@@ -4,7 +4,7 @@ epic: 6
 title: Prove the two larger original compositor shader programs
 priority: 525.02701059
 status: pending
-depends_on: [E6-T12g6l]
+depends_on: [E6-T12g6m1]
 estimate: S
 risk: high
 capstone: false
@@ -37,4 +37,9 @@ hunks need evidence or deletion; unsupported original paths stay gated.
 
 ## Verification log
 
-(empty)
+### 2026-10-04 — worker — prerequisite discovery
+
+Full literal 92cb866a and c5806d5f still reject at computed SIN/POW after the
+discard leaf. Add E6-T12g6m1 for exact materialized known arithmetic facts;
+this preserves the full-source acceptance above. Dynamic bank/geometry and
+computed indirect range obligations are not waived by opcode closure.

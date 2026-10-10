@@ -1174,7 +1174,7 @@ static bool radial_retry(struct profile *profile, const char *text, size_t lengt
    if (!profile->raw || !(profile->raw_flags & RAW_STRUCTURED)) return false;
    struct raw_ir *ir = profile->raw;
    int stage = profile->stage;
-   unsigned flags = RAW_MIXED | RAW_STRUCTURED | RAW_CONDITIONAL;
+   unsigned flags = RAW_MIXED | RAW_STRUCTURED | RAW_CONDITIONAL | (profile->raw_flags & RAW_KNOWN_RETRY);
    memset(ir, 0, sizeof(*ir));
    *profile = (struct profile){.stage = stage, .raw = ir, .raw_flags = flags, .syntax_only = true};
    memcpy(checked, text, length); checked[length] = 0;
@@ -1192,7 +1192,7 @@ static bool radial_retry(struct profile *profile, const char *text, size_t lengt
    return validate(checked, profile) && ir->radial.used && (ir->opcode_mask & RAW_FINITE_BANK_USED);
 }
 
-static const char *check_input(struct profile *profile, const char *text, size_t length)
+static const char *check_input_attempt(struct profile *profile, const char *text, size_t length, bool known_retry)
 {
    if (!text) return error("invalid-input", "TGSI text is required.");
    if (length > BRIDGE_MAX_TEXT) return error("input-too-large", "TGSI text exceeds 49152 bytes.");
@@ -1251,7 +1251,7 @@ static const char *check_input(struct profile *profile, const char *text, size_t
    }
    if (candidate) {
       profile->raw_flags = (numeric_candidate || structured_candidate ? RAW_MIXED : 0) |
-         (structured_candidate ? RAW_STRUCTURED : 0);
+         (structured_candidate ? RAW_STRUCTURED : 0) | (known_retry ? RAW_KNOWN_RETRY : 0);
       profile->raw = calloc(1, sizeof(*profile->raw));
       if (!profile->raw) return error("translation-error", "Raw IR allocation failed.");
    }
@@ -1276,7 +1276,7 @@ static const char *check_input(struct profile *profile, const char *text, size_t
       ir->count = 0; ir->opcode_mask = ir->indirect_indices = 0;
       ir->address = (struct raw_lane){0};
       *profile = (struct profile){.stage = stage, .raw = ir,
-         .raw_flags = RAW_MIXED | RAW_STRUCTURED | RAW_CONDITIONAL};
+         .raw_flags = RAW_MIXED | RAW_STRUCTURED | RAW_CONDITIONAL | (known_retry ? RAW_KNOWN_RETRY : 0)};
       memcpy(checked, text, length); checked[length] = 0;
       failure_code = "parse-error"; missing_numeric_authority = missing_initialization = false;
       if (validate(checked, profile)) return NULL;
@@ -1305,7 +1305,7 @@ static const char *check_input(struct profile *profile, const char *text, size_t
    int stage = profile->stage;
    free(profile->raw);
    *profile = (struct profile){.stage = stage, .raw_flags = RAW_MIXED | RAW_CONDITIONAL |
-      (structured_candidate ? RAW_STRUCTURED : 0)};
+      (structured_candidate ? RAW_STRUCTURED : 0) | (known_retry ? RAW_KNOWN_RETRY : 0)};
    profile->raw = calloc(1, sizeof(*profile->raw));
    if (!profile->raw) return numeric_rejection();
    memcpy(checked, text, length); checked[length] = 0;
@@ -1314,6 +1314,23 @@ static const char *check_input(struct profile *profile, const char *text, size_t
    if (validate(checked, profile) && (profile->raw->opcode_mask & RAW_FINITE_BANK_USED)) return NULL;
    if (missing_initialization && (demand_retry(profile, text, length, checked) ||
        (strcmp(failure_code, "translation-error") && radial_retry(profile, text, length, checked)))) return NULL;
+   return numeric_rejection();
+}
+
+static const char *check_input(struct profile *profile, const char *text, size_t length)
+{
+   const char *failed = check_input_attempt(profile, text, length, false);
+   if (!failed || !strstr(failed, "\"code\":\"unsupported-feature\"")) return failed;
+   /* Existing successful source/metadata bytes win. A fresh final transaction
+    * may materialize known producers; failed retries preserve the old error. */
+   int stage = profile->stage;
+   free(profile->raw);
+   *profile = (struct profile){.stage = stage};
+   const char *retry = check_input_attempt(profile, text, length, true);
+   if (!retry && profile->raw && (profile->raw->opcode_mask & RAW_KNOWN_ARITHMETIC_USED)) {
+      response_used = 0; response_overflow = false;
+      return NULL;
+   }
    return numeric_rejection();
 }
 
@@ -1573,6 +1590,19 @@ static void discard_contract(const struct profile *profile, const char *base)
       base, kill ? "\"KILL\"" : "", kill && conditional ? "," : "", conditional ? "\"KILL_IF\"" : "", profile->live ? "false" : "true");
 }
 
+static void known_arithmetic_contract(const struct profile *profile, const char *base)
+{
+   bool add = false, mul = false;
+   for (unsigned pc = 0; pc < profile->raw->count; ++pc) {
+      const struct raw_instruction *i = &profile->raw->instructions[pc];
+      if (!(i->flags & RAW_KNOWN_RESULT)) continue;
+      add |= i->opcode == RAW_ADD;
+      mul |= i->opcode == RAW_MUL;
+   }
+   append(",\"knownArithmeticBaseProfile\":\"%s\",\"knownArithmeticContract\":{\"kind\":\"tgsi-known-arithmetic-v1\",\"stage\":\"%s\",\"operations\":[%s%s%s],\"source\":\"fully-known-authorized-normal-or-zero-post-modifier\",\"rounding\":\"binary32-nearest-ties-to-even-integer\",\"result\":\"normal-or-zero-only\",\"emission\":\"literal-word-and-matching-shadow\",\"authority\":\"exact-emitted-producer-version-only\",\"storage\":\"unused-third-operand-four-word-cache\"}",
+      base, profile->stage ? "fragment" : "vertex", add ? "\"ADD\"" : "", add && mul ? "," : "", mul ? "\"MUL\"" : "");
+}
+
 static void stage_result(const struct conversion *c)
 {
    const struct profile *profile = &c->profile;
@@ -1616,12 +1646,13 @@ static void stage_result(const struct conversion *c)
    bool sine = profile->raw && (profile->raw->opcode_mask & RAW_SINE_OPCODES);
    bool coordinates = profile->raw && (profile->raw->opcode_mask & RAW_FRAGMENT_COORDINATES_USED);
    bool discard = profile->raw && (profile->raw->opcode_mask & RAW_DISCARD_OPCODES);
+   bool known_arithmetic = profile->raw && (profile->raw->opcode_mask & RAW_KNOWN_ARITHMETIC_USED);
    const char *conversion_name = conversion_bank ? "virgl-webgl2-raw-bits-v30" : "virgl-webgl2-raw-bits-v29";
    const char *base_profile =
       power ? "virgl-webgl2-raw-bits-v37" : sine ? "virgl-webgl2-raw-bits-v36" : exponent ? "virgl-webgl2-raw-bits-v35" : saturation ? "virgl-webgl2-raw-bits-v34" : fraction ? "virgl-webgl2-raw-bits-v33" : minimum ? "virgl-webgl2-raw-bits-v32" : scalar ? "virgl-webgl2-raw-bits-v31" : conversion ? conversion_name :
       arithmetic ? "virgl-webgl2-raw-bits-v28" : raster ? "virgl-webgl2-raw-bits-v27" : name;
    append("\",\"metadata\":{\"profile\":\"%s\",\"stage\":\"%s\",\"inputs\":",
-      discard ? "virgl-webgl2-raw-bits-v39" : coordinates ? "virgl-webgl2-raw-bits-v38" : base_profile,
+      known_arithmetic ? "virgl-webgl2-raw-bits-v40" : discard ? "virgl-webgl2-raw-bits-v39" : coordinates ? "virgl-webgl2-raw-bits-v38" : base_profile,
       stage ? "fragment" : "vertex");
    io_metadata(profile, IN); append(",\"outputs\":"); io_metadata(profile, OUT);
    append(",\"attributes\":");
@@ -1676,6 +1707,7 @@ static void stage_result(const struct conversion *c)
       scalar ? "virgl-webgl2-raw-bits-v31" : conversion ? conversion_name : arithmetic ? "virgl-webgl2-raw-bits-v28" : raster ? "virgl-webgl2-raw-bits-v27" : name);
    if (coordinates) coordinate_contract(base_profile);
    if (discard) discard_contract(profile, coordinates ? "virgl-webgl2-raw-bits-v38" : base_profile);
+   if (known_arithmetic) known_arithmetic_contract(profile, discard ? "virgl-webgl2-raw-bits-v39" : coordinates ? "virgl-webgl2-raw-bits-v38" : base_profile);
    append("}");
 }
 

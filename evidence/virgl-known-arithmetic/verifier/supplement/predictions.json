@@ -1,0 +1,35 @@
+{
+  "schema": "virgl-known-arithmetic-incremental-critic-predictions-v1",
+  "task": "E6-T12g6m1",
+  "submission": "3b55b8b6685885024cafe6d384cd45405a08547e",
+  "runtimeSource": "cba5ae02ba16dc15b7b51d5dcdd808f88fcaf1ee",
+  "harnessSource": "5353cf8591a94dbd962f92ee69b488ff18b8ebf0",
+  "priorVerdict": "a8dfaf5590bcbfeb14a90138ea08073e24c232f0",
+  "phase": "saved before supplemental manifest, reports, profiles or archive inspection",
+  "predictions": [
+    {
+      "id": "I0",
+      "prediction": "The old worker and critic seals remain byte-identical. All 42 new indexed members authenticate. Five runtime source bindings match cba5ae02, six changed harness bindings match 5353cf85, and each hot/cold copied native executable and Wasm artifact matches its corresponding original worker archive member. Historical untracked filename inventory remains exactly 4202 paths with SHA256 17fd92fd454a14a44fddc4db0beadc4246a92f4ff749e57a8e2762aca638f8ac."
+    },
+    {
+      "id": "C1",
+      "prediction": "Re-merging the supplemental raw profile and exporting it with its own corresponding archived original executable shows positive counts at raw_bits.c:known_add and known_arithmetic.c:known_add regions 34:13-34:21 and 35:13-35:21. The two literal ADD inputs (00000000,3fc00000) and (3fc00000,00000000) each return 3fc00000 in all four rounding modes, and the exact earlier case16 public text exercises both zero identities through the compiler with complete native/Wasm single/pair parity."
+    },
+    {
+      "id": "C2",
+      "prediction": "Each original hot/cold executable's supplemental profile shows a positive count at bridge.c:stage_result kind-0 region 1710:115-1710:142. Exact earlier case54 text produces the v40 wrapper over base v38 with lower-left/half-integer coordinate policy; complete native/Wasm single/pair results agree and the original metadata parser accepts it."
+    },
+    {
+      "id": "J1",
+      "prediction": "The archived original-source Node V8 profile has positive nested ranges 11519-11565 and 11978-11987 in constant-domain.mjs, with its frozen source hash unchanged. Actual both-operation metadata parses ordered ADD/MUL. Removing inherited sineContract from the original ADD/SIN wrapper returns false. Indexed operation, coordinate field and top-level accessors reject with zero getter calls."
+    },
+    {
+      "id": "H1",
+      "prediction": "The narrow replay guard consumes literal independent expectations, checks complete native/Wasm results, and rejects a deliberately wrong public zero-identity prediction or falsified consumer metadata in an actual run. Its positive original-binary replay passes; the targeted receipt rejects missing/zero coverage and mismatched original executable bindings. No unchanged runtime or unrelated suite is required to establish this harness-only addition."
+    },
+    {
+      "id": "H2",
+      "prediction": "The canonical acceptance recipe includes the targeted supplement and receipt check; its retained four literal public fixtures constitute deterministic permanent coverage for the formerly missing paths. Relevant JavaScript/Python syntax and task policy gates pass without changing runtime or prior evidence."
+    }
+  ]
+}

@@ -1,0 +1,281 @@
+{
+  "schema": "virgl-known-arithmetic-incremental-critic-verdict-v1",
+  "task": "E6-T12g6m1",
+  "verdict": "verified",
+  "runtimeHead": "cba5ae02ba16dc15b7b51d5dcdd808f88fcaf1ee",
+  "harnessHead": "5353cf8591a94dbd962f92ee69b488ff18b8ebf0",
+  "submissionHead": "3b55b8b6685885024cafe6d384cd45405a08547e",
+  "priorCriticCommit": "a8dfaf5590bcbfeb14a90138ea08073e24c232f0",
+  "predictionsSha256": "6e2897ead7da34b19bdf3ca10809532e5133a85fea712932f88e4b7754135680",
+  "incrementalPredictionResults": [
+    {
+      "id": "I0",
+      "status": "HELD"
+    },
+    {
+      "id": "C1",
+      "status": "HELD"
+    },
+    {
+      "id": "C2",
+      "status": "HELD"
+    },
+    {
+      "id": "J1",
+      "status": "HELD"
+    },
+    {
+      "id": "H1",
+      "status": "HELD"
+    },
+    {
+      "id": "H2",
+      "status": "HELD"
+    }
+  ],
+  "predictionResults": [
+    {
+      "id": "P0",
+      "status": "HELD",
+      "boundary": "Custody and lineage",
+      "carriedUnchanged": true
+    },
+    {
+      "id": "P1",
+      "status": "HELD",
+      "boundary": "Integer rounding",
+      "carriedUnchanged": true
+    },
+    {
+      "id": "P2",
+      "status": "HELD",
+      "boundary": "Literal emission and shadow",
+      "carriedUnchanged": true
+    },
+    {
+      "id": "P3",
+      "status": "HELD",
+      "boundary": "Unsafe and unknown operands",
+      "carriedUnchanged": true
+    },
+    {
+      "id": "P4",
+      "status": "HELD",
+      "boundary": "Join and address facts",
+      "carriedUnchanged": true
+    },
+    {
+      "id": "P5",
+      "status": "HELD",
+      "boundary": "Whole-text retry and old results",
+      "carriedUnchanged": true
+    },
+    {
+      "id": "P6",
+      "status": "HELD",
+      "boundary": "Metadata authority",
+      "carriedUnchanged": true
+    },
+    {
+      "id": "P7",
+      "status": "HELD",
+      "boundary": "Physical words and bytes",
+      "carriedUnchanged": true
+    },
+    {
+      "id": "P8",
+      "status": "HELD",
+      "boundary": "Owned consumer bank authority",
+      "carriedUnchanged": true
+    },
+    {
+      "id": "P9",
+      "status": "HELD",
+      "boundary": "Fault sensitivity and diagnostics",
+      "carriedUnchanged": true
+    },
+    {
+      "id": "P10",
+      "status": "HELD",
+      "boundary": "Storage and grammar",
+      "carriedUnchanged": true
+    },
+    {
+      "id": "P11",
+      "status": "HELD",
+      "boundary": "Remaining gate",
+      "carriedUnchanged": true
+    },
+    {
+      "id": "P12",
+      "status": "HELD",
+      "boundary": "Executable coverage",
+      "resolvedBy": [
+        "C1",
+        "C2",
+        "J1"
+      ]
+    },
+    {
+      "id": "P13",
+      "status": "HELD",
+      "boundary": "Independent attack and sabotage",
+      "carriedUnchanged": true
+    }
+  ],
+  "findings": [
+    {
+      "id": "C1",
+      "status": "HELD",
+      "prediction": "Both original helper instances execute both zero+nonzero identity returns.",
+      "observed": "Each original hot/cold raw profile re-merges byte-identically and re-exports with its own original executable. raw_bits known_add return-b/return-a counts8/4; standalone known_add counts4/4. Literal two WORD results are 0x3fc00000; exact case16 has complete native/Wasm singles/pairs and independent literal caches.",
+      "points": [
+        "renderer/virgl-shader/raw_known_arithmetic.h:34:13-34:21",
+        "renderer/virgl-shader/raw_known_arithmetic.h:35:13-35:21",
+        "recording-audit.json:variants[*].llvm[0..3]",
+        "original-supplement/hot/native.log:1",
+        "original-supplement/cold/native.log:1"
+      ],
+      "fixtureTextSha256": "b0909ad597f132fa4662444c8172098183fb694c2859aff2d6a9047e7e5d4db3"
+    },
+    {
+      "id": "C2",
+      "status": "HELD",
+      "prediction": "Original stage_result selects known arithmetic over inherited coordinate v38.",
+      "observed": "Exact original region1710:115-142 has count4 in each corresponding original executable. Exact case54 produces v40/basev38, lower-left/half-integer inherited coordinate policy; complete single/pair parity and original-source parser approval hold.",
+      "points": [
+        "renderer/virgl-shader/bridge.c:1710:115-1710:142",
+        "recording-audit.json:variants[*].llvm[4]",
+        "original-supplement/hot/native.log:5",
+        "original-supplement/cold/native.log:5"
+      ],
+      "fixtureTextSha256": "c4b060eb6d1914bfb388991e1e3a6895398c42b9e675c525c9e08f557ab5b312"
+    },
+    {
+      "id": "J1",
+      "status": "HELD",
+      "prediction": "Original-source canonical second-operation and recursive rejection ranges execute.",
+      "observed": "Both original Node profiles have exact nested V8 counts1/2 at11519-11565 and11978-11987. Both-operation [ADD,MUL] approves. Deleting only sineContract from otherwise-valid original ADD/SIN metadata rejects; three accessors reject with zero getter invocations.",
+      "points": [
+        "renderer/virgl-command/constant-domain.mjs:152",
+        "renderer/virgl-command/constant-domain.mjs:156",
+        "recording-audit.json:variants[*].v8",
+        "original-supplement/hot/consumer.json:results[2],attacks[0]",
+        "original-supplement/cold/consumer.json:results[2],attacks[0]"
+      ],
+      "sourceSha256": "0be4e058dc23250a3116ac9360613a404739d807b858b926ee4d84205126b40b"
+    }
+  ],
+  "productContradictions": [],
+  "coverageClosure": {
+    "native": {
+      "changedLines": 126,
+      "held": 83,
+      "waived": 43,
+      "needsEvidence": 0
+    },
+    "javascript": {
+      "changedLines": 23,
+      "held": 19,
+      "waived": 4,
+      "needsEvidence": 0
+    },
+    "resolved": [
+      "C1",
+      "C2",
+      "J1"
+    ],
+    "method": "original LLVM containing/nested kind-0 ranges and exact original-source V8 ranges"
+  },
+  "preservedSeals": [
+    {
+      "path": "evidence/virgl-known-arithmetic/worker",
+      "manifestSha256": "e211633f326cd8e43e37a1585d9c892f84fa8d1eea5f13ac00bcf98d4104d15f",
+      "archiveSha256": "cde41a7216f85761baf09b9b8646777e8703f1f449b0af270b31daf87a3813aa",
+      "indexSha256": "67a4726f63fe00ab9fd9f9c708c26ea89d47dff988aeb53fd6dd169d3fe017b0"
+    },
+    {
+      "path": "evidence/virgl-known-arithmetic/verifier",
+      "manifestSha256": "c9b4adfe834ac13e6f343ab8048ee059fc67b2d3a6405335d8ed6d6a7aa1502f",
+      "archiveSha256": "baf7e9f401baff5e1042f7b826345e6893dfee8e7069bec0e11390470b71f67f",
+      "indexSha256": "40afc73663871d44d0da14430e4e1d6bb44a531a77adbbdd241be8a11f3be315"
+    },
+    {
+      "path": "evidence/virgl-known-arithmetic/worker/supplement",
+      "manifestSha256": "eafc73232ac1d2d807bde62ad21c8a11473b985c3ad06ee85ce3194d9c7a4841",
+      "archiveSha256": "987800d6a1d94ab0527b406f88236bf818c6f19374c701e68f940edcc3e04c5c",
+      "indexSha256": "7784a22b0ab540b159241182c0281dad8c2ac534204f7653138219f63e681d97"
+    }
+  ],
+  "unchangedBoundarySources": [
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "sha256": "e3cae66fd843e9eadfd435967b04d3f546cb1b100c69750a6d9c8f8c17348398"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "sha256": "b4792108de3105ef0ba62d3c58bf148039c0ab0bcd9b0aaaa472bcf22f252b1d"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.h",
+      "sha256": "91409c2fa31857b1e917fd5fd3f8d759aedbf181bea6008257c2fa26ad05b9ce"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_known_arithmetic.h",
+      "sha256": "eaf4aa419caff2e7c9e7d2d5f6194c6184189cba78bd9c0ace541f7a291c27e9"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "sha256": "0be4e058dc23250a3116ac9360613a404739d807b858b926ee4d84205126b40b"
+    }
+  ],
+  "harnessAudit": {
+    "status": "HELD",
+    "points": [
+      "guard-attacks.json",
+      "final-checks.json"
+    ],
+    "actualFaults": "Corrupt original native output literals and reversed metadata are rejected. Positive original-binary replay passes;16 negative receipt variants reject.",
+    "criticCorrections": "guard-attack-correction.json retains a source-line citation correction and an injection correction for duplicate shadow literals. Earlier failed injection attempts remain archived; no faulty report was accepted.",
+    "wiringWaiver": "Canonical shell invocation and main receipt call are declarative wiring; static inspection binds them to the same replay/check_supplement implementations executed directly. Full acceptance walls remain HELD and are not restarted for harness-only wiring."
+  },
+  "suite": {
+    "reason": "Adopt the two exact first-critic public fixtures and independent literal zero identities, now committed with two policy fixtures and the canonical recurring guard. No redundant implementation-mirroring test is added.",
+    "sources": [
+      {
+        "path": "tools/virgl-known-arithmetic/supplement-cases.json",
+        "sha256": "f1a39129b47ef7f81e40292ccea68415b5c4a8eabe28270bcf8c37e92ef61c6b"
+      },
+      {
+        "path": "tools/virgl-known-arithmetic/supplement.mjs",
+        "sha256": "f2ede860a49ba55f1529b758417b7a78a983f0637aa0c150cb62d0fed0120360"
+      },
+      {
+        "path": "tools/virgl-known-arithmetic/receipt.py",
+        "sha256": "ad756ed8daba65c6d04b1ef022e9d9d08f5dc30637002aa5d9722049eaf6b4ff"
+      },
+      {
+        "path": "tools/verify-virgl-known-arithmetic.sh",
+        "sha256": "37edd36da9b522f979982788f49ab783ead9f8dc94318209d72a3fb7b879f730"
+      }
+    ],
+    "directResult": "four full native/Wasm singles/pairs, literal word/shadow producer checks, inherited coordinates/rejection, three inert getters, five LLVM and two V8 points"
+  },
+  "historicalUntracked": {
+    "count": 4202,
+    "sha256": "17fd92fd454a14a44fddc4db0beadc4246a92f4ff749e57a8e2762aca638f8ac"
+  },
+  "proofs": {
+    "authentication.json": "88febdf54a1cee894fa4815fa3684dabf426367231f3fdf5e7cdf7c67f1c60a0",
+    "final-checks.json": "18f1cf82e9124efe43dd714c5b2216ecf51e3bb513e0be021f211983dc38917b",
+    "guard-attack-correction.json": "3274e2251ba99cd3fa1edc0e98e3f13f18ace4d8be26075960dfcaffe94c1e05",
+    "guard-attack-predictions-2.json": "d902a7833b45b7c29abf6ad07acdc207d036879f26aec77d8c9c074b84a00a14",
+    "guard-attack-predictions.json": "a83f64effb8680989d29b79845f46184a32ae9476e4ffabbe4b62df9e19ee45b",
+    "guard-attacks.json": "f388771e85c9c0640f8ad84abb6b8a118187bdd6e5cfe7ffdbfa487393bad432",
+    "predictions.json": "6e2897ead7da34b19bdf3ca10809532e5133a85fea712932f88e4b7754135680",
+    "recording-audit.json": "b39a47063f58c46a321bd1ba71fde04cfadbfda184cc3302abc24a77ecde67ee"
+  },
+  "remainingGate": "Full c5806d5f and92cb866a originals, unproven dynamic uniform/geometry/indirect ranges, production negotiation/imports and performance remain gated. No new GPU, cold clone or unrelated gauntlet was required for unchanged runtime.",
+  "productionNegotiation": false,
+  "guestExecution": false
+}
