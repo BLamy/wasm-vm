@@ -3,7 +3,7 @@ id: E6-T11d27
 epic: 6
 title: Preserve original R11G11B10 floating image storage and transfers
 priority: 525.027039000369
-status: pending
+status: in-progress
 depends_on: [E6-T11d26]
 estimate: S
 risk: high
