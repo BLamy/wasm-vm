@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26]
-blocked_on: E6-T11d26
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27]
+blocked_on: E6-T11d27
 estimate: S
 risk: high
 capstone: false
@@ -352,3 +352,8 @@ Ordered S/high D25 preserves these original floating image storage/transfer repr
 ### 2026-10-10 — worker — float storage verified; original consumer prerequisite
 
 E6-T11d25 is independently verified at `7a58efee480e38ebad14dedcc57bde0e747088ae`; original F16/F32 words, native planes, public transfers, ranges and generations retain their sealed proof. At this verified head, all sixteen original floating sampler-view/surface packets still refuse through the historical byte consumer. `evidence/virgl-production-readiness/float-consumer-gap.json` records the full original bytes and exact source closure; reproduce each `hex` with `decodeStandardColorSubmission`. The selected original floating consumer E6-T11d26 is the next ordered S prerequisite. It must prove actual shaders, native float filtering/blending/outputs and retained ranges before production can report that API behavior. The explicit request continues the production graphics chain; the device remains disabled and the actual guest integration remains later work.
+
+
+### 2026-10-10 — worker — original packed storage floor remains gated
+
+E6-T11d26 is independently verified at `a5085b5491f24b3c700fb7cef7b1629c2efef914`; its original floating consumer and complete hot/cold seals are retained. At this verified head, both original packed formats124/125 still refuse in the selected float storage layout and original view/surface decoder. `evidence/virgl-production-readiness/standard-packed-float-image-gap.json` pins all six original metadata/packet inputs and exact source closure (SHA256 `4b0df56d9582b14af84df2feccf84fdee94d8ff4d0e48fa8d86116d90db129d4`). Exact repro: pass each metadata/fields row to `computeStandardFloatColorTransferLayout(metadata, fields, 4096)` and each literal `hex` row to `decodeStandardFloatImageSubmission`; all return refusal. Original R11G11B10 storage E6-T11d27 is the next ordered S boundary, followed by its original consumer. RGB9E5 and the remaining GLES3 floor remain later independent prerequisites; no production capset or guest graphics authority is granted.
