@@ -360,9 +360,9 @@ function decodeFields(p, objectType) {
       const fields = { start: p.u(1), count: p.u(2), mode: p.u(3), indexed: p.boolean(4), instanceCount: p.u(5),
         indexBias: p.i(6), startInstance: p.u(7), primitiveRestart: p.boolean(8), restartIndex: p.u(9),
         minIndex: p.u(10), maxIndex: p.u(11), countFromStreamOutput: p.u(12) };
-      p.require([4, 5].includes(fields.mode) && (p.standard || fields.instanceCount === 1) && fields.indexBias === 0 &&
+      p.require((p.standard ? [1, 2, 3, 4, 5, 6] : [4, 5]).includes(fields.mode) && (p.standard || fields.instanceCount === 1) && fields.indexBias === 0 &&
         fields.startInstance === 0 && !fields.primitiveRestart && fields.restartIndex === 0 && fields.countFromStreamOutput === 0,
-      "unsupported-feature", p.standard ? "Only triangles/strips without base offsets, restart or stream output are supported." :
+      "unsupported-feature", p.standard ? "Only core lines and triangles without base offsets, restart or stream output are supported." :
         "Only ordinary triangles/strips without instancing, restart or stream output are supported.");
       p.require(fields.start <= MAX_U32 - fields.count && fields.minIndex <= fields.maxIndex,
         "invalid-value", "Invalid draw count/index range.");

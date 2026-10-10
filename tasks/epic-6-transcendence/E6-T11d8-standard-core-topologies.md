@@ -27,7 +27,10 @@ qualification. Native line width remains the existing one-pixel state.
 `make verify-E6-T11d8` binds literal independently mapped Gallium mode fields and
 actual headed native hardware calls. Independently predict complete physical
 pixels for axis-aligned one-pixel segments, open/closed loops, strips and a
-triangle fan, using original input bytes and source geometry. Include arrays,
+triangle fan, using original input bytes and source geometry. Interior line pixels are
+strict; fragment-center endpoints admit the GLES3 section3.5 bounded native
+half-open alternatives, declared before comparison. No loop-edge interior or
+fan-area pixel is waived by those endpoint alternatives. Include arrays,
 byte/short/u32 wide indices, zero/one/positive instance counts, constant color
 records, instance-fed values, nonzero binding offsets and three bounded schedules.
 Make each native primitive distinguishable from the others: assert the loop's
