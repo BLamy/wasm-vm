@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29]
-blocked_on: E6-T11d29
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30]
+blocked_on: E6-T11d30
 estimate: S
 risk: high
 capstone: false
@@ -366,3 +366,7 @@ D27 is independently verified at `ed846a71801b74986e903f4f029b225df9545134`; the
 ### 2026-10-10 — worker — packed consumer verified; shared-exponent storage gap
 
 D28 is independently verified at `cd59854e79cedf31abe35585bbe1fe616a8fc7ae`. All four literal original125 storage/layout/range/surface negatives are recorded in `evidence/virgl-production-readiness/standard-shared-exponent-gap.json`; its adjacent script reproduces the historical qualified owner and decoder refusals, with zero native allocation. Ordered S/high D29 closes original RGB9E5 storage, GPU range copies and canonical public transfers. Its selected sampler consumer and remaining actual GLES3 floor follow separately. The user request keeps production graphics work ahead of unrelated general queue tasks; no capset, guest acceleration, worker scanout or live production authority is granted by this prerequisite.
+
+### 2026-10-10 — worker — shared-exponent storage verified; original consumer gap
+
+D29 is independently verified at `b76fa7d63703e3cf2a3dfc3b2d7c835c3f3db5e1` with complete original-bit, native GPU transfer, retained generation, caller state, budget and physical failure evidence. Its original125 storage authority does not admit original sampler packets. `evidence/virgl-production-readiness/standard-shared-exponent-consumer-gap.json` pins two original125 range1..3/swizzle views and a mip2 surface; exact repro at the recorded head is `node evidence/virgl-production-readiness/standard-shared-exponent-consumer-gap.mjs`. All three return unsupported-feature. Ordered S/high D30 qualifies the selected original125 sampler consumer while leaving125 surfaces closed. Remaining actual GLES3 floors, typed capsets, real guest rendering and worker scanout remain successors. The explicit request keeps this production graphics chain ahead of unrelated general queue entries; it does not grant any unproven capability.
