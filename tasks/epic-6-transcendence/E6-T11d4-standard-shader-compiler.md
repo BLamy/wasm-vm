@@ -116,3 +116,11 @@ executes the unchanged authored MOV/AND/OR/NOT/SHL/USHR shader bodies and the
 unchanged independent BigInt reference on actual GPU banks spanning shift counts
 0, 1, 7, 15, 23, 31 and 32. It replaces only that ancillary obsolete wrapper;
 no numerical oracle, old shader source, profile or runtime body changes.
+
+The source-frozen `ea1c446d` hot submission passes all compiler, metadata, native/
+Wasm, 125-frame pixel, mutation and retained entry-point checks. Its first
+pristine clone exposes a harness portability defect: macOS's `/var` temporary
+alias and canonical `/private/var` module root produce an outside-repository
+relative input path. Canonicalizing both input and root paths fixes that bounded
+recording wrapper. Runtime and expected values remain unchanged; the final
+exact-head cold-clone proof is rerun because this was a portability failure.

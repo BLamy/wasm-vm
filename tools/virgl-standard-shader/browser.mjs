@@ -5,7 +5,8 @@ import {createHash} from 'node:crypto';
 import {gunzipSync} from 'node:zlib';
 import {runVirglBrowser,browserOptions,browserDocument} from '../lib/virgl-browser-runner.mjs';
 const options=browserOptions(['--inputs','--fault']);assert.ok(options.inputs);assert.ok(!options.fault||options.fault==='sine');
-const root=path.resolve(import.meta.dirname,'../..'),inputs=path.relative(root,path.resolve(options.inputs)).split(path.sep).join('/');
+// Canonicalize both sides: macOS temporary clones use /var -> /private/var.
+const root=await fs.realpath(path.resolve(import.meta.dirname,'../..')),inputs=path.relative(root,await fs.realpath(path.resolve(options.inputs))).split(path.sep).join('/');
 const matrix=inputs+'/native/cases.json',native=inputs+'/native/native.jsonl',geometry=inputs+'/geometry.bin',banks=inputs+'/c580.bin';
 const files=[matrix,native,geometry,banks,'tools/virgl-original-programs/oracle.mjs'];
 const hash=b=>createHash('sha256').update(b).digest('hex');
