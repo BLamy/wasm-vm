@@ -910,8 +910,8 @@
     },
     {
       "path": "promoted/tools/virgl-command/standard-constant-adversarial-pixels.mjs",
-      "bytes": 10755,
-      "sha256": "cd2e789226f2ea3f1e25a0528423b9f8d60827191edf4c8439836c02fa4b1ba0"
+      "bytes": 10469,
+      "sha256": "6cc87ca57c7defb08793ae2e93064d86df3241b5a993e841d932965d94572579"
     }
   ]
 }

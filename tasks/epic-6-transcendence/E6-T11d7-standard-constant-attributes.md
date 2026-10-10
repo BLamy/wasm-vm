@@ -242,6 +242,7 @@ python3 evidence/virgl-standard-constant/verifier/authenticate.py
 python3 evidence/virgl-standard-constant/verifier/audit_originals.py
 python3 evidence/virgl-standard-constant/verifier/audit_coverage.py
 VIRGL_STANDARD_CONSTANT_ADVERSARIAL_EVIDENCE_DIR=target/evidence/virgl-standard-constant-critic-final make verify-E6-T11d7-adversarial
+node tools/virgl-command/standard-constant-adversarial-pixels.mjs target/evidence/virgl-standard-constant-critic-final
 python3 evidence/virgl-standard-constant/verifier/seal_critic.py
 python3 tools/check_task_policy.py
 python3 tools/build_queue.py
@@ -249,12 +250,19 @@ python3 tools/build_queue.py
 
 Critic evidence of record:
 `evidence/virgl-standard-constant/verifier/{manifest.json,records.json,recording.tar.gz}`,
-182 records/563,181 packed bytes. Archive SHA-256
-`ae4a7bbc1dc705e2bf76d9d987f981bb40fada83f6831259355be9319d60462b`;
-index `3c078c2ab8babe8b4d7e7760e17eb97fc7c93995bd48ae7a0ba920e70cfca2b2`;
+182 records/563,074 packed bytes. Archive SHA-256
+`0e7c1966aba67f0276d371a2414f065c0396d65088310b253e54a6857911d231`;
+index `d6d452707e41890f5a1726f8b66d7a956dd6a5caa69fa22dcfd70a0e45a1c6ba`;
 final physical audit `8cadc4535b87c5af147d5c180eadf753aa72f63a20a750da74afdf169f761ffe`.
 Worker submission `c63127a4954b6c61d23b2595149d8ab20116fdc6` and unchanged runtime
 state SHA-256 `dd2049d9d27e591b0ad63ecd30fedcdcf8ae09e7b754d81b769a81497c7d7671`
 remain the reviewed implementation. Scope is only the isolated standard async
 constant-attribute fetch and owned-batch lifetime. This verdict grants no guest,
 API, FPS/MIPS, production capability or live-deployment authority.
+
+Promotion custody refinement: the recurring offline gate authenticates each
+recording against its captured current source closure; the historical D7 runtime
+freeze is confined to this critic's authentication and seal. Removing that
+future-blocking harness assertion changes no runtime, original recording or
+pixel result. The touched Node syntax and offline audit pass again; sealed
+physical-audit digest remains unchanged. Incremental harness-only policy applies.

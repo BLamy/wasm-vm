@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 import assert from 'node:assert/strict';
-import { execFileSync } from 'node:child_process';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { gunzipSync } from 'node:zlib';
@@ -17,7 +16,6 @@ async function audit(name, fault = false, routing = false) {
   const served = new Map(report.servedFiles.map(s => [s.path, s.sha256])), blobs = new Map(r.blobs.map(b => [b.key, b]));
   for (const s of report.sources) {
     const current = await fs.readFile(path.join(repo, s.path)); assert.equal(sha256(current), s.sha256, 'critic source custody ' + s.path);
-    if (s.path === 'renderer/virgl-command/state.mjs') assert.equal(sha256(execFileSync('git', ['show', '39a9d14b7052c60ca11416bdba4e6eb78a38b1dd:' + s.path], { cwd: repo })), s.sha256, 'runtime unchanged from exact-head cold proof');
     if (served.has('/' + s.path)) assert.equal(served.get('/' + s.path), report.mutation?.path === s.path ? report.mutation.servedSha256 : s.sha256);
   }
   for (const key of ['browserCoverage', 'screenshot']) assert.equal(sha256(await fs.readFile(path.join(directory, report[key].path))), report[key].sha256);
