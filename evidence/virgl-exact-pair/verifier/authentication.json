@@ -1,0 +1,16 @@
+{
+  "task": "E6-T12g6m3c",
+  "verdict": "authenticated",
+  "manifestSha256": "25551b5127c2760ac8ae5f692d3e7af516db52126c758ee3c3abc835db929563",
+  "indexSha256": "c132aca9072cb5d0f67286241ab528f8c2579d283cea3f16aadfb4639fc95865",
+  "archiveSha256": "84324f32042372e11af30429a8997bff17eeec6d4b18fbe6fcfe97de426b9869",
+  "archiveMembers": 136,
+  "archiveBytes": 748055184,
+  "frozenHead": "1bbbe70a7bb4c9a9cdc0c3113cbb6b6a1deba733",
+  "trackedSourceChecks": 670,
+  "generatedSourceChecks": 56,
+  "hotNativeBinarySha256": "46ec6a369d1066d0e90a8879345e270522021da2e1c6ff5bade425b6485a66a7",
+  "coldNativeBinarySha256": "80f49b15c180d6231a585da13ce0f64231821173e2dfa28c07db8b36b230c99f",
+  "hotWasmSha256": "a6c08274cd3b0e921727c7ff55e2712f0837c58f1c9416c3a79f0ed92823243e",
+  "coldWasmSha256": "a6c08274cd3b0e921727c7ff55e2712f0837c58f1c9416c3a79f0ed92823243e"
+}

@@ -1,0 +1,26 @@
+{
+  "schema": "virgl-exact-pair-verifier-verdict-v1",
+  "task": "E6-T12g6m3c",
+  "verdict": "verified",
+  "sourceHead": "1bbbe70a7bb4c9a9cdc0c3113cbb6b6a1deba733",
+  "submissionHead": "69eadeb8e575674e586172e2f292e5a0df3aa9bd",
+  "workerManifestSha256": "25551b5127c2760ac8ae5f692d3e7af516db52126c758ee3c3abc835db929563",
+  "predictions": [
+    {"id":"P1","result":"HELD","point":"hot/native/report.json cases[ordinary-flat-wins] and all 21 valid ordinary winners","observation":"Every valid already-admitted ordinary pair has identical complete old and exact result JSON bytes; old native and Wasm pair results match across all 118 cases."},
+    {"id":"P2","result":"HELD","point":"hot/native/report.json cases[both-qualified-smooth, unused-full-flat-interface, both-qualified-coordinate-bytes, both-qualified-coordinate-discard, both-qualified-guaranteed-discard]","observation":"52 newly admitted pairs preserve the complete fragment result and fragment-derived vertex metadata. 59 qualified stage results retain all 837 supplied exact tuples; all nine explicitly predicted interface keys agree, including unused Generic[7], coordinate and discard keys."},
+    {"id":"P3","result":"HELD","point":"hot/native/report.json alias/failures; hot/node.json ownership/schemaAttacks/nativeRequests; renderer/virgl-shader/bridge.c:2006","observation":"Both texts and banks survive mutation at first calloc. Across 1,939 actual allocation failures, 1,277 recovered complete results and 662 error-only results, with subsequent calls recovering. The Wasm facade rejects 175 strict-own schema attacks and 18 direct ABI attacks."},
+    {"id":"P4","result":"HELD","point":"hot/gpu-{1779033703,3144134277,1013904242}/report.json acceptance.rigs[].draws/attacks/glEvents and capture-{seed}.json","observation":"Three Apple M4 Max Metal schedules each have 17 disposed rigs, 281 literal full frames, 17,984 independently recomputed pixels, 266 pre-effect bank rejections, and 340,032 observed uniform words; browser error arrays and final budgets are empty/zero."},
+    {"id":"P5","result":"HELD","point":"fault-source/{interface,metadata}/bridge.c and virgl-shader.wasm; hot/fault-{interface,metadata}/report.json; hot/capture-fault-{interface,metadata}.json","observation":"Each fault bridge.c differs from frozen source by its one intended line, its manifest and served Wasm digests match the browser report, and each physical run records three expected contradictions with link or metadata rejection."},
+    {"id":"P6","result":"HELD","point":"worker manifest/index/archive, hot and cold receipts, original native profiles, node-v8 and browser-coverage records","observation":"All 136 archive members (748,055,184 uncompressed bytes) rehash. 670 tracked and 56 generated source references bind frozen source/binaries. Hot and cold original LLVM profiles re-export byte-for-byte. 172 changed runtime lines execute; 36 are only comments/delimiters. All 92 V8 child regions hit. Of 110 native alternatives, 106 hit and four are precisely waived at bridge.c:1982,2023,2024,2036. The cold acceptance is pristine before/after, exits 0 at frozen head, and has its own retained binary/profile."},
+    {"id":"P7","result":"HELD","point":"hot/native/report.json cases[full-original/92cb866a..., full-original/c5806d5f...] and hot/legacy.json","observation":"Both tracked original larger program texts remain rejected. The unchanged predecessor replay covers 10,717 results, 2,683 old pairs, and 177 extensions."},
+    {"id":"P8","result":"HELD","point":"verifier/novel.json and novel-native.stdout","observation":"The sealed hot ASan binary and Wasm both reject simultaneous and single-stage swaps of distinct vertex/fragment exact banks for the full coordinate/discard pair; A/B/A restores the identical complete result."},
+    {"id":"P9","result":"HELD","point":"verifier/sabotage.json","observation":"Flipping one byte of the first physical frame in a verifier-only copy exits 1 at the complete-frame assertion."}
+  ],
+  "coverageWaivers": [
+    {"point":"bridge.c:1982 checker-rejection child","reason":"The complete checked fragment profile and pinned emitter have no caller-supplied interface key; unchanged prior pair checker and actual source faults provide the relevant dependency boundary."},
+    {"point":"bridge.c:2023,2024,2036 response-overflow children","reason":"Only bounded checked emitter output and inherited metadata reach the paired fixed buffer; no caller-supplied GLSL or capacity override exists. Maximum 49,152-byte, 768-instruction, 184-tuple stage cases execute. The inherited single-stage bound is unchanged."}
+  ],
+  "suite":"Discard the bounded bank-swap input as a new permanent fixture: existing stage-local wrong-bank DRAW and A/B/A tests already cover this boundary, while verifier/novel-native-input.bin preserves the reproducible attack.",
+  "custodyCaveat":"The verifier's first ASan replay omitted LLVM_PROFILE_FILE and overwrote pre-existing untracked default.profraw; prior content is unavailable. The file and all 4,202 baseline untracked paths remain present. No task proof uses that profile; the repeat replay set LLVM_PROFILE_FILE explicitly.",
+  "claimsNotMade":["public shader import","production deployment","full compositor admission","guest execution","performance"]
+}

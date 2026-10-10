@@ -4,7 +4,7 @@ epic: 6
 title: Prove the two larger original compositor shader programs
 priority: 525.02701059
 status: pending
-depends_on: [E6-T12g6m3b]
+depends_on: [E6-T12g6m3c]
 estimate: S
 risk: high
 capstone: false
@@ -57,3 +57,7 @@ proofs remain necessary before either full literal pair can be admitted.
 ### 2026-10-05 — worker — producer prerequisite discovery
 
 The exact-bank consumer E6-T12g6m3a is independently verified. Add ordered S/high E6-T12g6m3b to derive conditional raw CONST facts from owned whole source text and emit the enforced exact preconditions. This does not select specializations at DRAW, recognize new loops or prove geometry/numerical ranges. The full original acceptance above remains unchanged and both complete compositor bodies remain gated.
+
+### 2026-10-05 — worker — paired interface prerequisite discovery
+
+The real owned stage producer E6-T12g6m3b is independently verified. Flat, builtin-coordinate and discard interfaces still require the actual full paired compiler result, which the ordinary pair cannot produce for formerly rejected exact-guarded stages. Add one ordered S/high E6-T12g6m3c private paired transaction; preserve the complete checked fragment interface and unchanged shared renderer comparisons. Full original92cb/c5806d5f bodies still reject at geometry-dependent POW even with complete observed banks; neither contains a loop. No observed bank or diagnostic grants new range authority. The full-source acceptance above remains unchanged.

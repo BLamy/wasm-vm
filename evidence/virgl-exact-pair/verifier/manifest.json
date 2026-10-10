@@ -1,0 +1,24 @@
+{
+  "schema": "virgl-exact-pair-verifier-seal-v1",
+  "task": "E6-T12g6m3c",
+  "verdict": "verified",
+  "sourceHead": "1bbbe70a7bb4c9a9cdc0c3113cbb6b6a1deba733",
+  "submissionHead": "69eadeb8e575674e586172e2f292e5a0df3aa9bd",
+  "workerManifestSha256": "25551b5127c2760ac8ae5f692d3e7af516db52126c758ee3c3abc835db929563",
+  "records": 17,
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 45834,
+    "sha256": "3cc66e06e846fc08da3ebda7ae0864ca14a1225a396ce97f8c0490b1cc657ca5"
+  },
+  "recordIndex": {
+    "path": "records.json",
+    "bytes": 2790,
+    "sha256": "0ecc567525a227ef2e7d0cf5772888dc14e8c4331bae23aa4614275e14ee0d7d"
+  },
+  "verdictSha256": "e0ad2e5c2a4bf0b0bfed95380b82b8c90738bcb5ec4e1d6b3b54c0ae0cd57a31",
+  "authenticationSha256": "5d5ad0e8ad545d591735ba941584fb38ce4a1f66d581ad57545c0b1fea35699c",
+  "novelSha256": "1e497d89631e6acaee623541d43b7d38ba9dca947005ae7f2cb2fe26481af912",
+  "sabotageSha256": "2f3120caed2e94c5a0b32a349701dcbdb66584951b5d1cc3645312a26d0e5353",
+  "custodySha256": "e924585487d81f3a3da868f215cded97e8d01f7f4d6c05172c2dc1fd96485496"
+}
