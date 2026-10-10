@@ -2209,3 +2209,7 @@ verify-E6-T11d17:
 .PHONY: verify-E6-T11d17-adversarial
 verify-E6-T11d17-adversarial:
 	bash tools/verify-virgl-standard-uniform-bindings-adversarial.sh
+
+.PHONY: verify-E6-T11d18
+verify-E6-T11d18:
+	bash tools/verify-virgl-standard-buffer-roles.sh

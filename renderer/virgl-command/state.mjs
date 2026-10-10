@@ -14,6 +14,7 @@ export const DRAW_LIMITS = Object.freeze({ drawsPerSubmission: 64, indicesPerSub
 export const ASYNC_PROFILE = "virgl-tiny-async-jobs-v1";
 export const STANDARD_ASYNC_PROFILE = "virgl-standard-async-jobs-v1";
 export const STANDARD_UNIFORM_ASYNC_PROFILE = "virgl-standard-uniform-async-jobs-v1";
+export const STANDARD_BUFFER_ASYNC_PROFILE = "virgl-standard-buffer-async-jobs-v1";
 export const JOB_LIMITS = Object.freeze({ jobs: 1, commandsPerStep: 64, submissionBytes: 262144, transferBytes: 4194304 });
 export const CACHE_LIMITS = Object.freeze({ translations: 128, translationBytes: 4194304,
   programBytes: 4194304, states: 256, stateBytes: 1048576, debugBytes: 4194304 });
@@ -174,8 +175,13 @@ export function createVirglStandardUniformAsyncRenderer(options) {
   return createRenderer(options, true, true, true, true);
 }
 
+/** One original buffer allocation may serve all ordinary buffer roles. */
+export function createVirglStandardBufferAsyncRenderer(options) {
+  return createRenderer(options, true, true, true, true, true);
+}
+
 /** Host capabilities are trusted and non-reentrant. */
-function createRenderer(options, drawing, asynchronous = false, standard = false, uniform = false) {
+function createRenderer(options, drawing, asynchronous = false, standard = false, uniform = false, bufferRoles = false) {
   return result(() => {
     const config = dataRecord(options, ["gl", "resources", "bindings", "shaderBridge", "limits", "cacheLimits", ...(drawing ? ["drawLimits"] : []), ...(asynchronous ? ["asyncAccess", "jobLimits"] : []), ...(standard ? ["primitiveAssembly"] : []), ...(uniform ? ["uniformAccess"] : [])], ["gl", "resources", "bindings", "shaderBridge", ...(asynchronous ? ["asyncAccess"] : []), ...(uniform ? ["uniformAccess"] : [])]);
     const { gl, resources, bindings, shaderBridge } = config;
@@ -215,7 +221,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
     require(!uniform || uniformAccess && ["capture", "validate", "submit", "release", "inspect"].every(name =>
       typeof uniformAccess[name] === "function") && typeof shaderBridge.translatePairUniforms === "function",
     "invalid-input", "Selected uniform range and compiler capabilities are required.");
-    const profile = uniform ? STANDARD_UNIFORM_ASYNC_PROFILE : standard ? STANDARD_ASYNC_PROFILE : asynchronous ? ASYNC_PROFILE : drawing ? DRAW_PROFILE : STATE_PROFILE;
+    const profile = bufferRoles ? STANDARD_BUFFER_ASYNC_PROFILE : uniform ? STANDARD_UNIFORM_ASYNC_PROFILE : standard ? STANDARD_ASYNC_PROFILE : asynchronous ? ASYNC_PROFILE : drawing ? DRAW_PROFILE : STATE_PROFILE;
     const decodeCommands = uniform ? decodeStandardUniformSubmission : standard ? decodeStandardSubmission : decodeSubmission;
     const parseShaderMetadata = uniform ? parseStandardUniformShaderMetadata : standard ? parseStandardShaderMetadata : parseConstantDomain;
     const idle = () => require(activeJob === null, "busy", "A renderer job is active; cancel and drain it before changing state.");
@@ -971,7 +977,9 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         gl.enableVertexAttribArray(attribute.location);
       }
       gl.bindBuffer(gl.ARRAY_BUFFER, null);
-      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, sub.indexBuffer ? resolve(sub.indexBuffer.lease).storage.buffer : null);
+      // Selected original buffers remain in the native other-data class. Their
+      // fenced index reads feed a private element-array stream at draw time.
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, !bufferRoles && sub.indexBuffer ? resolve(sub.indexBuffer.lease).storage.buffer : null);
       for (let unit = 0; unit < maxUnits; unit++) {
         gl.activeTexture(gl.TEXTURE0 + unit);
         gl.bindTexture(gl.TEXTURE_2D, null); gl.bindTexture(gl.TEXTURE_CUBE_MAP, null);
@@ -1136,7 +1144,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       const { ctx, sub, command, fields, instances, vertexWork, surface, attributes, indexStorage, indexOffset, indexSize, indexByteLength } = plan;
       const indices = fields.indexed ? new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength) : null;
       let actualMinIndex = fields.indexed ? 0xffffffff : fields.start, actualMaxIndex = fields.indexed ? 0 : fields.start + fields.count - 1;
-      let validIndexCount = fields.indexed ? 0 : fields.count, restartCount = 0, normalize = false;
+      let validIndexCount = fields.indexed ? 0 : fields.count, restartCount = 0, normalize = bufferRoles && fields.indexed;
       const fixedRestart = 2 ** (indexSize * 8) - 1;
       for (let offset = 0; offset < indexByteLength; offset += indexSize) {
         const value = indexSize === 1 ? indices.getUint8(offset) : indexSize === 2 ? indices.getUint16(offset, true) : indices.getUint32(offset, true);
@@ -1337,7 +1345,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           try {
             for (const value of fields.buffers) {
               if (value.resourceHandle === 0) { require(value.stride === 0 && value.offset === 0, "invalid-state", "Unbound vertex buffer fields must be zero."); buffers.push(null); continue; }
-              const binding = retain(ctx, value.resourceHandle, "vertex", uniform ? ["vertex-buffer", "uniform-buffer"] : "vertex-buffer"); buffers.push({ ...binding, fields: value });
+              const binding = retain(ctx, value.resourceHandle, "vertex", bufferRoles ? "standard-buffer" : uniform ? ["vertex-buffer", "uniform-buffer"] : "vertex-buffer"); buffers.push({ ...binding, fields: value });
               require(value.offset <= binding.metadata.byteLength && value.stride <= 255 &&
                 (standard || value.stride % 4 === 0 && value.offset % 4 === 0), "out-of-bounds", "Invalid vertex buffer range/stride.");
             }
@@ -1377,7 +1385,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         case 11: {
           let value = null;
           if (fields.resourceHandle) {
-            value = { ...retain(ctx, fields.resourceHandle, "index", "index-buffer"), fields };
+            value = { ...retain(ctx, fields.resourceHandle, "index", bufferRoles ? "standard-buffer" : "index-buffer"), fields };
             if (fields.offset > value.metadata.byteLength) { release(value.lease); throw new StateFault("out-of-bounds", "Index offset exceeds storage."); }
           }
           if (sub.indexBuffer) release(sub.indexBuffer.lease); sub.indexBuffer = value; break;
@@ -1398,7 +1406,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           if (fields.stage > 1 || fields.index > 12) { sub.resets[`${command.name}:${fields.stage}:${fields.index}`] = fields; break; }
           let value = null;
           if (fields.resourceHandle) {
-            value = { ...retain(ctx, fields.resourceHandle, "uniform", ["vertex-buffer", "uniform-buffer"]), fields };
+            value = { ...retain(ctx, fields.resourceHandle, "uniform", bufferRoles ? "standard-buffer" : ["vertex-buffer", "uniform-buffer"]), fields };
             try {
               require(fields.offset % uniformHost.alignment === 0 && fields.offset <= value.metadata.byteLength &&
                 fields.length <= value.metadata.byteLength - fields.offset, "out-of-bounds", "Original uniform buffer range or native alignment is invalid.");

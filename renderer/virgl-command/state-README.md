@@ -247,3 +247,13 @@ selects both C-emitted stage bodies and participates in every cache/draw key.
 `make verify-E6-T11d17` records original packets, complete GPU storage, reflection,
 fences and independent full pixels. This isolated factory does not advertise
 production capabilities or initialize guest Mesa.
+
+The host-selected `createVirglStandardBufferAsyncRenderer` pairs with
+`createStandardBufferResourceStore`: zero or combined original vertex/index/constant
+creation flags preserve one authoritative native other-data allocation. Original
+vertex, index and uniform bindings retain that allocation independently. WebGL
+buffer classes prohibit native element-array aliasing, so the existing fenced
+index read supplies a bounded private u32 stream through the established
+normalization path. Original index values and restart/assembly semantics survive;
+the draw job owns and drains every private stream. This facet has no persistent
+CPU buffer shadow and does not advertise production capabilities.

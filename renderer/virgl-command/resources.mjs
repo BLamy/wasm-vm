@@ -75,14 +75,14 @@ function checkedProduct(a, b, maximum, message) {
   require(a === 0 || b <= Math.floor(maximum / a), "out-of-bounds", message);
   return a * b;
 }
-function normalizeMetadata(value, limits, uniform = false) {
+function normalizeMetadata(value, limits, uniform = false, bufferRoles = false) {
   const meta = record(value, META_KEYS);
   for (const key of META_KEYS) uint(meta[key], key, ["id", "width", "height", "depth", "arraySize"].includes(key));
   require(meta.depth === 1 && meta.arraySize === 1 && meta.lastLevel === 0 && meta.nrSamples === 0 && meta.flags === 0,
     "unsupported-resource", "Only one-level, single-layer, single-sample resources without flags are supported.");
   let kind, byteLength;
   if (meta.target === 0 && meta.format === 64 && meta.height === 1) {
-    kind = ({ 16: "vertex-buffer", 32: "index-buffer", 524288: "staging", ...(uniform ? { 64: "uniform-buffer", 80: "uniform-buffer" } : {}) })[meta.bind];
+    kind = bufferRoles && (meta.bind & ~112) === 0 ? "standard-buffer" : ({ 16: "vertex-buffer", 32: "index-buffer", 524288: "staging", ...(uniform ? { 64: "uniform-buffer", 80: "uniform-buffer" } : {}) })[meta.bind];
     require(kind !== undefined, "unsupported-resource", "Unsupported buffer binding class.");
     byteLength = meta.width;
   } else if (meta.target === 2 && meta.format === 16) {
@@ -237,7 +237,17 @@ export function computeStandardUniformTransferLayout(metadata, fields, backingBy
   });
 }
 
-function createStore(options, uniform) {
+/** Original creation hints cannot restrict later vertex/index/uniform roles. */
+export function createStandardBufferResourceStore(options) { return createStore(options, true, true); }
+
+export function computeStandardBufferTransferLayout(metadata, fields, backingByteLength, overrides = {}) {
+  return result(() => {
+    const limits = limitsFor(overrides);
+    return success({ layout: layoutFor(normalizeMetadata(metadata, limits, true, true), normalizedFields(fields), backingByteLength, limits) });
+  });
+}
+
+function createStore(options, uniform, bufferRoles = false) {
   return result(() => {
     const config = record(options, ["backend", "limits"], ["backend"]), backend = config.backend;
     require(backend && typeof backend === "object", "invalid-input", "A transfer backend is required.");
@@ -409,7 +419,7 @@ function createStore(options, uniform) {
         return success({ context: freeze({ id, generation: ctx.generation }) });
       }),
       createResource: operation((metadata) => {
-        const meta = normalizeMetadata(metadata, limits, uniform);
+        const meta = normalizeMetadata(metadata, limits, uniform, bufferRoles);
         require(!resources.has(meta.id), "resource-exists", "Resource ID is already public.");
         require(live.size < limits.resources, "limit-exceeded", "Live/retained resource count limit exceeded.");
         const allocationBytes = meta.kind === "staging" ? 0 : meta.byteLength;
@@ -486,7 +496,7 @@ function createStore(options, uniform) {
         const ctx = context(contextId), res = resource(id); membership(ctx, res);
         require(res.storage !== null, "unsupported-resource", "Staging resources have no GPU storage.");
         require(typeof role === "string" && ["view", "surface", "depth-surface", "vertex", "index", "readback", ...(uniform ? ["uniform"] : [])].includes(role), "invalid-input", "Unknown storage lease role.");
-        require(role === "readback" || (role === "view" && res.meta.kind === "texture" && (res.meta.bind & 8) !== 0) ||
+        require(role === "readback" || (bufferRoles && res.meta.kind === "standard-buffer" && ["vertex", "index", "uniform"].includes(role)) || (role === "view" && res.meta.kind === "texture" && (res.meta.bind & 8) !== 0) ||
           (role === "surface" && res.meta.kind === "texture" && (res.meta.bind & 2) !== 0) ||
           (role === "depth-surface" && res.meta.kind === "depth-texture" && res.meta.bind === 1) ||
           (role === "vertex" && (res.meta.kind === "vertex-buffer" || uniform && res.meta.kind === "uniform-buffer")) ||
