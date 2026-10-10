@@ -56,3 +56,5 @@ actual guest Mesa initialization, scanout and performance need their own proof.
 
 [Pure integer inputs](integer-vertex-README.md) use host-derived typed compiler
 variants and native integer arrays/generic words in the standard async factory.
+
+Packed 10/10/10/2 fetch uses original native buffers and retained four-byte constants; see [packed vertex proof](packed-vertex-README.md).

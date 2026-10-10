@@ -40,7 +40,7 @@ export function runWireAcceptance(){
  }
  for(const format of [0,27,68,78,87,95,123,172,173,177,193,0xffffffff]){
   const raw=packet(1,5,[777,0,0,0,format]),standard=decodeStandardSubmission(raw),legacy=decodeSubmission(raw);
-  const expected= format>=177&&format<=200;c.same([standard.ok,legacy.ok],[expected,false],'explicit successor integer admission');records.push({format,hex:hex(raw),expected,legacyExpected:false,standard,legacy});
+  const expected= [123,172,173].includes(format)||format>=177&&format<=200;c.same([standard.ok,legacy.ok],[expected,false],'explicit successor integer/packed admission');records.push({format,hex:hex(raw),expected,legacyExpected:false,standard,legacy});
  }
  for(const input of [NaN,Infinity,null,undefined,'177',{},-1])c.same(vertexFormat(input),null,'integer lookup does not coerce');
  return {status:'passed',records,predictions:c.rows,legacy:legacyWire()};

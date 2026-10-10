@@ -87,4 +87,12 @@ const char *bridge_translate_standard_pair_typed(const char *vertex_text, size_t
                                                  const char *fragment_text, size_t fragment_length,
                                                  uint32_t signed_inputs, uint32_t unsigned_inputs);
 
+/* Signed packed arrays arrive as unsigned, unnormalized 10/10/10/2 fields.
+ * The GPU emitter restores their signed/scaled or signed/normalized values.
+ * Normalized bits must be a subset of packed bits, disjoint from integer IO. */
+const char *bridge_translate_standard_pair_vertex_formats(const char *vertex_text, size_t vertex_length,
+                                                          const char *fragment_text, size_t fragment_length,
+                                                          uint32_t signed_inputs, uint32_t unsigned_inputs,
+                                                          uint32_t packed_signed_inputs, uint32_t packed_normalized_inputs);
+
 #endif

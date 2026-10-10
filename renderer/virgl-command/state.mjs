@@ -23,6 +23,17 @@ function constantVertexValues(bytes, sourceFormat) {
   const format = vertexFormat(sourceFormat), values = format.integer ?
     format.kind === "sint" ? new Int32Array([0, 0, 0, 1]) : new Uint32Array([0, 0, 0, 1]) : new Float32Array([0, 0, 0, 1]), words = [];
   const input = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength), output = new DataView(values.buffer);
+  if (format.packed) {
+    const packed = input.getUint32(0, true), signed = format.kind === "snorm" || format.kind === "sscaled";
+    for (let lane = 0; lane < 4; lane++) {
+      const bits = lane === 3 ? 2 : 10;
+      const field = packed >>> (lane * 10) & (2 ** bits - 1);
+      const scalar = signed && (field & 2 ** (bits - 1)) ? field - 2 ** bits : field;
+      values[lane] = format.normalized ? signed ? Math.max(-1, scalar / (2 ** (bits - 1) - 1)) : scalar / (2 ** bits - 1) : scalar;
+      words.push(output.getUint32(lane * 4, true));
+    }
+    return { values, words };
+  }
   for (let lane = 0; lane < format.components; lane++) {
     const at = lane * format.scalarBytes;
     let value;
@@ -317,7 +328,9 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       work.pairTranslations++;
       const request = { vertexText: vertex.fields.text, fragmentText: fragment.fields.text };
       const masks = inputTypes?.key ? { signedMask: inputTypes.signedMask, unsignedMask: inputTypes.unsignedMask } : null;
-      const response = masks ? shaderBridge.translatePairTyped({ ...request, ...masks }) : shaderBridge.translatePair(request);
+      const response = inputTypes?.packedSignedMask ? shaderBridge.translatePairVertexFormats({ ...request, ...masks,
+        packedSignedMask: inputTypes.packedSignedMask, packedNormalizedMask: inputTypes.packedNormalizedMask }) :
+        masks ? shaderBridge.translatePairTyped({ ...request, ...masks }) : shaderBridge.translatePair(request);
       const translated = standard ? unwrap(masks ? normalizeStandardShaderTypedPair(response, masks) :
         normalizeStandardShaderPair(response)) : freeze(unwrap(response));
       validate(translated);
@@ -476,17 +489,22 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       return variant;
     };
     const inputTypesFor = (sub, vertex) => {
-      let signedMask = 0, unsignedMask = 0;
+      let signedMask = 0, unsignedMask = 0, packedSignedMask = 0, packedNormalizedMask = 0;
       if (standard) for (const attribute of vertex.translation.metadata.attributes) {
         const element = sub.vertexElements?.fields.elements[attribute.index];
         const format = element ? vertexFormat(element.sourceFormat) : null;
         if (format?.integer) {
           if (format.kind === "sint") signedMask |= 1 << attribute.index;
           else unsignedMask |= 1 << attribute.index;
+        } else if (format?.packed && (format.kind === "snorm" || format.kind === "sscaled") &&
+                   sub.vertexBuffers[element.vertexBufferIndex]?.fields.stride > 0) {
+          packedSignedMask |= 1 << attribute.index;
+          if (format.normalized) packedNormalizedMask |= 1 << attribute.index;
         }
       }
-      return Object.freeze({ signedMask, unsignedMask,
-        key: signedMask || unsignedMask ? `integer-input-v1:${signedMask}:${unsignedMask}` : "" });
+      return Object.freeze({ signedMask, unsignedMask, packedSignedMask, packedNormalizedMask,
+        key: packedSignedMask ? `vertex-format-v1:${signedMask}:${unsignedMask}:${packedSignedMask}:${packedNormalizedMask}` :
+          signedMask || unsignedMask ? `integer-input-v1:${signedMask}:${unsignedMask}` : "" });
     };
     function link(sub, vertex, fragment) {
       require(vertex?.fields.stage === 0 && fragment?.fields.stage === 1, "missing-shader", "Link requires a vertex shader and a fragment shader.");
@@ -516,7 +534,8 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           require(typeof shaderBridge.translatePair === "function", "shader-link-error", interfaceInfo.coordinates ?
             "Fragment coordinates require the checked pair compiler." : interfaceInfo.discard ?
             "Fragment discard requires the checked pair compiler." : "Flat interpolation requires the checked pair compiler.");
-          require(!inputTypes.key || typeof shaderBridge.translatePairTyped === "function", "shader-link-error", "Integer inputs require the checked typed pair compiler.");
+          require(inputTypes.packedSignedMask ? typeof shaderBridge.translatePairVertexFormats === "function" :
+            !inputTypes.key || typeof shaderBridge.translatePairTyped === "function", "shader-link-error", "Vertex formats require the checked pair compiler.");
           const typedAttribute = attribute => ({ ...attribute, type: inputTypes.signedMask & (1 << attribute.index) ? "ivec4" :
             inputTypes.unsignedMask & (1 << attribute.index) ? "uvec4" : "vec4" });
           const expectedVertex = { ...vs, ...(standard ? { inputs: vs.inputs.map(typedAttribute), attributes: vs.attributes.map(typedAttribute) } : {}),
@@ -860,7 +879,12 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         }
         gl.bindBuffer(gl.ARRAY_BUFFER, resolve(buffer.lease).storage.buffer);
         if (format.integer) gl.vertexAttribIPointer(attribute.location, format.components, gl[format.type], buffer.fields.stride, buffer.fields.offset + element.sourceOffset);
-        else gl.vertexAttribPointer(attribute.location, format.components, gl[format.type], format.normalized, buffer.fields.stride, buffer.fields.offset + element.sourceOffset);
+        else {
+          const packedSigned = format.packed && (format.kind === "snorm" || format.kind === "sscaled");
+          if (packedSigned) gl.vertexAttribPointer(attribute.location, 4, gl.UNSIGNED_INT_2_10_10_10_REV, false,
+            buffer.fields.stride, buffer.fields.offset + element.sourceOffset);
+          else gl.vertexAttribPointer(attribute.location, format.components, gl[format.type], format.normalized, buffer.fields.stride, buffer.fields.offset + element.sourceOffset);
+        }
         // No admitted draw has an instance index >= the total-work ceiling.
         // Larger wire divisors therefore have the identical constant-zero fetch.
         if (standard) gl.vertexAttribDivisor(attribute.location, Math.min(element.instanceDivisor, DRAW_LIMITS.indicesPerSubmission));
@@ -1031,6 +1055,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         const format = vertexFormat(element.sourceFormat), elementBytes = format.elementBytes;
         const divisor = element.instanceDivisor;
         const constant = stride === 0;
+        const packedSignedArray = !constant && format.packed && (format.kind === "snorm" || format.kind === "sscaled");
         const first = empty ? null : constant || divisor ? 0 : actualMinIndex,
           last = empty ? null : constant ? 0 : divisor ? Math.floor((instances - 1) / divisor) : actualMaxIndex;
         // vertexLayout proved that the first complete element fits. Bound
@@ -1040,7 +1065,8 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         return { attributeIndex: attribute.index, location: attribute.location,
           resourceId: buffer.metadata.id, resourceGeneration: buffer.resourceGeneration,
           stride, offset, components: vertexComponents(element), firstByte: empty ? null : offset + first * stride, requiredEnd: empty ? null : offset + last * stride + elementBytes,
-          ...(standard ? { sourceFormat: element.sourceFormat, elementBytes, nativeType: gl[format.type], normalized: format.normalized,
+          ...(standard ? { sourceFormat: element.sourceFormat, elementBytes,
+            nativeType: packedSignedArray ? gl.UNSIGNED_INT_2_10_10_10_REV : gl[format.type], normalized: format.normalized && !packedSignedArray,
             ...(format.integer ? { nativeIntegerInput: true } : {}),
             divisor, nativeDivisor: constant ? 0 : Math.min(divisor, DRAW_LIMITS.indicesPerSubmission), firstElement: first, lastElement: last,
             ...(empty ? { fetchEmpty: true } : {}),
