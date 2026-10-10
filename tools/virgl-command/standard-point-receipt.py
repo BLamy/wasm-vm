@@ -45,6 +45,19 @@ def main(directory):
             frozen = subprocess.check_output(['git', 'show', head + ':' + name], cwd=ROOT)
             need(raw == frozen, 'source not frozen ' + name)
             sources[name] = sha(raw)
+    def evidence_head(recorded):
+        if recorded == head:
+            return
+        correction = json.loads(record('harness-correction.json'))
+        need(correction.get('physicalHead') == recorded and correction['sourceHead'] == head,
+             'explicit carried physical head')
+        subprocess.check_call(['git', 'merge-base', '--is-ancestor', recorded, head], cwd=ROOT)
+        need(set(git('diff', '--name-only', recorded, head).splitlines()) ==
+             {'tools/virgl-command/standard-point-receipt.py'}, 'physical carry requires receipt-only correction')
+        failed = record('harness-receipt-failure.log', correction['receiptFailureSha256'])
+        need(b'STANDARD_POINTS_RECORDING_COMPLETE\n' in failed and
+             b'ValueError: record drift retained-compiler/acceptance.log' in failed,
+             'preserve completed original physical run and receipt failure')
     for _ in range(500):
         if b'\nSTANDARD_POINTS_RECORDING_COMPLETE\n' in (directory / 'acceptance.log').read_bytes():
             break
@@ -54,7 +67,8 @@ def main(directory):
 
     def physical(name, task, frames, fault=False):
         report = json.loads(record(name + '/report.json'))
-        need(report['task'] == task and report['gitHead'] == head and report['status'] == ('failed' if fault else 'passed'), 'physical task/head/status ' + name)
+        evidence_head(report['gitHead'])
+        need(report['task'] == task and report['status'] == ('failed' if fault else 'passed'), 'physical task/head/status ' + name)
         need(report['fixedMemory'] == {'bytes': 16777216, 'stageExport': 'function', 'pairExport': 'function'}, 'fixed actual compiler')
         need(report['browserErrors'] == {'console': [], 'page': [], 'requests': []}, 'browser errors ' + name)
         browser = report['browser']
@@ -93,7 +107,8 @@ def main(directory):
         return result
 
     wire = json.loads(record('wire/report.json'))
-    need(wire['gitHead'] == head and wire['status'] == 'passed' and len(wire['wire']['records']) == 38 and all(row['held'] for row in wire['wire']['predictions']), 'literal standard/legacy point state')
+    evidence_head(wire['gitHead'])
+    need(wire['status'] == 'passed' and len(wire['wire']['records']) == 38 and all(row['held'] for row in wire['wire']['predictions']), 'literal standard/legacy point state')
     need(wire['metadata']['status'] == 'passed' and len(wire['metadata']['records']) == 24 and all(not row['observed']['ok'] for row in wire['metadata']['records']), 'typed point metadata attacks')
     for row in wire['sources']:
         source(row['path'], row['sha256'])
@@ -130,7 +145,16 @@ def main(directory):
         need(b'flags[@]: unbound variable' in original and b'CARRY_PASSED_COMPILER_AFTER_RECORDED_HARNESS_FAILURE' in (directory / 'acceptance.log').read_bytes(), 'original Bash failure and explicit resumed command')
     need(compiler['status'] == 'passed' and compiler['cases'] == 669 and compiler['frames'] == 129 and compiler['legacyBoundary']['unchanged'], 'directly affected compiler and legacy boundary')
     for name, digest in compiler['files'].items():
-        record('retained-compiler/' + name, digest)
+        if name == 'acceptance.log':
+            raw = record('retained-compiler/' + name)
+            # The retained compiler receipt prints this one fixed success line
+            # after hashing its own log. Authenticate that exact append without
+            # changing the historical receipt or accepting arbitrary drift.
+            suffix = b'Frozen standard compiler, 669 cases, 129 physical frames, coverage and legacy boundaries authenticated.\n'
+            need(sha(raw) == digest or (raw.endswith(suffix) and sha(raw[:-len(suffix)]) == digest),
+                 'retained compiler log prefix or exact success append')
+        else:
+            record('retained-compiler/' + name, digest)
     for name, digest in compiler['sources'].items():
         source(name, digest)
     for name, digest in compiler['generated'].items():
@@ -162,7 +186,6 @@ def main(directory):
     receipt = dict(schema='standard-native-points-receipt-v1', task=TASK, status='passed', gitHead=head, cases=118, frames=128, checkedPhysicalPixels=audit['pixels'], nativeDraws=audit['nativeDraws'], normalizedBuffers=audit['normalizedBuffers'],
                    guestExecution=False, productionNegotiation=False, authority='isolated-standard-native-points', productionDrawAuthority=False, historicalEvidenceHead=PREDECESSOR, carriedVerifiedEvidence=carried, files=files, sources=sources, generated=generated)
     (directory / 'receipt.json').write_text(json.dumps(receipt, indent=2) + '\n')
-    print('Frozen point pipeline, original native storage, strict pixels and retained boundaries authenticated.')
 
 
 if __name__ == '__main__':
