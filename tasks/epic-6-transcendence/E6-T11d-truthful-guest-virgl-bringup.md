@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12]
-blocked_on: E6-T11d12
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13]
+blocked_on: E6-T11d13
 estimate: S
 risk: high
 capstone: false
@@ -277,3 +277,18 @@ adds native compact fetches and bounded stride-zero scalar conversion while
 retaining float32 and legacy admission. Additional full-API gaps stay gated; no
 capset, guest offload, deployment or performance claim follows. The production
 graphics chain remains ahead of unrelated queue work under the user's request.
+
+### 2026-10-10 — worker — compact fetch verified; scalar conversion boundary
+
+E6-T11d12 is independently verified at
+`b98847797f109b0a3af6171fd0a8c21983e1057b`. The actual standard decoder still
+rejects the original normalized32 and scaled8/16/32 R/RG/RGB/RGBA floating-input
+formats. Decode every literal `packetHex` in
+`evidence/virgl-production-readiness/standard-scalar-vertex-gap.json` with
+`decodeStandardSubmission` to reproduce the 32 unsupported-feature results at
+that verified head. The record pins complete renderer/compiler source and actual
+fixed-memory Wasm. Ordered S/high prerequisite E6-T11d13 preserves original GPU
+storage and native floating conversion while closing this scalar family. Pure
+integer and packed inputs, storage/framebuffer/API qualification and real guest
+bring-up remain ordered successors. The user's instruction continues this
+graphics chain; isolated format results do not activate a production capset.

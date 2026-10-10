@@ -35,7 +35,8 @@ active binding; legitimately eliminated native declarations remain admissible.
 
 Floating vertex inputs include [native compact formats](compact-vertex-README.md)
 with actual byte-width bounds and retained stride-zero scalar reads. Arrays
-continue to use original GPU buffers and native conversion.
+continue to use original GPU buffers and native conversion. The later [scalar formats](scalar-vertex-README.md) add
+normalized32 and scaled integer storage with native floating inputs.
 
 `make verify-E6-T11d5` records literal wire/metadata predictions, hardware queued
 draws, actual uniforms/reflection/buffer bytes, later-task zero-timeout fences,

@@ -48,7 +48,7 @@ export async function runAcceptance({smoke=false,mutation}={}) {
   const format=base+lane,spec=criticFormat(format),expected=offset+spec.bytes*spec.components<=0xffffffff,legacyExpected=base===28&&divisor===0&&offset%4===0&&expected,raw=packet(1,5,[777,offset,divisor,0,format]);
   const standard=decodeStandardSubmission(raw),legacy=decodeSubmission(raw);c.same(standard.ok,expected,'critic literal standard packet end');c.same(legacy.ok,legacyExpected,'critic literal legacy packet');report.wire.push({hex:hex(raw),expected,legacyExpected,standard,legacy});
  }
- for(const format of [0,27,32,52,60,68,78,95,0xffffffff]){const raw=packet(1,5,[777,0,0,0,format]),standard=decodeStandardSubmission(raw),legacy=decodeSubmission(raw);c.same([standard.ok,legacy.ok],[false,false],'critic unsupported original enum');report.wire.push({hex:hex(raw),expected:false,legacyExpected:false,standard,legacy});}
+ for(const format of [0,27,32,52,60,68,78,95,0xffffffff]){const raw=packet(1,5,[777,0,0,0,format]),standard=decodeStandardSubmission(raw),legacy=decodeSubmission(raw),expected=[32,52,60].includes(format);c.same([standard.ok,legacy.ok],[expected,false],'critic explicit successor scalar admission');report.wire.push({hex:hex(raw),expected,legacyExpected:false,standard,legacy});}
  for(const value of [NaN,Infinity,null,undefined,'28',{},-1])c.same(floatingVertexFormat(value),null,'critic descriptor caller type does not coerce');
  if(smoke){await draw({format:67,shared:true,ids:[2,5,11],values:[[17,65,193,255],[255,1,125,33],[0,99,237,248]],...(mutation==='constant-unpack'?{stride:0}:{})},'critic-sabotage-'+mutation);report.status='passed';return report;}
  for(const base of [48,56,64,74,91])for(let lane=0;lane<4;lane++)for(const constant of [false,true]){

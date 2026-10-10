@@ -1,0 +1,158 @@
+{
+  "schema": "scalar-critic-authentication-v1",
+  "status": "passed",
+  "predictions": "predictions.json",
+  "workerHead": "2879d9a49c5b9b4f351993f0cf75342c7743d41b",
+  "freezeHead": "1b8e94b79de6ee79f72116246ce4042aa7bda815",
+  "archiveSha256": "99c79728c82a3c7ddef092b1faa10420192df535be67da662e1724b3aab596d2",
+  "recordIndexSha256": "8f1c71adc3cce4358b72b8fa80c2bcf4c8e90d8c02c30cfde28c2967869c1097",
+  "records": 9578,
+  "receipts": {
+    "hot": {
+      "sha256": "33dbe88bfa942657c87255d8a65937fac6509e8bdf038919ffd21d7a476cbfc3",
+      "files": 4785,
+      "sources": 531,
+      "generated": {
+        "renderer/virgl-shader/build/wasm/virgl-shader.mjs": "8d07e5832efc6bc832b9bd684bcaaaad19b536783643f40d088e2ddfba2a5052",
+        "renderer/virgl-shader/build/wasm/virgl-shader.wasm": "30c655db576b421808c5316af3248c5c848b368000e4036f0803f26e0c309a81"
+      },
+      "carried": 154
+    },
+    "cold": {
+      "sha256": "c7b25cad9a3f308f66b9b58130d61db7db30dd7f893a5fe6005969c5f1d89dfb",
+      "files": 4785,
+      "sources": 531,
+      "generated": {
+        "renderer/virgl-shader/build/wasm/virgl-shader.mjs": "8d07e5832efc6bc832b9bd684bcaaaad19b536783643f40d088e2ddfba2a5052",
+        "renderer/virgl-shader/build/wasm/virgl-shader.wasm": "30c655db576b421808c5316af3248c5c848b368000e4036f0803f26e0c309a81"
+      },
+      "carried": 154
+    }
+  },
+  "physicalReports": [
+    {
+      "path": "hot/hardware/report.json",
+      "sha256": "611313911fa1d0c4d9e0d2b96dd17094ca212d22e1a0dd8b50b39891821a6618",
+      "frames": 391,
+      "status": "passed",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+      "blobs": 2792
+    },
+    {
+      "path": "hot/fault-native-signedness/report.json",
+      "sha256": "8a8603de36f753fb56c521209a9f935b161ee8afa1b89d4fc0d454969fc4625f",
+      "frames": 1,
+      "status": "failed",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+      "blobs": 7
+    },
+    {
+      "path": "hot/fault-constant-scaled/report.json",
+      "sha256": "8ec080464828a37538b660caf3cb88527fb7298eab96c0834e3e00fbbf242ffc",
+      "frames": 1,
+      "status": "failed",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+      "blobs": 7
+    },
+    {
+      "path": "hot/retained-compact/hardware/report.json",
+      "sha256": "bfd6834b4d459a0e66e5319a1ca8fc296feb2d29e4fef1050c6ce061063bc989",
+      "frames": 225,
+      "status": "passed",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+      "blobs": 1683
+    },
+    {
+      "path": "hot/retained-compact/fault-native-normalize/report.json",
+      "sha256": "ae3e4312b0e0339ecec0f1d721ae979a4f450a94c4302bd4060bde734a0691d4",
+      "frames": 1,
+      "status": "failed",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+      "blobs": 7
+    },
+    {
+      "path": "hot/retained-compact/fault-constant-unpack/report.json",
+      "sha256": "429e15e4190caa612f3a80cdddcd537e3861bc5a197be24c9cda3a5129fbedbd",
+      "frames": 1,
+      "status": "failed",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+      "blobs": 7
+    },
+    {
+      "path": "hot/retained-compact/critic-hardware/report.json",
+      "sha256": "efc8a13a3febe0988e2153073e591f8065c5cbec099c285e3b0b175e90f3a6c7",
+      "frames": 44,
+      "status": "passed",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+      "blobs": 241
+    },
+    {
+      "path": "cold/hardware/report.json",
+      "sha256": "7793c073be0ef134727616d103f1b2c06e69b0d86e787603f5c15b16d7d69a0e",
+      "frames": 391,
+      "status": "passed",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+      "blobs": 2792
+    },
+    {
+      "path": "cold/fault-native-signedness/report.json",
+      "sha256": "2d77f71ffb68ee5ea0ab9ad80cad19387ce4cc3622ebae21d809287045e4a7e9",
+      "frames": 1,
+      "status": "failed",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+      "blobs": 7
+    },
+    {
+      "path": "cold/fault-constant-scaled/report.json",
+      "sha256": "29c74f5ecd16976796f9498f8e253891adf9005c74cf9b0560350a98e059f82e",
+      "frames": 1,
+      "status": "failed",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+      "blobs": 7
+    },
+    {
+      "path": "cold/retained-compact/hardware/report.json",
+      "sha256": "b9165f6b779e8b1ccacfe00f6983dc0f7d1237ac606a44e2d13cd4bb3cf6ddbb",
+      "frames": 225,
+      "status": "passed",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+      "blobs": 1683
+    },
+    {
+      "path": "cold/retained-compact/fault-native-normalize/report.json",
+      "sha256": "b6a4edf48b32a3a3a15e3e30978a526e4f9cc67c5312937c8e0242cbe3218635",
+      "frames": 1,
+      "status": "failed",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+      "blobs": 7
+    },
+    {
+      "path": "cold/retained-compact/fault-constant-unpack/report.json",
+      "sha256": "8c69312426c686cde11087d2905d4a8b7f5d9abf7e571ce455c4daeb83b4edba",
+      "frames": 1,
+      "status": "failed",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+      "blobs": 7
+    },
+    {
+      "path": "cold/retained-compact/critic-hardware/report.json",
+      "sha256": "c1efe4a7edc65ef6649791998e67ac33952ce190a050a7e478d7ee5726af89d8",
+      "frames": 44,
+      "status": "passed",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+      "blobs": 241
+    }
+  ],
+  "cold": {
+    "reportSha256": "6651b7e44098ae7d9f40a81fb789e5f19b63a29dd2e28c091e96f7a37926316e",
+    "cloneHead": "1b8e94b79de6ee79f72116246ce4042aa7bda815",
+    "presentCloneClean": true,
+    "removedEnvironmentNames": [
+      "RUST_LOG"
+    ],
+    "command": [
+      "make",
+      "verify-E6-T11d13"
+    ]
+  }
+}
