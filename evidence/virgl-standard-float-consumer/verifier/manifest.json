@@ -1,0 +1,20 @@
+{
+  "schema": "independent-float-consumer-critic-seal-v1",
+  "task": "E6-T11d26",
+  "verdict": "verified",
+  "sourceHead": "0c0546814b48ef7feba1b9e8350c6ce5de97d2cb",
+  "workerFrozenHead": "cf6fee74b68682c189ffe27534fbc6abaf9c5ce4",
+  "workerArchiveSha256": "b70916d9faee7567b16cd8c031fe04e9f3da31d84d9a6c1ab2de0096e3d4b049",
+  "workerIndexSha256": "3892679dc0855e5f04002414a4e9bf5b58bbbaef4836eebc8ae4519b1cd92cd1",
+  "records": 2104,
+  "unpackedBytes": 45701616,
+  "archiveBytes": 4631955,
+  "archiveSha256": "98828d48ab4d9bb46584d0dd6d54ffee768b17692020c4921838ed614ad63e4f",
+  "recordIndexSha256": "89452fa48e47f86e5ec46ecb28a6c50c95da4954642c5b7e321f119fb1ac7a2c",
+  "nativeFreeze": "c4be7146cb3859761eb40a0d70d3d7746647bb07",
+  "originalAuditSha256": "669e7ec0d1574869e452d282fe2b0012e6a9ec558ed575816d7a98081fcc9c2f",
+  "precheckAuthority": false,
+  "guestExecution": false,
+  "productionDrawAuthority": false,
+  "authority": "isolated-original-floating-image-consumer"
+}

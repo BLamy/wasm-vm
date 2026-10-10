@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25]
-blocked_on: E6-T11d25
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26]
+blocked_on: E6-T11d26
 estimate: S
 risk: high
 capstone: false
@@ -348,3 +348,7 @@ D23 is independently verified at `71853cd302a2a39cd8f5af001fd8ad1b791b7da6`. Fiv
 D24 is independently verified at `6ec464d9b9d1daecd01a0dd5ac58d31ac23910fe`, with its exclusive lease released. The eight complete original F16/F32 R/RG/RGB/RGBA multilevel layouts still reject through the historical byte-color boundary. `evidence/virgl-production-readiness/standard-float-image-gap.json` binds the original metadata, transfer fields, enum values and unchanged source hashes to that exact head. Reproduce by importing `computeStandardColorTransferLayout` from `renderer/virgl-command/resources.mjs` and applying each recorded row's `metadata`, `fields` and `backingByteLength`; all return `unsupported-resource` before allocation.
 
 Ordered S/high D25 preserves these original floating image storage/transfer representations and retained ranges through a separate selected owner/backend. A native sampling/output consumer follows separately. The user's request continues the ordered production graphics chain; full API/caps, actual guest Mesa/compositor, production GPU worker/scanout and live deployment remain gated.
+
+### 2026-10-10 — worker — float storage verified; original consumer prerequisite
+
+E6-T11d25 is independently verified at `7a58efee480e38ebad14dedcc57bde0e747088ae`; original F16/F32 words, native planes, public transfers, ranges and generations retain their sealed proof. At this verified head, all sixteen original floating sampler-view/surface packets still refuse through the historical byte consumer. `evidence/virgl-production-readiness/float-consumer-gap.json` records the full original bytes and exact source closure; reproduce each `hex` with `decodeStandardColorSubmission`. The selected original floating consumer E6-T11d26 is the next ordered S prerequisite. It must prove actual shaders, native float filtering/blending/outputs and retained ranges before production can report that API behavior. The explicit request continues the production graphics chain; the device remains disabled and the actual guest integration remains later work.
