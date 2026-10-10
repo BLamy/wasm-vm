@@ -26,7 +26,7 @@ const sourcePaths=[
   'tools/virgl-command/view-fixtures.mjs','tools/verify-virgl-texture-views.mjs',
   'tools/verify-virgl-texture-views.sh','tools/virgl-command/views-receipt.py','tools/virgl-command/views-cold.py',
   'Makefile','renderer/virgl-command/README.md','renderer/virgl-command/resources-README.md','renderer/virgl-command/state-README.md',
-];
+ 'renderer/virgl-command/color-images.mjs'];
 const report={schema:1,task:'E6-T12g4',status:'running',guestExecution:false,
   boundary:'Original selected VIEW/SAMPLER packets plus independent synthetic pixels, immutable view keys and bounded shader variants; no full guest offload.',
   gitHead:execFileSync('git',['rev-parse','HEAD'],{cwd:repo,encoding:'utf8'}).trim(),command:[process.execPath,...process.argv.slice(1)],

@@ -32,7 +32,7 @@ const codePaths = [
   'renderer/virgl-shader/vendor/src/virgl_protocol.h',
   'renderer/virgl-shader/vendor/src/virgl_hw.h',
   'Makefile',
-];
+ 'renderer/virgl-command/color-images.mjs'];
 const html = `<!doctype html><meta charset="utf-8"><title>VirGL GPU transfer proof</title>
 <style>body{font:16px system-ui;background:#111720;color:#e7edf6;margin:32px;max-width:1100px}h1{font-size:27px}p{line-height:1.5}pre{white-space:pre-wrap;background:#1b2533;padding:20px;border:1px solid #435167;border-radius:8px;font-size:14px}</style>
 <h1>VirGL GPU resource transfers</h1><p>Original guest geometry and texture uploads · WebGL2 storage and readback · isolated transfer proof, no desktop acceleration claim</p>
@@ -72,7 +72,7 @@ try {
   console.log(`Node resource acceptance passed (${report.nodeMs.toFixed(0)} ms)`);
   if (!options['node-only']) {
     const modulePaths = ['renderer/virgl-command/decoder.mjs', 'renderer/virgl-command/resources.mjs',
-      'renderer/virgl-command/tests/resources-acceptance.mjs'];
+      'renderer/virgl-command/tests/resources-acceptance.mjs', 'renderer/virgl-command/color-images.mjs'];
     let servedFixtures = fixtureBytes;
     if (options.sabotage) {
       const corrupted = structuredClone(loaded.fixtures);

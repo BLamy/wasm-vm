@@ -117,4 +117,4 @@ for(const name of (await fs.readdir(directory)).filter(n=>n==='hardware-matrix'|
 }
 const controls=[...new Set(faults.map(f=>f.record))].map(record=>({record,fenceCompleted:faults.filter(f=>f.record===record).every(f=>f.fenceCompleted),observations:faults.filter(f=>f.record===record)}));
 const audit={schema:'original-byte-color-native-audit-v1',status:'passed',pixels,texels,draws,transfers,physicalFences,nativeAllocations,nativeUploads,nativeReads,rows,faults:controls,authority:'original byte-color isolated native inputs/outputs; no production guest/capset claim'};
-await fs.writeFile(path.join(directory,'physical-audit.json'),JSON.stringify(audit,null,2)+'\n');console.log(JSON.stringify({status:audit.status,pixels,texels,draws,transfers,physicalFences,observations:rows.length,faults:faults.length}));
+await fs.writeFile(path.join(directory,'physical-audit.json'),JSON.stringify(audit,null,2)+'\n');console.log(JSON.stringify({status:audit.status,pixels,texels,draws,transfers,physicalFences,observations:rows.length,faults:controls.length}));

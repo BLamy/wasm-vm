@@ -19,7 +19,7 @@ const sourcePaths=[
   'renderer/virgl-shader/index.mjs','renderer/virgl-shader/build/wasm/virgl-shader.mjs','renderer/virgl-shader/build/wasm/virgl-shader.wasm',
   'renderer/virgl-shader/bridge.c','renderer/virgl-shader/bridge.h','renderer/virgl-shader/raw_bits.h','renderer/virgl-shader/checked_upstream.c','renderer/virgl-shader/UPSTREAM.json',
   'tools/virgl-command/fixtures.mjs','tools/verify-virgl-float-vertex-fetch.mjs',
-];
+ 'renderer/virgl-command/color-images.mjs'];
 const report={schema:1,task:'E6-T11d3',status:'running',guestExecution:false,productionNegotiation:false,
   boundary:'Physical float vertex-fetch prerequisite; production negotiation remains disabled.',
   gitHead:execFileSync('git',['rev-parse','HEAD'],{cwd:repo,encoding:'utf8'}).trim(),command:[process.execPath,...process.argv.slice(1)],

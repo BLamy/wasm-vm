@@ -25,7 +25,7 @@ const sourcePaths=[
   'tools/virgl-command/color-fixtures.mjs','tools/verify-virgl-color-formats.mjs',
   'tools/verify-virgl-color-formats.sh','tools/virgl-command/colors-receipt.py','tools/virgl-command/colors-cold.py',
   'Makefile','renderer/virgl-command/README.md','renderer/virgl-command/resources-README.md','renderer/virgl-command/state-README.md',
-];
+ 'renderer/virgl-command/color-images.mjs'];
 const report={schema:1,task:'E6-T12g2',status:'running',guestExecution:false,
   boundary:'Original selected color packets and independent synthetic physical GL sampling/draw/readback; no full guest offload.',
   gitHead:execFileSync('git',['rev-parse','HEAD'],{cwd:repo,encoding:'utf8'}).trim(),command:[process.execPath,...process.argv.slice(1)],

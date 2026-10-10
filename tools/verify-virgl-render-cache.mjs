@@ -19,7 +19,7 @@ const sourcePaths=[
   'renderer/virgl-shader/index.mjs','renderer/virgl-shader/build/wasm/virgl-shader.mjs','renderer/virgl-shader/build/wasm/virgl-shader.wasm',
   'renderer/virgl-shader/bridge.c','renderer/virgl-shader/UPSTREAM.json',
   'tools/virgl-command/fixtures.mjs','tools/verify-virgl-render-cache.mjs',
-];
+ 'renderer/virgl-command/color-images.mjs'];
 const report={schema:1,task:'E6-T12i',status:'running',guestExecution:false,productionNegotiation:false,
   boundary:'Physical deterministic renderer cache proof; no live guest, FPS, or kmscube hit-rate claim.',
   gitHead:execFileSync('git',['rev-parse','HEAD'],{cwd:repo,encoding:'utf8'}).trim(),command:[process.execPath,...process.argv.slice(1)],

@@ -21,7 +21,7 @@ const sourcePaths=[
   'tools/virgl-command/fixtures.mjs','tools/virgl-command/inline-fixtures.mjs','tools/verify-virgl-inline-uploads.mjs',
   'tools/verify-virgl-inline-uploads.sh','tools/virgl-command/inline-receipt.py','tools/virgl-command/inline-cold.py',
   'Makefile','renderer/virgl-command/README.md','renderer/virgl-command/resources-README.md','renderer/virgl-command/state-README.md',
-];
+ 'renderer/virgl-command/color-images.mjs'];
 const report={schema:1,task:'E6-T12g5',status:'running',guestExecution:false,
   boundary:'Five original normal CPU uploads and synthetic checked inline writes with independent hardware bytes/depth; no full guest offload.',
   gitHead:execFileSync('git',['rev-parse','HEAD'],{cwd:repo,encoding:'utf8'}).trim(),command:[process.execPath,...process.argv.slice(1)],

@@ -8,7 +8,7 @@ import {execFileSync} from 'node:child_process';
 import {createServer} from 'node:http';
 const opts={};for(let i=2;i<process.argv.length;i+=2){assert.ok(['--module','--output','--seed','--fault'].includes(process.argv[i]));assert.ok(process.argv[i+1]);opts[process.argv[i].slice(2)]=process.argv[i+1];}
 assert.ok(opts.module&&opts.output);assert.ok(!opts.fault||opts.fault==='native-level');
-const root=process.cwd(),output=path.resolve(opts.output),sha=b=>createHash('sha256').update(b).digest('hex'),sourcePaths=['renderer/virgl-command/resources.mjs','renderer/virgl-command/decoder.mjs'],module=path.resolve(opts.module),chrome='/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+const root=process.cwd(),output=path.resolve(opts.output),sha=b=>createHash('sha256').update(b).digest('hex'),sourcePaths=['renderer/virgl-command/resources.mjs','renderer/virgl-command/decoder.mjs', 'renderer/virgl-command/color-images.mjs'],module=path.resolve(opts.module),chrome='/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 await fs.mkdir(output,{recursive:true});let browser,server,page,cdp;
 const report={schema:1,task:'E6-T11d20',verifier:true,seed:Number(opts.seed??0x92d7c381),fault:opts.fault??null,command:process.argv,gitHead:execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim(),reviewedStorageHead:'cde73ac477b4cab52e84f7a8995c701bf71cdca6',sources:[],servedFiles:[],browserErrors:{console:[],page:[],requests:[]},status:'running',startedAt:new Date().toISOString()};
 report.runtimeHead=report.gitHead;
