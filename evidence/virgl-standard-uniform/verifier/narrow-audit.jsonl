@@ -1,0 +1,16 @@
+{"name":"vertex-source-range","actualNativeWasmEqual":true,"result":{"ok":false,"error":{"code":"unsupported-feature","message":"TGSI is outside the bounded standard GLES3 grammar."}}}
+{"name":"vertex-undeclared-dynamic-user","actualNativeWasmEqual":true,"result":{"ok":false,"error":{"code":"unsupported-feature","message":"TGSI is outside the bounded standard GLES3 grammar."}}}
+{"name":"vertex-undeclared-dynamic-zero","actualNativeWasmEqual":true,"result":{"ok":false,"error":{"code":"unsupported-feature","message":"TGSI is outside the bounded standard GLES3 grammar."}}}
+{"name":"vertex-missing-first-close","actualNativeWasmEqual":true,"result":{"ok":false,"error":{"code":"unsupported-feature","message":"TGSI is outside the bounded standard GLES3 grammar."}}}
+{"name":"vertex-missing-vector-close","actualNativeWasmEqual":true,"result":{"ok":false,"error":{"code":"unsupported-feature","message":"TGSI is outside the bounded standard GLES3 grammar."}}}
+{"name":"vertex-old-no-addr","actualNativeWasmEqual":true,"result":{"ok":false,"error":{"code":"unsupported-feature","message":"TGSI is outside the bounded standard GLES3 grammar."}}}
+{"name":"vertex-old-bad-addr","actualNativeWasmEqual":true,"result":{"ok":false,"error":{"code":"unsupported-feature","message":"TGSI is outside the bounded standard GLES3 grammar."}}}
+{"name":"vertex-old-src-range","actualNativeWasmEqual":true,"result":{"ok":false,"error":{"code":"unsupported-feature","message":"TGSI is outside the bounded standard GLES3 grammar."}}}
+{"name":"fragment-source-range","actualNativeWasmEqual":true,"result":{"ok":false,"error":{"code":"unsupported-feature","message":"TGSI is outside the bounded standard GLES3 grammar."}}}
+{"name":"fragment-undeclared-dynamic-user","actualNativeWasmEqual":true,"result":{"ok":false,"error":{"code":"unsupported-feature","message":"TGSI is outside the bounded standard GLES3 grammar."}}}
+{"name":"fragment-undeclared-dynamic-zero","actualNativeWasmEqual":true,"result":{"ok":false,"error":{"code":"unsupported-feature","message":"TGSI is outside the bounded standard GLES3 grammar."}}}
+{"name":"fragment-missing-first-close","actualNativeWasmEqual":true,"result":{"ok":false,"error":{"code":"unsupported-feature","message":"TGSI is outside the bounded standard GLES3 grammar."}}}
+{"name":"fragment-missing-vector-close","actualNativeWasmEqual":true,"result":{"ok":false,"error":{"code":"unsupported-feature","message":"TGSI is outside the bounded standard GLES3 grammar."}}}
+{"name":"fragment-old-no-addr","actualNativeWasmEqual":true,"result":{"ok":false,"error":{"code":"unsupported-feature","message":"TGSI is outside the bounded standard GLES3 grammar."}}}
+{"name":"fragment-old-bad-addr","actualNativeWasmEqual":true,"result":{"ok":false,"error":{"code":"unsupported-feature","message":"TGSI is outside the bounded standard GLES3 grammar."}}}
+{"name":"fragment-old-src-range","actualNativeWasmEqual":true,"result":{"ok":false,"error":{"code":"unsupported-feature","message":"TGSI is outside the bounded standard GLES3 grammar."}}}

@@ -1,0 +1,7 @@
+{
+  "id": "P13",
+  "createdUtc": "2026-10-10T12:46:10.553083+00:00",
+  "beforeOffsetEvidenceInspection": true,
+  "prediction": "Original signed TGSI offsets -32768/-32767/-1024/-512/+512/+1024/+32767 with ARL address equal the negative offset produce effective vector0 in a declared slot0/user bank. The pinned parser stores the exact signed offset in Register.Index. The written boundary promises original-offset preservation and restricts vector storage extent/dimensions, but states no smaller signed offset limit; selected translation should admit these valid effective reads and preserve the signed offset in GPU source. A rejected result while the exact original token parses is a candidate task refutation requiring independent recheck.",
+  "cases": "original-offsets.jsonl"
+}
