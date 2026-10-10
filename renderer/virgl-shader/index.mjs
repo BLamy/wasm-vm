@@ -6,6 +6,7 @@ export const LIMITS = Object.freeze({
   registerIndex: 7,
   temporaryRegisterIndex: 511,
   constantRegisterIndex: 45,
+  ordinaryVertexConstantRegisterIndex: 127,
   immediateRegisterIndex: 31,
   conditionalDepth: 16,
   lines: 1536,

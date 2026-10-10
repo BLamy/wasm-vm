@@ -651,6 +651,26 @@ original closure or actual Mesa acceleration. Production stays disabled.
 
 ### Legacy finite-float profile
 
+The ordinary vertex path also accepts guest CONST indices 0–127. A declaration
+above index 45 selects `virgl-webgl2-straight-line-v6`; the older ordinary results
+retain their v5 bytes. This extension uses the same checked finite-float
+MOV/ADD/MUL/MAD grammar and pinned emitter. Fragment, raw numeric, indirect and
+private exact-bank profiles retain indices 0–45 and their existing metadata.
+The final CONST0 declaration can produce a 129-element native array, but guest
+CONST128 remains inaccessible. Reflection bounds the complete native active
+prefix by the actual host limit, and upload is capped at 128 guest vectors only
+for the ordinary v6 vertex profile. This capacity is a prerequisite for the
+GLES2 vertex-uniform floor; it does not qualify a complete guest API or capset.
+
+The pinned TGSI sanity checker and its three pinned hash tables now share one
+256KiB scratch transaction. Both upstream sources remain byte-pinned. Scratch
+allocation failure and arena exhaustion cancel validation before an unchecked
+upstream allocation can return NULL; the bridge returns a complete typed error.
+The actual delivered 16MiB Wasm module is tested under allocator exhaustion and
+must recover its exact healthy result. Scratch exhaustion is also tested in a
+sanitized build with a 64-byte bound. The parser/IR arenas, text/token/output
+ceilings and 256KiB Wasm stack retain their previous bounds.
+
 `virgl-webgl2-straight-line-v5` deliberately accepts a strict subset of TGSI text:
 
 - `VERT` and `FRAG`; unique `DCL` registers with canonical decimal indices
@@ -703,7 +723,8 @@ requires new safety checks and independent browser execution evidence.
 
 Input is capped at 49,152 bytes, 1,536 nonempty lines, 512 bytes per nonempty
 line, 768 non-END instructions, 512 TEMP registers, 32 immediate vectors, 46
-CONST registers and eight IN/OUT/SAMP/SVIEW registers. Tokens retain their fixed
+CONST registers (128 only for ordinary v6 vertex stages) and eight
+IN/OUT/SAMP/SVIEW registers. Tokens retain their fixed
 8,192-word allocation. GLSL is capped at 262,144 bytes per stage. These ceilings
 are independent: a valid 768-instruction MAD program can exceed the GLSL ceiling
 and must reject. JSON storage reserves the worst six-byte escape for every GLSL

@@ -69,7 +69,7 @@ const INDIRECT_PROFILES = new Set([INDIRECT_PROFILE, INDIRECT_CONDITIONAL_PROFIL
   ...rawProfiles(21, 22, 23, 25, 26)]);
 const CONDITIONAL_PROFILES = new Set([CONDITIONAL_PROFILE, STRUCTURED_CONDITIONAL_PROFILE, INDIRECT_CONDITIONAL_PROFILE, LOOP_PROFILE,
   ...RADIAL_PROFILES, ...rawProfiles(18, 20, 22, 23)]);
-const UNCONDITIONAL_PROFILES = new Set(["virgl-webgl2-straight-line-v5",
+const UNCONDITIONAL_PROFILES = new Set(["virgl-webgl2-straight-line-v5", "virgl-webgl2-straight-line-v6",
   ...rawProfiles(1, 2, 3, 4, 5, 6, 13, 17, 19, 21), STRUCTURED_PROFILE]);
 const METADATA_KEYS = ["profile", "stage", "inputs", "outputs", "attributes", "uniforms", "samplers", "uniformBlocks"];
 const DOMAIN_KEYS = ["kind", "stage", "slot", "name", "count"];
@@ -160,6 +160,8 @@ export function parseConstantDomain(metadata, expectedStage) {
     require(expectedStage === "vertex" || expectedStage === "fragment", "Unknown shader stage.");
     const value = record(metadata, [...METADATA_KEYS, "constantDomains", "constantAccesses", "constantConstraints", "constantRadialDomains", "preciseWordContract", "rasterBaseProfile", "constantRasterDomains", "arithmeticBaseProfile", "preciseArithmeticContract", "conversionBaseProfile", "signedConversionContract", "constantConversionDomains", "scalarBaseProfile", "scalarWordContract", "minimumBaseProfile", "minimumWordContract", "fractionBaseProfile", "fractionWordContract", "saturationBaseProfile", "saturationContract", "exponentBaseProfile", "exponentContract", "sineBaseProfile", "sineContract", "powerBaseProfile", "powerContract", "coordinateBaseProfile", "coordinateContract", "discardBaseProfile", "discardContract", "knownArithmeticBaseProfile", "knownArithmeticContract", "branchBaseProfile", "branchContract", "exactBaseProfile", "constantExactDomains"], METADATA_KEYS);
     require(value.stage === expectedStage, "Constant domain stage disagrees with the shader stage.");
+    require(value.profile !== "virgl-webgl2-straight-line-v6" || expectedStage === "vertex",
+      "Wide ordinary constants require a vertex shader.");
     const exact = value.profile === EXACT_BANK_PROFILE;
     require(exact === Object.hasOwn(value, "exactBaseProfile") && exact === Object.hasOwn(value, "constantExactDomains"),
       "Exact-word contract disagrees with its profile.");

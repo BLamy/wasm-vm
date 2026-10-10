@@ -1,0 +1,18 @@
+{
+  "task": "E6-T11d1",
+  "role": "fresh-adversarial-verifier",
+  "sourceHead": "92c98c7361cad2518200bfa99765ed5895ef4f95",
+  "baseline": "cbb640fc387b69441c0b3978bea6f687d9ebcc45",
+  "predictedBeforeInspection": [
+    {"id":"P1","prediction":"Both sealed hot and pristine cold records authenticate every indexed byte, all 393 source digests equal frozen Git blobs, and no source/runtime drift exists."},
+    {"id":"P2","prediction":"All 29 compiler cases retain complete native/sanitized/Wasm parity: ordinary vertex127 MOV/ADD/MUL/MAD and pairs use v6; 128, fragment46/127, duplicate/overlap/aliased declarations, raw modifiers and private127 reject without success payloads."},
+    {"id":"P3","prediction":"Every one of the 15 recorded 16x16 RGBA8 frames has all 256 pixels equal independent literal colors computed from supplied high-bank words, with packet custody matching words120,124,127 and A/B/A/fence retirement assertions held."},
+    {"id":"P4","prediction":"Actual reflection reaches128 and the simulated retained native suffix129 clamps upload128; host511, malformed/short/nonfinite active banks and metadata forgeries reject before any actual draw."},
+    {"id":"P5","prediction":"The delivered Wasm memory remains16MiB, typed allocator failure publishes no GLSL, and releasing held blocks recovers byte-identical translation. Sanitized64-byte scratch cancellation covers longjmp and complete typed failure."},
+    {"id":"P6","prediction":"Native coverage and browser precise coverage exercise every behavioral changed hunk; missing declarative, generated build, documentation or compiler-optimized lines receive individual justified waivers. Fixed text49152/token8192/output262144/stack262144/parser and raw arenas stay unchanged."},
+    {"id":"P7","prediction":"The compiler-bounds layout refresh equals preexisting parent exact-bank sizes and the adapted join input remains an unknown one-bit predicate with two live predecessors; unchanged I/H/G5 leaves carry forward with authentic digests."},
+    {"id":"P8","prediction":"A new physical swizzle/partial-write attack at nonadjacent high slots with an overdeclared unused suffix will draw exact independently calculated pixels, require only the actual active prefix, reject one-vector-short/poisoned prefix without draw, and recover after context reuse."},
+    {"id":"P9","prediction":"Sabotaging actual high-index upload capacity will make an independent physical pixel/boundary oracle fail meaningfully, not through browser/import errors."},
+    {"id":"P10","prediction":"A fresh maximal ordinary declaration/instruction transaction and repeated fail/recover Wasm pressure sequence cannot bypass scratch, stack, token or output bounds or contaminate later healthy output."}
+  ]
+}

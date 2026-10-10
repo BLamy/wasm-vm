@@ -6,6 +6,7 @@
  * Checked indirect constants use the owned raw backend exclusively.
  */
 #include "bridge.h"
+#include "checked_tgsi_heap.h"
 #include "checked_upstream.h"
 #include "raw_bits.h"
 #include "private_92cb_inputs.h"
@@ -124,12 +125,13 @@ static bool index_number(const char **p, unsigned *result, unsigned limit)
    *result = value;
    return true;
 }
-static unsigned register_limit(unsigned file)
+static unsigned register_limit(const struct profile *s, unsigned file)
 {
-   return file == TEMP ? TEMP_REGISTERS : file == CONST ? CONST_REGISTERS :
+   return file == TEMP ? TEMP_REGISTERS : file == CONST ?
+      (!s->stage && !s->raw ? BRIDGE_MAX_VERTEX_CONSTANTS : CONST_REGISTERS) :
       file == IMM ? IMM_REGISTERS : FILE_REGISTERS;
 }
-static bool register_name(const char **p, struct reg *r, enum operand_kind kind)
+static bool register_name(const char **p, const struct profile *s, struct reg *r, enum operand_kind kind)
 {
    if (word(p, "ADDR")) {
       failure_code = "unsupported-feature";
@@ -149,14 +151,14 @@ static bool register_name(const char **p, struct reg *r, enum operand_kind kind)
       failure_code = "unsupported-feature";
       if (kind != SOURCE || !punctuation(p, '[') || !index_number(p, &r->index, 1) ||
           !punctuation(p, ']') || !punctuation(p, '.') || !word(p, "x")) return false;
-   } else if (!index_number(p, &r->index, register_limit(f))) return false;
+   } else if (!index_number(p, &r->index, register_limit(s, f))) return false;
    r->file = indirect ? INDIRECT_CONST : (enum file)f;
    r->last = r->index;
    space(p);
    if (!strncmp(*p, "..", 2)) {
       if (kind != DECLARATION || (f != TEMP && f != CONST)) { failure_code = "unsupported-feature"; return false; }
       *p += 2;
-      if (!index_number(p, &r->last, register_limit(f)) || r->last < r->index) return false;
+      if (!index_number(p, &r->last, register_limit(s, f)) || r->last < r->index) return false;
    }
    if (!punctuation(p, ']')) return false;
    r->mask = 15;
@@ -191,7 +193,7 @@ static bool source(const char **p, struct profile *s, unsigned consumed, struct 
 {
    struct reg r;
    bool dead = !s->syntax_only && (s->raw_flags & RAW_BRANCH_RETRY) && !s->live;
-   if (!register_name(p, &r, SOURCE)) return false;
+   if (!register_name(p, s, &r, SOURCE)) return false;
    /* Handle the checked indirect tag BEFORE any ordinary file-array lookup. */
    if (r.file != INDIRECT_CONST &&
        (r.file == OUT || r.file >= SAMP || !s->declared[r.file][r.index])) return false;
@@ -323,7 +325,7 @@ static bool literal_float_bits(const char **p, uint32_t *raw_bits)
 static bool declaration(const char **p, struct profile *s)
 {
    struct reg r;
-   if (s->started || !register_name(p, &r, DECLARATION) || r.file == IMM) return false;
+   if (s->started || !register_name(p, s, &r, DECLARATION) || r.file == IMM) return false;
    if (r.file == ADDR) {
       failure_code = "unsupported-feature";
       if (!s->raw || s->address_declared || !end(p)) return false;
@@ -956,7 +958,7 @@ static bool instruction(const char **p, struct profile *s, struct flow_context *
    else { failure_code = "unsupported-feature"; return false; }
    if (++s->instructions > BRIDGE_MAX_INSTRUCTIONS) return false;
    struct reg dst;
-   if (!register_name(p, &dst, DESTINATION)) return false;
+   if (!register_name(p, s, &dst, DESTINATION)) return false;
    if (raw.opcode == RAW_UARL) {
       if (dst.file != ADDR || !s->address_declared) return false;
    } else if ((dst.file != OUT && dst.file != TEMP) || !s->declared[dst.file][dst.index] ||
@@ -978,7 +980,7 @@ static bool instruction(const char **p, struct profile *s, struct flow_context *
    }
    if (tex) {
       struct reg sampler;
-      if (s->stage != 1 || !punctuation(p, ',') || !register_name(p, &sampler, SOURCE) || sampler.file != SAMP || sampler.explicit_mask ||
+      if (s->stage != 1 || !punctuation(p, ',') || !register_name(p, s, &sampler, SOURCE) || sampler.file != SAMP || sampler.explicit_mask ||
           !s->declared[SAMP][sampler.index] || !s->declared[SVIEW][sampler.index] || !punctuation(p, ',') || !word(p, "2D")) return false;
       raw.sampler = sampler.index;
    }
@@ -1452,7 +1454,10 @@ static const char *convert(struct conversion *c, const char *text, size_t length
    memcpy(input, text, length); input[length] = 0;
    struct tgsi_token tokens[BRIDGE_MAX_TOKENS] = {0};
    upstream_logged = false;
-   if (!tgsi_text_translate(input, tokens, BRIDGE_MAX_TOKENS)) return error("parse-error", "Upstream TGSI validation rejected the shader.");
+   bridge_tgsi_scratch_begin();
+   if (!tgsi_text_translate(input, tokens, BRIDGE_MAX_TOKENS)) return bridge_tgsi_scratch_failed() ?
+      error("translation-error", "Upstream TGSI scratch allocation failed or exceeded its bound.") :
+      error("parse-error", "Upstream TGSI validation rejected the shader.");
    struct vrend_shader_cfg cfg = {.glsl_version = 300, .max_draw_buffers = 1, .use_gles = 1, .use_core_profile = 1, .use_integer = 1};
    struct vrend_shader_key key = {0};
    if (c->profile.stage == 1) key.fs.lower_left_origin = 1;
@@ -1737,7 +1742,12 @@ static void stage_result(const struct conversion *c)
          else append("%c", byte);
       }
    }
-   const char *name = !c->owned_shader ? "virgl-webgl2-straight-line-v5" :
+   bool wide_vertex_bank = false;
+   if (!stage && !profile->raw)
+      for (unsigned i = CONST_REGISTERS; i < BRIDGE_MAX_VERTEX_CONSTANTS; ++i)
+         wide_vertex_bank |= profile->declared[CONST][i];
+   const char *name = !c->owned_shader ? (wide_vertex_bank ?
+      "virgl-webgl2-straight-line-v6" : "virgl-webgl2-straight-line-v5") :
       profile->raw->opcode_mask & RAW_PRECISE_WORD_USED ? precise_profile(profile->raw) :
       profile->raw->radial.used ? (live_loop(profile->raw) ? "virgl-webgl2-raw-bits-v16" :
          profile->raw->indirect_indices ? "virgl-webgl2-raw-bits-v15" : "virgl-webgl2-raw-bits-v14") :

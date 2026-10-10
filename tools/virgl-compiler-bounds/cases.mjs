@@ -1,5 +1,5 @@
 // Independent resource-bound witnesses. No compiler parser/IR is used here.
-export const ENVELOPE=Object.freeze({textBytes:49152,tokens:8192,glslBytes:262144,instructions:768,registerIndex:7,temporaryRegisterIndex:511,constantRegisterIndex:45,immediateRegisterIndex:31,conditionalDepth:16,lines:1536,lineBytes:512});
+export const ENVELOPE=Object.freeze({textBytes:49152,tokens:8192,glslBytes:262144,instructions:768,registerIndex:7,temporaryRegisterIndex:511,constantRegisterIndex:45,ordinaryVertexConstantRegisterIndex:127,immediateRegisterIndex:31,conditionalDepth:16,lines:1536,lineBytes:512});
 export const SEEDS=[0x2317509d,0x834baa1f,0xfa1836c7];
 export function source(stage,body,{temps=511,immediates=32,extra=[],counter=0}={}) {
   const vertex=stage==='vertex';

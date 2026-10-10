@@ -456,8 +456,9 @@ function createRenderer(options, drawing, asynchronous = false) {
           program.reflection.attributes.push({ ...declared, location, type: actual.type });
         }
         for (const [stage, metadata] of [[0, vs], [1, fs]]) {
+          const guestConstantLimit = stage === 0 && metadata.profile === "virgl-webgl2-straight-line-v6" ? 128 : 46;
           for (const uniform of metadata.uniforms) {
-            require(uniform.type === "uvec4[]" && uniform.encoding === "float32-bits" && Number.isInteger(uniform.count) && uniform.count > 0 && uniform.count <= 47,
+            require(uniform.type === "uvec4[]" && uniform.encoding === "float32-bits" && Number.isInteger(uniform.count) && uniform.count > 0 && uniform.count <= guestConstantLimit + 1,
               "shader-reflection-error", "Unsupported uniform metadata.");
             const name = `${uniform.name}[0]`, location = gl.getUniformLocation(program.native, name);
             const index = gl.getUniformIndices(program.native, [name])?.[0];
@@ -470,9 +471,9 @@ function createRenderer(options, drawing, asynchronous = false) {
               require(Number.isInteger(activeCount) && activeCount > 0 && activeCount <= uniform.count &&
                 activeCount * 4 <= hostUniformComponents[stage], "shader-reflection-error", "Constant extent exceeds its declaration or host stage limit.");
             }
-            // The upstream declaration can include an unaddressable 47th element.
-            // Driver-retained suffixes are not permission to upload guest CONST46.
-            const uploadCount = Math.min(activeCount, 46);
+            // A final CONST0 declaration can retain one inaccessible suffix.
+            // Native array size never increases the profile's guest index limit.
+            const uploadCount = Math.min(activeCount, guestConstantLimit);
             const access = (stage === 0 ? vertex : fragment).constantAccess;
             require(!access || uploadCount > access.indices[access.indices.length - 1],
               "shader-reflection-error", "Constant upload extent does not cover every proved indirect index.");
