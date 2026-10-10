@@ -1,0 +1,956 @@
+{
+  "schema": 1,
+  "scope": "negative-standard-zero-stride-readiness",
+  "gitHead": "f7801621cffdddddc0d4865fa76e8d8b8980080a",
+  "sources": [
+    {
+      "path": "renderer/virgl-command/decoder.mjs",
+      "sha256": "9e3b12a0c2fe8035c1de7bd40c08bc11cc7b1d77bfceb7a7ef3b28667076c00e"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "sha256": "b5c8b0f0c203f4f1a39df931d60e1d00e25c184bed390f9e40ba371ebd14d642"
+    },
+    {
+      "path": "renderer/virgl-command/resources.mjs",
+      "sha256": "c2355819a1ae04125af8689bb0e23cbdfa73b10dc87710b0be72638397a66eae"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "sha256": "732878d142d6d2cfd694ad58629f2a1ee4d282d4fc76c22c2e216a2d2f3a066b"
+    },
+    {
+      "path": "renderer/virgl-command/cache.mjs",
+      "sha256": "9e50cc258528e581f79cee0e4e0038994c7968f80046b9db21e7f5e0e4a92cfa"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-instanced-draws.mjs",
+      "sha256": "e05070a7a6bbb9b73518d3f5722376994aa46967b21183f226f24a07348e498e"
+    },
+    {
+      "path": "tools/virgl-command/standard-draw-oracle.mjs",
+      "sha256": "8de41c4a9f041f7a9acaf8a062a525f64c0ef3d197c464753764ddada94d26e3"
+    },
+    {
+      "path": "renderer/virgl-shader/standard.mjs",
+      "sha256": "d949b156fed338cd9816abf94239eb32b1773aaf3b3c4ade6dba77201d2310cc"
+    },
+    {
+      "path": "renderer/virgl-shader/index.mjs",
+      "sha256": "1bae07f2e668078c4e447f65d1785815714907b7270ced01b131ce70e6d3f10e"
+    },
+    {
+      "path": "renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "sha256": "8d07e5832efc6bc832b9bd684bcaaaad19b536783643f40d088e2ddfba2a5052"
+    },
+    {
+      "path": "renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "sha256": "40772f2a609b803a11f97a3cdd35087810964c2dd35662e0bb143e7144f97287"
+    }
+  ],
+  "harness": {
+    "originalSha256": "e05070a7a6bbb9b73518d3f5722376994aa46967b21183f226f24a07348e498e",
+    "servedSha256": "785340e7ce67e56621c6c48bf67fb757f8cb2dc7ba0796db3313cf14408ba43d"
+  },
+  "prediction": {
+    "drawAdmission": false,
+    "errorCode": "unsupported-draw",
+    "nativeDraws": 0
+  },
+  "productionNegotiation": false,
+  "guestExecution": false,
+  "browserErrors": [],
+  "observed": {
+    "record": {
+      "label": "negative-zero-stride",
+      "ctx": 1,
+      "hex": "2b000d00030000000000000000000000000000000000000000000000000000000000000060171100010000000100000000000000010000002b000d00040000000000000000000000000000000000000000000000000000000000000050000000010000000100000000000000010000002b000d00050000000000000000000000000000000000000000000000000000000000000050000000010000000100000000000000010000002b000d0006000000000000000000000000000000000000000000000000000000000000001c000000010000000100000000000000010000000104cd0001000000000000001f0300000020000000000000564552540a44434c20494e5b305d0a44434c20494e5b315d0a44434c20494e5b31355d0a44434c2053565b305d2c20494e5354414e434549440a44434c2053565b315d2c2056455254455849440a44434c204f55545b305d2c20504f534954494f4e0a44434c204f55545b315d2c2047454e455249435b31355d0a44434c2054454d505b302e2e315d0a494d4d5b305d20464c543332207b302e363636363636363836353334383831362c202d312e302c20302e3030333932313536383632372c20302e3132357d0a494d4d5b315d2055494e543332207b3235352c3235352c3235352c3235357d0a494d4d5b325d2055494e543332207b312c312c372c377d0a494d4d5b335d20464c543332207b322e302c322e302c302e302c312e307d0a303a204932462054454d505b305d2e782c2053565b305d2e787878780a313a204d554c2054454d505b305d2e782c2054454d505b305d2e787878782c20494d4d5b305d2e787878780a323a204144442054454d505b305d2e782c2054454d505b305d2e787878782c20494d4d5b305d2e797979790a333a204d4144204f55545b305d2e782c20494e5b305d2e787878782c20494d4d5b305d2e787878782c2054454d505b305d2e787878780a343a204d4f56204f55545b305d2e797a772c20494e5b305d0a353a204d4f56204f55545b315d2e782c20494e5b315d2e787878780a363a20414e442054454d505b315d2e782c2053565b315d2e787878782c20494d4d5b315d2e787878780a373a205532462054454d505b315d2e782c2054454d505b315d2e787878780a383a204d554c204f55545b315d2e792c2054454d505b315d2e787878782c20494d4d5b305d2e7a7a7a7a0a393a20414e442054454d505b315d2e782c2053565b305d2e787878782c20494d4d5b325d2e7a7a7a7a0a31303a205532462054454d505b315d2e782c2054454d505b315d2e787878780a31313a204d4144204f55545b315d2e7a2c2054454d505b315d2e787878782c20494d4d5b305d2e777777772c20494e5b31355d2e7a7a7a7a0a31323a204d4f56204f55545b315d2e772c20494e5b31355d2e777777770a31333a20454e440a000001041b000200000001000000550000000020000000000000465241470a44434c20494e5b305d2c2047454e455249435b31355d2c20434f4e5354414e540a44434c204f55545b305d2c20434f4c4f520a303a204d4f56204f55545b305d2c20494e5b305d0a313a20454e440a0000000001054100030000001000000000000000000000001f0000000000000002000000010000001f0000001000000000000000000000001f0000001000000000000000000000001f0000001000000000000000000000001f0000001000000000000000000000001f0000001000000000000000000000001f0000001000000000000000000000001f0000001000000000000000000000001f0000001000000000000000000000001f0000001000000000000000000000001f0000001000000000000000000000001f0000001000000000000000000000001f0000001000000000000000000000001f0000001000000000000000000000001f0000001000000003000000020000001f0000000205010003000000060009001000000010000000030000001000000020000000040000001000000010000000050000000b00030006000000040000000c00000001080500040000000100000043000000000000000000000005000300010000000000000004000000040007000000000000004041000080400000003f00004041000080400000003f1f00020001000000000000001f0002000200000001000000070008000400000000000000000000000000000000000000000000000000f03f000000000600090010000000100000000300000000000000200000000400000010000000100000000500000008000c0000000000040000000500000001000000030000000000000000000000000000000000000000000000ffffffff00000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-draw",
+          "message": "Gallium constant attributes with stride zero are unsupported.",
+          "byteOffset": 1660,
+          "opcode": 8
+        },
+        "appliedCommands": 17,
+        "draws": [],
+        "gpuComplete": true
+      },
+      "steps": 5,
+      "dump": {
+        "schema": "virgl-render-frame-v1",
+        "number": 1,
+        "authority": "host-labelled-frame",
+        "presented": false,
+        "complete": true,
+        "dropped": {
+          "submissions": 0,
+          "programs": 0,
+          "draws": 0,
+          "outcomes": 0
+        },
+        "submissions": [
+          {
+            "sequence": 1,
+            "contextId": 1,
+            "byteLength": 1712,
+            "commandCount": 18,
+            "hex": "2b000d00030000000000000000000000000000000000000000000000000000000000000060171100010000000100000000000000010000002b000d00040000000000000000000000000000000000000000000000000000000000000050000000010000000100000000000000010000002b000d00050000000000000000000000000000000000000000000000000000000000000050000000010000000100000000000000010000002b000d0006000000000000000000000000000000000000000000000000000000000000001c000000010000000100000000000000010000000104cd0001000000000000001f0300000020000000000000564552540a44434c20494e5b305d0a44434c20494e5b315d0a44434c20494e5b31355d0a44434c2053565b305d2c20494e5354414e434549440a44434c2053565b315d2c2056455254455849440a44434c204f55545b305d2c20504f534954494f4e0a44434c204f55545b315d2c2047454e455249435b31355d0a44434c2054454d505b302e2e315d0a494d4d5b305d20464c543332207b302e363636363636363836353334383831362c202d312e302c20302e3030333932313536383632372c20302e3132357d0a494d4d5b315d2055494e543332207b3235352c3235352c3235352c3235357d0a494d4d5b325d2055494e543332207b312c312c372c377d0a494d4d5b335d20464c543332207b322e302c322e302c302e302c312e307d0a303a204932462054454d505b305d2e782c2053565b305d2e787878780a313a204d554c2054454d505b305d2e782c2054454d505b305d2e787878782c20494d4d5b305d2e787878780a323a204144442054454d505b305d2e782c2054454d505b305d2e787878782c20494d4d5b305d2e797979790a333a204d4144204f55545b305d2e782c20494e5b305d2e787878782c20494d4d5b305d2e787878782c2054454d505b305d2e787878780a343a204d4f56204f55545b305d2e797a772c20494e5b305d0a353a204d4f56204f55545b315d2e782c20494e5b315d2e787878780a363a20414e442054454d505b315d2e782c2053565b315d2e787878782c20494d4d5b315d2e787878780a373a205532462054454d505b315d2e782c2054454d505b315d2e787878780a383a204d554c204f55545b315d2e792c2054454d505b315d2e787878782c20494d4d5b305d2e7a7a7a7a0a393a20414e442054454d505b315d2e782c2053565b305d2e787878782c20494d4d5b325d2e7a7a7a7a0a31303a205532462054454d505b315d2e782c2054454d505b315d2e787878780a31313a204d4144204f55545b315d2e7a2c2054454d505b315d2e787878782c20494d4d5b305d2e777777772c20494e5b31355d2e7a7a7a7a0a31323a204d4f56204f55545b315d2e772c20494e5b31355d2e777777770a31333a20454e440a000001041b000200000001000000550000000020000000000000465241470a44434c20494e5b305d2c2047454e455249435b31355d2c20434f4e5354414e540a44434c204f55545b305d2c20434f4c4f520a303a204d4f56204f55545b305d2c20494e5b305d0a313a20454e440a0000000001054100030000001000000000000000000000001f0000000000000002000000010000001f0000001000000000000000000000001f0000001000000000000000000000001f0000001000000000000000000000001f0000001000000000000000000000001f0000001000000000000000000000001f0000001000000000000000000000001f0000001000000000000000000000001f0000001000000000000000000000001f0000001000000000000000000000001f0000001000000000000000000000001f0000001000000000000000000000001f0000001000000000000000000000001f0000001000000000000000000000001f0000001000000003000000020000001f0000000205010003000000060009001000000010000000030000001000000020000000040000001000000010000000050000000b00030006000000040000000c00000001080500040000000100000043000000000000000000000005000300010000000000000004000000040007000000000000004041000080400000003f00004041000080400000003f1f00020001000000000000001f0002000200000001000000070008000400000000000000000000000000000000000000000000000000f03f000000000600090010000000100000000300000000000000200000000400000010000000100000000500000008000c0000000000040000000500000001000000030000000000000000000000000000000000000000000000ffffffff00000000",
+            "provenance": {
+              "event": null,
+              "sourceSha256": null
+            }
+          }
+        ],
+        "programs": [],
+        "draws": [],
+        "outcomes": [
+          {
+            "sequence": 1,
+            "ok": false,
+            "appliedCommands": 17,
+            "draws": 0,
+            "gpuComplete": true,
+            "error": {
+              "code": "unsupported-draw",
+              "message": "Gallium constant attributes with stride zero are unsupported.",
+              "byteOffset": 1660,
+              "opcode": 8
+            }
+          }
+        ],
+        "start": {
+          "work": {
+            "translations": 0,
+            "pairTranslations": 0,
+            "shaderCompiles": 0,
+            "programLinks": 0,
+            "submissions": 0,
+            "decodedSubmissions": 0,
+            "completedSubmissions": 0,
+            "failedSubmissions": 0,
+            "appliedCommands": 0,
+            "drawCalls": 0,
+            "draws": 0
+          },
+          "caches": {
+            "translation": {
+              "requests": 0,
+              "hits": 0,
+              "misses": 0,
+              "comparisons": 0,
+              "collisions": 0,
+              "insertions": 0,
+              "evictions": 0,
+              "removals": 0,
+              "bypasses": 0,
+              "entries": 0,
+              "bytes": 0,
+              "limits": {
+                "entries": 128,
+                "bytes": 4194304
+              }
+            },
+            "program": {
+              "requests": 0,
+              "hits": 0,
+              "misses": 0,
+              "comparisons": 0,
+              "collisions": 0,
+              "insertions": 0,
+              "evictions": 0,
+              "removals": 0,
+              "bypasses": 0,
+              "entries": 0,
+              "bytes": 0,
+              "limits": {
+                "entries": 64,
+                "bytes": 4194304
+              }
+            },
+            "state": {
+              "requests": 0,
+              "hits": 0,
+              "misses": 0,
+              "comparisons": 0,
+              "collisions": 0,
+              "insertions": 0,
+              "evictions": 0,
+              "removals": 0,
+              "bypasses": 0,
+              "entries": 0,
+              "bytes": 0,
+              "limits": {
+                "entries": 256,
+                "bytes": 1048576
+              }
+            }
+          }
+        },
+        "end": {
+          "work": {
+            "translations": 2,
+            "pairTranslations": 1,
+            "shaderCompiles": 3,
+            "programLinks": 1,
+            "submissions": 1,
+            "decodedSubmissions": 1,
+            "completedSubmissions": 0,
+            "failedSubmissions": 1,
+            "appliedCommands": 17,
+            "drawCalls": 0,
+            "draws": 0
+          },
+          "caches": {
+            "translation": {
+              "requests": 3,
+              "hits": 0,
+              "misses": 3,
+              "comparisons": 0,
+              "collisions": 0,
+              "insertions": 3,
+              "evictions": 0,
+              "removals": 0,
+              "bypasses": 0,
+              "entries": 3,
+              "bytes": 27092,
+              "limits": {
+                "entries": 128,
+                "bytes": 4194304
+              }
+            },
+            "program": {
+              "requests": 5,
+              "hits": 4,
+              "misses": 1,
+              "comparisons": 4,
+              "collisions": 0,
+              "insertions": 1,
+              "evictions": 0,
+              "removals": 0,
+              "bypasses": 0,
+              "entries": 1,
+              "bytes": 7256,
+              "limits": {
+                "entries": 64,
+                "bytes": 4194304
+              }
+            },
+            "state": {
+              "requests": 13,
+              "hits": 5,
+              "misses": 8,
+              "comparisons": 5,
+              "collisions": 0,
+              "insertions": 8,
+              "evictions": 0,
+              "removals": 0,
+              "bypasses": 0,
+              "entries": 8,
+              "bytes": 55388,
+              "limits": {
+                "entries": 256,
+                "bytes": 1048576
+              }
+            }
+          }
+        }
+      }
+    },
+    "nativeDraws": 0,
+    "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+    "inputExchanges": [
+      {
+        "label": "negative-zero-stride",
+        "direction": "upload",
+        "resource": {
+          "id": 3,
+          "generation": 4
+        },
+        "layout": {
+          "kind": "buffer",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "width": 1120096,
+            "height": 1,
+            "depth": 1
+          },
+          "offset": 0,
+          "rowBytes": 1120096,
+          "rowCount": 1,
+          "rowStride": 1120096,
+          "layerStride": 1120096,
+          "footprintBytes": 1120096,
+          "requiredEnd": 1120096,
+          "tightBytes": 1120096,
+          "direction": "upload"
+        },
+        "blob": {
+          "key": "blob-0000",
+          "bytes": 1120096,
+          "sha256": "1f5069427cde7d7e65135355a0fe98bfbce967088e6ce640159507733a379a46",
+          "gzipSha256": "85c39ae825519435b1c9d6e6a2ff4383bd4bc17fd6b5c1cdc2a5468471899cb6"
+        }
+      },
+      {
+        "label": "negative-zero-stride",
+        "direction": "upload",
+        "resource": {
+          "id": 4,
+          "generation": 5
+        },
+        "layout": {
+          "kind": "buffer",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "width": 80,
+            "height": 1,
+            "depth": 1
+          },
+          "offset": 0,
+          "rowBytes": 80,
+          "rowCount": 1,
+          "rowStride": 80,
+          "layerStride": 80,
+          "footprintBytes": 80,
+          "requiredEnd": 80,
+          "tightBytes": 80,
+          "direction": "upload"
+        },
+        "blob": {
+          "key": "blob-0001",
+          "bytes": 80,
+          "sha256": "34b67c0ea254b13344afcd358e74e22af46eb14768518a32a9ad71d1b21a780e",
+          "gzipSha256": "f59ab20b6cfbf036ed2f74dd69f5a17876eb42d8ff16f57c106408df3387572e"
+        }
+      },
+      {
+        "label": "negative-zero-stride",
+        "direction": "upload",
+        "resource": {
+          "id": 5,
+          "generation": 6
+        },
+        "layout": {
+          "kind": "buffer",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "width": 80,
+            "height": 1,
+            "depth": 1
+          },
+          "offset": 0,
+          "rowBytes": 80,
+          "rowCount": 1,
+          "rowStride": 80,
+          "layerStride": 80,
+          "footprintBytes": 80,
+          "requiredEnd": 80,
+          "tightBytes": 80,
+          "direction": "upload"
+        },
+        "blob": {
+          "key": "blob-0002",
+          "bytes": 80,
+          "sha256": "89d583160b8ad64715e051ae97e8696ade6ac68c2d6c1a6c4f6fad22c6e2303c",
+          "gzipSha256": "59f1f348c969427aa1f09eceeb10112b29ceb5d7e364cb39ee35ca13323c75be"
+        }
+      },
+      {
+        "label": "negative-zero-stride",
+        "direction": "upload",
+        "resource": {
+          "id": 6,
+          "generation": 7
+        },
+        "layout": {
+          "kind": "buffer",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "width": 28,
+            "height": 1,
+            "depth": 1
+          },
+          "offset": 0,
+          "rowBytes": 28,
+          "rowCount": 1,
+          "rowStride": 28,
+          "layerStride": 28,
+          "footprintBytes": 28,
+          "requiredEnd": 28,
+          "tightBytes": 28,
+          "direction": "upload"
+        },
+        "blob": {
+          "key": "blob-0003",
+          "bytes": 28,
+          "sha256": "aa1ce9164e0d8c732804b975a983310e6c4dfde5e3a227e7e6f7d327e7aea75d",
+          "gzipSha256": "5b4919928e47b13286485b4688e8f0441c7afc3fcf1484f561528aa5a16d26ad"
+        }
+      }
+    ],
+    "metadata": [
+      {
+        "id": 1,
+        "target": 2,
+        "format": 67,
+        "bind": 2,
+        "width": 24,
+        "height": 8,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0,
+        "kind": "texture",
+        "byteLength": 768
+      },
+      {
+        "id": 3,
+        "target": 0,
+        "format": 64,
+        "bind": 16,
+        "width": 1120096,
+        "height": 1,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0,
+        "kind": "vertex-buffer",
+        "byteLength": 1120096
+      },
+      {
+        "id": 4,
+        "target": 0,
+        "format": 64,
+        "bind": 16,
+        "width": 80,
+        "height": 1,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0,
+        "kind": "vertex-buffer",
+        "byteLength": 80
+      },
+      {
+        "id": 5,
+        "target": 0,
+        "format": 64,
+        "bind": 16,
+        "width": 80,
+        "height": 1,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0,
+        "kind": "vertex-buffer",
+        "byteLength": 80
+      },
+      {
+        "id": 6,
+        "target": 0,
+        "format": 64,
+        "bind": 32,
+        "width": 28,
+        "height": 1,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0,
+        "kind": "index-buffer",
+        "byteLength": 28
+      }
+    ],
+    "predictions": [
+      {
+        "prediction": "real transfer backend ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "owned resources ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "host-selected renderer ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "async factory has no synchronous escape",
+        "expected": false,
+        "observed": false,
+        "held": true
+      },
+      {
+        "prediction": "resource context ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "renderer context ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "resource context ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "renderer context ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "resource 1 ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "resource membership ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "resource membership ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "owned backing ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "resource 3 ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "resource membership ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "resource membership ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "owned backing ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "resource 4 ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "resource membership ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "resource membership ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "owned backing ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "resource 5 ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "resource membership ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "resource membership ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "owned backing ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "resource 6 ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "resource membership ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "resource membership ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "owned backing ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "begin host record ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "owned later-task step ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "fresh input row ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "owned input exchange ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "consumed input token rejects",
+        "expected": false,
+        "observed": false,
+        "held": true
+      },
+      {
+        "prediction": "owned later-task step ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "fresh input row ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "owned input exchange ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "consumed input token rejects",
+        "expected": false,
+        "observed": false,
+        "held": true
+      },
+      {
+        "prediction": "owned later-task step ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "fresh input row ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "owned input exchange ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "consumed input token rejects",
+        "expected": false,
+        "observed": false,
+        "held": true
+      },
+      {
+        "prediction": "owned later-task step ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "fresh input row ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "owned input exchange ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "consumed input token rejects",
+        "expected": false,
+        "observed": false,
+        "held": true
+      },
+      {
+        "prediction": "owned later-task step ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "zero timeout fence poll",
+        "expected": [
+          0,
+          0
+        ],
+        "observed": [
+          0,
+          0
+        ],
+        "held": true
+      },
+      {
+        "prediction": "poll uses an owned sync",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "fence poll is one per later task",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "owned later-task step ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "bounded job completion",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "consumed job rejects",
+        "expected": false,
+        "observed": false,
+        "held": true
+      },
+      {
+        "prediction": "end host record ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "renderer cleanup ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "resource cleanup ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "cleanup counters ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "zero owned budget contexts",
+        "expected": 0,
+        "observed": 0,
+        "held": true
+      },
+      {
+        "prediction": "zero owned budget subContexts",
+        "expected": 0,
+        "observed": 0,
+        "held": true
+      },
+      {
+        "prediction": "zero owned budget objects",
+        "expected": 0,
+        "observed": 0,
+        "held": true
+      },
+      {
+        "prediction": "zero owned budget programs",
+        "expected": 0,
+        "observed": 0,
+        "held": true
+      },
+      {
+        "prediction": "zero owned budget shaders",
+        "expected": 0,
+        "observed": 0,
+        "held": true
+      },
+      {
+        "prediction": "zero owned budget samplers",
+        "expected": 0,
+        "observed": 0,
+        "held": true
+      },
+      {
+        "prediction": "zero owned budget leases",
+        "expected": 0,
+        "observed": 0,
+        "held": true
+      },
+      {
+        "prediction": "zero owned budget shaderBytes",
+        "expected": 0,
+        "observed": 0,
+        "held": true
+      },
+      {
+        "prediction": "zero owned budget uniformBytes",
+        "expected": 0,
+        "observed": 0,
+        "held": true
+      },
+      {
+        "prediction": "zero owned budget cacheBytes",
+        "expected": 0,
+        "observed": 0,
+        "held": true
+      },
+      {
+        "prediction": "zero owned budget debugBytes",
+        "expected": 0,
+        "observed": 0,
+        "held": true
+      },
+      {
+        "prediction": "cleanup counters ",
+        "expected": true,
+        "observed": true,
+        "held": true
+      },
+      {
+        "prediction": "zero owned budget resources",
+        "expected": 0,
+        "observed": 0,
+        "held": true
+      },
+      {
+        "prediction": "zero owned budget contexts",
+        "expected": 0,
+        "observed": 0,
+        "held": true
+      },
+      {
+        "prediction": "zero owned budget storages",
+        "expected": 0,
+        "observed": 0,
+        "held": true
+      },
+      {
+        "prediction": "zero owned budget backingBytes",
+        "expected": 0,
+        "observed": 0,
+        "held": true
+      },
+      {
+        "prediction": "zero owned budget cpuBytes",
+        "expected": 0,
+        "observed": 0,
+        "held": true
+      },
+      {
+        "prediction": "zero owned budget gpuBytes",
+        "expected": 0,
+        "observed": 0,
+        "held": true
+      },
+      {
+        "prediction": "zero owned budget scratchBytes",
+        "expected": 0,
+        "observed": 0,
+        "held": true
+      },
+      {
+        "prediction": "zero owned budget tickets",
+        "expected": 0,
+        "observed": 0,
+        "held": true
+      },
+      {
+        "prediction": "zero owned budget leases",
+        "expected": 0,
+        "observed": 0,
+        "held": true
+      },
+      {
+        "prediction": "cleanup has no GL error",
+        "expected": 0,
+        "observed": 0,
+        "held": true
+      }
+    ]
+  },
+  "status": "negative-readiness-confirmed"
+}
