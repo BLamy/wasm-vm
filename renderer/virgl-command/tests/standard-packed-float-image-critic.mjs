@@ -56,7 +56,7 @@ export async function runAcceptance({seed=0x6c8e9cf5,fault=null}={}){
  // Exercise the unchanged default/byte branches embedded in changed expressions.
  report.legacy=[];
  for(const format of [1,2,233,77]){
-  const legacy=rig(gl,c),meta={...metadata,format,width:2,height:2,lastLevel:0},input=new Uint8Array(16),words=new DataView(input.buffer);
+  const legacy=rig(gl,c),meta={...metadata,format,bind:format===77?8:10,width:2,height:2,lastLevel:0},input=new Uint8Array(16),words=new DataView(input.buffer);
   if(format===233)for(let i=0;i<4;i++)words.setUint32(i*4,(i*97|((3-i)*137)<<10|(i*61+83)<<20|3<<30)>>>0,true);
   else input.set(format===77?[127,0,64,127,32,96,16,127,0,0,0,127,127,127,127,127]:[12,29,87,255,34,53,99,255,81,12,39,255,243,111,3,255]);
   const legacyRow={metadata:meta,input:await blob(report,input)};report.legacy.push(legacyRow);
