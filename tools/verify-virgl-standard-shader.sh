@@ -57,7 +57,9 @@ node tools/virgl-standard-shader/pixels.mjs "$evidence"
 bash renderer/virgl-shader/build.sh sanitize
 node tools/virgl-original-corpus/browser.mjs --output "$evidence/retained-ordinary"
 node tools/virgl-standard-shader/retained-raw.mjs --output "$evidence/retained-raw"
-mkdir -p target/evidence/virgl-92cb-raster target/evidence/virgl-original-c580
+mkdir -p target/evidence/virgl-92cb-geometry target/evidence/virgl-92cb-raster target/evidence/virgl-original-c580
+cp "$evidence/geometry.bin" target/evidence/virgl-92cb-geometry/geometry.bin
+cp "$evidence/geometry.json" target/evidence/virgl-92cb-geometry/geometry.json
 cp "$evidence/geometry.bin" target/evidence/virgl-92cb-raster/geometry.bin
 cp "$evidence/c580.bin" target/evidence/virgl-original-c580/banks.bin
 python3 tools/virgl-92cb-raster/capture.py target/evidence/virgl-92cb-raster/raster.json > "$evidence/retained-raster.log"

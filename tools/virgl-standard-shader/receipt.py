@@ -8,6 +8,7 @@ GENERATED=['renderer/virgl-shader/build/'+name for name in [
  'standard-native/standard-test','standard-sanitize/standard-test',
  'standard-allocation-sanitize/standard-allocation-test',
  'wasm/virgl-shader.mjs','wasm/virgl-shader.wasm','sanitize/hostile-test']]+[
+ 'target/evidence/virgl-92cb-geometry/geometry.bin','target/evidence/virgl-92cb-geometry/geometry.json',
  'target/evidence/virgl-92cb-raster/geometry.bin','target/evidence/virgl-92cb-raster/raster.json',
  'target/evidence/virgl-original-c580/banks.bin']
 

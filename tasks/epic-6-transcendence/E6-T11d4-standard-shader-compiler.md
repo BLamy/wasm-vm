@@ -124,3 +124,10 @@ alias and canonical `/private/var` module root produce an outside-repository
 relative input path. Canonicalizing both input and root paths fixes that bounded
 recording wrapper. Runtime and expected values remain unchanged; the final
 exact-head cold-clone proof is rerun because this was a portability failure.
+
+The `383f6fac` cold run also passes the full standard path and retained ordinary/
+raw probes. The ancillary retained raster generator then exposes a second
+portability dependency: its fixed predecessor directory needs both freshly
+generated geometry bytes and the JSON instruction/event provenance. The recipe
+now stages those same newly recorded artifacts at that fixed path and seals
+their hashes. It never copies old ignored evidence into a cold checkout.
