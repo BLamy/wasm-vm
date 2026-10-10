@@ -75,14 +75,14 @@ function checkedProduct(a, b, maximum, message) {
   require(a === 0 || b <= Math.floor(maximum / a), "out-of-bounds", message);
   return a * b;
 }
-function normalizeMetadata(value, limits) {
+function normalizeMetadata(value, limits, uniform = false) {
   const meta = record(value, META_KEYS);
   for (const key of META_KEYS) uint(meta[key], key, ["id", "width", "height", "depth", "arraySize"].includes(key));
   require(meta.depth === 1 && meta.arraySize === 1 && meta.lastLevel === 0 && meta.nrSamples === 0 && meta.flags === 0,
     "unsupported-resource", "Only one-level, single-layer, single-sample resources without flags are supported.");
   let kind, byteLength;
   if (meta.target === 0 && meta.format === 64 && meta.height === 1) {
-    kind = ({ 16: "vertex-buffer", 32: "index-buffer", 524288: "staging" })[meta.bind];
+    kind = ({ 16: "vertex-buffer", 32: "index-buffer", 524288: "staging", ...(uniform ? { 64: "uniform-buffer", 80: "uniform-buffer" } : {}) })[meta.bind];
     require(kind !== undefined, "unsupported-resource", "Unsupported buffer binding class.");
     byteLength = meta.width;
   } else if (meta.target === 2 && meta.format === 16) {
@@ -225,7 +225,19 @@ function scatter(backing, layout, bytes) {
     bytes.subarray(row * layout.rowBytes, (row + 1) * layout.rowBytes), true);
 }
 
-export function createResourceStore(options) {
+export function createResourceStore(options) { return createStore(options, false); }
+
+/** Explicit host-selected original constant-buffer storage; old admissions stay isolated. */
+export function createStandardUniformResourceStore(options) { return createStore(options, true); }
+
+export function computeStandardUniformTransferLayout(metadata, fields, backingByteLength, overrides = {}) {
+  return result(() => {
+    const limits = limitsFor(overrides);
+    return success({ layout: layoutFor(normalizeMetadata(metadata, limits, true), normalizedFields(fields), backingByteLength, limits) });
+  });
+}
+
+function createStore(options, uniform) {
   return result(() => {
     const config = record(options, ["backend", "limits"], ["backend"]), backend = config.backend;
     require(backend && typeof backend === "object", "invalid-input", "A transfer backend is required.");
@@ -233,7 +245,7 @@ export function createResourceStore(options) {
     require(Number.isInteger(backend.maxTextureSize) && backend.maxTextureSize > 0, "invalid-input", "Backend must provide its texture dimension limit.");
     const requested = limitsFor(config.limits);
     const limits = Object.freeze({ ...requested, textureSize: Math.min(requested.textureSize, backend.maxTextureSize) });
-    const resources = new Map(), live = new Set(), contexts = new Map(), tickets = new Map(), leases = new Map(), storageReads = new Map(), revokedAccess = new Set();
+    const resources = new Map(), live = new Set(), contexts = new Map(), tickets = new Map(), leases = new Map(), storageReads = new Map(), uniformRanges = new Map(), revokedAccess = new Set(), revokedUniform = new Set();
     let nextGeneration = 1, nextBackingGeneration = 1, disposed = false, backingBytes = 0, gpuBytes = 0, scratchBytes = 0, stagingBytes = 0;
     const host = (name, ...args) => {
       try { return backend[name](...args); } catch { throw new ResourceFault("backend-error", `Backend ${name} failed.`); }
@@ -376,7 +388,7 @@ export function createResourceStore(options) {
           if (fields.flags === 3) heldBackings.push(needBacking(primary));
         } else if (!inline) { transferBacking = needBacking(primary); heldBackings.push(transferBacking); }
         const layout = layoutFor(primary.meta, fields, inline ? fields.dataWords.length * 4 : transferBacking.byteLength, limits);
-        require(tickets.size + storageReads.size < limits.tickets, "limit-exceeded", "Prepared transfer ticket limit exceeded.");
+        require(tickets.size + storageReads.size + uniformRanges.size < limits.tickets, "limit-exceeded", "Prepared transfer ticket limit exceeded.");
         reserveScratch(scratchCharge(layout));
         let upload;
         try { upload = inline ? gatherInline(fields.dataWords, layout) : !asynchronous && layout.direction === "upload" ? gather(transferBacking, layout) : null; }
@@ -397,7 +409,7 @@ export function createResourceStore(options) {
         return success({ context: freeze({ id, generation: ctx.generation }) });
       }),
       createResource: operation((metadata) => {
-        const meta = normalizeMetadata(metadata, limits);
+        const meta = normalizeMetadata(metadata, limits, uniform);
         require(!resources.has(meta.id), "resource-exists", "Resource ID is already public.");
         require(live.size < limits.resources, "limit-exceeded", "Live/retained resource count limit exceeded.");
         const allocationBytes = meta.kind === "staging" ? 0 : meta.byteLength;
@@ -473,14 +485,15 @@ export function createResourceStore(options) {
       retainStorage: operation((contextId, id, role = "view") => {
         const ctx = context(contextId), res = resource(id); membership(ctx, res);
         require(res.storage !== null, "unsupported-resource", "Staging resources have no GPU storage.");
-        require(typeof role === "string" && ["view", "surface", "depth-surface", "vertex", "index", "readback"].includes(role), "invalid-input", "Unknown storage lease role.");
+        require(typeof role === "string" && ["view", "surface", "depth-surface", "vertex", "index", "readback", ...(uniform ? ["uniform"] : [])].includes(role), "invalid-input", "Unknown storage lease role.");
         require(role === "readback" || (role === "view" && res.meta.kind === "texture" && (res.meta.bind & 8) !== 0) ||
           (role === "surface" && res.meta.kind === "texture" && (res.meta.bind & 2) !== 0) ||
           (role === "depth-surface" && res.meta.kind === "depth-texture" && res.meta.bind === 1) ||
-          (role === "vertex" && res.meta.kind === "vertex-buffer") || (role === "index" && res.meta.kind === "index-buffer"),
+          (role === "vertex" && (res.meta.kind === "vertex-buffer" || uniform && res.meta.kind === "uniform-buffer")) ||
+          (role === "uniform" && uniform && ["vertex-buffer", "uniform-buffer"].includes(res.meta.kind)) || (role === "index" && res.meta.kind === "index-buffer"),
         "unsupported-resource", "Storage lease role contradicts the resource binding class.");
         require(leases.size < limits.leases, "limit-exceeded", "Storage lease limit exceeded.");
-        const token = Object.freeze({}); leases.set(token, { resource: res, role }); res.references++;
+        const token = Object.freeze({}); leases.set(token, { resource: res, role, ...(role === "uniform" ? { context: ctx } : {}) }); res.references++;
         return success({ lease: token });
       }),
       releaseStorage: operation((token) => {
@@ -528,7 +541,7 @@ export function createResourceStore(options) {
         return success({ disposed, limits, resources: freeze(list),
           contexts: freeze([...contexts.values()].map((ctx) => ({ id: ctx.id, generation: ctx.generation, resourceIds: [...ctx.memberships.keys()].sort((a, b) => a - b) }))),
           budgets: freeze({ resources: live.size, contexts: contexts.size, storages: [...live].filter((res) => res.storage !== null).length,
-            backingBytes, cpuBytes: backingBytes + scratchBytes, gpuBytes, scratchBytes, tickets: tickets.size, leases: leases.size }) });
+            backingBytes, cpuBytes: backingBytes + scratchBytes, gpuBytes, scratchBytes, tickets: tickets.size, leases: leases.size, ...(uniform ? { uniformRanges: uniformRanges.size } : {}) }) });
       },
       dispose() {
         return result(() => {
@@ -544,6 +557,10 @@ export function createResourceStore(options) {
             try { freeStorageRead(entry); } catch (error) { firstError ??= error; }
           }
           storageReads.clear();
+          for (const [token, entry] of uniformRanges) {
+            revokedUniform.add(token); entry.resource.references--;
+          }
+          uniformRanges.clear();
           for (const [token, entry] of tickets) {
             if (entry.asynchronous) revokedAccess.add(token);
             try { releaseTicket(entry); } catch (error) { firstError ??= error; }
@@ -633,7 +650,7 @@ export function createResourceStore(options) {
           box: requestedBox, dataOffset: 0, direction: 2 });
         const layout = layoutFor(meta, fields, meta.byteLength, limits);
         require(leases.get(lease) === leaseEntry, "invalid-lease", "Storage lease changed while inspecting the box.");
-        require(tickets.size + storageReads.size < limits.tickets, "limit-exceeded", "Asynchronous access count exceeded.");
+        require(tickets.size + storageReads.size + uniformRanges.size < limits.tickets, "limit-exceeded", "Asynchronous access count exceeded.");
         reserveScratch(scratchCharge(layout));
         const entry = { resource: res, lease, leaseEntry, revision: res.contentRevision, layout, native: null, bytes: null };
         res.references++;
@@ -650,7 +667,7 @@ export function createResourceStore(options) {
         const fields = normalizedFields({ resourceHandle: meta.id, level: 0, usage: 0, stride: 0, layerStride: 0,
           box: { x: 0, y: 0, z: 0, width: meta.width, height: meta.height, depth: 1 }, dataOffset: 0, direction: 2 });
         const layout = layoutFor(meta, fields, meta.byteLength, limits);
-        require(tickets.size + storageReads.size < limits.tickets, "limit-exceeded", "Asynchronous access count exceeded.");
+        require(tickets.size + storageReads.size + uniformRanges.size < limits.tickets, "limit-exceeded", "Asynchronous access count exceeded.");
         reserveScratch(scratchCharge(layout));
         const entry = { resource: res, scanoutSnapshot: true, layout, native: null, bytes: null };
         res.references++;
@@ -689,7 +706,49 @@ export function createResourceStore(options) {
       inspect() { return success({ disposed, reads: storageReads.size,
         transfers: [...tickets.values()].filter((entry) => entry.asynchronous).length, stagingBytes }); },
     });
-    return success({ store: Object.freeze(store), bindings, asyncAccess });
+    // A pending range is a revision-checked snapshot. Submission converts it to
+    // an allocation hold: later ordered uploads are legal, but its exact native
+    // allocation remains alive through the job's final GPU fence.
+    const uniformEntry = token => {
+      const entry = uniformRanges.get(token);
+      require(entry, "invalid-range", "Unknown, released or foreign uniform range.");
+      return entry;
+    };
+    const checkUniform = entry => {
+      require(entry.mode === "pending", "invalid-range", "Uniform range is already submitted.");
+      require(entry.context.active && contexts.get(entry.context.id) === entry.context &&
+        leases.get(entry.lease) === entry.leaseEntry && entry.resource.contentRevision === entry.revision,
+      "stale-storage", "Uniform range context, lease or GPU contents changed before drawing.");
+    };
+    const uniformAccess = uniform ? Object.freeze({
+      capture: operation((lease, offset, byteLength) => {
+        const leaseEntry = leases.get(lease);
+        require(leaseEntry?.role === "uniform", "invalid-lease", "Expected a retained uniform storage lease.");
+        const res = leaseEntry.resource, ctx = leaseEntry.context;
+        uint(offset, "offset"); uint(byteLength, "byteLength", true);
+        require(offset <= res.meta.byteLength && byteLength <= res.meta.byteLength - offset,
+          "out-of-bounds", "Uniform range exceeds its retained allocation.");
+        require(ctx.active && contexts.get(ctx.id) === ctx, "stale-context", "Uniform lease context is no longer live.");
+        require(tickets.size + storageReads.size + uniformRanges.size < limits.tickets,
+          "limit-exceeded", "Uniform range and asynchronous ticket budget exceeded.");
+        const token = Object.freeze({}), entry = { resource: res, context: ctx, lease, leaseEntry,
+          revision: res.contentRevision, offset, byteLength, mode: "pending" };
+        res.references++; uniformRanges.set(token, entry);
+        return success({ token, generation: res.generation, metadata: res.meta, storage: res.storage, offset, byteLength });
+      }),
+      validate: operation(token => { checkUniform(uniformEntry(token)); return success(); }),
+      submit: operation(token => { const entry = uniformEntry(token); checkUniform(entry); entry.mode = "submitted"; return success(); }),
+      release(token) {
+        return result(() => {
+          if (disposed) { require(revokedUniform.delete(token), "invalid-range", "Unknown or already released revoked uniform range."); return success(); }
+          const entry = uniformEntry(token); uniformRanges.delete(token);
+          entry.resource.references--; collect(entry.resource); return success();
+        });
+      },
+      inspect() { return success({ disposed, pending: [...uniformRanges.values()].filter(entry => entry.mode === "pending").length,
+        submitted: [...uniformRanges.values()].filter(entry => entry.mode === "submitted").length }); },
+    }) : null;
+    return success({ store: Object.freeze(store), bindings, asyncAccess, ...(uniform ? { uniformAccess } : {}) });
   });
 }
 

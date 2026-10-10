@@ -228,3 +228,22 @@ Translation, native program and render-state reuse, limits, exact-key equality,
 eviction, truthful counters and host frame captures are described in
 [cache-README.md](cache-README.md). Every supported GL binding still restores on
 every cache hit.
+
+The separate `createVirglStandardUniformAsyncRenderer` entry point consumes
+original SET_UNIFORM_BUFFER27 using `createStandardUniformResourceStore` and its
+host-only `uniformAccess` capability. VS/FS slots0..12 retain their original
+allocation and aligned nonempty byte range across public unref, detach and ID
+reuse. SET_CONSTANT_BUFFER12 clears that slot's resource binding. Submitted
+ranges keep allocations alive until the final nonblocking fence; pending draws
+reject changes to their captured lease, context or GPU revision.
+
+Guest std140 blocks occupy unique native bindings1..26; the separately owned
+656-byte VirglBlock uses binding0. The selected factory requires native limits
+for14 vertex,13 fragment and27 combined blocks/bindings and16KiB blocks. It
+checks native members and stage references. Missing referenced banks reject;
+unused native-retained blocks share one bounded16KiB zero allocation. Native
+eliminated declarations require no backing. The original slot-zero binding state
+selects both C-emitted stage bodies and participates in every cache/draw key.
+`make verify-E6-T11d17` records original packets, complete GPU storage, reflection,
+fences and independent full pixels. This isolated factory does not advertise
+production capabilities or initialize guest Mesa.
