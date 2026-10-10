@@ -36,7 +36,7 @@ const codePaths = [
   'tools/virgl-command/fixtures.mjs', 'tools/verify-virgl-control.mjs', 'tools/verify-virgl-control.sh',
   'tools/verify-virgl-default-demo.mjs', 'web/dist/pkg/wasm_vm_wasm_bg.wasm', 'web/dist/sw.js',
   'tools/virgl-command/control-receipt.py', 'tools/virgl-command/control-cold.py', 'Makefile',
-];
+ 'renderer/virgl-command/color-images.mjs'];
 async function collect(directory) {
   for (const entry of await fs.readdir(path.join(repo, directory), { withFileTypes: true })) {
     const filename = `${directory}/${entry.name}`;

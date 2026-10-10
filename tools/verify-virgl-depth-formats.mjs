@@ -25,7 +25,7 @@ const sourcePaths=[
   'tools/virgl-command/depth-fixtures.mjs','tools/verify-virgl-depth-formats.mjs',
   'tools/verify-virgl-depth-formats.sh','tools/virgl-command/depth-receipt.py','tools/virgl-command/depth-cold.py',
   'Makefile','renderer/virgl-command/README.md','renderer/virgl-command/resources-README.md','renderer/virgl-command/state-README.md',
-];
+ 'renderer/virgl-command/color-images.mjs'];
 const report={schema:1,task:'E6-T12g3',status:'running',guestExecution:false,
   boundary:'Original selected Z16 packets plus synthetic independent GPU sampling/occlusion/readback; no full guest offload.',
   gitHead:execFileSync('git',['rev-parse','HEAD'],{cwd:repo,encoding:'utf8'}).trim(),command:[process.execPath,...process.argv.slice(1)],

@@ -1,0 +1,235 @@
+{
+  "schema": "original-byte-color-boundary-v1",
+  "changes": {
+    "renderer/virgl-command/decoder.mjs": [
+      {
+        "before": "/** Bounded, side-effect-free VirGL 1.3.0 wire decoding. See README.md. */\n",
+        "after": "/** Bounded, side-effect-free VirGL 1.3.0 wire decoding. See README.md. */\nimport {byteColorFormat} from \"./color-images.mjs\";\n"
+      },
+      {
+        "before": "export const STANDARD_IMAGE_PROFILE = \"virgl-standard-image-commands-v1\";",
+        "after": "export const STANDARD_IMAGE_PROFILE = \"virgl-standard-image-commands-v1\";\nexport const STANDARD_COLOR_PROFILE = \"virgl-standard-byte-color-commands-v1\";"
+      },
+      {
+        "before": "constructor(view, byteOffset, opcode, length, standard = false, uniform = false, textures = false, images = false) {",
+        "after": "constructor(view, byteOffset, opcode, length, standard = false, uniform = false, textures = false, images = false, colors = false) {"
+      },
+      {
+        "before": "function decode(bytes, provenance, standard, uniform = false, textures = false, images = false) {",
+        "after": "function decode(bytes, provenance, standard, uniform = false, textures = false, images = false, colors = false) {"
+      },
+      {
+        "before": "this.images = images;",
+        "after": "this.images = images; this.colors = colors;"
+      },
+      {
+        "before": "[2, 67, 233].includes(format) && target === 2",
+        "after": "([2, 67, 233].includes(format) || p.colors && byteColorFormat(format)) && target === 2"
+      },
+      {
+        "before": "[2, 16, 67, 233].includes(format) && (p.images ?",
+        "after": "([2, 16, 67, 233].includes(format) || p.colors && byteColorFormat(format)?.render) && (p.images ?"
+      },
+      {
+        "before": "function decode(bytes, provenance, standard, uniform = false, textures = false, images = false, colors = false) {",
+        "after": "/** Original normalized-byte and sRGB colors require an explicit host factory. */\nexport function decodeStandardColorSubmission(bytes, provenance = {}) {\n  return decode(bytes, provenance, true, true, true, true, true);\n}\n\nfunction decode(bytes, provenance, standard, uniform = false, textures = false, images = false, colors = false) {"
+      },
+      {
+        "before": "payloadDwords, standard, uniform, textures, images);",
+        "after": "payloadDwords, standard, uniform, textures, images, colors);"
+      },
+      {
+        "before": "profile: images ? STANDARD_IMAGE_PROFILE",
+        "after": "profile: colors ? STANDARD_COLOR_PROFILE : images ? STANDARD_IMAGE_PROFILE"
+      }
+    ],
+    "renderer/virgl-command/resources.mjs": [
+      {
+        "before": "/** Bounded resource ownership and transfers. See resources-README.md. */\n",
+        "after": "/** Bounded resource ownership and transfers. See resources-README.md. */\nimport {byteColorFormat, STANDARD_COLOR_TRANSFER_PROFILE} from \"./color-images.mjs\";\n"
+      },
+      {
+        "before": "function normalizeMetadata(value, limits, uniform = false, bufferRoles = false, mipmaps = false) {",
+        "after": "function normalizeMetadata(value, limits, uniform = false, bufferRoles = false, mipmaps = false, colors = false) {"
+      },
+      {
+        "before": "mipmaps && meta.target === 2 && [2, 67, 233].includes(meta.format)",
+        "after": "mipmaps && meta.target === 2 && ([2, 67, 233].includes(meta.format) || colors && byteColorFormat(meta.format))"
+      },
+      {
+        "before": "let kind, byteLength, levels;",
+        "after": "let kind, byteLength, levels, color, gpuByteLength;"
+      },
+      {
+        "before": "const roles = meta.bind & 10, hints = (1 << 18) | (1 << 20);",
+        "after": "color = colors ? byteColorFormat(meta.format) : null;\n    const roles = meta.bind & 10, hints = (1 << 18) | (1 << 20);"
+      },
+      {
+        "before": "meta.target === 2 && [2, 67, 233].includes(meta.format) && roles !== 0",
+        "after": "meta.target === 2 && ([2, 67, 233].includes(meta.format) || color) && roles !== 0 && (!color?.snorm || roles === 8)"
+      },
+      {
+        "before": "byteLength = checkedProduct(checkedProduct(meta.width, meta.height, limits.resourceBytes, \"Texture allocation is too large.\"), 4,",
+        "after": "byteLength = checkedProduct(checkedProduct(meta.width, meta.height, limits.resourceBytes, \"Texture allocation is too large.\"), color?.pixelBytes ?? 4,"
+      },
+      {
+        "before": "    if (mipmaps && meta.lastLevel > 0) {",
+        "after": "    if (color) gpuByteLength = checkedProduct(checkedProduct(meta.width, meta.height, limits.resourceBytes, \"Native color allocation is too large.\"), color.nativePixelBytes, limits.resourceBytes, \"Native color allocation is too large.\");\n    if (mipmaps && meta.lastLevel > 0) {"
+      },
+      {
+        "before": "levels = []; byteLength = 0;",
+        "after": "levels = []; byteLength = 0; if (color) gpuByteLength = 0;"
+      },
+      {
+        "before": "checkedProduct(width, height, limits.resourceBytes, \"Mip allocation is too large.\"), 4,",
+        "after": "checkedProduct(width, height, limits.resourceBytes, \"Mip allocation is too large.\"), color?.pixelBytes ?? 4,"
+      },
+      {
+        "before": "levels.push({ level, width, height, byteLength: bytes }); byteLength += bytes;",
+        "after": "let nativeBytes;\n        if (color) {\n          nativeBytes = checkedProduct(checkedProduct(width, height, limits.resourceBytes, \"Native mip is too large.\"), color.nativePixelBytes, limits.resourceBytes, \"Native mip is too large.\");\n          require(nativeBytes <= limits.resourceBytes - gpuByteLength, \"limit-exceeded\", \"Native mip chain exceeds resource byte limit.\");\n          gpuByteLength += nativeBytes;\n        }\n        levels.push({ level, width, height, byteLength: bytes, ...(color ? { gpuByteLength: nativeBytes } : {}) }); byteLength += bytes;"
+      },
+      {
+        "before": "return freeze({ ...meta, kind, byteLength, ...(levels ? { levels } : {}) });",
+        "after": "return freeze({ ...meta, kind, byteLength, ...(levels ? { levels } : {}), ...(color ? { pixelBytes: color.pixelBytes, gpuByteLength } : {}) });"
+      },
+      {
+        "before": "const pixelBytes = depth ? 2 : texture ? 4 : 1;",
+        "after": "const color = Object.hasOwn(meta, \"pixelBytes\") ? byteColorFormat(meta.format) : null;\n  const pixelBytes = depth ? 2 : texture ? color?.pixelBytes ?? 4 : 1;"
+      },
+      {
+        "before": "  return freeze({ kind: texture ? \"texture\" : \"buffer\", box: { ...box }, offset, rowBytes, rowCount: box.height,",
+        "after": "  const colorScratch = color ? checkedProduct(checkedProduct(box.width, box.height, RESOURCE_LIMITS.scratchBytes, \"Color transfer is too large.\"), direction === \"readback\" ? 4 : Math.max(color.pixelBytes, color.nativePixelBytes), RESOURCE_LIMITS.scratchBytes, \"Native color scratch exceeds byte limit.\") : 0;\n  return freeze({ kind: texture ? \"texture\" : \"buffer\", box: { ...box }, offset, rowBytes, rowCount: box.height,"
+      },
+      {
+        "before": "direction, ...(depth ? { scratchBytes: packedBytes,",
+        "after": "direction, ...(color ? { scratchBytes: colorScratch, stagingBytes: direction === \"readback\" ? colorScratch : 0 } : {}), ...(depth ? { scratchBytes: packedBytes,"
+      },
+      {
+        "before": "  const out = new Uint8Array(layout.tightBytes);\n  for (let row = 0; row < layout.rowCount; row++) copySegments",
+        "after": "  const out = new Uint8Array(scratchCharge(layout)).subarray(0, layout.tightBytes);\n  for (let row = 0; row < layout.rowCount; row++) copySegments"
+      },
+      {
+        "before": "  const out = new Uint8Array(layout.tightBytes);\n  for (let row = 0; row < layout.rowCount; row++) for",
+        "after": "  const out = new Uint8Array(scratchCharge(layout)).subarray(0, layout.tightBytes);\n  for (let row = 0; row < layout.rowCount; row++) for"
+      },
+      {
+        "before": "function createStore(options, uniform, bufferRoles = false, mipmaps = false, images = false) {",
+        "after": "export function createStandardColorResourceStore(options) { return createStore(options, true, true, true, true, true); }\n\nexport function computeStandardColorTransferLayout(metadata, fields, backingByteLength, overrides = {}) {\n  return result(() => {\n    const limits = limitsFor(overrides);\n    return success({ layout: layoutFor(normalizeMetadata(metadata, limits, true, true, true, true), normalizedFields(fields), backingByteLength, limits) });\n  });\n}\n\nfunction createStore(options, uniform, bufferRoles = false, mipmaps = false, images = false, colors = false) {"
+      },
+      {
+        "before": "    const requested = limitsFor(config.limits);",
+        "after": "    require(!colors || backend.colorProfile === STANDARD_COLOR_TRANSFER_PROFILE, \"invalid-input\", \"Byte colors require the qualified native transfer backend.\");\n    const requested = limitsFor(config.limits);"
+      },
+      {
+        "before": "gpuBytes -= res.meta.byteLength;",
+        "after": "gpuBytes -= res.meta.gpuByteLength ?? res.meta.byteLength;"
+      },
+      {
+        "before": "normalizeMetadata(metadata, limits, uniform, bufferRoles, mipmaps);",
+        "after": "normalizeMetadata(metadata, limits, uniform, bufferRoles, mipmaps, colors);"
+      },
+      {
+        "before": "meta.kind === \"staging\" ? 0 : meta.byteLength;",
+        "after": "meta.kind === \"staging\" ? 0 : meta.gpuByteLength ?? meta.byteLength;"
+      },
+      {
+        "before": "entry.upload = new Uint8Array(bytes); return success();",
+        "after": "entry.upload = new Uint8Array(scratchCharge(entry.layout)).subarray(0, entry.layout.tightBytes);\n        entry.upload.set(bytes); return success();"
+      },
+      {
+        "before": "const levels = []; let byteLength = 0;",
+        "after": "const levels = []; let byteLength = 0, gpuByteLength = 0;\n        const color = Object.hasOwn(meta, \"pixelBytes\") ? byteColorFormat(meta.format) : null;"
+      },
+      {
+        "before": "checkedProduct(w, h, limits.resourceBytes, \"View plane is too large.\"), 4,",
+        "after": "checkedProduct(w, h, limits.resourceBytes, \"View plane is too large.\"), color?.pixelBytes ?? 4,"
+      },
+      {
+        "before": "levels.push({ level, width: w, height: h, byteLength: bytes }); byteLength += bytes;",
+        "after": "let nativeBytes;\n          if (color) {\n            nativeBytes = checkedProduct(checkedProduct(w, h, limits.resourceBytes, \"Native view plane is too large.\"), color.nativePixelBytes, limits.resourceBytes, \"Native view plane is too large.\");\n            require(nativeBytes <= limits.resourceBytes - gpuByteLength, \"limit-exceeded\", \"Native view mip chain exceeds resource byte limit.\");\n            gpuByteLength += nativeBytes;\n          }\n          levels.push({ level, width: w, height: h, byteLength: bytes, ...(color ? { gpuByteLength: nativeBytes } : {}) }); byteLength += bytes;"
+      },
+      {
+        "before": "lastLevel: lastLevel - firstLevel, byteLength, levels });",
+        "after": "lastLevel: lastLevel - firstLevel, byteLength, levels, ...(color ? { gpuByteLength } : {}) });"
+      },
+      {
+        "before": "lastLevel === meta.lastLevel ? 0 : byteLength;",
+        "after": "lastLevel === meta.lastLevel ? 0 : color ? gpuByteLength : byteLength;"
+      },
+      {
+        "before": "export function createWebGL2TransferBackend(gl) {",
+        "after": "export function createWebGL2TransferBackend(gl) { return createTransferBackend(gl, false); }\n\nexport function createStandardColorTransferBackend(gl) { return createTransferBackend(gl, true); }\n\nfunction createTransferBackend(gl, colors) {"
+      },
+      {
+        "before": "    let vao = null, framebuffer = null, depthProgram = null, disposed = false;",
+        "after": "    require(!colors || gl.getExtension(\"EXT_render_snorm\"), \"unsupported-host\", \"Native signed color copies/readbacks require EXT_render_snorm.\");\n    let vao = null, framebuffer = null, depthProgram = null, disposed = false;"
+      },
+      {
+        "before": "      const profile = colorFormats[meta.format];",
+        "after": "      const color = colors ? byteColorFormat(meta.format) : null;\n      const profile = color ? { internal: gl[color.internal], upload: gl[color.upload], type: gl[color.type] } : colorFormats[meta.format];"
+      },
+      {
+        "before": "    const nativeUpload = (format, bytes) => {",
+        "after": "    const nativeUpload = (format, bytes) => {\n      const color = colors ? byteColorFormat(format) : null;\n      if (color) {\n        const count = bytes.length / color.pixelBytes, native = new Uint8Array(bytes.buffer, bytes.byteOffset, count * color.nativePixelBytes);\n        // Expansion walks backwards; compaction walks forwards. One pixel is\n        // captured before permutation, inside the already charged reservation.\n        for (let step = 0; step < count; step++) {\n          const i = color.nativePixelBytes > color.pixelBytes ? count - step - 1 : step, source = i * color.pixelBytes, pixel = [bytes[source], bytes[source + 1], bytes[source + 2], bytes[source + 3]];\n          for (let lane = 0; lane < color.nativePixelBytes; lane++) {\n            const original = color.lanes[lane];\n            native[i * color.nativePixelBytes + lane] = original === \"0\" ? 0 : original === \"1\" ? color.snorm ? 127 : 255 : pixel[original];\n          }\n        }\n        return color.snorm ? new Int8Array(native.buffer, native.byteOffset, native.byteLength) : native;\n      }"
+      },
+      {
+        "before": "    const guestReadback = (format, bytes) => {",
+        "after": "    const guestReadback = (format, bytes) => {\n      const color = colors ? byteColorFormat(format) : null;\n      if (color) {\n        const count = bytes.length / 4;\n        for (let i = 0; i < count; i++) {\n          const pixel = [bytes[i * 4], bytes[i * 4 + 1], bytes[i * 4 + 2], bytes[i * 4 + 3]];\n          for (let lane = 0; lane < color.pixelBytes; lane++) {\n            const rgba = color.lanes.indexOf(lane);\n            bytes[i * color.pixelBytes + lane] = rgba < 0 ? 255 : pixel[rgba];\n          }\n        }\n        return bytes.subarray(0, count * color.pixelBytes);\n      }"
+      },
+      {
+        "before": "        maxTextureSize,",
+        "after": "        maxTextureSize, ...(colors ? { colorProfile: STANDARD_COLOR_TRANSFER_PROFILE } : {}),"
+      },
+      {
+        "before": "gl.texStorage2D(gl.TEXTURE_2D, meta.lastLevel + 1, colorFormat(meta).internal, meta.width, meta.height);",
+        "after": "gl.texStorage2D(gl.TEXTURE_2D, meta.lastLevel + 1, colorFormat(meta).internal, meta.width, meta.height);\n              if (colors) check();"
+      },
+      {
+        "before": "if (meta.format === 233) for (let level = 0; level <= meta.lastLevel; level++) initializeXAlpha(texture, level);",
+        "after": "if (meta.format === 233 || colors && byteColorFormat(meta.format)?.implicitAlpha && byteColorFormat(meta.format).nativePixelBytes === 4) for (let level = 0; level <= meta.lastLevel; level++) initializeXAlpha(texture, level);"
+      },
+      {
+        "before": "const destination = meta.format === 233 ? new Uint32Array(bytes.buffer) : bytes;",
+        "after": "const destination = meta.format === 233 ? new Uint32Array(bytes.buffer) : colors && byteColorFormat(meta.format)?.snorm ? new Int8Array(bytes.buffer) : bytes;"
+      }
+    ],
+    "renderer/virgl-command/state.mjs": [
+      {
+        "before": "/** Typed VirGL state and bounded triangle draws. See state-README.md and draw-README.md. */\n",
+        "after": "/** Typed VirGL state and bounded triangle draws. See state-README.md and draw-README.md. */\nimport {byteColorFormat} from \"./color-images.mjs\";\n"
+      },
+      {
+        "before": "decodeStandardUniformSubmission, decodeStandardImageSubmission, vertexFormat",
+        "after": "decodeStandardUniformSubmission, decodeStandardImageSubmission, decodeStandardColorSubmission, vertexFormat"
+      },
+      {
+        "before": "export const STANDARD_IMAGE_ASYNC_PROFILE = \"virgl-standard-image-async-jobs-v1\";",
+        "after": "export const STANDARD_IMAGE_ASYNC_PROFILE = \"virgl-standard-image-async-jobs-v1\";\nexport const STANDARD_COLOR_ASYNC_PROFILE = \"virgl-standard-byte-color-async-jobs-v1\";"
+      },
+      {
+        "before": "/** Host capabilities are trusted and non-reentrant. */",
+        "after": "/** Original byte colors, including signed samples and linear sRGB operations. */\nexport function createVirglStandardColorAsyncRenderer(options) {\n  return createRenderer(options, true, true, true, true, true, true, true);\n}\n\n/** Host capabilities are trusted and non-reentrant. */"
+      },
+      {
+        "before": "bufferRoles = false, images = false) {",
+        "after": "bufferRoles = false, images = false, colors = false) {"
+      },
+      {
+        "before": "const profile = images ? STANDARD_IMAGE_ASYNC_PROFILE",
+        "after": "const profile = colors ? STANDARD_COLOR_ASYNC_PROFILE : images ? STANDARD_IMAGE_ASYNC_PROFILE"
+      },
+      {
+        "before": "const decodeCommands = images ? decodeStandardImageSubmission",
+        "after": "const decodeCommands = colors ? decodeStandardColorSubmission : images ? decodeStandardImageSubmission"
+      },
+      {
+        "before": "const xAlpha = (sub) => [2, 233].includes(sub.surfaces[0]?.metadata.format);",
+        "after": "const xAlpha = (sub) => [2, 233].includes(sub.surfaces[0]?.metadata.format) || colors && Boolean(byteColorFormat(sub.surfaces[0]?.metadata.format)?.implicitAlpha);"
+      }
+    ]
+  },
+  "newFiles": [
+    "renderer/virgl-command/color-images.mjs"
+  ],
+  "predecessor": "ac916b7fd0b194c088fe5d54800b24a80a4679ac"
+}

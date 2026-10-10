@@ -25,7 +25,7 @@ const sourcePaths=[
   'tools/virgl-command/raster-fixtures.mjs','tools/verify-virgl-raster-depth.mjs',
   'tools/verify-virgl-raster-depth.sh','tools/virgl-command/raster-receipt.py','tools/virgl-command/raster-cold.py',
   'Makefile','renderer/virgl-command/README.md','renderer/virgl-command/resources-README.md','renderer/virgl-command/state-README.md',
-];
+ 'renderer/virgl-command/color-images.mjs'];
 const report={schema:1,task:'E6-T12h',status:'running',guestExecution:false,
   boundary:'Complete original first client submissions and independent literal raster tests; no live guest offload.',
   gitHead:execFileSync('git',['rev-parse','HEAD'],{cwd:repo,encoding:'utf8'}).trim(),command:[process.execPath,...process.argv.slice(1)],

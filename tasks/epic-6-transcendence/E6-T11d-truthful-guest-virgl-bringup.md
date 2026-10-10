@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22]
-blocked_on: E6-T11d22
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23]
+blocked_on: E6-T11d23
 estimate: S
 risk: high
 capstone: false
@@ -332,3 +332,9 @@ D20 is independently verified at `c0488902039a5fb5f9efc8c62101798668b2ce4a`. Its
 ### 2026-10-10 — worker — image ranges verified; byte-color storage gap
 
 D21 is independently verified at `ac916b7fd0b194c088fe5d54800b24a80a4679ac`. Its original image decoder/store still reject 24 normalized-byte/sRGB families. `standard-byte-color-gap.json` and `standard-byte-color-storage-gap.json` under `evidence/virgl-production-readiness` bind 48 literal view/surface packets and 24 original metadata records, each refused before native allocation, to the exact unchanged source/Wasm and pinned Mesa/VirGL descriptors. Reproduce by decoding each `packetHex` through `decodeStandardImageSubmission` and passing each original metadata record to `createStandardImageResourceStore` with its qualified predecessor backend. Ordered S/high D22 closes one original byte-color image/transfer boundary with physical signed and sRGB semantics, padded storage charging and original memory orders. The explicit user instruction continues this graphics chain; typed caps, complete API, actual RISC-V guest Mesa/compositor, worker scanout and live deployment remain successors.
+
+### 2026-10-10 — worker — byte-color verified; original texture operation gap
+
+E6-T11d22 is independently verified at `ac2b1ed7a77e82afb21321d6dfdabe0b2da12d4c`. The complete original TXL/TXF/TXD/TXB/TXQ shaders still reject at the unchanged standard/uniform compiler, including legal fragment forms and vertex forms other than TXB. `evidence/virgl-production-readiness/standard-texture-operation-gap.json` binds twenty complete literal inputs, all responses, pinned parser/converter sources and the actual predecessor Wasm SHA256 `fc479ec92133f8b75d26043d20fca97d00b1a1556481abf5c5daf23b66e00fca`. Exact repro: iterate its `rows`, select `createVirglStandardShaderBridge` or `createVirglStandardUniformShaderBridge` from `renderer/virgl-shader/standard.mjs` according to `facet`, and call `translate({stage,text})`; all return unsupported-feature.
+
+Ordered S/high E6-T11d23 closes only the original 2D/FLOAT native texture compiler boundary, with a distinct selected profile and owned native level-query metadata. A following retained-image consumer must bind this metadata from validated original views. The user's production graphics request keeps this chain ahead of unrelated queue work. No capset, full API, guest draw, deployment or performance authority follows from the prerequisite.

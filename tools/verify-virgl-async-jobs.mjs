@@ -34,7 +34,7 @@ const codePaths = [
   'tools/virgl-command/async-receipt.py', 'tools/virgl-command/async-cold.py',
   'renderer/virgl-shader/vendor/src/virgl_protocol.h', 'renderer/virgl-shader/vendor/src/virgl_hw.h',
   'tools/virgl-capture/workloads/textured-scene.c', 'Makefile',
-];
+ 'renderer/virgl-command/color-images.mjs'];
 const html = `<!doctype html><meta charset="utf-8"><title>VirGL asynchronous renderer jobs</title>
 <style>body{font:16px system-ui;background:#111720;color:#e7edf6;margin:32px;max-width:1100px}h1{font-size:27px}p{line-height:1.5}#draws{display:flex;gap:12px}figure{margin:8px}figcaption{font-size:12px;max-width:192px}pre{white-space:pre-wrap;background:#1b2533;padding:20px;border:1px solid #435167;border-radius:8px;font-size:14px}</style>
 <h1>VirGL asynchronous renderer jobs</h1><p>Eight original submissions · actual GPU staging and zero-timeout fences · explicit fresh DMA handshakes</p>

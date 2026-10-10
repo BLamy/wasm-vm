@@ -1,5 +1,6 @@
 /** Typed VirGL state and bounded triangle draws. See state-README.md and draw-README.md. */
-import { decodeSubmission, decodeStandardSubmission, decodeStandardUniformSubmission, decodeStandardImageSubmission, vertexFormat } from "./decoder.mjs";
+import {byteColorFormat} from "./color-images.mjs";
+import { decodeSubmission, decodeStandardSubmission, decodeStandardUniformSubmission, decodeStandardImageSubmission, decodeStandardColorSubmission, vertexFormat } from "./decoder.mjs";
 import { LIMITS as SHADER_LIMITS } from "../virgl-shader/index.mjs";
 import { createKeyCache, hashKey } from "./cache.mjs";
 import { parseConstantDomain, checkFiniteBank, checkIndirectBank, checkLoopBank, checkRadialBank, checkRasterBank, checkConversionBank, checkExactBank, COORDINATE_KEY, DISCARD_KEY,
@@ -16,6 +17,7 @@ export const STANDARD_ASYNC_PROFILE = "virgl-standard-async-jobs-v1";
 export const STANDARD_UNIFORM_ASYNC_PROFILE = "virgl-standard-uniform-async-jobs-v1";
 export const STANDARD_BUFFER_ASYNC_PROFILE = "virgl-standard-buffer-async-jobs-v1";
 export const STANDARD_IMAGE_ASYNC_PROFILE = "virgl-standard-image-async-jobs-v1";
+export const STANDARD_COLOR_ASYNC_PROFILE = "virgl-standard-byte-color-async-jobs-v1";
 export const JOB_LIMITS = Object.freeze({ jobs: 1, commandsPerStep: 64, submissionBytes: 262144, transferBytes: 4194304 });
 export const CACHE_LIMITS = Object.freeze({ translations: 128, translationBytes: 4194304,
   programBytes: 4194304, states: 256, stateBytes: 1048576, debugBytes: 4194304 });
@@ -186,8 +188,13 @@ export function createVirglStandardImageAsyncRenderer(options) {
   return createRenderer(options, true, true, true, true, true, true);
 }
 
+/** Original byte colors, including signed samples and linear sRGB operations. */
+export function createVirglStandardColorAsyncRenderer(options) {
+  return createRenderer(options, true, true, true, true, true, true, true);
+}
+
 /** Host capabilities are trusted and non-reentrant. */
-function createRenderer(options, drawing, asynchronous = false, standard = false, uniform = false, bufferRoles = false, images = false) {
+function createRenderer(options, drawing, asynchronous = false, standard = false, uniform = false, bufferRoles = false, images = false, colors = false) {
   return result(() => {
     const config = dataRecord(options, ["gl", "resources", "bindings", "shaderBridge", "limits", "cacheLimits", ...(drawing ? ["drawLimits"] : []), ...(asynchronous ? ["asyncAccess", "jobLimits"] : []), ...(standard ? ["primitiveAssembly"] : []), ...(uniform ? ["uniformAccess"] : []), ...(images ? ["imageAccess"] : [])], ["gl", "resources", "bindings", "shaderBridge", ...(asynchronous ? ["asyncAccess"] : []), ...(uniform ? ["uniformAccess"] : []), ...(images ? ["imageAccess"] : [])]);
     const { gl, resources, bindings, shaderBridge } = config;
@@ -230,8 +237,8 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
     const imageAccess = images ? config.imageAccess : null;
     require(!images || imageAccess && ["capture", "resolve", "refresh", "hold", "holdStorage", "release", "inspect"].every(name => typeof imageAccess[name] === "function"),
       "invalid-input", "Original native image range authority is required.");
-    const profile = images ? STANDARD_IMAGE_ASYNC_PROFILE : bufferRoles ? STANDARD_BUFFER_ASYNC_PROFILE : uniform ? STANDARD_UNIFORM_ASYNC_PROFILE : standard ? STANDARD_ASYNC_PROFILE : asynchronous ? ASYNC_PROFILE : drawing ? DRAW_PROFILE : STATE_PROFILE;
-    const decodeCommands = images ? decodeStandardImageSubmission : uniform ? decodeStandardUniformSubmission : standard ? decodeStandardSubmission : decodeSubmission;
+    const profile = colors ? STANDARD_COLOR_ASYNC_PROFILE : images ? STANDARD_IMAGE_ASYNC_PROFILE : bufferRoles ? STANDARD_BUFFER_ASYNC_PROFILE : uniform ? STANDARD_UNIFORM_ASYNC_PROFILE : standard ? STANDARD_ASYNC_PROFILE : asynchronous ? ASYNC_PROFILE : drawing ? DRAW_PROFILE : STATE_PROFILE;
+    const decodeCommands = colors ? decodeStandardColorSubmission : images ? decodeStandardImageSubmission : uniform ? decodeStandardUniformSubmission : standard ? decodeStandardSubmission : decodeSubmission;
     const parseShaderMetadata = uniform ? parseStandardUniformShaderMetadata : standard ? parseStandardShaderMetadata : parseConstantDomain;
     const idle = () => require(activeJob === null, "busy", "A renderer job is active; cancel and drain it before changing state.");
     const contexts = new Map(), objects = new Set(), programs = new Set();
@@ -850,7 +857,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           format.elementBytes <= buffer.metadata.byteLength - buffer.fields.offset - element.sourceOffset, "out-of-bounds", "Vertex element exceeds storage.");
       }
     };
-    const xAlpha = (sub) => [2, 233].includes(sub.surfaces[0]?.metadata.format);
+    const xAlpha = (sub) => [2, 233].includes(sub.surfaces[0]?.metadata.format) || colors && Boolean(byteColorFormat(sub.surfaces[0]?.metadata.format)?.implicitAlpha);
     const colorMask = (sub) => {
       const bits = sub.blend?.fields.renderTargets[0].colorMask ?? 15;
       return [1, 2, 4, 8].map((bit) => Boolean(bits & bit) && (bit !== 8 || !xAlpha(sub)));

@@ -23,7 +23,7 @@ const sourcePaths = [
  'renderer/virgl-shader/build/wasm/virgl-shader.mjs','renderer/virgl-shader/build/wasm/virgl-shader.wasm',
  'renderer/virgl-shader/UPSTREAM.json','renderer/virgl-shader/bridge.c','renderer/virgl-shader/build.sh',
  'tools/verify-virgl-standard-texture-storage.mjs',
-];
+ 'renderer/virgl-command/color-images.mjs'];
 const report = { schema: 1, task: "E6-T11d20", status: "running", guestExecution: false, productionNegotiation: false,
   gitHead: execFileSync("git", ["rev-parse", "HEAD"], { cwd: repo, encoding: "utf8" }).trim(),
   command: [process.execPath, ...process.argv.slice(1)], host: { platform: process.platform, arch: process.arch,

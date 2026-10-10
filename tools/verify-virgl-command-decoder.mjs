@@ -28,7 +28,7 @@ const codePaths = [
   'tools/verify-virgl-command-decoder.sh', 'tools/virgl-command/receipt.py', 'tools/virgl-command/coverage.py', 'tools/virgl-command/cold.py',
   'renderer/virgl-shader/vendor/src/virgl_protocol.h',
   'docs/gpu-3d-contract.json', 'docs/gpu-3d-decision.md', 'Makefile',
-];
+ 'renderer/virgl-command/color-images.mjs'];
 const html = `<!doctype html><meta charset="utf-8"><title>VirGL command decoding proof</title>
 <style>body{font:16px system-ui;background:#111720;color:#e7edf6;margin:32px;max-width:1100px}h1{font-size:27px}p{line-height:1.5}pre{white-space:pre-wrap;background:#1b2533;padding:20px;border:1px solid #435167;border-radius:8px;font-size:14px}</style>
 <h1>VirGL command decoding</h1><p>Original textured-scene capture · bounded byte parsing · no GPU execution or guest acceleration claimed</p>
@@ -67,7 +67,7 @@ try {
   assert.equal(report.node.status, 'passed');
   console.log(`Node command acceptance passed (${report.nodeMs.toFixed(0)} ms)`);
   if (!options['node-only']) {
-    const modulePaths = ['renderer/virgl-command/decoder.mjs', 'renderer/virgl-command/tests/acceptance.mjs'];
+    const modulePaths = ['renderer/virgl-command/decoder.mjs', 'renderer/virgl-command/tests/acceptance.mjs', 'renderer/virgl-command/color-images.mjs'];
     let decoderBytes = sources.get(modulePaths[0]);
     if (options.sabotage) {
       const original = decoderBytes.toString('utf8');
@@ -82,6 +82,7 @@ try {
       ['/fixtures.json', { bytes: fixtureBytes, type: 'application/json' }],
       [`/${modulePaths[0]}`, { bytes: decoderBytes, type: 'text/javascript' }],
       [`/${modulePaths[1]}`, { bytes: sources.get(modulePaths[1]), type: 'text/javascript' }],
+      ['/renderer/virgl-command/color-images.mjs', { bytes: sources.get('renderer/virgl-command/color-images.mjs'), type: 'text/javascript' }],
     ]);
     server = createServer((request, response) => {
       const pathname = new URL(request.url, 'http://localhost').pathname;
