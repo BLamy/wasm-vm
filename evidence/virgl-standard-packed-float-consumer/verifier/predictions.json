@@ -1,0 +1,127 @@
+{
+  "schema": "d28-fresh-critic-preobservations-v1",
+  "submission": "08936a154a18740b927ef683d006d8c2a75904c6",
+  "runtime": "8d3e5ff481d2ecdf9930c44c3d1894bdcdb3e180",
+  "predecessor": "ed846a71801b74986e903f4f029b225df9545134",
+  "roundingSpec": "https://registry.khronos.org/OpenGL/specs/es/3.0/es_spec_3.0.pdf sections2.1.3/2.1.4",
+  "rounding": [
+    {
+      "fractionBits": 6,
+      "f32": 0.10000000149011612,
+      "lower": 0.099609375,
+      "upper": 0.1005859375,
+      "towardZero": 0.099609375,
+      "nearest": 0.099609375
+    },
+    {
+      "fractionBits": 5,
+      "f32": 0.10000000149011612,
+      "lower": 0.099609375,
+      "upper": 0.1015625,
+      "towardZero": 0.099609375,
+      "nearest": 0.099609375
+    }
+  ],
+  "predictions": [
+    {
+      "id": "P01",
+      "prediction": "Authenticate every indexed archive member independently; hot/cold identities equal the frozen 8d3e5ff runtime/harness, all carried D26/D27 archives rehash fully.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P02",
+      "prediction": "Literal format124 view handle9/resource6/target2/levels1..3/swizzle[2,4,0,5] and mip2 surface handle10/resource6 admit only selected packed profile. Format125, unknown format, range/layer/target/reserved/swizzle inputs refuse; all historical decoders refuse packed.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P03",
+      "prediction": "Migration inverse exactly reconstructs ed846a7 decoder/state; storage/maps/compiler/cache/crates/web/guest remain byte-identical. No ignored tests or disabled checks are added.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P04",
+      "prediction": "Before output inspection: f32(0.1)=0.10000000149011612. Both 6/5-fraction nearest and toward-zero conversions produce 0.099609375; packed clear has exactly that RGB and alpha1, negative clear yields [0,2.5,0,1].",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P05",
+      "prediction": "Original LE UInt32 word uses low11 red/next11 green/high10 blue, exponent bias15, fractions6/6/5 and implicit alpha1. Every original source native lane agrees with this independent decode; backing offsets/strides match original transfers.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P06",
+      "prediction": "Both stages TEX/TXL/TXF/TXD/TXQ and fragment TXB reconstruct from original TGSI immediates, original filters/ranges/swizzles. Identity and [2,zero,0,one] swizzles plus local query width/height/count agree at every output pixel.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P07",
+      "prediction": "Actual native source allocations/views use R11F_G11F_B10F 35898, source upload RGB6407/UNSIGNED_INT_10F_11F_11F_REV35899 with Uint32Array; sampler ranges are local0..last-first. Packed target format124 remains storage35898.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P08",
+      "prediction": "Every completed/native output observation follows actual and delivered physical signal37146/37148, a created earlier-turn sync, and once-only deletion. Disposal alone is never GPU completion.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P09",
+      "prediction": "Actual native attributes/bridge request original texts and complete source planes match original positions/TGSI; first/warm preserve programLinks with namespace selected.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P10",
+      "prediction": "Public packed words independently nearest-invert observed native RGB IEEE32; every public row, original offset5/stride(rowBytes+3) and untouched byte0x2e agree. Nonpacked outputs obey original component precision/count.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P11",
+      "prediction": "Packed fixture word(896|976<<11|544<<22) independently decodes [.5,1.25,4,1]. After mask5/add blend original RGB becomes [1,1.25,8,1]. Clear ignores masks/scissor; no float tolerance may certify packed quantization.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P12",
+      "prediction": "Every recorded target mip outside the selected original surface stays native zeros with implicit alpha1; selected mip dimensions equal max(1,floor(base/2^level)).",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P13",
+      "prediction": "Two retained contexts keep actual old source/view generations and original native planes after unequal11x7 replacement ID6; restore/reset replays same old values.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P14",
+      "prediction": "At queued final fence old source and target imageHolds=2 before public-name reuse; complete/cancel preserve old physical outputs and delayed native cleanup; renderer/resource disposal has explicit disposed result and zero cleanup budgets.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P15",
+      "prediction": "Original GPU-only source clear at firstLevel+1 to [.125,1.25,4,1] yields those next samples while every original source backing byte stays identical; feedback refuses.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P16",
+      "prediction": "Missing three native extensions refuses before native allocation; actual STENCIL-for-COLOR clear gives backend-error before draw. Unknown/inherited/accessor/trapped config gives invalid-input, zero getters/native allocations.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P17",
+      "prediction": "RGBA32F substituted for packed output yields 0.10000000149011612 RGB, disagreeing with original packed0.099609375 after fence; forced nearest disagrees with original linear sample after fence. Both same original-input oracles reject.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P18",
+      "prediction": "All owned native objects delete exactly once and resource/renderer budgets terminal zero in all runs/schedules; strict limits remain previous values.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P19",
+      "prediction": "For every changed executable interval, innermost/narrowest full V8 governing region is positive in an actual run or receives a precise nonbehavior waiver. Zero nested regions cannot inherit parent maxima.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P20",
+      "prediction": "Novel original native seed0xc01dcafe: NPOT13x7 packed source, truncated range1..3 and full range0..3 with TXL lod0.5 linear trilinear, swizzle[2,0,5,4]; retained two-context old source survives unequal9x5 public-ID replacement. Exact original bilinear/trilinear prediction must discriminate a physical forced-nearest sampler control after consumed fence.",
+      "status": "PREDICTED"
+    }
+  ]
+}
