@@ -1,0 +1,34 @@
+[
+  {
+    "prefix": "hot",
+    "mode": "matrix",
+    "binarySha256": "eed445b88ff48ad7ca72ceb9a7d42ee07dc83304982261cc1ee2b62554256714",
+    "stdoutSha256": "54dc79dab9a8935891349d0be4ae1fba0081d4984ab86389d281f4a95f01a31c",
+    "exitCode": 0,
+    "exactReplay": true
+  },
+  {
+    "prefix": "hot",
+    "mode": "allocations",
+    "binarySha256": "ed712e4c1bdc96abd07c54142d3a8dbe695c3677c8059f33a9abea239d5a2942",
+    "stdoutSha256": "47ad5c5a615c675167b245f4f74682a134d1aa6de4f4a5ab2d15ff99f684a6a8",
+    "exitCode": 0,
+    "exactReplay": true
+  },
+  {
+    "prefix": "cold",
+    "mode": "matrix",
+    "binarySha256": "f4bd6095e8d667c42153ec55e917c5b49259e243d179096ca7b8364aa2352f54",
+    "stdoutSha256": "54dc79dab9a8935891349d0be4ae1fba0081d4984ab86389d281f4a95f01a31c",
+    "exitCode": 0,
+    "exactReplay": true
+  },
+  {
+    "prefix": "cold",
+    "mode": "allocations",
+    "binarySha256": "2db96e25c1a6eb208caf018554850ba9918bc484d42995841746cde99ce9a4f1",
+    "stdoutSha256": "47ad5c5a615c675167b245f4f74682a134d1aa6de4f4a5ab2d15ff99f684a6a8",
+    "exitCode": 0,
+    "exactReplay": true
+  }
+]

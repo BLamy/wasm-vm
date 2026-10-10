@@ -1,0 +1,81 @@
+{
+  "status": "HELD",
+  "unchangedEvidence": 187,
+  "retained": [
+    {
+      "prefix": "hot",
+      "record": "compiler-retained/physical-audit.json",
+      "sha256": "fc838e97c46506e0e6bd82f6b01377a3860d6898605e3465a7fed9d43cf50595",
+      "status": "passed",
+      "frames": 129,
+      "pixels": 2390688,
+      "nativeDraws": null
+    },
+    {
+      "prefix": "hot",
+      "record": "retained-scalar/physical-audit.json",
+      "sha256": "518bdd12e85b41c37a2a15cd5dc8e33d7e3b502485fe9d25723e3f2651bc482f",
+      "status": "passed",
+      "frames": 391,
+      "pixels": 102912,
+      "nativeDraws": 391
+    },
+    {
+      "prefix": "hot",
+      "record": "retained-compact/physical-audit.json",
+      "sha256": "58551defd7bb7edfffc51f5cbd3f9f02895c19f3d6eacb032f270f9076bfdb5f",
+      "status": "passed",
+      "frames": 225,
+      "pixels": 60160,
+      "nativeDraws": 225
+    },
+    {
+      "prefix": "cold",
+      "record": "compiler-retained/physical-audit.json",
+      "sha256": "fc838e97c46506e0e6bd82f6b01377a3860d6898605e3465a7fed9d43cf50595",
+      "status": "passed",
+      "frames": 129,
+      "pixels": 2390688,
+      "nativeDraws": null
+    },
+    {
+      "prefix": "cold",
+      "record": "retained-scalar/physical-audit.json",
+      "sha256": "518bdd12e85b41c37a2a15cd5dc8e33d7e3b502485fe9d25723e3f2651bc482f",
+      "status": "passed",
+      "frames": 391,
+      "pixels": 102912,
+      "nativeDraws": 391
+    },
+    {
+      "prefix": "cold",
+      "record": "retained-compact/physical-audit.json",
+      "sha256": "58551defd7bb7edfffc51f5cbd3f9f02895c19f3d6eacb032f270f9076bfdb5f",
+      "status": "passed",
+      "frames": 225,
+      "pixels": 60160,
+      "nativeDraws": 225
+    },
+    {
+      "unchangedDependency": "renderer/virgl-shader/standard_guard.c",
+      "sha256": "1d7c94c83243122ccc1b52607722e5088ed593aab10c3b568db87af256b7db4d"
+    },
+    {
+      "unchangedDependency": "renderer/virgl-shader/raw_bits.c",
+      "sha256": "189bbb5af5530f2966c7dc099726ef07b04810beeb1c125ea2a66015ffe51710"
+    },
+    {
+      "unchangedDependency": "renderer/virgl-shader/checked_upstream.c",
+      "sha256": "a1d60b4e9b214466f2fec6baabde855f78024bee68199aef524ef84f1f7f772b"
+    },
+    {
+      "unchangedDependency": "renderer/virgl-command/resources.mjs",
+      "sha256": "c2355819a1ae04125af8689bb0e23cbdfa73b10dc87710b0be72638397a66eae"
+    },
+    {
+      "unchangedDependency": "renderer/virgl-command/cache.mjs",
+      "sha256": "9e50cc258528e581f79cee0e4e0038994c7968f80046b9db21e7f5e0e4a92cfa"
+    }
+  ],
+  "reason": "Unchanged prior numerical/opcode/allocator/device boundaries carry by digest; changed shared standard C emitter is covered by the new 669-case,129-frame recorded compiler gate and direct raw/ordinary/private anchors. Current original scalar/compact dispatch carries only after its new physical checks."
+}

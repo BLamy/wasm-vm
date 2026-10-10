@@ -1,0 +1,70 @@
+{
+  "schema": "standard-integer-verifier-predictions-v1",
+  "task": "E6-T11d14",
+  "predecessor": "8037ede91b4c8450e696811d33ac7d34235388ba",
+  "submission": "b7a9f1c670f8a986941f2e9c287d800578dce4c2",
+  "runtimeHead": "12bb78e1b7f4b9d636f8d46091b9a1a1766fbe4b",
+  "writtenBeforeEvidenceInspection": true,
+  "predictions": [
+    {
+      "id": "P1",
+      "boundary": "custody",
+      "prediction": "Every archive member occurs once with its indexed byte count and SHA256; hot/cold receipts, original source blobs, generated native/Wasm artifacts and served modules bind frozen runtime head 12bb78e1b7f4b9d636f8d46091b9a1a1766fbe4b. Cold clone was pristine and ran default make verify-E6-T11d14 with listed compiler/runtime environment scrubbed.",
+      "outcome": "PENDING"
+    },
+    {
+      "id": "P2",
+      "boundary": "compiler",
+      "prediction": "Actual C native/sanitized/Wasm outputs agree for all literal 16 slots and mixed masks; disjoint 16-bit masks restrict declarations exactly; old stage/pair produce vec4 zero-mask declarations and raw floating words; integer inputs use ivec4/uvec4 and raw uvec4 reads.",
+      "outcome": "PENDING"
+    },
+    {
+      "id": "P3",
+      "boundary": "API",
+      "prediction": "Primitive-owned exact requests snapshot without evaluating accessors, reject overlap/out-of-range/undeclared masks and alien fields; memory remains fixed16MiB, exhaustion returns no partial successful body and release recovers exact baseline; all typed allocation failures recover.",
+      "outcome": "PENDING"
+    },
+    {
+      "id": "P4",
+      "boundary": "original-format-fetch",
+      "prediction": "Each of formats177..200 retains exact uploaded/full GPU bytes, native integer pointer scalar enum/count/alignment/stride/buffer, no normalization and corresponding shader type. Constants read only declared byte width and sign/zero-expand that width; defaults are raw integer 0,0,0,1, including every missing lane.",
+      "outcome": "PENDING"
+    },
+    {
+      "id": "P5",
+      "boundary": "pixels",
+      "prediction": "Recomputing original TGSI and literal bytes independently yields every recorded full pixel, including signed minima, unsigned maxima, 2^24 neighbors, NaN-looking32bit words, high15 and mixed/shared cases. NaN-looking integers remain exact words, with no NaN category waiver.",
+      "outcome": "PENDING"
+    },
+    {
+      "id": "P6",
+      "boundary": "bounds",
+      "prediction": "Original effective ends equal observed fetched ends, exact source/work/staging ends draw, each one-unit-short/alignment failure rejects before native draw or read allocation as applicable; divisors, indices, instances, restart and all-restart retain original ownership and bounded native calls.",
+      "outcome": "PENDING"
+    },
+    {
+      "id": "P7",
+      "boundary": "lifetime",
+      "prediction": "While reads wait, revision/cancel rejects and drains fences without a draw; same-name reuse retains the old generation and original full pixels; disposal releases all reads/staging/normalization. Poisoned native state is restored.",
+      "outcome": "PENDING"
+    },
+    {
+      "id": "P8",
+      "boundary": "cache-types",
+      "prediction": "For one owned shader pair, float/signed/unsigned/float masks, reflected native types and compiled source agree; translation/program keys differ for complete masks, final float reuses only when retained, budget eviction releases variants. Wrong type/mask/method requests reject before draw.",
+      "outcome": "PENDING"
+    },
+    {
+      "id": "P9",
+      "boundary": "coverage",
+      "prediction": "Each added executable runtime C/JS line/branch is hit by authenticated exact-source LLVM/V8 regions or receives a justified guard/type/logging waiver. Source-line samples alone do not prove branch coverage. Unchanged verified numerical/guest boundaries carry only when dependency/source/evidence digests match.",
+      "outcome": "PENDING"
+    },
+    {
+      "id": "P10",
+      "boundary": "sabotage",
+      "prediction": "Independent high-attribute mixed/shared delayed constant batches seeded after submission preserve all original integer words/pixels through variant changes, eviction and source reuse/revision/cancel. At least one promoted raw-word/type supplied fault completes an actual native draw/fence and fails original full pixel assertions.",
+      "outcome": "PENDING"
+    }
+  ]
+}
