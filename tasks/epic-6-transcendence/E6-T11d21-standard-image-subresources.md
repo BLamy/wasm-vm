@@ -3,7 +3,7 @@ id: E6-T11d21
 epic: 6
 title: Render original 2D sampler ranges and framebuffer mip surfaces
 priority: 525.02703900036
-status: in-progress
+status: implemented
 depends_on: [E6-T11d20]
 estimate: S
 risk: high
@@ -47,3 +47,21 @@ The submission gate records the 750 original wire cases, full 24-resource/936-dr
 ### 2026-10-10 — worker — inherited direct-backend fixture correction
 
 The first frozen attempt at `7529bc0c3fe796b9309c682ffd6308f1945f686d` passed the complete native image matrix, all three boundary schedules, both physical sabotages and independent pixel/plane reconstruction, then stopped in historical async `finalCoverage` at its direct backend allocation. Its fixture omitted `lastLevel`, which the documented normalized host-backend contract includes. Actual predecessor `c0488902` and current source both produce `WebGL error 1281` for that incomplete fixture; both allocate successfully with `lastLevel:0`, on the same actual M4 Metal host with zero console errors. The complete reproducer/result is `evidence/virgl-production-readiness/standard-image-legacy-metadata-precheck.json`. This is an inherited harness omission, not an image-product failure. Add only the required zero-level field to the historical fixture. Preserve the failed attempt under `target/evidence/virgl-standard-image-final-attempt1`; freeze the corrected harness, record the final selected gate and run the single final cold clone. Product runtime remains byte-identical to `7529bc0c`.
+
+### 2026-10-10 — worker — sealed final original image submission
+
+Frozen acceptance head `89306b560bb71552a9a6800065ec54273cff0dc8`; product runtime is the unchanged `7529bc0c` implementation. Commands:
+
+```sh
+VIRGL_IMAGE_SUBRESOURCES_EVIDENCE_DIR=target/evidence/virgl-standard-image-final make verify-E6-T11d21
+python3 tools/virgl-command/standard-image-cold.py --output target/evidence/virgl-standard-image-cold-final
+python3 tools/virgl-command/standard-image-seal.py target/evidence/virgl-standard-image-final target/evidence/virgl-standard-image-cold-final evidence/virgl-standard-image-subresources/worker
+```
+
+The final hot and pristine scrubbed cold gates both pass at the exact frozen head. Each records 750 original view/surface admission cases and their historical-factory checks, the complete 24-resource/936-draw full/truncated color/range/filter matrix, three independently seeded 33-run native boundary schedules, two actual native selection faults, and affected decoder/resource/color/async/original-sampler regressions. The independent original-packet inverse checks 1,028 native draws, 59,904 full matrix pixels and 30,733 observed native texels across 1,173 rows; both native faults contradict the original oracle only after completed physical fences. Raw original backing/planes/transfer bytes, actual pre-draw sampler state and native plane bytes, complete shaders, original target levels, native objects, later-task fence/job/lifetime state and all GPU-only changes are retained. All healthy predictions hold, including pending delete/unref/reuse, cancellation/disposal, explicit logical nonoverlap and overlap, exact/short budgets, token/hold limits, context/cache/native-state restoration and actual allocation/blit errors. Native objects retire once and terminal budgets are zero.
+
+The recorded browser is headed actual Apple M4 Max Metal with zero console/page/request errors and the actual unchanged 16 MiB compiler exports. Each source/served/native/blob and full V8 record is bound by digest. The line-sample coverage audit contains 43 complete V8 script records and 479 added-line samples; all 206 sampled changed runtime lines have positive witnesses. Full nested regions remain the critic's authority. The explicit 48-migration product inverse restores all three exact D20 runtime files; cache/constants/compiler/Rust/worker/demo are unchanged. D20 worker and critic seals are authenticated against `c0488902`, carrying earlier HELD results through their unchanged dependency chain.
+
+Cold clone `/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-image-state-cold-ktfi4pfh/wasm-vm` is clean before and after acceptance. The seal under `evidence/virgl-standard-image-subresources/worker` has 20366 records and 19471765 compressed bytes. Archive SHA256 `6dcdde6ae41416f458cb4d5371df2ac0c83ae49e2bc0571a3efa52d2142f0a48`; record-index SHA256 `3199b8a4c20646f8cf31bd9b1e3d0b36a45c88e0e6994902b6564fddd425aeaa`; hot receipt `5ee47c6dd478b91d6e968a55889cb9df45dc80134c9861fd7d976ca5a48bdac4`; cold report `0426dd64e2f9de632fade0bbd5d0a3797388af667db1152ed89f21e3a8a5a861`; cold receipt `885823d8eb88371d619d84f3f3c81909dc593b3dcddf80490f607d2519ac9d66`.
+
+Claim: this recording demonstrates one explicitly selected original 2D normalized-color image-range/surface boundary with actual GPU-only copies, exact logical plane selection and retained asynchronous ownership. It is a worker claim awaiting fresh adversarial verification. Complete API/typed capsets, actual production guest Mesa/compositor/scanout, deployment and performance remain unqualified. No rr or retired `ssh dev` path is used.
