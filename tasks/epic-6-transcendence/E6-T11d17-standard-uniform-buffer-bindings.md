@@ -3,7 +3,7 @@ id: E6-T11d17
 epic: 6
 title: Bind original retained constant buffers to native uniform ranges
 priority: 525.02703900036
-status: pending
+status: in-progress
 depends_on: [E6-T11d16]
 estimate: S
 risk: high
@@ -41,3 +41,8 @@ Before inspecting evidence, predict concrete original resource generations/words
 The user's instruction is to finish production guest graphics. D16's verified compiler prerequisite supplies no original resource binding. Literal original opcode27 still rejects in the historical standard decoder, and original target0/format64/bind64 rejects resource admission; reproduce the packet and metadata in `evidence/virgl-production-readiness/standard-uniform-buffer-gap.json` against those existing factories. Pinned Mesa26.2.2 `virgl_context.c:638-667` sends opcode27 for any GPU buffer includingCB0; `virgl_encode.c:1242-1256` defines its five words. Pinned vrend `vrend_renderer.c:3508` retains the original resource reference and ignores incoming range on resource0. Mesa `bufferobj.c:159-186` treats creation role as a hint. WebGL2 prohibits copying across element-array/other-data classes (https://registry.khronos.org/webgl/specs/latest/2.0/); aliasing remains a separate successor.
 
 A planning-only headed M4 Metal probe in `/tmp/wasmvm-unused-ubo-probe.mjs` shows an unused retained std140 block with both reference flagsfalse still makes an unbacked native draw return1282 after a signaled fence. This motivates recording a bounded zero-buffer policy for native-retained unreferenced declarations in this boundary. The confirming acceptance must capture full original C output/native reflection/pixels; the planning probe is not submission evidence. API/caps, original element-array/data reuse, actual RISC-V guest Mesa/kmscube/desktop, worker scanout and live demo remain ordered qualification work.
+
+
+### 2026-10-10 — worker — activation
+
+Selected as the first eligible Next up entry after D16 fresh verification. Native stack layer `codex/virgl-standard-uniform-buffer-bindings` is rooted on the published compiler verdict. The original range boundary above is the only active task. Temporary iteration has already produced full original pixels on headed M4 Metal for buffered VS/FS → buffered VS with inline FS → both stages inline on identical original bodies; those scratch records are not submission evidence.
