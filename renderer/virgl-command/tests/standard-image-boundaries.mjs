@@ -4,7 +4,6 @@ import {decodeSubmission,decodeStandardSubmission,decodeStandardUniformSubmissio
 import {checks} from './standard-instanced-draws.mjs';
 import {nativeRead} from './standard-texture-storage.mjs';
 import {packet,join,meta,sampler,bind,draw,specimen,source,statePackets,imageView,surface,clear,word,originalPixels,hex,nativeFromGuest,levels} from '../../../tools/virgl-command/standard-image-fixtures.mjs';
-const later=()=>new Promise(resolve=>setTimeout(resolve,0));
 export function runWireAcceptance(){
  const c=checks(),records=[];
  for(const format of [2,67,233])for(let first=0;first<15;first++)for(let last=0;last<15;last++){
