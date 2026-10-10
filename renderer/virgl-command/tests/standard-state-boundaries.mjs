@@ -94,6 +94,9 @@ function trace(gl,delay){
   if(name==='getBufferSubData')events.push({name,label,turn,bytes:args[2].byteLength});
   if(name==='uniform4uiv')events.push({name,label,turn,words:[...args[1]]});
   if(name==='drawArrays'||name==='drawElements')events.push({name,label,turn,args:[...args]});
+  if(name==='getActiveUniform')events.push({name,label,turn,index:args[1],result:result?{name:result.name,type:result.type,size:result.size}:null});
+  if(name==='getActiveUniforms')events.push({name,label,turn,indices:[...args[1]],parameter:args[2],result:[...result]});
+  if(name==='shaderSource')events.push({name,label,turn,type:gl.getShaderParameter(args[0],gl.SHADER_TYPE),source:args[1]});
   return result;};methods.set(name,fn);return fn;}});
  return {gl:proxy,events,next(labelValue){turn++;label=labelValue;}};
 }
@@ -127,13 +130,15 @@ async function submit(r,ctx,bytes,label){
 function setup(s,vb=s.vb,fb=s.fb){return join(transfer(3,64),shader(1,0,s.vertex),shader(2,1,s.fragment),packet(1,5,[3,0,0,0,31]),packet(2,5,[3]),packet(6,0,[16,0,3]),packet(1,8,[4,1,67,0,0]),packet(5,0,[1,0,4]),packet(4,0,[0,...[4,4,.5,4,4,.5].map(bits)]),bank(0,encoded(vb)),bank(1,encoded(fb)),packet(1,7,[8,2|(2<<3)|(2<<11),0,0,bits(1),0,0,0,0]),...s.images.map((_,i)=>transfer(5+i,2,2)),...s.views.map((sw,i)=>view(9+i,5+i,sw)),bindview(0,3,9),bindview(0,15,10),bindview(1,2,11),bindview(1,15,12),packet(31,0,[1,0]),packet(31,0,[2,1]));}
 function finish(r){ok(r.renderer.dispose(),'critic renderer disposal');ok(r.store.dispose(),'critic store disposal');for(const o of [r.renderer,r.store])for(const [k,v]of Object.entries(ok(o.inspect(),'critic budgets').budgets))same(v,0,'critic zero budget '+k);}
 function native(gl,r){
- const program=gl.getParameter(gl.CURRENT_PROGRAM),uniforms=[],samplers=[];assert(program,'critic actual program');
+ const program=gl.getParameter(gl.CURRENT_PROGRAM),uniforms=[],samplers=[],activeUniforms=[];assert(program,'critic actual program');
  for(let i=0;i<gl.getProgramParameter(program,gl.ACTIVE_UNIFORMS);i++){
   const a=gl.getActiveUniform(program,i);
+  activeUniforms.push({index:i,name:a.name,type:a.type,size:a.size,blockIndex:gl.getActiveUniforms(program,[i],gl.UNIFORM_BLOCK_INDEX)[0]});
   if(/^[vf]sconst0\[0\]$/.test(a.name)){same(a.type,gl.UNSIGNED_INT_VEC4,'critic raw reflected type');const name=a.name.slice(0,-3),words=[];for(let n=0;n<a.size;n++)words.push(...gl.getUniform(program,gl.getUniformLocation(program,name+'['+n+']')));uniforms.push({name,count:a.size,words});}
  }
  for(const [stage,slots]of [[0,[3,15]],[1,[2,15]]])for(const slot of slots){const name=(stage===0?'vssamp':'fssamp')+slot,location=gl.getUniformLocation(program,name),unit=stage===0?16+slot:slot;gl.activeTexture(gl.TEXTURE0+unit);const texture=gl.getParameter(gl.TEXTURE_BINDING_2D);samplers.push({stage,slot,unit,value:location===null?null:gl.getUniform(program,location),resource:r.allocations.find(a=>a.storage.texture===texture)?.metadata.id??null});}
- gl.activeTexture(gl.TEXTURE0);return {uniforms,samplers};
+ const sources=gl.getAttachedShaders(program).map(shader=>({type:gl.getShaderParameter(shader,gl.SHADER_TYPE),source:gl.getShaderSource(shader)}));
+ gl.activeTexture(gl.TEXTURE0);return {uniforms,samplers,activeUniforms,sources};
 }
 export async function runAdversarial(plans){
  const report={schema:1,status:'running',plans,metadata:[],runs:[]};window.__criticStandardState=report;
@@ -141,6 +146,7 @@ export async function runAdversarial(plans){
  const bridge=await createVirglStandardShaderBridge();report.metadata=metadataAttacks(bridge);
  for(const [schedule,plan]of plans.entries()){
   const {specimen:s,seed}=plan,r=rig(gl,bridge,schedule?7:3,schedule?4:3),base=ok(bridge.translate({stage:'vertex',text:s.vertex}),'critic emitted VS');same(base.metadata.samplers.map(x=>x.index),[3,15],'critic VS multi sampler metadata');
+  const ownedRun={seed,delay:schedule?7:3,step:schedule?4:3,frames:r.frames,history:r.history,exchanges:r.exchanges,events:r.t.events};report.runs.push(ownedRun);
   for(let i=0;i<4;i++)r.add(meta(5+i,2,67,8,2,2),new Uint8Array(s.images[i]));
   let vb=s.vb,fb=s.fb,views=s.views,ctx=1;
   const render=async(label,commands,wanted,optimized=false)=>{
@@ -166,7 +172,7 @@ export async function runAdversarial(plans){
   await render('optimized-out',packet(31,0,[2,1]),plan.frames[10][1],true);
   const last=r.frames.at(-1);same(last.native.uniforms.filter(x=>x.name==='fsconst0'),[],'critic undeclared FS bank absent');same(last.native.samplers.filter(x=>x.slot===15).map(x=>x.value),[null,null],'critic all-constant VS view and unused FS slot pruned');
   const info=ok(r.renderer.inspect(),'critic final owned state');assert(info.caches.program.evictions>0,'critic program eviction');
-  report.runs.push({seed,delay:schedule?7:3,step:schedule?4:3,frames:r.frames,history:r.history,exchanges:r.exchanges,events:r.t.events,inspection:info});finish(r);
+  ownedRun.inspection=info;finish(r);
  }
  report.status='passed';return report;
 }
@@ -176,4 +182,80 @@ export async function runAdmissionAttacks(plans){
  const cases=[['variant bytes',{limits:{shaderBytes:bv+bf+s.vertex.length+s.fragment.length+1}}],['paired smooth spoof',{compiler:{...bridge,translatePair(request){const out=cp(bridge.translatePair(request)),g=out.vertex.metadata.outputs.find(x=>x.semantic==='GENERIC'&&x.semanticIndex===14);g.type='vec4';g.interpolation='smooth';return out;}}}]];
  for(const [label,options]of cases){const r=rig(gl,options.compiler??bridge,1,3,options.limits);for(let i=0;i<4;i++)r.add(meta(5+i,2,67,8,2,2),new Uint8Array(s.images[i]));const rec=await submit(r,1,join(setup(s),draw()),'critic-reject-'+label);same(rec.result.ok,false,'critic '+label+' rejects');if(label==='variant bytes'){same(rec.result.error.opcode,31,'critic variant quota fails at link');same(rec.result.error.code,'limit-exceeded','critic variant quota code');}assert(!r.t.events.some(e=>e.name==='drawArrays'||e.name==='drawElements'),'critic admission before draw');rows.push({label,result:rec.result,events:r.t.events});finish(r);}
  return rows;
+}
+
+// Original independently selected shader, four real images and literal raw banks
+// reproduce F1/F2. The unknown default-block scalar is a fresh completeness attack;
+// an unused declaration has the same metadata and must be admitted when pruned.
+export async function runNativeBindingAttacks(plans){
+ const gl=document.querySelector('canvas').getContext('webgl2'),original=await createVirglStandardShaderBridge(),spec=plans[0].specimen;
+ const report={schema:1,status:'running',sourceSeed:spec.seed,cases:[]};window.__criticStandardBindings=report;
+ const unknown='wv_critic_unaccounted';
+ const inject=(out,active)=>{
+  const main=/\bvoid\s+main\s*\(\s*(?:void)?\s*\)/g;
+  same([...out.glsl.matchAll(main)].length,1,'critic one actual compiler main');
+  const at=out.glsl.indexOf('\nvoid main(');assert(at>=0,'critic original main insertion point');
+  out.glsl=out.glsl.slice(0,at)+'\nuniform highp float '+unknown+';\n'+out.glsl.slice(at);
+  if(active){
+   const end=out.glsl.lastIndexOf('\n}');same(out.glsl.slice(end).trim(),'}','critic actual compiler main ends source');
+   out.glsl=out.glsl.slice(0,end)+'\nfsout_c0.r+='+unknown+';'+out.glsl.slice(end);
+  }
+  return out;
+ };
+ const cases=[
+  {label:'fragment-uniforms',stage:'fragment',field:'uniforms',names:['fsconst0[0]']},
+  {label:'fragment-samplers',stage:'fragment',field:'samplers',names:['fssamp2','fssamp15']},
+  {label:'vertex-uniforms',stage:'vertex',field:'uniforms',names:['vsconst0[0]']},
+  {label:'vertex-samplers',stage:'vertex',field:'samplers',names:['vssamp3','vssamp15']},
+  {label:'unknown-active-default-block',stage:'fragment',unknown:true,active:true,names:[unknown]},
+  {label:'unknown-eliminated-default-block',stage:'fragment',unknown:true,active:false,names:[unknown]},
+ ];
+ for(const test of cases){
+  const change=out=>{if(test.unknown)return inject(out,test.active);out.metadata[test.field]=[];return out;};
+  const compiler={...original,
+   translate(request){const out=cp(original.translate(request));return request.stage===test.stage?change(out):out;},
+   translatePair(request){const out=cp(original.translatePair(request));if(out.ok)out[test.stage]=change(out[test.stage]);return out;},
+  };
+  const stage=compiler.translate({stage:test.stage,text:spec[test.stage]}),pair=compiler.translatePair({vertexText:spec.vertex,fragmentText:spec.fragment});
+  if(test.stage==='fragment'){
+   same(stage.glsl,pair.fragment.glsl,'critic coherent stage/pair actual fragment GLSL');
+   same(stage.metadata,pair.fragment.metadata,'critic coherent stage/pair fragment metadata');
+  }else{
+   // The legitimate pair changes VS interpolation from the FS flat declaration.
+   // Omit only the same binding field in each actual compiler result.
+   same(stage.glsl,original.translate({stage:'vertex',text:spec.vertex}).glsl,'critic unchanged actual stage VS');
+   same(pair.vertex.glsl,original.translatePair({vertexText:spec.vertex,fragmentText:spec.fragment}).vertex.glsl,'critic unchanged actual paired VS');
+   same(stage.metadata[test.field],[],'critic stage VS coherent field omission');
+   same(pair.vertex.metadata[test.field],[],'critic paired VS coherent field omission');
+  }
+  const r=rig(gl,compiler,2,3);for(let i=0;i<4;i++)r.add(meta(5+i,2,67,8,2,2),new Uint8Array(spec.images[i]));
+  const rec=await submit(r,1,join(setup(spec),draw(),transfer(1,8,8,2)),'critic-binding-'+test.label);
+  const draws=r.t.events.filter(event=>event.name==='drawArrays'||event.name==='drawElements');
+  const active=r.t.events.filter(event=>event.name==='getActiveUniform'&&event.result&&test.names.includes(event.result.name));
+  const row={label:test.label,names:test.names,prediction:{ok:test.active===false,nativeDraws:test.active===false?1:0},
+    result:rec.result,nativeDraws:draws,activeNative:active,history:r.history,events:r.t.events,
+    output:rec.output,native:draws.length?native(gl,r):null,compilerStage:stage,compilerPair:pair};
+  report.cases.push(row);
+  if(test.active===false){
+   ok(rec.result,'critic eliminated declaration draw');same(rec.result.gpuComplete,true,'critic eliminated declaration final fence');
+   same(draws.length,1,'critic eliminated declaration real draw');
+   same(row.native.activeUniforms.filter(entry=>entry.name===unknown),[],'critic native unknown declaration actually eliminated');
+   same(rec.output?.length,256,'critic eliminated declaration full output');
+   const wanted=plans[0].frames[0][1],mismatches=[];
+   for(let at=0;at<rec.output.length;at++)if(Math.abs(rec.output[at]-wanted[at%4])>1)mismatches.push({at,observed:rec.output[at],expected:wanted[at%4]});
+   row.expected=wanted;row.mismatches=mismatches;same(mismatches,[],'critic eliminated declaration independent pixel oracle');
+  }else{
+   same(rec.result.ok,false,'critic-binding-'+test.label+' coherent active metadata rejects before draw');
+   same(rec.result.error.code,'shader-reflection-error','critic native completeness error');
+   assert(test.names.some(name=>rec.result.error.message.includes(name)),'critic native completeness names actual missing binding');
+   same(draws.length,0,'critic incomplete bindings execute zero native draws');
+   assert(active.length>0,'critic missing default-block entry is genuinely active natively');
+   for(const event of active){
+    const block=r.t.events.find(next=>next.name==='getActiveUniforms'&&next.parameter===gl.UNIFORM_BLOCK_INDEX&&next.indices[0]===event.index&&next.turn===event.turn);
+    assert(block&&block.result[0]===-1,'critic omitted active native entry is in default block');
+   }
+  }
+  same(gl.getError(),gl.NO_ERROR,'critic binding no native GL error');row.held=true;finish(r);
+ }
+ report.status='passed';return report;
 }

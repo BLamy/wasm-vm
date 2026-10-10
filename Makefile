@@ -2129,3 +2129,7 @@ verify-E6-T11d4-adversarial:
 .PHONY: verify-E6-T11d5
 verify-E6-T11d5:
 	bash tools/verify-virgl-standard-state.sh
+
+.PHONY: verify-E6-T11d5-adversarial
+verify-E6-T11d5-adversarial:
+	bash tools/verify-virgl-standard-state-adversarial.sh

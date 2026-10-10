@@ -1,0 +1,12 @@
+{
+  "task": "E6-T11d5",
+  "record": "independent/report.json",
+  "reason": "The first verifier extension incorrectly required a truthy ok field on pair stage payloads, which have no own ok field; its pre-draw coherence assertion correctly failed because only the stage omission had been applied. The extension also needed to preserve the real VS pair interpolation specialization rather than require identical stage/pair VS GLSL.",
+  "correction": "Treat only ok:false as failure for nested payloads, omit the same metadata field in both authentic responses, preserve each authentic VS GLSL and its specialized metadata. Fragment GLSL/metadata coherence remains explicitly checked.",
+  "productFinding": false,
+  "predictionsChanged": false,
+  "originalShaderImagesBanksAndPixelOracleChanged": false,
+  "secondRecord": "independent-final/report.json",
+  "secondCorrection": "The novel injected wrapper initially moved the main insertion point after texture calls, so view specialization inserted helper definitions too late for GLSL ES. The recorded result was a shader compilation error, not evidence of native completeness. Declare the novel uniform before the original main and insert its use at the original main closing brace. Preserve the real shader/view specialization insertion point.",
+  "finalRecording": "independent-complete/report.json"
+}

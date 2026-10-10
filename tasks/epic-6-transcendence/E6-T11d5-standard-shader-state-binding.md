@@ -3,7 +3,7 @@ id: E6-T11d5
 epic: 6
 title: Execute standard guest shader bindings through owned renderer jobs
 priority: 525.027038
-status: implemented
+status: verified
 depends_on: [E6-T11d4]
 estimate: S
 risk: high
@@ -259,3 +259,87 @@ The unchanged C/compiler, Rust/device/transport, original numerical prefix and
 16MiB Wasm proofs carry. This remains an isolated single-COLOR0 binding slice;
 no full guest API, production capset, live guest acceleration, scanout or MIPS
 claim follows. Submit this repaired head to a fresh adversarial session.
+
+### 2026-10-10 — fresh verifier — VERDICT: verified
+
+The repair at `adcbe81bcd091c3d411a8f96ac8746e1a17290fb` survives independent
+falsification and incremental sufficiency review. Worker claim
+`b1263f6e60d68239288309218b3e8cc4590363ad` changes documentary/seal bytes only.
+Predictions R1–R9 were written before inspecting the new state; every result is
+HELD. The complete prediction matrix, recorded points, source identities and
+coverage ledger are in `evidence/virgl-standard-state/reflection-verifier/verdict.md`.
+
+- F1/F2 — HELD after repair. Re-run the original independently chosen TGSI,
+  four images and literal raw banks. Coherent stage/pair omissions of FS/VS raw
+  uniforms and FS/VS samplers reject `shader-reflection-error` at opcode 31,
+  byteOffset 1912, with zero native draws. Actual native entries at turn 15 are
+  `fsconst0[0]`, `fssamp2`, `vsconst0[0]` and `vssamp3`; complete native lists,
+  type/extent/default-block queries and attached source are recorded at
+  `promoted-final/normal/report.json:browserResult.result.nativeBindings.cases[0..3]`
+  inside the fresh seal. These clear the original two refutations without
+  replacing the original independently selected specimens.
+- Bounded novel attack — HELD. A genuinely active undeclared default-block
+  `wv_critic_unaccounted` float rejects before draw. Its native-optimized-out
+  declaration counterpart completes one real draw and matches all 64 original
+  independently predicted pixels [91,117,153,140]. Points are cases[4] and [5]
+  of the same report; native source, actual calls and completion fences are saved.
+- Worker evidence and legitimate bindings — HELD. Independently authenticate
+  all 332 repaired records, receipts, source closures and the already completed
+  pristine scrubbed exact-head clone. Audit all 112 hot/cold hardware frames and
+  4,742,848 full pixels. All 110 prior wire/source/native-count/pixel digests are
+  unchanged. Both added index 34 blend frames have native factor
+  [0.25,0.5,0.75,1]; the literal Gallium packet and bank equation independently
+  predicts [16,64,143,255] throughout each 16x16 image. The complete active native
+  accounting includes 672 system entries, 182 raw entries, 16 samplers and two
+  renderer-owned blend entries. The unchanged compiler/device/transport closure
+  at 9323b445 and legacy prefix
+  `bfd25f78876cb1b60c7d04de81245c5d9e3938fb4d34f6b0e723961d896afdd2`
+  carry with the original HELD predictions and affected gates.
+- Sabotage — HELD. Disabling only the actual served native-accounting loop
+  completes the original F1 draw with twelve zero FS words and all-zero pixels,
+  then fails the named coherent-omission rejection oracle (expected false,
+  observed true). The original served VS-view mutation also completes a real
+  draw and fails the independent pixel oracle: [82,117,144,140] rather than
+  [91,117,153,140]. Exact served mutation bytes, native calls, readbacks and
+  fences are sealed in `promoted-final/fault-native-binding` and `fault-pixel`.
+- COVERAGE — HELD. All 14 new runtime lines at `state.mjs:597-610` are accounted:
+  eleven executed lines and three structural lines, no new runtime waiver.
+  All 60 added worker proof lines are accounted; the promoted harness has 68
+  executed, 15 structural and two narrowly waived diagnostic portions. Exact
+  V8 offsets/counts and reasons are in `coverage-audit.json`. Carry the original
+  45-hunk / seven partial-line waiver matrix unchanged. Each changed proof tool
+  has a separate execution/declarative ledger. No additional proof gap remains.
+
+SUITE: promote `make verify-E6-T11d5-adversarial`, preserving the original
+independent shader/images/banks/CPU equation and adding six native-accounting
+regressions. The final target passes 22 regression frames plus one native
+elimination draw, 1,472 full pixels, 25 metadata attacks, two prior native
+admission attacks, five real accounting rejections and both served-source
+sabotages. Preliminary harness-only corrections are recorded explicitly in
+`harness-correction.json`; no runtime implementation was edited by the verifier.
+
+Exact commands from `/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm`:
+
+```sh
+python3 evidence/virgl-standard-state/reflection-verifier/authenticate.py
+python3 evidence/virgl-standard-state/reflection-verifier/recording_audit.py
+VIRGL_STANDARD_STATE_ADVERSARIAL_EVIDENCE_DIR=evidence/virgl-standard-state/reflection-verifier/promoted-final make verify-E6-T11d5-adversarial
+python3 evidence/virgl-standard-state/reflection-verifier/coverage_audit.py
+python3 evidence/virgl-standard-state/reflection-verifier/adjudicate.py
+python3 evidence/virgl-standard-state/reflection-verifier/seal.py --verify
+python3 tools/check_task_policy.py
+python3 tools/build_queue.py
+```
+
+Fresh critic seal:
+`evidence/virgl-standard-state/reflection-verifier/{manifest.json,records.json,recording.tar.gz}`,
+90 members, 2,816,869 archive bytes; archive SHA256
+`fc19a77e6f6819c4b3cec8c98449e37accc7c9160d7d2ab8554fa8560d06f045`,
+index `02d8445ba85ef95e2dcf41c6f441afcbf012d860b5781000ff7750e7b190608d`.
+It retains predictions, exact harness diff, frozen sources, full native/pixel/
+fence observations, browser captures and incremental audits. Separately
+authenticated worker/prior critic seals retain their original digests above.
+Set this isolated standard binding slice verified. Full guest API/caps,
+production draw integration, guest boot/scanout and throughput remain ordered
+successor work; this verdict grants no such authority. No second cold clone is
+needed because the repaired runtime already has its final pristine proof.
