@@ -1,0 +1,85 @@
+{
+  "status": "passed",
+  "records": [
+    {
+      "family": "hot",
+      "record": "coverage/matrix",
+      "binarySha256": "53948508b1dad9abc9add474ac82a27941b1e971949813e9c05746d654e2dad5",
+      "rawSha256": "5617bf2fef0802cf83be137cd4f3585c49962f557d393617e5e8b97985c68a45",
+      "mergedSha256": "4ff8d283b354f86088627f6445a2d734db85fb3d5d0858c7ffab6616d1c15ca1",
+      "exportedSha256": "426cfb1bd3f03c566f698bbe4e6b16e8e14ef60313479078f4b168b238cb40e0",
+      "sealedExportSha256": "426cfb1bd3f03c566f698bbe4e6b16e8e14ef60313479078f4b168b238cb40e0",
+      "exactJsonEquality": true
+    },
+    {
+      "family": "hot",
+      "record": "coverage/allocations",
+      "binarySha256": "6d12ca3be09c8b21e8d39d475afb2398f281fc87b33fabc6f773066bbdbadfd1",
+      "rawSha256": "ea7105f3354f1398857fb7cb5362a48f1e860cb61cb31772ee6b30f7b1554521",
+      "mergedSha256": "bb8c5f51a80314b21b622ed01af717142eeb4a8a89d64e2f16a8846cbaff2390",
+      "exportedSha256": "34094fa2be0e5f4455fa0f5bcb4053f48d54f5cfbc2974cd4c63d6bfac062063",
+      "sealedExportSha256": "34094fa2be0e5f4455fa0f5bcb4053f48d54f5cfbc2974cd4c63d6bfac062063",
+      "exactJsonEquality": true
+    },
+    {
+      "family": "hot",
+      "record": "compiler-retained/coverage/matrix",
+      "binarySha256": "c00aedd895d751acf2f015c7c4180b38d384f4790005dc18866d143e3a44f632",
+      "rawSha256": "354f713b8ae376fa92db69e49bce613c701ba450b1244c9e8841355acec66927",
+      "mergedSha256": "2edee02e65075c83053d80f5c1a09155cd2eb485a957d2eea80955115874cdea",
+      "exportedSha256": "2f3661408461ede27154a485f0ddcf4a1d9528ee437e26f083e450308ca4ee2d",
+      "sealedExportSha256": "2f3661408461ede27154a485f0ddcf4a1d9528ee437e26f083e450308ca4ee2d",
+      "exactJsonEquality": true
+    },
+    {
+      "family": "hot",
+      "record": "compiler-retained/coverage/allocations",
+      "binarySha256": "a1d1429e414600d85dfad2f535fd434d6e8b42b72f7fcd2937e454cf25d08c19",
+      "rawSha256": "06ad1372e9df57f3160aa32cf1a56e5a63a35581b79a71f90f6eb8dea28fa3f7",
+      "mergedSha256": "d90f5562d98f0b41aaf2632112c8b1184dfb4faf824ee9107f0fbe08aebd5473",
+      "exportedSha256": "04defc5cc52bf24c01391b8f76f1142799adafc4bdac0f63b909a1735f3d6b45",
+      "sealedExportSha256": "04defc5cc52bf24c01391b8f76f1142799adafc4bdac0f63b909a1735f3d6b45",
+      "exactJsonEquality": true
+    },
+    {
+      "family": "cold",
+      "record": "coverage/matrix",
+      "binarySha256": "e3c8b4100b0f8172780ff3f346599e3d68b391275c0edffbdaeb3f46a341c417",
+      "rawSha256": "fe22d4713645423cea4f43cf6a600ba9e584c20c7e43bfd14d8a941140512f80",
+      "mergedSha256": "4ff8d283b354f86088627f6445a2d734db85fb3d5d0858c7ffab6616d1c15ca1",
+      "exportedSha256": "0aee6f56c263c37dee5bd950ba5d890b424ce548c459dbc99eb3235c502cc5e6",
+      "sealedExportSha256": "0aee6f56c263c37dee5bd950ba5d890b424ce548c459dbc99eb3235c502cc5e6",
+      "exactJsonEquality": true
+    },
+    {
+      "family": "cold",
+      "record": "coverage/allocations",
+      "binarySha256": "9140b83a6e3ab4066329e0bc3a88bbf8e4b24cf634910344b34760228ee88040",
+      "rawSha256": "4fd5e56d37ac0de0c31aa56a1468e3eb20c61dde4c6c72fdd3ce93390f5f1d75",
+      "mergedSha256": "bb8c5f51a80314b21b622ed01af717142eeb4a8a89d64e2f16a8846cbaff2390",
+      "exportedSha256": "9d275b2dfe1604e44df3b6b4957ff56c03bd242d68832d1de73d2101aa07f525",
+      "sealedExportSha256": "9d275b2dfe1604e44df3b6b4957ff56c03bd242d68832d1de73d2101aa07f525",
+      "exactJsonEquality": true
+    },
+    {
+      "family": "cold",
+      "record": "compiler-retained/coverage/matrix",
+      "binarySha256": "7ea5536ba78705e53ff316275d5ecc0dda1b912acc8c713266a2effd5a6185ce",
+      "rawSha256": "5ddbb2be845074cacecd668a1d3096a90a7a7bb4512b8af4d3afe6c8523e75ec",
+      "mergedSha256": "2edee02e65075c83053d80f5c1a09155cd2eb485a957d2eea80955115874cdea",
+      "exportedSha256": "40ef646a166d584c0004fe92172caedd0dafc1aaeb793711dbdf5d2e5c50e689",
+      "sealedExportSha256": "40ef646a166d584c0004fe92172caedd0dafc1aaeb793711dbdf5d2e5c50e689",
+      "exactJsonEquality": true
+    },
+    {
+      "family": "cold",
+      "record": "compiler-retained/coverage/allocations",
+      "binarySha256": "e3b9a20bd74e1ef42929a9669700b604ee822a89ed337bde90f954927f78157c",
+      "rawSha256": "badc9399cf69053020d5242937e57323f9a8fda5d53329dccc2d8cba3ff87784",
+      "mergedSha256": "d90f5562d98f0b41aaf2632112c8b1184dfb4faf824ee9107f0fbe08aebd5473",
+      "exportedSha256": "79fa2460e9b48651da8e1c47061218721a802824ce04ccb6e4dc6c58836a118e",
+      "sealedExportSha256": "79fa2460e9b48651da8e1c47061218721a802824ce04ccb6e4dc6c58836a118e",
+      "exactJsonEquality": true
+    }
+  ]
+}

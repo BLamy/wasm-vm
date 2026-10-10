@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14]
-blocked_on: E6-T11d14
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15]
+blocked_on: E6-T11d15
 estimate: S
 risk: high
 capstone: false
@@ -296,3 +296,7 @@ graphics chain; isolated format results do not activate a production capset.
 ### 2026-10-10 — worker — scalar fetch verified; pure integer input gap
 
 E6-T11d13 is independently verified at `8037ede91b4c8450e696811d33ac7d34235388ba`. The original 24 pure integer vertex formats177..200 still fail standard wire admission and the compiler has no host typed pair method. The negative recording `evidence/virgl-production-readiness/standard-integer-vertex-gap.json` binds their literal packets and complete source/generated identities at that verified head. Decode each `packetHex` with `decodeStandardSubmission` to reproduce. Ordered S/high E6-T11d14 closes the raw integer input boundary across the actual compiler, format-derived native shader variants, original GPU pointers and retained constant words. Packed formats, storage/framebuffer/API qualification and actual guest bring-up remain ordered successors. The explicit user instruction continues this chain; no speculative production capset is granted.
+
+### 2026-10-10 — worker — integer boundary verified; packed fetch remains
+
+E6-T11d14 is independently verified at `23bf410f9e152d53e83e674717c647a4164dcde7`. The next direct original vertex-element probe still rejects the four native packed R10G10B10A2 forms. `evidence/virgl-production-readiness/standard-packed-vertex-gap.json` records their original packets and exact source/generated identities at that verified head. Reproduce at that head by importing `decodeStandardSubmission` from `renderer/virgl-command/decoder.mjs` and passing each literal `packetHex` as `Buffer.from(packetHex, 'hex')`; each returns `unsupported-feature`. Original formats 8/123/172/173 are UNORM/USCALED/SSCALED/SNORM with four fields in one four-byte element. Ordered S/high E6-T11d15 adds original native fetch and bounded retained constants; it grants no texture/API/capset or production guest claim.

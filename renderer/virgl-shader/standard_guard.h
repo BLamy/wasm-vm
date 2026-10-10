@@ -28,6 +28,7 @@ struct standard_profile {
    uint16_t used_samplers;
    /* Host-derived vertex format types, never TGSI/guest shader keys. */
    uint16_t signed_inputs, unsigned_inputs;
+   uint16_t packed_signed_inputs, packed_normalized_inputs;
    uint8_t properties, broadcast;
 };
 

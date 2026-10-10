@@ -43,8 +43,14 @@ const INTEGER_VERTEX_FORMATS = Object.freeze(Object.fromEntries([
   return [format, Object.freeze({ format, components, scalarBytes,
     elementBytes: components * scalarBytes, type, kind, normalized: false, integer: true })];
 }))));
+const PACKED_VERTEX_FORMATS = Object.freeze(Object.fromEntries([
+  [8, "UNSIGNED_INT_2_10_10_10_REV", "unorm"], [123, "UNSIGNED_INT_2_10_10_10_REV", "uscaled"],
+  [172, "INT_2_10_10_10_REV", "sscaled"], [173, "INT_2_10_10_10_REV", "snorm"],
+].map(([format, type, kind]) => [format, Object.freeze({ format, components: 4, scalarBytes: 4,
+  elementBytes: 4, type, kind, normalized: kind === "unorm" || kind === "snorm", packed: true })])));
 export const vertexFormat = format => floatingVertexFormat(format) ??
-  (Number.isInteger(format) && Object.hasOwn(INTEGER_VERTEX_FORMATS, format) ? INTEGER_VERTEX_FORMATS[format] : null);
+  (Number.isInteger(format) && Object.hasOwn(INTEGER_VERTEX_FORMATS, format) ? INTEGER_VERTEX_FORMATS[format] :
+    Number.isInteger(format) && Object.hasOwn(PACKED_VERTEX_FORMATS, format) ? PACKED_VERTEX_FORMATS[format] : null);
 
 const COMMAND_NAMES = Object.freeze({
   1: "CREATE_OBJECT", 2: "BIND_OBJECT", 3: "DESTROY_OBJECT",

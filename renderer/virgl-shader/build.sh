@@ -38,6 +38,27 @@ case "$mode" in
       raw_bits.c generated/u_format_table.c "${sources[@]:4:${#sources[@]}-5}" "build/$mode/standard_emit.o" native_tests/standard_integer_allocations.c \
       -lm -o "build/$mode/standard-integer-allocation-test"
     ;;
+  standard-packed-native|standard-packed-sanitize)
+    instrument=(-O2)
+    if [[ "$mode" == standard-packed-sanitize ]]; then
+      instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+        -fprofile-instr-generate -fcoverage-mapping -fstack-usage)
+    fi
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only native_tests/standard_packed_inputs.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "${sources[@]}" native_tests/standard_packed_inputs.c \
+      -lm -o "build/$mode/standard-packed-test"
+    ;;
+  standard-packed-allocation-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping -fstack-usage)
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only native_tests/standard_packed_allocations.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -Dcalloc=precise_word_calloc -c bridge.c -o "build/$mode/bridge.o"
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -DBRIDGE_UPSTREAM_ALLOCATION_TEST -c checked_upstream.c -o "build/$mode/checked_upstream.o"
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -Dcalloc=precise_word_calloc -c standard_emit.c -o "build/$mode/standard_emit.o"
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "build/$mode/bridge.o" "build/$mode/checked_upstream.o" \
+      raw_bits.c generated/u_format_table.c "${sources[@]:4:${#sources[@]}-5}" "build/$mode/standard_emit.o" native_tests/standard_packed_allocations.c \
+      -lm -o "build/$mode/standard-packed-allocation-test"
+    ;;
   standard-allocation-sanitize)
     instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
       -fprofile-instr-generate -fcoverage-mapping -fstack-usage)
@@ -605,7 +626,7 @@ case "$mode" in
       -sMODULARIZE=1 -sEXPORT_ES6=1 -sENVIRONMENT=web,worker,node -sFILESYSTEM=0 \
       -sINITIAL_MEMORY=16777216 -sALLOW_MEMORY_GROWTH=0 \
       -sSTACK_SIZE=262144 -sABORTING_MALLOC=0 \
-      '-sEXPORTED_FUNCTIONS=["_bridge_translate","_bridge_translate_pair","_bridge_translate_exact","_bridge_translate_pair_exact","_bridge_translate_original_92cb_first_power","_bridge_translate_original_92cb_complete","_bridge_translate_standard","_bridge_translate_standard_pair","_bridge_translate_standard_pair_typed","_malloc","_free"]' \
+      '-sEXPORTED_FUNCTIONS=["_bridge_translate","_bridge_translate_pair","_bridge_translate_exact","_bridge_translate_pair_exact","_bridge_translate_original_92cb_first_power","_bridge_translate_original_92cb_complete","_bridge_translate_standard","_bridge_translate_standard_pair","_bridge_translate_standard_pair_typed","_bridge_translate_standard_pair_vertex_formats","_malloc","_free"]' \
       '-sEXPORTED_RUNTIME_METHODS=["UTF8ToString","HEAPU8"]'
     ;;
   *) echo 'Usage: build.sh guard-check|native|exact-reciprocal-sanitize|exact-pair-sanitize|sanitize|captured-sanitize|component-sanitize|pair-sanitize|bank-sanitize|raw-bit-sanitize|integer-mask-sanitize|float-mask-sanitize|numeric-float-sanitize|component-float-sanitize|dot-reciprocal-sanitize|wasm' >&2; exit 2 ;;

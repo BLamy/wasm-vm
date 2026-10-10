@@ -34,8 +34,12 @@ static void named(const struct standard_profile *p, unsigned file, unsigned inde
    else if (file == TGSI_FILE_IMMEDIATE) snprintf(name, 48, "imm%u", index);
    else if (file == TGSI_FILE_INPUT) {
       const struct standard_io *io = &p->input[index];
-      if (!p->stage) snprintf(name, 48,
-         (p->signed_inputs | p->unsigned_inputs) & (1u << index) ? "uvec4(in_%u)" : "floatBitsToUint(in_%u)", index);
+      if (!p->stage) {
+         if (p->packed_signed_inputs & (1u << index))
+            snprintf(name, 48, "floatBitsToUint(wv_pack_%u(in_%u))", index, index);
+         else snprintf(name, 48,
+            (p->signed_inputs | p->unsigned_inputs) & (1u << index) ? "uvec4(in_%u)" : "floatBitsToUint(in_%u)", index);
+      }
       else if (io->semantic == STD_POSITION) snprintf(name, 48, "floatBitsToUint(gl_FragCoord)");
       else if (io->semantic == STD_PCOORD) snprintf(name, 48, "wv_point_coord()");
       else if (io->flat) snprintf(name, 48, "vso_g%u", io->sid);
@@ -85,6 +89,11 @@ static void interface(struct output *o, const struct standard_profile *p)
    for (unsigned j = 0; j < STANDARD_SAMPLERS; ++j) if (p->used_samplers & (1u << j))
       put(o, "uniform highp sampler2D %ssamp%u;\n", p->stage ? "fs" : "vs", j);
    if (!p->stage) put(o, "layout(std140) uniform VirglBlock {\nvec4 clipp[8];\nuint stipple_pattern[32];\nfloat winsys_adjust_y;\nfloat alpha_ref_val;\nbool clip_plane_enabled;\nint drawid_base;\n};\nuniform vec2 wv_point_size;\n");
+   for (unsigned j = 0; j < 16; ++j) if (p->packed_signed_inputs & (1u << j)) {
+      put(o, "vec4 wv_pack_%u(vec4 v) {\nvec4 s = v - vec4(greaterThanEqual(v, vec4(512.0,512.0,512.0,2.0))) * vec4(1024.0,1024.0,1024.0,4.0);\n", j);
+      put(o, p->packed_normalized_inputs & (1u << j) ?
+          "return max(s / vec4(511.0,511.0,511.0,1.0), vec4(-1.0));\n}\n" : "return s;\n}\n");
+   }
    bool point_coord = false;
    for (unsigned j = 0; j < STANDARD_IO; ++j)
       point_coord |= p->declared[STD_IN][j] && p->input[j].semantic == STD_PCOORD;
