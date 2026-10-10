@@ -3,7 +3,7 @@ id: E6-T11d5
 epic: 6
 title: Execute standard guest shader bindings through owned renderer jobs
 priority: 525.027038
-status: in-progress
+status: implemented
 depends_on: [E6-T11d4]
 estimate: S
 risk: high
@@ -90,3 +90,62 @@ while `parseConstantDomain` rejects its metadata and `decodeSubmission` rejects
 an otherwise valid2048-word inline FS constant bank. A new explicit consumer and
 host-selected decoder are required; weakening the existing exact facet would
 confuse its numerical/word proof. Activate only after E6-T11d4 is verified.
+
+### 2026-10-09 — worker — implemented; frozen renderer recording
+
+Runtime/acceptance head `365b3cf3d076637c347c7e9802420f847d09fbed` (diff from
+`11558494`). Exact commands:
+
+```sh
+VIRGL_STANDARD_STATE_EVIDENCE_DIR=target/evidence/virgl-standard-state-final make verify-E6-T11d5
+python3 tools/virgl-command/standard-state-cold.py --output target/evidence/virgl-standard-state-final-cold
+python3 tools/virgl-command/standard-state-seal.py target/evidence/virgl-standard-state-final target/evidence/virgl-standard-state-final-cold evidence/virgl-standard-state/worker
+```
+
+The frozen gate passes 542 literal wire predictions and 32 metadata attacks,
+then 55 actual hardware queued frames with 2,371,168 independently checked
+pixels. It records native uniform words, reflection, sources, vertex buffer
+bytes, distinct texture units/images, input/output ownership and actual fences
+at delays 0/2/5 with command step budgets 64/1/2. Short and empty banks clear
+native suffixes; A/B/A restoration, cache reset/relink/pressure, retained selector
+name reuse, raw flat words/attribute15, all sixteen generic semantics, both-stage
+sampler15 views, native fragment coordinates/discard and built-in IDs execute.
+The complete captured 92cb and c580 programs execute through literal queued
+shader/constant/transfer/draw packets with all three authentic original banks.
+Every original frame's observed maximum RGBA8 error is zero (acceptance budgets
+are 1, or 6 for c580's inherited native highp color equation). Real compiler
+errors, foreign/accessor metadata, pair mismatch, quotas and malformed tails
+fail before native draw and clean up. Two jobs cancel after actual native draw
+and drain their completion fences. Chrome's active built-in integer reflection
+uses location -1 and is checked separately from bound guest attributes.
+
+A served-state mutation skips short raw uploads and fails specifically at
+`short-bank-0 independent physical pixel oracle`; the original first pixel is
+[96,64,48,159] and its mutated observation is [128,128,143,191]. An offline audit
+reconstructs shader/constant/view state from recorded original wire bytes,
+checks actual read native words and saved full pixels, and catches that fault.
+All nine directly affected old decoder/resource/state/draw/async/raster/cache/
+blend/float gates and the promoted blend/float boundaries pass once at this head.
+The C/compiler and Rust/device boundaries are unchanged: carry E6-T11d4 at
+`9323b445` and their prior native/wasm/guest evidence. The old metadata/numerical
+contract prefix is byte-identical (SHA256
+`bfd25f78876cb1b60c7d04de81245c5d9e3938fb4d34f6b0e723961d896afdd2`).
+The actual rebuilt Wasm remains 16 MiB, SHA256
+`40772f2a609b803a11f97a3cdd35087810964c2dd35662e0bb143e7144f97287`.
+
+The pristine exact-head clone at
+`/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-standard-state-cold-fnt6r7vr/wasm-vm`
+passes the same complete acceptance with scrubbed build environment and no
+checkout changes. Hot/cold V8 coverage, browser reports/screenshots, original
+input bytes, generated modules, logs and pixel captures are sealed in
+`evidence/virgl-standard-state/worker/{manifest.json,records.json,recording.tar.gz}`:
+228 records, 9,228,643 archive bytes; archive SHA256
+`553a510d719a5a4dd2617ec3ae1d126ee3a77ed4cbec5d113fb254b33c69d3d0`,
+index `efc78b0e268437e163c675bf1c601e3ee41f1c5272de39b2240b9c6921501ff4`,
+hot receipt `c0649f4e28aa4a2ed7ce758f4777b1b32939bcd51e5d7e043f5e72c2fbe82c52`,
+cold report `d6f52779845212d7ba72b8869019a954f3412f52890fc4f2b874fabf1af81183`,
+cold receipt `82d9846e1fcaf59167fe9089ff004c9491275007d2dde28ee48d2182bd566d9f`.
+This is a standard shader-binding prerequisite only: single COLOR0, the existing
+2D texture/storage and draw profile, no production negotiation or live guest/API/
+scanout/throughput claim. Production demo entry points remain gated. Submit to a
+fresh adversarial session; the worker has not set verified.
