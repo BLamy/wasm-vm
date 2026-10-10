@@ -1,0 +1,37 @@
+{
+  "schema": "standard-packed-critic-independent-audit-v1",
+  "status": "passed",
+  "records": [
+    {
+      "name": "hardware",
+      "reportSha256": "2461ee3fd162727550dced0f721ef71a0dfdeb5f43a10bee1a112f11b27eed7c",
+      "auditPath": "promoted-hardware-audit.jsonl",
+      "frames": 92
+    },
+    {
+      "name": "fault-native-normalize",
+      "reportSha256": "a189594838c23f96b8609ec1ebc7b5bb62806ffc41b24697f607e5e7cb904941",
+      "auditPath": "promoted-fault-native-normalize-audit.jsonl",
+      "frames": 1
+    },
+    {
+      "name": "fault-constant-field",
+      "reportSha256": "05c396c8d456ddc04fd2efe8dce7ed03e4086ec49f5a62962f3b82fefc1b7dd5",
+      "auditPath": "promoted-fault-constant-field-audit.jsonl",
+      "frames": 1
+    },
+    {
+      "name": "fault-shader-sign",
+      "reportSha256": "19aff6f8c3ebd0b6321cba146d8dfe3d6c10ec585e9ba19b1ac2ed9f69f8ef6f",
+      "auditPath": "promoted-fault-shader-sign-audit.jsonl",
+      "frames": 1
+    }
+  ],
+  "frames": 92,
+  "pixels": 23552,
+  "faults": 3,
+  "storage": 306,
+  "nativeShaderComparisons": 95,
+  "readRanges": 34,
+  "compilerVariants": 14
+}

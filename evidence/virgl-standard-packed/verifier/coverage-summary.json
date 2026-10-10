@@ -1,0 +1,621 @@
+{
+  "jsIntervals": 507,
+  "llvmRegions": 191,
+  "branches": 51,
+  "zeroJavascript": [
+    {
+      "source": "renderer/virgl-command/tests/standard-packed-vertex-fetch.mjs",
+      "line": 37,
+      "text": "throw Error('original high packed element create missing');"
+    },
+    {
+      "source": "renderer/virgl-command/tests/standard-packed-vertex-fetch.mjs",
+      "line": 57,
+      "text": "throw Error('real WebGL2 required');"
+    },
+    {
+      "source": "renderer/virgl-command/tests/standard-packed-vertex-fetch.mjs",
+      "line": 58,
+      "text": "??gl.VENDOR"
+    },
+    {
+      "source": "renderer/virgl-command/tests/standard-packed-vertex-fetch.mjs",
+      "line": 58,
+      "text": "??gl.RENDERER"
+    },
+    {
+      "source": "renderer/virgl-command/tests/standard-packed-vertex-fetch.mjs",
+      "line": 59,
+      "text": "throw Error('hardware packed proof required');"
+    }
+  ],
+  "zeroLlvm": [
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_packed_inputs.c",
+      "function": "main",
+      "start": [
+        22,
+        18
+      ],
+      "end": [
+        22,
+        19
+      ],
+      "kind": 3
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_packed_inputs.c",
+      "function": "main",
+      "start": [
+        22,
+        19
+      ],
+      "end": [
+        22,
+        27
+      ],
+      "kind": 0
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_packed_inputs.c",
+      "function": "main",
+      "start": [
+        23,
+        43
+      ],
+      "end": [
+        23,
+        44
+      ],
+      "kind": 3
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_packed_inputs.c",
+      "function": "main",
+      "start": [
+        23,
+        44
+      ],
+      "end": [
+        23,
+        52
+      ],
+      "kind": 0
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_packed_inputs.c",
+      "function": "main",
+      "start": [
+        24,
+        50
+      ],
+      "end": [
+        24,
+        51
+      ],
+      "kind": 3
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_packed_inputs.c",
+      "function": "main",
+      "start": [
+        24,
+        51
+      ],
+      "end": [
+        24,
+        59
+      ],
+      "kind": 0
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_packed_inputs.c",
+      "function": "main",
+      "start": [
+        29,
+        20
+      ],
+      "end": [
+        29,
+        21
+      ],
+      "kind": 3
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_packed_inputs.c",
+      "function": "main",
+      "start": [
+        29,
+        21
+      ],
+      "end": [
+        29,
+        29
+      ],
+      "kind": 0
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_packed_inputs.c",
+      "function": "main",
+      "start": [
+        34,
+        62
+      ],
+      "end": [
+        34,
+        63
+      ],
+      "kind": 3
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_packed_inputs.c",
+      "function": "main",
+      "start": [
+        34,
+        63
+      ],
+      "end": [
+        34,
+        71
+      ],
+      "kind": 0
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_packed_inputs.c",
+      "function": "main",
+      "start": [
+        38,
+        37
+      ],
+      "end": [
+        38,
+        38
+      ],
+      "kind": 3
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_packed_inputs.c",
+      "function": "main",
+      "start": [
+        38,
+        38
+      ],
+      "end": [
+        38,
+        46
+      ],
+      "kind": 0
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_packed_inputs.c",
+      "function": "standard_packed_inputs.c:number",
+      "start": [
+        9,
+        31
+      ],
+      "end": [
+        9,
+        32
+      ],
+      "kind": 3
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_packed_inputs.c",
+      "function": "standard_packed_inputs.c:number",
+      "start": [
+        9,
+        32
+      ],
+      "end": [
+        9,
+        39
+      ],
+      "kind": 0
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_packed_inputs.c",
+      "function": "standard_packed_inputs.c:text",
+      "start": [
+        15,
+        38
+      ],
+      "end": [
+        15,
+        39
+      ],
+      "kind": 3
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_packed_inputs.c",
+      "function": "standard_packed_inputs.c:text",
+      "start": [
+        15,
+        39
+      ],
+      "end": [
+        15,
+        46
+      ],
+      "kind": 0
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_packed_inputs.c",
+      "function": "standard_packed_inputs.c:text",
+      "start": [
+        17,
+        49
+      ],
+      "end": [
+        17,
+        50
+      ],
+      "kind": 3
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_packed_inputs.c",
+      "function": "standard_packed_inputs.c:text",
+      "start": [
+        17,
+        50
+      ],
+      "end": [
+        17,
+        57
+      ],
+      "kind": 0
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_packed_allocations.c",
+      "function": "standard_packed_allocations.c:require",
+      "start": [
+        26,
+        56
+      ],
+      "end": [
+        26,
+        200
+      ],
+      "kind": 0
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_packed_allocations.c",
+      "function": "standard_packed_allocations.c:require",
+      "start": [
+        26,
+        65
+      ],
+      "end": [
+        26,
+        65
+      ],
+      "kind": 0
+    }
+  ],
+  "oneSided": [
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_packed_inputs.c",
+      "start": [
+        22,
+        8
+      ],
+      "end": [
+        22,
+        17
+      ],
+      "true": 0,
+      "false": 1
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_packed_inputs.c",
+      "start": [
+        23,
+        40
+      ],
+      "end": [
+        23,
+        42
+      ],
+      "true": 0,
+      "false": 1
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_packed_inputs.c",
+      "start": [
+        24,
+        36
+      ],
+      "end": [
+        24,
+        49
+      ],
+      "true": 0,
+      "false": 1
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_packed_inputs.c",
+      "start": [
+        29,
+        11
+      ],
+      "end": [
+        29,
+        19
+      ],
+      "true": 0,
+      "false": 59
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_packed_inputs.c",
+      "start": [
+        34,
+        11
+      ],
+      "end": [
+        34,
+        18
+      ],
+      "true": 0,
+      "false": 59
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_packed_inputs.c",
+      "start": [
+        34,
+        22
+      ],
+      "end": [
+        34,
+        61
+      ],
+      "true": 0,
+      "false": 59
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_packed_inputs.c",
+      "start": [
+        38,
+        8
+      ],
+      "end": [
+        38,
+        23
+      ],
+      "true": 0,
+      "false": 1
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_packed_inputs.c",
+      "start": [
+        38,
+        27
+      ],
+      "end": [
+        38,
+        36
+      ],
+      "true": 0,
+      "false": 1
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_packed_inputs.c",
+      "start": [
+        9,
+        8
+      ],
+      "end": [
+        9,
+        30
+      ],
+      "true": 0,
+      "false": 414
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_packed_inputs.c",
+      "start": [
+        15,
+        8
+      ],
+      "end": [
+        15,
+        37
+      ],
+      "true": 0,
+      "false": 118
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_packed_inputs.c",
+      "start": [
+        17,
+        8
+      ],
+      "end": [
+        17,
+        10
+      ],
+      "true": 0,
+      "false": 118
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_packed_inputs.c",
+      "start": [
+        17,
+        14
+      ],
+      "end": [
+        17,
+        48
+      ],
+      "true": 0,
+      "false": 118
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_packed_allocations.c",
+      "start": [
+        32,
+        227
+      ],
+      "end": [
+        32,
+        238
+      ],
+      "true": 2,
+      "false": 0
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_packed_allocations.c",
+      "start": [
+        32,
+        240
+      ],
+      "end": [
+        32,
+        247
+      ],
+      "true": 2,
+      "false": 0
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_packed_allocations.c",
+      "start": [
+        32,
+        249
+      ],
+      "end": [
+        32,
+        259
+      ],
+      "true": 2,
+      "false": 0
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_packed_allocations.c",
+      "start": [
+        32,
+        261
+      ],
+      "end": [
+        32,
+        275
+      ],
+      "true": 2,
+      "false": 0
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_packed_allocations.c",
+      "start": [
+        32,
+        277
+      ],
+      "end": [
+        32,
+        292
+      ],
+      "true": 2,
+      "false": 0
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_packed_allocations.c",
+      "start": [
+        38,
+        181
+      ],
+      "end": [
+        38,
+        186
+      ],
+      "true": 1,
+      "false": 0
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_packed_allocations.c",
+      "start": [
+        38,
+        188
+      ],
+      "end": [
+        38,
+        193
+      ],
+      "true": 1,
+      "false": 0
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_packed_allocations.c",
+      "start": [
+        26,
+        50
+      ],
+      "end": [
+        26,
+        55
+      ],
+      "true": 0,
+      "false": 175
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_packed_allocations.c",
+      "start": [
+        28,
+        45
+      ],
+      "end": [
+        28,
+        46
+      ],
+      "true": 44,
+      "false": 0
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_packed_allocations.c",
+      "start": [
+        28,
+        48
+      ],
+      "end": [
+        28,
+        72
+      ],
+      "true": 44,
+      "false": 0
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_packed_allocations.c",
+      "start": [
+        28,
+        104
+      ],
+      "end": [
+        28,
+        125
+      ],
+      "true": 44,
+      "false": 0
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_packed_allocations.c",
+      "start": [
+        28,
+        127
+      ],
+      "end": [
+        28,
+        150
+      ],
+      "true": 44,
+      "false": 0
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_packed_allocations.c",
+      "start": [
+        28,
+        152
+      ],
+      "end": [
+        28,
+        177
+      ],
+      "true": 44,
+      "false": 0
+    }
+  ]
+}

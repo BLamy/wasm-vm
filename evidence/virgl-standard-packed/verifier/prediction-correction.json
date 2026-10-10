@@ -1,0 +1,11 @@
+{
+  "schema": "standard-packed-critic-prediction-correction-v1",
+  "at": "2026-10-10T11:32:12.013189+00:00",
+  "prediction": "P2",
+  "originalPredictionsSha256": "9c3b9c79c019908a86e10e204b938f649debd04f8097d8700745b2e53044f767",
+  "reason": "Verifier arithmetic mistake, not a runtime contradiction: the existing packet policy requires offset+elementBytes <= 0xffffffff. Four-byte offset0xfffffffb is the exact exclusive-end limit;0xfffffffc overflows that policy and must reject.",
+  "initialReportSha256": "0b830cd403beb5e445667170608015ab6a20d25510da17f981c80f3b6d7ddf60",
+  "initialHarnessSha256": "51a3f0120271633e5305559489c828aac61122cb44591802c528eacbf8a6ff9c",
+  "initialCompletedFrames": 90,
+  "newIndependentPrediction": "At offset0xfffffffb the original four-byte wire element admits;offset0xfffffffc rejects. The criterion names original packet bounds, which remain unchanged from the verified dependency."
+}

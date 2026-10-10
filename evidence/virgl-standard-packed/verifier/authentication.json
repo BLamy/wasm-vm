@@ -1,0 +1,54 @@
+{
+  "schema": "standard-packed-critic-authentication-v1",
+  "status": "passed",
+  "sourceFreeze": "e7a85906622794c60872876f9d3e80da83df9ccd",
+  "submission": "520dbc10ad15f3ae328de577db724b1ff99cb32a",
+  "predecessor": "23bf410f9e152d53e83e674717c647a4164dcde7",
+  "archiveSha256": "724887df2941202113d22fd297f8e3a5633ab0ddb409fd8ffa5ef260d4cc0113",
+  "indexSha256": "1c46154671bdbf7a2e743fbff97db333fee4ad28ac96aca5dcc22d9e1c9e6f85",
+  "records": 17844,
+  "sourcePinsIndependentlyAuthenticated": 1596,
+  "receipts": {
+    "hot": {
+      "sha256": "f25e1da2e1570ff7e48d11c10ecd9fe6422a25010e897a27339cb6812f5a2941",
+      "files": 8903,
+      "sources": 798,
+      "generated": 17,
+      "carriedEvidence": 199
+    },
+    "cold": {
+      "sha256": "ca81c3ebbe088cce3e376c4c3762637ceb23bbbde6bce22e71ebb94c228ac7be",
+      "files": 8903,
+      "sources": 798,
+      "generated": 17,
+      "carriedEvidence": 199
+    }
+  },
+  "freezeToSubmissionChanged": [
+    "evidence/virgl-standard-packed/worker/manifest.json",
+    "evidence/virgl-standard-packed/worker/recording.tar.gz",
+    "evidence/virgl-standard-packed/worker/records.json",
+    "tasks/QUEUE.md",
+    "tasks/epic-6-transcendence/E6-T11d15-standard-packed-vertex-fetch.md"
+  ],
+  "cold": {
+    "schema": 1,
+    "task": "E6-T11d15",
+    "gitHead": "e7a85906622794c60872876f9d3e80da83df9ccd",
+    "clone": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-standard-packed-cold-02yerfsm/wasm-vm",
+    "removedEnvironmentNames": [
+      "RUST_LOG"
+    ],
+    "command": [
+      "make",
+      "verify-E6-T11d15"
+    ],
+    "status": "passed",
+    "cloneHead": "e7a85906622794c60872876f9d3e80da83df9ccd",
+    "statusBefore": "",
+    "exitCode": 0,
+    "statusAfter": "",
+    "receiptSha256": "ca81c3ebbe088cce3e376c4c3762637ceb23bbbde6bce22e71ebb94c228ac7be",
+    "logSha256": "6614b2c3db920b148a0f0c087b4944111a5859cbf724d4bba90dc6ecef87568d"
+  }
+}
