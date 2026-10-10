@@ -3,7 +3,7 @@ id: E6-T11d5
 epic: 6
 title: Execute standard guest shader bindings through owned renderer jobs
 priority: 525.027038
-status: implemented
+status: in-progress
 depends_on: [E6-T11d4]
 estimate: S
 risk: high
@@ -149,3 +149,56 @@ This is a standard shader-binding prerequisite only: single COLOR0, the existing
 2D texture/storage and draw profile, no production negotiation or live guest/API/
 scanout/throughput claim. Production demo entry points remain gated. Submit to a
 fresh adversarial session; the worker has not set verified.
+
+
+### 2026-10-09 — fresh verifier — scoped native-admission refutation
+
+VERDICT: refuted
+
+- F1 raw uniform omission — FAILED. Predicted rejection before draw when both
+  stage/pair metadata coherently omit an active FS bank while preserving real
+  compiler GLSL. Both independent runs instead complete `drawArrays(5,0,4)` at
+  turn 16 (`ok:true`, `gpuComplete:true`): active `fsconst0` has three vectors,
+  twelve zero native words despite the full literal bank, and first pixel
+  [0,0,0,0] rather than [91,117,153,140]. Frozen diff points:
+  `constant-domain.mjs:857`, `state.mjs:517`. Evidence:
+  `evidence/virgl-standard-state/verifier/findings.jsonl:1`, recheck report
+  `browserResult.result.cases[0]`, SHA256
+  `6ad6e395c8de953ebca9ce351b32b8d7f4ace556603c141e8e3acb97a32abbdc`.
+  Account for every active native default-block raw uniform before draw.
+- F2 sampler omission — FAILED. The same coherent omission of FS samplers also
+  completes one draw at turn 16. Native `fssamp2`/`fssamp15` both read unit 0 rather
+  than 2/15; first pixel [77,81,80,232] rather than [91,117,153,140]. Frozen diff
+  points: `constant-domain.mjs:864`, `state.mjs:542`. Evidence:
+  `evidence/virgl-standard-state/verifier/findings.jsonl:2`, same recheck report
+  digest, `browserResult.result.cases[1]`. Account for every active native
+  default-block sampler before draw, preserving legitimate optimized-out reads.
+
+The complete verdict, prediction matrix, exact commands, recorded points and
+narrow coverage waivers are in
+`evidence/virgl-standard-state/verifier/verdict.md`. All conclusions are bound to
+immutable runtime 365b3cf3 / worker claim e5d4dba7, not a repair head. All other
+predictions are HELD: independently authenticated 228 worker records; audited
+all 110 hot/cold frames and 4,742,336 full pixels, including authentic original
+92cb/c580 shaders/banks; read literal wire, actual native uniform/buffer/system
+state and 146 real completion fences. All 45 runtime hunks / 268 added lines
+are accounted with seven explicit partial-line waivers plus structural lines;
+no additional sufficiency gap remains. A new four-image both-stage shader/view/
+raw-linkage attack passes 22 frames under two independently chosen seeds and
+schedules, 25 metadata attacks and two native admission attacks. Its single
+served VS-view sabotage reaches real draw and fails the named independent pixel
+oracle ([82,117,144,140] rather than [91,117,153,140]).
+
+Carry unchanged compiler/device/transport proof at 9323b445 and the legacy prefix
+`bfd25f78876cb1b60c7d04de81245c5d9e3938fb4d34f6b0e723961d896afdd2`, affected
+old gates and the already authenticated pristine exact-head clone. Preserve
+HELD results where code, dependency boundary and digest remain unchanged.
+Critic regression candidates and reproduction tooling are committed; terminal
+SUITE promotion waits for these refutations to clear. No runtime code was fixed.
+Return this same task to `in-progress` for native-admission repair and affected
+re-recording; do not start a successor yet.
+
+Critic seal: `evidence/virgl-standard-state/verifier/{manifest.json,records.json,
+recording.tar.gz}`, 52 members, archive SHA256
+`6f05eeafad2f2dcdc225957b6ee95889855c1abc3538b480ad3f9a1222257c9b`, index
+`09f798b43f4b9e960c97879b682ac0110089cb9f124b42108d79edd4093cbd7e`.

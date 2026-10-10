@@ -1,0 +1,3520 @@
+{
+  "schema": 1,
+  "head": "365b3cf3d076637c347c7e9802420f847d09fbed",
+  "base": "11558494",
+  "files": {
+    "renderer/virgl-command/constant-domain.mjs": {
+      "sha256": "732878d142d6d2cfd694ad58629f2a1ee4d282d4fc76c22c2e216a2d2f3a066b",
+      "recordings": [
+        "unpacked/hot/hardware/browser-coverage.json",
+        "unpacked/hot/promoted-blend/browser-coverage.json",
+        "unpacked/hot/retained-blend-equations/browser-coverage.json",
+        "unpacked/hot/retained-float-vertex-fetch/browser-coverage.json",
+        "unpacked/cold/hardware/browser-coverage.json",
+        "unpacked/cold/promoted-blend/browser-coverage.json",
+        "unpacked/cold/retained-blend-equations/browser-coverage.json",
+        "unpacked/cold/retained-float-vertex-fetch/browser-coverage.json",
+        "independent-final/browser-coverage.json"
+      ],
+      "hunks": [
+        {
+          "start": 767,
+          "count": 180
+        }
+      ],
+      "addedLines": [
+        {
+          "line": 767,
+          "text": "",
+          "classification": "waived",
+          "minimumCount": 0,
+          "maximumCount": 0,
+          "citations": [],
+          "unhitRanges": [],
+          "reason": "Comment, blank line, or punctuation-only structural syntax has no independent runtime behavior."
+        },
+        {
+          "line": 768,
+          "text": "// This separate consumer never derives exact authority from ordinary native",
+          "classification": "waived",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": [],
+          "reason": "Comment, blank line, or punctuation-only structural syntax has no independent runtime behavior."
+        },
+        {
+          "line": 769,
+          "text": "// shader semantics. The legacy parser and every legacy contract above remain",
+          "classification": "waived",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": [],
+          "reason": "Comment, blank line, or punctuation-only structural syntax has no independent runtime behavior."
+        },
+        {
+          "line": 770,
+          "text": "// independent; only the host-selected standard renderer calls these exports.",
+          "classification": "waived",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": [],
+          "reason": "Comment, blank line, or punctuation-only structural syntax has no independent runtime behavior."
+        },
+        {
+          "line": 771,
+          "text": "export const STANDARD_SHADER_PROFILE = \"virgl-webgl2-standard-gles3-v1\";",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 772,
+          "text": "const STANDARD_METADATA_KEYS = [\"profile\", \"stage\", \"inputs\", \"outputs\", \"attributes\",",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 773,
+          "text": "\"systemValues\", \"uniforms\", \"samplers\", \"uniformBlocks\", \"broadcastColor0\", \"standardSemantics\"];",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 774,
+          "text": "const STANDARD_SEMANTICS = Object.freeze({",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 775,
+          "text": "kind: \"native-gles3-highp-v1\", precision: \"native-highp\", undefinedDomains: \"native-gles3\",",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 776,
+          "text": "preciseQualifier: \"no-gpu-shader5\", registerStorage: \"uvec4\", flatVaryingStorage: \"uvec4\",",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 777,
+          "text": "scalarResults: \"tgsi-x-replicated\", exactAuthority: false, gpuExecutionBound: false,",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 778,
+          "text": "});",
+          "classification": "waived",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": [],
+          "reason": "Comment, blank line, or punctuation-only structural syntax has no independent runtime behavior."
+        },
+        {
+          "line": 779,
+          "text": "const STANDARD_IO_KEYS = [\"index\", \"name\", \"type\", \"semantic\", \"semanticIndex\", \"componentMask\"];",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 780,
+          "text": "function standardFreeze(value) {",
+          "classification": "executed",
+          "minimumCount": 73932,
+          "maximumCount": 73932,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 781,
+          "text": "if (value && typeof value === \"object\") {",
+          "classification": "executed",
+          "minimumCount": 19365,
+          "maximumCount": 73932,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 782,
+          "text": "for (const child of Object.values(value)) standardFreeze(child);",
+          "classification": "executed",
+          "minimumCount": 19365,
+          "maximumCount": 72492,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 783,
+          "text": "Object.freeze(value);",
+          "classification": "executed",
+          "minimumCount": 19365,
+          "maximumCount": 19365,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 784,
+          "text": "}",
+          "classification": "waived",
+          "minimumCount": 19365,
+          "maximumCount": 19365,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": [],
+          "reason": "Comment, blank line, or punctuation-only structural syntax has no independent runtime behavior."
+        },
+        {
+          "line": 785,
+          "text": "return value;",
+          "classification": "executed",
+          "minimumCount": 73932,
+          "maximumCount": 73932,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 786,
+          "text": "}",
+          "classification": "waived",
+          "minimumCount": 73932,
+          "maximumCount": 73932,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": [],
+          "reason": "Comment, blank line, or punctuation-only structural syntax has no independent runtime behavior."
+        },
+        {
+          "line": 787,
+          "text": "function standardIO(value, stage, file, paired) {",
+          "classification": "executed",
+          "minimumCount": 2651,
+          "maximumCount": 2651,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 788,
+          "text": "const output = file === \"outputs\", system = file === \"systemValues\";",
+          "classification": "executed",
+          "minimumCount": 2651,
+          "maximumCount": 2651,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 789,
+          "text": "const input = record(value, [...STANDARD_IO_KEYS, \"syntacticWriteMask\", \"interpolation\"],",
+          "classification": "executed",
+          "minimumCount": 2651,
+          "maximumCount": 2651,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 790,
+          "text": "[...STANDARD_IO_KEYS, ...(output ? [\"syntacticWriteMask\"] : [])]);",
+          "classification": "executed",
+          "minimumCount": 1241,
+          "maximumCount": 2651,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 791,
+          "text": "require(Number.isInteger(input.index) && input.index >= 0 && input.index < (system ? 2 : stage === \"vertex\" && !output ? 16 : 32) &&",
+          "classification": "executed",
+          "minimumCount": 16,
+          "maximumCount": 2651,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 792,
+          "text": "Number.isInteger(input.componentMask) && input.componentMask >= 1 && input.componentMask <= 15 &&",
+          "classification": "executed",
+          "minimumCount": 2649,
+          "maximumCount": 2649,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 793,
+          "text": "Number.isInteger(input.semanticIndex), \"Invalid standard physical register or component extent.\");",
+          "classification": "executed",
+          "minimumCount": 2649,
+          "maximumCount": 2651,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 794,
+          "text": "if (output) require(Number.isInteger(input.syntacticWriteMask) && input.syntacticWriteMask >= 0 && input.syntacticWriteMask <= 15 &&",
+          "classification": "executed",
+          "minimumCount": 1238,
+          "maximumCount": 2651,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 795,
+          "text": "(input.syntacticWriteMask & ~input.componentMask) === 0, \"Invalid syntactic output write mask.\");",
+          "classification": "executed",
+          "minimumCount": 1238,
+          "maximumCount": 1239,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 796,
+          "text": "else require(!Object.hasOwn(input, \"syntacticWriteMask\"), \"Input declarations cannot carry write authority.\");",
+          "classification": "executed",
+          "minimumCount": 1410,
+          "maximumCount": 1410,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 797,
+          "text": "let interpolation = null;",
+          "classification": "executed",
+          "minimumCount": 2648,
+          "maximumCount": 2648,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 798,
+          "text": "if (system) {",
+          "classification": "executed",
+          "minimumCount": 16,
+          "maximumCount": 2648,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 799,
+          "text": "require(stage === \"vertex\" && [\"VERTEXID\", \"INSTANCEID\"].includes(input.semantic) && input.type === \"int\" &&",
+          "classification": "executed",
+          "minimumCount": 16,
+          "maximumCount": 16,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 800,
+          "text": "input.semanticIndex === 0 && input.name === (input.semantic === \"VERTEXID\" ? \"gl_VertexID\" : \"gl_InstanceID\"),",
+          "classification": "executed",
+          "minimumCount": 8,
+          "maximumCount": 16,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 801,
+          "text": "\"Unknown standard system value.\");",
+          "classification": "executed",
+          "minimumCount": 16,
+          "maximumCount": 16,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 802,
+          "text": "} else if (stage === \"vertex\" && !output) {",
+          "classification": "executed",
+          "minimumCount": 16,
+          "maximumCount": 2632,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 803,
+          "text": "require(input.semantic === \"ATTRIBUTE\" && input.type === \"vec4\" && input.semanticIndex === 0 &&",
+          "classification": "executed",
+          "minimumCount": 921,
+          "maximumCount": 921,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 804,
+          "text": "input.componentMask === 15 && input.name === \"in_\" + input.index, \"Invalid standard vertex attribute.\");",
+          "classification": "executed",
+          "minimumCount": 921,
+          "maximumCount": 921,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 805,
+          "text": "} else if (input.semantic === \"GENERIC\") {",
+          "classification": "executed",
+          "minimumCount": 854,
+          "maximumCount": 1711,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 806,
+          "text": "require(input.semanticIndex >= 0 && input.semanticIndex < 16 &&",
+          "classification": "executed",
+          "minimumCount": 854,
+          "maximumCount": 854,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 807,
+          "text": "input.name === \"vso_g\" + input.semanticIndex && [\"smooth\", \"flat\"].includes(input.interpolation) &&",
+          "classification": "executed",
+          "minimumCount": 854,
+          "maximumCount": 854,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 808,
+          "text": "input.type === (input.interpolation === \"flat\" ? \"uvec4\" : \"vec4\") &&",
+          "classification": "executed",
+          "minimumCount": 96,
+          "maximumCount": 854,
+          "citations": [
+            "independent-final/browser-coverage.json",
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 809,
+          "text": "(!output || stage === \"vertex\") && (paired || !output || input.interpolation === \"smooth\"),",
+          "classification": "executed",
+          "minimumCount": 396,
+          "maximumCount": 854,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 810,
+          "text": "\"Invalid standard generic declaration.\");",
+          "classification": "executed",
+          "minimumCount": 854,
+          "maximumCount": 854,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 811,
+          "text": "interpolation = input.interpolation;",
+          "classification": "executed",
+          "minimumCount": 854,
+          "maximumCount": 854,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 812,
+          "text": "} else if (input.semantic === \"POSITION\") {",
+          "classification": "executed",
+          "minimumCount": 453,
+          "maximumCount": 857,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 813,
+          "text": "require(input.semanticIndex === 0 && input.type === \"vec4\" &&",
+          "classification": "executed",
+          "minimumCount": 453,
+          "maximumCount": 453,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 814,
+          "text": "(stage === \"vertex\" && output ? input.index === 0 && input.name === \"gl_Position\" && input.componentMask === 15 :",
+          "classification": "executed",
+          "minimumCount": 64,
+          "maximumCount": 453,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 815,
+          "text": "stage === \"fragment\" && !output && input.name === \"gl_FragCoord\" && input.interpolation === \"linear\"),",
+          "classification": "executed",
+          "minimumCount": 64,
+          "maximumCount": 453,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 816,
+          "text": "\"Invalid standard position declaration.\");",
+          "classification": "executed",
+          "minimumCount": 453,
+          "maximumCount": 453,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 817,
+          "text": "if (stage === \"fragment\") interpolation = \"linear\";",
+          "classification": "executed",
+          "minimumCount": 64,
+          "maximumCount": 453,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 818,
+          "text": "} else {",
+          "classification": "executed",
+          "minimumCount": 404,
+          "maximumCount": 453,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 819,
+          "text": "require(stage === \"fragment\" && output && input.semantic === \"COLOR\" &&",
+          "classification": "executed",
+          "minimumCount": 404,
+          "maximumCount": 404,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 820,
+          "text": "input.semanticIndex === 0 && input.name === \"fsout_c0\" && input.type === \"vec4\",",
+          "classification": "executed",
+          "minimumCount": 402,
+          "maximumCount": 404,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 821,
+          "text": "\"This execution profile requires a single declared COLOR0.\");",
+          "classification": "executed",
+          "minimumCount": 404,
+          "maximumCount": 404,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 822,
+          "text": "}",
+          "classification": "waived",
+          "minimumCount": 404,
+          "maximumCount": 404,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": [],
+          "reason": "Comment, blank line, or punctuation-only structural syntax has no independent runtime behavior."
+        },
+        {
+          "line": 823,
+          "text": "require(interpolation !== null || !Object.hasOwn(input, \"interpolation\"), \"Unexpected interpolation field.\");",
+          "classification": "executed",
+          "minimumCount": 1727,
+          "maximumCount": 2651,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 824,
+          "text": "return { index: input.index, name: input.name, type: input.type, semantic: input.semantic,",
+          "classification": "executed",
+          "minimumCount": 2651,
+          "maximumCount": 2651,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 825,
+          "text": "semanticIndex: input.semanticIndex, componentMask: input.componentMask,",
+          "classification": "executed",
+          "minimumCount": 2651,
+          "maximumCount": 2651,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 826,
+          "text": "...(output ? { syntacticWriteMask: input.syntacticWriteMask } : {}),",
+          "classification": "executed",
+          "minimumCount": 1235,
+          "maximumCount": 2651,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 827,
+          "text": "...(interpolation === null ? {} : { interpolation }) };",
+          "classification": "executed",
+          "minimumCount": 918,
+          "maximumCount": 2651,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 828,
+          "text": "}",
+          "classification": "waived",
+          "minimumCount": 2651,
+          "maximumCount": 2651,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": [],
+          "reason": "Comment, blank line, or punctuation-only structural syntax has no independent runtime behavior."
+        },
+        {
+          "line": 829,
+          "text": "function standardIOArray(value, stage, file, paired) {",
+          "classification": "executed",
+          "minimumCount": 3180,
+          "maximumCount": 3180,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 830,
+          "text": "const entries = array(value, file === \"systemValues\" ? 2 : file === \"attributes\" || stage === \"vertex\" && file === \"inputs\" ? 16 : 32)",
+          "classification": "executed",
+          "minimumCount": 778,
+          "maximumCount": 3180,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 831,
+          "text": ".map(entry => standardIO(entry, stage, file === \"attributes\" ? \"inputs\" : file, paired));",
+          "classification": "executed",
+          "minimumCount": 460,
+          "maximumCount": 3180,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 832,
+          "text": "const semantics = new Set();",
+          "classification": "executed",
+          "minimumCount": 3180,
+          "maximumCount": 3180,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 833,
+          "text": "for (let index = 0; index < entries.length; index++) {",
+          "classification": "executed",
+          "minimumCount": 2645,
+          "maximumCount": 3180,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 834,
+          "text": "const entry = entries[index], key = entry.semantic + \"/\" + entry.semanticIndex;",
+          "classification": "executed",
+          "minimumCount": 2645,
+          "maximumCount": 2645,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 835,
+          "text": "require(index === 0 || entries[index - 1].index < entry.index, \"Physical registers must be sorted and unique.\");",
+          "classification": "executed",
+          "minimumCount": 789,
+          "maximumCount": 2645,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 836,
+          "text": "if (entry.semantic !== \"ATTRIBUTE\") {",
+          "classification": "executed",
+          "minimumCount": 1724,
+          "maximumCount": 2645,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 837,
+          "text": "require(!semantics.has(key), \"Semantic declarations must be unique.\"); semantics.add(key);",
+          "classification": "executed",
+          "minimumCount": 1724,
+          "maximumCount": 1724,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 838,
+          "text": "}",
+          "classification": "waived",
+          "minimumCount": 1724,
+          "maximumCount": 1724,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": [],
+          "reason": "Comment, blank line, or punctuation-only structural syntax has no independent runtime behavior."
+        },
+        {
+          "line": 839,
+          "text": "}",
+          "classification": "waived",
+          "minimumCount": 2645,
+          "maximumCount": 2645,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": [],
+          "reason": "Comment, blank line, or punctuation-only structural syntax has no independent runtime behavior."
+        },
+        {
+          "line": 840,
+          "text": "return entries;",
+          "classification": "executed",
+          "minimumCount": 3172,
+          "maximumCount": 3172,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 841,
+          "text": "}",
+          "classification": "waived",
+          "minimumCount": 3180,
+          "maximumCount": 3180,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": [],
+          "reason": "Comment, blank line, or punctuation-only structural syntax has no independent runtime behavior."
+        },
+        {
+          "line": 842,
+          "text": "function standardMetadata(value, stage, paired = false) {",
+          "classification": "executed",
+          "minimumCount": 810,
+          "maximumCount": 810,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 843,
+          "text": "const input = record(value, STANDARD_METADATA_KEYS);",
+          "classification": "executed",
+          "minimumCount": 810,
+          "maximumCount": 810,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 844,
+          "text": "require([\"vertex\", \"fragment\"].includes(stage) && input.stage === stage && input.profile === STANDARD_SHADER_PROFILE,",
+          "classification": "executed",
+          "minimumCount": 804,
+          "maximumCount": 810,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 845,
+          "text": "\"Standard execution requires the distinct standard compiler profile.\");",
+          "classification": "executed",
+          "minimumCount": 810,
+          "maximumCount": 810,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 846,
+          "text": "const semantics = record(input.standardSemantics, Object.keys(STANDARD_SEMANTICS));",
+          "classification": "executed",
+          "minimumCount": 810,
+          "maximumCount": 810,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 847,
+          "text": "for (const [key, expected] of Object.entries(STANDARD_SEMANTICS))",
+          "classification": "executed",
+          "minimumCount": 810,
+          "maximumCount": 810,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 848,
+          "text": "require(semantics[key] === expected, \"Standard numerical/word semantics disagree.\");",
+          "classification": "executed",
+          "minimumCount": 7222,
+          "maximumCount": 7222,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 849,
+          "text": "require(input.broadcastColor0 === false, \"Broadcast color requires a later execution profile.\");",
+          "classification": "executed",
+          "minimumCount": 800,
+          "maximumCount": 800,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 850,
+          "text": "const inputs = standardIOArray(input.inputs, stage, \"inputs\", paired),",
+          "classification": "executed",
+          "minimumCount": 800,
+          "maximumCount": 800,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 851,
+          "text": "outputs = standardIOArray(input.outputs, stage, \"outputs\", paired),",
+          "classification": "executed",
+          "minimumCount": 800,
+          "maximumCount": 800,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 852,
+          "text": "attributes = standardIOArray(input.attributes, stage, \"attributes\", paired),",
+          "classification": "executed",
+          "minimumCount": 800,
+          "maximumCount": 800,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 853,
+          "text": "systemValues = standardIOArray(input.systemValues, stage, \"systemValues\", paired);",
+          "classification": "executed",
+          "minimumCount": 800,
+          "maximumCount": 800,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 854,
+          "text": "require(stage === \"vertex\" ? outputs.filter(entry => entry.semantic === \"POSITION\").length === 1 &&",
+          "classification": "executed",
+          "minimumCount": 388,
+          "maximumCount": 833,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 855,
+          "text": "JSON.stringify(attributes) === JSON.stringify(inputs) : outputs.length === 1 &&",
+          "classification": "executed",
+          "minimumCount": 388,
+          "maximumCount": 403,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 856,
+          "text": "attributes.length === 0 && systemValues.length === 0, \"Standard stage declarations disagree.\");",
+          "classification": "executed",
+          "minimumCount": 402,
+          "maximumCount": 810,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 857,
+          "text": "const uniforms = array(input.uniforms, 1).map(value => {",
+          "classification": "executed",
+          "minimumCount": 561,
+          "maximumCount": 810,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 858,
+          "text": "const entry = record(value, [\"name\", \"type\", \"count\", \"encoding\"]);",
+          "classification": "executed",
+          "minimumCount": 561,
+          "maximumCount": 561,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 859,
+          "text": "require(entry.name === (stage === \"vertex\" ? \"vsconst0\" : \"fsconst0\") && entry.type === \"uvec4[]\" &&",
+          "classification": "executed",
+          "minimumCount": 238,
+          "maximumCount": 561,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 860,
+          "text": "entry.encoding === \"raw-32bit-words\" && Number.isInteger(entry.count) && entry.count >= 1 && entry.count <= 512,",
+          "classification": "executed",
+          "minimumCount": 560,
+          "maximumCount": 561,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 861,
+          "text": "\"Invalid standard constant bank.\");",
+          "classification": "executed",
+          "minimumCount": 561,
+          "maximumCount": 561,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 862,
+          "text": "return { name: entry.name, type: entry.type, count: entry.count, encoding: entry.encoding };",
+          "classification": "executed",
+          "minimumCount": 561,
+          "maximumCount": 561,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 863,
+          "text": "});",
+          "classification": "waived",
+          "minimumCount": 561,
+          "maximumCount": 810,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": [],
+          "reason": "Comment, blank line, or punctuation-only structural syntax has no independent runtime behavior."
+        },
+        {
+          "line": 864,
+          "text": "const samplers = array(input.samplers, 16).map(value => {",
+          "classification": "executed",
+          "minimumCount": 367,
+          "maximumCount": 810,
+          "citations": [
+            "independent-final/browser-coverage.json",
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 865,
+          "text": "const entry = record(value, [\"index\", \"name\", \"type\"]);",
+          "classification": "executed",
+          "minimumCount": 367,
+          "maximumCount": 367,
+          "citations": [
+            "independent-final/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 866,
+          "text": "require(Number.isInteger(entry.index) && entry.index >= 0 && entry.index < 16 &&",
+          "classification": "executed",
+          "minimumCount": 365,
+          "maximumCount": 367,
+          "citations": [
+            "independent-final/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 867,
+          "text": "entry.name === (stage === \"vertex\" ? \"vssamp\" : \"fssamp\") + entry.index && entry.type === \"sampler2D\",",
+          "classification": "executed",
+          "minimumCount": 182,
+          "maximumCount": 367,
+          "citations": [
+            "independent-final/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 868,
+          "text": "\"Invalid standard sampler declaration.\");",
+          "classification": "executed",
+          "minimumCount": 367,
+          "maximumCount": 367,
+          "citations": [
+            "independent-final/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 869,
+          "text": "return { index: entry.index, name: entry.name, type: entry.type };",
+          "classification": "executed",
+          "minimumCount": 367,
+          "maximumCount": 367,
+          "citations": [
+            "independent-final/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 870,
+          "text": "});",
+          "classification": "waived",
+          "minimumCount": 367,
+          "maximumCount": 810,
+          "citations": [
+            "independent-final/browser-coverage.json",
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": [],
+          "reason": "Comment, blank line, or punctuation-only structural syntax has no independent runtime behavior."
+        },
+        {
+          "line": 871,
+          "text": "require(samplers.every((entry, index) => index === 0 || samplers[index - 1].index < entry.index),",
+          "classification": "executed",
+          "minimumCount": 175,
+          "maximumCount": 810,
+          "citations": [
+            "independent-final/browser-coverage.json",
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 872,
+          "text": "\"Standard samplers must be sorted and unique.\");",
+          "classification": "executed",
+          "minimumCount": 810,
+          "maximumCount": 810,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 873,
+          "text": "const uniformBlocks = array(input.uniformBlocks, stage === \"vertex\" ? 1 : 0).map(value => {",
+          "classification": "executed",
+          "minimumCount": 388,
+          "maximumCount": 810,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 874,
+          "text": "const block = record(value, [\"name\", \"byteLength\", \"members\"]);",
+          "classification": "executed",
+          "minimumCount": 388,
+          "maximumCount": 388,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 875,
+          "text": "require(block.name === \"VirglBlock\" && block.byteLength === 656, \"Invalid standard system block.\");",
+          "classification": "executed",
+          "minimumCount": 388,
+          "maximumCount": 388,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 876,
+          "text": "const members = array(block.members, 1).map(value => {",
+          "classification": "executed",
+          "minimumCount": 388,
+          "maximumCount": 388,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 877,
+          "text": "const member = record(value, [\"name\", \"offset\", \"type\", \"default\"]);",
+          "classification": "executed",
+          "minimumCount": 388,
+          "maximumCount": 388,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 878,
+          "text": "require(member.name === \"winsys_adjust_y\" && member.offset === 640 && member.type === \"float\" && member.default === 1,",
+          "classification": "executed",
+          "minimumCount": 388,
+          "maximumCount": 388,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 879,
+          "text": "\"Invalid standard system member.\");",
+          "classification": "executed",
+          "minimumCount": 388,
+          "maximumCount": 388,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 880,
+          "text": "return { name: member.name, offset: member.offset, type: member.type, default: member.default };",
+          "classification": "executed",
+          "minimumCount": 388,
+          "maximumCount": 388,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 881,
+          "text": "});",
+          "classification": "waived",
+          "minimumCount": 388,
+          "maximumCount": 388,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": [],
+          "reason": "Comment, blank line, or punctuation-only structural syntax has no independent runtime behavior."
+        },
+        {
+          "line": 882,
+          "text": "require(members.length === 1, \"Missing standard coordinate member.\");",
+          "classification": "executed",
+          "minimumCount": 388,
+          "maximumCount": 388,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 883,
+          "text": "return { name: block.name, byteLength: block.byteLength, members };",
+          "classification": "executed",
+          "minimumCount": 388,
+          "maximumCount": 388,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 884,
+          "text": "});",
+          "classification": "waived",
+          "minimumCount": 388,
+          "maximumCount": 810,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": [],
+          "reason": "Comment, blank line, or punctuation-only structural syntax has no independent runtime behavior."
+        },
+        {
+          "line": 885,
+          "text": "require(stage !== \"vertex\" || uniformBlocks.length === 1, \"Missing declared standard system block.\");",
+          "classification": "executed",
+          "minimumCount": 388,
+          "maximumCount": 810,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 886,
+          "text": "return standardFreeze({ profile: input.profile, stage, inputs, outputs, attributes, systemValues,",
+          "classification": "executed",
+          "minimumCount": 810,
+          "maximumCount": 810,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 887,
+          "text": "uniforms, samplers, uniformBlocks, broadcastColor0: false, standardSemantics: { ...STANDARD_SEMANTICS } });",
+          "classification": "executed",
+          "minimumCount": 810,
+          "maximumCount": 810,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 888,
+          "text": "}",
+          "classification": "waived",
+          "minimumCount": 810,
+          "maximumCount": 810,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": [],
+          "reason": "Comment, blank line, or punctuation-only structural syntax has no independent runtime behavior."
+        },
+        {
+          "line": 889,
+          "text": "function standardBody(value, stage, paired) {",
+          "classification": "executed",
+          "minimumCount": 161,
+          "maximumCount": 161,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 890,
+          "text": "const body = record(value, [\"glsl\", \"metadata\"]);",
+          "classification": "executed",
+          "minimumCount": 161,
+          "maximumCount": 161,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 891,
+          "text": "require(typeof body.glsl === \"string\" && body.glsl.length <= 262144 && /^#version 300 es\\b/m.test(body.glsl),",
+          "classification": "executed",
+          "minimumCount": 161,
+          "maximumCount": 161,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 892,
+          "text": "\"Standard compiler returned incompatible GLSL.\");",
+          "classification": "executed",
+          "minimumCount": 161,
+          "maximumCount": 161,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 893,
+          "text": "return standardFreeze({ glsl: body.glsl, metadata: standardMetadata(body.metadata, stage, paired) });",
+          "classification": "executed",
+          "minimumCount": 161,
+          "maximumCount": 161,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 894,
+          "text": "}",
+          "classification": "waived",
+          "minimumCount": 161,
+          "maximumCount": 161,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": [],
+          "reason": "Comment, blank line, or punctuation-only structural syntax has no independent runtime behavior."
+        },
+        {
+          "line": 895,
+          "text": "function standardError(value) {",
+          "classification": "executed",
+          "minimumCount": 2,
+          "maximumCount": 2,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 896,
+          "text": "const error = record(value, [\"code\", \"message\"]);",
+          "classification": "executed",
+          "minimumCount": 2,
+          "maximumCount": 2,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 897,
+          "text": "require(typeof error.code === \"string\" && error.code.length > 0 && error.code.length <= 128 &&",
+          "classification": "executed",
+          "minimumCount": 2,
+          "maximumCount": 2,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 898,
+          "text": "typeof error.message === \"string\" && error.message.length <= 4096, \"Invalid standard compiler error.\");",
+          "classification": "executed",
+          "minimumCount": 2,
+          "maximumCount": 2,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 899,
+          "text": "return failure(error.code, error.message);",
+          "classification": "executed",
+          "minimumCount": 2,
+          "maximumCount": 2,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 900,
+          "text": "}",
+          "classification": "waived",
+          "minimumCount": 2,
+          "maximumCount": 2,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": [],
+          "reason": "Comment, blank line, or punctuation-only structural syntax has no independent runtime behavior."
+        },
+        {
+          "line": 901,
+          "text": "function standardInterface(vertex, fragment) {",
+          "classification": "executed",
+          "minimumCount": 288,
+          "maximumCount": 288,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 902,
+          "text": "const outputs = new Map(vertex.outputs.filter(entry => entry.semantic === \"GENERIC\").map(entry => [entry.semanticIndex, entry]));",
+          "classification": "executed",
+          "minimumCount": 288,
+          "maximumCount": 622,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 903,
+          "text": "const inputs = fragment.inputs.filter(entry => entry.semantic === \"GENERIC\").sort((a, b) => a.semanticIndex - b.semanticIndex);",
+          "classification": "executed",
+          "minimumCount": 90,
+          "maximumCount": 338,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 904,
+          "text": "for (const input of inputs) {",
+          "classification": "executed",
+          "minimumCount": 288,
+          "maximumCount": 298,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 905,
+          "text": "const output = outputs.get(input.semanticIndex);",
+          "classification": "executed",
+          "minimumCount": 298,
+          "maximumCount": 298,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 906,
+          "text": "require(output && (input.componentMask & ~output.componentMask) === 0,",
+          "classification": "executed",
+          "minimumCount": 298,
+          "maximumCount": 298,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 907,
+          "text": "\"Standard fragment input exceeds its vertex declaration.\");",
+          "classification": "executed",
+          "minimumCount": 298,
+          "maximumCount": 298,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 908,
+          "text": "}",
+          "classification": "waived",
+          "minimumCount": 298,
+          "maximumCount": 298,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": [],
+          "reason": "Comment, blank line, or punctuation-only structural syntax has no independent runtime behavior."
+        },
+        {
+          "line": 909,
+          "text": "return { key: \"standard-generic-interpolation-v1:\" +",
+          "classification": "executed",
+          "minimumCount": 288,
+          "maximumCount": 288,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 910,
+          "text": "inputs.map(entry => \"g\" + entry.semanticIndex + \"/\" + entry.componentMask + \"/\" + entry.interpolation).join(\";\"),",
+          "classification": "executed",
+          "minimumCount": 288,
+          "maximumCount": 298,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 911,
+          "text": "flat: inputs.some(entry => entry.interpolation === \"flat\"),",
+          "classification": "executed",
+          "minimumCount": 288,
+          "maximumCount": 298,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 912,
+          "text": "coordinates: fragment.inputs.some(entry => entry.semantic === \"POSITION\"), discard: false, inputs };",
+          "classification": "executed",
+          "minimumCount": 288,
+          "maximumCount": 308,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 913,
+          "text": "}",
+          "classification": "waived",
+          "minimumCount": 288,
+          "maximumCount": 288,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": [],
+          "reason": "Comment, blank line, or punctuation-only structural syntax has no independent runtime behavior."
+        },
+        {
+          "line": 914,
+          "text": "export function parseStandardShaderMetadata(value, stage) {",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 159,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 915,
+          "text": "try { return standardFreeze({ ok: true, domain: null, metadata: standardMetadata(value, stage) }); }",
+          "classification": "executed",
+          "minimumCount": 159,
+          "maximumCount": 159,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 916,
+          "text": "catch (error) { if (!(error instanceof DomainFault)) throw error; return failure(\"shader-domain-error\", error.message); }",
+          "classification": "executed-with-narrow-waiver",
+          "minimumCount": 0,
+          "maximumCount": 21,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": [
+            {
+              "start": 69071,
+              "end": 69076,
+              "text": "throw"
+            },
+            {
+              "start": 69077,
+              "end": 69083,
+              "text": "error;"
+            }
+          ],
+          "reason": "Only the unexpected non-DomainFault defect rethrow is unhit. All descriptor/proxy/domain failures enter the recorded structured DomainFault path. This branch preserves unexpected implementation errors and is outside the guest metadata behavior; do not monkeypatch trusted JavaScript intrinsics to manufacture a defect."
+        },
+        {
+          "line": 917,
+          "text": "}",
+          "classification": "waived",
+          "minimumCount": 159,
+          "maximumCount": 159,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": [],
+          "reason": "Comment, blank line, or punctuation-only structural syntax has no independent runtime behavior."
+        },
+        {
+          "line": 918,
+          "text": "export function normalizeStandardShaderResult(value, stage) {",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 78,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 919,
+          "text": "try {",
+          "classification": "executed",
+          "minimumCount": 78,
+          "maximumCount": 78,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 920,
+          "text": "const response = record(value, [\"ok\", \"glsl\", \"metadata\", \"error\"], [\"ok\"]);",
+          "classification": "executed",
+          "minimumCount": 78,
+          "maximumCount": 78,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 921,
+          "text": "if (response.ok === false) {",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 78,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 922,
+          "text": "record(response, [\"ok\", \"error\"]); return standardError(response.error);",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 923,
+          "text": "}",
+          "classification": "waived",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": [],
+          "reason": "Comment, blank line, or punctuation-only structural syntax has no independent runtime behavior."
+        },
+        {
+          "line": 924,
+          "text": "require(response.ok === true, \"Invalid standard compiler result.\");",
+          "classification": "executed",
+          "minimumCount": 75,
+          "maximumCount": 75,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 925,
+          "text": "record(response, [\"ok\", \"glsl\", \"metadata\"]);",
+          "classification": "executed",
+          "minimumCount": 75,
+          "maximumCount": 75,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 926,
+          "text": "return standardFreeze({ ok: true, ...standardBody({ glsl: response.glsl, metadata: response.metadata }, stage, false) });",
+          "classification": "executed",
+          "minimumCount": 75,
+          "maximumCount": 75,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 927,
+          "text": "} catch (error) { if (!(error instanceof DomainFault)) throw error; return failure(\"shader-domain-error\", error.message); }",
+          "classification": "executed-with-narrow-waiver",
+          "minimumCount": 0,
+          "maximumCount": 75,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": [
+            {
+              "start": 69716,
+              "end": 69721,
+              "text": "throw"
+            },
+            {
+              "start": 69722,
+              "end": 69728,
+              "text": "error;"
+            }
+          ],
+          "reason": "Only the unexpected non-DomainFault defect rethrow is unhit. All descriptor/proxy/domain failures enter the recorded structured DomainFault path. This branch preserves unexpected implementation errors and is outside the guest metadata behavior; do not monkeypatch trusted JavaScript intrinsics to manufacture a defect."
+        },
+        {
+          "line": 928,
+          "text": "}",
+          "classification": "waived",
+          "minimumCount": 78,
+          "maximumCount": 78,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": [],
+          "reason": "Comment, blank line, or punctuation-only structural syntax has no independent runtime behavior."
+        },
+        {
+          "line": 929,
+          "text": "export function normalizeStandardShaderPair(value) {",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 44,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 930,
+          "text": "try {",
+          "classification": "executed",
+          "minimumCount": 44,
+          "maximumCount": 44,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 931,
+          "text": "const response = record(value, [\"ok\", \"vertex\", \"fragment\", \"interfaceKey\", \"error\"], [\"ok\"]);",
+          "classification": "executed",
+          "minimumCount": 44,
+          "maximumCount": 44,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 932,
+          "text": "if (response.ok === false) {",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 44,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 933,
+          "text": "record(response, [\"ok\", \"error\"]); return standardError(response.error);",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 934,
+          "text": "}",
+          "classification": "waived",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": [],
+          "reason": "Comment, blank line, or punctuation-only structural syntax has no independent runtime behavior."
+        },
+        {
+          "line": 935,
+          "text": "require(response.ok === true, \"Invalid standard pair result.\");",
+          "classification": "executed",
+          "minimumCount": 43,
+          "maximumCount": 43,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 936,
+          "text": "record(response, [\"ok\", \"vertex\", \"fragment\", \"interfaceKey\"]);",
+          "classification": "executed",
+          "minimumCount": 43,
+          "maximumCount": 43,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 937,
+          "text": "const vertex = standardBody(response.vertex, \"vertex\", true), fragment = standardBody(response.fragment, \"fragment\", true);",
+          "classification": "executed",
+          "minimumCount": 43,
+          "maximumCount": 43,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 938,
+          "text": "require(response.interfaceKey === standardInterface(vertex.metadata, fragment.metadata).key, \"Standard pair key disagrees.\");",
+          "classification": "executed",
+          "minimumCount": 43,
+          "maximumCount": 43,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 939,
+          "text": "return standardFreeze({ ok: true, vertex, fragment, interfaceKey: response.interfaceKey });",
+          "classification": "executed",
+          "minimumCount": 43,
+          "maximumCount": 43,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 940,
+          "text": "} catch (error) { if (!(error instanceof DomainFault)) throw error; return failure(\"shader-link-error\", error.message); }",
+          "classification": "executed-with-narrow-waiver",
+          "minimumCount": 0,
+          "maximumCount": 43,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": [
+            {
+              "start": 70612,
+              "end": 70617,
+              "text": "throw"
+            },
+            {
+              "start": 70618,
+              "end": 70624,
+              "text": "error;"
+            }
+          ],
+          "reason": "Only the unexpected non-DomainFault defect rethrow is unhit. All descriptor/proxy/domain failures enter the recorded structured DomainFault path. This branch preserves unexpected implementation errors and is outside the guest metadata behavior; do not monkeypatch trusted JavaScript intrinsics to manufacture a defect."
+        },
+        {
+          "line": 941,
+          "text": "}",
+          "classification": "waived",
+          "minimumCount": 44,
+          "maximumCount": 44,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": [],
+          "reason": "Comment, blank line, or punctuation-only structural syntax has no independent runtime behavior."
+        },
+        {
+          "line": 942,
+          "text": "export function deriveStandardShaderInterface(vertex, fragment) {",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 245,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 943,
+          "text": "try {",
+          "classification": "executed",
+          "minimumCount": 245,
+          "maximumCount": 245,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 944,
+          "text": "return standardFreeze({ ok: true, ...standardInterface(standardMetadata(vertex, \"vertex\"), standardMetadata(fragment, \"fragment\")) });",
+          "classification": "executed",
+          "minimumCount": 245,
+          "maximumCount": 245,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 945,
+          "text": "} catch (error) { if (!(error instanceof DomainFault)) throw error; return failure(\"shader-link-error\", error.message); }",
+          "classification": "executed-with-narrow-waiver",
+          "minimumCount": 0,
+          "maximumCount": 245,
+          "citations": [
+            "independent-final/browser-coverage.json",
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": [
+            {
+              "start": 70951,
+              "end": 70956,
+              "text": "throw"
+            },
+            {
+              "start": 70957,
+              "end": 70963,
+              "text": "error;"
+            }
+          ],
+          "reason": "Only the unexpected non-DomainFault defect rethrow is unhit. All descriptor/proxy/domain failures enter the recorded structured DomainFault path. This branch preserves unexpected implementation errors and is outside the guest metadata behavior; do not monkeypatch trusted JavaScript intrinsics to manufacture a defect."
+        },
+        {
+          "line": 946,
+          "text": "}",
+          "classification": "waived",
+          "minimumCount": 245,
+          "maximumCount": 245,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": [],
+          "reason": "Comment, blank line, or punctuation-only structural syntax has no independent runtime behavior."
+        }
+      ]
+    },
+    "renderer/virgl-command/decoder.mjs": {
+      "sha256": "114f14cbd6adf2d48130b29ad4668bc83372cfac4b54986577f06480ab62078e",
+      "recordings": [
+        "unpacked/hot/retained-raster-depth/browser-coverage.json",
+        "unpacked/hot/hardware/browser-coverage.json",
+        "unpacked/hot/promoted-blend/browser-coverage.json",
+        "unpacked/hot/retained-blend-equations/browser-coverage.json",
+        "unpacked/hot/retained-render-cache/browser-coverage.json",
+        "unpacked/hot/retained-float-vertex-fetch/browser-coverage.json",
+        "unpacked/cold/retained-raster-depth/browser-coverage.json",
+        "unpacked/cold/hardware/browser-coverage.json",
+        "unpacked/cold/promoted-blend/browser-coverage.json",
+        "unpacked/cold/retained-blend-equations/browser-coverage.json",
+        "unpacked/cold/retained-render-cache/browser-coverage.json",
+        "unpacked/cold/retained-float-vertex-fetch/browser-coverage.json",
+        "independent-final/browser-coverage.json"
+      ],
+      "hunks": [
+        {
+          "start": 3,
+          "count": 1
+        },
+        {
+          "start": 19,
+          "count": 1
+        },
+        {
+          "start": 64,
+          "count": 1
+        },
+        {
+          "start": 69,
+          "count": 1
+        },
+        {
+          "start": 385,
+          "count": 2
+        },
+        {
+          "start": 390,
+          "count": 1
+        },
+        {
+          "start": 482,
+          "count": 9
+        },
+        {
+          "start": 522,
+          "count": 1
+        },
+        {
+          "start": 537,
+          "count": 1
+        }
+      ],
+      "addedLines": [
+        {
+          "line": 3,
+          "text": "export const STANDARD_PROFILE = \"virgl-standard-commands-v1\";",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "unpacked/hot/retained-raster-depth/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 19,
+          "text": "export const STANDARD_LIMITS = Object.freeze({ ...LIMITS, constantWords: 2048, vertexConstantWords: 2048 });",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "unpacked/hot/retained-raster-depth/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 64,
+          "text": "constructor(view, byteOffset, opcode, length, standard = false) {",
+          "classification": "executed",
+          "minimumCount": 30768,
+          "maximumCount": 30768,
+          "citations": [
+            "unpacked/hot/retained-render-cache/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 69,
+          "text": "this.standard = standard;",
+          "classification": "executed",
+          "minimumCount": 30768,
+          "maximumCount": 30768,
+          "citations": [
+            "unpacked/hot/retained-render-cache/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 385,
+          "text": "const limits = p.standard ? STANDARD_LIMITS : LIMITS;",
+          "classification": "executed",
+          "minimumCount": 88,
+          "maximumCount": 2305,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json",
+            "unpacked/hot/retained-blend-equations/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 386,
+          "text": "const stage = p.stage(1), count = p.arrayCount(2, 1, stage === 0 ? limits.vertexConstantWords : limits.constantWords), index = p.u(2);",
+          "classification": "executed",
+          "minimumCount": 40,
+          "maximumCount": 2305,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json",
+            "unpacked/hot/retained-blend-equations/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 390,
+          "text": "return { stage, index, words: p.words(3, count), ...(p.standard ? {} : { values: p.floats(3, count) }) };",
+          "classification": "executed",
+          "minimumCount": 88,
+          "maximumCount": 2305,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json",
+            "unpacked/hot/retained-blend-equations/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 482,
+          "text": "return decode(bytes, provenance, false);",
+          "classification": "executed",
+          "minimumCount": 10168,
+          "maximumCount": 10168,
+          "citations": [
+            "unpacked/hot/retained-render-cache/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 483,
+          "text": "}",
+          "classification": "waived",
+          "minimumCount": 10168,
+          "maximumCount": 10168,
+          "citations": [
+            "unpacked/hot/retained-render-cache/browser-coverage.json"
+          ],
+          "unhitRanges": [],
+          "reason": "Comment, blank line, or punctuation-only structural syntax has no independent runtime behavior."
+        },
+        {
+          "line": 484,
+          "text": "",
+          "classification": "waived",
+          "minimumCount": 0,
+          "maximumCount": 0,
+          "citations": [],
+          "unhitRanges": [],
+          "reason": "Comment, blank line, or punctuation-only structural syntax has no independent runtime behavior."
+        },
+        {
+          "line": 485,
+          "text": "/** Selected only by the standard host factory; no wire/provenance selector. */",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "unpacked/hot/retained-raster-depth/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 486,
+          "text": "export function decodeStandardSubmission(bytes, provenance = {}) {",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 73,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json",
+            "unpacked/hot/retained-raster-depth/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 487,
+          "text": "return decode(bytes, provenance, true);",
+          "classification": "executed",
+          "minimumCount": 73,
+          "maximumCount": 73,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 488,
+          "text": "}",
+          "classification": "waived",
+          "minimumCount": 73,
+          "maximumCount": 73,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": [],
+          "reason": "Comment, blank line, or punctuation-only structural syntax has no independent runtime behavior."
+        },
+        {
+          "line": 489,
+          "text": "",
+          "classification": "waived",
+          "minimumCount": 0,
+          "maximumCount": 0,
+          "citations": [],
+          "unhitRanges": [],
+          "reason": "Comment, blank line, or punctuation-only structural syntax has no independent runtime behavior."
+        },
+        {
+          "line": 490,
+          "text": "function decode(bytes, provenance, standard) {",
+          "classification": "executed",
+          "minimumCount": 10168,
+          "maximumCount": 10168,
+          "citations": [
+            "unpacked/hot/retained-render-cache/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 522,
+          "text": "const p = new Packet(view, offset, opcode, payloadDwords, standard);",
+          "classification": "executed",
+          "minimumCount": 30768,
+          "maximumCount": 30768,
+          "citations": [
+            "unpacked/hot/retained-render-cache/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 537,
+          "text": "return freeze({ ok: true, profile: standard ? STANDARD_PROFILE : PROFILE, ...labels, byteLength, commands });",
+          "classification": "executed",
+          "minimumCount": 72,
+          "maximumCount": 10168,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json",
+            "unpacked/hot/retained-render-cache/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        }
+      ]
+    },
+    "renderer/virgl-command/state.mjs": {
+      "sha256": "7e9d7a18f53aceffe1c13dcc6bcd3f0da80c065c293cd58c21cbcbe06c47433e",
+      "recordings": [
+        "unpacked/hot/retained-raster-depth/browser-coverage.json",
+        "unpacked/hot/hardware/browser-coverage.json",
+        "unpacked/hot/retained-async-jobs/browser-coverage.json",
+        "unpacked/hot/promoted-blend/browser-coverage.json",
+        "unpacked/hot/retained-draw-replay/browser-coverage.json",
+        "unpacked/hot/retained-object-state/browser-coverage.json",
+        "unpacked/hot/retained-blend-equations/browser-coverage.json",
+        "unpacked/hot/retained-render-cache/browser-coverage.json",
+        "unpacked/hot/retained-float-vertex-fetch/browser-coverage.json",
+        "unpacked/cold/retained-raster-depth/browser-coverage.json",
+        "unpacked/cold/hardware/browser-coverage.json",
+        "unpacked/cold/retained-async-jobs/browser-coverage.json",
+        "unpacked/cold/promoted-blend/browser-coverage.json",
+        "unpacked/cold/retained-draw-replay/browser-coverage.json",
+        "unpacked/cold/retained-object-state/browser-coverage.json",
+        "unpacked/cold/retained-blend-equations/browser-coverage.json",
+        "unpacked/cold/retained-render-cache/browser-coverage.json",
+        "unpacked/cold/retained-float-vertex-fetch/browser-coverage.json",
+        "independent-final/browser-coverage.json"
+      ],
+      "hunks": [
+        {
+          "start": 2,
+          "count": 1
+        },
+        {
+          "start": 5,
+          "count": 2
+        },
+        {
+          "start": 14,
+          "count": 1
+        },
+        {
+          "start": 125,
+          "count": 5
+        },
+        {
+          "start": 131,
+          "count": 1
+        },
+        {
+          "start": 164,
+          "count": 3
+        },
+        {
+          "start": 265,
+          "count": 3
+        },
+        {
+          "start": 278,
+          "count": 2
+        },
+        {
+          "start": 342,
+          "count": 1
+        },
+        {
+          "start": 385,
+          "count": 9
+        },
+        {
+          "start": 396,
+          "count": 1
+        },
+        {
+          "start": 401,
+          "count": 2
+        },
+        {
+          "start": 404,
+          "count": 2
+        },
+        {
+          "start": 417,
+          "count": 1
+        },
+        {
+          "start": 437,
+          "count": 1
+        },
+        {
+          "start": 440,
+          "count": 5
+        },
+        {
+          "start": 455,
+          "count": 1
+        },
+        {
+          "start": 457,
+          "count": 1
+        },
+        {
+          "start": 462,
+          "count": 2
+        },
+        {
+          "start": 469,
+          "count": 1
+        },
+        {
+          "start": 473,
+          "count": 1
+        },
+        {
+          "start": 476,
+          "count": 1
+        },
+        {
+          "start": 478,
+          "count": 2
+        },
+        {
+          "start": 481,
+          "count": 1
+        },
+        {
+          "start": 503,
+          "count": 7
+        },
+        {
+          "start": 516,
+          "count": 1
+        },
+        {
+          "start": 518,
+          "count": 2
+        },
+        {
+          "start": 545,
+          "count": 1
+        },
+        {
+          "start": 547,
+          "count": 1
+        },
+        {
+          "start": 599,
+          "count": 1
+        },
+        {
+          "start": 697,
+          "count": 3
+        },
+        {
+          "start": 710,
+          "count": 1
+        },
+        {
+          "start": 730,
+          "count": 1
+        },
+        {
+          "start": 1216,
+          "count": 1
+        },
+        {
+          "start": 1296,
+          "count": 1
+        }
+      ],
+      "addedLines": [
+        {
+          "line": 2,
+          "text": "import { decodeSubmission, decodeStandardSubmission } from \"./decoder.mjs\";",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "unpacked/hot/retained-raster-depth/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 5,
+          "text": "import { parseConstantDomain, checkFiniteBank, checkIndirectBank, checkLoopBank, checkRadialBank, checkRasterBank, checkConversionBank, checkExactBank, COORDINATE_KEY, DISCARD_KEY,",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "unpacked/hot/retained-raster-depth/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 6,
+          "text": "parseStandardShaderMetadata, normalizeStandardShaderResult, normalizeStandardShaderPair, deriveStandardShaderInterface } from \"./constant-domain.mjs\";",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "unpacked/hot/retained-raster-depth/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 14,
+          "text": "export const STANDARD_ASYNC_PROFILE = \"virgl-standard-async-jobs-v1\";",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "unpacked/hot/retained-raster-depth/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 125,
+          "text": "/** Explicit host selection of ordinary native shader semantics and word banks. */",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "unpacked/hot/retained-raster-depth/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 126,
+          "text": "export function createVirglStandardAsyncRenderer(options) {",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 34,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json",
+            "unpacked/hot/retained-raster-depth/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 127,
+          "text": "return createRenderer(options, true, true, true);",
+          "classification": "executed",
+          "minimumCount": 34,
+          "maximumCount": 34,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 128,
+          "text": "}",
+          "classification": "waived",
+          "minimumCount": 34,
+          "maximumCount": 34,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": [],
+          "reason": "Comment, blank line, or punctuation-only structural syntax has no independent runtime behavior."
+        },
+        {
+          "line": 129,
+          "text": "",
+          "classification": "waived",
+          "minimumCount": 0,
+          "maximumCount": 0,
+          "citations": [],
+          "unhitRanges": [],
+          "reason": "Comment, blank line, or punctuation-only structural syntax has no independent runtime behavior."
+        },
+        {
+          "line": 131,
+          "text": "function createRenderer(options, drawing, asynchronous = false, standard = false) {",
+          "classification": "executed",
+          "minimumCount": 52,
+          "maximumCount": 52,
+          "citations": [
+            "unpacked/hot/retained-float-vertex-fetch/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 164,
+          "text": "const profile = standard ? STANDARD_ASYNC_PROFILE : asynchronous ? ASYNC_PROFILE : drawing ? DRAW_PROFILE : STATE_PROFILE;",
+          "classification": "executed",
+          "minimumCount": 19,
+          "maximumCount": 52,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json",
+            "unpacked/hot/retained-async-jobs/browser-coverage.json",
+            "unpacked/hot/retained-float-vertex-fetch/browser-coverage.json",
+            "unpacked/hot/retained-object-state/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 165,
+          "text": "const decodeCommands = standard ? decodeStandardSubmission : decodeSubmission;",
+          "classification": "executed",
+          "minimumCount": 34,
+          "maximumCount": 52,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json",
+            "unpacked/hot/retained-float-vertex-fetch/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 166,
+          "text": "const parseShaderMetadata = standard ? parseStandardShaderMetadata : parseConstantDomain;",
+          "classification": "executed",
+          "minimumCount": 34,
+          "maximumCount": 52,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json",
+            "unpacked/hot/retained-float-vertex-fetch/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 265,
+          "text": "const response = shaderBridge.translate(request);",
+          "classification": "executed",
+          "minimumCount": 159,
+          "maximumCount": 159,
+          "citations": [
+            "unpacked/hot/retained-float-vertex-fetch/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 266,
+          "text": "const translated = standard ? unwrap(normalizeStandardShaderResult(response, request.stage)) : freeze(unwrap(response));",
+          "classification": "executed",
+          "minimumCount": 74,
+          "maximumCount": 159,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json",
+            "unpacked/hot/retained-float-vertex-fetch/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 267,
+          "text": "unwrap(parseShaderMetadata(translated.metadata, request.stage));",
+          "classification": "executed",
+          "minimumCount": 159,
+          "maximumCount": 159,
+          "citations": [
+            "unpacked/hot/retained-float-vertex-fetch/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 278,
+          "text": "const response = shaderBridge.translatePair({ vertexText: vertex.fields.text, fragmentText: fragment.fields.text });",
+          "classification": "executed",
+          "minimumCount": 42,
+          "maximumCount": 42,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 279,
+          "text": "const translated = standard ? unwrap(normalizeStandardShaderPair(response)) : freeze(unwrap(response));",
+          "classification": "executed",
+          "minimumCount": 3,
+          "maximumCount": 47,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json",
+            "unpacked/hot/retained-float-vertex-fetch/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 342,
+          "text": "const contract = unwrap(parseShaderMetadata(translated.metadata, fields.stageName));",
+          "classification": "executed",
+          "minimumCount": 159,
+          "maximumCount": 159,
+          "citations": [
+            "unpacked/hot/retained-float-vertex-fetch/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 385,
+          "text": "const samplingFor = (sub, fragment, vertex = null) => {",
+          "classification": "executed",
+          "minimumCount": 52,
+          "maximumCount": 40640,
+          "citations": [
+            "unpacked/hot/retained-float-vertex-fetch/browser-coverage.json",
+            "unpacked/hot/retained-render-cache/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 386,
+          "text": "const declarations = standard ? [[0, vertex], [1, fragment]].flatMap(([stage, shader]) =>",
+          "classification": "executed",
+          "minimumCount": 302,
+          "maximumCount": 40640,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json",
+            "unpacked/hot/retained-render-cache/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 387,
+          "text": "shader.translation.metadata.samplers.map(sampler => ({ stage, sampler }))) :",
+          "classification": "executed",
+          "minimumCount": 302,
+          "maximumCount": 40640,
+          "citations": [
+            "independent-final/browser-coverage.json",
+            "unpacked/hot/hardware/browser-coverage.json",
+            "unpacked/hot/retained-render-cache/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 388,
+          "text": "fragment.translation.metadata.samplers.map(sampler => ({ stage: 1, sampler }));",
+          "classification": "executed",
+          "minimumCount": 621,
+          "maximumCount": 40640,
+          "citations": [
+            "unpacked/hot/retained-draw-replay/browser-coverage.json",
+            "unpacked/hot/retained-render-cache/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 389,
+          "text": "const views = declarations.map(({ stage, sampler }) => {",
+          "classification": "executed",
+          "minimumCount": 621,
+          "maximumCount": 40640,
+          "citations": [
+            "unpacked/hot/retained-draw-replay/browser-coverage.json",
+            "unpacked/hot/retained-render-cache/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 390,
+          "text": "require(sampler.type === \"sampler2D\" && Number.isInteger(sampler.index) && sampler.index >= 0 && sampler.index < (standard ? 16 : 8) &&",
+          "classification": "executed",
+          "minimumCount": 320,
+          "maximumCount": 621,
+          "citations": [
+            "independent-final/browser-coverage.json",
+            "unpacked/hot/retained-draw-replay/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 391,
+          "text": "sampler.name === (stage === 0 ? \"vssamp\" : \"fssamp\") + sampler.index,",
+          "classification": "executed",
+          "minimumCount": 164,
+          "maximumCount": 621,
+          "citations": [
+            "independent-final/browser-coverage.json",
+            "unpacked/hot/retained-draw-replay/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 392,
+          "text": "\"shader-link-error\", \"View specialization requires the checked stage 2D TEX family.\");",
+          "classification": "executed",
+          "minimumCount": 621,
+          "maximumCount": 621,
+          "citations": [
+            "unpacked/hot/retained-draw-replay/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 393,
+          "text": "const view = sub.views[stage][sampler.index], fields = view?.fields;",
+          "classification": "executed",
+          "minimumCount": 553,
+          "maximumCount": 621,
+          "citations": [
+            "unpacked/hot/retained-draw-replay/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 396,
+          "text": "return { ...(standard ? { stage } : {}), index: sampler.index, name: sampler.name, target: 2, format: fields?.format ?? 67,",
+          "classification": "executed",
+          "minimumCount": 96,
+          "maximumCount": 621,
+          "citations": [
+            "independent-final/browser-coverage.json",
+            "unpacked/hot/retained-async-jobs/browser-coverage.json",
+            "unpacked/hot/retained-draw-replay/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 401,
+          "text": "const identity = views.every((view) => view.format === 67 && view.swizzle.every((value, lane) => value === lane));",
+          "classification": "executed",
+          "minimumCount": 621,
+          "maximumCount": 40640,
+          "citations": [
+            "unpacked/hot/retained-draw-replay/browser-coverage.json",
+            "unpacked/hot/retained-render-cache/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 402,
+          "text": "return freeze({ key, suffix: identity ? \"\" : `|${key}`, views });",
+          "classification": "executed",
+          "minimumCount": 82,
+          "maximumCount": 40640,
+          "citations": [
+            "independent-final/browser-coverage.json",
+            "unpacked/hot/retained-render-cache/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 404,
+          "text": "const specializeViews = (text, sampling, stage = 1) => {",
+          "classification": "executed",
+          "minimumCount": 52,
+          "maximumCount": 88,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json",
+            "unpacked/hot/retained-float-vertex-fetch/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 405,
+          "text": "const specialized = sampling.views.filter((view) => (!standard || view.stage === stage) && view.swizzle.some((value, lane) => value !== lane));",
+          "classification": "executed",
+          "minimumCount": 34,
+          "maximumCount": 88,
+          "citations": [
+            "independent-final/browser-coverage.json",
+            "unpacked/hot/hardware/browser-coverage.json",
+            "unpacked/hot/retained-async-jobs/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 417,
+          "text": "require(main >= 0, \"shader-link-error\", \"Checked shader has no main insertion point.\");",
+          "classification": "executed",
+          "minimumCount": 18,
+          "maximumCount": 18,
+          "citations": [
+            "independent-final/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 437,
+          "text": "const sampling = samplingFor(sub, fragment, vertex);",
+          "classification": "executed",
+          "minimumCount": 30487,
+          "maximumCount": 30487,
+          "citations": [
+            "unpacked/hot/retained-render-cache/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 440,
+          "text": "const fs = fragment.translation.metadata;",
+          "classification": "executed",
+          "minimumCount": 30487,
+          "maximumCount": 30487,
+          "citations": [
+            "unpacked/hot/retained-render-cache/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 441,
+          "text": "const interfaceInfo = standard ? (() => {",
+          "classification": "executed",
+          "minimumCount": 245,
+          "maximumCount": 30487,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json",
+            "unpacked/hot/retained-render-cache/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 442,
+          "text": "const owned = unwrap(deriveStandardShaderInterface(vs, fs));",
+          "classification": "executed",
+          "minimumCount": 245,
+          "maximumCount": 245,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 443,
+          "text": "return { ...owned, inputs: new Map(owned.inputs.map(input => [input.semanticIndex, input])) };",
+          "classification": "executed",
+          "minimumCount": 245,
+          "maximumCount": 255,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 444,
+          "text": "})() : shaderInterface(vs, fs, fragment.coordinateContract, fragment.discardContract);",
+          "classification": "executed",
+          "minimumCount": 245,
+          "maximumCount": 30487,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json",
+            "unpacked/hot/retained-render-cache/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 455,
+          "text": "reflection: { attributes: [], uniforms: [], samplers: [], uniformBlocks: [], outputs: [], ...(standard ? { systemValues: [] } : {}) } };",
+          "classification": "executed",
+          "minimumCount": 47,
+          "maximumCount": 30487,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json",
+            "unpacked/hot/retained-blend-equations/browser-coverage.json",
+            "unpacked/hot/retained-render-cache/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 457,
+          "text": "if (standard || interfaceInfo.flat || interfaceInfo.coordinates || interfaceInfo.discard) {",
+          "classification": "executed",
+          "minimumCount": 47,
+          "maximumCount": 30487,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json",
+            "unpacked/hot/retained-blend-equations/browser-coverage.json",
+            "unpacked/hot/retained-render-cache/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 462,
+          "text": "{ ...output, ...(standard ? { type: interfaceInfo.inputs.get(output.semanticIndex)?.interpolation === \"flat\" ? \"uvec4\" : \"vec4\" } : {}),",
+          "classification": "executed",
+          "minimumCount": 3,
+          "maximumCount": 54,
+          "citations": [
+            "independent-final/browser-coverage.json",
+            "unpacked/hot/hardware/browser-coverage.json",
+            "unpacked/hot/retained-float-vertex-fetch/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 463,
+          "text": "interpolation: interfaceInfo.inputs.get(output.semanticIndex)?.interpolation ?? \"smooth\" } : output) };",
+          "classification": "executed",
+          "minimumCount": 6,
+          "maximumCount": 54,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 469,
+          "text": "if (standard || interfaceInfo.flat) {",
+          "classification": "executed",
+          "minimumCount": 3,
+          "maximumCount": 47,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json",
+            "unpacked/hot/retained-float-vertex-fetch/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 473,
+          "text": "let fragmentText = specializeViews(fragment.translation.glsl, sampling);",
+          "classification": "executed",
+          "minimumCount": 63,
+          "maximumCount": 63,
+          "citations": [
+            "unpacked/hot/retained-blend-equations/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 476,
+          "text": "program.vertexText = (standard ? specializeViews(program.vertexText, sampling, 0) : null) ?? program.vertexText;",
+          "classification": "executed",
+          "minimumCount": 44,
+          "maximumCount": 30487,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json",
+            "unpacked/hot/retained-blend-equations/browser-coverage.json",
+            "unpacked/hot/retained-render-cache/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 478,
+          "text": "const vertexVariant = standard ? program.vertexText !== vertex.translation.glsl : interfaceInfo.flat;",
+          "classification": "executed",
+          "minimumCount": 44,
+          "maximumCount": 30487,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json",
+            "unpacked/hot/retained-blend-equations/browser-coverage.json",
+            "unpacked/hot/retained-render-cache/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 479,
+          "text": "const requiredVariantBytes = (vertexVariant ? program.vertexText.length : 0) + (fragmentText?.length ?? 0);",
+          "classification": "executed",
+          "minimumCount": 9,
+          "maximumCount": 30487,
+          "citations": [
+            "independent-final/browser-coverage.json",
+            "unpacked/hot/retained-blend-equations/browser-coverage.json",
+            "unpacked/hot/retained-float-vertex-fetch/browser-coverage.json",
+            "unpacked/hot/retained-render-cache/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 481,
+          "text": "if (vertexVariant) {",
+          "classification": "executed",
+          "minimumCount": 8,
+          "maximumCount": 30487,
+          "citations": [
+            "independent-final/browser-coverage.json",
+            "unpacked/hot/retained-render-cache/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 503,
+          "text": "const system = standard ? vs.systemValues.find(value => value.name === actual.name) : null;",
+          "classification": "executed",
+          "minimumCount": 5,
+          "maximumCount": 106,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json",
+            "unpacked/hot/retained-float-vertex-fetch/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 504,
+          "text": "if (system) {",
+          "classification": "executed",
+          "minimumCount": 2,
+          "maximumCount": 106,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json",
+            "unpacked/hot/retained-float-vertex-fetch/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 505,
+          "text": "require(actual.type === gl.INT && actual.size === 1 && gl.getAttribLocation(program.native, actual.name) === -1,",
+          "classification": "executed",
+          "minimumCount": 2,
+          "maximumCount": 2,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 506,
+          "text": "\"shader-reflection-error\", \"Built-in system value must not expose a bound vertex attribute.\");",
+          "classification": "executed",
+          "minimumCount": 2,
+          "maximumCount": 2,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 507,
+          "text": "program.reflection.systemValues.push({ ...system, location: -1, type: actual.type });",
+          "classification": "executed",
+          "minimumCount": 2,
+          "maximumCount": 2,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 508,
+          "text": "continue;",
+          "classification": "executed",
+          "minimumCount": 2,
+          "maximumCount": 2,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 509,
+          "text": "}",
+          "classification": "waived",
+          "minimumCount": 2,
+          "maximumCount": 2,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": [],
+          "reason": "Comment, blank line, or punctuation-only structural syntax has no independent runtime behavior."
+        },
+        {
+          "line": 516,
+          "text": "const guestConstantLimit = standard ? 512 : stage === 0 && metadata.profile === \"virgl-webgl2-straight-line-v6\" ? 128 : 46;",
+          "classification": "executed-with-narrow-waiver",
+          "minimumCount": 0,
+          "maximumCount": 122,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json",
+            "unpacked/hot/retained-blend-equations/browser-coverage.json"
+          ],
+          "unhitRanges": [
+            {
+              "start": 38188,
+              "end": 38189,
+              "text": "?"
+            },
+            {
+              "start": 38190,
+              "end": 38193,
+              "text": "128"
+            }
+          ],
+          "reason": "The unhit 128-vector ternary arm is the unchanged legacy VS-v6 cap. The new standard 512 arm and legacy 46 arm execute; preserved old-domain contracts and unchanged legacy expression carry their prior proof, with nine exact-head affected renderer regressions passing."
+        },
+        {
+          "line": 518,
+          "text": "require(uniform.type === \"uvec4[]\" && uniform.encoding === (standard ? \"raw-32bit-words\" : \"float32-bits\") &&",
+          "classification": "executed",
+          "minimumCount": 60,
+          "maximumCount": 63,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json",
+            "unpacked/hot/retained-blend-equations/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 519,
+          "text": "Number.isInteger(uniform.count) && uniform.count > 0 && uniform.count <= guestConstantLimit + (standard ? 0 : 1),",
+          "classification": "executed",
+          "minimumCount": 60,
+          "maximumCount": 63,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json",
+            "unpacked/hot/retained-blend-equations/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 545,
+          "text": "const view = standard || stage === 1 ? sampling.views.find((entry) => entry.index === sampler.index && (!standard || entry.stage === stage)) : null;",
+          "classification": "executed-with-narrow-waiver",
+          "minimumCount": 0,
+          "maximumCount": 72,
+          "citations": [
+            "independent-final/browser-coverage.json",
+            "unpacked/hot/retained-async-jobs/browser-coverage.json"
+          ],
+          "unhitRanges": [
+            {
+              "start": 40839,
+              "end": 40840,
+              "text": ":"
+            },
+            {
+              "start": 40841,
+              "end": 40845,
+              "text": "null"
+            }
+          ],
+          "reason": "The unhit null arm is the unchanged old-facet VS sampler view fallback. The new standard both-stage lookup executes with native VS3/15 and FS2/15. Old factories still use the original FS-only view branch and their retained regressions pass."
+        },
+        {
+          "line": 547,
+          "text": "if (location === null && index === gl.INVALID_INDEX) require(standard || constant,",
+          "classification": "executed-with-narrow-waiver",
+          "minimumCount": 0,
+          "maximumCount": 30,
+          "citations": [
+            "independent-final/browser-coverage.json",
+            "unpacked/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": [
+            {
+              "start": 41011,
+              "end": 41013,
+              "text": "||"
+            },
+            {
+              "start": 41014,
+              "end": 41022,
+              "text": "constant"
+            }
+          ],
+          "reason": "The unhit constant arm is the unchanged old-facet all-constant-only sampler elimination predicate. Standard reflection permissiveness executes with pruned native VS/FS15; the original exact sampler predicate is preserved and carried."
+        },
+        {
+          "line": 599,
+          "text": "require(output.semantic === \"COLOR\" && (location === 0 || location === -1 && (standard || fragment.discardContract?.alwaysDiscards === true)),",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 60,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json",
+            "unpacked/hot/retained-blend-equations/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 697,
+          "text": "// Every absent standard word is zeroed, including strict draws, so",
+          "classification": "waived",
+          "minimumCount": 30357,
+          "maximumCount": 30357,
+          "citations": [
+            "unpacked/hot/retained-render-cache/browser-coverage.json"
+          ],
+          "unhitRanges": [],
+          "reason": "Comment, blank line, or punctuation-only structural syntax has no independent runtime behavior."
+        },
+        {
+          "line": 698,
+          "text": "// shortening/reset cannot retain a preceding draw's native bank.",
+          "classification": "waived",
+          "minimumCount": 30357,
+          "maximumCount": 30357,
+          "citations": [
+            "unpacked/hot/retained-render-cache/browser-coverage.json"
+          ],
+          "unhitRanges": [],
+          "reason": "Comment, blank line, or punctuation-only structural syntax has no independent runtime behavior."
+        },
+        {
+          "line": 699,
+          "text": "if (strict && !standard) require(bank.length >= count, \"incomplete-draw\", \"Drawing requires every active constant word.\");",
+          "classification": "executed",
+          "minimumCount": 10129,
+          "maximumCount": 30357,
+          "citations": [
+            "unpacked/hot/retained-render-cache/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 710,
+          "text": "samplingFor(sub, shaders[1], shaders[0]).key === program.samplingKey &&",
+          "classification": "executed",
+          "minimumCount": 10153,
+          "maximumCount": 10153,
+          "citations": [
+            "unpacked/hot/retained-render-cache/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 730,
+          "text": "const discardOnly = plan && (standard || program.fragment.discardContract?.alwaysDiscards === true) &&",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 30758,
+          "citations": [
+            "unpacked/hot/hardware/browser-coverage.json",
+            "unpacked/hot/retained-blend-equations/browser-coverage.json",
+            "unpacked/hot/retained-render-cache/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 1216,
+          "text": "const decoded = decodeCommands(bytes, provenance);",
+          "classification": "executed",
+          "minimumCount": 10159,
+          "maximumCount": 10159,
+          "citations": [
+            "unpacked/hot/retained-render-cache/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 1296,
+          "text": "const decoded = decodeCommands(bytes, provenance);",
+          "classification": "executed",
+          "minimumCount": 133,
+          "maximumCount": 133,
+          "citations": [
+            "unpacked/hot/retained-async-jobs/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        }
+      ]
+    }
+  },
+  "status": "coverage-accounted",
+  "waivers": [
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 916,
+      "ranges": [
+        {
+          "start": 69071,
+          "end": 69076,
+          "text": "throw"
+        },
+        {
+          "start": 69077,
+          "end": 69083,
+          "text": "error;"
+        }
+      ],
+      "reason": "Only the unexpected non-DomainFault defect rethrow is unhit. All descriptor/proxy/domain failures enter the recorded structured DomainFault path. This branch preserves unexpected implementation errors and is outside the guest metadata behavior; do not monkeypatch trusted JavaScript intrinsics to manufacture a defect."
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 927,
+      "ranges": [
+        {
+          "start": 69716,
+          "end": 69721,
+          "text": "throw"
+        },
+        {
+          "start": 69722,
+          "end": 69728,
+          "text": "error;"
+        }
+      ],
+      "reason": "Only the unexpected non-DomainFault defect rethrow is unhit. All descriptor/proxy/domain failures enter the recorded structured DomainFault path. This branch preserves unexpected implementation errors and is outside the guest metadata behavior; do not monkeypatch trusted JavaScript intrinsics to manufacture a defect."
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 940,
+      "ranges": [
+        {
+          "start": 70612,
+          "end": 70617,
+          "text": "throw"
+        },
+        {
+          "start": 70618,
+          "end": 70624,
+          "text": "error;"
+        }
+      ],
+      "reason": "Only the unexpected non-DomainFault defect rethrow is unhit. All descriptor/proxy/domain failures enter the recorded structured DomainFault path. This branch preserves unexpected implementation errors and is outside the guest metadata behavior; do not monkeypatch trusted JavaScript intrinsics to manufacture a defect."
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "line": 945,
+      "ranges": [
+        {
+          "start": 70951,
+          "end": 70956,
+          "text": "throw"
+        },
+        {
+          "start": 70957,
+          "end": 70963,
+          "text": "error;"
+        }
+      ],
+      "reason": "Only the unexpected non-DomainFault defect rethrow is unhit. All descriptor/proxy/domain failures enter the recorded structured DomainFault path. This branch preserves unexpected implementation errors and is outside the guest metadata behavior; do not monkeypatch trusted JavaScript intrinsics to manufacture a defect."
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 516,
+      "ranges": [
+        {
+          "start": 38188,
+          "end": 38189,
+          "text": "?"
+        },
+        {
+          "start": 38190,
+          "end": 38193,
+          "text": "128"
+        }
+      ],
+      "reason": "The unhit 128-vector ternary arm is the unchanged legacy VS-v6 cap. The new standard 512 arm and legacy 46 arm execute; preserved old-domain contracts and unchanged legacy expression carry their prior proof, with nine exact-head affected renderer regressions passing."
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 545,
+      "ranges": [
+        {
+          "start": 40839,
+          "end": 40840,
+          "text": ":"
+        },
+        {
+          "start": 40841,
+          "end": 40845,
+          "text": "null"
+        }
+      ],
+      "reason": "The unhit null arm is the unchanged old-facet VS sampler view fallback. The new standard both-stage lookup executes with native VS3/15 and FS2/15. Old factories still use the original FS-only view branch and their retained regressions pass."
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "line": 547,
+      "ranges": [
+        {
+          "start": 41011,
+          "end": 41013,
+          "text": "||"
+        },
+        {
+          "start": 41014,
+          "end": 41022,
+          "text": "constant"
+        }
+      ],
+      "reason": "The unhit constant arm is the unchanged old-facet all-constant-only sampler elimination predicate. Standard reflection permissiveness executes with pruned native VS/FS15; the original exact sampler predicate is preserved and carried."
+    }
+  ],
+  "summary": {
+    "renderer/virgl-command/constant-domain.mjs": {
+      "addedLines": 180,
+      "hunks": 1,
+      "executed": 149,
+      "executedWithNarrowWaiver": 4,
+      "syntaxWaived": 27
+    },
+    "renderer/virgl-command/decoder.mjs": {
+      "addedLines": 18,
+      "hunks": 9,
+      "executed": 14,
+      "executedWithNarrowWaiver": 0,
+      "syntaxWaived": 4
+    },
+    "renderer/virgl-command/state.mjs": {
+      "addedLines": 70,
+      "hunks": 35,
+      "executed": 62,
+      "executedWithNarrowWaiver": 3,
+      "syntaxWaived": 5
+    }
+  }
+}
