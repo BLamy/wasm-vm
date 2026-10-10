@@ -28,6 +28,8 @@ def main(directory):
     need(wire['gitHead']==head and wire['task']==TASK and wire['status']=='passed','original wire exact-head identity')
     need(len(wire['wire']['records'])==39 and len(wire['wire']['predictions'])==107 and all(p['held'] for p in wire['wire']['predictions']),'original wire/ownership/budget predictions')
     for row in wire['sources']:source(row['path'],row['sha256'])
+    serving=json.loads(record('serving-audit.json'));need(serving['gitHead']==head and serving['predecessor']==BASE and serving['status']=='passed' and len(serving['records'])==26 and all(row['held'] for row in serving['records']),'historical imported-source closure')
+    for row in serving['sources']+serving['records']:source(row['path'],row['sha256'])
     vectors=json.loads(record('scalar-vectors.json'));scalar=json.loads(record('scalar-audit.json'))
     need(len(vectors['records'])==11950 and scalar['gitHead']==head and scalar['status']=='passed','independent scalar vectors')
     need(scalar['inputSha256']==files['scalar-vectors.json'] and all(row['held'] for row in scalar['records']),'original scalar custody')

@@ -15,11 +15,12 @@ git diff --check
 for file in renderer/virgl-command/{resources,packed-float-images}.mjs renderer/virgl-command/tests/standard-packed-float-image{-rig,-boundaries}.mjs renderer/virgl-command/tests/standard-packed-float-images.mjs tools/verify-virgl-standard-packed-float-images.mjs tools/virgl-command/standard-packed-float-image-{fixtures,scalars}.mjs; do
  node --check "$file"
 done
-python3 -m py_compile tools/virgl-command/standard-packed-float-image-{values,scalar-vectors,receipt,coverage,cold,seal}.py tools/virgl-command/standard_packed_float_scalar.py
+python3 -m py_compile tools/virgl-command/standard-packed-float-image-{values,scalar-vectors,serving,receipt,coverage,cold,seal}.py tools/virgl-command/standard_packed_float_scalar.py
 bash -n tools/verify-virgl-standard-packed-float-images.sh
 bash renderer/virgl-shader/build.sh wasm
 mkdir -p "$evidence/node-coverage"
 NODE_V8_COVERAGE="$evidence/node-coverage" node tools/verify-virgl-standard-packed-float-images.mjs --output "$evidence/wire" --node-only true
+python3 tools/virgl-command/standard-packed-float-image-serving.py "$evidence"
 python3 tools/virgl-command/standard-packed-float-image-scalar-vectors.py "$evidence/scalar-vectors.json"
 NODE_V8_COVERAGE="$evidence/node-coverage" node tools/virgl-command/standard-packed-float-image-scalars.mjs "$evidence/scalar-vectors.json" "$evidence/scalar-audit.json"
 node tools/verify-virgl-standard-packed-float-images.mjs --output "$evidence/hardware-matrix"
