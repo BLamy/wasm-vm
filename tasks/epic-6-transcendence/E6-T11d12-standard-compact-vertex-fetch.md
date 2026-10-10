@@ -3,7 +3,7 @@ id: E6-T11d12
 epic: 6
 title: Execute compact floating vertex fetches from original GPU storage
 priority: 525.0270390003
-status: implemented
+status: verified
 depends_on: [E6-T11d11]
 estimate: S
 risk: high
@@ -150,3 +150,111 @@ original packet histories, GPU state and screenshots are sealed. This is isolate
 standard compact floating fetch authority only. Complete API qualification, typed
 production capsets, actual guest offload, deployment and performance remain gated.
 Only a fresh critic may set verified.
+
+### 2026-10-10 — fresh verifier — VERDICT: verified
+
+VERDICT: verified
+
+Predictions were written to `evidence/virgl-standard-compact/verifier/predictions.json`
+before inspecting the worker recording. The critic implemented no runtime code.
+The original runtime/harness freeze remains
+`ac77cdd095de121d71628308d920bfdcdbc454c3`; only promoted tests and proof metadata
+follow it. Promoted critic harness freeze:
+`4fd889f27c477978b59f81e9cecb4bb7916e9c45`.
+
+- P1 custody/pristine/compiler — HELD. Independently authenticated all 16252
+  original archive records, each hot/cold run's 507 source and 8122 file identities,
+  actual served/source/coverage bytes, and original fixed16 MiB generated Wasm
+  against D11 critic pins. The exact-head pristine default make returned exit0,
+  with scrubbed environment and empty checkout before/after; the clone remains
+  at the claimed freeze and clean. 136 unchanged historical evidence files and
+  compiler/allocator HELD proofs carry forward. Citation:
+  `verifier/authentication.json`; worker archive SHA256
+  `fcf9e7c4490eda1974668d22a8d1f1f2d28fbea28a8d157b31675d56fba860c4`.
+- P2 original admission/ABI — HELD. Decoded the 301 hot/cold literal packets
+  independently of renderer descriptors and checked native plus ASan/UBSan pinned
+  enum results. 297 independent browser packets additionally execute standard,
+  legacy, overflow and unsupported-format branches under exact-source V8
+  coverage. Float32/legacy admission remains bounded. Citations:
+  original `hot/wire/report.json`, `hot/abi/compact-{native,sanitize}.json` in the
+  worker archive; `verifier/fresh-audit.json` and `coverage-audit.json`.
+- P3 original arrays/pointers/bounds — HELD. Rebuilt full GPU sources from each
+  original packet and owned upload exchange, then independently derived native
+  types, normalized flags, components, offsets, strides, divisors, actual index
+  extrema and required ends. Every actual native pointer uses its original source
+  generation. Shared SNORM at original `hot/hardware/report.json:162727` fetches
+  resource 3 at offset 213, stride 3, through requiredEnd 251; native source/pixel
+  identities are in `verifier/citations.json`. Pixels SHA256
+  `aeacb5e0bcf97e6af65b18da519988b8dc9eaaaa69badb8430230b2c7805ee2e`.
+  Nine rejections per original run are independently predicted before drawing,
+  including actual short ends, scalar misalignment and aggregate staging 7>6.
+- P4 original scalar/TGSI pixels — HELD. A separate literal scalar decoder and
+  interpreter of the original TGSI operations, importing no renderer descriptor,
+  scalar unpacker or worker model, verified 450 original hot/cold frames and 120320
+  full pixels. Ten private original restart buffers match the literal indices.
+  Signed minimum at `hot/hardware/report.json:71664` produces generic word
+  `0xbf800000` and native missing lanes `(0,0,1)`; pixels SHA256
+  `d5af5258e13488f04e0155be6e97d36b39a46a4105d2374ed44a69690a28cc7c`.
+  The half exponent transition at line193500 preserves `0x03ff/0x0400` and
+  negative counterparts; pixels SHA256
+  `28f67ea1e299227ba8a2986df2cdd5c6950e245d50bee59c122abc5b57e97d1d`.
+  Signed zero, subnormals, max finite, infinities and 384 NaN-category pixels held.
+  No native NaN payload certificate is issued. Citation: `verifier/physical-audit.json`.
+- P5 retained source/ownership — HELD. Every constant source copy/read uses the
+  declared compact width and original bytes. Revision/cancel failures retire the
+  full batch before any draw; public name reuse preserves the originally uploaded
+  generation. Disposal releases read/staging ownership. Actual later-turn fence
+  polls are bounded and every sync retires. A/B/A restores poisoned type,
+  normalization, pointer, divisor and generic state. Original restored A at
+  `hot/hardware/report.json:248523` has pixels SHA256
+  `9b6eb10cf9f7254d19c07e14ebdc2682490af62f58eddbac00daa5dd9a243fbb`.
+- P6 original two GPU fault witnesses — HELD. Both original native-normalization
+  and constant-unpack served faults finish native draw/fence work, retain the
+  original full GPU buffers, and contradict independently derived original pixels.
+  Normalize fault pixel(10,3): predicted `[174,175,175,97]`, observed all255;
+  pixels SHA256 `020794cc70dac71e5d589a8294fae365d9a9322d6930dbbc5d885a3b06cac92e`.
+  Unpack fault pixel(1,2): predicted `[159,191,223,255]`, observed all255;
+  pixels SHA256 `0e48da2a94ba03bc5eca17e7f2e5c8aae637ec5606795e54cffc2d7ac88abc89`.
+  Exact original record lines, source mutations and blob custody are in
+  `verifier/citations.json` and `physical-audit.json`.
+- P7 changed-hunk coverage/regression — HELD. All 61 added runtime lines are
+  executed under authenticated detailed V8 coverage or individually structural
+  waivers. The only unexecuted executable subexpressions are the unchanged
+  legacy-only predicates at `state.mjs:368` and `state.mjs:1159`, separately waived
+  because their added standard bypasses execute and their legacy bodies are the
+  predecessor text. Original point 128/list 304/default-restart 189 and five faults
+  per run retained their independent saved pixel verdicts; both hot/cold were
+  rechecked with unchanged predecessor oracles. Compiler arithmetic is unchanged
+  and was not restarted. Citation: `verifier/coverage-audit.json`.
+- P8 independent attack/promoted-oracle sabotage — HELD. Seed `0x6b82d1f3`
+  recorded 44 new native frames/31744 pixels across all 20 compact combinations,
+  shared float/compact storage, delayed stride-zero reads, signed minima, half
+  exponent transitions, effective offset sums, short bounds and source lifetime
+  probes. Independent A/B/A and shared-generation reuse held. Both actual served
+  faults against the promoted interpreter completed draws/fences and failed
+  pixel(1,2): expected `[136,160,224,255]`, observed all255. Citation:
+  `verifier/fresh-audit.json`, sealed `final-gpu/report.json` and
+  `final-sabotage-{native,constant}/report.json`.
+
+Commands: `python3 evidence/virgl-standard-compact/verifier/authenticate.py`;
+`node evidence/virgl-standard-compact/verifier/audit.mjs`;
+`node tools/verify-virgl-standard-compact.mjs --output
+evidence/virgl-standard-compact/verifier/final-gpu --adversarial true`;
+the same hardware runner with `--smoke true --mutation native-normalize` and
+`constant-unpack` (both expected exit1 only after original pixels contradict);
+`node evidence/virgl-standard-compact/verifier/fresh-audit.mjs`;
+`python3 evidence/virgl-standard-compact/verifier/coverage.py`;
+the unchanged `standard-{point,assembly,restart}-pixels.mjs` on each sealed
+hot/cold retained directory; relevant Node syntax, Python compile and diff checks.
+
+SUITE: promoted deterministic seeded browser test
+`renderer/virgl-command/tests/standard-compact-vertex-fetch-adversarial.mjs` and
+independent original-operation oracle
+`tools/virgl-command/standard-compact-adversarial-oracle.mjs`.
+Critic seal: `evidence/virgl-standard-compact/verifier/{manifest.json,records.json,
+recording.tar.gz}`, 296 records, archive SHA256
+`905bbffa7111083b74923a6d2d7df455aa9dc3a85487abf8d4df286b8c85a3f9`, index SHA256
+`ae175766fbbe6075521bfb86e8f0e39134f2297325d8a43466485c0e802068db`.
+The recorded authority is only isolated standard compact floating fetch.
+Complete API, production capsets, actual guest graphics, deployment, throughput
+and native NaN payload portability remain separate gates.

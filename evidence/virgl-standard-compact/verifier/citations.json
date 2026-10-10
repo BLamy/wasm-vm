@@ -1,0 +1,1036 @@
+{
+  "schema": "standard-compact-critic-citations-v1",
+  "rows": [
+    {
+      "label": "format-56-constant-2",
+      "record": "worker/recording.tar.gz:hot/hardware/report.json",
+      "line": 71664,
+      "recordSha256": "f3ed0486113f095729335ea5799875517ecd4203c2fbe14a3257232bfb7c2d48",
+      "pixelsSha256": "d5af5258e13488f04e0155be6e97d36b39a46a4105d2374ed44a69690a28cc7c",
+      "nativeSources": [
+        {
+          "id": 3,
+          "generation": 4,
+          "sha256": "e2586341cdfd082fa4bb0e1682f83e3fa9b4f19f30646b5eb8f1e9bec4c00060"
+        },
+        {
+          "id": 4,
+          "generation": 5,
+          "sha256": "6d58692645c9d1cfaf13541cbd258f86193ef63c2f1d38f6bbca9617372d7bd6"
+        },
+        {
+          "id": 6,
+          "generation": 6,
+          "sha256": "186328a0441f24437060a076da4d488cb3f00c8364ed0d8f0158c0b7848df256"
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 7,
+          "lastElement": 12,
+          "firstByte": 116,
+          "requiredEnd": 212
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 4,
+          "stride": 0,
+          "offset": 2,
+          "components": 1,
+          "sourceFormat": 56,
+          "elementBytes": 2,
+          "nativeType": 5122,
+          "normalized": true,
+          "constant": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "firstByte": 2,
+          "requiredEnd": 4,
+          "genericValues": [
+            -1,
+            0,
+            0,
+            1
+          ],
+          "componentWords": [
+            3212836864
+          ],
+          "nan": [
+            false,
+            false,
+            false,
+            false
+          ]
+        }
+      ]
+    },
+    {
+      "label": "format-74-array-5",
+      "record": "worker/recording.tar.gz:hot/hardware/report.json",
+      "line": 140839,
+      "recordSha256": "f3ed0486113f095729335ea5799875517ecd4203c2fbe14a3257232bfb7c2d48",
+      "pixelsSha256": "d05c6d70a656d9cb1cc6902e0e023f6375d68bb43e58694ab2a29c64aba8623c",
+      "nativeSources": [
+        {
+          "id": 3,
+          "generation": 4,
+          "sha256": "e2586341cdfd082fa4bb0e1682f83e3fa9b4f19f30646b5eb8f1e9bec4c00060"
+        },
+        {
+          "id": 4,
+          "generation": 5,
+          "sha256": "292c9fbdc99f6496add18ed25f68ef86fe80c05996025b49889ea3015369de1d"
+        },
+        {
+          "id": 6,
+          "generation": 6,
+          "sha256": "186328a0441f24437060a076da4d488cb3f00c8364ed0d8f0158c0b7848df256"
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 7,
+          "lastElement": 12,
+          "firstByte": 116,
+          "requiredEnd": 212
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 4,
+          "stride": 1,
+          "offset": 1,
+          "components": 1,
+          "sourceFormat": 74,
+          "elementBytes": 1,
+          "nativeType": 5120,
+          "normalized": true,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 7,
+          "lastElement": 12,
+          "firstByte": 8,
+          "requiredEnd": 14
+        }
+      ]
+    },
+    {
+      "label": "half-word-1-1-true",
+      "record": "worker/recording.tar.gz:hot/hardware/report.json",
+      "line": 193500,
+      "recordSha256": "f3ed0486113f095729335ea5799875517ecd4203c2fbe14a3257232bfb7c2d48",
+      "pixelsSha256": "28f67ea1e299227ba8a2986df2cdd5c6950e245d50bee59c122abc5b57e97d1d",
+      "nativeSources": [
+        {
+          "id": 3,
+          "generation": 4,
+          "sha256": "e2586341cdfd082fa4bb0e1682f83e3fa9b4f19f30646b5eb8f1e9bec4c00060"
+        },
+        {
+          "id": 4,
+          "generation": 5,
+          "sha256": "9e2a57ef792eefecc9f19383e34dbecca6173a0dfec917f1990c48030ebff530"
+        },
+        {
+          "id": 6,
+          "generation": 6,
+          "sha256": "186328a0441f24437060a076da4d488cb3f00c8364ed0d8f0158c0b7848df256"
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 7,
+          "lastElement": 12,
+          "firstByte": 116,
+          "requiredEnd": 212
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 4,
+          "stride": 0,
+          "offset": 2,
+          "components": 4,
+          "sourceFormat": 94,
+          "elementBytes": 8,
+          "nativeType": 5131,
+          "normalized": false,
+          "constant": true,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "firstByte": 2,
+          "requiredEnd": 10,
+          "genericValues": [
+            6.097555160522461e-05,
+            6.103515625e-05,
+            -6.097555160522461e-05,
+            -6.103515625e-05
+          ],
+          "componentWords": [
+            947896320,
+            947912704,
+            3095379968,
+            3095396352
+          ],
+          "nan": [
+            false,
+            false,
+            false,
+            false
+          ]
+        }
+      ]
+    },
+    {
+      "label": "mixed-shared",
+      "record": "worker/recording.tar.gz:hot/hardware/report.json",
+      "line": 162727,
+      "recordSha256": "f3ed0486113f095729335ea5799875517ecd4203c2fbe14a3257232bfb7c2d48",
+      "pixelsSha256": "aeacb5e0bcf97e6af65b18da519988b8dc9eaaaa69badb8430230b2c7805ee2e",
+      "nativeSources": [
+        {
+          "id": 3,
+          "generation": 4,
+          "sha256": "0e6bab06be9a4004c74c7c0747d741e0846f994e2df4dfe6c811ab390e76cfac"
+        },
+        {
+          "id": 6,
+          "generation": 5,
+          "sha256": "186328a0441f24437060a076da4d488cb3f00c8364ed0d8f0158c0b7848df256"
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 7,
+          "lastElement": 12,
+          "firstByte": 116,
+          "requiredEnd": 212
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 3,
+          "offset": 213,
+          "components": 2,
+          "sourceFormat": 75,
+          "elementBytes": 2,
+          "nativeType": 5120,
+          "normalized": true,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 7,
+          "lastElement": 12,
+          "firstByte": 234,
+          "requiredEnd": 251
+        }
+      ]
+    },
+    {
+      "label": "restore-A-last",
+      "record": "worker/recording.tar.gz:hot/hardware/report.json",
+      "line": 248523,
+      "recordSha256": "f3ed0486113f095729335ea5799875517ecd4203c2fbe14a3257232bfb7c2d48",
+      "pixelsSha256": "9b6eb10cf9f7254d19c07e14ebdc2682490af62f58eddbac00daa5dd9a243fbb",
+      "nativeSources": [
+        {
+          "id": 3,
+          "generation": 4,
+          "sha256": "e2586341cdfd082fa4bb0e1682f83e3fa9b4f19f30646b5eb8f1e9bec4c00060"
+        },
+        {
+          "id": 4,
+          "generation": 5,
+          "sha256": "915bf8787ba00822c0910b3e6ccdccb48d0494ccfcf05a2d0f919ffa2333b4b4"
+        },
+        {
+          "id": 6,
+          "generation": 6,
+          "sha256": "186328a0441f24437060a076da4d488cb3f00c8364ed0d8f0158c0b7848df256"
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 7,
+          "lastElement": 12,
+          "firstByte": 116,
+          "requiredEnd": 212
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 4,
+          "stride": 4,
+          "offset": 1,
+          "components": 4,
+          "sourceFormat": 77,
+          "elementBytes": 4,
+          "nativeType": 5120,
+          "normalized": true,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 7,
+          "lastElement": 12,
+          "firstByte": 29,
+          "requiredEnd": 53
+        }
+      ]
+    },
+    {
+      "label": "exact-compact-staging",
+      "record": "worker/recording.tar.gz:hot/hardware/report.json",
+      "line": 240749,
+      "recordSha256": "f3ed0486113f095729335ea5799875517ecd4203c2fbe14a3257232bfb7c2d48",
+      "pixelsSha256": "0694e9243d11f555cc7df5826aedde92cdc971b23404bbf31b634a14392fcaea",
+      "nativeSources": [
+        {
+          "id": 3,
+          "generation": 4,
+          "sha256": "e2586341cdfd082fa4bb0e1682f83e3fa9b4f19f30646b5eb8f1e9bec4c00060"
+        },
+        {
+          "id": 4,
+          "generation": 5,
+          "sha256": "96a296d224f285c67bee93c30f8a309157f0daa35dc5b87e410b78630a09cfc7"
+        },
+        {
+          "id": 6,
+          "generation": 6,
+          "sha256": "186328a0441f24437060a076da4d488cb3f00c8364ed0d8f0158c0b7848df256"
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 7,
+          "lastElement": 12,
+          "firstByte": 116,
+          "requiredEnd": 212
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 4,
+          "stride": 0,
+          "offset": 1,
+          "components": 1,
+          "sourceFormat": 64,
+          "elementBytes": 1,
+          "nativeType": 5121,
+          "normalized": true,
+          "constant": true,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "firstByte": 1,
+          "requiredEnd": 2,
+          "genericValues": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "componentWords": [
+            0
+          ],
+          "nan": [
+            false,
+            false,
+            false,
+            false
+          ]
+        }
+      ]
+    },
+    {
+      "label": "compact-smoke",
+      "record": "worker/recording.tar.gz:hot/fault-native-normalize/report.json",
+      "line": 344,
+      "recordSha256": "7ffa7059d5271a565f9b6eab1aedbed5c5058d05aa829c89cb2e591964c9f751",
+      "pixelsSha256": "020794cc70dac71e5d589a8294fae365d9a9322d6930dbbc5d885a3b06cac92e",
+      "nativeSources": [
+        {
+          "id": 3,
+          "generation": 4,
+          "sha256": "e2586341cdfd082fa4bb0e1682f83e3fa9b4f19f30646b5eb8f1e9bec4c00060"
+        },
+        {
+          "id": 4,
+          "generation": 5,
+          "sha256": "1d212b8d88610b71f4ad28cd5a85493c13ba91104117e468b14127b5346b3a30"
+        },
+        {
+          "id": 6,
+          "generation": 6,
+          "sha256": "186328a0441f24437060a076da4d488cb3f00c8364ed0d8f0158c0b7848df256"
+        }
+      ],
+      "misses": [
+        {
+          "x": 10,
+          "y": 3,
+          "expected": [
+            174,
+            175,
+            175,
+            97
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 158
+        },
+        {
+          "x": 11,
+          "y": 3,
+          "expected": [
+            174,
+            175,
+            175,
+            97
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 158
+        },
+        {
+          "x": 12,
+          "y": 3,
+          "expected": [
+            174,
+            175,
+            175,
+            97
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 158
+        },
+        {
+          "x": 13,
+          "y": 3,
+          "expected": [
+            174,
+            175,
+            175,
+            97
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 158
+        },
+        {
+          "x": 10,
+          "y": 4,
+          "expected": [
+            174,
+            175,
+            175,
+            97
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 158
+        },
+        {
+          "x": 11,
+          "y": 4,
+          "expected": [
+            174,
+            175,
+            175,
+            97
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 158
+        },
+        {
+          "x": 12,
+          "y": 4,
+          "expected": [
+            174,
+            175,
+            175,
+            97
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 158
+        },
+        {
+          "x": 13,
+          "y": 4,
+          "expected": [
+            174,
+            175,
+            175,
+            97
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 158
+        }
+      ]
+    },
+    {
+      "label": "compact-smoke",
+      "record": "worker/recording.tar.gz:hot/fault-constant-unpack/report.json",
+      "line": 344,
+      "recordSha256": "2a13428988f4ba3762c06ab66a57c84ccbb198d77b66e51f445625998af8269e",
+      "pixelsSha256": "0e48da2a94ba03bc5eca17e7f2e5c8aae637ec5606795e54cffc2d7ac88abc89",
+      "nativeSources": [
+        {
+          "id": 3,
+          "generation": 4,
+          "sha256": "e2586341cdfd082fa4bb0e1682f83e3fa9b4f19f30646b5eb8f1e9bec4c00060"
+        },
+        {
+          "id": 4,
+          "generation": 5,
+          "sha256": "8b429a7525628acb01fe5fe644f75ae1cd05bb986a3e4a3d632481af846012f5"
+        },
+        {
+          "id": 6,
+          "generation": 6,
+          "sha256": "186328a0441f24437060a076da4d488cb3f00c8364ed0d8f0158c0b7848df256"
+        }
+      ],
+      "misses": [
+        {
+          "x": 1,
+          "y": 2,
+          "expected": [
+            159,
+            191,
+            223,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 96
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "expected": [
+            159,
+            191,
+            223,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 96
+        },
+        {
+          "x": 3,
+          "y": 2,
+          "expected": [
+            159,
+            191,
+            223,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 96
+        },
+        {
+          "x": 4,
+          "y": 2,
+          "expected": [
+            159,
+            191,
+            223,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 96
+        },
+        {
+          "x": 1,
+          "y": 3,
+          "expected": [
+            159,
+            191,
+            223,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 96
+        },
+        {
+          "x": 2,
+          "y": 3,
+          "expected": [
+            159,
+            191,
+            223,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 96
+        },
+        {
+          "x": 3,
+          "y": 3,
+          "expected": [
+            159,
+            191,
+            223,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 96
+        },
+        {
+          "x": 4,
+          "y": 3,
+          "expected": [
+            159,
+            191,
+            223,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 96
+        }
+      ]
+    },
+    {
+      "label": "critic-sabotage-native-normalize",
+      "record": "final-sabotage-native/report.json",
+      "line": 367,
+      "recordSha256": "87815471edc5313129ab85b71c60b1b1b799fd14925dd14b8c897bbdf64a6db0",
+      "pixelsSha256": "39e7ed5473a33b56d4d9439de9b1726eb5d5f455be47e0ecd120c9079e50be69",
+      "originalWireSha256": "7d03c41ff8a4b39031109e15c33229510512b5fe72d2f0964d087b3c01c0d806",
+      "misses": [
+        {
+          "x": 1,
+          "y": 2,
+          "expected": [
+            136,
+            160,
+            224,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 119
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "expected": [
+            136,
+            160,
+            224,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 119
+        },
+        {
+          "x": 3,
+          "y": 2,
+          "expected": [
+            136,
+            160,
+            224,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 119
+        },
+        {
+          "x": 4,
+          "y": 2,
+          "expected": [
+            136,
+            160,
+            224,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 119
+        },
+        {
+          "x": 1,
+          "y": 3,
+          "expected": [
+            136,
+            160,
+            224,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 119
+        },
+        {
+          "x": 2,
+          "y": 3,
+          "expected": [
+            136,
+            160,
+            224,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 119
+        },
+        {
+          "x": 3,
+          "y": 3,
+          "expected": [
+            136,
+            160,
+            224,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 119
+        },
+        {
+          "x": 4,
+          "y": 3,
+          "expected": [
+            136,
+            160,
+            224,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 119
+        }
+      ]
+    },
+    {
+      "label": "critic-sabotage-constant-unpack",
+      "record": "final-sabotage-constant/report.json",
+      "line": 367,
+      "recordSha256": "266c5617f4cd699c0eb2bd60543d7d52ed6f575e80b16a0864678a680e1b56f3",
+      "pixelsSha256": "0e48da2a94ba03bc5eca17e7f2e5c8aae637ec5606795e54cffc2d7ac88abc89",
+      "originalWireSha256": "aab7fb0261cfdf626ab19b2a4b3a35a746f3a61603f7cfc4d721707e752f2af6",
+      "misses": [
+        {
+          "x": 1,
+          "y": 2,
+          "expected": [
+            136,
+            160,
+            224,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 119
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "expected": [
+            136,
+            160,
+            224,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 119
+        },
+        {
+          "x": 3,
+          "y": 2,
+          "expected": [
+            136,
+            160,
+            224,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 119
+        },
+        {
+          "x": 4,
+          "y": 2,
+          "expected": [
+            136,
+            160,
+            224,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 119
+        },
+        {
+          "x": 1,
+          "y": 3,
+          "expected": [
+            136,
+            160,
+            224,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 119
+        },
+        {
+          "x": 2,
+          "y": 3,
+          "expected": [
+            136,
+            160,
+            224,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 119
+        },
+        {
+          "x": 3,
+          "y": 3,
+          "expected": [
+            136,
+            160,
+            224,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 119
+        },
+        {
+          "x": 4,
+          "y": 3,
+          "expected": [
+            136,
+            160,
+            224,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 119
+        }
+      ]
+    }
+  ]
+}
