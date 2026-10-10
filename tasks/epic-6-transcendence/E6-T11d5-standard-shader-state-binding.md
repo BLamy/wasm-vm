@@ -3,7 +3,7 @@ id: E6-T11d5
 epic: 6
 title: Execute standard guest shader bindings through owned renderer jobs
 priority: 525.027038
-status: in-progress
+status: implemented
 depends_on: [E6-T11d4]
 estimate: S
 risk: high
@@ -202,3 +202,60 @@ Critic seal: `evidence/virgl-standard-state/verifier/{manifest.json,records.json
 recording.tar.gz}`, 52 members, archive SHA256
 `6f05eeafad2f2dcdc225957b6ee95889855c1abc3538b480ad3f9a1222257c9b`, index
 `09f798b43f4b9e960c97879b682ac0110089cb9f124b42108d79edd4093cbd7e`.
+
+### 2026-10-09 — worker — native binding completeness repair; implemented
+
+The fresh critic refuted F1/F2 at `01c4dc73`: coherently omitted active FS
+constant/sampler metadata reached a native draw. Repair/acceptance head
+`adcbe81bcd091c3d411a8f96ac8746e1a17290fb` adds standard-only enumeration of
+every active native uniform after the existing typed reflection checks. Default
+block entries must match checked raw constants, stage samplers or the inserted
+blend uniform; block entries must belong to the already measured, owned system
+block. No native binding may disappear merely because both stage and pair
+metadata omit it. Legitimate driver pruning and the old renderer facet remain
+unchanged. The original critic's other HELD results and 45-hunk coverage/waivers
+at `01c4dc73` carry forward, with the new admission hunk requiring fresh review.
+
+Exact frozen commands:
+
+```sh
+VIRGL_STANDARD_STATE_EVIDENCE_DIR=target/evidence/virgl-standard-state-reflection-final make verify-E6-T11d5
+python3 tools/virgl-command/standard-state-cold.py --output target/evidence/virgl-standard-state-reflection-final-cold
+python3 tools/virgl-command/standard-state-seal.py target/evidence/virgl-standard-state-reflection-final target/evidence/virgl-standard-state-reflection-final-cold evidence/virgl-standard-state/reflection-repair
+```
+
+The full prescribed gate and pristine scrubbed exact-head clone both pass:
+542 literal wire predictions, 32 metadata attacks, 56 hardware queued frames
+and 2,371,424 independently checked pixels. Four new coherent stage/pair
+omission cases cover active VS/FS constants and samplers; each names the actual
+native binding, fails `shader-reflection-error` and records zero native draws.
+All successful frames now include directly queried complete active native
+uniform lists. The added mixed-constant blend frame physically exercises the
+renderer-owned float uniform and agrees with the independent literal-packet
+blend equation. Original full compositor programs/banks, short/reset zeroing,
+both-stage views, ownership, cancellation, fences and all nine affected old
+regressions plus promoted blend/float boundaries still pass.
+
+Both real served mutations remain sensitive. Short-upload corruption fails
+`short-bank-0 independent physical pixel oracle`. Disabling only the new native
+accounting loop reaches one real completed native draw with omitted VS constant
+metadata, then fails `omitted-active-vertex-uniforms coherently spoofed stage/pair
+metadata rejects` (expected false, observed true). Original source/mutation
+bytes, native calls, error provenance, partial recordings, full saved pixels and
+coverage are sealed; no proxy fabricates the program outcome. The offline audit
+passes all 56 normal frames and catches the original short-upload fault.
+
+The cold clone is
+`/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-standard-state-cold-e809aaf_/wasm-vm`.
+Its exact head and clean checkout are recorded. The new committed seal is
+`evidence/virgl-standard-state/reflection-repair/{manifest.json,records.json,recording.tar.gz}`:
+332 records, 10,343,259 archive bytes; archive SHA256
+`9c2a187e7f192c35bcc9c06eb32d1e7fc90e8e7ca938cb37c6a124eb3bdc467e`,
+index `be036ae9072dbfae6ea1225572ffbe62fa84a5df4ebe345eefe25a72d62fef11`,
+hot receipt `c7e39d32cb02684d278a2f673544063b10498c449ce1ea37ebadf5bcebe5ffa8`,
+cold report `dc427e1574da1cb0caf7b8f761883f95c73a95fa61ee45ffa024e488e5315161`,
+cold receipt `33545abd27c2b5ab70b2126f12bd469722f72a81949d59b1da7e97f0df04ef6f`.
+The unchanged C/compiler, Rust/device/transport, original numerical prefix and
+16MiB Wasm proofs carry. This remains an isolated single-COLOR0 binding slice;
+no full guest API, production capset, live guest acceleration, scanout or MIPS
+claim follows. Submit this repaired head to a fresh adversarial session.

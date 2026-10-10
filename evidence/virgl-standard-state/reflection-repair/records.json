@@ -1,0 +1,1667 @@
+{
+  "schema": "virgl-standard-state-binding-records-v1",
+  "task": "E6-T11d5",
+  "sourceHead": "adcbe81bcd091c3d411a8f96ac8746e1a17290fb",
+  "records": [
+    {
+      "path": "cold-generated/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "bytes": 10814,
+      "sha256": "8d07e5832efc6bc832b9bd684bcaaaad19b536783643f40d088e2ddfba2a5052"
+    },
+    {
+      "path": "cold-generated/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "bytes": 426197,
+      "sha256": "40772f2a609b803a11f97a3cdd35087810964c2dd35662e0bb143e7144f97287"
+    },
+    {
+      "path": "cold/acceptance.log",
+      "bytes": 11145,
+      "sha256": "e1e6f6ca0d0f92739196f55bd9a2187dabdbdb79bf833d4e0d401d1893b971c7"
+    },
+    {
+      "path": "cold/c580.bin",
+      "bytes": 1784,
+      "sha256": "4df0b1dca3d4455535333a2a7f0560775cd1140c00ad49a59f782ad78a49004e"
+    },
+    {
+      "path": "cold/c580.json",
+      "bytes": 3299,
+      "sha256": "a26571fd785e3eb5219df53e76706e59dfb131dee287665fbb05db2e0bc4d0f0"
+    },
+    {
+      "path": "cold/c580.log",
+      "bytes": 50,
+      "sha256": "56d6294ec71ae8b13cc516e85bdbee1ef31a4f79c9e1a5d28eb5431b1bd35ddb"
+    },
+    {
+      "path": "cold/cold.log",
+      "bytes": 11389,
+      "sha256": "de27167bb088a87343727515ae3cb22ab2662c6342fe9edfddaf10bcbd062189"
+    },
+    {
+      "path": "cold/fault-metadata/browser-coverage.json",
+      "bytes": 323640,
+      "sha256": "f5557cb6524b0b45354f549a85eb9eeaf532402f08ca2037b7d0f37e5c4d196b"
+    },
+    {
+      "path": "cold/fault-metadata/browser.png",
+      "bytes": 27041,
+      "sha256": "cf9775722e68460b9265395d639404c3775888b0591b47a530a2473e1dae15e9"
+    },
+    {
+      "path": "cold/fault-metadata/mutation-source.mjs",
+      "bytes": 100605,
+      "sha256": "a323c66acab859e59aee69eb290fa90f27bd335d1b4c2cad02f0b05e10940726"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-000.bin.gz",
+      "bytes": 32,
+      "sha256": "d6211ccf83c6d13c29b93ef958944564e8d0253c1d72d15ac90b10ae6381a342"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-001.bin.gz",
+      "bytes": 32,
+      "sha256": "8281ba2602b672737e43fb8ad16eef2fbb5147ad10178cb3a17407b5aabf06de"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-002.bin.gz",
+      "bytes": 29,
+      "sha256": "e279c78e3a47796c37f1c5fb7933f5b33d67c04712bbe005102f1d0f75f39d03"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-003.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-004.bin.gz",
+      "bytes": 32,
+      "sha256": "8281ba2602b672737e43fb8ad16eef2fbb5147ad10178cb3a17407b5aabf06de"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-005.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-006.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-007.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-008.bin.gz",
+      "bytes": 32,
+      "sha256": "4765355f87f1da79d970f63874f607681c9dae92338bba4c3af1b2102e55cda7"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-009.bin.gz",
+      "bytes": 32,
+      "sha256": "8281ba2602b672737e43fb8ad16eef2fbb5147ad10178cb3a17407b5aabf06de"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-010.bin.gz",
+      "bytes": 32,
+      "sha256": "dc4ebe086548cee20fe890a1b842a0d1ac110c13ed5dff45d6113c185eefeec5"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-011.bin.gz",
+      "bytes": 32,
+      "sha256": "d6211ccf83c6d13c29b93ef958944564e8d0253c1d72d15ac90b10ae6381a342"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-012.bin.gz",
+      "bytes": 32,
+      "sha256": "8281ba2602b672737e43fb8ad16eef2fbb5147ad10178cb3a17407b5aabf06de"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-013.bin.gz",
+      "bytes": 29,
+      "sha256": "e279c78e3a47796c37f1c5fb7933f5b33d67c04712bbe005102f1d0f75f39d03"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-014.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-015.bin.gz",
+      "bytes": 32,
+      "sha256": "8281ba2602b672737e43fb8ad16eef2fbb5147ad10178cb3a17407b5aabf06de"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-016.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-017.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-018.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-019.bin.gz",
+      "bytes": 32,
+      "sha256": "4765355f87f1da79d970f63874f607681c9dae92338bba4c3af1b2102e55cda7"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-020.bin.gz",
+      "bytes": 32,
+      "sha256": "8281ba2602b672737e43fb8ad16eef2fbb5147ad10178cb3a17407b5aabf06de"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-021.bin.gz",
+      "bytes": 32,
+      "sha256": "dc4ebe086548cee20fe890a1b842a0d1ac110c13ed5dff45d6113c185eefeec5"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-022.bin.gz",
+      "bytes": 32,
+      "sha256": "d6211ccf83c6d13c29b93ef958944564e8d0253c1d72d15ac90b10ae6381a342"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-023.bin.gz",
+      "bytes": 32,
+      "sha256": "8281ba2602b672737e43fb8ad16eef2fbb5147ad10178cb3a17407b5aabf06de"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-024.bin.gz",
+      "bytes": 29,
+      "sha256": "e279c78e3a47796c37f1c5fb7933f5b33d67c04712bbe005102f1d0f75f39d03"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-025.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-026.bin.gz",
+      "bytes": 32,
+      "sha256": "8281ba2602b672737e43fb8ad16eef2fbb5147ad10178cb3a17407b5aabf06de"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-027.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-028.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-029.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-030.bin.gz",
+      "bytes": 32,
+      "sha256": "4765355f87f1da79d970f63874f607681c9dae92338bba4c3af1b2102e55cda7"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-031.bin.gz",
+      "bytes": 32,
+      "sha256": "8281ba2602b672737e43fb8ad16eef2fbb5147ad10178cb3a17407b5aabf06de"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-032.bin.gz",
+      "bytes": 32,
+      "sha256": "dc4ebe086548cee20fe890a1b842a0d1ac110c13ed5dff45d6113c185eefeec5"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-033.bin.gz",
+      "bytes": 32,
+      "sha256": "4765355f87f1da79d970f63874f607681c9dae92338bba4c3af1b2102e55cda7"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-034.bin.gz",
+      "bytes": 32,
+      "sha256": "0305cc6f5a9c2e39a09933e9b89a3018964fac12a42f1d2e1baa1950c7a531c8"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-035.bin.gz",
+      "bytes": 32,
+      "sha256": "330511817637dc1d28b1de61e83fac1c97962b1a7e4fae10a11f611defc50d59"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-036.bin.gz",
+      "bytes": 32,
+      "sha256": "900b191cdeeac80dddccec185a593cde82dcbf3f2a85076ed83190eeec521e7d"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-037.bin.gz",
+      "bytes": 32,
+      "sha256": "5f376ae3ffac80ccf295ed496c0332254d0b49b59a1e9c2bd984bcc85473a0ca"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-038.bin.gz",
+      "bytes": 32,
+      "sha256": "91cbbdaf945719b0fa967c4e1cfc08706234f68d0fb416df1e26ef4f980babf6"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-039.bin.gz",
+      "bytes": 29,
+      "sha256": "3244eb3d51a6d74256f18823facf500dfcd659c8d2b3e202a73462291e2f61ba"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-040.bin.gz",
+      "bytes": 32,
+      "sha256": "900b191cdeeac80dddccec185a593cde82dcbf3f2a85076ed83190eeec521e7d"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-041.bin.gz",
+      "bytes": 504,
+      "sha256": "a3ec9b7097af90ea7e57edd46d10b96533b41e5a5cb6819169b1266d51ba5cfb"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-042.bin.gz",
+      "bytes": 43,
+      "sha256": "acb3d3690497c687c74dc1db324f2f7287af838258a85b1fb56c6ca6dce84497"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-043.bin.gz",
+      "bytes": 32,
+      "sha256": "dab2c7eb93b7c2f9b3022baaf7eeb5e20ca4b08b6bb656748cf068f5eca50025"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-044.bin.gz",
+      "bytes": 226,
+      "sha256": "14705339ceb4470380b634f344e2419d710810b51481ff8d1f1d132c7c37f98a"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-045.bin.gz",
+      "bytes": 32,
+      "sha256": "4765355f87f1da79d970f63874f607681c9dae92338bba4c3af1b2102e55cda7"
+    },
+    {
+      "path": "cold/fault-metadata/pixels-046.bin.gz",
+      "bytes": 32,
+      "sha256": "dab2c7eb93b7c2f9b3022baaf7eeb5e20ca4b08b6bb656748cf068f5eca50025"
+    },
+    {
+      "path": "cold/fault-metadata/report.json",
+      "bytes": 25797727,
+      "sha256": "a4f927572dc1e1669b33d996c4383fcdb153c597e821f9c236e47207b4f6017a"
+    },
+    {
+      "path": "cold/fault-suffix/browser-coverage.json",
+      "bytes": 270524,
+      "sha256": "2337e569d0fd16a6d8fbc0fff95f8339c992f0919dedeef9b2689db71169f674"
+    },
+    {
+      "path": "cold/fault-suffix/browser.png",
+      "bytes": 52519,
+      "sha256": "4762201ab03cdcb9ecd3e4555a4b55e674ad8e6bc260da3f6b88543f03f941a1"
+    },
+    {
+      "path": "cold/fault-suffix/mutation-source.mjs",
+      "bytes": 100662,
+      "sha256": "9ced4a933c89acc6bb04f02db576e1f0955cd87452bd3315b3e402b4b0c618b3"
+    },
+    {
+      "path": "cold/fault-suffix/pixels-000.bin.gz",
+      "bytes": 32,
+      "sha256": "d6211ccf83c6d13c29b93ef958944564e8d0253c1d72d15ac90b10ae6381a342"
+    },
+    {
+      "path": "cold/fault-suffix/pixels-001.bin.gz",
+      "bytes": 32,
+      "sha256": "d6211ccf83c6d13c29b93ef958944564e8d0253c1d72d15ac90b10ae6381a342"
+    },
+    {
+      "path": "cold/fault-suffix/report.json",
+      "bytes": 1137822,
+      "sha256": "a33be88f8489cee9cfd9e8a1d4b837139d5fe0a0341eea969085dd6ceeeebd81"
+    },
+    {
+      "path": "cold/geometry.bin",
+      "bytes": 2040,
+      "sha256": "0d8bf78697b9be39a58c9274e221a89a9903f8587dfa2cf5cf5b754ae82e27ac"
+    },
+    {
+      "path": "cold/geometry.json",
+      "bytes": 935057,
+      "sha256": "c7b11dade4d79f16a375bd62e1d6c588657c7a775a9c466cb0fdc5f03793ae37"
+    },
+    {
+      "path": "cold/geometry.log",
+      "bytes": 82,
+      "sha256": "0d3285ceafeac3b38f81f40c2fc5f79358ac7ce01ceab083c0a1850f76d84b83"
+    },
+    {
+      "path": "cold/hardware/browser-coverage.json",
+      "bytes": 343177,
+      "sha256": "7578f4dcc01c02907ffe7ff50c82a472ac789e72dcc7d69cac5751f0baf6f053"
+    },
+    {
+      "path": "cold/hardware/browser.png",
+      "bytes": 35138,
+      "sha256": "2f8969b0b17b209695cb097eb0e531207ec52aeb62daf4c24fc89760473f83a9"
+    },
+    {
+      "path": "cold/hardware/pixels-000.bin.gz",
+      "bytes": 32,
+      "sha256": "d6211ccf83c6d13c29b93ef958944564e8d0253c1d72d15ac90b10ae6381a342"
+    },
+    {
+      "path": "cold/hardware/pixels-001.bin.gz",
+      "bytes": 32,
+      "sha256": "8281ba2602b672737e43fb8ad16eef2fbb5147ad10178cb3a17407b5aabf06de"
+    },
+    {
+      "path": "cold/hardware/pixels-002.bin.gz",
+      "bytes": 29,
+      "sha256": "e279c78e3a47796c37f1c5fb7933f5b33d67c04712bbe005102f1d0f75f39d03"
+    },
+    {
+      "path": "cold/hardware/pixels-003.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "cold/hardware/pixels-004.bin.gz",
+      "bytes": 32,
+      "sha256": "8281ba2602b672737e43fb8ad16eef2fbb5147ad10178cb3a17407b5aabf06de"
+    },
+    {
+      "path": "cold/hardware/pixels-005.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "cold/hardware/pixels-006.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "cold/hardware/pixels-007.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "cold/hardware/pixels-008.bin.gz",
+      "bytes": 32,
+      "sha256": "4765355f87f1da79d970f63874f607681c9dae92338bba4c3af1b2102e55cda7"
+    },
+    {
+      "path": "cold/hardware/pixels-009.bin.gz",
+      "bytes": 32,
+      "sha256": "8281ba2602b672737e43fb8ad16eef2fbb5147ad10178cb3a17407b5aabf06de"
+    },
+    {
+      "path": "cold/hardware/pixels-010.bin.gz",
+      "bytes": 32,
+      "sha256": "dc4ebe086548cee20fe890a1b842a0d1ac110c13ed5dff45d6113c185eefeec5"
+    },
+    {
+      "path": "cold/hardware/pixels-011.bin.gz",
+      "bytes": 32,
+      "sha256": "d6211ccf83c6d13c29b93ef958944564e8d0253c1d72d15ac90b10ae6381a342"
+    },
+    {
+      "path": "cold/hardware/pixels-012.bin.gz",
+      "bytes": 32,
+      "sha256": "8281ba2602b672737e43fb8ad16eef2fbb5147ad10178cb3a17407b5aabf06de"
+    },
+    {
+      "path": "cold/hardware/pixels-013.bin.gz",
+      "bytes": 29,
+      "sha256": "e279c78e3a47796c37f1c5fb7933f5b33d67c04712bbe005102f1d0f75f39d03"
+    },
+    {
+      "path": "cold/hardware/pixels-014.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "cold/hardware/pixels-015.bin.gz",
+      "bytes": 32,
+      "sha256": "8281ba2602b672737e43fb8ad16eef2fbb5147ad10178cb3a17407b5aabf06de"
+    },
+    {
+      "path": "cold/hardware/pixels-016.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "cold/hardware/pixels-017.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "cold/hardware/pixels-018.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "cold/hardware/pixels-019.bin.gz",
+      "bytes": 32,
+      "sha256": "4765355f87f1da79d970f63874f607681c9dae92338bba4c3af1b2102e55cda7"
+    },
+    {
+      "path": "cold/hardware/pixels-020.bin.gz",
+      "bytes": 32,
+      "sha256": "8281ba2602b672737e43fb8ad16eef2fbb5147ad10178cb3a17407b5aabf06de"
+    },
+    {
+      "path": "cold/hardware/pixels-021.bin.gz",
+      "bytes": 32,
+      "sha256": "dc4ebe086548cee20fe890a1b842a0d1ac110c13ed5dff45d6113c185eefeec5"
+    },
+    {
+      "path": "cold/hardware/pixels-022.bin.gz",
+      "bytes": 32,
+      "sha256": "d6211ccf83c6d13c29b93ef958944564e8d0253c1d72d15ac90b10ae6381a342"
+    },
+    {
+      "path": "cold/hardware/pixels-023.bin.gz",
+      "bytes": 32,
+      "sha256": "8281ba2602b672737e43fb8ad16eef2fbb5147ad10178cb3a17407b5aabf06de"
+    },
+    {
+      "path": "cold/hardware/pixels-024.bin.gz",
+      "bytes": 29,
+      "sha256": "e279c78e3a47796c37f1c5fb7933f5b33d67c04712bbe005102f1d0f75f39d03"
+    },
+    {
+      "path": "cold/hardware/pixels-025.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "cold/hardware/pixels-026.bin.gz",
+      "bytes": 32,
+      "sha256": "8281ba2602b672737e43fb8ad16eef2fbb5147ad10178cb3a17407b5aabf06de"
+    },
+    {
+      "path": "cold/hardware/pixels-027.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "cold/hardware/pixels-028.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "cold/hardware/pixels-029.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "cold/hardware/pixels-030.bin.gz",
+      "bytes": 32,
+      "sha256": "4765355f87f1da79d970f63874f607681c9dae92338bba4c3af1b2102e55cda7"
+    },
+    {
+      "path": "cold/hardware/pixels-031.bin.gz",
+      "bytes": 32,
+      "sha256": "8281ba2602b672737e43fb8ad16eef2fbb5147ad10178cb3a17407b5aabf06de"
+    },
+    {
+      "path": "cold/hardware/pixels-032.bin.gz",
+      "bytes": 32,
+      "sha256": "dc4ebe086548cee20fe890a1b842a0d1ac110c13ed5dff45d6113c185eefeec5"
+    },
+    {
+      "path": "cold/hardware/pixels-033.bin.gz",
+      "bytes": 32,
+      "sha256": "4765355f87f1da79d970f63874f607681c9dae92338bba4c3af1b2102e55cda7"
+    },
+    {
+      "path": "cold/hardware/pixels-034.bin.gz",
+      "bytes": 32,
+      "sha256": "0305cc6f5a9c2e39a09933e9b89a3018964fac12a42f1d2e1baa1950c7a531c8"
+    },
+    {
+      "path": "cold/hardware/pixels-035.bin.gz",
+      "bytes": 32,
+      "sha256": "330511817637dc1d28b1de61e83fac1c97962b1a7e4fae10a11f611defc50d59"
+    },
+    {
+      "path": "cold/hardware/pixels-036.bin.gz",
+      "bytes": 32,
+      "sha256": "900b191cdeeac80dddccec185a593cde82dcbf3f2a85076ed83190eeec521e7d"
+    },
+    {
+      "path": "cold/hardware/pixels-037.bin.gz",
+      "bytes": 32,
+      "sha256": "5f376ae3ffac80ccf295ed496c0332254d0b49b59a1e9c2bd984bcc85473a0ca"
+    },
+    {
+      "path": "cold/hardware/pixels-038.bin.gz",
+      "bytes": 32,
+      "sha256": "91cbbdaf945719b0fa967c4e1cfc08706234f68d0fb416df1e26ef4f980babf6"
+    },
+    {
+      "path": "cold/hardware/pixels-039.bin.gz",
+      "bytes": 29,
+      "sha256": "3244eb3d51a6d74256f18823facf500dfcd659c8d2b3e202a73462291e2f61ba"
+    },
+    {
+      "path": "cold/hardware/pixels-040.bin.gz",
+      "bytes": 32,
+      "sha256": "900b191cdeeac80dddccec185a593cde82dcbf3f2a85076ed83190eeec521e7d"
+    },
+    {
+      "path": "cold/hardware/pixels-041.bin.gz",
+      "bytes": 504,
+      "sha256": "a3ec9b7097af90ea7e57edd46d10b96533b41e5a5cb6819169b1266d51ba5cfb"
+    },
+    {
+      "path": "cold/hardware/pixels-042.bin.gz",
+      "bytes": 43,
+      "sha256": "acb3d3690497c687c74dc1db324f2f7287af838258a85b1fb56c6ca6dce84497"
+    },
+    {
+      "path": "cold/hardware/pixels-043.bin.gz",
+      "bytes": 32,
+      "sha256": "dab2c7eb93b7c2f9b3022baaf7eeb5e20ca4b08b6bb656748cf068f5eca50025"
+    },
+    {
+      "path": "cold/hardware/pixels-044.bin.gz",
+      "bytes": 226,
+      "sha256": "14705339ceb4470380b634f344e2419d710810b51481ff8d1f1d132c7c37f98a"
+    },
+    {
+      "path": "cold/hardware/pixels-045.bin.gz",
+      "bytes": 32,
+      "sha256": "4765355f87f1da79d970f63874f607681c9dae92338bba4c3af1b2102e55cda7"
+    },
+    {
+      "path": "cold/hardware/pixels-046.bin.gz",
+      "bytes": 32,
+      "sha256": "dab2c7eb93b7c2f9b3022baaf7eeb5e20ca4b08b6bb656748cf068f5eca50025"
+    },
+    {
+      "path": "cold/hardware/pixels-047.bin.gz",
+      "bytes": 4617,
+      "sha256": "fb0ab1cee6a0fe3e7709c1bf312df49a7c12f5b5b27f6b65aa49ababd312c420"
+    },
+    {
+      "path": "cold/hardware/pixels-048.bin.gz",
+      "bytes": 4753,
+      "sha256": "b9639cbd86cf8f39b80da355e5ad8604efdc64991f2a2a451990690f6f393ff9"
+    },
+    {
+      "path": "cold/hardware/pixels-049.bin.gz",
+      "bytes": 4845,
+      "sha256": "1a949cd225da31b3a1671820521474701ae6cd9b1e1f5cb74f85004468360e35"
+    },
+    {
+      "path": "cold/hardware/pixels-050.bin.gz",
+      "bytes": 29,
+      "sha256": "a1ee2484c0ab79d8ee448c60c66e9814d6e9f19fe7796f24adbd00a4630328dd"
+    },
+    {
+      "path": "cold/hardware/pixels-051.bin.gz",
+      "bytes": 33,
+      "sha256": "379abce6110d13fa26e6fda34bf1c9858796fab9e6daba07a008f277494056eb"
+    },
+    {
+      "path": "cold/hardware/pixels-052.bin.gz",
+      "bytes": 29,
+      "sha256": "a1ee2484c0ab79d8ee448c60c66e9814d6e9f19fe7796f24adbd00a4630328dd"
+    },
+    {
+      "path": "cold/hardware/pixels-053.bin.gz",
+      "bytes": 33,
+      "sha256": "379abce6110d13fa26e6fda34bf1c9858796fab9e6daba07a008f277494056eb"
+    },
+    {
+      "path": "cold/hardware/pixels-054.bin.gz",
+      "bytes": 29,
+      "sha256": "a1ee2484c0ab79d8ee448c60c66e9814d6e9f19fe7796f24adbd00a4630328dd"
+    },
+    {
+      "path": "cold/hardware/pixels-055.bin.gz",
+      "bytes": 33,
+      "sha256": "379abce6110d13fa26e6fda34bf1c9858796fab9e6daba07a008f277494056eb"
+    },
+    {
+      "path": "cold/hardware/report.json",
+      "bytes": 32430955,
+      "sha256": "286a280366eb2349646a928430c2643d941ee858671fd3b6f4e9f15d773f1187"
+    },
+    {
+      "path": "cold/physical-audit.json",
+      "bytes": 11522,
+      "sha256": "a7129b3afc6b40b1f72f646256e549a3cd5405d940db7997ca4288316eda2504"
+    },
+    {
+      "path": "cold/promoted-blend/blend-pixels.bin",
+      "bytes": 22528,
+      "sha256": "5f08b7bf4628dfe742e7a92019862547887c754823b1c1354bab279b0aacf80f"
+    },
+    {
+      "path": "cold/promoted-blend/browser-coverage.json",
+      "bytes": 210467,
+      "sha256": "308e11bf52dd2c4a530048d47b30d0d4652dedb5cf3319ba05947537c0b5c320"
+    },
+    {
+      "path": "cold/promoted-blend/browser.png",
+      "bytes": 47684,
+      "sha256": "c0ecce08173094535ee42259039073e46af2325fe7fae0bd942512b6c5f49c96"
+    },
+    {
+      "path": "cold/promoted-blend/report.json",
+      "bytes": 892980,
+      "sha256": "f5ea4f92f8b85c2b2a4297a7d28695549b919ef37fd8fb9c65c0a645e3879e5c"
+    },
+    {
+      "path": "cold/promoted-float/browser.png",
+      "bytes": 114106,
+      "sha256": "094bd8e5737192c3ae239becf61974a25f8d8bc6d64a97e644a7b3480e1950d6"
+    },
+    {
+      "path": "cold/promoted-float/coverage.json",
+      "bytes": 262951,
+      "sha256": "9a08bdfbee4ddf1aa2205ad93d5343211609b59ec35d6afc3b1853bbe229c57e"
+    },
+    {
+      "path": "cold/promoted-float/pixels.bin",
+      "bytes": 98304,
+      "sha256": "7249563abedf280f05d4b8161e5e109511d54d0331d69cb6aa0baf4ae2c19779"
+    },
+    {
+      "path": "cold/promoted-float/report.json",
+      "bytes": 6318651,
+      "sha256": "b8f43ffa0028004bef81d8b4c6362683a0014c272c99dabba40cc4acba7fed7e"
+    },
+    {
+      "path": "cold/receipt.json",
+      "bytes": 456018,
+      "sha256": "33545abd27c2b5ab70b2126f12bd469722f72a81949d59b1da7e97f0df04ef6f"
+    },
+    {
+      "path": "cold/report.json",
+      "bytes": 627,
+      "sha256": "dc427e1574da1cb0caf7b8f761883f95c73a95fa61ee45ffa024e488e5315161"
+    },
+    {
+      "path": "cold/retained-async-jobs/browser-coverage.json",
+      "bytes": 191083,
+      "sha256": "44b9ae7bb249b5d350c75503ee5a488b762a682a3405b66597a5851a53468cc2"
+    },
+    {
+      "path": "cold/retained-async-jobs/browser.png",
+      "bytes": 64893,
+      "sha256": "063554c73a0225d42278885e7212a41d81070ab61ee0b17b003bd6badc940ca2"
+    },
+    {
+      "path": "cold/retained-async-jobs/report.json",
+      "bytes": 624094,
+      "sha256": "3727ed05dba57f3c6d17075ca906e6380b830545df15e67043659221d0f8a333"
+    },
+    {
+      "path": "cold/retained-blend-equations/blend-pixels.bin",
+      "bytes": 2357248,
+      "sha256": "e9a410a2ae2930425475fc620d2b0099223d97be7fd3ead93e414b8da19cedd0"
+    },
+    {
+      "path": "cold/retained-blend-equations/browser-coverage.json",
+      "bytes": 218259,
+      "sha256": "10e22b918b7c67b53d22ad6ecbb67679043f80ddd873bd3880d93565df7fb9b9"
+    },
+    {
+      "path": "cold/retained-blend-equations/browser.png",
+      "bytes": 76003,
+      "sha256": "7bc1895395656bfb1f1a78b2fef04feea68340b74635de991a28052e070297ed"
+    },
+    {
+      "path": "cold/retained-blend-equations/report.json",
+      "bytes": 59179124,
+      "sha256": "ed0598c62d325f8f0bdf196f6384e5712b0d26645ecabfec045298818d5c2f88"
+    },
+    {
+      "path": "cold/retained-command-decoder/browser.png",
+      "bytes": 179777,
+      "sha256": "6ee4b66d3a4e8bf989265eeb84b146ea16846f4d875fa23db220feb10aaf4451"
+    },
+    {
+      "path": "cold/retained-command-decoder/report.json",
+      "bytes": 413249,
+      "sha256": "e241f3ec539b16b8afae5face3bd7de1c9f1e298ab8babf41be7a45937b8cebb"
+    },
+    {
+      "path": "cold/retained-draw-replay/browser-coverage.json",
+      "bytes": 169248,
+      "sha256": "b0c7d207589e00ad806389c08cb30894813e181cf161bd6fe3617b8926fcf7b2"
+    },
+    {
+      "path": "cold/retained-draw-replay/browser.png",
+      "bytes": 78328,
+      "sha256": "3017afbbfc27d7b495da79df5a441f5013e2ae86cc4475f50252888369e51760"
+    },
+    {
+      "path": "cold/retained-draw-replay/report.json",
+      "bytes": 276466,
+      "sha256": "f6fbce6410a94a16a767ef0130fc0ef8afe3cede4781b2561824030bf6d99799"
+    },
+    {
+      "path": "cold/retained-float-vertex-fetch/browser-coverage.json",
+      "bytes": 216540,
+      "sha256": "3094191e38072848829c8c6bffceab3b5492bf4b853ef00b6a4a50840e8a5a7f"
+    },
+    {
+      "path": "cold/retained-float-vertex-fetch/browser.png",
+      "bytes": 71129,
+      "sha256": "d368207dea83bf8e7088c125e2280a08e819d72144be436a100cda868676dffd"
+    },
+    {
+      "path": "cold/retained-float-vertex-fetch/report.json",
+      "bytes": 2753405,
+      "sha256": "598ec67ab5c22f9feafcad2777fa8b112226c87885722d6682e6cb4438cd0fd1"
+    },
+    {
+      "path": "cold/retained-float-vertex-fetch/vertex-pixels.bin",
+      "bytes": 58368,
+      "sha256": "6655ad8977530fcef72d07f085a0a250bccbbb8b6bfac03b4f15bef2f0473314"
+    },
+    {
+      "path": "cold/retained-object-state/browser-coverage.json",
+      "bytes": 167957,
+      "sha256": "7366b503fd8ede45c4696e74b6ce4c7c3b7f185c506c87477b3648c7a21e7285"
+    },
+    {
+      "path": "cold/retained-object-state/browser.png",
+      "bytes": 64089,
+      "sha256": "242adf3551eaa5534388544006e84366096387ebd2e30ad7e6da786a591156cf"
+    },
+    {
+      "path": "cold/retained-object-state/report.json",
+      "bytes": 88353,
+      "sha256": "5c0369e33e636a439d1de8be5263724b9eccf1835fbcf52717cc56964a09eb25"
+    },
+    {
+      "path": "cold/retained-raster-depth/browser-coverage.json",
+      "bytes": 195371,
+      "sha256": "110b772a694dc16cf07524c7643392ad802296d6f21c8090959d54e60a84adca"
+    },
+    {
+      "path": "cold/retained-raster-depth/browser.png",
+      "bytes": 116313,
+      "sha256": "fa1794d01b45b61d12b3761022a33261fb30d742f820a74fc134b26fe55056e9"
+    },
+    {
+      "path": "cold/retained-raster-depth/report.json",
+      "bytes": 433843,
+      "sha256": "9d01c4b75985e22cbc7c2609749d9fa20d10790ca3c48097b78b88c0f4a42dc4"
+    },
+    {
+      "path": "cold/retained-render-cache/browser-coverage.json",
+      "bytes": 189546,
+      "sha256": "7b518096f9024caa9136812caf6d5c65e6247003a9bb99e42a5a3b8e247845e0"
+    },
+    {
+      "path": "cold/retained-render-cache/browser.png",
+      "bytes": 258253,
+      "sha256": "ffde9f133c08f0e415f890416cce1981b1fa746b2c2b2fede35a92bf3b984e61"
+    },
+    {
+      "path": "cold/retained-render-cache/report.json",
+      "bytes": 7611201,
+      "sha256": "6db22067bed5ea0656c436d9559c3c8d9b58c82d56b551dd4017d25bc41d5b4a"
+    },
+    {
+      "path": "cold/retained-render-cache/toggles.rgba",
+      "bytes": 10240000,
+      "sha256": "dbf578ae8f10724d735c5c696ef118d4e2e717156b11dccd9c3091202e476af4"
+    },
+    {
+      "path": "cold/retained-resource-transfers/browser-coverage.json",
+      "bytes": 53230,
+      "sha256": "b5a7a63c5089ea0aaaef4cf22099ce80ded7bde4b3d0852fce655a505eaab433"
+    },
+    {
+      "path": "cold/retained-resource-transfers/browser.png",
+      "bytes": 415981,
+      "sha256": "9748d9abfdca283518634a6446a76472a82093aa6e788b0ce1e48e699d770d01"
+    },
+    {
+      "path": "cold/retained-resource-transfers/report.json",
+      "bytes": 275709,
+      "sha256": "c0ad0c97b8f997d463167445dbf21bf0ef851e7ab526f05374bfb5016f785bd4"
+    },
+    {
+      "path": "cold/wire/report.json",
+      "bytes": 305820,
+      "sha256": "9c042b8b13bbdcf7d2650455c6d5c99ecc77683d92f15b240ba4c5c3d49c9234"
+    },
+    {
+      "path": "hot-generated/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "bytes": 10814,
+      "sha256": "8d07e5832efc6bc832b9bd684bcaaaad19b536783643f40d088e2ddfba2a5052"
+    },
+    {
+      "path": "hot-generated/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "bytes": 426197,
+      "sha256": "40772f2a609b803a11f97a3cdd35087810964c2dd35662e0bb143e7144f97287"
+    },
+    {
+      "path": "hot/acceptance.log",
+      "bytes": 10058,
+      "sha256": "43b8d237dd23b705f24fe9e24885f67bd793af3c0de705d67dd375341cea90bf"
+    },
+    {
+      "path": "hot/c580.bin",
+      "bytes": 1784,
+      "sha256": "4df0b1dca3d4455535333a2a7f0560775cd1140c00ad49a59f782ad78a49004e"
+    },
+    {
+      "path": "hot/c580.json",
+      "bytes": 3299,
+      "sha256": "a26571fd785e3eb5219df53e76706e59dfb131dee287665fbb05db2e0bc4d0f0"
+    },
+    {
+      "path": "hot/c580.log",
+      "bytes": 50,
+      "sha256": "56d6294ec71ae8b13cc516e85bdbee1ef31a4f79c9e1a5d28eb5431b1bd35ddb"
+    },
+    {
+      "path": "hot/fault-metadata/browser-coverage.json",
+      "bytes": 323640,
+      "sha256": "10518a27391837308f877f0ba7bc78232bcda5832ba87fd947cfeb1216adc1f5"
+    },
+    {
+      "path": "hot/fault-metadata/browser.png",
+      "bytes": 27041,
+      "sha256": "cf9775722e68460b9265395d639404c3775888b0591b47a530a2473e1dae15e9"
+    },
+    {
+      "path": "hot/fault-metadata/mutation-source.mjs",
+      "bytes": 100605,
+      "sha256": "a323c66acab859e59aee69eb290fa90f27bd335d1b4c2cad02f0b05e10940726"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-000.bin.gz",
+      "bytes": 32,
+      "sha256": "d6211ccf83c6d13c29b93ef958944564e8d0253c1d72d15ac90b10ae6381a342"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-001.bin.gz",
+      "bytes": 32,
+      "sha256": "8281ba2602b672737e43fb8ad16eef2fbb5147ad10178cb3a17407b5aabf06de"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-002.bin.gz",
+      "bytes": 29,
+      "sha256": "e279c78e3a47796c37f1c5fb7933f5b33d67c04712bbe005102f1d0f75f39d03"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-003.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-004.bin.gz",
+      "bytes": 32,
+      "sha256": "8281ba2602b672737e43fb8ad16eef2fbb5147ad10178cb3a17407b5aabf06de"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-005.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-006.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-007.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-008.bin.gz",
+      "bytes": 32,
+      "sha256": "4765355f87f1da79d970f63874f607681c9dae92338bba4c3af1b2102e55cda7"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-009.bin.gz",
+      "bytes": 32,
+      "sha256": "8281ba2602b672737e43fb8ad16eef2fbb5147ad10178cb3a17407b5aabf06de"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-010.bin.gz",
+      "bytes": 32,
+      "sha256": "dc4ebe086548cee20fe890a1b842a0d1ac110c13ed5dff45d6113c185eefeec5"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-011.bin.gz",
+      "bytes": 32,
+      "sha256": "d6211ccf83c6d13c29b93ef958944564e8d0253c1d72d15ac90b10ae6381a342"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-012.bin.gz",
+      "bytes": 32,
+      "sha256": "8281ba2602b672737e43fb8ad16eef2fbb5147ad10178cb3a17407b5aabf06de"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-013.bin.gz",
+      "bytes": 29,
+      "sha256": "e279c78e3a47796c37f1c5fb7933f5b33d67c04712bbe005102f1d0f75f39d03"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-014.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-015.bin.gz",
+      "bytes": 32,
+      "sha256": "8281ba2602b672737e43fb8ad16eef2fbb5147ad10178cb3a17407b5aabf06de"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-016.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-017.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-018.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-019.bin.gz",
+      "bytes": 32,
+      "sha256": "4765355f87f1da79d970f63874f607681c9dae92338bba4c3af1b2102e55cda7"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-020.bin.gz",
+      "bytes": 32,
+      "sha256": "8281ba2602b672737e43fb8ad16eef2fbb5147ad10178cb3a17407b5aabf06de"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-021.bin.gz",
+      "bytes": 32,
+      "sha256": "dc4ebe086548cee20fe890a1b842a0d1ac110c13ed5dff45d6113c185eefeec5"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-022.bin.gz",
+      "bytes": 32,
+      "sha256": "d6211ccf83c6d13c29b93ef958944564e8d0253c1d72d15ac90b10ae6381a342"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-023.bin.gz",
+      "bytes": 32,
+      "sha256": "8281ba2602b672737e43fb8ad16eef2fbb5147ad10178cb3a17407b5aabf06de"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-024.bin.gz",
+      "bytes": 29,
+      "sha256": "e279c78e3a47796c37f1c5fb7933f5b33d67c04712bbe005102f1d0f75f39d03"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-025.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-026.bin.gz",
+      "bytes": 32,
+      "sha256": "8281ba2602b672737e43fb8ad16eef2fbb5147ad10178cb3a17407b5aabf06de"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-027.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-028.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-029.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-030.bin.gz",
+      "bytes": 32,
+      "sha256": "4765355f87f1da79d970f63874f607681c9dae92338bba4c3af1b2102e55cda7"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-031.bin.gz",
+      "bytes": 32,
+      "sha256": "8281ba2602b672737e43fb8ad16eef2fbb5147ad10178cb3a17407b5aabf06de"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-032.bin.gz",
+      "bytes": 32,
+      "sha256": "dc4ebe086548cee20fe890a1b842a0d1ac110c13ed5dff45d6113c185eefeec5"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-033.bin.gz",
+      "bytes": 32,
+      "sha256": "4765355f87f1da79d970f63874f607681c9dae92338bba4c3af1b2102e55cda7"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-034.bin.gz",
+      "bytes": 32,
+      "sha256": "0305cc6f5a9c2e39a09933e9b89a3018964fac12a42f1d2e1baa1950c7a531c8"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-035.bin.gz",
+      "bytes": 32,
+      "sha256": "330511817637dc1d28b1de61e83fac1c97962b1a7e4fae10a11f611defc50d59"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-036.bin.gz",
+      "bytes": 32,
+      "sha256": "900b191cdeeac80dddccec185a593cde82dcbf3f2a85076ed83190eeec521e7d"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-037.bin.gz",
+      "bytes": 32,
+      "sha256": "5f376ae3ffac80ccf295ed496c0332254d0b49b59a1e9c2bd984bcc85473a0ca"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-038.bin.gz",
+      "bytes": 32,
+      "sha256": "91cbbdaf945719b0fa967c4e1cfc08706234f68d0fb416df1e26ef4f980babf6"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-039.bin.gz",
+      "bytes": 29,
+      "sha256": "3244eb3d51a6d74256f18823facf500dfcd659c8d2b3e202a73462291e2f61ba"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-040.bin.gz",
+      "bytes": 32,
+      "sha256": "900b191cdeeac80dddccec185a593cde82dcbf3f2a85076ed83190eeec521e7d"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-041.bin.gz",
+      "bytes": 504,
+      "sha256": "a3ec9b7097af90ea7e57edd46d10b96533b41e5a5cb6819169b1266d51ba5cfb"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-042.bin.gz",
+      "bytes": 43,
+      "sha256": "acb3d3690497c687c74dc1db324f2f7287af838258a85b1fb56c6ca6dce84497"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-043.bin.gz",
+      "bytes": 32,
+      "sha256": "dab2c7eb93b7c2f9b3022baaf7eeb5e20ca4b08b6bb656748cf068f5eca50025"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-044.bin.gz",
+      "bytes": 226,
+      "sha256": "14705339ceb4470380b634f344e2419d710810b51481ff8d1f1d132c7c37f98a"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-045.bin.gz",
+      "bytes": 32,
+      "sha256": "4765355f87f1da79d970f63874f607681c9dae92338bba4c3af1b2102e55cda7"
+    },
+    {
+      "path": "hot/fault-metadata/pixels-046.bin.gz",
+      "bytes": 32,
+      "sha256": "dab2c7eb93b7c2f9b3022baaf7eeb5e20ca4b08b6bb656748cf068f5eca50025"
+    },
+    {
+      "path": "hot/fault-metadata/report.json",
+      "bytes": 25795899,
+      "sha256": "c67e3d182a70b070dde294fe28c792e84dddf4fdf1f96dd70bdb7a2ca7b8d2b4"
+    },
+    {
+      "path": "hot/fault-suffix/browser-coverage.json",
+      "bytes": 270524,
+      "sha256": "c7fa7e4bb0a41681157d8b2b8b59179c3b73c82f91345c05744fa11c5be9674f"
+    },
+    {
+      "path": "hot/fault-suffix/browser.png",
+      "bytes": 52519,
+      "sha256": "4762201ab03cdcb9ecd3e4555a4b55e674ad8e6bc260da3f6b88543f03f941a1"
+    },
+    {
+      "path": "hot/fault-suffix/mutation-source.mjs",
+      "bytes": 100662,
+      "sha256": "9ced4a933c89acc6bb04f02db576e1f0955cd87452bd3315b3e402b4b0c618b3"
+    },
+    {
+      "path": "hot/fault-suffix/pixels-000.bin.gz",
+      "bytes": 32,
+      "sha256": "d6211ccf83c6d13c29b93ef958944564e8d0253c1d72d15ac90b10ae6381a342"
+    },
+    {
+      "path": "hot/fault-suffix/pixels-001.bin.gz",
+      "bytes": 32,
+      "sha256": "d6211ccf83c6d13c29b93ef958944564e8d0253c1d72d15ac90b10ae6381a342"
+    },
+    {
+      "path": "hot/fault-suffix/report.json",
+      "bytes": 1137680,
+      "sha256": "91be776efecab1848542ad748b92b3310328e08b844df4373d28fb4bb837c178"
+    },
+    {
+      "path": "hot/geometry.bin",
+      "bytes": 2040,
+      "sha256": "0d8bf78697b9be39a58c9274e221a89a9903f8587dfa2cf5cf5b754ae82e27ac"
+    },
+    {
+      "path": "hot/geometry.json",
+      "bytes": 935057,
+      "sha256": "c7b11dade4d79f16a375bd62e1d6c588657c7a775a9c466cb0fdc5f03793ae37"
+    },
+    {
+      "path": "hot/geometry.log",
+      "bytes": 82,
+      "sha256": "0d3285ceafeac3b38f81f40c2fc5f79358ac7ce01ceab083c0a1850f76d84b83"
+    },
+    {
+      "path": "hot/hardware/browser-coverage.json",
+      "bytes": 343177,
+      "sha256": "db0028da91299858e91592a1b9958013749d6e4eb1c2639230072138d901d6c5"
+    },
+    {
+      "path": "hot/hardware/browser.png",
+      "bytes": 35317,
+      "sha256": "e62d24a43fa3a4cefe6ae5af08292fd70822fe045598ead7bff32d7f539e962c"
+    },
+    {
+      "path": "hot/hardware/pixels-000.bin.gz",
+      "bytes": 32,
+      "sha256": "d6211ccf83c6d13c29b93ef958944564e8d0253c1d72d15ac90b10ae6381a342"
+    },
+    {
+      "path": "hot/hardware/pixels-001.bin.gz",
+      "bytes": 32,
+      "sha256": "8281ba2602b672737e43fb8ad16eef2fbb5147ad10178cb3a17407b5aabf06de"
+    },
+    {
+      "path": "hot/hardware/pixels-002.bin.gz",
+      "bytes": 29,
+      "sha256": "e279c78e3a47796c37f1c5fb7933f5b33d67c04712bbe005102f1d0f75f39d03"
+    },
+    {
+      "path": "hot/hardware/pixels-003.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "hot/hardware/pixels-004.bin.gz",
+      "bytes": 32,
+      "sha256": "8281ba2602b672737e43fb8ad16eef2fbb5147ad10178cb3a17407b5aabf06de"
+    },
+    {
+      "path": "hot/hardware/pixels-005.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "hot/hardware/pixels-006.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "hot/hardware/pixels-007.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "hot/hardware/pixels-008.bin.gz",
+      "bytes": 32,
+      "sha256": "4765355f87f1da79d970f63874f607681c9dae92338bba4c3af1b2102e55cda7"
+    },
+    {
+      "path": "hot/hardware/pixels-009.bin.gz",
+      "bytes": 32,
+      "sha256": "8281ba2602b672737e43fb8ad16eef2fbb5147ad10178cb3a17407b5aabf06de"
+    },
+    {
+      "path": "hot/hardware/pixels-010.bin.gz",
+      "bytes": 32,
+      "sha256": "dc4ebe086548cee20fe890a1b842a0d1ac110c13ed5dff45d6113c185eefeec5"
+    },
+    {
+      "path": "hot/hardware/pixels-011.bin.gz",
+      "bytes": 32,
+      "sha256": "d6211ccf83c6d13c29b93ef958944564e8d0253c1d72d15ac90b10ae6381a342"
+    },
+    {
+      "path": "hot/hardware/pixels-012.bin.gz",
+      "bytes": 32,
+      "sha256": "8281ba2602b672737e43fb8ad16eef2fbb5147ad10178cb3a17407b5aabf06de"
+    },
+    {
+      "path": "hot/hardware/pixels-013.bin.gz",
+      "bytes": 29,
+      "sha256": "e279c78e3a47796c37f1c5fb7933f5b33d67c04712bbe005102f1d0f75f39d03"
+    },
+    {
+      "path": "hot/hardware/pixels-014.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "hot/hardware/pixels-015.bin.gz",
+      "bytes": 32,
+      "sha256": "8281ba2602b672737e43fb8ad16eef2fbb5147ad10178cb3a17407b5aabf06de"
+    },
+    {
+      "path": "hot/hardware/pixels-016.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "hot/hardware/pixels-017.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "hot/hardware/pixels-018.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "hot/hardware/pixels-019.bin.gz",
+      "bytes": 32,
+      "sha256": "4765355f87f1da79d970f63874f607681c9dae92338bba4c3af1b2102e55cda7"
+    },
+    {
+      "path": "hot/hardware/pixels-020.bin.gz",
+      "bytes": 32,
+      "sha256": "8281ba2602b672737e43fb8ad16eef2fbb5147ad10178cb3a17407b5aabf06de"
+    },
+    {
+      "path": "hot/hardware/pixels-021.bin.gz",
+      "bytes": 32,
+      "sha256": "dc4ebe086548cee20fe890a1b842a0d1ac110c13ed5dff45d6113c185eefeec5"
+    },
+    {
+      "path": "hot/hardware/pixels-022.bin.gz",
+      "bytes": 32,
+      "sha256": "d6211ccf83c6d13c29b93ef958944564e8d0253c1d72d15ac90b10ae6381a342"
+    },
+    {
+      "path": "hot/hardware/pixels-023.bin.gz",
+      "bytes": 32,
+      "sha256": "8281ba2602b672737e43fb8ad16eef2fbb5147ad10178cb3a17407b5aabf06de"
+    },
+    {
+      "path": "hot/hardware/pixels-024.bin.gz",
+      "bytes": 29,
+      "sha256": "e279c78e3a47796c37f1c5fb7933f5b33d67c04712bbe005102f1d0f75f39d03"
+    },
+    {
+      "path": "hot/hardware/pixels-025.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "hot/hardware/pixels-026.bin.gz",
+      "bytes": 32,
+      "sha256": "8281ba2602b672737e43fb8ad16eef2fbb5147ad10178cb3a17407b5aabf06de"
+    },
+    {
+      "path": "hot/hardware/pixels-027.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "hot/hardware/pixels-028.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "hot/hardware/pixels-029.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "hot/hardware/pixels-030.bin.gz",
+      "bytes": 32,
+      "sha256": "4765355f87f1da79d970f63874f607681c9dae92338bba4c3af1b2102e55cda7"
+    },
+    {
+      "path": "hot/hardware/pixels-031.bin.gz",
+      "bytes": 32,
+      "sha256": "8281ba2602b672737e43fb8ad16eef2fbb5147ad10178cb3a17407b5aabf06de"
+    },
+    {
+      "path": "hot/hardware/pixels-032.bin.gz",
+      "bytes": 32,
+      "sha256": "dc4ebe086548cee20fe890a1b842a0d1ac110c13ed5dff45d6113c185eefeec5"
+    },
+    {
+      "path": "hot/hardware/pixels-033.bin.gz",
+      "bytes": 32,
+      "sha256": "4765355f87f1da79d970f63874f607681c9dae92338bba4c3af1b2102e55cda7"
+    },
+    {
+      "path": "hot/hardware/pixels-034.bin.gz",
+      "bytes": 32,
+      "sha256": "0305cc6f5a9c2e39a09933e9b89a3018964fac12a42f1d2e1baa1950c7a531c8"
+    },
+    {
+      "path": "hot/hardware/pixels-035.bin.gz",
+      "bytes": 32,
+      "sha256": "330511817637dc1d28b1de61e83fac1c97962b1a7e4fae10a11f611defc50d59"
+    },
+    {
+      "path": "hot/hardware/pixels-036.bin.gz",
+      "bytes": 32,
+      "sha256": "900b191cdeeac80dddccec185a593cde82dcbf3f2a85076ed83190eeec521e7d"
+    },
+    {
+      "path": "hot/hardware/pixels-037.bin.gz",
+      "bytes": 32,
+      "sha256": "5f376ae3ffac80ccf295ed496c0332254d0b49b59a1e9c2bd984bcc85473a0ca"
+    },
+    {
+      "path": "hot/hardware/pixels-038.bin.gz",
+      "bytes": 32,
+      "sha256": "91cbbdaf945719b0fa967c4e1cfc08706234f68d0fb416df1e26ef4f980babf6"
+    },
+    {
+      "path": "hot/hardware/pixels-039.bin.gz",
+      "bytes": 29,
+      "sha256": "3244eb3d51a6d74256f18823facf500dfcd659c8d2b3e202a73462291e2f61ba"
+    },
+    {
+      "path": "hot/hardware/pixels-040.bin.gz",
+      "bytes": 32,
+      "sha256": "900b191cdeeac80dddccec185a593cde82dcbf3f2a85076ed83190eeec521e7d"
+    },
+    {
+      "path": "hot/hardware/pixels-041.bin.gz",
+      "bytes": 504,
+      "sha256": "a3ec9b7097af90ea7e57edd46d10b96533b41e5a5cb6819169b1266d51ba5cfb"
+    },
+    {
+      "path": "hot/hardware/pixels-042.bin.gz",
+      "bytes": 43,
+      "sha256": "acb3d3690497c687c74dc1db324f2f7287af838258a85b1fb56c6ca6dce84497"
+    },
+    {
+      "path": "hot/hardware/pixels-043.bin.gz",
+      "bytes": 32,
+      "sha256": "dab2c7eb93b7c2f9b3022baaf7eeb5e20ca4b08b6bb656748cf068f5eca50025"
+    },
+    {
+      "path": "hot/hardware/pixels-044.bin.gz",
+      "bytes": 226,
+      "sha256": "14705339ceb4470380b634f344e2419d710810b51481ff8d1f1d132c7c37f98a"
+    },
+    {
+      "path": "hot/hardware/pixels-045.bin.gz",
+      "bytes": 32,
+      "sha256": "4765355f87f1da79d970f63874f607681c9dae92338bba4c3af1b2102e55cda7"
+    },
+    {
+      "path": "hot/hardware/pixels-046.bin.gz",
+      "bytes": 32,
+      "sha256": "dab2c7eb93b7c2f9b3022baaf7eeb5e20ca4b08b6bb656748cf068f5eca50025"
+    },
+    {
+      "path": "hot/hardware/pixels-047.bin.gz",
+      "bytes": 4617,
+      "sha256": "fb0ab1cee6a0fe3e7709c1bf312df49a7c12f5b5b27f6b65aa49ababd312c420"
+    },
+    {
+      "path": "hot/hardware/pixels-048.bin.gz",
+      "bytes": 4753,
+      "sha256": "b9639cbd86cf8f39b80da355e5ad8604efdc64991f2a2a451990690f6f393ff9"
+    },
+    {
+      "path": "hot/hardware/pixels-049.bin.gz",
+      "bytes": 4845,
+      "sha256": "1a949cd225da31b3a1671820521474701ae6cd9b1e1f5cb74f85004468360e35"
+    },
+    {
+      "path": "hot/hardware/pixels-050.bin.gz",
+      "bytes": 29,
+      "sha256": "a1ee2484c0ab79d8ee448c60c66e9814d6e9f19fe7796f24adbd00a4630328dd"
+    },
+    {
+      "path": "hot/hardware/pixels-051.bin.gz",
+      "bytes": 33,
+      "sha256": "379abce6110d13fa26e6fda34bf1c9858796fab9e6daba07a008f277494056eb"
+    },
+    {
+      "path": "hot/hardware/pixels-052.bin.gz",
+      "bytes": 29,
+      "sha256": "a1ee2484c0ab79d8ee448c60c66e9814d6e9f19fe7796f24adbd00a4630328dd"
+    },
+    {
+      "path": "hot/hardware/pixels-053.bin.gz",
+      "bytes": 33,
+      "sha256": "379abce6110d13fa26e6fda34bf1c9858796fab9e6daba07a008f277494056eb"
+    },
+    {
+      "path": "hot/hardware/pixels-054.bin.gz",
+      "bytes": 29,
+      "sha256": "a1ee2484c0ab79d8ee448c60c66e9814d6e9f19fe7796f24adbd00a4630328dd"
+    },
+    {
+      "path": "hot/hardware/pixels-055.bin.gz",
+      "bytes": 33,
+      "sha256": "379abce6110d13fa26e6fda34bf1c9858796fab9e6daba07a008f277494056eb"
+    },
+    {
+      "path": "hot/hardware/report.json",
+      "bytes": 32432650,
+      "sha256": "8c7105143379303688503ea1bec8bc30354b01ee403b7f16276f1d2659ea90af"
+    },
+    {
+      "path": "hot/physical-audit.json",
+      "bytes": 11522,
+      "sha256": "a7129b3afc6b40b1f72f646256e549a3cd5405d940db7997ca4288316eda2504"
+    },
+    {
+      "path": "hot/promoted-blend/blend-pixels.bin",
+      "bytes": 22528,
+      "sha256": "5f08b7bf4628dfe742e7a92019862547887c754823b1c1354bab279b0aacf80f"
+    },
+    {
+      "path": "hot/promoted-blend/browser-coverage.json",
+      "bytes": 210467,
+      "sha256": "ae85536c07c81ec58c14723b27b1a58ecc638dde7422f7a785ec44062f780bb2"
+    },
+    {
+      "path": "hot/promoted-blend/browser.png",
+      "bytes": 47684,
+      "sha256": "c0ecce08173094535ee42259039073e46af2325fe7fae0bd942512b6c5f49c96"
+    },
+    {
+      "path": "hot/promoted-blend/report.json",
+      "bytes": 892891,
+      "sha256": "51cf9b4747b4e39e3047f6dc6135130fb0bf9053c0ee86f9191c49565c8c5d4d"
+    },
+    {
+      "path": "hot/promoted-float/browser.png",
+      "bytes": 114106,
+      "sha256": "094bd8e5737192c3ae239becf61974a25f8d8bc6d64a97e644a7b3480e1950d6"
+    },
+    {
+      "path": "hot/promoted-float/coverage.json",
+      "bytes": 262952,
+      "sha256": "21ff6fab6e34c702e856393e44d4902b9740a87edc32d77041f22c69bf8aeef0"
+    },
+    {
+      "path": "hot/promoted-float/pixels.bin",
+      "bytes": 98304,
+      "sha256": "7249563abedf280f05d4b8161e5e109511d54d0331d69cb6aa0baf4ae2c19779"
+    },
+    {
+      "path": "hot/promoted-float/report.json",
+      "bytes": 6318563,
+      "sha256": "4d1473d00573c21974ce5223377df5e5b1e77b78055118f84c36ef260a3d4e47"
+    },
+    {
+      "path": "hot/receipt.json",
+      "bytes": 456018,
+      "sha256": "c7e39d32cb02684d278a2f673544063b10498c449ce1ea37ebadf5bcebe5ffa8"
+    },
+    {
+      "path": "hot/retained-async-jobs/browser-coverage.json",
+      "bytes": 191083,
+      "sha256": "b5507b43e12061fa703d8544ff009c95ad2ebbe19ae6d03b7521e8ed7d4cec18"
+    },
+    {
+      "path": "hot/retained-async-jobs/browser.png",
+      "bytes": 64893,
+      "sha256": "063554c73a0225d42278885e7212a41d81070ab61ee0b17b003bd6badc940ca2"
+    },
+    {
+      "path": "hot/retained-async-jobs/report.json",
+      "bytes": 624013,
+      "sha256": "75b379dabd22320df8cde333fd7b331ac4cb07355635a73cca6e934e5c8d3730"
+    },
+    {
+      "path": "hot/retained-blend-equations/blend-pixels.bin",
+      "bytes": 2357248,
+      "sha256": "e9a410a2ae2930425475fc620d2b0099223d97be7fd3ead93e414b8da19cedd0"
+    },
+    {
+      "path": "hot/retained-blend-equations/browser-coverage.json",
+      "bytes": 218259,
+      "sha256": "e3ff596ffda8071181c57762449001131999d9abda0b1705c1e8342ddcb3c682"
+    },
+    {
+      "path": "hot/retained-blend-equations/browser.png",
+      "bytes": 76003,
+      "sha256": "7bc1895395656bfb1f1a78b2fef04feea68340b74635de991a28052e070297ed"
+    },
+    {
+      "path": "hot/retained-blend-equations/report.json",
+      "bytes": 59179037,
+      "sha256": "9e9c9439c8b370ef3798400df96c9f11b44ee2df08cd8a798817ab223685638e"
+    },
+    {
+      "path": "hot/retained-command-decoder/browser.png",
+      "bytes": 179777,
+      "sha256": "6ee4b66d3a4e8bf989265eeb84b146ea16846f4d875fa23db220feb10aaf4451"
+    },
+    {
+      "path": "hot/retained-command-decoder/report.json",
+      "bytes": 413159,
+      "sha256": "a413ec6ba5efd503296dd65af3f84df5b953d513290d0aff23edd85dec89a962"
+    },
+    {
+      "path": "hot/retained-draw-replay/browser-coverage.json",
+      "bytes": 169248,
+      "sha256": "1b6c8932d6fe8a713bcdba38c289da55f772f2b437a6eb80dddd4bce6fa7b17e"
+    },
+    {
+      "path": "hot/retained-draw-replay/browser.png",
+      "bytes": 78328,
+      "sha256": "3017afbbfc27d7b495da79df5a441f5013e2ae86cc4475f50252888369e51760"
+    },
+    {
+      "path": "hot/retained-draw-replay/report.json",
+      "bytes": 276379,
+      "sha256": "1377f5ada3d26cce05e332129fb305ad872ddf1657f5195188ba1f1bae1b8e5c"
+    },
+    {
+      "path": "hot/retained-float-vertex-fetch/browser-coverage.json",
+      "bytes": 216540,
+      "sha256": "61d0801dc8008effc0b400119af2dd95493bc795cd01b65281c104d06f141e7d"
+    },
+    {
+      "path": "hot/retained-float-vertex-fetch/browser.png",
+      "bytes": 71129,
+      "sha256": "d368207dea83bf8e7088c125e2280a08e819d72144be436a100cda868676dffd"
+    },
+    {
+      "path": "hot/retained-float-vertex-fetch/report.json",
+      "bytes": 2753318,
+      "sha256": "1133071a53f677d74e560726789f29dba7aa9d99c531c91be565b9a995918ebc"
+    },
+    {
+      "path": "hot/retained-float-vertex-fetch/vertex-pixels.bin",
+      "bytes": 58368,
+      "sha256": "6655ad8977530fcef72d07f085a0a250bccbbb8b6bfac03b4f15bef2f0473314"
+    },
+    {
+      "path": "hot/retained-object-state/browser-coverage.json",
+      "bytes": 167957,
+      "sha256": "5703d732f2c59a6921bdb3b18e58a7771b45448ca207b7106bf0b6e9c0536421"
+    },
+    {
+      "path": "hot/retained-object-state/browser.png",
+      "bytes": 64089,
+      "sha256": "242adf3551eaa5534388544006e84366096387ebd2e30ad7e6da786a591156cf"
+    },
+    {
+      "path": "hot/retained-object-state/report.json",
+      "bytes": 88265,
+      "sha256": "c378481acec3f13477bb39d251241ef065e25aae923cebec9873776636b8e8ea"
+    },
+    {
+      "path": "hot/retained-raster-depth/browser-coverage.json",
+      "bytes": 195371,
+      "sha256": "554a06945ac1ee8d0280de83f762cc7656cc8596f2e9de7bc76bfe768480420c"
+    },
+    {
+      "path": "hot/retained-raster-depth/browser.png",
+      "bytes": 116313,
+      "sha256": "fa1794d01b45b61d12b3761022a33261fb30d742f820a74fc134b26fe55056e9"
+    },
+    {
+      "path": "hot/retained-raster-depth/report.json",
+      "bytes": 433755,
+      "sha256": "ad8efe17057486239cbbd074a0804cb2284380c71b6347d869234c73049003b9"
+    },
+    {
+      "path": "hot/retained-render-cache/browser-coverage.json",
+      "bytes": 189546,
+      "sha256": "a26f54679313c7e4a3892cf386c8024169237d425534340d3281f8d33d21d6c9"
+    },
+    {
+      "path": "hot/retained-render-cache/browser.png",
+      "bytes": 258253,
+      "sha256": "ffde9f133c08f0e415f890416cce1981b1fa746b2c2b2fede35a92bf3b984e61"
+    },
+    {
+      "path": "hot/retained-render-cache/report.json",
+      "bytes": 7611113,
+      "sha256": "a1fcf8bc09a7020294eb0629eca87a0207d2dab71afa4840512338931d4827af"
+    },
+    {
+      "path": "hot/retained-render-cache/toggles.rgba",
+      "bytes": 10240000,
+      "sha256": "dbf578ae8f10724d735c5c696ef118d4e2e717156b11dccd9c3091202e476af4"
+    },
+    {
+      "path": "hot/retained-resource-transfers/browser-coverage.json",
+      "bytes": 53230,
+      "sha256": "e8e773e06b7c3933a643015fea8a2cdd92a77f6e2b1aeacf09a7b7ddb9b31fa8"
+    },
+    {
+      "path": "hot/retained-resource-transfers/browser.png",
+      "bytes": 415981,
+      "sha256": "9748d9abfdca283518634a6446a76472a82093aa6e788b0ce1e48e699d770d01"
+    },
+    {
+      "path": "hot/retained-resource-transfers/report.json",
+      "bytes": 275621,
+      "sha256": "e8a901fb3c6d86efd3b9cfd5842f8e127f6528179eefeb487628e2ae2813c4d8"
+    },
+    {
+      "path": "hot/wire/report.json",
+      "bytes": 305732,
+      "sha256": "05e4df7f55fafd3adba8a89b1c2892981e892a955ddb6457121beb1898c89f84"
+    }
+  ]
+}
