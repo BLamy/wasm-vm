@@ -1,0 +1,16 @@
+{
+  "schema": "virgl-standard-instanced-draws-seal-v1",
+  "task": "E6-T11d6",
+  "sourceHead": "c9963d71add68b550d9f26a2b9e9d417f3daa437",
+  "records": 752,
+  "archiveSha256": "4a6c5816f8979dbf7e6ed75abd05bedf53073becae307e6a0d970d9c0382270b",
+  "archiveBytes": 2615399,
+  "recordIndexSha256": "6613d8d1075325f89a0cca63c78b0a65b73c138f629780b786d21dcad03d77dd",
+  "hotReceiptSha256": "9f106b441b5e7d31e3e9f01bb8fde545722ad2126362225dfd664085d8767abf",
+  "coldReportSha256": "1c024ba641e0972eff7e487b2feb11e6eca25b5cc921b119687ceb5b0b70d380",
+  "coldReceiptSha256": "4936409d84709204d6c828be3e628c5f752d72e8686fc2c26716bbab3926e86c",
+  "guestExecution": false,
+  "portableDomainCertified": false,
+  "authority": "isolated-standard-instanced-draws",
+  "productionDrawAuthority": false
+}
