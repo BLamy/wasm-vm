@@ -1,0 +1,16 @@
+{
+  "schema": "original-packed-float-consumer-seal-v1",
+  "task": "E6-T11d28",
+  "sourceHead": "8d3e5ff481d2ecdf9930c44c3d1894bdcdb3e180",
+  "records": 11034,
+  "archiveSha256": "681c54f8ca1e027a048f370e55f33c980745e41024a7524f7a71852e671c99aa",
+  "archiveBytes": 9455316,
+  "recordIndexSha256": "8ac3f2450fefe86ac7987f4deee7c19dcbc328264d672a84916b7d2b2b435339",
+  "hotReceiptSha256": "edcda4d26725b33a4b30b13b6b92fbc1b23521e3d79d01695efad61a92931c2e",
+  "coldReportSha256": "0485c622ece3c4faf89eacc212b4a0c336fc314a1820bac8598813cd25d4e073",
+  "coldReceiptSha256": "c40aebebc64e1a42720ddbc3342ea239877ce3006cd2eea02f58c1aa72d79720",
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "authority": "isolated-original-packed-float-consumers",
+  "productionDrawAuthority": false
+}

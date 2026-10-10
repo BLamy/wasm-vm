@@ -664,7 +664,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.027039000369` [E6-T11d27](epic-6-transcendence/E6-T11d27-standard-packed-float-images.md) — Preserve original R11G11B10 floating image storage and transfers *(deps: E6-T11d26)*
 - [x] `525.02703900037` [E6-T11d18](epic-6-transcendence/E6-T11d18-standard-buffer-roles.md) — Preserve original buffer identity across vertex index and uniform roles *(deps: E6-T11d17)*
 - [x] `525.02703900037` [E6-T11d20](epic-6-transcendence/E6-T11d20-standard-texture-storage.md) — Allocate and transfer original mipmapped 2D color resources *(deps: E6-T11d19)*
-- [~] `525.02703900037` [E6-T11d28](epic-6-transcendence/E6-T11d28-standard-packed-float-consumer.md) — Execute original R11G11B10 image samples and framebuffer surfaces *(deps: E6-T11d27)*
+- [?] `525.02703900037` [E6-T11d28](epic-6-transcendence/E6-T11d28-standard-packed-float-consumer.md) — Execute original R11G11B10 image samples and framebuffer surfaces *(deps: E6-T11d27)*
 - [x] `525.02703900038` [E6-T11d19](epic-6-transcendence/E6-T11d19-standard-sampler-state.md) — Execute original core sampler address filter and LOD state *(deps: E6-T11d18)*
 - [x] `525.027039001` [E6-T11d9](epic-6-transcendence/E6-T11d9-standard-primitive-restart.md) — Normalize owned standard index streams for primitive restart *(deps: E6-T11d8)*
 - [x] `525.02703901` [E6-T11d8](epic-6-transcendence/E6-T11d8-standard-core-topologies.md) — Execute bounded standard core line and triangle-fan draws *(deps: E6-T11d7)*
