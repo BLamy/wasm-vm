@@ -2,7 +2,7 @@
 id: E6-T11d30
 epic: 6
 title: Consume original RGB9E5 sampler views in the native standard renderer
-status: in-progress
+status: implemented
 estimate: S
 risk: high
 priority: 525.027039000372
@@ -115,3 +115,18 @@ target/evidence/virgl-standard-shared-exponent-consumer-prefreeze-predecessor --
 Temporary query, shader, sampler-capture, refresh and case-selection isolation changes
 were removed before freezing. Native attribute/VAO/program/draw-buffer/capability snapshots
 remain in the final capture so the critic can inspect the actual draw state.
+
+### 2026-10-10 — worker — frozen original consumer submission
+
+Frozen runtime and complete harness: `62011567d7616e2b9bbe888e4754aa2064bde3ee`.
+`VIRGL_SHARED_EXPONENT_CONSUMER_EVIDENCE_DIR=target/evidence/virgl-standard-shared-exponent-consumer-final make verify-E6-T11d30` passes once on that frozen head.
+`python3 tools/virgl-command/standard-shared-exponent-consumer-cold.py --output target/evidence/virgl-standard-shared-exponent-consumer-cold-final` repeats the same command from a pristine scrubbed clone; both before/after tracked and untracked status are empty.
+The clone remains at `/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-shared-exponent-consumer-cold-ujwwxejv/wasm-vm`.
+
+The original-bit/packet/TGSI inverse authenticates25,340 output components,17,824 retained native components,89,600 public bytes and29,760 padding bytes in each hot/cold run. The52 original shader cases, all three11-case ownership/host/error schedules, both actual native corruption controls after physical completion, and five affected predecessor gates pass their prescribed results. Full nested coverage for19 changed-source script records is retained; all29 added-line navigation samples have a positive governing counter, with whole intervals remaining the critic's authority. No original inputs or output tolerance were changed after GPU observation. All objects retire once and all recorded terminal budgets are zero.
+
+`python3 tools/virgl-command/standard-shared-exponent-consumer-seal.py target/evidence/virgl-standard-shared-exponent-consumer-final target/evidence/virgl-standard-shared-exponent-consumer-cold-final evidence/virgl-standard-shared-exponent-consumer/worker` seals the full recordings, original source closure, generated compiler, browser captures, physical planes and coverage. The worker reopens and hashes every member against the index before submission.
+
+Worker seal: `evidence/virgl-standard-shared-exponent-consumer/worker/manifest.json`, `evidence/virgl-standard-shared-exponent-consumer/worker/records.json`, `evidence/virgl-standard-shared-exponent-consumer/worker/recording.tar.gz`; 13,146 members, 11,227,303 compressed bytes. Archive `319c7460a407c940302aa5023c328e945a7e7d082a6fb9668c02b214851a859d`; index `e0c86f2beb30fec38a27951a967c7844ea9cd496d56477f05ae07d3894395250`; hot receipt `6bc95efad0e7331a724b922dcef98b97956c2f4c2fea9a1009fb842cc269fd7c`; cold report `8a8aeaa5535b6cc919d7ef6ecce5a438d2a6edf39abee3818d7d47d1e51ea17c`; cold receipt `6ea23e9431ce95ccd51ffee4182e1784b1af819aee82c3224b61e74b78569472`.
+
+Claim: only the explicitly selected original125 sampler consumer is implemented, with original vertex/fragment sampling, fixed native precision, safe refresh/draw ordering, retained storage, actual terminal fences, GPU-only updates and explicit refusals demonstrated in the sealed session. All eight D26/D27/D28/D29 worker/critic seals and unchanged storage/compiler/cache boundaries are carried by exact digest. This submission grants no production capability, guest execution, live deployment or performance authority. A separate fresh critic must attack the diff and these recordings before verification.
