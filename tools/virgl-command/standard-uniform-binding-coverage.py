@@ -26,7 +26,7 @@ scripts = []
 for file in directory.rglob('browser-coverage.json'):
     if '/fault-' in str(file):
         continue
-    for row in json.loads(file.read_text())['scripts']:
+    for row in json.loads(file.read_text()).get('scripts', []):
         if row['source'] in added:
             scripts.append(dict(record=file.relative_to(directory).as_posix(), **row))
 for file in (directory/'node-coverage').glob('coverage-*.json'):

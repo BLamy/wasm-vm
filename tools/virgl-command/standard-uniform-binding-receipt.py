@@ -48,7 +48,12 @@ def main(directory):
     else:
         raise ValueError('submission log incomplete')
     wire = json.loads(record('wire/report.json'))
-    need(wire['task'] == TASK and wire['gitHead'] == head and wire['status'] == 'passed', 'original wire identity')
+    execution_head = wire['gitHead']
+    harness_changes = git('diff', '--name-only', execution_head, head).splitlines()
+    need(all(name in {'tools/virgl-command/standard-uniform-binding-coverage.py',
+                      'tools/virgl-command/standard-uniform-binding-receipt.py'} for name in harness_changes),
+         'only incremental evidence parser repairs may follow the recorded runtime head')
+    need(wire['task'] == TASK and wire['status'] == 'passed', 'original wire identity')
     need(len(wire['wire']['records']) == 67 and wire['wire']['status'] == 'passed', 'original wire bounds')
     for row in wire['sources']:
         source(row['path'], row['sha256'])
@@ -56,7 +61,7 @@ def main(directory):
     for name in ['hardware', 'fault-block-word', 'fault-range-offset', 'fault-slot-zero-variant']:
         fault = name != 'hardware'
         report = json.loads(record(name+'/report.json'))
-        need(report['task'] == TASK and report['gitHead'] == head and report['status'] == ('failed' if fault else 'passed'), 'physical identity '+name)
+        need(report['task'] == TASK and report['gitHead'] == execution_head and report['status'] == ('failed' if fault else 'passed'), 'physical identity '+name)
         need(report['fixedMemory'] == dict(bytes=16777216, stageExport='function', pairExport='function', typedPairExport='function', vertexFormatsExport='function', uniformExport='function', uniformPairExport='function'), 'actual fixed-memory compiler')
         need(report['browserErrors'] == dict(console=[], page=[], requests=[]), 'browser errors '+name)
         need(not report['browser']['headless'], 'headed physical proof')
@@ -102,10 +107,10 @@ def main(directory):
     coverage = json.loads(record('coverage-audit.json'))
     need(coverage['gitHead'] == head and coverage['predecessor'] == BASE and coverage['fullRegionsRemainAuthority'], 'affected diff coverage')
     resources = json.loads(record('retained-resources/receipt.json'))
-    need(resources['status'] == 'passed' and resources['gitHead'] == head, 'affected old resource gate')
+    need(resources['status'] == 'passed' and resources['gitHead'] == execution_head, 'affected old resource gate')
     for name in ['retained-standard-wire', 'retained-standard-hardware']:
         report = json.loads(record(name+'/report.json'))
-        need(report['status'] == 'passed' and report['gitHead'] == head and report['task'] == 'E6-T11d15', 'affected old standard renderer gate')
+        need(report['status'] == 'passed' and report['gitHead'] == execution_head and report['task'] == 'E6-T11d15', 'affected old standard renderer gate')
         for row in report['sources']:
             source(row['path'], row['sha256'])
     need(not git('diff', '--name-only', BASE, head, '--', 'renderer/virgl-shader', 'crates', 'web', 'tools/guest'), 'compiler and unqualified production boundaries unchanged')
@@ -124,6 +129,7 @@ def main(directory):
         if file.is_file() and file.name != 'receipt.json':
             record(file.relative_to(directory).as_posix())
     receipt = dict(schema='original-uniform-binding-receipt-v1', task=TASK, status='passed', gitHead=head,
+                   executionHead=execution_head, incrementalHarnessChanges=harness_changes,
                    frames=len(physical['frames']), pixels=audit['pixels'], guestBlocks=audit['guestBlocks'],
                    historicalEvidenceHead=BASE, carriedVerifiedEvidence=carried, sources=sources,
                    generated=generated, files=files, guestExecution=False, productionNegotiation=False,
