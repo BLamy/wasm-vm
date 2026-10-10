@@ -1,0 +1,77 @@
+---
+id: E6-T11d4
+epic: 6
+title: Compile bounded ordinary guest shaders with standard WebGL2 semantics
+priority: 525.027037
+status: in-progress
+depends_on: [E6-T11d3]
+estimate: S
+risk: high
+capstone: false
+---
+
+## Boundary
+
+Add a separate host-selected standard shader compiler facet around the pinned
+VirGL TGSI-to-ESSL translator. Bound the complete grammar before the general
+upstream parser, then preserve its typed shader semantics and owned metadata.
+It is compilation admission, not an exact numerical certificate. Preserve the
+existing ordinary/raw/private entry points and their exact admission/results;
+no guest packet or supplied fact may choose or weaken that old proof facet.
+
+The new facet admits ordinary uniform-fed floating operations, boolean/integer
+lowerings and structured flow within its closed supported token set. It covers
+the pinned complete original sources, scalar/vector masks and modifiers,
+bounded constant/register/IO/sampler declarations and independent interstage
+matching. Compilation resources and stack/heap/output stay fixed and checked.
+Unknown stages/opcodes/properties/files, memory operations and excessive text,
+indices, depth or resource extent fail without partial GLSL/metadata. Native
+and Wasm results are deterministic and recover after malformed/allocation cases.
+The new facet states its standard precision and undefined-domain rules plainly;
+it grants no bit-exact/private/precondition authority and no positive capsets.
+
+Production state integration and actual texture/storage/draw semantics remain
+ordered successors. This isolated compiler does not claim a guest boot, full
+API support, bounded GPU execution time or graphics throughput.
+
+## Deterministic acceptance
+
+`make verify-E6-T11d4` authenticates pinned source/image/ABI context and executes
+the new guarded public C and actual fixed-memory Wasm entry points. Record
+native and ASan/UBSan bounds/malformed/allocation/recovery tests with independent
+seeds, exact native/Wasm outputs, complete original captured sources, each
+accepted token/property/declaration family and both sides of every declared
+limit. Cross-check emitted metadata against separately decoded pinned TGSI
+records rather than trusting the bridge output as its own expected value.
+
+Compile the complete captured programs on the headed hardware WebGL2 context;
+link actual fragment-derived smooth/flat interfaces and physically draw a
+bounded independently specified set, including ordinary dynamic SIN/EX2/LG2/
+POW, default constant banks, nontrivial masks/swizzles, branches and partial IO.
+Record actual uploaded bytes, emitted sources, reflection, full pixel bytes and
+independent mathematical pixel expectations with specified precision budgets.
+Exercise original full compositor programs through this general facet without
+private exact tuples/source pins/geometry specialization granting admission.
+
+A real emitter/native-operation mutation must fail the independent physical
+oracle. Preserve exact legacy/raw/private acceptance/results at representative
+anchors and affected existing compiler gates. At the frozen source run the
+submission gate once, one final pristine exact-head clone, seal source/input/
+output/coverage/browser evidence, and submit to a fresh adversarial verifier.
+No production demo imports or capabilities change in this isolated slice.
+
+## Adversarial verification
+
+Predict specific admitted dynamic operations and actual GPU values before
+inspection. Attack oversized/wrapped/ranged/multidimensional/indirect register
+fields, stage or IO mismatch, semantic collisions, unknown and partial token
+consumption, immediate literal limits, depth/labels/flow balance, allocation
+failure and stale response/input ownership. Cover every changed runtime hunk
+with deterministic evidence or a narrowly justified waiver. Probe a separately
+chosen well-defined dynamic shader and sabotage the promoted oracle once.
+Check that no new facet result is confused with an old exact or conditional
+contract; existing private rejection/results must carry unchanged.
+
+## Verification log
+
+(empty)
