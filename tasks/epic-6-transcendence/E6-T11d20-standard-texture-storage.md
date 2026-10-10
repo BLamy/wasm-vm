@@ -3,7 +3,7 @@ id: E6-T11d20
 epic: 6
 title: Allocate and transfer original mipmapped 2D color resources
 priority: 525.02703900037
-status: in-progress
+status: implemented
 depends_on: [E6-T11d19]
 estimate: S
 risk: high
@@ -37,3 +37,21 @@ E6-T11d19 is independently verified at `52d3cc4e2f0f28d82a2900ff33ab855ae118e66e
 ### 2026-10-10 — worker — activated
 
 The original multilevel storage/transfer boundary is the sole active task. Dependency E6-T11d19 is verified at `52d3cc4e2f0f28d82a2900ff33ab855ae118e66e`. Use `make verify-E6-T11d20` as the single deterministic acceptance, affected legacy gates, one final pristine scrubbed clone and a fresh independent verifier. All temporary native prechecks are ephemeral until the committed exact-head recording.
+
+### 2026-10-10 — worker — implemented; sealed original storage/transfer submission
+
+Runtime and complete original harness froze at `cde73ac477b4cab52e84f7a8995c701bf71cdca6`. Exact commands:
+
+```sh
+VIRGL_TEXTURE_STORAGE_EVIDENCE_DIR=target/evidence/virgl-standard-texture-storage-final make verify-E6-T11d20
+python3 tools/virgl-command/standard-texture-cold.py --output target/evidence/virgl-standard-texture-storage-cold-final
+python3 tools/virgl-command/standard-texture-seal.py target/evidence/virgl-standard-texture-storage-final target/evidence/virgl-standard-texture-storage-cold-final evidence/virgl-standard-texture-storage/worker
+```
+
+Both frozen hot and pristine scrubbed exact-head cold runs passed on actual headed Chrome/M4 Metal, with zero console/page/request errors. Each records 1062 original wire metadata/level cases / 80640 assertions, 72 native runs, 1201 native level records / 380450 complete texels / 259 fenced reads. Full/truncated NPOT chains, 1D-degenerate dimensions including 16384x1/1x16384 with all 15 levels, existing formats2/67/233 and all original roles/hints execute. Original strided/odd-offset/split backing, inline and asynchronous inline/input writes, partial patches, both synchronous/asynchronous copy directions, full GPU-only overwrites and inverse padding checks agree. Every native object retires once and every terminal resource budget is zero. Exact retained generations through public unref/reuse, backing/context/attachment revocation, cancellation, native allocation/upload/readback/fence failures and exact/one-byte-short full-chain plus staging budgets are exercised.
+
+The independent offline audit reconstructs every expected plane and CPU inverse from the original metadata/wire/full input blobs, never observed GPU output. Both upload-level and read-level physical sabotages complete their actual PBO read/fence before this unchanged original oracle fails. Full source/served/generated Wasm/native blobs/object IDs/screenshot/V8 regions are bound to receipts; unchanged compiler/state/cache/buffer/uniform/sampler dependencies and D19 worker/critic seals carry by exact identity. Affected old command-decoder, resource-transfer and color-format gates pass in both runs. No Rust/compiler/web/production path changed. Complete nested regions remain coverage authority rather than added-line counts alone.
+
+Cold checkout: `/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-texture-state-cold-93pffpbv/wasm-vm`, clean before and after. Record `target/evidence/virgl-standard-texture-storage-cold-final/report.json` binds its scrubbed controls, exact head and receipt. Final immutable worker archive `evidence/virgl-standard-texture-storage/worker/recording.tar.gz` contains 10704 records / 11821948 compressed bytes, SHA256 `69b3ab4a2a7bddb01a3301dd17c4996bb7535d458c72eb644bd07307c59d3d6d`; index `records.json` SHA256 `9ee4efd09f6c3a7ebc0f87d5fe0eee53f3816add57e40a5c2511fd9cb83e73c9`. Hot receipt SHA256 `3be2aa34bee5acfdcf233b6bcf6406c551da32749d0b575305e85f8536159201`, cold report `48c0d5d916b3310e74c6b6df89b680d84826932c670f1fe6ad6eee39650f8e55`, cold receipt `9231d599c5140ce5e2e368a035cb9c3bc06b0fb7f7b41a69c62255b40cefe8a6`.
+
+This claims only isolated host-selected original 2D mip storage and transfers. New kind=mip-texture remains inadmissible to historical draw/view/scanout consumers. Actual views/framebuffer surfaces, complete API and typed capsets, production guest Mesa/compositor rendering, worker/scanout, demo/deployment and performance remain successors. Fresh adversarial verification is required; only that separate session may mark verified.
