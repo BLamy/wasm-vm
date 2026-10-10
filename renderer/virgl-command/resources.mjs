@@ -276,15 +276,20 @@ export function computeStandardTextureTransferLayout(metadata, fields, backingBy
   });
 }
 
-function createStore(options, uniform, bufferRoles = false, mipmaps = false) {
+/** Original image subresources have private, budgeted GPU view authority. */
+export function createStandardImageResourceStore(options) { return createStore(options, true, true, true, true); }
+
+function createStore(options, uniform, bufferRoles = false, mipmaps = false, images = false) {
   return result(() => {
     const config = record(options, ["backend", "limits"], ["backend"]), backend = config.backend;
     require(backend && typeof backend === "object", "invalid-input", "A transfer backend is required.");
     for (const method of ["allocate", "destroy", "upload", "readback", "dispose"]) require(typeof backend[method] === "function", "invalid-input", `Backend is missing ${method}.`);
     require(Number.isInteger(backend.maxTextureSize) && backend.maxTextureSize > 0, "invalid-input", "Backend must provide its texture dimension limit.");
+    require(!images || typeof backend.copyTextureRange === "function", "invalid-input", "Image views require native GPU copies.");
     const requested = limitsFor(config.limits);
     const limits = Object.freeze({ ...requested, textureSize: Math.min(requested.textureSize, backend.maxTextureSize) });
     const resources = new Map(), live = new Set(), contexts = new Map(), tickets = new Map(), leases = new Map(), storageReads = new Map(), uniformRanges = new Map(), revokedAccess = new Set(), revokedUniform = new Set();
+    const imageViews = new Map(), imageHolds = new Map(), liveImages = new Set(), revokedImages = new Set();
     let nextGeneration = 1, nextBackingGeneration = 1, disposed = false, backingBytes = 0, gpuBytes = 0, scratchBytes = 0, stagingBytes = 0;
     const host = (name, ...args) => {
       try { return backend[name](...args); } catch { throw new ResourceFault("backend-error", `Backend ${name} failed.`); }
@@ -324,6 +329,18 @@ function createStore(options, uniform, bufferRoles = false, mipmaps = false) {
       if (res.public || res.references !== 0) return;
       if (res.storage !== null) { host("destroy", res.storage); gpuBytes -= res.meta.byteLength; res.storage = null; }
       live.delete(res);
+    };
+    const collectImage = entry => {
+      if (entry.references !== 0) return;
+      if (entry.allocationBytes) { host("destroy", entry.storage); gpuBytes -= entry.allocationBytes; }
+      liveImages.delete(entry); entry.resource.references--; collect(entry.resource);
+    };
+    const imageLease = (lease, roles) => {
+      const entry = leases.get(lease);
+      require(entry && roles.includes(entry.role) && ["texture", "mip-texture", "depth-texture"].includes(entry.resource.meta.kind),
+        "invalid-lease", "Expected a retained original image lease.");
+      require(entry.context.active && contexts.get(entry.context.id) === entry.context, "stale-context", "Image lease context is stale.");
+      return entry;
     };
     const removeBacking = (res) => {
       if (res.backing === null) return;
@@ -532,7 +549,7 @@ function createStore(options, uniform, bufferRoles = false, mipmaps = false) {
           (role === "uniform" && uniform && ["vertex-buffer", "uniform-buffer"].includes(res.meta.kind)) || (role === "index" && res.meta.kind === "index-buffer"),
         "unsupported-resource", "Storage lease role contradicts the resource binding class.");
         require(leases.size < limits.leases, "limit-exceeded", "Storage lease limit exceeded.");
-        const token = Object.freeze({}); leases.set(token, { resource: res, role, ...(role === "uniform" ? { context: ctx } : {}) }); res.references++;
+        const token = Object.freeze({}); leases.set(token, { resource: res, role, ...(role === "uniform" || images && ["view", "surface", "depth-surface"].includes(role) ? { context: ctx } : {}) }); res.references++;
         return success({ lease: token });
       }),
       releaseStorage: operation((token) => {
@@ -580,7 +597,7 @@ function createStore(options, uniform, bufferRoles = false, mipmaps = false) {
         return success({ disposed, limits, resources: freeze(list),
           contexts: freeze([...contexts.values()].map((ctx) => ({ id: ctx.id, generation: ctx.generation, resourceIds: [...ctx.memberships.keys()].sort((a, b) => a - b) }))),
           budgets: freeze({ resources: live.size, contexts: contexts.size, storages: [...live].filter((res) => res.storage !== null).length,
-            backingBytes, cpuBytes: backingBytes + scratchBytes, gpuBytes, scratchBytes, tickets: tickets.size, leases: leases.size, ...(uniform ? { uniformRanges: uniformRanges.size } : {}) }) });
+            backingBytes, cpuBytes: backingBytes + scratchBytes, gpuBytes, scratchBytes, tickets: tickets.size, leases: leases.size, ...(uniform ? { uniformRanges: uniformRanges.size } : {}), ...(images ? { imageViews: liveImages.size, imageHolds: imageHolds.size } : {}) }) });
       },
       dispose() {
         return result(() => {
@@ -600,6 +617,14 @@ function createStore(options, uniform, bufferRoles = false, mipmaps = false) {
             revokedUniform.add(token); entry.resource.references--;
           }
           uniformRanges.clear();
+          if (images) {
+            for (const token of [...imageViews.keys(), ...imageHolds.keys()]) revokedImages.add(token);
+            imageViews.clear();
+            for (const entry of liveImages) entry.references = 0;
+            for (const entry of imageHolds.values()) if (entry.source) entry.resource.references--;
+            imageHolds.clear();
+            for (const entry of [...liveImages]) { try { collectImage(entry); } catch (error) { firstError ??= error; } }
+          }
           for (const [token, entry] of tickets) {
             if (entry.asynchronous) revokedAccess.add(token);
             try { releaseTicket(entry); } catch (error) { firstError ??= error; }
@@ -787,7 +812,66 @@ function createStore(options, uniform, bufferRoles = false, mipmaps = false) {
       inspect() { return success({ disposed, pending: [...uniformRanges.values()].filter(entry => entry.mode === "pending").length,
         submitted: [...uniformRanges.values()].filter(entry => entry.mode === "submitted").length }); },
     }) : null;
-    return success({ store: Object.freeze(store), bindings, asyncAccess, ...(uniform ? { uniformAccess } : {}) });
+    const imageEntry = token => {
+      const entry = imageViews.get(token);
+      require(entry, "invalid-view", "Unknown, released or foreign native image view.");
+      imageLease(entry.lease, ["view"]); return entry;
+    };
+    const imageAccess = images ? Object.freeze({
+      capture: operation((lease, firstLevel, lastLevel) => {
+        const leaseEntry = imageLease(lease, ["view"]), res = leaseEntry.resource, meta = res.meta;
+        uint(firstLevel, "firstLevel"); uint(lastLevel, "lastLevel");
+        require(firstLevel <= lastLevel && lastLevel <= meta.lastLevel, "out-of-bounds", "Original view range exceeds retained image levels.");
+        require(liveImages.size < limits.leases, "limit-exceeded", "Live/retained native image view limit exceeded.");
+        const width = Math.max(1, Math.floor(meta.width / 2 ** firstLevel)), height = Math.max(1, Math.floor(meta.height / 2 ** firstLevel));
+        const levels = []; let byteLength = 0;
+        for (let level = 0, w = width, h = height; level <= lastLevel - firstLevel; level++) {
+          const bytes = checkedProduct(checkedProduct(w, h, limits.resourceBytes, "View plane is too large."), 4, limits.resourceBytes, "View plane is too large.");
+          require(bytes <= limits.resourceBytes - byteLength, "limit-exceeded", "Complete view mip chain exceeds resource byte limit.");
+          levels.push({ level, width: w, height: h, byteLength: bytes }); byteLength += bytes;
+          w = Math.max(1, Math.floor(w / 2)); h = Math.max(1, Math.floor(h / 2));
+        }
+        const metadata = freeze({ ...meta, kind: lastLevel > firstLevel ? "mip-texture" : "texture", width, height,
+          lastLevel: lastLevel - firstLevel, byteLength, levels });
+        const allocationBytes = firstLevel === 0 && lastLevel === meta.lastLevel ? 0 : byteLength;
+        require(allocationBytes <= limits.gpuBytes - gpuBytes, "limit-exceeded", "Native image view byte budget exceeded.");
+        const storage = allocationBytes ? host("allocate", metadata) : res.storage;
+        require(storage && typeof storage === "object", "backend-error", "Native image view allocation returned no storage.");
+        const token = Object.freeze({}), entry = { resource: res, lease, metadata, firstLevel, lastLevel, storage, allocationBytes, references: 1 };
+        gpuBytes += allocationBytes; res.references++; liveImages.add(entry); imageViews.set(token, entry);
+        return success({ token, metadata, generation: res.generation });
+      }),
+      resolve: operation(token => { const entry = imageEntry(token); return success({ storage: entry.storage, metadata: entry.metadata, generation: entry.resource.generation }); }),
+      refresh: operation(token => {
+        const entry = imageEntry(token);
+        if (entry.allocationBytes) host("copyTextureRange", entry.resource.storage, entry.storage, entry.metadata, entry.firstLevel);
+        return success();
+      }),
+      hold: operation(token => {
+        const entry = imageEntry(token);
+        require(imageHolds.size < limits.tickets, "limit-exceeded", "Image completion-hold count exceeded.");
+        const hold = Object.freeze({}); entry.references++; imageHolds.set(hold, entry); return success({ token: hold });
+      }),
+      holdStorage: operation(lease => {
+        const entry = imageLease(lease, ["surface", "depth-surface"]);
+        require(imageHolds.size < limits.tickets, "limit-exceeded", "Image completion-hold count exceeded.");
+        const token = Object.freeze({}); entry.resource.references++;
+        imageHolds.set(token, { resource: entry.resource, source: true }); return success({ token, generation: entry.resource.generation });
+      }),
+      release(token) {
+        return result(() => {
+          if (disposed) { require(revokedImages.delete(token), "invalid-view", "Unknown or already released revoked image token."); return success(); }
+          const entry = imageViews.get(token) ?? imageHolds.get(token);
+          require(entry, "invalid-view", "Unknown, released or foreign native image token.");
+          imageViews.delete(token); imageHolds.delete(token);
+          if (entry.source) { entry.resource.references--; collect(entry.resource); }
+          else { entry.references--; collectImage(entry); }
+          return success();
+        });
+      },
+      inspect() { return success({ disposed, views: imageViews.size, allocations: liveImages.size, holds: imageHolds.size }); },
+    }) : null;
+    return success({ store: Object.freeze(store), bindings, asyncAccess, ...(uniform ? { uniformAccess } : {}), ...(images ? { imageAccess } : {}) });
   });
 }
 
@@ -987,6 +1071,34 @@ export function createWebGL2TransferBackend(gl) {
           }
         },
         destroy,
+        copyTextureRange(source, destination, meta, firstLevel) {
+          check();
+          const previousRead = gl.getParameter(gl.READ_FRAMEBUFFER_BINDING), previousDraw = gl.getParameter(gl.DRAW_FRAMEBUFFER_BINDING);
+          const scissor = gl.isEnabled(gl.SCISSOR_TEST);
+          let destinationFramebuffer = null, attached = false;
+          try {
+            destinationFramebuffer = gl.createFramebuffer();
+            require(destinationFramebuffer, "backend-error", "Image copy framebuffer allocation failed.");
+            gl.disable(gl.SCISSOR_TEST);
+            gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, destinationFramebuffer); gl.drawBuffers([gl.COLOR_ATTACHMENT0]);
+            gl.bindFramebuffer(gl.READ_FRAMEBUFFER, framebuffer); gl.readBuffer(gl.COLOR_ATTACHMENT0); attached = true;
+            for (const level of meta.levels) {
+              gl.framebufferTexture2D(gl.READ_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, source.texture, firstLevel + level.level);
+              gl.framebufferTexture2D(gl.DRAW_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, destination.texture, level.level);
+              require(gl.checkFramebufferStatus(gl.READ_FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE &&
+                gl.checkFramebufferStatus(gl.DRAW_FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE,
+              "backend-error", "Image copy framebuffer is incomplete.");
+              // Matching normalized formats and identical extents preserve every
+              // original texel, including RGB10_A2, through a native GPU blit.
+              gl.blitFramebuffer(0, 0, level.width, level.height, 0, 0, level.width, level.height, gl.COLOR_BUFFER_BIT, gl.NEAREST); check();
+            }
+          } finally {
+            if (attached) gl.framebufferTexture2D(gl.READ_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, null, 0);
+            gl.bindFramebuffer(gl.READ_FRAMEBUFFER, previousRead); gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, previousDraw);
+            if (destinationFramebuffer) gl.deleteFramebuffer(destinationFramebuffer);
+            if (scissor) gl.enable(gl.SCISSOR_TEST); else gl.disable(gl.SCISSOR_TEST);
+          }
+        },
         upload(storage, meta, layout, bytes) {
           check(); pixelState();
           if (storage.kind === "buffer") {

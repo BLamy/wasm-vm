@@ -1,5 +1,5 @@
 /** Typed VirGL state and bounded triangle draws. See state-README.md and draw-README.md. */
-import { decodeSubmission, decodeStandardSubmission, decodeStandardUniformSubmission, vertexFormat } from "./decoder.mjs";
+import { decodeSubmission, decodeStandardSubmission, decodeStandardUniformSubmission, decodeStandardImageSubmission, vertexFormat } from "./decoder.mjs";
 import { LIMITS as SHADER_LIMITS } from "../virgl-shader/index.mjs";
 import { createKeyCache, hashKey } from "./cache.mjs";
 import { parseConstantDomain, checkFiniteBank, checkIndirectBank, checkLoopBank, checkRadialBank, checkRasterBank, checkConversionBank, checkExactBank, COORDINATE_KEY, DISCARD_KEY,
@@ -15,6 +15,7 @@ export const ASYNC_PROFILE = "virgl-tiny-async-jobs-v1";
 export const STANDARD_ASYNC_PROFILE = "virgl-standard-async-jobs-v1";
 export const STANDARD_UNIFORM_ASYNC_PROFILE = "virgl-standard-uniform-async-jobs-v1";
 export const STANDARD_BUFFER_ASYNC_PROFILE = "virgl-standard-buffer-async-jobs-v1";
+export const STANDARD_IMAGE_ASYNC_PROFILE = "virgl-standard-image-async-jobs-v1";
 export const JOB_LIMITS = Object.freeze({ jobs: 1, commandsPerStep: 64, submissionBytes: 262144, transferBytes: 4194304 });
 export const CACHE_LIMITS = Object.freeze({ translations: 128, translationBytes: 4194304,
   programBytes: 4194304, states: 256, stateBytes: 1048576, debugBytes: 4194304 });
@@ -180,10 +181,15 @@ export function createVirglStandardBufferAsyncRenderer(options) {
   return createRenderer(options, true, true, true, true, true);
 }
 
+/** Owned original 2D sampler ranges and framebuffer mip surfaces. */
+export function createVirglStandardImageAsyncRenderer(options) {
+  return createRenderer(options, true, true, true, true, true, true);
+}
+
 /** Host capabilities are trusted and non-reentrant. */
-function createRenderer(options, drawing, asynchronous = false, standard = false, uniform = false, bufferRoles = false) {
+function createRenderer(options, drawing, asynchronous = false, standard = false, uniform = false, bufferRoles = false, images = false) {
   return result(() => {
-    const config = dataRecord(options, ["gl", "resources", "bindings", "shaderBridge", "limits", "cacheLimits", ...(drawing ? ["drawLimits"] : []), ...(asynchronous ? ["asyncAccess", "jobLimits"] : []), ...(standard ? ["primitiveAssembly"] : []), ...(uniform ? ["uniformAccess"] : [])], ["gl", "resources", "bindings", "shaderBridge", ...(asynchronous ? ["asyncAccess"] : []), ...(uniform ? ["uniformAccess"] : [])]);
+    const config = dataRecord(options, ["gl", "resources", "bindings", "shaderBridge", "limits", "cacheLimits", ...(drawing ? ["drawLimits"] : []), ...(asynchronous ? ["asyncAccess", "jobLimits"] : []), ...(standard ? ["primitiveAssembly"] : []), ...(uniform ? ["uniformAccess"] : []), ...(images ? ["imageAccess"] : [])], ["gl", "resources", "bindings", "shaderBridge", ...(asynchronous ? ["asyncAccess"] : []), ...(uniform ? ["uniformAccess"] : []), ...(images ? ["imageAccess"] : [])]);
     const { gl, resources, bindings, shaderBridge } = config;
     const primitiveAssembly = standard ? config.primitiveAssembly ?? "native" : "native";
     require(["native", "lists"].includes(primitiveAssembly), "invalid-input", "Unknown standard primitive assembly selection.");
@@ -221,8 +227,11 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
     require(!uniform || uniformAccess && ["capture", "validate", "submit", "release", "inspect"].every(name =>
       typeof uniformAccess[name] === "function") && typeof shaderBridge.translatePairUniforms === "function",
     "invalid-input", "Selected uniform range and compiler capabilities are required.");
-    const profile = bufferRoles ? STANDARD_BUFFER_ASYNC_PROFILE : uniform ? STANDARD_UNIFORM_ASYNC_PROFILE : standard ? STANDARD_ASYNC_PROFILE : asynchronous ? ASYNC_PROFILE : drawing ? DRAW_PROFILE : STATE_PROFILE;
-    const decodeCommands = uniform ? decodeStandardUniformSubmission : standard ? decodeStandardSubmission : decodeSubmission;
+    const imageAccess = images ? config.imageAccess : null;
+    require(!images || imageAccess && ["capture", "resolve", "refresh", "hold", "holdStorage", "release", "inspect"].every(name => typeof imageAccess[name] === "function"),
+      "invalid-input", "Original native image range authority is required.");
+    const profile = images ? STANDARD_IMAGE_ASYNC_PROFILE : bufferRoles ? STANDARD_BUFFER_ASYNC_PROFILE : uniform ? STANDARD_UNIFORM_ASYNC_PROFILE : standard ? STANDARD_ASYNC_PROFILE : asynchronous ? ASYNC_PROFILE : drawing ? DRAW_PROFILE : STATE_PROFILE;
+    const decodeCommands = images ? decodeStandardImageSubmission : uniform ? decodeStandardUniformSubmission : standard ? decodeStandardSubmission : decodeSubmission;
     const parseShaderMetadata = uniform ? parseStandardUniformShaderMetadata : standard ? parseStandardShaderMetadata : parseConstantDomain;
     const idle = () => require(activeJob === null, "busy", "A renderer job is active; cancel and drain it before changing state.");
     const contexts = new Map(), objects = new Set(), programs = new Set();
@@ -370,6 +379,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
     const collectObject = (sub, object) => {
       if (object.references !== 0) return;
       sub.live.delete(object); objects.delete(object);
+      if (object.imageRange) unwrap(imageAccess.release(object.imageRange));
       if (object.lease) release(object.lease);
       if (object.shader) {
         for (const program of [...sub.programs.values()]) if (program.vertex === object || program.fragment === object) deleteProgram(sub, program);
@@ -421,8 +431,16 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         }
         if (type === 6 || type === 8) {
           const depth = type === 8 && fields.format === 16;
-          Object.assign(object, retain(ctx, fields.resourceHandle, depth ? "depth-surface" : type === 6 ? "view" : "surface", depth ? "depth-texture" : "texture"));
+          Object.assign(object, retain(ctx, fields.resourceHandle, depth ? "depth-surface" : type === 6 ? "view" : "surface", depth ? "depth-texture" : images ? ["texture", "mip-texture"] : "texture"));
           require(object.metadata.format === fields.format, "incompatible-resource", "View format and storage format differ.");
+          if (images && !depth) {
+            if (type === 6) object.imageRange = unwrap(imageAccess.capture(object.lease, fields.firstLevel, fields.lastLevel)).token;
+            else {
+              require(fields.level <= object.metadata.lastLevel, "out-of-bounds", "Surface mip level exceeds retained image levels.");
+              const level = object.metadata.levels?.[fields.level] ?? object.metadata;
+              object.dimensions = Object.freeze({ width: level.width, height: level.height, level: fields.level });
+            }
+          }
         }
         if (type === 4) {
           const translated = translatedStage(sub, { stage: fields.stageName, text: fields.text });
@@ -468,6 +486,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         if (object.shader) shaderBytes += object.shaderBytes;
         sub.names.set(object.handle, object); sub.live.add(object); objects.add(object);
       } catch (error) {
+        if (object.imageRange) unwrap(imageAccess.release(object.imageRange));
         if (object.lease) release(object.lease);
         if (object.shader) gl.deleteShader(object.shader);
         if (object.sampler) gl.deleteSampler(object.sampler);
@@ -487,7 +506,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         // Linking may precede view binding. The fixed legacy RGBA identity
         // specialization is safe then; draw validation still requires a view.
         return { ...(standard ? { stage } : {}), index: sampler.index, name: sampler.name, target: 2, format: fields?.format ?? 67,
-          firstLevel: 0, lastLevel: 0, firstLayer: 0, lastLayer: 0, origin: "lower-left",
+          firstLevel: images ? fields?.firstLevel ?? 0 : 0, lastLevel: images ? fields?.lastLevel ?? 0 : 0, firstLayer: 0, lastLayer: 0, origin: "lower-left",
           swizzle: fields?.swizzle ?? [0, 1, 2, 3] };
       });
       const key = views.length ? `sampler-view-v1:${JSON.stringify(views)}` : "";
@@ -935,7 +954,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       gl.bindVertexArray(sub.vao);
       gl.bindFramebuffer(gl.FRAMEBUFFER, sub.framebuffer);
       const surface = sub.surfaces[0] ?? null;
-      gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, surface ? resolve(surface.lease).storage.texture : null, 0);
+      gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, surface ? resolve(surface.lease).storage.texture : null, images ? surface?.fields.level ?? 0 : 0);
       gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, sub.depthSurface ? resolve(sub.depthSurface.lease).storage.texture : null, 0);
       gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.STENCIL_ATTACHMENT, gl.TEXTURE_2D, null, 0);
       // WebGL requires every enabled color buffer to have an active output.
@@ -993,7 +1012,15 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       }
       for (let stage = 0; stage < 2; stage++) for (let slot = 0; slot < stageSlots[stage]; slot++) {
         const view = sub.views[stage][slot], sampler = sub.samplers[stage][slot], unit = unitFor(stage, slot);
-        gl.activeTexture(gl.TEXTURE0 + unit); gl.bindTexture(gl.TEXTURE_2D, view ? resolve(view.lease).storage.texture : null);
+        let image = null;
+        if (images && view) {
+          if (plan && program.samplers.some(entry => entry.stage === stage && entry.index === slot)) unwrap(imageAccess.refresh(view.imageRange));
+          image = unwrap(imageAccess.resolve(view.imageRange));
+        }
+        gl.activeTexture(gl.TEXTURE0 + unit); gl.bindTexture(gl.TEXTURE_2D, view ? images ? image.storage.texture : resolve(view.lease).storage.texture : null);
+        if (images && image) {
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_BASE_LEVEL, 0); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAX_LEVEL, image.metadata.lastLevel);
+        }
         gl.bindSampler(unit, sampler?.sampler ?? null);
       }
       gl.activeTexture(gl.TEXTURE0);
@@ -1081,6 +1108,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
     };
     const prepareDraw = (ctx, sub, command, submission, job = null) => {
       const fields = command.fields;
+      require(!images || job, "unsupported-draw", "Original image draws require an owned completion job.");
       // VirGL1.3 uses zero to select an ordinary draw, still with one instance.
       const instances = standard ? Math.max(1, fields.instanceCount) : 1;
       require(fields.count > 0 && (fields.indexed ? fields.start === 0 : fields.start <= 0x7fffffff - fields.count),
@@ -1106,7 +1134,9 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       for (const sampler of program.samplers) {
         const view = sub.views[sampler.stage][sampler.index], state = sub.samplers[sampler.stage][sampler.index];
         require(view && state, "incomplete-draw", "Drawing requires an active sampler view and sampler state.");
-        require(resolve(view.lease).storage.texture !== surface.storage.texture,
+        const overlap = resolve(view.lease).storage.texture === surface.storage.texture;
+        const surfaceLevel = sub.surfaces[0].fields.level;
+        require(!overlap || images && (surfaceLevel < view.fields.firstLevel || surfaceLevel > view.fields.lastLevel),
           "framebuffer-feedback", "A draw cannot sample its own framebuffer texture.");
       }
       const attributes = program.reflection.attributes.map((attribute) => {
@@ -1251,6 +1281,13 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer);
           gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, words, gl.STREAM_DRAW); check();
         }
+        if (images) {
+          for (const sampler of plan.program.samplers) {
+            const token = sub.views[sampler.stage][sampler.index].imageRange;
+            if (!job.imageHolds.has(token)) job.imageHolds.set(token, unwrap(imageAccess.hold(token)).token);
+          }
+          holdImageSurfaces(job, sub);
+        }
         if (uniform) {
           for (const range of plan.uniformRanges) unwrap(uniformAccess.validate(range.token));
           for (const range of plan.uniformRanges) {
@@ -1285,7 +1322,8 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         contextId: ctx.id, contextGeneration: ctx.generation, subContextId: sub.id, subContextGeneration: sub.generation,
         indexResourceId: indexStorage?.metadata.id ?? null, indexResourceGeneration: indexStorage?.generation ?? null,
         vertexFetches, framebuffer: { resourceId: surface.metadata.id, resourceGeneration: surface.generation,
-          width: surface.metadata.width, height: surface.metadata.height,
+          width: images ? sub.surfaces[0].dimensions.width : surface.metadata.width, height: images ? sub.surfaces[0].dimensions.height : surface.metadata.height,
+          ...(images ? { level: sub.surfaces[0].fields.level } : {}),
           depthResourceId: sub.depthSurface?.metadata.id ?? null, depthResourceGeneration: sub.depthSurface?.resourceGeneration ?? null },
         vertexShader: ref(sub.shaders[0]), fragmentShader: ref(sub.shaders[1]),
         ...(uniform ? { bufferZeroMask: plan.program.bufferZeroMask, uniformRanges: plan.uniformRanges.map(range => ({
@@ -1307,7 +1345,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         { x: plan.indexOffset, y: 0, z: 0, width: plan.indexByteLength, height: 1, depth: 1 })).bytes : null;
       issueDraw(plan, bytes, submission);
     };
-    const apply = (ctx, command, submission) => {
+    const apply = (ctx, command, submission, job = null) => {
       const fields = command.fields, sub = ctx.subs.get(ctx.current), op = command.opcode;
       switch (op) {
         case 1: createObject(ctx, sub, command); break;
@@ -1337,9 +1375,9 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
             resolve(depthSurface.lease);
           }
           for (const surface of surfaces) if (surface) {
-            require(surface.metadata.kind === "texture", "incompatible-resource", "A depth surface cannot be a color attachment.");
+            require(images ? ["texture", "mip-texture"].includes(surface.metadata.kind) : surface.metadata.kind === "texture", "incompatible-resource", "A depth surface cannot be a color attachment.");
             resolve(surface.lease);
-            require(!depthSurface || (surface.metadata.width === depthSurface.metadata.width && surface.metadata.height === depthSurface.metadata.height),
+            require(!depthSurface || ((images ? surface.dimensions.width : surface.metadata.width) === depthSurface.metadata.width && (images ? surface.dimensions.height : surface.metadata.height) === depthSurface.metadata.height),
               "incompatible-resource", "Color and depth attachment dimensions differ.");
           }
           for (let index = 0; index < Math.max(sub.surfaces.length, surfaces.length); index++) objectRef(sub, sub.surfaces[index], surfaces[index]);
@@ -1361,6 +1399,8 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           sub.vertexBuffers = buffers; break;
         }
         case 7: {
+          require(!images || job, "unsupported-clear", "Original image clears require an owned completion job.");
+          if (images) holdImageSurfaces(job, sub);
           require(!(fields.buffers & 4) || sub.surfaces[0], "incomplete-framebuffer", "Color CLEAR needs a color surface.");
           require(!(fields.buffers & 1) || sub.depthSurface, "incomplete-framebuffer", "Depth CLEAR needs a Z16 depth surface.");
           restore(sub);
@@ -1515,9 +1555,19 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
     };
     const jobStatus = (job, status) => Object.freeze({ ok: true, status, appliedCommands: job.index,
       ...(job.request ? { request: job.request } : {}) });
+    const holdImageSurfaces = (job, sub) => {
+      for (const surface of [...sub.surfaces, sub.depthSurface]) if (surface && !job.imageSources.has(surface.resourceGeneration)) {
+        const held = unwrap(imageAccess.holdStorage(surface.lease)); job.imageSources.set(held.generation, held.token);
+      }
+    };
+    const releaseImageHolds = job => {
+      if (!images) return;
+      for (const token of [...job.imageHolds.values(), ...job.imageSources.values()]) unwrap(imageAccess.release(token));
+      job.imageHolds.clear(); job.imageSources.clear();
+    };
     const finishJob = (job, gpuComplete) => {
       releaseJobAccess(job);
-      releaseNormalizedIndices(job); releaseUniformHolds(job);
+      releaseNormalizedIndices(job); releaseUniformHolds(job); releaseImageHolds(job);
       if (job.sync) { gl.deleteSync(job.sync); job.sync = null; }
       activeJob = null;
       const extra = { appliedCommands: job.index, draws: job.submission.draws, gpuComplete };
@@ -1655,7 +1705,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           }
           // END_TRANSFERS issues no GL work. Other state operations restore GL state.
           if (job.command.opcode !== 44) job.serial++;
-          apply(job.ctx, job.command, job.submission); advanceJob(job); budget--;
+          apply(job.ctx, job.command, job.submission, job); advanceJob(job); budget--;
         }
         return job.index === job.commands.length ? finishOrFence(job) : jobStatus(job, "ready");
       } catch (error) { return failJob(job, error, polling && error.code === "backend-error"); }
@@ -1734,7 +1784,8 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
             reads: asyncAccess.inspect().reads, transfers: asyncAccess.inspect().transfers, stagingBytes: asyncAccess.inspect().stagingBytes,
             ...(standard ? { normalizedBuffers: activeJob?.normalizedIndices.length ?? 0,
               normalizedBytes: activeJob?.normalizedBytes ?? 0, normalizationScratchBytes: activeJob?.normalizationScratchBytes ?? 0,
-              ...(uniform ? { uniformPending: activeJob?.pendingUniformRanges.size ?? 0, uniformHolds: activeJob?.uniformHolds.size ?? 0 } : {}) } : {}) } } : {}),
+              ...(images ? { imageHolds: activeJob?.imageHolds.size ?? 0, imageSources: activeJob?.imageSources.size ?? 0 } : {}),
+            ...(uniform ? { uniformPending: activeJob?.pendingUniformRanges.size ?? 0, uniformHolds: activeJob?.uniformHolds.size ?? 0 } : {}) } : {}) } } : {}),
           budgets: { contexts: contexts.size, subContexts: subCount, objects: objects.size, programs: programs.size,
             shaders: [...objects].filter((o) => o.type === 4).length, samplers: [...objects].filter((o) => o.type === 7).length,
             leases: leaseCount, shaderBytes, uniformBytes,
@@ -1747,7 +1798,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         if (activeJob) {
           recordOutcome(activeJob.sequence, failure(new StateFault("cancelled", "Renderer disposed."), {
             appliedCommands: activeJob.index, draws: activeJob.submission.draws, gpuComplete: false }));
-          work.failedSubmissions++; releaseJobAccess(activeJob); releaseNormalizedIndices(activeJob); releaseUniformHolds(activeJob);
+          work.failedSubmissions++; releaseJobAccess(activeJob); releaseNormalizedIndices(activeJob); releaseUniformHolds(activeJob); releaseImageHolds(activeJob);
           if (activeJob.sync) gl.deleteSync(activeJob.sync); activeJob = null;
         }
         for (const ctx of contexts.values()) for (const sub of ctx.subs.values()) disposeSub(sub);
@@ -1779,7 +1830,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
               command: null, submission: { draws: [], indices: 0 }, phase: "ready", pending: null, request: null,
               error: null, serial: 0, completedSerial: -1, hadFence: false, sync: null,
               normalizedIndices: [], normalizedBytes: 0, normalizationScratchBytes: 0,
-              ...(uniform ? { pendingUniformRanges: new Set(), uniformHolds: new Map() } : {}) };
+              ...(uniform ? { pendingUniformRanges: new Set(), uniformHolds: new Map() } : {}), ...(images ? { imageHolds: new Map(), imageSources: new Map() } : {}) };
             return success({ job: token, profile, byteLength: decoded.byteLength, commandCount: decoded.commands.length });
             } catch (error) {
               const rejected = failure(error); work.failedSubmissions++; recordOutcome(sequence, rejected); return rejected;

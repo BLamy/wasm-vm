@@ -1,0 +1,203 @@
+{
+  "schema": "original-image-boundary-inverse-v1",
+  "changes": {
+    "renderer/virgl-command/decoder.mjs": [
+      {
+        "before": "export const STANDARD_TEXTURE_PROFILE = \"virgl-standard-texture-commands-v1\";",
+        "after": "export const STANDARD_TEXTURE_PROFILE = \"virgl-standard-texture-commands-v1\";\nexport const STANDARD_IMAGE_PROFILE = \"virgl-standard-image-commands-v1\";"
+      },
+      {
+        "before": "textures = false) {",
+        "after": "textures = false, images = false) {"
+      },
+      {
+        "before": "this.textures = textures;",
+        "after": "this.textures = textures; this.images = images;"
+      },
+      {
+        "before": "p.zero(4, 2, \"Only level zero, layer zero sampler views are supported.\");",
+        "after": "let firstLevel = 0, lastLevel = 0;\n      if (p.images) {\n        p.zero(4, 1, \"Only layer zero sampler views are supported.\");\n        const levels = p.u(5); p.mask(levels, 0xffff);\n        firstLevel = levels & 255; lastLevel = levels >>> 8;\n        p.require(firstLevel <= lastLevel && lastLevel <= 14, \"unsupported-feature\", \"Sampler mip range exceeds selected image levels.\");\n      } else p.zero(4, 2, \"Only level zero, layer zero sampler views are supported.\");"
+      },
+      {
+        "before": "firstLevel: 0, lastLevel: 0, swizzle",
+        "after": "firstLevel, lastLevel, swizzle"
+      },
+      {
+        "before": "[2, 16, 67, 233].includes(format) && level === 0 && layers === 0",
+        "after": "[2, 16, 67, 233].includes(format) && (p.images ? level <= 14 && (format !== 16 || level === 0) : level === 0) && layers === 0"
+      },
+      {
+        "before": "\"Only required level zero, layer zero color or Z16 surfaces are supported.\");",
+        "after": "p.images ? \"Only qualified 2D image levels or level-zero Z16 surfaces are supported.\" : \"Only required level zero, layer zero color or Z16 surfaces are supported.\");"
+      },
+      {
+        "before": "function decode(bytes, provenance, standard, uniform = false, textures = false) {",
+        "after": "/** Original 2D image view/surface levels require explicit host selection. */\nexport function decodeStandardImageSubmission(bytes, provenance = {}) {\n  return decode(bytes, provenance, true, true, true, true);\n}\n\nfunction decode(bytes, provenance, standard, uniform = false, textures = false, images = false) {"
+      },
+      {
+        "before": "standard, uniform, textures);",
+        "after": "standard, uniform, textures, images);"
+      },
+      {
+        "before": "profile: textures ? STANDARD_TEXTURE_PROFILE",
+        "after": "profile: images ? STANDARD_IMAGE_PROFILE : textures ? STANDARD_TEXTURE_PROFILE"
+      }
+    ],
+    "renderer/virgl-command/resources.mjs": [
+      {
+        "before": "function createStore(options, uniform, bufferRoles = false, mipmaps = false) {",
+        "after": "/** Original image subresources have private, budgeted GPU view authority. */\nexport function createStandardImageResourceStore(options) { return createStore(options, true, true, true, true); }\n\nfunction createStore(options, uniform, bufferRoles = false, mipmaps = false, images = false) {"
+      },
+      {
+        "before": "const requested = limitsFor(config.limits);",
+        "after": "require(!images || typeof backend.copyTextureRange === \"function\", \"invalid-input\", \"Image views require native GPU copies.\");\n    const requested = limitsFor(config.limits);"
+      },
+      {
+        "before": "let nextGeneration = 1,",
+        "after": "const imageViews = new Map(), imageHolds = new Map(), liveImages = new Set(), revokedImages = new Set();\n    let nextGeneration = 1,"
+      },
+      {
+        "before": "const removeBacking = (res) => {",
+        "after": "const collectImage = entry => {\n      if (entry.references !== 0) return;\n      if (entry.allocationBytes) { host(\"destroy\", entry.storage); gpuBytes -= entry.allocationBytes; }\n      liveImages.delete(entry); entry.resource.references--; collect(entry.resource);\n    };\n    const imageLease = (lease, roles) => {\n      const entry = leases.get(lease);\n      require(entry && roles.includes(entry.role) && [\"texture\", \"mip-texture\", \"depth-texture\"].includes(entry.resource.meta.kind),\n        \"invalid-lease\", \"Expected a retained original image lease.\");\n      require(entry.context.active && contexts.get(entry.context.id) === entry.context, \"stale-context\", \"Image lease context is stale.\");\n      return entry;\n    };\n    const removeBacking = (res) => {"
+      },
+      {
+        "before": "...(role === \"uniform\" ? { context: ctx } : {})",
+        "after": "...(role === \"uniform\" || images && [\"view\", \"surface\", \"depth-surface\"].includes(role) ? { context: ctx } : {})"
+      },
+      {
+        "before": "...(uniform ? { uniformRanges: uniformRanges.size } : {}) })",
+        "after": "...(uniform ? { uniformRanges: uniformRanges.size } : {}), ...(images ? { imageViews: liveImages.size, imageHolds: imageHolds.size } : {}) })"
+      },
+      {
+        "before": "uniformRanges.clear();\n          for (const [token, entry] of tickets)",
+        "after": "uniformRanges.clear();\n          if (images) {\n            for (const token of [...imageViews.keys(), ...imageHolds.keys()]) revokedImages.add(token);\n            imageViews.clear();\n            for (const entry of liveImages) entry.references = 0;\n            for (const entry of imageHolds.values()) if (entry.source) entry.resource.references--;\n            imageHolds.clear();\n            for (const entry of [...liveImages]) { try { collectImage(entry); } catch (error) { firstError ??= error; } }\n          }\n          for (const [token, entry] of tickets)"
+      },
+      {
+        "before": "    return success({ store: Object.freeze(store), bindings, asyncAccess, ...(uniform ? { uniformAccess } : {}) });",
+        "after": "    const imageEntry = token => {\n      const entry = imageViews.get(token);\n      require(entry, \"invalid-view\", \"Unknown, released or foreign native image view.\");\n      imageLease(entry.lease, [\"view\"]); return entry;\n    };\n    const imageAccess = images ? Object.freeze({\n      capture: operation((lease, firstLevel, lastLevel) => {\n        const leaseEntry = imageLease(lease, [\"view\"]), res = leaseEntry.resource, meta = res.meta;\n        uint(firstLevel, \"firstLevel\"); uint(lastLevel, \"lastLevel\");\n        require(firstLevel <= lastLevel && lastLevel <= meta.lastLevel, \"out-of-bounds\", \"Original view range exceeds retained image levels.\");\n        require(liveImages.size < limits.leases, \"limit-exceeded\", \"Live/retained native image view limit exceeded.\");\n        const width = Math.max(1, Math.floor(meta.width / 2 ** firstLevel)), height = Math.max(1, Math.floor(meta.height / 2 ** firstLevel));\n        const levels = []; let byteLength = 0;\n        for (let level = 0, w = width, h = height; level <= lastLevel - firstLevel; level++) {\n          const bytes = checkedProduct(checkedProduct(w, h, limits.resourceBytes, \"View plane is too large.\"), 4, limits.resourceBytes, \"View plane is too large.\");\n          require(bytes <= limits.resourceBytes - byteLength, \"limit-exceeded\", \"Complete view mip chain exceeds resource byte limit.\");\n          levels.push({ level, width: w, height: h, byteLength: bytes }); byteLength += bytes;\n          w = Math.max(1, Math.floor(w / 2)); h = Math.max(1, Math.floor(h / 2));\n        }\n        const metadata = freeze({ ...meta, kind: lastLevel > firstLevel ? \"mip-texture\" : \"texture\", width, height,\n          lastLevel: lastLevel - firstLevel, byteLength, levels });\n        const allocationBytes = firstLevel === 0 && lastLevel === meta.lastLevel ? 0 : byteLength;\n        require(allocationBytes <= limits.gpuBytes - gpuBytes, \"limit-exceeded\", \"Native image view byte budget exceeded.\");\n        const storage = allocationBytes ? host(\"allocate\", metadata) : res.storage;\n        require(storage && typeof storage === \"object\", \"backend-error\", \"Native image view allocation returned no storage.\");\n        const token = Object.freeze({}), entry = { resource: res, lease, metadata, firstLevel, lastLevel, storage, allocationBytes, references: 1 };\n        gpuBytes += allocationBytes; res.references++; liveImages.add(entry); imageViews.set(token, entry);\n        return success({ token, metadata, generation: res.generation });\n      }),\n      resolve: operation(token => { const entry = imageEntry(token); return success({ storage: entry.storage, metadata: entry.metadata, generation: entry.resource.generation }); }),\n      refresh: operation(token => {\n        const entry = imageEntry(token);\n        if (entry.allocationBytes) host(\"copyTextureRange\", entry.resource.storage, entry.storage, entry.metadata, entry.firstLevel);\n        return success();\n      }),\n      hold: operation(token => {\n        const entry = imageEntry(token);\n        require(imageHolds.size < limits.tickets, \"limit-exceeded\", \"Image completion-hold count exceeded.\");\n        const hold = Object.freeze({}); entry.references++; imageHolds.set(hold, entry); return success({ token: hold });\n      }),\n      holdStorage: operation(lease => {\n        const entry = imageLease(lease, [\"surface\", \"depth-surface\"]);\n        require(imageHolds.size < limits.tickets, \"limit-exceeded\", \"Image completion-hold count exceeded.\");\n        const token = Object.freeze({}); entry.resource.references++;\n        imageHolds.set(token, { resource: entry.resource, source: true }); return success({ token, generation: entry.resource.generation });\n      }),\n      release(token) {\n        return result(() => {\n          if (disposed) { require(revokedImages.delete(token), \"invalid-view\", \"Unknown or already released revoked image token.\"); return success(); }\n          const entry = imageViews.get(token) ?? imageHolds.get(token);\n          require(entry, \"invalid-view\", \"Unknown, released or foreign native image token.\");\n          imageViews.delete(token); imageHolds.delete(token);\n          if (entry.source) { entry.resource.references--; collect(entry.resource); }\n          else { entry.references--; collectImage(entry); }\n          return success();\n        });\n      },\n      inspect() { return success({ disposed, views: imageViews.size, allocations: liveImages.size, holds: imageHolds.size }); },\n    }) : null;\n    return success({ store: Object.freeze(store), bindings, asyncAccess, ...(uniform ? { uniformAccess } : {}), ...(images ? { imageAccess } : {}) });"
+      },
+      {
+        "before": "        upload(storage, meta, layout, bytes) {",
+        "after": "        copyTextureRange(source, destination, meta, firstLevel) {\n          check();\n          const previousRead = gl.getParameter(gl.READ_FRAMEBUFFER_BINDING), previousDraw = gl.getParameter(gl.DRAW_FRAMEBUFFER_BINDING);\n          const scissor = gl.isEnabled(gl.SCISSOR_TEST);\n          let destinationFramebuffer = null, attached = false;\n          try {\n            destinationFramebuffer = gl.createFramebuffer();\n            require(destinationFramebuffer, \"backend-error\", \"Image copy framebuffer allocation failed.\");\n            gl.disable(gl.SCISSOR_TEST);\n            gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, destinationFramebuffer); gl.drawBuffers([gl.COLOR_ATTACHMENT0]);\n            gl.bindFramebuffer(gl.READ_FRAMEBUFFER, framebuffer); gl.readBuffer(gl.COLOR_ATTACHMENT0); attached = true;\n            for (const level of meta.levels) {\n              gl.framebufferTexture2D(gl.READ_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, source.texture, firstLevel + level.level);\n              gl.framebufferTexture2D(gl.DRAW_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, destination.texture, level.level);\n              require(gl.checkFramebufferStatus(gl.READ_FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE &&\n                gl.checkFramebufferStatus(gl.DRAW_FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE,\n              \"backend-error\", \"Image copy framebuffer is incomplete.\");\n              // Matching normalized formats and identical extents preserve every\n              // original texel, including RGB10_A2, through a native GPU blit.\n              gl.blitFramebuffer(0, 0, level.width, level.height, 0, 0, level.width, level.height, gl.COLOR_BUFFER_BIT, gl.NEAREST); check();\n            }\n          } finally {\n            if (attached) gl.framebufferTexture2D(gl.READ_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, null, 0);\n            gl.bindFramebuffer(gl.READ_FRAMEBUFFER, previousRead); gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, previousDraw);\n            if (destinationFramebuffer) gl.deleteFramebuffer(destinationFramebuffer);\n            if (scissor) gl.enable(gl.SCISSOR_TEST); else gl.disable(gl.SCISSOR_TEST);\n          }\n        },\n        upload(storage, meta, layout, bytes) {"
+      }
+    ],
+    "renderer/virgl-command/state.mjs": [
+      {
+        "before": "decodeStandardUniformSubmission, vertexFormat",
+        "after": "decodeStandardUniformSubmission, decodeStandardImageSubmission, vertexFormat"
+      },
+      {
+        "before": "export const STANDARD_BUFFER_ASYNC_PROFILE = \"virgl-standard-buffer-async-jobs-v1\";",
+        "after": "export const STANDARD_BUFFER_ASYNC_PROFILE = \"virgl-standard-buffer-async-jobs-v1\";\nexport const STANDARD_IMAGE_ASYNC_PROFILE = \"virgl-standard-image-async-jobs-v1\";"
+      },
+      {
+        "before": "/** Host capabilities are trusted and non-reentrant. */",
+        "after": "/** Owned original 2D sampler ranges and framebuffer mip surfaces. */\nexport function createVirglStandardImageAsyncRenderer(options) {\n  return createRenderer(options, true, true, true, true, true, true);\n}\n\n/** Host capabilities are trusted and non-reentrant. */"
+      },
+      {
+        "before": "bufferRoles = false) {",
+        "after": "bufferRoles = false, images = false) {"
+      },
+      {
+        "before": "...(uniform ? [\"uniformAccess\"] : [])],",
+        "after": "...(uniform ? [\"uniformAccess\"] : []), ...(images ? [\"imageAccess\"] : [])],"
+      },
+      {
+        "before": "...(uniform ? [\"uniformAccess\"] : [])]);",
+        "after": "...(uniform ? [\"uniformAccess\"] : []), ...(images ? [\"imageAccess\"] : [])]);"
+      },
+      {
+        "before": "const profile = bufferRoles ? STANDARD_BUFFER_ASYNC_PROFILE",
+        "after": "const imageAccess = images ? config.imageAccess : null;\n    require(!images || imageAccess && [\"capture\", \"resolve\", \"refresh\", \"hold\", \"holdStorage\", \"release\", \"inspect\"].every(name => typeof imageAccess[name] === \"function\"),\n      \"invalid-input\", \"Original native image range authority is required.\");\n    const profile = images ? STANDARD_IMAGE_ASYNC_PROFILE : bufferRoles ? STANDARD_BUFFER_ASYNC_PROFILE"
+      },
+      {
+        "before": "const decodeCommands = uniform ?",
+        "after": "const decodeCommands = images ? decodeStandardImageSubmission : uniform ?"
+      },
+      {
+        "before": "if (object.lease) release(object.lease);\n      if (object.shader)",
+        "after": "if (object.imageRange) unwrap(imageAccess.release(object.imageRange));\n      if (object.lease) release(object.lease);\n      if (object.shader)"
+      },
+      {
+        "before": "depth ? \"depth-texture\" : \"texture\"));",
+        "after": "depth ? \"depth-texture\" : images ? [\"texture\", \"mip-texture\"] : \"texture\"));"
+      },
+      {
+        "before": "require(object.metadata.format === fields.format, \"incompatible-resource\", \"View format and storage format differ.\");",
+        "after": "require(object.metadata.format === fields.format, \"incompatible-resource\", \"View format and storage format differ.\");\n          if (images && !depth) {\n            if (type === 6) object.imageRange = unwrap(imageAccess.capture(object.lease, fields.firstLevel, fields.lastLevel)).token;\n            else {\n              require(fields.level <= object.metadata.lastLevel, \"out-of-bounds\", \"Surface mip level exceeds retained image levels.\");\n              const level = object.metadata.levels?.[fields.level] ?? object.metadata;\n              object.dimensions = Object.freeze({ width: level.width, height: level.height, level: fields.level });\n            }\n          }"
+      },
+      {
+        "before": "} catch (error) {\n        if (object.lease)",
+        "after": "} catch (error) {\n        if (object.imageRange) unwrap(imageAccess.release(object.imageRange));\n        if (object.lease)"
+      },
+      {
+        "before": "firstLevel: 0, lastLevel: 0, firstLayer: 0, lastLayer: 0, origin:",
+        "after": "firstLevel: images ? fields?.firstLevel ?? 0 : 0, lastLevel: images ? fields?.lastLevel ?? 0 : 0, firstLayer: 0, lastLayer: 0, origin:"
+      },
+      {
+        "before": "surface ? resolve(surface.lease).storage.texture : null, 0);",
+        "after": "surface ? resolve(surface.lease).storage.texture : null, images ? surface?.fields.level ?? 0 : 0);"
+      },
+      {
+        "before": "gl.activeTexture(gl.TEXTURE0 + unit); gl.bindTexture(gl.TEXTURE_2D, view ? resolve(view.lease).storage.texture : null);",
+        "after": "let image = null;\n        if (images && view) {\n          if (plan && program.samplers.some(entry => entry.stage === stage && entry.index === slot)) unwrap(imageAccess.refresh(view.imageRange));\n          image = unwrap(imageAccess.resolve(view.imageRange));\n        }\n        gl.activeTexture(gl.TEXTURE0 + unit); gl.bindTexture(gl.TEXTURE_2D, view ? images ? image.storage.texture : resolve(view.lease).storage.texture : null);\n        if (images && image) {\n          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_BASE_LEVEL, 0); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAX_LEVEL, image.metadata.lastLevel);\n        }"
+      },
+      {
+        "before": "const fields = command.fields;\n      // VirGL1.3",
+        "after": "const fields = command.fields;\n      require(!images || job, \"unsupported-draw\", \"Original image draws require an owned completion job.\");\n      // VirGL1.3"
+      },
+      {
+        "before": "        if (uniform) {\n          for (const range of plan.uniformRanges)",
+        "after": "        if (images) {\n          for (const sampler of plan.program.samplers) {\n            const token = sub.views[sampler.stage][sampler.index].imageRange;\n            if (!job.imageHolds.has(token)) job.imageHolds.set(token, unwrap(imageAccess.hold(token)).token);\n          }\n          holdImageSurfaces(job, sub);\n        }\n        if (uniform) {\n          for (const range of plan.uniformRanges)"
+      },
+      {
+        "before": "width: surface.metadata.width, height: surface.metadata.height,",
+        "after": "width: images ? sub.surfaces[0].dimensions.width : surface.metadata.width, height: images ? sub.surfaces[0].dimensions.height : surface.metadata.height,\n          ...(images ? { level: sub.surfaces[0].fields.level } : {}),"
+      },
+      {
+        "before": "const apply = (ctx, command, submission) => {",
+        "after": "const apply = (ctx, command, submission, job = null) => {"
+      },
+      {
+        "before": "require(surface.metadata.kind === \"texture\", \"incompatible-resource\",",
+        "after": "require(images ? [\"texture\", \"mip-texture\"].includes(surface.metadata.kind) : surface.metadata.kind === \"texture\", \"incompatible-resource\","
+      },
+      {
+        "before": "(surface.metadata.width === depthSurface.metadata.width && surface.metadata.height === depthSurface.metadata.height)",
+        "after": "((images ? surface.dimensions.width : surface.metadata.width) === depthSurface.metadata.width && (images ? surface.dimensions.height : surface.metadata.height) === depthSurface.metadata.height)"
+      },
+      {
+        "before": "require(!(fields.buffers & 4) || sub.surfaces[0],",
+        "after": "require(!images || job, \"unsupported-clear\", \"Original image clears require an owned completion job.\");\n          if (images) holdImageSurfaces(job, sub);\n          require(!(fields.buffers & 4) || sub.surfaces[0],"
+      },
+      {
+        "before": "const finishJob = (job, gpuComplete) => {",
+        "after": "const holdImageSurfaces = (job, sub) => {\n      for (const surface of [...sub.surfaces, sub.depthSurface]) if (surface && !job.imageSources.has(surface.resourceGeneration)) {\n        const held = unwrap(imageAccess.holdStorage(surface.lease)); job.imageSources.set(held.generation, held.token);\n      }\n    };\n    const releaseImageHolds = job => {\n      if (!images) return;\n      for (const token of [...job.imageHolds.values(), ...job.imageSources.values()]) unwrap(imageAccess.release(token));\n      job.imageHolds.clear(); job.imageSources.clear();\n    };\n    const finishJob = (job, gpuComplete) => {"
+      },
+      {
+        "before": "releaseNormalizedIndices(job); releaseUniformHolds(job);",
+        "after": "releaseNormalizedIndices(job); releaseUniformHolds(job); releaseImageHolds(job);"
+      },
+      {
+        "before": "apply(job.ctx, job.command, job.submission);",
+        "after": "apply(job.ctx, job.command, job.submission, job);"
+      },
+      {
+        "before": "releaseNormalizedIndices(activeJob); releaseUniformHolds(activeJob);",
+        "after": "releaseNormalizedIndices(activeJob); releaseUniformHolds(activeJob); releaseImageHolds(activeJob);"
+      },
+      {
+        "before": "...(uniform ? { pendingUniformRanges: new Set(), uniformHolds: new Map() } : {}) };",
+        "after": "...(uniform ? { pendingUniformRanges: new Set(), uniformHolds: new Map() } : {}), ...(images ? { imageHolds: new Map(), imageSources: new Map() } : {}) };"
+      },
+      {
+        "before": "...(uniform ? { uniformPending:",
+        "after": "...(images ? { imageHolds: activeJob?.imageHolds.size ?? 0, imageSources: activeJob?.imageSources.size ?? 0 } : {}),\n            ...(uniform ? { uniformPending:"
+      },
+      {
+        "before": "        require(resolve(view.lease).storage.texture !== surface.storage.texture,\n          \"framebuffer-feedback\", \"A draw cannot sample its own framebuffer texture.\");",
+        "after": "        const overlap = resolve(view.lease).storage.texture === surface.storage.texture;\n        const surfaceLevel = sub.surfaces[0].fields.level;\n        require(!overlap || images && (surfaceLevel < view.fields.firstLevel || surfaceLevel > view.fields.lastLevel),\n          \"framebuffer-feedback\", \"A draw cannot sample its own framebuffer texture.\");"
+      }
+    ]
+  }
+}

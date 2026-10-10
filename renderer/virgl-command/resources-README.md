@@ -353,3 +353,23 @@ FBO/PBO level and existing fences/identity retirement. Packed X-alpha initialize
 each native level. Historical factories retain their previous admissions and
 metadata/layout shapes. This storage facet grants no full/subrange sampler view,
 complete API, production negotiation or actual guest rendering by itself.
+
+The explicit `createStandardImageResourceStore` host facet adds original 2D view
+ranges and surface planes to the verified multilevel store. Its separate
+`imageAccess` capability owns opaque view and completion tokens. A restricted
+range has a fully charged private immutable GPU chain, refreshed before each
+active draw by identical-format, unscaled native framebuffer blits. A complete
+range may alias its retained source. Public token retirement and allocation
+retirement are distinct: submitted holds keep private/source storage charged
+through the job fence. Caller scissor and read/draw FBO state are restored; no CPU
+image feeds native output. Old factories expose no image capability.
+
+`decodeStandardImageSubmission` and `createVirglStandardImageAsyncRenderer`
+select original view first/last and surface level words. Both shader stages can
+retain different ranges of one source. Logical feedback rejects an overlapping
+original framebuffer plane even when a view uses a private copy. Nonoverlapping
+original levels can render into another plane. Z16 remains level zero; matching
+depth dimensions are checked against the selected color plane. Native base/max
+state restores explicitly, and views/surfaces retain native allocations until
+completion, cancellation or disposal. This isolated host API does not qualify
+production capsets, a complete guest API or the production worker/scanout path.

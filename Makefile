@@ -2233,3 +2233,7 @@ verify-E6-T11d20:
 .PHONY: verify-E6-T11d20-adversarial
 verify-E6-T11d20-adversarial:
 	bash tools/verify-virgl-standard-texture-storage-adversarial.sh
+
+.PHONY: verify-E6-T11d21
+verify-E6-T11d21:
+	bash tools/verify-virgl-standard-image-subresources.sh
