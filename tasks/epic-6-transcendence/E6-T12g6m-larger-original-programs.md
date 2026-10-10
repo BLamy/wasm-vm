@@ -4,7 +4,7 @@ epic: 6
 title: Prove the two larger original compositor shader programs
 priority: 525.02701059
 status: pending
-depends_on: [E6-T12g6m3c]
+depends_on: [E6-T12g6m4a]
 estimate: S
 risk: high
 capstone: false
@@ -61,3 +61,11 @@ The exact-bank consumer E6-T12g6m3a is independently verified. Add ordered S/hig
 ### 2026-10-05 — worker — paired interface prerequisite discovery
 
 The real owned stage producer E6-T12g6m3b is independently verified. Flat, builtin-coordinate and discard interfaces still require the actual full paired compiler result, which the ordinary pair cannot produce for formerly rejected exact-guarded stages. Add one ordered S/high E6-T12g6m3c private paired transaction; preserve the complete checked fragment interface and unchanged shared renderer comparisons. Full original92cb/c5806d5f bodies still reject at geometry-dependent POW even with complete observed banks; neither contains a loop. No observed bank or diagnostic grants new range authority. The full-source acceptance above remains unchanged.
+
+### 2026-10-05 — worker — activation
+
+Private paired interface prerequisite E6-T12g6m3c is independently verified at `0e20a2dade4cd7b7453b87942edb5ff258612b68` with its 17-member critic seal `9fe71788c2a9269209a05504010e84fc68477a34fbe5faccefe346f30cb455bc`. This task now targets the two unchanged full original pairs under its existing high-risk acceptance. The verified prerequisite alone grants no geometry-dependent POW domain or live guest graphics claim.
+
+### 2026-10-05 — worker — reciprocal prerequisite discovery
+
+The unchanged c5806d5f fragment uses `RCP TEMP[48].x, CONST[30].xxxx` at pc34 as the exponent of two subsequent `POW`s. The complete observed exact bank fixes `CONST[30].x` at binary32 `2.0`, but the compiler's ordinary reciprocal produces no static word fact, so a sound later domain proof cannot even identify its exact `0.5` exponent. Add one ordered S/high E6-T12g6m4a leaf to materialize only exact power-of-two reciprocal results in the private exact-bank retry, with literal matching raw/shadow emission and real physical evidence. This does not authorize either original geometry-dependent base or the full pair; the acceptance above is unchanged.

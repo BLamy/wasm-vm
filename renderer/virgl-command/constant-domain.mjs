@@ -208,9 +208,9 @@ export function parseConstantDomain(metadata, expectedStage) {
         policy.source === "fully-known-authorized-normal-or-zero-post-modifier" && policy.rounding === "binary32-nearest-ties-to-even-integer" &&
         policy.result === "normal-or-zero-only" && policy.emission === "literal-word-and-matching-shadow" &&
         policy.authority === "exact-emitted-producer-version-only" && policy.storage === "unused-third-operand-four-word-cache", "Unknown known arithmetic policy.");
-      const operations = array(policy.operations, 2);
-      require(operations.length > 0 && operations.every((op, i) => ["ADD", "MUL"].includes(op) &&
-        (i === 0 || operations[i - 1] === "ADD" && op === "MUL")), "Invalid known arithmetic operation set.");
+      const operations = array(policy.operations, 3);
+      require(operations.length > 0 && operations.every((op, i) => ["ADD", "MUL", "RCP"].includes(op) &&
+        (i === 0 || operations[i - 1] < op)), "Invalid known arithmetic operation set.");
       const base = { ...value, profile: value.knownArithmeticBaseProfile };
       delete base.knownArithmeticBaseProfile; delete base.knownArithmeticContract;
       const checked = parseConstantDomain(base, expectedStage);
