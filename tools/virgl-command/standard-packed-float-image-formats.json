@@ -1,0 +1,22 @@
+{
+  "schema": "original-r11g11b10-layout-v1",
+  "format": 124,
+  "name": "R11G11B10_FLOAT",
+  "originalPixelBytes": 4,
+  "nativePixelBytes": 4,
+  "nativeReadPixelBytes": 16,
+  "implicitAlpha": 1,
+  "fields": [
+    {"lane": "R", "offset": 0, "width": 11, "exponentBits": 5, "mantissaBits": 6, "exponentBias": 15},
+    {"lane": "G", "offset": 11, "width": 11, "exponentBits": 5, "mantissaBits": 6, "exponentBias": 15},
+    {"lane": "B", "offset": 22, "width": 10, "exponentBits": 5, "mantissaBits": 5, "exponentBias": 15}
+  ],
+  "native": {"internal": "R11F_G11F_B10F", "upload": "RGB", "type": "UNSIGNED_INT_10F_11F_11F_REV", "read": "RGBA", "readType": "FLOAT"},
+  "primarySources": [
+    {"path": "renderer/virgl-shader/vendor/src/virgl_hw.h", "sha256": "191ca5cea527949a29e9753b1e31d550f2fed922895d78dabc5c5c3585aa2ff7"},
+    {"path": "tools/virgl-command/standard-float-image-mesa-formats.yaml", "sha256": "f0fef33544456468def10d5dffc72a61e8b0e7acc599b700fc65366e6f495a10"}
+  ],
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "productionDrawAuthority": false
+}
