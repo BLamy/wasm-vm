@@ -2025,3 +2025,7 @@ verify-E6-T12g6i:
 .PHONY: verify-E6-T12g6j1
 verify-E6-T12g6j1:
 	bash tools/verify-virgl-sine.sh
+
+.PHONY: verify-E6-T12g6j2
+verify-E6-T12g6j2:
+	bash tools/verify-virgl-power.sh

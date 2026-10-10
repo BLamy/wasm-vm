@@ -1,0 +1,24 @@
+{
+  "schema": "virgl-power-worker-seal-v1",
+  "task": "E6-T12g6j2",
+  "sourceHead": "6fcadd1eaa08f72b3fd7d301ce1df88fca452b1d",
+  "base": "ff4692e52a3ea52ee75368358b46fed1bd3fce9b",
+  "records": 147,
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 46410389,
+    "sha256": "5630a4ff3fcc271a812096b602d04c73b31bb3691fc6f39e1b6b9a653f02f3a2"
+  },
+  "recordIndex": {
+    "path": "records.json",
+    "bytes": 25443,
+    "sha256": "3043e4458999f7a0f6024348ea2e2e18251c505c1bdfbfb6da43bcedb30e3363"
+  },
+  "hotReceiptSha256": "e02ad44fc5473da72b8f99308c3dd7f5cfe30d5806039a715272f92cb2c42f0f",
+  "coldReportSha256": "99ab9a9128b1f7b37809d6ba06e1fbc35e634fabb6640be1decb38312521f9e7",
+  "coldReceiptSha256": "9b48f5d7434576de3fe10bce24990ace3e94a41a4b661939a2317785fdb95251",
+  "checkedWords": 37152,
+  "checkedPixels": 65280,
+  "productionNegotiation": false,
+  "guestExecution": false
+}

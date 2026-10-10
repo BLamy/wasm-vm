@@ -39,7 +39,7 @@ export function getCases(){
  add('SIN-unused-special','fragment',program([imm(2,[bits(2),0x7fc00001,1,0xff800000]),'SIN OUT[0], IMM[2]']),true,true);
  add('SIN-no-result-F2I-facts','fragment',program(['SIN TEMP[0], IMM[0]','F2I TEMP[1], TEMP[0]','I2F OUT[0], TEMP[1]']),false);
  for(const producer of ['SIN','EX2','LG2'])add('SIN-no-computed-facts-'+producer,'fragment',program([`${producer} TEMP[0], IMM[0]`,'SIN OUT[0], TEMP[0]']),false);
- for(const spelling of ['SIN_SAT','SIN_PRECISE','COS','POW'])add('SIN-unsupported-'+spelling,'fragment',program([`${spelling} TEMP[0], IMM[0]${spelling==='POW'?', IMM[1]':''}`,'MOV OUT[0], IMM[0]']),false);
+ for(const spelling of ['SIN_SAT','SIN_PRECISE','COS','POW_PRECISE'])add('SIN-unsupported-'+spelling,'fragment',program([`${spelling} TEMP[0], IMM[0]${spelling==='POW_PRECISE'?', IMM[1]':''}`,'MOV OUT[0], IMM[0]']),false);
  for(const bad of ['SIN TEMP[5], IMM[0]','SIN TEMP[0], CONST[46]','SIN TEMP[0], |IMM[0]|','SIN TEMP[0], IMM[0].xy','SIN CONST[0], IMM[0]','SIN TEMP[0], IMM[0], IMM[1]'])add('malformed-'+bad,'fragment',program([bad,'MOV OUT[0], IMM[0]']),false);
  for(const w of [bits(8)+1,bits(-8)+1,bits(9),bits(-9),1,0x80000001,0x007fffff,0x7f800000,0xff800000,0x7fc00001])add('SIN-out-of-domain-'+w,'fragment',program([imm(2,Array(4).fill(w)),'SIN TEMP[0], IMM[2]','MOV OUT[0], IMM[0]']),false);
  add('SIN-neg-out-of-domain','fragment',program([imm(2,Array(4).fill(bits(-9))),'SIN OUT[0], -IMM[2]']),false);
