@@ -3,7 +3,7 @@ id: E6-T11d24
 epic: 6
 title: Execute original texture operations through retained image views
 priority: 525.027039000366
-status: in-progress
+status: implemented
 depends_on: [E6-T11d23]
 estimate: S
 risk: high
@@ -55,3 +55,25 @@ The immutable served matrix executed all970 original cases and1940 full frames o
 ### 2026-10-10 — worker — historical browser harness closure repair
 
 At frozen runtime/harness `96c2a3bbb4c5c4957c35990ff1a3cf0a83f4204c`, the complete native970/1940 matrix, all three50-frame schedule boundaries, all three physical controls and independent143744-pixel/300488-texel audit pass. The affected historical uniform browser runner then fails its zero-error check because its old explicit HTTP closure omits `renderer/virgl-command/color-images.mjs`, imported by the current shared resource engine. Add that exact unchanged source to its served/snapshot list. Runtime and numerical oracles stay identical. The first attempt is preserved; rerun the complete local selected submission at the final repaired harness head and perform the one final pristine clone there. No earlier failed overall submission is claimed as final evidence.
+
+### 2026-10-10 — worker — original retained-image texture consumer implemented
+
+Frozen final runtime/harness head `765e9d967258e44def61b65e595bcfd92b192367` (product first frozen at `96c2a3bbb4c5c4957c35990ff1a3cf0a83f4204c`; the final five-line repair adds only the unchanged color source to an inherited browser serving list plus its task log). Complete final selected submission and one pristine scrubbed exact-head clone:
+
+```sh
+VIRGL_TEXTURE_OPERATIONS_EVIDENCE_DIR=target/evidence/virgl-standard-texture-operations-final-complete make verify-E6-T11d24
+python3 tools/virgl-command/standard-texture-operations-cold.py --output target/evidence/virgl-standard-texture-operations-cold-final
+python3 tools/virgl-command/standard-texture-operations-seal.py target/evidence/virgl-standard-texture-operations-final-complete target/evidence/virgl-standard-texture-operations-cold-final evidence/virgl-standard-texture-operations/worker
+```
+
+Each final run executes970 complete original programs through the actual fixed16MiB C/Wasm bridge and selected async renderer on headed M4 Metal, with1940 first/warm full8×8 frames. Original TEX/TXL/TXF/TXD/fragmentTXB/TXQ, vertex/fragment sparse slots0/3/15, nearest/linear UNORM/SNORM/sRGB, full/truncated NPOT chains, arbitrary/all-constant swizzles, masks/query-only/unused declarations, two independently retained slot3/15 query ranges and the maximum local level14 are recorded. Complete original attributes/backing/planes/pairs/selectors/packets and native planes, queryINT5124/count1/actual integer values, program state, outputs and consumed physical fences stay in custody. Queries bind captured local view counts; dimensions remain unswizzled. Link precedes view binding; warm draws reuse programs. No CPU shader/texture shadow or source alteration control.
+
+Three independent varied native schedules each run50 original frames plus four full retired-output captures. They exercise context/subcontext/cache restore, original3-level views after unequal11×7/two-level public-ID reuse, old targets after unequal9×3 replacements, real later-task fence completion/cancellation/disposal, native-only mip mutation with byte-identical backing, same-source output rejection and native query type/size/location/component-budget/write failure. Sixteen combinations per schedule compose a native level query with raw slot0/12 banks, buffered/inline slot-zero selection, signed/unsigned/packed/normalized vertex formats and constant/strided fetch; whole native UBO/attribute buffers and direct raw buffer reads are recorded. All native objects retire once and every terminal owner/renderer byte budget is zero.
+
+Strict34-record/49-prediction own-data metadata proof covers invalid associations/types/names/indices, duplicate/order/hole/size/unknown fields, wrong-stage/selectors/refusals, hostile getters/proxies and caller mutation/deep freeze. Native original-image/query selection controls (real upload R/G swap, real uniform1i level+1, real TEXTURE_BASE_LEVEL1) each consume a physical GPU fence, fail the unchanged original-input pixel oracle, and clean up with zero browser errors. Independent Python reconstruction uses original text/immediates, full input planes/attributes/raw bank words and query ranges, never emitted GLSL or worker expected output. Per-run totals143744 healthy pixels and300488 native selected texels include every complete output, composition and retired original target; three wrong-state controls fail independently.
+
+The selected transfer factory preserves raw buffer bytes beside existing native color conversion, fixing the actual indexed/constant composition boundary without changing historical backend selection. Three runtime files have15 exact reversible migrations back to verified D23. Complete nested V8 regions (36 script records/379 added-line samples) and all source/served/generated digests remain authoritative. Affected historical async, raw uniform/typed binding and full byte-color renderer hardware gates pass. Actual compiler/source pins remain unchanged; authenticate every D22 worker30256/verifier1824 and D23 worker5814/verifier1467 member and carry unchanged original compiler/wire/cache/format/image numerical evidence by exact dependency/digest. No Rust/guest/demo/capset is changed.
+
+Sealed complete hot/cold custody at `evidence/virgl-standard-texture-operations/worker/`: 102566 indexed members, 71949067 archive bytes. Archive SHA256 `f6be8a4330a501c058b539c0e0706ddf1e4d929dc518df7dd1cc49ab91326c81`; index `16aec9971cee75c0ac705ec38cced2d79f95d2c0e9d19f0413ab73146b155514`; hot receipt `72b8b7cee61c1f0bfb920adb765245a1d80ae3c3537a0a598fff3855dd4a6119`; cold receipt `50dade7c0e763e2cef9df095474a1a72a2415d5b570194eb0c859890a3a9933e`; cold report `d40c00cdaba111be746b11b64c257edf431b45d83a0dc2540ad40171805504fd`. The pristine scrubbed clone `/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-texture-operations-cold-q7xjabtk/wasm-vm` stays at the exact frozen head with empty pre/post tracked status. `target/evidence/virgl-standard-texture-operations-final-complete/` and `target/evidence/virgl-standard-texture-operations-cold-final/` retain the full local bodies; the committed seals contain the complete recording, not summaries.
+
+The recording demonstrates only this explicitly host-selected original retained2D/FLOAT image consumer and exact raw buffer transfer selection. A fresh critic must judge it. Complete API/caps, production GPU worker/scanout, actual guest Mesa/desktop rendering, live deployment and performance/MIPS remain later acceptance gates.
