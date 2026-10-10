@@ -1,0 +1,256 @@
+{
+  "schema": "virgl-exponent-logarithm-critic-seal-v1",
+  "task": "E6-T12g6i",
+  "verdict": "verified",
+  "sourceHead": "a3c2b48995cc6165f4a2844497671273d7305029",
+  "workerSubmission": "7757338d75aa59fa9ec34f913db629e09ffa1e35",
+  "base": "2aa21751921bb047f8bb6b58432d35c093a76b62",
+  "records": 81,
+  "allMembersAuthenticated": true,
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 5715510,
+    "sha256": "5ed88a420b97fec61922242d12a7c0a5543810929200e9cfe438f70f44eec262"
+  },
+  "recordIndex": {
+    "path": "records.json",
+    "bytes": 13269,
+    "sha256": "b9e0acedf515989e8e18d8e3b7b048aa59f6ab64c550348e23bc2dd01c5f7613"
+  },
+  "verdictRecord": {
+    "path": "verdict.json",
+    "bytes": 27429,
+    "sha256": "114472d86e1922ec0f4b6cc28e4e5fcc86d92dbc1acb4ab923f74096a63c3e85"
+  },
+  "predictions": {
+    "held": 11,
+    "failed": 0,
+    "needsEvidence": 0
+  },
+  "workerDependencies": {
+    "manifestSha256": "70f8caea9625dff7e6a2454b62c18323248a4fb0003b49abd256366902f376cb",
+    "archiveSha256": "2a64c4c3cfc3abdad5d624a7e1132d867afc6332889576ae5715993dc8866afe",
+    "indexSha256": "b37eb8cf128dee208580dbcff376af6675d6aafb921b48ac80380c57fb1a2fb9",
+    "members": 115,
+    "authenticatedSources": 667
+  },
+  "promoted": [
+    {
+      "path": "renderer/virgl-shader/tests/exponent-logarithm-regressions.mjs",
+      "testSha256": "53d202c49570acab0e5811165b568b346e0382e8b577f0e6342a16391a6df7d6",
+      "archiveMember": "promoted/exponent-logarithm-regressions.mjs",
+      "report": "independent-regressions.json",
+      "reportSha256": "742e96602d7dcdc1c2339b81729e8d1ddfc4cd99e12aed080ee3a73d88ebd33c",
+      "cases": 1022
+    },
+    {
+      "path": "renderer/virgl-shader/tests/exponent-logarithm-capture-regressions.py",
+      "testSha256": "59976dc30501ba5a42f4871d12fc75ce7bca82cc46715741e79c0f08d5f28442",
+      "archiveMember": "promoted/exponent-logarithm-capture-regressions.py",
+      "report": "fourth-source-guards.json",
+      "reportSha256": "245f74562c492e5d68b11f6a1373a5a2357b2a95ee93edc63485ab023003159a",
+      "physicalWords": 13152,
+      "physicalPixels": 30464,
+      "dependency": {
+        "path": "tools/virgl-exponent-logarithm/reference.py",
+        "sha256": "79013b28c03575de0c7c177ade00d649d887ace9166d59377b48752f6e331458"
+      }
+    }
+  ],
+  "targetWiring": {
+    "path": "tools/verify-virgl-exponent-logarithm.sh",
+    "sha256": "83ef18588d7ad61a6cc05dfae7ee3f5b9bd38fca6629768c2927b2bb7b796f8d",
+    "archiveMember": "promoted/verify-virgl-exponent-logarithm.sh"
+  },
+  "coverage": {
+    "runtimeHunks": 22,
+    "addedRuntimeLines": 77,
+    "needsEvidence": 0,
+    "dead": 0,
+    "allNewDomainPredicateEdgesHit": true,
+    "declarativeWaivers": "opcode/type/masks, comments/whitespace, function signature have no executable body; actual arity, policy, emission and both domain branches covered"
+  },
+  "physical": {
+    "sealedWords": 78912,
+    "sealedPixels": 182784,
+    "fourthSeed": 305419896,
+    "fourthWords": 13152,
+    "fourthPixels": 30464,
+    "totalWords": 92064,
+    "totalPixels": 213248,
+    "extraActualPinnedWitnesses": 160,
+    "capturedBroadcastStatements": 18,
+    "pinnedDiscrepancy": "Componentwise vendor EX2/LG2 remain explicitly contrary to TGSI REPL; 316 concrete vertex deviations per schedule; broadcasts obey independent scalar equations; actual pinned GLSL unchanged",
+    "allSourceEventsBound": true,
+    "allResourcesDisposed": true
+  },
+  "priorHeldSeals": [
+    {
+      "boundary": "evidence/virgl-saturation/verifier",
+      "manifestSha256": "87f0dede96f0fa3d7033412025c35a01a46f9fbbcfa656f56af03243d68e467d",
+      "archiveSha256": "cd1a07fa45456a46060dabe52d8a91c6521fd46d11bdac3ff5f7a3480654cead",
+      "indexSha256": "690b88eeb9125b4afccba8e7ff06dbc376f5183e04a60e70ed0d7fb8be730df5",
+      "members": 100,
+      "verdict": "verified",
+      "promoted": [
+        {
+          "path": "renderer/virgl-shader/tests/saturation-regressions.mjs",
+          "sha256": "724fe09a689e41494e0cfbb7698d68b5b73390b1b6c1ee0b8c8204328a7c1536",
+          "sealedSourceCopies": [
+            "promoted/saturation-regressions.mjs"
+          ]
+        },
+        {
+          "path": "renderer/virgl-shader/tests/saturation-capture-regressions.py",
+          "sha256": "9483831c97a60e40ea1fb51c33580ec1665e0bcdaa2a93a01b43e841de7a3745",
+          "sealedSourceCopies": [
+            "promoted/saturation-capture-regressions.py"
+          ]
+        }
+      ]
+    },
+    {
+      "boundary": "evidence/virgl-precise-fraction/verifier",
+      "manifestSha256": "27c7fa297d0f9c4f3f9ed65f71bd1c53fd47cddbce4959be167004965a6530c0",
+      "archiveSha256": "29fdaa5e6774bde13f708333b870bb2cda1060547f369086d0f11fd9a73c21e6",
+      "indexSha256": "16ac41cbdc3e4944cccb845670fa941b9fce9180589887a17717fd9d380b3a7a",
+      "members": 71,
+      "verdict": "verified",
+      "promoted": [
+        {
+          "path": "renderer/virgl-shader/tests/precise-fraction-regressions.mjs",
+          "sha256": "6442b2dcaf14019e49eaed4406875c173d002ed99bba34f4ae3544cac4b7ef5e",
+          "sealedSourceCopies": [
+            "promoted/precise-fraction-regressions.mjs"
+          ]
+        },
+        {
+          "path": "renderer/virgl-shader/tests/precise-fraction-capture-regressions.mjs",
+          "sha256": "3313c6693652d26baf0e1dc1179de478aab045c1f5b1bf49d5d2b4b3b2ae08f8",
+          "sealedSourceCopies": [
+            "promoted/precise-fraction-capture-regressions.mjs"
+          ]
+        }
+      ]
+    },
+    {
+      "boundary": "evidence/virgl-minimum-selection/verifier",
+      "manifestSha256": "592ea6d92b6a6b68bb36eaef91403964c0517fab63007a0916591562ffbb98e0",
+      "archiveSha256": "aedf4c1401b7e985b399350ab9648d6ec981d591692ce3dbce1e95fabc8bd4ff",
+      "indexSha256": "7a9bca57207672121cea1f0d17c76b788cb7813b1fd8d736e68ca13321020b98",
+      "members": 63,
+      "verdict": "verified",
+      "promoted": [
+        {
+          "path": "renderer/virgl-shader/tests/minimum-selection-regressions.mjs",
+          "sha256": "641318a8ea3896fd078536c8c6fe11c4fe9cf118eeac1154ce6cb8a68fc5ab0f",
+          "sealedSourceCopies": [
+            "promoted/minimum-selection-regressions.mjs"
+          ]
+        }
+      ]
+    },
+    {
+      "boundary": "evidence/virgl-scalar-operations/verifier",
+      "manifestSha256": "df1c4906705f6a2e4f9fe6a548f523b4d35ca273c3e45f3cfeea5ea9607da927",
+      "archiveSha256": "c5fd50cd563707c31c5c6ac52e360e0a711cdb16c088a2fff64a8461381c06e4",
+      "indexSha256": "7ac5c0e5a368a575d0dbb1ac9607a357830a30d5198aaa0cce37e54c71f41b9a",
+      "members": 51,
+      "verdict": "verified",
+      "promoted": [
+        {
+          "path": "renderer/virgl-shader/tests/scalar-operation-regressions.mjs",
+          "sha256": "5bc2520293dc934249f91e962f6328f36053cf702960200a8731e068d122fba8",
+          "sealedSourceCopies": [
+            "promoted/scalar-operation-regressions.mjs"
+          ]
+        }
+      ]
+    },
+    {
+      "boundary": "evidence/virgl-signed-conversions/verifier",
+      "manifestSha256": "bf3ae212d2ef31ce1a084a162f38e692713f36bcc69f9f200977751e42545cd7",
+      "archiveSha256": "ccec7ef4231c2aaac9ed93167ab7e025283a14a9efe28a3be5c91f6a43e41cca",
+      "indexSha256": "fc9b55d8d34a2dc287d2193dafcefec1291e8098fee9aa7386205535e7b0ffc9",
+      "members": 47,
+      "verdict": "verified",
+      "promoted": [
+        {
+          "path": "renderer/virgl-shader/tests/signed-conversion-regressions.mjs",
+          "sha256": "af656f9a8a7bc00d12fc4d8562dbc889ea19c63c2428917c37a6e45ad471ae0a",
+          "sealedSourceCopies": [
+            "promoted/signed-conversion-regressions.mjs"
+          ]
+        }
+      ]
+    },
+    {
+      "boundary": "evidence/virgl-signed-integers/verifier",
+      "manifestSha256": "50796c1e44d5cff1cadc56dfbc5908b3298b0cb601c38d14e11c8465efbb0543",
+      "archiveSha256": "3fb492e9b9addbecedf462e27ac08ad9dcbe7e22d10aa6f92cac25952c17b777",
+      "indexSha256": "2d18d13e974bd8a5c95154db3f85adf5c43726f7c7013538f8f0d2837346d4a4",
+      "members": 37,
+      "verdict": "verified",
+      "promoted": [
+        {
+          "path": "renderer/virgl-shader/tests/signed-integer-regressions.mjs",
+          "sha256": "3b3a460110a099530dd255b51fd79c2180f2ed98df084f58180518485ebf43a3",
+          "sealedSourceCopies": [
+            "signed-integer-regressions.mjs"
+          ]
+        }
+      ]
+    },
+    {
+      "boundary": "evidence/virgl-hex-literals/verifier",
+      "manifestSha256": "de87e77241b5f78f78b30364e728d4b0465d37114e8fc46a65913ca87df3b2a2",
+      "archiveSha256": "bb25e10d6b31a6efe547c8468a6b4d0f560b40c60650e85c6133bcbe33aa184d",
+      "indexSha256": "e684ae0b0a697a59a89c57f01c15c8347fa2d2853d7233b269ee6a8ce0618977",
+      "members": 30,
+      "verdict": "verified",
+      "promoted": [
+        {
+          "path": "renderer/virgl-shader/tests/hex-literal-regressions.mjs",
+          "sha256": "91000d19f71a851b94ea21d974e6d250ceb96e654b3aa5765d0b7a39321c770e",
+          "sealedSourceCopies": [
+            "promoted/hex-literal-regressions.mjs"
+          ]
+        }
+      ]
+    },
+    {
+      "boundary": "evidence/virgl-compiler-bounds/verifier",
+      "manifestSha256": "1081296a0236616037539d953cacba78aed05d517dc6eee6c048e1d96ba6e643",
+      "archiveSha256": "1c6e0d69048ccdcb9762acde6e9198b3d5e380e6fb6308aa1a5e9355fa01037d",
+      "indexSha256": "fb78c6bc0fde0df3b9269787ced68d40d200de233bd45147321a1eea3636f821",
+      "members": 28,
+      "verdict": "verified",
+      "promoted": [
+        {
+          "path": "renderer/virgl-shader/tests/compiler-bounds-joins.mjs",
+          "sha256": "26dab24dbbff632ce381276abefcbca43f5fc2dca8342313f43fcd8376035c62",
+          "sealedSourceCopies": [
+            "independent-joins.mjs",
+            "promoted/compiler-bounds-joins.mjs"
+          ]
+        }
+      ]
+    }
+  ],
+  "carried": {
+    "unchangedDependencies": 298,
+    "wholePredecessorResponsesPerSet": 4246,
+    "priorGuardsPerSet": 13714,
+    "heldSaturationWords": 39576,
+    "priorPromotion": "existing SAT acceptance target matches prior critic seal"
+  },
+  "scope": {
+    "runtimeEdited": false,
+    "productionNegotiation": false,
+    "guestOffload": false,
+    "fullOriginalAdmission": false,
+    "fpsMipsOrDeploymentClaim": false,
+    "rr": "waived by current AGENTS.md",
+    "checks": "narrow affected C/consumer/native/Wasm/physical gauntlet at frozen source plus touched verifier harness checks; no Actions"
+  }
+}
