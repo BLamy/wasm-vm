@@ -1,0 +1,31 @@
+{
+  "schema": "fresh-rgb9e5-independent-original-bit-audit-v1",
+  "status": "HELD",
+  "arithmetic": "Exact rational primary conversion and integer binary32 encoding; no renderer/worker decoder imported",
+  "predictions": [
+    "P2",
+    "P3",
+    "P4",
+    "P5",
+    "P6",
+    "P7",
+    "P8",
+    "P9"
+  ],
+  "counts": {
+    "scalarWords": 118528,
+    "runs": 226,
+    "originalInputBytes": 1515352,
+    "fenceCitations": 658,
+    "nativeComponents": 4266544,
+    "publicBytes": 4386888,
+    "physicalAllocations": 314,
+    "nativeUploadBytes": 1514392,
+    "pboUploads": 322,
+    "paddingBytes": 1869352,
+    "physicalFailureCases": 126,
+    "physicalControls": 4
+  },
+  "citationsSha256": "b99fbf25e1d33c04b5f5e5a76a200536772fcceb954d8f043d06efb1dd738641",
+  "citations": 1780
+}

@@ -1,0 +1,184 @@
+{
+  "schema": "fresh-rgb9e5-promoted-critic-audit-v1",
+  "status": "HELD",
+  "runs": 11,
+  "points": [
+    {
+      "run": 0,
+      "kind": "source",
+      "level": 0,
+      "bytes": 3312,
+      "originalSha256": "b7af4568b3cc74be73c30df4be3130334a6a9965ec50215f42239e76f45ccc63",
+      "nativeSha256": "6bf58bc2ae18bc5246512f9ec0df4581a4262e248f57e9bfb0522a29751f47da"
+    },
+    {
+      "run": 0,
+      "kind": "source",
+      "level": 1,
+      "bytes": 704,
+      "originalSha256": "57c9466244b29556f8ceed3e9bbe62f5e77fa7caf118b45a9d2dd8c28d559673",
+      "nativeSha256": "717a5dc11b9d2bb8b8387f655314d782fc14800b2ea5ab162ff54be8749d1446"
+    },
+    {
+      "run": 0,
+      "kind": "source",
+      "level": 2,
+      "bytes": 160,
+      "originalSha256": "afc2f17a42368862ecddd682c51769e08e7ec084bdab359119485fafab74002a",
+      "nativeSha256": "ee35a271f0aacc1f571f9ef9098db90e4cc337e7ae1622642dbb29803a2b1b86"
+    },
+    {
+      "run": 0,
+      "kind": "source",
+      "level": 3,
+      "bytes": 32,
+      "originalSha256": "f03db1e13b22dfe6655e2919c31adcd477292b46b511cbb7732cc04fdb704d3c",
+      "nativeSha256": "d3f2fb66824771e27b9337094fc2be35a1d0a087405f02b6edc8e7e62a8a9a35"
+    },
+    {
+      "run": 0,
+      "kind": "source",
+      "level": 4,
+      "bytes": 16,
+      "originalSha256": "66cf465e2468e316fefc5295dd1be2f65cd29555699dfaa6f53751df3394b3de",
+      "nativeSha256": "20eb173f89e14573d970f05d573b28adf996b60ae5adfcf03e358d8409ab0451"
+    },
+    {
+      "run": 0,
+      "kind": "private",
+      "level": 2,
+      "bytes": 160,
+      "originalSha256": "afc2f17a42368862ecddd682c51769e08e7ec084bdab359119485fafab74002a",
+      "nativeSha256": "ee35a271f0aacc1f571f9ef9098db90e4cc337e7ae1622642dbb29803a2b1b86"
+    },
+    {
+      "run": 0,
+      "kind": "private",
+      "level": 3,
+      "bytes": 32,
+      "originalSha256": "f03db1e13b22dfe6655e2919c31adcd477292b46b511cbb7732cc04fdb704d3c",
+      "nativeSha256": "d3f2fb66824771e27b9337094fc2be35a1d0a087405f02b6edc8e7e62a8a9a35"
+    },
+    {
+      "run": 2,
+      "kind": "source",
+      "level": 0,
+      "bytes": 912,
+      "originalSha256": "8968a0ddd10e4be395c8f52d67da8b9a815a2cf63184849dafc218081a3b4f23",
+      "nativeSha256": "92776f60c7a445483e9bd9618590cf0a71f0e3f1c608de890293d3561b078f83"
+    },
+    {
+      "run": 2,
+      "kind": "source",
+      "level": 1,
+      "bytes": 144,
+      "originalSha256": "34dd315fe60eba0ab4ae3b3621bc57138b30fa4928d98472fd7ae28b39eaa7fc",
+      "nativeSha256": "2dabd82635757ba995856fa120e28e81a7dde0fcba403e0482f5055e132a10eb"
+    },
+    {
+      "run": 2,
+      "kind": "source",
+      "level": 2,
+      "bytes": 64,
+      "originalSha256": "9c447eee87038705957634d29c80edc723fec4e80fa1232ce9822a4f25a37cf8",
+      "nativeSha256": "372cfa1a74ae0391830d00a99be9f069684614c48030eb26bac7654cb009cd7b"
+    },
+    {
+      "run": 2,
+      "kind": "source",
+      "level": 3,
+      "bytes": 32,
+      "originalSha256": "1182b2ff8007df54bd8ad040fd65f7a0babbc66c6e7ab67a2b9eacb65ca55900",
+      "nativeSha256": "22a2839e09be1b3ba55207fc71315453a8587098382b3c3b7cdcbc9a1f7c7408"
+    },
+    {
+      "run": 2,
+      "kind": "private",
+      "level": 2,
+      "bytes": 64,
+      "originalSha256": "9c447eee87038705957634d29c80edc723fec4e80fa1232ce9822a4f25a37cf8",
+      "nativeSha256": "372cfa1a74ae0391830d00a99be9f069684614c48030eb26bac7654cb009cd7b"
+    },
+    {
+      "run": 2,
+      "kind": "private",
+      "level": 3,
+      "bytes": 32,
+      "originalSha256": "1182b2ff8007df54bd8ad040fd65f7a0babbc66c6e7ab67a2b9eacb65ca55900",
+      "nativeSha256": "22a2839e09be1b3ba55207fc71315453a8587098382b3c3b7cdcbc9a1f7c7408"
+    },
+    {
+      "run": 4,
+      "kind": "source",
+      "level": 0,
+      "bytes": 496,
+      "originalSha256": "514fca9e4834a4353483e4e03671a6f91a89cc57555073e038c27b7bdafff6ba",
+      "nativeSha256": "c8b7834cad00a07fe589dbd28bb8c3dbd953e901aaa5213a02175f8dc0e1fe1f"
+    },
+    {
+      "run": 4,
+      "kind": "source",
+      "level": 1,
+      "bytes": 240,
+      "originalSha256": "0e8c49fddca34782c342baf3739a8cc3f368138db66883ba554defebafd8bf48",
+      "nativeSha256": "5ac25027c6429fbc58eddb0931aa3bd089b72b88b2ae2213b4afd1511d79ecdc"
+    },
+    {
+      "run": 4,
+      "kind": "source",
+      "level": 2,
+      "bytes": 112,
+      "originalSha256": "cccd037d563e428c08845b370a3eac3ee7190d8c3e5288e818d6321aabcf6505",
+      "nativeSha256": "26c564764b103a0fb2e783bcca0f6f3f568ff585ad613576775f81dacdbc6ded"
+    },
+    {
+      "run": 4,
+      "kind": "source",
+      "level": 3,
+      "bytes": 48,
+      "originalSha256": "a134bb1439c5deb38b271f2a07768196d371345823f9bd6cab00a38154daf357",
+      "nativeSha256": "1ac8a0655864bdf214860627ca205286440fdf406ac8156c76ad9eb7701da39d"
+    },
+    {
+      "run": 4,
+      "kind": "source",
+      "level": 4,
+      "bytes": 16,
+      "originalSha256": "66cf465e2468e316fefc5295dd1be2f65cd29555699dfaa6f53751df3394b3de",
+      "nativeSha256": "20eb173f89e14573d970f05d573b28adf996b60ae5adfcf03e358d8409ab0451"
+    },
+    {
+      "run": 4,
+      "kind": "private",
+      "level": 2,
+      "bytes": 112,
+      "originalSha256": "cccd037d563e428c08845b370a3eac3ee7190d8c3e5288e818d6321aabcf6505",
+      "nativeSha256": "26c564764b103a0fb2e783bcca0f6f3f568ff585ad613576775f81dacdbc6ded"
+    },
+    {
+      "run": 4,
+      "kind": "private",
+      "level": 3,
+      "bytes": 48,
+      "originalSha256": "a134bb1439c5deb38b271f2a07768196d371345823f9bd6cab00a38154daf357",
+      "nativeSha256": "1ac8a0655864bdf214860627ca205286440fdf406ac8156c76ad9eb7701da39d"
+    }
+  ],
+  "actualBlueFieldControl": {
+    "status": "REFUTED",
+    "point": "/partial/sabotage",
+    "originalLevel": 2,
+    "component": 2,
+    "predictedBits": "0x3b400000",
+    "observedBits": "0x3a800000",
+    "nativeSha256": "2d79c870cfc34ea5e0ea37f300cb5f73613ac1dd50a0502f56cb9b7933cb8304",
+    "fence": {
+      "name": "clientWaitSync",
+      "turn": 6,
+      "label": "critic-native-real-completion",
+      "sync": 19,
+      "actual": 37146,
+      "delivered": 37146
+    }
+  }
+}
