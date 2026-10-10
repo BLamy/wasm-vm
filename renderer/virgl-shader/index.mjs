@@ -51,6 +51,69 @@ export async function createVirglShaderBridge(options = {}) {
   const { default: createModule } = await import("./build/wasm/virgl-shader.mjs");
   const module = await createModule(options);
   return Object.freeze({
+    translateOriginal92cbFirstPower(request) {
+      let vertexText, fragmentText, geometry, bank, state;
+      try {
+        const names = ["vertexText", "fragmentText", "geometry", "bank", "drawState"];
+        if (!request || typeof request !== "object" || Array.isArray(request) ||
+            Reflect.ownKeys(request).length !== names.length ||
+            Reflect.ownKeys(request).some(key => !names.includes(key)))
+          return failure("invalid-input", "Provide the complete original sources, geometry, bank and draw state.");
+        const fields = names.map(key => Object.getOwnPropertyDescriptor(request, key));
+        if (fields.some(field => !field || !("value" in field)))
+          return failure("invalid-input", "Private inputs must be own data properties.");
+        [vertexText, fragmentText] = fields.map(field => field.value);
+        geometry = fields[2].value;
+        bank = fields[3].value;
+        const suppliedState = fields[4].value;
+        if (typeof vertexText !== "string" || typeof fragmentText !== "string" ||
+            vertexText.length > LIMITS.textBytes || fragmentText.length > LIMITS.textBytes ||
+            /[^\x09\x0a\x0d\x20-\x7e]/.test(vertexText) ||
+            /[^\x09\x0a\x0d\x20-\x7e]/.test(fragmentText) ||
+            !(geometry instanceof Uint8Array) || geometry.length !== 2040 ||
+            !Number.isInteger(bank) || bank < 0 || bank > 2 ||
+            !suppliedState || typeof suppliedState !== "object" || Array.isArray(suppliedState))
+          return failure("invalid-input", "Private inputs have invalid types or extents.");
+        geometry = new Uint8Array(geometry);
+        const keys = ["viewportX", "viewportY", "viewportWidth", "viewportHeight",
+          "samples", "colorFormat", "mode", "first", "count"];
+        if (Reflect.ownKeys(suppliedState).length !== keys.length ||
+            Reflect.ownKeys(suppliedState).some(key => !keys.includes(key)))
+          return failure("invalid-input", "Private draw state requires nine exact fields.");
+        state = keys.map(key => {
+          const field = Object.getOwnPropertyDescriptor(suppliedState, key);
+          if (!field || !("value" in field) || !Number.isInteger(field.value) ||
+              field.value < 0 || field.value > 0xffffffff) throw new Error("invalid state");
+          return field.value;
+        });
+      } catch {
+        return failure("invalid-input", "Private request reflection failed.");
+      }
+      const pointers = [];
+      try {
+        for (const data of [vertexText, fragmentText, geometry, state]) {
+          const size = typeof data === "string" ? data.length + 1 :
+            data === geometry ? geometry.length : state.length * 4;
+          const pointer = module._malloc(size);
+          if (!pointer) return failure("allocation-failed", "Private Wasm input allocation failed.");
+          pointers.push(pointer);
+          if (typeof data === "string") {
+            for (let i = 0; i < data.length; ++i) module.HEAPU8[pointer + i] = data.charCodeAt(i);
+            module.HEAPU8[pointer + data.length] = 0;
+          } else if (data === geometry) module.HEAPU8.set(geometry, pointer);
+          else {
+            const view = new DataView(module.HEAPU8.buffer);
+            state.forEach((word, index) => view.setUint32(pointer + index * 4, word, true));
+          }
+        }
+        const output = module._bridge_translate_original_92cb_first_power(
+          pointers[0], vertexText.length, pointers[1], fragmentText.length,
+          pointers[2], geometry.length, bank, pointers[3]);
+        return JSON.parse(module.UTF8ToString(output));
+      } finally {
+        for (const pointer of pointers.reverse()) module._free(pointer);
+      }
+    },
     translatePairExact(request) {
       let vertexText, fragmentText, vertexComponents, fragmentComponents;
       try {
