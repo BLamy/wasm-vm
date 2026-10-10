@@ -2005,3 +2005,7 @@ verify-E6-T12g6e:
 .PHONY: verify-E6-T12g6f
 verify-E6-T12g6f:
 	bash tools/verify-virgl-scalar-operations.sh
+
+.PHONY: verify-E6-T12g6g1
+verify-E6-T12g6g1:
+	bash tools/verify-virgl-minimum-selection.sh

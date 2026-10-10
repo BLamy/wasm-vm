@@ -23,10 +23,13 @@ export const CONVERSION_KIND = "tgsi-signed32-binary32-v1";
 export const CONVERSION_DOMAIN_KIND = "constant-bank-f2i-range-v1";
 export const SCALAR_PROFILE = "virgl-webgl2-raw-bits-v31";
 export const SCALAR_KIND = "tgsi-finite-scalar-binary32-v1";
+export const MINIMUM_PROFILE = "virgl-webgl2-raw-bits-v32";
+export const MINIMUM_KIND = "tgsi-minimum-word-local-v1";
 const rawProfiles = (...versions) => versions.map((version) => `virgl-webgl2-raw-bits-v${version}`);
 const ARITHMETIC_BASES = new Set(rawProfiles(...Array.from({ length: 27 }, (_, i) => i + 1)));
 const CONVERSION_BASES = new Set(rawProfiles(...Array.from({ length: 28 }, (_, i) => i + 1)));
 const SCALAR_BASES = new Set(rawProfiles(...Array.from({ length: 30 }, (_, i) => i + 1)));
+const MINIMUM_BASES = new Set(rawProfiles(...Array.from({ length: 31 }, (_, i) => i + 1)));
 const PRECISE_PROFILES = new Set(rawProfiles(17, 18, 19, 20, 21, 22, 23, 24, 25, 26));
 const RADIAL_PROFILES = new Set([RADIAL_PROFILE, RADIAL_INDIRECT_PROFILE, RADIAL_LOOP_PROFILE, ...rawProfiles(24, 25, 26)]);
 const LOOP_PROFILES = new Set([LOOP_PROFILE, RADIAL_LOOP_PROFILE, ...rawProfiles(23, 26)]);
@@ -106,8 +109,29 @@ function conversionBankContract(value) {
 export function parseConstantDomain(metadata, expectedStage) {
   try {
     require(expectedStage === "vertex" || expectedStage === "fragment", "Unknown shader stage.");
-    const value = record(metadata, [...METADATA_KEYS, "constantDomains", "constantAccesses", "constantConstraints", "constantRadialDomains", "preciseWordContract", "rasterBaseProfile", "constantRasterDomains", "arithmeticBaseProfile", "preciseArithmeticContract", "conversionBaseProfile", "signedConversionContract", "constantConversionDomains", "scalarBaseProfile", "scalarWordContract"], METADATA_KEYS);
+    const value = record(metadata, [...METADATA_KEYS, "constantDomains", "constantAccesses", "constantConstraints", "constantRadialDomains", "preciseWordContract", "rasterBaseProfile", "constantRasterDomains", "arithmeticBaseProfile", "preciseArithmeticContract", "conversionBaseProfile", "signedConversionContract", "constantConversionDomains", "scalarBaseProfile", "scalarWordContract", "minimumBaseProfile", "minimumWordContract"], METADATA_KEYS);
     require(value.stage === expectedStage, "Constant domain stage disagrees with the shader stage.");
+    const minimum = value.profile === MINIMUM_PROFILE;
+    require(minimum === Object.hasOwn(value, "minimumBaseProfile") && minimum === Object.hasOwn(value, "minimumWordContract"),
+      "Minimum contract disagrees with its profile.");
+    if (minimum) {
+      require(MINIMUM_BASES.has(value.minimumBaseProfile), "Minimum requires an existing raw base profile.");
+      const policy = record(value.minimumWordContract, ["kind", "stage", "operations", "ordinary", "precise", "modifiers", "output"]);
+      require(policy.kind === MINIMUM_KIND && policy.stage === expectedStage &&
+        policy.ordinary === "existing-finite-numeric-authority" && policy.precise === "ordered-less-first-otherwise-second-original-word" &&
+        policy.modifiers === "negation-before-selection" && policy.output === "existing-numeric-or-selected-raw-authority",
+      "Unknown instruction-local minimum policy.");
+      const operations = array(policy.operations, 2), names = ["MIN", "MIN_PRECISE"];
+      require(operations.length > 0 && operations.every((op, position) => names.includes(op) &&
+        (position === 0 || names.indexOf(operations[position - 1]) < names.indexOf(op))),
+      "Minimum operations must be nonempty, sorted and unique.");
+      const base = { ...value, profile: value.minimumBaseProfile };
+      delete base.minimumBaseProfile; delete base.minimumWordContract;
+      // v32 cannot wrap itself. Every descending prior wrapper preserves its
+      // whole contract, so the chain is bounded to five wrappers.
+      const checked = parseConstantDomain(base, expectedStage);
+      return checked.ok ? Object.freeze({ ...checked, minimum: Object.freeze({ ...policy, operations: Object.freeze(operations) }) }) : checked;
+    }
     const scalar = value.profile === SCALAR_PROFILE;
     require(scalar === Object.hasOwn(value, "scalarBaseProfile") && scalar === Object.hasOwn(value, "scalarWordContract"),
       "Scalar contract disagrees with its profile.");
@@ -317,7 +341,7 @@ export function signedConversionBinary32Word(word) {
 export function checkConversionBank(words, domain, base) {
   try {
     const contract = conversionBankContract(domain);
-    base = record(base, ["ok", "domain", "access", "constraint", "radialDomain", "rasterDomain", "precision", "arithmetic", "conversion", "conversionDomain", "scalar"], ["ok", "domain"]);
+    base = record(base, ["ok", "domain", "access", "constraint", "radialDomain", "rasterDomain", "precision", "arithmetic", "conversion", "conversionDomain", "scalar", "minimum"], ["ok", "domain"]);
     require(base.ok === true, "Conversion requires an approved base contract.");
     for (const [key, kind, extra] of [["domain", CONSTANT_DOMAIN_KIND, []], ["access", CONSTANT_ACCESS_KIND, ["indices"]],
       ["constraint", CONSTANT_CONSTRAINT_KIND, ["register", "component", "maximum"]],

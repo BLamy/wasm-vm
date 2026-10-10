@@ -31,7 +31,8 @@ enum raw_opcode { RAW_MOV, RAW_AND, RAW_OR, RAW_NOT, RAW_SHL, RAW_USHR,
                   /* Bit40 is the precise arithmetic feature, not an opcode. */
                   RAW_ISLT = 41, RAW_IMAX, RAW_I2F, RAW_F2I,
                   /* Bit45 is the signed conversion-bank feature. */
-                  RAW_TRUNC = 46, RAW_SSG };
+                  RAW_TRUNC = 46, RAW_SSG, RAW_MIN, RAW_MIN_PRECISE };
+#define RAW_MINIMUM_OPCODES ((UINT64_C(1) << RAW_MIN) | (UINT64_C(1) << RAW_MIN_PRECISE))
 #define RAW_SCALAR_OPCODES ((UINT64_C(1) << RAW_TRUNC) | (UINT64_C(1) << RAW_SSG))
 #define RAW_CONVERSION_OPCODES ((UINT64_C(1) << RAW_I2F) | (UINT64_C(1) << RAW_F2I))
 #define RAW_CONVERSION_BANK_USED (UINT64_C(1) << 45)
@@ -39,7 +40,7 @@ enum raw_opcode { RAW_MOV, RAW_AND, RAW_OR, RAW_NOT, RAW_SHL, RAW_USHR,
 #define RAW_V3_OPCODES ((UINT64_C(1) << RAW_FSLT) | (UINT64_C(1) << RAW_FSGE))
 #define RAW_EQUALITY_OPCODES ((UINT64_C(1) << RAW_FSEQ) | (UINT64_C(1) << RAW_FSNE))
 #define RAW_V4_OPCODES ((UINT64_C(1) << RAW_ADD) | (UINT64_C(1) << RAW_MUL) | (UINT64_C(1) << RAW_MAD) | (UINT64_C(1) << RAW_TEX))
-#define RAW_V5_OPCODES ((UINT64_C(1) << RAW_DIV) | (UINT64_C(1) << RAW_MAX) | (UINT64_C(1) << RAW_FRC) | (UINT64_C(1) << RAW_LRP))
+#define RAW_V5_OPCODES ((UINT64_C(1) << RAW_DIV) | (UINT64_C(1) << RAW_MAX) | (UINT64_C(1) << RAW_MIN) | (UINT64_C(1) << RAW_FRC) | (UINT64_C(1) << RAW_LRP))
 #define RAW_V6_OPCODES ((UINT64_C(1) << RAW_DP3) | (UINT64_C(1) << RAW_RCP) | (UINT64_C(1) << RAW_RSQ))
 #define RAW_NUMERIC_OPCODES (RAW_V4_OPCODES | RAW_V5_OPCODES | RAW_V6_OPCODES | RAW_SCALAR_OPCODES)
 /* The remaining mask bit records a validated numeric modifier, not an opcode. */
@@ -60,6 +61,7 @@ _Static_assert(RAW_ADD_PRECISE == 38 && RAW_MUL_PRECISE == 39, "arithmetic/featu
 _Static_assert(RAW_ISLT == 41 && RAW_IMAX == 42 && RAW_IMAX < 64, "signed opcode/feature separation");
 _Static_assert(RAW_I2F == 43 && RAW_F2I == 44, "conversion opcode/feature separation");
 _Static_assert(RAW_TRUNC == 46 && RAW_SSG == 47, "scalar opcode/feature separation");
+_Static_assert(RAW_MIN == 48 && RAW_MIN_PRECISE == 49, "minimum opcode/feature separation");
 enum { RAW_FLOAT_SHADOW = 33, RAW_FLOAT_DECODE = 34, RAW_FLOAT_CONDITIONAL = 35,
        RAW_ACCESS_MASK = 63, RAW_OUTPUT = 64, RAW_BANK_DEPENDENCY = 128,
        RAW_MIXED = 1, RAW_NEGATE_SOURCE0 = 2, RAW_NEGATE_SOURCES = 14,
