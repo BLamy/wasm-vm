@@ -34,6 +34,17 @@ const FLOATING_VERTEX_FORMATS = Object.freeze(Object.fromEntries([
     elementBytes: components * scalarBytes, type, kind, normalized: kind === "unorm" || kind === "snorm" })];
 }))));
 export const floatingVertexFormat = format => Number.isInteger(format) && Object.hasOwn(FLOATING_VERTEX_FORMATS, format) ? FLOATING_VERTEX_FORMATS[format] : null;
+const INTEGER_VERTEX_FORMATS = Object.freeze(Object.fromEntries([
+  [177, 1, "UNSIGNED_BYTE", "uint"], [181, 1, "BYTE", "sint"],
+  [185, 2, "UNSIGNED_SHORT", "uint"], [189, 2, "SHORT", "sint"],
+  [193, 4, "UNSIGNED_INT", "uint"], [197, 4, "INT", "sint"],
+].flatMap(([base, scalarBytes, type, kind]) => Array.from({ length: 4 }, (_, lane) => {
+  const format = base + lane, components = lane + 1;
+  return [format, Object.freeze({ format, components, scalarBytes,
+    elementBytes: components * scalarBytes, type, kind, normalized: false, integer: true })];
+}))));
+export const vertexFormat = format => floatingVertexFormat(format) ??
+  (Number.isInteger(format) && Object.hasOwn(INTEGER_VERTEX_FORMATS, format) ? INTEGER_VERTEX_FORMATS[format] : null);
 
 const COMMAND_NAMES = Object.freeze({
   1: "CREATE_OBJECT", 2: "BIND_OBJECT", 3: "DESTROY_OBJECT",
@@ -264,9 +275,9 @@ function decodeObject(p, objectType) {
         const start = 2 + index * 4;
         const sourceOffset = p.u(start), instanceDivisor = p.u(start + 1), vertexBufferIndex = p.u(start + 2), sourceFormat = p.u(start + 3);
         p.require(vertexBufferIndex < LIMITS.vertexBuffers, "limit-exceeded", "Vertex buffer index exceeds profile limit.");
-        const format = floatingVertexFormat(sourceFormat);
+        const format = vertexFormat(sourceFormat);
         p.require(p.standard ? format !== null : instanceDivisor === 0 && [28, 29, 30, 31].includes(sourceFormat), "unsupported-feature",
-          p.standard ? "Unsupported floating vertex format." : "Only per-vertex R32 through RGBA32_FLOAT elements are supported.");
+          p.standard ? "Unsupported standard vertex format." : "Only per-vertex R32 through RGBA32_FLOAT elements are supported.");
         // Standard alignment is checked on the effective buffer+element offset,
         // so individually unaligned offsets may sum to a valid native pointer.
         p.require((p.standard || sourceOffset % 4 === 0) && sourceOffset <= MAX_U32 - format.elementBytes,

@@ -784,7 +784,14 @@ function standardFreeze(value) {
   }
   return value;
 }
-function standardIO(value, stage, file, paired) {
+const STANDARD_FLOAT_INPUTS = Object.freeze({ signedMask: 0, unsignedMask: 0 });
+function standardInputTypes(value) {
+  const masks = record(value, ["signedMask", "unsignedMask"]);
+  require([masks.signedMask, masks.unsignedMask].every(mask => Number.isInteger(mask) && mask >= 0 && mask <= 0xffff) &&
+    (masks.signedMask & masks.unsignedMask) === 0, "Invalid host vertex input masks.");
+  return masks;
+}
+function standardIO(value, stage, file, paired, masks) {
   const output = file === "outputs", system = file === "systemValues";
   const input = record(value, [...STANDARD_IO_KEYS, "syntacticWriteMask", "interpolation"],
     [...STANDARD_IO_KEYS, ...(output ? ["syntacticWriteMask"] : [])]);
@@ -801,7 +808,8 @@ function standardIO(value, stage, file, paired) {
       stage === "fragment" && input.semantic === "PCOORD" && input.type === "vec4" && input.name === "gl_PointCoord"),
     "Unknown standard system value.");
   } else if (stage === "vertex" && !output) {
-    require(input.semantic === "ATTRIBUTE" && input.type === "vec4" && input.semanticIndex === 0 &&
+    const type = masks.signedMask & (1 << input.index) ? "ivec4" : masks.unsignedMask & (1 << input.index) ? "uvec4" : "vec4";
+    require(input.semantic === "ATTRIBUTE" && input.type === type && input.semanticIndex === 0 &&
       input.componentMask === 15 && input.name === "in_" + input.index, "Invalid standard vertex attribute.");
   } else if (input.semantic === "GENERIC") {
     require(input.semanticIndex >= 0 && input.semanticIndex < 16 &&
@@ -834,9 +842,9 @@ function standardIO(value, stage, file, paired) {
     ...(output ? { syntacticWriteMask: input.syntacticWriteMask } : {}),
     ...(interpolation === null ? {} : { interpolation }) };
 }
-function standardIOArray(value, stage, file, paired) {
+function standardIOArray(value, stage, file, paired, masks) {
   const entries = array(value, file === "systemValues" ? 2 : file === "attributes" || stage === "vertex" && file === "inputs" ? 16 : 32)
-    .map(entry => standardIO(entry, stage, file === "attributes" ? "inputs" : file, paired));
+    .map(entry => standardIO(entry, stage, file === "attributes" ? "inputs" : file, paired, masks));
   const semantics = new Set();
   for (let index = 0; index < entries.length; index++) {
     const entry = entries[index], key = entry.semantic + "/" + entry.semanticIndex;
@@ -847,7 +855,7 @@ function standardIOArray(value, stage, file, paired) {
   }
   return entries;
 }
-function standardMetadata(value, stage, paired = false) {
+function standardMetadata(value, stage, paired = false, masks = STANDARD_FLOAT_INPUTS) {
   const input = record(value, STANDARD_METADATA_KEYS);
   require(["vertex", "fragment"].includes(stage) && input.stage === stage && input.profile === STANDARD_SHADER_PROFILE,
     "Standard execution requires the distinct standard compiler profile.");
@@ -855,10 +863,13 @@ function standardMetadata(value, stage, paired = false) {
   for (const [key, expected] of Object.entries(STANDARD_SEMANTICS))
     require(semantics[key] === expected, "Standard numerical/word semantics disagree.");
   require(input.broadcastColor0 === false, "Broadcast color requires a later execution profile.");
-  const inputs = standardIOArray(input.inputs, stage, "inputs", paired),
-    outputs = standardIOArray(input.outputs, stage, "outputs", paired),
-    attributes = standardIOArray(input.attributes, stage, "attributes", paired),
-    systemValues = standardIOArray(input.systemValues, stage, "systemValues", paired);
+  const inputs = standardIOArray(input.inputs, stage, "inputs", paired, masks),
+    outputs = standardIOArray(input.outputs, stage, "outputs", paired, masks),
+    attributes = standardIOArray(input.attributes, stage, "attributes", paired, masks),
+    systemValues = standardIOArray(input.systemValues, stage, "systemValues", paired, masks);
+  if (stage === "vertex") require(((masks.signedMask | masks.unsignedMask) &
+    ~attributes.reduce((mask, attribute) => mask | (1 << attribute.index), 0)) === 0,
+  "Host typed masks exceed declared vertex attributes.");
   require(stage === "vertex" ? outputs.filter(entry => entry.semantic === "POSITION").length === 1 &&
     JSON.stringify(attributes) === JSON.stringify(inputs) : outputs.length === 1 &&
     attributes.length === 0, "Standard stage declarations disagree.");
@@ -902,11 +913,11 @@ function standardMetadata(value, stage, paired = false) {
   return standardFreeze({ profile: input.profile, stage, inputs, outputs, attributes, systemValues,
     uniforms, samplers, uniformBlocks, rasterUniforms, broadcastColor0: false, standardSemantics: { ...STANDARD_SEMANTICS } });
 }
-function standardBody(value, stage, paired) {
+function standardBody(value, stage, paired, masks = STANDARD_FLOAT_INPUTS) {
   const body = record(value, ["glsl", "metadata"]);
   require(typeof body.glsl === "string" && body.glsl.length <= 262144 && /^#version 300 es\b/m.test(body.glsl),
     "Standard compiler returned incompatible GLSL.");
-  return standardFreeze({ glsl: body.glsl, metadata: standardMetadata(body.metadata, stage, paired) });
+  return standardFreeze({ glsl: body.glsl, metadata: standardMetadata(body.metadata, stage, paired, masks) });
 }
 function standardError(value) {
   const error = record(value, ["code", "message"]);
@@ -942,7 +953,7 @@ export function normalizeStandardShaderResult(value, stage) {
     return standardFreeze({ ok: true, ...standardBody({ glsl: response.glsl, metadata: response.metadata }, stage, false) });
   } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-domain-error", error.message); }
 }
-export function normalizeStandardShaderPair(value) {
+function normalizedStandardPair(value, masks) {
   try {
     const response = record(value, ["ok", "vertex", "fragment", "interfaceKey", "error"], ["ok"]);
     if (response.ok === false) {
@@ -950,10 +961,17 @@ export function normalizeStandardShaderPair(value) {
     }
     require(response.ok === true, "Invalid standard pair result.");
     record(response, ["ok", "vertex", "fragment", "interfaceKey"]);
-    const vertex = standardBody(response.vertex, "vertex", true), fragment = standardBody(response.fragment, "fragment", true);
+    const vertex = standardBody(response.vertex, "vertex", true, masks), fragment = standardBody(response.fragment, "fragment", true);
     require(response.interfaceKey === standardInterface(vertex.metadata, fragment.metadata).key, "Standard pair key disagrees.");
     return standardFreeze({ ok: true, vertex, fragment, interfaceKey: response.interfaceKey });
   } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-link-error", error.message); }
+}
+export function normalizeStandardShaderPair(value) {
+  return normalizedStandardPair(value, STANDARD_FLOAT_INPUTS);
+}
+export function normalizeStandardShaderTypedPair(value, inputTypes) {
+  try { return normalizedStandardPair(value, standardInputTypes(inputTypes)); }
+  catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-link-error", error.message); }
 }
 export function deriveStandardShaderInterface(vertex, fragment) {
   try {

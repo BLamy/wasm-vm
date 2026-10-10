@@ -64,5 +64,20 @@ export async function createVirglStandardShaderBridge(options = {}) {
       }
       return run(input, ([vertex, fragment]) => module._bridge_translate_standard_pair(vertex, vertexText.length, fragment, fragmentText.length));
     },
+    translatePairTyped(request) {
+      let input;
+      try { input = fields(request, ["vertexText", "fragmentText", "signedMask", "unsignedMask"]); }
+      catch { return fail("invalid-input", "Typed standard pair reflection failed."); }
+      if (!input) return fail("invalid-input", "Provide only own texts and signed/unsigned mask data fields.");
+      const [vertexText, fragmentText, signedMask, unsignedMask] = input;
+      if (![signedMask, unsignedMask].every(mask => Number.isInteger(mask) && mask >= 0 && mask <= 0xffff) ||
+          (signedMask & unsignedMask) !== 0) return fail("invalid-input", "Vertex input masks must be disjoint 16-bit integers.");
+      for (const text of [vertexText, fragmentText]) {
+        const error = textError(text);
+        if (error) return error;
+      }
+      return run([vertexText, fragmentText], ([vertex, fragment]) => module._bridge_translate_standard_pair_typed(
+        vertex, vertexText.length, fragment, fragmentText.length, signedMask, unsignedMask));
+    },
   });
 }

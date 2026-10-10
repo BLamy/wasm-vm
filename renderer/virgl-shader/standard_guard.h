@@ -26,8 +26,16 @@ struct standard_profile {
    struct standard_io input[STANDARD_IO], output[STANDARD_IO], system[2];
    uint16_t instructions, constants, immediates;
    uint16_t used_samplers;
+   /* Host-derived vertex format types, never TGSI/guest shader keys. */
+   uint16_t signed_inputs, unsigned_inputs;
    uint8_t properties, broadcast;
 };
+
+static inline const char *standard_attribute_type(const struct standard_profile *p, unsigned index)
+{
+   return p->signed_inputs & (1u << index) ? "ivec4" :
+          p->unsigned_inputs & (1u << index) ? "uvec4" : "vec4";
+}
 
 /* Copies one bounded line at a time, consumes all characters, and validates
  * numbers and grammar BEFORE the upstream text parser sees the original text. */

@@ -2181,3 +2181,7 @@ verify-E6-T11d12:
 .PHONY: verify-E6-T11d13
 verify-E6-T11d13:
 	bash tools/verify-virgl-standard-scalar.sh
+
+.PHONY: verify-E6-T11d14
+verify-E6-T11d14:
+	bash tools/verify-virgl-standard-integer.sh

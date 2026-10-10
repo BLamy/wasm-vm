@@ -2375,6 +2375,10 @@ static const char *standard_convert(struct standard_conversion *c, const char *o
       .use_gles = 1, .use_core_profile = 1, .use_integer = 1};
    struct vrend_shader_key key = {0};
    if (c->profile.stage) key.fs.lower_left_origin = 1;
+   else {
+      key.vs.attrib_signed_int_bitmask = c->profile.signed_inputs;
+      key.vs.attrib_unsigned_int_bitmask = c->profile.unsigned_inputs;
+   }
    if (fragment) key.fs_info = *fragment;
    if (!strarray_alloc(&c->shader, SHADER_MAX_STRINGS))
       return error("translation-error", "Standard output allocation failed.");
@@ -2439,7 +2443,7 @@ static void standard_io_json(const struct standard_profile *p, unsigned file)
       else if (io->semantic == STD_PCOORD) snprintf(name, sizeof(name), "gl_PointCoord");
       else snprintf(name, sizeof(name), "%s", io->semantic == STD_VERTEXID ? "gl_VertexID" : "gl_InstanceID");
       append("%s{\"index\":%u,\"name\":\"%s\",\"type\":\"%s\",\"semantic\":\"%s\",\"semanticIndex\":%u,\"componentMask\":%u",
-         comma ? "," : "", i, name, io->semantic == STD_PSIZE ? "float" : file == STD_SV && io->semantic != STD_PCOORD ? "int" : io->semantic == STD_GENERIC && io->flat ? "uvec4" : "vec4", semantics[io->semantic], io->sid, io->mask);
+         comma ? "," : "", i, name, io->semantic == STD_ATTRIBUTE ? standard_attribute_type(p, i) : io->semantic == STD_PSIZE ? "float" : file == STD_SV && io->semantic != STD_PCOORD ? "int" : io->semantic == STD_GENERIC && io->flat ? "uvec4" : "vec4", semantics[io->semantic], io->sid, io->mask);
       if (file == STD_OUT) append(",\"syntacticWriteMask\":%u", io->writes);
       if (io->semantic == STD_GENERIC) append(",\"interpolation\":\"%s\"", io->flat ? "flat" : "smooth");
       if ((io->semantic == STD_POSITION || io->semantic == STD_PCOORD) && file == STD_IN && p->stage) append(",\"interpolation\":\"linear\"");
@@ -2512,10 +2516,13 @@ const char *bridge_translate_standard(int stage, const char *text, size_t length
    if (response_overflow) return error("translation-error", "Standard JSON output exceeded its bound.");
    return response;
 }
-const char *bridge_translate_standard_pair(const char *vertex_text, size_t vertex_length,
-                                           const char *fragment_text, size_t fragment_length)
+static const char *standard_pair(const char *vertex_text, size_t vertex_length,
+                                const char *fragment_text, size_t fragment_length,
+                                uint32_t signed_inputs, uint32_t unsigned_inputs)
 {
    begin_response(true);
+   if ((signed_inputs | unsigned_inputs) > 0xffffu || (signed_inputs & unsigned_inputs))
+      return error("invalid-input", "Vertex input masks must be disjoint 16-bit masks.");
    char owned[2][BRIDGE_MAX_TEXT + 1];
    struct standard_profile profiles[2] = {{.stage = 0}, {.stage = 1}};
    const char *failed = standard_input(&profiles[0], vertex_text, vertex_length, owned[0]);
@@ -2523,6 +2530,13 @@ const char *bridge_translate_standard_pair(const char *vertex_text, size_t verte
    if (!failed && !standard_match(&profiles[0], &profiles[1]))
       failed = error("incompatible-interface", "Standard fragment inputs require matching declared vertex components.");
    if (failed) return response;
+   uint32_t declared_inputs = 0;
+   for (unsigned i = 0; i < 16; ++i)
+      if (profiles[0].declared[STD_IN][i]) declared_inputs |= 1u << i;
+   if ((signed_inputs | unsigned_inputs) & ~declared_inputs)
+      return error("invalid-input", "Typed masks must name declared vertex attributes.");
+   profiles[0].signed_inputs = (uint16_t)signed_inputs;
+   profiles[0].unsigned_inputs = (uint16_t)unsigned_inputs;
    struct standard_conversion *c = calloc(2, sizeof(*c));
    if (!c) return error("allocation-failed", "Standard pair arena allocation failed.");
    c[0].profile = profiles[0]; c[1].profile = profiles[1];
@@ -2544,4 +2558,16 @@ const char *bridge_translate_standard_pair(const char *vertex_text, size_t verte
    standard_cleanup(&c[0]); standard_cleanup(&c[1]); free(c);
    if (response_overflow) return error("translation-error", "Standard pair JSON output exceeded its bound.");
    return response;
+}
+const char *bridge_translate_standard_pair(const char *vertex_text, size_t vertex_length,
+                                           const char *fragment_text, size_t fragment_length)
+{
+   return standard_pair(vertex_text, vertex_length, fragment_text, fragment_length, 0, 0);
+}
+const char *bridge_translate_standard_pair_typed(const char *vertex_text, size_t vertex_length,
+                                                 const char *fragment_text, size_t fragment_length,
+                                                 uint32_t signed_inputs, uint32_t unsigned_inputs)
+{
+   return standard_pair(vertex_text, vertex_length, fragment_text, fragment_length,
+                        signed_inputs, unsigned_inputs);
 }
