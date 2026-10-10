@@ -3,7 +3,7 @@ id: E6-T11d22
 epic: 6
 title: Execute original normalized-byte and sRGB 2D color images
 priority: 525.02703900036
-status: in-progress
+status: implemented
 depends_on: [E6-T11d21]
 estimate: S
 risk: high
@@ -45,3 +45,21 @@ The final selected gate records 192 literal wire/layout/allocation cases, 96 ful
 ### 2026-10-10 — worker — explicit browser proof source closure
 
 The first frozen gate at `76bd5df85e9c59f202d1bd879cb8f2470612432a` passed all 96 native matrix runs, all three 31-run schedules, both completed-fence native controls and independent reconstruction of 83,072 pixels / 41,786 native texels / 1,404 draws / 864 transfers / 2,607 physical fences. It stopped in the historical decoder browser server because that server's explicit source list omitted the new pure imported descriptor module. The failed attempt remains preserved. Add that transitive dependency to explicit historical proof-server source arrays, preserving numeric module indices and every existing assertion/control. These are declarative source/serve metadata corrections; the four affected historical consumers plus the selected original-image consumer run in the final gate. Other unchanged historical source-list declarations are scoped configuration waivers, not new runtime claims. No renderer, compiler or native oracle semantics changed. Freeze this corrected harness; record the final selected acceptance and one final pristine clone.
+
+### 2026-10-10 — worker — sealed final byte-color submission
+
+Frozen acceptance head `30908255d0ab91434ff37505852fe6550977a227`; product runtime is the unchanged `76bd5df85e9c59f202d1bd879cb8f2470612432a` implementation. Exact commands:
+
+```sh
+VIRGL_BYTE_COLOR_EVIDENCE_DIR=target/evidence/virgl-standard-byte-color-final make verify-E6-T11d22
+python3 tools/virgl-command/standard-byte-color-cold.py --output target/evidence/virgl-standard-byte-color-cold-final
+python3 tools/virgl-command/standard-byte-color-seal.py target/evidence/virgl-standard-byte-color-final target/evidence/virgl-standard-byte-color-cold-final evidence/virgl-standard-byte-color-images/worker
+```
+
+Both final hot and pristine scrubbed cold gates passed at the exact frozen head with zero browser errors and actual headed Apple M4 Max Metal. Each records 192 literal original wire/layout/allocation cases, 96 full/truncated resources, 1152 complete sampled frames, 240 selected-surface clear/draw/blend frames, three independently seeded 31-run boundary schedules, and two native channel/encoding controls rejected by the original full oracle after completed physical fences. Independent packet replay reconstructs 1,404 native draws, 83,072 full pixels, 41,786 native texels, 864 original synchronous/staged/owned transfers and 2,607 consumed physical fences. Native enum/typed-array and byte audits check 2,548 allocations, 402 uploads and 1,161 reads. Full signed normalization, sRGB decode-before-filter / encode-on-clear-draw-blend, source swizzles and implicit channels hold. GPU-only writes refresh restricted views without CPU uploads. Original43/45 outputs preserve complete logical source/staging rows and all untouched segmented padding. Retained old output is recorded before deletion after its consumed physical fence; generation reuse, cancellation/disposal and real GL failures leave no duplicate native deletion or terminal CPU/GPU/scratch/image/job budget.
+
+The affected original decoder, transfer, color, async and D21 image regressions pass. Source/served/generated/full nested V8 and all complete native/input bodies are bound by digest. The line-sample audit binds 42 complete V8 records and 440 added-line samples; full nested regions remain the fresh critic's authority. The 55 explicit migrations restore all three exact predecessor runtime files. Compiler/cache/constants/Rust/worker/demo remain unchanged; authenticated D21 worker+critic seals carry their prior HELD dependency chain. Source-list declarations for historical browser servers only serve the new pure dependency; assertions and prior controls stay unchanged.
+
+Cold clone `/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-byte-color-cold-6et86a3g/wasm-vm` was clean before and after acceptance. The seal contains 30256 records / 23359582 compressed bytes. Archive SHA256 `06406c64da6f9117633df916eb307c466df9d73c3fcc13abec640f7efcb5ac4e`; index SHA256 `846ce5b67333ea0f3aac751d3c5aed448979ca2f17c2fd1cae569c73974166a7`; hot receipt `92343a0947ee5d6355fb71f193a2647ab2a29d63df7b4b7c32b79ee63615a5db`; cold report `aaa2e726c5a2183250764b2eea5fec3933ab5dbea442d6f982bb0ae97b8b43d0`; cold receipt `17d3aa8752362bd758abd9c5915ed3c4e74e1844bbbae5082c54e0f6d335b61b`.
+
+Claim: this evidence demonstrates one host-selected original byte-color image/transfer/async boundary with actual native signed and sRGB semantics, separately bounded logical/physical bytes and GPU-only image work. This is a worker claim awaiting a fresh adversarial verifier. Complete graphics API/typed caps, actual production RISC-V guest Mesa/compositor, production worker scanout/deployment and performance remain unqualified. No retired rr/ssh path is used.
