@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19]
-blocked_on: E6-T11d19
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20]
+blocked_on: E6-T11d20
 estimate: S
 risk: high
 capstone: false
@@ -320,3 +320,7 @@ D17 is independently verified at `f489b8ed5599dfe9afeb7d7d1463655e768af418`. Its
 ### 2026-10-10 — worker — buffer identity verified; sampler state gap
 
 E6-T11d18 is independently verified at `bdad14aff93ba70c09d60ab308df4d2024dce4ba`. The unchanged standard sampler decoder still rejects 25 of the 27 original REPEAT/CLAMP_TO_EDGE/MIRROR_REPEAT address combinations, and all original mip-filter states. `evidence/virgl-production-readiness/standard-sampler-gap.json` binds the literal packet probe and unchanged decoder/pinned enum/encoder/renderer hashes. Decode each packetHex using `decodeStandardUniformSubmission` to reproduce. Ordered S prerequisite E6-T11d19 executes these original core state fields through native samplers, preserving finite legacy admissions. GLES leaves reversed LOD bounds sampling undefined; their source words and native parameter values must be preserved without a fabricated pixel claim. Actual storage/API/capset qualification, RISC-V guest Mesa/compositor execution, production worker scanout and live deployment remain successors under the explicit user instruction to finish production guest graphics.
+
+### 2026-10-10 — worker — sampler verified; original mip storage gap
+
+E6-T11d19 is independently verified at `52d3cc4e2f0f28d82a2900ff33ab855ae118e66e`. The original metadata and op9/43/45 packets in `evidence/virgl-production-readiness/standard-texture-gap.json` still reject nonzero lastLevel/level. Reproduce with its complete script against the pinned unchanged resource/decoder bytes. Ordered S/high E6-T11d20 adds checked original mip storage and transfers. Sampler views, framebuffer subresources, complete API and typed caps, real guest Mesa/rendering and deployment remain gated. The explicit user instruction continues this production graphics chain; this prerequisite cannot grant their authority.

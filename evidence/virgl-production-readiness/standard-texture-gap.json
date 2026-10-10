@@ -1,0 +1,71 @@
+{
+  "schema": "original-mip-storage-gap-v1",
+  "sourceHead": "3d81681fd22caf78639791a5b7f698cd44c13fc6",
+  "metadata": {
+    "id": 1,
+    "target": 2,
+    "format": 67,
+    "bind": 10,
+    "width": 7,
+    "height": 5,
+    "depth": 1,
+    "arraySize": 1,
+    "lastLevel": 2,
+    "nrSamples": 0,
+    "flags": 0
+  },
+  "packetHex": "2b000d000100000001000000000000000f0000001e0000000000000000000000000000000300000002000000010000000500000001000000",
+  "fields": {
+    "resourceHandle": 1,
+    "level": 1,
+    "usage": 0,
+    "stride": 15,
+    "layerStride": 30,
+    "box": {
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "width": 3,
+      "height": 2,
+      "depth": 1
+    },
+    "dataOffset": 5,
+    "direction": 1
+  },
+  "decoder": {
+    "ok": false,
+    "error": {
+      "code": "unsupported-feature",
+      "message": "Only level zero transfers are supported.",
+      "byteOffset": 0,
+      "opcode": 43
+    }
+  },
+  "layout": {
+    "ok": false,
+    "error": {
+      "code": "unsupported-resource",
+      "message": "Only one-level, single-layer, single-sample resources without flags are supported."
+    }
+  },
+  "sources": [
+    {
+      "path": "renderer/virgl-command/resources.mjs",
+      "sha256": "2e0cf5852e1e3423d90b39751934ca6abd6e7e4f67b46949207ef61d14b15c0c"
+    },
+    {
+      "path": "renderer/virgl-command/decoder.mjs",
+      "sha256": "e17ecec366317132ebabb8978d494f6c1997bb130d53a2cb80397a4a94a8484e"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/virgl_protocol.h",
+      "sha256": "094a6e2b210f1d3dd0f1ac254ed8820c1d889e57d2735c0c6194dbc94f3b1ac7"
+    },
+    {
+      "path": "/tmp/wasmvm-mesa-ubo-source/mesa-26.2.2/src/gallium/drivers/virgl/virgl_resource.c",
+      "sha256": "6394b5eb45f8d0aee27073bd0bff7b7de4c7080bd32352f6c8f30851b31fb05e"
+    }
+  ],
+  "guestExecution": false,
+  "productionNegotiation": false
+}
