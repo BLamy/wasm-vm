@@ -1,0 +1,142 @@
+{
+  "boundary": "read-only minimum API readiness, no caps or guest execution",
+  "sourceHead": "e5d4dba7b9cd5e8f8085f191d74f5e4a817abddd",
+  "decoderSha256": "114f14cbd6adf2d48130b29ad4668bc83372cfac4b54986577f06480ab62078e",
+  "cases": [
+    {
+      "name": "two-instances",
+      "packetHex": "08000c00000000000300000004000000000000000200000000000000000000000000000000000000000000000000000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only ordinary triangles/strips without instancing, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      }
+    },
+    {
+      "name": "instance-divisor",
+      "packetHex": "01050500090300000000000001000000000000001f000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only per-vertex R32 through RGBA32_FLOAT elements are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "name": "u32-indices",
+      "packetHex": "0b000300030000000400000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only u16 index buffers are supported.",
+          "byteOffset": 0,
+          "opcode": 11
+        }
+      }
+    },
+    {
+      "name": "primitive-0",
+      "packetHex": "08000c00000000000300000000000000000000000100000000000000000000000000000000000000000000000000000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only ordinary triangles/strips without instancing, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      }
+    },
+    {
+      "name": "primitive-1",
+      "packetHex": "08000c00000000000300000001000000000000000100000000000000000000000000000000000000000000000000000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only ordinary triangles/strips without instancing, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      }
+    },
+    {
+      "name": "primitive-2",
+      "packetHex": "08000c00000000000300000002000000000000000100000000000000000000000000000000000000000000000000000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only ordinary triangles/strips without instancing, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      }
+    },
+    {
+      "name": "primitive-3",
+      "packetHex": "08000c00000000000300000003000000000000000100000000000000000000000000000000000000000000000000000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only ordinary triangles/strips without instancing, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      }
+    },
+    {
+      "name": "primitive-6",
+      "packetHex": "08000c00000000000300000006000000000000000100000000000000000000000000000000000000000000000000000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only ordinary triangles/strips without instancing, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      }
+    }
+  ],
+  "mesaSources": [
+    {
+      "version": "26.2.2",
+      "path": "src/gallium/drivers/virgl/virgl_screen.c",
+      "bytes": 42620,
+      "sha256": "6a78bf41561a59e440d814a31a392ee07a03cf54a367ca49cfe71086aa7e85a8"
+    },
+    {
+      "version": "26.2.2",
+      "path": "src/gallium/drivers/virgl/virgl_encode.c",
+      "bytes": 74791,
+      "sha256": "8999ff4398e9696c4b3a561f953270672a6f8d82f8e417c5d9de11ab1d284e2e"
+    },
+    {
+      "version": "26.2.2",
+      "path": "src/mesa/main/version.c",
+      "bytes": 29380,
+      "sha256": "8d3fd4701b3ec44276fcc0bbd3cafecfcb026043c01b74d9ddf018d3a116a24b"
+    }
+  ],
+  "hostProbe": {
+    "path": "/tmp/wasmvm-standard-instancing-host-probe.json",
+    "sha256": "feafe7a8fadf21ace501c37fcb5965c6f71e91f2339bb160f6c9a46ef9bf6173",
+    "scriptSha256": "daf695990b99750d88b795f08206f8d948f30a0daea82ae946a843cb2ed0e0fa"
+  },
+  "observations": [
+    "Mesa instance IDs and per-element divisors are unconditional at virgl_screen.c:322-323.",
+    "Mesa encoder serializes DRAW_VBO instance count and index width-dependent state.",
+    "GLES3 version check in version.c:487-516 requires instancing, transform feedback, UBOs, texture arrays, typed formats and four color attachments.",
+    "This negative decoder probe and direct host test do not qualify any positive guest API or production capability."
+  ]
+}
