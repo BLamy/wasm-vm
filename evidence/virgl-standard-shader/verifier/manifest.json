@@ -1,0 +1,14 @@
+{
+  "schema": "virgl-standard-shader-critic-seal-v1",
+  "task": "E6-T11d4",
+  "verdict": "refuted",
+  "workerClaimHead": "ea93f59eb8550fcacd1ce10c8773b02d9df16c2e",
+  "compilerHead": "571c22593967e1cdae801d0c54ab0833d94b2c43",
+  "workerArchiveSha256": "ee57339a1ce43d5f600a4d0d2c0e4bc47b361a189b78e1807cc31061225067b8",
+  "workerIndexSha256": "a9a18780e726e13e0f6c883ce447e1c415314ff9d4b2604daa6273b5528bff2b",
+  "records": 71,
+  "archiveSha256": "1f59cd3fc8c56509ef73b9d02f766d02e488a9eae70df1e607a4ac036061e78c",
+  "archiveBytes": 2212835,
+  "recordIndexSha256": "2435c54371b4db9a5935683aec13881f6925db8993996b48b38024df864f86cd",
+  "verdictSha256": "4abe8fba7590be899066c9677e8c46799cf4005b7347265497060dcf57ecc1cc"
+}

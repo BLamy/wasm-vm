@@ -1,0 +1,11 @@
+import fs from 'node:fs/promises';
+import assert from 'node:assert/strict';
+import {createVirglStandardShaderBridge} from '../../../../renderer/virgl-shader/standard.mjs';
+const text=await fs.readFile(new URL('./case.tgsi', import.meta.url), 'utf8');
+const bridge=await createVirglStandardShaderBridge();
+const result=bridge.translate({stage:'fragment',text});
+assert.equal(result.ok,false);
+assert.equal(result.error.code,'translation-error');
+assert.deepEqual(Object.keys(result),['ok','error']);
+await fs.writeFile(new URL('./wasm.json',import.meta.url), JSON.stringify({source:text,result},null,2)+'\n');
+console.log(JSON.stringify(result));

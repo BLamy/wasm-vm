@@ -3,7 +3,7 @@ id: E6-T11d4
 epic: 6
 title: Compile bounded ordinary guest shaders with standard WebGL2 semantics
 priority: 525.027037
-status: implemented
+status: in-progress
 depends_on: [E6-T11d3]
 estimate: S
 risk: high
@@ -169,3 +169,113 @@ head and SHA256 `7651a22aaa59bf8b50824420f018f96c32926f29be590c2bc9dbb7974c527a2
 and includes its bytes. No compiler, acceptance or cold-clone behavior changed;
 the final exact-head cold proof at `571c2259` is retained incrementally.
 A fresh adversarial session must judge correctness and every changed hunk.
+
+
+### 2026-10-09 — fresh adversarial verifier — VERDICT: refuted
+
+VERDICT: refuted
+
+- **P2/P3 supported declaration order — FAILED.** Before execution, independent
+  case 528 predicted admission and a 512-vector constant bank for the exact
+  source below. Optimized native, ASan/UBSan and the actual public fixed-memory
+  Wasm facet instead return only `ok:false` and `translation-error` with
+  `Standard conversion failed or metadata/output bounds disagree.` Rechecked
+  the single input independently on all three paths. At `bridge.c:2283`, an
+  unmodified-source `-g -O0` ASan/UBSan debugger build observes
+  `profile.constants=512`, `info.num_consts=513`: direct expressions in
+  `evidence/virgl-standard-shader/verifier/finding/lldb-debug.log:21` and `:23`
+  (SHA256 `36ce777862c86b6e606d101d88ecd2d75fe8bc664575ecd7fa04df24ade8cac2`). The maximum extent is retained by
+  `standard_guard.c:144`; pinned `vendor/src/vrend/vrend_shader.c:1958–1966`
+  sets 512 for Last511, then increments for Last0; the new strict metadata
+  comparison at `bridge.c:2284` rejects the admitted source. The positive
+  prediction, case bytes and optimized result at `promoted-final/native/native.jsonl:529`
+  are sealed below. Repair the standard-only upstream metadata transaction,
+  retain strict extent checking and all old entry-point bodies, and record this
+  declaration-order regression on native/sanitized/Wasm plus final exact-head
+  cold acceptance. This is an admitted-grammar completeness failure.
+
+```tgsi
+FRAG
+DCL CONST[511]
+DCL CONST[0]
+DCL OUT[0], COLOR
+0: MOV OUT[0], CONST[511]
+1: END
+```
+
+- **P1 evidence custody — HELD.** Independently authenticated all 409 worker
+  records, both source lists and generated binaries, exact frozen compiler
+  `571c2259`, clean actual cold clone before/after, and all final log bytes.
+  Audited the post-freeze `seal.py` diff, its separately recorded helper head
+  `505a9e59` and SHA256 `7651a22aaa59bf8b50824420f018f96c32926f29be590c2bc9dbb7974c527a21`;
+  independently sabotaged hot/cold prefix, confirmation and appended bytes
+  (six mutations), all rejected. Worker archive/index remain
+  `ee57339a1ce43d5f600a4d0d2c0e4bc47b361a189b78e1807cc31061225067b8` /
+  `a9a18780e726e13e0f6c883ce447e1c415314ff9d4b2604daa6273b5528bff2b`.
+- **P2/P3 other exercised grammar and metadata — HELD.** Worker 634 cases
+  match native/sanitized/actual Wasm and separately decoded pinned TGSI.
+  Fresh seeds `608135816`, `2242054355`, `320440878` add 483 predicted cases
+  (66 admitted) covering wrapped/ranged/multidimensional/indirect fields,
+  collisions, stages, labels/depth/flow, partial tokens and literal limits;
+  native/sanitized/Wasm and independent metadata agree. These successful
+  cases do not waive the positive declaration-order failure.
+- **P4 ownership/allocation — HELD.** Worker 41 actual allocation-site faults
+  recover, and caller text mutation preserves original paired results.
+  Fresh fixed-16MiB Wasm pressure lets input allocation succeed, then exercises
+  C arena failure after releasing 2048 bytes and checked upstream parser failure
+  after releasing 65536 bytes; single/pair return no partial output and fully
+  recover after freeing allocations. Owned-field, getter/proxy, stale-result
+  and wrapper-exhaustion attacks also hold (`wasm-pressure.json`,
+  `independent/node.json` in the critic archive).
+- **P5/P6/P7 physical semantics — HELD.** Recomputed both sealed hot/cold
+  recordings offline: 125 frames / 2,390,624 pixels, all three complete 92cb
+  banks and six c580 frames. Predicted dynamic SIN, first-swizzled EX2
+  replication, literal NaN-mask custody and raw flat words before inspection;
+  all satisfy the independent budgets/word assertions. A separate bounded
+  uniform-fed shader combines ARL-selected constants, scalar EX2/LG2/SIN/COS,
+  nonuniform swizzles, masked aliases, unsigned source negation/comparison and
+  flow on defined finite inputs. Three fresh hardware frames / 768 pixels
+  have maximum errors `7.256596390448067e-8`, `4.334021097562868e-8`,
+  `2.165692496447491e-7` (`fresh-physical-audit.json`). Browser console/page/
+  request error counts are zero.
+- **P8 isolation / prior architectural boundary — HELD.** The complete legacy
+  C body hash `60b2defc35edff77c760bf641cddb8c4719b58e5727e9e883e3bc07b94183e9e`
+  and 250 pre-existing compiler files are unchanged. Retained ordinary
+  19 bodies/57 programs, raw 42 frames, and private original-pair anchors
+  preserve their profiles/results. Carry prior verified architectural evidence
+  forward only for that unchanged boundary. The standard authority remains
+  distinct; no production capability or throughput claim is inferred.
+- **P9/P11 novel attack and sabotage — HELD.** Actual emitted SIN-to-COS
+  mutation fails the independent fresh physical oracle at pixel (0,0):
+  expected lane0 `2.9353883300152694`, observed `1.5279462337493896`, error
+  `1.4074420962658798`. Sabotaging the candidate promoted CPU oracle by +0.125
+  also fails at (0,0), error `0.12500000337037198`, with zero browser errors.
+- **P10 sufficiency — partial audit retained, closure pending repair.** Sealed
+  LLVM profiles re-export identically against their recorded binaries. Matrix
+  line coverage is 332/335 guard and 213/218 emitter; allocation recordings
+  cover the fault transactions, and fresh Wasm/physical attacks execute C
+  arena/parser failures and unsigned source negation. Authenticated optimized
+  stack records show pair108256 + conversion33552 + upstream49216 + emitter624
+  =191648 bytes before small callbacks, within262144. Exhaustive defensive/
+  branch waiver closure is unfinished after this semantic refutation; this
+  entry grants no complete sufficiency verdict.
+
+SUITE: no permanent promotion while correctness is refuted. Critic test
+proposals are retained in the archive for the repair. The 483-case/three-frame
+candidate passed after a Python3.9-only harness `zip` repair; the expanded
+532-case/six-frame candidate stops at case528 before Wasm/browser. No six-frame
+pass is claimed. Preserve HELD predictions when their code, dependency boundary
+and evidence digests remain unchanged; rerun the affected semantic gates and
+one final pristine exact-head proof for the repair.
+
+Critic evidence: `evidence/virgl-standard-shader/verifier/{manifest.json,records.json,recording.tar.gz,verdict.json,finding/}`;
+71 records, 2,212,835 compressed bytes;
+archive SHA256 `1f59cd3fc8c56509ef73b9d02f766d02e488a9eae70df1e607a4ac036061e78c`;
+index `2435c54371b4db9a5935683aec13881f6925db8993996b48b38024df864f86cd`. It binds original predictions,
+fresh inputs/results/coverage, complete pixel bytes, both sabotage captures,
+log-authentication attacks and the rechecked finding. Runtime was not edited.
+Commands include independent `metadata.py` and `pixels.mjs` replays on both
+unpacked worker sides; native/sanitized/Node critic matrices and pressure;
+headed hardware critic draws and sabotage; independent offline pixel audit;
+`xcrun lldb --batch` on the reproduced source at `bridge.c:2283`;
+`python3 tools/check_task_policy.py`; `python3 tools/build_queue.py`.
