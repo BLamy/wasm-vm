@@ -98,3 +98,13 @@ passes 634 native/Wasm structural/limit cases, independent TGSI metadata,
 including all three complete 92cb banks and six c580 corner/discard draws.
 An actual SIN-to-COS emitted-operation mutation fails the physical oracle.
 These are development checks, not a frozen submission or verifier verdict.
+
+The first frozen recording at `bbfdfb36` passes the complete standard path and
+offline pixel audit. An ancillary ancient E6-T10a browser fixture then fails
+because it still expects text/GLSL/temp limits 16384/65536/117. The verified
+predecessor `97ed2ca3` already publishes 49152/262144/511 (and vertex slot127);
+the entire pre-existing C runtime body is byte-identical. This is a stale harness
+assertion, not a new runtime contradiction. The affected ordinary gate uses the
+current recorded original corpus instead: 19 unchanged bodies, 57 programs,
+1,536 independently checked vertex words and 155,648 physical pixels pass.
+No old runtime code or expected shader value is changed to clear the fixture.

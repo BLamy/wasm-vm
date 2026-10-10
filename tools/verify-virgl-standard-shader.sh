@@ -55,7 +55,7 @@ node tools/virgl-standard-shader/pixels.mjs "$evidence"
 # Retain direct ordinary/raw/private behavior. Their unchanged HELD numerical
 # proofs remain carried; these are affected-path checks at the new frozen head.
 bash renderer/virgl-shader/build.sh sanitize
-node tools/verify-virgl-shader.mjs --output "$evidence/retained-ordinary"
+node tools/virgl-original-corpus/browser.mjs --output "$evidence/retained-ordinary"
 node tools/verify-virgl-raw-bits.mjs --output "$evidence/retained-raw"
 mkdir -p target/evidence/virgl-92cb-raster target/evidence/virgl-original-c580
 cp "$evidence/geometry.bin" target/evidence/virgl-92cb-raster/geometry.bin
