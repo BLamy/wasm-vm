@@ -3,7 +3,7 @@ id: E6-T11d18
 epic: 6
 title: Preserve original buffer identity across vertex index and uniform roles
 priority: 525.02703900037
-status: pending
+status: in-progress
 depends_on: [E6-T11d17]
 estimate: S
 risk: high
@@ -39,3 +39,7 @@ The existing D17 facet preserves other-data vertex/uniform aliasing but rejects 
 Pinned Mesa26.2.2 `bufferobj.c:162-186,325-341` derives creation flags from the original GL target, while `virgl_context.c:638-663` binds constant data by the original resource and updates bind_history. These creation flags cannot forbid later GL role reuse. The WebGL2 specification's Buffer Object Binding restrictions require class isolation (https://registry.khronos.org/webgl/specs/latest/2.0/). A headed M4 Metal planning probe `/tmp/wasmvm-standard-buffer-native-class.mjs` records error1282 for direct cross-class binding and copy, and exact original `[2,0,1]` bytes surviving a read/upload bridge. This planning probe is not task submission evidence; acceptance must exercise the actual renderer and original packets through completed fences.
 
 The user's explicit instruction to finish production guest graphics keeps this ordered chain ahead of unrelated general queue work. Actual GLES3/typed API qualification, real RISC-V guest Mesa/compositor execution, worker scanout integration and live deployment remain later work.
+
+### 2026-10-10 — worker — activation
+
+Selected as the next eligible ordered graphics prerequisite under the user’s instruction to finish production guest graphics. D17 fresh verifier commit f489b8ed is the native stack parent. Original buffer identity and the existing private u32 index bridge are the only active boundary.
