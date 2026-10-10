@@ -1,0 +1,16 @@
+{
+  "schema": "virgl-standard-primitive-assembly-seal-v1",
+  "task": "E6-T11d10",
+  "sourceHead": "dc28eaa0128177a5f742e8f2877fc7a6573d06fd",
+  "records": 10364,
+  "archiveSha256": "51ff1c7fa589480cdc626d715771364164aa3540086dbc9ea443986503d84177",
+  "archiveBytes": 18592102,
+  "recordIndexSha256": "54312872d7bb67b194478a04e5e12039b49d582fa15b9e4c59c1ad766a5a0331",
+  "hotReceiptSha256": "9269b5f25ad79161b3e4b422c886ae9c797da85a90dcf25e444ef85e09e3a831",
+  "coldReportSha256": "209334cc2defe2244a6d4190ac30aa71af2aa3a9ea0806c7d3326dc1afa311ac",
+  "coldReceiptSha256": "ef7256c612aebff7fadc2a83b72f735613012df64b1e90107bae14913a8b0f1c",
+  "guestExecution": false,
+  "portableDomainCertified": false,
+  "authority": "isolated-standard-primitive-assembly",
+  "productionDrawAuthority": false
+}
