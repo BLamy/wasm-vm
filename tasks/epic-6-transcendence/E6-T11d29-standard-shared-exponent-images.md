@@ -3,7 +3,7 @@ id: E6-T11d29
 epic: 6
 title: Preserve original RGB9E5 image words with native GPU copies and reads
 priority: 525.027039000371
-status: pending
+status: in-progress
 depends_on: [E6-T11d28]
 estimate: S
 risk: high
