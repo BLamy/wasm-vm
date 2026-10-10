@@ -1,0 +1,107 @@
+{
+  "status": "passed",
+  "verifiedPredecessor": "bef7040804a1c71ad37112e35adcfebefbc4be21",
+  "carriedEvidence": [
+    {
+      "path": "evidence/virgl-standard-draw/verifier/manifest.json",
+      "sha256": "795ab0071efbc9ef0232420d979715512ceebb004941cc2322119d4dbd0c54f6",
+      "unchangedSinceVerifiedPredecessor": true
+    },
+    {
+      "path": "evidence/virgl-standard-draw/verifier/recording.tar.gz",
+      "sha256": "a0da501deed127a1f9359c2ce511606efd15135a65d6e8338d84f97a5fb05905",
+      "unchangedSinceVerifiedPredecessor": true
+    },
+    {
+      "path": "evidence/virgl-standard-draw/verifier/records.json",
+      "sha256": "775ab1789688128b44ff3e6e3933509e67404d32eb39b4e290ed2ffb7f91b1ef",
+      "unchangedSinceVerifiedPredecessor": true
+    },
+    {
+      "path": "evidence/virgl-standard-draw/worker/manifest.json",
+      "sha256": "2a46c901bd571f8e231ce2d12005109f9a8b15f9c0f96defec059c504191d5fd",
+      "unchangedSinceVerifiedPredecessor": true
+    },
+    {
+      "path": "evidence/virgl-standard-draw/worker/recording.tar.gz",
+      "sha256": "4a6c5816f8979dbf7e6ed75abd05bedf53073becae307e6a0d970d9c0382270b",
+      "unchangedSinceVerifiedPredecessor": true
+    },
+    {
+      "path": "evidence/virgl-standard-draw/worker/records.json",
+      "sha256": "6613d8d1075325f89a0cca63c78b0a65b73c138f629780b786d21dcad03d77dd",
+      "unchangedSinceVerifiedPredecessor": true
+    },
+    {
+      "path": "evidence/virgl-standard-constant/verifier/manifest.json",
+      "sha256": "724dc99c0ec26dfe6de101560bb7452a320884a7d914659868d8fb42ca3de06d",
+      "unchangedSinceVerifiedPredecessor": true
+    },
+    {
+      "path": "evidence/virgl-standard-constant/verifier/recording.tar.gz",
+      "sha256": "0e7c1966aba67f0276d371a2414f065c0396d65088310b253e54a6857911d231",
+      "unchangedSinceVerifiedPredecessor": true
+    },
+    {
+      "path": "evidence/virgl-standard-constant/verifier/records.json",
+      "sha256": "d6d452707e41890f5a1726f8b66d7a956dd6a5caa69fa22dcfd70a0e45a1c6ba",
+      "unchangedSinceVerifiedPredecessor": true
+    },
+    {
+      "path": "evidence/virgl-standard-constant/verifier/verdict.json",
+      "sha256": "45264a9b070fe72231e90378e81fa1bc7698473fb3a1142ef820aa55d12028c8",
+      "unchangedSinceVerifiedPredecessor": true
+    },
+    {
+      "path": "evidence/virgl-standard-constant/worker/manifest.json",
+      "sha256": "3029e840ffc4d864af8a4186fd320b3012e3005a42cefa7d283956c3ec49d796",
+      "unchangedSinceVerifiedPredecessor": true
+    },
+    {
+      "path": "evidence/virgl-standard-constant/worker/recording.tar.gz",
+      "sha256": "598acb64caacea419f099a5fc1bb25fe763c4ce8dfb3eb8c0a76126acea28aca",
+      "unchangedSinceVerifiedPredecessor": true
+    },
+    {
+      "path": "evidence/virgl-standard-constant/worker/records.json",
+      "sha256": "36217166ebf678e6dd701ec7ec66f042891963be7638dc2c77a920903694d65a",
+      "unchangedSinceVerifiedPredecessor": true
+    },
+    {
+      "path": "evidence/virgl-standard-topology/verifier/manifest.json",
+      "sha256": "20cf75ad768e1b7eaa60ca744b0215dc337b88a488241ef11d23f8e891b92087",
+      "unchangedSinceVerifiedPredecessor": true
+    },
+    {
+      "path": "evidence/virgl-standard-topology/verifier/recording.tar.gz",
+      "sha256": "2a7eaca7ad6b474ca29dc7d4977ec97507d69ec5c9d9a61b26b89c930e6fdd24",
+      "unchangedSinceVerifiedPredecessor": true
+    },
+    {
+      "path": "evidence/virgl-standard-topology/verifier/records.json",
+      "sha256": "d5daecd5bd4d655978b0e7925d9e2e5cc08fb8fce46676d3a39291473a700c12",
+      "unchangedSinceVerifiedPredecessor": true
+    },
+    {
+      "path": "evidence/virgl-standard-topology/verifier/verdict.json",
+      "sha256": "2972e3de4a3dc08612e16a92c0b0154c0f09aaa9575815ff3a70f38aa28fb2cf",
+      "unchangedSinceVerifiedPredecessor": true
+    },
+    {
+      "path": "evidence/virgl-standard-topology/worker/manifest.json",
+      "sha256": "ca65a70e68f5ff437e9795a737548c009ad8ad609c06d8342b184018f464d319",
+      "unchangedSinceVerifiedPredecessor": true
+    },
+    {
+      "path": "evidence/virgl-standard-topology/worker/recording.tar.gz",
+      "sha256": "c192468202cec8d341e6074cc241d19d699cde78d58e7361b2e09d58da1ba8cf",
+      "unchangedSinceVerifiedPredecessor": true
+    },
+    {
+      "path": "evidence/virgl-standard-topology/worker/records.json",
+      "sha256": "387bbf495d4e22e397636147874974a08c01f7ffe0dee6828be8ddd1e637c8af",
+      "unchangedSinceVerifiedPredecessor": true
+    }
+  ],
+  "scope": "Carry earlier HELD compiler, resource/cache, constant-domain and link/uniform boundaries and historical D6/D7/D8 evidence only within their original source/claim scopes. Standard indexed sentinel admission/bounds changed, so historical rejection of legal u8/u16 maxima is not carried as D9 authority; the renewed physical D6 short-source negatives and D9 actual maximum pixels prove that part. No provoking-state or production/API qualification follows."
+}
