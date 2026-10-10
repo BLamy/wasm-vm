@@ -1,0 +1,9 @@
+{
+  "criterion": "bounded supported constant declarations must compile with independently derived extent512",
+  "source": "FRAG\nDCL CONST[511]\nDCL CONST[0]\nDCL OUT[0], COLOR\n0: MOV OUT[0], CONST[511]\n1: END\n",
+  "expectedPublicOk": true,
+  "point": "standard_convert before bridge.c:2283 post-upstream metadata comparison",
+  "expectedProfileConstants": 512,
+  "expectedUpstreamNumConsts": 513,
+  "reason": "Pinned Last511 updates extent512, then Last0 increments count by1; guard keeps maximum extent512."
+}

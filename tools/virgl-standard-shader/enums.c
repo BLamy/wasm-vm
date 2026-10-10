@@ -1,0 +1,16 @@
+/* SPDX-License-Identifier: MIT — ABI constants from the pinned TGSI headers. */
+#include "pipe/p_shader_tokens.h"
+#include <stdio.h>
+int main(void)
+{
+   printf("{");
+#define FIELD(n) printf("\"" #n "\":%u,", (unsigned)n)
+   FIELD(TGSI_PROCESSOR_VERTEX); FIELD(TGSI_PROCESSOR_FRAGMENT);
+   FIELD(TGSI_FILE_INPUT); FIELD(TGSI_FILE_OUTPUT); FIELD(TGSI_FILE_CONSTANT);
+   FIELD(TGSI_FILE_SYSTEM_VALUE); FIELD(TGSI_FILE_SAMPLER);
+   FIELD(TGSI_SEMANTIC_POSITION); FIELD(TGSI_SEMANTIC_GENERIC); FIELD(TGSI_SEMANTIC_COLOR);
+   FIELD(TGSI_SEMANTIC_VERTEXID); FIELD(TGSI_SEMANTIC_INSTANCEID);
+   FIELD(TGSI_INTERPOLATE_CONSTANT); FIELD(TGSI_INTERPOLATE_PERSPECTIVE);
+#undef FIELD
+   printf("\"status\":\"pinned-header\"}\n"); return 0;
+}

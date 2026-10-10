@@ -1,0 +1,27 @@
+(lldb) target create "target/evidence/virgl-standard-shader-verifier/finding/standard-debug"
+Current executable set to '/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-standard-shader-verifier/finding/standard-debug' (arm64).
+(lldb) settings set target.disable-aslr false
+(lldb) breakpoint set --file bridge.c --line 2283
+Breakpoint 1: where = standard-debug`standard_convert + 2592 at bridge.c:2283:9, address = 0x000000010002226c
+(lldb) run target/evidence/virgl-standard-shader-verifier/finding/case.bin
+Process 26246 launched: '/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-standard-shader-verifier/finding/standard-debug' (arm64)
+Process 26246 stopped
+* thread #1, queue = 'com.apple.main-thread', stop reason = breakpoint 1.1
+       frame #0: 0x0000000100c2226c standard-debug`standard_convert(c=0x0000623000000100, owned="FRAG\nDCL CONST[511]\nDCL CONST[0]\nDCL OUT[0], COLOR\n0: MOV OUT[0], CONST[511]\n1: END\n", fragment=0x0000000000000000) at bridge.c:2283:9
+   2280	   bool ok = vrend_convert_shader(NULL, &cfg, tokens, 0, &key, &c->info, &c->variable, &c->shader);
+   2281	   size_t bytes = 0;
+   2282	   for (int i = 0; i < c->shader.num_strings; ++i) bytes += strlen(c->shader.strings[i].buf);
+-> 2283	   if (!ok || bridge_upstream_allocation_failed() || upstream_logged || bytes > BRIDGE_MAX_GLSL ||
+    	        ^
+   2284	       c->info.num_consts != c->profile.constants || c->info.samplers_used_mask != c->profile.used_samplers)
+   2285	      return error("translation-error", "Standard conversion failed or metadata/output bounds disagree.");
+   2286	   const char *emitted = standard_emit(&c->profile, tokens, &c->standard_source);
+Target 0: (standard-debug) stopped.
+(lldb) expression -- c->profile.constants
+(uint16_t) $0 = 512
+(lldb) expression -- c->info.num_consts
+(int) $1 = 513
+(lldb) continue
+{"case":0,"result":{"ok":false,"error":{"code":"translation-error","message":"Standard conversion failed or metadata/output bounds disagree."}},"oracle":null}
+Process 26246 resuming
+Process 26246 exited with status = 0 (0x00000000)

@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3]
-blocked_on: E6-T11d3
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4]
+blocked_on: E6-T11d4
 estimate: S
 risk: high
 capstone: false
@@ -104,3 +104,24 @@ return `unsupported-feature: Only per-vertex RG32/RGB32_FLOAT elements are
 supported.` Ordered S prerequisite E6-T11d3 closes the scalar/four-component
 fetch family and independently proves missing lanes, fourth alpha and clip W.
 No complete API, production negotiation or guest rendering is claimed here.
+
+### 2026-10-09 — worker — float fetch verified; ordinary shader boundary
+
+E6-T11d3 is independently verified at `97ed2ca3`. Standard uniform-fed SIN,
+EX2, LG2 and POW shaders still reject through the existing exact proof facet;
+so does a legal position plus eight generic outputs. Reproduce each complete
+source in `evidence/virgl-production-readiness/standard-shader-gap.json` through
+`createVirglShaderBridge().translate({stage,text})`. Its negative result binds
+the unchanged compiler source closure, actual Wasm and Mesa26.2.2 source pin.
+E6-T11d4 adds a distinct bounded standard compiler facet, preserving existing
+exact/raw/private admission. It grants no positive capsets.
+
+The captured Hyprland0.56.2 source requests GLES3.2 and falls back only to
+GLES3.0 (OpenGL.cpp184..203 at pinned revisionefb50993780079460b0cbed1363e2166a2de1d9f).
+`evidence/virgl-production-readiness/compositor-api-floor.json` binds that source
+and the original reference log. GLES2-only kmscube admission cannot complete
+the requested desktop offload. This source/readiness observation does not claim
+that the browser supports the complete API. Remaining actual GLES3 storage,
+state, texture, draw and typed qualification gates remain ordered successors.
+The explicit user instruction continues this graphics chain instead of the
+unrelated general queue entry.

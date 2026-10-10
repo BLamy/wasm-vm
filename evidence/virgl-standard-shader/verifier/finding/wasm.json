@@ -1,0 +1,10 @@
+{
+  "source": "FRAG\nDCL CONST[511]\nDCL CONST[0]\nDCL OUT[0], COLOR\n0: MOV OUT[0], CONST[511]\n1: END\n",
+  "result": {
+    "ok": false,
+    "error": {
+      "code": "translation-error",
+      "message": "Standard conversion failed or metadata/output bounds disagree."
+    }
+  }
+}

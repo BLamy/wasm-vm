@@ -9,7 +9,7 @@ sources=(bridge.c raw_bits.c generated/u_format_table.c checked_upstream.c
 for source in vendor/src/gallium/auxiliary/tgsi/*.c; do
   [[ "$source" == */tgsi_sanity.c ]] || sources+=("$source")
 done
-sources+=(vendor/src/gallium/auxiliary/cso_cache/cso_cache.c vendor/src/mesa/util/u_debug.c)
+sources+=(vendor/src/gallium/auxiliary/cso_cache/cso_cache.c vendor/src/mesa/util/u_debug.c standard_guard.c standard_emit.c)
 common=(-std=gnu11 -D_GNU_SOURCE -D_DARWIN_C_SOURCE
   -DUTIL_ARCH_LITTLE_ENDIAN=1 -DUTIL_ARCH_BIG_ENDIAN=0
   -DHAVE___BUILTIN_CLZ=1 -DHAVE___BUILTIN_CLZLL=1 -DHAVE___BUILTIN_POPCOUNT=1
@@ -17,6 +17,26 @@ common=(-std=gnu11 -D_GNU_SOURCE -D_DARWIN_C_SOURCE
   -Ivendor/src/mesa/compat -Ivendor/src/gallium/include
   -Ivendor/src/gallium/auxiliary -Ivendor/src/gallium/auxiliary/util)
 case "$mode" in
+  standard-allocation-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping -fstack-usage)
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -Dcalloc=precise_word_calloc -c bridge.c -o "build/$mode/bridge.o"
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -DBRIDGE_UPSTREAM_ALLOCATION_TEST -c checked_upstream.c -o "build/$mode/checked_upstream.o"
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -Dcalloc=precise_word_calloc -c standard_emit.c -o "build/$mode/standard_emit.o"
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "build/$mode/bridge.o" "build/$mode/checked_upstream.o" \
+      raw_bits.c generated/u_format_table.c "${sources[@]:4:${#sources[@]}-5}" "build/$mode/standard_emit.o" native_tests/standard_allocations.c \
+      -lm -o "build/$mode/standard-allocation-test"
+    ;;
+  standard-native|standard-sanitize)
+    instrument=(-O2)
+    if [[ "$mode" == standard-sanitize ]]; then
+      instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+        -fprofile-instr-generate -fcoverage-mapping -fstack-usage)
+    fi
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only standard_guard.c standard_emit.c native_tests/standard_compiler.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "${sources[@]}" native_tests/standard_compiler.c \
+      -lm -o "build/$mode/standard-test"
+    ;;
   exact-reciprocal-sanitize)
     instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
       -fprofile-instr-generate -fcoverage-mapping)
@@ -199,6 +219,7 @@ case "$mode" in
       "${sources[@]:2}" native_tests/exact_pair.c -lm -o build/exact-pair-sanitize/exact-pair-test
     ;;
   guard-check)
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only standard_guard.c standard_emit.c native_tests/standard_compiler.c native_tests/standard_allocations.c
     "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only bridge.c raw_bits.c native_tests/captured.c native_tests/components.c native_tests/pairs.c native_tests/banks.c native_tests/raw_bits.c native_tests/integer_masks.c native_tests/float_masks.c native_tests/numeric_floats.c native_tests/component_floats.c native_tests/dot_reciprocals.c native_tests/constant_compiler.c native_tests/structured_conditionals.c native_tests/indirect_constants.c native_tests/bounded_loops.c native_tests/raw_equality.c native_tests/selected_lanes.c native_tests/selected_lanes_pair.c native_tests/radial_domain.c native_tests/precise_words.c native_tests/precise_audit.c native_tests/ordered_masks.c native_tests/raster_bank.c native_tests/precise_arithmetic.c native_tests/original_corpus.c native_tests/precise_fraction.c native_tests/saturation.c native_tests/exponent_logarithm.c native_tests/exact_reciprocal.c native_tests/coordinate_prefix.c native_tests/zero_cap.c native_tests/original_c580.c native_tests/original_92cb_geometry.c native_tests/original_92cb_power_domain.c
     "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -Wno-unused-function -DBRIDGE_UPSTREAM_ALLOC_GUARD_ONLY -fsyntax-only checked_upstream.c
     ;;
@@ -545,13 +566,13 @@ case "$mode" in
     "${CC:-clang}" "${common[@]}" -g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined \
       "${sources[@]}" native_tests/precise_audit.c -lm -o build/precise-token-audit/precise-token-audit
     ;;
-  compiler-bounds-wasm-stack)
+  standard-wasm-stack|compiler-bounds-wasm-stack)
     emcc=${EMCC:-${EMSDK:+$EMSDK/upstream/emscripten/emcc}}
     if [[ -z "$emcc" ]]; then echo 'Set EMCC to the pinned Emscripten 4.0.22 compiler.' >&2; exit 1; fi
     "$emcc" --version | head -1 | grep -q ' 4\.0\.22 ' || { echo 'Emscripten 4.0.22 required.' >&2; exit 1; }
     # Same owned source and optimization as the delivered module. These objects
     # only measure compiler stack frames; the public acceptance uses build/wasm.
-    for source in bridge raw_bits checked_tgsi_sanity checked_cso_hash; do
+    for source in bridge raw_bits checked_tgsi_sanity checked_cso_hash standard_guard standard_emit checked_upstream; do
       "$emcc" "${common[@]}" -O2 -fstack-usage -c "$source.c" -o "build/$mode/$source.o"
     done
     ;;
@@ -563,7 +584,7 @@ case "$mode" in
       -sMODULARIZE=1 -sEXPORT_ES6=1 -sENVIRONMENT=web,worker,node -sFILESYSTEM=0 \
       -sINITIAL_MEMORY=16777216 -sALLOW_MEMORY_GROWTH=0 \
       -sSTACK_SIZE=262144 -sABORTING_MALLOC=0 \
-      '-sEXPORTED_FUNCTIONS=["_bridge_translate","_bridge_translate_pair","_bridge_translate_exact","_bridge_translate_pair_exact","_bridge_translate_original_92cb_first_power","_bridge_translate_original_92cb_complete","_malloc","_free"]' \
+      '-sEXPORTED_FUNCTIONS=["_bridge_translate","_bridge_translate_pair","_bridge_translate_exact","_bridge_translate_pair_exact","_bridge_translate_original_92cb_first_power","_bridge_translate_original_92cb_complete","_bridge_translate_standard","_bridge_translate_standard_pair","_malloc","_free"]' \
       '-sEXPORTED_RUNTIME_METHODS=["UTF8ToString","HEAPU8"]'
     ;;
   *) echo 'Usage: build.sh guard-check|native|exact-reciprocal-sanitize|exact-pair-sanitize|sanitize|captured-sanitize|component-sanitize|pair-sanitize|bank-sanitize|raw-bit-sanitize|integer-mask-sanitize|float-mask-sanitize|numeric-float-sanitize|component-float-sanitize|dot-reciprocal-sanitize|wasm' >&2; exit 2 ;;

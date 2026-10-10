@@ -1,0 +1,163 @@
+{
+  "status": "passed",
+  "sourceHead": "1c17b508d0dc52199613f4c4883486c477773203",
+  "archiveSha256": "40ea23d821e37165c6b54f54b7cb636e9418601b8b709dbb4bffc6658ac0b99d",
+  "indexSha256": "387063b8ea31ea8ab77d6b830d5c7a13a5ab9949a815418c46ce4b45dcd767c5",
+  "records": 417,
+  "receipts": {
+    "hot": {
+      "sha256": "15ec02d8f017edac338f905bb4c817daf73cc518fe7cfbca1fc08a84375e4a09",
+      "files": 195,
+      "sources": 369,
+      "generated": 11,
+      "counts": {
+        "cases": 669,
+        "frames": 129,
+        "pixels": 2390688
+      }
+    },
+    "cold": {
+      "sha256": "3c402acbecf99819614c82ae183e1b89ced721680f7e736a0ab21257b67634f0",
+      "files": 195,
+      "sources": 369,
+      "generated": 11,
+      "counts": {
+        "cases": 669,
+        "frames": 129,
+        "pixels": 2390688
+      }
+    }
+  },
+  "reports": {
+    "hot/hardware": {
+      "status": "passed",
+      "errors": {
+        "console": [],
+        "page": [],
+        "requests": []
+      },
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)"
+    },
+    "hot/fault-sine": {
+      "status": "failed",
+      "errors": {
+        "console": [],
+        "page": [],
+        "requests": []
+      },
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)"
+    },
+    "hot/retained-ordinary": {
+      "status": "passed",
+      "errors": {
+        "console": [],
+        "page": [],
+        "requests": []
+      },
+      "renderer": {
+        "vendor": "Google Inc. (Apple)",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+        "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+      }
+    },
+    "hot/retained-raw": {
+      "status": "passed",
+      "errors": {
+        "console": [],
+        "page": [],
+        "requests": []
+      },
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)"
+    },
+    "hot/retained-private-92cb": {
+      "status": "passed",
+      "errors": {
+        "console": [],
+        "page": [],
+        "requests": []
+      },
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)"
+    },
+    "hot/retained-private-c580": {
+      "status": "passed",
+      "errors": {
+        "console": [],
+        "page": [],
+        "requests": []
+      },
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)"
+    },
+    "cold/hardware": {
+      "status": "passed",
+      "errors": {
+        "console": [],
+        "page": [],
+        "requests": []
+      },
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)"
+    },
+    "cold/fault-sine": {
+      "status": "failed",
+      "errors": {
+        "console": [],
+        "page": [],
+        "requests": []
+      },
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)"
+    },
+    "cold/retained-ordinary": {
+      "status": "passed",
+      "errors": {
+        "console": [],
+        "page": [],
+        "requests": []
+      },
+      "renderer": {
+        "vendor": "Google Inc. (Apple)",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+        "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+      }
+    },
+    "cold/retained-raw": {
+      "status": "passed",
+      "errors": {
+        "console": [],
+        "page": [],
+        "requests": []
+      },
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)"
+    },
+    "cold/retained-private-92cb": {
+      "status": "passed",
+      "errors": {
+        "console": [],
+        "page": [],
+        "requests": []
+      },
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)"
+    },
+    "cold/retained-private-c580": {
+      "status": "passed",
+      "errors": {
+        "console": [],
+        "page": [],
+        "requests": []
+      },
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)"
+    }
+  },
+  "cold": {
+    "gitHead": "1c17b508d0dc52199613f4c4883486c477773203",
+    "cloneHead": "1c17b508d0dc52199613f4c4883486c477773203",
+    "status": "passed",
+    "statusBefore": "",
+    "statusAfter": "",
+    "exitCode": 0,
+    "removedEnvironmentNames": [
+      "RUST_LOG"
+    ],
+    "logSha256": "c560bc7c03cfa2597ed67137bbb87e614e8904719235be62278123d3385e562b",
+    "receiptSha256": "3c402acbecf99819614c82ae183e1b89ced721680f7e736a0ab21257b67634f0"
+  },
+  "runtimeTrackedDiffSinceFrozen": []
+}

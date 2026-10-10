@@ -1,0 +1,152 @@
+{
+  "schema": "virgl-standard-shader-completion-verdict-v1",
+  "task": "E6-T11d4",
+  "verdict": "verified",
+  "predecessor": "97ed2ca31f08465e442c88aed3a677237f78e236",
+  "frozenRuntime": "1c17b508d0dc52199613f4c4883486c477773203",
+  "workerClaimCommit": "8101e82c2228012ff6a7435da8ab03e31f4e975d",
+  "predictions": [
+    {
+      "id": "R1-final-custody",
+      "outcome": "HELD",
+      "citation": "audit/final-authentication.json; all417 members, hot/cold receipts and exact frozen source/binaries authenticate."
+    },
+    {
+      "id": "R2-constant-order",
+      "outcome": "HELD",
+      "citation": "audit/repair-case-points.json and suite/native/native.jsonl lines533-692; metadata uniform extent equals independently parsed maximum; both stages/high511/zero late."
+    },
+    {
+      "id": "R3-token-custody",
+      "outcome": "HELD",
+      "citation": "suite/hardware/report.json frames[6:8], suite/physical-plan.json, pixel bytes and audit/coverage-audit.json; two repair plans preserve immediate words, indirect addressing and explicit branch targets."
+    },
+    {
+      "id": "R4-constant-rejection",
+      "outcome": "HELD",
+      "citation": "audit/repair-case-points.json, suite/native/native.jsonl and audit/constant-extent-drift.lldb.log:2325/2326; duplicate/overlap/hole/wrapped/dimensional inputs reject; injected513 versus512 still rejects."
+    },
+    {
+      "id": "R5-sampler-declarations",
+      "outcome": "HELD",
+      "citation": "audit/repair-case-points.json; unused SAMP/SVIEW and all16 masks admit while public sampler arrays are only TEX reads; audit/declared-mask-drift.lldb.log binds guarded32768 to upstream32768 and rejects injected0."
+    },
+    {
+      "id": "R6-sampler-rejection",
+      "outcome": "HELD",
+      "citation": "suite/native/native.jsonl lines685-688; unrelated unused slot does not grant missing SAMP/SVIEW reads; malformed operands and unsupported target rejected by carried worker/critic cases."
+    },
+    {
+      "id": "R7-pixels-repair",
+      "outcome": "HELD",
+      "citation": "suite/physical-audit.json points[6:8] and hardware/pixels/frame-6-0.f32.gz,frame-7-0.f32.gz; native highp budgets pass; all browser error arrays empty."
+    },
+    {
+      "id": "R8-legacy-isolation",
+      "outcome": "HELD",
+      "citation": "audit/carry-forward-authentication.json; complete old bridge prefix equals predecessor except two includes, guard/emitter/wrapper byte-identical to earlier critic boundary; final hot/cold retained ordinary/raw/private recordings authenticate."
+    },
+    {
+      "id": "R9-sufficiency",
+      "outcome": "HELD",
+      "citation": "audit/coverage-audit.json;51 changed hunks,49 explicitly classified zero native-arm entries, actualWasm parser pressure, five fault/recovery probes, both detailedV8 wrapper profiles. No needs-evidence or dead-feature entry."
+    }
+  ],
+  "carryForward": {
+    "criticArchive": "1f59cd3fc8c56509ef73b9d02f766d02e488a9eae70df1e607a4ac036061e78c",
+    "held": [
+      "P1-original-authentication",
+      "P2/P3-except-descending-constant-order",
+      "P4-owned-input-and-allocation-and-actual16MiB-pressure",
+      "P5/P6/P7-unchanged-emitter-and-full-original-semantics",
+      "P8-legacy-boundary",
+      "P9/P11-independent-physical-operation-and-oracle-sabotage"
+    ],
+    "pending": [
+      "P10-exhaustive-runtime-hunk-and-defensive-branch-closure"
+    ],
+    "rule": "Carry only when the dependency boundary and sealed evidence digest remain unchanged; new compiler/cold/log custody and repaired declarations require fresh checking."
+  },
+  "fresh": {
+    "cases": 695,
+    "accepted": 208,
+    "hardwareFrames": 8,
+    "pixels": 2048,
+    "repairSeeds": [
+      1096302871,
+      2126713300
+    ],
+    "faults": 5,
+    "sineSabotage": {
+      "kind": "sine",
+      "point": {
+        "output": 0,
+        "x": 0,
+        "y": 0,
+        "expected": [
+          2.9353883300152694,
+          2.968935562220505,
+          1.1880736118741773,
+          1.2020895940794127
+        ],
+        "actual": [
+          1.5279462337493896,
+          2.968935489654541,
+          -0.21936839818954468,
+          1.202089548110962
+        ],
+        "errors": [
+          1.4074420962658798,
+          7.256596390448067e-08,
+          1.407442010063722,
+          4.596845082360801e-08
+        ]
+      }
+    },
+    "oracleSabotage": {
+      "kind": "oracle",
+      "point": {
+        "output": 0,
+        "x": 0,
+        "y": 0,
+        "expected": [
+          3.0603883300152694,
+          2.968935562220505,
+          1.1880736118741773,
+          1.2020895940794127
+        ],
+        "actual": [
+          2.9353883266448975,
+          2.968935489654541,
+          1.1880736351013184,
+          1.202089548110962
+        ],
+        "errors": [
+          0.12500000337037198,
+          7.256596390448067e-08,
+          2.3227141099368964e-08,
+          4.596845082360801e-08
+        ]
+      }
+    }
+  },
+  "coverage": {
+    "hunks": 51,
+    "classifiedZeroNativeArmEntries": 49,
+    "remainingNeedsEvidence": []
+  },
+  "suite": {
+    "promoted": [
+      "renderer/virgl-shader/tests/standard-adversarial.mjs",
+      "tools/verify-virgl-standard-shader-adversarial.sh",
+      "tools/virgl-standard-shader/adversarial-cases.py",
+      "tools/virgl-standard-shader/adversarial-browser.mjs",
+      "tools/virgl-standard-shader/adversarial-pixels.py",
+      "tools/virgl-standard-shader/adversarial-pressure.mjs"
+    ],
+    "verifyTarget": "make verify-E6-T11d4-adversarial",
+    "validation": "Exact recipe components run against authenticated worker native/sanitized/Wasm bytes; source/build modes are the frozen worker hot+cold build modes. make -n and bash -n checked the new recipe. No redundant runtime rebuild or cold clone after test-only promotion."
+  },
+  "scope": "Isolated bounded standard compiler/native-highp semantics; no exact/private authority, production capsets, full API/guest boot, GPU execution-time bound or throughput claim.",
+  "implementationFixes": []
+}

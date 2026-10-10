@@ -72,4 +72,13 @@ const char *bridge_translate_original_92cb_complete(
    const unsigned char *geometry, size_t geometry_length,
    unsigned bank, const struct bridge_92cb_draw_state *draw);
 
+/* Distinct host-selected standard GLES3 facet. Structural admission only:
+ * native highp/undefined-domain semantics, no exact or conditional authority.
+ * Neither old entry points nor guest inputs select this facet implicitly.
+ * JSON is borrowed until the next call; serialize calls and copy results.
+ * Both complete input strings are copied before semantic allocations. */
+const char *bridge_translate_standard(int stage, const char *text, size_t length);
+const char *bridge_translate_standard_pair(const char *vertex_text, size_t vertex_length,
+                                           const char *fragment_text, size_t fragment_length);
+
 #endif
