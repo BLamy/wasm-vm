@@ -3,7 +3,7 @@ id: E6-T11d25
 epic: 6
 title: Preserve original F16 and F32 2D image transfers and retained views
 priority: 525.027039000367
-status: pending
+status: in-progress
 depends_on: [E6-T11d24]
 estimate: S
 risk: high
