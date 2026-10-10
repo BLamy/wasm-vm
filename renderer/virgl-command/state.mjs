@@ -17,7 +17,7 @@ export const CACHE_LIMITS = Object.freeze({ translations: 128, translationBytes:
   programBytes: 4194304, states: 256, stateBytes: 1048576, debugBytes: 4194304 });
 const NAMES = ["NULL", "BLEND", "RASTERIZER", "DSA", "SHADER", "VERTEX_ELEMENTS", "SAMPLER_VIEW", "SAMPLER_STATE", "SURFACE"];
 const BINDINGS = { 1: "blend", 2: "rasterizer", 3: "dsa", 5: "vertexElements" };
-const DRAW_MODES = Object.freeze({ 1: "LINES", 2: "LINE_LOOP", 3: "LINE_STRIP", 4: "TRIANGLES", 5: "TRIANGLE_STRIP", 6: "TRIANGLE_FAN" });
+const DRAW_MODES = Object.freeze({ 0: "POINTS", 1: "LINES", 2: "LINE_LOOP", 3: "LINE_STRIP", 4: "TRIANGLES", 5: "TRIANGLE_STRIP", 6: "TRIANGLE_FAN" });
 const vertexComponents = (element) => element.sourceFormat - 27;
 const viewportRectangle = ({ scale, translate }) => [translate[0] - scale[0], translate[1] - Math.abs(scale[1]), scale[0] * 2, Math.abs(scale[1]) * 2];
 const BLEND_EQUATIONS = Object.freeze(["FUNC_ADD", "FUNC_SUBTRACT", "FUNC_REVERSE_SUBTRACT", "MIN", "MAX"]);
@@ -463,7 +463,8 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         interfaceKey: interfaceInfo.key, samplingKey: sampling.key, samplingViews: sampling.views,
         variantShader: null, fragmentVariantShader: null, variantBytes: 0,
         blendFold, blendUniform: null,
-        reflection: { attributes: [], uniforms: [], samplers: [], uniformBlocks: [], outputs: [], ...(standard ? { systemValues: [] } : {}) } };
+        reflection: { attributes: [], uniforms: [], samplers: [], uniformBlocks: [], outputs: [], ...(standard ? { systemValues: [], rasterUniforms: [] } : {}) },
+        ...(standard ? { rasterUniforms: [] } : {}) };
       try {
         if (standard || interfaceInfo.flat || interfaceInfo.coordinates || interfaceInfo.discard) {
           require(typeof shaderBridge.translatePair === "function", "shader-link-error", interfaceInfo.coordinates ?
@@ -524,6 +525,22 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           program.reflection.attributes.push({ ...declared, location, type: actual.type });
         }
         for (const [stage, metadata] of [[0, vs], [1, fs]]) {
+          if (standard) for (const uniform of metadata.rasterUniforms) {
+            const pointSize = uniform.semantic === "POINT_SIZE";
+            require(pointSize ? stage === 0 && uniform.name === "wv_point_size" && uniform.type === "vec2" :
+              stage === 1 && uniform.semantic === "POINT_COORD_Y" && uniform.name === "wv_point_coord_y" && uniform.type === "float",
+            "shader-reflection-error", "Unsupported raster uniform metadata.");
+            const type = pointSize ? gl.FLOAT_VEC2 : gl.FLOAT;
+            const location = gl.getUniformLocation(program.native, uniform.name), index = gl.getUniformIndices(program.native, [uniform.name])?.[0];
+            const active = location !== null || index !== gl.INVALID_INDEX;
+            if (active) require(location !== null && index !== undefined && index !== gl.INVALID_INDEX &&
+              gl.getActiveUniforms(program.native, [index], gl.UNIFORM_TYPE)[0] === type &&
+              gl.getActiveUniforms(program.native, [index], gl.UNIFORM_SIZE)[0] === 1,
+            "shader-reflection-error", "Raster uniform reflection mismatch.");
+            else require(!pointSize, "shader-reflection-error", "Missing native point-size binding.");
+            program.rasterUniforms.push({ semantic: uniform.semantic, location });
+            program.reflection.rasterUniforms.push({ ...uniform, stage: metadata.stage, active, nativeType: type });
+          }
           const guestConstantLimit = standard ? 512 : stage === 0 && metadata.profile === "virgl-webgl2-straight-line-v6" ? 128 : 46;
           for (const uniform of metadata.uniforms) {
             require(uniform.type === "uvec4[]" && uniform.encoding === (standard ? "raw-32bit-words" : "float32-bits") &&
@@ -601,7 +618,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
             gl.getActiveUniforms(program.native, [index], gl.UNIFORM_SIZE)[0] === 1,
           "shader-reflection-error", "Blend factor uniform reflection mismatch.");
           const components = program.reflection.uniforms.filter(uniform => uniform.stage === "fragment")
-            .reduce((sum, uniform) => sum + uniform.activeCount * 4, 4);
+            .reduce((sum, uniform) => sum + uniform.activeCount * 4, 4 + (standard ? program.reflection.rasterUniforms.filter(uniform => uniform.stage === "fragment" && uniform.active).length : 0));
           require(components <= hostUniformComponents[1], "shader-reflection-error", "Blend factor exceeds the host fragment uniform limit.");
           program.reflection.blend = { sourceFactor: blendFold, uniform: name, type: "vec4", count: 1 };
         }
@@ -616,8 +633,16 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
               uniform.activeCount === actual.size && actual.type === gl.UNSIGNED_INT_VEC4) ||
             program.reflection.samplers.some(sampler => sampler.name === actual.name &&
               actual.size === 1 && actual.type === gl.SAMPLER_2D) ||
-            program.reflection.blend?.uniform === actual.name && actual.size === 1 && actual.type === gl.FLOAT_VEC4;
+            program.reflection.blend?.uniform === actual.name && actual.size === 1 && actual.type === gl.FLOAT_VEC4 ||
+            program.reflection.rasterUniforms.some(uniform => uniform.active && uniform.name === actual.name &&
+              actual.size === 1 && actual.type === uniform.nativeType);
           require(accounted, "shader-reflection-error", `Active native uniform ${actual.name} has no checked binding metadata.`);
+        }
+        if (standard) for (const stage of ["vertex", "fragment"]) {
+          const components = program.reflection.uniforms.filter(uniform => uniform.stage === stage).reduce((sum, uniform) => sum + uniform.activeCount * 4, 0) +
+            program.reflection.rasterUniforms.filter(uniform => uniform.stage === stage && uniform.active).reduce((sum, uniform) => sum + (uniform.type === "vec2" ? 2 : 1), 0) +
+            (stage === "fragment" && blendFold ? 4 : 0);
+          require(components <= hostUniformComponents[stage === "vertex" ? 0 : 1], "shader-reflection-error", "Raster bindings exceed the host stage uniform limit.");
         }
         for (const output of fs.outputs) {
           const location = gl.getFragDataLocation(program.native, output.name);
@@ -801,6 +826,10 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           gl.uniform4uiv(uniform.location, words);
         }
         for (const sampler of program.samplers) gl.uniform1i(sampler.location, sampler.unit);
+        if (standard) for (const uniform of program.rasterUniforms) {
+          if (uniform.semantic === "POINT_SIZE") gl.uniform2f(uniform.location, state.rasterizer?.pointSize ?? 1, state.rasterizer?.pointSizePerVertex ? 1 : 0);
+          else gl.uniform1f(uniform.location, state.winsysY);
+        }
         if (program.blendFold) {
           const color = state.blendColor.map(value => Math.max(0, Math.min(1, value)));
           let factor = [8, 24].includes(program.blendFold) ? Array(3).fill(color[3]) : color.slice(0, 3);

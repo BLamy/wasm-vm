@@ -36,10 +36,12 @@ static void named(const struct standard_profile *p, unsigned file, unsigned inde
       const struct standard_io *io = &p->input[index];
       if (!p->stage) snprintf(name, 48, "floatBitsToUint(in_%u)", index);
       else if (io->semantic == STD_POSITION) snprintf(name, 48, "floatBitsToUint(gl_FragCoord)");
+      else if (io->semantic == STD_PCOORD) snprintf(name, 48, "wv_point_coord()");
       else if (io->flat) snprintf(name, 48, "vso_g%u", io->sid);
       else snprintf(name, 48, "floatBitsToUint(vso_g%u)", io->sid);
    } else if (file == TGSI_FILE_SYSTEM_VALUE) {
-      snprintf(name, 48, "uvec4(uint(%s))", p->system[index].semantic == STD_VERTEXID ? "gl_VertexID" : "gl_InstanceID");
+      if (p->system[index].semantic == STD_PCOORD) snprintf(name, 48, "wv_point_coord()");
+      else snprintf(name, 48, "uvec4(uint(%s))", p->system[index].semantic == STD_VERTEXID ? "gl_VertexID" : "gl_InstanceID");
    } else snprintf(name, 48, "INVALID"); /* structurally unreachable */
 }
 static void source(struct output *o, const struct standard_profile *p,
@@ -81,17 +83,30 @@ static void interface(struct output *o, const struct standard_profile *p)
    if (p->constants) put(o, "uniform uvec4 %sconst0[%u];\n", p->stage ? "fs" : "vs", p->constants);
    for (unsigned j = 0; j < STANDARD_SAMPLERS; ++j) if (p->used_samplers & (1u << j))
       put(o, "uniform highp sampler2D %ssamp%u;\n", p->stage ? "fs" : "vs", j);
-   if (!p->stage) put(o, "layout(std140) uniform VirglBlock {\nvec4 clipp[8];\nuint stipple_pattern[32];\nfloat winsys_adjust_y;\nfloat alpha_ref_val;\nbool clip_plane_enabled;\nint drawid_base;\n};\n");
+   if (!p->stage) put(o, "layout(std140) uniform VirglBlock {\nvec4 clipp[8];\nuint stipple_pattern[32];\nfloat winsys_adjust_y;\nfloat alpha_ref_val;\nbool clip_plane_enabled;\nint drawid_base;\n};\nuniform vec2 wv_point_size;\n");
+   bool point_coord = false;
+   for (unsigned j = 0; j < STANDARD_IO; ++j)
+      point_coord |= p->declared[STD_IN][j] && p->input[j].semantic == STD_PCOORD;
+   for (unsigned j = 0; j < 2; ++j)
+      point_coord |= p->declared[STD_SV][j] && p->system[j].semantic == STD_PCOORD;
+   if (point_coord) put(o, "uniform float wv_point_coord_y;\nuvec4 wv_point_coord() {\nreturn floatBitsToUint(vec4(gl_PointCoord.x, mix(1.0 - gl_PointCoord.y, gl_PointCoord.y, clamp(wv_point_coord_y, 0.0, 1.0)), 0.0, 1.0));\n}\n");
 }
 static void exit_program(struct output *o, const struct standard_profile *p)
 {
+   unsigned point_size = STANDARD_IO;
    for (unsigned j = 0; j < STANDARD_IO; ++j) if (p->declared[STD_OUT][j]) {
       const struct standard_io *io = &p->output[j];
       if (io->semantic == STD_POSITION) put(o, "gl_Position = uintBitsToFloat(o%u);\n", j);
       else if (io->semantic == STD_GENERIC) put(o, "vso_g%u = %s(o%u);\n", io->sid, io->flat ? "uvec4" : "uintBitsToFloat", j);
       else if (io->semantic == STD_COLOR) put(o, "fsout_c%u = uintBitsToFloat(o%u);\n", io->sid, j);
+      else if (io->semantic == STD_PSIZE) point_size = j;
    }
-   if (!p->stage) put(o, "gl_Position.y *= winsys_adjust_y;\n");
+   if (!p->stage) {
+      put(o, "gl_Position.y *= winsys_adjust_y;\ngl_PointSize = wv_point_size.y > 0.5 ? ");
+      if (point_size < STANDARD_IO) put(o, "uintBitsToFloat(o%u).x", point_size);
+      else put(o, "1.0"); /* Unwritten PSIZE retains native undefined-domain authority. */
+      put(o, " : wv_point_size.x;\n");
+   }
    if (p->broadcast) for (unsigned j = 1; j < 4; ++j) put(o, "fsout_c%u = fsout_c0;\n", j);
    put(o, "}\n");
 }

@@ -2248,6 +2248,7 @@ const char *bridge_translate_original_92cb_complete(
 /* The standard facet deliberately has no profile/raw_ir member. Its guarded
  * syntax is the only input to this independent upstream transaction. */
 #include "tgsi/tgsi_parse.h"
+#include "tgsi/tgsi_build.h"
 struct standard_conversion {
    struct standard_profile profile;
    struct vrend_shader_info info;
@@ -2296,6 +2297,71 @@ static bool standard_constant_order(struct tgsi_token *tokens)
    tgsi_parse_free(&parser);
    return ok;
 }
+/* This pinned converter predates NIR's PCOORD system-value declaration. Give
+ * upstream validation one private unused input alias; public metadata and the
+ * word emitter still consume the complete original tokens. Rebuilding bounds
+ * the extra interpolation token and avoids changing any caller-owned stream. */
+static const char *standard_point_tokens(const struct standard_profile *p,
+                                         const struct tgsi_token *original,
+                                         struct tgsi_token **result)
+{
+   unsigned system = 2, input = 0;
+   for (unsigned i = 0; i < 2; ++i)
+      if (p->declared[STD_SV][i] && p->system[i].semantic == STD_PCOORD) system = i;
+   if (system == 2) return NULL;
+   while (input < STANDARD_IO && p->declared[STD_IN][input]) ++input;
+   if (input == STANDARD_IO) return error("translation-error", "No bounded private point-coordinate alias.");
+   struct tgsi_token *tokens = calloc(BRIDGE_MAX_TOKENS, sizeof(*tokens));
+   if (!tokens) return error("allocation-failed", "Point-coordinate validation allocation failed.");
+   struct tgsi_parse_context parser;
+   if (tgsi_parse_init(&parser, original) != TGSI_PARSE_OK) {
+      free(tokens); return error("translation-error", "Original point-coordinate token parsing failed.");
+   }
+   struct tgsi_header header = tgsi_build_header();
+   struct tgsi_processor processor = tgsi_build_processor(parser.FullHeader.Processor.Processor, &header);
+   memcpy(tokens + 1, &processor, sizeof(processor));
+   unsigned used = 2; bool ok = true;
+   while (!tgsi_parse_end_of_tokens(&parser)) {
+      if (!tgsi_parse_token(&parser)) { ok = false; break; }
+      unsigned built = 0;
+      switch (parser.FullToken.Token.Type) {
+      case TGSI_TOKEN_TYPE_DECLARATION: {
+         struct tgsi_full_declaration *d = &parser.FullToken.FullDeclaration;
+         if (d->Declaration.File == TGSI_FILE_SYSTEM_VALUE && d->Range.First == system) {
+            d->Declaration.File = TGSI_FILE_INPUT;
+            d->Range.First = d->Range.Last = input;
+            d->Declaration.Interpolate = 1;
+            d->Interp.Interpolate = TGSI_INTERPOLATE_LINEAR;
+            d->Interp.Location = TGSI_INTERPOLATE_LOC_CENTER;
+         }
+         built = tgsi_build_full_declaration(d, tokens + used, &header, BRIDGE_MAX_TOKENS - used);
+         break;
+      }
+      case TGSI_TOKEN_TYPE_IMMEDIATE:
+         built = tgsi_build_full_immediate(&parser.FullToken.FullImmediate, tokens + used, &header, BRIDGE_MAX_TOKENS - used);
+         break;
+      case TGSI_TOKEN_TYPE_PROPERTY:
+         built = tgsi_build_full_property(&parser.FullToken.FullProperty, tokens + used, &header, BRIDGE_MAX_TOKENS - used);
+         break;
+      case TGSI_TOKEN_TYPE_INSTRUCTION: {
+         struct tgsi_full_instruction *i = &parser.FullToken.FullInstruction;
+         for (unsigned j = 0; j < i->Instruction.NumSrcRegs; ++j)
+            if (i->Src[j].Register.File == TGSI_FILE_SYSTEM_VALUE && i->Src[j].Register.Index == (int)system) {
+               i->Src[j].Register.File = TGSI_FILE_INPUT; i->Src[j].Register.Index = (int)input;
+            }
+         built = tgsi_build_full_instruction(i, tokens + used, &header, BRIDGE_MAX_TOKENS - used);
+         break;
+      }
+      default: break;
+      }
+      if (!built) { ok = false; break; }
+      used += built;
+   }
+   tgsi_parse_free(&parser);
+   if (!ok) { free(tokens); return error("translation-error", "Bounded point-coordinate validation rebuild failed."); }
+   memcpy(tokens, &header, sizeof(header)); *result = tokens;
+   return NULL;
+}
 static const char *standard_convert(struct standard_conversion *c, const char *owned,
                                     const struct vrend_fs_shader_info *fragment)
 {
@@ -2312,8 +2378,12 @@ static const char *standard_convert(struct standard_conversion *c, const char *o
    if (fragment) key.fs_info = *fragment;
    if (!strarray_alloc(&c->shader, SHADER_MAX_STRINGS))
       return error("translation-error", "Standard output allocation failed.");
+   struct tgsi_token *point_tokens = NULL;
+   const char *failed = standard_point_tokens(&c->profile, tokens, &point_tokens);
+   if (failed) return failed;
    bridge_upstream_allocation_begin();
-   bool ok = vrend_convert_shader(NULL, &cfg, tokens, 0, &key, &c->info, &c->variable, &c->shader);
+   bool ok = vrend_convert_shader(NULL, &cfg, point_tokens ? point_tokens : tokens, 0, &key, &c->info, &c->variable, &c->shader);
+   free(point_tokens);
    size_t bytes = 0;
    for (int i = 0; i < c->shader.num_strings; ++i) bytes += strlen(c->shader.strings[i].buf);
    /* Pinned upstream samplers_used means declared SAMP registers. Our public
@@ -2357,7 +2427,7 @@ static void standard_io_json(const struct standard_profile *p, unsigned file)
    append("[");
    const struct standard_io *list = file == STD_IN ? p->input : file == STD_OUT ? p->output : p->system;
    unsigned count = file == STD_SV ? 2 : STANDARD_IO;
-   static const char *semantics[] = {"ATTRIBUTE", "POSITION", "GENERIC", "COLOR", "VERTEXID", "INSTANCEID"};
+   static const char *semantics[] = {"ATTRIBUTE", "POSITION", "GENERIC", "COLOR", "VERTEXID", "INSTANCEID", "PSIZE", "PCOORD"};
    for (unsigned i = 0; i < count; ++i) if (p->declared[file][i]) {
       const struct standard_io *io = &list[i];
       char name[32];
@@ -2365,12 +2435,14 @@ static void standard_io_json(const struct standard_profile *p, unsigned file)
       else if (io->semantic == STD_POSITION) snprintf(name, sizeof(name), "%s", p->stage ? "gl_FragCoord" : "gl_Position");
       else if (io->semantic == STD_GENERIC) snprintf(name, sizeof(name), "vso_g%u", io->sid);
       else if (io->semantic == STD_COLOR) snprintf(name, sizeof(name), "fsout_c%u", io->sid);
+      else if (io->semantic == STD_PSIZE) snprintf(name, sizeof(name), "gl_PointSize");
+      else if (io->semantic == STD_PCOORD) snprintf(name, sizeof(name), "gl_PointCoord");
       else snprintf(name, sizeof(name), "%s", io->semantic == STD_VERTEXID ? "gl_VertexID" : "gl_InstanceID");
       append("%s{\"index\":%u,\"name\":\"%s\",\"type\":\"%s\",\"semantic\":\"%s\",\"semanticIndex\":%u,\"componentMask\":%u",
-         comma ? "," : "", i, name, file == STD_SV ? "int" : io->semantic == STD_GENERIC && io->flat ? "uvec4" : "vec4", semantics[io->semantic], io->sid, io->mask);
+         comma ? "," : "", i, name, io->semantic == STD_PSIZE ? "float" : file == STD_SV && io->semantic != STD_PCOORD ? "int" : io->semantic == STD_GENERIC && io->flat ? "uvec4" : "vec4", semantics[io->semantic], io->sid, io->mask);
       if (file == STD_OUT) append(",\"syntacticWriteMask\":%u", io->writes);
       if (io->semantic == STD_GENERIC) append(",\"interpolation\":\"%s\"", io->flat ? "flat" : "smooth");
-      if (io->semantic == STD_POSITION && p->stage) append(",\"interpolation\":\"linear\"");
+      if ((io->semantic == STD_POSITION || io->semantic == STD_PCOORD) && file == STD_IN && p->stage) append(",\"interpolation\":\"linear\"");
       append("}"); comma = true;
    }
    append("]");
@@ -2401,6 +2473,14 @@ static void standard_result(const struct standard_conversion *c)
    }
    append("],\"uniformBlocks\":[");
    if (!p->stage) append("{\"name\":\"VirglBlock\",\"byteLength\":656,\"members\":[{\"name\":\"winsys_adjust_y\",\"offset\":640,\"type\":\"float\",\"default\":1}]}");
+   append("],\"rasterUniforms\":[");
+   bool point_coord = false;
+   for (unsigned i = 0; i < STANDARD_IO; ++i)
+      point_coord |= p->declared[STD_IN][i] && p->input[i].semantic == STD_PCOORD;
+   for (unsigned i = 0; i < 2; ++i)
+      point_coord |= p->declared[STD_SV][i] && p->system[i].semantic == STD_PCOORD;
+   if (!p->stage) append("{\"name\":\"wv_point_size\",\"type\":\"vec2\",\"semantic\":\"POINT_SIZE\"}");
+   else if (point_coord) append("{\"name\":\"wv_point_coord_y\",\"type\":\"float\",\"semantic\":\"POINT_COORD_Y\"}");
    append("],\"broadcastColor0\":%s,\"standardSemantics\":{\"kind\":\"native-gles3-highp-v1\",\"precision\":\"native-highp\",\"undefinedDomains\":\"native-gles3\",\"preciseQualifier\":\"no-gpu-shader5\",\"registerStorage\":\"uvec4\",\"flatVaryingStorage\":\"uvec4\",\"scalarResults\":\"tgsi-x-replicated\",\"exactAuthority\":false,\"gpuExecutionBound\":false}}", p->broadcast ? "true" : "false");
 }
 static const char *standard_input(struct standard_profile *p, const char *text, size_t length, char *owned)

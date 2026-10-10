@@ -183,7 +183,7 @@ export function runWireAcceptance() {
     test(packet(11,0,[6,size,offset]),[1,2,4].includes(size)&&offset%size===0,size===2&&offset%2===0,"index-"+size+"-"+offset);
   for(const instances of [0,1,2,5,65536,0xffffffff])for(const mode of [0,4,5]) {
     const bytes=packet(8,0,[0,4,mode,0,instances,0,0,0,0,0,0xffffffff,0]);
-    test(bytes,[4,5].includes(mode),instances===1&&[4,5].includes(mode),"draw-"+instances+"-"+mode);
+    test(bytes,[0,4,5].includes(mode),instances===1&&[4,5].includes(mode),"draw-"+instances+"-"+mode);
   }
   test(join(packet(11,0,[6,4,12]),packet(8,0,[])),false,false,"malformed-tail");
   return {status:"passed",records,predictions:c.rows};

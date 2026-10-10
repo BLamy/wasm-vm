@@ -23,14 +23,16 @@ void *precise_word_upstream_realloc(void *p,size_t size)
 }
 static const char vertex[]="VERT\nDCL IN[0]\nDCL IN[1]\nDCL CONST[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\n0: MOV OUT[0], IN[0]\n1: MUL OUT[1], IN[1], CONST[0]\n2: END\n";
 static const char fragment[]="FRAG\nDCL IN[0], GENERIC[0], CONSTANT\nDCL CONST[0]\nDCL OUT[0], COLOR\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nDCL TEMP[0]\n0: TEX TEMP[0], IN[0], SAMP[0], 2D\n1: SIN TEMP[0].x, CONST[0].xxxx\n2: MOV OUT[0], TEMP[0]\n3: END\n";
+static const char point_vertex[]="VERT\nDCL IN[0]\nDCL IN[1]\nDCL OUT[0], POSITION\nDCL OUT[31].x, PSIZE\n0: MOV OUT[0], IN[0]\n1: MOV OUT[31].x, IN[1].xxxx\n2: END\n";
+static const char point_fragment[]="FRAG\nDCL IN[0], PCOORD, LINEAR\nDCL SV[0], PCOORD\nDCL OUT[0], COLOR\nDCL TEMP[0]\nIMM[0] FLT32 {0.5,0.5,0.5,0.5}\n0: ADD TEMP[0], IN[0], SV[0]\n1: MUL OUT[0], TEMP[0], IMM[0]\n2: END\n";
 static void require(int good,const char *why){if(!good){fprintf(stderr,"standard allocation failure calls=%u at=%u hit=%u calloc=%u/%u: %s\n",calls,fail_at,hit,calloc_calls,calloc_fail,why);exit(1);}}
-static const char *run(unsigned kind){return kind<2?bridge_translate_standard((int)kind,kind?fragment:vertex,strlen(kind?fragment:vertex)):bridge_translate_standard_pair(vertex,strlen(vertex),fragment,strlen(fragment));}
+static const char *run(unsigned kind){const char *v=kind<3?vertex:point_vertex,*f=kind<3?fragment:point_fragment;unsigned k=kind%3;return k<2?bridge_translate_standard((int)k,k?f:v,strlen(k?f:v)):bridge_translate_standard_pair(v,strlen(v),f,strlen(f));}
 static void rejected(const char *r){require(r&&strstr(r,"\"ok\":false"),"every fault rejects");require(!strstr(r,"\"glsl\"")&&!strstr(r,"\"vertex\"")&&!strstr(r,"\"fragment\""),"no partial successful result");}
 int main(void)
 {
-   char *saved[3];unsigned counts[3],ccounts[3],faults=0,recoveries=0;
-   for(unsigned kind=0;kind<3;++kind){calls=calloc_calls=0;const char *r=run(kind);require(strstr(r,"\"ok\":true")!=NULL,"healthy actual stage/pair");saved[kind]=strdup(r);counts[kind]=calls;ccounts[kind]=calloc_calls;require(saved[kind]&&calls>4&&calls<1024&&calloc_calls>0&&calloc_calls<12,"bounded real sites");printf("{\"kind\":\"baseline\",\"mode\":%u,\"allocations\":%u,\"callocs\":%u,\"result\":%s}\n",kind,calls,calloc_calls,r);}
-   for(unsigned kind=0;kind<3;++kind){
+   char *saved[6];unsigned counts[6],ccounts[6],faults=0,recoveries=0;
+   for(unsigned kind=0;kind<6;++kind){calls=calloc_calls=0;const char *r=run(kind);require(strstr(r,"\"ok\":true")!=NULL,"healthy actual stage/pair");saved[kind]=strdup(r);counts[kind]=calls;ccounts[kind]=calloc_calls;require(saved[kind]&&calls>4&&calls<1024&&calloc_calls>0&&calloc_calls<12,"bounded real sites");printf("{\"kind\":\"baseline\",\"mode\":%u,\"allocations\":%u,\"callocs\":%u,\"result\":%s}\n",kind,calls,calloc_calls,r);}
+   for(unsigned kind=0;kind<6;++kind){
       for(unsigned site=1;site<=counts[kind];++site){calls=calloc_calls=hit=0;fail_at=site;const char *r=run(kind);rejected(r);require(hit==site,"actual upstream failure hit");printf("{\"kind\":\"upstream-fault\",\"mode\":%u,\"site\":%u,\"result\":%s}\n",kind,site,r);fail_at=0;++faults;require(!strcmp(run(kind),saved[kind]),"upstream exact recovery");++recoveries;}
       for(unsigned site=1;site<=ccounts[kind];++site){calls=calloc_calls=calloc_hit=0;calloc_fail=site;const char *r=run(kind);rejected(r);require(calloc_hit==site,"actual bridge arena/string-array failure hit");printf("{\"kind\":\"calloc-fault\",\"mode\":%u,\"site\":%u,\"result\":%s}\n",kind,site,r);calloc_fail=0;++faults;require(!strcmp(run(kind),saved[kind]),"calloc exact recovery");++recoveries;}
    }
@@ -41,5 +43,5 @@ int main(void)
    rejected(bridge_translate_standard_pair(NULL,0,fragment,strlen(fragment)));
    require(!strcmp(run(2),saved[2]),"invalid input/stage recovery");
    printf("{\"kind\":\"summary\",\"faults\":%u,\"recoveries\":%u,\"callerMutation\":true,\"partialResults\":false}\n",faults,recoveries);
-   for(unsigned i=0;i<3;++i)free(saved[i]);return 0;
+   for(unsigned i=0;i<6;++i)free(saved[i]);return 0;
 }

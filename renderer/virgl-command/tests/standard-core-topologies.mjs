@@ -73,7 +73,7 @@ export function runWireAcceptance(){
   const c=checks(),records=[];
   const test=(bytes,expected,legacy,label)=>{const standard=decodeStandardSubmission(bytes),old=decodeSubmission(bytes);c.same(standard.ok,expected,label+' standard');c.same(old.ok,legacy,label+' legacy');records.push({label,hex:hex(bytes),standard,legacy:old,expected,legacyExpected:legacy});};
   for(const mode of [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,0xffffffff])for(const instances of [0,1,4])
-    test(packet(8,0,[0,4,mode,0,instances,0,0,0,0,0,0xffffffff,0]),mode>=1&&mode<=6,instances===1&&[4,5].includes(mode),'mode-'+mode+'-'+instances);
+    test(packet(8,0,[0,4,mode,0,instances,0,0,0,0,0,0xffffffff,0]),mode>=0&&mode<=6,instances===1&&[4,5].includes(mode),'mode-'+mode+'-'+instances);
   for(const mode of [1,2,3,6]){
     for(const [label,slot,value]of [['bias',5,1],['base-instance',6,1],['restart',7,1],['restart-index',8,255],['stream',11,1],['invalid-indexed',3,2]]){
       const w=[0,4,mode,0,1,0,0,0,0,0,0xffffffff,0];w[slot]=value;test(packet(8,0,w),false,false,label+'-'+mode);}
