@@ -2077,3 +2077,7 @@ verify-E6-T12g6m5a:
 .PHONY: verify-E6-T12g6m5b1
 verify-E6-T12g6m5b1:
 	bash tools/verify-virgl-original-92cb-geometry.sh
+
+.PHONY: verify-E6-T12g6m5b2a
+verify-E6-T12g6m5b2a:
+	bash tools/verify-virgl-original-92cb-raster.sh
