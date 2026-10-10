@@ -1,0 +1,13 @@
+{
+  "schema": "original-mip-storage-critic-seal-authentication-v1",
+  "task": "E6-T11d20",
+  "status": "passed",
+  "records": 12993,
+  "regularUniqueSafeMembers": true,
+  "allMemberHashesAndLengths": true,
+  "uncompressedRecordBytes": 51579713,
+  "archiveSha256": "c9c7922e9c67020b7b3f555c17b5552de630657dce0e8662964be1df11a12289",
+  "recordIndexSha256": "479a4347e65746eab08765eb726bf0d37265793507d10e4e8d5872adf656f0d8",
+  "preAttestationManifestSha256": "6566f52dc896998ceff61205b21029dbf6f6e1039b3b79d93d49ae9d4e37a69a",
+  "unchangedWorkerArchiveSha256": "69b3ab4a2a7bddb01a3301dd17c4996bb7535d458c72eb644bd07307c59d3d6d"
+}
