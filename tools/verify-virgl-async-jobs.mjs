@@ -24,7 +24,7 @@ await fs.mkdir(output, { recursive: true });
 const codePaths = [
   'renderer/virgl-command/decoder.mjs', 'renderer/virgl-command/resources.mjs',
   'renderer/virgl-command/resources-README.md',
-  'renderer/virgl-command/constant-domain.mjs', 'renderer/virgl-command/state.mjs', 'renderer/virgl-command/state-README.md', 'renderer/virgl-command/draw-README.md', 'renderer/virgl-command/async-README.md',
+  'renderer/virgl-command/constant-domain.mjs', 'renderer/virgl-command/state.mjs', 'renderer/virgl-command/cache.mjs', 'renderer/virgl-command/state-README.md', 'renderer/virgl-command/draw-README.md', 'renderer/virgl-command/async-README.md',
   'renderer/virgl-command/tests/async-acceptance.mjs', 'renderer/virgl-shader/index.mjs',
   'renderer/virgl-shader/build/wasm/virgl-shader.mjs', 'renderer/virgl-shader/build/wasm/virgl-shader.wasm',
   'renderer/virgl-shader/bridge.c', 'renderer/virgl-shader/UPSTREAM.json',
@@ -140,7 +140,7 @@ try {
     } finally { clearTimeout(timer); }
     report.browserMs = performance.now() - browserBegin;
     const coverage = await coverageSession.send('Profiler.takePreciseCoverage');
-    const runtimePaths = ['renderer/virgl-command/state.mjs', 'renderer/virgl-command/resources.mjs'];
+    const runtimePaths = ['renderer/virgl-command/state.mjs', 'renderer/virgl-command/cache.mjs', 'renderer/virgl-command/resources.mjs'];
     const scripts = runtimePaths.map((filename) => {
       const matches = coverage.result.filter((script) => script.url.endsWith('/' + filename));
       assert.equal(matches.length, 1, `coverage must name the served runtime ${filename}`);

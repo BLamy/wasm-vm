@@ -229,7 +229,7 @@ if(options.mode==='branch-polarity'){
 }else assert.equal(options['fault-artifacts'],undefined,'clean proof uses real clean compiler artifacts');
 function mutateServed(filename,original){return faultFiles.get(filename)??original;}
 const {ORIGINAL_INPUTS}=await import('../renderer/virgl-shader/tests/components.mjs');
-const runtime=['renderer/virgl-command/decoder.mjs','renderer/virgl-command/resources.mjs','renderer/virgl-command/state.mjs','renderer/virgl-command/constant-domain.mjs','renderer/virgl-command/tests/structured-conditionals.mjs','renderer/virgl-command/tests/structured-conditionals-oracle.mjs','renderer/virgl-command/tests/structured-conditionals-shaders.json'];
+const runtime=['renderer/virgl-command/decoder.mjs','renderer/virgl-command/resources.mjs','renderer/virgl-command/state.mjs', 'renderer/virgl-command/cache.mjs','renderer/virgl-command/constant-domain.mjs','renderer/virgl-command/tests/structured-conditionals.mjs','renderer/virgl-command/tests/structured-conditionals-oracle.mjs','renderer/virgl-command/tests/structured-conditionals-shaders.json'];
 const runtimePins=await Promise.all(runtime.map(async filename=>{const bytes=await fs.readFile(path.join(repo,filename));return{path:filename,size:bytes.length,sha256:hash(bytes)};}));
 await runVirglBrowser({options,task:'E6-T12e7',boundary:'literal unsigned structured branches and joined numerical authority through decoded shared renderer',
  reportFields:{currentGuest3dAdvertisement:false,trustedHostMetadataWrapper:false,mode:options.mode,faultManifest,faultManifestBinding},modulePath:'/renderer/virgl-command/tests/structured-conditionals.mjs',windowReportKey:'__virglStructuredConditionalReport',browserArguments:{mode:options.mode},

@@ -15,7 +15,7 @@ assert.ok(options.output);assert.ok(!options.sabotage||['inline-offset','stride'
 assert.ok(!options['node-only']||options['node-only']==='true');
 const output=path.resolve(options.output);await fs.mkdir(output,{recursive:true});
 const sourcePaths=[
-  'renderer/virgl-command/resources.mjs','renderer/virgl-command/decoder.mjs','renderer/virgl-command/state.mjs',
+  'renderer/virgl-command/resources.mjs','renderer/virgl-command/decoder.mjs','renderer/virgl-command/state.mjs', 'renderer/virgl-command/cache.mjs',
   'renderer/virgl-command/constant-domain.mjs','renderer/virgl-command/tests/inline-uploads.mjs',
   'renderer/virgl-shader/index.mjs','renderer/virgl-shader/UPSTREAM.json','renderer/virgl-shader/vendor/src/virgl_protocol.h',
   'tools/virgl-command/fixtures.mjs','tools/virgl-command/inline-fixtures.mjs','tools/verify-virgl-inline-uploads.mjs',

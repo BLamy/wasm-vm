@@ -61,7 +61,7 @@ DESTROY_OBJECT drops their public name/reference; existing bindings survive unti
 explicit replacement/unbind or subcontext destruction. In particular original
 submit249 destroys surface3 at byte11376 while its framebuffer still owns it; the
 framebuffer reset at byte11384 releases the last reference to already-unreferenced
-resource5. Shader programs disappear when either selector is finally released.
+resource5. Shader programs disappear when either selector is finally released and may be evicted sooner under bounded cache pressure; live bindings recreate them.
 DSA and vertex elements unbind when destroyed. Sampler-state destruction clears
 matching slots and compacts later slots, following the pinned destructor. Blend
 and rasterizer bindings own a bounded copy of their fields; destroying their
@@ -81,7 +81,7 @@ Shader creation passes original decoded TGSI text and its VS/FS stage to the
 verified Wasm bridge, then compiles the emitted GLSL ES300 on the actual GL
 context. LINK_SHADER prelinks a pair without binding it; BIND_SHADER selects its
 stage and links the pair when both stages are present. Programs are keyed by the
-two selector generations and a canonical interface derived from the fragment's
+private subcontext owner, two immutable selector generations, every used view and a canonical interface derived from the actual pair's
 GENERIC semantic indices, component masks and interpolation modes. Fragment
 input components must be written by the matching vertex semantic, independently
 of physical register order. The v4 shader bridge exposes `smooth`/`flat` metadata.
@@ -102,7 +102,7 @@ the final binding is released. Smooth pairs keep their existing base shaders.
 
 Fragment sampling keys canonically include used sampler slot/name, exact color
 format, target2, level/layer0, fixed lower-left origin and all four immutable
-RGBA/ZERO/ONE selectors. RGBA identity keeps its legacy executable key. The
+RGBA/ZERO/ONE selectors. RGBA identity includes its complete sampling key as well. The
 checked 2D TEX lookup is wrapped by a private GLSL helper before fragment main;
 helpers map the native normalized sample, including X-format alpha one. Shared
 texture contents and parameters remain unchanged. No per-view image or CPU
@@ -223,3 +223,8 @@ inline jobs own their dense reserved upload at preparation and yield in
 step checks resource/context/membership identity, issues the upload and retires
 through a nonblocking GPU completion fence. Cancellation, stale identity and
 backend failures release the reservation without publishing an unowned payload.
+
+Translation, native program and render-state reuse, limits, exact-key equality,
+eviction, truthful counters and host frame captures are described in
+[cache-README.md](cache-README.md). Every supported GL binding still restores on
+every cache hit.

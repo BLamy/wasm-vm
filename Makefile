@@ -2101,3 +2101,7 @@ verify-E6-T12g6m:
 .PHONY: verify-E6-T12h
 verify-E6-T12h:
 	bash tools/verify-virgl-raster-depth.sh
+
+.PHONY: verify-E6-T12i
+verify-E6-T12i:
+	bash tools/verify-virgl-render-cache.sh

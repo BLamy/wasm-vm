@@ -284,3 +284,7 @@ fields remain explicit errors. `make verify-E6-T12h` binds actual original clien
 draws and independent physical state/pixel predictions; production caps remain
 disabled. The shader text ceiling is 49,152 bytes, separately from the bounded
 draw/state profile.
+
+The renderer uses bounded context-owned caches with exact key equality. See
+[cache-README.md](cache-README.md) for residency, eviction, counter denominators
+and explicitly host-labelled original-command/ESSL/binding frame dumps.

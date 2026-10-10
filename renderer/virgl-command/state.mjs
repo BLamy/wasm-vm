@@ -1,6 +1,7 @@
 /** Typed VirGL state and bounded triangle draws. See state-README.md and draw-README.md. */
 import { decodeSubmission } from "./decoder.mjs";
 import { LIMITS as SHADER_LIMITS } from "../virgl-shader/index.mjs";
+import { createKeyCache, hashKey } from "./cache.mjs";
 import { parseConstantDomain, checkFiniteBank, checkIndirectBank, checkLoopBank, checkRadialBank, checkRasterBank, checkConversionBank, checkExactBank, COORDINATE_KEY, DISCARD_KEY } from "./constant-domain.mjs";
 
 export const STATE_PROFILE = "virgl-tiny-state-v1";
@@ -10,6 +11,8 @@ export const DRAW_PROFILE = "virgl-tiny-indexed-draw-v1";
 export const DRAW_LIMITS = Object.freeze({ drawsPerSubmission: 64, indicesPerSubmission: 65536 });
 export const ASYNC_PROFILE = "virgl-tiny-async-jobs-v1";
 export const JOB_LIMITS = Object.freeze({ jobs: 1, commandsPerStep: 64, submissionBytes: 262144, transferBytes: 4194304 });
+export const CACHE_LIMITS = Object.freeze({ translations: 128, translationBytes: 4194304,
+  programBytes: 4194304, states: 256, stateBytes: 1048576, debugBytes: 4194304 });
 const NAMES = ["NULL", "BLEND", "RASTERIZER", "DSA", "SHADER", "VERTEX_ELEMENTS", "SAMPLER_VIEW", "SAMPLER_STATE", "SURFACE"];
 const BINDINGS = { 1: "blend", 2: "rasterizer", 3: "dsa", 5: "vertexElements" };
 const vertexComponents = (element) => element.sourceFormat === 30 ? 3 : 2;
@@ -109,7 +112,7 @@ export function createVirglAsyncRenderer(options) {
 /** Host capabilities are trusted and non-reentrant. */
 function createRenderer(options, drawing, asynchronous = false) {
   return result(() => {
-    const config = dataRecord(options, ["gl", "resources", "bindings", "shaderBridge", "limits", ...(drawing ? ["drawLimits"] : []), ...(asynchronous ? ["asyncAccess", "jobLimits"] : [])], ["gl", "resources", "bindings", "shaderBridge", ...(asynchronous ? ["asyncAccess"] : [])]);
+    const config = dataRecord(options, ["gl", "resources", "bindings", "shaderBridge", "limits", "cacheLimits", ...(drawing ? ["drawLimits"] : []), ...(asynchronous ? ["asyncAccess", "jobLimits"] : [])], ["gl", "resources", "bindings", "shaderBridge", ...(asynchronous ? ["asyncAccess"] : [])]);
     const { gl, resources, bindings, shaderBridge } = config;
     require(gl && typeof gl.createVertexArray === "function" && typeof gl.uniform4uiv === "function", "invalid-input", "A WebGL2 context is required.");
     require(resources && ["inspect", "retainStorage", "releaseStorage", "prepareTransfer", "executeTransfer"].every((name) => typeof resources[name] === "function") &&
@@ -118,6 +121,10 @@ function createRenderer(options, drawing, asynchronous = false) {
     const supplied = dataRecord(config.limits ?? {}, Object.keys(STATE_LIMITS), []), limits = { ...STATE_LIMITS, ...supplied };
     for (const key of Object.keys(limits)) require(Number.isSafeInteger(limits[key]) && limits[key] >= 0 && limits[key] <= STATE_LIMITS[key], "invalid-input", "Limits may only tighten defaults.");
     Object.freeze(limits);
+    const cacheLimits = { ...CACHE_LIMITS, ...dataRecord(config.cacheLimits ?? {}, Object.keys(CACHE_LIMITS), []) };
+    for (const key of Object.keys(cacheLimits)) require(Number.isSafeInteger(cacheLimits[key]) && cacheLimits[key] >= 0 && cacheLimits[key] <= CACHE_LIMITS[key],
+      "invalid-input", "Cache limits may only tighten defaults.");
+    Object.freeze(cacheLimits);
     let drawLimits = null;
     if (drawing) {
       const suppliedDraw = dataRecord(config.drawLimits ?? {}, Object.keys(DRAW_LIMITS), []);
@@ -140,6 +147,12 @@ function createRenderer(options, drawing, asynchronous = false) {
     const idle = () => require(activeJob === null, "busy", "A renderer job is active; cancel and drain it before changing state.");
     const contexts = new Map(), objects = new Set(), programs = new Set();
     let disposed = false, nextGeneration = 1, subCount = 0, shaderBytes = 0, uniformBytes = 0, leaseCount = 0;
+    const translationCache = createKeyCache({ entries: cacheLimits.translations, bytes: cacheLimits.translationBytes });
+    const stateCache = createKeyCache({ entries: cacheLimits.states, bytes: cacheLimits.stateBytes });
+    const programCache = createKeyCache({ entries: limits.programs, bytes: cacheLimits.programBytes, release: collectProgram });
+    const work = { translations: 0, pairTranslations: 0, shaderCompiles: 0, programLinks: 0,
+      submissions: 0, decodedSubmissions: 0, completedSubmissions: 0, failedSubmissions: 0, appliedCommands: 0, drawCalls: 0, draws: 0 };
+    let activeFrame = null, lastFrame = null, lastFrameNumber = -1, debugBytes = 0;
     const check = () => {
       require(!gl.isContextLost(), "backend-error", "WebGL context is lost.");
       const error = gl.getError(); require(error === gl.NO_ERROR, "backend-error", `WebGL error ${error}.`);
@@ -206,7 +219,7 @@ function createRenderer(options, drawing, asynchronous = false) {
         subCount++; return sub;
       } catch (error) { if (vao) gl.deleteVertexArray(vao); if (framebuffer) gl.deleteFramebuffer(framebuffer); throw error; }
     };
-    const deleteProgram = (sub, program) => {
+    function collectProgram(program, sub) {
       sub.programs.delete(program.key); programs.delete(program);
       if (gl.getParameter(gl.CURRENT_PROGRAM) === program.native) gl.useProgram(null);
       gl.deleteProgram(program.native);
@@ -214,6 +227,37 @@ function createRenderer(options, drawing, asynchronous = false) {
       if (program.fragmentVariantShader) gl.deleteShader(program.fragmentVariantShader);
       shaderBytes -= program.variantBytes;
       for (const block of program.blocks) { gl.deleteBuffer(block.buffer); uniformBytes -= block.byteLength; }
+    }
+    const deleteProgram = (sub, program) => programCache.remove(sub, program.key);
+    const makeProgramRoom = (variantBytes) => {
+      const evictableBytes = [...programs].reduce((sum, program) => sum + program.variantBytes, 0);
+      require(limits.programs > 0 && limits.uniformBytes >= 656 && variantBytes <= limits.shaderBytes - shaderBytes + evictableBytes,
+        "limit-exceeded", "One program cannot fit the native allocation budgets.");
+      while (programs.size >= limits.programs || variantBytes > limits.shaderBytes - shaderBytes || 656 > limits.uniformBytes - uniformBytes) {
+        require(programCache.evict(), "limit-exceeded", "Linked program, variant or system-uniform budget exceeded.");
+      }
+    };
+    const translatedStage = (sub, request) => {
+      const key = JSON.stringify([sub.generation, "stage", request.stage, request.text]);
+      const cached = translationCache.get(sub, key);
+      if (cached) return cached;
+      work.translations++;
+      const translated = freeze(unwrap(shaderBridge.translate(request)));
+      unwrap(parseConstantDomain(translated.metadata, request.stage));
+      require(typeof translated.glsl === "string" && /^#version 300 es\b/m.test(translated.glsl),
+        "shader-error", "Shader bridge returned incompatible output.");
+      translationCache.put(sub, key, translated, 1024 + 2 * (key.length + JSON.stringify(translated).length));
+      return translated;
+    };
+    const translatedPair = (sub, vertex, fragment, interfaceKey, validate) => {
+      const key = JSON.stringify([sub.generation, "pair", vertex.fields.text, fragment.fields.text, interfaceKey]);
+      const cached = translationCache.get(sub, key);
+      if (cached) { validate(cached); return cached; }
+      work.pairTranslations++;
+      const translated = freeze(unwrap(shaderBridge.translatePair({ vertexText: vertex.fields.text, fragmentText: fragment.fields.text })));
+      validate(translated);
+      translationCache.put(sub, key, translated, 1024 + 2 * (key.length + JSON.stringify(translated).length));
+      return translated;
     };
     const collectObject = (sub, object) => {
       if (object.references !== 0) return;
@@ -245,6 +289,7 @@ function createRenderer(options, drawing, asynchronous = false) {
     }
     const disposeSub = (sub) => {
       for (const program of [...sub.programs.values()]) deleteProgram(sub, program);
+      translationCache.removeOwner(sub); stateCache.removeOwner(sub);
       for (const surface of sub.surfaces) objectRef(sub, surface, null);
       sub.surfaces = [];
       sub.depthSurface = objectRef(sub, sub.depthSurface, null);
@@ -271,7 +316,7 @@ function createRenderer(options, drawing, asynchronous = false) {
           require(object.metadata.format === fields.format, "incompatible-resource", "View format and storage format differ.");
         }
         if (type === 4) {
-          const translated = unwrap(shaderBridge.translate({ stage: fields.stageName, text: fields.text }));
+          const translated = translatedStage(sub, { stage: fields.stageName, text: fields.text });
           const contract = unwrap(parseConstantDomain(translated.metadata, fields.stageName));
           object.constantDomain = contract.domain;
           object.constantAccess = contract.access ?? null;
@@ -289,7 +334,7 @@ function createRenderer(options, drawing, asynchronous = false) {
           require(object.shaderBytes <= limits.shaderBytes - shaderBytes, "limit-exceeded", "Shader storage budget exceeded.");
           object.shader = gl.createShader(fields.stage === 0 ? gl.VERTEX_SHADER : gl.FRAGMENT_SHADER);
           require(object.shader, "backend-error", "Shader allocation failed.");
-          gl.shaderSource(object.shader, translated.glsl); gl.compileShader(object.shader);
+          gl.shaderSource(object.shader, translated.glsl); work.shaderCompiles++; gl.compileShader(object.shader);
           require(gl.getShaderParameter(object.shader, gl.COMPILE_STATUS), "shader-error", `WebGL shader compilation failed: ${gl.getShaderInfoLog(object.shader)}`);
           object.translation = freeze(translated);
         }
@@ -351,17 +396,14 @@ function createRenderer(options, drawing, asynchronous = false) {
     function link(sub, vertex, fragment) {
       require(vertex?.fields.stage === 0 && fragment?.fields.stage === 1, "missing-shader", "Link requires a vertex shader and a fragment shader.");
       const sampling = samplingFor(sub, fragment);
-      // A successfully checked selector is immutable. Repeated restoration can
-      // reuse its canonical key without rebuilding the varying maps each time.
-      if (fragment.interfaceKey !== undefined) {
-        const cached = sub.programs.get(`${vertex.generation}:${fragment.generation}:${fragment.interfaceKey}${sampling.suffix}`);
-        if (cached) return cached;
-      }
       let vs = vertex.translation.metadata;
       const fs = fragment.translation.metadata, interfaceInfo = shaderInterface(vs, fs, fragment.coordinateContract, fragment.discardContract);
-      const key = `${vertex.generation}:${fragment.generation}:${interfaceInfo.key}${sampling.suffix}`;
-      require(programs.size < limits.programs, "limit-exceeded", "Linked program limit exceeded.");
-      const program = { key, vertex, fragment, native: null, blocks: [], uniforms: [], samplers: [],
+      // Generations identify these exact owned immutable bodies/metadata, not public names.
+      // Derive the complete pair interface even when another vertex used this fragment.
+      const key = `${sub.generation}:${vertex.generation}:${fragment.generation}:${interfaceInfo.key}|${sampling.key}`;
+      const cached = programCache.get(sub, key);
+      if (cached) return cached;
+      const program = { key, generation: generation(), vertex, fragment, native: null, blocks: [], uniforms: [], samplers: [],
         interfaceKey: interfaceInfo.key, samplingKey: sampling.key, samplingViews: sampling.views,
         variantShader: null, fragmentVariantShader: null, variantBytes: 0,
         reflection: { attributes: [], uniforms: [], samplers: [], uniformBlocks: [], outputs: [] } };
@@ -370,38 +412,41 @@ function createRenderer(options, drawing, asynchronous = false) {
           require(typeof shaderBridge.translatePair === "function", "shader-link-error", interfaceInfo.coordinates ?
             "Fragment coordinates require the checked pair compiler." : interfaceInfo.discard ?
             "Fragment discard requires the checked pair compiler." : "Flat interpolation requires the checked pair compiler.");
-          const pair = unwrap(shaderBridge.translatePair({ vertexText: vertex.fields.text, fragmentText: fragment.fields.text }));
           const expectedVertex = { ...vs, outputs: vs.outputs.map((output) => output.semantic === "GENERIC" ?
             { ...output, interpolation: interfaceInfo.inputs.get(output.semanticIndex)?.interpolation ?? "smooth" } : output) };
-          require(pair.interfaceKey === interfaceInfo.key &&
+          const pair = translatedPair(sub, vertex, fragment, interfaceInfo.key, (pair) => require(pair.interfaceKey === interfaceInfo.key &&
             pair.fragment?.glsl === fragment.translation.glsl && JSON.stringify(pair.fragment?.metadata) === JSON.stringify(fs) &&
             typeof pair.vertex?.glsl === "string" && pair.vertex.glsl.length <= SHADER_LIMITS.glslBytes &&
             /^#version 300 es\b/m.test(pair.vertex.glsl) && JSON.stringify(pair.vertex.metadata) === JSON.stringify(expectedVertex),
-          "shader-link-error", "Pair compiler output does not match the selected shader interface.");
+          "shader-link-error", "Pair compiler output does not match the selected shader interface."));
           if (interfaceInfo.flat) {
-            require(pair.vertex.glsl.length <= limits.shaderBytes - shaderBytes, "limit-exceeded", "Vertex variant storage budget exceeded.");
-            program.variantBytes = pair.vertex.glsl.length; shaderBytes += program.variantBytes;
-            program.variantShader = gl.createShader(gl.VERTEX_SHADER);
-            require(program.variantShader, "backend-error", "Vertex variant allocation failed.");
-            gl.shaderSource(program.variantShader, pair.vertex.glsl); gl.compileShader(program.variantShader);
-            require(gl.getShaderParameter(program.variantShader, gl.COMPILE_STATUS), "shader-error",
-              `WebGL vertex variant compilation failed: ${gl.getShaderInfoLog(program.variantShader)}`);
-            vs = pair.vertex.metadata;
+            program.vertexText = pair.vertex.glsl; vs = pair.vertex.metadata;
           }
         }
         const fragmentText = specializeFragment(fragment.translation.glsl, sampling);
+        program.vertexText ??= vertex.translation.glsl;
+        program.fragmentText = fragmentText ?? fragment.translation.glsl;
+        const requiredVariantBytes = (interfaceInfo.flat ? program.vertexText.length : 0) + (fragmentText?.length ?? 0);
+        makeProgramRoom(requiredVariantBytes);
+        if (interfaceInfo.flat) {
+            program.variantBytes = program.vertexText.length; shaderBytes += program.variantBytes;
+            program.variantShader = gl.createShader(gl.VERTEX_SHADER);
+            require(program.variantShader, "backend-error", "Vertex variant allocation failed.");
+            gl.shaderSource(program.variantShader, program.vertexText); work.shaderCompiles++; gl.compileShader(program.variantShader);
+            require(gl.getShaderParameter(program.variantShader, gl.COMPILE_STATUS), "shader-error",
+              `WebGL vertex variant compilation failed: ${gl.getShaderInfoLog(program.variantShader)}`);
+        }
         if (fragmentText !== null) {
-          require(fragmentText.length <= limits.shaderBytes - shaderBytes, "limit-exceeded", "Fragment view variant storage budget exceeded.");
           program.variantBytes += fragmentText.length; shaderBytes += fragmentText.length;
           program.fragmentVariantShader = gl.createShader(gl.FRAGMENT_SHADER);
           require(program.fragmentVariantShader, "backend-error", "Fragment view variant allocation failed.");
-          gl.shaderSource(program.fragmentVariantShader, fragmentText); gl.compileShader(program.fragmentVariantShader);
+          gl.shaderSource(program.fragmentVariantShader, fragmentText); work.shaderCompiles++; gl.compileShader(program.fragmentVariantShader);
           require(gl.getShaderParameter(program.fragmentVariantShader, gl.COMPILE_STATUS), "shader-error",
             `WebGL fragment view variant compilation failed: ${gl.getShaderInfoLog(program.fragmentVariantShader)}`);
         }
         program.native = gl.createProgram(); require(program.native, "backend-error", "Program allocation failed.");
         gl.attachShader(program.native, program.variantShader ?? vertex.shader); gl.attachShader(program.native, program.fragmentVariantShader ?? fragment.shader);
-        gl.linkProgram(program.native);
+        work.programLinks++; gl.linkProgram(program.native);
         require(gl.getProgramParameter(program.native, gl.LINK_STATUS), "shader-link-error", `WebGL program link failed: ${gl.getProgramInfoLog(program.native)}`);
         for (let index = 0; index < gl.getProgramParameter(program.native, gl.ACTIVE_ATTRIBUTES); index++) {
           const actual = gl.getActiveAttrib(program.native, index), declared = vs.attributes.find((attribute) => attribute.name === actual.name);
@@ -484,8 +529,10 @@ function createRenderer(options, drawing, asynchronous = false) {
             "shader-reflection-error", "Unsupported fragment output.");
           program.reflection.outputs.push({ ...output, location });
         }
-        check(); freeze(program.reflection); sub.programs.set(key, program); programs.add(program);
-        fragment.interfaceKey = interfaceInfo.key; return program;
+        check(); freeze(program.reflection);
+        const cacheBytes = 1024 + 2 * (key.length + JSON.stringify(program.reflection).length + requiredVariantBytes);
+        require(programCache.put(sub, key, program, cacheBytes), "limit-exceeded", "Program cache byte budget exceeded.");
+        sub.programs.set(key, program); programs.add(program); return program;
       } catch (error) {
         if (program.native) gl.deleteProgram(program.native);
         if (program.variantShader) gl.deleteShader(program.variantShader);
@@ -511,6 +558,51 @@ function createRenderer(options, drawing, asynchronous = false) {
       const bits = sub.blend?.fields.renderTargets[0].colorMask ?? 15;
       return [1, 2, 4, 8].map((bit) => Boolean(bits & bit) && (bit !== 8 || !xAlpha(sub)));
     };
+    const cachedState = (sub, program, drawingNow) => {
+      const storage = (binding) => binding ? { generation: binding.resourceGeneration, metadata: binding.metadata, fields: binding.fields } : null;
+      const key = JSON.stringify({ sub: sub.generation, program: program?.generation ?? null, programKey: program?.key ?? null, drawingNow,
+        vertexElements: sub.vertexElements?.fields ?? null, vertexBuffers: sub.vertexBuffers.map(storage), indexBuffer: storage(sub.indexBuffer),
+        targets: sub.surfaces.map(storage), depth: storage(sub.depthSurface), views: sub.views.map(slots => slots.map(storage)),
+        samplers: sub.samplers.map(slots => slots.map(object => object ? { generation: object.generation, fields: object.fields } : null)),
+        constants: sub.constants,
+        blend: sub.blend?.fields ?? null,
+        rasterizer: sub.rasterizer?.fields ?? null, dsa: sub.dsa?.fields ?? null, viewport: sub.viewport, scissor: sub.scissor,
+        blendColor: sub.blendColor, stencilRef: sub.stencilRef, defaults: sub.defaults });
+      let state = stateCache.get(sub, key);
+      if (!state) {
+        state = freeze({ blend: sub.blend?.fields ?? null, rasterizer: sub.rasterizer?.fields ?? null, dsa: sub.dsa?.fields ?? null,
+          viewport: sub.viewport, scissor: sub.scissor, blendColor: [...sub.blendColor], stencilRef: { ...sub.stencilRef },
+          mask: colorMask(sub), winsysY: sub.viewport?.scale[1] < 0 ? -1 : 1 });
+        stateCache.put(sub, key, state, 512 + 2 * (key.length + JSON.stringify(state).length));
+      }
+      return { key, state };
+    };
+    const cacheInspection = () => ({ translation: translationCache.inspect(), program: programCache.inspect(), state: stateCache.inspect() });
+    const appendFrame = (kind, entry) => {
+      if (!activeFrame) return;
+      const charge = 256 + 2 * JSON.stringify(entry).length;
+      if (!activeFrame.complete || charge > cacheLimits.debugBytes - debugBytes) {
+        activeFrame.complete = false; activeFrame.dropped[kind]++; return;
+      }
+      activeFrame[kind].push(freeze(entry)); debugBytes += charge;
+    };
+    const recordSubmission = (id, bytes, decoded, sequence) => {
+      if (!activeFrame) return;
+      if (!activeFrame.complete || decoded.byteLength * 4 + 1024 > cacheLimits.debugBytes - debugBytes) {
+        activeFrame.complete = false; activeFrame.dropped.submissions++; return;
+      }
+      // Use intrinsic view access after decoder validation, never caller getters/iterators.
+      const prototype = Object.getPrototypeOf(Uint8Array.prototype);
+      const get = name => Object.getOwnPropertyDescriptor(prototype, name).get.call(bytes);
+      const view = new Uint8Array(get("buffer"), get("byteOffset"), get("byteLength"));
+      const hex = Array.from(view, byte => byte.toString(16).padStart(2, "0")).join("");
+      appendFrame("submissions", { sequence, contextId: id, byteLength: decoded.byteLength, commandCount: decoded.commands.length, hex,
+        provenance: { event: decoded.event, sourceSha256: decoded.sourceSha256 } });
+    };
+    const recordOutcome = (sequence, outcome) => appendFrame("outcomes", { sequence, ok: outcome.ok,
+      appliedCommands: outcome.appliedCommands ?? 0, draws: outcome.draws?.length ?? 0, gpuComplete: outcome.gpuComplete ?? null,
+      error: outcome.error ?? null });
+    const advanceJob = job => { job.index++; work.appliedCommands++; };
     // Restoration also follows SET, CLEAR, binding changes and restoreContext.
     // A partial/invalid conditional or indirect bank remains CPU state but is never uploaded.
     const constantUploads = (program, banks, strict, approvedBanks = null) => Object.freeze((program?.uniforms ?? []).flatMap((uniform) => {
@@ -550,6 +642,7 @@ function createRenderer(options, drawing, asynchronous = false) {
       check(); vertexLayout(sub);
       if (plan) validateDrawPlan(plan);
       const program = plan ? plan.program : selectedProgram(sub);
+      const { key: stateKey, state } = cachedState(sub, program, Boolean(plan));
       const uploads = plan ? plan.uploads : constantUploads(program, sub.constants, false);
       gl.bindVertexArray(sub.vao);
       gl.bindFramebuffer(gl.FRAMEBUFFER, sub.framebuffer);
@@ -591,7 +684,7 @@ function createRenderer(options, drawing, asynchronous = false) {
       for (let slot = 0; slot < uniformBindings; slot++) gl.bindBufferBase(gl.UNIFORM_BUFFER, slot, null);
       if (program) {
         for (const block of program.blocks) {
-          new DataView(block.data.buffer).setFloat32(640, sub.viewport?.scale[1] < 0 ? -1 : 1, true);
+          new DataView(block.data.buffer).setFloat32(640, state.winsysY, true);
           gl.bindBuffer(gl.UNIFORM_BUFFER, block.buffer); gl.bufferSubData(gl.UNIFORM_BUFFER, 0, block.data);
           gl.uniformBlockBinding(program.native, block.index, 0); gl.bindBufferBase(gl.UNIFORM_BUFFER, 0, block.buffer);
         }
@@ -610,39 +703,40 @@ function createRenderer(options, drawing, asynchronous = false) {
       gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.NONE);
       for (const cap of [gl.STENCIL_TEST, gl.RASTERIZER_DISCARD, gl.POLYGON_OFFSET_FILL,
         gl.SAMPLE_ALPHA_TO_COVERAGE, gl.SAMPLE_COVERAGE]) gl.disable(cap);
-      const dsa = sub.dsa?.fields;
+      const dsa = state.dsa;
       if (dsa?.depthEnable) gl.enable(gl.DEPTH_TEST); else gl.disable(gl.DEPTH_TEST);
       gl.depthMask(dsa?.depthWriteMask ?? false);
       gl.depthFunc([gl.NEVER, gl.LESS, gl.EQUAL, gl.LEQUAL, gl.GREATER, gl.NOTEQUAL, gl.GEQUAL, gl.ALWAYS][dsa?.depthFunction ?? 0]);
       gl.clearDepth(1); gl.clearStencil(0);
       gl.stencilMaskSeparate(gl.FRONT, 0); gl.stencilMaskSeparate(gl.BACK, 0);
-      gl.stencilFuncSeparate(gl.FRONT, gl.NEVER, sub.stencilRef.front, 0);
-      gl.stencilFuncSeparate(gl.BACK, gl.NEVER, sub.stencilRef.back, 0);
+      gl.stencilFuncSeparate(gl.FRONT, gl.NEVER, state.stencilRef.front, 0);
+      gl.stencilFuncSeparate(gl.BACK, gl.NEVER, state.stencilRef.back, 0);
       gl.stencilOpSeparate(gl.FRONT_AND_BACK, gl.KEEP, gl.KEEP, gl.KEEP);
       gl.polygonOffset(0, 0); gl.lineWidth(1); gl.sampleCoverage(1, false);
-      const rasterizer = sub.rasterizer?.fields;
+      const rasterizer = state.rasterizer;
       if (rasterizer?.scissor) gl.enable(gl.SCISSOR_TEST); else gl.disable(gl.SCISSOR_TEST);
-      const scissor = sub.scissor;
+      const scissor = state.scissor;
       gl.scissor(scissor?.minX ?? 0, scissor?.minY ?? 0, scissor ? scissor.maxX - scissor.minX : 0, scissor ? scissor.maxY - scissor.minY : 0);
       if (rasterizer?.cullFace === 2) gl.enable(gl.CULL_FACE); else gl.disable(gl.CULL_FACE);
       // All supported resource flags are zero: pinned lower-left FBOs invert
       // Gallium front_ccw (vrend_update_frontface_state).
       gl.cullFace(gl.BACK); gl.frontFace(rasterizer?.frontCcw ? gl.CW : gl.CCW);
-      const blend = sub.blend?.fields, target = blend?.renderTargets[0];
+      const blend = state.blend, target = blend?.renderTargets[0];
       if (blend?.dither) gl.enable(gl.DITHER); else gl.disable(gl.DITHER);
       if (target?.blendEnable) gl.enable(gl.BLEND); else gl.disable(gl.BLEND);
       gl.blendEquationSeparate(gl.FUNC_ADD, gl.FUNC_ADD);
       gl.blendFuncSeparate(target?.blendEnable ? (target.rgbSourceFactor === 3 ? gl.SRC_ALPHA : gl.ONE) : gl.ONE,
         target?.blendEnable ? gl.ONE_MINUS_SRC_ALPHA : gl.ZERO, gl.ONE, target?.blendEnable ? gl.ONE_MINUS_SRC_ALPHA : gl.ZERO);
-      gl.blendColor(...sub.blendColor);
-      const mask = colorMask(sub);
+      gl.blendColor(...state.blendColor);
+      const mask = state.mask;
       gl.colorMask(...mask);
-      if (sub.viewport) {
-        const { scale, translate } = sub.viewport;
-        gl.viewport(...viewportRectangle(sub.viewport));
+      if (state.viewport) {
+        const { scale, translate } = state.viewport;
+        gl.viewport(...viewportRectangle(state.viewport));
         gl.depthRange(translate[2] - scale[2], translate[2] + scale[2]);
       } else { gl.viewport(0, 0, 0, 0); gl.depthRange(0, 1); }
       check();
+      return stateKey;
     };
     const prepareDraw = (ctx, sub, command, submission) => {
       const fields = command.fields;
@@ -714,11 +808,13 @@ function createRenderer(options, drawing, asynchronous = false) {
       });
       // readStorage changes copy/pixel bindings. Restore every supported binding
       // after its synchronous GPU read, immediately before issuing the real draw.
-      restore(sub, plan);
+      const stateKey = restore(sub, plan);
       const mode = fields.mode === 5 ? gl.TRIANGLE_STRIP : gl.TRIANGLES;
       if (fields.indexed) gl.drawElements(mode, fields.count, gl.UNSIGNED_SHORT, indexOffset);
       else gl.drawArrays(mode, fields.start, fields.count);
+      work.drawCalls++;
       check();
+      work.draws++;
       submission.indices += fields.count;
       submission.draws.push({ byteOffset: command.byteOffset, opcode: 8, count: fields.count, indexed: fields.indexed, mode: fields.mode, start: fields.start,
         indexOffset, indexByteLength, actualMinIndex, actualMaxIndex,
@@ -728,6 +824,15 @@ function createRenderer(options, drawing, asynchronous = false) {
           width: surface.metadata.width, height: surface.metadata.height,
           depthResourceId: sub.depthSurface?.metadata.id ?? null, depthResourceGeneration: sub.depthSurface?.resourceGeneration ?? null },
         vertexShader: ref(sub.shaders[0]), fragmentShader: ref(sub.shaders[1]) });
+      if (activeFrame) {
+        if (!activeFrame.programs.some(entry => entry.generation === plan.program.generation)) appendFrame("programs", {
+          generation: plan.program.generation, key: plan.program.key, hash: hashKey(plan.program.key),
+          vertexTGSI: plan.shaders[0].fields.text, fragmentTGSI: plan.shaders[1].fields.text,
+          vertexESSL300: plan.program.vertexText, fragmentESSL300: plan.program.fragmentText, reflection: plan.program.reflection });
+        appendFrame("draws", { number: work.draws, command: submission.draws.at(-1), programGeneration: plan.program.generation,
+          programKey: plan.program.key, stateKey, stateHash: hashKey(stateKey), bindings: describeSub(sub).bindings,
+          uploads: plan.uploads.map(upload => ({ stage: upload.uniform.stage, words: [...upload.words] })) });
+      }
     };
     const draw = (ctx, sub, command, submission) => {
       const plan = prepareDraw(ctx, sub, command, submission);
@@ -872,7 +977,7 @@ function createRenderer(options, drawing, asynchronous = false) {
         stencilRef: { ...sub.stencilRef }, framebufferDefaults: { ...sub.defaults } },
       programs: [...sub.programs.values()].map((program) => ({ vertexHandle: program.vertex.handle, fragmentHandle: program.fragment.handle,
         vertexGeneration: program.vertex.generation, fragmentGeneration: program.fragment.generation,
-        key: program.key, interfaceKey: program.interfaceKey, samplingKey: program.samplingKey,
+        key: program.key, generation: program.generation, interfaceKey: program.interfaceKey, samplingKey: program.samplingKey,
         samplingViews: program.samplingViews, variantBytes: program.variantBytes,
         reflection: program.reflection })), resets: { ...sub.resets } });
     const releaseJobAccess = (job) => {
@@ -903,6 +1008,7 @@ function createRenderer(options, drawing, asynchronous = false) {
       const extra = { appliedCommands: job.index, draws: job.submission.draws, gpuComplete };
       const completed = job.error ? failure(job.error, extra, job.command) : success({ profile, ...extra,
         byteLength: job.byteLength, contextId: job.ctx.id, subContextId: job.ctx.current });
+      work[job.error ? "failedSubmissions" : "completedSubmissions"]++; recordOutcome(job.sequence, completed);
       return Object.freeze({ ok: true, status: "done", appliedCommands: job.index, result: completed });
     };
     const finishOrFence = (job) => {
@@ -964,10 +1070,10 @@ function createRenderer(options, drawing, asynchronous = false) {
           // No yield or public host callback separates the revision check and draw.
           unwrap(asyncAccess.validate(job.pending.ticket));
           job.serial++; issueDraw(job.pending.plan, polled.bytes, job.submission);
-          releaseJobAccess(job); job.index++; budget--; job.phase = "ready";
+          releaseJobAccess(job); advanceJob(job); budget--; job.phase = "ready";
         } else if (job.phase === "upload-ready") {
           job.serial++; unwrap(asyncAccess.upload(job.pending.ticket));
-          releaseJobAccess(job); job.index++; budget--; job.phase = "ready";
+          releaseJobAccess(job); advanceJob(job); budget--; job.phase = "ready";
         }
         while (job.index < job.commands.length && budget > 0) {
           job.command = job.commands[job.index];
@@ -977,7 +1083,7 @@ function createRenderer(options, drawing, asynchronous = false) {
             job.serial++;
             const plan = prepareDraw(job.ctx, sub, job.command, job.submission);
             if (!plan.index) {
-              issueDraw(plan, null, job.submission); job.index++; budget--; continue;
+              issueDraw(plan, null, job.submission); advanceJob(job); budget--; continue;
             }
             require(plan.indexByteLength <= jobLimits.transferBytes, "limit-exceeded", "Index staging exceeds job byte limit.");
             const read = unwrap(asyncAccess.beginStorageRead(plan.index.lease,
@@ -999,7 +1105,7 @@ function createRenderer(options, drawing, asynchronous = false) {
           }
           // END_TRANSFERS issues no GL work. Other state operations restore GL state.
           if (job.command.opcode !== 44) job.serial++;
-          apply(job.ctx, job.command, job.submission); job.index++; budget--;
+          apply(job.ctx, job.command, job.submission); advanceJob(job); budget--;
         }
         return job.index === job.commands.length ? finishOrFence(job) : jobStatus(job, "ready");
       } catch (error) { return failJob(job, error, polling && error.code === "backend-error"); }
@@ -1018,23 +1124,58 @@ function createRenderer(options, drawing, asynchronous = false) {
       }); },
       executeSubmission(id, bytes, provenance = {}) {
         let appliedCommands = 0, command = null;
+        const sequence = ++work.submissions;
         const submission = drawing ? { draws: [], indices: 0 } : null;
         const drawResults = () => drawing ? { draws: submission.draws } : {};
         try {
           idle();
           const decoded = decodeSubmission(bytes, provenance);
-          if (!decoded.ok) return freeze({ ...decoded, appliedCommands, ...drawResults() });
+          if (!decoded.ok) {
+            const rejected = freeze({ ...decoded, appliedCommands, ...drawResults() });
+            work.failedSubmissions++; recordOutcome(sequence, rejected); return rejected;
+          }
+          work.decodedSubmissions++;
           const ctx = context(id);
           require(decoded.contextId === null || decoded.contextId === id, "invalid-provenance", "Context provenance disagrees with execution context.");
-          for (command of decoded.commands) { apply(ctx, command, submission); appliedCommands++; }
-          return success({ profile, appliedCommands, byteLength: decoded.byteLength, contextId: id, subContextId: ctx.current, ...drawResults() });
-        } catch (error) { return failure(error, { appliedCommands, ...drawResults() }, command); }
+          recordSubmission(id, bytes, decoded, sequence);
+          for (command of decoded.commands) { apply(ctx, command, submission); appliedCommands++; work.appliedCommands++; }
+          const completed = success({ profile, appliedCommands, byteLength: decoded.byteLength, contextId: id, subContextId: ctx.current, ...drawResults() });
+          work.completedSubmissions++; recordOutcome(sequence, completed); return completed;
+        } catch (error) {
+          const rejected = failure(error, { appliedCommands, ...drawResults() }, command);
+          work.failedSubmissions++; recordOutcome(sequence, rejected); return rejected;
+        }
       },
       restoreContext(id) { return result(() => { idle(); const ctx = context(id); restore(ctx.subs.get(ctx.current)); return success({ contextId: id, subContextId: ctx.current }); }); },
+      resetCaches() { return result(() => {
+        alive(); idle(); programCache.clear(); translationCache.clear(); stateCache.clear();
+        activeFrame = null; lastFrame = null; debugBytes = 0; return success();
+      }); },
+      beginFrame(number) { return result(() => {
+        alive(); idle(); require(Number.isSafeInteger(number) && number >= 0 && number > lastFrameNumber, "invalid-frame", "Host frame numbers must be increasing safe integers.");
+        require(activeFrame === null, "busy", "A host frame capture is active.");
+        require(cacheLimits.debugBytes >= 8192, "limit-exceeded", "Frame capture metadata budget is disabled.");
+        lastFrame = null; debugBytes = 8192; lastFrameNumber = number;
+        activeFrame = { schema: "virgl-render-frame-v1", number, authority: "host-labelled-frame", presented: false, complete: true,
+          dropped: { submissions: 0, programs: 0, draws: 0, outcomes: 0 }, submissions: [], programs: [], draws: [], outcomes: [],
+          start: { work: { ...work }, caches: cacheInspection() }, end: null };
+        return success({ number });
+      }); },
+      endFrame(number) { return result(() => {
+        alive(); idle(); require(activeFrame !== null && number === activeFrame.number, "invalid-frame", "No matching host frame capture.");
+        activeFrame.end = { work: { ...work }, caches: cacheInspection() };
+        // Header reserve plus independently charged records bounds the complete serialized payload.
+        debugBytes = 256 + 2 * JSON.stringify(activeFrame).length;
+        require(debugBytes <= cacheLimits.debugBytes, "limit-exceeded", "Frame capture exceeded its reserved metadata budget.");
+        lastFrame = freeze(activeFrame); activeFrame = null; return success({ dump: lastFrame });
+      }); },
+      frameDump() { return result(() => { alive(); return success({ dump: lastFrame }); }); },
       inspect(id) { return result(() => {
         if (id !== undefined) { uint(id, "contextId"); require(contexts.has(id), "missing-context", "State context does not exist."); }
         const selected = id === undefined ? [...contexts.values()] : [contexts.get(id)];
-        return success({ profile, disposed, limits, hostUniformComponents, ...(drawing ? { drawLimits } : {}),
+        return success({ profile, disposed, limits, cacheLimits, hostUniformComponents, work: { ...work }, caches: cacheInspection(),
+          debug: { activeFrame: activeFrame?.number ?? null, lastFrame: lastFrame?.number ?? null, complete: lastFrame?.complete ?? activeFrame?.complete ?? null },
+          ...(drawing ? { drawLimits } : {}),
           ...(asynchronous ? { jobLimits, jobs: { active: activeJob === null ? 0 : 1, status: activeJob?.phase ?? "idle",
             appliedCommands: activeJob?.index ?? 0, commandCount: activeJob?.commands.length ?? 0,
             draws: activeJob?.submission.draws.length ?? 0,
@@ -1043,15 +1184,20 @@ function createRenderer(options, drawing, asynchronous = false) {
             reads: asyncAccess.inspect().reads, transfers: asyncAccess.inspect().transfers, stagingBytes: asyncAccess.inspect().stagingBytes } } : {}),
           budgets: { contexts: contexts.size, subContexts: subCount, objects: objects.size, programs: programs.size,
             shaders: [...objects].filter((o) => o.type === 4).length, samplers: [...objects].filter((o) => o.type === 7).length,
-            leases: leaseCount, shaderBytes, uniformBytes },
+            leases: leaseCount, shaderBytes, uniformBytes,
+            cacheBytes: translationCache.inspect().bytes + programCache.inspect().bytes + stateCache.inspect().bytes, debugBytes },
           contexts: selected.map((ctx) => ({ id: ctx.id, generation: ctx.generation, resourceContextGeneration: ctx.resourceContextGeneration,
             currentSubContext: ctx.current, subContexts: [...ctx.subs.values()].map(describeSub) })) });
       }); },
       dispose() { return result(() => {
         if (disposed) return success();
-        if (activeJob) { releaseJobAccess(activeJob); if (activeJob.sync) gl.deleteSync(activeJob.sync); activeJob = null; }
+        if (activeJob) {
+          recordOutcome(activeJob.sequence, failure(new StateFault("cancelled", "Renderer disposed."), {
+            appliedCommands: activeJob.index, draws: activeJob.submission.draws, gpuComplete: false }));
+          work.failedSubmissions++; releaseJobAccess(activeJob); if (activeJob.sync) gl.deleteSync(activeJob.sync); activeJob = null;
+        }
         for (const ctx of contexts.values()) for (const sub of ctx.subs.values()) disposeSub(sub);
-        contexts.clear(); disposed = true; return success();
+        contexts.clear(); activeFrame = null; lastFrame = null; debugBytes = 0; disposed = true; return success();
       }); },
     };
     if (asynchronous) {
@@ -1060,17 +1206,27 @@ function createRenderer(options, drawing, asynchronous = false) {
       Object.assign(renderer, {
         beginSubmission(id, bytes, provenance = {}) {
           return result(() => {
+            const sequence = ++work.submissions;
+            try {
             alive(); idle(); require(jobLimits.jobs > 0, "limit-exceeded", "Renderer jobs are disabled.");
             const decoded = decodeSubmission(bytes, provenance);
-            if (!decoded.ok) return freeze({ ...decoded, appliedCommands: 0, draws: [] });
+            if (!decoded.ok) {
+              const rejected = freeze({ ...decoded, appliedCommands: 0, draws: [] });
+              work.failedSubmissions++; recordOutcome(sequence, rejected); return rejected;
+            }
+            work.decodedSubmissions++;
             require(decoded.byteLength <= jobLimits.submissionBytes, "limit-exceeded", "Submission exceeds job byte budget.");
             const ctx = context(id);
             require(decoded.contextId === null || decoded.contextId === id, "invalid-provenance", "Context provenance disagrees with execution context.");
             const token = Object.freeze({});
-            activeJob = { token, ctx, commands: decoded.commands, byteLength: decoded.byteLength, index: 0,
+            recordSubmission(id, bytes, decoded, sequence);
+            activeJob = { token, ctx, sequence, commands: decoded.commands, byteLength: decoded.byteLength, index: 0,
               command: null, submission: { draws: [], indices: 0 }, phase: "ready", pending: null, request: null,
               error: null, serial: 0, completedSerial: -1, hadFence: false, sync: null };
             return success({ job: token, profile, byteLength: decoded.byteLength, commandCount: decoded.commands.length });
+            } catch (error) {
+              const rejected = failure(error); work.failedSubmissions++; recordOutcome(sequence, rejected); return rejected;
+            }
           });
         },
         step(token) { return result(() => stepJob(token)); },
@@ -1083,7 +1239,7 @@ function createRenderer(options, drawing, asynchronous = false) {
         acknowledgeOutput(token, requestToken) { return result(() => {
           const job = getJob(token);
           require(job.phase === "needs-output" && job.request.token === requestToken, "invalid-request", "Unknown or consumed output request.");
-          validateJob(job); releaseJobAccess(job); job.index++; job.phase = "ready"; return success();
+          validateJob(job); releaseJobAccess(job); advanceJob(job); job.phase = "ready"; return success();
         }); },
         cancel(token) { return result(() => {
           const job = getJob(token);

@@ -134,12 +134,14 @@ function multiSlot(gl,bridge,fixtures,c){
   const result={draws,programs:sub(r,c).sub.programs.filter(p=>p.fragmentHandle===99),calls:r.calls};dispose(r,gl,c,'multi-slot');return result;
 }
 
+const nativeBudgets = budgets => {const {cacheBytes,...native}=budgets;return native;};
+
 function budgetsAndFailures(gl,bridge,fixtures,c){
   const baseline=rig(gl,bridge,c),draw=initialize(baseline,fixtures,c,67),base=c.ok(baseline.renderer.inspect(),'base selector storage').budgets.shaderBytes;
   execute(baseline,view(100,67,[2,1,0,5]),c,'measured fragment variant view');execute(baseline,bindView(100),c,'measured fragment variant');const extra=c.ok(baseline.renderer.inspect(),'charged fragment variant').budgets.shaderBytes-base;
   const source=baseline.calls.filter(x=>x.op==='shaderSource'&&x.text.includes('wv_view_0')).at(-1);c.equal(extra,source.bytes,'fragment variant charge equals exact native GLSL bytes');c.equal(source.budget.shaderBytes,base+extra,'fragment storage is charged before compile');dispose(baseline,gl,c,'measured variant');
   const pressure=[];for(const short of [0,1]){const r=rig(gl,bridge,c,{limits:{shaderBytes:base+extra-short}}),d=initialize(r,fixtures,c,67);execute(r,view(100,67,[2,1,0,5]),c,'quota view creation');const before=c.ok(r.renderer.inspect(),'quota base state').budgets,objects=r.objects.size,attempt=r.renderer.executeSubmission(2,bindView(100));if(short){c.bad(attempt,'one byte short fragment variant','limit-exceeded');c.equal(c.ok(r.renderer.inspect(),'quota rollback').budgets,before,'quota failure has no partial charge');c.equal(r.objects.size,objects,'quota failure allocates no native name');}else{c.ok(attempt,'exact fragment quota accepts');execute(r,d,c,'exact quota actual draw');physical(r,gl,c,67,[2,1,0,5],'exact quota pixels');c.equal(c.ok(r.renderer.inspect(),'exact charged quota').budgets.shaderBytes,base+extra,'exact aggregate shader budget');}pressure.push({short,budget:base+extra-short,result:attempt});dispose(r,gl,c,'quota '+short);}
-  {const r=rig(gl,bridge,c,{limits:{programs:1}});initialize(r,fixtures,c,67);execute(r,view(100,67,[2,1,0,5]),c,'program pressure view');c.bad(r.renderer.executeSubmission(2,bindView(100)),'new view cannot exceed program count','limit-exceeded');c.equal(c.ok(r.renderer.inspect(),'program pressure').budgets.programs,1,'program count remains at admitted legacy program');dispose(r,gl,c,'program quota');}
+  {const r=rig(gl,bridge,c,{limits:{programs:1}}),d=initialize(r,fixtures,c,67);execute(r,view(100,67,[2,1,0,5]),c,'program pressure view');execute(r,bindView(100),c,'new view evicts at program quota');execute(r,d,c,'evicted view actual draw');physical(r,gl,c,67,[2,1,0,5],'one program pressure view');c.equal(c.ok(r.renderer.inspect(),'program pressure').budgets.programs,1,'program count remains bounded after eviction');c.equal(r.renderer.inspect().caches.program.evictions>0,true,'one program pressure deletes old native program');dispose(r,gl,c,'program quota');}
   const failures=[];
   for(const mode of ['fragment-allocate','fragment-compile','program-allocate','program-link','sampler-location','sampler-index','sampler-type','sampler-size','uniform-buffer','uniform-block','gl-error','flat-fragment-compile']){
     let armed=false;const intercept=(t,k,args,run)=>{
@@ -158,7 +160,7 @@ function budgetsAndFailures(gl,bridge,fixtures,c){
     };
     const r=rig(gl,bridge,c,{intercept}),d=initialize(r,fixtures,c,67);execute(r,view(100,67,[2,1,0,5]),c,'failure immutable view');let request=bindView(100);
     if(mode==='flat-fragment-compile'){execute(r,shader(99,1,fixtures.commands.shaders.FRAG.replace('PERSPECTIVE','CONSTANT')),c,'failure flat TEX selector');execute(r,bindView(100),c,'failure prebound view');request=packet(31,0,[99,1]);}
-    const before=c.ok(r.renderer.inspect(),'failure pre-budget').budgets,names=r.objects.size;armed=true;const error=c.bad(r.renderer.executeSubmission(2,request),'injected '+mode);armed=false;c.equal(c.ok(r.renderer.inspect(),'failure rollback').budgets,before,'injected '+mode+' exact charge rollback');c.equal(r.objects.size,names,'injected '+mode+' exact native name rollback');
+    const before=c.ok(r.renderer.inspect(),'failure pre-budget').budgets,names=r.objects.size;armed=true;const error=c.bad(r.renderer.executeSubmission(2,request),'injected '+mode);armed=false;c.equal(nativeBudgets(c.ok(r.renderer.inspect(),'failure rollback').budgets),nativeBudgets(before),'injected '+mode+' exact native charge rollback');c.equal(r.objects.size,names,'injected '+mode+' exact native name rollback');
     c.equal(error.error.message.includes('fragment view')||mode!=='fragment-compile',true,'fault reached fragment view boundary');c.ok(r.renderer.restoreContext(2),'retry after '+mode);execute(r,d,c,'recovered actual draw '+mode);if(mode!=='flat-fragment-compile')physical(r,gl,c,67,[2,1,0,5],'recovery '+mode);failures.push({mode,error:error.error,calls:r.calls});dispose(r,gl,c,'failure '+mode);
   }
   return{base,fragmentBytes:extra,pressure,failures};
@@ -178,7 +180,7 @@ function checkedOutputGuards(gl,bridge,fixtures,c){
       if(mode==='sampler-index')out.metadata.samplers[0].index=8;
       return out;
     }};
-    const r=rig(gl,injected,c);initialize(r,fixtures,c,67);armed=true;execute(r,shader(99,1,fixtures.commands.shaders.FRAG),c,'injected checked output base compiles '+mode);armed=false;execute(r,view(100,67,[2,1,0,5]),c,'checked output nonidentity view');execute(r,bindView(100),c,'checked output original selector specialization');const before=c.ok(r.renderer.inspect(),'checked output pre-charge').budgets,names=r.objects.size;
+    const r=rig(gl,injected,c);initialize(r,fixtures,c,67);armed=true;execute(r,shader(99,1,fixtures.commands.shaders.FRAG+'\n'),c,'injected uncached checked output base compiles '+mode);armed=false;execute(r,view(100,67,[2,1,0,5]),c,'checked output nonidentity view');execute(r,bindView(100),c,'checked output original selector specialization');const before=c.ok(r.renderer.inspect(),'checked output pre-charge').budgets,names=r.objects.size;
     const error=c.bad(r.renderer.executeSubmission(2,packet(31,0,[99,1])),'checked output boundary '+mode,mode==='length'?'limit-exceeded':'shader-link-error');c.equal(c.ok(r.renderer.inspect(),'checked output rollback').budgets,before,'checked output '+mode+' no partial charge');c.equal(r.objects.size,names,'checked output '+mode+' no temporary native names');rows.push({mode,error:error.error});dispose(r,gl,c,'checked output '+mode);
   }return rows;
 }
