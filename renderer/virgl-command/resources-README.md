@@ -373,3 +373,35 @@ depth dimensions are checked against the selected color plane. Native base/max
 state restores explicitly, and views/surfaces retain native allocations until
 completion, cancellation or disposal. This isolated host API does not qualify
 production capsets, a complete guest API or the production worker/scanout path.
+
+
+### Original byte color images
+
+`createStandardColorTransferBackend`, `createStandardColorResourceStore`,
+`computeStandardColorTransferLayout`, `decodeStandardColorSubmission`, and
+`createVirglStandardColorAsyncRenderer` select the byte color boundary explicitly.
+The preceding factories keep their admissions and result shapes. The color store
+requires its matching native backend, including actual `EXT_render_snorm` support
+for private signed image copies and readback. Signed-normalized images support
+original sampler roles here; their original render bindings and surfaces reject.
+UNORM and sRGB images support both sampler and render roles.
+
+The immutable original format descriptor preserves each guest channel order and
+logical pixel size. New metadata reports `pixelBytes`, logical `byteLength`, and
+physical `gpuByteLength`, including every mip. Guest boxes, backing offsets and
+row pitches always use logical bytes. RGB SNORM and RGB sRGB use complete RGBA
+native storage with alpha initialized to one. All implicit-alpha render formats
+mask destination alpha writes. Allocation and private-view budgets charge the
+physical storage; uploads reserve enough scratch for any expansion. Expansion
+walks backwards in that same reservation. Readback uses native RGBA bytes and
+compacts them to the original guest order in the same reservation; R/RG images
+therefore reserve four bytes per read pixel, including their staged PBO.
+
+Native normalized sampling supplies missing zero/one channels. Native sRGB
+textures decode before filtering, and native sRGB targets encode linear clears,
+draws and blending. CPU transfers carry encoded bytes. Signed `-128` and `-127`
+represent the same normalized endpoint; normalized readbacks and GPU copies may
+canonicalize that duplicate encoding. No CPU texture shadow or store revision
+substitutes for the actual native image when refreshing a restricted mip view.
+This boundary supplies no complete guest API, positive capset, production guest
+initialization, scanout, deployment or throughput authority.
