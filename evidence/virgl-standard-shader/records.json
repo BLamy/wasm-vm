@@ -1,0 +1,2052 @@
+{
+  "schema": "virgl-standard-shader-records-v1",
+  "task": "E6-T11d4",
+  "sourceHead": "571c22593967e1cdae801d0c54ab0833d94b2c43",
+  "records": [
+    {
+      "path": "cold-generated/renderer/virgl-shader/build/sanitize/hostile-test",
+      "bytes": 3018192,
+      "sha256": "bf31313017c22faf9f54110aa61a590c31228f52fb7b9dc75bcff3129e04182a"
+    },
+    {
+      "path": "cold-generated/renderer/virgl-shader/build/standard-allocation-sanitize/standard-allocation-test",
+      "bytes": 3987592,
+      "sha256": "7822e508d67007deed8a4c4858b88b8e9161d74e3e0933e7ddfedb62e62cdbc5"
+    },
+    {
+      "path": "cold-generated/renderer/virgl-shader/build/standard-native/standard-test",
+      "bytes": 467120,
+      "sha256": "8565248d5836979ee7b869c31ca3684cfc3ca92752734de30c7d731e792a8806"
+    },
+    {
+      "path": "cold-generated/renderer/virgl-shader/build/standard-sanitize/standard-test",
+      "bytes": 3984336,
+      "sha256": "78386aa31e295881a9e8f8c301a40d7da29bf66643ced4955a83b5fd419f82a1"
+    },
+    {
+      "path": "cold-generated/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "bytes": 10814,
+      "sha256": "8d07e5832efc6bc832b9bd684bcaaaad19b536783643f40d088e2ddfba2a5052"
+    },
+    {
+      "path": "cold-generated/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "bytes": 425661,
+      "sha256": "74c3efde7ce27348b7842c879b403281347fbad8474b615b5b7baa368a1cfca4"
+    },
+    {
+      "path": "cold-generated/target/evidence/virgl-92cb-geometry/geometry.bin",
+      "bytes": 2040,
+      "sha256": "0d8bf78697b9be39a58c9274e221a89a9903f8587dfa2cf5cf5b754ae82e27ac"
+    },
+    {
+      "path": "cold-generated/target/evidence/virgl-92cb-geometry/geometry.json",
+      "bytes": 935057,
+      "sha256": "c7b11dade4d79f16a375bd62e1d6c588657c7a775a9c466cb0fdc5f03793ae37"
+    },
+    {
+      "path": "cold-generated/target/evidence/virgl-92cb-raster/geometry.bin",
+      "bytes": 2040,
+      "sha256": "0d8bf78697b9be39a58c9274e221a89a9903f8587dfa2cf5cf5b754ae82e27ac"
+    },
+    {
+      "path": "cold-generated/target/evidence/virgl-92cb-raster/raster.json",
+      "bytes": 3214662,
+      "sha256": "2034c5f448730f0cd94f8d4001ef8822fc4db48c92dc9d7610b30bc82bd3ecdd"
+    },
+    {
+      "path": "cold-generated/target/evidence/virgl-original-c580/banks.bin",
+      "bytes": 1784,
+      "sha256": "4df0b1dca3d4455535333a2a7f0560775cd1140c00ad49a59f782ad78a49004e"
+    },
+    {
+      "path": "cold/abi/enums-native",
+      "bytes": 33792,
+      "sha256": "54460715e58c40f27fe007a7c8258e30fc000cfecbb116b9fd1a0f4bba4b18e8"
+    },
+    {
+      "path": "cold/abi/enums-native.dSYM/Contents/Info.plist",
+      "bytes": 641,
+      "sha256": "355c4506cbdd333505187264a8911ead8c5a15fbc596435c242f2cd97ded6734"
+    },
+    {
+      "path": "cold/abi/enums-native.dSYM/Contents/Resources/DWARF/enums-native",
+      "bytes": 9380,
+      "sha256": "fe30cba548e57e1b0782fa3fadd1af8b77e90bd3c2e2716feb1fd091665c6b62"
+    },
+    {
+      "path": "cold/abi/enums-native.dSYM/Contents/Resources/Relocations/aarch64/enums-native.yml",
+      "bytes": 246,
+      "sha256": "2f0c80c15c40327dc4b83f7a87293df5ae1852c70726eec27f4fbf289959ff3a"
+    },
+    {
+      "path": "cold/abi/enums-sanitize",
+      "bytes": 53344,
+      "sha256": "139a2795c5da7c4eb8e9f6d5c1cbb7e10c63d668304719ba2c625a10c628c469"
+    },
+    {
+      "path": "cold/abi/enums-sanitize.dSYM/Contents/Info.plist",
+      "bytes": 643,
+      "sha256": "2786dd497a38bef66ae058dac09d3545274a60fba18ec8a78b399c1d084edd0f"
+    },
+    {
+      "path": "cold/abi/enums-sanitize.dSYM/Contents/Resources/DWARF/enums-sanitize",
+      "bytes": 13932,
+      "sha256": "64f726ce2eefa6bc5ff6d593e3e31aa1ec0b574abe6a5cedadd3da37a6eecea1"
+    },
+    {
+      "path": "cold/abi/enums-sanitize.dSYM/Contents/Resources/Relocations/aarch64/enums-sanitize.yml",
+      "bytes": 248,
+      "sha256": "3f5e373b2b6b9d702b70a18c31fc6411b0b2a29d0e0e2ffbc7d078eedd132185"
+    },
+    {
+      "path": "cold/abi/native.json",
+      "bytes": 392,
+      "sha256": "1e448ade2355767ec9579a330e7f15e5bcc71c1fe78b344c69dd0dcafa219cf2"
+    },
+    {
+      "path": "cold/abi/sanitize.json",
+      "bytes": 392,
+      "sha256": "1e448ade2355767ec9579a330e7f15e5bcc71c1fe78b344c69dd0dcafa219cf2"
+    },
+    {
+      "path": "cold/acceptance.log",
+      "bytes": 27203,
+      "sha256": "fe7125871e90af3eb7c92bef592d082bac0bad7898c38fca379eb14009ea5284"
+    },
+    {
+      "path": "cold/c580.bin",
+      "bytes": 1784,
+      "sha256": "4df0b1dca3d4455535333a2a7f0560775cd1140c00ad49a59f782ad78a49004e"
+    },
+    {
+      "path": "cold/c580.json",
+      "bytes": 3299,
+      "sha256": "a26571fd785e3eb5219df53e76706e59dfb131dee287665fbb05db2e0bc4d0f0"
+    },
+    {
+      "path": "cold/c580.log",
+      "bytes": 50,
+      "sha256": "56d6294ec71ae8b13cc516e85bdbee1ef31a4f79c9e1a5d28eb5431b1bd35ddb"
+    },
+    {
+      "path": "cold/cold.log",
+      "bytes": 27464,
+      "sha256": "8e18bd17e6c7d6a8923f01bbdf5dfc517dcef32f4b34f424e039a7b272fa5541"
+    },
+    {
+      "path": "cold/coverage/allocations.json",
+      "bytes": 19105514,
+      "sha256": "49bf693856825cd1e8ec93c689620e4400f38476e69d2563f755b5320577591d"
+    },
+    {
+      "path": "cold/coverage/allocations.profdata",
+      "bytes": 59680,
+      "sha256": "e3322ab7d31735f73808d8bc2d32a51e0cb1a1e0b8e023d154c58134f16467de"
+    },
+    {
+      "path": "cold/coverage/allocations.profraw",
+      "bytes": 121408,
+      "sha256": "9a878333b9e6620ad3079be3a407bdcd4a4c18fc618a0d7d852690a4390aef94"
+    },
+    {
+      "path": "cold/coverage/matrix.json",
+      "bytes": 19376099,
+      "sha256": "6f3c76fde4a0b983345b3a6f80f0caeb1afb543ea4ca0a6e934c57ca7687872d"
+    },
+    {
+      "path": "cold/coverage/matrix.profdata",
+      "bytes": 82064,
+      "sha256": "5b9774e85b33839d09bb71dcce1e085d0f14b17299f14d078add2c81d1ac9f1f"
+    },
+    {
+      "path": "cold/coverage/matrix.profraw",
+      "bytes": 121288,
+      "sha256": "67a9406b1d403d422bdee6b8bc18a0d5b4f72a145b2de99c6214136113fce683"
+    },
+    {
+      "path": "cold/fault-sine/browser-coverage.json",
+      "bytes": 40624,
+      "sha256": "8f7984d235355f35651bd944f2383341e7425d2f298c57e9eda426ae4186bae4"
+    },
+    {
+      "path": "cold/fault-sine/failure.png",
+      "bytes": 27134,
+      "sha256": "844f1c4044a360d4d54fc65adf5d16391a0840d5cb324b12510e64f192ea2d21"
+    },
+    {
+      "path": "cold/fault-sine/pixels/frame-0-attachment-0.f32.gz",
+      "bytes": 56,
+      "sha256": "ce3a3b64efeb5447520f17a4f31adc933db598f934453e977f4a9fbd67a68397"
+    },
+    {
+      "path": "cold/fault-sine/report.json",
+      "bytes": 2690052,
+      "sha256": "69e01732de3ab9547fb1e19b20aa6b4dc16e6f461cfe4ea3a6456965685a562f"
+    },
+    {
+      "path": "cold/geometry.bin",
+      "bytes": 2040,
+      "sha256": "0d8bf78697b9be39a58c9274e221a89a9903f8587dfa2cf5cf5b754ae82e27ac"
+    },
+    {
+      "path": "cold/geometry.json",
+      "bytes": 935057,
+      "sha256": "c7b11dade4d79f16a375bd62e1d6c588657c7a775a9c466cb0fdc5f03793ae37"
+    },
+    {
+      "path": "cold/geometry.log",
+      "bytes": 82,
+      "sha256": "0d3285ceafeac3b38f81f40c2fc5f79358ac7ce01ceab083c0a1850f76d84b83"
+    },
+    {
+      "path": "cold/hardware/browser-coverage.json",
+      "bytes": 55816,
+      "sha256": "452fcb40e6f14be5bccf693b7ce0d93906fb1b2d4fce5a4ea64a8e124ce550cb"
+    },
+    {
+      "path": "cold/hardware/browser.png",
+      "bytes": 69958,
+      "sha256": "31be043efdf17d7f8aeba28703cca45177344ac065ab89711f3ae745d08f42b5"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-0-attachment-0.f32.gz",
+      "bytes": 56,
+      "sha256": "d31680d1fcce2b9d1bf62e32175580b6e245a05d6bab984e0cc0edd00cb75781"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-1-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "cf29752382be8c5eb6e4d59d86be9c55720b67e555d478e49a6010b6f6026473"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-10-attachment-0.f32.gz",
+      "bytes": 58,
+      "sha256": "6a67d3122198ec338186fd929ca92f3e84980df9e6f3ef3095983ec5e6db3f2c"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-100-attachment-0.f32.gz",
+      "bytes": 56,
+      "sha256": "06209a3b5652bed063137cab6265d6b6727eb80f693819e0ffd2585ae72c7fd8"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-101-attachment-0.f32.gz",
+      "bytes": 54,
+      "sha256": "747d05bbdc45a045de24361d228fe8b2c4131f7cccdb5f699ae566c3835964ed"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-102-attachment-0.f32.gz",
+      "bytes": 54,
+      "sha256": "a1235ba57393cdda5274a3fe55b31972b4d7605feb9bfc42a0b3104054ea5cd1"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-103-attachment-0.f32.gz",
+      "bytes": 54,
+      "sha256": "a1235ba57393cdda5274a3fe55b31972b4d7605feb9bfc42a0b3104054ea5cd1"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-104-attachment-0.f32.gz",
+      "bytes": 55,
+      "sha256": "8b50a6ecb45d49e152cb928353f709f9b5024f6e6fb5dd5338ea582d5b93060e"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-105-attachment-0.f32.gz",
+      "bytes": 38,
+      "sha256": "338ee02de9b10a63e968f4e8f28e1373f2e45653904440f39b4b3e01a167decc"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-106-attachment-0.f32.gz",
+      "bytes": 964,
+      "sha256": "b5474de77eea32f50a86589c8399f250884ab0cba9b849981d9882612f81e15b"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-107-attachment-0.f32.gz",
+      "bytes": 54,
+      "sha256": "2702c479e3d76a7dfbdce08dcb41220226f19c0103f770ddd1b762491a88a36b"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-108-attachment-0.f32.gz",
+      "bytes": 54,
+      "sha256": "70133fe6cf774927ea1d5c087221bf36eaa351c23ea5fc1e1ec47c05750b9392"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-109-attachment-0.f32.gz",
+      "bytes": 54,
+      "sha256": "bb08529da880e652532a81dac442f60c732bef4bb3832ae054750257c3a1acbf"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-109-attachment-1.f32.gz",
+      "bytes": 55,
+      "sha256": "9267f73c0e5d5b0aeb2155b71308eaa20d4f10dfa05cfcd4ad77cd109bba70c2"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-109-attachment-2.f32.gz",
+      "bytes": 54,
+      "sha256": "3c06f49fcca38188f2af8955c2b5d0d79007e779d4cb36872498eda3444df898"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-109-attachment-3.f32.gz",
+      "bytes": 56,
+      "sha256": "60822340189bb8b3b573c62487fed5eada925c9e070c52c1486eaf979a90b424"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-11-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "fc22b048f52231b5658592191688368bd3398fe47c0f5f83b1699be810325fcc"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-110-attachment-0.f32.gz",
+      "bytes": 54,
+      "sha256": "70133fe6cf774927ea1d5c087221bf36eaa351c23ea5fc1e1ec47c05750b9392"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-110-attachment-1.f32.gz",
+      "bytes": 54,
+      "sha256": "70133fe6cf774927ea1d5c087221bf36eaa351c23ea5fc1e1ec47c05750b9392"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-110-attachment-2.f32.gz",
+      "bytes": 54,
+      "sha256": "70133fe6cf774927ea1d5c087221bf36eaa351c23ea5fc1e1ec47c05750b9392"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-110-attachment-3.f32.gz",
+      "bytes": 54,
+      "sha256": "70133fe6cf774927ea1d5c087221bf36eaa351c23ea5fc1e1ec47c05750b9392"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-111-attachment-0.f32.gz",
+      "bytes": 523,
+      "sha256": "55356ffd39d47c910d4a3a4924a3d97c7292be38c166b91823d357843d13e735"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-112-attachment-0.f32.gz",
+      "bytes": 54,
+      "sha256": "a1235ba57393cdda5274a3fe55b31972b4d7605feb9bfc42a0b3104054ea5cd1"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-113-attachment-0.f32.gz",
+      "bytes": 44,
+      "sha256": "9ee6acc2880a5a0541949105fcea294989ba992bec695dd98ef76fe6f3507045"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-114-attachment-0.f32.gz",
+      "bytes": 63,
+      "sha256": "1993daf37ee11d5985c3ef8f084d67e0415500cebec2556aaa721255ca44ce25"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-115-attachment-0.f32.gz",
+      "bytes": 63,
+      "sha256": "1993daf37ee11d5985c3ef8f084d67e0415500cebec2556aaa721255ca44ce25"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-116-attachment-0.f32.gz",
+      "bytes": 14553,
+      "sha256": "cc3ac72a643208eedbe6eba4592a8285ece865cc2c1723609e7e661e067054d1"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-117-attachment-0.f32.gz",
+      "bytes": 14122,
+      "sha256": "1d4e30a354df24b61b847318d10d69a16385ffb10edf0c9dd42f1904d977cee7"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-118-attachment-0.f32.gz",
+      "bytes": 17008,
+      "sha256": "0743d51c00516272bd009688c7705aa75785b7d13a00c58e0e7a56ec0d192b6f"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-119-attachment-0.f32.gz",
+      "bytes": 43,
+      "sha256": "949fc57020b99e9315f433b45130e3d3352e0040e060715ee1bf49cc722f0aa0"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-12-attachment-0.f32.gz",
+      "bytes": 56,
+      "sha256": "d31680d1fcce2b9d1bf62e32175580b6e245a05d6bab984e0cc0edd00cb75781"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-120-attachment-0.f32.gz",
+      "bytes": 40,
+      "sha256": "b7dd3ba5afa341fa0f1e6ae60c0baf2af4a4138166f2044835bd98ac4a6cdd8c"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-121-attachment-0.f32.gz",
+      "bytes": 43,
+      "sha256": "949fc57020b99e9315f433b45130e3d3352e0040e060715ee1bf49cc722f0aa0"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-122-attachment-0.f32.gz",
+      "bytes": 40,
+      "sha256": "b7dd3ba5afa341fa0f1e6ae60c0baf2af4a4138166f2044835bd98ac4a6cdd8c"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-123-attachment-0.f32.gz",
+      "bytes": 43,
+      "sha256": "949fc57020b99e9315f433b45130e3d3352e0040e060715ee1bf49cc722f0aa0"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-124-attachment-0.f32.gz",
+      "bytes": 40,
+      "sha256": "b7dd3ba5afa341fa0f1e6ae60c0baf2af4a4138166f2044835bd98ac4a6cdd8c"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-13-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "cf29752382be8c5eb6e4d59d86be9c55720b67e555d478e49a6010b6f6026473"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-14-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "fff1d1905b541ed7faaf309ece3bc28b32566cf934831fa56dda2c4e18c10028"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-15-attachment-0.f32.gz",
+      "bytes": 58,
+      "sha256": "b8e131b05cbfb59b03ba3d8805232d1b90aaa892afc11cd5cf09f618482b6a65"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-16-attachment-0.f32.gz",
+      "bytes": 53,
+      "sha256": "19d640c7a0249a18d3c4bd27b7f4610d4b4f90523c8985746b0e8a065317fb2c"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-17-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "45bad7dc61ee3bdd9c6a7ea40a4cf8e462ceb8a475d9209c65a2e2047b777d42"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-18-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "626f03506f95e9445f7b11bd7572f33f3bee5158613064f73eb55b97659ec4e2"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-19-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "0bf5d9253c71ebe44e187e57d4788d3e737c963819ff5e8b5e56885ae423332c"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-2-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "fff1d1905b541ed7faaf309ece3bc28b32566cf934831fa56dda2c4e18c10028"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-20-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "63d4aaf74c87b049b778aa97caa50567987e32d44b1c61ee6568d3ae6df4adb5"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-21-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "00f734cc79e2947acdf98b520d8c3640b856d8df7984e7cd02b318340384e56e"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-22-attachment-0.f32.gz",
+      "bytes": 58,
+      "sha256": "6a67d3122198ec338186fd929ca92f3e84980df9e6f3ef3095983ec5e6db3f2c"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-23-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "fc22b048f52231b5658592191688368bd3398fe47c0f5f83b1699be810325fcc"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-24-attachment-0.f32.gz",
+      "bytes": 56,
+      "sha256": "0ee02cc87944140966b1d33b280e2660afa1f7b31e1ac62dc003e33cd8843779"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-25-attachment-0.f32.gz",
+      "bytes": 52,
+      "sha256": "f37de488ded45213c57b6b63072c24c9ed76ada1da7d869b0114318cf11346b3"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-26-attachment-0.f32.gz",
+      "bytes": 58,
+      "sha256": "6a3de61e5f9a6dc26807f0d82e834e8afa013c6d896fcd0267aa158c21cd8e05"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-27-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "065a218058adbd284809841ea5650b115142614e4561d8f2a87b8a980b6701be"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-28-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "74f045e0e8567e6a755a22f2b2e385a470759894a88a3d027c7be49784652825"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-29-attachment-0.f32.gz",
+      "bytes": 58,
+      "sha256": "5db7d5508d7b8aa152d700a69003252742926a074482670598ca24d053fdb09d"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-3-attachment-0.f32.gz",
+      "bytes": 58,
+      "sha256": "b8e131b05cbfb59b03ba3d8805232d1b90aaa892afc11cd5cf09f618482b6a65"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-30-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "0ceada9a07e907940f54123dd138eea28cb6011daf2297d979a1b488f9b825a1"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-31-attachment-0.f32.gz",
+      "bytes": 56,
+      "sha256": "d31680d1fcce2b9d1bf62e32175580b6e245a05d6bab984e0cc0edd00cb75781"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-32-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "6b3b2b31e1b5af1f66c7b17fdfbd5158f52f41628fd916fc6f707585b8159a25"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-33-attachment-0.f32.gz",
+      "bytes": 56,
+      "sha256": "ce3a3b64efeb5447520f17a4f31adc933db598f934453e977f4a9fbd67a68397"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-34-attachment-0.f32.gz",
+      "bytes": 58,
+      "sha256": "6a2a5fe67cb80f11d5789600f4a5f6a312316dd2b38e6a319e09179d5f21065a"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-35-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "45bad7dc61ee3bdd9c6a7ea40a4cf8e462ceb8a475d9209c65a2e2047b777d42"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-36-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "626f03506f95e9445f7b11bd7572f33f3bee5158613064f73eb55b97659ec4e2"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-37-attachment-0.f32.gz",
+      "bytes": 54,
+      "sha256": "757796346870e8fde22fdc18a27d547557a4271c55275f2155dbe6d3e60da77c"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-38-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "fc22b048f52231b5658592191688368bd3398fe47c0f5f83b1699be810325fcc"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-39-attachment-0.f32.gz",
+      "bytes": 52,
+      "sha256": "5392bc98d8c449336b9f10bc96babccff0e9623762b56266f0221f725bc62e45"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-4-attachment-0.f32.gz",
+      "bytes": 53,
+      "sha256": "19d640c7a0249a18d3c4bd27b7f4610d4b4f90523c8985746b0e8a065317fb2c"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-40-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "2d14074767d5c082abbe438330155bc817ab8480453f6ab92aaa9dd1b3472081"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-41-attachment-0.f32.gz",
+      "bytes": 55,
+      "sha256": "42002ecab844631eaab9526d8e6ddf75cd4e6c393e9c05e17227bc25dea5906b"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-42-attachment-0.f32.gz",
+      "bytes": 55,
+      "sha256": "6b5f03ab30339bca7beef9972e9882b1de4bf52dc53d32227ae20c8de16eb760"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-43-attachment-0.f32.gz",
+      "bytes": 60,
+      "sha256": "42e41412a2524552b5ff54330d12aefbce537f091dd5b05dbe2435ec57419de8"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-44-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "c1de3b22d8f13962a946c98de1dd157eb5d861a21fbfa4dbf87473427cd88bca"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-45-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "6d0c7f19c3f12da56fd8ba1a49e21ebc854969c702930bb307200ac9e0fd99b1"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-46-attachment-0.f32.gz",
+      "bytes": 56,
+      "sha256": "8750d54d61b1a95b6fa70ca28e5135fdd5e25d7dcfb499336103b92db8736878"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-47-attachment-0.f32.gz",
+      "bytes": 54,
+      "sha256": "07474017e64e9e2e31cbaa44b450ec3f38d2dc2cd4a72878d6831cc8cb1974f1"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-48-attachment-0.f32.gz",
+      "bytes": 58,
+      "sha256": "2576a09dfbfc6e2e24189d9a02200f0f2461a7a55c1d5b2570cfd172f9754463"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-49-attachment-0.f32.gz",
+      "bytes": 54,
+      "sha256": "c369ef1b165443b85d2380c006ff3b8b1668e3fa6417e393273db6a698d58fc2"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-5-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "45bad7dc61ee3bdd9c6a7ea40a4cf8e462ceb8a475d9209c65a2e2047b777d42"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-50-attachment-0.f32.gz",
+      "bytes": 54,
+      "sha256": "e9fc67e00f3d8567a62803f63870701c7b0e21b93a78e0594ca2ea3946f3aa30"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-51-attachment-0.f32.gz",
+      "bytes": 54,
+      "sha256": "e9fc67e00f3d8567a62803f63870701c7b0e21b93a78e0594ca2ea3946f3aa30"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-52-attachment-0.f32.gz",
+      "bytes": 54,
+      "sha256": "b420411d42b0fa92c5d89ba57c9fe996af0f7446fb78593f316b93cb9ba2eb11"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-53-attachment-0.f32.gz",
+      "bytes": 54,
+      "sha256": "35ad3a00fa7f57c583fcba70fe429b313e9031af9f6aaed5595ff1e84ce15f17"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-54-attachment-0.f32.gz",
+      "bytes": 56,
+      "sha256": "b103006e8f7b23b74effabc4fae15575340add067abf307e8b3519a3d752492d"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-55-attachment-0.f32.gz",
+      "bytes": 38,
+      "sha256": "338ee02de9b10a63e968f4e8f28e1373f2e45653904440f39b4b3e01a167decc"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-56-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-57-attachment-0.f32.gz",
+      "bytes": 51,
+      "sha256": "35135796b4817466075ff72dea7a8d61cac0add99b96e5948f0e3a6084e6dd91"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-58-attachment-0.f32.gz",
+      "bytes": 52,
+      "sha256": "5b7d15ad8e174680642a71582a42a8525d177be27857ba7a58aaa33809c4253b"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-59-attachment-0.f32.gz",
+      "bytes": 38,
+      "sha256": "338ee02de9b10a63e968f4e8f28e1373f2e45653904440f39b4b3e01a167decc"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-6-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "626f03506f95e9445f7b11bd7572f33f3bee5158613064f73eb55b97659ec4e2"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-60-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "f2b47877c31a742827f467c938df73d48cb87136b96ad4eb8f267313c6fa0150"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-61-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "a6b953efa8a102517752fcdfdf8804a10c0a7b715ab2b7086557492c86dc7c35"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-62-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-63-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-64-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-65-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-66-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-67-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-68-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-69-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-7-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "0bf5d9253c71ebe44e187e57d4788d3e737c963819ff5e8b5e56885ae423332c"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-70-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-71-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-72-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-73-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-74-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-75-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-76-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-77-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-78-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-79-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-8-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "63d4aaf74c87b049b778aa97caa50567987e32d44b1c61ee6568d3ae6df4adb5"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-80-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-81-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-82-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-83-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-84-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-85-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-86-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-87-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-88-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-89-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-9-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "00f734cc79e2947acdf98b520d8c3640b856d8df7984e7cd02b318340384e56e"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-90-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-91-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-92-attachment-0.f32.gz",
+      "bytes": 43,
+      "sha256": "c5d2bea05817bf25f3de56c66d5d21f87a0e9b0ba1f50b6ce060670d11acab4c"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-93-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-94-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "fe6450bb8add18fc8a931dcea463aaa5d727a1be2409d13b2bdb10d08d23f6db"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-95-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-96-attachment-0.f32.gz",
+      "bytes": 49,
+      "sha256": "ed89ea7f69f6ee713d538229961edf27c63530ca7546738c6ed9b774e8d0f9fe"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-97-attachment-0.f32.gz",
+      "bytes": 50,
+      "sha256": "73f0c05bb9ec58c05fdaffcbc06c24e4263eaf451b7a3d7fd598fa557a127472"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-98-attachment-0.f32.gz",
+      "bytes": 56,
+      "sha256": "06209a3b5652bed063137cab6265d6b6727eb80f693819e0ffd2585ae72c7fd8"
+    },
+    {
+      "path": "cold/hardware/pixels/frame-99-attachment-0.f32.gz",
+      "bytes": 54,
+      "sha256": "747d05bbdc45a045de24361d228fe8b2c4131f7cccdb5f699ae566c3835964ed"
+    },
+    {
+      "path": "cold/hardware/report.json",
+      "bytes": 4673586,
+      "sha256": "cc1f9418090f339a56f5b88623ea4ad4471b2c111d5c2b3f37515a9d5cc60b71"
+    },
+    {
+      "path": "cold/native/allocations.jsonl",
+      "bytes": 15007,
+      "sha256": "0731a7f0e9f2a370414ba05714628801c1f9ee733be1d5d0fa27cafac17c7211"
+    },
+    {
+      "path": "cold/native/cases.bin",
+      "bytes": 1315726,
+      "sha256": "a73886e1c2bf221707a90b56a40b5691832a28161eb59a5a86d324f163018027"
+    },
+    {
+      "path": "cold/native/cases.json",
+      "bytes": 1594649,
+      "sha256": "f966dafcbf4e389c0e59a68cb052ca7946376d7b22c4294b65892e4f076b5bd0"
+    },
+    {
+      "path": "cold/native/metadata.json",
+      "bytes": 93,
+      "sha256": "687a492581c2b4c7e2032b3eb832dfd0ac93a3f3883fc8770eb8c7162b461d5c"
+    },
+    {
+      "path": "cold/native/native.jsonl",
+      "bytes": 2787316,
+      "sha256": "3cce0898a3cd62ef0a54be296aa594b71a1a995bd7fbf50e2ae35310b958a233"
+    },
+    {
+      "path": "cold/native/node.json",
+      "bytes": 4846,
+      "sha256": "bb905c99e627df336e74eb7369443f3c4bc89c1bcf09aad77ecbdea7569999dc"
+    },
+    {
+      "path": "cold/native/sanitize.jsonl",
+      "bytes": 2787316,
+      "sha256": "3cce0898a3cd62ef0a54be296aa594b71a1a995bd7fbf50e2ae35310b958a233"
+    },
+    {
+      "path": "cold/native/wasm.jsonl",
+      "bytes": 2257572,
+      "sha256": "8f045a9b03109751ad6c3c741bd0d4c9b653838fa1f52fe8feaacc79d681f9c2"
+    },
+    {
+      "path": "cold/physical-audit.json",
+      "bytes": 27120,
+      "sha256": "cfc9e6e5663c41f1cd17c5899dd6e6f4a18cde9ed92b6a0534fd938454807027"
+    },
+    {
+      "path": "cold/receipt.json",
+      "bytes": 76743,
+      "sha256": "0f3dd8c91f66f8de021753922be3e65837345d7810be122e9cae670ae64a37ca"
+    },
+    {
+      "path": "cold/report.json",
+      "bytes": 628,
+      "sha256": "6a4bfd2e431a162b2be114e1cdae1c4d2c5448499411d2dcc1154d9fb4cdb961"
+    },
+    {
+      "path": "cold/retained-ordinary/browser-coverage.json",
+      "bytes": 70074,
+      "sha256": "2ade25726e2f5f4483a811caf7e16f644ee50e0ef6080220ec720d5d71e071c6"
+    },
+    {
+      "path": "cold/retained-ordinary/browser.png",
+      "bytes": 55991,
+      "sha256": "e4d81358076a95bf65af0ac897e0923df3c54e05936c2b26d3d035265a976062"
+    },
+    {
+      "path": "cold/retained-ordinary/report.json",
+      "bytes": 17519836,
+      "sha256": "b66275b17a088e873da8029112d56adcc10da7f7f882b4fbb5efe7d388088eef"
+    },
+    {
+      "path": "cold/retained-private-92cb/browser-coverage.json",
+      "bytes": 6902,
+      "sha256": "355134c664a52190c8f107d27c5b2734babb799635b24ea1b192a8c41dc62637"
+    },
+    {
+      "path": "cold/retained-private-92cb/browser.png",
+      "bytes": 33400,
+      "sha256": "7920d6cc8666d1ddadb90f9a721f8a57704e4a7122ae10ef51be357e330ff649"
+    },
+    {
+      "path": "cold/retained-private-92cb/report.json",
+      "bytes": 2416672,
+      "sha256": "06ec5f64448a7f7ed90111679ab29bcb9826bfaa4c7c9141e884fc6142e76e6e"
+    },
+    {
+      "path": "cold/retained-private-c580/browser-coverage.json",
+      "bytes": 20044,
+      "sha256": "73b2012de2317c5e47b7bb460e7e61783eee465ef6073247500a11009d27b1c1"
+    },
+    {
+      "path": "cold/retained-private-c580/browser.png",
+      "bytes": 33581,
+      "sha256": "db4b5a4885e25e94e06f8a9d765cb88bd00c25262c347c2716d2f57bbce4d934"
+    },
+    {
+      "path": "cold/retained-private-c580/report.json",
+      "bytes": 292291,
+      "sha256": "704760ed5aef105cfe1fc0e14b3a27b4285af03213329c23cb59d5348184fbbf"
+    },
+    {
+      "path": "cold/retained-raster.log",
+      "bytes": 96,
+      "sha256": "238ea827514b423bbc03f4ecca4e3d4920e2e33496186b9682c9a1de057559d6"
+    },
+    {
+      "path": "cold/retained-raw/browser-coverage.json",
+      "bytes": 17278,
+      "sha256": "c38d66b4c6867a9506b399df564f0c57856f73ef93ca810bad9e51e5baefe16b"
+    },
+    {
+      "path": "cold/retained-raw/browser.png",
+      "bytes": 24214,
+      "sha256": "fcee7e4b743e581a1d3876897b9873178ecba2add03043f8737022e742f0b833"
+    },
+    {
+      "path": "cold/retained-raw/report.json",
+      "bytes": 764165,
+      "sha256": "55cb56ae4c233f3b994e70f4910f06e1e6a07ba927d7759b1f12f53f124845ad"
+    },
+    {
+      "path": "cold/stack/bridge.su",
+      "bytes": 2161,
+      "sha256": "ce6fec0bef220a3379438b03793782fcf542a6917fe4fde6230823f33433bbe1"
+    },
+    {
+      "path": "cold/stack/checked_cso_hash.su",
+      "bytes": 1231,
+      "sha256": "6e1b5958dff360a36dfbe4aa74532274cdad757cbba6e240a4228154292914cc"
+    },
+    {
+      "path": "cold/stack/checked_tgsi_sanity.su",
+      "bytes": 1180,
+      "sha256": "a86ec592148f8db357e20a3eb7aca7aac87064049ce38726d1fc2d00d75e4558"
+    },
+    {
+      "path": "cold/stack/checked_upstream.su",
+      "bytes": 5599,
+      "sha256": "16c674c74feebfba29eb4a6fde88d96d6bfda2ea582d76e509bab2002cd49e00"
+    },
+    {
+      "path": "cold/stack/raw_bits.su",
+      "bytes": 1102,
+      "sha256": "0b580fa3fec8816a148dcfa71eb501f9b8b114f9735b9092e4c577c73cf309ac"
+    },
+    {
+      "path": "cold/stack/standard_emit.su",
+      "bytes": 151,
+      "sha256": "ae63d5eb97c034a1488981f188b16395fa4cf3edab20a6945a7d8db38f4783fa"
+    },
+    {
+      "path": "cold/stack/standard_guard.su",
+      "bytes": 400,
+      "sha256": "9ddbfdf03c91aa1c2d62ee40694b9bc5ef5e65f40a267a572cd8bbabe1987cff"
+    },
+    {
+      "path": "cold/toolchain.json",
+      "bytes": 1227,
+      "sha256": "52188c29c3607a163e5eb4119b0964ce0b50594a8528e646d54d9479e7daf7ce"
+    },
+    {
+      "path": "hot-generated/renderer/virgl-shader/build/sanitize/hostile-test",
+      "bytes": 3017056,
+      "sha256": "3bad810eff4736a03aec14af71415ce1b015ac8dbcd0690cce6952bb10ecf625"
+    },
+    {
+      "path": "hot-generated/renderer/virgl-shader/build/standard-allocation-sanitize/standard-allocation-test",
+      "bytes": 3986328,
+      "sha256": "df04e55bffd9165f62cd4ce1e86dab7d11c6191c970d99ea441111b297497e21"
+    },
+    {
+      "path": "hot-generated/renderer/virgl-shader/build/standard-native/standard-test",
+      "bytes": 467120,
+      "sha256": "8565248d5836979ee7b869c31ca3684cfc3ca92752734de30c7d731e792a8806"
+    },
+    {
+      "path": "hot-generated/renderer/virgl-shader/build/standard-sanitize/standard-test",
+      "bytes": 3983216,
+      "sha256": "1e40aa4958c51e10bf296bd2ed04b97313f38fdaa1f022825889f2dff1ab7d15"
+    },
+    {
+      "path": "hot-generated/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "bytes": 10814,
+      "sha256": "8d07e5832efc6bc832b9bd684bcaaaad19b536783643f40d088e2ddfba2a5052"
+    },
+    {
+      "path": "hot-generated/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "bytes": 425661,
+      "sha256": "74c3efde7ce27348b7842c879b403281347fbad8474b615b5b7baa368a1cfca4"
+    },
+    {
+      "path": "hot-generated/target/evidence/virgl-92cb-geometry/geometry.bin",
+      "bytes": 2040,
+      "sha256": "0d8bf78697b9be39a58c9274e221a89a9903f8587dfa2cf5cf5b754ae82e27ac"
+    },
+    {
+      "path": "hot-generated/target/evidence/virgl-92cb-geometry/geometry.json",
+      "bytes": 935057,
+      "sha256": "c7b11dade4d79f16a375bd62e1d6c588657c7a775a9c466cb0fdc5f03793ae37"
+    },
+    {
+      "path": "hot-generated/target/evidence/virgl-92cb-raster/geometry.bin",
+      "bytes": 2040,
+      "sha256": "0d8bf78697b9be39a58c9274e221a89a9903f8587dfa2cf5cf5b754ae82e27ac"
+    },
+    {
+      "path": "hot-generated/target/evidence/virgl-92cb-raster/raster.json",
+      "bytes": 3214662,
+      "sha256": "2034c5f448730f0cd94f8d4001ef8822fc4db48c92dc9d7610b30bc82bd3ecdd"
+    },
+    {
+      "path": "hot-generated/target/evidence/virgl-original-c580/banks.bin",
+      "bytes": 1784,
+      "sha256": "4df0b1dca3d4455535333a2a7f0560775cd1140c00ad49a59f782ad78a49004e"
+    },
+    {
+      "path": "hot/abi/enums-native",
+      "bytes": 33728,
+      "sha256": "2f3e4237798afa81a4b61040cab0c1b3bea4d82715c975ab4eb0d067995223d5"
+    },
+    {
+      "path": "hot/abi/enums-native.dSYM/Contents/Info.plist",
+      "bytes": 641,
+      "sha256": "355c4506cbdd333505187264a8911ead8c5a15fbc596435c242f2cd97ded6734"
+    },
+    {
+      "path": "hot/abi/enums-native.dSYM/Contents/Resources/DWARF/enums-native",
+      "bytes": 9268,
+      "sha256": "e15f9838ea830d15593d5f8e8044f699c9b6557d994dcff61a79190b2e5983dd"
+    },
+    {
+      "path": "hot/abi/enums-native.dSYM/Contents/Resources/Relocations/aarch64/enums-native.yml",
+      "bytes": 209,
+      "sha256": "bed15b5e6732b7af3c8d2e69e0addad3b1c3529f7e0596b424ea1c2bdffef409"
+    },
+    {
+      "path": "hot/abi/enums-sanitize",
+      "bytes": 53296,
+      "sha256": "c8ecbc92d369089fc0addbc0e0c896a97e51ddeddedba96ef5017e5aaa8ec493"
+    },
+    {
+      "path": "hot/abi/enums-sanitize.dSYM/Contents/Info.plist",
+      "bytes": 643,
+      "sha256": "2786dd497a38bef66ae058dac09d3545274a60fba18ec8a78b399c1d084edd0f"
+    },
+    {
+      "path": "hot/abi/enums-sanitize.dSYM/Contents/Resources/DWARF/enums-sanitize",
+      "bytes": 13820,
+      "sha256": "6c0e03aff7ba7405487afc8a0298bedcf83235a16d0a23e0cd2e9a258a10fe51"
+    },
+    {
+      "path": "hot/abi/enums-sanitize.dSYM/Contents/Resources/Relocations/aarch64/enums-sanitize.yml",
+      "bytes": 211,
+      "sha256": "ab6d7e2b7062f6d15eb9d8f249659fd47a8ec92fe37ddfba81602b188ec06cd8"
+    },
+    {
+      "path": "hot/abi/native.json",
+      "bytes": 392,
+      "sha256": "1e448ade2355767ec9579a330e7f15e5bcc71c1fe78b344c69dd0dcafa219cf2"
+    },
+    {
+      "path": "hot/abi/sanitize.json",
+      "bytes": 392,
+      "sha256": "1e448ade2355767ec9579a330e7f15e5bcc71c1fe78b344c69dd0dcafa219cf2"
+    },
+    {
+      "path": "hot/acceptance.log",
+      "bytes": 25151,
+      "sha256": "f3662cdc4e6eac2c4c54cafa5f2048d6a76312dfa7132c32e3f10b6b07f319b9"
+    },
+    {
+      "path": "hot/c580.bin",
+      "bytes": 1784,
+      "sha256": "4df0b1dca3d4455535333a2a7f0560775cd1140c00ad49a59f782ad78a49004e"
+    },
+    {
+      "path": "hot/c580.json",
+      "bytes": 3299,
+      "sha256": "a26571fd785e3eb5219df53e76706e59dfb131dee287665fbb05db2e0bc4d0f0"
+    },
+    {
+      "path": "hot/c580.log",
+      "bytes": 50,
+      "sha256": "56d6294ec71ae8b13cc516e85bdbee1ef31a4f79c9e1a5d28eb5431b1bd35ddb"
+    },
+    {
+      "path": "hot/coverage/allocations.json",
+      "bytes": 16635079,
+      "sha256": "161a0fd7fbccc7db6483e53f0d349439b670ebcedcf0e9fd2bf7aecf763ebd38"
+    },
+    {
+      "path": "hot/coverage/allocations.profdata",
+      "bytes": 59680,
+      "sha256": "e3322ab7d31735f73808d8bc2d32a51e0cb1a1e0b8e023d154c58134f16467de"
+    },
+    {
+      "path": "hot/coverage/allocations.profraw",
+      "bytes": 121408,
+      "sha256": "89490fe14edd163252e90c8dae6ebf1cd3f850919cb19825396eaf60bbf21b02"
+    },
+    {
+      "path": "hot/coverage/matrix.json",
+      "bytes": 16904234,
+      "sha256": "701f4e42cb586967af82987705a390260b3505a5a51c1853c144d1f39dd0c594"
+    },
+    {
+      "path": "hot/coverage/matrix.profdata",
+      "bytes": 82064,
+      "sha256": "5b9774e85b33839d09bb71dcce1e085d0f14b17299f14d078add2c81d1ac9f1f"
+    },
+    {
+      "path": "hot/coverage/matrix.profraw",
+      "bytes": 121288,
+      "sha256": "3274db9a6102b445ab3e8d2b8c97b466ff93121f4190d7e9902dd1d3330ab832"
+    },
+    {
+      "path": "hot/fault-sine/browser-coverage.json",
+      "bytes": 40624,
+      "sha256": "ce55bb7dc5cc76b48ffea4f2dc5a9763e21200719ddd898473e117bc90a712d1"
+    },
+    {
+      "path": "hot/fault-sine/failure.png",
+      "bytes": 27134,
+      "sha256": "844f1c4044a360d4d54fc65adf5d16391a0840d5cb324b12510e64f192ea2d21"
+    },
+    {
+      "path": "hot/fault-sine/pixels/frame-0-attachment-0.f32.gz",
+      "bytes": 56,
+      "sha256": "ce3a3b64efeb5447520f17a4f31adc933db598f934453e977f4a9fbd67a68397"
+    },
+    {
+      "path": "hot/fault-sine/report.json",
+      "bytes": 2699670,
+      "sha256": "ba7371e047eaa0f4cf42d0f538d84797172a867a9ee9813b3110a4ba82c91a34"
+    },
+    {
+      "path": "hot/geometry.bin",
+      "bytes": 2040,
+      "sha256": "0d8bf78697b9be39a58c9274e221a89a9903f8587dfa2cf5cf5b754ae82e27ac"
+    },
+    {
+      "path": "hot/geometry.json",
+      "bytes": 935057,
+      "sha256": "c7b11dade4d79f16a375bd62e1d6c588657c7a775a9c466cb0fdc5f03793ae37"
+    },
+    {
+      "path": "hot/geometry.log",
+      "bytes": 82,
+      "sha256": "0d3285ceafeac3b38f81f40c2fc5f79358ac7ce01ceab083c0a1850f76d84b83"
+    },
+    {
+      "path": "hot/hardware/browser-coverage.json",
+      "bytes": 55816,
+      "sha256": "d3f4ee08d15c82e6265ceeb42b3455cb5ef025dc5e1ace7c9f006bca861690db"
+    },
+    {
+      "path": "hot/hardware/browser.png",
+      "bytes": 69958,
+      "sha256": "31be043efdf17d7f8aeba28703cca45177344ac065ab89711f3ae745d08f42b5"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-0-attachment-0.f32.gz",
+      "bytes": 56,
+      "sha256": "d31680d1fcce2b9d1bf62e32175580b6e245a05d6bab984e0cc0edd00cb75781"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-1-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "cf29752382be8c5eb6e4d59d86be9c55720b67e555d478e49a6010b6f6026473"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-10-attachment-0.f32.gz",
+      "bytes": 58,
+      "sha256": "6a67d3122198ec338186fd929ca92f3e84980df9e6f3ef3095983ec5e6db3f2c"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-100-attachment-0.f32.gz",
+      "bytes": 56,
+      "sha256": "06209a3b5652bed063137cab6265d6b6727eb80f693819e0ffd2585ae72c7fd8"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-101-attachment-0.f32.gz",
+      "bytes": 54,
+      "sha256": "747d05bbdc45a045de24361d228fe8b2c4131f7cccdb5f699ae566c3835964ed"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-102-attachment-0.f32.gz",
+      "bytes": 54,
+      "sha256": "a1235ba57393cdda5274a3fe55b31972b4d7605feb9bfc42a0b3104054ea5cd1"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-103-attachment-0.f32.gz",
+      "bytes": 54,
+      "sha256": "a1235ba57393cdda5274a3fe55b31972b4d7605feb9bfc42a0b3104054ea5cd1"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-104-attachment-0.f32.gz",
+      "bytes": 55,
+      "sha256": "8b50a6ecb45d49e152cb928353f709f9b5024f6e6fb5dd5338ea582d5b93060e"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-105-attachment-0.f32.gz",
+      "bytes": 38,
+      "sha256": "338ee02de9b10a63e968f4e8f28e1373f2e45653904440f39b4b3e01a167decc"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-106-attachment-0.f32.gz",
+      "bytes": 964,
+      "sha256": "b5474de77eea32f50a86589c8399f250884ab0cba9b849981d9882612f81e15b"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-107-attachment-0.f32.gz",
+      "bytes": 54,
+      "sha256": "2702c479e3d76a7dfbdce08dcb41220226f19c0103f770ddd1b762491a88a36b"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-108-attachment-0.f32.gz",
+      "bytes": 54,
+      "sha256": "70133fe6cf774927ea1d5c087221bf36eaa351c23ea5fc1e1ec47c05750b9392"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-109-attachment-0.f32.gz",
+      "bytes": 54,
+      "sha256": "bb08529da880e652532a81dac442f60c732bef4bb3832ae054750257c3a1acbf"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-109-attachment-1.f32.gz",
+      "bytes": 55,
+      "sha256": "9267f73c0e5d5b0aeb2155b71308eaa20d4f10dfa05cfcd4ad77cd109bba70c2"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-109-attachment-2.f32.gz",
+      "bytes": 54,
+      "sha256": "3c06f49fcca38188f2af8955c2b5d0d79007e779d4cb36872498eda3444df898"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-109-attachment-3.f32.gz",
+      "bytes": 56,
+      "sha256": "60822340189bb8b3b573c62487fed5eada925c9e070c52c1486eaf979a90b424"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-11-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "fc22b048f52231b5658592191688368bd3398fe47c0f5f83b1699be810325fcc"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-110-attachment-0.f32.gz",
+      "bytes": 54,
+      "sha256": "70133fe6cf774927ea1d5c087221bf36eaa351c23ea5fc1e1ec47c05750b9392"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-110-attachment-1.f32.gz",
+      "bytes": 54,
+      "sha256": "70133fe6cf774927ea1d5c087221bf36eaa351c23ea5fc1e1ec47c05750b9392"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-110-attachment-2.f32.gz",
+      "bytes": 54,
+      "sha256": "70133fe6cf774927ea1d5c087221bf36eaa351c23ea5fc1e1ec47c05750b9392"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-110-attachment-3.f32.gz",
+      "bytes": 54,
+      "sha256": "70133fe6cf774927ea1d5c087221bf36eaa351c23ea5fc1e1ec47c05750b9392"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-111-attachment-0.f32.gz",
+      "bytes": 523,
+      "sha256": "55356ffd39d47c910d4a3a4924a3d97c7292be38c166b91823d357843d13e735"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-112-attachment-0.f32.gz",
+      "bytes": 54,
+      "sha256": "a1235ba57393cdda5274a3fe55b31972b4d7605feb9bfc42a0b3104054ea5cd1"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-113-attachment-0.f32.gz",
+      "bytes": 44,
+      "sha256": "9ee6acc2880a5a0541949105fcea294989ba992bec695dd98ef76fe6f3507045"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-114-attachment-0.f32.gz",
+      "bytes": 63,
+      "sha256": "1993daf37ee11d5985c3ef8f084d67e0415500cebec2556aaa721255ca44ce25"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-115-attachment-0.f32.gz",
+      "bytes": 63,
+      "sha256": "1993daf37ee11d5985c3ef8f084d67e0415500cebec2556aaa721255ca44ce25"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-116-attachment-0.f32.gz",
+      "bytes": 14553,
+      "sha256": "cc3ac72a643208eedbe6eba4592a8285ece865cc2c1723609e7e661e067054d1"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-117-attachment-0.f32.gz",
+      "bytes": 14122,
+      "sha256": "1d4e30a354df24b61b847318d10d69a16385ffb10edf0c9dd42f1904d977cee7"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-118-attachment-0.f32.gz",
+      "bytes": 17008,
+      "sha256": "0743d51c00516272bd009688c7705aa75785b7d13a00c58e0e7a56ec0d192b6f"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-119-attachment-0.f32.gz",
+      "bytes": 43,
+      "sha256": "949fc57020b99e9315f433b45130e3d3352e0040e060715ee1bf49cc722f0aa0"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-12-attachment-0.f32.gz",
+      "bytes": 56,
+      "sha256": "d31680d1fcce2b9d1bf62e32175580b6e245a05d6bab984e0cc0edd00cb75781"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-120-attachment-0.f32.gz",
+      "bytes": 40,
+      "sha256": "b7dd3ba5afa341fa0f1e6ae60c0baf2af4a4138166f2044835bd98ac4a6cdd8c"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-121-attachment-0.f32.gz",
+      "bytes": 43,
+      "sha256": "949fc57020b99e9315f433b45130e3d3352e0040e060715ee1bf49cc722f0aa0"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-122-attachment-0.f32.gz",
+      "bytes": 40,
+      "sha256": "b7dd3ba5afa341fa0f1e6ae60c0baf2af4a4138166f2044835bd98ac4a6cdd8c"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-123-attachment-0.f32.gz",
+      "bytes": 43,
+      "sha256": "949fc57020b99e9315f433b45130e3d3352e0040e060715ee1bf49cc722f0aa0"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-124-attachment-0.f32.gz",
+      "bytes": 40,
+      "sha256": "b7dd3ba5afa341fa0f1e6ae60c0baf2af4a4138166f2044835bd98ac4a6cdd8c"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-13-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "cf29752382be8c5eb6e4d59d86be9c55720b67e555d478e49a6010b6f6026473"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-14-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "fff1d1905b541ed7faaf309ece3bc28b32566cf934831fa56dda2c4e18c10028"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-15-attachment-0.f32.gz",
+      "bytes": 58,
+      "sha256": "b8e131b05cbfb59b03ba3d8805232d1b90aaa892afc11cd5cf09f618482b6a65"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-16-attachment-0.f32.gz",
+      "bytes": 53,
+      "sha256": "19d640c7a0249a18d3c4bd27b7f4610d4b4f90523c8985746b0e8a065317fb2c"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-17-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "45bad7dc61ee3bdd9c6a7ea40a4cf8e462ceb8a475d9209c65a2e2047b777d42"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-18-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "626f03506f95e9445f7b11bd7572f33f3bee5158613064f73eb55b97659ec4e2"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-19-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "0bf5d9253c71ebe44e187e57d4788d3e737c963819ff5e8b5e56885ae423332c"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-2-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "fff1d1905b541ed7faaf309ece3bc28b32566cf934831fa56dda2c4e18c10028"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-20-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "63d4aaf74c87b049b778aa97caa50567987e32d44b1c61ee6568d3ae6df4adb5"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-21-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "00f734cc79e2947acdf98b520d8c3640b856d8df7984e7cd02b318340384e56e"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-22-attachment-0.f32.gz",
+      "bytes": 58,
+      "sha256": "6a67d3122198ec338186fd929ca92f3e84980df9e6f3ef3095983ec5e6db3f2c"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-23-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "fc22b048f52231b5658592191688368bd3398fe47c0f5f83b1699be810325fcc"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-24-attachment-0.f32.gz",
+      "bytes": 56,
+      "sha256": "0ee02cc87944140966b1d33b280e2660afa1f7b31e1ac62dc003e33cd8843779"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-25-attachment-0.f32.gz",
+      "bytes": 52,
+      "sha256": "f37de488ded45213c57b6b63072c24c9ed76ada1da7d869b0114318cf11346b3"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-26-attachment-0.f32.gz",
+      "bytes": 58,
+      "sha256": "6a3de61e5f9a6dc26807f0d82e834e8afa013c6d896fcd0267aa158c21cd8e05"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-27-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "065a218058adbd284809841ea5650b115142614e4561d8f2a87b8a980b6701be"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-28-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "74f045e0e8567e6a755a22f2b2e385a470759894a88a3d027c7be49784652825"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-29-attachment-0.f32.gz",
+      "bytes": 58,
+      "sha256": "5db7d5508d7b8aa152d700a69003252742926a074482670598ca24d053fdb09d"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-3-attachment-0.f32.gz",
+      "bytes": 58,
+      "sha256": "b8e131b05cbfb59b03ba3d8805232d1b90aaa892afc11cd5cf09f618482b6a65"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-30-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "0ceada9a07e907940f54123dd138eea28cb6011daf2297d979a1b488f9b825a1"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-31-attachment-0.f32.gz",
+      "bytes": 56,
+      "sha256": "d31680d1fcce2b9d1bf62e32175580b6e245a05d6bab984e0cc0edd00cb75781"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-32-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "6b3b2b31e1b5af1f66c7b17fdfbd5158f52f41628fd916fc6f707585b8159a25"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-33-attachment-0.f32.gz",
+      "bytes": 56,
+      "sha256": "ce3a3b64efeb5447520f17a4f31adc933db598f934453e977f4a9fbd67a68397"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-34-attachment-0.f32.gz",
+      "bytes": 58,
+      "sha256": "6a2a5fe67cb80f11d5789600f4a5f6a312316dd2b38e6a319e09179d5f21065a"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-35-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "45bad7dc61ee3bdd9c6a7ea40a4cf8e462ceb8a475d9209c65a2e2047b777d42"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-36-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "626f03506f95e9445f7b11bd7572f33f3bee5158613064f73eb55b97659ec4e2"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-37-attachment-0.f32.gz",
+      "bytes": 54,
+      "sha256": "757796346870e8fde22fdc18a27d547557a4271c55275f2155dbe6d3e60da77c"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-38-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "fc22b048f52231b5658592191688368bd3398fe47c0f5f83b1699be810325fcc"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-39-attachment-0.f32.gz",
+      "bytes": 52,
+      "sha256": "5392bc98d8c449336b9f10bc96babccff0e9623762b56266f0221f725bc62e45"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-4-attachment-0.f32.gz",
+      "bytes": 53,
+      "sha256": "19d640c7a0249a18d3c4bd27b7f4610d4b4f90523c8985746b0e8a065317fb2c"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-40-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "2d14074767d5c082abbe438330155bc817ab8480453f6ab92aaa9dd1b3472081"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-41-attachment-0.f32.gz",
+      "bytes": 55,
+      "sha256": "42002ecab844631eaab9526d8e6ddf75cd4e6c393e9c05e17227bc25dea5906b"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-42-attachment-0.f32.gz",
+      "bytes": 55,
+      "sha256": "6b5f03ab30339bca7beef9972e9882b1de4bf52dc53d32227ae20c8de16eb760"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-43-attachment-0.f32.gz",
+      "bytes": 60,
+      "sha256": "42e41412a2524552b5ff54330d12aefbce537f091dd5b05dbe2435ec57419de8"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-44-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "c1de3b22d8f13962a946c98de1dd157eb5d861a21fbfa4dbf87473427cd88bca"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-45-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "6d0c7f19c3f12da56fd8ba1a49e21ebc854969c702930bb307200ac9e0fd99b1"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-46-attachment-0.f32.gz",
+      "bytes": 56,
+      "sha256": "8750d54d61b1a95b6fa70ca28e5135fdd5e25d7dcfb499336103b92db8736878"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-47-attachment-0.f32.gz",
+      "bytes": 54,
+      "sha256": "07474017e64e9e2e31cbaa44b450ec3f38d2dc2cd4a72878d6831cc8cb1974f1"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-48-attachment-0.f32.gz",
+      "bytes": 58,
+      "sha256": "2576a09dfbfc6e2e24189d9a02200f0f2461a7a55c1d5b2570cfd172f9754463"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-49-attachment-0.f32.gz",
+      "bytes": 54,
+      "sha256": "c369ef1b165443b85d2380c006ff3b8b1668e3fa6417e393273db6a698d58fc2"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-5-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "45bad7dc61ee3bdd9c6a7ea40a4cf8e462ceb8a475d9209c65a2e2047b777d42"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-50-attachment-0.f32.gz",
+      "bytes": 54,
+      "sha256": "e9fc67e00f3d8567a62803f63870701c7b0e21b93a78e0594ca2ea3946f3aa30"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-51-attachment-0.f32.gz",
+      "bytes": 54,
+      "sha256": "e9fc67e00f3d8567a62803f63870701c7b0e21b93a78e0594ca2ea3946f3aa30"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-52-attachment-0.f32.gz",
+      "bytes": 54,
+      "sha256": "b420411d42b0fa92c5d89ba57c9fe996af0f7446fb78593f316b93cb9ba2eb11"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-53-attachment-0.f32.gz",
+      "bytes": 54,
+      "sha256": "35ad3a00fa7f57c583fcba70fe429b313e9031af9f6aaed5595ff1e84ce15f17"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-54-attachment-0.f32.gz",
+      "bytes": 56,
+      "sha256": "b103006e8f7b23b74effabc4fae15575340add067abf307e8b3519a3d752492d"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-55-attachment-0.f32.gz",
+      "bytes": 38,
+      "sha256": "338ee02de9b10a63e968f4e8f28e1373f2e45653904440f39b4b3e01a167decc"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-56-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-57-attachment-0.f32.gz",
+      "bytes": 51,
+      "sha256": "35135796b4817466075ff72dea7a8d61cac0add99b96e5948f0e3a6084e6dd91"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-58-attachment-0.f32.gz",
+      "bytes": 52,
+      "sha256": "5b7d15ad8e174680642a71582a42a8525d177be27857ba7a58aaa33809c4253b"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-59-attachment-0.f32.gz",
+      "bytes": 38,
+      "sha256": "338ee02de9b10a63e968f4e8f28e1373f2e45653904440f39b4b3e01a167decc"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-6-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "626f03506f95e9445f7b11bd7572f33f3bee5158613064f73eb55b97659ec4e2"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-60-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "f2b47877c31a742827f467c938df73d48cb87136b96ad4eb8f267313c6fa0150"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-61-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "a6b953efa8a102517752fcdfdf8804a10c0a7b715ab2b7086557492c86dc7c35"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-62-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-63-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-64-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-65-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-66-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-67-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-68-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-69-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-7-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "0bf5d9253c71ebe44e187e57d4788d3e737c963819ff5e8b5e56885ae423332c"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-70-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-71-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-72-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-73-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-74-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-75-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-76-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-77-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-78-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-79-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-8-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "63d4aaf74c87b049b778aa97caa50567987e32d44b1c61ee6568d3ae6df4adb5"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-80-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-81-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-82-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-83-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-84-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-85-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-86-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-87-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-88-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-89-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-9-attachment-0.f32.gz",
+      "bytes": 57,
+      "sha256": "00f734cc79e2947acdf98b520d8c3640b856d8df7984e7cd02b318340384e56e"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-90-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-91-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-92-attachment-0.f32.gz",
+      "bytes": 43,
+      "sha256": "c5d2bea05817bf25f3de56c66d5d21f87a0e9b0ba1f50b6ce060670d11acab4c"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-93-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-94-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "fe6450bb8add18fc8a931dcea463aaa5d727a1be2409d13b2bdb10d08d23f6db"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-95-attachment-0.f32.gz",
+      "bytes": 42,
+      "sha256": "ca4660b4001c127f3f2dbcaddabe347090e055144f1c8ea157c0287fa83e4e33"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-96-attachment-0.f32.gz",
+      "bytes": 49,
+      "sha256": "ed89ea7f69f6ee713d538229961edf27c63530ca7546738c6ed9b774e8d0f9fe"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-97-attachment-0.f32.gz",
+      "bytes": 50,
+      "sha256": "73f0c05bb9ec58c05fdaffcbc06c24e4263eaf451b7a3d7fd598fa557a127472"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-98-attachment-0.f32.gz",
+      "bytes": 56,
+      "sha256": "06209a3b5652bed063137cab6265d6b6727eb80f693819e0ffd2585ae72c7fd8"
+    },
+    {
+      "path": "hot/hardware/pixels/frame-99-attachment-0.f32.gz",
+      "bytes": 54,
+      "sha256": "747d05bbdc45a045de24361d228fe8b2c4131f7cccdb5f699ae566c3835964ed"
+    },
+    {
+      "path": "hot/hardware/report.json",
+      "bytes": 4683389,
+      "sha256": "b5a5297502467cd89d101f5ed4cf7275986199c5b4e99cf367f58892b10e2235"
+    },
+    {
+      "path": "hot/native/allocations.jsonl",
+      "bytes": 15007,
+      "sha256": "0731a7f0e9f2a370414ba05714628801c1f9ee733be1d5d0fa27cafac17c7211"
+    },
+    {
+      "path": "hot/native/cases.bin",
+      "bytes": 1315726,
+      "sha256": "a73886e1c2bf221707a90b56a40b5691832a28161eb59a5a86d324f163018027"
+    },
+    {
+      "path": "hot/native/cases.json",
+      "bytes": 1594649,
+      "sha256": "f966dafcbf4e389c0e59a68cb052ca7946376d7b22c4294b65892e4f076b5bd0"
+    },
+    {
+      "path": "hot/native/metadata.json",
+      "bytes": 93,
+      "sha256": "687a492581c2b4c7e2032b3eb832dfd0ac93a3f3883fc8770eb8c7162b461d5c"
+    },
+    {
+      "path": "hot/native/native.jsonl",
+      "bytes": 2787316,
+      "sha256": "3cce0898a3cd62ef0a54be296aa594b71a1a995bd7fbf50e2ae35310b958a233"
+    },
+    {
+      "path": "hot/native/node.json",
+      "bytes": 4846,
+      "sha256": "bb905c99e627df336e74eb7369443f3c4bc89c1bcf09aad77ecbdea7569999dc"
+    },
+    {
+      "path": "hot/native/sanitize.jsonl",
+      "bytes": 2787316,
+      "sha256": "3cce0898a3cd62ef0a54be296aa594b71a1a995bd7fbf50e2ae35310b958a233"
+    },
+    {
+      "path": "hot/native/wasm.jsonl",
+      "bytes": 2257572,
+      "sha256": "8f045a9b03109751ad6c3c741bd0d4c9b653838fa1f52fe8feaacc79d681f9c2"
+    },
+    {
+      "path": "hot/physical-audit.json",
+      "bytes": 27120,
+      "sha256": "cfc9e6e5663c41f1cd17c5899dd6e6f4a18cde9ed92b6a0534fd938454807027"
+    },
+    {
+      "path": "hot/receipt.json",
+      "bytes": 76743,
+      "sha256": "f2f3adf4665cda7f3a89b97fe79463df1f4fd325f5b0730098f30cf90b086497"
+    },
+    {
+      "path": "hot/retained-ordinary/browser-coverage.json",
+      "bytes": 70074,
+      "sha256": "4ee10e164138445010a2108918b28b9c767e40db309c38ec7ebc26986c583118"
+    },
+    {
+      "path": "hot/retained-ordinary/browser.png",
+      "bytes": 55991,
+      "sha256": "e4d81358076a95bf65af0ac897e0923df3c54e05936c2b26d3d035265a976062"
+    },
+    {
+      "path": "hot/retained-ordinary/report.json",
+      "bytes": 17529596,
+      "sha256": "c75bd5bff04889bdc8cf92718b9402db404530b713e583c1e85948f55dde01bc"
+    },
+    {
+      "path": "hot/retained-private-92cb/browser-coverage.json",
+      "bytes": 6902,
+      "sha256": "ac25b1c1899c34bc02a01180cc83db7bbfbc3e6b6f28441ae84a57515306b88d"
+    },
+    {
+      "path": "hot/retained-private-92cb/browser.png",
+      "bytes": 33400,
+      "sha256": "7920d6cc8666d1ddadb90f9a721f8a57704e4a7122ae10ef51be357e330ff649"
+    },
+    {
+      "path": "hot/retained-private-92cb/report.json",
+      "bytes": 2426432,
+      "sha256": "0bb6fa1fd3e4a9b950f9fba59e7ac97299e9d03f27dc766c428cb47b9d1d8f6f"
+    },
+    {
+      "path": "hot/retained-private-c580/browser-coverage.json",
+      "bytes": 20044,
+      "sha256": "cc4e9e6bf8f070dff0e0471be6acd6b284a8106780c7004790955a3649a854ae"
+    },
+    {
+      "path": "hot/retained-private-c580/browser.png",
+      "bytes": 33581,
+      "sha256": "db4b5a4885e25e94e06f8a9d765cb88bd00c25262c347c2716d2f57bbce4d934"
+    },
+    {
+      "path": "hot/retained-private-c580/report.json",
+      "bytes": 302051,
+      "sha256": "9bcea1e69aac9ee6cb132560a7a26d45a6aead5ed4f67aa49748164063000e87"
+    },
+    {
+      "path": "hot/retained-raster.log",
+      "bytes": 96,
+      "sha256": "238ea827514b423bbc03f4ecca4e3d4920e2e33496186b9682c9a1de057559d6"
+    },
+    {
+      "path": "hot/retained-raw/browser-coverage.json",
+      "bytes": 17278,
+      "sha256": "988741fe74edadaa88246a86ed5cad5cab3e96d90ab4ef4baa889894427f5c77"
+    },
+    {
+      "path": "hot/retained-raw/browser.png",
+      "bytes": 24214,
+      "sha256": "fcee7e4b743e581a1d3876897b9873178ecba2add03043f8737022e742f0b833"
+    },
+    {
+      "path": "hot/retained-raw/report.json",
+      "bytes": 773925,
+      "sha256": "32b3e7e9785966df94dbd24088cbdf66ca10ca869db2fb7d104471300c938af5"
+    },
+    {
+      "path": "hot/stack/bridge.su",
+      "bytes": 2161,
+      "sha256": "ce6fec0bef220a3379438b03793782fcf542a6917fe4fde6230823f33433bbe1"
+    },
+    {
+      "path": "hot/stack/checked_cso_hash.su",
+      "bytes": 1231,
+      "sha256": "6e1b5958dff360a36dfbe4aa74532274cdad757cbba6e240a4228154292914cc"
+    },
+    {
+      "path": "hot/stack/checked_tgsi_sanity.su",
+      "bytes": 1180,
+      "sha256": "a86ec592148f8db357e20a3eb7aca7aac87064049ce38726d1fc2d00d75e4558"
+    },
+    {
+      "path": "hot/stack/checked_upstream.su",
+      "bytes": 5599,
+      "sha256": "16c674c74feebfba29eb4a6fde88d96d6bfda2ea582d76e509bab2002cd49e00"
+    },
+    {
+      "path": "hot/stack/raw_bits.su",
+      "bytes": 1102,
+      "sha256": "0b580fa3fec8816a148dcfa71eb501f9b8b114f9735b9092e4c577c73cf309ac"
+    },
+    {
+      "path": "hot/stack/standard_emit.su",
+      "bytes": 151,
+      "sha256": "ae63d5eb97c034a1488981f188b16395fa4cf3edab20a6945a7d8db38f4783fa"
+    },
+    {
+      "path": "hot/stack/standard_guard.su",
+      "bytes": 400,
+      "sha256": "9ddbfdf03c91aa1c2d62ee40694b9bc5ef5e65f40a267a572cd8bbabe1987cff"
+    },
+    {
+      "path": "hot/toolchain.json",
+      "bytes": 1227,
+      "sha256": "52188c29c3607a163e5eb4119b0964ce0b50594a8528e646d54d9479e7daf7ce"
+    },
+    {
+      "path": "recording-tool/seal.py",
+      "bytes": 5645,
+      "sha256": "7651a22aaa59bf8b50824420f018f96c32926f29be590c2bc9dbb7974c527a21"
+    }
+  ]
+}

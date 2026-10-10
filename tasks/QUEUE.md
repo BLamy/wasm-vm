@@ -644,7 +644,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.027035` [E6-T11d1](epic-6-transcendence/E6-T11d1-vertex-constant-floor.md) — Execute the GLES2 ordinary vertex constant-bank floor *(deps: E6-T12i)*
 - [x] `525.027036` [E6-T11d3](epic-6-transcendence/E6-T11d3-float-vertex-fetch.md) — Execute scalar through four-component float vertex fetches *(deps: E6-T11d2)*
 - [x] `525.027037` [E6-T11d2](epic-6-transcendence/E6-T11d2-single-target-blend.md) — Execute single-target blend equations and factors for guest qualification *(deps: E6-T11d1)*
-- [~] `525.027037` [E6-T11d4](epic-6-transcendence/E6-T11d4-standard-shader-compiler.md) — Compile bounded ordinary guest shaders with standard WebGL2 semantics *(deps: E6-T11d3)*
+- [?] `525.027037` [E6-T11d4](epic-6-transcendence/E6-T11d4-standard-shader-compiler.md) — Compile bounded ordinary guest shaders with standard WebGL2 semantics *(deps: E6-T11d3)*
 - [b] `525.02704` [E6-T11d](epic-6-transcendence/E6-T11d-truthful-guest-virgl-bringup.md) — Advertise proven VirGL capabilities and initialize real guest Mesa *(deps: E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4)*
 
 ## Epic 5.5 — `epic-5.5-omarchy`

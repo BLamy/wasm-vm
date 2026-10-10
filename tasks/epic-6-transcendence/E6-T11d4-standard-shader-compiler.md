@@ -3,7 +3,7 @@ id: E6-T11d4
 epic: 6
 title: Compile bounded ordinary guest shaders with standard WebGL2 semantics
 priority: 525.027037
-status: in-progress
+status: implemented
 depends_on: [E6-T11d3]
 estimate: S
 risk: high
@@ -131,3 +131,41 @@ portability dependency: its fixed predecessor directory needs both freshly
 generated geometry bytes and the JSON instruction/event provenance. The recipe
 now stages those same newly recorded artifacts at that fixed path and seals
 their hashes. It never copies old ignored evidence into a cold checkout.
+
+### 2026-10-09 — worker — implemented; frozen compiler submission
+
+Compiler/source head: `571c22593967e1cdae801d0c54ab0833d94b2c43`.
+Commands: `VIRGL_STANDARD_SHADER_EVIDENCE_DIR=target/evidence/virgl-standard-shader-final-complete make verify-E6-T11d4`;
+`python3 tools/virgl-standard-shader/cold.py --output target/evidence/virgl-standard-shader-final-complete-cold`;
+`python3 tools/virgl-standard-shader/seal.py target/evidence/virgl-standard-shader-final-complete target/evidence/virgl-standard-shader-final-complete-cold evidence/virgl-standard-shader`.
+The pristine exact-head clone is clean before and after acceptance, with inherited
+RUST/CARGO/compiler/browser overrides scrubbed. Both commands exit zero.
+
+The compiler recording demonstrates 634 independent native/sanitized/Wasm
+cases, separately parsed pinned TGSI metadata, actual allocation-site failures
+and exact recovery, fixed 16 MiB Wasm memory, 238 hardware compiles/programs,
+125 real GPU frames and 2,390,624 independently recomputed RGBA pixels. It
+executes all three full original 92cb banks and six c580 color/discard frames
+through the standard facet. An actual emitted SIN-to-COS mutation fails by
+0.398157 at the first pixel. Direct retained proofs pass 19 ordinary original
+bodies/57 programs, 42 original raw-bit frames, and both private original-pair
+paths. The pre-existing C body is byte-identical to verified `97ed2ca3`; its
+unchanged HELD semantic evidence carries forward. No guest boot, positive
+capset, complete API, GPU-time bound or graphics throughput is claimed.
+
+Evidence: `evidence/virgl-standard-shader/{manifest.json,records.json,recording.tar.gz}`
+seals 409 records, 15,363,226 compressed bytes. Archive SHA256
+`ee57339a1ce43d5f600a4d0d2c0e4bc47b361a189b78e1807cc31061225067b8`;
+index `a9a18780e726e13e0f6c883ce447e1c415314ff9d4b2604daa6273b5528bff2b`.
+Hot receipt `f2f3adf4665cda7f3a89b97fe79463df1f4fd325f5b0730098f30cf90b086497`;
+cold receipt `0f3dd8c91f66f8de021753922be3e65837345d7810be122e9cae670ae64a37ca`.
+
+The seal tool alone was corrected afterward at `505a9e59`: receipt generation
+hashes the log before printing its one confirmation line. Sealing authenticates
+that exact recorded prefix and exact final line and binds all finalized bytes;
+prefix edits, footer edits and appended text reject. It refuses any post-freeze
+change outside that sealing file. The seal separately records the actual helper
+head and SHA256 `7651a22aaa59bf8b50824420f018f96c32926f29be590c2bc9dbb7974c527a21`
+and includes its bytes. No compiler, acceptance or cold-clone behavior changed;
+the final exact-head cold proof at `571c2259` is retained incrementally.
+A fresh adversarial session must judge correctness and every changed hunk.
