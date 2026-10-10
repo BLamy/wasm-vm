@@ -1,0 +1,63 @@
+{
+  "schema": "virgl-fragment-coordinate-critic-seal-v1",
+  "task": "E6-T12g6k",
+  "verdict": "verified",
+  "prerequisite": "574d633c17c7436545195c63e534d9fa7859ac74",
+  "frozenRuntime": "c947442bad912ebcd46d3ff30a0e4c71be87ca4a",
+  "workerSubmissionHead": "c72a5ead0aa67e3ba51fd99923d4df29d6f09abd",
+  "criticHead": "0eb794639b408c80aa6f35688bf85e15a433a845",
+  "records": 532,
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 17219983,
+    "sha256": "a05686aa76631217e32eb2b598b48fc0305a0ab43e5b692d0934aad82323edc2"
+  },
+  "recordIndex": {
+    "path": "records.json",
+    "bytes": 98614,
+    "sha256": "50372d59bfdca970e0ff520572c18bf0f4f0916222ed0190f2c2bff01b6672d4"
+  },
+  "verdictPath": "critic/verdict.json",
+  "verdictSha256": "a5f446813901b5e54b09e4330c604450d7cac3b1ce3461b893f77d71d6393c77",
+  "predictionsPath": "critic/predictions.md",
+  "predictionsSha256": "31d879d5b2e5dec5c331378378e7aac1cedc67be74762b3371a80e44595aa181",
+  "workerManifestSha256": "eab640fe0bc3433f233ab6c236d91b61b7f92655da4c187f041b8ab6fd23c2c9",
+  "workerArchiveSha256": "8bba25788029785c57fd48b2f1a47a522856b178f4b3d5025f14adce43c7d8e2",
+  "workerRecordIndexSha256": "e6c6ab2af48ff5ca58e0794e163ee38075ead285f04c3df6ee822bb33d521bad",
+  "authenticationSha256": "6f0c5c3d8a5eaf6b749d097af957db9e879b206680cbe5b093b1c9566884503a",
+  "coverageAuditSha256": "62f9bc2d1f802044bc8aa6398f1d5924d881b554c7ba36bbb76fa00eb17ef8df",
+  "finalAcceptanceReceiptSha256": "f66b0c7a371c603cdd9718eea8ee7826e9e85e8a091b69da0eb33c07c6c5ee43",
+  "freshReportSha256": "eb0d44e3f5af4e5cd1d5a9ed69a70c52bdfb49195de0220085ae6039a56757ce",
+  "freshCaptureSha256": "6ce0e979a7caa34869830b365991d7b9b724884208e5e96406adc89f618d8426",
+  "sabotageSha256": "7370a82cd2aa68e4bfca5acf6ce6df8c65457efc817fa820dc089840c930026c",
+  "independentNativeWasmCases": 380,
+  "independentMetadataAttacks": 32,
+  "independentBankCases": 480,
+  "uniquePhysicalSeeds": [
+    2654435769,
+    608135816,
+    2242054355,
+    3737844652
+  ],
+  "uniqueScheduleComponentWords": 657696,
+  "maximumObservedAbsoluteError": "1/2097152",
+  "measuredAbsoluteBudget": "1/1048576",
+  "changedRuntimeLines": 127,
+  "executedRuntimeLines": 118,
+  "individuallyWaivedLines": 9,
+  "unprovenExecutableLines": 0,
+  "coldProof": {
+    "sourceHead": "c947442bad912ebcd46d3ff30a0e4c71be87ca4a",
+    "reportSha256": "821210827dd50ba460b65a279b79f257da68a558ac79f8c8a15454913b474130",
+    "incremental": true,
+    "additionalClone": false
+  },
+  "carriedPredecessorPredictions": 10,
+  "productionNegotiation": false,
+  "guestExecution": false,
+  "qualifications": [
+    "Physical accuracy is measured for this headed Chrome/Apple M4 Max Metal configuration, not a portable guarantee.",
+    "The synthetic combined ports and copied-bank probe preserve underlying obligations; they do not admit the original full compositor bodies.",
+    "No production GPU capability, public/demo imports, live guest integration, FPS or MIPS claim is made."
+  ]
+}

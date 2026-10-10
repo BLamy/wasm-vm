@@ -329,7 +329,8 @@ static bool declaration(const char **p, struct profile *s)
    if (r.file == OUT || (r.file == IN && s->stage == 1)) {
       if (!punctuation(p, ',')) return false;
       if (word(p, "POSITION")) {
-         if (s->stage != 0 || r.file != OUT || r.index != 0) return false;
+         if (r.index != 0 || !((s->stage == 0 && r.file == OUT) ||
+             (s->stage == 1 && r.file == IN && s->raw))) return false;
          semantic = 1;
       } else if (word(p, "GENERIC")) {
          if (!punctuation(p, '[') || !index_number(p, &sid, FILE_REGISTERS) || !punctuation(p, ']')) return false;
@@ -343,7 +344,8 @@ static bool declaration(const char **p, struct profile *s)
          if (s->declared[r.file][i] && s->semantic[r.file][i] == semantic && s->semantic_index[r.file][i] == sid) return false;
       if (s->stage == 1 && r.file == IN) {
          if (!punctuation(p, ',')) return false;
-         if (word(p, "CONSTANT")) flat = true;
+         if (semantic == 1) { if (!word(p, "LINEAR")) return false; }
+         else if (word(p, "CONSTANT")) flat = true;
          else if (!word(p, "PERSPECTIVE")) return false;
       }
    } else if (r.file == SVIEW) {
@@ -973,13 +975,20 @@ static bool validate_body(char *text, struct profile *s, struct flow_context *fl
          if (!punctuation(&p, '}') || !end(&p)) return false;
          s->declared[IMM][i] = true; s->components[IMM][i] = 15; ++s->immediates;
       } else if (word(&p, "PROPERTY")) {
-         if (s->stage != 1 || s->started || s->color0_property ||
-             !word(&p, "FS_COLOR0_WRITES_ALL_CBUFS") || !word(&p, "1") || !end(&p)) {
-            failure_code = "unsupported-feature";
-            return false;
+         failure_code = "unsupported-feature";
+         if (s->stage != 1 || s->started) return false;
+         if (word(&p, "FS_COORD_ORIGIN")) {
+            if (!s->raw || s->coordinate_origin_property || !word(&p, "LOWER_LEFT") || !end(&p)) return false;
+            s->coordinate_origin_property = true;
+         } else if (word(&p, "FS_COORD_PIXEL_CENTER")) {
+            if (!s->raw || s->coordinate_center_property || !word(&p, "HALF_INTEGER") || !end(&p)) return false;
+            s->coordinate_center_property = true;
+         } else {
+            if (s->color0_property || !word(&p, "FS_COLOR0_WRITES_ALL_CBUFS") || !word(&p, "1") || !end(&p)) return false;
+            /* Fixed cfg.max_draw_buffers=1 makes this exactly COLOR0, not MRT. */
+            s->color0_property = true;
          }
-         /* Fixed cfg.max_draw_buffers=1 makes this exactly COLOR0, not MRT. */
-         s->color0_property = true;
+         failure_code = "parse-error";
       } else {
          s->started = true;
          /* Labels are optional, bounded, sequential, and never jump targets. */
@@ -996,6 +1005,13 @@ static bool validate_body(char *text, struct profile *s, struct flow_context *fl
    }
    if (flow && flow->depth) { failure_code = "unsupported-feature"; return false; }
    if (!header || !s->ended || !s->instructions || !s->declared[OUT][0]) return false;
+   bool coordinates = s->stage == 1 && s->declared[IN][0] && s->semantic[IN][0] == 1;
+   if (coordinates != s->coordinate_origin_property || coordinates != s->coordinate_center_property) {
+      failure_code = "unsupported-feature";
+      return false;
+   }
+   /* A direct MOV of the builtin needs no fabricated opcode or static facts. */
+   if (coordinates) s->raw->opcode_mask |= RAW_FRAGMENT_COORDINATES_USED;
    if (s->syntax_only) return s->semantic[OUT][0] == (s->stage == 0 ? 1u : 3u);
    for (unsigned i = 0; i < 8; ++i)
       if (s->declared[OUT][i] && s->written[OUT][i] != s->components[OUT][i]) return false;
@@ -1041,12 +1057,13 @@ static void io_metadata(const struct profile *s, enum file f)
       const char *names[] = {"ATTRIBUTE", "POSITION", "GENERIC", "COLOR"};
       char name[32];
       if (!semantic) snprintf(name, sizeof(name), "in_%u", i);
-      else if (semantic == 1) snprintf(name, sizeof(name), "gl_Position");
+      else if (semantic == 1) snprintf(name, sizeof(name), "%s", s->stage ? "gl_FragCoord" : "gl_Position");
       else if (semantic == 2) snprintf(name, sizeof(name), "vso_g%u", sid);
       else snprintf(name, sizeof(name), "fsout_c0");
       append("%s{\"index\":%u,\"name\":\"%s\",\"type\":\"vec4\",\"semantic\":\"%s\",\"semanticIndex\":%u,\"componentMask\":%u", comma ? "," : "", i, name, names[semantic], sid, s->components[f][i]);
       if (f == OUT) append(",\"writtenMask\":%u", s->written[f][i]);
       if (semantic == 2) append(",\"interpolation\":\"%s\"", s->flat[f][i] ? "flat" : "smooth");
+      if (semantic == 1 && s->stage) append(",\"interpolation\":\"linear\"");
       append("}");
       comma = true;
    }
@@ -1176,6 +1193,9 @@ static const char *check_input(struct profile *profile, const char *text, size_t
          candidate = structured_candidate = loop_candidate = true;
       } else if (word(&p, "UIF") || word(&p, "ELSE") || word(&p, "ENDIF")) {
          candidate = structured_candidate = true;
+      } else if (profile->stage == 1 && word(&p, "PROPERTY") &&
+                 (word(&p, "FS_COORD_ORIGIN") || word(&p, "FS_COORD_PIXEL_CENTER"))) {
+         candidate = true;
       } else if (word(&p, "MOV_PRECISE") || word(&p, "FSEQ_PRECISE") || word(&p, "FSNE_PRECISE")) {
          candidate = true;
       } else if (word(&p, "ADD_PRECISE") || word(&p, "MUL_PRECISE") || word(&p, "FRC_PRECISE")) {
@@ -1280,7 +1300,7 @@ static const char *convert(struct conversion *c, const char *text, size_t length
             c->info.samplers_used_mask |= 1u << c->profile.raw->instructions[i].sampler;
       if (c->profile.stage) {
          struct vrend_fs_shader_info *fs = &c->variable.fs_info;
-         for (unsigned i = 0; i < FILE_REGISTERS; ++i) if (c->profile.declared[IN][i]) {
+         for (unsigned i = 0; i < FILE_REGISTERS; ++i) if (c->profile.declared[IN][i] && c->profile.semantic[IN][i] == 2) {
             struct vrend_interp_info *entry = &fs->interpinfo[fs->num_interps++];
             entry->semantic_name = TGSI_SEMANTIC_GENERIC;
             entry->semantic_index = c->profile.semantic_index[IN][i];
@@ -1311,7 +1331,7 @@ static const char *convert(struct conversion *c, const char *text, size_t length
    return NULL;
 }
 
-/* The profile permits only GENERIC fragment inputs, all centered and either
+/* Interstage inputs are GENERIC, all centered and either
  * PERSPECTIVE or CONSTANT. Cross-check upstream's value-only export before it
  * becomes a vertex key; never accept caller keys or copy owned shader pointers. */
 static bool checked_fragment_interface(const struct conversion *fragment)
@@ -1320,7 +1340,7 @@ static bool checked_fragment_interface(const struct conversion *fragment)
    const struct vrend_fs_shader_info *info = &fragment->variable.fs_info;
    unsigned count = 0;
    bool seen[FILE_REGISTERS] = {0};
-   for (unsigned i = 0; i < FILE_REGISTERS; ++i) count += p->declared[IN][i];
+   for (unsigned i = 0; i < FILE_REGISTERS; ++i) count += p->declared[IN][i] && p->semantic[IN][i] == 2;
    if (info->num_interps != (int)count || info->has_sample_input || info->has_noperspective) return false;
    for (unsigned i = 0; i < count; ++i) {
       const struct vrend_interp_info *entry = &info->interpinfo[i];
@@ -1328,7 +1348,7 @@ static bool checked_fragment_interface(const struct conversion *fragment)
           entry->location != TGSI_INTERPOLATE_LOC_CENTER || seen[entry->semantic_index]) return false;
       seen[entry->semantic_index] = true;
       bool matched = false;
-      for (unsigned j = 0; j < FILE_REGISTERS; ++j) if (p->declared[IN][j] && p->semantic_index[IN][j] == entry->semantic_index) {
+      for (unsigned j = 0; j < FILE_REGISTERS; ++j) if (p->declared[IN][j] && p->semantic[IN][j] == 2 && p->semantic_index[IN][j] == entry->semantic_index) {
          unsigned expected = p->flat[IN][j] ? TGSI_INTERPOLATE_CONSTANT : TGSI_INTERPOLATE_PERSPECTIVE;
          if (entry->interpolate != expected) return false;
          matched = true;
@@ -1340,7 +1360,7 @@ static bool checked_fragment_interface(const struct conversion *fragment)
 
 static bool match_interface(struct profile *vertex, const struct profile *fragment)
 {
-   for (unsigned i = 0; i < FILE_REGISTERS; ++i) if (fragment->declared[IN][i]) {
+   for (unsigned i = 0; i < FILE_REGISTERS; ++i) if (fragment->declared[IN][i] && fragment->semantic[IN][i] == 2) {
       bool matched = false;
       for (unsigned j = 0; j < FILE_REGISTERS; ++j) {
          if (!vertex->declared[OUT][j] || vertex->semantic[OUT][j] != 2 ||
@@ -1360,10 +1380,12 @@ static void interface_key(const struct profile *fragment)
    bool comma = false;
    for (unsigned sid = 0; sid < FILE_REGISTERS; ++sid)
       for (unsigned i = 0; i < FILE_REGISTERS; ++i)
-         if (fragment->declared[IN][i] && fragment->semantic_index[IN][i] == sid) {
+         if (fragment->declared[IN][i] && fragment->semantic[IN][i] == 2 && fragment->semantic_index[IN][i] == sid) {
             append("%sg%u/%u/%s", comma ? ";" : "", sid, fragment->components[IN][i], fragment->flat[IN][i] ? "flat" : "smooth");
             comma = true;
          }
+   if (fragment->raw && (fragment->raw->opcode_mask & RAW_FRAGMENT_COORDINATES_USED))
+      append("|tgsi-fragment-position-v1:in0/linear/lower-left/half-integer/window-z/reciprocal-w");
    append("\"");
 }
 
@@ -1506,6 +1528,11 @@ static void power_contract(const struct profile *profile, const char *base)
       base, profile->stage ? "fragment" : "vertex");
 }
 
+static void coordinate_contract(const char *base)
+{
+   append(",\"coordinateBaseProfile\":\"%s\",\"coordinateContract\":{\"kind\":\"tgsi-fragment-position-v1\",\"stage\":\"fragment\",\"input\":0,\"semanticIndex\":0,\"source\":\"gl_FragCoord\",\"interpolation\":\"linear\",\"origin\":\"lower-left\",\"pixelCenter\":\"half-integer\",\"components\":\"window-xy-depth-z-reciprocal-clip-w\",\"precision\":\"essl3-highp-builtin\",\"rasterization\":\"single-sample-half-pixel\",\"surfaceOrigin\":\"lower-left\",\"authority\":\"existing-input-no-static-range-facts\"}", base);
+}
+
 static void stage_result(const struct conversion *c)
 {
    const struct profile *profile = &c->profile;
@@ -1547,10 +1574,13 @@ static void stage_result(const struct conversion *c)
    bool exponent = profile->raw && (profile->raw->opcode_mask & RAW_EXPONENT_OPCODES);
    bool power = profile->raw && (profile->raw->opcode_mask & RAW_POWER_OPCODES);
    bool sine = profile->raw && (profile->raw->opcode_mask & RAW_SINE_OPCODES);
+   bool coordinates = profile->raw && (profile->raw->opcode_mask & RAW_FRAGMENT_COORDINATES_USED);
    const char *conversion_name = conversion_bank ? "virgl-webgl2-raw-bits-v30" : "virgl-webgl2-raw-bits-v29";
-   append("\",\"metadata\":{\"profile\":\"%s\",\"stage\":\"%s\",\"inputs\":",
+   const char *base_profile =
       power ? "virgl-webgl2-raw-bits-v37" : sine ? "virgl-webgl2-raw-bits-v36" : exponent ? "virgl-webgl2-raw-bits-v35" : saturation ? "virgl-webgl2-raw-bits-v34" : fraction ? "virgl-webgl2-raw-bits-v33" : minimum ? "virgl-webgl2-raw-bits-v32" : scalar ? "virgl-webgl2-raw-bits-v31" : conversion ? conversion_name :
-      arithmetic ? "virgl-webgl2-raw-bits-v28" : raster ? "virgl-webgl2-raw-bits-v27" : name,
+      arithmetic ? "virgl-webgl2-raw-bits-v28" : raster ? "virgl-webgl2-raw-bits-v27" : name;
+   append("\",\"metadata\":{\"profile\":\"%s\",\"stage\":\"%s\",\"inputs\":",
+      coordinates ? "virgl-webgl2-raw-bits-v38" : base_profile,
       stage ? "fragment" : "vertex");
    io_metadata(profile, IN); append(",\"outputs\":"); io_metadata(profile, OUT);
    append(",\"attributes\":");
@@ -1603,6 +1633,7 @@ static void stage_result(const struct conversion *c)
       scalar ? "virgl-webgl2-raw-bits-v31" : conversion ? conversion_name : arithmetic ? "virgl-webgl2-raw-bits-v28" : raster ? "virgl-webgl2-raw-bits-v27" : name);
    if (power) power_contract(profile, sine ? "virgl-webgl2-raw-bits-v36" : exponent ? "virgl-webgl2-raw-bits-v35" : saturation ? "virgl-webgl2-raw-bits-v34" : fraction ? "virgl-webgl2-raw-bits-v33" : minimum ? "virgl-webgl2-raw-bits-v32" :
       scalar ? "virgl-webgl2-raw-bits-v31" : conversion ? conversion_name : arithmetic ? "virgl-webgl2-raw-bits-v28" : raster ? "virgl-webgl2-raw-bits-v27" : name);
+   if (coordinates) coordinate_contract(base_profile);
    append("}");
 }
 

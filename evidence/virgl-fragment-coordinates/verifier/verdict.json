@@ -1,0 +1,298 @@
+{
+  "schema": "virgl-fragment-coordinate-critic-verdict-v1",
+  "task": "E6-T12g6k",
+  "verdict": "verified",
+  "prerequisite": "574d633c17c7436545195c63e534d9fa7859ac74",
+  "frozenRuntime": "c947442bad912ebcd46d3ff30a0e4c71be87ca4a",
+  "workerSubmissionHead": "c72a5ead0aa67e3ba51fd99923d4df29d6f09abd",
+  "criticGuardHead": "0eb794639b408c80aa6f35688bf85e15a433a845",
+  "predictionsMadeBeforeInspection": true,
+  "predictionsSha256": "31d879d5b2e5dec5c331378378e7aac1cedc67be74762b3371a80e44595aa181",
+  "predictions": [
+    {
+      "id": "P1",
+      "status": "HELD",
+      "observed": "All 127 safe unique worker members and 795 source bindings authenticate; distinct actual hot/cold binaries and profiles match their indexes.",
+      "citations": [
+        {
+          "path": "critic/authentication.json",
+          "pointer": "/members",
+          "sha256": "6f0c5c3d8a5eaf6b749d097af957db9e879b206680cbe5b093b1c9566884503a"
+        },
+        {
+          "path": "critic/native-replays.json",
+          "pointer": "/records",
+          "sha256": "947e67fbb5e1cfd4afe60388c277fc211112bf15cc9e549bcc0a8611034720de"
+        }
+      ]
+    },
+    {
+      "id": "P2",
+      "status": "HELD",
+      "observed": "Literal original header, 285 unmodified Mesa token/GLSL witnesses, pinned properties and primary TGSI/ESSL conventions agree.",
+      "citations": [
+        {
+          "path": "critic/source-semantics.json",
+          "pointer": "",
+          "sha256": "2b5d42fe504f56c6909ebe2c3fd6f95ce66d51de6ed3d26ced8fd455f0f8198b"
+        },
+        {
+          "path": "worker-recording/generated/coordinate-primary.json",
+          "pointer": "/0/primary",
+          "sha256": "469e4a92782152ed5789dfa5abaa1b27eaa2e8748a6243c36299a8cb7c344ea8"
+        }
+      ]
+    },
+    {
+      "id": "P3",
+      "status": "HELD",
+      "observed": "Original and reordered headers accept; unsupported conventions and numerical authority laundering reject in 380 complete independent native/Wasm singles and pairs. Original complete bodies retain their admission results.",
+      "citations": [
+        {
+          "path": "acceptance/independent-coordinate-guards.json",
+          "pointer": "/native",
+          "sha256": "5e0cf32d5c70b35bebfeaca28df5706d85cd61fd9c8f77656766c90215918b2a"
+        },
+        {
+          "path": "critic/carry-forward.json",
+          "pointer": "/rejectedCompleteBodies",
+          "sha256": "1cfd512f9c44a709bde63c2e43a83f632d8f89642050d10be0357756665f9b34"
+        }
+      ]
+    },
+    {
+      "id": "P4",
+      "status": "HELD",
+      "observed": "Strict inert v38 wrapper retains all simultaneous underlying obligations; 561 original metadata forgeries plus 32 independent metadata attacks invoke zero getters; four combined probes and 480 independent bank cases preserve owned copies and restrictions.",
+      "citations": [
+        {
+          "path": "worker-recording/hot/consumer.json",
+          "pointer": "/combined",
+          "sha256": "8bd1784e24c70eed43b9f39916ffe5ef6c5aab7976299a93718e7e55dd4943b1"
+        },
+        {
+          "path": "acceptance/independent-coordinate-guards.json",
+          "pointer": "/banks",
+          "sha256": "5e0cf32d5c70b35bebfeaca28df5706d85cd61fd9c8f77656766c90215918b2a"
+        }
+      ]
+    },
+    {
+      "id": "P5",
+      "status": "HELD",
+      "observed": "POSITION never becomes a GENERIC producer obligation; POSITION+GENERIC0/7 pairs bind the exact convention suffix, and actual forged source/pair/convention selectors reject atomically.",
+      "citations": [
+        {
+          "path": "acceptance/independent-coordinate-guards.json",
+          "pointer": "/native",
+          "sha256": "5e0cf32d5c70b35bebfeaca28df5706d85cd61fd9c8f77656766c90215918b2a"
+        },
+        {
+          "path": "critic/gpu-3737844652/report.json",
+          "pointer": "/acceptance/consumers/0/pairRequests",
+          "sha256": "eb0d44e3f5af4e5cd1d5a9ed69a70c52bdfb49195de0220085ae6039a56757ce"
+        }
+      ]
+    },
+    {
+      "id": "P6",
+      "status": "HELD",
+      "observed": "Independent determinant barycentrics and literal clip geometry check 657696 complete words across four distinct seeds. Exact XY/dyadic cases hold; maximum variable-derived absolute error is 2^-21 within 2^-20; every outside viewport sentinel holds.",
+      "citations": [
+        {
+          "path": "critic/hot-capture-2654435769.json",
+          "pointer": "/transcript/294",
+          "sha256": "c38568f712d70bb8f83f764325881f7a0d925ea8be086292fd2dd29fa9ad53bb"
+        },
+        {
+          "path": "critic/fourth-capture.json",
+          "pointer": "/transcript/294",
+          "sha256": "6ce0e979a7caa34869830b365991d7b9b724884208e5e96406adc89f618d8426"
+        }
+      ]
+    },
+    {
+      "id": "P7",
+      "status": "HELD",
+      "observed": "Forward literal TGSI source execution snapshots every operand before masked destination writes. Reverse aliases, saved/live/killed lane versions, copied/raw/numeric uses and UIF agree with physical words and 300 independent conversion/transcendental version guards.",
+      "citations": [
+        {
+          "path": "critic/fourth-capture.json",
+          "pointer": "/transcript",
+          "sha256": "6ce0e979a7caa34869830b365991d7b9b724884208e5e96406adc89f618d8426"
+        },
+        {
+          "path": "acceptance/independent-coordinate-guards.json",
+          "pointer": "/predictions",
+          "sha256": "5e0cf32d5c70b35bebfeaca28df5706d85cd61fd9c8f77656766c90215918b2a"
+        }
+      ]
+    },
+    {
+      "id": "P8",
+      "status": "HELD",
+      "observed": "Headed WebGL2 on physical Apple M4 Max Metal compiles/links both implementations, reflects no FragCoord uniform, maps COLOR0 to zero and disposes all 8173 created objects with zero errors.",
+      "citations": [
+        {
+          "path": "critic/gpu-3737844652/report.json",
+          "pointer": "/browser",
+          "sha256": "eb0d44e3f5af4e5cd1d5a9ed69a70c52bdfb49195de0220085ae6039a56757ce"
+        },
+        {
+          "path": "critic/gpu-3737844652/report.json",
+          "pointer": "/acceptance/events",
+          "sha256": "eb0d44e3f5af4e5cd1d5a9ed69a70c52bdfb49195de0220085ae6039a56757ce"
+        },
+        {
+          "path": "critic/fourth-capture.json",
+          "pointer": "/nativeObjects",
+          "sha256": "6ce0e979a7caa34869830b365991d7b9b724884208e5e96406adc89f618d8426"
+        }
+      ]
+    },
+    {
+      "id": "P9",
+      "status": "HELD",
+      "observed": "Both actual indexed consumers restore poisoned raster/viewport/depth state, own poisoned packets, and reproduce A/B/A source predictions. Each rejects 24 attacks; asynchronous completion-fence-only events stay bounded; all final budgets are zero.",
+      "citations": [
+        {
+          "path": "critic/gpu-3737844652/report.json",
+          "pointer": "/acceptance/consumers",
+          "sha256": "eb0d44e3f5af4e5cd1d5a9ed69a70c52bdfb49195de0220085ae6039a56757ce"
+        },
+        {
+          "path": "critic/fourth-capture.json",
+          "pointer": "/rejections",
+          "sha256": "6ce0e979a7caa34869830b365991d7b9b724884208e5e96406adc89f618d8426"
+        }
+      ]
+    },
+    {
+      "id": "P10",
+      "status": "HELD",
+      "observed": "Every original hot/cold X/Y/Z/W emitted-source fault contradicts the independent original pixel prediction. Isolated actual runtime source admission, promoted-test metadata expectation, and jointly forged pixel/cache word each cause the intended deterministic failure.",
+      "citations": [
+        {
+          "path": "critic/hot-capture-fault-x.json",
+          "pointer": "/transcript/0/failurePoints",
+          "sha256": "01eb94ae8b45fd21f6ed8b80387f17c847c656745bd36376ce0a6f40a4f3e19d"
+        },
+        {
+          "path": "critic/hot-capture-fault-w.json",
+          "pointer": "/transcript",
+          "sha256": "c9186b312694f44f65930b0988101b98548764fdd508fd9c4b733acc4112dbd0"
+        },
+        {
+          "path": "critic/sabotage.json",
+          "pointer": "/records",
+          "sha256": "7370a82cd2aa68e4bfca5acf6ce6df8c65457efc817fa820dc089840c930026c"
+        }
+      ]
+    },
+    {
+      "id": "P11",
+      "status": "HELD",
+      "observed": "118 of 127 changed runtime lines execute in authenticated original LLVM/V8/Node recordings; nine nonexecuting comments, declaration/macro/static-assert/signature lines have individual reasons. Zero executable gap. Ten unchanged predecessor HELD predictions carry by boundary and digest.",
+      "citations": [
+        {
+          "path": "critic/coverage-audit.json",
+          "pointer": "/lines",
+          "sha256": "62f9bc2d1f802044bc8aa6398f1d5924d881b554c7ba36bbb76fa00eb17ef8df"
+        },
+        {
+          "path": "critic/carry-forward.json",
+          "pointer": "/priorVerdict/predictions",
+          "sha256": "1cfd512f9c44a709bde63c2e43a83f632d8f89642050d10be0357756665f9b34"
+        }
+      ]
+    },
+    {
+      "id": "P12",
+      "status": "HELD",
+      "observed": "The authenticated pristine c947442b clone passes the same acceptance command with scrubbed environment and clean before/after status. Promotions only alter the harness/tests; portability proof carries without another clone.",
+      "citations": [
+        {
+          "path": "critic/authentication.json",
+          "pointer": "/cold",
+          "sha256": "6f0c5c3d8a5eaf6b749d097af957db9e879b206680cbe5b093b1c9566884503a"
+        },
+        {
+          "path": "critic/final-acceptance.json",
+          "pointer": "",
+          "sha256": "50fb0633dcb18aea4229a7e0c8ac7688d97f4703aabaee5fb3490047c74b3903"
+        }
+      ]
+    },
+    {
+      "id": "P13",
+      "status": "HELD",
+      "observed": "Novel eight-register POSITION+GENERIC0/7, missing producer/ninth-register, masked version, signed-zero/subnormal/nonfinite bank and inert metadata attacks hold. Fresh seed 3737844652 with step size two checks 162568 words and 48 actual rejections.",
+      "citations": [
+        {
+          "path": "acceptance/independent-coordinate-guards.json",
+          "pointer": "/predictions",
+          "sha256": "5e0cf32d5c70b35bebfeaca28df5706d85cd61fd9c8f77656766c90215918b2a"
+        },
+        {
+          "path": "critic/fourth-command.json",
+          "pointer": "",
+          "sha256": "e6734279948ffee0e4ed7a3ab1594e688e8c97a1c753e5beae9e9c8dd44bc522"
+        },
+        {
+          "path": "critic/fourth-capture.json",
+          "pointer": "",
+          "sha256": "6ce0e979a7caa34869830b365991d7b9b724884208e5e96406adc89f618d8426"
+        }
+      ]
+    }
+  ],
+  "changedRuntimeLines": 127,
+  "executedRuntimeLines": 118,
+  "individuallyWaivedLines": 9,
+  "unprovenExecutableLines": 0,
+  "carriedPredecessorPredictions": 10,
+  "independentNativeWasmCases": 380,
+  "independentMetadataAttacks": 32,
+  "independentBankCases": 480,
+  "uniquePhysicalSeeds": [
+    2654435769,
+    608135816,
+    2242054355,
+    3737844652
+  ],
+  "uniqueScheduleComponentWords": 657696,
+  "maximumObservedAbsoluteError": "1/2097152",
+  "measuredAbsoluteBudget": "1/1048576",
+  "maximumPoint": {
+    "seed": 2654435769,
+    "reportPointer": "/acceptance/probes/294",
+    "rawSha256": "680a769f44a0d90b2be014160c61311e977b36426a5c70214ebce219435a995d",
+    "point": {
+      "x": 3,
+      "y": 1,
+      "coordinates": [
+        "7/2",
+        "3/2",
+        "97/336",
+        "313/336"
+      ],
+      "expectedWord": 1080981992,
+      "observedWord": 1080981990,
+      "budget": "1/1048576",
+      "absoluteError": "1/2097152"
+    }
+  },
+  "coldProofCarried": true,
+  "productionNegotiation": false,
+  "guestExecution": false,
+  "suite": [
+    "tools/virgl-fragment-coordinates/independent-guards.mjs",
+    "tools/virgl-fragment-coordinates/capture-check.py",
+    "make verify-E6-T12g6k"
+  ],
+  "qualifications": [
+    "Physical accuracy is measured for this headed Chrome/Apple M4 Max Metal configuration, not a portable guarantee.",
+    "The synthetic combined ports and copied-bank probe preserve underlying obligations; they do not admit the original full compositor bodies.",
+    "No production GPU capability, public/demo imports, live guest integration, FPS or MIPS claim is made."
+  ]
+}

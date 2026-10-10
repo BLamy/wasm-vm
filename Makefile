@@ -2029,3 +2029,7 @@ verify-E6-T12g6j1:
 .PHONY: verify-E6-T12g6j2
 verify-E6-T12g6j2:
 	bash tools/verify-virgl-power.sh
+
+.PHONY: verify-E6-T12g6k
+verify-E6-T12g6k:
+	bash tools/verify-virgl-fragment-coordinates.sh
