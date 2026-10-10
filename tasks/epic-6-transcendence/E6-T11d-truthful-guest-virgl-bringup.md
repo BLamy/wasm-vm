@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18]
-blocked_on: E6-T11d18
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19]
+blocked_on: E6-T11d19
 estimate: S
 risk: high
 capstone: false
@@ -316,3 +316,7 @@ E6-T11d16 is independently verified at `3ec060c46a9743a62306ae409d0bf1a548d4a616
 ### 2026-10-10 — worker — uniform ranges verified; original buffer role reuse
 
 D17 is independently verified at `f489b8ed5599dfe9afeb7d7d1463655e768af418`. Its selected facet still rejects original index/other-data reuse, zero/combined creation hints. `node evidence/virgl-production-readiness/standard-buffer-role-gap.mjs` reproduces every negative role result on the unchanged old factories; source bytes and original metadata are pinned in the adjacent JSON. Ordered S task D18 closes this original allocation boundary using the existing fenced index read and private u32 normalization path. WebGL cross-class binding/copy restrictions forbid direct native aliasing. Production API/caps, actual guest Mesa/compositor and worker scanout/live deployment remain unqualified. The explicit user instruction continues this graphics chain ahead of unrelated general queue work.
+
+### 2026-10-10 — worker — buffer identity verified; sampler state gap
+
+E6-T11d18 is independently verified at `bdad14aff93ba70c09d60ab308df4d2024dce4ba`. The unchanged standard sampler decoder still rejects 25 of the 27 original REPEAT/CLAMP_TO_EDGE/MIRROR_REPEAT address combinations, and all original mip-filter states. `evidence/virgl-production-readiness/standard-sampler-gap.json` binds the literal packet probe and unchanged decoder/pinned enum/encoder/renderer hashes. Decode each packetHex using `decodeStandardUniformSubmission` to reproduce. Ordered S prerequisite E6-T11d19 executes these original core state fields through native samplers, preserving finite legacy admissions. GLES leaves reversed LOD bounds sampling undefined; their source words and native parameter values must be preserved without a fabricated pixel claim. Actual storage/API/capset qualification, RISC-V guest Mesa/compositor execution, production worker scanout and live deployment remain successors under the explicit user instruction to finish production guest graphics.

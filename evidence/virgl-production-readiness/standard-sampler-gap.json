@@ -1,0 +1,1102 @@
+{
+  "schema": "standard-sampler-readiness-v1",
+  "gitHead": "dd2ba352e8c0d9f32198b02f552d9f785388ec2d",
+  "sourceSha256": "f48738fb56a748643eb50082532adb336229de2fcce5f3fb20955cf399b0c73a",
+  "pinnedEnums": {
+    "path": "renderer/virgl-shader/vendor/src/gallium/include/pipe/p_defines.h",
+    "sha256": "29b02c15399768ab74054e711f6633c407cf5f952f591c046e7542b82e54a008"
+  },
+  "originalEncoder": {
+    "path": "/tmp/wasmvm-mesa-ubo-source/mesa-26.2.2/src/gallium/drivers/virgl/virgl_encode.c",
+    "sha256": "8999ff4398e9696c4b3a561f953270672a6f8d82f8e417c5d9de11ab1d284e2e"
+  },
+  "originalRenderer": {
+    "path": "/tmp/wasmvm-pinned-vrend-renderer.c",
+    "sha256": "be7e5c63fb501cb77bd5b2c13c332f8b93c49fd04d207f17d434932c237f4ea3"
+  },
+  "rows": [
+    {
+      "wrapS": 0,
+      "wrapT": 0,
+      "wrapR": 0,
+      "packetHex": "010709000903000000100000000000000000000000007a4400000000000000000000000000000000",
+      "old": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "uniform": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "wrapS": 0,
+      "wrapT": 0,
+      "wrapR": 2,
+      "packetHex": "010709000903000080100000000000000000000000007a4400000000000000000000000000000000",
+      "old": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "uniform": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "wrapS": 0,
+      "wrapT": 0,
+      "wrapR": 4,
+      "packetHex": "010709000903000000110000000000000000000000007a4400000000000000000000000000000000",
+      "old": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "uniform": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "wrapS": 0,
+      "wrapT": 2,
+      "wrapR": 0,
+      "packetHex": "010709000903000010100000000000000000000000007a4400000000000000000000000000000000",
+      "old": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "uniform": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "wrapS": 0,
+      "wrapT": 2,
+      "wrapR": 2,
+      "packetHex": "010709000903000090100000000000000000000000007a4400000000000000000000000000000000",
+      "old": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "uniform": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "wrapS": 0,
+      "wrapT": 2,
+      "wrapR": 4,
+      "packetHex": "010709000903000010110000000000000000000000007a4400000000000000000000000000000000",
+      "old": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "uniform": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "wrapS": 0,
+      "wrapT": 4,
+      "wrapR": 0,
+      "packetHex": "010709000903000020100000000000000000000000007a4400000000000000000000000000000000",
+      "old": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "uniform": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "wrapS": 0,
+      "wrapT": 4,
+      "wrapR": 2,
+      "packetHex": "0107090009030000a0100000000000000000000000007a4400000000000000000000000000000000",
+      "old": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "uniform": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "wrapS": 0,
+      "wrapT": 4,
+      "wrapR": 4,
+      "packetHex": "010709000903000020110000000000000000000000007a4400000000000000000000000000000000",
+      "old": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "uniform": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "wrapS": 2,
+      "wrapT": 0,
+      "wrapR": 0,
+      "packetHex": "010709000903000002100000000000000000000000007a4400000000000000000000000000000000",
+      "old": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "uniform": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "wrapS": 2,
+      "wrapT": 0,
+      "wrapR": 2,
+      "packetHex": "010709000903000082100000000000000000000000007a4400000000000000000000000000000000",
+      "old": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "uniform": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "wrapS": 2,
+      "wrapT": 0,
+      "wrapR": 4,
+      "packetHex": "010709000903000002110000000000000000000000007a4400000000000000000000000000000000",
+      "old": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "uniform": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "wrapS": 2,
+      "wrapT": 2,
+      "wrapR": 0,
+      "packetHex": "010709000903000012100000000000000000000000007a4400000000000000000000000000000000",
+      "old": {
+        "ok": true,
+        "profile": "virgl-tiny-commands-v1",
+        "sourceSha256": null,
+        "event": null,
+        "contextId": null,
+        "byteLength": 40,
+        "commands": [
+          {
+            "opcode": 1,
+            "name": "CREATE_OBJECT",
+            "objectType": 7,
+            "objectName": "SAMPLER_STATE",
+            "byteOffset": 0,
+            "byteLength": 40,
+            "payloadDwords": 9,
+            "fields": {
+              "handle": 777,
+              "wrapS": 2,
+              "wrapT": 2,
+              "wrapR": 0,
+              "minImageFilter": 0,
+              "minMipFilter": 2,
+              "magImageFilter": 0,
+              "compareMode": 0,
+              "compareFunction": 0,
+              "seamlessCubeMap": false,
+              "maxAnisotropy": 0,
+              "lodBias": 0,
+              "minLod": 0,
+              "maxLod": 1000,
+              "borderColor": [
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          }
+        ]
+      },
+      "standard": {
+        "ok": true,
+        "profile": "virgl-standard-commands-v1",
+        "sourceSha256": null,
+        "event": null,
+        "contextId": null,
+        "byteLength": 40,
+        "commands": [
+          {
+            "opcode": 1,
+            "name": "CREATE_OBJECT",
+            "objectType": 7,
+            "objectName": "SAMPLER_STATE",
+            "byteOffset": 0,
+            "byteLength": 40,
+            "payloadDwords": 9,
+            "fields": {
+              "handle": 777,
+              "wrapS": 2,
+              "wrapT": 2,
+              "wrapR": 0,
+              "minImageFilter": 0,
+              "minMipFilter": 2,
+              "magImageFilter": 0,
+              "compareMode": 0,
+              "compareFunction": 0,
+              "seamlessCubeMap": false,
+              "maxAnisotropy": 0,
+              "lodBias": 0,
+              "minLod": 0,
+              "maxLod": 1000,
+              "borderColor": [
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          }
+        ]
+      },
+      "uniform": {
+        "ok": true,
+        "profile": "virgl-standard-uniform-commands-v1",
+        "sourceSha256": null,
+        "event": null,
+        "contextId": null,
+        "byteLength": 40,
+        "commands": [
+          {
+            "opcode": 1,
+            "name": "CREATE_OBJECT",
+            "objectType": 7,
+            "objectName": "SAMPLER_STATE",
+            "byteOffset": 0,
+            "byteLength": 40,
+            "payloadDwords": 9,
+            "fields": {
+              "handle": 777,
+              "wrapS": 2,
+              "wrapT": 2,
+              "wrapR": 0,
+              "minImageFilter": 0,
+              "minMipFilter": 2,
+              "magImageFilter": 0,
+              "compareMode": 0,
+              "compareFunction": 0,
+              "seamlessCubeMap": false,
+              "maxAnisotropy": 0,
+              "lodBias": 0,
+              "minLod": 0,
+              "maxLod": 1000,
+              "borderColor": [
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "wrapS": 2,
+      "wrapT": 2,
+      "wrapR": 2,
+      "packetHex": "010709000903000092100000000000000000000000007a4400000000000000000000000000000000",
+      "old": {
+        "ok": true,
+        "profile": "virgl-tiny-commands-v1",
+        "sourceSha256": null,
+        "event": null,
+        "contextId": null,
+        "byteLength": 40,
+        "commands": [
+          {
+            "opcode": 1,
+            "name": "CREATE_OBJECT",
+            "objectType": 7,
+            "objectName": "SAMPLER_STATE",
+            "byteOffset": 0,
+            "byteLength": 40,
+            "payloadDwords": 9,
+            "fields": {
+              "handle": 777,
+              "wrapS": 2,
+              "wrapT": 2,
+              "wrapR": 2,
+              "minImageFilter": 0,
+              "minMipFilter": 2,
+              "magImageFilter": 0,
+              "compareMode": 0,
+              "compareFunction": 0,
+              "seamlessCubeMap": false,
+              "maxAnisotropy": 0,
+              "lodBias": 0,
+              "minLod": 0,
+              "maxLod": 1000,
+              "borderColor": [
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          }
+        ]
+      },
+      "standard": {
+        "ok": true,
+        "profile": "virgl-standard-commands-v1",
+        "sourceSha256": null,
+        "event": null,
+        "contextId": null,
+        "byteLength": 40,
+        "commands": [
+          {
+            "opcode": 1,
+            "name": "CREATE_OBJECT",
+            "objectType": 7,
+            "objectName": "SAMPLER_STATE",
+            "byteOffset": 0,
+            "byteLength": 40,
+            "payloadDwords": 9,
+            "fields": {
+              "handle": 777,
+              "wrapS": 2,
+              "wrapT": 2,
+              "wrapR": 2,
+              "minImageFilter": 0,
+              "minMipFilter": 2,
+              "magImageFilter": 0,
+              "compareMode": 0,
+              "compareFunction": 0,
+              "seamlessCubeMap": false,
+              "maxAnisotropy": 0,
+              "lodBias": 0,
+              "minLod": 0,
+              "maxLod": 1000,
+              "borderColor": [
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          }
+        ]
+      },
+      "uniform": {
+        "ok": true,
+        "profile": "virgl-standard-uniform-commands-v1",
+        "sourceSha256": null,
+        "event": null,
+        "contextId": null,
+        "byteLength": 40,
+        "commands": [
+          {
+            "opcode": 1,
+            "name": "CREATE_OBJECT",
+            "objectType": 7,
+            "objectName": "SAMPLER_STATE",
+            "byteOffset": 0,
+            "byteLength": 40,
+            "payloadDwords": 9,
+            "fields": {
+              "handle": 777,
+              "wrapS": 2,
+              "wrapT": 2,
+              "wrapR": 2,
+              "minImageFilter": 0,
+              "minMipFilter": 2,
+              "magImageFilter": 0,
+              "compareMode": 0,
+              "compareFunction": 0,
+              "seamlessCubeMap": false,
+              "maxAnisotropy": 0,
+              "lodBias": 0,
+              "minLod": 0,
+              "maxLod": 1000,
+              "borderColor": [
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "wrapS": 2,
+      "wrapT": 2,
+      "wrapR": 4,
+      "packetHex": "010709000903000012110000000000000000000000007a4400000000000000000000000000000000",
+      "old": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "uniform": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "wrapS": 2,
+      "wrapT": 4,
+      "wrapR": 0,
+      "packetHex": "010709000903000022100000000000000000000000007a4400000000000000000000000000000000",
+      "old": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "uniform": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "wrapS": 2,
+      "wrapT": 4,
+      "wrapR": 2,
+      "packetHex": "0107090009030000a2100000000000000000000000007a4400000000000000000000000000000000",
+      "old": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "uniform": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "wrapS": 2,
+      "wrapT": 4,
+      "wrapR": 4,
+      "packetHex": "010709000903000022110000000000000000000000007a4400000000000000000000000000000000",
+      "old": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "uniform": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "wrapS": 4,
+      "wrapT": 0,
+      "wrapR": 0,
+      "packetHex": "010709000903000004100000000000000000000000007a4400000000000000000000000000000000",
+      "old": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "uniform": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "wrapS": 4,
+      "wrapT": 0,
+      "wrapR": 2,
+      "packetHex": "010709000903000084100000000000000000000000007a4400000000000000000000000000000000",
+      "old": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "uniform": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "wrapS": 4,
+      "wrapT": 0,
+      "wrapR": 4,
+      "packetHex": "010709000903000004110000000000000000000000007a4400000000000000000000000000000000",
+      "old": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "uniform": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "wrapS": 4,
+      "wrapT": 2,
+      "wrapR": 0,
+      "packetHex": "010709000903000014100000000000000000000000007a4400000000000000000000000000000000",
+      "old": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "uniform": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "wrapS": 4,
+      "wrapT": 2,
+      "wrapR": 2,
+      "packetHex": "010709000903000094100000000000000000000000007a4400000000000000000000000000000000",
+      "old": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "uniform": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "wrapS": 4,
+      "wrapT": 2,
+      "wrapR": 4,
+      "packetHex": "010709000903000014110000000000000000000000007a4400000000000000000000000000000000",
+      "old": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "uniform": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "wrapS": 4,
+      "wrapT": 4,
+      "wrapR": 0,
+      "packetHex": "010709000903000024100000000000000000000000007a4400000000000000000000000000000000",
+      "old": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "uniform": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "wrapS": 4,
+      "wrapT": 4,
+      "wrapR": 2,
+      "packetHex": "0107090009030000a4100000000000000000000000007a4400000000000000000000000000000000",
+      "old": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "uniform": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "wrapS": 4,
+      "wrapT": 4,
+      "wrapR": 4,
+      "packetHex": "010709000903000024110000000000000000000000007a4400000000000000000000000000000000",
+      "old": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      },
+      "uniform": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only clamp-edge 2D nearest/linear non-mip samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    }
+  ]
+}
