@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10]
-blocked_on: E6-T11d10
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11]
+blocked_on: E6-T11d11
 estimate: S
 risk: high
 capstone: false
@@ -235,4 +235,18 @@ restores LAST before native draws, and proves original vertex identities and
 flat/smooth outputs through original packets and physical GPU buffers. Its
 historical default native facet remains isolated and unchanged. The user's
 instruction continues this graphics chain; points, complete profile/typed caps,
+real guest initialization, scanout and demo deployment remain later gates.
+
+### 2026-10-10 — worker — primitive assembly verified; point pipeline gap
+
+E6-T11d10 is independently verified at
+`c810cbef23caa7a19b090491ccc30c093d432518`. The original POINTS packet, fixed
+size4 and per-vertex rasterizer state still reject, as do complete original vertex
+PSIZE and fragment PCOORD input/system-value shaders. The authenticated negative
+record `evidence/virgl-production-readiness/standard-point-gap.json` names the
+complete compiler/runtime source closure and actual Wasm. Decode each `packetHex`
+with `decodeStandardSubmission` or translate each `stage`/`text` through
+`createVirglStandardShaderBridge().translate` to reproduce `unsupported-feature`.
+Ordered S prerequisite E6-T11d11 closes this single native point pipeline. The
+user's explicit request continues this graphics chain; complete API, typed caps,
 real guest initialization, scanout and demo deployment remain later gates.
