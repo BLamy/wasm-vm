@@ -29,10 +29,10 @@ export async function runAcceptance({seed=0x6c8e9cf5,fault=null}={}){
   const stride=width*4+1;planes.push({level,width,height,stride,offset,input});offset+=(height-1)*stride+width*4+3;
  }
  const backing=new Uint8Array(offset).fill(0xa7);for(const p of planes)for(let y=0;y<p.height;y++)backing.set(p.input.subarray(y*p.width*4,(y+1)*p.width*4),p.offset+y*p.stride);
- const r=rig(gl,c,{delay:2+(seed&1),fault}),row={seed,metadata,backing:await blob(report,backing),planes:[],views:[],transfers:[],refusals:[]};report.runs.push(row);for(const p of planes)row.planes.push({...p,input:await blob(report,p.input)});
+ const r=rig(gl,c,{delay:2+(seed&1),fault}),row={seed,metadata,backing:await blob(report,backing),planes:[],views:[],transfers:[],refusals:[]};let historical;report.runs.push(row);for(const p of planes)row.planes.push({...p,input:await blob(report,p.input)});
  try{
   const created=add(r,metadata,backing);row.generation=created.generation;
-  const historical=c.ok(createStandardColorResourceStore({backend:r.backend}),'fresh historical byte owner').store;const unselected=historical.createResource(metadata);c.same(unselected.ok,false,'unselected historical owner refuses original packed resource');row.refusals.push({kind:'unselected-owner',result:unselected});c.ok(historical.dispose(),'fresh historical owner cleanup');
+  historical=c.ok(createStandardColorResourceStore({backend:r.backend}),'fresh historical byte owner').store;const unselected=historical.createResource(metadata);c.same(unselected.ok,false,'unselected historical owner refuses original packed resource');row.refusals.push({kind:'unselected-owner',result:unselected});
   for(const p of planes){const wire=packet(6,p),prepared=c.ok(r.store.prepareTransfer(1,decode(wire)),'fresh original odd transfer');r.setLabel('original-float-upload-'+p.level);c.ok(r.store.executeTransfer(prepared.ticket),'actual fresh original packed upload');r.operations.push({label:r.label,wire:hex(wire),layout:prepared.layout});}
   row.uploadFence=await physicalFence(r,'fresh-asymmetric-packed-upload');const texture=r.allocations[0].storage.texture;
   for(const p of planes){const native=nativeRead(gl,texture,p.width,p.height,p.level),observation={level:p.level,width:p.width,height:p.height,native:await blob(report,native)};row.planes[p.level].observed=observation;
@@ -52,7 +52,7 @@ export async function runAcceptance({seed=0x6c8e9cf5,fault=null}={}){
   const other=planes[0],readWire=packet(6,other,2),sync=c.ok(r.store.prepareTransfer(1,decode(readWire)),'fresh complete synchronous transfer');r.setLabel('original-float-sync-read-0');c.ok(r.store.executeTransfer(sync.ticket),'fresh actual complete synchronous read');const dense=new Uint8Array(other.input.length);for(let y=0;y<other.height;y++)dense.set(c.ok(r.store.readBacking(6,other.offset+y*other.stride,other.width*4),'fresh complete public row').bytes,y*other.width*4);
   const request=c.ok(r.asyncAccess.prepareTransfer(1,decode(readWire)),'fresh complete actual PBO transfer');r.setLabel('original-float-staged-43-0');c.ok(r.asyncAccess.beginTransferRead(request.ticket),'fresh actual PBO issue');const result=await poll(r,request.ticket),readFence=r.trace.events.filter(e=>e.name==='clientWaitSync').at(-1);row.transfers.push({level:0,sync:await blob(report,dense),reads:[{opcode:43,wire:hex(readWire),layout:request.layout,fence:readFence,nativeBytes:await blob(report,result.bytes)}]});
   const actual=new Uint8Array(new Float32Array(original(result.bytes)).buffer);oracle(c,other.input,actual,'fresh PBO original fields');c.ok(r.asyncAccess.release(request.ticket),'fresh consumed actual PBO cleanup');c.same(gl.getError(),gl.NO_ERROR,'fresh native experiment leaves no error');
- }finally{await finish(r,report,row);}
+ }finally{await finish(r,report,row);if(historical){c.ok(historical.dispose(),'fresh empty historical owner cleanup after shared backend use');row.historicalFinal=historical.inspect();}}
  // Exercise the unchanged default/byte branches embedded in changed expressions.
  report.legacy=[];
  for(const format of [1,2,233,77]){
