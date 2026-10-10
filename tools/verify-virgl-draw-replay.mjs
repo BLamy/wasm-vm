@@ -22,7 +22,7 @@ assert.ok(options.sabotage === undefined || ['vertex', 'index', 'texel', 'consta
 const output = path.resolve(options.output);
 await fs.mkdir(output, { recursive: true });
 const codePaths = [
-  'renderer/virgl-command/decoder.mjs', 'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs',
+  'renderer/virgl-command/decoder.mjs', 'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs',
   'renderer/virgl-command/resources-README.md',
   'renderer/virgl-command/constant-domain.mjs', 'renderer/virgl-command/state.mjs', 'renderer/virgl-command/cache.mjs', 'renderer/virgl-command/state-README.md', 'renderer/virgl-command/draw-README.md',
   'renderer/virgl-command/tests/draw-acceptance.mjs', 'renderer/virgl-shader/index.mjs',

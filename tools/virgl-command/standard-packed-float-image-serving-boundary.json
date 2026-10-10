@@ -1,0 +1,137 @@
+{
+  "schema": "original-packed-import-serving-boundary-v1",
+  "predecessor": "a5085b5491f24b3c700fb7cef7b1629c2efef914",
+  "authority": "test-server-source-declarations-only",
+  "changes": [
+    {
+      "path": "tools/verify-virgl-async-jobs.mjs",
+      "before": "'renderer/virgl-command/float-images.mjs'",
+      "after": "'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs'"
+    },
+    {
+      "path": "tools/verify-virgl-blend-equations.mjs",
+      "before": "'renderer/virgl-command/float-images.mjs'",
+      "after": "'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs'"
+    },
+    {
+      "path": "tools/verify-virgl-bounded-loops.mjs",
+      "before": "'renderer/virgl-command/float-images.mjs'",
+      "after": "'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs'"
+    },
+    {
+      "path": "tools/verify-virgl-color-formats.mjs",
+      "before": "'renderer/virgl-command/float-images.mjs'",
+      "after": "'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs'"
+    },
+    {
+      "path": "tools/verify-virgl-constant-compiler.mjs",
+      "before": "'renderer/virgl-command/float-images.mjs'",
+      "after": "'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs'"
+    },
+    {
+      "path": "tools/verify-virgl-constant-domains.mjs",
+      "before": "'renderer/virgl-command/float-images.mjs'",
+      "after": "'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs'"
+    },
+    {
+      "path": "tools/verify-virgl-constants.mjs",
+      "before": "'renderer/virgl-command/float-images.mjs'",
+      "after": "'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs'"
+    },
+    {
+      "path": "tools/verify-virgl-control.mjs",
+      "before": "'renderer/virgl-command/float-images.mjs'",
+      "after": "'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs'"
+    },
+    {
+      "path": "tools/verify-virgl-depth-formats.mjs",
+      "before": "'renderer/virgl-command/float-images.mjs'",
+      "after": "'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs'"
+    },
+    {
+      "path": "tools/verify-virgl-draw-replay.mjs",
+      "before": "'renderer/virgl-command/float-images.mjs'",
+      "after": "'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs'"
+    },
+    {
+      "path": "tools/verify-virgl-float-vertex-fetch.mjs",
+      "before": "'renderer/virgl-command/float-images.mjs'",
+      "after": "'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs'"
+    },
+    {
+      "path": "tools/verify-virgl-indirect-constants.mjs",
+      "before": "'renderer/virgl-command/float-images.mjs'",
+      "after": "'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs'"
+    },
+    {
+      "path": "tools/verify-virgl-inline-uploads.mjs",
+      "before": "'renderer/virgl-command/float-images.mjs'",
+      "after": "'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs'"
+    },
+    {
+      "path": "tools/verify-virgl-object-state.mjs",
+      "before": "'renderer/virgl-command/float-images.mjs'",
+      "after": "'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs'"
+    },
+    {
+      "path": "tools/verify-virgl-pairs.mjs",
+      "before": "'renderer/virgl-command/float-images.mjs'",
+      "after": "'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs'"
+    },
+    {
+      "path": "tools/verify-virgl-raster-depth.mjs",
+      "before": "'renderer/virgl-command/float-images.mjs'",
+      "after": "'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs'"
+    },
+    {
+      "path": "tools/verify-virgl-render-cache.mjs",
+      "before": "'renderer/virgl-command/float-images.mjs'",
+      "after": "'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs'"
+    },
+    {
+      "path": "tools/verify-virgl-resource-transfers.mjs",
+      "before": "'renderer/virgl-command/float-images.mjs'",
+      "after": "'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs'"
+    },
+    {
+      "path": "tools/verify-virgl-standard-float-images-adversarial.mjs",
+      "before": "'renderer/virgl-command/float-images.mjs'",
+      "after": "'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs'"
+    },
+    {
+      "path": "tools/verify-virgl-standard-float-images.mjs",
+      "before": "'renderer/virgl-command/float-images.mjs'",
+      "after": "'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs'"
+    },
+    {
+      "path": "tools/verify-virgl-standard-texture-storage-adversarial.mjs",
+      "before": "'renderer/virgl-command/float-images.mjs'",
+      "after": "'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs'"
+    },
+    {
+      "path": "tools/verify-virgl-standard-texture-storage.mjs",
+      "before": "'renderer/virgl-command/float-images.mjs'",
+      "after": "'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs'"
+    },
+    {
+      "path": "tools/verify-virgl-structured-conditionals.mjs",
+      "before": "'renderer/virgl-command/float-images.mjs'",
+      "after": "'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs'"
+    },
+    {
+      "path": "tools/verify-virgl-texture-views.mjs",
+      "before": "'renderer/virgl-command/float-images.mjs'",
+      "after": "'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs'"
+    },
+    {
+      "path": "tools/verify-virgl-vertex-constants.mjs",
+      "before": "'renderer/virgl-command/float-images.mjs'",
+      "after": "'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs'"
+    },
+    {
+      "path": "tools/verify-virgl-standard-uniform-bindings.mjs",
+      "before": "\"renderer/virgl-command/float-images.mjs\"",
+      "after": "\"renderer/virgl-command/float-images.mjs\", \"renderer/virgl-command/packed-float-images.mjs\""
+    }
+  ]
+}

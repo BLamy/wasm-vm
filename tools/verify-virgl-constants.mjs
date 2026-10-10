@@ -231,7 +231,7 @@ function mutateServed(filename, original, report) {
   return altered;
 }
 const { ORIGINAL_INPUTS } = await import('../renderer/virgl-shader/tests/components.mjs');
-const runtime = ['renderer/virgl-command/constant-domain.mjs','renderer/virgl-command/decoder.mjs','renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs','renderer/virgl-command/state.mjs', 'renderer/virgl-command/cache.mjs','renderer/virgl-command/tests/constants.mjs','renderer/virgl-command/tests/constant-shaders.json','tools/virgl-constants/decoder.mjs', 'renderer/virgl-command/color-images.mjs'];
+const runtime = ['renderer/virgl-command/constant-domain.mjs','renderer/virgl-command/decoder.mjs','renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs','renderer/virgl-command/state.mjs', 'renderer/virgl-command/cache.mjs','renderer/virgl-command/tests/constants.mjs','renderer/virgl-command/tests/constant-shaders.json','tools/virgl-constants/decoder.mjs', 'renderer/virgl-command/color-images.mjs'];
 const runtimePins = await Promise.all(runtime.map(async filename => {const bytes=await fs.readFile(path.join(repo,filename));return {path:filename,size:bytes.length,sha256:createHash('sha256').update(bytes).digest('hex')};}));
 await runVirglBrowser({options,task:'E6-T12e3b',boundary:'authored raw184-word constant packets; actual command renderer; conservative active-prefix reflection; production disabled',
  reportFields:{currentGuest3dAdvertisement:false}, modulePath:'/renderer/virgl-command/tests/constants.mjs',windowReportKey:'__virglConstantsReport',

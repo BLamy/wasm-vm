@@ -22,7 +22,7 @@ const sourcePaths = [...new Set([
  'renderer/virgl-shader/UPSTREAM.json','renderer/virgl-shader/bridge.c','renderer/virgl-shader/build.sh',
  'tools/verify-virgl-standard-float-images.mjs',
  'renderer/virgl-command/color-images.mjs',
- 'renderer/virgl-command/float-images.mjs',
+ 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs',
  'renderer/virgl-command/tests/standard-float-image-rig.mjs',
  'renderer/virgl-command/tests/standard-float-images.mjs',
  'renderer/virgl-command/tests/standard-float-image-boundaries.mjs',

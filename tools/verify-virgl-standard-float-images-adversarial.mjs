@@ -16,7 +16,7 @@ for (let i = 2; i < process.argv.length; i += 2) {
 assert.ok(options.output && options.inputs); assert.ok(!options.fault || options.fault === 'precision');
 const output = path.resolve(options.output); await fs.mkdir(output, {recursive: true});
 const input = await fs.readFile(options.inputs), spec = JSON.parse(input);
-const names = ['renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/color-images.mjs',
+const names = ['renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/color-images.mjs',
   'renderer/virgl-command/tests/standard-float-image-adversarial.mjs', 'tools/verify-virgl-standard-float-images-adversarial.mjs', 'tools/virgl-command/standard-float-image-adversarial.py'];
 const sources = new Map();
 for (const name of names) sources.set(name, await fs.readFile(path.join(root, name)));
