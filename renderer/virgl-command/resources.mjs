@@ -75,12 +75,12 @@ function checkedProduct(a, b, maximum, message) {
   require(a === 0 || b <= Math.floor(maximum / a), "out-of-bounds", message);
   return a * b;
 }
-function normalizeMetadata(value, limits, uniform = false, bufferRoles = false) {
+function normalizeMetadata(value, limits, uniform = false, bufferRoles = false, mipmaps = false) {
   const meta = record(value, META_KEYS);
   for (const key of META_KEYS) uint(meta[key], key, ["id", "width", "height", "depth", "arraySize"].includes(key));
-  require(meta.depth === 1 && meta.arraySize === 1 && meta.lastLevel === 0 && meta.nrSamples === 0 && meta.flags === 0,
-    "unsupported-resource", "Only one-level, single-layer, single-sample resources without flags are supported.");
-  let kind, byteLength;
+  require(meta.depth === 1 && meta.arraySize === 1 && (meta.lastLevel === 0 || mipmaps && meta.target === 2 && [2, 67, 233].includes(meta.format)) && meta.nrSamples === 0 && meta.flags === 0,
+    "unsupported-resource", mipmaps ? "Only qualified 2D levels, one layer, one sample and no flags are supported." : "Only one-level, single-layer, single-sample resources without flags are supported.");
+  let kind, byteLength, levels;
   if (meta.target === 0 && meta.format === 64 && meta.height === 1) {
     kind = bufferRoles && (meta.bind & ~112) === 0 ? "standard-buffer" : ({ 16: "vertex-buffer", 32: "index-buffer", 524288: "staging", ...(uniform ? { 64: "uniform-buffer", 80: "uniform-buffer" } : {}) })[meta.bind];
     require(kind !== undefined, "unsupported-resource", "Unsupported buffer binding class.");
@@ -99,9 +99,26 @@ function normalizeMetadata(value, limits, uniform = false, bufferRoles = false) 
     kind = "texture";
     byteLength = checkedProduct(checkedProduct(meta.width, meta.height, limits.resourceBytes, "Texture allocation is too large."), 4,
       limits.resourceBytes, "Texture allocation is too large.");
+    if (mipmaps && meta.lastLevel > 0) {
+      // Validate the maximum first: guest level words never control an unbounded
+      // loop or JavaScript's masked shift counts. NPOT dimensions round down.
+      require(meta.lastLevel <= Math.floor(Math.log2(Math.max(meta.width, meta.height))),
+        "unsupported-resource", "Mip chain extends beyond the final 1x1 level.");
+      levels = []; byteLength = 0;
+      for (let level = 0, width = meta.width, height = meta.height; level <= meta.lastLevel; level++) {
+        const bytes = checkedProduct(checkedProduct(width, height, limits.resourceBytes, "Mip allocation is too large."), 4,
+          limits.resourceBytes, "Mip allocation is too large.");
+        require(bytes <= limits.resourceBytes - byteLength, "limit-exceeded", "Complete mip chain exceeds the resource byte limit.");
+        levels.push({ level, width, height, byteLength: bytes }); byteLength += bytes;
+        width = Math.max(1, Math.floor(width / 2)); height = Math.max(1, Math.floor(height / 2));
+      }
+      // Historical draw/view consumers require kind=texture and therefore cannot
+      // silently sample the new allocation before their own view qualification.
+      kind = "mip-texture";
+    }
   }
   require(byteLength <= limits.resourceBytes, "limit-exceeded", "Resource exceeds per-resource byte limit.");
-  return freeze({ ...meta, kind, byteLength });
+  return freeze({ ...meta, kind, byteLength, ...(levels ? { levels } : {}) });
 }
 function inlineWords(value) {
   // The wire submission cap leaves at most 65524 words after its inline header.
@@ -148,21 +165,22 @@ function normalizedFields(value) {
 function layoutFor(meta, fields, backingBytes, limits) {
   uint(backingBytes, "backingByteLength");
   require(meta.kind !== "staging", "unsupported-resource", "Staging resources have no GPU transfer storage.");
-  require(fields.resourceHandle === meta.id && fields.level === 0, "invalid-transfer", "Resource identity or level mismatch.");
+  require(fields.resourceHandle === meta.id && fields.level <= meta.lastLevel, "invalid-transfer", "Resource identity or level mismatch.");
+  const selected = meta.kind === "mip-texture" ? meta.levels[fields.level] : meta;
   const box = fields.box;
-  for (const [origin, extent, bound] of [[box.x, box.width, meta.width], [box.y, box.height, meta.height], [box.z, box.depth, meta.depth]]) {
+  for (const [origin, extent, bound] of [[box.x, box.width, selected.width], [box.y, box.height, selected.height], [box.z, box.depth, meta.depth]]) {
     require(origin <= bound && extent <= bound - origin, "out-of-bounds", "Transfer box exceeds logical resource extent.");
   }
-  const depth = meta.kind === "depth-texture", texture = meta.kind === "texture" || depth;
+  const depth = meta.kind === "depth-texture", texture = meta.kind === "texture" || meta.kind === "mip-texture" || depth;
   require(texture || (box.y === 0 && box.z === 0 && box.height === 1 && box.depth === 1), "invalid-transfer", "Buffer coordinates are byte-addressed one-dimensional ranges.");
   require(box.z === 0 && box.depth === 1, "invalid-transfer", "Only one 2D layer is supported.");
   const pixelBytes = depth ? 2 : texture ? 4 : 1;
   const rowBytes = checkedProduct(box.width, pixelBytes, limits.transferBytes, "Transfer row exceeds byte limit.");
-  const defaultStride = checkedProduct(meta.width, pixelBytes, U32, "Default stride overflows u32.");
+  const defaultStride = checkedProduct(selected.width, pixelBytes, U32, "Default stride overflows u32.");
   const rowStride = fields.stride || defaultStride;
   require(rowStride >= rowBytes, "out-of-bounds", "Row stride overlaps the transferred row.");
   const minimumLayer = checkedProduct(rowStride, box.height, U32, "Layer stride calculation overflows u32.");
-  const layerStride = fields.layerStride || checkedProduct(rowStride, meta.height, U32, "Default layer stride overflows u32.");
+  const layerStride = fields.layerStride || checkedProduct(rowStride, selected.height, U32, "Default layer stride overflows u32.");
   require(layerStride >= minimumLayer, "out-of-bounds", "Layer stride overlaps transferred rows.");
   const span = checkedProduct(box.height - 1, rowStride, U32, "Row footprint overflows u32.");
   require(rowBytes <= U32 - span, "out-of-bounds", "Transfer footprint overflows u32.");
@@ -177,6 +195,7 @@ function layoutFor(meta, fields, backingBytes, limits) {
   const direction = (fields.direction === 2 || fields.flags === 3) ? "readback" : "upload";
   const packedBytes = depth && direction === "readback" ? checkedProduct(tightBytes, 2, RESOURCE_LIMITS.scratchBytes, "Depth conversion exceeds scratch byte limit.") : tightBytes;
   return freeze({ kind: texture ? "texture" : "buffer", box: { ...box }, offset, rowBytes, rowCount: box.height,
+    ...(meta.kind === "mip-texture" ? { level: fields.level, levelWidth: selected.width, levelHeight: selected.height } : {}),
     rowStride, layerStride, footprintBytes, requiredEnd: offset + footprintBytes, tightBytes,
     direction, ...(depth ? { scratchBytes: packedBytes, conversionBytes: direction === "readback" ? packedBytes : 0,
       stagingBytes: direction === "readback" ? checkedProduct(packedBytes, 2, RESOURCE_LIMITS.gpuBytes, "Depth staging exceeds GPU byte limit.") : 0 } : {}) });
@@ -247,7 +266,17 @@ export function computeStandardBufferTransferLayout(metadata, fields, backingByt
   });
 }
 
-function createStore(options, uniform, bufferRoles = false) {
+/** Host-selected original multilevel 2D storage; view/draw consumers stay gated. */
+export function createStandardTextureResourceStore(options) { return createStore(options, true, true, true); }
+
+export function computeStandardTextureTransferLayout(metadata, fields, backingByteLength, overrides = {}) {
+  return result(() => {
+    const limits = limitsFor(overrides);
+    return success({ layout: layoutFor(normalizeMetadata(metadata, limits, true, true, true), normalizedFields(fields), backingByteLength, limits) });
+  });
+}
+
+function createStore(options, uniform, bufferRoles = false, mipmaps = false) {
   return result(() => {
     const config = record(options, ["backend", "limits"], ["backend"]), backend = config.backend;
     require(backend && typeof backend === "object", "invalid-input", "A transfer backend is required.");
@@ -419,7 +448,7 @@ function createStore(options, uniform, bufferRoles = false) {
         return success({ context: freeze({ id, generation: ctx.generation }) });
       }),
       createResource: operation((metadata) => {
-        const meta = normalizeMetadata(metadata, limits, uniform, bufferRoles);
+        const meta = normalizeMetadata(metadata, limits, uniform, bufferRoles, mipmaps);
         require(!resources.has(meta.id), "resource-exists", "Resource ID is already public.");
         require(live.size < limits.resources, "limit-exceeded", "Live/retained resource count limit exceeded.");
         const allocationBytes = meta.kind === "staging" ? 0 : meta.byteLength;
@@ -496,8 +525,8 @@ function createStore(options, uniform, bufferRoles = false) {
         const ctx = context(contextId), res = resource(id); membership(ctx, res);
         require(res.storage !== null, "unsupported-resource", "Staging resources have no GPU storage.");
         require(typeof role === "string" && ["view", "surface", "depth-surface", "vertex", "index", "readback", ...(uniform ? ["uniform"] : [])].includes(role), "invalid-input", "Unknown storage lease role.");
-        require(role === "readback" || (bufferRoles && res.meta.kind === "standard-buffer" && ["vertex", "index", "uniform"].includes(role)) || (role === "view" && res.meta.kind === "texture" && (res.meta.bind & 8) !== 0) ||
-          (role === "surface" && res.meta.kind === "texture" && (res.meta.bind & 2) !== 0) ||
+        require(role === "readback" || (bufferRoles && res.meta.kind === "standard-buffer" && ["vertex", "index", "uniform"].includes(role)) || (role === "view" && ["texture", "mip-texture"].includes(res.meta.kind) && (res.meta.bind & 8) !== 0) ||
+          (role === "surface" && ["texture", "mip-texture"].includes(res.meta.kind) && (res.meta.bind & 2) !== 0) ||
           (role === "depth-surface" && res.meta.kind === "depth-texture" && res.meta.bind === 1) ||
           (role === "vertex" && (res.meta.kind === "vertex-buffer" || uniform && res.meta.kind === "uniform-buffer")) ||
           (role === "uniform" && uniform && ["vertex-buffer", "uniform-buffer"].includes(res.meta.kind)) || (role === "index" && res.meta.kind === "index-buffer"),
@@ -841,12 +870,12 @@ export function createWebGL2TransferBackend(gl) {
       gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false); gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
       gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.NONE);
     };
-    const initializeXAlpha = (texture) => {
+    const initializeXAlpha = (texture, level = 0) => {
       const previous = gl.getParameter(gl.DRAW_FRAMEBUFFER_BINDING), mask = gl.getParameter(gl.COLOR_WRITEMASK);
       const scissor = gl.isEnabled(gl.SCISSOR_TEST);
       gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, framebuffer);
       try {
-        gl.framebufferTexture2D(gl.DRAW_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+        gl.framebufferTexture2D(gl.DRAW_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, level);
         gl.drawBuffers([gl.COLOR_ATTACHMENT0]);
         require(gl.checkFramebufferStatus(gl.DRAW_FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE, "backend-error", "Packed color initialization framebuffer is incomplete.");
         gl.disable(gl.SCISSOR_TEST); gl.colorMask(true, true, true, true);
@@ -925,21 +954,21 @@ export function createWebGL2TransferBackend(gl) {
           check();
           let storage = null;
           try {
-            if (meta.kind === "texture" || meta.kind === "depth-texture") {
+            if (meta.kind === "texture" || meta.kind === "mip-texture" || meta.kind === "depth-texture") {
               if (meta.format === 16) require(gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER, gl.HIGH_FLOAT)?.precision >= 23,
                 "unsupported-resource", "Faithful UN16 reconstruction requires highp binary32 shader precision.");
               const texture = gl.createTexture();
               require(texture !== null, "backend-error", "WebGL texture allocation failed.");
               storage = Object.freeze({ kind: "texture", texture });
               gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, texture);
-              gl.texStorage2D(gl.TEXTURE_2D, 1, colorFormat(meta).internal, meta.width, meta.height);
+              gl.texStorage2D(gl.TEXTURE_2D, meta.lastLevel + 1, colorFormat(meta).internal, meta.width, meta.height);
               gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
               gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
               gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
               gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
               // RGB8 has implicit alpha one. RGB10_A2 needs actual stored A=3,
               // then the state executor masks destination alpha writes.
-              if (meta.format === 233) initializeXAlpha(texture);
+              if (meta.format === 233) for (let level = 0; level <= meta.lastLevel; level++) initializeXAlpha(texture, level);
             } else {
               const buffer = gl.createBuffer();
               require(buffer !== null, "backend-error", "WebGL buffer allocation failed.");
@@ -966,7 +995,7 @@ export function createWebGL2TransferBackend(gl) {
           } else {
             gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, storage.texture);
             const profile = colorFormat(meta);
-            gl.texSubImage2D(gl.TEXTURE_2D, 0, layout.box.x, layout.box.y, layout.box.width, layout.box.height,
+            gl.texSubImage2D(gl.TEXTURE_2D, layout.level ?? 0, layout.box.x, layout.box.y, layout.box.width, layout.box.height,
               profile.upload, profile.type, nativeUpload(meta.format, bytes));
           }
           check();
@@ -993,7 +1022,7 @@ export function createWebGL2TransferBackend(gl) {
           } else {
             gl.bindFramebuffer(gl.READ_FRAMEBUFFER, framebuffer);
             try {
-              gl.framebufferTexture2D(gl.READ_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, storage.texture, 0);
+              gl.framebufferTexture2D(gl.READ_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, storage.texture, layout.level ?? 0);
               gl.readBuffer(gl.COLOR_ATTACHMENT0);
               require(gl.checkFramebufferStatus(gl.READ_FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE, "backend-error", "Transfer framebuffer is incomplete.");
               const profile = colorFormat(meta);
@@ -1020,7 +1049,7 @@ export function createWebGL2TransferBackend(gl) {
               try {
                 if (meta.format === 16) converted = packDepth(storage, layout.box);
                 gl.bindFramebuffer(gl.READ_FRAMEBUFFER, framebuffer);
-                gl.framebufferTexture2D(gl.READ_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, converted ?? storage.texture, 0);
+                gl.framebufferTexture2D(gl.READ_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, converted ?? storage.texture, converted ? 0 : layout.level ?? 0);
                 gl.readBuffer(gl.COLOR_ATTACHMENT0);
                 require(gl.checkFramebufferStatus(gl.READ_FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE, "backend-error", "Readback framebuffer is incomplete.");
                 // Numeric offset selects the PBO overload: no CPU destination here.

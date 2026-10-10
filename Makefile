@@ -2225,3 +2225,7 @@ verify-E6-T11d19:
 .PHONY: verify-E6-T11d19-adversarial
 verify-E6-T11d19-adversarial:
 	bash tools/verify-virgl-standard-sampler-state-adversarial.sh
+
+.PHONY: verify-E6-T11d20
+verify-E6-T11d20:
+	bash tools/verify-virgl-standard-texture-storage.sh

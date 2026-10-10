@@ -337,3 +337,19 @@ means the full resource width in guest bytes, including partial boxes; layer
 stride0 means the full resource height. Dense repacking skips guest row padding.
 Inline writes never modify guest backing and pending inline tickets bind resource
 and membership generations, independently of unrelated backing changes.
+
+
+## Host-selected multilevel 2D storage
+
+`createStandardTextureResourceStore` and `computeStandardTextureTransferLayout`
+extend the original buffer owner with existing color formats2/67/233 and bounded
+2D mip chains. `decodeStandardTextureSubmission` admits original op9/43/45 level
+words0..14; each resource still bounds the actual selected level. Dimensions round
+down per mip, with a minimum of one, and GPU charges sum every allocated level.
+Selected default strides use the full selected level dimensions. `mip-texture`
+metadata includes frozen `levels` and cannot pass historical view/draw/scanout
+kind checks. Transfers allocate no CPU image mirror; reads use the selected native
+FBO/PBO level and existing fences/identity retirement. Packed X-alpha initializes
+each native level. Historical factories retain their previous admissions and
+metadata/layout shapes. This storage facet grants no full/subrange sampler view,
+complete API, production negotiation or actual guest rendering by itself.

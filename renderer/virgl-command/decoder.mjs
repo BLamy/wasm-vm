@@ -2,6 +2,7 @@
 export const PROFILE = "virgl-tiny-commands-v1";
 export const STANDARD_PROFILE = "virgl-standard-commands-v1";
 export const STANDARD_UNIFORM_PROFILE = "virgl-standard-uniform-commands-v1";
+export const STANDARD_TEXTURE_PROFILE = "virgl-standard-texture-commands-v1";
 export const LIMITS = Object.freeze({
   submissionBytes: 262144,
   commands: 4096,
@@ -96,12 +97,12 @@ class DecodeFault extends Error {
 
 /** Indexes in Packet match the pinned protocol: header=0, first payload word=1. */
 class Packet {
-  constructor(view, byteOffset, opcode, length, standard = false, uniform = false) {
+  constructor(view, byteOffset, opcode, length, standard = false, uniform = false, textures = false) {
     this.view = view;
     this.byteOffset = byteOffset;
     this.opcode = opcode;
     this.length = length;
-    this.standard = standard; this.uniform = uniform;
+    this.standard = standard; this.uniform = uniform; this.textures = textures;
   }
   fail(code, message) { throw new DecodeFault(code, message, this.byteOffset, this.opcode); }
   require(condition, code, message) { if (!condition) this.fail(code, message); }
@@ -323,7 +324,7 @@ function decodeTransfer(p, copy, inline = false) {
   const resourceHandle = p.handle(1), level = p.u(2), usage = p.u(3), stride = p.u(4), layerStride = p.u(5);
   // Pinned vrend_decode_transfer_common ignores usage; preserve this opaque word.
   // In particular, do not interpret modern Mesa flags using the old renderer enum.
-  p.require(level === 0, "unsupported-feature", "Only level zero transfers are supported.");
+  p.require(p.textures ? level <= 14 : level === 0, "unsupported-feature", p.textures ? "Transfer level exceeds the selected storage profile." : "Only level zero transfers are supported.");
   const box = { x: p.u(6), y: p.u(7), z: p.u(8), width: p.u(9), height: p.u(10), depth: p.u(11) };
   for (const [origin, extent] of [[box.x, box.width], [box.y, box.height], [box.z, box.depth]]) {
     p.require(extent > 0 && extent <= MAX_I32 && origin <= MAX_I32 - extent,
@@ -547,7 +548,12 @@ export function decodeStandardUniformSubmission(bytes, provenance = {}) {
   return decode(bytes, provenance, true, true);
 }
 
-function decode(bytes, provenance, standard, uniform = false) {
+/** Host-owned facet; a guest provenance/options property cannot enable levels. */
+export function decodeStandardTextureSubmission(bytes, provenance = {}) {
+  return decode(bytes, provenance, true, true, true);
+}
+
+function decode(bytes, provenance, standard, uniform = false, textures = false) {
   let byteLength, buffer, byteOffset;
   try {
     const typedArrayPrototype = Object.getPrototypeOf(Uint8Array.prototype);
@@ -579,7 +585,7 @@ function decode(bytes, provenance, standard, uniform = false) {
     for (let offset = 0; offset < byteLength;) {
       const header = view.getUint32(offset, true), opcode = header & 255, objectType = (header >>> 8) & 255, payloadDwords = header >>> 16;
       const packetByteLength = (payloadDwords + 1) * 4;
-      const p = new Packet(view, offset, opcode, payloadDwords, standard, uniform);
+      const p = new Packet(view, offset, opcode, payloadDwords, standard, uniform, textures);
       p.require(commands.length < LIMITS.commands, "limit-exceeded", "Submission exceeds packet count limit.");
       p.require(packetByteLength <= byteLength - offset, "truncated-payload", "Packet payload exceeds submission.");
       p.require(Object.hasOwn(COMMAND_NAMES, opcode) || uniform && opcode === 27, "unsupported-command", "Unknown or unsupported command.");
@@ -594,5 +600,5 @@ function decode(bytes, provenance, standard, uniform = false) {
     if (error instanceof DecodeFault) return error.result;
     throw error; // Unexpected implementation defects are not disguised as guest errors.
   }
-  return freeze({ ok: true, profile: uniform ? STANDARD_UNIFORM_PROFILE : standard ? STANDARD_PROFILE : PROFILE, ...labels, byteLength, commands });
+  return freeze({ ok: true, profile: textures ? STANDARD_TEXTURE_PROFILE : uniform ? STANDARD_UNIFORM_PROFILE : standard ? STANDARD_PROFILE : PROFILE, ...labels, byteLength, commands });
 }
