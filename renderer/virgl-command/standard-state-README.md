@@ -53,3 +53,6 @@ state from literal command bytes and checks the saved physical pixels.
 This factory is an isolated production prerequisite. It does not negotiate
 guest capabilities or enter the demo's production device path. Full API,
 actual guest Mesa initialization, scanout and performance need their own proof.
+
+[Pure integer inputs](integer-vertex-README.md) use host-derived typed compiler
+variants and native integer arrays/generic words in the standard async factory.

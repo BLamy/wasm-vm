@@ -81,4 +81,10 @@ const char *bridge_translate_standard(int stage, const char *text, size_t length
 const char *bridge_translate_standard_pair(const char *vertex_text, size_t vertex_length,
                                            const char *fragment_text, size_t fragment_length);
 
+/* Host vertex-format specialization only. Disjoint 16-bit masks must name
+ * declared vertex attributes; no guest text key or numeric authority is added. */
+const char *bridge_translate_standard_pair_typed(const char *vertex_text, size_t vertex_length,
+                                                 const char *fragment_text, size_t fragment_length,
+                                                 uint32_t signed_inputs, uint32_t unsigned_inputs);
+
 #endif

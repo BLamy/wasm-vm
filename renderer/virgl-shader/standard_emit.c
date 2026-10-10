@@ -34,7 +34,8 @@ static void named(const struct standard_profile *p, unsigned file, unsigned inde
    else if (file == TGSI_FILE_IMMEDIATE) snprintf(name, 48, "imm%u", index);
    else if (file == TGSI_FILE_INPUT) {
       const struct standard_io *io = &p->input[index];
-      if (!p->stage) snprintf(name, 48, "floatBitsToUint(in_%u)", index);
+      if (!p->stage) snprintf(name, 48,
+         (p->signed_inputs | p->unsigned_inputs) & (1u << index) ? "uvec4(in_%u)" : "floatBitsToUint(in_%u)", index);
       else if (io->semantic == STD_POSITION) snprintf(name, 48, "floatBitsToUint(gl_FragCoord)");
       else if (io->semantic == STD_PCOORD) snprintf(name, 48, "wv_point_coord()");
       else if (io->flat) snprintf(name, 48, "vso_g%u", io->sid);
@@ -72,7 +73,7 @@ static void interface(struct output *o, const struct standard_profile *p)
       const struct standard_io *list = f == STD_IN ? p->input : p->output;
       for (unsigned j = 0; j < STANDARD_IO; ++j) if (p->declared[f][j]) {
          const struct standard_io *io = &list[j];
-         if (io->semantic == STD_ATTRIBUTE) put(o, "in vec4 in_%u;\n", j);
+         if (io->semantic == STD_ATTRIBUTE) put(o, "in %s in_%u;\n", standard_attribute_type(p, j), j);
          else if (io->semantic == STD_GENERIC)
             put(o, "%s %s %s vso_g%u;\n", io->flat ? "flat" : "smooth",
                 f == STD_IN ? "in" : "out", io->flat ? "uvec4" : "vec4", io->sid);

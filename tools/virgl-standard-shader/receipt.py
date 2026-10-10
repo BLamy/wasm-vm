@@ -59,8 +59,10 @@ def main(directory):
     for p in (directory/'stack').glob('*.su'):
         for line in p.read_text().splitlines():
             fields=line.split('\t');frames[fields[0].rsplit(':',1)[-1]]=int(fields[1])
-    need(frames.get('bridge_translate_standard_pair',262144)<120000 and frames.get('standard_convert',262144)<40000 and frames.get('standard_emit',262144)<4096,'owned optimized Wasm stack bounds')
-    stack=dict(pair=frames['bridge_translate_standard_pair'],conversion=frames['standard_convert'],emitter=frames['standard_emit'],largestUpstream=frames.get('vrend_convert_shader'),stackBytes=262144)
+    pair=frames.get('bridge_translate_standard_pair',262144)+frames.get('standard_pair',0)
+    typed=frames.get('bridge_translate_standard_pair_typed',0)+frames.get('standard_pair',0)
+    need(max(pair,typed)<120000 and frames.get('standard_convert',262144)<40000 and frames.get('standard_emit',262144)<4096,'owned optimized Wasm stack bounds')
+    stack=dict(pair=pair,typedPair=typed,pairHelper=frames.get('standard_pair',0),conversion=frames['standard_convert'],emitter=frames['standard_emit'],largestUpstream=frames.get('vrend_convert_shader'),stackBytes=262144)
     paths=git('ls-files','--','renderer/virgl-shader','tools/virgl-standard-shader','tools/verify-virgl-standard-shader.sh','tools/lib/virgl-browser-runner.mjs','tools/setup-virgl-emsdk.sh','tools/virgl-original-programs','tools/virgl-original-corpus','tools/virgl-original-c580','tools/virgl-92cb-geometry','tools/virgl-92cb-raster','tools/virgl-capture/validate.py','tools/verify-virgl-shader.mjs','tools/verify-virgl-raw-bits.mjs','evidence/virgl-production-readiness','evidence/virgl-workload-inventory/captures/es2gears/shaders','evidence/virgl-workload-inventory/captures/es2gears/manifest.json','evidence/virgl-workload-inventory/captures/es2gears/summary.json','evidence/virgl-workload-inventory/captures/es2gears/events.jsonl','evidence/virgl-workload-inventory/es2gears-inventory.json','Makefile',f'tasks/epic-6-transcendence/{TASK}-standard-shader-compiler.md').splitlines()
     paths=sorted(set(paths)|served_sources)
     files={p.relative_to(directory).as_posix():sha(p.read_bytes()) for p in directory.rglob('*') if p.is_file() and p.name!='receipt.json'}

@@ -6,7 +6,7 @@ import {compactModel,compareCompactPixels} from '../../../tools/virgl-command/st
 const word=n=>new Uint32Array(new Float32Array([n]).buffer)[0];
 const tgsi=(stage,decl,body)=>(stage===0?'VERT':'FRAG')+'\n'+decl+'\n'+[...body,'END'].map((line,i)=>i+': '+line+'\n').join('');
 const families=[[28,4,'float'],[48,2,'unorm'],[56,2,'snorm'],[64,1,'unorm'],[74,1,'snorm'],[91,2,'half']];
-function fixtureFormat(format){for(const [base,bytes,kind]of [...families,[32,4,'unorm'],[40,4,'snorm'],[36,4,'uscaled'],[44,4,'sscaled'],[52,2,'uscaled'],[60,2,'sscaled'],[69,1,'uscaled'],[82,1,'sscaled']])if(format>=base&&format<base+4)return {components:format-base+1,bytes,kind};throw Error('unsupported fixture format');}
+function fixtureFormat(format){for(const [base,bytes,kind]of [...families,[32,4,'unorm'],[40,4,'snorm'],[36,4,'uscaled'],[44,4,'sscaled'],[52,2,'uscaled'],[60,2,'sscaled'],[69,1,'uscaled'],[82,1,'sscaled'],[177,1,'uint'],[181,1,'sint'],[185,2,'uint'],[189,2,'sint'],[193,4,'uint'],[197,4,'sint']])if(format>=base&&format<base+4)return {components:format-base+1,bytes,kind};throw Error('unsupported fixture format');}
 export function compactSpec(options={}){
  const s={format:67,instances:1,indexed:true,indexSize:2,indexOffset:12,start:5,enabled:false,restartIndex:61,divisor:0,bufferOffset:1,sourceOffset:0,
   positionOffset:1,positionSourceOffset:3,positionStride:16,shared:false,seed:0xa419029b,wordLane:null,negativeY:false,...options},fmt=fixtureFormat(s.format);
@@ -29,7 +29,7 @@ export function compactSpec(options={}){
   let value=s.values?.[ordinal%s.values.length]?.[lane];
   if(fmt.kind==='half'){value=s.halfBits?.[ordinal%s.halfBits.length]?.[lane]??[0x3400,0xb800,0x3800,0x3c00][(lane+ordinal)%4];q.setUint16(at,value,true);}
   else if(fmt.kind==='float')q.setFloat32(at,value??(16+random()%192)/256,true);
-  else {const bits=fmt.bytes*8,signed=fmt.kind==='snorm'||fmt.kind==='sscaled',top=signed?2**(bits-1)-1:2**bits-1;
+  else {const bits=fmt.bytes*8,signed=['snorm','sscaled','sint'].includes(fmt.kind),top=signed?2**(bits-1)-1:2**bits-1;
    value=value??(ordinal===0?(signed?-(2**(bits-1)):0):ordinal===1?top:Math.floor(top*.37)+lane);
    if(fmt.bytes===1){if(signed)q.setInt8(at,value);else q.setUint8(at,value);}else if(fmt.bytes===2){if(signed)q.setInt16(at,value,true);else q.setUint16(at,value,true);}else if(signed)q.setInt32(at,value,true);else q.setUint32(at,value,true);
   }
@@ -65,15 +65,16 @@ export function compactRig(gl,bridge,c,s,options={}){
  const factory=config=>{const wrapped=new Proxy(config.gl,{get(target,name){const value=Reflect.get(target,name,target);if(typeof value!=='function')return value;return(...args)=>{
   if(['drawArrays','drawElements','drawArraysInstanced','drawElementsInstanced'].includes(name)){
    const p=gl.getParameter(gl.CURRENT_PROGRAM),u=gl.getUniformLocation(p,'wv_point_size');
-   const attributes=Array.from({length:gl.getProgramParameter(p,gl.ACTIVE_ATTRIBUTES)},(_,i)=>{const a=gl.getActiveAttrib(p,i),location=gl.getAttribLocation(p,a.name);if(location<0)return {name:a.name,location};const get=n=>gl.getVertexAttrib(location,gl[n]),generic=[...get('CURRENT_VERTEX_ATTRIB')];
-    return {name:a.name,location,type:get('VERTEX_ATTRIB_ARRAY_TYPE'),normalized:get('VERTEX_ATTRIB_ARRAY_NORMALIZED'),integer:get('VERTEX_ATTRIB_ARRAY_INTEGER'),components:get('VERTEX_ATTRIB_ARRAY_SIZE'),stride:get('VERTEX_ATTRIB_ARRAY_STRIDE'),
-     offset:gl.getVertexAttribOffset(location,gl.VERTEX_ATTRIB_ARRAY_POINTER),divisor:get('VERTEX_ATTRIB_ARRAY_DIVISOR'),enabled:get('VERTEX_ATTRIB_ARRAY_ENABLED'),genericValues:generic,genericWords:[...new Uint32Array(new Float32Array(generic).buffer)],buffer:r.trace.id(get('VERTEX_ATTRIB_ARRAY_BUFFER_BINDING'))};});
-   nativeState.push({label:r.currentLabel,pointSize:[...gl.getUniform(p,u)],attributes});
+   const attributes=Array.from({length:gl.getProgramParameter(p,gl.ACTIVE_ATTRIBUTES)},(_,i)=>{const a=gl.getActiveAttrib(p,i),location=gl.getAttribLocation(p,a.name);if(location<0)return {name:a.name,location};const get=n=>gl.getVertexAttrib(location,gl[n]),generic=get('CURRENT_VERTEX_ATTRIB');
+    return {name:a.name,location,shaderType:a.type,type:get('VERTEX_ATTRIB_ARRAY_TYPE'),normalized:get('VERTEX_ATTRIB_ARRAY_NORMALIZED'),integer:get('VERTEX_ATTRIB_ARRAY_INTEGER'),components:get('VERTEX_ATTRIB_ARRAY_SIZE'),stride:get('VERTEX_ATTRIB_ARRAY_STRIDE'),
+     offset:gl.getVertexAttribOffset(location,gl.VERTEX_ATTRIB_ARRAY_POINTER),divisor:get('VERTEX_ATTRIB_ARRAY_DIVISOR'),enabled:get('VERTEX_ATTRIB_ARRAY_ENABLED'),genericKind:generic.constructor.name,genericValues:[...generic],genericWords:[...new Uint32Array(generic.buffer,generic.byteOffset,generic.length)],buffer:r.trace.id(get('VERTEX_ATTRIB_ARRAY_BUFFER_BINDING'))};});
+   const shaders=gl.getAttachedShaders(p).map(shader=>({type:gl.getShaderParameter(shader,gl.SHADER_TYPE),source:gl.getShaderSource(shader)}));
+   nativeState.push({label:r.currentLabel,program:r.trace.id(p),pointSize:[...gl.getUniform(p,u)],attributes,shaders});
   }
   if(name==='bufferData'&&args[0]===gl.ELEMENT_ARRAY_BUFFER&&args[1] instanceof Uint32Array)normalized.push({buffer:gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING),nativeBuffer:r.trace.id(gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING)),label:r.currentLabel,bytes:args[1].byteLength,deleted:false});
   if(name==='deleteBuffer'){const entry=normalized.find(e=>e.buffer===args[0]);if(entry){const before=gl.getParameter(gl.COPY_READ_BUFFER_BINDING);gl.bindBuffer(gl.COPY_READ_BUFFER,entry.buffer);entry.raw=new Uint8Array(entry.bytes);gl.getBufferSubData(gl.COPY_READ_BUFFER,0,entry.raw);gl.bindBuffer(gl.COPY_READ_BUFFER,before);entry.deleted=true;}}
   return value.apply(target,args);
- };}});return createVirglStandardAsyncRenderer({...config,gl:wrapped,primitiveAssembly:'lists'});};
+ };}});return createVirglStandardAsyncRenderer({...config,gl:wrapped,primitiveAssembly:'lists',...(options.stateLimits?{limits:options.stateLimits}:{}),...(options.cacheLimits?{cacheLimits:options.cacheLimits}:{})});};
  r=rig(gl,bridge,c,{width:s.width,height:s.height,...options,factory});r.normalized=normalized;r.nativeState=nativeState;r.range=[...gl.getParameter(gl.ALIASED_POINT_SIZE_RANGE)];return r;
 }
 export async function compactSubmit(r,ctx,bytes,label,onYield=null){r.currentLabel=label;return submit(r,ctx,bytes,label,onYield);}
@@ -98,8 +99,11 @@ export async function compactFrame(r,record,oracle={model:compactModel,compare:c
  if(model.normalize)c.same(normalized.find(e=>e.nativeBuffer===call.indexBuffer).blob.sha256,hex(new Uint8Array(await crypto.subtle.digest('SHA-256',model.normalized))),'original compact normalized native indices');
  const state=frame.native.state.at(-1);c.same(state.pointSize,model.pointUniform,'native compact fixed point uniform');
  for(const fetch of model.fetches){const got=draw.vertexFetches.find(a=>a.attributeIndex===fetch.attributeIndex),a=state.attributes.find(a=>a.name==='in_'+fetch.attributeIndex),keys=['resourceId','stride','offset','components','sourceFormat','elementBytes','nativeType','normalized','firstByte','requiredEnd','divisor','nativeDivisor','firstElement','lastElement'];
-  c.same(Object.fromEntries(keys.map(k=>[k,got[k]])),Object.fromEntries(keys.map(k=>[k,fetch[k]])),'original compact fetch '+fetch.attributeIndex);c.same(a.enabled,!fetch.constant,'actual compact array/generic');c.same(a.divisor,fetch.nativeDivisor,'actual compact divisor');c.same(a.integer,false,'native floating input');
-  if(fetch.constant){c.same(a.genericValues,fetch.genericValues,'native generic compact values');checkWords(c,got.componentWords,fetch.componentWords,fetch.genericValues,'retained compact scalar words');checkWords(c,a.genericWords,fetch.genericValues.map(word),fetch.genericValues,'physical generic words');
+  c.same(Object.fromEntries(keys.map(k=>[k,got[k]])),Object.fromEntries(keys.map(k=>[k,fetch[k]])),'original compact fetch '+fetch.attributeIndex);c.same(a.enabled,!fetch.constant,'actual compact array/generic');c.same(a.divisor,fetch.nativeDivisor,'actual compact divisor');
+  if(fetch.integer){c.same(got.nativeIntegerInput,true,'retained integer input');c.same(a.shaderType,fetch.shaderType,'physical typed shader input');if(!fetch.constant)c.same(a.integer,true,'native integer pointer');}
+  else c.same(a.integer,false,'native floating input');
+  if(fetch.constant){c.same(a.genericValues,fetch.genericValues,'native generic compact values');checkWords(c,got.componentWords,fetch.componentWords,fetch.genericValues,'retained compact scalar words');checkWords(c,a.genericWords,fetch.integer?fetch.genericWords:fetch.genericValues.map(word),fetch.genericValues,'physical generic words');
+   if(fetch.integer)c.same(a.genericKind,fetch.signed?'Int32Array':'Uint32Array','physical typed generic kind');
    const reads=r.trace.events.filter(e=>e.label===record.label&&e.name==='getBufferSubData');c.same(reads.some(e=>e.bytes===fetch.elementBytes&&e.hex===hex(r.bufferBytes.get(fetch.resourceId).subarray(fetch.offset,fetch.offset+fetch.elementBytes))),true,'actual retained compact read width and bytes');
   }else {c.same([a.type,a.normalized,a.components,a.stride,a.offset],[fetch.nativeType,fetch.normalized,fetch.components,fetch.stride,fetch.offset],'physical compact format pointer');c.same(a.buffer,buffers.find(b=>b.resourceId===fetch.resourceId).nativeBuffer,'original compact GPU array identity');}
  }

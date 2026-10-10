@@ -1,0 +1,163 @@
+{
+  "status": "HELD",
+  "unhitRuntimeBranches": [
+    {
+      "source": "renderer/virgl-command/constant-domain.mjs",
+      "line": 974,
+      "region": "throw error;",
+      "classification": "waived",
+      "reason": "Preserves an unexpected non-DomainFault exception. All malformed own-data/proxy inputs are converted to DomainFault by descriptors()/record() and are exercised; arbitrary internal implementation exceptions are outside successful typed translation. The same rethrow exists in the old normalizers."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 322,
+      "region": ": freeze(unwrap(response))",
+      "classification": "waived",
+      "reason": "Textually unchanged nonstandard private pair normalization arm. The host standard selector is true in this boundary; private inputTypes stays empty because inputTypesFor only derives masks for standard. Direct actual old/raw/private compiler anchors retain the legacy boundary."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 505,
+      "region": "? `|blend-source-constant-v1:${blendFold}`",
+      "classification": "waived",
+      "reason": "Textually unchanged pre-existing blend-source constant cache key arm. The only new behavior appends inputTypes.key after the existing expression; all zero-mask/private cases append nothing. No blend semantics are changed or claimed by this task."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 522,
+      "region": ": {}",
+      "classification": "waived",
+      "reason": "Empty object spread for the existing nonstandard selector; typed masks cannot be produced in that factory. Textually unchanged fallback adds no state or behavior; current standard tests exercise both signed/unsigned and floating declarations."
+    }
+  ],
+  "nonExecutableLines": [
+    {
+      "source": "renderer/virgl-shader/bridge.c",
+      "line": 2519,
+      "text": "static const char *standard_pair(const char *vertex_text, size_t vertex_length,",
+      "classification": "waived",
+      "reason": "Comment, prototype, struct field, function signature or closing brace with no executable LLVM source region. Each new function body and ternary/guard branch has positive full-region coverage."
+    },
+    {
+      "source": "renderer/virgl-shader/bridge.c",
+      "line": 2520,
+      "text": "const char *fragment_text, size_t fragment_length,",
+      "classification": "waived",
+      "reason": "Comment, prototype, struct field, function signature or closing brace with no executable LLVM source region. Each new function body and ternary/guard branch has positive full-region coverage."
+    },
+    {
+      "source": "renderer/virgl-shader/bridge.c",
+      "line": 2521,
+      "text": "uint32_t signed_inputs, uint32_t unsigned_inputs)",
+      "classification": "waived",
+      "reason": "Comment, prototype, struct field, function signature or closing brace with no executable LLVM source region. Each new function body and ternary/guard branch has positive full-region coverage."
+    },
+    {
+      "source": "renderer/virgl-shader/bridge.c",
+      "line": 2562,
+      "text": "const char *bridge_translate_standard_pair(const char *vertex_text, size_t vertex_length,",
+      "classification": "waived",
+      "reason": "Comment, prototype, struct field, function signature or closing brace with no executable LLVM source region. Each new function body and ternary/guard branch has positive full-region coverage."
+    },
+    {
+      "source": "renderer/virgl-shader/bridge.c",
+      "line": 2563,
+      "text": "const char *fragment_text, size_t fragment_length)",
+      "classification": "waived",
+      "reason": "Comment, prototype, struct field, function signature or closing brace with no executable LLVM source region. Each new function body and ternary/guard branch has positive full-region coverage."
+    },
+    {
+      "source": "renderer/virgl-shader/bridge.c",
+      "line": 2567,
+      "text": "const char *bridge_translate_standard_pair_typed(const char *vertex_text, size_t vertex_length,",
+      "classification": "waived",
+      "reason": "Comment, prototype, struct field, function signature or closing brace with no executable LLVM source region. Each new function body and ternary/guard branch has positive full-region coverage."
+    },
+    {
+      "source": "renderer/virgl-shader/bridge.c",
+      "line": 2568,
+      "text": "const char *fragment_text, size_t fragment_length,",
+      "classification": "waived",
+      "reason": "Comment, prototype, struct field, function signature or closing brace with no executable LLVM source region. Each new function body and ternary/guard branch has positive full-region coverage."
+    },
+    {
+      "source": "renderer/virgl-shader/bridge.c",
+      "line": 2569,
+      "text": "uint32_t signed_inputs, uint32_t unsigned_inputs)",
+      "classification": "waived",
+      "reason": "Comment, prototype, struct field, function signature or closing brace with no executable LLVM source region. Each new function body and ternary/guard branch has positive full-region coverage."
+    },
+    {
+      "source": "renderer/virgl-shader/bridge.h",
+      "line": 84,
+      "text": "/* Host vertex-format specialization only. Disjoint 16-bit masks must name",
+      "classification": "waived",
+      "reason": "Comment, prototype, struct field, function signature or closing brace with no executable LLVM source region. Each new function body and ternary/guard branch has positive full-region coverage."
+    },
+    {
+      "source": "renderer/virgl-shader/bridge.h",
+      "line": 85,
+      "text": "* declared vertex attributes; no guest text key or numeric authority is added. */",
+      "classification": "waived",
+      "reason": "Comment, prototype, struct field, function signature or closing brace with no executable LLVM source region. Each new function body and ternary/guard branch has positive full-region coverage."
+    },
+    {
+      "source": "renderer/virgl-shader/bridge.h",
+      "line": 86,
+      "text": "const char *bridge_translate_standard_pair_typed(const char *vertex_text, size_t vertex_length,",
+      "classification": "waived",
+      "reason": "Comment, prototype, struct field, function signature or closing brace with no executable LLVM source region. Each new function body and ternary/guard branch has positive full-region coverage."
+    },
+    {
+      "source": "renderer/virgl-shader/bridge.h",
+      "line": 87,
+      "text": "const char *fragment_text, size_t fragment_length,",
+      "classification": "waived",
+      "reason": "Comment, prototype, struct field, function signature or closing brace with no executable LLVM source region. Each new function body and ternary/guard branch has positive full-region coverage."
+    },
+    {
+      "source": "renderer/virgl-shader/bridge.h",
+      "line": 88,
+      "text": "uint32_t signed_inputs, uint32_t unsigned_inputs);",
+      "classification": "waived",
+      "reason": "Comment, prototype, struct field, function signature or closing brace with no executable LLVM source region. Each new function body and ternary/guard branch has positive full-region coverage."
+    },
+    {
+      "source": "renderer/virgl-shader/bridge.h",
+      "line": 89,
+      "text": "",
+      "classification": "waived",
+      "reason": "Comment, prototype, struct field, function signature or closing brace with no executable LLVM source region. Each new function body and ternary/guard branch has positive full-region coverage."
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.h",
+      "line": 29,
+      "text": "/* Host-derived vertex format types, never TGSI/guest shader keys. */",
+      "classification": "waived",
+      "reason": "Comment, prototype, struct field, function signature or closing brace with no executable LLVM source region. Each new function body and ternary/guard branch has positive full-region coverage."
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.h",
+      "line": 30,
+      "text": "uint16_t signed_inputs, unsigned_inputs;",
+      "classification": "waived",
+      "reason": "Comment, prototype, struct field, function signature or closing brace with no executable LLVM source region. Each new function body and ternary/guard branch has positive full-region coverage."
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.h",
+      "line": 34,
+      "text": "static inline const char *standard_attribute_type(const struct standard_profile *p, unsigned index)",
+      "classification": "waived",
+      "reason": "Comment, prototype, struct field, function signature or closing brace with no executable LLVM source region. Each new function body and ternary/guard branch has positive full-region coverage."
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.h",
+      "line": 39,
+      "text": "",
+      "classification": "waived",
+      "reason": "Comment, prototype, struct field, function signature or closing brace with no executable LLVM source region. Each new function body and ternary/guard branch has positive full-region coverage."
+    }
+  ],
+  "allNewSemanticV8BranchesHit": true,
+  "allAddedCBranchDirectionsHit": true
+}

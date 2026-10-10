@@ -1,0 +1,18 @@
+{
+  "schema": "standard-integer-critic-seal-v1",
+  "task": "E6-T11d14",
+  "verdict": "verified",
+  "workerRuntimeHead": "12bb78e1b7f4b9d636f8d46091b9a1a1766fbe4b",
+  "workerSubmission": "b7a9f1c670f8a986941f2e9c287d800578dce4c2",
+  "promotedTestHead": "700f424c8a9af222c00be63146016df2417a488d",
+  "workerArchiveSha256": "a4f79256677d3f5ef6e2de5f1b2c15ca6b85b6b9c7f7ba5ccbb222424459b93a",
+  "records": 431,
+  "recordIndexSha256": "2b40681c03315a8c48db4b7b43ba8cb7fb7e73aa9ff92f914bdc81a8bab0a907",
+  "archiveSha256": "bba5c7dbc13d369a0954e19f161e764652a7153772730844f72dec29dcb07345",
+  "archiveBytes": 2574148,
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "productionDrawAuthority": false,
+  "portableDomainCertified": false,
+  "authority": "isolated-standard-pure-integer-fetch"
+}

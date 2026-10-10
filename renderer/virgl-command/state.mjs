@@ -1,9 +1,9 @@
 /** Typed VirGL state and bounded triangle draws. See state-README.md and draw-README.md. */
-import { decodeSubmission, decodeStandardSubmission, floatingVertexFormat } from "./decoder.mjs";
+import { decodeSubmission, decodeStandardSubmission, vertexFormat } from "./decoder.mjs";
 import { LIMITS as SHADER_LIMITS } from "../virgl-shader/index.mjs";
 import { createKeyCache, hashKey } from "./cache.mjs";
 import { parseConstantDomain, checkFiniteBank, checkIndirectBank, checkLoopBank, checkRadialBank, checkRasterBank, checkConversionBank, checkExactBank, COORDINATE_KEY, DISCARD_KEY,
-  parseStandardShaderMetadata, normalizeStandardShaderResult, normalizeStandardShaderPair, deriveStandardShaderInterface } from "./constant-domain.mjs";
+  parseStandardShaderMetadata, normalizeStandardShaderResult, normalizeStandardShaderPair, normalizeStandardShaderTypedPair, deriveStandardShaderInterface } from "./constant-domain.mjs";
 
 export const STATE_PROFILE = "virgl-tiny-state-v1";
 export const STATE_LIMITS = Object.freeze({ contexts: 8, subContexts: 16, objects: 256,
@@ -18,9 +18,10 @@ export const CACHE_LIMITS = Object.freeze({ translations: 128, translationBytes:
 const NAMES = ["NULL", "BLEND", "RASTERIZER", "DSA", "SHADER", "VERTEX_ELEMENTS", "SAMPLER_VIEW", "SAMPLER_STATE", "SURFACE"];
 const BINDINGS = { 1: "blend", 2: "rasterizer", 3: "dsa", 5: "vertexElements" };
 const DRAW_MODES = Object.freeze({ 0: "POINTS", 1: "LINES", 2: "LINE_LOOP", 3: "LINE_STRIP", 4: "TRIANGLES", 5: "TRIANGLE_STRIP", 6: "TRIANGLE_FAN" });
-const vertexComponents = (element) => floatingVertexFormat(element.sourceFormat).components;
+const vertexComponents = (element) => vertexFormat(element.sourceFormat).components;
 function constantVertexValues(bytes, sourceFormat) {
-  const format = floatingVertexFormat(sourceFormat), values = new Float32Array([0, 0, 0, 1]), words = [];
+  const format = vertexFormat(sourceFormat), values = format.integer ?
+    format.kind === "sint" ? new Int32Array([0, 0, 0, 1]) : new Uint32Array([0, 0, 0, 1]) : new Float32Array([0, 0, 0, 1]), words = [];
   const input = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength), output = new DataView(values.buffer);
   for (let lane = 0; lane < format.components; lane++) {
     const at = lane * format.scalarBytes;
@@ -31,7 +32,7 @@ function constantVertexValues(bytes, sourceFormat) {
       value = exponent === 31 ? fraction ? NaN : sign * Infinity :
         sign * (exponent === 0 ? fraction * 2 ** -24 : (1024 + fraction) * 2 ** (exponent - 25));
     } else {
-      const signed = format.kind === "snorm" || format.kind === "sscaled", bits = format.scalarBytes * 8;
+      const signed = ["snorm", "sscaled", "sint"].includes(format.kind), bits = format.scalarBytes * 8;
       const scalar = format.scalarBytes === 1 ? signed ? input.getInt8(at) : input.getUint8(at) :
         format.scalarBytes === 2 ? signed ? input.getInt16(at, true) : input.getUint16(at, true) :
         signed ? input.getInt32(at, true) : input.getUint32(at, true);
@@ -308,13 +309,17 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       translationCache.put(sub, key, translated, 1024 + 2 * (key.length + JSON.stringify(translated).length));
       return translated;
     };
-    const translatedPair = (sub, vertex, fragment, interfaceKey, validate) => {
-      const key = JSON.stringify([sub.generation, "pair", vertex.fields.text, fragment.fields.text, interfaceKey]);
+    const translatedPair = (sub, vertex, fragment, interfaceKey, validate, inputTypes = null) => {
+      const key = JSON.stringify([sub.generation, "pair", vertex.fields.text, fragment.fields.text, interfaceKey,
+        ...(inputTypes?.key ? [inputTypes.key] : [])]);
       const cached = translationCache.get(sub, key);
       if (cached) { validate(cached); return cached; }
       work.pairTranslations++;
-      const response = shaderBridge.translatePair({ vertexText: vertex.fields.text, fragmentText: fragment.fields.text });
-      const translated = standard ? unwrap(normalizeStandardShaderPair(response)) : freeze(unwrap(response));
+      const request = { vertexText: vertex.fields.text, fragmentText: fragment.fields.text };
+      const masks = inputTypes?.key ? { signedMask: inputTypes.signedMask, unsignedMask: inputTypes.unsignedMask } : null;
+      const response = masks ? shaderBridge.translatePairTyped({ ...request, ...masks }) : shaderBridge.translatePair(request);
+      const translated = standard ? unwrap(masks ? normalizeStandardShaderTypedPair(response, masks) :
+        normalizeStandardShaderPair(response)) : freeze(unwrap(response));
       validate(translated);
       translationCache.put(sub, key, translated, 1024 + 2 * (key.length + JSON.stringify(translated).length));
       return translated;
@@ -470,10 +475,24 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       require(variant.length <= SHADER_LIMITS.glslBytes, "limit-exceeded", "Blend-specialized GLSL exceeds the compiler output bound.");
       return variant;
     };
+    const inputTypesFor = (sub, vertex) => {
+      let signedMask = 0, unsignedMask = 0;
+      if (standard) for (const attribute of vertex.translation.metadata.attributes) {
+        const element = sub.vertexElements?.fields.elements[attribute.index];
+        const format = element ? vertexFormat(element.sourceFormat) : null;
+        if (format?.integer) {
+          if (format.kind === "sint") signedMask |= 1 << attribute.index;
+          else unsignedMask |= 1 << attribute.index;
+        }
+      }
+      return Object.freeze({ signedMask, unsignedMask,
+        key: signedMask || unsignedMask ? `integer-input-v1:${signedMask}:${unsignedMask}` : "" });
+    };
     function link(sub, vertex, fragment) {
       require(vertex?.fields.stage === 0 && fragment?.fields.stage === 1, "missing-shader", "Link requires a vertex shader and a fragment shader.");
       const sampling = samplingFor(sub, fragment, vertex);
       const blendFold = blendFoldFor(sub, fragment);
+      const inputTypes = inputTypesFor(sub, vertex);
       let vs = vertex.translation.metadata;
       const fs = fragment.translation.metadata;
       const interfaceInfo = standard ? (() => {
@@ -483,11 +502,11 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       // Generations identify these exact owned immutable bodies/metadata, not public names.
       // Derive the complete pair interface even when another vertex used this fragment.
       const key = `${sub.generation}:${vertex.generation}:${fragment.generation}:${interfaceInfo.key}|${sampling.key}` +
-        (blendFold ? `|blend-source-constant-v1:${blendFold}` : "");
+        (blendFold ? `|blend-source-constant-v1:${blendFold}` : "") + (inputTypes.key ? `|${inputTypes.key}` : "");
       const cached = programCache.get(sub, key);
       if (cached) return cached;
       const program = { key, generation: generation(), vertex, fragment, native: null, blocks: [], uniforms: [], samplers: [],
-        interfaceKey: interfaceInfo.key, samplingKey: sampling.key, samplingViews: sampling.views,
+        interfaceKey: interfaceInfo.key, samplingKey: sampling.key, samplingViews: sampling.views, inputKey: inputTypes.key,
         variantShader: null, fragmentVariantShader: null, variantBytes: 0,
         blendFold, blendUniform: null,
         reflection: { attributes: [], uniforms: [], samplers: [], uniformBlocks: [], outputs: [], ...(standard ? { systemValues: [], rasterUniforms: [] } : {}) },
@@ -497,14 +516,18 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           require(typeof shaderBridge.translatePair === "function", "shader-link-error", interfaceInfo.coordinates ?
             "Fragment coordinates require the checked pair compiler." : interfaceInfo.discard ?
             "Fragment discard requires the checked pair compiler." : "Flat interpolation requires the checked pair compiler.");
-          const expectedVertex = { ...vs, outputs: vs.outputs.map((output) => output.semantic === "GENERIC" ?
+          require(!inputTypes.key || typeof shaderBridge.translatePairTyped === "function", "shader-link-error", "Integer inputs require the checked typed pair compiler.");
+          const typedAttribute = attribute => ({ ...attribute, type: inputTypes.signedMask & (1 << attribute.index) ? "ivec4" :
+            inputTypes.unsignedMask & (1 << attribute.index) ? "uvec4" : "vec4" });
+          const expectedVertex = { ...vs, ...(standard ? { inputs: vs.inputs.map(typedAttribute), attributes: vs.attributes.map(typedAttribute) } : {}),
+            outputs: vs.outputs.map((output) => output.semantic === "GENERIC" ?
             { ...output, ...(standard ? { type: interfaceInfo.inputs.get(output.semanticIndex)?.interpolation === "flat" ? "uvec4" : "vec4" } : {}),
               interpolation: interfaceInfo.inputs.get(output.semanticIndex)?.interpolation ?? "smooth" } : output) };
           const pair = translatedPair(sub, vertex, fragment, interfaceInfo.key, (pair) => require(pair.interfaceKey === interfaceInfo.key &&
             pair.fragment?.glsl === fragment.translation.glsl && JSON.stringify(pair.fragment?.metadata) === JSON.stringify(fs) &&
             typeof pair.vertex?.glsl === "string" && pair.vertex.glsl.length <= SHADER_LIMITS.glslBytes &&
             /^#version 300 es\b/m.test(pair.vertex.glsl) && JSON.stringify(pair.vertex.metadata) === JSON.stringify(expectedVertex),
-          "shader-link-error", "Pair compiler output does not match the selected shader interface."));
+          "shader-link-error", "Pair compiler output does not match the selected shader interface."), inputTypes);
           if (standard || interfaceInfo.flat) {
             program.vertexText = pair.vertex.glsl; vs = pair.vertex.metadata;
           }
@@ -546,7 +569,8 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
             program.reflection.systemValues.push({ ...system, location: -1, type: actual.type });
             continue;
           }
-          require(declared && actual.type === gl.FLOAT_VEC4 && actual.size === 1 && declared.index < maxAttributes, "shader-reflection-error", "Unknown active vertex attribute.");
+          require(declared && actual.type === ({ vec4: gl.FLOAT_VEC4, ivec4: gl.INT_VEC4, uvec4: gl.UNSIGNED_INT_VEC4 })[declared.type] &&
+            actual.size === 1 && declared.index < maxAttributes, "shader-reflection-error", "Unknown active vertex attribute.");
           const location = gl.getAttribLocation(program.native, actual.name);
           require(location >= 0, "shader-reflection-error", "Missing vertex attribute location.");
           program.reflection.attributes.push({ ...declared, location, type: actual.type });
@@ -695,7 +719,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       if (!elements) return;
       for (const element of elements.fields.elements) {
         const buffer = buffers[element.vertexBufferIndex]; if (!buffer) continue;
-        const format = floatingVertexFormat(element.sourceFormat), offset = buffer.fields.offset + element.sourceOffset;
+        const format = vertexFormat(element.sourceFormat), offset = buffer.fields.offset + element.sourceOffset;
         require(buffer.fields.stride <= 255 && buffer.fields.stride % format.scalarBytes === 0 && offset % format.scalarBytes === 0,
           "invalid-state", "Vertex buffer stride/offset is not supported by WebGL.");
         require(buffer.fields.offset <= buffer.metadata.byteLength && element.sourceOffset <= buffer.metadata.byteLength - buffer.fields.offset &&
@@ -787,6 +811,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         sub.programs.get(program.key) === program && programs.has(program) &&
         samplingFor(sub, shaders[1], shaders[0]).key === program.samplingKey &&
         blendFoldFor(sub, shaders[1]) === program.blendFold &&
+        inputTypesFor(sub, shaders[0]).key === program.inputKey &&
         sub.constants.every((bank, stage) => bank === banks[stage]),
       "stale-draw", "Draw shader, program or constant-bank identity changed.");
     };
@@ -811,20 +836,31 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       if (surface || sub.depthSurface) require(gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE, "incomplete-framebuffer", "Framebuffer is incomplete.");
       gl.useProgram(program?.native ?? null);
       for (let slot = 0; slot < maxAttributes; slot++) {
-        gl.disableVertexAttribArray(slot); gl.vertexAttribDivisor(slot, 0); gl.vertexAttrib4f(slot, 0, 0, 0, 1);
+        gl.disableVertexAttribArray(slot); gl.vertexAttribDivisor(slot, 0);
+        const type = program?.reflection.attributes.find(attribute => attribute.location === slot)?.type;
+        if (type === gl.INT_VEC4) gl.vertexAttribI4i(slot, 0, 0, 0, 1);
+        else if (type === gl.UNSIGNED_INT_VEC4) gl.vertexAttribI4ui(slot, 0, 0, 0, 1);
+        else gl.vertexAttrib4f(slot, 0, 0, 0, 1);
       }
       if (sub.vertexElements) for (const attribute of program?.reflection.attributes ?? []) {
         const element = sub.vertexElements.fields.elements[attribute.index], buffer = element ? sub.vertexBuffers[element.vertexBufferIndex] : null;
         if (!buffer) continue;
+        const format = vertexFormat(element.sourceFormat);
         if (standard && buffer.fields.stride === 0) {
           // State prefixes reset to the generic default. A draw supplies only
           // values collected from its retained, validated GPU read tickets.
-          if (plan) gl.vertexAttrib4fv(attribute.location, constantAttributes.get(attribute.index).values);
+          if (plan) {
+            const values = constantAttributes.get(attribute.index).values;
+            if (format.integer) {
+              if (format.kind === "sint") gl.vertexAttribI4iv(attribute.location, values);
+              else gl.vertexAttribI4uiv(attribute.location, values);
+            } else gl.vertexAttrib4fv(attribute.location, values);
+          }
           continue;
         }
         gl.bindBuffer(gl.ARRAY_BUFFER, resolve(buffer.lease).storage.buffer);
-        const format = floatingVertexFormat(element.sourceFormat);
-        gl.vertexAttribPointer(attribute.location, format.components, gl[format.type], format.normalized, buffer.fields.stride, buffer.fields.offset + element.sourceOffset);
+        if (format.integer) gl.vertexAttribIPointer(attribute.location, format.components, gl[format.type], buffer.fields.stride, buffer.fields.offset + element.sourceOffset);
+        else gl.vertexAttribPointer(attribute.location, format.components, gl[format.type], format.normalized, buffer.fields.stride, buffer.fields.offset + element.sourceOffset);
         // No admitted draw has an instance index >= the total-work ceiling.
         // Larger wire divisors therefore have the identical constant-zero fetch.
         if (standard) gl.vertexAttribDivisor(attribute.location, Math.min(element.instanceDivisor, DRAW_LIMITS.indicesPerSubmission));
@@ -992,7 +1028,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         "unsupported-draw", "Actual vertex index exceeds the native maximum element index.");
       const vertexFetches = attributes.map(({ attribute, element, buffer }) => {
         const offset = buffer.fields.offset + element.sourceOffset, stride = buffer.fields.stride;
-        const format = floatingVertexFormat(element.sourceFormat), elementBytes = format.elementBytes;
+        const format = vertexFormat(element.sourceFormat), elementBytes = format.elementBytes;
         const divisor = element.instanceDivisor;
         const constant = stride === 0;
         const first = empty ? null : constant || divisor ? 0 : actualMinIndex,
@@ -1005,6 +1041,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           resourceId: buffer.metadata.id, resourceGeneration: buffer.resourceGeneration,
           stride, offset, components: vertexComponents(element), firstByte: empty ? null : offset + first * stride, requiredEnd: empty ? null : offset + last * stride + elementBytes,
           ...(standard ? { sourceFormat: element.sourceFormat, elementBytes, nativeType: gl[format.type], normalized: format.normalized,
+            ...(format.integer ? { nativeIntegerInput: true } : {}),
             divisor, nativeDivisor: constant ? 0 : Math.min(divisor, DRAW_LIMITS.indicesPerSubmission), firstElement: first, lastElement: last,
             ...(empty ? { fetchEmpty: true } : {}),
             ...(constant ? { constant: true, componentWords: constantAttributes.get(attribute.index).words,
@@ -1393,7 +1430,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
             if (plan.constants.length) {
               const reads = plan.constants.map(({ attribute, element, buffer }) => ({
                 lease: buffer.lease, attributeIndex: attribute.index, sourceFormat: element.sourceFormat,
-                box: { x: buffer.fields.offset + element.sourceOffset, y: 0, z: 0, width: floatingVertexFormat(element.sourceFormat).elementBytes, height: 1, depth: 1 },
+                box: { x: buffer.fields.offset + element.sourceOffset, y: 0, z: 0, width: vertexFormat(element.sourceFormat).elementBytes, height: 1, depth: 1 },
               }));
               if (plan.index) reads.push({ lease: plan.index.lease,
                 box: { x: plan.indexOffset, y: 0, z: 0, width: plan.indexByteLength, height: 1, depth: 1 } });
