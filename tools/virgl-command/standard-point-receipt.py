@@ -120,7 +120,15 @@ def main(directory):
         need(old_audit['status'] == 'passed' and len(old_audit['frames']) == frames and all(row['held'] for row in old_audit['frames']), 'retained physical ' + family)
 
     compiler = json.loads(record('retained-compiler/receipt.json'))
-    need(compiler['status'] == 'passed' and compiler['gitHead'] == head and compiler['cases'] == 669 and compiler['frames'] == 129 and compiler['legacyBoundary']['unchanged'], 'directly affected compiler and legacy boundary')
+    if compiler['gitHead'] != head:
+        subprocess.check_call(['git', 'merge-base', '--is-ancestor', compiler['gitHead'], head], cwd=ROOT)
+        allowed = {'tools/verify-virgl-standard-points.sh', 'tools/virgl-command/standard-point-receipt.py'}
+        need(set(git('diff', '--name-only', compiler['gitHead'], head).splitlines()) <= allowed, 'compiler carry requires a harness-only correction')
+        correction = json.loads(record('harness-correction.json'))
+        need(correction['sourceHead'] == head and correction['retainedCompilerHead'] == compiler['gitHead'] and correction['originalMakePassed'] is False and correction['originalExitCode'] == 2, 'honest original wrapper failure')
+        original = record('harness-original-acceptance.log', correction['originalAcceptanceSha256'])
+        need(b'flags[@]: unbound variable' in original and b'CARRY_PASSED_COMPILER_AFTER_RECORDED_HARNESS_FAILURE' in (directory / 'acceptance.log').read_bytes(), 'original Bash failure and explicit resumed command')
+    need(compiler['status'] == 'passed' and compiler['cases'] == 669 and compiler['frames'] == 129 and compiler['legacyBoundary']['unchanged'], 'directly affected compiler and legacy boundary')
     for name, digest in compiler['files'].items():
         record('retained-compiler/' + name, digest)
     for name, digest in compiler['sources'].items():

@@ -19,10 +19,20 @@ python3 -m py_compile tools/virgl-command/standard-point-{cases,receipt,cold,sea
 bash -n tools/verify-virgl-standard-points.sh
 # The standard C path changed; preserve all directly affected compiler/native
 # shader checks plus its authenticated, unchanged legacy/raw/private boundary.
-VIRGL_STANDARD_SHADER_EVIDENCE_DIR="$evidence/retained-compiler" bash tools/verify-virgl-standard-shader.sh
+if [[ ${1:-} == --resume-compiler && $# == 1 ]]; then
+  [[ -f "$evidence/harness-correction.json" && -f "$evidence/retained-compiler/receipt.json" ]]
+  # Receipt authentication below checks every carried source/result digest,
+  # ancestor head and the exact harness-only diff before accepting this reuse.
+  printf 'CARRY_PASSED_COMPILER_AFTER_RECORDED_HARNESS_FAILURE\n'
+elif [[ $# == 0 ]]; then
+  VIRGL_STANDARD_SHADER_EVIDENCE_DIR="$evidence/retained-compiler" bash tools/verify-virgl-standard-shader.sh
+else
+  echo 'Usage: verify-virgl-standard-points.sh [--resume-compiler]' >&2
+  exit 2
+fi
 mkdir -p "$evidence/abi" "$evidence/native" "$evidence/coverage"
 for mode in native sanitize; do
-  flags=()
+  flags=(-g)
   if [[ $mode == sanitize ]]; then flags+=(-fsanitize=address,undefined -fno-omit-frame-pointer); fi
   clang -std=gnu11 -Wall -Wextra -Werror -DUTIL_ARCH_LITTLE_ENDIAN=1 -DUTIL_ARCH_BIG_ENDIAN=0 "${flags[@]}" -Irenderer/virgl-shader/vendor/src/gallium/include -Irenderer/virgl-shader/vendor/src/mesa/pipe -Irenderer/virgl-shader/vendor/src/mesa/compat -Irenderer/virgl-shader/vendor/src/mesa -Irenderer/virgl-shader/vendor/src tools/virgl-command/standard-point-enums.c -o "$evidence/abi/points-$mode"
   "$evidence/abi/points-$mode" > "$evidence/abi/points-$mode.json"
