@@ -3,7 +3,7 @@ id: E6-T11d12
 epic: 6
 title: Execute compact floating vertex fetches from original GPU storage
 priority: 525.0270390003
-status: in-progress
+status: implemented
 depends_on: [E6-T11d11]
 estimate: S
 risk: high
@@ -105,3 +105,48 @@ complete original shared-buffer replacements. No failed self run is evidence.
 Final submission now runs the affected gates once at a frozen head, followed by
 a pristine exact-head default acceptance and a fresh critic. Compiler/vendor,
 guest and production paths remain unchanged.
+
+### 2026-10-10 — worker — submitted original compact fetch evidence
+
+Implementation/harness freeze: `ac77cdd095de121d71628308d920bfdcdbc454c3`.
+The recorded hot command `VIRGL_STANDARD_COMPACT_EVIDENCE_DIR=target/evidence/
+virgl-standard-compact-final make verify-E6-T11d12` passed with exit0; no harness
+correction or physical carry was needed. One pristine clone runs the default
+complete `make verify-E6-T11d12` at that exact head with scrubbed environment,
+exit0 and empty checkout status before/after. Command: `python3 tools/virgl-command/
+standard-compact-cold.py --output target/evidence/virgl-standard-compact-final-cold`.
+Cold report SHA256 `b3f88cd087837eb6db5fc2391c40f6ea2172499d21c57bd81b854d5b12fcbeca`.
+
+Each hot/cold run records 301 original wire cases; independent pinned native and
+ASan/UBSan enum checks; original fixed16MiB compiler identities matching the D11
+critic seal; 225 actual headed M4 Metal compact frames; 60160 independently
+derived full pixels; 5 private original-index buffers and 192 NaN-category pixels.
+All twenty compact combinations and four retained float32 combinations execute
+as native arrays and retained stride-zero generic values under three schedules.
+Ordinary arrays retain original full GPU storage and execute native pointer
+conversion. Supplied generic words, actual compact source read widths, missing
+lanes, finite half endpoints/subnormals/signed zero, normalized signed minima and
+original shader bodies are physically exercised. Native NaN payload bits receive
+no portable certificate. Nine bounds/staging rejections occur before drawing, six
+source-revision/cancel/reuse suspensions drain or preserve original generations,
+and disposal plus A/B/A poisoned native state restore release bounded ownership.
+Both actual served normalization/scalar-unpack faults complete native draws and
+final fences then fail original full pixels. Retained point128/list304/default-
+restart189 hardware frames and their five actual faults pass independent saved
+pixel audits. Their historical seals and compiler/allocator evidence are unchanged
+from dependency1fbdfa7e; no unrelated C arithmetic gauntlet was restarted.
+
+Seal command: `python3 tools/virgl-command/standard-compact-seal.py
+target/evidence/virgl-standard-compact-final
+target/evidence/virgl-standard-compact-final-cold
+evidence/virgl-standard-compact/worker`. The committed worker seal has16252
+records; archive SHA256
+`fcf9e7c4490eda1974668d22a8d1f1f2d28fbea28a8d157b31675d56fba860c4`;
+index SHA256 `0b90efc9b0106526f4e54294377d4e01c7a1e464ee1daa4c24038385d8f2f480`.
+Hot receipt SHA256 `0f23206cee8f3c4ebfb150b027ee4f6845acf6dda2399d8c04f10b4051cc8002`;
+cold receipt SHA256 `f359b05663644cc0d92415c33410dd9e5163b4d51c6148ce5dd5b5dcd2ce64db`.
+Source, generated compiler, served-source, V8 coverage, full pixel/buffer blobs,
+original packet histories, GPU state and screenshots are sealed. This is isolated
+standard compact floating fetch authority only. Complete API qualification, typed
+production capsets, actual guest offload, deployment and performance remain gated.
+Only a fresh critic may set verified.
