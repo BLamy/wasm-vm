@@ -6,6 +6,27 @@ the separate private raw-bit profile. It supplies a translation boundary to the 
 renderers. Production GPU negotiation remains disabled; this module does not
 establish general Mesa or guest desktop compatibility.
 
+## Original 2D texture operations — E6-T11d23
+
+`createVirglStandardTextureShaderBridge` selects a separate fixed-memory
+standard/uniform compiler for original TXL, TXF, TXD, fragment TXB and TXQ.
+Declared views remain 2D/FLOAT. Native ESSL uses explicit LOD, integer fetch,
+gradients, bias and size queries with the original masks and source modifiers.
+The historical factories and public C entries retain their original responses.
+
+The distinct `virgl-webgl2-standard-texture-gles3-v1` metadata includes sorted
+`textureQueries` records for defined TXQ.w lanes. Each names a native integer
+uniform for the original stage sampler's accessible level count. Its future
+resource consumer must derive this count from a retained, validated view.
+Undefined 2D TXQ.z supplies no dimension claim. This compiler does not bind
+resources or activate guest capabilities.
+
+`make verify-E6-T11d23` records complete original operands, native/sanitized C
+and fixed-memory Wasm responses, real allocation failures and recovery, exact
+historical ABI comparisons, headed Metal pixels and physical native-state
+controls. Full sources, texture planes, output bodies and consumed fences are
+sealed with one final pristine clone for a fresh verifier.
+
 ## Finite scalar truncation and sign — E6-T12g6f
 
 TRUNC and SSG operate independently on each consumed component, including

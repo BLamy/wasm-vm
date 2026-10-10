@@ -2246,6 +2246,10 @@ verify-E6-T11d21-adversarial:
 verify-E6-T11d22:
 	bash tools/verify-virgl-standard-byte-color-images.sh
 
+.PHONY: verify-E6-T11d23
+verify-E6-T11d23:
+	bash tools/verify-virgl-standard-texture.sh
+
 .PHONY: verify-E6-T11d22-adversarial
 verify-E6-T11d22-adversarial:
 	bash tools/verify-virgl-standard-byte-color-adversarial.sh

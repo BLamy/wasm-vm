@@ -272,7 +272,16 @@ static bool property(const char **s, struct standard_profile *p)
 /* A closed GLES3 operation set. The pinned opcode table supplies arities only
  * after selection; unknown/memory/subroutine/64-bit instructions never enter
  * the upstream parser. Native ESSL still validates supported host operations. */
-static bool supported(unsigned op)
+unsigned standard_texture_sources(unsigned op)
+{
+   switch (op) {
+   case TGSI_OPCODE_TEX: case TGSI_OPCODE_TXL: case TGSI_OPCODE_TXF:
+   case TGSI_OPCODE_TXB: case TGSI_OPCODE_TXQ: return 1;
+   case TGSI_OPCODE_TXD: return 3;
+   default: return 0;
+   }
+}
+static bool supported(unsigned op, bool texture_operations)
 {
    switch (op) {
 #define OP(x) case TGSI_OPCODE_##x:
@@ -288,6 +297,8 @@ static bool supported(unsigned op)
    OP(IF) OP(UIF) OP(ELSE) OP(ENDIF) OP(BGNLOOP) OP(ENDLOOP) OP(BRK) OP(END)
 #undef OP
       return true;
+   case TGSI_OPCODE_TXL: case TGSI_OPCODE_TXF: case TGSI_OPCODE_TXD:
+   case TGSI_OPCODE_TXB: case TGSI_OPCODE_TXQ: return texture_operations;
    default: return false;
    }
 }
@@ -308,12 +319,15 @@ static bool instruction(const char **s, struct standard_profile *p, struct flow 
    if (len >= 4 && !strcmp(mnemonic + len - 4, "_SAT")) { saturate = true; mnemonic[len -= 4] = 0; }
    unsigned op;
    for (op = 0; op < TGSI_OPCODE_LAST; ++op)
-      if (supported(op) && !strcmp(mnemonic, tgsi_get_opcode_info(op)->mnemonic)) break;
+      if (supported(op, p->texture_operations) && !strcmp(mnemonic, tgsi_get_opcode_info(op)->mnemonic)) break;
    if (op == TGSI_OPCODE_LAST) return false;
    const struct tgsi_opcode_info *info = tgsi_get_opcode_info(op);
    if ((saturate || precise) && (!info->num_dst || op == TGSI_OPCODE_UARL || op == TGSI_OPCODE_ARL)) return false;
    if (!p->stage && (op == TGSI_OPCODE_KILL || op == TGSI_OPCODE_KILL_IF || op == TGSI_OPCODE_DDX || op == TGSI_OPCODE_DDY)) return false;
-   unsigned texture_sampler = 0;
+   if (!p->stage && op == TGSI_OPCODE_TXB) return false;
+   if (op == TGSI_OPCODE_TXQ && (saturate || precise)) return false;
+   unsigned texture_sampler = 0, texture_mask = 0;
+   unsigned texture_sources = standard_texture_sources(op);
    for (unsigned i = 0; i < info->num_dst + info->num_src; ++i) {
       if (i && !take(s, ',')) return false;
       bool neg = false, absolute = false;
@@ -333,17 +347,19 @@ static bool instruction(const char **s, struct standard_profile *p, struct flow 
          if (r.file != STD_ADDR && (op == TGSI_OPCODE_UARL || op == TGSI_OPCODE_ARL)) return false;
          if ((r.mask & p->declared[r.file][r.first]) != r.mask) return false;
          if (r.file == STD_OUT) p->output[r.first].writes |= (uint8_t)r.mask;
+         if (texture_sources) texture_mask = r.mask;
       } else {
-         bool sampler = op == TGSI_OPCODE_TEX && i == info->num_dst + 1;
+         bool sampler = texture_sources && i == info->num_dst + texture_sources;
          if (sampler) {
             if (r.file != STD_SAMP || r.mask != 15 || neg || absolute || !p->declared[STD_SVIEW][r.first]) return false;
             texture_sampler = r.first;
          } else if (r.file != STD_IN && r.file != STD_TEMP && r.file != STD_CONST && r.file != STD_IMM && r.file != STD_SV) return false;
       }
    }
-   if (op == TGSI_OPCODE_TEX) {
+   if (texture_sources) {
       if (!take(s, ',') || !word(s, "2D")) return false;
       p->used_samplers |= (uint16_t)(1u << texture_sampler);
+      if (op == TGSI_OPCODE_TXQ && (texture_mask & 8u)) p->queried_levels |= (uint16_t)(1u << texture_sampler);
    }
    /* Labels must describe the same edges as the structured blocks. The
     * pinned TGSI dumper uses zero for unspecified loop labels. */

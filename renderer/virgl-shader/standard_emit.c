@@ -98,6 +98,8 @@ static void interface(struct output *o, const struct standard_profile *p)
           p->stage ? "FS" : "VS", j, p->stage ? "fs" : "vs", j, p->uniform_counts[j]);
    for (unsigned j = 0; j < STANDARD_SAMPLERS; ++j) if (p->used_samplers & (1u << j))
       put(o, "uniform highp sampler2D %ssamp%u;\n", p->stage ? "fs" : "vs", j);
+   for (unsigned j = 0; j < STANDARD_SAMPLERS; ++j) if (p->queried_levels & (1u << j))
+      put(o, "uniform highp int %ssamplevels%u;\n", p->stage ? "fs" : "vs", j);
    if (!p->stage) put(o, "layout(std140) uniform VirglBlock {\nvec4 clipp[8];\nuint stipple_pattern[32];\nfloat winsys_adjust_y;\nfloat alpha_ref_val;\nbool clip_plane_enabled;\nint drawid_base;\n};\nuniform vec2 wv_point_size;\n");
    for (unsigned j = 0; j < 16; ++j) if (p->packed_signed_inputs & (1u << j)) {
       put(o, "vec4 wv_pack_%u(vec4 v) {\nvec4 s = v - vec4(greaterThanEqual(v, vec4(512.0,512.0,512.0,2.0))) * vec4(1024.0,1024.0,1024.0,4.0);\n", j);
@@ -150,7 +152,8 @@ static bool instruction(struct output *o, const struct standard_profile *p,
    }
    put(o, "{\n");
    static const char *variables[] = {"a", "b", "c"};
-   unsigned sources = op == TGSI_OPCODE_TEX ? 1 : i->Instruction.NumSrcRegs;
+   unsigned texture_sources = standard_texture_sources(op);
+   unsigned sources = texture_sources ? texture_sources : i->Instruction.NumSrcRegs;
    for (unsigned j = 0; j < sources; ++j) source(o, p, i, j, variables[j]);
    if (op == TGSI_OPCODE_KILL_IF) { put(o, "if (any(lessThan(uintBitsToFloat(a), vec4(0.0)))) discard;\n}\n"); return true; }
    if (op == TGSI_OPCODE_UARL || op == TGSI_OPCODE_ARL) {
@@ -229,6 +232,22 @@ static bool instruction(struct output *o, const struct standard_profile *p,
 #undef COMPARE
    case TGSI_OPCODE_TEX:
       put(o, "uvec4 r = floatBitsToUint(texture(%ssamp%u, " FA ".xy));\n", p->stage ? "fs" : "vs", i->Src[1].Register.Index); break;
+   case TGSI_OPCODE_TXL:
+      put(o, "uvec4 r = floatBitsToUint(textureLod(%ssamp%u, " FA ".xy, " FA ".w));\n", p->stage ? "fs" : "vs", i->Src[1].Register.Index); break;
+   case TGSI_OPCODE_TXF:
+      put(o, "uvec4 r = floatBitsToUint(texelFetch(%ssamp%u, ivec2(a.xy), int(a.w)));\n", p->stage ? "fs" : "vs", i->Src[1].Register.Index); break;
+   case TGSI_OPCODE_TXD:
+      put(o, "uvec4 r = floatBitsToUint(textureGrad(%ssamp%u, " FA ".xy, " FB ".xy, " FC ".xy));\n", p->stage ? "fs" : "vs", i->Src[3].Register.Index); break;
+   case TGSI_OPCODE_TXB:
+      put(o, "uvec4 r = floatBitsToUint(texture(%ssamp%u, " FA ".xy, " FA ".w));\n", p->stage ? "fs" : "vs", i->Src[1].Register.Index); break;
+   case TGSI_OPCODE_TXQ:
+      /* 2D z is undefined in TGSI. Zero is a representative, not a depth claim.
+       * Accessible levels come from the selected host view, never guest text. */
+      if (i->Dst[0].Register.WriteMask & 8u)
+         put(o, "uvec4 r = uvec4(textureSize(%ssamp%u, int(a.x)), 0, %ssamplevels%u);\n",
+             p->stage ? "fs" : "vs", i->Src[1].Register.Index, p->stage ? "fs" : "vs", i->Src[1].Register.Index);
+      else put(o, "uvec4 r = uvec4(textureSize(%ssamp%u, int(a.x)), 0, 0);\n", p->stage ? "fs" : "vs", i->Src[1].Register.Index);
+      break;
    default: return false;
    }
 #undef RAW

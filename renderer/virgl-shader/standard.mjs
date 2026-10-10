@@ -33,9 +33,14 @@ export async function createVirglStandardShaderBridge(options = {}) {
 export async function createVirglStandardUniformShaderBridge(options = {}) {
   return createStandardBridge(options, true);
 }
-async function createStandardBridge(options, uniformBuffers) {
+/** Explicit original 2D texture operations, including checked host query metadata. */
+export async function createVirglStandardTextureShaderBridge(options = {}) {
+  return createStandardBridge(options, true, true);
+}
+async function createStandardBridge(options, uniformBuffers, textureOperations = false) {
   const { default: createModule } = await import("./build/wasm/virgl-shader.mjs");
   const module = await createModule(options);
+  const uniformPair = textureOperations ? module._bridge_translate_standard_texture_pair : module._bridge_translate_standard_uniform_pair;
   function run(texts, call) {
     const pointers = [];
     try {
@@ -61,7 +66,7 @@ async function createStandardBridge(options, uniformBuffers) {
       if (stage !== "vertex" && stage !== "fragment") return fail("unsupported-stage", "Only vertex and fragment stages are supported.");
       const error = textError(text);
       if (error) return error;
-      return run([text], ([pointer]) => (uniformBuffers ? module._bridge_translate_standard_uniform :
+      return run([text], ([pointer]) => (textureOperations ? module._bridge_translate_standard_texture : uniformBuffers ? module._bridge_translate_standard_uniform :
         module._bridge_translate_standard)(stage === "vertex" ? 0 : 1, pointer, text.length));
     },
     translatePair(request) {
@@ -75,7 +80,7 @@ async function createStandardBridge(options, uniformBuffers) {
         if (error) return error;
       }
       return run(input, ([vertex, fragment]) => uniformBuffers ?
-        module._bridge_translate_standard_uniform_pair(vertex, vertexText.length, fragment, fragmentText.length, 0, 0, 0, 0, 0) :
+        uniformPair(vertex, vertexText.length, fragment, fragmentText.length, 0, 0, 0, 0, 0) :
         module._bridge_translate_standard_pair(vertex, vertexText.length, fragment, fragmentText.length));
     },
     translatePairTyped(request) {
@@ -91,7 +96,7 @@ async function createStandardBridge(options, uniformBuffers) {
         if (error) return error;
       }
       return run([vertexText, fragmentText], ([vertex, fragment]) => uniformBuffers ?
-        module._bridge_translate_standard_uniform_pair(vertex, vertexText.length, fragment, fragmentText.length, signedMask, unsignedMask, 0, 0, 0) :
+        uniformPair(vertex, vertexText.length, fragment, fragmentText.length, signedMask, unsignedMask, 0, 0, 0) :
         module._bridge_translate_standard_pair_typed(vertex, vertexText.length, fragment, fragmentText.length, signedMask, unsignedMask));
     },
     translatePairVertexFormats(request) {
@@ -108,7 +113,7 @@ async function createStandardBridge(options, uniformBuffers) {
         if (error) return error;
       }
       return run([vertexText, fragmentText], ([vertex, fragment]) => uniformBuffers ?
-        module._bridge_translate_standard_uniform_pair(vertex, vertexText.length, fragment, fragmentText.length, signedMask, unsignedMask, packedSignedMask, packedNormalizedMask, 0) :
+        uniformPair(vertex, vertexText.length, fragment, fragmentText.length, signedMask, unsignedMask, packedSignedMask, packedNormalizedMask, 0) :
         module._bridge_translate_standard_pair_vertex_formats(vertex, vertexText.length, fragment, fragmentText.length, signedMask, unsignedMask, packedSignedMask, packedNormalizedMask));
     },
   };
@@ -126,7 +131,7 @@ async function createStandardBridge(options, uniformBuffers) {
       const error = textError(text);
       if (error) return error;
     }
-    return run([vertexText, fragmentText], ([vertex, fragment]) => module._bridge_translate_standard_uniform_pair(
+    return run([vertexText, fragmentText], ([vertex, fragment]) => uniformPair(
       vertex, vertexText.length, fragment, fragmentText.length, signedMask, unsignedMask, packedSignedMask, packedNormalizedMask, bufferZeroMask));
   };
   return Object.freeze(bridge);
