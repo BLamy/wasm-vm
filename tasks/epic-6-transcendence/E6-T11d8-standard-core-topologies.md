@@ -3,7 +3,7 @@ id: E6-T11d8
 epic: 6
 title: Execute bounded standard core line and triangle-fan draws
 priority: 525.02703901
-status: implemented
+status: verified
 depends_on: [E6-T11d7]
 estimate: S
 risk: high
@@ -132,3 +132,117 @@ and job ownership. It grants no points, restart, other formats/state/storage,
 production capsets, full GLES/API, actual guest graphics, demo deployment or
 MIPS/FPS. Only a fresh critic may set `verified`.
 
+### 2026-10-10 — fresh verifier — VERDICT: verified
+
+VERDICT: verified
+
+Read AGENTS.md, the full task and scoped `64b24622..2d1303bf` diff before evidence
+inspection. Predictions P1–P8 were written first in
+`evidence/virgl-standard-topology/verifier/predictions.json`, SHA-256
+`f5fc51d22dad4a8c1069cb2e7f108630c341bbc54831fcbc55ce0ea317887f33`.
+This fresh critic did not implement or edit the runtime. Every prediction HELD;
+no semantic refutation or evidence gap remains.
+
+- P1 custody — HELD. All 2716 unique safe worker archive members, 24 reports,
+  2626 physical blobs, 347 frozen source bindings, generated compiler artifacts,
+  served closures, coverage and screenshots authenticate. Hot/cold receipts bind
+  `dff28ee8`; final pristine acceptance exits 0, scrubs the named environment and
+  is clean before/after. Point: worker seal `cold/report.json:1`, SHA-256
+  `688211b47d03b0d6e1076655fdeb2efd92455697de4942a4cc0d2749bf43abff`.
+  `authentication.json` records every digest and the sole current Makefile
+  extension, a declarative promoted verifier target.
+- P2 literal admission/native modes — HELD. The independent literal parser
+  classifies 316 hot/cold Node/browser packet records. Standard admits modes 1..6;
+  legacy admits modes 4/5 with one instance. Unsupported fields/modes and malformed
+  tails expose no decoded prefix. All four native call families select the
+  expected mode. Point: worker seal `hot/hardware/report.json:102416`,
+  `/browserResult/result/frames/5`, SHA-256
+  `8680cd502d31396c727860904807abc55907f56467f2db6a147d489bb60dc4ec`;
+  actual `drawElementsInstanced(2,4,5125,12,4)`.
+- P3 physical primitives — HELD. The fresh model imports no runtime or worker
+  oracle. Original uploads, literal packets and source shader math predict all
+  174 frames/100,352 full pixels. Only declared line endpoints and single outer
+  fan boundaries admit color/clear; 99,142 pixels are strict. Loop closing (2,3)
+  requires [85,56,51,128]; fan (3,10) requires the same color in a region strip order
+  omits. Points: worker seal `hot/hardware/report.json:102416` and `:117093`,
+  report digest above; pixel digests
+  `737559f8b1faa56d11a438091a13ec216eb60696ba33d8ef5b2ef468b831a864` and
+  `ae7358a6067e2f8b7c4bc146d11c08c64de3d10d67b24fc4395b5f2e6d619f42`.
+  [GLES3 sections2.7.1/3.5](https://registry.khronos.org/OpenGL/specs/es/3.0/es_spec_3.0.pdf)
+  support the primitive/raster scope; no closing-edge interior or fan area is
+  waived.
+- P4 fetch/work — HELD. Independent actual u8/u16/wide-u32 reads override false
+  zero hints. All GPU buffers equal original uploads; byte extents, generic
+  words/divisors, zero/one/positive instances and incomplete counts 1/2/3/5 agree.
+  All 24 hot/cold short-tail/index and 8-versus-7 rejections occur before draw.
+  LINES count 5 charges and bounds its unused high vertex. Points: worker seal
+  `hot/hardware/report.json:175122`, `/browserResult/result/frames/69`, and
+  `:358088` short-tail rejection, same report digest above. All extents are in
+  `original-audit.json`, SHA-256
+  `0e1beee2d1dc73f290f53e6e099a98f792b910f5d27f6438e2a70c6813e6b3cc`.
+- P5 state/lifetime — HELD. A/B/A restores mode and pixels after native poisoning.
+  Pending constant/index batches retain two tickets: real index revision rejects
+  stale-storage, cancellation rejects cancelled, public-name reuse draws using
+  the original generation. All fences poll on later tasks and are deleted;
+  reads/staging drain to 0. Points: worker seal `hot/hardware/report.json:155135`
+  restored A, `:383298` stale and `:385092` cancellation, same digest above;
+  `original-audit.json` `/lifetimes/0..5` authenticates the batch outcomes.
+- P6 sensitivity — HELD. Both original real mode mutations complete draw/fence
+  and fail independent strict closing coverage. The promoted oracle is sabotaged
+  once at the served selector: `drawElementsInstanced(3,4,5125,28,4)` and 3 real
+  signaled/deleted fences complete, then (3,4) expects [33,43,35,128], observes
+  [0,0,0,0], error 128. The named `critic-mode-2-wide promoted independent topology
+  pixel oracle` rejects. Point: critic seal `physical/fault-mode/report.json:1276`,
+  `/partial/frames/0`, SHA-256
+  `a0becb6871704572f356b8878f628217c64fed6bd140f2ea79706f7f41083f9f`.
+- P7 coverage/carry — HELD. Frozen V8 coverage executes every changed runtime
+  token: decoder lines 363/365 (263 hits), state line 20 initialization (1), selector line 936 (114).
+  Every hunk is executed or narrowly classified in `coverage-audit.json`, SHA-256
+  `34796c8f10a18cbab4c6228c1a00832729b2d278b92342522a165c996d1703ee`.
+  Unchanged compiler/resource/cache/constant-domain sources and original D7
+  worker/critic archives authenticate against `64b24622`. Full D6 (37 frames/
+  10,296 pixels, four legacy gates, divisor sabotage) and D7 (31 frames/12,500
+  pixels, generic sabotage, offline audit) remain proven per hot/cold run.
+  Historical D7 decoder custody is carried without rewriting its receipt. No
+  portability/isolation finding requires another cold clone or unrelated gate.
+- P8 bounded novel attack — HELD. Seed `0x25df967b` uses nonmonotonic u32 IDs
+  [82186,82178,82182,82180], unused high tail 82194, binding/source prefixes 52/56/48,
+  index offset 28, rectangle 3.5..12.5 (fan 3..12), per-fence delays 1..6 and command
+  step 2. All primitive/call families, byte/short indices, incomplete tails,
+  exact/short/work limits, malformed atomic tails, nonempty/indexed-start errors,
+  A/B/A and stale/cancel/reuse/CPU-only backing outcomes hold. Native line width 1,
+  viewport, scissor and color writes are queried directly. Point: critic seal
+  `physical/hardware/report.json:74296`, `/browserResult/result/frames/0`, SHA-256
+  `d4f8c5baeb0e6c85ccdcb02cede1c506832b2fa2251864a529e7a950ef85470f`.
+
+SUITE: promote `standard-core-topologies-adversarial.mjs`, its independent
+literal-wire/byte/raster model, offline capture audit and
+`make verify-E6-T11d8-adversarial`. Final promoted acceptance passes 44 physical
+frames/24,576 pixels, 70 independently classified Node and browser records,
+24 rejection jobs and 4 delayed lifetime cases. Its completed real mode sabotage
+fails. Headed Chrome 155/Metal M4 Max has a nonempty hardware identity, actual
+fixed16 MiB compiler, zero console/page/request errors and GL_NO_ERROR for every
+draw/capture/cleanup. Screenshots, native fence/state events and coverage are
+sealed.
+
+Commands in `/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm`:
+
+```sh
+python3 evidence/virgl-standard-topology/verifier/authenticate.py
+node evidence/virgl-standard-topology/verifier/audit_originals.mjs
+python3 evidence/virgl-standard-topology/verifier/audit_coverage.py
+VIRGL_STANDARD_TOPOLOGY_ADVERSARIAL_EVIDENCE_DIR=target/evidence/virgl-standard-topology-critic-final make verify-E6-T11d8-adversarial
+python3 evidence/virgl-standard-topology/verifier/write_verdict.py
+python3 evidence/virgl-standard-topology/verifier/seal_critic.py
+python3 tools/check_task_policy.py
+python3 tools/build_queue.py
+```
+
+Fresh evidence: `evidence/virgl-standard-topology/verifier/{manifest.json,records.json,recording.tar.gz,verdict.json}`;
+498 records, 1,339,524 archive bytes, SHA-256
+`2a7eaca7ad6b474ca29dc7d4977ec97507d69ec5c9d9a61b26b89c930e6fdd24`,
+index `d5daecd5bd4d655978b0e7925d9e2e5cc08fb8fce46676d3a39291473a700c12`.
+
+Only isolated bounded standard core primitive assembly is verified. Guest
+graphics, complete API/capsets, production negotiation/deployment and FPS/MIPS
+remain later acceptance boundaries. Runtime and worker evidence are unchanged.

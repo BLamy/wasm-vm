@@ -1,0 +1,23 @@
+{
+  "schema": "standard-topology-critic-seal-v1",
+  "task": "E6-T11d8",
+  "verdict": "verified",
+  "authority": "isolated-standard-core-topologies",
+  "runtimeSourceHead": "dff28ee8cb1c494a52a6fbb5af872ed377605f66",
+  "workerSubmission": "2d1303bfd1f476ac33eda616ea380f5df52d1e0f",
+  "workerArchiveSha256": "c192468202cec8d341e6074cc241d19d699cde78d58e7361b2e09d58da1ba8cf",
+  "records": 498,
+  "archiveBytes": 1339524,
+  "archiveSha256": "2a7eaca7ad6b474ca29dc7d4977ec97507d69ec5c9d9a61b26b89c930e6fdd24",
+  "recordIndexSha256": "d5daecd5bd4d655978b0e7925d9e2e5cc08fb8fce46676d3a39291473a700c12",
+  "predictionsSha256": "f5fc51d22dad4a8c1069cb2e7f108630c341bbc54831fcbc55ce0ea317887f33",
+  "verdictSha256": "2972e3de4a3dc08612e16a92c0b0154c0f09aaa9575815ff3a70f38aa28fb2cf",
+  "physicalAuditSha256": "136fbfd2261f0439f1d86525b1ec9a94766cea071f1162a20296151c07490c59",
+  "physicalFrames": 44,
+  "checkedPhysicalPixels": 24576,
+  "originalFramesChecked": 174,
+  "originalPixelsChecked": 100352,
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "productionDrawAuthority": false
+}
