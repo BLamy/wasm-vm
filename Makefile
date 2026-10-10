@@ -2193,3 +2193,7 @@ verify-E6-T11d15:
 .PHONY: verify-E6-T11d15-adversarial
 verify-E6-T11d15-adversarial:
 	node tools/verify-virgl-standard-packed-adversarial.mjs
+
+.PHONY: verify-E6-T11d16
+verify-E6-T11d16:
+	bash tools/verify-virgl-standard-uniform.sh

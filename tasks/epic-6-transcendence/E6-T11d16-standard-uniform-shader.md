@@ -46,3 +46,11 @@ Primary sources: original dimensional token parsing is vendor/src/gallium/auxili
 ### 2026-10-10 — worker — activation
 
 Selected as the first eligible Next up entry after the verified D15 dependency. Native stack branch `codex/virgl-standard-uniform-shader` was added after publishing the critic verdict. Runtime/claim scope is the one original dimensional constant-bank compiler boundary above. The separate retained resource-binding prerequisite follows fresh verification of this shader layer.
+
+### 2026-10-10 — worker — implementation freeze preparation
+
+Self-validation has 338 complete native/Wasm cases with independently reparsed original TGSI dimensions, ranges and signed offsets; 93 genuine stage/pair allocation failures recover exactly, including the newly selected bounded checker allocation. All 125 headed M4 Metal draws and 104716 full pixels pass, including complete raw words across slots0..12 in both stages, extreme signed vector offsets, all 26 guest banks plus the separate VS system block, and all four vertex format masks. Independent block-word, range-offset and slot-zero selector corruptions fail the original pixel predictions only after completed real GPU fences. These iteration records are scratch work, not the worker submission.
+
+The pinned checker needs a separate bounded2097152-byte scratch transaction for simultaneous large banks; existing callers retain262144. The fixed Wasm memory remains16777216 and its real exhausted-checker failure recovers. Optimized frame measurements give a conservative uniform pair chain of195072 bytes against262144. Metal retains unused std140 declarations in native reflection here; the harness records and binds them, and also handles native elimination without erasing compiler metadata. Two manually summed combined-format pixel expectations were corrected from the independent literal input arithmetic during self-validation. No runtime shader/source rewrite or producer patch was used.
+
+The frozen submission will run `make verify-E6-T11d16` once, including the affected existing full compiler and old four-mask/typed gates, followed by one final scrubbed exact-head clone and a sealed worker recording. Its authority remains this isolated shader compiler boundary; original production resource binding and API/guest qualification remain gated.

@@ -10,6 +10,8 @@
 #define STANDARD_CONSTANTS 512u
 #define STANDARD_SAMPLERS 16u
 #define STANDARD_DEPTH 32u
+#define STANDARD_UNIFORM_SLOTS 12u
+#define STANDARD_UNIFORM_VECTORS 1024u
 
 enum standard_file { STD_IN, STD_OUT, STD_TEMP, STD_CONST, STD_IMM,
                      STD_SAMP, STD_SVIEW, STD_ADDR, STD_SV, STD_FILES };
@@ -29,6 +31,11 @@ struct standard_profile {
    /* Host-derived vertex format types, never TGSI/guest shader keys. */
    uint16_t signed_inputs, unsigned_inputs;
    uint16_t packed_signed_inputs, packed_normalized_inputs;
+   /* A distinct host-selected facet admits dimensional constant banks. The
+    * legacy facets keep both flags zero and retain their original grammar. */
+   uint32_t uniform_declared[STANDARD_UNIFORM_SLOTS][STANDARD_UNIFORM_VECTORS / 32];
+   uint16_t uniform_counts[STANDARD_UNIFORM_SLOTS + 1];
+   bool uniform_buffers, buffer_zero;
    uint8_t properties, broadcast;
 };
 

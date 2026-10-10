@@ -978,3 +978,90 @@ export function deriveStandardShaderInterface(vertex, fragment) {
     return standardFreeze({ ok: true, ...standardInterface(standardMetadata(vertex, "vertex"), standardMetadata(fragment, "fragment")) });
   } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-link-error", error.message); }
 }
+
+// Dimensional banks are admitted only by this explicitly selected consumer.
+// Reuse the proven IO/system contract after snapshotting the new own records.
+export const STANDARD_UNIFORM_SHADER_PROFILE = "virgl-webgl2-standard-uniform-gles3-v1";
+const STANDARD_UNIFORM_SELECTORS = Object.freeze({ signedMask: 0, unsignedMask: 0,
+  packedSignedMask: 0, packedNormalizedMask: 0, bufferZeroMask: 0 });
+function standardUniformSelectors(value) {
+  const input = record(value, Object.keys(STANDARD_UNIFORM_SELECTORS));
+  const { signedMask, unsignedMask, packedSignedMask, packedNormalizedMask, bufferZeroMask } = input;
+  require([signedMask, unsignedMask, packedSignedMask, packedNormalizedMask].every(mask =>
+    Number.isInteger(mask) && mask >= 0 && mask <= 0xffff) && !(signedMask & unsignedMask) &&
+    !((signedMask | unsignedMask) & packedSignedMask) && !(packedNormalizedMask & ~packedSignedMask) &&
+    Number.isInteger(bufferZeroMask) && bufferZeroMask >= 0 && bufferZeroMask <= 3,
+  "Invalid host uniform/vertex format selectors.");
+  return input;
+}
+function standardUniformMetadata(value, stage, paired, selectors) {
+  const input = record(value, [...STANDARD_METADATA_KEYS, "guestUniformBlocks"]);
+  require(input.profile === STANDARD_UNIFORM_SHADER_PROFILE, "Uniform banks require the distinct compiler profile.");
+  const common = Object.fromEntries(STANDARD_METADATA_KEYS.map(key => [key, input[key]]));
+  common.profile = STANDARD_SHADER_PROFILE;
+  const metadata = standardMetadata(common, stage, paired, selectors);
+  if (stage === "vertex") require((selectors.packedSignedMask & ~metadata.attributes.reduce((mask, entry) =>
+    mask | (1 << entry.index), 0)) === 0, "Packed selectors exceed declared vertex attributes.");
+  const prefix = stage === "vertex" ? "vs" : "fs", blockPrefix = stage === "vertex" ? "VS" : "FS";
+  const blocks = array(input.guestUniformBlocks, 13).map(value => {
+    const block = record(value, ["name", "stage", "slot", "byteLength", "encoding", "members"]);
+    require(Number.isInteger(block.slot) && block.slot >= 0 && block.slot <= 12 &&
+      block.stage === stage && block.name === "Virgl" + blockPrefix + "Const" + block.slot &&
+      block.encoding === "raw-32bit-words", "Invalid original uniform bank identity.");
+    const members = array(block.members, 1).map(value => {
+      const member = record(value, ["name", "type", "count", "offset", "arrayStride"]);
+      require(member.name === prefix + "const" + block.slot && member.type === "uvec4[]" &&
+        Number.isInteger(member.count) && member.count >= 1 && member.count <= (block.slot ? 1024 : 512) &&
+        member.offset === 0 && member.arrayStride === 16 && block.byteLength === member.count * 16,
+      "Invalid raw-word std140 bank layout.");
+      return { name: member.name, type: member.type, count: member.count, offset: 0, arrayStride: 16 };
+    });
+    require(members.length === 1, "Missing original uniform bank array.");
+    return { name: block.name, stage, slot: block.slot, byteLength: block.byteLength, encoding: block.encoding, members };
+  });
+  require(blocks.every((entry, index) => !index || blocks[index - 1].slot < entry.slot), "Uniform banks must be sorted and unique.");
+  const bufferedZero = Boolean(selectors.bufferZeroMask & (stage === "vertex" ? 1 : 2));
+  require(blocks.some(block => block.slot === 0) === bufferedZero && (!bufferedZero || metadata.uniforms.length === 0),
+    "Slot zero storage disagrees with the host selector.");
+  return standardFreeze({ ...metadata, profile: input.profile, guestUniformBlocks: blocks });
+}
+function standardUniformBody(value, stage, paired, selectors) {
+  const body = record(value, ["glsl", "metadata"]);
+  require(typeof body.glsl === "string" && body.glsl.length <= 262144 && /^#version 300 es\b/m.test(body.glsl),
+    "Uniform compiler returned incompatible GLSL.");
+  return standardFreeze({ glsl: body.glsl, metadata: standardUniformMetadata(body.metadata, stage, paired, selectors) });
+}
+export function parseStandardUniformShaderMetadata(value, stage) {
+  try { return standardFreeze({ ok: true, domain: null,
+    metadata: standardUniformMetadata(value, stage, false, STANDARD_UNIFORM_SELECTORS) }); }
+  catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-domain-error", error.message); }
+}
+export function normalizeStandardUniformShaderResult(value, stage) {
+  try {
+    const response = record(value, ["ok", "glsl", "metadata", "error"], ["ok"]);
+    if (response.ok === false) { record(response, ["ok", "error"]); return standardError(response.error); }
+    require(response.ok === true, "Invalid uniform compiler result.");
+    record(response, ["ok", "glsl", "metadata"]);
+    return standardFreeze({ ok: true, ...standardUniformBody({ glsl: response.glsl, metadata: response.metadata },
+      stage, false, STANDARD_UNIFORM_SELECTORS) });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-domain-error", error.message); }
+}
+export function normalizeStandardUniformShaderPair(value, hostSelectors = STANDARD_UNIFORM_SELECTORS) {
+  try {
+    const selectors = standardUniformSelectors(hostSelectors), response = record(value, ["ok", "vertex", "fragment", "interfaceKey", "error"], ["ok"]);
+    if (response.ok === false) { record(response, ["ok", "error"]); return standardError(response.error); }
+    require(response.ok === true, "Invalid uniform pair result.");
+    record(response, ["ok", "vertex", "fragment", "interfaceKey"]);
+    const vertex = standardUniformBody(response.vertex, "vertex", true, selectors),
+      fragment = standardUniformBody(response.fragment, "fragment", true, selectors);
+    require(response.interfaceKey === standardInterface(vertex.metadata, fragment.metadata).key, "Uniform pair key disagrees.");
+    return standardFreeze({ ok: true, vertex, fragment, interfaceKey: response.interfaceKey });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-link-error", error.message); }
+}
+export function deriveStandardUniformShaderInterface(vertex, fragment, hostSelectors = STANDARD_UNIFORM_SELECTORS) {
+  try {
+    const selectors = standardUniformSelectors(hostSelectors);
+    return standardFreeze({ ok: true, ...standardInterface(standardUniformMetadata(vertex, "vertex", true, selectors),
+      standardUniformMetadata(fragment, "fragment", true, selectors)) });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-link-error", error.message); }
+}

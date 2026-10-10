@@ -95,4 +95,15 @@ const char *bridge_translate_standard_pair_vertex_formats(const char *vertex_tex
                                                           uint32_t signed_inputs, uint32_t unsigned_inputs,
                                                           uint32_t packed_signed_inputs, uint32_t packed_normalized_inputs);
 
+/* Separate dimensional raw-word uniform-block facet. User slots 1..12 are
+ * native std140 arrays; slot zero remains inline unless the stage bit is set.
+ * The selector composes with the four vertex-format masks. No resource is
+ * retained and no existing entry point admits this profile implicitly. */
+const char *bridge_translate_standard_uniform(int stage, const char *text, size_t length);
+const char *bridge_translate_standard_uniform_pair(const char *vertex_text, size_t vertex_length,
+                                                   const char *fragment_text, size_t fragment_length,
+                                                   uint32_t signed_inputs, uint32_t unsigned_inputs,
+                                                   uint32_t packed_signed_inputs, uint32_t packed_normalized_inputs,
+                                                   uint32_t buffer_zero_mask);
+
 #endif

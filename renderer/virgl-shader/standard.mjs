@@ -4,6 +4,9 @@ export const STANDARD_LIMITS = Object.freeze({
   ioRegisters: 32, vertexAttributes: 16, genericSemantics: 16,
   samplers: 16, colorOutputs: 4, flowDepth: 32, lines: 1536, lineBytes: 512,
 });
+export const STANDARD_UNIFORM_LIMITS = Object.freeze({
+  ...STANDARD_LIMITS, uniformSlots: 12, uniformVectors: 1024, sanityScratchBytes: 2097152,
+});
 const fail = (code, message) => ({ ok: false, error: { code, message } });
 function fields(request, names) {
   if (!request || typeof request !== "object" || Array.isArray(request)) return null;
@@ -23,6 +26,14 @@ function textError(text) {
  * Wasm memory; results own all strings and records. It exposes no exact facts,
  * keys, private source/geometry tuples, or implicit fallback to another facet. */
 export async function createVirglStandardShaderBridge(options = {}) {
+  return createStandardBridge(options, false);
+}
+/** Explicit host-selected dimensional constant-bank compiler. Its distinct
+ * profile carries raw-word native block layouts, never resource authority. */
+export async function createVirglStandardUniformShaderBridge(options = {}) {
+  return createStandardBridge(options, true);
+}
+async function createStandardBridge(options, uniformBuffers) {
   const { default: createModule } = await import("./build/wasm/virgl-shader.mjs");
   const module = await createModule(options);
   function run(texts, call) {
@@ -40,7 +51,7 @@ export async function createVirglStandardShaderBridge(options = {}) {
       for (const pointer of pointers.reverse()) module._free(pointer);
     }
   }
-  return Object.freeze({
+  const bridge = {
     translate(request) {
       let input;
       try { input = fields(request, ["stage", "text"]); }
@@ -50,7 +61,8 @@ export async function createVirglStandardShaderBridge(options = {}) {
       if (stage !== "vertex" && stage !== "fragment") return fail("unsupported-stage", "Only vertex and fragment stages are supported.");
       const error = textError(text);
       if (error) return error;
-      return run([text], ([pointer]) => module._bridge_translate_standard(stage === "vertex" ? 0 : 1, pointer, text.length));
+      return run([text], ([pointer]) => (uniformBuffers ? module._bridge_translate_standard_uniform :
+        module._bridge_translate_standard)(stage === "vertex" ? 0 : 1, pointer, text.length));
     },
     translatePair(request) {
       let input;
@@ -62,7 +74,9 @@ export async function createVirglStandardShaderBridge(options = {}) {
         const error = textError(text);
         if (error) return error;
       }
-      return run(input, ([vertex, fragment]) => module._bridge_translate_standard_pair(vertex, vertexText.length, fragment, fragmentText.length));
+      return run(input, ([vertex, fragment]) => uniformBuffers ?
+        module._bridge_translate_standard_uniform_pair(vertex, vertexText.length, fragment, fragmentText.length, 0, 0, 0, 0, 0) :
+        module._bridge_translate_standard_pair(vertex, vertexText.length, fragment, fragmentText.length));
     },
     translatePairTyped(request) {
       let input;
@@ -76,8 +90,9 @@ export async function createVirglStandardShaderBridge(options = {}) {
         const error = textError(text);
         if (error) return error;
       }
-      return run([vertexText, fragmentText], ([vertex, fragment]) => module._bridge_translate_standard_pair_typed(
-        vertex, vertexText.length, fragment, fragmentText.length, signedMask, unsignedMask));
+      return run([vertexText, fragmentText], ([vertex, fragment]) => uniformBuffers ?
+        module._bridge_translate_standard_uniform_pair(vertex, vertexText.length, fragment, fragmentText.length, signedMask, unsignedMask, 0, 0, 0) :
+        module._bridge_translate_standard_pair_typed(vertex, vertexText.length, fragment, fragmentText.length, signedMask, unsignedMask));
     },
     translatePairVertexFormats(request) {
       let input;
@@ -92,8 +107,27 @@ export async function createVirglStandardShaderBridge(options = {}) {
         const error = textError(text);
         if (error) return error;
       }
-      return run([vertexText, fragmentText], ([vertex, fragment]) => module._bridge_translate_standard_pair_vertex_formats(
-        vertex, vertexText.length, fragment, fragmentText.length, signedMask, unsignedMask, packedSignedMask, packedNormalizedMask));
+      return run([vertexText, fragmentText], ([vertex, fragment]) => uniformBuffers ?
+        module._bridge_translate_standard_uniform_pair(vertex, vertexText.length, fragment, fragmentText.length, signedMask, unsignedMask, packedSignedMask, packedNormalizedMask, 0) :
+        module._bridge_translate_standard_pair_vertex_formats(vertex, vertexText.length, fragment, fragmentText.length, signedMask, unsignedMask, packedSignedMask, packedNormalizedMask));
     },
-  });
+  };
+  if (uniformBuffers) bridge.translatePairUniforms = request => {
+    let input;
+    try { input = fields(request, ["vertexText", "fragmentText", "signedMask", "unsignedMask", "packedSignedMask", "packedNormalizedMask", "bufferZeroMask"]); }
+    catch { return fail("invalid-input", "Uniform pair reflection failed."); }
+    if (!input) return fail("invalid-input", "Provide only own texts, vertex format masks and buffered slot zero mask.");
+    const [vertexText, fragmentText, signedMask, unsignedMask, packedSignedMask, packedNormalizedMask, bufferZeroMask] = input;
+    if (![signedMask, unsignedMask, packedSignedMask, packedNormalizedMask].every(mask => Number.isInteger(mask) && mask >= 0 && mask <= 0xffff) ||
+        (signedMask & unsignedMask) !== 0 || ((signedMask | unsignedMask) & packedSignedMask) !== 0 ||
+        (packedNormalizedMask & ~packedSignedMask) !== 0 || !Number.isInteger(bufferZeroMask) || bufferZeroMask < 0 || bufferZeroMask > 3)
+      return fail("invalid-input", "Uniform and vertex format masks have incompatible extents.");
+    for (const text of [vertexText, fragmentText]) {
+      const error = textError(text);
+      if (error) return error;
+    }
+    return run([vertexText, fragmentText], ([vertex, fragment]) => module._bridge_translate_standard_uniform_pair(
+      vertex, vertexText.length, fragment, fragmentText.length, signedMask, unsignedMask, packedSignedMask, packedNormalizedMask, bufferZeroMask));
+  };
+  return Object.freeze(bridge);
 }
