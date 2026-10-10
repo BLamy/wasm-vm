@@ -2205,3 +2205,7 @@ verify-E6-T11d16-adversarial:
 .PHONY: verify-E6-T11d17
 verify-E6-T11d17:
 	bash tools/verify-virgl-standard-uniform-bindings.sh
+
+.PHONY: verify-E6-T11d17-adversarial
+verify-E6-T11d17-adversarial:
+	bash tools/verify-virgl-standard-uniform-bindings-adversarial.sh
