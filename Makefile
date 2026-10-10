@@ -2297,3 +2297,7 @@ verify-E6-T11d28:
 .PHONY: verify-E6-T11d28-adversarial
 verify-E6-T11d28-adversarial:
 	bash tools/verify-virgl-standard-packed-float-consumer-adversarial.sh
+
+.PHONY: verify-E6-T11d29
+verify-E6-T11d29:
+	bash tools/verify-virgl-standard-shared-exponent-images.sh

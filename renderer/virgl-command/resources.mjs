@@ -2,7 +2,9 @@
 import {byteColorFormat, STANDARD_COLOR_TRANSFER_PROFILE} from "./color-images.mjs";
 import {floatColorFormat, halfFromFloatWord, STANDARD_FLOAT_COLOR_TRANSFER_PROFILE} from "./float-images.mjs";
 import {packedFloatColorFormat, r11g11b10FromFloatWords, STANDARD_PACKED_FLOAT_COLOR_TRANSFER_PROFILE} from "./packed-float-images.mjs";
-const ownedColorFormat = meta => byteColorFormat(meta.format) || (meta.floatPrecision ? floatColorFormat(meta.format) : null) || (meta.packedFloat ? packedFloatColorFormat(meta.format) : null);
+import {sharedExponentColorFormat, STANDARD_SHARED_EXPONENT_TRANSFER_PROFILE} from "./shared-exponent-images.mjs";
+import {createSharedExponentPacker} from "./shared-exponent-gpu.mjs";
+const ownedColorFormat = meta => byteColorFormat(meta.format) || (meta.floatPrecision ? floatColorFormat(meta.format) : null) || (meta.packedFloat ? packedFloatColorFormat(meta.format) : null) || (meta.sharedExponent ? sharedExponentColorFormat(meta.format) : null);
 export const RESOURCE_LIMITS = Object.freeze({
   resources: 16, contexts: 8, segments: 256, tickets: 64, leases: 64,
   resourceBytes: 4194304, transferBytes: 4194304,
@@ -79,10 +81,10 @@ function checkedProduct(a, b, maximum, message) {
   require(a === 0 || b <= Math.floor(maximum / a), "out-of-bounds", message);
   return a * b;
 }
-function normalizeMetadata(value, limits, uniform = false, bufferRoles = false, mipmaps = false, colors = false, floats = false, packed = false) {
+function normalizeMetadata(value, limits, uniform = false, bufferRoles = false, mipmaps = false, colors = false, floats = false, packed = false, shared = false) {
   const meta = record(value, META_KEYS);
   for (const key of META_KEYS) uint(meta[key], key, ["id", "width", "height", "depth", "arraySize"].includes(key));
-  require(meta.depth === 1 && meta.arraySize === 1 && (meta.lastLevel === 0 || mipmaps && meta.target === 2 && ([2, 67, 233].includes(meta.format) || colors && byteColorFormat(meta.format) || floats && floatColorFormat(meta.format) || packed && packedFloatColorFormat(meta.format))) && meta.nrSamples === 0 && meta.flags === 0,
+  require(meta.depth === 1 && meta.arraySize === 1 && (meta.lastLevel === 0 || mipmaps && meta.target === 2 && ([2, 67, 233].includes(meta.format) || colors && byteColorFormat(meta.format) || floats && floatColorFormat(meta.format) || packed && packedFloatColorFormat(meta.format) || shared && sharedExponentColorFormat(meta.format))) && meta.nrSamples === 0 && meta.flags === 0,
     "unsupported-resource", mipmaps ? "Only qualified 2D levels, one layer, one sample and no flags are supported." : "Only one-level, single-layer, single-sample resources without flags are supported.");
   let kind, byteLength, levels, color, gpuByteLength;
   if (meta.target === 0 && meta.format === 64 && meta.height === 1) {
@@ -96,9 +98,9 @@ function normalizeMetadata(value, limits, uniform = false, bufferRoles = false, 
     byteLength = checkedProduct(checkedProduct(meta.width, meta.height, limits.resourceBytes, "Depth allocation is too large."), 2,
       limits.resourceBytes, "Depth allocation is too large.");
   } else {
-    color = (colors ? byteColorFormat(meta.format) : null) || (floats ? floatColorFormat(meta.format) : null) || (packed ? packedFloatColorFormat(meta.format) : null);
+    color = (colors ? byteColorFormat(meta.format) : null) || (floats ? floatColorFormat(meta.format) : null) || (packed ? packedFloatColorFormat(meta.format) : null) || (shared ? sharedExponentColorFormat(meta.format) : null);
     const roles = meta.bind & 10, hints = (1 << 18) | (1 << 20);
-    require(meta.target === 2 && ([2, 67, 233].includes(meta.format) || color) && roles !== 0 && (!color?.snorm || roles === 8) && (meta.bind & ~(10 | hints)) === 0,
+    require(meta.target === 2 && ([2, 67, 233].includes(meta.format) || color) && roles !== 0 && (!color?.snorm || roles === 8) && (!color?.sharedExponent || meta.bind === 8) && (meta.bind & ~(10 | hints)) === 0,
       "unsupported-resource", "Only required normalized 2D color formats with render/sampler roles and scanout/shared hints are supported.");
     require(meta.width <= limits.textureSize && meta.height <= limits.textureSize, "limit-exceeded", "Texture dimensions exceed host/profile limits.");
     kind = "texture";
@@ -130,7 +132,7 @@ function normalizeMetadata(value, limits, uniform = false, bufferRoles = false, 
     }
   }
   require(byteLength <= limits.resourceBytes, "limit-exceeded", "Resource exceeds per-resource byte limit.");
-  return freeze({ ...meta, kind, byteLength, ...(levels ? { levels } : {}), ...(color ? { pixelBytes: color.pixelBytes, gpuByteLength, ...(color.precision ? { floatPrecision: color.precision } : {}), ...(color.packedFloat ? { packedFloat: true } : {}) } : {}) });
+  return freeze({ ...meta, kind, byteLength, ...(levels ? { levels } : {}), ...(color ? { pixelBytes: color.pixelBytes, gpuByteLength, ...(color.precision ? { floatPrecision: color.precision } : {}), ...(color.packedFloat ? { packedFloat: true } : {}), ...(color.sharedExponent ? { sharedExponent: true } : {}) } : {}) });
 }
 function inlineWords(value) {
   // The wire submission cap leaves at most 65524 words after its inline header.
@@ -211,7 +213,7 @@ function layoutFor(meta, fields, backingBytes, limits) {
   return freeze({ kind: texture ? "texture" : "buffer", box: { ...box }, offset, rowBytes, rowCount: box.height,
     ...(meta.kind === "mip-texture" ? { level: fields.level, levelWidth: selected.width, levelHeight: selected.height } : {}),
     rowStride, layerStride, footprintBytes, requiredEnd: offset + footprintBytes, tightBytes,
-    direction, ...(color ? { scratchBytes: colorScratch, stagingBytes: direction === "readback" ? colorScratch : 0 } : {}), ...(depth ? { scratchBytes: packedBytes, conversionBytes: direction === "readback" ? packedBytes : 0,
+    direction, ...(color ? { scratchBytes: colorScratch, ...(color.sharedExponent ? { conversionBytes: direction === "readback" ? tightBytes : 0 } : {}), stagingBytes: direction === "readback" ? color.sharedExponent ? checkedProduct(colorScratch, 2, RESOURCE_LIMITS.gpuBytes, "Shared exponent staging exceeds GPU byte limit.") : colorScratch : 0 } : {}), ...(depth ? { scratchBytes: packedBytes, conversionBytes: direction === "readback" ? packedBytes : 0,
       stagingBytes: direction === "readback" ? checkedProduct(packedBytes, 2, RESOURCE_LIMITS.gpuBytes, "Depth staging exceeds GPU byte limit.") : 0 } : {}) });
 }
 
@@ -318,7 +320,15 @@ export function computeStandardPackedFloatColorTransferLayout(metadata, fields, 
   });
 }
 
-function createStore(options, uniform, bufferRoles = false, mipmaps = false, images = false, colors = false, floats = false, packed = false) {
+export function createStandardSharedExponentResourceStore(options) { return createStore(options, true, true, true, true, true, true, true, true); }
+export function computeStandardSharedExponentTransferLayout(metadata, fields, backingByteLength, overrides = {}) {
+  return result(() => {
+    const limits = limitsFor(overrides);
+    return success({ layout: layoutFor(normalizeMetadata(metadata, limits, true, true, true, true, true, true, true), normalizedFields(fields), backingByteLength, limits) });
+  });
+}
+
+function createStore(options, uniform, bufferRoles = false, mipmaps = false, images = false, colors = false, floats = false, packed = false, shared = false) {
   return result(() => {
     const config = record(options, ["backend", "limits"], ["backend"]), backend = config.backend;
     require(backend && typeof backend === "object", "invalid-input", "A transfer backend is required.");
@@ -328,6 +338,7 @@ function createStore(options, uniform, bufferRoles = false, mipmaps = false, ima
     require(!colors || backend.colorProfile === STANDARD_COLOR_TRANSFER_PROFILE, "invalid-input", "Byte colors require the qualified native transfer backend.");
     require(!floats || backend.floatProfile === STANDARD_FLOAT_COLOR_TRANSFER_PROFILE, "invalid-input", "Float images require the selected native transfer backend.");
     require(!packed || backend.packedFloatProfile === STANDARD_PACKED_FLOAT_COLOR_TRANSFER_PROFILE, "invalid-input", "Packed float images require their selected native transfer backend.");
+    require(!shared || backend.sharedExponentProfile === STANDARD_SHARED_EXPONENT_TRANSFER_PROFILE, "invalid-input", "Shared exponent images require their selected native transfer backend.");
     const requested = limitsFor(config.limits);
     const limits = Object.freeze({ ...requested, textureSize: Math.min(requested.textureSize, backend.maxTextureSize) });
     const resources = new Map(), live = new Set(), contexts = new Map(), tickets = new Map(), leases = new Map(), storageReads = new Map(), uniformRanges = new Map(), revokedAccess = new Set(), revokedUniform = new Set();
@@ -507,7 +518,7 @@ function createStore(options, uniform, bufferRoles = false, mipmaps = false, ima
         return success({ context: freeze({ id, generation: ctx.generation }) });
       }),
       createResource: operation((metadata) => {
-        const meta = normalizeMetadata(metadata, limits, uniform, bufferRoles, mipmaps, colors, floats, packed);
+        const meta = normalizeMetadata(metadata, limits, uniform, bufferRoles, mipmaps, colors, floats, packed, shared);
         require(!resources.has(meta.id), "resource-exists", "Resource ID is already public.");
         require(live.size < limits.resources, "limit-exceeded", "Live/retained resource count limit exceeded.");
         const allocationBytes = meta.kind === "staging" ? 0 : meta.gpuByteLength ?? meta.byteLength;
@@ -881,9 +892,11 @@ function createStore(options, uniform, bufferRoles = false, mipmaps = false, ima
           levels.push({ level, width: w, height: h, byteLength: bytes, ...(color ? { gpuByteLength: nativeBytes } : {}) }); byteLength += bytes;
           w = Math.max(1, Math.floor(w / 2)); h = Math.max(1, Math.floor(h / 2));
         }
+        const privateRange = firstLevel !== 0 || lastLevel !== meta.lastLevel;
+        const sharedCopyScratchBytes = privateRange && color?.sharedExponent ? checkedProduct(checkedProduct(width, height, limits.gpuBytes, "Shared exponent copy image is too large."), color.copyPixelBytes, limits.gpuBytes, "Shared exponent copy scratch is too large.") : 0;
         const metadata = freeze({ ...meta, kind: lastLevel > firstLevel ? "mip-texture" : "texture", width, height,
-          lastLevel: lastLevel - firstLevel, byteLength, levels, ...(color ? { gpuByteLength } : {}) });
-        const allocationBytes = firstLevel === 0 && lastLevel === meta.lastLevel ? 0 : color ? gpuByteLength : byteLength;
+          lastLevel: lastLevel - firstLevel, byteLength, levels, ...(color ? { gpuByteLength } : {}), ...(sharedCopyScratchBytes ? { sharedCopyScratchBytes } : {}) });
+        const allocationBytes = privateRange ? (color ? gpuByteLength : byteLength) + sharedCopyScratchBytes : 0;
         require(allocationBytes <= limits.gpuBytes - gpuBytes, "limit-exceeded", "Native image view byte budget exceeded.");
         const storage = allocationBytes ? host("allocate", metadata) : res.storage;
         require(storage && typeof storage === "object", "backend-error", "Native image view allocation returned no storage.");
@@ -937,12 +950,14 @@ export function createStandardFloatColorTransferBackend(gl) { return createTrans
 
 export function createStandardPackedFloatColorTransferBackend(gl) { return createTransferBackend(gl, true, true, true, true); }
 
-function createTransferBackend(gl, colors, rawBufferReadbacks = false, floats = false, packed = false) {
+export function createStandardSharedExponentTransferBackend(gl) { return createTransferBackend(gl, true, true, true, true, true); }
+
+function createTransferBackend(gl, colors, rawBufferReadbacks = false, floats = false, packed = false, shared = false) {
   return result(() => {
     require(gl && typeof gl.getBufferSubData === "function" && typeof gl.texStorage2D === "function", "invalid-input", "A WebGL2 context is required.");
     require(!colors || gl.getExtension("EXT_render_snorm"), "unsupported-host", "Native signed color copies/readbacks require EXT_render_snorm.");
     require(!floats || gl.getExtension("EXT_color_buffer_float"), "unsupported-host", "Native floating planes require EXT_color_buffer_float.");
-    let vao = null, framebuffer = null, depthProgram = null, disposed = false;
+    let vao = null, framebuffer = null, depthProgram = null, sharedPacker = null, disposed = false;
     const allocations = new Set(), pendingReads = new Set();
     const colorFormats = {
       16: { internal: gl.DEPTH_COMPONENT16, upload: gl.DEPTH_COMPONENT, type: gl.UNSIGNED_SHORT },
@@ -951,7 +966,7 @@ function createTransferBackend(gl, colors, rawBufferReadbacks = false, floats = 
       233: { internal: gl.RGB10_A2, upload: gl.RGBA, type: gl.UNSIGNED_INT_2_10_10_10_REV },
     };
     const colorFormat = (meta) => {
-      const color = (colors ? byteColorFormat(meta.format) : null) || (floats ? floatColorFormat(meta.format) : null) || (packed ? packedFloatColorFormat(meta.format) : null);
+      const color = (colors ? byteColorFormat(meta.format) : null) || (floats ? floatColorFormat(meta.format) : null) || (packed ? packedFloatColorFormat(meta.format) : null) || (shared ? sharedExponentColorFormat(meta.format) : null);
       const profile = color ? { internal: gl[color.internal], upload: gl[color.upload], type: gl[color.type], ...(color.precision || color.packedFloat ? { readType: gl.FLOAT } : {}) } : colorFormats[meta.format];
       require(profile, "unsupported-resource", "Unsupported native texture storage format.");
       return profile;
@@ -959,7 +974,7 @@ function createTransferBackend(gl, colors, rawBufferReadbacks = false, floats = 
     // Store uploads are private, dense scratch arrays. Convert in that same
     // reservation: no second CPU image or GPU shadow escapes the byte budgets.
     const nativeUpload = (format, bytes) => {
-      if (packed && packedFloatColorFormat(format)) {
+      if (packed && packedFloatColorFormat(format) || shared && sharedExponentColorFormat(format)) {
         const data = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength), words = new Uint32Array(bytes.buffer, bytes.byteOffset, bytes.byteLength / 4);
         for (let i = 0; i < words.length; i++) words[i] = data.getUint32(i * 4, true);
         return words;
@@ -1016,6 +1031,11 @@ function createTransferBackend(gl, colors, rawBufferReadbacks = false, floats = 
       return bytes;
     };
     const guestReadback = (format, bytes) => {
+      if (shared && sharedExponentColorFormat(format)) {
+        const words = new Uint32Array(bytes.buffer, bytes.byteOffset, bytes.byteLength / 4), data = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+        for (let i = 0; i < words.length; i++) data.setUint32(i * 4, words[i], true);
+        return bytes;
+      }
       if (packed && packedFloatColorFormat(format)) {
         const count = bytes.length / 16, data = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
         for (let i = 0; i < count; i++) data.setUint32(i * 4, r11g11b10FromFloatWords(data.getUint32(i * 16, true), data.getUint32(i * 16 + 4, true), data.getUint32(i * 16 + 8, true)), true);
@@ -1070,6 +1090,15 @@ function createTransferBackend(gl, colors, rawBufferReadbacks = false, floats = 
       require(!disposed && !gl.isContextLost(), "backend-error", "WebGL context is disposed or lost.");
       const error = gl.getError();
       require(error === gl.NO_ERROR, "backend-error", `WebGL error ${error}.`);
+    };
+    const sharedHelper = () => {
+      require(shared, "unsupported-resource", "Shared exponent GPU conversion is not selected.");
+      return sharedPacker ??= createSharedExponentPacker(gl, check, require, vao);
+    };
+    const sharedConversion = (storage, layout) => {
+      const helper = sharedHelper(), converted = helper.createScratch(layout.box.width, layout.box.height);
+      try { helper.pack(converted, storage.texture, layout.level ?? 0, layout.box); return converted; }
+      catch (error) { helper.releaseScratch(converted); throw error; }
     };
     const pixelState = () => {
       gl.bindBuffer(gl.PIXEL_PACK_BUFFER, null); gl.bindBuffer(gl.PIXEL_UNPACK_BUFFER, null);
@@ -1149,26 +1178,27 @@ function createTransferBackend(gl, colors, rawBufferReadbacks = false, floats = 
       check();
       const destroy = (storage) => {
         if (!allocations.has(storage)) return;
-        if (storage.kind === "texture") gl.deleteTexture(storage.texture); else gl.deleteBuffer(storage.buffer);
+        if (storage.kind === "texture") { gl.deleteTexture(storage.texture); if (storage.sharedCopyScratch) sharedHelper().releaseScratch(storage.sharedCopyScratch); } else gl.deleteBuffer(storage.buffer);
         allocations.delete(storage);
       };
       const releaseReadback = (entry) => {
         if (!pendingReads.delete(entry)) return;
         if (entry.sync) gl.deleteSync(entry.sync);
         if (entry.buffer) gl.deleteBuffer(entry.buffer);
+        if (entry.sharedConversion) sharedHelper().releaseScratch(entry.sharedConversion);
       };
       const backend = {
-        maxTextureSize, ...(colors ? { colorProfile: STANDARD_COLOR_TRANSFER_PROFILE } : {}), ...(floats ? { floatProfile: STANDARD_FLOAT_COLOR_TRANSFER_PROFILE } : {}), ...(packed ? { packedFloatProfile: STANDARD_PACKED_FLOAT_COLOR_TRANSFER_PROFILE } : {}),
+        maxTextureSize, ...(colors ? { colorProfile: STANDARD_COLOR_TRANSFER_PROFILE } : {}), ...(floats ? { floatProfile: STANDARD_FLOAT_COLOR_TRANSFER_PROFILE } : {}), ...(packed ? { packedFloatProfile: STANDARD_PACKED_FLOAT_COLOR_TRANSFER_PROFILE } : {}), ...(shared ? { sharedExponentProfile: STANDARD_SHARED_EXPONENT_TRANSFER_PROFILE } : {}),
         allocate(meta) {
           check();
           let storage = null;
           try {
             if (meta.kind === "texture" || meta.kind === "mip-texture" || meta.kind === "depth-texture") {
-              if (meta.format === 16) require(gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER, gl.HIGH_FLOAT)?.precision >= 23,
+              if (meta.format === 16 || shared && sharedExponentColorFormat(meta.format)) require(gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER, gl.HIGH_FLOAT)?.precision >= 23,
                 "unsupported-resource", "Faithful UN16 reconstruction requires highp binary32 shader precision.");
               const texture = gl.createTexture();
               require(texture !== null, "backend-error", "WebGL texture allocation failed.");
-              storage = Object.freeze({ kind: "texture", texture });
+              storage = { kind: "texture", texture };
               gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, texture);
               gl.texStorage2D(gl.TEXTURE_2D, meta.lastLevel + 1, colorFormat(meta).internal, meta.width, meta.height);
               if (colors) check();
@@ -1178,7 +1208,9 @@ function createTransferBackend(gl, colors, rawBufferReadbacks = false, floats = 
               gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
               // RGB8 has implicit alpha one. RGB10_A2 needs actual stored A=3,
               // then the state executor masks destination alpha writes.
-              if (meta.format === 233 || colors && ownedColorFormat(meta)?.implicitAlpha && ownedColorFormat(meta).nativePixelBytes === (ownedColorFormat(meta).precision ? 4 * ownedColorFormat(meta).precision / 8 : 4)) for (let level = 0; level <= meta.lastLevel; level++) initializeXAlpha(texture, level);
+              if (meta.format === 233 || colors && ownedColorFormat(meta)?.implicitAlpha && !ownedColorFormat(meta).sharedExponent && ownedColorFormat(meta).nativePixelBytes === (ownedColorFormat(meta).precision ? 4 * ownedColorFormat(meta).precision / 8 : 4)) for (let level = 0; level <= meta.lastLevel; level++) initializeXAlpha(texture, level);
+              if (meta.sharedCopyScratchBytes) storage.sharedCopyScratch = sharedHelper().createScratch(meta.width, meta.height, true);
+              storage = Object.freeze(storage);
             } else {
               const buffer = gl.createBuffer();
               require(buffer !== null, "backend-error", "WebGL buffer allocation failed.");
@@ -1191,7 +1223,7 @@ function createTransferBackend(gl, colors, rawBufferReadbacks = false, floats = 
             }
             check(); allocations.add(storage); return storage;
           } catch (error) {
-            if (storage?.kind === "texture") gl.deleteTexture(storage.texture);
+            if (storage?.kind === "texture") { gl.deleteTexture(storage.texture); if (storage.sharedCopyScratch) sharedHelper().releaseScratch(storage.sharedCopyScratch); }
             else if (storage) gl.deleteBuffer(storage.buffer);
             throw error;
           }
@@ -1199,6 +1231,10 @@ function createTransferBackend(gl, colors, rawBufferReadbacks = false, floats = 
         destroy,
         copyTextureRange(source, destination, meta, firstLevel) {
           check();
+          if (shared && sharedExponentColorFormat(meta.format)) {
+            sharedHelper().copy(destination.sharedCopyScratch, source.texture, destination.texture, firstLevel, meta.levels);
+            return;
+          }
           const previousRead = gl.getParameter(gl.READ_FRAMEBUFFER_BINDING), previousDraw = gl.getParameter(gl.DRAW_FRAMEBUFFER_BINDING);
           const scissor = gl.isEnabled(gl.SCISSOR_TEST);
           let destinationFramebuffer = null, attached = false;
@@ -1244,6 +1280,18 @@ function createTransferBackend(gl, colors, rawBufferReadbacks = false, floats = 
           if (storage.kind === "buffer") {
             gl.bindBuffer(gl.COPY_READ_BUFFER, storage.buffer);
             gl.getBufferSubData(gl.COPY_READ_BUFFER, layout.box.x, bytes);
+          } else if (shared && sharedExponentColorFormat(meta.format)) {
+            let converted = null;
+            try {
+              converted = sharedConversion(storage, layout);
+              gl.bindFramebuffer(gl.READ_FRAMEBUFFER, framebuffer);
+              gl.framebufferTexture2D(gl.READ_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, converted.texture, 0); gl.readBuffer(gl.COLOR_ATTACHMENT0);
+              require(gl.checkFramebufferStatus(gl.READ_FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE, "backend-error", "Shared exponent readback framebuffer is incomplete.");
+              gl.readPixels(0, 0, layout.box.width, layout.box.height, gl.RGBA, gl.UNSIGNED_BYTE, bytes);
+            } finally {
+              gl.bindFramebuffer(gl.READ_FRAMEBUFFER, framebuffer); gl.framebufferTexture2D(gl.READ_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, null, 0);
+              if (converted) sharedHelper().releaseScratch(converted);
+            }
           } else if (meta.format === 16) {
             let converted = null;
             try {
@@ -1286,6 +1334,7 @@ function createTransferBackend(gl, colors, rawBufferReadbacks = false, floats = 
               gl.bindFramebuffer(gl.READ_FRAMEBUFFER, framebuffer);
               try {
                 if (meta.format === 16) converted = packDepth(storage, layout.box);
+                if (shared && sharedExponentColorFormat(meta.format)) { entry.sharedConversion = sharedConversion(storage, layout); converted = entry.sharedConversion.texture; }
                 gl.bindFramebuffer(gl.READ_FRAMEBUFFER, framebuffer);
                 gl.framebufferTexture2D(gl.READ_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, converted ?? storage.texture, converted ? 0 : layout.level ?? 0);
                 gl.readBuffer(gl.COLOR_ATTACHMENT0);
@@ -1296,7 +1345,7 @@ function createTransferBackend(gl, colors, rawBufferReadbacks = false, floats = 
               } finally {
                 gl.framebufferTexture2D(gl.READ_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, null, 0);
                 gl.bindBuffer(gl.PIXEL_PACK_BUFFER, null);
-                if (converted) gl.deleteTexture(converted);
+                if (converted && !entry.sharedConversion) gl.deleteTexture(converted);
               }
             } else {
               // WebGL forbids copies across element-array/other-data classes.
@@ -1340,6 +1389,7 @@ function createTransferBackend(gl, colors, rawBufferReadbacks = false, floats = 
             if (gl.getParameter(gl.CURRENT_PROGRAM) === depthProgram.program) gl.useProgram(null);
             gl.deleteProgram(depthProgram.program);
           }
+          if (sharedPacker) sharedPacker.dispose();
           gl.deleteVertexArray(vao); gl.deleteFramebuffer(framebuffer); disposed = true;
         },
       };
