@@ -26,6 +26,10 @@ if node tools/verify-virgl-standard-state.mjs --output "$evidence/fault-suffix" 
   echo 'ERROR: actual short-bank upload corruption escaped its independent pixel oracle' >&2
   exit 1
 fi
+if node tools/verify-virgl-standard-state.mjs --output "$evidence/fault-metadata" --mutation metadata; then
+  echo 'ERROR: actual native metadata admission corruption escaped its independent rejection oracle' >&2
+  exit 1
+fi
 node tools/virgl-command/standard-state-pixels.mjs "$evidence"
 # Direct affected old paths, once each. Their unchanged numerical/cold/sabotage
 # proofs carry forward; this submission does not repeat unrelated gate chains.

@@ -27,6 +27,12 @@ appear as active attributes: only checked integer system values with location
 match native reflection. Execution remains single-target COLOR0; MRT and color
 broadcast fail explicitly.
 
+After linking, the standard facet accounts for every active native uniform.
+Default-block entries must match checked raw constants, stage samplers or the
+renderer's inserted blend uniform. System-block entries must belong to the
+already validated native block. Coherent stage/pair metadata cannot omit an
+active binding; legitimately eliminated native declarations remain admissible.
+
 `make verify-E6-T11d5` records literal wire/metadata predictions, hardware queued
 draws, actual uniforms/reflection/buffer bytes, later-task zero-timeout fences,
 owned input/output exchanges and independent full-pixel predictions. It covers
@@ -34,7 +40,9 @@ short banks, A/B/A restoration, cache pressure/relinking, retained selectors,
 both-stage slot15 images and view variants, native coordinates/discard/IDs,
 complete captured 92cb/c580 sources with authenticated original banks, structured
 errors, cancellation and cleanup. A served upload mutation must fail the
-short-bank pixel oracle. The offline audit reconstructs shader/constant/view
+short-bank pixel oracle. A separate served mutation disables native binding
+accounting and must fail the coherent omission oracle after a real native draw.
+The offline audit reconstructs shader/constant/view
 state from literal command bytes and checks the saved physical pixels.
 
 This factory is an isolated production prerequisite. It does not negotiate

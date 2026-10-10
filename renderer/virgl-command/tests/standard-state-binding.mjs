@@ -159,7 +159,7 @@ function traceGL(gl, c, delay) {
       if (name === "drawArrays" || name === "drawElements") calls.push({ name, args: [...args], turn, label: currentLabel,
         program: gl.getParameter(gl.CURRENT_PROGRAM), activeTexture: gl.getParameter(gl.ACTIVE_TEXTURE) });
       const result = value.apply(target, args);
-      if (name === "getActiveAttrib") events.push({ name, turn, label: currentLabel,
+      if (name === "getActiveAttrib" || name === "getActiveUniform") events.push({ name, turn, label: currentLabel,
         index: args[1], result: result ? { name: result.name, type: result.type, size: result.size } : null });
       if (/^create(Buffer|Texture|Framebuffer|VertexArray|Sampler|Program|Shader)$/.test(name) && result) objects.set(result, next++);
       if (name === "fenceSync" && result) {
@@ -285,8 +285,16 @@ function nativeState(r, record) {
       resourceId: r.allocations.find(entry => entry.storage.texture === texture)?.metadata.id ?? null,
       samplerObject: r.trace.id(gl.getParameter(gl.SAMPLER_BINDING)) });
   }
+  const activeUniforms = [];
+  for (let index = 0; index < gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS); index++) {
+    const actual = gl.getActiveUniform(program, index);
+    activeUniforms.push({ index, name: actual.name, type: actual.type, size: actual.size,
+      blockIndex: gl.getActiveUniforms(program, [index], gl.UNIFORM_BLOCK_INDEX)[0] });
+  }
+  const blendLocation = gl.getUniformLocation(program, "wv_rgb_blend_factor");
+  const blend = blendLocation === null ? null : { words: [...gl.getUniform(program, blendLocation)] };
   gl.activeTexture(gl.TEXTURE0);
-  return { op: call.name, args: call.args, programObject: r.trace.id(program), uniforms, attributes, systemValues, samplers };
+  return { op: call.name, args: call.args, programObject: r.trace.id(program), uniforms, attributes, systemValues, samplers, activeUniforms, blend };
 }
 async function frame(r, record, expected, fixture) {
   const { c, gl } = r;
@@ -417,6 +425,18 @@ export async function runAcceptance({ geometryPath = null, banksPath = null, ori
   }
   if (smoke) { report.status = "passed"; return report; }
   {
+    const r = make({ delay: 2, step: 1 }), factor = [.25, .5, .75, .25], source = [.25, .5, .75, 1];
+    const target = 1 | 7 << 4 | 8 << 9 | 1 << 17 | 17 << 22 | 15 << 27;
+    const rec = await submit(r, 1, join(setup(r), packet(1, 1, [5, 0, 0, target, ...Array(7).fill(0)]),
+      packet(2, 1, [5]), packet(14, 0, factor.map(word)), draw()), "standard-owned-blend-uniform");
+    const saved = await frame(r, rec, colorOracle([source[0] * factor[0], source[1] * factor[1], source[2] * factor[2], 1]),
+      { kind: "owned-blend", source, factor });
+    c.same(saved.native.blend.words, [...factor.slice(0, 3), 1], "actual renderer-owned native blend uniform");
+    c.same(saved.native.activeUniforms.some(u => u.name === "wv_rgb_blend_factor" && u.type === gl.FLOAT_VEC4 && u.size === 1),
+      true, "owned blend uniform participates in complete active reflection");
+    done(r);
+  }
+  {
     const r = make({ delay: 5, step: 1 }), vsDecl = ["DCL IN[15]", "DCL OUT[0], POSITION", "DCL CONST[0..15]"],
       fsDecl = ["DCL OUT[31], COLOR", "DCL TEMP[0]", "IMM[0] FLT32 {0.0625, 0.0625, 0.0625, 0.0625}"],
       vsBody = ["MOV OUT[0], IN[15]"], fsBody = ["MOV TEMP[0], IN[0]"], v = [];
@@ -543,6 +563,44 @@ async function rejectionCases(gl, bridge, c, report) {
     report.runs.push({ history: r.history, events: r.trace.events, exchanges: r.exchanges }); dispose(r);
   }
   c.same(getters, 0, "standard result accessor is never invoked");
+  const omit = (stage, field) => ({ ...bridge,
+    translate(request) {
+      const out = copy(bridge.translate(request));
+      if (request.stage === stage) out.metadata[field] = [];
+      return out;
+    },
+    translatePair(request) {
+      const out = copy(bridge.translatePair(request)); out[stage].metadata[field] = []; return out;
+    },
+  });
+  report.nativeBindingRejections = [];
+  for (const stage of ["vertex", "fragment"]) for (const field of ["uniforms", "samplers"]) {
+    const r = rig(gl, omit(stage, field), c, { delay: 2, step: 1 }), label = `omitted-active-${stage}-${field}`;
+    let vertex = VS, fragment = FS, extra = new Uint8Array();
+    if (field === "uniforms" && stage === "vertex") vertex = tgsi("vertex",
+      "DCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[0]", ["ADD OUT[0], IN[0], CONST[0]"]);
+    if (field === "samplers") {
+      const declaration = "DCL SAMP[15]\nDCL SVIEW[15], 2D, FLOAT\nIMM[0] FLT32 {0.5,0.5,0,1}";
+      if (stage === "vertex") vertex = tgsi("vertex", "DCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0]\n" + declaration,
+        ["TEX TEMP[0], IMM[0], SAMP[15], 2D", "ADD OUT[0], IN[0], TEMP[0]"]);
+      else fragment = tgsi("fragment", "DCL OUT[0], COLOR\n" + declaration, ["TEX OUT[0], IMM[0], SAMP[15], 2D"]);
+      add(r, meta(5, 2, 67, 8, 1), new Uint8Array(4));
+      extra = join(transfer(5, 1), packet(1, 7, [8, 2 | 2 << 3 | 2 << 11, 0, 0, word(1), 0, 0, 0, 0]),
+        samplerView(6, 5, [0, 1, 2, 3]), bindSampler(stage === "vertex" ? 0 : 1, 6));
+    }
+    const rec = await submit(r, 1, join(extra, setup(r, { vertex, fragment }), draw()), label);
+    const name = (stage === "vertex" ? "vs" : "fs") + (field === "uniforms" ? "const0[0]" : "samp15");
+    report.nativeBindingRejections.push({ label, name, result: rec.result,
+      native: r.trace.events.filter(event => event.name === "getActiveUniform"),
+      nativeDraws: r.trace.calls.map(call => ({ name: call.name, args: call.args, turn: call.turn })) });
+    c.same(rec.result.ok, false, label + " coherently spoofed stage/pair metadata rejects");
+    c.same(rec.result.error.code, "shader-reflection-error", label + " fails native completeness check");
+    c.same(rec.result.error.message.includes(name), true, label + " names missing actual native binding");
+    c.same(r.trace.calls.length, 0, label + " fails before any native draw");
+    c.same(r.trace.events.some(event => event.name === "getActiveUniform" && event.result?.name === name), true,
+      label + " records independently active native uniform");
+    report.runs.push({ history: r.history, events: r.trace.events, exchanges: r.exchanges }); dispose(r);
+  }
   {
     const r = rig(gl, bridge, c);
     const rec = await submit(r, 1, join(constants(1, [1, 2, 3, 4]), packet(8, 0, [])), "malformed-tail-zero-mutation");

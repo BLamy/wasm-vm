@@ -89,15 +89,35 @@ def main(directory):
             need(row['sha256'] == served['/' + row['source']], 'coverage/source custody')
         result = report['partial'] if fault else report['browserResult']['result']
         if fault:
-            need(mutation['mode'] == 'suffix' and report['partial']['frames'][-1]['label'] == 'short-bank-0'
-                 and 'short-bank-0 independent physical pixel oracle' in report['browserResult']['error']['message'], 'unrelated failure cannot count as sabotage')
+            if name == 'fault-suffix':
+                need(mutation['mode'] == 'suffix' and report['partial']['frames'][-1]['label'] == 'short-bank-0'
+                     and 'short-bank-0 independent physical pixel oracle' in report['browserResult']['error']['message'],
+                     'unrelated failure cannot count as upload sabotage')
+            else:
+                need(name == 'fault-metadata' and mutation['mode'] == 'metadata' and
+                     'omitted-active-vertex-uniforms coherently spoofed stage/pair metadata rejects' in report['browserResult']['error']['message'],
+                     'unrelated failure cannot count as admission sabotage')
+                omissions = result['nativeBindingRejections']
+                need(len(omissions) == 1 and omissions[0]['label'] == 'omitted-active-vertex-uniforms' and
+                     omissions[0]['result']['ok'] and omissions[0]['result']['gpuComplete'] and
+                     len(omissions[0]['nativeDraws']) == 1 and omissions[0]['nativeDraws'][0]['name'] == 'drawArrays',
+                     'real incomplete-metadata native draw must contradict the rejection prediction')
             original = (ROOT / mutation['path']).read_bytes()
             changed = record(name + '/mutation-source.mjs', mutation['servedSha256'])
             need(sha(original) == mutation['originalSha256'] and original.count(mutation['needle'].encode()) == 1
                  and original.replace(mutation['needle'].encode(), mutation['replacement'].encode()) == changed, 'actual upload mutation custody')
         else:
-            need(result['status'] == 'passed' and len(result['frames']) == 55
+            need(result['status'] == 'passed' and len(result['frames']) == 56
                  and all(row['held'] for row in result['predictions']), 'physical acceptance matrix')
+            omissions = result['nativeBindingRejections']
+            need(len(omissions) == 4 and
+                 {row['label'] for row in omissions} ==
+                 {f'omitted-active-{stage}-{field}' for stage in ['vertex', 'fragment'] for field in ['uniforms', 'samplers']} and
+                 all(not row['result']['ok'] and row['result']['error']['code'] == 'shader-reflection-error' and
+                     row['name'] in row['result']['error']['message'] and
+                     row['nativeDraws'] == [] and
+                     any(event['result'] and event['result']['name'] == row['name'] for event in row['native']) for row in omissions),
+                 'complete active native constant/sampler metadata admission')
             need(not result['guestExecution'] and not result['productionNegotiation'], 'isolated authority')
             need([row['delay'] for row in result['cancelledJobs']] == [2, 5]
                  and all(row['result']['gpuComplete'] and row['result']['error']['code'] == 'cancelled' for row in result['cancelledJobs']), 'actual cancellation/drain')
@@ -120,8 +140,9 @@ def main(directory):
 
     physical('hardware')
     physical('fault-suffix', True)
+    physical('fault-metadata', True)
     audit = json.loads(record('physical-audit.json'))
-    need(audit['status'] == 'passed' and len(audit['frames']) == 55 and audit['pixels'] == 2371168
+    need(audit['status'] == 'passed' and len(audit['frames']) == 56 and audit['pixels'] == 2371424
          and all(row['held'] for row in audit['frames'])
          and [row['label'] for row in audit['faults'] if not row['held']] == ['short-bank-0'], 'offline physical oracle')
     for gate in GATES + ['blend', 'float']:

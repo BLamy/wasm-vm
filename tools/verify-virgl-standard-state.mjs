@@ -13,7 +13,7 @@ for (let index = 2; index < process.argv.length; index += 2) {
   assert.ok(["--output", "--node-only", "--mutation", "--smoke", "--inputs"].includes(process.argv[index]));
   assert.ok(process.argv[index + 1]); options[process.argv[index].slice(2)] = process.argv[index + 1];
 }
-assert.ok(options.output); assert.ok(!options.mutation || options.mutation === "suffix");
+assert.ok(options.output); assert.ok(!options.mutation || ["suffix", "metadata"].includes(options.mutation));
 for (const flag of ["node-only", "smoke"]) assert.ok(!options[flag] || options[flag] === "true");
 const output = path.resolve(options.output); await fs.mkdir(output, { recursive: true });
 const sourcePaths = [
@@ -45,8 +45,10 @@ try {
   if (!options["node-only"]) {
     if (options.mutation) {
       const name = "renderer/virgl-command/state.mjs", before = sources.get(name).toString(),
-        needle = "const shader = uniform.stage === 0 ? program.vertex : program.fragment;",
-        replacement = needle + "\n      if (standard && bank.length < count) return [];";
+        needle = options.mutation === "suffix" ? "const shader = uniform.stage === 0 ? program.vertex : program.fragment;" :
+          "if (standard) for (let index = 0; index < gl.getProgramParameter(program.native, gl.ACTIVE_UNIFORMS); index++) {",
+        replacement = options.mutation === "suffix" ? needle + "\n      if (standard && bank.length < count) return [];" :
+          needle.replace("if (standard)", "if (false)");
       assert.equal(before.split(needle).length, 2, "real upload mutation has one site");
       const bytes = Buffer.from(before.replace(needle, replacement)); sources.set(name, bytes);
       await fs.writeFile(path.join(output, "mutation-source.mjs"), bytes);

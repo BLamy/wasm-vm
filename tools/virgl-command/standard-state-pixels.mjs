@@ -27,7 +27,7 @@ function packets(encoded) {
 function state(frame) {
   const draw = frame.dump.draws.at(-1), ctx = draw.command.contextId,
     banks = [[], []], names = new Map(), selected = [null, null], views = [[], []], samplerStates = [[], []];
-  let clear = [0, 0, 0, 0], elements = null, boundElements = null, buffers = [];
+  let clear = [0, 0, 0, 0], elements = null, boundElements = null, buffers = [], blend = null, blendColor = [0, 0, 0, 0];
   for (const row of frame.history) {
     if (row.ctx !== ctx) continue;
     assert.equal(row.result.ok, true, "pixel history must be successful");
@@ -46,6 +46,8 @@ function state(frame) {
       else if (packet.op === 31) selected[w[1]] = w[0] ? names.get(w[0]) : null;
       else if (packet.op === 12 && w[0] < 2 && w[1] === 0) banks[w[0]] = w.slice(2);
       else if (packet.op === 7) clear = w.slice(1, 5).map(f).map(quant);
+      else if (packet.op === 2 && packet.kind === 1) blend = w[0] ? names.get(w[0]) : null;
+      else if (packet.op === 14) blendColor = w.map(f);
       else if (packet.op === 2 && packet.kind === 5) boundElements = w[0] ? names.get(w[0]) : null;
       else if (packet.op === 6) buffers = Array.from({ length: w.length / 3 }, (_, i) => w.slice(i * 3, i * 3 + 3));
       else if (packet.op === 10 || packet.op === 18) {
@@ -67,7 +69,7 @@ function state(frame) {
     assert.equal(fetch.resourceGeneration, attribute.generation);
     assert.ok(fetch.requiredEnd <= raw.length); assert.equal(fetch.offset, attribute.offset);
   }
-  return { banks, selected, views, samplerStates, clear, program, draw };
+  return { banks, selected, views, samplerStates, clear, program, draw, blend, blendColor };
 }
 function expected(frame, st) {
   const { banks: [v, b], selected, clear } = st, get = (bank, slot) => Array.from({ length: 4 }, (_, lane) => f(bank[slot * 4 + lane] ?? 0));
@@ -79,6 +81,17 @@ function expected(frame, st) {
       output = get(b, 0).map((n, lane) => n + get(b, 511)[lane] + get(v, 511)[lane]);
     else output = get(b, 0);
     return () => color(output);
+  }
+  if (fixture.kind === "owned-blend") {
+    const source = get(b, 0), factor = st.blendColor;
+    assert.deepEqual(source, fixture.source); assert.deepEqual(factor, fixture.factor);
+    // Literal Gallium fields: ADD, CONSTANT_COLOR / CONSTANT_ALPHA in RGB,
+    // ONE / ZERO in alpha. The fixture's clear color is transparent black.
+    assert.deepEqual(st.blend.words.slice(1), [0, 0, (1 | 7 << 4 | 8 << 9 | 1 << 17 | 17 << 22 | 15 << 27) >>> 0, ...Array(7).fill(0)]);
+    assert.deepEqual(clear, [0, 0, 0, 0]);
+    assert.deepEqual(frame.native.blend.words, [...factor.slice(0, 3), 1]);
+    assert.ok(frame.native.activeUniforms.some(uniform => uniform.name === "wv_rgb_blend_factor" && uniform.type === 35666 && uniform.size === 1));
+    return () => color([source[0] * factor[0], source[1] * factor[1], source[2] * factor[2], source[3]]);
   }
   if (fixture.kind === "flat") {
     assert.ok(st.program.vertexESSL300.includes("flat out uvec4 vso_g15"));
@@ -168,7 +181,7 @@ for (const name of ["hardware", "fault-suffix"]) {
   }
   assert.deepEqual(failed, fault ? ["short-bank-0"] : [], "saved pixel sensitivity");
 }
-assert.equal(audit.frames.length, 55); audit.pixels = audit.frames.reduce((n, row) => n + row.pixels, 0);
-assert.equal(audit.pixels, 2371168); audit.status = "passed";
+assert.equal(audit.frames.length, 56); audit.pixels = audit.frames.reduce((n, row) => n + row.pixels, 0);
+assert.equal(audit.pixels, 2371424); audit.status = "passed";
 await fs.writeFile(path.join(directory, "physical-audit.json"), JSON.stringify(audit, null, 2) + "\n");
 console.log("Offline audit passed: " + audit.frames.length + " frames, " + audit.pixels + " pixels; actual upload mutation detected");

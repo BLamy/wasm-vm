@@ -594,6 +594,20 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           require(components <= hostUniformComponents[1], "shader-reflection-error", "Blend factor exceeds the host fragment uniform limit.");
           program.reflection.blend = { sourceFactor: blendFold, uniform: name, type: "vec4", count: 1 };
         }
+        if (standard) for (let index = 0; index < gl.getProgramParameter(program.native, gl.ACTIVE_UNIFORMS); index++) {
+          const actual = gl.getActiveUniform(program.native, index);
+          require(actual, "shader-reflection-error", "Missing active native uniform reflection.");
+          const blockIndex = gl.getActiveUniforms(program.native, [index], gl.UNIFORM_BLOCK_INDEX)[0];
+          // The measured system block includes upstream reserved members. Its
+          // complete native extent and owned zero-filled data were checked above.
+          const accounted = program.blocks.some(block => block.index === blockIndex) ||
+            program.reflection.uniforms.some(uniform => uniform.name === actual.name &&
+              uniform.activeCount === actual.size && actual.type === gl.UNSIGNED_INT_VEC4) ||
+            program.reflection.samplers.some(sampler => sampler.name === actual.name &&
+              actual.size === 1 && actual.type === gl.SAMPLER_2D) ||
+            program.reflection.blend?.uniform === actual.name && actual.size === 1 && actual.type === gl.FLOAT_VEC4;
+          require(accounted, "shader-reflection-error", `Active native uniform ${actual.name} has no checked binding metadata.`);
+        }
         for (const output of fs.outputs) {
           const location = gl.getFragDataLocation(program.native, output.name);
           require(output.semantic === "COLOR" && (location === 0 || location === -1 && (standard || fragment.discardContract?.alwaysDiscards === true)),
