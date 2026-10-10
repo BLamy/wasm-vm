@@ -165,6 +165,8 @@ def predict(directory, seeds):
     result = dict(schema='fresh-original-image-numeric-predictions-v1',
                   created=datetime.now(timezone.utc).isoformat(), beforeNativeExecution=True,
                   seeds=seeds, cases=cases, nativeRoundingTolerance={2:1, 67:1, 233:0},
+                  nativeAllocationFailure=dict(originalCall=[3553,2,32856,4,2],deliveredCall=[3553,0,32856,4,2],
+                                               nativeError=1281,unpublishedViews=0,privateAllocations=0,gpuBytes=172,leases=0),
                   runtimeOracleImports=False)
     (directory/'predictions.json').write_text(json.dumps(result, indent=2)+'\n')
     print('Full original image predictions written before native execution')
@@ -393,6 +395,13 @@ def audit(directory, expect_fault=False):
         assert len(faults)==1
     else:
         cleanup=result['cleanup']
+        allocation=cleanup['allocation']
+        assert allocation['record']['result']['error']['code']=='backend-error'
+        assert sum(e['actual']==1281 for e in cleanup['nativeEvents'])==1
+        assert allocation['nativeMutation']==[dict(name='texStorage2D',original=[3553,2,32856,4,2],delivered=[3553,0,32856,4,2])]
+        assert allocation['point']['images']['views']==allocation['point']['images']['allocations']==0
+        assert allocation['point']['resources']['budgets']['gpuBytes']==172
+        assert allocation['point']['resources']['budgets']['leases']==0
         assert cleanup['record']['result']['error']['code']=='backend-error'
         assert cleanup['captureEvents'][0]['captured']
         assert sum(e['actual']==1280 for e in cleanup['nativeEvents'])==1
