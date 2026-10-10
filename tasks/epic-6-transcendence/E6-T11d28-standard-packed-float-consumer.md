@@ -3,7 +3,7 @@ id: E6-T11d28
 epic: 6
 title: Execute original R11G11B10 image samples and framebuffer surfaces
 priority: 525.027039000370
-status: pending
+status: in-progress
 depends_on: [E6-T11d27]
 estimate: S
 risk: high
