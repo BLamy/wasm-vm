@@ -2247,6 +2247,7 @@ const char *bridge_translate_original_92cb_complete(
 
 /* The standard facet deliberately has no profile/raw_ir member. Its guarded
  * syntax is the only input to this independent upstream transaction. */
+#include "tgsi/tgsi_parse.h"
 struct standard_conversion {
    struct standard_profile profile;
    struct vrend_shader_info info;
@@ -2262,6 +2263,39 @@ static void standard_cleanup(struct standard_conversion *c)
    free(c->info.image_arrays);
    free(c->standard_source);
 }
+/* The pinned converter counts a declaration ending at CONST[0] with ++,
+ * rather than max(Last + 1). Put that unique declaration before other CONST
+ * declarations. This is a stable permutation of complete original tokens:
+ * no register, instruction, property, immediate or label is rewritten. The
+ * guard still rejects duplicates/holes used by direct reads, and the strict
+ * independently derived maximum-bank comparison remains in force. */
+static bool standard_constant_order(struct tgsi_token *tokens)
+{
+   struct tgsi_parse_context parser;
+   if (tgsi_parse_init(&parser, tokens) != TGSI_PARSE_OK) return false;
+   unsigned first = 0;
+   bool ok = true;
+   while (!tgsi_parse_end_of_tokens(&parser)) {
+      unsigned start = parser.Position;
+      if (!tgsi_parse_token(&parser)) { ok = false; break; }
+      if (parser.FullToken.Token.Type == TGSI_TOKEN_TYPE_INSTRUCTION) break;
+      if (parser.FullToken.Token.Type != TGSI_TOKEN_TYPE_DECLARATION ||
+          parser.FullToken.FullDeclaration.Declaration.File != TGSI_FILE_CONSTANT) continue;
+      if (!first) first = start;
+      const struct tgsi_full_declaration *decl = &parser.FullToken.FullDeclaration;
+      if (decl->Range.Last || start == first) continue;
+      if (decl->Range.First || decl->Declaration.Dimension || parser.Position - start != 2) {
+         ok = false; break;
+      }
+      struct tgsi_token zero[2];
+      memcpy(zero, tokens + start, sizeof(zero));
+      memmove(tokens + first + 2, tokens + first, (start - first) * sizeof(*tokens));
+      memcpy(tokens + first, zero, sizeof(zero));
+      break;
+   }
+   tgsi_parse_free(&parser);
+   return ok;
+}
 static const char *standard_convert(struct standard_conversion *c, const char *owned,
                                     const struct vrend_fs_shader_info *fragment)
 {
@@ -2269,6 +2303,8 @@ static const char *standard_convert(struct standard_conversion *c, const char *o
    bridge_tgsi_scratch_begin(); upstream_logged = false;
    if (!tgsi_text_translate(owned, tokens, BRIDGE_MAX_TOKENS) || bridge_tgsi_scratch_failed() || upstream_logged)
       return error("translation-error", "Checked upstream TGSI parsing failed.");
+   if (!standard_constant_order(tokens))
+      return error("translation-error", "Checked standard constant declaration ordering failed.");
    struct vrend_shader_cfg cfg = {.glsl_version = 300, .max_draw_buffers = 4,
       .use_gles = 1, .use_core_profile = 1, .use_integer = 1};
    struct vrend_shader_key key = {0};

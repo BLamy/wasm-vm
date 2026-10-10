@@ -12,6 +12,13 @@ parser. Explicit conditional labels must agree with the structured edges.
 Zero loop labels retain the pinned dumper's unspecified-label convention.
 Unknown or excessive inputs return an error with no partial stage or metadata.
 
+Constant declarations may appear in any order. A standard-only stable token
+permutation moves an isolated `CONST[0]` declaration before other constant
+declarations because the pinned upstream converter otherwise increments an
+already larger bank count. Every original token and instruction index remains
+intact, and upstream metadata must still equal the independently checked maximum
+extent. This does not admit duplicate declarations or direct reads of holes.
+
 Uniforms, temporaries, immediate vectors, MOV/UCMP and flat varyings retain
 32-bit words in `uvec4` storage. Storing integer masks in float temporaries
 would allow a hardware compiler to canonicalize `0xffffffff` as a NaN, changing

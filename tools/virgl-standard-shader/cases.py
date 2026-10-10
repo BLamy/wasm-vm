@@ -114,6 +114,30 @@ def main(out):
         if item.get('probe')=='ordinary':add('legacy-'+item['sha256'],(ROOT/item['path']).read_text(),kind=3 if item['stage']=='vertex' else 4)
     for digest in ['92cb866af48f952b719c54959a439c7330333c6d32897430bc3d4a0a2f63bfba','c5806d5f8fd74bf2d3ce5ccf32bdc255ec13ad9447eec5896a3c96a591a5c68f']:
         add('legacy-still-rejects-'+digest,originals[digest]['text'],False,kind=4)
+    # Legal declaration order must not change the maximum bank extent. The
+    # upstream Last==0 increment once contradicted these independent maxima.
+    orders={
+        'zero-last':'DCL CONST[511]\nDCL CONST[0]',
+        'intervening-temp':'DCL CONST[10..511]\nDCL TEMP[0]\nDCL CONST[0]',
+        'zero-first':'DCL CONST[0]\nDCL CONST[511]',
+        'descending-ranges':'DCL CONST[256..511]\nDCL CONST[1..255]\nDCL CONST[0]',
+        'descending-all':'\n'.join(f'DCL CONST[{i}]' for i in reversed(range(512))),
+        'ascending-all':'\n'.join(f'DCL CONST[{i}]' for i in range(512)),
+        'sparse-middle-zero':'DCL CONST[17]\nDCL CONST[0]\nDCL CONST[511]',
+        'no-zero':'DCL CONST[1..511]',
+        'only-zero':'DCL CONST[0]',
+    }
+    for stage in [0,1]:
+        output='POSITION' if stage==0 else 'COLOR'
+        for name,decl in orders.items():
+            index=0 if name=='only-zero' else 511
+            add(f'constant-order-{stage}-{name}',program(stage,decl+'\nDCL OUT[0], '+output,[f'MOV OUT[0], CONST[{index}]']),kind=stage)
+        for name,decl,index in [('duplicate-zero','DCL CONST[511]\nDCL CONST[0]\nDCL CONST[0]',511),('undeclared-hole','DCL CONST[511]\nDCL CONST[0]',1)]:
+            add(f'constant-order-reject-{stage}-{name}',program(stage,decl+'\nDCL OUT[0], '+output,[f'MOV OUT[0], CONST[{index}]']),False,kind=stage,code='unsupported-feature')
+    add('constant-order-both-stages',program(0,'DCL IN[0]\nDCL CONST[511]\nDCL CONST[0]\nDCL OUT[0], POSITION\nDCL OUT[31], GENERIC[15]',
+        ['MOV OUT[0], IN[0]','ADD OUT[31], CONST[0], CONST[511]']),
+        b=program(1,'DCL CONST[511]\nDCL IN[31], GENERIC[15], PERSPECTIVE\nDCL CONST[0]\nDCL TEMP[0]\nDCL OUT[0], COLOR',
+        ['ADD TEMP[0], IN[31], CONST[511]','ADD OUT[0], TEMP[0], CONST[0]']),kind=2)
     report={'schema':'virgl-standard-shader-cases-v1','cases':cases,'originals':list(originals.values()),'seeds':seeds}
     (out/'cases.json').write_text(json.dumps(report,indent=2)+'\n')
     parts=[struct.pack('<I',len(cases))]

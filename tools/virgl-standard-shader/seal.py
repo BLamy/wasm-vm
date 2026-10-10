@@ -20,7 +20,7 @@ def recorded_log(raw, digest):
     # receipt.py snapshots the log before printing its one final confirmation.
     # Authenticate that complete snapshot and the exact appended line, then seal
     # the finalized bytes. Any other addition or prefix edit remains a failure.
-    footer = b'Frozen standard compiler, 634 cases, 125 physical frames, coverage and legacy boundaries authenticated.\n'
+    footer = b'Frozen standard compiler, 657 cases, 128 physical frames, coverage and legacy boundaries authenticated.\n'
     return raw.endswith(footer) and sha(raw[:-len(footer)]) == digest
 
 

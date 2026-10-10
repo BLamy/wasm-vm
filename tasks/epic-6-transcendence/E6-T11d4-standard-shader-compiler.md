@@ -80,6 +80,19 @@ contract; existing private rejection/results must carry unchanged.
 
 ## Verification log
 
+### 2026-10-09 — worker — declaration-order repair in progress
+
+Fresh refutation `6a81dbab` found a legitimate isolated CONST0 declaration after
+CONST511. The standard transaction now stably moves that complete two-token
+declaration before earlier constants. No register, property, immediate,
+instruction or label is rewritten; strict upstream/guardian maximum-extent
+checking remains enabled, and the legacy C boundary is unchanged. The expanded
+independent matrix contains 657 cases, including both stages, intervening
+declarations, descending ranges, all 512 declarations in both orders, sparse
+banks, no-zero/single-zero cases and duplicate/hole rejection. Three new physical
+paired draws exercise both 512-vector banks. These are worker self-validation
+until a frozen recording, exact-head cold clone and fresh verdict are submitted.
+
 ### 2026-10-09 — worker — structural and physical self-validation
 
 The unmodified upstream float-temporary translation compiled every complete

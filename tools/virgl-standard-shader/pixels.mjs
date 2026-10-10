@@ -65,6 +65,13 @@ function expectation(frame,x,y,output){
  case 'mrt':return s.values[output];
  case 'position':return[x+.5,y+.5,.5,1];
  case 'discard':return s.negative?frame.clear:s.value;
+ case 'constant-order':{
+  assert.deepEqual(frame.banks.map(b=>[b.name,b.count]),[['vsconst0',512],['fsconst0',512]]);
+  const [v,f]=frame.banks.map(b=>b.actualWords.map(f32));
+  assert.ok(frame.vertexText.includes('DCL CONST[511]\nDCL CONST[0]'));
+  assert.ok(frame.fragmentText.indexOf('DCL CONST[511]')<frame.fragmentText.indexOf('DCL CONST[0]'));
+  return [0,1,2,3].map(i=>Math.fround(Math.fround(Math.fround(v[i]+v[2044+i])+f[2044+i])+f[i]));
+ }
  case 'original92':{
   const {v,f}=decodedBank(frame),axes=[0,1].map(axis=>{const half=axis?384:512;const first=(v[8+axis]+1)*half,last=(v[8+axis]+v[axis?5:0]+1)*half;const pixel=(axis?y:x)+.5;return{first,last,pixel,guest:f[16+axis]*(pixel-first)/(last-first)};});
   if(axes.some(a=>a.pixel<a.first||a.pixel>a.last))return frame.clear;
@@ -78,7 +85,7 @@ function expectation(frame,x,y,output){
  }
 }
 const hardware=JSON.parse(await fs.readFile(path.join(root,'hardware/report.json'))),failed=JSON.parse(await fs.readFile(path.join(root,'fault-sine/report.json')));
-assert.equal(hardware.status,'passed');assert.equal(hardware.acceptance.frames.length,125);assert.equal(hardware.acceptance.compiles.length,238);
+assert.equal(hardware.status,'passed');assert.equal(hardware.acceptance.frames.length,128);assert.equal(hardware.acceptance.compiles.length,257);
 const results=[];let pixels=0;
 for(const frame of hardware.acceptance.frames){
  assert.equal(frame.mismatches.length,0);assert.equal(frame.budget,frame.fixture.kind==='originalC580'?.02:frame.fixture.kind==='original92'?.0001:.00005);
@@ -96,5 +103,5 @@ for(const frame of hardware.acceptance.frames){
 assert.equal(failed.status,'failed');assert.deepEqual(failed.browserErrors,{console:[],page:[],requests:[]});assert.ok(failed.failure.message.includes('dynamic-fragment-SIN-0 independent standard pixels'));
 const fault=failed.acceptance.frames[0],good=hardware.acceptance.frames[0];assert.equal(fault.name,good.name);assert.equal(fault.fragment.glsl,good.fragment.glsl.replace('sin(','cos('));assert.deepEqual(fault.banks,good.banks);
 assert.ok(fault.mismatches.length>0&&fault.mismatches[0].errors.some(e=>e>.1));
-const report={schema:'standard-shader-offline-pixels-v1',status:'passed',frames:125,pixels,results,mutation:{operation:'SIN-to-COS',point:fault.mismatches[0],caught:true},oracleAuthority:'literal CPU math, integer arithmetic, pinned complete original analytic oracle; no emitted GLSL expected values'};
+const report={schema:'standard-shader-offline-pixels-v1',status:'passed',frames:128,pixels,results,mutation:{operation:'SIN-to-COS',point:fault.mismatches[0],caught:true},oracleAuthority:'literal CPU math, integer arithmetic, pinned complete original analytic oracle; no emitted GLSL expected values'};
 await fs.writeFile(path.join(root,'physical-audit.json'),JSON.stringify(report,null,2)+'\n');console.log(`${pixels} independently recomputed physical pixels and actual SIN-to-COS mutation authenticated.`);

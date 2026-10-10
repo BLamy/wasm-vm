@@ -182,6 +182,15 @@ export async function runAcceptance({matrixPath,nativePath,geometryPath,banksPat
   const positions=[],uv=[];for(const[x,y]of[[-1,-1],[3,-1],[-1,3]]){positions.push((x-ox)/sx,(y-oy)/sy,0,1);uv.push(((edge==='near'?0:w-4)+(x+1)*2)/w,((edge==='near'?0:h-4)+(y+1)*2)/h,0,0);}
   const color=c580Color(fragment);await run({name:`full-original-c580-${bank}-${edge}`,width:4,height:4,budget:.02,clear:[0,0,1,1],vertexText:originals.get('403b0529c632d3d2ffe4584ede810f5745e8b76ca2ab4f575e1073d8f29fcf0c'),fragmentText:originals.get('c5806d5f8fd74bf2d3ce5ccf32bdc255ec13ad9447eec5896a3c96a591a5c68f'),vertexWords:vertex,fragmentWords:fragment,attributes:[{name:'in_0',components:4,values:positions},{name:'in_1',components:4,values:uv}],fixture:{kind:'originalC580',bank,edge,vertex,fragment},expected:(x,y)=>{const px=(edge==='near'?0:w-4)+x+.5,py=(edge==='near'?0:h-4)+y+.5;return Math.min(px,w-px,py,h-py)<=1?color:[0,0,1,1];}});
  }
+ // Both stages place the isolated zero declaration after CONST511. Real
+ // reflection and all 512 uploaded vectors must retain the independent max.
+ const order=matrix.cases.find(c=>c.name==='constant-order-both-stages');require(order,'recorded declaration-order pair');
+ for(let bank=0;bank<3;bank++){
+  const vertex=Array(2048).fill(0),fragment=Array(2048).fill(0);
+  const v0=[(bank+1)/32,1/16,1/8,3/16],v511=[1/8,1/8,1/4,1/4],f0=[1/16,1/8,3/16,1/4],f511=[1/8,1/16,1/32,1/8];
+  for(const [input,at,values]of[[vertex,0,v0],[vertex,2044,v511],[fragment,0,f0],[fragment,2044,f511]])input.splice(at,4,...words(values));
+  await run({name:'constant-order-physical-'+bank,width:4,height:4,vertexText:order.a,fragmentText:order.b,vertexWords:vertex,fragmentWords:fragment,fixture:{kind:'constant-order',bank},expected:()=>v0.map((n,i)=>n+v511[i]+f511[i]+f0[i])});
+ }
  report.status='passed';document.querySelector('#status').textContent=`${report.compiles.length} full shader/program compiles, ${report.frames.length} physical draws with independent pixels`;document.querySelector('#renderer').textContent=report.renderer;return report;
 }
 function c580Color(words){
