@@ -1,0 +1,377 @@
+diff --git a/Makefile b/Makefile
+index 86097145..df62daab 100644
+--- a/Makefile
++++ b/Makefile
+@@ -2129,3 +2129,7 @@ verify-E6-T11d4-adversarial:
+ .PHONY: verify-E6-T11d5
+ verify-E6-T11d5:
+ 	bash tools/verify-virgl-standard-state.sh
++
++.PHONY: verify-E6-T11d5-adversarial
++verify-E6-T11d5-adversarial:
++	bash tools/verify-virgl-standard-state-adversarial.sh
+diff --git a/renderer/virgl-command/tests/standard-state-boundaries.mjs b/renderer/virgl-command/tests/standard-state-boundaries.mjs
+index 0ca83e41..033066c6 100644
+--- a/renderer/virgl-command/tests/standard-state-boundaries.mjs
++++ b/renderer/virgl-command/tests/standard-state-boundaries.mjs
+@@ -94,6 +94,9 @@ function trace(gl,delay){
+   if(name==='getBufferSubData')events.push({name,label,turn,bytes:args[2].byteLength});
+   if(name==='uniform4uiv')events.push({name,label,turn,words:[...args[1]]});
+   if(name==='drawArrays'||name==='drawElements')events.push({name,label,turn,args:[...args]});
++  if(name==='getActiveUniform')events.push({name,label,turn,index:args[1],result:result?{name:result.name,type:result.type,size:result.size}:null});
++  if(name==='getActiveUniforms')events.push({name,label,turn,indices:[...args[1]],parameter:args[2],result:[...result]});
++  if(name==='shaderSource')events.push({name,label,turn,type:gl.getShaderParameter(args[0],gl.SHADER_TYPE),source:args[1]});
+   return result;};methods.set(name,fn);return fn;}});
+  return {gl:proxy,events,next(labelValue){turn++;label=labelValue;}};
+ }
+@@ -127,13 +130,15 @@ async function submit(r,ctx,bytes,label){
+ function setup(s,vb=s.vb,fb=s.fb){return join(transfer(3,64),shader(1,0,s.vertex),shader(2,1,s.fragment),packet(1,5,[3,0,0,0,31]),packet(2,5,[3]),packet(6,0,[16,0,3]),packet(1,8,[4,1,67,0,0]),packet(5,0,[1,0,4]),packet(4,0,[0,...[4,4,.5,4,4,.5].map(bits)]),bank(0,encoded(vb)),bank(1,encoded(fb)),packet(1,7,[8,2|(2<<3)|(2<<11),0,0,bits(1),0,0,0,0]),...s.images.map((_,i)=>transfer(5+i,2,2)),...s.views.map((sw,i)=>view(9+i,5+i,sw)),bindview(0,3,9),bindview(0,15,10),bindview(1,2,11),bindview(1,15,12),packet(31,0,[1,0]),packet(31,0,[2,1]));}
+ function finish(r){ok(r.renderer.dispose(),'critic renderer disposal');ok(r.store.dispose(),'critic store disposal');for(const o of [r.renderer,r.store])for(const [k,v]of Object.entries(ok(o.inspect(),'critic budgets').budgets))same(v,0,'critic zero budget '+k);}
+ function native(gl,r){
+- const program=gl.getParameter(gl.CURRENT_PROGRAM),uniforms=[],samplers=[];assert(program,'critic actual program');
++ const program=gl.getParameter(gl.CURRENT_PROGRAM),uniforms=[],samplers=[],activeUniforms=[];assert(program,'critic actual program');
+  for(let i=0;i<gl.getProgramParameter(program,gl.ACTIVE_UNIFORMS);i++){
+   const a=gl.getActiveUniform(program,i);
++  activeUniforms.push({index:i,name:a.name,type:a.type,size:a.size,blockIndex:gl.getActiveUniforms(program,[i],gl.UNIFORM_BLOCK_INDEX)[0]});
+   if(/^[vf]sconst0\[0\]$/.test(a.name)){same(a.type,gl.UNSIGNED_INT_VEC4,'critic raw reflected type');const name=a.name.slice(0,-3),words=[];for(let n=0;n<a.size;n++)words.push(...gl.getUniform(program,gl.getUniformLocation(program,name+'['+n+']')));uniforms.push({name,count:a.size,words});}
+  }
+  for(const [stage,slots]of [[0,[3,15]],[1,[2,15]]])for(const slot of slots){const name=(stage===0?'vssamp':'fssamp')+slot,location=gl.getUniformLocation(program,name),unit=stage===0?16+slot:slot;gl.activeTexture(gl.TEXTURE0+unit);const texture=gl.getParameter(gl.TEXTURE_BINDING_2D);samplers.push({stage,slot,unit,value:location===null?null:gl.getUniform(program,location),resource:r.allocations.find(a=>a.storage.texture===texture)?.metadata.id??null});}
+- gl.activeTexture(gl.TEXTURE0);return {uniforms,samplers};
++ const sources=gl.getAttachedShaders(program).map(shader=>({type:gl.getShaderParameter(shader,gl.SHADER_TYPE),source:gl.getShaderSource(shader)}));
++ gl.activeTexture(gl.TEXTURE0);return {uniforms,samplers,activeUniforms,sources};
+ }
+ export async function runAdversarial(plans){
+  const report={schema:1,status:'running',plans,metadata:[],runs:[]};window.__criticStandardState=report;
+@@ -141,6 +146,7 @@ export async function runAdversarial(plans){
+  const bridge=await createVirglStandardShaderBridge();report.metadata=metadataAttacks(bridge);
+  for(const [schedule,plan]of plans.entries()){
+   const {specimen:s,seed}=plan,r=rig(gl,bridge,schedule?7:3,schedule?4:3),base=ok(bridge.translate({stage:'vertex',text:s.vertex}),'critic emitted VS');same(base.metadata.samplers.map(x=>x.index),[3,15],'critic VS multi sampler metadata');
++  const ownedRun={seed,delay:schedule?7:3,step:schedule?4:3,frames:r.frames,history:r.history,exchanges:r.exchanges,events:r.t.events};report.runs.push(ownedRun);
+   for(let i=0;i<4;i++)r.add(meta(5+i,2,67,8,2,2),new Uint8Array(s.images[i]));
+   let vb=s.vb,fb=s.fb,views=s.views,ctx=1;
+   const render=async(label,commands,wanted,optimized=false)=>{
+@@ -166,7 +172,7 @@ export async function runAdversarial(plans){
+   await render('optimized-out',packet(31,0,[2,1]),plan.frames[10][1],true);
+   const last=r.frames.at(-1);same(last.native.uniforms.filter(x=>x.name==='fsconst0'),[],'critic undeclared FS bank absent');same(last.native.samplers.filter(x=>x.slot===15).map(x=>x.value),[null,null],'critic all-constant VS view and unused FS slot pruned');
+   const info=ok(r.renderer.inspect(),'critic final owned state');assert(info.caches.program.evictions>0,'critic program eviction');
+-  report.runs.push({seed,delay:schedule?7:3,step:schedule?4:3,frames:r.frames,history:r.history,exchanges:r.exchanges,events:r.t.events,inspection:info});finish(r);
++  ownedRun.inspection=info;finish(r);
+  }
+  report.status='passed';return report;
+ }
+@@ -177,3 +183,79 @@ export async function runAdmissionAttacks(plans){
+  for(const [label,options]of cases){const r=rig(gl,options.compiler??bridge,1,3,options.limits);for(let i=0;i<4;i++)r.add(meta(5+i,2,67,8,2,2),new Uint8Array(s.images[i]));const rec=await submit(r,1,join(setup(s),draw()),'critic-reject-'+label);same(rec.result.ok,false,'critic '+label+' rejects');if(label==='variant bytes'){same(rec.result.error.opcode,31,'critic variant quota fails at link');same(rec.result.error.code,'limit-exceeded','critic variant quota code');}assert(!r.t.events.some(e=>e.name==='drawArrays'||e.name==='drawElements'),'critic admission before draw');rows.push({label,result:rec.result,events:r.t.events});finish(r);}
+  return rows;
+ }
++
++// Original independently selected shader, four real images and literal raw banks
++// reproduce F1/F2. The unknown default-block scalar is a fresh completeness attack;
++// an unused declaration has the same metadata and must be admitted when pruned.
++export async function runNativeBindingAttacks(plans){
++ const gl=document.querySelector('canvas').getContext('webgl2'),original=await createVirglStandardShaderBridge(),spec=plans[0].specimen;
++ const report={schema:1,status:'running',sourceSeed:spec.seed,cases:[]};window.__criticStandardBindings=report;
++ const unknown='wv_critic_unaccounted';
++ const inject=(out,active)=>{
++  const main=/\bvoid\s+main\s*\(\s*(?:void)?\s*\)/g;
++  same([...out.glsl.matchAll(main)].length,1,'critic one actual compiler main');
++  const at=out.glsl.indexOf('\nvoid main(');assert(at>=0,'critic original main insertion point');
++  out.glsl=out.glsl.slice(0,at)+'\nuniform highp float '+unknown+';\n'+out.glsl.slice(at);
++  if(active){
++   const end=out.glsl.lastIndexOf('\n}');same(out.glsl.slice(end).trim(),'}','critic actual compiler main ends source');
++   out.glsl=out.glsl.slice(0,end)+'\nfsout_c0.r+='+unknown+';'+out.glsl.slice(end);
++  }
++  return out;
++ };
++ const cases=[
++  {label:'fragment-uniforms',stage:'fragment',field:'uniforms',names:['fsconst0[0]']},
++  {label:'fragment-samplers',stage:'fragment',field:'samplers',names:['fssamp2','fssamp15']},
++  {label:'vertex-uniforms',stage:'vertex',field:'uniforms',names:['vsconst0[0]']},
++  {label:'vertex-samplers',stage:'vertex',field:'samplers',names:['vssamp3','vssamp15']},
++  {label:'unknown-active-default-block',stage:'fragment',unknown:true,active:true,names:[unknown]},
++  {label:'unknown-eliminated-default-block',stage:'fragment',unknown:true,active:false,names:[unknown]},
++ ];
++ for(const test of cases){
++  const change=out=>{if(test.unknown)return inject(out,test.active);out.metadata[test.field]=[];return out;};
++  const compiler={...original,
++   translate(request){const out=cp(original.translate(request));return request.stage===test.stage?change(out):out;},
++   translatePair(request){const out=cp(original.translatePair(request));if(out.ok)out[test.stage]=change(out[test.stage]);return out;},
++  };
++  const stage=compiler.translate({stage:test.stage,text:spec[test.stage]}),pair=compiler.translatePair({vertexText:spec.vertex,fragmentText:spec.fragment});
++  if(test.stage==='fragment'){
++   same(stage.glsl,pair.fragment.glsl,'critic coherent stage/pair actual fragment GLSL');
++   same(stage.metadata,pair.fragment.metadata,'critic coherent stage/pair fragment metadata');
++  }else{
++   // The legitimate pair changes VS interpolation from the FS flat declaration.
++   // Omit only the same binding field in each actual compiler result.
++   same(stage.glsl,original.translate({stage:'vertex',text:spec.vertex}).glsl,'critic unchanged actual stage VS');
++   same(pair.vertex.glsl,original.translatePair({vertexText:spec.vertex,fragmentText:spec.fragment}).vertex.glsl,'critic unchanged actual paired VS');
++   same(stage.metadata[test.field],[],'critic stage VS coherent field omission');
++   same(pair.vertex.metadata[test.field],[],'critic paired VS coherent field omission');
++  }
++  const r=rig(gl,compiler,2,3);for(let i=0;i<4;i++)r.add(meta(5+i,2,67,8,2,2),new Uint8Array(spec.images[i]));
++  const rec=await submit(r,1,join(setup(spec),draw(),transfer(1,8,8,2)),'critic-binding-'+test.label);
++  const draws=r.t.events.filter(event=>event.name==='drawArrays'||event.name==='drawElements');
++  const active=r.t.events.filter(event=>event.name==='getActiveUniform'&&event.result&&test.names.includes(event.result.name));
++  const row={label:test.label,names:test.names,prediction:{ok:test.active===false,nativeDraws:test.active===false?1:0},
++    result:rec.result,nativeDraws:draws,activeNative:active,history:r.history,events:r.t.events,
++    output:rec.output,native:draws.length?native(gl,r):null,compilerStage:stage,compilerPair:pair};
++  report.cases.push(row);
++  if(test.active===false){
++   ok(rec.result,'critic eliminated declaration draw');same(rec.result.gpuComplete,true,'critic eliminated declaration final fence');
++   same(draws.length,1,'critic eliminated declaration real draw');
++   same(row.native.activeUniforms.filter(entry=>entry.name===unknown),[],'critic native unknown declaration actually eliminated');
++   same(rec.output?.length,256,'critic eliminated declaration full output');
++   const wanted=plans[0].frames[0][1],mismatches=[];
++   for(let at=0;at<rec.output.length;at++)if(Math.abs(rec.output[at]-wanted[at%4])>1)mismatches.push({at,observed:rec.output[at],expected:wanted[at%4]});
++   row.expected=wanted;row.mismatches=mismatches;same(mismatches,[],'critic eliminated declaration independent pixel oracle');
++  }else{
++   same(rec.result.ok,false,'critic-binding-'+test.label+' coherent active metadata rejects before draw');
++   same(rec.result.error.code,'shader-reflection-error','critic native completeness error');
++   assert(test.names.some(name=>rec.result.error.message.includes(name)),'critic native completeness names actual missing binding');
++   same(draws.length,0,'critic incomplete bindings execute zero native draws');
++   assert(active.length>0,'critic missing default-block entry is genuinely active natively');
++   for(const event of active){
++    const block=r.t.events.find(next=>next.name==='getActiveUniforms'&&next.parameter===gl.UNIFORM_BLOCK_INDEX&&next.indices[0]===event.index&&next.turn===event.turn);
++    assert(block&&block.result[0]===-1,'critic omitted active native entry is in default block');
++   }
++  }
++  same(gl.getError(),gl.NO_ERROR,'critic binding no native GL error');row.held=true;finish(r);
++ }
++ report.status='passed';return report;
++}
+diff --git a/tools/verify-virgl-standard-state-adversarial.mjs b/tools/verify-virgl-standard-state-adversarial.mjs
+index c33a8e08..a6e00fbd 100644
+--- a/tools/verify-virgl-standard-state-adversarial.mjs
++++ b/tools/verify-virgl-standard-state-adversarial.mjs
+@@ -8,27 +8,27 @@ import { createHash } from 'node:crypto';
+ import { pathToFileURL, fileURLToPath } from 'node:url';
+ const root=path.dirname(path.dirname(fileURLToPath(import.meta.url))),opts={};
+ for(let i=2;i<process.argv.length;i+=2){assert.ok(['--output','--mutation'].includes(process.argv[i]));opts[process.argv[i].slice(2)]=process.argv[i+1];}
+-assert.ok(opts.output);assert.ok(!opts.mutation||opts.mutation==='vs-blue');
++assert.ok(opts.output);assert.ok(!opts.mutation||['vs-blue','native-binding'].includes(opts.mutation));
+ const output=path.resolve(opts.output);await fs.mkdir(output,{recursive:true});
+-const sha=b=>createHash('sha256').update(b).digest('hex'),runtimeHead='365b3cf3d076637c347c7e9802420f847d09fbed';
++const sha=b=>createHash('sha256').update(b).digest('hex'),runtimeHead='adcbe81bcd091c3d411a8f96ac8746e1a17290fb';
+ const test='renderer/virgl-command/tests/standard-state-boundaries.mjs';
+ const paths=[test,...['state','resources','decoder','constant-domain','cache'].map(n=>'renderer/virgl-command/'+n+'.mjs'),
+  'renderer/virgl-shader/standard.mjs','renderer/virgl-shader/index.mjs','renderer/virgl-shader/build/wasm/virgl-shader.mjs','renderer/virgl-shader/build/wasm/virgl-shader.wasm'];
+ const sources=new Map(),report={schema:1,task:'E6-T11d5',runtimeHead,gitHead:execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim(),status:'running',sources:[],served:[],browserErrors:[]};
+ let browser,server,page;
+ try{
+- for(const p of paths){const b=await fs.readFile(path.join(root,p));sources.set(p,b);report.sources.push({path:p,bytes:b.length,sha256:sha(b)});if(p!==test&&!p.includes('/build/'))assert.equal(sha(execFileSync('git',['show',runtimeHead+':'+p],{cwd:root})),sha(b),'frozen runtime source');}
++ for(const p of paths){const b=await fs.readFile(path.join(root,p));sources.set(p,b);report.sources.push({path:p,bytes:b.length,sha256:sha(b)});if(p!==test&&!p.includes('/build/'))assert.equal(sha(execFileSync('git',['show',runtimeHead+':'+p],{cwd:root})),sha(b),'frozen runtime source');if(p.includes('/build/'))assert.equal(sha(b),p.endsWith('.wasm')?'40772f2a609b803a11f97a3cdd35087810964c2dd35662e0bb143e7144f97287':'8d07e5832efc6bc832b9bd684bcaaaad19b536783643f40d088e2ddfba2a5052','carried fixed-memory compiler artifact');}
+  const {predict,metadataAttacks}=await import(pathToFileURL(path.join(root,test)));
+  const plans=[0x38f27cd1,0xba29ad44].map(predict);await fs.writeFile(path.join(output,'predictions.json'),JSON.stringify(plans,null,2)+'\n');
+  const {createVirglStandardShaderBridge}=await import(pathToFileURL(path.join(root,'renderer/virgl-shader/standard.mjs')));report.nodeAttacks=metadataAttacks(await createVirglStandardShaderBridge());
+- if(opts.mutation){const p='renderer/virgl-command/state.mjs',before=sources.get(p).toString(),needle='const lanes = ["v.r", "v.g", "v.b", "v.a", "0.0", "1.0"];',replacement='const lanes = standard && stage === 0 ? ["v.r", "v.g", "v.r", "v.a", "0.0", "1.0"] : ["v.r", "v.g", "v.b", "v.a", "0.0", "1.0"];';assert.equal(before.split(needle).length,2);const changed=Buffer.from(before.replace(needle,replacement));sources.set(p,changed);await fs.writeFile(path.join(output,'mutation-source.mjs'),changed);report.mutation={path:p,needle,replacement,originalSha256:sha(Buffer.from(before)),servedSha256:sha(changed)};}
++ if(opts.mutation){const p='renderer/virgl-command/state.mjs',before=sources.get(p).toString(),needle=opts.mutation==='vs-blue'?'const lanes = ["v.r", "v.g", "v.b", "v.a", "0.0", "1.0"];':'if (standard) for (let index = 0; index < gl.getProgramParameter(program.native, gl.ACTIVE_UNIFORMS); index++) {',replacement=opts.mutation==='vs-blue'?'const lanes = standard && stage === 0 ? ["v.r", "v.g", "v.r", "v.a", "0.0", "1.0"] : ["v.r", "v.g", "v.b", "v.a", "0.0", "1.0"];':needle.replace('if (standard)','if (false)');assert.equal(before.split(needle).length,2);const changed=Buffer.from(before.replace(needle,replacement));sources.set(p,changed);await fs.writeFile(path.join(output,'mutation-source.mjs'),changed);report.mutation={mode:opts.mutation,path:p,needle,replacement,originalSha256:sha(Buffer.from(before)),servedSha256:sha(changed)};}
+  const served=new Set();server=createServer((req,res)=>{const p=new URL(req.url,'http://localhost').pathname;if(p==='/'){res.writeHead(200,{'Content-Type':'text/html'}).end('<!doctype html><title>Fresh standard state critic</title><h1>Fresh standard state critic</h1><canvas width="8" height="8"></canvas><pre id="result">Running literal shader/texture predictions</pre>');return;}if(p==='/favicon.ico'){res.writeHead(204).end();return;}const name=p.slice(1),b=sources.get(name);if(!b){res.writeHead(404).end();return;}served.add(name);res.writeHead(200,{'Content-Type':name.endsWith('.wasm')?'application/wasm':'text/javascript','Cache-Control':'no-store'}).end(b);});
+  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
+  const {chromium}=await import(pathToFileURL(path.join(root,'web/node_modules/playwright/index.mjs'))),executable='/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+  browser=await chromium.launch({executablePath:executable,headless:false,args:['--enable-gpu']});const session=await browser.newBrowserCDPSession(),sys=await session.send('SystemInfo.getInfo'),command=await session.send('Browser.getBrowserCommandLine');assert.equal(sys.gpu.featureStatus.webgl2??sys.gpu.featureStatus.webgl,'enabled');assert.ok(!command.arguments.some(a=>/swiftshader|llvmpipe|softpipe|--disable-gpu(?:$|=)/i.test(a)));report.browser={executable,sha256:sha(await fs.readFile(executable)),version:browser.version(),gpu:sys.gpu,commandLine:command.arguments};
+  const context=await browser.newContext();page=await context.newPage();page.on('pageerror',e=>report.browserErrors.push(e.message));page.on('console',m=>{if(m.type()==='error')report.browserErrors.push(m.text());});await page.goto('http://127.0.0.1:'+server.address().port+'/');const cdp=await context.newCDPSession(page);await cdp.send('Profiler.enable');await cdp.send('Profiler.startPreciseCoverage',{callCount:true,detailed:true});
+- report.browserResult=await page.evaluate(async({plans,test})=>{try{const t=await import('/'+test),r=await t.runAdversarial(plans);r.admission=await t.runAdmissionAttacks(plans);document.querySelector('#result').textContent=JSON.stringify({status:r.status,gpu:r.gpu,frames:r.runs.reduce((n,x)=>n+x.frames.length,0)},null,2);return {status:'passed',result:r};}catch(e){document.querySelector('#result').textContent=e.message;return {status:'failed',error:{message:e.message,stack:e.stack},partial:window.__criticStandardState};}}, {plans,test});
++ report.browserResult=await page.evaluate(async({plans,test})=>{try{const t=await import('/'+test),r=await t.runAdversarial(plans);r.admission=await t.runAdmissionAttacks(plans);r.nativeBindings=await t.runNativeBindingAttacks(plans);document.querySelector('#result').textContent=JSON.stringify({status:r.status,gpu:r.gpu,frames:r.runs.reduce((n,x)=>n+x.frames.length,0),bindingCases:r.nativeBindings.cases.length},null,2);return {status:'passed',result:r};}catch(e){document.querySelector('#result').textContent=e.message;return {status:'failed',error:{message:e.message,stack:e.stack},partial:window.__criticStandardState,bindingPartial:window.__criticStandardBindings};}}, {plans,test});
+  const coverage=await cdp.send('Profiler.takePreciseCoverage');const rows=[];for(const p of paths.filter(p=>p.endsWith('.mjs'))){const found=coverage.result.filter(x=>x.url.endsWith('/'+p));if(found.length){assert.equal(found.length,1);rows.push({source:p,sha256:sha(sources.get(p)),coverage:found[0]});}}
+  await fs.writeFile(path.join(output,'browser-coverage.json'),JSON.stringify({schema:1,scripts:rows},null,2)+'\n');await page.screenshot({path:path.join(output,'browser.png'),fullPage:true});report.coverageSha256=sha(await fs.readFile(path.join(output,'browser-coverage.json')));report.screenshotSha256=sha(await fs.readFile(path.join(output,'browser.png')));report.served=[...served].map(p=>({path:p,sha256:sha(sources.get(p))}));assert.deepEqual(report.browserErrors,[]);
+- assert.equal(report.browserResult.status,'passed',report.browserResult.error?.message);report.status='passed';console.log('Fresh standard state hardware boundaries held: 22 independently predicted queued frames, 25 metadata attacks and two native admission attacks.');
++ assert.equal(report.browserResult.status,'passed',report.browserResult.error?.message);report.status='passed';console.log('Fresh repaired standard state boundaries held: 22 independent queued frames, 25 metadata attacks, two earlier admission attacks and six native-binding attacks.');
+ }catch(e){report.status='failed';report.error={message:e.message,stack:e.stack};process.exitCode=1;console.error(e.message);}finally{await fs.writeFile(path.join(output,'report.json'),JSON.stringify(report,null,2)+'\n');await browser?.close().catch(()=>{});if(server)await new Promise(resolve=>server.close(resolve));}
+diff --git a/tools/verify-virgl-standard-state-adversarial.sh b/tools/verify-virgl-standard-state-adversarial.sh
+new file mode 100644
+index 00000000..f106f554
+--- /dev/null
++++ b/tools/verify-virgl-standard-state-adversarial.sh
+@@ -0,0 +1,27 @@
++#!/usr/bin/env bash
++set -euo pipefail
++cd "$(dirname "$0")/.."
++evidence=${VIRGL_STANDARD_STATE_ADVERSARIAL_EVIDENCE_DIR:-target/evidence/virgl-standard-state-adversarial}
++mkdir -p "$evidence"
++evidence=$(cd "$evidence" && pwd)
++exec > >(tee "$evidence/acceptance.log") 2>&1
++if [[ ! -d web/node_modules/playwright ]]; then (cd web && npm ci --no-audit --no-fund); fi
++if [[ ! -f renderer/virgl-shader/build/wasm/virgl-shader.wasm ]]; then
++  if [[ -z ${EMCC:-} ]]; then EMCC=$(bash tools/setup-virgl-emsdk.sh); fi
++  export EMCC
++  bash renderer/virgl-shader/build.sh wasm
++fi
++node --check renderer/virgl-command/tests/standard-state-boundaries.mjs
++node --check tools/verify-virgl-standard-state-adversarial.mjs
++python3 -m py_compile tools/virgl-command/standard-state-adversarial-audit.py
++node tools/verify-virgl-standard-state-adversarial.mjs --output "$evidence/normal"
++if node tools/verify-virgl-standard-state-adversarial.mjs --output "$evidence/fault-native-binding" --mutation native-binding; then
++  echo 'ERROR: real active native omission escaped the promoted rejection oracle' >&2
++  exit 1
++fi
++if node tools/verify-virgl-standard-state-adversarial.mjs --output "$evidence/fault-pixel" --mutation vs-blue; then
++  echo 'ERROR: real vertex-view corruption escaped the promoted pixel oracle' >&2
++  exit 1
++fi
++python3 tools/virgl-command/standard-state-adversarial-audit.py "$evidence"
++printf 'STANDARD_STATE_ADVERSARIAL_COMPLETE\n'
+diff --git a/tools/virgl-command/standard-state-adversarial-audit.py b/tools/virgl-command/standard-state-adversarial-audit.py
+new file mode 100644
+index 00000000..e38be205
+--- /dev/null
++++ b/tools/virgl-command/standard-state-adversarial-audit.py
+@@ -0,0 +1,159 @@
++#!/usr/bin/env python3
++"""Authenticate promoted standard binding rejection/pixel/fence sensitivity."""
++from pathlib import Path
++import argparse
++import hashlib
++import json
++import subprocess
++
++ROOT = Path(__file__).resolve().parents[2]
++HEAD = 'adcbe81bcd091c3d411a8f96ac8746e1a17290fb'
++sha = lambda raw: hashlib.sha256(raw).hexdigest()
++
++
++def need(value, label):
++    if not value:
++        raise AssertionError(label)
++
++
++def fence_audit(events):
++    syncs, ready, completed = {}, {}, []
++    for at, event in enumerate(events):
++        name, turn, label = event['name'], event['turn'], event['label']
++        if name == 'fenceSync':
++            need(event['sync'] not in syncs, 'distinct actual native sync identity')
++            syncs[event['sync']] = {'issued': turn, 'last': -1}
++        elif name == 'clientWaitSync':
++            sync = syncs[event['sync']]
++            need(turn > sync['issued'] and turn > sync['last'], 'later-task single zero-timeout poll')
++            sync['last'] = turn
++            need(event['actual'] in [37146, 37147, 37148], 'actual native readiness code')
++            if event['delivered'] in [37146, 37148]:
++                need(event['actual'] in [37146, 37148], 'no readiness invented by trace wrapper')
++                ready[label] = turn
++                completed.append({'event': at, 'label': label, 'turn': turn, 'sync': event['sync']})
++            else:
++                need(event['delivered'] == 37147, 'bounded delay only reports timeout')
++        elif name == 'getBufferSubData':
++            need(label in ready and ready[label] <= turn, 'actual PBO read follows owned completion')
++    return completed
++
++
++def report(directory, name, fault=None):
++    folder = directory / name
++    raw = (folder / 'report.json').read_bytes()
++    value = json.loads(raw)
++    need(value['runtimeHead'] == HEAD and value['status'] == ('failed' if fault else 'passed'), name + ' runtime/status')
++    need(value['browserErrors'] == [], name + ' unexpected browser errors')
++    sources = {row['path']: row['sha256'] for row in value['sources']}
++    for row in value['sources']:
++        original = (ROOT / row['path']).read_bytes()
++        need(len(original) == row['bytes'] and sha(original) == row['sha256'], name + ' recorded source custody')
++    served = {row['path']: row['sha256'] for row in value['served']}
++    if fault:
++        mutation = value['mutation']
++        original = subprocess.check_output(['git', 'show', HEAD + ':' + mutation['path']], cwd=ROOT)
++        changed = (folder / 'mutation-source.mjs').read_bytes()
++        need(mutation['mode'] == fault and sha(original) == mutation['originalSha256'], name + ' mutation anchor')
++        need(original.count(mutation['needle'].encode()) == 1 and
++             original.replace(mutation['needle'].encode(), mutation['replacement'].encode()) == changed and
++             sha(changed) == mutation['servedSha256'], name + ' only designated real mutation')
++        need(served[mutation['path']] == sha(changed), name + ' actually served mutation')
++    for name_, digest in served.items():
++        expected = value['mutation']['servedSha256'] if fault and name_ == value['mutation']['path'] else sources[name_]
++        need(digest == expected, name + ' served closure')
++    coverage_raw = (folder / 'browser-coverage.json').read_bytes()
++    need(sha(coverage_raw) == value['coverageSha256'], name + ' coverage custody')
++    for row in json.loads(coverage_raw)['scripts']:
++        need(row['sha256'] == served[row['source']], name + ' coverage served-source custody')
++    need(sha((folder / 'browser.png').read_bytes()) == value['screenshotSha256'], name + ' browser capture custody')
++    need(value['browser']['gpu']['featureStatus'].get('webgl2', value['browser']['gpu']['featureStatus'].get('webgl')) == 'enabled', name + ' enabled hardware WebGL')
++    need(not any(any(word in arg.lower() for word in ['swiftshader', 'llvmpipe', 'softpipe', 'lavapipe'])
++                 or arg.startswith('--disable-gpu') for arg in value['browser']['commandLine']), name + ' hardware launch')
++    return value, {'report': name + '/report.json', 'sha256': sha(raw)}
++
++
++def main(directory):
++    normal, normal_cite = report(directory, 'normal')
++    result = normal['browserResult']['result']
++    plans = json.loads((directory / 'normal/predictions.json').read_bytes())
++    need(len(plans) == len(result['runs']) == 2, 'original two independent seed/schedule plans')
++    frames, fences, cases = [], [], []
++    for plan, run in zip(plans, result['runs']):
++        need(plan['seed'] == run['seed'] and len(run['frames']) == 11, 'complete original independent frame matrix')
++        fences.extend(fence_audit(run['events']))
++        for index, frame in enumerate(run['frames']):
++            wanted = plan['frames'][index][1]
++            raw = bytes.fromhex(frame['pixelsHex'])
++            need(frame['expected'] == wanted and len(raw) == 256, 'unchanged independently predicted full image')
++            need(all(abs(value - wanted[at % 4]) <= 1 for at, value in enumerate(raw)), 'independent full-pixel equation')
++            need(any(event['name'] in ['drawArrays', 'drawElements'] and event['label'] == frame['label'] for event in run['events']), 'recorded real native draw')
++            for stage_source in frame['native']['sources']:
++                need(any(event['name'] == 'shaderSource' and event['source'] == stage_source['source'] and event['type'] == stage_source['type'] for event in run['events']), 'native attached shader actual source')
++            frames.append({'point': f'browserResult.result.runs[{len(frames)//11}].frames[{index}]',
++                           'label': frame['label'], 'expected': wanted, 'firstPixel': list(raw[:4]),
++                           'pixelsSha256': sha(raw), 'pixels': len(raw) // 4, 'held': True})
++    binding = result['nativeBindings']
++    need(binding['status'] == 'passed' and len(binding['cases']) == 6, 'native binding matrix')
++    expected_labels = ['fragment-uniforms', 'fragment-samplers', 'vertex-uniforms', 'vertex-samplers',
++                       'unknown-active-default-block', 'unknown-eliminated-default-block']
++    for at, row in enumerate(binding['cases']):
++        need(row['label'] == expected_labels[at] and row['held'], 'native binding case ordering/result')
++        completed = fence_audit(row['events'])
++        if at < 5:
++            need(not row['result']['ok'] and row['result']['gpuComplete'] and row['result']['draws'] == [] and row['nativeDraws'] == [], 'active incomplete metadata fails before native draw')
++            need(row['result']['error']['code'] == 'shader-reflection-error' and
++                 any(name in row['result']['error']['message'] for name in row['names']), 'native completeness code/name')
++            need(row['activeNative'], 'genuinely active unknown/omitted native entry')
++            for event in row['activeNative']:
++                actual = event['result']
++                expected_type = 5126 if at == 4 else 36296 if row['label'].endswith('uniforms') else 35678
++                need(actual['type'] == expected_type and actual['size'] == (3 if expected_type == 36296 else 1), 'actual missing type/extent')
++                need(any(query['name'] == 'getActiveUniforms' and query['parameter'] == 35386 and
++                         query['indices'] == [event['index']] and query['result'] == [-1] and query['turn'] == event['turn']
++                         for query in row['events']), 'actual missing native entry is default-block')
++        else:
++            need(row['result']['ok'] and row['result']['gpuComplete'] and len(row['nativeDraws']) == 1, 'native elimination allowed real completed draw')
++            need(all(actual['name'] != 'wv_critic_unaccounted' for actual in row['native']['activeUniforms']), 'native unknown declaration actually pruned')
++            wanted = plans[0]['frames'][0][1]
++            need(len(row['output']) == 256 and all(abs(value - wanted[i % 4]) <= 1 for i, value in enumerate(row['output'])), 'eliminated declaration independent full pixels')
++            need(any('uniform highp float wv_critic_unaccounted;' in source['source'] for source in row['native']['sources']), 'real native eliminated source declaration')
++        cases.append({'point': f'browserResult.result.nativeBindings.cases[{at}]', 'label': row['label'],
++                      'result': row['result'], 'activeNative': row['activeNative'], 'nativeDraws': row['nativeDraws'],
++                      'completedFences': completed, 'held': True})
++    native_fault, native_cite = report(directory, 'fault-native-binding', 'native-binding')
++    value = native_fault['browserResult']
++    need('critic-binding-fragment-uniforms coherent active metadata rejects before draw expected false observed true' in value['error']['message'], 'named promoted native rejection oracle sensitivity')
++    row = value['bindingPartial']['cases'][0]
++    need(row['label'] == 'fragment-uniforms' and row['result']['ok'] and row['result']['gpuComplete'] and len(row['nativeDraws']) == 1, 'real omitted raw bank draw under accounting sabotage')
++    need(next(uniform['words'] for uniform in row['native']['uniforms'] if uniform['name'] == 'fsconst0') == [0] * 12, 'actual native omitted FS bank zero words')
++    need(row['output'] == [0] * 256, 'saved actual F1 wrong pixels under accounting sabotage')
++    native_fences = fence_audit(row['events'])
++    need(native_fences, 'actual sabotaged native draw/readback fence completed')
++    pixel_fault, pixel_cite = report(directory, 'fault-pixel', 'vs-blue')
++    value = pixel_fault['browserResult']
++    need('critic-full-955415761 independent pixel oracle' in value['error']['message'], 'named promoted independent pixel sensitivity')
++    frame = value['partial']['lastFrame']
++    need(frame['expected'] == [91, 117, 153, 140] and frame['observedFirst'] == [82, 117, 144, 140], 'actual named view corruption')
++    need(frame['mismatches'] and len(frame['dump']['draws']) == 1, 'pixel sabotage reached real native draw')
++    pixel_run = value['partial']['runs'][0]
++    need(any(event['name'] == 'drawArrays' for event in pixel_run['events']), 'saved real pixel sabotage native call')
++    pixel_fences = fence_audit(pixel_run['events'])
++    need(pixel_fences, 'saved actual pixel sabotage completion fence')
++    audit = {'schema': 1, 'task': 'E6-T11d5', 'sourceHead': HEAD, 'status': 'passed',
++             'normal': normal_cite, 'frames': frames, 'pixels': sum(row['pixels'] for row in frames) + 64,
++             'bindingCases': cases, 'completedFences': fences,
++             'nativeSabotage': {**native_cite, 'point': 'browserResult.bindingPartial.cases[0]',
++                              'nativeDraws': row['nativeDraws'], 'completedFences': native_fences,
++                              'expectedPixel': [91, 117, 153, 140], 'observedPixel': [0, 0, 0, 0]},
++             'pixelSabotage': {**pixel_cite, 'point': 'browserResult.partial.lastFrame',
++                             'expectedPixel': frame['expected'], 'observedPixel': frame['observedFirst'],
++                             'completedFences': pixel_fences}}
++    (directory / 'adversarial-audit.json').write_text(json.dumps(audit, indent=2) + '\n')
++    print('Promoted native-binding audit passed: 22 frames / 1472 pixels, six binding cases; both real source sabotages detected.')
++
++
++if __name__ == '__main__':
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument('directory', type=Path)
++    main(parser.parse_args().directory.resolve())

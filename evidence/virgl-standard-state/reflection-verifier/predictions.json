@@ -1,0 +1,21 @@
+{
+  "task": "E6-T11d5",
+  "role": "fresh adversarial repair verifier",
+  "sourceHead": "adcbe81bcd091c3d411a8f96ac8746e1a17290fb",
+  "workerClaimHead": "b1263f6e60d68239288309218b3e8cc4590363ad",
+  "repairBase": "01c4dc73f08a752ab5593ae941acdc441d5f4123",
+  "writtenBeforeNewRecordedStateInspection": true,
+  "predictions": [
+    {"id": "R1", "prediction": "All 332 repaired worker seal members match the signed index; archive, source identities, served-source and coverage identities bind to adcbe81b. HEAD changes only documentary task/queue/seal bytes. The recorded pristine scrubbed clone uses the same exact runtime closure."},
+    {"id": "R2", "prediction": "Previously HELD compiler/device/transport, legacy prefix and original 45 runtime hunk results remain byte-identical outside the 14-line admission hunk. Carry their authenticated evidence forward unchanged."},
+    {"id": "R3-F1", "prediction": "With the ORIGINAL independent shader, images and literal raw banks, coherent omission of active fragment raw uniform metadata from BOTH stage and pair returns shader-reflection-error naming fsconst0[0]; it executes zero native draws. Omitted VS raw constant metadata is likewise rejected before draw."},
+    {"id": "R4-F2", "prediction": "With the ORIGINAL independent four-image shader, coherent omission of active fragment sampler metadata from BOTH stage and pair returns shader-reflection-error naming an actual fssamp native entry; it executes zero native draws. The VS counterpart is likewise rejected."},
+    {"id": "R5", "prediction": "The repaired normal recordings contain all native active uniform entries, their types, extents and block indices. Each entry matches a checked stage raw uvec4 bank, scalar sampler2D, validated VirglBlock index or owned vec4 blend factor. Native block size remains 656 and actual owned blend uniform carries the literal factor. Successful original native pixels and drawn-fence state remain consistent."},
+    {"id": "R6", "prediction": "A new bounded attack injecting a genuinely active unknown default-block float uniform coherently into real compiler GLSL while preserving its metadata rejects by native completeness before any real draw. A same declaration which the native linker actually eliminates can remain admissible, and must execute the unchanged full-pixel oracle."},
+    {"id": "R7", "prediction": "Legitimate optimizer elimination, all-constant views, reserved system block entries and the renderer-owned blend factor remain admissible. The original independent both-stage shader/view/cache/ownership regressions continue to match their independent pixel equations after reanchoring source custody."},
+    {"id": "R8", "prediction": "Disabling ONLY the actual served active-native-accounting loop permits at least one coherent active omission to reach a completed real draw, then fails the promoted named rejection oracle. The existing real VS-view corruption still fails the independent full-pixel oracle."},
+    {"id": "R9", "prediction": "Every executable line of the 14-line runtime addition executes in authenticated normal/adversarial records, including matching block, constant, sampler, blend and false-accounted rejection paths. Trusted browser impossible-null guards and standard=false legacy branch may receive narrow explicit waivers; structural/comment-only lines require no execution. All changed proof paths are exercised or individually waived."}
+  ],
+  "scope": "isolated standard binding factory, existing single COLOR0 and 2D draw profile",
+  "outOfScope": ["full GLES/API", "production capset", "guest boot", "scanout", "MIPS", "throughput"]
+}

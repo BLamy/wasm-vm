@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4]
-blocked_on: E6-T11d4
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5]
+blocked_on: E6-T11d5
 estimate: S
 risk: high
 capstone: false
@@ -125,3 +125,24 @@ that the browser supports the complete API. Remaining actual GLES3 storage,
 state, texture, draw and typed qualification gates remain ordered successors.
 The explicit user instruction continues this graphics chain instead of the
 unrelated general queue entry.
+
+### 2026-10-09 — worker — standard compiler verified; command consumer gap
+
+E6-T11d4 is independently verified at `9323b44519710dfb2c8a324fe115872b79d274f0`.
+The complete original compositor programs and standard arithmetic/word semantics
+are proven in the isolated compiler, while production still has no VirGL caps.
+The existing state parser rejects standard metadata, and its finite constant
+decoder rejects a valid 2048-word fragment slot0 bank. The negative recording
+`evidence/virgl-production-readiness/standard-renderer-gap.json` pins unchanged
+state/decoder/compiler source and actual Wasm at `8101e82c`; those runtime bytes
+remain unchanged through the verified compiler head. Reproduce by translating
+its complete `text` through `createVirglStandardShaderBridge`, passing the returned
+metadata to `parseConstantDomain(metadata, 'fragment')`, and decoding its exact
+`packetHex` with `decodeSubmission`. Observed errors are `shader-domain-error`
+(unknown/accessor property) and `limit-exceeded` (array exceeds profile limit).
+
+Ordered S task E6-T11d5 adds a host-selected standard async consumer and separate
+raw-word decoder. It executes full original compositor bodies through renderer
+jobs and preserves old exact/private facets. It does not qualify the full API or
+enable the production device. The user's instruction continues this graphics
+chain; actual guest Mesa initialization, API gaps and scanout remain later gates.

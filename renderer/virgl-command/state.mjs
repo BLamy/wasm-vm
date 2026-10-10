@@ -1,8 +1,9 @@
 /** Typed VirGL state and bounded triangle draws. See state-README.md and draw-README.md. */
-import { decodeSubmission } from "./decoder.mjs";
+import { decodeSubmission, decodeStandardSubmission } from "./decoder.mjs";
 import { LIMITS as SHADER_LIMITS } from "../virgl-shader/index.mjs";
 import { createKeyCache, hashKey } from "./cache.mjs";
-import { parseConstantDomain, checkFiniteBank, checkIndirectBank, checkLoopBank, checkRadialBank, checkRasterBank, checkConversionBank, checkExactBank, COORDINATE_KEY, DISCARD_KEY } from "./constant-domain.mjs";
+import { parseConstantDomain, checkFiniteBank, checkIndirectBank, checkLoopBank, checkRadialBank, checkRasterBank, checkConversionBank, checkExactBank, COORDINATE_KEY, DISCARD_KEY,
+  parseStandardShaderMetadata, normalizeStandardShaderResult, normalizeStandardShaderPair, deriveStandardShaderInterface } from "./constant-domain.mjs";
 
 export const STATE_PROFILE = "virgl-tiny-state-v1";
 export const STATE_LIMITS = Object.freeze({ contexts: 8, subContexts: 16, objects: 256,
@@ -10,6 +11,7 @@ export const STATE_LIMITS = Object.freeze({ contexts: 8, subContexts: 16, object
 export const DRAW_PROFILE = "virgl-tiny-indexed-draw-v1";
 export const DRAW_LIMITS = Object.freeze({ drawsPerSubmission: 64, indicesPerSubmission: 65536 });
 export const ASYNC_PROFILE = "virgl-tiny-async-jobs-v1";
+export const STANDARD_ASYNC_PROFILE = "virgl-standard-async-jobs-v1";
 export const JOB_LIMITS = Object.freeze({ jobs: 1, commandsPerStep: 64, submissionBytes: 262144, transferBytes: 4194304 });
 export const CACHE_LIMITS = Object.freeze({ translations: 128, translationBytes: 4194304,
   programBytes: 4194304, states: 256, stateBytes: 1048576, debugBytes: 4194304 });
@@ -120,8 +122,13 @@ export function createVirglAsyncRenderer(options) {
   return createRenderer(options, true, true);
 }
 
+/** Explicit host selection of ordinary native shader semantics and word banks. */
+export function createVirglStandardAsyncRenderer(options) {
+  return createRenderer(options, true, true, true);
+}
+
 /** Host capabilities are trusted and non-reentrant. */
-function createRenderer(options, drawing, asynchronous = false) {
+function createRenderer(options, drawing, asynchronous = false, standard = false) {
   return result(() => {
     const config = dataRecord(options, ["gl", "resources", "bindings", "shaderBridge", "limits", "cacheLimits", ...(drawing ? ["drawLimits"] : []), ...(asynchronous ? ["asyncAccess", "jobLimits"] : [])], ["gl", "resources", "bindings", "shaderBridge", ...(asynchronous ? ["asyncAccess"] : [])]);
     const { gl, resources, bindings, shaderBridge } = config;
@@ -154,7 +161,9 @@ function createRenderer(options, drawing, asynchronous = false) {
         "invalid-input", "Job limits may only tighten defaults; step budget must be positive.");
       Object.freeze(jobLimits);
     }
-    const profile = asynchronous ? ASYNC_PROFILE : drawing ? DRAW_PROFILE : STATE_PROFILE;
+    const profile = standard ? STANDARD_ASYNC_PROFILE : asynchronous ? ASYNC_PROFILE : drawing ? DRAW_PROFILE : STATE_PROFILE;
+    const decodeCommands = standard ? decodeStandardSubmission : decodeSubmission;
+    const parseShaderMetadata = standard ? parseStandardShaderMetadata : parseConstantDomain;
     const idle = () => require(activeJob === null, "busy", "A renderer job is active; cancel and drain it before changing state.");
     const contexts = new Map(), objects = new Set(), programs = new Set();
     let disposed = false, nextGeneration = 1, subCount = 0, shaderBytes = 0, uniformBytes = 0, leaseCount = 0;
@@ -253,8 +262,9 @@ function createRenderer(options, drawing, asynchronous = false) {
       const cached = translationCache.get(sub, key);
       if (cached) return cached;
       work.translations++;
-      const translated = freeze(unwrap(shaderBridge.translate(request)));
-      unwrap(parseConstantDomain(translated.metadata, request.stage));
+      const response = shaderBridge.translate(request);
+      const translated = standard ? unwrap(normalizeStandardShaderResult(response, request.stage)) : freeze(unwrap(response));
+      unwrap(parseShaderMetadata(translated.metadata, request.stage));
       require(typeof translated.glsl === "string" && /^#version 300 es\b/m.test(translated.glsl),
         "shader-error", "Shader bridge returned incompatible output.");
       translationCache.put(sub, key, translated, 1024 + 2 * (key.length + JSON.stringify(translated).length));
@@ -265,7 +275,8 @@ function createRenderer(options, drawing, asynchronous = false) {
       const cached = translationCache.get(sub, key);
       if (cached) { validate(cached); return cached; }
       work.pairTranslations++;
-      const translated = freeze(unwrap(shaderBridge.translatePair({ vertexText: vertex.fields.text, fragmentText: fragment.fields.text })));
+      const response = shaderBridge.translatePair({ vertexText: vertex.fields.text, fragmentText: fragment.fields.text });
+      const translated = standard ? unwrap(normalizeStandardShaderPair(response)) : freeze(unwrap(response));
       validate(translated);
       translationCache.put(sub, key, translated, 1024 + 2 * (key.length + JSON.stringify(translated).length));
       return translated;
@@ -328,7 +339,7 @@ function createRenderer(options, drawing, asynchronous = false) {
         }
         if (type === 4) {
           const translated = translatedStage(sub, { stage: fields.stageName, text: fields.text });
-          const contract = unwrap(parseConstantDomain(translated.metadata, fields.stageName));
+          const contract = unwrap(parseShaderMetadata(translated.metadata, fields.stageName));
           object.constantDomain = contract.domain;
           object.constantAccess = contract.access ?? null;
           object.constantConstraint = contract.constraint ?? null;
@@ -371,23 +382,27 @@ function createRenderer(options, drawing, asynchronous = false) {
       }
     };
     const unitFor = (stage, index) => stage === 1 ? index : 16 + index;
-    const samplingFor = (sub, fragment) => {
-      const views = fragment.translation.metadata.samplers.map((sampler) => {
-        require(sampler.type === "sampler2D" && Number.isInteger(sampler.index) && sampler.index >= 0 && sampler.index < 8 &&
-          sampler.name === `fssamp${sampler.index}`, "shader-link-error", "View specialization requires the checked fragment 2D TEX family.");
-        const view = sub.views[1][sampler.index], fields = view?.fields;
+    const samplingFor = (sub, fragment, vertex = null) => {
+      const declarations = standard ? [[0, vertex], [1, fragment]].flatMap(([stage, shader]) =>
+        shader.translation.metadata.samplers.map(sampler => ({ stage, sampler }))) :
+        fragment.translation.metadata.samplers.map(sampler => ({ stage: 1, sampler }));
+      const views = declarations.map(({ stage, sampler }) => {
+        require(sampler.type === "sampler2D" && Number.isInteger(sampler.index) && sampler.index >= 0 && sampler.index < (standard ? 16 : 8) &&
+          sampler.name === (stage === 0 ? "vssamp" : "fssamp") + sampler.index,
+        "shader-link-error", "View specialization requires the checked stage 2D TEX family.");
+        const view = sub.views[stage][sampler.index], fields = view?.fields;
         // Linking may precede view binding. The fixed legacy RGBA identity
         // specialization is safe then; draw validation still requires a view.
-        return { index: sampler.index, name: sampler.name, target: 2, format: fields?.format ?? 67,
+        return { ...(standard ? { stage } : {}), index: sampler.index, name: sampler.name, target: 2, format: fields?.format ?? 67,
           firstLevel: 0, lastLevel: 0, firstLayer: 0, lastLayer: 0, origin: "lower-left",
           swizzle: fields?.swizzle ?? [0, 1, 2, 3] };
       });
       const key = views.length ? `sampler-view-v1:${JSON.stringify(views)}` : "";
-      const standard = views.every((view) => view.format === 67 && view.swizzle.every((value, lane) => value === lane));
-      return freeze({ key, suffix: standard ? "" : `|${key}`, views });
+      const identity = views.every((view) => view.format === 67 && view.swizzle.every((value, lane) => value === lane));
+      return freeze({ key, suffix: identity ? "" : `|${key}`, views });
     };
-    const specializeFragment = (text, sampling) => {
-      const specialized = sampling.views.filter((view) => view.swizzle.some((value, lane) => value !== lane));
+    const specializeViews = (text, sampling, stage = 1) => {
+      const specialized = sampling.views.filter((view) => (!standard || view.stage === stage) && view.swizzle.some((value, lane) => value !== lane));
       if (!specialized.length) return null;
       let helpers = "";
       for (const view of specialized) {
@@ -399,7 +414,7 @@ function createRenderer(options, drawing, asynchronous = false) {
         helpers += `vec4 ${name}(vec2 coord){vec4 v=texture(${view.name},coord);return vec4(${view.swizzle.map((value) => lanes[value]).join(",")});}\n`;
       }
       const main = text.indexOf("\nvoid main(");
-      require(main >= 0, "shader-link-error", "Checked fragment has no main insertion point.");
+      require(main >= 0, "shader-link-error", "Checked shader has no main insertion point.");
       const variant = text.slice(0, main + 1) + helpers + text.slice(main + 1);
       require(variant.length <= SHADER_LIMITS.glslBytes, "limit-exceeded", "View-specialized GLSL exceeds the compiler output bound.");
       return variant;
@@ -419,10 +434,14 @@ function createRenderer(options, drawing, asynchronous = false) {
     };
     function link(sub, vertex, fragment) {
       require(vertex?.fields.stage === 0 && fragment?.fields.stage === 1, "missing-shader", "Link requires a vertex shader and a fragment shader.");
-      const sampling = samplingFor(sub, fragment);
+      const sampling = samplingFor(sub, fragment, vertex);
       const blendFold = blendFoldFor(sub, fragment);
       let vs = vertex.translation.metadata;
-      const fs = fragment.translation.metadata, interfaceInfo = shaderInterface(vs, fs, fragment.coordinateContract, fragment.discardContract);
+      const fs = fragment.translation.metadata;
+      const interfaceInfo = standard ? (() => {
+        const owned = unwrap(deriveStandardShaderInterface(vs, fs));
+        return { ...owned, inputs: new Map(owned.inputs.map(input => [input.semanticIndex, input])) };
+      })() : shaderInterface(vs, fs, fragment.coordinateContract, fragment.discardContract);
       // Generations identify these exact owned immutable bodies/metadata, not public names.
       // Derive the complete pair interface even when another vertex used this fragment.
       const key = `${sub.generation}:${vertex.generation}:${fragment.generation}:${interfaceInfo.key}|${sampling.key}` +
@@ -433,30 +452,33 @@ function createRenderer(options, drawing, asynchronous = false) {
         interfaceKey: interfaceInfo.key, samplingKey: sampling.key, samplingViews: sampling.views,
         variantShader: null, fragmentVariantShader: null, variantBytes: 0,
         blendFold, blendUniform: null,
-        reflection: { attributes: [], uniforms: [], samplers: [], uniformBlocks: [], outputs: [] } };
+        reflection: { attributes: [], uniforms: [], samplers: [], uniformBlocks: [], outputs: [], ...(standard ? { systemValues: [] } : {}) } };
       try {
-        if (interfaceInfo.flat || interfaceInfo.coordinates || interfaceInfo.discard) {
+        if (standard || interfaceInfo.flat || interfaceInfo.coordinates || interfaceInfo.discard) {
           require(typeof shaderBridge.translatePair === "function", "shader-link-error", interfaceInfo.coordinates ?
             "Fragment coordinates require the checked pair compiler." : interfaceInfo.discard ?
             "Fragment discard requires the checked pair compiler." : "Flat interpolation requires the checked pair compiler.");
           const expectedVertex = { ...vs, outputs: vs.outputs.map((output) => output.semantic === "GENERIC" ?
-            { ...output, interpolation: interfaceInfo.inputs.get(output.semanticIndex)?.interpolation ?? "smooth" } : output) };
+            { ...output, ...(standard ? { type: interfaceInfo.inputs.get(output.semanticIndex)?.interpolation === "flat" ? "uvec4" : "vec4" } : {}),
+              interpolation: interfaceInfo.inputs.get(output.semanticIndex)?.interpolation ?? "smooth" } : output) };
           const pair = translatedPair(sub, vertex, fragment, interfaceInfo.key, (pair) => require(pair.interfaceKey === interfaceInfo.key &&
             pair.fragment?.glsl === fragment.translation.glsl && JSON.stringify(pair.fragment?.metadata) === JSON.stringify(fs) &&
             typeof pair.vertex?.glsl === "string" && pair.vertex.glsl.length <= SHADER_LIMITS.glslBytes &&
             /^#version 300 es\b/m.test(pair.vertex.glsl) && JSON.stringify(pair.vertex.metadata) === JSON.stringify(expectedVertex),
           "shader-link-error", "Pair compiler output does not match the selected shader interface."));
-          if (interfaceInfo.flat) {
+          if (standard || interfaceInfo.flat) {
             program.vertexText = pair.vertex.glsl; vs = pair.vertex.metadata;
           }
         }
-        let fragmentText = specializeFragment(fragment.translation.glsl, sampling);
+        let fragmentText = specializeViews(fragment.translation.glsl, sampling);
         fragmentText = specializeBlend(fragmentText ?? fragment.translation.glsl, blendFold, fs) ?? fragmentText;
         program.vertexText ??= vertex.translation.glsl;
+        program.vertexText = (standard ? specializeViews(program.vertexText, sampling, 0) : null) ?? program.vertexText;
         program.fragmentText = fragmentText ?? fragment.translation.glsl;
-        const requiredVariantBytes = (interfaceInfo.flat ? program.vertexText.length : 0) + (fragmentText?.length ?? 0);
+        const vertexVariant = standard ? program.vertexText !== vertex.translation.glsl : interfaceInfo.flat;
+        const requiredVariantBytes = (vertexVariant ? program.vertexText.length : 0) + (fragmentText?.length ?? 0);
         makeProgramRoom(requiredVariantBytes);
-        if (interfaceInfo.flat) {
+        if (vertexVariant) {
             program.variantBytes = program.vertexText.length; shaderBytes += program.variantBytes;
             program.variantShader = gl.createShader(gl.VERTEX_SHADER);
             require(program.variantShader, "backend-error", "Vertex variant allocation failed.");
@@ -478,15 +500,23 @@ function createRenderer(options, drawing, asynchronous = false) {
         require(gl.getProgramParameter(program.native, gl.LINK_STATUS), "shader-link-error", `WebGL program link failed: ${gl.getProgramInfoLog(program.native)}`);
         for (let index = 0; index < gl.getProgramParameter(program.native, gl.ACTIVE_ATTRIBUTES); index++) {
           const actual = gl.getActiveAttrib(program.native, index), declared = vs.attributes.find((attribute) => attribute.name === actual.name);
+          const system = standard ? vs.systemValues.find(value => value.name === actual.name) : null;
+          if (system) {
+            require(actual.type === gl.INT && actual.size === 1 && gl.getAttribLocation(program.native, actual.name) === -1,
+              "shader-reflection-error", "Built-in system value must not expose a bound vertex attribute.");
+            program.reflection.systemValues.push({ ...system, location: -1, type: actual.type });
+            continue;
+          }
           require(declared && actual.type === gl.FLOAT_VEC4 && actual.size === 1 && declared.index < maxAttributes, "shader-reflection-error", "Unknown active vertex attribute.");
           const location = gl.getAttribLocation(program.native, actual.name);
           require(location >= 0, "shader-reflection-error", "Missing vertex attribute location.");
           program.reflection.attributes.push({ ...declared, location, type: actual.type });
         }
         for (const [stage, metadata] of [[0, vs], [1, fs]]) {
-          const guestConstantLimit = stage === 0 && metadata.profile === "virgl-webgl2-straight-line-v6" ? 128 : 46;
+          const guestConstantLimit = standard ? 512 : stage === 0 && metadata.profile === "virgl-webgl2-straight-line-v6" ? 128 : 46;
           for (const uniform of metadata.uniforms) {
-            require(uniform.type === "uvec4[]" && uniform.encoding === "float32-bits" && Number.isInteger(uniform.count) && uniform.count > 0 && uniform.count <= guestConstantLimit + 1,
+            require(uniform.type === "uvec4[]" && uniform.encoding === (standard ? "raw-32bit-words" : "float32-bits") &&
+              Number.isInteger(uniform.count) && uniform.count > 0 && uniform.count <= guestConstantLimit + (standard ? 0 : 1),
               "shader-reflection-error", "Unsupported uniform metadata.");
             const name = `${uniform.name}[0]`, location = gl.getUniformLocation(program.native, name);
             const index = gl.getUniformIndices(program.native, [name])?.[0];
@@ -512,9 +542,9 @@ function createRenderer(options, drawing, asynchronous = false) {
           for (const sampler of metadata.samplers) {
             require(sampler.type === "sampler2D" && sampler.index < stageSlots[stage], "shader-reflection-error", "Sampler exceeds supported host stage slots.");
             const location = gl.getUniformLocation(program.native, sampler.name), index = gl.getUniformIndices(program.native, [sampler.name])?.[0];
-            const view = stage === 1 ? sampling.views.find((entry) => entry.index === sampler.index) : null;
+            const view = standard || stage === 1 ? sampling.views.find((entry) => entry.index === sampler.index && (!standard || entry.stage === stage)) : null;
             const constant = view?.swizzle.every((value) => value >= 4) ?? false;
-            if (location === null && index === gl.INVALID_INDEX) require(constant,
+            if (location === null && index === gl.INVALID_INDEX) require(standard || constant,
               "shader-reflection-error", "Only a proved all-constant view may eliminate a used sampler.");
             else require(location !== null && index !== undefined && index !== gl.INVALID_INDEX &&
                 gl.getActiveUniforms(program.native, [index], gl.UNIFORM_TYPE)[0] === gl.SAMPLER_2D &&
@@ -564,9 +594,23 @@ function createRenderer(options, drawing, asynchronous = false) {
           require(components <= hostUniformComponents[1], "shader-reflection-error", "Blend factor exceeds the host fragment uniform limit.");
           program.reflection.blend = { sourceFactor: blendFold, uniform: name, type: "vec4", count: 1 };
         }
+        if (standard) for (let index = 0; index < gl.getProgramParameter(program.native, gl.ACTIVE_UNIFORMS); index++) {
+          const actual = gl.getActiveUniform(program.native, index);
+          require(actual, "shader-reflection-error", "Missing active native uniform reflection.");
+          const blockIndex = gl.getActiveUniforms(program.native, [index], gl.UNIFORM_BLOCK_INDEX)[0];
+          // The measured system block includes upstream reserved members. Its
+          // complete native extent and owned zero-filled data were checked above.
+          const accounted = program.blocks.some(block => block.index === blockIndex) ||
+            program.reflection.uniforms.some(uniform => uniform.name === actual.name &&
+              uniform.activeCount === actual.size && actual.type === gl.UNSIGNED_INT_VEC4) ||
+            program.reflection.samplers.some(sampler => sampler.name === actual.name &&
+              actual.size === 1 && actual.type === gl.SAMPLER_2D) ||
+            program.reflection.blend?.uniform === actual.name && actual.size === 1 && actual.type === gl.FLOAT_VEC4;
+          require(accounted, "shader-reflection-error", `Active native uniform ${actual.name} has no checked binding metadata.`);
+        }
         for (const output of fs.outputs) {
           const location = gl.getFragDataLocation(program.native, output.name);
-          require(output.semantic === "COLOR" && (location === 0 || location === -1 && fragment.discardContract?.alwaysDiscards === true),
+          require(output.semantic === "COLOR" && (location === 0 || location === -1 && (standard || fragment.discardContract?.alwaysDiscards === true)),
             "shader-reflection-error", "Unsupported fragment output.");
           program.reflection.outputs.push({ ...output, location });
         }
@@ -664,7 +708,9 @@ function createRenderer(options, drawing, asynchronous = false) {
         if (!checked.ok && !strict) return [];
         words = unwrap(checked).words;
       } else {
-        if (strict) require(bank.length >= count, "incomplete-draw", "Drawing requires every active constant word.");
+        // Every absent standard word is zeroed, including strict draws, so
+        // shortening/reset cannot retain a preceding draw's native bank.
+        if (strict && !standard) require(bank.length >= count, "incomplete-draw", "Drawing requires every active constant word.");
         words = Object.freeze(Array.from({ length: count }, (_, index) => bank[index] ?? 0));
       }
       return [Object.freeze({ uniform, words })];
@@ -675,7 +721,7 @@ function createRenderer(options, drawing, asynchronous = false) {
         "stale-context", "Draw context or subcontext identity changed.");
       require(sub.shaders.every((shader, stage) => shader === shaders[stage]) &&
         sub.programs.get(program.key) === program && programs.has(program) &&
-        samplingFor(sub, shaders[1]).key === program.samplingKey &&
+        samplingFor(sub, shaders[1], shaders[0]).key === program.samplingKey &&
         blendFoldFor(sub, shaders[1]) === program.blendFold &&
         sub.constants.every((bank, stage) => bank === banks[stage]),
       "stale-draw", "Draw shader, program or constant-bank identity changed.");
@@ -695,7 +741,7 @@ function createRenderer(options, drawing, asynchronous = false) {
       // WebGL requires every enabled color buffer to have an active output.
       // A checked terminal discard may have no reflected output. Disable it
       // only for that draw; CLEAR and ordinary restoration retain the surface.
-      const discardOnly = plan && program.fragment.discardContract?.alwaysDiscards === true &&
+      const discardOnly = plan && (standard || program.fragment.discardContract?.alwaysDiscards === true) &&
         program.reflection.outputs.length === 1 && program.reflection.outputs[0].location === -1;
       gl.drawBuffers([surface && !discardOnly ? gl.COLOR_ATTACHMENT0 : gl.NONE]); gl.readBuffer(surface ? gl.COLOR_ATTACHMENT0 : gl.NONE);
       if (surface || sub.depthSurface) require(gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE, "incomplete-framebuffer", "Framebuffer is incomplete.");
@@ -1181,7 +1227,7 @@ function createRenderer(options, drawing, asynchronous = false) {
         const drawResults = () => drawing ? { draws: submission.draws } : {};
         try {
           idle();
-          const decoded = decodeSubmission(bytes, provenance);
+          const decoded = decodeCommands(bytes, provenance);
           if (!decoded.ok) {
             const rejected = freeze({ ...decoded, appliedCommands, ...drawResults() });
             work.failedSubmissions++; recordOutcome(sequence, rejected); return rejected;
@@ -1261,7 +1307,7 @@ function createRenderer(options, drawing, asynchronous = false) {
             const sequence = ++work.submissions;
             try {
             alive(); idle(); require(jobLimits.jobs > 0, "limit-exceeded", "Renderer jobs are disabled.");
-            const decoded = decodeSubmission(bytes, provenance);
+            const decoded = decodeCommands(bytes, provenance);
             if (!decoded.ok) {
               const rejected = freeze({ ...decoded, appliedCommands: 0, draws: [] });
               work.failedSubmissions++; recordOutcome(sequence, rejected); return rejected;

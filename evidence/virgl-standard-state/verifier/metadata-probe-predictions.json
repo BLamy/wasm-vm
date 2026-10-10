@@ -1,0 +1,14 @@
+{
+  "schema": 1,
+  "writtenBeforeProbe": true,
+  "task": "E6-T11d5",
+  "prediction": "Removing an active raw bank or sampler from both coherent stage and pair metadata must be rejected before native draw, because the task requires complete metadata and spoofed metadata rejection. The native GLSL remains the real compiler body.",
+  "cases": [
+    "omitted fragment raw bank",
+    "omitted fragment sampler declarations"
+  ],
+  "expected": {
+    "ok": false,
+    "nativeDraws": 0
+  }
+}
