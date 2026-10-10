@@ -3,7 +3,7 @@ id: E6-T11d16
 epic: 6
 title: Lower original dimensional constant banks to native uniform blocks
 priority: 525.02703900034
-status: pending
+status: in-progress
 depends_on: [E6-T11d15]
 estimate: S
 risk: high
@@ -41,3 +41,8 @@ E6-T11d15 is independently verified at `e118e4c2ddf83b2641fcca267025b1a6ef8fdad9
 The user's instruction to finish production guest graphics keeps this S/high shader boundary ahead of unrelated work. Resource retention/binding and index/data storage aliasing are ordered successors. Existing old entry points remain isolated.
 
 Primary sources: original dimensional token parsing is vendor/src/gallium/auxiliary/tgsi/tgsi_text.c at969/1352; original converter user-bank handling is vendor/src/vrend/vrend_shader.c at1946 and4871 and independent ubo_used_mask export. Mesa26.2.2 virgl_set_constant_buffer sends opcode27 for every nonnull GPU buffer includingCB0, and opcode12 for inline/unbind. ES3.0.6 table6.33 and section2.12.6.2 require native UBO minimum storage and bounds; primary specification https://registry.khronos.org/OpenGL/specs/es/3.0/es_spec_3.0.pdf. Later bindings may not copy between WebGL element-array and other-data classes; that is explicitly forbidden by https://registry.khronos.org/webgl/specs/latest/2.0/#5.1 and needs a separately proven mirrored-upload/retained transfer adapter.
+
+
+### 2026-10-10 — worker — activation
+
+Selected as the first eligible Next up entry after the verified D15 dependency. Native stack branch `codex/virgl-standard-uniform-shader` was added after publishing the critic verdict. Runtime/claim scope is the one original dimensional constant-bank compiler boundary above. The separate retained resource-binding prerequisite follows fresh verification of this shader layer.
