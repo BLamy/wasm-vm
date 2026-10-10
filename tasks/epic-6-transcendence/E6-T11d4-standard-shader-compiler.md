@@ -13,8 +13,12 @@ capstone: false
 ## Boundary
 
 Add a separate host-selected standard shader compiler facet around the pinned
-VirGL TGSI-to-ESSL translator. Bound the complete grammar before the general
-upstream parser, then preserve its typed shader semantics and owned metadata.
+VirGL TGSI-to-ESSL translator and parser. Bound the complete grammar before the
+general upstream parser, check its independently derived interface metadata,
+then emit standard ESSL with typed word storage. Integer/untyped temporaries,
+MOV/UCMP and flat interfaces must retain 32-bit words without float storage
+canonicalizing NaN encodings. Actual floating operations use native highp math;
+scalar TGSI results replicate the first swizzled lane. Keep metadata owned.
 It is compilation admission, not an exact numerical certificate. Preserve the
 existing ordinary/raw/private entry points and their exact admission/results;
 no guest packet or supplied fact may choose or weaken that old proof facet.
@@ -47,7 +51,9 @@ records rather than trusting the bridge output as its own expected value.
 Compile the complete captured programs on the headed hardware WebGL2 context;
 link actual fragment-derived smooth/flat interfaces and physically draw a
 bounded independently specified set, including ordinary dynamic SIN/EX2/LG2/
-POW, default constant banks, nontrivial masks/swizzles, branches and partial IO.
+POW, nonuniform scalar replication, every admitted arithmetic/comparison word
+family, literal NaN-mask custody, flat raw-word transport, default constant
+banks, nontrivial masks/swizzles, branches and partial IO.
 Record actual uploaded bytes, emitted sources, reflection, full pixel bytes and
 independent mathematical pixel expectations with specified precision budgets.
 Exercise original full compositor programs through this general facet without
@@ -74,4 +80,21 @@ contract; existing private rejection/results must carry unchanged.
 
 ## Verification log
 
-(empty)
+### 2026-10-09 — worker — structural and physical self-validation
+
+The unmodified upstream float-temporary translation compiled every complete
+original but contradicted the independent 92cb corner-opacity oracle: at
+pixel (358,228) bank 0 expected alpha 0.00010340225773969997 and observed
+0.000000201957575995948. A separate 4×4 literal-mask probe confirmed
+that MOV of `0xffffffff` through a float temporary followed by NOT/UCMP chose
+the wrong branch (0.125 instead of 0.875, GL error 0 on M4 Max Metal).
+The new facet therefore owns a typed word emitter after the pinned guarded
+parser/interface transaction; it preserves raw integer custody and TGSI scalar
+replication. The old C runtime body and exact APIs are unchanged.
+
+Ephemeral self-validation at `target/evidence/virgl-standard-shader-draft/`
+passes 634 native/Wasm structural/limit cases, independent TGSI metadata,
+125 headed hardware draws and 2,390,624 independently recomputed pixel values,
+including all three complete 92cb banks and six c580 corner/discard draws.
+An actual SIN-to-COS emitted-operation mutation fails the physical oracle.
+These are development checks, not a frozen submission or verifier verdict.

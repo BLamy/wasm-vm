@@ -10,6 +10,8 @@
 #include "checked_upstream.h"
 #include "raw_bits.h"
 #include "private_92cb_inputs.h"
+#include "standard_guard.h"
+#include "standard_emit.h"
 #include "vrend/vrend_shader.h"
 #include "tgsi/tgsi_text.h"
 #include "util/os_misc.h"
@@ -2240,5 +2242,184 @@ const char *bridge_translate_original_92cb_complete(
    cleanup(&stages[0]); cleanup(&stages[1]);
    free(stages);
    if (rejected && response_overflow) return error("translation-error", "Private paired JSON exceeded its bound.");
+   return response;
+}
+
+/* The standard facet deliberately has no profile/raw_ir member. Its guarded
+ * syntax is the only input to this independent upstream transaction. */
+struct standard_conversion {
+   struct standard_profile profile;
+   struct vrend_shader_info info;
+   struct vrend_variable_shader_info variable;
+   struct vrend_strarray shader;
+   char *standard_source;
+};
+_Static_assert(sizeof(struct standard_conversion) * 2 <= 65536, "standard pair arena bound");
+static void standard_cleanup(struct standard_conversion *c)
+{
+   strarray_free(&c->shader, true);
+   free(c->info.sampler_arrays);
+   free(c->info.image_arrays);
+   free(c->standard_source);
+}
+static const char *standard_convert(struct standard_conversion *c, const char *owned,
+                                    const struct vrend_fs_shader_info *fragment)
+{
+   struct tgsi_token tokens[BRIDGE_MAX_TOKENS] = {0};
+   bridge_tgsi_scratch_begin(); upstream_logged = false;
+   if (!tgsi_text_translate(owned, tokens, BRIDGE_MAX_TOKENS) || bridge_tgsi_scratch_failed() || upstream_logged)
+      return error("translation-error", "Checked upstream TGSI parsing failed.");
+   struct vrend_shader_cfg cfg = {.glsl_version = 300, .max_draw_buffers = 4,
+      .use_gles = 1, .use_core_profile = 1, .use_integer = 1};
+   struct vrend_shader_key key = {0};
+   if (c->profile.stage) key.fs.lower_left_origin = 1;
+   if (fragment) key.fs_info = *fragment;
+   if (!strarray_alloc(&c->shader, SHADER_MAX_STRINGS))
+      return error("translation-error", "Standard output allocation failed.");
+   bridge_upstream_allocation_begin();
+   bool ok = vrend_convert_shader(NULL, &cfg, tokens, 0, &key, &c->info, &c->variable, &c->shader);
+   size_t bytes = 0;
+   for (int i = 0; i < c->shader.num_strings; ++i) bytes += strlen(c->shader.strings[i].buf);
+   if (!ok || bridge_upstream_allocation_failed() || upstream_logged || bytes > BRIDGE_MAX_GLSL ||
+       c->info.num_consts != c->profile.constants || c->info.samplers_used_mask != c->profile.used_samplers)
+      return error("translation-error", "Standard conversion failed or metadata/output bounds disagree.");
+   const char *emitted = standard_emit(&c->profile, tokens, &c->standard_source);
+   return emitted ? error(emitted, "Standard word-storage emission failed.") : NULL;
+}
+static bool standard_fragment_export(const struct standard_conversion *c)
+{
+   const struct standard_profile *p = &c->profile;
+   const struct vrend_fs_shader_info *fs = &c->variable.fs_info;
+   unsigned count = 0; bool seen[STANDARD_GENERIC] = {0};
+   for (unsigned i = 0; i < STANDARD_IO; ++i)
+      count += p->declared[STD_IN][i] && p->input[i].semantic == STD_GENERIC;
+   if (fs->num_interps != (int)count || fs->has_sample_input || fs->has_noperspective) return false;
+   for (unsigned i = 0; i < count; ++i) {
+      const struct vrend_interp_info *e = &fs->interpinfo[i];
+      if (e->semantic_name != TGSI_SEMANTIC_GENERIC || e->semantic_index >= STANDARD_GENERIC ||
+          e->location != TGSI_INTERPOLATE_LOC_CENTER || seen[e->semantic_index]) return false;
+      seen[e->semantic_index] = true;
+      bool found = false;
+      for (unsigned j = 0; j < STANDARD_IO; ++j) if (p->declared[STD_IN][j] &&
+          p->input[j].semantic == STD_GENERIC && p->input[j].sid == e->semantic_index) {
+         if (e->interpolate != (p->input[j].flat ? TGSI_INTERPOLATE_CONSTANT : TGSI_INTERPOLATE_PERSPECTIVE)) return false;
+         found = true;
+      }
+      if (!found) return false;
+   }
+   return true;
+}
+static void standard_io_json(const struct standard_profile *p, unsigned file)
+{
+   bool comma = false;
+   append("[");
+   const struct standard_io *list = file == STD_IN ? p->input : file == STD_OUT ? p->output : p->system;
+   unsigned count = file == STD_SV ? 2 : STANDARD_IO;
+   static const char *semantics[] = {"ATTRIBUTE", "POSITION", "GENERIC", "COLOR", "VERTEXID", "INSTANCEID"};
+   for (unsigned i = 0; i < count; ++i) if (p->declared[file][i]) {
+      const struct standard_io *io = &list[i];
+      char name[32];
+      if (io->semantic == STD_ATTRIBUTE) snprintf(name, sizeof(name), "in_%u", i);
+      else if (io->semantic == STD_POSITION) snprintf(name, sizeof(name), "%s", p->stage ? "gl_FragCoord" : "gl_Position");
+      else if (io->semantic == STD_GENERIC) snprintf(name, sizeof(name), "vso_g%u", io->sid);
+      else if (io->semantic == STD_COLOR) snprintf(name, sizeof(name), "fsout_c%u", io->sid);
+      else snprintf(name, sizeof(name), "%s", io->semantic == STD_VERTEXID ? "gl_VertexID" : "gl_InstanceID");
+      append("%s{\"index\":%u,\"name\":\"%s\",\"type\":\"%s\",\"semantic\":\"%s\",\"semanticIndex\":%u,\"componentMask\":%u",
+         comma ? "," : "", i, name, file == STD_SV ? "int" : io->semantic == STD_GENERIC && io->flat ? "uvec4" : "vec4", semantics[io->semantic], io->sid, io->mask);
+      if (file == STD_OUT) append(",\"syntacticWriteMask\":%u", io->writes);
+      if (io->semantic == STD_GENERIC) append(",\"interpolation\":\"%s\"", io->flat ? "flat" : "smooth");
+      if (io->semantic == STD_POSITION && p->stage) append(",\"interpolation\":\"linear\"");
+      append("}"); comma = true;
+   }
+   append("]");
+}
+static void standard_result(const struct standard_conversion *c)
+{
+   const struct standard_profile *p = &c->profile;
+   append("\"glsl\":\"");
+   {
+      const char *s = c->standard_source;
+      for (; *s; ++s) {
+         unsigned char ch = (unsigned char)*s;
+         if (ch == '"' || ch == '\\') append("\\%c", ch);
+         else if (ch < 32) append("\\u%04x", ch);
+         else append("%c", ch);
+      }
+   }
+   append("\",\"metadata\":{\"profile\":\"virgl-webgl2-standard-gles3-v1\",\"stage\":\"%s\",\"inputs\":", p->stage ? "fragment" : "vertex");
+   standard_io_json(p, STD_IN); append(",\"outputs\":"); standard_io_json(p, STD_OUT);
+   append(",\"attributes\":"); if (p->stage) append("[]"); else standard_io_json(p, STD_IN);
+   append(",\"systemValues\":"); standard_io_json(p, STD_SV);
+   append(",\"uniforms\":[");
+   if (p->constants) append("{\"name\":\"%sconst0\",\"type\":\"uvec4[]\",\"count\":%u,\"encoding\":\"raw-32bit-words\"}", p->stage ? "fs" : "vs", p->constants);
+   append("],\"samplers\":["); bool comma = false;
+   for (unsigned i = 0; i < STANDARD_SAMPLERS; ++i) if (p->used_samplers & (1u << i)) {
+      append("%s{\"index\":%u,\"name\":\"%ssamp%u\",\"type\":\"sampler2D\"}", comma ? "," : "", i, p->stage ? "fs" : "vs", i);
+      comma = true;
+   }
+   append("],\"uniformBlocks\":[");
+   if (!p->stage) append("{\"name\":\"VirglBlock\",\"byteLength\":656,\"members\":[{\"name\":\"winsys_adjust_y\",\"offset\":640,\"type\":\"float\",\"default\":1}]}");
+   append("],\"broadcastColor0\":%s,\"standardSemantics\":{\"kind\":\"native-gles3-highp-v1\",\"precision\":\"native-highp\",\"undefinedDomains\":\"native-gles3\",\"preciseQualifier\":\"no-gpu-shader5\",\"registerStorage\":\"uvec4\",\"flatVaryingStorage\":\"uvec4\",\"scalarResults\":\"tgsi-x-replicated\",\"exactAuthority\":false,\"gpuExecutionBound\":false}}", p->broadcast ? "true" : "false");
+}
+static const char *standard_input(struct standard_profile *p, const char *text, size_t length, char *owned)
+{
+   if (!text) return error("invalid-input", "Standard TGSI input is null.");
+   if (length > BRIDGE_MAX_TEXT) return error("input-too-large", "TGSI text exceeds 49152 bytes.");
+   memcpy(owned, text, length); owned[length] = 0;
+   const char *code = standard_validate(p, owned, length);
+   /* The pinned parser omits CR from its whitespace set. This facet owns and
+    * canonicalizes only accepted whitespace; grammar and extents use original
+    * bytes, and no opcode, literal or register is rewritten. */
+   if (!code) for (size_t i = 0; i < length; ++i) if (owned[i] == '\r') owned[i] = ' ';
+   return code ? error(code, "TGSI is outside the bounded standard GLES3 grammar.") : NULL;
+}
+const char *bridge_translate_standard(int stage, const char *text, size_t length)
+{
+   begin_response(false);
+   if (stage != 0 && stage != 1) return error("unsupported-stage", "Only vertex and fragment stages are supported.");
+   char owned[BRIDGE_MAX_TEXT + 1];
+   struct standard_profile p = {.stage = stage};
+   const char *failed = standard_input(&p, text, length, owned);
+   if (failed) return response;
+   struct standard_conversion *c = calloc(1, sizeof(*c));
+   if (!c) return error("allocation-failed", "Standard conversion arena allocation failed.");
+   c->profile = p;
+   failed = standard_convert(c, owned, NULL);
+   if (!failed) { append("{\"ok\":true,"); standard_result(c); append("}"); }
+   standard_cleanup(c); free(c);
+   if (response_overflow) return error("translation-error", "Standard JSON output exceeded its bound.");
+   return response;
+}
+const char *bridge_translate_standard_pair(const char *vertex_text, size_t vertex_length,
+                                           const char *fragment_text, size_t fragment_length)
+{
+   begin_response(true);
+   char owned[2][BRIDGE_MAX_TEXT + 1];
+   struct standard_profile profiles[2] = {{.stage = 0}, {.stage = 1}};
+   const char *failed = standard_input(&profiles[0], vertex_text, vertex_length, owned[0]);
+   if (!failed) failed = standard_input(&profiles[1], fragment_text, fragment_length, owned[1]);
+   if (!failed && !standard_match(&profiles[0], &profiles[1]))
+      failed = error("incompatible-interface", "Standard fragment inputs require matching declared vertex components.");
+   if (failed) return response;
+   struct standard_conversion *c = calloc(2, sizeof(*c));
+   if (!c) return error("allocation-failed", "Standard pair arena allocation failed.");
+   c[0].profile = profiles[0]; c[1].profile = profiles[1];
+   failed = standard_convert(&c[1], owned[1], NULL);
+   if (!failed && !standard_fragment_export(&c[1])) failed = error("translation-error", "Standard interpolation export differs from the checked fragment declarations.");
+   if (!failed) failed = standard_convert(&c[0], owned[0], &c[1].variable.fs_info);
+   if (!failed) {
+      append("{\"ok\":true,\"vertex\":{"); standard_result(&c[0]);
+      append("},\"fragment\":{"); standard_result(&c[1]);
+      append("},\"interfaceKey\":\"standard-generic-interpolation-v1:");
+      bool comma = false;
+      for (unsigned sid = 0; sid < STANDARD_GENERIC; ++sid)
+         for (unsigned i = 0; i < STANDARD_IO; ++i) if (profiles[1].declared[STD_IN][i] && profiles[1].input[i].semantic == STD_GENERIC && profiles[1].input[i].sid == sid) {
+            const struct standard_io *io = &profiles[1].input[i];
+            append("%sg%u/%u/%s", comma ? ";" : "", sid, io->mask, io->flat ? "flat" : "smooth"); comma = true;
+         }
+      append("\"}");
+   }
+   standard_cleanup(&c[0]); standard_cleanup(&c[1]); free(c);
+   if (response_overflow) return error("translation-error", "Standard pair JSON output exceeded its bound.");
    return response;
 }

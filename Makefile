@@ -2117,3 +2117,7 @@ verify-E6-T11d2:
 .PHONY: verify-E6-T11d3
 verify-E6-T11d3:
 	bash tools/verify-virgl-float-vertex-fetch.sh
+
+.PHONY: verify-E6-T11d4
+verify-E6-T11d4:
+	bash tools/verify-virgl-standard-shader.sh
