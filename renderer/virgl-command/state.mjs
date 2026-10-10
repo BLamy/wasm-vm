@@ -5,7 +5,7 @@ import { LIMITS as SHADER_LIMITS } from "../virgl-shader/index.mjs";
 import { createKeyCache, hashKey } from "./cache.mjs";
 import { parseConstantDomain, checkFiniteBank, checkIndirectBank, checkLoopBank, checkRadialBank, checkRasterBank, checkConversionBank, checkExactBank, COORDINATE_KEY, DISCARD_KEY,
   parseStandardShaderMetadata, normalizeStandardShaderResult, normalizeStandardShaderPair, normalizeStandardShaderTypedPair, deriveStandardShaderInterface, parseStandardUniformShaderMetadata,
-  normalizeStandardUniformShaderResult, normalizeStandardUniformShaderPair, deriveStandardUniformShaderInterface } from "./constant-domain.mjs";
+  normalizeStandardUniformShaderResult, normalizeStandardUniformShaderPair, deriveStandardUniformShaderInterface, parseStandardTextureShaderMetadata, normalizeStandardTextureShaderResult, normalizeStandardTextureShaderPair, deriveStandardTextureShaderInterface } from "./constant-domain.mjs";
 
 export const STATE_PROFILE = "virgl-tiny-state-v1";
 export const STATE_LIMITS = Object.freeze({ contexts: 8, subContexts: 16, objects: 256,
@@ -18,6 +18,7 @@ export const STANDARD_UNIFORM_ASYNC_PROFILE = "virgl-standard-uniform-async-jobs
 export const STANDARD_BUFFER_ASYNC_PROFILE = "virgl-standard-buffer-async-jobs-v1";
 export const STANDARD_IMAGE_ASYNC_PROFILE = "virgl-standard-image-async-jobs-v1";
 export const STANDARD_COLOR_ASYNC_PROFILE = "virgl-standard-byte-color-async-jobs-v1";
+export const STANDARD_TEXTURE_ASYNC_PROFILE = "virgl-standard-texture-async-jobs-v1";
 export const JOB_LIMITS = Object.freeze({ jobs: 1, commandsPerStep: 64, submissionBytes: 262144, transferBytes: 4194304 });
 export const CACHE_LIMITS = Object.freeze({ translations: 128, translationBytes: 4194304,
   programBytes: 4194304, states: 256, stateBytes: 1048576, debugBytes: 4194304 });
@@ -193,8 +194,13 @@ export function createVirglStandardColorAsyncRenderer(options) {
   return createRenderer(options, true, true, true, true, true, true, true);
 }
 
+/** Original sampling operations and native queries from retained image views. */
+export function createVirglStandardTextureAsyncRenderer(options) {
+  return createRenderer(options, true, true, true, true, true, true, true, true);
+}
+
 /** Host capabilities are trusted and non-reentrant. */
-function createRenderer(options, drawing, asynchronous = false, standard = false, uniform = false, bufferRoles = false, images = false, colors = false) {
+function createRenderer(options, drawing, asynchronous = false, standard = false, uniform = false, bufferRoles = false, images = false, colors = false, textureOperations = false) {
   return result(() => {
     const config = dataRecord(options, ["gl", "resources", "bindings", "shaderBridge", "limits", "cacheLimits", ...(drawing ? ["drawLimits"] : []), ...(asynchronous ? ["asyncAccess", "jobLimits"] : []), ...(standard ? ["primitiveAssembly"] : []), ...(uniform ? ["uniformAccess"] : []), ...(images ? ["imageAccess"] : [])], ["gl", "resources", "bindings", "shaderBridge", ...(asynchronous ? ["asyncAccess"] : []), ...(uniform ? ["uniformAccess"] : []), ...(images ? ["imageAccess"] : [])]);
     const { gl, resources, bindings, shaderBridge } = config;
@@ -237,9 +243,9 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
     const imageAccess = images ? config.imageAccess : null;
     require(!images || imageAccess && ["capture", "resolve", "refresh", "hold", "holdStorage", "release", "inspect"].every(name => typeof imageAccess[name] === "function"),
       "invalid-input", "Original native image range authority is required.");
-    const profile = colors ? STANDARD_COLOR_ASYNC_PROFILE : images ? STANDARD_IMAGE_ASYNC_PROFILE : bufferRoles ? STANDARD_BUFFER_ASYNC_PROFILE : uniform ? STANDARD_UNIFORM_ASYNC_PROFILE : standard ? STANDARD_ASYNC_PROFILE : asynchronous ? ASYNC_PROFILE : drawing ? DRAW_PROFILE : STATE_PROFILE;
+    const profile = textureOperations ? STANDARD_TEXTURE_ASYNC_PROFILE : colors ? STANDARD_COLOR_ASYNC_PROFILE : images ? STANDARD_IMAGE_ASYNC_PROFILE : bufferRoles ? STANDARD_BUFFER_ASYNC_PROFILE : uniform ? STANDARD_UNIFORM_ASYNC_PROFILE : standard ? STANDARD_ASYNC_PROFILE : asynchronous ? ASYNC_PROFILE : drawing ? DRAW_PROFILE : STATE_PROFILE;
     const decodeCommands = colors ? decodeStandardColorSubmission : images ? decodeStandardImageSubmission : uniform ? decodeStandardUniformSubmission : standard ? decodeStandardSubmission : decodeSubmission;
-    const parseShaderMetadata = uniform ? parseStandardUniformShaderMetadata : standard ? parseStandardShaderMetadata : parseConstantDomain;
+    const parseShaderMetadata = textureOperations ? parseStandardTextureShaderMetadata : uniform ? parseStandardUniformShaderMetadata : standard ? parseStandardShaderMetadata : parseConstantDomain;
     const idle = () => require(activeJob === null, "busy", "A renderer job is active; cancel and drain it before changing state.");
     const contexts = new Map(), objects = new Set(), programs = new Set();
     let disposed = false, nextGeneration = 1, subCount = 0, shaderBytes = 0, uniformBytes = 0, leaseCount = 0;
@@ -352,12 +358,12 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       }
     };
     const translatedStage = (sub, request) => {
-      const key = JSON.stringify([sub.generation, "stage", request.stage, request.text]);
+      const key = JSON.stringify([sub.generation, "stage", request.stage, request.text, ...(textureOperations ? [STANDARD_TEXTURE_ASYNC_PROFILE] : [])]);
       const cached = translationCache.get(sub, key);
       if (cached) return cached;
       work.translations++;
       const response = shaderBridge.translate(request);
-      const translated = uniform ? unwrap(normalizeStandardUniformShaderResult(response, request.stage)) : standard ? unwrap(normalizeStandardShaderResult(response, request.stage)) : freeze(unwrap(response));
+      const translated = textureOperations ? unwrap(normalizeStandardTextureShaderResult(response, request.stage)) : uniform ? unwrap(normalizeStandardUniformShaderResult(response, request.stage)) : standard ? unwrap(normalizeStandardShaderResult(response, request.stage)) : freeze(unwrap(response));
       unwrap(parseShaderMetadata(translated.metadata, request.stage));
       require(typeof translated.glsl === "string" && /^#version 300 es\b/m.test(translated.glsl),
         "shader-error", "Shader bridge returned incompatible output.");
@@ -366,7 +372,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
     };
     const translatedPair = (sub, vertex, fragment, interfaceKey, validate, inputTypes = null, bufferZeroMask = 0) => {
       const key = JSON.stringify([sub.generation, "pair", vertex.fields.text, fragment.fields.text, interfaceKey,
-        ...(inputTypes?.key ? [inputTypes.key] : []), ...(uniform ? [bufferZeroMask] : [])]);
+        ...(inputTypes?.key ? [inputTypes.key] : []), ...(uniform ? [bufferZeroMask] : []), ...(textureOperations ? [STANDARD_TEXTURE_ASYNC_PROFILE] : [])]);
       const cached = translationCache.get(sub, key);
       if (cached) { validate(cached); return cached; }
       work.pairTranslations++;
@@ -377,7 +383,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       const response = uniform ? shaderBridge.translatePairUniforms({ ...request, ...selectors }) : inputTypes?.packedSignedMask ? shaderBridge.translatePairVertexFormats({ ...request, ...masks,
         packedSignedMask: inputTypes.packedSignedMask, packedNormalizedMask: inputTypes.packedNormalizedMask }) :
         masks ? shaderBridge.translatePairTyped({ ...request, ...masks }) : shaderBridge.translatePair(request);
-      const translated = uniform ? unwrap(normalizeStandardUniformShaderPair(response, selectors)) : standard ? unwrap(masks ? normalizeStandardShaderTypedPair(response, masks) :
+      const translated = textureOperations ? unwrap(normalizeStandardTextureShaderPair(response, selectors)) : uniform ? unwrap(normalizeStandardUniformShaderPair(response, selectors)) : standard ? unwrap(masks ? normalizeStandardShaderTypedPair(response, masks) :
         normalizeStandardShaderPair(response)) : freeze(unwrap(response));
       validate(translated);
       translationCache.put(sub, key, translated, 1024 + 2 * (key.length + JSON.stringify(translated).length));
@@ -525,13 +531,25 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       if (!specialized.length) return null;
       let helpers = "";
       for (const view of specialized) {
-        const name = `wv_view_${view.index}`, pattern = new RegExp(`\\btexture\\s*\\(\\s*${view.name}\\s*,`, "g");
-        let hits = 0;
-        text = text.replace(pattern, () => { hits++; return `${name}(`; });
-        require(hits > 0, "shader-link-error", "Checked TEX sampler has no emitted lookup to specialize.");
-        const lanes = ["v.r", "v.g", "v.b", "v.a", "0.0", "1.0"];
-        helpers += `vec4 ${name}(vec2 coord){vec4 v=texture(${view.name},coord);return vec4(${view.swizzle.map((value) => lanes[value]).join(",")});}\n`;
+        const lanes = ["v.r", "v.g", "v.b", "v.a", "0.0", "1.0"], swizzle = view.swizzle.map(value => lanes[value]).join(",");
+        const operations = textureOperations ? [
+          ["texture", "vec2 coord", "coord"], ["textureLod", "vec2 coord,float lod", "coord,lod"],
+          ["texelFetch", "ivec2 coord,int lod", "coord,lod"], ["textureGrad", "vec2 coord,vec2 dx,vec2 dy", "coord,dx,dy"]
+        ] : [["texture", "vec2 coord", "coord"]];
+        let total = 0;
+        for (const [operation, parameters, argumentsText] of operations) {
+          const name = textureOperations ? `wv_view_${view.index}_${operation}` : `wv_view_${view.index}`, pattern = new RegExp(`\\b${operation}\\s*\\(\\s*${view.name}\\s*,`, "g");
+          let hits = 0;
+          text = text.replace(pattern, () => { hits++; return `${name}(`; }); total += hits;
+          if (hits) {
+            helpers += `vec4 ${name}(${parameters}){vec4 v=${operation}(${view.name},${argumentsText});return vec4(${swizzle});}\n`;
+            if (textureOperations && operation === "texture" && stage === 1)
+              helpers += `vec4 ${name}(vec2 coord,float bias){vec4 v=texture(${view.name},coord,bias);return vec4(${swizzle});}\n`;
+          }
+        }
+        require(textureOperations || total > 0, "shader-link-error", "Checked TEX sampler has no emitted lookup to specialize.");
       }
+      if (textureOperations && !helpers) return null;
       const main = text.indexOf("\nvoid main(");
       require(main >= 0, "shader-link-error", "Checked shader has no main insertion point.");
       const variant = text.slice(0, main + 1) + helpers + text.slice(main + 1);
@@ -598,7 +616,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       const bufferZeroMask = zeroMask(sub, vertex, fragment);
       let fragmentBase = fragment.translation.glsl;
       const interfaceInfo = standard ? (() => {
-        const owned = unwrap(uniform ? deriveStandardUniformShaderInterface(vs, fs) : deriveStandardShaderInterface(vs, fs));
+        const owned = unwrap(textureOperations ? deriveStandardTextureShaderInterface(vs, fs) : uniform ? deriveStandardUniformShaderInterface(vs, fs) : deriveStandardShaderInterface(vs, fs));
         return { ...owned, inputs: new Map(owned.inputs.map(input => [input.semanticIndex, input])) };
       })() : shaderInterface(vs, fs, fragment.coordinateContract, fragment.discardContract);
       // Generations identify these exact owned immutable bodies/metadata, not public names.
@@ -611,8 +629,8 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         interfaceKey: interfaceInfo.key, samplingKey: sampling.key, samplingViews: sampling.views, inputKey: inputTypes.key,
         variantShader: null, fragmentVariantShader: null, variantBytes: 0,
         blendFold, blendUniform: null,
-        reflection: { attributes: [], uniforms: [], samplers: [], uniformBlocks: [], outputs: [], ...(standard ? { systemValues: [], rasterUniforms: [] } : {}) },
-        ...(standard ? { rasterUniforms: [] } : {}), ...(uniform ? { guestBlocks: [], bufferZeroMask } : {}) };
+        reflection: { attributes: [], uniforms: [], samplers: [], uniformBlocks: [], outputs: [], ...(standard ? { systemValues: [], rasterUniforms: [] } : {}), ...(textureOperations ? { textureQueries: [] } : {}) },
+        ...(standard ? { rasterUniforms: [] } : {}), ...(uniform ? { guestBlocks: [], bufferZeroMask } : {}), ...(textureOperations ? { textureQueries: [] } : {}) };
       try {
         if (standard || interfaceInfo.flat || interfaceInfo.coordinates || interfaceInfo.discard) {
           require(typeof shaderBridge.translatePair === "function", "shader-link-error", interfaceInfo.coordinates ?
@@ -723,6 +741,16 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
               conditional: (stage === 0 ? vertex : fragment).constantDomain !== null });
             program.reflection.uniforms.push({ ...uniform, name, stage: metadata.stage, activeCount, uploadCount });
           }
+          if (textureOperations) for (const query of metadata.textureQueries) {
+            const location = gl.getUniformLocation(program.native, query.name), index = gl.getUniformIndices(program.native, [query.name])?.[0];
+            const active = location !== null || index !== gl.INVALID_INDEX;
+            if (active) require(location !== null && index !== undefined && index !== gl.INVALID_INDEX &&
+              gl.getActiveUniforms(program.native, [index], gl.UNIFORM_TYPE)[0] === gl.INT &&
+              gl.getActiveUniforms(program.native, [index], gl.UNIFORM_SIZE)[0] === 1,
+              "shader-reflection-error", "Native original texture query reflection mismatch.");
+            program.textureQueries.push({ stage, index: query.index, location, active });
+            program.reflection.textureQueries.push({ ...query, stage: metadata.stage, active, nativeType: gl.INT });
+          }
           for (const sampler of metadata.samplers) {
             require(sampler.type === "sampler2D" && sampler.index < stageSlots[stage], "shader-reflection-error", "Sampler exceeds supported host stage slots.");
             const location = gl.getUniformLocation(program.native, sampler.name), index = gl.getUniformIndices(program.native, [sampler.name])?.[0];
@@ -815,6 +843,8 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
               uniform.activeCount === actual.size && actual.type === gl.UNSIGNED_INT_VEC4) ||
             program.reflection.samplers.some(sampler => sampler.name === actual.name &&
               actual.size === 1 && actual.type === gl.SAMPLER_2D) ||
+            textureOperations && program.reflection.textureQueries.some(query => query.active && query.name === actual.name &&
+              actual.size === 1 && actual.type === gl.INT) ||
             program.reflection.blend?.uniform === actual.name && actual.size === 1 && actual.type === gl.FLOAT_VEC4 ||
             program.reflection.rasterUniforms.some(uniform => uniform.active && uniform.name === actual.name &&
               actual.size === 1 && actual.type === uniform.nativeType);
@@ -823,7 +853,8 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         if (standard) for (const stage of ["vertex", "fragment"]) {
           const components = program.reflection.uniforms.filter(uniform => uniform.stage === stage).reduce((sum, uniform) => sum + uniform.activeCount * 4, 0) +
             program.reflection.rasterUniforms.filter(uniform => uniform.stage === stage && uniform.active).reduce((sum, uniform) => sum + (uniform.type === "vec2" ? 2 : 1), 0) +
-            (stage === "fragment" && blendFold ? 4 : 0);
+            (stage === "fragment" && blendFold ? 4 : 0) +
+            (textureOperations ? program.reflection.textureQueries.filter(query => query.stage === stage && query.active).length : 0);
           require(components <= hostUniformComponents[stage === "vertex" ? 0 : 1], "shader-reflection-error", "Raster bindings exceed the host stage uniform limit.");
         }
         for (const output of fs.outputs) {
@@ -1053,6 +1084,18 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           gl.uniform4uiv(uniform.location, words);
         }
         for (const sampler of program.samplers) gl.uniform1i(sampler.location, sampler.unit);
+        if (textureOperations) for (const query of program.textureQueries) {
+          const view = sub.views[query.stage][query.index];
+          if (!view?.imageRange) {
+            require(!plan, "incomplete-draw", "Original texture query requires its retained view.");
+            continue;
+          }
+          const image = unwrap(imageAccess.resolve(view.imageRange));
+          const levels = image.metadata.lastLevel + 1;
+          require(Number.isInteger(levels) && levels >= 1 && levels === image.metadata.levels.length,
+            "shader-reflection-error", "Captured local image level count disagrees with its owned planes.");
+          if (query.active) gl.uniform1i(query.location, levels);
+        }
         if (standard) for (const uniform of program.rasterUniforms) {
           if (uniform.semantic === "POINT_SIZE") gl.uniform2f(uniform.location, state.rasterizer?.pointSize ?? 1, state.rasterizer?.pointSizePerVertex ? 1 : 0);
           else gl.uniform1f(uniform.location, state.winsysY);

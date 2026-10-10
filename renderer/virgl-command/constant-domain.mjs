@@ -1065,3 +1065,58 @@ export function deriveStandardUniformShaderInterface(vertex, fragment, hostSelec
       standardUniformMetadata(fragment, "fragment", true, selectors)) });
   } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-link-error", error.message); }
 }
+
+// Selected retained-image query contract; historical normalizers remain closed.
+export const STANDARD_TEXTURE_SHADER_PROFILE = "virgl-webgl2-standard-texture-gles3-v1";
+function standardTextureMetadata(value, stage, paired, selectors) {
+  const input = record(value, [...STANDARD_METADATA_KEYS, "guestUniformBlocks", "textureQueries"]);
+  require(input.profile === STANDARD_TEXTURE_SHADER_PROFILE, "Texture operations require their distinct compiler profile.");
+  const common = Object.fromEntries([...STANDARD_METADATA_KEYS, "guestUniformBlocks"].map(key => [key, input[key]]));
+  common.profile = STANDARD_UNIFORM_SHADER_PROFILE;
+  const metadata = standardUniformMetadata(common, stage, paired, selectors);
+  const queries = array(input.textureQueries, 16).map(value => {
+    const query = record(value, ["index", "name", "type", "semantic"]);
+    require(Number.isInteger(query.index) && query.index >= 0 && query.index < 16 &&
+      query.name === (stage === "vertex" ? "vs" : "fs") + "samplevels" + query.index &&
+      query.type === "int" && query.semantic === "TEXTURE_LEVELS" &&
+      metadata.samplers.some(sampler => sampler.index === query.index), "Invalid original texture query identity.");
+    return { index: query.index, name: query.name, type: query.type, semantic: query.semantic };
+  });
+  require(queries.every((entry, index) => !index || queries[index - 1].index < entry.index), "Texture queries must be sorted and unique.");
+  return standardFreeze({ ...metadata, profile: input.profile, textureQueries: queries });
+}
+function standardTextureBody(value, stage, paired, selectors) {
+  const body = record(value, ["glsl", "metadata"]);
+  require(typeof body.glsl === "string" && body.glsl.length <= 262144 && /^#version 300 es\b/m.test(body.glsl), "Texture compiler returned incompatible GLSL.");
+  return standardFreeze({ glsl: body.glsl, metadata: standardTextureMetadata(body.metadata, stage, paired, selectors) });
+}
+export function parseStandardTextureShaderMetadata(value, stage) {
+  try { return standardFreeze({ ok: true, domain: null,
+    metadata: standardTextureMetadata(value, stage, false, STANDARD_UNIFORM_SELECTORS) }); }
+  catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-domain-error", error.message); }
+}
+export function normalizeStandardTextureShaderResult(value, stage) {
+  try {
+    const response = record(value, ["ok", "glsl", "metadata", "error"], ["ok"]);
+    if (response.ok === false) { record(response, ["ok", "error"]); return standardError(response.error); }
+    require(response.ok === true, "Invalid texture compiler result."); record(response, ["ok", "glsl", "metadata"]);
+    return standardFreeze({ ok: true, ...standardTextureBody({ glsl: response.glsl, metadata: response.metadata }, stage, false, STANDARD_UNIFORM_SELECTORS) });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-domain-error", error.message); }
+}
+export function normalizeStandardTextureShaderPair(value, hostSelectors = STANDARD_UNIFORM_SELECTORS) {
+  try {
+    const selectors = standardUniformSelectors(hostSelectors), response = record(value, ["ok", "vertex", "fragment", "interfaceKey", "error"], ["ok"]);
+    if (response.ok === false) { record(response, ["ok", "error"]); return standardError(response.error); }
+    require(response.ok === true, "Invalid texture pair result."); record(response, ["ok", "vertex", "fragment", "interfaceKey"]);
+    const vertex = standardTextureBody(response.vertex, "vertex", true, selectors), fragment = standardTextureBody(response.fragment, "fragment", true, selectors);
+    require(response.interfaceKey === standardInterface(vertex.metadata, fragment.metadata).key, "Texture pair key disagrees.");
+    return standardFreeze({ ok: true, vertex, fragment, interfaceKey: response.interfaceKey });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-link-error", error.message); }
+}
+export function deriveStandardTextureShaderInterface(vertex, fragment, hostSelectors = STANDARD_UNIFORM_SELECTORS) {
+  try {
+    const selectors = standardUniformSelectors(hostSelectors);
+    return standardFreeze({ ok: true, ...standardInterface(standardTextureMetadata(vertex, "vertex", true, selectors),
+      standardTextureMetadata(fragment, "fragment", true, selectors)) });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-link-error", error.message); }
+}

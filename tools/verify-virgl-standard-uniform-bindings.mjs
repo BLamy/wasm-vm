@@ -17,6 +17,7 @@ assert.ok(options.output); assert.ok(!options.fault || ["block-word", "range-off
 for (const flag of ["smoke", "node-only"]) assert.ok(!options[flag] || options[flag] === "true");
 const output = path.resolve(options.output); await fs.mkdir(output, { recursive: true });
 const sourcePaths = [
+ "renderer/virgl-command/color-images.mjs",
  ...['resources','decoder','state','cache','constant-domain'].map(name=>'renderer/virgl-command/'+name+'.mjs'),
  'renderer/virgl-command/tests/standard-uniform-buffer-bindings.mjs','renderer/virgl-command/tests/standard-instanced-draws.mjs',
  'tools/virgl-command/standard-draw-oracle.mjs','tools/virgl-command/standard-uniform-binding-fixtures.mjs',

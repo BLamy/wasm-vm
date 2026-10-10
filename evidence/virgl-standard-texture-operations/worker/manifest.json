@@ -1,0 +1,16 @@
+{
+  "schema": "original-texture-operations-seal-v1",
+  "task": "E6-T11d24",
+  "sourceHead": "765e9d967258e44def61b65e595bcfd92b192367",
+  "records": 102566,
+  "archiveSha256": "f6be8a4330a501c058b539c0e0706ddf1e4d929dc518df7dd1cc49ab91326c81",
+  "archiveBytes": 71949067,
+  "recordIndexSha256": "16aec9971cee75c0ac705ec38cced2d79f95d2c0e9d19f0413ab73146b155514",
+  "hotReceiptSha256": "72b8b7cee61c1f0bfb920adb765245a1d80ae3c3537a0a598fff3855dd4a6119",
+  "coldReportSha256": "d40c00cdaba111be746b11b64c257edf431b45d83a0dc2540ad40171805504fd",
+  "coldReceiptSha256": "50dade7c0e763e2cef9df095474a1a72a2415d5b570194eb0c859890a3a9933e",
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "authority": "isolated-original-texture-operations",
+  "productionDrawAuthority": false
+}
