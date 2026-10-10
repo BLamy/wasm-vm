@@ -2261,3 +2261,7 @@ verify-E6-T11d22-adversarial:
 .PHONY: verify-E6-T11d24
 verify-E6-T11d24:
 	bash tools/verify-virgl-standard-texture-operations.sh
+
+.PHONY: verify-E6-T11d24-adversarial
+verify-E6-T11d24-adversarial:
+	bash tools/verify-virgl-standard-texture-operations-adversarial.sh
