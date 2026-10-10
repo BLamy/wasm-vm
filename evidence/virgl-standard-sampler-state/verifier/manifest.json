@@ -1,0 +1,21 @@
+{
+  "schema": "original-core-sampler-critic-evidence-v1",
+  "task": "E6-T11d19",
+  "role": "fresh-adversarial-verifier",
+  "verdict": "verified",
+  "frozenRuntimeAndWorkerHarness": "4e13347405adf4926dd866b9ff434a08420b4784",
+  "promotedTestHead": "8b9a387a651640e707471d850468e9dd22b10dd7",
+  "records": 14923,
+  "archiveBytes": 8313084,
+  "archiveSha256": "2a9289da24d1af97288bc38fba9c4719f952761cd7cf862aee5e24015a826450",
+  "recordIndexSha256": "1c9117b541e5a4c2e0a5e1eba9e3c54366fd8bbeae2ca7c8f7a4ae8fc3c2bfc2",
+  "workerArchive": "../worker/recording.tar.gz",
+  "workerArchiveSha256": "aeffc0b3a43f7af0232248a1915961a62407002579f1bd69f52513b06c2e4f18",
+  "workerRecordIndexSha256": "15792ac21e635cf3b3e8ab028ad4b79cec13e96703ab20520dd4bf9a46f92e8f",
+  "completeIndependentPositivePixels": 267776,
+  "actualPositiveNativeDraws": 4200,
+  "actualNativeSabotageDraws": 6,
+  "actualWasmCompletePairReplays": 7,
+  "authority": "Only isolated original host-selected standard core sampler admission/native state; one-level2D remains; reversed LOD parameter-only; no guest/caps/API/production/scanout/deployment/performance authority.",
+  "unpackedWorkerCustody": "References beginning unpacked/ map to corresponding members of the authenticated worker archive via worker-reference.json; unchanged inherited proof digests are recorded in authentication.json. Worker originals are not duplicated in this archive."
+}
