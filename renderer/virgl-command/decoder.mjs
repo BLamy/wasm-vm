@@ -1,5 +1,6 @@
 /** Bounded, side-effect-free VirGL 1.3.0 wire decoding. See README.md. */
 export const PROFILE = "virgl-tiny-commands-v1";
+export const STANDARD_PROFILE = "virgl-standard-commands-v1";
 export const LIMITS = Object.freeze({
   submissionBytes: 262144,
   commands: 4096,
@@ -15,6 +16,7 @@ export const LIMITS = Object.freeze({
   imageSlots: 32,
   atomicBufferSlots: 16,
 });
+export const STANDARD_LIMITS = Object.freeze({ ...LIMITS, constantWords: 2048, vertexConstantWords: 2048 });
 
 const COMMAND_NAMES = Object.freeze({
   1: "CREATE_OBJECT", 2: "BIND_OBJECT", 3: "DESTROY_OBJECT",
@@ -59,11 +61,12 @@ class DecodeFault extends Error {
 
 /** Indexes in Packet match the pinned protocol: header=0, first payload word=1. */
 class Packet {
-  constructor(view, byteOffset, opcode, length) {
+  constructor(view, byteOffset, opcode, length, standard = false) {
     this.view = view;
     this.byteOffset = byteOffset;
     this.opcode = opcode;
     this.length = length;
+    this.standard = standard;
   }
   fail(code, message) { throw new DecodeFault(code, message, this.byteOffset, this.opcode); }
   require(condition, code, message) { if (!condition) this.fail(code, message); }
@@ -379,11 +382,12 @@ function decodeFields(p, objectType) {
       return { resourceHandle, indexSize, offset };
     }
     case 12: {
-      const stage = p.stage(1), count = p.arrayCount(2, 1, stage === 0 ? LIMITS.vertexConstantWords : LIMITS.constantWords), index = p.u(2);
+      const limits = p.standard ? STANDARD_LIMITS : LIMITS;
+      const stage = p.stage(1), count = p.arrayCount(2, 1, stage === 0 ? limits.vertexConstantWords : limits.constantWords), index = p.u(2);
       p.require(index < LIMITS.constantSlots, "limit-exceeded", "Constant buffer slot exceeds profile limit.");
       p.require(count % 4 === 0, "payload-length", "Inline constants must contain whole vec4 values.");
       p.require(count === 0 || (stage <= 1 && index === 0), "unsupported-feature", "Active constants require VS/FS slot zero.");
-      return { stage, index, words: p.words(3, count), values: p.floats(3, count) };
+      return { stage, index, words: p.words(3, count), ...(p.standard ? {} : { values: p.floats(3, count) }) };
     }
     case 13:
       p.exact(1); p.mask(p.u(1), 0xffff);
@@ -475,6 +479,15 @@ function provenanceLabels(provenance) {
 
 /** Returns one frozen complete submission, or a frozen structured error. */
 export function decodeSubmission(bytes, provenance = {}) {
+  return decode(bytes, provenance, false);
+}
+
+/** Selected only by the standard host factory; no wire/provenance selector. */
+export function decodeStandardSubmission(bytes, provenance = {}) {
+  return decode(bytes, provenance, true);
+}
+
+function decode(bytes, provenance, standard) {
   let byteLength, buffer, byteOffset;
   try {
     const typedArrayPrototype = Object.getPrototypeOf(Uint8Array.prototype);
@@ -506,7 +519,7 @@ export function decodeSubmission(bytes, provenance = {}) {
     for (let offset = 0; offset < byteLength;) {
       const header = view.getUint32(offset, true), opcode = header & 255, objectType = (header >>> 8) & 255, payloadDwords = header >>> 16;
       const packetByteLength = (payloadDwords + 1) * 4;
-      const p = new Packet(view, offset, opcode, payloadDwords);
+      const p = new Packet(view, offset, opcode, payloadDwords, standard);
       p.require(commands.length < LIMITS.commands, "limit-exceeded", "Submission exceeds packet count limit.");
       p.require(packetByteLength <= byteLength - offset, "truncated-payload", "Packet payload exceeds submission.");
       p.require(Object.hasOwn(COMMAND_NAMES, opcode), "unsupported-command", "Unknown or unsupported command.");
@@ -521,5 +534,5 @@ export function decodeSubmission(bytes, provenance = {}) {
     if (error instanceof DecodeFault) return error.result;
     throw error; // Unexpected implementation defects are not disguised as guest errors.
   }
-  return freeze({ ok: true, profile: PROFILE, ...labels, byteLength, commands });
+  return freeze({ ok: true, profile: standard ? STANDARD_PROFILE : PROFILE, ...labels, byteLength, commands });
 }
