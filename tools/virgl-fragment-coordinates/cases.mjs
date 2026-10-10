@@ -65,7 +65,7 @@ export function getCases(){
   ['missing-interpolation',t=>t.replace(', LINEAR','')],['duplicate-position',t=>t.replace(HEADER[3],HEADER[3]+'\n'+HEADER[3])],['range-position',t=>t.replace('DCL IN[0]','DCL IN[0..1]')],
   ['unproven-F2I',t=>t.replace('MOV OUT[0], IN[0]','DCL TEMP[0]\nF2I TEMP[0], IN[0]\nI2F OUT[0], TEMP[0]')],
   ...['EX2','LG2','SIN','POW','UARL'].map(op=>['unproven-'+op,t=>t.replace('MOV OUT[0], IN[0]',`DCL TEMP[0]\n${op} TEMP[0], IN[0]${op==='POW'?', IN[0]':''}\nMOV OUT[0], IN[0]`)]),
-  ['kill',t=>t.replace('END','KILL\nEND')],['kill-if',t=>t.replace('END','KILL_IF IN[0]\nEND')]
+  ['kill',t=>t.replace('END','KILL_PRECISE\nEND')],['kill-if',t=>t.replace('END','KILL_IF_PRECISE IN[0]\nEND')]
  ])add(name,change(base),false,false);
  add('vertex-stage-properties',base.replace('FRAG','VERT'),false,false,{stage:'vertex',partner:PARTNER_FRAGMENT});
  add('missing-generic-producer',bytesFragment(0,'numeric'),true,true,{partner:PARTNER_VERTEX.replace('DCL OUT[1], GENERIC[0]\n','').replace('MOV OUT[1], IN[1]\n',''),pairOk:false});

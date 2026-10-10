@@ -1,7 +1,7 @@
 /** Typed VirGL state and bounded indexed draws. See state-README.md and draw-README.md. */
 import { decodeSubmission } from "./decoder.mjs";
 import { LIMITS as SHADER_LIMITS } from "../virgl-shader/index.mjs";
-import { parseConstantDomain, checkFiniteBank, checkIndirectBank, checkLoopBank, checkRadialBank, checkRasterBank, checkConversionBank, COORDINATE_KEY } from "./constant-domain.mjs";
+import { parseConstantDomain, checkFiniteBank, checkIndirectBank, checkLoopBank, checkRadialBank, checkRasterBank, checkConversionBank, COORDINATE_KEY, DISCARD_KEY } from "./constant-domain.mjs";
 
 export const STATE_PROFILE = "virgl-tiny-state-v1";
 export const STATE_LIMITS = Object.freeze({ contexts: 8, subContexts: 16, objects: 256,
@@ -50,7 +50,7 @@ const ref = (object) => object ? { handle: object.handle, generation: object.gen
 
 // Reconstruct the interface from checked stage metadata. The guest never supplies
 // a compiler key, and physical register order does not identify a varying.
-function shaderInterface(vertex, fragment, coordinates = null) {
+function shaderInterface(vertex, fragment, coordinates = null, discard = null) {
   require(Array.isArray(vertex.outputs) && vertex.outputs.length <= 8 &&
     Array.isArray(fragment.inputs) && fragment.inputs.length <= 8,
   "shader-link-error", "Shader interface exceeds the bounded varying profile.");
@@ -85,8 +85,8 @@ function shaderInterface(vertex, fragment, coordinates = null) {
   require(position === Boolean(coordinates), "shader-link-error", "Coordinate policy and builtin interface disagree.");
   const ordered = [...inputs.values()].sort((left, right) => left.semanticIndex - right.semanticIndex);
   return { key: `generic-interpolation-v1:${ordered.map((input) =>
-    `g${input.semanticIndex}/${input.componentMask}/${input.interpolation}`).join(";")}${coordinates ? COORDINATE_KEY : ""}`,
-  flat: ordered.some((input) => input.interpolation === "flat"), coordinates: position, inputs };
+    `g${input.semanticIndex}/${input.componentMask}/${input.interpolation}`).join(";")}${coordinates ? COORDINATE_KEY : ""}${discard ? DISCARD_KEY + Number(discard.alwaysDiscards) : ""}`,
+  flat: ordered.some((input) => input.interpolation === "flat"), coordinates: position, discard: Boolean(discard), inputs };
 }
 
 /** The state-only entry point deliberately continues to reject every draw. */
@@ -279,6 +279,7 @@ function createRenderer(options, drawing, asynchronous = false) {
           object.constantConversionDomain = contract.conversionDomain ?? null;
           object.constantConversionBase = contract;
           object.coordinateContract = contract.coordinates ?? null;
+          object.discardContract = contract.discard ?? null;
           require(typeof translated.glsl === "string" && /^#version 300 es\b/m.test(translated.glsl), "shader-error", "Shader bridge returned incompatible output.");
           object.shaderBytes = fields.text.length + translated.glsl.length;
           require(object.shaderBytes <= limits.shaderBytes - shaderBytes, "limit-exceeded", "Shader storage budget exceeded.");
@@ -353,7 +354,7 @@ function createRenderer(options, drawing, asynchronous = false) {
         if (cached) return cached;
       }
       let vs = vertex.translation.metadata;
-      const fs = fragment.translation.metadata, interfaceInfo = shaderInterface(vs, fs, fragment.coordinateContract);
+      const fs = fragment.translation.metadata, interfaceInfo = shaderInterface(vs, fs, fragment.coordinateContract, fragment.discardContract);
       const key = `${vertex.generation}:${fragment.generation}:${interfaceInfo.key}${sampling.suffix}`;
       require(programs.size < limits.programs, "limit-exceeded", "Linked program limit exceeded.");
       const program = { key, vertex, fragment, native: null, blocks: [], uniforms: [], samplers: [],
@@ -361,9 +362,10 @@ function createRenderer(options, drawing, asynchronous = false) {
         variantShader: null, fragmentVariantShader: null, variantBytes: 0,
         reflection: { attributes: [], uniforms: [], samplers: [], uniformBlocks: [], outputs: [] } };
       try {
-        if (interfaceInfo.flat || interfaceInfo.coordinates) {
+        if (interfaceInfo.flat || interfaceInfo.coordinates || interfaceInfo.discard) {
           require(typeof shaderBridge.translatePair === "function", "shader-link-error", interfaceInfo.coordinates ?
-            "Fragment coordinates require the checked pair compiler." : "Flat interpolation requires the checked pair compiler.");
+            "Fragment coordinates require the checked pair compiler." : interfaceInfo.discard ?
+            "Fragment discard requires the checked pair compiler." : "Flat interpolation requires the checked pair compiler.");
           const pair = unwrap(shaderBridge.translatePair({ vertexText: vertex.fields.text, fragmentText: fragment.fields.text }));
           const expectedVertex = { ...vs, outputs: vs.outputs.map((output) => output.semantic === "GENERIC" ?
             { ...output, interpolation: interfaceInfo.inputs.get(output.semanticIndex)?.interpolation ?? "smooth" } : output) };
@@ -474,7 +476,8 @@ function createRenderer(options, drawing, asynchronous = false) {
           "shader-reflection-error", "Every active block must match the system block.");
         for (const output of fs.outputs) {
           const location = gl.getFragDataLocation(program.native, output.name);
-          require(output.semantic === "COLOR" && location === 0, "shader-reflection-error", "Unsupported fragment output.");
+          require(output.semantic === "COLOR" && (location === 0 || location === -1 && fragment.discardContract?.alwaysDiscards === true),
+            "shader-reflection-error", "Unsupported fragment output.");
           program.reflection.outputs.push({ ...output, location });
         }
         check(); freeze(program.reflection); sub.programs.set(key, program); programs.add(program);
@@ -547,7 +550,12 @@ function createRenderer(options, drawing, asynchronous = false) {
       gl.bindFramebuffer(gl.FRAMEBUFFER, sub.framebuffer);
       const surface = sub.surfaces[0] ?? null;
       gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, surface ? resolve(surface.lease).storage.texture : null, 0);
-      gl.drawBuffers([surface ? gl.COLOR_ATTACHMENT0 : gl.NONE]); gl.readBuffer(surface ? gl.COLOR_ATTACHMENT0 : gl.NONE);
+      // WebGL requires every enabled color buffer to have an active output.
+      // A checked terminal discard may have no reflected output. Disable it
+      // only for that draw; CLEAR and ordinary restoration retain the surface.
+      const discardOnly = plan && program.fragment.discardContract?.alwaysDiscards === true &&
+        program.reflection.outputs.length === 1 && program.reflection.outputs[0].location === -1;
+      gl.drawBuffers([surface && !discardOnly ? gl.COLOR_ATTACHMENT0 : gl.NONE]); gl.readBuffer(surface ? gl.COLOR_ATTACHMENT0 : gl.NONE);
       if (surface) require(gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE, "incomplete-framebuffer", "Framebuffer is incomplete.");
       gl.useProgram(program?.native ?? null);
       for (let slot = 0; slot < maxAttributes; slot++) {

@@ -2033,3 +2033,7 @@ verify-E6-T12g6j2:
 .PHONY: verify-E6-T12g6k
 verify-E6-T12g6k:
 	bash tools/verify-virgl-fragment-coordinates.sh
+
+.PHONY: verify-E6-T12g6l
+verify-E6-T12g6l:
+	bash tools/verify-virgl-fragment-discard.sh

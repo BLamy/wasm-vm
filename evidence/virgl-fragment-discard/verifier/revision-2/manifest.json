@@ -1,0 +1,28 @@
+{
+  "schema": "fragment-discard-incremental-critic-seal-v1",
+  "task": "E6-T12g6l",
+  "verdict": "verified",
+  "sourceHead": "e7137ce55e714c4a5759175529a82cc056a6d097",
+  "workerSubmissionHead": "408b6637c255d0a9dfac6461c0789f0598ecd997",
+  "base": "cca9a570fe061107ff05e3697b99cfc3566fabe5",
+  "records": 81,
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 3436040,
+    "sha256": "d778e836faf6d307cd2b436023cb740b87512ecd597100b4393b4b6a6172234f"
+  },
+  "recordIndex": {
+    "path": "records.json",
+    "bytes": 14488,
+    "sha256": "4534b941f5ba83c325d93a8d02327e984d0010ea37b9d2035403b9a36021e205"
+  },
+  "verdictPath": "critic/verdict.json",
+  "verdictSha256": "a3c80c224991cecee3cf5755f04b1a40c90ed9070b625343c433c30851137dfb",
+  "predictionsSha256": "00e69d286cc7d4c402ec2d53ac337b067a3eaf5ced31ee1f5fd5a02253b4c1ef",
+  "revisedWorkerManifestSha256": "a7e58892ccf37211ac6c2b14b02a5fee08850aec4e560c929fa10bdcd0233439",
+  "initialCriticManifestSha256": "21ce3644f99d69b8c4c7bc2518e395baebc45adc129699c508e7842d12d8c6cd",
+  "coverageAuditSha256": "917917e191c1b7ea7fbc4a4fc4de571f212eaf4ced2848c6e12d3ef81a6a6bd9",
+  "harnessGateSha256": "58a0b25468d7f778c9c5272ce76002eec3352b0fc6ad47b3ab216c6d2b0f98e9",
+  "scope": "corrected private fragment discard; pure promoted harness",
+  "runtimeChangedByCritic": false
+}

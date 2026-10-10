@@ -32,7 +32,7 @@ for(const [label,mutate]of [
  ['position-register7',t=>t.replaceAll('IN[0]','IN[7]')],['position-register8',t=>t.replaceAll('IN[0]','IN[8]')],
  ['position-range',t=>t.replace('DCL IN[0]','DCL IN[0..1]')],['position-perspective',t=>t.replace('LINEAR','PERSPECTIVE')],
  ['position-output',t=>t.replace('OUT[0], COLOR','OUT[0], POSITION')],['output-register1',t=>t.replaceAll('OUT[0]','OUT[1]')],
- ['output-incomplete',t=>t.replace('MOV OUT[0], IN[0]','MOV OUT[0].x, IN[0]')],['discard',t=>t.replace('END','KILL\nEND')]
+ ['output-incomplete',t=>t.replace('MOV OUT[0], IN[0]','MOV OUT[0].x, IN[0]')],['discard',t=>t.replace('END','KILL_PRECISE\nEND')]
 ])add(label,mutate(cases[0].text),false);
 // Eight registers include POSITION and GENERIC0 without confusing semanticIndex0.
 const semantics=[0,2,3,4,5,6,7];

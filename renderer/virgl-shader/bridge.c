@@ -813,6 +813,31 @@ static bool control(const char **p, struct profile *s, struct flow_context *flow
    return true;
 }
 
+static bool discard_instruction(const char **p, struct profile *s, enum raw_opcode opcode)
+{
+   failure_code = "unsupported-feature";
+   if (!s->raw || s->stage != 1 || s->instructions >= BRIDGE_MAX_INSTRUCTIONS) return false;
+   struct raw_instruction raw = {.opcode = opcode, .flags = s->raw_flags};
+   if (opcode == RAW_KILL_IF) {
+      if (punctuation(p, '-')) raw.flags |= RAW_NEGATE_SOURCE0;
+      bool absolute = punctuation(p, '|');
+      if (absolute) raw.flags |= RAW_ABSOLUTE_SOURCE0;
+      if (!source(p, s, 15u, &raw.src[0], opcode, 0) || (absolute && !punctuation(p, '|'))) return false;
+   }
+   if (!end(p)) return false;
+   ++s->instructions;
+   if (s->syntax_only) s->raw->instructions[s->raw->count++] = raw;
+   else {
+      if (raw_discard_guaranteed(s->raw, &raw)) {
+         s->live = false;
+         raw.flags |= RAW_TERMINATING_DISCARD;
+      }
+      raw_record(s->raw, &raw);
+   }
+   failure_code = "parse-error";
+   return true;
+}
+
 static bool instruction(const char **p, struct profile *s, struct flow_context *flow)
 {
    s->current_pc = s->instructions;
@@ -823,6 +848,8 @@ static bool instruction(const char **p, struct profile *s, struct flow_context *
       if (flow && flow->depth) { failure_code = "unsupported-feature"; return false; }
       s->ended = true; return end(p);
    }
+   if (word(p, "KILL_IF")) return discard_instruction(p, s, RAW_KILL_IF);
+   if (word(p, "KILL")) return discard_instruction(p, s, RAW_KILL);
    if (flow) {
       if (word(p, "BGNLOOP")) return control(p, s, flow, RAW_BGNLOOP);
       if (word(p, "BRK")) return control(p, s, flow, RAW_BRK);
@@ -1014,13 +1041,13 @@ static bool validate_body(char *text, struct profile *s, struct flow_context *fl
    if (coordinates) s->raw->opcode_mask |= RAW_FRAGMENT_COORDINATES_USED;
    if (s->syntax_only) return s->semantic[OUT][0] == (s->stage == 0 ? 1u : 3u);
    for (unsigned i = 0; i < 8; ++i)
-      if (s->declared[OUT][i] && s->written[OUT][i] != s->components[OUT][i]) return false;
+      if (s->live && s->declared[OUT][i] && s->written[OUT][i] != s->components[OUT][i]) return false;
    if (s->raw && (!s->raw->opcode_mask ||
        (s->address_declared && !s->raw->indirect_indices))) {
       failure_code = "unsupported-feature";
       return false;
    }
-   if (s->raw && !raw_outputs_safe(s)) {
+   if (s->live && s->raw && !raw_outputs_safe(s)) {
       int raster = raw_certify_raster_outputs(s);
       if (raster != 1) {
          /* An exact producer alone cannot borrow raw-bank output authority.
@@ -1189,7 +1216,9 @@ static const char *check_input(struct profile *profile, const char *text, size_t
          while (isdigit((unsigned char)*p)) ++p;
          if (!punctuation(&p, ':')) continue;
       }
-      if (word(&p, "BGNLOOP") || word(&p, "BRK") || word(&p, "ENDLOOP")) {
+      if (word(&p, "KILL") || word(&p, "KILL_IF")) {
+         candidate = true;
+      } else if (word(&p, "BGNLOOP") || word(&p, "BRK") || word(&p, "ENDLOOP")) {
          candidate = structured_candidate = loop_candidate = true;
       } else if (word(&p, "UIF") || word(&p, "ELSE") || word(&p, "ENDIF")) {
          candidate = structured_candidate = true;
@@ -1386,6 +1415,8 @@ static void interface_key(const struct profile *fragment)
          }
    if (fragment->raw && (fragment->raw->opcode_mask & RAW_FRAGMENT_COORDINATES_USED))
       append("|tgsi-fragment-position-v1:in0/linear/lower-left/half-integer/window-z/reciprocal-w");
+   if (fragment->raw && (fragment->raw->opcode_mask & RAW_DISCARD_OPCODES))
+      append("|tgsi-fragment-discard-v1:ordered-any-negative/raw-words/always-%u", !fragment->live);
    append("\"");
 }
 
@@ -1533,6 +1564,15 @@ static void coordinate_contract(const char *base)
    append(",\"coordinateBaseProfile\":\"%s\",\"coordinateContract\":{\"kind\":\"tgsi-fragment-position-v1\",\"stage\":\"fragment\",\"input\":0,\"semanticIndex\":0,\"source\":\"gl_FragCoord\",\"interpolation\":\"linear\",\"origin\":\"lower-left\",\"pixelCenter\":\"half-integer\",\"components\":\"window-xy-depth-z-reciprocal-clip-w\",\"precision\":\"essl3-highp-builtin\",\"rasterization\":\"single-sample-half-pixel\",\"surfaceOrigin\":\"lower-left\",\"authority\":\"existing-input-no-static-range-facts\"}", base);
 }
 
+static void discard_contract(const struct profile *profile, const char *base)
+{
+   uint64_t ops = profile->raw->opcode_mask;
+   bool kill = (ops & (UINT64_C(1) << RAW_KILL)) != 0;
+   bool conditional = (ops & (UINT64_C(1) << RAW_KILL_IF)) != 0;
+   append(",\"discardBaseProfile\":\"%s\",\"discardContract\":{\"kind\":\"tgsi-fragment-discard-v1\",\"stage\":\"fragment\",\"operations\":[%s%s%s],\"source\":\"all-four-post-swizzle-word-lanes\",\"comparison\":\"ordered-binary32-any-negative-zero-and-nan-false\",\"modifiers\":\"absolute-before-negation\",\"liveness\":\"exclude-proved-discarded-predecessors\",\"authority\":\"no-new-numeric-range-or-initialization-facts\",\"alwaysDiscards\":%s}",
+      base, kill ? "\"KILL\"" : "", kill && conditional ? "," : "", conditional ? "\"KILL_IF\"" : "", profile->live ? "false" : "true");
+}
+
 static void stage_result(const struct conversion *c)
 {
    const struct profile *profile = &c->profile;
@@ -1575,12 +1615,13 @@ static void stage_result(const struct conversion *c)
    bool power = profile->raw && (profile->raw->opcode_mask & RAW_POWER_OPCODES);
    bool sine = profile->raw && (profile->raw->opcode_mask & RAW_SINE_OPCODES);
    bool coordinates = profile->raw && (profile->raw->opcode_mask & RAW_FRAGMENT_COORDINATES_USED);
+   bool discard = profile->raw && (profile->raw->opcode_mask & RAW_DISCARD_OPCODES);
    const char *conversion_name = conversion_bank ? "virgl-webgl2-raw-bits-v30" : "virgl-webgl2-raw-bits-v29";
    const char *base_profile =
       power ? "virgl-webgl2-raw-bits-v37" : sine ? "virgl-webgl2-raw-bits-v36" : exponent ? "virgl-webgl2-raw-bits-v35" : saturation ? "virgl-webgl2-raw-bits-v34" : fraction ? "virgl-webgl2-raw-bits-v33" : minimum ? "virgl-webgl2-raw-bits-v32" : scalar ? "virgl-webgl2-raw-bits-v31" : conversion ? conversion_name :
       arithmetic ? "virgl-webgl2-raw-bits-v28" : raster ? "virgl-webgl2-raw-bits-v27" : name;
    append("\",\"metadata\":{\"profile\":\"%s\",\"stage\":\"%s\",\"inputs\":",
-      coordinates ? "virgl-webgl2-raw-bits-v38" : base_profile,
+      discard ? "virgl-webgl2-raw-bits-v39" : coordinates ? "virgl-webgl2-raw-bits-v38" : base_profile,
       stage ? "fragment" : "vertex");
    io_metadata(profile, IN); append(",\"outputs\":"); io_metadata(profile, OUT);
    append(",\"attributes\":");
@@ -1634,6 +1675,7 @@ static void stage_result(const struct conversion *c)
    if (power) power_contract(profile, sine ? "virgl-webgl2-raw-bits-v36" : exponent ? "virgl-webgl2-raw-bits-v35" : saturation ? "virgl-webgl2-raw-bits-v34" : fraction ? "virgl-webgl2-raw-bits-v33" : minimum ? "virgl-webgl2-raw-bits-v32" :
       scalar ? "virgl-webgl2-raw-bits-v31" : conversion ? conversion_name : arithmetic ? "virgl-webgl2-raw-bits-v28" : raster ? "virgl-webgl2-raw-bits-v27" : name);
    if (coordinates) coordinate_contract(base_profile);
+   if (discard) discard_contract(profile, coordinates ? "virgl-webgl2-raw-bits-v38" : base_profile);
    append("}");
 }
 
