@@ -50,10 +50,10 @@ async function audit(name,fault=false) {
   }
   if(fault) {assert.equal(checked.length,1);assert.ok(report.failure.message.includes('independent original uniform pixels after completed GPU fence'));
     faults.push({mode:name.slice(6),fenced:true,...checked[0]});}
-  else {assert.equal(checked.length,125);frames.push(...checked);}
+  else {assert.equal(checked.length,253);frames.push(...checked);}
 }
 await audit('hardware');for(const fault of ['block-word','range-offset','slot-zero-variant'])await audit('fault-'+fault,true);
 const pixels=frames.reduce((sum,frame)=>sum+frame.checkedPixels,0),words=frames.reduce((sum,frame)=>sum+frame.checkedWords,0);
-await fs.writeFile(path.join(directory,'physical-audit.json'),JSON.stringify({status:'passed',frames,pixels,checkedWords:words,nativeDraws:125,
+await fs.writeFile(path.join(directory,'physical-audit.json'),JSON.stringify({status:'passed',frames,pixels,checkedWords:words,nativeDraws:253,
   everyBankWordRead:true,allBanksSimultaneouslyActive:true,fullOriginalStorage:true,faults,guestExecution:false,productionNegotiation:false},null,2)+'\n');
 console.log('Audited '+pixels+' complete original uniform pixels and all three completed GPU faults.');

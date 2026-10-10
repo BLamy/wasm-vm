@@ -55,8 +55,8 @@ def main(directory):
         raise ValueError('incomplete recording log')
 
     audit = json.loads(record('physical-audit.json'))
-    need(audit['status'] == 'passed' and len(audit['frames']) == 125 and audit['pixels'] == 104716 and
-         audit['nativeDraws'] == 125 and len(audit['faults']) == 3 and audit['everyBankWordRead'] and
+    need(audit['status'] == 'passed' and len(audit['frames']) == 253 and audit['pixels'] == 104844 and
+         audit['nativeDraws'] == 253 and len(audit['faults']) == 3 and audit['everyBankWordRead'] and
          audit['allBanksSimultaneouslyActive'] and audit['fullOriginalStorage'], 'complete offline original hardware audit')
     for name in ['hardware', 'fault-block-word', 'fault-range-offset', 'fault-slot-zero-variant']:
         fault = name != 'hardware'
@@ -87,9 +87,9 @@ def main(directory):
             need(row['sha256'] == served[row['source']], 'V8 served source digest')
         acceptance = report['acceptance']
         need(not acceptance['guestExecution'] and not acceptance['productionNegotiation'], 'isolated authority')
-        need(len(acceptance['frames']) == (1 if fault else 125), 'all native draws')
+        need(len(acceptance['frames']) == (1 if fault else 253), 'all native draws')
         if not fault:
-            need(len(acceptance['compiles']) == 237, 'all original physical compiles')
+            need(len(acceptance['compiles']) == 397, 'all original physical compiles')
             limits = acceptance['limits']
             need(limits['vertexBlocks'] >= 14 and limits['fragmentBlocks'] >= 13 and limits['combinedBlocks'] >= 27 and
                  limits['bindings'] >= 27 and limits['blockBytes'] >= 16384, 'actual full uniform hardware limits')
@@ -103,7 +103,7 @@ def main(directory):
             need('independent original uniform pixels after completed GPU fence' in report['failure']['message'], 'fault reached hardware pixels')
 
     node = json.loads(record('native/node.json'))
-    need(node['status'] == 'passed' and node['cases'] == 338 and node['exactNativeWasm'] and node['getters'] == 0 and
+    need(node['status'] == 'passed' and node['cases'] == 508 and node['exactNativeWasm'] and node['getters'] == 0 and
          node['peerIsolation'] and node['ownedSnapshots'] and len(node['rejections']) == 61 and
          node['pressure']['bytes'] == 16777216 and node['pressure']['recovered'] and
          node['pressure']['scratchFailure']['error']['message'] == 'Checked upstream TGSI parsing failed.', 'native/Wasm/facade/genuine scratch OOM')
@@ -182,7 +182,7 @@ def main(directory):
         if file.is_file() and file.name != 'receipt.json':
             record(file.relative_to(directory).as_posix())
     result = dict(schema='standard-uniform-shader-receipt-v1', task=TASK, status='passed', gitHead=head,
-                  cases=338, compiles=237, frames=125, pixels=104716, checkedRawWords=audit['checkedWords'],
+                  cases=508, compiles=397, frames=253, pixels=104844, checkedRawWords=audit['checkedWords'],
                   stack=stack, fixedMemoryBytes=16777216, scratchBytes=2097152,
                   authority='isolated-standard-uniform-shader', guestExecution=False, productionNegotiation=False,
                   productionDrawAuthority=False, historicalEvidenceHead=PREDECESSOR, carriedVerifiedEvidence=carried,

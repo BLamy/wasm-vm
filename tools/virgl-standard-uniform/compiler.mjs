@@ -65,8 +65,8 @@ if(mode==='cases') {
         assert.deepEqual(body.metadata.guestUniformBlocks,blocks,c.name+' independently declared native banks');
         assert.deepEqual(body.metadata.uniforms,counts.has(0)&&!selected?[{name:prefix+'const0',type:'uvec4[]',count:counts.get(0),encoding:'raw-32bit-words'}]:[]);
         for(const block of blocks)assert.ok(body.glsl.includes('layout(std140) uniform '+block.name+' { uvec4 '+block.members[0].name+'['+block.members[0].count+']; };'));
-        for(const match of text.matchAll(/CONST\[(\d+)\]\[ADDR\[0\]\.x\s*([+-])\s*(\d+)\]/g))
-          assert.ok(body.glsl.includes(prefix+'const'+match[1]+'[addr0 + ('+(match[2]==='-'?'-':'')+match[3]+')]'),c.name+' original signed dynamic offset');
+        for(const source of sources.filter(value=>value.indirect&&value.index))
+          assert.ok(body.glsl.includes(prefix+'const'+source.slot+'[addr0 + ('+source.index+')]'),c.name+' original signed dynamic offset');
         assert.equal(normalizeStandardShaderResult({ok:true,glsl:body.glsl,metadata:body.metadata},stage).ok,false,'old result admission isolated');
         if(c.kind<2)assert.equal(parseStandardUniformShaderMetadata(body.metadata,stage).ok,true);
       }

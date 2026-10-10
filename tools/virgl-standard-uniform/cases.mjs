@@ -29,7 +29,7 @@ export function compilerCases() {
       const end=slot?1023:511;
       add(stage+'-sparse-'+slot,kind,slotProgram(stage,slot,7,end,7));
       add(stage+'-sparse-hole-'+slot,kind,slotProgram(stage,slot,7,end,6),'',zeroSelectors,false,'unsupported-feature');
-      for(const offset of ['', ' +1',' -1',' +'+end,' -'+end])
+      for(const offset of ['', ' +1',' -1',' +'+end,' -'+end,' +'+(end+1),' -'+(end+1),' +32767',' -32768'])
         add(stage+'-dynamic-'+slot+'-'+offset,kind,slotProgram(stage,slot,0,end,'ADDR[0].x'+offset,
           'DCL ADDR[0]\nIMM[0] UINT32 {1,1,1,1}').replace(/\n(\d+): /g,(_,index)=>'\n'+(Number(index)+1)+': ')
           .replace('\n1: ', '\n0: UARL ADDR[0].x, IMM[0].xxxx\n1: '));
@@ -39,7 +39,9 @@ export function compilerCases() {
         ['range-descending',s=>s.replace('[0..'+end+']','[8..7]')],
         ['bank-range',s=>s.replace('CONST['+slot+'][0..','CONST['+slot+'..'+slot+'][0..')],
         ['duplicate',s=>s.replace('\n0:', '\nDCL CONST['+slot+'][0..'+end+']\n0:')],
-        ['offset-over',s=>s.replace('CONST['+slot+']['+end+']','CONST['+slot+'][ADDR[0].x +'+(end+1)+']')
+        ['positive-offset-over',s=>s.replace('CONST['+slot+']['+end+']','CONST['+slot+'][ADDR[0].x +32768]')
+          .replace('\n0:','\nDCL ADDR[0]\n0:')],
+        ['negative-offset-over',s=>s.replace('CONST['+slot+']['+end+']','CONST['+slot+'][ADDR[0].x -32769]')
           .replace('\n0:','\nDCL ADDR[0]\n0:')],
       ]) add(stage+'-'+slot+'-'+label,kind,change(slotProgram(stage,slot)),'',zeroSelectors,false,'unsupported-feature');
     }
@@ -49,6 +51,13 @@ export function compilerCases() {
       add(stage+'-malformed-'+source,kind,slotProgram(stage,1).replace('CONST[1][1023]',source)
         .replace('\n0:','\nDCL ADDR[0]\n0:'),'',zeroSelectors,false,'unsupported-feature');
     const io=stage==='vertex'?'DCL IN[0]\nDCL OUT[0], POSITION':'DCL OUT[0], COLOR';
+    for(const offset of [512,-512,32767,-32768,32768,-32769]) {
+      const okay=offset>=-32768&&offset<=32767,relative=(offset>0?'+':'')+offset;
+      add(stage+'-plain-offset-'+offset,kind,program(stage,io+'\nDCL CONST[0..511]\nDCL ADDR[0]\n'+
+        'IMM[0] FLT32 {'+[-offset,-offset,-offset,-offset].map(value=>value+'.0').join(',')+'}',
+        ['ARL ADDR[0].x, IMM[0].xxxx','MOV OUT[0], CONST[ADDR[0].x '+relative+']']),
+        '',zeroSelectors,okay,okay?null:'unsupported-feature');
+    }
     for(const declarations of ['DCL CONST[0][9]\nDCL CONST[0]','DCL CONST[9]\nDCL CONST[0][0]',
       'DCL CONST[12][0..1023]\nDCL CONST[0][9]\nDCL CONST[0][0]','DCL CONST[9]\nDCL CONST[0]',
       'DCL CONST[0][0]\nDCL CONST[9]'])

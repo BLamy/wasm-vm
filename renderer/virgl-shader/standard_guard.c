@@ -67,9 +67,11 @@ static bool constant_index(const char **s, const struct standard_profile *p,
       if (!p->declared[STD_ADDR][0] || !take(s, '[') || !number(s, 0, &n) || !take(s, ']') ||
           !take(s, '.') || !word(s, "x")) return false;
       r->indirect = true;
-      if (take(s, '+') || take(s, '-')) {
-         /* Original parse_int consumes the sign and digits as one token. */
-         if (!isdigit((unsigned char)**s) || !number(s, maximum, &n)) return false;
+      bool positive = take(s, '+');
+      if (positive || take(s, '-')) {
+         /* Original Index is a signed16 relative offset, independent of the
+          * bank extent. parse_int consumes sign and digits as one token. */
+         if (!isdigit((unsigned char)**s) || !number(s, positive ? 32767 : 32768, &n)) return false;
          r->first = r->last = n; /* magnitude; original parser owns the sign */
       }
    } else {
@@ -96,7 +98,7 @@ static bool constant_indices(const char **s, const struct standard_profile *p,
       return constant_index(s, p, r, kind,
                             (r->slot ? STANDARD_UNIFORM_VECTORS : STANDARD_CONSTANTS) - 1);
    }
-   return r->last < STANDARD_CONSTANTS;
+   return r->indirect || r->last < STANDARD_CONSTANTS;
 }
 static bool reg(const char **at, const struct standard_profile *p, struct operand *r, enum operand_kind kind)
 {

@@ -15,7 +15,7 @@ const report=await runVirglBrowser({options,task:'E6-T11d16',boundary:'Explicit 
   browserArguments:{matrixPath:'/'+matrix,nativePath:'/'+native,fault:options.fault??null},servedFiles:files,pinnedFiles:pinned,
   coveragePaths:['renderer/virgl-shader/standard.mjs','renderer/virgl-command/constant-domain.mjs','renderer/virgl-shader/tests/standard-uniform-browser.mjs'],
   html:browserDocument({title:'Original guest uniform banks',heading:'Original guest uniform banks on the GPU',description:'All raw words and all bank limits · native block reflection · complete pixels and GPU fences'}),
-  validate(acceptance){assert.equal(acceptance.frames.length,125);assert.ok(acceptance.compiles.length>=200);assert.ok(acceptance.frames.every(frame=>frame.gpuComplete?.fenced&&frame.cleaned&&frame.audit.held));},
+  validate(acceptance){assert.equal(acceptance.frames.length,253);assert.equal(acceptance.compiles.length,397);assert.ok(acceptance.frames.every(frame=>frame.gpuComplete?.fenced&&frame.cleaned&&frame.audit.held));},
   successMessage:acceptance=>acceptance.frames.length+' hardware frames passed, including every original raw bank word.'});
 const output=path.resolve(options.output);
 for(const item of report.acceptance?.blobs??[]) {

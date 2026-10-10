@@ -33,6 +33,17 @@ function atlasFragment(slot,count,shift,base,offset) {
       'MOV TEMP[1], CONST['+slot+']['+address+']','USHR TEMP[1], TEMP[1], IMM[0]',
       'AND TEMP[1], TEMP[1], IMM[1]','U2F OUT[0], TEMP[1]']);
 }
+function signedOffsetProgram(stage,slot,count,base,offset,shift,plain) {
+  const bank=plain?'CONST[0..'+(count-1)+']':'CONST['+slot+'][0..'+(count-1)+']',
+    source='CONST'+(plain?'':'['+slot+']')+'[ADDR[0].x '+(offset>0?'+':'')+offset+']';
+  const declarations=(stage==='vertex'?'DCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]':coord+'\nDCL OUT[0], COLOR')+
+    '\nDCL '+bank+'\nDCL ADDR[0]\nDCL TEMP[0..1]\nIMM[0] FLT32 {'+Array(4).fill(base+'.0').join(',')+'}';
+  if(stage==='vertex')return program(stage,declarations,
+    ['MOV OUT[0], IN[0]','ADD TEMP[0], IN[0].zzzz, IMM[0]','ARL ADDR[0].x, TEMP[0].xxxx','MOV OUT[1], '+source]);
+  return program(stage,declarations+'\nIMM[1] UINT32 {'+Array(4).fill(shift).join(',')+'}\nIMM[2] UINT32 {255,255,255,255}',
+    ['ADD TEMP[0], IN[0].xxxx, IMM[0]','ARL ADDR[0].x, TEMP[0].xxxx','MOV TEMP[1], '+source,
+      'USHR TEMP[1], TEMP[1], IMM[1]','AND TEMP[1], TEMP[1], IMM[2]','U2F OUT[0], TEMP[1]']);
+}
 export function hardwareFixtures() {
   const fixtures=[];
   for(const stage of ['vertex','fragment'])for(let slot=0;slot<=12;++slot)for(const shift of [0,8,16,24]) {
@@ -54,6 +65,19 @@ export function hardwareFixtures() {
       attributes:stage==='vertex'?[]:[{index:0,type:'float',data:quad}],banks:[{stage,slot,count,words}],
       expected:()=>Array.from({length:4},(_,lane)=>(words[(base+offset)*4+lane]>>>shift)&255)});
   }
+  for(const stage of ['vertex','fragment'])for(const slot of [0,1,12])for(const plain of slot?[false]:[false,true])
+    for(const offset of [slot?1024:512,slot?-1024:-512,32767,-32768])for(const shift of [0,8,16,24]) {
+      const count=slot?1024:512,base=-offset,width=1,seed=(0x789abc13+slot*97+(stage==='vertex'?0:613))>>>0,words=bankWords(count,seed);
+      const name=stage+'-'+(plain?'plain':'dimensional')+'-slot-'+slot+'-signed-offset-'+offset+'-shift-'+shift;
+      // Actual varying input prevents folding the address into a constant;
+      // original ARL base and signed offset select vector0 in both stages.
+      fixtures.push({name,kind:'atlas',stage,slot,shift,count,width,height:1,base,offset,seed,mode:'TRIANGLES',vertices:3,
+        selectors:{...zeroSelectors,bufferZeroMask:slot||plain?0:stage==='vertex'?1:2},
+        vertexText:stage==='vertex'?signedOffsetProgram(stage,slot,count,base,offset,shift,plain):basicVertex,
+        fragmentText:stage==='fragment'?signedOffsetProgram(stage,slot,count,base,offset,shift,plain):byteOutput(shift),
+        attributes:[{index:0,type:'float',data:quad}],banks:[{stage,slot,count,words}],
+        expected:()=>Array.from({length:4},(_,lane)=>(words[lane]>>>shift)&255)});
+    }
   for(const bufferZeroMask of [0,1,2,3]) {
     const banks=[];for(const stage of ['vertex','fragment'])for(let slot=0;slot<=12;++slot) {
       const count=slot?1024:512,words=bankWords(count,0x23456789+slot*31+(stage==='vertex'?0:88));
