@@ -3,7 +3,7 @@ id: E6-T11d23
 epic: 6
 title: Compile original 2D texture operations to native GPU instructions
 priority: 525.027039000365
-status: in-progress
+status: implemented
 depends_on: [E6-T11d22]
 estimate: S
 risk: high
@@ -43,3 +43,23 @@ Temporary source/C/Wasm prototypes and deterministic harness preparation remain 
 ### 2026-10-10 — worker — active original texture compiler boundary
 
 D22 is verified, its lease is released, and this S/high task is the top eligible graphics prerequisite. Implementation proceeds on `codex/virgl-standard-texture-operations`. The old compiler and renderer dependency evidence remains unchanged at activation.
+
+### 2026-10-10 — worker — original native texture compiler implemented
+
+Frozen runtime/harness head `bd1f39244d74a86a811a064eaa4e9a8989bcee8c`; incremental sealing-only head `7eda9f021bdcbda82dc6c3bc1fc9b81a0bae41c8`. The final original compiler run and the one pristine scrubbed exact-head clone both passed:
+
+```sh
+VIRGL_STANDARD_TEXTURE_EVIDENCE_DIR=target/evidence/virgl-standard-texture-final make verify-E6-T11d23
+python3 tools/virgl-standard-texture/cold.py --output target/evidence/virgl-standard-texture-cold-final
+python3 tools/virgl-standard-texture/seal.py target/evidence/virgl-standard-texture-final target/evidence/virgl-standard-texture-cold-final evidence/virgl-standard-texture/worker
+```
+
+Each run records 932 complete original C/native-sanitized/fixed-memory Wasm cases (647 admitted, 285 refused), literal immediate words and texture operand/type/mask/modifier/target custody, 69+ sorted query bindings, 61 strict own-request refusals, source snapshots, independent memories and real heap/scratch exhaustion with recovery. All 932 historical public ABI responses are byte-identical to the actual predecessor module independently extracted from the authenticated D22 worker seal. Affected original uniform508/packed59/integer48 native/sanitized/Wasm gates pass at the frozen module. All 165 genuine allocation failures recover, with both original source strings owned before semantic allocations and no partial result. Optimized Wasm call-chain measurements are stage139488 and pair195184 bytes, below unchanged262144; memory remains fixed16777216 bytes. Pinned upstream70 files are unchanged.
+
+Each actual headed M4 Max Metal run compiles909 complete accepted native stages and executes246 full8x8 frames (15744 pixels,62976 raw output words,29916 native image texels). Full/truncated17x9 mip chains, all legal vertex/fragment operations and sparse/high slots, nearest/linear signed-normalized and sRGB samples, fractional explicit LOD and integer negated-source fetch/query, masked preserved query lanes and query-only native elimination are recorded. The independent Python original-input audit reconstructs every output from literal shader immediates, original full image bodies and attributes. Real wrong native TEXTURE_BASE_LEVEL, gradient LOD clamp and integer level binding each complete a consumed GPU fence, then fail the unchanged full-pixel oracle. All healthy/fault programs clean up; zero browser/native errors. No undefined 2D query z numerical claim is made.
+
+Complete source/served/generated/input/native identity and full nested LLVM/V8 counters accompany the recordings (12 V8 scripts,27 LLVM file records,94 line samples; full nested regions remain critic authority). The seven compiler files have39 exact reversible migrations in `tools/virgl-standard-texture/boundary.json`. D22 worker30256 and verifier1824 members are independently reread/authenticated; renderer/resource/transport/guest/demo bytes remain identical. All unchanged HELD image/lifetime evidence carries through that sealed dependency. The one final cold clone at `/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-standard-texture-cold-msbfcjuu/wasm-vm` is clean before/after with scrubbed environment. No related runtime code changed after the recording. The subsequent sealing-only repair names the exact receipt stdout append and promotes its literal/tamper test; original recorded source identities and cold proof carry unchanged under incremental policy.
+
+Sealed evidence: `evidence/virgl-standard-texture/worker/{manifest.json,records.json,recording.tar.gz}`. 5814 members, archive SHA256 `0e3941c6a1dc117bc27f4e319ca2f768357ec20e733841410d8ad74ac7b73e20` (27195344 bytes), index SHA256 `35159ac22757fd992efc8184a023207850eeef29286e7372f432a714ccbea792`, hot receipt `51b333ab4ed3b0812c74cb1550b8690a4f63a3428ad069ad6421fb67260cab42`, cold report `014be7a0dec5eb110f8055773986944404543e29cf2de833366f03f22088c92a`, cold receipt `b61c7abeccd10b0a5de14a765c876bbb783d1db136667593481ad4a053c1c6f9`.
+
+The recording demonstrates only this explicitly selected original 2D/FLOAT compiler boundary and native execution of its owned output. It supplies no retained-image consumer or production resource authority. Complete API/capsets, actual guest Mesa/desktop offload, production GPU worker/scanout, live deployment and any performance figure remain later acceptance gates. A fresh verifier must judge this submission before a successor enters the active lane.
