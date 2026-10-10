@@ -3,7 +3,7 @@ id: E6-T11d19
 epic: 6
 title: Execute original core sampler address filter and LOD state
 priority: 525.02703900038
-status: pending
+status: in-progress
 depends_on: [E6-T11d18]
 estimate: S
 risk: high
@@ -31,3 +31,7 @@ Predict original word fields, native sampler identities/parameters, full texture
 The unchanged selected standard decoder admits only two of the 27 original core S/T/R wrap combinations. The literal probe `evidence/virgl-production-readiness/standard-sampler-gap.json` binds decoder, pinned Gallium header, Mesa26.2.2 original encoder and virglrenderer source hashes to the result at `dd2ba352e8c0d9f32198b02f552d9f785388ec2d`. A REPEAT/REPEAT/REPEAT packet rejects with `unsupported-feature: Only clamp-edge 2D nearest/linear non-mip samplers are supported.` Pinned encoder `virgl_encode.c:1131-1159` preserves each original field; pinned renderer `vrend_renderer.c:2515-2576,2588-2631` maps the core address/filter state to native sampler parameters. Khronos GLES3.0 specification sections3.8.2/3.8.10 define sampler state and filtering (https://registry.khronos.org/OpenGL/specs/es/3.0/es_spec_3.0.pdf). Actual resource/texture/API qualification, guest Mesa/compositor execution, worker scanout and live deployment remain ordered successors under the user's explicit instruction to finish production guest graphics.
 
 The 72 direct native Metal prechecks in `/tmp/wasmvm-sampler-native-precheck.json` agree with the planned independent GLES equations for implicit fragment/vertex LOD, all three mip enums and signed LOD clamp changes. This is planning only; it is not the original decoder/renderer acceptance or final evidence.
+
+### 2026-10-10 — worker — activation
+
+Selected as the next ordered production-graphics prerequisite. D18 is verified at bdad14aff93ba70c09d60ab308df4d2024dce4ba and all prior graphics dependencies remain verified. Core native sampler address/filter/LOD state is the only active runtime boundary.
