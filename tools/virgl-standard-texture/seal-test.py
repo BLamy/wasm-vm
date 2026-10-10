@@ -7,6 +7,7 @@ path = Path(__file__).with_name('seal.py')
 spec = importlib.util.spec_from_file_location('texture_seal', path)
 seal = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(seal)
+assert seal.RECEIPT_CONFIRMATION == b'Frozen original texture operations, physical pixels, retained ABIs and complete custody authenticated.\n'
 
 prefix = b'original completed GPU fence\nSTANDARD_TEXTURE_RECORDING_COMPLETE\n'
 digest = seal.sha(prefix)

@@ -10,7 +10,7 @@ import sys
 import tarfile
 
 ROOT = Path(__file__).resolve().parents[2]
-RECEIPT_CONFIRMATION = b'Frozen original texture-operation shaders, native hardware words/pixels, old ABIs and complete custody authenticated.\n'
+RECEIPT_CONFIRMATION = b'Frozen original texture operations, physical pixels, retained ABIs and complete custody authenticated.\n'
 SEALING_FILES = ('tools/virgl-standard-texture/seal.py', 'tools/virgl-standard-texture/seal-test.py')
 
 
