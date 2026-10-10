@@ -3,7 +3,7 @@ id: E6-T11d13
 epic: 6
 title: Execute remaining scalar floating vertex formats from original GPU buffers
 priority: 525.02703900031
-status: implemented
+status: verified
 depends_on: [E6-T11d12]
 estimate: S
 risk: high
@@ -144,3 +144,109 @@ Original local paths and `/tmp/wasmvm-standard-scalar-{final,cold,seal}.log`
 remain available; the committed archive is the handoff. Fresh adversarial
 verification is pending. This implements only scalar floating fetch: complete
 API/profile/caps, production guest offload, deployment and throughput are unclaimed.
+
+### 2026-10-10 — fresh verifier — VERDICT: verified
+
+VERDICT: verified
+
+The fresh critic wrote P1–P11 in
+`evidence/virgl-standard-scalar/verifier/predictions.json` before opening the
+worker recording. Runtime/harness freeze remains
+`1b8e94b79de6ee79f72116246ce4042aa7bda815`; worker submission is
+`2879d9a49c5b9b4f351993f0cf75342c7743d41b`. Promoted independent test/oracle
+freeze is `f8770251a815c9c9d7dbca58e671a0ec61262c94`. No implementation code
+was edited by the critic.
+
+- P1 custody and P10 pristine/compiler — HELD. Independently authenticated every
+  one of the 9578 archive records, all raw/gzip blobs and served/V8 identities,
+  each receipt's 531 tracked sources and two actual generated compiler files,
+  and all 154 unchanged predecessor evidence files. The recorded scrubbed default
+  acceptance exits 0 at the exact freeze; its still-present clone is pristine.
+  Actual fixed 16 MiB generated hashes match the D12 critic pins. Compiler/allocator,
+  C/vendor, guest, web and production sources are unchanged. Citation:
+  `verifier/authentication.json`; worker archive SHA256
+  `99c79728c82a3c7ddef092b1faa10420192df535be67da662e1724b3aab596d2`.
+- P2 literal ABI/admission — HELD. Native and ASan/UBSan pinned programs emit
+  the independently enumerated 32 formats. Independently reconstructed 396 scalar
+  packets and 80 historical packets per run preserve byte-end overflow and legacy
+  gates. The affected 297 compact critic packets per run admit only deliberately
+  widened original scalar enums. The sealed historical negative evidence stays
+  byte-identical. Citations: `verifier/physical-audit.json`, original
+  `hot/abi/scalar-{native,sanitize}.json` and `hot/wire/report.json` in the worker seal.
+- P3 native source/pointers — HELD. Reconstructed every complete original GPU
+  buffer from literal upload packets and owned exchanges, checked original source
+  generations, floating native reflection, pointer types/normalization, component
+  counts, effective alignment/stride/divisors and actual index-derived ends.
+  Shared signed32 overlap at original `hot/hardware/report.json:398065` uses
+  resource 3, offset 216, stride 8 and requiredEnd 328; pixels SHA256
+  `7ae7c17ba068572e60850a3bdcd53be0ac3e477d5a9fc788bd3c5c21f4c24ca0`.
+- P4 exact generic words — HELD. A separate arithmetic byte decoder plus BigInt
+  rational ties-to-even rounding imports no renderer descriptor/converter or
+  worker model. Original `hot/hardware/report.json:224239` converts
+  `[16777217,16777218,16777219,33554431]` to words
+  `[0x4b800000,0x4b800001,0x4b800002,0x4c000000]`. Signed normalization minimum
+  is `0xbf800000` at line312239. Full-range normalized32 interior words hold at
+  lines316715/322310; missing components hold at line350849. Original retained
+  reads contain exactly declared bytes. Citations and full report/pixel digests:
+  `verifier/citations.json` and `physical-audit.json`.
+- P5 original shader/pixel authority — HELD. The carried independent interpreter
+  evaluates original TGSI instructions and constants from literal packets against
+  original bytes, never generated ESSL. All 782 scalar frames / 205824 pixels and
+  538 affected compact/critic frames / 183808 pixels hold across hot/cold; every native
+  draw completes its final fence. General native array arithmetic retains bounded
+  numerical pixel authority; no portable exact arithmetic certificate is added.
+- P6 bounds/work and P7 lifetime/ownership — HELD. Each run's ten rejections
+  independently fails original ends/alignment, required staging 22>21 or original
+  work 6>5 before drawing. Twenty total baseline private index buffers match literal
+  restart semantics and retire. Every scalar run releases job storage and owned
+  fences. Six delayed probes per run reach their stated phases: revision/cancel
+  drain with zero draws; name reuse preserves originally uploaded generations
+  and pixels; active-read disposal releases the batch. A/B/A restores poisoned
+  native state. Reuse at original line425796 has pixels SHA256
+  `ea263e0b96d3e17cc0fcc2c3a34b4a0469780b02c854f71c17c417e8e893a350`;
+  restored A at line430101 has SHA256
+  `6c2187a5f30442e58aa9f5e1f881aa61d458712836ade087de4544038dfee05f`.
+- P8 original GPU fault witnesses — HELD. Served signedness and scaled-generic
+  faults complete actual draws/fences and fail original pixels in both recordings.
+  `hot/fault-native-signedness/report.json:364`, pixel(1,2): predicted
+  `[0,0,0,207]`, observed `[0,0,0,79]`. The scaled witness at
+  `hot/fault-constant-scaled/report.json:364` predicts `[0,0,128,75]`, observes
+  `[0,0,0,75]`. Four affected compact fault witnesses also hold. Exact mutation,
+  report and blob digests are in `verifier/citations.json`.
+- P9 changed-hunk coverage — HELD. All 13 added runtime lines and all affected
+  historical expectation updates have authenticated detailed V8 hits; no new
+  runtime executable segment is unexercised. All 34 worker diff hunks are classified.
+  The only unhit executable segment on a changed helper line is the textually
+  unchanged fixture-only unsupported-format throw, explicitly waived. Types,
+  declarative metadata/docs and sealed records are individually classified;
+  defensive harness failure guards add no product behavior. Citations:
+  `verifier/coverage-audit.json` and `hunk-audit.json`.
+- P11 independent bounded attack/sabotage — HELD. Seed `0xd35a7e19` generates
+  original bytes independently of the worker fixture, and proves 92 fresh M4 Metal
+  frames / 70656 pixels, 396 wire cases, mixed-width shared storage, delayed generic
+  reads, fresh 2^24 ties, signed minima, non-four-byte/overlapping strides,
+  restart/divisors, five short/alignment rejections, revision/cancel/reuse and
+  disposal. Both served runtime sabotages complete native draw/fence work and
+  fail the promoted original-TGSI oracle. Fresh scaled tie pixel(1,2): predicted
+  `[4,0,128,75]`, observed `[4,0,0,75]`. Citations: `verifier/fresh-audit.json`,
+  sealed `final-gpu/report.json` and `final-sabotage-{native,constant}/report.json`.
+
+Commands: `python3 evidence/virgl-standard-scalar/verifier/authenticate.py`;
+`node evidence/virgl-standard-scalar/verifier/audit.mjs`; scoped scalar/compact
+`--node-only true` runs with `NODE_V8_COVERAGE`; final
+`node tools/verify-virgl-standard-scalar.mjs --output
+evidence/virgl-standard-scalar/verifier/final-gpu --adversarial true`;
+the same promoted command with `--smoke true --mutation native-signedness` and
+`constant-scaled` (both expected exit1 at original pixels); `audit.mjs --fresh`;
+`fresh-authenticate.py`, `coverage.py`, `finish.py` and `seal.py`.
+
+SUITE: promoted the independent scalar byte/rational/TGSI oracle and seeded headed
+hardware test, using the existing `--adversarial` runner. The final critic seal
+contains 543 records, archive SHA256
+`bd65fa424aac4dd77166240f7f2dea90bcd0b06d5a537d8c74c322bbe9c87942`,
+2515271 bytes; index SHA256
+`7a68ed058a40b31cadc85ff8cea838ee35b60d5fc593925137d75299a8a4704f`.
+P1–P11 are HELD with no findings or proof gaps. Earlier unchanged compiler and
+allocator proofs carry forward; no unrelated gauntlet was restarted. Authority
+remains isolated scalar floating fetch. Complete API/caps, production guest
+graphics, deployment and throughput remain unclaimed.
