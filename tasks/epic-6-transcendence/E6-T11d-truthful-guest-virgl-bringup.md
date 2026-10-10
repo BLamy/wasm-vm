@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17]
-blocked_on: E6-T11d17
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18]
+blocked_on: E6-T11d18
 estimate: S
 risk: high
 capstone: false
@@ -312,3 +312,7 @@ Ordered S/high E6-T11d16 proves actual C/Wasm dimensional uniform-block emission
 ### 2026-10-10 — worker — uniform compiler verified; original retained binding gap
 
 E6-T11d16 is independently verified at `3ec060c46a9743a62306ae409d0bf1a548d4a616`, with its exclusive lease released and verdict published in open PR492. The historical standard decoder and resource factory still reject original opcode27 and target0/format64/bind64. Reproduce by decoding little-endian dwords `[0x5001b,0,1,16,16384,777]` through `decodeStandardSubmission`, or submitting the pinned uniform-buffer metadata in `evidence/virgl-production-readiness/standard-uniform-buffer-gap.json` to `computeTransferLayout`; command/resource runtime is unchanged through D16. Ordered S/high E6-T11d17 connects this one original packet-to-native retained range boundary. Element-array/data reuse, full GLES3/API/caps, actual RISC-V guest Mesa/kmscube/desktop, production worker scanout and live demo remain later qualification; no positive caps or guest rendering is claimed here.
+
+### 2026-10-10 — worker — uniform ranges verified; original buffer role reuse
+
+D17 is independently verified at `f489b8ed5599dfe9afeb7d7d1463655e768af418`. Its selected facet still rejects original index/other-data reuse, zero/combined creation hints. `node evidence/virgl-production-readiness/standard-buffer-role-gap.mjs` reproduces every negative role result on the unchanged old factories; source bytes and original metadata are pinned in the adjacent JSON. Ordered S task D18 closes this original allocation boundary using the existing fenced index read and private u32 normalization path. WebGL cross-class binding/copy restrictions forbid direct native aliasing. Production API/caps, actual guest Mesa/compositor and worker scanout/live deployment remain unqualified. The explicit user instruction continues this graphics chain ahead of unrelated general queue work.

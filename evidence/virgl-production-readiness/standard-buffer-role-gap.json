@@ -1,0 +1,566 @@
+{
+  "schema": 1,
+  "task": "production-readiness-buffer-role-gap",
+  "sourceHead": "16316900e782613e4056c5bb34febfd5afc64b97",
+  "source": {
+    "path": "renderer/virgl-command/resources.mjs",
+    "bytes": 68257,
+    "sha256": "27e6d3e2f489705a20dfb54bed3f6286d693498304f29bbbd0cbdcba6ec68a82"
+  },
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "records": [
+    {
+      "factory": "historical",
+      "metadata": {
+        "id": 1,
+        "target": 0,
+        "format": 64,
+        "bind": 0,
+        "width": 64,
+        "height": 1,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "create": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-resource",
+          "message": "Unsupported buffer binding class."
+        }
+      },
+      "roles": {}
+    },
+    {
+      "factory": "historical",
+      "metadata": {
+        "id": 1,
+        "target": 0,
+        "format": 64,
+        "bind": 16,
+        "width": 64,
+        "height": 1,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "create": {
+        "ok": true,
+        "resource": {
+          "id": 1,
+          "target": 0,
+          "format": 64,
+          "bind": 16,
+          "width": 64,
+          "height": 1,
+          "depth": 1,
+          "arraySize": 1,
+          "lastLevel": 0,
+          "nrSamples": 0,
+          "flags": 0,
+          "kind": "vertex-buffer",
+          "byteLength": 64,
+          "generation": 2
+        }
+      },
+      "roles": {
+        "vertex": {
+          "ok": true
+        },
+        "index": {
+          "ok": false,
+          "error": {
+            "code": "unsupported-resource",
+            "message": "Storage lease role contradicts the resource binding class."
+          }
+        },
+        "uniform": {
+          "ok": false,
+          "error": {
+            "code": "invalid-input",
+            "message": "Unknown storage lease role."
+          }
+        }
+      }
+    },
+    {
+      "factory": "historical",
+      "metadata": {
+        "id": 1,
+        "target": 0,
+        "format": 64,
+        "bind": 32,
+        "width": 64,
+        "height": 1,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "create": {
+        "ok": true,
+        "resource": {
+          "id": 1,
+          "target": 0,
+          "format": 64,
+          "bind": 32,
+          "width": 64,
+          "height": 1,
+          "depth": 1,
+          "arraySize": 1,
+          "lastLevel": 0,
+          "nrSamples": 0,
+          "flags": 0,
+          "kind": "index-buffer",
+          "byteLength": 64,
+          "generation": 2
+        }
+      },
+      "roles": {
+        "vertex": {
+          "ok": false,
+          "error": {
+            "code": "unsupported-resource",
+            "message": "Storage lease role contradicts the resource binding class."
+          }
+        },
+        "index": {
+          "ok": true
+        },
+        "uniform": {
+          "ok": false,
+          "error": {
+            "code": "invalid-input",
+            "message": "Unknown storage lease role."
+          }
+        }
+      }
+    },
+    {
+      "factory": "historical",
+      "metadata": {
+        "id": 1,
+        "target": 0,
+        "format": 64,
+        "bind": 48,
+        "width": 64,
+        "height": 1,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "create": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-resource",
+          "message": "Unsupported buffer binding class."
+        }
+      },
+      "roles": {}
+    },
+    {
+      "factory": "historical",
+      "metadata": {
+        "id": 1,
+        "target": 0,
+        "format": 64,
+        "bind": 64,
+        "width": 64,
+        "height": 1,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "create": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-resource",
+          "message": "Unsupported buffer binding class."
+        }
+      },
+      "roles": {}
+    },
+    {
+      "factory": "historical",
+      "metadata": {
+        "id": 1,
+        "target": 0,
+        "format": 64,
+        "bind": 80,
+        "width": 64,
+        "height": 1,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "create": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-resource",
+          "message": "Unsupported buffer binding class."
+        }
+      },
+      "roles": {}
+    },
+    {
+      "factory": "historical",
+      "metadata": {
+        "id": 1,
+        "target": 0,
+        "format": 64,
+        "bind": 96,
+        "width": 64,
+        "height": 1,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "create": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-resource",
+          "message": "Unsupported buffer binding class."
+        }
+      },
+      "roles": {}
+    },
+    {
+      "factory": "historical",
+      "metadata": {
+        "id": 1,
+        "target": 0,
+        "format": 64,
+        "bind": 112,
+        "width": 64,
+        "height": 1,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "create": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-resource",
+          "message": "Unsupported buffer binding class."
+        }
+      },
+      "roles": {}
+    },
+    {
+      "factory": "uniform",
+      "metadata": {
+        "id": 1,
+        "target": 0,
+        "format": 64,
+        "bind": 0,
+        "width": 64,
+        "height": 1,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "create": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-resource",
+          "message": "Unsupported buffer binding class."
+        }
+      },
+      "roles": {}
+    },
+    {
+      "factory": "uniform",
+      "metadata": {
+        "id": 1,
+        "target": 0,
+        "format": 64,
+        "bind": 16,
+        "width": 64,
+        "height": 1,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "create": {
+        "ok": true,
+        "resource": {
+          "id": 1,
+          "target": 0,
+          "format": 64,
+          "bind": 16,
+          "width": 64,
+          "height": 1,
+          "depth": 1,
+          "arraySize": 1,
+          "lastLevel": 0,
+          "nrSamples": 0,
+          "flags": 0,
+          "kind": "vertex-buffer",
+          "byteLength": 64,
+          "generation": 2
+        }
+      },
+      "roles": {
+        "vertex": {
+          "ok": true
+        },
+        "index": {
+          "ok": false,
+          "error": {
+            "code": "unsupported-resource",
+            "message": "Storage lease role contradicts the resource binding class."
+          }
+        },
+        "uniform": {
+          "ok": true
+        }
+      }
+    },
+    {
+      "factory": "uniform",
+      "metadata": {
+        "id": 1,
+        "target": 0,
+        "format": 64,
+        "bind": 32,
+        "width": 64,
+        "height": 1,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "create": {
+        "ok": true,
+        "resource": {
+          "id": 1,
+          "target": 0,
+          "format": 64,
+          "bind": 32,
+          "width": 64,
+          "height": 1,
+          "depth": 1,
+          "arraySize": 1,
+          "lastLevel": 0,
+          "nrSamples": 0,
+          "flags": 0,
+          "kind": "index-buffer",
+          "byteLength": 64,
+          "generation": 2
+        }
+      },
+      "roles": {
+        "vertex": {
+          "ok": false,
+          "error": {
+            "code": "unsupported-resource",
+            "message": "Storage lease role contradicts the resource binding class."
+          }
+        },
+        "index": {
+          "ok": true
+        },
+        "uniform": {
+          "ok": false,
+          "error": {
+            "code": "unsupported-resource",
+            "message": "Storage lease role contradicts the resource binding class."
+          }
+        }
+      }
+    },
+    {
+      "factory": "uniform",
+      "metadata": {
+        "id": 1,
+        "target": 0,
+        "format": 64,
+        "bind": 48,
+        "width": 64,
+        "height": 1,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "create": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-resource",
+          "message": "Unsupported buffer binding class."
+        }
+      },
+      "roles": {}
+    },
+    {
+      "factory": "uniform",
+      "metadata": {
+        "id": 1,
+        "target": 0,
+        "format": 64,
+        "bind": 64,
+        "width": 64,
+        "height": 1,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "create": {
+        "ok": true,
+        "resource": {
+          "id": 1,
+          "target": 0,
+          "format": 64,
+          "bind": 64,
+          "width": 64,
+          "height": 1,
+          "depth": 1,
+          "arraySize": 1,
+          "lastLevel": 0,
+          "nrSamples": 0,
+          "flags": 0,
+          "kind": "uniform-buffer",
+          "byteLength": 64,
+          "generation": 2
+        }
+      },
+      "roles": {
+        "vertex": {
+          "ok": true
+        },
+        "index": {
+          "ok": false,
+          "error": {
+            "code": "unsupported-resource",
+            "message": "Storage lease role contradicts the resource binding class."
+          }
+        },
+        "uniform": {
+          "ok": true
+        }
+      }
+    },
+    {
+      "factory": "uniform",
+      "metadata": {
+        "id": 1,
+        "target": 0,
+        "format": 64,
+        "bind": 80,
+        "width": 64,
+        "height": 1,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "create": {
+        "ok": true,
+        "resource": {
+          "id": 1,
+          "target": 0,
+          "format": 64,
+          "bind": 80,
+          "width": 64,
+          "height": 1,
+          "depth": 1,
+          "arraySize": 1,
+          "lastLevel": 0,
+          "nrSamples": 0,
+          "flags": 0,
+          "kind": "uniform-buffer",
+          "byteLength": 64,
+          "generation": 2
+        }
+      },
+      "roles": {
+        "vertex": {
+          "ok": true
+        },
+        "index": {
+          "ok": false,
+          "error": {
+            "code": "unsupported-resource",
+            "message": "Storage lease role contradicts the resource binding class."
+          }
+        },
+        "uniform": {
+          "ok": true
+        }
+      }
+    },
+    {
+      "factory": "uniform",
+      "metadata": {
+        "id": 1,
+        "target": 0,
+        "format": 64,
+        "bind": 96,
+        "width": 64,
+        "height": 1,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "create": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-resource",
+          "message": "Unsupported buffer binding class."
+        }
+      },
+      "roles": {}
+    },
+    {
+      "factory": "uniform",
+      "metadata": {
+        "id": 1,
+        "target": 0,
+        "format": 64,
+        "bind": 112,
+        "width": 64,
+        "height": 1,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "create": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-resource",
+          "message": "Unsupported buffer binding class."
+        }
+      },
+      "roles": {}
+    }
+  ]
+}
