@@ -3,7 +3,7 @@ id: E6-T11d3
 epic: 6
 title: Execute scalar through four-component float vertex fetches
 priority: 525.027036
-status: implemented
+status: verified
 depends_on: [E6-T11d2]
 estimate: S
 risk: high
@@ -115,3 +115,75 @@ Evidence: `evidence/virgl-float-vertex/worker/recording.tar.gz`,
 `target/evidence/virgl-float-vertex` and `target/evidence/virgl-float-vertex-cold`.
 The recording demonstrates only the isolated float-fetch boundary. No capsets,
 production guest boot, complete API or graphics throughput are claimed.
+
+### 2026-10-09 — fresh verifier — VERDICT: verified
+
+VERDICT: verified
+
+Reviewed frozen source `2ba17ed3d5373eea3991225c8cd8160920928499` against
+verified parent `bcdb820620092aaf869aa0574ffce6de793dd5fe`; worker submission
+`aaaf3565`. Predictions preceded opening the evidence; this verifier changed
+no runtime implementation. The guest/browser evidence replaces the waived host rr layer.
+Predictions: `evidence/virgl-float-vertex/verifier/predictions.json:1`, SHA256 `ee24f920bee31866a08c9217e4e3e1a96942ceefd5aaf17257cd20718c48f635`.
+
+- P1 — HELD. 196 seal members,382 exact-head sources,generated modules,served scripts and pristine final cold clone authenticate. Citation: `evidence/virgl-float-vertex/verifier/authentication.json:1`, SHA256 `561fa80b41099ace2ba00ca7f720c0bd741db5c27066c874715e1c9bdeb945b1`.
+- P2 — HELD. Fresh native and ASan/UBSan pinned C enum/layout oracles match widths4/8/12/16; admitted formats are exactly28..31. Citation: `evidence/virgl-float-vertex/verifier/enum-audit.json:1`, SHA256 `bd54935a372432b28acf5f61ea4da3a78464fa6bd9f7e77f697ad85361319746`.
+- P3 — HELD. Aligned u32 last offsets,remainders,overflows,divisors and slot bounds hold,including3132 fresh seeded wire predicates. Citation: `evidence/virgl-float-vertex/verifier/fresh-wire/report.json:1`, SHA256 `b4e75c6fa47dd964eac3ad527f9e15a5b5c7dee6704c3ecd23fc70a63c88abfe`.
+- P4 — HELD. Every scalar/RG/RGB recorded pixel derives from actual GPU bytes and independent missing lanes; no padding leakage. Citation: `evidence/virgl-float-vertex/verifier/hot-hardware-audit.jsonl:4`, SHA256 `e67e54e893faff157e48e50854d79b8d60ea1a8392645be73162ca2bede3c898`.
+- P5 — HELD. Fourth color alpha64 and clip reciprocal W128/64/32 agree at pixel8,8 and every recorded pixel. Citation: `evidence/virgl-float-vertex/verifier/hot-hardware-audit.jsonl:7`, SHA256 `e67e54e893faff157e48e50854d79b8d60ea1a8392645be73162ca2bede3c898`.
+- P6 — HELD. First and actual-last fetch bounds,offsets,252/overlapping strides,actual u16 maxima,exact ends and short rejection/recovery hold. Citation: `evidence/virgl-float-vertex/verifier/recording-audit.json:1`, SHA256 `677176a943931d8e864e939de40728c6228913925c13641d4b5fa94b0bb6f663`.
+- P7 — HELD. Inactive slot15,A/B/A,public unref/ID reuse,old-generation retention,rebind and current transfer match native bytes and pixels. Citation: `evidence/virgl-float-vertex/verifier/fresh-hardware-audit.jsonl:5`, SHA256 `65114338302eba4903a20643df5b68ec2a39129e7fe3c94482d56ead066d5a02`.
+- P8 — HELD. Owned async input,real read/completion fences and varied delays0/1/3 plus fresh0/2/5 hold; short cases issue no draw. Citation: `evidence/virgl-float-vertex/verifier/fresh-audit.json:1`, SHA256 `81c585f1ec1ae46ca9aac75608919f20b552b757be97577c99e13bed0aa64d9d`.
+- P9 — HELD. All three sealed physical source-size faults contradict their named pixel predictions,without unrelated failures. Citation: `evidence/virgl-float-vertex/verifier/recording-audit.json:1`, SHA256 `677176a943931d8e864e939de40728c6228913925c13641d4b5fa94b0bb6f663`.
+- P10 — HELD. Every changed runtime predicate/lane expression and all its extent/native-pointer consumers execute; zero runtime waivers. Citation: `evidence/virgl-float-vertex/verifier/recording-audit.json:1`, SHA256 `677176a943931d8e864e939de40728c6228913925c13641d4b5fa94b0bb6f663`.
+- P11 — HELD. 257 unchanged compiler/private/cache sources and parent D2 HELD results carry; current H/nine original draws and promoted22 blend frames authenticate. Citation: `evidence/virgl-float-vertex/verifier/carry-forward.json:1`, SHA256 `dd9f19214ecf3bdf751d43ab18b888dab77c6396b7dd8a0e7d10cd573ad05f34`.
+- P12 — HELD. 96 fresh varying-W/partial-color frames,24576 independently derived pixels and144 rejections hold; real RGBA-size3 sabotage produces alpha255 instead of203 at2,2. Citation: `evidence/virgl-float-vertex/verifier/fresh-audit.json:1`, SHA256 `81c585f1ec1ae46ca9aac75608919f20b552b757be97577c99e13bed0aa64d9d`.
+
+COVERAGE: the decoder’s three changed lines execute in a 466-hit element map;
+the changed `vertexComponents` expression executes 2,515 times in each hot/cold
+capture. Its first-element extent, native pointer and actual-last-fetch consumers
+execute with all widths. No runtime hunk is unexecuted or waived. README prose
+and task/queue metadata are non-executable scope; recording scripts and aligned
+retained fixtures are exercised by authenticated final acceptance logs.
+
+The independent novel oracle uses general triangle cross products and exact
+binary32/Fraction GPU values to re-derive all 24,576 fresh pixels. The deliberate
+RGBA native-size3 fault reaches the physical predicate after a zero-GL-error check:
+pixel (2,2) alpha203 becomes255. Reopen `sabotage-promoted-audit.jsonl:25`
+or raw `sabotage-promoted/pixels.bin` alpha byte24715 (SHA256
+`7136937d0c810e7b6d31af7a58fa08deb416bbc46196743f71c2c53380470316`).
+
+SUITE: promoted deterministic `renderer/virgl-command/tests/float-vertex-boundaries.mjs`
+retains 3,132 seeded wire predicates, 96 physical frames, 144 rejections, varying W
+and partial lanes, A/B/A and retained generation transitions, actual index maxima,
+both element bounds and async0/2/5. Its real source mutation must fail the named
+alpha prediction. The initial critic harness incorrectly expected malformed async
+`beginSubmission` to allocate a job; recording now preserves its immediate typed
+rejection. This was a harness correction, with no product refutation.
+
+Exact critic commands:
+
+```sh
+python3 evidence/virgl-float-vertex/verifier/authenticate.py
+python3 evidence/virgl-float-vertex/verifier/recording_audit.py
+python3 evidence/virgl-float-vertex/verifier/carry_forward.py
+node --check renderer/virgl-command/tests/float-vertex-boundaries.mjs
+node renderer/virgl-command/tests/float-vertex-boundaries.mjs --output evidence/virgl-float-vertex/verifier/fresh-wire --node-only true
+node renderer/virgl-command/tests/float-vertex-boundaries.mjs --output evidence/virgl-float-vertex/verifier/fresh-hardware
+node renderer/virgl-command/tests/float-vertex-boundaries.mjs --output evidence/virgl-float-vertex/verifier/sabotage-promoted --mutation rgba
+# Above mutation exits1 at the predicted alpha pixel; baseline exits0.
+python3 evidence/virgl-float-vertex/verifier/fresh_audit.py
+python3 evidence/virgl-float-vertex/verifier/finish.py
+```
+
+The exact native and ASan/UBSan compile/execute commands and outputs are retained
+in `enum-audit.json:1`; their pinned values agree. Final pristine/scrubbed
+`make verify-E6-T11d3` at the frozen head is authenticated once and carried; no
+unrelated compiler, stress or broad workspace gate is restarted.
+
+Critic seal: `evidence/virgl-float-vertex/verifier/recording.tar.gz`, 240 authenticated records, 6585163 bytes; archive SHA256 `952d04551cffdb8a79618ef544214ef4683c08ee18bf6e792767bef319fb5734`; index SHA256 `8b3c4e7925fa75612f45077d68787884b27b6801054f3a342ea17e844c18f46b`.
+Reopen with `tar -xzf evidence/virgl-float-vertex/verifier/recording.tar.gz -C evidence/virgl-float-vertex/verifier`.
+The seal includes original hot/cold captures, all independent audit scripts/results,
+fresh GPU bytes/packets/dumps/coverage/screenshots, faults and the promoted test.
+Production negotiation remains disabled; no complete API, guest boot or throughput
+claim is granted. E6-T11d remains outside this isolated verdict.
