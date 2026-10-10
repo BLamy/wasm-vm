@@ -1,0 +1,45 @@
+{
+  "status": "passed",
+  "command": "VIRGL_STANDARD_UNIFORM_ADVERSARIAL_DIR=target/evidence/virgl-standard-uniform-offset-critic/promotion make verify-E6-T11d16-adversarial",
+  "cases": 128,
+  "signed16Admits": 104,
+  "preTruncationRejects": 16,
+  "directPlainLimitRejects": 8,
+  "headedHardwareDraws": 64,
+  "completePixels": 256,
+  "postFenceSabotageRejected": true,
+  "runtimeUnchanged": true,
+  "wasmBytesEqualSealedRuntime": true,
+  "sources": [
+    {
+      "path": "Makefile",
+      "sha256": "840d6e8b22ae2a949f9ad45a800d639f83c6acdfef09922f4bf464f3dd8e0115"
+    },
+    {
+      "path": "tools/virgl-standard-uniform/adversarial/build-original-offsets.sh",
+      "sha256": "491bb9a222b375eca1d62b69cf553cfbf3d1fcec50b2dab12e0e71f732bd11f0"
+    },
+    {
+      "path": "tools/virgl-standard-uniform/adversarial/novel-hardware.mjs",
+      "sha256": "df541d23bbff3c04e732a9761c304479336546a60f9b1f47c300311988ea5404"
+    },
+    {
+      "path": "tools/virgl-standard-uniform/adversarial/original-offsets.c",
+      "sha256": "1efb36371250a7fb59a67c97337bf1f8e9c40feec5518b20daaad36a2cc6a424"
+    },
+    {
+      "path": "tools/virgl-standard-uniform/adversarial/recheck-wasm.mjs",
+      "sha256": "ec0bc5e764791dd4e27adfb412a6dde756890aacdc485eec7eedf3c5a7bf3661"
+    },
+    {
+      "path": "tools/virgl-standard-uniform/adversarial/run-novel.mjs",
+      "sha256": "fb7dcf3e32257f0e4a8412f3e1bb9c5355077295d94d20a38a6d3b28f3ff7f3f"
+    },
+    {
+      "path": "tools/virgl-standard-uniform/adversarial/verify.sh",
+      "sha256": "dbe3df212b6de876bf49a99eb5117403754e9163a0385326213975e1e94d86d7"
+    }
+  ],
+  "hardwareAuditSha256": "d8fda79d003c071771b68474aa8e6d68c4449a228263b398c40f36bbb0e861ba",
+  "acceptanceLogSha256": "33b282b045282c42fb57f1da416798078c9ef541a8390fd2e7514b1da0f94416"
+}
