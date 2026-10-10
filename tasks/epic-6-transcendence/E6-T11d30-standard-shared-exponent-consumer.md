@@ -2,7 +2,7 @@
 id: E6-T11d30
 epic: 6
 title: Consume original RGB9E5 sampler views in the native standard renderer
-status: pending
+status: in-progress
 estimate: S
 risk: high
 priority: 525.027039000372
