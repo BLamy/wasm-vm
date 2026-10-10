@@ -3,7 +3,7 @@ id: E6-T11d19
 epic: 6
 title: Execute original core sampler address filter and LOD state
 priority: 525.02703900038
-status: in-progress
+status: implemented
 depends_on: [E6-T11d18]
 estimate: S
 risk: high
@@ -35,3 +35,21 @@ The 72 direct native Metal prechecks in `/tmp/wasmvm-sampler-native-precheck.jso
 ### 2026-10-10 — worker — activation
 
 Selected as the next ordered production-graphics prerequisite. D18 is verified at bdad14aff93ba70c09d60ab308df4d2024dce4ba and all prior graphics dependencies remain verified. Core native sampler address/filter/LOD state is the only active runtime boundary.
+
+### 2026-10-10 — worker — frozen original sampler submission
+
+Runtime and all acceptance sources are frozen at `4e13347405adf4926dd866b9ff434a08420b4784`, based on independently verified D18 `bdad14aff93ba70c09d60ab308df4d2024dce4ba`. Commands:
+
+```sh
+VIRGL_SAMPLER_STATE_EVIDENCE_DIR=target/evidence/virgl-standard-sampler-state-final make verify-E6-T11d19
+python3 tools/virgl-command/standard-sampler-cold.py --output target/evidence/virgl-standard-sampler-state-cold-final
+python3 tools/virgl-command/standard-sampler-seal.py target/evidence/virgl-standard-sampler-state-final target/evidence/virgl-standard-sampler-state-cold-final evidence/virgl-standard-sampler-state/worker
+```
+
+The frozen headed Chrome155/M4 Metal run contains 8,192 literal sampler enum probes, 288 signed/reversed/inactive raw-word probes, 832 positive frames, 834 actual native draws and 53,248 independently checked pixels. Both image filters, all three mip enums and every original core S/T/R combination execute under minification and magnification. Original vertex/fragment/combined-stage shaders, NPOT textures, swizzles and alpha, finite min/max LOD clamps, all eight inactive compare functions, 72 finite/reversed native parameter round-trips, public sampler deletion/replacement, ambient sampler poisoning, contexts/subcontexts/cache reset, queued draws and varied delayed fences execute. Actual native allocation and parameter faults reject/retire without publishing a sampler. Every final allocation, object, lease, job, uniform-snapshot and cache budget is zero; each actual sampler retires once. Both real native wrap/filter mapping faults complete draws and fences before the unchanged original full-pixel oracle rejects them. The independent audit binds original op1/op10/op18/op8 words and complete shader text to full native parameters, texture/vertex bytes and full pixels; it never derives expected pixels from observed GPU output. Complete source/served/generated/Wasm/V8 and native blobs are recorded. Each added JavaScript line has an execution sample; full nested V8 regions remain the critic's coverage authority. Seven documentation lines require no execution.
+
+The affected old command-decoder, object-state and complete standard-state gates pass on the same frozen head. Compiler/Rust/production bytes and resources/cache/constant-domain bytes are unchanged. The receipt verifies byte-identical decoder code outside decodeSamplerState and state code outside the native type7 creation branch against D18; inherited buffer/ownership/compiler/range proofs carry by these exact dependency boundaries and authenticated D16/D17/D18 worker/critic digests. No unrelated runtime claim is expanded.
+
+The one final pristine scrubbed clone passed the complete same command at the exact frozen head and remained clean before/after. Clone `/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-sampler-state-cold-iw78x_6z/wasm-vm`; source/control environment was scrubbed and the complete acceptance log and copied receipt are sealed. Worker `evidence/virgl-standard-sampler-state/worker/recording.tar.gz` has 9750 records / 7988941 compressed bytes, SHA256 `aeffc0b3a43f7af0232248a1915961a62407002579f1bd69f52513b06c2e4f18`; record index SHA256 `15792ac21e635cf3b3e8ab028ad4b79cec13e96703ab20520dd4bf9a46f92e8f`. Hot receipt SHA256 `db8363b6db8492182ae70926e8985b532a4dd2df0bd3b404994c1c3dfafce744`; cold report `6912e094a3608245bf68f7f7d3e7a53469a55eceeddbc56aeee06aba97fd89ea`; cold receipt `5f06dde33d9ed440cacd370cb562e4b7f304bae40e2f4f483623971727439118`.
+
+This isolates original core sampler state. Reversed LOD bounds have undefined GLES sampling and are proven by exact native parameter round-trip only. Actual multilevel/cube/array/shadow storage, API and typed capset qualification, guest Mesa/compositor execution, production worker/scanout, demo/deployment and performance remain successors. No positive production capability or guest/offload authority is claimed. Submit this diff and sealed evidence to a fresh adversarial verifier; only that session may mark verified.

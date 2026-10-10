@@ -1,0 +1,16 @@
+{
+  "schema": "original-sampler-seal-v1",
+  "task": "E6-T11d19",
+  "sourceHead": "4e13347405adf4926dd866b9ff434a08420b4784",
+  "records": 9750,
+  "archiveSha256": "aeffc0b3a43f7af0232248a1915961a62407002579f1bd69f52513b06c2e4f18",
+  "archiveBytes": 7988941,
+  "recordIndexSha256": "15792ac21e635cf3b3e8ab028ad4b79cec13e96703ab20520dd4bf9a46f92e8f",
+  "hotReceiptSha256": "db8363b6db8492182ae70926e8985b532a4dd2df0bd3b404994c1c3dfafce744",
+  "coldReportSha256": "6912e094a3608245bf68f7f7d3e7a53469a55eceeddbc56aeee06aba97fd89ea",
+  "coldReceiptSha256": "5f06dde33d9ed440cacd370cb562e4b7f304bae40e2f4f483623971727439118",
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "authority": "isolated-original-samplers",
+  "productionDrawAuthority": false
+}
