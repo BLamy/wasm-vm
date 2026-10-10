@@ -108,3 +108,11 @@ assertion, not a new runtime contradiction. The affected ordinary gate uses the
 current recorded original corpus instead: 19 unchanged bodies, 57 programs,
 1,536 independently checked vertex words and 155,648 physical pixels pass.
 No old runtime code or expected shader value is changed to clear the fixture.
+
+The second frozen recording at `d03edbd2` again passes the complete standard
+submission and current original corpus, then encounters the same obsolete limit
+assertion in the ancient raw-bit full-suite wrapper. The final retained raw path
+executes the unchanged authored MOV/AND/OR/NOT/SHL/USHR shader bodies and the
+unchanged independent BigInt reference on actual GPU banks spanning shift counts
+0, 1, 7, 15, 23, 31 and 32. It replaces only that ancillary obsolete wrapper;
+no numerical oracle, old shader source, profile or runtime body changes.

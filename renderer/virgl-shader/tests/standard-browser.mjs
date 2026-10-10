@@ -10,7 +10,7 @@ const VS=text('vertex','DCL IN[0]\nDCL OUT[0], POSITION',['MOV OUT[0], IN[0]']);
 const quad=[-1,-1,0,1,3,-1,0,1,-1,3,0,1];
 function encoded(bytes){let result='';for(let at=0;at<bytes.length;at+=32768)result+=String.fromCharCode(...bytes.subarray(at,at+32768));return btoa(result);}
 async function pixels(bytes){const zipped=new Uint8Array(await new Response(new Blob([bytes]).stream().pipeThrough(new CompressionStream('gzip'))).arrayBuffer());return{bytes:bytes.length,sha256:await digest(bytes),gzipSha256:await digest(zipped),gzipBase64:encoded(zipped)};}
-async function draw(gl,pair,spec,report,fault){
+export async function draw(gl,pair,spec,report,fault){
  const actual={vertex:pair.vertex,fragment:pair.fragment};
  if(fault==='sine'&&spec.name==='dynamic-fragment-SIN-0'){
   require(actual.fragment.glsl.includes('sin('),'real native sine mutation site');
