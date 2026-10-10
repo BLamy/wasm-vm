@@ -660,7 +660,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.027039000365` [E6-T11d23](epic-6-transcendence/E6-T11d23-standard-texture-operations.md) — Compile original 2D texture operations to native GPU instructions *(deps: E6-T11d22)*
 - [x] `525.027039000366` [E6-T11d24](epic-6-transcendence/E6-T11d24-standard-texture-consumer.md) — Execute original texture operations through retained image views *(deps: E6-T11d23)*
 - [x] `525.027039000367` [E6-T11d25](epic-6-transcendence/E6-T11d25-standard-float-images.md) — Preserve original F16 and F32 2D image transfers and retained views *(deps: E6-T11d24)*
-- [~] `525.027039000368` [E6-T11d26](epic-6-transcendence/E6-T11d26-standard-float-consumer.md) — Execute original floating image samples and framebuffer outputs *(deps: E6-T11d25)*
+- [?] `525.027039000368` [E6-T11d26](epic-6-transcendence/E6-T11d26-standard-float-consumer.md) — Execute original floating image samples and framebuffer outputs *(deps: E6-T11d25)*
 - [x] `525.02703900037` [E6-T11d18](epic-6-transcendence/E6-T11d18-standard-buffer-roles.md) — Preserve original buffer identity across vertex index and uniform roles *(deps: E6-T11d17)*
 - [x] `525.02703900037` [E6-T11d20](epic-6-transcendence/E6-T11d20-standard-texture-storage.md) — Allocate and transfer original mipmapped 2D color resources *(deps: E6-T11d19)*
 - [x] `525.02703900038` [E6-T11d19](epic-6-transcendence/E6-T11d19-standard-sampler-state.md) — Execute original core sampler address filter and LOD state *(deps: E6-T11d18)*
