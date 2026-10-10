@@ -49,15 +49,25 @@ def main(directory):
             sources[name] = sha(raw)
 
     for _ in range(500):
-        if b'\nSTANDARD_ASSEMBLY_RECORDING_COMPLETE\n' in (directory / 'acceptance.log').read_bytes():
+        if b'\nSTANDARD_ASSEMBLY_RECORDING_COMPLETE\n' in (directory / 'acceptance.log').read_bytes() or (directory / 'harness-correction.json').exists():
             break
         time.sleep(.01)
     else:
         raise ValueError('acceptance log has no completed runtime block')
 
+    physical_head = json.loads(record('wire/report.json'))['gitHead']
+    if physical_head != head:
+        subprocess.check_call(['git', 'merge-base', '--is-ancestor', physical_head, head], cwd=ROOT)
+        allowed = {'tools/virgl-command/standard-assembly-pixels.mjs', 'tools/virgl-command/standard-assembly-receipt.py'}
+        need(set(git('diff', '--name-only', physical_head, head).splitlines()) <= allowed, 'physical carry permits only offline audit/receipt correction')
+        correction = json.loads(record('harness-correction.json'))
+        need(correction['sourceHead'] == head and correction['physicalSourceHead'] == physical_head and not correction['originalMakePassed'] and correction['originalExitCode'] == 2, 'honest original offline audit failure')
+        need('independent restart pixel oracle' in (directory / 'acceptance.log').read_text(), 'retain original offline label assertion failure')
+        need(b'STANDARD_ASSEMBLY_CORRECTED_AUDIT_COMPLETE' in record('harness-correction.log'), 'completed narrow corrected offline audit')
+
     def physical(name, task, frames, fault=False):
         report = json.loads(record(name + '/report.json'))
-        need(report['task'] == task and report['status'] == ('failed' if fault else 'passed') and report['gitHead'] == head,
+        need(report['task'] == task and report['status'] == ('failed' if fault else 'passed') and report['gitHead'] == physical_head,
              'physical exact-head task/status: ' + name)
         need(report['fixedMemory'] == {'bytes': 16777216, 'stageExport': 'function', 'pairExport': 'function'}, 'fixed native compiler')
         need(report['browserErrors'] == {'console': [], 'page': [], 'requests': []}, 'browser errors: ' + name)
@@ -103,7 +113,7 @@ def main(directory):
 
     for name in ['wire', 'retained-restart/wire']:
         wire = json.loads(record(name + '/report.json'))
-        need(wire['status'] == 'passed' and wire['gitHead'] == head and len(wire['wire']['records']) == 292
+        need(wire['status'] == 'passed' and wire['gitHead'] == physical_head and len(wire['wire']['records']) == 292
              and all(row['held'] for row in wire['wire']['predictions']), 'literal standard/legacy flags')
         for row in wire['sources']:
             source(row['path'], row['sha256'])
@@ -163,7 +173,7 @@ def main(directory):
     for item in directory.rglob('*'):
         if item.is_file() and item.name != 'receipt.json':
             record(item.relative_to(directory).as_posix())
-    receipt = dict(schema='standard-primitive-assembly-receipt-v1', task=TASK, status='passed', gitHead=head,
+    receipt = dict(schema='standard-primitive-assembly-receipt-v1', task=TASK, status='passed', gitHead=head, physicalSourceHead=physical_head,
                    frames=304, checkedPhysicalPixels=audit['pixels'], nativeDraws=audit['nativeDraws'], normalizedBuffers=audit['normalizedBuffers'],
                    guestExecution=False, productionNegotiation=False, authority='isolated-standard-primitive-assembly', productionDrawAuthority=False,
                    carriedCompilerAndOwnershipHead=PREDECESSOR, carriedVerifiedEvidence=carried, files=files, sources=sources, generated=generated)

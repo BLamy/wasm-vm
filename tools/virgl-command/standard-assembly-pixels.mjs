@@ -33,7 +33,7 @@ async function audit(name,fault=false){
   assert.deepEqual(frame.native.state.map(state=>state.convention),Array(frame.native.calls.length).fill(fault&&report.mutation.mode==='provoking'?0x8e4d:0x8e4e),'native provoking state');
   assert.deepEqual([draw.primitiveAssembly,draw.assembled,draw.nativeMode,draw.nativeCount,draw.nativeIndexed,draw.nativeVertexWork],['lists',model.assembled,model.nativeMode,model.nativeCount,model.nativeIndexed,model.nativeCount*model.effective]);
   const row={label:frame.label,pixels:comparison.pixels,maxError:comparison.maxError,misses:comparison.misses,held:comparison.held,failedJob:Boolean(frame.failedJob),draws:frame.native.calls.length,normalizedBuffers:normalized.size};
-  if(fault){out.faults.push(row);assert.equal(comparison.held,false);assert.ok(report.browserResult.error.message.includes(frame.label+' independent restart pixel oracle'));}
+  if(fault){out.faults.push(row);assert.equal(comparison.held,false);assert.ok(report.browserResult.error.message.includes(frame.label+' independent assembly pixel oracle'));}
   else{out.frames.push(row);out.pixels+=comparison.pixels;out.nativeDraws+=row.draws;out.normalizedBuffers+=row.normalizedBuffers;assert.equal(comparison.held,true,frame.label);}
  }
 }
