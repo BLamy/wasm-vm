@@ -3,7 +3,7 @@ id: E6-T11d23
 epic: 6
 title: Compile original 2D texture operations to native GPU instructions
 priority: 525.027039000365
-status: pending
+status: in-progress
 depends_on: [E6-T11d22]
 estimate: S
 risk: high
@@ -39,3 +39,7 @@ Predict complete original texture tokens, native operation selection, all define
 D22 byte-color task is independently verified at ac2b1ed7a77e82afb21321d6dfdabe0b2da12d4c, with its exclusive lease released and a clean tracked tree. Twenty complete constructed original TGSI inputs (five operations, both stages, both historical standard/uniform facets) are rejected unsupported-feature by the unchanged predecessor module, SHA256 fc479ec92133f8b75d26043d20fca97d00b1a1556481abf5c5daf23b66e00fca. The readiness record pins all complete inputs, compiler source and pinned original opcode/converter headers; it carries no native, guest or production authority.
 
 Temporary source/C/Wasm prototypes and deterministic harness preparation remain outside the repository. This task may enter the active lane only after D22 is independently verified and its exclusive verifier lease is released. Primary original semantics: https://docs.mesa3d.org/gallium/tgsi.html and https://registry.khronos.org/OpenGL/specs/es/3.0/GLSL_ES_Specification_3.00.pdf. Pinned local original sources are bound by readiness digests; accessible levels are a selected-view fact, and the undefined 2D z dimension is not a pixel predicate.
+
+### 2026-10-10 — worker — active original texture compiler boundary
+
+D22 is verified, its lease is released, and this S/high task is the top eligible graphics prerequisite. Implementation proceeds on `codex/virgl-standard-texture-operations`. The old compiler and renderer dependency evidence remains unchanged at activation.
