@@ -1,0 +1,24 @@
+{
+  "schema": "virgl-known-branches-worker-seal-v1",
+  "task": "E6-T12g6m2",
+  "sourceHead": "8e6e3848b2df4a3bf5703a517e33d345e3b0c96c",
+  "base": "97dc44d2fbc9284705ad81630998bb533186c9a1",
+  "records": 146,
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 13227552,
+    "sha256": "c5cf668e9591991c253a976104e2bf7a9f95825e4baac6aa645897164fc23e29"
+  },
+  "recordIndex": {
+    "path": "records.json",
+    "bytes": 25606,
+    "sha256": "3e984daf15c2d029330251a1653d69efbd07f1e5df6d5fb29fa1cdb44ce21da3"
+  },
+  "hotReceiptSha256": "fc9eb62c7d9607b326790ed245bc3488a67d7fb949950abad7adece096f81ccc",
+  "coldReportSha256": "bea5d64370c5505e6febe7a6f2ba65e0a79c76fb1599cbc5c6334f65d0a7e529",
+  "coldReceiptSha256": "d3c887a96eb313b6f7ddb1cc18dfdcc3093ca22d38af6152701f0ae330bd70d1",
+  "checkedWords": 1440,
+  "checkedPixels": 5904,
+  "productionNegotiation": false,
+  "guestExecution": false
+}

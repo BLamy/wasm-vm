@@ -87,9 +87,16 @@ async function record(binaryPath, wasmPath, output) {
   const profdata = path.join(output, 'native.profdata'); execFileSync('xcrun', ['llvm-profdata', 'merge', '-sparse', profile, '-o', profdata]);
   const coverageRaw = execFileSync('xcrun', ['llvm-cov', 'export', binary, `-instr-profile=${profdata}`], {maxBuffer: 128e6}); fs.writeFileSync(path.join(output, 'coverage.json'), coverageRaw);
   const functions = JSON.parse(coverageRaw).data.flatMap(d => d.functions), nativeRegions = [];
+  const point = (name, anchor, token, length = token.length) => {
+    const text = fs.readFileSync(path.join(root, name), 'utf8'), start = text.indexOf(anchor); assert.ok(start >= 0 && text.indexOf(anchor, start + 1) < 0, 'unique original-source anchor');
+    const offset = text.indexOf(token, start); assert.ok(offset >= start && offset < start + anchor.length); const prefix = text.slice(0, offset), line = prefix.split('\n').length, column = offset - prefix.lastIndexOf('\n');
+    return [line, column, line, column + length];
+  };
+  const returnPoints = ['b', 'a'].map(letter => point('renderer/virgl-shader/raw_known_arithmetic.h', `if (!m${letter === 'b' ? 'a' : 'b'}) return ${letter};`, `return ${letter}`));
+  const coordinatePoint = point('renderer/virgl-shader/bridge.c', 'if (known_arithmetic) known_arithmetic_contract(profile, discard ? "virgl-webgl2-raw-bits-v39" : coordinates ? "virgl-webgl2-raw-bits-v38" : base_profile);', '"virgl-webgl2-raw-bits-v38"');
   for (const [name, points] of [
-    ['raw_bits.c:known_add', [[34, 13, 34, 21], [35, 13, 35, 21]]], ['known_arithmetic.c:known_add', [[34, 13, 34, 21], [35, 13, 35, 21]]],
-    ['bridge.c:stage_result', [[1710, 115, 1710, 142]]],
+    ['raw_bits.c:known_add', returnPoints], ['known_arithmetic.c:known_add', returnPoints],
+    ['bridge.c:stage_result', [coordinatePoint]],
   ]) {
     const f = functions.find(f => f.name === name); assert.ok(f, name + ' original instance');
     for (const point of points) {
@@ -118,7 +125,12 @@ async function record(binaryPath, wasmPath, output) {
   const sourcePath = path.join(root, 'renderer/virgl-command/constant-domain.mjs'), sourceUrl = pathToFileURL(sourcePath).href;
   const v8Files = fs.readdirSync(v8Directory).filter(name => name.endsWith('.json')); assert.equal(v8Files.length, 1, 'one actual original-source child profile');
   const v8 = read(path.join(v8Directory, v8Files[0])).result.find(s => s.url === sourceUrl); assert.ok(v8, 'original-source module URL');
-  const v8Regions = [[11519, 11565], [11978, 11987]].map(([startOffset, endOffset]) => {
+  const consumerSource = fs.readFileSync(sourcePath, 'utf8'), knownStart = consumerSource.indexOf('    const knownArithmetic ='), knownEnd = consumerSource.indexOf('    const discard =', knownStart);
+  assert.ok(knownStart >= 0 && knownEnd > knownStart, 'bounded known wrapper source');
+  const sourceRanges = ['|| operations[i - 1] === "ADD" && op === "MUL"', ': checked'].map(needle => {
+    const startOffset = consumerSource.indexOf(needle, knownStart); assert.ok(startOffset >= knownStart && startOffset < knownEnd && (consumerSource.indexOf(needle, startOffset + 1) === -1 || consumerSource.indexOf(needle, startOffset + 1) >= knownEnd), 'unique nested known policy anchor'); return [startOffset, startOffset + needle.length];
+  });
+  const v8Regions = sourceRanges.map(([startOffset, endOffset]) => {
     const r = v8.functions.flatMap(f => f.ranges).find(r => r.startOffset === startOffset && r.endOffset === endOffset);
     assert.ok(r && r.count > 0, `specific V8 region ${startOffset}-${endOffset}`); return r;
   });

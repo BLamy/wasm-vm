@@ -4,7 +4,7 @@ epic: 6
 title: Prove the two larger original compositor shader programs
 priority: 525.02701059
 status: pending
-depends_on: [E6-T12g6m1]
+depends_on: [E6-T12g6m2]
 estimate: S
 risk: high
 capstone: false
@@ -43,3 +43,13 @@ Full literal 92cb866a and c5806d5f still reject at computed SIN/POW after the
 discard leaf. Add E6-T12g6m1 for exact materialized known arithmetic facts;
 this preserves the full-source acceptance above. Dynamic bank/geometry and
 computed indirect range obligations are not waived by opcode closure.
+
+
+### 2026-10-05 — worker — control prerequisite discovery
+
+Known arithmetic E6-T12g6m1 is independently verified. A complete known UIF
+predicate still leaves unreachable numeric operations subject to live-domain
+checks. Add the ordered S/high E6-T12g6m2 leaf for raw predicate liveness after
+full unchanged text validation. Acceptance above is unchanged. Observed captured
+bank values supply no authority; original bank, geometry and indirect range
+proofs remain necessary before either full literal pair can be admitted.

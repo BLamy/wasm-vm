@@ -44,6 +44,14 @@ static struct raw_lane shifted(struct raw_lane a, struct raw_lane b, bool left)
    return result;
 }
 
+int raw_uif_truth(const struct raw_ir *ir, const struct raw_source *source)
+{
+   struct raw_lane value = source_lane(ir, source, 0, false);
+   if (value.zero & value.one) return -1;
+   if (value.one) return 1;
+   return value.zero == UINT32_MAX ? 0 : -1;
+}
+
 static struct raw_lane known_word(uint32_t word)
 {
    return (struct raw_lane){.zero = ~word, .one = word};
@@ -572,6 +580,11 @@ static bool raster_graph(const struct raw_ir *ir, struct raster_analysis *a)
          } else {
             a->next[open][1] = otherwise == RASTER_NONE ? pc + 1 : otherwise + 1;
             if (otherwise != RASTER_NONE) a->next[otherwise][0] = pc + 1;
+            unsigned flags = ir->instructions[open].flags;
+            if (flags & RAW_UIF_FALSE) {
+               a->next[open][0] = a->next[open][1];
+               a->next[open][1] = RASTER_NONE;
+            } else if (flags & RAW_UIF_TRUE) a->next[open][1] = RASTER_NONE;
             if (ir->radial.used && open == ir->radial.branch) {
                /* Existing coefficient approval proves this exact edge false.
                 * The outer raster profile must retain that radial contract. */
@@ -925,10 +938,11 @@ char *raw_emit(const struct profile *p, unsigned const_count)
       emit(&w, " highp vec4 float_temp[%u];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n", temporaries);
    for (unsigned index = 0; index < p->raw->count; ++index) {
       const struct raw_instruction *instruction = &p->raw->instructions[index];
+      if ((instruction->flags & RAW_DEAD) && !((UINT64_C(1) << instruction->opcode) & (RAW_STRUCTURED_OPCODES | RAW_LOOP_OPCODES))) continue;
       if (instruction->flags & RAW_PRECISE) emit(&w, " /* TGSI PRECISE word-local */\n");
       if (instruction->opcode == RAW_BGNLOOP) { emit(&w, " do {\n"); continue; }
       if (instruction->opcode == RAW_BRK) { emit(&w, " break;\n"); continue; }
-      if (instruction->opcode == RAW_ENDLOOP) { emit(&w, " } while (true);\n"); continue; }
+      if (instruction->opcode == RAW_ENDLOOP) { emit(&w, " } while (%s);\n", instruction->flags & RAW_DEAD ? "false" : "true"); continue; }
       if (instruction->opcode == RAW_KILL) { emit(&w, " discard;\n"); continue; }
       if (instruction->opcode == RAW_KILL_IF) {
          emit(&w, " if (");
@@ -946,7 +960,9 @@ char *raw_emit(const struct profile *p, unsigned const_count)
          continue;
       }
       if (instruction->opcode == RAW_UIF) {
-         emit(&w, " if ("); operand(&w, p, &instruction->src[0], 0); emit(&w, " != 0u) {\n");
+         if (instruction->flags & (RAW_DEAD | RAW_UIF_FALSE | RAW_UIF_TRUE))
+            emit(&w, " /* proved raw UIF */ if (%s) {\n", instruction->flags & RAW_UIF_TRUE ? "true" : "false");
+         else { emit(&w, " if ("); operand(&w, p, &instruction->src[0], 0); emit(&w, " != 0u) {\n"); }
          continue;
       }
       if (instruction->opcode == RAW_ELSE) { emit(&w, " } else {\n"); continue; }
