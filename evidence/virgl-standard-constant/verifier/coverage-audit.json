@@ -1,0 +1,2163 @@
+{
+  "schema": "D7-scoped-coverage-v1",
+  "stateDigest": "dd2049d9d27e591b0ad63ecd30fedcdcf8ae09e7b754d81b769a81497c7d7671",
+  "base": "67220bb5ed0dfab2e06563b6353fd6975f9696b9",
+  "runtimeFreeze": "39a9d14b7052c60ca11416bdba4e6eb78a38b1dd",
+  "hunks": [
+    {
+      "header": "@@ -732 +732 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "lines": [
+        732
+      ]
+    },
+    {
+      "header": "@@ -757,0 +758,6 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "lines": [
+        758,
+        759,
+        760,
+        761,
+        762,
+        763
+      ]
+    },
+    {
+      "header": "@@ -879 +885 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "lines": [
+        885
+      ]
+    },
+    {
+      "header": "@@ -890,0 +897 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "lines": [
+        897
+      ]
+    },
+    {
+      "header": "@@ -892 +899 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "lines": [
+        899
+      ]
+    },
+    {
+      "header": "@@ -895 +902 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "lines": [
+        902
+      ]
+    },
+    {
+      "header": "@@ -912 +919,2 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "lines": [
+        919,
+        920
+      ]
+    },
+    {
+      "header": "@@ -915 +923 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "lines": [
+        923
+      ]
+    },
+    {
+      "header": "@@ -920 +928,3 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "lines": [
+        928,
+        929,
+        930
+      ]
+    },
+    {
+      "header": "@@ -924 +934 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "lines": [
+        934
+      ]
+    },
+    {
+      "header": "@@ -1104 +1114,2 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "lines": [
+        1114,
+        1115
+      ]
+    },
+    {
+      "header": "@@ -1117 +1128,11 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "lines": [
+        1128,
+        1129,
+        1130,
+        1131,
+        1132,
+        1133,
+        1134,
+        1135,
+        1136,
+        1137,
+        1138
+      ]
+    },
+    {
+      "header": "@@ -1118,0 +1140 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "lines": [
+        1140
+      ]
+    },
+    {
+      "header": "@@ -1161,2 +1183,3 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "lines": [
+        1183,
+        1184,
+        1185
+      ]
+    },
+    {
+      "header": "@@ -1179 +1202,21 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "lines": [
+        1202,
+        1203,
+        1204,
+        1205,
+        1206,
+        1207,
+        1208,
+        1209,
+        1210,
+        1211,
+        1212,
+        1213,
+        1214,
+        1215,
+        1216,
+        1217,
+        1218,
+        1219,
+        1220,
+        1221,
+        1222
+      ]
+    },
+    {
+      "header": "@@ -1202,0 +1246,18 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "lines": [
+        1246,
+        1247,
+        1248,
+        1249,
+        1250,
+        1251,
+        1252,
+        1253,
+        1254,
+        1255,
+        1256,
+        1257,
+        1258,
+        1259,
+        1260,
+        1261,
+        1262,
+        1263
+      ]
+    }
+  ],
+  "lines": [
+    {
+      "line": 732,
+      "text": "    const restore = (sub, plan = null, constantAttributes = null) => {",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 37,
+          "function": ""
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 47,
+          "function": ""
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 37,
+          "function": ""
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 47,
+          "function": ""
+        }
+      ]
+    },
+    {
+      "line": 758,
+      "text": "        if (standard && buffer.fields.stride === 0) {",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 514,
+          "function": "restore"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 399,
+          "function": "restore"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 514,
+          "function": "restore"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 399,
+          "function": "restore"
+        }
+      ]
+    },
+    {
+      "line": 759,
+      "text": "          // State prefixes reset to the generic default. A draw supplies only",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 494,
+          "function": "restore"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "restore"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 494,
+          "function": "restore"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "restore"
+        }
+      ]
+    },
+    {
+      "line": 760,
+      "text": "          // values collected from its retained, validated GPU read tickets.",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 494,
+          "function": "restore"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "restore"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 494,
+          "function": "restore"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "restore"
+        }
+      ]
+    },
+    {
+      "line": 761,
+      "text": "          if (plan) gl.vertexAttrib4fv(attribute.location, constantAttributes.get(attribute.index).values);",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 494,
+          "function": "restore"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "restore"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 494,
+          "function": "restore"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "restore"
+        }
+      ]
+    },
+    {
+      "line": 762,
+      "text": "          continue;",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 494,
+          "function": "restore"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "restore"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 494,
+          "function": "restore"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "restore"
+        }
+      ]
+    },
+    {
+      "line": 763,
+      "text": "        }",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 494,
+          "function": "restore"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "restore"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 494,
+          "function": "restore"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "restore"
+        }
+      ]
+    },
+    {
+      "line": 885,
+      "text": "        require(standard || buffer.fields.stride !== 0, \"unsupported-draw\", \"Gallium constant attributes with stride zero are unsupported.\");",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 177,
+          "function": ""
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 141,
+          "function": ""
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 177,
+          "function": ""
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 141,
+          "function": ""
+        }
+      ]
+    },
+    {
+      "line": 897,
+      "text": "      const constants = attributes.filter(({ buffer }) => buffer.fields.stride === 0);",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 39,
+          "function": "prepareDraw"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 51,
+          "function": "prepareDraw"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 39,
+          "function": "prepareDraw"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 51,
+          "function": "prepareDraw"
+        }
+      ]
+    },
+    {
+      "line": 899,
+      "text": "        surface, attributes, constants, index, indexStorage, indexOffset, indexSize, indexByteLength,",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 39,
+          "function": "prepareDraw"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 51,
+          "function": "prepareDraw"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 39,
+          "function": "prepareDraw"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 51,
+          "function": "prepareDraw"
+        }
+      ]
+    },
+    {
+      "line": 902,
+      "text": "    const issueDraw = (plan, bytes, submission, constantAttributes = null) => {",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 37,
+          "function": ""
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 47,
+          "function": ""
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 37,
+          "function": ""
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 47,
+          "function": ""
+        }
+      ]
+    },
+    {
+      "line": 919,
+      "text": "        const constant = stride === 0;",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 148,
+          "function": ""
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 115,
+          "function": ""
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 148,
+          "function": ""
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 115,
+          "function": ""
+        }
+      ]
+    },
+    {
+      "line": 920,
+      "text": "        const first = constant || divisor ? 0 : actualMinIndex, last = constant ? 0 : divisor ? Math.floor((instances - 1) / divisor) : actualMaxIndex;",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 148,
+          "function": ""
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 115,
+          "function": ""
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 148,
+          "function": ""
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 115,
+          "function": ""
+        }
+      ]
+    },
+    {
+      "line": 923,
+      "text": "        require(constant || last <= Math.floor((buffer.metadata.byteLength - offset - elementBytes) / stride),",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 148,
+          "function": ""
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 115,
+          "function": ""
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 148,
+          "function": ""
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 115,
+          "function": ""
+        }
+      ]
+    },
+    {
+      "line": 928,
+      "text": "          ...(standard ? { divisor, nativeDivisor: constant ? 0 : Math.min(divisor, DRAW_LIMITS.indicesPerSubmission), firstElement: first, lastElement: last,",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 148,
+          "function": ""
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 115,
+          "function": ""
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 148,
+          "function": ""
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 115,
+          "function": ""
+        }
+      ]
+    },
+    {
+      "line": 929,
+      "text": "            ...(constant ? { constant: true, componentWords: constantAttributes.get(attribute.index).words,",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 148,
+          "function": ""
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 112,
+          "function": ""
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 148,
+          "function": ""
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 112,
+          "function": ""
+        }
+      ]
+    },
+    {
+      "line": 930,
+      "text": "              genericValues: [...constantAttributes.get(attribute.index).values] } : {}) } : {}) };",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 142,
+          "function": ""
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": ""
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 142,
+          "function": ""
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": ""
+        }
+      ]
+    },
+    {
+      "line": 934,
+      "text": "      const stateKey = restore(sub, plan, constantAttributes);",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 31,
+          "function": "issueDraw"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 45,
+          "function": "issueDraw"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 31,
+          "function": "issueDraw"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 45,
+          "function": "issueDraw"
+        }
+      ]
+    },
+    {
+      "line": 1114,
+      "text": "        if (pending.reads) for (const read of pending.reads) unwrap(asyncAccess.release(read.ticket));",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 117,
+          "function": "releaseJobAccess"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 206,
+          "function": "releaseJobAccess"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 117,
+          "function": "releaseJobAccess"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 206,
+          "function": "releaseJobAccess"
+        }
+      ]
+    },
+    {
+      "line": 1115,
+      "text": "        else unwrap(asyncAccess.release(pending.ticket));",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 80,
+          "function": "releaseJobAccess"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 206,
+          "function": "releaseJobAccess"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 80,
+          "function": "releaseJobAccess"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 206,
+          "function": "releaseJobAccess"
+        }
+      ]
+    },
+    {
+      "line": 1128,
+      "text": "        if (job.pending.reads) for (const read of job.pending.reads) unwrap(asyncAccess.validate(read.ticket));",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 298,
+          "function": "validateJob"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 444,
+          "function": "validateJob"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 297,
+          "function": "validateJob"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 444,
+          "function": "validateJob"
+        }
+      ]
+    },
+    {
+      "line": 1129,
+      "text": "        else unwrap(asyncAccess.validate(job.pending.ticket));",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 160,
+          "function": "validateJob"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 444,
+          "function": "validateJob"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 160,
+          "function": "validateJob"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 444,
+          "function": "validateJob"
+        }
+      ]
+    },
+    {
+      "line": 1130,
+      "text": "      }",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 298,
+          "function": "validateJob"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 444,
+          "function": "validateJob"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 297,
+          "function": "validateJob"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 444,
+          "function": "validateJob"
+        }
+      ]
+    },
+    {
+      "line": 1131,
+      "text": "    };",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 643,
+          "function": "validateJob"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 857,
+          "function": "validateJob"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 642,
+          "function": "validateJob"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 857,
+          "function": "validateJob"
+        }
+      ]
+    },
+    {
+      "line": 1132,
+      "text": "    const pollAttributeReads = (pending, discard = false) => {",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 37,
+          "function": ""
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 47,
+          "function": ""
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 37,
+          "function": ""
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 47,
+          "function": ""
+        }
+      ]
+    },
+    {
+      "line": 1133,
+      "text": "      let ready = true;",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 128,
+          "function": "pollAttributeReads"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "pollAttributeReads"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 127,
+          "function": "pollAttributeReads"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "pollAttributeReads"
+        }
+      ]
+    },
+    {
+      "line": 1134,
+      "text": "      for (const read of pending.reads) {",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 128,
+          "function": "pollAttributeReads"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "pollAttributeReads"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 127,
+          "function": "pollAttributeReads"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "pollAttributeReads"
+        }
+      ]
+    },
+    {
+      "line": 1135,
+      "text": "        if (read.ready) continue;",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 695,
+          "function": "pollAttributeReads"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "pollAttributeReads"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 691,
+          "function": "pollAttributeReads"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "pollAttributeReads"
+        }
+      ]
+    },
+    {
+      "line": 1136,
+      "text": "        const polled = unwrap(asyncAccess.poll(read.ticket, discard));",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 661,
+          "function": "pollAttributeReads"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "pollAttributeReads"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 659,
+          "function": "pollAttributeReads"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "pollAttributeReads"
+        }
+      ]
+    },
+    {
+      "line": 1137,
+      "text": "        if (polled.status === \"pending\") ready = false;",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 661,
+          "function": "pollAttributeReads"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "pollAttributeReads"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 659,
+          "function": "pollAttributeReads"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "pollAttributeReads"
+        }
+      ]
+    },
+    {
+      "line": 1138,
+      "text": "        else { read.ready = true; if (!discard) read.bytes = polled.bytes; }",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 186,
+          "function": "pollAttributeReads"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "pollAttributeReads"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 186,
+          "function": "pollAttributeReads"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "pollAttributeReads"
+        }
+      ]
+    },
+    {
+      "line": 1140,
+      "text": "      return ready;",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 128,
+          "function": "pollAttributeReads"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "pollAttributeReads"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 127,
+          "function": "pollAttributeReads"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "pollAttributeReads"
+        }
+      ]
+    },
+    {
+      "line": 1183,
+      "text": "            const ready = job.pending.reads ? pollAttributeReads(job.pending, true) :",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 22,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 15,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 22,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 15,
+          "function": "stepJob"
+        }
+      ]
+    },
+    {
+      "line": 1184,
+      "text": "              unwrap(asyncAccess.poll(job.pending.ticket, true)).status === \"ready\";",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 15,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 15,
+          "function": "stepJob"
+        }
+      ]
+    },
+    {
+      "line": 1185,
+      "text": "            if (!ready) return jobStatus(job, \"waiting-gpu\");",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 22,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 15,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 22,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 15,
+          "function": "stepJob"
+        }
+      ]
+    },
+    {
+      "line": 1202,
+      "text": "        if (job.phase === \"waiting-attributes\") {",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 397,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 541,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 396,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 541,
+          "function": "stepJob"
+        }
+      ]
+    },
+    {
+      "line": 1203,
+      "text": "          polling = true;",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 106,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 105,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        }
+      ]
+    },
+    {
+      "line": 1204,
+      "text": "          if (!pollAttributeReads(job.pending)) return jobStatus(job, \"waiting-gpu\");",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 106,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 105,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        }
+      ]
+    },
+    {
+      "line": 1205,
+      "text": "          polling = false; job.completedSerial = job.pending.fenceSerial;",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 31,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 31,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        }
+      ]
+    },
+    {
+      "line": 1206,
+      "text": "          const constantAttributes = new Map(); let indexBytes = null;",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 31,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 31,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        }
+      ]
+    },
+    {
+      "line": 1207,
+      "text": "          for (const read of job.pending.reads) {",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 31,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 31,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        }
+      ]
+    },
+    {
+      "line": 1208,
+      "text": "            if (read.attributeIndex === undefined) indexBytes = read.bytes;",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 170,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 170,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        }
+      ]
+    },
+    {
+      "line": 1209,
+      "text": "            else {",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 142,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 142,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        }
+      ]
+    },
+    {
+      "line": 1210,
+      "text": "              const values = new Float32Array([0, 0, 0, 1]), words = [], view = new DataView(read.bytes.buffer, read.bytes.byteOffset, read.bytes.byteLength);",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 142,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 142,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        }
+      ]
+    },
+    {
+      "line": 1211,
+      "text": "              for (let lane = 0; lane < read.bytes.byteLength / 4; lane++) {",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 142,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 142,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        }
+      ]
+    },
+    {
+      "line": 1212,
+      "text": "                words.push(view.getUint32(lane * 4, true)); values[lane] = view.getFloat32(lane * 4, true);",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 424,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 424,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        }
+      ]
+    },
+    {
+      "line": 1213,
+      "text": "              }",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 424,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 424,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        }
+      ]
+    },
+    {
+      "line": 1214,
+      "text": "              constantAttributes.set(read.attributeIndex, { values, words });",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 142,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 142,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        }
+      ]
+    },
+    {
+      "line": 1215,
+      "text": "            }",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 142,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 142,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        }
+      ]
+    },
+    {
+      "line": 1216,
+      "text": "          }",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 170,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 170,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        }
+      ]
+    },
+    {
+      "line": 1217,
+      "text": "          // Keep earlier collected tickets alive and revalidate the entire batch",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 31,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 31,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        }
+      ]
+    },
+    {
+      "line": 1218,
+      "text": "          // in this task. A later read cannot hide a changed earlier source.",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 31,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 31,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        }
+      ]
+    },
+    {
+      "line": 1219,
+      "text": "          validateJob(job);",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 31,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 31,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        }
+      ]
+    },
+    {
+      "line": 1220,
+      "text": "          job.serial++; issueDraw(job.pending.plan, indexBytes, job.submission, constantAttributes);",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 31,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 31,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        }
+      ]
+    },
+    {
+      "line": 1221,
+      "text": "          releaseJobAccess(job); advanceJob(job); budget--; job.phase = \"ready\";",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 31,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 31,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        }
+      ]
+    },
+    {
+      "line": 1222,
+      "text": "        } else if (job.phase === \"waiting-index\" || job.phase === \"waiting-transfer\") {",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 31,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 31,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        }
+      ]
+    },
+    {
+      "line": 1246,
+      "text": "            if (plan.constants.length) {",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 39,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 51,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 39,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 51,
+          "function": "stepJob"
+        }
+      ]
+    },
+    {
+      "line": 1247,
+      "text": "              const reads = plan.constants.map(({ attribute, element, buffer }) => ({",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 38,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 38,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        }
+      ]
+    },
+    {
+      "line": 1248,
+      "text": "                lease: buffer.lease, attributeIndex: attribute.index,",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 170,
+          "function": ""
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": ""
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 170,
+          "function": ""
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": ""
+        }
+      ]
+    },
+    {
+      "line": 1249,
+      "text": "                box: { x: buffer.fields.offset + element.sourceOffset, y: 0, z: 0, width: vertexComponents(element) * 4, height: 1, depth: 1 },",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 170,
+          "function": ""
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": ""
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 170,
+          "function": ""
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": ""
+        }
+      ]
+    },
+    {
+      "line": 1250,
+      "text": "              }));",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 170,
+          "function": ""
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": ""
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 170,
+          "function": ""
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": ""
+        }
+      ]
+    },
+    {
+      "line": 1251,
+      "text": "              if (plan.index) reads.push({ lease: plan.index.lease,",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 38,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 38,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        }
+      ]
+    },
+    {
+      "line": 1252,
+      "text": "                box: { x: plan.indexOffset, y: 0, z: 0, width: plan.indexByteLength, height: 1, depth: 1 } });",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 35,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 35,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        }
+      ]
+    },
+    {
+      "line": 1253,
+      "text": "              require(reads.length <= 17 && reads.reduce((sum, read) => sum + read.box.width, 0) <= jobLimits.transferBytes,",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 38,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 38,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        }
+      ]
+    },
+    {
+      "line": 1254,
+      "text": "                \"limit-exceeded\", \"Constant attribute and index staging exceeds job limit.\");",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 38,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 38,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        }
+      ]
+    },
+    {
+      "line": 1255,
+      "text": "              job.pending = { sub, plan, reads: [], readStarted: false, fenceSerial: job.serial };",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 38,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 38,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        }
+      ]
+    },
+    {
+      "line": 1256,
+      "text": "              for (const read of reads) {",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 38,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 38,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        }
+      ]
+    },
+    {
+      "line": 1257,
+      "text": "                job.serial++;",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 197,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 197,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        }
+      ]
+    },
+    {
+      "line": 1258,
+      "text": "                const access = unwrap(asyncAccess.beginStorageRead(read.lease, read.box));",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 197,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 197,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        }
+      ]
+    },
+    {
+      "line": 1259,
+      "text": "                job.pending.reads.push({ ...access, attributeIndex: read.attributeIndex, ready: false });",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 197,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 197,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        }
+      ]
+    },
+    {
+      "line": 1260,
+      "text": "                job.pending.readStarted = true; job.pending.fenceSerial = job.serial; job.hadFence = true;",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 197,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 197,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        }
+      ]
+    },
+    {
+      "line": 1261,
+      "text": "              }",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 197,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 197,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        }
+      ]
+    },
+    {
+      "line": 1262,
+      "text": "              job.phase = \"waiting-attributes\"; return jobStatus(job, \"waiting-gpu\");",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 36,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 36,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        }
+      ]
+    },
+    {
+      "line": 1263,
+      "text": "            }",
+      "executed": true,
+      "hits": [
+        {
+          "record": "unpacked/hot/hardware/browser-coverage.json",
+          "count": 36,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/hardware/browser-coverage.json",
+          "count": 36,
+          "function": "stepJob"
+        },
+        {
+          "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+          "count": 0,
+          "function": "stepJob"
+        }
+      ]
+    }
+  ],
+  "unexecutedRuntimeTokens": []
+}

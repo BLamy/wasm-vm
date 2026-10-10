@@ -729,7 +729,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         sub.constants.every((bank, stage) => bank === banks[stage]),
       "stale-draw", "Draw shader, program or constant-bank identity changed.");
     };
-    const restore = (sub, plan = null) => {
+    const restore = (sub, plan = null, constantAttributes = null) => {
       check(); vertexLayout(sub);
       if (plan) validateDrawPlan(plan);
       const program = plan ? plan.program : selectedProgram(sub);
@@ -755,6 +755,12 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       if (sub.vertexElements) for (const attribute of program?.reflection.attributes ?? []) {
         const element = sub.vertexElements.fields.elements[attribute.index], buffer = element ? sub.vertexBuffers[element.vertexBufferIndex] : null;
         if (!buffer) continue;
+        if (standard && buffer.fields.stride === 0) {
+          // State prefixes reset to the generic default. A draw supplies only
+          // values collected from its retained, validated GPU read tickets.
+          if (plan) gl.vertexAttrib4fv(attribute.location, constantAttributes.get(attribute.index).values);
+          continue;
+        }
         gl.bindBuffer(gl.ARRAY_BUFFER, resolve(buffer.lease).storage.buffer);
         gl.vertexAttribPointer(attribute.location, vertexComponents(element), gl.FLOAT, false, buffer.fields.stride, buffer.fields.offset + element.sourceOffset);
         // No admitted draw has an instance index >= the total-work ceiling.
@@ -876,7 +882,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         const element = sub.vertexElements.fields.elements[attribute.index];
         const buffer = element ? sub.vertexBuffers[element.vertexBufferIndex] : null;
         require(buffer, "incomplete-draw", "Drawing requires each active vertex attribute buffer.");
-        require(buffer.fields.stride !== 0, "unsupported-draw", "Gallium constant attributes with stride zero are unsupported.");
+        require(standard || buffer.fields.stride !== 0, "unsupported-draw", "Gallium constant attributes with stride zero are unsupported.");
         resolve(buffer.lease);
         return { attribute, element, buffer };
       });
@@ -888,11 +894,12 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       require(!index || fields.count <= Math.floor((indexStorage.metadata.byteLength - indexOffset) / indexSize),
         "out-of-bounds", "Index draw range exceeds retained storage.");
       const indexByteLength = index ? fields.count * indexSize : 0;
+      const constants = attributes.filter(({ buffer }) => buffer.fields.stride === 0);
       return Object.freeze({ ctx, sub, command, fields, instances, vertexWork: fields.count * instances,
-        surface, attributes, index, indexStorage, indexOffset, indexSize, indexByteLength,
+        surface, attributes, constants, index, indexStorage, indexOffset, indexSize, indexByteLength,
         program, shaders, banks, uploads });
     };
-    const issueDraw = (plan, bytes, submission) => {
+    const issueDraw = (plan, bytes, submission, constantAttributes = null) => {
       const { ctx, sub, command, fields, instances, vertexWork, surface, attributes, indexStorage, indexOffset, indexSize, indexByteLength } = plan;
       const indices = fields.indexed ? new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength) : null;
       let actualMinIndex = fields.indexed ? 0xffffffff : fields.start, actualMaxIndex = fields.indexed ? 0 : fields.start + fields.count - 1;
@@ -909,19 +916,22 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         const offset = buffer.fields.offset + element.sourceOffset, stride = buffer.fields.stride;
         const elementBytes = vertexComponents(element) * 4;
         const divisor = element.instanceDivisor;
-        const first = divisor ? 0 : actualMinIndex, last = divisor ? Math.floor((instances - 1) / divisor) : actualMaxIndex;
+        const constant = stride === 0;
+        const first = constant || divisor ? 0 : actualMinIndex, last = constant ? 0 : divisor ? Math.floor((instances - 1) / divisor) : actualMaxIndex;
         // vertexLayout proved that the first complete element fits. Bound
         // the largest actual fetch with division, independent of wire hints.
-        require(last <= Math.floor((buffer.metadata.byteLength - offset - elementBytes) / stride),
+        require(constant || last <= Math.floor((buffer.metadata.byteLength - offset - elementBytes) / stride),
           "out-of-bounds", "An actual vertex fetch exceeds retained storage.");
         return { attributeIndex: attribute.index, location: attribute.location,
           resourceId: buffer.metadata.id, resourceGeneration: buffer.resourceGeneration,
           stride, offset, components: vertexComponents(element), firstByte: offset + first * stride, requiredEnd: offset + last * stride + elementBytes,
-          ...(standard ? { divisor, nativeDivisor: Math.min(divisor, DRAW_LIMITS.indicesPerSubmission), firstElement: first, lastElement: last } : {}) };
+          ...(standard ? { divisor, nativeDivisor: constant ? 0 : Math.min(divisor, DRAW_LIMITS.indicesPerSubmission), firstElement: first, lastElement: last,
+            ...(constant ? { constant: true, componentWords: constantAttributes.get(attribute.index).words,
+              genericValues: [...constantAttributes.get(attribute.index).values] } : {}) } : {}) };
       });
       // readStorage changes copy/pixel bindings. Restore every supported binding
       // after its synchronous GPU read, immediately before issuing the real draw.
-      const stateKey = restore(sub, plan);
+      const stateKey = restore(sub, plan, constantAttributes);
       const mode = fields.mode === 5 ? gl.TRIANGLE_STRIP : gl.TRIANGLES;
       const indexType = indexSize === 1 ? gl.UNSIGNED_BYTE : indexSize === 2 ? gl.UNSIGNED_SHORT : gl.UNSIGNED_INT;
       if (fields.indexed) {
@@ -1101,7 +1111,8 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
     const releaseJobAccess = (job) => {
       if (job.pending) {
         const pending = job.pending; job.pending = null;
-        unwrap(asyncAccess.release(pending.ticket));
+        if (pending.reads) for (const read of pending.reads) unwrap(asyncAccess.release(read.ticket));
+        else unwrap(asyncAccess.release(pending.ticket));
       }
       job.request = null;
     };
@@ -1114,8 +1125,19 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       if (job.pending) {
         require(job.ctx.subs.get(job.pending.sub.id) === job.pending.sub && job.ctx.current === job.pending.sub.id,
           "stale-context", "Renderer subcontext identity changed.");
-        unwrap(asyncAccess.validate(job.pending.ticket));
+        if (job.pending.reads) for (const read of job.pending.reads) unwrap(asyncAccess.validate(read.ticket));
+        else unwrap(asyncAccess.validate(job.pending.ticket));
       }
+    };
+    const pollAttributeReads = (pending, discard = false) => {
+      let ready = true;
+      for (const read of pending.reads) {
+        if (read.ready) continue;
+        const polled = unwrap(asyncAccess.poll(read.ticket, discard));
+        if (polled.status === "pending") ready = false;
+        else { read.ready = true; if (!discard) read.bytes = polled.bytes; }
+      }
+      return ready;
     };
     const jobStatus = (job, status) => Object.freeze({ ok: true, status, appliedCommands: job.index,
       ...(job.request ? { request: job.request } : {}) });
@@ -1158,8 +1180,9 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         if (job.phase === "cancelling" || job.phase === "retiring") {
           if (job.pending?.readStarted) {
             polling = true;
-            const polled = unwrap(asyncAccess.poll(job.pending.ticket, true));
-            if (polled.status === "pending") return jobStatus(job, "waiting-gpu");
+            const ready = job.pending.reads ? pollAttributeReads(job.pending, true) :
+              unwrap(asyncAccess.poll(job.pending.ticket, true)).status === "ready";
+            if (!ready) return jobStatus(job, "waiting-gpu");
             polling = false; job.completedSerial = job.pending.fenceSerial;
           }
           releaseJobAccess(job); return finishOrFence(job);
@@ -1176,7 +1199,27 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         }
         if (job.phase === "needs-input" || job.phase === "needs-output") return jobStatus(job, job.phase);
         let budget = jobLimits.commandsPerStep;
-        if (job.phase === "waiting-index" || job.phase === "waiting-transfer") {
+        if (job.phase === "waiting-attributes") {
+          polling = true;
+          if (!pollAttributeReads(job.pending)) return jobStatus(job, "waiting-gpu");
+          polling = false; job.completedSerial = job.pending.fenceSerial;
+          const constantAttributes = new Map(); let indexBytes = null;
+          for (const read of job.pending.reads) {
+            if (read.attributeIndex === undefined) indexBytes = read.bytes;
+            else {
+              const values = new Float32Array([0, 0, 0, 1]), words = [], view = new DataView(read.bytes.buffer, read.bytes.byteOffset, read.bytes.byteLength);
+              for (let lane = 0; lane < read.bytes.byteLength / 4; lane++) {
+                words.push(view.getUint32(lane * 4, true)); values[lane] = view.getFloat32(lane * 4, true);
+              }
+              constantAttributes.set(read.attributeIndex, { values, words });
+            }
+          }
+          // Keep earlier collected tickets alive and revalidate the entire batch
+          // in this task. A later read cannot hide a changed earlier source.
+          validateJob(job);
+          job.serial++; issueDraw(job.pending.plan, indexBytes, job.submission, constantAttributes);
+          releaseJobAccess(job); advanceJob(job); budget--; job.phase = "ready";
+        } else if (job.phase === "waiting-index" || job.phase === "waiting-transfer") {
           polling = true;
           const polled = unwrap(asyncAccess.poll(job.pending.ticket));
           if (polled.status === "pending") return jobStatus(job, "waiting-gpu");
@@ -1200,6 +1243,24 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
             // Planning may link a program, so account for even a failed prefix.
             job.serial++;
             const plan = prepareDraw(job.ctx, sub, job.command, job.submission);
+            if (plan.constants.length) {
+              const reads = plan.constants.map(({ attribute, element, buffer }) => ({
+                lease: buffer.lease, attributeIndex: attribute.index,
+                box: { x: buffer.fields.offset + element.sourceOffset, y: 0, z: 0, width: vertexComponents(element) * 4, height: 1, depth: 1 },
+              }));
+              if (plan.index) reads.push({ lease: plan.index.lease,
+                box: { x: plan.indexOffset, y: 0, z: 0, width: plan.indexByteLength, height: 1, depth: 1 } });
+              require(reads.length <= 17 && reads.reduce((sum, read) => sum + read.box.width, 0) <= jobLimits.transferBytes,
+                "limit-exceeded", "Constant attribute and index staging exceeds job limit.");
+              job.pending = { sub, plan, reads: [], readStarted: false, fenceSerial: job.serial };
+              for (const read of reads) {
+                job.serial++;
+                const access = unwrap(asyncAccess.beginStorageRead(read.lease, read.box));
+                job.pending.reads.push({ ...access, attributeIndex: read.attributeIndex, ready: false });
+                job.pending.readStarted = true; job.pending.fenceSerial = job.serial; job.hadFence = true;
+              }
+              job.phase = "waiting-attributes"; return jobStatus(job, "waiting-gpu");
+            }
             if (!plan.index) {
               issueDraw(plan, null, job.submission); advanceJob(job); budget--; continue;
             }

@@ -1,0 +1,32 @@
+[
+  {
+    "member": "worker:cold/hardware/report.json",
+    "line": 52116,
+    "pointer": "/browserResult/result/frames/0",
+    "sha256": "2f124323ec283c3bb1edfe76c967d17fb25731ca07b5f4892adba8b3dbbe44af"
+  },
+  {
+    "member": "worker:cold/fault-generic/report.json",
+    "line": 832,
+    "pointer": "/partial/frames/0",
+    "sha256": "6666e5ccbccd92363067d0078538a05be625f19ce3091f7a0d49638da185cd61"
+  },
+  {
+    "member": "critic:physical/hardware/report.json",
+    "line": 22007,
+    "pointer": "/browserResult/result/frames/0",
+    "sha256": "ac8eff480807d1d636f1bcc61a9fee00bfe6c2c36d794ee3857cca4590c5b4f4"
+  },
+  {
+    "member": "critic:physical/fault-generic/report.json",
+    "line": 1492,
+    "pointer": "/partial/frames/0",
+    "sha256": "4e7745d6dddc73b7b4b0254ee863495ab8d2fcce823f755150f72919b39a6191"
+  },
+  {
+    "member": "critic:physical/hardware/report.json",
+    "line": 64337,
+    "pointer": "/browserResult/result/suspensions/0",
+    "sha256": "ac8eff480807d1d636f1bcc61a9fee00bfe6c2c36d794ee3857cca4590c5b4f4"
+  }
+]

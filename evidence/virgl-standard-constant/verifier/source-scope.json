@@ -1,0 +1,279 @@
+{
+  "schema": "D7-critic-hunk-scope-v1",
+  "workerDiffBase": "67220bb5ed0dfab2e06563b6353fd6975f9696b9",
+  "workerDiffEnd": "c63127a4954b6c61d23b2595149d8ab20116fdc6",
+  "runtimeHunks": [
+    {
+      "header": "@@ -732 +732 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "lines": [
+        732
+      ]
+    },
+    {
+      "header": "@@ -757,0 +758,6 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "lines": [
+        758,
+        759,
+        760,
+        761,
+        762,
+        763
+      ]
+    },
+    {
+      "header": "@@ -879 +885 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "lines": [
+        885
+      ]
+    },
+    {
+      "header": "@@ -890,0 +897 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "lines": [
+        897
+      ]
+    },
+    {
+      "header": "@@ -892 +899 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "lines": [
+        899
+      ]
+    },
+    {
+      "header": "@@ -895 +902 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "lines": [
+        902
+      ]
+    },
+    {
+      "header": "@@ -912 +919,2 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "lines": [
+        919,
+        920
+      ]
+    },
+    {
+      "header": "@@ -915 +923 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "lines": [
+        923
+      ]
+    },
+    {
+      "header": "@@ -920 +928,3 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "lines": [
+        928,
+        929,
+        930
+      ]
+    },
+    {
+      "header": "@@ -924 +934 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "lines": [
+        934
+      ]
+    },
+    {
+      "header": "@@ -1104 +1114,2 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "lines": [
+        1114,
+        1115
+      ]
+    },
+    {
+      "header": "@@ -1117 +1128,11 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "lines": [
+        1128,
+        1129,
+        1130,
+        1131,
+        1132,
+        1133,
+        1134,
+        1135,
+        1136,
+        1137,
+        1138
+      ]
+    },
+    {
+      "header": "@@ -1118,0 +1140 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "lines": [
+        1140
+      ]
+    },
+    {
+      "header": "@@ -1161,2 +1183,3 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "lines": [
+        1183,
+        1184,
+        1185
+      ]
+    },
+    {
+      "header": "@@ -1179 +1202,21 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "lines": [
+        1202,
+        1203,
+        1204,
+        1205,
+        1206,
+        1207,
+        1208,
+        1209,
+        1210,
+        1211,
+        1212,
+        1213,
+        1214,
+        1215,
+        1216,
+        1217,
+        1218,
+        1219,
+        1220,
+        1221,
+        1222
+      ]
+    },
+    {
+      "header": "@@ -1202,0 +1246,18 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "lines": [
+        1246,
+        1247,
+        1248,
+        1249,
+        1250,
+        1251,
+        1252,
+        1253,
+        1254,
+        1255,
+        1256,
+        1257,
+        1258,
+        1259,
+        1260,
+        1261,
+        1262,
+        1263
+      ]
+    }
+  ],
+  "runtimeAddedChangedLines": 74,
+  "unexecutedRuntimeTokens": 0,
+  "files": [
+    {
+      "path": "Makefile",
+      "sha256": "34f8e089bc76ff749068f1769b42af3a5db8d0e5d085699f8bba37edc8345fc4",
+      "classification": "waived",
+      "reason": "Declarative gate/task documentation or immutable diagnostic/seal data; no runtime semantics. Gates invoke the physically exercised commands; evidence custody authenticated separately."
+    },
+    {
+      "path": "evidence/virgl-production-readiness/standard-constant-stride-gap.json",
+      "sha256": "930f3f44586dd747d725c01a7fdf55815f8aaaf029638be50c6a8e82620d0dae",
+      "classification": "waived",
+      "reason": "Declarative gate/task documentation or immutable diagnostic/seal data; no runtime semantics. Gates invoke the physically exercised commands; evidence custody authenticated separately."
+    },
+    {
+      "path": "evidence/virgl-standard-constant/worker/manifest.json",
+      "sha256": "3029e840ffc4d864af8a4186fd320b3012e3005a42cefa7d283956c3ec49d796",
+      "classification": "waived",
+      "reason": "Declarative gate/task documentation or immutable diagnostic/seal data; no runtime semantics. Gates invoke the physically exercised commands; evidence custody authenticated separately."
+    },
+    {
+      "path": "evidence/virgl-standard-constant/worker/recording.tar.gz",
+      "sha256": "598acb64caacea419f099a5fc1bb25fe763c4ce8dfb3eb8c0a76126acea28aca",
+      "classification": "waived",
+      "reason": "Declarative gate/task documentation or immutable diagnostic/seal data; no runtime semantics. Gates invoke the physically exercised commands; evidence custody authenticated separately."
+    },
+    {
+      "path": "evidence/virgl-standard-constant/worker/records.json",
+      "sha256": "36217166ebf678e6dd701ec7ec66f042891963be7638dc2c77a920903694d65a",
+      "classification": "waived",
+      "reason": "Declarative gate/task documentation or immutable diagnostic/seal data; no runtime semantics. Gates invoke the physically exercised commands; evidence custody authenticated separately."
+    },
+    {
+      "path": "renderer/virgl-command/draw-README.md",
+      "sha256": "0c89573cd3b2c6bae72f713896447f5e17e06b13b4bcd0aa36082df2e1a26639",
+      "classification": "waived",
+      "reason": "Declarative gate/task documentation or immutable diagnostic/seal data; no runtime semantics. Gates invoke the physically exercised commands; evidence custody authenticated separately."
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "sha256": "dd2049d9d27e591b0ad63ecd30fedcdcf8ae09e7b754d81b769a81497c7d7671",
+      "classification": "executed",
+      "reason": "All74 added/changed source lines and every alphanumeric token reached by authenticated original hardware/retained D6 V8 coverage; no new unexecuted runtime hunk."
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-constant-attributes.mjs",
+      "sha256": "b18b997a0b10314a1b3e178abb8e8becf80be9acf73aa410c671bf1771760d2b",
+      "classification": "exercised-harness",
+      "reason": "Complete31-frame matrix,7 negatives,6 suspensions,renderer disposal and generic pixel sabotage; independent raw-byte/raster audit corroborates outputs."
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-instanced-draws.mjs",
+      "sha256": "65c4e946f53871cfb1938fd83b559de96f5a04332cb4af113d24fb44ab4fc56f",
+      "classification": "exercised-harness",
+      "reason": "Native generic/array query, per-fence delay function, real copy and fence tracing, resource/job limit and factory options exercised by matrix, suspension, partial and legacy cases."
+    },
+    {
+      "path": "tasks/QUEUE.md",
+      "sha256": "6437c315d29636ca6f370365a72485682f0edee34d3b7d72725c62a23b184093",
+      "classification": "waived",
+      "reason": "Declarative gate/task documentation or immutable diagnostic/seal data; no runtime semantics. Gates invoke the physically exercised commands; evidence custody authenticated separately."
+    },
+    {
+      "path": "tasks/epic-6-transcendence/E6-T11d-truthful-guest-virgl-bringup.md",
+      "sha256": "7be981856f28d02f12b030ef52249ae66d09fd086dbbc9a9bf9f55972a59bad4",
+      "classification": "waived",
+      "reason": "Declarative gate/task documentation or immutable diagnostic/seal data; no runtime semantics. Gates invoke the physically exercised commands; evidence custody authenticated separately."
+    },
+    {
+      "path": "tasks/epic-6-transcendence/E6-T11d7-standard-constant-attributes.md",
+      "sha256": "f49ab094facd2b4f85e8a1b64466229d503bbf1765d5628bf83d034dfe9dc0c2",
+      "classification": "waived",
+      "reason": "Declarative gate/task documentation or immutable diagnostic/seal data; no runtime semantics. Gates invoke the physically exercised commands; evidence custody authenticated separately."
+    },
+    {
+      "path": "tools/verify-virgl-standard-constant.mjs",
+      "sha256": "705561c37b194713b01584c78c31a5b73081a35c7d5042a023a9a63247c28431",
+      "classification": "exercised-harness",
+      "reason": "Actual hot/final-cold gate builds fixed16MiB compiler, records physical/default and real mutation captures, computes pixels/receipt and seals archive; preserved failed hot custody + actual successful repaired/final cold branches authenticated."
+    },
+    {
+      "path": "tools/verify-virgl-standard-constant.sh",
+      "sha256": "a6602f1708218ec07ec711f98a65560e63cd9d36164b59844a3a0f8b2cddeda4",
+      "classification": "exercised-harness",
+      "reason": "Actual hot/final-cold gate builds fixed16MiB compiler, records physical/default and real mutation captures, computes pixels/receipt and seals archive; preserved failed hot custody + actual successful repaired/final cold branches authenticated."
+    },
+    {
+      "path": "tools/virgl-command/standard-constant-cold.py",
+      "sha256": "fa2a79b3f22be093f291009524f7d84acdc9f31de824fab560d92d23e6ee17b8",
+      "classification": "exercised-harness",
+      "reason": "Actual hot/final-cold gate builds fixed16MiB compiler, records physical/default and real mutation captures, computes pixels/receipt and seals archive; preserved failed hot custody + actual successful repaired/final cold branches authenticated."
+    },
+    {
+      "path": "tools/virgl-command/standard-constant-oracle.mjs",
+      "sha256": "6988872e2ffee27bbd960f009070bd2da293a7eb64845ffe15bf44f7bd3b14ca",
+      "classification": "exercised-harness",
+      "reason": "Actual hot/final-cold gate builds fixed16MiB compiler, records physical/default and real mutation captures, computes pixels/receipt and seals archive; preserved failed hot custody + actual successful repaired/final cold branches authenticated."
+    },
+    {
+      "path": "tools/virgl-command/standard-constant-pixels.mjs",
+      "sha256": "ed3789b31278f829bb35e7afaf16a66497b6fde218d1b0a6826706f5977e6aaa",
+      "classification": "exercised-harness",
+      "reason": "Actual hot/final-cold gate builds fixed16MiB compiler, records physical/default and real mutation captures, computes pixels/receipt and seals archive; preserved failed hot custody + actual successful repaired/final cold branches authenticated."
+    },
+    {
+      "path": "tools/virgl-command/standard-constant-receipt.py",
+      "sha256": "3354c3014c6568b18795e9b35c1fcdfd3b14f6e63c097bd6a376321b6e08dbc8",
+      "classification": "exercised-harness",
+      "reason": "Actual hot/final-cold gate builds fixed16MiB compiler, records physical/default and real mutation captures, computes pixels/receipt and seals archive; preserved failed hot custody + actual successful repaired/final cold branches authenticated."
+    },
+    {
+      "path": "tools/virgl-command/standard-constant-seal.py",
+      "sha256": "120e20f0cab3458b4b55b61682e7e69a338727a971e64b0d0fc372ff3242a7ee",
+      "classification": "exercised-harness",
+      "reason": "Actual hot/final-cold gate builds fixed16MiB compiler, records physical/default and real mutation captures, computes pixels/receipt and seals archive; preserved failed hot custody + actual successful repaired/final cold branches authenticated."
+    }
+  ]
+}

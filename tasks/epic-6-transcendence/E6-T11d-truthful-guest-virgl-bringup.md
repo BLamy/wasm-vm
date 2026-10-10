@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6]
-blocked_on: E6-T11d6
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7]
+blocked_on: E6-T11d7
 estimate: S
 risk: high
 capstone: false
@@ -165,3 +165,22 @@ graphics chain ahead of unrelated general-queue work. Other core topology,
 constant-stride, restart, storage and framebuffer/API gates remain ordered
 successors. No positive production capability or guest draw follows from this
 negative readiness observation.
+
+### 2026-10-10 — worker — instanced draws verified; constant attribute gap
+
+E6-T11d6 is independently verified at
+`67220bb5ed0dfab2e06563b6353fd6975f9696b9`. The next actual hardware
+readiness probe binds active IN1 with stride zero and submits its original
+instanced draw. It rejects with `unsupported-draw: Gallium constant attributes
+with stride zero are unsupported.` No native draw executes. Original wire,
+source/compiler identities and physical GPU identity are in
+`evidence/virgl-production-readiness/standard-constant-stride-gap.json`.
+To reproduce, use the pinned standard fixture's `specimen({instances:3})`,
+submit `setup`, then `packet(6,0,[16,16,3,0,32,4,16,16,5])` plus
+`drawPacket(spec)` through its actual headed standard async `rig`.
+
+Ordered S prerequisite E6-T11d7 implements this one fetch boundary through
+retained GPU reads and native generic attributes, including their batch lifetime.
+The user's production-graphics request keeps this ordered chain ahead of the
+unrelated queue. This negative observation grants no production capsets,
+complete API, guest execution or performance claim.
