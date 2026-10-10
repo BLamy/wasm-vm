@@ -27,12 +27,15 @@ export const MINIMUM_PROFILE = "virgl-webgl2-raw-bits-v32";
 export const MINIMUM_KIND = "tgsi-minimum-word-local-v1";
 export const FRACTION_PROFILE = "virgl-webgl2-raw-bits-v33";
 export const FRACTION_KIND = "tgsi-fraction-binary32-rne-v1";
+export const SATURATION_PROFILE = "virgl-webgl2-raw-bits-v34";
+export const SATURATION_KIND = "tgsi-numeric-saturation-local-v1";
 const rawProfiles = (...versions) => versions.map((version) => `virgl-webgl2-raw-bits-v${version}`);
 const ARITHMETIC_BASES = new Set(rawProfiles(...Array.from({ length: 27 }, (_, i) => i + 1)));
 const CONVERSION_BASES = new Set(rawProfiles(...Array.from({ length: 28 }, (_, i) => i + 1)));
 const SCALAR_BASES = new Set(rawProfiles(...Array.from({ length: 30 }, (_, i) => i + 1)));
 const MINIMUM_BASES = new Set(rawProfiles(...Array.from({ length: 31 }, (_, i) => i + 1)));
 const FRACTION_BASES = new Set(rawProfiles(...Array.from({ length: 32 }, (_, i) => i + 1)));
+const SATURATION_BASES = new Set(rawProfiles(...Array.from({ length: 33 }, (_, i) => i + 1)));
 const PRECISE_PROFILES = new Set(rawProfiles(17, 18, 19, 20, 21, 22, 23, 24, 25, 26));
 const RADIAL_PROFILES = new Set([RADIAL_PROFILE, RADIAL_INDIRECT_PROFILE, RADIAL_LOOP_PROFILE, ...rawProfiles(24, 25, 26)]);
 const LOOP_PROFILES = new Set([LOOP_PROFILE, RADIAL_LOOP_PROFILE, ...rawProfiles(23, 26)]);
@@ -112,8 +115,28 @@ function conversionBankContract(value) {
 export function parseConstantDomain(metadata, expectedStage) {
   try {
     require(expectedStage === "vertex" || expectedStage === "fragment", "Unknown shader stage.");
-    const value = record(metadata, [...METADATA_KEYS, "constantDomains", "constantAccesses", "constantConstraints", "constantRadialDomains", "preciseWordContract", "rasterBaseProfile", "constantRasterDomains", "arithmeticBaseProfile", "preciseArithmeticContract", "conversionBaseProfile", "signedConversionContract", "constantConversionDomains", "scalarBaseProfile", "scalarWordContract", "minimumBaseProfile", "minimumWordContract", "fractionBaseProfile", "fractionWordContract"], METADATA_KEYS);
+    const value = record(metadata, [...METADATA_KEYS, "constantDomains", "constantAccesses", "constantConstraints", "constantRadialDomains", "preciseWordContract", "rasterBaseProfile", "constantRasterDomains", "arithmeticBaseProfile", "preciseArithmeticContract", "conversionBaseProfile", "signedConversionContract", "constantConversionDomains", "scalarBaseProfile", "scalarWordContract", "minimumBaseProfile", "minimumWordContract", "fractionBaseProfile", "fractionWordContract", "saturationBaseProfile", "saturationContract"], METADATA_KEYS);
     require(value.stage === expectedStage, "Constant domain stage disagrees with the shader stage.");
+    const saturation = value.profile === SATURATION_PROFILE;
+    require(saturation === Object.hasOwn(value, "saturationBaseProfile") && saturation === Object.hasOwn(value, "saturationContract"),
+      "Saturation contract disagrees with its profile.");
+    if (saturation) {
+      require(SATURATION_BASES.has(value.saturationBaseProfile), "Saturation requires an existing raw base profile.");
+      const policy = record(value.saturationContract, ["kind", "stage", "operations", "equation", "authority", "divisionDomain", "division", "modifiers", "zero"]);
+      require(policy.kind === SATURATION_KIND && policy.stage === expectedStage &&
+        policy.equation === "post-operation-ternary-zero-one" && policy.authority === "existing-numeric-authority" &&
+        policy.divisionDomain === "static-normal-divisor-unit-or-known-bounded-quotient" && policy.division === "positive-denominator-highp-2.5-ulp" &&
+        policy.modifiers === "negation-before-operation" && policy.zero === "underlying-numeric-result",
+      "Unknown instruction-local saturation policy.");
+      const operations = array(policy.operations, 2);
+      require(operations.length > 0 && operations.every((op, i) => ["DIV_SAT", "MOV_SAT"].includes(op) &&
+        (i === 0 || operations[i - 1] < op)), "Saturation operations must be nonempty, sorted and unique.");
+      const base = { ...value, profile: value.saturationBaseProfile };
+      delete base.saturationBaseProfile; delete base.saturationContract;
+      // Whole prior obligations descend strictly; v34 cannot wrap itself.
+      const checked = parseConstantDomain(base, expectedStage);
+      return checked.ok ? Object.freeze({ ...checked, saturation: Object.freeze({ ...policy, operations: Object.freeze(operations) }) }) : checked;
+    }
     const fraction = value.profile === FRACTION_PROFILE;
     require(fraction === Object.hasOwn(value, "fractionBaseProfile") && fraction === Object.hasOwn(value, "fractionWordContract"),
       "Fraction contract disagrees with its profile.");
@@ -364,7 +387,7 @@ export function signedConversionBinary32Word(word) {
 export function checkConversionBank(words, domain, base) {
   try {
     const contract = conversionBankContract(domain);
-    base = record(base, ["ok", "domain", "access", "constraint", "radialDomain", "rasterDomain", "precision", "arithmetic", "conversion", "conversionDomain", "scalar", "minimum", "fraction"], ["ok", "domain"]);
+    base = record(base, ["ok", "domain", "access", "constraint", "radialDomain", "rasterDomain", "precision", "arithmetic", "conversion", "conversionDomain", "scalar", "minimum", "fraction", "saturation"], ["ok", "domain"]);
     require(base.ok === true, "Conversion requires an approved base contract.");
     for (const [key, kind, extra] of [["domain", CONSTANT_DOMAIN_KIND, []], ["access", CONSTANT_ACCESS_KIND, ["indices"]],
       ["constraint", CONSTANT_CONSTRAINT_KIND, ["register", "component", "maximum"]],

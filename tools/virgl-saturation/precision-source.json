@@ -1,0 +1,14 @@
+{
+  "source": "https://registry.khronos.org/OpenGL/specs/es/3.0/GLSL_ES_Specification_3.00.pdf",
+  "sha256": "325058092a1c96a172f6e5b1e4008e94e7a2c75b63d6431f5bec273f374b6e7f",
+  "section": "4.5.1",
+  "printedPage": 52,
+  "pdfPageIndex": 58,
+  "divisionMaximumErrorULP": "5/2",
+  "positiveDenominatorMinimumPowerOfTwo": -126,
+  "positiveDenominatorMaximumPowerOfTwo": 126,
+  "signedDenominators": "exact sign canonicalization before numerical division",
+  "nonunitQuotients": "known normal-or-zero numerator with conservative exponent difference -124 through 125",
+  "specialAndSubnormalNumericSources": "no new authority or exact numerical promise; existing bank and source policies are retained",
+  "numericalZero": "signed-zeros-interchangeable-ESSL-3.00-section4.5.1"
+}

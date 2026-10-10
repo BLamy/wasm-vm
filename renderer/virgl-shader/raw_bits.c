@@ -154,6 +154,23 @@ static struct raw_lane precise_source(const struct raw_ir *ir, const struct raw_
    return value;
 }
 
+/* SAT introduces no numerical source authority. A statically known, normal
+ * divisor is required at this exact post-modifier source version. Unit magnitude
+ * preserves the existing numeric domain; nonunit division requires a known
+ * normal-or-zero numerator and a conservative quotient exponent margin. No
+ * dynamic range facts or F2I permission are manufactured by the clamp. */
+static bool saturation_division_proved(struct raw_lane a, struct raw_lane b)
+{
+   if ((b.zero | b.one) != UINT32_MAX) return false;
+   uint32_t magnitude = b.one & UINT32_C(0x7fffffff);
+   if (magnitude < UINT32_C(0x00800000) || magnitude > UINT32_C(0x7e800000)) return false;
+   if (magnitude == UINT32_C(0x3f800000)) return true;
+   if ((a.zero | a.one) != UINT32_MAX || !safe_raw_float(a)) return false;
+   if (!(a.one & UINT32_C(0x7fffffff))) return true;
+   int difference = (int)((a.one >> 23) & 255u) - (int)((b.one >> 23) & 255u);
+   return difference >= -124 && difference <= 125;
+}
+
 bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
 {
    if ((UINT64_C(1) << input->opcode) & RAW_CONTROL_OPCODES) {
@@ -180,7 +197,7 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
    bool numeric = ((UINT64_C(1) << instruction->opcode) & RAW_NUMERIC_OPCODES) != 0;
    unsigned dependency = 0;
    bool conversion_bank = false;
-   unsigned sources = instruction->opcode == RAW_MOV || instruction->opcode == RAW_NOT ||
+   unsigned sources = instruction->opcode == RAW_MOV || instruction->opcode == RAW_MOV_SAT || instruction->opcode == RAW_NOT ||
       instruction->opcode == RAW_FRC || instruction->opcode == RAW_FRC_PRECISE || instruction->opcode == RAW_TEX ||
       instruction->opcode == RAW_RCP || instruction->opcode == RAW_RSQ ||
       instruction->opcode == RAW_I2F || instruction->opcode == RAW_F2I ||
@@ -196,6 +213,10 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
          if (numeric) dependency |= mode & RAW_BANK_DEPENDENCY;
          if (mixed) checked.float_modes[source] |= (uint32_t)mode << (lane * 8);
       }
+   if (instruction->opcode == RAW_DIV_SAT)
+      for (unsigned lane = 0; lane < 4; ++lane) if (consumed & (1u << lane))
+         if (!saturation_division_proved(precise_source(ir, instruction, 0, lane, conditional),
+                                        precise_source(ir, instruction, 1, lane, conditional))) return false;
    /* A known raw selector never demands numerical access to its unused arm.
     * Only the retry prunes these modes, preserving old emitted expressions. */
    if ((conditional || structured) && instruction->opcode == RAW_UCMP)
@@ -323,6 +344,8 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
       case RAW_MUL:
       case RAW_MAD:
       case RAW_DIV:
+      case RAW_MOV_SAT:
+      case RAW_DIV_SAT:
       case RAW_MAX:
       case RAW_MIN:
       case RAW_FRC:
@@ -663,6 +686,10 @@ static void float_snapshot(struct writer *w, const struct profile *p, const stru
             float_operand(w, p, instruction, 1, lane); emit(w, " : ");
             float_operand(w, p, instruction, 2, lane);
          } else float_operand(w, p, instruction, yes ? 1 : 2, lane);
+      } else if (op == RAW_DIV_SAT) {
+         emit(w, "raw_saturation_divide(");
+         float_operand(w, p, instruction, 0, lane); emit(w, ", ");
+         float_operand(w, p, instruction, 1, lane); emit(w, ")");
       } else if (op == RAW_LRP) {
          emit(w, "mix(");
          float_operand(w, p, instruction, 2, lane); emit(w, ", ");
@@ -682,6 +709,8 @@ static void float_snapshot(struct writer *w, const struct profile *p, const stru
       emit(w, ")");
    }
    emit(w, ");\n");
+   if ((UINT64_C(1) << op) & RAW_SATURATION_OPCODES)
+      emit(w, " /* saturation:post */ float_rhs = raw_saturate(float_rhs);\n");
 }
 
 char *raw_emit(const struct profile *p, unsigned const_count)
@@ -689,6 +718,15 @@ char *raw_emit(const struct profile *p, unsigned const_count)
    struct writer w = {.text = calloc(BRIDGE_MAX_GLSL + 1, 1)};
    if (!w.text) return NULL;
    emit(&w, "#version 300 es\nprecision highp float;\nprecision highp int;\n");
+   if (p->raw->opcode_mask & RAW_SATURATION_OPCODES)
+      emit(&w, "float raw_saturate_lane(float value) {\n"
+         " return value < 0.0 ? 0.0 : value > 1.0 ? 1.0 : value;\n}\n"
+         "vec4 raw_saturate(vec4 value) {\n"
+         " return vec4(raw_saturate_lane(value.x), raw_saturate_lane(value.y), raw_saturate_lane(value.z), raw_saturate_lane(value.w));\n}\n");
+   if (p->raw->opcode_mask & (UINT64_C(1) << RAW_DIV_SAT))
+      emit(&w, "float raw_saturation_divide(float a, float b) {\n"
+         " if (b < 0.0) { a = -a; b = -b; }\n"
+         " /* saturation:division */ return a / b;\n}\n");
    for (unsigned file = IN; file <= OUT; ++file)
       for (unsigned index = 0; index < FILE_REGISTERS; ++index) if (p->declared[file][index]) {
          unsigned semantic = p->semantic[file][index];

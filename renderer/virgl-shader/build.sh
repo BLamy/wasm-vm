@@ -16,7 +16,7 @@ common=(-std=gnu11 -D_GNU_SOURCE -D_DARWIN_C_SOURCE
   -Ivendor/src/gallium/auxiliary -Ivendor/src/gallium/auxiliary/util)
 case "$mode" in
   guard-check)
-    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only bridge.c raw_bits.c native_tests/captured.c native_tests/components.c native_tests/pairs.c native_tests/banks.c native_tests/raw_bits.c native_tests/integer_masks.c native_tests/float_masks.c native_tests/numeric_floats.c native_tests/component_floats.c native_tests/dot_reciprocals.c native_tests/constant_compiler.c native_tests/structured_conditionals.c native_tests/indirect_constants.c native_tests/bounded_loops.c native_tests/raw_equality.c native_tests/selected_lanes.c native_tests/selected_lanes_pair.c native_tests/radial_domain.c native_tests/precise_words.c native_tests/precise_audit.c native_tests/ordered_masks.c native_tests/raster_bank.c native_tests/precise_arithmetic.c native_tests/original_corpus.c native_tests/precise_fraction.c
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only bridge.c raw_bits.c native_tests/captured.c native_tests/components.c native_tests/pairs.c native_tests/banks.c native_tests/raw_bits.c native_tests/integer_masks.c native_tests/float_masks.c native_tests/numeric_floats.c native_tests/component_floats.c native_tests/dot_reciprocals.c native_tests/constant_compiler.c native_tests/structured_conditionals.c native_tests/indirect_constants.c native_tests/bounded_loops.c native_tests/raw_equality.c native_tests/selected_lanes.c native_tests/selected_lanes_pair.c native_tests/radial_domain.c native_tests/precise_words.c native_tests/precise_audit.c native_tests/ordered_masks.c native_tests/raster_bank.c native_tests/precise_arithmetic.c native_tests/original_corpus.c native_tests/precise_fraction.c native_tests/saturation.c
     "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -Wno-unused-function -DBRIDGE_UPSTREAM_ALLOC_GUARD_ONLY -fsyntax-only checked_upstream.c
     ;;
   native)
@@ -278,6 +278,13 @@ case "$mode" in
     "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only native_tests/precise_fraction.c
     "${CC:-clang}" "${common[@]}" "${instrument[@]}" "${sources[@]}" native_tests/precise_fraction.c \
       -lm -o build/precise-fraction-sanitize/precise-fraction-test
+    ;;
+  saturation-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping)
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only native_tests/saturation.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "${sources[@]}" native_tests/saturation.c \
+      -lm -o build/saturation-sanitize/saturation-test
     ;;
   precise-token-audit)
     "${CC:-clang}" "${common[@]}" -g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined \
