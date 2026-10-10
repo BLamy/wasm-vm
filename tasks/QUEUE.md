@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E5.5-T03q** — Publish the validated responsive Omarchy desktop
 1. **E6-T12g6m5b2b** — Prove first original 92cb powers with enforced draw geometry
 1. **E5-T26f** — Browser desktop snapshot round-trip and interaction smoke
 
@@ -596,7 +595,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.02699991` [E5.5-T03be](epic-5.5-omarchy/E5.5-T03be-jit-sparse-handoff.md) — Measure browser JIT register handoff and reject unproven speedups *(deps: E5.5-T03bd)*
 - [x] `525.02699991` [E5.5-T03bg](epic-5.5-omarchy/E5.5-T03bg-direct-memory-imports.md) — Remove browser JIT memory-import JavaScript trampolines *(deps: E5.5-T03bf)*
 - [x] `525.02699992` [E5.5-T03bf](epic-5.5-omarchy/E5.5-T03bf-integer-replay.md) — Increase cached interpreter throughput with a compact integer executor *(deps: E5.5-T03be)*
-- [ ] `525.027` [E5.5-T03q](epic-5.5-omarchy/E5.5-T03q-responsive-mode-release.md) — Publish the validated responsive Omarchy desktop *(deps: E5.5-T03az)*
+- [b] `525.027` [E5.5-T03q](epic-5.5-omarchy/E5.5-T03q-responsive-mode-release.md) — Publish the validated responsive Omarchy desktop *(deps: E5.5-T03az)*
 
 ## Epic 6 — `epic-6-transcendence`
 
