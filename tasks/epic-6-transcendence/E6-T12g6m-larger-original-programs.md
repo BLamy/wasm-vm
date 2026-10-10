@@ -4,7 +4,7 @@ epic: 6
 title: Prove the two larger original compositor shader programs
 priority: 525.02701059
 status: pending
-depends_on: [E6-T12g6m4a]
+depends_on: [E6-T12g6m4c]
 estimate: S
 risk: high
 capstone: false
@@ -69,3 +69,15 @@ Private paired interface prerequisite E6-T12g6m3c is independently verified at `
 ### 2026-10-05 — worker — reciprocal prerequisite discovery
 
 The unchanged c5806d5f fragment uses `RCP TEMP[48].x, CONST[30].xxxx` at pc34 as the exponent of two subsequent `POW`s. The complete observed exact bank fixes `CONST[30].x` at binary32 `2.0`, but the compiler's ordinary reciprocal produces no static word fact, so a sound later domain proof cannot even identify its exact `0.5` exponent. Add one ordered S/high E6-T12g6m4a leaf to materialize only exact power-of-two reciprocal results in the private exact-bank retry, with literal matching raw/shadow emission and real physical evidence. This does not authorize either original geometry-dependent base or the full pair; the acceptance above is unchanged.
+
+### 2026-10-05 — worker — resumed after reciprocal proof
+
+The independent critic verified E6-T12g6m4a at `8db5b1843a7d0c09c063edd086fd4a75b8310fe3`, including the mixed known-arithmetic metadata branch. Resume this parent to determine whether the remaining original geometry-dependent `POW` domains can be proven without widening the private exact-bank authority or the public renderer path.
+
+### 2026-10-05 — worker — zero-capped branch prerequisite discovery
+
+Replay of the authenticated context-5/subcontext-2 command stream finds all three original c580 draw-bank variants bind `CONST[29].x` to zero. This suggested that pc28 `MIN(TEMP[43].x, CONST[29].x)` and pc29 `FSLT(0, TEMP[44].x)` might close the branch before pc31's geometry-dependent `POW`. The following NaN audit found that the cap alone is insufficient; this observation grants no predicate fact or original-pair admission. The parent acceptance is unchanged.
+
+### 2026-10-05 — worker — finite-source split after NaN audit
+
+The earlier zero-cap argument omitted GLSL ES's permitted non-NaN result from an operation on NaN. An exploratory unbounded predicate bypass translated the full c580 pair under its three captured banks, which is beyond a sound narrow proof. No runtime change was committed. E6-T12g6m4b now certifies finite inputs through the exact original pc0..27 prefix; E6-T12g6m4c then proves the zero-capped MIN/FSLT branch. The full original pair stays gated until both and its own physical-body acceptance pass.

@@ -1056,6 +1056,14 @@ static bool validate_body(char *text, struct profile *s, struct flow_context *fl
          failure_code = "parse-error";
       } else {
          s->started = true;
+         /* The two validated TGSI properties and POSITION declaration already
+          * precede the first instruction. Make that checked coordinate source
+          * visible to the raw interpreter before its first IN[0] read. Final
+          * validation below still rejects an incomplete convention. */
+         if (s->raw && s->stage == 1 && s->declared[IN][0] &&
+             s->semantic[IN][0] == 1 && s->coordinate_origin_property &&
+             s->coordinate_center_property)
+            s->raw->opcode_mask |= RAW_FRAGMENT_COORDINATES_USED;
          /* Labels are optional, bounded, sequential, and never jump targets. */
          if (isdigit((unsigned char)*p)) {
             unsigned label = 0, digits = 0;

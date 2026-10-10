@@ -2061,3 +2061,7 @@ verify-E6-T12g6m3c:
 .PHONY: verify-E6-T12g6m4a
 verify-E6-T12g6m4a:
 	bash tools/verify-virgl-exact-reciprocal.sh
+
+.PHONY: verify-E6-T12g6m4b
+verify-E6-T12g6m4b:
+	bash tools/verify-virgl-coordinate-prefix.sh

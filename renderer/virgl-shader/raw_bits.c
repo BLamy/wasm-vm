@@ -8,6 +8,49 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
+static bool complete_prefix_bank(const struct raw_ir *ir)
+{
+   if (!ir->exact || ir->exact->count != 34u * 4u) return false;
+   for (unsigned reg = 0; reg < 34; ++reg)
+      if (ir->exact->present[reg] != 15u) return false;
+   /* These three complete 34x4 variants are the authenticated original draw
+    * banks. Every zero and otherwise unused component is part of the identity;
+    * a complete but different bank cannot borrow this source proof. */
+   static const uint32_t common[34][4] = {
+      [1] = {[0] = UINT32_C(0x3f800000)},
+      [2] = {[0] = UINT32_C(0x3f800000)},
+      [3] = {UINT32_C(0x3f800000), UINT32_C(0xa5400000),
+             UINT32_C(0x332033c9), UINT32_C(0x3f800000)},
+      [23] = {[0] = 1}, [28] = {[0] = UINT32_C(0x3f800000)},
+      [30] = {[0] = UINT32_C(0x40000000)},
+      [33] = {UINT32_C(0x3f800000), 0,
+              UINT32_C(0xbf800000), UINT32_C(0x44400000)}
+   };
+   static const uint32_t variant[3][6] = {
+      {UINT32_C(0x44760000), UINT32_C(0x44360000), UINT32_C(0x41a00000),
+       UINT32_C(0x41a00000), UINT32_C(0x44760000), UINT32_C(0x44360000)},
+      {UINT32_C(0x44804000), UINT32_C(0x44408000), UINT32_C(0xc0000000),
+       UINT32_C(0xc0000000), UINT32_C(0x44804000), UINT32_C(0x44408000)},
+      {UINT32_C(0x43970000), UINT32_C(0x43970000), UINT32_C(0x43b40000),
+       UINT32_C(0x43680000), UINT32_C(0x43970000), UINT32_C(0x43970000)}
+   };
+   for (unsigned choice = 0; choice < 3; ++choice) {
+      bool match = true;
+      for (unsigned reg = 0; reg < 34 && match; ++reg)
+         for (unsigned component = 0; component < 4; ++component) {
+            uint32_t expected = common[reg][component];
+            if (component < 2 && (reg == 0 || reg == 31 || reg == 32)) {
+               unsigned offset = (reg == 0 ? 0u : reg == 31 ? 2u : 4u) + component;
+               expected = variant[choice][offset];
+            }
+            if (ir->exact->words[reg][component] != expected) { match = false; break; }
+         }
+      if (match) return true;
+   }
+   return false;
+}
 
 static struct raw_lane source_lane(const struct raw_ir *ir, const struct raw_source *r, unsigned lane, bool conditional)
 {
@@ -23,7 +66,17 @@ static struct raw_lane source_lane(const struct raw_ir *ir, const struct raw_sou
        * Existing typed consumers still have to establish those independently. */
       return (struct raw_lane){.zero = ~value, .one = value};
    }
-   if (r->file == IN) return (struct raw_lane){.origin = (1 + r->index * 4 + component) | RAW_OUTPUT};
+   if (r->file == IN) {
+      unsigned origin = (1 + r->index * 4 + component) | RAW_OUTPUT;
+      /* A signed viewport origin plus a nonnegative GLsizei extent can reach
+       * almost 2^32 before framebuffer tests. Keep another bit for highp
+       * rounding and rasterization edges: |window x/y| <= 2^33. This is
+       * only a finite magnitude bound, never an exact coordinate word. */
+      if (complete_prefix_bank(ir) && r->index == 0 && component < 2 &&
+          (ir->opcode_mask & RAW_FRAGMENT_COORDINATES_USED))
+         origin |= 34u << RAW_FINITE_EXP_SHIFT;
+      return (struct raw_lane){.origin = origin};
+   }
    if ((r->file == CONST || r->file == INDIRECT_CONST) && conditional)
       return (struct raw_lane){.origin = RAW_FLOAT_CONDITIONAL | RAW_BANK_DEPENDENCY};
    return (struct raw_lane){0};
@@ -95,9 +148,107 @@ static bool safe_raw_float(struct raw_lane value)
    return (value.zero & exponent) && ((value.one & exponent) || (value.zero & mantissa) == mantissa);
 }
 
+/* Unknown means no certificate, not a large numerical value. A bit cube may
+ * itself prove a finite upper magnitude without a complete exact word (the
+ * c580 FSLT/AND mask is one example). Keep two exponent bits of headroom at
+ * each arithmetic step for highp rounding while staying far from overflow. */
+static unsigned finite_exp(struct raw_lane value)
+{
+   unsigned encoded = (value.origin & RAW_FINITE_EXP_MASK) >> RAW_FINITE_EXP_SHIFT;
+   if (encoded) return encoded - 1u;
+   if (!safe_raw_float(value)) return UINT32_MAX;
+   uint32_t upper = ~value.zero & UINT32_C(0x7fffffff);
+   unsigned field = upper >> 23;
+   if (field > 226) return UINT32_MAX;
+   if (field <= 127) return upper <= UINT32_C(0x3f800000) ? 0u : 1u;
+   unsigned exponent = field - 127u + ((upper & UINT32_C(0x007fffff)) != 0);
+   return exponent <= 100u ? exponent : UINT32_MAX;
+}
+
+unsigned raw_finite_exp(struct raw_lane value)
+{
+   return finite_exp(value);
+}
+
+static void set_finite_exp(struct raw_lane *result, unsigned exponent)
+{
+   if ((result->origin & UINT32_C(255)) && exponent <= 100u)
+      result->origin = (result->origin & ~RAW_FINITE_EXP_MASK) |
+         ((exponent + 1u) << RAW_FINITE_EXP_SHIFT);
+}
+
+struct prefix_source { unsigned file, index; unsigned char swizzle[4]; };
+struct prefix_shape {
+   unsigned opcode, dst, mask;
+   struct prefix_source source[2];
+};
+
+/* The sole consumer of the new terminal bound is the unchanged c580 pc27
+ * value version. Checking the complete ordered dependency prefix prevents an
+ * unrelated MIN_PRECISE from acquiring that source-specific certificate. */
+static const struct prefix_shape c580_prefix[28] = {
+   {RAW_MUL, 19, 1, {{IN, 0, {1,0,0,0}}, {CONST, 33, {2,0,0,0}}}},
+   {RAW_ADD, 9, 2, {{TEMP, 19, {0,0,0,0}}, {CONST, 33, {3,3,0,0}}}},
+   {RAW_MUL, 20, 3, {{IN, 1, {0,1,1,1}}, {CONST, 0, {0,1,1,1}}}},
+   {RAW_MUL, 21, 3, {{TEMP, 20, {1,0,0,0}}, {IMM, 0, {0,0,0,0}}}},
+   {RAW_MUL, 22, 3, {{CONST, 32, {0,1,1,1}}, {IMM, 0, {1,1,1,1}}}},
+   {RAW_ADD, 23, 3, {{CONST, 31, {0,1,1,1}}, {TEMP, 22, {0,1,1,1}}}},
+   {RAW_MUL, 24, 3, {{TEMP, 23, {0,1,0,0}}, {IMM, 0, {0,0,0,0}}}},
+   {RAW_MOV, 9, 1, {{IN, 0, {0,0,0,0}}, {IN, 0, {0,0,0,0}}}},
+   {RAW_ADD, 25, 3, {{TEMP, 9, {0,1,0,0}}, {TEMP, 24, {0,1,0,0}}}},
+   {RAW_FSLT, 26, 3, {{TEMP, 25, {0,1,1,1}}, {IMM, 0, {2,2,2,2}}}},
+   {RAW_AND, 27, 3, {{TEMP, 26, {0,1,1,1}}, {IMM, 1, {0,0,0,0}}}},
+   {RAW_MUL, 28, 3, {{IMM, 0, {3,3,3,3}}, {TEMP, 27, {0,1,0,0}}}},
+   {RAW_MUL, 29, 3, {{TEMP, 28, {0,1,0,0}}, {IMM, 0, {0,0,0,0}}}},
+   {RAW_ADD, 30, 3, {{TEMP, 29, {0,1,1,1}}, {IMM, 2, {0,0,0,0}}}},
+   {RAW_MUL, 31, 3, {{TEMP, 25, {0,1,1,1}}, {TEMP, 30, {0,1,1,1}}}},
+   {RAW_MUL, 32, 1, {{CONST, 29, {0,0,0,0}}, {IMM, 0, {0,0,0,0}}}},
+   {RAW_ADD, 33, 3, {{TEMP, 22, {0,1,0,0}}, {TEMP, 32, {0,0,0,0}}}},
+   {RAW_MUL, 34, 3, {{TEMP, 33, {0,1,0,0}}, {IMM, 0, {0,0,0,0}}}},
+   {RAW_ADD, 35, 3, {{TEMP, 31, {0,1,0,0}}, {TEMP, 34, {0,1,0,0}}}},
+   {RAW_MUL, 36, 1, {{CONST, 1, {0,0,0,0}}, {IMM, 0, {0,0,0,0}}}},
+   {RAW_ADD, 37, 3, {{TEMP, 22, {0,1,0,0}}, {TEMP, 36, {0,0,0,0}}}},
+   {RAW_MUL, 38, 3, {{TEMP, 37, {0,1,0,0}}, {IMM, 0, {0,0,0,0}}}},
+   {RAW_ADD, 39, 3, {{TEMP, 31, {0,1,0,0}}, {TEMP, 38, {0,1,0,0}}}},
+   {RAW_RCP, 40, 1, {{CONST, 32, {0,0,0,0}}, {IN, 0, {0,0,0,0}}}},
+   {RAW_RCP, 40, 2, {{CONST, 32, {1,1,1,1}}, {IN, 0, {0,0,0,0}}}},
+   {RAW_ADD, 41, 3, {{TEMP, 35, {0,1,1,1}}, {TEMP, 40, {0,1,1,1}}}},
+   {RAW_ADD, 42, 3, {{TEMP, 39, {0,1,1,1}}, {TEMP, 40, {0,1,1,1}}}},
+   {RAW_MIN_PRECISE, 43, 1, {{TEMP, 41, {0,0,0,0}}, {TEMP, 41, {1,0,0,0}}}}
+};
+
+static bool c580_prefix_matches(const struct raw_ir *ir, const struct raw_instruction *current)
+{
+   if (ir->count != 27 || !complete_prefix_bank(ir) ||
+       !(ir->opcode_mask & RAW_FRAGMENT_COORDINATES_USED)) return false;
+   static const uint32_t expected_imm[3][4] = {
+      {UINT32_C(0xbf800000), UINT32_C(0x3f000000), 0, UINT32_C(0x40000000)},
+      {UINT32_C(0x3f800000), 0, 0, 0},
+      {UINT32_C(0x3f800000), UINT32_C(0x3f166bb0), UINT32_C(0x3f966bb0), UINT32_C(0x40400000)}
+   };
+   if (memcmp(ir->immediates, expected_imm, sizeof(expected_imm))) return false;
+   for (unsigned pc = 0; pc < 28; ++pc) {
+      const struct raw_instruction *instruction = pc == 27 ? current : &ir->instructions[pc];
+      const struct prefix_shape *shape = &c580_prefix[pc];
+      if ((unsigned)instruction->opcode != shape->opcode || instruction->dst.file != TEMP ||
+          instruction->dst.index != shape->dst || instruction->dst.mask != shape->mask ||
+          (instruction->flags & (RAW_NEGATE_SOURCES | RAW_ABSOLUTE_SOURCES | RAW_DEAD | RAW_PRECISE)) !=
+             (pc == 27 ? RAW_PRECISE : 0)) return false;
+      unsigned sources = shape->opcode == RAW_MOV || shape->opcode == RAW_RCP ? 1u : 2u;
+      for (unsigned source = 0; source < sources; ++source) {
+         if ((unsigned)instruction->src[source].file != shape->source[source].file ||
+             instruction->src[source].index != shape->source[source].index) return false;
+         for (unsigned lane = 0; lane < 4; ++lane)
+            if (instruction->src[source].swizzle[lane] != shape->source[source].swizzle[lane]) return false;
+      }
+   }
+   return true;
+}
+
 static unsigned float_mode(struct raw_lane value)
 {
-   return value.origin ? value.origin : safe_raw_float(value) ? RAW_FLOAT_DECODE | RAW_OUTPUT : 0;
+   unsigned authority = value.origin & UINT32_C(255);
+   return authority ? authority : safe_raw_float(value) ? RAW_FLOAT_DECODE | RAW_OUTPUT : 0;
 }
 
 static bool output_legal(struct raw_lane value)
@@ -121,11 +272,16 @@ static struct raw_lane selected(struct raw_lane condition, struct raw_lane yes, 
    /* An unknown selector retains only facts true for BOTH payloads. Distinct
     * float origins remain distinct in old profiles. A mixed stage instead
     * materializes the chosen authorized value in a new float shadow. */
-   unsigned origin = yes.origin == no.origin ? yes.origin : 0;
+   unsigned origin = (yes.origin & UINT32_C(255)) == (no.origin & UINT32_C(255)) ?
+      yes.origin & UINT32_C(255) : 0;
    if (mixed && float_mode(yes) && float_mode(no))
       origin = RAW_FLOAT_SHADOW | ((yes.origin | no.origin) & RAW_BANK_DEPENDENCY) |
          (output_legal(yes) && output_legal(no) ? RAW_OUTPUT : 0);
-   return (struct raw_lane){.zero = yes.zero & no.zero, .one = yes.one & no.one, .origin = origin};
+   unsigned yes_exp = finite_exp(yes), no_exp = finite_exp(no);
+   struct raw_lane result = {.zero = yes.zero & no.zero, .one = yes.one & no.one, .origin = origin};
+   if (yes_exp <= 100u && no_exp <= 100u)
+      set_finite_exp(&result, yes_exp > no_exp ? yes_exp : no_exp);
+   return result;
 }
 
 unsigned raw_consumed_mask(enum raw_opcode opcode, unsigned destination_mask)
@@ -164,7 +320,8 @@ static struct raw_lane precise_source(const struct raw_ir *ir, const struct raw_
       uint32_t zero = value.zero;
       value.zero = (value.zero & ~sign) | (value.one & sign);
       value.one = (value.one & ~sign) | (zero & sign);
-      if (value.origin) value.origin = RAW_FLOAT_SHADOW | (value.origin & (RAW_BANK_DEPENDENCY | RAW_OUTPUT));
+      if (value.origin & UINT32_C(255))
+         value.origin = RAW_FLOAT_SHADOW | (value.origin & (RAW_BANK_DEPENDENCY | RAW_OUTPUT));
    }
    return value;
 }
@@ -434,6 +591,9 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
             known_word(instruction->opcode == RAW_MIN_PRECISE ?
                ordered_float_mask(a.one, b.one, false) : ordered_float_mask(b.one, a.one, false)) : (struct raw_lane){0};
          result[lane] = selected(condition, a, b, mixed);
+         if (instruction->opcode == RAW_MIN_PRECISE && ir->exact &&
+             (ir->opcode_mask & RAW_FRAGMENT_COORDINATES_USED))
+            result[lane].origin &= ~RAW_FINITE_EXP_MASK;
          break;
       }
       case RAW_ADD_PRECISE:
@@ -514,6 +674,28 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
       case RAW_KILL:
       case RAW_KILL_IF:
       case RAW_ENDIF: break; /* Recorded above without a destination. */
+      }
+      if (ir->exact && (ir->opcode_mask & RAW_FRAGMENT_COORDINATES_USED)) {
+         /* A finite coordinate can only authorize a finite result through
+          * operations whose overflow and exceptional cases we bound here.
+          * This certificate never changes the emitted arithmetic. */
+         if (instruction->opcode == RAW_ADD || instruction->opcode == RAW_MUL ||
+             instruction->opcode == RAW_MIN || instruction->opcode == RAW_MIN_PRECISE) {
+            unsigned left = finite_exp(precise_source(ir, instruction, 0, lane, conditional));
+            unsigned right = finite_exp(precise_source(ir, instruction, 1, lane, conditional));
+            if (left <= 100u && right <= 100u) {
+               unsigned maximum = left > right ? left : right;
+               unsigned bound = instruction->opcode == RAW_MUL ? left + right + 2u :
+                  instruction->opcode == RAW_ADD ? maximum + 2u : maximum;
+               if (instruction->opcode != RAW_MIN_PRECISE || c580_prefix_matches(ir, instruction))
+                  set_finite_exp(&result[lane], bound);
+            }
+         } else if (instruction->opcode == RAW_RCP && instruction->src[0].file == CONST) {
+            struct raw_lane denominator = precise_source(ir, instruction, 0, 0, conditional);
+            if (known_operands(denominator, denominator) && safe_raw_float(denominator) &&
+                (denominator.one & UINT32_C(0x7fffffff)) >= UINT32_C(0x3f800000))
+               set_finite_exp(&result[lane], 1u);
+         }
       }
       /* Each structured predecessor owns a physical shadow for every value
        * with numerical authority. A join can therefore retain a value without
