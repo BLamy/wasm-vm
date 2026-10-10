@@ -10,25 +10,27 @@ import { repo, sha256 } from "./virgl-command/fixtures.mjs";
 
 const options = {};
 for (let index = 2; index < process.argv.length; index += 2) {
-  assert.ok(["--output", "--fault", "--smoke", "--node-only"].includes(process.argv[index]));
+  assert.ok(["--output", "--fault", "--smoke", "--node-only", "--seed", "--mode"].includes(process.argv[index]));
   assert.ok(process.argv[index + 1]); options[process.argv[index].slice(2)] = process.argv[index + 1];
 }
-assert.ok(options.output); assert.ok(!options.fault || ["block-word", "range-offset", "slot-zero-variant"].includes(options.fault));
+assert.ok(options.output); assert.ok(!options.mode||["matrix","boundaries"].includes(options.mode)); assert.ok(!options.fault || ["upload-lane", "storage-precision", "copy-level"].includes(options.fault));
 for (const flag of ["smoke", "node-only"]) assert.ok(!options[flag] || options[flag] === "true");
 const output = path.resolve(options.output); await fs.mkdir(output, { recursive: true });
-const sourcePaths = [
- "renderer/virgl-command/color-images.mjs",
- "renderer/virgl-command/float-images.mjs",
- ...['resources','decoder','state','cache','constant-domain'].map(name=>'renderer/virgl-command/'+name+'.mjs'),
- 'renderer/virgl-command/tests/standard-uniform-buffer-bindings.mjs','renderer/virgl-command/tests/standard-instanced-draws.mjs',
- 'tools/virgl-command/standard-draw-oracle.mjs','tools/virgl-command/standard-uniform-binding-fixtures.mjs',
- 'renderer/virgl-shader/standard.mjs','renderer/virgl-shader/index.mjs','renderer/virgl-shader/build/wasm/virgl-shader.mjs',
- 'renderer/virgl-shader/build/wasm/virgl-shader.wasm','renderer/virgl-shader/UPSTREAM.json',
- 'renderer/virgl-shader/bridge.c','renderer/virgl-shader/standard_guard.c','renderer/virgl-shader/standard_guard.h',
- 'renderer/virgl-shader/standard_emit.c','renderer/virgl-shader/bridge.h','renderer/virgl-shader/build.sh',
- 'tools/verify-virgl-standard-uniform-bindings.mjs',
-];
-const report = { schema: 1, task: "E6-T11d17", status: "running", guestExecution: false, productionNegotiation: false,
+const sourcePaths = [...new Set([
+ ...execFileSync('git',['ls-files','renderer/virgl-command','renderer/virgl-shader','tools/virgl-command'],{cwd:repo,encoding:'utf8'}).trim().split('\n').filter(n=>n.endsWith('.mjs')),
+ 'renderer/virgl-shader/build/wasm/virgl-shader.mjs','renderer/virgl-shader/build/wasm/virgl-shader.wasm',
+ 'renderer/virgl-shader/UPSTREAM.json','renderer/virgl-shader/bridge.c','renderer/virgl-shader/build.sh',
+ 'tools/verify-virgl-standard-float-images.mjs',
+ 'renderer/virgl-command/color-images.mjs',
+ 'renderer/virgl-command/float-images.mjs',
+ 'renderer/virgl-command/tests/standard-float-image-rig.mjs',
+ 'renderer/virgl-command/tests/standard-float-images.mjs',
+ 'renderer/virgl-command/tests/standard-float-image-boundaries.mjs',
+ 'tools/virgl-command/standard-float-image-fixtures.mjs',
+ 'tools/virgl-command/standard-float-image-formats.json',
+ 'tools/virgl-command/standard-float-image-mesa-formats.yaml',
+])];
+const report = { schema: 1, task: "E6-T11d25", status: "running", guestExecution: false, productionNegotiation: false,
   gitHead: execFileSync("git", ["rev-parse", "HEAD"], { cwd: repo, encoding: "utf8" }).trim(),
   command: [process.execPath, ...process.argv.slice(1)], host: { platform: process.platform, arch: process.arch,
     release: os.release(), node: process.version }, sources: [], inputs: [], servedFiles: [],
@@ -40,24 +42,12 @@ try {
     const bytes = await fs.readFile(path.join(repo, name)); sources.set(name, bytes);
     report.sources.push({ path: name, bytes: bytes.length, sha256: sha256(bytes) });
   }
-  const { default: createModule } = await import(pathToFileURL(path.join(repo, "renderer/virgl-shader/build/wasm/virgl-shader.mjs")));
-  const actual = await createModule(); report.fixedMemory = { bytes: actual.HEAPU8.byteLength,
-    stageExport: typeof actual._bridge_translate_standard, pairExport: typeof actual._bridge_translate_standard_pair, typedPairExport: typeof actual._bridge_translate_standard_pair_typed, vertexFormatsExport: typeof actual._bridge_translate_standard_pair_vertex_formats, uniformExport: typeof actual._bridge_translate_standard_uniform, uniformPairExport: typeof actual._bridge_translate_standard_uniform_pair };
-  assert.deepEqual(report.fixedMemory, { bytes: 16777216, stageExport: "function", pairExport: "function", typedPairExport: "function", vertexFormatsExport: "function", uniformExport: "function", uniformPairExport: "function" });
   if (options["node-only"]) {
-    const module=await import(pathToFileURL(path.join(repo,"renderer/virgl-command/tests/standard-uniform-buffer-bindings.mjs")));
+    const module=await import(pathToFileURL(path.join(repo,"renderer/virgl-command/tests/standard-float-images.mjs")));
     report.wire=module.runWireAcceptance();assert.equal(report.wire.status,"passed");
   } else {
-    if (options.fault==='slot-zero-variant') {
-      const name='renderer/virgl-command/state.mjs', original=sources.get(name).toString(),
-        needle='mask | (sub.uniformBuffers[stage][0] && shader.translation.metadata.uniforms.length ?',
-        replacement='mask | (stage === 0 && sub.uniformBuffers[stage][0] && shader.translation.metadata.uniforms.length ?';
-      assert.equal(original.split(needle).length,2);const bytes=Buffer.from(original.replace(needle,replacement));sources.set(name,bytes);
-      await fs.writeFile(path.join(output,'mutation-source.mjs'),bytes);
-      report.mutation={mode:options.fault,path:name,originalSha256:sha256(Buffer.from(original)),servedSha256:sha256(bytes),needle,replacement};
-    }
     report.fault=options.fault??null;
-    const html = Buffer.from('<!doctype html><meta charset="utf-8"><title>Original guest uniform buffer bindings</title><style>body{font:16px system-ui;background:#111720;color:#e7edf6;margin:32px}pre{white-space:pre-wrap}canvas{width:256px;height:256px;image-rendering:pixelated}</style><h1>Original guest uniform buffer bindings</h1><p>Original compact bytes · native conversion · retained reads · independent full pixels</p><p id="status">Checking actual hardware bindings…</p><canvas id="gpu" width="16" height="16"></canvas><pre id="result"></pre>');
+    const html = Buffer.from('<!doctype html><meta charset="utf-8"><title>Original guest floating images</title><style>body{font:16px system-ui;background:#111720;color:#e7edf6;margin:32px}pre{white-space:pre-wrap}canvas{width:256px;height:256px;image-rendering:pixelated}</style><h1>Original guest floating images</h1><p>Original F16/F32 formats · native float planes · retained mip ranges</p><p id="status">Checking actual hardware bindings…</p><canvas id="gpu" width="8" height="8"></canvas><pre id="result"></pre>');
     const endpoints = new Map([["/", { bytes: html, type: "text/html" }],
       ...[...sources].filter(([name]) => name.endsWith(".mjs") || name.endsWith(".wasm")).map(([name, bytes]) =>
         ["/" + name, { bytes, type: name.endsWith(".wasm") ? "application/wasm" : "text/javascript" }])]);
@@ -91,20 +81,22 @@ try {
     try {
       report.browserResult = await Promise.race([page.evaluate(async spec => {
         try {
-          const module = await import("/renderer/virgl-command/tests/standard-uniform-buffer-bindings.mjs"), result = await module.runAcceptance(spec);
-          document.querySelector("#status").textContent = "Passed original uniform buffer proof";
-          document.querySelector("#result").textContent = JSON.stringify({ gpu: result.gpu, frames: result.frames.length, predictions: result.predictions.length }, null, 2);
+          const module = await import("/renderer/virgl-command/tests/standard-float-images.mjs"), result = await module.runAcceptance(spec);
+          document.querySelector("#status").textContent = "Passed original floating image proof";
+          document.querySelector("#result").textContent = JSON.stringify({ gpu: result.gpu, runs: result.runs.length, planes: result.runs.reduce((sum,row)=>sum+(row.planes?.length??0),0), predictions: result.predictions.length }, null, 2);
           return { status: "passed", result };
         } catch (error) {
           document.querySelector("#status").textContent = "Failed: " + error.message;
           return { status: "failed", error: { message: error.message, stack: error.stack } };
         }
-      }, { smoke: Boolean(options.smoke), fault:options.fault }),
-        new Promise((_, reject) => { timer = setTimeout(() => reject(new Error("uniform buffer hardware proof exceeded 240 seconds")), 240000); })]);
+      }, { smoke: Boolean(options.smoke), fault:options.fault, mode:options.mode, ...(options.seed ? {seed:Number(options.seed)} : {}) }),
+        new Promise((_, reject) => { timer = setTimeout(() => reject(new Error("floating image hardware proof exceeded 240 seconds")), 240000); })]);
     } finally { clearTimeout(timer); }
-    if (report.browserResult.status === "failed") report.partial = await page.evaluate(() => window.__standardUniformBindingEvidence ?? null);
+    if (report.browserResult.status === "failed") report.partial = await page.evaluate(() => window.__standardFloatImageEvidence ?? null);
     const evidence = report.browserResult.result ?? report.partial;
+    const blobKeys=new Set();
     if(evidence)for(const blob of evidence.blobs){
+      assert.ok(!blobKeys.has(blob.key),"recorded native blob keys are unique");blobKeys.add(blob.key);
       assert.ok(/^blob-[0-9]+$/.test(blob.key));
       const bytes=Buffer.from(blob.gzipBase64,"base64");assert.equal(sha256(bytes),blob.gzipSha256);
       delete blob.gzipBase64;blob.path=blob.key+".bin.gz";await fs.writeFile(path.join(output,blob.path),bytes);
@@ -122,7 +114,7 @@ try {
     assert.equal(report.browserResult.status, "passed", report.browserResult.error?.message);
   }
   for (const source of report.sources) assert.equal(sha256(await fs.readFile(path.join(repo, source.path))), source.sha256, "source drift " + source.path);
-  report.status = "passed"; console.log("Original uniform buffer hardware acceptance passed");
+  report.status = "passed"; console.log("Original floating image acceptance passed");
 } catch (error) {
   report.status = "failed"; report.failure = { message: error.message, stack: error.stack }; process.exitCode = 1; console.error(error.stack);
 } finally {

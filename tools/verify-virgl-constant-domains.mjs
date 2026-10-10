@@ -230,7 +230,7 @@ function mutateServed(filename,original,report){
   return Buffer.from(text);
 }
 const {ORIGINAL_INPUTS}=await import('../renderer/virgl-shader/tests/components.mjs');
-const runtime=['renderer/virgl-command/decoder.mjs','renderer/virgl-command/resources.mjs','renderer/virgl-command/state.mjs', 'renderer/virgl-command/cache.mjs','renderer/virgl-command/constant-domain.mjs','renderer/virgl-command/tests/constant-domains.mjs','renderer/virgl-command/tests/constant-domain-shaders.json', 'renderer/virgl-command/color-images.mjs'];
+const runtime=['renderer/virgl-command/decoder.mjs','renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs','renderer/virgl-command/state.mjs', 'renderer/virgl-command/cache.mjs','renderer/virgl-command/constant-domain.mjs','renderer/virgl-command/tests/constant-domains.mjs','renderer/virgl-command/tests/constant-domain-shaders.json', 'renderer/virgl-command/color-images.mjs'];
 const runtimePins=await Promise.all(runtime.map(async filename=>{const bytes=await fs.readFile(path.join(repo,filename));return {path:filename,size:bytes.length,sha256:createHash('sha256').update(bytes).digest('hex')};}));
 await runVirglBrowser({options,task:'E6-T12e6a',boundary:'trusted host conditional metadata; real decoded constant packets and shared sync/async draw consumer; compiler and guest transport unchanged',
   reportFields:{currentGuest3dAdvertisement:false,trustedHostMetadataWrapper:true,mode:options.mode,mutations:[]},modulePath:'/renderer/virgl-command/tests/constant-domains.mjs',windowReportKey:'__virglConstantDomainsReport',browserArguments:{mode:options.mode},

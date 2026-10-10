@@ -24,7 +24,8 @@
   "renderer/virgl-command/decoder.mjs",
   "renderer/virgl-command/resources.mjs",
   "renderer/virgl-command/scanout.mjs",
-  "renderer/virgl-command/constant-domain.mjs", "renderer/virgl-command/state.mjs",
+  "renderer/virgl-command/constant-domain.mjs",
+  "renderer/virgl-command/state.mjs",
   "renderer/virgl-command/submit-README.md",
   "renderer/virgl-command/tests/control-acceptance.mjs",
   "renderer/virgl-command/tests/submit-acceptance.mjs",
@@ -51,5 +52,7 @@
   "tools/virgl-command/submit-receipt.py",
   "tools/virgl-command/submit-sources.json",
   "web/dist/pkg/wasm_vm_wasm_bg.wasm",
-  "web/dist/sw.js"
+  "web/dist/sw.js",
+  "renderer/virgl-command/color-images.mjs",
+  "renderer/virgl-command/float-images.mjs"
 ]

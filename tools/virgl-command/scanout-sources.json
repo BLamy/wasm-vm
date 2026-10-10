@@ -26,7 +26,8 @@
   "renderer/virgl-command/resources.mjs",
   "renderer/virgl-command/scanout-README.md",
   "renderer/virgl-command/scanout.mjs",
-  "renderer/virgl-command/constant-domain.mjs", "renderer/virgl-command/state.mjs",
+  "renderer/virgl-command/constant-domain.mjs",
+  "renderer/virgl-command/state.mjs",
   "renderer/virgl-command/submit-README.md",
   "renderer/virgl-command/tests/control-acceptance.mjs",
   "renderer/virgl-command/tests/scanout-acceptance.mjs",
@@ -82,5 +83,7 @@
   "web/src/sink/viewport.js",
   "web/src/sink/virgl-scanout-presenter.js",
   "web/src/sink/visibility-scheduler.js",
-  "web/src/sink/webgl.js"
+  "web/src/sink/webgl.js",
+  "renderer/virgl-command/color-images.mjs",
+  "renderer/virgl-command/float-images.mjs"
 ]
