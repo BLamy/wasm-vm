@@ -650,7 +650,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.0270390001` [E6-T11d10](epic-6-transcendence/E6-T11d10-standard-primitive-assembly.md) — Preserve original provoking vertices with bounded native primitive lists *(deps: E6-T11d9)*
 - [x] `525.0270390002` [E6-T11d11](epic-6-transcendence/E6-T11d11-standard-native-points.md) — Execute bounded standard native point primitives and shader built-ins *(deps: E6-T11d10)*
 - [x] `525.0270390003` [E6-T11d12](epic-6-transcendence/E6-T11d12-standard-compact-vertex-fetch.md) — Execute compact floating vertex fetches from original GPU storage *(deps: E6-T11d11)*
-- [~] `525.02703900031` [E6-T11d13](epic-6-transcendence/E6-T11d13-standard-scalar-vertex-fetch.md) — Execute remaining scalar floating vertex formats from original GPU buffers *(deps: E6-T11d12)*
+- [?] `525.02703900031` [E6-T11d13](epic-6-transcendence/E6-T11d13-standard-scalar-vertex-fetch.md) — Execute remaining scalar floating vertex formats from original GPU buffers *(deps: E6-T11d12)*
 - [x] `525.027039001` [E6-T11d9](epic-6-transcendence/E6-T11d9-standard-primitive-restart.md) — Normalize owned standard index streams for primitive restart *(deps: E6-T11d8)*
 - [x] `525.02703901` [E6-T11d8](epic-6-transcendence/E6-T11d8-standard-core-topologies.md) — Execute bounded standard core line and triangle-fan draws *(deps: E6-T11d7)*
 - [x] `525.0270391` [E6-T11d7](epic-6-transcendence/E6-T11d7-standard-constant-attributes.md) — Fetch standard zero-stride attributes through owned GPU jobs *(deps: E6-T11d6)*

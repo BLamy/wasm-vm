@@ -3,7 +3,7 @@ id: E6-T11d13
 epic: 6
 title: Execute remaining scalar floating vertex formats from original GPU buffers
 priority: 525.02703900031
-status: in-progress
+status: implemented
 depends_on: [E6-T11d12]
 estimate: S
 risk: high
@@ -101,3 +101,46 @@ including full-original-range rounding. `target/evidence/virgl-scalar-self-*`
 and `/tmp/wasmvm-scalar-*.log` are inner-loop output only, not the final proof.
 The final default hot and scrubbed pristine-clone command will be recorded once
 at the frozen implementation/harness head, then sealed for a fresh critic.
+
+### 2026-10-10 — worker — implemented; frozen hot/cold submission
+
+Runtime/harness freeze: `1b8e94b79de6ee79f72116246ce4042aa7bda815` (activation `dea9d95a`).
+Exact final commands, each passing exit0 with no harness correction or runtime
+change after freeze:
+
+```sh
+VIRGL_STANDARD_SCALAR_EVIDENCE_DIR=target/evidence/virgl-standard-scalar-final make verify-E6-T11d13
+python3 tools/virgl-command/standard-scalar-cold.py --output target/evidence/virgl-standard-scalar-final-cold
+python3 tools/virgl-command/standard-scalar-seal.py target/evidence/virgl-standard-scalar-final target/evidence/virgl-standard-scalar-final-cold evidence/virgl-standard-scalar/worker
+```
+
+Original 32-format pinned native and ASan/UBSan programs agree; 396 scalar wire
+and 80 historical wire cases pass. Each physical recording has 391 new frames,
+102912 independently derived full pixels, 391 native draws, five original private
+index buffers, ten source/staging/work rejections, six delayed lifetime probes
+and active-read disposal. All job-owned reads/staging/normalized storage return
+to zero. Original full GPU bytes and pointer type/normalization, source generation,
+effective alignment/end/divisors and native generic words are recorded. Independent
+BigInt integer rounding checks signed/unsigned extrema and 2^24 ties; normalized32
+retained generic words exercise its full original range. Array arithmetic retains
+native authority, not a portable general word certificate.
+
+Both actual served faults finish real native draws/fences and contradict original
+pixels. The affected compact225/60160 pixels plus critic44/31744 pixels and their
+updated 297 wire cases pass in both runs; both earlier compact faults still fail
+after actual draws. The unchanged C/compiler/allocator and point/list/restart
+boundary carries 154 authentic historical evidence files. Actual generated
+16MiB Wasm hashes match the D12 critic pins; no compiler, guest or production
+source changed.
+
+Hot receipt SHA256 `33dbe88bfa942657c87255d8a65937fac6509e8bdf038919ffd21d7a476cbfc3`. Cold report SHA256
+`6651b7e44098ae7d9f40a81fb789e5f19b63a29dd2e28c091e96f7a37926316e`; cold receipt SHA256
+`c7b25cad9a3f308f66b9b58130d61db7db30dd7f893a5fe6005969c5f1d89dfb`. The scrubbed pristine clone identifies the same exact
+freeze, exits0 and has empty status before/after. The committed worker seal
+`evidence/virgl-standard-scalar/worker/{manifest.json,records.json,recording.tar.gz}`
+contains 9578 records; archive SHA256 `99c79728c82a3c7ddef092b1faa10420192df535be67da662e1724b3aab596d2`,
+23655986 bytes; record index SHA256 `8f1c71adc3cce4358b72b8fa80c2bcf4c8e90d8c02c30cfde28c2967869c1097`.
+Original local paths and `/tmp/wasmvm-standard-scalar-{final,cold,seal}.log`
+remain available; the committed archive is the handoff. Fresh adversarial
+verification is pending. This implements only scalar floating fetch: complete
+API/profile/caps, production guest offload, deployment and throughput are unclaimed.
