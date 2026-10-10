@@ -1,0 +1,563 @@
+{
+  "schema": "independent-float-image-verifier-records-v1",
+  "task": "E6-T11d25",
+  "sourceHead": "953f5c5eee075e4dc6562626bae945db6a0513f0",
+  "workerFrozenHead": "18ef4acfdebd30dd9edef9c3a1cca1e1fc4490dc",
+  "records": [
+    {
+      "path": "audit/audit-revisions.json",
+      "bytes": 901,
+      "sha256": "d71930ad9c83c8adc67f4ce0e681ac2cfa69315bbd190c9f0971dae0a489a543"
+    },
+    {
+      "path": "audit/authenticate.py",
+      "bytes": 5721,
+      "sha256": "7f799f0e9c46e536c6336bcdd6e543f3d23a40b567148b9102367aac42af2be5"
+    },
+    {
+      "path": "audit/authentication.json",
+      "bytes": 14038,
+      "sha256": "462f761c00d2982e91b484ec4e9778aa54592c9f53519a3e96710414b6928d1b"
+    },
+    {
+      "path": "audit/changed-file-classification.json",
+      "bytes": 21687,
+      "sha256": "f67421ae91769760d637bec7fd8fcec16b5ffdc12b8016b7c4d76534ee0424c1"
+    },
+    {
+      "path": "audit/classify_promoted.py",
+      "bytes": 2008,
+      "sha256": "ba09b21697ae00cff1f9f1327751c65666b7262b5990d0eaf6ea5bd6f35d008c"
+    },
+    {
+      "path": "audit/coverage-classification.json",
+      "bytes": 1583195,
+      "sha256": "be70e4071ba46508167de0019e8231d7076e3b61ef82ae98aab149c5f4329a59"
+    },
+    {
+      "path": "audit/coverage.py",
+      "bytes": 3142,
+      "sha256": "4b623cf883d8de1ad8a747b9daaadd15ca0d229835c6142787d60e6424bb3c8c"
+    },
+    {
+      "path": "audit/current-boundary.json",
+      "bytes": 1452,
+      "sha256": "c49611776adda3809804daaafa550637fbf2dc1a73eec2c11b8f8e9c98f8a5cc"
+    },
+    {
+      "path": "audit/final-command.json",
+      "bytes": 609,
+      "sha256": "d706bdffbd16f3857fbde1c49aa896f71f0d09cd5675996ff83a79901d450e39"
+    },
+    {
+      "path": "audit/final_audit.py",
+      "bytes": 7927,
+      "sha256": "fdbed575f79dacf5c0c43689dc5c97a9ce64e897438c7c89eea63e89389e6020"
+    },
+    {
+      "path": "audit/fresh-authentication.json",
+      "bytes": 3621,
+      "sha256": "e63ef104a5a2a63d5e72cfa193a4f1c1e4ca50c1e44c026d69ddb36a29a8bb21"
+    },
+    {
+      "path": "audit/initial-preparation-generator.py",
+      "bytes": 2815,
+      "sha256": "b5d9416674ff301f84f01a7ca509cc465791a0e544fe8f63c3f1ee22e808efeb"
+    },
+    {
+      "path": "audit/nested-coverage.json",
+      "bytes": 1572799,
+      "sha256": "edffbced44f261bd4920efd5cc7e417c1232c29765704cf393cde680823918f5"
+    },
+    {
+      "path": "audit/node-boundaries.json",
+      "bytes": 35690,
+      "sha256": "a1fcf79520962d48275fc3dbb88e24e094dddba9a6b0072d1cae868a5cbe376e"
+    },
+    {
+      "path": "audit/node-v8/coverage-36212-1791664112544-0.json",
+      "bytes": 176523,
+      "sha256": "f61da46b883da068266f0d69bd26e5b7a16641ef570c4d13d8059617c1b573e0"
+    },
+    {
+      "path": "audit/node_boundaries.mjs",
+      "bytes": 3909,
+      "sha256": "3c5c8c34b074442634fed640a64b34b1466dd632e2ed68e89d6df82d29178c16"
+    },
+    {
+      "path": "audit/novel-original-inputs-initial-preparation.json",
+      "bytes": 228049,
+      "sha256": "0ba33b26975f1453ce5db902163588feeb799c4f439f306a3a18a014e43c0831"
+    },
+    {
+      "path": "audit/predictions.json",
+      "bytes": 4681,
+      "sha256": "cc0e4832ebd9af717b5943544cee460b62487d0f20550ca2d51bc2f58cb116b8"
+    },
+    {
+      "path": "audit/promoted-coverage-classification.json",
+      "bytes": 102611,
+      "sha256": "c7e2833a3b29f3209f0c90b4c2d3bc5cd72f1052847f7af94861b40e660b1e32"
+    },
+    {
+      "path": "audit/promoted-coverage-raw.json",
+      "bytes": 93986,
+      "sha256": "9c9cd75545227bfb3e098ad2d95a7cff5e47ec1ecd684dc319af977c70e774b5"
+    },
+    {
+      "path": "audit/promoted-node-v8-final/coverage-36337-1791664150314-0.json",
+      "bytes": 25026,
+      "sha256": "f0f5ae8b425a67edb60c7963e1ae22041dedd553dba0fa204639a73f9f697889"
+    },
+    {
+      "path": "audit/promoted-node-v8-final/coverage-36338-1791664150340-0.json",
+      "bytes": 25026,
+      "sha256": "5b9e5f7a841cb48253c8b699873cb5a5f47450a4cc198bf042af531fd3541109"
+    },
+    {
+      "path": "audit/promoted-node-v8-final/coverage-36339-1791664152314-0.json",
+      "bytes": 1521274,
+      "sha256": "ba2a17feb3ee52b1a02a60510e391968bd26f49a33d87a10cbf75db34e3bbf4a"
+    },
+    {
+      "path": "audit/promoted-node-v8-final/coverage-36365-1791664153286-0.json",
+      "bytes": 1521029,
+      "sha256": "c328c365cd3d762e7e3f6da6a25f28bab64342d37dc6b30a09606c2c6d83b85d"
+    },
+    {
+      "path": "audit/promoted-node-v8/coverage-36158-1791664085614-0.json",
+      "bytes": 25026,
+      "sha256": "f088bf60c065a8fc8577a7fab2da2642fa88633c267bd2771717533ff7abbec0"
+    },
+    {
+      "path": "audit/promoted-node-v8/coverage-36159-1791664085636-0.json",
+      "bytes": 25026,
+      "sha256": "6f646d589abac32025d20e0e0515a885591c471a07b40508104aa0ad5fef17bc"
+    },
+    {
+      "path": "audit/promoted-node-v8/coverage-36160-1791664087667-0.json",
+      "bytes": 1521276,
+      "sha256": "434a386295b6a808d2db89dd833ee15fff712aa52129cefd5f3bb0daa5e2c10a"
+    },
+    {
+      "path": "audit/promoted-node-v8/coverage-36186-1791664088661-0.json",
+      "bytes": 1520922,
+      "sha256": "abceb54eb18faa76d7c7fcb5adf0e033d336c2ad2d411ecacd08817e3c67589d"
+    },
+    {
+      "path": "audit/promoted-precheck/control/browser.png",
+      "bytes": 17099,
+      "sha256": "8f0205f868cc9c2a0012b2efc4288c3cb7c71002a956203ba1d87bb75f63df8c"
+    },
+    {
+      "path": "audit/promoted-precheck/control/coverage.json",
+      "bytes": 81272,
+      "sha256": "8b2d49ccd93638db07b734a7fa7eff5cb9502ee351933d33c6b47729a2aa7584"
+    },
+    {
+      "path": "audit/promoted-precheck/control/report.json",
+      "bytes": 112586,
+      "sha256": "179d8988ca678354981119e22a2880ee3c72bca281ff9f21faacba11711335bd"
+    },
+    {
+      "path": "audit/promoted-precheck/healthy/browser.png",
+      "bytes": 19218,
+      "sha256": "73ddb19d5cc3853745b8493644ae6f618e458c98bd5d873e9c069550bf1f89a3"
+    },
+    {
+      "path": "audit/promoted-precheck/healthy/coverage.json",
+      "bytes": 96748,
+      "sha256": "736bd7e6be45e61939cca82b83a95aa00b9d7990b98e6ce3e3d9f30c82c71ccb"
+    },
+    {
+      "path": "audit/promoted-precheck/healthy/report.json",
+      "bytes": 2734522,
+      "sha256": "f09b8bcbf78c34d5e26dfe0a091ed44f6e32be4bc97412910575285d701b9be3"
+    },
+    {
+      "path": "audit/promoted-precheck/independent-audit.json",
+      "bytes": 4758,
+      "sha256": "e4c5ce61bc68addd8db54eaded40a6a2e4913714e13d62045ce2794860fc7d5b"
+    },
+    {
+      "path": "audit/promoted-precheck/original-inputs.json",
+      "bytes": 207645,
+      "sha256": "ff7e5360859dbcb4c4789dd6f858be471ac46e5c090fb361212a6a63dc905234"
+    },
+    {
+      "path": "audit/seal_verifier.py",
+      "bytes": 5585,
+      "sha256": "f5472fe23f657d7730e67ae1265b6c1c3325811ad94ae776b6ae78a1e4743e44"
+    },
+    {
+      "path": "audit/verdict-predictions.json",
+      "bytes": 5768,
+      "sha256": "2b14deb8625a28b184a1efbcfb51aefdb549b3f0a2931881ff423b1b662d0afc"
+    },
+    {
+      "path": "audit/worker-bit-audit.json",
+      "bytes": 44385,
+      "sha256": "14ff725c1cf12fa6e014e33d03d74aa01694d92bf82d3e5b4c56921f036b0e67"
+    },
+    {
+      "path": "audit/worker_audit.py",
+      "bytes": 12818,
+      "sha256": "ff2b9e7e097c0473bc07c03d596c93488447c2b3412d06e96bdd0eb591b61bc5"
+    },
+    {
+      "path": "generated/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "bytes": 11898,
+      "sha256": "509aaeb879c95b90acd26de08a310b23991779cf3564f174bbc1702c9b68a021"
+    },
+    {
+      "path": "generated/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "bytes": 435835,
+      "sha256": "41d5c79624d7799cb9339b3fb754bfb4b744ee959b70d8cc2daedfb0a1fb4ac8"
+    },
+    {
+      "path": "promoted/control/browser.png",
+      "bytes": 17099,
+      "sha256": "8f0205f868cc9c2a0012b2efc4288c3cb7c71002a956203ba1d87bb75f63df8c"
+    },
+    {
+      "path": "promoted/control/coverage.json",
+      "bytes": 81272,
+      "sha256": "d070951e6c7b8c94dbcf5354c921421d66e77179f092021014dc6c37228cdcb5"
+    },
+    {
+      "path": "promoted/control/report.json",
+      "bytes": 112586,
+      "sha256": "0363046a0c6da4eff9cde3d9f082cb3c7043fc4c938a0acd2b3294622637e2d2"
+    },
+    {
+      "path": "promoted/healthy/browser.png",
+      "bytes": 19218,
+      "sha256": "73ddb19d5cc3853745b8493644ae6f618e458c98bd5d873e9c069550bf1f89a3"
+    },
+    {
+      "path": "promoted/healthy/coverage.json",
+      "bytes": 96748,
+      "sha256": "cc08a336fadbd2ca620cf55864c25bb3b19554a1a83417ccce0e3cb769962d5d"
+    },
+    {
+      "path": "promoted/healthy/report.json",
+      "bytes": 2734522,
+      "sha256": "545f42ffe380d57c662e34ca71de129ef7e2c4188ec5d4eef68883a241d7fb61"
+    },
+    {
+      "path": "promoted/independent-audit.json",
+      "bytes": 5064,
+      "sha256": "77fed3318183622e60c9ae7034ec819529b8611431eb3eefefdd3edc2eecabd5"
+    },
+    {
+      "path": "promoted/original-inputs.json",
+      "bytes": 207645,
+      "sha256": "ff7e5360859dbcb4c4789dd6f858be471ac46e5c090fb361212a6a63dc905234"
+    },
+    {
+      "path": "source/promoted/Makefile",
+      "bytes": 119587,
+      "sha256": "0ca2db178ee175f734f63acd537eb8861c2fcc254273f52206dcc2547df95063"
+    },
+    {
+      "path": "source/promoted/renderer/virgl-command/color-images.mjs",
+      "bytes": 2770,
+      "sha256": "8c1b43f830e13f73d1397398e97bf263343f88c1782c683a890cb0f1fbc5e0e1"
+    },
+    {
+      "path": "source/promoted/renderer/virgl-command/float-images.mjs",
+      "bytes": 3132,
+      "sha256": "69543e48426c7ded5178b659eb651b5cb765aa559a0bbf96fd8d34f5cf7cfe46"
+    },
+    {
+      "path": "source/promoted/renderer/virgl-command/resources.mjs",
+      "bytes": 89447,
+      "sha256": "dccd5e97dfa4d53379538f08174e36436123d3af919505f374beaa31c8964281"
+    },
+    {
+      "path": "source/promoted/renderer/virgl-command/tests/standard-float-image-adversarial.mjs",
+      "bytes": 15937,
+      "sha256": "fa0c5b3b2eb6b4f1c8677ea738bce70d856a9b74b5801296e7f4cd120e8abbea"
+    },
+    {
+      "path": "source/promoted/tools/verify-virgl-standard-float-images-adversarial.mjs",
+      "bytes": 7138,
+      "sha256": "1388db40856fa03f8831ff622928280a6a0ee48f004201f3314ad7c1eca9c1a2"
+    },
+    {
+      "path": "source/promoted/tools/verify-virgl-standard-float-images-adversarial.sh",
+      "bytes": 903,
+      "sha256": "bb99d3f62ac5b165be2cd4e3cdbb03d7c74612262fc2be0c98e51f132e40dc8c"
+    },
+    {
+      "path": "source/promoted/tools/virgl-command/standard-float-image-adversarial.py",
+      "bytes": 14028,
+      "sha256": "67bc1944f6c2122e5c671476bf285a4f8b263d04647d3980411b2a89ba93f61c"
+    },
+    {
+      "path": "source/worker-frozen/Makefile",
+      "bytes": 119457,
+      "sha256": "03f85072bc5822aaf214236d164e9f188501fdf731e0ebceb207f660c564f174"
+    },
+    {
+      "path": "source/worker-frozen/evidence/virgl-production-readiness/standard-float-image-gap.json",
+      "bytes": 8368,
+      "sha256": "0aa34d6d4fa0754b3f6b018cbd7fbcf24726ce6c213ff36cab810efa96ce5682"
+    },
+    {
+      "path": "source/worker-frozen/renderer/virgl-command/float-images-README.md",
+      "bytes": 2715,
+      "sha256": "9b430d930b4215d2f7dc3307cafbd6b0923b19c2b86c847b864ff1834c3493c0"
+    },
+    {
+      "path": "source/worker-frozen/renderer/virgl-command/float-images.mjs",
+      "bytes": 3132,
+      "sha256": "69543e48426c7ded5178b659eb651b5cb765aa559a0bbf96fd8d34f5cf7cfe46"
+    },
+    {
+      "path": "source/worker-frozen/renderer/virgl-command/resources.mjs",
+      "bytes": 89447,
+      "sha256": "dccd5e97dfa4d53379538f08174e36436123d3af919505f374beaa31c8964281"
+    },
+    {
+      "path": "source/worker-frozen/renderer/virgl-command/tests/standard-float-image-boundaries.mjs",
+      "bytes": 12990,
+      "sha256": "5c40da2cfbe8a91fa4761f3a3ffd721e5dc3836a7ba1313e1a65449a424a0a0d"
+    },
+    {
+      "path": "source/worker-frozen/renderer/virgl-command/tests/standard-float-image-rig.mjs",
+      "bytes": 9077,
+      "sha256": "a2889aa8022f07c11a6038b3072d6cc21d93420d9021393013ffbeba45107232"
+    },
+    {
+      "path": "source/worker-frozen/renderer/virgl-command/tests/standard-float-images.mjs",
+      "bytes": 13350,
+      "sha256": "dfaa93db253b4660579eef183ea634dc7d15543dc69d69e6e9182f643a028653"
+    },
+    {
+      "path": "source/worker-frozen/renderer/virgl-shader/vendor/src/virgl_hw.h",
+      "bytes": 36318,
+      "sha256": "191ca5cea527949a29e9753b1e31d550f2fed922895d78dabc5c5c3585aa2ff7"
+    },
+    {
+      "path": "source/worker-frozen/tasks/QUEUE.md",
+      "bytes": 113154,
+      "sha256": "8eefb93f1bdb268178b86c8e5295e9d7cdcfbd31e143f7961e11877c2e10714c"
+    },
+    {
+      "path": "source/worker-frozen/tasks/epic-6-transcendence/E6-T11d-truthful-guest-virgl-bringup.md",
+      "bytes": 29462,
+      "sha256": "4ab35b8ce19f0f705caaa4efe76151dc565f8ce9d8e597bcd7c4b0e639d6db0b"
+    },
+    {
+      "path": "source/worker-frozen/tasks/epic-6-transcendence/E6-T11d25-standard-float-images.md",
+      "bytes": 6341,
+      "sha256": "c776c73c27f54e23acbea4a570cf0a4e50b56754ba6514bf851845891ae124f7"
+    },
+    {
+      "path": "source/worker-frozen/tools/verify-virgl-async-jobs.mjs",
+      "bytes": 13147,
+      "sha256": "cd9b587627e7932599de2b9d3acb074339bf6ea1fc7c0fc4c888380022d0f7f0"
+    },
+    {
+      "path": "source/worker-frozen/tools/verify-virgl-blend-equations.mjs",
+      "bytes": 10200,
+      "sha256": "a8847fe9668e355753232634e28017aea80fe498257f4068fed437a0a42ba3c6"
+    },
+    {
+      "path": "source/worker-frozen/tools/verify-virgl-bounded-loops.mjs",
+      "bytes": 17650,
+      "sha256": "0d1769543bc52fb92994faaf39f097b7f9fd2e12f9736dde56360639eede1185"
+    },
+    {
+      "path": "source/worker-frozen/tools/verify-virgl-color-formats.mjs",
+      "bytes": 10759,
+      "sha256": "64f1d62ce7c9ea541ded16e87049f087dd067d22d4985bb629e2f2707bad51c7"
+    },
+    {
+      "path": "source/worker-frozen/tools/verify-virgl-constant-compiler.mjs",
+      "bytes": 17979,
+      "sha256": "6a460c256a26b9203589f4e0c1a8a87230fe21597025a85fb989df8da6d6ac10"
+    },
+    {
+      "path": "source/worker-frozen/tools/verify-virgl-constant-domains.mjs",
+      "bytes": 17053,
+      "sha256": "4c4b92c6f1c992f85674d22bad268ce967b26a3386666217da9a2a90a6d10540"
+    },
+    {
+      "path": "source/worker-frozen/tools/verify-virgl-constants.mjs",
+      "bytes": 16209,
+      "sha256": "9f3d30cf173da44ee2e393515a4b49a17d88cc33c5198f5966cf44e42fc96505"
+    },
+    {
+      "path": "source/worker-frozen/tools/verify-virgl-control.mjs",
+      "bytes": 12440,
+      "sha256": "62a1d2cde021293e3eb73cc68f3353fcc4bd5b0ee3fa3a54cbe416e6793a8c44"
+    },
+    {
+      "path": "source/worker-frozen/tools/verify-virgl-depth-formats.mjs",
+      "bytes": 10247,
+      "sha256": "f88ecabdc0dfcc526b205fd7d670931341e9ed7ae5306e6960963a623d866230"
+    },
+    {
+      "path": "source/worker-frozen/tools/verify-virgl-draw-replay.mjs",
+      "bytes": 14085,
+      "sha256": "00c10f12ae4eea1980d9204bd72c8811840bc806a474ac78fc630b1329919c48"
+    },
+    {
+      "path": "source/worker-frozen/tools/verify-virgl-float-vertex-fetch.mjs",
+      "bytes": 10460,
+      "sha256": "37ade1ff98edfdbfd7ac0129d31fb319580b1c324c5f9d80092ba2b4fc444584"
+    },
+    {
+      "path": "source/worker-frozen/tools/verify-virgl-indirect-constants.mjs",
+      "bytes": 17713,
+      "sha256": "9e7b2f111922daf1312886c3f53a1723afe9011b7f79fb5345a609a7116144df"
+    },
+    {
+      "path": "source/worker-frozen/tools/verify-virgl-inline-uploads.mjs",
+      "bytes": 10130,
+      "sha256": "d086b3547d05592266694885dbfe80aa9b067971a45acb0196e03541c9f10ac9"
+    },
+    {
+      "path": "source/worker-frozen/tools/verify-virgl-object-state.mjs",
+      "bytes": 12540,
+      "sha256": "2a735f4814e3d77349dd53bda7a7ca7e9e673e24737ce80dda5ffe60d52de29c"
+    },
+    {
+      "path": "source/worker-frozen/tools/verify-virgl-pairs.mjs",
+      "bytes": 2662,
+      "sha256": "e73b3fda8ac34c9fff37f54e46a4411c09068accec010b8c4f39158d9d5f2079"
+    },
+    {
+      "path": "source/worker-frozen/tools/verify-virgl-raster-depth.mjs",
+      "bytes": 10914,
+      "sha256": "bb098eb0f570df07380c599dd492de0d754dce187e56515cbaa32dffef4340a9"
+    },
+    {
+      "path": "source/worker-frozen/tools/verify-virgl-render-cache.mjs",
+      "bytes": 10282,
+      "sha256": "6709ec53debb51c7a13e981fa37bc2d0f67129717c53f6952c39b59128239a51"
+    },
+    {
+      "path": "source/worker-frozen/tools/verify-virgl-resource-transfers.mjs",
+      "bytes": 12839,
+      "sha256": "4810364d7cd90cbde432870159ccf364b8983c7309114630239c5fe857410403"
+    },
+    {
+      "path": "source/worker-frozen/tools/verify-virgl-standard-float-images.mjs",
+      "bytes": 9957,
+      "sha256": "64155763abebee08b44aefa2269948e49bdd7f43b04d9187083ab721c72ae4db"
+    },
+    {
+      "path": "source/worker-frozen/tools/verify-virgl-standard-float-images.sh",
+      "bytes": 3005,
+      "sha256": "61ab6d0c544686e9f78d37614cf2741a44811b06691b90179f143d366b82ddb2"
+    },
+    {
+      "path": "source/worker-frozen/tools/verify-virgl-standard-texture-storage-adversarial.mjs",
+      "bytes": 7456,
+      "sha256": "470ff099a3d33d4a710092bad46bf7e8b476200856f447ec4c7117fe930a77c6"
+    },
+    {
+      "path": "source/worker-frozen/tools/verify-virgl-standard-texture-storage.mjs",
+      "bytes": 10293,
+      "sha256": "b78c44309846723baeba8d72ff31eeb77ba5a858e3369339cebcdb865137536d"
+    },
+    {
+      "path": "source/worker-frozen/tools/verify-virgl-standard-uniform-bindings.mjs",
+      "bytes": 11281,
+      "sha256": "41b4c648b694c01114972f33eba8131a8142dd435fe7efca644e4b06b71cb293"
+    },
+    {
+      "path": "source/worker-frozen/tools/verify-virgl-structured-conditionals.mjs",
+      "bytes": 17191,
+      "sha256": "21f7b33f421c1ca3e145e6748a4306c398f8fcc72d6c36afd6c8195421b8c31c"
+    },
+    {
+      "path": "source/worker-frozen/tools/verify-virgl-texture-views.mjs",
+      "bytes": 10658,
+      "sha256": "8c4228815dc9005c3a99453fa03e5d959a40383180c3791b8caec8cb0c0f8a3f"
+    },
+    {
+      "path": "source/worker-frozen/tools/verify-virgl-vertex-constants.mjs",
+      "bytes": 9359,
+      "sha256": "b24de592589cdc3025a47b789dcc769d311117b5de12abea896525ed770a765a"
+    },
+    {
+      "path": "source/worker-frozen/tools/virgl-command/scanout-sources.json",
+      "bytes": 3446,
+      "sha256": "1977499e7dddcebe6fee42ee8f1e97dc42ca9db36a53b4cdd89834e79d229440"
+    },
+    {
+      "path": "source/worker-frozen/tools/virgl-command/standard-float-image-boundary.json",
+      "bytes": 75012,
+      "sha256": "15573e6829afbc3919575d8360734bd8fde993984600fda462e68dab2e9164b9"
+    },
+    {
+      "path": "source/worker-frozen/tools/virgl-command/standard-float-image-cold.py",
+      "bytes": 3647,
+      "sha256": "59b56cac6cee3301da0d0f05d873f0de38b29626ce80ab4021e5befd5d855d4d"
+    },
+    {
+      "path": "source/worker-frozen/tools/virgl-command/standard-float-image-coverage.py",
+      "bytes": 2969,
+      "sha256": "65a3ab97019e01642071f1b2bf48134c997700ae808fd18f923e7925e103ec6b"
+    },
+    {
+      "path": "source/worker-frozen/tools/virgl-command/standard-float-image-fixtures.mjs",
+      "bytes": 4726,
+      "sha256": "d9b8413688afc83165a0a739516d4374edd2361dfb03b24aaad77f7f38762886"
+    },
+    {
+      "path": "source/worker-frozen/tools/virgl-command/standard-float-image-formats.json",
+      "bytes": 5859,
+      "sha256": "8e424f5c12a7a1e77a0762ef893c00bcb06ccf05714ae942fcaf4abc7da4a112"
+    },
+    {
+      "path": "source/worker-frozen/tools/virgl-command/standard-float-image-half.mjs",
+      "bytes": 1737,
+      "sha256": "588e8f37d4debc7e140cd6427807790ae5703400d5e4e340cd139d1f71e389ef"
+    },
+    {
+      "path": "source/worker-frozen/tools/virgl-command/standard-float-image-half.py",
+      "bytes": 1387,
+      "sha256": "de7a5a173d34d664e5e897cad595db5fccf9fde401bb1b3f814449f799b86b82"
+    },
+    {
+      "path": "source/worker-frozen/tools/virgl-command/standard-float-image-mesa-formats.yaml",
+      "bytes": 80486,
+      "sha256": "f0fef33544456468def10d5dffc72a61e8b0e7acc599b700fc65366e6f495a10"
+    },
+    {
+      "path": "source/worker-frozen/tools/virgl-command/standard-float-image-receipt.py",
+      "bytes": 11735,
+      "sha256": "6fc5c229dca9ce98c1ad781a4f44531db6b35d5ef3498abec2375c608440b542"
+    },
+    {
+      "path": "source/worker-frozen/tools/virgl-command/standard-float-image-seal.py",
+      "bytes": 4411,
+      "sha256": "b9f961ec0af19d13c8564c4a2c47fa21bd6efef01555b88bd46ecb2fcd20750f"
+    },
+    {
+      "path": "source/worker-frozen/tools/virgl-command/standard-float-image-values.py",
+      "bytes": 10919,
+      "sha256": "52cbb133ba6f5e5be96fa06a18441cd35fa190852d137ae07dbc1e2c5d75f89e"
+    },
+    {
+      "path": "source/worker-frozen/tools/virgl-command/submit-sources.json",
+      "bytes": 2256,
+      "sha256": "cc62d3ca083eea57b19ce04caf07e3c0ccc4078779236f42a9267151dd839ecb"
+    },
+    {
+      "path": "worker-reference/manifest.json",
+      "bytes": 773,
+      "sha256": "efb7bd48dfa5acf1b69a447f9935b057febffe0ae8ca33d364b7ab62639ebe7e"
+    },
+    {
+      "path": "worker-reference/records.json",
+      "bytes": 7557587,
+      "sha256": "dc9200c84fc4cbb006390265b5510f2c54343c87d6f609ce202b2e3c2d03f4dd"
+    }
+  ]
+}
