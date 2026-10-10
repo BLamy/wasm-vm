@@ -1,0 +1,192 @@
+{
+  "archiveSha256": "eeb29ca7e56cfaa8e8a79538dcf834e3b18e501c31bef5145e959ea437cc4216",
+  "yamlSha256": "f0fef33544456468def10d5dffc72a61e8b0e7acc599b700fc65366e6f495a10",
+  "headerSha256": "191ca5cea527949a29e9753b1e31d550f2fed922895d78dabc5c5c3585aa2ff7",
+  "records": [
+    {
+      "format": 91,
+      "name": "R16_FLOAT",
+      "precision": 16,
+      "components": 1,
+      "pixelBytes": 2,
+      "nativePixelBytes": 2,
+      "readPixelBytes": 16,
+      "internal": "R16F",
+      "upload": "RED",
+      "type": "HALF_FLOAT",
+      "lanes": [
+        0,
+        "0",
+        "0",
+        "1"
+      ],
+      "implicitAlpha": true,
+      "render": true,
+      "descriptor": "- name: R16_FLOAT\n  layout: plain\n  colorspace: RGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [F16]\n  swizzles: [X, 0, 0, 1]\n",
+      "descriptorSha256": "782a6ad32ef672f9f37b85894f543de4b9ea8cf60fd6f06c61d20128bfae1bef",
+      "sourceLine": 1660
+    },
+    {
+      "format": 92,
+      "name": "R16G16_FLOAT",
+      "precision": 16,
+      "components": 2,
+      "pixelBytes": 4,
+      "nativePixelBytes": 4,
+      "readPixelBytes": 16,
+      "internal": "RG16F",
+      "upload": "RG",
+      "type": "HALF_FLOAT",
+      "lanes": [
+        0,
+        1,
+        "0",
+        "1"
+      ],
+      "implicitAlpha": true,
+      "render": true,
+      "descriptor": "- name: R16G16_FLOAT\n  layout: plain\n  colorspace: RGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [F16, F16]\n  swizzles: [X, Y, 0, 1]\n",
+      "descriptorSha256": "060e83c7fcd6b8895d51b025146e60560314cb6660289a556cea71b520c421da",
+      "sourceLine": 1666
+    },
+    {
+      "format": 93,
+      "name": "R16G16B16_FLOAT",
+      "precision": 16,
+      "components": 3,
+      "pixelBytes": 6,
+      "nativePixelBytes": 8,
+      "readPixelBytes": 16,
+      "internal": "RGBA16F",
+      "upload": "RGBA",
+      "type": "HALF_FLOAT",
+      "lanes": [
+        0,
+        1,
+        2,
+        "1"
+      ],
+      "implicitAlpha": true,
+      "render": true,
+      "descriptor": "- name: R16G16B16_FLOAT\n  layout: plain\n  colorspace: RGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [F16, F16, F16]\n  swizzles: [X, Y, Z, 1]\n",
+      "descriptorSha256": "6a3d2cb4bd7c4a506cb82bad428084466bb0cd67a6594512b3ddd52955b090c2",
+      "sourceLine": 1672
+    },
+    {
+      "format": 94,
+      "name": "R16G16B16A16_FLOAT",
+      "precision": 16,
+      "components": 4,
+      "pixelBytes": 8,
+      "nativePixelBytes": 8,
+      "readPixelBytes": 16,
+      "internal": "RGBA16F",
+      "upload": "RGBA",
+      "type": "HALF_FLOAT",
+      "lanes": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "implicitAlpha": false,
+      "render": true,
+      "descriptor": "- name: R16G16B16A16_FLOAT\n  layout: plain\n  colorspace: RGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [F16, F16, F16, F16]\n  swizzles: [X, Y, Z, W]\n",
+      "descriptorSha256": "98720d39d6e9571d35b0080c56bc4734bdefc61c6c4cffd409dffd45600ed925",
+      "sourceLine": 1678
+    },
+    {
+      "format": 28,
+      "name": "R32_FLOAT",
+      "precision": 32,
+      "components": 1,
+      "pixelBytes": 4,
+      "nativePixelBytes": 4,
+      "readPixelBytes": 16,
+      "internal": "R32F",
+      "upload": "RED",
+      "type": "FLOAT",
+      "lanes": [
+        0,
+        "0",
+        "0",
+        "1"
+      ],
+      "implicitAlpha": true,
+      "render": true,
+      "descriptor": "- name: R32_FLOAT\n  layout: plain\n  colorspace: RGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [F32]\n  swizzles: [X, 0, 0, 1]\n",
+      "descriptorSha256": "e138c15c370ca4f7847cf9a1888019a0b855b2e4ba4ec1f8f65d15e39abf2ab1",
+      "sourceLine": 1540
+    },
+    {
+      "format": 29,
+      "name": "R32G32_FLOAT",
+      "precision": 32,
+      "components": 2,
+      "pixelBytes": 8,
+      "nativePixelBytes": 8,
+      "readPixelBytes": 16,
+      "internal": "RG32F",
+      "upload": "RG",
+      "type": "FLOAT",
+      "lanes": [
+        0,
+        1,
+        "0",
+        "1"
+      ],
+      "implicitAlpha": true,
+      "render": true,
+      "descriptor": "- name: R32G32_FLOAT\n  layout: plain\n  colorspace: RGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [F32, F32]\n  swizzles: [X, Y, 0, 1]\n",
+      "descriptorSha256": "cde7d9cf4c00dcdb18daaddaa6147d3f5e94037d0be46a9ab4d940a1aad59caa",
+      "sourceLine": 1546
+    },
+    {
+      "format": 30,
+      "name": "R32G32B32_FLOAT",
+      "precision": 32,
+      "components": 3,
+      "pixelBytes": 12,
+      "nativePixelBytes": 16,
+      "readPixelBytes": 16,
+      "internal": "RGBA32F",
+      "upload": "RGBA",
+      "type": "FLOAT",
+      "lanes": [
+        0,
+        1,
+        2,
+        "1"
+      ],
+      "implicitAlpha": true,
+      "render": true,
+      "descriptor": "- name: R32G32B32_FLOAT\n  layout: plain\n  colorspace: RGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [F32, F32, F32]\n  swizzles: [X, Y, Z, 1]\n",
+      "descriptorSha256": "b12b499951a2c2e6178985a502428e9290a597d89e728dddd8c86108a716a4a9",
+      "sourceLine": 1552
+    },
+    {
+      "format": 31,
+      "name": "R32G32B32A32_FLOAT",
+      "precision": 32,
+      "components": 4,
+      "pixelBytes": 16,
+      "nativePixelBytes": 16,
+      "readPixelBytes": 16,
+      "internal": "RGBA32F",
+      "upload": "RGBA",
+      "type": "FLOAT",
+      "lanes": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "implicitAlpha": false,
+      "render": true,
+      "descriptor": "- name: R32G32B32A32_FLOAT\n  layout: plain\n  colorspace: RGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [F32, F32, F32, F32]\n  swizzles: [X, Y, Z, W]\n",
+      "descriptorSha256": "092e64ebec8546b28ecbf4a165c09cf2ec1171c7c3b48c0f0a7a438e71ee0faa",
+      "sourceLine": 1558
+    }
+  ],
+  "sourceFile": "tools/virgl-command/standard-float-image-mesa-formats.yaml"
+}

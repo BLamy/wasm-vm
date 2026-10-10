@@ -23,7 +23,7 @@ assert.ok(options['node-only'] === undefined || options['node-only'] === 'true')
 const output = path.resolve(options.output);
 await fs.mkdir(output, { recursive: true });
 const codePaths = [
-  'renderer/virgl-command/decoder.mjs', 'renderer/virgl-command/resources.mjs',
+  'renderer/virgl-command/decoder.mjs', 'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs',
   'renderer/virgl-command/resources-README.md', 'renderer/virgl-command/tests/resources-acceptance.mjs',
   'tools/virgl-command/fixtures.mjs', 'tools/virgl-command/resource-fixtures.mjs',
   'tools/verify-virgl-resource-transfers.mjs', 'tools/verify-virgl-resource-transfers.sh',

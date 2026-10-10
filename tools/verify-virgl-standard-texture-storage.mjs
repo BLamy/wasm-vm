@@ -17,7 +17,7 @@ assert.ok(options.output); assert.ok(!options.fault || ["upload-level", "read-le
 for (const flag of ["smoke", "node-only"]) assert.ok(!options[flag] || options[flag] === "true");
 const output = path.resolve(options.output); await fs.mkdir(output, { recursive: true });
 const sourcePaths = [
- 'renderer/virgl-command/resources.mjs','renderer/virgl-command/decoder.mjs',
+ 'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs','renderer/virgl-command/decoder.mjs',
  'renderer/virgl-command/tests/standard-texture-storage.mjs',
  'tools/virgl-command/standard-texture-fixtures.mjs',
  'renderer/virgl-shader/build/wasm/virgl-shader.mjs','renderer/virgl-shader/build/wasm/virgl-shader.wasm',

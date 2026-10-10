@@ -1,5 +1,7 @@
 /** Bounded resource ownership and transfers. See resources-README.md. */
 import {byteColorFormat, STANDARD_COLOR_TRANSFER_PROFILE} from "./color-images.mjs";
+import {floatColorFormat, halfFromFloatWord, STANDARD_FLOAT_COLOR_TRANSFER_PROFILE} from "./float-images.mjs";
+const ownedColorFormat = meta => byteColorFormat(meta.format) || (meta.floatPrecision ? floatColorFormat(meta.format) : null);
 export const RESOURCE_LIMITS = Object.freeze({
   resources: 16, contexts: 8, segments: 256, tickets: 64, leases: 64,
   resourceBytes: 4194304, transferBytes: 4194304,
@@ -76,10 +78,10 @@ function checkedProduct(a, b, maximum, message) {
   require(a === 0 || b <= Math.floor(maximum / a), "out-of-bounds", message);
   return a * b;
 }
-function normalizeMetadata(value, limits, uniform = false, bufferRoles = false, mipmaps = false, colors = false) {
+function normalizeMetadata(value, limits, uniform = false, bufferRoles = false, mipmaps = false, colors = false, floats = false) {
   const meta = record(value, META_KEYS);
   for (const key of META_KEYS) uint(meta[key], key, ["id", "width", "height", "depth", "arraySize"].includes(key));
-  require(meta.depth === 1 && meta.arraySize === 1 && (meta.lastLevel === 0 || mipmaps && meta.target === 2 && ([2, 67, 233].includes(meta.format) || colors && byteColorFormat(meta.format))) && meta.nrSamples === 0 && meta.flags === 0,
+  require(meta.depth === 1 && meta.arraySize === 1 && (meta.lastLevel === 0 || mipmaps && meta.target === 2 && ([2, 67, 233].includes(meta.format) || colors && byteColorFormat(meta.format) || floats && floatColorFormat(meta.format))) && meta.nrSamples === 0 && meta.flags === 0,
     "unsupported-resource", mipmaps ? "Only qualified 2D levels, one layer, one sample and no flags are supported." : "Only one-level, single-layer, single-sample resources without flags are supported.");
   let kind, byteLength, levels, color, gpuByteLength;
   if (meta.target === 0 && meta.format === 64 && meta.height === 1) {
@@ -93,7 +95,7 @@ function normalizeMetadata(value, limits, uniform = false, bufferRoles = false, 
     byteLength = checkedProduct(checkedProduct(meta.width, meta.height, limits.resourceBytes, "Depth allocation is too large."), 2,
       limits.resourceBytes, "Depth allocation is too large.");
   } else {
-    color = colors ? byteColorFormat(meta.format) : null;
+    color = (colors ? byteColorFormat(meta.format) : null) || (floats ? floatColorFormat(meta.format) : null);
     const roles = meta.bind & 10, hints = (1 << 18) | (1 << 20);
     require(meta.target === 2 && ([2, 67, 233].includes(meta.format) || color) && roles !== 0 && (!color?.snorm || roles === 8) && (meta.bind & ~(10 | hints)) === 0,
       "unsupported-resource", "Only required normalized 2D color formats with render/sampler roles and scanout/shared hints are supported.");
@@ -127,7 +129,7 @@ function normalizeMetadata(value, limits, uniform = false, bufferRoles = false, 
     }
   }
   require(byteLength <= limits.resourceBytes, "limit-exceeded", "Resource exceeds per-resource byte limit.");
-  return freeze({ ...meta, kind, byteLength, ...(levels ? { levels } : {}), ...(color ? { pixelBytes: color.pixelBytes, gpuByteLength } : {}) });
+  return freeze({ ...meta, kind, byteLength, ...(levels ? { levels } : {}), ...(color ? { pixelBytes: color.pixelBytes, gpuByteLength, ...(color.precision ? { floatPrecision: color.precision } : {}) } : {}) });
 }
 function inlineWords(value) {
   // The wire submission cap leaves at most 65524 words after its inline header.
@@ -183,7 +185,7 @@ function layoutFor(meta, fields, backingBytes, limits) {
   const depth = meta.kind === "depth-texture", texture = meta.kind === "texture" || meta.kind === "mip-texture" || depth;
   require(texture || (box.y === 0 && box.z === 0 && box.height === 1 && box.depth === 1), "invalid-transfer", "Buffer coordinates are byte-addressed one-dimensional ranges.");
   require(box.z === 0 && box.depth === 1, "invalid-transfer", "Only one 2D layer is supported.");
-  const color = Object.hasOwn(meta, "pixelBytes") ? byteColorFormat(meta.format) : null;
+  const color = Object.hasOwn(meta, "pixelBytes") ? ownedColorFormat(meta) : null;
   const pixelBytes = depth ? 2 : texture ? color?.pixelBytes ?? 4 : 1;
   const rowBytes = checkedProduct(box.width, pixelBytes, limits.transferBytes, "Transfer row exceeds byte limit.");
   const defaultStride = checkedProduct(selected.width, pixelBytes, U32, "Default stride overflows u32.");
@@ -204,7 +206,7 @@ function layoutFor(meta, fields, backingBytes, limits) {
   const tightBytes = checkedProduct(rowBytes, box.height, limits.transferBytes, "Tight transfer exceeds byte limit.");
   const direction = (fields.direction === 2 || fields.flags === 3) ? "readback" : "upload";
   const packedBytes = depth && direction === "readback" ? checkedProduct(tightBytes, 2, RESOURCE_LIMITS.scratchBytes, "Depth conversion exceeds scratch byte limit.") : tightBytes;
-  const colorScratch = color ? checkedProduct(checkedProduct(box.width, box.height, RESOURCE_LIMITS.scratchBytes, "Color transfer is too large."), direction === "readback" ? 4 : Math.max(color.pixelBytes, color.nativePixelBytes), RESOURCE_LIMITS.scratchBytes, "Native color scratch exceeds byte limit.") : 0;
+  const colorScratch = color ? checkedProduct(checkedProduct(box.width, box.height, RESOURCE_LIMITS.scratchBytes, "Color transfer is too large."), direction === "readback" ? color.readPixelBytes ?? 4 : Math.max(color.pixelBytes, color.nativePixelBytes), RESOURCE_LIMITS.scratchBytes, "Native color scratch exceeds byte limit.") : 0;
   return freeze({ kind: texture ? "texture" : "buffer", box: { ...box }, offset, rowBytes, rowCount: box.height,
     ...(meta.kind === "mip-texture" ? { level: fields.level, levelWidth: selected.width, levelHeight: selected.height } : {}),
     rowStride, layerStride, footprintBytes, requiredEnd: offset + footprintBytes, tightBytes,
@@ -299,7 +301,15 @@ export function computeStandardColorTransferLayout(metadata, fields, backingByte
   });
 }
 
-function createStore(options, uniform, bufferRoles = false, mipmaps = false, images = false, colors = false) {
+export function createStandardFloatColorResourceStore(options) { return createStore(options, true, true, true, true, true, true); }
+export function computeStandardFloatColorTransferLayout(metadata, fields, backingByteLength, overrides = {}) {
+  return result(() => {
+    const limits = limitsFor(overrides);
+    return success({ layout: layoutFor(normalizeMetadata(metadata, limits, true, true, true, true, true), normalizedFields(fields), backingByteLength, limits) });
+  });
+}
+
+function createStore(options, uniform, bufferRoles = false, mipmaps = false, images = false, colors = false, floats = false) {
   return result(() => {
     const config = record(options, ["backend", "limits"], ["backend"]), backend = config.backend;
     require(backend && typeof backend === "object", "invalid-input", "A transfer backend is required.");
@@ -307,6 +317,7 @@ function createStore(options, uniform, bufferRoles = false, mipmaps = false, ima
     require(Number.isInteger(backend.maxTextureSize) && backend.maxTextureSize > 0, "invalid-input", "Backend must provide its texture dimension limit.");
     require(!images || typeof backend.copyTextureRange === "function", "invalid-input", "Image views require native GPU copies.");
     require(!colors || backend.colorProfile === STANDARD_COLOR_TRANSFER_PROFILE, "invalid-input", "Byte colors require the qualified native transfer backend.");
+    require(!floats || backend.floatProfile === STANDARD_FLOAT_COLOR_TRANSFER_PROFILE, "invalid-input", "Float images require the selected native transfer backend.");
     const requested = limitsFor(config.limits);
     const limits = Object.freeze({ ...requested, textureSize: Math.min(requested.textureSize, backend.maxTextureSize) });
     const resources = new Map(), live = new Set(), contexts = new Map(), tickets = new Map(), leases = new Map(), storageReads = new Map(), uniformRanges = new Map(), revokedAccess = new Set(), revokedUniform = new Set();
@@ -486,7 +497,7 @@ function createStore(options, uniform, bufferRoles = false, mipmaps = false, ima
         return success({ context: freeze({ id, generation: ctx.generation }) });
       }),
       createResource: operation((metadata) => {
-        const meta = normalizeMetadata(metadata, limits, uniform, bufferRoles, mipmaps, colors);
+        const meta = normalizeMetadata(metadata, limits, uniform, bufferRoles, mipmaps, colors, floats);
         require(!resources.has(meta.id), "resource-exists", "Resource ID is already public.");
         require(live.size < limits.resources, "limit-exceeded", "Live/retained resource count limit exceeded.");
         const allocationBytes = meta.kind === "staging" ? 0 : meta.gpuByteLength ?? meta.byteLength;
@@ -847,7 +858,7 @@ function createStore(options, uniform, bufferRoles = false, mipmaps = false, ima
         require(liveImages.size < limits.leases, "limit-exceeded", "Live/retained native image view limit exceeded.");
         const width = Math.max(1, Math.floor(meta.width / 2 ** firstLevel)), height = Math.max(1, Math.floor(meta.height / 2 ** firstLevel));
         const levels = []; let byteLength = 0, gpuByteLength = 0;
-        const color = Object.hasOwn(meta, "pixelBytes") ? byteColorFormat(meta.format) : null;
+        const color = Object.hasOwn(meta, "pixelBytes") ? ownedColorFormat(meta) : null;
         for (let level = 0, w = width, h = height; level <= lastLevel - firstLevel; level++) {
           const bytes = checkedProduct(checkedProduct(w, h, limits.resourceBytes, "View plane is too large."), color?.pixelBytes ?? 4, limits.resourceBytes, "View plane is too large.");
           require(bytes <= limits.resourceBytes - byteLength, "limit-exceeded", "Complete view mip chain exceeds resource byte limit.");
@@ -912,10 +923,13 @@ export function createStandardColorTransferBackend(gl) { return createTransferBa
 /** Retained original texture jobs preserve raw buffer reads beside color images. */
 export function createStandardTextureTransferBackend(gl) { return createTransferBackend(gl, true, true); }
 
-function createTransferBackend(gl, colors, rawBufferReadbacks = false) {
+export function createStandardFloatColorTransferBackend(gl) { return createTransferBackend(gl, true, true, true); }
+
+function createTransferBackend(gl, colors, rawBufferReadbacks = false, floats = false) {
   return result(() => {
     require(gl && typeof gl.getBufferSubData === "function" && typeof gl.texStorage2D === "function", "invalid-input", "A WebGL2 context is required.");
     require(!colors || gl.getExtension("EXT_render_snorm"), "unsupported-host", "Native signed color copies/readbacks require EXT_render_snorm.");
+    require(!floats || gl.getExtension("EXT_color_buffer_float"), "unsupported-host", "Native floating planes require EXT_color_buffer_float.");
     let vao = null, framebuffer = null, depthProgram = null, disposed = false;
     const allocations = new Set(), pendingReads = new Set();
     const colorFormats = {
@@ -925,14 +939,27 @@ function createTransferBackend(gl, colors, rawBufferReadbacks = false) {
       233: { internal: gl.RGB10_A2, upload: gl.RGBA, type: gl.UNSIGNED_INT_2_10_10_10_REV },
     };
     const colorFormat = (meta) => {
-      const color = colors ? byteColorFormat(meta.format) : null;
-      const profile = color ? { internal: gl[color.internal], upload: gl[color.upload], type: gl[color.type] } : colorFormats[meta.format];
+      const color = (colors ? byteColorFormat(meta.format) : null) || (floats ? floatColorFormat(meta.format) : null);
+      const profile = color ? { internal: gl[color.internal], upload: gl[color.upload], type: gl[color.type], ...(color.precision ? { readType: gl.FLOAT } : {}) } : colorFormats[meta.format];
       require(profile, "unsupported-resource", "Unsupported native texture storage format.");
       return profile;
     };
     // Store uploads are private, dense scratch arrays. Convert in that same
     // reservation: no second CPU image or GPU shadow escapes the byte budgets.
     const nativeUpload = (format, bytes) => {
+      const floating = floats ? floatColorFormat(format) : null;
+      if (floating) {
+        const count = bytes.length / floating.pixelBytes, size = floating.precision / 8, nativeCount = floating.nativePixelBytes / size;
+        const data = new DataView(bytes.buffer, bytes.byteOffset, count * floating.nativePixelBytes);
+        const read = at => size === 2 ? data.getUint16(at, true) : data.getUint32(at, true);
+        const write = (at, value) => size === 2 ? data.setUint16(at, value, true) : data.setUint32(at, value, true);
+        // Both pixels and lanes expand backwards in the one charged buffer.
+        for (let i = count - 1; i >= 0; i--) for (let lane = nativeCount - 1; lane >= 0; lane--) {
+          const word = lane < floating.components ? read(i * floating.pixelBytes + lane * size) : size === 2 ? 0x3c00 : 0x3f800000;
+          write(i * floating.nativePixelBytes + lane * size, word);
+        }
+        return size === 2 ? new Uint16Array(bytes.buffer, bytes.byteOffset, count * nativeCount) : new Float32Array(bytes.buffer, bytes.byteOffset, count * nativeCount);
+      }
       const color = colors ? byteColorFormat(format) : null;
       if (color) {
         const count = bytes.length / color.pixelBytes, native = new Uint8Array(bytes.buffer, bytes.byteOffset, count * color.nativePixelBytes);
@@ -972,6 +999,18 @@ function createTransferBackend(gl, colors, rawBufferReadbacks = false) {
       return bytes;
     };
     const guestReadback = (format, bytes) => {
+      const floating = floats ? floatColorFormat(format) : null;
+      if (floating) {
+        const count = bytes.length / 16, size = floating.precision / 8, data = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+        for (let i = 0; i < count; i++) {
+          for (let lane = 0; lane < floating.components; lane++) {
+            const word = data.getUint32(i * 16 + lane * 4, true), target = i * floating.pixelBytes + lane * size;
+            if (size === 4) data.setUint32(target, word, true);
+            else data.setUint16(target, halfFromFloatWord(word), true);
+          }
+        }
+        return bytes.subarray(0, count * floating.pixelBytes);
+      }
       const color = colors ? byteColorFormat(format) : null;
       if (color) {
         const count = bytes.length / 4;
@@ -1097,7 +1136,7 @@ function createTransferBackend(gl, colors, rawBufferReadbacks = false) {
         if (entry.buffer) gl.deleteBuffer(entry.buffer);
       };
       const backend = {
-        maxTextureSize, ...(colors ? { colorProfile: STANDARD_COLOR_TRANSFER_PROFILE } : {}),
+        maxTextureSize, ...(colors ? { colorProfile: STANDARD_COLOR_TRANSFER_PROFILE } : {}), ...(floats ? { floatProfile: STANDARD_FLOAT_COLOR_TRANSFER_PROFILE } : {}),
         allocate(meta) {
           check();
           let storage = null;
@@ -1117,7 +1156,7 @@ function createTransferBackend(gl, colors, rawBufferReadbacks = false) {
               gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
               // RGB8 has implicit alpha one. RGB10_A2 needs actual stored A=3,
               // then the state executor masks destination alpha writes.
-              if (meta.format === 233 || colors && byteColorFormat(meta.format)?.implicitAlpha && byteColorFormat(meta.format).nativePixelBytes === 4) for (let level = 0; level <= meta.lastLevel; level++) initializeXAlpha(texture, level);
+              if (meta.format === 233 || colors && ownedColorFormat(meta)?.implicitAlpha && ownedColorFormat(meta).nativePixelBytes === (ownedColorFormat(meta).precision ? 4 * ownedColorFormat(meta).precision / 8 : 4)) for (let level = 0; level <= meta.lastLevel; level++) initializeXAlpha(texture, level);
             } else {
               const buffer = gl.createBuffer();
               require(buffer !== null, "backend-error", "WebGL buffer allocation failed.");
@@ -1203,8 +1242,8 @@ function createTransferBackend(gl, colors, rawBufferReadbacks = false) {
               gl.readBuffer(gl.COLOR_ATTACHMENT0);
               require(gl.checkFramebufferStatus(gl.READ_FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE, "backend-error", "Transfer framebuffer is incomplete.");
               const profile = colorFormat(meta);
-              const destination = meta.format === 233 ? new Uint32Array(bytes.buffer) : colors && byteColorFormat(meta.format)?.snorm ? new Int8Array(bytes.buffer) : bytes;
-              gl.readPixels(layout.box.x, layout.box.y, layout.box.width, layout.box.height, gl.RGBA, profile.type, destination);
+              const destination = floats && floatColorFormat(meta.format) ? new Float32Array(bytes.buffer) : meta.format === 233 ? new Uint32Array(bytes.buffer) : colors && byteColorFormat(meta.format)?.snorm ? new Int8Array(bytes.buffer) : bytes;
+              gl.readPixels(layout.box.x, layout.box.y, layout.box.width, layout.box.height, gl.RGBA, profile.readType ?? profile.type, destination);
             } finally {
               gl.framebufferTexture2D(gl.READ_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, null, 0);
             }
@@ -1231,7 +1270,7 @@ function createTransferBackend(gl, colors, rawBufferReadbacks = false) {
                 require(gl.checkFramebufferStatus(gl.READ_FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE, "backend-error", "Readback framebuffer is incomplete.");
                 // Numeric offset selects the PBO overload: no CPU destination here.
                 gl.readPixels(converted ? 0 : layout.box.x, converted ? 0 : layout.box.y, layout.box.width, layout.box.height,
-                  gl.RGBA, converted ? gl.UNSIGNED_BYTE : colorFormat(meta).type, 0);
+                  gl.RGBA, converted ? gl.UNSIGNED_BYTE : colorFormat(meta).readType ?? colorFormat(meta).type, 0);
               } finally {
                 gl.framebufferTexture2D(gl.READ_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, null, 0);
                 gl.bindBuffer(gl.PIXEL_PACK_BUFFER, null);
