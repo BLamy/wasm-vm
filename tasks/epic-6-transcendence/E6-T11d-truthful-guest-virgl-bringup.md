@@ -3,8 +3,9 @@ id: E6-T11d
 epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
-status: pending
-depends_on: [E6-T12i]
+status: blocked
+depends_on: [E6-T12i, E6-T11d1]
+blocked_on: E6-T11d1
 estimate: S
 risk: high
 capstone: false
@@ -49,4 +50,31 @@ require the guest/ABI oracle to fail rather than accept an invalid profile.
 
 ## Verification log
 
-(empty)
+### 2026-10-09 — worker — negative readiness; ordered prerequisite
+
+Cache dependency E6-T12i is independently verified at
+`fcb908e756a5e2fe7eb6f29864e23b0e46652b37`. The first minimum API check cannot
+currently justify an ES2 profile: the ordinary vertex bridge and state reflection
+stop at 46 guest constant vectors (47 including the upstream inaccessible suffix),
+while GLES2 requires at least 128 vertex uniform vectors (Khronos ES2 table 6.20).
+The actual generated Wasm rejects a direct slot127 read before producing ESSL.
+No production capability or guest execution is claimed. The negative record
+`evidence/virgl-production-readiness/constant-floor.json` binds complete source,
+Wasm and source-head hashes to the result. Exact repro on this head:
+
+```sh
+node --input-type=module <<'JS'
+import {createVirglShaderBridge} from './renderer/virgl-shader/index.mjs';
+const bridge=await createVirglShaderBridge();
+console.log(bridge.translate({stage:'vertex',text:'VERT\nDCL CONST[0..127]\nDCL OUT[0], POSITION\n0: MOV OUT[0], CONST[127]\n1: END\n'}));
+JS
+```
+
+Observed `ok:false`, `unsupported-feature`, complete source rejected. Typed caps
+must not overstate this backend floor. Ordered S prerequisite E6-T11d1 implements
+and physically proves bounded ordinary vertex slot127 capacity while retaining
+private raw/certificate limits; it grants no positive production capability by
+itself. Resume bring-up after that fresh verification, then test the full actual
+qualification/handshake. Normal entry also rejects complete92cb/c580 sources;
+private numerical proof is not live admission. Any additional gap found during
+bring-up follows the same ordered-fix rule.
