@@ -1,0 +1,18 @@
+{
+  "schema": "virgl-standard-shader-seal-v1",
+  "task": "E6-T11d4",
+  "sourceHead": "1c17b508d0dc52199613f4c4883486c477773203",
+  "recordingToolHead": "1c17b508d0dc52199613f4c4883486c477773203",
+  "recordingToolSha256": "0870c73ac8ee59700ed2fa286487e0de5e1f7f713ae700d47422becb0dd93ed5",
+  "records": 417,
+  "archiveSha256": "40ea23d821e37165c6b54f54b7cb636e9418601b8b709dbb4bffc6658ac0b99d",
+  "archiveBytes": 15479457,
+  "recordIndexSha256": "387063b8ea31ea8ab77d6b830d5c7a13a5ab9949a815418c46ce4b45dcd767c5",
+  "hotReceiptSha256": "15ec02d8f017edac338f905bb4c817daf73cc518fe7cfbca1fc08a84375e4a09",
+  "coldReportSha256": "b82e974188460b4f05df5b6a944a0e4872cd05d500e925bcbcfe29d29c7c5fdc",
+  "coldReceiptSha256": "3c402acbecf99819614c82ae183e1b89ced721680f7e736a0ab21257b67634f0",
+  "guestExecution": false,
+  "portableDomainCertified": false,
+  "authority": "isolated-standard-shader-compiler",
+  "productionDrawAuthority": false
+}

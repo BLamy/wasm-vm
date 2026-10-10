@@ -3,7 +3,7 @@ id: E6-T11d4
 epic: 6
 title: Compile bounded ordinary guest shaders with standard WebGL2 semantics
 priority: 525.027037
-status: in-progress
+status: implemented
 depends_on: [E6-T11d3]
 estimate: S
 risk: high
@@ -79,6 +79,53 @@ Check that no new facet result is confused with an old exact or conditional
 contract; existing private rejection/results must carry unchanged.
 
 ## Verification log
+
+### 2026-10-09 — worker — implemented; frozen declaration repairs
+
+Runtime/source and sealing head: `1c17b508d0dc52199613f4c4883486c477773203`. Commands:
+
+```sh
+VIRGL_STANDARD_SHADER_EVIDENCE_DIR=target/evidence/virgl-standard-shader-final-declaration-fixes make verify-E6-T11d4
+python3 tools/virgl-standard-shader/cold.py --output target/evidence/virgl-standard-shader-final-declaration-fixes-cold
+python3 tools/virgl-standard-shader/seal.py target/evidence/virgl-standard-shader-final-declaration-fixes target/evidence/virgl-standard-shader-final-declaration-fixes-cold evidence/virgl-standard-shader/declaration-repair
+```
+
+All exit zero. This new complete hot recording and final pristine exact-head
+clone demonstrate 669 independent native/sanitized/actual-Wasm cases, separately
+parsed TGSI metadata, 265 physical compiles/programs, 129 hardware GPU frames
+and 2,390,688 independently recomputed pixels. Both 512-vector banks execute
+with isolated zero declarations placed last. Unused SAMP/SVIEW declarations
+execute on both stages without requiring a texture. Used/unused mixtures and
+missing-declaration rejections preserve the separate declared/read masks.
+The fixed-memory/stack/allocation and retained ordinary/raw/private checks also
+pass. The actual SIN-to-COS emission mutation is independently caught.
+
+`evidence/virgl-standard-shader/declaration-repair/{manifest.json,records.json,recording.tar.gz}`
+seals 417 records and 15,479,457 compressed bytes. Archive
+SHA256 `40ea23d821e37165c6b54f54b7cb636e9418601b8b709dbb4bffc6658ac0b99d`; index
+`387063b8ea31ea8ab77d6b830d5c7a13a5ab9949a815418c46ce4b45dcd767c5`. Hot receipt
+`15ec02d8f017edac338f905bb4c817daf73cc518fe7cfbca1fc08a84375e4a09`; cold receipt
+`3c402acbecf99819614c82ae183e1b89ced721680f7e736a0ab21257b67634f0`; cold report
+`b82e974188460b4f05df5b6a944a0e4872cd05d500e925bcbcfe29d29c7c5fdc`. Sealing binds its actual helper bytes
+`0870c73ac8ee59700ed2fa286487e0de5e1f7f713ae700d47422becb0dd93ed5` at that same frozen head.
+The cold checkout is clean before and after its full acceptance with inherited
+compiler/RUST/CARGO/browser overrides scrubbed.
+
+The intermediate b233979a hot run's receipt found only an untracked, unused
+critic proposal in the shader source directory after every product check passed.
+The proposal was preserved in
+`target/evidence/virgl-standard-shader-review-proposals/standard-adversarial.mjs`;
+only affected browser recordings were repeated at the identical frozen b233979a
+head and its clean clone also passed. Those intermediate recordings remain
+immutable at `target/evidence/virgl-standard-shader-order-final-complete` and
+its `-cold` sibling. They are superseded for this final runtime claim by the
+new full submission above after the independently found unused-sampler repair.
+
+Prior critic HELD results carry only where their runtime/dependency boundary and
+evidence digest are unchanged. The new separate critic must falsify the repaired
+transactions and finish P10 changed-hunk/defensive coverage closure. This is an
+isolated standard compiler claim; production negotiation, full API, guest boot,
+GPU execution bounds and throughput remain unclaimed and gated.
 
 ### 2026-10-09 — worker — unused sampler declaration repair
 
