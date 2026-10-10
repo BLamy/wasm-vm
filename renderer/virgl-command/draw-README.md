@@ -153,3 +153,24 @@ GPU calls and completion fences. The independent literal-packet oracle catches
 an actual served divisor corruption. Legacy factories retain their old grammar,
 result shape and behavior. Zero stride, other primitive modes, restart lowering
 and production capability negotiation remain subsequent boundaries.
+
+`make verify-E6-T11d7` admits zero-stride float attributes only through the
+host-selected standard async factory. Each active R32/RG32/RGB32/RGBA32 record
+uses the retained GPU buffer at buffer offset plus element source offset;
+missing lanes are 0,0,0,1. Native generic values replace disabled arrays, with
+native divisor zero even when the wire divisor is positive. Prefix restoration
+resets generic values; every actual draw restores the freshly collected values.
+These retain native GLES floating-point authority, not an exact raw-bit input
+certificate. Legacy factories continue to reject active zero stride.
+
+A draw batches at most sixteen constant reads and one index read. Their dense
+payload sum must fit the job transfer budget before any read starts. Existing
+opaque tickets retain each resource generation and content revision; an already
+collected ticket stays owned until every read is ready and the whole batch is
+validated immediately before the draw. Cancellation, stale storage and partial
+ticket allocation drain all started reads. Explicit renderer/store disposal
+invalidates the batch without claiming GPU completion. No finish or blocking
+poll is used. Original words, native generic values, fetch extents and physical
+pixels are recorded. The unchanged D6 and legacy async boundaries are retained
+in the frozen gate. This isolated facet does not enable production caps or the
+guest device; full API qualification and guest offload remain ordered work.

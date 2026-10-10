@@ -69,6 +69,7 @@ function traceGL(gl, c, delay, hostIndexLimit) {
             offset:gl.getVertexAttribOffset(location,gl.VERTEX_ATTRIB_ARRAY_POINTER),
             components:gl.getVertexAttrib(location,gl.VERTEX_ATTRIB_ARRAY_SIZE),
             enabled:gl.getVertexAttrib(location,gl.VERTEX_ATTRIB_ARRAY_ENABLED),
+            genericValues:[...gl.getVertexAttrib(location,gl.CURRENT_VERTEX_ATTRIB)],
             buffer:objects.get(gl.getVertexAttrib(location,gl.VERTEX_ATTRIB_ARRAY_BUFFER_BINDING))??null};
         }) });
       const result = value.apply(target, args);
@@ -81,12 +82,16 @@ function traceGL(gl, c, delay, hostIndexLimit) {
         index: args[1], result: result ? { name: result.name, type: result.type, size: result.size } : null });
       if (/^create(Buffer|Texture|Framebuffer|VertexArray|Sampler|Program|Shader)$/.test(name) && result) objects.set(result, next++);
       if (name === "fenceSync" && result) {
-        const entry = { id: next++, turn, lastPoll: -1, left: delay }; syncs.set(result, entry);
+        const entry = { id: next++, turn, lastPoll: -1, left: typeof delay === "function" ? delay({turn,label:currentLabel,ordinal:events.filter(e=>e.name==="fenceSync").length}) : delay }; syncs.set(result, entry);
         events.push({ name, turn, label: currentLabel, sync: entry.id });
       }
       if (name === "getBufferSubData") events.push({ name, turn, label: currentLabel, bytes: args[2].byteLength, ...(args[2].byteLength<=64?{hex:hex(new Uint8Array(args[2].buffer,args[2].byteOffset,args[2].byteLength))}:{}) });
+      if (name === "copyBufferSubData") events.push({ name, turn, label: currentLabel, args: [...args],
+        source: objects.get(gl.getParameter(gl.COPY_READ_BUFFER_BINDING)) ?? null,
+        destination: objects.get(gl.getParameter(gl.COPY_WRITE_BUFFER_BINDING)) ?? null });
+      if (name === "vertexAttrib4fv") events.push({ name, turn, label: currentLabel, location: args[0], values: [...args[1]] });
       if (name === "uniform4uiv") events.push({ name, turn, label: currentLabel, words: [...args[1]] });
-      if (name === "deleteSync") syncs.delete(args[0]);
+      if (name === "deleteSync") { events.push({ name, turn, label: currentLabel, sync: syncs.get(args[0])?.id ?? null }); syncs.delete(args[0]); }
       return result;
     };
     methods.set(name, fn); return fn;
@@ -94,15 +99,16 @@ function traceGL(gl, c, delay, hostIndexLimit) {
   return { gl: traced, calls, events, id: value => objects.get(value) ?? null,
     nextTurn() { turn++; }, label(value) { currentLabel = value; } };
 }
-function rig(gl, bridge, c, { delay = 0, step = 64, width = 16, height = 16, drawLimits, hostIndexLimit } = {}) {
+function rig(gl, bridge, c, { delay = 0, step = 64, width = 16, height = 16, drawLimits, hostIndexLimit, resourceLimits, jobLimits,
+  factory = createVirglStandardAsyncRenderer } = {}) {
   const trace = traceGL(gl, c, delay, hostIndexLimit), allocations = [];
   const backend = c.ok(createWebGL2TransferBackend(trace.gl), "real transfer backend").backend;
   const owner = c.ok(createResourceStore({ backend: { ...backend, allocate(metadata) {
     const storage = backend.allocate(metadata); allocations.push({ metadata, storage }); return storage;
-  } } }), "owned resources");
-  const renderer = c.ok(createVirglStandardAsyncRenderer({
+  } }, ...(resourceLimits ? { limits: resourceLimits } : {}) }), "owned resources");
+  const renderer = c.ok(factory({
     gl: trace.gl, shaderBridge: bridge, resources: owner.store, bindings: owner.bindings, asyncAccess: owner.asyncAccess,
-    jobLimits: { commandsPerStep: step }, ...(drawLimits ? { drawLimits } : {}),
+    jobLimits: { commandsPerStep: step, ...jobLimits }, ...(drawLimits ? { drawLimits } : {}),
   }), "host-selected renderer").renderer;
   c.same(Object.hasOwn(renderer, "executeSubmission"), false, "async factory has no synchronous escape");
   for (const ctx of [1, 2]) { c.ok(owner.store.createContext(ctx), "resource context"); c.ok(renderer.createContext(ctx), "renderer context"); }
