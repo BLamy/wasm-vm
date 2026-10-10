@@ -3,7 +3,7 @@ id: E6-T11d25
 epic: 6
 title: Preserve original F16 and F32 2D image transfers and retained views
 priority: 525.027039000367
-status: in-progress
+status: implemented
 depends_on: [E6-T11d24]
 estimate: S
 risk: high
@@ -41,3 +41,21 @@ Read the primary [WebGL EXT_color_buffer_float specification](https://registry.k
 The new float owner/backend stays explicitly selected; historical byte-color/resource factories and all wire/compiler/renderer/guest surfaces retain their complete recorded admission. The full original Mesa format YAML is checked in with its pinned digest, alongside complete descriptor ranges and enums. Ephemeral self-validation passed the 96-run physical matrix, lifetime/native-failure boundaries, all 65,536 original half words and 190,474 independent rounding points. All three actual wrong native lane/precision/copy controls fail after consumed physical fences. These are inner-loop checks, not the final submission.
 
 The prescribed high-risk submission is `make verify-E6-T11d25`: source/syntax/format checks; unchanged C/Wasm rebuild; pure own-data/layout/budget boundaries; independent representation oracle; physical matrix; three varied schedule/lifetime/native-error recordings; actual native controls; independent complete-plane/type/byte-footprint inverse; affected async/uniform/byte-color/texture browser gates; full V8 regions/source closures; one final pristine exact-head clone and full seal. Rust and the public demo/device are byte-identical to D24 and do not acquire production graphics authority from this isolated selected JavaScript storage boundary. Their broad regression walls remain outside this narrow submission; the production integration task still requires built demo, actual guest execution, scanout and deployment.
+
+### 2026-10-10 — worker — frozen original floating image submission
+
+Claimed source/harness head: `18ef4acfdebd30dd9edef9c3a1cca1e1fc4490dc`.
+Exact hot command: `VIRGL_FLOAT_IMAGE_EVIDENCE_DIR=target/evidence/virgl-standard-float-images-final EMCC=/Users/blamy/.cache/wasm-vm/emsdk/4.0.22/wasm-vm-emcc make verify-E6-T11d25`.
+Final pristine command, once: `python3 tools/virgl-command/standard-float-image-cold.py --output target/evidence/virgl-standard-float-images-cold-final`.
+Seal command: `python3 tools/virgl-command/standard-float-image-seal.py target/evidence/virgl-standard-float-images-final target/evidence/virgl-standard-float-images-cold-final evidence/virgl-standard-float-images/worker`.
+
+Both runs pass at the exact frozen head. Each includes 240 original own-data/layout/budget records; all 65,536 original binary16 words and 190,474 independent binary32 rounding patterns; 96 complete physical format/size/mip/exceptional transfer runs; three varied 16-run lifetime/native-failure schedules; and actual wrong native upload-lane/storage-precision/copy-level controls. The unchanged independent original-input oracle audits 50,908 native components, 111,476 public readback components, 107,808 complete native upload bytes, 24,672 untouched padding bytes and 10,345 logical/native/scratch footprint checks per run. Every physical negative control completes an actual GPU fence and fails that original-value inverse. Native-only revision refresh, retained old generations, unequal IDs, cancellation/disposal, zero terminal budgets and exactly-once native deletion are recorded. Nonfinite original inputs establish bounded safety and custody where GL values are unspecified, without a NaN payload/classification/readback equivalence claim.
+
+The actual M4 Metal browser records have zero console/page/request errors. Async jobs, uniform binding smoke, the full historical byte-color matrix and retained texture-operation smoke pass. Full nested V8 records, all 80 added runtime-line samples, complete original command/backing/planes and immutable source/served/generated closures remain evidence; line samples do not substitute for the critic's full interval audit. The compiler/wire/cache/renderer/guest boundaries are unchanged. The authenticated inverse accounts for the explicitly selected resource migration and 26 dependency-only HTTP closures; D22/D24 worker/critic archive/index identities carry forward unchanged.
+
+Hot receipt SHA256: `74626b8383d3a8ccea044bda25ae349ab0462a79b5fd2a29c5319ab639341982`.
+Cold receipt SHA256: `11450209d60ffaeab8f6de9f416ad0b7567321d6f0d51d265388bbf7eb467eb4`.
+Cold report SHA256: `69435d0be5916c036481cd50410839610446c7d423c01129d1f143b4457d1276`.
+Cold clone: `/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-float-image-cold-ujxnaawx/wasm-vm`, exact frozen HEAD, empty `statusBefore`/`statusAfter`, exit0. Every acceptance file and both generated compiler artifacts are retained in the full seal; source closures contain 531 files per run. The seal manifest records 43274 full members, archive SHA256 `560341ec9107b78c74be23176fc3d6a5bd988da08674e96f69855f2eec259eb9` and index SHA256 `dc9200c84fc4cbb006390265b5510f2c54343c87d6f609ce202b2e3c2d03f4dd`.
+
+This is a worker claim submitted for a fresh adversarial verifier. It establishes only selected original F16/F32 image storage, transfers and retained ranges. It enables no draw consumer, production capset, guest graphics, worker/scanout, deployment or performance authority. The explicit production graphics request continues through the next ordered consumer and integration gates after independent verification.
