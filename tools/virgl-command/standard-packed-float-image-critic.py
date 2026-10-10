@@ -318,9 +318,14 @@ class Critic:
                 self.held('C20',member,'/browserResult,/browserCoverage',sha(members[member]),'Affected original native regression passed with full serving/native closure.')
         cold=json.loads(members['cold/report.json']);assert cold['gitHead']==cold['cloneHead']==FREEZE and cold['status']=='passed' and cold['exitCode']==0 and not cold['statusBefore'] and not cold['statusAfter']
         assert sha(members['cold/cold.log'])==cold['logSha256'] and sha(members['cold/receipt.json'])==cold['receiptSha256']
-        clone=Path(cold['clone']);assert subprocess.check_output(['git','rev-parse','HEAD'],cwd=clone,text=True).strip()==FREEZE
-        assert not subprocess.check_output(['git','status','--porcelain','--untracked-files=all'],cwd=clone,text=True).strip()
-        self.held('C02','cold/report.json','/statusBefore,/statusAfter,/cloneHead,/receiptSha256',sha(members['cold/report.json']),'Original final clone remains exact and pristine; scrub algorithm removes Rust/Cargo/compiler/browser/npm overrides before default acceptance. Carried without redundant rebuild.')
+        # The complete sealed cold proof survives OS removal of its scratch clone.
+        # Interrogate a still-present clone too, without making recurring proof
+        # authentication depend on a historical temporary directory.
+        clone=Path(cold['clone'])
+        if clone.exists():
+            assert subprocess.check_output(['git','rev-parse','HEAD'],cwd=clone,text=True).strip()==FREEZE
+            assert not subprocess.check_output(['git','status','--porcelain','--untracked-files=all'],cwd=clone,text=True).strip()
+        self.held('C02','cold/report.json','/statusBefore,/statusAfter,/cloneHead,/receiptSha256',sha(members['cold/report.json']),'Complete original exact/pristine cold recording authenticated; an existing scratch clone is also checked. Scrub algorithm removes Rust/Cargo/compiler/browser/npm overrides before default acceptance. Carried without redundant rebuild.')
         for prefix in ['evidence/virgl-standard-float-images','evidence/virgl-standard-float-consumer']:
             for role in ['worker','verifier']:
                 p=ROOT/prefix/role;m,data=self.seal(p)
