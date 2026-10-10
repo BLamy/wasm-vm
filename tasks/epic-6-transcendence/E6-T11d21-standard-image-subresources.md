@@ -3,7 +3,7 @@ id: E6-T11d21
 epic: 6
 title: Render original 2D sampler ranges and framebuffer mip surfaces
 priority: 525.02703900036
-status: pending
+status: in-progress
 depends_on: [E6-T11d20]
 estimate: S
 risk: high
@@ -33,3 +33,7 @@ D20 supplies native mip storage and transfers, but its selected decoder still re
 ### 2026-10-10 — worker — verified predecessor and ordered selection
 
 D20 is independently verified at `c0488902039a5fb5f9efc8c62101798668b2ce4a` and its exclusive lease is released. Original decoder/resource/state bytes and fixed-memory Wasm in the negative image record remain unchanged through that verdict. The explicit request to finish production guest graphics selects this next original image boundary ahead of unrelated queue work. M4 prechecks in /tmp are exploratory; only the forthcoming frozen original-wire/native recording and fresh independent critic can grant image authority. Old API/capset, guest and deployment gates stay closed.
+
+### 2026-10-10 — worker — activated
+
+This original image-subresource boundary is the sole active task, with D20 independently verified. Temporary full/truncated, format, GPU-only, lifetime, budget, native-error and maximum-level prechecks passed on actual M4 Metal; they are not the final submission. Freeze the runtime and original harness, run the selected affected gates once, record full native/V8/source custody, run one final pristine scrubbed clone, seal and submit to a fresh critic.
