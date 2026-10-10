@@ -1,0 +1,1805 @@
+{
+  "task": "E6-T12g6m3a",
+  "status": "HELD",
+  "predictions": [
+    "P3",
+    "P4",
+    "P5",
+    "P6"
+  ],
+  "captures": [
+    {
+      "path": "unpacked/cold/acceptance/gpu-1013904242/report.json",
+      "sha256": "faa19850b38ff948f83c7a61afe37617e974390bcc352ea27cabb07e3a281033",
+      "frames": 131,
+      "literalPixels": 8384,
+      "rejections": 269,
+      "checkedUploadWords": 61460,
+      "asyncStates": 1546,
+      "fault": false,
+      "unwrappedInherited": false,
+      "seed": 1013904242,
+      "points": [
+        {
+          "point": "acceptance.rigs[0]",
+          "name": "vertex-0-x-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[1]",
+          "name": "vertex-45-y-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[2]",
+          "name": "vertex-inactive-46-sync",
+          "frames": 5,
+          "attacks": 12,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[3]",
+          "name": "vertex-inactive-47-sync",
+          "frames": 6,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[4]",
+          "name": "fragment-0-x-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[5]",
+          "name": "fragment-45-y-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[6]",
+          "name": "fragment-inactive-46-sync",
+          "frames": 5,
+          "attacks": 12,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[7]",
+          "name": "fragment-inactive-47-sync",
+          "frames": 6,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[8]",
+          "name": "vertex-pruned-46-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[9]",
+          "name": "fragment-pruned-46-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[10]",
+          "name": "fragment-composed-conversion-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[11]",
+          "name": "fragment-composed-raster-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[12]",
+          "name": "vertex-0-x-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[13]",
+          "name": "vertex-45-y-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[14]",
+          "name": "vertex-inactive-46-async",
+          "frames": 5,
+          "attacks": 12,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[15]",
+          "name": "vertex-inactive-47-async",
+          "frames": 6,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[16]",
+          "name": "fragment-0-x-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[17]",
+          "name": "fragment-45-y-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[18]",
+          "name": "fragment-inactive-46-async",
+          "frames": 5,
+          "attacks": 12,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[19]",
+          "name": "fragment-inactive-47-async",
+          "frames": 6,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[20]",
+          "name": "vertex-pruned-46-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[21]",
+          "name": "fragment-pruned-46-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[22]",
+          "name": "fragment-composed-conversion-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[23]",
+          "name": "fragment-composed-raster-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[24]",
+          "name": "owned lifecycle",
+          "frames": 7,
+          "attacks": 1,
+          "allNativeObjectsDeleted": true
+        }
+      ]
+    },
+    {
+      "path": "unpacked/cold/acceptance/gpu-1779033703/report.json",
+      "sha256": "902921f79d597fd8ed0ce810d71306fb66cbc7e5c3c6db05643f9bb45c89d0ac",
+      "frames": 131,
+      "literalPixels": 8384,
+      "rejections": 269,
+      "checkedUploadWords": 61460,
+      "asyncStates": 1568,
+      "fault": false,
+      "unwrappedInherited": false,
+      "seed": 1779033703,
+      "points": [
+        {
+          "point": "acceptance.rigs[0]",
+          "name": "vertex-0-x-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[1]",
+          "name": "vertex-45-y-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[2]",
+          "name": "vertex-inactive-46-sync",
+          "frames": 5,
+          "attacks": 12,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[3]",
+          "name": "vertex-inactive-47-sync",
+          "frames": 6,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[4]",
+          "name": "fragment-0-x-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[5]",
+          "name": "fragment-45-y-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[6]",
+          "name": "fragment-inactive-46-sync",
+          "frames": 5,
+          "attacks": 12,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[7]",
+          "name": "fragment-inactive-47-sync",
+          "frames": 6,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[8]",
+          "name": "vertex-pruned-46-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[9]",
+          "name": "fragment-pruned-46-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[10]",
+          "name": "fragment-composed-conversion-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[11]",
+          "name": "fragment-composed-raster-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[12]",
+          "name": "vertex-0-x-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[13]",
+          "name": "vertex-45-y-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[14]",
+          "name": "vertex-inactive-46-async",
+          "frames": 5,
+          "attacks": 12,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[15]",
+          "name": "vertex-inactive-47-async",
+          "frames": 6,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[16]",
+          "name": "fragment-0-x-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[17]",
+          "name": "fragment-45-y-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[18]",
+          "name": "fragment-inactive-46-async",
+          "frames": 5,
+          "attacks": 12,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[19]",
+          "name": "fragment-inactive-47-async",
+          "frames": 6,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[20]",
+          "name": "vertex-pruned-46-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[21]",
+          "name": "fragment-pruned-46-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[22]",
+          "name": "fragment-composed-conversion-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[23]",
+          "name": "fragment-composed-raster-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[24]",
+          "name": "owned lifecycle",
+          "frames": 7,
+          "attacks": 1,
+          "allNativeObjectsDeleted": true
+        }
+      ]
+    },
+    {
+      "path": "unpacked/cold/acceptance/gpu-3144134277/report.json",
+      "sha256": "81d5ae2b7409aa92c9483a9bde04474470f8bdef18e2c3228a86fd992f6ce207",
+      "frames": 131,
+      "literalPixels": 8384,
+      "rejections": 269,
+      "checkedUploadWords": 61460,
+      "asyncStates": 1690,
+      "fault": false,
+      "unwrappedInherited": false,
+      "seed": 3144134277,
+      "points": [
+        {
+          "point": "acceptance.rigs[0]",
+          "name": "vertex-0-x-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[1]",
+          "name": "vertex-45-y-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[2]",
+          "name": "vertex-inactive-46-sync",
+          "frames": 5,
+          "attacks": 12,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[3]",
+          "name": "vertex-inactive-47-sync",
+          "frames": 6,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[4]",
+          "name": "fragment-0-x-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[5]",
+          "name": "fragment-45-y-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[6]",
+          "name": "fragment-inactive-46-sync",
+          "frames": 5,
+          "attacks": 12,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[7]",
+          "name": "fragment-inactive-47-sync",
+          "frames": 6,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[8]",
+          "name": "vertex-pruned-46-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[9]",
+          "name": "fragment-pruned-46-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[10]",
+          "name": "fragment-composed-conversion-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[11]",
+          "name": "fragment-composed-raster-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[12]",
+          "name": "vertex-0-x-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[13]",
+          "name": "vertex-45-y-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[14]",
+          "name": "vertex-inactive-46-async",
+          "frames": 5,
+          "attacks": 12,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[15]",
+          "name": "vertex-inactive-47-async",
+          "frames": 6,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[16]",
+          "name": "fragment-0-x-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[17]",
+          "name": "fragment-45-y-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[18]",
+          "name": "fragment-inactive-46-async",
+          "frames": 5,
+          "attacks": 12,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[19]",
+          "name": "fragment-inactive-47-async",
+          "frames": 6,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[20]",
+          "name": "vertex-pruned-46-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[21]",
+          "name": "fragment-pruned-46-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[22]",
+          "name": "fragment-composed-conversion-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[23]",
+          "name": "fragment-composed-raster-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[24]",
+          "name": "owned lifecycle",
+          "frames": 7,
+          "attacks": 1,
+          "allNativeObjectsDeleted": true
+        }
+      ]
+    },
+    {
+      "path": "unpacked/hot/gpu-1013904242/report.json",
+      "sha256": "0bfb34a2fe9f298fa0ed2387cfadcb644ebd3dea7899a0f9282a792543ac629b",
+      "frames": 131,
+      "literalPixels": 8384,
+      "rejections": 269,
+      "checkedUploadWords": 61460,
+      "asyncStates": 1546,
+      "fault": false,
+      "unwrappedInherited": false,
+      "seed": 1013904242,
+      "points": [
+        {
+          "point": "acceptance.rigs[0]",
+          "name": "vertex-0-x-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[1]",
+          "name": "vertex-45-y-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[2]",
+          "name": "vertex-inactive-46-sync",
+          "frames": 5,
+          "attacks": 12,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[3]",
+          "name": "vertex-inactive-47-sync",
+          "frames": 6,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[4]",
+          "name": "fragment-0-x-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[5]",
+          "name": "fragment-45-y-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[6]",
+          "name": "fragment-inactive-46-sync",
+          "frames": 5,
+          "attacks": 12,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[7]",
+          "name": "fragment-inactive-47-sync",
+          "frames": 6,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[8]",
+          "name": "vertex-pruned-46-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[9]",
+          "name": "fragment-pruned-46-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[10]",
+          "name": "fragment-composed-conversion-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[11]",
+          "name": "fragment-composed-raster-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[12]",
+          "name": "vertex-0-x-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[13]",
+          "name": "vertex-45-y-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[14]",
+          "name": "vertex-inactive-46-async",
+          "frames": 5,
+          "attacks": 12,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[15]",
+          "name": "vertex-inactive-47-async",
+          "frames": 6,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[16]",
+          "name": "fragment-0-x-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[17]",
+          "name": "fragment-45-y-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[18]",
+          "name": "fragment-inactive-46-async",
+          "frames": 5,
+          "attacks": 12,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[19]",
+          "name": "fragment-inactive-47-async",
+          "frames": 6,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[20]",
+          "name": "vertex-pruned-46-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[21]",
+          "name": "fragment-pruned-46-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[22]",
+          "name": "fragment-composed-conversion-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[23]",
+          "name": "fragment-composed-raster-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[24]",
+          "name": "owned lifecycle",
+          "frames": 7,
+          "attacks": 1,
+          "allNativeObjectsDeleted": true
+        }
+      ]
+    },
+    {
+      "path": "unpacked/hot/gpu-1779033703/report.json",
+      "sha256": "e188b714d76f424a6319483e61435fd89f05bb493b7f8ce2fdd626a71999442a",
+      "frames": 131,
+      "literalPixels": 8384,
+      "rejections": 269,
+      "checkedUploadWords": 61460,
+      "asyncStates": 1568,
+      "fault": false,
+      "unwrappedInherited": false,
+      "seed": 1779033703,
+      "points": [
+        {
+          "point": "acceptance.rigs[0]",
+          "name": "vertex-0-x-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[1]",
+          "name": "vertex-45-y-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[2]",
+          "name": "vertex-inactive-46-sync",
+          "frames": 5,
+          "attacks": 12,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[3]",
+          "name": "vertex-inactive-47-sync",
+          "frames": 6,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[4]",
+          "name": "fragment-0-x-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[5]",
+          "name": "fragment-45-y-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[6]",
+          "name": "fragment-inactive-46-sync",
+          "frames": 5,
+          "attacks": 12,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[7]",
+          "name": "fragment-inactive-47-sync",
+          "frames": 6,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[8]",
+          "name": "vertex-pruned-46-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[9]",
+          "name": "fragment-pruned-46-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[10]",
+          "name": "fragment-composed-conversion-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[11]",
+          "name": "fragment-composed-raster-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[12]",
+          "name": "vertex-0-x-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[13]",
+          "name": "vertex-45-y-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[14]",
+          "name": "vertex-inactive-46-async",
+          "frames": 5,
+          "attacks": 12,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[15]",
+          "name": "vertex-inactive-47-async",
+          "frames": 6,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[16]",
+          "name": "fragment-0-x-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[17]",
+          "name": "fragment-45-y-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[18]",
+          "name": "fragment-inactive-46-async",
+          "frames": 5,
+          "attacks": 12,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[19]",
+          "name": "fragment-inactive-47-async",
+          "frames": 6,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[20]",
+          "name": "vertex-pruned-46-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[21]",
+          "name": "fragment-pruned-46-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[22]",
+          "name": "fragment-composed-conversion-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[23]",
+          "name": "fragment-composed-raster-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[24]",
+          "name": "owned lifecycle",
+          "frames": 7,
+          "attacks": 1,
+          "allNativeObjectsDeleted": true
+        }
+      ]
+    },
+    {
+      "path": "unpacked/hot/gpu-3144134277/report.json",
+      "sha256": "b5f56cee31620b516ac46ae3df9a387f122b81b49b2e68a5f46004fe14eb8cae",
+      "frames": 131,
+      "literalPixels": 8384,
+      "rejections": 269,
+      "checkedUploadWords": 61460,
+      "asyncStates": 1690,
+      "fault": false,
+      "unwrappedInherited": false,
+      "seed": 3144134277,
+      "points": [
+        {
+          "point": "acceptance.rigs[0]",
+          "name": "vertex-0-x-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[1]",
+          "name": "vertex-45-y-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[2]",
+          "name": "vertex-inactive-46-sync",
+          "frames": 5,
+          "attacks": 12,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[3]",
+          "name": "vertex-inactive-47-sync",
+          "frames": 6,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[4]",
+          "name": "fragment-0-x-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[5]",
+          "name": "fragment-45-y-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[6]",
+          "name": "fragment-inactive-46-sync",
+          "frames": 5,
+          "attacks": 12,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[7]",
+          "name": "fragment-inactive-47-sync",
+          "frames": 6,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[8]",
+          "name": "vertex-pruned-46-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[9]",
+          "name": "fragment-pruned-46-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[10]",
+          "name": "fragment-composed-conversion-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[11]",
+          "name": "fragment-composed-raster-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[12]",
+          "name": "vertex-0-x-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[13]",
+          "name": "vertex-45-y-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[14]",
+          "name": "vertex-inactive-46-async",
+          "frames": 5,
+          "attacks": 12,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[15]",
+          "name": "vertex-inactive-47-async",
+          "frames": 6,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[16]",
+          "name": "fragment-0-x-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[17]",
+          "name": "fragment-45-y-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[18]",
+          "name": "fragment-inactive-46-async",
+          "frames": 5,
+          "attacks": 12,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[19]",
+          "name": "fragment-inactive-47-async",
+          "frames": 6,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[20]",
+          "name": "vertex-pruned-46-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[21]",
+          "name": "fragment-pruned-46-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[22]",
+          "name": "fragment-composed-conversion-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[23]",
+          "name": "fragment-composed-raster-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[24]",
+          "name": "owned lifecycle",
+          "frames": 7,
+          "attacks": 1,
+          "allNativeObjectsDeleted": true
+        }
+      ]
+    },
+    {
+      "path": "unpacked/cold/acceptance/fault/report.json",
+      "sha256": "b59e8222c5cc5f63ca6f9d38c28bfd4d4f33c2bc2d5791c72744ab9aa640e673",
+      "frames": 1,
+      "literalPixels": 64,
+      "rejections": 0,
+      "checkedUploadWords": 20,
+      "asyncStates": 0,
+      "fault": true,
+      "unwrappedInherited": false,
+      "seed": 1779033703,
+      "points": [
+        {
+          "point": "acceptance.rigs[0].attacks[0]",
+          "verdict": "exact-equality sabotage produced native raw2, one DRAW and64 green pixels"
+        },
+        {
+          "point": "acceptance.rigs[0]",
+          "name": "vertex-0-x-sync",
+          "frames": 1,
+          "attacks": 1,
+          "allNativeObjectsDeleted": true
+        }
+      ]
+    },
+    {
+      "path": "unpacked/hot/fault/report.json",
+      "sha256": "4ea5483460d6db421bd3200f9007b09796302eec288ffb13e9e4fcbdc7e6032c",
+      "frames": 1,
+      "literalPixels": 64,
+      "rejections": 0,
+      "checkedUploadWords": 20,
+      "asyncStates": 0,
+      "fault": true,
+      "unwrappedInherited": false,
+      "seed": 1779033703,
+      "points": [
+        {
+          "point": "acceptance.rigs[0].attacks[0]",
+          "verdict": "exact-equality sabotage produced native raw2, one DRAW and64 green pixels"
+        },
+        {
+          "point": "acceptance.rigs[0]",
+          "name": "vertex-0-x-sync",
+          "frames": 1,
+          "attacks": 1,
+          "allNativeObjectsDeleted": true
+        }
+      ]
+    },
+    {
+      "path": "gpu-2343432205/report.json",
+      "sha256": "1237f3970885c6cf37731c9c789d1fc987b7a07a029b5ab31ca52e2b6a7b0937",
+      "frames": 131,
+      "literalPixels": 8384,
+      "rejections": 269,
+      "checkedUploadWords": 61460,
+      "asyncStates": 1552,
+      "fault": false,
+      "unwrappedInherited": false,
+      "seed": 2343432205,
+      "points": [
+        {
+          "point": "acceptance.rigs[0]",
+          "name": "vertex-0-x-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[1]",
+          "name": "vertex-45-y-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[2]",
+          "name": "vertex-inactive-46-sync",
+          "frames": 5,
+          "attacks": 12,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[3]",
+          "name": "vertex-inactive-47-sync",
+          "frames": 6,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[4]",
+          "name": "fragment-0-x-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[5]",
+          "name": "fragment-45-y-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[6]",
+          "name": "fragment-inactive-46-sync",
+          "frames": 5,
+          "attacks": 12,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[7]",
+          "name": "fragment-inactive-47-sync",
+          "frames": 6,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[8]",
+          "name": "vertex-pruned-46-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[9]",
+          "name": "fragment-pruned-46-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[10]",
+          "name": "fragment-composed-conversion-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[11]",
+          "name": "fragment-composed-raster-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[12]",
+          "name": "vertex-0-x-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[13]",
+          "name": "vertex-45-y-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[14]",
+          "name": "vertex-inactive-46-async",
+          "frames": 5,
+          "attacks": 12,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[15]",
+          "name": "vertex-inactive-47-async",
+          "frames": 6,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[16]",
+          "name": "fragment-0-x-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[17]",
+          "name": "fragment-45-y-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[18]",
+          "name": "fragment-inactive-46-async",
+          "frames": 5,
+          "attacks": 12,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[19]",
+          "name": "fragment-inactive-47-async",
+          "frames": 6,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[20]",
+          "name": "vertex-pruned-46-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[21]",
+          "name": "fragment-pruned-46-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[22]",
+          "name": "fragment-composed-conversion-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[23]",
+          "name": "fragment-composed-raster-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[24]",
+          "name": "owned lifecycle",
+          "frames": 7,
+          "attacks": 1,
+          "allNativeObjectsDeleted": true
+        }
+      ]
+    },
+    {
+      "path": "gpu-324508640/report.json",
+      "sha256": "51164c3b231d1e79a10c5a02f9058e6c63a95153bf14f615439ae1a17ec62a7d",
+      "frames": 131,
+      "literalPixels": 8384,
+      "rejections": 269,
+      "checkedUploadWords": 61460,
+      "asyncStates": 1518,
+      "fault": false,
+      "unwrappedInherited": false,
+      "seed": 324508640,
+      "points": [
+        {
+          "point": "acceptance.rigs[0]",
+          "name": "vertex-0-x-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[1]",
+          "name": "vertex-45-y-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[2]",
+          "name": "vertex-inactive-46-sync",
+          "frames": 5,
+          "attacks": 12,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[3]",
+          "name": "vertex-inactive-47-sync",
+          "frames": 6,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[4]",
+          "name": "fragment-0-x-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[5]",
+          "name": "fragment-45-y-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[6]",
+          "name": "fragment-inactive-46-sync",
+          "frames": 5,
+          "attacks": 12,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[7]",
+          "name": "fragment-inactive-47-sync",
+          "frames": 6,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[8]",
+          "name": "vertex-pruned-46-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[9]",
+          "name": "fragment-pruned-46-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[10]",
+          "name": "fragment-composed-conversion-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[11]",
+          "name": "fragment-composed-raster-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[12]",
+          "name": "vertex-0-x-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[13]",
+          "name": "vertex-45-y-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[14]",
+          "name": "vertex-inactive-46-async",
+          "frames": 5,
+          "attacks": 12,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[15]",
+          "name": "vertex-inactive-47-async",
+          "frames": 6,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[16]",
+          "name": "fragment-0-x-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[17]",
+          "name": "fragment-45-y-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[18]",
+          "name": "fragment-inactive-46-async",
+          "frames": 5,
+          "attacks": 12,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[19]",
+          "name": "fragment-inactive-47-async",
+          "frames": 6,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[20]",
+          "name": "vertex-pruned-46-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[21]",
+          "name": "fragment-pruned-46-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[22]",
+          "name": "fragment-composed-conversion-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[23]",
+          "name": "fragment-composed-raster-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[24]",
+          "name": "owned lifecycle",
+          "frames": 7,
+          "attacks": 1,
+          "allNativeObjectsDeleted": true
+        }
+      ]
+    },
+    {
+      "path": "gpu-3512640993/report.json",
+      "sha256": "ba4a36438fc239714ef8ccc6e669b3697eabd03619fbdce291899bb36ce68589",
+      "frames": 131,
+      "literalPixels": 8384,
+      "rejections": 269,
+      "checkedUploadWords": 61460,
+      "asyncStates": 1690,
+      "fault": false,
+      "unwrappedInherited": false,
+      "seed": 3512640993,
+      "points": [
+        {
+          "point": "acceptance.rigs[0]",
+          "name": "vertex-0-x-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[1]",
+          "name": "vertex-45-y-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[2]",
+          "name": "vertex-inactive-46-sync",
+          "frames": 5,
+          "attacks": 12,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[3]",
+          "name": "vertex-inactive-47-sync",
+          "frames": 6,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[4]",
+          "name": "fragment-0-x-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[5]",
+          "name": "fragment-45-y-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[6]",
+          "name": "fragment-inactive-46-sync",
+          "frames": 5,
+          "attacks": 12,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[7]",
+          "name": "fragment-inactive-47-sync",
+          "frames": 6,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[8]",
+          "name": "vertex-pruned-46-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[9]",
+          "name": "fragment-pruned-46-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[10]",
+          "name": "fragment-composed-conversion-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[11]",
+          "name": "fragment-composed-raster-sync",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[12]",
+          "name": "vertex-0-x-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[13]",
+          "name": "vertex-45-y-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[14]",
+          "name": "vertex-inactive-46-async",
+          "frames": 5,
+          "attacks": 12,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[15]",
+          "name": "vertex-inactive-47-async",
+          "frames": 6,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[16]",
+          "name": "fragment-0-x-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[17]",
+          "name": "fragment-45-y-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[18]",
+          "name": "fragment-inactive-46-async",
+          "frames": 5,
+          "attacks": 12,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[19]",
+          "name": "fragment-inactive-47-async",
+          "frames": 6,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[20]",
+          "name": "vertex-pruned-46-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[21]",
+          "name": "fragment-pruned-46-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[22]",
+          "name": "fragment-composed-conversion-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[23]",
+          "name": "fragment-composed-raster-async",
+          "frames": 5,
+          "attacks": 11,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[24]",
+          "name": "owned lifecycle",
+          "frames": 7,
+          "attacks": 1,
+          "allNativeObjectsDeleted": true
+        }
+      ]
+    },
+    {
+      "path": "inherited-gpu/report.json",
+      "sha256": "f22eefc85922f94750e35041255487e7806897eed9ee91925f8137f0e13ef458",
+      "frames": 8,
+      "literalPixels": 512,
+      "rejections": 4,
+      "checkedUploadWords": 2496,
+      "asyncStates": 87,
+      "fault": false,
+      "unwrappedInherited": true,
+      "seed": 324508640,
+      "points": [
+        {
+          "point": "acceptance.rigs[0]",
+          "name": "unwrapped conversion sync",
+          "frames": 2,
+          "attacks": 1,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[1]",
+          "name": "unwrapped raster sync",
+          "frames": 2,
+          "attacks": 1,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[2]",
+          "name": "unwrapped conversion async",
+          "frames": 2,
+          "attacks": 1,
+          "allNativeObjectsDeleted": true
+        },
+        {
+          "point": "acceptance.rigs[3]",
+          "name": "unwrapped raster async",
+          "frames": 2,
+          "attacks": 1,
+          "allNativeObjectsDeleted": true
+        }
+      ]
+    }
+  ]
+}

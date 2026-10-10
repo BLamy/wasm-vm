@@ -2045,3 +2045,7 @@ verify-E6-T12g6m1:
 .PHONY: verify-E6-T12g6m2
 verify-E6-T12g6m2:
 	bash tools/verify-virgl-known-branches.sh
+
+.PHONY: verify-E6-T12g6m3a
+verify-E6-T12g6m3a:
+	bash tools/verify-virgl-exact-bank.sh

@@ -1,0 +1,137 @@
+{
+  "status": "read-only-prerequisite-planning",
+  "taskCandidate": "E6-T12g6m3a",
+  "runtimeChanges": false,
+  "source": {
+    "path": "renderer/virgl-command/constant-domain.mjs",
+    "bytes": 52945,
+    "sha256": "878497bd347f80907a25806e0be060f0168cbbb2f3fd802d2e17cf86a10ec41a"
+  },
+  "probes": [
+    {
+      "name": "vertex-0-x",
+      "profile": "virgl-webgl2-raw-bits-v2",
+      "uniforms": [
+        {
+          "name": "vsconst0",
+          "type": "uvec4[]",
+          "count": 1,
+          "encoding": "float32-bits"
+        }
+      ],
+      "contract": {
+        "ok": true,
+        "domain": null
+      },
+      "outputs": [
+        {
+          "word": 1,
+          "approved": true,
+          "retained": 1,
+          "frozen": true
+        },
+        {
+          "word": 2,
+          "approved": true,
+          "retained": 2,
+          "frozen": true
+        }
+      ],
+      "implication": "Both raw1 and raw2 are valid old banks; neither approval owns an exact-word shader assumption."
+    },
+    {
+      "name": "vertex-45-y",
+      "profile": "virgl-webgl2-raw-bits-v2",
+      "uniforms": [
+        {
+          "name": "vsconst0",
+          "type": "uvec4[]",
+          "count": 46,
+          "encoding": "float32-bits"
+        }
+      ],
+      "contract": {
+        "ok": true,
+        "domain": null
+      },
+      "outputs": [
+        {
+          "word": 1,
+          "approved": true,
+          "retained": 1,
+          "frozen": true
+        },
+        {
+          "word": 2,
+          "approved": true,
+          "retained": 2,
+          "frozen": true
+        }
+      ],
+      "implication": "Both raw1 and raw2 are valid old banks; neither approval owns an exact-word shader assumption."
+    },
+    {
+      "name": "fragment-0-x",
+      "profile": "virgl-webgl2-raw-bits-v2",
+      "uniforms": [
+        {
+          "name": "fsconst0",
+          "type": "uvec4[]",
+          "count": 1,
+          "encoding": "float32-bits"
+        }
+      ],
+      "contract": {
+        "ok": true,
+        "domain": null
+      },
+      "outputs": [
+        {
+          "word": 1,
+          "approved": true,
+          "retained": 1,
+          "frozen": true
+        },
+        {
+          "word": 2,
+          "approved": true,
+          "retained": 2,
+          "frozen": true
+        }
+      ],
+      "implication": "Both raw1 and raw2 are valid old banks; neither approval owns an exact-word shader assumption."
+    },
+    {
+      "name": "fragment-45-y",
+      "profile": "virgl-webgl2-raw-bits-v2",
+      "uniforms": [
+        {
+          "name": "fsconst0",
+          "type": "uvec4[]",
+          "count": 46,
+          "encoding": "float32-bits"
+        }
+      ],
+      "contract": {
+        "ok": true,
+        "domain": null
+      },
+      "outputs": [
+        {
+          "word": 1,
+          "approved": true,
+          "retained": 1,
+          "frozen": true
+        },
+        {
+          "word": 2,
+          "approved": true,
+          "retained": 2,
+          "frozen": true
+        }
+      ],
+      "implication": "Both raw1 and raw2 are valid old banks; neither approval owns an exact-word shader assumption."
+    }
+  ],
+  "gitHead": "eb0658dbda25bee84991f47e13a374fdd13f1ab6"
+}
