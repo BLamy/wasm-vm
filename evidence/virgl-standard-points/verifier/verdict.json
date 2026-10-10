@@ -1,0 +1,111 @@
+{
+  "schema": "standard-point-critic-verdict-v1",
+  "task": "E6-T11d11",
+  "verdict": "verified",
+  "workerSubmission": "3d9cfcd03f2eabe900c50173242834aa6ce5f0e6",
+  "runtimeFreeze": "53e01e081ca7495960c6c51a15b585d4b66c64fe",
+  "coldExactHead": "8ccd2036305321645d7f8b47cf7e2c1bcdced863",
+  "workerArchiveSha256": "797426c742a74686db9e4dbdf02135a58b8d30fec3433cd17a4f73e3bb78f846",
+  "authenticatedRecords": 13269,
+  "sourceClosure": 517,
+  "generatedArtifacts": 22,
+  "criteria": [
+    {
+      "id": "custody",
+      "verdict": "HELD",
+      "prediction": "The 13269 archive entries match the committed record index exactly; all hashes and sizes hold. Hot/cold receipt source hashes match current runtime/compiler bytes. Runtime bytes are identical from 53e01e08 through submission."
+    },
+    {
+      "id": "compiler",
+      "verdict": "HELD",
+      "prediction": "Original PSIZE full/x physical slots 1,7,31 and PCOORD IN/SV slots and same-index IN/SV aliases preserve declarations and original instructions; native and Wasm output agree. Wrong stage/index/interpolation and duplicate built-ins reject. The maximal accepted adapter case stays within 8192 tokens and the adapter allocation fault emits no partial output then exactly recovers."
+    },
+    {
+      "id": "typed-metadata",
+      "verdict": "HELD",
+      "prediction": "POINT_SIZE is reflected FLOAT_VEC2 size 1 in every standard vertex program; PCOORD Y is FLOAT size 1 unless unused xy is optimized away. Missing/forged contracts reject before drawing; original fragment input/system PCOORD is vec4 and original PSIZE is scalar native output backed by uvec4 register words."
+    },
+    {
+      "id": "default-pixels",
+      "verdict": "HELD",
+      "prediction": "The per-vertex-input frame draws original IDs [7,9,12] through native POINTS mode 0, UNSIGNED_SHORT 5123, byte offset 12 and count 3. Positive size values [2,4,5.25] cover exactly 45 pixels. Pixel (2,3) is RGBA [119,223,32,128], and (3,4) is [119,96,159,128], with at most one native quantization unit per channel."
+    },
+    {
+      "id": "native-domains",
+      "verdict": "HELD",
+      "prediction": "Fixed size is bound unchanged, including 2048; hardware clamps to the queried range. Negative viewport uses Y uniform -1. Near/far centers outside [-w,w] produce zero covered pixels; a large point centered outside XY can still cover the framebuffer."
+    },
+    {
+      "id": "fetch-restart",
+      "verdict": "HELD",
+      "prediction": "Array/index offsets, u8/u16/u32 restart and disabled max indices, divisors, generic attributes and instancing remain original. Any private normalized u32 index bytes equal the independently decoded original sequence with only restart substitution. One-byte-short storage and exceeded work produce no draw."
+    },
+    {
+      "id": "ownership",
+      "verdict": "HELD",
+      "prediction": "At waiting-index there is one active read, at waiting-attributes two. Revision/cancel rejects before drawing and drains fences; name reuse keeps old generation. At retained normalized draw cancellation/disposal, owned storage survives until completion/drain and is released; final budgets are zero."
+    },
+    {
+      "id": "restore",
+      "verdict": "HELD",
+      "prediction": "A/B/A physical native uniforms, VAO/EBO, viewport, scissor and color writes recover original values after poisoning and context alternation; final A pixels equal first A."
+    },
+    {
+      "id": "faults",
+      "verdict": "HELD",
+      "prediction": "The actual served size-selection and coordinate-Y sabotages each complete native POINTS draw and final fence, then fail the original full-pixel oracle; size sabotage binds [1,0], coordinate sabotage binds opposite winsysY."
+    },
+    {
+      "id": "coverage",
+      "verdict": "HELD",
+      "prediction": "Each new executable runtime C/JS hunk is exercised by the sealed worker recording or a bounded critic attack. Unreachable structural/error checks receive individually justified waivers rather than an unqualified coverage claim."
+    },
+    {
+      "id": "cold-retained",
+      "verdict": "HELD",
+      "prediction": "One pristine exact-head default full make succeeds at 8ccd2036 with scrubbed environment and empty checkout before/after. Historical draw/constant/topology/restart/assembly seals are unchanged. Both hot wrapper/receipt failures remain visible and are carried only across the documented harness-only corrections."
+    },
+    {
+      "id": "novel-schedule",
+      "verdict": "HELD",
+      "prediction": "An independently seeded original point-size/coordinate pattern using delayed fences, aliasing and fixed/per-vertex alternation agrees with a separate literal geometric pixel oracle. Actual native uniform sabotage fails that promoted oracle after completion."
+    }
+  ],
+  "findings": [],
+  "workerReplay": {
+    "frames": 256,
+    "faults": 4,
+    "pixels": 76800,
+    "originalNativeBytes": 59503458,
+    "sha256": "55925918eeaa02f4404369408312f9340161a4d969dbe5452afecac7b3fd87da"
+  },
+  "novelAttack": {
+    "seed": 770354451,
+    "frames": 14,
+    "faults": 2,
+    "pixels": 5632,
+    "originalNativeBytes": 40410440,
+    "sha256": "f3c3cbda0dc8aa6dd91b11f7035e6460796dcd9197a2d29f1335f0c9d9993f2a",
+    "inactivePcoordAndBlendBudget": true,
+    "zeroDrawHostLimitRejections": 2,
+    "recurringCommand": "bash tools/verify-virgl-standard-points-adversarial.sh"
+  },
+  "coverage": {
+    "executableLinesHit": 148,
+    "structuralWaivers": 23,
+    "unreachableDefensiveWaivers": 2,
+    "sha256": "44c62237126754abf3359a4c17907992c3b57d6cbdbf74c8de0d0d344ecfdca8",
+    "scope": "all changed executable C/JS hunks hit or explicitly waived; no missing claimed behavior"
+  },
+  "carry": "Historical draw, constant, topology, restart and assembly seals remain byte-identical; directly affected 669-case compiler and 304/189-frame renderer retentions are authenticated. Hot wrapper/receipt failures preserved; pristine default full make succeeded exactly at 8ccd2036. No rerun of unchanged HELD arithmetic boundaries.",
+  "authority": "isolated-standard-native-points",
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "productionDrawAuthority": false,
+  "suite": [
+    "renderer/virgl-command/tests/standard-native-points-adversarial.mjs",
+    "tools/virgl-command/standard-point-adversarial-oracle.mjs",
+    "tools/virgl-command/standard-point-verifier.mjs",
+    "tools/verify-virgl-standard-points-adversarial.sh"
+  ]
+}

@@ -3,7 +3,7 @@ id: E6-T11d11
 epic: 6
 title: Execute bounded standard native point primitives and shader built-ins
 priority: 525.0270390002
-status: implemented
+status: verified
 depends_on: [E6-T11d10]
 estimate: S
 risk: high
@@ -169,3 +169,119 @@ Inspect manifest/records and the sealed hot/cold paths to reproduce every result
 This is an isolated standard native point claim. Complete API qualification,
 typed production capsets, actual guest offload, deployment and throughput remain
 outside its authority. Only a fresh critic may set verified.
+
+### 2026-10-10 — fresh verifier — VERDICT: verified
+
+Diff audited from `c810cbef23caa7a19b090491ccc30c093d432518` to worker submission
+`3d9cfcd03f2eabe900c50173242834aa6ce5f0e6`. Predictions were recorded before
+opening worker evidence in `evidence/virgl-standard-points/verifier/predictions.json`.
+No implementation changes were made. All scoped predictions survived; findings
+are empty in `verifier/verdict.json`.
+
+- Custody — HELD. Predicted every archive member, receipt and current source
+  hash would match. Authenticated all 13269 worker records, 13243 receipt files,
+  517 source-closure files and 22 generated artifacts, including the original
+  served Wasm. Runtime/compiler bytes remain identical from 53e01e08 through
+  submission. Citation: `verifier/authentication.json`, worker archive SHA256
+  `797426c742a74686db9e4dbdf02135a58b8d30fec3433cd17a4f73e3bb78f846`.
+- Original compiler and bounded scratch — HELD. Predicted original full/x PSIZE
+  slots 1/7/31, PCOORD IN/SV and physical aliases would preserve public register
+  and instruction identity, agree across native/sanitized/fixed-16-MiB Wasm,
+  and reject invalid stage/index/interpolation/duplicate built-ins. All 118
+  cases agree (98 accepted); 78 actual allocation faults recover exactly with
+  no partial output. The large 768-instruction adapter case stays inside its
+  fixed 8192-token arena. Actual arena failure/recovery is at sealed
+  `hot/retained-compiler/native/allocations.jsonl:65` and `:81`; upstream failure
+  and successful scratch frees were inspected against LLVM segments.
+  Citation: `verifier/checks.json`, sealed `hot/native/node.json`, compiler
+  point/matrix/allocation coverage; identical cold records.
+- Typed raster contract — HELD. Predicted POINT_SIZE FLOAT_VEC2 and PCOORD-Y
+  FLOAT reflection, legitimate unused-Y optimization, stage component budgets
+  and rejection before drawing. The 24 metadata forgeries reject; the novel
+  unused PCOORD SV[1] shader executes with inactive Y. Original POINTS with
+  constant-color blending exercises combined raster/blend bindings. Two
+  instrumented host-limit attacks record actual and delivered limits and reject
+  with zero draws. Citation: sealed critic `novel/report.json`, frames
+  `critic-unused-point-coord`, `critic-point-blend-budget`, and host-limit
+  rejections; `verifier/coverage-audit.json`, state.mjs:540, :621-622, :645.
+- Native geometry and pixels — HELD. Predicted original IDs [7,9,12], native
+  POINTS mode 0, type 5123, offset 12/count 3, sizes [2,4,5.25], exactly 45
+  covered pixels, RGBA [119,223,32,128] at (2,3) and [119,96,159,128] at (3,4).
+  Observed agreement within one native quantization unit. The separate literal
+  oracle imports no worker point or renderer model and audits 256 hot/cold
+  frames, 76800 full pixels and 59503458 original/native bytes. Fixed size 2048
+  stays bound unchanged and clamps through measured native [1,511]; negative
+  viewport uses Y=-1, near/far-outside centers cover zero, and a large XY-outside
+  point covers the framebuffer. Citation: sealed worker
+  `hot/hardware/report.json:135045`, `verifier/independent-replay.json` per-frame
+  source/pixel digests and numeric predictions.
+- Retained native ownership — HELD. Predicted original offsets, source indices,
+  u8/u16/u32 restart/disabled maxima, divisors, generics and bounded work would
+  survive. Independently decoded uploads equal actual VBO/EBO bytes; normalized
+  indices substitute only the restart marker. Waiting-index/attributes retain
+  one/two active reads; revision, reuse, cancellation and disposal preserve the
+  recorded generation until real completion/drain, then all budgets are zero.
+  Poisoned uniforms/VAO/EBO/raster state restore before native draws; A/B/A
+  first/final pixels agree. Citation: `verifier/independent-replay.json`, sealed
+  worker hardware frames/read/fence records and `verifier/novel-replay.json`.
+- Independent seed and sabotage — HELD. Predicted a separately seeded original
+  alias/size/coordinate pattern and delayed native fences would satisfy the
+  promoted literal oracle. Seed 770354451, base 66384, marker 16777545 and
+  original IDs [66387,66413,66445,66481] produce 14 actual headed M4 Metal
+  frames/draws, 5632 full pixels and 40410440 authenticated original/native
+  bytes. Both actual served uniform mutations complete POINTS draw and final
+  fence, then fail that oracle: size binds [1,0]; Y binds +1 instead of -1
+  (green 32 expected, 223 observed). Both failures were independently rechecked.
+  Citation: sealed critic `novel/report.json`, `fault-size-selection/report.json`,
+  `fault-coord-y/report.json`, `verifier/novel-replay.json`; served test SHA256
+  `2d94376ad9873de253fb6b29876b5ab988b22b52d588764f0f45cfdf4a0d74e6`.
+- Changed-hunk sufficiency — HELD. Exact-source LLVM/V8 coverage accounts for
+  all 173 added runtime C/JS lines: 148 executable lines hit, 23 structural
+  waivers (headers/enums/comments/signatures/braces), and two defensive waivers.
+  bridge.c:2318 reparses immutable internal tokens already accepted by text
+  translation/constant ordering/parse initialization; its failure requires
+  corruption, and its free was inspected. bridge.c:2355 default is unreachable
+  in the accepted DECL/IMM/PROPERTY/INSTRUCTION body grammar. The no-unused-input
+  guard cannot fill 32 slots from POSITION+PCOORD+16 GENERIC inputs. No changed
+  claimed behavior is dead or missing proof. Citation:
+  `verifier/coverage-audit.json` (per-line counts/reasons and source digests).
+- Cold and carry — HELD. Predicted one pristine exact-head default full make
+  would pass with scrubbed environment and empty checkout before/after. It
+  passes at `8ccd2036305321645d7f8b47cf7e2c1bcdced863`; sealed cold log SHA256
+  `3071e6ec9e76f4a1ef8bd759e09d62d466240dee692eacc380c9b90b82205bfd`.
+  The original hot full make failed, and the later hot receipt failed; both
+  failures remain sealed. The receipt-only correction carries unchanged b49bc887
+  physical bytes and authenticates precisely the retained compiler's success
+  append after its original prefix hash. Directly affected 669-case/129-frame
+  compiler, 304-frame list and 189-frame restart records hold. Historical
+  draw/constant/topology/restart/assembly seals are byte-identical to c810cbef;
+  unchanged HELD checks are carried without unrelated arithmetic reruns.
+  Citation: `verifier/authentication.json`, `verifier/checks.json`, sealed
+  `cold/report.json`, `hot/harness-correction.json` and both original failure logs.
+
+SUITE: promoted `renderer/virgl-command/tests/standard-native-points-adversarial.mjs`,
+`tools/virgl-command/standard-point-adversarial-oracle.mjs`,
+`tools/virgl-command/standard-point-verifier.mjs` and recurring
+`bash tools/verify-virgl-standard-points-adversarial.sh`. The recurring command
+passed the independently seeded native run, both expected native sabotage
+failures and offline audit; `STANDARD_POINTS_ADVERSARIAL_COMPLETE` is recorded.
+Authentication/replay/coverage commands:
+`python3 evidence/virgl-standard-points/verifier/authenticate.py`;
+`node tools/virgl-command/standard-point-verifier.mjs
+target/evidence/virgl-standard-points-critic/worker
+target/evidence/virgl-standard-points-critic/independent-replay.json`;
+the same replay tool with the critic root/output and `critic` argument;
+`python3 evidence/virgl-standard-points/verifier/coverage_audit.py`.
+Final promoted sources pass Node syntax, Bash syntax, Python compile and diff
+whitespace checks. No unrelated acceptance suite was restarted.
+
+Critic seal: `python3 evidence/virgl-standard-points/verifier/seal.py`.
+`evidence/virgl-standard-points/verifier/recording.tar.gz` contains 360 records,
+all independently reopened against `records.json`; archive SHA256
+`47527ba78396a7efb9d1f0986665d32c3bef08b64038c857d610549926d5a7cd`,
+index SHA256 `54d4c071a76a4188a5acac85f8046af3e727dd0f7d86c128ca5a233deda6833b`.
+It retains predictions, authentication, per-hunk audit, both independent replay
+results, novel/fault physical blobs/screenshots/coverage and the recurring run.
+Worker archive custody is linked by digest rather than duplicated. These results
+verify only isolated standard native points. Complete API/capsets, actual guest
+offload, deployment and any MIPS claim remain outside this task's authority.
