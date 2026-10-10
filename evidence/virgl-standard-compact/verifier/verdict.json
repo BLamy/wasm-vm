@@ -1,0 +1,67 @@
+{
+  "schema": "standard-compact-critic-verdict-v1",
+  "task": "E6-T11d12",
+  "verdict": "verified",
+  "runtimeHead": "ac77cdd095de121d71628308d920bfdcdbc454c3",
+  "criticHarnessHead": "4fd889f27c477978b59f81e9cecb4bb7916e9c45",
+  "workerArchiveSha256": "fcf9e7c4490eda1974668d22a8d1f1f2d28fbea28a8d157b31675d56fba860c4",
+  "predictions": [
+    {
+      "id": "P1",
+      "prediction": "The archive and index authenticate exactly 16252 unique original records. Hot and cold receipts identify the freeze. Runtime/compiler/allocator/guest source and historical HELD evidence remain equal to predecessor except the declared decoder/state compact-fetch hunks. Generated fixed16MiB Wasm bytes match the prior critic pins and the bytes actually served.",
+      "status": "HELD"
+    },
+    {
+      "id": "P2",
+      "prediction": "Literal enum bases 28,48,56,64,74,91 each admit four lanes only; byte widths are respectively 4,2,2,1,1,2 times lane count. Standard packet admission allows element ends through u32 and any divisor; legacy admits only aligned float32 and divisor zero. Native normalized families use GL unsigned-short/short/unsigned-byte/byte and normalization true, half uses HALF_FLOAT false, float32 FLOAT false.",
+      "status": "HELD"
+    },
+    {
+      "id": "P3",
+      "prediction": "From the original index/upload packets, each native array pointer uses the original GPU source and effective buffer+element offset; scalar alignment rather than four-byte alignment controls admission. Last fetched byte is offset + lastElement*stride + laneCount*scalarBytes - 1. Index restart markers are excluded, per-instance lastElement is floor((max(1,instances)-1)/divisor), stride-zero lastElement is zero. One-byte-short actual fetches reject before a native draw.",
+      "status": "HELD"
+    },
+    {
+      "id": "P4",
+      "prediction": "The original TGSI point operations applied independently to original compact uploads produce every recorded full framebuffer pixel. Finite half numbers include signed zero, smallest subnormal, max subnormal, first normal, max finite and infinities. Signed minima map to -1, missing lanes to 0,0,0,1. Byteword shader outputs match binary32 exactly except NaNs, which are checked only for exponent-all-ones and a nonzero fraction.",
+      "status": "HELD"
+    },
+    {
+      "id": "P5",
+      "prediction": "Constant attributes read only the laneCount*scalarBytes original GPU source bytes through retained async tickets; native generic words represent those scalar values and missing lanes. Source revision and cancellation drain before drawing; name reuse preserves the retained old generation. Disposal releases complete batches. All successful and rejected jobs leave zero read, staging and normalized-index ownership.",
+      "status": "HELD"
+    },
+    {
+      "id": "P6",
+      "prediction": "Both served normalize and constant-unpack faults complete an original native draw and final GPU fence, alter recorded physical attribute state, and contradict independently derived original pixels. Poisoned native type, normalized flag, pointer, divisor and generic values restore on A/B/A.",
+      "status": "HELD"
+    },
+    {
+      "id": "P7",
+      "prediction": "Every new executable runtime hunk has positive exact-source V8 coverage in the final records, or receives an individually justified structural/error-only waiver. Retained point128/list304/restart189 and their five GPU faults have unchanged historical oracle/seal boundaries and authenticate actual frozen-head draws.",
+      "status": "HELD"
+    },
+    {
+      "id": "P8",
+      "prediction": "The independently seeded attack 0x6b82d1f3 mixes signed/unsigned byte and half/float inputs over shared original buffers and stride-zero delayed reads. Effective offset splits, signed minima, half exponent transitions, exact/short bounds, source revision, cancellation and name reuse survive independent packet/pixel checks. An actual GPU sabotage is detected by the promoted critic oracle.",
+      "status": "HELD"
+    }
+  ],
+  "authority": "isolated-standard-compact-floating-fetch",
+  "portableNaNPayload": false,
+  "guestExecution": false,
+  "productionDrawAuthority": false,
+  "compilerArithmeticRerun": false,
+  "suitesPromoted": [
+    "renderer/virgl-command/tests/standard-compact-vertex-fetch-adversarial.mjs",
+    "tools/virgl-command/standard-compact-adversarial-oracle.mjs"
+  ],
+  "audits": {
+    "predictions.json": "85d488263ecec13ad1928a96d1d1452653a5f2a2bb1a1e6124fdf2e05ab74487",
+    "authentication.json": "e8ae697acb03aa4777824cb5190077983ec818b5122966dd5e7ef8fddd1dbec4",
+    "physical-audit.json": "7edd0a5129434a69249a230e10f5c923a72b3d49f0c41c8765929022654ba734",
+    "coverage-audit.json": "7013572f4bf857679cfbca7bee283540586c1615b4d5c5340abe38d53168a344",
+    "fresh-audit.json": "7a2fb804bff0ed18fdda8c5771ab010e23283e52e688b175dc3ff404fe52809f",
+    "citations.json": "3afd4638b57a189c98cb4a75ac7ade1ac02b4e3cc163e84f742d7d26a25ad9d6"
+  }
+}

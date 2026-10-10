@@ -1,0 +1,20 @@
+{
+  "schema": "standard-compact-critic-predictions-v1",
+  "task": "E6-T11d12",
+  "workerSubmission": "8ad1959d3eb00335b49d1786c5dc0fb5701de76c",
+  "runtimeFreeze": "ac77cdd095de121d71628308d920bfdcdbc454c3",
+  "predecessor": "1fbdfa7e53ebe6e8ed4a80935687d8b71a797f42",
+  "recordedBeforeEvidenceInspection": true,
+  "predictions": [
+    {"id":"P1", "prediction":"The archive and index authenticate exactly 16252 unique original records. Hot and cold receipts identify the freeze. Runtime/compiler/allocator/guest source and historical HELD evidence remain equal to predecessor except the declared decoder/state compact-fetch hunks. Generated fixed16MiB Wasm bytes match the prior critic pins and the bytes actually served."},
+    {"id":"P2", "prediction":"Literal enum bases 28,48,56,64,74,91 each admit four lanes only; byte widths are respectively 4,2,2,1,1,2 times lane count. Standard packet admission allows element ends through u32 and any divisor; legacy admits only aligned float32 and divisor zero. Native normalized families use GL unsigned-short/short/unsigned-byte/byte and normalization true, half uses HALF_FLOAT false, float32 FLOAT false."},
+    {"id":"P3", "prediction":"From the original index/upload packets, each native array pointer uses the original GPU source and effective buffer+element offset; scalar alignment rather than four-byte alignment controls admission. Last fetched byte is offset + lastElement*stride + laneCount*scalarBytes - 1. Index restart markers are excluded, per-instance lastElement is floor((max(1,instances)-1)/divisor), stride-zero lastElement is zero. One-byte-short actual fetches reject before a native draw."},
+    {"id":"P4", "prediction":"The original TGSI point operations applied independently to original compact uploads produce every recorded full framebuffer pixel. Finite half numbers include signed zero, smallest subnormal, max subnormal, first normal, max finite and infinities. Signed minima map to -1, missing lanes to 0,0,0,1. Byteword shader outputs match binary32 exactly except NaNs, which are checked only for exponent-all-ones and a nonzero fraction."},
+    {"id":"P5", "prediction":"Constant attributes read only the laneCount*scalarBytes original GPU source bytes through retained async tickets; native generic words represent those scalar values and missing lanes. Source revision and cancellation drain before drawing; name reuse preserves the retained old generation. Disposal releases complete batches. All successful and rejected jobs leave zero read, staging and normalized-index ownership."},
+    {"id":"P6", "prediction":"Both served normalize and constant-unpack faults complete an original native draw and final GPU fence, alter recorded physical attribute state, and contradict independently derived original pixels. Poisoned native type, normalized flag, pointer, divisor and generic values restore on A/B/A."},
+    {"id":"P7", "prediction":"Every new executable runtime hunk has positive exact-source V8 coverage in the final records, or receives an individually justified structural/error-only waiver. Retained point128/list304/restart189 and their five GPU faults have unchanged historical oracle/seal boundaries and authenticate actual frozen-head draws."},
+    {"id":"P8", "prediction":"The independently seeded attack 0x6b82d1f3 mixes signed/unsigned byte and half/float inputs over shared original buffers and stride-zero delayed reads. Effective offset splits, signed minima, half exponent transitions, exact/short bounds, source revision, cancellation and name reuse survive independent packet/pixel checks. An actual GPU sabotage is detected by the promoted critic oracle."}
+  ],
+  "portableNaNPayload": false,
+  "authority": "isolated-standard-compact-floating-fetch"
+}
