@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13]
-blocked_on: E6-T11d13
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14]
+blocked_on: E6-T11d14
 estimate: S
 risk: high
 capstone: false
@@ -292,3 +292,7 @@ storage and native floating conversion while closing this scalar family. Pure
 integer and packed inputs, storage/framebuffer/API qualification and real guest
 bring-up remain ordered successors. The user's instruction continues this
 graphics chain; isolated format results do not activate a production capset.
+
+### 2026-10-10 — worker — scalar fetch verified; pure integer input gap
+
+E6-T11d13 is independently verified at `8037ede91b4c8450e696811d33ac7d34235388ba`. The original 24 pure integer vertex formats177..200 still fail standard wire admission and the compiler has no host typed pair method. The negative recording `evidence/virgl-production-readiness/standard-integer-vertex-gap.json` binds their literal packets and complete source/generated identities at that verified head. Decode each `packetHex` with `decodeStandardSubmission` to reproduce. Ordered S/high E6-T11d14 closes the raw integer input boundary across the actual compiler, format-derived native shader variants, original GPU pointers and retained constant words. Packed formats, storage/framebuffer/API qualification and actual guest bring-up remain ordered successors. The explicit user instruction continues this chain; no speculative production capset is granted.
