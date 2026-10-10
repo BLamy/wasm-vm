@@ -20,6 +20,7 @@ const COMMAND_NAMES = Object.freeze({
   4: "SET_VIEWPORT_STATE", 5: "SET_FRAMEBUFFER_STATE", 6: "SET_VERTEX_BUFFERS",
   7: "CLEAR", 8: "DRAW_VBO", 9: "RESOURCE_INLINE_WRITE", 10: "SET_SAMPLER_VIEWS", 11: "SET_INDEX_BUFFER",
   12: "SET_CONSTANT_BUFFER", 13: "SET_STENCIL_REF", 14: "SET_BLEND_COLOR",
+  15: "SET_SCISSOR_STATE",
   18: "BIND_SAMPLER_STATES", 22: "SET_POLYGON_STIPPLE", 24: "SET_SAMPLE_MASK",
   25: "SET_STREAMOUT_TARGETS", 28: "SET_SUB_CTX", 29: "CREATE_SUB_CTX",
   30: "DESTROY_SUB_CTX", 31: "BIND_SHADER", 32: "SET_TESS_STATE",
@@ -144,7 +145,7 @@ function decodeRasterizer(p, handle) {
   p.exact(9);
   const bits = p.u(2);
   // Point/sprite fields are inert because the draw profile only allows triangles.
-  const allowed = 2 | 64 | 128 | (3 << 8) | (1 << 14) | (1 << 15) | (1 << 29);
+  const allowed = 2 | 64 | 128 | (3 << 8) | (1 << 14) | (1 << 15) | (1 << 29) | (1 << 30);
   p.require((bits & ~allowed) === 0 && (bits & 2) !== 0 && (bits & (1 << 29)) !== 0,
     "unsupported-feature", "Unsupported rasterizer feature or coordinate convention.");
   const cullFace = (bits >>> 8) & 3;
@@ -161,7 +162,7 @@ function decodeRasterizer(p, handle) {
     clampVertexColor: false, clampFragmentColor: false, offsetLine: false, offsetPoint: false,
     offsetTri: false, polygonSmooth: false, polygonStippleEnable: false, pointSmooth: false,
     pointSizePerVertex: false, multisample: false, lineSmooth: false, lineStippleEnable: false,
-    lineLastPixel: false, halfPixelCenter: true, bottomEdgeRule: false, forcePerSampleInterpolation: false,
+    lineLastPixel: false, halfPixelCenter: true, bottomEdgeRule: Boolean(bits & (1 << 30)), forcePerSampleInterpolation: false,
     pointSize, spriteCoordEnable, lineStipplePattern: 0xffff, lineStippleFactor: 0,
     clipPlaneEnable: 0, lineWidth, offsetUnits, offsetScale, offsetClamp };
 }
@@ -172,11 +173,13 @@ function decodeDsa(p, handle) {
   p.mask(p.u(3), 0x1fffffff);
   p.mask(p.u(4), 0x1fffffff);
   const alphaReference = p.f(5);
-  p.zero(2, 3, "Depth, stencil and alpha testing are outside this profile.");
+  const depth = p.u(2);
+  p.require((depth & ~31) === 0, "unsupported-feature", "Alpha testing is outside this profile.");
+  p.zero(3, 2, "Stencil testing requires unsupported stencil storage.");
   p.require(alphaReference === 0, "unsupported-feature", "Inactive alpha reference must be zero.");
   const stencil = () => ({ enabled: false, function: 0, failOperation: 0, depthPassOperation: 0,
     depthFailOperation: 0, valueMask: 0, writeMask: 0 });
-  return { handle, depthEnable: false, depthWriteMask: false, depthFunction: 0,
+  return { handle, depthEnable: Boolean(depth & 1), depthWriteMask: Boolean(depth & 2), depthFunction: (depth >>> 2) & 7,
     alphaEnable: false, alphaFunction: 0, alphaReference, stencil: [stencil(), stencil()] };
 }
 
@@ -236,8 +239,8 @@ function decodeObject(p, objectType) {
         const start = 2 + index * 4;
         const sourceOffset = p.u(start), instanceDivisor = p.u(start + 1), vertexBufferIndex = p.u(start + 2), sourceFormat = p.u(start + 3);
         p.require(vertexBufferIndex < LIMITS.vertexBuffers, "limit-exceeded", "Vertex buffer index exceeds profile limit.");
-        p.require(instanceDivisor === 0 && sourceFormat === 29, "unsupported-feature", "Only per-vertex R32G32_FLOAT elements are supported.");
-        p.require(sourceOffset <= MAX_U32 - 8, "invalid-value", "Vertex element end overflows u32.");
+        p.require(instanceDivisor === 0 && [29, 30].includes(sourceFormat), "unsupported-feature", "Only per-vertex RG32/RGB32_FLOAT elements are supported.");
+        p.require(sourceOffset <= MAX_U32 - (sourceFormat === 30 ? 12 : 8), "invalid-value", "Vertex element end overflows u32.");
         return { sourceOffset, instanceDivisor, vertexBufferIndex, sourceFormat };
       });
       return { handle, elements };
@@ -328,7 +331,6 @@ function decodeFields(p, objectType) {
       const colorBufferCount = p.u(1), depthStencilSurface = p.u(2);
       p.require(colorBufferCount <= 1, "unsupported-feature", "Only one color attachment is supported.");
       p.exact(2 + colorBufferCount);
-      p.require(depthStencilSurface === 0, "unsupported-feature", "Depth/stencil attachments are unsupported.");
       return { colorBufferCount, depthStencilSurface, colorSurfaces: p.words(3, colorBufferCount) };
     }
     case 6: {
@@ -338,7 +340,7 @@ function decodeFields(p, objectType) {
     case 7: {
       p.exact(8);
       const buffers = p.u(1), colorWords = p.words(2, 4), color = p.floats(2, 4);
-      p.require(buffers === 4, "unsupported-feature", "Only color attachment zero clear is supported.");
+      p.require(buffers !== 0 && (buffers & ~5) === 0, "unsupported-feature", "Only color attachment zero and Z16 depth clear are supported.");
       const depth = p.view.getFloat64(p.byteOffset + 24, true), stencil = p.u(8);
       p.require(Number.isFinite(depth) && depth >= 0 && depth <= 1 && stencil <= 255,
         "invalid-value", "Invalid clear depth or stencil value.");
@@ -349,9 +351,9 @@ function decodeFields(p, objectType) {
       const fields = { start: p.u(1), count: p.u(2), mode: p.u(3), indexed: p.boolean(4), instanceCount: p.u(5),
         indexBias: p.i(6), startInstance: p.u(7), primitiveRestart: p.boolean(8), restartIndex: p.u(9),
         minIndex: p.u(10), maxIndex: p.u(11), countFromStreamOutput: p.u(12) };
-      p.require(fields.mode === 4 && fields.instanceCount === 1 && fields.indexBias === 0 &&
+      p.require([4, 5].includes(fields.mode) && fields.instanceCount === 1 && fields.indexBias === 0 &&
         fields.startInstance === 0 && !fields.primitiveRestart && fields.restartIndex === 0 && fields.countFromStreamOutput === 0,
-      "unsupported-feature", "Only ordinary triangles without instancing, restart or stream output are supported.");
+      "unsupported-feature", "Only ordinary triangles/strips without instancing, restart or stream output are supported.");
       p.require(fields.start <= MAX_U32 - fields.count && fields.minIndex <= fields.maxIndex,
         "invalid-value", "Invalid draw count/index range.");
       return fields;
@@ -382,6 +384,16 @@ function decodeFields(p, objectType) {
       p.exact(1); p.mask(p.u(1), 0xffff);
       return { front: p.u(1) & 255, back: p.u(1) >>> 8 };
     case 14: p.exact(4); return { color: p.floats(1, 4) };
+    case 15: {
+      const count = p.arrayCount(1, 2, 1), startSlot = p.u(1);
+      p.slotRange(startSlot, count, 1);
+      return { startSlot, scissors: Array.from({ length: count }, (_, index) => {
+        const min = p.u(2 + index * 2), max = p.u(3 + index * 2);
+        const bounds = { minX: min & 65535, minY: min >>> 16, maxX: max & 65535, maxY: max >>> 16 };
+        p.require(bounds.maxX >= bounds.minX && bounds.maxY >= bounds.minY, "invalid-value", "Scissor bounds are reversed.");
+        return bounds;
+      }) };
+    }
     case 22:
       p.exact(32);
       for (let i = 1; i <= 32; i++) p.require(p.u(i) === MAX_U32, "unsupported-feature", "Only the inactive all-ones polygon stipple is supported.");

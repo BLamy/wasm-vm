@@ -276,3 +276,11 @@ and matching native2D color/Z16 storage reuse the checked transfer boundary.
 synthetic inline writes, raw GPU pixels/bytes, odd rows, deferred ownership and
 physical source faults. END_TRANSFERS padding stays opaque; production negotiation
 remains disabled.
+
+E6-T12h adds strict SET_SCISSOR_STATE (opcode15), RGB32_FLOAT vertex elements,
+optional Z16 framebuffer/depth clear and DSA depth fields, and ordinary triangle
+strips/array draws. Stencil/alpha tests and unsupported primitive/instance/restart
+fields remain explicit errors. `make verify-E6-T12h` binds actual original client
+draws and independent physical state/pixel predictions; production caps remain
+disabled. The shader text ceiling is 49,152 bytes, separately from the bounded
+draw/state profile.

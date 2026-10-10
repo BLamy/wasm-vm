@@ -2097,3 +2097,7 @@ verify-E6-T12g6m5b2b2:
 .PHONY: verify-E6-T12g6m
 verify-E6-T12g6m:
 	bash tools/verify-virgl-original-programs.sh
+
+.PHONY: verify-E6-T12h
+verify-E6-T12h:
+	bash tools/verify-virgl-raster-depth.sh

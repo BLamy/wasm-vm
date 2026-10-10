@@ -158,11 +158,12 @@ inactive resets remain accepted.
 
 The active profile is one required normalized level-zero color surface
 (BGRX8, RGBA8 or B10G10R10X2), exact-matching color sampler
-views with immutable selectors0–5, clamp-edge nearest/linear non-mip samplers, R32G32_FLOAT vertex elements,
-float-aligned vertex strides at most255 bytes, u16 indices, an integer positive
-viewport with normalized depth range, additive alpha blend modes supported by
-the decoder, optional dithering/back-face culling, and disabled depth/stencil.
-Scissor rasterization, depth views and mip/layer/cube sampling fail explicitly. Buffer
+views with immutable selectors0–5, clamp-edge nearest/linear non-mip samplers,
+RG32/RGB32_FLOAT vertex elements, float-aligned vertex strides at most255 bytes,
+u16 indices or nonindexed triangles/strips, integer viewports with either Y sign
+and normalized GL depth range, additive alpha blend modes supported by the
+decoder, optional dithering/back-face culling/scissor, and Z16 depth testing.
+Stencil/alpha tests, depth views and mip/layer/cube sampling fail explicitly. Buffer
 and element ranges, resource classes, link inputs and quotas are validated before
 publication. Backend allocation/compile/link failures delete temporary objects.
 
@@ -174,11 +175,19 @@ and DST_ALPHA observes one. RGBA8 retains its ordinary stored alpha behavior.
 
 The original gears Z16_UNORM SURFACE can retain exact format16/bind1 native
 depth storage through a separate depth-surface lease. It cannot become a color
-attachment or an RGBA8 sampler view. Depth/stencil framebuffer selection,
-clear and DSA execution remain E6-T12h; this storage boundary does not enable
-them. `make verify-E6-T12g3` checks original surface lifetime, incompatible
+attachment or an RGBA8 sampler view. E6-T12h adds depth framebuffer selection,
+full depth clear and the eight GL depth comparisons; Z16 has no stencil storage.
+`make verify-E6-T12g3` retains original surface lifetime, incompatible
 color attachment rejection and independent native depth observations.
 Required matching color view admission is the E6-T12g4 boundary above.
+
+Negative viewport scaleY sets the owned system block's `winsys_adjust_y` to -1
+on every restoration. Its rectangle remains translateY - abs(scaleY), height
+2*abs(scaleY); GL clip Z is unchanged. Scissor uses literal lower-left min/max
+coordinates. Full CLEAR ignores scissor and color/depth masks, then restores
+those masks and scissor enable. Depth attachments retain their object/storage
+generation independently of their public names. Color/depth dimensions must
+match. See [raster proof](../../tools/virgl-command/raster-README.md).
 
 Restoration binds the renderer's private VAO/FBO/program, every texture/sampler
 unit, vertex/index buffers, system UBO and constants, color/blend/raster state,

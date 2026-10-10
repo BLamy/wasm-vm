@@ -268,7 +268,7 @@ function isolatedAttacks(gl, bridge, fixtures, c) {
     recover(); valid(`${label} recovery`);
   };
   for (const [label, offset, value, code] of [["zero draw count", 8, 0, "unsupported-draw"], ["nonzero indexed start", 4, 1, "unsupported-draw"],
-    ["nonindexed draw", 16, 0, "unsupported-draw"], ["index count exceeds actual storage", 8, 7, "out-of-bounds"]]) {
+    ["nonindexed range exceeds actual vertex storage", 16, 0, "out-of-bounds"], ["index count exceeds actual storage", 8, 7, "out-of-bounds"]]) {
     const badDraw = draw.slice(); word(badDraw, offset, value); reject(badDraw, label, code);
   }
   run(packet(11, 0, [4, 2, 2]), "set supported aligned nonzero index offset");

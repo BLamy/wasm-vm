@@ -1,6 +1,6 @@
-# Bounded VirGL indexed draws
+# Bounded VirGL triangle draws
 
-`createVirglDrawRenderer` in `state.mjs` adds actual WebGL2 indexed drawing to the
+`createVirglDrawRenderer` in `state.mjs` adds actual WebGL2 triangle drawing to the
 same private engine used by `createVirglStateRenderer`. The state-only factory
 continues to reject every DRAW_VBO, with its existing API and result shape.
 Neither factory activates a guest device, advertises capsets, implements Mesa
@@ -35,12 +35,12 @@ successful prefix's draw summaries; the state-only results remain unchanged.
 
 Each summary contains:
 
-- `byteOffset,opcode,count,indexOffset,indexByteLength,actualMinIndex,actualMaxIndex`;
+- `byteOffset,opcode,count,indexed,mode,start,indexOffset,indexByteLength,actualMinIndex,actualMaxIndex`;
 - `contextId,contextGeneration,subContextId,subContextGeneration`;
-- `indexResourceId,indexResourceGeneration`;
+- `indexResourceId,indexResourceGeneration` (null for arrays);
 - `vertexFetches`: each active attribute's `attributeIndex,location,resourceId,
-  resourceGeneration,stride,offset,firstByte,requiredEnd`;
-- `framebuffer`: `resourceId,resourceGeneration,width,height`;
+  resourceGeneration,stride,offset,components,firstByte,requiredEnd`;
+- `framebuffer`: `resourceId,resourceGeneration,width,height,depthResourceId,depthResourceGeneration`;
 - `vertexShader,fragmentShader`: `{handle,generation}` references.
 
 `inspect()` reports the draw profile and `drawLimits` alongside the existing
@@ -52,14 +52,16 @@ Returned summaries own only frozen metadata, never native handles or index bytes
 
 ## Validation before a GPU draw
 
-The decoded draw must be nonempty indexed TRIANGLES, one instance, no base vertex
+The decoded draw must be nonempty TRIANGLES or TRIANGLE_STRIP, one instance, no base vertex
 or base instance, no primitive restart and no stream-output count. `start` must
-be zero. The pinned renderer's indexed path uses SET_INDEX_BUFFER's byte offset;
+be zero for indexed draws. Nonindexed start/count must fit signed GL integers.
+The pinned renderer's indexed path uses SET_INDEX_BUFFER's byte offset;
 it does not add DRAW_VBO.start (`vrend_renderer.c` around 6019 and 6149–6158).
-Nonzero starts and zero counts are explicitly unsupported in this profile.
+Nonzero indexed starts and zero counts are explicitly unsupported in this profile.
 
 Both shader stages, a color surface, a viewport, vertex elements and a u16 index
-buffer must be bound. Each active uniform array must have all its constant words.
+buffer must be bound for an indexed draw. Active depth testing requires a Z16
+attachment. Each active uniform array must have all its constant words.
 Each reflected sampler must have its view and sampler state, and its texture
 allocation must differ from the framebuffer allocation. Feedback rejects before
 issuing a draw. Every active vertex attribute must have its referenced buffer.
@@ -82,15 +84,16 @@ for TRIANGLES, whereas this wire profile disables it. Silently passing that valu
 would change primitive assembly. See the Khronos WebGL2 specification section
 [PRIMITIVE_RESTART_FIXED_INDEX is always enabled](https://registry.khronos.org/webgl/specs/latest/2.0/).
 
-For every active RG32_FLOAT attribute, validate the largest actual fetch:
+For every active RG32/RGB32_FLOAT attribute, validate the largest actual fetch:
 
 ```
 offset = vertexBuffer.offset + vertexElement.sourceOffset
-actualMaxIndex <= floor((vertexStorageBytes - offset - 8) / stride)
+elementBytes = 8 or 12
+actualMaxIndex <= floor((vertexStorageBytes - offset - elementBytes) / stride)
 ```
 
 The state layer already proves alignment and that the first whole element fits.
-The division check proves the complete final eight-byte fetch before computing
+The division check proves the complete final element fetch before computing
 reported endpoints. Original position and UV attributes use stride 16; the UV
 fetch at index 3 ends exactly at byte 64. Inactive attributes do not cause GPU
 fetches, and no extra vertex/index padding is required.
@@ -98,7 +101,10 @@ fetches, and no extra vertex/index padding is required.
 After all checks, restore the complete supported GL state, including bindings
 changed by GPU index readback, then call
 `gl.drawElements(gl.TRIANGLES, count, gl.UNSIGNED_SHORT, indexOffset)` and check
-GL errors. The call remains synchronous through validation and submission, so no
+GL errors (using TRIANGLE_STRIP when requested). Nonindexed draws use
+`gl.drawArrays(mode,start,count)` after validating the complete actual array
+range. They allocate/read no index staging; both families share the existing
+64-draw/65,536-element submission budget. The call remains synchronous through validation and submission, so no
 JavaScript yield allows guest input changes between the index scan and draw.
 A successful result records command issue, not fence completion. Subsequent
 original COPY_TRANSFER3D readPixels operations synchronize actual GPU results
@@ -118,6 +124,14 @@ boot resource 2/context 1 scanout and fence transport are excluded explicitly.
 
 The runtime does not recognize capture hashes, event numbers, resource IDs,
 shader texts or fixed image dimensions. Equivalent inputs within the bounded
-profile use the same checks. Nonindexed draws, restart lowering, constant vertex
-attributes, negative-Y viewports, generalized formats and live guest transport
+profile use the same checks. Restart lowering, constant vertex
+attributes, other formats and live guest transport
 remain outside this boundary. Actual context-loss recovery remains a later task.
+
+`make verify-E6-T12h` additionally replays the complete first client submissions
+of kmscube/es2gears (nine actual array-strip draws), original CPU inputs and full
+constant banks. Independent literal pixel scenes prove depth/scissor/winding,
+negative Y, adjacent state toggles and poisoned A/B/A restoration. Owned async
+arrays use the existing final completion fence without waiting for GPU indices.
+See [raster proof](../../tools/virgl-command/raster-README.md). This isolated
+renderer proof does not advertise guest caps or claim live frame rate.
