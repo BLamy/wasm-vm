@@ -16,7 +16,8 @@ verified packed-float command decoder after the shared-exponent storage prerequi
 The exact verified predecessor is `b76fa7d63703e3cf2a3dfc3b2d7c835c3f3db5e1`; `evidence/virgl-production-readiness/standard-shared-exponent-consumer-gap.json` records two original125 views and a surface, all returning unsupported-feature through the historical packed decoder.
 
 Admit original 125 2D sampler views through a separately selected standard decoder and
-async renderer. Preserve every historical profile, resource owner, shader compiler,
+async renderer. Complete the selected GPU view refresh before applying native guest
+draw state. Preserve every historical profile, resource owner, shader compiler,
 cache budget, native transfer backend, guest capability set, and production renderer.
 Original 125 surfaces and render-target use remain refused. Existing qualified original
 RGBA32F / format 31 targets prove resulting pixels without adding output-format authority.
@@ -72,7 +73,9 @@ then set the verdict under the task policy. The worker never marks this task ver
 
 One boundary: original 125 sampler admission and the selected consumer/cache namespace in
 `decoder.mjs` and `state.mjs`. Storage and compiler behavior remain the verified predecessor.
-Consumer integration has one deterministic acceptance command with wire, native matrix,
+The selected refresh order prevents native helper draws from intervening between guest
+state restoration and execution. Consumer integration has one deterministic acceptance
+command with wire, native matrix,
 three ownership schedules, two native sabotage controls and affected prior gates.
 
 ## Evidence boundary
@@ -89,3 +92,26 @@ parent production bringup stays blocked on its remaining original-protocol requi
 D29 is independently verified at `b76fa7d63703e3cf2a3dfc3b2d7c835c3f3db5e1` and published as open PR507 on the existing upper native stack. Both original125 range1..3 views, identity and [2,4,0,5] swizzles, still return `unsupported-feature` through `decodeStandardPackedFloatImageSubmission`; the original mip2 surface remains refused. The adjacent readiness script reproduces the literal original-wire negatives at that recorded head and pins both complete D29 seals and source closure. This has wire-refusal authority only. The ordered S/high consumer prerequisite is next on the user-authorized production graphics chain; no native consumer, guest, capset or production evidence is claimed yet.
 
 Pure scratch preparation declares52 original vertex/fragment programs and40,776 original components on an exact binary16 lattice before any GPU observation. Independent JavaScript and Python original-word calculations agree without changing the existing pixel budget. Those checks are preparation only; native execution, physical completion, hot/cold source closure and fresh adversarial verification remain required.
+
+### 2026-10-10 — worker — native integration before the frozen submission
+
+The first ephemeral original125 draw completed its native fence but retained the preceding
+clear plane. The packed-float predecessor smoke passed on the same hardware. Independent
+sampler-diagnostic removal did not alter the failure; temporarily bypassing the selected
+GPU view refresh restored rasterization with the expected empty private texture. The
+selected consumer now completes all sampler refresh helpers before configuring the guest
+VAO/framebuffer/program and remaining draw state, without changing any historical refresh
+path, backend, compiler, input lattice or pixel budget. After this ordering change, the
+full52-program native matrix and one11-case lifetime/host/error schedule pass. These are
+implementation checks only; the frozen hot/cold acceptance, inverse audit, seals and fresh
+critic verdict remain required.
+
+Commands: `node tools/verify-virgl-standard-shared-exponent-consumer.mjs --output
+target/evidence/virgl-standard-shared-exponent-consumer-prefreeze-matrix`; the same runner
+with `--mode boundaries --seed 0xa5471e03` and output
+`target/evidence/virgl-standard-shared-exponent-consumer-prefreeze-boundaries`;
+`node tools/verify-virgl-standard-packed-float-consumer.mjs --output
+target/evidence/virgl-standard-shared-exponent-consumer-prefreeze-predecessor --smoke true`.
+Temporary query, shader, sampler-capture, refresh and case-selection isolation changes
+were removed before freezing. Native attribute/VAO/program/draw-buffer/capability snapshots
+remain in the final capture so the critic can inspect the actual draw state.

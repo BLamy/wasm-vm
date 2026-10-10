@@ -294,3 +294,16 @@ draw/state profile.
 The renderer uses bounded context-owned caches with exact key equality. See
 [cache-README.md](cache-README.md) for residency, eviction, counter denominators
 and explicitly host-labelled original-command/ESSL/binding frame dumps.
+
+The independently selected `decodeStandardSharedExponentImageSubmission` and
+`createVirglStandardSharedExponentImageAsyncRenderer` consume original format 125
+2D sampler views using the qualified shared-exponent resource owner and GPU transfer
+backend. They retain ordinary float, packed-float and normalized color operations
+inside the new profile, while previous factories retain their original admission.
+Original format 125 surfaces stay refused.
+
+`make verify-E6-T11d30` records original TGSI/packets, whole native source/output planes,
+public readbacks, physical fences and complete V8 regions. The recorded inputs declare
+native precision before GPU execution. Native wrong-level and wrong-filter controls
+must complete and then fail the unchanged independent oracle. Guest driver negotiation
+and production graphics are still governed by the parent bringup task.

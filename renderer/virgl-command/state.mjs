@@ -2,7 +2,7 @@
 import {byteColorFormat} from "./color-images.mjs";
 import {floatColorFormat} from "./float-images.mjs";
 import {packedFloatColorFormat} from "./packed-float-images.mjs";
-import { decodeSubmission, decodeStandardSubmission, decodeStandardUniformSubmission, decodeStandardImageSubmission, decodeStandardColorSubmission, decodeStandardFloatImageSubmission, decodeStandardPackedFloatImageSubmission, vertexFormat } from "./decoder.mjs";
+import { decodeSubmission, decodeStandardSubmission, decodeStandardUniformSubmission, decodeStandardImageSubmission, decodeStandardColorSubmission, decodeStandardFloatImageSubmission, decodeStandardPackedFloatImageSubmission, decodeStandardSharedExponentImageSubmission, vertexFormat } from "./decoder.mjs";
 import { LIMITS as SHADER_LIMITS } from "../virgl-shader/index.mjs";
 import { createKeyCache, hashKey } from "./cache.mjs";
 import { parseConstantDomain, checkFiniteBank, checkIndirectBank, checkLoopBank, checkRadialBank, checkRasterBank, checkConversionBank, checkExactBank, COORDINATE_KEY, DISCARD_KEY,
@@ -19,6 +19,7 @@ export const STANDARD_ASYNC_PROFILE = "virgl-standard-async-jobs-v1";
 export const STANDARD_UNIFORM_ASYNC_PROFILE = "virgl-standard-uniform-async-jobs-v1";
 export const STANDARD_BUFFER_ASYNC_PROFILE = "virgl-standard-buffer-async-jobs-v1";
 export const STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE = "virgl-standard-r11g11b10-image-async-jobs-v1";
+export const STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE = "virgl-standard-rgb9e5-image-async-jobs-v1";
 export const STANDARD_FLOAT_IMAGE_ASYNC_PROFILE = "virgl-standard-float-image-async-jobs-v1";
 export const STANDARD_IMAGE_ASYNC_PROFILE = "virgl-standard-image-async-jobs-v1";
 export const STANDARD_COLOR_ASYNC_PROFILE = "virgl-standard-byte-color-async-jobs-v1";
@@ -213,8 +214,13 @@ export function createVirglStandardPackedFloatImageAsyncRenderer(options) {
   return createRenderer(options, true, true, true, true, true, true, true, true, true, true);
 }
 
+/** Selected original RGB9E5 sampling with the existing qualified output family. */
+export function createVirglStandardSharedExponentImageAsyncRenderer(options) {
+  return createRenderer(options, true, true, true, true, true, true, true, true, true, true, true);
+}
+
 /** Host capabilities are trusted and non-reentrant. */
-function createRenderer(options, drawing, asynchronous = false, standard = false, uniform = false, bufferRoles = false, images = false, colors = false, textureOperations = false, floats = false, packed = false) {
+function createRenderer(options, drawing, asynchronous = false, standard = false, uniform = false, bufferRoles = false, images = false, colors = false, textureOperations = false, floats = false, packed = false, shared = false) {
   return result(() => {
     const config = dataRecord(options, ["gl", "resources", "bindings", "shaderBridge", "limits", "cacheLimits", ...(drawing ? ["drawLimits"] : []), ...(asynchronous ? ["asyncAccess", "jobLimits"] : []), ...(standard ? ["primitiveAssembly"] : []), ...(uniform ? ["uniformAccess"] : []), ...(images ? ["imageAccess"] : [])], ["gl", "resources", "bindings", "shaderBridge", ...(asynchronous ? ["asyncAccess"] : []), ...(uniform ? ["uniformAccess"] : []), ...(images ? ["imageAccess"] : [])]);
     const { gl, resources, bindings, shaderBridge } = config;
@@ -259,8 +265,8 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
     const imageAccess = images ? config.imageAccess : null;
     require(!images || imageAccess && ["capture", "resolve", "refresh", "hold", "holdStorage", "release", "inspect"].every(name => typeof imageAccess[name] === "function"),
       "invalid-input", "Original native image range authority is required.");
-    const profile = packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : textureOperations ? STANDARD_TEXTURE_ASYNC_PROFILE : colors ? STANDARD_COLOR_ASYNC_PROFILE : images ? STANDARD_IMAGE_ASYNC_PROFILE : bufferRoles ? STANDARD_BUFFER_ASYNC_PROFILE : uniform ? STANDARD_UNIFORM_ASYNC_PROFILE : standard ? STANDARD_ASYNC_PROFILE : asynchronous ? ASYNC_PROFILE : drawing ? DRAW_PROFILE : STATE_PROFILE;
-    const decodeCommands = packed ? decodeStandardPackedFloatImageSubmission : floats ? decodeStandardFloatImageSubmission : colors ? decodeStandardColorSubmission : images ? decodeStandardImageSubmission : uniform ? decodeStandardUniformSubmission : standard ? decodeStandardSubmission : decodeSubmission;
+    const profile = shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : textureOperations ? STANDARD_TEXTURE_ASYNC_PROFILE : colors ? STANDARD_COLOR_ASYNC_PROFILE : images ? STANDARD_IMAGE_ASYNC_PROFILE : bufferRoles ? STANDARD_BUFFER_ASYNC_PROFILE : uniform ? STANDARD_UNIFORM_ASYNC_PROFILE : standard ? STANDARD_ASYNC_PROFILE : asynchronous ? ASYNC_PROFILE : drawing ? DRAW_PROFILE : STATE_PROFILE;
+    const decodeCommands = shared ? decodeStandardSharedExponentImageSubmission : packed ? decodeStandardPackedFloatImageSubmission : floats ? decodeStandardFloatImageSubmission : colors ? decodeStandardColorSubmission : images ? decodeStandardImageSubmission : uniform ? decodeStandardUniformSubmission : standard ? decodeStandardSubmission : decodeSubmission;
     const parseShaderMetadata = textureOperations ? parseStandardTextureShaderMetadata : uniform ? parseStandardUniformShaderMetadata : standard ? parseStandardShaderMetadata : parseConstantDomain;
     const idle = () => require(activeJob === null, "busy", "A renderer job is active; cancel and drain it before changing state.");
     const contexts = new Map(), objects = new Set(), programs = new Set();
@@ -374,7 +380,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       }
     };
     const translatedStage = (sub, request) => {
-      const key = JSON.stringify([sub.generation, "stage", request.stage, request.text, ...(textureOperations ? [packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : STANDARD_TEXTURE_ASYNC_PROFILE] : [])]);
+      const key = JSON.stringify([sub.generation, "stage", request.stage, request.text, ...(textureOperations ? [shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : STANDARD_TEXTURE_ASYNC_PROFILE] : [])]);
       const cached = translationCache.get(sub, key);
       if (cached) return cached;
       work.translations++;
@@ -388,7 +394,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
     };
     const translatedPair = (sub, vertex, fragment, interfaceKey, validate, inputTypes = null, bufferZeroMask = 0) => {
       const key = JSON.stringify([sub.generation, "pair", vertex.fields.text, fragment.fields.text, interfaceKey,
-        ...(inputTypes?.key ? [inputTypes.key] : []), ...(uniform ? [bufferZeroMask] : []), ...(textureOperations ? [packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : STANDARD_TEXTURE_ASYNC_PROFILE] : [])]);
+        ...(inputTypes?.key ? [inputTypes.key] : []), ...(uniform ? [bufferZeroMask] : []), ...(textureOperations ? [shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : STANDARD_TEXTURE_ASYNC_PROFILE] : [])]);
       const cached = translationCache.get(sub, key);
       if (cached) { validate(cached); return cached; }
       work.pairTranslations++;
@@ -1005,6 +1011,9 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       const program = plan ? plan.program : selectedProgram(sub);
       const { key: stateKey, state } = cachedState(sub, program, Boolean(plan));
       const uploads = plan ? plan.uploads : constantUploads(program, sub.constants, false);
+      // Shared-exponent refresh executes native helper draws. Complete those
+      // before applying guest draw state, with no helper draw before execution.
+      if (shared && plan) for (const sampler of program.samplers) unwrap(imageAccess.refresh(sub.views[sampler.stage][sampler.index].imageRange));
       gl.bindVertexArray(sub.vao);
       gl.bindFramebuffer(gl.FRAMEBUFFER, sub.framebuffer);
       const surface = sub.surfaces[0] ?? null;
@@ -1068,7 +1077,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         const view = sub.views[stage][slot], sampler = sub.samplers[stage][slot], unit = unitFor(stage, slot);
         let image = null;
         if (images && view) {
-          if (plan && program.samplers.some(entry => entry.stage === stage && entry.index === slot)) unwrap(imageAccess.refresh(view.imageRange));
+          if (!shared && plan && program.samplers.some(entry => entry.stage === stage && entry.index === slot)) unwrap(imageAccess.refresh(view.imageRange));
           image = unwrap(imageAccess.resolve(view.imageRange));
         }
         gl.activeTexture(gl.TEXTURE0 + unit); gl.bindTexture(gl.TEXTURE_2D, view ? images ? image.storage.texture : resolve(view.lease).storage.texture : null);

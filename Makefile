@@ -2305,3 +2305,7 @@ verify-E6-T11d29:
 .PHONY: verify-E6-T11d29-adversarial
 verify-E6-T11d29-adversarial:
 	bash tools/verify-virgl-standard-shared-exponent-adversarial.sh
+
+.PHONY: verify-E6-T11d30
+verify-E6-T11d30:
+	bash tools/verify-virgl-standard-shared-exponent-consumer.sh
