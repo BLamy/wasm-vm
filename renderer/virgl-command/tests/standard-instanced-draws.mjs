@@ -178,7 +178,7 @@ export function runWireAcceptance() {
     records.push({label,hex:hex(bytes),standard:a,legacy:b,expected,legacyExpected:legacy});
   };
   for(const divisor of [0,1,2,65535,0xffffffff])for(const format of [28,29,30,31,32])
-    test(packet(1,5,[777,0,divisor,0,format]),format<=31,divisor===0&&format<=31,"element-"+divisor+"-"+format);
+    test(packet(1,5,[777,0,divisor,0,format]),format<=32,divisor===0&&format<=31,"element-"+divisor+"-"+format);
   for(const size of [0,1,2,3,4,8])for(const offset of [0,1,4,8,12,0xfffffffc])
     test(packet(11,0,[6,size,offset]),[1,2,4].includes(size)&&offset%size===0,size===2&&offset%2===0,"index-"+size+"-"+offset);
   for(const instances of [0,1,2,5,65536,0xffffffff])for(const mode of [0,4,5]) {

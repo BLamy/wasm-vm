@@ -6,7 +6,7 @@ import {compactModel,compareCompactPixels} from '../../../tools/virgl-command/st
 const word=n=>new Uint32Array(new Float32Array([n]).buffer)[0];
 const tgsi=(stage,decl,body)=>(stage===0?'VERT':'FRAG')+'\n'+decl+'\n'+[...body,'END'].map((line,i)=>i+': '+line+'\n').join('');
 const families=[[28,4,'float'],[48,2,'unorm'],[56,2,'snorm'],[64,1,'unorm'],[74,1,'snorm'],[91,2,'half']];
-function fixtureFormat(format){for(const [base,bytes,kind]of families)if(format>=base&&format<base+4)return {components:format-base+1,bytes,kind};throw Error('unsupported fixture format');}
+function fixtureFormat(format){for(const [base,bytes,kind]of [...families,[32,4,'unorm'],[40,4,'snorm'],[36,4,'uscaled'],[44,4,'sscaled'],[52,2,'uscaled'],[60,2,'sscaled'],[69,1,'uscaled'],[82,1,'sscaled']])if(format>=base&&format<base+4)return {components:format-base+1,bytes,kind};throw Error('unsupported fixture format');}
 export function compactSpec(options={}){
  const s={format:67,instances:1,indexed:true,indexSize:2,indexOffset:12,start:5,enabled:false,restartIndex:61,divisor:0,bufferOffset:1,sourceOffset:0,
   positionOffset:1,positionSourceOffset:3,positionStride:16,shared:false,seed:0xa419029b,wordLane:null,negativeY:false,...options},fmt=fixtureFormat(s.format);
@@ -29,9 +29,9 @@ export function compactSpec(options={}){
   let value=s.values?.[ordinal%s.values.length]?.[lane];
   if(fmt.kind==='half'){value=s.halfBits?.[ordinal%s.halfBits.length]?.[lane]??[0x3400,0xb800,0x3800,0x3c00][(lane+ordinal)%4];q.setUint16(at,value,true);}
   else if(fmt.kind==='float')q.setFloat32(at,value??(16+random()%192)/256,true);
-  else {const bits=fmt.bytes*8,signed=fmt.kind==='snorm',top=signed?2**(bits-1)-1:2**bits-1;
+  else {const bits=fmt.bytes*8,signed=fmt.kind==='snorm'||fmt.kind==='sscaled',top=signed?2**(bits-1)-1:2**bits-1;
    value=value??(ordinal===0?(signed?-(2**(bits-1)):0):ordinal===1?top:Math.floor(top*.37)+lane);
-   if(fmt.bytes===1){if(signed)q.setInt8(at,value);else q.setUint8(at,value);}else if(signed)q.setInt16(at,value,true);else q.setUint16(at,value,true);
+   if(fmt.bytes===1){if(signed)q.setInt8(at,value);else q.setUint8(at,value);}else if(fmt.bytes===2){if(signed)q.setInt16(at,value,true);else q.setUint16(at,value,true);}else if(signed)q.setInt32(at,value,true);else q.setUint32(at,value,true);
   }
  }
  s.data=new Map([[3,position],...(s.shared?[]:[[4,color]])]);s.colorId=s.shared?3:4;
@@ -80,7 +80,7 @@ export async function compactSubmit(r,ctx,bytes,label,onYield=null){r.currentLab
 function checkWords(c,observed,expected,values,label){c.same(observed.length,expected.length,label+' supplied word count');for(let i=0;i<expected.length;i++){
  if(Number.isNaN(values[i]))c.same((observed[i]&0x7f800000)===0x7f800000&&(observed[i]&0x7fffff)!==0,true,label+' NaN category');else c.same(observed[i],expected[i],label+' lane '+i);
 }}
-export async function compactFrame(r,record){
+export async function compactFrame(r,record,oracle={model:compactModel,compare:compareCompactPixels}){
  const {gl,c}=r;c.ok(record.result,record.label+' completed original compact draw');c.same(record.result.gpuComplete,true,'compact final fence completed');
  const fb=gl.createFramebuffer();gl.bindFramebuffer(gl.READ_FRAMEBUFFER,fb);gl.framebufferTexture2D(gl.READ_FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,r.allocations[0].storage.texture,0);gl.readBuffer(gl.COLOR_ATTACHMENT0);gl.bindBuffer(gl.PIXEL_PACK_BUFFER,null);
  for(const p of ['PACK_ROW_LENGTH','PACK_SKIP_PIXELS','PACK_SKIP_ROWS'])gl.pixelStorei(gl[p],0);gl.pixelStorei(gl.PACK_ALIGNMENT,1);
@@ -89,7 +89,7 @@ export async function compactFrame(r,record){
  for(const [id,original]of r.bufferBytes){const generation=id===6?draw.indexResourceGeneration:draw.vertexFetches.find(a=>a.resourceId===id).resourceGeneration,allocation=r.allocations.find(a=>a.metadata.id===id&&a.generation===generation),bytes=new Uint8Array(original.length);
   gl.bindBuffer(gl.COPY_READ_BUFFER,allocation.storage.buffer);gl.getBufferSubData(gl.COPY_READ_BUFFER,0,bytes);gl.bindBuffer(gl.COPY_READ_BUFFER,null);const saved=await blob(r,bytes);c.same(saved.sha256,hex(new Uint8Array(await crypto.subtle.digest('SHA-256',original))),'unchanged original compact native bytes '+id);buffers.push({resourceId:id,generation,nativeBuffer:r.trace.id(allocation.storage.buffer),blob:saved});}
  for(const entry of r.normalized.filter(e=>e.label===record.label)){c.same(entry.deleted,true,'compact private index retired after fence');normalized.push({nativeBuffer:entry.nativeBuffer,bytes:entry.bytes,blob:await blob(r,entry.raw)});}
- const model=compactModel(r.history,r.bufferBytes,r.range),audit=compareCompactPixels(pixels,model,r.width,r.height),frame={label:record.label,width:r.width,height:r.height,range:r.range,history:r.history.map(h=>({...h})),inputs:r.exchanges.map(e=>({...e})),
+ const model=oracle.model(r.history,r.bufferBytes,r.range),audit=oracle.compare(pixels,model,r.width,r.height),frame={label:record.label,width:r.width,height:r.height,range:r.range,history:r.history.map(h=>({...h})),inputs:r.exchanges.map(e=>({...e})),
   native:{calls,buffers,normalized,state:r.nativeState.filter(a=>a.label===record.label)},predicted:{ids:model.ids,fetches:model.fetches,points:model.points,min:model.min,max:model.max,valid:model.valid,restarts:model.restarts,normalize:model.normalize},audit,pixels:await blob(r,pixels)};
  r.frames.push(frame);c.same(audit.misses,[],record.label+' independent original compact pixels');
  const call=calls.at(-1),instanced=model.effective>1;c.same(call.name,(model.draw.indexed?'drawElements':'drawArrays')+(instanced?'Instanced':''),'actual compact native draw entry');
@@ -111,7 +111,7 @@ export function runWireAcceptance(){
   c.same(a.ok,expected,'compact original standard element');c.same(b.ok,legacy,'unchanged legacy element');const desc=floatingVertexFormat(format);c.same([desc.components,desc.scalarBytes,desc.elementBytes],[k+1,bytes,(k+1)*bytes],'immutable compact byte width');c.same(Object.isFrozen(desc),true,'frozen original format');
   records.push({format,divisor,offset,hex:hex(packetBytes),standard:a,legacy:b,expected,legacyExpected:legacy});
  }
- for(const format of [0,27,32,40,52,60,68,69,78,82,87,95,0xffffffff]){const bytes=packet(1,5,[777,0,0,0,format]),a=decodeStandardSubmission(bytes);c.same(a.ok,false,'outside compact formats remain gated');records.push({format,hex:hex(bytes),standard:a,expected:false});}
+ for(const format of [0,27,32,40,52,60,68,69,78,82,87,95,0xffffffff]){const bytes=packet(1,5,[777,0,0,0,format]),a=decodeStandardSubmission(bytes),expected=[32,40,52,60,69,82].includes(format);c.same(a.ok,expected,'explicit successor scalar admission');records.push({format,hex:hex(bytes),standard:a,expected});}
  for(const input of [NaN,Infinity,null,undefined,'28',{},-1])c.same(floatingVertexFormat(input),null,'descriptor does not coerce caller input');return {status:'passed',records,predictions:c.rows};
 }
 export async function runAcceptance({smoke=false,constantFault=false}={}){

@@ -79,3 +79,25 @@ head. Each packet still fails standard and historical admission. The user's
 explicit instruction to finish production guest graphics keeps this ordered
 prerequisite ahead of unrelated general-queue work. One active S/high boundary;
 no production caps or complete API claim is made by this activation.
+
+### 2026-10-10 — worker — self-validation before freeze
+
+The runtime diff is limited to original scalar descriptors in `decoder.mjs`
+and the signed-width/normalized-versus-scaled stride-zero branch in `state.mjs`.
+No compiler, allocator, interface, resource, guest or production source changed.
+The first complete new hardware run passed 383 frames, 396 wire records and 80
+historical wire records. Both actual served faults completed draw/fence work
+and failed original pixels: signedness expected `[0,0,0,207]`, observed
+`[0,0,0,79]`; scaled-generic rounding expected `[0,0,128,75]`, observed
+`[0,0,0,75]`, both at pixel(1,2). Offline original byte/storage/word/pixel checks
+passed. Pinned native and ASan/UBSan enum programs print the same literal list.
+
+The affected compact225 and its two native faults still pass their independent
+saved-pixel audit; the promoted critic44/297-wire run passes unchanged original
+TGSI/pixel interpretation with the deliberately updated scalar exclusions.
+Historical recordings remain byte-identical. Eight additional normalized32
+retained-generic interior word checks bring the final matrix to 391 frames,
+including full-original-range rounding. `target/evidence/virgl-scalar-self-*`
+and `/tmp/wasmvm-scalar-*.log` are inner-loop output only, not the final proof.
+The final default hot and scrubbed pristine-clone command will be recorded once
+at the frozen implementation/harness head, then sealed for a fresh critic.

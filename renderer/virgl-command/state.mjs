@@ -31,10 +31,13 @@ function constantVertexValues(bytes, sourceFormat) {
       value = exponent === 31 ? fraction ? NaN : sign * Infinity :
         sign * (exponent === 0 ? fraction * 2 ** -24 : (1024 + fraction) * 2 ** (exponent - 25));
     } else {
-      const signed = format.kind === "snorm", bits = format.scalarBytes * 8;
+      const signed = format.kind === "snorm" || format.kind === "sscaled", bits = format.scalarBytes * 8;
       const scalar = format.scalarBytes === 1 ? signed ? input.getInt8(at) : input.getUint8(at) :
-        signed ? input.getInt16(at, true) : input.getUint16(at, true);
-      value = signed ? Math.max(-1, scalar / (2 ** (bits - 1) - 1)) : scalar / (2 ** bits - 1);
+        format.scalarBytes === 2 ? signed ? input.getInt16(at, true) : input.getUint16(at, true) :
+        signed ? input.getInt32(at, true) : input.getUint32(at, true);
+      if (format.normalized) {
+        value = signed ? Math.max(-1, scalar / (2 ** (bits - 1) - 1)) : scalar / (2 ** bits - 1);
+      } else value = scalar;
     }
     values[lane] = value;
     // Preserve historical original float32 word custody. Compact values record

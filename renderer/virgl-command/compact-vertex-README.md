@@ -30,8 +30,10 @@ Actual served normalization and scalar-unpack faults must complete draw/fence
 work and fail original physical pixels. Point/list/default-restart bindings and
 unchanged compiler/allocator seals are retained.
 
-Normalized32, scaled, packed/swizzled and pure integer vertex formats remain
-separate boundaries. This isolated factory has no production-demo import or
+Normalized32 and scaled formats are covered by the later
+[scalar floating boundary](scalar-vertex-README.md). Its explicit wire admission
+updates the corresponding historical exclusions; original D12 recordings remain
+sealed. Packed/swizzled and pure integer vertex formats remain separate boundaries. This isolated factory has no production-demo import or
 positive capset, complete API, actual guest offload, deployment or throughput
 authority. Format conversion follows the [GLES3 vertex attribute rules](https://registry.khronos.org/OpenGL/specs/es/3.0/es_spec_3.0.pdf)
 and [WebGL2 restrictions](https://registry.khronos.org/webgl/specs/latest/2.0/).

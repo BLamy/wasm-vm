@@ -21,9 +21,13 @@ export const STANDARD_LIMITS = Object.freeze({ ...LIMITS, constantWords: 2048, v
 // Original pinned VirGL enums. Descriptors are shared by wire admission,
 // native pointers, actual fetch bounds and retained stride-zero reads.
 const FLOATING_VERTEX_FORMATS = Object.freeze(Object.fromEntries([
-  [28, 4, "FLOAT", "float"], [48, 2, "UNSIGNED_SHORT", "unorm"],
-  [56, 2, "SHORT", "snorm"], [64, 1, "UNSIGNED_BYTE", "unorm"],
-  [74, 1, "BYTE", "snorm"], [91, 2, "HALF_FLOAT", "half"],
+  [28, 4, "FLOAT", "float"], [32, 4, "UNSIGNED_INT", "unorm"],
+  [36, 4, "UNSIGNED_INT", "uscaled"], [40, 4, "INT", "snorm"],
+  [44, 4, "INT", "sscaled"], [48, 2, "UNSIGNED_SHORT", "unorm"],
+  [52, 2, "UNSIGNED_SHORT", "uscaled"], [56, 2, "SHORT", "snorm"],
+  [60, 2, "SHORT", "sscaled"], [64, 1, "UNSIGNED_BYTE", "unorm"],
+  [69, 1, "UNSIGNED_BYTE", "uscaled"], [74, 1, "BYTE", "snorm"],
+  [82, 1, "BYTE", "sscaled"], [91, 2, "HALF_FLOAT", "half"],
 ].flatMap(([base, scalarBytes, type, kind]) => Array.from({ length: 4 }, (_, lane) => {
   const format = base + lane, components = lane + 1;
   return [format, Object.freeze({ format, components, scalarBytes,
