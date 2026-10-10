@@ -49,7 +49,9 @@ def main(directory):
             sources[name] = sha(raw)
 
     for _ in range(500):
-        if (directory / 'acceptance.log').read_bytes().endswith(b'STANDARD_CONSTANT_RECORDING_COMPLETE\n'):
+        # A failed custody check can append diagnostics after the completed
+        # runtime block. Preserve that original log during a harness-only repair.
+        if b'\nSTANDARD_CONSTANT_RECORDING_COMPLETE\n' in (directory / 'acceptance.log').read_bytes():
             break
         time.sleep(.01)
     else:
