@@ -1,0 +1,1479 @@
+{
+  "status": "closed",
+  "task": "E6-T11d4",
+  "predecessor": "97ed2ca31f08465e442c88aed3a677237f78e236",
+  "frozenRuntime": "1c17b508d0dc52199613f4c4883486c477773203",
+  "coverageSha256": "4a3bf892065b9be6820e55042ded6ccc74a21ea44631d64e3f23b1e877bf6eec",
+  "debugCoverageSha256": "1c5bfc88ab5b28a8fa7d0a2da4216ec4e3f887af1345d53496bf8cf410d07860",
+  "profileAuthentication": [
+    {
+      "side": "hot",
+      "profile": "matrix",
+      "identicalReexport": true
+    },
+    {
+      "side": "hot",
+      "profile": "allocations",
+      "identicalReexport": true
+    },
+    {
+      "side": "cold",
+      "profile": "matrix",
+      "identicalReexport": true
+    },
+    {
+      "side": "cold",
+      "profile": "allocations",
+      "identicalReexport": true
+    }
+  ],
+  "runtimeSummaries": {
+    "bridge.c": {
+      "branches": {
+        "count": 3222,
+        "covered": 1201,
+        "notcovered": 2021,
+        "percent": 37.27498448168839
+      },
+      "functions": {
+        "count": 97,
+        "covered": 43,
+        "percent": 44.329896907216494
+      },
+      "instantiations": {
+        "count": 97,
+        "covered": 43,
+        "percent": 44.329896907216494
+      },
+      "lines": {
+        "count": 2076,
+        "covered": 998,
+        "percent": 48.07321772639692
+      },
+      "mcdc": {
+        "count": 0,
+        "covered": 0,
+        "notcovered": 0,
+        "percent": 0
+      },
+      "regions": {
+        "count": 4952,
+        "covered": 2126,
+        "notcovered": 2826,
+        "percent": 42.932148626817444
+      }
+    },
+    "standard_emit.c": {
+      "branches": {
+        "count": 308,
+        "covered": 295,
+        "notcovered": 13,
+        "percent": 95.77922077922078
+      },
+      "functions": {
+        "count": 7,
+        "covered": 7,
+        "percent": 100
+      },
+      "instantiations": {
+        "count": 7,
+        "covered": 7,
+        "percent": 100
+      },
+      "lines": {
+        "count": 218,
+        "covered": 213,
+        "percent": 97.70642201834863
+      },
+      "mcdc": {
+        "count": 0,
+        "covered": 0,
+        "notcovered": 0,
+        "percent": 0
+      },
+      "regions": {
+        "count": 477,
+        "covered": 462,
+        "notcovered": 15,
+        "percent": 96.85534591194968
+      }
+    },
+    "standard_guard.c": {
+      "branches": {
+        "count": 790,
+        "covered": 783,
+        "notcovered": 7,
+        "percent": 99.1139240506329
+      },
+      "functions": {
+        "count": 15,
+        "covered": 15,
+        "percent": 100
+      },
+      "instantiations": {
+        "count": 15,
+        "covered": 15,
+        "percent": 100
+      },
+      "lines": {
+        "count": 335,
+        "covered": 333,
+        "percent": 99.40298507462687
+      },
+      "mcdc": {
+        "count": 0,
+        "covered": 0,
+        "notcovered": 0,
+        "percent": 0
+      },
+      "regions": {
+        "count": 1137,
+        "covered": 1127,
+        "notcovered": 10,
+        "percent": 99.12049252418646
+      }
+    }
+  },
+  "hunks": [
+    {
+      "file": "Makefile",
+      "line": 2120,
+      "lines": 4,
+      "classification": "WAIVED task/documentation/acceptance recipe metadata"
+    },
+    {
+      "file": "evidence/virgl-production-readiness/compositor-api-floor.json",
+      "line": 1,
+      "lines": 33,
+      "classification": "WAIVED immutable evidence/fixture metadata; hashes authenticated"
+    },
+    {
+      "file": "evidence/virgl-production-readiness/standard-shader-gap.json",
+      "line": 1,
+      "lines": 1386,
+      "classification": "WAIVED immutable evidence/fixture metadata; hashes authenticated"
+    },
+    {
+      "file": "evidence/virgl-standard-shader/manifest.json",
+      "line": 1,
+      "lines": 18,
+      "classification": "WAIVED immutable evidence/fixture metadata; hashes authenticated"
+    },
+    {
+      "file": "evidence/virgl-standard-shader/records.json",
+      "line": 1,
+      "lines": 2052,
+      "classification": "WAIVED immutable evidence/fixture metadata; hashes authenticated"
+    },
+    {
+      "file": "evidence/virgl-standard-shader/verifier/finding/build-debug.sh",
+      "line": 1,
+      "lines": 9,
+      "classification": "WAIVED immutable evidence/fixture metadata; hashes authenticated"
+    },
+    {
+      "file": "evidence/virgl-standard-shader/verifier/finding/case.tgsi",
+      "line": 1,
+      "lines": 6,
+      "classification": "WAIVED immutable evidence/fixture metadata; hashes authenticated"
+    },
+    {
+      "file": "evidence/virgl-standard-shader/verifier/finding/lldb-debug.log",
+      "line": 1,
+      "lines": 27,
+      "classification": "WAIVED immutable evidence/fixture metadata; hashes authenticated"
+    },
+    {
+      "file": "evidence/virgl-standard-shader/verifier/finding/native.jsonl",
+      "line": 1,
+      "lines": 1,
+      "classification": "WAIVED immutable evidence/fixture metadata; hashes authenticated"
+    },
+    {
+      "file": "evidence/virgl-standard-shader/verifier/finding/prediction.json",
+      "line": 1,
+      "lines": 9,
+      "classification": "WAIVED immutable evidence/fixture metadata; hashes authenticated"
+    },
+    {
+      "file": "evidence/virgl-standard-shader/verifier/finding/sanitize.jsonl",
+      "line": 1,
+      "lines": 1,
+      "classification": "WAIVED immutable evidence/fixture metadata; hashes authenticated"
+    },
+    {
+      "file": "evidence/virgl-standard-shader/verifier/finding/wasm.json",
+      "line": 1,
+      "lines": 10,
+      "classification": "WAIVED immutable evidence/fixture metadata; hashes authenticated"
+    },
+    {
+      "file": "evidence/virgl-standard-shader/verifier/finding/wasm.mjs",
+      "line": 1,
+      "lines": 11,
+      "classification": "WAIVED immutable evidence/fixture metadata; hashes authenticated"
+    },
+    {
+      "file": "evidence/virgl-standard-shader/verifier/manifest.json",
+      "line": 1,
+      "lines": 14,
+      "classification": "WAIVED immutable evidence/fixture metadata; hashes authenticated"
+    },
+    {
+      "file": "evidence/virgl-standard-shader/verifier/records.json",
+      "line": 1,
+      "lines": 363,
+      "classification": "WAIVED immutable evidence/fixture metadata; hashes authenticated"
+    },
+    {
+      "file": "evidence/virgl-standard-shader/verifier/verdict.json",
+      "line": 1,
+      "lines": 48,
+      "classification": "WAIVED immutable evidence/fixture metadata; hashes authenticated"
+    },
+    {
+      "file": "renderer/virgl-shader/STANDARD.md",
+      "line": 1,
+      "lines": 55,
+      "classification": "WAIVED task/documentation/acceptance recipe metadata"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 13,
+      "lines": 2,
+      "classification": "EXECUTED + specifically indexed arm/line waivers"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 2247,
+      "lines": 221,
+      "classification": "EXECUTED + specifically indexed arm/line waivers"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.h",
+      "line": 75,
+      "lines": 9,
+      "classification": "WAIVED declarations/types/limits; corresponding runtime exercised"
+    },
+    {
+      "file": "renderer/virgl-shader/build.sh",
+      "line": 12,
+      "lines": 1,
+      "classification": "EXECUTED selected native/sanitized/allocation/Wasm/stack modes in authenticated hot+cold acceptance; source/export additions configuration, legacy cases unchanged"
+    },
+    {
+      "file": "renderer/virgl-shader/build.sh",
+      "line": 20,
+      "lines": 20,
+      "classification": "EXECUTED selected native/sanitized/allocation/Wasm/stack modes in authenticated hot+cold acceptance; source/export additions configuration, legacy cases unchanged"
+    },
+    {
+      "file": "renderer/virgl-shader/build.sh",
+      "line": 222,
+      "lines": 1,
+      "classification": "EXECUTED selected native/sanitized/allocation/Wasm/stack modes in authenticated hot+cold acceptance; source/export additions configuration, legacy cases unchanged"
+    },
+    {
+      "file": "renderer/virgl-shader/build.sh",
+      "line": 569,
+      "lines": 1,
+      "classification": "EXECUTED selected native/sanitized/allocation/Wasm/stack modes in authenticated hot+cold acceptance; source/export additions configuration, legacy cases unchanged"
+    },
+    {
+      "file": "renderer/virgl-shader/build.sh",
+      "line": 575,
+      "lines": 1,
+      "classification": "EXECUTED selected native/sanitized/allocation/Wasm/stack modes in authenticated hot+cold acceptance; source/export additions configuration, legacy cases unchanged"
+    },
+    {
+      "file": "renderer/virgl-shader/build.sh",
+      "line": 587,
+      "lines": 1,
+      "classification": "EXECUTED selected native/sanitized/allocation/Wasm/stack modes in authenticated hot+cold acceptance; source/export additions configuration, legacy cases unchanged"
+    },
+    {
+      "file": "renderer/virgl-shader/native_tests/standard_allocations.c",
+      "line": 1,
+      "lines": 45,
+      "classification": "EXECUTED recording/test harness in hot+cold worker and independent critic replay; no alternate runtime/test-only semantics"
+    },
+    {
+      "file": "renderer/virgl-shader/native_tests/standard_compiler.c",
+      "line": 1,
+      "lines": 88,
+      "classification": "EXECUTED recording/test harness in hot+cold worker and independent critic replay; no alternate runtime/test-only semantics"
+    },
+    {
+      "file": "renderer/virgl-shader/standard.mjs",
+      "line": 1,
+      "lines": 68,
+      "classification": "EXECUTED + specifically indexed arm/line waivers"
+    },
+    {
+      "file": "renderer/virgl-shader/standard_emit.c",
+      "line": 1,
+      "lines": 253,
+      "classification": "EXECUTED + specifically indexed arm/line waivers"
+    },
+    {
+      "file": "renderer/virgl-shader/standard_emit.h",
+      "line": 1,
+      "lines": 11,
+      "classification": "WAIVED declarations/types/limits; corresponding runtime exercised"
+    },
+    {
+      "file": "renderer/virgl-shader/standard_guard.c",
+      "line": 1,
+      "lines": 376,
+      "classification": "EXECUTED + specifically indexed arm/line waivers"
+    },
+    {
+      "file": "renderer/virgl-shader/standard_guard.h",
+      "line": 1,
+      "lines": 36,
+      "classification": "WAIVED declarations/types/limits; corresponding runtime exercised"
+    },
+    {
+      "file": "renderer/virgl-shader/tests/standard-browser.mjs",
+      "line": 1,
+      "lines": 205,
+      "classification": "EXECUTED recording/test harness in hot+cold worker and independent critic replay; no alternate runtime/test-only semantics"
+    },
+    {
+      "file": "tasks/QUEUE.md",
+      "line": 5,
+      "lines": 1,
+      "classification": "WAIVED task/documentation/acceptance recipe metadata"
+    },
+    {
+      "file": "tasks/QUEUE.md",
+      "line": 647,
+      "lines": 2,
+      "classification": "WAIVED task/documentation/acceptance recipe metadata"
+    },
+    {
+      "file": "tasks/epic-6-transcendence/E6-T11d-truthful-guest-virgl-bringup.md",
+      "line": 7,
+      "lines": 2,
+      "classification": "WAIVED task/documentation/acceptance recipe metadata"
+    },
+    {
+      "file": "tasks/epic-6-transcendence/E6-T11d-truthful-guest-virgl-bringup.md",
+      "line": 107,
+      "lines": 21,
+      "classification": "WAIVED task/documentation/acceptance recipe metadata"
+    },
+    {
+      "file": "tasks/epic-6-transcendence/E6-T11d4-standard-shader-compiler.md",
+      "line": 1,
+      "lines": 308,
+      "classification": "WAIVED task/documentation/acceptance recipe metadata"
+    },
+    {
+      "file": "tools/verify-virgl-standard-shader.sh",
+      "line": 1,
+      "lines": 68,
+      "classification": "EXECUTED recording/test harness in hot+cold worker and independent critic replay; no alternate runtime/test-only semantics"
+    },
+    {
+      "file": "tools/virgl-standard-shader/browser.mjs",
+      "line": 1,
+      "lines": 17,
+      "classification": "EXECUTED recording/test harness in hot+cold worker and independent critic replay; no alternate runtime/test-only semantics"
+    },
+    {
+      "file": "tools/virgl-standard-shader/cases.py",
+      "line": 1,
+      "lines": 163,
+      "classification": "EXECUTED recording/test harness in hot+cold worker and independent critic replay; no alternate runtime/test-only semantics"
+    },
+    {
+      "file": "tools/virgl-standard-shader/cold.py",
+      "line": 1,
+      "lines": 74,
+      "classification": "EXECUTED recording/test harness in hot+cold worker and independent critic replay; no alternate runtime/test-only semantics"
+    },
+    {
+      "file": "tools/virgl-standard-shader/enums.c",
+      "line": 1,
+      "lines": 16,
+      "classification": "EXECUTED recording/test harness in hot+cold worker and independent critic replay; no alternate runtime/test-only semantics"
+    },
+    {
+      "file": "tools/virgl-standard-shader/metadata.py",
+      "line": 1,
+      "lines": 63,
+      "classification": "EXECUTED recording/test harness in hot+cold worker and independent critic replay; no alternate runtime/test-only semantics"
+    },
+    {
+      "file": "tools/virgl-standard-shader/node.mjs",
+      "line": 1,
+      "lines": 47,
+      "classification": "EXECUTED recording/test harness in hot+cold worker and independent critic replay; no alternate runtime/test-only semantics"
+    },
+    {
+      "file": "tools/virgl-standard-shader/pixels.mjs",
+      "line": 1,
+      "lines": 107,
+      "classification": "EXECUTED recording/test harness in hot+cold worker and independent critic replay; no alternate runtime/test-only semantics"
+    },
+    {
+      "file": "tools/virgl-standard-shader/receipt.py",
+      "line": 1,
+      "lines": 70,
+      "classification": "EXECUTED recording/test harness in hot+cold worker and independent critic replay; no alternate runtime/test-only semantics"
+    },
+    {
+      "file": "tools/virgl-standard-shader/retained-raw-page.mjs",
+      "line": 1,
+      "lines": 25,
+      "classification": "EXECUTED recording/test harness in hot+cold worker and independent critic replay; no alternate runtime/test-only semantics"
+    },
+    {
+      "file": "tools/virgl-standard-shader/retained-raw.mjs",
+      "line": 1,
+      "lines": 8,
+      "classification": "EXECUTED recording/test harness in hot+cold worker and independent critic replay; no alternate runtime/test-only semantics"
+    },
+    {
+      "file": "tools/virgl-standard-shader/seal.py",
+      "line": 1,
+      "lines": 101,
+      "classification": "EXECUTED recording/test harness in hot+cold worker and independent critic replay; no alternate runtime/test-only semantics"
+    }
+  ],
+  "pathClassification": {
+    "Makefile": "WAIVED task/documentation/acceptance recipe metadata",
+    "evidence/virgl-production-readiness/compositor-api-floor.json": "WAIVED immutable evidence/fixture metadata; hashes authenticated",
+    "evidence/virgl-production-readiness/standard-shader-gap.json": "WAIVED immutable evidence/fixture metadata; hashes authenticated",
+    "evidence/virgl-standard-shader/manifest.json": "WAIVED immutable evidence/fixture metadata; hashes authenticated",
+    "evidence/virgl-standard-shader/recording.tar.gz": "WAIVED immutable evidence/fixture metadata; hashes authenticated",
+    "evidence/virgl-standard-shader/records.json": "WAIVED immutable evidence/fixture metadata; hashes authenticated",
+    "evidence/virgl-standard-shader/verifier/finding/build-debug.sh": "WAIVED immutable evidence/fixture metadata; hashes authenticated",
+    "evidence/virgl-standard-shader/verifier/finding/case.bin": "WAIVED immutable evidence/fixture metadata; hashes authenticated",
+    "evidence/virgl-standard-shader/verifier/finding/case.tgsi": "WAIVED immutable evidence/fixture metadata; hashes authenticated",
+    "evidence/virgl-standard-shader/verifier/finding/lldb-debug.log": "WAIVED immutable evidence/fixture metadata; hashes authenticated",
+    "evidence/virgl-standard-shader/verifier/finding/native.jsonl": "WAIVED immutable evidence/fixture metadata; hashes authenticated",
+    "evidence/virgl-standard-shader/verifier/finding/prediction.json": "WAIVED immutable evidence/fixture metadata; hashes authenticated",
+    "evidence/virgl-standard-shader/verifier/finding/sanitize.jsonl": "WAIVED immutable evidence/fixture metadata; hashes authenticated",
+    "evidence/virgl-standard-shader/verifier/finding/wasm.json": "WAIVED immutable evidence/fixture metadata; hashes authenticated",
+    "evidence/virgl-standard-shader/verifier/finding/wasm.mjs": "WAIVED immutable evidence/fixture metadata; hashes authenticated",
+    "evidence/virgl-standard-shader/verifier/manifest.json": "WAIVED immutable evidence/fixture metadata; hashes authenticated",
+    "evidence/virgl-standard-shader/verifier/recording.tar.gz": "WAIVED immutable evidence/fixture metadata; hashes authenticated",
+    "evidence/virgl-standard-shader/verifier/records.json": "WAIVED immutable evidence/fixture metadata; hashes authenticated",
+    "evidence/virgl-standard-shader/verifier/verdict.json": "WAIVED immutable evidence/fixture metadata; hashes authenticated",
+    "renderer/virgl-shader/STANDARD.md": "WAIVED task/documentation/acceptance recipe metadata",
+    "renderer/virgl-shader/bridge.c": "EXECUTED + specifically indexed arm/line waivers",
+    "renderer/virgl-shader/bridge.h": "WAIVED declarations/types/limits; corresponding runtime exercised",
+    "renderer/virgl-shader/build.sh": "EXECUTED selected native/sanitized/allocation/Wasm/stack modes in authenticated hot+cold acceptance; source/export additions configuration, legacy cases unchanged",
+    "renderer/virgl-shader/native_tests/standard_allocations.c": "EXECUTED recording/test harness in hot+cold worker and independent critic replay; no alternate runtime/test-only semantics",
+    "renderer/virgl-shader/native_tests/standard_compiler.c": "EXECUTED recording/test harness in hot+cold worker and independent critic replay; no alternate runtime/test-only semantics",
+    "renderer/virgl-shader/standard.mjs": "EXECUTED + specifically indexed arm/line waivers",
+    "renderer/virgl-shader/standard_emit.c": "EXECUTED + specifically indexed arm/line waivers",
+    "renderer/virgl-shader/standard_emit.h": "WAIVED declarations/types/limits; corresponding runtime exercised",
+    "renderer/virgl-shader/standard_guard.c": "EXECUTED + specifically indexed arm/line waivers",
+    "renderer/virgl-shader/standard_guard.h": "WAIVED declarations/types/limits; corresponding runtime exercised",
+    "renderer/virgl-shader/tests/standard-browser.mjs": "EXECUTED recording/test harness in hot+cold worker and independent critic replay; no alternate runtime/test-only semantics",
+    "tasks/QUEUE.md": "WAIVED task/documentation/acceptance recipe metadata",
+    "tasks/epic-6-transcendence/E6-T11d-truthful-guest-virgl-bringup.md": "WAIVED task/documentation/acceptance recipe metadata",
+    "tasks/epic-6-transcendence/E6-T11d4-standard-shader-compiler.md": "WAIVED task/documentation/acceptance recipe metadata",
+    "tools/verify-virgl-standard-shader.sh": "EXECUTED recording/test harness in hot+cold worker and independent critic replay; no alternate runtime/test-only semantics",
+    "tools/virgl-standard-shader/browser.mjs": "EXECUTED recording/test harness in hot+cold worker and independent critic replay; no alternate runtime/test-only semantics",
+    "tools/virgl-standard-shader/cases.py": "EXECUTED recording/test harness in hot+cold worker and independent critic replay; no alternate runtime/test-only semantics",
+    "tools/virgl-standard-shader/cold.py": "EXECUTED recording/test harness in hot+cold worker and independent critic replay; no alternate runtime/test-only semantics",
+    "tools/virgl-standard-shader/enums.c": "EXECUTED recording/test harness in hot+cold worker and independent critic replay; no alternate runtime/test-only semantics",
+    "tools/virgl-standard-shader/metadata.py": "EXECUTED recording/test harness in hot+cold worker and independent critic replay; no alternate runtime/test-only semantics",
+    "tools/virgl-standard-shader/node.mjs": "EXECUTED recording/test harness in hot+cold worker and independent critic replay; no alternate runtime/test-only semantics",
+    "tools/virgl-standard-shader/pixels.mjs": "EXECUTED recording/test harness in hot+cold worker and independent critic replay; no alternate runtime/test-only semantics",
+    "tools/virgl-standard-shader/receipt.py": "EXECUTED recording/test harness in hot+cold worker and independent critic replay; no alternate runtime/test-only semantics",
+    "tools/virgl-standard-shader/retained-raw-page.mjs": "EXECUTED recording/test harness in hot+cold worker and independent critic replay; no alternate runtime/test-only semantics",
+    "tools/virgl-standard-shader/retained-raw.mjs": "EXECUTED recording/test harness in hot+cold worker and independent critic replay; no alternate runtime/test-only semantics",
+    "tools/virgl-standard-shader/seal.py": "EXECUTED recording/test harness in hot+cold worker and independent critic replay; no alternate runtime/test-only semantics"
+  },
+  "zeroNativeArms": [
+    {
+      "file": "bridge.c",
+      "range": [
+        2432,
+        8,
+        2432,
+        25
+      ],
+      "counts": [
+        0,
+        393
+      ],
+      "expression": "response_overflow",
+      "line": "if (response_overflow) return error(\"translation-error\", \"Standard JSON output exceeded its bound.\");",
+      "classification": "WAIVED-BOUND",
+      "reason": "Emitter output is at most262144 bytes and each byte expands by at most6 in JSON. At most51 bounded IO records*224 bytes +16 sampler records*80 +128 uniform +256 block +768 fixed metadata is below16384. BRIDGE_MAX_RESULT=6*MAX_GLSL+16384; pair doubles it and adds1024, exceeding the at most224-byte interface key. Output-cap acceptance/rejection executes in worker cases; no accepted JSON can overflow."
+    },
+    {
+      "file": "bridge.c",
+      "range": [
+        2450,
+        19,
+        2450,
+        51
+      ],
+      "counts": [
+        0,
+        154
+      ],
+      "expression": "!standard_fragment_export(&c[1])",
+      "line": "if (!failed && !standard_fragment_export(&c[1])) failed = error(\"translation-error\", \"Standard interpolation export differs from the checked fragment declarations.\");",
+      "classification": "WAIVED-PINNED-CONSISTENCY",
+      "reason": "Guardian fragment inputs are unique GENERIC[0..15] with CENTER perspective/constant interpolation; it rejects SAMPLE/noperspective/semantic duplicates. Pinned upstream exports those original declarations, separately decoded and linked in the recordings. These zero arms detect internal upstream metadata drift, not another admitted input family; all matching branches execute across159 interpolation entries and154 successful exports."
+    },
+    {
+      "file": "bridge.c",
+      "range": [
+        2465,
+        8,
+        2465,
+        25
+      ],
+      "counts": [
+        0,
+        165
+      ],
+      "expression": "response_overflow",
+      "line": "if (response_overflow) return error(\"translation-error\", \"Standard pair JSON output exceeded its bound.\");",
+      "classification": "WAIVED-BOUND",
+      "reason": "Emitter output is at most262144 bytes and each byte expands by at most6 in JSON. At most51 bounded IO records*224 bytes +16 sampler records*80 +128 uniform +256 block +768 fixed metadata is below16384. BRIDGE_MAX_RESULT=6*MAX_GLSL+16384; pair doubles it and adds1024, exceeding the at most224-byte interface key. Output-cap acceptance/rejection executes in worker cases; no accepted JSON can overflow."
+    },
+    {
+      "file": "bridge.c",
+      "range": [
+        2304,
+        8,
+        2304,
+        62
+      ],
+      "counts": [
+        0,
+        712
+      ],
+      "expression": "!tgsi_text_translate(owned, tokens, BRIDGE_MAX_TOKENS)",
+      "line": "if (!tgsi_text_translate(owned, tokens, BRIDGE_MAX_TOKENS) || bridge_tgsi_scratch_failed() || upstream_logged)",
+      "classification": "EXECUTED-WASM",
+      "reason": "combined-final/wasm-pressure.json results[1] records both public calls returning Checked upstream TGSI parsing failed. at exactly 16777216 memory bytes, followed by recovery. The 65536 release admits the private arena but prevents the mandatory parser scratch malloc."
+    },
+    {
+      "file": "bridge.c",
+      "range": [
+        2304,
+        66,
+        2304,
+        94
+      ],
+      "counts": [
+        0,
+        712
+      ],
+      "expression": "bridge_tgsi_scratch_failed()",
+      "line": "if (!tgsi_text_translate(owned, tokens, BRIDGE_MAX_TOKENS) || bridge_tgsi_scratch_failed() || upstream_logged)",
+      "classification": "WAIVED-INVARIANT",
+      "reason": "The checked sanity wrapper returns false when scratch allocation/setjmp fails (checked_tgsi_sanity.c:43-53), so tgsi_text_translate short-circuits before scratch_failed is tested; upstream diagnostics on successful prevalidated grammar are not a separate admitted behavior. Successful parser paths are independently decoded in 669 worker and 695 critic cases."
+    },
+    {
+      "file": "bridge.c",
+      "range": [
+        2304,
+        98,
+        2304,
+        113
+      ],
+      "counts": [
+        0,
+        712
+      ],
+      "expression": "upstream_logged",
+      "line": "if (!tgsi_text_translate(owned, tokens, BRIDGE_MAX_TOKENS) || bridge_tgsi_scratch_failed() || upstream_logged)",
+      "classification": "WAIVED-INVARIANT",
+      "reason": "The checked sanity wrapper returns false when scratch allocation/setjmp fails (checked_tgsi_sanity.c:43-53), so tgsi_text_translate short-circuits before scratch_failed is tested; upstream diagnostics on successful prevalidated grammar are not a separate admitted behavior. Successful parser paths are independently decoded in 669 worker and 695 critic cases."
+    },
+    {
+      "file": "bridge.c",
+      "range": [
+        2306,
+        8,
+        2306,
+        40
+      ],
+      "counts": [
+        0,
+        712
+      ],
+      "expression": "!standard_constant_order(tokens)",
+      "line": "if (!standard_constant_order(tokens))",
+      "classification": "EXECUTED-FAULT",
+      "reason": "invalid-zero-declaration-token.lldb.log reaches the ordering failure and confirms clean recovery."
+    },
+    {
+      "file": "bridge.c",
+      "range": [
+        2325,
+        54,
+        2325,
+        69
+      ],
+      "counts": [
+        0,
+        678
+      ],
+      "expression": "upstream_logged",
+      "line": "if (!ok || bridge_upstream_allocation_failed() || upstream_logged || bytes > BRIDGE_MAX_GLSL ||",
+      "classification": "EXECUTED-FAULT",
+      "reason": "upstream-log-drift.lldb.log faults only upstream_logged at bridge.c:2325; rejection and recovery are recorded."
+    },
+    {
+      "file": "bridge.c",
+      "range": [
+        2325,
+        73,
+        2325,
+        96
+      ],
+      "counts": [
+        0,
+        678
+      ],
+      "expression": "bytes > BRIDGE_MAX_GLSL",
+      "line": "if (!ok || bridge_upstream_allocation_failed() || upstream_logged || bytes > BRIDGE_MAX_GLSL ||",
+      "classification": "EXECUTED-FAULT",
+      "reason": "Unmodified debug binary reaches this exact arm under recorded constant-extent/mask/output process-state faults; every call rejects without partial results and the next call recovers. See debug-fault-audit.json and debug-faults-coverage.json."
+    },
+    {
+      "file": "bridge.c",
+      "range": [
+        2326,
+        8,
+        2326,
+        50
+      ],
+      "counts": [
+        0,
+        678
+      ],
+      "expression": "c->info.num_consts != c->profile.constants",
+      "line": "c->info.num_consts != c->profile.constants || c->info.samplers_used_mask != declared_samplers)",
+      "classification": "EXECUTED-FAULT",
+      "reason": "Unmodified debug binary reaches this exact arm under recorded constant-extent/mask/output process-state faults; every call rejects without partial results and the next call recovers. See debug-fault-audit.json and debug-faults-coverage.json."
+    },
+    {
+      "file": "bridge.c",
+      "range": [
+        2326,
+        54,
+        2326,
+        101
+      ],
+      "counts": [
+        0,
+        678
+      ],
+      "expression": "c->info.samplers_used_mask != declared_samplers",
+      "line": "c->info.num_consts != c->profile.constants || c->info.samplers_used_mask != declared_samplers)",
+      "classification": "EXECUTED-FAULT",
+      "reason": "Unmodified debug binary reaches this exact arm under recorded constant-extent/mask/output process-state faults; every call rejects without partial results and the next call recovers. See debug-fault-audit.json and debug-faults-coverage.json."
+    },
+    {
+      "file": "bridge.c",
+      "range": [
+        2275,
+        8,
+        2275,
+        57
+      ],
+      "counts": [
+        0,
+        712
+      ],
+      "expression": "tgsi_parse_init(&parser, tokens) != TGSI_PARSE_OK",
+      "line": "if (tgsi_parse_init(&parser, tokens) != TGSI_PARSE_OK) return false;",
+      "classification": "WAIVED-INVARIANT",
+      "reason": "Private tokens come only from successful checked tgsi_text_translate; it creates the two-word header and complete bounded tokens. tgsi_parse_init only rejects HeaderSize<2 (vendor tgsi_parse.c:34-49), and parse_token bounds reject truncated internal tokens. Stable complete-token movement preserves those invariants; no public raw-token ingress exists."
+    },
+    {
+      "file": "bridge.c",
+      "range": [
+        2278,
+        11,
+        2278,
+        45
+      ],
+      "counts": [
+        6818,
+        0
+      ],
+      "expression": "!tgsi_parse_end_of_tokens(&parser)",
+      "line": "while (!tgsi_parse_end_of_tokens(&parser)) {",
+      "classification": "WAIVED-INVARIANT",
+      "reason": "A successful guarded program has a mandatory END instruction; this declaration-only walk breaks on the first instruction before EOF. Both non-CONST and CONST paths execute; EOF fallthrough is impossible after the guard."
+    },
+    {
+      "file": "bridge.c",
+      "range": [
+        2280,
+        11,
+        2280,
+        37
+      ],
+      "counts": [
+        0,
+        6818
+      ],
+      "expression": "!tgsi_parse_token(&parser)",
+      "line": "if (!tgsi_parse_token(&parser)) { ok = false; break; }",
+      "classification": "WAIVED-INVARIANT",
+      "reason": "Private tokens come only from successful checked tgsi_text_translate; it creates the two-word header and complete bounded tokens. tgsi_parse_init only rejects HeaderSize<2 (vendor tgsi_parse.c:34-49), and parse_token bounds reject truncated internal tokens. Stable complete-token movement preserves those invariants; no public raw-token ingress exists."
+    },
+    {
+      "file": "bridge.c",
+      "range": [
+        2287,
+        11,
+        2287,
+        28
+      ],
+      "counts": [
+        0,
+        73
+      ],
+      "expression": "decl->Range.First",
+      "line": "if (decl->Range.First || decl->Declaration.Dimension || parser.Position - start != 2) {",
+      "classification": "EXECUTED-FAULT",
+      "reason": "invalid-zero-declaration-token.lldb.log reaches the First error arm and bridge.c:2288/2307."
+    },
+    {
+      "file": "bridge.c",
+      "range": [
+        2287,
+        32,
+        2287,
+        59
+      ],
+      "counts": [
+        0,
+        73
+      ],
+      "expression": "decl->Declaration.Dimension",
+      "line": "if (decl->Range.First || decl->Declaration.Dimension || parser.Position - start != 2) {",
+      "classification": "WAIVED-INVARIANT",
+      "reason": "The accepted guardian forbids dimensional CONST declarations (standard_guard.c:63-143); pinned tgsi_text builds a simple CONST token as declaration+range, exactly two words. Successful checked parsing therefore cannot yield either other ordering-error arm. No guest token mutation or raw tokens are accepted."
+    },
+    {
+      "file": "bridge.c",
+      "range": [
+        2287,
+        63,
+        2287,
+        91
+      ],
+      "counts": [
+        0,
+        73
+      ],
+      "expression": "parser.Position - start != 2",
+      "line": "if (decl->Range.First || decl->Declaration.Dimension || parser.Position - start != 2) {",
+      "classification": "WAIVED-INVARIANT",
+      "reason": "The accepted guardian forbids dimensional CONST declarations (standard_guard.c:63-143); pinned tgsi_text builds a simple CONST token as declaration+range, exactly two words. Successful checked parsing therefore cannot yield either other ordering-error arm. No guest token mutation or raw tokens are accepted."
+    },
+    {
+      "file": "bridge.c",
+      "range": [
+        2386,
+        14,
+        2386,
+        23
+      ],
+      "counts": [
+        0,
+        1879671
+      ],
+      "expression": "ch == '\"'",
+      "line": "if (ch == '\"' || ch == '\\\\') append(\"\\\\%c\", ch);",
+      "classification": "WAIVED-TEMPLATE",
+      "reason": "Only fixed emitter ASCII GLSL templates, bounded integer literals/names and fixed swizzles reach standard_result; none emits a quotation mark or backslash. User strings are never interpolated. Newline/control escaping and ordinary ASCII both execute (1879671 characters inspected)."
+    },
+    {
+      "file": "bridge.c",
+      "range": [
+        2386,
+        27,
+        2386,
+        37
+      ],
+      "counts": [
+        0,
+        1879671
+      ],
+      "expression": "ch == '\\\\'",
+      "line": "if (ch == '\"' || ch == '\\\\') append(\"\\\\%c\", ch);",
+      "classification": "WAIVED-TEMPLATE",
+      "reason": "Only fixed emitter ASCII GLSL templates, bounded integer literals/names and fixed swizzles reach standard_result; none emits a quotation mark or backslash. User strings are never interpolated. Newline/control escaping and ordinary ASCII both execute (1879671 characters inspected)."
+    },
+    {
+      "file": "bridge.c",
+      "range": [
+        2338,
+        8,
+        2338,
+        37
+      ],
+      "counts": [
+        0,
+        154
+      ],
+      "expression": "fs->num_interps != (int)count",
+      "line": "if (fs->num_interps != (int)count || fs->has_sample_input || fs->has_noperspective) return false;",
+      "classification": "WAIVED-PINNED-CONSISTENCY",
+      "reason": "Guardian fragment inputs are unique GENERIC[0..15] with CENTER perspective/constant interpolation; it rejects SAMPLE/noperspective/semantic duplicates. Pinned upstream exports those original declarations, separately decoded and linked in the recordings. These zero arms detect internal upstream metadata drift, not another admitted input family; all matching branches execute across159 interpolation entries and154 successful exports."
+    },
+    {
+      "file": "bridge.c",
+      "range": [
+        2338,
+        41,
+        2338,
+        61
+      ],
+      "counts": [
+        0,
+        154
+      ],
+      "expression": "fs->has_sample_input",
+      "line": "if (fs->num_interps != (int)count || fs->has_sample_input || fs->has_noperspective) return false;",
+      "classification": "WAIVED-PINNED-CONSISTENCY",
+      "reason": "Guardian fragment inputs are unique GENERIC[0..15] with CENTER perspective/constant interpolation; it rejects SAMPLE/noperspective/semantic duplicates. Pinned upstream exports those original declarations, separately decoded and linked in the recordings. These zero arms detect internal upstream metadata drift, not another admitted input family; all matching branches execute across159 interpolation entries and154 successful exports."
+    },
+    {
+      "file": "bridge.c",
+      "range": [
+        2338,
+        65,
+        2338,
+        86
+      ],
+      "counts": [
+        0,
+        154
+      ],
+      "expression": "fs->has_noperspective",
+      "line": "if (fs->num_interps != (int)count || fs->has_sample_input || fs->has_noperspective) return false;",
+      "classification": "WAIVED-PINNED-CONSISTENCY",
+      "reason": "Guardian fragment inputs are unique GENERIC[0..15] with CENTER perspective/constant interpolation; it rejects SAMPLE/noperspective/semantic duplicates. Pinned upstream exports those original declarations, separately decoded and linked in the recordings. These zero arms detect internal upstream metadata drift, not another admitted input family; all matching branches execute across159 interpolation entries and154 successful exports."
+    },
+    {
+      "file": "bridge.c",
+      "range": [
+        2341,
+        11,
+        2341,
+        52
+      ],
+      "counts": [
+        0,
+        159
+      ],
+      "expression": "e->semantic_name != TGSI_SEMANTIC_GENERIC",
+      "line": "if (e->semantic_name != TGSI_SEMANTIC_GENERIC || e->semantic_index >= STANDARD_GENERIC ||",
+      "classification": "WAIVED-PINNED-CONSISTENCY",
+      "reason": "Guardian fragment inputs are unique GENERIC[0..15] with CENTER perspective/constant interpolation; it rejects SAMPLE/noperspective/semantic duplicates. Pinned upstream exports those original declarations, separately decoded and linked in the recordings. These zero arms detect internal upstream metadata drift, not another admitted input family; all matching branches execute across159 interpolation entries and154 successful exports."
+    },
+    {
+      "file": "bridge.c",
+      "range": [
+        2341,
+        56,
+        2341,
+        93
+      ],
+      "counts": [
+        0,
+        159
+      ],
+      "expression": "e->semantic_index >= STANDARD_GENERIC",
+      "line": "if (e->semantic_name != TGSI_SEMANTIC_GENERIC || e->semantic_index >= STANDARD_GENERIC ||",
+      "classification": "WAIVED-PINNED-CONSISTENCY",
+      "reason": "Guardian fragment inputs are unique GENERIC[0..15] with CENTER perspective/constant interpolation; it rejects SAMPLE/noperspective/semantic duplicates. Pinned upstream exports those original declarations, separately decoded and linked in the recordings. These zero arms detect internal upstream metadata drift, not another admitted input family; all matching branches execute across159 interpolation entries and154 successful exports."
+    },
+    {
+      "file": "bridge.c",
+      "range": [
+        2342,
+        11,
+        2342,
+        53
+      ],
+      "counts": [
+        0,
+        159
+      ],
+      "expression": "e->location != TGSI_INTERPOLATE_LOC_CENTER",
+      "line": "e->location != TGSI_INTERPOLATE_LOC_CENTER || seen[e->semantic_index]) return false;",
+      "classification": "WAIVED-PINNED-CONSISTENCY",
+      "reason": "Guardian fragment inputs are unique GENERIC[0..15] with CENTER perspective/constant interpolation; it rejects SAMPLE/noperspective/semantic duplicates. Pinned upstream exports those original declarations, separately decoded and linked in the recordings. These zero arms detect internal upstream metadata drift, not another admitted input family; all matching branches execute across159 interpolation entries and154 successful exports."
+    },
+    {
+      "file": "bridge.c",
+      "range": [
+        2342,
+        57,
+        2342,
+        80
+      ],
+      "counts": [
+        0,
+        159
+      ],
+      "expression": "seen[e->semantic_index]",
+      "line": "e->location != TGSI_INTERPOLATE_LOC_CENTER || seen[e->semantic_index]) return false;",
+      "classification": "WAIVED-PINNED-CONSISTENCY",
+      "reason": "Guardian fragment inputs are unique GENERIC[0..15] with CENTER perspective/constant interpolation; it rejects SAMPLE/noperspective/semantic duplicates. Pinned upstream exports those original declarations, separately decoded and linked in the recordings. These zero arms detect internal upstream metadata drift, not another admitted input family; all matching branches execute across159 interpolation entries and154 successful exports."
+    },
+    {
+      "file": "bridge.c",
+      "range": [
+        2347,
+        14,
+        2347,
+        109
+      ],
+      "counts": [
+        0,
+        159
+      ],
+      "expression": "e->interpolate != (p->input[j].flat ? TGSI_INTERPOLATE_CONSTANT : TGSI_INTERPOLATE_PERSPECTIVE)",
+      "line": "if (e->interpolate != (p->input[j].flat ? TGSI_INTERPOLATE_CONSTANT : TGSI_INTERPOLATE_PERSPECTIVE)) return false;",
+      "classification": "WAIVED-PINNED-CONSISTENCY",
+      "reason": "Guardian fragment inputs are unique GENERIC[0..15] with CENTER perspective/constant interpolation; it rejects SAMPLE/noperspective/semantic duplicates. Pinned upstream exports those original declarations, separately decoded and linked in the recordings. These zero arms detect internal upstream metadata drift, not another admitted input family; all matching branches execute across159 interpolation entries and154 successful exports."
+    },
+    {
+      "file": "bridge.c",
+      "range": [
+        2350,
+        11,
+        2350,
+        17
+      ],
+      "counts": [
+        0,
+        159
+      ],
+      "expression": "!found",
+      "line": "if (!found) return false;",
+      "classification": "WAIVED-PINNED-CONSISTENCY",
+      "reason": "Guardian fragment inputs are unique GENERIC[0..15] with CENTER perspective/constant interpolation; it rejects SAMPLE/noperspective/semantic duplicates. Pinned upstream exports those original declarations, separately decoded and linked in the recordings. These zero arms detect internal upstream metadata drift, not another admitted input family; all matching branches execute across159 interpolation entries and154 successful exports."
+    },
+    {
+      "file": "standard_emit.c",
+      "range": [
+        222,
+        8,
+        222,
+        12
+      ],
+      "counts": [
+        674,
+        0
+      ],
+      "expression": "okay",
+      "line": "if (okay) {",
+      "classification": "WAIVED-PINNED-CONSISTENCY",
+      "reason": "Only successful guarded and checked tokens reach emission. The immutable pinned parser decodes complete tokens; stable movement changes no immediates/instructions/opcodes, and guardian instruction/immediate counts agree with independent pinned decoding. All supported opcode switch arms execute. This fallback detects internal parser/count drift, which is not reachable through accepted guest text; output allocation/capacity failure branches do execute."
+    },
+    {
+      "file": "standard_emit.c",
+      "range": [
+        225,
+        14,
+        225,
+        37
+      ],
+      "counts": [
+        0,
+        20290
+      ],
+      "expression": "!tgsi_parse_token(&ctx)",
+      "line": "if (!tgsi_parse_token(&ctx)) { okay = false; break; }",
+      "classification": "WAIVED-PINNED-CONSISTENCY",
+      "reason": "Only successful guarded and checked tokens reach emission. The immutable pinned parser decodes complete tokens; stable movement changes no immediates/instructions/opcodes, and guardian instruction/immediate counts agree with independent pinned decoding. All supported opcode switch arms execute. This fallback detects internal parser/count drift, which is not reachable through accepted guest text; output allocation/capacity failure branches do execute."
+    },
+    {
+      "file": "standard_emit.c",
+      "range": [
+        232,
+        11,
+        232,
+        31
+      ],
+      "counts": [
+        0,
+        674
+      ],
+      "expression": "imm != p->immediates",
+      "line": "if (imm != p->immediates) okay = false;",
+      "classification": "WAIVED-PINNED-CONSISTENCY",
+      "reason": "Only successful guarded and checked tokens reach emission. The immutable pinned parser decodes complete tokens; stable movement changes no immediates/instructions/opcodes, and guardian instruction/immediate counts agree with independent pinned decoding. All supported opcode switch arms execute. This fallback detects internal parser/count drift, which is not reachable through accepted guest text; output allocation/capacity failure branches do execute."
+    },
+    {
+      "file": "standard_emit.c",
+      "range": [
+        238,
+        8,
+        238,
+        12
+      ],
+      "counts": [
+        674,
+        0
+      ],
+      "expression": "okay",
+      "line": "if (okay && tgsi_parse_init(&ctx, tokens) == TGSI_PARSE_OK) {",
+      "classification": "WAIVED-PINNED-CONSISTENCY",
+      "reason": "Only successful guarded and checked tokens reach emission. The immutable pinned parser decodes complete tokens; stable movement changes no immediates/instructions/opcodes, and guardian instruction/immediate counts agree with independent pinned decoding. All supported opcode switch arms execute. This fallback detects internal parser/count drift, which is not reachable through accepted guest text; output allocation/capacity failure branches do execute."
+    },
+    {
+      "file": "standard_emit.c",
+      "range": [
+        238,
+        16,
+        238,
+        62
+      ],
+      "counts": [
+        674,
+        0
+      ],
+      "expression": "tgsi_parse_init(&ctx, tokens) == TGSI_PARSE_OK",
+      "line": "if (okay && tgsi_parse_init(&ctx, tokens) == TGSI_PARSE_OK) {",
+      "classification": "WAIVED-PINNED-CONSISTENCY",
+      "reason": "Only successful guarded and checked tokens reach emission. The immutable pinned parser decodes complete tokens; stable movement changes no immediates/instructions/opcodes, and guardian instruction/immediate counts agree with independent pinned decoding. All supported opcode switch arms execute. This fallback detects internal parser/count drift, which is not reachable through accepted guest text; output allocation/capacity failure branches do execute."
+    },
+    {
+      "file": "standard_emit.c",
+      "range": [
+        241,
+        14,
+        241,
+        37
+      ],
+      "counts": [
+        0,
+        20290
+      ],
+      "expression": "!tgsi_parse_token(&ctx)",
+      "line": "if (!tgsi_parse_token(&ctx)) { okay = false; break; }",
+      "classification": "WAIVED-PINNED-CONSISTENCY",
+      "reason": "Only successful guarded and checked tokens reach emission. The immutable pinned parser decodes complete tokens; stable movement changes no immediates/instructions/opcodes, and guardian instruction/immediate counts agree with independent pinned decoding. All supported opcode switch arms execute. This fallback detects internal parser/count drift, which is not reachable through accepted guest text; output allocation/capacity failure branches do execute."
+    },
+    {
+      "file": "standard_emit.c",
+      "range": [
+        244,
+        17,
+        244,
+        73
+      ],
+      "counts": [
+        0,
+        14083
+      ],
+      "expression": "!instruction(&output, p, &ctx.FullToken.FullInstruction)",
+      "line": "if (!instruction(&output, p, &ctx.FullToken.FullInstruction)) { okay = false; break; }",
+      "classification": "WAIVED-PINNED-CONSISTENCY",
+      "reason": "Only successful guarded and checked tokens reach emission. The immutable pinned parser decodes complete tokens; stable movement changes no immediates/instructions/opcodes, and guardian instruction/immediate counts agree with independent pinned decoding. All supported opcode switch arms execute. This fallback detects internal parser/count drift, which is not reachable through accepted guest text; output allocation/capacity failure branches do execute."
+    },
+    {
+      "file": "standard_emit.c",
+      "range": [
+        248,
+        11,
+        248,
+        35
+      ],
+      "counts": [
+        0,
+        674
+      ],
+      "expression": "count != p->instructions",
+      "line": "if (count != p->instructions) okay = false;",
+      "classification": "WAIVED-PINNED-CONSISTENCY",
+      "reason": "Only successful guarded and checked tokens reach emission. The immutable pinned parser decodes complete tokens; stable movement changes no immediates/instructions/opcodes, and guardian instruction/immediate counts agree with independent pinned decoding. All supported opcode switch arms execute. This fallback detects internal parser/count drift, which is not reachable through accepted guest text; output allocation/capacity failure branches do execute."
+    },
+    {
+      "file": "standard_emit.c",
+      "range": [
+        250,
+        8,
+        250,
+        13
+      ],
+      "counts": [
+        0,
+        674
+      ],
+      "expression": "!okay",
+      "line": "if (!okay || output.failed) { free(output.text); return \"translation-error\"; }",
+      "classification": "WAIVED-PINNED-CONSISTENCY",
+      "reason": "Only successful guarded and checked tokens reach emission. The immutable pinned parser decodes complete tokens; stable movement changes no immediates/instructions/opcodes, and guardian instruction/immediate counts agree with independent pinned decoding. All supported opcode switch arms execute. This fallback detects internal parser/count drift, which is not reachable through accepted guest text; output allocation/capacity failure branches do execute."
+    },
+    {
+      "file": "standard_emit.c",
+      "range": [
+        27,
+        8,
+        27,
+        13
+      ],
+      "counts": [
+        0,
+        83323
+      ],
+      "expression": "n < 0",
+      "line": "if (n < 0 || (size_t)n > STANDARD_OUTPUT_CAPACITY - o->used) o->failed = true;",
+      "classification": "WAIVED-TEMPLATE",
+      "reason": "vsnprintf uses only fixed ASCII formats, bounded unsigned numbers/names and strings; there is no locale wide-character conversion or arbitrary formatting, and the maximum expansion262144 is belowINT_MAX. Its capacity-error and no-op-after-failure arms execute; negative encoding/length return is unreachable in this template domain."
+    },
+    {
+      "file": "standard_emit.c",
+      "range": [
+        197,
+        4,
+        197,
+        11
+      ],
+      "counts": [
+        0,
+        11730
+      ],
+      "expression": "default",
+      "line": "default: return false;",
+      "classification": "WAIVED-CLOSED-TYPE",
+      "reason": "standard_guard supported() is a closed opcode whitelist fully represented by instruction() cases. TEX/ADDR/flow special paths and every arithmetic/comparison branch execute; unknown opcodes reject before the emitter."
+    },
+    {
+      "file": "standard_emit.c",
+      "range": [
+        92,
+        16,
+        92,
+        41
+      ],
+      "counts": [
+        417,
+        0
+      ],
+      "expression": "io->semantic == STD_COLOR",
+      "line": "else if (io->semantic == STD_COLOR) put(o, \"fsout_c%u = uintBitsToFloat(o%u);\\n\", io->sid, j);",
+      "classification": "WAIVED-CLOSED-TYPE",
+      "reason": "After POSITION and GENERIC branches, the only admitted output semantic is COLOR. The false color arm is impossible under the guard; all three actual output semantic branches execute."
+    },
+    {
+      "file": "standard_emit.c",
+      "range": [
+        41,
+        15,
+        41,
+        45
+      ],
+      "counts": [
+        2,
+        0
+      ],
+      "expression": "file == TGSI_FILE_SYSTEM_VALUE",
+      "line": "} else if (file == TGSI_FILE_SYSTEM_VALUE) {",
+      "classification": "WAIVED-CLOSED-TYPE",
+      "reason": "CONST is handled separately; TEMP/OUT/IMM/IN are handled above, leaving only SYSTEM_VALUE. SAMP is consumed by TEX special lowering, ADDR by ARL/UARL, and other source files reject. The INVALID fallback is impossible at this point."
+    },
+    {
+      "file": "standard_guard.c",
+      "range": [
+        317,
+        8,
+        317,
+        13
+      ],
+      "counts": [
+        0,
+        1688
+      ],
+      "expression": "!text",
+      "line": "if (!text) return \"invalid-input\";",
+      "classification": "WAIVED-PRECHECK",
+      "reason": "The public C entries reject null/length>49152/unknown stage before invoking standard_validate. The corresponding outer C errors and public Wasm errors are exercised; the private guard receives owned bounded text and stage0/1."
+    },
+    {
+      "file": "standard_guard.c",
+      "range": [
+        318,
+        8,
+        318,
+        32
+      ],
+      "counts": [
+        0,
+        1688
+      ],
+      "expression": "length > BRIDGE_MAX_TEXT",
+      "line": "if (length > BRIDGE_MAX_TEXT) return \"input-too-large\";",
+      "classification": "WAIVED-PRECHECK",
+      "reason": "The public C entries reject null/length>49152/unknown stage before invoking standard_validate. The corresponding outer C errors and public Wasm errors are exercised; the private guard receives owned bounded text and stage0/1."
+    },
+    {
+      "file": "standard_guard.c",
+      "range": [
+        319,
+        25,
+        319,
+        38
+      ],
+      "counts": [
+        0,
+        700
+      ],
+      "expression": "p->stage != 1",
+      "line": "if (p->stage != 0 && p->stage != 1) return \"unsupported-stage\";",
+      "classification": "WAIVED-PRECHECK",
+      "reason": "The public C entries reject null/length>49152/unknown stage before invoking standard_validate. The corresponding outer C errors and public Wasm errors are exercised; the private guard receives owned bounded text and stage0/1."
+    },
+    {
+      "file": "standard_guard.c",
+      "range": [
+        360,
+        11,
+        360,
+        22
+      ],
+      "counts": [
+        0,
+        101
+      ],
+      "expression": "colors != 1",
+      "line": "if (colors != 1) return \"unsupported-feature\";",
+      "classification": "WAIVED-INVARIANT",
+      "reason": "The output requirement ensures at least one COLOR for a fragment; broadcast rejects any nonzero color sid, and semantic uniqueness rejects duplicate COLOR0. Thus colors is necessarily one at this check."
+    },
+    {
+      "file": "standard_guard.c",
+      "range": [
+        54,
+        4,
+        54,
+        11
+      ],
+      "counts": [
+        0,
+        124243
+      ],
+      "expression": "default",
+      "line": "default: return 0;",
+      "classification": "WAIVED-CLOSED-TYPE",
+      "reason": "limit receives only the nine enumerated files selected by reg; unknown names reject before limit is called (standard_guard.c:60-67). Every enumerated switch arm executes."
+    },
+    {
+      "file": "standard_guard.c",
+      "range": [
+        166,
+        34,
+        166,
+        34
+      ],
+      "counts": [
+        0,
+        0
+      ],
+      "expression": "",
+      "line": "return !*tail && !errno && isfinite(f);",
+      "classification": "WAIVED-COMPILER-REGION",
+      "reason": "These zero-width isfinite macro regions are compiler metadata, not missing grammar. Decimal literals admit only +-0123456789.eE and finite strtof results; nonfinite numeric overflow sets errno and rejects before isfinite. nan/inf text rejects; literal NaN/Inf raw words take the separate exactly-eight-hex-digit custody branch and are exercised."
+    },
+    {
+      "file": "standard_guard.c",
+      "range": [
+        166,
+        34,
+        166,
+        34
+      ],
+      "counts": [
+        53,
+        0
+      ],
+      "expression": "",
+      "line": "return !*tail && !errno && isfinite(f);",
+      "classification": "WAIVED-COMPILER-REGION",
+      "reason": "These zero-width isfinite macro regions are compiler metadata, not missing grammar. Decimal literals admit only +-0123456789.eE and finite strtof results; nonfinite numeric overflow sets errno and rejects before isfinite. nan/inf text rejects; literal NaN/Inf raw words take the separate exactly-eight-hex-digit custody branch and are exercised."
+    },
+    {
+      "file": "standard_guard.c",
+      "range": [
+        166,
+        34,
+        166,
+        34
+      ],
+      "counts": [
+        53,
+        0
+      ],
+      "expression": "",
+      "line": "return !*tail && !errno && isfinite(f);",
+      "classification": "WAIVED-COMPILER-REGION",
+      "reason": "These zero-width isfinite macro regions are compiler metadata, not missing grammar. Decimal literals admit only +-0123456789.eE and finite strtof results; nonfinite numeric overflow sets errno and rejects before isfinite. nan/inf text rejects; literal NaN/Inf raw words take the separate exactly-eight-hex-digit custody branch and are exercised."
+    }
+  ],
+  "zeroNativeLines": [
+    {
+      "file": "bridge.c",
+      "line": 2305,
+      "classification": "EXECUTED-WASM",
+      "citation": "combined-final/wasm-pressure.json results[1]"
+    },
+    {
+      "file": "bridge.c",
+      "line": 2288,
+      "classification": "EXECUTED-FAULT",
+      "citation": "invalid-zero-declaration-token.lldb.log / debug-faults-lines.txt"
+    },
+    {
+      "file": "bridge.c",
+      "line": 2289,
+      "classification": "WAIVED closing brace region",
+      "citation": "No executable statement"
+    },
+    {
+      "file": "bridge.c",
+      "line": 2307,
+      "classification": "EXECUTED-FAULT",
+      "citation": "invalid-zero-declaration-token.lldb.log / debug-faults-lines.txt"
+    },
+    {
+      "file": "standard_guard.c",
+      "line": 54,
+      "classification": "WAIVED closed enum",
+      "citation": "reg file selection"
+    },
+    {
+      "file": "standard_emit.c",
+      "line": 190,
+      "classification": "WAIVED preprocessor directive",
+      "citation": "#undef COMPARE"
+    },
+    {
+      "file": "standard_emit.c",
+      "line": 194,
+      "classification": "WAIVED preprocessor directive",
+      "citation": "#undef COMPARE"
+    },
+    {
+      "file": "standard_emit.c",
+      "line": 197,
+      "classification": "WAIVED closed opcode whitelist",
+      "citation": "supported() vs instruction() switch"
+    }
+  ],
+  "wrapper": {
+    "status": "all detailed blocks exercised across matrix+pressure",
+    "sourceSha256": "d949b156fed338cd9816abf94239eb32b1773aaf3b3c4ade6dba77201d2310cc",
+    "records": 2,
+    "zeroRegionsClosed": [
+      {
+        "start": 3080,
+        "end": 3155,
+        "combinedCount": 1
+      },
+      {
+        "start": 516,
+        "end": 528,
+        "combinedCount": 4
+      },
+      {
+        "start": 648,
+        "end": 660,
+        "combinedCount": 6
+      },
+      {
+        "start": 796,
+        "end": 808,
+        "combinedCount": 1
+      },
+      {
+        "start": 910,
+        "end": 980,
+        "combinedCount": 2
+      },
+      {
+        "start": 1028,
+        "end": 1093,
+        "combinedCount": 1
+      },
+      {
+        "start": 1139,
+        "end": 1223,
+        "combinedCount": 3
+      },
+      {
+        "start": 1857,
+        "end": 1932,
+        "combinedCount": 2
+      },
+      {
+        "start": 2408,
+        "end": 2486,
+        "combinedCount": 1
+      },
+      {
+        "start": 2505,
+        "end": 2582,
+        "combinedCount": 9
+      },
+      {
+        "start": 2647,
+        "end": 2670,
+        "combinedCount": 274
+      },
+      {
+        "start": 2672,
+        "end": 2755,
+        "combinedCount": 1
+      },
+      {
+        "start": 2810,
+        "end": 2823,
+        "combinedCount": 3
+      },
+      {
+        "start": 2921,
+        "end": 2924,
+        "combinedCount": 273
+      },
+      {
+        "start": 3174,
+        "end": 3264,
+        "combinedCount": 2
+      },
+      {
+        "start": 3405,
+        "end": 3418,
+        "combinedCount": 3
+      }
+    ]
+  },
+  "stack": {
+    "memoryBytes": 16777216,
+    "stackBytes": 262144,
+    "pairFrame": 108256,
+    "convertFrame": 33552,
+    "upstreamFrame": 49216,
+    "emitterFrame": 624,
+    "upstreamInstructionFrame": 5744,
+    "texFrame": 1760,
+    "conservativeSubtotal": 199152,
+    "reason": "Pair+converter+upstream+emitter+instruction+tex subtotal counts even mutually exclusive phases together; remaining small fixed helper frames fit the remaining62992 bytes. Recursive guest flow is represented by bounded tables, not C recursion."
+  },
+  "remainingNeedsEvidence": [],
+  "deadFeatures": []
+}

@@ -3,7 +3,7 @@ id: E6-T11d4
 epic: 6
 title: Compile bounded ordinary guest shaders with standard WebGL2 semantics
 priority: 525.027037
-status: implemented
+status: verified
 depends_on: [E6-T11d3]
 estimate: S
 risk: high
@@ -353,3 +353,125 @@ unpacked worker sides; native/sanitized/Node critic matrices and pressure;
 headed hardware critic draws and sabotage; independent offline pixel audit;
 `xcrun lldb --batch` on the reproduced source at `bridge.c:2283`;
 `python3 tools/check_task_policy.py`; `python3 tools/build_queue.py`.
+
+### 2026-10-09 — fresh completion verifier
+
+VERDICT: verified
+
+Reviewed predecessor `97ed2ca31f08465e442c88aed3a677237f78e236` through frozen
+runtime/source `1c17b508d0dc52199613f4c4883486c477773203`, submitted by claim
+commit `8101e82c2228012ff6a7435da8ab03e31f4e975d`. Predictions were written
+before final evidence inspection (`completion-verifier/predictions.json`).
+No implementation code was edited.
+
+- **Carry prior HELD — HELD.** Reauthenticated all 409 original worker and
+  71 prior critic archive members and indexes. Carry P1; P2/P3 excluding the
+  refuted declaration order; P4 ownership/allocation/actual16MiB pressure;
+  P5–P7 unchanged emitter/full-original semantics; P8 legacy; and P9/P11
+  independent operation/oracle sabotage. Guard, emitter, headers and wrapper
+  bytes still match the prior critic boundary. The old C prefix, after removing
+  only the two new includes, matches verified predecessor bytes. Original
+  worker archive remains `ee57339a1ce43d5f600a4d0d2c0e4bc47b361a189b78e1807cc31061225067b8`;
+  prior critic remains `1f59cd3fc8c56509ef73b9d02f766d02e488a9eae70df1e607a4ac036061e78c`
+  (`audit/carry-forward-authentication.json` in the new archive).
+- **R1 final custody — HELD.** Authenticated all 417 final worker members,
+  indexes, both 195-file receipts, 369 source hashes and 11 generated artifacts
+  on each side. Independently replayed metadata and every pixel on both sides:
+  669 cases, 265 physical compiles/programs, 129 hardware frames and
+  2,390,688 pixels. Actual Wasm bytes, headed Apple M4 Max contexts and zero
+  console/page/request errors match. Final cold clone is exactly `1c17b508`,
+  clean before/after, exit0, with scrubbed build environment. Hot receipt
+  `15ec02d8f017edac338f905bb4c817daf73cc518fe7cfbca1fc08a84375e4a09`,
+  cold `3c402acbecf99819614c82ae183e1b89ced721680f7e736a0ab21257b67634f0`,
+  final worker archive `40ea23d821e37165c6b54f54b7cb636e9418601b8b709dbb4bffc6658ac0b99d`
+  (`completion-verifier/authentication.json`). No runtime change follows that head.
+- **R2/R4 constant admission and strict extent — HELD.** The exact prior
+  CONST511-then-CONST0 refutation now admits with independently decoded
+  uniform count512 on native/sanitized/actual Wasm. Fresh high1/17/127/255/511,
+  zero-first/late, shuffled sparse declarations and intervening IMM/TEMP/SAMP/
+  SVIEW cases hold on both stages; duplicate/overlap/hole/wrapped/dimensional
+  cases still reject without partial output (`suite/native/native.jsonl`
+  lines533–692; `audit/repair-case-points.json`). At `bridge.c:2325`, a
+  recorded debugger probe observes guarded/upstream512, then injects513:
+  strict comparison rejects and the next healthy call recovers
+  (`audit/constant-extent-drift.lldb.log`, SHA256
+  `896b408810f40e867909b93745bbc71b996d18b5e1ec13ea96f19ed4a1eef83f`).
+- **R3/R7 original token custody and physical repair — HELD.** Whole-token
+  permutation executes 73 times in merged native profiles; no labels,
+  instructions, immediate words or register indices are rewritten. Two
+  independently specified repair plans combine late CONST0, unused slot15,
+  raw immediate words, indirect addressing, explicit flow labels, scalar
+  replication, masks/swizzles and defined finite native math. At pixel(0,0),
+  fragment seed1096302871 yields
+  `[2.9020700454711914,2.5383729934692383,1.2711868286132812,0.9485054016113281]`;
+  vertex seed2126713300 yields
+  `[2.639313220977783,2.224212884902954,0.8709676861763,0.6785236597061157]`.
+  Maximum errors against precomputed CPU math are `1.0119175630762811e-7`
+  and `1.082069500668581e-7`, below the explicit0.00005 budgets.
+  All eight promoted hardware frames / 2048 full pixels pass with zero browser
+  errors (`suite/physical-audit.json` points6/7 and corresponding full pixel files).
+- **R5/R6 declared/read masks — HELD.** Empty, high, mixed and all16 unused
+  SAMP/SVIEW sets admit on both stages, in both declaration orders. Public
+  metadata/emission contains only independently decoded TEX reads. Unrelated
+  unused declarations do not grant missing SAMP or SVIEW permission
+  (`suite/native/native.jsonl` lines685–688). At `bridge.c:2325`, guardian
+  declared mask32768 equals upstream32768 while the public read mask is zero;
+  injecting upstream0 rejects without GLSL/metadata and recovers
+  (`audit/declared-mask-drift.lldb.log`, SHA256
+  `467cffdc9dfce67bcfa09f95b20e723e60a7360805189c79fd4a6222424c9600`).
+- **R8 legacy/authority — HELD.** Old body bytes and the prior compiler
+  dependency boundary remain unchanged. Authenticated hot/cold ordinary,
+  raw and both private originals preserve their contracts. Standard metadata
+  still states native-highp/undefined-domain semantics and false exact/GPU-bound
+  authority; production imports/capsets remain outside this slice.
+- **R9 / prior P10 exhaustive sufficiency — HELD, closed.** Independently
+  remerged/re-exported all four final hot/cold LLVM profiles; exports exactly
+  equal their sealed originals. Merged worker+695-case critic coverage covers
+  every new runtime function. Classified all 51 changed hunks and all 49
+  remaining zero native-arm entries individually in
+  `completion-verifier/coverage-audit.json`; no needs-evidence or dead-feature
+  entry remains. Reachable parser-allocation failure is recorded on actual
+  fixed16MiB Wasm after releasing65536 bytes, with single/pair clean recovery.
+  Five process-state fault recordings on a private, unmodified debug build
+  execute strict constant/mask/output/log consistency and ordering rejection.
+  Remaining narrowly waived arms follow closed file/opcode/semantic types,
+  complete private pinned tokens, fixed ASCII emission templates, public
+  prechecks, JSON capacity inequalities or zero-width/preprocessor regions.
+  The detailed V8 wrapper blocks all execute across matrix+pressure, including
+  paired throwing-Proxy reflection. Optimized stack records conservatively
+  sum pair+converter+upstream+emitter+instruction+tex to199152 bytes before
+  small fixed helpers, within262144; no recursive guest-flow C stack exists.
+- **Promoted sabotage — HELD.** Actual emitted SIN-to-COS fails at pixel(0,0),
+  lane0 error `1.4074420962658798`; independently shifting the CPU oracle by
+  +0.125 also fails, error `0.12500000337037198`. Both fail with zero browser
+  errors (`suite/physical-audit.json` faults and both full sabotage captures).
+
+SUITE: promote `make verify-E6-T11d4-adversarial`: 695 deterministic cases
+(208 admitted), independent pinned metadata/native-Wasm equality, eight
+independent physical plans, full offline pixels, operation/oracle sabotage,
+actual fixed-memory C arena/parser pressure and reflection/ownership regressions.
+The three final grammar-coverage inputs reject missing register/indirect brackets
+and accept bounded loop flow without optional branch targets. The final
+695-case physical plan bytes equal the recorded eight-frame plan, so its
+hardware evidence carries unchanged. Exact recipe components passed against
+authenticated frozen native/sanitized/Wasm bytes; `bash -n` and `make -n`
+check the new recipe. Build modes are the final worker hot/cold modes. A
+redundant runtime rebuild/cold clone after test-only promotion is unnecessary.
+
+New critic evidence:
+`evidence/virgl-standard-shader/completion-verifier/{manifest.json,records.json,recording.tar.gz,verdict.json,coverage-audit.json,authentication.json,predictions.json}`;
+107 records, 7,363,417 compressed bytes; archive SHA256
+`35135d4c16dda7c25c2f00d49e04acdcd2140b8375ba8db43c27afc6201524a0`;
+index `6da06a396d5a0ead4599cce1086fdcb3fa8361bf0411ad040d46abf048fb82b0`.
+It preserves predictions, source/binary bindings, native/sanitized/Wasm results,
+complete pixels, profiles, every waiver and the five debugger transactions.
+Prior worker/critic archives were not modified.
+
+Commands: independent `metadata.py` and `pixels.mjs` on both sealed worker sides;
+695-case authenticated native/sanitized/Node runs; actual Wasm pressure;
+headed `adversarial-browser.mjs` acceptance and both expected-failing sabotage
+runs; offline `adversarial-pixels.py`; LLVM profile re-export/merge/show;
+`xcrun lldb --batch` at `bridge.c:2287`/`2325`;
+`python3 tools/check_task_policy.py` before `python3 tools/build_queue.py`.
+This verdict covers the isolated standard compiler. It adds no exact authority,
+production capabilities, guest boot/full API claim, GPU execution bound or throughput claim.

@@ -2121,3 +2121,7 @@ verify-E6-T11d3:
 .PHONY: verify-E6-T11d4
 verify-E6-T11d4:
 	bash tools/verify-virgl-standard-shader.sh
+
+.PHONY: verify-E6-T11d4-adversarial
+verify-E6-T11d4-adversarial:
+	bash tools/verify-virgl-standard-shader-adversarial.sh
