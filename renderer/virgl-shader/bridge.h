@@ -106,4 +106,13 @@ const char *bridge_translate_standard_uniform_pair(const char *vertex_text, size
                                                    uint32_t packed_signed_inputs, uint32_t packed_normalized_inputs,
                                                    uint32_t buffer_zero_mask);
 
+/* Distinct host-selected original 2D/FLOAT texture-operation facet. Native
+ * highp operations and a declared host view-level uniform; no resource authority. */
+const char *bridge_translate_standard_texture(int stage, const char *text, size_t length);
+const char *bridge_translate_standard_texture_pair(const char *vertex_text, size_t vertex_length,
+                                                   const char *fragment_text, size_t fragment_length,
+                                                   uint32_t signed_inputs, uint32_t unsigned_inputs,
+                                                   uint32_t packed_signed_inputs, uint32_t packed_normalized_inputs,
+                                                   uint32_t buffer_zero_mask);
+
 #endif

@@ -1,0 +1,290 @@
+{
+  "schema": "standard-texture-compiler-migrations-v1",
+  "predecessor": "ac2b1ed7a77e82afb21321d6dfdabe0b2da12d4c",
+  "files": [
+    {
+      "path": "renderer/virgl-shader/standard_guard.h",
+      "beforeSha256": "c4c05b9d5f58824deded65868ea35e080c202191602d279e7088daa7d8eab407",
+      "afterSha256": "22e733e75b454d47b39340c6a75c060a16dac71cf5a2c602dcb015b09ace9b17",
+      "changes": [
+        {
+          "beforeLine": 30,
+          "afterLine": 30,
+          "before": "   uint16_t used_samplers;\n",
+          "after": "   uint16_t used_samplers, queried_levels;\n"
+        },
+        {
+          "beforeLine": 38,
+          "afterLine": 38,
+          "before": "   bool uniform_buffers, buffer_zero;\n",
+          "after": "   bool uniform_buffers, buffer_zero, texture_operations;\n"
+        },
+        {
+          "beforeLine": 52,
+          "afterLine": 52,
+          "before": "",
+          "after": "/* Numeric sources preceding the final checked sampler, or zero. */\nunsigned standard_texture_sources(unsigned opcode);\n"
+        }
+      ]
+    },
+    {
+      "path": "renderer/virgl-shader/standard_guard.c",
+      "beforeSha256": "e6e326674fa25c1dc8854ba1512416ffd17d87b2bbc46b1aad2e4c78811a1898",
+      "afterSha256": "39cf78283a681f3024cfcecf1ff6d7c2eea04b7943a40fc5c8ae77147fb66831",
+      "changes": [
+        {
+          "beforeLine": 275,
+          "afterLine": 275,
+          "before": "static bool supported(unsigned op)\n",
+          "after": "unsigned standard_texture_sources(unsigned op)\n{\n   switch (op) {\n   case TGSI_OPCODE_TEX: case TGSI_OPCODE_TXL: case TGSI_OPCODE_TXF:\n   case TGSI_OPCODE_TXB: case TGSI_OPCODE_TXQ: return 1;\n   case TGSI_OPCODE_TXD: return 3;\n   default: return 0;\n   }\n}\nstatic bool supported(unsigned op, bool texture_operations)\n"
+        },
+        {
+          "beforeLine": 291,
+          "afterLine": 300,
+          "before": "",
+          "after": "   case TGSI_OPCODE_TXL: case TGSI_OPCODE_TXF: case TGSI_OPCODE_TXD:\n   case TGSI_OPCODE_TXB: case TGSI_OPCODE_TXQ: return texture_operations;\n"
+        },
+        {
+          "beforeLine": 311,
+          "afterLine": 322,
+          "before": "      if (supported(op) && !strcmp(mnemonic, tgsi_get_opcode_info(op)->mnemonic)) break;\n",
+          "after": "      if (supported(op, p->texture_operations) && !strcmp(mnemonic, tgsi_get_opcode_info(op)->mnemonic)) break;\n"
+        },
+        {
+          "beforeLine": 316,
+          "afterLine": 327,
+          "before": "   unsigned texture_sampler = 0;\n",
+          "after": "   if (!p->stage && op == TGSI_OPCODE_TXB) return false;\n   if (op == TGSI_OPCODE_TXQ && (saturate || precise)) return false;\n   unsigned texture_sampler = 0, texture_mask = 0;\n   unsigned texture_sources = standard_texture_sources(op);\n"
+        },
+        {
+          "beforeLine": 336,
+          "afterLine": 350,
+          "before": "",
+          "after": "         if (texture_sources) texture_mask = r.mask;\n"
+        },
+        {
+          "beforeLine": 337,
+          "afterLine": 352,
+          "before": "         bool sampler = op == TGSI_OPCODE_TEX && i == info->num_dst + 1;\n",
+          "after": "         bool sampler = texture_sources && i == info->num_dst + texture_sources;\n"
+        },
+        {
+          "beforeLine": 344,
+          "afterLine": 359,
+          "before": "   if (op == TGSI_OPCODE_TEX) {\n",
+          "after": "   if (texture_sources) {\n"
+        },
+        {
+          "beforeLine": 347,
+          "afterLine": 362,
+          "before": "",
+          "after": "      if (op == TGSI_OPCODE_TXQ && (texture_mask & 8u)) p->queried_levels |= (uint16_t)(1u << texture_sampler);\n"
+        }
+      ]
+    },
+    {
+      "path": "renderer/virgl-shader/standard_emit.c",
+      "beforeSha256": "910fe4ce510012c575bb624b44d6183c0550bf2e61020d2a6f4971c878941f88",
+      "afterSha256": "99466cf53d8737bcea02e468aabf04192476fac02bbd2688588efd4f8ced56d6",
+      "changes": [
+        {
+          "beforeLine": 101,
+          "afterLine": 101,
+          "before": "",
+          "after": "   for (unsigned j = 0; j < STANDARD_SAMPLERS; ++j) if (p->queried_levels & (1u << j))\n      put(o, \"uniform highp int %ssamplevels%u;\\n\", p->stage ? \"fs\" : \"vs\", j);\n"
+        },
+        {
+          "beforeLine": 153,
+          "afterLine": 155,
+          "before": "   unsigned sources = op == TGSI_OPCODE_TEX ? 1 : i->Instruction.NumSrcRegs;\n",
+          "after": "   unsigned texture_sources = standard_texture_sources(op);\n   unsigned sources = texture_sources ? texture_sources : i->Instruction.NumSrcRegs;\n"
+        },
+        {
+          "beforeLine": 232,
+          "afterLine": 235,
+          "before": "",
+          "after": "   case TGSI_OPCODE_TXL:\n      put(o, \"uvec4 r = floatBitsToUint(textureLod(%ssamp%u, \" FA \".xy, \" FA \".w));\\n\", p->stage ? \"fs\" : \"vs\", i->Src[1].Register.Index); break;\n   case TGSI_OPCODE_TXF:\n      put(o, \"uvec4 r = floatBitsToUint(texelFetch(%ssamp%u, ivec2(a.xy), int(a.w)));\\n\", p->stage ? \"fs\" : \"vs\", i->Src[1].Register.Index); break;\n   case TGSI_OPCODE_TXD:\n      put(o, \"uvec4 r = floatBitsToUint(textureGrad(%ssamp%u, \" FA \".xy, \" FB \".xy, \" FC \".xy));\\n\", p->stage ? \"fs\" : \"vs\", i->Src[3].Register.Index); break;\n   case TGSI_OPCODE_TXB:\n      put(o, \"uvec4 r = floatBitsToUint(texture(%ssamp%u, \" FA \".xy, \" FA \".w));\\n\", p->stage ? \"fs\" : \"vs\", i->Src[1].Register.Index); break;\n   case TGSI_OPCODE_TXQ:\n      /* 2D z is undefined in TGSI. Zero is a representative, not a depth claim.\n       * Accessible levels come from the selected host view, never guest text. */\n      if (i->Dst[0].Register.WriteMask & 8u)\n         put(o, \"uvec4 r = uvec4(textureSize(%ssamp%u, int(a.x)), 0, %ssamplevels%u);\\n\",\n             p->stage ? \"fs\" : \"vs\", i->Src[1].Register.Index, p->stage ? \"fs\" : \"vs\", i->Src[1].Register.Index);\n      else put(o, \"uvec4 r = uvec4(textureSize(%ssamp%u, int(a.x)), 0, 0);\\n\", p->stage ? \"fs\" : \"vs\", i->Src[1].Register.Index);\n      break;\n"
+        }
+      ]
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "beforeSha256": "fd925dfac1a097d891304841f0495b07b1b25ef49bf1c0fef045c8ee404fb4ff",
+      "afterSha256": "c63fc2ceedb07772366bfd9ff7854f36b27ded6a1cc7951432204f071ced1b4f",
+      "changes": [
+        {
+          "beforeLine": 2408,
+          "afterLine": 2408,
+          "before": "       c->info.ubo_used_mask != declared_uniforms || c->info.ubo_indirect)\n",
+          "after": "       c->info.ubo_used_mask != declared_uniforms || c->info.ubo_indirect ||\n       (c->profile.texture_operations && c->info.gles_use_tex_query_level != (c->profile.queried_levels != 0)))\n"
+        },
+        {
+          "beforeLine": 2487,
+          "afterLine": 2488,
+          "before": "          p->uniform_buffers ? \"virgl-webgl2-standard-uniform-gles3-v1\" : \"virgl-webgl2-standard-gles3-v1\",\n",
+          "after": "          p->texture_operations ? \"virgl-webgl2-standard-texture-gles3-v1\" : p->uniform_buffers ? \"virgl-webgl2-standard-uniform-gles3-v1\" : \"virgl-webgl2-standard-gles3-v1\",\n"
+        },
+        {
+          "beforeLine": 2522,
+          "afterLine": 2523,
+          "before": "",
+          "after": "   if (p->texture_operations) {\n      append(\",\\\"textureQueries\\\":[\"); bool comma = false;\n      for (unsigned i = 0; i < STANDARD_SAMPLERS; ++i) if (p->queried_levels & (1u << i)) {\n         append(\"%s{\\\"index\\\":%u,\\\"name\\\":\\\"%ssamplevels%u\\\",\\\"type\\\":\\\"int\\\",\\\"semantic\\\":\\\"TEXTURE_LEVELS\\\"}\",\n                comma ? \",\" : \"\", i, p->stage ? \"fs\" : \"vs\", i);\n         comma = true;\n      }\n      append(\"]\");\n   }\n"
+        },
+        {
+          "beforeLine": 2536,
+          "afterLine": 2546,
+          "before": "static const char *standard_stage(int stage, const char *text, size_t length, bool uniform_buffers)\n",
+          "after": "static const char *standard_stage(int stage, const char *text, size_t length, bool uniform_buffers, bool texture_operations)\n"
+        },
+        {
+          "beforeLine": 2541,
+          "afterLine": 2551,
+          "before": "   struct standard_profile p = {.stage = stage, .uniform_buffers = uniform_buffers};\n",
+          "after": "   struct standard_profile p = {.stage = stage, .uniform_buffers = uniform_buffers, .texture_operations = texture_operations};\n"
+        },
+        {
+          "beforeLine": 2555,
+          "afterLine": 2565,
+          "before": "   return standard_stage(stage, text, length, false);\n",
+          "after": "   return standard_stage(stage, text, length, false, false);\n"
+        },
+        {
+          "beforeLine": 2559,
+          "afterLine": 2569,
+          "before": "   return standard_stage(stage, text, length, true);\n",
+          "after": "   return standard_stage(stage, text, length, true, false);\n"
+        },
+        {
+          "beforeLine": 2565,
+          "afterLine": 2575,
+          "before": "                                bool uniform_buffers, uint32_t buffer_zero_mask)\n",
+          "after": "                                bool uniform_buffers, bool texture_operations, uint32_t buffer_zero_mask)\n"
+        },
+        {
+          "beforeLine": 2573,
+          "afterLine": 2583,
+          "before": "   struct standard_profile profiles[2] = {{.stage = 0, .uniform_buffers = uniform_buffers},\n                                         {.stage = 1, .uniform_buffers = uniform_buffers}};\n",
+          "after": "   struct standard_profile profiles[2] = {{.stage = 0, .uniform_buffers = uniform_buffers, .texture_operations = texture_operations},\n                                         {.stage = 1, .uniform_buffers = uniform_buffers, .texture_operations = texture_operations}};\n"
+        },
+        {
+          "beforeLine": 2618,
+          "afterLine": 2628,
+          "before": "   return standard_pair(vertex_text, vertex_length, fragment_text, fragment_length, 0, 0, 0, 0, false, 0);\n",
+          "after": "   return standard_pair(vertex_text, vertex_length, fragment_text, fragment_length, 0, 0, 0, 0, false, false, 0);\n"
+        },
+        {
+          "beforeLine": 2625,
+          "afterLine": 2635,
+          "before": "                        signed_inputs, unsigned_inputs, 0, 0, false, 0);\n",
+          "after": "                        signed_inputs, unsigned_inputs, 0, 0, false, false, 0);\n"
+        },
+        {
+          "beforeLine": 2633,
+          "afterLine": 2643,
+          "before": "                        signed_inputs, unsigned_inputs, packed_signed_inputs, packed_normalized_inputs, false, 0);\n",
+          "after": "                        signed_inputs, unsigned_inputs, packed_signed_inputs, packed_normalized_inputs, false, false, 0);\n"
+        },
+        {
+          "beforeLine": 2643,
+          "afterLine": 2653,
+          "before": "                        true, buffer_zero_mask);\n",
+          "after": "                        true, false, buffer_zero_mask);\n"
+        },
+        {
+          "beforeLine": 2645,
+          "afterLine": 2655,
+          "before": "",
+          "after": "\nconst char *bridge_translate_standard_texture(int stage, const char *text, size_t length)\n{\n   return standard_stage(stage, text, length, true, true);\n}\nconst char *bridge_translate_standard_texture_pair(const char *vertex_text, size_t vertex_length,\n                                                   const char *fragment_text, size_t fragment_length,\n                                                   uint32_t signed_inputs, uint32_t unsigned_inputs,\n                                                   uint32_t packed_signed_inputs, uint32_t packed_normalized_inputs,\n                                                   uint32_t buffer_zero_mask)\n{\n   return standard_pair(vertex_text, vertex_length, fragment_text, fragment_length,\n                        signed_inputs, unsigned_inputs, packed_signed_inputs, packed_normalized_inputs,\n                        true, true, buffer_zero_mask);\n}\n"
+        }
+      ]
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.h",
+      "beforeSha256": "3656745696d80bcae1f58f75834c367b5747a195dfff6ebe96b4f9893c800ac2",
+      "afterSha256": "b3ef7710ac1d360a94f08879d75045cebfded77a68ec246baf847c631f681e6b",
+      "changes": [
+        {
+          "beforeLine": 109,
+          "afterLine": 109,
+          "before": "",
+          "after": "/* Distinct host-selected original 2D/FLOAT texture-operation facet. Native\n * highp operations and a declared host view-level uniform; no resource authority. */\nconst char *bridge_translate_standard_texture(int stage, const char *text, size_t length);\nconst char *bridge_translate_standard_texture_pair(const char *vertex_text, size_t vertex_length,\n                                                   const char *fragment_text, size_t fragment_length,\n                                                   uint32_t signed_inputs, uint32_t unsigned_inputs,\n                                                   uint32_t packed_signed_inputs, uint32_t packed_normalized_inputs,\n                                                   uint32_t buffer_zero_mask);\n\n"
+        }
+      ]
+    },
+    {
+      "path": "renderer/virgl-shader/standard.mjs",
+      "beforeSha256": "e62f627e51a96658c100636c628a2ed6a87fd1ebf200d46c1167cf3107b6b25a",
+      "afterSha256": "88e6312adedc10ba804768d138eeb2e80c7bbbdc7b950edf2cd6ecf93e98b3ee",
+      "changes": [
+        {
+          "beforeLine": 36,
+          "afterLine": 36,
+          "before": "async function createStandardBridge(options, uniformBuffers) {\n",
+          "after": "/** Explicit original 2D texture operations, including checked host query metadata. */\nexport async function createVirglStandardTextureShaderBridge(options = {}) {\n  return createStandardBridge(options, true, true);\n}\nasync function createStandardBridge(options, uniformBuffers, textureOperations = false) {\n"
+        },
+        {
+          "beforeLine": 39,
+          "afterLine": 43,
+          "before": "",
+          "after": "  const uniformPair = textureOperations ? module._bridge_translate_standard_texture_pair : module._bridge_translate_standard_uniform_pair;\n"
+        },
+        {
+          "beforeLine": 64,
+          "afterLine": 69,
+          "before": "      return run([text], ([pointer]) => (uniformBuffers ? module._bridge_translate_standard_uniform :\n",
+          "after": "      return run([text], ([pointer]) => (textureOperations ? module._bridge_translate_standard_texture : uniformBuffers ? module._bridge_translate_standard_uniform :\n"
+        },
+        {
+          "beforeLine": 78,
+          "afterLine": 83,
+          "before": "        module._bridge_translate_standard_uniform_pair(vertex, vertexText.length, fragment, fragmentText.length, 0, 0, 0, 0, 0) :\n",
+          "after": "        uniformPair(vertex, vertexText.length, fragment, fragmentText.length, 0, 0, 0, 0, 0) :\n"
+        },
+        {
+          "beforeLine": 94,
+          "afterLine": 99,
+          "before": "        module._bridge_translate_standard_uniform_pair(vertex, vertexText.length, fragment, fragmentText.length, signedMask, unsignedMask, 0, 0, 0) :\n",
+          "after": "        uniformPair(vertex, vertexText.length, fragment, fragmentText.length, signedMask, unsignedMask, 0, 0, 0) :\n"
+        },
+        {
+          "beforeLine": 111,
+          "afterLine": 116,
+          "before": "        module._bridge_translate_standard_uniform_pair(vertex, vertexText.length, fragment, fragmentText.length, signedMask, unsignedMask, packedSignedMask, packedNormalizedMask, 0) :\n",
+          "after": "        uniformPair(vertex, vertexText.length, fragment, fragmentText.length, signedMask, unsignedMask, packedSignedMask, packedNormalizedMask, 0) :\n"
+        },
+        {
+          "beforeLine": 129,
+          "afterLine": 134,
+          "before": "    return run([vertexText, fragmentText], ([vertex, fragment]) => module._bridge_translate_standard_uniform_pair(\n",
+          "after": "    return run([vertexText, fragmentText], ([vertex, fragment]) => uniformPair(\n"
+        }
+      ]
+    },
+    {
+      "path": "renderer/virgl-shader/build.sh",
+      "beforeSha256": "368490806d1293183b326fa9b70557c07d5571f148faca0870f53c9e3469a4c8",
+      "afterSha256": "5bd3c89c04b2ffb8bfceb9d0d38bb5c8e5b88046dd32bf335706d7f29b6127af",
+      "changes": [
+        {
+          "beforeLine": 20,
+          "afterLine": 20,
+          "before": "",
+          "after": "  standard-texture-native|standard-texture-sanitize)\n    instrument=(-O2)\n    if [[ \"$mode\" == standard-texture-sanitize ]]; then\n      instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined\n        -fprofile-instr-generate -fcoverage-mapping -fstack-usage)\n    fi\n    \"${CC:-clang}\" \"${common[@]}\" -Wall -Wextra -Werror -fsyntax-only standard_guard.c standard_emit.c native_tests/standard_texture_inputs.c\n    \"${CC:-clang}\" \"${common[@]}\" \"${instrument[@]}\" \"${sources[@]}\" native_tests/standard_texture_inputs.c \\\n      -lm -o \"build/$mode/standard-texture-test\"\n    ;;\n"
+        },
+        {
+          "beforeLine": 29,
+          "afterLine": 39,
+          "before": "",
+          "after": "    ;;\n  standard-texture-allocation-sanitize)\n    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined\n      -fprofile-instr-generate -fcoverage-mapping -fstack-usage)\n    \"${CC:-clang}\" \"${common[@]}\" -Wall -Wextra -Werror -fsyntax-only native_tests/standard_texture_allocations.c\n    \"${CC:-clang}\" \"${common[@]}\" \"${instrument[@]}\" -Dcalloc=precise_word_calloc -c bridge.c -o \"build/$mode/bridge.o\"\n    \"${CC:-clang}\" \"${common[@]}\" \"${instrument[@]}\" -DBRIDGE_UPSTREAM_ALLOCATION_TEST -c checked_upstream.c -o \"build/$mode/checked_upstream.o\"\n    \"${CC:-clang}\" \"${common[@]}\" \"${instrument[@]}\" -Dcalloc=precise_word_calloc -c standard_emit.c -o \"build/$mode/standard_emit.o\"\n    \"${CC:-clang}\" \"${common[@]}\" \"${instrument[@]}\" -Dmalloc=precise_word_upstream_malloc -c checked_tgsi_sanity.c -o \"build/$mode/checked_tgsi_sanity.o\"\n    remaining=()\n    for source in \"${sources[@]}\"; do\n      case \"$source\" in bridge.c|checked_upstream.c|standard_emit.c|checked_tgsi_sanity.c) ;; *) remaining+=(\"$source\");; esac\n    done\n    \"${CC:-clang}\" \"${common[@]}\" \"${instrument[@]}\" \"build/$mode/bridge.o\" \"build/$mode/checked_upstream.o\" \"build/$mode/checked_tgsi_sanity.o\" \\\n      \"${remaining[@]}\" \"build/$mode/standard_emit.o\" native_tests/standard_texture_allocations.c \\\n      -lm -o \"build/$mode/standard-texture-allocation-test\"\n"
+        },
+        {
+          "beforeLine": 655,
+          "afterLine": 681,
+          "before": "      '-sEXPORTED_FUNCTIONS=[\"_bridge_translate\",\"_bridge_translate_pair\",\"_bridge_translate_exact\",\"_bridge_translate_pair_exact\",\"_bridge_translate_original_92cb_first_power\",\"_bridge_translate_original_92cb_complete\",\"_bridge_translate_standard\",\"_bridge_translate_standard_pair\",\"_bridge_translate_standard_pair_typed\",\"_bridge_translate_standard_pair_vertex_formats\",\"_bridge_translate_standard_uniform\",\"_bridge_translate_standard_uniform_pair\",\"_malloc\",\"_free\"]' \\\n",
+          "after": "      '-sEXPORTED_FUNCTIONS=[\"_bridge_translate\",\"_bridge_translate_pair\",\"_bridge_translate_exact\",\"_bridge_translate_pair_exact\",\"_bridge_translate_original_92cb_first_power\",\"_bridge_translate_original_92cb_complete\",\"_bridge_translate_standard\",\"_bridge_translate_standard_pair\",\"_bridge_translate_standard_pair_typed\",\"_bridge_translate_standard_pair_vertex_formats\",\"_bridge_translate_standard_uniform\",\"_bridge_translate_standard_uniform_pair\",\"_bridge_translate_standard_texture\",\"_bridge_translate_standard_texture_pair\",\"_malloc\",\"_free\"]' \\\n"
+        }
+      ]
+    }
+  ],
+  "restoredExactly": true
+}

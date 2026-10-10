@@ -27,7 +27,7 @@ struct standard_profile {
    uint8_t declared[STD_FILES][STANDARD_CONSTANTS];
    struct standard_io input[STANDARD_IO], output[STANDARD_IO], system[2];
    uint16_t instructions, constants, immediates;
-   uint16_t used_samplers;
+   uint16_t used_samplers, queried_levels;
    /* Host-derived vertex format types, never TGSI/guest shader keys. */
    uint16_t signed_inputs, unsigned_inputs;
    uint16_t packed_signed_inputs, packed_normalized_inputs;
@@ -35,7 +35,7 @@ struct standard_profile {
     * legacy facets keep both flags zero and retain their original grammar. */
    uint32_t uniform_declared[STANDARD_UNIFORM_SLOTS][STANDARD_UNIFORM_VECTORS / 32];
    uint16_t uniform_counts[STANDARD_UNIFORM_SLOTS + 1];
-   bool uniform_buffers, buffer_zero;
+   bool uniform_buffers, buffer_zero, texture_operations;
    uint8_t properties, broadcast;
 };
 
@@ -49,4 +49,6 @@ static inline const char *standard_attribute_type(const struct standard_profile 
  * numbers and grammar BEFORE the upstream text parser sees the original text. */
 const char *standard_validate(struct standard_profile *p, const char *text, size_t length);
 bool standard_match(struct standard_profile *vertex, const struct standard_profile *fragment);
+/* Numeric sources preceding the final checked sampler, or zero. */
+unsigned standard_texture_sources(unsigned opcode);
 #endif
