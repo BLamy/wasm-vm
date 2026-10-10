@@ -3,7 +3,7 @@ id: E6-T11d20
 epic: 6
 title: Allocate and transfer original mipmapped 2D color resources
 priority: 525.02703900037
-status: pending
+status: in-progress
 depends_on: [E6-T11d19]
 estimate: S
 risk: high
@@ -33,3 +33,7 @@ The selected resource owner requires lastLevel0, and all old decoder facets requ
 ### 2026-10-10 — worker — verified predecessor and ordered selection
 
 E6-T11d19 is independently verified at `52d3cc4e2f0f28d82a2900ff33ab855ae118e66e`. Its isolated sampler authority carries only across unchanged source/dependency/evidence digests. The original negative storage/level repro is sealed as `evidence/virgl-production-readiness/standard-texture-gap.json`; its recorded resource/decoder bytes remain unchanged through that verdict. The explicit user request to finish production guest graphics selects this ordered storage prerequisite ahead of unrelated queue work. Actual texture views, rendering, API/caps, guest Mesa and deployment remain successors.
+
+### 2026-10-10 — worker — activated
+
+The original multilevel storage/transfer boundary is the sole active task. Dependency E6-T11d19 is verified at `52d3cc4e2f0f28d82a2900ff33ab855ae118e66e`. Use `make verify-E6-T11d20` as the single deterministic acceptance, affected legacy gates, one final pristine scrubbed clone and a fresh independent verifier. All temporary native prechecks are ephemeral until the committed exact-head recording.
