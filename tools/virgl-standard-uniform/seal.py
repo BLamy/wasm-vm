@@ -10,18 +10,39 @@ import sys
 import tarfile
 
 ROOT = Path(__file__).resolve().parents[2]
+RECEIPT_CONFIRMATION = b'Frozen original uniform shaders, native hardware words/pixels, old ABIs and complete custody authenticated.\n'
+SEALING_FILES = ('tools/virgl-standard-uniform/seal.py', 'tools/virgl-standard-uniform/seal-test.py')
 
 
 def sha(raw):
     return hashlib.sha256(raw).hexdigest()
 
 
+def authenticated_record(name, raw, digest):
+    if sha(raw) == digest:
+        return raw, None
+    # The receipt hashes its own redirected stdout before its final print.
+    # Preserve the full final log separately, and authenticate the precise
+    # recorded prefix. No other appended or modified bytes are admitted.
+    if name == 'acceptance.log' and raw.endswith(RECEIPT_CONFIRMATION):
+        prefix = raw[:-len(RECEIPT_CONFIRMATION)]
+        if sha(prefix) == digest:
+            return prefix, raw
+    raise ValueError('record drift: ' + name)
+
+
 def main():
     hot, cold, output = [Path(value).resolve() for value in sys.argv[1:4]]
-    head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
+    sealing_head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
+    if subprocess.check_output(['git', 'diff', '--name-only', 'HEAD'], cwd=ROOT, text=True).strip():
+        raise ValueError('freeze sealing harness before packaging')
     hot_receipt = json.loads((hot / 'receipt.json').read_text())
     cold_report = json.loads((cold / 'report.json').read_text())
     cold_receipt = json.loads((cold / 'acceptance/receipt.json').read_text())
+    head = hot_receipt['gitHead']
+    changed = subprocess.check_output(['git', 'diff', '--name-only', head, sealing_head], cwd=ROOT, text=True).splitlines()
+    if any(name not in SEALING_FILES for name in changed):
+        raise ValueError('only incremental sealing-harness changes may follow the recorded head')
     for record in (hot_receipt, cold_report, cold_receipt):
         if record['status'] != 'passed' or record['gitHead'] != head:
             raise ValueError('only passed exact-head physical evidence may be sealed')
@@ -33,8 +54,10 @@ def main():
     for prefix, directory, receipt in [('hot', hot, hot_receipt),
                                        ('cold', cold / 'acceptance', cold_receipt)]:
         for name, digest in receipt['files'].items():
-            if sha((directory / name).read_bytes()) != digest:
-                raise ValueError(prefix + ' file drift: ' + name)
+            raw, final = authenticated_record(name, (directory / name).read_bytes(), digest)
+            members[prefix + '/' + name] = raw
+            if final is not None:
+                members[prefix + '/' + name + '.final'] = final
         for name, digest in receipt['sources'].items():
             original = subprocess.check_output(['git', 'show', f'{head}:{name}'], cwd=ROOT)
             if sha(original) != digest:
@@ -45,14 +68,15 @@ def main():
             if sha(data) != digest:
                 raise ValueError(prefix + ' generated binary drift: ' + name)
             members[prefix + '-generated/' + name] = data
-        for name in sorted([*receipt['files'], 'receipt.json']):
-            members[prefix + '/' + name] = (directory / name).read_bytes()
-        members[prefix + '/acceptance.log'] = (directory / 'acceptance.log').read_bytes()
+        members[prefix + '/receipt.json'] = (directory / 'receipt.json').read_bytes()
     members['cold/report.json'] = (cold / 'report.json').read_bytes()
     members['cold/cold.log'] = (cold / 'cold.log').read_bytes()
+    for name in SEALING_FILES:
+        members['sealing/' + name] = subprocess.check_output(['git', 'show', f'{sealing_head}:{name}'], cwd=ROOT)
+    members['sealing/seal-test.log'] = subprocess.check_output(['python3', str(ROOT / SEALING_FILES[1])], cwd=ROOT)
     output.mkdir(parents=True, exist_ok=True)
     records = {'schema': 'virgl-standard-uniform-shader-records-v1',
-               'task': 'E6-T11d16', 'sourceHead': head,
+               'task': 'E6-T11d16', 'sourceHead': head, 'sealingHead': sealing_head,
                'records': [{'path': name, 'bytes': len(data), 'sha256': sha(data)}
                            for name, data in sorted(members.items())]}
     index = (json.dumps(records, indent=2) + '\n').encode()
@@ -67,7 +91,7 @@ def main():
     packed = archive.getvalue()
     (output / 'recording.tar.gz').write_bytes(packed)
     manifest = {'schema': 'virgl-standard-uniform-shader-seal-v1',
-                'task': 'E6-T11d16', 'sourceHead': head, 'records': len(members),
+                'task': 'E6-T11d16', 'sourceHead': head, 'sealingHead': sealing_head, 'records': len(members),
                 'archiveSha256': sha(packed), 'archiveBytes': len(packed),
                 'recordIndexSha256': sha(index),
                 'hotReceiptSha256': sha((hot / 'receipt.json').read_bytes()),
