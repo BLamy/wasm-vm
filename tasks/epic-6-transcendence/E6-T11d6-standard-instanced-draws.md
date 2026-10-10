@@ -3,7 +3,7 @@ id: E6-T11d6
 epic: 6
 title: Execute standard instanced and wide-index vertex draws
 priority: 525.027039
-status: pending
+status: in-progress
 depends_on: [E6-T11d5]
 estimate: S
 risk: high
