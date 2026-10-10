@@ -62,4 +62,13 @@ const char *bridge_translate_original_92cb_first_power(
    const unsigned char *geometry, size_t geometry_length,
    unsigned bank, const struct bridge_92cb_draw_state *draw);
 
+/* Isolated full-source capture transaction. The same complete byte pins and
+ * draw state apply; dynamic powers carry emitted invocation-time guards and
+ * a separate diagnostic output. It grants no production draw authority. */
+const char *bridge_translate_original_92cb_complete(
+   const char *vertex_text, size_t vertex_length,
+   const char *fragment_text, size_t fragment_length,
+   const unsigned char *geometry, size_t geometry_length,
+   unsigned bank, const struct bridge_92cb_draw_state *draw);
+
 #endif

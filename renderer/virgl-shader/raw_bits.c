@@ -534,21 +534,28 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
    if (instruction->opcode == RAW_POW &&
        !power_domain_proved(precise_source(ir, instruction, 0, 0, conditional),
                             precise_source(ir, instruction, 1, 0, conditional))) {
-      /* The sole private exception is the two original power sites. The
-       * entry point authenticated the complete source, all three banks and
-       * geometry; its result still requires a physical draw-time check. */
-      unsigned pc = ir->count;
-      unsigned component = pc == 221 ? 0u : 1u;
-      if (!(instruction->flags & RAW_PRIVATE_92CB_POWER) ||
-          (pc != 221 && pc != 222) || !ir->exact ||
-          instruction->dst.file != TEMP || instruction->dst.index != 172 ||
-          instruction->dst.mask != (1u << component) ||
-          instruction->src[0].file != TEMP || instruction->src[0].index != 171 ||
-          instruction->src[0].swizzle[0] != component ||
-          instruction->src[1].file != CONST || instruction->src[1].index != 6 ||
-          instruction->src[1].swizzle[0] != 0 ||
-          !(ir->exact->present[6] & 1u) ||
-          ir->exact->words[6][0] != UINT32_C(0x40000000)) return false;
+      if (instruction->flags & RAW_PRIVATE_92CB_COMPLETE) {
+         /* This flag is reachable only after the full-source/geometry byte
+          * transaction. Never add numeric origin or static word facts: the
+          * actual post-modifier arguments are checked in the emitted shader. */
+         if (!ir->exact) return false;
+      } else {
+         /* The sole private exception is the two original power sites. The
+          * entry point authenticated the complete source, all three banks and
+          * geometry; its result still requires a physical draw-time check. */
+         unsigned pc = ir->count;
+         unsigned component = pc == 221 ? 0u : 1u;
+         if (!(instruction->flags & RAW_PRIVATE_92CB_POWER) ||
+             (pc != 221 && pc != 222) || !ir->exact ||
+             instruction->dst.file != TEMP || instruction->dst.index != 172 ||
+             instruction->dst.mask != (1u << component) ||
+             instruction->src[0].file != TEMP || instruction->src[0].index != 171 ||
+             instruction->src[0].swizzle[0] != component ||
+             instruction->src[1].file != CONST || instruction->src[1].index != 6 ||
+             instruction->src[1].swizzle[0] != 0 ||
+             !(ir->exact->present[6] & 1u) ||
+             ir->exact->words[6][0] != UINT32_C(0x40000000)) return false;
+      }
    }
    uint32_t reciprocal_word = 0;
    bool known_reciprocal = instruction->opcode == RAW_RCP && ir->exact &&
@@ -1062,7 +1069,18 @@ static void float_snapshot(struct writer *w, const struct profile *p, const stru
       float_operand(w, p, instruction, 0, 0);
       emit(w, "; highp float power_exponent = ");
       float_operand(w, p, instruction, 1, 0);
-      emit(w, "; float_rhs = vec4(0.0); if (power_base != 0.0) float_rhs = vec4(/* power:POW */ pow(power_base, power_exponent)); }\n");
+      if (instruction->flags & RAW_PRIVATE_92CB_COMPLETE) {
+         unsigned pc = (unsigned)(instruction - p->raw->instructions);
+         bool masked = pc == 231 || pc == 260 || pc == 293 || pc == 319;
+         emit(w, "; float_rhs = vec4(0.0); bool power_masked = %s && power_base < 0.0;"
+            " if (!power_masked) { if (!private_power_domain(power_base, power_exponent))"
+            " private_power_fault = true; else if (power_base != 0.0)"
+            " float_rhs = vec4(/* power:POW */ pow(power_base, power_exponent)); }"
+            " if (private_probe_pc == %u) private_probe = vec4(power_base,"
+            " power_exponent, float_rhs.x, power_masked ? 2.0 : 1.0); }\n",
+            masked ? "true" : "false", pc);
+      } else
+         emit(w, "; float_rhs = vec4(0.0); if (power_base != 0.0) float_rhs = vec4(/* power:POW */ pow(power_base, power_exponent)); }\n");
       return;
    }
    if (op == RAW_SIN) {
@@ -1219,10 +1237,29 @@ char *raw_emit(const struct profile *p, unsigned const_count)
    unsigned temporaries = LEGACY_TEMP_REGISTERS;
    for (unsigned index = LEGACY_TEMP_REGISTERS; index < TEMP_REGISTERS; ++index)
       if (p->declared[TEMP][index]) temporaries = index + 1;
+   if (p->raw_flags & RAW_PRIVATE_92CB_COMPLETE)
+      emit(&w,
+         "uniform int private_probe_pc;\n"
+         "uniform int private_probe_mode;\n"
+         "layout(location=1) out highp vec4 private_probe_out;\n"
+         "bool private_power_domain(highp float base, highp float exponent) {\n"
+         " uint b = floatBitsToUint(base); uint e = floatBitsToUint(exponent);\n"
+         " uint bm = b & 2147483647u; uint em = e & 2147483647u;\n"
+         " if (bm >= 2139095040u || em >= 2139095040u ||"
+         " (bm != 0u && (b & 2147483648u) != 0u)) return false;\n"
+         " if (em != 0u && em < 8388608u) return false;\n"
+         " if (bm == 0u) return exponent > 0.0;\n"
+         " if (bm < 8388608u) return false;\n"
+         " int lower = int(bm >> 23u) - 127;\n"
+         " int upper = lower + ((bm & 8388607u) != 0u ? 1 : 0);\n"
+         " return float(max(abs(lower), abs(upper))) * abs(exponent) <= 119.0;\n"
+         "}\n");
    emit(&w, "void main(void) {\n highp uvec4 raw_temp[%u];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n", temporaries);
    if (p->raw->indirect_indices) emit(&w, " highp uint raw_addr;\n");
    if (p->raw->opcode_mask & (RAW_NUMERIC_OPCODES | RAW_STRUCTURED_OPCODES | RAW_ARITHMETIC_OPCODES | RAW_CONVERSION_OPCODES | RAW_FRACTION_OPCODES | (UINT64_C(1) << RAW_MAX_PRECISE) | (UINT64_C(1) << RAW_MIN_PRECISE)))
       emit(&w, " highp vec4 float_temp[%u];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n", temporaries);
+   if (p->raw_flags & RAW_PRIVATE_92CB_COMPLETE)
+      emit(&w, " bool private_power_fault = false; highp vec4 private_probe = vec4(0.0);\n");
    for (unsigned index = 0; index < p->raw->count; ++index) {
       const struct raw_instruction *instruction = &p->raw->instructions[index];
       if ((instruction->flags & RAW_DEAD) && !((UINT64_C(1) << instruction->opcode) & (RAW_STRUCTURED_OPCODES | RAW_LOOP_OPCODES))) continue;
@@ -1230,7 +1267,12 @@ char *raw_emit(const struct profile *p, unsigned const_count)
       if (instruction->opcode == RAW_BGNLOOP) { emit(&w, " do {\n"); continue; }
       if (instruction->opcode == RAW_BRK) { emit(&w, " break;\n"); continue; }
       if (instruction->opcode == RAW_ENDLOOP) { emit(&w, " } while (%s);\n", instruction->flags & RAW_DEAD ? "false" : "true"); continue; }
-      if (instruction->opcode == RAW_KILL) { emit(&w, " discard;\n"); continue; }
+      if (instruction->opcode == RAW_KILL) {
+         if (p->raw_flags & RAW_PRIVATE_92CB_COMPLETE)
+            emit(&w, " if (private_probe_mode != 0) { private_probe_out = private_probe;"
+               " fsout_c0 = vec4(private_power_fault ? -30000.0 : -10000.0); return; }\n");
+         emit(&w, " discard;\n"); continue;
+      }
       if (instruction->opcode == RAW_KILL_IF) {
          emit(&w, " if (");
          for (unsigned lane = 0; lane < 4; ++lane) {
@@ -1376,6 +1418,8 @@ char *raw_emit(const struct profile *p, unsigned const_count)
          emit(&w, ";\n");
       }
    }
+   if (p->raw_flags & RAW_PRIVATE_92CB_COMPLETE)
+      emit(&w, " private_probe_out = private_probe; if (private_power_fault) fsout_c0 = vec4(-30000.0);\n");
    if (!p->stage) emit(&w, " gl_Position.y = gl_Position.y * winsys_adjust_y;\n");
    emit(&w, "}\n");
    if (w.overflow) { free(w.text); return NULL; }

@@ -2089,3 +2089,7 @@ verify-E6-T12g6m5b2b1:
 .PHONY: verify-E6-T12g6m5b2b2
 verify-E6-T12g6m5b2b2:
 	bash tools/verify-virgl-original-92cb-private-power.sh
+
+.PHONY: verify-E6-T12g6m
+verify-E6-T12g6m:
+	bash tools/verify-virgl-original-programs.sh
