@@ -6,6 +6,25 @@ the separate private raw-bit profile. It supplies a translation boundary to the 
 renderers. Production GPU negotiation remains disabled; this module does not
 establish general Mesa or guest desktop compatibility.
 
+## Finite scalar truncation and sign — E6-T12g6f
+
+TRUNC and SSG operate independently on each consumed component, including
+swizzles, negation and masked or aliased writes. They require the existing
+numeric authority. Unknown private integers and literal nonzero subnormals,
+infinities and NaNs cannot acquire numeric access through these operations.
+Existing finite constant banks still admit dynamic subnormal values. The
+unsigned helpers preserve TRUNC's source zero sign; SSG returns exact +1/-1
+for nonzero finite inputs and canonical positive zero for either input zero.
+Results carry a numeric shadow and ordinary output permission, with their
+whole inherited constant-bank dependency. All source lanes precede writes.
+
+Outer profile v31 declares these policies and retains the complete v1..v30
+base, including simultaneous conversion, arithmetic, raster, radial and loop
+obligations. The wrapper cannot wrap itself. [The recording protocol](../../tools/virgl-scalar-operations/README.md)
+documents the pinned TGSI source, exact owned zero bits, unmodified Mesa
+ordinary zero allowance and `make verify-E6-T12g6f`. Production negotiation
+and the complete captured compositor programs remain gated.
+
 ## Signed integer and binary32 conversions — E6-T12g6e
 
 Private I2F explicitly rounds signed32 words to binary32 nearest-even. F2I

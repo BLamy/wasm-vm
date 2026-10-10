@@ -850,6 +850,8 @@ static bool instruction(const char **p, struct profile *s, struct flow_context *
       else if (word(p, "IMAX")) raw.opcode = RAW_IMAX;
       else if (word(p, "I2F")) raw.opcode = RAW_I2F;
       else if (word(p, "F2I")) raw.opcode = RAW_F2I;
+      else if (word(p, "TRUNC")) raw.opcode = RAW_TRUNC;
+      else if (word(p, "SSG")) raw.opcode = RAW_SSG;
       else if (word(p, "USEQ")) raw.opcode = RAW_USEQ;
       else if (word(p, "USNE")) raw.opcode = RAW_USNE;
       else if (word(p, "UCMP")) raw.opcode = RAW_UCMP;
@@ -871,7 +873,8 @@ static bool instruction(const char **p, struct profile *s, struct flow_context *
       else { failure_code = "unsupported-feature"; return false; }
       tex = raw.opcode == RAW_TEX;
       arity = raw.opcode == RAW_UARL || raw.opcode == RAW_NOT || raw.opcode == RAW_FRC ||
-         raw.opcode == RAW_RCP || raw.opcode == RAW_RSQ || raw.opcode == RAW_I2F || raw.opcode == RAW_F2I || tex ? 1 :
+         raw.opcode == RAW_RCP || raw.opcode == RAW_RSQ || raw.opcode == RAW_I2F || raw.opcode == RAW_F2I ||
+         raw.opcode == RAW_TRUNC || raw.opcode == RAW_SSG || tex ? 1 :
          raw.opcode == RAW_UCMP || raw.opcode == RAW_MAD || raw.opcode == RAW_LRP ? 3 : 2;
       partial = !tex && raw.opcode != RAW_MAD;
       /* These formerly unsupported numeric tokens retain that error category
@@ -1168,7 +1171,7 @@ static const char *check_input(struct profile *profile, const char *text, size_t
          candidate = true;
       } else if (word(&p, "ADD_PRECISE") || word(&p, "MUL_PRECISE")) {
          candidate = numeric_candidate = true;
-      } else if (word(&p, "I2F") || word(&p, "F2I")) {
+      } else if (word(&p, "I2F") || word(&p, "F2I") || word(&p, "TRUNC") || word(&p, "SSG")) {
          candidate = numeric_candidate = true;
       } else if (word(&p, "AND") || word(&p, "OR") || word(&p, "NOT") || word(&p, "SHL") || word(&p, "USHR") ||
           word(&p, "UADD") || word(&p, "ISGE") || word(&p, "ISLT") || word(&p, "IMAX") || word(&p, "USEQ") || word(&p, "USNE") || word(&p, "UCMP") ||
@@ -1443,6 +1446,14 @@ static void conversion_contract(const struct profile *profile, unsigned count, c
    append("]}]");
 }
 
+static void scalar_contract(const struct profile *profile, const char *base)
+{
+   uint64_t ops = profile->raw->opcode_mask;
+   bool trunc = (ops & (UINT64_C(1) << RAW_TRUNC)) != 0, ssg = (ops & (UINT64_C(1) << RAW_SSG)) != 0;
+   append(",\"scalarBaseProfile\":\"%s\",\"scalarWordContract\":{\"kind\":\"tgsi-finite-scalar-binary32-v1\",\"stage\":\"%s\",\"operations\":[%s%s%s],\"domain\":\"existing-finite-numeric-authority\",\"truncation\":\"toward-zero-preserve-zero-sign\",\"sign\":\"negative-one-positive-one-canonical-zero\",\"result\":\"normal-or-signed-zero\"}",
+      base, profile->stage ? "fragment" : "vertex", trunc ? "\"TRUNC\"" : "", trunc && ssg ? "," : "", ssg ? "\"SSG\"" : "");
+}
+
 static void stage_result(const struct conversion *c)
 {
    const struct profile *profile = &c->profile;
@@ -1477,8 +1488,10 @@ static void stage_result(const struct conversion *c)
    bool arithmetic = profile->raw && (profile->raw->opcode_mask & RAW_PRECISE_ARITHMETIC_USED);
    bool conversion = profile->raw && (profile->raw->opcode_mask & RAW_CONVERSION_OPCODES);
    bool conversion_bank = profile->raw && (profile->raw->opcode_mask & RAW_CONVERSION_BANK_USED);
+   bool scalar = profile->raw && (profile->raw->opcode_mask & RAW_SCALAR_OPCODES);
+   const char *conversion_name = conversion_bank ? "virgl-webgl2-raw-bits-v30" : "virgl-webgl2-raw-bits-v29";
    append("\",\"metadata\":{\"profile\":\"%s\",\"stage\":\"%s\",\"inputs\":",
-      conversion ? (conversion_bank ? "virgl-webgl2-raw-bits-v30" : "virgl-webgl2-raw-bits-v29") :
+      scalar ? "virgl-webgl2-raw-bits-v31" : conversion ? conversion_name :
       arithmetic ? "virgl-webgl2-raw-bits-v28" : raster ? "virgl-webgl2-raw-bits-v27" : name,
       stage ? "fragment" : "vertex");
    io_metadata(profile, IN); append(",\"outputs\":"); io_metadata(profile, OUT);
@@ -1517,6 +1530,8 @@ static void stage_result(const struct conversion *c)
    if (raster) raster_contract(profile, info->num_consts, name);
    if (arithmetic) arithmetic_contract(profile, raster ? "virgl-webgl2-raw-bits-v27" : name);
    if (conversion) conversion_contract(profile, info->num_consts,
+      arithmetic ? "virgl-webgl2-raw-bits-v28" : raster ? "virgl-webgl2-raw-bits-v27" : name);
+   if (scalar) scalar_contract(profile, conversion ? conversion_name :
       arithmetic ? "virgl-webgl2-raw-bits-v28" : raster ? "virgl-webgl2-raw-bits-v27" : name);
    append("}");
 }
