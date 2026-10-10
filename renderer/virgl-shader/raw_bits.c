@@ -118,7 +118,7 @@ unsigned raw_consumed_mask(enum raw_opcode opcode, unsigned destination_mask)
    /* TGSI scalar operations consume post-swizzle x/xyz independently of the
     * written lanes. Use the same rule for initialization and float authority. */
    if (opcode == RAW_DP3) return 7u;
-   if (opcode == RAW_RCP || opcode == RAW_RSQ || opcode == RAW_UARL || opcode == RAW_EX2 || opcode == RAW_LG2) return 1u;
+   if (opcode == RAW_RCP || opcode == RAW_RSQ || opcode == RAW_UARL || opcode == RAW_EX2 || opcode == RAW_LG2 || opcode == RAW_SIN) return 1u;
    return opcode == RAW_TEX ? 3u : destination_mask;
 }
 
@@ -187,6 +187,14 @@ static bool exponent_domain_proved(enum raw_opcode op, struct raw_lane value)
    return true;
 }
 
+/* Bound every possible post-modifier argument, including partial facts.
+ * Numerical provenance alone cannot bound a computed value. The measured
+ * [-8,8] sine domain grants no static result or conversion authority. */
+static bool sine_domain_proved(struct raw_lane value)
+{
+   return safe_raw_float(value) && (~value.zero & UINT32_C(0x7fffffff)) <= UINT32_C(0x41000000);
+}
+
 bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
 {
    if ((UINT64_C(1) << input->opcode) & RAW_CONTROL_OPCODES) {
@@ -215,7 +223,7 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
    bool conversion_bank = false;
    unsigned sources = instruction->opcode == RAW_MOV || instruction->opcode == RAW_MOV_SAT || instruction->opcode == RAW_NOT ||
       instruction->opcode == RAW_FRC || instruction->opcode == RAW_FRC_PRECISE || instruction->opcode == RAW_TEX ||
-      instruction->opcode == RAW_RCP || instruction->opcode == RAW_RSQ || instruction->opcode == RAW_EX2 || instruction->opcode == RAW_LG2 ||
+      instruction->opcode == RAW_RCP || instruction->opcode == RAW_RSQ || instruction->opcode == RAW_EX2 || instruction->opcode == RAW_LG2 || instruction->opcode == RAW_SIN ||
       instruction->opcode == RAW_I2F || instruction->opcode == RAW_F2I ||
       instruction->opcode == RAW_TRUNC || instruction->opcode == RAW_SSG ? 1 :
       instruction->opcode == RAW_UCMP || instruction->opcode == RAW_MAD || instruction->opcode == RAW_LRP ? 3 : 2;
@@ -235,6 +243,8 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
                                         precise_source(ir, instruction, 1, lane, conditional))) return false;
    if (((UINT64_C(1) << instruction->opcode) & RAW_EXPONENT_OPCODES) &&
        !exponent_domain_proved(instruction->opcode, precise_source(ir, instruction, 0, 0, conditional))) return false;
+   if (instruction->opcode == RAW_SIN &&
+       !sine_domain_proved(precise_source(ir, instruction, 0, 0, conditional))) return false;
    /* A known raw selector never demands numerical access to its unused arm.
     * Only the retry prunes these modes, preserving old emitted expressions. */
    if ((conditional || structured) && instruction->opcode == RAW_UCMP)
@@ -373,9 +383,10 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
       case RAW_RSQ:
       case RAW_EX2:
       case RAW_LG2:
+      case RAW_SIN:
       case RAW_TEX:
          result[lane].origin = RAW_FLOAT_SHADOW | RAW_OUTPUT;
-         if (instruction->opcode == RAW_TEX || ((UINT64_C(1) << instruction->opcode) & (RAW_V6_OPCODES | RAW_EXPONENT_OPCODES)))
+         if (instruction->opcode == RAW_TEX || ((UINT64_C(1) << instruction->opcode) & (RAW_V6_OPCODES | RAW_EXPONENT_OPCODES | RAW_SINE_OPCODES)))
             result[lane].origin |= dependency;
          else for (unsigned source = 0; source < sources; ++source)
             result[lane].origin |= (checked.float_modes[source] >> (lane * 8)) & RAW_BANK_DEPENDENCY;
@@ -663,6 +674,13 @@ static void float_operand(struct writer *w, const struct profile *p, const struc
 static void float_snapshot(struct writer *w, const struct profile *p, const struct raw_instruction *instruction)
 {
    enum raw_opcode op = instruction->opcode;
+   if (op == RAW_SIN) {
+      /* One post-swizzle x evaluation precedes every masked/aliased write. */
+      emit(w, " float_rhs = vec4(/* sine:SIN */ sin(");
+      float_operand(w, p, instruction, 0, 0);
+      emit(w, "));\n");
+      return;
+   }
    if ((UINT64_C(1) << op) & RAW_EXPONENT_OPCODES) {
       /* TGSI consumes post-swizzle x once and broadcasts before publication,
        * even for a y/w-only destination or an aliased source register. */

@@ -1,0 +1,34 @@
+{
+  "schema": "virgl-sine-critic-seal-v1",
+  "task": "E6-T12g6j1",
+  "verdict": "verified",
+  "workerSubmission": "c6e56fa8",
+  "workerEvidenceHead": "d44d2683941ab4cb32df53d4dcb84f045046caf9",
+  "frozenRuntime": "ad31839ebc55e5f853c9d9853a44c9922767e7da",
+  "criticHead": "f6facf82163965c5018abc054f50247f9f0928e2",
+  "records": 115,
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 20170281,
+    "sha256": "904cb8b3a6cd3b8b6003458afa70aba854f4430d315242e304283e952f678525"
+  },
+  "recordIndex": {
+    "path": "records.json",
+    "bytes": 18872,
+    "sha256": "8cc8109602bf48d9fc449e9981e96d3f9622cb17f152c7d8046fdcecdac330cb"
+  },
+  "verdictSha256": "367b25f3d29ca10192f48a2d6d561abc2497c4a59bbf62515db18dad00a455dc",
+  "predictionsSha256": "5bf80923ce61ba481a1773d94ed5eedaa1e2552cd0da59560c0b1b6fe938c5c1",
+  "workerManifestSha256": "901e0d3afe92649e133065e9d5cb2574cd968494f9e7e4a365ddae143d82ab2b",
+  "workerArchiveSha256": "184d0cbf61b1fe7d3d0c01f1c20d786afceed06a1fa2600bbc4259e38011dc2c",
+  "independentGuards": 520,
+  "independentMetadataAttacks": 274,
+  "originalWorkerMetadataAttacks": 580,
+  "fourthSeed": 1834637033,
+  "fourthWords": 8160,
+  "fourthPixels": 20352,
+  "changedRuntimeLines": 50,
+  "declarativeWaivers": 12,
+  "productionNegotiation": false,
+  "guestExecution": false
+}

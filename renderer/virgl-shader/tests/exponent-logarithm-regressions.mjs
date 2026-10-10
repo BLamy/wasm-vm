@@ -52,7 +52,7 @@ export function getExponentLogarithmRegressions(){
   }
   for(const consumer of ['F2I TEMP[2], TEMP[1]',`${op} TEMP[2], TEMP[1]`])add(`${op}-no-result-facts-${consumer}`,program([], [
    `${op} TEMP[1], IMM[0]`,consumer,'MOV OUT[0], IMM[0]']),false);
-  for(const spelling of [op+'_PRECISE',op+'_SAT',op.toLowerCase(),'SIN','POW'])add(`${op}-unsupported-${spelling}`,program([], [
+  for(const spelling of [op+'_PRECISE',op+'_SAT',op.toLowerCase(),'SIN_PRECISE','POW'])add(`${op}-unsupported-${spelling}`,program([], [
    `${spelling} TEMP[1], IMM[0]${spelling==='POW'?', IMM[0]':''}`,'MOV OUT[0], IMM[0]']),false);
  }
  return cases;

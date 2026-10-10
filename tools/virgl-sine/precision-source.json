@@ -1,0 +1,14 @@
+{
+  "source": "https://registry.khronos.org/OpenGL/specs/es/3.0/GLSL_ES_Specification_3.00.pdf",
+  "sha256": "325058092a1c96a172f6e5b1e4008e94e7a2c75b63d6431f5bec273f374b6e7f",
+  "section": "4.5.1",
+  "printedPage": 52,
+  "sineSpecPrecision": "undefined; no ESSL sine accuracy guarantee is claimed",
+  "measuredPhysicalBudgetAbsolute": "2^-20",
+  "argument": "normal-or-zero [-8,8], independently proven at each post-modifier use",
+  "referenceMethod": "exact rational alternating Taylor enclosure after monotone tail proof at 220 bits, independently nested 280-bit enclosure",
+  "acceptance": "within measured budget for every real value in the enclosure; record conservative maximum observed error for each backend",
+  "replication": "pinned mesa-24.2.8-tgsi.rst lines 510-516 and tgsi_info.c SIN REPL",
+  "pinnedConverterDiscrepancy": "virglrenderer 1.3.0 vrend_shader.c:5654-5656 emits componentwise sin. Canonical broadcasts agree; actual nonbroadcast vendor results and deviations from TGSI scalar replication remain recorded.",
+  "byteCarrier": "One actual pixel exposes all four bytes of one evaluated result. Byte I2F exact; DIV by 255 <=2.5 ULP gives scaled error <0.00008, below RGBA8 half step."
+}
