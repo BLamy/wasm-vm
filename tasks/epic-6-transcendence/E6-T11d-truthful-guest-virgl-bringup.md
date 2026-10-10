@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7]
-blocked_on: E6-T11d7
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8]
+blocked_on: E6-T11d8
 estimate: S
 risk: high
 capstone: false
@@ -184,3 +184,21 @@ retained GPU reads and native generic attributes, including their batch lifetime
 The user's production-graphics request keeps this ordered chain ahead of the
 unrelated queue. This negative observation grants no production capsets,
 complete API, guest execution or performance claim.
+
+### 2026-10-10 — worker — constant fetch verified; core topology gap
+
+E6-T11d7 is independently verified at
+`64b246220bbf3ed5e1a6f1ed7371535ed5ec5c56`. The original decoder still
+rejects Gallium LINES, LINE_LOOP, LINE_STRIP and TRIANGLE_FAN (modes1,2,3,6).
+The literal packets and authenticated source closure are in
+`evidence/virgl-production-readiness/standard-topology-gap.json`; decode each
+`packetHex` with `decodeStandardSubmission` to reproduce the recorded
+`unsupported-feature`. Its original39a9d14b runtime bytes remain identical at
+the D7 verdict. No native or guest draw is claimed by this negative probe.
+
+Ordered S prerequisite E6-T11d8 extends only the standard native primitive
+selection, holding actual fetch/work and async storage ownership unchanged.
+The user explicitly requested continuing through production graphics, so this
+ordered graphics chain remains ahead of unrelated queue work. Complete GLES3,
+typed capsets, actual guest initialization/offload and the demo remain later
+gates; this negative result grants none of their authority.
