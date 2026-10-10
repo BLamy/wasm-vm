@@ -243,7 +243,11 @@ def physical_audit(folder):
                     assert terminal['result']['gpuComplete']and any(e['name']=='clientWaitSync'and e.get('label')==terminal['label']and e['delivered']in[37146,37148]for e in run['events'])
                 else:
                     assert terminal['disposed']and not terminal['result'].get('gpuComplete',False)
-                lifetimes.append(dict(run=index,name=run['name'],kind=action['kind'],oldGeneration=run['sourceGeneration'],newGeneration=action['newGeneration'],heldAtFinishing=2,terminalCode=terminal['result'].get('error',{}).get('code','completed'),gpuComplete=terminal['result'].get('gpuComplete',False),explicitDisposal=mode.endswith('dispose')))
+                retired=next(p for p in run['retiredPlanes']if p['texture']==target)
+                snapshots,uploads=decoded[index];color=original_sample(run,snapshots[run['history'].index(terminal)],uploads,dict())[0]
+                expected=store(color,run['target']['format']);raw=blobs[retired['pixels']['key']];actual=struct.unpack('<140f',raw)
+                assert all(abs(n-expected[i%4])<=2e-6*max(1,abs(expected[i%4]))for i,n in enumerate(actual))
+                lifetimes.append(dict(run=index,name=run['name'],kind=action['kind'],oldGeneration=run['sourceGeneration'],newGeneration=action['newGeneration'],heldAtFinishing=2,terminalCode=terminal['result'].get('error',{}).get('code','completed'),gpuComplete=terminal['result'].get('gpuComplete',False),explicitDisposal=mode.endswith('dispose'),retiredNativeComponents=len(actual),retiredNativeSha256=sha(raw),completionAuthority='consumed physical fence'if mode in['complete','cancel']else'synchronous native readPixels before delete; disposed result claims no GPU completion')))
     for frame_index, frame in enumerate(result['frames']):
         run = result['runs'][frame['run']]; snapshots, uploads = decoded[frame['run']]
         snapshot = snapshots[frame['historyIndex']]; fmt = run['target']['format']; surface = snapshot['framebuffer']
