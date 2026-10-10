@@ -3,6 +3,7 @@ export const PROFILE = "virgl-tiny-commands-v1";
 export const STANDARD_PROFILE = "virgl-standard-commands-v1";
 export const STANDARD_UNIFORM_PROFILE = "virgl-standard-uniform-commands-v1";
 export const STANDARD_TEXTURE_PROFILE = "virgl-standard-texture-commands-v1";
+export const STANDARD_IMAGE_PROFILE = "virgl-standard-image-commands-v1";
 export const LIMITS = Object.freeze({
   submissionBytes: 262144,
   commands: 4096,
@@ -97,12 +98,12 @@ class DecodeFault extends Error {
 
 /** Indexes in Packet match the pinned protocol: header=0, first payload word=1. */
 class Packet {
-  constructor(view, byteOffset, opcode, length, standard = false, uniform = false, textures = false) {
+  constructor(view, byteOffset, opcode, length, standard = false, uniform = false, textures = false, images = false) {
     this.view = view;
     this.byteOffset = byteOffset;
     this.opcode = opcode;
     this.length = length;
-    this.standard = standard; this.uniform = uniform; this.textures = textures;
+    this.standard = standard; this.uniform = uniform; this.textures = textures; this.images = images;
   }
   fail(code, message) { throw new DecodeFault(code, message, this.byteOffset, this.opcode); }
   require(condition, code, message) { if (!condition) this.fail(code, message); }
@@ -301,18 +302,24 @@ function decodeObject(p, objectType) {
       p.exact(6);
       const resourceHandle = p.handle(2), packedFormat = p.u(3), format = packedFormat & 0xffffff, target = packedFormat >>> 24;
       p.require([2, 67, 233].includes(format) && target === 2, "unsupported-feature", "Only required normalized color 2D sampler views are supported.");
-      p.zero(4, 2, "Only level zero, layer zero sampler views are supported.");
+      let firstLevel = 0, lastLevel = 0;
+      if (p.images) {
+        p.zero(4, 1, "Only layer zero sampler views are supported.");
+        const levels = p.u(5); p.mask(levels, 0xffff);
+        firstLevel = levels & 255; lastLevel = levels >>> 8;
+        p.require(firstLevel <= lastLevel && lastLevel <= 14, "unsupported-feature", "Sampler mip range exceeds selected image levels.");
+      } else p.zero(4, 2, "Only level zero, layer zero sampler views are supported.");
       const packedSwizzle = p.u(6);
       p.mask(packedSwizzle, 0xfff);
       const swizzle = Array.from({ length: 4 }, (_, i) => (packedSwizzle >>> (i * 3)) & 7);
       p.require(swizzle.every((component) => component <= 5), "invalid-enum", "Unknown swizzle component.");
-      return { handle, resourceHandle, format, target, firstLayer: 0, lastLayer: 0, firstLevel: 0, lastLevel: 0, swizzle };
+      return { handle, resourceHandle, format, target, firstLayer: 0, lastLayer: 0, firstLevel, lastLevel, swizzle };
     }
     case 7: return decodeSamplerState(p, handle);
     case 8: {
       p.exact(5);
       const resourceHandle = p.handle(2), format = p.u(3), level = p.u(4), layers = p.u(5);
-      p.require([2, 16, 67, 233].includes(format) && level === 0 && layers === 0, "unsupported-feature", "Only required level zero, layer zero color or Z16 surfaces are supported.");
+      p.require([2, 16, 67, 233].includes(format) && (p.images ? level <= 14 && (format !== 16 || level === 0) : level === 0) && layers === 0, "unsupported-feature", p.images ? "Only qualified 2D image levels or level-zero Z16 surfaces are supported." : "Only required level zero, layer zero color or Z16 surfaces are supported.");
       return { handle, resourceHandle, format, level, firstLayer: 0, lastLayer: 0 };
     }
     default: p.fail("unsupported-object", "Unknown or unsupported object type.");
@@ -553,7 +560,12 @@ export function decodeStandardTextureSubmission(bytes, provenance = {}) {
   return decode(bytes, provenance, true, true, true);
 }
 
-function decode(bytes, provenance, standard, uniform = false, textures = false) {
+/** Original 2D image view/surface levels require explicit host selection. */
+export function decodeStandardImageSubmission(bytes, provenance = {}) {
+  return decode(bytes, provenance, true, true, true, true);
+}
+
+function decode(bytes, provenance, standard, uniform = false, textures = false, images = false) {
   let byteLength, buffer, byteOffset;
   try {
     const typedArrayPrototype = Object.getPrototypeOf(Uint8Array.prototype);
@@ -585,7 +597,7 @@ function decode(bytes, provenance, standard, uniform = false, textures = false) 
     for (let offset = 0; offset < byteLength;) {
       const header = view.getUint32(offset, true), opcode = header & 255, objectType = (header >>> 8) & 255, payloadDwords = header >>> 16;
       const packetByteLength = (payloadDwords + 1) * 4;
-      const p = new Packet(view, offset, opcode, payloadDwords, standard, uniform, textures);
+      const p = new Packet(view, offset, opcode, payloadDwords, standard, uniform, textures, images);
       p.require(commands.length < LIMITS.commands, "limit-exceeded", "Submission exceeds packet count limit.");
       p.require(packetByteLength <= byteLength - offset, "truncated-payload", "Packet payload exceeds submission.");
       p.require(Object.hasOwn(COMMAND_NAMES, opcode) || uniform && opcode === 27, "unsupported-command", "Unknown or unsupported command.");
@@ -600,5 +612,5 @@ function decode(bytes, provenance, standard, uniform = false, textures = false) 
     if (error instanceof DecodeFault) return error.result;
     throw error; // Unexpected implementation defects are not disguised as guest errors.
   }
-  return freeze({ ok: true, profile: textures ? STANDARD_TEXTURE_PROFILE : uniform ? STANDARD_UNIFORM_PROFILE : standard ? STANDARD_PROFILE : PROFILE, ...labels, byteLength, commands });
+  return freeze({ ok: true, profile: images ? STANDARD_IMAGE_PROFILE : textures ? STANDARD_TEXTURE_PROFILE : uniform ? STANDARD_UNIFORM_PROFILE : standard ? STANDARD_PROFILE : PROFILE, ...labels, byteLength, commands });
 }

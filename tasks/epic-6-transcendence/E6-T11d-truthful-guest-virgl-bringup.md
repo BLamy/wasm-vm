@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20]
-blocked_on: E6-T11d20
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22]
+blocked_on: E6-T11d22
 estimate: S
 risk: high
 capstone: false
@@ -324,3 +324,11 @@ E6-T11d18 is independently verified at `bdad14aff93ba70c09d60ab308df4d2024dce4ba
 ### 2026-10-10 — worker — sampler verified; original mip storage gap
 
 E6-T11d19 is independently verified at `52d3cc4e2f0f28d82a2900ff33ab855ae118e66e`. The original metadata and op9/43/45 packets in `evidence/virgl-production-readiness/standard-texture-gap.json` still reject nonzero lastLevel/level. Reproduce with its complete script against the pinned unchanged resource/decoder bytes. Ordered S/high E6-T11d20 adds checked original mip storage and transfers. Sampler views, framebuffer subresources, complete API and typed caps, real guest Mesa/rendering and deployment remain gated. The explicit user instruction continues this production graphics chain; this prerequisite cannot grant their authority.
+
+### 2026-10-10 — worker — mip storage verified; original image boundary
+
+D20 is independently verified at `c0488902039a5fb5f9efc8c62101798668b2ce4a`. Its selected storage-only decoder still rejects original SAMPLER_VIEW [1,2] and SURFACE level2 packets. `evidence/virgl-production-readiness/standard-image-gap.json` binds their original words and unchanged source/Wasm through this verified head; reproduce with `decodeStandardTextureSubmission(Buffer.from(packetHex,'hex'))`. Ordered S/high D21 qualifies original native view ranges and framebuffer planes with bounded GPU copies and completion lifetime. The explicit instruction continues this production graphics chain; complete API, capsets, actual guest Mesa/compositor and worker/scanout/deployment remain later gates.
+
+### 2026-10-10 — worker — image ranges verified; byte-color storage gap
+
+D21 is independently verified at `ac916b7fd0b194c088fe5d54800b24a80a4679ac`. Its original image decoder/store still reject 24 normalized-byte/sRGB families. `standard-byte-color-gap.json` and `standard-byte-color-storage-gap.json` under `evidence/virgl-production-readiness` bind 48 literal view/surface packets and 24 original metadata records, each refused before native allocation, to the exact unchanged source/Wasm and pinned Mesa/VirGL descriptors. Reproduce by decoding each `packetHex` through `decodeStandardImageSubmission` and passing each original metadata record to `createStandardImageResourceStore` with its qualified predecessor backend. Ordered S/high D22 closes one original byte-color image/transfer boundary with physical signed and sRGB semantics, padded storage charging and original memory orders. The explicit user instruction continues this graphics chain; typed caps, complete API, actual RISC-V guest Mesa/compositor, worker scanout and live deployment remain successors.

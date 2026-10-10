@@ -1,0 +1,17 @@
+{
+  "schema": "fresh-original-image-critic-seal-authentication-v1",
+  "task": "E6-T11d21",
+  "status": "passed",
+  "regularUniqueSafeMembers": true,
+  "allMemberSizesAndHashes": true,
+  "records": 11121,
+  "uncompressedRecordBytes": 370986278,
+  "compressedNativeInputBlobsChecked": 9589,
+  "archiveSha256": "47deac18c7fc583deb1a3bf095dae6715ce8c544e7eed4a18b6afe8a8620e833",
+  "recordIndexSha256": "c67e29bdf2c11753058384372a146413dbe573f0d241d427cf671888a193ebbc",
+  "verdictSha256": "2fc6d6f811df86f753d002525c1ea409540cf1538866e07c3095ee4cd3f720c2",
+  "all47CitationsResolve": true,
+  "manifestBeforeAttestationSha256": "14ccdf1e568089c6498e330475137157369f25a235172c4c6d1e03cf6f138abd",
+  "unchangedWorkerArchiveSha256": "6dcdde6ae41416f458cb4d5371df2ac0c83ae49e2bc0571a3efa52d2142f0a48",
+  "promotedTestHead": "fad3678ccdee0a24bb65db744fc18920731c2be9"
+}
