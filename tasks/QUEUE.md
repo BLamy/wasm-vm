@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E6-T11d22** — Execute original normalized-byte and sRGB 2D color images
 1. **E5-T26f** — Browser desktop snapshot round-trip and interaction smoke
 
 
@@ -657,7 +656,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.02703900034` [E6-T11d16](epic-6-transcendence/E6-T11d16-standard-uniform-shader.md) — Lower original dimensional constant banks to native uniform blocks *(deps: E6-T11d15)*
 - [x] `525.02703900036` [E6-T11d17](epic-6-transcendence/E6-T11d17-standard-uniform-buffer-bindings.md) — Bind original retained constant buffers to native uniform ranges *(deps: E6-T11d16)*
 - [x] `525.02703900036` [E6-T11d21](epic-6-transcendence/E6-T11d21-standard-image-subresources.md) — Render original 2D sampler ranges and framebuffer mip surfaces *(deps: E6-T11d20)*
-- [ ] `525.02703900036` [E6-T11d22](epic-6-transcendence/E6-T11d22-standard-byte-color-images.md) — Execute original normalized-byte and sRGB 2D color images *(deps: E6-T11d21)*
+- [~] `525.02703900036` [E6-T11d22](epic-6-transcendence/E6-T11d22-standard-byte-color-images.md) — Execute original normalized-byte and sRGB 2D color images *(deps: E6-T11d21)*
 - [x] `525.02703900037` [E6-T11d18](epic-6-transcendence/E6-T11d18-standard-buffer-roles.md) — Preserve original buffer identity across vertex index and uniform roles *(deps: E6-T11d17)*
 - [x] `525.02703900037` [E6-T11d20](epic-6-transcendence/E6-T11d20-standard-texture-storage.md) — Allocate and transfer original mipmapped 2D color resources *(deps: E6-T11d19)*
 - [x] `525.02703900038` [E6-T11d19](epic-6-transcendence/E6-T11d19-standard-sampler-state.md) — Execute original core sampler address filter and LOD state *(deps: E6-T11d18)*

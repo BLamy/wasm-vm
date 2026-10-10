@@ -3,7 +3,7 @@ id: E6-T11d22
 epic: 6
 title: Execute original normalized-byte and sRGB 2D color images
 priority: 525.02703900036
-status: pending
+status: in-progress
 depends_on: [E6-T11d21]
 estimate: S
 risk: high
