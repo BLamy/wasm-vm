@@ -1,10 +1,12 @@
 /** Bounded, side-effect-free VirGL 1.3.0 wire decoding. See README.md. */
 import {byteColorFormat} from "./color-images.mjs";
 import {floatColorFormat} from "./float-images.mjs";
+import {packedFloatColorFormat} from "./packed-float-images.mjs";
 export const PROFILE = "virgl-tiny-commands-v1";
 export const STANDARD_PROFILE = "virgl-standard-commands-v1";
 export const STANDARD_UNIFORM_PROFILE = "virgl-standard-uniform-commands-v1";
 export const STANDARD_TEXTURE_PROFILE = "virgl-standard-texture-commands-v1";
+export const STANDARD_PACKED_FLOAT_IMAGE_PROFILE = "virgl-standard-r11g11b10-image-commands-v1";
 export const STANDARD_FLOAT_IMAGE_PROFILE = "virgl-standard-float-image-commands-v1";
 export const STANDARD_IMAGE_PROFILE = "virgl-standard-image-commands-v1";
 export const STANDARD_COLOR_PROFILE = "virgl-standard-byte-color-commands-v1";
@@ -102,12 +104,12 @@ class DecodeFault extends Error {
 
 /** Indexes in Packet match the pinned protocol: header=0, first payload word=1. */
 class Packet {
-  constructor(view, byteOffset, opcode, length, standard = false, uniform = false, textures = false, images = false, colors = false, floats = false) {
+  constructor(view, byteOffset, opcode, length, standard = false, uniform = false, textures = false, images = false, colors = false, floats = false, packed = false) {
     this.view = view;
     this.byteOffset = byteOffset;
     this.opcode = opcode;
     this.length = length;
-    this.standard = standard; this.uniform = uniform; this.textures = textures; this.images = images; this.colors = colors; this.floatingImages = floats;
+    this.standard = standard; this.uniform = uniform; this.textures = textures; this.images = images; this.colors = colors; this.floatingImages = floats; this.packedImages = packed;
   }
   fail(code, message) { throw new DecodeFault(code, message, this.byteOffset, this.opcode); }
   require(condition, code, message) { if (!condition) this.fail(code, message); }
@@ -305,7 +307,7 @@ function decodeObject(p, objectType) {
     case 6: {
       p.exact(6);
       const resourceHandle = p.handle(2), packedFormat = p.u(3), format = packedFormat & 0xffffff, target = packedFormat >>> 24;
-      p.require(([2, 67, 233].includes(format) || (p.colors && byteColorFormat(format) || p.floatingImages && floatColorFormat(format))) && target === 2, "unsupported-feature", "Only required normalized color 2D sampler views are supported.");
+      p.require(([2, 67, 233].includes(format) || (p.colors && byteColorFormat(format) || p.floatingImages && floatColorFormat(format) || p.packedImages && packedFloatColorFormat(format))) && target === 2, "unsupported-feature", "Only required normalized color 2D sampler views are supported.");
       let firstLevel = 0, lastLevel = 0;
       if (p.images) {
         p.zero(4, 1, "Only layer zero sampler views are supported.");
@@ -323,7 +325,7 @@ function decodeObject(p, objectType) {
     case 8: {
       p.exact(5);
       const resourceHandle = p.handle(2), format = p.u(3), level = p.u(4), layers = p.u(5);
-      p.require(([2, 16, 67, 233].includes(format) || (p.colors && byteColorFormat(format)?.render || p.floatingImages && floatColorFormat(format)?.render)) && (p.images ? level <= 14 && (format !== 16 || level === 0) : level === 0) && layers === 0, "unsupported-feature", p.images ? "Only qualified 2D image levels or level-zero Z16 surfaces are supported." : "Only required level zero, layer zero color or Z16 surfaces are supported.");
+      p.require(([2, 16, 67, 233].includes(format) || (p.colors && byteColorFormat(format)?.render || p.floatingImages && floatColorFormat(format)?.render || p.packedImages && packedFloatColorFormat(format)?.render)) && (p.images ? level <= 14 && (format !== 16 || level === 0) : level === 0) && layers === 0, "unsupported-feature", p.images ? "Only qualified 2D image levels or level-zero Z16 surfaces are supported." : "Only required level zero, layer zero color or Z16 surfaces are supported.");
       return { handle, resourceHandle, format, level, firstLayer: 0, lastLayer: 0 };
     }
     default: p.fail("unsupported-object", "Unknown or unsupported object type.");
@@ -578,7 +580,11 @@ export function decodeStandardFloatImageSubmission(bytes, provenance = {}) {
   return decode(bytes, provenance, true, true, true, true, true, true);
 }
 
-function decode(bytes, provenance, standard, uniform = false, textures = false, images = false, colors = false, floats = false) {
+export function decodeStandardPackedFloatImageSubmission(bytes, provenance = {}) {
+  return decode(bytes, provenance, true, true, true, true, true, true, true);
+}
+
+function decode(bytes, provenance, standard, uniform = false, textures = false, images = false, colors = false, floats = false, packed = false) {
   let byteLength, buffer, byteOffset;
   try {
     const typedArrayPrototype = Object.getPrototypeOf(Uint8Array.prototype);
@@ -610,7 +616,7 @@ function decode(bytes, provenance, standard, uniform = false, textures = false, 
     for (let offset = 0; offset < byteLength;) {
       const header = view.getUint32(offset, true), opcode = header & 255, objectType = (header >>> 8) & 255, payloadDwords = header >>> 16;
       const packetByteLength = (payloadDwords + 1) * 4;
-      const p = new Packet(view, offset, opcode, payloadDwords, standard, uniform, textures, images, colors, floats);
+      const p = new Packet(view, offset, opcode, payloadDwords, standard, uniform, textures, images, colors, floats, packed);
       p.require(commands.length < LIMITS.commands, "limit-exceeded", "Submission exceeds packet count limit.");
       p.require(packetByteLength <= byteLength - offset, "truncated-payload", "Packet payload exceeds submission.");
       p.require(Object.hasOwn(COMMAND_NAMES, opcode) || uniform && opcode === 27, "unsupported-command", "Unknown or unsupported command.");
@@ -625,5 +631,5 @@ function decode(bytes, provenance, standard, uniform = false, textures = false, 
     if (error instanceof DecodeFault) return error.result;
     throw error; // Unexpected implementation defects are not disguised as guest errors.
   }
-  return freeze({ ok: true, profile: floats ? STANDARD_FLOAT_IMAGE_PROFILE : colors ? STANDARD_COLOR_PROFILE : images ? STANDARD_IMAGE_PROFILE : textures ? STANDARD_TEXTURE_PROFILE : uniform ? STANDARD_UNIFORM_PROFILE : standard ? STANDARD_PROFILE : PROFILE, ...labels, byteLength, commands });
+  return freeze({ ok: true, profile: packed ? STANDARD_PACKED_FLOAT_IMAGE_PROFILE : floats ? STANDARD_FLOAT_IMAGE_PROFILE : colors ? STANDARD_COLOR_PROFILE : images ? STANDARD_IMAGE_PROFILE : textures ? STANDARD_TEXTURE_PROFILE : uniform ? STANDARD_UNIFORM_PROFILE : standard ? STANDARD_PROFILE : PROFILE, ...labels, byteLength, commands });
 }

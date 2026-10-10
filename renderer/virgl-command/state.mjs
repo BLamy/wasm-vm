@@ -1,7 +1,8 @@
 /** Typed VirGL state and bounded triangle draws. See state-README.md and draw-README.md. */
 import {byteColorFormat} from "./color-images.mjs";
 import {floatColorFormat} from "./float-images.mjs";
-import { decodeSubmission, decodeStandardSubmission, decodeStandardUniformSubmission, decodeStandardImageSubmission, decodeStandardColorSubmission, decodeStandardFloatImageSubmission, vertexFormat } from "./decoder.mjs";
+import {packedFloatColorFormat} from "./packed-float-images.mjs";
+import { decodeSubmission, decodeStandardSubmission, decodeStandardUniformSubmission, decodeStandardImageSubmission, decodeStandardColorSubmission, decodeStandardFloatImageSubmission, decodeStandardPackedFloatImageSubmission, vertexFormat } from "./decoder.mjs";
 import { LIMITS as SHADER_LIMITS } from "../virgl-shader/index.mjs";
 import { createKeyCache, hashKey } from "./cache.mjs";
 import { parseConstantDomain, checkFiniteBank, checkIndirectBank, checkLoopBank, checkRadialBank, checkRasterBank, checkConversionBank, checkExactBank, COORDINATE_KEY, DISCARD_KEY,
@@ -17,6 +18,7 @@ export const ASYNC_PROFILE = "virgl-tiny-async-jobs-v1";
 export const STANDARD_ASYNC_PROFILE = "virgl-standard-async-jobs-v1";
 export const STANDARD_UNIFORM_ASYNC_PROFILE = "virgl-standard-uniform-async-jobs-v1";
 export const STANDARD_BUFFER_ASYNC_PROFILE = "virgl-standard-buffer-async-jobs-v1";
+export const STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE = "virgl-standard-r11g11b10-image-async-jobs-v1";
 export const STANDARD_FLOAT_IMAGE_ASYNC_PROFILE = "virgl-standard-float-image-async-jobs-v1";
 export const STANDARD_IMAGE_ASYNC_PROFILE = "virgl-standard-image-async-jobs-v1";
 export const STANDARD_COLOR_ASYNC_PROFILE = "virgl-standard-byte-color-async-jobs-v1";
@@ -206,8 +208,13 @@ export function createVirglStandardFloatImageAsyncRenderer(options) {
   return createRenderer(options, true, true, true, true, true, true, true, true, true);
 }
 
+/** Original unsigned packed floating samples and framebuffer planes. */
+export function createVirglStandardPackedFloatImageAsyncRenderer(options) {
+  return createRenderer(options, true, true, true, true, true, true, true, true, true, true);
+}
+
 /** Host capabilities are trusted and non-reentrant. */
-function createRenderer(options, drawing, asynchronous = false, standard = false, uniform = false, bufferRoles = false, images = false, colors = false, textureOperations = false, floats = false) {
+function createRenderer(options, drawing, asynchronous = false, standard = false, uniform = false, bufferRoles = false, images = false, colors = false, textureOperations = false, floats = false, packed = false) {
   return result(() => {
     const config = dataRecord(options, ["gl", "resources", "bindings", "shaderBridge", "limits", "cacheLimits", ...(drawing ? ["drawLimits"] : []), ...(asynchronous ? ["asyncAccess", "jobLimits"] : []), ...(standard ? ["primitiveAssembly"] : []), ...(uniform ? ["uniformAccess"] : []), ...(images ? ["imageAccess"] : [])], ["gl", "resources", "bindings", "shaderBridge", ...(asynchronous ? ["asyncAccess"] : []), ...(uniform ? ["uniformAccess"] : []), ...(images ? ["imageAccess"] : [])]);
     const { gl, resources, bindings, shaderBridge } = config;
@@ -252,8 +259,8 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
     const imageAccess = images ? config.imageAccess : null;
     require(!images || imageAccess && ["capture", "resolve", "refresh", "hold", "holdStorage", "release", "inspect"].every(name => typeof imageAccess[name] === "function"),
       "invalid-input", "Original native image range authority is required.");
-    const profile = floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : textureOperations ? STANDARD_TEXTURE_ASYNC_PROFILE : colors ? STANDARD_COLOR_ASYNC_PROFILE : images ? STANDARD_IMAGE_ASYNC_PROFILE : bufferRoles ? STANDARD_BUFFER_ASYNC_PROFILE : uniform ? STANDARD_UNIFORM_ASYNC_PROFILE : standard ? STANDARD_ASYNC_PROFILE : asynchronous ? ASYNC_PROFILE : drawing ? DRAW_PROFILE : STATE_PROFILE;
-    const decodeCommands = floats ? decodeStandardFloatImageSubmission : colors ? decodeStandardColorSubmission : images ? decodeStandardImageSubmission : uniform ? decodeStandardUniformSubmission : standard ? decodeStandardSubmission : decodeSubmission;
+    const profile = packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : textureOperations ? STANDARD_TEXTURE_ASYNC_PROFILE : colors ? STANDARD_COLOR_ASYNC_PROFILE : images ? STANDARD_IMAGE_ASYNC_PROFILE : bufferRoles ? STANDARD_BUFFER_ASYNC_PROFILE : uniform ? STANDARD_UNIFORM_ASYNC_PROFILE : standard ? STANDARD_ASYNC_PROFILE : asynchronous ? ASYNC_PROFILE : drawing ? DRAW_PROFILE : STATE_PROFILE;
+    const decodeCommands = packed ? decodeStandardPackedFloatImageSubmission : floats ? decodeStandardFloatImageSubmission : colors ? decodeStandardColorSubmission : images ? decodeStandardImageSubmission : uniform ? decodeStandardUniformSubmission : standard ? decodeStandardSubmission : decodeSubmission;
     const parseShaderMetadata = textureOperations ? parseStandardTextureShaderMetadata : uniform ? parseStandardUniformShaderMetadata : standard ? parseStandardShaderMetadata : parseConstantDomain;
     const idle = () => require(activeJob === null, "busy", "A renderer job is active; cancel and drain it before changing state.");
     const contexts = new Map(), objects = new Set(), programs = new Set();
@@ -367,7 +374,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       }
     };
     const translatedStage = (sub, request) => {
-      const key = JSON.stringify([sub.generation, "stage", request.stage, request.text, ...(textureOperations ? [floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : STANDARD_TEXTURE_ASYNC_PROFILE] : [])]);
+      const key = JSON.stringify([sub.generation, "stage", request.stage, request.text, ...(textureOperations ? [packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : STANDARD_TEXTURE_ASYNC_PROFILE] : [])]);
       const cached = translationCache.get(sub, key);
       if (cached) return cached;
       work.translations++;
@@ -381,7 +388,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
     };
     const translatedPair = (sub, vertex, fragment, interfaceKey, validate, inputTypes = null, bufferZeroMask = 0) => {
       const key = JSON.stringify([sub.generation, "pair", vertex.fields.text, fragment.fields.text, interfaceKey,
-        ...(inputTypes?.key ? [inputTypes.key] : []), ...(uniform ? [bufferZeroMask] : []), ...(textureOperations ? [floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : STANDARD_TEXTURE_ASYNC_PROFILE] : [])]);
+        ...(inputTypes?.key ? [inputTypes.key] : []), ...(uniform ? [bufferZeroMask] : []), ...(textureOperations ? [packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : STANDARD_TEXTURE_ASYNC_PROFILE] : [])]);
       const cached = translationCache.get(sub, key);
       if (cached) { validate(cached); return cached; }
       work.pairTranslations++;
@@ -897,7 +904,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           format.elementBytes <= buffer.metadata.byteLength - buffer.fields.offset - element.sourceOffset, "out-of-bounds", "Vertex element exceeds storage.");
       }
     };
-    const xAlpha = (sub) => [2, 233].includes(sub.surfaces[0]?.metadata.format) || colors && Boolean((byteColorFormat(sub.surfaces[0]?.metadata.format) || (floats ? floatColorFormat(sub.surfaces[0]?.metadata.format) : null))?.implicitAlpha);
+    const xAlpha = (sub) => [2, 233].includes(sub.surfaces[0]?.metadata.format) || colors && Boolean((byteColorFormat(sub.surfaces[0]?.metadata.format) || (floats ? floatColorFormat(sub.surfaces[0]?.metadata.format) : null) || (packed ? packedFloatColorFormat(sub.surfaces[0]?.metadata.format) : null))?.implicitAlpha);
     const colorMask = (sub) => {
       const bits = sub.blend?.fields.renderTargets[0].colorMask ?? 15;
       return [1, 2, 4, 8].map((bit) => Boolean(bits & bit) && (bit !== 8 || !xAlpha(sub)));
@@ -1466,7 +1473,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           // Gallium full clear ignores scissor and component/depth write masks.
           // Pinned vrend_clear restores these after issuing the complete clear.
           gl.disable(gl.SCISSOR_TEST);
-          const floatClear = floats && Boolean(floatColorFormat(sub.surfaces[0]?.metadata.format));
+          const floatClear = floats && Boolean(floatColorFormat(sub.surfaces[0]?.metadata.format) || (packed ? packedFloatColorFormat(sub.surfaces[0]?.metadata.format) : null));
           if (fields.buffers & 4) {
             gl.colorMask(true, true, true, !xAlpha(sub));
             if (floatClear) gl.clearBufferfv(gl.COLOR, 0, fields.color);
