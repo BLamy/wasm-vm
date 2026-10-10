@@ -3,7 +3,7 @@ id: E6-T11d26
 epic: 6
 title: Execute original floating image samples and framebuffer outputs
 priority: 525.027039000368
-status: pending
+status: in-progress
 depends_on: [E6-T11d25]
 estimate: S
 risk: high
