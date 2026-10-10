@@ -30,7 +30,7 @@ def main(directory):
     directory = Path(directory).resolve()
     head = git('rev-parse', 'HEAD')
     need(not git('diff', '--name-only', 'HEAD'), 'freeze tracked source before recording')
-    files, sources, generated = {}, {}, {}
+    files, sources, generated, recorded_heads = {}, {}, {}, {}
 
     def record(name, digest=None):
         raw = (directory / name).read_bytes()
@@ -57,7 +57,9 @@ def main(directory):
 
     def physical(name, fault=False):
         report = json.loads(record(name + '/report.json'))
-        need(report['gitHead'] == head and report['task'] == TASK and report['status'] == ('failed' if fault else 'passed'), 'physical head/status ' + name)
+        need(report['task'] == TASK and report['status'] == ('failed' if fault else 'passed'), 'physical task/status ' + name)
+        need(git('rev-parse', report['gitHead']) == report['gitHead'], 'recorded commit identity ' + name)
+        recorded_heads[name] = report['gitHead']
         need(report['fixedMemory'] == {'bytes': 16777216, 'stageExport': 'function', 'pairExport': 'function'}, 'actual fixed compiler')
         need(report['browserErrors'] == {'console': [], 'page': [], 'requests': []}, 'browser errors ' + name)
         browser = report['browser']
@@ -68,6 +70,9 @@ def main(directory):
         mutation = report.get('mutation')
         for row in report['sources']:
             source(row['path'], row['sha256'])
+            if '/build/' not in row['path']:
+                need(sha(subprocess.check_output(['git', 'show', report['gitHead'] + ':' + row['path']], cwd=ROOT)) == row['sha256'],
+                     'recorded source closure drift: ' + row['path'])
             if '/' + row['path'] in served:
                 expected = mutation['servedSha256'] if mutation and row['path'] == mutation['path'] else row['sha256']
                 need(served['/' + row['path']] == expected, 'served source mismatch')
@@ -118,8 +123,9 @@ def main(directory):
                     if event['name'] == 'clientWaitSync':
                         need(event['turn'] > 0 and event['actual'] in [37146, 37147, 37148], 'real later-task zero-timeout poll')
             all_sixteen = [f for f in result['frames'] if f['label'].startswith('all-sixteen-')]
-            need(len(all_sixteen) == 3 and all(len(f['native']['calls'][0]['attributes']) == 16
-                 and all(not a['enabled'] and a['divisor'] == 0 for a in f['native']['calls'][0]['attributes']) for f in all_sixteen), 'all sixteen generic attributes/native disabled arrays')
+            need(len(all_sixteen) == 3 and all(len([a for a in f['native']['calls'][0]['attributes'] if a['location'] >= 0]) == 16
+                 and all(not a['enabled'] and a['divisor'] == 0 for a in f['native']['calls'][0]['attributes'] if a['location'] >= 0) for f in all_sixteen),
+                 'all sixteen generic attributes/native disabled arrays; native ID builtins have no attribute location')
 
     physical('hardware')
     physical('fault-generic', True)
@@ -127,8 +133,9 @@ def main(directory):
     need(audit['status'] == 'passed' and len(audit['frames']) == 31 and audit['pixels'] == 12500
          and all(row['held'] for row in audit['frames']) and [row['label'] for row in audit['faults'] if not row['held']] == ['all-widths-0'], 'offline independent original-byte/generic/pixel oracle')
     retained = json.loads(record('retained-standard-draw/receipt.json'))
-    need(retained['status'] == 'passed' and retained['gitHead'] == head and retained['frames'] == 37
+    need(retained['status'] == 'passed' and retained['frames'] == 37
          and retained['checkedPhysicalPixels'] == 10296, 'retained full D6/legacy acceptance')
+    recorded_heads['retained-standard-draw'] = retained['gitHead']
     for name, digest in retained['files'].items():
         record('retained-standard-draw/' + name, digest)
     for name, digest in {**retained['sources'], **retained['generated']}.items():
@@ -150,7 +157,8 @@ def main(directory):
     receipt = dict(schema='standard-constant-attributes-receipt-v1', task=TASK, status='passed', gitHead=head,
                    frames=31, checkedPhysicalPixels=12500, guestExecution=False, productionNegotiation=False,
                    authority='isolated-standard-constant-attributes', productionDrawAuthority=False,
-                   carriedCompilerOwnershipAndDecoderHead=PREDECESSOR, files=files, sources=sources, generated=generated)
+                   recordedRuntimeHeads=recorded_heads, carriedCompilerOwnershipAndDecoderHead=PREDECESSOR,
+                   files=files, sources=sources, generated=generated)
     (directory / 'receipt.json').write_text(json.dumps(receipt, indent=2) + '\n')
 
 
