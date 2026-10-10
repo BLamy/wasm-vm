@@ -3,7 +3,7 @@ id: E6-T11d7
 epic: 6
 title: Fetch standard zero-stride attributes through owned GPU jobs
 priority: 525.0270391
-status: implemented
+status: verified
 depends_on: [E6-T11d6]
 estimate: S
 risk: high
@@ -162,3 +162,99 @@ guest rendering, FPS/MIPS or demo deployment. A fresh adversarial critic alone
 may verify; prior HELD results carry only where code, dependencies and digests
 are unchanged.
 
+### 2026-10-10 — fresh verifier — VERDICT: verified
+
+VERDICT: verified
+
+Reviewed the whole task and scoped `67220bb5..c63127a4` diff before original
+inspection. Falsifiable predictions P1–P10 were written first in
+`evidence/virgl-standard-constant/verifier/predictions.json` (SHA-256
+`0d221b9ae82d3b3edf2b1042e5b9e034b08be011cbbe8ac978c776844659c438`).
+This critic did not implement the slice or edit runtime code. All predictions
+HELD; no semantic refutation or evidence gap remains.
+
+- P1–P4 bytes/defaults/native restoration/bounds — HELD. Independent literal-wire,
+  upload, GPU-source and raster audit checks both complete originals:62 frames and
+  25,000 full pixels. The four original constants are at32/56/88/128 with full
+  ends36/64/100/144; their original words and missing lanes match native generic
+  queries. Constants ignore positive/u32-max divisors, mixed arrays retain their
+  own divisor, all16 arrays are disabled, native IDs remain location-1, and wide
+  unsigned IDs are taken from original index bytes. All exact-end, three schedule,
+  count0/1/positive-instance, A/B/A, aggregate56/55 and four short-record outcomes
+  hold. Point: worker seal `cold/hardware/report.json:52116`,
+  `/browserResult/result/frames/0`, SHA-256
+  `2f124323ec283c3bb1edfe76c967d17fb25731ca07b5f4892adba8b3dbbe44af`;
+  all frame/byte citations are in `original-audit.json` and `citations.json`.
+- P5–P7 retained lifetime/cleanup/scheduling — HELD. Original cancellation,
+  collected-revision, name reuse, CPU-only backing mutation, busy reset,
+  partial real allocation, store and renderer disposal all retain/drain or
+  explicitly invalidate their whole batch with zero remaining reads/staging.
+  Real syncs poll at most once per later task, no finish/blocking poll, and every
+  fence is deleted. The novel seed `0xa17c9e53` splits active widths
+  `[2,4,1,3,4]` across GPU resources3..7, uses offsets36/44/40/12/48 and
+  unsigned indices `0xb4d40000..0xb4d40003`. With five distinct native sources,
+  only resource3 is uploaded after its8-byte record is collected while the
+  other4 remain pending. Direct GPU readback authenticates the changed bytes;
+  the job rejects `stale-storage`, never draws, drains all5 and completes its
+  fence. This distinguishes the earlier-ticket recheck from stale later reads.
+  Point: critic seal `physical/hardware/report.json:64337`,
+  `/browserResult/result/suspensions/0`, SHA-256
+  `ac8eff480807d1d636f1bcc61a9fee00bfe6c2c36d794ee3857cca4590c5b4f4`.
+- P8 native sabotage — HELD. Both original generic mutations complete physical
+  draws/fences then fail the independent raw-byte raster audit. The promoted
+  oracle is sabotaged once through the actual served native `vertexAttrib4fv`
+  site: drawElementsInstanced and its fence complete; at(0,0)
+  expected[48,42,31,104] becomes[99,42,31,104], error51. The named
+  `critic-seeded-exact promoted independent pixel oracle` rejects. This is a
+  completed wrong-pixel draw, with no pre-draw GL-error substitute. Point:
+  critic seal `physical/fault-generic/report.json:1492`, `/partial/frames/0`,
+  SHA-256 `4e7745d6dddc73b7b4b0254ee863495ab8d2fcce823f755150f72919b39a6191`.
+- P9 source/environment custody — HELD. All1123 worker archive/index members,
+ 350 original input/GPU/pixel blobs, served closures, precise coverage, screenshots,
+  generated compiler artifacts and nested receipts authenticate. The original
+  hot6b3f041d reports and failed receipt diagnostics remain intact; the repair
+  changes only the receipt harness, and its physical closure equals the final
+  cold39a9d14b bytes. Final exact-head cold acceptance exits0 and is pristine
+  before/after with scrubbed env. Carry268 byte-identical compiler/decoder/
+  resources/cache/constant-domain/native-link boundaries and the original full
+  D6 plus four affected legacy gates. No second cold clone or unrelated workspace
+  re-litigation is required by the incremental policy.
+- P10 sufficiency — HELD. Authenticated original hardware and retained-D6 V8
+  coverage reaches all74 added/changed runtime lines and every alphanumeric token
+  in the diff. Every runtime hunk is exercised; no unexecuted runtime hunk remains.
+  Harness/metadata/documentation classifications and custody are explicit in
+  `coverage-audit.json` and `source-scope.json`. The critic added only promoted
+  tests/oracles, narrow runner selection, gate metadata and these audit artifacts.
+
+SUITE: promote `standard-constant-attributes-adversarial.mjs`, its independent
+literal-wire/native-byte/full-pixel oracle and
+`make verify-E6-T11d7-adversarial`. The final promoted gate records6 novel physical
+frames plus3 unchanged default-route frames/5,700 full pixels, repeats every
+bounded lifetime attack, and rejects its completed generic sabotage. Actual
+headed Chrome/Metal M4 Max, fixed16 MiB compiler, zero console/page/request
+errors; screenshot and precise coverage are sealed. Original D5/D6 HELD boundaries
+carry only with their authenticated unchanged dependency bytes/digests.
+
+Commands (all in `/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm`):
+
+```sh
+python3 evidence/virgl-standard-constant/verifier/authenticate.py
+python3 evidence/virgl-standard-constant/verifier/audit_originals.py
+python3 evidence/virgl-standard-constant/verifier/audit_coverage.py
+VIRGL_STANDARD_CONSTANT_ADVERSARIAL_EVIDENCE_DIR=target/evidence/virgl-standard-constant-critic-final make verify-E6-T11d7-adversarial
+python3 evidence/virgl-standard-constant/verifier/seal_critic.py
+python3 tools/check_task_policy.py
+python3 tools/build_queue.py
+```
+
+Critic evidence of record:
+`evidence/virgl-standard-constant/verifier/{manifest.json,records.json,recording.tar.gz}`,
+182 records/563,181 packed bytes. Archive SHA-256
+`ae4a7bbc1dc705e2bf76d9d987f981bb40fada83f6831259355be9319d60462b`;
+index `3c078c2ab8babe8b4d7e7760e17eb97fc7c93995bd48ae7a0ba920e70cfca2b2`;
+final physical audit `8cadc4535b87c5af147d5c180eadf753aa72f63a20a750da74afdf169f761ffe`.
+Worker submission `c63127a4954b6c61d23b2595149d8ab20116fdc6` and unchanged runtime
+state SHA-256 `dd2049d9d27e591b0ad63ecd30fedcdcf8ae09e7b754d81b769a81497c7d7671`
+remain the reviewed implementation. Scope is only the isolated standard async
+constant-attribute fetch and owned-batch lifetime. This verdict grants no guest,
+API, FPS/MIPS, production capability or live-deployment authority.

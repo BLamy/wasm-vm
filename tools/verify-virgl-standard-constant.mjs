@@ -10,11 +10,11 @@ import { repo, sha256 } from "./virgl-command/fixtures.mjs";
 
 const options = {};
 for (let index = 2; index < process.argv.length; index += 2) {
-  assert.ok(["--output", "--mutation", "--smoke"].includes(process.argv[index]));
+  assert.ok(["--output", "--mutation", "--smoke", "--adversarial"].includes(process.argv[index]));
   assert.ok(process.argv[index + 1]); options[process.argv[index].slice(2)] = process.argv[index + 1];
 }
 assert.ok(options.output); assert.ok(!options.mutation || ["generic"].includes(options.mutation));
-for (const flag of ["smoke"]) assert.ok(!options[flag] || options[flag] === "true");
+for (const flag of ["smoke", "adversarial"]) assert.ok(!options[flag] || options[flag] === "true");
 const output = path.resolve(options.output); await fs.mkdir(output, { recursive: true });
 const sourcePaths = [
   ...["resources", "decoder", "state", "cache", "constant-domain"].map(name => "renderer/virgl-command/" + name + ".mjs"),
@@ -23,6 +23,8 @@ const sourcePaths = [
   "renderer/virgl-shader/build/wasm/virgl-shader.wasm", "tools/virgl-command/standard-constant-oracle.mjs",
   "tools/verify-virgl-standard-constant.mjs", "tools/virgl-command/fixtures.mjs",
   "renderer/virgl-command/tests/standard-instanced-draws.mjs", "tools/virgl-command/standard-draw-oracle.mjs",
+  ...(options.adversarial ? ["renderer/virgl-command/tests/standard-constant-attributes-adversarial.mjs",
+    "tools/virgl-command/standard-constant-adversarial-oracle.mjs"] : []),
 ];
 const report = { schema: 1, task: "E6-T11d7", status: "running", guestExecution: false, productionNegotiation: false,
   gitHead: execFileSync("git", ["rev-parse", "HEAD"], { cwd: repo, encoding: "utf8" }).trim(),
@@ -84,7 +86,8 @@ try {
     try {
       report.browserResult = await Promise.race([page.evaluate(async spec => {
         try {
-          const module = await import("/renderer/virgl-command/tests/standard-constant-attributes.mjs"), result = await module.runAcceptance(spec);
+          const module = await import(spec.adversarial ? "/renderer/virgl-command/tests/standard-constant-attributes-adversarial.mjs" :
+            "/renderer/virgl-command/tests/standard-constant-attributes.mjs"), result = await module.runAcceptance(spec);
           document.querySelector("#status").textContent = "Passed standard constant attribute proof";
           document.querySelector("#result").textContent = JSON.stringify({ gpu: result.gpu, frames: result.frames.length, predictions: result.predictions.length }, null, 2);
           return { status: "passed", result };
@@ -92,7 +95,7 @@ try {
           document.querySelector("#status").textContent = "Failed: " + error.message;
           return { status: "failed", error: { message: error.message, stack: error.stack } };
         }
-      }, { smoke: Boolean(options.smoke) }),
+      }, { smoke: Boolean(options.smoke), adversarial: Boolean(options.adversarial) }),
         new Promise((_, reject) => { timer = setTimeout(() => reject(new Error("standard constant hardware proof exceeded 240 seconds")), 240000); })]);
     } finally { clearTimeout(timer); }
     if (report.browserResult.status === "failed") report.partial = await page.evaluate(() => window.__standardConstantEvidence ?? null);
