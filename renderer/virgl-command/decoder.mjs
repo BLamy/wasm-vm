@@ -1,6 +1,7 @@
 /** Bounded, side-effect-free VirGL 1.3.0 wire decoding. See README.md. */
 export const PROFILE = "virgl-tiny-commands-v1";
 export const STANDARD_PROFILE = "virgl-standard-commands-v1";
+export const STANDARD_UNIFORM_PROFILE = "virgl-standard-uniform-commands-v1";
 export const LIMITS = Object.freeze({
   submissionBytes: 262144,
   commands: 4096,
@@ -95,12 +96,12 @@ class DecodeFault extends Error {
 
 /** Indexes in Packet match the pinned protocol: header=0, first payload word=1. */
 class Packet {
-  constructor(view, byteOffset, opcode, length, standard = false) {
+  constructor(view, byteOffset, opcode, length, standard = false, uniform = false) {
     this.view = view;
     this.byteOffset = byteOffset;
     this.opcode = opcode;
     this.length = length;
-    this.standard = standard;
+    this.standard = standard; this.uniform = uniform;
   }
   fail(code, message) { throw new DecodeFault(code, message, this.byteOffset, this.opcode); }
   require(condition, code, message) { if (!condition) this.fail(code, message); }
@@ -451,6 +452,16 @@ function decodeFields(p, objectType) {
       return { pattern: p.words(1, 32) };
     case 24: p.exact(1); p.require(p.u(1) === MAX_U32, "unsupported-feature", "Only a full sample mask is supported."); return { mask: p.u(1) };
     case 25: p.exact(1); p.zero(1, 1, "Only empty stream-output reset is supported."); return { appendBitmask: 0, handles: [] };
+    case 27: {
+      p.require(p.uniform, "unsupported-command", "Uniform buffer commands require explicit host selection.");
+      p.exact(5);
+      const stage = p.stage(1), index = p.u(2), offset = p.u(3), length = p.u(4), resourceHandle = p.u(5);
+      p.require(index < LIMITS.constantSlots, "limit-exceeded", "Uniform reset slot exceeds original limits.");
+      if (!resourceHandle) return { stage, index, offset: 0, length: 0, resourceHandle: 0 };
+      p.require(stage <= 1 && index <= 12, "unsupported-feature", "Active uniform buffers require VS/FS slots0..12.");
+      p.require(length > 0 && length <= MAX_U32 - offset, "invalid-value", "Uniform range must be nonempty and fit u32.");
+      return { stage, index, offset, length, resourceHandle };
+    }
     case 28: case 29: case 30: p.exact(1); return { subContextId: p.u(1) };
     case 31: {
       p.exact(2);
@@ -529,7 +540,11 @@ export function decodeStandardSubmission(bytes, provenance = {}) {
   return decode(bytes, provenance, true);
 }
 
-function decode(bytes, provenance, standard) {
+export function decodeStandardUniformSubmission(bytes, provenance = {}) {
+  return decode(bytes, provenance, true, true);
+}
+
+function decode(bytes, provenance, standard, uniform = false) {
   let byteLength, buffer, byteOffset;
   try {
     const typedArrayPrototype = Object.getPrototypeOf(Uint8Array.prototype);
@@ -561,14 +576,14 @@ function decode(bytes, provenance, standard) {
     for (let offset = 0; offset < byteLength;) {
       const header = view.getUint32(offset, true), opcode = header & 255, objectType = (header >>> 8) & 255, payloadDwords = header >>> 16;
       const packetByteLength = (payloadDwords + 1) * 4;
-      const p = new Packet(view, offset, opcode, payloadDwords, standard);
+      const p = new Packet(view, offset, opcode, payloadDwords, standard, uniform);
       p.require(commands.length < LIMITS.commands, "limit-exceeded", "Submission exceeds packet count limit.");
       p.require(packetByteLength <= byteLength - offset, "truncated-payload", "Packet payload exceeds submission.");
-      p.require(Object.hasOwn(COMMAND_NAMES, opcode), "unsupported-command", "Unknown or unsupported command.");
+      p.require(Object.hasOwn(COMMAND_NAMES, opcode) || uniform && opcode === 27, "unsupported-command", "Unknown or unsupported command.");
       if (opcode >= 1 && opcode <= 3) p.require(objectType >= 1 && objectType < OBJECT_NAMES.length, "unsupported-object", "Unknown or unsupported object type.");
       else p.require(objectType === 0, "invalid-object-type", "Non-object commands require a zero object-type byte.");
       const fields = decodeFields(p, objectType);
-      commands.push({ opcode, name: COMMAND_NAMES[opcode], objectType, objectName: OBJECT_NAMES[objectType],
+      commands.push({ opcode, name: opcode === 27 ? "SET_UNIFORM_BUFFER" : COMMAND_NAMES[opcode], objectType, objectName: OBJECT_NAMES[objectType],
         byteOffset: offset, byteLength: packetByteLength, payloadDwords, fields });
       offset += packetByteLength;
     }
@@ -576,5 +591,5 @@ function decode(bytes, provenance, standard) {
     if (error instanceof DecodeFault) return error.result;
     throw error; // Unexpected implementation defects are not disguised as guest errors.
   }
-  return freeze({ ok: true, profile: standard ? STANDARD_PROFILE : PROFILE, ...labels, byteLength, commands });
+  return freeze({ ok: true, profile: uniform ? STANDARD_UNIFORM_PROFILE : standard ? STANDARD_PROFILE : PROFILE, ...labels, byteLength, commands });
 }

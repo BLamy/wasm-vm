@@ -1,0 +1,62 @@
+{
+  "schema": "original-uniform-binding-critic-seal-v1",
+  "task": "E6-T11d17",
+  "verdict": "verified",
+  "reviewedSubmission": "16316900",
+  "runtimeCommit": "e771e262a37f9ee387f434fc752bd777187edcd8",
+  "frozenRuntimeHead": "47eb713cb5a456c8723cc32463fb04a4afea9905",
+  "workerArchive": "73a5bdfa08e5b7568b96017d471ac40cfbb8f5d087d52c1b2842cf6c2235d9d5",
+  "records": 4657,
+  "archiveSha256": "df3c55558fec56f14b838cc9c8f477fa4806a47657909c81696bcd595438542d",
+  "archiveBytes": 35580659,
+  "recordIndexSha256": "17f9f5b0729256dc06f71075e9b13c4cb725550d9fdabfe4354a387856cd787e",
+  "predictionSha256": "b24622a4c5da255cb327d10dbace235995be6d6dd6d7bbae62bfcea9eb513d6d",
+  "runtimeSourceHashes": {
+    "renderer/virgl-command/decoder.mjs": "f48738fb56a748643eb50082532adb336229de2fcce5f3fb20955cf399b0c73a",
+    "renderer/virgl-command/resources.mjs": "27e6d3e2f489705a20dfb54bed3f6286d693498304f29bbbd0cbdcba6ec68a82",
+    "renderer/virgl-command/state.mjs": "3ef955a18604b89391543562a549b605674bd6bb0e46f689107773079d286187"
+  },
+  "sourceHashes": {
+    "Makefile": "856f1e3550584c8312aa992c41d1b5d5cd2d1f4c9a7898f31906924f8eed38b8",
+    "renderer/virgl-command/cache.mjs": "9e50cc258528e581f79cee0e4e0038994c7968f80046b9db21e7f5e0e4a92cfa",
+    "renderer/virgl-command/constant-domain.mjs": "22b39dda3bd93f3e7343af1035c14b362a99b800aee5cf76d6916eb8c690e28b",
+    "renderer/virgl-command/decoder.mjs": "f48738fb56a748643eb50082532adb336229de2fcce5f3fb20955cf399b0c73a",
+    "renderer/virgl-command/resources.mjs": "27e6d3e2f489705a20dfb54bed3f6286d693498304f29bbbd0cbdcba6ec68a82",
+    "renderer/virgl-command/state.mjs": "3ef955a18604b89391543562a549b605674bd6bb0e46f689107773079d286187",
+    "renderer/virgl-command/tests/standard-instanced-draws.mjs": "f02cf96a50f79ef5ed71c0240784a7ae3d030231d18d320148e89252bf724afa",
+    "renderer/virgl-command/tests/standard-uniform-buffer-bindings.mjs": "9942e4e825364ced375f08645f115b09b45f8d3aab2fd5c08bb7f15db053575f",
+    "renderer/virgl-shader/UPSTREAM.json": "6f7866d3a3a5e502f6516506909c0d43dec60902fd251a2eecec9610bd992a71",
+    "renderer/virgl-shader/bridge.c": "fd925dfac1a097d891304841f0495b07b1b25ef49bf1c0fef045c8ee404fb4ff",
+    "renderer/virgl-shader/bridge.h": "3656745696d80bcae1f58f75834c367b5747a195dfff6ebe96b4f9893c800ac2",
+    "renderer/virgl-shader/build.sh": "368490806d1293183b326fa9b70557c07d5571f148faca0870f53c9e3469a4c8",
+    "renderer/virgl-shader/build/wasm/virgl-shader.mjs": "0f42245f22cabd36d69d2494056bedd03dd4394c9cf42424ee285f95b00920b0",
+    "renderer/virgl-shader/build/wasm/virgl-shader.wasm": "fc479ec92133f8b75d26043d20fca97d00b1a1556481abf5c5daf23b66e00fca",
+    "renderer/virgl-shader/index.mjs": "1bae07f2e668078c4e447f65d1785815714907b7270ced01b131ce70e6d3f10e",
+    "renderer/virgl-shader/standard.mjs": "e62f627e51a96658c100636c628a2ed6a87fd1ebf200d46c1167cf3107b6b25a",
+    "renderer/virgl-shader/standard_emit.c": "910fe4ce510012c575bb624b44d6183c0550bf2e61020d2a6f4971c878941f88",
+    "renderer/virgl-shader/standard_guard.c": "e6e326674fa25c1dc8854ba1512416ffd17d87b2bbc46b1aad2e4c78811a1898",
+    "renderer/virgl-shader/standard_guard.h": "c4c05b9d5f58824deded65868ea35e080c202191602d279e7088daa7d8eab407",
+    "tools/verify-virgl-standard-uniform-bindings-adversarial.mjs": "65a1862e56ad2a1ee7b4d06e241fc49b3afde46bb5c4d1e770060e0690d79d4a",
+    "tools/verify-virgl-standard-uniform-bindings-adversarial.sh": "5f441f601d35d878d9c4599b9e113e3aaf881fd958da6ce14fc2b6678ad7c070",
+    "tools/verify-virgl-standard-uniform-bindings.mjs": "e6a7e7f21f11638d93dd5dba8653aa66aa115d35165153166b7ed13e472250e5",
+    "tools/virgl-command/standard-draw-oracle.mjs": "8de41c4a9f041f7a9acaf8a062a525f64c0ef3d197c464753764ddada94d26e3",
+    "tools/virgl-command/standard-uniform-binding-adversarial-audit.py": "974ee07783edf198d3317927181967e7880ab529b71ecc25b7ff891a125db43f",
+    "tools/virgl-command/standard-uniform-binding-adversarial-body.mjs": "a280b07c7797dbb5727356c9f0a84c02c850eb52526a719f83b9cb32538c0e09",
+    "tools/virgl-command/standard-uniform-binding-fixtures.mjs": "7e28d98f5c4651453106c22191baa2ff783caf677b85cdc25374c37a3a7de733"
+  },
+  "nativeProofs": {
+    "sealedWorkerFramesAudited": 313,
+    "sealedWorkerPixelsAudited": 80128,
+    "independentFramesAudited": 461,
+    "independentPixelsAudited": 118016,
+    "promotedFramesAudited": 5,
+    "promotedPixelsAudited": 1280
+  },
+  "unqualified": {
+    "guestExecution": false,
+    "productionNegotiation": false,
+    "productionDrawAuthority": false,
+    "deployment": false,
+    "performance": false
+  }
+}

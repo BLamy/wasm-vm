@@ -1,9 +1,10 @@
 /** Typed VirGL state and bounded triangle draws. See state-README.md and draw-README.md. */
-import { decodeSubmission, decodeStandardSubmission, vertexFormat } from "./decoder.mjs";
+import { decodeSubmission, decodeStandardSubmission, decodeStandardUniformSubmission, vertexFormat } from "./decoder.mjs";
 import { LIMITS as SHADER_LIMITS } from "../virgl-shader/index.mjs";
 import { createKeyCache, hashKey } from "./cache.mjs";
 import { parseConstantDomain, checkFiniteBank, checkIndirectBank, checkLoopBank, checkRadialBank, checkRasterBank, checkConversionBank, checkExactBank, COORDINATE_KEY, DISCARD_KEY,
-  parseStandardShaderMetadata, normalizeStandardShaderResult, normalizeStandardShaderPair, normalizeStandardShaderTypedPair, deriveStandardShaderInterface } from "./constant-domain.mjs";
+  parseStandardShaderMetadata, normalizeStandardShaderResult, normalizeStandardShaderPair, normalizeStandardShaderTypedPair, deriveStandardShaderInterface, parseStandardUniformShaderMetadata,
+  normalizeStandardUniformShaderResult, normalizeStandardUniformShaderPair, deriveStandardUniformShaderInterface } from "./constant-domain.mjs";
 
 export const STATE_PROFILE = "virgl-tiny-state-v1";
 export const STATE_LIMITS = Object.freeze({ contexts: 8, subContexts: 16, objects: 256,
@@ -12,6 +13,7 @@ export const DRAW_PROFILE = "virgl-tiny-indexed-draw-v1";
 export const DRAW_LIMITS = Object.freeze({ drawsPerSubmission: 64, indicesPerSubmission: 65536 });
 export const ASYNC_PROFILE = "virgl-tiny-async-jobs-v1";
 export const STANDARD_ASYNC_PROFILE = "virgl-standard-async-jobs-v1";
+export const STANDARD_UNIFORM_ASYNC_PROFILE = "virgl-standard-uniform-async-jobs-v1";
 export const JOB_LIMITS = Object.freeze({ jobs: 1, commandsPerStep: 64, submissionBytes: 262144, transferBytes: 4194304 });
 export const CACHE_LIMITS = Object.freeze({ translations: 128, translationBytes: 4194304,
   programBytes: 4194304, states: 256, stateBytes: 1048576, debugBytes: 4194304 });
@@ -167,10 +169,15 @@ export function createVirglStandardAsyncRenderer(options) {
   return createRenderer(options, true, true, true);
 }
 
+/** Original retained native constant-buffer ranges, explicitly selected by the host. */
+export function createVirglStandardUniformAsyncRenderer(options) {
+  return createRenderer(options, true, true, true, true);
+}
+
 /** Host capabilities are trusted and non-reentrant. */
-function createRenderer(options, drawing, asynchronous = false, standard = false) {
+function createRenderer(options, drawing, asynchronous = false, standard = false, uniform = false) {
   return result(() => {
-    const config = dataRecord(options, ["gl", "resources", "bindings", "shaderBridge", "limits", "cacheLimits", ...(drawing ? ["drawLimits"] : []), ...(asynchronous ? ["asyncAccess", "jobLimits"] : []), ...(standard ? ["primitiveAssembly"] : [])], ["gl", "resources", "bindings", "shaderBridge", ...(asynchronous ? ["asyncAccess"] : [])]);
+    const config = dataRecord(options, ["gl", "resources", "bindings", "shaderBridge", "limits", "cacheLimits", ...(drawing ? ["drawLimits"] : []), ...(asynchronous ? ["asyncAccess", "jobLimits"] : []), ...(standard ? ["primitiveAssembly"] : []), ...(uniform ? ["uniformAccess"] : [])], ["gl", "resources", "bindings", "shaderBridge", ...(asynchronous ? ["asyncAccess"] : []), ...(uniform ? ["uniformAccess"] : [])]);
     const { gl, resources, bindings, shaderBridge } = config;
     const primitiveAssembly = standard ? config.primitiveAssembly ?? "native" : "native";
     require(["native", "lists"].includes(primitiveAssembly), "invalid-input", "Unknown standard primitive assembly selection.");
@@ -204,9 +211,13 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         "invalid-input", "Job limits may only tighten defaults; step budget must be positive.");
       Object.freeze(jobLimits);
     }
-    const profile = standard ? STANDARD_ASYNC_PROFILE : asynchronous ? ASYNC_PROFILE : drawing ? DRAW_PROFILE : STATE_PROFILE;
-    const decodeCommands = standard ? decodeStandardSubmission : decodeSubmission;
-    const parseShaderMetadata = standard ? parseStandardShaderMetadata : parseConstantDomain;
+    const uniformAccess = uniform ? config.uniformAccess : null;
+    require(!uniform || uniformAccess && ["capture", "validate", "submit", "release", "inspect"].every(name =>
+      typeof uniformAccess[name] === "function") && typeof shaderBridge.translatePairUniforms === "function",
+    "invalid-input", "Selected uniform range and compiler capabilities are required.");
+    const profile = uniform ? STANDARD_UNIFORM_ASYNC_PROFILE : standard ? STANDARD_ASYNC_PROFILE : asynchronous ? ASYNC_PROFILE : drawing ? DRAW_PROFILE : STATE_PROFILE;
+    const decodeCommands = uniform ? decodeStandardUniformSubmission : standard ? decodeStandardSubmission : decodeSubmission;
+    const parseShaderMetadata = uniform ? parseStandardUniformShaderMetadata : standard ? parseStandardShaderMetadata : parseConstantDomain;
     const idle = () => require(activeJob === null, "busy", "A renderer job is active; cancel and drain it before changing state.");
     const contexts = new Map(), objects = new Set(), programs = new Set();
     let disposed = false, nextGeneration = 1, subCount = 0, shaderBytes = 0, uniformBytes = 0, leaseCount = 0;
@@ -234,6 +245,16 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
     const maxViewport = [...gl.getParameter(gl.MAX_VIEWPORT_DIMS)];
     const uniformBindings = gl.getParameter(gl.MAX_UNIFORM_BUFFER_BINDINGS);
     const hostUniformComponents = [gl.getParameter(gl.MAX_VERTEX_UNIFORM_COMPONENTS), gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_COMPONENTS)];
+    const uniformHost = uniform ? {
+      vertex: gl.getParameter(gl.MAX_VERTEX_UNIFORM_BLOCKS), fragment: gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_BLOCKS),
+      combined: gl.getParameter(gl.MAX_COMBINED_UNIFORM_BLOCKS), blockBytes: gl.getParameter(gl.MAX_UNIFORM_BLOCK_SIZE),
+      alignment: gl.getParameter(gl.UNIFORM_BUFFER_OFFSET_ALIGNMENT),
+    } : null;
+    require(!uniform || Object.values(uniformHost).every(value => Number.isSafeInteger(value) && value > 0) &&
+      uniformHost.vertex >= 14 && uniformHost.fragment >= 13 && uniformHost.combined >= 27 &&
+      uniformHost.blockBytes >= 16384 && uniformBindings >= 27,
+    "unsupported-host", "Native uniform limits cannot support the selected original banks.");
+    let unusedUniformBuffer = null;
     check();
     require(maxUnits >= 32 && maxAttributes >= 2 && uniformBindings >= 1, "unsupported-host", "WebGL limits do not support the state profile.");
     require(hostUniformComponents.every((count) => Number.isSafeInteger(count) && count > 0),
@@ -265,7 +286,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       const lease = unwrap(resources.retainStorage(ctx.id, id, role)).lease;
       try {
         const binding = resolve(lease);
-        require(binding.metadata.kind === kind, "incompatible-resource", `Expected ${kind} storage.`);
+        require(Array.isArray(kind) ? kind.includes(binding.metadata.kind) : binding.metadata.kind === kind, "incompatible-resource", `Expected ${kind} storage.`);
         leaseCount++; return { lease, metadata: binding.metadata, resourceGeneration: binding.generation };
       } catch (error) { unwrap(resources.releaseStorage(lease)); throw error; }
     };
@@ -284,7 +305,8 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         const sub = { id, generation: generation(), names: new Map(), live: new Set(), programs: new Map(), vao, framebuffer,
           blend: null, rasterizer: null, dsa: null, vertexElements: null, shaders: [null, null], surfaces: [], depthSurface: null,
           vertexBuffers: [], indexBuffer: null, views: [Array(32).fill(null), Array(32).fill(null)],
-          samplers: [Array(32).fill(null), Array(32).fill(null)], constants: [[], []], viewport: null, scissor: null,
+          samplers: [Array(32).fill(null), Array(32).fill(null)], constants: [[], []],
+          ...(uniform ? { uniformBuffers: [Array(13).fill(null), Array(13).fill(null)] } : {}), viewport: null, scissor: null,
           blendColor: [0, 0, 0, 0], stencilRef: { front: 0, back: 0 }, defaults: { width: 0, height: 0 }, resets: {} };
         subCount++; return sub;
       } catch (error) { if (vao) gl.deleteVertexArray(vao); if (framebuffer) gl.deleteFramebuffer(framebuffer); throw error; }
@@ -313,25 +335,27 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       if (cached) return cached;
       work.translations++;
       const response = shaderBridge.translate(request);
-      const translated = standard ? unwrap(normalizeStandardShaderResult(response, request.stage)) : freeze(unwrap(response));
+      const translated = uniform ? unwrap(normalizeStandardUniformShaderResult(response, request.stage)) : standard ? unwrap(normalizeStandardShaderResult(response, request.stage)) : freeze(unwrap(response));
       unwrap(parseShaderMetadata(translated.metadata, request.stage));
       require(typeof translated.glsl === "string" && /^#version 300 es\b/m.test(translated.glsl),
         "shader-error", "Shader bridge returned incompatible output.");
       translationCache.put(sub, key, translated, 1024 + 2 * (key.length + JSON.stringify(translated).length));
       return translated;
     };
-    const translatedPair = (sub, vertex, fragment, interfaceKey, validate, inputTypes = null) => {
+    const translatedPair = (sub, vertex, fragment, interfaceKey, validate, inputTypes = null, bufferZeroMask = 0) => {
       const key = JSON.stringify([sub.generation, "pair", vertex.fields.text, fragment.fields.text, interfaceKey,
-        ...(inputTypes?.key ? [inputTypes.key] : [])]);
+        ...(inputTypes?.key ? [inputTypes.key] : []), ...(uniform ? [bufferZeroMask] : [])]);
       const cached = translationCache.get(sub, key);
       if (cached) { validate(cached); return cached; }
       work.pairTranslations++;
       const request = { vertexText: vertex.fields.text, fragmentText: fragment.fields.text };
       const masks = inputTypes?.key ? { signedMask: inputTypes.signedMask, unsignedMask: inputTypes.unsignedMask } : null;
-      const response = inputTypes?.packedSignedMask ? shaderBridge.translatePairVertexFormats({ ...request, ...masks,
+      const selectors = { signedMask: inputTypes?.signedMask ?? 0, unsignedMask: inputTypes?.unsignedMask ?? 0,
+        packedSignedMask: inputTypes?.packedSignedMask ?? 0, packedNormalizedMask: inputTypes?.packedNormalizedMask ?? 0, bufferZeroMask };
+      const response = uniform ? shaderBridge.translatePairUniforms({ ...request, ...selectors }) : inputTypes?.packedSignedMask ? shaderBridge.translatePairVertexFormats({ ...request, ...masks,
         packedSignedMask: inputTypes.packedSignedMask, packedNormalizedMask: inputTypes.packedNormalizedMask }) :
         masks ? shaderBridge.translatePairTyped({ ...request, ...masks }) : shaderBridge.translatePair(request);
-      const translated = standard ? unwrap(masks ? normalizeStandardShaderTypedPair(response, masks) :
+      const translated = uniform ? unwrap(normalizeStandardUniformShaderPair(response, selectors)) : standard ? unwrap(masks ? normalizeStandardShaderTypedPair(response, masks) :
         normalizeStandardShaderPair(response)) : freeze(unwrap(response));
       validate(translated);
       translationCache.put(sub, key, translated, 1024 + 2 * (key.length + JSON.stringify(translated).length));
@@ -375,6 +399,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       for (let stage = 0; stage < 2; stage++) sub.shaders[stage] = objectRef(sub, sub.shaders[stage], null);
       for (const buffer of sub.vertexBuffers) if (buffer) release(buffer.lease);
       if (sub.indexBuffer) release(sub.indexBuffer.lease);
+      if (uniform) for (const bank of sub.uniformBuffers.flat()) if (bank) release(bank.lease);
       for (const object of [...sub.names.values()]) destroyObject(sub, object);
       gl.deleteVertexArray(sub.vao); gl.deleteFramebuffer(sub.framebuffer); subCount--;
     };
@@ -506,21 +531,42 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         key: packedSignedMask ? `vertex-format-v1:${signedMask}:${unsignedMask}:${packedSignedMask}:${packedNormalizedMask}` :
           signedMask || unsignedMask ? `integer-input-v1:${signedMask}:${unsignedMask}` : "" });
     };
+    const zeroMask = (sub, vertex, fragment) => uniform ? [vertex, fragment].reduce((mask, shader, stage) =>
+      mask | (sub.uniformBuffers[stage][0] && shader.translation.metadata.uniforms.length ? 1 << stage : 0), 0) : 0;
+    const promotedMetadata = (metadata, stage, mask) => {
+      if (!(mask & (1 << stage))) return metadata;
+      const bank = metadata.uniforms[0], prefix = stage === 0 ? "VS" : "FS";
+      return { ...metadata, uniforms: [], guestUniformBlocks: [{ name: `Virgl${prefix}Const0`, stage: metadata.stage,
+        slot: 0, byteLength: bank.count * 16, encoding: "raw-32bit-words",
+        members: [{ name: bank.name, type: "uvec4[]", count: bank.count, offset: 0, arrayStride: 16 }] }, ...metadata.guestUniformBlocks] };
+    };
+    const unusedUniformStorage = (reserveSystem) => {
+      if (unusedUniformBuffer) return unusedUniformBuffer;
+      require(16384 + (reserveSystem ? 656 : 0) <= limits.uniformBytes, "limit-exceeded", "Unreferenced native block backing exceeds the uniform budget.");
+      while (16384 + (reserveSystem ? 656 : 0) > limits.uniformBytes - uniformBytes)
+        require(programCache.evict(), "limit-exceeded", "Unreferenced native block backing cannot fit beside the system block.");
+      const buffer = gl.createBuffer(); require(buffer, "backend-error", "Unreferenced native block backing allocation failed.");
+      try { gl.bindBuffer(gl.UNIFORM_BUFFER, buffer); gl.bufferData(gl.UNIFORM_BUFFER, 16384, gl.STATIC_DRAW); check(); }
+      catch (error) { gl.deleteBuffer(buffer); throw error; }
+      unusedUniformBuffer = buffer; uniformBytes += 16384; return buffer;
+    };
     function link(sub, vertex, fragment) {
       require(vertex?.fields.stage === 0 && fragment?.fields.stage === 1, "missing-shader", "Link requires a vertex shader and a fragment shader.");
       const sampling = samplingFor(sub, fragment, vertex);
       const blendFold = blendFoldFor(sub, fragment);
       const inputTypes = inputTypesFor(sub, vertex);
       let vs = vertex.translation.metadata;
-      const fs = fragment.translation.metadata;
+      let fs = fragment.translation.metadata;
+      const bufferZeroMask = zeroMask(sub, vertex, fragment);
+      let fragmentBase = fragment.translation.glsl;
       const interfaceInfo = standard ? (() => {
-        const owned = unwrap(deriveStandardShaderInterface(vs, fs));
+        const owned = unwrap(uniform ? deriveStandardUniformShaderInterface(vs, fs) : deriveStandardShaderInterface(vs, fs));
         return { ...owned, inputs: new Map(owned.inputs.map(input => [input.semanticIndex, input])) };
       })() : shaderInterface(vs, fs, fragment.coordinateContract, fragment.discardContract);
       // Generations identify these exact owned immutable bodies/metadata, not public names.
       // Derive the complete pair interface even when another vertex used this fragment.
       const key = `${sub.generation}:${vertex.generation}:${fragment.generation}:${interfaceInfo.key}|${sampling.key}` +
-        (blendFold ? `|blend-source-constant-v1:${blendFold}` : "") + (inputTypes.key ? `|${inputTypes.key}` : "");
+        (blendFold ? `|blend-source-constant-v1:${blendFold}` : "") + (inputTypes.key ? `|${inputTypes.key}` : "") + (uniform ? `|buffer-zero:${bufferZeroMask}` : "");
       const cached = programCache.get(sub, key);
       if (cached) return cached;
       const program = { key, generation: generation(), vertex, fragment, native: null, blocks: [], uniforms: [], samplers: [],
@@ -528,34 +574,36 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         variantShader: null, fragmentVariantShader: null, variantBytes: 0,
         blendFold, blendUniform: null,
         reflection: { attributes: [], uniforms: [], samplers: [], uniformBlocks: [], outputs: [], ...(standard ? { systemValues: [], rasterUniforms: [] } : {}) },
-        ...(standard ? { rasterUniforms: [] } : {}) };
+        ...(standard ? { rasterUniforms: [] } : {}), ...(uniform ? { guestBlocks: [], bufferZeroMask } : {}) };
       try {
         if (standard || interfaceInfo.flat || interfaceInfo.coordinates || interfaceInfo.discard) {
           require(typeof shaderBridge.translatePair === "function", "shader-link-error", interfaceInfo.coordinates ?
             "Fragment coordinates require the checked pair compiler." : interfaceInfo.discard ?
             "Fragment discard requires the checked pair compiler." : "Flat interpolation requires the checked pair compiler.");
-          require(inputTypes.packedSignedMask ? typeof shaderBridge.translatePairVertexFormats === "function" :
+          require(uniform ? typeof shaderBridge.translatePairUniforms === "function" : inputTypes.packedSignedMask ? typeof shaderBridge.translatePairVertexFormats === "function" :
             !inputTypes.key || typeof shaderBridge.translatePairTyped === "function", "shader-link-error", "Vertex formats require the checked pair compiler.");
           const typedAttribute = attribute => ({ ...attribute, type: inputTypes.signedMask & (1 << attribute.index) ? "ivec4" :
             inputTypes.unsignedMask & (1 << attribute.index) ? "uvec4" : "vec4" });
-          const expectedVertex = { ...vs, ...(standard ? { inputs: vs.inputs.map(typedAttribute), attributes: vs.attributes.map(typedAttribute) } : {}),
+          const expectedVertex = { ...(uniform ? promotedMetadata(vs, 0, bufferZeroMask) : vs), ...(standard ? { inputs: vs.inputs.map(typedAttribute), attributes: vs.attributes.map(typedAttribute) } : {}),
             outputs: vs.outputs.map((output) => output.semantic === "GENERIC" ?
             { ...output, ...(standard ? { type: interfaceInfo.inputs.get(output.semanticIndex)?.interpolation === "flat" ? "uvec4" : "vec4" } : {}),
               interpolation: interfaceInfo.inputs.get(output.semanticIndex)?.interpolation ?? "smooth" } : output) };
           const pair = translatedPair(sub, vertex, fragment, interfaceInfo.key, (pair) => require(pair.interfaceKey === interfaceInfo.key &&
-            pair.fragment?.glsl === fragment.translation.glsl && JSON.stringify(pair.fragment?.metadata) === JSON.stringify(fs) &&
+            (uniform || pair.fragment?.glsl === fragment.translation.glsl) && JSON.stringify(pair.fragment?.metadata) === JSON.stringify(uniform ? promotedMetadata(fs, 1, bufferZeroMask) : fs) &&
             typeof pair.vertex?.glsl === "string" && pair.vertex.glsl.length <= SHADER_LIMITS.glslBytes &&
             /^#version 300 es\b/m.test(pair.vertex.glsl) && JSON.stringify(pair.vertex.metadata) === JSON.stringify(expectedVertex),
-          "shader-link-error", "Pair compiler output does not match the selected shader interface."), inputTypes);
+          "shader-link-error", "Pair compiler output does not match the selected shader interface."), inputTypes, bufferZeroMask);
           if (standard || interfaceInfo.flat) {
             program.vertexText = pair.vertex.glsl; vs = pair.vertex.metadata;
+            if (uniform) { fragmentBase = pair.fragment.glsl; fs = pair.fragment.metadata; }
           }
         }
-        let fragmentText = specializeViews(fragment.translation.glsl, sampling);
-        fragmentText = specializeBlend(fragmentText ?? fragment.translation.glsl, blendFold, fs) ?? fragmentText;
+        let fragmentText = specializeViews(fragmentBase, sampling);
+        fragmentText = specializeBlend(fragmentText ?? fragmentBase, blendFold, fs) ?? fragmentText;
         program.vertexText ??= vertex.translation.glsl;
         program.vertexText = (standard ? specializeViews(program.vertexText, sampling, 0) : null) ?? program.vertexText;
-        program.fragmentText = fragmentText ?? fragment.translation.glsl;
+        program.fragmentText = fragmentText ?? fragmentBase;
+        if (uniform) fragmentText = program.fragmentText === fragment.translation.glsl ? null : program.fragmentText;
         const vertexVariant = standard ? program.vertexText !== vertex.translation.glsl : interfaceInfo.flat;
         const requiredVariantBytes = (vertexVariant ? program.vertexText.length : 0) + (fragmentText?.length ?? 0);
         makeProgramRoom(requiredVariantBytes);
@@ -650,6 +698,32 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
             const unit = unitFor(stage, sampler.index);
             program.samplers.push({ location, unit, stage, index: sampler.index }); program.reflection.samplers.push({ ...sampler, stage: metadata.stage, unit });
           }
+          if (uniform) for (const block of metadata.guestUniformBlocks) {
+            const index = gl.getUniformBlockIndex(program.native, block.name), binding = 1 + stage * 13 + block.slot;
+            const native = index !== gl.INVALID_INDEX;
+            const description = { ...block, index: native ? index : null, binding, native, referenced: false, members: [] };
+            if (native) {
+              const size = gl.getActiveUniformBlockParameter(program.native, index, gl.UNIFORM_BLOCK_DATA_SIZE),
+                vertexReference = gl.getActiveUniformBlockParameter(program.native, index, gl.UNIFORM_BLOCK_REFERENCED_BY_VERTEX_SHADER),
+                fragmentReference = gl.getActiveUniformBlockParameter(program.native, index, gl.UNIFORM_BLOCK_REFERENCED_BY_FRAGMENT_SHADER),
+                indices = [...gl.getActiveUniformBlockParameter(program.native, index, gl.UNIFORM_BLOCK_ACTIVE_UNIFORM_INDICES)];
+              require(size === block.byteLength && indices.length === 1 && !(stage === 0 ? fragmentReference : vertexReference),
+                "shader-reflection-error", "Guest native block extent or stage reference mismatch.");
+              const member = block.members[0], actual = gl.getActiveUniform(program.native, indices[0]),
+                offset = gl.getActiveUniforms(program.native, indices, gl.UNIFORM_OFFSET)[0],
+                stride = gl.getActiveUniforms(program.native, indices, gl.UNIFORM_ARRAY_STRIDE)[0],
+                blockIndex = gl.getActiveUniforms(program.native, indices, gl.UNIFORM_BLOCK_INDEX)[0];
+              require(actual && actual.name === `${member.name}[0]` && actual.type === gl.UNSIGNED_INT_VEC4 &&
+                actual.size === member.count && offset === 0 && stride === 16 && blockIndex === index,
+              "shader-reflection-error", "Guest native raw-word member reflection mismatch.");
+              Object.assign(description, { byteLength: size, referenced: Boolean(vertexReference || fragmentReference),
+                vertexReference, fragmentReference, members: [{ name: actual.name, type: actual.type, count: actual.size, offset, arrayStride: stride, blockIndex }] });
+              gl.uniformBlockBinding(program.native, index, binding);
+              program.guestBlocks.push({ ...block, index, binding, referenced: description.referenced });
+              if (!description.referenced) unusedUniformStorage(program.blocks.length === 0);
+            }
+            program.reflection.uniformBlocks.push(description);
+          }
           for (const block of metadata.uniformBlocks ?? []) {
             const index = gl.getUniformBlockIndex(program.native, block.name);
             require(index !== gl.INVALID_INDEX && gl.getActiveUniformBlockParameter(program.native, index, gl.UNIFORM_BLOCK_DATA_SIZE) === block.byteLength &&
@@ -678,7 +752,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
             program.reflection.uniformBlocks.push({ name: block.name, index, byteLength: block.byteLength, binding: 0, members });
           }
         }
-        require(program.blocks.length === 1 && gl.getProgramParameter(program.native, gl.ACTIVE_UNIFORM_BLOCKS) === 1,
+        require(program.blocks.length === 1 && gl.getProgramParameter(program.native, gl.ACTIVE_UNIFORM_BLOCKS) === 1 + (uniform ? program.guestBlocks.length : 0),
           "shader-reflection-error", "Every active block must match the system block.");
         if (blendFold) {
           const name = "wv_rgb_blend_factor", index = gl.getUniformIndices(program.native, [name])?.[0];
@@ -698,7 +772,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           const blockIndex = gl.getActiveUniforms(program.native, [index], gl.UNIFORM_BLOCK_INDEX)[0];
           // The measured system block includes upstream reserved members. Its
           // complete native extent and owned zero-filled data were checked above.
-          const accounted = program.blocks.some(block => block.index === blockIndex) ||
+          const accounted = program.blocks.some(block => block.index === blockIndex) || uniform && program.guestBlocks.some(block => block.index === blockIndex) ||
             program.reflection.uniforms.some(uniform => uniform.name === actual.name &&
               uniform.activeCount === actual.size && actual.type === gl.UNSIGNED_INT_VEC4) ||
             program.reflection.samplers.some(sampler => sampler.name === actual.name &&
@@ -756,7 +830,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         vertexElements: sub.vertexElements?.fields ?? null, vertexBuffers: sub.vertexBuffers.map(storage), indexBuffer: storage(sub.indexBuffer),
         targets: sub.surfaces.map(storage), depth: storage(sub.depthSurface), views: sub.views.map(slots => slots.map(storage)),
         samplers: sub.samplers.map(slots => slots.map(object => object ? { generation: object.generation, fields: object.fields } : null)),
-        constants: sub.constants,
+        constants: sub.constants, ...(uniform ? { uniformBuffers: sub.uniformBuffers.map(banks => banks.map(storage)) } : {}),
         blend: sub.blend?.fields ?? null,
         rasterizer: sub.rasterizer?.fields ?? null, dsa: sub.dsa?.fields ?? null, viewport: sub.viewport, scissor: sub.scissor,
         blendColor: sub.blendColor, stencilRef: sub.stencilRef, defaults: sub.defaults });
@@ -833,6 +907,12 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         inputTypesFor(sub, shaders[0]).key === program.inputKey &&
         sub.constants.every((bank, stage) => bank === banks[stage]),
       "stale-draw", "Draw shader, program or constant-bank identity changed.");
+      if (uniform) {
+        require(zeroMask(sub, shaders[0], shaders[1]) === program.bufferZeroMask &&
+          sub.uniformBuffers.every((entries, stage) => entries.every((entry, slot) => entry === plan.uniformBanks[stage][slot])),
+        "stale-draw", "Original uniform bank or slot-zero variant changed.");
+        for (const range of plan.uniformRanges) unwrap(uniformAccess.validate(range.token));
+      }
     };
     const restore = (sub, plan = null, constantAttributes = null) => {
       check(); vertexLayout(sub);
@@ -910,6 +990,16 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           gl.bindBuffer(gl.UNIFORM_BUFFER, block.buffer); gl.bufferSubData(gl.UNIFORM_BUFFER, 0, block.data);
           gl.uniformBlockBinding(program.native, block.index, 0); gl.bindBufferBase(gl.UNIFORM_BUFFER, 0, block.buffer);
         }
+        if (uniform) for (const block of program.guestBlocks) {
+          const stage = block.stage === "vertex" ? 0 : 1, bank = sub.uniformBuffers[stage][block.slot];
+          const range = plan?.uniformRanges.find(range => range.block === block);
+          gl.uniformBlockBinding(program.native, block.index, block.binding);
+          if (range) gl.bindBufferRange(gl.UNIFORM_BUFFER, block.binding, range.storage.buffer, range.offset, range.byteLength);
+          else if (bank) {
+            const owned = resolve(bank.lease);
+            gl.bindBufferRange(gl.UNIFORM_BUFFER, block.binding, owned.storage.buffer, bank.fields.offset, bank.fields.length);
+          } else if (!block.referenced) gl.bindBufferRange(gl.UNIFORM_BUFFER, block.binding, unusedUniformBuffer, 0, block.byteLength);
+        }
         for (const upload of uploads) {
           const uniform = upload.uniform, words = new Uint32Array(upload.words);
           gl.uniform4uiv(uniform.location, words);
@@ -975,7 +1065,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       check();
       return stateKey;
     };
-    const prepareDraw = (ctx, sub, command, submission) => {
+    const prepareDraw = (ctx, sub, command, submission, job = null) => {
       const fields = command.fields;
       // VirGL1.3 uses zero to select an ordinary draw, still with one instance.
       const instances = standard ? Math.max(1, fields.instanceCount) : 1;
@@ -1022,9 +1112,25 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         "out-of-bounds", "Index draw range exceeds retained storage.");
       const indexByteLength = index ? fields.count * indexSize : 0;
       const constants = attributes.filter(({ buffer }) => buffer.fields.stride === 0);
+      const uniformBanks = uniform ? sub.uniformBuffers.map(entries => Object.freeze([...entries])) : null, uniformRanges = [];
+      if (uniform) {
+        try {
+          for (const block of program.guestBlocks) {
+            const bank = uniformBanks[block.stage === "vertex" ? 0 : 1][block.slot];
+            require(bank || !block.referenced, "incomplete-draw", "Drawing requires every referenced original uniform bank.");
+            if (!bank) continue;
+            require(bank.fields.length >= block.byteLength, "out-of-bounds", "Original uniform range is shorter than the reflected block.");
+            const range = unwrap(uniformAccess.capture(bank.lease, bank.fields.offset, bank.fields.length));
+            uniformRanges.push({ ...range, block }); job.pendingUniformRanges.add(range.token);
+          }
+        } catch (error) {
+          for (const range of uniformRanges) { job.pendingUniformRanges.delete(range.token); unwrap(uniformAccess.release(range.token)); }
+          throw error;
+        }
+      }
       return Object.freeze({ ctx, sub, command, fields, instances, vertexWork: fields.count * instances,
         surface, attributes, constants, index, indexStorage, indexOffset, indexSize, indexByteLength,
-        program, shaders, banks, uploads });
+        program, shaders, banks, uploads, ...(uniform ? { uniformBanks, uniformRanges: Object.freeze(uniformRanges) } : {}) });
     };
     const issueDraw = (plan, bytes, submission, constantAttributes = null, job = null) => {
       const { ctx, sub, command, fields, instances, vertexWork, surface, attributes, indexStorage, indexOffset, indexSize, indexByteLength } = plan;
@@ -1131,6 +1237,14 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer);
           gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, words, gl.STREAM_DRAW); check();
         }
+        if (uniform) {
+          for (const range of plan.uniformRanges) unwrap(uniformAccess.validate(range.token));
+          for (const range of plan.uniformRanges) {
+            unwrap(uniformAccess.submit(range.token)); job.pendingUniformRanges.delete(range.token);
+            if (job.uniformHolds.has(range.generation)) unwrap(uniformAccess.release(range.token));
+            else job.uniformHolds.set(range.generation, range.token);
+          }
+        }
         if (nativeIndexed) {
           if (instances > 1) gl.drawElementsInstanced(mode, nativeCount, indexType, nativeIndexOffset, instances);
           else gl.drawElements(mode, nativeCount, indexType, nativeIndexOffset);
@@ -1159,7 +1273,10 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         vertexFetches, framebuffer: { resourceId: surface.metadata.id, resourceGeneration: surface.generation,
           width: surface.metadata.width, height: surface.metadata.height,
           depthResourceId: sub.depthSurface?.metadata.id ?? null, depthResourceGeneration: sub.depthSurface?.resourceGeneration ?? null },
-        vertexShader: ref(sub.shaders[0]), fragmentShader: ref(sub.shaders[1]) });
+        vertexShader: ref(sub.shaders[0]), fragmentShader: ref(sub.shaders[1]),
+        ...(uniform ? { bufferZeroMask: plan.program.bufferZeroMask, uniformRanges: plan.uniformRanges.map(range => ({
+          stage: range.block.stage, slot: range.block.slot, binding: range.block.binding,
+          resourceId: range.metadata.id, resourceGeneration: range.generation, offset: range.offset, length: range.byteLength })) } : {}) });
       if (activeFrame) {
         if (!activeFrame.programs.some(entry => entry.generation === plan.program.generation)) appendFrame("programs", {
           generation: plan.program.generation, key: plan.program.key, hash: hashKey(plan.program.key),
@@ -1220,7 +1337,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           try {
             for (const value of fields.buffers) {
               if (value.resourceHandle === 0) { require(value.stride === 0 && value.offset === 0, "invalid-state", "Unbound vertex buffer fields must be zero."); buffers.push(null); continue; }
-              const binding = retain(ctx, value.resourceHandle, "vertex", "vertex-buffer"); buffers.push({ ...binding, fields: value });
+              const binding = retain(ctx, value.resourceHandle, "vertex", uniform ? ["vertex-buffer", "uniform-buffer"] : "vertex-buffer"); buffers.push({ ...binding, fields: value });
               require(value.offset <= binding.metadata.byteLength && value.stride <= 255 &&
                 (standard || value.stride % 4 === 0 && value.offset % 4 === 0), "out-of-bounds", "Invalid vertex buffer range/stride.");
             }
@@ -1266,12 +1383,30 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           if (sub.indexBuffer) release(sub.indexBuffer.lease); sub.indexBuffer = value; break;
         }
         case 12:
+          if (uniform && fields.stage <= 1 && fields.index <= 12) {
+            const old = sub.uniformBuffers[fields.stage][fields.index];
+            if (old) release(old.lease); sub.uniformBuffers[fields.stage][fields.index] = null;
+          }
           if (fields.stage <= 1 && fields.index === 0) sub.constants[fields.stage] = fields.words;
           else sub.resets[`${command.name}:${fields.stage}:${fields.index}`] = fields;
           break;
         case 13: sub.stencilRef = fields; break;
         case 14: sub.blendColor = fields.color; break;
         case 15: if (fields.scissors.length) sub.scissor = fields.scissors[0]; break;
+        case 27: {
+          require(uniform, "unsupported-command", "Uniform bindings require explicit host selection.");
+          if (fields.stage > 1 || fields.index > 12) { sub.resets[`${command.name}:${fields.stage}:${fields.index}`] = fields; break; }
+          let value = null;
+          if (fields.resourceHandle) {
+            value = { ...retain(ctx, fields.resourceHandle, "uniform", ["vertex-buffer", "uniform-buffer"]), fields };
+            try {
+              require(fields.offset % uniformHost.alignment === 0 && fields.offset <= value.metadata.byteLength &&
+                fields.length <= value.metadata.byteLength - fields.offset, "out-of-bounds", "Original uniform buffer range or native alignment is invalid.");
+            } catch (error) { release(value.lease); throw error; }
+          }
+          const old = sub.uniformBuffers[fields.stage][fields.index];
+          if (old) release(old.lease); sub.uniformBuffers[fields.stage][fields.index] = value; break;
+        }
         case 28:
           require(ctx.subs.has(fields.subContextId), "missing-subcontext", "Subcontext is not live."); ctx.current = fields.subContextId; break;
         case 29:
@@ -1310,7 +1445,9 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         vertexBuffers: sub.vertexBuffers.map((buffer) => buffer ? { ...buffer.fields, resourceGeneration: buffer.resourceGeneration } : null),
         indexBuffer: sub.indexBuffer ? { ...sub.indexBuffer.fields, resourceGeneration: sub.indexBuffer.resourceGeneration } : null,
         samplerViews: sub.views.map((slots) => slots.map(ref)), samplerStates: sub.samplers.map((slots) => slots.map(ref)),
-        constants: sub.constants.map((words) => [...words]), viewport: sub.viewport, scissor: sub.scissor, blendColor: [...sub.blendColor],
+        constants: sub.constants.map((words) => [...words]),
+        ...(uniform ? { uniformBuffers: sub.uniformBuffers.map(entries => entries.map(bank => bank ?
+          { ...bank.fields, resourceGeneration: bank.resourceGeneration } : null)) } : {}), viewport: sub.viewport, scissor: sub.scissor, blendColor: [...sub.blendColor],
         stencilRef: { ...sub.stencilRef }, framebufferDefaults: { ...sub.defaults } },
       programs: [...sub.programs.values()].map((program) => ({ vertexHandle: program.vertex.handle, fragmentHandle: program.fragment.handle,
         vertexGeneration: program.vertex.generation, fragmentGeneration: program.fragment.generation,
@@ -1323,7 +1460,16 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         if (pending.reads) for (const read of pending.reads) unwrap(asyncAccess.release(read.ticket));
         else unwrap(asyncAccess.release(pending.ticket));
       }
+      if (uniform) {
+        for (const token of job.pendingUniformRanges) unwrap(uniformAccess.release(token));
+        job.pendingUniformRanges.clear();
+      }
       job.request = null;
+    };
+    const releaseUniformHolds = job => {
+      if (!uniform) return;
+      for (const token of job.uniformHolds.values()) unwrap(uniformAccess.release(token));
+      job.uniformHolds.clear();
     };
     const releaseNormalizedIndices = (job) => {
       for (const buffer of job.normalizedIndices) gl.deleteBuffer(buffer);
@@ -1335,6 +1481,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
     };
     const validateJob = (job) => {
       require(context(job.ctx.id) === job.ctx, "stale-context", "Renderer context identity changed.");
+      if (uniform) for (const token of job.pendingUniformRanges) unwrap(uniformAccess.validate(token));
       if (job.pending) {
         require(job.ctx.subs.get(job.pending.sub.id) === job.pending.sub && job.ctx.current === job.pending.sub.id,
           "stale-context", "Renderer subcontext identity changed.");
@@ -1356,7 +1503,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       ...(job.request ? { request: job.request } : {}) });
     const finishJob = (job, gpuComplete) => {
       releaseJobAccess(job);
-      releaseNormalizedIndices(job);
+      releaseNormalizedIndices(job); releaseUniformHolds(job);
       if (job.sync) { gl.deleteSync(job.sync); job.sync = null; }
       activeJob = null;
       const extra = { appliedCommands: job.index, draws: job.submission.draws, gpuComplete };
@@ -1452,7 +1599,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           if (job.command.opcode === 8) {
             // Planning may link a program, so account for even a failed prefix.
             job.serial++;
-            const plan = prepareDraw(job.ctx, sub, job.command, job.submission);
+            const plan = prepareDraw(job.ctx, sub, job.command, job.submission, job);
             if (plan.constants.length) {
               const reads = plan.constants.map(({ attribute, element, buffer }) => ({
                 lease: buffer.lease, attributeIndex: attribute.index, sourceFormat: element.sourceFormat,
@@ -1572,7 +1719,8 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
             outputBytes: activeJob?.request?.bytes?.byteLength ?? 0,
             reads: asyncAccess.inspect().reads, transfers: asyncAccess.inspect().transfers, stagingBytes: asyncAccess.inspect().stagingBytes,
             ...(standard ? { normalizedBuffers: activeJob?.normalizedIndices.length ?? 0,
-              normalizedBytes: activeJob?.normalizedBytes ?? 0, normalizationScratchBytes: activeJob?.normalizationScratchBytes ?? 0 } : {}) } } : {}),
+              normalizedBytes: activeJob?.normalizedBytes ?? 0, normalizationScratchBytes: activeJob?.normalizationScratchBytes ?? 0,
+              ...(uniform ? { uniformPending: activeJob?.pendingUniformRanges.size ?? 0, uniformHolds: activeJob?.uniformHolds.size ?? 0 } : {}) } : {}) } } : {}),
           budgets: { contexts: contexts.size, subContexts: subCount, objects: objects.size, programs: programs.size,
             shaders: [...objects].filter((o) => o.type === 4).length, samplers: [...objects].filter((o) => o.type === 7).length,
             leases: leaseCount, shaderBytes, uniformBytes,
@@ -1585,10 +1733,11 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         if (activeJob) {
           recordOutcome(activeJob.sequence, failure(new StateFault("cancelled", "Renderer disposed."), {
             appliedCommands: activeJob.index, draws: activeJob.submission.draws, gpuComplete: false }));
-          work.failedSubmissions++; releaseJobAccess(activeJob); releaseNormalizedIndices(activeJob);
+          work.failedSubmissions++; releaseJobAccess(activeJob); releaseNormalizedIndices(activeJob); releaseUniformHolds(activeJob);
           if (activeJob.sync) gl.deleteSync(activeJob.sync); activeJob = null;
         }
         for (const ctx of contexts.values()) for (const sub of ctx.subs.values()) disposeSub(sub);
+        if (unusedUniformBuffer) { gl.deleteBuffer(unusedUniformBuffer); unusedUniformBuffer = null; uniformBytes -= 16384; }
         contexts.clear(); activeFrame = null; lastFrame = null; debugBytes = 0; disposed = true; return success();
       }); },
     };
@@ -1615,7 +1764,8 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
             activeJob = { token, ctx, sequence, commands: decoded.commands, byteLength: decoded.byteLength, index: 0,
               command: null, submission: { draws: [], indices: 0 }, phase: "ready", pending: null, request: null,
               error: null, serial: 0, completedSerial: -1, hadFence: false, sync: null,
-              normalizedIndices: [], normalizedBytes: 0, normalizationScratchBytes: 0 };
+              normalizedIndices: [], normalizedBytes: 0, normalizationScratchBytes: 0,
+              ...(uniform ? { pendingUniformRanges: new Set(), uniformHolds: new Map() } : {}) };
             return success({ job: token, profile, byteLength: decoded.byteLength, commandCount: decoded.commands.length });
             } catch (error) {
               const rejected = failure(error); work.failedSubmissions++; recordOutcome(sequence, rejected); return rejected;
