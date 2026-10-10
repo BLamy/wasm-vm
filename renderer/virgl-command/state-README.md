@@ -257,3 +257,10 @@ index read supplies a bounded private u32 stream through the established
 normalization path. Original index values and restart/assembly semantics survive;
 the draw job owns and drains every private stream. This facet has no persistent
 CPU buffer shadow and does not advertise production capabilities.
+The host-selected standard facets preserve original core sampler address modes
+REPEAT/CLAMP_TO_EDGE/MIRROR_REPEAT, both image filters, all three mip-filter enums,
+finite signed LOD limits and inactive raw border/compare fields. Native sampler
+parameters use the pinned Gallium mapping. Reversed LOD limits have undefined
+sampling under GLES; their parameter values are preserved. Texture storage is
+still the proven single-level 2D profile, and shadow/border/anisotropy/nonzero LOD
+bias remain gated. Legacy finite admissions and native parameter shape stay intact.
