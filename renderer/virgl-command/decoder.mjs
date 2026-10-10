@@ -246,7 +246,8 @@ function decodeObject(p, objectType) {
         const start = 2 + index * 4;
         const sourceOffset = p.u(start), instanceDivisor = p.u(start + 1), vertexBufferIndex = p.u(start + 2), sourceFormat = p.u(start + 3);
         p.require(vertexBufferIndex < LIMITS.vertexBuffers, "limit-exceeded", "Vertex buffer index exceeds profile limit.");
-        p.require(instanceDivisor === 0 && [28, 29, 30, 31].includes(sourceFormat), "unsupported-feature", "Only per-vertex R32 through RGBA32_FLOAT elements are supported.");
+        p.require((p.standard || instanceDivisor === 0) && [28, 29, 30, 31].includes(sourceFormat), "unsupported-feature",
+          p.standard ? "Only R32 through RGBA32_FLOAT elements are supported." : "Only per-vertex R32 through RGBA32_FLOAT elements are supported.");
         p.require(sourceOffset % 4 === 0 && sourceOffset <= MAX_U32 - (sourceFormat - 27) * 4,
           "invalid-value", "Vertex element offset must be float-aligned and its end must fit u32.");
         return { sourceOffset, instanceDivisor, vertexBufferIndex, sourceFormat };
@@ -359,9 +360,10 @@ function decodeFields(p, objectType) {
       const fields = { start: p.u(1), count: p.u(2), mode: p.u(3), indexed: p.boolean(4), instanceCount: p.u(5),
         indexBias: p.i(6), startInstance: p.u(7), primitiveRestart: p.boolean(8), restartIndex: p.u(9),
         minIndex: p.u(10), maxIndex: p.u(11), countFromStreamOutput: p.u(12) };
-      p.require([4, 5].includes(fields.mode) && fields.instanceCount === 1 && fields.indexBias === 0 &&
+      p.require([4, 5].includes(fields.mode) && (p.standard || fields.instanceCount === 1) && fields.indexBias === 0 &&
         fields.startInstance === 0 && !fields.primitiveRestart && fields.restartIndex === 0 && fields.countFromStreamOutput === 0,
-      "unsupported-feature", "Only ordinary triangles/strips without instancing, restart or stream output are supported.");
+      "unsupported-feature", p.standard ? "Only triangles/strips without base offsets, restart or stream output are supported." :
+        "Only ordinary triangles/strips without instancing, restart or stream output are supported.");
       p.require(fields.start <= MAX_U32 - fields.count && fields.minIndex <= fields.maxIndex,
         "invalid-value", "Invalid draw count/index range.");
       return fields;
@@ -377,7 +379,8 @@ function decodeFields(p, objectType) {
       }
       p.handle(1);
       const indexSize = p.u(2), offset = p.u(3);
-      p.require(indexSize === 2, "unsupported-feature", "Only u16 index buffers are supported.");
+      p.require((p.standard ? [1, 2, 4] : [2]).includes(indexSize), "unsupported-feature",
+        p.standard ? "Only u8/u16/u32 index buffers are supported." : "Only u16 index buffers are supported.");
       p.require(offset % indexSize === 0, "invalid-value", "Index buffer offset must be aligned.");
       return { resourceHandle, indexSize, offset };
     }

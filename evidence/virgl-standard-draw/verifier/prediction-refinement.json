@@ -1,0 +1,46 @@
+{
+  "prediction": "P11-novel",
+  "beforeNewRun": true,
+  "reason": "Exercise stated component width boundary with R32_FLOAT IN1, preserving distinct divisors0/3/5 and wide indices. Root suggestion received before novel run.",
+  "seed": 3833342609,
+  "instances": 7,
+  "indexOffset": 20,
+  "ids": [
+    65557,
+    65558,
+    65559,
+    65560
+  ],
+  "formats": [
+    31,
+    28,
+    31
+  ],
+  "divisors": [
+    0,
+    3,
+    5
+  ],
+  "expectedRequiredEnds": [
+    1049008,
+    68,
+    64
+  ],
+  "expectedVertexWork": 28,
+  "expectedIndexBytes": 16,
+  "calibration": {
+    "label": "critic-divisor-pixel-oracle",
+    "divisors": [
+      0,
+      2,
+      5
+    ],
+    "expectedRequiredEnds": [
+      1049008,
+      84,
+      64
+    ],
+    "mutation": "actual native divisor2=>1 completes draw but fails named physical oracle"
+  },
+  "largeMultiplication": "Literal u32-max count and instance count reject limit-exceeded before any draw without a huge backing allocation"
+}

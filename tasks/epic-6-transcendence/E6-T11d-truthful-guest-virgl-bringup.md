@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5]
-blocked_on: E6-T11d5
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6]
+blocked_on: E6-T11d6
 estimate: S
 risk: high
 capstone: false
@@ -146,3 +146,22 @@ raw-word decoder. It executes full original compositor bodies through renderer
 jobs and preserves old exact/private facets. It does not qualify the full API or
 enable the production device. The user's instruction continues this graphics
 chain; actual guest Mesa initialization, API gaps and scanout remain later gates.
+
+### 2026-10-10 — worker — standard bindings verified; draw prerequisite
+
+E6-T11d5 is independently verified at
+`761a912a88823954e3424f7b003c15887e7c9034`. The next actual decoder
+readiness probe still rejects instance counts above one, positive element
+divisors, and u32 index bindings. The unchanged decoder digest and literal
+negative packets are in
+`evidence/virgl-production-readiness/standard-draw-gap.json`; decode each
+`packetHex` with `decodeStandardSubmission` to reproduce. The same file pins
+Mesa26.2.2's encoder and unconditional instance-ID/divisor promises.
+
+Ordered S prerequisite E6-T11d6 implements this one vertex-fetch boundary,
+including actual wide-index and per-instance bounds, restore and native calls.
+The explicit user request to finish production guest graphics keeps this
+graphics chain ahead of unrelated general-queue work. Other core topology,
+constant-stride, restart, storage and framebuffer/API gates remain ordered
+successors. No positive production capability or guest draw follows from this
+negative readiness observation.

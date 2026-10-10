@@ -179,6 +179,9 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
     };
     check();
     const maxAttributes = gl.getParameter(gl.MAX_VERTEX_ATTRIBS);
+    const maxElementIndex = standard ? gl.getParameter(gl.MAX_ELEMENT_INDEX) : null;
+    require(!standard || Number.isSafeInteger(maxElementIndex) && maxElementIndex >= 0 && maxElementIndex <= 0xffffffff,
+      "unsupported-host", "WebGL maximum element index must be a u32.");
     const maxUnits = gl.getParameter(gl.MAX_COMBINED_TEXTURE_IMAGE_UNITS);
     const stageSlots = [Math.min(16, gl.getParameter(gl.MAX_VERTEX_TEXTURE_IMAGE_UNITS)), Math.min(16, gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS))];
     const maxViewport = [...gl.getParameter(gl.MAX_VIEWPORT_DIMS)];
@@ -754,6 +757,9 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         if (!buffer) continue;
         gl.bindBuffer(gl.ARRAY_BUFFER, resolve(buffer.lease).storage.buffer);
         gl.vertexAttribPointer(attribute.location, vertexComponents(element), gl.FLOAT, false, buffer.fields.stride, buffer.fields.offset + element.sourceOffset);
+        // No admitted draw has an instance index >= the total-work ceiling.
+        // Larger wire divisors therefore have the identical constant-zero fetch.
+        if (standard) gl.vertexAttribDivisor(attribute.location, Math.min(element.instanceDivisor, DRAW_LIMITS.indicesPerSubmission));
         gl.enableVertexAttribArray(attribute.location);
       }
       gl.bindBuffer(gl.ARRAY_BUFFER, null);
@@ -838,9 +844,11 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
     };
     const prepareDraw = (ctx, sub, command, submission) => {
       const fields = command.fields;
+      // VirGL1.3 uses zero to select an ordinary draw, still with one instance.
+      const instances = standard ? Math.max(1, fields.instanceCount) : 1;
       require(fields.count > 0 && (fields.indexed ? fields.start === 0 : fields.start <= 0x7fffffff - fields.count),
         "unsupported-draw", "Draws must be nonempty; indexed start must be zero and array ranges must fit signed GL integers.");
-      require(submission.draws.length < drawLimits.drawsPerSubmission && fields.count <= drawLimits.indicesPerSubmission - submission.indices,
+      require(submission.draws.length < drawLimits.drawsPerSubmission && fields.count <= Math.floor((drawLimits.indicesPerSubmission - submission.indices) / instances),
         "limit-exceeded", "Submission draw or index budget exceeded.");
       require(sub.shaders.every(Boolean), "incomplete-draw", "Drawing requires both shader stages.");
       require(sub.surfaces[0] && sub.viewport && sub.vertexElements && (!fields.indexed || sub.indexBuffer),
@@ -876,46 +884,58 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       const index = fields.indexed ? sub.indexBuffer : null, indexStorage = index ? resolve(index.lease) : null, indexOffset = index?.fields.offset ?? 0;
       // Pinned indexed draws use the index-binding byte offset; DRAW.start is not
       // added to it. Subtraction proves the range before multiplying or reading.
-      require(!index || fields.count <= Math.floor((indexStorage.metadata.byteLength - indexOffset) / 2),
+      const indexSize = index?.fields.indexSize ?? 0;
+      require(!index || fields.count <= Math.floor((indexStorage.metadata.byteLength - indexOffset) / indexSize),
         "out-of-bounds", "Index draw range exceeds retained storage.");
-      const indexByteLength = index ? fields.count * 2 : 0;
-      return Object.freeze({ ctx, sub, command, fields, surface, attributes, index, indexStorage, indexOffset, indexByteLength,
+      const indexByteLength = index ? fields.count * indexSize : 0;
+      return Object.freeze({ ctx, sub, command, fields, instances, vertexWork: fields.count * instances,
+        surface, attributes, index, indexStorage, indexOffset, indexSize, indexByteLength,
         program, shaders, banks, uploads });
     };
     const issueDraw = (plan, bytes, submission) => {
-      const { ctx, sub, command, fields, surface, attributes, indexStorage, indexOffset, indexByteLength } = plan;
+      const { ctx, sub, command, fields, instances, vertexWork, surface, attributes, indexStorage, indexOffset, indexSize, indexByteLength } = plan;
       const indices = fields.indexed ? new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength) : null;
-      let actualMinIndex = fields.indexed ? 65535 : fields.start, actualMaxIndex = fields.indexed ? 0 : fields.start + fields.count - 1;
-      for (let offset = 0; offset < indexByteLength; offset += 2) {
-        const value = indices.getUint16(offset, true);
+      let actualMinIndex = fields.indexed ? 0xffffffff : fields.start, actualMaxIndex = fields.indexed ? 0 : fields.start + fields.count - 1;
+      for (let offset = 0; offset < indexByteLength; offset += indexSize) {
+        const value = indexSize === 1 ? indices.getUint8(offset) : indexSize === 2 ? indices.getUint16(offset, true) : indices.getUint32(offset, true);
         // WebGL2's fixed primitive restart is always enabled. The wire profile
-        // disables restart, so accepting ushort 0xffff would change semantics.
-        require(value !== 65535, "unsupported-draw", "Index 0xffff requires unsupported primitive-restart lowering.");
+        // disables restart, so each index type's sentinel needs later lowering.
+        require(value !== 2 ** (indexSize * 8) - 1, "unsupported-draw", standard ?
+          "Fixed restart index requires unsupported primitive-restart lowering." : "Index 0xffff requires unsupported primitive-restart lowering.");
         actualMinIndex = Math.min(actualMinIndex, value); actualMaxIndex = Math.max(actualMaxIndex, value);
       }
+      require(!standard || actualMaxIndex <= maxElementIndex, "unsupported-draw", "Actual vertex index exceeds the native maximum element index.");
       const vertexFetches = attributes.map(({ attribute, element, buffer }) => {
         const offset = buffer.fields.offset + element.sourceOffset, stride = buffer.fields.stride;
         const elementBytes = vertexComponents(element) * 4;
+        const divisor = element.instanceDivisor;
+        const first = divisor ? 0 : actualMinIndex, last = divisor ? Math.floor((instances - 1) / divisor) : actualMaxIndex;
         // vertexLayout proved that the first complete element fits. Bound
         // the largest actual fetch with division, independent of wire hints.
-        require(actualMaxIndex <= Math.floor((buffer.metadata.byteLength - offset - elementBytes) / stride),
+        require(last <= Math.floor((buffer.metadata.byteLength - offset - elementBytes) / stride),
           "out-of-bounds", "An actual vertex fetch exceeds retained storage.");
         return { attributeIndex: attribute.index, location: attribute.location,
           resourceId: buffer.metadata.id, resourceGeneration: buffer.resourceGeneration,
-          stride, offset, components: vertexComponents(element), firstByte: offset + actualMinIndex * stride, requiredEnd: offset + actualMaxIndex * stride + elementBytes };
+          stride, offset, components: vertexComponents(element), firstByte: offset + first * stride, requiredEnd: offset + last * stride + elementBytes,
+          ...(standard ? { divisor, nativeDivisor: Math.min(divisor, DRAW_LIMITS.indicesPerSubmission), firstElement: first, lastElement: last } : {}) };
       });
       // readStorage changes copy/pixel bindings. Restore every supported binding
       // after its synchronous GPU read, immediately before issuing the real draw.
       const stateKey = restore(sub, plan);
       const mode = fields.mode === 5 ? gl.TRIANGLE_STRIP : gl.TRIANGLES;
-      if (fields.indexed) gl.drawElements(mode, fields.count, gl.UNSIGNED_SHORT, indexOffset);
+      const indexType = indexSize === 1 ? gl.UNSIGNED_BYTE : indexSize === 2 ? gl.UNSIGNED_SHORT : gl.UNSIGNED_INT;
+      if (fields.indexed) {
+        if (instances > 1) gl.drawElementsInstanced(mode, fields.count, indexType, indexOffset, instances);
+        else gl.drawElements(mode, fields.count, indexType, indexOffset);
+      } else if (instances > 1) gl.drawArraysInstanced(mode, fields.start, fields.count, instances);
       else gl.drawArrays(mode, fields.start, fields.count);
       work.drawCalls++;
       check();
       work.draws++;
-      submission.indices += fields.count;
+      submission.indices += vertexWork;
       submission.draws.push({ byteOffset: command.byteOffset, opcode: 8, count: fields.count, indexed: fields.indexed, mode: fields.mode, start: fields.start,
         indexOffset, indexByteLength, actualMinIndex, actualMaxIndex,
+        ...(standard ? { instanceCount: fields.instanceCount, effectiveInstances: instances, vertexWork, indexSize } : {}),
         contextId: ctx.id, contextGeneration: ctx.generation, subContextId: sub.id, subContextGeneration: sub.generation,
         indexResourceId: indexStorage?.metadata.id ?? null, indexResourceGeneration: indexStorage?.generation ?? null,
         vertexFetches, framebuffer: { resourceId: surface.metadata.id, resourceGeneration: surface.generation,
