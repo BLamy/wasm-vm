@@ -1,0 +1,16 @@
+{
+  "schema": "virgl-standard-primitive-restart-seal-v1",
+  "task": "E6-T11d9",
+  "sourceHead": "ef30bcccb02f006a72da6c4796134b9c780a828d",
+  "records": 6862,
+  "archiveSha256": "bc713cc04fc443130c36a98abcd87586d4df52fad6ff2ffea16416b7ed618764",
+  "archiveBytes": 14118238,
+  "recordIndexSha256": "3508f8a5acec1ed9ee54ed54e3ab886f37d9ee4083fd3ad3b8c08f74fa4ce779",
+  "hotReceiptSha256": "ce10ae383776b80c94366ebc167e8e41d6e40ffdf6294e77167e89269da2417a",
+  "coldReportSha256": "99f3be9267d5ad3947aced666fb3ec7ce62ccc0fd3b8602dc9bd02c22090cdd8",
+  "coldReceiptSha256": "8914cdf8ecad9443310a7077752a48761f93e76f12bfdc6c8630185e18eacdde",
+  "guestExecution": false,
+  "portableDomainCertified": false,
+  "authority": "isolated-standard-primitive-restart",
+  "productionDrawAuthority": false
+}

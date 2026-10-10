@@ -900,33 +900,46 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         surface, attributes, constants, index, indexStorage, indexOffset, indexSize, indexByteLength,
         program, shaders, banks, uploads });
     };
-    const issueDraw = (plan, bytes, submission, constantAttributes = null) => {
+    const issueDraw = (plan, bytes, submission, constantAttributes = null, job = null) => {
       const { ctx, sub, command, fields, instances, vertexWork, surface, attributes, indexStorage, indexOffset, indexSize, indexByteLength } = plan;
       const indices = fields.indexed ? new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength) : null;
       let actualMinIndex = fields.indexed ? 0xffffffff : fields.start, actualMaxIndex = fields.indexed ? 0 : fields.start + fields.count - 1;
+      let validIndexCount = fields.indexed ? 0 : fields.count, restartCount = 0, normalize = false;
+      const fixedRestart = 2 ** (indexSize * 8) - 1;
       for (let offset = 0; offset < indexByteLength; offset += indexSize) {
         const value = indexSize === 1 ? indices.getUint8(offset) : indexSize === 2 ? indices.getUint16(offset, true) : indices.getUint32(offset, true);
-        // WebGL2's fixed primitive restart is always enabled. The wire profile
-        // disables restart, so each index type's sentinel needs later lowering.
-        require(value !== 2 ** (indexSize * 8) - 1, "unsupported-draw", standard ?
-          "Fixed restart index requires unsupported primitive-restart lowering." : "Index 0xffff requires unsupported primitive-restart lowering.");
+        if (standard && fields.primitiveRestart && value === fields.restartIndex) {
+          restartCount++; normalize ||= value !== fixedRestart; continue;
+        }
+        require(standard || value !== fixedRestart, "unsupported-draw", "Index 0xffff requires unsupported primitive-restart lowering.");
+        // A nonrestart u32 sentinel cannot be preserved by widening. Smaller
+        // sentinels remain real vertex IDs in a private native u32 stream.
+        require(!standard || value !== 0xffffffff && value <= maxElementIndex,
+          "unsupported-draw", "Actual vertex index exceeds the native maximum element index.");
+        normalize ||= standard && value === fixedRestart;
+        validIndexCount++;
         actualMinIndex = Math.min(actualMinIndex, value); actualMaxIndex = Math.max(actualMaxIndex, value);
       }
-      require(!standard || actualMaxIndex <= maxElementIndex, "unsupported-draw", "Actual vertex index exceeds the native maximum element index.");
+      const empty = validIndexCount === 0;
+      if (empty) { actualMinIndex = null; actualMaxIndex = null; }
+      require(!standard || empty || actualMaxIndex <= maxElementIndex,
+        "unsupported-draw", "Actual vertex index exceeds the native maximum element index.");
       const vertexFetches = attributes.map(({ attribute, element, buffer }) => {
         const offset = buffer.fields.offset + element.sourceOffset, stride = buffer.fields.stride;
         const elementBytes = vertexComponents(element) * 4;
         const divisor = element.instanceDivisor;
         const constant = stride === 0;
-        const first = constant || divisor ? 0 : actualMinIndex, last = constant ? 0 : divisor ? Math.floor((instances - 1) / divisor) : actualMaxIndex;
+        const first = empty ? null : constant || divisor ? 0 : actualMinIndex,
+          last = empty ? null : constant ? 0 : divisor ? Math.floor((instances - 1) / divisor) : actualMaxIndex;
         // vertexLayout proved that the first complete element fits. Bound
         // the largest actual fetch with division, independent of wire hints.
-        require(constant || last <= Math.floor((buffer.metadata.byteLength - offset - elementBytes) / stride),
+        require(empty || constant || last <= Math.floor((buffer.metadata.byteLength - offset - elementBytes) / stride),
           "out-of-bounds", "An actual vertex fetch exceeds retained storage.");
         return { attributeIndex: attribute.index, location: attribute.location,
           resourceId: buffer.metadata.id, resourceGeneration: buffer.resourceGeneration,
-          stride, offset, components: vertexComponents(element), firstByte: offset + first * stride, requiredEnd: offset + last * stride + elementBytes,
+          stride, offset, components: vertexComponents(element), firstByte: empty ? null : offset + first * stride, requiredEnd: empty ? null : offset + last * stride + elementBytes,
           ...(standard ? { divisor, nativeDivisor: constant ? 0 : Math.min(divisor, DRAW_LIMITS.indicesPerSubmission), firstElement: first, lastElement: last,
+            ...(empty ? { fetchEmpty: true } : {}),
             ...(constant ? { constant: true, componentWords: constantAttributes.get(attribute.index).words,
               genericValues: [...constantAttributes.get(attribute.index).values] } : {}) } : {}) };
       });
@@ -934,19 +947,50 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       // after its synchronous GPU read, immediately before issuing the real draw.
       const stateKey = restore(sub, plan, constantAttributes);
       const mode = gl[DRAW_MODES[fields.mode]];
-      const indexType = indexSize === 1 ? gl.UNSIGNED_BYTE : indexSize === 2 ? gl.UNSIGNED_SHORT : gl.UNSIGNED_INT;
-      if (fields.indexed) {
-        if (instances > 1) gl.drawElementsInstanced(mode, fields.count, indexType, indexOffset, instances);
-        else gl.drawElements(mode, fields.count, indexType, indexOffset);
-      } else if (instances > 1) gl.drawArraysInstanced(mode, fields.start, fields.count, instances);
-      else gl.drawArrays(mode, fields.start, fields.count);
+      const nativeIndexSize = normalize ? 4 : indexSize, nativeIndexOffset = normalize ? 0 : indexOffset;
+      const indexType = nativeIndexSize === 1 ? gl.UNSIGNED_BYTE : nativeIndexSize === 2 ? gl.UNSIGNED_SHORT : gl.UNSIGNED_INT;
+      try {
+        if (normalize) {
+          const byteLength = fields.count * 4;
+          require(standard && job && job.normalizedIndices.length < drawLimits.drawsPerSubmission &&
+            byteLength <= drawLimits.indicesPerSubmission * 4 - job.normalizedBytes,
+          "limit-exceeded", "Owned normalized index budget exceeded.");
+          job.normalizationScratchBytes = byteLength;
+          const words = new Uint32Array(fields.count);
+          for (let i = 0; i < words.length; i++) {
+            const offset = i * indexSize, value = indexSize === 1 ? indices.getUint8(offset) : indexSize === 2 ? indices.getUint16(offset, true) : indices.getUint32(offset, true);
+            words[i] = fields.primitiveRestart && value === fields.restartIndex ? 0xffffffff : value;
+          }
+          const buffer = gl.createBuffer();
+          require(buffer, "backend-error", "Normalized index buffer allocation failed.");
+          // Own before upload/check: even a partial native allocation drains
+          // with the job. The work ceiling bounds all retained streams.
+          job.normalizedIndices.push(buffer); job.normalizedBytes += byteLength;
+          gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer);
+          gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, words, gl.STREAM_DRAW); check();
+        }
+        if (fields.indexed) {
+          if (instances > 1) gl.drawElementsInstanced(mode, fields.count, indexType, nativeIndexOffset, instances);
+          else gl.drawElements(mode, fields.count, indexType, nativeIndexOffset);
+        } else if (instances > 1) gl.drawArraysInstanced(mode, fields.start, fields.count, instances);
+        else gl.drawArrays(mode, fields.start, fields.count);
+      } finally {
+        if (normalize) {
+          job.normalizationScratchBytes = 0;
+          // Detach from the VAO before any yield; native storage remains owned
+          // until the job's final completion/drain or explicit disposal.
+          gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexStorage.storage.buffer);
+        }
+      }
       work.drawCalls++;
       check();
       work.draws++;
       submission.indices += vertexWork;
       submission.draws.push({ byteOffset: command.byteOffset, opcode: 8, count: fields.count, indexed: fields.indexed, mode: fields.mode, start: fields.start,
         indexOffset, indexByteLength, actualMinIndex, actualMaxIndex,
-        ...(standard ? { instanceCount: fields.instanceCount, effectiveInstances: instances, vertexWork, indexSize } : {}),
+        ...(standard ? { instanceCount: fields.instanceCount, effectiveInstances: instances, vertexWork, indexSize,
+          primitiveRestart: fields.primitiveRestart, restartIndex: fields.restartIndex, validIndexCount, restartCount,
+          normalizedIndices: normalize, nativeIndexSize, nativeIndexOffset, normalizedIndexBytes: normalize ? fields.count * 4 : 0 } : {}),
         contextId: ctx.id, contextGeneration: ctx.generation, subContextId: sub.id, subContextGeneration: sub.generation,
         indexResourceId: indexStorage?.metadata.id ?? null, indexResourceGeneration: indexStorage?.generation ?? null,
         vertexFetches, framebuffer: { resourceId: surface.metadata.id, resourceGeneration: surface.generation,
@@ -1117,6 +1161,10 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       }
       job.request = null;
     };
+    const releaseNormalizedIndices = (job) => {
+      for (const buffer of job.normalizedIndices) gl.deleteBuffer(buffer);
+      job.normalizedIndices.length = 0; job.normalizedBytes = 0; job.normalizationScratchBytes = 0;
+    };
     const getJob = (token) => {
       alive(); require(activeJob && activeJob.token === token, "invalid-job", "Unknown, completed or foreign renderer job.");
       return activeJob;
@@ -1144,6 +1192,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       ...(job.request ? { request: job.request } : {}) });
     const finishJob = (job, gpuComplete) => {
       releaseJobAccess(job);
+      releaseNormalizedIndices(job);
       if (job.sync) { gl.deleteSync(job.sync); job.sync = null; }
       activeJob = null;
       const extra = { appliedCommands: job.index, draws: job.submission.draws, gpuComplete };
@@ -1218,7 +1267,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           // Keep earlier collected tickets alive and revalidate the entire batch
           // in this task. A later read cannot hide a changed earlier source.
           validateJob(job);
-          job.serial++; issueDraw(job.pending.plan, indexBytes, job.submission, constantAttributes);
+          job.serial++; issueDraw(job.pending.plan, indexBytes, job.submission, constantAttributes, job);
           releaseJobAccess(job); advanceJob(job); budget--; job.phase = "ready";
         } else if (job.phase === "waiting-index" || job.phase === "waiting-transfer") {
           polling = true;
@@ -1231,7 +1280,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           }
           // No yield or public host callback separates the revision check and draw.
           unwrap(asyncAccess.validate(job.pending.ticket));
-          job.serial++; issueDraw(job.pending.plan, polled.bytes, job.submission);
+          job.serial++; issueDraw(job.pending.plan, polled.bytes, job.submission, null, job);
           releaseJobAccess(job); advanceJob(job); budget--; job.phase = "ready";
         } else if (job.phase === "upload-ready") {
           job.serial++; unwrap(asyncAccess.upload(job.pending.ticket));
@@ -1361,7 +1410,9 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
             draws: activeJob?.submission.draws.length ?? 0,
             inputBytes: activeJob?.phase === "upload-ready" ? activeJob.pending.layout.tightBytes : 0,
             outputBytes: activeJob?.request?.bytes?.byteLength ?? 0,
-            reads: asyncAccess.inspect().reads, transfers: asyncAccess.inspect().transfers, stagingBytes: asyncAccess.inspect().stagingBytes } } : {}),
+            reads: asyncAccess.inspect().reads, transfers: asyncAccess.inspect().transfers, stagingBytes: asyncAccess.inspect().stagingBytes,
+            ...(standard ? { normalizedBuffers: activeJob?.normalizedIndices.length ?? 0,
+              normalizedBytes: activeJob?.normalizedBytes ?? 0, normalizationScratchBytes: activeJob?.normalizationScratchBytes ?? 0 } : {}) } } : {}),
           budgets: { contexts: contexts.size, subContexts: subCount, objects: objects.size, programs: programs.size,
             shaders: [...objects].filter((o) => o.type === 4).length, samplers: [...objects].filter((o) => o.type === 7).length,
             leases: leaseCount, shaderBytes, uniformBytes,
@@ -1374,7 +1425,8 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         if (activeJob) {
           recordOutcome(activeJob.sequence, failure(new StateFault("cancelled", "Renderer disposed."), {
             appliedCommands: activeJob.index, draws: activeJob.submission.draws, gpuComplete: false }));
-          work.failedSubmissions++; releaseJobAccess(activeJob); if (activeJob.sync) gl.deleteSync(activeJob.sync); activeJob = null;
+          work.failedSubmissions++; releaseJobAccess(activeJob); releaseNormalizedIndices(activeJob);
+          if (activeJob.sync) gl.deleteSync(activeJob.sync); activeJob = null;
         }
         for (const ctx of contexts.values()) for (const sub of ctx.subs.values()) disposeSub(sub);
         contexts.clear(); activeFrame = null; lastFrame = null; debugBytes = 0; disposed = true; return success();
@@ -1402,7 +1454,8 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
             recordSubmission(id, bytes, decoded, sequence);
             activeJob = { token, ctx, sequence, commands: decoded.commands, byteLength: decoded.byteLength, index: 0,
               command: null, submission: { draws: [], indices: 0 }, phase: "ready", pending: null, request: null,
-              error: null, serial: 0, completedSerial: -1, hadFence: false, sync: null };
+              error: null, serial: 0, completedSerial: -1, hadFence: false, sync: null,
+              normalizedIndices: [], normalizedBytes: 0, normalizationScratchBytes: 0 };
             return success({ job: token, profile, byteLength: decoded.byteLength, commandCount: decoded.commands.length });
             } catch (error) {
               const rejected = failure(error); work.failedSubmissions++; recordOutcome(sequence, rejected); return rejected;

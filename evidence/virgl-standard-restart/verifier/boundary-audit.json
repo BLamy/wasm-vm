@@ -1,0 +1,125 @@
+{
+  "schema": "standard-restart-fresh-boundary-audit-v1",
+  "status": "passed",
+  "exactBounds": [
+    {
+      "prefix": "hot",
+      "label": "scratch-exact-one",
+      "nativeBuffers": 1,
+      "nativeBytes": 262144,
+      "draws": 1,
+      "sourceWork": 65536,
+      "point": "browserResult.result.ownership[0]",
+      "reportSha256": "eb24f3f682a7b7b18f9d97deacc7bad31f3ad3484680eef0fd8058186bffa1dd"
+    },
+    {
+      "prefix": "hot",
+      "label": "scratch-exact-64",
+      "nativeBuffers": 64,
+      "nativeBytes": 262144,
+      "draws": 64,
+      "sourceWork": 65536,
+      "point": "browserResult.result.ownership[1]",
+      "reportSha256": "eb24f3f682a7b7b18f9d97deacc7bad31f3ad3484680eef0fd8058186bffa1dd"
+    },
+    {
+      "prefix": "hot",
+      "label": "scratch-minus-one",
+      "nativeBuffers": 63,
+      "nativeBytes": 258048,
+      "draws": 63,
+      "sourceWork": 64512,
+      "point": "browserResult.result.ownership[2]",
+      "reportSha256": "eb24f3f682a7b7b18f9d97deacc7bad31f3ad3484680eef0fd8058186bffa1dd"
+    },
+    {
+      "prefix": "hot",
+      "label": "scratch-draw-65",
+      "nativeBuffers": 64,
+      "nativeBytes": 262144,
+      "draws": 64,
+      "sourceWork": 65536,
+      "point": "browserResult.result.ownership[3]",
+      "reportSha256": "eb24f3f682a7b7b18f9d97deacc7bad31f3ad3484680eef0fd8058186bffa1dd"
+    },
+    {
+      "prefix": "cold",
+      "label": "scratch-exact-one",
+      "nativeBuffers": 1,
+      "nativeBytes": 262144,
+      "draws": 1,
+      "sourceWork": 65536,
+      "point": "browserResult.result.ownership[0]",
+      "reportSha256": "1a9aaab32847eff5bda2079f19f8b4af3803f83b5809e55eb1eb2b920a52ec5a"
+    },
+    {
+      "prefix": "cold",
+      "label": "scratch-exact-64",
+      "nativeBuffers": 64,
+      "nativeBytes": 262144,
+      "draws": 64,
+      "sourceWork": 65536,
+      "point": "browserResult.result.ownership[1]",
+      "reportSha256": "1a9aaab32847eff5bda2079f19f8b4af3803f83b5809e55eb1eb2b920a52ec5a"
+    },
+    {
+      "prefix": "cold",
+      "label": "scratch-minus-one",
+      "nativeBuffers": 63,
+      "nativeBytes": 258048,
+      "draws": 63,
+      "sourceWork": 64512,
+      "point": "browserResult.result.ownership[2]",
+      "reportSha256": "1a9aaab32847eff5bda2079f19f8b4af3803f83b5809e55eb1eb2b920a52ec5a"
+    },
+    {
+      "prefix": "cold",
+      "label": "scratch-draw-65",
+      "nativeBuffers": 64,
+      "nativeBytes": 262144,
+      "draws": 64,
+      "sourceWork": 65536,
+      "point": "browserResult.result.ownership[3]",
+      "reportSha256": "1a9aaab32847eff5bda2079f19f8b4af3803f83b5809e55eb1eb2b920a52ec5a"
+    }
+  ],
+  "nodeBrowserLiteralMatrices": 2,
+  "workerSourceRejectionsPerRun": 8,
+  "workerPendingAttacksPerRun": 4,
+  "workerOwnershipScenariosPerRun": 11,
+  "freshFrames": 52,
+  "freshPixels": 51712,
+  "freshRuns": 59,
+  "freshActualYieldPoints": 2778,
+  "freshScheduleDelayValues": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "freshReportSha256": "25d55902c7ffc3bdb86e4f1a3c4d5055b1213500cee16e936f5f77eb9cbcb289",
+  "promotedFaultSha256": "2fc33b9b82476de845fe7d0bfc57c838be1f3c7e93187028f1a85bcacee5654f",
+  "promotedFaultFirstMiss": {
+    "x": 0,
+    "y": 3,
+    "expected": [
+      [
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "observed": [
+      58,
+      53,
+      41,
+      128
+    ],
+    "error": 128
+  },
+  "carryReason": "D6/D7/D8 historical HELD results retain original source/digest scopes. Changed D6 u8/u16 sentinel rejection authority is renewed by actual one-byte-short failures; new legal maximum behavior is proven by D9 full GPU bytes/pixels. No compiler/resource/cache/constant/link boundary changed; no provoking or production authority is granted."
+}

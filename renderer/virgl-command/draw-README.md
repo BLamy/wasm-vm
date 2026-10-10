@@ -200,3 +200,25 @@ fence but fails the named full-pixel oracle. Full D6/affected legacy and D7
 physical gates are retained once, with unchanged historical receipts carried
 rather than rewritten for this new mode boundary. This isolated factory still
 grants no positive production capabilities, guest/API/throughput or demo claim.
+
+The standard async facet also lowers explicit indexed primitive restart. Only
+matching original restart words are excluded from actual fetch bounds. Custom
+markers become native u32 fixed restart, and disabled-restart u8/u16 maximum
+vertices are widened without changing their vertex IDs. Already compatible
+streams keep the original native type and binding offset. Nonrestart u32max,
+nonindexed restart, base offsets and stream output remain explicit errors.
+
+Private normalized EBOs are detached from the guest VAO before a yield and
+retained through final job completion/drain or explicit disposal. The existing
+65536 source-work and 64-draw ceilings bound retained normalized storage to
+262144 bytes and 64 buffers. CPU normalization scratch is separately accounted
+and cannot cross a yield. Inspection exposes all three counters. All-restart
+streams report empty/null vertex bounds while charging original source work.
+
+`make verify-E6-T11d9` records original GPU bytes, physical normalized EBO bytes,
+actual native indexed calls, full pixels and private ownership through later
+reads/fences, allocation failures and disposal. Its shader guards clip W with
+the actual native vertex ID and the original position record's ID tag. This
+proves index preservation without relying on a browser's flat-line provoking
+vertex convention. Core provoking-vertex qualification, complete GLES, actual
+guest Mesa, production negotiation and performance remain outside this facet.

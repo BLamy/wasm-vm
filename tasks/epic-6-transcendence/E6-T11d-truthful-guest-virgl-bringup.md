@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8]
-blocked_on: E6-T11d8
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9]
+blocked_on: E6-T11d9
 estimate: S
 risk: high
 capstone: false
@@ -202,3 +202,17 @@ The user explicitly requested continuing through production graphics, so this
 ordered graphics chain remains ahead of unrelated queue work. Complete GLES3,
 typed capsets, actual guest initialization/offload and the demo remain later
 gates; this negative result grants none of their authority.
+
+### 2026-10-10 — worker — topology verified; restart normalization gap
+
+E6-T11d8 is independently verified at
+`bef7040804a1c71ad37112e35adcfebefbc4be21`. Every original restart packet in
+`evidence/virgl-production-readiness/standard-restart-gap.json` still rejects;
+decode its `packetHex` with `decodeStandardSubmission` to reproduce. The
+recorded decoder/state/compiler bytes are unchanged through the verdict.
+Mesa26.2.2 promises custom and fixed restart together through one capability
+bit, while WebGL2 always interprets the native type's maximum as fixed restart.
+Ordered S prerequisite E6-T11d9 lowers only actual owned index streams and
+preserves valid disabled-restart u8/u16 maximum vertices. The explicit request
+continues this graphics chain; complete API, typed caps, actual guest rendering
+and production deployment remain later gates.

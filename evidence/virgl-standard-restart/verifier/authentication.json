@@ -1,0 +1,58 @@
+{
+  "schema": "standard-restart-fresh-authentication-v1",
+  "status": "passed",
+  "records": 6862,
+  "archiveSha256": "bc713cc04fc443130c36a98abcd87586d4df52fad6ff2ffea16416b7ed618764",
+  "indexSha256": "3508f8a5acec1ed9ee54ed54e3ab886f37d9ee4083fd3ad3b8c08f74fa4ce779",
+  "sourcesAuthenticated": 726,
+  "generatedAuthenticated": 4,
+  "receiptFilesAuthenticated": 6854,
+  "sourceEquivalentDelta": [
+    "tools/virgl-command/standard-restart-receipt.py"
+  ],
+  "actualHotFullMake": "failed only in original receipt KeyError: bytes",
+  "actualHotPhysicalHead": "31e4b3ff907d36f54689513796927acc16b5fd62",
+  "actualFinalColdHead": "ef30bcccb02f006a72da6c4796134b9c780a828d",
+  "coldReport": {
+    "schema": 1,
+    "task": "E6-T11d9",
+    "gitHead": "ef30bcccb02f006a72da6c4796134b9c780a828d",
+    "clone": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-standard-restart-cold-r_4c3bae/wasm-vm",
+    "removedEnvironmentNames": [
+      "RUST_LOG"
+    ],
+    "command": [
+      "make",
+      "verify-E6-T11d9"
+    ],
+    "status": "passed",
+    "cloneHead": "ef30bcccb02f006a72da6c4796134b9c780a828d",
+    "statusBefore": "",
+    "exitCode": 0,
+    "statusAfter": "",
+    "receiptSha256": "8914cdf8ecad9443310a7077752a48761f93e76f12bfdc6c8630185e18eacdde",
+    "logSha256": "199e6c34660ffa86b23ef66c45613f1d33ad4bf869bb9b858f4606871cc21442"
+  },
+  "carriedHistorical": {
+    "evidence/virgl-standard-draw/worker/manifest.json": "2a46c901bd571f8e231ce2d12005109f9a8b15f9c0f96defec059c504191d5fd",
+    "evidence/virgl-standard-draw/worker/records.json": "6613d8d1075325f89a0cca63c78b0a65b73c138f629780b786d21dcad03d77dd",
+    "evidence/virgl-standard-draw/worker/recording.tar.gz": "4a6c5816f8979dbf7e6ed75abd05bedf53073becae307e6a0d970d9c0382270b",
+    "evidence/virgl-standard-draw/verifier/manifest.json": "795ab0071efbc9ef0232420d979715512ceebb004941cc2322119d4dbd0c54f6",
+    "evidence/virgl-standard-draw/verifier/records.json": "775ab1789688128b44ff3e6e3933509e67404d32eb39b4e290ed2ffb7f91b1ef",
+    "evidence/virgl-standard-draw/verifier/recording.tar.gz": "a0da501deed127a1f9359c2ce511606efd15135a65d6e8338d84f97a5fb05905",
+    "evidence/virgl-standard-constant/worker/manifest.json": "3029e840ffc4d864af8a4186fd320b3012e3005a42cefa7d283956c3ec49d796",
+    "evidence/virgl-standard-constant/worker/records.json": "36217166ebf678e6dd701ec7ec66f042891963be7638dc2c77a920903694d65a",
+    "evidence/virgl-standard-constant/worker/recording.tar.gz": "598acb64caacea419f099a5fc1bb25fe763c4ce8dfb3eb8c0a76126acea28aca",
+    "evidence/virgl-standard-constant/verifier/manifest.json": "724dc99c0ec26dfe6de101560bb7452a320884a7d914659868d8fb42ca3de06d",
+    "evidence/virgl-standard-constant/verifier/records.json": "d6d452707e41890f5a1726f8b66d7a956dd6a5caa69fa22dcfd70a0e45a1c6ba",
+    "evidence/virgl-standard-constant/verifier/recording.tar.gz": "0e7c1966aba67f0276d371a2414f065c0396d65088310b253e54a6857911d231",
+    "evidence/virgl-standard-topology/worker/manifest.json": "ca65a70e68f5ff437e9795a737548c009ad8ad609c06d8342b184018f464d319",
+    "evidence/virgl-standard-topology/worker/records.json": "387bbf495d4e22e397636147874974a08c01f7ffe0dee6828be8ddd1e637c8af",
+    "evidence/virgl-standard-topology/worker/recording.tar.gz": "c192468202cec8d341e6074cc241d19d699cde78d58e7361b2e09d58da1ba8cf",
+    "evidence/virgl-standard-topology/verifier/manifest.json": "20cf75ad768e1b7eaa60ca744b0215dc337b88a488241ef11d23f8e891b92087",
+    "evidence/virgl-standard-topology/verifier/records.json": "d5daecd5bd4d655978b0e7925d9e2e5cc08fb8fce46676d3a39291473a700c12",
+    "evidence/virgl-standard-topology/verifier/recording.tar.gz": "2a7eaca7ad6b474ca29dc7d4977ec97507d69ec5c9d9a61b26b89c930e6fdd24"
+  },
+  "unchangedBoundaryFiles": 266,
+  "predictionsSha256": "a08d42dca27adb305ed5750f52610622e8fd1439264fd030a66a8991802c56cd"
+}
