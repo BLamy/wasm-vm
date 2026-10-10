@@ -33,7 +33,7 @@ for(const name of [...files,relative(path.join(output,'original-inputs.json'))])
 const report=await runVirglBrowser({options,task:'E6-T11d23',boundary:'Independent original mip/query/source-modifier compiler attack',reportFields:{productionNegotiation:false,seed,physicalControl:options.fault??null,nativeCompilerSha256:hash(await fs.readFile(binary))},
   modulePath:'/renderer/virgl-shader/tests/standard-texture-adversarial.mjs',windowReportKey:'__standardTextureReport',serializedAcceptance:true,
   browserArguments:{seed,matrixPath:'/'+files[0],nativePath:'/'+files[1],fault:options.fault??null},servedFiles:files,pinnedFiles:pinned,
-  coveragePaths:['renderer/virgl-shader/standard.mjs','renderer/virgl-shader/tests/standard-texture-adversarial.mjs'],
+  coveragePaths:['renderer/virgl-shader/standard.mjs','renderer/virgl-shader/tests/standard-texture-adversarial.mjs','tools/virgl-standard-texture/adversarial-fixtures.mjs'],
   html:browserDocument({title:'Independent original texture compiler proof',heading:'Independent original mip and query proof',description:'Separate image words and source modifiers · original stage slots 7 and 14 · completed native GPU fences'}),
   validate(acceptance){assert.equal(acceptance.frames.length,16);assert.equal(acceptance.compiles.length,32);assert.ok(acceptance.frames.every(f=>f.gpuComplete.fenced&&f.cleaned&&f.audit.held));},
   successMessage:acceptance=>acceptance.frames.length+' independent original texture frames passed.'});
