@@ -1,0 +1,448 @@
+{
+  "schema": "standard-topology-runtime-coverage-v1",
+  "base": "64b246220bbf3ed5e1a6f1ed7371535ed5ec5c56",
+  "head": "dff28ee8cb1c494a52a6fbb5af872ed377605f66",
+  "files": [
+    {
+      "path": "renderer/virgl-command/decoder.mjs",
+      "sourceDigest": "4c42869c7c5259e644d2ef33a4bcf2bca10236dbde9634bd5e99a756631f95d0",
+      "lines": [
+        {
+          "line": 363,
+          "text": "      p.require((p.standard ? [1, 2, 3, 4, 5, 6] : [4, 5]).includes(fields.mode) && (p.standard || fields.instanceCount === 1) && fields.indexBias === 0 &&",
+          "hits": [
+            {
+              "record": "unpacked/cold/fault-mode/browser-coverage.json",
+              "sha256": "7691c9031e6baea3d0d56415bebbc01f1a11aae12d8276fdfbe31ff88c3d0619",
+              "count": 163,
+              "function": "decodeFields"
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "sha256": "4414f455f028df56c57ba35be718538dcd7a6d408506acce2a50810c8c9bf7dc",
+              "count": 263,
+              "function": "decodeFields"
+            },
+            {
+              "record": "unpacked/cold/retained-constant/fault-generic/browser-coverage.json",
+              "sha256": "926ea59d2746f03b777c6b99e94464607703731eb442bb94bc8e95a634b4e4e2",
+              "count": 1,
+              "function": "decodeFields"
+            },
+            {
+              "record": "unpacked/cold/retained-constant/hardware/browser-coverage.json",
+              "sha256": "81d0d8693e4e1f441318d1f8c61c58571464d0257e2cb7a32d4e427968c48b2d",
+              "count": 43,
+              "function": "decodeFields"
+            },
+            {
+              "record": "unpacked/cold/retained-standard-draw/fault-divisor/browser-coverage.json",
+              "sha256": "9efd2c8daa42f34c8810238ea3e67e6b0907c1d1d728efb126a95a21cfda2b0e",
+              "count": 1,
+              "function": "decodeFields"
+            },
+            {
+              "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+              "sha256": "bf8a5baa3297ffe3687b7b2f5430a98e3fe08ab73a36829ba28866234edb43a4",
+              "count": 52,
+              "function": "decodeFields"
+            },
+            {
+              "record": "unpacked/cold/retained-standard-draw/retained-float-vertex-fetch/browser-coverage.json",
+              "sha256": "abd62b77a41f2e02821e6815eb073d6aa1d56800eec3f7f69caed53030279a04",
+              "count": 68,
+              "function": "decodeFields"
+            },
+            {
+              "record": "unpacked/hot/fault-mode/browser-coverage.json",
+              "sha256": "8f3414229b039437e9833187cf68d2007248e5d0c9bbdcd6e5dbd32609668a98",
+              "count": 163,
+              "function": "decodeFields"
+            },
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "sha256": "d40f2fc88a836700ae1691f99676f991a01054b4dfc5eeb5aa9c768c9df78eb4",
+              "count": 263,
+              "function": "decodeFields"
+            },
+            {
+              "record": "unpacked/hot/retained-constant/fault-generic/browser-coverage.json",
+              "sha256": "c431f24dc4fada3dbc2804c68d08d20b3037316973732badf1dc0a1ec009f285",
+              "count": 1,
+              "function": "decodeFields"
+            },
+            {
+              "record": "unpacked/hot/retained-constant/hardware/browser-coverage.json",
+              "sha256": "e329b51bd6a83c242bb92e20cfcbda4fb4390e7437b47444ed7fc94817bdd71d",
+              "count": 43,
+              "function": "decodeFields"
+            },
+            {
+              "record": "unpacked/hot/retained-standard-draw/fault-divisor/browser-coverage.json",
+              "sha256": "168bfff3dce3000da3e1b80741d5da1824cb27d155089544e5b742602f028210",
+              "count": 1,
+              "function": "decodeFields"
+            },
+            {
+              "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+              "sha256": "a3a9e1803137a6653a233dfe09d7034200cdc3b2f99f3cca5e61c08fe7e26989",
+              "count": 52,
+              "function": "decodeFields"
+            },
+            {
+              "record": "unpacked/hot/retained-standard-draw/retained-float-vertex-fetch/browser-coverage.json",
+              "sha256": "1a83570a6ac578ed53a3a1f03cf98873781a910fae660d1c232306a8c1fade94",
+              "count": 68,
+              "function": "decodeFields"
+            }
+          ],
+          "executed": true
+        },
+        {
+          "line": 365,
+          "text": "      \"unsupported-feature\", p.standard ? \"Only core lines and triangles without base offsets, restart or stream output are supported.\" :",
+          "hits": [
+            {
+              "record": "unpacked/cold/fault-mode/browser-coverage.json",
+              "sha256": "7691c9031e6baea3d0d56415bebbc01f1a11aae12d8276fdfbe31ff88c3d0619",
+              "count": 163,
+              "function": "decodeFields"
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "sha256": "4414f455f028df56c57ba35be718538dcd7a6d408506acce2a50810c8c9bf7dc",
+              "count": 263,
+              "function": "decodeFields"
+            },
+            {
+              "record": "unpacked/cold/retained-constant/fault-generic/browser-coverage.json",
+              "sha256": "926ea59d2746f03b777c6b99e94464607703731eb442bb94bc8e95a634b4e4e2",
+              "count": 1,
+              "function": "decodeFields"
+            },
+            {
+              "record": "unpacked/cold/retained-constant/hardware/browser-coverage.json",
+              "sha256": "81d0d8693e4e1f441318d1f8c61c58571464d0257e2cb7a32d4e427968c48b2d",
+              "count": 43,
+              "function": "decodeFields"
+            },
+            {
+              "record": "unpacked/cold/retained-standard-draw/fault-divisor/browser-coverage.json",
+              "sha256": "9efd2c8daa42f34c8810238ea3e67e6b0907c1d1d728efb126a95a21cfda2b0e",
+              "count": 1,
+              "function": "decodeFields"
+            },
+            {
+              "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+              "sha256": "bf8a5baa3297ffe3687b7b2f5430a98e3fe08ab73a36829ba28866234edb43a4",
+              "count": 52,
+              "function": "decodeFields"
+            },
+            {
+              "record": "unpacked/cold/retained-standard-draw/retained-float-vertex-fetch/browser-coverage.json",
+              "sha256": "abd62b77a41f2e02821e6815eb073d6aa1d56800eec3f7f69caed53030279a04",
+              "count": 68,
+              "function": "decodeFields"
+            },
+            {
+              "record": "unpacked/hot/fault-mode/browser-coverage.json",
+              "sha256": "8f3414229b039437e9833187cf68d2007248e5d0c9bbdcd6e5dbd32609668a98",
+              "count": 163,
+              "function": "decodeFields"
+            },
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "sha256": "d40f2fc88a836700ae1691f99676f991a01054b4dfc5eeb5aa9c768c9df78eb4",
+              "count": 263,
+              "function": "decodeFields"
+            },
+            {
+              "record": "unpacked/hot/retained-constant/fault-generic/browser-coverage.json",
+              "sha256": "c431f24dc4fada3dbc2804c68d08d20b3037316973732badf1dc0a1ec009f285",
+              "count": 1,
+              "function": "decodeFields"
+            },
+            {
+              "record": "unpacked/hot/retained-constant/hardware/browser-coverage.json",
+              "sha256": "e329b51bd6a83c242bb92e20cfcbda4fb4390e7437b47444ed7fc94817bdd71d",
+              "count": 43,
+              "function": "decodeFields"
+            },
+            {
+              "record": "unpacked/hot/retained-standard-draw/fault-divisor/browser-coverage.json",
+              "sha256": "168bfff3dce3000da3e1b80741d5da1824cb27d155089544e5b742602f028210",
+              "count": 1,
+              "function": "decodeFields"
+            },
+            {
+              "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+              "sha256": "a3a9e1803137a6653a233dfe09d7034200cdc3b2f99f3cca5e61c08fe7e26989",
+              "count": 52,
+              "function": "decodeFields"
+            },
+            {
+              "record": "unpacked/hot/retained-standard-draw/retained-float-vertex-fetch/browser-coverage.json",
+              "sha256": "1a83570a6ac578ed53a3a1f03cf98873781a910fae660d1c232306a8c1fade94",
+              "count": 68,
+              "function": "decodeFields"
+            }
+          ],
+          "executed": true
+        }
+      ]
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "sourceDigest": "1ca80d6c9b0ed81933b6c655d3fe3494ec88307a92adc7ff2c85c7c7bad614ee",
+      "lines": [
+        {
+          "line": 20,
+          "text": "const DRAW_MODES = Object.freeze({ 1: \"LINES\", 2: \"LINE_LOOP\", 3: \"LINE_STRIP\", 4: \"TRIANGLES\", 5: \"TRIANGLE_STRIP\", 6: \"TRIANGLE_FAN\" });",
+          "hits": [
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "sha256": "4414f455f028df56c57ba35be718538dcd7a6d408506acce2a50810c8c9bf7dc",
+              "count": 1,
+              "function": ""
+            },
+            {
+              "record": "unpacked/cold/retained-constant/hardware/browser-coverage.json",
+              "sha256": "81d0d8693e4e1f441318d1f8c61c58571464d0257e2cb7a32d4e427968c48b2d",
+              "count": 1,
+              "function": ""
+            },
+            {
+              "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+              "sha256": "bf8a5baa3297ffe3687b7b2f5430a98e3fe08ab73a36829ba28866234edb43a4",
+              "count": 1,
+              "function": ""
+            },
+            {
+              "record": "unpacked/cold/retained-standard-draw/retained-async-jobs/browser-coverage.json",
+              "sha256": "38cbc24cb297c07cf9a039c9101fd37a477b0d25a5763318df49f0e56df46f6b",
+              "count": 1,
+              "function": ""
+            },
+            {
+              "record": "unpacked/cold/retained-standard-draw/retained-draw-replay/browser-coverage.json",
+              "sha256": "98669825cb4dfd5efcd835f79273b9c730496fb27b44f916f4548899b45a743c",
+              "count": 1,
+              "function": ""
+            },
+            {
+              "record": "unpacked/cold/retained-standard-draw/retained-float-vertex-fetch/browser-coverage.json",
+              "sha256": "abd62b77a41f2e02821e6815eb073d6aa1d56800eec3f7f69caed53030279a04",
+              "count": 1,
+              "function": ""
+            },
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "sha256": "d40f2fc88a836700ae1691f99676f991a01054b4dfc5eeb5aa9c768c9df78eb4",
+              "count": 1,
+              "function": ""
+            },
+            {
+              "record": "unpacked/hot/retained-constant/hardware/browser-coverage.json",
+              "sha256": "e329b51bd6a83c242bb92e20cfcbda4fb4390e7437b47444ed7fc94817bdd71d",
+              "count": 1,
+              "function": ""
+            },
+            {
+              "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+              "sha256": "a3a9e1803137a6653a233dfe09d7034200cdc3b2f99f3cca5e61c08fe7e26989",
+              "count": 1,
+              "function": ""
+            },
+            {
+              "record": "unpacked/hot/retained-standard-draw/retained-async-jobs/browser-coverage.json",
+              "sha256": "7785f8601313b2e3271c48dfd89611ace02c688d4c12816a8259dca198bf9ee8",
+              "count": 1,
+              "function": ""
+            },
+            {
+              "record": "unpacked/hot/retained-standard-draw/retained-draw-replay/browser-coverage.json",
+              "sha256": "9e7eddde1fa8185c5ddf6312d944bb3b62a45c26105d23e03dd4f20be5463ba1",
+              "count": 1,
+              "function": ""
+            },
+            {
+              "record": "unpacked/hot/retained-standard-draw/retained-float-vertex-fetch/browser-coverage.json",
+              "sha256": "1a83570a6ac578ed53a3a1f03cf98873781a910fae660d1c232306a8c1fade94",
+              "count": 1,
+              "function": ""
+            }
+          ],
+          "executed": true
+        },
+        {
+          "line": 936,
+          "text": "      const mode = gl[DRAW_MODES[fields.mode]];",
+          "hits": [
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "sha256": "4414f455f028df56c57ba35be718538dcd7a6d408506acce2a50810c8c9bf7dc",
+              "count": 91,
+              "function": "issueDraw"
+            },
+            {
+              "record": "unpacked/cold/retained-constant/hardware/browser-coverage.json",
+              "sha256": "81d0d8693e4e1f441318d1f8c61c58571464d0257e2cb7a32d4e427968c48b2d",
+              "count": 31,
+              "function": "issueDraw"
+            },
+            {
+              "record": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+              "sha256": "bf8a5baa3297ffe3687b7b2f5430a98e3fe08ab73a36829ba28866234edb43a4",
+              "count": 45,
+              "function": "issueDraw"
+            },
+            {
+              "record": "unpacked/cold/retained-standard-draw/retained-async-jobs/browser-coverage.json",
+              "sha256": "38cbc24cb297c07cf9a039c9101fd37a477b0d25a5763318df49f0e56df46f6b",
+              "count": 26,
+              "function": "issueDraw"
+            },
+            {
+              "record": "unpacked/cold/retained-standard-draw/retained-draw-replay/browser-coverage.json",
+              "sha256": "98669825cb4dfd5efcd835f79273b9c730496fb27b44f916f4548899b45a743c",
+              "count": 114,
+              "function": "issueDraw"
+            },
+            {
+              "record": "unpacked/cold/retained-standard-draw/retained-float-vertex-fetch/browser-coverage.json",
+              "sha256": "abd62b77a41f2e02821e6815eb073d6aa1d56800eec3f7f69caed53030279a04",
+              "count": 64,
+              "function": "issueDraw"
+            },
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "sha256": "d40f2fc88a836700ae1691f99676f991a01054b4dfc5eeb5aa9c768c9df78eb4",
+              "count": 91,
+              "function": "issueDraw"
+            },
+            {
+              "record": "unpacked/hot/retained-constant/hardware/browser-coverage.json",
+              "sha256": "e329b51bd6a83c242bb92e20cfcbda4fb4390e7437b47444ed7fc94817bdd71d",
+              "count": 31,
+              "function": "issueDraw"
+            },
+            {
+              "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+              "sha256": "a3a9e1803137a6653a233dfe09d7034200cdc3b2f99f3cca5e61c08fe7e26989",
+              "count": 45,
+              "function": "issueDraw"
+            },
+            {
+              "record": "unpacked/hot/retained-standard-draw/retained-async-jobs/browser-coverage.json",
+              "sha256": "7785f8601313b2e3271c48dfd89611ace02c688d4c12816a8259dca198bf9ee8",
+              "count": 26,
+              "function": "issueDraw"
+            },
+            {
+              "record": "unpacked/hot/retained-standard-draw/retained-draw-replay/browser-coverage.json",
+              "sha256": "9e7eddde1fa8185c5ddf6312d944bb3b62a45c26105d23e03dd4f20be5463ba1",
+              "count": 114,
+              "function": "issueDraw"
+            },
+            {
+              "record": "unpacked/hot/retained-standard-draw/retained-float-vertex-fetch/browser-coverage.json",
+              "sha256": "1a83570a6ac578ed53a3a1f03cf98873781a910fae660d1c232306a8c1fade94",
+              "count": 64,
+              "function": "issueDraw"
+            }
+          ],
+          "executed": true
+        }
+      ]
+    }
+  ],
+  "unexecutedRuntimeTokens": [],
+  "hunkClassifications": [
+    {
+      "path": "renderer/virgl-command/decoder.mjs",
+      "classification": "executed",
+      "basis": "Literal Node/browser mode matrix and malformed/unsupported packets plus retained D6 legacy paths; positive and rejection arms have V8 hit counts."
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "classification": "executed",
+      "basis": "Frozen table initialization and real mode selector have positive authenticated coverage. Native calls independently show all four new modes in ordinary/instanced array/index calls; retained D6 exercises4/5."
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-core-topologies.mjs",
+      "classification": "executed",
+      "basis": "Hot/cold full87-frame recordings and actual mode mutation exercise positive/negative fixture paths. Smoke branch is harness routing recorded in fault-mode."
+    },
+    {
+      "path": "tools/verify-virgl-standard-topology.mjs",
+      "classification": "executed",
+      "basis": "Hot/cold Node, hardware and actual served mutation reports authenticate source/served/GPU/coverage/screenshot closure. Optional adversarial route is exercised by fresh promoted tests."
+    },
+    {
+      "path": "tools/verify-virgl-standard-topology.sh",
+      "classification": "executed",
+      "basis": "Hot/cold acceptance logs execute the full scoped frozen gate, including D6/D7 and two actual mutations."
+    },
+    {
+      "path": "tools/virgl-command/standard-topology-oracle.mjs",
+      "classification": "executed",
+      "basis": "All87 frames and both source-mode sabotages; independent fresh oracle rederives174 original frames without importing this implementation."
+    },
+    {
+      "path": "tools/virgl-command/standard-topology-pixels.mjs",
+      "classification": "executed",
+      "basis": "Both recorded physical-audit results,87 frames/50176 pixels each, source-closed receipts."
+    },
+    {
+      "path": "tools/virgl-command/standard-topology-receipt.py",
+      "classification": "executed",
+      "basis": "Both authenticated exact-head receipts and logged completion. Refusal branches are custody guards, independently challenged by archive/source/blob authentication rather than product behavior."
+    },
+    {
+      "path": "tools/virgl-command/standard-topology-cold.py",
+      "classification": "executed",
+      "basis": "Cold report/log, pinned exact head, scrubbed environment, clean before/after and copied full acceptance receipt."
+    },
+    {
+      "path": "tools/virgl-command/standard-topology-seal.py",
+      "classification": "executed",
+      "basis": "Authenticated2716-record archive/index/manifest; independent archive reader checks unique safe members and all declared digests."
+    },
+    {
+      "path": "Makefile",
+      "classification": "waived",
+      "basis": "Declarative target calls the actual recorded acceptance script; no new runtime behavior."
+    },
+    {
+      "path": "renderer/virgl-command/draw-README.md",
+      "classification": "waived",
+      "basis": "Documentation of isolated boundary only; physical and source evidence independently confirms stated limitations."
+    },
+    {
+      "path": "tasks/epic-6-transcendence/E6-T11d-truthful-guest-virgl-bringup.md",
+      "classification": "waived",
+      "basis": "Dependency/status log metadata; no runtime behavior or production authorization."
+    },
+    {
+      "path": "tasks/epic-6-transcendence/E6-T11d8-standard-core-topologies.md",
+      "classification": "waived",
+      "basis": "Task contract/claim/status metadata; assertions are interrogated by P1..P8, not executed."
+    },
+    {
+      "path": "tasks/QUEUE.md",
+      "classification": "waived",
+      "basis": "Generated task-status metadata; check_task_policy/build_queue validate consistency."
+    },
+    {
+      "path": "evidence/virgl-production-readiness/standard-topology-gap.json",
+      "classification": "waived",
+      "basis": "Historical negative planning probe against predecessor decoder; no new runtime claim. New full matrix supersedes mode-admission observations."
+    },
+    {
+      "path": "evidence/virgl-standard-topology/worker",
+      "classification": "executed",
+      "basis": "Capture/index/manifest data independently authenticated and all changed behavior rederived from actual original packets/bytes/native calls/pixels."
+    }
+  ],
+  "status": "passed"
+}

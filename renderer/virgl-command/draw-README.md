@@ -174,3 +174,29 @@ poll is used. Original words, native generic values, fetch extents and physical
 pixels are recorded. The unchanged D6 and legacy async boundaries are retained
 in the frozen gate. This isolated facet does not enable production caps or the
 guest device; full API qualification and guest offload remain ordered work.
+
+
+## Standard core line and triangle-fan primitives
+
+The explicit `createVirglStandardAsyncRenderer` also maps Gallium modes1,2,3,6
+onto native LINES, LINE_LOOP, LINE_STRIP and TRIANGLE_FAN. All four existing
+array/index ordinary/instanced entry points use the same checked selection.
+Legacy factories continue to admit only modes4/5. Native one-pixel line state,
+actual-index bounds, all vertex-instance work, GPU-read constant defaults and
+whole-batch ownership are unchanged; incomplete primitive tails are charged and
+bounded even when they produce no geometry. Nonempty counts, disabled restart,
+zero base offsets and the existing format/resource/shader limits remain required.
+Points, point size, quads, adjacency and patches remain unsupported.
+
+`make verify-E6-T11d8` proves original wire modes and 87 physical frames/50,176
+pixels, exact/short complete tails, false hints, work limits, native-state A/B/A,
+three later-task schedules and pending cancellation/staleness/name reuse. The
+independent oracle reads only original upload packets/bytes and known source
+geometry. Native GLES3 section3.5 permits bounded line raster alternatives;
+fragment-center endpoints may be present or absent while all interiors and
+outside pixels remain strict. The closing loop-edge interiors and fan area are
+strict, and a real served LINE_LOOP-to-LINE_STRIP mutation completes its draw and
+fence but fails the named full-pixel oracle. Full D6/affected legacy and D7
+physical gates are retained once, with unchanged historical receipts carried
+rather than rewritten for this new mode boundary. This isolated factory still
+grants no positive production capabilities, guest/API/throughput or demo claim.

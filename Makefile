@@ -2149,3 +2149,11 @@ verify-E6-T11d7:
 .PHONY: verify-E6-T11d7-adversarial
 verify-E6-T11d7-adversarial:
 	bash tools/verify-virgl-standard-constant-adversarial.sh
+
+.PHONY: verify-E6-T11d8
+verify-E6-T11d8:
+	bash tools/verify-virgl-standard-topology.sh
+
+.PHONY: verify-E6-T11d8-adversarial
+verify-E6-T11d8-adversarial:
+	bash tools/verify-virgl-standard-topology-adversarial.sh

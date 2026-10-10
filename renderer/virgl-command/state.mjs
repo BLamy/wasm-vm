@@ -17,6 +17,7 @@ export const CACHE_LIMITS = Object.freeze({ translations: 128, translationBytes:
   programBytes: 4194304, states: 256, stateBytes: 1048576, debugBytes: 4194304 });
 const NAMES = ["NULL", "BLEND", "RASTERIZER", "DSA", "SHADER", "VERTEX_ELEMENTS", "SAMPLER_VIEW", "SAMPLER_STATE", "SURFACE"];
 const BINDINGS = { 1: "blend", 2: "rasterizer", 3: "dsa", 5: "vertexElements" };
+const DRAW_MODES = Object.freeze({ 1: "LINES", 2: "LINE_LOOP", 3: "LINE_STRIP", 4: "TRIANGLES", 5: "TRIANGLE_STRIP", 6: "TRIANGLE_FAN" });
 const vertexComponents = (element) => element.sourceFormat - 27;
 const viewportRectangle = ({ scale, translate }) => [translate[0] - scale[0], translate[1] - Math.abs(scale[1]), scale[0] * 2, Math.abs(scale[1]) * 2];
 const BLEND_EQUATIONS = Object.freeze(["FUNC_ADD", "FUNC_SUBTRACT", "FUNC_REVERSE_SUBTRACT", "MIN", "MAX"]);
@@ -932,7 +933,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       // readStorage changes copy/pixel bindings. Restore every supported binding
       // after its synchronous GPU read, immediately before issuing the real draw.
       const stateKey = restore(sub, plan, constantAttributes);
-      const mode = fields.mode === 5 ? gl.TRIANGLE_STRIP : gl.TRIANGLES;
+      const mode = gl[DRAW_MODES[fields.mode]];
       const indexType = indexSize === 1 ? gl.UNSIGNED_BYTE : indexSize === 2 ? gl.UNSIGNED_SHORT : gl.UNSIGNED_INT;
       if (fields.indexed) {
         if (instances > 1) gl.drawElementsInstanced(mode, fields.count, indexType, indexOffset, instances);
