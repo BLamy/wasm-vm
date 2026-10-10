@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24]
-blocked_on: E6-T11d24
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25]
+blocked_on: E6-T11d25
 estimate: S
 risk: high
 capstone: false
@@ -342,3 +342,9 @@ Ordered S/high E6-T11d23 closes only the original 2D/FLOAT native texture compil
 ### 2026-10-10 — worker — texture compiler verified; retained-image consumer gap
 
 D23 is independently verified at `71853cd302a2a39cd8f5af001fd8ad1b791b7da6`. Five complete original pairs in `evidence/virgl-production-readiness/standard-texture-consumer-gap.json` produce owned texture metadata, but the unchanged uniform consumer rejects it and the pair with unknown/accessor-property errors. Its complete inputs, responses and runtime/generated digests were reproduced at that exact head. Reproduce by translating each original pair through `createVirglStandardTextureShaderBridge`, then calling `parseStandardUniformShaderMetadata` and `normalizeStandardUniformShaderPair`. Ordered S task D24 binds the original native texture operations and integer queries to retained views. Actual API/caps, worker/scanout, guest Mesa/desktop and live offload remain unqualified.
+
+### 2026-10-10 — worker — texture consumer verified; original float storage gap
+
+D24 is independently verified at `6ec464d9b9d1daecd01a0dd5ac58d31ac23910fe`, with its exclusive lease released. The eight complete original F16/F32 R/RG/RGB/RGBA multilevel layouts still reject through the historical byte-color boundary. `evidence/virgl-production-readiness/standard-float-image-gap.json` binds the original metadata, transfer fields, enum values and unchanged source hashes to that exact head. Reproduce by importing `computeStandardColorTransferLayout` from `renderer/virgl-command/resources.mjs` and applying each recorded row's `metadata`, `fields` and `backingByteLength`; all return `unsupported-resource` before allocation.
+
+Ordered S/high D25 preserves these original floating image storage/transfer representations and retained ranges through a separate selected owner/backend. A native sampling/output consumer follows separately. The user's request continues the ordered production graphics chain; full API/caps, actual guest Mesa/compositor, production GPU worker/scanout and live deployment remain gated.
