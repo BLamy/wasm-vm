@@ -1,0 +1,113 @@
+{
+  "schema": "virgl-fraction-critic-seal-v1",
+  "task": "E6-T12g6g2",
+  "verdict": "verified",
+  "sourceHead": "be4ff41ba8e99047796d9c41e13b34b0965c8e6c",
+  "runtimeHead": "8a721921e16375ccc6ee30f46e772f245a4a17ac",
+  "workerSubmission": "be4ff41ba8e99047796d9c41e13b34b0965c8e6c",
+  "base": "5ec49cbce92fc809498c601dc5e3a0e165e435ba",
+  "records": 71,
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 13091830,
+    "sha256": "29fdaa5e6774bde13f708333b870bb2cda1060547f369086d0f11fd9a73c21e6"
+  },
+  "recordIndex": {
+    "path": "records.json",
+    "bytes": 11496,
+    "sha256": "16ac41cbdc3e4944cccb845670fa941b9fce9180589887a17717fd9d380b3a7a"
+  },
+  "verdictRecord": {
+    "path": "verdict.json",
+    "bytes": 15660,
+    "sha256": "0b55fa9417706aeb14a88b2baa7f1689a8d1891bdd141845f0e3fb2c82578fd7"
+  },
+  "workerDependencies": {
+    "manifestSha256": "22181688ea92437c588a892992fa97cd19f785b92019321e8452f1ae39f94d1d",
+    "archiveSha256": "4d4636dc00d88c0a9bb073e2fbc35afba741f51d460912430e4c8fe1b24c562d",
+    "indexSha256": "a0d424b132263e40d61e497f2416f2927c285f0b57896f0a7ae4d4311f0ec623"
+  },
+  "priorHeldSeals": [
+    {
+      "boundary": "virgl-minimum-selection",
+      "manifestSha256": "592ea6d92b6a6b68bb36eaef91403964c0517fab63007a0916591562ffbb98e0",
+      "archiveSha256": "aedf4c1401b7e985b399350ab9648d6ec981d591692ce3dbce1e95fabc8bd4ff",
+      "indexSha256": "7a9bca57207672121cea1f0d17c76b788cb7813b1fd8d736e68ca13321020b98",
+      "members": 63,
+      "verdict": "verified"
+    },
+    {
+      "boundary": "virgl-scalar-operations",
+      "manifestSha256": "df1c4906705f6a2e4f9fe6a548f523b4d35ca273c3e45f3cfeea5ea9607da927",
+      "archiveSha256": "c5fd50cd563707c31c5c6ac52e360e0a711cdb16c088a2fff64a8461381c06e4",
+      "indexSha256": "7ac5c0e5a368a575d0dbb1ac9607a357830a30d5198aaa0cce37e54c71f41b9a",
+      "members": 51,
+      "verdict": "verified"
+    },
+    {
+      "boundary": "virgl-signed-conversions",
+      "manifestSha256": "bf3ae212d2ef31ce1a084a162f38e692713f36bcc69f9f200977751e42545cd7",
+      "archiveSha256": "ccec7ef4231c2aaac9ed93167ab7e025283a14a9efe28a3be5c91f6a43e41cca",
+      "indexSha256": "fc9b55d8d34a2dc287d2193dafcefec1291e8098fee9aa7386205535e7b0ffc9",
+      "members": 47,
+      "verdict": "verified"
+    },
+    {
+      "boundary": "virgl-signed-integers",
+      "manifestSha256": "50796c1e44d5cff1cadc56dfbc5908b3298b0cb601c38d14e11c8465efbb0543",
+      "archiveSha256": "3fb492e9b9addbecedf462e27ac08ad9dcbe7e22d10aa6f92cac25952c17b777",
+      "indexSha256": "2d18d13e974bd8a5c95154db3f85adf5c43726f7c7013538f8f0d2837346d4a4",
+      "members": 37,
+      "verdict": "verified"
+    },
+    {
+      "boundary": "virgl-hex-literals",
+      "manifestSha256": "de87e77241b5f78f78b30364e728d4b0465d37114e8fc46a65913ca87df3b2a2",
+      "archiveSha256": "bb25e10d6b31a6efe547c8468a6b4d0f560b40c60650e85c6133bcbe33aa184d",
+      "indexSha256": "e684ae0b0a697a59a89c57f01c15c8347fa2d2853d7233b269ee6a8ce0618977",
+      "members": 30,
+      "verdict": "verified"
+    },
+    {
+      "boundary": "virgl-compiler-bounds",
+      "manifestSha256": "1081296a0236616037539d953cacba78aed05d517dc6eee6c048e1d96ba6e643",
+      "archiveSha256": "1c6e0d69048ccdcb9762acde6e9198b3d5e380e6fb6308aa1a5e9355fa01037d",
+      "indexSha256": "fb78c6bc0fde0df3b9269787ced68d40d200de233bd45147321a1eea3636f821",
+      "members": 28,
+      "verdict": "verified"
+    }
+  ],
+  "promoted": [
+    {
+      "path": "renderer/virgl-shader/tests/precise-fraction-regressions.mjs",
+      "testSha256": "6442b2dcaf14019e49eaed4406875c173d002ed99bba34f4ae3544cac4b7ef5e",
+      "cases": 4469,
+      "report": "independent-regressions.json",
+      "reportSha256": "fc23c3ab26457cc8e7d72a044a7faa6b793b545e5e35a4a1ba9a5d48ab352480",
+      "schema": "virgl-precise-fraction-critic-guards-v1"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/precise-fraction-capture-regressions.mjs",
+      "testSha256": "3313c6693652d26baf0e1dc1179de478aab045c1f5b1bf49d5d2b4b3b2ae08f8",
+      "physicalWords": 36096,
+      "report": "independent-capture-regressions.json",
+      "reportSha256": "34709e400099e20c5f45697e80035d53b0cdb846550c704f5c4ac46434908829",
+      "schema": "virgl-fraction-critic-capture-guards-v1"
+    }
+  ],
+  "held": 8,
+  "failed": 0,
+  "needsEvidence": 0,
+  "coverage": {
+    "hunks": 28,
+    "addedRuntimeLines": 145,
+    "needsEvidence": 0,
+    "dead": 0
+  },
+  "recordedPhysicalWords": 775392,
+  "recordedPhysicalPixels": 67456,
+  "fourthPhysicalWords": 128832,
+  "fourthPhysicalPixels": 11072,
+  "productionNegotiation": false,
+  "guestExecution": false
+}

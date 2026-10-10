@@ -2009,3 +2009,7 @@ verify-E6-T12g6f:
 .PHONY: verify-E6-T12g6g1
 verify-E6-T12g6g1:
 	bash tools/verify-virgl-minimum-selection.sh
+
+.PHONY: verify-E6-T12g6g2
+verify-E6-T12g6g2:
+	bash tools/verify-virgl-precise-fraction.sh

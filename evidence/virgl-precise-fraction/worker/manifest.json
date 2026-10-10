@@ -1,0 +1,24 @@
+{
+  "schema": "virgl-precise-fraction-worker-seal-v1",
+  "task": "E6-T12g6g2",
+  "sourceHead": "8a721921e16375ccc6ee30f46e772f245a4a17ac",
+  "base": "5ec49cbc",
+  "records": 95,
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 36345207,
+    "sha256": "4d4636dc00d88c0a9bb073e2fbc35afba741f51d460912430e4c8fe1b24c562d"
+  },
+  "recordIndex": {
+    "path": "records.json",
+    "bytes": 16565,
+    "sha256": "a0d424b132263e40d61e497f2416f2927c285f0b57896f0a7ae4d4311f0ec623"
+  },
+  "hotReceiptSha256": "86e6ab57ded74e6922d889028d2c6aefcb315eaa3e22e3a2c1ede55d22b1bcc3",
+  "coldReportSha256": "ca8040575804b467cfaee5248e443459f59ed8a6e5cb3a47d22dab95efc8f00a",
+  "coldReceiptSha256": "eff718e69bed1ff62fb81327d83154bbf490563dffdda5125a40d4abb433168f",
+  "checkedWords": 387696,
+  "checkedPixels": 33728,
+  "productionNegotiation": false,
+  "guestExecution": false
+}

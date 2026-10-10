@@ -837,6 +837,7 @@ static bool instruction(const char **p, struct profile *s, struct flow_context *
       else if (word(p, "FSNE_PRECISE")) { raw.opcode = RAW_FSNE; raw.flags = RAW_PRECISE; }
       else if (word(p, "MAX_PRECISE")) { raw.opcode = RAW_MAX_PRECISE; raw.flags = RAW_PRECISE; }
       else if (word(p, "MIN_PRECISE")) { raw.opcode = RAW_MIN_PRECISE; raw.flags = RAW_PRECISE; }
+      else if (word(p, "FRC_PRECISE")) { raw.opcode = RAW_FRC_PRECISE; raw.flags = RAW_PRECISE; }
       else if (word(p, "ADD_PRECISE")) { raw.opcode = RAW_ADD_PRECISE; raw.flags = RAW_PRECISE; }
       else if (word(p, "MUL_PRECISE")) { raw.opcode = RAW_MUL_PRECISE; raw.flags = RAW_PRECISE; }
       else if (word(p, "UARL")) raw.opcode = RAW_UARL;
@@ -874,14 +875,14 @@ static bool instruction(const char **p, struct profile *s, struct flow_context *
       else if (word(p, "RSQ")) raw.opcode = RAW_RSQ;
       else { failure_code = "unsupported-feature"; return false; }
       tex = raw.opcode == RAW_TEX;
-      arity = raw.opcode == RAW_UARL || raw.opcode == RAW_NOT || raw.opcode == RAW_FRC ||
+      arity = raw.opcode == RAW_UARL || raw.opcode == RAW_NOT || raw.opcode == RAW_FRC || raw.opcode == RAW_FRC_PRECISE ||
          raw.opcode == RAW_RCP || raw.opcode == RAW_RSQ || raw.opcode == RAW_I2F || raw.opcode == RAW_F2I ||
          raw.opcode == RAW_TRUNC || raw.opcode == RAW_SSG || tex ? 1 :
          raw.opcode == RAW_UCMP || raw.opcode == RAW_MAD || raw.opcode == RAW_LRP ? 3 : 2;
       partial = !tex && raw.opcode != RAW_MAD;
       /* These formerly unsupported numeric tokens retain that error category
        * for malformed syntax and unproven domains in an owned raw stage. */
-      if (raw.opcode == RAW_UARL || ((UINT64_C(1) << raw.opcode) & (RAW_NUMERIC_OPCODES | RAW_ARITHMETIC_OPCODES | RAW_CONVERSION_OPCODES))) failure_code = "unsupported-feature";
+      if (raw.opcode == RAW_UARL || ((UINT64_C(1) << raw.opcode) & (RAW_NUMERIC_OPCODES | RAW_ARITHMETIC_OPCODES | RAW_CONVERSION_OPCODES | RAW_FRACTION_OPCODES))) failure_code = "unsupported-feature";
    }
    else if (word(p, "ADD") || word(p, "MUL")) { arity = 2; partial = true; }
    else if (word(p, "MAD")) arity = 3;
@@ -902,7 +903,7 @@ static bool instruction(const char **p, struct profile *s, struct flow_context *
        * and bitwise payloads never pass through this typed minus parser. */
       bool arithmetic = s->raw && ((UINT64_C(1) << raw.opcode) & RAW_ARITHMETIC_OPCODES);
       if (s->raw && (((UINT64_C(1) << raw.opcode) & (RAW_NUMERIC_OPCODES | RAW_ARITHMETIC_OPCODES)) ||
-          raw.opcode == RAW_MAX_PRECISE || raw.opcode == RAW_MIN_PRECISE || raw.opcode == RAW_F2I) && punctuation(p, '-'))
+          raw.opcode == RAW_MAX_PRECISE || raw.opcode == RAW_MIN_PRECISE || raw.opcode == RAW_FRC_PRECISE || raw.opcode == RAW_F2I) && punctuation(p, '-'))
          raw.flags |= RAW_NEGATE_SOURCE0 << i;
       bool absolute = (arithmetic || raw.opcode == RAW_F2I) && punctuation(p, '|');
       if (absolute) raw.flags |= RAW_ABSOLUTE_SOURCE0 << i;
@@ -1003,7 +1004,7 @@ static bool validate_body(char *text, struct profile *s, struct flow_context *fl
          /* An exact producer alone cannot borrow raw-bank output authority.
           * One whole-text finite-bank retry can establish ordinary numerical
           * access separately. Allocation failure is never retried as a domain. */
-         if (raster == 0 && (s->raw->opcode_mask & RAW_PRECISE_ARITHMETIC_USED) &&
+         if (raster == 0 && (s->raw->opcode_mask & (RAW_PRECISE_ARITHMETIC_USED | RAW_FRACTION_OPCODES)) &&
              !(s->raw_flags & RAW_CONDITIONAL)) missing_numeric_authority = true;
          failure_code = raster < 0 ? "translation-error" : "unsupported-feature";
          return false;
@@ -1171,7 +1172,7 @@ static const char *check_input(struct profile *profile, const char *text, size_t
          candidate = structured_candidate = true;
       } else if (word(&p, "MOV_PRECISE") || word(&p, "FSEQ_PRECISE") || word(&p, "FSNE_PRECISE")) {
          candidate = true;
-      } else if (word(&p, "ADD_PRECISE") || word(&p, "MUL_PRECISE")) {
+      } else if (word(&p, "ADD_PRECISE") || word(&p, "MUL_PRECISE") || word(&p, "FRC_PRECISE")) {
          candidate = numeric_candidate = true;
       } else if (word(&p, "I2F") || word(&p, "F2I") || word(&p, "TRUNC") || word(&p, "SSG")) {
          candidate = numeric_candidate = true;
@@ -1387,7 +1388,7 @@ static void precise_contract(const struct profile *profile)
       const struct raw_instruction *instruction = &profile->raw->instructions[i];
       if (!(instruction->flags & RAW_PRECISE)) continue;
       if ((UINT64_C(1) << instruction->opcode) & RAW_ARITHMETIC_OPCODES) continue;
-      if (instruction->opcode == RAW_MIN_PRECISE) continue;
+      if (instruction->opcode == RAW_MIN_PRECISE || instruction->opcode == RAW_FRC_PRECISE) continue;
       used[instruction->opcode == RAW_FSEQ ? 0 : instruction->opcode == RAW_FSNE ? 1 :
          instruction->opcode == RAW_MAX_PRECISE ? 2 : 3] = true;
    }
@@ -1465,6 +1466,12 @@ static void minimum_contract(const struct profile *profile, const char *base)
       base, profile->stage ? "fragment" : "vertex", plain ? "\"MIN\"" : "", plain && precise ? "," : "", precise ? "\"MIN_PRECISE\"" : "");
 }
 
+static void fraction_contract(const struct profile *profile, const char *base)
+{
+   append(",\"fractionBaseProfile\":\"%s\",\"fractionWordContract\":{\"kind\":\"tgsi-fraction-binary32-rne-v1\",\"stage\":\"%s\",\"operations\":[\"FRC_PRECISE\"],\"equation\":\"x-minus-floor\",\"rounding\":\"nearest-even\",\"specials\":\"canonical-quiet-0x7fc00000\",\"subnormals\":\"gradual\",\"zero\":\"canonical-positive\",\"modifiers\":\"negation-before-evaluation\",\"authority\":\"existing-numeric-or-static-word-authority\"}",
+      base, profile->stage ? "fragment" : "vertex");
+}
+
 static void stage_result(const struct conversion *c)
 {
    const struct profile *profile = &c->profile;
@@ -1501,9 +1508,10 @@ static void stage_result(const struct conversion *c)
    bool conversion_bank = profile->raw && (profile->raw->opcode_mask & RAW_CONVERSION_BANK_USED);
    bool scalar = profile->raw && (profile->raw->opcode_mask & RAW_SCALAR_OPCODES);
    bool minimum = profile->raw && (profile->raw->opcode_mask & RAW_MINIMUM_OPCODES);
+   bool fraction = profile->raw && (profile->raw->opcode_mask & RAW_FRACTION_OPCODES);
    const char *conversion_name = conversion_bank ? "virgl-webgl2-raw-bits-v30" : "virgl-webgl2-raw-bits-v29";
    append("\",\"metadata\":{\"profile\":\"%s\",\"stage\":\"%s\",\"inputs\":",
-      minimum ? "virgl-webgl2-raw-bits-v32" : scalar ? "virgl-webgl2-raw-bits-v31" : conversion ? conversion_name :
+      fraction ? "virgl-webgl2-raw-bits-v33" : minimum ? "virgl-webgl2-raw-bits-v32" : scalar ? "virgl-webgl2-raw-bits-v31" : conversion ? conversion_name :
       arithmetic ? "virgl-webgl2-raw-bits-v28" : raster ? "virgl-webgl2-raw-bits-v27" : name,
       stage ? "fragment" : "vertex");
    io_metadata(profile, IN); append(",\"outputs\":"); io_metadata(profile, OUT);
@@ -1547,6 +1555,8 @@ static void stage_result(const struct conversion *c)
       arithmetic ? "virgl-webgl2-raw-bits-v28" : raster ? "virgl-webgl2-raw-bits-v27" : name);
    if (minimum) minimum_contract(profile, scalar ? "virgl-webgl2-raw-bits-v31" : conversion ? conversion_name :
       arithmetic ? "virgl-webgl2-raw-bits-v28" : raster ? "virgl-webgl2-raw-bits-v27" : name);
+   if (fraction) fraction_contract(profile, minimum ? "virgl-webgl2-raw-bits-v32" : scalar ? "virgl-webgl2-raw-bits-v31" :
+      conversion ? conversion_name : arithmetic ? "virgl-webgl2-raw-bits-v28" : raster ? "virgl-webgl2-raw-bits-v27" : name);
    append("}");
 }
 
