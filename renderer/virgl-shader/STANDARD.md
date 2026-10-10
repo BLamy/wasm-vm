@@ -19,6 +19,11 @@ already larger bank count. Every original token and instruction index remains
 intact, and upstream metadata must still equal the independently checked maximum
 extent. This does not admit duplicate declarations or direct reads of holes.
 
+Unused sampler declarations retain admission. Pinned upstream sampler metadata
+counts declared SAMP registers, while this facet's public sampler interface
+lists actual TEX reads. The transaction checks the declaration mask against
+upstream and independently checks each TEX against its declared SAMP/SVIEW.
+
 Uniforms, temporaries, immediate vectors, MOV/UCMP and flat varyings retain
 32-bit words in `uvec4` storage. Storing integer masks in float temporaries
 would allow a hardware compiler to canonicalize `0xffffffff` as a NaN, changing

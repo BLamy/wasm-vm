@@ -138,6 +138,19 @@ def main(out):
         ['MOV OUT[0], IN[0]','ADD OUT[31], CONST[0], CONST[511]']),
         b=program(1,'DCL CONST[511]\nDCL IN[31], GENERIC[15], PERSPECTIVE\nDCL CONST[0]\nDCL TEMP[0]\nDCL OUT[0], COLOR',
         ['ADD TEMP[0], IN[31], CONST[511]','ADD OUT[0], TEMP[0], CONST[0]']),kind=2)
+    # The pinned upstream field counts declarations, not texture reads. Public
+    # metadata must still list only the independently decoded TEX read mask.
+    for stage in [0,1]:
+        output='POSITION' if stage==0 else 'COLOR'
+        for sid in [0,15]:
+            decl=f'DCL SAMP[{sid}]\nDCL SVIEW[{sid}], 2D, FLOAT\nDCL OUT[0], {output}\nIMM[0] FLT32 {{0,0,0,1}}'
+            add(f'unused-sampler-{stage}-{sid}',program(stage,decl,['MOV OUT[0], IMM[0]']),kind=stage)
+            other=15-sid
+            decl=f'DCL SAMP[{sid}]\nDCL SVIEW[{sid}], 2D, FLOAT\nDCL SAMP[{other}]\nDCL SVIEW[{other}], 2D, FLOAT\nDCL OUT[0], {output}\nIMM[0] FLT32 {{0,0,0,1}}'
+            add(f'mixed-used-unused-sampler-{stage}-{sid}',program(stage,decl,[f'TEX OUT[0], IMM[0], SAMP[{sid}], 2D']),kind=stage)
+        for missing in ['SAMP','SVIEW']:
+            decl=('DCL SVIEW[0], 2D, FLOAT' if missing=='SAMP' else 'DCL SAMP[0]')+f'\nDCL OUT[0], {output}\nIMM[0] FLT32 {{0,0,0,1}}'
+            add(f'missing-texture-declaration-{stage}-{missing}',program(stage,decl,['TEX OUT[0], IMM[0], SAMP[0], 2D']),False,kind=stage,code='unsupported-feature')
     report={'schema':'virgl-standard-shader-cases-v1','cases':cases,'originals':list(originals.values()),'seeds':seeds}
     (out/'cases.json').write_text(json.dumps(report,indent=2)+'\n')
     parts=[struct.pack('<I',len(cases))]

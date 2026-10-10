@@ -19,7 +19,7 @@ def git(*args):return subprocess.check_output(['git',*args],cwd=ROOT,text=True).
 def main(directory):
     head=git('rev-parse','HEAD');need(not git('diff','--name-only','HEAD'),'freeze source before recording')
     metadata=json.loads((directory/'native/metadata.json').read_text());node=json.loads((directory/'native/node.json').read_text())
-    need(metadata['status']==node['status']=='passed' and metadata['cases']==node['cases']==657,'complete native/independent metadata/Wasm cases')
+    need(metadata['status']==node['status']=='passed' and metadata['cases']==node['cases']==669,'complete native/independent metadata/Wasm cases')
     need(node['exactNativeWasm'] and node['fixedMemory']['bytes']==16777216 and node['fixedMemory']['recovered'],'fixed actual Wasm recovery')
     need((directory/'native/native.jsonl').read_bytes()==(directory/'native/sanitize.jsonl').read_bytes(),'native and sanitized bytes differ')
     allocations=[json.loads(l) for l in (directory/'native/allocations.jsonl').read_text().splitlines()]
@@ -40,7 +40,7 @@ def main(directory):
             if not item['path'].startswith(('target/','renderer/virgl-shader/build/')):served_sources.add(item['path'])
         coverage=report['browserCoverage'];need(sha((directory/name/coverage['path']).read_bytes())==coverage['sha256'],'V8 coverage drift '+name)
         if name=='hardware':need(report['acceptance']['frames'] and not report['productionNegotiation'],'isolated physical compiler scope')
-    audit=json.loads((directory/'physical-audit.json').read_text());need(audit['status']=='passed' and audit['frames']==128 and audit['pixels']==2390672 and audit['mutation']['caught'],'offline physical evidence')
+    audit=json.loads((directory/'physical-audit.json').read_text());need(audit['status']=='passed' and audit['frames']==129 and audit['pixels']==2390688 and audit['mutation']['caught'],'offline physical evidence')
     # Preserve the entire pre-existing C boundary byte for byte (apart from the
     # two new includes and trailing whitespace). Its HELD evidence is carried;
     # the new frozen module also executed direct ordinary/raw/private anchors.
@@ -64,7 +64,7 @@ def main(directory):
     paths=git('ls-files','--','renderer/virgl-shader','tools/virgl-standard-shader','tools/verify-virgl-standard-shader.sh','tools/lib/virgl-browser-runner.mjs','tools/setup-virgl-emsdk.sh','tools/virgl-original-programs','tools/virgl-original-corpus','tools/virgl-original-c580','tools/virgl-92cb-geometry','tools/virgl-92cb-raster','tools/virgl-capture/validate.py','tools/verify-virgl-shader.mjs','tools/verify-virgl-raw-bits.mjs','evidence/virgl-production-readiness','evidence/virgl-workload-inventory/captures/es2gears/shaders','evidence/virgl-workload-inventory/captures/es2gears/manifest.json','evidence/virgl-workload-inventory/captures/es2gears/summary.json','evidence/virgl-workload-inventory/captures/es2gears/events.jsonl','evidence/virgl-workload-inventory/es2gears-inventory.json','Makefile',f'tasks/epic-6-transcendence/{TASK}-standard-shader-compiler.md').splitlines()
     paths=sorted(set(paths)|served_sources)
     files={p.relative_to(directory).as_posix():sha(p.read_bytes()) for p in directory.rglob('*') if p.is_file() and p.name!='receipt.json'}
-    result=dict(schema='standard-shader-compiler-receipt-v1',task=TASK,status='passed',gitHead=head,cases=657,frames=128,pixels=2390672,coverage=coverage,stack=stack,legacyBoundary=dict(head=predecessor,sha256=sha(legacy),unchanged=True),guestExecution=False,productionDrawAuthority=False,files=files,sources={p:sha((ROOT/p).read_bytes()) for p in paths},generated={p:sha((ROOT/p).read_bytes()) for p in GENERATED})
-    (directory/'receipt.json').write_text(json.dumps(result,indent=2)+'\n');print('Frozen standard compiler, 657 cases, 128 physical frames, coverage and legacy boundaries authenticated.')
+    result=dict(schema='standard-shader-compiler-receipt-v1',task=TASK,status='passed',gitHead=head,cases=669,frames=129,pixels=2390688,coverage=coverage,stack=stack,legacyBoundary=dict(head=predecessor,sha256=sha(legacy),unchanged=True),guestExecution=False,productionDrawAuthority=False,files=files,sources={p:sha((ROOT/p).read_bytes()) for p in paths},generated={p:sha((ROOT/p).read_bytes()) for p in GENERATED})
+    (directory/'receipt.json').write_text(json.dumps(result,indent=2)+'\n');print('Frozen standard compiler, 669 cases, 129 physical frames, coverage and legacy boundaries authenticated.')
 
 if __name__=='__main__':main(Path(sys.argv[1]))

@@ -166,6 +166,11 @@ export async function runAcceptance({matrixPath,nativePath,geometryPath,banksPat
   const ft=stage==='fragment'?text('fragment','DCL CONST[0]\nDCL OUT[0], COLOR\n'+decl,['TEX OUT[0], CONST[0], SAMP[15], 2D']):text('fragment','DCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR',['MOV OUT[0], IN[0]']);
   await run({name:'native-'+stage+'-sampler15',vertexText:vt,fragmentText:ft,[stage==='vertex'?'vertexWords':'fragmentWords']:words([.25,.25,0,1]),samplers:[{name:(stage==='vertex'?'vs':'fs')+'samp15',unit:15,rgba}],fixture:{kind:'constant',value:color},expected:()=>color});
  }
+ const unused='DCL SAMP[15]\nDCL SVIEW[15], 2D, FLOAT';
+ await run({name:'unused-sampler-both-stages',width:4,height:4,
+  vertexText:text('vertex','DCL IN[0]\nDCL OUT[0], POSITION\n'+unused,['MOV OUT[0], IN[0]']),
+  fragmentText:text('fragment','DCL CONST[0]\nDCL OUT[0], COLOR\n'+unused,['MOV OUT[0], CONST[0]']),
+  fragmentWords:words([.25,.5,.75,.875]),fixture:{kind:'constant',value:[.25,.5,.75,.875]},expected:()=>[.25,.5,.75,.875]});
  const originals=new Map(matrix.originals.map(o=>[o.sha256,o.text]));
  const geometry=new DataView(await(await fetch(geometryPath)).arrayBuffer());require(geometry.byteLength===2040&&geometry.getUint32(4,true)===3,'authenticated full original geometry extent');
  const rw=(offset,count)=>Array.from({length:count},(_,i)=>geometry.getUint32(offset+i*4,true));

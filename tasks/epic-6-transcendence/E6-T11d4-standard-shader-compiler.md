@@ -80,6 +80,20 @@ contract; existing private rejection/results must carry unchanged.
 
 ## Verification log
 
+### 2026-10-09 — worker — unused sampler declaration repair
+
+The declaration-order repair at `b233979a` passes all 657 cases and 128 physical
+frames, including its clean exact-head run. A subsequent integration probe finds
+that legal unused SAMP/SVIEW declarations still reject: pinned upstream
+`vrend_shader.c:1896` calls the declaration mask `samplers_used`, while the
+standard guardian records actual TEX reads. The transaction now compares that
+upstream field to independently guarded declarations; public metadata still
+contains only independently decoded instruction reads. No sampler limit or
+undeclared-TEX check is relaxed. The matrix adds both stages, slots0/15,
+used/unused mixtures and missing SAMP/SVIEW rejection, plus a real paired draw
+with unused declarations in both stages. New runtime semantics require a new
+frozen submission and final exact-head clone before the fresh verdict.
+
 ### 2026-10-09 — worker — declaration-order repair in progress
 
 Fresh refutation `6a81dbab` found a legitimate isolated CONST0 declaration after

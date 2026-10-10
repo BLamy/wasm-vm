@@ -85,7 +85,7 @@ function expectation(frame,x,y,output){
  }
 }
 const hardware=JSON.parse(await fs.readFile(path.join(root,'hardware/report.json'))),failed=JSON.parse(await fs.readFile(path.join(root,'fault-sine/report.json')));
-assert.equal(hardware.status,'passed');assert.equal(hardware.acceptance.frames.length,128);assert.equal(hardware.acceptance.compiles.length,257);
+assert.equal(hardware.status,'passed');assert.equal(hardware.acceptance.frames.length,129);assert.equal(hardware.acceptance.compiles.length,265);
 const results=[];let pixels=0;
 for(const frame of hardware.acceptance.frames){
  assert.equal(frame.mismatches.length,0);assert.equal(frame.budget,frame.fixture.kind==='originalC580'?.02:frame.fixture.kind==='original92'?.0001:.00005);
@@ -103,5 +103,5 @@ for(const frame of hardware.acceptance.frames){
 assert.equal(failed.status,'failed');assert.deepEqual(failed.browserErrors,{console:[],page:[],requests:[]});assert.ok(failed.failure.message.includes('dynamic-fragment-SIN-0 independent standard pixels'));
 const fault=failed.acceptance.frames[0],good=hardware.acceptance.frames[0];assert.equal(fault.name,good.name);assert.equal(fault.fragment.glsl,good.fragment.glsl.replace('sin(','cos('));assert.deepEqual(fault.banks,good.banks);
 assert.ok(fault.mismatches.length>0&&fault.mismatches[0].errors.some(e=>e>.1));
-const report={schema:'standard-shader-offline-pixels-v1',status:'passed',frames:128,pixels,results,mutation:{operation:'SIN-to-COS',point:fault.mismatches[0],caught:true},oracleAuthority:'literal CPU math, integer arithmetic, pinned complete original analytic oracle; no emitted GLSL expected values'};
+const report={schema:'standard-shader-offline-pixels-v1',status:'passed',frames:129,pixels,results,mutation:{operation:'SIN-to-COS',point:fault.mismatches[0],caught:true},oracleAuthority:'literal CPU math, integer arithmetic, pinned complete original analytic oracle; no emitted GLSL expected values'};
 await fs.writeFile(path.join(root,'physical-audit.json'),JSON.stringify(report,null,2)+'\n');console.log(`${pixels} independently recomputed physical pixels and actual SIN-to-COS mutation authenticated.`);

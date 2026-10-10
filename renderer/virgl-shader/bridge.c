@@ -2316,8 +2316,14 @@ static const char *standard_convert(struct standard_conversion *c, const char *o
    bool ok = vrend_convert_shader(NULL, &cfg, tokens, 0, &key, &c->info, &c->variable, &c->shader);
    size_t bytes = 0;
    for (int i = 0; i < c->shader.num_strings; ++i) bytes += strlen(c->shader.strings[i].buf);
+   /* Pinned upstream samplers_used means declared SAMP registers. Our public
+    * interface describes actual TEX reads, so unused declarations must not
+    * confuse those two independently checked facts. */
+   uint32_t declared_samplers = 0;
+   for (unsigned i = 0; i < STANDARD_SAMPLERS; ++i)
+      if (c->profile.declared[STD_SAMP][i]) declared_samplers |= 1u << i;
    if (!ok || bridge_upstream_allocation_failed() || upstream_logged || bytes > BRIDGE_MAX_GLSL ||
-       c->info.num_consts != c->profile.constants || c->info.samplers_used_mask != c->profile.used_samplers)
+       c->info.num_consts != c->profile.constants || c->info.samplers_used_mask != declared_samplers)
       return error("translation-error", "Standard conversion failed or metadata/output bounds disagree.");
    const char *emitted = standard_emit(&c->profile, tokens, &c->standard_source);
    return emitted ? error(emitted, "Standard word-storage emission failed.") : NULL;
