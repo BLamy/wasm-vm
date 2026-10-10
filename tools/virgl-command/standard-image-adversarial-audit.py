@@ -249,6 +249,7 @@ def audit(directory, expect_fault=False):
     report_bytes = (directory/'report.json').read_bytes()
     report = json.loads(report_bytes)
     result = report.get('partial') or report['browserResult']['result']
+    result_pointer = '/partial' if report.get('partial') else '/browserResult/result'
     assert report['task'] == 'E6-T11d21'
     assert report['browserErrors'] == dict(console=[],page=[],requests=[])
     assert not report['browser']['headless'] and 'M4' in result['gpu'] and 'Metal' in result['gpu']
@@ -316,7 +317,7 @@ def audit(directory, expect_fault=False):
             fences += 1
         draw_occurrence = {}
         for di, draw in enumerate(run['draws']):
-            point = f'report.json#/browserResult/result/runs/{ri}/draws/{di}'
+            point = f'report.json#{result_pointer}/runs/{ri}/draws/{di}'
             occurrence = draw_occurrence.get(draw['label'], 0)
             event = events[draw['label']][occurrence]
             draw_occurrence[draw['label']] = occurrence+1
@@ -351,7 +352,7 @@ def audit(directory, expect_fault=False):
         for oi, observation in enumerate(run['observations']):
             if not observation.get('native'):
                 continue
-            point = f'report.json#/browserResult/result/runs/{ri}/observations/{oi}'
+            point = f'report.json#{result_pointer}/runs/{ri}/observations/{oi}'
             event = events[observation['label']][-1]
             predicted = format_pixels(observation['format'], event['color'], observation['width'], observation['height'])
             if predicted_case:
