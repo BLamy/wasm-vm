@@ -259,11 +259,14 @@ function decodeSamplerState(p, handle) {
   const minImageFilter = (bits >>> 9) & 1, minMipFilter = (bits >>> 11) & 3, magImageFilter = (bits >>> 13) & 1;
   const compareMode = (bits >>> 15) & 1, compareFunction = (bits >>> 16) & 7;
   const seamlessCubeMap = Boolean(bits & (1 << 19)), maxAnisotropy = (bits >>> 20) & 31;
-  p.require(wrapS === 2 && wrapT === 2 && [0, 2].includes(wrapR) && minMipFilter === 2 &&
-    compareMode === 0 && maxAnisotropy === 0, "unsupported-feature", "Only clamp-edge 2D nearest/linear non-mip samplers are supported.");
+  p.require((p.standard ? [wrapS, wrapT, wrapR].every(wrap => [0, 2, 4].includes(wrap)) && minMipFilter <= 2 :
+    wrapS === 2 && wrapT === 2 && [0, 2].includes(wrapR) && minMipFilter === 2) &&
+    compareMode === 0 && maxAnisotropy === 0, "unsupported-feature", p.standard ?
+    "Only core repeat, clamp-edge and mirrored-repeat non-shadow samplers are supported." :
+    "Only clamp-edge 2D nearest/linear non-mip samplers are supported.");
   const lodBias = p.f(3), minLod = p.f(4), maxLod = p.f(5), borderColor = p.words(6, 4);
-  p.require(lodBias === 0 && minLod === 0 && maxLod >= 0, "unsupported-feature", "Unsupported sampler LOD state.");
-  p.zero(6, 4, "Inactive sampler border color must be zero.");
+  p.require(lodBias === 0 && (p.standard || minLod === 0 && maxLod >= 0), "unsupported-feature", "Unsupported sampler LOD state.");
+  if (!p.standard) p.zero(6, 4, "Inactive sampler border color must be zero.");
   return { handle, wrapS, wrapT, wrapR, minImageFilter, minMipFilter, magImageFilter,
     compareMode, compareFunction, seamlessCubeMap, maxAnisotropy, lodBias, minLod, maxLod, borderColor };
 }

@@ -1,0 +1,499 @@
+{
+  "task": "E6-T11d19",
+  "role": "fresh-adversarial-verifier",
+  "verdict": "verified",
+  "base": "bdad14aff93ba70c09d60ab308df4d2024dce4ba",
+  "submission": "a8859ed6d16f9c5479bc32c97ae43c8caf6a6d96",
+  "frozenRuntimeAndWorkerHarness": "4e13347405adf4926dd866b9ff434a08420b4784",
+  "promotedTestHead": "8b9a387a651640e707471d850468e9dd22b10dd7",
+  "predictions": {
+    "record": "predictions.json",
+    "sha256": "3b5ede9f4c64347e42ee558f953c3c789097ebae1f836c1fcb97abffde60ed94"
+  },
+  "findings": [
+    {
+      "id": "P1",
+      "status": "HELD",
+      "prediction": "All8192 original enum packets admit exactly324 standard and8 legacy combinations.",
+      "observed": "Both hot/cold full literal matrices match independent original bit predicates; finite public shape remains restricted.",
+      "citations": [
+        {
+          "record": "wire-audit.json",
+          "jsonPoint": "/runs/0",
+          "line": 4,
+          "sha256": "381ac90370c727fa095263af760b40f668d8cc0065b4458847d6896759131e97",
+          "custody": "critic sealed archive"
+        },
+        {
+          "record": "unpacked/hot/wire/report.json",
+          "jsonPoint": "/wire/records",
+          "line": 153,
+          "sha256": "c0a7e938a7c0b3bb7891f3bb2c329879abd4905d6d8eed32005315822b120f4a",
+          "custody": "worker sealed archive via worker-reference.json"
+        }
+      ]
+    },
+    {
+      "id": "P2",
+      "status": "HELD",
+      "prediction": "Finite signed/reversed LOD and inactive raw words are preserved; unsupported/nonfinite/reserved/guest-selector/malformed-tail states reject.",
+      "observed": "288 extra original records per hot/cold run,48 original negative-zero minima and104 reversed original bounds, all eight inactive compare functions.72 native parameter-only cases include40 reversed bounds. No shader request/draw occurs in parameter-only cases.",
+      "citations": [
+        {
+          "record": "unpacked/hot/wire/report.json",
+          "jsonPoint": "/wire/extra/0",
+          "line": 65692,
+          "sha256": "c0a7e938a7c0b3bb7891f3bb2c329879abd4905d6d8eed32005315822b120f4a",
+          "custody": "worker sealed archive via worker-reference.json"
+        },
+        {
+          "record": "state-audit.json",
+          "jsonPoint": "/runs/0/nativeParameterOnly/0",
+          "line": 81,
+          "sha256": "3a6a2b7a165ec016efd60e502fb3466690c61e04c1b101bf037047eb6a6e491e",
+          "custody": "critic sealed archive"
+        }
+      ]
+    },
+    {
+      "id": "P3",
+      "status": "HELD",
+      "prediction": "Original packet state, exact native sampler identities/parameters, all upload/GPU/vertex/shader bytes and full completed-fence pixels match independent literal state and GLES equations.",
+      "observed": "Hot/cold106496 pixels and1668 positive actual draws, three independently scheduled matrices159744 pixels/2502 draws. All full original/native texels and position words authenticate, and all7 complete C/Wasm pair results replay through actual16MiB Wasm.",
+      "citations": [
+        {
+          "record": "recording-audit.json",
+          "jsonPoint": "/runs/0/frames/0",
+          "line": 12,
+          "sha256": "b4f5d654bd73e88c098a33854d42f913a43ce8df15337d1310b259234535155f",
+          "custody": "critic sealed archive"
+        },
+        {
+          "record": "unpacked/hot/hardware/report.json",
+          "jsonPoint": "/browserResult/result/frames/648",
+          "line": 713222,
+          "sha256": "8e5c3bbd736b796c3712549adf49febe6976a06c98ba4f71f2eed1f76603e8d5",
+          "custody": "worker sealed archive via worker-reference.json"
+        },
+        {
+          "record": "independent-matrix-audit.json",
+          "jsonPoint": "/positivePixels",
+          "line": 97775,
+          "sha256": "186394d96b52ae314339e9f37a8a409677866e3abf53e45e65ba84c9cd968e12",
+          "custody": "critic sealed archive"
+        },
+        {
+          "record": "wasm-replay.json",
+          "jsonPoint": "/actualPairExportCalls",
+          "line": 4,
+          "sha256": "e11232523e4c1a744f38e203324383de25084598c797c83afb9c1128a65ec107",
+          "custody": "critic sealed archive"
+        }
+      ]
+    },
+    {
+      "id": "P4",
+      "status": "HELD",
+      "prediction": "Native failures publish nothing; exact retained identities restore after poison/context/subcontext/cache changes and queued delayed fences; all ownership retires.",
+      "observed": "Native allocation and parameter errors apply zero commands, issue zero draws and retire zero/one actual sampler respectively. Public deletion applies its one delete then refuses a draw. Recorded finishing points retain live samplers/leases through3 queued native draws; every terminal budget is zero and every created sampler deletes once.",
+      "citations": [
+        {
+          "record": "unpacked/hot/hardware/report.json",
+          "jsonPoint": "/browserResult/result/rejections/0",
+          "line": 1590741,
+          "sha256": "8e5c3bbd736b796c3712549adf49febe6976a06c98ba4f71f2eed1f76603e8d5",
+          "custody": "worker sealed archive via worker-reference.json"
+        },
+        {
+          "record": "unpacked/hot/hardware/report.json",
+          "jsonPoint": "/browserResult/result/rejections/1",
+          "line": 1590938,
+          "sha256": "8e5c3bbd736b796c3712549adf49febe6976a06c98ba4f71f2eed1f76603e8d5",
+          "custody": "worker sealed archive via worker-reference.json"
+        },
+        {
+          "record": "unpacked/hot/hardware/report.json",
+          "jsonPoint": "/browserResult/result/ownership/72",
+          "line": 1607606,
+          "sha256": "8e5c3bbd736b796c3712549adf49febe6976a06c98ba4f71f2eed1f76603e8d5",
+          "custody": "worker sealed archive via worker-reference.json"
+        },
+        {
+          "record": "unpacked/cold/hardware/report.json",
+          "jsonPoint": "/browserResult/result/runs/254/final",
+          "line": 1590485,
+          "sha256": "919d7bcd6e86aa7c2fb43a349e47b473398f4f3a5b32f7bf0d374b1bd32db627",
+          "custody": "worker sealed archive via worker-reference.json"
+        }
+      ]
+    },
+    {
+      "id": "P5",
+      "status": "HELD",
+      "prediction": "Real wrap/filter faults change completed actual draw/fence pixels and fail the unchanged independent oracle.",
+      "observed": "Both hot and cold native wrap/filter mutations issue actual native draws, return gpuComplete=true, then fail full pixels; the independent raw-word/native audit observes changed parameters and differing full pixels.",
+      "citations": [
+        {
+          "record": "unpacked/hot/fault-wrap/report.json",
+          "jsonPoint": "/partial/runs/0/history/0/result",
+          "line": 1859,
+          "sha256": "9505f219bed392d13e94c9c2c96a6b80010ac66eaadc444e581765e3ef03fcc7",
+          "custody": "worker sealed archive via worker-reference.json"
+        },
+        {
+          "record": "unpacked/hot/fault-filter/report.json",
+          "jsonPoint": "/partial/runs/0/history/0/result",
+          "line": 1859,
+          "sha256": "00ff2b47edc515f9b729dbca82d3a18b482bee151517b9956eed279bd9054b31",
+          "custody": "worker sealed archive via worker-reference.json"
+        },
+        {
+          "record": "unpacked/cold/fault-wrap/report.json",
+          "jsonPoint": "/partial/frames/0",
+          "line": 1041,
+          "sha256": "7dddb290296b591180afacd596575a0e3e4bad8f8c300e97cebdc0493c1e2ee3",
+          "custody": "worker sealed archive via worker-reference.json"
+        },
+        {
+          "record": "unpacked/cold/fault-filter/report.json",
+          "jsonPoint": "/partial/frames/0",
+          "line": 1041,
+          "sha256": "043a88edceaec6b94a1f61426cab9e85a4d469ef599f8800a823f0e08ebc98df",
+          "custody": "worker sealed archive via worker-reference.json"
+        }
+      ]
+    },
+    {
+      "id": "P6",
+      "status": "HELD",
+      "prediction": "Exact hot/cold source/generated/served/Wasm/V8 custody, pristine scrubbed clone and complete changed nested runtime coverage; carry unchanged HELD dependencies.",
+      "observed": "9750 sealed worker members authenticate. Each receipt binds437 frozen source files and2 identical generated artifacts. All changed nested runtime segments execute in hot/cold unions;13 test/offline diagnostics per side have explicit individual waivers. Covered offline audits reproduce sealed worker output byte for byte. All35 inherited evidence records and5 unchanged code boundaries authenticate; affected old gates pass hot/cold. Final14 fresh recordings and29 full source snapshots authenticate.",
+      "citations": [
+        {
+          "record": "authentication.json",
+          "jsonPoint": "/receipts",
+          "line": 8,
+          "sha256": "b3a40003a581178e3c892f5cc7f72a50ed3c62f180346c810e546372f2091176",
+          "custody": "critic sealed archive"
+        },
+        {
+          "record": "authentication.json",
+          "jsonPoint": "/boundaries",
+          "line": 28,
+          "sha256": "b3a40003a581178e3c892f5cc7f72a50ed3c62f180346c810e546372f2091176",
+          "custody": "critic sealed archive"
+        },
+        {
+          "record": "authentication.json",
+          "jsonPoint": "/carry",
+          "line": 35,
+          "sha256": "b3a40003a581178e3c892f5cc7f72a50ed3c62f180346c810e546372f2091176",
+          "custody": "critic sealed archive"
+        },
+        {
+          "record": "unpacked/cold/report.json",
+          "jsonPoint": "/cloneHead",
+          "line": 14,
+          "sha256": "6912e094a3608245bf68f7f7d3e7a53469a55eceeddbc56aeee06aba97fd89ea",
+          "custody": "worker sealed archive via worker-reference.json"
+        },
+        {
+          "record": "coverage-regions.json",
+          "jsonPoint": "/runtimeUnexecuted",
+          "line": 50671,
+          "sha256": "a0bf68da86bd08b29f1be70b44d5a8135b11fbeab803e32126882c0d3adbe009",
+          "custody": "critic sealed archive"
+        },
+        {
+          "record": "fresh-custody.json",
+          "jsonPoint": "/runtimeDiffAfterFreeze",
+          "line": 11,
+          "sha256": "2d745c4dcd277cb705f1f3eafbfdd7bada88f5f1c8f168c699def0f87f3537ea",
+          "custody": "critic sealed archive"
+        }
+      ]
+    },
+    {
+      "id": "P7-initial-ideal-coordinate",
+      "status": "FAILED",
+      "classification": "invalid-critic-fixture-precondition",
+      "prediction": "Ideal interpolated coordinate y=4 at two upper-right nearest REPEAT samples.",
+      "observed": "Unchanged original native vertex output actually interpolates3.999999761581421 at those two fragments. Those measured coordinate words explain every one of the8 differing bytes; native identity/parameters/full texture/vertex/GLSL remain correct. The unchanged recheck repeats the same failure.",
+      "demand": "Completed: correct only the critic fixture to keep interpolated nearest samples1/32 away from discontinuities and use exact original constant VS coordinates for continuous linear seams, then rerun the touched novel proof at committed test head.",
+      "citations": [
+        {
+          "record": "promoted-final/gpu-521288629/report.json",
+          "jsonPoint": "/partial/frames/5",
+          "line": 6879,
+          "sha256": "191eace8980991fe0f4e74d11355e47ea68bea3e0a4e0c5b22d3b664abe48154",
+          "custody": "critic sealed archive"
+        },
+        {
+          "record": "novel-recheck-521288629/report.json",
+          "jsonPoint": "/partial/frames/5",
+          "line": 6879,
+          "sha256": "b515eb216861256a690d39649cf425854068661b9f74a52f8c4681a098a42d5a",
+          "custody": "critic sealed archive"
+        },
+        {
+          "record": "interpolation-diagnostic.json",
+          "jsonPoint": "/result/rows/1/values",
+          "line": 613,
+          "sha256": "8f1a80094d399a632ba195f151ec96e96a12b7df6272f8a648c5dc9868d93357",
+          "custody": "critic sealed archive"
+        },
+        {
+          "record": "prediction-correction.json",
+          "jsonPoint": "/revisedPredictionBeforeNewRuns",
+          "line": 20,
+          "sha256": "c52caebef2604b622d7f71cbdf26543981be21614bcf2572bdb7cd31d1d811f2",
+          "custody": "critic sealed archive"
+        }
+      ]
+    },
+    {
+      "id": "P7",
+      "status": "HELD",
+      "prediction": "The revised bounded independently seeded stage-split seam attack restores exact sampler identity/state under ambient poison, cache/context/subcontext changes and queued FS-only replacement; native sabotage fails only after draw/fence.",
+      "observed": "Seeds362436069/521288629/733973753 at exact committed test head each pass8 full frames/10 actual draws;1536 independently reconstructed positive pixels. In queued draw0 FS uses original13, draw1/2 use new46 while VS18 remains unchanged in seed362436069. Two actual native sabotages fail full pixels only after gpuComplete=true; all91 nested promoted body segments execute and ownership drains.",
+      "citations": [
+        {
+          "record": "promoted-stable/gpu-362436069/report.json",
+          "jsonPoint": "/browserResult/result/frames/5",
+          "line": 7356,
+          "sha256": "e8751091dbbb4bbce5b6181cf28f55b28a7125b7b6fc799fd27cddc8a16271a5",
+          "custody": "critic sealed archive"
+        },
+        {
+          "record": "promoted-stable/gpu-521288629/report.json",
+          "jsonPoint": "/browserResult/result/frames/5",
+          "line": 7548,
+          "sha256": "89da60fa91db97b9afe260b9d60da581aaf620d875387154c650b198925e338e",
+          "custody": "critic sealed archive"
+        },
+        {
+          "record": "promoted-stable/gpu-733973753/report.json",
+          "jsonPoint": "/browserResult/result/frames/5",
+          "line": 7188,
+          "sha256": "052ad7219ec6e29a0c2bf1b3f52f66fbf1c3a6bf8aa060dafa798be9b83e9cdf",
+          "custody": "critic sealed archive"
+        },
+        {
+          "record": "promoted-stable/sabotage-wrap/report.json",
+          "jsonPoint": "/partial/runs/0/history/0/result",
+          "line": 1988,
+          "sha256": "9b9ba402edae7aae67533bf378a7f02b86dfd717c7832302863cb7ed37eca567",
+          "custody": "critic sealed archive"
+        },
+        {
+          "record": "promoted-stable/sabotage-filter/report.json",
+          "jsonPoint": "/partial/runs/0/history/0/result",
+          "line": 1988,
+          "sha256": "0bb069b7bd90f67d47b9fb94614f6d228dab5990481b9b7dbeed7b8294d12ea6",
+          "custody": "critic sealed archive"
+        }
+      ]
+    }
+  ],
+  "changedFileClassification": [
+    {
+      "source": "Makefile",
+      "classification": "executed-acceptance-control-and-waived-host-diagnostics",
+      "reason": "Exact original Make/runner/shell/cold/receipt/seal gates execute in sealed hot/cold logs; promoted Make/runner/Python-model/audit execute in source-bound final target and independent matrix records. CLI help, timeouts, source-drift, malformed-record and environment/absence diagnostics are host proof controls, not unexecuted original sampler behavior."
+    },
+    {
+      "source": "evidence/virgl-production-readiness/standard-sampler-gap.json",
+      "classification": "waived-recorded-data",
+      "reason": "Immutable planning/submission recordings and indices; authenticated digests or explicitly historical readiness probe, no runtime behavior."
+    },
+    {
+      "source": "evidence/virgl-standard-sampler-state/worker/manifest.json",
+      "classification": "waived-recorded-data",
+      "reason": "Immutable planning/submission recordings and indices; authenticated digests or explicitly historical readiness probe, no runtime behavior."
+    },
+    {
+      "source": "evidence/virgl-standard-sampler-state/worker/recording.tar.gz",
+      "classification": "waived-recorded-data",
+      "reason": "Immutable planning/submission recordings and indices; authenticated digests or explicitly historical readiness probe, no runtime behavior."
+    },
+    {
+      "source": "evidence/virgl-standard-sampler-state/worker/records.json",
+      "classification": "waived-recorded-data",
+      "reason": "Immutable planning/submission recordings and indices; authenticated digests or explicitly historical readiness probe, no runtime behavior."
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "classification": "executed",
+      "reason": "Every nested decision in the sole changed original sampler region has authenticated V8 hits; legacy/source outside that region carries by exact identity."
+    },
+    {
+      "source": "renderer/virgl-command/state-README.md",
+      "classification": "waived-declarative-documentation",
+      "reason": "Task/status/dependency/queue/README prose cannot change runtime semantics; policy checked before regenerated queue."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "classification": "executed",
+      "reason": "Every nested decision in the sole changed original sampler region has authenticated V8 hits; legacy/source outside that region carries by exact identity."
+    },
+    {
+      "source": "renderer/virgl-command/tests/standard-sampler-state.mjs",
+      "classification": "executed-and-explicit-diagnostic-waivers",
+      "reason": "Full authenticated nested V8 union; exact unexecuted diagnostics/fallbacks are individually classified in coverage-regions.json."
+    },
+    {
+      "source": "tasks/QUEUE.md",
+      "classification": "waived-declarative-documentation",
+      "reason": "Task/status/dependency/queue/README prose cannot change runtime semantics; policy checked before regenerated queue."
+    },
+    {
+      "source": "tasks/epic-6-transcendence/E6-T11d-truthful-guest-virgl-bringup.md",
+      "classification": "waived-declarative-documentation",
+      "reason": "Task/status/dependency/queue/README prose cannot change runtime semantics; policy checked before regenerated queue."
+    },
+    {
+      "source": "tasks/epic-6-transcendence/E6-T11d19-standard-sampler-state.md",
+      "classification": "waived-declarative-documentation",
+      "reason": "Task/status/dependency/queue/README prose cannot change runtime semantics; policy checked before regenerated queue."
+    },
+    {
+      "source": "tools/verify-virgl-standard-sampler-state-adversarial.mjs",
+      "classification": "executed-acceptance-control-and-waived-host-diagnostics",
+      "reason": "Exact original Make/runner/shell/cold/receipt/seal gates execute in sealed hot/cold logs; promoted Make/runner/Python-model/audit execute in source-bound final target and independent matrix records. CLI help, timeouts, source-drift, malformed-record and environment/absence diagnostics are host proof controls, not unexecuted original sampler behavior."
+    },
+    {
+      "source": "tools/verify-virgl-standard-sampler-state-adversarial.sh",
+      "classification": "executed-acceptance-control-and-waived-host-diagnostics",
+      "reason": "Exact original Make/runner/shell/cold/receipt/seal gates execute in sealed hot/cold logs; promoted Make/runner/Python-model/audit execute in source-bound final target and independent matrix records. CLI help, timeouts, source-drift, malformed-record and environment/absence diagnostics are host proof controls, not unexecuted original sampler behavior."
+    },
+    {
+      "source": "tools/verify-virgl-standard-sampler-state.mjs",
+      "classification": "executed-and-explicit-diagnostic-waivers",
+      "reason": "Full authenticated nested V8 union; exact unexecuted diagnostics/fallbacks are individually classified in coverage-regions.json."
+    },
+    {
+      "source": "tools/verify-virgl-standard-sampler-state.sh",
+      "classification": "executed-acceptance-control-and-waived-host-diagnostics",
+      "reason": "Exact original Make/runner/shell/cold/receipt/seal gates execute in sealed hot/cold logs; promoted Make/runner/Python-model/audit execute in source-bound final target and independent matrix records. CLI help, timeouts, source-drift, malformed-record and environment/absence diagnostics are host proof controls, not unexecuted original sampler behavior."
+    },
+    {
+      "source": "tools/virgl-command/standard-sampler-adversarial-audit.py",
+      "classification": "executed-acceptance-control-and-waived-host-diagnostics",
+      "reason": "Exact original Make/runner/shell/cold/receipt/seal gates execute in sealed hot/cold logs; promoted Make/runner/Python-model/audit execute in source-bound final target and independent matrix records. CLI help, timeouts, source-drift, malformed-record and environment/absence diagnostics are host proof controls, not unexecuted original sampler behavior."
+    },
+    {
+      "source": "tools/virgl-command/standard-sampler-adversarial-body.mjs",
+      "classification": "executed",
+      "reason": "All91 complete nested promoted body segments execute in final seeded/sabotage source-bound variants."
+    },
+    {
+      "source": "tools/virgl-command/standard-sampler-cold.py",
+      "classification": "executed-acceptance-control-and-waived-host-diagnostics",
+      "reason": "Exact original Make/runner/shell/cold/receipt/seal gates execute in sealed hot/cold logs; promoted Make/runner/Python-model/audit execute in source-bound final target and independent matrix records. CLI help, timeouts, source-drift, malformed-record and environment/absence diagnostics are host proof controls, not unexecuted original sampler behavior."
+    },
+    {
+      "source": "tools/virgl-command/standard-sampler-coverage.py",
+      "classification": "executed-acceptance-control-and-waived-host-diagnostics",
+      "reason": "Exact original Make/runner/shell/cold/receipt/seal gates execute in sealed hot/cold logs; promoted Make/runner/Python-model/audit execute in source-bound final target and independent matrix records. CLI help, timeouts, source-drift, malformed-record and environment/absence diagnostics are host proof controls, not unexecuted original sampler behavior."
+    },
+    {
+      "source": "tools/virgl-command/standard-sampler-fixtures.mjs",
+      "classification": "executed",
+      "reason": "Every nested fixture/offline physical-audit segment has authenticated browser or covered Node replay hits."
+    },
+    {
+      "source": "tools/virgl-command/standard-sampler-oracle.mjs",
+      "classification": "executed-and-explicit-diagnostic-waivers",
+      "reason": "Full authenticated nested V8 union; exact unexecuted diagnostics/fallbacks are individually classified in coverage-regions.json."
+    },
+    {
+      "source": "tools/virgl-command/standard-sampler-pixels.mjs",
+      "classification": "executed",
+      "reason": "Every nested fixture/offline physical-audit segment has authenticated browser or covered Node replay hits."
+    },
+    {
+      "source": "tools/virgl-command/standard-sampler-receipt.py",
+      "classification": "executed-acceptance-control-and-waived-host-diagnostics",
+      "reason": "Exact original Make/runner/shell/cold/receipt/seal gates execute in sealed hot/cold logs; promoted Make/runner/Python-model/audit execute in source-bound final target and independent matrix records. CLI help, timeouts, source-drift, malformed-record and environment/absence diagnostics are host proof controls, not unexecuted original sampler behavior."
+    },
+    {
+      "source": "tools/virgl-command/standard-sampler-seal.py",
+      "classification": "executed-acceptance-control-and-waived-host-diagnostics",
+      "reason": "Exact original Make/runner/shell/cold/receipt/seal gates execute in sealed hot/cold logs; promoted Make/runner/Python-model/audit execute in source-bound final target and independent matrix records. CLI help, timeouts, source-drift, malformed-record and environment/absence diagnostics are host proof controls, not unexecuted original sampler behavior."
+    },
+    {
+      "source": "tools/virgl-command/standard_sampler_literal_model.py",
+      "classification": "executed-acceptance-control-and-waived-host-diagnostics",
+      "reason": "Exact original Make/runner/shell/cold/receipt/seal gates execute in sealed hot/cold logs; promoted Make/runner/Python-model/audit execute in source-bound final target and independent matrix records. CLI help, timeouts, source-drift, malformed-record and environment/absence diagnostics are host proof controls, not unexecuted original sampler behavior."
+    }
+  ],
+  "completeIndependentPositivePixels": 267776,
+  "actualPositiveNativeDraws": 4200,
+  "actualNativeSabotageDraws": 6,
+  "actualWasmCompletePairReplays": 7,
+  "suite": "make verify-E6-T11d19-adversarial",
+  "commands": [
+    "python3 evidence/virgl-standard-sampler-state/verifier/authenticate.py",
+    "python3 evidence/virgl-standard-sampler-state/verifier/audit_worker.py",
+    "node tools/verify-virgl-standard-sampler-state-adversarial.mjs --output evidence/virgl-standard-sampler-state/verifier/wire-independent --node-only true",
+    "node tools/verify-virgl-standard-sampler-state-adversarial.mjs --output evidence/virgl-standard-sampler-state/verifier/matrix-<seed> --seed <seed> --mode matrix (362436069,521288629,733973753)",
+    "VIRGL_SAMPLER_ADVERSARIAL_DIR=evidence/virgl-standard-sampler-state/verifier/promoted-stable make verify-E6-T11d19-adversarial",
+    "NODE_V8_COVERAGE=evidence/virgl-standard-sampler-state/verifier/covered-pixels-<side>/node-coverage node tools/virgl-command/standard-sampler-pixels.mjs evidence/virgl-standard-sampler-state/verifier/covered-pixels-<side> (hot,cold)",
+    "node evidence/virgl-standard-sampler-state/verifier/replay-wasm.mjs",
+    "python3 evidence/virgl-standard-sampler-state/verifier/coverage_audit.py",
+    "python3 evidence/virgl-standard-sampler-state/verifier/promotion_coverage.py",
+    "python3 evidence/virgl-standard-sampler-state/verifier/fresh_custody.py",
+    "python3 evidence/virgl-standard-sampler-state/verifier/state_audit.py"
+  ],
+  "authority": "Only the isolated host-selected original standard core sampler admission/native state boundary. One-level2D storage remains. Reversed LOD sampling is undefined and intentionally proven only by native parameter round-trip. No multilevel/cube/array/shadow storage, complete API/caps, actual guest/production/browser-demo/deployment/scanout or performance authority.",
+  "evidence": [
+    {
+      "record": "authentication.json",
+      "sha256": "b3a40003a581178e3c892f5cc7f72a50ed3c62f180346c810e546372f2091176"
+    },
+    {
+      "record": "wire-audit.json",
+      "sha256": "381ac90370c727fa095263af760b40f668d8cc0065b4458847d6896759131e97"
+    },
+    {
+      "record": "recording-audit.json",
+      "sha256": "b4f5d654bd73e88c098a33854d42f913a43ce8df15337d1310b259234535155f"
+    },
+    {
+      "record": "state-audit.json",
+      "sha256": "3a6a2b7a165ec016efd60e502fb3466690c61e04c1b101bf037047eb6a6e491e"
+    },
+    {
+      "record": "independent-matrix-audit.json",
+      "sha256": "186394d96b52ae314339e9f37a8a409677866e3abf53e45e65ba84c9cd968e12"
+    },
+    {
+      "record": "coverage-regions.json",
+      "sha256": "a0bf68da86bd08b29f1be70b44d5a8135b11fbeab803e32126882c0d3adbe009"
+    },
+    {
+      "record": "promotion-coverage.json",
+      "sha256": "4d0ee551b2b90c5fbb0c769a90a1259ddb1c298e7a015d7e243bfe8987581711"
+    },
+    {
+      "record": "fresh-custody.json",
+      "sha256": "2d745c4dcd277cb705f1f3eafbfdd7bada88f5f1c8f168c699def0f87f3537ea"
+    },
+    {
+      "record": "wasm-replay.json",
+      "sha256": "e11232523e4c1a744f38e203324383de25084598c797c83afb9c1128a65ec107"
+    },
+    {
+      "record": "prediction-correction.json",
+      "sha256": "c52caebef2604b622d7f71cbdf26543981be21614bcf2572bdb7cd31d1d811f2"
+    },
+    {
+      "record": "promoted-stable/adversarial-audit.json",
+      "sha256": "69f2f08145893042887b6a97e39dc44a8e8fc87906e14985250ffbc5084a58e5"
+    },
+    {
+      "record": "citations.json",
+      "sha256": "f1ce5a58ca6f481a7b290a71b45499654a22dc5f9677621efebdee58bcf3a3a6"
+    }
+  ]
+}

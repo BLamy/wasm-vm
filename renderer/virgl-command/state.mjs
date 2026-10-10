@@ -449,12 +449,18 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         }
         if (type === 7) {
           object.sampler = gl.createSampler(); require(object.sampler, "backend-error", "Sampler allocation failed.");
-          gl.samplerParameteri(object.sampler, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-          gl.samplerParameteri(object.sampler, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-          gl.samplerParameteri(object.sampler, gl.TEXTURE_WRAP_R, fields.wrapR === 0 ? gl.REPEAT : gl.CLAMP_TO_EDGE);
-          gl.samplerParameteri(object.sampler, gl.TEXTURE_MIN_FILTER, fields.minImageFilter === 0 ? gl.NEAREST : gl.LINEAR);
+          const address = wrap => wrap === 0 ? gl.REPEAT : wrap === 2 ? gl.CLAMP_TO_EDGE : gl.MIRRORED_REPEAT;
+          const imageFilter = fields.minImageFilter === 0 ? gl.NEAREST : gl.LINEAR;
+          const minFilter = !standard || fields.minMipFilter === 2 ? imageFilter :
+            fields.minMipFilter === 0 ? (fields.minImageFilter === 0 ? gl.NEAREST_MIPMAP_NEAREST : gl.LINEAR_MIPMAP_NEAREST) :
+              (fields.minImageFilter === 0 ? gl.NEAREST_MIPMAP_LINEAR : gl.LINEAR_MIPMAP_LINEAR);
+          gl.samplerParameteri(object.sampler, gl.TEXTURE_WRAP_S, standard ? address(fields.wrapS) : gl.CLAMP_TO_EDGE);
+          gl.samplerParameteri(object.sampler, gl.TEXTURE_WRAP_T, standard ? address(fields.wrapT) : gl.CLAMP_TO_EDGE);
+          gl.samplerParameteri(object.sampler, gl.TEXTURE_WRAP_R, address(fields.wrapR));
+          gl.samplerParameteri(object.sampler, gl.TEXTURE_MIN_FILTER, minFilter);
           gl.samplerParameteri(object.sampler, gl.TEXTURE_MAG_FILTER, fields.magImageFilter === 0 ? gl.NEAREST : gl.LINEAR);
           gl.samplerParameteri(object.sampler, gl.TEXTURE_COMPARE_MODE, gl.NONE);
+          if (standard) gl.samplerParameteri(object.sampler, gl.TEXTURE_COMPARE_FUNC, gl.NEVER + fields.compareFunction);
           gl.samplerParameterf(object.sampler, gl.TEXTURE_MIN_LOD, fields.minLod);
           gl.samplerParameterf(object.sampler, gl.TEXTURE_MAX_LOD, fields.maxLod);
         }
