@@ -2,7 +2,7 @@
 id: E6-T11d31
 epic: 6
 title: Preserve original signed and unsigned integer color image storage
-status: pending
+status: in-progress
 estimate: S
 risk: high
 priority: 525.027039000373
