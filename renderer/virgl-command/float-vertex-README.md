@@ -1,5 +1,8 @@
 # Float vertex fetch boundary
 
+This is the historical float32 boundary. The selected standard factory's
+additional native compact formats are described in [compact-vertex-README.md](compact-vertex-README.md).
+
 Pinned VirGL formats 28/29/30/31 are R32/RG32/RGB32/RGBA32_FLOAT. The decoder
 owns their one through four lanes, divisor zero, float-aligned source offsets
 and u32 end bounds. The same lane count determines the native attribute size,

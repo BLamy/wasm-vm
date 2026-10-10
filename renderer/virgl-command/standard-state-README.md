@@ -33,6 +33,10 @@ renderer's inserted blend uniform. System-block entries must belong to the
 already validated native block. Coherent stage/pair metadata cannot omit an
 active binding; legitimately eliminated native declarations remain admissible.
 
+Floating vertex inputs include [native compact formats](compact-vertex-README.md)
+with actual byte-width bounds and retained stride-zero scalar reads. Arrays
+continue to use original GPU buffers and native conversion.
+
 `make verify-E6-T11d5` records literal wire/metadata predictions, hardware queued
 draws, actual uniforms/reflection/buffer bytes, later-task zero-timeout fences,
 owned input/output exchanges and independent full-pixel predictions. It covers

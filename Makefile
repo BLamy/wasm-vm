@@ -2173,3 +2173,7 @@ verify-E6-T11d10:
 .PHONY: verify-E6-T11d11
 verify-E6-T11d11:
 	bash tools/verify-virgl-standard-points.sh
+
+.PHONY: verify-E6-T11d12
+verify-E6-T11d12:
+	bash tools/verify-virgl-standard-compact.sh

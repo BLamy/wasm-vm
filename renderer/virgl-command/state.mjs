@@ -1,5 +1,5 @@
 /** Typed VirGL state and bounded triangle draws. See state-README.md and draw-README.md. */
-import { decodeSubmission, decodeStandardSubmission } from "./decoder.mjs";
+import { decodeSubmission, decodeStandardSubmission, floatingVertexFormat } from "./decoder.mjs";
 import { LIMITS as SHADER_LIMITS } from "../virgl-shader/index.mjs";
 import { createKeyCache, hashKey } from "./cache.mjs";
 import { parseConstantDomain, checkFiniteBank, checkIndirectBank, checkLoopBank, checkRadialBank, checkRasterBank, checkConversionBank, checkExactBank, COORDINATE_KEY, DISCARD_KEY,
@@ -18,7 +18,31 @@ export const CACHE_LIMITS = Object.freeze({ translations: 128, translationBytes:
 const NAMES = ["NULL", "BLEND", "RASTERIZER", "DSA", "SHADER", "VERTEX_ELEMENTS", "SAMPLER_VIEW", "SAMPLER_STATE", "SURFACE"];
 const BINDINGS = { 1: "blend", 2: "rasterizer", 3: "dsa", 5: "vertexElements" };
 const DRAW_MODES = Object.freeze({ 0: "POINTS", 1: "LINES", 2: "LINE_LOOP", 3: "LINE_STRIP", 4: "TRIANGLES", 5: "TRIANGLE_STRIP", 6: "TRIANGLE_FAN" });
-const vertexComponents = (element) => element.sourceFormat - 27;
+const vertexComponents = (element) => floatingVertexFormat(element.sourceFormat).components;
+function constantVertexValues(bytes, sourceFormat) {
+  const format = floatingVertexFormat(sourceFormat), values = new Float32Array([0, 0, 0, 1]), words = [];
+  const input = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength), output = new DataView(values.buffer);
+  for (let lane = 0; lane < format.components; lane++) {
+    const at = lane * format.scalarBytes;
+    let value;
+    if (format.kind === "float") value = input.getFloat32(at, true);
+    else if (format.kind === "half") {
+      const bits = input.getUint16(at, true), sign = bits & 0x8000 ? -1 : 1, exponent = bits >>> 10 & 31, fraction = bits & 1023;
+      value = exponent === 31 ? fraction ? NaN : sign * Infinity :
+        sign * (exponent === 0 ? fraction * 2 ** -24 : (1024 + fraction) * 2 ** (exponent - 25));
+    } else {
+      const signed = format.kind === "snorm", bits = format.scalarBytes * 8;
+      const scalar = format.scalarBytes === 1 ? signed ? input.getInt8(at) : input.getUint8(at) :
+        signed ? input.getInt16(at, true) : input.getUint16(at, true);
+      value = signed ? Math.max(-1, scalar / (2 ** (bits - 1) - 1)) : scalar / (2 ** bits - 1);
+    }
+    values[lane] = value;
+    // Preserve historical original float32 word custody. Compact values record
+    // the actual generic binary32 result; the retained ticket owns source bytes.
+    words.push(format.kind === "float" ? input.getUint32(at, true) : output.getUint32(lane * 4, true));
+  }
+  return { values, words };
+}
 const viewportRectangle = ({ scale, translate }) => [translate[0] - scale[0], translate[1] - Math.abs(scale[1]), scale[0] * 2, Math.abs(scale[1]) * 2];
 const BLEND_EQUATIONS = Object.freeze(["FUNC_ADD", "FUNC_SUBTRACT", "FUNC_REVERSE_SUBTRACT", "MIN", "MAX"]);
 const BLEND_FACTORS = Object.freeze({ 1: "ONE", 2: "SRC_COLOR", 3: "SRC_ALPHA", 4: "DST_ALPHA", 5: "DST_COLOR",
@@ -341,7 +365,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       try {
         if (type === 5) {
           require(fields.elements.length <= maxAttributes, "limit-exceeded", "Vertex elements exceed host attribute slots.");
-          for (const element of fields.elements) require(element.sourceOffset % 4 === 0, "invalid-state", "Vertex element offset must be float-aligned.");
+          if (!standard) for (const element of fields.elements) require(element.sourceOffset % 4 === 0, "invalid-state", "Vertex element offset must be float-aligned.");
         }
         if (type === 6 || type === 8) {
           const depth = type === 8 && fields.format === 16;
@@ -668,10 +692,11 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       if (!elements) return;
       for (const element of elements.fields.elements) {
         const buffer = buffers[element.vertexBufferIndex]; if (!buffer) continue;
-        require(buffer.fields.stride <= 255 && buffer.fields.stride % 4 === 0 && buffer.fields.offset % 4 === 0,
+        const format = floatingVertexFormat(element.sourceFormat), offset = buffer.fields.offset + element.sourceOffset;
+        require(buffer.fields.stride <= 255 && buffer.fields.stride % format.scalarBytes === 0 && offset % format.scalarBytes === 0,
           "invalid-state", "Vertex buffer stride/offset is not supported by WebGL.");
         require(buffer.fields.offset <= buffer.metadata.byteLength && element.sourceOffset <= buffer.metadata.byteLength - buffer.fields.offset &&
-          vertexComponents(element) * 4 <= buffer.metadata.byteLength - buffer.fields.offset - element.sourceOffset, "out-of-bounds", "Vertex element exceeds storage.");
+          format.elementBytes <= buffer.metadata.byteLength - buffer.fields.offset - element.sourceOffset, "out-of-bounds", "Vertex element exceeds storage.");
       }
     };
     const xAlpha = (sub) => [2, 233].includes(sub.surfaces[0]?.metadata.format);
@@ -795,7 +820,8 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           continue;
         }
         gl.bindBuffer(gl.ARRAY_BUFFER, resolve(buffer.lease).storage.buffer);
-        gl.vertexAttribPointer(attribute.location, vertexComponents(element), gl.FLOAT, false, buffer.fields.stride, buffer.fields.offset + element.sourceOffset);
+        const format = floatingVertexFormat(element.sourceFormat);
+        gl.vertexAttribPointer(attribute.location, format.components, gl[format.type], format.normalized, buffer.fields.stride, buffer.fields.offset + element.sourceOffset);
         // No admitted draw has an instance index >= the total-work ceiling.
         // Larger wire divisors therefore have the identical constant-zero fetch.
         if (standard) gl.vertexAttribDivisor(attribute.location, Math.min(element.instanceDivisor, DRAW_LIMITS.indicesPerSubmission));
@@ -963,7 +989,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         "unsupported-draw", "Actual vertex index exceeds the native maximum element index.");
       const vertexFetches = attributes.map(({ attribute, element, buffer }) => {
         const offset = buffer.fields.offset + element.sourceOffset, stride = buffer.fields.stride;
-        const elementBytes = vertexComponents(element) * 4;
+        const format = floatingVertexFormat(element.sourceFormat), elementBytes = format.elementBytes;
         const divisor = element.instanceDivisor;
         const constant = stride === 0;
         const first = empty ? null : constant || divisor ? 0 : actualMinIndex,
@@ -975,7 +1001,8 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         return { attributeIndex: attribute.index, location: attribute.location,
           resourceId: buffer.metadata.id, resourceGeneration: buffer.resourceGeneration,
           stride, offset, components: vertexComponents(element), firstByte: empty ? null : offset + first * stride, requiredEnd: empty ? null : offset + last * stride + elementBytes,
-          ...(standard ? { divisor, nativeDivisor: constant ? 0 : Math.min(divisor, DRAW_LIMITS.indicesPerSubmission), firstElement: first, lastElement: last,
+          ...(standard ? { sourceFormat: element.sourceFormat, elementBytes, nativeType: gl[format.type], normalized: format.normalized,
+            divisor, nativeDivisor: constant ? 0 : Math.min(divisor, DRAW_LIMITS.indicesPerSubmission), firstElement: first, lastElement: last,
             ...(empty ? { fetchEmpty: true } : {}),
             ...(constant ? { constant: true, componentWords: constantAttributes.get(attribute.index).words,
               genericValues: [...constantAttributes.get(attribute.index).values] } : {}) } : {}) };
@@ -1128,7 +1155,8 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
             for (const value of fields.buffers) {
               if (value.resourceHandle === 0) { require(value.stride === 0 && value.offset === 0, "invalid-state", "Unbound vertex buffer fields must be zero."); buffers.push(null); continue; }
               const binding = retain(ctx, value.resourceHandle, "vertex", "vertex-buffer"); buffers.push({ ...binding, fields: value });
-              require(value.offset <= binding.metadata.byteLength && value.stride <= 255 && value.stride % 4 === 0 && value.offset % 4 === 0, "out-of-bounds", "Invalid vertex buffer range/stride.");
+              require(value.offset <= binding.metadata.byteLength && value.stride <= 255 &&
+                (standard || value.stride % 4 === 0 && value.offset % 4 === 0), "out-of-bounds", "Invalid vertex buffer range/stride.");
             }
             vertexLayout(sub, sub.vertexElements, buffers);
           } catch (error) { for (const buffer of buffers) if (buffer) release(buffer.lease); throw error; }
@@ -1327,11 +1355,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           for (const read of job.pending.reads) {
             if (read.attributeIndex === undefined) indexBytes = read.bytes;
             else {
-              const values = new Float32Array([0, 0, 0, 1]), words = [], view = new DataView(read.bytes.buffer, read.bytes.byteOffset, read.bytes.byteLength);
-              for (let lane = 0; lane < read.bytes.byteLength / 4; lane++) {
-                words.push(view.getUint32(lane * 4, true)); values[lane] = view.getFloat32(lane * 4, true);
-              }
-              constantAttributes.set(read.attributeIndex, { values, words });
+              constantAttributes.set(read.attributeIndex, constantVertexValues(read.bytes, read.sourceFormat));
             }
           }
           // Keep earlier collected tickets alive and revalidate the entire batch
@@ -1365,8 +1389,8 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
             const plan = prepareDraw(job.ctx, sub, job.command, job.submission);
             if (plan.constants.length) {
               const reads = plan.constants.map(({ attribute, element, buffer }) => ({
-                lease: buffer.lease, attributeIndex: attribute.index,
-                box: { x: buffer.fields.offset + element.sourceOffset, y: 0, z: 0, width: vertexComponents(element) * 4, height: 1, depth: 1 },
+                lease: buffer.lease, attributeIndex: attribute.index, sourceFormat: element.sourceFormat,
+                box: { x: buffer.fields.offset + element.sourceOffset, y: 0, z: 0, width: floatingVertexFormat(element.sourceFormat).elementBytes, height: 1, depth: 1 },
               }));
               if (plan.index) reads.push({ lease: plan.index.lease,
                 box: { x: plan.indexOffset, y: 0, z: 0, width: plan.indexByteLength, height: 1, depth: 1 } });
@@ -1376,7 +1400,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
               for (const read of reads) {
                 job.serial++;
                 const access = unwrap(asyncAccess.beginStorageRead(read.lease, read.box));
-                job.pending.reads.push({ ...access, attributeIndex: read.attributeIndex, ready: false });
+                job.pending.reads.push({ ...access, attributeIndex: read.attributeIndex, sourceFormat: read.sourceFormat, ready: false });
                 job.pending.readStarted = true; job.pending.fenceSerial = job.serial; job.hadFence = true;
               }
               job.phase = "waiting-attributes"; return jobStatus(job, "waiting-gpu");

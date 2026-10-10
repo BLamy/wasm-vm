@@ -84,3 +84,24 @@ packets rejected at that exact head. This ordered high-risk S boundary implement
 only compact floating vertex fetch; it grants no positive production capability.
 The user's continuing production graphics request keeps this chain ahead of
 unrelated queue work.
+
+### 2026-10-10 — worker — narrow self-validation before freeze
+
+The original 301-case wire matrix and native pinned-header enum program passed.
+Headed M4 Metal self-validation passed 225 full-frame draws, 60160 independently
+derived pixels, 5 private native index buffers and 192 NaN-category pixels.
+All twenty compact combinations execute as native arrays and retained generic
+attributes under three schedules; four old float32 combinations remain covered.
+Both actual served conversion faults completed native draws/fences and failed
+the original pixel oracle. This is self-validation, not submitted final evidence.
+
+The first hardware probe exposed a remaining historical source-offset alignment
+predicate in object creation; the selected standard path now defers it to the
+effective offset check, preserving the legacy predicate. Later inner-loop failures
+were fixture errors: stale host-method names, illegal cross-class GL poison buffer
+reuse, and a B-context upload still reading A's backing. The corrected fixture uses
+real store transfer/revision operations, separate valid poison buffer classes and
+complete original shared-buffer replacements. No failed self run is evidence.
+Final submission now runs the affected gates once at a frozen head, followed by
+a pristine exact-head default acceptance and a fresh critic. Compiler/vendor,
+guest and production paths remain unchanged.
