@@ -1,0 +1,138 @@
+{
+  "schema": "d31-independent-input-declaration-v1",
+  "declaredBeforeNativeRun": true,
+  "cases": [
+    {
+      "metadata": {
+        "id": 6,
+        "target": 2,
+        "format": 195,
+        "bind": 10,
+        "width": 9,
+        "height": 5,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 3,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "signed": false,
+      "planes": [
+        {
+          "level": 0,
+          "width": 9,
+          "height": 5,
+          "stride": 113,
+          "offset": 3,
+          "inputHex": "00000080ffffffff00000000ffffffff00000000ffffff7f00000000ffffff7f01000080ffffff7f01000080efbeadde01000080efbeadde01000000efbeadde01000000f0ffffff01000000f0ffffff67452301f0ffffff67452301000000806745230100000080ffffffff00000000ffffff7f01000080fefefe7f00010180eebfacde03020280edbcafde03020200ecbdaede02030300f3fcfcff05040400f4fbfbff63412701f5fafaff62402601050505806143250106060680f9f9f9ff07070780f8f8f8ff07070700f7f7f7ff08080800f7f7f77f01000080efbeadde01000000edbcafde03020200f2fdfdff05040400f4fbfbff63412701f6f9f9ff61432501060606806f4d2b0108080880f7f7f7ff0a0a0a80f5f5f5ff0a0a0a00f3f3f3ff0c0c0c00f3f3f37f0e0e0e00f1f1f17f0f0e0e80efefef7f11101080ffaebdde01000000f0ffffff67452301f3fcfcff64462001030303806143250106060680f9f9f9ff09090980f6f6f6ff09090900f3f3f3ff0c0c0c00f3f3f37f0f0f0f00f0f0f07f0e0f0f80ededed7f13121280fdacbfde14151580faabb8de14151500f7a6b5de19181800e8e7e7ff6745230100000080ffffffff04040480fbfbfbff04040400f7f7f7ff08080800f7f7f77f0c0c0c00f3f3f37f0d0c0c80efefef7f11101080ffaebdde15141480fbaab9de15141400f7a6b5de19181800e8e7e7ff1d1c1c00ece3e3ff7b593f01d0dfdfff4765030120202080"
+        },
+        {
+          "level": 1,
+          "width": 4,
+          "height": 2,
+          "stride": 53,
+          "offset": 572,
+          "inputHex": "fefefeff01010100fefefe7f01010100fefefe7f00010180fefefe7f00010180eebfacde00010180eebfacde00010100fefefe7f00010180eebfacde03020280edbcafde03020200ecbdaede02030300f3fcfcff05040400f4fbfbff63412701"
+        },
+        {
+          "level": 2,
+          "width": 2,
+          "height": 1,
+          "stride": 29,
+          "offset": 682,
+          "inputHex": "02020200fdfdfd7f03020280fdfdfd7f03020280edbcafde"
+        },
+        {
+          "level": 3,
+          "width": 1,
+          "height": 1,
+          "stride": 17,
+          "offset": 715,
+          "inputHex": "fcfcfc7f02030380ecbdaede"
+        }
+      ],
+      "backingHex": "93939300000080ffffffff00000000ffffffff00000000ffffff7f00000000ffffff7f01000080ffffff7f01000080efbeadde01000080efbeadde01000000efbeadde01000000f0ffffff01000000f0ffffff67452301f0ffffff67452301000000806745230100000080ffffffff939393939300000000ffffff7f01000080fefefe7f00010180eebfacde03020280edbcafde03020200ecbdaede02030300f3fcfcff05040400f4fbfbff63412701f5fafaff62402601050505806143250106060680f9f9f9ff07070780f8f8f8ff07070700f7f7f7ff08080800f7f7f77f939393939301000080efbeadde01000000edbcafde03020200f2fdfdff05040400f4fbfbff63412701f6f9f9ff61432501060606806f4d2b0108080880f7f7f7ff0a0a0a80f5f5f5ff0a0a0a00f3f3f3ff0c0c0c00f3f3f37f0e0e0e00f1f1f17f0f0e0e80efefef7f11101080ffaebdde939393939301000000f0ffffff67452301f3fcfcff64462001030303806143250106060680f9f9f9ff09090980f6f6f6ff09090900f3f3f3ff0c0c0c00f3f3f37f0f0f0f00f0f0f07f0e0f0f80ededed7f13121280fdacbfde14151580faabb8de14151500f7a6b5de19181800e8e7e7ff93939393936745230100000080ffffffff04040480fbfbfbff04040400f7f7f7ff08080800f7f7f77f0c0c0c00f3f3f37f0d0c0c80efefef7f11101080ffaebdde15141480fbaab9de15141400f7a6b5de19181800e8e7e7ff1d1c1c00ece3e3ff7b593f01d0dfdfff4765030120202080939393939393939393fefefeff01010100fefefe7f01010100fefefe7f00010180fefefe7f00010180eebfacde00010180eebfacde000101009393939393fefefe7f00010180eebfacde03020280edbcafde03020200ecbdaede02030300f3fcfcff05040400f4fbfbff6341270193939393939393939302020200fdfdfd7f03020280fdfdfd7f03020280edbcafde939393939393939393fcfcfc7f02030380ecbdaede93939393939393939393939393939393",
+      "clearLevel": 2,
+      "clearValues": [
+        4294967295,
+        2147483648,
+        3735928559,
+        1
+      ],
+      "readBox": {
+        "x": 1,
+        "y": 1,
+        "z": 0,
+        "width": 3,
+        "height": 2,
+        "depth": 1
+      }
+    },
+    {
+      "metadata": {
+        "id": 6,
+        "target": 2,
+        "format": 199,
+        "bind": 10,
+        "width": 9,
+        "height": 5,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 3,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "signed": true,
+      "planes": [
+        {
+          "level": 0,
+          "width": 9,
+          "height": 5,
+          "stride": 113,
+          "offset": 3,
+          "inputHex": "00000080ffffffff00000000ffffffff00000000ffffff7f00000000ffffff7f01000080ffffff7f01000080efbeadde01000080efbeadde01000000efbeadde01000000f0ffffff01000000f0ffffff67452301f0ffffff67452301000000806745230100000080ffffffff00000000ffffff7f01000080fefefe7f00010180eebfacde03020280edbcafde03020200ecbdaede02030300f3fcfcff05040400f4fbfbff63412701f5fafaff62402601050505806143250106060680f9f9f9ff07070780f8f8f8ff07070700f7f7f7ff08080800f7f7f77f01000080efbeadde01000000edbcafde03020200f2fdfdff05040400f4fbfbff63412701f6f9f9ff61432501060606806f4d2b0108080880f7f7f7ff0a0a0a80f5f5f5ff0a0a0a00f3f3f3ff0c0c0c00f3f3f37f0e0e0e00f1f1f17f0f0e0e80efefef7f11101080ffaebdde01000000f0ffffff67452301f3fcfcff64462001030303806143250106060680f9f9f9ff09090980f6f6f6ff09090900f3f3f3ff0c0c0c00f3f3f37f0f0f0f00f0f0f07f0e0f0f80ededed7f13121280fdacbfde14151580faabb8de14151500f7a6b5de19181800e8e7e7ff6745230100000080ffffffff04040480fbfbfbff04040400f7f7f7ff08080800f7f7f77f0c0c0c00f3f3f37f0d0c0c80efefef7f11101080ffaebdde15141480fbaab9de15141400f7a6b5de19181800e8e7e7ff1d1c1c00ece3e3ff7b593f01d0dfdfff4765030120202080"
+        },
+        {
+          "level": 1,
+          "width": 4,
+          "height": 2,
+          "stride": 53,
+          "offset": 572,
+          "inputHex": "fefefeff01010100fefefe7f01010100fefefe7f00010180fefefe7f00010180eebfacde00010180eebfacde00010100fefefe7f00010180eebfacde03020280edbcafde03020200ecbdaede02030300f3fcfcff05040400f4fbfbff63412701"
+        },
+        {
+          "level": 2,
+          "width": 2,
+          "height": 1,
+          "stride": 29,
+          "offset": 682,
+          "inputHex": "02020200fdfdfd7f03020280fdfdfd7f03020280edbcafde"
+        },
+        {
+          "level": 3,
+          "width": 1,
+          "height": 1,
+          "stride": 17,
+          "offset": 715,
+          "inputHex": "fcfcfc7f02030380ecbdaede"
+        }
+      ],
+      "backingHex": "93939300000080ffffffff00000000ffffffff00000000ffffff7f00000000ffffff7f01000080ffffff7f01000080efbeadde01000080efbeadde01000000efbeadde01000000f0ffffff01000000f0ffffff67452301f0ffffff67452301000000806745230100000080ffffffff939393939300000000ffffff7f01000080fefefe7f00010180eebfacde03020280edbcafde03020200ecbdaede02030300f3fcfcff05040400f4fbfbff63412701f5fafaff62402601050505806143250106060680f9f9f9ff07070780f8f8f8ff07070700f7f7f7ff08080800f7f7f77f939393939301000080efbeadde01000000edbcafde03020200f2fdfdff05040400f4fbfbff63412701f6f9f9ff61432501060606806f4d2b0108080880f7f7f7ff0a0a0a80f5f5f5ff0a0a0a00f3f3f3ff0c0c0c00f3f3f37f0e0e0e00f1f1f17f0f0e0e80efefef7f11101080ffaebdde939393939301000000f0ffffff67452301f3fcfcff64462001030303806143250106060680f9f9f9ff09090980f6f6f6ff09090900f3f3f3ff0c0c0c00f3f3f37f0f0f0f00f0f0f07f0e0f0f80ededed7f13121280fdacbfde14151580faabb8de14151500f7a6b5de19181800e8e7e7ff93939393936745230100000080ffffffff04040480fbfbfbff04040400f7f7f7ff08080800f7f7f77f0c0c0c00f3f3f37f0d0c0c80efefef7f11101080ffaebdde15141480fbaab9de15141400f7a6b5de19181800e8e7e7ff1d1c1c00ece3e3ff7b593f01d0dfdfff4765030120202080939393939393939393fefefeff01010100fefefe7f01010100fefefe7f00010180fefefe7f00010180eebfacde00010180eebfacde000101009393939393fefefe7f00010180eebfacde03020280edbcafde03020200ecbdaede02030300f3fcfcff05040400f4fbfbff6341270193939393939393939302020200fdfdfd7f03020280fdfdfd7f03020280edbcafde939393939393939393fcfcfc7f02030380ecbdaede93939393939393939393939393939393",
+      "clearLevel": 2,
+      "clearValues": [
+        -2147483648,
+        2147483647,
+        -1,
+        1
+      ],
+      "readBox": {
+        "x": 1,
+        "y": 1,
+        "z": 0,
+        "width": 3,
+        "height": 2,
+        "depth": 1
+      }
+    }
+  ]
+}
