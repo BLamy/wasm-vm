@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33]
-blocked_on: E6-T11d33
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34]
+blocked_on: E6-T11d34
 estimate: S
 risk: high
 capstone: false
@@ -410,3 +410,17 @@ recorded in the adjacent JSON. Ordered S/high D33 composes the owned contract,
 retained images and async native draws into one selected single-color consumer.
 Production capability floors, actual guest Mesa/compositor, worker/scanout/demo
 and throughput acceptance remain successors; this gap is no guest authority.
+
+### 2026-10-10 — worker — integer consumer verified; multiple attachments remain
+
+D33 is independently verified at1206a5beb3026de10457cd395d249daf8aff9966
+and published to existing open PR511. At that exact head run
+`node evidence/virgl-production-readiness/standard-multiple-color-gap.mjs`.
+Both complete seals authenticate161233 members. Six original framebuffer/clear
+packets and twelve original actual-compiler metadata/pair contracts refuse;
+the compiler already admits six corresponding explicit/sparse/broadcast programs.
+Ordered S/high D34 qualifies one native multiple-color framebuffer transaction,
+including per-target types, masks, blending and retained native completion.
+Remaining original API/format/capacity floors, typed capsets, actual guest Mesa/
+compositor and worker/scanout/demo deployment stay gated under the user's explicit
+production graphics objective. Production graphics and300MIPS remain unproven.
