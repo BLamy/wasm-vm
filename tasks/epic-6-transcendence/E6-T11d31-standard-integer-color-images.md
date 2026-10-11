@@ -2,7 +2,7 @@
 id: E6-T11d31
 epic: 6
 title: Preserve original signed and unsigned integer color image storage
-status: in-progress
+status: implemented
 estimate: S
 risk: high
 priority: 525.027039000373
@@ -128,3 +128,46 @@ The final frozen command and one pristine clone follow; no unrelated Rust/worksp
 gates or historical HELD criteria are restarted. These isolated modules are not
 part of the deployed app or a reachable production feature; web/wasm/crates/capsets
 remain unchanged, so no demo capability or deployment is claimed at this boundary.
+
+### 2026-10-10 — worker — frozen native submission; fresh verdict pending
+
+Runtime and final harness are frozen at `ba735c389ca9db84de76f5ee042035edbccf0a99`.
+Runtime bytes are unchanged from `78cbe57062fcddb0d2325e326a153e0e05b01731`:
+`integer-images.mjs` SHA256 `8871226b60ad86ee1f585f8de6e5891241a361ad84aa811a36028fd003d95029`;
+`resources.mjs` SHA256 `b9b7645b12ad66a1ab6a05df6f8707be827e7422025462f8f738730459712e02`.
+Commands:
+
+```
+EMCC=/Users/blamy/.cache/wasm-vm/emsdk/4.0.22/wasm-vm-emcc \
+VIRGL_INTEGER_IMAGE_EVIDENCE_DIR=target/evidence/virgl-standard-integer-images-final-hot \
+make verify-E6-T11d31
+python3 tools/virgl-command/standard-integer-image-cold.py --output target/evidence/virgl-standard-integer-images-final-cold
+python3 tools/virgl-command/standard-integer-image-seal.py target/evidence/virgl-standard-integer-images-final-hot target/evidence/virgl-standard-integer-images-final-cold evidence/virgl-standard-integer-images/worker
+```
+
+Both full commands passed. The pristine detached clone ran that same acceptance
+command once at the frozen head, with scrubbed Rust/Cargo/Node/Python/npm/compiler
+environment and empty tracked status before/after. Both receipts authenticate
+347 native cases,346388 native components,529620 public bytes and109152 untouched
+SG padding bytes. All24 original formats, three roles, four mip-chain shapes,
+strided/subrect/inline/sync/async paths, typed GPU clear/range refresh and three
+varied ownership schedules are captured on actual Apple M4 Metal WebGL2.
+Both upload-lane and copy-level physical corruptions fail the unchanged whole-plane
+original-word inverse after actual fence completion. The full nested V8 audits
+contain403 exercised governing partitions and zero unexecuted changed partitions.
+Historical owner/layout refusals, native errors/context loss, object/fence retirement,
+terminal budgets,27 exact server-declaration inverses, unchanged compiler artifacts
+and all ten D26–D30 worker/critic seals are authenticated by each receipt.
+
+The committed worker packet contains48653 indexed members, complete native blobs,
+events, browser sources/ranges/screenshots, full source closure and actual generated
+compiler artifacts. The sealer reopened every member and checked its size/digest.
+`evidence/virgl-standard-integer-images/worker/recording.tar.gz` SHA256 is
+`ee9d19ac6f0fbbce842fb0c416731e6770a61e05bf77c84d6a6840fb2cc21fb2`;
+`records.json` SHA256 is `98e2767f99f9d7c1acb8bf1dfa8cab36a1d009517c99d171dad994653d4f3da5`.
+Hot receipt SHA256 `f127c85a75d5e180a2618508a8e7a153a01d1f713eb739fa21fbfcf6462eeff1`;
+cold report SHA256 `3022d10d2d8f37835a5e0f9bfe57fa04d059f820eb86158b958fd874a4f1c481`;
+cold receipt SHA256 `a9345f8cc2e2d551b7fad8a8f388ef957ad7729d25de0df3f82c2547e1255d58`.
+These are worker claims awaiting a fresh adversarial verifier. They grant isolated
+original integer storage/transfer authority only, with no guest shader/command,
+production capset, complete GLES API, deployed demo or performance claim.
