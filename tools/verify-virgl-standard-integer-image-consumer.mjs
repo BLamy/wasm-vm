@@ -13,7 +13,7 @@ for (let index = 2; index < process.argv.length; index += 2) {
   assert.ok(["--output", "--fault", "--smoke", "--node-only", "--seed", "--mode", "--predecessor"].includes(process.argv[index]));
   assert.ok(process.argv[index + 1]); options[process.argv[index].slice(2)] = process.argv[index + 1];
 }
-assert.ok(options.output); assert.ok(!options.mode||["matrix","boundaries","contracts","float","typed"].includes(options.mode)); assert.ok(!options.fault || ["original-level", "original-words", "completed-output"].includes(options.fault));
+assert.ok(options.output); assert.ok(!options.mode||["matrix","boundaries","contracts","float","typed","critic"].includes(options.mode)); assert.ok(!options.fault || ["original-level", "original-words", "completed-output"].includes(options.fault));
 for (const flag of ["smoke", "node-only"]) assert.ok(!options[flag] || options[flag] === "true");
 const output = path.resolve(options.output); await fs.mkdir(output, { recursive: true });
 const sourcePaths = [...new Set([
@@ -99,7 +99,9 @@ try {
       report.browserResult = await Promise.race([page.evaluate(async spec => {
         try {
           let result;
-          if(spec.mode==='contracts'){
+          if(spec.mode==='critic'){
+            const module=await import('/renderer/virgl-command/tests/standard-integer-image-consumer-critic.mjs');result=await module.runCritic(spec);
+          }else if(spec.mode==='contracts'){
             const contract=await import('/renderer/virgl-command/tests/standard-integer-image-contract.mjs'),
               {default:createModule}=await import('/renderer/virgl-shader/build/wasm/virgl-shader.mjs'),
               data=await(await fetch('/original-contract-data.json')).json();
