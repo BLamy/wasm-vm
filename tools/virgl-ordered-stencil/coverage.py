@@ -11,7 +11,7 @@ for row in git('diff','--unified=0',BASE,'--','renderer/virgl-command/decoder.mj
     elif row.startswith('+') and name:added.setdefault(name,[]).append(line);line+=1
     elif row.startswith(' '):line+=1
 scripts=[]
-for file in sorted(directory.glob('*/browser-coverage.json')):
+for file in sorted(directory.rglob('browser-coverage.json')):
     if '/fault-' in str(file):continue
     record=json.loads(file.read_text())
     for row in record.get('scripts',[record]):
