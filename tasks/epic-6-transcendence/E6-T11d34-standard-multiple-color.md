@@ -2,7 +2,7 @@
 id: E6-T11d34
 epic: 6
 title: Execute original multiple color attachments through owned native jobs
-status: in-progress
+status: implemented
 estimate: S
 risk: high
 priority: 525.027039000376
@@ -167,3 +167,70 @@ of waiving its newly wrapped control expression. Full source/compiler/storage
 digests remain the authority for carried dependency facts. Production caps,
 guest Mesa/compositor, worker scanout, deployment and throughput remain outside
 this prerequisite.
+
+### 2026-10-11 — worker — frozen exact-head submission
+
+Runtime and complete acceptance harness are frozen at
+`fd425d1052ab139e89178729bbb72ce89a3521f1`, above verified predecessor
+`1206a5beb3026de10457cd395d249daf8aff9966`. Commands, all exit0:
+
+```sh
+VIRGL_EVIDENCE_DIR=target/evidence/virgl-standard-multiple-color-final-hot make verify-E6-T11d34
+python3 tools/virgl-multiple-color/cold.py --output target/evidence/virgl-standard-multiple-color-final-cold
+python3 tools/virgl-multiple-color/seal.py target/evidence/virgl-standard-multiple-color-final-hot target/evidence/virgl-standard-multiple-color-final-cold evidence/virgl-multiple-color/worker
+```
+
+The same acceptance command passes in a pristine scrubbed clone at the same
+commit, with empty tracked status before and after. The cold report preserves
+the clone path, environment removals, exact command and complete log. The hot
+and cold receipts bind805 source files and both unchanged generated artifacts;
+actual Wasm SHA256 remains
+`acbe036afcdc4f1d8aa8cfb0fb107f48ba27759a6af4a7b9d6c83e3aa679d6cc`.
+Both complete D33 seals and the carried D32 compiler facts authenticate before
+execution. Historical contract, integer consumer, float consumer and original
+blend gates pass. No compiler or resource-storage bytes changed.
+
+The hot native matrix executes326 original cases and1304 complete frames on
+headed Apple Metal WebGL2:5156 target captures,441088 native words,8628 complete
+planes and103120000 padded public backing bytes have zero differences. It records
+6786 unique native syncs,14585 polls,18940 CPU reads and652 actual native draw
+state queries. The independent Python inverse consumes original wire, TGSI and
+raw source bytes without importing product code. Captures follow actual completed
+fences; four original semantic locations, sparse holes, nonmatching OUT indices,
+broadcast, mixed types, mip levels, full/selective clears, indexed masks and
+FLOAT blending alongside integer bypass all execute. Physical output reflection,
+blend factors/uniforms and native handle identities are preserved in the recording.
+
+Three schedules (1030219,2882400001,1629686191) each pass19 frames,64 targets,
+4096 words,52 syncs,65 CPU reads and8 retired target generations, preserving
+20000 replacement backing bytes. They cover queued completion/cancellation,
+renderer/store disposal, all-target ID reuse, shape/context/cache restore,
+nonzero feedback refusal, depth-clear restoration and native failure recovery.
+Indexed integer input and reversed viewport exercise unchanged predecessor
+dispatches. Measured host capabilities and selected limits refuse before allocation.
+
+The unchanged inverse detects actual wrong COLOR3 attachment selection and an
+actual completed COLOR3 word corruption, with a second distinct native fence for
+the latter; both controls end refuted at the expected physical target. Node and
+browser replay2586 complete actual compiler responses with161 contract attacks,
+zero getters invoked and exact byte agreement. Nested V8 coverage accounts for
+830 positive smallest governing partitions,36 individually authenticated unchanged
+predecessor waivers and zero unexplained gaps. The pre-freeze terminal-KILL oracle
+correction above is retained; no failed inner recording is submission evidence.
+
+Sealed evidence of record is `evidence/virgl-multiple-color/worker/`: all102863
+members (1084770847 uncompressed bytes) are reopened and authenticated, including
+complete original inputs, responses, native events, pixel/backing blobs, nested
+coverage, screenshots, source closure and cold proof. Digests:
+
+- Archive `recording.tar.gz`: `5a2bb69d86959fa0eda75da40342a31c760cae2b713dc2a956e9451490d322b9`.
+- Index `records.json`: `59df1f7b0a68ea9e1cbe790edc67932b5962a095542d4abc3dca79032d790d99`.
+- Manifest `manifest.json`: `cc3d8bf50dac64c46bff5e83ce54ad50e21928993830896cc11fdb1af7e511b2`.
+- Hot receipt: `ab4c84d0fadb41294cfa99cffd8026a36c41d08c6aaa9d464863fd0ea9b180ff`.
+- Cold receipt: `ad86bfbfe11974ad6dccae87510dd1ae3c18990c3d19ccaf72713dbb87105fbf`.
+
+Claim: the selected original multiple-color transaction reaches independently
+typed native attachments with preserved original semantics and owned completion.
+Old exports stay closed. Production capsets, complete GLES3, guest Mesa/compositor,
+worker scanout, deployment and throughput remain unqualified. Submission status
+is implemented; only a fresh adversarial verifier may set verified.
