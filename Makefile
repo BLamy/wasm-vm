@@ -2426,3 +2426,7 @@ verify-E6-T11d42-critic:
 	node --check renderer/virgl-command/tests/standard-packed-depth-critic.mjs
 	node --check tools/verify-virgl-standard-packed-depth-critic.mjs
 	node tools/verify-virgl-standard-packed-depth-critic.mjs --output $${VIRGL_PACKED_DEPTH_CRITIC_EVIDENCE_DIR:-target/evidence/d42-critic-novel} --seed 0x6d2a91c7
+
+.PHONY: verify-E6-T11d44
+verify-E6-T11d44:
+	bash tools/verify-virgl-standard-stencil.sh

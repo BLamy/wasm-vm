@@ -7,7 +7,7 @@ import {packedNormalizedColorFormat} from "./packed-normalized-images.mjs";
 import {packedUnsignedColorFormat} from "./packed-unsigned-images.mjs";
 import {floatingDepthFormat} from "./floating-depth-images.mjs";
 import {unormDepthFormat, packedDepthFormat} from "./unorm-depth-images.mjs";
-import { decodeSubmission, decodeStandardSubmission, decodeStandardUniformSubmission, decodeStandardImageSubmission, decodeStandardColorSubmission, decodeStandardFloatImageSubmission, decodeStandardPackedFloatImageSubmission, decodeStandardSharedExponentImageSubmission, decodeStandardIntegerImageSubmission, decodeStandardMultipleColorSubmission, decodeStandardPackedNormalizedImageSubmission, decodeStandardPackedUnsignedImageSubmission, decodeStandardFloatingDepthImageSubmission, decodeStandardUnormDepthImageSubmission, decodeStandardPackedDepthImageSubmission, vertexFormat } from "./decoder.mjs";
+import { decodeSubmission, decodeStandardSubmission, decodeStandardUniformSubmission, decodeStandardImageSubmission, decodeStandardColorSubmission, decodeStandardFloatImageSubmission, decodeStandardPackedFloatImageSubmission, decodeStandardSharedExponentImageSubmission, decodeStandardIntegerImageSubmission, decodeStandardMultipleColorSubmission, decodeStandardPackedNormalizedImageSubmission, decodeStandardPackedUnsignedImageSubmission, decodeStandardFloatingDepthImageSubmission, decodeStandardUnormDepthImageSubmission, decodeStandardPackedDepthImageSubmission, decodeStandardStencilSubmission, vertexFormat } from "./decoder.mjs";
 import { LIMITS as SHADER_LIMITS } from "../virgl-shader/index.mjs";
 import { createKeyCache, hashKey } from "./cache.mjs";
 import { parseConstantDomain, checkFiniteBank, checkIndirectBank, checkLoopBank, checkRadialBank, checkRasterBank, checkConversionBank, checkExactBank, COORDINATE_KEY, DISCARD_KEY,
@@ -34,6 +34,7 @@ export const STANDARD_PACKED_UNSIGNED_IMAGE_ASYNC_PROFILE = "virgl-standard-pack
 export const STANDARD_FLOATING_DEPTH_IMAGE_ASYNC_PROFILE = "virgl-standard-floating-depth-image-async-jobs-v1";
 export const STANDARD_UNORM_DEPTH_IMAGE_ASYNC_PROFILE = "virgl-standard-unorm-depth-image-async-jobs-v1";
 export const STANDARD_PACKED_DEPTH_IMAGE_ASYNC_PROFILE = "virgl-standard-packed-depth-image-async-jobs-v1";
+export const STANDARD_STENCIL_ASYNC_PROFILE = "virgl-standard-stencil-async-jobs-v1";
 export const STANDARD_FLOAT_IMAGE_ASYNC_PROFILE = "virgl-standard-float-image-async-jobs-v1";
 export const STANDARD_IMAGE_ASYNC_PROFILE = "virgl-standard-image-async-jobs-v1";
 export const STANDARD_COLOR_ASYNC_PROFILE = "virgl-standard-byte-color-async-jobs-v1";
@@ -85,6 +86,9 @@ function constantVertexValues(bytes, sourceFormat) {
   return { values, words };
 }
 const viewportRectangle = ({ scale, translate }) => [translate[0] - scale[0], translate[1] - Math.abs(scale[1]), scale[0] * 2, Math.abs(scale[1]) * 2];
+const STENCIL_OPERATIONS = Object.freeze(["KEEP", "ZERO", "REPLACE", "INCR", "DECR", "INCR_WRAP", "DECR_WRAP", "INVERT"]);
+const INACTIVE_STENCIL = Object.freeze({ enabled: false, function: 0, failOperation: 0,
+  depthPassOperation: 0, depthFailOperation: 0, valueMask: 0, writeMask: 0 });
 const BLEND_EQUATIONS = Object.freeze(["FUNC_ADD", "FUNC_SUBTRACT", "FUNC_REVERSE_SUBTRACT", "MIN", "MAX"]);
 const BLEND_FACTORS = Object.freeze({ 1: "ONE", 2: "SRC_COLOR", 3: "SRC_ALPHA", 4: "DST_ALPHA", 5: "DST_COLOR",
   6: "SRC_ALPHA_SATURATE", 7: "CONSTANT_COLOR", 8: "CONSTANT_ALPHA", 17: "ZERO", 18: "ONE_MINUS_SRC_COLOR",
@@ -269,7 +273,12 @@ export function createVirglStandardPackedDepthImageAsyncRenderer(options) {
   return createRenderer(options, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
 }
 
-function createRenderer(options, drawing, asynchronous = false, standard = false, uniform = false, bufferRoles = false, images = false, colors = false, textureOperations = false, floats = false, packed = false, shared = false, integers = false, multipleColors = false, normalized = false, unsigned = false, floatingDepth = false, unormDepth = false, packedDepth = false) {
+/** Original stencil state/clears on qualified combined depth-stencil storage. */
+export function createVirglStandardStencilAsyncRenderer(options) {
+  return createRenderer(options, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
+}
+
+function createRenderer(options, drawing, asynchronous = false, standard = false, uniform = false, bufferRoles = false, images = false, colors = false, textureOperations = false, floats = false, packed = false, shared = false, integers = false, multipleColors = false, normalized = false, unsigned = false, floatingDepth = false, unormDepth = false, packedDepth = false, stencil = false) {
   return result(() => {
     const config = dataRecord(options, ["gl", "resources", "bindings", "shaderBridge", "limits", "cacheLimits", ...(drawing ? ["drawLimits"] : []), ...(asynchronous ? ["asyncAccess", "jobLimits"] : []), ...(standard ? ["primitiveAssembly"] : []), ...(uniform ? ["uniformAccess"] : []), ...(images ? ["imageAccess"] : [])], ["gl", "resources", "bindings", "shaderBridge", ...(asynchronous ? ["asyncAccess"] : []), ...(uniform ? ["uniformAccess"] : []), ...(images ? ["imageAccess"] : [])]);
     const { gl, resources, bindings, shaderBridge } = config;
@@ -320,8 +329,8 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       "invalid-input", "Original native image range authority is required.");
     require(!integers || typeof shaderBridge.translateImages === "function", "invalid-input", "Integer images require the selected stage compiler.");
     const integerFormat = format => integerColorFormat(format) || (unsigned ? packedUnsignedColorFormat(format) : null);
-    const profile = packedDepth ? STANDARD_PACKED_DEPTH_IMAGE_ASYNC_PROFILE : unormDepth ? STANDARD_UNORM_DEPTH_IMAGE_ASYNC_PROFILE : floatingDepth ? STANDARD_FLOATING_DEPTH_IMAGE_ASYNC_PROFILE : unsigned ? STANDARD_PACKED_UNSIGNED_IMAGE_ASYNC_PROFILE : normalized ? STANDARD_PACKED_NORMALIZED_IMAGE_ASYNC_PROFILE : multipleColors ? STANDARD_MULTIPLE_COLOR_ASYNC_PROFILE : integers ? STANDARD_INTEGER_IMAGE_ASYNC_PROFILE : shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : textureOperations ? STANDARD_TEXTURE_ASYNC_PROFILE : colors ? STANDARD_COLOR_ASYNC_PROFILE : images ? STANDARD_IMAGE_ASYNC_PROFILE : bufferRoles ? STANDARD_BUFFER_ASYNC_PROFILE : uniform ? STANDARD_UNIFORM_ASYNC_PROFILE : standard ? STANDARD_ASYNC_PROFILE : asynchronous ? ASYNC_PROFILE : drawing ? DRAW_PROFILE : STATE_PROFILE;
-    const decodeCommands = packedDepth ? decodeStandardPackedDepthImageSubmission : unormDepth ? decodeStandardUnormDepthImageSubmission : floatingDepth ? decodeStandardFloatingDepthImageSubmission : unsigned ? decodeStandardPackedUnsignedImageSubmission : normalized ? decodeStandardPackedNormalizedImageSubmission : multipleColors ? decodeStandardMultipleColorSubmission : integers ? decodeStandardIntegerImageSubmission : shared ? decodeStandardSharedExponentImageSubmission : packed ? decodeStandardPackedFloatImageSubmission : floats ? decodeStandardFloatImageSubmission : colors ? decodeStandardColorSubmission : images ? decodeStandardImageSubmission : uniform ? decodeStandardUniformSubmission : standard ? decodeStandardSubmission : decodeSubmission;
+    const profile = stencil ? STANDARD_STENCIL_ASYNC_PROFILE : packedDepth ? STANDARD_PACKED_DEPTH_IMAGE_ASYNC_PROFILE : unormDepth ? STANDARD_UNORM_DEPTH_IMAGE_ASYNC_PROFILE : floatingDepth ? STANDARD_FLOATING_DEPTH_IMAGE_ASYNC_PROFILE : unsigned ? STANDARD_PACKED_UNSIGNED_IMAGE_ASYNC_PROFILE : normalized ? STANDARD_PACKED_NORMALIZED_IMAGE_ASYNC_PROFILE : multipleColors ? STANDARD_MULTIPLE_COLOR_ASYNC_PROFILE : integers ? STANDARD_INTEGER_IMAGE_ASYNC_PROFILE : shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : textureOperations ? STANDARD_TEXTURE_ASYNC_PROFILE : colors ? STANDARD_COLOR_ASYNC_PROFILE : images ? STANDARD_IMAGE_ASYNC_PROFILE : bufferRoles ? STANDARD_BUFFER_ASYNC_PROFILE : uniform ? STANDARD_UNIFORM_ASYNC_PROFILE : standard ? STANDARD_ASYNC_PROFILE : asynchronous ? ASYNC_PROFILE : drawing ? DRAW_PROFILE : STATE_PROFILE;
+    const decodeCommands = stencil ? decodeStandardStencilSubmission : packedDepth ? decodeStandardPackedDepthImageSubmission : unormDepth ? decodeStandardUnormDepthImageSubmission : floatingDepth ? decodeStandardFloatingDepthImageSubmission : unsigned ? decodeStandardPackedUnsignedImageSubmission : normalized ? decodeStandardPackedNormalizedImageSubmission : multipleColors ? decodeStandardMultipleColorSubmission : integers ? decodeStandardIntegerImageSubmission : shared ? decodeStandardSharedExponentImageSubmission : packed ? decodeStandardPackedFloatImageSubmission : floats ? decodeStandardFloatImageSubmission : colors ? decodeStandardColorSubmission : images ? decodeStandardImageSubmission : uniform ? decodeStandardUniformSubmission : standard ? decodeStandardSubmission : decodeSubmission;
     const parseShaderMetadata = multipleColors ? parseStandardMultipleColorShaderMetadata : integers ? parseStandardIntegerImageShaderMetadata : textureOperations ? parseStandardTextureShaderMetadata : uniform ? parseStandardUniformShaderMetadata : standard ? parseStandardShaderMetadata : parseConstantDomain;
     const idle = () => require(activeJob === null, "busy", "A renderer job is active; cancel and drain it before changing state.");
     const contexts = new Map(), objects = new Set(), programs = new Set();
@@ -1116,6 +1125,31 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         for (const range of plan.uniformRanges) unwrap(uniformAccess.validate(range.token));
       }
     };
+    const stencilState = sub => {
+      const fields = sub.dsa?.fields.stencil ?? [INACTIVE_STENCIL, INACTIVE_STENCIL];
+      // Pinned vrend applies front-only state and reference to both faces.
+      const frontOnly = fields[0].enabled && !fields[1].enabled;
+      return { enabled: fields[0].enabled || fields[1].enabled, faces: [
+        { fields: fields[0], reference: sub.stencilRef.front },
+        { fields: frontOnly ? fields[0] : fields[1], reference: frontOnly ? sub.stencilRef.front : sub.stencilRef.back },
+      ] };
+    };
+    const applyStencil = sub => {
+      const state = stencilState(sub);
+      gl[state.enabled ? "enable" : "disable"](gl.STENCIL_TEST);
+      state.faces.forEach(({ fields, reference }, index) => {
+        const face = index ? gl.BACK : gl.FRONT;
+        gl.stencilFuncSeparate(face, [gl.NEVER, gl.LESS, gl.EQUAL, gl.LEQUAL, gl.GREATER, gl.NOTEQUAL, gl.GEQUAL, gl.ALWAYS][fields.function], reference, fields.valueMask);
+        gl.stencilMaskSeparate(face, fields.writeMask);
+        gl.stencilOpSeparate(face, gl[STENCIL_OPERATIONS[fields.failOperation]],
+          gl[STENCIL_OPERATIONS[fields.depthFailOperation]], gl[STENCIL_OPERATIONS[fields.depthPassOperation]]);
+      });
+    };
+    const restoreStencilMasks = sub => {
+      const fields = sub.dsa?.fields.stencil ?? [INACTIVE_STENCIL, INACTIVE_STENCIL];
+      // Original full CLEAR restores the literal per-face DSA write masks.
+      gl.stencilMaskSeparate(gl.FRONT, fields[0].writeMask); gl.stencilMaskSeparate(gl.BACK, fields[1].writeMask);
+    };
     const restore = (sub, plan = null, constantAttributes = null) => {
       check(); vertexLayout(sub);
       if (plan) validateDrawPlan(plan);
@@ -1280,6 +1314,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       gl.stencilFuncSeparate(gl.FRONT, gl.NEVER, state.stencilRef.front, 0);
       gl.stencilFuncSeparate(gl.BACK, gl.NEVER, state.stencilRef.back, 0);
       gl.stencilOpSeparate(gl.FRONT_AND_BACK, gl.KEEP, gl.KEEP, gl.KEEP);
+      if (stencil) applyStencil(sub);
       gl.polygonOffset(0, 0); gl.lineWidth(1); gl.sampleCoverage(1, false);
       const rasterizer = state.rasterizer;
       if (rasterizer?.scissor) gl.enable(gl.SCISSOR_TEST); else gl.disable(gl.SCISSOR_TEST);
@@ -1327,6 +1362,16 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       require(primarySurface && sub.viewport && sub.vertexElements && (!fields.indexed || sub.indexBuffer),
         "incomplete-draw", "Drawing requires a surface, viewport, vertex elements and any indexed draw's index buffer.");
       require(!sub.dsa?.fields.depthEnable || sub.depthSurface, "incomplete-draw", "Active depth testing requires a depth attachment.");
+      if (stencil) {
+        const state = stencilState(sub), format = sub.depthSurface?.fields.format;
+        const present = floatingDepthFormat(format)?.stencil || packedDepthFormat(format)?.stencil;
+        if (state.enabled && present) {
+          const [front, back] = state.faces;
+          require(front.reference === back.reference && front.fields.valueMask === back.fields.valueMask &&
+            front.fields.writeMask === back.fields.writeMask, "unsupported-stencil",
+          "Native WebGL stencil draws require common effective front/back references and masks.");
+        }
+      }
       const banks = Object.freeze([...sub.constants]), shaders = Object.freeze([...sub.shaders]);
       // Presence and numeric authority apply to the complete declared prefix,
       // even if reflection prunes it. Reject before linking or any draw allocation.
@@ -1638,7 +1683,10 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
                 format.signed ? new Int32Array(fields.colorWords) : new Uint32Array(fields.colorWords));
               else gl.clearBufferfv(gl.COLOR, slot, fields.color);
             }
-            if (fields.buffers & 1) { gl.depthMask(true); gl.clearDepth(fields.depth); gl.clear(gl.DEPTH_BUFFER_BIT); }
+            if (fields.buffers & 2) { gl.stencilMask(255); gl.clearStencil(fields.stencil); }
+            if (fields.buffers & 1) { gl.depthMask(true); gl.clearDepth(fields.depth); }
+            if (fields.buffers & 3) gl.clear((fields.buffers & 1 ? gl.DEPTH_BUFFER_BIT : 0) | (fields.buffers & 2 ? gl.STENCIL_BUFFER_BIT : 0));
+            if (fields.buffers & 2) restoreStencilMasks(sub);
             for (let slot = 0; slot < 4; slot++) indexedColors.colorMaskiOES(slot, ...colorMask(sub, slot));
             gl.depthMask(sub.dsa?.fields.depthWriteMask ?? false);
             if (sub.rasterizer?.fields.scissor) gl.enable(gl.SCISSOR_TEST);

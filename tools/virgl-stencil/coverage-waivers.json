@@ -1,0 +1,53 @@
+{
+  "predecessor": "5a0d9fc9655f1e0956154763bda420aec721865a",
+  "waivers": [
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "startOffset": 24456,
+      "endOffset": 24498,
+      "text": "? STANDARD_UNORM_DEPTH_IMAGE_ASYNC_PROFILE",
+      "sha256": "9d2db2a0a6cf7f1381eec000325e4acc1acc178ace0069051aea7d0b951e8087",
+      "classification": "unchanged-operand",
+      "predecessorSourceSha256": "bffa00ce1c0664a4a075f9026fc8ad950b8374fd0c564a0c4b52acdae7a8ffa2",
+      "predecessorStartOffset": 23687,
+      "predecessorEndOffset": 23729,
+      "reason": "Exact unchanged lower factory/profile selection operand at independently verified D43; it contains no new stencil operand. Its retained source/compiler/native evidence is completely authenticated."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "startOffset": 24561,
+      "endOffset": 25272,
+      "text": ": unsigned ? STANDARD_PACKED_UNSIGNED_IMAGE_ASYNC_PROFILE : normalized ? STANDARD_PACKED_NORMALIZED_IMAGE_ASYNC_PROFILE : multipleColors ? STANDARD_MULTIPLE_COLOR_ASYNC_PROFILE : integers ? STANDARD_INTEGER_IMAGE_ASYNC_PROFILE : shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : textureOperations ? STANDARD_TEXTURE_ASYNC_PROFILE : colors ? STANDARD_COLOR_ASYNC_PROFILE : images ? STANDARD_IMAGE_ASYNC_PROFILE : bufferRoles ? STANDARD_BUFFER_ASYNC_PROFILE : uniform ? STANDARD_UNIFORM_ASYNC_PROFILE : standard ? STANDARD_ASYNC_PROFILE : asynchronous ? ASYNC_PROFILE : drawing ? DRAW_PROFILE : STATE_PROFILE",
+      "sha256": "c936cbfb99a1763e6f13be11d464f955fc3ca734b48901a3650e094cd3d16615",
+      "classification": "unchanged-operand",
+      "predecessorSourceSha256": "bffa00ce1c0664a4a075f9026fc8ad950b8374fd0c564a0c4b52acdae7a8ffa2",
+      "predecessorStartOffset": 23792,
+      "predecessorEndOffset": 24503,
+      "reason": "Exact unchanged lower factory/profile selection operand at independently verified D43; it contains no new stencil operand. Its retained source/compiler/native evidence is completely authenticated."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "startOffset": 25413,
+      "endOffset": 25454,
+      "text": "? decodeStandardUnormDepthImageSubmission",
+      "sha256": "9f7bd841fa0d1479d993c8b3b51041e5094c91fd423e330fbfbd3d3307df2da2",
+      "classification": "unchanged-operand",
+      "predecessorSourceSha256": "bffa00ce1c0664a4a075f9026fc8ad950b8374fd0c564a0c4b52acdae7a8ffa2",
+      "predecessorStartOffset": 24600,
+      "predecessorEndOffset": 24641,
+      "reason": "Exact unchanged lower factory/profile selection operand at independently verified D43; it contains no new stencil operand. Its retained source/compiler/native evidence is completely authenticated."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "startOffset": 25516,
+      "endOffset": 26076,
+      "text": ": unsigned ? decodeStandardPackedUnsignedImageSubmission : normalized ? decodeStandardPackedNormalizedImageSubmission : multipleColors ? decodeStandardMultipleColorSubmission : integers ? decodeStandardIntegerImageSubmission : shared ? decodeStandardSharedExponentImageSubmission : packed ? decodeStandardPackedFloatImageSubmission : floats ? decodeStandardFloatImageSubmission : colors ? decodeStandardColorSubmission : images ? decodeStandardImageSubmission : uniform ? decodeStandardUniformSubmission : standard ? decodeStandardSubmission : decodeSubmission",
+      "sha256": "62c1830a3efd9a0325ab9fd9718c4e646bc6fddd9529803d25de240edbd2d2f4",
+      "classification": "unchanged-operand",
+      "predecessorSourceSha256": "bffa00ce1c0664a4a075f9026fc8ad950b8374fd0c564a0c4b52acdae7a8ffa2",
+      "predecessorStartOffset": 24703,
+      "predecessorEndOffset": 25263,
+      "reason": "Exact unchanged lower factory/profile selection operand at independently verified D43; it contains no new stencil operand. Its retained source/compiler/native evidence is completely authenticated."
+    }
+  ]
+}
