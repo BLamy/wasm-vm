@@ -1,0 +1,69 @@
+{
+  "schema": "packed-unsigned-full-fresh-critic-seal-v1",
+  "task": "E6-T11d37",
+  "verdict": "verified",
+  "workerRuntimeHead": "c7c66c54482566f76b2f49af5a5e5721bd69d3f7",
+  "workerSubmission": "45c0be47181afe28fbfc9b59908f9fe553b7bb37",
+  "criticHarnessHead": "fed0ab1693e6a409dfb021cbd147fbc00192ef04",
+  "records": 12793,
+  "reopenedMembers": 12793,
+  "rawBytes": 157929629,
+  "archiveBytes": 16074878,
+  "archiveSha256": "b6e0f545759a851d4b46e358c09088980bb1ca017e8f25ddcc1182883a16b525",
+  "recordIndexSha256": "468e756e8dcff001453d5cd17158e02694336494fa1c1607f8bfe1225d2af5cf",
+  "predictions": 12,
+  "heldPredictions": 12,
+  "sourceClosureIncluded": true,
+  "allWorkerMembersIncluded": 11416,
+  "heldPredecessorMembersReopened": 141936,
+  "heldPredecessorSeals": [
+    {
+      "path": "evidence/virgl-standard-packed-normalized-images/worker",
+      "members": 28896,
+      "digests": {
+        "recording.tar.gz": "c8e12f7832dfbfc94b5cab8a7d196e56409544e3a218eb493d919babcf9e07dc",
+        "records.json": "784a390eea7213a797b0881ef8911847771429a1f9fe27b2a8249dca73bedbfd",
+        "manifest.json": "3f099fb484d1529e1848d6f2ee80587cdd100d38412fda58de1f9221b454960e"
+      },
+      "carryReason": "Every raw archive member reopened; exact predecessor evidence and source bytes remain unchanged."
+    },
+    {
+      "path": "evidence/virgl-standard-packed-normalized-images/verifier",
+      "members": 14093,
+      "digests": {
+        "recording.tar.gz": "7142c920bdcd8ceda75ae58fe5a5cebdbfbcc7dfa455b73b3c0c765d5ede7d4a",
+        "records.json": "a34c7fc4f46c8b98dcf3dc61cd7b93f0ada0c939d840b8a409776c67ba6b6815",
+        "manifest.json": "106a7569d82db9cab3058b744c16d1ec8341a19311d34046c5d54db2619f8b0b"
+      },
+      "carryReason": "Every raw archive member reopened; exact predecessor evidence and source bytes remain unchanged."
+    },
+    {
+      "path": "evidence/virgl-packed-normalized-consumer/worker",
+      "members": 83780,
+      "digests": {
+        "recording.tar.gz": "c3ad79b7cc0fb58e1cbc93929f509719ccbd832214a65b00fbe154224b645c4f",
+        "records.json": "79362e795d016d5653defb8c017cde0f40e51eea807a6e32e6b36d666b9328f7",
+        "manifest.json": "bb8e9018f976d3da260244fc7336ec0715b151a31ca3e9c2a0b7ccfe10c63efa"
+      },
+      "carryReason": "Every raw archive member reopened; exact predecessor evidence and source bytes remain unchanged."
+    },
+    {
+      "path": "evidence/virgl-packed-normalized-consumer/verifier",
+      "members": 15167,
+      "digests": {
+        "recording.tar.gz": "1def79716c709590a99617b5803376add8c25fa675d4bdbf0a1a7010865245d7",
+        "records.json": "0c68099df6556ebf99fd773dcd11d2c7c752cf11a28ea42e4839a1ec0633e820",
+        "manifest.json": "68b47304d1638bf5190d86c151dcf8367cfa6d8709601925b37c4e10523e05f0"
+      },
+      "carryReason": "Every raw archive member reopened; exact predecessor evidence and source bytes remain unchanged."
+    }
+  ],
+  "freshSchedules": 3,
+  "newNativeSabotages": 2,
+  "allNativeGzipMembersReopened": 11015,
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "productionDrawAuthority": false,
+  "runtimeChangedByCritic": false,
+  "authority": "selected-original-packed-unsigned-storage-and-transfer"
+}

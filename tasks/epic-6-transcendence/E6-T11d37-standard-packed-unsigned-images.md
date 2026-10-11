@@ -2,7 +2,7 @@
 id: E6-T11d37
 epic: 6
 title: Qualify original packed unsigned color image storage
-status: implemented
+status: verified
 estimate: S
 risk: high
 priority: 525.027039000379
@@ -161,3 +161,150 @@ Full reopened worker seal: `11416` members, `105019927` raw bytes,
 
 Status is implemented pending a fresh adversarial verifier; worker self-validation
 does not set verified. No merge authorization has been supplied.
+
+### 2026-10-11 — fresh verifier — VERDICT: verified
+
+VERDICT: verified
+
+This critic session did not implement the storage boundary. It read AGENTS, this
+complete task and the scoped `ec96d754..45c0be47` runtime/harness diff, then wrote
+twelve falsifiable predictions before opening worker recordings. Worker runtime
+and harness remain pinned to `c7c66c54482566f76b2f49af5a5e5721bd69d3f7`;
+submission is `45c0be47181afe28fbfc9b59908f9fe553b7bb37`. The independent
+promoted critic harness is frozen at
+`fed0ab1693e6a409dfb021cbd147fbc00192ef04`; it changes tests/tooling only.
+
+- P1 custody/cold — HELD. Independently reopened all 11416 worker members,
+  105019927 raw bytes, with exact indexed lengths/digests; all remain byte for
+  byte inside the critic seal. Both final receipts bind the frozen worker head.
+  The existing cold report/log authenticate zero exit status, pristine before
+  and after, and scrubbed override handling. No portability finding justified a
+  second cold clone. Points: `worker-custody.json`,
+  `worker-reopened/{hot,cold}/receipt.json`, `worker-reopened/cold/report.json`.
+- P2 primary/native fields — HELD. The full, independently pinned upstream
+  `vendor/src/gallium/auxiliary/util/u_format.yaml` at lines 2857 and 3109
+  matches both complete Mesa excerpt blocks. UP10/UP10/UP10/UP2 and the two
+  original swizzles derive the original integer fields; header IDs are 225/253.
+  Native storage is actual RGB10_A2UI, with RGBA_INTEGER/UNSIGNED_INT reads.
+  Points: `primary-provenance.json`, `worker-independent-audit.json`.
+- P3 whole uploads/subrects — HELD. Re-executing the unchanged complete Python
+  inverse against both reopened hot/cold recordings reproduced 197080 native
+  components, 131988 public bytes and 10988 untouched padding bytes per
+  acceptance. Every original mip, both dense exhaustive planes, native upload
+  permutation, patch and untouched texel survives zero-tolerance comparison.
+  Points: `worker-reopened/{hot,cold}/independent-values.json` and full original
+  `hardware-matrix/report.json`/raw blob members.
+- P4 raw budgets/public SG — HELD. All pure and native exact/one-short bounds
+  hold. Four-byte storage/upload, sixteen-byte scratch/PBO reservations and
+  complete compact public words/SG padding agree with original descriptors.
+  Independently inspected an additional 263136 complete raw direct/PBO uint
+  components across hot/cold, before product compaction. The novel overlapping
+  old/new reads retain their separate exact reservations through completion.
+  Points: `worker-independent-audit.json`, `fresh-schedules-audit.json`,
+  `promoted/independent-critic-values.json`.
+- P5 private mip copies — HELD. Full native private ranges match their original
+  source mips, use actual COLOR/NEAREST GPU blits with no CPU copy download or
+  shadow, and preserve adjacent levels during GPU-only UINT clears. Original
+  guest backing and caller FBO/scissor/mask state survive. The novel restricted
+  [1,2] range has its own 68-byte packed native allocation. Points:
+  `worker-reopened/hot/independent-values.json`, `worker-independent-audit.json`,
+  `promoted/report.json`.
+- P6 generation/completion/retirement — HELD. Full physical fence/collection
+  events show later-task completion before collection and once-only sync/object
+  retirement. All terminal owner charges are zero. Stale public reads/views
+  refuse after original ID/context reuse; old held ranges and ordered storage
+  reads still return the original words. Points: `worker-independent-audit.json`,
+  `fresh-schedules-audit.json`, `promoted/report.json`.
+- P7 refusal/native failures — HELD. All 132 historical owners, 120 historical
+  layouts and six complete original consumer packets refuse. Malformed metadata,
+  transfers, hostile records and absent backend profile refuse. Every native
+  allocation/upload/read/copy/buffer/fence/collection failure and actual context
+  loss refuses with explicit errors and zero terminal charges. Compiler/default
+  device/capset/guest/web admission remains unchanged. Points:
+  `worker-independent-audit.json`, full `wire/report.json` and all native
+  schedule reports.
+- P8 incremental dependency closure — HELD. All 141936 D35/D36 worker/verifier
+  members reopened with exact predecessor archive/index/manifest and unchanged
+  source digests. Twelve complete original predecessor creation/transfer
+  refusals remain bound to `ec96d754` with zero allocations. Actual rebuilt
+  C/Wasm and module retain `acbe036a...` and `6bb07a0b...`. Points:
+  `worker-independent-audit.json`, `worker-reopened/hot/predecessor-audit.json`,
+  `held-source-indices/` and `critic-source-closure.json`.
+- P9 sufficiency — HELD. Independently reconstructed the union of raw V8 nested
+  endpoints and each smallest governing containing range. All 327 partitions
+  match the full recorded counters in each acceptance; zero missing partitions
+  and zero runtime waivers. Every one of 27 historical static server additions
+  reverses to exact predecessor bytes; these declarative module entries are
+  waived with individual reasons. Task/docs/receipt metadata are declarative;
+  new harness/source records remain complete, with no product behavior claim
+  from diagnostic-only branches. Points: `hot-independent-coverage.json`,
+  `cold-independent-coverage.json`, `worker-independent-audit.json`.
+- P10 three novel schedules — HELD. Seeds `0x7b29c4e1`, `0xd06f83a5` and
+  `0x4ec21977` execute all 66 native schedule cases with zero console/page/request
+  errors on headed Apple M4 Max Metal. Complete independently inspected PBO
+  reads add 1680 raw uint components; all failures, exact/short bounds,
+  generations, completion and retirement hold. Points:
+  `fresh-schedules-audit.json`, complete `hardware-boundaries-*/` members.
+- P11 bounded opposite-alias/partial-box attack — HELD. Both original aliases
+  use an independently generated 11x7 four-mip source, patches at levels 0/1,
+  a private [1,2] range and overlapping old partial reads. Reused resource/context
+  IDs allocate the opposite alias with a distinct generation/texture. Old
+  storage reads preserve old words; stale public transfers/views refuse, and
+  replacement fields, compact words and every SG padding byte remain exact.
+  Points: `promoted/report.json`, `promoted/independent-critic-values.json`.
+- P12 physical sabotage sensitivity — HELD. After completed native work,
+  physically XOR native R bit0 in private mip0/original mip1, then complete a
+  distinct second physical fence (sync 28 then sync 31). The unchanged full
+  inverse rejects complete raw planes: 225 R=660 versus 661; 253 R=648 versus
+  649. All other lanes/pixels and adjacent mip bytes remain exact. Points:
+  `promoted/independent-critic-values.json:9,50`, full original inputs,
+  clean/corrupted native blobs and physical fence events in `promoted/report.json`.
+  Complete inverse SHA256:
+  `546709f2e900b0be299b707ea4eca39745f527557b5078611c253d61d85ebd1f`.
+
+Commands:
+
+```sh
+python3 tools/virgl-command/standard-packed-unsigned-critic-audit.py \
+  --output target/evidence/virgl-packed-unsigned-critic
+node tools/verify-virgl-standard-packed-unsigned-images.mjs \
+  --output target/evidence/virgl-packed-unsigned-critic/hardware-boundaries-0x7b29c4e1 \
+  --mode boundaries --seed 0x7b29c4e1
+node tools/verify-virgl-standard-packed-unsigned-images.mjs \
+  --output target/evidence/virgl-packed-unsigned-critic/hardware-boundaries-0xd06f83a5 \
+  --mode boundaries --seed 0xd06f83a5
+node tools/verify-virgl-standard-packed-unsigned-images.mjs \
+  --output target/evidence/virgl-packed-unsigned-critic/hardware-boundaries-0x4ec21977 \
+  --mode boundaries --seed 0x4ec21977
+make verify-E6-T11d37-adversarial
+python3 target/evidence/virgl-packed-unsigned-critic/seal-recording.py
+python3 tools/check_task_policy.py
+python3 tools/build_queue.py
+git diff --check
+```
+
+SUITE: promoted deterministic opposite-alias/partial-box/generation attack and
+complete unchanged-inverse physical sabotage control in
+`make verify-E6-T11d37-adversarial`; passed once at the frozen critic harness
+head. Scoped Node/Python syntax and diff checks pass. No runtime implementation
+edits or unrelated workspace/target regression runs were necessary.
+
+The complete critic seal at
+`evidence/virgl-standard-packed-unsigned-images/verifier` retains 12793 members,
+157929629 raw bytes, a 16074878-byte archive, 798 complete critic source files,
+all 11416 original worker members, all new raw inputs/native/public outputs,
+whole original coverage/browser/screenshot records and held predecessor indices.
+It was fully reopened twice; all 11015 native gzip members decompress (6026930
+raw native bytes). Every digest/length and original worker member remains exact.
+Archive SHA256:
+`b6e0f545759a851d4b46e358c09088980bb1ca017e8f25ddcc1182883a16b525`;
+index:
+`468e756e8dcff001453d5cd17158e02694336494fa1c1607f8bfe1225d2af5cf`;
+manifest:
+`3038f9c8aee956049f259cb8aa577a72cb801cc9274b8c9420b6c6758bf042e9`.
+Every prediction and its specific member digest is retained in `predictions.json`.
+
+No contradiction or proof gap survives for selected original packed UINT storage
+and transfer. Actual guest graphics, shader consumer admission, negotiation,
+default/capset/production/throughput authority remain unfinished and unclaimed.
+No successor was activated; no push, merge or deployment was performed.
