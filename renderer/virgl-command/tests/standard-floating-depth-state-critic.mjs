@@ -46,7 +46,9 @@ export async function runStateAcceptance() {
       g.linkProgram(program); c.same(g.getProgramParameter(program, g.LINK_STATUS), true, 'actual caller program links'); g.useProgram(program);
       const vao = make('VertexArray'); g.bindVertexArray(vao);
       const buffer = make('Buffer'); g.bindBuffer(g.COPY_WRITE_BUFFER, buffer); g.bufferData(g.COPY_WRITE_BUFFER, 512, g.STATIC_DRAW);
-      for (const name of ['PIXEL_PACK_BUFFER', 'PIXEL_UNPACK_BUFFER', 'COPY_READ_BUFFER', 'ARRAY_BUFFER', 'ELEMENT_ARRAY_BUFFER']) g.bindBuffer(g[name], buffer);
+      for (const name of ['PIXEL_PACK_BUFFER', 'PIXEL_UNPACK_BUFFER', 'COPY_READ_BUFFER', 'ARRAY_BUFFER']) g.bindBuffer(g[name], buffer);
+      const elements = make('Buffer'); g.bindBuffer(g.ELEMENT_ARRAY_BUFFER, elements); g.bufferData(g.ELEMENT_ARRAY_BUFFER, 512, g.STATIC_DRAW);
+      c.same(gl.getError(), gl.NO_ERROR, 'legal distinct element and other-data caller buffer classes');
       const color = make('Texture'); g.activeTexture(g.TEXTURE0); g.bindTexture(g.TEXTURE_2D, color); g.texStorage2D(g.TEXTURE_2D, 1, g.RGBA8, 8, 8);
       const read = make('Framebuffer'), draw = make('Framebuffer');
       g.bindFramebuffer(g.READ_FRAMEBUFFER, read); g.framebufferTexture2D(g.READ_FRAMEBUFFER, g.COLOR_ATTACHMENT0, g.TEXTURE_2D, color, 0); g.readBuffer(g.COLOR_ATTACHMENT0);
@@ -67,6 +69,7 @@ export async function runStateAcceptance() {
         indexed.colorMaskiOES(output, output % 2 === 0, true, output % 3 === 0, false);
         indexed.blendEquationSeparateiOES(output, g.FUNC_SUBTRACT, g.FUNC_REVERSE_SUBTRACT); indexed.blendFuncSeparateiOES(output, g.SRC_ALPHA, g.ONE_MINUS_SRC_ALPHA, g.ONE, g.ZERO);
       }
+      c.same(gl.getError(), gl.NO_ERROR, 'nondefault caller setup enters with no pending native error');
       const state = () => {
         const active = g.getParameter(g.ACTIVE_TEXTURE), stencilNames = ['STENCIL_FUNC', 'STENCIL_REF', 'STENCIL_VALUE_MASK', 'STENCIL_WRITEMASK', 'STENCIL_FAIL', 'STENCIL_PASS_DEPTH_FAIL', 'STENCIL_PASS_DEPTH_PASS'];
         const result = { program: r.trace.id(g.getParameter(g.CURRENT_PROGRAM)), vao: r.trace.id(g.getParameter(g.VERTEX_ARRAY_BINDING)),
@@ -87,7 +90,8 @@ export async function runStateAcceptance() {
           blend: ['BLEND_EQUATION_RGB', 'BLEND_EQUATION_ALPHA', 'BLEND_SRC_RGB', 'BLEND_DST_RGB', 'BLEND_SRC_ALPHA', 'BLEND_DST_ALPHA'].map(name => g.getIndexedParameter(g[name], i)) })) : null;
         return result;
       };
-      const before = state(); c.same(before.program !== null && before.vao !== null && before.read !== null && before.draw !== null, true, 'caller has actual nondefault object identities');
+      const before = state(); row.before = before; c.same(before.program !== null && before.vao !== null && before.read !== null && before.draw !== null, true, 'caller has actual nondefault object identities');
+      c.same(gl.getError(), gl.NO_ERROR, 'nondefault caller snapshot has no native query error');
       r.setLabel('state-native-range-refresh'); c.ok(r.imageAccess.refresh(view.token), 'native range refresh with nondefault caller bindings');
       row.copyState = { before, after: state() }; c.same(row.copyState.after, before, 'native copies preserve concrete caller identity and state');
       row.copyFence = await physicalFence(r, 'state-range-copy-completed');
