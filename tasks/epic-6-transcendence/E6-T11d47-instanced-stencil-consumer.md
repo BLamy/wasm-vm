@@ -153,3 +153,23 @@ unchanged code/dependency/digests; the affected consumer/metadata and actual bro
 path run in the new recurring target. This factory remains unreachable from the
 demo's production controller; capability/demo/deployment changes belong to the
 actual production integration acceptance, not this isolated prerequisite.
+
+### 2026-10-11 — worker — recorded schedule exposed a diagnostic fence gap
+
+The first frozen submission at83e3fa58 stopped in the unchanged physical audit
+on boundary seed0x1f305b97. The complete run-0004.json under
+target/evidence/virgl-instanced-stencil-final-83e3fa58/hardware-boundaries-0x1f305b97
+records copy writers2562/2564, fence creations2563/2565, and ticket18 completing
+last at2575. The independent color read at2580 cited that earlier-created
+ticket18. Its full original pixel inverse passed, but the recording did not
+prove a fence created after every staging copy. The126 case shows the same gap.
+This is a recording failure, not an accepted final run.
+
+A D47-only copy of the held boundary harness adds an explicit native diagnostic
+fence after the job has drained and before its pixel reads. Every original
+attack, product completion assertion and physical audit is preserved. No runtime
+or predecessor source changes. The exact failing seed then passed all24 runs,
+40 whole frames and the unchanged physical audit, report SHA256
+de69c90e25e7fe367fb59d3db3eec3bbca37db90a70b4a6ef0ecb302546f5a6a.
+The frozen submission will restart at the new harness head; the final pristine
+clone has not yet run.

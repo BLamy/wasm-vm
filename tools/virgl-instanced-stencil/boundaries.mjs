@@ -1,4 +1,4 @@
-import { boundaries as heldBoundaries } from '../virgl-ordered-stencil/boundaries.mjs';
+import { boundaries as heldBoundaries } from './ordered-boundaries.mjs';
 import { submit, blob, nativeRead } from '../../renderer/virgl-command/tests/standard-instanced-stencil-rig.mjs';
 import { textureTransfer, shader } from '../virgl-stencil/fixtures.mjs';
 import { draw, join, packet, clear } from './fixtures.mjs';
