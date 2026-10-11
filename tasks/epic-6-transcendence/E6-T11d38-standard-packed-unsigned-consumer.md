@@ -2,7 +2,7 @@
 id: E6-T11d38
 epic: 6
 title: Consume original packed unsigned samplers and COLOR0–3 surfaces
-status: implemented
+status: verified
 estimate: S
 risk: high
 priority: 525.027039000378
@@ -156,3 +156,154 @@ The seal contains complete sources, raw native/public/input blobs, browser/GPU
 metadata, original requests/responses, full coverage regions, logs and screenshots.
 This is a worker claim for one selected isolated consumer. Production caps,
 real RISC-V guest graphics, deployment and 300 MIPS remain unproven.
+
+
+### 2026-10-11 — fresh adversarial verifier — VERDICT: verified
+
+VERDICT: verified
+
+Fresh critic of worker submission `83b2e147f7134bb807b699500ba91bd4a42e9090`,
+runtime/harness freeze `11326fe597196cb75d0853d230da0a3ed22683c5`, against verified
+predecessor `f9f479c20d37d89d0d6da18675777a4a8fd7a7b9`. Read the full task and diff
+before opening evidence. All twelve falsifiable predictions were written first
+in sealed `critic/predictions.json` (SHA256
+`eb2f686659d1f8556e2b33835a8541480506099fb2494085631ace5fe5bf5255`);
+all are HELD in `critic/verdict.json`. No contradiction or coverage gap survived.
+No runtime implementation was edited.
+
+- **P1 authentication — HELD.** Independently reopened all 26639 worker archive
+  members and all 123156 D37/D36 predecessor members, matched every size/digest,
+  authenticated 871 worker closure sources and 290 unchanged storage/compiler
+  sources, and reopened both exact-head receipts and the scrubbed pristine cold
+  report. Freeze-to-submission changes contain only task/queue/seal material.
+  `critic/authentication.json`, SHA256
+  `c1ba4f97ab8cb131f0a0ba7f20a2f95ad43f534a4b24488cc95eef009cc579f8`.
+  Carry unchanged predecessor HELD results, including module
+  `6bb07a0b2a056d21ae52b22d7700ce10577854c1cdcf0877dd80be938e30e0fa`
+  and Wasm `acbe036afcdc4f1d8aa8cfb0fb107f48ba27759a6af4a7b9d6c83e3aa679d6cc`.
+  The authenticated final cold clone remains sufficient; no portability finding
+  warranted repeating it.
+- **P2 pure UINT conversion — HELD.** Independently generated and compiled the
+  pinned original Mesa pack kernels: non-normalized pure uint channels clamp
+  through `MIN2` to 1023/1023/1023/3 before shifts/masks. Alias 225 uses RGBA
+  offsets 20/10/0/30 and alias 253 uses 0/10/20/30. Tested out-of-width/extremal
+  operands against those original kernels. `critic/primary-audit.json`, SHA256
+  `80cc64113cd3cee6f79a3335613f6e3cf370c0cdf5237ef8fe4555f319333b75`,
+  pins original pack/parse/header descriptors. Public storage remains four
+  bytes per pixel; diagnostic native integer reads remain sixteen.
+- **P3 hardware saturation — HELD.** Original raw uint clear
+  `[4294967295,1024,2147483648,4]` and out-of-width shader outputs produced
+  `[1023,1023,1023,3]`, public word `0xffffffff`, on both native packed aliases.
+  Worker `hot/hardware-targets/report.json` SHA256
+  `0490e0e7389882b2d0a7a0acf250e464d7ef6ba892da27eeb0349cbcdacf6131`,
+  `$.browserResult.result.frames[8..10].targets[slot=0|3]`: frame 8 is the raw
+  clear; frames 9/10 are cold/warm draws. Raw native digest
+  `29f0d41985de2cd1af5ec68275a0d23a2335d7bc725fca900a696c21f9a032b0`,
+  complete public backing digest
+  `dc6d1461a7dc1aad47ebc203a163594bb84fe1573708884b345787d1e7418eb3`.
+  Sealed `critic/replay-audit.json` includes all twelve matching hot/cold points.
+- **P4 complete target inverse — HELD.** Independently interrogated original
+  packet/TGSI inversion, poisoned stored fixture expectations in separate replay
+  reports, and reopened all native/public input blobs. Both worker runs retained
+  36 target cases, 144 frames, 552 targets and 920 private mip planes; full uint
+  lanes, mixed FLOAT/SINT/UINT blending, sparse/broadcast COLOR0–3 outputs,
+  masks/scissors, public SG padding and untouched private levels matched.
+  `critic/replay-audit.json`, SHA256
+  `611ef79a10b59fd78ec0364565107d539d1c68f1d2f637159b23afd6405f8735`.
+- **P5 both-stage samplers — HELD.** Both aliases executed TXF/TXL/nearest TEX
+  across base/restricted/swizzled/constant views with original field extraction,
+  typed `usampler2D` native enum 36306 and complete range/padding checks.
+  Independently inspected 24 actual vertex links for `flat uvec4` CONSTANT
+  varyings. Exact source/draw pointers and GLSL digests live in
+  `critic/wire-audit.json`, SHA256
+  `19398aacd1cdaad763b838f09bd6b344e0fddc791d31951a66487c5338722183`;
+  each worker run retains 18 sample cases / 54 frames.
+- **P6 refusal/failure — HELD.** Fresh original wire decoding keeps all twelve
+  historical profiles closed (72 refusals per wire recording), and validates
+  malformed, typed FLOAT/SINT, wrong-alias and linear-filter refusal boundaries.
+  Recorded 549 scoped refusal points before guest draws/private copies, including
+  actual nonzero native clear GLenum failure: fresh target seed 1541459225,
+  `report.json` SHA256
+  `9d7bea3b967fd7a4ebf553e820e5eefaf47e9595e90714314f19b415b21ee777`,
+  `$.browserResult.result.runs[9].history[1]`, label
+  `boundary/actual-nonzero-clear-error`, observed `backend-error` with retirement.
+- **P7 fence/generation custody — HELD.** Independently checked every selected
+  native sync create/poll/delete, monotonic event sequence, CPU read after actual
+  successful physical completion and all prior writes including private blits,
+  context/cache identity, retained ranges across ID reuse, zero terminal charges
+  and once-only object retirement. Authenticated and decompressed 31708 blobs
+  from 41 browser recordings. `critic/fresh-audit.json`, SHA256
+  `5ced5e48c3e7650466550e19d5c5c8fed8896dfd5f45ebff8a99bdbbb9e17cea`,
+  contains per-record source/blob/fence and exact refusal citations.
+- **P8 physical controls — HELD.** Fresh wrong nonzero attachment, wrong sample
+  texture and completed packed output corruption were recorded on real native
+  storage and refuted by the unchanged full inverses. Worker and fresh control
+  differences remain in `critic/replay-audit.json` / `critic/fresh-audit.json`;
+  no result-array mutation substitutes for a physical control.
+- **P9 governing coverage — HELD.** Independently repartitioned every changed
+  decoder/state line at every nested V8 range boundary. Both hot/cold recordings
+  prove 254 positive governing partitions and exactly 16 source-pinned unchanged
+  operand waivers, with zero unexplained partitions: fourteen exact D36 critic
+  regions, plus unchanged single-target `?? 0` and integer-disabled `: null`
+  fallbacks unreachable under this selected profile. No packed-UINT lookup,
+  guard, invocation, selection or integer-format operand is waived.
+  `critic/coverage-audit.json`, SHA256
+  `e7c7bd1dfedad13dcfd658cac6510631a6f9a0ce353594c71ba25b69df2888b1`.
+- **P10 fresh varied attacks — HELD.** New seeds 1541459225, 2773480762 and
+  3355599323 each passed complete target and sampler schedules, nineteen target
+  frames and eight sampler lifetime runs / sixty frames, including both aliases
+  across completion, cancellation and both disposal modes. Scoped feedback,
+  incomplete-clear, nonfinite, capability/configuration and actual native error
+  paths also held. Four authenticated affected historical paths passed their
+  original independent inverses; no unrelated suite was added.
+- **P11 novel attack — HELD.** Promoted a deterministic mixed-alias mip attack:
+  `[225,FLOAT=31,SINT=200,253]`, only COLOR1/COLOR3 emitted, mask 5, interior
+  scissor, FLOAT blend folding, two contexts, reversed packed aliases under reused
+  IDs, retained old surfaces and cache reset/restore. Full inverse passed eight
+  frames / thirty-two targets / 4096 native words / ninety-six private planes,
+  400000 public/padding bytes and 40000 untouched replacement bytes.
+  Final promoted clean report SHA256
+  `274d6a285d355bd53b619acfb4f88bd1dee298acd5ea009ceb5c39593e589256`.
+- **P12 promoted physical sabotage — HELD.** After completed old-generation
+  COLOR3 native storage, actual upload changed pixel 9 R=17 to 16. Original
+  sync 30 completed at sequence 1446; a distinct second physical sync 31 completed
+  at sequence 1505. The unchanged inverse rejected frame 8, COLOR3, raw lane 36,
+  expected 17 / observed 16, and the full private level 1 plane. Final promoted
+  sabotage report SHA256
+  `7f1acfa74b2f3e9d5ed637a3f8d42cf981e86f204dbe3eacb036ab7344457e9e`;
+  `critic/promoted/sabotage/critic-audit.json` differences[0], native SHA256
+  `c27cdf181488ff3f72959028d8c309d9ab35b79b4d19b5ba4a4d96752f77e75d`.
+  The same complete inverse SHA256
+  `c94820525c7d83313cd41e5aaf4b4ffb3cae173e8f3a60d0c5c1b8c5f076269c`
+  verified clean and refuted control; `critic/promoted-integrity.json` also
+  independently authenticated all 731 final promoted raw blobs and source pins.
+
+SUITE: promoted `standard-packed-unsigned-consumer-critic.mjs`, actual headed
+Chrome recorder `tools/verify-virgl-standard-packed-unsigned-consumer-critic.mjs`,
+original-wire full inverse `tools/virgl-packed-unsigned-consumer/critic.py`, and
+`make verify-E6-T11d38-adversarial`. That permanent target passed, including its
+expected actual-storage sabotage failure and independent refutation. Recorded
+zero console/page/request errors on Apple M4 Max Metal.
+
+Commands: scoped Node syntax checks, Python compile checks, `git diff --check`,
+`python3 tools/check_task_policy.py`; sealed `authenticate.py`, `primary.py`,
+`replay.py`, `coverage.py`, `fresh.py`, `wire.py`, `promoted-integrity.py` and
+`seal.py`; unchanged actual hardware runner in boundaries/sample-boundaries
+modes for all three new seeds and fault modes nonzero-attachment/sample-plane/
+completed-output; `make verify-E6-T11d38-adversarial`. Full exact commands and
+logs are sealed with each source/input/native/browser/coverage recording.
+After status change: `python3 tools/check_task_policy.py`, then
+`python3 tools/build_queue.py`, then commit this verdict.
+
+Complete fresh verifier seal: `evidence/virgl-packed-unsigned-consumer/verifier`,
+7901 members reopened byte-for-byte, 399012542 raw bytes,
+19875235 archive bytes, 876 source closure pins. Archive SHA256
+`abd8363319ed7967177acb4927f1bffd55133bb21373a382ae574cc1e9c90db8`;
+index `f174a0fc0b7bd4f8f92fe7787860a6a42febdc0e1c36a277c89653610a0bd3c6`;
+manifest `2040d964cbba902d937a0d890f838a5c26b828c231a1485d7735cb6e3b92bec7`.
+It includes complete fresh recordings, original packets/TGSI, every raw native/
+public/input blob, all coverage source/regions, actual GPU/browser metadata and
+screenshots, both final promoted target recordings, full audits and source
+snapshots. Existing worker evidence was never modified. The verified boundary
+remains this false-by-default isolated consumer; production guest/capset,
+deployment and throughput remain assigned to parent E6-T11d.

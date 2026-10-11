@@ -2368,3 +2368,10 @@ verify-E6-T11d37-adversarial:
 .PHONY: verify-E6-T11d38
 verify-E6-T11d38:
 	bash tools/verify-virgl-standard-packed-unsigned-consumer.sh
+
+.PHONY: verify-E6-T11d38-adversarial
+verify-E6-T11d38-adversarial:
+	node tools/verify-virgl-standard-packed-unsigned-consumer-critic.mjs --output target/evidence/virgl-packed-unsigned-consumer-critic-promoted --seed 0x510e527f
+	python3 tools/virgl-packed-unsigned-consumer/critic.py target/evidence/virgl-packed-unsigned-consumer-critic-promoted
+	! node tools/verify-virgl-standard-packed-unsigned-consumer-critic.mjs --output target/evidence/virgl-packed-unsigned-consumer-critic-sabotage --seed 0x510e527f --fault completed-output
+	python3 tools/virgl-packed-unsigned-consumer/critic.py target/evidence/virgl-packed-unsigned-consumer-critic-sabotage --control
