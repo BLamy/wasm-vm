@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40]
-blocked_on: E6-T11d40
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41]
+blocked_on: E6-T11d41
 estimate: S
 risk: high
 capstone: false
@@ -510,3 +510,16 @@ printed161) show native non-comparison depth samples cannot use linear filters.
 D40 explicitly refuses those original sampler states before private copy/draw.
 Production must qualify desktop linear depth semantics in a shader/storage
 boundary before claiming the API floor; native zero samples are not acceptance.
+
+
+### 2026-10-11 — worker — floating depth consumer verified; original UN16 gap
+
+D40 is independently verified at
+`d64b2f5e782fee2090f7a0f435bdb0ea7a0a1081` and remains on existing open PR518.
+The original source-pinned `standard-unorm-depth-image-gap.json` records thirteen
+storage/view/mip-surface refusals for original Z16_UNORM=16, while three legacy
+base-depth admissions remain held. Reproduce with its adjacent `.mjs` command.
+Ordered S/high E6-T11d41 qualifies this one UN16 storage/transfer/view/surface
+path through an opt-in factory and unchanged compiler/GPU helpers. Parent
+full API, shadow/stencil/linear semantics, actual guest/compositor, caps,
+worker/scanout/demo deployment and measured throughput remain unproven.
