@@ -2,7 +2,7 @@
 id: E6-T11d36
 epic: 6
 title: Consume original packed normalized samplers and color surfaces
-status: pending
+status: in-progress
 estimate: S
 risk: high
 priority: 525.027039000378
