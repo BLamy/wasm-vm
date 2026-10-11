@@ -2341,3 +2341,8 @@ verify-E6-T11d34:
 .PHONY: verify-E6-T11d35
 verify-E6-T11d35:
 	bash tools/verify-virgl-standard-packed-normalized-images.sh
+
+.PHONY: verify-E6-T11d35-adversarial
+verify-E6-T11d35-adversarial:
+	node tools/verify-virgl-standard-packed-normalized-critic.mjs --output target/evidence/virgl-standard-packed-normalized-critic-promoted
+	python3 tools/virgl-command/standard-packed-normalized-critic-novel-audit.py --directory target/evidence/virgl-standard-packed-normalized-critic-promoted --primary tools/virgl-command/standard-packed-normalized-critic-primary.json --output target/evidence/virgl-standard-packed-normalized-critic-promoted/independent-values.json

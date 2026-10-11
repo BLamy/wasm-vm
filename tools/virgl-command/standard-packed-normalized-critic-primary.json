@@ -1,0 +1,742 @@
+{
+  "schema": "d35-primary-derived-fields-v1",
+  "status": "passed",
+  "archiveSha256": "eeb29ca7e56cfaa8e8a79538dcf834e3b18e501c31bef5145e959ea437cc4216",
+  "sourceDigests": {
+    "src/mesa/main/version.c": "8d3fd4701b3ec44276fcc0bbd3cafecfcb026043c01b74d9ddf018d3a116a24b",
+    "src/mesa/state_tracker/st_extensions.c": "dbed39e3997c3fbc5e3a02c0fd6845cb43ab67f2c7972362ce20c225a24138ff",
+    "src/util/format/u_format.yaml": "f0fef33544456468def10d5dffc72a61e8b0e7acc599b700fc65366e6f495a10"
+  },
+  "headerSha256": "191ca5cea527949a29e9753b1e31d550f2fed922895d78dabc5c5c3585aa2ff7",
+  "excerptSha256": "7b994f15b8a044a675a1a2b2b7e6e35f4eb5d5e1be64ed6bf9cb2e2ec0a4245e",
+  "records": [
+    {
+      "originalFormat": 5,
+      "originalName": "B5G5R5A1_UNORM",
+      "rgbaFields": [
+        {
+          "bits": 5,
+          "offset": 10,
+          "ignored": false
+        },
+        {
+          "bits": 5,
+          "offset": 5,
+          "ignored": false
+        },
+        {
+          "bits": 5,
+          "offset": 0,
+          "ignored": false
+        },
+        {
+          "bits": 1,
+          "offset": 15,
+          "ignored": false
+        }
+      ],
+      "guestPixelBytes": 2,
+      "plannedNativePixelBytes": 2,
+      "plannedNativeInternal": "RGB5_A1",
+      "plannedUploadFormat": "RGBA",
+      "plannedUploadType": "UNSIGNED_SHORT_5_5_5_1",
+      "nativeOffsets": [
+        11,
+        6,
+        1,
+        0
+      ],
+      "implicitAlpha": false,
+      "readPixelBytes": 4,
+      "plannedReadType": "UNSIGNED_BYTE",
+      "plannedReadFormat": "RGBA",
+      "channels": [
+        "UN5",
+        "UN5",
+        "UN5",
+        "UN1"
+      ],
+      "swizzles": [
+        "Z",
+        "Y",
+        "X",
+        "W"
+      ],
+      "primaryLine": 181
+    },
+    {
+      "originalFormat": 6,
+      "originalName": "B4G4R4A4_UNORM",
+      "rgbaFields": [
+        {
+          "bits": 4,
+          "offset": 8,
+          "ignored": false
+        },
+        {
+          "bits": 4,
+          "offset": 4,
+          "ignored": false
+        },
+        {
+          "bits": 4,
+          "offset": 0,
+          "ignored": false
+        },
+        {
+          "bits": 4,
+          "offset": 12,
+          "ignored": false
+        }
+      ],
+      "guestPixelBytes": 2,
+      "plannedNativePixelBytes": 2,
+      "plannedNativeInternal": "RGBA4",
+      "plannedUploadFormat": "RGBA",
+      "plannedUploadType": "UNSIGNED_SHORT_4_4_4_4",
+      "nativeOffsets": [
+        12,
+        8,
+        4,
+        0
+      ],
+      "implicitAlpha": false,
+      "readPixelBytes": 4,
+      "plannedReadType": "UNSIGNED_BYTE",
+      "plannedReadFormat": "RGBA",
+      "channels": [
+        "UN4",
+        "UN4",
+        "UN4",
+        "UN4"
+      ],
+      "swizzles": [
+        "Z",
+        "Y",
+        "X",
+        "W"
+      ],
+      "primaryLine": 223
+    },
+    {
+      "originalFormat": 7,
+      "originalName": "B5G6R5_UNORM",
+      "rgbaFields": [
+        {
+          "bits": 5,
+          "offset": 11,
+          "ignored": false
+        },
+        {
+          "bits": 6,
+          "offset": 5,
+          "ignored": false
+        },
+        {
+          "bits": 5,
+          "offset": 0,
+          "ignored": false
+        },
+        {
+          "bits": 0,
+          "offset": 0,
+          "implicit": true
+        }
+      ],
+      "guestPixelBytes": 2,
+      "plannedNativePixelBytes": 2,
+      "plannedNativeInternal": "RGB565",
+      "plannedUploadFormat": "RGB",
+      "plannedUploadType": "UNSIGNED_SHORT_5_6_5",
+      "nativeOffsets": [
+        11,
+        5,
+        0,
+        0
+      ],
+      "implicitAlpha": true,
+      "readPixelBytes": 4,
+      "plannedReadType": "UNSIGNED_BYTE",
+      "plannedReadFormat": "RGBA",
+      "channels": [
+        "UN5",
+        "UN6",
+        "UN5"
+      ],
+      "swizzles": [
+        "Z",
+        "Y",
+        "X",
+        "1"
+      ],
+      "primaryLine": 253
+    },
+    {
+      "originalFormat": 8,
+      "originalName": "R10G10B10A2_UNORM",
+      "rgbaFields": [
+        {
+          "bits": 10,
+          "offset": 0,
+          "ignored": false
+        },
+        {
+          "bits": 10,
+          "offset": 10,
+          "ignored": false
+        },
+        {
+          "bits": 10,
+          "offset": 20,
+          "ignored": false
+        },
+        {
+          "bits": 2,
+          "offset": 30,
+          "ignored": false
+        }
+      ],
+      "guestPixelBytes": 4,
+      "plannedNativePixelBytes": 4,
+      "plannedNativeInternal": "RGB10_A2",
+      "plannedUploadFormat": "RGBA",
+      "plannedUploadType": "UNSIGNED_INT_2_10_10_10_REV",
+      "nativeOffsets": [
+        0,
+        10,
+        20,
+        30
+      ],
+      "implicitAlpha": false,
+      "readPixelBytes": 4,
+      "plannedReadType": "UNSIGNED_INT_2_10_10_10_REV",
+      "plannedReadFormat": "RGBA",
+      "channels": [
+        "UN10",
+        "UN10",
+        "UN10",
+        "UN2"
+      ],
+      "swizzles": [
+        "X",
+        "Y",
+        "Z",
+        "W"
+      ],
+      "primaryLine": 259
+    },
+    {
+      "originalFormat": 122,
+      "originalName": "B5G5R5X1_UNORM",
+      "rgbaFields": [
+        {
+          "bits": 5,
+          "offset": 10,
+          "ignored": false
+        },
+        {
+          "bits": 5,
+          "offset": 5,
+          "ignored": false
+        },
+        {
+          "bits": 5,
+          "offset": 0,
+          "ignored": false
+        },
+        {
+          "bits": 1,
+          "offset": 15,
+          "implicit": true,
+          "ignored": true
+        }
+      ],
+      "guestPixelBytes": 2,
+      "plannedNativePixelBytes": 2,
+      "plannedNativeInternal": "RGB5_A1",
+      "plannedUploadFormat": "RGBA",
+      "plannedUploadType": "UNSIGNED_SHORT_5_5_5_1",
+      "nativeOffsets": [
+        11,
+        6,
+        1,
+        0
+      ],
+      "implicitAlpha": true,
+      "readPixelBytes": 4,
+      "plannedReadType": "UNSIGNED_BYTE",
+      "plannedReadFormat": "RGBA",
+      "channels": [
+        "UN5",
+        "UN5",
+        "UN5",
+        "X1"
+      ],
+      "swizzles": [
+        "Z",
+        "Y",
+        "X",
+        "1"
+      ],
+      "primaryLine": 175
+    },
+    {
+      "originalFormat": 131,
+      "originalName": "B10G10R10A2_UNORM",
+      "rgbaFields": [
+        {
+          "bits": 10,
+          "offset": 20,
+          "ignored": false
+        },
+        {
+          "bits": 10,
+          "offset": 10,
+          "ignored": false
+        },
+        {
+          "bits": 10,
+          "offset": 0,
+          "ignored": false
+        },
+        {
+          "bits": 2,
+          "offset": 30,
+          "ignored": false
+        }
+      ],
+      "guestPixelBytes": 4,
+      "plannedNativePixelBytes": 4,
+      "plannedNativeInternal": "RGB10_A2",
+      "plannedUploadFormat": "RGBA",
+      "plannedUploadType": "UNSIGNED_INT_2_10_10_10_REV",
+      "nativeOffsets": [
+        0,
+        10,
+        20,
+        30
+      ],
+      "implicitAlpha": false,
+      "readPixelBytes": 4,
+      "plannedReadType": "UNSIGNED_INT_2_10_10_10_REV",
+      "plannedReadFormat": "RGBA",
+      "channels": [
+        "UN10",
+        "UN10",
+        "UN10",
+        "UN2"
+      ],
+      "swizzles": [
+        "Z",
+        "Y",
+        "X",
+        "W"
+      ],
+      "primaryLine": 271
+    },
+    {
+      "originalFormat": 135,
+      "originalName": "B4G4R4X4_UNORM",
+      "rgbaFields": [
+        {
+          "bits": 4,
+          "offset": 8,
+          "ignored": false
+        },
+        {
+          "bits": 4,
+          "offset": 4,
+          "ignored": false
+        },
+        {
+          "bits": 4,
+          "offset": 0,
+          "ignored": false
+        },
+        {
+          "bits": 4,
+          "offset": 12,
+          "implicit": true,
+          "ignored": true
+        }
+      ],
+      "guestPixelBytes": 2,
+      "plannedNativePixelBytes": 2,
+      "plannedNativeInternal": "RGBA4",
+      "plannedUploadFormat": "RGBA",
+      "plannedUploadType": "UNSIGNED_SHORT_4_4_4_4",
+      "nativeOffsets": [
+        12,
+        8,
+        4,
+        0
+      ],
+      "implicitAlpha": true,
+      "readPixelBytes": 4,
+      "plannedReadType": "UNSIGNED_BYTE",
+      "plannedReadFormat": "RGBA",
+      "channels": [
+        "UN4",
+        "UN4",
+        "UN4",
+        "X4"
+      ],
+      "swizzles": [
+        "Z",
+        "Y",
+        "X",
+        "1"
+      ],
+      "primaryLine": 229
+    },
+    {
+      "originalFormat": 308,
+      "originalName": "R10G10B10X2_UNORM",
+      "rgbaFields": [
+        {
+          "bits": 10,
+          "offset": 0,
+          "ignored": false
+        },
+        {
+          "bits": 10,
+          "offset": 10,
+          "ignored": false
+        },
+        {
+          "bits": 10,
+          "offset": 20,
+          "ignored": false
+        },
+        {
+          "bits": 2,
+          "offset": 30,
+          "implicit": true,
+          "ignored": true
+        }
+      ],
+      "guestPixelBytes": 4,
+      "plannedNativePixelBytes": 4,
+      "plannedNativeInternal": "RGB10_A2",
+      "plannedUploadFormat": "RGBA",
+      "plannedUploadType": "UNSIGNED_INT_2_10_10_10_REV",
+      "nativeOffsets": [
+        0,
+        10,
+        20,
+        30
+      ],
+      "implicitAlpha": true,
+      "readPixelBytes": 4,
+      "plannedReadType": "UNSIGNED_INT_2_10_10_10_REV",
+      "plannedReadFormat": "RGBA",
+      "channels": [
+        "UN10",
+        "UN10",
+        "UN10",
+        "X2"
+      ],
+      "swizzles": [
+        "X",
+        "Y",
+        "Z",
+        "1"
+      ],
+      "primaryLine": 265
+    },
+    {
+      "originalFormat": 319,
+      "originalName": "R4G4B4A4_UNORM",
+      "rgbaFields": [
+        {
+          "bits": 4,
+          "offset": 0,
+          "ignored": false
+        },
+        {
+          "bits": 4,
+          "offset": 4,
+          "ignored": false
+        },
+        {
+          "bits": 4,
+          "offset": 8,
+          "ignored": false
+        },
+        {
+          "bits": 4,
+          "offset": 12,
+          "ignored": false
+        }
+      ],
+      "guestPixelBytes": 2,
+      "plannedNativePixelBytes": 2,
+      "plannedNativeInternal": "RGBA4",
+      "plannedUploadFormat": "RGBA",
+      "plannedUploadType": "UNSIGNED_SHORT_4_4_4_4",
+      "nativeOffsets": [
+        12,
+        8,
+        4,
+        0
+      ],
+      "implicitAlpha": false,
+      "readPixelBytes": 4,
+      "plannedReadType": "UNSIGNED_BYTE",
+      "plannedReadFormat": "RGBA",
+      "channels": [
+        "UN4",
+        "UN4",
+        "UN4",
+        "UN4"
+      ],
+      "swizzles": [
+        "X",
+        "Y",
+        "Z",
+        "W"
+      ],
+      "primaryLine": 211
+    },
+    {
+      "originalFormat": 320,
+      "originalName": "R5G5B5A1_UNORM",
+      "rgbaFields": [
+        {
+          "bits": 5,
+          "offset": 0,
+          "ignored": false
+        },
+        {
+          "bits": 5,
+          "offset": 5,
+          "ignored": false
+        },
+        {
+          "bits": 5,
+          "offset": 10,
+          "ignored": false
+        },
+        {
+          "bits": 1,
+          "offset": 15,
+          "ignored": false
+        }
+      ],
+      "guestPixelBytes": 2,
+      "plannedNativePixelBytes": 2,
+      "plannedNativeInternal": "RGB5_A1",
+      "plannedUploadFormat": "RGBA",
+      "plannedUploadType": "UNSIGNED_SHORT_5_5_5_1",
+      "nativeOffsets": [
+        11,
+        6,
+        1,
+        0
+      ],
+      "implicitAlpha": false,
+      "readPixelBytes": 4,
+      "plannedReadType": "UNSIGNED_BYTE",
+      "plannedReadFormat": "RGBA",
+      "channels": [
+        "UN5",
+        "UN5",
+        "UN5",
+        "UN1"
+      ],
+      "swizzles": [
+        "X",
+        "Y",
+        "Z",
+        "W"
+      ],
+      "primaryLine": 163
+    },
+    {
+      "originalFormat": 321,
+      "originalName": "R5G6B5_UNORM",
+      "rgbaFields": [
+        {
+          "bits": 5,
+          "offset": 0,
+          "ignored": false
+        },
+        {
+          "bits": 6,
+          "offset": 5,
+          "ignored": false
+        },
+        {
+          "bits": 5,
+          "offset": 11,
+          "ignored": false
+        },
+        {
+          "bits": 0,
+          "offset": 0,
+          "implicit": true
+        }
+      ],
+      "guestPixelBytes": 2,
+      "plannedNativePixelBytes": 2,
+      "plannedNativeInternal": "RGB565",
+      "plannedUploadFormat": "RGB",
+      "plannedUploadType": "UNSIGNED_SHORT_5_6_5",
+      "nativeOffsets": [
+        11,
+        5,
+        0,
+        0
+      ],
+      "implicitAlpha": true,
+      "readPixelBytes": 4,
+      "plannedReadType": "UNSIGNED_BYTE",
+      "plannedReadFormat": "RGBA",
+      "channels": [
+        "UN5",
+        "UN6",
+        "UN5"
+      ],
+      "swizzles": [
+        "X",
+        "Y",
+        "Z",
+        "1"
+      ],
+      "primaryLine": 247
+    },
+    {
+      "originalFormat": 407,
+      "originalName": "R4G4B4X4_UNORM",
+      "rgbaFields": [
+        {
+          "bits": 4,
+          "offset": 0,
+          "ignored": false
+        },
+        {
+          "bits": 4,
+          "offset": 4,
+          "ignored": false
+        },
+        {
+          "bits": 4,
+          "offset": 8,
+          "ignored": false
+        },
+        {
+          "bits": 4,
+          "offset": 12,
+          "implicit": true,
+          "ignored": true
+        }
+      ],
+      "guestPixelBytes": 2,
+      "plannedNativePixelBytes": 2,
+      "plannedNativeInternal": "RGBA4",
+      "plannedUploadFormat": "RGBA",
+      "plannedUploadType": "UNSIGNED_SHORT_4_4_4_4",
+      "nativeOffsets": [
+        12,
+        8,
+        4,
+        0
+      ],
+      "implicitAlpha": true,
+      "readPixelBytes": 4,
+      "plannedReadType": "UNSIGNED_BYTE",
+      "plannedReadFormat": "RGBA",
+      "channels": [
+        "UN4",
+        "UN4",
+        "UN4",
+        "X4"
+      ],
+      "swizzles": [
+        "X",
+        "Y",
+        "Z",
+        "1"
+      ],
+      "primaryLine": 217
+    },
+    {
+      "originalFormat": 409,
+      "originalName": "R5G5B5X1_UNORM",
+      "rgbaFields": [
+        {
+          "bits": 5,
+          "offset": 0,
+          "ignored": false
+        },
+        {
+          "bits": 5,
+          "offset": 5,
+          "ignored": false
+        },
+        {
+          "bits": 5,
+          "offset": 10,
+          "ignored": false
+        },
+        {
+          "bits": 1,
+          "offset": 15,
+          "implicit": true,
+          "ignored": true
+        }
+      ],
+      "guestPixelBytes": 2,
+      "plannedNativePixelBytes": 2,
+      "plannedNativeInternal": "RGB5_A1",
+      "plannedUploadFormat": "RGBA",
+      "plannedUploadType": "UNSIGNED_SHORT_5_5_5_1",
+      "nativeOffsets": [
+        11,
+        6,
+        1,
+        0
+      ],
+      "implicitAlpha": true,
+      "readPixelBytes": 4,
+      "plannedReadType": "UNSIGNED_BYTE",
+      "plannedReadFormat": "RGBA",
+      "channels": [
+        "UN5",
+        "UN5",
+        "UN5",
+        "X1"
+      ],
+      "swizzles": [
+        "X",
+        "Y",
+        "Z",
+        "1"
+      ],
+      "primaryLine": 169
+    }
+  ],
+  "extensionPoints": [
+    {
+      "line": 948,
+      "text": "      { { o(EXT_texture_type_2_10_10_10_REV) },"
+    },
+    {
+      "line": 949,
+      "text": "        { PIPE_FORMAT_R10G10B10A2_UNORM,"
+    },
+    {
+      "line": 950,
+      "text": "          PIPE_FORMAT_B10G10R10A2_UNORM },"
+    },
+    {
+      "line": 1018,
+      "text": "        { PIPE_FORMAT_R10G10B10A2_UNORM,"
+    },
+    {
+      "line": 1019,
+      "text": "          PIPE_FORMAT_B10G10R10A2_UNORM,"
+    }
+  ],
+  "nativeFormatSource": "https://registry.khronos.org/OpenGL/specs/es/3.0/es_spec_3.0.pdf tables3.2/3.7/3.8, printed pages111/118/119"
+}
