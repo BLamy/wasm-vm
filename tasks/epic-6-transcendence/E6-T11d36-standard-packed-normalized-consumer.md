@@ -76,3 +76,26 @@ selected storage facts are held by unchanged source and authenticated seals.
 This consumer continues the explicitly authorized production graphics chain;
 unrelated queue work remains deferred. Actual guest/API/capacity, typed capsets
 and live production proof remain later gates. No merge is authorized.
+
+### 2026-10-11 — worker — runtime and acceptance freeze
+
+The selected decoder/renderer adds one explicit packed UNORM admission flag and
+profile, preserving D35 storage, compiler and shader-contract bytes. Ephemeral
+181-target cases (including all five blend equations) and 104 FLOAT-sampler
+cases pass on headed Apple Metal; their independent Python original-wire
+inverses compare all native components, mip planes and public padding. Thirteen
+retained sampler cases and eleven target boundary cases pass; physical wrong
+sample, wrong COLOR3 target and completed packed-word controls refute the
+unchanged inverse. These are inner-loop results, not the final evidence claim.
+
+Packed native fields and public words require exact comparison. FLOAT fetches
+use a 2e-6 absolute bound. The linear endpoint fixture uses a fixed 2^-11 bound
+(stricter than the Khronos GLES3 filtering suite's 8-bit render-target test
+threshold); the inverse derives original values independently. This is an
+isolated host qualification, not a complete GLES/API or actual guest claim.
+Khronos filtering reference: https://github.com/KhronosGroup/VK-GL-CTS/blob/main/modules/gles3/functional/es3fTextureFilteringTests.cpp#L311-L323
+
+Fourteen zero-count historical V8 operands are pinned individually, byte for
+byte, to the authenticated D35 source closure. No new packed admission, profile,
+cache discriminator, or alpha-mask operand is waived. Final exact-head hot and
+pristine cold records, source closure, coverage and full seal follow this freeze.
