@@ -2,7 +2,7 @@
 id: E6-T11d44
 epic: 6
 title: Execute original native S8 stencil state and clears
-status: implemented
+status: verified
 estimate: S
 risk: high
 priority: 525.027039000382
@@ -70,3 +70,43 @@ Each hot/cold acceptance covers214 original stencil cases and202 observed native
 Four real native controls fail as intended and are refuted by the independent original-field inverse: wrong operation, zero value mask, completed output corruption and completed S8 corruption. The last two occur after original completion behind a distinct second physically consumed WebGLSync; completed S8 uses an actual stencil clear, not patched expected data. All positive browser console/page/request error lists are empty. Finest governing nested V8 coverage is245 executed partitions plus four exact5a unchanged lower-profile operands, zero new runtime gaps, in both hot and cold. Full regions/counters/source bodies remain authority.
 
 Complete seal `evidence/virgl-stencil/worker/recording.tar.gz` is42,370,970 bytes / SHA256 `46beab4bf23c06c2b8f826e41db8b0969cfd380b2a9bdcf750a4cc12322a848c`. Full index `records.json` SHA256 `e590aee23a07f06a68542a118dea90eb9823d31a3669dbfad17294566c8f9271`; manifest SHA256 `386cdb8880bcf72d20a9bf5d6c2bb1eef58023da64974448b42ef7edab445055`. Sealing reopens every42,535 complete logical member, checks each length and digest and requires every hardlink to name an earlier complete physical body. Logical byte count is 1817189091. These records demonstrate the opt-in original native stencil boundary only. Active asymmetric S8 translation, complete production API/caps, guest Mesa/compositor, worker/scanout/demo/deployment and300 MIPS remain unproven. A fresh critic must attack the claim and changed code before verified status. Existing upper native stack500 is continued; its72 earlier published PRs preserve all IDs/order/heads/bases and are open/unmerged.
+
+### 2026-10-11 — fresh verifier — VERDICT: verified
+
+This separate critic session did not implement or alter the runtime. It read the task and diff before evidence and committed falsifiable predictions in `evidence/virgl-stencil/verifier/PREDICTIONS.md`, SHA256 `1a23b894e16cfec07adf29c33a8ac35f21f02706113b987eddf5bfcbc33c047e`. Worker submission is `e8a36fe6c0a582cb86605a370f5fefc945a8f552`, runtime/source freeze is `de736cd109a092b59c82a83dd9520ee5928b8c2a`, and the independently verified dependency is `5a0d9fc9655f1e0956154763bda420aec721865a`. The final promoted harness and six complete fresh recordings are frozen at `0515e4dd31c41b1819762a0ec06aa23365fd295c`. Both changed runtime modules remain byte-identical to the worker freeze.
+
+All fourteen predictions are HELD, with no FAILED or NEEDS EVIDENCE criterion:
+
+- P1 custody: every 42,535 D44 worker body and all 61,957 D43 worker / 12,156 D43 critic bodies independently reopened; complete source, compiler, input, wire, native, public, event, browser and V8 identities authenticated.
+- P2 original admission: independent raw-packet reconstruction checks all 16 historical decoders, reserved fields, legal inactive alpha and complete unsigned 32-bit clears, including isolated complete Git5a refusal bodies.
+- P3 face rules: original winding and front_ccw determine faces; front-only unified, back-enabled literal and both-disabled state held through the novel ordered native sequence.
+- P4 compares: all eight comparisons on both faces and both qualified formats use masked reference as the left operand.
+- P5 operations: all 96 operation/failure-path/face/format cells and 192 independent boundary points at original S8 0/255 held, including saturation, wrap and merged write masks.
+- P6 clear: full-plane mask/scissor override, wide clear masking, selected planes/mips, literal per-face restoration and following front-only state held.
+- P7 depth/output: the original inverse independently checks each hot/cold acceptance's 1,066,896 color words, 716,924 depth pixels, 694,644 S8 pixels and 42,114,404 public/padding bytes. Uploaded UN24 tolerance, native clear conversion and exact FLOAT126 held.
+- P8 asymmetry/absence: all six active-S8 preflight refusals occur at original DRAW byteOffset40 before native draws/blits. Guard ordering precedes draw planning and private-image refresh. Four fresh live 20/126 to 18/21 switches prove actual stale stencil detachment, legal active unequal fields, unchanged depth and retained old S8 149.
+- P9 lifetimes: fresh seeds `0x70119abd`, `0x4aa534b7` and `0xf0097321` each pass eight cases and all four terminal modes, context restoration, private mips, captured old generations, opposite-format replacements and queued clears.
+- P10 completion: full consumed fence identities and writer order held, including all 626 worker blit writers. Disposal-only deletion is never counted as physical completion.
+- P11 failures/sabotage: all 18 native/guard failures close ownership/budgets; all four original controls are independently refuted. Fresh real native S8 sabotage changes every selected byte from 127 to 97: original sync3/event407, actual stencil clear/event411, then distinct consumed sync4/event413. The unchanged inverse detects the corruption.
+- P12 coverage/portability: whole finest V8 range/counter bodies independently yield 245 positive partitions, four exact unchanged Git5a lower-factory operands and zero new gaps for both hot/cold. No new stencil operand waiver. The one exact-de pristine cold proof carries with unchanged runtime/compiler boundaries; no portability finding warrants repetition.
+- P13 novel attacks/SUITE: ordered original draws at async steps 1/64 and the same-FBO live depth-only switch are promoted to `make verify-E6-T11d44-critic`, alongside three fresh schedules and real completed-S8 sabotage. Handwritten boundary pixel values and complete independent native inverses held.
+- P14 scope: isolated original native S8 qualification only. Production guest graphics, active asymmetric stencil translation, full API/caps, Mesa/compositor, worker/scanout/demo/deployment and 300 MIPS remain unproven.
+
+The complete point-cited verdict is `evidence/virgl-stencil/verifier/VERDICT.md`, SHA256 `40f45e072d16de983e78ac508ced70879114a22ef666407b5445f5ef5c323ea7`. Its citations identify complete sealed original inputs, native offsets/digests, event sequences, physical fences, compiler responses and governing V8 partitions. The supplemental raw-wire audit initially guessed 15 historical decoders; complete frozen source proves 16, including texture decoding. The corrected independent check derives the complete export set from frozen source. That verifier-assumption failure is preserved in sealed `audit/failure-original-count.log`; it is not a product refutation and no runtime or original inverse was patched.
+
+Final exact-head promoted command passed with exit 0:
+
+```sh
+VIRGL_STENCIL_CRITIC_EVIDENCE_DIR=target/evidence/virgl-stencil-critic/frozen-0515e4dd make verify-E6-T11d44-critic
+```
+
+Additional commands were full-body `critic_custody.py`, every reopened hot/cold original inverse and affected retained packed/floating inverse, `critic_audit.py worker` on both receipts, direct raw native boundary/failure checks and complete `critic_seal.py` reopening. Syntax and diff checks passed. No runtime semantics changed; no unrelated workspace wall or second cold was repeated.
+
+Fresh complete seal is `evidence/virgl-stencil/verifier/`: six complete recordings, 6,445 logical members, 1,271 physical bodies and 273,973,735 logical bytes. Its 636 complete source-closure bodies include the unchanged full compiler and independently authenticated inverse/lifetime imports. Every hardlink names an earlier complete regular body. Exact SHA256 pins:
+
+- `recording.tar.gz`: `6256d79d6cef23c6e20ce7b068773fddc5069d1f20183c0a9533e27c73e68ede` (12,899,252 bytes).
+- `records.json`: `4a73ffbdbc9461bfe0fa3997c9f22fcffb208b06636a900133b6b8cb8317594e`.
+- `reopening-audit.json`: `30946d58632ba4802d9a02cc8fa785e81916d8bd223be3021e6e74b869caf4dc`.
+- `manifest.json`: `a15d8b849cc8e3eef90a9116a16f16155c65130af3271c74b574bda5ce8b4b63`.
+
+All Git/index/tracked-source and Node/compiler/browser/GPU leases are explicitly released after this verdict commit. All native/browser/compiler jobs are closed. The root alone continues publication and later graphics boundaries; this verifier neither restarted nor changed any stack, PR, branch or merge state.
