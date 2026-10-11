@@ -44,10 +44,12 @@ def main(directory):
         else:
             need(all(p['held'] for p in result['predictions']),'all original native predictions')
             need(len(result['runs'])==(169 if name=='hardware-matrix' else 26),'complete original packed matrix/schedules')
-            if name=='hardware-matrix':need(sum(r['dense'] for r in result['runs'])==13 and sum(len(r['planes'][0]['input']['key'])>0 and r['metadata']['width']*r['metadata']['height']==65536 for r in result['runs'])==10,'every 16-bit layout exhausts all original words')
+            if name=='hardware-matrix':need(sum(r['dense'] for r in result['runs'])==13 and sum(r['dense'] and r['metadata']['width']*r['metadata']['height']==65536 for r in result['runs'])==10,'every 16-bit layout exhausts all original words')
     values=json.loads(record('independent-values.json'));need(values['status']=='passed' and not values['oracleImportsProductCode'] and len(values['faults'])==3 and all(f['status']=='refuted' and f['fenceCompleted'] for f in values['faults']),'independent original inverse rejects all physical corruptions')
     coverage=json.loads(record('coverage-audit.json'));need(coverage['gitHead']==head and coverage['predecessor']==BASE and coverage['fullRegionsRemainAuthority'] and coverage['positive']>0 and not coverage['zero'],'every smallest changed nested partition exercised or authenticated waiver')
     predecessor=json.loads(record('predecessor-audit.json'));need(predecessor['status']=='passed' and predecessor['predecessor']==BASE and len(predecessor['records'])==4,'all held original dependency seals authenticated')
+    serving=json.loads(record('serving-audit.json'));need(serving['status']=='passed' and serving['predecessor']==BASE and serving['gitHead']==head and len(serving['records'])==27 and all(row['held'] for row in serving['records']),'only declared legacy imported-source additions')
+    for row in serving['records']:source(row['path'],row['sha256'])
     carried={}
     for row in predecessor['records']:
         for name,digest in row['digests'].items():source(row['path']+'/'+name,digest);carried[row['path']+'/'+name]=digest

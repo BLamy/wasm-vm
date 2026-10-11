@@ -13,12 +13,13 @@ set -x
 git rev-parse HEAD
 git diff --check
 for file in renderer/virgl-command/{resources,packed-normalized-images}.mjs renderer/virgl-command/tests/standard-packed-normalized-{rig,wire,images,boundaries}.mjs tools/verify-virgl-standard-packed-normalized-images.mjs tools/virgl-command/standard-packed-normalized-fixtures.mjs; do node --check "$file"; done
-python3 -m py_compile tools/virgl-command/standard-packed-normalized-{values,predecessor,receipt,coverage,cold,seal}.py
+python3 -m py_compile tools/virgl-command/standard-packed-normalized-{values,predecessor,receipt,coverage,cold,seal,serving}.py
 bash -n tools/verify-virgl-standard-packed-normalized-images.sh
 bash renderer/virgl-shader/build.sh wasm
 mkdir -p "$evidence/node-coverage"
 NODE_V8_COVERAGE="$evidence/node-coverage" node tools/verify-virgl-standard-packed-normalized-images.mjs --output "$evidence/wire" --node-only true
 python3 tools/virgl-command/standard-packed-normalized-predecessor.py "$evidence"
+python3 tools/virgl-command/standard-packed-normalized-serving.py "$evidence"
 node tools/verify-virgl-standard-packed-normalized-images.mjs --output "$evidence/hardware-matrix"
 for seed in 0xa5471e03 0x13579bdf 0x9e3779b9; do node tools/verify-virgl-standard-packed-normalized-images.mjs --output "$evidence/hardware-boundaries-$seed" --mode boundaries --seed "$seed"; done
 for fault in upload-lane copy-level completed-word; do

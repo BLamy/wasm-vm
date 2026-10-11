@@ -40,7 +40,7 @@ def main():
             report['cloneHead'], report['statusBefore'] = git('rev-parse', 'HEAD', cwd=clone), git('status', '--porcelain', '--untracked-files=all', cwd=clone)
             if report['cloneHead'] != head or report['statusBefore']:
                 raise ValueError('clone is not pristine at exact head')
-            run_output = clone/'target/evidence/virgl-standard-packed-normalizeds-cold'
+            run_output = clone/'target/evidence/virgl-standard-packed-normalized-images-cold'
             env['VIRGL_PACKED_NORMALIZED_EVIDENCE_DIR'] = str(run_output)
             result = subprocess.run(report['command'], cwd=clone, env=env, stdout=log,
                                     stderr=subprocess.STDOUT, timeout=1800)
