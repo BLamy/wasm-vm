@@ -213,8 +213,22 @@ def audit_wire(path):
                 physical = sum(w*h*f['native'] for w,h in sizes)
                 bound = row['limits'].get('gpuBytes',row['limits'].get('resourceBytes'))
                 need(result['ok'] == (physical <= bound), point+' exact physical mip bound')
+            else:
+                fields, f = row['fields'], FORMATS[row['metadata']['format']]
+                box = fields['box']; native_row = box['width']*f['pixel']
+                stride = fields['stride'] or native_row
+                footprint = (box['height']-1)*stride+native_row
+                end = fields['dataOffset']+footprint
+                expected = end <= row['backingBytes'] and footprint <= row['limits'].get('transferBytes',4194304)
+                need(result['ok'] == expected, point+' independent strided exact-bound/one-less footprint')
+                if expected:
+                    need(result['layout']['footprintBytes'] == footprint and result['layout']['requiredEnd'] == end,
+                         point+' original strided addressing never uses native expanded row')
         elif row['kind'] == 'default-scratch-bound':
-            need(result['ok'] == (row['metadata']['height'] == 32), point+' exact 8MiB integer read bound')
+            box = row['fields']['box']; charged = box['width']*box['height']*16
+            need(result['ok'] == (charged <= 8388608), point+' exact 8MiB integer read bound')
+            if result['ok']:
+                need(result['layout']['scratchBytes'] == result['layout']['stagingBytes'] == charged, point+' exact wide read reservation')
         else:
             need(not result['ok'], point+' malformed/old owner refuses')
             if 'calls' in row:
