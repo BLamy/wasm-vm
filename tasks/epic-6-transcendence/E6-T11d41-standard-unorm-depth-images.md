@@ -2,7 +2,7 @@
 id: E6-T11d41
 epic: 6
 title: Qualify original UN16 depth images and sampling
-status: implemented
+status: verified
 estimate: S
 risk: high
 priority: 525.027039000381
@@ -219,3 +219,73 @@ This claim qualifies one isolated original UN16 path. Shadow/stencil/desktop
 linear semantics, complete API and capsets, actual guest/compositor/worker/
 scanout/demo production offload and300MIPS remain unproven. A fresh critic must
 interrogate the full diff and recordings before this task can become verified.
+
+### 2026-10-11 — fresh verifier — VERDICT: verified
+
+VERDICT: verified
+
+This session did not implement D41. Fifteen falsifiable predictions were written
+before opening evidence, SHA256
+`20ceb3c68d578649472a36d136fde0878293bd0d2e453c95a8f83d9a36fe27fb`.
+The novel attack was separately predicted before execution, SHA256
+`62bc97d718a2cbf4fb93331ede46df97308ee043b5c6db5c70efb84b44272678`.
+All fifteen are HELD; no contradiction or proof gap survives. Complete individual
+predictions, observations and file/line/JSON-pointer/full-digest citations are in
+`evidence/virgl-unorm-depth-images/verifier/prediction-results.json` (SHA256
+`a1300c9d73f906cfc9046e38c004f39f00876ee10daba2265e345219ef6bb7da`).
+
+Below, `audits/` and `fresh/` name complete logical members in the critic seal;
+`hot/` names the authenticated worker seal. Every cited body is fully stored.
+
+- P01 — HELD. Every37121 logical worker member resolved to an earlier real physical body;1937 physical bodies; all SHA/length/source/receipt pins hold. Final cold clone is exact eda91 with clean status before/after. Citation: `audits/custody.json:15`, SHA256 `9a703cf81569b42f4f3e0a32f7565f9752babdcd628d6fbe5494fd167ed619c5`.
+- P02 — HELD. Complete unchanged D40 worker33662 and critic7041 members reopened; actual C/Wasm compiler and native GPU copy/pack helper unchanged; whole primary pins and original UN16 mapping hold. Citation: `audits/custody.json:259877`, SHA256 `9a703cf81569b42f4f3e0a32f7565f9752babdcd628d6fbe5494fd167ed619c5`.
+- P03 — HELD. Original13 readiness refusals and3 legacy successes remain authenticated. Actual format16 native roles/mips/costs match original descriptors. Every boundary schedule refuses60 original bad aliases/returns/filters/roles/feedback before actual draw/copy; drawBuffers is framebuffer setup, not a guest draw. Citation: `audits/custody.json:544861`, SHA256 `9a703cf81569b42f4f3e0a32f7565f9752babdcd628d6fbe5494fd167ed619c5`.
+- P04 — HELD. All65536 original words are physically uploaded at event4. Both actual original TEX draws produce exact f32(word/65535) depth; exact public canonical UN16/padding and complete raw pack collection595 after actual consumed594 hold, maximum0ULP. Citation: `audits/domain.json:10`, SHA256 `408d1e1746c27ad38f190f056c656007ccf932713d4fcf7254e0d60672cd080f`.
+- P05 — HELD. Unchanged independent original TGSI/packet/input inverses pass both shader stages, slots0/15 and all six supported operations/swizzles/constants/query/private ranges/nonzero outputs. All full diagnostic bodies match actual returned native bytes; full original UN16 uploads independently confirmed. Citation: `hot/hardware-samples/report.json:2863`, SHA256 `3551e0e15dc3e8286c4931d248d15e520a37090fa084de062e98456199cbccfe`.
+- P06 — HELD. Original DSA packets independently derive all eight functions and test/write masks across20 surface runs; full native color/depth bytes hold.126 old S8 pixels remain exact through switches. All8 clear cases uniformly choose allowed24575; public bytes exactly match that validated native word, no independent public tolerance. Citation: `audits/state.json:118`, SHA256 `4981fea2a61ab52444126caee9095df4f13b62ef9db3b28074db5288c8a1b4ff`.
+- P07 — HELD. 18 transfer cases hold full original/native/public/padding inverses, including native-only refresh. Exact reserved2-byte native mip costs precede texStorage2D.2 allocated failure rollbacks and4 one-byte-short resource/view/scratch/staging refusals preserve budgets and native object/allocation/read counts. Citation: `audits/state.json:243`, SHA256 `4981fea2a61ab52444126caee9095df4f13b62ef9db3b28074db5288c8a1b4ff`.
+- P08 — HELD. All four terminal modes and old-range/opposite-format126 ID reuse hold from original physical generation/bodies; all6993 positive native objects retire exactly once, every terminal resource/renderer/async/image charge zero. Novel stale source also keeps old private1..2 generation correct while replacement bytes remain exact. Citation: `audits/state.json:21`, SHA256 `4981fea2a61ab52444126caee9095df4f13b62ef9db3b28074db5288c8a1b4ff`.
+- P09 — HELD. Full native events own1716 syncs with1710 actual consumed and6 disposal-only. CPU1648 splits1586 post-writer-fenced and62 driver-synchronized readPixels returns. Transfer summary omission does not count as zero:310 transfer completions are independently included. Blits/PBO writes and conversion draws participate in writer ordering. Citation: `audits/events.json:17`, SHA256 `0e980a187cd4f287716f8a3b7f2f11609eb8a070dcacceb6cb8b683c7b885c49`.
+- P10 — HELD. Both hot/cold independently reconstruct62 positive runs,133frames,801576output words,280776depth pixels+2732transfer pixels,10866784public bytes,56 actual pair/112 actual stage responses vs101 actual draw associations. Controls and legacy are separate. Citation: `audits/hot-original-inverses.json:183`, SHA256 `5942ba605d72ce85ab97912b2f9caa8308e1cdaa041a870d2d52911375178461`.
+- P11 — HELD. Both full finest governing UTF16/V8 audits reconstruct602executed/25waived/0unproven. All29 exact predecessor source/offset/operand bodies authenticate; four listed waivers now execute, no new UN16 semantics waived. All25 recorder whole bodies differ by only one dependency literal, original legacy hardware recorder passes hot/cold. Citation: `audits/coverage.json:364`, SHA256 `8f9e5176ff65f8667ede7c79af7bbf1386e1414cefd56a4736fedee2807cca3a`.
+- P12 — HELD. New schedules0x6a09e667,0xbb67ae85,0x3c6ef372 all pass unchanged full inverses; each4runs/18frames/238actual completions/2disposal-only and terminalzero. Novel13x11 oddstride7 offset5 nine-word mip1 subrectangle, retained1..2 range and pending opposite-format source reuse passes7 full native plane inversions; stale transfer refuses before CPU collection and destination bytes unchanged. Citation: `audits/attacks.json:7`, SHA256 `25f474330b6c9a6459ce6514eda95ac438416df558e19390c81d1fcd2e5c966d`.
+- P13 — HELD. Actual completed depth draw334 consumes sync3 at337; native clear(.0625)341 follows; new sync4 is created342 and actually consumed345. Actual full diagnostic return378 differs at first word1031794944 vs original prediction1056964736; unchanged full original-input inverse refutes the sabotage. Citation: `fresh/fault-completed-depth/report.json:8550`, SHA256 `d45ae76568cd8d05cf01500484c1d00208c12cee9831ec822f4ee1738a12ee4b`.
+- P14 — HELD. 42 worker browser recordings and5 fresh full recordings authenticate whole served source/coverage/screenshot bodies; all headed actual Metal M4 WebGL2, no software flags, zero console/page/request errors. Fresh2472source bodies match20732055; runtime and unchanged inverses remain byteidentical eda91. Fresh root HTML is reconstructed from whole recorder literal and exactly matches its served SHA. Citation: `audits/worker-browser.json:6`, SHA256 `e508c4b4a2b10ca9112d8ea9a9009d72ef5ee674f5be1bd264548721e65b5cd8`.
+- P15 — HELD. Verified isolated original UN16 factory only. Recorded guestExecution and productionNegotiation false. Production guest/compositor/worker/scanout/demo offload, complete API/caps and300MIPS remain unproven; no merge/push/deploy/successor by critic. Citation: `fresh/promoted/report.json:5`, SHA256 `50cf4379bd50a7183a1c6fb66182296934225db9ae5cf5c3b27a3069ff0694b6`.
+
+SUITE: promoted `make verify-E6-T11d41-critic` at exact source head
+`2073205506d408d2800b1e65bf112123e9869b34`. The independent attack checks
+nine original UN16 mip1 words at odd stride7/offset5 on a13x11 source, pending
+PBO source-ID reuse as126, refusal before CPU collection, unchanged destination
+and replacement backing, retained private range1..2 and once-only terminal
+retirement. All seven full native planes pass its original-input inverse. The
+same gate requires actual completed native depth sabotage to fail the unchanged
+worker inverse; native clear341 is after consumed337 and before distinct consumed345.
+
+Commands: `make verify-E6-T11d41-critic`; three fresh `--mode boundaries` runs
+with seeds `0x6a09e667`, `0xbb67ae85`, `0x3c6ef372`, each followed by unchanged
+`tools/virgl-unorm-depth/values.py`; both complete worker positive matrices and
+four physical fault controls re-inverted; nine independent custody/native/state/
+domain/coverage/browser/attack audit programs; scoped Node/Python syntax and
+diff checks. Every fresh browser uses headed Chrome155, actual Metal M4 Max
+and zero console/page/request errors. The frozen final scrubbed cold clone is
+carried once because its code/boundary/evidence digests are unchanged.
+
+Full fresh seal: `evidence/virgl-unorm-depth-images/verifier`;
+4529 logical members (179084456 bytes),733 physical bodies,8862192-byte archive.
+All4529 full bodies reopened successfully. Archive SHA256
+`3186b70378d361999dff6313671de1be3db6bb87ef741e54a58c81521b79c1cb`.
+Index SHA256 `1c999af56e97c2cddc44a6223721483f444b4885a2c9a2668747493ec65c279e`.
+Manifest SHA256 `a675062f96329b618e9d406052182b61f1ead91889f1afb25d791aa423586063`.
+The archive includes every fresh input/native/public/source/browser/coverage/
+screenshot body, actual returned native bytes and events, all audit results and
+programs, exact diffs and unchanged original-input inverse sources. The already
+committed worker and D40 archives are fully authenticated by the complete custody
+audit rather than duplicating them in this seal.
+
+Implementation, actual compiler and native GPU helper remain byteidentical to
+frozen `eda91e2569c38de3f56b92fd38b5326b2c6ae3fd`; critic changes only promoted
+tests/gate, evidence and verification bookkeeping. Status is `verified`. Policy
+is run before queue regeneration and the deliberate evidence/verdict commit.
+Production guest/offload/API/caps/300MIPS remain unproven; no merge, push,
+deployment or successor was performed by this critic.
