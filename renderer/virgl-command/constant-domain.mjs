@@ -1219,3 +1219,100 @@ export function deriveStandardIntegerImageShaderInterface(vertex, fragment, host
       standardImageMetadata(fragment, "fragment", true, selectors)) });
   } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-link-error", error.message); }
 }
+
+// A separate host-selected consumer admits original COLOR0..3 declarations.
+// Reuse the closed predecessor for every non-color field and each projected IO;
+// never grant authority to a profile string supplied by the guest.
+function standardMultipleColors(value) {
+  const colors = record(value, Object.keys(STANDARD_IMAGE_COLORS));
+  require([colors.signedColorMask, colors.unsignedColorMask].every(mask =>
+    Number.isInteger(mask) && mask >= 0 && mask <= 15) && !(colors.signedColorMask & colors.unsignedColorMask),
+  "Multiple colors require disjoint four-bit host masks.");
+  return colors;
+}
+function standardMultipleSelectors(value) {
+  const input = record(value, Object.keys(STANDARD_IMAGE_SELECTORS));
+  return { ...standardUniformSelectors(Object.fromEntries(Object.keys(STANDARD_UNIFORM_SELECTORS).map(key => [key, input[key]]))),
+    ...standardMultipleColors({ signedColorMask: input.signedColorMask, unsignedColorMask: input.unsignedColorMask }) };
+}
+function standardMultipleMetadata(value, stage, paired, selectors) {
+  if (stage !== "fragment") return standardImageMetadata(value, stage, paired, selectors);
+  const input = record(value, [...STANDARD_METADATA_KEYS, "guestUniformBlocks", "textureQueries", "colorOutputMasks"]),
+    colors = record(input.colorOutputMasks, ["signedMask", "unsignedMask"]);
+  require(colors.signedMask === selectors.signedColorMask && colors.unsignedMask === selectors.unsignedColorMask,
+    "Native multiple color masks disagree with their host attachments.");
+  require(typeof input.broadcastColor0 === "boolean", "Invalid original broadcast property.");
+  const semantics = new Set(), outputs = array(input.outputs, 4).map(value => {
+    const output = record(value, [...STANDARD_IO_KEYS, "syntacticWriteMask", "interpolation"],
+      [...STANDARD_IO_KEYS, "syntacticWriteMask"]);
+    require(output.semantic === "COLOR" && Number.isInteger(output.semanticIndex) && output.semanticIndex >= 0 && output.semanticIndex < 4 &&
+      output.name === "fsout_c" + output.semanticIndex && !semantics.has(output.semanticIndex),
+    "Invalid or repeated original color semantic.");
+    semantics.add(output.semanticIndex);
+    const bit = 1 << output.semanticIndex, type = colors.signedMask & bit ? "ivec4" : colors.unsignedMask & bit ? "uvec4" : "vec4";
+    require(output.type === type, "Native color output type disagrees with its own attachment.");
+    const checked = standardIO({ ...output, name: "fsout_c0", semanticIndex: 0, type: "vec4" }, stage, "outputs", paired, selectors);
+    return { ...checked, name: output.name, semanticIndex: output.semanticIndex, type: output.type };
+  });
+  require(outputs.length > 0 && outputs.every((output, index) => !index || outputs[index - 1].index < output.index),
+    "Original color registers must be nonempty, sorted and unique.");
+  require(!input.broadcastColor0 || outputs.length === 1 && outputs[0].semanticIndex === 0,
+    "Original COLOR0 broadcast requires exactly its one declared output.");
+  const emitted = input.broadcastColor0 ? 15 : outputs.reduce((mask, output) => mask | (1 << output.semanticIndex), 0);
+  require(!((colors.signedMask | colors.unsignedMask) & ~emitted), "Host masks exceed emitted color semantics.");
+  const first = outputs[0], firstBit = 1 << first.semanticIndex,
+    projectedSelectors = { ...selectors, signedColorMask: colors.signedMask & firstBit ? 1 : 0,
+      unsignedColorMask: colors.unsignedMask & firstBit ? 1 : 0 };
+  const metadata = standardImageMetadata({ ...input, broadcastColor0: false,
+    outputs: [{ ...first, name: "fsout_c0", semanticIndex: 0 }],
+    colorOutputMasks: { signedMask: projectedSelectors.signedColorMask, unsignedMask: projectedSelectors.unsignedColorMask } },
+  stage, paired, projectedSelectors);
+  return standardFreeze({ ...metadata, outputs, broadcastColor0: input.broadcastColor0,
+    colorOutputMasks: { signedMask: colors.signedMask, unsignedMask: colors.unsignedMask } });
+}
+function standardMultipleBody(value, stage, paired, selectors) {
+  const body = record(value, ["glsl", "metadata"]);
+  require(typeof body.glsl === "string" && body.glsl.length <= 262144 && /^#version 300 es\b/m.test(body.glsl),
+    "Multiple color compiler returned incompatible GLSL.");
+  return standardFreeze({ glsl: body.glsl, metadata: standardMultipleMetadata(body.metadata, stage, paired, selectors) });
+}
+export function parseStandardMultipleColorShaderMetadata(value, stage, hostColors = STANDARD_IMAGE_COLORS) {
+  try {
+    const colors = standardMultipleColors(hostColors);
+    return standardFreeze({ ok: true, domain: null,
+      metadata: standardMultipleMetadata(value, stage, false, { ...STANDARD_UNIFORM_SELECTORS, ...colors }) });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-domain-error", error.message); }
+}
+export function normalizeStandardMultipleColorShaderResult(value, stage, hostColors = STANDARD_IMAGE_COLORS) {
+  try {
+    const colors = standardMultipleColors(hostColors), response = record(value, ["ok", "glsl", "metadata", "error"], ["ok"]);
+    if (response.ok === false) { record(response, ["ok", "error"]); return standardError(response.error); }
+    require(response.ok === true, "Invalid multiple color compiler result."); record(response, ["ok", "glsl", "metadata"]);
+    return standardFreeze({ ok: true, ...standardMultipleBody({ glsl: response.glsl, metadata: response.metadata }, stage,
+      false, { ...STANDARD_UNIFORM_SELECTORS, ...colors }) });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-domain-error", error.message); }
+}
+export function normalizeStandardMultipleColorShaderPair(value, hostSelectors = STANDARD_IMAGE_SELECTORS) {
+  try {
+    const selectors = standardMultipleSelectors(hostSelectors), response = record(value, ["ok", "vertex", "fragment", "interfaceKey", "error"], ["ok"]);
+    if (response.ok === false) { record(response, ["ok", "error"]); return standardError(response.error); }
+    require(response.ok === true, "Invalid multiple color pair result."); record(response, ["ok", "vertex", "fragment", "interfaceKey"]);
+    const vertex = standardMultipleBody(response.vertex, "vertex", true, selectors),
+      fragment = standardMultipleBody(response.fragment, "fragment", true, selectors),
+      derived = standardInterface(vertex.metadata, fragment.metadata);
+    require(response.interfaceKey === derived.key, "Multiple color pair key disagrees.");
+    for (const input of derived.inputs) {
+      const output = vertex.metadata.outputs.find(output => output.semantic === "GENERIC" && output.semanticIndex === input.semanticIndex);
+      require(output.type === input.type && output.interpolation === input.interpolation,
+        "Multiple color pair lacks the compiler's promoted generic output.");
+    }
+    return standardFreeze({ ok: true, vertex, fragment, interfaceKey: response.interfaceKey });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-link-error", error.message); }
+}
+export function deriveStandardMultipleColorShaderInterface(vertex, fragment, hostSelectors = STANDARD_IMAGE_SELECTORS) {
+  try {
+    const selectors = standardMultipleSelectors(hostSelectors);
+    return standardFreeze({ ok: true, ...standardInterface(standardMultipleMetadata(vertex, "vertex", true, selectors),
+      standardMultipleMetadata(fragment, "fragment", true, selectors)) });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-link-error", error.message); }
+}

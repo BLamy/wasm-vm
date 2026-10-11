@@ -3,13 +3,14 @@ import {byteColorFormat} from "./color-images.mjs";
 import {floatColorFormat} from "./float-images.mjs";
 import {packedFloatColorFormat} from "./packed-float-images.mjs";
 import {integerColorFormat} from "./integer-images.mjs";
-import { decodeSubmission, decodeStandardSubmission, decodeStandardUniformSubmission, decodeStandardImageSubmission, decodeStandardColorSubmission, decodeStandardFloatImageSubmission, decodeStandardPackedFloatImageSubmission, decodeStandardSharedExponentImageSubmission, decodeStandardIntegerImageSubmission, vertexFormat } from "./decoder.mjs";
+import { decodeSubmission, decodeStandardSubmission, decodeStandardUniformSubmission, decodeStandardImageSubmission, decodeStandardColorSubmission, decodeStandardFloatImageSubmission, decodeStandardPackedFloatImageSubmission, decodeStandardSharedExponentImageSubmission, decodeStandardIntegerImageSubmission, decodeStandardMultipleColorSubmission, vertexFormat } from "./decoder.mjs";
 import { LIMITS as SHADER_LIMITS } from "../virgl-shader/index.mjs";
 import { createKeyCache, hashKey } from "./cache.mjs";
 import { parseConstantDomain, checkFiniteBank, checkIndirectBank, checkLoopBank, checkRadialBank, checkRasterBank, checkConversionBank, checkExactBank, COORDINATE_KEY, DISCARD_KEY,
   parseStandardShaderMetadata, normalizeStandardShaderResult, normalizeStandardShaderPair, normalizeStandardShaderTypedPair, deriveStandardShaderInterface, parseStandardUniformShaderMetadata,
   normalizeStandardUniformShaderResult, normalizeStandardUniformShaderPair, deriveStandardUniformShaderInterface, parseStandardTextureShaderMetadata, normalizeStandardTextureShaderResult, normalizeStandardTextureShaderPair, deriveStandardTextureShaderInterface,
-  parseStandardIntegerImageShaderMetadata, normalizeStandardIntegerImageShaderResult, normalizeStandardIntegerImageShaderPair, deriveStandardIntegerImageShaderInterface } from "./constant-domain.mjs";
+  parseStandardIntegerImageShaderMetadata, normalizeStandardIntegerImageShaderResult, normalizeStandardIntegerImageShaderPair, deriveStandardIntegerImageShaderInterface,
+  parseStandardMultipleColorShaderMetadata, normalizeStandardMultipleColorShaderResult, normalizeStandardMultipleColorShaderPair, deriveStandardMultipleColorShaderInterface } from "./constant-domain.mjs";
 
 export const STATE_PROFILE = "virgl-tiny-state-v1";
 export const STATE_LIMITS = Object.freeze({ contexts: 8, subContexts: 16, objects: 256,
@@ -23,6 +24,7 @@ export const STANDARD_BUFFER_ASYNC_PROFILE = "virgl-standard-buffer-async-jobs-v
 export const STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE = "virgl-standard-r11g11b10-image-async-jobs-v1";
 export const STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE = "virgl-standard-rgb9e5-image-async-jobs-v1";
 export const STANDARD_INTEGER_IMAGE_ASYNC_PROFILE = "virgl-standard-integer-image-async-jobs-v1";
+export const STANDARD_MULTIPLE_COLOR_ASYNC_PROFILE = "virgl-standard-multiple-color-async-jobs-v1";
 export const STANDARD_FLOAT_IMAGE_ASYNC_PROFILE = "virgl-standard-float-image-async-jobs-v1";
 export const STANDARD_IMAGE_ASYNC_PROFILE = "virgl-standard-image-async-jobs-v1";
 export const STANDARD_COLOR_ASYNC_PROFILE = "virgl-standard-byte-color-async-jobs-v1";
@@ -227,8 +229,13 @@ export function createVirglStandardIntegerImageAsyncRenderer(options) {
   return createRenderer(options, true, true, true, true, true, true, true, true, true, true, true, true);
 }
 
+/** Original multiple native color attachments require explicit host authority. */
+export function createVirglStandardMultipleColorAsyncRenderer(options) {
+  return createRenderer(options, true, true, true, true, true, true, true, true, true, true, true, true, true);
+}
+
 /** Host capabilities are trusted and non-reentrant. */
-function createRenderer(options, drawing, asynchronous = false, standard = false, uniform = false, bufferRoles = false, images = false, colors = false, textureOperations = false, floats = false, packed = false, shared = false, integers = false) {
+function createRenderer(options, drawing, asynchronous = false, standard = false, uniform = false, bufferRoles = false, images = false, colors = false, textureOperations = false, floats = false, packed = false, shared = false, integers = false, multipleColors = false) {
   return result(() => {
     const config = dataRecord(options, ["gl", "resources", "bindings", "shaderBridge", "limits", "cacheLimits", ...(drawing ? ["drawLimits"] : []), ...(asynchronous ? ["asyncAccess", "jobLimits"] : []), ...(standard ? ["primitiveAssembly"] : []), ...(uniform ? ["uniformAccess"] : []), ...(images ? ["imageAccess"] : [])], ["gl", "resources", "bindings", "shaderBridge", ...(asynchronous ? ["asyncAccess"] : []), ...(uniform ? ["uniformAccess"] : []), ...(images ? ["imageAccess"] : [])]);
     const { gl, resources, bindings, shaderBridge } = config;
@@ -238,6 +245,10 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
     require(gl && typeof gl.createVertexArray === "function" && typeof gl.uniform4uiv === "function", "invalid-input", "A WebGL2 context is required.");
     require(!floats || gl.getExtension("EXT_color_buffer_float") && gl.getExtension("EXT_float_blend") && gl.getExtension("OES_texture_float_linear"),
       "unsupported-host", "Floating image draws require native floating storage, blending and filtering extensions.");
+    const indexedColors = multipleColors ? gl.getExtension("OES_draw_buffers_indexed") : null;
+    require(!multipleColors || indexedColors && typeof indexedColors.colorMaskiOES === "function" &&
+      gl.getParameter(gl.MAX_DRAW_BUFFERS) >= 4 && gl.getParameter(gl.MAX_COLOR_ATTACHMENTS) >= 4,
+    "unsupported-host", "Multiple colors require four native attachments and actual indexed color masks.");
     require(resources && ["inspect", "retainStorage", "releaseStorage", "prepareTransfer", "executeTransfer"].every((name) => typeof resources[name] === "function") &&
       bindings && typeof bindings.resolve === "function" && shaderBridge && typeof shaderBridge.translate === "function", "invalid-input", "Resource and shader capabilities are required.");
     require(!drawing || typeof resources.readStorage === "function", "invalid-input", "Drawing requires actual storage readback.");
@@ -274,9 +285,9 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
     require(!images || imageAccess && ["capture", "resolve", "refresh", "hold", "holdStorage", "release", "inspect"].every(name => typeof imageAccess[name] === "function"),
       "invalid-input", "Original native image range authority is required.");
     require(!integers || typeof shaderBridge.translateImages === "function", "invalid-input", "Integer images require the selected stage compiler.");
-    const profile = integers ? STANDARD_INTEGER_IMAGE_ASYNC_PROFILE : shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : textureOperations ? STANDARD_TEXTURE_ASYNC_PROFILE : colors ? STANDARD_COLOR_ASYNC_PROFILE : images ? STANDARD_IMAGE_ASYNC_PROFILE : bufferRoles ? STANDARD_BUFFER_ASYNC_PROFILE : uniform ? STANDARD_UNIFORM_ASYNC_PROFILE : standard ? STANDARD_ASYNC_PROFILE : asynchronous ? ASYNC_PROFILE : drawing ? DRAW_PROFILE : STATE_PROFILE;
-    const decodeCommands = integers ? decodeStandardIntegerImageSubmission : shared ? decodeStandardSharedExponentImageSubmission : packed ? decodeStandardPackedFloatImageSubmission : floats ? decodeStandardFloatImageSubmission : colors ? decodeStandardColorSubmission : images ? decodeStandardImageSubmission : uniform ? decodeStandardUniformSubmission : standard ? decodeStandardSubmission : decodeSubmission;
-    const parseShaderMetadata = integers ? parseStandardIntegerImageShaderMetadata : textureOperations ? parseStandardTextureShaderMetadata : uniform ? parseStandardUniformShaderMetadata : standard ? parseStandardShaderMetadata : parseConstantDomain;
+    const profile = multipleColors ? STANDARD_MULTIPLE_COLOR_ASYNC_PROFILE : integers ? STANDARD_INTEGER_IMAGE_ASYNC_PROFILE : shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : textureOperations ? STANDARD_TEXTURE_ASYNC_PROFILE : colors ? STANDARD_COLOR_ASYNC_PROFILE : images ? STANDARD_IMAGE_ASYNC_PROFILE : bufferRoles ? STANDARD_BUFFER_ASYNC_PROFILE : uniform ? STANDARD_UNIFORM_ASYNC_PROFILE : standard ? STANDARD_ASYNC_PROFILE : asynchronous ? ASYNC_PROFILE : drawing ? DRAW_PROFILE : STATE_PROFILE;
+    const decodeCommands = multipleColors ? decodeStandardMultipleColorSubmission : integers ? decodeStandardIntegerImageSubmission : shared ? decodeStandardSharedExponentImageSubmission : packed ? decodeStandardPackedFloatImageSubmission : floats ? decodeStandardFloatImageSubmission : colors ? decodeStandardColorSubmission : images ? decodeStandardImageSubmission : uniform ? decodeStandardUniformSubmission : standard ? decodeStandardSubmission : decodeSubmission;
+    const parseShaderMetadata = multipleColors ? parseStandardMultipleColorShaderMetadata : integers ? parseStandardIntegerImageShaderMetadata : textureOperations ? parseStandardTextureShaderMetadata : uniform ? parseStandardUniformShaderMetadata : standard ? parseStandardShaderMetadata : parseConstantDomain;
     const idle = () => require(activeJob === null, "busy", "A renderer job is active; cancel and drain it before changing state.");
     const contexts = new Map(), objects = new Set(), programs = new Set();
     let disposed = false, nextGeneration = 1, subCount = 0, shaderBytes = 0, uniformBytes = 0, leaseCount = 0;
@@ -389,12 +400,12 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       }
     };
     const translatedStage = (sub, request) => {
-      const key = JSON.stringify([sub.generation, "stage", request.stage, request.text, ...(textureOperations ? [integers ? STANDARD_INTEGER_IMAGE_ASYNC_PROFILE : shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : STANDARD_TEXTURE_ASYNC_PROFILE] : [])]);
+      const key = JSON.stringify([sub.generation, "stage", request.stage, request.text, ...(textureOperations ? [multipleColors ? STANDARD_MULTIPLE_COLOR_ASYNC_PROFILE : integers ? STANDARD_INTEGER_IMAGE_ASYNC_PROFILE : shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : STANDARD_TEXTURE_ASYNC_PROFILE] : [])]);
       const cached = translationCache.get(sub, key);
       if (cached) return cached;
       work.translations++;
       const response = integers ? shaderBridge.translateImages({ ...request, signedColorMask: 0, unsignedColorMask: 0 }) : shaderBridge.translate(request);
-      const translated = integers ? unwrap(normalizeStandardIntegerImageShaderResult(response, request.stage)) : textureOperations ? unwrap(normalizeStandardTextureShaderResult(response, request.stage)) : uniform ? unwrap(normalizeStandardUniformShaderResult(response, request.stage)) : standard ? unwrap(normalizeStandardShaderResult(response, request.stage)) : freeze(unwrap(response));
+      const translated = multipleColors ? unwrap(normalizeStandardMultipleColorShaderResult(response, request.stage)) : integers ? unwrap(normalizeStandardIntegerImageShaderResult(response, request.stage)) : textureOperations ? unwrap(normalizeStandardTextureShaderResult(response, request.stage)) : uniform ? unwrap(normalizeStandardUniformShaderResult(response, request.stage)) : standard ? unwrap(normalizeStandardShaderResult(response, request.stage)) : freeze(unwrap(response));
       unwrap(parseShaderMetadata(translated.metadata, request.stage));
       require(typeof translated.glsl === "string" && /^#version 300 es\b/m.test(translated.glsl),
         "shader-error", "Shader bridge returned incompatible output.");
@@ -403,7 +414,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
     };
     const translatedPair = (sub, vertex, fragment, interfaceKey, validate, inputTypes = null, bufferZeroMask = 0, colorOutputs = null) => {
       const key = JSON.stringify([sub.generation, "pair", vertex.fields.text, fragment.fields.text, interfaceKey,
-        ...(inputTypes?.key ? [inputTypes.key] : []), ...(uniform ? [bufferZeroMask] : []), ...(integers ? [colorOutputs.key] : []), ...(textureOperations ? [integers ? STANDARD_INTEGER_IMAGE_ASYNC_PROFILE : shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : STANDARD_TEXTURE_ASYNC_PROFILE] : [])]);
+        ...(inputTypes?.key ? [inputTypes.key] : []), ...(uniform ? [bufferZeroMask] : []), ...(integers ? [colorOutputs.key] : []), ...(textureOperations ? [multipleColors ? STANDARD_MULTIPLE_COLOR_ASYNC_PROFILE : integers ? STANDARD_INTEGER_IMAGE_ASYNC_PROFILE : shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : STANDARD_TEXTURE_ASYNC_PROFILE] : [])]);
       const cached = translationCache.get(sub, key);
       if (cached) { validate(cached); return cached; }
       work.pairTranslations++;
@@ -415,7 +426,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       const response = integers ? shaderBridge.translatePairImages({ ...request, ...selectors }) : uniform ? shaderBridge.translatePairUniforms({ ...request, ...selectors }) : inputTypes?.packedSignedMask ? shaderBridge.translatePairVertexFormats({ ...request, ...masks,
         packedSignedMask: inputTypes.packedSignedMask, packedNormalizedMask: inputTypes.packedNormalizedMask }) :
         masks ? shaderBridge.translatePairTyped({ ...request, ...masks }) : shaderBridge.translatePair(request);
-      const translated = integers ? unwrap(normalizeStandardIntegerImageShaderPair(response, selectors)) : textureOperations ? unwrap(normalizeStandardTextureShaderPair(response, selectors)) : uniform ? unwrap(normalizeStandardUniformShaderPair(response, selectors)) : standard ? unwrap(masks ? normalizeStandardShaderTypedPair(response, masks) :
+      const translated = multipleColors ? unwrap(normalizeStandardMultipleColorShaderPair(response, selectors)) : integers ? unwrap(normalizeStandardIntegerImageShaderPair(response, selectors)) : textureOperations ? unwrap(normalizeStandardTextureShaderPair(response, selectors)) : uniform ? unwrap(normalizeStandardUniformShaderPair(response, selectors)) : standard ? unwrap(masks ? normalizeStandardShaderTypedPair(response, masks) :
         normalizeStandardShaderPair(response)) : freeze(unwrap(response));
       validate(translated);
       translationCache.put(sub, key, translated, 1024 + 2 * (key.length + JSON.stringify(translated).length));
@@ -539,12 +550,35 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       }
     };
     const unitFor = (stage, index) => stage === 1 ? index : 16 + index;
-    const colorsFor = sub => {
+    const colorsFor = (sub, fragment) => {
+      if (multipleColors) {
+        const metadata = fragment.translation.metadata, emitted = metadata.broadcastColor0 ? 15 :
+          metadata.outputs.reduce((mask, output) => mask | (1 << output.semanticIndex), 0);
+        let signedColorMask = 0, unsignedColorMask = 0;
+        const formats = Array.from({ length: 4 }, (_, slot) => sub.surfaces[slot]?.metadata.format ?? 0);
+        for (const [slot, format] of formats.entries()) if (emitted & (1 << slot)) {
+          const image = integerColorFormat(format);
+          if (image?.signed === true) signedColorMask |= 1 << slot;
+          else if (image?.signed === false) unsignedColorMask |= 1 << slot;
+        }
+        return { signedColorMask, unsignedColorMask, key: "multiple-color-formats-v1:" + formats.join(":") };
+      }
       const format = sub.surfaces[0]?.metadata.format ?? 0, image = integerColorFormat(format);
       return { signedColorMask: image?.signed === true ? 1 : 0, unsignedColorMask: image?.signed === false ? 1 : 0,
         key: "integer-image-color0-v1:" + format };
     };
-    const selectedBlendFold = (sub, fragment) => integers && integerColorFormat(sub.surfaces[0]?.metadata.format) ? 0 : blendFoldFor(sub, fragment);
+    const selectedBlendFold = (sub, fragment) => multipleColors ?
+      sub.surfaces.some((surface, slot) => surface && !integerColorFormat(surface.metadata.format) &&
+        (fragment.translation.metadata.broadcastColor0 || fragment.translation.metadata.outputs.some(output => output.semanticIndex === slot))) ? blendFoldFor(sub, fragment) : 0 :
+      integers && integerColorFormat(sub.surfaces[0]?.metadata.format) ? 0 : blendFoldFor(sub, fragment);
+    const nativeColorOutputs = metadata => {
+      if (!multipleColors || !metadata.broadcastColor0) return metadata.outputs;
+      const source = metadata.outputs[0];
+      return Array.from({ length: 4 }, (_, slot) => ({ ...source, semanticIndex: slot, name: "fsout_c" + slot,
+        type: metadata.colorOutputMasks.signedMask & (1 << slot) ? "ivec4" :
+          metadata.colorOutputMasks.unsignedMask & (1 << slot) ? "uvec4" : "vec4",
+        ...(slot ? { broadcastFrom: source.index } : {}) }));
+    };
     const samplingFor = (sub, fragment, vertex = null) => {
       const declarations = standard ? [[0, vertex], [1, fragment]].flatMap(([stage, shader]) =>
         shader.translation.metadata.samplers.map(sampler => ({ stage, sampler }))) :
@@ -600,16 +634,22 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       require(variant.length <= SHADER_LIMITS.glslBytes, "limit-exceeded", "View-specialized GLSL exceeds the compiler output bound.");
       return variant;
     };
-    const specializeBlend = (text, fold, metadata) => {
+    const specializeBlend = (text, fold, metadata, sub) => {
       if (!fold) return null;
-      require(metadata.outputs.length === 1 && metadata.outputs[0].name === "fsout_c0" &&
-        metadata.outputs[0].type === "vec4" && !text.includes("wv_rgb_blend_factor") && !text.includes("wv_unblended_main"),
+      require((multipleColors || metadata.outputs.length === 1 && metadata.outputs[0].name === "fsout_c0" &&
+        metadata.outputs[0].type === "vec4") && !text.includes("wv_rgb_blend_factor") && !text.includes("wv_unblended_main"),
       "shader-link-error", "Constant blend folding requires the checked single color output.");
       const main = /\bvoid\s+main\s*\(\s*(?:void)?\s*\)/g;
       require([...text.matchAll(main)].length === 1, "shader-link-error", "Constant blend folding requires one checked main.");
+      const assignments = multipleColors ? nativeColorOutputs(metadata).filter(output => output.type === "vec4").map(output => {
+        const format = sub.surfaces[output.semanticIndex]?.metadata.format,
+          floating = Boolean(floatColorFormat(format) || packedFloatColorFormat(format));
+        const source = output.name + ".rgb";
+        return source + "=" + (floating ? source : "clamp(" + source + ",0.0,1.0)") + "*wv_rgb_blend_factor.rgb;";
+      }).join("") : "fsout_c0.rgb=clamp(fsout_c0.rgb,0.0,1.0)*wv_rgb_blend_factor.rgb;";
       const variant = text.replace(main, "void wv_unblended_main(void)") +
         "\nuniform highp vec4 wv_rgb_blend_factor;\nvoid main(void){wv_unblended_main();" +
-        "fsout_c0.rgb=clamp(fsout_c0.rgb,0.0,1.0)*wv_rgb_blend_factor.rgb;}\n";
+        assignments + "}\n";
       require(variant.length <= SHADER_LIMITS.glslBytes, "limit-exceeded", "Blend-specialized GLSL exceeds the compiler output bound.");
       return variant;
     };
@@ -653,14 +693,14 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
     function link(sub, vertex, fragment) {
       require(vertex?.fields.stage === 0 && fragment?.fields.stage === 1, "missing-shader", "Link requires a vertex shader and a fragment shader.");
       const sampling = samplingFor(sub, fragment, vertex);
-      const blendFold = selectedBlendFold(sub, fragment), colorOutputs = integers ? colorsFor(sub) : null;
+      const blendFold = selectedBlendFold(sub, fragment), colorOutputs = integers ? colorsFor(sub, fragment) : null;
       const inputTypes = inputTypesFor(sub, vertex);
       let vs = vertex.translation.metadata;
       let fs = fragment.translation.metadata;
       const bufferZeroMask = zeroMask(sub, vertex, fragment);
       let fragmentBase = fragment.translation.glsl;
       const interfaceInfo = standard ? (() => {
-        const owned = unwrap(integers ? deriveStandardIntegerImageShaderInterface(vs, fs) : textureOperations ? deriveStandardTextureShaderInterface(vs, fs) : uniform ? deriveStandardUniformShaderInterface(vs, fs) : deriveStandardShaderInterface(vs, fs));
+        const owned = unwrap(multipleColors ? deriveStandardMultipleColorShaderInterface(vs, fs) : integers ? deriveStandardIntegerImageShaderInterface(vs, fs) : textureOperations ? deriveStandardTextureShaderInterface(vs, fs) : uniform ? deriveStandardUniformShaderInterface(vs, fs) : deriveStandardShaderInterface(vs, fs));
         return { ...owned, inputs: new Map(owned.inputs.map(input => [input.semanticIndex, input])) };
       })() : shaderInterface(vs, fs, fragment.coordinateContract, fragment.discardContract);
       // Generations identify these exact owned immutable bodies/metadata, not public names.
@@ -692,7 +732,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           const expectedFragment = uniform ? promotedMetadata(fs, 1, bufferZeroMask) : fs;
           const selectedFragment = integers ? { ...expectedFragment,
             outputs: expectedFragment.outputs.map(output => ({ ...output,
-              type: colorOutputs.signedColorMask ? "ivec4" : colorOutputs.unsignedColorMask ? "uvec4" : "vec4" })),
+              type: colorOutputs.signedColorMask & (1 << (multipleColors ? output.semanticIndex : 0)) ? "ivec4" : colorOutputs.unsignedColorMask & (1 << (multipleColors ? output.semanticIndex : 0)) ? "uvec4" : "vec4" })),
             colorOutputMasks: { signedMask: colorOutputs.signedColorMask, unsignedMask: colorOutputs.unsignedColorMask } } : expectedFragment;
           const pair = translatedPair(sub, vertex, fragment, interfaceInfo.key, (pair) => require(pair.interfaceKey === interfaceInfo.key &&
             (uniform || pair.fragment?.glsl === fragment.translation.glsl) && JSON.stringify(pair.fragment?.metadata) === JSON.stringify(selectedFragment) &&
@@ -705,7 +745,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           }
         }
         let fragmentText = specializeViews(fragmentBase, sampling);
-        fragmentText = specializeBlend(fragmentText ?? fragmentBase, blendFold, fs) ?? fragmentText;
+        fragmentText = specializeBlend(fragmentText ?? fragmentBase, blendFold, fs, sub) ?? fragmentText;
         program.vertexText ??= vertex.translation.glsl;
         program.vertexText = (standard ? specializeViews(program.vertexText, sampling, 0) : null) ?? program.vertexText;
         program.fragmentText = fragmentText ?? fragmentBase;
@@ -909,12 +949,15 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
             (textureOperations ? program.reflection.textureQueries.filter(query => query.stage === stage && query.active).length : 0);
           require(components <= hostUniformComponents[stage === "vertex" ? 0 : 1], "shader-reflection-error", "Raster bindings exceed the host stage uniform limit.");
         }
-        for (const output of fs.outputs) {
+        for (const output of nativeColorOutputs(fs)) {
           const location = gl.getFragDataLocation(program.native, output.name);
-          require(output.semantic === "COLOR" && (location === 0 || location === -1 && (standard || fragment.discardContract?.alwaysDiscards === true)),
+          require(output.semantic === "COLOR" && (location === (multipleColors ? output.semanticIndex : 0) || location === -1 && (standard || fragment.discardContract?.alwaysDiscards === true)),
             "shader-reflection-error", "Unsupported fragment output.");
           program.reflection.outputs.push({ ...output, location });
         }
+        if (multipleColors) for (let slot = 0; slot < 4; slot++) require(gl.getFragDataLocation(program.native, "fsout_c" + slot) ===
+          (program.reflection.outputs.find(output => output.semanticIndex === slot)?.location ?? -1),
+        "shader-reflection-error", "Every active native color location requires owned original output metadata.");
         check(); freeze(program.reflection);
         const cacheBytes = 1024 + 2 * (key.length + JSON.stringify(program.reflection).length + requiredVariantBytes);
         require(programCache.put(sub, key, program, cacheBytes), "limit-exceeded", "Program cache byte budget exceeded.");
@@ -940,10 +983,10 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           format.elementBytes <= buffer.metadata.byteLength - buffer.fields.offset - element.sourceOffset, "out-of-bounds", "Vertex element exceeds storage.");
       }
     };
-    const xAlpha = (sub) => [2, 233].includes(sub.surfaces[0]?.metadata.format) || colors && Boolean((byteColorFormat(sub.surfaces[0]?.metadata.format) || (floats ? floatColorFormat(sub.surfaces[0]?.metadata.format) : null) || (packed ? packedFloatColorFormat(sub.surfaces[0]?.metadata.format) : null) || (integers ? integerColorFormat(sub.surfaces[0]?.metadata.format) : null))?.implicitAlpha);
-    const colorMask = (sub) => {
+    const xAlpha = (sub, slot = 0) => [2, 233].includes(sub.surfaces[slot]?.metadata.format) || colors && Boolean((byteColorFormat(sub.surfaces[slot]?.metadata.format) || (floats ? floatColorFormat(sub.surfaces[slot]?.metadata.format) : null) || (packed ? packedFloatColorFormat(sub.surfaces[slot]?.metadata.format) : null) || (integers ? integerColorFormat(sub.surfaces[slot]?.metadata.format) : null))?.implicitAlpha);
+    const colorMask = (sub, slot = 0) => {
       const bits = sub.blend?.fields.renderTargets[0].colorMask ?? 15;
-      return [1, 2, 4, 8].map((bit) => Boolean(bits & bit) && (bit !== 8 || !xAlpha(sub)));
+      return [1, 2, 4, 8].map((bit) => Boolean(bits & bit) && (bit !== 8 || !xAlpha(sub, slot)));
     };
     const cachedState = (sub, program, drawingNow) => {
       const storage = (binding) => binding ? { generation: binding.resourceGeneration, metadata: binding.metadata, fields: binding.fields } : null;
@@ -959,7 +1002,8 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       if (!state) {
         state = freeze({ blend: sub.blend?.fields ?? null, rasterizer: sub.rasterizer?.fields ?? null, dsa: sub.dsa?.fields ?? null,
           viewport: sub.viewport, scissor: sub.scissor, blendColor: [...sub.blendColor], stencilRef: { ...sub.stencilRef },
-          mask: colorMask(sub), winsysY: sub.viewport?.scale[1] < 0 ? -1 : 1 });
+          mask: colorMask(sub), ...(multipleColors ? { colorMasks: Array.from({ length: 4 }, (_, slot) => colorMask(sub, slot)) } : {}),
+          winsysY: sub.viewport?.scale[1] < 0 ? -1 : 1 });
         stateCache.put(sub, key, state, 512 + 2 * (key.length + JSON.stringify(state).length));
       }
       return { key, state };
@@ -1025,7 +1069,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         sub.programs.get(program.key) === program && programs.has(program) &&
         samplingFor(sub, shaders[1], shaders[0]).key === program.samplingKey &&
         selectedBlendFold(sub, shaders[1]) === program.blendFold &&
-        (!integers || colorsFor(sub).key === program.colorKey) &&
+        (!integers || colorsFor(sub, shaders[1]).key === program.colorKey) &&
         inputTypesFor(sub, shaders[0]).key === program.inputKey &&
         sub.constants.every((bank, stage) => bank === banks[stage]),
       "stale-draw", "Draw shader, program or constant-bank identity changed.");
@@ -1048,7 +1092,12 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       gl.bindVertexArray(sub.vao);
       gl.bindFramebuffer(gl.FRAMEBUFFER, sub.framebuffer);
       const surface = sub.surfaces[0] ?? null;
-      gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, surface ? resolve(surface.lease).storage.texture : null, images ? surface?.fields.level ?? 0 : 0);
+      if (multipleColors) for (let slot = 0; slot < 4; slot++) {
+        const target = sub.surfaces[slot];
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + slot, gl.TEXTURE_2D,
+          target ? resolve(target.lease).storage.texture : null, target?.fields.level ?? 0);
+      }
+      else gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, surface ? resolve(surface.lease).storage.texture : null, images ? surface?.fields.level ?? 0 : 0);
       gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, sub.depthSurface ? resolve(sub.depthSurface.lease).storage.texture : null, 0);
       gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.STENCIL_ATTACHMENT, gl.TEXTURE_2D, null, 0);
       // WebGL requires every enabled color buffer to have an active output.
@@ -1056,8 +1105,13 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       // only for that draw; CLEAR and ordinary restoration retain the surface.
       const discardOnly = plan && (standard || program.fragment.discardContract?.alwaysDiscards === true) &&
         program.reflection.outputs.length === 1 && program.reflection.outputs[0].location === -1;
-      gl.drawBuffers([surface && !discardOnly ? gl.COLOR_ATTACHMENT0 : gl.NONE]); gl.readBuffer(surface ? gl.COLOR_ATTACHMENT0 : gl.NONE);
-      if (surface || sub.depthSurface) require(gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE, "incomplete-framebuffer", "Framebuffer is incomplete.");
+      if (multipleColors) {
+        gl.drawBuffers(Array.from({ length: 4 }, (_, slot) => sub.surfaces[slot] &&
+          (!plan || program.reflection.outputs.some(output => output.location === slot)) ? gl.COLOR_ATTACHMENT0 + slot : gl.NONE));
+        const first = sub.surfaces.findIndex(Boolean);
+        gl.readBuffer(first >= 0 ? gl.COLOR_ATTACHMENT0 + first : gl.NONE);
+      } else { gl.drawBuffers([surface && !discardOnly ? gl.COLOR_ATTACHMENT0 : gl.NONE]); gl.readBuffer(surface ? gl.COLOR_ATTACHMENT0 : gl.NONE); }
+      if ((multipleColors ? sub.surfaces.some(Boolean) : surface) || sub.depthSurface) require(gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE, "incomplete-framebuffer", "Framebuffer is incomplete.");
       gl.useProgram(program?.native ?? null);
       for (let slot = 0; slot < maxAttributes; slot++) {
         gl.disableVertexAttribArray(slot); gl.vertexAttribDivisor(slot, 0);
@@ -1192,7 +1246,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       gl.cullFace(gl.BACK); gl.frontFace(rasterizer?.frontCcw ? gl.CW : gl.CCW);
       const blend = state.blend, target = blend?.renderTargets[0];
       if (blend?.dither) gl.enable(gl.DITHER); else gl.disable(gl.DITHER);
-      const enabled = target?.blendEnable === true && !(integers && integerColorFormat(sub.surfaces[0]?.metadata.format));
+      const enabled = target?.blendEnable === true && !(!multipleColors && integers && integerColorFormat(sub.surfaces[0]?.metadata.format));
       if (enabled) gl.enable(gl.BLEND); else gl.disable(gl.BLEND);
       const ignoresRgbFactors = enabled && target.rgbFunction >= 3;
       gl.blendEquationSeparate(enabled ? gl[BLEND_EQUATIONS[target.rgbFunction]] : gl.FUNC_ADD,
@@ -1204,6 +1258,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       gl.blendColor(...state.blendColor);
       const mask = state.mask;
       gl.colorMask(...mask);
+      if (multipleColors) for (let slot = 0; slot < 4; slot++) indexedColors.colorMaskiOES(slot, ...state.colorMasks[slot]);
       if (state.viewport) {
         const { scale, translate } = state.viewport;
         gl.viewport(...viewportRectangle(state.viewport));
@@ -1223,7 +1278,8 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       require(submission.draws.length < drawLimits.drawsPerSubmission && fields.count <= Math.floor((drawLimits.indicesPerSubmission - submission.indices) / instances),
         "limit-exceeded", "Submission draw or index budget exceeded.");
       require(sub.shaders.every(Boolean), "incomplete-draw", "Drawing requires both shader stages.");
-      require(sub.surfaces[0] && sub.viewport && sub.vertexElements && (!fields.indexed || sub.indexBuffer),
+      const primarySurface = multipleColors ? sub.surfaces.find(Boolean) : sub.surfaces[0];
+      require(primarySurface && sub.viewport && sub.vertexElements && (!fields.indexed || sub.indexBuffer),
         "incomplete-draw", "Drawing requires a surface, viewport, vertex elements and any indexed draw's index buffer.");
       require(!sub.dsa?.fields.depthEnable || sub.depthSurface, "incomplete-draw", "Active depth testing requires a Z16 depth attachment.");
       const banks = Object.freeze([...sub.constants]), shaders = Object.freeze([...sub.shaders]);
@@ -1236,7 +1292,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         unwrap(checkRadialBank(banks[stage], shader.constantRadialDomain.count, shader.constantConstraint !== null)) : shader.constantAccess ?
         unwrap(shader.constantConstraint ? checkLoopBank(banks[stage], shader.constantConstraint.count) :
           checkIndirectBank(banks[stage], shader.constantAccess.count, shader.constantDomain !== null)) : null));
-      const program = selectedProgram(sub), surface = resolve(sub.surfaces[0].lease);
+      const program = selectedProgram(sub), surface = resolve(primarySurface.lease);
       const uploads = constantUploads(program, banks, true, approvedBanks);
       for (const sampler of program.samplers) {
         const view = sub.views[sampler.stage][sampler.index], state = sub.samplers[sampler.stage][sampler.index];
@@ -1244,10 +1300,12 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         if (integers && integerColorFormat(view.fields.format)) require(state.fields.minImageFilter === 0 &&
           state.fields.magImageFilter === 0 && [0, 2].includes(state.fields.minMipFilter),
         "unsupported-sampler", "Integer image sampling requires native nearest-compatible filters.");
-        const overlap = resolve(view.lease).storage.texture === surface.storage.texture;
-        const surfaceLevel = sub.surfaces[0].fields.level;
-        require(!overlap || images && (surfaceLevel < view.fields.firstLevel || surfaceLevel > view.fields.lastLevel),
-          "framebuffer-feedback", "A draw cannot sample its own framebuffer texture.");
+        for (const target of multipleColors ? sub.surfaces.filter(Boolean) : [primarySurface]) {
+          const overlap = resolve(view.lease).storage.texture === resolve(target.lease).storage.texture;
+          const surfaceLevel = target.fields.level;
+          require(!overlap || images && (surfaceLevel < view.fields.firstLevel || surfaceLevel > view.fields.lastLevel),
+            "framebuffer-feedback", "A draw cannot sample its own framebuffer texture.");
+        }
       }
       const attributes = program.reflection.attributes.map((attribute) => {
         const element = sub.vertexElements.fields.elements[attribute.index];
@@ -1283,7 +1341,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         }
       }
       return Object.freeze({ ctx, sub, command, fields, instances, vertexWork: fields.count * instances,
-        surface, attributes, constants, index, indexStorage, indexOffset, indexSize, indexByteLength,
+        surface, ...(multipleColors ? { primarySurface } : {}), attributes, constants, index, indexStorage, indexOffset, indexSize, indexByteLength,
         program, shaders, banks, uploads, ...(uniform ? { uniformBanks, uniformRanges: Object.freeze(uniformRanges) } : {}) });
     };
     const issueDraw = (plan, bytes, submission, constantAttributes = null, job = null) => {
@@ -1432,8 +1490,13 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         contextId: ctx.id, contextGeneration: ctx.generation, subContextId: sub.id, subContextGeneration: sub.generation,
         indexResourceId: indexStorage?.metadata.id ?? null, indexResourceGeneration: indexStorage?.generation ?? null,
         vertexFetches, framebuffer: { resourceId: surface.metadata.id, resourceGeneration: surface.generation,
-          width: images ? sub.surfaces[0].dimensions.width : surface.metadata.width, height: images ? sub.surfaces[0].dimensions.height : surface.metadata.height,
-          ...(images ? { level: sub.surfaces[0].fields.level } : {}),
+          width: images ? (plan.primarySurface ?? sub.surfaces[0]).dimensions.width : surface.metadata.width, height: images ? (plan.primarySurface ?? sub.surfaces[0]).dimensions.height : surface.metadata.height,
+          ...(images ? { level: (plan.primarySurface ?? sub.surfaces[0]).fields.level } : {}),
+          ...(multipleColors ? { colors: Array.from({ length: 4 }, (_, slot) => {
+            const target = sub.surfaces[slot];
+            return target ? { slot, resourceId: target.metadata.id, resourceGeneration: target.resourceGeneration,
+              format: target.metadata.format, level: target.fields.level, width: target.dimensions.width, height: target.dimensions.height } : null;
+          }) } : {}),
           depthResourceId: sub.depthSurface?.metadata.id ?? null, depthResourceGeneration: sub.depthSurface?.resourceGeneration ?? null },
         vertexShader: ref(sub.shaders[0]), fragmentShader: ref(sub.shaders[1]),
         ...(uniform ? { bufferZeroMask: plan.program.bufferZeroMask, uniformRanges: plan.uniformRanges.map(range => ({
@@ -1510,6 +1573,29 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         }
         case 7: {
           require(!images || job, "unsupported-clear", "Original image clears require an owned completion job.");
+          if (multipleColors) {
+            const targets = Array.from({ length: 4 }, (_, slot) => ({ slot, surface: sub.surfaces[slot] }))
+              .filter(({ slot }) => fields.buffers & (4 << slot));
+            for (const { surface } of targets) {
+              require(surface, "incomplete-framebuffer", "Selected color CLEAR needs its original surface.");
+              require(integerColorFormat(surface.metadata.format) || fields.color.every(Number.isFinite),
+                "invalid-value", "A floating attachment clear requires finite original float words.");
+            }
+            require(!(fields.buffers & 1) || sub.depthSurface, "incomplete-framebuffer", "Depth CLEAR needs a Z16 depth surface.");
+            holdImageSurfaces(job, sub); restore(sub); gl.disable(gl.SCISSOR_TEST);
+            for (const { slot, surface } of targets) {
+              indexedColors.colorMaskiOES(slot, true, true, true, !xAlpha(sub, slot));
+              const format = integerColorFormat(surface.metadata.format);
+              if (format) gl[format.signed ? "clearBufferiv" : "clearBufferuiv"](gl.COLOR, slot,
+                format.signed ? new Int32Array(fields.colorWords) : new Uint32Array(fields.colorWords));
+              else gl.clearBufferfv(gl.COLOR, slot, fields.color);
+            }
+            if (fields.buffers & 1) { gl.depthMask(true); gl.clearDepth(fields.depth); gl.clear(gl.DEPTH_BUFFER_BIT); }
+            for (let slot = 0; slot < 4; slot++) indexedColors.colorMaskiOES(slot, ...colorMask(sub, slot));
+            gl.depthMask(sub.dsa?.fields.depthWriteMask ?? false);
+            if (sub.rasterizer?.fields.scissor) gl.enable(gl.SCISSOR_TEST);
+            check(); return;
+          }
           const integerClear = integers ? integerColorFormat(sub.surfaces[0]?.metadata.format) : null;
           require(!integers || !(fields.buffers & 4) || integerClear || fields.color.every(Number.isFinite),
             "invalid-value", "A floating color clear requires finite original float words.");

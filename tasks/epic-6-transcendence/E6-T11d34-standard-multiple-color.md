@@ -133,3 +133,37 @@ predecessor contracts remain unchanged. No guest/capset/performance claim follow
 The user explicitly requests completing production guest graphics, so this
 ordered dependency replaces the parent's named blocker before unrelated general
 queue work. Existing PR identities/base order stay open; no merge is authorized.
+
+### 2026-10-11 — worker — pre-freeze prediction correction and selected gates
+
+The inner matrix, owned contract attacks, physical nonzero-target controls and
+three varied lifetime schedules pass. The new contract replays all2586 sealed
+actual C/Wasm responses and957 historical normalized responses, with161 strict
+ownership/malformed-input attacks. The matrix additionally covers original
+FLOAT16/FLOAT32 R/RG/RGB implicit lanes and packed HDR targets. The indexed
+boundary uploads its original six index bytes, uses native integer vertex
+fetches, reverses viewport Y and preserves all four color outputs. A separate
+closed predecessor factory still bypasses integer-only blending. No runtime
+semantics changed during these harness additions.
+
+The first expanded native-state inverse incorrectly predicted that terminal
+KILL always makes every output inactive. At original case
+`original-terminal-discard-mixed-constant-blend`, the native draw buffers were
+`[NONE,COLOR_ATTACHMENT1,NONE,COLOR_ATTACHMENT3]`: the blend wrapper keeps its
+FLOAT outputs reflected, although every original fragment discards and all
+pixels remain their clear values. This was an oracle assumption, not a product
+refutation. The corrected prediction admits either native location or pruning
+for a terminal discard and requires draw-buffer selection to agree with actual
+`getFragDataLocation`; non-discard outputs still require their exact original
+semantic locations. Each real driver query, factor uniform and blend color is
+now recorded. The initial failed inner recording remains separate; only the
+frozen successful hot/cold submission below can become evidence of record.
+
+Every changed selected runtime path must have a positive smallest governing V8
+counter. Individual waivers cover only byte-identical predecessor dispatch
+operands; source/offset/text/digest and a specific reason are recorded. The
+historical blend gate directly exercises the unchanged single-color fold instead
+of waiving its newly wrapped control expression. Full source/compiler/storage
+digests remain the authority for carried dependency facts. Production caps,
+guest Mesa/compositor, worker scanout, deployment and throughput remain outside
+this prerequisite.

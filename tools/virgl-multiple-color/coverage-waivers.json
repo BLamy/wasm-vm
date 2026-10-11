@@ -1,0 +1,364 @@
+{
+  "waivers": [
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 655,
+      "startOffset": 39711,
+      "endOffset": 39751,
+      "text": "? STANDARD_SHARED_EXPONENT_IMAGE_PROFILE",
+      "sha256": "344dbb24902a1267126b8e406eac21975b6e06e94d98ed81c1b4697ab9d477a2",
+      "reason": "Unchanged earlier decoder profile identifiers; the new multiple-color selection and original packet bounds execute in the selected recordings.",
+      "predecessorLiteralUnchanged": true
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 655,
+      "startOffset": 39761,
+      "endOffset": 39798,
+      "text": "? STANDARD_PACKED_FLOAT_IMAGE_PROFILE",
+      "sha256": "fa04dcdeab835e0423ba8c2f5b2cb3b8c4a1ff0194b4b8d71946a33291baa6aa",
+      "reason": "Unchanged earlier decoder profile identifiers; the new multiple-color selection and original packet bounds execute in the selected recordings.",
+      "predecessorLiteralUnchanged": true
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 655,
+      "startOffset": 39848,
+      "endOffset": 39872,
+      "text": "? STANDARD_COLOR_PROFILE",
+      "sha256": "96892ec181e0eaf3d7e7b1fe0ce40f58f38f9d71bd28ecc951d5be89bd398fba",
+      "reason": "Unchanged earlier decoder profile identifiers; the new multiple-color selection and original packet bounds execute in the selected recordings.",
+      "predecessorLiteralUnchanged": true
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 655,
+      "startOffset": 39882,
+      "endOffset": 39906,
+      "text": "? STANDARD_IMAGE_PROFILE",
+      "sha256": "74ab93e7219c27a450340065f97cbf1b59cf59c57a97ebcf78757d409a706826",
+      "reason": "Unchanged earlier decoder profile identifiers; the new multiple-color selection and original packet bounds execute in the selected recordings.",
+      "predecessorLiteralUnchanged": true
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 655,
+      "startOffset": 39918,
+      "endOffset": 39944,
+      "text": "? STANDARD_TEXTURE_PROFILE",
+      "sha256": "4d13bd46692aa649d4b4ef987c617f7a30561ee328303d9995aa477e7a5d032e",
+      "reason": "Unchanged earlier decoder profile identifiers; the new multiple-color selection and original packet bounds execute in the selected recordings.",
+      "predecessorLiteralUnchanged": true
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 655,
+      "startOffset": 39955,
+      "endOffset": 39981,
+      "text": "? STANDARD_UNIFORM_PROFILE",
+      "sha256": "10ffc846cb82147cab40ba03de7ba0686d401f0866581a507d2d4cc9ea402fec",
+      "reason": "Unchanged earlier decoder profile identifiers; the new multiple-color selection and original packet bounds execute in the selected recordings.",
+      "predecessorLiteralUnchanged": true
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 655,
+      "startOffset": 39993,
+      "endOffset": 40011,
+      "text": "? STANDARD_PROFILE",
+      "sha256": "0fc6768def01675527ab6952af0a040bb5931f3923d9e7818e3c998a198f05af",
+      "reason": "Unchanged earlier decoder profile identifiers; the new multiple-color selection and original packet bounds execute in the selected recordings.",
+      "predecessorLiteralUnchanged": true
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 288,
+      "startOffset": 21004,
+      "endOffset": 21050,
+      "text": "? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE",
+      "sha256": "fe1064e94c93f020e8d8a93ddd33a02e3605560a435bebb607afdcfabc0bddad",
+      "reason": "Unchanged earlier factory profile identifier arm; the selected multiple-color and historical integer/floating/draw factories execute, without widening the other factories.",
+      "predecessorLiteralUnchanged": true
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 288,
+      "startOffset": 21060,
+      "endOffset": 21103,
+      "text": "? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE",
+      "sha256": "63091f477c1023e5ad6ab8b618cc9efb8b02cc8e1b639399e10a7afa58f6994c",
+      "reason": "Unchanged earlier factory profile identifier arm; the selected multiple-color and historical integer/floating/draw factories execute, without widening the other factories.",
+      "predecessorLiteralUnchanged": true
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 288,
+      "startOffset": 21170,
+      "endOffset": 21202,
+      "text": "? STANDARD_TEXTURE_ASYNC_PROFILE",
+      "sha256": "8075b4886e02b83ca5535cdb74d4bfce81347d4cab0eaae73c3c8810c610c094",
+      "reason": "Unchanged earlier factory profile identifier arm; the selected multiple-color and historical integer/floating/draw factories execute, without widening the other factories.",
+      "predecessorLiteralUnchanged": true
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 288,
+      "startOffset": 21212,
+      "endOffset": 21242,
+      "text": "? STANDARD_COLOR_ASYNC_PROFILE",
+      "sha256": "dfbe4e8be5594adaeccc77c749566fceb23d3bca372ff0f9ccb6606d0ea0697e",
+      "reason": "Unchanged earlier factory profile identifier arm; the selected multiple-color and historical integer/floating/draw factories execute, without widening the other factories.",
+      "predecessorLiteralUnchanged": true
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 288,
+      "startOffset": 21252,
+      "endOffset": 21282,
+      "text": "? STANDARD_IMAGE_ASYNC_PROFILE",
+      "sha256": "912e452d966a99d17f196b2799a6e9bb0de68a007c90e64bd0ac93b70c313483",
+      "reason": "Unchanged earlier factory profile identifier arm; the selected multiple-color and historical integer/floating/draw factories execute, without widening the other factories.",
+      "predecessorLiteralUnchanged": true
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 288,
+      "startOffset": 21297,
+      "endOffset": 21328,
+      "text": "? STANDARD_BUFFER_ASYNC_PROFILE",
+      "sha256": "1a19d3ded211ddae9cdf06e15b2e7a4846010daee3b14bbc5f3336bdc036ccb6",
+      "reason": "Unchanged earlier factory profile identifier arm; the selected multiple-color and historical integer/floating/draw factories execute, without widening the other factories.",
+      "predecessorLiteralUnchanged": true
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 288,
+      "startOffset": 21339,
+      "endOffset": 21371,
+      "text": "? STANDARD_UNIFORM_ASYNC_PROFILE",
+      "sha256": "7d0787236709efe243b36695b1bb21b4a6e71a76fe6e03294b2e9e269d55daf4",
+      "reason": "Unchanged earlier factory profile identifier arm; the selected multiple-color and historical integer/floating/draw factories execute, without widening the other factories.",
+      "predecessorLiteralUnchanged": true
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 288,
+      "startOffset": 21383,
+      "endOffset": 21407,
+      "text": "? STANDARD_ASYNC_PROFILE",
+      "sha256": "927dcd764e1ac0d043338364935dd086c09007ff4430ad420aefa6a2382368a3",
+      "reason": "Unchanged earlier factory profile identifier arm; the selected multiple-color and historical integer/floating/draw factories execute, without widening the other factories.",
+      "predecessorLiteralUnchanged": true
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 288,
+      "startOffset": 21464,
+      "endOffset": 21479,
+      "text": ": STATE_PROFILE",
+      "sha256": "1f06b1e8489a5aea82f3afb623e51d81444a8e6a56a0958fcdbea9cb4b8c8293",
+      "reason": "Unchanged earlier factory profile identifier arm; the selected multiple-color and historical integer/floating/draw factories execute, without widening the other factories.",
+      "predecessorLiteralUnchanged": true
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 289,
+      "startOffset": 21622,
+      "endOffset": 21667,
+      "text": "? decodeStandardSharedExponentImageSubmission",
+      "sha256": "ddadb1fc6a31a7ec6c0e728d65faae5f00b7c83fc54b0eb13db7ca75bac49353",
+      "reason": "Unchanged earlier decoder export selection; selected and historical decoder admissions are separately recorded.",
+      "predecessorLiteralUnchanged": true
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 289,
+      "startOffset": 21677,
+      "endOffset": 21719,
+      "text": "? decodeStandardPackedFloatImageSubmission",
+      "sha256": "3909dc14313a4da3ef6b35afd40788e14cdf176d2d366db210344f47ad341072",
+      "reason": "Unchanged earlier decoder export selection; selected and historical decoder admissions are separately recorded.",
+      "predecessorLiteralUnchanged": true
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 289,
+      "startOffset": 21775,
+      "endOffset": 21806,
+      "text": "? decodeStandardColorSubmission",
+      "sha256": "48bd49d46d774525f1023a07e3bc2056872ff869ab64fceff85697b6190d14fc",
+      "reason": "Unchanged earlier decoder export selection; selected and historical decoder admissions are separately recorded.",
+      "predecessorLiteralUnchanged": true
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 289,
+      "startOffset": 21816,
+      "endOffset": 21847,
+      "text": "? decodeStandardImageSubmission",
+      "sha256": "95fbedfda888f4ac5baa048d96a63ca1557db76e7e139ec21750d135a78e37fc",
+      "reason": "Unchanged earlier decoder export selection; selected and historical decoder admissions are separately recorded.",
+      "predecessorLiteralUnchanged": true
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 289,
+      "startOffset": 21858,
+      "endOffset": 21891,
+      "text": "? decodeStandardUniformSubmission",
+      "sha256": "45816024be80c00ed9573cfbd5f071613907f62bcd6d7296a1717ef0c1278fce",
+      "reason": "Unchanged earlier decoder export selection; selected and historical decoder admissions are separately recorded.",
+      "predecessorLiteralUnchanged": true
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 289,
+      "startOffset": 21903,
+      "endOffset": 21929,
+      "text": "? decodeStandardSubmission",
+      "sha256": "e37009c7f2986685b08a1b10007dac66dfd15f3a3386367fc995944901602637",
+      "reason": "Unchanged earlier decoder export selection; selected and historical decoder admissions are separately recorded.",
+      "predecessorLiteralUnchanged": true
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 290,
+      "startOffset": 22160,
+      "endOffset": 22196,
+      "text": "? parseStandardUniformShaderMetadata",
+      "sha256": "1ee6de46a64e0278e722e0b0870d37aa6ec04a27590e1ba4b94cfd3c2318ea22",
+      "reason": "Unchanged earlier owned metadata parser selection; the entire predecessor contract prefix and compiler/storage dependencies are authenticated.",
+      "predecessorLiteralUnchanged": true
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 290,
+      "startOffset": 22208,
+      "endOffset": 22237,
+      "text": "? parseStandardShaderMetadata",
+      "sha256": "2bca306c25470b3caa0e3cd3d7c3d8eeff72e0feeaaf62f660bf12ad307819ca",
+      "reason": "Unchanged earlier owned metadata parser selection; the entire predecessor contract prefix and compiler/storage dependencies are authenticated.",
+      "predecessorLiteralUnchanged": true
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 403,
+      "startOffset": 30988,
+      "endOffset": 31034,
+      "text": "? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE",
+      "sha256": "fe1064e94c93f020e8d8a93ddd33a02e3605560a435bebb607afdcfabc0bddad",
+      "reason": "Unchanged earlier profile identifier in stage translation identity; the new multiple-color profile identity executes and is recorded.",
+      "predecessorLiteralUnchanged": true
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 403,
+      "startOffset": 31044,
+      "endOffset": 31087,
+      "text": "? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE",
+      "sha256": "63091f477c1023e5ad6ab8b618cc9efb8b02cc8e1b639399e10a7afa58f6994c",
+      "reason": "Unchanged earlier profile identifier in stage translation identity; the new multiple-color profile identity executes and is recorded.",
+      "predecessorLiteralUnchanged": true
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 403,
+      "startOffset": 31134,
+      "endOffset": 31166,
+      "text": ": STANDARD_TEXTURE_ASYNC_PROFILE",
+      "sha256": "f8eee915f6c37620ee92ec2a996edc8601808d7c0bf340e6caf3588b84908868",
+      "reason": "Unchanged earlier profile identifier in stage translation identity; the new multiple-color profile identity executes and is recorded.",
+      "predecessorLiteralUnchanged": true
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 408,
+      "startOffset": 31754,
+      "endOffset": 31825,
+      "text": "? unwrap(normalizeStandardUniformShaderResult(response, request.stage))",
+      "sha256": "c3bf9d9c5d19ed7572fb74f424c87fe37e378253018c2a0bf2d386808ba4f108",
+      "reason": "Unchanged earlier stage normalizer dispatch; owned multiple-color normalization executes with all original compiler inputs and hostile records.",
+      "predecessorLiteralUnchanged": true
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 408,
+      "startOffset": 31837,
+      "endOffset": 31901,
+      "text": "? unwrap(normalizeStandardShaderResult(response, request.stage))",
+      "sha256": "008235be18f444b3cfaa8558d9614a173f83aadabf0f198300425c0548ed66d1",
+      "reason": "Unchanged earlier stage normalizer dispatch; owned multiple-color normalization executes with all original compiler inputs and hostile records.",
+      "predecessorLiteralUnchanged": true
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 417,
+      "startOffset": 32840,
+      "endOffset": 32886,
+      "text": "? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE",
+      "sha256": "fe1064e94c93f020e8d8a93ddd33a02e3605560a435bebb607afdcfabc0bddad",
+      "reason": "Unchanged earlier profile identifier in paired translation identity; the new complete attachment signature and typed vertex identity execute.",
+      "predecessorLiteralUnchanged": true
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 417,
+      "startOffset": 32896,
+      "endOffset": 32939,
+      "text": "? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE",
+      "sha256": "63091f477c1023e5ad6ab8b618cc9efb8b02cc8e1b639399e10a7afa58f6994c",
+      "reason": "Unchanged earlier profile identifier in paired translation identity; the new complete attachment signature and typed vertex identity execute.",
+      "predecessorLiteralUnchanged": true
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 417,
+      "startOffset": 32986,
+      "endOffset": 33018,
+      "text": ": STANDARD_TEXTURE_ASYNC_PROFILE",
+      "sha256": "f8eee915f6c37620ee92ec2a996edc8601808d7c0bf340e6caf3588b84908868",
+      "reason": "Unchanged earlier profile identifier in paired translation identity; the new complete attachment signature and typed vertex identity execute.",
+      "predecessorLiteralUnchanged": true
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 429,
+      "startOffset": 34556,
+      "endOffset": 34621,
+      "text": "? unwrap(normalizeStandardUniformShaderPair(response, selectors))",
+      "sha256": "2b8e546276ee8e595f210466cda49c1f8ab95984ed8c82ce4d2b50c3bfea7ed2",
+      "reason": "Unchanged earlier paired normalizer dispatch; selected pair agreement, ownership and malformed-input refusals execute.",
+      "predecessorLiteralUnchanged": true
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 429,
+      "startOffset": 34633,
+      "endOffset": 34702,
+      "text": "? unwrap(masks ? normalizeStandardShaderTypedPair(response, masks) :\n",
+      "sha256": "0615c68b6fd7819e7232d6a99bae8e085932ad9ff4bcb316ed7cc0d4c79c4ea7",
+      "reason": "Unchanged earlier paired normalizer dispatch; selected pair agreement, ownership and malformed-input refusals execute.",
+      "predecessorLiteralUnchanged": true
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 703,
+      "startOffset": 54934,
+      "endOffset": 55030,
+      "text": ": uniform ? deriveStandardUniformShaderInterface(vs, fs) : deriveStandardShaderInterface(vs, fs)",
+      "sha256": "c4ba2bab27981a82f3ca37da293ea4dd37239afcc9fd8726341dde7c39437dc3",
+      "reason": "Unchanged earlier shader-interface dispatch; the new owned multiple-color interface and all pair checks execute.",
+      "predecessorLiteralUnchanged": true
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 986,
+      "startOffset": 81862,
+      "endOffset": 81868,
+      "text": ": null",
+      "sha256": "4253b001123eab143572305c09442a3fa70aba23a7dbb1e06c8afe858a5a539e",
+      "reason": "Unchanged null fallback of floating-format lookup when the older factory has floats=false; the selected factory always has floats=true and per-slot implicit alpha is physically recorded.",
+      "predecessorLiteralUnchanged": true
+    }
+  ]
+}

@@ -2333,3 +2333,7 @@ verify-E6-T11d33:
 .PHONY: verify-E6-T11d33-adversarial
 verify-E6-T11d33-adversarial:
 	bash tools/verify-virgl-standard-integer-image-consumer-adversarial.sh
+
+.PHONY: verify-E6-T11d34
+verify-E6-T11d34:
+	bash tools/verify-virgl-standard-multiple-color.sh
