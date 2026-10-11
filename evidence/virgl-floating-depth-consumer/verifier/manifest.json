@@ -1,0 +1,217 @@
+{
+  "schema": "fresh-d40-critic-seal-v1",
+  "task": "E6-T11d40",
+  "frozenRuntimeHead": "1f8cb8c7ccdf8d58e78944a51156453a22fc5b5a",
+  "verifierHarnessHead": "05a2511cc58ba1f3bac7c649f0fc4c17728ed7c6",
+  "archiveSha256": "25b0bbee63a5ac00720c8fcc9b037f695a231ab3bd29d3bb77a3d9b397e9dab0",
+  "archiveBytes": 24204241,
+  "recordIndexSha256": "bbddcf9a418b2d5ce25b945dc6fd2c0fa8c416f4509fd470acfa8cd16ad3296b",
+  "members": 7041,
+  "reopenedMembers": 7041,
+  "fullUncompressedBytes": 276630684,
+  "workerDependency": {
+    "archive": "44697cfa945b3ea306d44eb9fefef1e8505a56ac7aec37f538471c374f5ecba6",
+    "index": "4e1bf3fc407ec86d2897ccc1279a82d401d9061d1873d55125575a036fefd22a",
+    "manifest": "0bd79d028035888c9f7c6d3876c0c03de3b44b5fb108d035b4f7b802377bbeb5"
+  },
+  "heldD39Dependencies": [
+    {
+      "path": "evidence/virgl-standard-floating-depth-images/worker",
+      "members": 21200,
+      "digests": {
+        "archive": "43ae2cd2d362ba708121e9d3d23789eae24c738324b43a2261f29e3bf5ebdc16",
+        "index": "b853257bc25b5e71da6854ed8c35fb55ffe61b3e3c0cffc34942ed4e1f797891",
+        "manifest": "fbee164ddf5646594c79aeaf5237a3a0465bcc75cc73cd1dcff9b7e8a2cc9f4a"
+      }
+    },
+    {
+      "path": "evidence/virgl-standard-floating-depth-images/verifier",
+      "members": 7139,
+      "digests": {
+        "archive": "90ac4d8e042eeaec80843e474e608d1ef84509fe0038a73642c41869089a798e",
+        "index": "c433f077dd5d3d26920ad212400741e80940d12a3eeea05fa8d613a27df7ca26",
+        "manifest": "8c5ec5d64cdd2cb72e843f6780549beb620395b6f418ab5c3c77e7100e46a6cd"
+      }
+    }
+  ],
+  "records": [
+    {
+      "path": "fresh/boundaries-0x1f83d9ab/report.json",
+      "sourceHead": "4e71167f13b53a3e8591b4a2aff91549a8049390",
+      "sha256": "74ecb4ab3a1751e31b7f05c3fa305035570d87a0c95a2db984e661633ffd0b24",
+      "status": "passed",
+      "inverseStatus": "passed",
+      "inverseSha256": "511021a2863bc19eea46cec112b7832a8a54ea4a423c213478c18e40beb6948f",
+      "counts": {
+        "runs": 4,
+        "frames": 18,
+        "outputWords": 2196,
+        "depthPixels": 2990,
+        "publicBytes": 640000,
+        "syncs": 278,
+        "polls": 939,
+        "cpuReads": 214,
+        "compilerResponses": 18
+      },
+      "blobs": 677
+    },
+    {
+      "path": "fresh/boundaries-0x510e527f/report.json",
+      "sourceHead": "4e71167f13b53a3e8591b4a2aff91549a8049390",
+      "sha256": "afad8bfc11424efd8cbec04a2554749ea25ec1c55d8f639603587166274465ff",
+      "status": "passed",
+      "inverseStatus": "passed",
+      "inverseSha256": "6b66db1abcd11116c56e3234591d0ad43e8c125285b2f740b4f5a25be124dd67",
+      "counts": {
+        "runs": 4,
+        "frames": 18,
+        "outputWords": 2196,
+        "depthPixels": 2990,
+        "publicBytes": 640000,
+        "syncs": 278,
+        "polls": 900,
+        "cpuReads": 214,
+        "compilerResponses": 18
+      },
+      "blobs": 677
+    },
+    {
+      "path": "fresh/boundaries-0x9b05688c/report.json",
+      "sourceHead": "4e71167f13b53a3e8591b4a2aff91549a8049390",
+      "sha256": "2c06f338a206ff5e96dc43484041cfc038a35ca5d22552e395e0774efa96928b",
+      "status": "passed",
+      "inverseStatus": "passed",
+      "inverseSha256": "861b2eb0fe7ce15ff97f8183580e6e215c2a66ab13cee4887600b279042a8e29",
+      "counts": {
+        "runs": 4,
+        "frames": 18,
+        "outputWords": 2196,
+        "depthPixels": 2990,
+        "publicBytes": 640000,
+        "syncs": 278,
+        "polls": 922,
+        "cpuReads": 214,
+        "compilerResponses": 18
+      },
+      "blobs": 677
+    },
+    {
+      "path": "fresh/fault-completed-stencil/report.json",
+      "sourceHead": "05a2511cc58ba1f3bac7c649f0fc4c17728ed7c6",
+      "sha256": "77752525aa5f42cf3f3b22a5245a32661e9268952d97dfa17d15180ed96035a1",
+      "status": "failed",
+      "inverseStatus": "refuted",
+      "inverseSha256": "f0e2394aaab44691032e00b7349b2480493332b6e6b57d5beb67850a135515f9",
+      "counts": {
+        "runs": 1,
+        "frames": 4,
+        "outputWords": 32,
+        "depthPixels": 901,
+        "publicBytes": 80000,
+        "syncs": 62,
+        "polls": 262,
+        "cpuReads": 72,
+        "compilerResponses": 3
+      },
+      "blobs": 158
+    },
+    {
+      "path": "fresh/initial-qualified-harness/fault-completed-stencil/report.json",
+      "sourceHead": "5742cf64948c39d823eb33020b5c68da77c1466e",
+      "sha256": "995167fb5cc2957798cb45e0d18708612c2130fd5773e2a3816f985c9071388c",
+      "status": "failed",
+      "inverseStatus": "refuted",
+      "inverseSha256": "41120ef15ab22e89fe0f055f295ae0591c127c0700ca687bc6645ccd4421b5ff",
+      "counts": {
+        "runs": 1,
+        "frames": 4,
+        "outputWords": 32,
+        "depthPixels": 901,
+        "publicBytes": 80000,
+        "syncs": 62,
+        "polls": 260,
+        "cpuReads": 72,
+        "compilerResponses": 3
+      },
+      "blobs": 158
+    },
+    {
+      "path": "fresh/initial-qualified-harness/promoted/report.json",
+      "sourceHead": "5742cf64948c39d823eb33020b5c68da77c1466e",
+      "sha256": "d02978a9bd18324bd94343cd697f7e614f008d917e007aafdc22f2a38909e7d8",
+      "status": "passed",
+      "inverseStatus": "passed",
+      "inverseSha256": "b92fb590f1ba607c31585b09a33f951dc7c65f8cc91b2f169c95defef7a7bea4",
+      "counts": {
+        "runs": 1,
+        "frames": 4,
+        "outputWords": 32,
+        "depthPixels": 708,
+        "publicBytes": 80000,
+        "syncs": 55,
+        "polls": 231,
+        "cpuReads": 66,
+        "compilerResponses": 3
+      },
+      "blobs": 149
+    },
+    {
+      "path": "fresh/promoted/report.json",
+      "sourceHead": "05a2511cc58ba1f3bac7c649f0fc4c17728ed7c6",
+      "sha256": "e0422d14f8e4703af030dc7a31e364e9d3b5add2ce32dd3e49758c8006d9e0f8",
+      "status": "passed",
+      "inverseStatus": "passed",
+      "inverseSha256": "b92fb590f1ba607c31585b09a33f951dc7c65f8cc91b2f169c95defef7a7bea4",
+      "counts": {
+        "runs": 1,
+        "frames": 4,
+        "outputWords": 32,
+        "depthPixels": 708,
+        "publicBytes": 80000,
+        "syncs": 55,
+        "polls": 231,
+        "cpuReads": 66,
+        "compilerResponses": 3
+      },
+      "blobs": 149
+    }
+  ],
+  "stateAuditRecordings": 25,
+  "stateAuditTotals": {
+    "runs": 172,
+    "draws": 362,
+    "refusals": 580,
+    "queued": 36,
+    "cpuReads": 6044,
+    "ownedSyncs": 6080,
+    "consumedSyncs": 6062,
+    "disposalRetiredUnconsumedSyncs": 18,
+    "nativeObjects": 26195,
+    "compilerPairs": 362,
+    "privateNativeBindings": 156
+  },
+  "stateAuditCounterUnits": {
+    "compilerPairs": "draw associations with an actual original-TGSI pair response; cached responses may serve multiple draws"
+  },
+  "workerAccountingPerPositiveReceipt": {
+    "ownedSyncs": 2485,
+    "consumedSyncs": 2479,
+    "disposalRetiredUnconsumedSyncs": 6,
+    "actualPairResponses": 86,
+    "actualStageResponses": 172,
+    "actualCompilerResponses": 258,
+    "perDrawMatchedResponses": 144
+  },
+  "sourceClosureIncluded": true,
+  "generated": {
+    "renderer/virgl-shader/build/wasm/virgl-shader.mjs": "6bb07a0b2a056d21ae52b22d7700ce10577854c1cdcf0877dd80be938e30e0fa",
+    "renderer/virgl-shader/build/wasm/virgl-shader.wasm": "acbe036afcdc4f1d8aa8cfb0fb107f48ba27759a6af4a7b9d6c83e3aa679d6cc"
+  },
+  "predictionsHeld": 17,
+  "implementationEdits": false,
+  "coldCloneRepeated": false,
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "productionDrawAuthority": false,
+  "authority": "isolated-original-floating-depth-consumers"
+}
