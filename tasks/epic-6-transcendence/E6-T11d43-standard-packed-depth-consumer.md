@@ -2,7 +2,7 @@
 id: E6-T11d43
 epic: 6
 title: Consume original packed UN24 sampler views and mip depth surfaces
-status: pending
+status: in-progress
 estimate: S
 risk: high
 priority: 525.027039000383
