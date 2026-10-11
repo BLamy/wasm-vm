@@ -14,7 +14,7 @@ git rev-parse HEAD
 git diff --check
 python3 tools/check_task_policy.py
 for file in renderer/virgl-command/{decoder,state,resources,unorm-depth-images}.mjs renderer/virgl-command/tests/standard-unorm-depth{,-rig,-transfers}.mjs tools/virgl-unorm-depth/fixtures.mjs tools/verify-virgl-standard-unorm-depth.mjs; do node --check "$file"; done
-python3 -m py_compile tools/virgl-unorm-depth/{predecessor,values,transfers,lifetimes,coverage,receipt,cold,seal}.py
+python3 -m py_compile tools/virgl-unorm-depth/{predecessor,values,transfers,lifetimes,coverage,receipt,cold,seal,recorder-closure}.py
 bash -n tools/verify-virgl-standard-unorm-depth.sh
 bash renderer/virgl-shader/build.sh wasm
 python3 tools/virgl-unorm-depth/predecessor.py "$evidence"
@@ -40,7 +40,8 @@ node tools/verify-virgl-standard-packed-unsigned-consumer.mjs --output "$evidenc
 python3 tools/virgl-packed-unsigned-consumer/samples.py "$evidence/retained-unsigned-consumer"
 node tools/verify-virgl-standard-packed-unsigned-consumer.mjs --output "$evidence/retained-unsigned-boundary" --mode boundaries
 python3 tools/virgl-packed-unsigned-consumer/boundaries.py "$evidence/retained-unsigned-boundary"
-node tools/verify-virgl-standard-unorm-depth.mjs --output "$evidence/retained-z16-consumer" --mode retained-z16-consumer
+node tools/verify-virgl-depth-formats.mjs --output "$evidence/retained-z16-consumer"
+python3 tools/virgl-unorm-depth/recorder-closure.py "$evidence"
 for mode in samples surfaces boundaries; do
  node tools/verify-virgl-standard-unorm-depth.mjs --output "$evidence/retained-floating-$mode" --mode "retained-floating-$mode" --smoke true
  python3 tools/virgl-floating-depth-consumer/values.py "$evidence/retained-floating-$mode"

@@ -59,6 +59,8 @@ def main(directory):
         'tools/verify-virgl-standard-unorm-depth.mjs','tools/verify-virgl-standard-unorm-depth.sh','tools/verify-virgl-standard-floating-depth-consumer.mjs','tools/verify-virgl-standard-floating-depth-consumer.sh','Makefile','tools/check_task_policy.py','AGENTS.md','web/package.json','web/package-lock.json',
         'tasks/epic-6-transcendence/E6-T11d41-standard-unorm-depth-images.md','evidence/virgl-production-readiness/standard-unorm-depth-image-gap.mjs','evidence/virgl-production-readiness/standard-unorm-depth-image-gap.json']
     for name in git('ls-files',*roots).splitlines():source(name)
+    recorder=load('recorder-closure.json');assert recorder['status']=='passed' and len(recorder['configs'])==25
+    for row in recorder['configs']:source(row['path'],row['sha256'])
     for row in predecessor['records']:
         for name,digest in row['digests'].items():source(row['path']+'/'+name,digest)
     for name,digest in predecessor['unchangedBoundaries'].items():source(name,digest)

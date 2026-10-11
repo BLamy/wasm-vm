@@ -139,3 +139,7 @@ explicitly. Asynchronous PBO `getBufferSubData` and independent diagnostics stil
 require an actual consumed fence created after their writer. The new audit
 counts these separately and does not relabel synchronous reads as WebGLSync
 completions. Product and held GPU helper code are unchanged.
+
+### 2026-10-11 — worker — older recorder import closure repaired
+
+The first frozen product matrix and pristine clone at `9b3e9412d19e26488c675ad53c7b08d6e490a417` passed. Separately, the original legacy recorder's fixed import list omitted the new descriptor: `target/evidence/d41-preflight/retained-z16-consumer/report.json` contains its missing-module failure. The unified adapter proved the unchanged native behavior but did not repair that original command. Twenty-five fixed recorder inventories now append only this dependency. Every full body is compared to D40 with exactly that literal removed, and the original hardware `verify-virgl-depth-formats.mjs` command is part of final acceptance. No runtime, shader compiler or GPU-helper behavior changed. The earlier hot/cold pair remains a pre-repair recording; the final worker submission uses the corrected frozen harness and one final pristine clone on that head.

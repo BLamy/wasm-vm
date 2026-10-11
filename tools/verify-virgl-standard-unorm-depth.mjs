@@ -6,7 +6,6 @@ import { createServer } from "node:http";
 import os from "node:os";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
-import {loadDepthFixtures} from "./virgl-command/depth-fixtures.mjs";
 import { repo, sha256 } from "./virgl-command/fixtures.mjs";
 
 const options = {};
@@ -14,7 +13,7 @@ for (let index = 2; index < process.argv.length; index += 2) {
   assert.ok(["--output", "--fault", "--smoke", "--node-only", "--seed", "--mode"].includes(process.argv[index]));
   assert.ok(process.argv[index + 1]); options[process.argv[index].slice(2)] = process.argv[index + 1];
 }
-assert.ok(options.output); assert.ok(!options.mode||["samples","surfaces","boundaries","domain","transfers","historical","historical-integer","historical-float","historical-normalized","retained-floating-samples","retained-floating-surfaces","retained-floating-boundaries","retained-z16-consumer"].includes(options.mode)); assert.ok(!options.fault || ["depth-attachment", "completed-depth", "completed-output", "sample-plane"].includes(options.fault));
+assert.ok(options.output); assert.ok(!options.mode||["samples","surfaces","boundaries","domain","transfers","historical","historical-integer","historical-float","historical-normalized","retained-floating-samples","retained-floating-surfaces","retained-floating-boundaries"].includes(options.mode)); assert.ok(!options.fault || ["depth-attachment", "completed-depth", "completed-output", "sample-plane"].includes(options.fault));
 for (const flag of ["smoke", "node-only"]) assert.ok(!options[flag] || options[flag] === "true");
 const output = path.resolve(options.output); await fs.mkdir(output, { recursive: true });
 const sourcePaths = [...new Set([
@@ -52,15 +51,9 @@ try {
   } else {
     report.fault=options.fault??null;
     const html = Buffer.from('<!doctype html><meta charset="utf-8"><title>Original guest UN16 depth consumers</title><style>body{font:16px system-ui;background:#111720;color:#e7edf6;margin:32px}pre{white-space:pre-wrap}canvas{width:256px;height:256px;image-rendering:pixelated}</style><h1>Original guest UN16 depth consumers</h1><p>Original UN16 depth words · native packed planes · retained mip ranges</p><p id="status">Checking actual hardware bindings…</p><canvas id="gpu" width="8" height="8"></canvas><pre id="result"></pre>');
-    let depthFixtures;
-    if(options.mode==='retained-z16-consumer'){
-      const loaded=await loadDepthFixtures();depthFixtures=loaded.fixtures;report.inputs=loaded.sources;
-      for(const row of loaded.sources){const raw=await fs.readFile(path.join(repo,row.path));await fs.mkdir(path.join(output,'source',path.dirname(row.path)),{recursive:true});await fs.writeFile(path.join(output,'source',row.path),raw);}
-    }
     const endpoints = new Map([["/", { bytes: html, type: "text/html" }],
       ...[...sources].filter(([name]) => name.endsWith(".mjs") || name.endsWith(".wasm")).map(([name, bytes]) =>
         ["/" + name, { bytes, type: name.endsWith(".wasm") ? "application/wasm" : "text/javascript" }])]);
-    if(depthFixtures){const bytes=Buffer.from(JSON.stringify(depthFixtures));endpoints.set('/fixtures.json',{bytes,type:'application/json'});report.fixtureTransport={bytes:bytes.length,sha256:sha256(bytes)};}
     server = createServer((request, response) => {
       const name = new URL(request.url, "http://localhost").pathname;
       if (name === "/favicon.ico") { response.writeHead(204).end(); return; }
@@ -91,8 +84,8 @@ try {
     try {
       report.browserResult = await Promise.race([page.evaluate(async spec => {
         try {
-          const historical={historical:'standard-multiple-color', 'historical-integer':'standard-integer-image-consumer','historical-float':'standard-integer-image-consumer','historical-normalized':'standard-packed-normalized-consumer','retained-floating-samples':'standard-floating-depth-consumer','retained-floating-surfaces':'standard-floating-depth-consumer','retained-floating-boundaries':'standard-floating-depth-consumer','retained-z16-consumer':'depth-formats'}, selected=historical[spec.mode]??'standard-unorm-depth';
-          const module = await import('/renderer/virgl-command/tests/'+selected+'.mjs'), result = spec.mode==='retained-z16-consumer'? await module.runBrowserDepthAcceptance(await(await fetch('/fixtures.json')).json()) : await module.runAcceptance(spec.mode?.startsWith('retained-floating-')?{...spec,mode:spec.mode.slice('retained-floating-'.length),smoke:true}:historical[spec.mode]?{...spec,mode:spec.mode==='historical-float'?'float':'matrix',smoke:spec.mode!=='historical-float'}:spec);
+          const historical={historical:'standard-multiple-color', 'historical-integer':'standard-integer-image-consumer','historical-float':'standard-integer-image-consumer','historical-normalized':'standard-packed-normalized-consumer','retained-floating-samples':'standard-floating-depth-consumer','retained-floating-surfaces':'standard-floating-depth-consumer','retained-floating-boundaries':'standard-floating-depth-consumer'}, selected=historical[spec.mode]??'standard-unorm-depth';
+          const module = await import('/renderer/virgl-command/tests/'+selected+'.mjs'), result = await module.runAcceptance(spec.mode?.startsWith('retained-floating-')?{...spec,mode:spec.mode.slice('retained-floating-'.length),smoke:true}:historical[spec.mode]?{...spec,mode:spec.mode==='historical-float'?'float':'matrix',smoke:spec.mode!=='historical-float'}:spec);
           document.querySelector("#status").textContent = "Passed original UN16 depth consumer proof";
           document.querySelector("#result").textContent = JSON.stringify({ gpu: result.gpu, runs: result.runs?.length??0, planes: (result.runs??[]).reduce((sum,row)=>sum+(row.planes?.length??0),0), predictions: result.predictions?.length??result.assertions?.length??0 }, null, 2);
           return { status: "passed", result };
