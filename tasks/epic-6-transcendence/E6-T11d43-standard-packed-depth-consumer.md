@@ -54,3 +54,11 @@ The fresh D42 novel attack also pins a necessary oracle distinction: original up
 
 
 Complete negative recording SHA256 `5942c360ab065ee349e815df71c49c95b09f54febdd1871b93dcd22b4c0b58f2`.
+
+### 2026-10-11 — worker — implementation frozen for recording
+
+The runtime diff is confined to `decoder.mjs` and `state.mjs`: append a host-selected original20/21 profile/factory, checked original view/surface admission, depth-role retention, combined20 attachment selection and the existing nearest-only depth guard. Storage, actual compiler, guest caps, default consumers, web and Rust remain unchanged. All six texture operations pass in original vertex/fragment native jobs; the self-validation matrix covers120 depth states and transitions among16/18/126/20/21. Eight lifetime runs include distinct contexts, private ranges, retained old generations, GPU-only refresh, cancellation and both disposal orders; ten actual native failure paths drain ownership. These exploratory runs are not the submitted evidence.
+
+The complete matrix exhausted Node's default heap when CDP returned the whole trace in one object. The recorder now writes each complete run body and native blob as it finishes, binds every body by length/SHA256, and keeps the full V8/native event records. No sampling or trace reduction is used. Independent Python reconstructs results from original TGSI/wires/input fields, validates uploaded depths to1ULP, validates GPU clears against the original conversion interval, and exactly serializes the actual validated native depth choice and all S8/X8/public padding. Twelve narrowly pinned unchanged historical operands may be waived only at their original C60 source coordinates; every packed operand must execute.
+
+`make verify-E6-T11d43` is the submission gate. Scope is JavaScript/native shader compilation and the selected native browser factory; Rust/web/default production paths are unchanged, so unrelated workspace and demo/deployment walls do not substitute for or expand this isolated claim. The frozen hot run, one pristine scrubbed cold run, full seals and fresh independent critique follow. Production guest graphics remains incomplete.
