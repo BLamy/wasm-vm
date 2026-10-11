@@ -2,7 +2,7 @@
 id: E6-T11d44
 epic: 6
 title: Execute original native S8 stencil state and clears
-status: in-progress
+status: implemented
 estimate: S
 risk: high
 priority: 525.027039000382
@@ -52,3 +52,21 @@ The additional exact predecessor wide-CLEAR recorder reconstructs only complete 
 Ephemeral inner runs exercised96 operation cases,32 comparisons,16 write masks,20 clears,4 inactive states,4 absent-S8 cases,18 native/guard failures and8 lifetime cases. A recording-registry defect in the first operation runs was corrected before the final recorded submission; those earlier runs only support the inner-loop native pixel observations. The independent original-field inverse passes the subsequent complete clear/comparison/mask/inactive/absence/failure/lifetime bodies. It rejects four real native controls (operation, value-mask, completed output and completed S8). Completed S8 corruption is an actual stencil clear behind a distinct physically consumed second fence. The first refusal harness accidentally counted drawBuffers as a draw; actual original trace inspection showed no draw/copy and the predicate now names only native draw calls and blits. The retained historical wire enumeration treated the newly introduced future factory as historical; the wrapper now runs the current complete wire admission matrix separately and preserves the unchanged retained native actors. Both failed inner recordings remain in target/evidence.
 
 Retained packed surfaces and floating samples/surfaces pass their unchanged independent inverses. Complete predecessor reopening authenticates74113 logical D43 worker/critic bodies. Preview finest V8 coverage has245 executed partitions and four exact unchanged lower factory operands, zero new gaps; final exact-head coverage remains required. These observations are preparation, not the frozen submission or a verifier verdict. All GPU jobs are closed before this freeze.
+
+### 2026-10-11 — worker — frozen recorded submission
+
+Runtime/source freeze `de736cd109a092b59c82a83dd9520ee5928b8c2a` contains the two changed runtime modules, full recurring harness/inverse/custody scripts and explicit host-selected factory. Exact commands:
+
+```sh
+EMCC=/Users/blamy/.cache/wasm-vm/emsdk/4.0.22/wasm-vm-emcc VIRGL_STENCIL_EVIDENCE_DIR=target/evidence/virgl-standard-stencil-frozen-de make verify-E6-T11d44
+python3 tools/virgl-stencil/cold.py --output target/evidence/virgl-standard-stencil-cold-de
+python3 tools/virgl-stencil/seal.py target/evidence/virgl-standard-stencil-frozen-de target/evidence/virgl-standard-stencil-cold-de evidence/virgl-stencil/worker
+```
+
+Both complete commands pass at the same exact frozen head. The pristine clone `/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-stencil-cold-cgm5x3i_/wasm-vm` has empty before/after Git status and scrubbed runtime/compiler environment. Hot receipt SHA256 `f91bfe2d9b9216a287bd7e5c393e046a1419cfbe974fc8aeae1b7b6f22d4bd8a`; cold receipt `ae6cfce6fecc7c902a8a75c635d21ee27fa3f7f9efc229cef1c595255056c033`; complete cold report `07431ec30af71c0bc20b5b43da6d6e822c667fdac4dc1aa9dc341a4f9b149d80`. Each receipt authenticates20,775 full recorded files and985 complete source identities. Each run rebuilds/qualifies the unchanged actual compiler, reopens all74,113 exact D43 worker/critic logical bodies and exercises affected retained packed/floating native consumers. No unchanged full-domain regression wall is needlessly repeated.
+
+Each hot/cold acceptance covers214 original stencil cases and202 observed native/public frames:96 operation cases across8 operations/3 failure paths/2 faces/2 formats,32 comparison cases,16 mask cases,20 full clear cases (17 wide32-bit fields),4 legal inactive-field cases,4 absent-S8 cases,18 native/guard failures and three varied8-case lifetime schedules. The original-field inverse validates1,066,896 color words,716,924 depth pixels,694,644 S8 pixels and42,114,404 public/padding bytes per acceptance. It recognizes3,146 consumed physical syncs and12 disposal-only syncs and additionally checks626 blit writers against CPU collection fences. All256 original S8 inputs occur. Complete original TGSI, actual compiler responses, preceding delivered shaderSource calls and actual queried draw programs are held together. Full clears override scissor/masks, restore literal per-face masks, and then a front-only post-clear draw reinstalls unified state. Private nonzero mip copies, old GPU generations after name reuse, opposite-format replacement bytes, queued S8 clears and all four lifetime terminals are recorded.
+
+Four real native controls fail as intended and are refuted by the independent original-field inverse: wrong operation, zero value mask, completed output corruption and completed S8 corruption. The last two occur after original completion behind a distinct second physically consumed WebGLSync; completed S8 uses an actual stencil clear, not patched expected data. All positive browser console/page/request error lists are empty. Finest governing nested V8 coverage is245 executed partitions plus four exact5a unchanged lower-profile operands, zero new runtime gaps, in both hot and cold. Full regions/counters/source bodies remain authority.
+
+Complete seal `evidence/virgl-stencil/worker/recording.tar.gz` is42,370,970 bytes / SHA256 `46beab4bf23c06c2b8f826e41db8b0969cfd380b2a9bdcf750a4cc12322a848c`. Full index `records.json` SHA256 `e590aee23a07f06a68542a118dea90eb9823d31a3669dbfad17294566c8f9271`; manifest SHA256 `386cdb8880bcf72d20a9bf5d6c2bb1eef58023da64974448b42ef7edab445055`. Sealing reopens every42,535 complete logical member, checks each length and digest and requires every hardlink to name an earlier complete physical body. Logical byte count is 1817189091. These records demonstrate the opt-in original native stencil boundary only. Active asymmetric S8 translation, complete production API/caps, guest Mesa/compositor, worker/scanout/demo/deployment and300 MIPS remain unproven. A fresh critic must attack the claim and changed code before verified status. Existing upper native stack500 is continued; its72 earlier published PRs preserve all IDs/order/heads/bases and are open/unmerged.
