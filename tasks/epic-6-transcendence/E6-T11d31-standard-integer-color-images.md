@@ -104,3 +104,27 @@ glBlitFramebuffer/glClearBuffer) and Mesa26.2.2 original format descriptors.
 Integer RGB is expanded to matching native RGBA; native integer alpha is1.
 Integer public reads use guaranteed RGBA_INTEGER plus INT/UNSIGNED_INT.
 The original4MiB/resource,32MiB aggregate and8MiB scratch ceilings stay unchanged.
+
+### 2026-10-10 — worker — source-declaration proof repair; runtime unchanged
+
+At frozen runtime/harness head `78cbe57062fcddb0d2325e326a153e0e05b01731`,
+all288 native matrix cases, three19-case schedules, both physical corruption
+controls and the independent inverse passed (346388 native components,529620
+public bytes,109152 untouched SG padding bytes). The selected full command did
+not complete: the historical async test server refused to serve the new imported
+`integer-images.mjs`, producing404 before module evaluation. This is a harness
+source-closure gap, not a passing acceptance claim. The exact failed record is
+`target/evidence/virgl-standard-integer-images-78cbe570-hot/retained-async-jobs/report.json`
+(SHA256 `3efa4bc6be3ce523fe08a2f232b95e8195f325762860da4953264f1eb32bf299`); its acceptance log SHA256
+is `af0c63433022772d219a30e6f6a44d48b8f578c7f78618402c1f5452d2c00d3c`.
+
+Only the new imported source declaration is appended to27 historical closed test
+server allowlists. `standard-integer-image-serving.py` and its adjacent inverse
+map require each algorithm to reconstruct byte-for-byte to the verified predecessor.
+The corrected async native preview passes. Runtime, compiler, decoder, executor,
+limits and all ten predecessor seals are unchanged. Packed, byte and legacy color
+storage previews cover the newly extended read selector’s historical branches.
+The final frozen command and one pristine clone follow; no unrelated Rust/workspace
+gates or historical HELD criteria are restarted. These isolated modules are not
+part of the deployed app or a reachable production feature; web/wasm/crates/capsets
+remain unchanged, so no demo capability or deployment is claimed at this boundary.

@@ -40,6 +40,8 @@ def main(directory):
         else:
             need(all(p['held'] for p in report['predictions']),'all original native predictions');need(len(report['runs'])==(288 if name=='hardware-matrix' else 19),'complete24-format/role/chain and ownership schedules')
             if name!='hardware-matrix':need(report['seed']==int(name.rsplit('-',1)[1],16),'varied original integer schedule')
+    serving=json.loads(record('serving-audit.json'));need(serving['status']=='passed' and serving['gitHead']==head and serving['predecessor']==BASE and len(serving['records'])==27 and all(r['held'] for r in serving['records']),'only declared imported-source additions in historical pages')
+    for row in serving['records']+serving['sources']:source(row['path'],row['sha256'])
     values=json.loads(record('independent-values.json'));need(values['status']=='passed' and values['runs']==347 and values['nativeComponents']>340000 and values['publicBytes']>520000 and values['untouchedPaddingBytes']>100000 and len(values['faults'])==2 and all(f['status']=='refuted' and f['fenceCompleted'] for f in values['faults']),'independent original integer inverse with physical sabotage')
     coverage=json.loads(record('coverage-audit.json'));need(coverage['gitHead']==head and coverage['predecessor']==BASE and coverage['fullRegionsRemainAuthority'] and coverage['positive']>0,'full changed runtime coverage retained')
     changed=git('diff','--name-only',BASE,head,'--','renderer/virgl-command').splitlines();runtime=[n for n in changed if '/tests/' not in n and not n.endswith('.md')];need(set(runtime)=={'renderer/virgl-command/resources.mjs','renderer/virgl-command/integer-images.mjs'},'one original integer storage runtime boundary')
@@ -57,7 +59,7 @@ def main(directory):
     for row in descriptor['normativeSource']['records'].values():source(row['path'],row['sha256'])
     for name in git('ls-files','renderer/virgl-command','renderer/virgl-shader','tools/verify-virgl-standard-integer-images*','tools/virgl-command/standard-integer-image*','tools/virgl-command/integer-image-spec','Makefile','tasks/epic-6-transcendence/E6-T11d31-standard-integer-color-images.md').splitlines():source(name)
     for row in wire['sources']:source(row['path'],row['sha256'])
-    for name in ('retained-shared-storage','retained-shared-consumer','retained-float-consumer','retained-async-jobs'):
+    for name in ('retained-shared-storage','retained-shared-consumer','retained-float-consumer','retained-packed-storage','retained-byte-storage','retained-color-formats','retained-async-jobs'):
         envelope=json.loads(record(name+'/report.json'));need(envelope['gitHead']==head and envelope['status']=='passed','affected predecessor native gate '+name)
         for row in envelope['sources']:source(row['path'],row['sha256'])
     need(generated.get('renderer/virgl-shader/build/wasm/virgl-shader.wasm')=='41d5c79624d7799cb9339b3fb754bfb4b744ee959b70d8cc2daedfb0a1fb4ac8' and generated.get('renderer/virgl-shader/build/wasm/virgl-shader.mjs')=='509aaeb879c95b90acd26de08a310b23991779cf3564f174bbc1702c9b68a021','unchanged actual C/Wasm compiler identities')
