@@ -133,6 +133,26 @@ This isolated compiler facet grants no original integer resource packet/consumer
 production capset, guest Mesa/compositor execution, worker scanout, demo deployment
 or throughput result. No old compiler/runtime profile silently selects it.
 
+## Implementation notes
+
+The selected facet accepts one through four homogeneous original SVIEW return
+fields and bounded SVIEW ranges. SAMP registers retain individual declarations:
+the pinned converter exports only Range.Last into its sampler-used mask, so
+admitting SAMP ranges would contradict original converter metadata. Six explicit
+range refusals cover both stages and all three return types; full sixteen-slot
+SVIEW range queries remain admitted with individual original SAMP declarations.
+
+The recorded native matrix contains 2,586 cases, including 1,975 admitted cases
+and 611 refusals. Full historical response comparison covers 957 cases against
+the authenticated D31 generated module. The affected historical FLOAT facade
+matrix retains its own original 932-case names and five selector fields.
+Changed shared metadata paths include original system values, point size and
+broadcast, in addition to selected integer outputs. Vertex TXB remains refused;
+its unreachable vertex-emission alternative was removed without changing any
+admitted historical source. Real native allocation interposition exercises 165
+sites and byte-exact recoveries. These are worker submission boundaries, not an
+independent verifier verdict.
+
 ## Verification log
 
 ### 2026-10-10 — worker — verified dependency and original refusal

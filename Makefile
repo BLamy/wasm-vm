@@ -2306,6 +2306,10 @@ verify-E6-T11d29:
 verify-E6-T11d31:
 	bash tools/verify-virgl-standard-integer-images.sh
 
+.PHONY: verify-E6-T11d32
+verify-E6-T11d32:
+	bash tools/verify-virgl-integer-image-shader.sh
+
 .PHONY: verify-E6-T11d29-adversarial
 verify-E6-T11d29-adversarial:
 	bash tools/verify-virgl-standard-shared-exponent-adversarial.sh

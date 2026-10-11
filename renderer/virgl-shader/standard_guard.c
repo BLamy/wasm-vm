@@ -121,7 +121,8 @@ static bool reg(const char **at, const struct standard_profile *p, struct operan
          r->first = r->last = n;
          spaces(s);
          if (!strncmp(*s, "..", 2)) {
-            if (kind != DECL || (f != STD_TEMP && f != STD_CONST)) return false;
+            if (kind != DECL || (f != STD_TEMP && f != STD_CONST &&
+                !(p->integer_images && f == STD_SVIEW))) return false;
             *s += 2;
             if (!number(s, limit(p, f) - 1, &n) || n < r->first) return false;
             r->last = n;
@@ -189,7 +190,20 @@ static bool declaration(const char **s, struct standard_profile *p)
          if (p->declared[r.file][i] && list[i].semantic == io.semantic && list[i].sid == io.sid) return false;
       list[r.first] = io;
    } else if (r.file == STD_SVIEW) {
-      if (!take(s, ',') || !word(s, "2D") || !take(s, ',') || !word(s, "FLOAT")) return false;
+      if (!take(s, ',') || !word(s, "2D") || !take(s, ',')) return false;
+      unsigned type;
+      const char *name;
+      if (word(s, "FLOAT")) { type = STD_SAMPLE_FLOAT; name = "FLOAT"; }
+      else if (p->integer_images && word(s, "SINT")) { type = STD_SAMPLE_SINT; name = "SINT"; }
+      else if (p->integer_images && word(s, "UINT")) { type = STD_SAMPLE_UINT; name = "UINT"; }
+      else return false;
+      /* The original parser replicates an abbreviated homogeneous return
+       * declaration. Only this selected facet accepts its additional fields. */
+      if (p->integer_images) {
+         unsigned fields = 1;
+         while (take(s, ',')) if (++fields > 4 || !word(s, name)) return false;
+      }
+      for (unsigned i = r.first; i <= r.last; ++i) p->sampler_returns[i] = (uint8_t)type;
    } else if (r.mask != 15) return false;
    if (!ended(s)) return false;
    if (r.file == STD_CONST && r.slot) {

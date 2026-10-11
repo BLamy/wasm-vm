@@ -84,10 +84,10 @@ static void interface(struct output *o, const struct standard_profile *p)
          else if (io->semantic == STD_GENERIC)
             put(o, "%s %s %s vso_g%u;\n", io->flat ? "flat" : "smooth",
                 f == STD_IN ? "in" : "out", io->flat ? "uvec4" : "vec4", io->sid);
-         else if (io->semantic == STD_COLOR) put(o, "layout(location=%u) out vec4 fsout_c%u;\n", io->sid, io->sid);
+         else if (io->semantic == STD_COLOR) put(o, "layout(location=%u) out %s fsout_c%u;\n", io->sid, standard_color_type(p, io->sid), io->sid);
       }
    }
-   if (p->broadcast) for (unsigned j = 1; j < 4; ++j) put(o, "layout(location=%u) out vec4 fsout_c%u;\n", j, j);
+   if (p->broadcast) for (unsigned j = 1; j < 4; ++j) put(o, "layout(location=%u) out %s fsout_c%u;\n", j, standard_color_type(p, j), j);
    if (p->constants) {
       if (p->buffer_zero) put(o, "layout(std140) uniform Virgl%sConst0 { uvec4 %sconst0[%u]; };\n",
                               p->stage ? "FS" : "VS", p->stage ? "fs" : "vs", p->constants);
@@ -97,7 +97,7 @@ static void interface(struct output *o, const struct standard_profile *p)
       put(o, "layout(std140) uniform Virgl%sConst%u { uvec4 %sconst%u[%u]; };\n",
           p->stage ? "FS" : "VS", j, p->stage ? "fs" : "vs", j, p->uniform_counts[j]);
    for (unsigned j = 0; j < STANDARD_SAMPLERS; ++j) if (p->used_samplers & (1u << j))
-      put(o, "uniform highp sampler2D %ssamp%u;\n", p->stage ? "fs" : "vs", j);
+      put(o, "uniform highp %s %ssamp%u;\n", standard_sampler_type(p, j), p->stage ? "fs" : "vs", j);
    for (unsigned j = 0; j < STANDARD_SAMPLERS; ++j) if (p->queried_levels & (1u << j))
       put(o, "uniform highp int %ssamplevels%u;\n", p->stage ? "fs" : "vs", j);
    if (!p->stage) put(o, "layout(std140) uniform VirglBlock {\nvec4 clipp[8];\nuint stipple_pattern[32];\nfloat winsys_adjust_y;\nfloat alpha_ref_val;\nbool clip_plane_enabled;\nint drawid_base;\n};\nuniform vec2 wv_point_size;\n");
@@ -115,12 +115,16 @@ static void interface(struct output *o, const struct standard_profile *p)
 }
 static void exit_program(struct output *o, const struct standard_profile *p)
 {
-   unsigned point_size = STANDARD_IO;
+   unsigned point_size = STANDARD_IO, color_zero = 0;
    for (unsigned j = 0; j < STANDARD_IO; ++j) if (p->declared[STD_OUT][j]) {
       const struct standard_io *io = &p->output[j];
       if (io->semantic == STD_POSITION) put(o, "gl_Position = uintBitsToFloat(o%u);\n", j);
       else if (io->semantic == STD_GENERIC) put(o, "vso_g%u = %s(o%u);\n", io->sid, io->flat ? "uvec4" : "uintBitsToFloat", j);
-      else if (io->semantic == STD_COLOR) put(o, "fsout_c%u = uintBitsToFloat(o%u);\n", io->sid, j);
+      else if (io->semantic == STD_COLOR) {
+         put(o, "fsout_c%u = %s(o%u);\n", io->sid,
+             p->signed_colors & (1u << io->sid) ? "ivec4" : p->unsigned_colors & (1u << io->sid) ? "uvec4" : "uintBitsToFloat", j);
+         if (!io->sid) color_zero = j;
+      }
       else if (io->semantic == STD_PSIZE) point_size = j;
    }
    if (!p->stage) {
@@ -129,8 +133,16 @@ static void exit_program(struct output *o, const struct standard_profile *p)
       else put(o, "1.0"); /* Unwritten PSIZE retains native undefined-domain authority. */
       put(o, " : wv_point_size.x;\n");
    }
-   if (p->broadcast) for (unsigned j = 1; j < 4; ++j) put(o, "fsout_c%u = fsout_c0;\n", j);
+   if (p->broadcast) for (unsigned j = 1; j < 4; ++j) {
+      if (p->integer_images) put(o, "fsout_c%u = %s(o%u);\n", j,
+         p->signed_colors & (1u << j) ? "ivec4" : p->unsigned_colors & (1u << j) ? "uvec4" : "uintBitsToFloat", color_zero);
+      else put(o, "fsout_c%u = fsout_c0;\n", j);
+   }
    put(o, "}\n");
+}
+static const char *sample_conversion(const struct standard_profile *p, unsigned sampler)
+{
+   return p->integer_images && p->sampler_returns[sampler] != STD_SAMPLE_FLOAT ? "uvec4" : "floatBitsToUint";
 }
 static bool instruction(struct output *o, const struct standard_profile *p,
                         const struct tgsi_full_instruction *i)
@@ -231,15 +243,15 @@ static bool instruction(struct output *o, const struct standard_profile *p,
    COMPARE(SLT,"lessThan"); COMPARE(SGE,"greaterThanEqual");
 #undef COMPARE
    case TGSI_OPCODE_TEX:
-      put(o, "uvec4 r = floatBitsToUint(texture(%ssamp%u, " FA ".xy));\n", p->stage ? "fs" : "vs", i->Src[1].Register.Index); break;
+      put(o, "uvec4 r = %s(texture(%ssamp%u, " FA ".xy));\n", sample_conversion(p, i->Src[1].Register.Index), p->stage ? "fs" : "vs", i->Src[1].Register.Index); break;
    case TGSI_OPCODE_TXL:
-      put(o, "uvec4 r = floatBitsToUint(textureLod(%ssamp%u, " FA ".xy, " FA ".w));\n", p->stage ? "fs" : "vs", i->Src[1].Register.Index); break;
+      put(o, "uvec4 r = %s(textureLod(%ssamp%u, " FA ".xy, " FA ".w));\n", sample_conversion(p, i->Src[1].Register.Index), p->stage ? "fs" : "vs", i->Src[1].Register.Index); break;
    case TGSI_OPCODE_TXF:
-      put(o, "uvec4 r = floatBitsToUint(texelFetch(%ssamp%u, ivec2(a.xy), int(a.w)));\n", p->stage ? "fs" : "vs", i->Src[1].Register.Index); break;
+      put(o, "uvec4 r = %s(texelFetch(%ssamp%u, ivec2(a.xy), int(a.w)));\n", sample_conversion(p, i->Src[1].Register.Index), p->stage ? "fs" : "vs", i->Src[1].Register.Index); break;
    case TGSI_OPCODE_TXD:
-      put(o, "uvec4 r = floatBitsToUint(textureGrad(%ssamp%u, " FA ".xy, " FB ".xy, " FC ".xy));\n", p->stage ? "fs" : "vs", i->Src[3].Register.Index); break;
+      put(o, "uvec4 r = %s(textureGrad(%ssamp%u, " FA ".xy, " FB ".xy, " FC ".xy));\n", sample_conversion(p, i->Src[3].Register.Index), p->stage ? "fs" : "vs", i->Src[3].Register.Index); break;
    case TGSI_OPCODE_TXB:
-      put(o, "uvec4 r = floatBitsToUint(texture(%ssamp%u, " FA ".xy, " FA ".w));\n", p->stage ? "fs" : "vs", i->Src[1].Register.Index); break;
+      put(o, "uvec4 r = %s(texture(fssamp%u, " FA ".xy, " FA ".w));\n", sample_conversion(p, i->Src[1].Register.Index), i->Src[1].Register.Index); break;
    case TGSI_OPCODE_TXQ:
       /* 2D z is undefined in TGSI. Zero is a representative, not a depth claim.
        * Accessible levels come from the selected host view, never guest text. */

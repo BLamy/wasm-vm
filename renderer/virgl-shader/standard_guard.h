@@ -17,6 +17,7 @@ enum standard_file { STD_IN, STD_OUT, STD_TEMP, STD_CONST, STD_IMM,
                      STD_SAMP, STD_SVIEW, STD_ADDR, STD_SV, STD_FILES };
 enum standard_semantic { STD_ATTRIBUTE, STD_POSITION, STD_GENERIC, STD_COLOR,
                          STD_VERTEXID, STD_INSTANCEID, STD_PSIZE, STD_PCOORD };
+enum standard_sampler_return { STD_SAMPLE_FLOAT, STD_SAMPLE_SINT, STD_SAMPLE_UINT };
 struct standard_io {
    uint8_t semantic, sid, mask, writes, flat;
 };
@@ -28,6 +29,9 @@ struct standard_profile {
    struct standard_io input[STANDARD_IO], output[STANDARD_IO], system[2];
    uint16_t instructions, constants, immediates;
    uint16_t used_samplers, queried_levels;
+   uint8_t sampler_returns[STANDARD_SAMPLERS];
+   /* Host color formats select outputs; shader text cannot select these bits. */
+   uint8_t signed_colors, unsigned_colors;
    /* Host-derived vertex format types, never TGSI/guest shader keys. */
    uint16_t signed_inputs, unsigned_inputs;
    uint16_t packed_signed_inputs, packed_normalized_inputs;
@@ -35,7 +39,7 @@ struct standard_profile {
     * legacy facets keep both flags zero and retain their original grammar. */
    uint32_t uniform_declared[STANDARD_UNIFORM_SLOTS][STANDARD_UNIFORM_VECTORS / 32];
    uint16_t uniform_counts[STANDARD_UNIFORM_SLOTS + 1];
-   bool uniform_buffers, buffer_zero, texture_operations;
+   bool uniform_buffers, buffer_zero, texture_operations, integer_images;
    uint8_t properties, broadcast;
 };
 
@@ -43,6 +47,18 @@ static inline const char *standard_attribute_type(const struct standard_profile 
 {
    return p->signed_inputs & (1u << index) ? "ivec4" :
           p->unsigned_inputs & (1u << index) ? "uvec4" : "vec4";
+}
+
+static inline const char *standard_color_type(const struct standard_profile *p, unsigned index)
+{
+   return p->signed_colors & (1u << index) ? "ivec4" :
+          p->unsigned_colors & (1u << index) ? "uvec4" : "vec4";
+}
+
+static inline const char *standard_sampler_type(const struct standard_profile *p, unsigned index)
+{
+   return p->integer_images && p->sampler_returns[index] == STD_SAMPLE_SINT ? "isampler2D" :
+          p->integer_images && p->sampler_returns[index] == STD_SAMPLE_UINT ? "usampler2D" : "sampler2D";
 }
 
 /* Copies one bounded line at a time, consumes all characters, and validates
