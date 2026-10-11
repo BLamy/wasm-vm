@@ -127,3 +127,25 @@ the native signed/unsigned ClearBuffer entry point. Preserve original Gallium
 full-clear scissor/write-mask behavior and RGB implicit alpha1 independently.
 The selected consumer refuses non-nearest integer filtering explicitly; it does
 not invent defined sampled values for an incomplete native integer texture.
+
+### 2026-10-10 — worker — source freeze preparation
+
+The selected implementation uses the authenticated D32 module without rebuilding
+or changing compiler/storage/guest sources. Inner-loop runs exercised all586
+original integer matrix cases; two additional physical OUT5 COLOR0 cases,
+one selected FLOAT compatibility case and two native typed-vertex/constant0 cases
+bring the frozen matrix to591 cases/1773 complete frames. The original contract
+matrix replays all2586 responses in Node and the headed browser, with144 hostile
+contract attacks and zero getter invocations. Every physical wrong-level,
+wrong-word and completed-output control reaches genuine native completion and
+fails the unchanged full-word inverse. The first boundary schedule passes24
+complete frames; the submission repeats three distinct schedules. Affected
+historical FLOAT draws pass their existing smoke command.
+
+Full smallest governing V8 partitions are retained. Only exact pre-existing
+older-facet/default operands and non-executable whitespace have explicit,
+source-offset/digest-bound waiver entries in
+`tools/virgl-integer-image-consumer/coverage-waivers.json`; all selected runtime
+branches need positive evidence. Every waiver states its predecessor/static
+reason and remains open to independent refutation. The final recorded command,
+pristine clone, seals and exact source head will be added after recording.

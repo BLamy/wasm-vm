@@ -2,12 +2,14 @@
 import {byteColorFormat} from "./color-images.mjs";
 import {floatColorFormat} from "./float-images.mjs";
 import {packedFloatColorFormat} from "./packed-float-images.mjs";
-import { decodeSubmission, decodeStandardSubmission, decodeStandardUniformSubmission, decodeStandardImageSubmission, decodeStandardColorSubmission, decodeStandardFloatImageSubmission, decodeStandardPackedFloatImageSubmission, decodeStandardSharedExponentImageSubmission, vertexFormat } from "./decoder.mjs";
+import {integerColorFormat} from "./integer-images.mjs";
+import { decodeSubmission, decodeStandardSubmission, decodeStandardUniformSubmission, decodeStandardImageSubmission, decodeStandardColorSubmission, decodeStandardFloatImageSubmission, decodeStandardPackedFloatImageSubmission, decodeStandardSharedExponentImageSubmission, decodeStandardIntegerImageSubmission, vertexFormat } from "./decoder.mjs";
 import { LIMITS as SHADER_LIMITS } from "../virgl-shader/index.mjs";
 import { createKeyCache, hashKey } from "./cache.mjs";
 import { parseConstantDomain, checkFiniteBank, checkIndirectBank, checkLoopBank, checkRadialBank, checkRasterBank, checkConversionBank, checkExactBank, COORDINATE_KEY, DISCARD_KEY,
   parseStandardShaderMetadata, normalizeStandardShaderResult, normalizeStandardShaderPair, normalizeStandardShaderTypedPair, deriveStandardShaderInterface, parseStandardUniformShaderMetadata,
-  normalizeStandardUniformShaderResult, normalizeStandardUniformShaderPair, deriveStandardUniformShaderInterface, parseStandardTextureShaderMetadata, normalizeStandardTextureShaderResult, normalizeStandardTextureShaderPair, deriveStandardTextureShaderInterface } from "./constant-domain.mjs";
+  normalizeStandardUniformShaderResult, normalizeStandardUniformShaderPair, deriveStandardUniformShaderInterface, parseStandardTextureShaderMetadata, normalizeStandardTextureShaderResult, normalizeStandardTextureShaderPair, deriveStandardTextureShaderInterface,
+  parseStandardIntegerImageShaderMetadata, normalizeStandardIntegerImageShaderResult, normalizeStandardIntegerImageShaderPair, deriveStandardIntegerImageShaderInterface } from "./constant-domain.mjs";
 
 export const STATE_PROFILE = "virgl-tiny-state-v1";
 export const STATE_LIMITS = Object.freeze({ contexts: 8, subContexts: 16, objects: 256,
@@ -20,6 +22,7 @@ export const STANDARD_UNIFORM_ASYNC_PROFILE = "virgl-standard-uniform-async-jobs
 export const STANDARD_BUFFER_ASYNC_PROFILE = "virgl-standard-buffer-async-jobs-v1";
 export const STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE = "virgl-standard-r11g11b10-image-async-jobs-v1";
 export const STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE = "virgl-standard-rgb9e5-image-async-jobs-v1";
+export const STANDARD_INTEGER_IMAGE_ASYNC_PROFILE = "virgl-standard-integer-image-async-jobs-v1";
 export const STANDARD_FLOAT_IMAGE_ASYNC_PROFILE = "virgl-standard-float-image-async-jobs-v1";
 export const STANDARD_IMAGE_ASYNC_PROFILE = "virgl-standard-image-async-jobs-v1";
 export const STANDARD_COLOR_ASYNC_PROFILE = "virgl-standard-byte-color-async-jobs-v1";
@@ -219,8 +222,13 @@ export function createVirglStandardSharedExponentImageAsyncRenderer(options) {
   return createRenderer(options, true, true, true, true, true, true, true, true, true, true, true);
 }
 
+/** Original typed images require this host-selected compiler and storage owner. */
+export function createVirglStandardIntegerImageAsyncRenderer(options) {
+  return createRenderer(options, true, true, true, true, true, true, true, true, true, true, true, true);
+}
+
 /** Host capabilities are trusted and non-reentrant. */
-function createRenderer(options, drawing, asynchronous = false, standard = false, uniform = false, bufferRoles = false, images = false, colors = false, textureOperations = false, floats = false, packed = false, shared = false) {
+function createRenderer(options, drawing, asynchronous = false, standard = false, uniform = false, bufferRoles = false, images = false, colors = false, textureOperations = false, floats = false, packed = false, shared = false, integers = false) {
   return result(() => {
     const config = dataRecord(options, ["gl", "resources", "bindings", "shaderBridge", "limits", "cacheLimits", ...(drawing ? ["drawLimits"] : []), ...(asynchronous ? ["asyncAccess", "jobLimits"] : []), ...(standard ? ["primitiveAssembly"] : []), ...(uniform ? ["uniformAccess"] : []), ...(images ? ["imageAccess"] : [])], ["gl", "resources", "bindings", "shaderBridge", ...(asynchronous ? ["asyncAccess"] : []), ...(uniform ? ["uniformAccess"] : []), ...(images ? ["imageAccess"] : [])]);
     const { gl, resources, bindings, shaderBridge } = config;
@@ -260,14 +268,15 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
     }
     const uniformAccess = uniform ? config.uniformAccess : null;
     require(!uniform || uniformAccess && ["capture", "validate", "submit", "release", "inspect"].every(name =>
-      typeof uniformAccess[name] === "function") && typeof shaderBridge.translatePairUniforms === "function",
+      typeof uniformAccess[name] === "function") && typeof shaderBridge[integers ? "translatePairImages" : "translatePairUniforms"] === "function",
     "invalid-input", "Selected uniform range and compiler capabilities are required.");
     const imageAccess = images ? config.imageAccess : null;
     require(!images || imageAccess && ["capture", "resolve", "refresh", "hold", "holdStorage", "release", "inspect"].every(name => typeof imageAccess[name] === "function"),
       "invalid-input", "Original native image range authority is required.");
-    const profile = shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : textureOperations ? STANDARD_TEXTURE_ASYNC_PROFILE : colors ? STANDARD_COLOR_ASYNC_PROFILE : images ? STANDARD_IMAGE_ASYNC_PROFILE : bufferRoles ? STANDARD_BUFFER_ASYNC_PROFILE : uniform ? STANDARD_UNIFORM_ASYNC_PROFILE : standard ? STANDARD_ASYNC_PROFILE : asynchronous ? ASYNC_PROFILE : drawing ? DRAW_PROFILE : STATE_PROFILE;
-    const decodeCommands = shared ? decodeStandardSharedExponentImageSubmission : packed ? decodeStandardPackedFloatImageSubmission : floats ? decodeStandardFloatImageSubmission : colors ? decodeStandardColorSubmission : images ? decodeStandardImageSubmission : uniform ? decodeStandardUniformSubmission : standard ? decodeStandardSubmission : decodeSubmission;
-    const parseShaderMetadata = textureOperations ? parseStandardTextureShaderMetadata : uniform ? parseStandardUniformShaderMetadata : standard ? parseStandardShaderMetadata : parseConstantDomain;
+    require(!integers || typeof shaderBridge.translateImages === "function", "invalid-input", "Integer images require the selected stage compiler.");
+    const profile = integers ? STANDARD_INTEGER_IMAGE_ASYNC_PROFILE : shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : textureOperations ? STANDARD_TEXTURE_ASYNC_PROFILE : colors ? STANDARD_COLOR_ASYNC_PROFILE : images ? STANDARD_IMAGE_ASYNC_PROFILE : bufferRoles ? STANDARD_BUFFER_ASYNC_PROFILE : uniform ? STANDARD_UNIFORM_ASYNC_PROFILE : standard ? STANDARD_ASYNC_PROFILE : asynchronous ? ASYNC_PROFILE : drawing ? DRAW_PROFILE : STATE_PROFILE;
+    const decodeCommands = integers ? decodeStandardIntegerImageSubmission : shared ? decodeStandardSharedExponentImageSubmission : packed ? decodeStandardPackedFloatImageSubmission : floats ? decodeStandardFloatImageSubmission : colors ? decodeStandardColorSubmission : images ? decodeStandardImageSubmission : uniform ? decodeStandardUniformSubmission : standard ? decodeStandardSubmission : decodeSubmission;
+    const parseShaderMetadata = integers ? parseStandardIntegerImageShaderMetadata : textureOperations ? parseStandardTextureShaderMetadata : uniform ? parseStandardUniformShaderMetadata : standard ? parseStandardShaderMetadata : parseConstantDomain;
     const idle = () => require(activeJob === null, "busy", "A renderer job is active; cancel and drain it before changing state.");
     const contexts = new Map(), objects = new Set(), programs = new Set();
     let disposed = false, nextGeneration = 1, subCount = 0, shaderBytes = 0, uniformBytes = 0, leaseCount = 0;
@@ -380,32 +389,33 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       }
     };
     const translatedStage = (sub, request) => {
-      const key = JSON.stringify([sub.generation, "stage", request.stage, request.text, ...(textureOperations ? [shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : STANDARD_TEXTURE_ASYNC_PROFILE] : [])]);
+      const key = JSON.stringify([sub.generation, "stage", request.stage, request.text, ...(textureOperations ? [integers ? STANDARD_INTEGER_IMAGE_ASYNC_PROFILE : shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : STANDARD_TEXTURE_ASYNC_PROFILE] : [])]);
       const cached = translationCache.get(sub, key);
       if (cached) return cached;
       work.translations++;
-      const response = shaderBridge.translate(request);
-      const translated = textureOperations ? unwrap(normalizeStandardTextureShaderResult(response, request.stage)) : uniform ? unwrap(normalizeStandardUniformShaderResult(response, request.stage)) : standard ? unwrap(normalizeStandardShaderResult(response, request.stage)) : freeze(unwrap(response));
+      const response = integers ? shaderBridge.translateImages({ ...request, signedColorMask: 0, unsignedColorMask: 0 }) : shaderBridge.translate(request);
+      const translated = integers ? unwrap(normalizeStandardIntegerImageShaderResult(response, request.stage)) : textureOperations ? unwrap(normalizeStandardTextureShaderResult(response, request.stage)) : uniform ? unwrap(normalizeStandardUniformShaderResult(response, request.stage)) : standard ? unwrap(normalizeStandardShaderResult(response, request.stage)) : freeze(unwrap(response));
       unwrap(parseShaderMetadata(translated.metadata, request.stage));
       require(typeof translated.glsl === "string" && /^#version 300 es\b/m.test(translated.glsl),
         "shader-error", "Shader bridge returned incompatible output.");
       translationCache.put(sub, key, translated, 1024 + 2 * (key.length + JSON.stringify(translated).length));
       return translated;
     };
-    const translatedPair = (sub, vertex, fragment, interfaceKey, validate, inputTypes = null, bufferZeroMask = 0) => {
+    const translatedPair = (sub, vertex, fragment, interfaceKey, validate, inputTypes = null, bufferZeroMask = 0, colorOutputs = null) => {
       const key = JSON.stringify([sub.generation, "pair", vertex.fields.text, fragment.fields.text, interfaceKey,
-        ...(inputTypes?.key ? [inputTypes.key] : []), ...(uniform ? [bufferZeroMask] : []), ...(textureOperations ? [shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : STANDARD_TEXTURE_ASYNC_PROFILE] : [])]);
+        ...(inputTypes?.key ? [inputTypes.key] : []), ...(uniform ? [bufferZeroMask] : []), ...(integers ? [colorOutputs.key] : []), ...(textureOperations ? [integers ? STANDARD_INTEGER_IMAGE_ASYNC_PROFILE : shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : STANDARD_TEXTURE_ASYNC_PROFILE] : [])]);
       const cached = translationCache.get(sub, key);
       if (cached) { validate(cached); return cached; }
       work.pairTranslations++;
       const request = { vertexText: vertex.fields.text, fragmentText: fragment.fields.text };
       const masks = inputTypes?.key ? { signedMask: inputTypes.signedMask, unsignedMask: inputTypes.unsignedMask } : null;
       const selectors = { signedMask: inputTypes?.signedMask ?? 0, unsignedMask: inputTypes?.unsignedMask ?? 0,
-        packedSignedMask: inputTypes?.packedSignedMask ?? 0, packedNormalizedMask: inputTypes?.packedNormalizedMask ?? 0, bufferZeroMask };
-      const response = uniform ? shaderBridge.translatePairUniforms({ ...request, ...selectors }) : inputTypes?.packedSignedMask ? shaderBridge.translatePairVertexFormats({ ...request, ...masks,
+        packedSignedMask: inputTypes?.packedSignedMask ?? 0, packedNormalizedMask: inputTypes?.packedNormalizedMask ?? 0, bufferZeroMask,
+        ...(integers ? { signedColorMask: colorOutputs.signedColorMask, unsignedColorMask: colorOutputs.unsignedColorMask } : {}) };
+      const response = integers ? shaderBridge.translatePairImages({ ...request, ...selectors }) : uniform ? shaderBridge.translatePairUniforms({ ...request, ...selectors }) : inputTypes?.packedSignedMask ? shaderBridge.translatePairVertexFormats({ ...request, ...masks,
         packedSignedMask: inputTypes.packedSignedMask, packedNormalizedMask: inputTypes.packedNormalizedMask }) :
         masks ? shaderBridge.translatePairTyped({ ...request, ...masks }) : shaderBridge.translatePair(request);
-      const translated = textureOperations ? unwrap(normalizeStandardTextureShaderPair(response, selectors)) : uniform ? unwrap(normalizeStandardUniformShaderPair(response, selectors)) : standard ? unwrap(masks ? normalizeStandardShaderTypedPair(response, masks) :
+      const translated = integers ? unwrap(normalizeStandardIntegerImageShaderPair(response, selectors)) : textureOperations ? unwrap(normalizeStandardTextureShaderPair(response, selectors)) : uniform ? unwrap(normalizeStandardUniformShaderPair(response, selectors)) : standard ? unwrap(masks ? normalizeStandardShaderTypedPair(response, masks) :
         normalizeStandardShaderPair(response)) : freeze(unwrap(response));
       validate(translated);
       translationCache.put(sub, key, translated, 1024 + 2 * (key.length + JSON.stringify(translated).length));
@@ -529,18 +539,28 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       }
     };
     const unitFor = (stage, index) => stage === 1 ? index : 16 + index;
+    const colorsFor = sub => {
+      const format = sub.surfaces[0]?.metadata.format ?? 0, image = integerColorFormat(format);
+      return { signedColorMask: image?.signed === true ? 1 : 0, unsignedColorMask: image?.signed === false ? 1 : 0,
+        key: "integer-image-color0-v1:" + format };
+    };
+    const selectedBlendFold = (sub, fragment) => integers && integerColorFormat(sub.surfaces[0]?.metadata.format) ? 0 : blendFoldFor(sub, fragment);
     const samplingFor = (sub, fragment, vertex = null) => {
       const declarations = standard ? [[0, vertex], [1, fragment]].flatMap(([stage, shader]) =>
         shader.translation.metadata.samplers.map(sampler => ({ stage, sampler }))) :
         fragment.translation.metadata.samplers.map(sampler => ({ stage: 1, sampler }));
       const views = declarations.map(({ stage, sampler }) => {
-        require(sampler.type === "sampler2D" && Number.isInteger(sampler.index) && sampler.index >= 0 && sampler.index < (standard ? 16 : 8) &&
+        require((integers ? ["sampler2D", "isampler2D", "usampler2D"].includes(sampler.type) : sampler.type === "sampler2D") && Number.isInteger(sampler.index) && sampler.index >= 0 && sampler.index < (standard ? 16 : 8) &&
           sampler.name === (stage === 0 ? "vssamp" : "fssamp") + sampler.index,
         "shader-link-error", "View specialization requires the checked stage 2D TEX family.");
         const view = sub.views[stage][sampler.index], fields = view?.fields;
+        if (integers && fields) {
+          const image = integerColorFormat(fields.format), nativeType = image ? image.signed ? "isampler2D" : "usampler2D" : "sampler2D";
+          require(sampler.type === nativeType, "incompatible-resource", "Original sampler return type disagrees with retained image storage.");
+        }
         // Linking may precede view binding. The fixed legacy RGBA identity
         // specialization is safe then; draw validation still requires a view.
-        return { ...(standard ? { stage } : {}), index: sampler.index, name: sampler.name, target: 2, format: fields?.format ?? 67,
+        return { ...(standard ? { stage } : {}), ...(integers ? { type: sampler.type } : {}), index: sampler.index, name: sampler.name, target: 2, format: fields?.format ?? 67,
           firstLevel: images ? fields?.firstLevel ?? 0 : 0, lastLevel: images ? fields?.lastLevel ?? 0 : 0, firstLayer: 0, lastLayer: 0, origin: "lower-left",
           swizzle: fields?.swizzle ?? [0, 1, 2, 3] };
       });
@@ -553,7 +573,9 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       if (!specialized.length) return null;
       let helpers = "";
       for (const view of specialized) {
-        const lanes = ["v.r", "v.g", "v.b", "v.a", "0.0", "1.0"], swizzle = view.swizzle.map(value => lanes[value]).join(",");
+        const type = view.type === "isampler2D" ? "ivec4" : view.type === "usampler2D" ? "uvec4" : "vec4",
+          lanes = ["v.r", "v.g", "v.b", "v.a", type === "uvec4" ? "0u" : type === "ivec4" ? "0" : "0.0", type === "uvec4" ? "1u" : type === "ivec4" ? "1" : "1.0"],
+          swizzle = view.swizzle.map(value => lanes[value]).join(",");
         const operations = textureOperations ? [
           ["texture", "vec2 coord", "coord"], ["textureLod", "vec2 coord,float lod", "coord,lod"],
           ["texelFetch", "ivec2 coord,int lod", "coord,lod"], ["textureGrad", "vec2 coord,vec2 dx,vec2 dy", "coord,dx,dy"]
@@ -564,9 +586,9 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           let hits = 0;
           text = text.replace(pattern, () => { hits++; return `${name}(`; }); total += hits;
           if (hits) {
-            helpers += `vec4 ${name}(${parameters}){vec4 v=${operation}(${view.name},${argumentsText});return vec4(${swizzle});}\n`;
+            helpers += `${type} ${name}(${parameters}){${type} v=${operation}(${view.name},${argumentsText});return ${type}(${swizzle});}\n`;
             if (textureOperations && operation === "texture" && stage === 1)
-              helpers += `vec4 ${name}(vec2 coord,float bias){vec4 v=texture(${view.name},coord,bias);return vec4(${swizzle});}\n`;
+              helpers += `${type} ${name}(vec2 coord,float bias){${type} v=texture(${view.name},coord,bias);return ${type}(${swizzle});}\n`;
           }
         }
         require(textureOperations || total > 0, "shader-link-error", "Checked TEX sampler has no emitted lookup to specialize.");
@@ -631,24 +653,25 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
     function link(sub, vertex, fragment) {
       require(vertex?.fields.stage === 0 && fragment?.fields.stage === 1, "missing-shader", "Link requires a vertex shader and a fragment shader.");
       const sampling = samplingFor(sub, fragment, vertex);
-      const blendFold = blendFoldFor(sub, fragment);
+      const blendFold = selectedBlendFold(sub, fragment), colorOutputs = integers ? colorsFor(sub) : null;
       const inputTypes = inputTypesFor(sub, vertex);
       let vs = vertex.translation.metadata;
       let fs = fragment.translation.metadata;
       const bufferZeroMask = zeroMask(sub, vertex, fragment);
       let fragmentBase = fragment.translation.glsl;
       const interfaceInfo = standard ? (() => {
-        const owned = unwrap(textureOperations ? deriveStandardTextureShaderInterface(vs, fs) : uniform ? deriveStandardUniformShaderInterface(vs, fs) : deriveStandardShaderInterface(vs, fs));
+        const owned = unwrap(integers ? deriveStandardIntegerImageShaderInterface(vs, fs) : textureOperations ? deriveStandardTextureShaderInterface(vs, fs) : uniform ? deriveStandardUniformShaderInterface(vs, fs) : deriveStandardShaderInterface(vs, fs));
         return { ...owned, inputs: new Map(owned.inputs.map(input => [input.semanticIndex, input])) };
       })() : shaderInterface(vs, fs, fragment.coordinateContract, fragment.discardContract);
       // Generations identify these exact owned immutable bodies/metadata, not public names.
       // Derive the complete pair interface even when another vertex used this fragment.
       const key = `${sub.generation}:${vertex.generation}:${fragment.generation}:${interfaceInfo.key}|${sampling.key}` +
-        (blendFold ? `|blend-source-constant-v1:${blendFold}` : "") + (inputTypes.key ? `|${inputTypes.key}` : "") + (uniform ? `|buffer-zero:${bufferZeroMask}` : "");
+        (blendFold ? `|blend-source-constant-v1:${blendFold}` : "") + (inputTypes.key ? `|${inputTypes.key}` : "") + (uniform ? `|buffer-zero:${bufferZeroMask}` : "") + (integers ? `|${colorOutputs.key}` : "");
       const cached = programCache.get(sub, key);
       if (cached) return cached;
       const program = { key, generation: generation(), vertex, fragment, native: null, blocks: [], uniforms: [], samplers: [],
         interfaceKey: interfaceInfo.key, samplingKey: sampling.key, samplingViews: sampling.views, inputKey: inputTypes.key,
+        ...(integers ? { colorKey: colorOutputs.key } : {}),
         variantShader: null, fragmentVariantShader: null, variantBytes: 0,
         blendFold, blendUniform: null,
         reflection: { attributes: [], uniforms: [], samplers: [], uniformBlocks: [], outputs: [], ...(standard ? { systemValues: [], rasterUniforms: [] } : {}), ...(textureOperations ? { textureQueries: [] } : {}) },
@@ -658,7 +681,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           require(typeof shaderBridge.translatePair === "function", "shader-link-error", interfaceInfo.coordinates ?
             "Fragment coordinates require the checked pair compiler." : interfaceInfo.discard ?
             "Fragment discard requires the checked pair compiler." : "Flat interpolation requires the checked pair compiler.");
-          require(uniform ? typeof shaderBridge.translatePairUniforms === "function" : inputTypes.packedSignedMask ? typeof shaderBridge.translatePairVertexFormats === "function" :
+          require(integers ? typeof shaderBridge.translatePairImages === "function" : uniform ? typeof shaderBridge.translatePairUniforms === "function" : inputTypes.packedSignedMask ? typeof shaderBridge.translatePairVertexFormats === "function" :
             !inputTypes.key || typeof shaderBridge.translatePairTyped === "function", "shader-link-error", "Vertex formats require the checked pair compiler.");
           const typedAttribute = attribute => ({ ...attribute, type: inputTypes.signedMask & (1 << attribute.index) ? "ivec4" :
             inputTypes.unsignedMask & (1 << attribute.index) ? "uvec4" : "vec4" });
@@ -666,11 +689,16 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
             outputs: vs.outputs.map((output) => output.semantic === "GENERIC" ?
             { ...output, ...(standard ? { type: interfaceInfo.inputs.get(output.semanticIndex)?.interpolation === "flat" ? "uvec4" : "vec4" } : {}),
               interpolation: interfaceInfo.inputs.get(output.semanticIndex)?.interpolation ?? "smooth" } : output) };
+          const expectedFragment = uniform ? promotedMetadata(fs, 1, bufferZeroMask) : fs;
+          const selectedFragment = integers ? { ...expectedFragment,
+            outputs: expectedFragment.outputs.map(output => ({ ...output,
+              type: colorOutputs.signedColorMask ? "ivec4" : colorOutputs.unsignedColorMask ? "uvec4" : "vec4" })),
+            colorOutputMasks: { signedMask: colorOutputs.signedColorMask, unsignedMask: colorOutputs.unsignedColorMask } } : expectedFragment;
           const pair = translatedPair(sub, vertex, fragment, interfaceInfo.key, (pair) => require(pair.interfaceKey === interfaceInfo.key &&
-            (uniform || pair.fragment?.glsl === fragment.translation.glsl) && JSON.stringify(pair.fragment?.metadata) === JSON.stringify(uniform ? promotedMetadata(fs, 1, bufferZeroMask) : fs) &&
+            (uniform || pair.fragment?.glsl === fragment.translation.glsl) && JSON.stringify(pair.fragment?.metadata) === JSON.stringify(selectedFragment) &&
             typeof pair.vertex?.glsl === "string" && pair.vertex.glsl.length <= SHADER_LIMITS.glslBytes &&
             /^#version 300 es\b/m.test(pair.vertex.glsl) && JSON.stringify(pair.vertex.metadata) === JSON.stringify(expectedVertex),
-          "shader-link-error", "Pair compiler output does not match the selected shader interface."), inputTypes, bufferZeroMask);
+          "shader-link-error", "Pair compiler output does not match the selected shader interface."), inputTypes, bufferZeroMask, colorOutputs);
           if (standard || interfaceInfo.flat) {
             program.vertexText = pair.vertex.glsl; vs = pair.vertex.metadata;
             if (uniform) { fragmentBase = pair.fragment.glsl; fs = pair.fragment.metadata; }
@@ -774,14 +802,15 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
             program.reflection.textureQueries.push({ ...query, stage: metadata.stage, active, nativeType: gl.INT });
           }
           for (const sampler of metadata.samplers) {
-            require(sampler.type === "sampler2D" && sampler.index < stageSlots[stage], "shader-reflection-error", "Sampler exceeds supported host stage slots.");
+            const nativeType = ({ sampler2D: gl.SAMPLER_2D, isampler2D: gl.INT_SAMPLER_2D, usampler2D: gl.UNSIGNED_INT_SAMPLER_2D })[sampler.type];
+            require((integers ? nativeType !== undefined : sampler.type === "sampler2D") && sampler.index < stageSlots[stage], "shader-reflection-error", "Sampler exceeds supported host stage slots.");
             const location = gl.getUniformLocation(program.native, sampler.name), index = gl.getUniformIndices(program.native, [sampler.name])?.[0];
             const view = standard || stage === 1 ? sampling.views.find((entry) => entry.index === sampler.index && (!standard || entry.stage === stage)) : null;
             const constant = view?.swizzle.every((value) => value >= 4) ?? false;
             if (location === null && index === gl.INVALID_INDEX) require(standard || constant,
               "shader-reflection-error", "Only a proved all-constant view may eliminate a used sampler.");
             else require(location !== null && index !== undefined && index !== gl.INVALID_INDEX &&
-                gl.getActiveUniforms(program.native, [index], gl.UNIFORM_TYPE)[0] === gl.SAMPLER_2D &&
+                gl.getActiveUniforms(program.native, [index], gl.UNIFORM_TYPE)[0] === nativeType &&
                 gl.getActiveUniforms(program.native, [index], gl.UNIFORM_SIZE)[0] === 1, "shader-reflection-error", "Sampler reflection mismatch.");
             const unit = unitFor(stage, sampler.index);
             program.samplers.push({ location, unit, stage, index: sampler.index }); program.reflection.samplers.push({ ...sampler, stage: metadata.stage, unit });
@@ -864,7 +893,8 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
             program.reflection.uniforms.some(uniform => uniform.name === actual.name &&
               uniform.activeCount === actual.size && actual.type === gl.UNSIGNED_INT_VEC4) ||
             program.reflection.samplers.some(sampler => sampler.name === actual.name &&
-              actual.size === 1 && actual.type === gl.SAMPLER_2D) ||
+              actual.size === 1 && actual.type === ({ sampler2D: gl.SAMPLER_2D, isampler2D: gl.INT_SAMPLER_2D,
+                usampler2D: gl.UNSIGNED_INT_SAMPLER_2D })[sampler.type]) ||
             textureOperations && program.reflection.textureQueries.some(query => query.active && query.name === actual.name &&
               actual.size === 1 && actual.type === gl.INT) ||
             program.reflection.blend?.uniform === actual.name && actual.size === 1 && actual.type === gl.FLOAT_VEC4 ||
@@ -910,7 +940,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           format.elementBytes <= buffer.metadata.byteLength - buffer.fields.offset - element.sourceOffset, "out-of-bounds", "Vertex element exceeds storage.");
       }
     };
-    const xAlpha = (sub) => [2, 233].includes(sub.surfaces[0]?.metadata.format) || colors && Boolean((byteColorFormat(sub.surfaces[0]?.metadata.format) || (floats ? floatColorFormat(sub.surfaces[0]?.metadata.format) : null) || (packed ? packedFloatColorFormat(sub.surfaces[0]?.metadata.format) : null))?.implicitAlpha);
+    const xAlpha = (sub) => [2, 233].includes(sub.surfaces[0]?.metadata.format) || colors && Boolean((byteColorFormat(sub.surfaces[0]?.metadata.format) || (floats ? floatColorFormat(sub.surfaces[0]?.metadata.format) : null) || (packed ? packedFloatColorFormat(sub.surfaces[0]?.metadata.format) : null) || (integers ? integerColorFormat(sub.surfaces[0]?.metadata.format) : null))?.implicitAlpha);
     const colorMask = (sub) => {
       const bits = sub.blend?.fields.renderTargets[0].colorMask ?? 15;
       return [1, 2, 4, 8].map((bit) => Boolean(bits & bit) && (bit !== 8 || !xAlpha(sub)));
@@ -994,7 +1024,8 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       require(sub.shaders.every((shader, stage) => shader === shaders[stage]) &&
         sub.programs.get(program.key) === program && programs.has(program) &&
         samplingFor(sub, shaders[1], shaders[0]).key === program.samplingKey &&
-        blendFoldFor(sub, shaders[1]) === program.blendFold &&
+        selectedBlendFold(sub, shaders[1]) === program.blendFold &&
+        (!integers || colorsFor(sub).key === program.colorKey) &&
         inputTypesFor(sub, shaders[0]).key === program.inputKey &&
         sub.constants.every((bank, stage) => bank === banks[stage]),
       "stale-draw", "Draw shader, program or constant-bank identity changed.");
@@ -1161,8 +1192,9 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       gl.cullFace(gl.BACK); gl.frontFace(rasterizer?.frontCcw ? gl.CW : gl.CCW);
       const blend = state.blend, target = blend?.renderTargets[0];
       if (blend?.dither) gl.enable(gl.DITHER); else gl.disable(gl.DITHER);
-      if (target?.blendEnable) gl.enable(gl.BLEND); else gl.disable(gl.BLEND);
-      const enabled = target?.blendEnable === true, ignoresRgbFactors = enabled && target.rgbFunction >= 3;
+      const enabled = target?.blendEnable === true && !(integers && integerColorFormat(sub.surfaces[0]?.metadata.format));
+      if (enabled) gl.enable(gl.BLEND); else gl.disable(gl.BLEND);
+      const ignoresRgbFactors = enabled && target.rgbFunction >= 3;
       gl.blendEquationSeparate(enabled ? gl[BLEND_EQUATIONS[target.rgbFunction]] : gl.FUNC_ADD,
         enabled ? gl[BLEND_EQUATIONS[target.alphaFunction]] : gl.FUNC_ADD);
       gl.blendFuncSeparate(enabled && !ignoresRgbFactors && !mixedBlendConstants(target) ? gl[BLEND_FACTORS[target.rgbSourceFactor]] : gl.ONE,
@@ -1209,6 +1241,9 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       for (const sampler of program.samplers) {
         const view = sub.views[sampler.stage][sampler.index], state = sub.samplers[sampler.stage][sampler.index];
         require(view && state, "incomplete-draw", "Drawing requires an active sampler view and sampler state.");
+        if (integers && integerColorFormat(view.fields.format)) require(state.fields.minImageFilter === 0 &&
+          state.fields.magImageFilter === 0 && [0, 2].includes(state.fields.minMipFilter),
+        "unsupported-sampler", "Integer image sampling requires native nearest-compatible filters.");
         const overlap = resolve(view.lease).storage.texture === surface.storage.texture;
         const surfaceLevel = sub.surfaces[0].fields.level;
         require(!overlap || images && (surfaceLevel < view.fields.firstLevel || surfaceLevel > view.fields.lastLevel),
@@ -1475,6 +1510,9 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         }
         case 7: {
           require(!images || job, "unsupported-clear", "Original image clears require an owned completion job.");
+          const integerClear = integers ? integerColorFormat(sub.surfaces[0]?.metadata.format) : null;
+          require(!integers || !(fields.buffers & 4) || integerClear || fields.color.every(Number.isFinite),
+            "invalid-value", "A floating color clear requires finite original float words.");
           if (images) holdImageSurfaces(job, sub);
           require(!(fields.buffers & 4) || sub.surfaces[0], "incomplete-framebuffer", "Color CLEAR needs a color surface.");
           require(!(fields.buffers & 1) || sub.depthSurface, "incomplete-framebuffer", "Depth CLEAR needs a Z16 depth surface.");
@@ -1485,11 +1523,13 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           const floatClear = floats && Boolean(floatColorFormat(sub.surfaces[0]?.metadata.format) || (packed ? packedFloatColorFormat(sub.surfaces[0]?.metadata.format) : null));
           if (fields.buffers & 4) {
             gl.colorMask(true, true, true, !xAlpha(sub));
-            if (floatClear) gl.clearBufferfv(gl.COLOR, 0, fields.color);
+            if (integerClear) gl[integerClear.signed ? "clearBufferiv" : "clearBufferuiv"](gl.COLOR, 0,
+              integerClear.signed ? new Int32Array(fields.colorWords) : new Uint32Array(fields.colorWords));
+            else if (floatClear) gl.clearBufferfv(gl.COLOR, 0, fields.color);
             else gl.clearColor(...fields.color);
           }
           if (fields.buffers & 1) { gl.depthMask(true); gl.clearDepth(fields.depth); }
-          gl.clear((!floatClear && fields.buffers & 4 ? gl.COLOR_BUFFER_BIT : 0) | (fields.buffers & 1 ? gl.DEPTH_BUFFER_BIT : 0));
+          gl.clear((!floatClear && !integerClear && fields.buffers & 4 ? gl.COLOR_BUFFER_BIT : 0) | (fields.buffers & 1 ? gl.DEPTH_BUFFER_BIT : 0));
           gl.colorMask(...colorMask(sub)); gl.depthMask(sub.dsa?.fields.depthWriteMask ?? false);
           if (sub.rasterizer?.fields.scissor) gl.enable(gl.SCISSOR_TEST);
           check(); return;

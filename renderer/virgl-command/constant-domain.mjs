@@ -1120,3 +1120,102 @@ export function deriveStandardTextureShaderInterface(vertex, fragment, hostSelec
       standardTextureMetadata(fragment, "fragment", true, selectors)) });
   } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-link-error", error.message); }
 }
+
+// Original integer image authority is selected by the host, never inferred from
+// a guest profile string. Project already checked native types through the closed
+// predecessor contract, then restore them in an entirely owned representation.
+export const STANDARD_INTEGER_IMAGE_SHADER_PROFILE = "virgl-webgl2-standard-integer-image-gles3-v1";
+const STANDARD_IMAGE_COLORS = Object.freeze({ signedColorMask: 0, unsignedColorMask: 0 });
+const STANDARD_IMAGE_SELECTORS = Object.freeze({ ...STANDARD_UNIFORM_SELECTORS, ...STANDARD_IMAGE_COLORS });
+function standardImageColors(value) {
+  const colors = record(value, Object.keys(STANDARD_IMAGE_COLORS));
+  require([colors.signedColorMask, colors.unsignedColorMask].every(mask =>
+    Number.isInteger(mask) && mask >= 0 && mask <= 1) && !(colors.signedColorMask & colors.unsignedColorMask),
+  "Integer image colors require disjoint host COLOR0 masks.");
+  return colors;
+}
+function standardImageSelectors(value) {
+  const input = record(value, Object.keys(STANDARD_IMAGE_SELECTORS));
+  return { ...standardUniformSelectors(Object.fromEntries(Object.keys(STANDARD_UNIFORM_SELECTORS).map(key => [key, input[key]]))),
+    ...standardImageColors({ signedColorMask: input.signedColorMask, unsignedColorMask: input.unsignedColorMask }) };
+}
+function standardImageMetadata(value, stage, paired, selectors) {
+  const input = record(value, [...STANDARD_METADATA_KEYS, "guestUniformBlocks", "textureQueries", "colorOutputMasks"]);
+  require(input.profile === STANDARD_INTEGER_IMAGE_SHADER_PROFILE,
+    "Integer images require their distinct compiler profile.");
+  require(paired || stage !== "vertex" || !(selectors.signedColorMask | selectors.unsignedColorMask),
+    "A vertex stage cannot select color outputs.");
+  const colors = record(input.colorOutputMasks, ["signedMask", "unsignedMask"]);
+  const signedMask = stage === "fragment" ? selectors.signedColorMask : 0,
+    unsignedMask = stage === "fragment" ? selectors.unsignedColorMask : 0;
+  require(colors.signedMask === signedMask && colors.unsignedMask === unsignedMask,
+    "Native color output masks disagree with the retained host format.");
+  const samplers = array(input.samplers, 16).map(value => {
+    const sampler = record(value, ["index", "name", "type"]);
+    require(["sampler2D", "isampler2D", "usampler2D"].includes(sampler.type),
+      "Unsupported original native 2D sampler type.");
+    return sampler;
+  });
+  const outputs = array(input.outputs, 32).map(value => {
+    const output = record(value, [...STANDARD_IO_KEYS, "syntacticWriteMask", "interpolation"],
+      [...STANDARD_IO_KEYS, "syntacticWriteMask"]);
+    if (stage === "fragment") require(output.type === (signedMask ? "ivec4" : unsignedMask ? "uvec4" : "vec4"),
+      "Native COLOR0 type disagrees with its host attachment.");
+    return output;
+  });
+  const common = Object.fromEntries([...STANDARD_METADATA_KEYS, "guestUniformBlocks", "textureQueries"].map(key => [key, input[key]]));
+  common.profile = STANDARD_TEXTURE_SHADER_PROFILE;
+  common.samplers = samplers.map(sampler => ({ ...sampler, type: "sampler2D" }));
+  common.outputs = outputs.map(output => stage === "fragment" ? { ...output, type: "vec4" } : output);
+  const metadata = standardTextureMetadata(common, stage, paired, selectors);
+  return standardFreeze({ ...metadata, profile: input.profile,
+    samplers: metadata.samplers.map((sampler, index) => ({ ...sampler, type: samplers[index].type })),
+    outputs: metadata.outputs.map((output, index) => ({ ...output, type: outputs[index].type })),
+    colorOutputMasks: { signedMask, unsignedMask } });
+}
+function standardImageBody(value, stage, paired, selectors) {
+  const body = record(value, ["glsl", "metadata"]);
+  require(typeof body.glsl === "string" && body.glsl.length <= 262144 && /^#version 300 es\b/m.test(body.glsl),
+    "Integer image compiler returned incompatible GLSL.");
+  return standardFreeze({ glsl: body.glsl, metadata: standardImageMetadata(body.metadata, stage, paired, selectors) });
+}
+export function parseStandardIntegerImageShaderMetadata(value, stage, hostColors = STANDARD_IMAGE_COLORS) {
+  try {
+    const colors = standardImageColors(hostColors);
+    return standardFreeze({ ok: true, domain: null,
+      metadata: standardImageMetadata(value, stage, false, { ...STANDARD_UNIFORM_SELECTORS, ...colors }) });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-domain-error", error.message); }
+}
+export function normalizeStandardIntegerImageShaderResult(value, stage, hostColors = STANDARD_IMAGE_COLORS) {
+  try {
+    const colors = standardImageColors(hostColors), response = record(value, ["ok", "glsl", "metadata", "error"], ["ok"]);
+    if (response.ok === false) { record(response, ["ok", "error"]); return standardError(response.error); }
+    require(response.ok === true, "Invalid integer image compiler result."); record(response, ["ok", "glsl", "metadata"]);
+    return standardFreeze({ ok: true, ...standardImageBody({ glsl: response.glsl, metadata: response.metadata }, stage,
+      false, { ...STANDARD_UNIFORM_SELECTORS, ...colors }) });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-domain-error", error.message); }
+}
+export function normalizeStandardIntegerImageShaderPair(value, hostSelectors = STANDARD_IMAGE_SELECTORS) {
+  try {
+    const selectors = standardImageSelectors(hostSelectors), response = record(value, ["ok", "vertex", "fragment", "interfaceKey", "error"], ["ok"]);
+    if (response.ok === false) { record(response, ["ok", "error"]); return standardError(response.error); }
+    require(response.ok === true, "Invalid integer image pair result."); record(response, ["ok", "vertex", "fragment", "interfaceKey"]);
+    const vertex = standardImageBody(response.vertex, "vertex", true, selectors),
+      fragment = standardImageBody(response.fragment, "fragment", true, selectors),
+      derived = standardInterface(vertex.metadata, fragment.metadata);
+    require(response.interfaceKey === derived.key, "Integer image pair key disagrees.");
+    for (const input of derived.inputs) {
+      const output = vertex.metadata.outputs.find(output => output.semantic === "GENERIC" && output.semanticIndex === input.semanticIndex);
+      require(output.type === input.type && output.interpolation === input.interpolation,
+        "Integer image pair lacks the compiler's promoted generic output.");
+    }
+    return standardFreeze({ ok: true, vertex, fragment, interfaceKey: response.interfaceKey });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-link-error", error.message); }
+}
+export function deriveStandardIntegerImageShaderInterface(vertex, fragment, hostSelectors = STANDARD_IMAGE_SELECTORS) {
+  try {
+    const selectors = standardImageSelectors(hostSelectors);
+    return standardFreeze({ ok: true, ...standardInterface(standardImageMetadata(vertex, "vertex", true, selectors),
+      standardImageMetadata(fragment, "fragment", true, selectors)) });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-link-error", error.message); }
+}
