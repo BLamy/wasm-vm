@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32]
-blocked_on: E6-T11d32
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33]
+blocked_on: E6-T11d33
 estimate: S
 risk: high
 capstone: false
@@ -397,3 +397,16 @@ selected compiler boundary: native integer samplers/raw sampled words and
 host format-selected fragment output types. Original packet consumption, the
 remaining GLES3/API/capset floors, actual guest bring-up and worker/scanout/demo
 deployment remain gated. Production guest graphics and300MIPS are not claimed.
+
+### 2026-10-10 — worker — integer compiler verified; original consumer gap
+
+D32 is independently verified and published on the existing PR510 at
+c64c3325c15d8978f455d57fc103559eec1b9d20. At that exact head run
+`node evidence/virgl-production-readiness/standard-integer-image-consumer-gap.mjs`.
+Authenticated sealed compilation admits24 original stage/pair programs, but the
+FLOAT-only consumer contract refuses them and all48 original integer view/surface
+packets refuse. Complete texts, actual compiler bodies, wire bytes and hashes are
+recorded in the adjacent JSON. Ordered S/high D33 composes the owned contract,
+retained images and async native draws into one selected single-color consumer.
+Production capability floors, actual guest Mesa/compositor, worker/scanout/demo
+and throughput acceptance remain successors; this gap is no guest authority.
