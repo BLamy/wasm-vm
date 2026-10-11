@@ -2,7 +2,7 @@
 id: E6-T11d35
 epic: 6
 title: Preserve original packed normalized image storage and transfers
-status: pending
+status: in-progress
 estimate: S
 risk: high
 priority: 525.027039000377
