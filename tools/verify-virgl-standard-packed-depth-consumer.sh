@@ -34,7 +34,7 @@ for mode in samples surfaces; do
  node tools/verify-virgl-standard-floating-depth-consumer.mjs --output "$evidence/retained-floating-$mode" --mode "$mode" --smoke true
  python3 tools/virgl-floating-depth-consumer/values.py "$evidence/retained-floating-$mode"
 done
-node tools/verify-virgl-standard-packed-depth-images.mjs --output "$evidence/retained-packed-storage" --smoke true
+node tools/verify-virgl-standard-packed-depth-images.mjs --output "$evidence/retained-packed-storage/hardware-matrix" --smoke true
 python3 tools/virgl-packed-depth/values.py "$evidence/retained-packed-storage"
 python3 tools/virgl-packed-depth-consumer/coverage.py "$evidence"
 set +x

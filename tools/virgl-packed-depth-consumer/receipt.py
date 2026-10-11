@@ -25,10 +25,11 @@ def main(directory):
             assert raw==subprocess.check_output(['git','show',head+':'+name],cwd=ROOT),name;sources[name]=actual
         else:assert actual==sources[name],name
     for name in names+legacy:
-        report=load(name+'/report.json');assert report['gitHead']==head and report['status']==('failed' if name.startswith('fault-') else 'passed')
+        relative=name+'/hardware-matrix' if name=='retained-packed-storage' else name
+        report=load(relative+'/report.json');assert report['gitHead']==head and report['status']==('failed' if name.startswith('fault-') else 'passed')
         assert report['browserErrors']==dict(console=[],page=[],requests=[])
         for row in report['sources']:
-            source(row['path'],row['sha256']);assert sha((directory/name/'source'/row['path']).read_bytes())==row['sha256']
+            source(row['path'],row['sha256']);assert sha((directory/relative/'source'/row['path']).read_bytes())==row['sha256']
         if name=='wire':
             assert len(report['wire']['records'])==22 and all(p['held'] for p in report['wire']['predictions']);continue
         assert report['browser']['headless'] is False and not any(any(s in arg.lower() for s in ['swiftshader','llvmpipe','softpipe','lavapipe']) or arg.startswith('--disable-gpu') for arg in report['browser']['commandLine'])
@@ -45,13 +46,13 @@ def main(directory):
                 assert len(evidence['runs'])=={'hardware-samples':22,'hardware-surfaces':120,'hardware-domain':2,'hardware-failures':10}.get(name,8)
                 if name=='hardware-domain':assert audits[name]['counts']['stratifiedOriginalPackedValues']==131072 and audits[name]['counts']['originalS8Values']==256
             else:assert audits[name]['status']=='refuted' and audits[name]['differences']
-        served={row['path']:row['sha256'] for row in report['servedFiles']};coverage=load(name+'/'+report['browserCoverage']['path'])
+        served={row['path']:row['sha256'] for row in report['servedFiles']};coverage=load(relative+'/'+report['browserCoverage']['path'])
         if name!='retained-packed-storage':assert RUNTIME<={r['source'] for r in coverage['scripts']}
         for row in coverage['scripts']:assert sha(row['sourceBody'].encode())==row['sha256']==served['/'+row['source']]
         for row in evidence['blobs']:
-            z=(directory/name/row['path']).read_bytes();assert sha(z)==row['gzipSha256'];raw=gzip.decompress(z);assert len(raw)==row['bytes'] and sha(raw)==row['sha256']
+            z=(directory/relative/row['path']).read_bytes();assert sha(z)==row['gzipSha256'];raw=gzip.decompress(z);assert len(raw)==row['bytes'] and sha(raw)==row['sha256']
         for key in ['screenshot','browserCoverage']:
-            row=report[key];assert sha((directory/name/row['path']).read_bytes())==row['sha256']
+            row=report[key];assert sha((directory/relative/row['path']).read_bytes())==row['sha256']
     assert generated==predecessor['generated'],'unchanged actual compiler identities'
     coverage=load('coverage-audit.json');assert coverage['gitHead']==head and coverage['predecessor']==BASE and coverage['positive'] and not coverage['zero']
     changed={n for n in git('diff','--name-only',BASE,head,'--','renderer/virgl-command').splitlines() if '/tests/' not in n and not n.endswith('.md')};assert changed==RUNTIME
