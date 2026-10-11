@@ -2412,3 +2412,9 @@ verify-E6-T11d41-critic:
 	python3 tools/virgl-unorm-depth/critic.py target/evidence/virgl-standard-unorm-depth-critic/promoted
 	@if node tools/verify-virgl-standard-unorm-depth.mjs --output target/evidence/virgl-standard-unorm-depth-critic/fault-completed-depth --mode surfaces --fault completed-depth --smoke true; then echo 'ERROR: completed native UN16 depth corruption escaped the unchanged inverse' >&2; exit 1; fi
 	python3 tools/virgl-unorm-depth/values.py target/evidence/virgl-standard-unorm-depth-critic/fault-completed-depth --control
+
+.PHONY: verify-E6-T11d42-critic
+verify-E6-T11d42-critic:
+	node --check renderer/virgl-command/tests/standard-packed-depth-critic.mjs
+	node --check tools/verify-virgl-standard-packed-depth-critic.mjs
+	node tools/verify-virgl-standard-packed-depth-critic.mjs --output $${VIRGL_PACKED_DEPTH_CRITIC_EVIDENCE_DIR:-target/evidence/d42-critic-novel} --seed 0x6d2a91c7
