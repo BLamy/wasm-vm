@@ -2,7 +2,7 @@
 id: E6-T11d32
 epic: 6
 title: Compile original integer samplers and format-selected fragment outputs
-status: implemented
+status: verified
 estimate: S
 risk: high
 priority: 525.027039000374
@@ -222,3 +222,113 @@ and format-selected output compiler boundary. Unchanged D31 runtime/storage
 and both predecessor seals are carried by exact code/dependency/digest. It
 demonstrates no integer command consumer, production capset, guest graphics,
 deployed demo or MIPS result. Fresh adversarial verification remains required.
+
+
+### 2026-10-10 — fresh independent verifier — VERDICT: verified
+
+VERDICT: verified
+
+Predictions were written before the recording (`predictions.json`, SHA256
+`66166ffc993417f6e0518653fe959b2853dd58c1856aee2c4b154782d134121d`), after reading
+the complete actual AGENTS.md, task and complete scoped D31..submission diff.
+The full diff is sealed (4,128,548 bytes,
+`a75ae7284c4ec871701aa4dced2b07447f0f2ccd5090d5490b1c4393b0f3da69`).
+Compiler source remains `3c0a3e348048c0ff293a6b67638a96fb5c3561cb`;
+actual added native test recordings are at clean immutable verifier test head
+`a899bee2eb6a50cf472c11181eb3bb9f89746e6d`.
+
+- P0 authentication — HELD. Reopened every one of 22,894 worker members, all 491
+  original source files and every hot/cold original/generated/toolchain/package
+  receipt binding. Also reopened all 48,653 D31 worker and 69,487 D31 verifier
+  members and compared their seals to actual d8d510a6. Archive/index remain
+  `6489b7d7b97effba826b3f8555efc192b9dcfae59ca8a232142cea6355f68be0` /
+  `7d670a9b824d7fc96f02c307b5e98d505658af4876430e80e77ac61b41e3f8dd`.
+- P1 original types/words — HELD. Literal original enum/format headers and full
+  public bytes independently reconstruct all 24 integer formats, signed minima,
+  unsigned high bits, missing lanes and native RGB expansion. Each normal capture
+  has 2,182 native source planes, 262,304 source words and 141,312 completed output
+  words with zero inverse mismatches (`original-word-audit.json:18630`).
+- P2 masks/declarations/refusals — HELD. All 2,586 complete native/sanitized/Wasm
+  states agree (1,975 accepted / 611 refused), including original COLOR semantic
+  locations, broadcast, sparse/high slots, bounded homogeneous SVIEWs, individual
+  SAMPs and malformed extents. Fresh independent 16 C/Wasm cases and 56 hostile
+  host requests preserve zero getters (`fresh/audit.json:4`, `:1859`).
+- P3 original operations/modifiers — HELD. Original parser fields are checked
+  against literal opcode, operand file/index/slot/swizzle/modifiers/masks and
+  immediate words. Native frames 530/537 prove finite-normal typed SAT as the
+  original float destination clamp. The three-seed mixed TXF/TXL/TXQ attack also
+  proves swizzled integer fetches, numeric absolute LOD, sampled-word modifiers,
+  masked lanes, unused view range, signed/unsigned/FLOAT sparse semantic outputs
+  (`novel-native/report.json:4867`, SHA256
+  `a62bb878948c11c2e9ba3fb4b53606c9b9dd4aab2cf292c1a048c32cff2c3792`).
+- P4 ownership/allocation/memory — HELD. Original and fresh hostile facades
+  preserve snapshots, zero getters and peer isolation. All 165 actual allocation
+  faults recover byte-exactly with no partial results, independently rerun under
+  ASan/UBSan. Binary memory-section parsing proves initial=maximum=256 pages,
+  16,777,216 bytes (`authentication.json:707699`); real input/scratch exhaustion
+  and recovery are recorded.
+- P5 incremental historical state — HELD. Actual authenticated old/new Wasm
+  exports match all 2,586 complete native response strings and all 957 old ABI
+  byte strings; 22 original typed refusals remain refused (`module-replay.json:8`,
+  `:12940`). The affected 932-case original FLOAT facade and 246 native draws plus
+  three physical controls hold with the unchanged verified original oracle.
+  D31 command/storage/crates/web/guest remain unchanged by code/dependency/seals.
+- P6 physical native custody — HELD after closing a recording gap. The old
+  records lacked explicit native sync identities/full waits. Verifier-only actual
+  method instrumentation now records 542 distinct returned WebGLSync objects,
+  all 1,956 polls, retirement, actual sampler/query/unit/COLOR reflection/level
+  state and completion-before-all-2,734-read ordering. Full original planes remain
+  correct (`complete-custody/hardware/report.json:467413`, SHA256
+  `8a29f2d55c013a6d6f30c073b8abeba3752cba93f2cd1b73505d2118a452a5d2`).
+- P7 controls/novel sabotage — HELD. Both actual texture controls finish
+  identified fences before unchanged full-output oracle failures; the type compile
+  refusal remains separate. Seeds 608135816 / 2242054355 / 320440878 pass the novel
+  native attack. After original fence 1 and correct outputs, actual texSubImage2D
+  changes word 608135816 to 608135817, distinct fence 2 completes, and the unchanged
+  promoted assertion catches it (`sabotage-post-completion/report.json:10328`,
+  SHA256 `1962fca27e265fb543babbc97df98ec92d6e951e059927382a31c81b4f3bc1c1`).
+- P8 smallest governing coverage/stack — HELD. Independently recomputed 145 JS
+  and 367 native positive changed-byte partitions in each final hot/cold record,
+  zero gaps and 20 explicit declaration/signature/header/comment waivers. Actual
+  optimized frames measure stage139,568 / pair195,280; including all measured
+  selected helpers gives conservative215,296 <262,144 (`coverage.json:14214`).
+- P9 pristine/environment — HELD. Carry the single authenticated final3c0a3e34
+  pristine compiler proof by unchanged actual boundaries. The added physical
+  instrumentation and assertions also pass in a clean scrubbed exact-a899bee2 clone
+  with fresh lockfile package install, both native texture controls and the same
+  actual post-completion pixel sabotage (`cold-harness/report.json:154`, SHA256
+  `a554a0c83e6e5c9ebdfa48731c171143fd8ad5c476e0380d62ffcab8d6d2a494`).
+
+Every prediction is HELD; no implementation refutation or proof demand remains.
+No runtime C/header/standard facade/build code, command/storage/crates/web/guest
+source was changed by the critic. Undefined query z, out-of-range operations,
+NaN/overflow and float denormals receive no invented numeric truth. Primary
+semantics remain the pinned original TGSI source and Khronos GLSL ES3.00r6
+sections4.1.3/5.4.1/5.4.2 (the task's exact primary-source link).
+
+SUITE: promoted independent original-header/input/byte/word/ABI/nested coverage
+and native modifier/query tests, complete physical fence custody and the actual
+post-completion pixel sabotage; `make verify-E6-T11d32-adversarial`. The recurring
+recipe's default output path is keyed by HEAD to avoid stale captures after later
+metadata commits; that sole post-record config line is syntax-checked, preserved
+in `post-record-config-waiver.json` and adds no test/runtime behavior.
+
+Evidence: `evidence/virgl-integer-image-shader/verifier/`.
+All 17,249 indexed regular members were independently reopened/sized/hashed,
+including all original complete inputs, returned native planes/fences, generated
+modules, 3,171 source bindings, audits, predictions and source closure. Archive
+SHA256 `1fbd03f22c08eeb555df4645fa1d4ba67d5093e8cd1fb8309854676cc8bd5bf8`;
+index SHA256 `0ed286ce446acf0c406cd1d578254778ea47e00e9430f1d5f6ccab1494e8de5d`;
+manifest SHA256 `13ae15bb1c1c83c83227661bd6c53eaefcd65abf96dbf4664b9d14e510906a4c`.
+Detailed criterion points/digests are in `verdict.md`, `final-audit.json` and
+`seal-reopen.json`; original records remain inside the sealed archive.
+
+Commands: `EMCC=/Users/blamy/.cache/wasm-vm/emsdk/4.0.22/wasm-vm-emcc make verify-E6-T11d32-adversarial`
+(exit0, full final completion marker); narrow added-harness pristine replay
+(`verifier-tools/cold-harness.py` in the seal, eight recorded commands);
+independent cold native word audits; sealed `verifier-tools/final-audit.py`,
+`verifier-tools/seal.py`, `verifier-tools/add-final-config.py`; independent final
+full-member reopen; Python/Node/shell syntax checks and `git diff --check`.
+Policy check precedes queue regeneration and the final verdict commit.
+The host rr layer is waived by the user's 2026-09-01 policy. No guest/wire/capset,
+demo deployment or throughput authority is added by this compiler facet.

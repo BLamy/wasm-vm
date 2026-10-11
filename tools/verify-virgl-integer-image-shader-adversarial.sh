@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 cd "$(dirname "$0")/.."
-evidence=${VIRGL_INTEGER_SHADER_CRITIC_EVIDENCE_DIR:-target/evidence/virgl-integer-image-shader-critic}
+evidence=${VIRGL_INTEGER_SHADER_CRITIC_EVIDENCE_DIR:-target/evidence/virgl-integer-image-shader-critic-$(git rev-parse --short=12 HEAD)}
 mkdir -p "$evidence"
 evidence=$(cd "$evidence" && pwd)
 exec > >(tee "$evidence/critic.log") 2>&1

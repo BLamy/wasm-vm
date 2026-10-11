@@ -1,0 +1,10 @@
+{
+  "schema": "d32-independent-final-seal-reopen-v1",
+  "status": "HELD",
+  "members": 17249,
+  "everyMemberSizeHashReopened": true,
+  "uniqueRegularContainedMembership": true,
+  "archiveSha256": "1fbd03f22c08eeb555df4645fa1d4ba67d5093e8cd1fb8309854676cc8bd5bf8",
+  "recordIndexSha256": "0ed286ce446acf0c406cd1d578254778ea47e00e9430f1d5f6ccab1494e8de5d",
+  "manifestSha256": "13ae15bb1c1c83c83227661bd6c53eaefcd65abf96dbf4664b9d14e510906a4c"
+}
