@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44]
-blocked_on: E6-T11d44
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45]
+blocked_on: E6-T11d45
 estimate: S
 risk: high
 capstone: false
@@ -545,3 +545,10 @@ D42 is independently verified at `c60bf20abcd42c1c10fb1863c2666a344d5c8e70` and 
 D43 is independently verified at `5a0d9fc9655f1e0956154763bda420aec721865a` and published on the existing open PR521. The original selected decoder still rejects the ten complete DSA/CLEAR bodies in `evidence/virgl-production-readiness/standard-stencil-consumer-gap.json` (SHA256 `c97ec6894299fe104b6b6bb06bb206ebd490c5846b1ff2aca1692db98b1dcbd9`). Run its adjacent recorder at that verified predecessor to reproduce. Legal original references and 20/126 views/surfaces already admit. The actual native M4 Metal precheck confirms WebGL's enabled-S8 common-reference/value-mask/write-mask restriction while disabled/asymmetric and absent-S8 draws remain legal.
 
 Ordered S/high task E6-T11d44 closes native original S8 state/clear execution with common effective per-face masks/references. Unsupported asymmetric active-S8 draws are refused before draw and require later ordered native translation; the full original stencil/API floor is not yet qualified. The user's production-graphics instruction continues this boundary. Native stack 500 is continued; all 121 earlier PR identities/order/heads/bases remain preserved and open. Actual guest Mesa initialization, full API/caps, worker/scanout/demo/deployment and 300 MIPS remain unproven.
+
+
+### 2026-10-11 — worker — native stencil verified; original ordered face translation remains
+
+D44 is independently verified at `ff80836249c9f235cae516421498a574b51b6f9c` and published in existing open PR522. Its fresh critic holds all14 criteria, including complete original native state/clear, active asymmetry refusals, live absent-S8 attachment switches, three fresh lifetime schedules, full custody/coverage and real second-fence S8 sabotage. The runtime remains exactde; all leases are explicitly released.
+
+The actual original asymmetric20/126 draws still fail at DRAW byteOffset40 before native draw/blit. Exact original repro before source changes is `node evidence/virgl-production-readiness/standard-ordered-stencil-gap.mjs`; the adjacent JSON binds six full original packet refusals, all510 original source bodies and the completely reopened938-member native recording at the exact verifiedff head. Original refs/value/write masks need ordered face selection to bypass the real WebGL restriction without changing guest output. S/high D45 provides one native face-selection/primitive-order boundary; split-call original INSTANCEID remains a later prerequisite. Common/inactive/absent paths stay held. The explicit user instruction continues production guest graphics. Existing upper native stack500 is continued; no previous PR was recreated or merged. Complete production API/caps, actual Mesa/compositor, worker/scanout/demo/deployment and300 MIPS remain unproven.
