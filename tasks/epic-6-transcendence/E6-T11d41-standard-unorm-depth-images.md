@@ -2,7 +2,7 @@
 id: E6-T11d41
 epic: 6
 title: Qualify original UN16 depth images and sampling
-status: pending
+status: in-progress
 estimate: S
 risk: high
 priority: 525.027039000381
