@@ -2390,3 +2390,10 @@ verify-E6-T11d39-critic:
 .PHONY: verify-E6-T11d40
 verify-E6-T11d40:
 	bash tools/verify-virgl-standard-floating-depth-consumer.sh
+
+.PHONY: verify-E6-T11d40-critic
+verify-E6-T11d40-critic:
+	node tools/verify-virgl-standard-floating-depth-consumer-critic.mjs --output target/evidence/virgl-standard-floating-depth-consumer-critic/promoted
+	python3 tools/virgl-floating-depth-consumer/values.py target/evidence/virgl-standard-floating-depth-consumer-critic/promoted
+	@if node tools/verify-virgl-standard-floating-depth-consumer-critic.mjs --output target/evidence/virgl-standard-floating-depth-consumer-critic/fault-completed-stencil --fault completed-stencil; then echo 'ERROR: actual completed retained stencil corruption escaped the unchanged inverse' >&2; exit 1; fi
+	python3 tools/virgl-floating-depth-consumer/values.py target/evidence/virgl-standard-floating-depth-consumer-critic/fault-completed-stencil --control
