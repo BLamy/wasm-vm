@@ -1,0 +1,88 @@
+{
+  "schema": "original-floating-depth-consumer-primary-v1",
+  "revision": "ca50e008863837e094747a69974dde3ae148aeaa",
+  "sources": [
+    {
+      "path": "tools/virgl-floating-depth-consumer/primary/vrend_renderer.c",
+      "bytes": 495473,
+      "sha256": "be7e5c63fb501cb77bd5b2c13c332f8b93c49fd04d207f17d434932c237f4ea3",
+      "url": "https://gitlab.freedesktop.org/virgl/virglrenderer/-/raw/ca50e008863837e094747a69974dde3ae148aeaa/src/vrend/vrend_renderer.c"
+    },
+    {
+      "path": "tools/virgl-floating-depth-consumer/primary/vrend_formats.c",
+      "bytes": 43802,
+      "sha256": "1b4b48526638b7b16293e7eb552b6d6cbdea44d551358bdc02f17c99b1d86844",
+      "url": "https://gitlab.freedesktop.org/virgl/virglrenderer/-/raw/ca50e008863837e094747a69974dde3ae148aeaa/src/vrend/vrend_formats.c"
+    },
+    {
+      "path": "tools/virgl-floating-depth-consumer/primary/src/mesa/main/teximage.c",
+      "bytes": 255399,
+      "sha256": "1296f344ff67c53a361c285291466fa3286efaecb7098130c2a9ed0a85eb5c7f",
+      "archive": "https://archive.mesa3d.org/mesa-26.2.2.tar.xz",
+      "archiveSha256": "eeb29ca7e56cfaa8e8a79538dcf834e3b18e501c31bef5145e959ea437cc4216",
+      "member": "mesa-26.2.2/src/mesa/main/teximage.c"
+    },
+    {
+      "path": "tools/virgl-floating-depth-consumer/primary/src/mesa/main/texobj.c",
+      "bytes": 77306,
+      "sha256": "722a80e6ec7b0e25502f17641452d98d65424ada67129170d33668e7b7550e39",
+      "archive": "https://archive.mesa3d.org/mesa-26.2.2.tar.xz",
+      "archiveSha256": "eeb29ca7e56cfaa8e8a79538dcf834e3b18e501c31bef5145e959ea437cc4216",
+      "member": "mesa-26.2.2/src/mesa/main/texobj.c"
+    },
+    {
+      "path": "tools/virgl-floating-depth-consumer/primary/src/mesa/main/texparam.c",
+      "bytes": 105194,
+      "sha256": "25c94b9279fb3de7dd8a658f8a34ee471016f342b2674aca32b5ebac010c4c02",
+      "archive": "https://archive.mesa3d.org/mesa-26.2.2.tar.xz",
+      "archiveSha256": "eeb29ca7e56cfaa8e8a79538dcf834e3b18e501c31bef5145e959ea437cc4216",
+      "member": "mesa-26.2.2/src/mesa/main/texparam.c"
+    },
+    {
+      "path": "tools/virgl-floating-depth-consumer/primary/src/mesa/main/texstate.c",
+      "bytes": 37823,
+      "sha256": "8dae6b6192ad126c6a2a46bfcc0c61dd8cdb72c9ec785072d438523178a2125d",
+      "archive": "https://archive.mesa3d.org/mesa-26.2.2.tar.xz",
+      "archiveSha256": "eeb29ca7e56cfaa8e8a79538dcf834e3b18e501c31bef5145e959ea437cc4216",
+      "member": "mesa-26.2.2/src/mesa/main/texstate.c"
+    },
+    {
+      "path": "tools/virgl-floating-depth-consumer/primary/src/mesa/state_tracker/st_atom_texture.c",
+      "bytes": 16450,
+      "sha256": "3c4dc14e7d4f96758d376a41d2c3ec7ac66430f0d6be2030bcf60ad6b4adb1e0",
+      "archive": "https://archive.mesa3d.org/mesa-26.2.2.tar.xz",
+      "archiveSha256": "eeb29ca7e56cfaa8e8a79538dcf834e3b18e501c31bef5145e959ea437cc4216",
+      "member": "mesa-26.2.2/src/mesa/state_tracker/st_atom_texture.c"
+    },
+    {
+      "path": "tools/virgl-floating-depth-consumer/primary/src/mesa/state_tracker/st_cb_texture.c",
+      "bytes": 132673,
+      "sha256": "1b0e02ff3c4da0a22574e7496725a5842d571d27ec01c99f5cdd8363f8fb0e1a",
+      "archive": "https://archive.mesa3d.org/mesa-26.2.2.tar.xz",
+      "archiveSha256": "eeb29ca7e56cfaa8e8a79538dcf834e3b18e501c31bef5145e959ea437cc4216",
+      "member": "mesa-26.2.2/src/mesa/state_tracker/st_cb_texture.c"
+    },
+    {
+      "path": "tools/virgl-floating-depth-consumer/primary/src/mesa/state_tracker/st_sampler_view.c",
+      "bytes": 22499,
+      "sha256": "21b73af3b60a0b81b0766deff991754d45064422161cadb1a3e80e81afb4b4d1",
+      "archive": "https://archive.mesa3d.org/mesa-26.2.2.tar.xz",
+      "archiveSha256": "eeb29ca7e56cfaa8e8a79538dcf834e3b18e501c31bef5145e959ea437cc4216",
+      "member": "mesa-26.2.2/src/mesa/state_tracker/st_sampler_view.c"
+    }
+  ],
+  "observations": [
+    "vrend_formats.c18/126 use native DEPTH_COMPONENT32F and DEPTH32F_STENCIL8, NO_SWIZZLE",
+    "vrend_renderer.c2855..2866 and3698..3709 select GL_RED depth mode for compatibility and GL_DEPTH_COMPONENT mode for views having depth",
+    "original client view swizzle is applied directly; depth combined stencil is not sampled under these FLOAT view formats"
+  ],
+  "glesDepthContract": {
+    "wholeSource": "tools/virgl-floating-depth/primary/es-3.0.6.pdf",
+    "pdfPage": 176,
+    "printedPage": 163,
+    "section": "3.8.15.1",
+    "comparisonDisabled": "r = Dt, assigned to Rt",
+    "componentExpansion": "Table 3.24 RED = (Rt,0,0,1)",
+    "stencilIgnoredPrintedPage": 168
+  }
+}

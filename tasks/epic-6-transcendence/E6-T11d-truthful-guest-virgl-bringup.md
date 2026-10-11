@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39]
-blocked_on: E6-T11d39
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40]
+blocked_on: E6-T11d40
 estimate: S
 risk: high
 capstone: false
@@ -490,3 +490,15 @@ storage/transfer/range boundary; native consumer/shadow/API/capset and actual
 guest Mesa/compositor/worker/scanout/demo deployment remain successors. The
 user's production graphics request continues this chain. No guest or 300 MIPS
 claim follows from these isolated prerequisites.
+
+### 2026-10-11 — worker — floating depth storage verified; command refusal
+
+D39 is independently verified at
+`50b98a3ab6652e9d23f3eaac5eb1095023f9898d`. The original source-pinned six-packet
+probe `evidence/virgl-production-readiness/standard-floating-depth-consumer-gap.json`
+still refuses formats18/126 at base/private mip sampler views and nonzero depth
+surfaces through D38's unchanged selected command profile. Reproduce with the
+adjacent `.mjs` command. Ordered S prerequisite E6-T11d40 connects that one
+original packet-to-native consumer boundary. Storage and actual C/Wasm remain
+held; default caps, complete API, guest graphics and throughput await their
+real acceptance. The explicit user instruction continues this graphics chain.
