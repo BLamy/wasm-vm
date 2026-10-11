@@ -2,7 +2,7 @@
 id: E6-T11d33
 epic: 6
 title: Consume original signed and unsigned integer images in native draws
-status: pending
+status: in-progress
 estimate: S
 risk: high
 priority: 525.027039000375
