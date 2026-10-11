@@ -2,7 +2,7 @@
 id: E6-T11d32
 epic: 6
 title: Compile original integer samplers and format-selected fragment outputs
-status: pending
+status: in-progress
 estimate: S
 risk: high
 priority: 525.027039000374
