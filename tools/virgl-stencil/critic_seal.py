@@ -39,6 +39,10 @@ def main(directory, audits, output):
             if '/build/wasm/' not in row['path']:
                 assert body == subprocess.check_output(['git', 'show', head+':'+row['path']], cwd=ROOT)
                 source_names.add(row['path'])
+            else:
+                generated = {'virgl-shader.mjs': '6bb07a0b2a056d21ae52b22d7700ce10577854c1cdcf0877dd80be938e30e0fa',
+                             'virgl-shader.wasm': 'acbe036afcdc4f1d8aa8cfb0fb107f48ba27759a6af4a7b9d6c83e3aa679d6cc'}
+                assert sha(body) == generated[Path(row['path']).name]
         for row in e['blobs']:
             zipped = (folder/row['path']).read_bytes()
             body = gzip.decompress(zipped)
@@ -62,7 +66,10 @@ def main(directory, audits, output):
         parent = audits/'worker-reopened'/role
         for path in sorted(parent.glob('*/independent-values.json'))+sorted(parent.glob('*/value-audit.json')):
             members['audit/worker-reopened/'+role+'/'+path.relative_to(parent).as_posix()] = path.read_bytes()
-    source_names.update(subprocess.check_output(['git', 'ls-files', 'tools/virgl-stencil', 'tools/verify-virgl-standard-stencil.mjs', 'tools/verify-virgl-standard-stencil.sh', 'tools/verify-virgl-standard-stencil-critic.sh', 'Makefile', 'evidence/virgl-stencil/verifier/PREDICTIONS.md'], cwd=ROOT, text=True).splitlines())
+    source_names.update(subprocess.check_output(['git', 'ls-files', 'renderer/virgl-shader', 'tools/virgl-stencil', 'tools/virgl-unorm-depth/lifetimes.py', 'tools/virgl-packed-unsigned-consumer/pixels.py', 'tools/verify-virgl-standard-stencil.mjs', 'tools/verify-virgl-standard-stencil.sh', 'tools/verify-virgl-standard-stencil-critic.sh', 'Makefile', 'evidence/virgl-stencil/verifier/PREDICTIONS.md'], cwd=ROOT, text=True).splitlines())
+    for name in source_names:
+        if name.startswith('renderer/virgl-shader/') or name in ['tools/virgl-unorm-depth/lifetimes.py', 'tools/virgl-packed-unsigned-consumer/pixels.py']:
+            assert subprocess.check_output(['git', 'show', head+':'+name], cwd=ROOT) == subprocess.check_output(['git', 'show', FREEZE+':'+name], cwd=ROOT), 'held compiler/inverse dependency changed'
     for name in source_names:
         members['source/'+name] = subprocess.check_output(['git', 'show', head+':'+name], cwd=ROOT)
     output.mkdir(parents=True, exist_ok=True)
