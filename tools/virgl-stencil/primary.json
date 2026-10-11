@@ -1,0 +1,22 @@
+{
+  "schema": "original-stencil-primary-v1",
+  "sources": [
+    {
+      "path": "tools/virgl-stencil/primary/webgl1.html",
+      "url": "https://raw.githubusercontent.com/KhronosGroup/WebGL/eb040a77b1e1cde6b2ed11b120b83f4575c1f3e9/specs/latest/1.0/index.html",
+      "commit": "eb040a77b1e1cde6b2ed11b120b83f4575c1f3e9",
+      "bytes": 277350,
+      "sha256": "0735f489eba0499ee55b860fe3cdad0a64cdc777679ab2ccf00db5b3c7c4c9d1"
+    }
+  ],
+  "held": "tools/virgl-floating-depth/primary.json",
+  "originalHost": "tools/virgl-floating-depth-consumer/primary/vrend_renderer.c",
+  "restriction": "STENCIL_SEPARATE_LIMIT: enabled test on present S8 requires common effective front/back references/value masks/write masks",
+  "nativeProbe": {
+    "head": "5a0d9fc9655f1e0956154763bda420aec721865a",
+    "path": "evidence/virgl-production-readiness/standard-stencil-native-precheck-report.json",
+    "sha256": "b81f657245df44451d4b09aaf661043e2b066dc0905f637fef9b8c1e5a97230f",
+    "authority": "native-host-precheck-only",
+    "productionNegotiation": false
+  }
+}
