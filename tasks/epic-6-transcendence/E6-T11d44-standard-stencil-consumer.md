@@ -2,7 +2,7 @@
 id: E6-T11d44
 epic: 6
 title: Execute original native S8 stencil state and clears
-status: pending
+status: in-progress
 estimate: S
 risk: high
 priority: 525.027039000382

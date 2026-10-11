@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E6-T11d44** — Execute original native S8 stencil state and clears
 1. **E5-T26f** — Browser desktop snapshot round-trip and interaction smoke
 
 
@@ -681,7 +680,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.02703900038` [E6-T11d40](epic-6-transcendence/E6-T11d40-standard-floating-depth-consumer.md) — Consume original floating depth views and surfaces *(deps: E6-T11d39)*
 - [x] `525.027039000381` [E6-T11d41](epic-6-transcendence/E6-T11d41-standard-unorm-depth-images.md) — Qualify original UN16 depth images and sampling *(deps: E6-T11d40)*
 - [x] `525.027039000382` [E6-T11d42](epic-6-transcendence/E6-T11d42-standard-packed-depth-images.md) — Preserve original packed UN24 depth and stencil storage and transfers *(deps: E6-T11d41)*
-- [ ] `525.027039000382` [E6-T11d44](epic-6-transcendence/E6-T11d44-standard-stencil-consumer.md) — Execute original native S8 stencil state and clears *(deps: E6-T11d43)*
+- [~] `525.027039000382` [E6-T11d44](epic-6-transcendence/E6-T11d44-standard-stencil-consumer.md) — Execute original native S8 stencil state and clears *(deps: E6-T11d43)*
 - [x] `525.027039000383` [E6-T11d43](epic-6-transcendence/E6-T11d43-standard-packed-depth-consumer.md) — Consume original packed UN24 sampler views and mip depth surfaces *(deps: E6-T11d42)*
 - [x] `525.027039001` [E6-T11d9](epic-6-transcendence/E6-T11d9-standard-primitive-restart.md) — Normalize owned standard index streams for primitive restart *(deps: E6-T11d8)*
 - [x] `525.02703901` [E6-T11d8](epic-6-transcendence/E6-T11d8-standard-core-topologies.md) — Execute bounded standard core line and triangle-fan draws *(deps: E6-T11d7)*
