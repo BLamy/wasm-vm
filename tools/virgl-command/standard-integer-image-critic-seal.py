@@ -29,6 +29,7 @@ def main():
     generated = json.loads((capture/'worker/hot/receipt.json').read_bytes())['generated']
     native_heads = set()
     native_sources = {}
+    native_snapshot = {}
     for name in names:
         report = json.loads((capture/name/'report.json').read_bytes())
         native_heads.add(report['gitHead'])
@@ -37,15 +38,25 @@ def main():
         # Authenticate every recorded source at that head, and every native loaded
         # module/runner byte against the current head before carrying its result.
         for row in report['sources']:
-            if row['path'] in generated:
+            if row['path'] in native_snapshot:
+                raw = native_snapshot[row['path']]
+            elif row['path'] in generated:
                 raw = (capture/'worker/hot-generated'/row['path']).read_bytes()
                 assert sha(raw) == generated[row['path']]
             else:
                 raw = git('show',report['gitHead']+':'+row['path'])
             assert len(raw) == row['bytes'] and sha(raw) == row['sha256']
+            native_snapshot[row['path']] = raw
             if row['path'].endswith('.mjs'):
                 assert raw == (ROOT/row['path']).read_bytes()
                 native_sources[row['path']] = row['sha256']
+        if 'runnerSha256' in report:
+            runner_path = 'tools/verify-virgl-standard-integer-images-adversarial.mjs'
+            raw = git('show',report['gitHead']+':'+runner_path)
+            assert sha(raw) == report['runnerSha256'] and raw == (capture/name/'runner.mjs').read_bytes()
+            assert raw == (ROOT/runner_path).read_bytes()
+            native_snapshot[runner_path] = raw
+            native_sources[runner_path] = sha(raw)
     assert len(native_heads) == 1
     native_head = native_heads.pop()
     assert git('diff','--name-only',native_head,head).decode().splitlines() in (
@@ -56,6 +67,7 @@ def main():
     for path in sorted(capture.rglob('*')):
         if path.is_file():
             members['capture/'+path.relative_to(capture).as_posix()] = path.read_bytes()
+    members.update({'source-native/'+name: raw for name,raw in native_snapshot.items()})
     for path in ['predictions.json','novel-input-declaration.json','verdict.md']:
         members['verdict/'+path] = (capture/path).read_bytes()
     files = ['AGENTS.md','renderer/virgl-command/tests/standard-integer-image-critic.mjs',
