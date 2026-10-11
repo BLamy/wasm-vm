@@ -2355,3 +2355,7 @@ verify-E6-T11d36:
 verify-E6-T11d36-adversarial:
 	node tools/verify-virgl-standard-packed-normalized-consumer-critic.mjs --output target/evidence/virgl-packed-normalized-consumer-critic-promoted
 	python3 tools/virgl-packed-normalized-consumer/critic.py target/evidence/virgl-packed-normalized-consumer-critic-promoted
+
+.PHONY: verify-E6-T11d37
+verify-E6-T11d37:
+	bash tools/verify-virgl-standard-packed-unsigned-images.sh

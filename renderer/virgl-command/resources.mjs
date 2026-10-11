@@ -5,8 +5,9 @@ import {packedFloatColorFormat, r11g11b10FromFloatWords, STANDARD_PACKED_FLOAT_C
 import {sharedExponentColorFormat, STANDARD_SHARED_EXPONENT_TRANSFER_PROFILE} from "./shared-exponent-images.mjs";
 import {integerColorFormat, STANDARD_INTEGER_COLOR_TRANSFER_PROFILE} from "./integer-images.mjs";
 import {packedNormalizedColorFormat, STANDARD_PACKED_NORMALIZED_TRANSFER_PROFILE} from "./packed-normalized-images.mjs";
+import {packedUnsignedColorFormat, STANDARD_PACKED_UNSIGNED_TRANSFER_PROFILE} from "./packed-unsigned-images.mjs";
 import {createSharedExponentPacker} from "./shared-exponent-gpu.mjs";
-const ownedColorFormat = meta => byteColorFormat(meta.format) || (meta.floatPrecision ? floatColorFormat(meta.format) : null) || (meta.packedFloat ? packedFloatColorFormat(meta.format) : null) || (meta.sharedExponent ? sharedExponentColorFormat(meta.format) : null) || (meta.integerBits ? integerColorFormat(meta.format) : null) || (meta.packedNormalized ? packedNormalizedColorFormat(meta.format) : null);
+const ownedColorFormat = meta => byteColorFormat(meta.format) || (meta.floatPrecision ? floatColorFormat(meta.format) : null) || (meta.packedFloat ? packedFloatColorFormat(meta.format) : null) || (meta.sharedExponent ? sharedExponentColorFormat(meta.format) : null) || (meta.integerBits ? integerColorFormat(meta.format) : null) || (meta.packedNormalized ? packedNormalizedColorFormat(meta.format) : null) || (meta.packedUnsigned ? packedUnsignedColorFormat(meta.format) : null);
 export const RESOURCE_LIMITS = Object.freeze({
   resources: 16, contexts: 8, segments: 256, tickets: 64, leases: 64,
   resourceBytes: 4194304, transferBytes: 4194304,
@@ -83,10 +84,10 @@ function checkedProduct(a, b, maximum, message) {
   require(a === 0 || b <= Math.floor(maximum / a), "out-of-bounds", message);
   return a * b;
 }
-function normalizeMetadata(value, limits, uniform = false, bufferRoles = false, mipmaps = false, colors = false, floats = false, packed = false, shared = false, integers = false, normalized = false) {
+function normalizeMetadata(value, limits, uniform = false, bufferRoles = false, mipmaps = false, colors = false, floats = false, packed = false, shared = false, integers = false, normalized = false, unsigned = false) {
   const meta = record(value, META_KEYS);
   for (const key of META_KEYS) uint(meta[key], key, ["id", "width", "height", "depth", "arraySize"].includes(key));
-  require(meta.depth === 1 && meta.arraySize === 1 && (meta.lastLevel === 0 || mipmaps && meta.target === 2 && ([2, 67, 233].includes(meta.format) || colors && byteColorFormat(meta.format) || floats && floatColorFormat(meta.format) || packed && packedFloatColorFormat(meta.format) || shared && sharedExponentColorFormat(meta.format) || integers && integerColorFormat(meta.format) || normalized && packedNormalizedColorFormat(meta.format))) && meta.nrSamples === 0 && meta.flags === 0,
+  require(meta.depth === 1 && meta.arraySize === 1 && (meta.lastLevel === 0 || mipmaps && meta.target === 2 && ([2, 67, 233].includes(meta.format) || colors && byteColorFormat(meta.format) || floats && floatColorFormat(meta.format) || packed && packedFloatColorFormat(meta.format) || shared && sharedExponentColorFormat(meta.format) || integers && integerColorFormat(meta.format) || normalized && packedNormalizedColorFormat(meta.format) || unsigned && packedUnsignedColorFormat(meta.format))) && meta.nrSamples === 0 && meta.flags === 0,
     "unsupported-resource", mipmaps ? "Only qualified 2D levels, one layer, one sample and no flags are supported." : "Only one-level, single-layer, single-sample resources without flags are supported.");
   let kind, byteLength, levels, color, gpuByteLength;
   if (meta.target === 0 && meta.format === 64 && meta.height === 1) {
@@ -100,7 +101,7 @@ function normalizeMetadata(value, limits, uniform = false, bufferRoles = false, 
     byteLength = checkedProduct(checkedProduct(meta.width, meta.height, limits.resourceBytes, "Depth allocation is too large."), 2,
       limits.resourceBytes, "Depth allocation is too large.");
   } else {
-    color = (colors ? byteColorFormat(meta.format) : null) || (floats ? floatColorFormat(meta.format) : null) || (packed ? packedFloatColorFormat(meta.format) : null) || (shared ? sharedExponentColorFormat(meta.format) : null) || (integers ? integerColorFormat(meta.format) : null) || (normalized ? packedNormalizedColorFormat(meta.format) : null);
+    color = (colors ? byteColorFormat(meta.format) : null) || (floats ? floatColorFormat(meta.format) : null) || (packed ? packedFloatColorFormat(meta.format) : null) || (shared ? sharedExponentColorFormat(meta.format) : null) || (integers ? integerColorFormat(meta.format) : null) || (normalized ? packedNormalizedColorFormat(meta.format) : null) || (unsigned ? packedUnsignedColorFormat(meta.format) : null);
     const roles = meta.bind & 10, hints = (1 << 18) | (1 << 20);
     require(meta.target === 2 && ([2, 67, 233].includes(meta.format) || color) && roles !== 0 && (!color?.snorm || roles === 8) && (!color?.sharedExponent || meta.bind === 8) && (meta.bind & ~(10 | hints)) === 0,
       "unsupported-resource", "Only required normalized 2D color formats with render/sampler roles and scanout/shared hints are supported.");
@@ -134,7 +135,7 @@ function normalizeMetadata(value, limits, uniform = false, bufferRoles = false, 
     }
   }
   require(byteLength <= limits.resourceBytes, "limit-exceeded", "Resource exceeds per-resource byte limit.");
-  return freeze({ ...meta, kind, byteLength, ...(levels ? { levels } : {}), ...(color ? { pixelBytes: color.pixelBytes, gpuByteLength, ...(color.precision ? { floatPrecision: color.precision } : {}), ...(color.packedFloat ? { packedFloat: true } : {}), ...(color.sharedExponent ? { sharedExponent: true } : {}), ...(color.integerBits ? { integerBits: color.integerBits } : {}), ...(color.packedNormalized ? { packedNormalized: true } : {}) } : {}) });
+  return freeze({ ...meta, kind, byteLength, ...(levels ? { levels } : {}), ...(color ? { pixelBytes: color.pixelBytes, gpuByteLength, ...(color.precision ? { floatPrecision: color.precision } : {}), ...(color.packedFloat ? { packedFloat: true } : {}), ...(color.sharedExponent ? { sharedExponent: true } : {}), ...(color.integerBits ? { integerBits: color.integerBits } : {}), ...(color.packedNormalized ? { packedNormalized: true } : {}), ...(color.packedUnsigned ? { packedUnsigned: true } : {}) } : {}) });
 }
 function inlineWords(value) {
   // The wire submission cap leaves at most 65524 words after its inline header.
@@ -348,7 +349,16 @@ export function computeStandardPackedNormalizedTransferLayout(metadata, fields, 
   });
 }
 
-function createStore(options, uniform, bufferRoles = false, mipmaps = false, images = false, colors = false, floats = false, packed = false, shared = false, integers = false, normalized = false) {
+/** Original packed UINT storage; command admission remains separately gated. */
+export function createStandardPackedUnsignedResourceStore(options) { return createStore(options, true, true, true, true, true, true, true, true, true, true, true); }
+export function computeStandardPackedUnsignedTransferLayout(metadata, fields, backingByteLength, overrides = {}) {
+  return result(() => {
+    const limits = limitsFor(overrides);
+    return success({ layout: layoutFor(normalizeMetadata(metadata, limits, true, true, true, true, true, true, true, true, true, true), normalizedFields(fields), backingByteLength, limits) });
+  });
+}
+
+function createStore(options, uniform, bufferRoles = false, mipmaps = false, images = false, colors = false, floats = false, packed = false, shared = false, integers = false, normalized = false, unsigned = false) {
   return result(() => {
     const config = record(options, ["backend", "limits"], ["backend"]), backend = config.backend;
     require(backend && typeof backend === "object", "invalid-input", "A transfer backend is required.");
@@ -361,6 +371,7 @@ function createStore(options, uniform, bufferRoles = false, mipmaps = false, ima
     require(!shared || backend.sharedExponentProfile === STANDARD_SHARED_EXPONENT_TRANSFER_PROFILE, "invalid-input", "Shared exponent images require their selected native transfer backend.");
     require(!integers || backend.integerProfile === STANDARD_INTEGER_COLOR_TRANSFER_PROFILE, "invalid-input", "Integer images require their selected native transfer backend.");
     require(!normalized || backend.packedNormalizedProfile === STANDARD_PACKED_NORMALIZED_TRANSFER_PROFILE, "invalid-input", "Packed normalized images require their selected native transfer backend.");
+    require(!unsigned || backend.packedUnsignedProfile === STANDARD_PACKED_UNSIGNED_TRANSFER_PROFILE, "invalid-input", "Packed unsigned images require their selected native transfer backend.");
     const requested = limitsFor(config.limits);
     const limits = Object.freeze({ ...requested, textureSize: Math.min(requested.textureSize, backend.maxTextureSize) });
     const resources = new Map(), live = new Set(), contexts = new Map(), tickets = new Map(), leases = new Map(), storageReads = new Map(), uniformRanges = new Map(), revokedAccess = new Set(), revokedUniform = new Set();
@@ -540,7 +551,7 @@ function createStore(options, uniform, bufferRoles = false, mipmaps = false, ima
         return success({ context: freeze({ id, generation: ctx.generation }) });
       }),
       createResource: operation((metadata) => {
-        const meta = normalizeMetadata(metadata, limits, uniform, bufferRoles, mipmaps, colors, floats, packed, shared, integers, normalized);
+        const meta = normalizeMetadata(metadata, limits, uniform, bufferRoles, mipmaps, colors, floats, packed, shared, integers, normalized, unsigned);
         require(!resources.has(meta.id), "resource-exists", "Resource ID is already public.");
         require(live.size < limits.resources, "limit-exceeded", "Live/retained resource count limit exceeded.");
         const allocationBytes = meta.kind === "staging" ? 0 : meta.gpuByteLength ?? meta.byteLength;
@@ -977,7 +988,9 @@ export function createStandardSharedExponentTransferBackend(gl) { return createT
 export function createStandardIntegerColorTransferBackend(gl) { return createTransferBackend(gl, true, true, true, true, true, true); }
 export function createStandardPackedNormalizedTransferBackend(gl) { return createTransferBackend(gl, true, true, true, true, true, true, true); }
 
-function createTransferBackend(gl, colors, rawBufferReadbacks = false, floats = false, packed = false, shared = false, integers = false, normalized = false) {
+export function createStandardPackedUnsignedTransferBackend(gl) { return createTransferBackend(gl, true, true, true, true, true, true, true, true); }
+
+function createTransferBackend(gl, colors, rawBufferReadbacks = false, floats = false, packed = false, shared = false, integers = false, normalized = false, unsigned = false) {
   return result(() => {
     require(gl && typeof gl.getBufferSubData === "function" && typeof gl.texStorage2D === "function", "invalid-input", "A WebGL2 context is required.");
     require(!colors || gl.getExtension("EXT_render_snorm"), "unsupported-host", "Native signed color copies/readbacks require EXT_render_snorm.");
@@ -992,7 +1005,7 @@ function createTransferBackend(gl, colors, rawBufferReadbacks = false, floats = 
       233: { internal: gl.RGB10_A2, upload: gl.RGBA, type: gl.UNSIGNED_INT_2_10_10_10_REV },
     };
     const colorFormat = (meta) => {
-      const color = (colors ? byteColorFormat(meta.format) : null) || (floats ? floatColorFormat(meta.format) : null) || (packed ? packedFloatColorFormat(meta.format) : null) || (shared ? sharedExponentColorFormat(meta.format) : null) || (integers ? integerColorFormat(meta.format) : null) || (normalized ? packedNormalizedColorFormat(meta.format) : null);
+      const color = (colors ? byteColorFormat(meta.format) : null) || (floats ? floatColorFormat(meta.format) : null) || (packed ? packedFloatColorFormat(meta.format) : null) || (shared ? sharedExponentColorFormat(meta.format) : null) || (integers ? integerColorFormat(meta.format) : null) || (normalized ? packedNormalizedColorFormat(meta.format) : null) || (unsigned ? packedUnsignedColorFormat(meta.format) : null);
       const profile = color ? { internal: gl[color.internal], upload: gl[color.upload], type: gl[color.type], ...(color.precision || color.packedFloat ? { readType: gl.FLOAT } : {}), ...(color.integerBits ? { readType: gl[color.readType], readFormat: gl[color.readFormat] } : {}), ...(color.packedNormalized ? { readType: gl[color.readType] } : {}) } : colorFormats[meta.format];
       require(profile, "unsupported-resource", "Unsupported native texture storage format.");
       return profile;
@@ -1000,16 +1013,16 @@ function createTransferBackend(gl, colors, rawBufferReadbacks = false, floats = 
     // Store uploads are private, dense scratch arrays. Convert in that same
     // reservation: no second CPU image or GPU shadow escapes the byte budgets.
     const nativeUpload = (format, bytes) => {
-      const normalizedColor = normalized ? packedNormalizedColorFormat(format) : null;
-      if (normalizedColor) {
-        const size = normalizedColor.pixelBytes, data = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+      const packedColor = (normalized ? packedNormalizedColorFormat(format) : null) || (unsigned ? packedUnsignedColorFormat(format) : null);
+      if (packedColor) {
+        const size = packedColor.pixelBytes, data = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
         const native = size === 2 ? new Uint16Array(bytes.buffer, bytes.byteOffset, bytes.byteLength / 2) : new Uint32Array(bytes.buffer, bytes.byteOffset, bytes.byteLength / 4);
         for (let i = 0; i < native.length; i++) {
           const original = size === 2 ? data.getUint16(i * 2, true) : data.getUint32(i * 4, true);
           let word = 0;
           for (let lane = 0; lane < 4; lane++) {
-            const field = normalizedColor.fields[lane], mask = 2 ** field.bits - 1;
-            const value = lane === 3 && normalizedColor.implicitAlpha ? mask : (original >>> field.offset) & mask;
+            const field = packedColor.fields[lane], mask = 2 ** field.bits - 1;
+            const value = lane === 3 && packedColor.implicitAlpha ? mask : (original >>> field.offset) & mask;
             word |= value << field.nativeOffset;
           }
           native[i] = word;
@@ -1085,6 +1098,22 @@ function createTransferBackend(gl, colors, rawBufferReadbacks = false, floats = 
       return bytes;
     };
     const guestReadback = (format, bytes) => {
+      const packedInteger = unsigned ? packedUnsignedColorFormat(format) : null;
+      if (packedInteger) {
+        const count = bytes.length / 16, native = new Uint32Array(bytes.buffer, bytes.byteOffset, count * 4);
+        const data = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+        for (let i = 0; i < count; i++) {
+          // Read every native integer lane before compacting the charged buffer.
+          const pixel = [native[i * 4], native[i * 4 + 1], native[i * 4 + 2], native[i * 4 + 3]];
+          let word = 0;
+          for (let lane = 0; lane < 4; lane++) {
+            const field = packedInteger.fields[lane];
+            word |= (pixel[lane] & (2 ** field.bits - 1)) << field.offset;
+          }
+          data.setUint32(i * 4, word, true);
+        }
+        return bytes.subarray(0, count * 4);
+      }
       const normalizedColor = normalized ? packedNormalizedColorFormat(format) : null;
       if (normalizedColor) {
         const size = normalizedColor.pixelBytes, data = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
@@ -1275,7 +1304,7 @@ function createTransferBackend(gl, colors, rawBufferReadbacks = false, floats = 
         if (entry.sharedConversion) sharedHelper().releaseScratch(entry.sharedConversion);
       };
       const backend = {
-        maxTextureSize, ...(colors ? { colorProfile: STANDARD_COLOR_TRANSFER_PROFILE } : {}), ...(floats ? { floatProfile: STANDARD_FLOAT_COLOR_TRANSFER_PROFILE } : {}), ...(packed ? { packedFloatProfile: STANDARD_PACKED_FLOAT_COLOR_TRANSFER_PROFILE } : {}), ...(shared ? { sharedExponentProfile: STANDARD_SHARED_EXPONENT_TRANSFER_PROFILE } : {}), ...(integers ? { integerProfile: STANDARD_INTEGER_COLOR_TRANSFER_PROFILE } : {}), ...(normalized ? { packedNormalizedProfile: STANDARD_PACKED_NORMALIZED_TRANSFER_PROFILE } : {}),
+        maxTextureSize, ...(colors ? { colorProfile: STANDARD_COLOR_TRANSFER_PROFILE } : {}), ...(floats ? { floatProfile: STANDARD_FLOAT_COLOR_TRANSFER_PROFILE } : {}), ...(packed ? { packedFloatProfile: STANDARD_PACKED_FLOAT_COLOR_TRANSFER_PROFILE } : {}), ...(shared ? { sharedExponentProfile: STANDARD_SHARED_EXPONENT_TRANSFER_PROFILE } : {}), ...(integers ? { integerProfile: STANDARD_INTEGER_COLOR_TRANSFER_PROFILE } : {}), ...(normalized ? { packedNormalizedProfile: STANDARD_PACKED_NORMALIZED_TRANSFER_PROFILE } : {}), ...(unsigned ? { packedUnsignedProfile: STANDARD_PACKED_UNSIGNED_TRANSFER_PROFILE } : {}),
         allocate(meta) {
           check();
           let storage = null;
@@ -1399,7 +1428,7 @@ function createTransferBackend(gl, colors, rawBufferReadbacks = false, floats = 
               gl.readBuffer(gl.COLOR_ATTACHMENT0);
               require(gl.checkFramebufferStatus(gl.READ_FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE, "backend-error", "Transfer framebuffer is incomplete.");
               const profile = colorFormat(meta);
-              const integer = integers ? integerColorFormat(meta.format) : null;
+              const integer = (integers ? integerColorFormat(meta.format) : null) || (unsigned ? packedUnsignedColorFormat(meta.format) : null);
               const destination = integer ? integer.signed ? new Int32Array(bytes.buffer) : new Uint32Array(bytes.buffer) : (floats && floatColorFormat(meta.format) || packed && packedFloatColorFormat(meta.format)) ? new Float32Array(bytes.buffer) : meta.format === 233 || normalized && packedNormalizedColorFormat(meta.format)?.pixelBytes === 4 ? new Uint32Array(bytes.buffer) : colors && byteColorFormat(meta.format)?.snorm ? new Int8Array(bytes.buffer) : bytes;
               gl.readPixels(layout.box.x, layout.box.y, layout.box.width, layout.box.height, profile.readFormat ?? gl.RGBA, profile.readType ?? profile.type, destination);
             } finally {

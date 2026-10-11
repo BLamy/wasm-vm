@@ -23,7 +23,7 @@ const sourcePaths = [...new Set([
  'tools/verify-virgl-standard-packed-float-images.mjs',
  'renderer/virgl-command/color-images.mjs',
  'renderer/virgl-command/float-images.mjs',
- 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs',
+ 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs',
  'renderer/virgl-command/tests/standard-packed-float-image-rig.mjs',
  'renderer/virgl-command/tests/standard-packed-float-images.mjs',
  'renderer/virgl-command/tests/standard-packed-float-image-boundaries.mjs',

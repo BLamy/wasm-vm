@@ -90,3 +90,21 @@ before allocation. This is synthetic refusal evidence, not a guest or native run
 Mesa's original UP10/UP10/UP10/UP2 fields and WebGL2's native RGB10_A2UI support
 permit a narrow storage prerequisite. D38 consumer admission follows only after
 this independent verification; production negotiation and throughput are unclaimed.
+
+### 2026-10-11 — worker — scoped implementation and prechecks
+
+The selected resource owner/backend admit only the two primary packed UINT
+aliases beyond D36. A false-by-default appended flag retains all historical
+factory boundaries. Packed upload uses the existing raw field permutation in
+its four-byte scratch. Integer readback captures every native uint lane before
+compacting into the already charged sixteen-byte reservation. No compiler,
+consumer, guest, capset, web or default device source changes.
+
+Ephemeral prechecks: selected wire and headed hardware smoke; all 26 matrix
+cases and one 22-case native schedule; independent original-word/native-lane
+and complete public SG inverse; three physical upload/copy/completed-word
+controls caught; eight affected historical storage/resource paths passed. All
+327 changed governing runtime partitions were positive, with zero gaps or
+waivers. Declarative module additions in 27 old static servers were held byte
+for byte against D36 apart from the pinned additions. These runs guide the
+worker only. Final exact-head hot/cold and sealed submission follow this freeze.
