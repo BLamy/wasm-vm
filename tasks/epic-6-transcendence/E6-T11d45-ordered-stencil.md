@@ -2,7 +2,7 @@
 id: E6-T11d45
 epic: 6
 title: Preserve original primitive order for asymmetric S8 draws
-status: in-progress
+status: implemented
 estimate: S
 risk: high
 priority: 525.027039000383
@@ -95,3 +95,74 @@ exact unchanged predecessor profile/metadata operands, each pinned to fullff
 source identity and original UTF16 range. No new runtime partition is waived.
 Task policy, syntax and diff checks pass. Final frozen hot/cold recording, full
 custody and a fresh adversarial verdict are still required before verification.
+
+
+### 2026-10-11 — worker — frozen hot/cold submission
+
+Runtime and harness freeze: `c510692cc77e0f0c99d1e2f28dff9de6de2f3372`.
+Implementation is `7ae4f66c4c04e929c9a47d070e13dcbfa60d0a06`; c510 changes
+only the coverage collector from glob to rglob so it includes the nested retained
+primitive-assembly recording. The first 7ae recording passed all native groups
+and controls but stopped at that collector gap. It is retained as a failed
+submission, not substituted for the successful exact-c510 records.
+
+Exact final commands, all exit0:
+
+```sh
+EMCC=/Users/blamy/.cache/wasm-vm/emsdk/4.0.22/wasm-vm-emcc \
+VIRGL_ORDERED_STENCIL_EVIDENCE_DIR=target/evidence/virgl-ordered-stencil-frozen-c510 \
+make verify-E6-T11d45
+python3 tools/virgl-ordered-stencil/cold.py --output target/evidence/virgl-ordered-stencil-cold-c510
+python3 tools/virgl-ordered-stencil/seal.py target/evidence/virgl-ordered-stencil-frozen-c510 target/evidence/virgl-ordered-stencil-cold-c510 evidence/virgl-ordered-stencil/worker
+```
+
+The gate runs task policy, diff/syntax checks, actual unchanged pinned compiler
+Wasm build, full predecessor custody, literal wire20, all six native groups,
+three varied schedules, five actual corruption controls, retained common12 and
+loop/fan2, finest nested V8 coverage and full-body receipt authentication. No Rust,
+wasm VM, guest, demo or deployment source changed in this isolated selected factory;
+those gates cannot confer guest or production authority on it.
+
+Each hot/cold recording independently reopens476 cases /454 frames /552516
+pixels,2930 native passes,7851176 normalized-index bytes and96650078 public
+backing bytes. Its native audits record8110 consumed syncs and24 explicit-disposal
+syncs. The original wire/GPU vertex and normalized-index bytes, compiled whole
+programs, per-call state, all output/private mips and public padding agree with
+the independent inverses. All original mode/index/restart/instancing paths,
+allocation/work limits, refusal and real native error suffixes execute. Worker
+schedule seeds are d9453211,13579bdf,9e3779b9. All five served/native/completed
+corruptions physically contradict the original prediction after consumed
+post-writer completions; whole-face grouping producesS8=125 instead of119.
+Both coverage audits hold230 positive partitions, with only17 exact unchanged
+predecessor operands waived and zero uncovered new partitions. Original D44
+worker/critic48980 members and gap938 members are completely reopened; storage,
+decoder and actual compiler identities stay held.
+
+Cold clone `/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-ordered-stencil-cold-qys8i72d/wasm-vm`
+is exactc510, pristine before and after, with the specified build/runtime env
+names scrubbed (the inherited RUST_LOG was removed). Its literal acceptance
+command is `make verify-E6-T11d45`. Hot receipt SHA256
+`1963002b56559bdf2c7efed661a1e54eb389d2a291eb8d0f63db63db935ceecf`;
+cold receipt `e045b25dfd225076460d96f85c681d7963c3d2f99b25ba71aa240d22bb9df980`;
+cold report `7a6e6cbd87183e8385f9fef867bf184756630752fb1961c511591e495e34331b`.
+
+Committed worker archive `evidence/virgl-ordered-stencil/worker/recording.tar.gz`
+is75846524 bytes / SHA256
+`5d40d9cf0650b561637863b24cd52984cf1fbaf08ebf988e8a57940add1f13ed`;
+index `records.json` SHA256
+`bfee67b4e66aa3645f1f05a7847ef0e8f6ee5f092904a60ff56ab28c22aae8eb`.
+All83324 complete logical archive members are reopened with lengths/digests,
+including earlier physical hardlink targets. The source closure is included.
+Manifest SHA256 `6e1ab959e3e04a2998eabf4b60233419f3b0934ee33ccf2d36b09e441c28886c`.
+
+Claim: the new opt-in factory executes the qualified original asymmetric active
+S8 one-face draws and single-instance no-cull triangles in original primitive
+order, with original native vertex identity, state, exact S8 and held depth/color
+semantics. It preserves bounded ownership, original source work charges,
+restoration, completed-prefix error behavior and final native retirement.
+No-cull asymmetric effective instances>1 remain refused. A fresh verifier must
+still attack this submission with three new schedules, one original ordered
+primitive case and actual completed native/served corruption. Full production
+API/caps, guest Mesa/compositor, worker/scanout/demo/deploy and300 MIPS remain
+unproven. Native stacks499/500 and all123 prior PR identities/order/heads/bases
+are rechecked unchanged, open/draft/unmerged; this branch continues upper500.
