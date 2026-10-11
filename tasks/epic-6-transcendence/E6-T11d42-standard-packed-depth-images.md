@@ -2,7 +2,7 @@
 id: E6-T11d42
 epic: 6
 title: Preserve original packed UN24 depth and stencil storage and transfers
-status: in-progress
+status: implemented
 estimate: S
 risk: high
 priority: 525.027039000382
@@ -156,3 +156,37 @@ Nested coverage executes all new packed-depth semantics;10 precise unchanged
 D41 color operands are pinned by whole predecessor source SHA, UTF16 offsets and
 exact text. The final source must rerun the deterministic acceptance at its
 frozen head, followed by one pristine scrubbed clone and a fresh critic.
+
+### 2026-10-11 — worker — implemented, frozen native submission
+
+Frozen source/recording head `c9d745dca15c170d0dfc080d20d39e8696d436fc`.
+The implementation is limited to resources.mjs, unorm-depth-images.mjs and the
+optional matching stencil scratch format in floating-depth-gpu.mjs. Decoder,
+state, actual C/Wasm compiler, core/guest/production and web remain unchanged.
+
+Exact commands and complete recorded bodies are in
+`evidence/virgl-packed-depth-images/worker/README.md`. The final hot acceptance
+and one pristine scrubbed detached clone pass at the same frozen head; clone
+checkout is clean before and after. The full37,947-member seal reopened every
+logical body. Archive is21 ordered16MiB-or-smaller pieces of one gzip stream,
+339,293,519 bytes, SHA
+`e60573b012f80accdeb73f9e1a63d3408c080a8ad4746e68de72b7d373ad602f`;
+index SHA `77ad969bd93459de71e673eacfa914f52d2d6d833ddb017f43059de30cbfac1d`.
+
+Per hot/cold run: both complete16,777,216-value original domains,32 role/mip/SG
+cases, three46-case varied physical schedules and four refuted native controls.
+Independent full-body inverses validate33,563,813 native pixels,268,471,144 exact
+public bytes,10,352 padding bytes and all256 S8 values. Successful native FLOAT
+samples have maximum one ULP; deliberately corrupted samples are separate.
+Native budget rollback, private generations/ranges, GPU-only refresh with
+unchanged backing, cancellation, disposal and caller-state restoration pass.
+Fence audit:1584 owned,1575 consumed,9 disposal-only;1128 fenced CPU collections
+and384 synchronous driver returns. Objects retire once; terminal budgets zero.
+Nested V8 coverage:516 executed,10 precise unchanged D41 operands,0 unproven.
+Held original UN16/floating18/126/Z16 consumers and actual compiler SHA pins pass.
+Original6 packed guest consumer refusals and all historical admission remain.
+
+Worker claim: original20/21 native storage and public transfers satisfy this
+bounded storage contract on the recorded real Metal backend. This is a worker
+submission awaiting a fresh adversarial critic, not a verified status or complete
+production/API/capset/guest graphics/deployment/300MIPS claim.

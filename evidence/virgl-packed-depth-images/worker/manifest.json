@@ -1,0 +1,125 @@
+{
+  "schema": "original-packed-depth-seal-v1",
+  "task": "E6-T11d42",
+  "sourceHead": "c9d745dca15c170d0dfc080d20d39e8696d436fc",
+  "archiveParts": [
+    {
+      "path": "recording.tar.gz.part-0000",
+      "bytes": 16777216,
+      "sha256": "20096e4dca4532a4a3b428f0e5e6c5189a47a175b0bc7b713c4c08c9fc7ebe78"
+    },
+    {
+      "path": "recording.tar.gz.part-0001",
+      "bytes": 16777216,
+      "sha256": "16e0dc1803b393fd6682ead28968f00b346349731fef004fd27dedaafff12db5"
+    },
+    {
+      "path": "recording.tar.gz.part-0002",
+      "bytes": 16777216,
+      "sha256": "eaa8936a68853bb79692d26001c1bcba9bc93dba9cbb4c814ecd90eb0b070aa9"
+    },
+    {
+      "path": "recording.tar.gz.part-0003",
+      "bytes": 16777216,
+      "sha256": "fac1d1a0c4191e39cae83fe136c0ccaf720de0962ebfd5c85adfcaa3b59e96a8"
+    },
+    {
+      "path": "recording.tar.gz.part-0004",
+      "bytes": 16777216,
+      "sha256": "af96899ad36689f35c5a3fca96ffdc6519e0910b07555574c3667e8167f61aba"
+    },
+    {
+      "path": "recording.tar.gz.part-0005",
+      "bytes": 16777216,
+      "sha256": "9559aaa8c10e024f484be8c3ae596ddc91ca19fbfe772a73e27d7abb74731504"
+    },
+    {
+      "path": "recording.tar.gz.part-0006",
+      "bytes": 16777216,
+      "sha256": "10527f80204cdd365baa73dbe0b83119b3c11fbdbbf8ed26f016b90abbae0e16"
+    },
+    {
+      "path": "recording.tar.gz.part-0007",
+      "bytes": 16777216,
+      "sha256": "ca211dda81711527d650577c5848de1dee11f632002414b491fe68ee804e058e"
+    },
+    {
+      "path": "recording.tar.gz.part-0008",
+      "bytes": 16777216,
+      "sha256": "155621a504a80e39bfa2b75641ed4be302326cd17533028ae0e40b334a928697"
+    },
+    {
+      "path": "recording.tar.gz.part-0009",
+      "bytes": 16777216,
+      "sha256": "90e1b77b4586ee8a3787a9add684c5ab9d2da21ec5af1d66708e6f9a182fd1f0"
+    },
+    {
+      "path": "recording.tar.gz.part-0010",
+      "bytes": 16777216,
+      "sha256": "631c59da0319952d0f950b7c7688e0c4a1ff133c787de81e6d92414b30af8b01"
+    },
+    {
+      "path": "recording.tar.gz.part-0011",
+      "bytes": 16777216,
+      "sha256": "ce92c3189b059d7aaf2fbda544d7bc75bb2cb0ed80daa4c16dc80c61d46c75b1"
+    },
+    {
+      "path": "recording.tar.gz.part-0012",
+      "bytes": 16777216,
+      "sha256": "90e7ecdde011fd2cd7c1818810fad65aa1824cbabe7649b69a635ba449c25174"
+    },
+    {
+      "path": "recording.tar.gz.part-0013",
+      "bytes": 16777216,
+      "sha256": "faa5bbeededeaa93483cb7108f9e73054ee98535edfaf43c6159e10ae4f9f75c"
+    },
+    {
+      "path": "recording.tar.gz.part-0014",
+      "bytes": 16777216,
+      "sha256": "bb5c89ebb2df850384d4f5ceb517e472fff9aba7bda89018d7fb8fa03e6e67fc"
+    },
+    {
+      "path": "recording.tar.gz.part-0015",
+      "bytes": 16777216,
+      "sha256": "a2b7796a37aef091b11dc652da13683f709c1e37b99530d20810d30290ee9955"
+    },
+    {
+      "path": "recording.tar.gz.part-0016",
+      "bytes": 16777216,
+      "sha256": "c4ed79b72ddbcbd89198770866e6d31712f19b410dd6e582c4f568891fd74f20"
+    },
+    {
+      "path": "recording.tar.gz.part-0017",
+      "bytes": 16777216,
+      "sha256": "e1e4a51379db815bdf8280e4af23263e90b59d448bafc363f0b4c62382c7b9c3"
+    },
+    {
+      "path": "recording.tar.gz.part-0018",
+      "bytes": 16777216,
+      "sha256": "65a9c458753a1118a6cab29f103a0de4565ccb6c7cdc8fdd076339150028a5c4"
+    },
+    {
+      "path": "recording.tar.gz.part-0019",
+      "bytes": 16777216,
+      "sha256": "27a429d97803f610ba3f110b9f241a066ecc4e8fead0393a39a42301c719b20d"
+    },
+    {
+      "path": "recording.tar.gz.part-0020",
+      "bytes": 3749199,
+      "sha256": "5346c4b4e6672d669301fbee837496731e7d13f5bf0d074a1495538cde1faa1c"
+    }
+  ],
+  "records": 37947,
+  "reopenedMembers": 37947,
+  "sourceClosureIncluded": true,
+  "archiveSha256": "e60573b012f80accdeb73f9e1a63d3408c080a8ad4746e68de72b7d373ad602f",
+  "archiveBytes": 339293519,
+  "recordIndexSha256": "77ad969bd93459de71e673eacfa914f52d2d6d833ddb017f43059de30cbfac1d",
+  "hotReceiptSha256": "ed031284059f83d0d0c763aa31a0ba12a645544460e1b8c6506da9c0ad169153",
+  "coldReportSha256": "37b59f47d8a4330839ceafe0ea6fbd5e04ca6e2a0b05216394c7ebaaaa522627",
+  "coldReceiptSha256": "3566e762403afaf6dbd1f4e5eed5bc1b7d3221e831ce1c76dac9149af264b217",
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "authority": "isolated-original-packed-depths",
+  "productionDrawAuthority": false
+}
