@@ -1,0 +1,93 @@
+{
+  "status": "passed",
+  "harnessHead": "d3583d1f4574dfd9fc7a3b0bef0e3e544342cee1",
+  "commands": [
+    {
+      "command": [
+        "node",
+        "--check",
+        "renderer/virgl-command/tests/standard-packed-depth-critic.mjs"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "--check",
+        "tools/verify-virgl-standard-packed-depth-critic.mjs"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "py_compile",
+        "/tmp/d42-fresh-critic/custody.py",
+        "/tmp/d42-fresh-critic/audit.py",
+        "/tmp/d42-fresh-critic/coverage.py",
+        "/tmp/d42-fresh-critic/wire-regressions.py",
+        "/tmp/d42-fresh-critic/novel-audit.py",
+        "/tmp/d42-fresh-critic/fresh-source.py",
+        "/tmp/d42-fresh-critic/initial-clear-audit.py",
+        "/tmp/d42-fresh-critic/seal.py"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python3",
+        "tools/check_task_policy.py"
+      ],
+      "exitCode": 0,
+      "stdout": "task-policy: OK (active=none)\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python3",
+        "tools/build_queue.py"
+      ],
+      "exitCode": 0,
+      "stdout": "wrote tasks/QUEUE.md: 659 tasks, 467 verified\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "sealMembersReopened": 5097,
+  "sealManifestSha256": "41d6374be74e6119bfc85cd35e4e9d97345c0904f7ddd512f4a988cac5560400",
+  "runtime": [
+    {
+      "path": "renderer/virgl-command/resources.mjs",
+      "sha256": "601a575f91fd2399fa162f8e3bdffd403a7f9cd4f63d8066d131ac04528e78df",
+      "unchanged": true
+    },
+    {
+      "path": "renderer/virgl-command/unorm-depth-images.mjs",
+      "sha256": "7fb08881153cfd06ed1acb5dba8d6cc61525b8f742a3b0a9715fb0e68e55e1d1",
+      "unchanged": true
+    },
+    {
+      "path": "renderer/virgl-command/floating-depth-gpu.mjs",
+      "sha256": "6e87240445044201f21a2977ee883de57e930542b67a99a03cf0077c008ef853",
+      "unchanged": true
+    }
+  ],
+  "taskStatus": "verified",
+  "queueAfterPolicy": true
+}

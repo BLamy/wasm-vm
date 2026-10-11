@@ -2,7 +2,7 @@
 id: E6-T11d42
 epic: 6
 title: Preserve original packed UN24 depth and stencil storage and transfers
-status: implemented
+status: verified
 estimate: S
 risk: high
 priority: 525.027039000382
@@ -190,3 +190,90 @@ Worker claim: original20/21 native storage and public transfers satisfy this
 bounded storage contract on the recorded real Metal backend. This is a worker
 submission awaiting a fresh adversarial critic, not a verified status or complete
 production/API/capset/guest graphics/deployment/300MIPS claim.
+
+### 2026-10-11 — fresh verifier — VERDICT: verified
+
+I did not implement this task. Read the task and three runtime diffs before
+opening evidence; wrote P1–P11 predictions first, original journal SHA
+`42bd4d1c7fcdfe1bd1e1137fcce73ffb09f5f957353edc97e0caaf41b640099d`.
+Full per-prediction report, observed native sequences/body digests and precise
+demands are in `evidence/virgl-packed-depth-images/verifier/VERDICT.md`.
+Every prediction is HELD; no product contradiction or missing worker run survives.
+
+- P1 custody/source — HELD: independently reopened all37,947 D42 and41,650 D41
+  logical bodies, authenticated all21 worker parts and915 frozen Git source
+  bodies, whole Mesa/virglrenderer/GLES and served V8/compiler identities.
+- P2 original fields/admissions — HELD: whole original enum/Mesa/native mapping
+  and original numeric wire fields match; all14 old owners,13 old layouts and
+  six guest sampler/surface refusals remain unchanged.
+- P3 full domains — HELD: independent literal inverses reopen all native/public
+  bodies for every0..16777215 UN24 word in both formats/hot/cold; successful
+  native max1 ULP, exact public/S8/canonical X8/padding. No code-under-test
+  conversion supplies the critic's expected fields.
+- P4 native diagnostics — HELD: actual independent depth/S8 diagnostics and all
+  256 EQUAL references in each matrix group;47,104 actual reference calls per
+  hot/cold matrix. Large extra domain diagnostic is explicitly depth-only, with
+  exact native packing/public S8 planes checked across the complete domains.
+- P5 physical completion — HELD: independently audited all positive298 rows per
+  hot/cold:1584 owned/1575 consumed/9 disposal-only syncs,1128 fenced CPU
+  collections/384 synchronous driver returns. Actual completion follows latest
+  writers; every native object deletes once and terminal charges are zero.
+- P6 lifetime/ranges — HELD: three NEW seeds0x73c19be5,0xd0846f21,0x5e9a7c33 each
+  pass46 recorded cases. Full/private NPOT remap, actual matching native refresh,
+  unchanged backing, old generations, opposite-format ID reuse, stale queues,
+  cancellation and disposal hold in independent full-body/native-event audits.
+- P7 precharge/rollback — HELD: malformed/overflow/one-byte-short guards refuse
+  before affected native allocation or collection; post-allocation failures
+  unwind immediately before disposal and leave no charge/object leak.
+- P8 actual completed sabotage — HELD: reopened worker depth/S8 and precision/
+  stencil controls. Worker S8 actual169→243 occurs at native sequence106 between
+  consumed sync4/96 and sync6/118 (both actual37148), native raw SHA
+  `8f0d79898ead31af35fa611c42606f82304405e71fc41928f38300824b65b5f0`.
+  Fresh promoted inverse rejects actual199→97 at native sequence131 between
+  consumed sync4/122 and distinct sync6/144 (both actual/delivered37146), raw
+  SHA `cf2ddc1876d99a1c0619d9368f7bdbbd1b45c5e506d07a6aab21735a6270c2f7`.
+  A second fresh existing inverse rejects98→56. These intentional corruptions
+  are recorded failing controls; unchanged full original-input inverses catch them.
+- P9 retained/cold — HELD: affected UN16/floating18/126/Z16 paths pass;211 actual
+  retained D32F_S8 allocations per floating-storage run preserve the old helper
+  default. Actual generated MJS/Wasm pins remain unchanged. Authenticated one
+  pristine scrubbed frozen cold clone, clean before/after; no repeat was needed.
+- P10 finest coverage — HELD: independent raw V8/Git partition reconstruction
+  yields516 executed/10 source-SHA/UTF16/text-pinned unchanged D41 color operands/
+  0 unproven per hot/cold. No changed packed-depth/scratch semantics are waived.
+- P11 novel attack — HELD: correlated low/tie/high/max UN24 pairs and all256 S8/
+  X8 through33×17 segmented mips, private levels1..3, eight GPU clear values,
+  odd nonzero mip read and held old ranges pass. Promoted test/driver/Make target
+  at `d3583d1f4574dfd9fc7a3b0bef0e3e544342cee1` passes two formats/34,170
+  predictions and its physical completed-S8 sabotage mode intentionally exits1.
+
+Retained the initial failed promoted-harness capture at8d1a2f55, the refinement
+journal written before the completing run, and corrected intermediate pass at
+3a08a913. Initial harness wrongly extended the original-upload1 ULP inverse to
+GPU FLOAT clear: actual low bits0x358c0001 choose UN24 18 within[17,18], while
+the invented inverse0x35900001 differs262144 ULP. Full failed native body SHA
+`b64d688f0a32cb7709ddbbe9326b69fa89828fb04a81ba37e8929bd36593f0c9`
+is independently reopened. Whole pinned GLES3.0.6 SHA
+`7e831831595d3e44c267cc0a0d754f8c244cf3c8f5056f49a674f25fb9d5adeb`
+§2.1.6.1/2 (physical PDF23–24), §2.13.1 (PDF95–96), §4.2.3 (PDF201–202),
+§3.8.15.1 (PDF176) supports the full clear conversion interval and exact native
+choice serialization. Original upload normalization/1 ULP bounds are unchanged;
+this was a verifier-harness correction, not a runtime correction or product failure.
+
+SUITE: promoted `renderer/virgl-command/tests/standard-packed-depth-critic.mjs`,
+`tools/verify-virgl-standard-packed-depth-critic.mjs`,
+`make verify-E6-T11d42-critic` and its actual completed-stencil control. Exact
+fresh commands and independent scripts/results are in the critic README/seal.
+Critic seal reopens all5,097 logical members/950 real bodies/4,147 earlier-real
+hardlinks,228,666,681 logical bytes. One joined7,561,056-byte gzip stream SHA
+`c36fb7f77a4088c0c61b283cd4997512079b10ae8d7e6024932d5a27d42334ba`;
+index SHA `98df45b4000a79235b6407b5c7beaa59c718ffb60c49016607d750dcfe310991`;
+manifest SHA `41d6374be74e6119bfc85cd35e4e9d97345c0904f7ddd512f4a988cac5560400`.
+
+Frozen runtime is unchanged fromc9d745dc at final critic harness d3583d1f; status/
+evidence commits change no runtime. Final scoped Node syntax, independent Python
+script compilation, diff whitespace and task policy checks pass; queue rebuilt
+after policy. Carry D41 HELD results only at authenticated unchanged boundaries.
+No production/API/caps, real guest Mesa/compositor/scanout, deployment or300MIPS
+authority is granted. All Git/index/source/Node/compiler/browser/GPU leases are
+released to the root after the final verdict/evidence/status commit.
