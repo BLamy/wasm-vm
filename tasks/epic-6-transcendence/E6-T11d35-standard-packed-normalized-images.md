@@ -2,7 +2,7 @@
 id: E6-T11d35
 epic: 6
 title: Preserve original packed normalized image storage and transfers
-status: in-progress
+status: implemented
 estimate: S
 risk: high
 priority: 525.027039000377
@@ -118,3 +118,69 @@ prediction to count the public source and staging backings only on CPU and the
 PBO only after native issue. Runtime semantics are unchanged. No successful
 final receipt or task verdict follows from this interrupted recording; rerun the
 selected frozen submission after this harness correction.
+
+### 2026-10-11 — worker — exact recorded submission
+
+Runtime is frozen at `2acc572aaea2368f1c2f2aad0def5c2d08ecc2d8`; final source and
+harness head is `b6434e33c9e5399f48fc191656e02f318cd78075`, based on independently
+verified D34 `b57c3ae04e0bd306e6bb5877ff94c5d8f4d6df06`. The selected packed
+descriptor and resource/backend profile are the only two changed runtime files.
+Decoder, command consumer, compiler, historical profiles and production caps
+retain their predecessor digests.
+
+Commands:
+
+```
+VIRGL_PACKED_NORMALIZED_EVIDENCE_DIR=target/evidence/virgl-standard-packed-normalized-final-hot-v3 make verify-E6-T11d35
+python3 tools/virgl-command/standard-packed-normalized-cold.py --output target/evidence/virgl-standard-packed-normalized-final-cold
+python3 tools/virgl-command/standard-packed-normalized-seal.py target/evidence/virgl-standard-packed-normalized-final-hot-v3 target/evidence/virgl-standard-packed-normalized-final-cold evidence/virgl-standard-packed-normalized-images/worker
+```
+
+The hot command and identical pristine-clone command exit zero on headed native
+Apple Metal WebGL2, with zero recorded browser errors. Each proves 169 actual
+native cases and three 26-case varied ownership/failure schedules. The
+independent primary-table inverse checks 250 recorded runs, 15,144,788 native
+components, 4,200,708 public bytes and 96,104 untouched padding bytes. Ten
+16-bit layouts exhaust all 65,536 original words; three 32-bit layouts cover all
+defined fields and alpha endpoints. Original transfer boxes, GPU-only changes,
+isolated mip ranges, full backing, native formats, indexed state restoration,
+retained generations, PBO fences and exact CPU/GPU/scratch budgets are compared.
+Three physical upload/copy/completed-word corruptions are independently refuted
+after native completion; `fault-completed-word/report.json` run 0,
+`planes/0/observed/native` retains the second completed native fence and corrupt
+packed component. The two other points are `fault-copy-level/report.json` run 0
+`views/planes/native` and `fault-upload-lane/report.json` run 0
+`planes/0/observed/native`.
+
+All seven affected historical resource/transfer gates pass. The complete nested
+V8 audit has 449 positive smallest governing changed-runtime partitions, zero
+zero-hit partitions and zero waivers. The predecessor audit reopens and hashes
+223,159 members of four held worker/critic seals. Actual generated Wasm remains
+`acbe036afcdc4f1d8aa8cfb0fb107f48ba27759a6af4a7b9d6c83e3aa679d6cc`.
+The cold clone is pristine before and after its single final exact-head run.
+
+The earlier harness-only recording at `cebeb6892b77ade6cca991fc8eae4b7cb9591881`
+reached the legacy color-format server's missing new-module 404. Final harness
+head adds only pinned source-serving declarations to 27 historical harnesses
+and supports the legacy single-source coverage shape. The serving auditor
+reconstructs every original D34 file by removing those declared additions;
+no historical algorithm or assertion changed. Both interrupted recordings are
+retained locally; neither is offered as the successful final submission.
+
+Evidence of record: `evidence/virgl-standard-packed-normalized-images/worker/`
+contains the complete hot/cold inputs, native events, backing/pixel blobs,
+source closure, screenshots, coverage, custody and receipts. Its 28,896 members
+were reopened and hashed. Archive: 56,549,137 bytes,
+SHA256 `c8e12f7832dfbfc94b5cab8a7d196e56409544e3a218eb493d919babcf9e07dc`;
+index SHA256 `784a390eea7213a797b0881ef8911847771429a1f9fe27b2a8249dca73bedbfd`;
+manifest SHA256 `3f099fb484d1529e1848d6f2ee80587cdd100d38412fda58de1f9221b454960e`.
+Hot receipt SHA256 `8b0255a5f183ed2df1453284aeb5a4dd72dca11c65370c92f3ad95233e8a200e`;
+cold receipt SHA256 `66b4e578e070c6e14fe57b5e29564afd232cce66b3581716f7d643181edc80bf`;
+cold report SHA256 `ffe66714cb8cf7c478e2743863c17e21c4f791072c560e7fc2661e414faf3398`.
+
+Claim: the isolated selected owner/backend preserves these thirteen original
+packed normalized representations through actual native storage and transfers,
+including full-mip and retained-generation transactions, within existing
+budgets. This is a worker claim awaiting a fresh critic. It grants no guest
+execution, original command-consumer, production negotiation or production draw
+authority. The following command consumer remains a separate ordered task.
