@@ -22,7 +22,7 @@ export async function runStateAcceptance() {
     const metadata = { id: 6, target: 2, format, bind: 9, width: 15, height: 9, depth: 1, arraySize: 1, lastLevel: 3, nrSamples: 0, flags: 0 };
     const row = { kind: 'nondefault-caller-state', seed: source.seed, metadata, source: [], private: [] }, owned = [];
     report.runs.push(row);
-    const make = kind => { const object = g['create'+kind](); if (!object) throw Error('caller '+kind+' allocation'); owned.push([kind, object]); return object; };
+    const make = (kind, ...args) => { const object = g['create'+kind](...args); if (!object) throw Error('caller '+kind+' allocation'); owned.push([kind, object]); return object; };
     try {
       add(r, metadata, unhex(source.backingHex)); const storage = r.allocations[0].storage;
       for (const plane of source.planes) {
@@ -40,7 +40,7 @@ export async function runStateAcceptance() {
       const program = make('Program');
       for (const [type, text] of [[g.VERTEX_SHADER, '#version 300 es\nvoid main(){gl_Position=vec4(0,0,0,1);}'],
         [g.FRAGMENT_SHADER, '#version 300 es\nprecision highp float;out vec4 color;void main(){color=vec4(0.125,0.25,0.5,1.0);}']]) {
-        const shader = make('Shader'); g.shaderSource(shader, text); g.compileShader(shader);
+        const shader = make('Shader', type); g.shaderSource(shader, text); g.compileShader(shader);
         c.same(g.getShaderParameter(shader, g.COMPILE_STATUS), true, 'actual caller shader compiles'); g.attachShader(program, shader);
       }
       g.linkProgram(program); c.same(g.getProgramParameter(program, g.LINK_STATUS), true, 'actual caller program links'); g.useProgram(program);
