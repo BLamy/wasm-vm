@@ -417,12 +417,78 @@ def novel(record, originals):
     return results
 
 
+def caller_states(record, originals):
+    """Check native identities and exact helper state beyond inherited transfer setup."""
+    require(record.data['status'] == 'passed' and len(record.data['runs']) == 2, 'both physical caller-state cases complete')
+    results = []
+    for run in record.data['runs']:
+        fmt = run['metadata']['format']
+        source = next(row for row in originals['rows'] if row['seed'] == 0x6b49172d and row['format'] == fmt)
+        require(run['seed'] == source['seed'] and fmt in (18, 126), 'independent caller original identity')
+        caller = [row for row in run['nativeObjects'] if row['label'] == 'state-independent-caller-objects']
+        identities = {kind: [row['id'] for row in caller if row['name'] == 'create'+kind]
+                      for kind in ('Program', 'Shader', 'VertexArray', 'Buffer', 'Texture', 'Framebuffer', 'Sampler')}
+        require([len(identities[kind]) for kind in identities] == [1, 2, 1, 2, 1, 2, 1], 'concrete distinct owned native caller objects')
+        program, vao, color, sampler = (identities[kind][0] for kind in ('Program', 'VertexArray', 'Texture', 'Sampler'))
+        other, elements = identities['Buffer']
+        read, draw = identities['Framebuffer']
+        require(other != elements and read != draw, 'native element/other-data classes and unequal caller FBOs')
+        texture = run['allocations'][0]['texture']
+        before = dict(program=program, vao=vao, read=read, draw=draw, readAttachment=color,
+                      drawAttachment=color, readBuffer=36064, active=33987, viewport=[2, 3, 5, 7],
+                      scissor=[3, 2, 4, 5], depthMask=True, caps=[False, True, True, True, False, True, False, False, False],
+                      stencil=[[513, 37, 115, 183, 7682, 7683, 5386], [516, 91, 157, 105, 7681, 0, 34055]],
+                      buffers=[other]*5+[elements], pixelStore=[8, 17, 2, 3, 8, 19, 1, 2, 23, 1],
+                      units=[dict(unit=0, texture=color, sampler=sampler),
+                             dict(unit=1, texture=texture, sampler=None, sourceParameters=[1, 2, 34894, 515, 9729, 9729]),
+                             dict(unit=3, texture=color, sampler=sampler)],
+                      indexed=[dict(mask=[i % 2 == 0, True, i % 3 == 0, False], blend=[32778, 32779, 770, 771, 1, 0]) for i in range(8)])
+        require(run['before'] == before, 'all pre-run predicted nondefault native caller fields')
+        require(run['copyState']['before'] == before == run['copyState']['after'], 'actual private copy preserves every native caller identity')
+        normalized = dict(before, buffers=[None, None, *before['buffers'][2:]], pixelStore=[1, 0, 0, 0, 1, 0, 0, 0, 0, 0])
+        backend_fbo = next(row['id'] for row in run['nativeObjects'] if row['name'] == 'createFramebuffer' and row['label'] == '')
+        issued = dict(normalized, read=backend_fbo, readAttachment=None)
+        staging = [event for event in run['nativeEvents'] if event['name'] == 'bufferData' and event['args'][0] == 35051]
+        require(len(staging) == 1 and staging[0]['args'][1] == 135*(8 if fmt == 126 else 4), 'actual original-field native staging byte count')
+        collected = dict(issued, buffers=[None, None, staging[0]['buffer'], *before['buffers'][3:]])
+        for name, expected in [('syncState', normalized), ('issueState', issued), ('collectState', collected)]:
+            require(run[name]['before'] == before and run[name]['expected'] == expected == run[name]['after'],
+                    'new helper preserves all concrete state beyond literal inherited setup: '+name)
+        require(len(run['source']) == len(source['planes']) == 4, 'all full original caller mip inputs')
+        for saved, plane in zip(run['source'], source['planes']):
+            raw = bytes.fromhex(plane['inputHex'])
+            require(saved['level'] == plane['level'] and record.blob(saved['input']) == raw, 'every pre-run original caller field')
+            upload = next(row for row in run['uploads'] if row.get('texture') == texture and row['args'][1] == plane['level'])
+            require(upload['args'] == [3553, plane['level'], 0, 0, plane['width'], plane['height'], 34041 if fmt == 126 else 6402, 36269 if fmt == 126 else 5126],
+                    'every actual original native caller upload dimension/format/type')
+            data = next(row for row in run['uploads'] if row.get('name') == 'bufferSubData' and row['bytes']['sha256'] == saved['input']['sha256']) if fmt == 126 else upload
+            require(record.blob(data['bytes']) == raw, 'complete actual native caller input bytes')
+            require((upload['type'] == 'PBO') == (fmt == 126), 'qualified native original upload overload')
+        base = source['planes'][0]['predictions']
+        record.public(fmt, base, run['sync'], 'all nondefault caller original synchronous fields')
+        record.public(fmt, base, run['async'], 'all nondefault caller original staged fields')
+        require(len(run['private']) == 2, 'complete private caller range')
+        for plane in run['private']:
+            require(plane['original'] == plane['local']+1, 'original caller private mip remapping')
+            record.plane(fmt, source['planes'][plane['original']]['predictions'], plane['native'], 'complete caller private native field planes')
+        seen = set()
+        for event in run['events']:
+            if event['name'] == 'clientWaitSync' and event['delivered'] in (37146, 37148) and event['sync'] not in seen:
+                record.fence(event, run)
+                seen.add(event['sync'])
+        require(len(seen) == (7 if fmt == 126 else 5), 'all upload/copy/PBO and independent diagnostic completions')
+        results.append(dict(format=fmt, seed=source['seed'], status='held', copy=run['copyState'], synchronous=run['syncState'],
+                            issue=run['issueState'], collection=run['collectState']))
+    return results
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--worker', type=Path)
     parser.add_argument('--predictions', type=Path)
     parser.add_argument('--boundaries', type=Path)
     parser.add_argument('--novel', type=Path)
+    parser.add_argument('--states', type=Path)
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
     results, native_pixels, public_bytes, fences = [], 0, 0, 0
@@ -453,6 +519,13 @@ def main():
             native_pixels += record.native_pixels
             public_bytes += record.public_bytes
             fences += record.fences
+    if args.states:
+        originals = json.loads((ROOT / 'renderer/virgl-command/tests/standard-floating-depth-critic-originals.json').read_text())
+        record = Recording(args.states / 'states' / 'report.json')
+        results.append(dict(path='states/report.json', reportSha256=record.digest, detail=caller_states(record, originals)))
+        native_pixels += record.native_pixels
+        public_bytes += record.public_bytes
+        fences += record.fences
     require(results, 'full actual recordings required')
     result = dict(schema='fresh-d39-independent-full-fields-v1', status='passed', oracleImportsProductCode=False,
                   nativePixels=native_pixels, publicBytes=public_bytes, consumedPhysicalFences=fences, records=results)
