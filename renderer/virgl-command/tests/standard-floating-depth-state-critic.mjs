@@ -92,16 +92,24 @@ export async function runStateAcceptance() {
       };
       const before = state(); row.before = before; c.same(before.program !== null && before.vao !== null && before.read !== null && before.draw !== null, true, 'caller has actual nondefault object identities');
       c.same(gl.getError(), gl.NO_ERROR, 'nondefault caller snapshot has no native query error');
+      // The unchanged transfer backend deliberately normalizes pixel state and
+      // binds its own staging framebuffer/buffer. Qualify the new helper against
+      // that inherited setup, rather than inventing a new backend restoration API.
+      const transferState = { ...before, buffers: [null, null, ...before.buffers.slice(2)], pixelStore: [1, 0, 0, 0, 1, 0, 0, 0, 0, 0] };
       r.setLabel('state-native-range-refresh'); c.ok(r.imageAccess.refresh(view.token), 'native range refresh with nondefault caller bindings');
       row.copyState = { before, after: state() }; c.same(row.copyState.after, before, 'native copies preserve concrete caller identity and state');
       row.copyFence = await physicalFence(r, 'state-range-copy-completed');
       const output = c.ok(r.store.readStorage(readLease, { x: 0, y: 0, z: 0, width: 15, height: 9, depth: 1 }), 'synchronous native fields under nondefault caller state').bytes;
-      row.sync = await blob(report, output); row.syncState = { before, after: state() }; c.same(row.syncState.after, before, 'packing restores concrete source sampler texture attachment and pixel state');
+      row.sync = await blob(report, output); row.syncState = { before, expected: transferState, after: state() }; c.same(row.syncState.after, transferState, 'packing restores concrete helper state after inherited pixel setup');
       c.same(fieldMisses(format, source.planes[0].predictions, output, true), [], 'nondefault caller public fields independently exact');
       const request = c.ok(r.asyncAccess.beginStorageRead(readLease, { x: 0, y: 0, z: 0, width: 15, height: 9, depth: 1 }), 'actual nondefault native PBO issue');
-      row.issueState = { before, after: state() }; c.same(row.issueState.after, before, 'queued native field issue preserves caller identities');
+      const stagingFramebuffer = r.nativeObjects.find(object => object.name === 'createFramebuffer' && object.label === '').id;
+      const issueState = { ...transferState, read: stagingFramebuffer, readAttachment: null };
+      row.issueState = { before, expected: issueState, after: state() }; c.same(row.issueState.after, issueState, 'queued helper preserves identities beyond inherited staging bindings');
       const ready = await poll(r, request.ticket); row.async = await blob(report, ready.bytes); row.readFence = r.trace.events.filter(event => event.name === 'clientWaitSync').at(-1);
-      row.collectState = { before, after: state() }; c.same(row.collectState.after, before, 'native PBO collection restores all nondefault caller state');
+      const stagingBuffer = r.nativeEvents.filter(event => event.name === 'bufferData' && event.args[0] === g.PIXEL_PACK_BUFFER).at(-1).buffer;
+      const collectState = { ...issueState, buffers: [null, null, stagingBuffer, ...before.buffers.slice(3)] };
+      row.collectState = { before, expected: collectState, after: state() }; c.same(row.collectState.after, collectState, 'native collection preserves helper identities beyond inherited copy-read binding');
       c.same(fieldMisses(format, source.planes[0].predictions, ready.bytes, true), [], 'queued nondefault public fields independently exact'); c.ok(r.asyncAccess.release(request.ticket), 'nondefault read retires');
       for (let local = 0; local < 2; local++) {
         const plane = source.planes[local+1], native = await nativeRead(r, resolved.storage.texture, plane.width, plane.height, local, packed);
