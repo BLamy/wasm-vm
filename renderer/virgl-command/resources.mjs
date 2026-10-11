@@ -3,8 +3,9 @@ import {byteColorFormat, STANDARD_COLOR_TRANSFER_PROFILE} from "./color-images.m
 import {floatColorFormat, halfFromFloatWord, STANDARD_FLOAT_COLOR_TRANSFER_PROFILE} from "./float-images.mjs";
 import {packedFloatColorFormat, r11g11b10FromFloatWords, STANDARD_PACKED_FLOAT_COLOR_TRANSFER_PROFILE} from "./packed-float-images.mjs";
 import {sharedExponentColorFormat, STANDARD_SHARED_EXPONENT_TRANSFER_PROFILE} from "./shared-exponent-images.mjs";
+import {integerColorFormat, STANDARD_INTEGER_COLOR_TRANSFER_PROFILE} from "./integer-images.mjs";
 import {createSharedExponentPacker} from "./shared-exponent-gpu.mjs";
-const ownedColorFormat = meta => byteColorFormat(meta.format) || (meta.floatPrecision ? floatColorFormat(meta.format) : null) || (meta.packedFloat ? packedFloatColorFormat(meta.format) : null) || (meta.sharedExponent ? sharedExponentColorFormat(meta.format) : null);
+const ownedColorFormat = meta => byteColorFormat(meta.format) || (meta.floatPrecision ? floatColorFormat(meta.format) : null) || (meta.packedFloat ? packedFloatColorFormat(meta.format) : null) || (meta.sharedExponent ? sharedExponentColorFormat(meta.format) : null) || (meta.integerBits ? integerColorFormat(meta.format) : null);
 export const RESOURCE_LIMITS = Object.freeze({
   resources: 16, contexts: 8, segments: 256, tickets: 64, leases: 64,
   resourceBytes: 4194304, transferBytes: 4194304,
@@ -81,10 +82,10 @@ function checkedProduct(a, b, maximum, message) {
   require(a === 0 || b <= Math.floor(maximum / a), "out-of-bounds", message);
   return a * b;
 }
-function normalizeMetadata(value, limits, uniform = false, bufferRoles = false, mipmaps = false, colors = false, floats = false, packed = false, shared = false) {
+function normalizeMetadata(value, limits, uniform = false, bufferRoles = false, mipmaps = false, colors = false, floats = false, packed = false, shared = false, integers = false) {
   const meta = record(value, META_KEYS);
   for (const key of META_KEYS) uint(meta[key], key, ["id", "width", "height", "depth", "arraySize"].includes(key));
-  require(meta.depth === 1 && meta.arraySize === 1 && (meta.lastLevel === 0 || mipmaps && meta.target === 2 && ([2, 67, 233].includes(meta.format) || colors && byteColorFormat(meta.format) || floats && floatColorFormat(meta.format) || packed && packedFloatColorFormat(meta.format) || shared && sharedExponentColorFormat(meta.format))) && meta.nrSamples === 0 && meta.flags === 0,
+  require(meta.depth === 1 && meta.arraySize === 1 && (meta.lastLevel === 0 || mipmaps && meta.target === 2 && ([2, 67, 233].includes(meta.format) || colors && byteColorFormat(meta.format) || floats && floatColorFormat(meta.format) || packed && packedFloatColorFormat(meta.format) || shared && sharedExponentColorFormat(meta.format) || integers && integerColorFormat(meta.format))) && meta.nrSamples === 0 && meta.flags === 0,
     "unsupported-resource", mipmaps ? "Only qualified 2D levels, one layer, one sample and no flags are supported." : "Only one-level, single-layer, single-sample resources without flags are supported.");
   let kind, byteLength, levels, color, gpuByteLength;
   if (meta.target === 0 && meta.format === 64 && meta.height === 1) {
@@ -98,7 +99,7 @@ function normalizeMetadata(value, limits, uniform = false, bufferRoles = false, 
     byteLength = checkedProduct(checkedProduct(meta.width, meta.height, limits.resourceBytes, "Depth allocation is too large."), 2,
       limits.resourceBytes, "Depth allocation is too large.");
   } else {
-    color = (colors ? byteColorFormat(meta.format) : null) || (floats ? floatColorFormat(meta.format) : null) || (packed ? packedFloatColorFormat(meta.format) : null) || (shared ? sharedExponentColorFormat(meta.format) : null);
+    color = (colors ? byteColorFormat(meta.format) : null) || (floats ? floatColorFormat(meta.format) : null) || (packed ? packedFloatColorFormat(meta.format) : null) || (shared ? sharedExponentColorFormat(meta.format) : null) || (integers ? integerColorFormat(meta.format) : null);
     const roles = meta.bind & 10, hints = (1 << 18) | (1 << 20);
     require(meta.target === 2 && ([2, 67, 233].includes(meta.format) || color) && roles !== 0 && (!color?.snorm || roles === 8) && (!color?.sharedExponent || meta.bind === 8) && (meta.bind & ~(10 | hints)) === 0,
       "unsupported-resource", "Only required normalized 2D color formats with render/sampler roles and scanout/shared hints are supported.");
@@ -132,7 +133,7 @@ function normalizeMetadata(value, limits, uniform = false, bufferRoles = false, 
     }
   }
   require(byteLength <= limits.resourceBytes, "limit-exceeded", "Resource exceeds per-resource byte limit.");
-  return freeze({ ...meta, kind, byteLength, ...(levels ? { levels } : {}), ...(color ? { pixelBytes: color.pixelBytes, gpuByteLength, ...(color.precision ? { floatPrecision: color.precision } : {}), ...(color.packedFloat ? { packedFloat: true } : {}), ...(color.sharedExponent ? { sharedExponent: true } : {}) } : {}) });
+  return freeze({ ...meta, kind, byteLength, ...(levels ? { levels } : {}), ...(color ? { pixelBytes: color.pixelBytes, gpuByteLength, ...(color.precision ? { floatPrecision: color.precision } : {}), ...(color.packedFloat ? { packedFloat: true } : {}), ...(color.sharedExponent ? { sharedExponent: true } : {}), ...(color.integerBits ? { integerBits: color.integerBits } : {}) } : {}) });
 }
 function inlineWords(value) {
   // The wire submission cap leaves at most 65524 words after its inline header.
@@ -328,7 +329,16 @@ export function computeStandardSharedExponentTransferLayout(metadata, fields, ba
   });
 }
 
-function createStore(options, uniform, bufferRoles = false, mipmaps = false, images = false, colors = false, floats = false, packed = false, shared = false) {
+/** Selected original UINT/SINT storage; typed shader/command admission is separate. */
+export function createStandardIntegerColorResourceStore(options) { return createStore(options, true, true, true, true, true, true, true, true, true); }
+export function computeStandardIntegerColorTransferLayout(metadata, fields, backingByteLength, overrides = {}) {
+  return result(() => {
+    const limits = limitsFor(overrides);
+    return success({ layout: layoutFor(normalizeMetadata(metadata, limits, true, true, true, true, true, true, true, true), normalizedFields(fields), backingByteLength, limits) });
+  });
+}
+
+function createStore(options, uniform, bufferRoles = false, mipmaps = false, images = false, colors = false, floats = false, packed = false, shared = false, integers = false) {
   return result(() => {
     const config = record(options, ["backend", "limits"], ["backend"]), backend = config.backend;
     require(backend && typeof backend === "object", "invalid-input", "A transfer backend is required.");
@@ -339,6 +349,7 @@ function createStore(options, uniform, bufferRoles = false, mipmaps = false, ima
     require(!floats || backend.floatProfile === STANDARD_FLOAT_COLOR_TRANSFER_PROFILE, "invalid-input", "Float images require the selected native transfer backend.");
     require(!packed || backend.packedFloatProfile === STANDARD_PACKED_FLOAT_COLOR_TRANSFER_PROFILE, "invalid-input", "Packed float images require their selected native transfer backend.");
     require(!shared || backend.sharedExponentProfile === STANDARD_SHARED_EXPONENT_TRANSFER_PROFILE, "invalid-input", "Shared exponent images require their selected native transfer backend.");
+    require(!integers || backend.integerProfile === STANDARD_INTEGER_COLOR_TRANSFER_PROFILE, "invalid-input", "Integer images require their selected native transfer backend.");
     const requested = limitsFor(config.limits);
     const limits = Object.freeze({ ...requested, textureSize: Math.min(requested.textureSize, backend.maxTextureSize) });
     const resources = new Map(), live = new Set(), contexts = new Map(), tickets = new Map(), leases = new Map(), storageReads = new Map(), uniformRanges = new Map(), revokedAccess = new Set(), revokedUniform = new Set();
@@ -518,7 +529,7 @@ function createStore(options, uniform, bufferRoles = false, mipmaps = false, ima
         return success({ context: freeze({ id, generation: ctx.generation }) });
       }),
       createResource: operation((metadata) => {
-        const meta = normalizeMetadata(metadata, limits, uniform, bufferRoles, mipmaps, colors, floats, packed, shared);
+        const meta = normalizeMetadata(metadata, limits, uniform, bufferRoles, mipmaps, colors, floats, packed, shared, integers);
         require(!resources.has(meta.id), "resource-exists", "Resource ID is already public.");
         require(live.size < limits.resources, "limit-exceeded", "Live/retained resource count limit exceeded.");
         const allocationBytes = meta.kind === "staging" ? 0 : meta.gpuByteLength ?? meta.byteLength;
@@ -952,7 +963,9 @@ export function createStandardPackedFloatColorTransferBackend(gl) { return creat
 
 export function createStandardSharedExponentTransferBackend(gl) { return createTransferBackend(gl, true, true, true, true, true); }
 
-function createTransferBackend(gl, colors, rawBufferReadbacks = false, floats = false, packed = false, shared = false) {
+export function createStandardIntegerColorTransferBackend(gl) { return createTransferBackend(gl, true, true, true, true, true, true); }
+
+function createTransferBackend(gl, colors, rawBufferReadbacks = false, floats = false, packed = false, shared = false, integers = false) {
   return result(() => {
     require(gl && typeof gl.getBufferSubData === "function" && typeof gl.texStorage2D === "function", "invalid-input", "A WebGL2 context is required.");
     require(!colors || gl.getExtension("EXT_render_snorm"), "unsupported-host", "Native signed color copies/readbacks require EXT_render_snorm.");
@@ -966,14 +979,26 @@ function createTransferBackend(gl, colors, rawBufferReadbacks = false, floats = 
       233: { internal: gl.RGB10_A2, upload: gl.RGBA, type: gl.UNSIGNED_INT_2_10_10_10_REV },
     };
     const colorFormat = (meta) => {
-      const color = (colors ? byteColorFormat(meta.format) : null) || (floats ? floatColorFormat(meta.format) : null) || (packed ? packedFloatColorFormat(meta.format) : null) || (shared ? sharedExponentColorFormat(meta.format) : null);
-      const profile = color ? { internal: gl[color.internal], upload: gl[color.upload], type: gl[color.type], ...(color.precision || color.packedFloat ? { readType: gl.FLOAT } : {}) } : colorFormats[meta.format];
+      const color = (colors ? byteColorFormat(meta.format) : null) || (floats ? floatColorFormat(meta.format) : null) || (packed ? packedFloatColorFormat(meta.format) : null) || (shared ? sharedExponentColorFormat(meta.format) : null) || (integers ? integerColorFormat(meta.format) : null);
+      const profile = color ? { internal: gl[color.internal], upload: gl[color.upload], type: gl[color.type], ...(color.precision || color.packedFloat ? { readType: gl.FLOAT } : {}), ...(color.integerBits ? { readType: gl[color.readType], readFormat: gl[color.readFormat] } : {}) } : colorFormats[meta.format];
       require(profile, "unsupported-resource", "Unsupported native texture storage format.");
       return profile;
     };
     // Store uploads are private, dense scratch arrays. Convert in that same
     // reservation: no second CPU image or GPU shadow escapes the byte budgets.
     const nativeUpload = (format, bytes) => {
+      const integer = integers ? integerColorFormat(format) : null;
+      if (integer) {
+        const size = integer.integerBits / 8, count = bytes.length / integer.pixelBytes, nativeCount = integer.nativePixelBytes / size;
+        const data = new DataView(bytes.buffer, bytes.byteOffset, count * integer.nativePixelBytes);
+        const ArrayType = integer.signed ? [Int8Array, Int16Array, Int32Array][Math.log2(size)] : [Uint8Array, Uint16Array, Uint32Array][Math.log2(size)];
+        const native = new ArrayType(bytes.buffer, bytes.byteOffset, count * nativeCount);
+        const read = at => size === 1 ? data.getUint8(at) : size === 2 ? data.getUint16(at, true) : data.getUint32(at, true);
+        // Reverse expansion protects unread original words in the charged scratch.
+        for (let i = count - 1; i >= 0; i--) for (let lane = nativeCount - 1; lane >= 0; lane--)
+          native[i * nativeCount + lane] = lane < integer.components ? read(i * integer.pixelBytes + lane * size) : 1;
+        return native;
+      }
       if (packed && packedFloatColorFormat(format) || shared && sharedExponentColorFormat(format)) {
         const data = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength), words = new Uint32Array(bytes.buffer, bytes.byteOffset, bytes.byteLength / 4);
         for (let i = 0; i < words.length; i++) words[i] = data.getUint32(i * 4, true);
@@ -1031,6 +1056,19 @@ function createTransferBackend(gl, colors, rawBufferReadbacks = false, floats = 
       return bytes;
     };
     const guestReadback = (format, bytes) => {
+      const integer = integers ? integerColorFormat(format) : null;
+      if (integer) {
+        const count = bytes.length / 16, size = integer.integerBits / 8;
+        const native = integer.signed ? new Int32Array(bytes.buffer, bytes.byteOffset, count * 4) : new Uint32Array(bytes.buffer, bytes.byteOffset, count * 4);
+        const data = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+        for (let i = 0; i < count; i++) for (let lane = 0; lane < integer.components; lane++) {
+          const word = native[i * 4 + lane], target = i * integer.pixelBytes + lane * size;
+          if (size === 1) data.setUint8(target, word);
+          else if (size === 2) data.setUint16(target, word, true);
+          else data.setUint32(target, word, true);
+        }
+        return bytes.subarray(0, count * integer.pixelBytes);
+      }
       if (shared && sharedExponentColorFormat(format)) {
         const words = new Uint32Array(bytes.buffer, bytes.byteOffset, bytes.byteLength / 4), data = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
         for (let i = 0; i < words.length; i++) data.setUint32(i * 4, words[i], true);
@@ -1108,7 +1146,7 @@ function createTransferBackend(gl, colors, rawBufferReadbacks = false, floats = 
       gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false); gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
       gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.NONE);
     };
-    const initializeXAlpha = (texture, level = 0) => {
+    const initializeXAlpha = (texture, level = 0, color = null) => {
       const previous = gl.getParameter(gl.DRAW_FRAMEBUFFER_BINDING), mask = gl.getParameter(gl.COLOR_WRITEMASK);
       const scissor = gl.isEnabled(gl.SCISSOR_TEST);
       gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, framebuffer);
@@ -1117,7 +1155,8 @@ function createTransferBackend(gl, colors, rawBufferReadbacks = false, floats = 
         gl.drawBuffers([gl.COLOR_ATTACHMENT0]);
         require(gl.checkFramebufferStatus(gl.DRAW_FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE, "backend-error", "Packed color initialization framebuffer is incomplete.");
         gl.disable(gl.SCISSOR_TEST); gl.colorMask(true, true, true, true);
-        gl.clearBufferfv(gl.COLOR, 0, [0, 0, 0, 1]);
+        if (color?.integerBits) gl[color.signed ? "clearBufferiv" : "clearBufferuiv"](gl.COLOR, 0, [0, 0, 0, 1]);
+        else gl.clearBufferfv(gl.COLOR, 0, [0, 0, 0, 1]);
       } finally {
         gl.framebufferTexture2D(gl.DRAW_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, null, 0);
         gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, previous); gl.colorMask(...mask);
@@ -1188,7 +1227,7 @@ function createTransferBackend(gl, colors, rawBufferReadbacks = false, floats = 
         if (entry.sharedConversion) sharedHelper().releaseScratch(entry.sharedConversion);
       };
       const backend = {
-        maxTextureSize, ...(colors ? { colorProfile: STANDARD_COLOR_TRANSFER_PROFILE } : {}), ...(floats ? { floatProfile: STANDARD_FLOAT_COLOR_TRANSFER_PROFILE } : {}), ...(packed ? { packedFloatProfile: STANDARD_PACKED_FLOAT_COLOR_TRANSFER_PROFILE } : {}), ...(shared ? { sharedExponentProfile: STANDARD_SHARED_EXPONENT_TRANSFER_PROFILE } : {}),
+        maxTextureSize, ...(colors ? { colorProfile: STANDARD_COLOR_TRANSFER_PROFILE } : {}), ...(floats ? { floatProfile: STANDARD_FLOAT_COLOR_TRANSFER_PROFILE } : {}), ...(packed ? { packedFloatProfile: STANDARD_PACKED_FLOAT_COLOR_TRANSFER_PROFILE } : {}), ...(shared ? { sharedExponentProfile: STANDARD_SHARED_EXPONENT_TRANSFER_PROFILE } : {}), ...(integers ? { integerProfile: STANDARD_INTEGER_COLOR_TRANSFER_PROFILE } : {}),
         allocate(meta) {
           check();
           let storage = null;
@@ -1208,7 +1247,7 @@ function createTransferBackend(gl, colors, rawBufferReadbacks = false, floats = 
               gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
               // RGB8 has implicit alpha one. RGB10_A2 needs actual stored A=3,
               // then the state executor masks destination alpha writes.
-              if (meta.format === 233 || colors && ownedColorFormat(meta)?.implicitAlpha && !ownedColorFormat(meta).sharedExponent && ownedColorFormat(meta).nativePixelBytes === (ownedColorFormat(meta).precision ? 4 * ownedColorFormat(meta).precision / 8 : 4)) for (let level = 0; level <= meta.lastLevel; level++) initializeXAlpha(texture, level);
+              if (meta.format === 233 || colors && ownedColorFormat(meta)?.implicitAlpha && !ownedColorFormat(meta).sharedExponent && ownedColorFormat(meta).nativePixelBytes === 4 * (ownedColorFormat(meta).precision ?? ownedColorFormat(meta).integerBits ?? 8) / 8) for (let level = 0; level <= meta.lastLevel; level++) initializeXAlpha(texture, level, ownedColorFormat(meta));
               if (meta.sharedCopyScratchBytes) storage.sharedCopyScratch = sharedHelper().createScratch(meta.width, meta.height, true);
               storage = Object.freeze(storage);
             } else {
@@ -1312,8 +1351,9 @@ function createTransferBackend(gl, colors, rawBufferReadbacks = false, floats = 
               gl.readBuffer(gl.COLOR_ATTACHMENT0);
               require(gl.checkFramebufferStatus(gl.READ_FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE, "backend-error", "Transfer framebuffer is incomplete.");
               const profile = colorFormat(meta);
-              const destination = (floats && floatColorFormat(meta.format) || packed && packedFloatColorFormat(meta.format)) ? new Float32Array(bytes.buffer) : meta.format === 233 ? new Uint32Array(bytes.buffer) : colors && byteColorFormat(meta.format)?.snorm ? new Int8Array(bytes.buffer) : bytes;
-              gl.readPixels(layout.box.x, layout.box.y, layout.box.width, layout.box.height, gl.RGBA, profile.readType ?? profile.type, destination);
+              const integer = integers ? integerColorFormat(meta.format) : null;
+              const destination = integer ? integer.signed ? new Int32Array(bytes.buffer) : new Uint32Array(bytes.buffer) : (floats && floatColorFormat(meta.format) || packed && packedFloatColorFormat(meta.format)) ? new Float32Array(bytes.buffer) : meta.format === 233 ? new Uint32Array(bytes.buffer) : colors && byteColorFormat(meta.format)?.snorm ? new Int8Array(bytes.buffer) : bytes;
+              gl.readPixels(layout.box.x, layout.box.y, layout.box.width, layout.box.height, profile.readFormat ?? gl.RGBA, profile.readType ?? profile.type, destination);
             } finally {
               gl.framebufferTexture2D(gl.READ_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, null, 0);
             }
@@ -1341,7 +1381,7 @@ function createTransferBackend(gl, colors, rawBufferReadbacks = false, floats = 
                 require(gl.checkFramebufferStatus(gl.READ_FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE, "backend-error", "Readback framebuffer is incomplete.");
                 // Numeric offset selects the PBO overload: no CPU destination here.
                 gl.readPixels(converted ? 0 : layout.box.x, converted ? 0 : layout.box.y, layout.box.width, layout.box.height,
-                  gl.RGBA, converted ? gl.UNSIGNED_BYTE : colorFormat(meta).readType ?? colorFormat(meta).type, 0);
+                  converted ? gl.RGBA : colorFormat(meta).readFormat ?? gl.RGBA, converted ? gl.UNSIGNED_BYTE : colorFormat(meta).readType ?? colorFormat(meta).type, 0);
               } finally {
                 gl.framebufferTexture2D(gl.READ_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, null, 0);
                 gl.bindBuffer(gl.PIXEL_PACK_BUFFER, null);
