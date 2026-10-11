@@ -2,7 +2,7 @@
 id: E6-T11d46
 epic: 6
 title: Preserve original instance IDs with a host-owned compiler offset
-status: pending
+status: in-progress
 estimate: S
 risk: high
 priority: 525.027039000384
