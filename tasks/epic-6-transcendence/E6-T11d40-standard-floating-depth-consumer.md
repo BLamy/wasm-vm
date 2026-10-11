@@ -2,7 +2,7 @@
 id: E6-T11d40
 epic: 6
 title: Consume original floating depth views and surfaces
-status: in-progress
+status: implemented
 estimate: S
 risk: high
 priority: 525.027039000380
@@ -119,3 +119,69 @@ This is a native API restriction even for TXF. The initial plan's native linear
 acceptance was therefore incorrect. This selected decoder/state task now proves
 explicit pre-copy/pre-draw linear refusal; qualified desktop linear depth
 semantics remain parent production work. No compiler or owner behavior changes.
+
+### 2026-10-11 — worker — frozen original floating depth consumer submission
+
+Runtime and harness freeze: `1f8cb8c7ccdf8d58e78944a51156453a22fc5b5a`.
+The runtime diff from independently verified D39
+`50b98a3ab6652e9d23f3eaac5eb1095023f9898d` changes only decoder/state; all
+resource, transfer, constant-domain and actual C/Wasm compiler boundaries retain
+their held identities. Final commands, run once at this frozen head:
+
+```sh
+EMCC=/Users/blamy/.cache/wasm-vm/emsdk/4.0.22/wasm-vm-emcc \
+  VIRGL_FLOATING_DEPTH_CONSUMER_EVIDENCE_DIR=target/evidence/virgl-standard-floating-depth-consumer-final-hot \
+  make verify-E6-T11d40
+python3 tools/virgl-floating-depth-consumer/cold.py \
+  --output target/evidence/virgl-standard-floating-depth-consumer-final-cold
+python3 tools/virgl-floating-depth-consumer/seal.py \
+  target/evidence/virgl-standard-floating-depth-consumer-final-hot \
+  target/evidence/virgl-standard-floating-depth-consumer-final-cold \
+  evidence/virgl-floating-depth-consumer/worker
+```
+
+Both acceptance receipts passed, with the cold clone pristine before and after
+the run and its relevant inherited environment scrubbed. Each independently
+inverted 74 positive original runs, 206 native output frames, 23,664 float/integer
+output words, 28,188 retained native depth/stencil pixels and 10,560,000 public
+bytes, with 2,485 consumed physical syncs and 144 actual compiler responses.
+The full nearest-compatible 22-pair sampler matrix covers both stages, slots0/15,
+original operations, swizzles/constants, full/private NPOT ranges and output
+mips. Forty surface cases cover all eight comparisons, test/write state, FLOAT,
+SINT and UINT neighbors, plus attachment switching through original Z16 and the
+opposite floating format without losing original S8. Three boundary schedules
+cover linear and role/return/range/feedback refusal, GPU-only old-range refresh,
+opposite-format ID reuse and completing/cancelling/disposing queued generations.
+Retired queued output planes were read after physical completion and before
+native deletion. Every terminal account is zero; native objects retire once.
+
+Each hot/cold recording also refuted actual wrong native sampler and depth
+attachment controls, and completed native color/depth corruption after distinct
+second consumed physical fences, through the unchanged JS/Python inverses.
+Historical MRT, FLOAT/SINT/UINT, packed-normalized, packed-unsigned and Z16
+consumer checks passed on the real Metal GPU with zero browser errors and no
+software-rendering flags. Syntax, Python compilation, shell syntax, diff/policy,
+actual C/Wasm rebuild and all affected gates passed. Both coverage audits have
+305 positive governing nested V8 partitions, 24 exact source-pinned unchanged
+predecessor operands, and zero unexplained partitions. The predecessor audit
+reopened all 28,339 D39 worker/critic members; no held boundary was requalified.
+
+Complete committed evidence is `evidence/virgl-floating-depth-consumer/worker/`:
+33,662 members, 1,521,428,916 raw bytes, 90,599,444 archive bytes. Every member was
+reopened and authenticated, including original wire/TGSI/input/native/public
+bodies, browser command lines, full source bodies/closures, nested counters,
+screenshots, original primary sources, hot/cold logs and generated compiler
+bytes. SHA256 identities:
+
+- archive: `44697cfa945b3ea306d44eb9fefef1e8505a56ac7aec37f538471c374f5ecba6`
+- index: `4e1bf3fc407ec86d2897ccc1279a82d401d9061d1873d55125575a036fefd22a`
+- manifest: `0bd79d028035888c9f7c6d3876c0c03de3b44b5fb108d035b4f7b802377bbeb5`
+- hot receipt: `aee53aa3ed5147d0454432d39a16eaae152e327dbd54c9ab358e0d8d7c8682ee`
+- cold report: `d3d0e38a1d34807acb41764120bec075cc3c10a43b7b6b47412d2a6590961c97`
+- cold receipt: `f2d539b85783e0630a5fb49b95642c5f08ecea704b3be7492a3f5ce903220c9d`
+
+This evidence demonstrates the selected original non-shadow floating-depth
+command boundary with nearest-compatible filtering and preserved depth/stencil
+storage and lifetimes. It deliberately grants no linear-depth, shadow-compare,
+stencil-test, Z16-sampler, full-API, production-capset, guest-execution, offload or
+throughput authority. Fresh adversarial verification is still required.
