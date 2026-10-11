@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E6-T11d40** — Consume original floating depth views and surfaces
 1. **E5-T26f** — Browser desktop snapshot round-trip and interaction smoke
 
 
@@ -678,7 +677,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.027039000379` [E6-T11d37](epic-6-transcendence/E6-T11d37-standard-packed-unsigned-images.md) — Qualify original packed unsigned color image storage *(deps: E6-T11d36)*
 - [x] `525.027039000379` [E6-T11d39](epic-6-transcendence/E6-T11d39-standard-floating-depth-images.md) — Preserve original floating depth and stencil image transfers and retained ranges *(deps: E6-T11d38)*
 - [x] `525.02703900038` [E6-T11d19](epic-6-transcendence/E6-T11d19-standard-sampler-state.md) — Execute original core sampler address filter and LOD state *(deps: E6-T11d18)*
-- [ ] `525.02703900038` [E6-T11d40](epic-6-transcendence/E6-T11d40-standard-floating-depth-consumer.md) — Consume original floating depth views and surfaces *(deps: E6-T11d39)*
+- [~] `525.02703900038` [E6-T11d40](epic-6-transcendence/E6-T11d40-standard-floating-depth-consumer.md) — Consume original floating depth views and surfaces *(deps: E6-T11d39)*
 - [x] `525.027039001` [E6-T11d9](epic-6-transcendence/E6-T11d9-standard-primitive-restart.md) — Normalize owned standard index streams for primitive restart *(deps: E6-T11d8)*
 - [x] `525.02703901` [E6-T11d8](epic-6-transcendence/E6-T11d8-standard-core-topologies.md) — Execute bounded standard core line and triangle-fan draws *(deps: E6-T11d7)*
 - [x] `525.0270391` [E6-T11d7](epic-6-transcendence/E6-T11d7-standard-constant-attributes.md) — Fetch standard zero-stride attributes through owned GPU jobs *(deps: E6-T11d6)*
