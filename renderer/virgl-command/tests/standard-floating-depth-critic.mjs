@@ -20,7 +20,7 @@ function wire(plane, direction = 1, inline = false) {
   for (let y = 0; y < plane.height; y++) padded.set(input.subarray(y * row, (y + 1) * row), y * plane.stride);
   return packet(9, [...fields, ...Array.from({ length: padded.length / 4 }, (_, i) => view.getUint32(i * 4, true))]);
 }
-function fieldMisses(format, expected, raw, publicFields = false) {
+export function fieldMisses(format, expected, raw, publicFields = false) {
   const size = format === 126 ? 8 : 4, count = expected.length, misses = [];
   if (raw.length !== count * (publicFields ? size : 20)) return [{ field: 'complete-byte-count', expected: count * (publicFields ? size : 20), observed: raw.length }];
   const view = new DataView(raw.buffer, raw.byteOffset, raw.byteLength);
@@ -63,7 +63,8 @@ function corruptStencil(r, texture, level, expected) {
   return { field: 'actual-private-native-stencil', local: level, x: 1, y: 1, original: expected, delivered };
 }
 
-export async function runAcceptance({ fault = null } = {}) {
+export async function runAcceptance({ fault = null, mode = 'matrix' } = {}) {
+  if (mode === 'states') return (await import('./standard-floating-depth-state-critic.mjs')).runStateAcceptance();
   const originals = await (await fetch('/renderer/virgl-command/tests/standard-floating-depth-critic-originals.json')).json();
   const c = checks(), gl = document.querySelector('#gpu').getContext('webgl2', { antialias: false, preserveDrawingBuffer: true, failIfMajorPerformanceCaveat: true });
   if (!gl) throw Error('critic requires actual WebGL2');

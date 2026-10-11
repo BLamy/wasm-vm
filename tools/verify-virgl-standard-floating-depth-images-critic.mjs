@@ -14,7 +14,7 @@ for (let index = 2; index < process.argv.length; index += 2) {
   assert.ok(["--output", "--fault", "--smoke", "--node-only", "--seed", "--mode"].includes(process.argv[index]));
   assert.ok(process.argv[index + 1]); options[process.argv[index].slice(2)] = process.argv[index + 1];
 }
-assert.ok(options.output); assert.ok(!options.mode||["matrix","boundaries"].includes(options.mode)); assert.ok(!options.fault || ["completed-private-stencil"].includes(options.fault));
+assert.ok(options.output); assert.ok(!options.mode||["matrix","boundaries","states"].includes(options.mode)); assert.ok(!options.fault || ["completed-private-stencil"].includes(options.fault));
 for (const flag of ["smoke", "node-only"]) assert.ok(!options[flag] || options[flag] === "true");
 const output = path.resolve(options.output); await fs.mkdir(output, { recursive: true });
 const sourcePaths = [...new Set([
@@ -24,6 +24,7 @@ const sourcePaths = [...new Set([
  'renderer/virgl-shader/UPSTREAM.json','renderer/virgl-shader/bridge.c','renderer/virgl-shader/build.sh',
  'renderer/virgl-command/packed-normalized-images.mjs',
  'renderer/virgl-command/tests/standard-floating-depth-critic.mjs',
+ 'renderer/virgl-command/tests/standard-floating-depth-state-critic.mjs',
  'renderer/virgl-command/tests/standard-floating-depth-critic-originals.json',
  'tools/virgl-floating-depth/critic.py',
  ...['rig','images','boundaries','wire'].map(n=>'renderer/virgl-command/tests/standard-floating-depth-'+n+'.mjs'),
