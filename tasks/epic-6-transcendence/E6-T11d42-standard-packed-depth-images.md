@@ -132,3 +132,27 @@ its65,536 stratified values preserve canonical words with maximum one sampled
 ULP. These ephemeral probes guide implementation and are not final evidence.
 The final acceptance must prove the complete original domain in the actual
 selected resource/backend at its frozen source head.
+
+### 2026-10-11 — worker — self-validation before source freeze
+
+Ephemeral selected-backend hardware validation on headed Chrome155/Apple M4 Max
+Metal passed all128 bounded domain chunks:16,777,216 consecutive original UN24
+values for each20/21 format, exact canonical public words, and maximum one native
+sampled FLOAT ULP. The independent Python inverse reopened complete recorded
+original/native/public bodies. The32-case role/mip/segmented matrix includes an
+independent exhaustive256-reference S8 diagnostic; three46-case lifetime/fault
+schedules and all affected UN16/floating18/126/original Z16 consumer gates passed.
+Actual completed depth and S8 mutation controls were rejected after distinct
+consumed fences. These runs are self-validation, not the frozen submission.
+
+A whole-result domain recording terminated without a report and was discarded.
+The recorder now streams each complete compressed body to disk per bounded
+chunk, retaining its descriptor, byte count and digest in the final report. This
+changes evidence transport only. Full final recordings remain subject to whole
+body custody checks and archive reopening. The seal uses ordered16MiB parts of
+one unchanged gzip stream only when needed to fit GitHub's per-file limit.
+
+Nested coverage executes all new packed-depth semantics;10 precise unchanged
+D41 color operands are pinned by whole predecessor source SHA, UTF16 offsets and
+exact text. The final source must rerun the deterministic acceptance at its
+frozen head, followed by one pristine scrubbed clone and a fresh critic.

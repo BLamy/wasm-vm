@@ -53,9 +53,11 @@ export function createFloatingDepthPacker(gl, check, require, vao, indexed) {
     } catch (error) { if (program) gl.deleteProgram(program); throw error; }
     finally { for (const shader of shaders) gl.deleteShader(shader); }
   };
-  const createScratch = (width, height, stencil) => {
+  const createScratch = (width, height, stencil, stencilInternal = gl.DEPTH32F_STENCIL8) => {
     ready(); require(Number.isSafeInteger(width) && width > 0 && Number.isSafeInteger(height) && height > 0,
       "backend-error", "Invalid floating depth conversion dimensions.");
+    require(!stencil || [gl.DEPTH32F_STENCIL8, gl.DEPTH24_STENCIL8].includes(stencilInternal),
+      "backend-error", "Invalid native stencil copy format.");
     const active = gl.getParameter(gl.ACTIVE_TEXTURE); gl.activeTexture(gl.TEXTURE0);
     const binding = gl.getParameter(gl.TEXTURE_BINDING_2D), created = [];
     const texture = internal => {
@@ -64,7 +66,7 @@ export function createFloatingDepthPacker(gl, check, require, vao, indexed) {
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST); check(); return object;
     };
     try {
-      const depthColor = texture(gl.RGBA8), stencilColor = stencil ? texture(gl.RGBA8) : null, depthCopy = stencil ? texture(gl.DEPTH32F_STENCIL8) : null;
+      const depthColor = texture(gl.RGBA8), stencilColor = stencil ? texture(gl.RGBA8) : null, depthCopy = stencil ? texture(stencilInternal) : null;
       const pair = Object.freeze({ width, height, depthColor, stencilColor, depthCopy }); scratch.add(pair); return pair;
     } catch (error) { for (const object of created) gl.deleteTexture(object); throw error; }
     finally { gl.bindTexture(gl.TEXTURE_2D, binding); gl.activeTexture(active); }

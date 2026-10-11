@@ -2402,6 +2402,10 @@ verify-E6-T11d40-critic:
 verify-E6-T11d41:
 	bash tools/verify-virgl-standard-unorm-depth.sh
 
+.PHONY: verify-E6-T11d42
+verify-E6-T11d42:
+	bash tools/verify-virgl-standard-packed-depth-images.sh
+
 .PHONY: verify-E6-T11d41-critic
 verify-E6-T11d41-critic:
 	node tools/verify-virgl-standard-unorm-depth-critic.mjs --output target/evidence/virgl-standard-unorm-depth-critic/promoted
