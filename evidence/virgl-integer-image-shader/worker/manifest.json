@@ -1,0 +1,18 @@
+{
+  "schema": "original-integer-shader-seal-v1",
+  "task": "E6-T11d32",
+  "sourceHead": "3c0a3e348048c0ff293a6b67638a96fb5c3561cb",
+  "records": 22894,
+  "reopenedMembers": 22894,
+  "sourceClosureIncluded": true,
+  "archiveSha256": "6489b7d7b97effba826b3f8555efc192b9dcfae59ca8a232142cea6355f68be0",
+  "archiveBytes": 13237825,
+  "recordIndexSha256": "7d670a9b824d7fc96f02c307b5e98d505658af4876430e80e77ac61b41e3f8dd",
+  "hotReceiptSha256": "7c19cb17a28a345c11a1b430006f561379ea3db79866d8d6ed20e929ecc496f3",
+  "coldReportSha256": "99e602129ee2cbe21e15c07e4e235da9a20ecc26bed7e0e661fc3e8a3c11d31e",
+  "coldReceiptSha256": "4afaa67255a25227d11edf7910c06922b3dbdc36f6b5e77ad1d80e51e7c9bf78",
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "authority": "isolated-original-integer-shaders",
+  "productionDrawAuthority": false
+}

@@ -668,7 +668,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.027039000371` [E6-T11d29](epic-6-transcendence/E6-T11d29-standard-shared-exponent-images.md) — Preserve original RGB9E5 image words with native GPU copies and reads *(deps: E6-T11d28)*
 - [x] `525.027039000372` [E6-T11d30](epic-6-transcendence/E6-T11d30-standard-shared-exponent-consumer.md) — Consume original RGB9E5 sampler views in the native standard renderer *(deps: —)*
 - [x] `525.027039000373` [E6-T11d31](epic-6-transcendence/E6-T11d31-standard-integer-color-images.md) — Preserve original signed and unsigned integer color image storage *(deps: E6-T11d30)*
-- [~] `525.027039000374` [E6-T11d32](epic-6-transcendence/E6-T11d32-standard-integer-image-shaders.md) — Compile original integer samplers and format-selected fragment outputs *(deps: E6-T11d31)*
+- [?] `525.027039000374` [E6-T11d32](epic-6-transcendence/E6-T11d32-standard-integer-image-shaders.md) — Compile original integer samplers and format-selected fragment outputs *(deps: E6-T11d31)*
 - [x] `525.02703900038` [E6-T11d19](epic-6-transcendence/E6-T11d19-standard-sampler-state.md) — Execute original core sampler address filter and LOD state *(deps: E6-T11d18)*
 - [x] `525.027039001` [E6-T11d9](epic-6-transcendence/E6-T11d9-standard-primitive-restart.md) — Normalize owned standard index streams for primitive restart *(deps: E6-T11d8)*
 - [x] `525.02703901` [E6-T11d8](epic-6-transcendence/E6-T11d8-standard-core-topologies.md) — Execute bounded standard core line and triangle-fan draws *(deps: E6-T11d7)*

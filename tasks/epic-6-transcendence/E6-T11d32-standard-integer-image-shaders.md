@@ -2,7 +2,7 @@
 id: E6-T11d32
 epic: 6
 title: Compile original integer samplers and format-selected fragment outputs
-status: in-progress
+status: implemented
 estimate: S
 risk: high
 priority: 525.027039000374
@@ -168,3 +168,57 @@ The adjacent standalone script reproduces those original refusals before this
 selected compiler is implemented. No native draw, guest or production authority
 is derived from the negative. The human instruction continues this graphics
 chain ahead of unrelated queue work and leaves all pull requests open.
+
+### 2026-10-10 — worker — frozen original integer shader submission
+
+Frozen runtime and full harness: `3c0a3e348048c0ff293a6b67638a96fb5c3561cb`.
+The preceding `b9f3f1a87e07fea807d177bf9b2d5a6b65eb12b4` hot/cold runs
+passed, but pre-seal inspection found that the packer excluded its original
+readiness fixtures. Only the receipt/packer changed to include those literal
+fixtures and their source/toolchain/package dependencies. All C, Wasm-facade,
+renderer/storage, native fixture and browser semantics remained unchanged.
+The final submission repeats the prescribed command at the complete exact head.
+
+Commands:
+`EMCC=/Users/blamy/.cache/wasm-vm/emsdk/4.0.22/wasm-vm-emcc VIRGL_INTEGER_SHADER_EVIDENCE_DIR=target/evidence/virgl-integer-image-shader-complete-hot make verify-E6-T11d32`;
+`python3 tools/virgl-integer-image-shader/cold.py --output target/evidence/virgl-integer-image-shader-complete-cold`;
+`python3 tools/virgl-integer-image-shader/seal.py target/evidence/virgl-integer-image-shader-complete-hot target/evidence/virgl-integer-image-shader-complete-cold evidence/virgl-integer-image-shader/worker`.
+Both final acceptance runs pass. The final pristine clone is
+`/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-integer-image-shader-cold-3c90nf1l/wasm-vm`;
+its before/after tracked and untracked status is empty and compiler/runtime
+environment overrides are scrubbed. Its receipt is at the same frozen head.
+
+The native/sanitized/fixed16MiB-Wasm matrix agrees on all 2,586 complete
+responses: 1,975 admitted and 611 refused, with original sampler declarations,
+all four return fields and instruction/immediate/operand tokens retained. All
+957 historical response bodies are byte-identical against authenticated D31
+generated artifacts. The selected facade rejects malformed host selectors and
+hostile own requests without invoking getters, owns caller snapshots, isolates
+memories and recovers from actual fixed-heap input and upstream-scratch failures.
+All 165 genuine allocation faults return no partial success and recover byte-for-byte.
+
+The headed Apple Metal WebGL2 recording executes 542 original integer shader
+draws, preserving 410,424 original bytes, 2,182 native source planes containing
+262,304 whole words, and 141,312 output words. The independent original-byte
+inverse finds zero normal mismatches. Wrong-level and wrong-word physical
+controls each consume their original GPU fence and then fail that unchanged
+inverse. Native incorrect type emission is separately refused by actual ESSL
+compilation. The historical FLOAT facade's 932-case matrix and 246 actual
+hardware draws pass; its three physical controls remain refuted. All browser
+console/page/request error lists are empty. Full changed nested coverage has
+145 positive V8 partitions and 367 positive C partitions, with no governing
+zero partitions; complete LLVM/V8 records and 20 declaration/signature waivers
+remain available for the critic. Conservative actual optimized Wasm stage/pair
+stack sums are 139,568/195,280 bytes, below unchanged 262,144.
+
+Worker seal: `evidence/virgl-integer-image-shader/worker/manifest.json`,
+`records.json` and `recording.tar.gz`. All 22,894 indexed members were reopened
+and independently size/hash checked. Archive SHA256:
+`6489b7d7b97effba826b3f8555efc192b9dcfae59ca8a232142cea6355f68be0`;
+index SHA256:
+`7d670a9b824d7fc96f02c307b5e98d505658af4876430e80e77ac61b41e3f8dd`.
+The complete recording demonstrates only the selected original integer sampler
+and format-selected output compiler boundary. Unchanged D31 runtime/storage
+and both predecessor seals are carried by exact code/dependency/digest. It
+demonstrates no integer command consumer, production capset, guest graphics,
+deployed demo or MIPS result. Fresh adversarial verification remains required.
