@@ -2,7 +2,7 @@
 id: E6-T11d38
 epic: 6
 title: Consume original packed unsigned samplers and COLOR0–3 surfaces
-status: pending
+status: in-progress
 estimate: S
 risk: high
 priority: 525.027039000378

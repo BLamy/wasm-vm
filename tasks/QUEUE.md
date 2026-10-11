@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E6-T11d38** — Consume original packed unsigned samplers and COLOR0–3 surfaces
 1. **E5-T26f** — Browser desktop snapshot round-trip and interaction smoke
 
 
@@ -674,7 +673,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.027039000376` [E6-T11d34](epic-6-transcendence/E6-T11d34-standard-multiple-color.md) — Execute original multiple color attachments through owned native jobs *(deps: E6-T11d33)*
 - [x] `525.027039000377` [E6-T11d35](epic-6-transcendence/E6-T11d35-standard-packed-normalized-images.md) — Preserve original packed normalized image storage and transfers *(deps: E6-T11d34)*
 - [x] `525.027039000378` [E6-T11d36](epic-6-transcendence/E6-T11d36-standard-packed-normalized-consumer.md) — Consume original packed normalized samplers and color surfaces *(deps: E6-T11d35)*
-- [ ] `525.027039000378` [E6-T11d38](epic-6-transcendence/E6-T11d38-standard-packed-unsigned-consumer.md) — Consume original packed unsigned samplers and COLOR0–3 surfaces *(deps: E6-T11d37)*
+- [~] `525.027039000378` [E6-T11d38](epic-6-transcendence/E6-T11d38-standard-packed-unsigned-consumer.md) — Consume original packed unsigned samplers and COLOR0–3 surfaces *(deps: E6-T11d37)*
 - [x] `525.027039000379` [E6-T11d37](epic-6-transcendence/E6-T11d37-standard-packed-unsigned-images.md) — Qualify original packed unsigned color image storage *(deps: E6-T11d36)*
 - [x] `525.02703900038` [E6-T11d19](epic-6-transcendence/E6-T11d19-standard-sampler-state.md) — Execute original core sampler address filter and LOD state *(deps: E6-T11d18)*
 - [x] `525.027039001` [E6-T11d9](epic-6-transcendence/E6-T11d9-standard-primitive-restart.md) — Normalize owned standard index streams for primitive restart *(deps: E6-T11d8)*
