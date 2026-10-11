@@ -1,0 +1,11 @@
+{
+  "status": "passed",
+  "logicalMembers": 8065,
+  "physicalBodies": 2088,
+  "hardlinks": 5977,
+  "logicalBytes": 363121234,
+  "allCompleteLogicalBodiesReopened": true,
+  "earlierRegularHardlinkTargetsOnly": true,
+  "archiveSha256": "d76c57d568deff90f0578b45afde5405804981b4d5c6e33f192f1ab979b27a1b",
+  "recordIndexSha256": "8ed963dbb701cf544a1c6c1adfe409e5164d8f664b7737fde65924588a2bcd6e"
+}

@@ -2,7 +2,7 @@
 id: E6-T11d45
 epic: 6
 title: Preserve original primitive order for asymmetric S8 draws
-status: implemented
+status: verified
 estimate: S
 risk: high
 priority: 525.027039000383
@@ -166,3 +166,86 @@ primitive case and actual completed native/served corruption. Full production
 API/caps, guest Mesa/compositor, worker/scanout/demo/deploy and300 MIPS remain
 unproven. Native stacks499/500 and all123 prior PR identities/order/heads/bases
 are rechecked unchanged, open/draft/unmerged; this branch continues upper500.
+
+
+### 2026-10-11 — fresh verifier — VERDICT: verified
+
+Independent session read the entire task, AGENTS.md and diff before evidence;
+no runtime code was edited. Worker submission1d3955ec, runtime/harness c510692c
+and verified D44ff808362 authenticate. Frozen predictions P1–P16 all HELD;
+full point/body citations and hunk classifications are in
+`evidence/virgl-ordered-stencil/verifier/{VERDICT.md,prediction-results.json,diff-audit.json}`.
+Only17 exact unchanged predecessor operands are waived; finest nested UTF16/V8
+coverage independently holds230 positive partitions/zero new gaps on both sides.
+
+Exact commands: `python3 tools/virgl-ordered-stencil/critic-custody.py
+evidence/virgl-ordered-stencil/verifier --unpack /tmp/d45-critic-custody-final-20261011`;
+`python3 tools/virgl-ordered-stencil/critic-audit.py coverage
+/tmp/d45-critic-custody-final-20261011/d45/{hot,cold}
+evidence/virgl-ordered-stencil/verifier/{hot,cold}-finest-coverage.json` (each side);
+`python3 tools/virgl-stencil/critic_audit.py switch
+/tmp/d45-critic-custody-final-20261011/d44-critic/fresh/switch`;
+`python3 tools/virgl-ordered-stencil/critic-replay.py
+/tmp/d45-critic-custody-final-20261011/d45
+target/evidence/virgl-ordered-stencil-critic-worker-replay-final`;
+`VIRGL_ORDERED_STENCIL_CRITIC_EVIDENCE_DIR=target/evidence/virgl-ordered-stencil-critic-frozen-20c7360c
+make verify-E6-T11d45-critic`;
+`python3 tools/virgl-ordered-stencil/critic-seal.py
+target/evidence/virgl-ordered-stencil-critic-frozen-20c7360c
+evidence/virgl-ordered-stencil/verifier
+target/evidence/virgl-ordered-stencil-critic-worker-replay-final`. All pass;
+the actual served mutant's expected exit1 is independently detected after native
+completion. No unrelated runtime/cold/guest gate was rerun at unchanged boundaries.
+
+All133242 original complete bodies reopen:83324 worker D45,42535 worker D44,
+6445 critic D44,938 original gap, including every complete hardlink target,
+length/digest and exact membership. Published pins and source/compiler/decoder/
+storage/primary/generated identities agree. Hot/cold receipts1963002b… ande045b25d…,
+cold report7a6e6cbd… authenticate pristine exactc510, scrubbed environment and exit0.
+All32 independent hot/cold replay groups pass; each side retains476 cases/454
+frames/552516 pixels,2930 native passes and all complete public/GPU bodies.
+
+New seeds243f6a88/85a308d3/13198a2e each pass16 lifecycle cases with context/native
+poison, mip writes, public name/generation reuse, captured source mutation,
+waiting/finishing cancellation and both disposal orders. Novel30 original words
+(four restart markers/two tails) form eight alternating overlapping triangles
+with original IDs4099/701/9031,96 GPU index bytes,48 vertex visits and16 paired
+calls. Frozen hand prediction93→94→187→186→95→68→161→160→69 and exact LAST701
+color hold at pixel(14,4) for20/126×step1/64. Fresh positive52 frames/26624 pixels,
+448 initial ordered native passes,2688 normalized bytes,10027472 public bytes,
+1354 consumed syncs and24 disposal-only syncs pass the full inverses/lifetimes.
+
+Actual served whole-face grouping physically fails the unchanged prediction69
+with S8=71 at byte8760; raw `capture/fault-order/run-0000.json` body SHA256
+`f496fd35f7e67ba7999a9c67edd0e52ce1b3d46403aac06a2825811c3d83e76b`.
+Native draw events637–652 complete, fence9 created655 is consumed657, distinct
+from baseline5/548. Full mutant source, original packets/compiler/GPU and output
+bodies are sealed; neither refusal nor expected-value rewrite counts.
+
+Fresh seed2 found an auditor-only global writer conflation. Raw run-0004 SHA256
+`6730c8568b8f5d0a479531b8672e7e614159d37447785597ca66e2c51d9f5c35`:
+color texture7 read3893 follows draw3869 and consumed fence26(created3873/poll3888).
+Unrelated source10→buffer124 copy3872 uses26, while source11→buffer126 copy3874
+uses distinct27(created3875/poll3887); both are complete. Promoted critic physical
+checks distinguish image writers from the queried buffer's writer and preserve
+all original bodies/predictions. `resource-fence-audit.json` cites both identities
+and checker sensitivity. No runtime finding remains. Initial two captures at20c
+are carried only after every captured source/body digest matches; third schedule,
+novel/control and frozen checker/closure use9381f22a. Capture heads are explicit.
+
+SUITE: new deterministic original critic actor, original-packet/native/GPU and
+hand/control/custody/resource-fence auditors, immutable replay/full seal helpers,
+`make verify-E6-T11d45-critic`, seeds and unchanged hand predictions. Source freeze
+`9381f22a1e555a9d6648f399e255207c51ca4e35`. Complete new verifier seal8065 logical
+members/2088 physical bodies/5977 earlier regular hardlinks/363121234 logical
+bytes and969 source bodies; all were reopened. Archive14444408 bytes SHA256
+`d76c57d568deff90f0578b45afde5405804981b4d5c6e33f192f1ab979b27a1b`;
+index `8ed963dbb701cf544a1c6c1adfe409e5164d8f664b7737fde65924588a2bcd6e`;
+manifest `4b0b3b14105b4005e68bf52dde8666e0b85fd80731ad988e39f1759b4a3d66a9`;
+reopening audit `dab85432967c724b62a6dcd913ba87eeebbe242208161f777e0ae0ec9ce2c627`.
+
+Verdict grants only the selected native stencil boundary. Split effective instances>1
+remain refused; full production API/caps, guest Mesa/compositor, worker/scanout/demo/
+deploy and throughput remain unproven. No PR/branch/stack/push/publication/merge work
+was done. All processes are closed; after policy→queue→commit all Git/index/source
+and Node/compiler/browser/GPU leases are explicitly released to root.
