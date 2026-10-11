@@ -2,7 +2,7 @@
 id: E6-T11d43
 epic: 6
 title: Consume original packed UN24 sampler views and mip depth surfaces
-status: in-progress
+status: implemented
 estimate: S
 risk: high
 priority: 525.027039000383
@@ -66,3 +66,21 @@ The complete matrix exhausted Node's default heap when CDP returned the whole tr
 ### 2026-10-11 — worker — retained gate harness correction
 
 The selected consumer matrices, original-word planes, three lifetime schedules, ten native failure paths and all five actual GPU corruption controls passed at93/FFD. These incomplete submission attempts remain in `target/evidence/virgl-standard-packed-depth-consumer-frozen{,-final}`; neither was claimed complete. The retained storage checker requires a grouped hardware directory, all256 S8 values and (by default) its entire UN24 numerical domain. The corrected gate runs the complete32-case storage matrix and explicitly invokes its existing `allow_partial=True` inverse entry for this regression slice. Its full UN24 domain is carried solely by the independently authenticated43044 D42 worker/critic records at the unchanged storage/compiler boundary. This does not waive any consumer proof or advertise a new storage-domain claim. The corrected retained gate self-check passes32 runs/8800 native pixels/35688 exact public bytes/10352 padding bytes/all256 S8/maximum1ULP. Runtime is unchanged; the final frozen submission will bind the corrected full recipe and one final pristine clone.
+
+### 2026-10-11 — worker — implemented; final frozen hot/cold submission
+
+Frozen source `bb12868a5fceea81acec5a8ff42496e13007ddd8` passes these exact commands:
+
+```sh
+VIRGL_PACKED_DEPTH_CONSUMER_EVIDENCE_DIR=target/evidence/virgl-standard-packed-depth-consumer-frozen-bb make verify-E6-T11d43
+python3 tools/virgl-packed-depth-consumer/cold.py --output target/evidence/virgl-standard-packed-depth-consumer-cold-bb
+python3 tools/virgl-packed-depth-consumer/seal.py target/evidence/virgl-standard-packed-depth-consumer-frozen-bb target/evidence/virgl-standard-packed-depth-consumer-cold-bb evidence/virgl-packed-depth-consumer/worker
+```
+
+The whole hot and cold recipes pass scoped syntax/diff/policy, the actual unchanged Wasm compiler rebuild, all 43,044 held predecessor bodies, 22 original wire cases, 22 sampler runs, 120 surface runs, two original-word planes, ten actual native failures, three distinct eight-run lifetime schedules, five refuted actual native corruption controls and the retained UN16/floating/32-case packed storage paths. Native browser records have zero console/page/request errors. Independent original-field inversion records 1,632,516 output words, 575,488 native depth pixels, 32,147,936 public bytes, 131,072 stratified original packed words and all 256 S8 values in the successful hot consumer bodies. Uploaded normalized FLOAT lanes have maximum one ULP; all other words, public fields and padding are exact. GPU-only clear results are first constrained to the whole original conversion interval; canonical public serialization then follows the independently validated native choice. This recording demonstrates original 20/21 sampler and mip depth consumers, depth-state/attachment switches, captured generations, native refresh and bounded ownership in the selected factory. It does not demonstrate production guest graphics.
+
+Native lifetime counts distinguish 5,413 owned / 5,399 consumed / 14 disposal-only syncs, 5,607 fenced CPU collections and zero synchronous collections in the selected consumer records. Full finest nested V8 partitions report 194 executed / eight precisely pinned unchanged historical operands / zero unproven new partitions for both exact-head gates. The retained packed matrix covers all 256 S8 values and 32 cases; its unchanged complete UN24 domain remains the authenticated D42 claim, rather than a new partial-domain claim.
+
+The full worker seal is `evidence/virgl-packed-depth-consumer/worker`: 61,957 logical members reopened, one 43,886,017-byte gzip stream SHA256 `cee5f6525922a02a14885affebcf763df18468b6434267a251f1a1f5b3e313a4`, index SHA256 `012d2a73e5d3d61db1b98a399ebda30d2d0f8592ec54df06e15a0f9cc6be11cf`, manifest SHA256 `50d98b1a99ec9ffc0dce2567126a59fa7785536140275c2c62951d47378dfbdb`. It includes whole original/native/public bodies, events, screenshots, full coverage regions, frozen source and actual generated compiler binaries; hardlinks name earlier physical bodies only. Hot receipt SHA256 `1425537b3c0b6962359919acfce4d0d9c3add9f916141b3cb7e5a06c3629ef97`; cold receipt SHA256 `bc98b4397a2066e4d7a73c346cc0e483598047a2b075b47d37da3883edcf111e`; cold report SHA256 `fa66e169a366b8eccc2c5549712cae1fb5426760061e92023af6ba5b9d204042`. The final pristine clone is `/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-packed-depth-consumer-cold-m8vhk4__/wasm-vm`, detached at the frozen head with empty complete status before/after and exit zero. Compiler MJS/Wasm SHA256 remain `6bb07a0b2a056d21ae52b22d7700ce10577854c1cdcf0877dd80be938e30e0fa` / `acbe036afcdc4f1d8aa8cfb0fb107f48ba27759a6af4a7b9d6c83e3aa679d6cc`.
+
+Status is implemented, awaiting the separately required fresh adversarial verifier. Production API/caps, actual guest Mesa/compositor, worker/scanout/deployment and 300 MIPS remain outside this isolated boundary. Existing native stack 500 is continued; no PR is recreated or merged.
