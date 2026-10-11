@@ -119,7 +119,7 @@ def main(directory):
                     raw=expected[p['level']];need(blob(transfer['sync'])==raw,'complete exact public packed normalized sync bytes');public+=len(raw)
                     for read in transfer['reads']:fence(read['fence']);need(blob(read['nativeBytes'])==raw,'complete exact public packed normalized PBO bytes');public+=len(raw)
                     for read in transfer['reads']:
-                        charge=p['width']*p['height']*4;base_gpu=physical+len(backing);base_cpu=2*len(backing)
+                        charge=p['width']*p['height']*4;base_gpu=physical;base_cpu=2*len(backing)
                         for point in ('beforeRead','afterPrepare','afterIssue','afterReady','afterRelease'):
                             budget=read[point];scratch=charge if point in ('afterPrepare','afterIssue','afterReady') else 0;staging=charge if point in ('afterIssue','afterReady') else 0
                             need(budget['gpuBytes']==base_gpu+staging and budget['scratchBytes']==scratch and budget['cpuBytes']==base_cpu+scratch and budget['backingBytes']==base_cpu,'exact original/native/PBO/scratch charge at '+point)

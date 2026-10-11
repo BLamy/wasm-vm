@@ -105,3 +105,16 @@ retains the complete inputs and source digests. This selected storage prerequisi
 continues the user-authorized production graphics chain; the unrelated general
 queue entry remains deferred. Original command consumption follows separately.
 No production capset or guest execution is claimed.
+
+### 2026-10-11 — worker — pre-submission accounting prediction correction
+
+At runtime head `2acc572aaea2368f1c2f2aad0def5c2d08ecc2d8`, the complete native
+matrix, three ownership schedules and three physical corruption controls passed.
+The independent budget assertion incorrectly added public staging backing to
+GPU storage. Original bind524288 is intentionally CPU-only (`resources.mjs`
+createResource allocationBytes); the observed first run has 392 texture bytes,
+1090 backing bytes and a separate 612-byte native PBO. Correct the harness
+prediction to count the public source and staging backings only on CPU and the
+PBO only after native issue. Runtime semantics are unchanged. No successful
+final receipt or task verdict follows from this interrupted recording; rerun the
+selected frozen submission after this harness correction.
