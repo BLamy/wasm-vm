@@ -2,7 +2,7 @@
 id: E6-T11d37
 epic: 6
 title: Qualify original packed unsigned color image storage
-status: pending
+status: in-progress
 estimate: S
 risk: high
 priority: 525.027039000379
