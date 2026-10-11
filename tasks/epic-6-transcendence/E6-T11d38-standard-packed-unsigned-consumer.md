@@ -2,7 +2,7 @@
 id: E6-T11d38
 epic: 6
 title: Consume original packed unsigned samplers and COLOR0–3 surfaces
-status: in-progress
+status: implemented
 estimate: S
 risk: high
 priority: 525.027039000378
@@ -97,3 +97,62 @@ nonzero mip color surfaces. This is synthetic original-wire refusal evidence,
 not a guest/native draw. D37 storage and the unchanged integer pair compiler
 permit this one selected consumer prerequisite; no complete API or positive
 production capability follows from it.
+
+### 2026-10-11 — worker — selected packed UINT command submission
+
+Runtime/harness freeze: `11326fe597196cb75d0853d230da0a3ed22683c5`.
+Verified dependency: `f9f479c20d37d89d0d6da18675777a4a8fd7a7b9`.
+Only decoder/state runtime changed; D37 storage, the constant domain, actual
+C/Wasm compiler, crates, guest tooling and the production demo remain unchanged.
+
+Commands, in order:
+
+```sh
+env EMCC=/Users/blamy/.cache/wasm-vm/emsdk/4.0.22/wasm-vm-emcc VIRGL_PACKED_UNSIGNED_CONSUMER_EVIDENCE_DIR=target/evidence/virgl-packed-unsigned-consumer-final-hot make verify-E6-T11d38
+python3 tools/virgl-packed-unsigned-consumer/cold.py --output target/evidence/virgl-packed-unsigned-consumer-final-cold
+python3 tools/virgl-packed-unsigned-consumer/seal.py target/evidence/virgl-packed-unsigned-consumer-final-hot target/evidence/virgl-packed-unsigned-consumer-final-cold evidence/virgl-packed-unsigned-consumer/worker
+```
+
+Hot and scrubbed pristine cold both passed at that exact freeze with zero
+browser/console/request errors on headed Chrome 155.0.8059.39, Apple M4 Max Metal.
+Each recorded 36 target cases / 144 frames / 552 targets / 920 complete private mip
+planes, 18 sampler cases / 54 frames across TXF/TXL/nearest in both stages, and
+three target/sampler boundary schedules (seeds 362514859, 2882400001, 1629686191).
+Each schedule recorded 19 target frames and 8 sampler lifetime runs / 60 frames,
+including both aliases for completion, cancellation and both disposal modes.
+The four affected historical MRT/integer/FLOAT/packed-UNORM paths also passed.
+
+The full independent Python inverses derive native uint lanes and original
+public packed words from the complete original TGSI/packet/input bytes. They
+hold exact 10/10/10/2 saturation for out-of-width shader and raw clear values,
+per-slot integer blend bypass with FLOAT neighbor folding, typed/alias/linear
+filter refusals before guest draws or private copies, every public SG/padding
+byte and untouched private mip, caches/contexts/reused generations, physical
+fence custody and once-only native retirement with zero terminal charges.
+Three real native controls are refuted by the unchanged inverses: wrong sampler
+storage, substituted nonzero attachment, and completed packed R=1023 corrupted
+to 1022 after a distinct new native fence. No result-array mutation is evidence.
+
+D37/D36 authentication reopened 123156 predecessor archive members and pinned 290
+unchanged compiler/storage sources, both generated compiler binaries and primary
+Mesa 26.2.2 integer pack/parse sources. The generated module remains
+`6bb07a0b2a056d21ae52b22d7700ce10577854c1cdcf0877dd80be938e30e0fa`;
+Wasm remains `acbe036afcdc4f1d8aa8cfb0fb107f48ba27759a6af4a7b9d6c83e3aa679d6cc`.
+Nested V8 accounting has 254 positive governing partitions and 16 explicitly
+source-pinned legacy operand waivers, 14 carried at the exact D36 partitions and
+two unchanged single-target/disabled-integer fallbacks. No new packed-UINT
+lookup, guard, invocation or profile operand is waived; no unexplained zero
+partition remains.
+
+Full worker seal: `evidence/virgl-packed-unsigned-consumer/worker`, 26639 reopened
+members,545436693 raw bytes, 18851139 archive bytes. Archive SHA256
+`8faad34f84ccfce10b8645598ad92f53a2e3b58414949d4dee6fc59a5ed7a0c6`;
+index `a9004074786c4e82196bf4177986b7cf150c16bdd6f611ecda330f8c314cb567`;
+manifest `59503b08e0af721884fd8496d02ba4bc72f17c7982208c13d5ded7354fb66e3e`.
+Hot receipt `3b25b9a5a58139decdcb807a3feef5a7179bcd035634a0fa9a109a3a465160d7`;
+cold receipt `61801e6a8853e61c1900edc65ada84156347346a00db44e7714c86461c449ce6`;
+cold report `0a25da170eb7f46b8e46c984f272b37cc17cd2ae9f70961613abcbcd116ba8e6`.
+The seal contains complete sources, raw native/public/input blobs, browser/GPU
+metadata, original requests/responses, full coverage regions, logs and screenshots.
+This is a worker claim for one selected isolated consumer. Production caps,
+real RISC-V guest graphics, deployment and 300 MIPS remain unproven.
