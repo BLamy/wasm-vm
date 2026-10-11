@@ -25,7 +25,7 @@ def main():
     names=['schedule-0x243f6a88','schedule-0x85a308d3','schedule-0x13198a2e','novel','fault-order'];source_pins={}
     for name in names:
         raw=(capture/name/'report.json').read_bytes();report=json.loads(raw)
-        assert sha(raw)==marker['reportDigests'][name] and report['gitHead']==head
+        assert sha(raw)==marker['reportDigests'][name] and report['gitHead']==marker['captureHeads'][name]
         assert report['status']==('failed' if name=='fault-order' else 'passed') and report['browserErrors']==dict(console=[],page=[],requests=[])
         for row in report['sources']:
             body=(capture/name/'source'/row['path']).read_bytes()
@@ -68,7 +68,7 @@ def main():
     # Source closure covers the actual native runner and the independently run
     # inverses/lifetime imports, plus all original primary/compiler bodies.
     roots=['renderer/virgl-command','renderer/virgl-shader','tools/virgl-command','tools/virgl-ordered-stencil',
-           'tools/virgl-stencil','tools/virgl-unorm-depth','tools/virgl-packed-depth-consumer',
+           'tools/virgl-stencil','tools/virgl-unorm-depth','tools/virgl-packed-depth-consumer','tools/virgl-packed-unsigned-consumer',
            'tools/virgl-floating-depth','tools/virgl-floating-depth-consumer',
            'tools/verify-virgl-ordered-stencil.mjs','tools/verify-virgl-ordered-stencil-critic.sh',
            'tools/verify-virgl-ordered-stencil.sh','Makefile','AGENTS.md','tools/check_task_policy.py',
@@ -112,6 +112,7 @@ def main():
                   records=len(seen),physicalBodies=len(phys),logicalBytes=logical_bytes,archive=dict(path='recording.tar.gz',bytes=len(archive),sha256=sha(archive)),
                   recordIndexSha256=sha(index),reopeningAuditSha256=sha(reopen_raw),sourceClosure=source_closure,
                   sourceClosureIncluded=True,allCompleteBodiesReopened=True,predictionsFrozenBeforeNative=True,
+                  captureHeads=marker['captureHeads'],allCapturedSourceBodiesExact=True,
                   guestExecution=False,productionNegotiation=False,productionDrawAuthority=False)
     (output/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
     print(json.dumps(dict(sourceHead=head,records=len(seen),physicalBodies=len(phys),archive=manifest['archive'],indexSha256=sha(index))))
