@@ -2,7 +2,7 @@
 id: E6-T11d42
 epic: 6
 title: Preserve original packed UN24 depth and stencil storage and transfers
-status: pending
+status: in-progress
 estimate: S
 risk: high
 priority: 525.027039000382
