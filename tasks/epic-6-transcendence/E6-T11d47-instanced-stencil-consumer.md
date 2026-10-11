@@ -2,7 +2,7 @@
 id: E6-T11d47
 epic: 6
 title: Preserve original instanced two-face stencil draws in the selected consumer
-status: pending
+status: in-progress
 estimate: S
 risk: high
 priority: 525.027039000392
