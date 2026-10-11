@@ -23,6 +23,7 @@ def main(directory):
             need(raw==subprocess.check_output(['git','show',head+':'+name],cwd=ROOT),'unfrozen source '+name);sources[name]=actual
     dependency=load('predecessor-audit.json');need(dependency['status']=='passed' and dependency['predecessor']==BASE and dependency['reopenedMembers']==41650,'full held UN16 worker/critic seals')
     values=load('independent-values.json');need(values['status']=='passed' and values['scope']=='full-domain' and values['domainWordsPerFormat']=={'20':16777216,'21':16777216} and not values['oracleImportsProductCode'] and values['stencilValues']==256,'independent whole-domain field inverse')
+    need(values['maxObservedNativeUlp']<=values['nativeDepthUlpBound']==1,'positive native FLOAT bound excludes deliberately corrupted controls')
     faults=['depth-precision','stencil-selection','completed-depth','completed-stencil'];need({r['name'] for r in values['faults']}=={'fault-'+f for f in faults} and all(r['status']=='refuted' for r in values['faults']),'all actual native controls independently refuted')
     names=['wire','hardware-matrix','hardware-domain']+['hardware-boundaries-'+s for s in ['0xa5471e03','0x13579bdf','0x9e3779b9']]+['fault-'+f for f in faults]
     legacy=['retained-un16-samples','retained-un16-surfaces','retained-un16-transfers','retained-floating-storage','retained-floating-samples','retained-floating-surfaces','retained-z16-consumer']

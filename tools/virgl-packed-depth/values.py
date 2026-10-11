@@ -74,11 +74,15 @@ def primary():
     return manifest
 
 def main(directory,allow_partial=False):
+    global MAX_ULP
+    MAX_ULP=0
     directory=Path(directory).resolve(); primary(); totals=dict(runs=0,nativePixels=0,publicBytes=0,paddingBytes=0); faults=[]; citations=[]; stencil_values=set();domain_chunks={20:set(),21:set()}
     paths=sorted(directory.glob('hardware-*/report.json'))+sorted(directory.glob('fault-*/report.json'))
     need(paths,'original native recordings are required')
     for path in paths:
         envelope=json.loads(path.read_text()); fault=path.parent.name.startswith('fault-'); report=envelope['partial'] if fault else envelope['browserResult']['result']; blobs={b['key']:b for b in report['blobs']}; refuted=False
+        positive_max=MAX_ULP
+        if fault:MAX_ULP=0
         def blob(point):
             row=blobs[point['key']]; packed=(path.parent/row['path']).read_bytes(); need(sha(packed)==row['gzipSha256'],'compressed custody'); raw=gzip.decompress(packed); need(len(raw)==row['bytes'] and sha(raw)==row['sha256'],'complete original/native/public custody'); return raw
         def fence(point):
@@ -201,7 +205,7 @@ def main(directory,allow_partial=False):
             elif kind.startswith('native-error-'): need(not row['result']['ok'] and row['result']['error']['code']=='backend-error' and row['faultEvents'],'actual native failure and explicit refusal')
             if 'final' in row: need(all(v==0 for v in row['final']['budgets'].values()) and all(o['deleted']==1 for o in row['nativeObjects']),'all terminal charges zero and native objects retire once')
         if fault:
-            need(refuted and report['sabotage']['fenceCompleted'] and not report['sabotage']['held'],'unchanged independent inverse refutes actual completed native control'); faults.append(dict(name=path.parent.name,status='refuted',fenceCompleted=True))
+            need(refuted and report['sabotage']['fenceCompleted'] and not report['sabotage']['held'],'unchanged independent inverse refutes actual completed native control'); faults.append(dict(name=path.parent.name,status='refuted',fenceCompleted=True,controlNativeDepthUlp=MAX_ULP));MAX_ULP=positive_max
     need(stencil_values==set(range(256)),'complete original stencil field values')
     if not allow_partial:need(all(v==set(range(0,16777216,262144)) for v in domain_chunks.values()),'full original UN24 domain for each format')
     result=dict(scope='inner-loop' if allow_partial else 'full-domain',domainWordsPerFormat={str(k):len(v)*262144 for k,v in domain_chunks.items()},schema='independent-original-packed-depth-values-v1',status='passed',**totals,faults=faults,citations=citations,oracleImportsProductCode=False,maxObservedNativeUlp=MAX_ULP,nativeDepthUlpBound=1,publicFixedFieldsExact=True,stencilValues=len(stencil_values))
