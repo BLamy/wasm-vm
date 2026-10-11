@@ -1,0 +1,7 @@
+The first new critic novel actor completed its common native baseline and then
+called state(f) a second time, attempting to publish DSA handle30 twice. The
+original renderer correctly refused the duplicate handle. The critic harness
+now rebinds existing handle30 and original refs after the baseline. The complete
+failed recording remains at target/evidence/virgl-ordered-stencil-critic-inner-novel.
+This is a verifier fixture mistake, not a runtime or original prediction finding.
+No runtime code or frozen expected value changed.
