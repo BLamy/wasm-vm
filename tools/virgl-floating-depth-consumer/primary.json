@@ -83,6 +83,17 @@
     "section": "3.8.15.1",
     "comparisonDisabled": "r = Dt, assigned to Rt",
     "componentExpansion": "Table 3.24 RED = (Rt,0,0,1)",
-    "stencilIgnoredPrintedPage": 168
+    "stencilIgnoredPrintedPage": 168,
+    "nonComparisonFiltering": {
+      "pdfPage": 174,
+      "printedPage": 161,
+      "section": "3.8.13",
+      "minification": [
+        "NEAREST",
+        "NEAREST_MIPMAP_NEAREST"
+      ],
+      "magnification": "NEAREST",
+      "linear": "texture incomplete even for texelFetch"
+    }
   }
 }

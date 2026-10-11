@@ -31,13 +31,17 @@ storage/compiler source closure incrementally, including original whole Mesa
 26.2.2 and pinned virglrenderer1.3.0 depth-view/swizzle sources. Rebuild actual
 C/Wasm with held generated digests; no compiler, owner or transfer edits.
 
-Execute FLOAT samplers in both stages at slots0/15, nearest/linear and original
+Execute FLOAT samplers in both stages at slots0/15, native nearest and original
 TXF/TXL/TEX/TXD/TXB/TXQ where that stage supports them. Cover arbitrary original
 swizzles/constants, full and private truncated NPOT ranges, nonzero source and
 output levels and GPU-only source refresh. Independently invert original shader,
 packet, descriptor and segmented input bytes into full native float output words,
 retained depth/stencil fields, public output rows and all untouched padding/mips.
-Use exact binary fraction inputs where filtering must have an exact result.
+Use exact binary fraction inputs. Reject original linear minification,
+magnification and mip filters before any private copy or guest draw. GLES3.0.6
+section3.8.13 makes non-comparison depth textures incomplete under those filters;
+native linear support cannot be granted by this decoder/state boundary. A later
+qualified shader/storage path must implement desktop depth linear semantics.
 
 Execute original floating depth surfaces at base/nonzero levels with all eight
 comparison functions, enabled/disabled tests and write masks, full depth clears
@@ -103,3 +107,15 @@ native depth component, original client swizzle and preservation of S8. GLES3.0.
 section3.8.15.1 assigns depth to Rt, with RED expansion (Rt,0,0,1) in table3.24;
 its non-shadow lookup ignores stencil. These primary facts grant no production
 API or capset authority.
+
+### 2026-10-11 — worker — depth filtering scope corrected from primary evidence
+
+The ephemeral hardware matrix
+`target/evidence/d40-full-samples/report.json` caught original Z32_FLOAT vertex
+TXF with a linear sampler returning zero depth, instead of the input depth word
+`1051721728`. Whole pinned GLES3.0.6 PDF page174 / printed161, section3.8.13,
+requires native nearest-compatible filtering when depth compare mode is NONE.
+This is a native API restriction even for TXF. The initial plan's native linear
+acceptance was therefore incorrect. This selected decoder/state task now proves
+explicit pre-copy/pre-draw linear refusal; qualified desktop linear depth
+semantics remain parent production work. No compiler or owner behavior changes.

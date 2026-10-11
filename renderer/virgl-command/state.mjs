@@ -5,7 +5,8 @@ import {packedFloatColorFormat} from "./packed-float-images.mjs";
 import {integerColorFormat} from "./integer-images.mjs";
 import {packedNormalizedColorFormat} from "./packed-normalized-images.mjs";
 import {packedUnsignedColorFormat} from "./packed-unsigned-images.mjs";
-import { decodeSubmission, decodeStandardSubmission, decodeStandardUniformSubmission, decodeStandardImageSubmission, decodeStandardColorSubmission, decodeStandardFloatImageSubmission, decodeStandardPackedFloatImageSubmission, decodeStandardSharedExponentImageSubmission, decodeStandardIntegerImageSubmission, decodeStandardMultipleColorSubmission, decodeStandardPackedNormalizedImageSubmission, decodeStandardPackedUnsignedImageSubmission, vertexFormat } from "./decoder.mjs";
+import {floatingDepthFormat} from "./floating-depth-images.mjs";
+import { decodeSubmission, decodeStandardSubmission, decodeStandardUniformSubmission, decodeStandardImageSubmission, decodeStandardColorSubmission, decodeStandardFloatImageSubmission, decodeStandardPackedFloatImageSubmission, decodeStandardSharedExponentImageSubmission, decodeStandardIntegerImageSubmission, decodeStandardMultipleColorSubmission, decodeStandardPackedNormalizedImageSubmission, decodeStandardPackedUnsignedImageSubmission, decodeStandardFloatingDepthImageSubmission, vertexFormat } from "./decoder.mjs";
 import { LIMITS as SHADER_LIMITS } from "../virgl-shader/index.mjs";
 import { createKeyCache, hashKey } from "./cache.mjs";
 import { parseConstantDomain, checkFiniteBank, checkIndirectBank, checkLoopBank, checkRadialBank, checkRasterBank, checkConversionBank, checkExactBank, COORDINATE_KEY, DISCARD_KEY,
@@ -29,6 +30,7 @@ export const STANDARD_INTEGER_IMAGE_ASYNC_PROFILE = "virgl-standard-integer-imag
 export const STANDARD_MULTIPLE_COLOR_ASYNC_PROFILE = "virgl-standard-multiple-color-async-jobs-v1";
 export const STANDARD_PACKED_NORMALIZED_IMAGE_ASYNC_PROFILE = "virgl-standard-packed-normalized-image-async-jobs-v1";
 export const STANDARD_PACKED_UNSIGNED_IMAGE_ASYNC_PROFILE = "virgl-standard-packed-unsigned-image-async-jobs-v1";
+export const STANDARD_FLOATING_DEPTH_IMAGE_ASYNC_PROFILE = "virgl-standard-floating-depth-image-async-jobs-v1";
 export const STANDARD_FLOAT_IMAGE_ASYNC_PROFILE = "virgl-standard-float-image-async-jobs-v1";
 export const STANDARD_IMAGE_ASYNC_PROFILE = "virgl-standard-image-async-jobs-v1";
 export const STANDARD_COLOR_ASYNC_PROFILE = "virgl-standard-byte-color-async-jobs-v1";
@@ -249,7 +251,12 @@ export function createVirglStandardPackedUnsignedImageAsyncRenderer(options) {
 }
 
 /** Host capabilities are trusted and non-reentrant. */
-function createRenderer(options, drawing, asynchronous = false, standard = false, uniform = false, bufferRoles = false, images = false, colors = false, textureOperations = false, floats = false, packed = false, shared = false, integers = false, multipleColors = false, normalized = false, unsigned = false) {
+/** Selected original non-shadow floating depth views and mip depth surfaces. */
+export function createVirglStandardFloatingDepthImageAsyncRenderer(options) {
+  return createRenderer(options, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
+}
+
+function createRenderer(options, drawing, asynchronous = false, standard = false, uniform = false, bufferRoles = false, images = false, colors = false, textureOperations = false, floats = false, packed = false, shared = false, integers = false, multipleColors = false, normalized = false, unsigned = false, floatingDepth = false) {
   return result(() => {
     const config = dataRecord(options, ["gl", "resources", "bindings", "shaderBridge", "limits", "cacheLimits", ...(drawing ? ["drawLimits"] : []), ...(asynchronous ? ["asyncAccess", "jobLimits"] : []), ...(standard ? ["primitiveAssembly"] : []), ...(uniform ? ["uniformAccess"] : []), ...(images ? ["imageAccess"] : [])], ["gl", "resources", "bindings", "shaderBridge", ...(asynchronous ? ["asyncAccess"] : []), ...(uniform ? ["uniformAccess"] : []), ...(images ? ["imageAccess"] : [])]);
     const { gl, resources, bindings, shaderBridge } = config;
@@ -300,8 +307,8 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       "invalid-input", "Original native image range authority is required.");
     require(!integers || typeof shaderBridge.translateImages === "function", "invalid-input", "Integer images require the selected stage compiler.");
     const integerFormat = format => integerColorFormat(format) || (unsigned ? packedUnsignedColorFormat(format) : null);
-    const profile = unsigned ? STANDARD_PACKED_UNSIGNED_IMAGE_ASYNC_PROFILE : normalized ? STANDARD_PACKED_NORMALIZED_IMAGE_ASYNC_PROFILE : multipleColors ? STANDARD_MULTIPLE_COLOR_ASYNC_PROFILE : integers ? STANDARD_INTEGER_IMAGE_ASYNC_PROFILE : shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : textureOperations ? STANDARD_TEXTURE_ASYNC_PROFILE : colors ? STANDARD_COLOR_ASYNC_PROFILE : images ? STANDARD_IMAGE_ASYNC_PROFILE : bufferRoles ? STANDARD_BUFFER_ASYNC_PROFILE : uniform ? STANDARD_UNIFORM_ASYNC_PROFILE : standard ? STANDARD_ASYNC_PROFILE : asynchronous ? ASYNC_PROFILE : drawing ? DRAW_PROFILE : STATE_PROFILE;
-    const decodeCommands = unsigned ? decodeStandardPackedUnsignedImageSubmission : normalized ? decodeStandardPackedNormalizedImageSubmission : multipleColors ? decodeStandardMultipleColorSubmission : integers ? decodeStandardIntegerImageSubmission : shared ? decodeStandardSharedExponentImageSubmission : packed ? decodeStandardPackedFloatImageSubmission : floats ? decodeStandardFloatImageSubmission : colors ? decodeStandardColorSubmission : images ? decodeStandardImageSubmission : uniform ? decodeStandardUniformSubmission : standard ? decodeStandardSubmission : decodeSubmission;
+    const profile = floatingDepth ? STANDARD_FLOATING_DEPTH_IMAGE_ASYNC_PROFILE : unsigned ? STANDARD_PACKED_UNSIGNED_IMAGE_ASYNC_PROFILE : normalized ? STANDARD_PACKED_NORMALIZED_IMAGE_ASYNC_PROFILE : multipleColors ? STANDARD_MULTIPLE_COLOR_ASYNC_PROFILE : integers ? STANDARD_INTEGER_IMAGE_ASYNC_PROFILE : shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : textureOperations ? STANDARD_TEXTURE_ASYNC_PROFILE : colors ? STANDARD_COLOR_ASYNC_PROFILE : images ? STANDARD_IMAGE_ASYNC_PROFILE : bufferRoles ? STANDARD_BUFFER_ASYNC_PROFILE : uniform ? STANDARD_UNIFORM_ASYNC_PROFILE : standard ? STANDARD_ASYNC_PROFILE : asynchronous ? ASYNC_PROFILE : drawing ? DRAW_PROFILE : STATE_PROFILE;
+    const decodeCommands = floatingDepth ? decodeStandardFloatingDepthImageSubmission : unsigned ? decodeStandardPackedUnsignedImageSubmission : normalized ? decodeStandardPackedNormalizedImageSubmission : multipleColors ? decodeStandardMultipleColorSubmission : integers ? decodeStandardIntegerImageSubmission : shared ? decodeStandardSharedExponentImageSubmission : packed ? decodeStandardPackedFloatImageSubmission : floats ? decodeStandardFloatImageSubmission : colors ? decodeStandardColorSubmission : images ? decodeStandardImageSubmission : uniform ? decodeStandardUniformSubmission : standard ? decodeStandardSubmission : decodeSubmission;
     const parseShaderMetadata = multipleColors ? parseStandardMultipleColorShaderMetadata : integers ? parseStandardIntegerImageShaderMetadata : textureOperations ? parseStandardTextureShaderMetadata : uniform ? parseStandardUniformShaderMetadata : standard ? parseStandardShaderMetadata : parseConstantDomain;
     const idle = () => require(activeJob === null, "busy", "A renderer job is active; cancel and drain it before changing state.");
     const contexts = new Map(), objects = new Set(), programs = new Set();
@@ -501,10 +508,11 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           if (!standard) for (const element of fields.elements) require(element.sourceOffset % 4 === 0, "invalid-state", "Vertex element offset must be float-aligned.");
         }
         if (type === 6 || type === 8) {
-          const depth = type === 8 && fields.format === 16;
-          Object.assign(object, retain(ctx, fields.resourceHandle, depth ? "depth-surface" : type === 6 ? "view" : "surface", depth ? "depth-texture" : images ? ["texture", "mip-texture"] : "texture"));
+          const floating = floatingDepth && Boolean(floatingDepthFormat(fields.format));
+          const depth = type === 8 && (fields.format === 16 || floating);
+          Object.assign(object, retain(ctx, fields.resourceHandle, depth ? "depth-surface" : type === 6 ? "view" : "surface", floating ? ["depth-texture", "mip-depth-texture"] : depth ? "depth-texture" : images ? ["texture", "mip-texture"] : "texture"));
           require(object.metadata.format === fields.format, "incompatible-resource", "View format and storage format differ.");
-          if (images && !depth) {
+          if (images && (!depth || floating)) {
             if (type === 6) object.imageRange = unwrap(imageAccess.capture(object.lease, fields.firstLevel, fields.lastLevel)).token;
             else {
               require(fields.level <= object.metadata.lastLevel, "out-of-bounds", "Surface mip level exceeds retained image levels.");
@@ -1113,8 +1121,17 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           target ? resolve(target.lease).storage.texture : null, target?.fields.level ?? 0);
       }
       else gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, surface ? resolve(surface.lease).storage.texture : null, images ? surface?.fields.level ?? 0 : 0);
-      gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, sub.depthSurface ? resolve(sub.depthSurface.lease).storage.texture : null, 0);
-      gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.STENCIL_ATTACHMENT, gl.TEXTURE_2D, null, 0);
+      if (floatingDepth) {
+        // Detach both old planes before switching combined and depth-only storage.
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, null, 0);
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.STENCIL_ATTACHMENT, gl.TEXTURE_2D, null, 0);
+        if (sub.depthSurface) gl.framebufferTexture2D(gl.FRAMEBUFFER,
+          floatingDepthFormat(sub.depthSurface.fields.format)?.stencil ? gl.DEPTH_STENCIL_ATTACHMENT : gl.DEPTH_ATTACHMENT,
+          gl.TEXTURE_2D, resolve(sub.depthSurface.lease).storage.texture, sub.depthSurface.fields.level);
+      } else {
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, sub.depthSurface ? resolve(sub.depthSurface.lease).storage.texture : null, 0);
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.STENCIL_ATTACHMENT, gl.TEXTURE_2D, null, 0);
+      }
       // WebGL requires every enabled color buffer to have an active output.
       // A checked terminal discard may have no reflected output. Disable it
       // only for that draw; CLEAR and ordinary restoration retain the surface.
@@ -1296,7 +1313,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       const primarySurface = multipleColors ? sub.surfaces.find(Boolean) : sub.surfaces[0];
       require(primarySurface && sub.viewport && sub.vertexElements && (!fields.indexed || sub.indexBuffer),
         "incomplete-draw", "Drawing requires a surface, viewport, vertex elements and any indexed draw's index buffer.");
-      require(!sub.dsa?.fields.depthEnable || sub.depthSurface, "incomplete-draw", "Active depth testing requires a Z16 depth attachment.");
+      require(!sub.dsa?.fields.depthEnable || sub.depthSurface, "incomplete-draw", "Active depth testing requires a depth attachment.");
       const banks = Object.freeze([...sub.constants]), shaders = Object.freeze([...sub.shaders]);
       // Presence and numeric authority apply to the complete declared prefix,
       // even if reflection prunes it. Reject before linking or any draw allocation.
@@ -1315,7 +1332,10 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         if (integers && integerFormat(view.fields.format)) require(state.fields.minImageFilter === 0 &&
           state.fields.magImageFilter === 0 && [0, 2].includes(state.fields.minMipFilter),
         "unsupported-sampler", "Integer image sampling requires native nearest-compatible filters.");
-        for (const target of multipleColors ? sub.surfaces.filter(Boolean) : [primarySurface]) {
+        if (floatingDepth && floatingDepthFormat(view.fields.format)) require(state.fields.minImageFilter === 0 &&
+          state.fields.magImageFilter === 0 && [0, 2].includes(state.fields.minMipFilter),
+        "unsupported-sampler", "Non-comparison depth sampling requires native nearest-compatible filters.");
+        for (const target of floatingDepth ? [...sub.surfaces, sub.depthSurface].filter(Boolean) : multipleColors ? sub.surfaces.filter(Boolean) : [primarySurface]) {
           const overlap = resolve(view.lease).storage.texture === resolve(target.lease).storage.texture;
           const surfaceLevel = target.fields.level;
           require(!overlap || images && (surfaceLevel < view.fields.firstLevel || surfaceLevel > view.fields.lastLevel),
@@ -1559,13 +1579,13 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           const surfaces = fields.colorSurfaces.map((handle) => lookup(sub, handle, 8, true));
           const depthSurface = lookup(sub, fields.depthStencilSurface, 8, true);
           if (depthSurface) {
-            require(depthSurface.metadata.kind === "depth-texture", "incompatible-resource", "The depth attachment requires a Z16 surface.");
+            require(floatingDepth ? ["depth-texture", "mip-depth-texture"].includes(depthSurface.metadata.kind) : depthSurface.metadata.kind === "depth-texture", "incompatible-resource", "The depth attachment requires a qualified depth surface.");
             resolve(depthSurface.lease);
           }
           for (const surface of surfaces) if (surface) {
             require(images ? ["texture", "mip-texture"].includes(surface.metadata.kind) : surface.metadata.kind === "texture", "incompatible-resource", "A depth surface cannot be a color attachment.");
             resolve(surface.lease);
-            require(!depthSurface || ((images ? surface.dimensions.width : surface.metadata.width) === depthSurface.metadata.width && (images ? surface.dimensions.height : surface.metadata.height) === depthSurface.metadata.height),
+            require(!depthSurface || ((images ? surface.dimensions.width : surface.metadata.width) === (floatingDepth ? depthSurface.dimensions?.width ?? depthSurface.metadata.width : depthSurface.metadata.width) && (images ? surface.dimensions.height : surface.metadata.height) === (floatingDepth ? depthSurface.dimensions?.height ?? depthSurface.metadata.height : depthSurface.metadata.height)),
               "incompatible-resource", "Color and depth attachment dimensions differ.");
           }
           for (let index = 0; index < Math.max(sub.surfaces.length, surfaces.length); index++) objectRef(sub, sub.surfaces[index], surfaces[index]);
@@ -1596,7 +1616,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
               require(integerFormat(surface.metadata.format) || fields.color.every(Number.isFinite),
                 "invalid-value", "A floating attachment clear requires finite original float words.");
             }
-            require(!(fields.buffers & 1) || sub.depthSurface, "incomplete-framebuffer", "Depth CLEAR needs a Z16 depth surface.");
+            require(!(fields.buffers & 1) || sub.depthSurface, "incomplete-framebuffer", "Depth CLEAR needs a depth surface.");
             holdImageSurfaces(job, sub); restore(sub); gl.disable(gl.SCISSOR_TEST);
             for (const { slot, surface } of targets) {
               indexedColors.colorMaskiOES(slot, true, true, true, !xAlpha(sub, slot));
@@ -1616,7 +1636,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
             "invalid-value", "A floating color clear requires finite original float words.");
           if (images) holdImageSurfaces(job, sub);
           require(!(fields.buffers & 4) || sub.surfaces[0], "incomplete-framebuffer", "Color CLEAR needs a color surface.");
-          require(!(fields.buffers & 1) || sub.depthSurface, "incomplete-framebuffer", "Depth CLEAR needs a Z16 depth surface.");
+          require(!(fields.buffers & 1) || sub.depthSurface, "incomplete-framebuffer", "Depth CLEAR needs a depth surface.");
           restore(sub);
           // Gallium full clear ignores scissor and component/depth write masks.
           // Pinned vrend_clear restores these after issuing the complete clear.

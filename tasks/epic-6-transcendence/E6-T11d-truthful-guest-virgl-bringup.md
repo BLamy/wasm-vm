@@ -502,3 +502,11 @@ adjacent `.mjs` command. Ordered S prerequisite E6-T11d40 connects that one
 original packet-to-native consumer boundary. Storage and actual C/Wasm remain
 held; default caps, complete API, guest graphics and throughput await their
 real acceptance. The explicit user instruction continues this graphics chain.
+
+### 2026-10-11 — worker — desktop linear depth sampling remains unqualified
+
+D40 hardware self-validation and whole GLES3.0.6 section3.8.13 (PDF174 /
+printed161) show native non-comparison depth samples cannot use linear filters.
+D40 explicitly refuses those original sampler states before private copy/draw.
+Production must qualify desktop linear depth semantics in a shader/storage
+boundary before claiming the API floor; native zero samples are not acceptance.

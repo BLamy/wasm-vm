@@ -2386,3 +2386,7 @@ verify-E6-T11d39-critic:
 	node tools/verify-virgl-standard-floating-depth-images-critic.mjs --output target/evidence/virgl-standard-floating-depth-critic/states --mode states
 	@if node tools/verify-virgl-standard-floating-depth-images-critic.mjs --output target/evidence/virgl-standard-floating-depth-critic/fault-completed-private-stencil --fault completed-private-stencil; then echo 'ERROR: completed private native stencil corruption escaped the original inverse' >&2; exit 1; fi
 	python3 tools/virgl-floating-depth/critic.py --novel target/evidence/virgl-standard-floating-depth-critic --states target/evidence/virgl-standard-floating-depth-critic --output target/evidence/virgl-standard-floating-depth-critic/independent-fields.json
+
+.PHONY: verify-E6-T11d40
+verify-E6-T11d40:
+	bash tools/verify-virgl-standard-floating-depth-consumer.sh
