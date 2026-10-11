@@ -3,7 +3,7 @@ id: E6-T11d39
 epic: 6
 title: Preserve original floating depth and stencil image transfers and retained ranges
 priority: 525.027039000379
-status: in-progress
+status: implemented
 depends_on: [E6-T11d38]
 estimate: S
 risk: high
@@ -110,3 +110,72 @@ source pins and complete original native/source evidence will be frozen with
 this task's acceptance. The user's explicit instruction continues this graphics
 chain ahead of unrelated general queue work. Consumer/shadow/API/capset and real
 guest Mesa/desktop/worker/scanout/demo deployment remain subsequent gates.
+
+### 2026-10-11 — worker — frozen original floating depth storage submission
+
+Frozen source: `2ef416185b8b4ddd85e39efd0913c8eb8eeb71e3`. Submission claims the selected original resource,
+transfer and retained-range boundary only. The code changes `resources.mjs` and
+two isolated floating-depth helpers; previous decoders/consumers, compiler,
+default device, production negotiation and demo remain identical at the D38
+verified boundary. Four preceding D37/D38 worker/critic seals authenticate
+58,749 full members; the declared 25 historical HTTP module lists add only the
+two imports, with unchanged historical test algorithms.
+
+Exact final commands, all at the frozen source:
+
+```sh
+VIRGL_FLOATING_DEPTH_EVIDENCE_DIR=target/evidence/virgl-standard-floating-depth-images-final-hot EMCC=/Users/blamy/.cache/wasm-vm/emsdk/4.0.22/wasm-vm-emcc make verify-E6-T11d39
+python3 tools/virgl-floating-depth/cold.py --output target/evidence/virgl-standard-floating-depth-images-final-cold
+python3 tools/virgl-floating-depth/seal.py target/evidence/virgl-standard-floating-depth-images-final-hot target/evidence/virgl-standard-floating-depth-images-final-cold evidence/virgl-standard-floating-depth-images/worker
+```
+
+The complete source/native/packet/transfer fields are retained in
+`evidence/virgl-standard-floating-depth-images/worker/{recording.tar.gz,records.json,manifest.json}`.
+The full archive contains 21200 reopened unique members (77123950 bytes),
+archive SHA256 `43ae2cd2d362ba708121e9d3d23789eae24c738324b43a2261f29e3bf5ebdc16`, index `b853257bc25b5e71da6854ed8c35fb55ffe61b3e3c0cffc34942ed4e1f797891`, manifest `fbee164ddf5646594c79aeaf5237a3a0465bcc75cc73cd1dcff9b7e8a2cc9f4a`.
+Hot receipt `1eb6a28ecd0210a6a4e1b428d1488b623a93bbd5def3689d566fa21645a8d576`; cold receipt `2aae0643d3c37f90ffc75f8be70c0261e69f52f3f131e272d593265e54cefa99`; cold report `da27f6a07f8d0d375949cdbac5e84f33f3ecd065815bb1ff314ac03b6abb3028`.
+The report binds the pristine detached source head and empty tracked/untracked
+status before and after acceptance, with Rust/Cargo/Node/Python/compiler/VirGL
+environment overrides scrubbed. All recorded immutable source bodies and
+generated C/Wasm identities are included. Generated MJS SHA256
+`6bb07a0b2a056d21ae52b22d7700ce10577854c1cdcf0877dd80be938e30e0fa`,
+Wasm `acbe036afcdc4f1d8aa8cfb0fb107f48ba27759a6af4a7b9d6c83e3aa679d6cc`.
+
+Hot and cold each pass the same original wire predictions (144 previous owner,
+132 previous layout and six consumer refusal cases), the 32 native image cases,
+and 47 boundary cases under each of seeds `0xa5471e03`, `0x13579bdf`,
+`0x9e3779b9`. The independent Python inverse uses literal upstream format and
+IEEE/GLES rules, importing no product code: 176 complete runs, 8,310 native
+pixels, 47,988 public bytes, 9,764 padding bytes and all 256 stencil values.
+Original finite F32, S8 and canonical X24 public fields hold; original
+nonfinite words prove bounded complete custody only, and zero/denormal values
+have only the pinned specification alternatives. Both formats, all three roles,
+NPOT/full/truncated mip geometry, nonzero boxes, segmented padded backing,
+private remapping and GPU-only refresh with unchanged backing execute.
+Persistent original 126 upload PBOs and every logical/physical/scratch/staging
+reservation are charged before allocation. Physical allocation/upload/pack/copy,
+shader/link/uniform, buffer/fence/collection failures, strict refusal limits,
+queued old generations, opposite-format ID reuse, cancellation, disposal,
+missing indexed extension and actual context loss unwind once with zero final
+charges. Native readbacks use consumed physical fences; full native planes use
+an independently compiled integer-lane depth diagnostic and exhaustive
+fixed-function stencil reference selection.
+
+All three real completed corruption controls are refuted after physical
+completion: `fault-depth-precision/report.json:partial.runs[0].planes[0]` has
+depth word 1051372203 instead of original 1051372373; `fault-completed-depth`
+has 1063256064 instead; `fault-stencil-selection` has public stencil 86
+instead of 169 at its first original pixel. Wrong native depth clears use a
+distinct second completed fence before the unchanged independent plane inverse.
+The governing nested V8 partitions over every changed runtime line have
+1,108 positive partitions and zero unproven ones. Exact text/SHA waivers cover
+four whitespace spans and one unchanged historical RGB9_E5 cleanup operand;
+full source bodies and all original nested regions remain the authority.
+
+Syntax, task policy, actual pinned C/Wasm build, original wire/native/browser
+checks and ten affected historical native storage/job gates pass on headed
+Chrome155.0.8059.39 using physical Apple M4 Max Metal, with no software flags
+and zero console/page/request errors. The historical Z16 gate includes all
+65,536 UN16 encodings and real asynchronous readback. This is a worker claim
+awaiting a fresh critic; it grants no consumer/shadow/stencil-state, API/capset,
+real guest, production offload, demo/deployment or throughput authority.
