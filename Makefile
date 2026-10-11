@@ -2375,3 +2375,7 @@ verify-E6-T11d38-adversarial:
 	python3 tools/virgl-packed-unsigned-consumer/critic.py target/evidence/virgl-packed-unsigned-consumer-critic-promoted
 	! node tools/verify-virgl-standard-packed-unsigned-consumer-critic.mjs --output target/evidence/virgl-packed-unsigned-consumer-critic-sabotage --seed 0x510e527f --fault completed-output
 	python3 tools/virgl-packed-unsigned-consumer/critic.py target/evidence/virgl-packed-unsigned-consumer-critic-sabotage --control
+
+.PHONY: verify-E6-T11d39
+verify-E6-T11d39:
+	bash tools/verify-virgl-standard-floating-depth-images.sh

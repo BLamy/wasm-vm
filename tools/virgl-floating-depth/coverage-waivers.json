@@ -1,0 +1,54 @@
+{
+  "schema": 1,
+  "predecessor": "d79868fbfbb70ef215de0eaeee34cf3bee70a008",
+  "waivers": [
+    {
+      "source": "renderer/virgl-command/floating-depth-gpu.mjs",
+      "startOffset": 4198,
+      "endOffset": 4199,
+      "text": "\n",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "classification": "whitespace",
+      "reason": "Literal whitespace only, with no executable token or storage/state behavior."
+    },
+    {
+      "source": "renderer/virgl-command/floating-depth-gpu.mjs",
+      "startOffset": 4199,
+      "endOffset": 4203,
+      "text": "    ",
+      "sha256": "1a0f564ddc6039457b2fb26b3d6a316c15eba20a886449847c3210c35821a693",
+      "classification": "whitespace",
+      "reason": "Literal whitespace only, with no executable token or storage/state behavior."
+    },
+    {
+      "source": "renderer/virgl-command/floating-depth-gpu.mjs",
+      "startOffset": 5507,
+      "endOffset": 5508,
+      "text": "\n",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "classification": "whitespace",
+      "reason": "Literal whitespace only, with no executable token or storage/state behavior."
+    },
+    {
+      "source": "renderer/virgl-command/floating-depth-gpu.mjs",
+      "startOffset": 5508,
+      "endOffset": 5512,
+      "text": "    ",
+      "sha256": "1a0f564ddc6039457b2fb26b3d6a316c15eba20a886449847c3210c35821a693",
+      "classification": "whitespace",
+      "reason": "Literal whitespace only, with no executable token or storage/state behavior."
+    },
+    {
+      "source": "renderer/virgl-command/resources.mjs",
+      "startOffset": 102944,
+      "endOffset": 103001,
+      "text": "sharedHelper().releaseScratch(storage.sharedCopyScratch);",
+      "sha256": "43836d9eab64b634f375dfd5af3353bf68a9670877b79abad241d0b4eeff9c1c",
+      "classification": "unchanged-operand",
+      "reason": "Exact unchanged cleanup operand for the preceding RGB9_E5 private copy scratch. D39 floating depth metadata never sets sharedCopyScratch; its new upload-buffer cleanup is separately executed. The original shared helper, condition and metadata producer retain their verified dependency boundary.",
+      "predecessorSourceSha256": "da688c0fc6cb25d05d5e84aed98bb0a91a834bbf8147c058cbd12edf78bed74d",
+      "predecessorStartOffset": 95496,
+      "predecessorEndOffset": 95553
+    }
+  ]
+}

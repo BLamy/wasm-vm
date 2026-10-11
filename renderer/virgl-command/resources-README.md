@@ -405,3 +405,44 @@ canonicalize that duplicate encoding. No CPU texture shadow or store revision
 substitutes for the actual native image when refreshing a restricted mip view.
 This boundary supplies no complete guest API, positive capset, production guest
 initialization, scanout, deployment or throughput authority.
+
+### Original floating depth storage
+
+`createStandardFloatingDepthResourceStore`,
+`createStandardFloatingDepthTransferBackend`, and
+`computeStandardFloatingDepthTransferLayout` explicitly select Z32_FLOAT (18)
+and Z32_FLOAT_S8X24_UINT (126). Original 2D depth, sampler and combined bindings
+are 1, 8 and 9. Bounded full/truncated NPOT mip chains, strided segmented input,
+partial mip boxes and retained native ranges preserve original level identities.
+Historical owners and layouts continue rejecting these formats; Z16 keeps its
+original one-level depth binding. No new command/shader consumer or production
+device selects this storage profile.
+
+Format 18 owns native DEPTH_COMPONENT32F at four bytes per pixel. Format 126
+owns DEPTH32F_STENCIL8 plus a persistent pixel-unpack buffer, charged together
+at sixteen bytes per pixel before allocation. Original input remains eight
+bytes: little endian F32, stencil UP8 and unused X24. The numeric-offset PBO
+upload obeys WebGL's restriction on packed depth/stencil ArrayBufferViews.
+Finite depth follows GLES clamping to [0,1]. Signed zero and denormals retain
+only their defined alternatives; nonfinite fields have bounded raw custody,
+without a payload/value guarantee. Public X24 padding is canonical zero.
+
+Readback packs native float bits on the GPU. Packed stencil uses a cropped
+matching-format native blit and actual fixed-function masked tests into a
+separate byte plane. CPU work interleaves those downloaded fields only after
+completion; it never mirrors or rasterizes the texture. Read scratch is four
+bytes/pixel for 18 and sixteen for 126. Conversion textures cost four and
+sixteen; queued native read PBOs cost four and eight, so total staging charges
+are eight and twenty-four respectively. Every private 126 range includes its
+own upload-buffer charge. Matching-format NEAREST depth/stencil copies preserve
+fields through GPU-only changes, old generations and completion holds.
+
+Packing restores caller program, VAO, framebuffers, viewport, texture/sampler
+parameters, depth/stencil state, blend and color mask. With indexed draw buffers
+it changes output zero only, preserving other outputs without relying on an
+unavailable enabled-state query. Cancellation, native failure, disposal and ID
+reuse release each owned allocation once. `make verify-E6-T11d39` records full
+original/native/public inputs, varied physical schedules, independent field
+inverses, completed native corruption controls and governing V8 partitions.
+Real guest Mesa initialization, shadow/surface consumers, capabilities, demo
+deployment and throughput remain later qualifications.
