@@ -106,5 +106,25 @@
       "magnification": "NEAREST",
       "linear": "texture incomplete even for texelFetch"
     }
+  },
+  "fixedDepthConversion": {
+    "wholeSource": "tools/virgl-floating-depth/primary/es-3.0.6.pdf",
+    "normalizationSection": "2.1.6.1",
+    "fixedConversionSection": "2.1.6.2",
+    "fixedConversionPdfPages": [
+      22,
+      23
+    ],
+    "clearSection": "4.2.3",
+    "clearPdfPages": [
+      200,
+      201
+    ],
+    "windowDepthSection": "2.13.1",
+    "windowDepthPdfPages": [
+      94,
+      95
+    ],
+    "rule": "floating-to-UNORM conversion selects one of the two closest integer values; nearest is preferred. Native clear choice must be allowed, uniform, and canonical public bytes must exactly serialize that same native fixed value."
   }
 }

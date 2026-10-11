@@ -32,7 +32,10 @@ Exercise all 65,536 original UN16 input words through native sampling and exact
 canonical public UN16 readback. For native FLOAT lookup, derive the expected
 value independently as float32(original_word/65535), permitting at most one ULP
 only in sampled depth lanes; all constants, query results, other output words,
-UN16 bytes and padding remain exact. Execute original non-shadow FLOAT samplers
+UN16 bytes and padding remain exact. For floating-point clears, validate the
+GLES3.0.6 two-closest-integers conversion rule, a uniform native choice, and
+exact public serialization of that same native fixed word; never independently
+allow native and public streams to disagree. Execute original non-shadow FLOAT samplers
 in both stages at slots 0/15, original TXF/TXL/TEX/TXD/TXB/TXQ where supported,
 client swizzles/constants, private/full NPOT ranges and nonzero output levels.
 
@@ -51,6 +54,9 @@ D40 18/126 and legacy level-zero Z16 behavior. Run three varied retained-range,
 generation, cancellation and disposal schedules, including opposite-format ID
 reuse and once-only fence/object retirement with zero terminal charges. Separate
 owned fences, consumed completions and disposal-only fences in all claims.
+Distinguish driver-synchronized CPU readPixels returns in the synchronous
+backend from asynchronous PBO collection after consumed WebGLSync completion.
+A fence preceding a conversion draw must not be claimed as completing that draw.
 
 Refute actual wrong native sampler/depth attachment and completed native color
 or depth corruption after a distinct second consumed fence with unchanged full
@@ -105,3 +111,31 @@ sources and GLES3.0.6 depth-mode expansion/filter restrictions remain held.
 The selected implementation reuses the unchanged native GPU copy/packing helper
 and actual compiler. The public depth stream remains exact UN16, while native
 FLOAT depth lanes have the explicitly bounded one-ULP acceptance above.
+
+
+### 2026-10-11 — worker — native UN16 clear conversion corrected from whole primary
+
+The ephemeral `target/evidence/d41-transfer-smoke/report.json` records a native
+0.375 clear sampled as 0.37499046325683594, original word24575, while the initial
+fixture assumed nearest word24576. The unchanged actual GPU therefore refuted
+that over-specific fixture assumption. Whole GLES3.0.6 section2.1.6.2 allows the
+two closest integers for float-to-UNORM conversion and prefers nearest;
+section4.2.3 applies fixed window-depth conversion to clears. The updated
+acceptance independently predicts the allowed pair24575/24576 before the clear,
+requires every native pixel to use the same allowed fixed word, and then demands
+all public bytes exactly serialize that independently validated native choice.
+Uploaded UN16 words, constants, padding and comparisons retain their existing
+exact criteria. This changes no product, compiler or GPU-helper code.
+
+
+### 2026-10-11 — worker — synchronous readback custody is explicit
+
+The initial transfer event audit correctly refused to credit an earlier
+WebGLSync as completing a later GPU packing draw. The synchronous backend uses
+actual CPU-destination `readPixels`, which returns the framebuffer data through
+the driver's synchronous readback API. Its full returned native words are
+recorded and inverted, and the selected backend invocation scope is recorded
+explicitly. Asynchronous PBO `getBufferSubData` and independent diagnostics still
+require an actual consumed fence created after their writer. The new audit
+counts these separately and does not relabel synchronous reads as WebGLSync
+completions. Product and held GPU helper code are unchanged.
