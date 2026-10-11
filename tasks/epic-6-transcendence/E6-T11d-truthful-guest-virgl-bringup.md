@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34]
-blocked_on: E6-T11d34
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35]
+blocked_on: E6-T11d35
 estimate: S
 risk: high
 capstone: false
@@ -424,3 +424,17 @@ including per-target types, masks, blending and retained native completion.
 Remaining original API/format/capacity floors, typed capsets, actual guest Mesa/
 compositor and worker/scanout/demo deployment stay gated under the user's explicit
 production graphics objective. Production graphics and300MIPS remain unproven.
+
+### 2026-10-11 — worker — multiple attachments verified; packed normalized storage
+
+D34 is independently verified at `b57c3ae04e0bd306e6bb5877ff94c5d8f4d6df06`
+and published on existing open PR512. The exact-head command
+`node evidence/virgl-production-readiness/standard-packed-normalized-image-gap.mjs`
+records 78 original metadata/layout refusals for 13 packed UNORM formats, with
+zero native allocations. The adjacent JSON retains every input and source hash.
+Ordered S/high D35 preserves those original words through native packed storage,
+transfers, mip levels and retained GPU range copies. Its original command consumer,
+remaining actual API/capacity floors, truthful capsets, guest Mesa/compositor and
+worker/scanout/demo deployment follow separately. The explicit user instruction
+continues this production graphics chain ahead of unrelated queue work. No
+production graphics or throughput authority follows from these prerequisites.
