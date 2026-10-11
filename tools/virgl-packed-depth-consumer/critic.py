@@ -91,7 +91,7 @@ def audit(directory):
             need(load(f['backing'])==wanted,'all native/public output words and padding exactly identical');counts['publicBytes']+=len(wanted)
             citations.append(dict(run=ref['path'],runSha256=ref['sha256'],frame=fi,label=f['label'],historyIndex=f['historyIndex'],nativeSha256=f['native']['sha256'],completion=f['completion']))
         refusal=r['history'][r['refusal']['historyIndex']];need(not refusal['result']['ok'] and refusal['result']['error']['code']=='framebuffer-feedback' and r['refusal']['before']==r['refusal']['after'],'overlap rejected before native draw/private copy');counts['refusals']+=1
-        wanted=bytearray(load(r['depthPublic']['backingBefore']))
+        before=load(r['depthPublic']['backingBefore']);need(before==sourceBacking,'GPU-only writes preserve every original input backing byte');wanted=bytearray(sourceBacking)
         for read in r['depthPublic']['reads']:
             hi=read['historyIndex'];h=r['history'][hi];op,kind,w,body=next(packets(h['hex']));need(op==43 and w[0]==6 and w[1]==read['level'] and w[12]==2,'original public depth packet');p=snapshots[hi][w[1]];n=p['width']*p['height'];collection=next(v for v in r['readbacks'] if v['label']==h['label'] and v['name']=='getBufferSubData' and v['cpu']);raw=load(collection['bytes']);need(len(raw)==n*(8 if fmt==20 else 4),'actual native public collection fields');out=bytearray()
             for i in range(n):
