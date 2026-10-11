@@ -2,7 +2,7 @@
 id: E6-T11d41
 epic: 6
 title: Qualify original UN16 depth images and sampling
-status: in-progress
+status: implemented
 estimate: S
 risk: high
 priority: 525.027039000381
@@ -143,3 +143,79 @@ completions. Product and held GPU helper code are unchanged.
 ### 2026-10-11 — worker — older recorder import closure repaired
 
 The first frozen product matrix and pristine clone at `9b3e9412d19e26488c675ad53c7b08d6e490a417` passed. Separately, the original legacy recorder's fixed import list omitted the new descriptor: `target/evidence/d41-preflight/retained-z16-consumer/report.json` contains its missing-module failure. The unified adapter proved the unchanged native behavior but did not repair that original command. Twenty-five fixed recorder inventories now append only this dependency. Every full body is compared to D40 with exactly that literal removed, and the original hardware `verify-virgl-depth-formats.mjs` command is part of final acceptance. No runtime, shader compiler or GPU-helper behavior changed. The earlier hot/cold pair remains a pre-repair recording; the final worker submission uses the corrected frozen harness and one final pristine clone on that head.
+
+### 2026-10-11 — worker — implemented; frozen native UN16 claim
+
+Frozen source head: `eda91e2569c38de3f56b92fd38b5326b2c6ae3fd`.
+The four runtime files are byteidentical to the first product freeze9b3e9412;
+the final head repairs only recorder packaging and records that repair.
+
+Commands (run locally on M4 Max, headed Chrome155 with real Metal, zero console,
+page or request errors):
+
+```sh
+EMCC=/Users/blamy/.cache/wasm-vm/emsdk/4.0.22/wasm-vm-emcc VIRGL_UNORM_DEPTH_EVIDENCE_DIR=target/evidence/virgl-standard-unorm-depth-frozen-hot make verify-E6-T11d41
+python3 tools/virgl-unorm-depth/cold.py --output target/evidence/virgl-standard-unorm-depth-frozen-cold
+python3 evidence/virgl-unorm-depth-images/worker/seal-io-driver.py target/evidence/virgl-standard-unorm-depth-frozen-hot target/evidence/virgl-standard-unorm-depth-frozen-cold evidence/virgl-unorm-depth-images/worker
+```
+
+Both final hot and pristine scrubbed cold acceptance passed at the frozen head.
+The clean clone was detached at that exact head, with empty status before and
+after and scrubbed compiler/Node/Python/recording environment. Each positive
+matrix records62 runs,133 frames,801576 exact/qualified output words,
+280776 sampled/tested depth pixels plus2732 transfer pixels, and10866784 public
+bytes. Original descriptors, full TGSI/wire and all segmented input, native,
+public and padding bytes are independently inverted. All65536 UN16 values
+execute through an original guest sampler and exact canonical readback;680472
+qualified FLOAT depth-lane comparisons had maximum observed error zero ULP.
+Constants, queries and UN16/padding stay exact. Allowed clear quantization uses
+one uniform primary-permitted native fixed value with exactly matching public
+serialization. All eight depth comparisons, masks, original mip attachments,
+nonzero levels and18->126->16 switches preserve original S8.
+
+Eighteen transfer cases include native allocated-then-failed resource/private-view
+rollback and one-byte-short resource, private-view, scratch and staging refusal
+before any object allocation or CPU collection. Three varied schedules exercise
+old generation/range retention, opposite-format ID reuse, cancellation and both
+disposal orders. Four actual wrong-binding/attachment/completed-storage controls
+are refuted by unchanged full original-input inverses; completed controls have a
+distinct second consumed native fence. Every positive native object retires once
+(6993 objects), with zero terminal budgets.
+
+Full positive fenceObjects count1716 owned,1710 consumed and6 disposal-only
+fences. The transfer inverse's summary omits consumedSyncs; its310 actual
+completions are explicitly included from its full native fenceObjects, rather
+than treating a missing field as zero. The1648 CPU reads separate1586 fenced
+collections from62 synchronous driver readPixels returns. An earlier fence is
+never credited for a later packing draw. Actual compiler requests are56 pair and
+112 stage responses;101 matching draw associations are a separate quantity.
+
+Both final nested V8 audits cover602 governing partitions, with25 exact
+source-pinned unchanged predecessor operand/delimiter waivers and zero unproven
+partitions. The original legacy Z16 recorder passes; all25 other repaired fixed
+inventories are full-body authenticated as exactly one dependency literal added.
+Historical D40 18/126, packed UINT/UNORM, integer/FLOAT/MRT paths remain green.
+The unchanged actual compiler/helper and whole primary sources are authenticated,
+and both full D40 archives reopen40703 held members.
+
+The committed worker seal losslessly stores every logical source/input/native/
+public/browser/coverage/screenshot member, including duplicate full records as
+hardlinks to identical physical bytes. The initial gzip reverse-seek reopen was
+terminated for cost. The committed I/O driver only expands the same stored
+archive into memory and resolves each hardlink to its earlier actual physical
+body; every logical body still passes the unchanged frozen sealer's complete
+length/SHA check. It changes no record, verification predicate or product code.
+
+Seal: `evidence/virgl-unorm-depth-images/worker`; 37121 members fully reopened, archive33512700 bytes.
+Archive SHA256: `c04d93daf4f37cca8b9f9423fbe4776fe88d63c6a006709345691f9bcbc31afe`.
+Index SHA256: `1d86135fbe288343f0d67d15cf7b355956e53400ea343324d3dae789a0e8d609`.
+Manifest SHA256: `3b35c81a5d67ecbc8d781ad94acef91c2dadf656f950c7be8855637de72820ec`.
+I/O driver SHA256: `2c44a63914f8f73ff416a2883a9fe2bd3fbe87f02875cce88deb07d93041e4c1`.
+Hot receipt SHA256: `80292c7965691175b079b6c591de17a3038b28e0dea1693186d75b34a3402bdb`.
+Cold report SHA256: `7b708cfe8bd3c3cd99affe1f62529a2c9a00511ed6f3cd921a76dd753c0b3738`.
+Cold receipt SHA256: `602f358ec0569544a9ea5315c9d62b0e0cc19e1734e600b59ef0118c6602cc2e`.
+
+This claim qualifies one isolated original UN16 path. Shadow/stencil/desktop
+linear semantics, complete API and capsets, actual guest/compositor/worker/
+scanout/demo production offload and300MIPS remain unproven. A fresh critic must
+interrogate the full diff and recordings before this task can become verified.
