@@ -10,11 +10,10 @@ import { repo, sha256 } from "./virgl-command/fixtures.mjs";
 
 const options = {};
 for (let index = 2; index < process.argv.length; index += 2) {
-  assert.ok(["--output", "--fault", "--smoke", "--node-only", "--seed", "--mode"].includes(process.argv[index]));
+  assert.ok(["--output", "--fault", "--seed"].includes(process.argv[index]));
   assert.ok(process.argv[index + 1]); options[process.argv[index].slice(2)] = process.argv[index + 1];
 }
-assert.ok(options.output); assert.ok(!options.mode||["samples","surfaces","boundaries","historical","historical-integer","historical-float","historical-normalized"].includes(options.mode)); assert.ok(!options.fault || ["completed-stencil"].includes(options.fault));
-for (const flag of ["smoke", "node-only"]) assert.ok(!options[flag] || options[flag] === "true");
+assert.ok(options.output); assert.ok(!options.fault || options.fault === "completed-stencil");
 const output = path.resolve(options.output); await fs.mkdir(output, { recursive: true });
 const sourcePaths = [...new Set([
  ...execFileSync('git',['ls-files','renderer/virgl-command','renderer/virgl-shader','tools/virgl-command'],{cwd:repo,encoding:'utf8'}).trim().split('\n').filter(n=>/\.(?:mjs|h|json|yaml)$/.test(n)),
@@ -47,10 +46,6 @@ try {
     report.sources.push({ path: name, bytes: bytes.length, sha256: sha256(bytes) });
     await fs.mkdir(path.join(output,"source",path.dirname(name)),{recursive:true});await fs.writeFile(path.join(output,"source",name),bytes);
   }
-  if (options["node-only"]) {
-    const module=await import(pathToFileURL(path.join(repo,"renderer/virgl-command/tests/standard-floating-depth-consumer.mjs")));
-    report.wire=module.runWireAcceptance();assert.equal(report.wire.status,"passed");
-  } else {
     report.fault=options.fault??null;
     const html = Buffer.from('<!doctype html><meta charset="utf-8"><title>Original guest floating depth consumers</title><style>body{font:16px system-ui;background:#111720;color:#e7edf6;margin:32px}pre{white-space:pre-wrap}canvas{width:256px;height:256px;image-rendering:pixelated}</style><h1>Original guest floating depth consumers</h1><p>Original floating depth words · native packed planes · retained mip ranges</p><p id="status">Checking actual hardware bindings…</p><canvas id="gpu" width="8" height="8"></canvas><pre id="result"></pre>');
     const endpoints = new Map([["/", { bytes: html, type: "text/html" }],
@@ -86,8 +81,7 @@ try {
     try {
       report.browserResult = await Promise.race([page.evaluate(async spec => {
         try {
-          const historical={historical:'standard-multiple-color', 'historical-integer':'standard-integer-image-consumer','historical-float':'standard-integer-image-consumer','historical-normalized':'standard-packed-normalized-consumer'}, selected='standard-floating-depth-consumer-critic';
-          const module = await import('/renderer/virgl-command/tests/'+selected+'.mjs'), result = await module.runAcceptance(historical[spec.mode]?{...spec,mode:spec.mode==='historical-float'?'float':'matrix',smoke:spec.mode!=='historical-float'}:spec);
+          const module = await import('/renderer/virgl-command/tests/standard-floating-depth-consumer-critic.mjs'), result = await module.runAcceptance(spec);
           document.querySelector("#status").textContent = "Passed original floating depth consumer proof";
           document.querySelector("#result").textContent = JSON.stringify({ gpu: result.gpu, runs: result.runs.length, planes: result.runs.reduce((sum,row)=>sum+(row.planes?.length??0),0), predictions: result.predictions.length }, null, 2);
           return { status: "passed", result };
@@ -95,10 +89,10 @@ try {
           document.querySelector("#status").textContent = "Failed: " + error.message;
           return { status: "failed", error: { message: error.message, stack: error.stack } };
         }
-      }, { smoke: Boolean(options.smoke), fault:options.fault, mode:options.mode, ...(options.seed ? {seed:Number(options.seed)} : {}) }),
+      }, { fault:options.fault, ...(options.seed ? {seed:Number(options.seed)} : {}) }),
         new Promise((_, reject) => { timer = setTimeout(() => reject(new Error("floating depth image hardware proof exceeded 420 seconds")), 420000); })]);
     } finally { clearTimeout(timer); }
-    if (report.browserResult.status === "failed") report.partial = await page.evaluate(() => window.__standardFloatingDepthConsumerEvidence ?? window.__standardMultipleColorEvidence ?? window.__standardIntegerImageConsumerEvidence ?? window.__standardPackedNormalizedConsumerEvidence ?? null);
+    if (report.browserResult.status === "failed") report.partial = await page.evaluate(() => window.__standardFloatingDepthConsumerEvidence ?? null);
     const evidence = report.browserResult.result ?? report.partial;
     const blobKeys=new Set();
     if(evidence)for(const blob of evidence.blobs){
@@ -118,7 +112,6 @@ try {
     report.screenshot = { path: "browser.png", sha256: sha256(await fs.readFile(path.join(output, "browser.png"))) };
     assert.deepEqual(report.browserErrors, { console: [], page: [], requests: [] });
     assert.equal(report.browserResult.status, "passed", report.browserResult.error?.message);
-  }
   for (const source of report.sources) assert.equal(sha256(await fs.readFile(path.join(repo, source.path))), source.sha256, "source drift " + source.path);
   report.status = "passed"; console.log("Fresh retained depth generation endpoint acceptance passed");
 } catch (error) {
