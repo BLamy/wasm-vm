@@ -3,7 +3,7 @@ id: E6-T11d39
 epic: 6
 title: Preserve original floating depth and stencil image transfers and retained ranges
 priority: 525.027039000379
-status: pending
+status: in-progress
 depends_on: [E6-T11d38]
 estimate: S
 risk: high
@@ -21,10 +21,11 @@ Checked original 2D depth/sampler/combined roles, NPOT full/truncated mip chains
 boxes, row padding, segmented backing and private native ranges must charge
 logical, physical, scratch, conversion and staging bytes before any work.
 
-Use qualified native DEPTH_COMPONENT32F and DEPTH32F_STENCIL8 textures, with 126's persistent per-resource pixel-unpack buffer charged before allocation; no CPU
+Use qualified native DEPTH_COMPONENT32F and DEPTH32F_STENCIL8 textures, with
+126's persistent per-resource pixel-unpack buffer charged before allocation; no CPU
 texture, depth or stencil mirror or rasterizer fallback. Original finite depth
 uploads follow pinned GLES clamp/conversion rules; zero/denormal and nonfinite
-inputs have only their defined public guarantee.126's unused X24 lane is explicit
+inputs have only their defined public guarantee. 126's unused X24 lane is explicit
 canonical padding, with no invented preservation claim. The WebGL packed
 ArrayBufferView restriction cannot be ignored: qualify its numeric-offset PBO
 route physically before selecting it. GPU field packing and actual fixed-function
@@ -91,7 +92,7 @@ allocation, command consumer, guest or capability authority follows.
 
 Pinned Mesa26.2.2 `version.c` GLES3.0 and `st_extensions.c:832..836` require
 both original floating depth formats with depth-surface and sampler support.
-The complete original format YAML defines126 little endian as F32/UP8/X24.
+The complete original format YAML defines 126 little endian as F32/UP8/X24.
 Read the primary [WebGL2 specification](https://registry.khronos.org/webgl/specs/2.0/)
 and [GLES3.0.6 sections 2.1.1,3.8.3](https://registry.khronos.org/OpenGL/specs/es/3.0/es_spec_3.0.pdf).
 Their packed ArrayBufferView restriction has a distinct numeric-offset PBO
