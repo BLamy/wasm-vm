@@ -2,7 +2,7 @@
 id: E6-T11d46
 epic: 6
 title: Preserve original instance IDs with a host-owned compiler offset
-status: implemented
+status: verified
 estimate: S
 risk: high
 priority: 525.027039000384
@@ -187,3 +187,75 @@ cold report SHA256
 A fresh independent adversarial verdict is required before verification.
 
 Worker manifest SHA256: `649def87b9a04660ba795de462f7ff1773bf0d9db9b89c501b6a417accddf5ce`.
+
+### 2026-10-11 — fresh independent verifier — VERDICT: verified
+
+The critic did not implement D46 or change runtime. Falsifiable predictions were
+committed before concrete state at `cb74ee09550ef3aeb75eb1ea6fcefb49930ff821`;
+the promoted critic source/gate was frozen before the final fresh run at
+`52e42114e8f89607da7c449d9682aa3c769c56a9`. Runtime remains byte-identical to
+`28e5e7ab42ae52c75713b96ffad37727cceb05d6`. Full per-prediction state/digest/
+event citations are in `evidence/virgl-instance-base/verifier/VERDICT.md`.
+
+- P1 custody — HELD: every2584 complete worker body and all91389 nested D45
+  bodies authenticated, including exact earlier physical hardlinks and Git pins.
+- P2 historical ABI — HELD: fresh manual ABI compared4313 literal native/Wasm
+  response strings and2586 actual authenticated predecessor response strings.
+- P3 original token semantics — HELD: each hot/cold run independently redecoded
+  4969 original stages and144 system operands, with3385 admits/928 refusals.
+- P4 reflection/composition — HELD: actual uint/default-zero/pruned liveness,
+  queried C-emitted sources, raw attributes/constants/images and VirglBlock656.
+- P5 strict custody — HELD:239 worker plus97 additional strict refusals,
+  zero getters, mutation/proxy/host-field bounds and subsequent-call behavior.
+- P6 allocation/memory — HELD:165 fresh actual fault sites and exact recoveries,
+  fixed distinct16MiB memories, three independent peer schedules/pressure, and
+  complete delivered O2 stack bodies below262144 on the selected call path.
+- P7 original raw IDs — HELD: all60 hot and60 cold whole native planes,
+  independently derived from original token/upload/index/native draw bytes.
+- P8 completion/ownership — HELD: actual post-writer consumed syncs, native
+  readbacks, full object retirement and headed M4 Max Metal/browser error lists.
+- P9 completed negatives — HELD: worker original17/actual18 fails12 ID words;
+  fresh second-draw corruption fails36 predicted x/z/w words after distinct sync.
+- P10 finest coverage — HELD:33 JS/87 native positive governing partitions,
+  zero executable gaps and11 exact non-executable declaration/signature waivers.
+- P11 frozen cold/environment — HELD: exact28e5 pristine scrubbed cold and
+  unchanged D45 dependency facts carry by complete authenticated identities.
+- P12 bounded novel case — HELD: three fresh sparse u8/u16/u32 schedules and
+  original INSTANCEID/VERTEXID MOV modifiers/XOR yield18 planes/756 correct words.
+- P13 permanent suite — HELD: promoted `make verify-E6-T11d46-critic` passed
+  once at the frozen critic head; complete normal/corrupt recordings retained.
+- P14 scope — HELD: isolated compiler facet only; no production consumer,
+  guest/caps/Mesa/compositor/display/deployment/throughput or PR-stack change.
+
+The concrete fresh sabotage first completes original max-u32 draw82/sync14
+created84/consumed87/read89. Actual uniform1ui(16) at91 preserves the original
+base4294967295 expectation; second writer92/sync15 created94/consumed97/read99
+refutes exactly36 raw words in lanes0/2/3. Complete corrupt output SHA256:
+`7624ffe4dee7331283d18e90c997e7c283c7580e959223e89c53301ae133cf7b`.
+The native report and independent original-token interpreter remain unchanged
+in `fresh/fault-completed-offset` inside the seal. A compile/type refusal is
+separate. An initial critic-only instruction-length assumption was corrected
+against the complete original builder; its failed transcript is preserved.
+
+Final commands (exit0):
+
+```sh
+VIRGL_INSTANCE_BASE_CRITIC_EVIDENCE_DIR=target/evidence/virgl-instance-base-critic/frozen-52e42114 make verify-E6-T11d46-critic
+python3 tools/virgl-instance-base/critic_seal.py target/evidence/virgl-instance-base-critic/frozen-52e42114 evidence/virgl-instance-base/verifier
+```
+
+The full critic seal reopened3206 members/404126514 logical bytes/670 physical
+bodies, with318 source and55 generated identities. Archive18359204 bytes in
+two bounded parts, concatenated SHA256
+`cf4cf5b9ced80cc4f379748bd199f9228d1cb4f6de8810adbef2f209aed70563`;
+manifest SHA256
+`8fc075d8d6e85a4078ddf507cb349282b5579093f5c047a3a14c2929d17f13b4`;
+complete index SHA256
+`2298b9fbb3e68cbe4d2996d92d335efeb891c552de5eb41f8d9ed531adc3dc58`;
+full reopen audit SHA256
+`ca631c3782a7438ffeb7c574adc02be51b2ff44117818a8c2f5e37f6ee58c30d`.
+The worker and nested predecessor full archives remain committed and were all
+reopened against their published pins. No product FAILED or NEEDS EVIDENCE
+criterion remains. Policy is checked before queue regeneration; only verifier
+evidence/tests/log/status/queue changes are committed. Production guest graphics
+remains unfinished, and the root retains all publication/stack work.
