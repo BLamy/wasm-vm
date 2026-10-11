@@ -1316,3 +1316,70 @@ export function deriveStandardMultipleColorShaderInterface(vertex, fragment, hos
       standardMultipleMetadata(fragment, "fragment", true, selectors)) });
   } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-link-error", error.message); }
 }
+
+// Host selection owns this additional native binding. Every other field still
+// passes through the complete, closed multiple-color metadata contract.
+export const STANDARD_INSTANCE_BASE_SHADER_PROFILE = "virgl-webgl2-standard-instance-base-gles3-v1";
+function standardInstanceMetadata(value, stage, paired, selectors) {
+  const keys = [...STANDARD_METADATA_KEYS, "guestUniformBlocks", "textureQueries", "colorOutputMasks"];
+  const input = record(value, [...keys, "instanceUniforms"]);
+  require(input.profile === STANDARD_INSTANCE_BASE_SHADER_PROFILE, "Instance offsets require their distinct compiler profile.");
+  const common = Object.fromEntries(keys.map(key => [key, input[key]]));
+  common.profile = STANDARD_INTEGER_IMAGE_SHADER_PROFILE;
+  const metadata = standardMultipleMetadata(common, stage, paired, selectors);
+  const uniforms = array(input.instanceUniforms, 1).map(value => {
+    const uniform = record(value, ["name", "type", "semantic", "default"]);
+    require(uniform.name === "wv_instance_base" && uniform.type === "uint" &&
+      uniform.semantic === "INSTANCE_BASE" && Object.is(uniform.default, 0), "Invalid owned instance offset uniform.");
+    return { name: uniform.name, type: uniform.type, semantic: uniform.semantic, default: uniform.default };
+  });
+  const expected = stage === "vertex" && metadata.systemValues.some(value => value.semantic === "INSTANCEID") ?
+    [{ name: "wv_instance_base", type: "uint", semantic: "INSTANCE_BASE", default: 0 }] : [];
+  require(JSON.stringify(uniforms) === JSON.stringify(expected), "Instance offset contract disagrees with original system declarations.");
+  return standardFreeze({ ...metadata, profile: input.profile, instanceUniforms: uniforms });
+}
+function standardInstanceBody(value, stage, paired, selectors) {
+  const body = record(value, ["glsl", "metadata"]);
+  require(typeof body.glsl === "string" && body.glsl.length <= 262144 && /^#version 300 es\b/m.test(body.glsl),
+    "Instance offset compiler returned incompatible GLSL.");
+  return standardFreeze({ glsl: body.glsl, metadata: standardInstanceMetadata(body.metadata, stage, paired, selectors) });
+}
+export function parseStandardInstanceBaseShaderMetadata(value, stage, hostColors = STANDARD_IMAGE_COLORS) {
+  try {
+    const colors = standardMultipleColors(hostColors);
+    return standardFreeze({ ok: true, domain: null,
+      metadata: standardInstanceMetadata(value, stage, false, { ...STANDARD_UNIFORM_SELECTORS, ...colors }) });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-domain-error", error.message); }
+}
+export function normalizeStandardInstanceBaseShaderResult(value, stage, hostColors = STANDARD_IMAGE_COLORS) {
+  try {
+    const colors = standardMultipleColors(hostColors), response = record(value, ["ok", "glsl", "metadata", "error"], ["ok"]);
+    if (response.ok === false) { record(response, ["ok", "error"]); return standardError(response.error); }
+    require(response.ok === true, "Invalid instance offset compiler result."); record(response, ["ok", "glsl", "metadata"]);
+    return standardFreeze({ ok: true, ...standardInstanceBody({ glsl: response.glsl, metadata: response.metadata }, stage,
+      false, { ...STANDARD_UNIFORM_SELECTORS, ...colors }) });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-domain-error", error.message); }
+}
+export function normalizeStandardInstanceBaseShaderPair(value, hostSelectors = STANDARD_IMAGE_SELECTORS) {
+  try {
+    const selectors = standardMultipleSelectors(hostSelectors), response = record(value, ["ok", "vertex", "fragment", "interfaceKey", "error"], ["ok"]);
+    if (response.ok === false) { record(response, ["ok", "error"]); return standardError(response.error); }
+    require(response.ok === true, "Invalid instance offset pair result."); record(response, ["ok", "vertex", "fragment", "interfaceKey"]);
+    const vertex = standardInstanceBody(response.vertex, "vertex", true, selectors),
+      fragment = standardInstanceBody(response.fragment, "fragment", true, selectors), derived = standardInterface(vertex.metadata, fragment.metadata);
+    require(response.interfaceKey === derived.key, "Instance offset pair key disagrees.");
+    for (const input of derived.inputs) {
+      const output = vertex.metadata.outputs.find(output => output.semantic === "GENERIC" && output.semanticIndex === input.semanticIndex);
+      require(output.type === input.type && output.interpolation === input.interpolation,
+        "Instance offset pair lacks the compiler's promoted generic output.");
+    }
+    return standardFreeze({ ok: true, vertex, fragment, interfaceKey: response.interfaceKey });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-link-error", error.message); }
+}
+export function deriveStandardInstanceBaseShaderInterface(vertex, fragment, hostSelectors = STANDARD_IMAGE_SELECTORS) {
+  try {
+    const selectors = standardMultipleSelectors(hostSelectors);
+    return standardFreeze({ ok: true, ...standardInterface(standardInstanceMetadata(vertex, "vertex", true, selectors),
+      standardInstanceMetadata(fragment, "fragment", true, selectors)) });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-link-error", error.message); }
+}

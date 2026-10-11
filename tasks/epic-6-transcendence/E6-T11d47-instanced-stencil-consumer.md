@@ -124,3 +124,32 @@ S/high consumer boundary ahead of unrelated queue work. Compiler/native/Wasm and
 old consumer/storage facts carry only with their exact authenticated boundaries.
 Full API/caps, real guest Mesa/compositor, worker/scanout/demo/deployment and300MIPS
 remain unproven. A fresh critic remains required after the selected final recording.
+
+### 2026-10-11 — worker — isolated consumer implementation and inner validation
+
+The new explicitly selected consumer checks the complete compiler metadata,
+owns exact native uint locations, and runs original instance, primitive and face
+order. It phases retained positive-divisor pointers without changing their native
+divisor, reuses one normalized original index stream, bounds whole work/fetches,
+and restores the offset, pointers, element binding and stencil/cull state before
+yield or native suffix failure. Existing factory defaults and guards are held.
+
+Inner validation passed66 matrix,60 restart/tail,24 typed/packed,24 native failure,
+24 lifetime,8 reflection/budget,8 work-limit,4 unused/absent and2 retained old
+consumer runs on headed M4 Metal. Complete original-byte inverses and physical
+completion/retirement audits passed. Three actual completed corruptions were
+refuted: primitive-major instance grouping produced215 instead of119 S8; wrong
+uint base and wrong divisor phase independently changed the original green lane.
+All84 metadata/refusal checks passed. Provisional finest V8 coverage exercised341
+regions;16 narrow waivers name exact corresponding unchanged predecessor operands.
+These inner runs are self-validation; final exact-head hot/cold recordings and a
+fresh independent critic remain required.
+
+The C compiler, generated Wasm, decoder, resource/storage, Rust, guest and web
+boundaries are unchanged. The selected submission authenticates and reopens97179
+complete D45/D46 worker/verifier members and extracts the exact verified compiler
+when absent in a clean checkout. Broad native/Rust/compiler gates carry by their
+unchanged code/dependency/digests; the affected consumer/metadata and actual browser
+path run in the new recurring target. This factory remains unreachable from the
+demo's production controller; capability/demo/deployment changes belong to the
+actual production integration acceptance, not this isolated prerequisite.
