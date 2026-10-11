@@ -2,7 +2,7 @@
 id: E6-T11d46
 epic: 6
 title: Preserve original instance IDs with a host-owned compiler offset
-status: in-progress
+status: implemented
 estimate: S
 risk: high
 priority: 525.027039000384
@@ -133,3 +133,57 @@ The independent Python byte reconstruction held. Finest governing changed runtim
 coverage had33 positive JS and87 positive native partitions, with no executable
 zero partition. These runs are self-validation only; final exact-head hot/cold
 recordings and a fresh adversarial verdict remain required.
+
+### 2026-10-11 — worker — implemented; exact-head recorded submission
+
+Frozen implementation head: `28e5e7ab42ae52c75713b96ffad37727cceb05d6`.
+The selected high-risk gate ran once hot and once in a pristine same-head clone:
+
+```sh
+VIRGL_INSTANCE_BASE_EVIDENCE_DIR=target/evidence/virgl-instance-base-frozen-28e5 EMCC=/Users/blamy/.cache/wasm-vm/emsdk/4.0.22/wasm-vm-emcc make verify-E6-T11d46
+python3 tools/virgl-instance-base/cold.py --output target/evidence/virgl-instance-base-cold-28e5
+python3 tools/virgl-instance-base/seal.py target/evidence/virgl-instance-base-frozen-28e5 target/evidence/virgl-instance-base-cold-28e5 evidence/virgl-instance-base/worker
+```
+
+Both gates passed at that exact head; the clone had empty status before and
+following the same deterministic acceptance command with build/runtime override
+variables scrubbed. The complete recordings demonstrate 4313 byte-equal native,
+ASan/UBSan and Wasm responses,2586 historical response-byte comparisons,239
+strict facade/custody checks,165 genuine allocation faults with exact recovery,
+2107 actual Metal stage compiles,60 whole raw native planes and the physically
+refuted completed wrong-offset draw. Every changed executable governing partition
+was positive (33 JS,87 native; zero executable gaps). Delivered-source O2 frame
+measurements retain selected sums139568(stage)/195280(pair) bytes below the
+262144-byte Wasm setting; the actual module completes the whole matrix with its
+fixed16777216-byte memory. Old renderer/decoder/storage/guest/web boundaries are
+unchanged and their D45 facts carry by complete authenticated bodies. This is
+compiler authority only; production guest graphics remains unfinished.
+
+Concrete point: hot `hardware/report.json`, frame
+`raw/base4294967295/index32`, draw event15438, fence handle2415 created15440 and
+consumed15443, complete output digest
+`28bc7696ab333cb05d5d17db5afa0da30d60fbff976a4fedcfdad106a90d88b1`.
+Its original u32 indices4099/17/2051/7 survive and its original INSTANCEID rows
+are4294967295/0/1. Hot `fault-wrong-offset/report.json` uses actual uniform1ui(18)
+with unchanged original base17, draw84, distinct sync14 created86/consumed90;
+all12 original instance lanes fail after completion. Corrupt output digest:
+`fc7438fe93d359172f4475746d913c8b28d887da12717cebdf4f54c530087153`.
+Native calls, full original/upload/readback bytes, shaders, parser words,
+reflections, fences, console results and captures are all in the worker seal.
+
+The published worker seal at `evidence/virgl-instance-base/worker` contains2584
+complete indexed/reopened members plus both complete nested D45 seals whose91389
+logical members were authenticated in each run. Archive97678160 bytes (six
+bounded parts), full SHA256
+`f746e58d61505392aa5b7f23fe919e2585187be0925e86f3158282052076df0e`;
+record index SHA256
+`e9ff82d91a2f6d8e6310e971ef87357a5aa22237f5eaf25facad465351ee29b9`.
+Hot receipt SHA256
+`64d0d99ac40db4cfec61f68a6b7002557be9c1fcfcc85b063b8c38b94fb521ea`;
+cold receipt SHA256
+`49d938be6065ddff1c54edb0faa6155ba1a81511266219b738cfa890d791b4ea`;
+cold report SHA256
+`c0a9217a198080474b3beb9a6f024c139684c29026e4905036a525148ef9236e`.
+A fresh independent adversarial verdict is required before verification.
+
+Worker manifest SHA256: `649def87b9a04660ba795de462f7ff1773bf0d9db9b89c501b6a417accddf5ce`.
