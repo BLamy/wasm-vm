@@ -2364,3 +2364,7 @@ verify-E6-T11d37:
 verify-E6-T11d37-adversarial:
 	node tools/verify-virgl-standard-packed-unsigned-critic.mjs --output target/evidence/virgl-packed-unsigned-critic-promoted --seed 0x62e31a97
 	python3 tools/virgl-command/standard-packed-unsigned-critic-values.py target/evidence/virgl-packed-unsigned-critic-promoted
+
+.PHONY: verify-E6-T11d38
+verify-E6-T11d38:
+	bash tools/verify-virgl-standard-packed-unsigned-consumer.sh

@@ -4,7 +4,8 @@ import {floatColorFormat} from "./float-images.mjs";
 import {packedFloatColorFormat} from "./packed-float-images.mjs";
 import {integerColorFormat} from "./integer-images.mjs";
 import {packedNormalizedColorFormat} from "./packed-normalized-images.mjs";
-import { decodeSubmission, decodeStandardSubmission, decodeStandardUniformSubmission, decodeStandardImageSubmission, decodeStandardColorSubmission, decodeStandardFloatImageSubmission, decodeStandardPackedFloatImageSubmission, decodeStandardSharedExponentImageSubmission, decodeStandardIntegerImageSubmission, decodeStandardMultipleColorSubmission, decodeStandardPackedNormalizedImageSubmission, vertexFormat } from "./decoder.mjs";
+import {packedUnsignedColorFormat} from "./packed-unsigned-images.mjs";
+import { decodeSubmission, decodeStandardSubmission, decodeStandardUniformSubmission, decodeStandardImageSubmission, decodeStandardColorSubmission, decodeStandardFloatImageSubmission, decodeStandardPackedFloatImageSubmission, decodeStandardSharedExponentImageSubmission, decodeStandardIntegerImageSubmission, decodeStandardMultipleColorSubmission, decodeStandardPackedNormalizedImageSubmission, decodeStandardPackedUnsignedImageSubmission, vertexFormat } from "./decoder.mjs";
 import { LIMITS as SHADER_LIMITS } from "../virgl-shader/index.mjs";
 import { createKeyCache, hashKey } from "./cache.mjs";
 import { parseConstantDomain, checkFiniteBank, checkIndirectBank, checkLoopBank, checkRadialBank, checkRasterBank, checkConversionBank, checkExactBank, COORDINATE_KEY, DISCARD_KEY,
@@ -27,6 +28,7 @@ export const STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE = "virgl-standard-rgb9
 export const STANDARD_INTEGER_IMAGE_ASYNC_PROFILE = "virgl-standard-integer-image-async-jobs-v1";
 export const STANDARD_MULTIPLE_COLOR_ASYNC_PROFILE = "virgl-standard-multiple-color-async-jobs-v1";
 export const STANDARD_PACKED_NORMALIZED_IMAGE_ASYNC_PROFILE = "virgl-standard-packed-normalized-image-async-jobs-v1";
+export const STANDARD_PACKED_UNSIGNED_IMAGE_ASYNC_PROFILE = "virgl-standard-packed-unsigned-image-async-jobs-v1";
 export const STANDARD_FLOAT_IMAGE_ASYNC_PROFILE = "virgl-standard-float-image-async-jobs-v1";
 export const STANDARD_IMAGE_ASYNC_PROFILE = "virgl-standard-image-async-jobs-v1";
 export const STANDARD_COLOR_ASYNC_PROFILE = "virgl-standard-byte-color-async-jobs-v1";
@@ -241,8 +243,13 @@ export function createVirglStandardPackedNormalizedImageAsyncRenderer(options) {
   return createRenderer(options, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
 }
 
+/** Selected original packed UINT samplers and COLOR0..3 outputs. */
+export function createVirglStandardPackedUnsignedImageAsyncRenderer(options) {
+  return createRenderer(options, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
+}
+
 /** Host capabilities are trusted and non-reentrant. */
-function createRenderer(options, drawing, asynchronous = false, standard = false, uniform = false, bufferRoles = false, images = false, colors = false, textureOperations = false, floats = false, packed = false, shared = false, integers = false, multipleColors = false, normalized = false) {
+function createRenderer(options, drawing, asynchronous = false, standard = false, uniform = false, bufferRoles = false, images = false, colors = false, textureOperations = false, floats = false, packed = false, shared = false, integers = false, multipleColors = false, normalized = false, unsigned = false) {
   return result(() => {
     const config = dataRecord(options, ["gl", "resources", "bindings", "shaderBridge", "limits", "cacheLimits", ...(drawing ? ["drawLimits"] : []), ...(asynchronous ? ["asyncAccess", "jobLimits"] : []), ...(standard ? ["primitiveAssembly"] : []), ...(uniform ? ["uniformAccess"] : []), ...(images ? ["imageAccess"] : [])], ["gl", "resources", "bindings", "shaderBridge", ...(asynchronous ? ["asyncAccess"] : []), ...(uniform ? ["uniformAccess"] : []), ...(images ? ["imageAccess"] : [])]);
     const { gl, resources, bindings, shaderBridge } = config;
@@ -292,8 +299,9 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
     require(!images || imageAccess && ["capture", "resolve", "refresh", "hold", "holdStorage", "release", "inspect"].every(name => typeof imageAccess[name] === "function"),
       "invalid-input", "Original native image range authority is required.");
     require(!integers || typeof shaderBridge.translateImages === "function", "invalid-input", "Integer images require the selected stage compiler.");
-    const profile = normalized ? STANDARD_PACKED_NORMALIZED_IMAGE_ASYNC_PROFILE : multipleColors ? STANDARD_MULTIPLE_COLOR_ASYNC_PROFILE : integers ? STANDARD_INTEGER_IMAGE_ASYNC_PROFILE : shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : textureOperations ? STANDARD_TEXTURE_ASYNC_PROFILE : colors ? STANDARD_COLOR_ASYNC_PROFILE : images ? STANDARD_IMAGE_ASYNC_PROFILE : bufferRoles ? STANDARD_BUFFER_ASYNC_PROFILE : uniform ? STANDARD_UNIFORM_ASYNC_PROFILE : standard ? STANDARD_ASYNC_PROFILE : asynchronous ? ASYNC_PROFILE : drawing ? DRAW_PROFILE : STATE_PROFILE;
-    const decodeCommands = normalized ? decodeStandardPackedNormalizedImageSubmission : multipleColors ? decodeStandardMultipleColorSubmission : integers ? decodeStandardIntegerImageSubmission : shared ? decodeStandardSharedExponentImageSubmission : packed ? decodeStandardPackedFloatImageSubmission : floats ? decodeStandardFloatImageSubmission : colors ? decodeStandardColorSubmission : images ? decodeStandardImageSubmission : uniform ? decodeStandardUniformSubmission : standard ? decodeStandardSubmission : decodeSubmission;
+    const integerFormat = format => integerColorFormat(format) || (unsigned ? packedUnsignedColorFormat(format) : null);
+    const profile = unsigned ? STANDARD_PACKED_UNSIGNED_IMAGE_ASYNC_PROFILE : normalized ? STANDARD_PACKED_NORMALIZED_IMAGE_ASYNC_PROFILE : multipleColors ? STANDARD_MULTIPLE_COLOR_ASYNC_PROFILE : integers ? STANDARD_INTEGER_IMAGE_ASYNC_PROFILE : shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : textureOperations ? STANDARD_TEXTURE_ASYNC_PROFILE : colors ? STANDARD_COLOR_ASYNC_PROFILE : images ? STANDARD_IMAGE_ASYNC_PROFILE : bufferRoles ? STANDARD_BUFFER_ASYNC_PROFILE : uniform ? STANDARD_UNIFORM_ASYNC_PROFILE : standard ? STANDARD_ASYNC_PROFILE : asynchronous ? ASYNC_PROFILE : drawing ? DRAW_PROFILE : STATE_PROFILE;
+    const decodeCommands = unsigned ? decodeStandardPackedUnsignedImageSubmission : normalized ? decodeStandardPackedNormalizedImageSubmission : multipleColors ? decodeStandardMultipleColorSubmission : integers ? decodeStandardIntegerImageSubmission : shared ? decodeStandardSharedExponentImageSubmission : packed ? decodeStandardPackedFloatImageSubmission : floats ? decodeStandardFloatImageSubmission : colors ? decodeStandardColorSubmission : images ? decodeStandardImageSubmission : uniform ? decodeStandardUniformSubmission : standard ? decodeStandardSubmission : decodeSubmission;
     const parseShaderMetadata = multipleColors ? parseStandardMultipleColorShaderMetadata : integers ? parseStandardIntegerImageShaderMetadata : textureOperations ? parseStandardTextureShaderMetadata : uniform ? parseStandardUniformShaderMetadata : standard ? parseStandardShaderMetadata : parseConstantDomain;
     const idle = () => require(activeJob === null, "busy", "A renderer job is active; cancel and drain it before changing state.");
     const contexts = new Map(), objects = new Set(), programs = new Set();
@@ -407,7 +415,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       }
     };
     const translatedStage = (sub, request) => {
-      const key = JSON.stringify([sub.generation, "stage", request.stage, request.text, ...(textureOperations ? [normalized ? STANDARD_PACKED_NORMALIZED_IMAGE_ASYNC_PROFILE : multipleColors ? STANDARD_MULTIPLE_COLOR_ASYNC_PROFILE : integers ? STANDARD_INTEGER_IMAGE_ASYNC_PROFILE : shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : STANDARD_TEXTURE_ASYNC_PROFILE] : [])]);
+      const key = JSON.stringify([sub.generation, "stage", request.stage, request.text, ...(textureOperations ? [unsigned ? STANDARD_PACKED_UNSIGNED_IMAGE_ASYNC_PROFILE : normalized ? STANDARD_PACKED_NORMALIZED_IMAGE_ASYNC_PROFILE : multipleColors ? STANDARD_MULTIPLE_COLOR_ASYNC_PROFILE : integers ? STANDARD_INTEGER_IMAGE_ASYNC_PROFILE : shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : STANDARD_TEXTURE_ASYNC_PROFILE] : [])]);
       const cached = translationCache.get(sub, key);
       if (cached) return cached;
       work.translations++;
@@ -421,7 +429,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
     };
     const translatedPair = (sub, vertex, fragment, interfaceKey, validate, inputTypes = null, bufferZeroMask = 0, colorOutputs = null) => {
       const key = JSON.stringify([sub.generation, "pair", vertex.fields.text, fragment.fields.text, interfaceKey,
-        ...(inputTypes?.key ? [inputTypes.key] : []), ...(uniform ? [bufferZeroMask] : []), ...(integers ? [colorOutputs.key] : []), ...(textureOperations ? [normalized ? STANDARD_PACKED_NORMALIZED_IMAGE_ASYNC_PROFILE : multipleColors ? STANDARD_MULTIPLE_COLOR_ASYNC_PROFILE : integers ? STANDARD_INTEGER_IMAGE_ASYNC_PROFILE : shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : STANDARD_TEXTURE_ASYNC_PROFILE] : [])]);
+        ...(inputTypes?.key ? [inputTypes.key] : []), ...(uniform ? [bufferZeroMask] : []), ...(integers ? [colorOutputs.key] : []), ...(textureOperations ? [unsigned ? STANDARD_PACKED_UNSIGNED_IMAGE_ASYNC_PROFILE : normalized ? STANDARD_PACKED_NORMALIZED_IMAGE_ASYNC_PROFILE : multipleColors ? STANDARD_MULTIPLE_COLOR_ASYNC_PROFILE : integers ? STANDARD_INTEGER_IMAGE_ASYNC_PROFILE : shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : STANDARD_TEXTURE_ASYNC_PROFILE] : [])]);
       const cached = translationCache.get(sub, key);
       if (cached) { validate(cached); return cached; }
       work.pairTranslations++;
@@ -564,20 +572,20 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         let signedColorMask = 0, unsignedColorMask = 0;
         const formats = Array.from({ length: 4 }, (_, slot) => sub.surfaces[slot]?.metadata.format ?? 0);
         for (const [slot, format] of formats.entries()) if (emitted & (1 << slot)) {
-          const image = integerColorFormat(format);
+          const image = integerFormat(format);
           if (image?.signed === true) signedColorMask |= 1 << slot;
           else if (image?.signed === false) unsignedColorMask |= 1 << slot;
         }
         return { signedColorMask, unsignedColorMask, key: "multiple-color-formats-v1:" + formats.join(":") };
       }
-      const format = sub.surfaces[0]?.metadata.format ?? 0, image = integerColorFormat(format);
+      const format = sub.surfaces[0]?.metadata.format ?? 0, image = integerFormat(format);
       return { signedColorMask: image?.signed === true ? 1 : 0, unsignedColorMask: image?.signed === false ? 1 : 0,
         key: "integer-image-color0-v1:" + format };
     };
     const selectedBlendFold = (sub, fragment) => multipleColors ?
-      sub.surfaces.some((surface, slot) => surface && !integerColorFormat(surface.metadata.format) &&
+      sub.surfaces.some((surface, slot) => surface && !integerFormat(surface.metadata.format) &&
         (fragment.translation.metadata.broadcastColor0 || fragment.translation.metadata.outputs.some(output => output.semanticIndex === slot))) ? blendFoldFor(sub, fragment) : 0 :
-      integers && integerColorFormat(sub.surfaces[0]?.metadata.format) ? 0 : blendFoldFor(sub, fragment);
+      integers && integerFormat(sub.surfaces[0]?.metadata.format) ? 0 : blendFoldFor(sub, fragment);
     const nativeColorOutputs = metadata => {
       if (!multipleColors || !metadata.broadcastColor0) return metadata.outputs;
       const source = metadata.outputs[0];
@@ -596,7 +604,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         "shader-link-error", "View specialization requires the checked stage 2D TEX family.");
         const view = sub.views[stage][sampler.index], fields = view?.fields;
         if (integers && fields) {
-          const image = integerColorFormat(fields.format), nativeType = image ? image.signed ? "isampler2D" : "usampler2D" : "sampler2D";
+          const image = integerFormat(fields.format), nativeType = image ? image.signed ? "isampler2D" : "usampler2D" : "sampler2D";
           require(sampler.type === nativeType, "incompatible-resource", "Original sampler return type disagrees with retained image storage.");
         }
         // Linking may precede view binding. The fixed legacy RGBA identity
@@ -990,7 +998,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           format.elementBytes <= buffer.metadata.byteLength - buffer.fields.offset - element.sourceOffset, "out-of-bounds", "Vertex element exceeds storage.");
       }
     };
-    const xAlpha = (sub, slot = 0) => [2, 233].includes(sub.surfaces[slot]?.metadata.format) || colors && Boolean((byteColorFormat(sub.surfaces[slot]?.metadata.format) || (floats ? floatColorFormat(sub.surfaces[slot]?.metadata.format) : null) || (packed ? packedFloatColorFormat(sub.surfaces[slot]?.metadata.format) : null) || (integers ? integerColorFormat(sub.surfaces[slot]?.metadata.format) : null) || (normalized ? packedNormalizedColorFormat(sub.surfaces[slot]?.metadata.format) : null))?.implicitAlpha);
+    const xAlpha = (sub, slot = 0) => [2, 233].includes(sub.surfaces[slot]?.metadata.format) || colors && Boolean((byteColorFormat(sub.surfaces[slot]?.metadata.format) || (floats ? floatColorFormat(sub.surfaces[slot]?.metadata.format) : null) || (packed ? packedFloatColorFormat(sub.surfaces[slot]?.metadata.format) : null) || (integers ? integerFormat(sub.surfaces[slot]?.metadata.format) : null) || (normalized ? packedNormalizedColorFormat(sub.surfaces[slot]?.metadata.format) : null))?.implicitAlpha);
     const colorMask = (sub, slot = 0) => {
       const bits = sub.blend?.fields.renderTargets[0].colorMask ?? 15;
       return [1, 2, 4, 8].map((bit) => Boolean(bits & bit) && (bit !== 8 || !xAlpha(sub, slot)));
@@ -1253,7 +1261,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       gl.cullFace(gl.BACK); gl.frontFace(rasterizer?.frontCcw ? gl.CW : gl.CCW);
       const blend = state.blend, target = blend?.renderTargets[0];
       if (blend?.dither) gl.enable(gl.DITHER); else gl.disable(gl.DITHER);
-      const enabled = target?.blendEnable === true && !(!multipleColors && integers && integerColorFormat(sub.surfaces[0]?.metadata.format));
+      const enabled = target?.blendEnable === true && !(!multipleColors && integers && integerFormat(sub.surfaces[0]?.metadata.format));
       if (enabled) gl.enable(gl.BLEND); else gl.disable(gl.BLEND);
       const ignoresRgbFactors = enabled && target.rgbFunction >= 3;
       gl.blendEquationSeparate(enabled ? gl[BLEND_EQUATIONS[target.rgbFunction]] : gl.FUNC_ADD,
@@ -1304,7 +1312,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       for (const sampler of program.samplers) {
         const view = sub.views[sampler.stage][sampler.index], state = sub.samplers[sampler.stage][sampler.index];
         require(view && state, "incomplete-draw", "Drawing requires an active sampler view and sampler state.");
-        if (integers && integerColorFormat(view.fields.format)) require(state.fields.minImageFilter === 0 &&
+        if (integers && integerFormat(view.fields.format)) require(state.fields.minImageFilter === 0 &&
           state.fields.magImageFilter === 0 && [0, 2].includes(state.fields.minMipFilter),
         "unsupported-sampler", "Integer image sampling requires native nearest-compatible filters.");
         for (const target of multipleColors ? sub.surfaces.filter(Boolean) : [primarySurface]) {
@@ -1585,14 +1593,14 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
               .filter(({ slot }) => fields.buffers & (4 << slot));
             for (const { surface } of targets) {
               require(surface, "incomplete-framebuffer", "Selected color CLEAR needs its original surface.");
-              require(integerColorFormat(surface.metadata.format) || fields.color.every(Number.isFinite),
+              require(integerFormat(surface.metadata.format) || fields.color.every(Number.isFinite),
                 "invalid-value", "A floating attachment clear requires finite original float words.");
             }
             require(!(fields.buffers & 1) || sub.depthSurface, "incomplete-framebuffer", "Depth CLEAR needs a Z16 depth surface.");
             holdImageSurfaces(job, sub); restore(sub); gl.disable(gl.SCISSOR_TEST);
             for (const { slot, surface } of targets) {
               indexedColors.colorMaskiOES(slot, true, true, true, !xAlpha(sub, slot));
-              const format = integerColorFormat(surface.metadata.format);
+              const format = integerFormat(surface.metadata.format);
               if (format) gl[format.signed ? "clearBufferiv" : "clearBufferuiv"](gl.COLOR, slot,
                 format.signed ? new Int32Array(fields.colorWords) : new Uint32Array(fields.colorWords));
               else gl.clearBufferfv(gl.COLOR, slot, fields.color);
@@ -1603,7 +1611,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
             if (sub.rasterizer?.fields.scissor) gl.enable(gl.SCISSOR_TEST);
             check(); return;
           }
-          const integerClear = integers ? integerColorFormat(sub.surfaces[0]?.metadata.format) : null;
+          const integerClear = integers ? integerFormat(sub.surfaces[0]?.metadata.format) : null;
           require(!integers || !(fields.buffers & 4) || integerClear || fields.color.every(Number.isFinite),
             "invalid-value", "A floating color clear requires finite original float words.");
           if (images) holdImageSurfaces(job, sub);
