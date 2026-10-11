@@ -89,6 +89,10 @@ export async function runAcceptance({mode='samples',smoke=false,seed=0xd9403211,
    await publicDepths(env,f,r,row,{},'floating-sampler-depth-public-'+ordinal);
    if(mode==='boundaries')await boundaries(env,f,r,row,target,original,ordinal);
   }finally{await finish(r,report,row);}
+  if(mode==='boundaries'&&['complete','cancel'].includes(row.terminalMode)){
+   const retired=row.retiredPlanes.find(p=>p.texture===r.trace.id(target.storage.texture));c.same(Boolean(retired),true,'old queued output captured after physical completion and before native deletion');
+   const frame={run:report.runs.length-1,kind:'queued',retired:true,completion:retired.completion,historyIndex:row.history.findIndex(h=>h.label.startsWith('floating-queued-')),native:retired.native,outputs:[],bindings:[],depths:[]};row.frames.push(report.frames.length);report.frames.push(frame);
+  }
  }
  report.status='passed';return report;
 }

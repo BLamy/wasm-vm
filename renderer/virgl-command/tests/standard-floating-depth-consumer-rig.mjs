@@ -35,6 +35,13 @@ export function rig(gl,bridge,c,f,{delay=0,step=64,fault=null,nativeFault=null,p
    if(armed&&!failed&&nativeFault==='integer-clear'&&['clearBufferiv','clearBufferuiv'].includes(name)){
     failed=true;delivered[0]=0;faultEvents.push({name,label:currentLabel,original:args[0],delivered:0});
    }
+   if(name==='deleteTexture'&&!diagnosticActive&&currentLabel.startsWith('floating-queued-')){
+    const allocation=allocations.find(a=>a.storage.texture===args[0]&&a.metadata.id===1&&a.metadata.format===31),draw=draws.findLast(d=>d.native.colors.some(color=>color.attachment===id(args[0])));
+    if(allocation&&draw&&completed?.sequence>draw.sequence){
+     const level=draw.native.colors.find(color=>color.attachment===id(args[0])).level,m=allocation.metadata,width=Math.max(1,m.width>>level),height=Math.max(1,m.height>>level),previous=diagnosticActive;diagnosticActive=true;
+     try{retiredPlanes.push({texture:id(args[0]),metadata:m,level,width,height,completion:{...completed},raw:priorRead({...r,gl:traced},args[0],31,width,height,level)});}finally{diagnosticActive=previous;}
+    }
+   }
    if(drawNames.includes(name)&&!diagnosticActive){
     const program=gl.getParameter(gl.CURRENT_PROGRAM),copy=!gl.getAttachedShaders(program).some(shader=>gl.getShaderSource(shader).includes('fsout_c'));
     if(!copy){
