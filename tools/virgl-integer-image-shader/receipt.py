@@ -56,7 +56,17 @@ def main(directory):
         assert observed['conservativeBytes'] < 262144
         stack[mode] = observed
     sources, generated = {}, {}
-    for name in git('ls-files','renderer/virgl-shader','renderer/virgl-command','tools/virgl-integer-image-shader','tools/virgl-standard-texture','tools/virgl-standard-uniform','tools/verify-virgl-integer-image-shader.sh','tools/lib/virgl-browser-runner.mjs','tools/virgl-original-corpus/toolchain.py','tools/setup-virgl-emsdk.sh','Makefile','tasks/epic-6-transcendence/E6-T11d32-standard-integer-image-shaders.md','evidence/virgl-production-readiness/standard-integer-image-shader-gap.json').splitlines():
+    source_roots = ['renderer/virgl-shader','renderer/virgl-command',
+                    'tools/virgl-integer-image-shader','tools/virgl-standard-texture',
+                    'tools/virgl-standard-uniform','tools/verify-virgl-integer-image-shader.sh',
+                    'tools/lib/virgl-browser-runner.mjs','tools/virgl-original-corpus/toolchain.py',
+                    'tools/virgl-original-corpus/shared.py','tools/setup-virgl-emsdk.sh',
+                    'web/package.json','web/package-lock.json','Makefile',
+                    'tasks/epic-6-transcendence/E6-T11d32-standard-integer-image-shaders.md',
+                    'evidence/virgl-production-readiness/standard-texture-operation-gap.json',
+                    'evidence/virgl-production-readiness/standard-integer-image-shader-gap.json',
+                    'evidence/virgl-production-readiness/standard-integer-image-shader-gap.mjs']
+    for name in git('ls-files',*source_roots).splitlines():
         raw = (ROOT/name).read_bytes()
         assert raw == subprocess.check_output(['git','show',head+':'+name],cwd=ROOT)
         sources[name] = sha(raw)

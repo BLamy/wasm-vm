@@ -44,11 +44,10 @@ def main():
             original = subprocess.check_output(['git', 'show', head+':'+name], cwd=ROOT)
             if sha(original) != digest:
                 raise ValueError('source drift '+name)
-            if not name.startswith('evidence/'):
-                key = 'source/'+name
-                if key in members and members[key] != original:
-                    raise ValueError('source closure drift '+name)
-                members[key] = original
+            key = 'source/'+name
+            if key in members and members[key] != original:
+                raise ValueError('source closure drift '+name)
+            members[key] = original
         binary_root = ROOT if prefix == 'hot' else Path(cold_report['clone'])
         for name, digest in receipt['generated'].items():
             raw = (binary_root/name).read_bytes()
