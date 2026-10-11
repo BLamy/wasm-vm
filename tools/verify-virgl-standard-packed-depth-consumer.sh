@@ -14,7 +14,7 @@ git rev-parse HEAD
 git diff --check
 python3 tools/check_task_policy.py
 for file in renderer/virgl-command/{decoder,state}.mjs renderer/virgl-command/tests/standard-packed-depth-consumer{,-rig}.mjs tools/virgl-packed-depth-consumer/fixtures.mjs tools/verify-virgl-standard-packed-depth-consumer.mjs; do node --check "$file"; done
-python3 -m py_compile tools/virgl-packed-depth-consumer/{predecessor,values,coverage,receipt,cold,seal}.py
+python3 -m py_compile tools/virgl-packed-depth-consumer/{predecessor,values,retained,coverage,receipt,cold,seal}.py
 bash -n tools/verify-virgl-standard-packed-depth-consumer.sh
 bash renderer/virgl-shader/build.sh wasm
 python3 tools/virgl-packed-depth-consumer/predecessor.py "$evidence"
@@ -34,8 +34,8 @@ for mode in samples surfaces; do
  node tools/verify-virgl-standard-floating-depth-consumer.mjs --output "$evidence/retained-floating-$mode" --mode "$mode" --smoke true
  python3 tools/virgl-floating-depth-consumer/values.py "$evidence/retained-floating-$mode"
 done
-node tools/verify-virgl-standard-packed-depth-images.mjs --output "$evidence/retained-packed-storage/hardware-matrix" --smoke true
-python3 tools/virgl-packed-depth/values.py "$evidence/retained-packed-storage"
+node tools/verify-virgl-standard-packed-depth-images.mjs --output "$evidence/retained-packed-storage/hardware-matrix"
+python3 tools/virgl-packed-depth-consumer/retained.py "$evidence/retained-packed-storage"
 python3 tools/virgl-packed-depth-consumer/coverage.py "$evidence"
 set +x
 printf 'PACKED_DEPTH_CONSUMER_RECORDING_COMPLETE\n'

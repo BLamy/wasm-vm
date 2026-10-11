@@ -16,6 +16,7 @@ def main(directory):
     load=lambda name:json.loads((directory/name).read_text());sources={};generated={}
     predecessor=load('predecessor-audit.json');assert predecessor['status']=='passed' and predecessor['predecessor']==BASE and predecessor['reopenedMembers']==43044
     values=load('independent-values.json');assert values['status']=='passed' and not values['oracleImportsProductCode'];audits=values['records']
+    retained=load('retained-packed-storage/independent-values.json');assert retained['status']=='passed' and retained['stencilValues']==256 and retained['nativePixels']>0 and retained['scope']=='inner-loop' and retained['publicFixedFieldsExact']
     names=['wire','hardware-samples','hardware-surfaces','hardware-domain','hardware-failures']+['hardware-boundaries-'+seed for seed in ['0xa5471e03','0x13579bdf','0x9e3779b9']]+['fault-'+fault for fault in ['sample-plane','completed-output','depth-attachment','completed-depth','completed-stencil']]
     legacy=['retained-un16-samples','retained-un16-surfaces','retained-floating-samples','retained-floating-surfaces','retained-packed-storage']
     def source(name,digest=None):
