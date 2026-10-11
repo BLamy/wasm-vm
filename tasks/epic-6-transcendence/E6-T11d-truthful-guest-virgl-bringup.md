@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31]
-blocked_on: E6-T11d31
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32]
+blocked_on: E6-T11d32
 estimate: S
 risk: high
 capstone: false
@@ -384,3 +384,16 @@ only original integer storage/transfer/range representation. Original typed samp
 output compiler and retained command consumer follow separately. Full API/capsets,
 actual RISC-V guest Mesa/compositor and production worker scanout/live deployment
 remain successors under the explicit instruction to finish production guest graphics.
+
+### 2026-10-10 — worker — integer storage verified; compiler boundary
+
+D31 is independently verified at `d8d510a689cfb5440cc8b3b65fd94adb9baee109`
+and published on existing open PR509. The generated compiler still rejects22
+original signed/unsigned sampler texts in the adjacent
+`standard-integer-image-shader-gap.json` negative record. Reproduce by running
+its standalone script at that source head; complete original texts and actual
+C/Wasm/source hashes are retained. Ordered S/high D32 implements this one
+selected compiler boundary: native integer samplers/raw sampled words and
+host format-selected fragment output types. Original packet consumption, the
+remaining GLES3/API/capset floors, actual guest bring-up and worker/scanout/demo
+deployment remain gated. Production guest graphics and300MIPS are not claimed.
