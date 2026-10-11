@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42]
-blocked_on: E6-T11d42
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43]
+blocked_on: E6-T11d43
 estimate: S
 risk: high
 capstone: false
@@ -535,3 +535,7 @@ at that head. Ordered S/high E6-T11d42 closes the storage/transfer/native-range
 boundary; the guest consumer remains a separate successor. Full API, shadow/
 stencil/desktop-linear semantics, capacities/caps and actual guest/compositor/
 worker/scanout/demo production offload and300MIPS remain unproven.
+
+### 2026-10-11 — worker — packed UN24 storage verified; original consumer gap
+
+D42 is independently verified at `c60bf20abcd42c1c10fb1863c2666a344d5c8e70` and remains on existing open PR520. Its fresh critic released every lease. Exact-head `node evidence/virgl-production-readiness/standard-packed-depth-consumer-gap.mjs` records six complete original20/21 view/mip-depth-surface refusals and24 held qualified storage layouts. The adjacent JSON retains all original inputs/wires and runtime/primary/generated identities. Ordered S/high E6-T11d43 connects this one selected original command consumer while preserving the verified storage and actual compiler. Full API, shadow/stencil/desktop-linear semantics, capacities/caps and actual guest/compositor/worker/scanout/demo production offload and300MIPS remain unproven. The existing native stack500 and every prior PR remain intact under the user's continuing production graphics request.
