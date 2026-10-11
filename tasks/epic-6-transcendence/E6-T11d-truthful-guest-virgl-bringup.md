@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46]
-blocked_on: E6-T11d46
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47]
+blocked_on: E6-T11d47
 estimate: S
 risk: high
 capstone: false
@@ -574,3 +574,8 @@ consumer task will preserve original instance/divisor fetches and order.
 Production negotiation, actual Mesa/compositor execution, worker/display
 integration, demo/live deployment and throughput remain later acceptance.
 The human request continues this graphics chain; all PRs remain open.
+
+
+### 2026-10-11 — worker — instance compiler verified; original consumer still gated
+
+D46 is independently verified at a19b49441e932e64446f756cefe0c18e6b5b71b3 and published on open/draft PR524 in unchanged native stack500. All124 previous PR identities/order/heads/bases remain held. The exact-head original metadata probe still records three new-profile consumer refusals and three old-profile admissions. Its adjacent native recording retains both original20/126 asymmetric two-instance refusals before native drawing, in1357 completely reopened members. See the standard-instanced-stencil-consumer-gap and standard-instanced-stencil-native-gap recorders/records under evidence/virgl-production-readiness for full commands and identities. Ordered S/high E6-T11d47 connects this one selected consumer while retaining original instance IDs, divisor phases, primitive order, work/fetch bounds, resource generations and asynchronous cleanup. The explicit human request continues production graphics. Full API/caps, actual guest Mesa/compositor, worker/scanout/demo/deployment and300MIPS remain unproven.
