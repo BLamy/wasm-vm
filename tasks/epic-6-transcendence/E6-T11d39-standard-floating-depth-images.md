@@ -3,7 +3,7 @@ id: E6-T11d39
 epic: 6
 title: Preserve original floating depth and stencil image transfers and retained ranges
 priority: 525.027039000379
-status: implemented
+status: verified
 depends_on: [E6-T11d38]
 estimate: S
 risk: high
@@ -179,3 +179,136 @@ and zero console/page/request errors. The historical Z16 gate includes all
 65,536 UN16 encodings and real asynchronous readback. This is a worker claim
 awaiting a fresh critic; it grants no consumer/shadow/stencil-state, API/capset,
 real guest, production offload, demo/deployment or throughput authority.
+
+### 2026-10-11 — fresh adversarial verifier
+
+VERDICT: verified
+
+This fresh session read the task and the exact D38-to-frozen-source diff before
+opening worker evidence. `critic/orientation.json`, `critic/predictions.txt` and
+the complete independent original matrix vectors were frozen outside the
+repository first. Production runtime remains
+`2ef416185b8b4ddd85e39efd0913c8eb8eeb71e3`; the final promoted verifier harness
+is `9eddf5859b3d6456d3be8d16332c19a8183ed9ca`. Earlier successful recordings
+retain their own exact source bodies and heads at the unchanged runtime boundary.
+
+- P1 custody/cold — **HELD**. Independently reopened all 21,200 full worker
+  members (759,680,972 bytes), all 880 immutable source identities and both
+  generated compiler bodies. Archive/index/manifest match the worker pins above.
+  The sole cold proof binds the exact frozen clone head and empty status before
+  and after; `worker:cold/report.json:14`, SHA256
+  `da27f6a07f8d0d375949cdbac5e84f33f3ecd065815bb1ff314ac03b6abb3028`.
+- P2 original formats — **HELD**. Literal original enum and complete Mesa
+  descriptors, numeric packed PBO overload, native internal formats and every
+  native upload field agree. All ten complete primary bodies were independently
+  fetched from their pinned revisions and hashed; `critic/format-audit.json`
+  and `critic/primary-authentication.json` retain exact fields and source pins.
+- P3 finite depth/stencil/public X24 — **HELD**. The fresh Python inverse imports
+  neither product code nor worker oracle. Both full hot/cold phases, schedules
+  and controls cover 16,296 native pixels, 106,896 public bytes and 930 consumed
+  physical fence points; all 256 original stencil values occur. Positive normal
+  words and finite clamp rules match exactly; zero/denormal fields receive only
+  defined alternatives, nonfinite fields only bounded custody. Complete original
+  native/public points: `worker:hot/hardware-matrix/report.json:2742` and `:3196`,
+  report SHA256 `fb8102cc30d4009739bef11ff06e3771ea9b826f2165bc3f41da1d2dec4e2127`.
+- P4 original packets/geometry — **HELD**. Independently predicted every original
+  matrix word, metadata/packet field, nonzero mip box, row padding and complete
+  segmented backing before inspection. Native adjacent fields and untouched
+  backing remain exact; complete backing point at the same matrix report `:2718`.
+  Each hot/cold wire record additionally holds 1,517 strict original predicates.
+- P5 reservations — **HELD**. Logical/native/private/scratch/conversion/PBO
+  charges match independently counted pixels before allocation; exact bounds
+  pass and one-byte-short refusals allocate nothing. Original 126 owns its
+  persistent upload PBO. The explicit short scratch path is
+  `worker:hot/hardware-boundaries-0x13579bdf/report.json:134112`, SHA256
+  `30db58491451d3be526abe953a63cb75c26cdc7d736cde353bf288fbdafb1ebe`.
+- P6 native ranges — **HELD**. Full views alias their source, private levels map
+  to original levels and use matching-format NEAREST native depth/stencil blits.
+  GPU-only refresh changes native fields while complete backing stays unchanged;
+  the full original matrix range point is `worker:hot/hardware-matrix/report.json:2853`.
+- P7 generations/fences/terminal ownership — **HELD**. Old private ranges and
+  queued source reads survive opposite-format same-ID/context reuse without
+  publishing into replacement backing. Actual consumed completion precedes
+  release; every owned native object/sync retires once and terminal charges are
+  zero. Original replacement point: the boundary report above `:2912`.
+- P8 failures/helper state — **HELD**. Allocation, upload/read/collection/copy,
+  framebuffer/program/shader/uniform/fence failures, cancellation, disposal and
+  actual context loss refuse explicitly and unwind ownership; native failure
+  cases begin at the same boundary report `:100931`. Fresh nondefault caller
+  qualification also preserves actual numeric program/VAO/FBO/attachment,
+  texture/sampler identities and all new helper-touched depth/stencil/indexed
+  blend/mask fields in both formats. `fresh/states/report.json:3016`, `:3490`,
+  `:4179`, `:4882`, SHA256
+  `09ba67733b9b95cc1efc0813328221b838f4b9032c7f26e2c8710e0119425d34`.
+- P9 native controls — **HELD**. All three worker controls fail the unchanged
+  fresh inverse at physically completed original fields. The promoted control
+  additionally performs an actual private stencil clear: original level2/local1
+  pixel4 must be 219 and becomes 220 at native blob byte112. Its distinct second
+  consumed fence is sync88/turn88 after refresh sync86/turn82, both actual
+  ALREADY_SIGNALED. `fresh/fault-completed-private-stencil/report.json:4278` and
+  `:4304`, report SHA256
+  `0b46a2e9caeaaf03931447057b6d2625b59f5aa0a748cabca2885b7b07248019`,
+  native blob `6e1156662d97460b2fb9a21898fcb67035f4e70cfb65f02b0db24802c18309ef`.
+- P10 coverage/retained authority — **HELD**. Independently recomputed all
+  governing innermost partitions from complete original nested V8 ranges and
+  source bodies, including the affected historical gates and original Node wire
+  record: 1,108 positive partitions and zero unproven per phase. Four whitespace
+  spans and one text-identical historical RGB9_E5 cleanup operand are precisely
+  waived; `critic/coverage-audit.json:10`, SHA256
+  `e4916fef8c50f7ce834789c1fb5660f9fe047d851b4f3dd070aec4475440bbdf`.
+  Declarative snapshots/metadata/import lists are authenticated data; recorded
+  syntax/build/native/browser/cold commands exercise the affected acceptance
+  tooling. The four unchanged prior seals retain 58,749 independently reopened
+  members and their original HELD boundaries; `critic/source-audit.json`.
+- P11 bounded novel original-field/range attack — **HELD**. Independently prepared
+  SHA256-domain seeds `0x6b49172d`, `0xd42087e1` cover both formats on 15x9 NPOT
+  full chains and private [1,2], a nonzero original level1 box, GPU-only level2
+  refresh with unchanged backing, queued old reads and unequal replacement.
+  `fresh/novel/report.json:4146`, `:4263`, `:4542`, SHA256
+  `8dc0c4f53b320d70390280f29fe85706d2ef45875ec9df491d8d5dc0067812c7`.
+  All 47 task attack paths were rerun under fresh physical schedules
+  `0x271c9350`, `0x5e71d954`, `0xb82fa27d`. Complete pre-run originals authenticate
+  all 138 image cases, 189 input blobs and 357 actual native uploads. The final
+  fresh inverse totals 1,772 native pixels, 12,780 public bytes and 93 consumed
+  completion points, with error-free headed Chrome/M4 Max Metal records.
+
+The additional P8A probe is fully retained. Two setup failures were corrected
+only in the verifier fixture (required shader type and permanent WebGL
+element/other-data buffer classes). A valid broader pixel-restoration probe
+then observed the exact inherited `pixelState()` reset; this extra restoration
+requirement is outside the selected helper claim. D38's literal transfer
+prologue, staging read-FBO binding and collection COPY_READ binding are
+byte-identical and independently authenticated in
+`critic/historical-transfer-state-authentication.json`. Fresh scoped predictions
+preceded the next physical run; all changed helper state and original fields
+held. The earlier broad probe remains at
+`fresh/probe-historical-pixel-reset/report.json:3474`, SHA256
+`bcbf279008d9d00a86eb8916d5677f142dbdfa303eef8304e310f1f0aa192a1d`.
+No runtime fix or failing changed predicate was hidden.
+
+SUITE: promoted `verify-E6-T11d39-critic`, complete independent arbitrary-original
+range fixtures, nondefault native caller identities and the standalone Python
+inverse. The actual second-fence native sabotage fails as required. No additional
+cold clone or unrelated workspace gate was repeated for test-only refinements.
+The selected storage proof grants no compiler, default-device, command consumer,
+shader/stencil-state, API/capset, real guest, production graphics, demo or
+throughput authority.
+
+Final exact-harness commands:
+
+```sh
+make verify-E6-T11d39-critic
+python3 tools/virgl-floating-depth/critic.py --boundaries target/evidence/virgl-standard-floating-depth-critic --novel target/evidence/virgl-standard-floating-depth-critic --states target/evidence/virgl-standard-floating-depth-critic --output target/evidence/virgl-standard-floating-depth-critic/independent-fresh-fields.json
+python3 tools/virgl-floating-depth/critic-seal.py --fresh target/evidence/virgl-standard-floating-depth-critic --scratch /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasmvm-e6-t11d39-critic-0251zq3y --output evidence/virgl-standard-floating-depth-images/verifier
+```
+
+Fresh evidence in `evidence/virgl-standard-floating-depth-images/verifier/`
+contains all original raw/native/source/V8/fence records, browser errors and
+screenshots, earlier complete probes, predictions, independent audits and
+reopenable file/line/digest/byte points. All 7,139 members were reopened
+(303,732,156 full bytes; 49,297,435 archive bytes). Archive SHA256
+`90ac4d8e042eeaec80843e474e608d1ef84509fe0038a73642c41869089a798e`,
+index `c433f077dd5d3d26920ad212400741e80940d12a3eeea05fa8d613a27df7ca26`,
+manifest `8c5ec5d64cdd2cb72e843f6780549beb620395b6f418ab5c3c77e7100e46a6cd`.
+The full worker seal above is an immutable authenticated dependency; its archive
+is retained rather than duplicated. No refutation or sufficiency gap remains.
