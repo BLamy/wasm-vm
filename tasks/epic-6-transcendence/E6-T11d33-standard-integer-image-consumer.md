@@ -2,7 +2,7 @@
 id: E6-T11d33
 epic: 6
 title: Consume original signed and unsigned integer images in native draws
-status: in-progress
+status: implemented
 estimate: S
 risk: high
 priority: 525.027039000375
@@ -149,3 +149,49 @@ source-offset/digest-bound waiver entries in
 branches need positive evidence. Every waiver states its predecessor/static
 reason and remains open to independent refutation. The final recorded command,
 pristine clone, seals and exact source head will be added after recording.
+
+### 2026-10-10 — worker — implemented, sealed original native consumer
+
+Frozen source head: `ba5370a38126048d64d9353e9be5317a69e2d538`.
+Exact commands: `make verify-E6-T11d33`, then
+`python3 tools/virgl-integer-image-consumer/cold.py --output target/evidence/virgl-standard-integer-image-consumer-cold`, then
+`python3 tools/virgl-integer-image-consumer/seal.py target/evidence/virgl-standard-integer-image-consumer target/evidence/virgl-standard-integer-image-consumer-cold evidence/virgl-integer-image-consumer/worker`.
+All commands passed. The pristine clone ran the identical make command at the
+same head; scrubbed environment and before/after clean status are recorded in
+`cold/report.json` in the seal.
+
+The full actual C/Wasm matrix replayed2586 original responses in Node and the
+headed browser (1238 selected accepted records,144 hostile contract attacks,
+zero getters). All591 native cases/1773 whole frames matched453888 output words
+and601440 source words across4854 native source planes. All original public
+readbacks matched35460000 backing bytes including row padding. The matrix held
+4137 unique real WebGLSync objects, recorded9945 polls and10321 CPU reads,
+with completion-before-read and once-only retirement. Three boundary schedules
+(1030219,2882400001,1629686191) each held24 complete frames, including retained
+old generations, opposite-sign target changes/cache reuse, GPU-only updates,
+integer blend bypass/write masks/full clears, native sign/filter refusals,
+cancellation and both disposal paths. Actual wrong-level, altered original-word
+and post-completion native output controls failed the unchanged independent
+whole-word inverse after physical completion. Original OUT5 maps COLOR0 at
+native location0; selected FLOAT compatibility and both actual native typed
+vertex/constant0 paths hold. The historical FLOAT consumer smoke command passes.
+
+The recorded page runs had zero console/page/request errors and screenshots;
+complete requests/responses, wire bytes, input/output blobs, native allocations,
+reflections, real sync identities/every poll and complete nested CDP/V8 ranges
+are sealed. Coverage:611 positive governing partitions;41 explicit unchanged
+older-facet/default/whitespace waivers; no unexplained zero partitions.
+D32 compiler/generated/fixed-memory/stack facts and D31 storage facts are carried
+by unchanged exact code and both independently authenticated predecessor seals,
+whose40143 members were all reopened. This claims only the selected original
+single-color consumer boundary. Production capsets, guest acceleration,
+deployment,300MIPS and the full API remain unqualified.
+
+Seal: `evidence/virgl-integer-image-consumer/worker/{manifest.json,records.json,recording.tar.gz}`.
+Archive SHA256: `4bf86adde84cf2ea958e195f6740a848d67f0641952cf4ab00d613f5cae6db3a`.
+Index SHA256: `2220c476a1feafe3fe7c9228347d0fae4af07f3888f87a52bbc51c8e869568ce`.
+Hot receipt: `591ad67ca59bedfed7259c95d050151500a870783c3b5426298e1199b6da03e4`.
+Cold report: `e68e7e6ab9137a33dd2e44dd853bd3c2d52bed79e34b316e881fc00bf8f52697`.
+Cold receipt: `4c84fe93685aef3d023412b1ea0e3646dd94b2e2d069e1222749b06f875c4963`.
+All78714 indexed members, including806 exact source files, were reopened and hashed.
+Fresh adversarial verification is pending.
