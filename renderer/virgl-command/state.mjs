@@ -35,6 +35,7 @@ export const STANDARD_FLOATING_DEPTH_IMAGE_ASYNC_PROFILE = "virgl-standard-float
 export const STANDARD_UNORM_DEPTH_IMAGE_ASYNC_PROFILE = "virgl-standard-unorm-depth-image-async-jobs-v1";
 export const STANDARD_PACKED_DEPTH_IMAGE_ASYNC_PROFILE = "virgl-standard-packed-depth-image-async-jobs-v1";
 export const STANDARD_STENCIL_ASYNC_PROFILE = "virgl-standard-stencil-async-jobs-v1";
+export const STANDARD_ORDERED_STENCIL_ASYNC_PROFILE = "virgl-standard-ordered-stencil-async-jobs-v1";
 export const STANDARD_FLOAT_IMAGE_ASYNC_PROFILE = "virgl-standard-float-image-async-jobs-v1";
 export const STANDARD_IMAGE_ASYNC_PROFILE = "virgl-standard-image-async-jobs-v1";
 export const STANDARD_COLOR_ASYNC_PROFILE = "virgl-standard-byte-color-async-jobs-v1";
@@ -278,7 +279,12 @@ export function createVirglStandardStencilAsyncRenderer(options) {
   return createRenderer(options, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
 }
 
-function createRenderer(options, drawing, asynchronous = false, standard = false, uniform = false, bufferRoles = false, images = false, colors = false, textureOperations = false, floats = false, packed = false, shared = false, integers = false, multipleColors = false, normalized = false, unsigned = false, floatingDepth = false, unormDepth = false, packedDepth = false, stencil = false) {
+/** Selected native face passes retain original primitive order and vertex IDs. */
+export function createVirglStandardOrderedStencilAsyncRenderer(options) {
+  return createRenderer(options, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
+}
+
+function createRenderer(options, drawing, asynchronous = false, standard = false, uniform = false, bufferRoles = false, images = false, colors = false, textureOperations = false, floats = false, packed = false, shared = false, integers = false, multipleColors = false, normalized = false, unsigned = false, floatingDepth = false, unormDepth = false, packedDepth = false, stencil = false, orderedStencil = false) {
   return result(() => {
     const config = dataRecord(options, ["gl", "resources", "bindings", "shaderBridge", "limits", "cacheLimits", ...(drawing ? ["drawLimits"] : []), ...(asynchronous ? ["asyncAccess", "jobLimits"] : []), ...(standard ? ["primitiveAssembly"] : []), ...(uniform ? ["uniformAccess"] : []), ...(images ? ["imageAccess"] : [])], ["gl", "resources", "bindings", "shaderBridge", ...(asynchronous ? ["asyncAccess"] : []), ...(uniform ? ["uniformAccess"] : []), ...(images ? ["imageAccess"] : [])]);
     const { gl, resources, bindings, shaderBridge } = config;
@@ -329,7 +335,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       "invalid-input", "Original native image range authority is required.");
     require(!integers || typeof shaderBridge.translateImages === "function", "invalid-input", "Integer images require the selected stage compiler.");
     const integerFormat = format => integerColorFormat(format) || (unsigned ? packedUnsignedColorFormat(format) : null);
-    const profile = stencil ? STANDARD_STENCIL_ASYNC_PROFILE : packedDepth ? STANDARD_PACKED_DEPTH_IMAGE_ASYNC_PROFILE : unormDepth ? STANDARD_UNORM_DEPTH_IMAGE_ASYNC_PROFILE : floatingDepth ? STANDARD_FLOATING_DEPTH_IMAGE_ASYNC_PROFILE : unsigned ? STANDARD_PACKED_UNSIGNED_IMAGE_ASYNC_PROFILE : normalized ? STANDARD_PACKED_NORMALIZED_IMAGE_ASYNC_PROFILE : multipleColors ? STANDARD_MULTIPLE_COLOR_ASYNC_PROFILE : integers ? STANDARD_INTEGER_IMAGE_ASYNC_PROFILE : shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : textureOperations ? STANDARD_TEXTURE_ASYNC_PROFILE : colors ? STANDARD_COLOR_ASYNC_PROFILE : images ? STANDARD_IMAGE_ASYNC_PROFILE : bufferRoles ? STANDARD_BUFFER_ASYNC_PROFILE : uniform ? STANDARD_UNIFORM_ASYNC_PROFILE : standard ? STANDARD_ASYNC_PROFILE : asynchronous ? ASYNC_PROFILE : drawing ? DRAW_PROFILE : STATE_PROFILE;
+    const profile = orderedStencil ? STANDARD_ORDERED_STENCIL_ASYNC_PROFILE : stencil ? STANDARD_STENCIL_ASYNC_PROFILE : packedDepth ? STANDARD_PACKED_DEPTH_IMAGE_ASYNC_PROFILE : unormDepth ? STANDARD_UNORM_DEPTH_IMAGE_ASYNC_PROFILE : floatingDepth ? STANDARD_FLOATING_DEPTH_IMAGE_ASYNC_PROFILE : unsigned ? STANDARD_PACKED_UNSIGNED_IMAGE_ASYNC_PROFILE : normalized ? STANDARD_PACKED_NORMALIZED_IMAGE_ASYNC_PROFILE : multipleColors ? STANDARD_MULTIPLE_COLOR_ASYNC_PROFILE : integers ? STANDARD_INTEGER_IMAGE_ASYNC_PROFILE : shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : textureOperations ? STANDARD_TEXTURE_ASYNC_PROFILE : colors ? STANDARD_COLOR_ASYNC_PROFILE : images ? STANDARD_IMAGE_ASYNC_PROFILE : bufferRoles ? STANDARD_BUFFER_ASYNC_PROFILE : uniform ? STANDARD_UNIFORM_ASYNC_PROFILE : standard ? STANDARD_ASYNC_PROFILE : asynchronous ? ASYNC_PROFILE : drawing ? DRAW_PROFILE : STATE_PROFILE;
     const decodeCommands = stencil ? decodeStandardStencilSubmission : packedDepth ? decodeStandardPackedDepthImageSubmission : unormDepth ? decodeStandardUnormDepthImageSubmission : floatingDepth ? decodeStandardFloatingDepthImageSubmission : unsigned ? decodeStandardPackedUnsignedImageSubmission : normalized ? decodeStandardPackedNormalizedImageSubmission : multipleColors ? decodeStandardMultipleColorSubmission : integers ? decodeStandardIntegerImageSubmission : shared ? decodeStandardSharedExponentImageSubmission : packed ? decodeStandardPackedFloatImageSubmission : floats ? decodeStandardFloatImageSubmission : colors ? decodeStandardColorSubmission : images ? decodeStandardImageSubmission : uniform ? decodeStandardUniformSubmission : standard ? decodeStandardSubmission : decodeSubmission;
     const parseShaderMetadata = multipleColors ? parseStandardMultipleColorShaderMetadata : integers ? parseStandardIntegerImageShaderMetadata : textureOperations ? parseStandardTextureShaderMetadata : uniform ? parseStandardUniformShaderMetadata : standard ? parseStandardShaderMetadata : parseConstantDomain;
     const idle = () => require(activeJob === null, "busy", "A renderer job is active; cancel and drain it before changing state.");
@@ -1134,10 +1140,11 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         { fields: frontOnly ? fields[0] : fields[1], reference: frontOnly ? sub.stencilRef.front : sub.stencilRef.back },
       ] };
     };
-    const applyStencil = sub => {
+    const applyStencil = (sub, selectedFace = null) => {
       const state = stencilState(sub);
       gl[state.enabled ? "enable" : "disable"](gl.STENCIL_TEST);
-      state.faces.forEach(({ fields, reference }, index) => {
+      const faces = selectedFace === null ? state.faces : [state.faces[selectedFace], state.faces[selectedFace]];
+      faces.forEach(({ fields, reference }, index) => {
         const face = index ? gl.BACK : gl.FRONT;
         gl.stencilFuncSeparate(face, [gl.NEVER, gl.LESS, gl.EQUAL, gl.LEQUAL, gl.GREATER, gl.NOTEQUAL, gl.GEQUAL, gl.ALWAYS][fields.function], reference, fields.valueMask);
         gl.stencilMaskSeparate(face, fields.writeMask);
@@ -1362,14 +1369,22 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       require(primarySurface && sub.viewport && sub.vertexElements && (!fields.indexed || sub.indexBuffer),
         "incomplete-draw", "Drawing requires a surface, viewport, vertex elements and any indexed draw's index buffer.");
       require(!sub.dsa?.fields.depthEnable || sub.depthSurface, "incomplete-draw", "Active depth testing requires a depth attachment.");
+      let stencilLowering = null;
       if (stencil) {
         const state = stencilState(sub), format = sub.depthSurface?.fields.format;
         const present = floatingDepthFormat(format)?.stencil || packedDepthFormat(format)?.stencil;
         if (state.enabled && present) {
           const [front, back] = state.faces;
-          require(front.reference === back.reference && front.fields.valueMask === back.fields.valueMask &&
-            front.fields.writeMask === back.fields.writeMask, "unsupported-stencil",
-          "Native WebGL stencil draws require common effective front/back references and masks.");
+          const common = front.reference === back.reference && front.fields.valueMask === back.fields.valueMask &&
+            front.fields.writeMask === back.fields.writeMask;
+          if (!common) {
+            require(orderedStencil, "unsupported-stencil",
+              "Native WebGL stencil draws require common effective front/back references and masks.");
+            require(assemblyLists, "unsupported-stencil", "Ordered stencil draws require native last-vertex list assembly.");
+            stencilLowering = fields.mode <= 3 || sub.rasterizer?.fields.cullFace === 2 ? "front" : "triangles";
+            require(stencilLowering === "front" || instances === 1, "unsupported-stencil",
+              "Ordered two-face stencil draws require one original instance.");
+          }
         }
       }
       const banks = Object.freeze([...sub.constants]), shaders = Object.freeze([...sub.shaders]);
@@ -1434,6 +1449,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         }
       }
       return Object.freeze({ ctx, sub, command, fields, instances, vertexWork: fields.count * instances,
+        ...(orderedStencil ? { stencilLowering } : {}),
         surface, ...(multipleColors ? { primarySurface } : {}), attributes, constants, index, indexStorage, indexOffset, indexSize, indexByteLength,
         program, shaders, banks, uploads, ...(uniform ? { uniformBanks, uniformRanges: Object.freeze(uniformRanges) } : {}) });
     };
@@ -1487,13 +1503,42 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       // readStorage changes copy/pixel bindings. Restore every supported binding
       // after its synchronous GPU read, immediately before issuing the real draw.
       const stateKey = restore(sub, plan, constantAttributes);
-      const assembled = assemblyLists && [2, 6].includes(fields.mode);
-      const nativeMode = assembled ? fields.mode === 2 ? 1 : 4 : fields.mode;
+      const splitStencil = plan.stencilLowering === "triangles";
+      const assembled = splitStencil || assemblyLists && [2, 6].includes(fields.mode);
+      const nativeMode = splitStencil ? 4 : assembled ? fields.mode === 2 ? 1 : 4 : fields.mode;
       const sourceIndex = i => !indices ? fields.start + i : indexSize === 1 ? indices.getUint8(i) :
         indexSize === 2 ? indices.getUint16(i * 2, true) : indices.getUint32(i * 4, true);
       const isRestart = value => fields.primitiveRestart && value === fields.restartIndex;
+      // Enumerate original triangle identities twice: first to bound storage,
+      // then to fill it. Strip parity resets at restart; the original LAST
+      // vertex remains last even when swapping the two winding vertices.
+      const visitStencilTriangles = emit => {
+        let a = 0, b = 0, length = 0;
+        for (let i = 0; i < fields.count; i++) {
+          const value = sourceIndex(i);
+          if (fields.indexed && isRestart(value)) { length = 0; continue; }
+          if (fields.mode === 4) {
+            if (length % 3 === 0) a = value;
+            else if (length % 3 === 1) b = value;
+            else emit(a, b, value);
+          } else {
+            if (length === 0) a = value;
+            else if (length === 1) b = value;
+            else {
+              if (fields.mode === 5 && length % 2) emit(b, a, value);
+              else emit(a, b, value);
+              if (fields.mode === 5) a = b;
+              b = value;
+            }
+          }
+          length++;
+        }
+      };
       let nativeCount = fields.count;
-      if (assembled) {
+      if (splitStencil) {
+        nativeCount = 0; visitStencilTriangles(() => { nativeCount += 3; });
+        normalize = true;
+      } else if (assembled) {
         nativeCount = 0; let length = 0;
         for (let i = 0; i <= fields.count; i++) {
           if (i === fields.count || isRestart(sourceIndex(i))) {
@@ -1504,6 +1549,10 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         require(nativeCount <= fields.count * 3, "limit-exceeded", "Expanded native primitive work exceeds original source bound.");
         normalize = true;
       }
+      const nativeDrawCalls = splitStencil ? nativeCount / 3 * 2 : 1;
+      const nativeVertexWork = nativeCount * instances * (splitStencil ? 2 : 1);
+      require(!orderedStencil || nativeVertexWork <= vertexWork * 6 && nativeDrawCalls <= vertexWork * 2,
+        "limit-exceeded", "Ordered native work exceeds the original source budget.");
       const mode = gl[DRAW_MODES[nativeMode]], nativeIndexed = fields.indexed || assembled;
       const nativeIndexSize = normalize ? 4 : indexSize, nativeIndexOffset = normalize ? 0 : indexOffset;
       const indexType = nativeIndexSize === 1 ? gl.UNSIGNED_BYTE : nativeIndexSize === 2 ? gl.UNSIGNED_SHORT : gl.UNSIGNED_INT;
@@ -1516,7 +1565,10 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           "limit-exceeded", "Owned normalized index budget exceeded.");
           job.normalizationScratchBytes = byteLength;
           const words = new Uint32Array(nativeCount);
-          if (assembled) {
+          if (splitStencil) {
+            let out = 0;
+            visitStencilTriangles((a, b, c) => { words[out++] = a; words[out++] = b; words[out++] = c; });
+          } else if (assembled) {
             let first = 0, previous = 0, length = 0, out = 0;
             for (let i = 0; i <= fields.count; i++) {
               if (i === fields.count || isRestart(sourceIndex(i))) {
@@ -1557,11 +1609,21 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
             else job.uniformHolds.set(range.generation, range.token);
           }
         }
-        if (nativeIndexed) {
+        if (splitStencil) {
+          for (let i = 0; i < nativeCount; i += 3) for (let face = 0; face < 2; face++) {
+            applyStencil(sub, face); gl.enable(gl.CULL_FACE); gl.cullFace(face ? gl.FRONT : gl.BACK); check();
+            work.drawCalls++;
+            gl.drawElements(gl.TRIANGLES, 3, gl.UNSIGNED_INT, i * 4); check();
+          }
+        } else if (nativeIndexed) {
+          if (plan.stencilLowering === "front") { applyStencil(sub, 0); check(); }
           if (instances > 1) gl.drawElementsInstanced(mode, nativeCount, indexType, nativeIndexOffset, instances);
           else gl.drawElements(mode, nativeCount, indexType, nativeIndexOffset);
-        } else if (instances > 1) gl.drawArraysInstanced(mode, fields.start, fields.count, instances);
-        else gl.drawArrays(mode, fields.start, fields.count);
+        } else {
+          if (plan.stencilLowering === "front") { applyStencil(sub, 0); check(); }
+          if (instances > 1) gl.drawArraysInstanced(mode, fields.start, fields.count, instances);
+          else gl.drawArrays(mode, fields.start, fields.count);
+        }
       } finally {
         if (normalize) {
           job.normalizationScratchBytes = 0;
@@ -1569,8 +1631,13 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           // until the job's final completion/drain or explicit disposal.
           gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, originalIndexBuffer);
         }
+        if (plan.stencilLowering) {
+          applyStencil(sub);
+          gl[sub.rasterizer?.fields.cullFace === 2 ? "enable" : "disable"](gl.CULL_FACE);
+          gl.cullFace(gl.BACK);
+        }
       }
-      work.drawCalls++;
+      if (!splitStencil) work.drawCalls++;
       check();
       work.draws++;
       submission.indices += vertexWork;
@@ -1579,7 +1646,8 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         ...(standard ? { instanceCount: fields.instanceCount, effectiveInstances: instances, vertexWork, indexSize,
           primitiveRestart: fields.primitiveRestart, restartIndex: fields.restartIndex, validIndexCount, restartCount,
           normalizedIndices: normalize, nativeIndexSize, nativeIndexOffset, normalizedIndexBytes: normalize ? nativeCount * 4 : 0,
-          ...(assemblyLists ? { primitiveAssembly, assembled, nativeMode, nativeCount, nativeIndexed, nativeVertexWork: nativeCount * instances } : {}) } : {}),
+          ...(assemblyLists ? { primitiveAssembly, assembled, nativeMode, nativeCount, nativeIndexed, nativeVertexWork } : {}),
+          ...(orderedStencil ? { stencilLowering: plan.stencilLowering, nativeDrawCalls } : {}) } : {}),
         contextId: ctx.id, contextGeneration: ctx.generation, subContextId: sub.id, subContextGeneration: sub.generation,
         indexResourceId: indexStorage?.metadata.id ?? null, indexResourceGeneration: indexStorage?.generation ?? null,
         vertexFetches, framebuffer: { resourceId: surface.metadata.id, resourceGeneration: surface.generation,

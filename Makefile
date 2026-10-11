@@ -2434,3 +2434,7 @@ verify-E6-T11d44:
 .PHONY: verify-E6-T11d44-critic
 verify-E6-T11d44-critic:
 	bash tools/verify-virgl-standard-stencil-critic.sh
+
+.PHONY: verify-E6-T11d45
+verify-E6-T11d45:
+	bash tools/verify-virgl-ordered-stencil.sh

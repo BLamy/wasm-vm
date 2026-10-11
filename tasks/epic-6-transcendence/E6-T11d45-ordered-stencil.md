@@ -50,3 +50,48 @@ The user's production-graphics instruction continues this one S/high boundary ah
 
 
 The new exact-source recorder itself passes at the unchanged verifiedff head: all18 original failures retain52 consumed syncs, zero output frames and zero native draws; the six active-S8 guards have the exact original92-byte packets and no native draw/blit during their refusal phase. Syntax, independent inverse, task policy and diff checks pass. The task remains pending; this is the starting gap, not new acceptance.
+
+### 2026-10-11 — worker — implementation and narrow native self-validation
+
+The selected ordered-stencil factory lowers original no-cull triangles in
+primitive order, with one front/back culled pair per original primitive and
+original LAST identity. Original one-face draws retain native instancing;
+asymmetric no-cull instances greater than one remain refused. Private normalized
+indices use the held allocator and retirement, with explicit original source
+charges and bounded native work. Literal stencil/cull state restores in finally.
+No decoder, compiler, storage allocator, guest, caps, demo or deployment changes
+are made in this isolated boundary.
+
+Inner native recordings include168 array/index/mode/instancing cases,72 original
+function/op paths,140 restart/tail/degenerate cases,22 guard/native suffix
+failures,20 maximum/tightened budget cases, six absent-S8 native draws and16
+lifecycle cases. Maximum one-face instancing physically reaches65536 instances
+with exact final native INSTANCEID/divisor color. One fan owns786408 bytes;
+64 fans own784896 bytes /64 buffers. The source-plus-generic read ceiling is
+65552 bytes and minus-one refuses before normalization. Actual allocation,
+upload and draw failures preserve a completed prefix and halt the suffix.
+
+Independent full-body Node inverses and native lifetime audits pass for
+`target/evidence/virgl-ordered-stencil-inner-final-arrays`,
+`...-inner-final-segments`, `...-inner-limits-3`, `...-inner-boundaries-2`,
+`...-inner-absent` and `...-inner-failures-prefix`. Each complete source/GPU/wire
+body remains in its recording. Five actual native/served corruption controls
+(order, operation, comparison mask, completed color and completed S8) contradict
+original predicted pixels after distinct consumed completions. Wrong whole-face
+grouping yieldsS8=125 where original primitive order requires119. These inner
+runs are self-validation, not the frozen final submission.
+
+The recorder now captures actual native vertex fetch state and complete GPU
+vertex-buffer bytes, plus complete GPU normalized index bytes at retirement;
+all CPU reads cite consumed fences after that buffer's writer. Its negative
+active-attribute location guard avoids Chrome's builtin-ID enumeration poisoning
+queries. Source/mip fixture dimensions are derived from the selected original
+mip. Retained common stencil12 and original primitive-list loop/fan2 pass;
+the old D10 server's closed list omits later imports, so the retained actor runs
+through the complete D45 server closure.
+
+Finest nested runtime coverage currently holds229 partitions and waives only17
+exact unchanged predecessor profile/metadata operands, each pinned to fullff
+source identity and original UTF16 range. No new runtime partition is waived.
+Task policy, syntax and diff checks pass. Final frozen hot/cold recording, full
+custody and a fresh adversarial verdict are still required before verification.

@@ -64,6 +64,9 @@ export function rig(gl,bridge,c,f,{delay=0,step=64,fault=null,nativeFault=null,p
      gl.activeTexture(active);
      for(let index=0;index<gl.getProgramParameter(program,gl.ACTIVE_ATTRIBUTES);index++){
       const attribute=gl.getActiveAttrib(program,index),location=gl.getAttribLocation(program,attribute.name);
+      // Chrome may enumerate built-in IDs with location -1. They have no
+      // attribute-array binding; querying one would poison the real draw.
+      if(location<0)continue;
       attributes.push({name:attribute.name,type:attribute.type,location,buffer:id(gl.getVertexAttrib(location,gl.VERTEX_ATTRIB_ARRAY_BUFFER_BINDING)),
        stride:gl.getVertexAttrib(location,gl.VERTEX_ATTRIB_ARRAY_STRIDE),offset:gl.getVertexAttribOffset(location,gl.VERTEX_ATTRIB_ARRAY_POINTER),
        integer:gl.getVertexAttrib(location,gl.VERTEX_ATTRIB_ARRAY_INTEGER),divisor:gl.getVertexAttrib(location,gl.VERTEX_ATTRIB_ARRAY_DIVISOR)});

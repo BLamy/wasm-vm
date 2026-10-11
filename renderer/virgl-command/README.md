@@ -307,3 +307,23 @@ public readbacks, physical fences and complete V8 regions. The recorded inputs d
 native precision before GPU execution. Native wrong-level and wrong-filter controls
 must complete and then fail the unchanged independent oracle. Guest driver negotiation
 and production graphics are still governed by the parent bringup task.
+
+
+`createVirglStandardOrderedStencilAsyncRenderer` selects the isolated D45 native
+stencil consumer with `primitiveAssembly: "lists"` and an explicit native LAST
+provoking convention. For active S8 with unequal effective face references or
+masks, points, lines and BACK-culling triangles keep their original native draw
+and install front stencil state on both native faces. No-cull triangles with
+effective instance count one execute each original triangle's front/back culled
+passes before advancing to the next triangle. Strip parity and restart reset,
+fan center, original vertex IDs and LAST provoking identity survive u32 index
+normalization. Larger no-cull asymmetric instance counts remain refused.
+
+Owned normalization uses at most 12 bytes per charged original source word,
+64 native buffers, six native vertex visits and two native calls per source
+word. Every restart word and incomplete tail is charged. CPU scratch is detached
+before yielding, and native buffers retire only on consumed completion/drain
+or explicit disposal. The factory restores literal guest stencil and cull
+state after lowered calls, including native failure. Original common-field,
+front-only, disabled, absent-S8 and predecessor factory behavior is retained.
+This selected factory does not yet expose a production guest or negotiated caps.
