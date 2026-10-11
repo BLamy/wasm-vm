@@ -2401,3 +2401,10 @@ verify-E6-T11d40-critic:
 .PHONY: verify-E6-T11d41
 verify-E6-T11d41:
 	bash tools/verify-virgl-standard-unorm-depth.sh
+
+.PHONY: verify-E6-T11d41-critic
+verify-E6-T11d41-critic:
+	node tools/verify-virgl-standard-unorm-depth-critic.mjs --output target/evidence/virgl-standard-unorm-depth-critic/promoted
+	python3 tools/virgl-unorm-depth/critic.py target/evidence/virgl-standard-unorm-depth-critic/promoted
+	@if node tools/verify-virgl-standard-unorm-depth.mjs --output target/evidence/virgl-standard-unorm-depth-critic/fault-completed-depth --mode surfaces --fault completed-depth --smoke true; then echo 'ERROR: completed native UN16 depth corruption escaped the unchanged inverse' >&2; exit 1; fi
+	python3 tools/virgl-unorm-depth/values.py target/evidence/virgl-standard-unorm-depth-critic/fault-completed-depth --control
