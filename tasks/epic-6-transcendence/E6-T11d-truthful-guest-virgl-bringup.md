@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35]
-blocked_on: E6-T11d35
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36]
+blocked_on: E6-T11d36
 estimate: S
 risk: high
 capstone: false
@@ -438,3 +438,17 @@ remaining actual API/capacity floors, truthful capsets, guest Mesa/compositor an
 worker/scanout/demo deployment follow separately. The explicit user instruction
 continues this production graphics chain ahead of unrelated queue work. No
 production graphics or throughput authority follows from these prerequisites.
+
+### 2026-10-11 — worker — packed storage verified; original consumers remain
+
+D35 is independently verified at `3e5e41429aadc9acbe68fade926d2763d1e2a356`
+and published on existing open PR513. At that exact head,
+`node evidence/virgl-production-readiness/standard-packed-normalized-consumer-gap.mjs`
+records 39 complete original base/mip/swizzled sampler and mip-surface refusals
+for the thirteen now-qualified packed normalized formats. The adjacent JSON
+retains original wire bytes, metadata and source/pin digests. Ordered S/high D36
+admits them through a separately selected original multiple-color command
+consumer while preserving compiler and qualified storage bytes. The user's
+production graphics objective continues ahead of unrelated queue work; actual
+API/capacity floors, truthful capsets and real guest/compositor/deployment proof
+remain gated. No production or throughput authority follows from private tests.
