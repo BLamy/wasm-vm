@@ -2,7 +2,7 @@
 id: E6-T11d36
 epic: 6
 title: Consume original packed normalized samplers and color surfaces
-status: in-progress
+status: implemented
 estimate: S
 risk: high
 priority: 525.027039000378
@@ -99,3 +99,49 @@ Fourteen zero-count historical V8 operands are pinned individually, byte for
 byte, to the authenticated D35 source closure. No new packed admission, profile,
 cache discriminator, or alpha-mask operand is waived. Final exact-head hot and
 pristine cold records, source closure, coverage and full seal follow this freeze.
+
+### 2026-10-11 — worker — implemented; sealed exact-head submission
+
+Runtime and recorded head: `001f3d42f3d55f2c225af65a81996d0c8b9d087c`.
+Commands: `EMCC=/Users/blamy/.cache/wasm-vm/emsdk/4.0.22/wasm-vm-emcc
+VIRGL_PACKED_NORMALIZED_CONSUMER_EVIDENCE_DIR=target/evidence/virgl-packed-normalized-consumer-final-hot
+make verify-E6-T11d36`;
+`python3 tools/virgl-packed-normalized-consumer/cold.py --output
+target/evidence/virgl-packed-normalized-consumer-final-cold`;
+`python3 tools/virgl-packed-normalized-consumer/seal.py
+target/evidence/virgl-packed-normalized-consumer-final-hot
+target/evidence/virgl-packed-normalized-consumer-final-cold
+evidence/virgl-packed-normalized-consumer/worker`. All passed.
+
+The full original-wire inverse checks 181 target cases / 724 frames /
+2,740 captured targets / 245,248 native components / 4,924 mip planes /
+54,800,000 public backing bytes, and 104 sampler cases / 312 frames /
+18,720 output and 46,488 retained-range components / 6,240,000 public bytes.
+Each of three independent schedules runs 11 target and 13 sampler boundary
+cases, including retained source/target identities, FLOAT-vs-integer refusal,
+GPU-only mip refresh, complete/cancel/disposal and once-only native retirement.
+Wrong native COLOR3 attachment, wrong native sample and a completed packed
+word changed after a second distinct physical fence all refute the unchanged
+independent inverse. Historical multiple-color native cases pass.
+
+All 179 changed governing V8 partitions execute; 14 unchanged historical
+operands are individually pinned to authenticated D35 source hashes, with no
+remaining unaccounted partition. The recording authenticates all 42,989 D35
+worker/verifier members and 289 unchanged compiler/storage/contract sources.
+The actual generated C/Wasm bytes stay `acbe036afcdc4f1d8aa8cfb0fb107f48ba27759a6af4a7b9d6c83e3aa679d6cc`
+(Wasm) and `6bb07a0b2a056d21ae52b22d7700ce10577854c1cdcf0877dd80be938e30e0fa`
+(MJS). Headed Metal/CDP evidence, zero browser errors, original complete inputs,
+C stage/pair results, native captures, screenshot and V8 regions are sealed.
+
+Hot receipt `aff2dcd143e6bed1e190d583958ab1408fd7e196d313bbb3b169c03ec7845437`;
+cold receipt `6fe4aa9fdcaaa0f9c767d54392f424fa83e3eaa25127c666aa90f2fdf7a44fa3`;
+cold report `6d2f2b2dc62137e8e7d740d333f42ce6ebe52b4057d3e4cbbb1aa86c61206ced`.
+The pristine scrubbed clone has equal exact head and empty before/after status.
+Seal: `evidence/virgl-packed-normalized-consumer/worker`: 83,780 reopened members,
+1,406,290,757 raw bytes and 39,962,909 archive bytes; archive
+`c3ad79b7cc0fb58e1cbc93929f509719ccbd832214a65b00fbe154224b645c4f`,
+index `79362e795d016d5653defb8c017cde0f40e51eea807a6e32e6b36d666b9328f7`,
+manifest `bb8e9018f976d3da260244fc7336ec0715b151a31ca3e9c2a0b7ccfe10c63efa`.
+This proves only the selected isolated packed UNORM command consumer. Complete
+API/capacity, typed capabilities, actual/default guest, live production and
+throughput remain unclaimed. A fresh critic must attempt to refute this submission.
