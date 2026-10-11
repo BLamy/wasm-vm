@@ -1,0 +1,56 @@
+{
+  "schema": "D36-fresh-critic-predictions-v1",
+  "task": "E6-T11d36",
+  "createdAt": "2026-10-11T06:48:54Z",
+  "phase": "before-recording-inspection",
+  "predecessor": "3e5e41429aadc9acbe68fade926d2763d1e2a356",
+  "workerHead": "6e89fb7a25156136eb701dd8a4e475c563190ecb",
+  "runtimeHead": "001f3d42f3d55f2c225af65a81996d0c8b9d087c",
+  "predictions": [
+    {
+      "id": "P0",
+      "prediction": "Every worker seal member authenticates against the stated archive/index/manifest hashes; hot and cold sourceHead is 001f3d42f3d55f2c225af65a81996d0c8b9d087c. Cold clone before/after is pristine, scrubbed, and actual generated C/Wasm equals the authenticated D35 binary. Source runtime equals frozen head; unchanged dependency sources and each of the 14 historical waived operands match D35 byte-for-byte.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P1",
+      "prediction": "All thirteen original packed aliases have base-view, swizzled restricted mip-view and mip-surface wire admissions only in the selected normalized profile. Prior entry points refuse them before native mutation. Invalid target/layer/extent/swizzle and mismatched original storage formats remain refused. Selected host capability/config refusals allocate no native object.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P2",
+      "prediction": "From literal TGSI and packet state, each native packed component equals floor(clamp(float32_value,0,1)*(2^field_bits-1)+0.5) with original channel offsets; blend equations and masks use quantized destination fields, correct per-target native component type, and opaque alpha stays one. Normalized neighbors clamp, HDR FLOAT neighbors retain out-of-range values, integer neighbors preserve typed values. Native targets and every mip plane exactly match the independently parsed original commands, including sparse slots/broadcast/clear/mask/scissor and warm variants.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P3",
+      "prediction": "From original source words and literal view/TGSI packet state, each FLOAT sampler fetch uses original_field/(2^bits-1), canonical implicit alpha one, requested swizzle constants and first+explicit_lod. Native sampler_2D unit, range texture and base/max levels agree. Vertex and fragment FLOAT use actual C/Wasm translation with the integer-image compiler profile; UINT/SINT views cannot borrow UNORM. Endpoint linear averages remain within 2^-11; fetches within 2e-6. Compiler stage/pair contracts and translated cache identities match original shaders and type/output shape.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P4",
+      "prediction": "Each captured public backing is reconstructed only from original transfer packet offset, stride, extent, original packed fields, and native FLOAT/integer values. All non-written bytes remain 0x2e; X fields are canonical one. Original source SG backing non-written bytes stay 0xa7. Every output/source mip outside the written level remains unchanged.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P5",
+      "prediction": "For three independent varied schedules, a CPU native capture follows a successful actual poll on an owned WebGLSync created after all relevant writes; fence identities and native objects retire exactly once. Retained source/target generations and context/cache reuse cannot alias replacement names/backings. Cancellation/disposal drains holds/budgets and suppresses forbidden pending readback.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P6",
+      "prediction": "Re-derived smallest governing V8 partitions cover every new normalized admission/profile/cache/xAlpha operand. Zero-count operands may be waived only when individually exact and historical in authenticated predecessor source. No new normalized operand is waived; coverage hashes identify actual runtime served to headed Apple Metal.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P7",
+      "prediction": "Wrong COLOR3 attachment and wrong packed sampler physically redirect native bindings and the independent inverse refutes resulting complete captures. Completed-output sabotage changes an actual packed native word after the original completion, polls another distinct physical fence, captures the changed word, and the unchanged independent inverse refutes it.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P8",
+      "prediction": "A critic-authored bounded attack interleaves packed alias identity refusal, restricted mip partial-box update and mixed targets with opaque alpha. Independent original-wire reconstruction must match full native/public planes across A/B/A cache and retained-generation operations. Physical corruption of a packed target after a completed critic draw must fail the same independent inverse after a distinct native fence.",
+      "status": "PREDICTED"
+    }
+  ]
+}

@@ -2350,3 +2350,8 @@ verify-E6-T11d35-adversarial:
 .PHONY: verify-E6-T11d36
 verify-E6-T11d36:
 	bash tools/verify-virgl-standard-packed-normalized-consumer.sh
+
+.PHONY: verify-E6-T11d36-adversarial
+verify-E6-T11d36-adversarial:
+	node tools/verify-virgl-standard-packed-normalized-consumer-critic.mjs --output target/evidence/virgl-packed-normalized-consumer-critic-promoted
+	python3 tools/virgl-packed-normalized-consumer/critic.py target/evidence/virgl-packed-normalized-consumer-critic-promoted

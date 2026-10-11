@@ -2,7 +2,7 @@
 id: E6-T11d36
 epic: 6
 title: Consume original packed normalized samplers and color surfaces
-status: implemented
+status: verified
 estimate: S
 risk: high
 priority: 525.027039000378
@@ -145,3 +145,122 @@ manifest `bb8e9018f976d3da260244fc7336ec0715b151a31ca3e9c2a0b7ccfe10c63efa`.
 This proves only the selected isolated packed UNORM command consumer. Complete
 API/capacity, typed capabilities, actual/default guest, live production and
 throughput remain unclaimed. A fresh critic must attempt to refute this submission.
+
+### 2026-10-11 — fresh verifier — VERDICT: verified
+
+Independently reviewed predecessor `3e5e41429aadc9acbe68fade926d2763d1e2a356`
+through submission `6e89fb7a25156136eb701dd8a4e475c563190ecb`; runtime and
+recorded head remain `001f3d42f3d55f2c225af65a81996d0c8b9d087c`. Predictions
+P0–P8 were written before inspecting recordings in
+`evidence/virgl-packed-normalized-consumer/verifier/predictions.json`
+(`57ddd146c85d6edf5bdae2ce7a97de7b9944cb06a8b3431b195f91be01315361`).
+All nine are HELD; there is no product contradiction or remaining proof gap.
+The following citations are paths inside the reopened verifier archive.
+
+- P0 custody — HELD. Authenticated every one of 83,780 worker members, 802 source
+  members, both exact-head receipts, the recorded pristine scrubbed cold clone,
+  all 42,989 D35 worker/verifier members, and 289 unchanged compiler/storage/
+  contract sources. The cold clone remains clean at the recorded head. No cold
+  rerun was justified. Point: `critic/authentication.json`, digest
+  `1c658f45cdc080b6ac9d399f5aa8487f32d6d40b3049ae52578ddad6ff7fa154`.
+- P1 original admissions and identity — HELD. Independently replayed all 39
+  original refusal streams through all eleven exact predecessor decoders and
+  current historical entry points. The selected normalized profile admits
+  them. Native-equivalent wrong-format view/surface aliases apply zero commands
+  and change no native state, storage or ownership; owned completion fence
+  bookkeeping is permissible. Point: `critic/wire-replay.json`, digest
+  `0096699deefca9f3cb36de85dbe859b7557f71f762d6cf4f817318db2a690d88`.
+- P2 targets, masks and blending — HELD. Re-ran unchanged original-wire Python
+  inverses on both complete hot/cold sets: 181 cases, 724 frames, 2,740 targets,
+  245,248 components and 4,924 mip planes per recording. Independently checked
+  114,828 physical implicit-alpha pixels without the inverse's alpha
+  canonicalization. Mixed FLOAT/integer/normalized neighbors, clamping, five
+  blend equations, broadcasts and sparse targets match original packets.
+  Point: `critic/rechecks/hot/hardware-targets/pixel-audit.json`, digest
+  `e112d2c5a872b713196929d3dd86ff525dee156ba6f4673c4bc75a06c1c3c2d6`;
+  `critic/recording-details.json`, digest
+  `813c994ca59a4e38a632d8e2ca1cee586b46a60d9a6a1e522389d80bb1fe142a`.
+- P3 sampler and actual compiler contracts — HELD. Both 104-case/312-frame
+  sampler inverses match all 18,720 output and 46,488 retained-range components.
+  Re-executed 46 unique worker requests covering 2,898 responses and 19 unique
+  fresh requests covering 669 responses in the unchanged actual C/Wasm bridge;
+  results match exactly. Original view swizzles/ranges/LOD, FLOAT contracts and
+  cache keys agree. Point: `critic/c-replay.json`, digest
+  `c7e6ee0300c2fad138adeaf1c298d5219eed92b62d064c55b7f0849d55c07361`;
+  `critic/c-replay-fresh.json`, digest
+  `284ab11a9bb74ce3f6f837efa0d089438c8abea923fe1299481b698a46cd0be4`.
+- P4 full backing and mip isolation — HELD. Independently reconstructing
+  original public packing, offsets and row strides matches 54,800,000 target
+  and 6,240,000 sampler backing bytes per recording. Fresh boxed reads check
+  every one of 480,000 backing bytes per run, including all untouched padding
+  and levels. Point: `critic/fresh-novel-3242072501/critic-audit.json`, digest
+  `d41cf17747f9826586315287a766ca4a46c3cdd058b5d014ff4a98b9cdcd5a40`.
+- P5 asynchronous ownership/lifetime — HELD. All worker schedules and fresh
+  target/sampler boundaries under seeds 3242072501, 2113343427 and 375936213
+  preserve native fence-before-capture ordering, retained generations, range
+  refresh, cache/context reuse, cancel/disposal and once-only retirement.
+  Point: `critic/fresh-runs.json`, digest
+  `11e6411cce0ae82e8f678f3c86e02c7de6fbe9d5507d70eaa83f4967574065cd`.
+- P6 changed partition sufficiency — HELD. Independently re-derived smallest
+  governing V8 UTF-16 partitions in both hot/cold recordings: 179 executed,
+  fourteen historical zero operands individually mapped to exact authenticated
+  predecessor source. No normalized admission/profile/cache/alpha-mask operand
+  is waived; no changed operand is unaccounted. Point:
+  `critic/coverage-audit.json`, digest
+  `b67daa7d36f0eaa6015f6239c19a1ee700e30dfb31c18d488fc69e1814733ba0`.
+- P7 physical negative controls — HELD. Independently caught fresh actual wrong
+  COLOR3 attachment and sampler-plane substitutions. Novel post-completion
+  native format131 COLOR3 mip1 word changed 1477311616 to 1477311617:
+  original fence30 successful poll at trace sequence1214, actual upload at1220,
+  distinct physical fence31 successful poll at1227, CPU capture at1231.
+  Captured red129 contradicts independently predicted128; the unchanged full
+  inverse also catches the mip/public backing change. Point:
+  `critic/physical-control.json`, digest
+  `08d52ab8e3927f946f8b06669304b973bf947f00d36083fe9590dad2378f9018`;
+  `critic/fresh-fault-completed-output/pixel-audit.json`, digest
+  `597c97366fd7f913012fc80f980c084a35c4406e90f4defe4c560c7bcaca3246`.
+- P8 bounded novel attack and suite — HELD. Before fresh captures, refined the
+  planned partial-box operation to an allowed public boxed read in
+  `critic/fresh-attack-plan.json`. Three schedules mix packed aliases, odd
+  restricted mip dimensions, native-equivalent alias refusals, FLOAT/integer
+  neighbors, implicit-alpha masks and full native/public capture. The promoted
+  `make verify-E6-T11d36-adversarial` passes: 30 frames, 120 targets, 360 mip
+  planes, 15,360 components and 2,400,000 backing bytes. Private stage/pair
+  requests retain the normalized profile discriminator. Point:
+  `promoted/critic-audit.json`, digest
+  `3fd1f03248d8c0fa3a6ef911e7e3a364a193f8d52aabb29b264de964413f6b82`.
+
+All fourteen fresh/promoted/earlier-harness captures authenticate original
+inputs, native captures, actual source files, executable Chrome, headed Apple
+Metal, screenshots and coverage. Complete earlier critic harness attempts are
+retained: two authentication script schema mistakes were corrected, and an
+initial alias-refusal assertion incorrectly rejected harmless completion fences.
+That assertion was narrowed to actual material/storage/ownership mutation
+before final fresh runs. These are critic harness corrections, not product
+findings (`critic/harness-correction.json` and initial logs retained).
+
+SUITE: promoted `renderer/virgl-command/tests/standard-packed-normalized-consumer-critic.mjs`,
+`tools/verify-virgl-standard-packed-normalized-consumer-critic.mjs`, independent
+`tools/virgl-packed-normalized-consumer/critic.py` and the adversarial make target.
+The verifier did not edit runtime, compiler, storage or conversion implementation.
+Scoped commands: the archived authentication, original-wire replay, C/Wasm
+request replay, V8 audit, complete inverse, fresh schedule/control drivers;
+`make verify-E6-T11d36-adversarial`; `python3 tools/check_task_policy.py` before
+`python3 tools/build_queue.py`; `git diff --check`.
+
+Full reopened critic seal: `evidence/virgl-packed-normalized-consumer/verifier`:
+15,167 members, 357,072,663 raw bytes, 13,428,585 archive bytes. Archive
+`1def79716c709590a99617b5803376add8c25fa675d4bdbf0a1a7010865245d7`;
+index `0c68099df6556ebf99fd773dcd11d2c7c752cf11a28ea42e4839a1ec0633e820`;
+manifest `68b47304d1638bf5190d86c151dcf8367cfa6d8709601925b37c4e10523e05f0`;
+verdict `eb40d79adc5ae05108b635a8d161c9d2541f48073178fa9bed037e89a9a4fa49`.
+The seal pins the complete authenticated worker/dependency archives by their
+exact digests and includes fresh complete records plus source closure.
+
+This verdict verifies only the isolated host-selected packed UNORM command
+consumer. Actual/default guest, complete API/capacity, typed capabilities,
+production negotiation/live draw and throughput remain outside this claim.
+PR514 remains open/draft; no publication, merge, deployment or Actions run was
+performed by the verifier. Git/index/shared-worktree/compiler/Node/browser/
+headed Chrome/GPU leases are released after this deliberate verifier commit;
+no owned browser or verification process remains.

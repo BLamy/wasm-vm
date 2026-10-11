@@ -1,0 +1,62 @@
+{
+  "schema": "D36-fresh-adversarial-critic-seal-v1",
+  "task": "E6-T11d36",
+  "verdict": "verified",
+  "runtimeHead": "001f3d42f3d55f2c225af65a81996d0c8b9d087c",
+  "workerSubmissionHead": "6e89fb7a25156136eb701dd8a4e475c563190ecb",
+  "records": 15167,
+  "reopenedMembers": 15167,
+  "sourceClosureIncluded": true,
+  "uncompressedBytes": 357072663,
+  "archiveBytes": 13428585,
+  "archiveSha256": "1def79716c709590a99617b5803376add8c25fa675d4bdbf0a1a7010865245d7",
+  "recordIndexSha256": "0c68099df6556ebf99fd773dcd11d2c7c752cf11a28ea42e4839a1ec0633e820",
+  "predictionsSha256": "57ddd146c85d6edf5bdae2ce7a97de7b9944cb06a8b3431b195f91be01315361",
+  "verdictSha256": "eb40d79adc5ae05108b635a8d161c9d2541f48073178fa9bed037e89a9a4fa49",
+  "carriedWorkerSeal": {
+    "path": "evidence/virgl-packed-normalized-consumer/worker",
+    "digests": {
+      "manifest.json": "bb8e9018f976d3da260244fc7336ec0715b151a31ca3e9c2a0b7ccfe10c63efa",
+      "records.json": "79362e795d016d5653defb8c017cde0f40e51eea807a6e32e6b36d666b9328f7",
+      "recording.tar.gz": "c3ad79b7cc0fb58e1cbc93929f509719ccbd832214a65b00fbe154224b645c4f"
+    },
+    "members": 83780,
+    "rawBytes": 1406290757,
+    "sourceHead": "001f3d42f3d55f2c225af65a81996d0c8b9d087c",
+    "sourceCount": 802
+  },
+  "carriedPredecessors": [
+    {
+      "path": "evidence/virgl-standard-packed-normalized-images/worker",
+      "digests": {
+        "manifest.json": "3f099fb484d1529e1848d6f2ee80587cdd100d38412fda58de1f9221b454960e",
+        "records.json": "784a390eea7213a797b0881ef8911847771429a1f9fe27b2a8249dca73bedbfd",
+        "recording.tar.gz": "c8e12f7832dfbfc94b5cab8a7d196e56409544e3a218eb493d919babcf9e07dc"
+      },
+      "members": 28896,
+      "rawBytes": 259423292,
+      "sourceHead": "b6434e33c9e5399f48fc191656e02f318cd78075",
+      "sourceCount": 790
+    },
+    {
+      "path": "evidence/virgl-standard-packed-normalized-images/verifier",
+      "digests": {
+        "manifest.json": "106a7569d82db9cab3058b744c16d1ec8341a19311d34046c5d54db2619f8b0b",
+        "records.json": "a34c7fc4f46c8b98dcf3dc61cd7b93f0ada0c939d840b8a409776c67ba6b6815",
+        "recording.tar.gz": "7142c920bdcd8ceda75ae58fe5a5cebdbfbcc7dfa455b73b3c0c765d5ede7d4a"
+      },
+      "members": 14093,
+      "rawBytes": 127986969,
+      "sourceHead": null,
+      "sourceCount": 442
+    }
+  ],
+  "freshRecordingsIncluded": true,
+  "pristineCloneRepeated": false,
+  "runtimeEdited": false,
+  "earlierHarnessFailureIncluded": "critic/novel-harness-v0/report.json",
+  "scope": "isolated host-selected original packed UNORM consumer",
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "productionDrawAuthority": false
+}
