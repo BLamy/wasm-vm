@@ -2410,6 +2410,10 @@ verify-E6-T11d42:
 verify-E6-T11d43:
 	bash tools/verify-virgl-standard-packed-depth-consumer.sh
 
+.PHONY: verify-E6-T11d43-critic
+verify-E6-T11d43-critic:
+	bash tools/verify-virgl-packed-depth-consumer-critic.sh
+
 .PHONY: verify-E6-T11d41-critic
 verify-E6-T11d41-critic:
 	node tools/verify-virgl-standard-unorm-depth-critic.mjs --output target/evidence/virgl-standard-unorm-depth-critic/promoted

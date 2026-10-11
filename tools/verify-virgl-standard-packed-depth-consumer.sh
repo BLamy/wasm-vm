@@ -28,6 +28,7 @@ for fault in sample-plane completed-output depth-attachment completed-depth comp
  if node tools/verify-virgl-standard-packed-depth-consumer.mjs --output "$evidence/fault-$fault" --mode "$mode" --fault "$fault" --smoke true; then echo 'ERROR: actual native packed depth consumer corruption escaped the independent inverse' >&2; exit 1; fi
 done
 python3 tools/virgl-packed-depth-consumer/values.py "$evidence"
+VIRGL_PACKED_DEPTH_CRITIC_EVIDENCE_DIR="$evidence/critic-regression" bash tools/verify-virgl-packed-depth-consumer-critic.sh
 for mode in samples surfaces; do
  node tools/verify-virgl-standard-unorm-depth.mjs --output "$evidence/retained-un16-$mode" --mode "$mode" --smoke true
  python3 tools/virgl-unorm-depth/values.py "$evidence/retained-un16-$mode"
