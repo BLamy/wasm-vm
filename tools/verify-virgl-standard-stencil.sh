@@ -40,6 +40,7 @@ for mode in samples surfaces; do
  python3 tools/virgl-floating-depth-consumer/values.py "$evidence/retained-floating-$mode"
 done
 python3 tools/virgl-stencil/coverage.py "$evidence"
+VIRGL_STENCIL_CRITIC_EVIDENCE_DIR="$evidence/critic" make verify-E6-T11d44-critic
 set +x
 printf 'STENCIL_RECORDING_COMPLETE\n'
 python3 tools/virgl-stencil/receipt.py "$evidence"
