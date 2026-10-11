@@ -2,7 +2,7 @@
 id: E6-T11d37
 epic: 6
 title: Qualify original packed unsigned color image storage
-status: in-progress
+status: implemented
 estimate: S
 risk: high
 priority: 525.027039000379
@@ -108,3 +108,56 @@ controls caught; eight affected historical storage/resource paths passed. All
 waivers. Declarative module additions in 27 old static servers were held byte
 for byte against D36 apart from the pinned additions. These runs guide the
 worker only. Final exact-head hot/cold and sealed submission follow this freeze.
+
+### 2026-10-11 — worker — sealed exact-head submission
+
+Recorded runtime/harness head: `c7c66c54482566f76b2f49af5a5e5721bd69d3f7`.
+Selected gate commands, in order:
+
+```sh
+env EMCC=/Users/blamy/.cache/wasm-vm/emsdk/4.0.22/wasm-vm-emcc \
+  VIRGL_PACKED_UNSIGNED_EVIDENCE_DIR=target/evidence/virgl-packed-unsigned-final-hot \
+  make verify-E6-T11d37
+python3 tools/virgl-command/standard-packed-unsigned-cold.py \
+  --output target/evidence/virgl-packed-unsigned-final-cold
+python3 tools/virgl-command/standard-packed-unsigned-seal.py \
+  target/evidence/virgl-packed-unsigned-final-hot \
+  target/evidence/virgl-packed-unsigned-final-cold \
+  evidence/virgl-standard-packed-unsigned-images/worker
+```
+
+Both final acceptances passed at that exact head. The cold checkout was pristine
+before and after, with compiler, Node, Python, Cargo and VirGL overrides scrubbed.
+Each acceptance records 26 original native matrix cases and 110 input mip planes,
+three independent 22-case native schedules, all eight affected historical storage
+paths, zero browser console/page/request errors, and 327 positive changed governing
+V8 partitions with zero missing partitions or waivers. The independent primary
+field inverse checks 197080 native integer components, 131988 complete public
+bytes and 10988 untouched SG padding bytes; dense cases cover every value in
+each ten-bit RGB and two-bit A lane. Upload/copy/completed-word physical
+controls are independently refuted after native completion; completed corruption
+uses a distinct second physical fence. Four-byte packed storage/upload and
+sixteen-byte native read/PBO accounting pass exact and one-short boundaries.
+All native objects retire once and all owner charges end at zero.
+
+The recording demonstrates selected original packed UINT storage, transfer,
+partial boxes, GPU-only clears, private mip ranges and retained generation/job
+ownership. Every historical owner/layout and the prior original command
+consumer stays closed. D35/D36 dependency archives were fully reopened:
+141936 authenticated members; unchanged compiler, consumers, constant domain
+and image helpers are pinned. The actual rebuilt C/Wasm and module retain their
+held digests. No compiler, production/default guest, capset, web, API-negotiation
+or throughput claim follows from this storage boundary.
+
+Hot receipt: `3d5e4faeb167bbc1e8e4f2944b33eaabd4b7798b935203f78464108e2e477989`.
+Cold receipt: `72ad2db9e6365208c282247da7fdba0a1730849c9ee09696f597de70067a393a`; cold report:
+`0a3525fab3556e8c3312d40468d1223de218ec655cbad18e323d4f518cbe6bef`.
+Full reopened worker seal: `11416` members, `105019927` raw bytes,
+`10766473` archive bytes at
+`evidence/virgl-standard-packed-unsigned-images/worker`. Archive:
+`3013c3d161c192b598370147e70940a28a14bfd741ce3a4180ed027da79167fc`; index:
+`f191f60d45f82bab43fdec9227123b8f79c53fb9df90f60546b468741167af6e`; manifest:
+`f6fb9368e136cc8e4ed9fa5bd0d8ddfce453a9dcf3bba577bbadbbfdfee0f6c6`.
+
+Status is implemented pending a fresh adversarial verifier; worker self-validation
+does not set verified. No merge authorization has been supplied.
