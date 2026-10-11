@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41]
-blocked_on: E6-T11d41
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42]
+blocked_on: E6-T11d42
 estimate: S
 risk: high
 capstone: false
@@ -523,3 +523,15 @@ Ordered S/high E6-T11d41 qualifies this one UN16 storage/transfer/view/surface
 path through an opt-in factory and unchanged compiler/GPU helpers. Parent
 full API, shadow/stencil/linear semantics, actual guest/compositor, caps,
 worker/scanout/demo deployment and measured throughput remain unproven.
+
+### 2026-10-11 — worker — UN16 verified; packed UN24 storage gap
+
+D41 is independently verified at `c34b00e91f6e84501f0eff731a74857a10eb4250`
+and published on existing open PR519. Every verifier lease is released. At that
+verified head, the complete original packed-depth readiness recording has24
+layout and6 sampler/surface refusals for original20/21. Reproduce with
+`node evidence/virgl-production-readiness/standard-packed-depth-image-gap.mjs`
+at that head. Ordered S/high E6-T11d42 closes the storage/transfer/native-range
+boundary; the guest consumer remains a separate successor. Full API, shadow/
+stencil/desktop-linear semantics, capacities/caps and actual guest/compositor/
+worker/scanout/demo production offload and300MIPS remain unproven.

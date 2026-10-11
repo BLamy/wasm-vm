@@ -1,0 +1,134 @@
+---
+id: E6-T11d42
+epic: 6
+title: Preserve original packed UN24 depth and stencil storage and transfers
+status: pending
+estimate: S
+risk: high
+priority: 525.027039000382
+depends_on: [E6-T11d41]
+capstone: false
+---
+
+## Boundary
+
+One opt-in original packed fixed-depth resource/backend path for
+S8_UINT_Z24_UNORM=20 and Z24X8_UNORM=21. Checked single-layer 2D depth/sampler
+roles1/8/9, full/truncated NPOT mip chains, original little-endian public fields,
+strided segmented transfers and retained native ranges share this storage
+boundary. Preserve every historical factory, original command consumer,
+compiler, production device and capability admission.
+
+Original20 has low S8 and high UN24 in one four-byte word; original21 has low
+UN24 and unused high X8. Use native DEPTH24_STENCIL8/UNSIGNED_INT_24_8 and
+DEPTH_COMPONENT24/UNSIGNED_INT respectively. Original21 readback has canonical
+zero X8, with no invented unused-lane preservation promise. Native-only depth
+sampling and fixed-function stencil extraction provide authoritative public
+readback, without a CPU image/depth/stencil mirror or rasterizer. Native packed
+scratch copies must use the same DEPTH24_STENCIL8 format, while existing floating
+scratch calls keep their default DEPTH32F_STENCIL8 behavior.
+
+Charge native images, scratch, conversion and PBO staging before any allocation
+or read. Private mip ranges preserve source generation, remap levels and refresh
+through actual matching native copies after GPU-only changes. Cancellation,
+opposite-format ID reuse and both disposal orders retire objects and physical
+fences once. Guest sampler/surface command admission remains refused; the
+consumer, shadow/stencil/API/capset and real guest/demo boundaries are successors.
+
+## Deterministic acceptance
+
+`make verify-E6-T11d42`
+
+Authenticate the full independently verified D41 worker/critic seals, original
+wire/format definitions, whole pinned Mesa/virglrenderer/GLES sources and
+unchanged actual C/Wasm compiler identities. Record the original24 storage
+refusals and6 consumer refusals at verified D41 before activation. Preserve those
+consumer refusals and every historical resource factory's admission.
+
+Exercise all16,777,216 original UN24 words for each format through actual native
+storage and complete canonical public readback, in bounded chunks. Native sampled
+depth must differ by at most one ULP from independently derived
+float32(original_UN24/16777215); that allowance applies only to native FLOAT depth
+lanes. Every canonical public UN24/S8/X8 and padding byte is exact. Include all256
+original S8 values and independent actual stencil diagnostics. Public readback
+must derive from native planes, never unchanged guest backing. Record actual
+upload words, both complete native field planes, full public bodies, write/read
+ordering and consumed physical fences.
+
+Cover both formats/all three roles; NPOT/full/truncated mip chains, nonzero boxes,
+odd strides/offsets and segmented padding; inline, synchronous and asynchronous
+transfers; full/private retained ranges and source-ID reuse; refresh after a
+GPU-only depth/stencil clear with unchanged backing. Floating clears obey the
+whole GLES fixed conversion bound, with public bytes exactly serializing the
+validated native choice. No guest depth comparison or stencil-state claim follows.
+
+Reject malformed descriptors, unsupported roles/targets/layers/samples/flags,
+invalid chains, strided overflows and one-byte-short resource/view/scratch/staging
+budgets before allocation or collection. Native allocated-then-failed images,
+conversion copies and PBO reads roll back every charge/object. Run three varied
+physical lifetime schedules, including stale queued reads, opposite-format ID
+reuse, cancellation and disposal. Count owned, consumed and disposal-only fences
+separately; synchronous driver readPixels returns are not invented sync events.
+
+Refute actual completed native depth and S8 corruption after a distinct second
+consumed fence using unchanged full original-input inverses. Retain native UN16
+and floating18/126 transfers and original consumer gates affected by the shared
+helper. Cover every changed governing nested V8 partition or exact source-pinned
+unchanged predecessor operand. Run scoped syntax/diff/policy and affected native
+browser gates, one final frozen hot run and one pristine scrubbed cold clone.
+Seal and reopen every full source/input/native/public/browser/coverage/screenshot
+record before a fresh adversarial verifier examines the submission.
+
+This isolated factory is not demo-reachable and grants no production authority.
+Complete API/caps, actual guest/compositor/worker/scanout/live deployment and
+300MIPS remain in E6-T11d and subsequent qualification.
+
+## Adversarial verification
+
+A fresh critic writes falsifiable predictions before evidence. Independently
+authenticate custody and invert full original descriptors, fields, uploads,
+native/public/padding bytes and source identities. Attack UN24 low values, high
+half/tie values, ignored X8 and all256 S8 values; verify matching stencil scratch
+format, mip geometry, exact budgets, actual writer-before-consumed-fence ordering
+and terminal retirement. Carry prior HELD results only at unchanged boundaries.
+
+Run three new schedules and one bounded novel packed-field/range attack. Sabotage
+actual completed native depth or S8 after a distinct consumed fence and demand
+unchanged inverses reject it. Promote one useful deterministic attack and seal
+fresh evidence. Verify only when no contradiction or proof gap survives and all
+changed governing partitions are executed, precisely waived or deleted. Do not
+repeat the unchanged final cold clone absent a portability finding.
+
+## Verification log
+
+### 2026-10-11 — worker — verified predecessor and original packed depth gap
+
+D41 is independently verified at
+`c34b00e91f6e84501f0eff731a74857a10eb4250` and published on existing open PR519.
+Its fresh verifier released all Git/Node/browser/GPU leases. The user's explicit
+instruction continues production graphics qualification ahead of unrelated queue
+work. Existing stack500 and all70 prior PR identities/order/base branches remain
+intact; this is the next branch above PR519, not a replacement stack.
+
+Exact original reproduction at the verified D41 head:
+
+```sh
+node evidence/virgl-production-readiness/standard-packed-depth-image-gap.mjs
+```
+
+The adjacent complete JSON records24 original20/21 role/base/mip/direction layout
+refusals and6 original base/private sampler or mip-surface packet refusals, with
+the complete original metadata, fields, packets and source/primary/generated
+identities. This storage task closes the24 layout refusals; consumer admission
+and its6 refusals remain for the independently ordered next boundary.
+
+Whole pinned `vrend_formats.c:87..92` supplies the native mapping. Whole Mesa
+`u_format.yaml` defines20 as UP8/UN24 and21 as UN24/X8. The native-only planning
+probe under `/tmp/wasmvm-production-api-plan/un24-native/` refuted simple bit
+replication for21: some original high-half words round down by one after actual
+Metal upload despite the arithmetic-only inverse passing. The corrected planning
+probe chooses a U32 encoding around the independently derived binary32 depth;
+its65,536 stratified values preserve canonical words with maximum one sampled
+ULP. These ephemeral probes guide implementation and are not final evidence.
+The final acceptance must prove the complete original domain in the actual
+selected resource/backend at its frozen source head.
