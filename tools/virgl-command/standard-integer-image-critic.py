@@ -403,7 +403,7 @@ def audit_native(path, checks):
     return dict(path=str(path), sha256=report_digest, status='passed', seed=report['seed'], **totals)
 
 
-def coverage(directory):
+def coverage(directory, carried_directories=()):
     added, name, line = {}, None, 0
     for row in git('diff','--unified=0',BASE,FROZEN,'--','renderer/virgl-command/resources.mjs','renderer/virgl-command/integer-images.mjs').decode().splitlines():
         if row.startswith('+++ b/'):
@@ -414,19 +414,37 @@ def coverage(directory):
             added.setdefault(name,[]).append(line); line += 1
         elif row.startswith(' '):
             line += 1
-    scripts = []
-    for path in sorted(directory.rglob('browser-coverage.json')):
-        if any(x.startswith(('fault-','fresh-fault-','sabotage-')) for x in path.parts):
-            continue
-        for script in json.loads(path.read_bytes())['scripts']:
-            if script['source'] in added:
-                need(script['sha256'] == sha((ROOT/script['source']).read_bytes()), str(path)+' full native V8 source')
-                scripts.append(dict(record=path.relative_to(directory).as_posix(), **script))
-    for path in sorted((directory/'node-coverage').glob('coverage-*.json')):
-        for script in json.loads(path.read_bytes())['result']:
-            name = next((name for name in added if script['url'].endswith('/'+name)),None)
-            if name:
-                scripts.append(dict(record=path.relative_to(directory).as_posix(),source=name,sha256=sha((ROOT/name).read_bytes()),coverage=script))
+    scripts, records = [], []
+    source_pins = {name: sha(git('show',FROZEN+':'+name)) for name in added}
+    for name, digest in source_pins.items():
+        need(sha((ROOT/name).read_bytes()) == digest, 'unchanged coverage boundary '+name)
+    for origin in [directory, *carried_directories]:
+        carried = origin != directory
+        if carried:
+            receipt = json.loads((origin/'receipt.json').read_bytes())
+            need(receipt['status'] == 'passed' and receipt['gitHead'] == FROZEN,
+                 'incremental carry must be independently authenticated frozen full acceptance')
+        paths = sorted(origin.rglob('browser-coverage.json')) + sorted((origin/'node-coverage').glob('coverage-*.json'))
+        for path in paths:
+            if any(x.startswith(('fault-','fresh-fault-','sabotage-')) for x in path.parts):
+                continue
+            raw = path.read_bytes()
+            point = dict(record=str(path),recordSha256=sha(raw),carried=carried)
+            if carried:
+                relative = path.relative_to(origin).as_posix()
+                need(receipt['files'].get(relative) == sha(raw), 'unchanged HELD nested ranges '+relative)
+                point['heldReceiptSha256'] = sha((origin/'receipt.json').read_bytes())
+            records.append(point)
+            if path.name == 'browser-coverage.json':
+                for script in json.loads(raw)['scripts']:
+                    if script['source'] in added:
+                        need(script['sha256'] == source_pins[script['source']], str(path)+' full native V8 source')
+                        scripts.append(dict(**point, **script))
+            else:
+                for script in json.loads(raw)['result']:
+                    name = next((name for name in added if script['url'].endswith('/'+name)),None)
+                    if name:
+                        scripts.append(dict(**point,source=name,sha256=source_pins[name],coverage=script))
     intervals, hunks = [], []
     for name, lines in added.items():
         source = (ROOT/name).read_text().splitlines(keepends=True)
@@ -449,14 +467,15 @@ def coverage(directory):
                     if candidates:
                         span = min(x[0] for x in candidates)
                         # Every equally smallest governing partition is retained; no parent masks zero.
-                        governing.extend(dict(record=script['record'],function=fn,**r) for size,fn,r in candidates if size == span)
+                        governing.extend(dict(record=script['record'],recordSha256=script['recordSha256'],carried=script['carried'],function=fn,**r) for size,fn,r in candidates if size == span)
                 held = any(r['count'] > 0 for r in governing)
+                carried_only = held and not any(r['count'] > 0 and not r['carried'] for r in governing)
                 text = source[line-1].strip()
                 waiver = 'comment/import/declarative syntax; source closure independently authenticated' if not held and (not text or text.startswith(('/**','//','import '))) else None
-                intervals.append(dict(source=name,line=line,startOffset=a,endOffset=b,held=held,waiver=waiver,governing=governing))
+                intervals.append(dict(source=name,line=line,startOffset=a,endOffset=b,held=held,carriedOnly=carried_only,waiver=waiver,governing=governing))
             hunks.append(dict(source=name,line=line,classification='executed' if all(x['held'] for x in intervals if x['source']==name and x['line']==line) else 'waived' if all(x['held'] or x['waiver'] for x in intervals if x['source']==name and x['line']==line) else 'needs-evidence'))
     zero = [r for r in intervals if not r['held'] and not r['waiver']]
-    return dict(status='passed' if not zero else 'needs-evidence', predecessor=BASE,runtimeHead=FROZEN, addedLines=added, intervals=intervals,hunks=hunks,zero=zero,scripts=scripts,positive=sum(r['held'] for r in intervals),fullNestedRangesAreAuthority=True)
+    return dict(status='passed' if not zero else 'needs-evidence', predecessor=BASE,runtimeHead=FROZEN, sourcePins=source_pins,addedLines=added, intervals=intervals,hunks=hunks,zero=zero,scripts=scripts,records=records,positive=sum(r['held'] for r in intervals),carriedOnly=sum(r['carriedOnly'] for r in intervals),fullNestedRangesAreAuthority=True)
 
 
 def declaration():
@@ -581,7 +600,8 @@ def main():
         wires.append(audit_wire(directory/'wire/report.json'))
         for path in sorted(directory.glob('hardware-*/report.json'))+sorted(directory.glob('fault-*/report.json')):
             records.append(audit_native(path,checks))
-        audits.append(dict(record=prefix,**coverage(directory)))
+        carried = [capture/'worker/hot',capture/'worker/cold'] if prefix == 'fresh' else []
+        audits.append(dict(record=prefix,**coverage(directory,carried)))
     need(all(a['status'] == 'passed' for a in audits), 'every changed runtime hunk/partition exercised or explicitly waived')
     novel = [audit_novel(capture,fault) for fault in [False,True]] if (capture/'novel-native/report.json').exists() else []
     result = dict(schema='d31-independent-critic-v1',status='passed',taskCorrectness='HELD',workerSubmission=SUBMISSION,runtimeHead=FROZEN,

@@ -26,10 +26,31 @@ def main():
     names = ['fresh/wire','fresh/hardware-matrix','novel-native','sabotage-post-fence']
     names += ['fresh/hardware-boundaries-'+seed for seed in ['0x6a09e667','0xbb67ae85','0x3c6ef372']]
     names += ['fresh/fault-'+fault for fault in ['upload-lane','copy-level']]
+    generated = json.loads((capture/'worker/hot/receipt.json').read_bytes())['generated']
+    native_heads = set()
+    native_sources = {}
     for name in names:
         report = json.loads((capture/name/'report.json').read_bytes())
-        assert report['gitHead'] == head
+        native_heads.add(report['gitHead'])
         assert report['status'] == ('failed' if 'fault-' in name or name == 'sabotage-post-fence' else 'passed')
+        # A proof-only Python audit repair cannot rewrite the actual native run head.
+        # Authenticate every recorded source at that head, and every native loaded
+        # module/runner byte against the current head before carrying its result.
+        for row in report['sources']:
+            if row['path'] in generated:
+                raw = (capture/'worker/hot-generated'/row['path']).read_bytes()
+                assert sha(raw) == generated[row['path']]
+            else:
+                raw = git('show',report['gitHead']+':'+row['path'])
+            assert len(raw) == row['bytes'] and sha(raw) == row['sha256']
+            if row['path'].endswith('.mjs'):
+                assert raw == (ROOT/row['path']).read_bytes()
+                native_sources[row['path']] = row['sha256']
+    assert len(native_heads) == 1
+    native_head = native_heads.pop()
+    assert git('diff','--name-only',native_head,head).decode().splitlines() in (
+        [], ['tools/virgl-command/standard-integer-image-critic-seal.py',
+             'tools/virgl-command/standard-integer-image-critic.py'])
     assert 'INTEGER_IMAGE_CRITIC_COMPLETE' in (capture/'critic.log').read_text()
     members = {}
     for path in sorted(capture.rglob('*')):
@@ -46,7 +67,7 @@ def main():
         raw = (ROOT/name).read_bytes(); assert raw == git('show',head+':'+name)
         members['source-critic/'+name] = raw
     output.mkdir(parents=True,exist_ok=True)
-    index = (json.dumps(dict(schema='d31-full-critic-records-v1',task='E6-T11d31',nativeHead=head,runtimeHead=FROZEN,
+    index = (json.dumps(dict(schema='d31-full-critic-records-v1',task='E6-T11d31',nativeHead=native_head,criticHead=head,runtimeHead=FROZEN,
                             records=[dict(path=name,bytes=len(raw),sha256=sha(raw)) for name,raw in sorted(members.items())]),indent=2)+'\n').encode()
     (output/'records.json').write_bytes(index)
     memory = io.BytesIO()
@@ -65,10 +86,13 @@ def main():
             assert len(raw) == row['bytes'] and sha(raw) == row['sha256'] and raw == members[member.name]
             seen.add(member.name)
     assert seen == expected.keys()
-    manifest = dict(schema='d31-full-independent-critic-seal-v1',task='E6-T11d31',verdict='verified',nativeHead=head,runtimeHead=FROZEN,
+    predictions = json.loads((capture/'predictions.json').read_bytes())
+    assert all(row['status'] == 'HELD' or row['status'] == 'FAILED' and row.get('scopeWaiver') for row in predictions['predictions'])
+    manifest = dict(schema='d31-full-independent-critic-seal-v1',task='E6-T11d31',verdict='verified',nativeHead=native_head,criticHead=head,runtimeHead=FROZEN,
                     workerSubmission=audit['workerSubmission'],records=len(members),reopenedMembers=len(seen),archiveBytes=len(archive),unpackedBytes=sum(map(len,members.values())),
                     archiveSha256=sha(archive),recordIndexSha256=sha(index),auditSha256=sha((capture/'audit.json').read_bytes()),coverageSha256=sha((capture/'coverage.json').read_bytes()),
-                    workerArchiveSha256=audit['custody']['archiveSha256'],workerIndexSha256=audit['custody']['indexSha256'],allTaskPredictionsHeld=True,
+                    workerArchiveSha256=audit['custody']['archiveSha256'],workerIndexSha256=audit['custody']['indexSha256'],allAcceptanceCriteriaHeld=True,
+                    scopeWaivers=[row['id'] for row in predictions['predictions'] if row.get('scopeWaiver')],nativeSourcePins=native_sources,
                     guestExecution=False,productionNegotiation=False,productionDrawAuthority=False,authority='isolated-original-integer-storage')
     (output/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
     for name in ['predictions.json','novel-input-declaration.json','verdict.md']:
