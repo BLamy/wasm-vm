@@ -2,7 +2,7 @@
 id: E6-T11d34
 epic: 6
 title: Execute original multiple color attachments through owned native jobs
-status: pending
+status: in-progress
 estimate: S
 risk: high
 priority: 525.027039000376
