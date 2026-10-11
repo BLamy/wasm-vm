@@ -160,7 +160,9 @@ def native(directory):
             assert not calls or completion['sequence']>calls[-1]['sequence']
             assert p['retirement']['inspection']['normalizationScratchBytes']==0
             r.counts['gpuIndexBytes']+=len(wanted)
-        if row.get('restored'):
+        # Preflight/capture budget refusals issue no lowered draw and must not
+        # acquire authority to overwrite a caller's arbitrary native poison.
+        if row.get('restored') and (completed or row['execution']['result']['ok']):
             assert row['restored']['stencil']['faces']==faces and row['restored']['cull']==(s['raster']>>8&3==2)
             assert row['restored']['cullFace']==1029
         citations.append(dict(run=row['name'],bodySha256=digest,drawWords=d,originalIds=ids,originalPrimitives=primitives,

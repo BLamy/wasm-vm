@@ -1,0 +1,10 @@
+The first independent direct-native audit passed matrix/functions/segments and
+all actual native failure suffixes, then incorrectly demanded BACK cull selection
+after the read-minus-one limit refused before any lowered draw. The worker had
+deliberately poisoned native cull mode to FRONT before the attempted job. No draw
+or restore ran, so preserving that caller state was correct. The critic assertion
+now requires restoration only when native lowering executes or an original draw
+completes, including zero-primitive successful streams. The original completed
+work and output assertions remain unchanged. Failed scratch audit records are
+preserved at target/evidence/virgl-ordered-stencil-critic-worker-replay; the final
+independent replay uses a new directory. No product refutation or runtime fix.
