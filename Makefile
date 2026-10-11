@@ -2446,3 +2446,7 @@ verify-E6-T11d45-critic:
 .PHONY: verify-E6-T11d46
 verify-E6-T11d46:
 	bash tools/verify-virgl-instance-base.sh
+
+.PHONY: verify-E6-T11d46-critic
+verify-E6-T11d46-critic:
+	bash tools/verify-virgl-instance-base-critic.sh
