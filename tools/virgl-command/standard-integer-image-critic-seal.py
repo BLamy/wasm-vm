@@ -87,12 +87,12 @@ def main():
             seen.add(member.name)
     assert seen == expected.keys()
     predictions = json.loads((capture/'predictions.json').read_bytes())
-    assert all(row['status'] == 'HELD' or row['status'] == 'FAILED' and row.get('scopeWaiver') for row in predictions['predictions'])
+    assert all(row['status'] == 'HELD' or row['status'] == 'FAILED' and row.get('scopeCorrection') and row.get('acceptanceStatus') == 'HELD' for row in predictions['predictions'])
     manifest = dict(schema='d31-full-independent-critic-seal-v1',task='E6-T11d31',verdict='verified',nativeHead=native_head,criticHead=head,runtimeHead=FROZEN,
                     workerSubmission=audit['workerSubmission'],records=len(members),reopenedMembers=len(seen),archiveBytes=len(archive),unpackedBytes=sum(map(len,members.values())),
                     archiveSha256=sha(archive),recordIndexSha256=sha(index),auditSha256=sha((capture/'audit.json').read_bytes()),coverageSha256=sha((capture/'coverage.json').read_bytes()),
                     workerArchiveSha256=audit['custody']['archiveSha256'],workerIndexSha256=audit['custody']['indexSha256'],allAcceptanceCriteriaHeld=True,
-                    scopeWaivers=[row['id'] for row in predictions['predictions'] if row.get('scopeWaiver')],nativeSourcePins=native_sources,
+                    predictionCorrections=[row['id'] for row in predictions['predictions'] if row.get('scopeCorrection')],nativeSourcePins=native_sources,
                     guestExecution=False,productionNegotiation=False,productionDrawAuthority=False,authority='isolated-original-integer-storage')
     (output/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
     for name in ['predictions.json','novel-input-declaration.json','verdict.md']:
