@@ -2,7 +2,7 @@
 id: E6-T11d34
 epic: 6
 title: Execute original multiple color attachments through owned native jobs
-status: implemented
+status: verified
 estimate: S
 risk: high
 priority: 525.027039000376
@@ -234,3 +234,131 @@ typed native attachments with preserved original semantics and owned completion.
 Old exports stay closed. Production capsets, complete GLES3, guest Mesa/compositor,
 worker scanout, deployment and throughput remain unqualified. Submission status
 is implemented; only a fresh adversarial verifier may set verified.
+
+### 2026-10-11 — fresh independent verifier — VERDICT: verified
+
+VERDICT: verified
+
+Predictions P01–P15 were written before opening the primary recorded results.
+Runtime and compiler/storage boundary remains exactly
+`fd425d1052ab139e89178729bbb72ce89a3521f1`; worker submission was
+`d1d5c3914b020c90e91fd633ccfe0adf2dc57d29`, above independently verified D33
+`1206a5beb3026de10457cd395d249daf8aff9966`. No implementation code was changed
+by this critic. Each prediction is HELD; none is FAILED or NEEDS EVIDENCE.
+The full prediction/result/digest map is sealed as `critic/verdict.json`.
+
+- P01 dependency/source custody — HELD. Independently reopened every member of
+  the worker and both D33/D32 seal pairs:304239 members total. All805 original
+  source files and both hot/cold generated modules agree exactly; compiler,
+  storage and the complete old contract prefix retain their verified digests.
+  `critic/authentication.json:2`; actual Wasm SHA256 remains
+  `acbe036afcdc4f1d8aa8cfb0fb107f48ba27759a6af4a7b9d6c83e3aa679d6cc`.
+- P02/P04 original wire and strict contracts — HELD. Independently reconstructed
+  admission and per-semantic types from all2586 original C/Wasm inputs; all957
+  historical normalized responses agree byte-for-byte,161 hostile record attacks
+  refuse, getters remain0 and all17 selected wire boundary cases hold. A fresh
+  Node run re-executed the complete actual module and matched both complete hot
+  and cold responses. The original six D33 wire refusals and twelve owned
+  metadata/pair refusals remain authenticated. `critic/contract-wire-audit.json:4`,
+  SHA256 `c07ce9bdd651c48e9e636377b74bff65ef1c466e80f30c859cdaf709c8156c37`.
+- P03/P04 original semantic location and physical types — HELD. Sparse original
+  COLOR3 reflects at3 despite its physical OUT index; actual mixed attachment
+  component types are5124/5126/5125 for SINT/FLOAT/UINT. Points:
+  `worker/hot/hardware/report.json:6490630` and70613/70626/70639, SHA256
+  `33f3bc9a1331b60fd55580657717359f228f6812710064affff801ca06220d36`.
+  Terminal discard permits native pruning only when actual reflection/draw buffers
+  agree; complete planes remain at their clear values.
+- P05/P06/P07/P08 native words, backings, clears, masks and mixed blend — HELD.
+  A separate inverse imports no product code and ignores worker expected arrays.
+  It replays literal original TGSI and packets through every hot/cold matrix:
+  2608 complete frames,10312 targets,882176 words,17256 mip planes and206240000
+  padded public backing bytes, zero differences. It verifies actual shader
+  declarations, all four physical attachments/draw buffers/indexed masks,
+  selective/full clears and HDR FLOAT blending alongside independent integer
+  bypass. Actual fold uniform `[.25,.5,.75,1]` is at
+  `worker/hot/hardware/report.json:6674168` with the same digest above.
+  `critic/hot-original-inverse.json` and `critic/cold-original-inverse.json`
+  contain complete per-run citations and counts.
+- P09 real completion/CPU custody — HELD. The inverse authenticates every blob,
+  every physical sync/poll and every CPU readback record, requiring an actual
+  completed unique native fence after the last write and before collection.
+  Each matrix has6786 unique syncs and18940 CPU reads; hot/cold polls are14585
+  and14590. Native objects and syncs retire once, all terminal budgets drain.
+  Full raw event/readback records remain in the worker archive.
+- P10/P11 retained generations, cancellation, disposal, recovery and caches —
+  HELD. Replayed all six sealed schedules and fresh independent schedules
+  3141592653/733973753/2575857510. Each fresh schedule has19 frames,64 targets,
+  4096 words,52 syncs,65 CPU reads and8 retired target generations. Original
+  generations survive all-target ID reuse; replacement backings remain20000
+  bytes of0x71. Cancellation drains and synchronous disposal collects no pending
+  CPU pixels; feedback/failure/shape/context/cache restoration holds.
+  `critic/fresh-3141592653/report.json:45769` shows4 retained image holds;
+  line55556 records `cancelled`, SHA256
+  `b84aa6ac4dd917b7ba606ec12db668f79a4818e31a7a1953c1d5552c5ef73007`.
+- P12 selected limits and measured host refusal — HELD. Original count4/mask
+  bounds admit and count5/invalid masks refuse. The actual Metal host reports
+  8 draw buffers,8 attachments and the actual indexed extension at
+  `worker/hot/hardware/report.json:1822`. Actual host proxy denials refuse
+  before allocation: `critic/fresh-3141592653/report.json:104801` is
+  `unsupported-host`, line136791 is allocation count0, digest above. Existing
+  independent blend and old selected exports remain closed.
+- P13 complete diff coverage — HELD. Independently recomputed all smallest
+  governing nested V8 counters from full hot/cold records:830 positive
+  partitions and36 individual static waivers, zero gaps. Every waiver matches
+  its exact source/UTF16 offsets/text/digest and the corresponding removed
+  predecessor hunk; no changed behavior was waived.
+  `critic/coverage-audit.json:147471`, SHA256
+  `074e93e4510411095e46281dd27023d741ab398a1985dc598cdaa2310c924352`.
+- P14 pristine exact-head proof — HELD. The same complete acceptance command
+  exits0 in a scrubbed pristine clone at the frozen runtime head, with empty
+  tracked/untracked status before and after. All sources/generated bytes and
+  recordings authenticate. `worker/cold/report.json:14`, SHA256
+  `5f56131b5a889b71f7df1f69e91671721c4fd30738bb3b6e2f25b91d74b84334`.
+- P15 novel sparse broadcast and real physical sabotage — HELD. An independent
+  original OUT19/COLOR0 broadcast starts with COLOR0/COLOR2 holes, mixed
+  FLOAT/UINT targets, original scissor/mask5 and unclamped HDR constant folding;
+  adding SINT COLOR2 and returning A/B/A retains program24 (B is49). All7
+  frames/16 targets/1024 words/320000 backing bytes pass. Program24 points are
+  `critic/promoted/report.json:18656` and19136, SHA256
+  `98146505bb12eb5834ade29b7de99f7a2fa078d34492ca7366dc4064c4af03a3`.
+  After real completion sync24/sequence733, actual COLOR3 corruption completes
+  at distinct sync25/sequence744, both actual/delivered37146:
+  `critic/promoted-sabotage/report.json:23115` and23121, SHA256
+  `466e44c1604c0cc24195abec8c602192eaf9f0ede79bdd49251eb3c8ea747d46`.
+  The unchanged original inverse and fresh independent inverse both detect
+  word0 expected7/actual6; `critic/promoted-sabotage-inverse.json:23`, SHA256
+  `24cde9c0c71421ca1fd5e0f0612dbe17a9232625463ebca881f63ed042164d52`.
+  The original wrong-nonzero-attachment and completed-word controls independently
+  refute at COLOR3 in both sealed recordings too.
+
+SUITE: promoted `renderer/virgl-command/tests/standard-multiple-color-critic.mjs`
+into the recurring acceptance script via `--mode critic`, including complete
+original inverse and receipt custody. This changes only tests/recording harness;
+current runtime bytes remain frozen. The promoted command and its physical
+completed-output sabotage were rerun, and touched Node/Python/shell syntax and
+`git diff --check` pass. Unrelated workspace/compiler gates were carried forward.
+The independent readback audit initially compared the recorded blob reference
+with the event's numeric byte count; its corrected comparison verifies the
+referenced decoded byte length and all remaining event fields. This was an audit
+schema correction; no product prediction or runtime failed.
+
+Commands and exact outcomes are sealed in `critic/commands.json`; independent
+replay/authentication/coverage/citation/seal scripts are retained in full.
+`critic/citations.json` contains exact JSON pointers, line numbers, observed
+values and per-file digests for the points above. Critic evidence of record:
+`evidence/virgl-multiple-color/verifier/{manifest.json,records.json,recording.tar.gz}`.
+All2156 critic members (210429716 uncompressed bytes) reopen and authenticate,
+then all102863 members of its embedded original worker archive reopen again.
+Digests:
+
+- Critic archive: `a9efc528ee4266f421aa47deaec2edb8004fce6a5ec0a618dde4795ddc7d56b5`.
+- Critic index: `59d66f1a5f47ac43eef8f02d1438df324b27799707c03c93fb48a81541871968`.
+- Critic manifest: `4116a9f48c0f1c0f7f320c5c78e9af9bd618bc4ce811a23f4668c9a5debfbab6`.
+
+Verdict scope is only this selected original framebuffer transaction. Production
+capsets, complete GLES3, guest execution/compositor, scanout, deployment and
+throughput remain unqualified. rr is waived by the repository's host-layer policy.
+No merge/rebase/deploy/Actions/ssh-dev operation occurred. All owned processes
+are stopped. Git/index/worktree/compiler/Node/browser/GPU leases are released
+when this verdict commit has completed; unrelated untracked files and releases
+are preserved.

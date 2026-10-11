@@ -11,7 +11,7 @@ set -x
 git rev-parse HEAD
 git diff --check
 python3 tools/check_task_policy.py
-for file in renderer/virgl-command/{constant-domain,decoder,state}.mjs renderer/virgl-command/tests/standard-multiple-color{,-rig,-boundaries,-contract}.mjs tools/virgl-multiple-color/fixtures.mjs tools/verify-virgl-standard-multiple-color.mjs; do node --check "$file"; done
+for file in renderer/virgl-command/{constant-domain,decoder,state}.mjs renderer/virgl-command/tests/standard-multiple-color{,-rig,-boundaries,-contract,-critic}.mjs tools/virgl-multiple-color/fixtures.mjs tools/verify-virgl-standard-multiple-color.mjs; do node --check "$file"; done
 python3 -m py_compile tools/virgl-multiple-color/{predecessor,pixels,boundaries,coverage,receipt,cold,seal}.py
 bash -n tools/verify-virgl-standard-multiple-color.sh
 # Reopen both complete D33 seals and the unchanged actual C/Wasm dependency.
@@ -23,6 +23,8 @@ node tools/verify-virgl-standard-integer-image-consumer.mjs --output "$evidence/
 node tools/verify-virgl-standard-multiple-color.mjs --output "$evidence/contracts" --mode contracts --predecessor "$evidence/predecessor"
 node tools/verify-virgl-standard-multiple-color.mjs --output "$evidence/hardware" --predecessor "$evidence/predecessor"
 python3 tools/virgl-multiple-color/pixels.py "$evidence/hardware"
+node tools/verify-virgl-standard-multiple-color.mjs --output "$evidence/critic" --mode critic --predecessor "$evidence/predecessor"
+python3 tools/virgl-multiple-color/pixels.py "$evidence/critic"
 for seed in 1030219 2882400001 1629686191; do
  node tools/verify-virgl-standard-multiple-color.mjs --output "$evidence/boundary-$seed" --mode boundaries --seed "$seed" --predecessor "$evidence/predecessor"
  python3 tools/virgl-multiple-color/boundaries.py "$evidence/boundary-$seed"

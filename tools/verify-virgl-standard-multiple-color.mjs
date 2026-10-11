@@ -13,7 +13,7 @@ for (let index = 2; index < process.argv.length; index += 2) {
   assert.ok(["--output", "--fault", "--smoke", "--node-only", "--seed", "--mode", "--predecessor"].includes(process.argv[index]));
   assert.ok(process.argv[index + 1]); options[process.argv[index].slice(2)] = process.argv[index + 1];
 }
-assert.ok(options.output); assert.ok(!options.mode||["matrix","boundaries","contracts"].includes(options.mode)); assert.ok(!options.fault || ["nonzero-attachment", "completed-output"].includes(options.fault));
+assert.ok(options.output); assert.ok(!options.mode||["matrix","boundaries","contracts","critic"].includes(options.mode)); assert.ok(!options.fault || ["nonzero-attachment", "completed-output"].includes(options.fault));
 for (const flag of ["smoke", "node-only"]) assert.ok(!options[flag] || options[flag] === "true");
 const output = path.resolve(options.output); await fs.mkdir(output, { recursive: true });
 const sourcePaths = [...new Set([
@@ -28,6 +28,7 @@ const sourcePaths = [...new Set([
  'tools/virgl-multiple-color/fixtures.mjs',
  'renderer/virgl-command/tests/standard-multiple-color-rig.mjs',
  'renderer/virgl-command/tests/standard-multiple-color.mjs',
+ 'renderer/virgl-command/tests/standard-multiple-color-critic.mjs',
  'renderer/virgl-command/tests/standard-multiple-color-boundaries.mjs',
  'renderer/virgl-command/tests/standard-multiple-color-contract.mjs',
 ])];

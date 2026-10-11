@@ -49,7 +49,7 @@ def main(directory):
            'evidence/virgl-production-readiness/standard-multiple-color-gap.json']
     for name in git('ls-files',*roots).splitlines():
         raw=(ROOT/name).read_bytes();assert raw==subprocess.check_output(['git','show',head+':'+name],cwd=ROOT);sources[name]=sha(raw)
-    names=['node','historical-integer','historical-integer-native','contracts','hardware','boundary-1030219','boundary-2882400001','boundary-1629686191',
+    names=['node','historical-integer','historical-integer-native','contracts','hardware','critic','boundary-1030219','boundary-2882400001','boundary-1629686191',
            'fault-nonzero-attachment','fault-completed-output','historical-float','historical-blend']
     for name in names:
         report=load(name+'/report.json');assert report['gitHead']==head

@@ -32,6 +32,7 @@ function publicExpected(f,slot,plane,bytes){
  return expected;
 }
 export async function runAcceptance({smoke=false,fault=null,seed=0x91230ae1,mode='matrix'}={}){
+ if(mode==='critic')return(await import('./standard-multiple-color-critic.mjs')).runNovel({fault,seed});
  if(mode==='boundaries')return(await import('./standard-multiple-color-boundaries.mjs')).runBoundaries({seed});
  const c=checks(),gl=document.querySelector('#gpu').getContext('webgl2',{antialias:false,preserveDrawingBuffer:true,failIfMajorPerformanceCaveat:true}),
   bridge=await createVirglStandardIntegerImageShaderBridge(),debug=gl.getExtension('WEBGL_debug_renderer_info'),
