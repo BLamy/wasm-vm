@@ -46,6 +46,8 @@ static void named(const struct standard_profile *p, unsigned file, unsigned inde
       else snprintf(name, 48, "floatBitsToUint(vso_g%u)", io->sid);
    } else if (file == TGSI_FILE_SYSTEM_VALUE) {
       if (p->system[index].semantic == STD_PCOORD) snprintf(name, 48, "wv_point_coord()");
+      else if (p->instance_base && p->system[index].semantic == STD_INSTANCEID)
+         snprintf(name, 48, "uvec4(uint(gl_InstanceID) + wv_instance_base)");
       else snprintf(name, 48, "uvec4(uint(%s))", p->system[index].semantic == STD_VERTEXID ? "gl_VertexID" : "gl_InstanceID");
    } else snprintf(name, 48, "INVALID"); /* structurally unreachable */
 }
@@ -101,6 +103,7 @@ static void interface(struct output *o, const struct standard_profile *p)
    for (unsigned j = 0; j < STANDARD_SAMPLERS; ++j) if (p->queried_levels & (1u << j))
       put(o, "uniform highp int %ssamplevels%u;\n", p->stage ? "fs" : "vs", j);
    if (!p->stage) put(o, "layout(std140) uniform VirglBlock {\nvec4 clipp[8];\nuint stipple_pattern[32];\nfloat winsys_adjust_y;\nfloat alpha_ref_val;\nbool clip_plane_enabled;\nint drawid_base;\n};\nuniform vec2 wv_point_size;\n");
+   if (p->instance_base && standard_has_instance_id(p)) put(o, "uniform highp uint wv_instance_base;\n");
    for (unsigned j = 0; j < 16; ++j) if (p->packed_signed_inputs & (1u << j)) {
       put(o, "vec4 wv_pack_%u(vec4 v) {\nvec4 s = v - vec4(greaterThanEqual(v, vec4(512.0,512.0,512.0,2.0))) * vec4(1024.0,1024.0,1024.0,4.0);\n", j);
       put(o, p->packed_normalized_inputs & (1u << j) ?

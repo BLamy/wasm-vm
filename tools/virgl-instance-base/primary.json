@@ -19,7 +19,9 @@
         "2.9.3",
         "2.11.9"
       ],
-      "url": "https://registry.khronos.org/OpenGL/specs/es/3.0/es_spec_3.0.pdf"
+      "url": "https://raw.githubusercontent.com/KhronosGroup/OpenGL-Registry/1a4e34ec3cb8346d71112ccd07036924c0627c87/specs/es/3.0/es_spec_3.0.pdf",
+      "repository": "KhronosGroup/OpenGL-Registry",
+      "revision": "1a4e34ec3cb8346d71112ccd07036924c0627c87"
     },
     {
       "path": "renderer/virgl-shader/vendor/src/gallium/include/pipe/p_shader_tokens.h",

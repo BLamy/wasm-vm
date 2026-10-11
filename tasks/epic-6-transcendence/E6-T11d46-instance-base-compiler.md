@@ -111,3 +111,25 @@ with its adjacent `.mjs` script. This is compiler/source readiness, explicitly
 without native draw, guest or production authority. D45's verified original
 asymmetric-S8 instancing refusal remains held. The human instruction to finish
 production graphics continues this prerequisite ahead of unrelated queue work.
+
+### 2026-10-11 — worker — implementation self-validation before frozen recording
+
+The selected C stage/pair exports and strict factory preserve raw original
+INSTANCEID words with a separately owned native highp uint offset. Historical
+entries explicitly leave the flag false. No renderer, decoder, storage, transport,
+guest, capset, demo or production authority changed. The native/Wasm pre-check
+compared 4313 complete responses (3385 admitted,928 refused), including2586
+byte-identical historical responses and all four historical factories. The
+original source-size boundaries49151/49152 admit and49153 refuses. All165
+actual allocation faults reject without partial results and recover exactly.
+
+Sixty actual headed Metal raw integer planes passed, including both system slot
+orders, high-bit and wrapping offsets, original sparse/non-monotonic u8/u16/u32
+indices, ordinary/single/multiple instancing, modifiers, absent/unused values,
+typed/packed inputs and original dimensional/buffered constants and UINT image
+composition. A physical uniform1ui(18) control retained the original base17
+expectation, completed its own native fence and failed on all12 instance lanes.
+The independent Python byte reconstruction held. Finest governing changed runtime
+coverage had33 positive JS and87 positive native partitions, with no executable
+zero partition. These runs are self-validation only; final exact-head hot/cold
+recordings and a fresh adversarial verdict remain required.

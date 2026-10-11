@@ -39,9 +39,17 @@ struct standard_profile {
     * legacy facets keep both flags zero and retain their original grammar. */
    uint32_t uniform_declared[STANDARD_UNIFORM_SLOTS][STANDARD_UNIFORM_VECTORS / 32];
    uint16_t uniform_counts[STANDARD_UNIFORM_SLOTS + 1];
-   bool uniform_buffers, buffer_zero, texture_operations, integer_images;
+   bool uniform_buffers, buffer_zero, texture_operations, integer_images, instance_base;
    uint8_t properties, broadcast;
 };
+
+static inline bool standard_has_instance_id(const struct standard_profile *p)
+{
+   if (p->stage) return false;
+   for (unsigned i = 0; i < 2; ++i)
+      if (p->declared[STD_SV][i] && p->system[i].semantic == STD_INSTANCEID) return true;
+   return false;
+}
 
 static inline const char *standard_attribute_type(const struct standard_profile *p, unsigned index)
 {

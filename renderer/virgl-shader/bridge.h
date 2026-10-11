@@ -126,4 +126,13 @@ const char *bridge_translate_standard_integer_image_pair(const char *vertex_text
                                                          uint32_t packed_signed_inputs, uint32_t packed_normalized_inputs,
                                                          uint32_t buffer_zero_mask, uint32_t signed_colors, uint32_t unsigned_colors);
 
+/* Host-selected original instance offset. No guest/request offset selector. */
+const char *bridge_translate_standard_instance_base(int stage, const char *text, size_t length,
+                                                    uint32_t signed_colors, uint32_t unsigned_colors);
+const char *bridge_translate_standard_instance_base_pair(const char *vertex_text, size_t vertex_length,
+                                                         const char *fragment_text, size_t fragment_length,
+                                                         uint32_t signed_inputs, uint32_t unsigned_inputs,
+                                                         uint32_t packed_signed_inputs, uint32_t packed_normalized_inputs,
+                                                         uint32_t buffer_zero_mask, uint32_t signed_colors, uint32_t unsigned_colors);
+
 #endif

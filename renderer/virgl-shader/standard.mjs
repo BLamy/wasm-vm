@@ -42,10 +42,16 @@ export async function createVirglStandardTextureShaderBridge(options = {}) {
 export async function createVirglStandardIntegerImageShaderBridge(options = {}) {
   return createStandardBridge(options, true, true, true);
 }
-async function createStandardBridge(options, uniformBuffers, textureOperations = false, integerImages = false) {
+/** Host-owned offset for original INSTANCEID reads during split native draws. */
+export async function createVirglStandardInstanceBaseShaderBridge(options = {}) {
+  return createStandardBridge(options, true, true, true, true);
+}
+async function createStandardBridge(options, uniformBuffers, textureOperations = false, integerImages = false, instanceBase = false) {
   const { default: createModule } = await import("./build/wasm/virgl-shader.mjs");
   const module = await createModule(options);
-  const uniformPair = integerImages ? (...args) => module._bridge_translate_standard_integer_image_pair(...args, 0, 0) :
+  const integerStage = instanceBase ? module._bridge_translate_standard_instance_base : module._bridge_translate_standard_integer_image;
+  const integerPair = instanceBase ? module._bridge_translate_standard_instance_base_pair : module._bridge_translate_standard_integer_image_pair;
+  const uniformPair = integerImages ? (...args) => integerPair(...args, 0, 0) :
     textureOperations ? module._bridge_translate_standard_texture_pair : module._bridge_translate_standard_uniform_pair;
   function run(texts, call) {
     const pointers = [];
@@ -73,7 +79,7 @@ async function createStandardBridge(options, uniformBuffers, textureOperations =
       const error = textError(text);
       if (error) return error;
       return run([text], ([pointer]) => integerImages ?
-        module._bridge_translate_standard_integer_image(stage === "vertex" ? 0 : 1, pointer, text.length, 0, 0) :
+        integerStage(stage === "vertex" ? 0 : 1, pointer, text.length, 0, 0) :
         (textureOperations ? module._bridge_translate_standard_texture : uniformBuffers ? module._bridge_translate_standard_uniform :
         module._bridge_translate_standard)(stage === "vertex" ? 0 : 1, pointer, text.length));
     },
@@ -155,7 +161,7 @@ async function createStandardBridge(options, uniformBuffers, textureOperations =
         return fail("invalid-input", "Color format masks must be disjoint 4-bit fragment masks.");
       const error = textError(text);
       if (error) return error;
-      return run([text], ([pointer]) => module._bridge_translate_standard_integer_image(
+      return run([text], ([pointer]) => integerStage(
         stage === "vertex" ? 0 : 1, pointer, text.length, signedColorMask, unsignedColorMask));
     };
     bridge.translatePairImages = request => {
@@ -173,7 +179,7 @@ async function createStandardBridge(options, uniformBuffers, textureOperations =
         const error = textError(text);
         if (error) return error;
       }
-      return run([vertexText, fragmentText], ([vertex, fragment]) => module._bridge_translate_standard_integer_image_pair(
+      return run([vertexText, fragmentText], ([vertex, fragment]) => integerPair(
         vertex, vertexText.length, fragment, fragmentText.length, signedMask, unsignedMask, packedSignedMask, packedNormalizedMask, bufferZeroMask, signedColorMask, unsignedColorMask));
     };
   }

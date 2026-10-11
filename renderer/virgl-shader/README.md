@@ -6,6 +6,23 @@ the separate private raw-bit profile. It supplies a translation boundary to the 
 renderers. Production GPU negotiation remains disabled; this module does not
 establish general Mesa or guest desktop compatibility.
 
+## Original instance IDs — E6-T11d46
+
+`createVirglStandardInstanceBaseShaderBridge` selects the separate
+`virgl-webgl2-standard-instance-base-gles3-v1` compiler. Original TGSI INSTANCEID
+reads use `uint(gl_InstanceID) + wv_instance_base`; the original VERTEXID remains
+native. Its existing request methods accept no offset field. A vertex INSTANCEID
+declaration owns one `instanceUniforms` record for the highp uint uniform, whose
+native initial value is zero. An unused declaration can be optimized out.
+
+The future qualified draw consumer must bind the retained original instance
+offset with `uniform1ui`. This compiler retains the original typed/packed inputs,
+constant banks, integer images and raw output words; it does not bind guest
+resources or activate graphics negotiation. Historical entry points and factories
+retain their complete response bytes. `make verify-E6-T11d46` records actual
+native/Wasm responses, original tokens, allocation faults, raw Metal outputs and
+a completed wrong-offset control for independent verification.
+
 ## Original 2D texture operations — E6-T11d23
 
 `createVirglStandardTextureShaderBridge` selects a separate fixed-memory
