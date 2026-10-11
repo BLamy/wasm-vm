@@ -2337,3 +2337,7 @@ verify-E6-T11d33-adversarial:
 .PHONY: verify-E6-T11d34
 verify-E6-T11d34:
 	bash tools/verify-virgl-standard-multiple-color.sh
+
+.PHONY: verify-E6-T11d35
+verify-E6-T11d35:
+	bash tools/verify-virgl-standard-packed-normalized-images.sh
