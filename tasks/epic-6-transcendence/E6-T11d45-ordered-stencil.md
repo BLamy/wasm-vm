@@ -2,7 +2,7 @@
 id: E6-T11d45
 epic: 6
 title: Preserve original primitive order for asymmetric S8 draws
-status: pending
+status: in-progress
 estimate: S
 risk: high
 priority: 525.027039000383
