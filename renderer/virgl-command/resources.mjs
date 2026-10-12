@@ -17,6 +17,9 @@ export const RESOURCE_LIMITS = Object.freeze({
   cpuBytes: 33554432, gpuBytes: 33554432, scratchBytes: 8388608,
   textureSize: 16384,
 });
+// Desktop allocation counts are separately selected by the host. Byte budgets,
+// storage admission and every historical store's defaults remain unchanged.
+export const STANDARD_DESKTOP_RESOURCE_LIMITS = Object.freeze({ ...RESOURCE_LIMITS, resources: 64 });
 const U32 = 0xffffffff;
 const META_KEYS = ["id", "target", "format", "bind", "width", "height", "depth", "arraySize", "lastLevel", "nrSamples", "flags"];
 const COMMON_KEYS = ["resourceHandle", "level", "usage", "stride", "layerStride", "box"];
@@ -62,10 +65,10 @@ function uint(value, name, nonzero = false) {
     "invalid-input", `${name} must be ${nonzero ? "a nonzero " : "a "}u32.`);
   return value;
 }
-function limitsFor(overrides = {}) {
-  const supplied = record(overrides, Object.keys(RESOURCE_LIMITS), []);
-  const limits = { ...RESOURCE_LIMITS, ...supplied };
-  for (const key of Object.keys(limits)) require(Number.isSafeInteger(limits[key]) && limits[key] >= 0 && limits[key] <= RESOURCE_LIMITS[key],
+function limitsFor(overrides = {}, baseline = RESOURCE_LIMITS) {
+  const supplied = record(overrides, Object.keys(baseline), []);
+  const limits = { ...baseline, ...supplied };
+  for (const key of Object.keys(limits)) require(Number.isSafeInteger(limits[key]) && limits[key] >= 0 && limits[key] <= baseline[key],
     "invalid-input", `Limit ${key} may only tighten its default.`);
   return Object.freeze(limits);
 }
@@ -406,7 +409,12 @@ export function computeStandardPackedDepthTransferLayout(metadata, fields, backi
   });
 }
 
-function createStore(options, uniform, bufferRoles = false, mipmaps = false, images = false, colors = false, floats = false, packed = false, shared = false, integers = false, normalized = false, unsigned = false, floatingDepth = false, unormDepth = false, packedDepth = false) {
+/** Bounded desktop lifetimes compose only already-qualified native storage. */
+export function createStandardDesktopResourceStore(options) {
+  return createStore(options, true, true, true, true, true, true, true, true, true, true, true, true, true, true, STANDARD_DESKTOP_RESOURCE_LIMITS);
+}
+
+function createStore(options, uniform, bufferRoles = false, mipmaps = false, images = false, colors = false, floats = false, packed = false, shared = false, integers = false, normalized = false, unsigned = false, floatingDepth = false, unormDepth = false, packedDepth = false, resourceLimits = RESOURCE_LIMITS) {
   return result(() => {
     const config = record(options, ["backend", "limits"], ["backend"]), backend = config.backend;
     require(backend && typeof backend === "object", "invalid-input", "A transfer backend is required.");
@@ -423,7 +431,7 @@ function createStore(options, uniform, bufferRoles = false, mipmaps = false, ima
     require(!floatingDepth || backend.floatingDepthProfile === STANDARD_FLOATING_DEPTH_TRANSFER_PROFILE, "invalid-input", "Floating depth images require their selected native transfer backend.");
     require(!unormDepth || backend.unormDepthProfile === STANDARD_UNORM_DEPTH_TRANSFER_PROFILE, "invalid-input", "UN16 depth images require their selected native transfer backend.");
     require(!packedDepth || backend.packedDepthProfile === STANDARD_PACKED_DEPTH_TRANSFER_PROFILE, "invalid-input", "Packed UN24 depth images require their selected native transfer backend.");
-    const requested = limitsFor(config.limits);
+    const requested = limitsFor(config.limits, resourceLimits);
     const limits = Object.freeze({ ...requested, textureSize: Math.min(requested.textureSize, backend.maxTextureSize) });
     const resources = new Map(), live = new Set(), contexts = new Map(), tickets = new Map(), leases = new Map(), storageReads = new Map(), uniformRanges = new Map(), revokedAccess = new Set(), revokedUniform = new Set();
     const imageViews = new Map(), imageHolds = new Map(), liveImages = new Set(), revokedImages = new Set();

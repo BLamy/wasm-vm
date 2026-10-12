@@ -30,12 +30,16 @@ the demo/live deployment and measured throughput remain parent acceptance.
 
 `make verify-E6-T11d50` authenticates the original compositor, glmark2-es2 and
 kmscube event bytes against their published manifests, replays every original
-Mesa create/unref pair in order through the actual selected store on headed
+Mesa create/unref pair in order up to completion or the first unrelated refusal,
+through the actual selected store on headed
 M4 Metal WebGL2, and matches independent live-resource/byte counters. It records
 the one exact excluded bootstrap 2D call and does not skip any Mesa refusal.
 All admitted native allocations must execute with zero GL/browser errors.
-The compositor and glmark2 pass their complete lifetime streams; old-store
-controls still stop at their original recorded count-overflow events.
+The compositor and kmscube pass their complete lifetime streams. Glmark2 must
+advance beyond its old count-overflow event and stop at its complete original
+Z32 format17 create (event3025), with an explicit unsupported-resource refusal
+before allocation; retaining this separate format boundary is part of the
+claim. Old-store controls still stop at the recorded count-overflow events.
 
 Physically upload and independently read 64 distinct GPU allocations, including
 slots above 16, using actual completed native fences. Refuse allocation 65
@@ -89,3 +93,14 @@ calls pass. Original metadata and enter/return pairs are retained; only original
 QEMU bootstrap resource2/event10/flags1 is identified as the separate 2D path.
 This negative record makes no guest or production claim. Native stack500 is
 continued above the existing D49 branch, preserving all128 previous PRs.
+
+### 2026-10-12 — worker — scope held after original replay
+
+The first self-validation of the selected capacity admits the compositor's
+complete56 lifetime calls (peak24). Glmark2 passes the prior count overflow,
+reaches25 live resources, then explicitly refuses original event3025/resource32,
+format17, 800x600 depth storage. Its full stream peak35 includes this unqualified
+format. The acceptance now requires that precise visible refusal and preserves
+the single count boundary; this task does not add or pretend to prove format17.
+The original source events remain fully authenticated and retained. Separate
+ordered format work remains necessary before glmark2/full API qualification.

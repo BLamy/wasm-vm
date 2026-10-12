@@ -2470,3 +2470,7 @@ verify-E6-T11d48-critic:
 .PHONY: verify-E6-T11d49
 verify-E6-T11d49:
 	bash tools/verify-virgl-shadow-samplers.sh
+
+.PHONY: verify-E6-T11d50
+verify-E6-T11d50:
+	bash tools/verify-virgl-resource-capacity.sh
