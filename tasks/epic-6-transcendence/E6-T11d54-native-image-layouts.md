@@ -3,7 +3,7 @@ id: E6-T11d54
 epic: 6
 title: Carry qualified 2D image layouts and mip DMA through native desktop queues
 priority: 525.027039000397
-status: pending
+status: in-progress
 depends_on: [E6-T11d53, E6-T11d50]
 estimate: S
 risk: high
