@@ -1,0 +1,59 @@
+{
+  "schema": "dimensional-storage-critic-seal-v1",
+  "task": "E6-T11d55",
+  "verdict": "verified",
+  "submissionHead": "d9e58259ec36a2bb0d7fa3fa5a1dcf8f442313a0",
+  "runtimeHead": "bae5df1f1973e93d331bc7662b3ce89bbc1c98ef",
+  "records": 584,
+  "reopenedMembers": 584,
+  "recordIndexSha256": "f3fd8f6a9cea34379b208f20a595c4939d4604d58063c14851a48c30928edb55",
+  "archiveSha256": "309db5281fe1c73b06b7c7999214d37c49d9620911740bdfc8e0642928a26e1d",
+  "archiveBytes": 6555925,
+  "workerManifestSha256": "15815d6dc767934fbb4e5fbd493c1d927edc622d6ceb1833d6d9eac062c6e8a1",
+  "dependencySeals": [
+    {
+      "family": "virgl-native-image",
+      "role": "worker",
+      "manifestSha256": "760e7cec92d98d9cf2104e534f296429d6f8305e0d24e013a62c4eff91dfd624",
+      "indexSha256": "ca2681aab7fe795ffc508441f0b0c7db306f78ae32de55aa524109b68f85c99b",
+      "archiveSha256": "438ecaf1c7eb936ea785d93ba37792460963f7a39ce1277aaed6cc0d7878c5c2",
+      "completeBodies": 1179,
+      "completeBytes": 212606708,
+      "verifiedParentEqual": true
+    },
+    {
+      "family": "virgl-native-image",
+      "role": "verifier",
+      "manifestSha256": "08394b2a36a9f01e375584e12afbc5b42c46aad7da5709be107dd2a09789ecac",
+      "indexSha256": "f1ad2d4c224506b24cb6c322bb603b0d8278b13ebcfe8e1c6c2ebbc9c076baa1",
+      "archiveSha256": "13e394b2d3efb5489180b4970dee702171895896bd4ca958a737279a02f78444",
+      "completeBodies": 218,
+      "completeBytes": 194586166,
+      "verifiedParentEqual": true
+    },
+    {
+      "family": "virgl-resource-capacity",
+      "role": "worker",
+      "manifestSha256": "59cea015984012bb2bbd8c8ac469e509ae272c5ca10814dbf80af669566dbdd7",
+      "indexSha256": "4a948c805eaf6d5c165a88694e81d575a630069d49292098274de625e4f1c4c8",
+      "archiveSha256": "7abb50b55a92b45ceec07aa52a95f0a024c94837dc0a44773465e3d4d3999420",
+      "completeBodies": 642,
+      "completeBytes": 77777340,
+      "verifiedParentEqual": true
+    },
+    {
+      "family": "virgl-resource-capacity",
+      "role": "verifier",
+      "manifestSha256": "7eb6715ab4f8345cf6093d1c7ed35e43aa5b8838d36d1d0ef63410338e353745",
+      "indexSha256": "21dc44b2dd2401e5a056c1ff152fa474e1529cd62199e40596c8c6864e7e6a86",
+      "archiveSha256": "4f038098d37c82b90234fcf03807b2e05632492a368a33647f014579dd0177cc",
+      "completeBodies": 365,
+      "completeBytes": 30249682,
+      "verifiedParentEqual": true
+    }
+  ],
+  "allPredictionsHeld": true,
+  "guestExecution": false,
+  "productionAuthority": false,
+  "publicationVerified": true
+}
