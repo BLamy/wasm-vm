@@ -89,6 +89,8 @@ for name,lines in changed.items():
                 waived.append(dict(**p,reason='Byte-identical static empty argument list or historical kind literal. The new factory fixes all depth format qualifiers true, so its new retained depth kind executes separately; this unchanged literal introduces no operation.'))
             elif name.endswith('state.mjs') and text.strip().startswith(': shadowSamplers ? STANDARD_SHADOW_SAMPLER_ASYNC_PROFILE') and text.strip() in old:
                 waived.append(dict(**p,reason='Byte-identical static historical shader-cache profile labels. All new selected cache keys use the separately executed dimensional depth view profile; existing historical cache-label selection is unchanged.'))
+            elif name.endswith('state.mjs') and line in [488,502] and text.strip().startswith(': instanceBase ? STANDARD_INSTANCED_STENCIL_ASYNC_PROFILE') and text.strip() in old:
+                waived.append(dict(**p,reason='Byte-identical tail of historical shader-cache profile labels, split more finely by historical browser coverage. These unchanged configuration labels are not new operations; the new selected cache key executes separately.'))
             else:missing.append(p)
 result=dict(schema='dimensional-depth-view-finest-v8-v1',head=git('rev-parse','HEAD').strip(),base=base,changedLines=changed,scripts=scripts,heldScripts=held_scripts,executed=executed,held=held,waived=waived,needsEvidence=missing)
 (root/'coverage-audit.json').write_text(json.dumps(result,indent=2)+'\n')

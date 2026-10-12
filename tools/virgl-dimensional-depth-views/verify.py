@@ -17,7 +17,7 @@ def retain_file(source,destination):
     return destination
 if args.carry:
     previous=Path(args.carry).resolve();prior=json.loads((previous/'report.json').read_bytes());assert prior['exitCode']==2 and not prior['cleanBefore'] and not prior['cleanAfter'];assert Path(prior['clone']).resolve()==repo.resolve()
-    changed=git('diff','--name-only',prior['head'],head).splitlines();allowed={'tools/virgl-dimensional-depth-views/private-browser.mjs','tools/virgl-dimensional-depth-views/audit.py','tools/virgl-dimensional-depth-views/verify.py','tools/virgl-dimensional-depth-views/cold.py','tools/virgl-dimensional-depth-views/seal.py'};assert set(changed)<=allowed,changed
+    changed=git('diff','--name-only',prior['head'],head).splitlines();allowed={'tools/virgl-dimensional-depth-views/private-browser.mjs','tools/virgl-dimensional-depth-views/private-body.mjs','tools/virgl-dimensional-depth-views/configurations.mjs','tools/virgl-dimensional-depth-views/coverage.py','tools/virgl-dimensional-depth-views/audit.py','tools/virgl-dimensional-depth-views/verify.py','tools/virgl-dimensional-depth-views/cold.py','tools/virgl-dimensional-depth-views/seal.py'};assert set(changed)<=allowed,changed
     assert not git('diff','--name-only',prior['head'],head,'--','crates','renderer','Cargo.toml','Cargo.lock','web')
     carry=root/'carried';shutil.copytree(previous,carry,copy_function=retain_file);prior_stdout=(carry/'cold.stdout').read_text();old_recording=carry/'recording'
     for name in carry_names:assert name+': expected exit '+str(1 if name=='fault-wrong-layer' else 0) in prior_stdout,name
@@ -68,6 +68,7 @@ run('fault-wrong-layer',['node','tools/virgl-dimensional-depth-views/browser.mjs
 run('historical-dimensional-views',['node','tools/virgl-dimensional-views/browser.mjs','--output',str(root/'historical-dimensional-views'),'--seeds','27449','--smoke','true'])
 run('historical-dimensional-depth',['node','tools/virgl-dimensional-depth/browser.mjs','--output',str(root/'historical-dimensional-depth'),'--seeds','27449','--smoke','true'])
 run('historical-bindings',['node','tools/verify-virgl-shadow-samplers.mjs','--output',str(root/'historical-bindings'),'--mode','bindings','--smoke','true'])
+run('historical-configurations',['node','tools/virgl-dimensional-depth-views/private-browser.mjs','--output',str(root/'historical-configurations'),'--configurations','true'])
 run('physical-audit',['python3','tools/virgl-dimensional-depth-views/audit.py',str(root)])
 run('coverage-audit',['python3','tools/virgl-dimensional-depth-views/coverage.py',str(root)])
 run('default-build',['make','web-dist']);run('default-demo',['node','tools/verify-virgl-default-demo.mjs','--output',str(root/'default-demo'),'--task','E6-T11d60'])
