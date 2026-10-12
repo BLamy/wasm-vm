@@ -1799,6 +1799,29 @@ impl Machine {
         self.install_virtio_gpu(device, state)
     }
 
+    /// Host-selected original cube/array depth layout; production caps stay off.
+    #[cfg(feature = "virgl-control-proof")]
+    #[allow(clippy::type_complexity)]
+    pub fn enable_virtio_gpu_standard_dimensional_depth_submit3d_proof(
+        &mut self,
+        frame_sink: alloc::boxed::Box<dyn dev::virtio::gpu::FrameSink>,
+        control_sink: alloc::boxed::Box<dyn dev::virtio::gpu::control3d::Control3dSink>,
+        submit_sink: alloc::boxed::Box<dyn dev::virtio::gpu::submit3d::Submit3dSink>,
+        mailbox: dev::virtio::gpu::submit3d::Submit3dMailbox,
+    ) -> Option<(
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::mmio::VirtioMmio>>,
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::gpu::GpuState>>,
+    )> {
+        let (device, state) =
+            dev::virtio::gpu::VirtioGpu::new_with_standard_dimensional_depth_submit3d_proof_state(
+                frame_sink,
+                control_sink,
+                submit_sink,
+                mailbox,
+            );
+        self.install_virtio_gpu(device, state)
+    }
+
     #[cfg(feature = "virgl-control-proof")]
     #[allow(clippy::type_complexity)]
     pub fn enable_virtio_gpu_scanout3d_proof(

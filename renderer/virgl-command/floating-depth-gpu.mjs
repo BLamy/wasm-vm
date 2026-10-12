@@ -75,13 +75,14 @@ export function createFloatingDepthPacker(gl, check, require, vao, indexed) {
     if (!scratch.delete(pair)) return;
     gl.deleteTexture(pair.depthColor); if (pair.stencilColor) gl.deleteTexture(pair.stencilColor); if (pair.depthCopy) gl.deleteTexture(pair.depthCopy);
   };
-  const copyRegion = (source, destination, stencil, sourceLevel, destinationLevel, box) => {
+  const copyRegion = (source, destination, stencil, sourceLevel, destinationLevel, box, sourceTarget = gl.TEXTURE_2D, sourceLayer = 0) => {
     framebuffers();
     const previousRead = gl.getParameter(gl.READ_FRAMEBUFFER_BINDING), previousDraw = gl.getParameter(gl.DRAW_FRAMEBUFFER_BINDING), scissor = gl.isEnabled(gl.SCISSOR_TEST);
     const attachment = stencil ? gl.DEPTH_STENCIL_ATTACHMENT : gl.DEPTH_ATTACHMENT;
     try {
       gl.bindFramebuffer(gl.READ_FRAMEBUFFER, readFramebuffer); gl.readBuffer(gl.NONE);
-      gl.framebufferTexture2D(gl.READ_FRAMEBUFFER, attachment, gl.TEXTURE_2D, source, sourceLevel);
+      if (sourceTarget === gl.TEXTURE_2D_ARRAY) gl.framebufferTextureLayer(gl.READ_FRAMEBUFFER, attachment, source, sourceLevel, sourceLayer);
+      else gl.framebufferTexture2D(gl.READ_FRAMEBUFFER, attachment, sourceTarget === gl.TEXTURE_CUBE_MAP ? gl.TEXTURE_CUBE_MAP_POSITIVE_X + sourceLayer : gl.TEXTURE_2D, source, sourceLevel);
       gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, drawFramebuffer); gl.drawBuffers([gl.NONE]);
       gl.framebufferTexture2D(gl.DRAW_FRAMEBUFFER, attachment, gl.TEXTURE_2D, destination, destinationLevel);
       require(gl.checkFramebufferStatus(gl.READ_FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE && gl.checkFramebufferStatus(gl.DRAW_FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE,
@@ -142,7 +143,7 @@ export function createFloatingDepthPacker(gl, check, require, vao, indexed) {
       gl.bindTexture(gl.TEXTURE_2D, binding); gl.bindSampler(0, sampler); gl.activeTexture(previous.active);
     }
   };
-  const read = (pair, destination) => {
+  const read = (pair, destination, byteOffset = 0, planeStride = pair.width * pair.height * 4) => {
     ready(); require(scratch.has(pair), "backend-error", "Foreign floating depth readback."); framebuffers();
     const previous = gl.getParameter(gl.READ_FRAMEBUFFER_BINDING), planeBytes = pair.width * pair.height * 4;
     try {
@@ -150,7 +151,8 @@ export function createFloatingDepthPacker(gl, check, require, vao, indexed) {
       for (const [index, texture] of [pair.depthColor, pair.stencilColor].entries()) if (texture) {
         gl.framebufferTexture2D(gl.READ_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
         require(gl.checkFramebufferStatus(gl.READ_FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE, "backend-error", "Floating depth read framebuffer is incomplete.");
-        gl.readPixels(0, 0, pair.width, pair.height, gl.RGBA, gl.UNSIGNED_BYTE, destination === null ? index * planeBytes : destination.subarray(index * planeBytes, (index + 1) * planeBytes)); check();
+        const offset = byteOffset + index * planeStride;
+        gl.readPixels(0, 0, pair.width, pair.height, gl.RGBA, gl.UNSIGNED_BYTE, destination === null ? offset : destination.subarray(offset, offset + planeBytes)); check();
       }
     } finally {
       gl.bindFramebuffer(gl.READ_FRAMEBUFFER, readFramebuffer); gl.framebufferTexture2D(gl.READ_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, null, 0); gl.bindFramebuffer(gl.READ_FRAMEBUFFER, previous);

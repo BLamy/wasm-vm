@@ -151,12 +151,20 @@ impl Q {
         Self::with_profile(true, true)
     }
     fn with_profile(desktop: bool, dimensional: bool) -> Self {
+        Self::with_complete_profile(desktop, dimensional, false)
+    }
+    fn dimensional_depth() -> Self {
+        Self::with_complete_profile(true, true, true)
+    }
+    fn with_complete_profile(desktop: bool, dimensional: bool, dimensional_depth: bool) -> Self {
         let mut machine = Machine::new(RAM);
         machine.enable_plic();
         machine.enable_virtio_slots(None);
         let host = Rc::new(RefCell::new(Host::default()));
         let mail = Submit3dMailbox::new();
-        let install = if dimensional {
+        let install = if dimensional_depth {
+            Machine::enable_virtio_gpu_standard_dimensional_depth_submit3d_proof
+        } else if dimensional {
             Machine::enable_virtio_gpu_standard_dimensional_submit3d_proof
         } else if desktop {
             Machine::enable_virtio_gpu_standard_desktop_submit3d_proof
@@ -368,6 +376,9 @@ impl Q {
 
 #[path = "virtio_gpu_submit3d/dimensional.rs"]
 mod dimensional;
+
+#[path = "virtio_gpu_submit3d/dimensional_depth.rs"]
+mod dimensional_depth;
 
 #[test]
 fn submit3d_portable_fresh_dma_fences_and_destroy() {

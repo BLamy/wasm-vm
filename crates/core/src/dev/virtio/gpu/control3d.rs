@@ -49,21 +49,28 @@ impl Resource3dMetadata {
         self,
         desktop_resources: bool,
         dimensional_resources: bool,
+        dimensional_depth_resources: bool,
     ) -> Result<(u64, u64), Control3dError> {
         if self.width == 0 || self.height == 0 || self.nr_samples != 0 || self.flags != 0 {
             return Err(Control3dError::InvalidParameter);
         }
         if dimensional_resources && matches!(self.target, 3 | 4 | 7) {
+            if self.format != 67 && !dimensional_depth_resources {
+                return Err(Control3dError::InvalidParameter);
+            }
+            let (public_pixel, gpu_pixel) = self.dimensional_format()?;
             self.dimensional_extent(0)?;
-            let mut bytes = 0;
+            let (mut bytes, mut gpu_bytes) = (0, 0);
             for level in 0..=self.last_level {
                 let (width, height, layers) = self.dimensional_extent(level)?;
-                bytes += u64::from(width) * u64::from(height) * u64::from(layers) * 4;
-                if bytes > MAX_RESOURCE_BYTES {
+                let pixels = u64::from(width) * u64::from(height) * u64::from(layers);
+                bytes += pixels * u64::from(public_pixel);
+                gpu_bytes += pixels * u64::from(gpu_pixel);
+                if bytes > MAX_RESOURCE_BYTES || gpu_bytes > MAX_RESOURCE_BYTES {
                     return Err(Control3dError::OutOfMemory);
                 }
             }
-            return Ok((bytes, bytes));
+            return Ok((bytes, gpu_bytes));
         }
         if self.depth != 1 || self.array_size != 1 {
             return Err(Control3dError::InvalidParameter);
@@ -139,22 +146,28 @@ impl Resource3dMetadata {
         }
         if matches!(self.target, 3 | 4 | 7) {
             let (width, height, layers) = self.dimensional_extent(level)?;
-            return Ok((width, height, layers, 4));
+            let (public_pixel, _) = self.dimensional_format()?;
+            return Ok((width, height, layers, public_pixel));
         }
         let (public_pixel, _) = image2d_format(self.format, self.bind)?;
         let (width, height) = self.mip_extent(level)?;
         Ok((width, height, 1, public_pixel))
     }
 
+    fn dimensional_format(self) -> Result<(u32, u32), Control3dError> {
+        if self.format == 67
+            || matches!(self.target, 4 | 7) && matches!(self.format, 16 | 18 | 20 | 21 | 126)
+        {
+            image2d_format(self.format, self.bind)
+        } else {
+            Err(Control3dError::InvalidParameter)
+        }
+    }
+
     fn dimensional_extent(self, level: u32) -> Result<(u32, u32, u32), Control3dError> {
         let bad = Control3dError::InvalidParameter;
-        let roles = 10 | (1 << 18) | (1 << 20);
-        if self.format != 67
-            || self.bind & 10 == 0
-            || self.bind & !roles != 0
-            || self.depth == 0
-            || self.array_size == 0
-        {
+        self.dimensional_format()?;
+        if self.depth == 0 || self.array_size == 0 {
             return Err(bad);
         }
         let size = match self.target {
@@ -450,6 +463,7 @@ pub(crate) struct Control3dState {
     sink: Box<dyn Control3dSink>,
     desktop_resources: bool,
     dimensional_resources: bool,
+    dimensional_depth_resources: bool,
     epoch: u64,
     next_generation: u64,
     next_backing_generation: u64,
@@ -463,23 +477,28 @@ pub(crate) struct Control3dState {
 
 impl Control3dState {
     pub(crate) fn new(sink: Box<dyn Control3dSink>) -> Self {
-        Self::with_resource_profile(sink, false, false)
+        Self::with_resource_profile(sink, false, false, false)
     }
     pub(crate) fn new_standard_desktop(sink: Box<dyn Control3dSink>) -> Self {
-        Self::with_resource_profile(sink, true, false)
+        Self::with_resource_profile(sink, true, false, false)
     }
     pub(crate) fn new_standard_dimensional(sink: Box<dyn Control3dSink>) -> Self {
-        Self::with_resource_profile(sink, true, true)
+        Self::with_resource_profile(sink, true, true, false)
+    }
+    pub(crate) fn new_standard_dimensional_depth(sink: Box<dyn Control3dSink>) -> Self {
+        Self::with_resource_profile(sink, true, true, true)
     }
     fn with_resource_profile(
         sink: Box<dyn Control3dSink>,
         desktop_resources: bool,
         dimensional_resources: bool,
+        dimensional_depth_resources: bool,
     ) -> Self {
         Self {
             sink,
             desktop_resources,
             dimensional_resources,
+            dimensional_depth_resources,
             epoch: 1,
             next_generation: 1,
             next_backing_generation: 1,
@@ -701,8 +720,11 @@ impl Control3dState {
                 {
                     return Err(Control3dError::InvalidResourceId);
                 }
-                let (logical, gpu) =
-                    metadata.sizes(self.desktop_resources, self.dimensional_resources)?;
+                let (logical, gpu) = metadata.sizes(
+                    self.desktop_resources,
+                    self.dimensional_resources,
+                    self.dimensional_depth_resources,
+                )?;
                 let max_resources = if self.desktop_resources {
                     MAX_DESKTOP_RESOURCES
                 } else {
@@ -750,9 +772,11 @@ impl Control3dState {
                     self.resources[index].backing = None;
                     self.resources[index].backing_generation = None;
                 } else {
-                    let (logical, gpu) = self.resources[index]
-                        .metadata
-                        .sizes(self.desktop_resources, self.dimensional_resources)?;
+                    let (logical, gpu) = self.resources[index].metadata.sizes(
+                        self.desktop_resources,
+                        self.dimensional_resources,
+                        self.dimensional_depth_resources,
+                    )?;
                     self.send(Control3dOperation::UnrefResource { resource })?;
                     self.resources.remove(index);
                     for context in &mut self.contexts {
@@ -860,3 +884,7 @@ fn fixed<const N: usize>(
     }
     read_readable_at::<N>(chain, bus, 0).ok_or(Control3dError::InvalidParameter)
 }
+
+#[cfg(test)]
+#[path = "control3d_dimensional_depth_tests.rs"]
+mod dimensional_depth_tests;
