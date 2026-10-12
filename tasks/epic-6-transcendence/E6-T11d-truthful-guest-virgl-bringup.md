@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47, E6-T11d48, E6-T11d49, E6-T11d50]
-blocked_on: E6-T11d50
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47, E6-T11d48, E6-T11d49, E6-T11d50, E6-T11d51]
+blocked_on: E6-T11d51
 estimate: S
 risk: high
 capstone: false
@@ -607,3 +607,18 @@ and all eight original comparison-mode sampler functions refuse. Exact repro:
 Full bytes/responses and source/generated digests are retained in that record.
 Ordered S/high prerequisite D49 fixes the native sampler consumer before this
 production gate resumes; no guest/capset/deployment/performance claim is made.
+
+### 2026-10-12 — worker — capacity verified; original control envelope gap
+
+D50 is independently verified at `cf184d42823dd4d0d3640482d9b1379181d364fe`,
+and PR528 extends existing stack500. The complete continuity audit preserves
+both native stack identities and every128 earlier PR identity/order/head/base;
+all129 PRs remain open/draft/unmerged. The new host store does not yet reach
+the guest. The exact original native VirtIO packet probe
+`evidence/virgl-production-readiness/standard-control-resource-gap.{py,json}`
+records BGRA/scanout/shared refusals at compositor267, kmscube97 and
+glmark2-es2 276, plus the old16/17 transport quota. Reproduce with
+`python3 evidence/virgl-production-readiness/standard-control-resource-gap.py cf184d42823dd4d0d3640482d9b1379181d364fe evidence/virgl-production-readiness/standard-control-resource-gap.json`.
+Ordered S/high D51 closes this selected control envelope before bring-up
+resumes. It grants no complete API, guest renderer, worker/scanout/demo/live
+or300MIPS claim. The human production-graphics instruction remains active.
