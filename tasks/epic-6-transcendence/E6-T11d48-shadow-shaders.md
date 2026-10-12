@@ -2,7 +2,7 @@
 id: E6-T11d48
 epic: 6
 title: Translate original 2D shadow texture operations with owned view controls
-status: in-progress
+status: implemented
 estimate: S
 risk: high
 priority: 525.027039000394
@@ -138,3 +138,67 @@ verdict. Final authority is `make verify-E6-T11d48` at the frozen head, then the
 scrubbed pristine clone and independent critic. Rust, consumer, guest and demo
 sources are unchanged at the authenticated verified predecessor; only the
 affected compiler/harness gates run for this boundary.
+
+### 2026-10-11 — worker — frozen compiler submission; fresh critic required
+
+Runtime and harness freeze: `f57db8c880684eb73cdc29c166568185fdde0a46`.
+All final affected gates passed once there, with tracked source clean, then once
+in a pristine clone at exactly that head with Rust/Cargo, compiler, Node, Python,
+Chrome and task overrides scrubbed. Cold checkout was pristine before and after.
+
+Exact commands:
+
+```
+VIRGL_SHADOW_TEXTURE_EVIDENCE_DIR=target/evidence/virgl-shadow-f57-hot caffeinate -disu make verify-E6-T11d48
+caffeinate -disu python3 tools/virgl-shadow-shaders/cold.py --output target/evidence/virgl-shadow-f57-cold
+caffeinate -disu python3 tools/virgl-shadow-shaders/seal.py target/evidence/virgl-shadow-f57-hot target/evidence/virgl-shadow-f57-cold evidence/virgl-shadow-shaders/worker
+```
+
+Hot/cold each recorded7163 native/sanitized/Wasm responses (5865 admitted,
+1298 refused),4081 selected native shader compiles,82 original system stages,
+5641 original texture instructions, and4313 byte-identical historical responses
+against the complete actual authenticated predecessor compiler. All213 actual
+upstream/arena faults recovered exactly, with five retained caller-custody
+probes, zero getter calls, strict request methods, separate fixed16MiB Wasm
+memories and pressure recovery. Optimized selected frame sums are139616 stage
+and195344 pair bytes within262144. The full original parser words are retained,
+not regenerated from ESSL.
+
+Each recording contains896 complete GPU planes/8114 pixels/32456 words on headed
+Apple M4 Max Metal, with each actual writer followed by its own newly created,
+consumed and deleted native fence before full RGBA32UI readback. The independent
+Python TGSI interpreter reads original shader/sampler/view packets and actual
+uploaded input/depth bytes, not emitted ESSL or the JavaScript expectation.
+All original comparison functions, native nearest/comparison-linear constant
+neighborhoods, LOD/gradients/projection, derivative-sensitive nonzero bias,
+raw-ID wrap and packed-SNORM compositions held. A second completed draw with one
+wrong mask retained the baseline original-byte expectation and produced exactly
+three wrong red words; the oracle physically refuted it after its separate
+fence. Final browser console/page/request errors are zero. Each selected changed
+executable partition is positive:23 JavaScript and308 native; signatures/types/
+comments outside executable regions are separately classified.
+
+Sealed full hot/cold source/generated/compiler/native-call/readback bodies are in
+`evidence/virgl-shadow-shaders/worker/manifest.json`, `records.json` and32 adjacent
+archive parts. All52584 logical members were reopened and authenticated, plus
+all213503 carried predecessor members. Archive size525639457 bytes; archive
+SHA256 `49c9951e44f0aac20e4d709034e606803698ca7465d7f110078acccd29534c8a`;
+record-index SHA256
+`29ca252c9abaf1c2d29fd0f39d53ff4dc73a416a2f3fa13d5bb6d1b95807733f`.
+Hot receipt SHA256
+`33ae2686587f5bf8aa39c2b13e572866b18f25c1c1cecd93b7ff2d200db0df0e`;
+cold receipt SHA256
+`5549d250033551617820708d11246071d2bca85861aeb217a6200d1139054e4c`.
+The archive retains full governing LLVM/V8 partitions, generated binaries,
+original tokens, physical bodies, source/primary pins and browser captures.
+
+Claim: this isolated selected compiler translates the original admitted shadow
+family with owned stage/slot controls and unchanged old entry responses, within
+its fixed bounds. The recording demonstrates the compiler and actual hardware
+shader behavior, not guest execution. Decoder/consumer/storage/Rust/web/guest
+sources remain byte-identical at the verified predecessor. No production caps,
+guest offload, demo/deployment or throughput authority follows. The task is
+implemented pending a fresh independent adversarial verdict; the human graphics
+request continues with the dependent sampler consumer after that verification.
+
+Worker manifest SHA256 `6e3dac963bac00e954134e0f9ffe3f9f86b595b183b42f823beaa11aacf7b77a`.
