@@ -3,7 +3,7 @@ id: E6-T11d57
 epic: 6
 title: Compile original volume, cube and array texture shaders for native GLES3
 priority: 525.027039000396
-status: in-progress
+status: implemented
 depends_on: [E6-T11d56, E6-T11d48, E6-T11d49]
 estimate: S
 risk: high
@@ -135,3 +135,78 @@ The failed complete recording remains at
 its original full bodies successfully in a separate recovery command. No
 failed log or browser body was deleted or changed. A final clean recording
 will exercise the corrected orchestration and the remaining coverage/demo gates.
+
+### 2026-10-12 — worker — frozen original dimensional compiler submission
+
+Runtime implementation is277475e90b2b5abb4459b806fe198f165bedbb4a; the final
+runtime/harness head isebd460b325f5a3b97798a9450ab3c7f879b9ca26. The latter
+changes only the pixel-audit directory filter and its documented failure.
+Exact authoritative command:
+`python3 tools/virgl-dimensional-shaders/cold.py /tmp/wasmvm-dimensional-shaders-cold-ebd460b3`.
+It ran`make verify-E6-T11d57` in a scrubbed pristine clone at that exact head;
+tracked checkout was clean before and after, exit0. Final clone:
+`/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dimensional-shaders-cold-9y9mvjdz/repo`.
+ReceiptSHA256`9aa4603cafc7cb70967bbee56bf15b0a10a48918a3253877c33d784e8d035894`.
+
+The37recorded commands exercise9791admissions/1789refusals across11580
+complete optimized native/sanitized/Wasm cases. All7163historical response
+bodies are byte-identical to the authenticated old module. Original raw TGSI
+words independently match literal declarations, dimension/return types,
+operands, masks/modifiers and instructions (9526texture instructions).
+Three native Metal schedules (seeds27149/81953/163841) produce396complete
+RGBA32UI planes each, proving all supported original typed dimensions,
+operations, face/layer/mip identities, query components, original gradients,
+projection, masks and rounded/clamped array-layer neighbors. Full bodies are
+reopened by the independent pixel auditor. Physically swapped array layers
+fail the unchanged288-byte oracle after an actual native fence, with zero GL
+or browser errors and complete cleanup. Genuine allocation instrumentation
+records213faults/213exact recoveries and owned caller text before allocation.
+Heap stays16MiB; optimized selected stack frame sums are139680stage and
+195424pair bytes against262144. Finest coverage has29positive JS partitions,
+251positive native partitions, zero gaps and16static declaration waivers.
+Native/consumer/Rust boundaries are byte-identical to verified D56 and are held;
+no dimensional resource/consumer or production authority is added here.
+
+Successful full recording is`evidence/virgl-dimensional-shaders/worker/`:
+38049complete reopened bodies,32145683compressed bytes; manifestSHA256
+`0c698861a17b341265e35b6c6d223ea0390ea495cb942c0e469d4ecb1201602f`,
+indexSHA256`ce50cc6e695c5a8dacebc006e88c661967f2fa1e5a1e646b4ae5809d9c54976f`,
+archiveSHA256`0476287955b27dd7ffca49c3be190acfa6f2b809c86f0b7f9339c995ec84970c`.
+The earlier failed orchestration and recovery diagnostics are separately sealed
+in`evidence/virgl-dimensional-shaders/diagnostic/`:37389complete bodies;
+manifestSHA256`e324de4aa3350de51528ae97d5a01baa17b8f58aecae72d493b7b6ae635ae870`,
+indexSHA256`8743090aa0ab239776508120a2f9574e38fefe354c2d9a5c894c1a96b2a8f0f0`,
+archiveSHA256`12efb7befedfee0b9b8b57dee249fb99d0a6da030e61d4d5db9a62c060a747e0`.
+That diagnostic manifest names the final submission head; the original failed
+run's own report correctly retains277475e9and nonzero exit. Its reproducible
+checkout was removed only after preserving the complete recording, frozen
+shader sources, executed native/Wasm binaries and cleanup custody record.
+The recovery coverage attempt from the parent workspace cannot map cloned
+paths and is not authority; the canonical-clone recovery and final successful
+recording both have zero coverage gaps. No failed body was hidden.
+
+The built demo's single load passed127/0, zero errors, partial graphics and
+absent proof exports. Frozen default bundle was published with pinned
+Wrangler4.149.0 to Cloudflare deployment96df17e7-0547-4890-9078-b4a397452eae,
+https://96df17e7.wasm-vm.pages.dev; API reports success at15:56:57UTC with
+explicit frozen hash and ad-hoc main deployment metadata, without a Git merge.
+The staged304assets total66437568bytes, all below25MiB; only roadmap.js/sw.js
+changed from the authenticated D56 staging. Staging indexSHA256
+`474738c0b03a2974247a260479f3cd959de3fe0f6e0a69e2c9dd48814893f619`.
+One fresh canonical live load at https://wasm-vm.pages.dev/app.html passes127/0
+with zero errors, partial graphics, no proof exports, exact frozen roadmap and
+unchanged default WasmSHA256
+`8b49c7912ff6ce0157552dfa01b8649d7cce81287fdd31f4e7a6506d14a1e308`.
+Live reportSHA256`9c2131ca6614bb8052638a9099a3ac21bb9d84d62953afc294de73df99a9425e`.
+Publication is`evidence/virgl-dimensional-shaders/deployment/`:204complete
+reopened bodies, including194full HTTP responses, screenshot, frozen dist,
+preparation/publish/API and source; manifestSHA256
+`f852585081506fe1e0c97417da06ea2cd3435d484e0d5d2f15cb81bf404fa650`,
+indexSHA256`3eb8743404017d746e8f3ffc46462d99fea9e0e15fb99e77f153c5c7d8fcd5a9`,
+archiveSHA256`36a70ec88dbeeac94c4d55f50800d3a302d10d2057b3c2b0405b7eae0a0d683a`.
+
+Claim: This recording proves one explicit bounded compiler facet preserves
+original dimensional texture semantics through native GLES3 translation and
+physical GPU outputs, while all historical compiler responses stay unchanged.
+Storage/view/submission integration, production Mesa, positive capsets and a
+300MIPS result remain unproven. Fresh adversarial verification is pending.
