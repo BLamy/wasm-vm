@@ -3,7 +3,7 @@ id: E6-T11d59
 epic: 6
 title: Allocate and transfer original cube and array depth resources
 priority: 525.027039000396
-status: pending
+status: in-progress
 depends_on: [E6-T11d58, E6-T11d56, E6-T11d54]
 estimate: S
 risk: high
@@ -131,3 +131,10 @@ graphics chain ahead of unrelated general-queue work. This record proves a
 specific prerequisite gap; real Linux guest Mesa/Hyprland, dimensional depth
 consumers, other remaining API gates, truthful capabilities, production worker/
 scanout and measured MIPS remain parent work.
+
+### 2026-10-12 — worker — activated
+
+D59 is the sole active allocation and layered DMA contract. Its D58/D56/D54
+dependencies are independently verified. Preserve historical admission,
+exercise one selected native/host path, then record the prescribed final
+pristine-clone submission and hand it to a separate adversarial critic.
