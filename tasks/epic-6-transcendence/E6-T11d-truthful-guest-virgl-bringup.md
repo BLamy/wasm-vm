@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47, E6-T11d48, E6-T11d49, E6-T11d50, E6-T11d51, E6-T11d52, E6-T11d53, E6-T11d54, E6-T11d55, E6-T11d56, E6-T11d57]
-blocked_on: E6-T11d57
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47, E6-T11d48, E6-T11d49, E6-T11d50, E6-T11d51, E6-T11d52, E6-T11d53, E6-T11d54, E6-T11d55, E6-T11d56, E6-T11d57, E6-T11d58]
+blocked_on: E6-T11d58
 estimate: S
 risk: high
 capstone: false
@@ -715,3 +715,26 @@ D57 owns this next atomic compiler boundary. Native storage/DMA proof does
 not authorize dimensional shader consumers, capsets or production Mesa; the
 parent remains blocked until the named compiler boundary and subsequent actual
 consumer/API/production qualifications are independently proven.
+
+### 2026-10-12 — worker — dimensional compiler verified; view consumer remains gated
+
+D57 is independently verified at `deb7b3113f9adeb2e6e80449a6710dd3295093ea`
+and continues existing stack500 as open/draft PR535 above PR534. All135 earlier
+PR identities, heads, bases, order and both stack identities remain unchanged;
+no merge or restart occurred. The actual selected compiler passes54 original
+dimensional cases while the existing consumer rejects all54 metadata records
+and19 decoder entrypoints reject57 original dimensional view packets. All25
+ordinary2D controls pass. Exact clean-head reproduction:
+
+```sh
+node /tmp/wasmvm-dimensional-view-readiness.mjs /tmp/wasmvm-dimensional-view-gap-deb7b311-final
+```
+
+The complete84-body source/input/output/primary/stack-custody seal is
+`evidence/virgl-production-readiness/dimensional-sampler-view-gap/`, manifest
+`b76764f40ad62136a835869e1adb88650ae58f8b6a56ce0284c42b8ff9f8c530`,
+index `8a0f3e965d6fc8a515c2fb289c7b7e88cfcefc163b0ca2fe7225890e841351bf`,
+archive `f087447c3ff9b16638724faffe0cf83c7a6f2979c37775e092f5fec2f2d6543a`.
+Ordered S/high E6-T11d58 qualifies selected RGBA8 dimensional sampler views
+and actual draws. Compiler-only Metal fixtures grant no production guest
+acceleration or positive capsets; this parent remains blocked.
