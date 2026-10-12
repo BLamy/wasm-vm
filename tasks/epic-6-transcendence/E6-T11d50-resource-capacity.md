@@ -3,7 +3,7 @@ id: E6-T11d50
 epic: 6
 title: Retain the compositor's original resources within a bounded native store
 priority: 525.027039000397
-status: pending
+status: in-progress
 depends_on: [E6-T11d49]
 estimate: S
 risk: high
