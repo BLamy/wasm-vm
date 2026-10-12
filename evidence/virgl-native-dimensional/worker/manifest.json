@@ -1,0 +1,48 @@
+{
+  "schema": "native-dimensional-seal-v1",
+  "task": "E6-T11d56",
+  "head": "9de5721b5a9c5c0d70b94956305ba76a447a5024",
+  "records": 1625,
+  "reopenedMembers": 1625,
+  "recordIndexSha256": "01cb810875ddfcd1b895df24e688e798c1fe4e9d66364da2be4ea0d6aaeef418",
+  "archiveSha256": "d2f66777cdba8f6375d5958e80ca9204854bbccf151a0c3325cb63e6f91eef4b",
+  "archiveBytes": 38478604,
+  "dependencySeals": [
+    {
+      "family": "virgl-native-image",
+      "role": "worker",
+      "manifestSha256": "760e7cec92d98d9cf2104e534f296429d6f8305e0d24e013a62c4eff91dfd624",
+      "indexSha256": "ca2681aab7fe795ffc508441f0b0c7db306f78ae32de55aa524109b68f85c99b",
+      "archiveSha256": "438ecaf1c7eb936ea785d93ba37792460963f7a39ce1277aaed6cc0d7878c5c2",
+      "reopenedBodies": 1179
+    },
+    {
+      "family": "virgl-native-image",
+      "role": "verifier",
+      "manifestSha256": "08394b2a36a9f01e375584e12afbc5b42c46aad7da5709be107dd2a09789ecac",
+      "indexSha256": "f1ad2d4c224506b24cb6c322bb603b0d8278b13ebcfe8e1c6c2ebbc9c076baa1",
+      "archiveSha256": "13e394b2d3efb5489180b4970dee702171895896bd4ca958a737279a02f78444",
+      "reopenedBodies": 218
+    },
+    {
+      "family": "virgl-dimensional-storage",
+      "role": "worker",
+      "manifestSha256": "15815d6dc767934fbb4e5fbd493c1d927edc622d6ceb1833d6d9eac062c6e8a1",
+      "indexSha256": "3818f85ddc3f083764334ef80c4c615615dafe9d9c89dbe54776e0183aaac0a4",
+      "archiveSha256": "c32c662034196c07d06ec9103bb68de55bc461fc0623930fe2fed9ee0bc8d691",
+      "reopenedBodies": 1516
+    },
+    {
+      "family": "virgl-dimensional-storage",
+      "role": "verifier",
+      "manifestSha256": "3a8b2f0713ffd30165bb582dcf7fc1b769312545c2db418ad0d0dca4ad29f1b9",
+      "indexSha256": "f3fd8f6a9cea34379b208f20a595c4939d4604d58063c14851a48c30928edb55",
+      "archiveSha256": "309db5281fe1c73b06b7c7999214d37c49d9620911740bdfc8e0642928a26e1d",
+      "reopenedBodies": 584
+    }
+  ],
+  "authoritativeRecording": "cold/recording",
+  "commands": 33,
+  "guestExecution": false,
+  "productionAuthority": false
+}

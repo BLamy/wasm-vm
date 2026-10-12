@@ -3,7 +3,7 @@ id: E6-T11d56
 epic: 6
 title: Carry original layered RGBA8 allocation and DMA through native guest queues
 priority: 525.027039000397
-status: in-progress
+status: implemented
 depends_on: [E6-T11d55, E6-T11d54, E6-T11d52]
 estimate: S
 risk: high
@@ -112,3 +112,79 @@ S/high task; D55, D54 and D52 are independently verified. The frozen submission
 will record `make verify-E6-T11d56`, affected native/wasm/browser gates, one final
 scrubbed pristine clone and complete evidence for a separate adversarial critic.
 No production capabilities or Linux guest renderer are enabled by activation.
+
+### 2026-10-12 — worker — implemented; exact-head native queues and layered GPU inverses
+
+Frozen runtime/harness `9de5721b5a9c5c0d70b94956305ba76a447a5024` carries
+original RGBA8 volume/cube/array allocation, outer0x205/0x206 and inner9/43/45
+through actual selected Wasm VirtIO callbacks, generation-checked layered guest
+DMA and the D55 hardware store. Historical constructors and original2D/buffer
+paths keep their prior admission. The new selected profile enables no production
+capsets, dimensional shader sampling, surface or scanout consumer, or Linux guest
+renderer. Production guest graphics and300MIPS remain unproven.
+
+The final authoritative command is
+`python3 tools/virgl-native-dimensional/cold.py /tmp/wasmvm-native-dimensional-cold-9de5721b`,
+which runs `make verify-E6-T11d56` once from the exact frozen pristine clone with
+inherited compiler/npm/Chrome settings scrubbed. Its clean-before/clean-after
+receipt names `/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-native-dimensional-cold-360j2fhv/repo`.
+All33 commands passed in386s: affected format/default and selected clippy/native/
+wasm gates, historical decoder/storage/all81 image layouts, actual Metal replay,
+physical cube-face sabotage, built127/0 default demo, finest Rust/V8 and independent
+wire/RAM/GPU audit. Native queues pass21 tests, GPU83, control13, Machine4.
+The new allocator oracle exercises a real System-allocation refusal in a
+thread-local test scope, yielding `Err(OutOfMemory)` and zero partial spans.
+The unit-harness clippy command suppresses only the pre-existing GPU module
+`items_after_test_module` lint; ordinary selected/default lint remains strict.
+
+Three hardware schedules14241/33485/58393 exercise nine original shapes,
+27 mips and150 original layers. Complete independent public-byte/padding
+oracles cover live dirty5-entry SG memory, default/padded row/layer pitches,
+nonzero last layers/faces, inline and actual staging uploads/inverses, queued
+backing revocation/reattach, generations, exchange replay, callback reentrancy,
+reset, ID reuse and failed native GPU waits. The recording contains273 original
+queue records,3647 native canonical state points, all27 native DMA bodies and
+nine exact mip-span records,8761 actual GL calls,120 physical fences and63 PBO
+collections, ending with zero native objects. Machine.run never polls GPU; used
+responses follow actual fences and complete scatter. A physically rotated cube
+PBO face returns a wrong600-byte inverse and fails the unchanged full-byte oracle.
+
+Finest coverage audits168 changed native runtime lines and128 executed V8
+partitions with zero gaps. Thirty-six unchanged V8 partitions are carried by
+exact verified D55 source-region digests; one static null configuration is waived.
+Wasm's new constructor and both layered exports execute through the original
+bindgen ABI, including failed reentrant Machine borrows and malformed/replayed
+exchanges; unchanged exchange parsing/error mapping remains carried. Every
+compiler, primitive dependency and historical boundary is authenticated from
+complete D54/D55 worker and verifier archives.
+
+The worker seal at `evidence/virgl-native-dimensional/worker/` preserves and
+reopens all1625 complete bodies,38478604 compressed bytes, including full source,
+original wires, RAM inverses/guards, traces/digests, GPU calls/output, coverage,
+test binaries and final pristine recording:
+
+- manifest `7c8fb3ab46b3659ce855e77a80afc161a14f808b491a6753caa6c53231b0d0e6`
+- index `01cb810875ddfcd1b895df24e688e798c1fe4e9d66364da2be4ea0d6aaeef418`
+- archive `d2f66777cdba8f6375d5958e80ca9204854bbccf151a0c3325cb63e6f91eef4b`
+
+The committed default dist was deployed without mutating that frozen checkout.
+Its304 staged files total66437533 bytes and match the frozen dist except for
+exact authenticated D55 boot URL/snapshot staging. Only Wasm, roadmap and service
+worker differ from the preceding staged deployment. Staging index
+`0730d7c93933224b59c2abd4f7e9a96c710c66f3767aa5ae7c12047985635075`
+binds every file. A preliminary empty staging-directory attempt was rejected
+locally with ENOENT before upload; its complete log is retained. The validated
+Wrangler4.149.0 deployment succeeded as production
+`9f22c455-fe79-48e1-a0c9-1062f684a74f` at14:27:21UTC, explicitly naming the
+frozen commit. Canonical `https://wasm-vm.pages.dev/` serves the exact default
+1634057-byte Wasm
+`8b49c7912ff6ce0157552dfa01b8649d7cce81287fdd31f4e7a6506d14a1e308`.
+A one-load Playwright live capture records194 full response bodies,127/0,
+zero application/page/request errors, permitted favicon404, no proof exports,
+and the D56 graphics marker still partial with production acceleration disabled.
+The source, screenshot, full bodies, publish/API logs and staging index are
+sealed separately under `evidence/virgl-native-dimensional/deployment/`.
+
+Normal progress continues existing native stack500 above open/draft PR533.
+There is no new stack initialization, reset or merge. A fresh critic must now
+interrogate these claims and promote its independently surviving attack.
