@@ -2,7 +2,7 @@
 id: E6-T11d49
 epic: 6
 title: Execute original 2D shadow sampler state against owned native depth views
-status: in-progress
+status: implemented
 estimate: S
 risk: high
 priority: 525.027039000396
@@ -134,3 +134,56 @@ match 1,194 historical public results, and the prior instanced public factory
 is exercised directly on native Metal. The remaining older false-selector
 operands have exact source/digest waivers. No guest, capset, demo, deployment
 or throughput claim is made by this isolated boundary.
+
+### 2026-10-12 — worker — frozen submission, fresh criticism required
+
+Runtime and every recording/audit harness are frozen at
+`17b9d9334dfa1b2b209df36e0105e2ec96549fa7`. Exact commands:
+
+```sh
+VIRGL_SHADOW_SAMPLER_EVIDENCE_DIR=target/evidence/virgl-shadow-samplers-final/hot make verify-E6-T11d49
+python3 tools/virgl-shadow-samplers/cold.py --output target/evidence/virgl-shadow-samplers-final/cold
+python3 tools/virgl-shadow-samplers/seal.py target/evidence/virgl-shadow-samplers-final/hot target/evidence/virgl-shadow-samplers-final/cold evidence/virgl-shadow-samplers/worker
+```
+
+Hot and pristine scrubbed clone gates both passed: 252 owned metadata/decoder
+rows, zero getter calls, 1,194 exact historical public-result comparisons,
+596 original hardware cases and 591 complete frame checks. They each audit
+20,774 pixels, 20,988 directly interpreted point-result words, 320 composed
+instance/stencil native passes, 17 no-draw/reflection refusals and 601 plane
+completion citations. The full records also retain the held physical lifetime
+audit for every composed diagnostic writer. Three distinct deterministic
+schedules pass cancellation/rebind/destruction cleanup. Both physical controls
+first pass a baseline, then consume a separate native fence before the unchanged
+original oracle rejects respectively 36 comparison words and 9 mask words.
+Finest governing V8 partitions: 493 positive, 25 exact unchanged historical
+operand waivers, zero unclassified executable partitions.
+
+The pristine clone is detached at the exact frozen head, starts/ends pristine,
+uses scrubbed build/runtime overrides and recovers the actual generated
+compiler bodies from the authenticated published predecessor. Compiler,
+storage, transport, guest and demo source remain unchanged.
+
+`evidence/virgl-shadow-samplers/worker` includes all hot/cold original packet,
+compiler response, actual native input/upload/readback, reflection, fence,
+full source/coverage, screenshot and audit bodies. All 44,665 logical members
+were sealed and reopened against the exact record index. Published D48 worker
+and critic seals are exact external dependencies: their complete 53,210 logical
+bodies were reopened once per final gate, and their full indexes and manifest
+identities travel in this seal. No earlier archive is silently replaced.
+
+Manifest SHA256 `f6060a1d127854fa230b3f9ba0f50e83941ded19c4e516f5f5e0908a8f901f8f`; record index SHA256
+`7bf6f4ea3b5aaf6b53a0199dc8a3dfa6824cf2c512f5f8a7a48067aad3370192`; complete archive SHA256
+`efde5ede4f9528859ea0f762b34ac906e2e5765724efe87bd563e9615673c5cb` (28,031,341 bytes).
+Hot receipt SHA256 `23a5437a6593e2c8175b4c2d239f080816bf82f6be3d3242177f5a9d6a1c6f7d`; cold receipt
+SHA256 `ff9906682e2702bfbb71cdb73c0006c98494e6d660269fcd552e50b7aca22725`; cold report SHA256
+`70e8159b532594c7e2db5efb6b5de35278d5a2c7f5dbe4c817e536d8ca70cd49`.
+
+Claim: the selected original 2D comparison sampler consumer executes native
+depth comparisons and stage/slot-owned view controls while preserving neutral
+queries, ordinary/integer sampling, original instance/stencil order, refusal
+atomicity and bounded lifetime custody. The independent original-packet/word
+oracles and completed physical counterexamples support that isolated claim.
+This is a worker submission awaiting the mandated fresh adversarial verifier;
+production negotiation, actual guest Mesa/compositor offload, demo/live shipping
+and measured 300 MIPS remain the parent task's acceptance.
