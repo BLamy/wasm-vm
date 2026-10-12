@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47, E6-T11d48, E6-T11d49, E6-T11d50, E6-T11d51]
-blocked_on: E6-T11d51
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47, E6-T11d48, E6-T11d49, E6-T11d50, E6-T11d51, E6-T11d52]
+blocked_on: E6-T11d52
 estimate: S
 risk: high
 capstone: false
@@ -622,3 +622,18 @@ glmark2-es2 276, plus the old16/17 transport quota. Reproduce with
 Ordered S/high D51 closes this selected control envelope before bring-up
 resumes. It grants no complete API, guest renderer, worker/scanout/demo/live
 or300MIPS claim. The human production-graphics instruction remains active.
+
+### 2026-10-12 — worker — control verified; selected submission composition gap
+
+D51 is independently verified at `0660eebf08a1b047109ed4e2e508132b68d103ba`;
+PR529 continues the same stack500 with both stack identities and all129 prior
+PRs preserved, all130 open/draft/unmerged. Its selected native envelope is not
+yet assembled into the host submission bridge. The recorded hardware bridge
+probe first refuses packed depth20 at compositor419 and glmark2 428, and still
+uses the old16-resource quota; complete input/owner/GL records and runner are
+sealed in `evidence/virgl-production-readiness/desktop-submit-bridge-gap/`.
+Exact repro was `node /tmp/wasmvm-desktop-bridge-readiness.mjs` at0660eebf, with
+manifest `c0e3e61ee34f77e48094fd901c318bb4fd90a1a1e1bc5340b1504e34f54b3eaa`.
+Ordered S/high D52 composes the verified control/store/consumer with real Wasm
+submission ownership. No complete API, positive capabilities, actual guest
+boot, production worker/scanout or300MIPS is claimed.
