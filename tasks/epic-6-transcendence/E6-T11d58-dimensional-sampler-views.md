@@ -3,7 +3,7 @@ id: E6-T11d58
 epic: 6
 title: Execute original RGBA8 volume cube and array sampler views
 priority: 525.027039000397
-status: implemented
+status: verified
 depends_on: [E6-T11d57, E6-T11d56, E6-T11d55, E6-T11d49]
 estimate: S
 risk: high
@@ -215,3 +215,173 @@ success response and live capture. ManifestSHA256
 index `0fda4f27d53d65fd39285edf245344715da499e68f6c50439841462cba70654a`;
 archive `5054f169b23d2a8dcda3cd29d9bfc5708a7a05f43a54fc3af0057a0cc4a307c8`.
 Fresh adversarial verification is required before this task can become verified.
+
+### 2026-10-12 — fresh verifier
+
+VERDICT: verified
+
+Oriented on AGENTS.md, the complete task and the diff against verified D57
+before opening evidence. Predictions P0–P9 were written first in
+`evidence/virgl-dimensional-views/verifier/predictions.json`, SHA256
+`a188b5bab782efdce59125f0a49343bf9e337af05b05a6f7958ccc0322a64978`.
+The frozen runtime/original acceptance harness is
+`1c7f8c9b4e52e09e8f6e2201f92d7483ce7117a6`; submission is
+`75f5815d0f290e92cdb77239b78facf93ca6fbbc`. No runtime or original harness
+was edited by this critic. This verdict covers the explicitly selected RGBA8
+dimensional sampler-view consumer and grants no actual Linux guest, capset,
+API-completeness, production or MIPS authority.
+
+- P0 custody — HELD. Reopened all2,327 worker and512 deployment bodies against
+  the worker's exact manifest/index/archive digests above, then all53,318 named
+  predecessor bodies. Frozen receipt SHA256
+  `61949f18a5a3556c2ef33bd2b069e41c54f293271537cc4913b0e048bb3b88b2`
+  retains all31 expected command exits. All three hardware report heads are
+  exact. The submission's sealer-only guard correctly authenticates the three
+  seed reports; it does not change the frozen run. Citations:
+  `verifier/authentication.json:63`, `:67`, `:555`.
+- P1 original packets/metadata/history — HELD. Independently reopened and
+  checked all794 complete facade contracts,54 held compiler responses,
+  76 historical decoder responses and247 paired interfaces. Packed levels,
+  layers and swizzles are literal; rejected target/range/format/role/typed,
+  hostile accessor/coercion/revoked-proxy/extra/hole records retain structured
+  refusals and recover before drawing. Executed hostile accessor/coercion
+  count is0. Fresh43 attack bodies repeat the worker's129 attack bodies.
+  Citations: `verifier/boundary-audit.json:6`,
+  `verifier/recording-interrogation.jsonl:1`,
+  `verifier/verifier-interrogation.jsonl:1`.
+- P2 complete original pixels/RAM — HELD. Independent arithmetic consumes
+  actual original uploaded RGBA8 byte indices and original coordinate/TGSI
+  constants, without importing the worker oracle. It checked926 complete
+  planes/58,656 words, every SG padding and guard byte, and936 fractional
+  written float lanes. Maximum filtered absolute error is
+  `0.00012254714965820312`, below the selected Metal1/255 budget; other lanes
+  are exact. Citations: `verifier/recording-interrogation.json:7`, `:23`;
+  subset body `hardware-27449/run-0241.json.gz`, decompressed SHA256
+  `77ba8f338a42efade2de5d978cc54c2b44241236b8672a8489d89204cea8a69b`,
+  `verifier/recording-interrogation.jsonl:628`.
+- P3 native dimensions/stage slots — HELD. Actual reflected sampler types,
+  bound native texture dimensions, relative mip counts and sampler state
+  match the original commands.18 sharing bodies keep cross-stage dimensions
+  and same-allocation ranges distinct. The fresh NPOT5x3/seven-layer case
+  uses original slot15, native units31/15, vertex mip1/layers2..6 and fragment
+  mips0..2/layers1..3 with different swizzles. Citations:
+  `verifier/recording-interrogation.jsonl:881` and
+  `verifier/verifier-interrogation.jsonl:47`–`:48`; first novel body SHA256
+  `49e48b2c3bd6d02873ccaaf81347be8f0d4b3442a9282a663d2496bc216e9285`.
+- P4 actual copies/budgets/state — HELD. Replayed actual native framebuffer
+  attachments and blits for every private mip/layer plane. The subset cited
+  in P2 copies original layers1..3 to local layers0..2 at calls7857,7864,
+  7871,7878,7885,7892. All12 worker/fresh GPU-only refresh records contain
+  zero CPU texture uploads after their passing baseline. Six complete native
+  owner records preserve caller framebuffer/scissor state, original/private
+  byte budgets and cleanup through allocation/copy/status failures. Citations:
+  `verifier/gpu-refresh-audit.jsonl:1`,
+  `verifier/boundary-audit.json:5157` and the P2 body/calls.
+- P5 Wasm/fences/generations — HELD. Reopened actual request/response,
+  descriptor/avail/used RAM, canonical state/digests and command traces, with
+  distinct real draw/PBO fences, native signal, staging collection and owned
+  synchronization retirement. Nine worker and three fresh boundary sequences
+  hold rebinding, destroy/reuse and cancellation. Example boundary body SHA256
+  `112acb05c43949472446b8517f2c1ee625124fd55509a5d97bbd342eba678f1b`
+  retains four complete planes and a cancelled pending draw;
+  `verifier/recording-interrogation.jsonl:130`. Unchanged reset intentionally
+  clears the command trace (`crates/core/src/dev/virtio/gpu/mod.rs:593`);
+  complete pre-reset literal records/canonical digests remain audited.
+- P6 novel/sabotage sensitivity — HELD. The worker's completed wrong-layer
+  plane1 word0 expected1065353216/observed0 is independently confirmed at
+  `verifier/recording-interrogation.jsonl:139`, body SHA256
+  `24f30f0e4e4f31fefc7e5022fd4d26e2a279f65688f4bf0c2749c8fdca1b4f62`.
+  Fresh novel positives passed schedules3141592653/2718281829. After its
+  passing baseline, physical source-layer+1 copies reached actual completed
+  readback, then the promoted test exited1 at plane1 word1:
+  expected0/observed1065353216, exactly the pre-written novel prediction.
+  Body SHA256 `4570f90ba941d70000e43c157bd26c694dee7338bffe4619dfc0e0e0dc90b487`,
+  `verifier/verifier-interrogation.jsonl:49`; physical calls10387(2→3),
+  10394(3→4),10401(4→5),10408(5→6),10415(6→0); real draw10963,
+  draw fence10966, readback fence11005, collection11024. This also sabotage-
+  checks the promoted test. The initial negative capture used the reused
+  helper's ordinary fixture oracle; it is retained as non-authoritative.
+  The corrected helper forwards the same novel oracle to both planes;
+  `verifier/recording-corrections.json` records this harness-only correction.
+- P7 finest changed-line coverage — HELD. Independently recomputed every913
+  partition from raw precise V8 records and exact source bodies:851 executed,
+  61 HELD unchanged operands,one static waiver,zero new executable gaps.
+  All61 HELD historical counters arezero. They retain unchanged verified
+  source/dependency authority and are explicitly not new positive execution.
+  `verifier/coverage-audit.json:252`, `:254`, `:257` retains each finest
+  governing count and old/new source offsets; all61 exact held citations are
+  also in `verifier/held-citations.jsonl`. The sole static waiver is the
+  unchanged `: "texture"` fallback at `state.mjs:570`.
+- P8 pristine/dependency boundary — HELD. Authenticated the one final pristine
+  scrubbed clone at the frozen head and its clean before/after states; no
+  portability contradiction requires another clone.589 frozen source pins,
+  638 held source pins and six generated bodies are exact. Final fresh source
+  audit covers160 complete pins and leaves the original acceptance harness
+  SHA256 `f6958d91ad90a7551dc08803dbcc69e8ccb4e0bcb51db2ffb816589c1f0d6526`
+  unchanged. Only the selected critic acceptance alias introduces the novel
+  packet and forwards its original oracle; runtime modules remain exact.
+  Citations: `verifier/authentication.json:64`–`:65`,
+  `verifier/final-custody.json:1`. Unchanged C/Rust/compiler walls were carried
+  by authenticated dependencies rather than rebuilt.
+- P9 demonstration/deployment — HELD. Reopened all512 deployment bodies and
+  all204 prior-deployment bodies, checked all304 staged files and194 complete
+  live HTTP responses against frozen staged bytes. Only roadmap.js/sw.js code
+  bodies change; all files are below25MiB and boot artifacts remain exact.
+  Actual deployment id is `e7b44bfe-632e-401f-a61a-df033112f26a`; local and
+  canonical127/0/errors0, proof exports absent, scalar pip live, guest-GPU pip
+  partial and production authority false. Citations:
+  `verifier/deployment-audit.json:5`, `:16`, `:1193`; live screenshot SHA256
+  `d3d6fb88b24856706697a17e731dbdad906a30148f15d27edd53baf5f691dd18`.
+
+No FAILED or NEEDS EVIDENCE prediction remains within this boundary. The fresh
+original-byte audit covers49 runs/59 planes/3,120 words and474,969 native calls,
+in addition to the898 worker runs/926 planes/7,736,731 native calls. Complete
+worker citation index SHA256
+`166cc76f1352af6034d9c0856846bef74a7b99307e2d30ba2fc35d34ca9e0a88`;
+fresh index `6fe347b690b4a743e039d8ed842346c5c839536815c9f1a1c35b9c133286f03d`.
+The fresh facade body SHA256 is exactly the worker's
+`7d1ee9f223f9df941323dfae919b88ab547be79b80849f70d00d4a6ba7771c38`.
+
+SUITE: promote `tools/virgl-dimensional-views/critic-case.mjs` and
+`critic-browser.mjs` as the deterministic original-byte slot15/private-range
+case and completed physical sensitivity runner. Keep the existing verify
+target and complete recordings. All fresh browser runs used actual headed
+Chrome/Apple M4 Max Metal with zero browser errors. Owned browsers closed;
+unrelated Chrome and raw/cold evidence are preserved.
+
+Exact fresh commands:
+
+```sh
+node tools/virgl-dimensional-views/browser.mjs --output evidence/virgl-dimensional-views/verifier/fresh-attacks-3141592653 --seeds 3141592653 --attacks true
+node tools/virgl-dimensional-views/browser.mjs --output evidence/virgl-dimensional-views/verifier/fresh-boundaries-2718281829 --seeds 2718281829 --boundaries true
+node tools/virgl-dimensional-views/facade.mjs evidence/virgl-dimensional-views/verifier/fresh-facade /tmp/wasmvm-dimensional-views-cold-1c7f8c9b/recording/predecessor
+node tools/virgl-dimensional-views/critic-browser.mjs --output evidence/virgl-dimensional-views/verifier/novel-corrected-3141592653-2718281829 --seeds 3141592653,2718281829
+node tools/virgl-dimensional-views/critic-browser.mjs --output evidence/virgl-dimensional-views/verifier/novel-sabotage-corrected-3141592653 --seeds 3141592653 --fault true
+python3 evidence/virgl-dimensional-views/verifier/authenticate.py
+python3 evidence/virgl-dimensional-views/verifier/interrogate.py
+python3 evidence/virgl-dimensional-views/verifier/interrogate.py evidence/virgl-dimensional-views/verifier fresh-attacks-3141592653,fresh-boundaries-2718281829,novel-corrected-3141592653-2718281829,novel-sabotage-corrected-3141592653
+python3 evidence/virgl-dimensional-views/verifier/coverage_audit.py
+python3 evidence/virgl-dimensional-views/verifier/boundary_audit.py
+python3 evidence/virgl-dimensional-views/verifier/deployment_audit.py
+python3 evidence/virgl-dimensional-views/verifier/final_audit.py
+python3 evidence/virgl-dimensional-views/verifier/write_verdict.py
+python3 tools/check_task_policy.py
+python3 tools/build_queue.py
+python3 evidence/virgl-dimensional-views/verifier/seal.py
+```
+
+The original151,192,332-byte worker archive is authentic but exceeds GitHub's
+100MiB blob limit. Its later lossless chunk serialization is a separate narrow
+publication transport correction requiring incremental authentication; this
+runtime verdict and all HELD digests remain intact. No PR was merged, published
+or stack-mutated by this critic.
+
+Critic seal `evidence/virgl-dimensional-views/verifier/` retains445 complete
+reopened members (29,945,836 compressed bytes). Manifest SHA256
+`bf8aaeb347ad4aead9304fbfc4759fe74f1e622328f0399fc13c3b412318d590`;
+index `c2b97a36f021cc572d94490e7a341bca0a209923399d3e0c2d070b3026386958`;
+archive `b5cbdaca9aa4885a0b06b94572eaa3a92688be1ba4b0a0c89def652fc956f787`.
+It contains predictions, every audit and citation, all fresh source closures,
+complete positive and completed sabotage bodies, screenshots, promoted sources,
+correction provenance and successful policy-before-queue receipts. The archived
+verification-log snapshot precedes this digest paragraph to avoid self-reference.
