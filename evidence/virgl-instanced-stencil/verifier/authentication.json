@@ -1,0 +1,4591 @@
+{
+  "schema": "fresh-instanced-stencil-full-custody-v1",
+  "sourceHead": "3cbb041b43928701026b5ca2ddfb3dcf9a799c2b",
+  "submissionHead": "d88235ea7d16b2475ff9d6c7d96cc361d5589c3e",
+  "seals": [
+    {
+      "family": "virgl-instanced-stencil",
+      "role": "worker",
+      "manifestSha256": "2387876828e65c6b958b5c0d9898a3face77af6fc26ffa5bbc114b0890da33a3",
+      "indexSha256": "e43fb84a4a36adb043968185259061fe2a8af6b44edcb334cbe63c7975d73857",
+      "archiveSha256": "af534b07ebb9a8422adebdf9cd66286f8b2c3472faff8ee38b0a5433ac320b99",
+      "archiveBytes": 143968194,
+      "logicalMembers": 41944,
+      "physicalMembers": 2517,
+      "logicalBytes": 1485499748,
+      "allBodiesReopened": true,
+      "extracted": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-instanced-stencil/verifier/unpacked"
+    },
+    {
+      "family": "virgl-ordered-stencil",
+      "role": "worker",
+      "manifestSha256": "6e1ab959e3e04a2998eabf4b60233419f3b0934ee33ccf2d36b09e441c28886c",
+      "indexSha256": "bfee67b4e66aa3645f1f05a7847ef0e8f6ee5f092904a60ff56ab28c22aae8eb",
+      "archiveSha256": "5d40d9cf0650b561637863b24cd52984cf1fbaf08ebf988e8a57940add1f13ed",
+      "archiveBytes": 75846524,
+      "logicalMembers": 83324,
+      "physicalMembers": 8124,
+      "logicalBytes": 3540408516,
+      "allBodiesReopened": true,
+      "extracted": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-instanced-stencil/verifier/predecessor/virgl-ordered-stencil/worker"
+    },
+    {
+      "family": "virgl-ordered-stencil",
+      "role": "verifier",
+      "manifestSha256": "4b0b3b14105b4005e68bf52dde8666e0b85fd80731ad988e39f1759b4a3d66a9",
+      "indexSha256": "8ed963dbb701cf544a1c6c1adfe409e5164d8f664b7737fde65924588a2bcd6e",
+      "archiveSha256": "d76c57d568deff90f0578b45afde5405804981b4d5c6e33f192f1ab979b27a1b",
+      "archiveBytes": 14444408,
+      "logicalMembers": 8065,
+      "physicalMembers": 2088,
+      "logicalBytes": 363121234,
+      "allBodiesReopened": true,
+      "extracted": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-instanced-stencil/verifier/predecessor/virgl-ordered-stencil/verifier"
+    },
+    {
+      "family": "virgl-instance-base",
+      "role": "worker",
+      "manifestSha256": "649def87b9a04660ba795de462f7ff1773bf0d9db9b89c501b6a417accddf5ce",
+      "indexSha256": "e9ff82d91a2f6d8e6310e971ef87357a5aa22237f5eaf25facad465351ee29b9",
+      "archiveSha256": "f746e58d61505392aa5b7f23fe919e2585187be0925e86f3158282052076df0e",
+      "archiveBytes": 97678160,
+      "logicalMembers": 2584,
+      "physicalMembers": 562,
+      "logicalBytes": 481065882,
+      "allBodiesReopened": true,
+      "extracted": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-instanced-stencil/verifier/predecessor/virgl-instance-base/worker"
+    },
+    {
+      "family": "virgl-instance-base",
+      "role": "verifier",
+      "manifestSha256": "8fc075d8d6e85a4078ddf507cb349282b5579093f5c047a3a14c2929d17f13b4",
+      "indexSha256": "2298b9fbb3e68cbe4d2996d92d335efeb891c552de5eb41f8d9ed531adc3dc58",
+      "archiveSha256": "cf4cf5b9ced80cc4f379748bd199f9228d1cb4f6de8810adbef2f209aed70563",
+      "archiveBytes": 18359204,
+      "logicalMembers": 3206,
+      "physicalMembers": 670,
+      "logicalBytes": 404126514,
+      "allBodiesReopened": true,
+      "extracted": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-instanced-stencil/verifier/predecessor/virgl-instance-base/verifier"
+    }
+  ],
+  "sources": [
+    {
+      "path": "AGENTS.md",
+      "bytes": 25819,
+      "sha256": "d1c7718fd7ab6c3efaa7900d1923f090e267829e6762f7a1a1bb64d4c45c085d"
+    },
+    {
+      "path": "Makefile",
+      "bytes": 127791,
+      "sha256": "0f2451aca58c77f2f6c02a24e4b827d83e2dc01f4ff63c36e988bb2b4829622a"
+    },
+    {
+      "path": "renderer/virgl-command/README.md",
+      "bytes": 20424,
+      "sha256": "709c9cc19a9a4a7a2ede6bfd4dc73dc75288b126adba1189126249a957adc54f"
+    },
+    {
+      "path": "renderer/virgl-command/async-README.md",
+      "bytes": 7101,
+      "sha256": "e8f014fbb665f56baf4ab85341ea91b9a79d34d13d7df9ca8ec6628d9eefe2dc"
+    },
+    {
+      "path": "renderer/virgl-command/blend-README.md",
+      "bytes": 3303,
+      "sha256": "eb9b136b426495fb4deb74a51503c729478b84b8ab3a73dac907333a6f3e163d"
+    },
+    {
+      "path": "renderer/virgl-command/cache-README.md",
+      "bytes": 7519,
+      "sha256": "9ffbd3cc25b9a18fcc6f5f94330e779226ed4cea59092afc64b6d0317e08739c"
+    },
+    {
+      "path": "renderer/virgl-command/cache.mjs",
+      "bytes": 2989,
+      "sha256": "9e50cc258528e581f79cee0e4e0038994c7968f80046b9db21e7f5e0e4a92cfa"
+    },
+    {
+      "path": "renderer/virgl-command/color-images.mjs",
+      "bytes": 2770,
+      "sha256": "8c1b43f830e13f73d1397398e97bf263343f88c1782c683a890cb0f1fbc5e0e1"
+    },
+    {
+      "path": "renderer/virgl-command/compact-vertex-README.md",
+      "bytes": 2704,
+      "sha256": "520045ca261d53fe4d8663dba0f9b16e9f8ac8cfa8b4a3e2abcd1da560eb0fd0"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "bytes": 104686,
+      "sha256": "ae0f5671ea62b984aae8df60c9104b5f6f3bb4bf9f4c8494aad3cc89bb6227a1"
+    },
+    {
+      "path": "renderer/virgl-command/control-README.md",
+      "bytes": 6075,
+      "sha256": "f6d1c9853f51196a7b9d484c1bc64336ea314e9eed1e62d18fa8d29c6a32ddb7"
+    },
+    {
+      "path": "renderer/virgl-command/control-bridge.mjs",
+      "bytes": 30335,
+      "sha256": "59881d26fa257e3462f5d628026d4557ae541f27894124d19fddc9b104db43cf"
+    },
+    {
+      "path": "renderer/virgl-command/decoder.mjs",
+      "bytes": 44879,
+      "sha256": "e421aa823c4c45801a268626c206ca0150ecbaa29e976cb9d45fb2aa5bea4638"
+    },
+    {
+      "path": "renderer/virgl-command/draw-README.md",
+      "bytes": 15985,
+      "sha256": "3645f1daaa10af9665155c3f4ce2792e4371cd1430e178d23307acd5d58149c2"
+    },
+    {
+      "path": "renderer/virgl-command/float-consumer-README.md",
+      "bytes": 2169,
+      "sha256": "fc54462b61f0feac081f08792070008c2a330fa2c698c7a47848b300b9c21345"
+    },
+    {
+      "path": "renderer/virgl-command/float-images-README.md",
+      "bytes": 2715,
+      "sha256": "9b430d930b4215d2f7dc3307cafbd6b0923b19c2b86c847b864ff1834c3493c0"
+    },
+    {
+      "path": "renderer/virgl-command/float-images.mjs",
+      "bytes": 3132,
+      "sha256": "69543e48426c7ded5178b659eb651b5cb765aa559a0bbf96fd8d34f5cf7cfe46"
+    },
+    {
+      "path": "renderer/virgl-command/float-vertex-README.md",
+      "bytes": 1914,
+      "sha256": "ee79a8a3d1a008b66544b9c2fa4c02baf51e99dc967803de5a82b1f18c6de620"
+    },
+    {
+      "path": "renderer/virgl-command/floating-depth-gpu.mjs",
+      "bytes": 14648,
+      "sha256": "6e87240445044201f21a2977ee883de57e930542b67a99a03cf0077c008ef853"
+    },
+    {
+      "path": "renderer/virgl-command/floating-depth-images.mjs",
+      "bytes": 947,
+      "sha256": "76e02b32e5a24f65f360adb7cbcc0f9e5d51ee90be7cfbe1a383bfa99cc30370"
+    },
+    {
+      "path": "renderer/virgl-command/integer-image-consumer-README.md",
+      "bytes": 1391,
+      "sha256": "efa4462b8529d831766518be8638d4619c29e957d1c23e9cd1c4cf17033248e2"
+    },
+    {
+      "path": "renderer/virgl-command/integer-images-README.md",
+      "bytes": 861,
+      "sha256": "d323bf05dbd37492261323430a9469d8754fe864d73c8109b20f69998eaba603"
+    },
+    {
+      "path": "renderer/virgl-command/integer-images.mjs",
+      "bytes": 1557,
+      "sha256": "8871226b60ad86ee1f585f8de6e5891241a361ad84aa811a36028fd003d95029"
+    },
+    {
+      "path": "renderer/virgl-command/integer-vertex-README.md",
+      "bytes": 1705,
+      "sha256": "c506218898ba0a00c8500de01b8e6bc4a28fce1eccaba83098c55fe94808b8c3"
+    },
+    {
+      "path": "renderer/virgl-command/packed-float-consumer-README.md",
+      "bytes": 2005,
+      "sha256": "3561e3c02db63b34cce41a1ba7d070f863c44e7baa6a16bf03c86689c9b72768"
+    },
+    {
+      "path": "renderer/virgl-command/packed-float-images-README.md",
+      "bytes": 2178,
+      "sha256": "c684887a7300654ece2cadbc8655d3db9cc716e5794a97b14d8a1da947e540fc"
+    },
+    {
+      "path": "renderer/virgl-command/packed-float-images.mjs",
+      "bytes": 1620,
+      "sha256": "0ea28e0bfcf4a0ae04f634826d4b65cb19a6285850836412c7b06311ce1c5405"
+    },
+    {
+      "path": "renderer/virgl-command/packed-normalized-images-README.md",
+      "bytes": 1400,
+      "sha256": "66620059e3f74ea8e2e3297a48998534447df997ccdb093d4140930b5ca47a49"
+    },
+    {
+      "path": "renderer/virgl-command/packed-normalized-images.mjs",
+      "bytes": 2046,
+      "sha256": "5ccf01336a906f3b46b0c8c790c73449331e09ac3cfee2931459d507b6dccd18"
+    },
+    {
+      "path": "renderer/virgl-command/packed-unsigned-images.mjs",
+      "bytes": 991,
+      "sha256": "1170cf4d69d7281fdc32383354d7c17d6019ece0c7a6f681de86b27a57ea0d61"
+    },
+    {
+      "path": "renderer/virgl-command/packed-vertex-README.md",
+      "bytes": 3052,
+      "sha256": "5e8cefdcb2e5dfea01e7e32eaebf960f142c410ad85204708ffb17988200aaed"
+    },
+    {
+      "path": "renderer/virgl-command/resources-README.md",
+      "bytes": 28284,
+      "sha256": "b928f0443fda3e43aa6b209233ae86a264391c7db133e2a41a6d9a8151f96ccc"
+    },
+    {
+      "path": "renderer/virgl-command/resources.mjs",
+      "bytes": 122744,
+      "sha256": "601a575f91fd2399fa162f8e3bdffd403a7f9cd4f63d8066d131ac04528e78df"
+    },
+    {
+      "path": "renderer/virgl-command/scalar-vertex-README.md",
+      "bytes": 2578,
+      "sha256": "3d12024f33dc92ba9c4d872395c6e79c1ef11a2fa60f089d10dca545b7a16515"
+    },
+    {
+      "path": "renderer/virgl-command/scanout-README.md",
+      "bytes": 3833,
+      "sha256": "ae55d9162c1acfe521ba27493a62fac221c6ec43edbff023e29e7a1a78e0b757"
+    },
+    {
+      "path": "renderer/virgl-command/scanout.mjs",
+      "bytes": 14132,
+      "sha256": "affbac9b1b14e2a1eadb9bc29c693e120e20ffb84af02196a9eb00660eac1bac"
+    },
+    {
+      "path": "renderer/virgl-command/shared-exponent-gpu.mjs",
+      "bytes": 9865,
+      "sha256": "22efbf4e0a3ae04d2e29900278db1e88880bd7c2fc7e757d0fd12d3a899531b7"
+    },
+    {
+      "path": "renderer/virgl-command/shared-exponent-images-README.md",
+      "bytes": 1571,
+      "sha256": "26dd525c7ae891a9b646d6a479704a7670cffb4010dd1e0e0e9292fca054e5d7"
+    },
+    {
+      "path": "renderer/virgl-command/shared-exponent-images.mjs",
+      "bytes": 563,
+      "sha256": "27de20239649aea73145e1f547c9265692f451fedddf3876639c173cf0d6168f"
+    },
+    {
+      "path": "renderer/virgl-command/standard-state-README.md",
+      "bytes": 3814,
+      "sha256": "8009b23eb265fdb965c5a7de77ed9e4c88fe41ccf25e41feec23036abd565858"
+    },
+    {
+      "path": "renderer/virgl-command/state-README.md",
+      "bytes": 17959,
+      "sha256": "7da36fe02d8588822932e6e86cd6b2fb1e34a56004a9cb475fb4df3d0a7e3d82"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "bytes": 178594,
+      "sha256": "62a5fdeeff7e4a68b2f7ef780c9d72302b7a2e68a5cc830eeedcbdf6cb1a6b39"
+    },
+    {
+      "path": "renderer/virgl-command/submit-README.md",
+      "bytes": 3842,
+      "sha256": "284d9adc2dee8271090b66de83b4d43bad9fa8761ee4d245964fd844bec10f14"
+    },
+    {
+      "path": "renderer/virgl-command/tests/acceptance.mjs",
+      "bytes": 43149,
+      "sha256": "c72674d63ccdd9a21dc5e5b5f1c6bd464bab606cf593462bf6355c05c3904b47"
+    },
+    {
+      "path": "renderer/virgl-command/tests/async-acceptance.mjs",
+      "bytes": 61068,
+      "sha256": "2c318843b089dec98ce134d45b7aa749229b5771dbb191727d5405129af83781"
+    },
+    {
+      "path": "renderer/virgl-command/tests/blend-boundaries.mjs",
+      "bytes": 34787,
+      "sha256": "9ccadf5102df2c93d9b58a2f88c7a7a16b2b02e4f663bc3ac87c79fb3f70d7c7"
+    },
+    {
+      "path": "renderer/virgl-command/tests/blend-equations.mjs",
+      "bytes": 22518,
+      "sha256": "4cdf0c5655d93d47f695b21dd405ae85b675bfb1a636f2f2449a6515580b58ce"
+    },
+    {
+      "path": "renderer/virgl-command/tests/bounded-loops-oracle.mjs",
+      "bytes": 5954,
+      "sha256": "09c4e66b6c7edb4230ee36a041607733c2a84f9026fdd399f2cfcef06f0d8fc9"
+    },
+    {
+      "path": "renderer/virgl-command/tests/bounded-loops-shaders.json",
+      "bytes": 92481,
+      "sha256": "18bb5d7d0582065352df7cd99347feb98fa975b97d8ca3252fb0cfe9277c2b07"
+    },
+    {
+      "path": "renderer/virgl-command/tests/bounded-loops.mjs",
+      "bytes": 31020,
+      "sha256": "cf70da55972427bbeae65ae7e05bccb3f6674c3329316024610a205c3977ab17"
+    },
+    {
+      "path": "renderer/virgl-command/tests/cache-boundaries.mjs",
+      "bytes": 23100,
+      "sha256": "b62565795c8d704cb328f388e3cd8611ad71d844052a793a3c0279f807505d8b"
+    },
+    {
+      "path": "renderer/virgl-command/tests/color-formats.mjs",
+      "bytes": 32256,
+      "sha256": "b05ba5c8b45db392a987d8416222a208177352b1ba50f541741c256cc6b5707e"
+    },
+    {
+      "path": "renderer/virgl-command/tests/constant-compiler-oracle.mjs",
+      "bytes": 7078,
+      "sha256": "2d3fa9009540031c8ec38aae20d0215209ea9f59d9f3f8b92a72b106f5c7c1ad"
+    },
+    {
+      "path": "renderer/virgl-command/tests/constant-compiler-shaders.json",
+      "bytes": 52436,
+      "sha256": "93e5b961e952a483b42516ef8d2610091646410feea9097afe53bc2c81b09c89"
+    },
+    {
+      "path": "renderer/virgl-command/tests/constant-compiler.mjs",
+      "bytes": 32371,
+      "sha256": "4e6a423a9719dafff9501e62d5afefce7e7a15c30228f3a4d70a721a632f765a"
+    },
+    {
+      "path": "renderer/virgl-command/tests/constant-domain-shaders.json",
+      "bytes": 4600,
+      "sha256": "589e6afad30fe1ea293707725909e44bcb550082245206b0b4fe4831d371a086"
+    },
+    {
+      "path": "renderer/virgl-command/tests/constant-domains.mjs",
+      "bytes": 38543,
+      "sha256": "fa5ce9e1cb60d6cf50fa90a8d6b975ef1aa03ef3cb165b60586ba998ddf55bbb"
+    },
+    {
+      "path": "renderer/virgl-command/tests/constant-shaders.json",
+      "bytes": 2659,
+      "sha256": "23079034c630aaf057891601f467bf2c2c68ddde1ebb7d6ac68e3ae54ccd2ece"
+    },
+    {
+      "path": "renderer/virgl-command/tests/constants.mjs",
+      "bytes": 39824,
+      "sha256": "0a5eebd8d7fcc692ae929e2383e33e8c4c558fd96be1c832d7d0134470fd1eff"
+    },
+    {
+      "path": "renderer/virgl-command/tests/control-acceptance.mjs",
+      "bytes": 40179,
+      "sha256": "40ce75a60abd149ea9c1eff2e7aebdea6779bd179c21ed809d87285dc603ee51"
+    },
+    {
+      "path": "renderer/virgl-command/tests/depth-formats.mjs",
+      "bytes": 34938,
+      "sha256": "c364a56271a78fd85cab87d4811800d2f826339528baa0f5b57412f22c259593"
+    },
+    {
+      "path": "renderer/virgl-command/tests/draw-acceptance.mjs",
+      "bytes": 31662,
+      "sha256": "6f360e68be2febee5ed682025b31325f5d0f5b27ad14b66e9b3697eba5c9ac80"
+    },
+    {
+      "path": "renderer/virgl-command/tests/exact-bank.mjs",
+      "bytes": 29107,
+      "sha256": "cce89a7c0e3bc953a7cd7ed0864fb5cf4a0e87d8a68433bbd849dd20480d25fe"
+    },
+    {
+      "path": "renderer/virgl-command/tests/exact-pair.mjs",
+      "bytes": 26116,
+      "sha256": "7c5074e5326ad8dbde44f8c69d33992599f43dd8be4d6b92d613f9f594538a2f"
+    },
+    {
+      "path": "renderer/virgl-command/tests/exact-producer.mjs",
+      "bytes": 24931,
+      "sha256": "f76d67c0b069fd42ef74bf66e1265023669698853ef8fbfd058f08174a7eda4f"
+    },
+    {
+      "path": "renderer/virgl-command/tests/flat-pairs.mjs",
+      "bytes": 23441,
+      "sha256": "8a84e08fddd653853dba99cf730810f8713a009cec8e3dfbc2a6f75dbe27e753"
+    },
+    {
+      "path": "renderer/virgl-command/tests/float-vertex-boundaries.mjs",
+      "bytes": 25852,
+      "sha256": "a0648e2a24f45645bf47b01915ea014e02cd2b21d9cf900f2884531c0c16d9f2"
+    },
+    {
+      "path": "renderer/virgl-command/tests/float-vertex-fetch.mjs",
+      "bytes": 21525,
+      "sha256": "42faee6b7e1d49a7bec7f505a1bdd819cde4de1ca7297cdb906353a513323708"
+    },
+    {
+      "path": "renderer/virgl-command/tests/indirect-constants-oracle.mjs",
+      "bytes": 4686,
+      "sha256": "bd36ef97aaf55560b19e71341bc9b4a72294a1ff0bec5df77cdfc75dea5d9029"
+    },
+    {
+      "path": "renderer/virgl-command/tests/indirect-constants-shaders.json",
+      "bytes": 57769,
+      "sha256": "c4d9fefc1700e2e926b8110ccc4fd1e3542233872967bf2e5e7c98a27932966f"
+    },
+    {
+      "path": "renderer/virgl-command/tests/indirect-constants.mjs",
+      "bytes": 29601,
+      "sha256": "b2efe1831be81f3ff9ee93987042a6dd51eb877ee4b38d296eababa55557aaf5"
+    },
+    {
+      "path": "renderer/virgl-command/tests/inline-uploads.mjs",
+      "bytes": 30557,
+      "sha256": "897acb9df8db21a0997edb5ea00493072ac3b00583594fb96dde00194c2fa814"
+    },
+    {
+      "path": "renderer/virgl-command/tests/ordered-mask-regressions.mjs",
+      "bytes": 2917,
+      "sha256": "c70d9278bcc71ec85e501f36c86f4ed533af10cb05a86dee8a22b9f34ff27291"
+    },
+    {
+      "path": "renderer/virgl-command/tests/ordered-masks.mjs",
+      "bytes": 14811,
+      "sha256": "26e2aef577982ca3fcd17f795c9b6adb5f779b38767849e82f85790d25597b1e"
+    },
+    {
+      "path": "renderer/virgl-command/tests/precise-arithmetic-verifier-regressions.mjs",
+      "bytes": 4311,
+      "sha256": "1f5507fa2fdaf58346c24f923d5d30cdf3134f5db270cd786c9bb71f3cc01538"
+    },
+    {
+      "path": "renderer/virgl-command/tests/precise-arithmetic.mjs",
+      "bytes": 17863,
+      "sha256": "b8849e968120f6eba637ae9624bacce16bf85a43c55f5016644b077f9700bae0"
+    },
+    {
+      "path": "renderer/virgl-command/tests/precise-word-regressions.mjs",
+      "bytes": 9836,
+      "sha256": "008251016a235c88c9d53d40d5d6f9567f4a3e22717f06fe51451a38d72ac032"
+    },
+    {
+      "path": "renderer/virgl-command/tests/precise-words.mjs",
+      "bytes": 14225,
+      "sha256": "52d3dbd15d37a5849c0f5253b20460c2648ba719668237e2952caeacc3268ae0"
+    },
+    {
+      "path": "renderer/virgl-command/tests/radial-domain-regressions.mjs",
+      "bytes": 4547,
+      "sha256": "a9ceadf3847fcbc6ac3198071ae2615ec6991a9218ad8930a82d8db55a9e620b"
+    },
+    {
+      "path": "renderer/virgl-command/tests/radial-domain.mjs",
+      "bytes": 27185,
+      "sha256": "43b2a2e72e5cd6b43e9e4806435b413cf649bbb1d5f82d29972e6f2d3af538dc"
+    },
+    {
+      "path": "renderer/virgl-command/tests/raster-bank-verifier-regressions.mjs",
+      "bytes": 9353,
+      "sha256": "0b37d641763f196f24408ec638f3fc8ce0c1eb26b93f0f52e59bd34526f4c290"
+    },
+    {
+      "path": "renderer/virgl-command/tests/raster-bank.mjs",
+      "bytes": 28734,
+      "sha256": "0ca99befc0f0d75e9b4fcf18c6ca207a871c4256a0d5d49e7565e7c71e584f5d"
+    },
+    {
+      "path": "renderer/virgl-command/tests/raster-depth-boundaries.mjs",
+      "bytes": 18384,
+      "sha256": "7b7916492c9eb56ef7a7c8a75931ffdc97dec045c3682d5e29ad0304763c390b"
+    },
+    {
+      "path": "renderer/virgl-command/tests/raster-depth.mjs",
+      "bytes": 27949,
+      "sha256": "dbd21225974b061111b26543555ae4eae56b0259f5d71481ac27c4eb6ddcc758"
+    },
+    {
+      "path": "renderer/virgl-command/tests/render-cache.mjs",
+      "bytes": 27422,
+      "sha256": "05420824c992e1e52e2289be04dd0d900606b298b365a61b6ba8510d95881435"
+    },
+    {
+      "path": "renderer/virgl-command/tests/required-format-roles.mjs",
+      "bytes": 6793,
+      "sha256": "3327edcca510e46a96edfa2a4a89916ace0855efeec567f69d2b2597113aa5b5"
+    },
+    {
+      "path": "renderer/virgl-command/tests/resources-acceptance.mjs",
+      "bytes": 57379,
+      "sha256": "49f97ef7bd4b4329da69246457806c556cfdfaa41bc547cb99af721737f87d02"
+    },
+    {
+      "path": "renderer/virgl-command/tests/scanout-acceptance.mjs",
+      "bytes": 47088,
+      "sha256": "1c4bd09075defbf89297d3bdec66d1a05193f19dd12491d002f507b60483bb9a"
+    },
+    {
+      "path": "renderer/virgl-command/tests/selected-lanes-oracle.mjs",
+      "bytes": 6017,
+      "sha256": "37731e7ab59e13a51cd8724406f13036bb9115e131a574ceb0fca44e00a9be5d"
+    },
+    {
+      "path": "renderer/virgl-command/tests/selected-lanes.mjs",
+      "bytes": 17987,
+      "sha256": "d8ccba72b4c11cdc14428c76aa931adb7085e508fc56f8b4d86c6bba47c00f06"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-buffer-roles.mjs",
+      "bytes": 28190,
+      "sha256": "1124025bca1650a15b571e26e746ae58c83b4d45dc025d19f21979aa63c9883e"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-byte-color-boundaries.mjs",
+      "bytes": 20965,
+      "sha256": "3340e19f0d102bce5a1089aa59e5686036146dc9174d48af0f42fffaf40ab71b"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-byte-color-images.mjs",
+      "bytes": 16499,
+      "sha256": "885bc2b9fbdadd0bb7923e3dd2c36f893214646d1bcd26314d9fccc3ead38838"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-byte-color-rig.mjs",
+      "bytes": 15828,
+      "sha256": "d7e995fa2a2b55d7261625e827682ba675835b68de367f6510492237791cdae9"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-compact-vertex-fetch-adversarial.mjs",
+      "bytes": 14918,
+      "sha256": "4838589cea77f2b6ca5b3e3d176158a5fb04a3702ad71e74f825b4f5417a5c92"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-compact-vertex-fetch.mjs",
+      "bytes": 27143,
+      "sha256": "3e68f1cac358c4e4518a3963716dc6cfea7067a31051fdabe7bf84818546b0b7"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-constant-attributes-adversarial.mjs",
+      "bytes": 14675,
+      "sha256": "d2f246d80c17351d82fa60f573e68f39ac76c90c0623d9c019b20b332a1ebcd8"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-constant-attributes.mjs",
+      "bytes": 19602,
+      "sha256": "b18b997a0b10314a1b3e178abb8e8becf80be9acf73aa410c671bf1771760d2b"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-core-topologies-adversarial.mjs",
+      "bytes": 15780,
+      "sha256": "b61f5bd9d9861ed5ef9c57723332ecbdadbc67d5ee55185a4cf018405a4b0dfe"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-core-topologies.mjs",
+      "bytes": 15023,
+      "sha256": "fea95ee2889b17ea286ab936cec35be3ab5d9be85f06c83bc86d6f5177e9317c"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-float-consumer-adversarial.mjs",
+      "bytes": 18032,
+      "sha256": "0ebee4def0c3d151d6a4ed68f8e4dd4a560179761c861af720ca538bedc6b1df"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-float-consumer-boundaries.mjs",
+      "bytes": 12260,
+      "sha256": "f82d82ef1a78d7c6ea2b243d251c5dba115f4ce52cc82d604aab637fda316022"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-float-consumer-rig.mjs",
+      "bytes": 16482,
+      "sha256": "e1fe53c9d2257f5f13fa1621a6efe059c441e2035e9bf0f6c62dfcde675d394b"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-float-consumer.mjs",
+      "bytes": 7740,
+      "sha256": "5f07053f657473b98bd6278113edaaab44b8143367d303df0cb6bababac6c4b7"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-float-image-adversarial.mjs",
+      "bytes": 15937,
+      "sha256": "fa0c5b3b2eb6b4f1c8677ea738bce70d856a9b74b5801296e7f4cd120e8abbea"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-float-image-boundaries.mjs",
+      "bytes": 12990,
+      "sha256": "5c40da2cfbe8a91fa4761f3a3ffd721e5dc3836a7ba1313e1a65449a424a0a0d"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-float-image-rig.mjs",
+      "bytes": 9077,
+      "sha256": "a2889aa8022f07c11a6038b3072d6cc21d93420d9021393013ffbeba45107232"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-float-images.mjs",
+      "bytes": 13350,
+      "sha256": "dfaa93db253b4660579eef183ea634dc7d15543dc69d69e6e9182f643a028653"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-floating-depth-boundaries.mjs",
+      "bytes": 21364,
+      "sha256": "7ae2f8707160aad8194ee64f2f6032327a6642c26baaff049887e02def90ccc1"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-floating-depth-consumer-critic.mjs",
+      "bytes": 9834,
+      "sha256": "1d9aeb708a9d75a498cbd7caa5508fdbd9074a0a4d0244659e41f90ca5b59310"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-floating-depth-consumer-rig.mjs",
+      "bytes": 16793,
+      "sha256": "37040b00592abf631794368262f725043181096d4b284af5a264d9cd8640979c"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-floating-depth-consumer.mjs",
+      "bytes": 24267,
+      "sha256": "6a85511ee4802ad636a4629496249f952dd6dd91be72e622de9ca638cab09133"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-floating-depth-critic-originals.json",
+      "bytes": 202966,
+      "sha256": "fec7fc86a402caf54843083b1a639fb06b24dce7d4a1fa423275cd9866f2cbc8"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-floating-depth-critic.mjs",
+      "bytes": 16274,
+      "sha256": "0ac5d3f6f401e5e809bfb3ba38f7587b9710b3775a51c580e628de6393921a8f"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-floating-depth-images.mjs",
+      "bytes": 17128,
+      "sha256": "7340b59bbd2700828619ab9413a4d506380da2228c749fa1e3deb0c1b1658114"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-floating-depth-rig.mjs",
+      "bytes": 21418,
+      "sha256": "dbc82caa4db5e21c2c5771afcd454ef46991d817a2fbea988a4896212a8b1c8b"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-floating-depth-state-critic.mjs",
+      "bytes": 14073,
+      "sha256": "efbfc38a66224784994711d7d5c8928beb945ef4cd22a0240c3bf5fd6e08133c"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-floating-depth-wire.mjs",
+      "bytes": 8415,
+      "sha256": "7d1693e37ab78c472d85f1ff400bed297910ae18d0ee97af93a80480d279a023"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-image-boundaries.mjs",
+      "bytes": 24841,
+      "sha256": "65f87db50f4bb67dcb5f0b87d5b23b9249634f93b8a216ebf17a66ea57d993ed"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-image-matrix.mjs",
+      "bytes": 5282,
+      "sha256": "d57a6fc9917664210e3198d1f08f050da72480a74f64ff57f9d5be60fcf2d247"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-image-rig.mjs",
+      "bytes": 10609,
+      "sha256": "1b1ed0d48c5c8ba7fedbd452191266a22eaa2f94186898c29e6fa4c0b3c9d6d7"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-image-subresources.mjs",
+      "bytes": 434,
+      "sha256": "2fdbdbb1df5245d2a29e991b61313cc6f6b6fda9baf18dbd137376a6f6845db7"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-instanced-draws-adversarial.mjs",
+      "bytes": 8373,
+      "sha256": "996478d196f489f91951285c3aea86a1f2bda3c9f969e14ca0651118198ad71e"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-instanced-draws.mjs",
+      "bytes": 32402,
+      "sha256": "f02cf96a50f79ef5ed71c0240784a7ae3d030231d18d320148e89252bf724afa"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-instanced-stencil-reflection.mjs",
+      "bytes": 3817,
+      "sha256": "ae559d160b4c3118c4a128e3041d82bcd4b8a64f8522c7910c05acecd4035dbb"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-instanced-stencil-rig.mjs",
+      "bytes": 6131,
+      "sha256": "5c52bc1ce858afd0b3a67c5800bc4f07fd849880227484eac1eed44d46f5b0b5"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-instanced-stencil.mjs",
+      "bytes": 14393,
+      "sha256": "6e689510618225c822a24e9eb2cdbd7302d63816cd232f1f1ddbe3ed5b2805e6"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-integer-image-boundaries.mjs",
+      "bytes": 10010,
+      "sha256": "bddc34dea69b784b85b7d4955cc0443862eb518c66594ee4bec29e535860652e"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-integer-image-consumer-boundaries.mjs",
+      "bytes": 16201,
+      "sha256": "e2ca6b357a2e0c32b7dfc53a39749bbd6d729f015cad9c90729471c9cf3a8ef7"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-integer-image-consumer-critic.mjs",
+      "bytes": 8144,
+      "sha256": "90308fc1909363a5ef5b329ad7b9aef74eedfe57db225b0f3e7160654c9533da"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-integer-image-consumer-rig.mjs",
+      "bytes": 14174,
+      "sha256": "baf18f88780a4e720a3144071a417a456f87338c16e065a66f80e2569ef31636"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-integer-image-consumer.mjs",
+      "bytes": 10276,
+      "sha256": "0645b1ffe5e58c723518c675bd53537a8e16f5763cb7296768a4ddc50ff473a5"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-integer-image-contract.mjs",
+      "bytes": 13445,
+      "sha256": "fae84226f05632b9ccc97a74dd0ac1d1f0a38b87cf51bf1a3cf63d621a231ec2"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-integer-image-critic.mjs",
+      "bytes": 21153,
+      "sha256": "a8b2f8605131f36fa0713b84b8aae292d8f949a1a92c1ba026905c847b9b10bc"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-integer-image-rig.mjs",
+      "bytes": 11315,
+      "sha256": "4840e753bbaeace02242d227e942798730bb1f436067073005098c39d78ff74d"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-integer-images.mjs",
+      "bytes": 19413,
+      "sha256": "5a1ccbacea4af18e8774c46c36304dda8792093e5620aba0e8679470132fdc71"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-integer-vertex-inputs-adversarial.mjs",
+      "bytes": 17217,
+      "sha256": "95e77ff757e1ccddd442932575f75043d7f82f1cdfd2059922f68da336fbf42b"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-integer-vertex-inputs.mjs",
+      "bytes": 18515,
+      "sha256": "1b947c0c8e3c8d2b64bcab3ed6d00f69ab48496405b08cc3b5e97a49af1baebe"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-multiple-color-boundaries.mjs",
+      "bytes": 15305,
+      "sha256": "5683748ff08efd1fa92cc3e4d6d836ea99f0903884e18e445d4295e1b834fe12"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-multiple-color-contract.mjs",
+      "bytes": 16471,
+      "sha256": "a57babacd8cbca2aaadec854e7f6f7f1aa3037c926a5048d835d5f63664cf50a"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-multiple-color-critic.mjs",
+      "bytes": 7070,
+      "sha256": "eb17ae4f2d6177d83abd6abec6cf9225e47953bfae0cbdb62f5043a1cc9988ac"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-multiple-color-rig.mjs",
+      "bytes": 15655,
+      "sha256": "08ff6b27004c7c667cf94a701655069db4cbdd27e9d9c12f856b71c3234d7f4f"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-multiple-color.mjs",
+      "bytes": 8653,
+      "sha256": "da5df6634be6b3709f93cffcec0edef3f313d7613938270d4ca128066a5aae70"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-native-points-adversarial.mjs",
+      "bytes": 9823,
+      "sha256": "2d94376ad9873de253fb6b29876b5ab988b22b52d588764f0f45cfdf4a0d74e6"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-native-points.mjs",
+      "bytes": 25665,
+      "sha256": "0a50f6c32af226ec5b63a3ad0916eb56b5ad1847b4d387b67381523d68252b17"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-ordered-stencil-critic.mjs",
+      "bytes": 8552,
+      "sha256": "baedea52877a4d5525cf15d4b47c89da28c5d7165c56f2fd419f43b6dd97203e"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-ordered-stencil-rig.mjs",
+      "bytes": 7129,
+      "sha256": "afcdf8ca8f674f7814ae3d8219a7500da5b50a83b8c455a2a467fccb603ccee3"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-ordered-stencil.mjs",
+      "bytes": 21301,
+      "sha256": "54c3f25a40ebbf7819c522dbcdf2a59e8f89090ebfac6dfddcbf2fd13ba279d9"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-packed-depth-boundaries.mjs",
+      "bytes": 21279,
+      "sha256": "8a795dd486c3f9c9fbb04435a9b327de3aa21538440ec4b08b8f4efbba90581c"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-packed-depth-consumer-critic.mjs",
+      "bytes": 7962,
+      "sha256": "53655a6cdcdd1fb83a77ec6d3ff03293a81d7384ac7c18467a65beed5dcd1d10"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-packed-depth-consumer-rig.mjs",
+      "bytes": 18672,
+      "sha256": "5b80ba353a9f813f26f2a267abf4b276d6ab2a985a966e99e7dced8d4a1f4a04"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-packed-depth-consumer.mjs",
+      "bytes": 29749,
+      "sha256": "2402cf24705dd7d99d54944c244ea23483c3345a7134a4ddaaf76056243c889a"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-packed-depth-critic.mjs",
+      "bytes": 11413,
+      "sha256": "9084bffa6f37b045a5d412ead22349fe905409d8a5cbdc88209cffdb5d20f837"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-packed-depth-domain.mjs",
+      "bytes": 3592,
+      "sha256": "2a487509e4442ccaf451f7107055fb8a664a3290518c625915449c3421923062"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-packed-depth-images.mjs",
+      "bytes": 17700,
+      "sha256": "bdd0293bdae9814842a1de18036d73f0991a3095e94a751d4948a3cea0de4268"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-packed-depth-rig.mjs",
+      "bytes": 21829,
+      "sha256": "dcf4aea2cbde7a563f87ccdee9e41d871893de7cab3762b69276354b3a51494e"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-packed-depth-wire.mjs",
+      "bytes": 8642,
+      "sha256": "1d3fe12a0f4f5160a099da1edecfafb083fe6f802bea56d104656c96fdfc5909"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-packed-float-consumer-boundaries.mjs",
+      "bytes": 14115,
+      "sha256": "63d2dacbba1244698956e2a0a7bc3674bee2635029824099b5d463cd7b26e03e"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-packed-float-consumer-critic.mjs",
+      "bytes": 20360,
+      "sha256": "eb0ef95ce5c7ade64da4ecf2011ad28ef8d969e7ea7b7d24b4179c2e3807f5b3"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-packed-float-consumer-rig.mjs",
+      "bytes": 16457,
+      "sha256": "eefd7b2f34dcd62bfbedfc6323c608f84f9342f79bcf0fb28445beb33d53b253"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-packed-float-consumer.mjs",
+      "bytes": 9203,
+      "sha256": "6534a99d6198fd7b5f434b0a5ae3d558a8478280d3f2f40737700c92e0f301e7"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-packed-float-image-boundaries.mjs",
+      "bytes": 21314,
+      "sha256": "7d3b8482e72dd153eb20214927085a5b808f1806c64045e6d5dfcf147a93b8b7"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-packed-float-image-critic.mjs",
+      "bytes": 10736,
+      "sha256": "c62902530ce8c2ffbfa513cddd946e273e5f30c98f3d2aa4223e223da4868aba"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-packed-float-image-rig.mjs",
+      "bytes": 8987,
+      "sha256": "69ebb0d1b7e7258c11c993b71aff238447c37b8f5af5175dfa3cffbae1f22197"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-packed-float-images.mjs",
+      "bytes": 14675,
+      "sha256": "6d5603c131b2699dfe2a497c3658421c20249327faf8b690a23bcc9ca6daa045"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-packed-normalized-boundaries.mjs",
+      "bytes": 13329,
+      "sha256": "9ef066fc8c9ad9e8ab4f13abfbe55c0d53d06fa5e33a17a0ddfabfff9cab5c95"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-packed-normalized-consumer-boundaries.mjs",
+      "bytes": 15376,
+      "sha256": "8052360baecef5567370a479f182a5022375d1b81552abe7ff6aa598725e0179"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-packed-normalized-consumer-critic.mjs",
+      "bytes": 8206,
+      "sha256": "68a0f3ec0e951f51df54ca14dd1dae09162c44bfa4221e29fb9c6cb74fca1594"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-packed-normalized-consumer-rig.mjs",
+      "bytes": 16318,
+      "sha256": "57df038c5bf4199435374151f4832e94aa9c071e33b15eb4f24a8f60bd4a64b2"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-packed-normalized-consumer-samples.mjs",
+      "bytes": 12146,
+      "sha256": "99f21bcb20131993e92c7d169e5536d9667349786e1f631f71e24d5ae25c1481"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-packed-normalized-consumer-targets.mjs",
+      "bytes": 7345,
+      "sha256": "c08659701f9f735e6536c5d207401e4b1f2d49f65a7ee19807c73a5b987f6fa8"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-packed-normalized-consumer-wire.mjs",
+      "bytes": 2316,
+      "sha256": "38f837b87a53f0eb6a7a8825af2ba2c96582b4e6df3529f9aa96257a8546271c"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-packed-normalized-consumer.mjs",
+      "bytes": 577,
+      "sha256": "59fab6d5e4b86b4d17f33d8cebd6a5d4f31e79dcaf78046e90e18cfbb17c3b8d"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-packed-normalized-critic.mjs",
+      "bytes": 17462,
+      "sha256": "34c88ea63efe8c3c07d396df10a9a6cedcbb125d4e9db29ba924791e9ed641e4"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-packed-normalized-images.mjs",
+      "bytes": 14322,
+      "sha256": "c99ffedae27314e680c635beb3661e4f4fb79753d3c428708cf2e6bf8d8c1a37"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-packed-normalized-rig.mjs",
+      "bytes": 11794,
+      "sha256": "3e8f53172602c1b4ff94d7843a038fb6792f5a935ec2a3294bfe99b5fd93459b"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-packed-normalized-wire.mjs",
+      "bytes": 7278,
+      "sha256": "a6392578c158e3ca5fad8ab2adfa3479f97e6d9cd42fe6965742d6cacf03efcc"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-packed-unsigned-boundaries.mjs",
+      "bytes": 12325,
+      "sha256": "654acd9634ab87cfb8661b0205c57684405d4b2bd0d9c5eaa347734913dbf765"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-packed-unsigned-consumer-boundaries.mjs",
+      "bytes": 15370,
+      "sha256": "6ba70bbb278a935e7730713dcfde9c530aa0599794d53a8ee5c61d72c094ec54"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-packed-unsigned-consumer-critic.mjs",
+      "bytes": 7943,
+      "sha256": "4dd7546a30475370e5af6ea7d7f46ac94603bd47ba8477c9d8bb522924ae53d3"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-packed-unsigned-consumer-rig.mjs",
+      "bytes": 16112,
+      "sha256": "a394ab01bea768f913a3eb53342a010003f0745b2d1c8f41b13425e16755bb0d"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-packed-unsigned-consumer-samples.mjs",
+      "bytes": 13108,
+      "sha256": "cb31672caecbdeb7a0a4a7a1b85daf43b810ee1269562bcbb3e6c75bef2a61e4"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-packed-unsigned-consumer-targets.mjs",
+      "bytes": 7183,
+      "sha256": "d3c073c02ea9badde04c5a5069067dd3604e060adb59129a7e261c2aa891173a"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-packed-unsigned-consumer-wire.mjs",
+      "bytes": 2306,
+      "sha256": "978227136f15cfb5195e6f24edebb819e98ebe2b3290350b463b82d63956524a"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-packed-unsigned-consumer.mjs",
+      "bytes": 569,
+      "sha256": "dae64755afa95d4a289a8bdf99d90f6e6cf1caf101ba774d25959710f3fd09ad"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-packed-unsigned-critic.mjs",
+      "bytes": 13878,
+      "sha256": "adacad37cf89b1955ed52f81b133e08342c5664b74a7692b65d0587ce7df5f63"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-packed-unsigned-images.mjs",
+      "bytes": 14196,
+      "sha256": "848075d2b7f55972f7fee6b5736ba769c822671f0c7d7234d4853f56e546dd7d"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-packed-unsigned-rig.mjs",
+      "bytes": 11693,
+      "sha256": "1dcc4a2a797ae330bc3fd0ac0b22ef3552de7f8fafe74336c9f509e1b22cc993"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-packed-unsigned-wire.mjs",
+      "bytes": 8427,
+      "sha256": "1e65eb6a5d6713147ea00d43c2a77791291db49c97d3fdd4c8cedd8d516164bc"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-packed-vertex-fetch-adversarial.mjs",
+      "bytes": 14959,
+      "sha256": "0955ff1b1385253b296ff884bdeca69aefe7995a9c09f56f6807d72ba1811fe3"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-packed-vertex-fetch.mjs",
+      "bytes": 18996,
+      "sha256": "c0f4902aa16b353998fcc01cfa0bdacbd0b6e2598c8be3f4f057f46582f1dcc0"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-primitive-assembly-adversarial.mjs",
+      "bytes": 7125,
+      "sha256": "4f872e5ecc1b2b8885690ba05b9f9a7fe8b0ee5f03ef34e3eebf58452e48a511"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-primitive-assembly.mjs",
+      "bytes": 30342,
+      "sha256": "da39d94dea6a0cb80985fd7ea8b1758bc17d86182fc744fd1f667bed5f0ef717"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-primitive-restart-adversarial.mjs",
+      "bytes": 22937,
+      "sha256": "7c73a5a082652c6c35659ca5ff575c5a1f3c10b7f04057ee283d9878fb9fa19b"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-primitive-restart.mjs",
+      "bytes": 24761,
+      "sha256": "c2a5d5ce94b84e95b510c347aa64157628eb474fc1da30d9667972a06b5e23e4"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-sampler-state.mjs",
+      "bytes": 18517,
+      "sha256": "27b38b4fbe5fd76ad19b42dc8b66f6bea7ac9236cb0ba4180491da1b87b31823"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-scalar-vertex-fetch-adversarial.mjs",
+      "bytes": 19876,
+      "sha256": "29a62ec94c23e2cb0ca6254d5f5d9470271f0d84c38d399d019daa9d84c0a00a"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-scalar-vertex-fetch.mjs",
+      "bytes": 14622,
+      "sha256": "4e21a8552e07f16f34fd8ab4074309b281670ac6718137b356583fa9b95d5746"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-shared-exponent-boundaries.mjs",
+      "bytes": 38808,
+      "sha256": "013da58033f52ebb58b164dc09df2965079b92d56121f5460f1ffd4369cdb891"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-shared-exponent-consumer-boundaries.mjs",
+      "bytes": 18125,
+      "sha256": "86d2ff66fb5a9ab15c917792c09ced6b0de95ffdee5c5d53a797670126f0aa40"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-shared-exponent-consumer-critic.mjs",
+      "bytes": 9734,
+      "sha256": "4ca0dd77aa8fb7c26159111f1f28e3ef69fd987805954b7b4aab211144789018"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-shared-exponent-consumer-rig.mjs",
+      "bytes": 19789,
+      "sha256": "f1aa62b6abd932f6c3b0cf262338b9c98fd1bba0f9f50c1fb6b662892bef9c5b"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-shared-exponent-consumer.mjs",
+      "bytes": 9196,
+      "sha256": "5deb15dd6a8bde46a6585cbf66c0d16ae59598b890d821ef23a919995f2f6e2a"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-shared-exponent-critic.json",
+      "bytes": 28418,
+      "sha256": "92642f09a1a002ef64593e8d63a68eb1709a73cefc6e5b05bf0a4aeda4e172c5"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-shared-exponent-critic.mjs",
+      "bytes": 15817,
+      "sha256": "055027fede65b7c5ed8aa992fe4e61364cc5166d143620942f612d35f5177826"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-shared-exponent-images.mjs",
+      "bytes": 15087,
+      "sha256": "39dca2e7d0551111f7c105ad2890d70d551094cd53c970980055e98a11edf2bd"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-shared-exponent-rig.mjs",
+      "bytes": 15002,
+      "sha256": "4fb062cf4f64de499cd8b6a68b611bb518871fdb5a053f88b00a240b2968f4e0"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-state-binding.mjs",
+      "bytes": 51831,
+      "sha256": "a929e1d97a42f1327708d3fc1d405a6665e25e1025bd5b5df0fea6672dfe2a73"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-state-boundaries.mjs",
+      "bytes": 26939,
+      "sha256": "b2caf76add497ff8a690a99e4188842e250ee9aed999a745b5569cf33030132a"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-stencil-critic.mjs",
+      "bytes": 7739,
+      "sha256": "db5dc3c51172e1b5a7164e3371325855019c1c64cbb3f5f3e221bb3b9333b90c"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-stencil-rig.mjs",
+      "bytes": 2581,
+      "sha256": "30bce8bbaf4f6b04f320dae9bcefc0afeb7cd639007d1f4799725d8c2a4f1bc4"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-stencil-switch-critic.mjs",
+      "bytes": 7634,
+      "sha256": "03de459611972b0ea1d5e5a1fa075eb5785fe277f363689fe30389b0e5e35db6"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-stencil-wire.mjs",
+      "bytes": 3006,
+      "sha256": "53c01051f7e3844ccd80e904b0a5c825fb7d91894f20cdf1d9058f6c3b59fc92"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-stencil.mjs",
+      "bytes": 20103,
+      "sha256": "03f85556e8a2ae7f74a8e328b50bb5abc48692b1cf956a518da4d05ed605280a"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-texture-operations-adversarial.mjs",
+      "bytes": 8535,
+      "sha256": "0ea3bf6dcfbe798149a0c7b908f85f0c175393b35046bdbc7fc23f7190db3dea"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-texture-operations-boundaries.mjs",
+      "bytes": 14870,
+      "sha256": "02d2e45d86c5ce61d947eb0ee2c0bd1b5dfc80b23a1a96334f8a4b76c2dc179a"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-texture-operations-rig.mjs",
+      "bytes": 18932,
+      "sha256": "8e5cfea2c86871c1838399ab3ab70adcf5fab3b92ee95b3586b9c696ab986ba1"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-texture-operations.mjs",
+      "bytes": 13331,
+      "sha256": "8a106ed2ba18d49f37e0328ba4ce83429ef2ff5ebb76855c978b2c7b9d8cbffe"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-texture-storage.mjs",
+      "bytes": 30300,
+      "sha256": "65cbfc4a5a642788e9b645ef17ec168738e64b444dbab9e9e0acbc0c985cc423"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-uniform-buffer-bindings.mjs",
+      "bytes": 33343,
+      "sha256": "9942e4e825364ced375f08645f115b09b45f8d3aab2fd5c08bb7f15db053575f"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-unorm-depth-rig.mjs",
+      "bytes": 17355,
+      "sha256": "f960217a415a2d73571f649243b7a629d9b399c915b6b63a5940d268e0983aa2"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-unorm-depth-transfers.mjs",
+      "bytes": 14130,
+      "sha256": "9305fd14473a84891a21c597d17ebfe72b93c4afc7bb3c05635531f11275c424"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-unorm-depth.mjs",
+      "bytes": 28411,
+      "sha256": "c3a5f02832d0ba4b897090739c62646feabdec9b6a548fa147eedadd14b49e71"
+    },
+    {
+      "path": "renderer/virgl-command/tests/state-acceptance.mjs",
+      "bytes": 48287,
+      "sha256": "792b282aaa6f7c5892607bac3d47bfbcd3899cfc023145374df7580e7a64110f"
+    },
+    {
+      "path": "renderer/virgl-command/tests/structured-conditionals-oracle.mjs",
+      "bytes": 4051,
+      "sha256": "5a31a7a0362f4b4a239fd3f59fb47f8d52f5c886003b6f85b854cb67da8519cc"
+    },
+    {
+      "path": "renderer/virgl-command/tests/structured-conditionals-shaders.json",
+      "bytes": 33251,
+      "sha256": "be611e5319e81c1dbd247bcde9fa405573d02acc9282fb42da7158620099d00e"
+    },
+    {
+      "path": "renderer/virgl-command/tests/structured-conditionals.mjs",
+      "bytes": 28830,
+      "sha256": "48c201d2c7ff376034268dfff2640a5ba6609a7eb4b075aa0f07aba75c511454"
+    },
+    {
+      "path": "renderer/virgl-command/tests/submit-acceptance.mjs",
+      "bytes": 52238,
+      "sha256": "fb1615f78a795700231f9d66f9ee3af3bf10e9dc03ee62253822eddf13fe5b34"
+    },
+    {
+      "path": "renderer/virgl-command/tests/texture-views.mjs",
+      "bytes": 35152,
+      "sha256": "1363689c51a77d93a8543d1fc81676662d4172a25357269baf86d3e41bf06cd9"
+    },
+    {
+      "path": "renderer/virgl-command/tests/vertex-constant-boundaries.mjs",
+      "bytes": 7434,
+      "sha256": "e64a2d4a97b5ff7401bf95ea4c45ff4da031eb754796ec906d7927d18e0dd826"
+    },
+    {
+      "path": "renderer/virgl-command/tests/vertex-constants.mjs",
+      "bytes": 18011,
+      "sha256": "491a314731b144bf3d236dc3f52103f7f60907b3ac23bd6e2cfc97180ff0c99d"
+    },
+    {
+      "path": "renderer/virgl-command/texture-operations-README.md",
+      "bytes": 1726,
+      "sha256": "da24fae0048d808838b4aa08cf4159edcf688e303e8bb9b11e43b536fca7eca8"
+    },
+    {
+      "path": "renderer/virgl-command/unorm-depth-images.mjs",
+      "bytes": 1409,
+      "sha256": "7fb08881153cfd06ed1acb5dba8d6cc61525b8f742a3b0a9715fb0e68e55e1d1"
+    },
+    {
+      "path": "renderer/virgl-shader/.gitignore",
+      "bytes": 8,
+      "sha256": "020c2606e8ed484089c2083e0be438b9d0736bee1558a6b76af0d58bd23f69cf"
+    },
+    {
+      "path": "renderer/virgl-shader/INTEGER-IMAGES.md",
+      "bytes": 1604,
+      "sha256": "123080127541968172a16936b2be592f9e9862c33fd43f8f838e6ac069c2bb3c"
+    },
+    {
+      "path": "renderer/virgl-shader/README.md",
+      "bytes": 84743,
+      "sha256": "9ada48676c0a9f23f929d2ba345696bc61a6d259d42f0837a1692c25ed48b99f"
+    },
+    {
+      "path": "renderer/virgl-shader/STANDARD.md",
+      "bytes": 3652,
+      "sha256": "4adb2d2d25f1abfbdbb18cf3b000c77f0e6a93aba90ca3e7ef0c344ca5008d5c"
+    },
+    {
+      "path": "renderer/virgl-shader/UPSTREAM.json",
+      "bytes": 8594,
+      "sha256": "6f7866d3a3a5e502f6516506909c0d43dec60902fd251a2eecec9610bd992a71"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "bytes": 156152,
+      "sha256": "8e4fc274c3c19ec54edc2f98cd2a9bbd376d7209948d0ad7763f693766cfddfb"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.h",
+      "bytes": 9367,
+      "sha256": "f04c75af8cdde5c4d3c9207b70b3bfba8d2baa897b7a58a66de93185d7e052d6"
+    },
+    {
+      "path": "renderer/virgl-shader/build.sh",
+      "bytes": 49858,
+      "sha256": "4cf0ee37832c94bf2441753741351c061076421f077c098f3e1efe7097983732"
+    },
+    {
+      "path": "renderer/virgl-shader/checked_cso_hash.c",
+      "bytes": 374,
+      "sha256": "fd5f5eccb4893602cad5cbdae7522c32cfe6ffa193fa3584c7c7bac06ae735d3"
+    },
+    {
+      "path": "renderer/virgl-shader/checked_tgsi_heap.h",
+      "bytes": 671,
+      "sha256": "d5b135f2a51a845e6c7798d56478dfdde8eed2e97cc7b5c722ce7052852d8d46"
+    },
+    {
+      "path": "renderer/virgl-shader/checked_tgsi_sanity.c",
+      "bytes": 1937,
+      "sha256": "f166e21f455174010ef3964d8c81126588d77ddc69cf15b7fa9cd825e3f08b1d"
+    },
+    {
+      "path": "renderer/virgl-shader/checked_upstream.c",
+      "bytes": 3266,
+      "sha256": "a1d60b4e9b214466f2fec6baabde855f78024bee68199aef524ef84f1f7f772b"
+    },
+    {
+      "path": "renderer/virgl-shader/checked_upstream.h",
+      "bytes": 304,
+      "sha256": "bdd21214e97b6e9a63516e2b96e4753f8aaaa9f69ad48dee1d133129872f8aac"
+    },
+    {
+      "path": "renderer/virgl-shader/cli.c",
+      "bytes": 454,
+      "sha256": "65c9e5a0a3c58ddad36e520f335ca054c8eeec33e851df24db474546a8d7afb3"
+    },
+    {
+      "path": "renderer/virgl-shader/generated/u_format_gen.h",
+      "bytes": 48398,
+      "sha256": "ac83c3095bf8d81e84eeb448e7743135ce14cf7b35efdc0b75fef8d9c941f068"
+    },
+    {
+      "path": "renderer/virgl-shader/generated/u_format_table.c",
+      "bytes": 554830,
+      "sha256": "9b654addadc5a17ae283381ba93c8f745a9416171284821e3da381571a49b4f4"
+    },
+    {
+      "path": "renderer/virgl-shader/generated/virgl-version.h",
+      "bytes": 2149,
+      "sha256": "bea8c6c3b5f6509840d7365bfd0a6bb1d9671118e38da04464a419372faa97fb"
+    },
+    {
+      "path": "renderer/virgl-shader/index.mjs",
+      "bytes": 22546,
+      "sha256": "1bae07f2e668078c4e447f65d1785815714907b7270ced01b131ce70e6d3f10e"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/banks.c",
+      "bytes": 9108,
+      "sha256": "bbdb308cf8eb69b1ad5d53e33ad8e49051b58ac1ceed8b390d143db63b3f81e7"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/bounded_loops.c",
+      "bytes": 16364,
+      "sha256": "9728ec295089efba300c4e8d51eafd1e3c21171b868126a0a0f804697bbb128b"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/captured.c",
+      "bytes": 10446,
+      "sha256": "b0339483f3cb999932be8ae3e2dda9afefbec706f745bcb821d9df4ea8881abf"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/compiler_bounds.c",
+      "bytes": 7426,
+      "sha256": "53d7d7b03f362a837a64597a5e26e5e82a93e0d259aa86f380500bc654fa8e93"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/component_floats.c",
+      "bytes": 12756,
+      "sha256": "f4448c512bebc7243cb346123df3335df0ec9f56f5b7458d9e5b023ade5bc7ed"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/components.c",
+      "bytes": 6760,
+      "sha256": "6fd3bf132a80e5d8b9776967cd2d335433f54fba4937271c2d8e1e4504aea938"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/constant_compiler.c",
+      "bytes": 15327,
+      "sha256": "e30e7ff420b27e58c0e3a5b22b02b758a2dc6c767d358d0c2ea1a4468465b952"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/coordinate_prefix.c",
+      "bytes": 9869,
+      "sha256": "0fd37d903f9c9537844a8153ba90697145cff4cbbe1f8ce9321afdfa19caf1f0"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/dot_reciprocals.c",
+      "bytes": 12911,
+      "sha256": "9c701b78b0ac902ec1370b0b06200b58024fa2db9054eb7ca22226e6806fc3bf"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/exact_pair.c",
+      "bytes": 6930,
+      "sha256": "a7463df62c0fd54cdc4a49722c916dff98a4d228f136383e1846218dd93bfaf9"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/exact_producer.c",
+      "bytes": 7161,
+      "sha256": "dd202a4b9447ae9beed7c40817943386bc79620d2b0cadd119a035ee4ec321da"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/exact_reciprocal.c",
+      "bytes": 2376,
+      "sha256": "12d74f9b2d3fa7b4f64e0e2ad6e9df6d69ef4fceb3ab2bfad706a2ca6b9c8ad2"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/exponent_logarithm.c",
+      "bytes": 5628,
+      "sha256": "6d9663275c845be1aa9a12f7c624c9c06e613e1f5c9c6d1ebcb87f00207053ca"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/float_masks.c",
+      "bytes": 12298,
+      "sha256": "afc41f061f6d6427fe85ec35510512910e03bb893d35bb05ebe4d5ecbe5a2455"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/fragment_coordinates.c",
+      "bytes": 6958,
+      "sha256": "a682bccdba4e2ee2ea11f94f9d5901ae83062620e80365f8b2dfb8df75390971"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/fragment_discard.c",
+      "bytes": 8203,
+      "sha256": "6f50f7d77902474c0768ae28f9916bf000d23e0611de83ac10d466eddec53dfe"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/hex_literals.c",
+      "bytes": 3186,
+      "sha256": "4a08eddaca59ef684a431342ecf75779b1d077918cc1083b7cff9d92da7e69cd"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/hostile.c",
+      "bytes": 7478,
+      "sha256": "cff3b387a16d438a12dd1af57b47128c815a9f1a9fc1966a365cee51e1119696"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/indirect_constants.c",
+      "bytes": 16400,
+      "sha256": "5d2ce3c7f57c7422a44186d653a1fae6f76bdd064b1859be35877abc5f191129"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/integer_masks.c",
+      "bytes": 12136,
+      "sha256": "ac712922b538298a97bd67af2a1eddb4dd8bd060ca3d6c2f5e8b31c153112fe4"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/known_arithmetic.c",
+      "bytes": 3841,
+      "sha256": "f5abdb72162e0df0f13e41a8cfb36474faca509ce94471e5f0032c747f14acbd"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/known_branch.c",
+      "bytes": 4982,
+      "sha256": "02292fee984a8ef5a40f8c74d7af39a6773fc677c2f112056be884ff245c3a98"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/minimum_selection.c",
+      "bytes": 5381,
+      "sha256": "0624508c33793ed9561c298f58cb997c790d8d18cc6f4d4ea587380caf37eb07"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/numeric_floats.c",
+      "bytes": 12549,
+      "sha256": "1c86ce4e37632eebf76e5c0d085bbf344845a4427e85c562ce9d758eb84504b8"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/ordered_masks.c",
+      "bytes": 23863,
+      "sha256": "9ea96a8eafddc4db2dd8966f7e9b52d16bc85b09534bdd7042fb4c8c43a2ca4a"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/original_92cb_complete.c",
+      "bytes": 10736,
+      "sha256": "184cfcc6fad8b591880f710bb23c1a5670e16ece1887f9bc758c54e593922327"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/original_92cb_geometry.c",
+      "bytes": 5758,
+      "sha256": "8736d4cb1f150b626c46a4a1d0cd996bfd81c56c13b1fece1e7bf39383a83938"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/original_92cb_power_domain.c",
+      "bytes": 4401,
+      "sha256": "68d7930813758b6b55ba37d2a27ae274d16317497236bac6af1b56ce1160b4a1"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/original_92cb_private_power.c",
+      "bytes": 6362,
+      "sha256": "70c030ecff821b506a9b3aed139ab253908c97817d2324c67e85d388d1948c49"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/original_92cb_raster.c",
+      "bytes": 4590,
+      "sha256": "d42cb414fbc13369af6bab9501017fd0858748c62ef7cf9806fa636b4a0e2fbd"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/original_c580.c",
+      "bytes": 3060,
+      "sha256": "40611a136a17edd71fa633d855166c4469a63219c80c0f726dc90eb3d74f03eb"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/original_corpus.c",
+      "bytes": 3667,
+      "sha256": "4e78d3a0660312450e2c3db453c56f7d10bd25601b3078bc2d196572e50e7bd0"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/pairs.c",
+      "bytes": 8708,
+      "sha256": "19dc85ec25b16230e813996531e3a8235b396c4dfb9331304ad815cc784f46c2"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/power.c",
+      "bytes": 5565,
+      "sha256": "4fbc30c0a87322ee401396b9149779d9a23b9f4ba45a44b7b6e8a6075b8a21fd"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/precise_arithmetic.c",
+      "bytes": 27753,
+      "sha256": "3ca506dc6af11efd49b4af0e9a26aa65bb45f1150cdf74725c91704b882f4bc9"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/precise_audit.c",
+      "bytes": 1975,
+      "sha256": "193748c7e2dca04dba7a8345bcee1d6d18d99a4a949dbe7d71f4f52000c47f4f"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/precise_fraction.c",
+      "bytes": 5895,
+      "sha256": "eccb78f243ae210dd0174854b530d89a99a227b29f22c5a51905c6e20fd848a4"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/precise_upstream_allocations.c",
+      "bytes": 5169,
+      "sha256": "80bd380980efd72df832a52654ce00078ef3be8239e786e47e9539ca0c7cb891"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/precise_upstream_allocations.sh",
+      "bytes": 1387,
+      "sha256": "d916319918b821f102ee9cbcce3af07daaa7ec54cbdfedba0b88cf1a5f75c651"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/precise_words.c",
+      "bytes": 23834,
+      "sha256": "529dfd30bb43948e5a73ce96fb21f07413772107db6a598fdae76cb67f167cd5"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/radial_domain.c",
+      "bytes": 19041,
+      "sha256": "92a4474de315deae0b653b47368c2cab676aeaa175395ca31fb3d440d69f1947"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/raster_bank.c",
+      "bytes": 25552,
+      "sha256": "e22e4ccf23b5048e5939367090fc3dcc451d34b9753067721b2435ffae7a5cab"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/raw_bits.c",
+      "bytes": 11721,
+      "sha256": "8959695ea4436938389c64eb93e356fc83c1ad070941419d0184f57f25dd01bc"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/raw_equality.c",
+      "bytes": 16456,
+      "sha256": "355600c95b0ae2e1ddbb6f355d7119382553112676fb8079efc640677a7d0049"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/saturation.c",
+      "bytes": 5618,
+      "sha256": "53486fb5e04a1a6472abdc498d7f28794c49d19aecc96a37cdbfcec9ec739e7b"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/scalar_operations.c",
+      "bytes": 5429,
+      "sha256": "35738685cc578b08df9c43525fd2a28e0e05d2e49f959649eeac68d3af7db88d"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/selected_lanes.c",
+      "bytes": 17898,
+      "sha256": "d4dfe66030345634062412ff7d902cf1648d54334568d176edde64570b0a9000"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/selected_lanes_pair.c",
+      "bytes": 906,
+      "sha256": "a931212987b702398159715d67af4009b9631fc4394aee349c7c712b05c81842"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/signed_conversions.c",
+      "bytes": 5514,
+      "sha256": "fb9bb1e447fb53ae9603638df282a58bed59833dec351cf351c958ac20cde653"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/signed_integers.c",
+      "bytes": 5412,
+      "sha256": "20712fb7b685e39be33474bf111230faec298615362e744d668db240ab9b9f90"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/sine.c",
+      "bytes": 5563,
+      "sha256": "5b8d533698ae03074db78e12f5912c6d27c4480eaf23c037d8b45b35916103fb"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/standard_allocations.c",
+      "bytes": 4561,
+      "sha256": "6e3363baceffbeee44eeeaadafd690d66f564a8ab1ce37ef04fa104178281a3b"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/standard_compiler.c",
+      "bytes": 4007,
+      "sha256": "4b9900c6771859e42fab560e02c75442ecaffc5da1f45346e2eb66cca987174b"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/standard_instance_base_allocations.c",
+      "bytes": 5939,
+      "sha256": "f32de97472d5b2feb452eef849e0c3feb569c5ef5e456cd947bec4f4ebd60578"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/standard_instance_base_inputs.c",
+      "bytes": 10882,
+      "sha256": "bb3314c995b006908db342ea1b6b5e4403353c4309eae602be36201621c6c04e"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/standard_integer_allocations.c",
+      "bytes": 4091,
+      "sha256": "2817bc35a60ccd0fe25aba7a54629d6c6ea76068df2767bd19c777338e641c7b"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/standard_integer_image_shader_allocations.c",
+      "bytes": 5890,
+      "sha256": "65d678935ce138aa4d56cf327b6fd7b18408aa57875224a78e1c2fa6a6fa19cc"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/standard_integer_image_shader_inputs.c",
+      "bytes": 8276,
+      "sha256": "9ebcc1fe044999f9f077fc8aec1c3852004c2a046718154f766fed782578650a"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/standard_integer_inputs.c",
+      "bytes": 1494,
+      "sha256": "19d0ab9db8114ac2c63fa13c91a6cbf80631414fd0bd923597e20a748ed5f927"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/standard_packed_allocations.c",
+      "bytes": 4123,
+      "sha256": "6e748fdfd6c86f205540abd8d8d3f2cbbc37ad82f453b10f8c4341f6b96c9087"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/standard_packed_inputs.c",
+      "bytes": 1720,
+      "sha256": "92dbc8fb34d55af57a3ef0dadee5b53d802527cec96e2a586f0ddcb9f8113132"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/standard_texture_allocations.c",
+      "bytes": 5845,
+      "sha256": "a0157187ef330bb12a4db74f8dc9bf40073ca31d378e82c4da90971c15b76c73"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/standard_texture_inputs.c",
+      "bytes": 6886,
+      "sha256": "8c0956d966856d1b34383adf60b2e9b2453457e5793118aed22678a5b270216f"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/standard_uniform_allocations.c",
+      "bytes": 5137,
+      "sha256": "03f16f2e92b7293b34b14c02b9575a66cf33f9cf85e1d42f0170dffad506f7ed"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/standard_uniform_inputs.c",
+      "bytes": 4540,
+      "sha256": "3953024b8003fb345753538753447a5b507f45057d0f329b1ae4396ce2339868"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/structured_conditionals.c",
+      "bytes": 15757,
+      "sha256": "aec64e43ca848ee704c1dd4931206a83bf7a07e60e3a2bc23fd93d9e7c4a32db"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/tgsi_scratch_boundaries.c",
+      "bytes": 3274,
+      "sha256": "8458322946c0a81b868d7c6236533a28c129b5fb190a39113eb86ac08a9afc3b"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/vertex_constants.c",
+      "bytes": 1857,
+      "sha256": "346c04c761e0480ccc94405409329a9c8e879fc58b98324d4d1d12a3694947a7"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/zero_cap.c",
+      "bytes": 7850,
+      "sha256": "d28cde75dd0f93316ccb87025cac04ab890f50c1aa3aee0c1c53dbd8ab3a267b"
+    },
+    {
+      "path": "renderer/virgl-shader/private_92cb_inputs.h",
+      "bytes": 58265,
+      "sha256": "b870fe0c78f82b1d006ad76e0f91e5e586840f66c54f881d2fedaaeddf7af440"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_binary32.h",
+      "bytes": 5216,
+      "sha256": "90d8e3227f44c19e21443d5ec85f6e926eece345b95cb6cd3b06f01259a7c490"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "bytes": 77456,
+      "sha256": "189bbb5af5530f2966c7dc099726ef07b04810beeb1c125ea2a66015ffe51710"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.h",
+      "bytes": 13722,
+      "sha256": "c3380721eaa83606bd8dd780de23a1f296e829de7efd3f62ff00606d04fd56f8"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_conversions.h",
+      "bytes": 3316,
+      "sha256": "f843c0f99ec6a62321507e72fcbed48bac504ff86f6818c1a232d0a666dd7341"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_fraction.h",
+      "bytes": 4300,
+      "sha256": "30ac2ff3c804f4b75e92a5646d95f108a1e3df5ad955027c204f490aa3e36003"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_known_arithmetic.h",
+      "bytes": 2732,
+      "sha256": "eaf4aa419caff2e7c9e7d2d5f6194c6184189cba78bd9c0ace541f7a291c27e9"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_scalar.h",
+      "bytes": 1329,
+      "sha256": "e3252b5baf03c58a941b22473bfa9784cc5315a1653cef65b95219bcea2c8afd"
+    },
+    {
+      "path": "renderer/virgl-shader/regenerate.py",
+      "bytes": 1696,
+      "sha256": "04121f0bbc2438b885c88737b03886c27a7024ea75454858c1bed9e40e89b399"
+    },
+    {
+      "path": "renderer/virgl-shader/standard.mjs",
+      "bytes": 12727,
+      "sha256": "6e9a37712641b46db30403af0c7a52ef575f9e4999052f6a85b053a5d8318dce"
+    },
+    {
+      "path": "renderer/virgl-shader/standard_emit.c",
+      "bytes": 18629,
+      "sha256": "019476d6439ebcc33914388e493692370796b491101aff570dc88350547ba78f"
+    },
+    {
+      "path": "renderer/virgl-shader/standard_emit.h",
+      "bytes": 526,
+      "sha256": "d80b357e90c79f78b9153aff6501ac689e469d9838c667d35285272390dc472c"
+    },
+    {
+      "path": "renderer/virgl-shader/standard_guard.c",
+      "bytes": 22103,
+      "sha256": "cd6764a9fc43a73a7353873a8b6461d3927e16fea05504044154296320042f45"
+    },
+    {
+      "path": "renderer/virgl-shader/standard_guard.h",
+      "bytes": 3478,
+      "sha256": "2399dc24876a19cff67d5985b3653b2c895ea6e0e30d8efd6a736e68676696d4"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/alpha.frag.tgsi",
+      "bytes": 145,
+      "sha256": "b76a6ab3958192db11de2e1e300e2761e6c6db359e00afeb3e6527d8fa70b53e"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/arithmetic.frag.tgsi",
+      "bytes": 160,
+      "sha256": "e05362e13188b954051e39bccf3da5201ebaf967ee9a60ac0f987ee38383600f"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/bank-cases.json",
+      "bytes": 192995,
+      "sha256": "a6582a8578b5e0b3e71c9ee49e4fdf0328fb8f40a8ffac1e2984498495513a75"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/banks.mjs",
+      "bytes": 23946,
+      "sha256": "b0f538bf1c61c9eb83d3b9b3a0e1567d2981bcbb728e1a2eba9f54e66bcd007d"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/bounded-loop-cases.json",
+      "bytes": 361412,
+      "sha256": "0eec49f7e11ff80fbcf84ef723df88126061c04ea17ddc70de26fc7529ba1653"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/browser.mjs",
+      "bytes": 18232,
+      "sha256": "98c06c9083ac761ebec44ebc2b051dd0faf8e917014ce7287dc8aa079bb7e1ef"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/captured-grammar-migrations.json",
+      "bytes": 8214,
+      "sha256": "ce3193f5efc48d47e8ff10c2f5571fd9efb5cea56935d32c32ccd8aa86a23a36"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/captured-invalid.json",
+      "bytes": 20802,
+      "sha256": "fd7769f258bc5d51ce6e1c10c8e91345124676e6ce1777b30999e23a19cdbd80"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/captured-textured-scene.mjs",
+      "bytes": 18550,
+      "sha256": "6e84d3e7313b9480f23fe41d571522f0e081343b732ab0b3e25482dd1f2aebcc"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/compiler-bounds-joins.mjs",
+      "bytes": 5725,
+      "sha256": "26dab24dbbff632ce381276abefcbca43f5fc2dca8342313f43fcd8376035c62"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/compiler-bounds.mjs",
+      "bytes": 13654,
+      "sha256": "a14ee820fdc0252863415dc403c066c8d0c9c49911dae827205f9a4cbfb7a64b"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/component-cases.json",
+      "bytes": 54311,
+      "sha256": "92752e2bfc8d5712dc77d84b9502ed54c14fbecac6a717191dd556d09c122b40"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/component-float-cases.json",
+      "bytes": 301735,
+      "sha256": "423f9cd45978fe43a4da5c8c8a59d6d53f76e2068868c30eb06d3f331d92e198"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/component-float-hardware.json",
+      "bytes": 112033,
+      "sha256": "ee9afd644f44542c7bfef49636be7d4f9db957413f454a300737c10f1e8784e3"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/component-float-migrations.json",
+      "bytes": 3184,
+      "sha256": "f430bf73c2d29663d9ef406be7b55be2a6c590f2ad57e1584907a03974f88002"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/component-floats.mjs",
+      "bytes": 65278,
+      "sha256": "044a12cc3a0c166d3fe2c412b2d12f083b8a5d3edf3f91a983183e9f9a3fdc8e"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/components.mjs",
+      "bytes": 20021,
+      "sha256": "28feb47ddaa30ba18704f63f150ce3e150b040be9788c146620635965c9a5f0c"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/constant-compiler-cases.json",
+      "bytes": 398193,
+      "sha256": "53a0f1ef11e1b7049807df169d5b56acdaad4148aef4a8c4fd7b83154b1b9f7c"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/constant-compiler-migrations.json",
+      "bytes": 232244,
+      "sha256": "91e88ec0a3dc6e9d9efe9ff9c0261021b87b0914394fd5cf7c338874911d3bc7"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/conversion-banks.mjs",
+      "bytes": 13931,
+      "sha256": "a42f166975286ecd0b085ff53c255447af2fd23e041b2221b30d783c0d7225af"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/coordinate-prefix.mjs",
+      "bytes": 7165,
+      "sha256": "d7647597389766d2f5822f5e93e178ff32aae042957b3ceb7cfdc70df06e23c9"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/corpus.mjs",
+      "bytes": 4442,
+      "sha256": "4f88a7a4f4a301f1a60e3f1b046d71635373a273cbc07e60b43c35aae33d0245"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/dot-reciprocal-cases.json",
+      "bytes": 339348,
+      "sha256": "6640068f84c207cb221c8d753f5cd07afbed8fbc63b86f06664e245c9fb9ec3b"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/dot-reciprocal-hardware.json",
+      "bytes": 134169,
+      "sha256": "ca3dc4ec1cc4c60e382c1c23af645070b4aea303e9cea0c1cb8fd989666193a3"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/dot-reciprocal-migrations.json",
+      "bytes": 1117,
+      "sha256": "e02edfeb1351ec7da0728a5d66673e12224b6d29e3b153e3a9c160f28325b28b"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/dot-reciprocals.mjs",
+      "bytes": 69323,
+      "sha256": "2b2f35dbd3a67c6fd11dada58746286837691599375a5d50c220fb31462f00b4"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/exact-reciprocal.mjs",
+      "bytes": 8180,
+      "sha256": "634167470e42a4f12768779ace33e8db69fdb57a669629ef67565abdc5d92ec1"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/exponent-logarithm-capture-regressions.py",
+      "bytes": 9786,
+      "sha256": "59976dc30501ba5a42f4871d12fc75ce7bca82cc46715741e79c0f08d5f28442"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/exponent-logarithm-regressions.mjs",
+      "bytes": 8009,
+      "sha256": "a3d5a37da138c9f79b808cccbf55c53959fb4917997d131ccf1286df83b4122d"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/exponent-logarithm.mjs",
+      "bytes": 20101,
+      "sha256": "b6fa4109e6db0c4a9ed428b416ae9c142ae78180cc4ffd4095d88ddc7a9dcc18"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/float-mask-cases.json",
+      "bytes": 229886,
+      "sha256": "fc5044fbce3c4df167c3d757e79079dfd3d1d533b220aecc99cae31037442a63"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/float-mask-hardware.json",
+      "bytes": 58605,
+      "sha256": "77e86508296cd98ee7b0844e635874124dadead9d932f8c03780c83c26c53458"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/float-masks-equality-successor.mjs",
+      "bytes": 42035,
+      "sha256": "66a30a77518169a0a06432f3f576ea27bc7c961bb3c0d4312c26754e0b141ef1"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/float-masks.mjs",
+      "bytes": 45102,
+      "sha256": "46a919670247c8e31bd21c81a584c28e5ad46b3f440112f5976ebf7b3e883e75"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/fraction-banks.mjs",
+      "bytes": 15065,
+      "sha256": "c43e677ee6ebf0f118829348347ea2c23bb82ae0913e2bfa3109429ea689ea3a"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/fragment-coordinates.mjs",
+      "bytes": 23461,
+      "sha256": "29124c976106fd6e334bea07b415650390cd73694f0e8a23144461fb3e8917aa"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/fragment-discard.mjs",
+      "bytes": 23217,
+      "sha256": "7e803de0b785b668d4c84f27965689ca73eea4486fc345ffadcaeb98cd19ad2c"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/gears-exact-alpha.mjs",
+      "bytes": 2112,
+      "sha256": "9b118502814dd7634fda76c1fc6df0d9eba679dbd73a469f413d8fd637a1f3da"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/gears-originals.json",
+      "bytes": 13694,
+      "sha256": "b2ea32f6f47428c1de7edbb70c21b40ad15409504bdaad4805f938658385ef28"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/gears-originals.mjs",
+      "bytes": 21524,
+      "sha256": "5a17d8733cf8562ba9ede747bc006c4b4c67d6de7f1b1a383bde81a8dffa76c0"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/hex-literal-regressions.mjs",
+      "bytes": 8196,
+      "sha256": "91000d19f71a851b94ea21d974e6d250ceb96e654b3aa5765d0b7a39321c770e"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/hex-literals.mjs",
+      "bytes": 11322,
+      "sha256": "86bb9f3a6d0d12f6225375acda9b31d0714fc2085412fb59ef6e8dbdc889ac95"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/indirect-constant-cases.json",
+      "bytes": 339595,
+      "sha256": "8155bcfee6bcf299dc26d8b2eb82b98bda270c8bfbb763a97c4f320895fce167"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/integer-mask-cases.json",
+      "bytes": 313689,
+      "sha256": "bc3209f4e1d498d9c176d08ad56ba13ff633e9ad3e710a63eae77552400ad16c"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/integer-mask-hardware.json",
+      "bytes": 57298,
+      "sha256": "7ff7c4e8f9d95b0dd1df94ef6ca9e0ba7e776ea2af4f4e879ca3554ebb9bedda"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/integer-masks-equality-successor.mjs",
+      "bytes": 41546,
+      "sha256": "9c30e74b6c45bfce99f8a32854cdedd360ad92e05171f856310075de9e728d01"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/integer-masks.mjs",
+      "bytes": 44611,
+      "sha256": "b4e5ca48168907ba566b8d7eb2f0599721d1e528c7812229057416e9a1018a28"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/known-arithmetic.mjs",
+      "bytes": 17145,
+      "sha256": "2197bbe1b29916cfb3580cc151a6809a1b186316a8c7be5aa1b82fadedc05d6d"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/known-branches.mjs",
+      "bytes": 20488,
+      "sha256": "48f7edd550e16fe3bc59ba707d8238ed185ed1456caf991c88adf5ffafa5ff35"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/linkage.frag.tgsi",
+      "bytes": 80,
+      "sha256": "bf50dd29e6dadcc16e16e538731a72e47498881e38154fc15059bc2997d846c9"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/mesa-24.2.8-tgsi.rst",
+      "bytes": 99554,
+      "sha256": "856a2d675bf20e8014ecb77c96b7cd91e6d4bf853bbfbe697f3b09edfc34223c"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/minimum-banks.mjs",
+      "bytes": 14516,
+      "sha256": "ac8a1838f47f0184efe60d62443b6c65167c93250e7352103c11639642b7156e"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/minimum-selection-regressions.mjs",
+      "bytes": 9293,
+      "sha256": "641318a8ea3896fd078536c8c6fe11c4fe9cf118eeac1154ce6cb8a68fc5ab0f"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/minimum-selection.mjs",
+      "bytes": 23694,
+      "sha256": "c7e0c9922457b5be8b603c99efa1478aa04daf92ad100860b865a844a4bddf7e"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/numeric-float-cases.json",
+      "bytes": 211013,
+      "sha256": "f6a5ebb60bfac13649d67835d48b3a3bbc88e60e4c8b14d0240f2e5bc35e172b"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/numeric-float-hardware.json",
+      "bytes": 92929,
+      "sha256": "635559a8b3d3d3c85399bd9a4fa0b20a970374293f00854d25569433251d0ba0"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/numeric-floats.mjs",
+      "bytes": 47489,
+      "sha256": "06ce68ff9abdcdb7b33d71b75db37ee54f57ecae6e326b8a04ad90803bf44b76"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/ordered-mask-cases.json",
+      "bytes": 410808,
+      "sha256": "41fe03c341c2df3c399366e1c72e1c392a1e4a79c262fe9aeed84025a7f28dad"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/original-92cb-power-domain.mjs",
+      "bytes": 14096,
+      "sha256": "91216245604c703dc71c30b8fab6d0245d1839521da8c9c98895be7a6ffdd20e"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/original-92cb-private-power-worker.mjs",
+      "bytes": 280,
+      "sha256": "2eec3a8c0aa66275f37b39bd93c0d9bbaaac228d8c12833950a1af852784b023"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/original-92cb-private-power.mjs",
+      "bytes": 23074,
+      "sha256": "39d760230e8f88978dedfbe3a4e3af4a5de0d2b7be49f65365f5d760e1af20a6"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/original-c580.mjs",
+      "bytes": 12581,
+      "sha256": "89c8edde6bc5349d8eed7373b19885015bb13dce90c39ebc39b98ecac566570f"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/original-corpus.json",
+      "bytes": 43067,
+      "sha256": "72762494d89146a605db7dae27e22ba76288f9cad5dca6654f6a3af669704020"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/original-corpus.mjs",
+      "bytes": 17645,
+      "sha256": "3634573e3bb9e5f88649642b61df924ce823525055b0c0d1e38530ad1709a771"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/original-programs-custody.mjs",
+      "bytes": 5148,
+      "sha256": "6e5efc2876dfe63e011d2fddb7bcd5773fe4bf7a8b5f9cc80126a32203979991"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/original-programs-worker.mjs",
+      "bytes": 270,
+      "sha256": "42a118ebb2d9a7c0352a421a4577dc15c1610f4dace1ff749bf31e404f2a6205"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/original-programs.mjs",
+      "bytes": 32060,
+      "sha256": "b35de4c4f326e1b5a9cef666d9d0d3326f4369abfc43f55412d9022549e16a1f"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/pair-cases.json",
+      "bytes": 199393,
+      "sha256": "1b230d356463f1adb1155631a5377e7f8e65ab6f78bc4404eeba26c0b7b52d63"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/pairs.mjs",
+      "bytes": 15961,
+      "sha256": "a837403ff169cfb40b015256fb29b32da6c0f7b2f07eaf975c57392f8a690e3a"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/passthrough.vert.tgsi",
+      "bytes": 109,
+      "sha256": "396294ea197243b64d61cc6207e76f5043f791d318d5dc90d8ec3da1fc496ce4"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/power-capture-regressions.py",
+      "bytes": 15905,
+      "sha256": "7909501d13f4c4b5353da9f7437ef37b82806af33f44e3278ecc3989659e390d"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/power-regressions.mjs",
+      "bytes": 10145,
+      "sha256": "3ecb62118b1dbda5341e1877774acb252cc4cdbe18bc71a3de42d61faf192165"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/power.mjs",
+      "bytes": 20046,
+      "sha256": "2d16c9e48b72d462dcdebcaebbc4a895600cbe49060942d996f6cdf0410ea37d"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/precise-arithmetic-cases.json",
+      "bytes": 576585,
+      "sha256": "68f6811d318ef2661f9010e28cf8e4a1a284600e419b371905ef9a639d1e02cc"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/precise-fraction-capture-regressions.mjs",
+      "bytes": 4899,
+      "sha256": "3313c6693652d26baf0e1dc1179de478aab045c1f5b1bf49d5d2b4b3b2ae08f8"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/precise-fraction-regressions.mjs",
+      "bytes": 9751,
+      "sha256": "6442b2dcaf14019e49eaed4406875c173d002ed99bba34f4ae3544cac4b7ef5e"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/precise-fraction.mjs",
+      "bytes": 21709,
+      "sha256": "61f0de99c66b60dd05fb41ff92037e3a6486519175a067b374d50dfa0c8c46f2"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/precise-word-cases.json",
+      "bytes": 162808,
+      "sha256": "b3630a1489042dd7872d170e28decef3a27627028bd0ba36231d279199164064"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/radial-domain-cases.json",
+      "bytes": 80589,
+      "sha256": "bf87fce0e9cf3edc279e70b291005f0f1621e7aecc2506b88a2b76e943b126bd"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/raster-bank-cases.json",
+      "bytes": 348383,
+      "sha256": "d9c11fd692f5fa4dea867834f5bc1a739d8ea4d6ff8799521e9be2a5ff35d728"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/raw-bit-cases.json",
+      "bytes": 107467,
+      "sha256": "f39f7650f947d53370c4d0ecd45eaa282b3610f42a28ca70af24473ee4077e4a"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/raw-bit-hardware.json",
+      "bytes": 41731,
+      "sha256": "da9d08b03fa8cbe853f9b9813be9946c9b3d836b9a2c5cf879db9f98510aaae2"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/raw-bits.mjs",
+      "bytes": 38247,
+      "sha256": "0ed981c535e859e63556082e70336a250ea8254e876f0b6b5311d569c9de0986"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/raw-equality-cases.json",
+      "bytes": 277543,
+      "sha256": "a00303544487dc9b29f2f15a0aac89b24d79d52802fd1294801c9d9840611a61"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/raw-equality-migrations.json",
+      "bytes": 5170,
+      "sha256": "50c09a3cd522e340fd38279c50c49c0ac2b47f7eef0697b4be3d2380317c76f8"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/raw-equality-oracle.mjs",
+      "bytes": 5810,
+      "sha256": "7a1d358b664b6f74d1fd6294ca8639a1da5e5b68d0e97c3770dd41ede34ac1f4"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/raw-equality.mjs",
+      "bytes": 22854,
+      "sha256": "cd6cc39953dc0beabfb7a0f2f13f6f09fa74d4bdbcae89b8adbc572ab6d02392"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/saturation-capture-regressions.py",
+      "bytes": 11118,
+      "sha256": "9483831c97a60e40ea1fb51c33580ec1665e0bcdaa2a93a01b43e841de7a3745"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/saturation-regressions.mjs",
+      "bytes": 8915,
+      "sha256": "724fe09a689e41494e0cfbb7698d68b5b73390b1b6c1ee0b8c8204328a7c1536"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/saturation.mjs",
+      "bytes": 21741,
+      "sha256": "70ca5bf95506165ce69cdbae15c0fc0ae1013a9bd2921882ef10337709c2ce2c"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/scalar-banks.mjs",
+      "bytes": 14276,
+      "sha256": "603885049741f01214934aafd09c64815bbbe986dd89e5c062cc538d9e913c8f"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/scalar-operation-regressions.mjs",
+      "bytes": 9370,
+      "sha256": "5bc2520293dc934249f91e962f6328f36053cf702960200a8731e068d122fba8"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/scalar-operations.mjs",
+      "bytes": 23205,
+      "sha256": "a87ebdd431c6e440769b0fe86d6ed25861ffac0106d6d3c96dd180b82f7e8a22"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/selected-lanes-cases.json",
+      "bytes": 399314,
+      "sha256": "35585d7c3ff8eb3388c3a392349450e65df75c2bcd8c7f677b39a8cd065213b7"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/signed-conversion-regressions.mjs",
+      "bytes": 9538,
+      "sha256": "af656f9a8a7bc00d12fc4d8562dbc889ea19c63c2428917c37a6e45ad471ae0a"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/signed-conversions.mjs",
+      "bytes": 22617,
+      "sha256": "116f17ed35223e5c9fc3bf7471f042dd350773245f141905852faf4bdb053db4"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/signed-integer-regressions.mjs",
+      "bytes": 6552,
+      "sha256": "3b3a460110a099530dd255b51fd79c2180f2ed98df084f58180518485ebf43a3"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/signed-integers.mjs",
+      "bytes": 20900,
+      "sha256": "5872ff256b70b524458d4c490219557d40a0fcd2d2e4dc0e109621b6124a193a"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/sine-capture-regressions.py",
+      "bytes": 13561,
+      "sha256": "ed2b288cd928cdd3b409b1a5d31a6f38e28b30ce3e0a282a868dc55d0a25be9c"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/sine-regressions.mjs",
+      "bytes": 9286,
+      "sha256": "f57cf767e5d98db39c2bc34457b489527d9a88a7eae30e3c2075f6d6acc9545d"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/sine.mjs",
+      "bytes": 19909,
+      "sha256": "1a654d3d78146d4719d18b83a142bc89179f1e0324f5abc218f78e73b9b1247e"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/standard-adversarial.mjs",
+      "bytes": 1866,
+      "sha256": "19a2a199655e8186a345e18869b51381bdbf2604ecc746a74d8dea3459984ce2"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/standard-browser.mjs",
+      "bytes": 29019,
+      "sha256": "53aa76cabffb0ac9c81a76ed47dae56710ce76b269f4cbc4f9af047d0b3fae22"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/standard-instance-base-browser.mjs",
+      "bytes": 15983,
+      "sha256": "6e3351da6e1233aab15979e9fd2299fb65f4d59321f47dfe8803e0e829f46f34"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/standard-instance-base-critic.mjs",
+      "bytes": 11021,
+      "sha256": "f568bc4a3de1f2f828bad66b78a3b0f59b63232e8c960c602b45ad12a360f62f"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/standard-integer-image-shader-browser.mjs",
+      "bytes": 16080,
+      "sha256": "700a43b58ecf90d8fb8be8ec7261253fdc2b408b4479e50322ca83781edd6502"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/standard-integer-image-shader-critic.mjs",
+      "bytes": 12551,
+      "sha256": "486f001a4903152b5a46d2eb4e3a54c77e9bf45c481525e9aadaba75e766d306"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/standard-integer-image-shader-custody.mjs",
+      "bytes": 4112,
+      "sha256": "c0d09375f1157e4d29ee3ba1828071ad62ce6aa7b6ce684298e4a3983ecacb0f"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/standard-texture-adversarial.mjs",
+      "bytes": 14914,
+      "sha256": "fc586615bf67abc8bbbac878adc8bca9bc64d8f873e33d5229c9fba3a4ba1292"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/standard-texture-browser.mjs",
+      "bytes": 15160,
+      "sha256": "53128848ce3a6b5ca0463b11db4b04faf7c09d0d47ecc81ca2f8297dadd16f1c"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/standard-uniform-browser.mjs",
+      "bytes": 18303,
+      "sha256": "7c5eecbb11611c030c366a0b8c0189c007134016f6d229578141a91db68f0b9f"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/structured-conditional-cases.json",
+      "bytes": 240027,
+      "sha256": "688d72e3ca6c210351242fba32d663cc356a6fc82e36809483dcd4a3900d2024"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/texture.frag.tgsi",
+      "bytes": 185,
+      "sha256": "4ca512b5dfd3afac60eddf009cdc542fe6effa5b9817143ff404210ffce3fa00"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/transform.vert.tgsi",
+      "bytes": 165,
+      "sha256": "320d661e3f13f88dd6c3e874ffe1a43320211a28b69d505cc9e0e6c3fe4908ff"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/zero-cap.mjs",
+      "bytes": 9516,
+      "sha256": "3c2bab1575764998004beb36ba9b83b74885012e0b9d0db8657010a38ffa33a2"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/COPYING",
+      "bytes": 1098,
+      "sha256": "3b32caf16e2402c2aff2b716858713f3e1feded85c25e71bf829816ee5009402"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/cso_cache/cso_cache.c",
+      "bytes": 8950,
+      "sha256": "88a296ad627e49f22d3e58b6c70c2a656f8c3e7a6fba652f16332c172b12737c"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/cso_cache/cso_cache.h",
+      "bytes": 5609,
+      "sha256": "84ce8070d4af061f51e887ce7d80ce8fa9d81633205cf16bd61e42832d2cf1a0"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/cso_cache/cso_hash.c",
+      "bytes": 11319,
+      "sha256": "385fbd6abb5cfdb8fe0b982f07bdc2b98e2edaa50910b26681ab500c48d88514"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/cso_cache/cso_hash.h",
+      "bytes": 4178,
+      "sha256": "189444cd8c4b98327d79f0c33c5b63231854ab6419f9fe18b20e829510bcd66f"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_build.c",
+      "bytes": 35054,
+      "sha256": "45867deeb665f4ca86bc0b755ea3e72d320cb01ef881b6a808e9f332b0a040c3"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_build.h",
+      "bytes": 2838,
+      "sha256": "5f3c327979b3043649b9df678b0e359d387f334e9573c16bd4a263c5452da039"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_dump.c",
+      "bytes": 23084,
+      "sha256": "747fc8eb4df95202ea8192b377751021480ec7f430ba458936045a999d7f39bc"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_dump.h",
+      "bytes": 2696,
+      "sha256": "94cb5b4d80dc53937819a8dce44344ae63633e418174d3f8674668e1a74f49f4"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_info.c",
+      "bytes": 22172,
+      "sha256": "2419cdd3a6322cee5da57d666012504c7b6500acb228418334b8183aa7ec1833"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_info.h",
+      "bytes": 3230,
+      "sha256": "d20f7d0697a35196c5893d9454016b1cbe58d0b5dfe1eadec23b692271de0568"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_iterate.c",
+      "bytes": 2910,
+      "sha256": "1767a12cd5be68c04ec5f94a8ec27559913708c9eee13ba524919ee376c85879"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_iterate.h",
+      "bytes": 2323,
+      "sha256": "29a5f6c96dc4e3483a8afc1f6fdd035fabb29dbcd354bb316d5a005c7feb34db"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_parse.c",
+      "bytes": 9241,
+      "sha256": "c08c03b75cc74dc8d30231773ed357ddbcbf5b792d303164882ad996c89d91bd"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_parse.h",
+      "bytes": 4672,
+      "sha256": "3fb35f0187777fffcbbd9b5f12d3f17f7012e925439f5b959fc9c6876230ef1c"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_sanity.c",
+      "bytes": 15277,
+      "sha256": "f5bc791e3488f2ae35ef1156b7953620de38601bbb4418984d039af5a0c14e51"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_sanity.h",
+      "bytes": 1879,
+      "sha256": "beac1b1c6680faf9cbcb660324b445a7664ea22fdc1ffb69f9ccfbac5fbf0bac"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_scan.c",
+      "bytes": 24473,
+      "sha256": "c77892860df340b883c5e191577006f6ba5b0f07eb4ca6d74ec5e6466eac0975"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_scan.h",
+      "bytes": 5283,
+      "sha256": "16f4742f1f8563703686aec4dbfade31ebaee2d1357f69ff525678919e0fc928"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_strings.c",
+      "bytes": 5859,
+      "sha256": "e1c3909633b5acd3ff445ce3ddde249457ca92d1ba571269162b7eb5903f513f"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_strings.h",
+      "bytes": 2378,
+      "sha256": "12d42a3b23f78824c93a5115e479d437f21bb03745b647a9004feaef74a42abb"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_text.c",
+      "bytes": 49657,
+      "sha256": "692188a36d9cb4cb714dfc3eaf8fc9f7be4f5428550d8ad243fa3d6247d25b0c"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_text.h",
+      "bytes": 1628,
+      "sha256": "e3a4c2c7af363e952c4b32b71c9b6f5517718392ed9572b86f27d27151e8af9c"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_util.c",
+      "bytes": 11690,
+      "sha256": "dbab8d2d314a647c9639d9dd9e6947d3b920346a4680d3fe8102e7497241e4ce"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_util.h",
+      "bytes": 2715,
+      "sha256": "f3b4b296b9f0ccc1b8ad802bca91597efd12e08c551ccbce3b94fc23467a8fc1"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_debug_describe.h",
+      "bytes": 2040,
+      "sha256": "002511b4833ea6665b0aa6bd9010a0d999a58a4f8d91cb32de7fc30ff28f76ab"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_debug_refcnt.h",
+      "bytes": 1789,
+      "sha256": "2f173c1b54038fcd432933611687632ab2eac27a94511c615a9ab0c302a8c7b9"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_format.h",
+      "bytes": 24095,
+      "sha256": "3e2f6ad3d5c933ca9fd0124b3ae66a1584fc2ae57f761f2e147b497473384f51"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_format.yaml",
+      "bytes": 77400,
+      "sha256": "6c2d3255351b90612afee88e9758b603c244cc81f26d25e0000f263d50c06a10"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_format_parse.py",
+      "bytes": 20341,
+      "sha256": "718ba46b27fbec2e0026ca8e2480a6b4992583a9b2bd4e2a90eee2a64f8a6ee7"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_format_s3tc.h",
+      "bytes": 1601,
+      "sha256": "653113e5628c6ab84f5dd680cc658a992901011435332b2c445adabd0131587c"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_format_table.py",
+      "bytes": 20834,
+      "sha256": "4fd54a3df7c3ccd37c3cd429953956799fa4d5113d147d60d8cf5d48e6415087"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_inlines.h",
+      "bytes": 7051,
+      "sha256": "52961188ed9a0cd849baabdbcce5fb1701f0bb8dc02e64115e82cbe2cac89866"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_prim.h",
+      "bytes": 7979,
+      "sha256": "8b4fddd7a11f08c7dd2d90a2b8f1f91abbfeaf849cc5f21425a5c80375b396d4"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/include/pipe/p_defines.h",
+      "bytes": 25281,
+      "sha256": "29b02c15399768ab74054e711f6633c407cf5f952f591c046e7542b82e54a008"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/include/pipe/p_shader_tokens.h",
+      "bytes": 23154,
+      "sha256": "48d2cedf0e97e4a685c20acb59bc8dd1317e0b2ba9166e9c4ac81fedda2e61f9"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/include/pipe/p_state.h",
+      "bytes": 19681,
+      "sha256": "4c9b59a7e9827314dcac5b7492ecd0cc62bd585d662f0611e542af70858c9dbe"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/compat/c11_compat.h",
+      "bytes": 483,
+      "sha256": "103fedb48f658d36cb416c9c9e5ea4d70dff181aab551fcb1028107d098ffa3e"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/compat/c99_compat.h",
+      "bytes": 2754,
+      "sha256": "92445314d5fb3eff3a12eaf4cc864f9b459862a99594403b36ea79dfe149d267"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/compat/no_extern_c.h",
+      "bytes": 2051,
+      "sha256": "60883a8d2b2978b861ef686c5a9afb41cf91ffec7c56baca89c626e7fea2d385"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/pipe/p_compiler.h",
+      "bytes": 4021,
+      "sha256": "cea977fedff656415c98ca4ac98d7ba4649c7bde65730f76a2e7a94034519e81"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/pipe/p_config.h",
+      "bytes": 4036,
+      "sha256": "86c0234de12412f65f8a53f1e9f619841d2e60a2b0e32b1ba99961b78c698985"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/bitscan.h",
+      "bytes": 8438,
+      "sha256": "afa4325d0ed38985bf00b547788a3b73c66a97a4513a3beb516e55b5fead5879"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/detect_os.h",
+      "bytes": 2522,
+      "sha256": "6d45904758bf3b5a67c0fa3829534461f1c8b276f55328f58a7cbac1d3770f95"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/hash_table.h",
+      "bytes": 7376,
+      "sha256": "9189e93d161af045eee3fca6f47aa164313e1668ab7341c69987a0f3ada24352"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/macros.h",
+      "bytes": 15240,
+      "sha256": "a6d424c804a9dd0e22f9bfe5fe332554b3440a13929d0aecf93f571ce9e9db8d"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/os_memory.h",
+      "bytes": 1938,
+      "sha256": "d77e951306a5027123a7c64675e10b23af8de03ea0673e84cbd935f93284e73f"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/os_memory_aligned.h",
+      "bytes": 3383,
+      "sha256": "12d86fa94be38c13f7eeebdf313795e1267dd5a7187d2f0072e0e896f41702f6"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/os_memory_stdc.h",
+      "bytes": 2088,
+      "sha256": "07360363b88c927065e10df71bebf6c8a0cc3b9167c9dfce55f2d65f11e6f787"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/os_misc.h",
+      "bytes": 2695,
+      "sha256": "3b88b89e0227de413926a9907d660c4b967ee5fe15c9e47977ecfe7091823ceb"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_atomic.h",
+      "bytes": 11209,
+      "sha256": "cd3c5ca84af9a2aae50517e8735aacf7e72edce326504d60c9c239f5c7ab3d0c"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_debug.c",
+      "bytes": 10824,
+      "sha256": "9a3f45a3ed1cb45cd6b8543181b06aa30a6ef1ca57a0fca2678900f9c42b5a4d"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_debug.h",
+      "bytes": 11537,
+      "sha256": "652e2cbc07d44cee7de3fa8cf2e30edc816bb061393de2f43f6d99d99e798ad8"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_endian.h",
+      "bytes": 1712,
+      "sha256": "088a97ceb214f120fabfe4a0eb8924fb1655de982525548bd867e3b45931b409"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_formats.h",
+      "bytes": 1818,
+      "sha256": "3fb34a11387b6c625a20862bd5204fc1b5dfb874d2a5f718ba6fa37953925cfc"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_math.h",
+      "bytes": 17141,
+      "sha256": "1ba82ca8f9eaaac9b48b5ffbb3fa59edbd4f91051f6bbdd8bf2dc6d375a2620a"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_memory.h",
+      "bytes": 2735,
+      "sha256": "c5db17c724c70283ddbe04165722f6988d4e0eb9aa3602ae472feff016649af9"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_string.h",
+      "bytes": 3055,
+      "sha256": "2c5615fc0be8f391051e2302dd1b1985eba5c5ece4922f511f8da07c59cf2598"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/virgl-version.h.meson",
+      "bytes": 2209,
+      "sha256": "eb8fa107bc2e5fb42d5831a2036dae2f7e5c2c89574388d12391817685ed9eb1"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/virgl_hw.h",
+      "bytes": 36318,
+      "sha256": "191ca5cea527949a29e9753b1e31d550f2fed922895d78dabc5c5c3585aa2ff7"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/virgl_protocol.h",
+      "bytes": 30358,
+      "sha256": "094a6e2b210f1d3dd0f1ac254ed8820c1d889e57d2735c0c6194dbc94f3b1ac7"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/virgl_util.h",
+      "bytes": 4932,
+      "sha256": "d96d902c2b4d27083e5982fc90c7e887841cce07e0f95f42aa07ae64d9b53b77"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/virglrenderer.h",
+      "bytes": 19876,
+      "sha256": "0b39479c6dbad50d0b94adbd681e124d3c1a77cb0560309ed493241644730cf8"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/vrend/vrend_debug.h",
+      "bytes": 3279,
+      "sha256": "89f086d99d07d01753de837068fa510e00d6447961f994d3a7bb7d2dbbe5a62f"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/vrend/vrend_shader.c",
+      "bytes": 333808,
+      "sha256": "e08fe8ceebfebb3e6a050b74d0ea0ebbfab35b6be742b6f0c9b9149dd484c3e2"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/vrend/vrend_shader.h",
+      "bytes": 9367,
+      "sha256": "0df385cd9953620e9531db813a54fc582594f56364e5bf1efb1e7cd1ba2a2d09"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/vrend/vrend_strbuf.h",
+      "bytes": 6786,
+      "sha256": "b5909235cf614798d6cc89e6d9236e1653faf14b0493e1e912b68098841cae6f"
+    },
+    {
+      "path": "renderer/virgl-shader/verify_sources.py",
+      "bytes": 951,
+      "sha256": "2f473d2719bddcecea8828cd9eb02b98671d23fb6879f41946847998c8fea287"
+    },
+    {
+      "path": "tasks/epic-6-transcendence/E6-T11d47-instanced-stencil-consumer.md",
+      "bytes": 10603,
+      "sha256": "e9f84b517aad494b2805a869f424c3830c211fc3a39f3a7acba3ab1929e5af06"
+    },
+    {
+      "path": "tools/check_task_policy.py",
+      "bytes": 2216,
+      "sha256": "51bfe598dbd9632a2742d901d3ec5839bdaf97337d624b51486b3ac9262562bc"
+    },
+    {
+      "path": "tools/verify-virgl-instanced-stencil.mjs",
+      "bytes": 15680,
+      "sha256": "f7911e4be0bef96c590492f620d148f801849f6dd5d285604b45659ff4dda540"
+    },
+    {
+      "path": "tools/verify-virgl-instanced-stencil.sh",
+      "bytes": 2406,
+      "sha256": "46782c862992a42c39a85054731d66b88ec85a9ee3c184ed39cf2dc9133e0973"
+    },
+    {
+      "path": "tools/verify-virgl-ordered-stencil.mjs",
+      "bytes": 14798,
+      "sha256": "96f1274371b230da15b60feb9a5d4916054a28e37a51aa27d7ebb79a1c166240"
+    },
+    {
+      "path": "tools/verify-virgl-standard-stencil.mjs",
+      "bytes": 13494,
+      "sha256": "e3a48659343547559a39fbab0af546bb2da383789eec25537e762ffadf2852e4"
+    },
+    {
+      "path": "tools/virgl-command/async-cold.py",
+      "bytes": 3500,
+      "sha256": "e00a3c5abc95fc559fa25b6681b739820a8ead919603c30fbdbfe67d09fb93b5"
+    },
+    {
+      "path": "tools/virgl-command/async-receipt.py",
+      "bytes": 8471,
+      "sha256": "239b213a7685cd2f6526b0f51a8dfb9026ccb97927a352665c7e7536b5428915"
+    },
+    {
+      "path": "tools/virgl-command/blend-cold.py",
+      "bytes": 3738,
+      "sha256": "8190d48b9099189b204c9a0a5a817cd690d92d3b749525f83994ff37d694952b"
+    },
+    {
+      "path": "tools/virgl-command/blend-enums.c",
+      "bytes": 1313,
+      "sha256": "89ec1bc14d794b48f63300b547b6be157ed1b3d4908d01f93f431650214c8d64"
+    },
+    {
+      "path": "tools/virgl-command/blend-receipt.py",
+      "bytes": 17538,
+      "sha256": "235162e90544d5bdd1eb4e218c167e7d621b5932830c6b54f043126c622901d0"
+    },
+    {
+      "path": "tools/virgl-command/blend-seal.py",
+      "bytes": 4314,
+      "sha256": "014969d933a931131fd4d388799160117e014b06d511fbaf5e7b3226ae171b62"
+    },
+    {
+      "path": "tools/virgl-command/cache-README.md",
+      "bytes": 1846,
+      "sha256": "e78d96093491947b65f369329db1440b0c22ea21514bf4b089599b6b115296fd"
+    },
+    {
+      "path": "tools/virgl-command/cache-cold.py",
+      "bytes": 3726,
+      "sha256": "a80386962d86b52cfe04a0f13904eed420109d9b9720295ade7bed4257059116"
+    },
+    {
+      "path": "tools/virgl-command/cache-receipt.py",
+      "bytes": 10800,
+      "sha256": "19c24448d0093c327ff3f14625babcdf5c2e0e13ada69d39119397dc85471d25"
+    },
+    {
+      "path": "tools/virgl-command/cache-seal.py",
+      "bytes": 4284,
+      "sha256": "4e90177bb30b8421a45c43f7186a4cd7881d428bcb77ef007124d9c202c0ed6e"
+    },
+    {
+      "path": "tools/virgl-command/cold.py",
+      "bytes": 3493,
+      "sha256": "5688903910d9a47730e3a9e889c71388d75dafc042aafbc3ad8f2adfc294af2b"
+    },
+    {
+      "path": "tools/virgl-command/color-fixtures.mjs",
+      "bytes": 5244,
+      "sha256": "ce2cb9e023b7d141c59170dce7ac187205340f685bee3a35b7c9bd6d1ee0f8aa"
+    },
+    {
+      "path": "tools/virgl-command/colors-cold.py",
+      "bytes": 3711,
+      "sha256": "787f0a2df7d464a3852d564e4e6d02536902a792599dc054af9a9b25caa23d22"
+    },
+    {
+      "path": "tools/virgl-command/colors-receipt.py",
+      "bytes": 8134,
+      "sha256": "6bd34f4dff76cd6a4fc3a39440036a7436b24b6dd38b60ee385731ea1f54f453"
+    },
+    {
+      "path": "tools/virgl-command/control-cold.py",
+      "bytes": 3761,
+      "sha256": "3988929b2976b494d7ca6e1f9b99a1c6b2b84f51c16b774a12c480af8d32cf86"
+    },
+    {
+      "path": "tools/virgl-command/control-receipt.py",
+      "bytes": 13492,
+      "sha256": "92b59bad3bb6cc5758822f944fa68082ba12310839d7a1439efbe4aa19bf2463"
+    },
+    {
+      "path": "tools/virgl-command/coverage.py",
+      "bytes": 919,
+      "sha256": "c98949b8d43fdf76d2fd5388a2a8e22da1ebcb0aefc9b40c73c7117281bbc7d2"
+    },
+    {
+      "path": "tools/virgl-command/depth-cold.py",
+      "bytes": 3711,
+      "sha256": "3d59b0ac20514e78177978feb92e7af7dfc1f0bf297a5a8de55e3628b404e691"
+    },
+    {
+      "path": "tools/virgl-command/depth-fixtures.mjs",
+      "bytes": 2846,
+      "sha256": "407c3ca48d72c01ba13bb5716fe962c7255327178430f01ce76205e1a44ab8b9"
+    },
+    {
+      "path": "tools/virgl-command/depth-receipt.py",
+      "bytes": 8187,
+      "sha256": "33ca1f281645e434953173809ba28138ecfa543e01e7842afb540654d9ee628b"
+    },
+    {
+      "path": "tools/virgl-command/draw-cold.py",
+      "bytes": 3483,
+      "sha256": "260737d0b67282fe0f0322ef12da7bc25cdb8907e2e9856ebcff3dfa420dabc3"
+    },
+    {
+      "path": "tools/virgl-command/draw-fixtures.mjs",
+      "bytes": 4128,
+      "sha256": "3ccd8c609b52a09bf8f6ff192c6fc1c4452c09dffa801af3201a4532c1110868"
+    },
+    {
+      "path": "tools/virgl-command/draw-receipt.py",
+      "bytes": 6320,
+      "sha256": "63ad2e077742d30867715b66bb45865a219da8b17f10597832a5e544cf830b42"
+    },
+    {
+      "path": "tools/virgl-command/fixtures.mjs",
+      "bytes": 3660,
+      "sha256": "399b6b74fa48a8b6edfb237f23e7a42d45a65495fcb090762da0275218a29217"
+    },
+    {
+      "path": "tools/virgl-command/float-vertex-cold.py",
+      "bytes": 3757,
+      "sha256": "33aaa7c3fb03ace12cec8d34c66c167847a0c3a89ac1ef724d67c2ecb57c4089"
+    },
+    {
+      "path": "tools/virgl-command/float-vertex-enums.c",
+      "bytes": 1240,
+      "sha256": "e0293fbbfa0e151c3b6937cf53f9386ff37dade8504327adce9bf7368d383bb2"
+    },
+    {
+      "path": "tools/virgl-command/float-vertex-receipt.py",
+      "bytes": 16837,
+      "sha256": "745b9e1495aee59e8961ac641192bfa25366483bb92d093baff139b393d02a86"
+    },
+    {
+      "path": "tools/virgl-command/float-vertex-seal.py",
+      "bytes": 4299,
+      "sha256": "453253958ab8a119a5d5d30290d792ec0808eb6c55ce41090c58697b096f0a91"
+    },
+    {
+      "path": "tools/virgl-command/inline-cold.py",
+      "bytes": 3728,
+      "sha256": "301deb34c5fa935be56bc1b589442e5684ece323d15dce8f8403a7e8de16177b"
+    },
+    {
+      "path": "tools/virgl-command/inline-fixtures.mjs",
+      "bytes": 3989,
+      "sha256": "30bda47bf22d70581938d1162c49f5340e4f3888eb4edb7445e4a3473499521b"
+    },
+    {
+      "path": "tools/virgl-command/inline-receipt.py",
+      "bytes": 8271,
+      "sha256": "c88e15eae5543ab0860927ac18cd807900945588add39c8e20d9ca53a3fa884c"
+    },
+    {
+      "path": "tools/virgl-command/integer-image-spec/glBlitFramebuffer.xhtml",
+      "bytes": 15518,
+      "sha256": "a85132a35670568d3f3cb94bde77561e65f3f00a882759084958af1383ddaaf2"
+    },
+    {
+      "path": "tools/virgl-command/integer-image-spec/glClearBuffer.xhtml",
+      "bytes": 15807,
+      "sha256": "0dc45589669d18f25763046ffbe13f2d88aeeea2ae8a7ad7a2b1d7aa6d273136"
+    },
+    {
+      "path": "tools/virgl-command/integer-image-spec/glReadPixels.xhtml",
+      "bytes": 36477,
+      "sha256": "b80f248d5ff6a238eaae0651da462a9e399511cb173e573d549ef41f44c3f4d5"
+    },
+    {
+      "path": "tools/virgl-command/integer-image-spec/glTexImage2D.xhtml",
+      "bytes": 115431,
+      "sha256": "781c4f3976377bb2f7020d0956bdba2166697fd4c80676d1540aaaddcaf6350a"
+    },
+    {
+      "path": "tools/virgl-command/raster-README.md",
+      "bytes": 3078,
+      "sha256": "1931b4f2427b850844415e95efbf994d57eb9a0eb29990acf82eb5993a6d4df7"
+    },
+    {
+      "path": "tools/virgl-command/raster-cold.py",
+      "bytes": 3725,
+      "sha256": "832415bf7ccd3e6ce27a49162ee5afd19a46b82864251fb77f3dec3c6267ca81"
+    },
+    {
+      "path": "tools/virgl-command/raster-fixtures.mjs",
+      "bytes": 3925,
+      "sha256": "d21cf26f23306df705de59c316d9df864df44288c1617cdee0fc867d764aefcb"
+    },
+    {
+      "path": "tools/virgl-command/raster-receipt.py",
+      "bytes": 7907,
+      "sha256": "dbd8479c249428707a5d95aac9e1fed38b30009fdc00f888ec8c7d2738d69602"
+    },
+    {
+      "path": "tools/virgl-command/raster-seal.py",
+      "bytes": 4280,
+      "sha256": "2b9ac30e122a3bdb8a2befc5314ad884ad5e08e049538ff5db3db299c9d7f4a3"
+    },
+    {
+      "path": "tools/virgl-command/receipt.py",
+      "bytes": 4214,
+      "sha256": "f28f5e036062b07718d6fe925b8eb2d9a3f738873963c5712cf94bd8f71f102c"
+    },
+    {
+      "path": "tools/virgl-command/resource-fixtures.mjs",
+      "bytes": 3484,
+      "sha256": "642df589df2a9adc3ae393cbc848b330b7bdbe1bae8c0797dc358e8f6394b30c"
+    },
+    {
+      "path": "tools/virgl-command/resources-cold.py",
+      "bytes": 3503,
+      "sha256": "2c32bbf9a2c268472ba5a9e0bf469b3658aa962190b494cf2d73c54d1a60a87e"
+    },
+    {
+      "path": "tools/virgl-command/resources-coverage.py",
+      "bytes": 932,
+      "sha256": "c22614508eecf72422c175acb094d4a861997403a6f9fe7b6ebb4cd5e0fc740a"
+    },
+    {
+      "path": "tools/virgl-command/resources-receipt.py",
+      "bytes": 5320,
+      "sha256": "19580a15c0d3b759cc64dc7f0adb44eaadfb497fe1b0346b4064f035ebba70eb"
+    },
+    {
+      "path": "tools/virgl-command/scanout-cold.py",
+      "bytes": 11198,
+      "sha256": "0dfd12b7d811ede50d81cb2549154b244829ef9abefef2405dc693a3ab6a1137"
+    },
+    {
+      "path": "tools/virgl-command/scanout-desktop.mjs",
+      "bytes": 21669,
+      "sha256": "cd5f3d5f526e22f6bf3e17e86eae78a4069122d967579152c1ad748089de572d"
+    },
+    {
+      "path": "tools/virgl-command/scanout-receipt.py",
+      "bytes": 18607,
+      "sha256": "4f3d2766326e60f111e29a681bf231b18ea9af3d1fc7a75ce368ce92ab93afdf"
+    },
+    {
+      "path": "tools/virgl-command/scanout-sources.json",
+      "bytes": 3446,
+      "sha256": "1977499e7dddcebe6fee42ee8f1e97dc42ca9db36a53b4cdd89834e79d229440"
+    },
+    {
+      "path": "tools/virgl-command/standard-assembly-adversarial-audit.mjs",
+      "bytes": 16259,
+      "sha256": "b61485c03bc77999c263a95fbe86544edb9a1fed6a8abeaa3a22aa0a41325b3d"
+    },
+    {
+      "path": "tools/virgl-command/standard-assembly-adversarial-oracle.mjs",
+      "bytes": 14853,
+      "sha256": "2252ca7b5626d1293121540dacecc4658014fabcef2e40f3abd3d6558c9c0986"
+    },
+    {
+      "path": "tools/virgl-command/standard-assembly-cold.py",
+      "bytes": 3792,
+      "sha256": "c35bd9a91172ada879d0de2aa656a25afc220ef7629292a6e5a284491254cc23"
+    },
+    {
+      "path": "tools/virgl-command/standard-assembly-oracle.mjs",
+      "bytes": 7904,
+      "sha256": "4a79db5273152e5fa5dcf15aebe9a6bdd10756b162acdab7c81a15496f42feda"
+    },
+    {
+      "path": "tools/virgl-command/standard-assembly-pixels.mjs",
+      "bytes": 6078,
+      "sha256": "528fd8cd5d15b9f45e446868d6a7785343d1fd456034876839f6821705b074cc"
+    },
+    {
+      "path": "tools/virgl-command/standard-assembly-receipt.py",
+      "bytes": 12563,
+      "sha256": "e9ae7050bcbb1010e31de59659dd02ce0613f90b27ed36036ecb12cc6089fbe6"
+    },
+    {
+      "path": "tools/virgl-command/standard-assembly-seal.py",
+      "bytes": 4337,
+      "sha256": "240164495a887727d83505ad51400cab06b83d8ee5d48511564572a15b68be64"
+    },
+    {
+      "path": "tools/virgl-command/standard-buffer-role-adversarial-audit.py",
+      "bytes": 11632,
+      "sha256": "200f67f82927ba0cecebf1c23ef53eba46a42248f09e025a49c66a031f0f9f57"
+    },
+    {
+      "path": "tools/virgl-command/standard-buffer-role-adversarial-body.mjs",
+      "bytes": 8850,
+      "sha256": "3db07b84e52c8905561bedcd79defe5e1690561c41e0cb432695edbe304d2b2b"
+    },
+    {
+      "path": "tools/virgl-command/standard-buffer-role-cold.py",
+      "bytes": 3635,
+      "sha256": "4deda46d207a1ad7600c2d5017f385dd0016e2c12ce79bce619b2d10eb6a857b"
+    },
+    {
+      "path": "tools/virgl-command/standard-buffer-role-coverage.py",
+      "bytes": 2912,
+      "sha256": "6f6092039d3aab1fff799dbb0600f2e3b6bc490f30709092c41bf48ff154cc7b"
+    },
+    {
+      "path": "tools/virgl-command/standard-buffer-role-fixtures.mjs",
+      "bytes": 2129,
+      "sha256": "f9e02e0d8fb9f642b317f7c614f2578446d11191a1af11182d1b2dfe7ef0edeb"
+    },
+    {
+      "path": "tools/virgl-command/standard-buffer-role-oracle.mjs",
+      "bytes": 7910,
+      "sha256": "8ccdc5c10deed611ed4c3b1ab82ba244e1c92c1883d1e8f8b89a1b5df3a98dfc"
+    },
+    {
+      "path": "tools/virgl-command/standard-buffer-role-pixels.mjs",
+      "bytes": 7892,
+      "sha256": "7b5d387bf313e229f0389405ec0d538a2ab8f57c94fb0c98719f93df1ca26aca"
+    },
+    {
+      "path": "tools/virgl-command/standard-buffer-role-receipt.py",
+      "bytes": 10127,
+      "sha256": "8fd853b06b870e87117c5ae75909618c1b031a9fe371ca00f2c2540f861de126"
+    },
+    {
+      "path": "tools/virgl-command/standard-buffer-role-seal.py",
+      "bytes": 4427,
+      "sha256": "0c0cd8cb70aed03eed4936115fd57f01eecbface1d4e33ba04378022cae9a483"
+    },
+    {
+      "path": "tools/virgl-command/standard-byte-color-adversarial-audit.py",
+      "bytes": 9442,
+      "sha256": "7099313f462f8b9225203b39342e9c4971bebcb7f81150ddeb2812e3a511274b"
+    },
+    {
+      "path": "tools/virgl-command/standard-byte-color-adversarial.mjs",
+      "bytes": 8486,
+      "sha256": "6de112ec221d573d214562e523c8d654b20448d12b5c8330a616f2c5bfbbf6e6"
+    },
+    {
+      "path": "tools/virgl-command/standard-byte-color-boundary.json",
+      "bytes": 17844,
+      "sha256": "4c022ae70389db603b358bb546da82efe6ec6894f50dc06943ad326d3ccd465c"
+    },
+    {
+      "path": "tools/virgl-command/standard-byte-color-cold.py",
+      "bytes": 3650,
+      "sha256": "027601e595e0228de03c850a989186f79b81f6eccb38e7ed9a6b83766a33cb1f"
+    },
+    {
+      "path": "tools/virgl-command/standard-byte-color-coverage.py",
+      "bytes": 2918,
+      "sha256": "85ef76d340d1e0210b796265897bd510ef911086c669263e2ede005a38514bb8"
+    },
+    {
+      "path": "tools/virgl-command/standard-byte-color-fixtures.mjs",
+      "bytes": 16675,
+      "sha256": "a40dffd854c7bf92ebbd33fdeedcd0f909a3b8cc2fb296ba0a9c582bb40500f4"
+    },
+    {
+      "path": "tools/virgl-command/standard-byte-color-pixels.mjs",
+      "bytes": 18866,
+      "sha256": "72b76846fcaac5878c91a10f2c8c97c8a7be43a8b1a21694c633c9faabc16bde"
+    },
+    {
+      "path": "tools/virgl-command/standard-byte-color-receipt.py",
+      "bytes": 10728,
+      "sha256": "18be34c472dcfefabf0983ac107947ec514dfc1fea38d8b400a40a28c9ca4b88"
+    },
+    {
+      "path": "tools/virgl-command/standard-byte-color-seal.py",
+      "bytes": 4423,
+      "sha256": "c37439e21d9fe483ba69db3603477301f08cfd526e06d7ae711015aec729a6a4"
+    },
+    {
+      "path": "tools/virgl-command/standard-compact-adversarial-oracle.mjs",
+      "bytes": 11723,
+      "sha256": "fc3535d580d7ccf4322208d949800f4ebb8a97fd4e15cb2232b14479c0d540e1"
+    },
+    {
+      "path": "tools/virgl-command/standard-compact-cold.py",
+      "bytes": 3779,
+      "sha256": "35446291026e788e40f6539ffdba8633ac2c53ad58c39dffc1bc85e301ea59a0"
+    },
+    {
+      "path": "tools/virgl-command/standard-compact-enums.c",
+      "bytes": 3569,
+      "sha256": "52a7943ed1fc92561c10ee31f57a6d0c3abaaa13be1d691217ca88da2c599481"
+    },
+    {
+      "path": "tools/virgl-command/standard-compact-oracle.mjs",
+      "bytes": 7240,
+      "sha256": "c626038849a3b8524d44668a39a6f18a7807a03d17321c46408a2f77011f28af"
+    },
+    {
+      "path": "tools/virgl-command/standard-compact-pixels.mjs",
+      "bytes": 6508,
+      "sha256": "6c2a128231e99e3d784444d09efb149ee8131f76bc6bbf3bcae5f342fc3b3dc0"
+    },
+    {
+      "path": "tools/virgl-command/standard-compact-receipt.py",
+      "bytes": 9383,
+      "sha256": "3a974abb9226f8f0bb1d63d6b3bb1121cfd647dbecd3af4002b6dfde260655cd"
+    },
+    {
+      "path": "tools/virgl-command/standard-compact-seal.py",
+      "bytes": 4326,
+      "sha256": "e11769d7a7980a50de04b3481e25a3df83eaa57c3bce32085585b4d29d235de5"
+    },
+    {
+      "path": "tools/virgl-command/standard-constant-adversarial-oracle.mjs",
+      "bytes": 5843,
+      "sha256": "79fd1e12625cfa0e7a482e8a075de7624cb12c50673ef762d1b1529aa622a0b6"
+    },
+    {
+      "path": "tools/virgl-command/standard-constant-adversarial-pixels.mjs",
+      "bytes": 10469,
+      "sha256": "6cc87ca57c7defb08793ae2e93064d86df3241b5a993e841d932965d94572579"
+    },
+    {
+      "path": "tools/virgl-command/standard-constant-cold.py",
+      "bytes": 3790,
+      "sha256": "fa2a79b3f22be093f291009524f7d84acdc9f31de824fab560d92d23e6ee17b8"
+    },
+    {
+      "path": "tools/virgl-command/standard-constant-oracle.mjs",
+      "bytes": 3068,
+      "sha256": "6988872e2ffee27bbd960f009070bd2da293a7eb64845ffe15bf44f7bd3b14ca"
+    },
+    {
+      "path": "tools/virgl-command/standard-constant-pixels.mjs",
+      "bytes": 4513,
+      "sha256": "ed3789b31278f829bb35e7afaf16a66497b6fde218d1b0a6826706f5977e6aaa"
+    },
+    {
+      "path": "tools/virgl-command/standard-constant-receipt.py",
+      "bytes": 11456,
+      "sha256": "3354c3014c6568b18795e9b35c1fcdfd3b14f6e63c097bd6a376321b6e08dbc8"
+    },
+    {
+      "path": "tools/virgl-command/standard-constant-seal.py",
+      "bytes": 4338,
+      "sha256": "120e20f0cab3458b4b55b61682e7e69a338727a971e64b0d0fc372ff3242a7ee"
+    },
+    {
+      "path": "tools/virgl-command/standard-draw-adversarial-audit.py",
+      "bytes": 17414,
+      "sha256": "3202e8980300b08e4d1ee002c9d18b72515f536fe2e28c40b4e5d496c6b51372"
+    },
+    {
+      "path": "tools/virgl-command/standard-draw-cold.py",
+      "bytes": 3770,
+      "sha256": "8daf33d8724d465ed39000fb328a8de0408709a5f4784cd6cd6c1c2bcfbeb9c9"
+    },
+    {
+      "path": "tools/virgl-command/standard-draw-oracle.mjs",
+      "bytes": 4684,
+      "sha256": "8de41c4a9f041f7a9acaf8a062a525f64c0ef3d197c464753764ddada94d26e3"
+    },
+    {
+      "path": "tools/virgl-command/standard-draw-pixels.mjs",
+      "bytes": 4094,
+      "sha256": "5d08c4316dcfab780164fb30bb765ce400eee9ee68ef80a99094ecfb8cac9b06"
+    },
+    {
+      "path": "tools/virgl-command/standard-draw-receipt.py",
+      "bytes": 9822,
+      "sha256": "1fc9016641473b6cbf7cbd71f32d1ac99d0cadc5993cde7d783c14230967a83f"
+    },
+    {
+      "path": "tools/virgl-command/standard-draw-seal.py",
+      "bytes": 4322,
+      "sha256": "ab6c56dcb75178d0606e84094a4780514b580e623eee43f10c06d27192068972"
+    },
+    {
+      "path": "tools/virgl-command/standard-float-consumer-adversarial-audit.py",
+      "bytes": 36903,
+      "sha256": "a67db73e12cc952241da8585893968451291bc6807d6e0224c796bdbdcc442e3"
+    },
+    {
+      "path": "tools/virgl-command/standard-float-consumer-adversarial-seal.py",
+      "bytes": 5278,
+      "sha256": "63f457e09920053c03c2f6d75937397860c7597601dd59176ae3413fb57c75d1"
+    },
+    {
+      "path": "tools/virgl-command/standard-float-consumer-boundary.json",
+      "bytes": 19501,
+      "sha256": "099a5bf6f34ff5d75270439e545c4b4eabe44f9c04b5d98c6586d4ef363d4368"
+    },
+    {
+      "path": "tools/virgl-command/standard-float-consumer-cold.py",
+      "bytes": 3652,
+      "sha256": "73259e268dda10d4859889dc0a191cf9c531a8030ce00c84c6278c09795a51db"
+    },
+    {
+      "path": "tools/virgl-command/standard-float-consumer-coverage.py",
+      "bytes": 2963,
+      "sha256": "200e7a6c62a4624110337025df5eebd6bb20e58b6f24ee0eca33520f19f20ac0"
+    },
+    {
+      "path": "tools/virgl-command/standard-float-consumer-fixtures.mjs",
+      "bytes": 6242,
+      "sha256": "a4cc8e8f5c550d2e253fd01c4310112793f1955e476170c88c424c64ebc0a2c9"
+    },
+    {
+      "path": "tools/virgl-command/standard-float-consumer-pixels.mjs",
+      "bytes": 3987,
+      "sha256": "ceabfae2ebe418ce281702861e13d79f1ff18fed4991213d28eea818d7b88abb"
+    },
+    {
+      "path": "tools/virgl-command/standard-float-consumer-pixels.py",
+      "bytes": 9151,
+      "sha256": "cce2de5565b4e6744bbb33281b23289799c6ae95e94041037af630e33f8984e4"
+    },
+    {
+      "path": "tools/virgl-command/standard-float-consumer-receipt.py",
+      "bytes": 8578,
+      "sha256": "6b87fb01f02fe4c202d67191c336b509065b8d7f0846e712d2502bef8966cbac"
+    },
+    {
+      "path": "tools/virgl-command/standard-float-consumer-seal.py",
+      "bytes": 4427,
+      "sha256": "44c0efa8468536ef1ae2762f7fc2739fe84a3ce8748a7a73d57f17ba94beea5f"
+    },
+    {
+      "path": "tools/virgl-command/standard-float-image-adversarial.py",
+      "bytes": 14028,
+      "sha256": "67bc1944f6c2122e5c671476bf285a4f8b263d04647d3980411b2a89ba93f61c"
+    },
+    {
+      "path": "tools/virgl-command/standard-float-image-boundary.json",
+      "bytes": 75012,
+      "sha256": "15573e6829afbc3919575d8360734bd8fde993984600fda462e68dab2e9164b9"
+    },
+    {
+      "path": "tools/virgl-command/standard-float-image-cold.py",
+      "bytes": 3647,
+      "sha256": "59b56cac6cee3301da0d0f05d873f0de38b29626ce80ab4021e5befd5d855d4d"
+    },
+    {
+      "path": "tools/virgl-command/standard-float-image-coverage.py",
+      "bytes": 2969,
+      "sha256": "65a3ab97019e01642071f1b2bf48134c997700ae808fd18f923e7925e103ec6b"
+    },
+    {
+      "path": "tools/virgl-command/standard-float-image-fixtures.mjs",
+      "bytes": 4726,
+      "sha256": "d9b8413688afc83165a0a739516d4374edd2361dfb03b24aaad77f7f38762886"
+    },
+    {
+      "path": "tools/virgl-command/standard-float-image-formats.json",
+      "bytes": 5859,
+      "sha256": "8e424f5c12a7a1e77a0762ef893c00bcb06ccf05714ae942fcaf4abc7da4a112"
+    },
+    {
+      "path": "tools/virgl-command/standard-float-image-half.mjs",
+      "bytes": 1737,
+      "sha256": "588e8f37d4debc7e140cd6427807790ae5703400d5e4e340cd139d1f71e389ef"
+    },
+    {
+      "path": "tools/virgl-command/standard-float-image-half.py",
+      "bytes": 1387,
+      "sha256": "de7a5a173d34d664e5e897cad595db5fccf9fde401bb1b3f814449f799b86b82"
+    },
+    {
+      "path": "tools/virgl-command/standard-float-image-mesa-formats.yaml",
+      "bytes": 80486,
+      "sha256": "f0fef33544456468def10d5dffc72a61e8b0e7acc599b700fc65366e6f495a10"
+    },
+    {
+      "path": "tools/virgl-command/standard-float-image-receipt.py",
+      "bytes": 11735,
+      "sha256": "6fc5c229dca9ce98c1ad781a4f44531db6b35d5ef3498abec2375c608440b542"
+    },
+    {
+      "path": "tools/virgl-command/standard-float-image-seal.py",
+      "bytes": 4411,
+      "sha256": "b9f961ec0af19d13c8564c4a2c47fa21bd6efef01555b88bd46ecb2fcd20750f"
+    },
+    {
+      "path": "tools/virgl-command/standard-float-image-values.py",
+      "bytes": 10919,
+      "sha256": "52cbb133ba6f5e5be96fa06a18441cd35fa190852d137ae07dbc1e2c5d75f89e"
+    },
+    {
+      "path": "tools/virgl-command/standard-floating-depth-fixtures.mjs",
+      "bytes": 7049,
+      "sha256": "7f0619678a4fc198c9b0a3f5e680f1477829b49a60ad08725438bf16155e84d2"
+    },
+    {
+      "path": "tools/virgl-command/standard-floating-depth-formats.json",
+      "bytes": 885,
+      "sha256": "3458c5deb4a3213950c9209945d843e3ccda68f0cd4908c33d69ae1247ae8929"
+    },
+    {
+      "path": "tools/virgl-command/standard-floating-depth-mesa-formats.yaml",
+      "bytes": 383,
+      "sha256": "6c3d8ba73ca0a00e90f30c6529014bb62af44bf4f2727638445c351d9c8aa01b"
+    },
+    {
+      "path": "tools/virgl-command/standard-image-adversarial-audit.py",
+      "bytes": 27020,
+      "sha256": "0e54ed8883ab616f5d6d877ffaae974d315f4be1595ff0068e838148bac28908"
+    },
+    {
+      "path": "tools/virgl-command/standard-image-adversarial.mjs",
+      "bytes": 20242,
+      "sha256": "2d78de2c155d024d522a7e7838b446b8748cde5b86aafdc2f2bfd1d80f0ba315"
+    },
+    {
+      "path": "tools/virgl-command/standard-image-boundary.json",
+      "bytes": 22684,
+      "sha256": "c5bfa576a9ddf0c85af0f8d90be04cc2b15d082b38aef74c7696fe614fe888d0"
+    },
+    {
+      "path": "tools/virgl-command/standard-image-cold.py",
+      "bytes": 3654,
+      "sha256": "10cc38f1dbe2c466f6b21a3b2f7357f0201269e35e5feb3a222e60e9bf514e0a"
+    },
+    {
+      "path": "tools/virgl-command/standard-image-coverage.py",
+      "bytes": 2919,
+      "sha256": "fc38d90907af279db2a2509f42bddab9953387c210dd9dc7023db4feb47ab87c"
+    },
+    {
+      "path": "tools/virgl-command/standard-image-fixtures.mjs",
+      "bytes": 3809,
+      "sha256": "1c045bdf667fc18be16644a05dfeeb5ef7e88b4eb7eaf3f3572f20fa98954d48"
+    },
+    {
+      "path": "tools/virgl-command/standard-image-pixels.mjs",
+      "bytes": 11257,
+      "sha256": "856f6190ca98ce4f5f5992d73d4d06e32c23cadfeb683841ea3c555bea157d91"
+    },
+    {
+      "path": "tools/virgl-command/standard-image-receipt.py",
+      "bytes": 10752,
+      "sha256": "d46d796954c8657c47634ba6dca506423d66b7a815485b169d7f9d4c436e6627"
+    },
+    {
+      "path": "tools/virgl-command/standard-image-seal.py",
+      "bytes": 4404,
+      "sha256": "8664e4fdfcd45949cadb02d79db56949454d9a69d8eed8cf26da64e2210dd7b3"
+    },
+    {
+      "path": "tools/virgl-command/standard-integer-adversarial-oracle.mjs",
+      "bytes": 9561,
+      "sha256": "45e4569dd6efe66a18a9cd9c102d15280fd835c8af469af853e148076db2737a"
+    },
+    {
+      "path": "tools/virgl-command/standard-integer-cold.py",
+      "bytes": 3771,
+      "sha256": "b7f263640839a22afeae41d57f1379e75d2547d386ff6851f8724670c0416e6a"
+    },
+    {
+      "path": "tools/virgl-command/standard-integer-compiler.mjs",
+      "bytes": 7710,
+      "sha256": "c533ad6bee0d7623169200e711d567617043d9e114d6b02f2229af35bcdceabf"
+    },
+    {
+      "path": "tools/virgl-command/standard-integer-coverage.py",
+      "bytes": 4060,
+      "sha256": "b8f172df70dfb9ccd6fe11be858b14f996ced3a39b81888265be4c21224c35b9"
+    },
+    {
+      "path": "tools/virgl-command/standard-integer-enums.c",
+      "bytes": 3436,
+      "sha256": "8806e05f509ec0d17ebf902b77070c63f6313056fea6c0f2f4989d53939dc462"
+    },
+    {
+      "path": "tools/virgl-command/standard-integer-image-cold.py",
+      "bytes": 3660,
+      "sha256": "67a58bb9d7f29db4f4809532d04beb5b5a5cfb98cc898d6ee51d6ba042ceed87"
+    },
+    {
+      "path": "tools/virgl-command/standard-integer-image-coverage.py",
+      "bytes": 3092,
+      "sha256": "d593a064e5e5112c60ad854f852d5915d85a701f551d86e2b298de6bb1332495"
+    },
+    {
+      "path": "tools/virgl-command/standard-integer-image-critic-seal.py",
+      "bytes": 7274,
+      "sha256": "9c2e5f8a8fb6e9e5c9c44cee0ef45895958088dd4e9a19c353a2b9f49b341b18"
+    },
+    {
+      "path": "tools/virgl-command/standard-integer-image-critic.py",
+      "bytes": 45804,
+      "sha256": "486679a0220a3963a050c04773290f98e582603555cc24530e889b8c8c1b1560"
+    },
+    {
+      "path": "tools/virgl-command/standard-integer-image-fixtures.mjs",
+      "bytes": 14605,
+      "sha256": "f06edea5aa2ba98dd68631630f89a47c77142626252f5c71f4acc057100e212a"
+    },
+    {
+      "path": "tools/virgl-command/standard-integer-image-formats.json",
+      "bytes": 15013,
+      "sha256": "b2b4017a104604b8f7188760ad80530be0d4deaae0a5a91d8e5d442855dada1c"
+    },
+    {
+      "path": "tools/virgl-command/standard-integer-image-receipt.py",
+      "bytes": 9538,
+      "sha256": "e7ba4c3260c6529497b4de7ca40847ba01c8236ca096b3212c6a75877d4552aa"
+    },
+    {
+      "path": "tools/virgl-command/standard-integer-image-seal.py",
+      "bytes": 5419,
+      "sha256": "0c8655592bd5a5276e71058057a0caf606668355ae5b9dbc5c2b62cdd02a5038"
+    },
+    {
+      "path": "tools/virgl-command/standard-integer-image-serving-boundary.json",
+      "bytes": 12516,
+      "sha256": "a41571e797d2aada10b9c154b244262d01a677931b1e4b78107a17dd6e3e6b4d"
+    },
+    {
+      "path": "tools/virgl-command/standard-integer-image-serving.py",
+      "bytes": 2077,
+      "sha256": "3f79516701de19770abc9c34efea64b8e5615548cee82805a433771564479195"
+    },
+    {
+      "path": "tools/virgl-command/standard-integer-image-values.py",
+      "bytes": 11133,
+      "sha256": "fcfda06e7ed21b757025529f9c8dacb6c04de936d731fcaa82a9ad35b1857199"
+    },
+    {
+      "path": "tools/virgl-command/standard-integer-oracle.mjs",
+      "bytes": 11727,
+      "sha256": "4e3a9d7bb30d0e559ddb3162d16c450480069fdf2c42d88d907e74c729a157a6"
+    },
+    {
+      "path": "tools/virgl-command/standard-integer-pixels.mjs",
+      "bytes": 6973,
+      "sha256": "5963db90b495a164027f36974ccc4bc405ade4a70cbf90a823dbdcfe6706cc23"
+    },
+    {
+      "path": "tools/virgl-command/standard-integer-receipt.py",
+      "bytes": 10073,
+      "sha256": "7cae01ecc88aa59000f45d7358a8b81d6c4367c4ab05e4d24782316ceaba64cd"
+    },
+    {
+      "path": "tools/virgl-command/standard-integer-seal.py",
+      "bytes": 4318,
+      "sha256": "47e040c9b1670891061dcb38e5a750e89e92d73e9cf6d53f500fab06420037c1"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-adversarial-compiler.mjs",
+      "bytes": 5934,
+      "sha256": "386e4b441609041bfd14f7e416503aae1a9cd91047f507d1ba42d048624c946e"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-adversarial-oracle.mjs",
+      "bytes": 10883,
+      "sha256": "9a258335fb9f7075c6d3ee69744d118ab92912003c193a56cd8edd625018539d"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-cold.py",
+      "bytes": 3756,
+      "sha256": "0778369942d108a1569d31b8b1eafc3167c78983695fab23f4b510f3d2ba39b5"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-compiler.mjs",
+      "bytes": 8757,
+      "sha256": "37f0c239694e6f2b618b93480c9253e5fba5167c54b1a7c0519265959839060b"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-coverage.py",
+      "bytes": 4059,
+      "sha256": "c6d25653564c48d711949d0ab860b39044a3cf83e9bf44f8f9df37054f8d6337"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-enums.c",
+      "bytes": 786,
+      "sha256": "bccc0a244230d6a3871ce3cdd0b2b69d3007afab9a7fc00c01d62a4a782e2aeb"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-float-consumer-boundary.json",
+      "bytes": 22415,
+      "sha256": "1119efcc705aa343981db6057ad3b1f3e2ae58530f765c27460ebaf404dbb243"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-float-consumer-cold.py",
+      "bytes": 3690,
+      "sha256": "7ae07f3f2e27b56e7358015c42c9c818a874107a927a68d5b99eb16d64a59108"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-float-consumer-coverage.py",
+      "bytes": 2970,
+      "sha256": "a37b5f2b9ba5b3ad6eebb3008dcf00fdaebff497714002a4126dbc8d908f2c67"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-float-consumer-critic-coverage.py",
+      "bytes": 5121,
+      "sha256": "8dca03e2f6c80ade35a9ab715bf3a68c87c12d9c5197cd128550575e59b5703f"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-float-consumer-critic-seal.py",
+      "bytes": 5902,
+      "sha256": "cbe685011977a94853a5290630c4adf8eb7e0be9ccabc5ef693317c255087b96"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-float-consumer-critic.py",
+      "bytes": 46660,
+      "sha256": "b544dbd75be3ff98574f63fd99f3b5a81d71126c8f76b1ce3a7152d2dfb3ab91"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-float-consumer-fixtures.mjs",
+      "bytes": 6270,
+      "sha256": "70a913fdf9d8efe77bbed622f4878f13d0a228ceb791abe08bc2d16e81b9e16e"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-float-consumer-pixels.mjs",
+      "bytes": 4772,
+      "sha256": "d5aa1eb844e0d855117c64f0970f16f3655103c5449929f9d67670a2bb1f6fff"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-float-consumer-pixels.py",
+      "bytes": 9897,
+      "sha256": "83550ce71594c5347d72789d2e63e33aae6e0c9bd9aa0b7c87eed81602a5f441"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-float-consumer-receipt.py",
+      "bytes": 8603,
+      "sha256": "49470d29cbb9aa7327b7e3e3780254d8560d2b95fbd3a5ccdca656786314e1e2"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-float-consumer-seal.py",
+      "bytes": 4455,
+      "sha256": "e886fb35c38774f4de958823c0e4d64dbe955eb3a064dd6968ab784baf4291c5"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-float-image-boundary.json",
+      "bytes": 20169,
+      "sha256": "81e3b38c2ead0a330fbfb8ca3fd07e6d6eaf98ef3f0a3bbf1993ce8b0f8724ce"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-float-image-cold.py",
+      "bytes": 3668,
+      "sha256": "2dd6b6ec0c773a0a111d1982e3b5d0352b0442ad9c346dd77e2d837a232ed0f8"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-float-image-coverage.py",
+      "bytes": 2983,
+      "sha256": "e9b3ccc1fb4a75510fc67f209a1be9b890c2ce4a1e04b671f48c823555a6f811"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-float-image-critic-coverage.py",
+      "bytes": 4690,
+      "sha256": "e046f266913bb757cdf296bce01ef7e87defc5f28339e2a56b2a16cbaeca854e"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-float-image-critic-seal.py",
+      "bytes": 5010,
+      "sha256": "bcf55dbb548be84a6dd7525a154162ba263ca708dd76629869731d72ab441f79"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-float-image-critic.py",
+      "bytes": 34814,
+      "sha256": "64abb7021283a5b33e7afd907c0a3ef7a1aaa120c9fff960a6fe73dbda773ded"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-float-image-fixtures.mjs",
+      "bytes": 3629,
+      "sha256": "d224646c0e2d28c26f2306d5ecf5c59d89f6930fc3bb456f43d1e1d8b9870005"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-float-image-formats.json",
+      "bytes": 1080,
+      "sha256": "c931b993166df673d2d90c9e15f93cbcf90f37ac8493ca9115c23a210b9fedef"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-float-image-receipt.py",
+      "bytes": 10521,
+      "sha256": "575eb4c2bcbb7c1cd3877d992ceccb06aa06d10720b44a8bdf5ec80e6d2ba2b8"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-float-image-scalar-vectors.py",
+      "bytes": 2226,
+      "sha256": "1a629c211dd223798674e6e369ca56648e52aff174acf518b8fe0a1530c760ce"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-float-image-scalars.mjs",
+      "bytes": 1763,
+      "sha256": "8a8fb3917765ce6f46d79fe173a2e93a0199266dd6bee46315914ca58aa699a4"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-float-image-seal.py",
+      "bytes": 4430,
+      "sha256": "78bea5737fe7bb468f46cbf348779694304077e6a4dd6ff9bdcf5c80503fef9f"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-float-image-serving-boundary.json",
+      "bytes": 6450,
+      "sha256": "f74d9bcae7ee4d055ca791aca5ef49d7b2ec04698bd28a4540113146c2e9a5a2"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-float-image-serving.py",
+      "bytes": 2101,
+      "sha256": "dddaeb21b7458b4b16980a13f881e4c93ce0d2d23f216c2c90abcee208b617d6"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-float-image-values.py",
+      "bytes": 15489,
+      "sha256": "46ea9a5d911f0085c585a6a015a5751af5954b454f80b824f516f093d76b1363"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-normalized-cold.py",
+      "bytes": 3694,
+      "sha256": "599f2ca43f7a94a7f39ee8832d64bb7c3c931aa468137b66e56b6258dc5e025a"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-normalized-coverage.py",
+      "bytes": 3143,
+      "sha256": "5f73ecc0bdd3199107a9048c37f7f7480b5925baf4fc026b29c2d283b4ed4286"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-normalized-critic-audit.py",
+      "bytes": 27903,
+      "sha256": "39220a777d2b16ba7f450156b6d8ce4d5a5d95c342f7b5cb15238a1bc8865ab9"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-normalized-critic-auth.py",
+      "bytes": 12819,
+      "sha256": "25fdb176ae8715cc76ff092d3df06456b4db85ff822f7670496be4d66e65c9fb"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-normalized-critic-baseline.mjs",
+      "bytes": 1859,
+      "sha256": "8fde462d13ed5f302d459c03f5fc96acf97d7ba719a3687c1848cc79d07df700"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-normalized-critic-inputs.mjs",
+      "bytes": 29737,
+      "sha256": "a6f3ec0a5ccf3d458c939d99d8dd3346669d6dda2aa6f247d7174a072edf15de"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-normalized-critic-inputs.py",
+      "bytes": 2382,
+      "sha256": "670c46ac7affd20b8563b3e83620a5acb93b21044f23437f864acc69165035c6"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-normalized-critic-novel-audit.py",
+      "bytes": 12398,
+      "sha256": "30c2ebf18593f81e412339b4f578c40884f5d13e450a320647427a9709becc87"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-normalized-critic-primary.json",
+      "bytes": 15545,
+      "sha256": "cfe43eebf895e8a78c8c1679c7eb9be94b881b3e65954a9c628222ad228cd8ec"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-normalized-critic-receipt.py",
+      "bytes": 10868,
+      "sha256": "68e6819b02d6295925a49b098faa254b5a0df7d1be6c49ada6e776f92c7f28d8"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-normalized-critic-seal.py",
+      "bytes": 5923,
+      "sha256": "98a0379f9de32e7911f5434e3a48bab0024c50ffe05aa7d3d9c58088e59b9e91"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-normalized-fixtures.mjs",
+      "bytes": 12955,
+      "sha256": "c04c0f0a450635729d5c3bd7ce2e33c8fc4f07f0895b761cf44614d025338b43"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-normalized-formats.json",
+      "bytes": 14249,
+      "sha256": "bf0f37b31c071a363a6ee5b336b7bfb80463901c1ed685adb23443b90b0e8764"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-normalized-mesa-formats.yaml",
+      "bytes": 2027,
+      "sha256": "7b994f15b8a044a675a1a2b2b7e6e35f4eb5d5e1be64ed6bf9cb2e2ec0a4245e"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-normalized-predecessor.py",
+      "bytes": 2279,
+      "sha256": "4dd3cd47c8f86d5c346009751dafe85b0b4dfd62b168ce4755367f75a83c5b1a"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-normalized-receipt.py",
+      "bytes": 8816,
+      "sha256": "ff2e8f1192ebc722ce442dad8f83ef15eb7db2c17200098b9138f71a1d2652d4"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-normalized-seal.py",
+      "bytes": 5459,
+      "sha256": "6466c8af0c3b3495a46ca86b465c8d7285cc98ee1dc6ba86196b3eba0dbcdd65"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-normalized-serving-boundary.json",
+      "bytes": 19795,
+      "sha256": "d03abb71574ef6c226b95f56164a01acb9ec926d11a64051e27c3c06bf9c07d8"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-normalized-serving.py",
+      "bytes": 1653,
+      "sha256": "5fcafa55696941cb51f75a0ec2e455bd396b82ce8594044c4f789350260d17c6"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-normalized-values.py",
+      "bytes": 15505,
+      "sha256": "41cfcf488d4d45990266a269e0ac72857fa955ed5938b3c2c0bbac26a4fe70ad"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-oracle.mjs",
+      "bytes": 7801,
+      "sha256": "f4acc188957c95a2da46fdabf5a05a47663f74e1aaa8b009747f4faf7b526335"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-pixels.mjs",
+      "bytes": 6688,
+      "sha256": "b37cacbbf75f5f5f80e54968feef2f034f928e6216b0d1d880ee0410031f0b78"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-receipt.py",
+      "bytes": 12078,
+      "sha256": "b394b18903c3153d2fa5bfcce808f98e114f4b83a1102125eae6d0e50236ed80"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-seal.py",
+      "bytes": 4304,
+      "sha256": "16c8c6c2faefa02cc8691c4776ae2b154f630c701c85a7f4e173952ac94b9fc9"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-unsigned-cold.py",
+      "bytes": 3688,
+      "sha256": "4bf4826a328a4877b268963570fc2766b2f1192452a865518824e42736fb91a8"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-unsigned-coverage.py",
+      "bytes": 3132,
+      "sha256": "e921f751c019aa26f8a27f454610b9f9a31475b8dc9cbe23f8eec92327376a92"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-unsigned-critic-audit.py",
+      "bytes": 23665,
+      "sha256": "9388be78f88cbd379ac4a2fc7df66b800a87035e2a332c08a6fa67ec6f700fd1"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-unsigned-critic-values.py",
+      "bytes": 15528,
+      "sha256": "ccbcd8e034870b4e3ad34e379a1cb0aa8d5462f5aeded091badfd40fdd3f0d65"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-unsigned-fixtures.mjs",
+      "bytes": 5930,
+      "sha256": "b9b1a63e17c8f29aaaef688efd1de40ae6c91eb98b5a6f82415dec0c73519e61"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-unsigned-formats.json",
+      "bytes": 2535,
+      "sha256": "63aecc395c630db3646ea4d634a9df1dabe2106abfc182ef831e355768d0b37d"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-unsigned-mesa-formats.yaml",
+      "bytes": 322,
+      "sha256": "6b2973fbcad86bc83e1b6ca0db4a235724f5837da1d2cbb9911c25e6f692742e"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-unsigned-predecessor.py",
+      "bytes": 4235,
+      "sha256": "d619b4ea7a61801d177df41944b2c552c9d401a3cbaf006f96a59407a06a3da7"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-unsigned-receipt.py",
+      "bytes": 8604,
+      "sha256": "591be8e282cce0d7799fdfdabca10a9d116443a615992ad3483fc801ba6d6c76"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-unsigned-seal.py",
+      "bytes": 5451,
+      "sha256": "ab9188c963576325088c4ea51595eefad615f64cdaf1c7322666f6d167d8502f"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-unsigned-serving-boundary.json",
+      "bytes": 23075,
+      "sha256": "0983a573477d94300b88bd04c3886575a14641a9433243c92fd2d2c1713a6205"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-unsigned-serving.py",
+      "bytes": 1649,
+      "sha256": "0cdb08b1ba1534d143f2a78a9bd1bd79b365248ae7a2347c9251d68ed7f90d0e"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-unsigned-values.py",
+      "bytes": 16109,
+      "sha256": "546709f2e900b0be299b707ea4eca39745f527557b5078611c253d61d85ebd1f"
+    },
+    {
+      "path": "tools/virgl-command/standard-point-adversarial-oracle.mjs",
+      "bytes": 14538,
+      "sha256": "91e5b95d26beab76f5c655cf03b2f92a767953c4f6dc595d4e5cbb24f7763faf"
+    },
+    {
+      "path": "tools/virgl-command/standard-point-cases.py",
+      "bytes": 4904,
+      "sha256": "16503a1bbf03b5ef65b41cf0ebeef89b05fe0f847d3dcd2978d3a76be0727fec"
+    },
+    {
+      "path": "tools/virgl-command/standard-point-cold.py",
+      "bytes": 3774,
+      "sha256": "e05f6c8d57fb6dc65292180436c0e3721619b3be0ae5a3ff1d8e6259a5225526"
+    },
+    {
+      "path": "tools/virgl-command/standard-point-enums.c",
+      "bytes": 840,
+      "sha256": "b9d6945e0f1ebeb79d7b6b5cf309f0f3d8571d29e8f420305bad5ba42d7ccf30"
+    },
+    {
+      "path": "tools/virgl-command/standard-point-oracle.mjs",
+      "bytes": 6099,
+      "sha256": "08e58f88ecf8d88fe4f2952b4ca9cf4bf4456ea83fb4954cdd50f7821358257a"
+    },
+    {
+      "path": "tools/virgl-command/standard-point-pixels.mjs",
+      "bytes": 5533,
+      "sha256": "a843099d3ef6ee5a798bca424e2a2fd7327886e521ce92532c71a8ed6730509e"
+    },
+    {
+      "path": "tools/virgl-command/standard-point-receipt.py",
+      "bytes": 15056,
+      "sha256": "88048188b94a7692bd7962b20b140d74989ab248b6ef9a274b1ae59498b102f5"
+    },
+    {
+      "path": "tools/virgl-command/standard-point-seal.py",
+      "bytes": 4316,
+      "sha256": "c1e7f989628eb4232760901c8fb3d233326ae65be523a0743be9ee902228cbf9"
+    },
+    {
+      "path": "tools/virgl-command/standard-point-verifier.mjs",
+      "bytes": 8848,
+      "sha256": "fa8db84e94a7894a609ec4b2c5db216bf535a6c175eeb111aba5f3d4829ac171"
+    },
+    {
+      "path": "tools/virgl-command/standard-restart-adversarial-oracle.mjs",
+      "bytes": 10861,
+      "sha256": "6c0f2610ff2f73a341708d140e67f258d1592cf19112eba2f36d5fc1be2641c4"
+    },
+    {
+      "path": "tools/virgl-command/standard-restart-adversarial-pixels.mjs",
+      "bytes": 10135,
+      "sha256": "3706d5b4dd16a870d9874c40557515bcedcaf2980fe2a171084c673692596e09"
+    },
+    {
+      "path": "tools/virgl-command/standard-restart-cold.py",
+      "bytes": 3785,
+      "sha256": "fb0024f3bf1583135320e7ac999e5bf000ddca62213b5ca89c83cdccd68e5e7d"
+    },
+    {
+      "path": "tools/virgl-command/standard-restart-oracle.mjs",
+      "bytes": 5803,
+      "sha256": "2e1bc4042038b4f5337fe5ba5d35d37e81b1c37098fdc1e2b53c6857e9d27bc8"
+    },
+    {
+      "path": "tools/virgl-command/standard-restart-pixels.mjs",
+      "bytes": 5181,
+      "sha256": "2003a2eaadbe7edfa0d417afeb817e7a9973268ac6cf90ecefae45e77b13aca9"
+    },
+    {
+      "path": "tools/virgl-command/standard-restart-receipt.py",
+      "bytes": 12829,
+      "sha256": "758edf81615ee58839b0003a2e3731e09f2dc95ac262f556cfe5fef8d7826992"
+    },
+    {
+      "path": "tools/virgl-command/standard-restart-seal.py",
+      "bytes": 4327,
+      "sha256": "99acc0c9de49b3661e173eb3f60667706d4dc0a2149793a39f5732e050b7c01a"
+    },
+    {
+      "path": "tools/virgl-command/standard-sampler-adversarial-audit.py",
+      "bytes": 10530,
+      "sha256": "52825e2a3d61527f4a5dc637805261d871d0c300c0c00dd938baf1478ae123a0"
+    },
+    {
+      "path": "tools/virgl-command/standard-sampler-adversarial-body.mjs",
+      "bytes": 9624,
+      "sha256": "681eb70fa8d76de71ab3a529c1e9dfe1b4e060c4ca26cb9f135fe6e95dda8162"
+    },
+    {
+      "path": "tools/virgl-command/standard-sampler-cold.py",
+      "bytes": 3633,
+      "sha256": "7e6e006b86492bb0bc1def5270c4237f00781bbd4dfcc788ed7e7f3c721d4196"
+    },
+    {
+      "path": "tools/virgl-command/standard-sampler-coverage.py",
+      "bytes": 2913,
+      "sha256": "c4eebd506b4cbd522557f34fdec373bab8dc760cb0a08948fb76f73d6586b1e8"
+    },
+    {
+      "path": "tools/virgl-command/standard-sampler-fixtures.mjs",
+      "bytes": 3671,
+      "sha256": "e0977f02f9d6750b727c5e9b72f9e486b0245acc203acafeeaec16de8e25133d"
+    },
+    {
+      "path": "tools/virgl-command/standard-sampler-oracle.mjs",
+      "bytes": 6529,
+      "sha256": "d5bbeaafa0227e0b9629500c654dab6c9505277abef54977e31fd10491401873"
+    },
+    {
+      "path": "tools/virgl-command/standard-sampler-pixels.mjs",
+      "bytes": 5999,
+      "sha256": "a4cfbf6ac35682aeca789d2671a6e7f22dc70e333b7bfb6ac25326bd2e73bd0a"
+    },
+    {
+      "path": "tools/virgl-command/standard-sampler-receipt.py",
+      "bytes": 10793,
+      "sha256": "443d61b37716e779f1cf889c0fb1006e7253417bb4e70113e0c2b134c231991b"
+    },
+    {
+      "path": "tools/virgl-command/standard-sampler-seal.py",
+      "bytes": 4422,
+      "sha256": "a0919f2f4944e632862eeb0f799b6197f4a65ed0d9bd1e29643cfe4e18c5fe07"
+    },
+    {
+      "path": "tools/virgl-command/standard-scalar-adversarial-oracle.mjs",
+      "bytes": 12329,
+      "sha256": "1b43198ce327df78378c213e20c649aa2dce212f445f8215ab24f2149e1e70ec"
+    },
+    {
+      "path": "tools/virgl-command/standard-scalar-cold.py",
+      "bytes": 3774,
+      "sha256": "dcd03092f82c5ee3dba0d9fe19cf055d6c114055fd1417cda4b1484c2e51a2e0"
+    },
+    {
+      "path": "tools/virgl-command/standard-scalar-enums.c",
+      "bytes": 4705,
+      "sha256": "5e6550a9cf64e63ee7f83a60e518180c9ed91ab9a1a2dc90a62138fb07391b2c"
+    },
+    {
+      "path": "tools/virgl-command/standard-scalar-oracle.mjs",
+      "bytes": 8042,
+      "sha256": "7ce6bc29f64d45f2591d23f1ed6b051b474c2e64a0589115ef3bdc1b8ff8b53f"
+    },
+    {
+      "path": "tools/virgl-command/standard-scalar-pixels.mjs",
+      "bytes": 6531,
+      "sha256": "48c81ccf2afb44b4554cc096df938c05f3db4f54e024d3518da76e811a0248d3"
+    },
+    {
+      "path": "tools/virgl-command/standard-scalar-receipt.py",
+      "bytes": 9479,
+      "sha256": "61faeef7105ea4d00cd51cc09cd5454dbca558e947f541086447c642bf941f94"
+    },
+    {
+      "path": "tools/virgl-command/standard-scalar-retained-critic.mjs",
+      "bytes": 2521,
+      "sha256": "2c89a54fea91249dc0e54f79b9239da413f84271a4690fc93da5772dc8a63b54"
+    },
+    {
+      "path": "tools/virgl-command/standard-scalar-seal.py",
+      "bytes": 4322,
+      "sha256": "57c5afd38a72f81020cf0c1e6d0fbcf5dca87593c9b3a3e8b51b3b3d9296d54a"
+    },
+    {
+      "path": "tools/virgl-command/standard-shared-exponent-boundary.json",
+      "bytes": 52799,
+      "sha256": "35970873aa983d174f1c05cf996e34560c153c2b21c6d422a59f3d27d916b6c8"
+    },
+    {
+      "path": "tools/virgl-command/standard-shared-exponent-cold.py",
+      "bytes": 3680,
+      "sha256": "f6e621aa2544ceeebd517427d7d18026e877e31bfdede49cbb27302f44bf32ce"
+    },
+    {
+      "path": "tools/virgl-command/standard-shared-exponent-consumer-boundary.json",
+      "bytes": 26213,
+      "sha256": "d2172a8b37e51e72e5e87141ed2e882db7cb1b7222df1bb2ff38f736734ef45f"
+    },
+    {
+      "path": "tools/virgl-command/standard-shared-exponent-consumer-cold.py",
+      "bytes": 3699,
+      "sha256": "03ea39df86e8379b8b245bec8adcd292d5543b871a6991bae67044ae9d612f0a"
+    },
+    {
+      "path": "tools/virgl-command/standard-shared-exponent-consumer-coverage.py",
+      "bytes": 2973,
+      "sha256": "f1c14bc1fac04a71635da775155eeb15c7b55a906803ddd7c2ec444ec8b132d3"
+    },
+    {
+      "path": "tools/virgl-command/standard-shared-exponent-consumer-critic-coverage.py",
+      "bytes": 5174,
+      "sha256": "0844530bbf2889b8af983bb412846aa093e84f93c898b109c57088004ccc6354"
+    },
+    {
+      "path": "tools/virgl-command/standard-shared-exponent-consumer-critic-seal.py",
+      "bytes": 5440,
+      "sha256": "01c839928ba283b20b8729032956ff4419ab78adde63714be18639ca506221af"
+    },
+    {
+      "path": "tools/virgl-command/standard-shared-exponent-consumer-critic.py",
+      "bytes": 35353,
+      "sha256": "432b47ad845d6a82de9d97e6b6cb4f397e284fefedb678fcb67c96dd8699117e"
+    },
+    {
+      "path": "tools/virgl-command/standard-shared-exponent-consumer-fixtures.mjs",
+      "bytes": 5928,
+      "sha256": "93f7767ede20665378860ee907a1f6bda5045a0e15eaecec49b3a1bf9702b094"
+    },
+    {
+      "path": "tools/virgl-command/standard-shared-exponent-consumer-pixels.mjs",
+      "bytes": 3485,
+      "sha256": "26914ea54f8ba9433e1de057212bc96fe3998e207890f92cdd43e7e067beec94"
+    },
+    {
+      "path": "tools/virgl-command/standard-shared-exponent-consumer-pixels.py",
+      "bytes": 9777,
+      "sha256": "f4193f25dc7cd96f2dc7fd6388ef7534e2b848a3b75140e9375a793b1311a2ae"
+    },
+    {
+      "path": "tools/virgl-command/standard-shared-exponent-consumer-receipt.py",
+      "bytes": 8849,
+      "sha256": "43a37df2f058f2f68994fbb7cb8f2178060607f089b44bde0bff0948287ebc1a"
+    },
+    {
+      "path": "tools/virgl-command/standard-shared-exponent-consumer-seal.py",
+      "bytes": 4464,
+      "sha256": "a8a7f9dec13ce081a07f71d289d533facd69f3b5c84dceb249b235e846f781e1"
+    },
+    {
+      "path": "tools/virgl-command/standard-shared-exponent-coverage.py",
+      "bytes": 3033,
+      "sha256": "15d06b29097d648350dcdf29ccfeeea3e2b5160f1ecf9f93b697ec3b074d6ca0"
+    },
+    {
+      "path": "tools/virgl-command/standard-shared-exponent-critic.py",
+      "bytes": 6576,
+      "sha256": "fc9a349f71927d80417e305e61fc12eba4031124ef2f30d318dd1eab793095ac"
+    },
+    {
+      "path": "tools/virgl-command/standard-shared-exponent-fixtures.mjs",
+      "bytes": 4090,
+      "sha256": "65c6c995a5324774b511f4a267cf08db3769a2f22adbc114a73f3d9f0ebd1069"
+    },
+    {
+      "path": "tools/virgl-command/standard-shared-exponent-formats.json",
+      "bytes": 1553,
+      "sha256": "8a44033f0969b2eabea998ebaaf48f28d3054af3e43fe28efc36cb8bc65eabe2"
+    },
+    {
+      "path": "tools/virgl-command/standard-shared-exponent-receipt.py",
+      "bytes": 10899,
+      "sha256": "b0b6aae4ec19c8efa8f7f673152d1be540fd0e5c1204c3baadb63820217681eb"
+    },
+    {
+      "path": "tools/virgl-command/standard-shared-exponent-scalars.py",
+      "bytes": 3741,
+      "sha256": "9c227843743d35bfc8a0f1d8d9f802e706f3c8040261df964ef30ae439e23387"
+    },
+    {
+      "path": "tools/virgl-command/standard-shared-exponent-seal.py",
+      "bytes": 4439,
+      "sha256": "c861b6e5d41aadab2c9612f61d23906490e0ea74fb96e525c4dd7d9a23081bc6"
+    },
+    {
+      "path": "tools/virgl-command/standard-shared-exponent-serving-boundary.json",
+      "bytes": 8522,
+      "sha256": "35e244e928eb382da9141207f90607bb493ccf4df1e7440fb44557ba22243df9"
+    },
+    {
+      "path": "tools/virgl-command/standard-shared-exponent-serving.py",
+      "bytes": 2104,
+      "sha256": "ac9bf449e6269ce43caa4e98b86f85b1de2a5b2381e4400a065d141bc8cbdbda"
+    },
+    {
+      "path": "tools/virgl-command/standard-shared-exponent-values.py",
+      "bytes": 14862,
+      "sha256": "f31e0d2d8e924f31a219f0e1d8cce2d7ddb5c311defa24839e7160d7e105169c"
+    },
+    {
+      "path": "tools/virgl-command/standard-state-adversarial-audit.py",
+      "bytes": 11499,
+      "sha256": "eb1e8d2ae7ee97f4b3c539814a59b319116c4ca5f2d9e7ef5e1b7a81fa51782a"
+    },
+    {
+      "path": "tools/virgl-command/standard-state-cold.py",
+      "bytes": 3773,
+      "sha256": "05bd6072bbfefc4bacbaaca777425c89519616ec59a0e31e63ee92119b4ca2f5"
+    },
+    {
+      "path": "tools/virgl-command/standard-state-pixels.mjs",
+      "bytes": 11826,
+      "sha256": "6827b404becc501cf684dc17b5b38161e4f9ad40564a49d9fe2119b2b4cbfccc"
+    },
+    {
+      "path": "tools/virgl-command/standard-state-receipt.py",
+      "bytes": 11652,
+      "sha256": "d40f1c3dabfc56ede80e05cb2399f80367866d4ef8741f9083a755b3e52fa820"
+    },
+    {
+      "path": "tools/virgl-command/standard-state-seal.py",
+      "bytes": 4316,
+      "sha256": "a9b42817d44fecee70bf5ff671420e0d57727501f53b24a24c918a40504d655a"
+    },
+    {
+      "path": "tools/virgl-command/standard-texture-adversarial-audit.py",
+      "bytes": 10405,
+      "sha256": "c6f6851d65f79ceb287c405be71b3c3cb2b72258cdb9cd571b6b625f9379a00f"
+    },
+    {
+      "path": "tools/virgl-command/standard-texture-adversarial.mjs",
+      "bytes": 22736,
+      "sha256": "2f958f4aea0caac7d8630414a7d0cfaa7f8699d6ff8ce66b3b1b556f38959cf4"
+    },
+    {
+      "path": "tools/virgl-command/standard-texture-cold.py",
+      "bytes": 3635,
+      "sha256": "482d814c196901b22ccc9937ca801a2f106672c4080cb79c9fc82c9419698bcc"
+    },
+    {
+      "path": "tools/virgl-command/standard-texture-coverage.py",
+      "bytes": 2913,
+      "sha256": "9873b2daeb9cc927fe591a55bf3f677146a06dcf1244d124adc896566319929c"
+    },
+    {
+      "path": "tools/virgl-command/standard-texture-fixtures.mjs",
+      "bytes": 3872,
+      "sha256": "f32f31df7d93fdf829559b04b822ea23162de44c9e171c19ccc37c71c65c15e8"
+    },
+    {
+      "path": "tools/virgl-command/standard-texture-operations-adversarial-pixels.py",
+      "bytes": 6203,
+      "sha256": "9102c56efd95654604941e6f59ee8a792cd5cf293f8ce84c426f07cef77976d0"
+    },
+    {
+      "path": "tools/virgl-command/standard-texture-operations-boundary.json",
+      "bytes": 45428,
+      "sha256": "e343f8d2fa6479dcc70a5f4d3a64bd31a6befc4f924d755d98e71842246fb1d7"
+    },
+    {
+      "path": "tools/virgl-command/standard-texture-operations-cold.py",
+      "bytes": 3679,
+      "sha256": "4b27cb0ec6daa7e8b3c51d633e085c68fced52d4e45aedcac4f34468313688b7"
+    },
+    {
+      "path": "tools/virgl-command/standard-texture-operations-coverage.py",
+      "bytes": 2919,
+      "sha256": "8044ddba2c8c11463c812720c72d9e8908d70dc0c595f05f45745083af080acb"
+    },
+    {
+      "path": "tools/virgl-command/standard-texture-operations-fixtures.mjs",
+      "bytes": 8989,
+      "sha256": "19e08bfd058e30a9a37afc70a785591151a39fcf617e5e9fa7dbd895f2bb8274"
+    },
+    {
+      "path": "tools/virgl-command/standard-texture-operations-pixels.py",
+      "bytes": 9559,
+      "sha256": "342eeb39546f1fb86580559fde9e7c5280369b6f9265b0912b38acfc8bfc6b4d"
+    },
+    {
+      "path": "tools/virgl-command/standard-texture-operations-receipt.py",
+      "bytes": 10348,
+      "sha256": "e70aa0eaf01e880f541e7e025ffce48a5d2cbb6fcf90a88ff4acd4e7276d4c8c"
+    },
+    {
+      "path": "tools/virgl-command/standard-texture-operations-seal.py",
+      "bytes": 4449,
+      "sha256": "cf718b87b366480123816402464a8b148721d6f12c007e58c2f26adb37bef4c9"
+    },
+    {
+      "path": "tools/virgl-command/standard-texture-pixels.mjs",
+      "bytes": 6144,
+      "sha256": "a0c956422b1cca5f3b1822d744c965552a4f3fd1478e03c84da58ea880639716"
+    },
+    {
+      "path": "tools/virgl-command/standard-texture-receipt.py",
+      "bytes": 11492,
+      "sha256": "16bdf5477da3b24192bc44233f1aa8e8dfa7cd624bf14cbcebc536e3af29f6f9"
+    },
+    {
+      "path": "tools/virgl-command/standard-texture-seal.py",
+      "bytes": 4412,
+      "sha256": "6deeb1dad08ec3ed3cdcc92203ae529f190d9eecd2e938352bb65492d6b81d85"
+    },
+    {
+      "path": "tools/virgl-command/standard-topology-adversarial-oracle.mjs",
+      "bytes": 9576,
+      "sha256": "22c37c5dc6a3855142829c3acb22dad5ed0f0c8386c93cf2ec071a03aa5407c0"
+    },
+    {
+      "path": "tools/virgl-command/standard-topology-adversarial-pixels.mjs",
+      "bytes": 9425,
+      "sha256": "20a35827449e5937259e0b21a10f783d6004d3b44402430a03ca6906d51774be"
+    },
+    {
+      "path": "tools/virgl-command/standard-topology-cold.py",
+      "bytes": 3780,
+      "sha256": "b32b66ac18edef2cdcf7133f80d8b990b123cf6ab4d7735bf1727a371cf13ea4"
+    },
+    {
+      "path": "tools/virgl-command/standard-topology-oracle.mjs",
+      "bytes": 5250,
+      "sha256": "1f434ea46e023e68bf3a0b70ea9521dae53007fa086b26479e5f24a339476ec6"
+    },
+    {
+      "path": "tools/virgl-command/standard-topology-pixels.mjs",
+      "bytes": 4304,
+      "sha256": "6fb8b31597461561fe759be9841fb4844af1fb2849f73da749f5ee627a9e7642"
+    },
+    {
+      "path": "tools/virgl-command/standard-topology-receipt.py",
+      "bytes": 10662,
+      "sha256": "98bc326a4201a708570adbe4a6d25f5309a3b1d7389bdbf605f77c36a82ba4b3"
+    },
+    {
+      "path": "tools/virgl-command/standard-topology-seal.py",
+      "bytes": 4321,
+      "sha256": "76160933b11bb8ce5364d7146bd0dad761def969de50131f6cb7b33f7c43fcd3"
+    },
+    {
+      "path": "tools/virgl-command/standard-uniform-binding-adversarial-audit.py",
+      "bytes": 13423,
+      "sha256": "974ee07783edf198d3317927181967e7880ab529b71ecc25b7ff891a125db43f"
+    },
+    {
+      "path": "tools/virgl-command/standard-uniform-binding-adversarial-body.mjs",
+      "bytes": 6063,
+      "sha256": "a280b07c7797dbb5727356c9f0a84c02c850eb52526a719f83b9cb32538c0e09"
+    },
+    {
+      "path": "tools/virgl-command/standard-uniform-binding-cold.py",
+      "bytes": 3651,
+      "sha256": "6ed489780c3e00e75efb76299461c855d390e653d0649fd77a25e9efb688136a"
+    },
+    {
+      "path": "tools/virgl-command/standard-uniform-binding-coverage.py",
+      "bytes": 2916,
+      "sha256": "abdfce749f917ab617bb719f9bc53b4d9056aee50ac44246061cfe3f839e386f"
+    },
+    {
+      "path": "tools/virgl-command/standard-uniform-binding-fixtures.mjs",
+      "bytes": 5841,
+      "sha256": "7e28d98f5c4651453106c22191baa2ff783caf677b85cdc25374c37a3a7de733"
+    },
+    {
+      "path": "tools/virgl-command/standard-uniform-binding-oracle.mjs",
+      "bytes": 7928,
+      "sha256": "51a69f420e7706d0bfd2317efd0ff1947d9bd4a1074e841f02c1d8120266bc39"
+    },
+    {
+      "path": "tools/virgl-command/standard-uniform-binding-pixels.mjs",
+      "bytes": 6714,
+      "sha256": "ae23be11d4e3d00906a29830d14ab3c159a15b06171d19a86f7b8a84a0129648"
+    },
+    {
+      "path": "tools/virgl-command/standard-uniform-binding-receipt.py",
+      "bytes": 9574,
+      "sha256": "ed5849bb945e239181183da935bf874c0f0df6c8fe05bc4d3b145d738319f6d3"
+    },
+    {
+      "path": "tools/virgl-command/standard-uniform-binding-seal.py",
+      "bytes": 4444,
+      "sha256": "2971ad70ce958d47462e573fd30078241c205b7335c7fa434a81e139e6e03245"
+    },
+    {
+      "path": "tools/virgl-command/standard_buffer_role_literal_model.py",
+      "bytes": 5579,
+      "sha256": "68841fe1803519d499c13ed717376f2a264aea654bc8801266af5a7d804c6862"
+    },
+    {
+      "path": "tools/virgl-command/standard_packed_float_scalar.py",
+      "bytes": 889,
+      "sha256": "4dad5a67b100b03bb58834824569872f924786b8caf58e9e004f418a15658899"
+    },
+    {
+      "path": "tools/virgl-command/standard_sampler_literal_model.py",
+      "bytes": 7245,
+      "sha256": "ce87dccfce5fab51eb9f576e4985563e4c2083288611d02c9c8035355257eb64"
+    },
+    {
+      "path": "tools/virgl-command/state-cold.py",
+      "bytes": 3489,
+      "sha256": "1af21c4307d0a97f24238e6c5d46d53a6398c8900c30e2c753f0d13bc48295a0"
+    },
+    {
+      "path": "tools/virgl-command/state-fixtures.mjs",
+      "bytes": 1436,
+      "sha256": "55f1594e7ae39eb08212d7ee9da4f1cb2a38d739ead7ac072059b1bf36aa5c0a"
+    },
+    {
+      "path": "tools/virgl-command/state-receipt.py",
+      "bytes": 4868,
+      "sha256": "c9a37e05ff29ea7211eecc0e04fa279953657c29a63f011857572843490214d0"
+    },
+    {
+      "path": "tools/virgl-command/submit-cold.py",
+      "bytes": 3769,
+      "sha256": "82cae182f18ecda9bb19e7c967564b2edce02ebb2e50cffd736658ee63da0547"
+    },
+    {
+      "path": "tools/virgl-command/submit-receipt.py",
+      "bytes": 16531,
+      "sha256": "883c03f313a24fe0a1603602139dcafb3583744d3080cf8e65b658571e7034ef"
+    },
+    {
+      "path": "tools/virgl-command/submit-sources.json",
+      "bytes": 2256,
+      "sha256": "cc62d3ca083eea57b19ce04caf07e3c0ccc4078779236f42a9267151dd839ecb"
+    },
+    {
+      "path": "tools/virgl-command/vertex-constant-cold.py",
+      "bytes": 3760,
+      "sha256": "098a2c8f1f3cb860732585f793413a820703734147f50b61ef682f121f000882"
+    },
+    {
+      "path": "tools/virgl-command/vertex-constant-joins.mjs",
+      "bytes": 1797,
+      "sha256": "0b246d247bba78fe6e5261c95eedd03d4a5b63b6f35857244731efc840f31593"
+    },
+    {
+      "path": "tools/virgl-command/vertex-constant-native.mjs",
+      "bytes": 3695,
+      "sha256": "014abb80fe4c01770f8498998a55f613feb6a0a96e0d11d22e625d13cbccbd1c"
+    },
+    {
+      "path": "tools/virgl-command/vertex-constant-receipt.py",
+      "bytes": 9736,
+      "sha256": "68a5c1ee5bddc87ae7c841234053f61c644463ba55a3f90f9d079971e7f6cd3e"
+    },
+    {
+      "path": "tools/virgl-command/vertex-constant-seal.py",
+      "bytes": 4296,
+      "sha256": "c0d508ae9cc30dc97defdf0e8baf1ee82852cb1797439efd9e7c92e7178803d8"
+    },
+    {
+      "path": "tools/virgl-command/view-fixtures.mjs",
+      "bytes": 3768,
+      "sha256": "5f3b319b085a9cdcc972d1bf08b4d9313aeb0a0e831510c5f1de54180cb0d691"
+    },
+    {
+      "path": "tools/virgl-command/views-cold.py",
+      "bytes": 3722,
+      "sha256": "6782cff9ec78b304b9bedc017d52a3df02e03c3bc7f92d39ea19f6d82602d140"
+    },
+    {
+      "path": "tools/virgl-command/views-receipt.py",
+      "bytes": 8722,
+      "sha256": "e129785e32f99daf48661005e47d70dec4e65d2a75f1394ae4792178e2a770ac"
+    },
+    {
+      "path": "tools/virgl-floating-depth-consumer/fixtures.mjs",
+      "bytes": 9246,
+      "sha256": "c820767b5c34ec199d68625ca50101fe9f4a1ca1c4b242fcd1973899ed8de386"
+    },
+    {
+      "path": "tools/virgl-instanced-stencil/boundaries.mjs",
+      "bytes": 5710,
+      "sha256": "94c6b3a9747888fb305947fd47fc1cd9817aab617ea1d1238ca7e83c4a6a8902"
+    },
+    {
+      "path": "tools/virgl-instanced-stencil/cold.py",
+      "bytes": 3670,
+      "sha256": "7a27a5e437ee174e7b86d4b29d6d44883693bc668cbff189afcc511886bc7de5"
+    },
+    {
+      "path": "tools/virgl-instanced-stencil/coverage-waivers.json",
+      "bytes": 15279,
+      "sha256": "f4c36f23e6f64306346ccd7fef0ec50d9729acb231ea96883f4ec23a3a05d1c2"
+    },
+    {
+      "path": "tools/virgl-instanced-stencil/coverage.py",
+      "bytes": 4700,
+      "sha256": "00011162a4d75b5738ee3a618b3644d58f03a44d9abf12583fb163924c4e98cd"
+    },
+    {
+      "path": "tools/virgl-instanced-stencil/fixtures.mjs",
+      "bytes": 2091,
+      "sha256": "da2f06a4ad2935fe17139f39f6f2e105b98db71e583c6e3ea3ed5c492da3a79e"
+    },
+    {
+      "path": "tools/virgl-instanced-stencil/metadata.mjs",
+      "bytes": 9613,
+      "sha256": "b45e3a6612d01d8d4bfaa47ede558dffd537c7c0c1a8da49e6011f73aca4d556"
+    },
+    {
+      "path": "tools/virgl-instanced-stencil/oracle.mjs",
+      "bytes": 10616,
+      "sha256": "97730331ebf46160e0807d3a6f881fd0d1ec8399d22c7e2e09936b3eb8c9bdd1"
+    },
+    {
+      "path": "tools/virgl-instanced-stencil/ordered-boundaries.mjs",
+      "bytes": 8057,
+      "sha256": "f76180b19395e257f4999ce422bf713615ad6b393b9352bb2e12e09d9622a37e"
+    },
+    {
+      "path": "tools/virgl-instanced-stencil/predecessor.py",
+      "bytes": 5330,
+      "sha256": "e181a454addfcf74df3dcd4e676fa1917c939789d25b3c5250328a2670140b34"
+    },
+    {
+      "path": "tools/virgl-instanced-stencil/receipt.py",
+      "bytes": 7720,
+      "sha256": "d6db6615f7fbad81908d7216d712398faa3336d323d690d6d55c960f666d502c"
+    },
+    {
+      "path": "tools/virgl-instanced-stencil/seal.py",
+      "bytes": 7750,
+      "sha256": "51bf5488b40863b2c4139d830bef38fd14ca43e0a6c072ff7dbd21c8040c9125"
+    },
+    {
+      "path": "tools/virgl-instanced-stencil/values.mjs",
+      "bytes": 16750,
+      "sha256": "ed9a40950615f0783800207db7fc0732548e14498d8d0ca0644e3c4f58945fe3"
+    },
+    {
+      "path": "tools/virgl-integer-image-consumer/fixtures.mjs",
+      "bytes": 6252,
+      "sha256": "237670192f02400ab76d8b67bdf7861680530ef9127d562efb05a83d9469af47"
+    },
+    {
+      "path": "tools/virgl-integer-image-shader/browser.mjs",
+      "bytes": 2622,
+      "sha256": "e8cc19f67c4cdae11a55a3b0833fb1409b6967466b361a39fbff7aecdc4a4d41"
+    },
+    {
+      "path": "tools/virgl-integer-image-shader/cases.mjs",
+      "bytes": 6215,
+      "sha256": "3e26670830dfe9c3d8f5e3d2d3f9f33ed946ee807d1a2579d4dc7e97339c72fb"
+    },
+    {
+      "path": "tools/virgl-integer-image-shader/compiler.mjs",
+      "bytes": 14159,
+      "sha256": "9b9ca878efa3b88ffd9ec9e2c2f06ea7acfa4c91d29cf7e7d67ddc0ec04fa2d6"
+    },
+    {
+      "path": "tools/virgl-integer-image-shader/critic-browser.mjs",
+      "bytes": 1970,
+      "sha256": "a2ab6cf928ebd6b1424420c81b1173b8284b9b341ab44afe2d771b109f2dd9f5"
+    },
+    {
+      "path": "tools/virgl-integer-image-shader/critic-fixtures.mjs",
+      "bytes": 4052,
+      "sha256": "0172a366e25c0edcf97fdc54659d74005f84d7a09f82a70db8c2602be4200b17"
+    },
+    {
+      "path": "tools/virgl-integer-image-shader/critic-inputs.mjs",
+      "bytes": 5312,
+      "sha256": "1dafdc932c685d2da82441d5a471218f2ab353b7e799eeea629a70a9ca396862"
+    },
+    {
+      "path": "tools/virgl-integer-image-shader/critic-module.mjs",
+      "bytes": 4039,
+      "sha256": "7cc936d48c7c31c242bdeacd3ec21e76aa9581f64fec9ea545401a29752f8400"
+    },
+    {
+      "path": "tools/virgl-integer-image-shader/critic-replay-browser.mjs",
+      "bytes": 2651,
+      "sha256": "55c5283e2998fe49d8bf3bdd29ed0198636c603f0bec8b0d2fd91625cdce685f"
+    },
+    {
+      "path": "tools/virgl-integer-image-shader/fixtures.mjs",
+      "bytes": 6629,
+      "sha256": "a601bfbc4c13d6c727eebc5b53bdc91a7f63eade8fefbd28b4c95f3bfa85378f"
+    },
+    {
+      "path": "tools/virgl-multiple-color/fixtures.mjs",
+      "bytes": 10356,
+      "sha256": "9c42374d96c98883da7a93e3464c01f9767e4e90abf23dd2dff6d296c9acd203"
+    },
+    {
+      "path": "tools/virgl-ordered-stencil/boundaries.mjs",
+      "bytes": 7656,
+      "sha256": "2914a17b792fa28546cd088e5c17ced4961af9d89121a03fcee155c20a4981e8"
+    },
+    {
+      "path": "tools/virgl-ordered-stencil/cold.py",
+      "bytes": 3650,
+      "sha256": "5b51fac51d67f0895f2b026b0cb54baa9561889dabe48dc4a4e73cba432b0176"
+    },
+    {
+      "path": "tools/virgl-ordered-stencil/coverage-waivers.json",
+      "bytes": 12924,
+      "sha256": "03a94bfe6eb52bd6e8983dfb650867ea53d4a8e23d6c9ef017b4c2ddd7d89af1"
+    },
+    {
+      "path": "tools/virgl-ordered-stencil/coverage.py",
+      "bytes": 4688,
+      "sha256": "7172a29259a50edab8c9c27a6cd90d3ed1477b7bca676bba798fff9463c74036"
+    },
+    {
+      "path": "tools/virgl-ordered-stencil/critic-audit.py",
+      "bytes": 20457,
+      "sha256": "32175e40ee52dd9618db40a5a347879798c7b33f0af0af000cea642d5ea8fa4b"
+    },
+    {
+      "path": "tools/virgl-ordered-stencil/critic-custody.py",
+      "bytes": 9317,
+      "sha256": "e989610b11f7f63265d54bcae5fc0cf47b19de1ea4f94dcf5d719a50cb032ee6"
+    },
+    {
+      "path": "tools/virgl-ordered-stencil/critic-physical.py",
+      "bytes": 6929,
+      "sha256": "e41f406bb5585bf708da1629ba701ce3c60cd3f353eafae658d5e794b36d65d6"
+    },
+    {
+      "path": "tools/virgl-ordered-stencil/critic-replay.py",
+      "bytes": 2578,
+      "sha256": "dc7c34eb95635808c1886c712d8debd6e2c1b1eee1c697fa2d41e7600d908cf2"
+    },
+    {
+      "path": "tools/virgl-ordered-stencil/critic-seal.py",
+      "bytes": 8918,
+      "sha256": "7dd1889fd2455a93175f3ff24a793616a9e07941b180cd543e0f19be4d1774ae"
+    },
+    {
+      "path": "tools/virgl-ordered-stencil/fixtures.mjs",
+      "bytes": 6172,
+      "sha256": "199f0bf79e7a87da6f1fb05606939ec31168064a6a7bf1efcefc4c3e20e2a8d5"
+    },
+    {
+      "path": "tools/virgl-ordered-stencil/oracle.mjs",
+      "bytes": 9977,
+      "sha256": "e4c2ab256035a14805e02cc4d07a1c13bd4898fa83d9ab8a5f2fc1ce5b6cc1a4"
+    },
+    {
+      "path": "tools/virgl-ordered-stencil/physical.py",
+      "bytes": 4938,
+      "sha256": "9a248f7db1368d8583b3ba6c344459125f91fb503737da8485b26ee0425c2a5e"
+    },
+    {
+      "path": "tools/virgl-ordered-stencil/predecessor.py",
+      "bytes": 6032,
+      "sha256": "c46b6500b13b1e716d12d34969c0245b0691c8994da91671da9b2279bf91c935"
+    },
+    {
+      "path": "tools/virgl-ordered-stencil/receipt.py",
+      "bytes": 7325,
+      "sha256": "e8569f3848ea7e2786857b59eacb3aae52d1d37ea0fb4f4635625647027391bf"
+    },
+    {
+      "path": "tools/virgl-ordered-stencil/retained-assembly-values.mjs",
+      "bytes": 6033,
+      "sha256": "08063c856b5ccc007eff7c6e8a3e60810d1fb825c27038347c79a861cb7a3c41"
+    },
+    {
+      "path": "tools/virgl-ordered-stencil/seal.py",
+      "bytes": 6892,
+      "sha256": "5f99a12c3382f9dfb2ec72950817dae77a14c03aa7aa1637513b49325cc637d8"
+    },
+    {
+      "path": "tools/virgl-ordered-stencil/values.mjs",
+      "bytes": 22664,
+      "sha256": "74ea01abb41f772906d27e09f63a15a3fd91e46de33eb01249a7cf1ff6f1a559"
+    },
+    {
+      "path": "tools/virgl-packed-depth-consumer/fixtures.mjs",
+      "bytes": 6909,
+      "sha256": "31d02424ae1a36ec9329460d8590109018853708cb74ac61400fabcadd78237c"
+    },
+    {
+      "path": "tools/virgl-packed-normalized-consumer/fixtures.mjs",
+      "bytes": 11322,
+      "sha256": "d7499a5edcdb9e8c38348b3646c96c97f51fa62ef2b7b49e09352b72ec9cb08d"
+    },
+    {
+      "path": "tools/virgl-packed-normalized-consumer/samples.mjs",
+      "bytes": 4847,
+      "sha256": "c240ed74b53621eae328fb5ef75f682df46d65969bfbddd4b4313f1a50bcd905"
+    },
+    {
+      "path": "tools/virgl-packed-unsigned-consumer/fixtures.mjs",
+      "bytes": 9325,
+      "sha256": "6c0ac42f5439b9ff3fade5eebca0b6e229bc2d86639005579c22e96cf19ea792"
+    },
+    {
+      "path": "tools/virgl-packed-unsigned-consumer/samples.mjs",
+      "bytes": 3793,
+      "sha256": "5be3efd69d40d0c5a5dc5fdf5eabb80aeb6199a6a855297b5c6af6765ee71417"
+    },
+    {
+      "path": "tools/virgl-stencil/fixtures.mjs",
+      "bytes": 9464,
+      "sha256": "d99327a0f0284d5b072e6623c0f6da3645442a61e2cafb8323b8a1b9699d8018"
+    },
+    {
+      "path": "tools/virgl-unorm-depth/fixtures.mjs",
+      "bytes": 6744,
+      "sha256": "918397fab72d316ce0ab60b75e103bb152e63220dbb75224942f19af87aec524"
+    },
+    {
+      "path": "web/package-lock.json",
+      "bytes": 3299,
+      "sha256": "1390c5d47562959ba7cb440b5bc53477c54014c845e2365eafda3e4ec90e7fca"
+    },
+    {
+      "path": "web/package.json",
+      "bytes": 901,
+      "sha256": "7fd9542da215986a1844f96d9a32855508266a27c6ec4377c4a7ad2be6f3354f"
+    }
+  ],
+  "postFreezeChanges": [
+    "evidence/virgl-instanced-stencil/worker/manifest.json",
+    "evidence/virgl-instanced-stencil/worker/recording.tar.gz.part-0000",
+    "evidence/virgl-instanced-stencil/worker/recording.tar.gz.part-0001",
+    "evidence/virgl-instanced-stencil/worker/recording.tar.gz.part-0002",
+    "evidence/virgl-instanced-stencil/worker/recording.tar.gz.part-0003",
+    "evidence/virgl-instanced-stencil/worker/recording.tar.gz.part-0004",
+    "evidence/virgl-instanced-stencil/worker/recording.tar.gz.part-0005",
+    "evidence/virgl-instanced-stencil/worker/recording.tar.gz.part-0006",
+    "evidence/virgl-instanced-stencil/worker/recording.tar.gz.part-0007",
+    "evidence/virgl-instanced-stencil/worker/recording.tar.gz.part-0008",
+    "evidence/virgl-instanced-stencil/worker/records.json",
+    "tasks/QUEUE.md",
+    "tasks/epic-6-transcendence/E6-T11d47-instanced-stencil-consumer.md"
+  ],
+  "status": "passed",
+  "completedAt": 1791768746.885364
+}

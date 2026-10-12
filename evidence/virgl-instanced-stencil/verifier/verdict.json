@@ -1,0 +1,123 @@
+{
+  "schema": "fresh-instanced-stencil-verdict-v1",
+  "task": "E6-T11d47",
+  "verdict": "verified",
+  "runtimeHead": "3cbb041b43928701026b5ca2ddfb3dcf9a799c2b",
+  "criticHead": "ea48669715abe39b966627a6ed7606d901aa2263",
+  "predictionSha256": "cd602ecbdb725761c3703f7fce8af57872c74d0d8bda35683275ef74d4cf1734",
+  "predictionResults": [
+    {
+      "id": "P01",
+      "boundary": "Full custody",
+      "result": "HELD",
+      "citation": "VERDICT.md#P01"
+    },
+    {
+      "id": "P02",
+      "boundary": "Exact predecessor refusals",
+      "result": "HELD",
+      "citation": "VERDICT.md#P02"
+    },
+    {
+      "id": "P03",
+      "boundary": "Closed metadata",
+      "result": "HELD",
+      "citation": "VERDICT.md#P03"
+    },
+    {
+      "id": "P04",
+      "boundary": "Native reflection and ownership",
+      "result": "HELD",
+      "citation": "VERDICT.md#P04"
+    },
+    {
+      "id": "P05",
+      "boundary": "Original native ordering",
+      "result": "HELD",
+      "citation": "VERDICT.md#P05"
+    },
+    {
+      "id": "P06",
+      "boundary": "Original fetch phases",
+      "result": "HELD",
+      "citation": "VERDICT.md#P06"
+    },
+    {
+      "id": "P07",
+      "boundary": "Original topology and IDs",
+      "result": "HELD",
+      "citation": "VERDICT.md#P07"
+    },
+    {
+      "id": "P08",
+      "boundary": "Whole physical semantics",
+      "result": "HELD",
+      "citation": "VERDICT.md#P08"
+    },
+    {
+      "id": "P09",
+      "boundary": "Whole bounds and quotas",
+      "result": "HELD",
+      "citation": "VERDICT.md#P09"
+    },
+    {
+      "id": "P10",
+      "boundary": "Restoration before yield",
+      "result": "HELD",
+      "citation": "VERDICT.md#P10"
+    },
+    {
+      "id": "P11",
+      "boundary": "Native failure prefixes",
+      "result": "HELD",
+      "citation": "VERDICT.md#P11"
+    },
+    {
+      "id": "P12",
+      "boundary": "Lifetime and schedules",
+      "result": "HELD",
+      "citation": "VERDICT.md#P12"
+    },
+    {
+      "id": "P13",
+      "boundary": "Completed physical controls",
+      "result": "HELD",
+      "citation": "VERDICT.md#P13"
+    },
+    {
+      "id": "P14",
+      "boundary": "Finest V8 coverage",
+      "result": "HELD",
+      "citation": "VERDICT.md#P14"
+    },
+    {
+      "id": "P15",
+      "boundary": "Cold isolation and carry-forward",
+      "result": "HELD",
+      "citation": "VERDICT.md#P15"
+    },
+    {
+      "id": "P16",
+      "boundary": "Bounded novel physical attack",
+      "result": "HELD",
+      "citation": "VERDICT.md#P16"
+    }
+  ],
+  "proofDigests": {
+    "authentication.json": "866322c740cfea8fa2077a4f07ef964528b5e2a4e07b3707e87a629da20dffad",
+    "gap-and-carry.json": "a67b2d78e473fe7da97464c7e452a08e681ab6d7064a403952e5d3b85946e8ee",
+    "interrogation.json": "e0a61655e8f346a54a8049387ab32936724b739ef3d73af40005162b9c3f256b",
+    "closure-and-coverage.json": "baa49531fbd460047994cbda00101fe695a4a816adce65ebd2d87cbe4ccb1dc8",
+    "corruption-audit.json": "82cf564b04d572179bfa53b889df9bd6c764db86084d3feedfb7d1ad6e50fe9d",
+    "novel-interrogation.json": "031112c7a8f043b8c920352a5353fcc271a0ef49575277fecbdaba8f0b616ea6",
+    "manifest.json": "6e723b988592814e41b90c702cc5ee6b814d2eb9aaa618e6b61ed1d7d6c76059",
+    "records.json": "3870203396e52053f7a6de5e5cb286bc8b335d24968643d7b29b27069acdaac8"
+  },
+  "fullAuditSha256": "57adf7040eb416847a4776e3fdbcfcf8ffcf856ebf93701ab2847dac6ea73c39",
+  "remainingFindings": [],
+  "runtimeEditedByVerifier": false,
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "productionDrawAuthority": false,
+  "mergePerformed": false
+}

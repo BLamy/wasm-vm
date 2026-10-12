@@ -1,0 +1,143 @@
+bash tools/verify-virgl-instanced-stencil.sh
++ git rev-parse HEAD
+d88235ea7d16b2475ff9d6c7d96cc361d5589c3e
++ git diff --check
++ for file in renderer/virgl-command/state.mjs renderer/virgl-command/constant-domain.mjs 'renderer/virgl-command/tests/standard-instanced-stencil*.mjs' 'tools/virgl-instanced-stencil/*.mjs' tools/verify-virgl-instanced-stencil.mjs
++ node --check renderer/virgl-command/state.mjs
++ for file in renderer/virgl-command/state.mjs renderer/virgl-command/constant-domain.mjs 'renderer/virgl-command/tests/standard-instanced-stencil*.mjs' 'tools/virgl-instanced-stencil/*.mjs' tools/verify-virgl-instanced-stencil.mjs
++ node --check renderer/virgl-command/constant-domain.mjs
++ for file in renderer/virgl-command/state.mjs renderer/virgl-command/constant-domain.mjs 'renderer/virgl-command/tests/standard-instanced-stencil*.mjs' 'tools/virgl-instanced-stencil/*.mjs' tools/verify-virgl-instanced-stencil.mjs
++ node --check renderer/virgl-command/tests/standard-instanced-stencil-reflection.mjs
++ for file in renderer/virgl-command/state.mjs renderer/virgl-command/constant-domain.mjs 'renderer/virgl-command/tests/standard-instanced-stencil*.mjs' 'tools/virgl-instanced-stencil/*.mjs' tools/verify-virgl-instanced-stencil.mjs
++ node --check renderer/virgl-command/tests/standard-instanced-stencil-rig.mjs
++ for file in renderer/virgl-command/state.mjs renderer/virgl-command/constant-domain.mjs 'renderer/virgl-command/tests/standard-instanced-stencil*.mjs' 'tools/virgl-instanced-stencil/*.mjs' tools/verify-virgl-instanced-stencil.mjs
++ node --check renderer/virgl-command/tests/standard-instanced-stencil.mjs
++ for file in renderer/virgl-command/state.mjs renderer/virgl-command/constant-domain.mjs 'renderer/virgl-command/tests/standard-instanced-stencil*.mjs' 'tools/virgl-instanced-stencil/*.mjs' tools/verify-virgl-instanced-stencil.mjs
++ node --check tools/virgl-instanced-stencil/boundaries.mjs
++ for file in renderer/virgl-command/state.mjs renderer/virgl-command/constant-domain.mjs 'renderer/virgl-command/tests/standard-instanced-stencil*.mjs' 'tools/virgl-instanced-stencil/*.mjs' tools/verify-virgl-instanced-stencil.mjs
++ node --check tools/virgl-instanced-stencil/fixtures.mjs
++ for file in renderer/virgl-command/state.mjs renderer/virgl-command/constant-domain.mjs 'renderer/virgl-command/tests/standard-instanced-stencil*.mjs' 'tools/virgl-instanced-stencil/*.mjs' tools/verify-virgl-instanced-stencil.mjs
++ node --check tools/virgl-instanced-stencil/metadata.mjs
++ for file in renderer/virgl-command/state.mjs renderer/virgl-command/constant-domain.mjs 'renderer/virgl-command/tests/standard-instanced-stencil*.mjs' 'tools/virgl-instanced-stencil/*.mjs' tools/verify-virgl-instanced-stencil.mjs
++ node --check tools/virgl-instanced-stencil/oracle.mjs
++ for file in renderer/virgl-command/state.mjs renderer/virgl-command/constant-domain.mjs 'renderer/virgl-command/tests/standard-instanced-stencil*.mjs' 'tools/virgl-instanced-stencil/*.mjs' tools/verify-virgl-instanced-stencil.mjs
++ node --check tools/virgl-instanced-stencil/ordered-boundaries.mjs
++ for file in renderer/virgl-command/state.mjs renderer/virgl-command/constant-domain.mjs 'renderer/virgl-command/tests/standard-instanced-stencil*.mjs' 'tools/virgl-instanced-stencil/*.mjs' tools/verify-virgl-instanced-stencil.mjs
++ node --check tools/virgl-instanced-stencil/values.mjs
++ for file in renderer/virgl-command/state.mjs renderer/virgl-command/constant-domain.mjs 'renderer/virgl-command/tests/standard-instanced-stencil*.mjs' 'tools/virgl-instanced-stencil/*.mjs' tools/verify-virgl-instanced-stencil.mjs
++ node --check tools/verify-virgl-instanced-stencil.mjs
++ python3 -m py_compile tools/virgl-instanced-stencil/cold.py tools/virgl-instanced-stencil/coverage.py tools/virgl-instanced-stencil/predecessor.py tools/virgl-instanced-stencil/receipt.py tools/virgl-instanced-stencil/seal.py
++ bash -n tools/verify-virgl-instanced-stencil.sh
++ python3 tools/virgl-instanced-stencil/predecessor.py /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-fresh-d88235ea/predecessor
+{"status": "passed", "reopenedMembers": 97179, "generated": {"renderer/virgl-shader/build/wasm/virgl-shader.mjs": "2fe4bfc079c0149817f8842e400e4567757da05b0e4e6d73689605a42aea0e05", "renderer/virgl-shader/build/wasm/virgl-shader.wasm": "41afa61d8a42c547c7a8c4cc261ee4e689039d0edc62b98d3ecf448c3fca965d"}}
++ NODE_V8_COVERAGE=/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-fresh-d88235ea/node-coverage
++ node tools/virgl-instanced-stencil/metadata.mjs /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-fresh-d88235ea/metadata
+{"status":"passed","rows":84,"sha256":"7003a8973861d1794da034a609b889bccf9926e57eb33da96cc476ce8e2dc6df"}
++ for mode in matrix bindings typed segments failures reflection limits
++ node tools/verify-virgl-instanced-stencil.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-fresh-d88235ea/hardware-matrix --mode matrix
+Original instanced native S8 stencil acceptance passed
++ node tools/virgl-instanced-stencil/values.mjs /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-fresh-d88235ea/hardware-matrix
+{"status":"passed","counts":{"runs":66,"frames":66,"pixels":87681,"nativePasses":1342,"normalizedBytes":2736},"differences":0}
++ python3 tools/virgl-ordered-stencil/physical.py /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-fresh-d88235ea/hardware-matrix
+{"schema": "original-ordered-stencil-physical-v1", "status": "passed", "reportSha256": "846156c80be7ba2073bd7fc4ee12fedec217c817f22a72a381f4294e0383d796", "counts": {"runs": 66, "bodies": 2734, "consumedSyncs": 440, "disposalOnlySyncs": 0, "blitWriters": 0, "fencedCPUReads": 508, "synchronousCPUReads": 0}, "oracleImportsProductCode": false, "allCompleteBodiesReopened": true}
++ for mode in matrix bindings typed segments failures reflection limits
++ node tools/verify-virgl-instanced-stencil.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-fresh-d88235ea/hardware-bindings --mode bindings
+Original instanced native S8 stencil acceptance passed
++ node tools/virgl-instanced-stencil/values.mjs /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-fresh-d88235ea/hardware-bindings
+{"status":"passed","counts":{"runs":4,"frames":4,"pixels":5314,"nativePasses":160,"normalizedBytes":192},"differences":0}
++ python3 tools/virgl-ordered-stencil/physical.py /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-fresh-d88235ea/hardware-bindings
+{"schema": "original-ordered-stencil-physical-v1", "status": "passed", "reportSha256": "11daac068255fc7eb19aabdae35a88d5c5c19a22955377994c163793fb33b33a", "counts": {"runs": 4, "bodies": 168, "consumedSyncs": 28, "disposalOnlySyncs": 0, "blitWriters": 0, "fencedCPUReads": 32, "synchronousCPUReads": 0}, "oracleImportsProductCode": false, "allCompleteBodiesReopened": true}
++ for mode in matrix bindings typed segments failures reflection limits
++ node tools/verify-virgl-instanced-stencil.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-fresh-d88235ea/hardware-typed --mode typed
+Original instanced native S8 stencil acceptance passed
++ node tools/virgl-instanced-stencil/values.mjs /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-fresh-d88235ea/hardware-typed
+{"status":"passed","counts":{"runs":24,"frames":24,"pixels":31884,"nativePasses":960,"normalizedBytes":1152},"differences":0}
++ python3 tools/virgl-ordered-stencil/physical.py /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-fresh-d88235ea/hardware-typed
+{"schema": "original-ordered-stencil-physical-v1", "status": "passed", "reportSha256": "778597046317dd17ec91fcfda895317dceeb07f51aadfc63b0d3e8d21966a8a8", "counts": {"runs": 24, "bodies": 1008, "consumedSyncs": 156, "disposalOnlySyncs": 0, "blitWriters": 0, "fencedCPUReads": 192, "synchronousCPUReads": 0}, "oracleImportsProductCode": false, "allCompleteBodiesReopened": true}
++ for mode in matrix bindings typed segments failures reflection limits
++ node tools/verify-virgl-instanced-stencil.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-fresh-d88235ea/hardware-segments --mode segments
+Original instanced native S8 stencil acceptance passed
++ node tools/virgl-instanced-stencil/values.mjs /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-fresh-d88235ea/hardware-segments
+{"status":"passed","counts":{"runs":60,"frames":60,"pixels":79710,"nativePasses":3720,"normalizedBytes":4464},"differences":0}
++ python3 tools/virgl-ordered-stencil/physical.py /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-fresh-d88235ea/hardware-segments
+{"schema": "original-ordered-stencil-physical-v1", "status": "passed", "reportSha256": "2b02937607fe66f67dfd12b7f5e616313f2c34523ae7e2258ac40393c9467f9f", "counts": {"runs": 60, "bodies": 2484, "consumedSyncs": 420, "disposalOnlySyncs": 0, "blitWriters": 0, "fencedCPUReads": 444, "synchronousCPUReads": 0}, "oracleImportsProductCode": false, "allCompleteBodiesReopened": true}
++ for mode in matrix bindings typed segments failures reflection limits
++ node tools/verify-virgl-instanced-stencil.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-fresh-d88235ea/hardware-failures --mode failures
+Original instanced native S8 stencil acceptance passed
++ node tools/virgl-instanced-stencil/values.mjs /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-fresh-d88235ea/hardware-failures
+{"status":"passed","counts":{"runs":24,"frames":10,"pixels":11652,"nativePasses":212,"normalizedBytes":576},"differences":0}
++ python3 tools/virgl-ordered-stencil/physical.py /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-fresh-d88235ea/hardware-failures
+{"schema": "original-ordered-stencil-physical-v1", "status": "passed", "reportSha256": "0830f68d6070f6392ad677cdc623aa7553cd7f2ceb37dc796cd5e33241460b83", "counts": {"runs": 24, "bodies": 864, "consumedSyncs": 128, "disposalOnlySyncs": 0, "blitWriters": 0, "fencedCPUReads": 98, "synchronousCPUReads": 0}, "oracleImportsProductCode": false, "allCompleteBodiesReopened": true}
++ for mode in matrix bindings typed segments failures reflection limits
++ node tools/verify-virgl-instanced-stencil.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-fresh-d88235ea/hardware-reflection --mode reflection
+Original instanced native S8 stencil acceptance passed
++ node tools/virgl-instanced-stencil/values.mjs /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-fresh-d88235ea/hardware-reflection
+{"status":"passed","counts":{"runs":8,"frames":0,"pixels":0,"nativePasses":0,"normalizedBytes":0},"differences":0}
++ python3 tools/virgl-ordered-stencil/physical.py /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-fresh-d88235ea/hardware-reflection
+{"schema": "original-ordered-stencil-physical-v1", "status": "passed", "reportSha256": "83c29019274352b45b4020689c13e77b3e64955950d3aa512164283e3c111717", "counts": {"runs": 8, "bodies": 181, "consumedSyncs": 8, "disposalOnlySyncs": 0, "blitWriters": 0, "fencedCPUReads": 0, "synchronousCPUReads": 0}, "oracleImportsProductCode": false, "allCompleteBodiesReopened": true}
++ for mode in matrix bindings typed segments failures reflection limits
++ node tools/verify-virgl-instanced-stencil.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-fresh-d88235ea/hardware-limits --mode limits
+Original instanced native S8 stencil acceptance passed
++ node tools/virgl-instanced-stencil/values.mjs /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-fresh-d88235ea/hardware-limits
+{"status":"passed","counts":{"runs":8,"frames":4,"pixels":8580,"nativePasses":80,"normalizedBytes":96},"differences":0}
++ python3 tools/virgl-ordered-stencil/physical.py /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-fresh-d88235ea/hardware-limits
+{"schema": "original-ordered-stencil-physical-v1", "status": "passed", "reportSha256": "fa4c25213abdc69adaa497cdc4bc21de7b6668071801025417a4517db55b05ab", "counts": {"runs": 8, "bodies": 284, "consumedSyncs": 40, "disposalOnlySyncs": 0, "blitWriters": 0, "fencedCPUReads": 28, "synchronousCPUReads": 0}, "oracleImportsProductCode": false, "allCompleteBodiesReopened": true}
++ for seed in 0x47d195a3 0x1f305b97 0xac92e647
++ node tools/verify-virgl-instanced-stencil.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-fresh-d88235ea/hardware-boundaries-0x47d195a3 --mode boundaries --seed 0x47d195a3
+Original instanced native S8 stencil acceptance passed
++ node tools/virgl-instanced-stencil/values.mjs /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-fresh-d88235ea/hardware-boundaries-0x47d195a3
+{"status":"passed","counts":{"runs":24,"frames":40,"pixels":20480,"nativePasses":960,"normalizedBytes":1152},"differences":0}
++ python3 tools/virgl-ordered-stencil/physical.py /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-fresh-d88235ea/hardware-boundaries-0x47d195a3
+{"schema": "original-ordered-stencil-physical-v1", "status": "passed", "reportSha256": "bb7f3619939257bcfa67baa5c41f27758e79e450556317b49725b3dca2e8632c", "counts": {"runs": 24, "bodies": 1596, "consumedSyncs": 424, "disposalOnlySyncs": 8, "blitWriters": 32, "fencedCPUReads": 372, "synchronousCPUReads": 0}, "oracleImportsProductCode": false, "allCompleteBodiesReopened": true}
++ for seed in 0x47d195a3 0x1f305b97 0xac92e647
++ node tools/verify-virgl-instanced-stencil.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-fresh-d88235ea/hardware-boundaries-0x1f305b97 --mode boundaries --seed 0x1f305b97
+Original instanced native S8 stencil acceptance passed
++ node tools/virgl-instanced-stencil/values.mjs /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-fresh-d88235ea/hardware-boundaries-0x1f305b97
+{"status":"passed","counts":{"runs":24,"frames":40,"pixels":20480,"nativePasses":960,"normalizedBytes":1152},"differences":0}
++ python3 tools/virgl-ordered-stencil/physical.py /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-fresh-d88235ea/hardware-boundaries-0x1f305b97
+{"schema": "original-ordered-stencil-physical-v1", "status": "passed", "reportSha256": "5708cfb492d817fde8b19ca5d8cd9d1a58fc7ba355b3610bc31e42e6df987748", "counts": {"runs": 24, "bodies": 1596, "consumedSyncs": 424, "disposalOnlySyncs": 8, "blitWriters": 32, "fencedCPUReads": 372, "synchronousCPUReads": 0}, "oracleImportsProductCode": false, "allCompleteBodiesReopened": true}
++ for seed in 0x47d195a3 0x1f305b97 0xac92e647
++ node tools/verify-virgl-instanced-stencil.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-fresh-d88235ea/hardware-boundaries-0xac92e647 --mode boundaries --seed 0xac92e647
+Original instanced native S8 stencil acceptance passed
++ node tools/virgl-instanced-stencil/values.mjs /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-fresh-d88235ea/hardware-boundaries-0xac92e647
+{"status":"passed","counts":{"runs":24,"frames":40,"pixels":20480,"nativePasses":960,"normalizedBytes":1152},"differences":0}
++ python3 tools/virgl-ordered-stencil/physical.py /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-fresh-d88235ea/hardware-boundaries-0xac92e647
+{"schema": "original-ordered-stencil-physical-v1", "status": "passed", "reportSha256": "75224d043a4872ce1d9f68d6c9cc75dca06a9454df408bcdc092bc4ebbceb687", "counts": {"runs": 24, "bodies": 1596, "consumedSyncs": 424, "disposalOnlySyncs": 8, "blitWriters": 32, "fencedCPUReads": 372, "synchronousCPUReads": 0}, "oracleImportsProductCode": false, "allCompleteBodiesReopened": true}
++ for fault in order base phase
++ node tools/verify-virgl-instanced-stencil.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-fresh-d88235ea/fault-order --fault order
+AssertionError [ERR_ASSERTION]: independent original instance order, color, depth and S8: expected [], observed [{"pixel":132,"observed":{"color":[1058603008,1052770304,1061158912,1065353216],"stencil":215,"depth":0},"wanted":[{"color":[0.59765625,0.375,0.75,1],"stencil":119,"depth":0}]},{"pixel":133,"observed":{"color":[1058603008,1052770304,1061158912,1065353216],"stencil":215,"depth":1048576001},"wanted":[{"color":[0.59765625,0.375,0.75,1],"stencil":119,"depth":0.2500000149011621}]},{"pixel":134,"observed":{"color":[1058603008,1052770304,1061158912,1065353216],"stencil":215,"depth":1061158912},"wanted":[{"color":[0.59765625,0.375,0.75,1],"stencil":119,"depth":0.7499999850988379}]},{"pixel":135,"observed":{"color":[1058603008,1052770304,1061158912,1065353216],"stencil":215,"depth":1065353216},"wanted":[{"color":[0.59765625,0.375,0.75,1],"stencil":119,"depth":1}]},{"pixel":136,"observed":{"color":[1058603008,1052770304,1061158912,1065353216],"stencil":215,"depth":0},"wanted":[{"color":[0.59765625,0.375,0.75,1],"stencil":119,"depth":0}]},{"pixel":137,"observed":{"color":[1058603008,1052770304,1061158912,1065353216],"stencil":215,"depth":1048576001},"wanted":[{"color":[0.59765625,0.375,0.75,1],"stencil":119,"depth":0.2500000149011621}]},{"pixel":138,"observed":{"color":[1058603008,1052770304,1061158912,1065353216],"stencil":215,"depth":1061158912},"wanted":[{"color":[0.59765625,0.375,0.75,1],"stencil":119,"depth":0.7499999850988379}]},{"pixel":139,"observed":{"color":[1058603008,1052770304,1061158912,1065353216],"stencil":215,"depth":1065353216},"wanted":[{"color":[0.59765625,0.375,0.75,1],"stencil":119,"depth":1}]}]
+
+'failed' !== 'passed'
+
+    at file:///Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/verify-virgl-instanced-stencil.mjs:128:12
++ node tools/virgl-instanced-stencil/values.mjs /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-fresh-d88235ea/fault-order --control
+{"status":"refuted","counts":{"runs":1,"frames":1,"pixels":2145,"nativePasses":40,"normalizedBytes":48},"differences":1}
++ for fault in order base phase
++ node tools/verify-virgl-instanced-stencil.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-fresh-d88235ea/fault-base --fault base
+AssertionError [ERR_ASSERTION]: independent original instance order, color, depth and S8: expected [], observed [{"pixel":132,"observed":{"color":[1058603008,1040187392,1061158912,1065353216],"stencil":119,"depth":0},"wanted":[{"color":[0.59765625,0.375,0.75,1],"stencil":119,"depth":0}]},{"pixel":133,"observed":{"color":[1058603008,1040187392,1061158912,1065353216],"stencil":119,"depth":1048576001},"wanted":[{"color":[0.59765625,0.375,0.75,1],"stencil":119,"depth":0.2500000149011621}]},{"pixel":134,"observed":{"color":[1058603008,1040187392,1061158912,1065353216],"stencil":119,"depth":1061158912},"wanted":[{"color":[0.59765625,0.375,0.75,1],"stencil":119,"depth":0.7499999850988379}]},{"pixel":135,"observed":{"color":[1058603008,1040187392,1061158912,1065353216],"stencil":119,"depth":1065353216},"wanted":[{"color":[0.59765625,0.375,0.75,1],"stencil":119,"depth":1}]},{"pixel":136,"observed":{"color":[1058603008,1040187392,1061158912,1065353216],"stencil":119,"depth":0},"wanted":[{"color":[0.59765625,0.375,0.75,1],"stencil":119,"depth":0}]},{"pixel":137,"observed":{"color":[1058603008,1040187392,1061158912,1065353216],"stencil":119,"depth":1048576001},"wanted":[{"color":[0.59765625,0.375,0.75,1],"stencil":119,"depth":0.2500000149011621}]},{"pixel":138,"observed":{"color":[1058603008,1040187392,1061158912,1065353216],"stencil":119,"depth":1061158912},"wanted":[{"color":[0.59765625,0.375,0.75,1],"stencil":119,"depth":0.7499999850988379}]},{"pixel":139,"observed":{"color":[1058603008,1040187392,1061158912,1065353216],"stencil":119,"depth":1065353216},"wanted":[{"color":[0.59765625,0.375,0.75,1],"stencil":119,"depth":1}]}]
+
+'failed' !== 'passed'
+
+    at file:///Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/verify-virgl-instanced-stencil.mjs:128:12
++ node tools/virgl-instanced-stencil/values.mjs /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-fresh-d88235ea/fault-base --control
+{"status":"refuted","counts":{"runs":1,"frames":1,"pixels":2145,"nativePasses":40,"normalizedBytes":48},"differences":1}
++ for fault in order base phase
++ node tools/verify-virgl-instanced-stencil.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-fresh-d88235ea/fault-phase --fault phase
+AssertionError [ERR_ASSERTION]: independent original instance order, color, depth and S8: expected [], observed [{"pixel":132,"observed":{"color":[1058603008,1048576000,1061158912,1065353216],"stencil":119,"depth":0},"wanted":[{"color":[0.59765625,0.375,0.75,1],"stencil":119,"depth":0}]},{"pixel":133,"observed":{"color":[1058603008,1048576000,1061158912,1065353216],"stencil":119,"depth":1048576001},"wanted":[{"color":[0.59765625,0.375,0.75,1],"stencil":119,"depth":0.2500000149011621}]},{"pixel":134,"observed":{"color":[1058603008,1048576000,1061158912,1065353216],"stencil":119,"depth":1061158912},"wanted":[{"color":[0.59765625,0.375,0.75,1],"stencil":119,"depth":0.7499999850988379}]},{"pixel":135,"observed":{"color":[1058603008,1048576000,1061158912,1065353216],"stencil":119,"depth":1065353216},"wanted":[{"color":[0.59765625,0.375,0.75,1],"stencil":119,"depth":1}]},{"pixel":136,"observed":{"color":[1058603008,1048576000,1061158912,1065353216],"stencil":119,"depth":0},"wanted":[{"color":[0.59765625,0.375,0.75,1],"stencil":119,"depth":0}]},{"pixel":137,"observed":{"color":[1058603008,1048576000,1061158912,1065353216],"stencil":119,"depth":1048576001},"wanted":[{"color":[0.59765625,0.375,0.75,1],"stencil":119,"depth":0.2500000149011621}]},{"pixel":138,"observed":{"color":[1058603008,1048576000,1061158912,1065353216],"stencil":119,"depth":1061158912},"wanted":[{"color":[0.59765625,0.375,0.75,1],"stencil":119,"depth":0.7499999850988379}]},{"pixel":139,"observed":{"color":[1058603008,1048576000,1061158912,1065353216],"stencil":119,"depth":1065353216},"wanted":[{"color":[0.59765625,0.375,0.75,1],"stencil":119,"depth":1}]}]
+
+'failed' !== 'passed'
+
+    at file:///Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/verify-virgl-instanced-stencil.mjs:128:12
++ node tools/virgl-instanced-stencil/values.mjs /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-fresh-d88235ea/fault-phase --control
+{"status":"refuted","counts":{"runs":1,"frames":1,"pixels":2145,"nativePasses":40,"normalizedBytes":48},"differences":1}
++ node tools/verify-virgl-instanced-stencil.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-fresh-d88235ea/retained-ordered --mode retained-ordered --smoke true
+Original instanced native S8 stencil acceptance passed
++ node tools/virgl-ordered-stencil/values.mjs /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-fresh-d88235ea/retained-ordered
+{"schema":"original-ordered-stencil-inverse-v1","status":"passed","reportSha256":"6af8603ba68ead2a5301e0de1b55add9ab5f3c9814413ad7dba18da576e63317","counts":{"runs":2,"frames":2,"pixels":2657,"nativePasses":16,"normalizedBytes":96,"publicBytes":428902}}
++ python3 tools/virgl-ordered-stencil/physical.py /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-fresh-d88235ea/retained-ordered
+{"schema": "original-ordered-stencil-physical-v1", "status": "passed", "reportSha256": "6af8603ba68ead2a5301e0de1b55add9ab5f3c9814413ad7dba18da576e63317", "counts": {"runs": 2, "bodies": 122, "consumedSyncs": 30, "disposalOnlySyncs": 0, "blitWriters": 6, "fencedCPUReads": 32, "synchronousCPUReads": 0}, "oracleImportsProductCode": false, "allCompleteBodiesReopened": true}
++ python3 tools/virgl-instanced-stencil/coverage.py /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-fresh-d88235ea
+{"positive": 344, "waived": 16, "zero": []}
++ set +x
+INSTANCED_STENCIL_RECORDING_COMPLETE
+Frozen original instanced draws, bindings and native planes authenticated.

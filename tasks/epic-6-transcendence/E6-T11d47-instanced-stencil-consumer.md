@@ -2,7 +2,7 @@
 id: E6-T11d47
 epic: 6
 title: Preserve original instanced two-face stencil draws in the selected consumer
-status: implemented
+status: verified
 estimate: S
 risk: high
 priority: 525.027039000392
@@ -259,3 +259,74 @@ sabotages completed primitive-major order against the unchanged original-byte
 oracle. Only verifier tests/harness/evidence are promoted; runtime remains
 byte-identical to3cbb041b. Status stays implemented until the fresh final
 critic run, custody seal and adversarial verdict are complete.
+
+### 2026-10-11 — fresh independent verifier — VERDICT: verified
+
+VERDICT: verified
+
+- P01–P04 — HELD: complete worker/predecessor custody, exact predecessor
+  refusals, closed/frozen metadata, and native uint reflection/program ownership.
+  Reopened41944 worker plus97179 predecessor full members and1357 original
+  refusal members; all84 metadata cases and eight reflection/budget cases hold.
+- P05–P08 — HELD: original instance/primitive/face order, retained divisor phases
+  and integer/packed/constant inputs, original IDs/LAST/restart/parity/tails,
+  and every whole physical color/depth/S8 plane against original bytes.
+- P09–P12 — HELD: whole-original bounds and exact/minus-one quotas, one reused
+  normalized stream, restoration before yield/native suffix failures, completed
+  failure prefixes, generation reuse/poison/cancellation and both disposal orders.
+  The three new seeds cover72 fresh lifetime cases in addition to worker hot/cold.
+- P13–P15 — HELD: all completed physical order/base/phase controls refute the
+  unchanged oracle; independent finest V8 reconstruction finds344 executed
+  partitions,16 exact unchanged fallback waivers, zero unexplained; the pristine
+  scrubbed clone runs the same frozen acceptance command. Unchanged D46
+  compiler/native/Wasm and D45 resource/decoder facts carry by exact identities.
+- P16 — HELD: all six original novel-format/seed cases match the committed
+  packet/input/shader forecast,112 native calls, divisor3 offsets8/8/8/24/24/24/40,
+  packed divisor2 offsets12/12/16/16/20/20/24, and whole physical planes. Novel
+  primitive-major corruption completes writers620..731 then distinct native
+  sync8 created at737/completed739; physical pixel133 has S8=223 versus119.
+  The full corrupted report SHA256 is
+  `36243d61a9b3cfad4329c491f1aa357c5e44f6733e4ed2206ea1096cd128dc35`.
+
+The full per-prediction audit, each original/full native record digest and event
+citation, narrow coverage waivers, environment/carry rationale and promotion
+decision are committed in `evidence/virgl-instanced-stencil/verifier/VERDICT.md`.
+Predictions were committed before native evidence; their original digests remain
+unchanged. Verifier audit assumptions and failed audit transcripts are retained
+separately from product findings. No runtime code was changed by the critic.
+
+Commands: `VIRGL_INSTANCED_STENCIL_EVIDENCE_DIR=target/evidence/virgl-instanced-stencil-fresh-d88235ea make verify-E6-T11d47`
+passed at `d88235ea7d16b2475ff9d6c7d96cc361d5589c3e` (268 cases,290 frames,
+288918 pixels,9370 primary native calls); fresh receipt SHA256
+`6df627e5d1c4f1dcfed35481274401464ba9b2003b671a7013b7f5b4fae40cb6`.
+`VIRGL_INSTANCED_STENCIL_CRITIC_EVIDENCE_DIR=target/evidence/virgl-instanced-stencil-critic-ea486697 make verify-E6-T11d47-critic`
+passed at `ea48669715abe39b966627a6ed7606d901aa2263` (78 cases,126 frames,
+74310 pixels,3552 primary native calls plus the expected completed physical
+control); critic receipt SHA256
+`97b7a6636cec8221eebb7b4e0831d192d6247b787333a48150f7d461c3b01370`.
+Runtime and the authoritative hot/cold worker harness remain byte-identical to
+`3cbb041b43928701026b5ca2ddfb3dcf9a799c2b`; only verifier tests/harness/evidence,
+status/log and queue change afterward. A second pristine-clone run is waived by
+the incremental evidence-only re-verification policy, with the exact final cold
+report/receipt retained and independently authenticated. All runs use headed
+M4 Metal, zero browser console/page/request errors, no mock compiler/software GL.
+
+SUITE: promoted original restart/divisor/packed fixtures, their native test and
+completed physical order sabotage are in `make verify-E6-T11d47-critic`. The full
+verifier seal reopens74380 logical members/3341 physical bodies from ten stored
+parts, including full worker hot/cold, fresh acceptance, correct/corrupt critic,
+source/generated and audit bodies. Manifest SHA256
+`6e723b988592814e41b90c702cc5ee6b814d2eb9aaa618e6b61ed1d7d6c76059`;
+record-index SHA256
+`3870203396e52053f7a6de5e5cb286bc8b335d24968643d7b29b27069acdaac8`;
+complete archive SHA256
+`cd4f43ae3dad8c1e7631214b0d12f10334a67d72db8a116fcfafbe1f9f8caa8b`
+(164646878 bytes). Every indexed full member was reopened and hashed; all four
+separately published predecessor archives remain byte-identical.
+
+No unresolved product or coverage finding remains. This verdict grants only
+the explicitly selected isolated consumer boundary; it grants no guest,
+production API/negotiation/demo/deployment or throughput result. All verifier
+Git/index/source/Node/compiler/browser/GPU leases are released after this status
+and queue commit; the pre-existing unknown Chrome and1425 historical untracked
+entries are preserved. No PR, native stack or merge operation was performed.

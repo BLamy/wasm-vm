@@ -1,0 +1,103 @@
+{
+  "schema": "fresh-instanced-stencil-verifier-seal-v1",
+  "task": "E6-T11d47",
+  "sourceHead": "ea48669715abe39b966627a6ed7606d901aa2263",
+  "runtimeHead": "3cbb041b43928701026b5ca2ddfb3dcf9a799c2b",
+  "archiveParts": [
+    {
+      "path": "recording.tar.gz.part-0000",
+      "bytes": 16777216,
+      "sha256": "1c2ae294c0f44bddcf326089dbf540820ab3aaa5d921e51fb31ac3aca66c0adb"
+    },
+    {
+      "path": "recording.tar.gz.part-0001",
+      "bytes": 16777216,
+      "sha256": "850a5bfebcdfbc49ec4333179fbf400c7507ff93628155e302399ec6303889d4"
+    },
+    {
+      "path": "recording.tar.gz.part-0002",
+      "bytes": 16777216,
+      "sha256": "45aad650e2c3659fa86e75a634637fe4e215335aa830a4a2db34f79e6ec1e5ef"
+    },
+    {
+      "path": "recording.tar.gz.part-0003",
+      "bytes": 16777216,
+      "sha256": "39cc9a7304d1528faa74daa9f5764227fa631800018fb9eb63dada4d65e9a1df"
+    },
+    {
+      "path": "recording.tar.gz.part-0004",
+      "bytes": 16777216,
+      "sha256": "8e1755a3800c07d0c6dd7f0ef23cf64e757bfe3a3c7b76e828b81365d8e00862"
+    },
+    {
+      "path": "recording.tar.gz.part-0005",
+      "bytes": 16777216,
+      "sha256": "ad0358c50789157ff23a6ba1293b2ab5d5123b327689ca2c5509fbf1327ebd59"
+    },
+    {
+      "path": "recording.tar.gz.part-0006",
+      "bytes": 16777216,
+      "sha256": "b7f83aaed7fb9b5dc131500e16716b747acd007ca0bc16e4a0c78eceabac27d9"
+    },
+    {
+      "path": "recording.tar.gz.part-0007",
+      "bytes": 16777216,
+      "sha256": "0fb7f5b65645fd51db57b3c3b3e0771810ec43a5b991e4fb1ffae365947c978e"
+    },
+    {
+      "path": "recording.tar.gz.part-0008",
+      "bytes": 16777216,
+      "sha256": "2d111f958ae3d9763ee0e0a8f60303e849ad091b3dc5b126ee331e07200af84c"
+    },
+    {
+      "path": "recording.tar.gz.part-0009",
+      "bytes": 13651934,
+      "sha256": "34e38443986a78cfd99ac574426ae11690177b2756c3c9b183ad0422d4e65647"
+    }
+  ],
+  "archiveSha256": "cd4f43ae3dad8c1e7631214b0d12f10334a67d72db8a116fcfafbe1f9f8caa8b",
+  "archiveBytes": 164646878,
+  "recordIndexSha256": "3870203396e52053f7a6de5e5cb286bc8b335d24968643d7b29b27069acdaac8",
+  "records": 74380,
+  "reopenedMembers": 74380,
+  "actualPhysicalBodies": 3341,
+  "completeWorkerBodiesReopened": 41944,
+  "completePredecessorBodiesReopened": 97179,
+  "originalGapMembersReopened": 1357,
+  "sourceClosureIncluded": true,
+  "receipts": {
+    "fresh-acceptance": {
+      "sourceHead": "d88235ea7d16b2475ff9d6c7d96cc361d5589c3e",
+      "sha256": "6df627e5d1c4f1dcfed35481274401464ba9b2003b671a7013b7f5b4fae40cb6",
+      "counts": {
+        "runs": 268,
+        "frames": 290,
+        "pixels": 288918,
+        "nativePasses": 9370,
+        "normalizedBytes": 12768,
+        "consumedSyncs": 2522,
+        "disposalOnlySyncs": 24
+      },
+      "completeReceiptFiles": 20511
+    },
+    "critic": {
+      "sourceHead": "ea48669715abe39b966627a6ed7606d901aa2263",
+      "sha256": "97b7a6636cec8221eebb7b4e0831d192d6247b787333a48150f7d461c3b01370",
+      "counts": {
+        "runs": 78,
+        "frames": 126,
+        "pixels": 74310,
+        "nativePasses": 3552,
+        "normalizedBytes": 4032
+      },
+      "completeReceiptFiles": 8911
+    }
+  },
+  "predictionsSha256": "cd602ecbdb725761c3703f7fce8af57872c74d0d8bda35683275ef74d4cf1734",
+  "novelPredictionsSha256": "e59093e5f7cbeb728db51d2289baab53d788f89d919367aebb30565ecacc7cb1",
+  "publishedPredecessorArchivesRemainByteIdentical": true,
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "productionDrawAuthority": false,
+  "authority": "isolated-original-instanced-stencil-consumer"
+}
