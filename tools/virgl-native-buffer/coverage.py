@@ -43,10 +43,12 @@ for path, line, source in changed:
         count = segment[2] if segment and segment[3] and not segment[5] else 0
         # Structural match labels/patterns are represented by their following
         # executable arm, not by an independently executable token region.
-        if text.startswith(("(0,", "(2,")) or text in ["{", "}"]:
+        if text.startswith(("(0,", "(2,")) and (" if " not in source or token.start() < source.index("if ")):
+            waivers.append({"path": path, "line": line, "column": token.start() + 1, "token": token.group(),
+                            "reason": "static match pattern/binding; dynamic guard operands are checked separately"})
             continue
         if segment and not segment[3] and token.group() in {
-            "let", "if", "else", "&&", "<=", "true", "false", "MAX_TEXTURE_SIZE"
+            "let", "if", "else", "&&", "<=", "==", "true", "false", "MAX_TEXTURE_SIZE"
         }:
             waivers.append({"path": path, "line": line, "column": token.start() + 1,
                             "token": token.group(), "segment": segment,
@@ -57,7 +59,7 @@ for path, line, source in changed:
         if count <= 0:
             gaps.append({"path": path, "line": line, "column": token.start() + 1,
                          "token": token.group(), "segment": segment})
-    if text.startswith(("(0,", "(2,")):
+    if text.startswith(("(0,", "(2,")) and " if " not in source:
         waivers.append({"path": path, "line": line, "text": source, "reason": "match pattern; arm execution is separately covered"})
     else:
         rows.append({"path": path, "line": line, "text": source, "operands": checks})
