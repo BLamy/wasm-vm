@@ -1415,6 +1415,119 @@ const ORIGINAL_IMAGE_LAYOUTS: &[(u32, u32, u32, u32)] = &[
 ];
 
 #[test]
+fn selected_desktop_image_critic_neighbor_formats_and_hint_bits() {
+    // Exercise the finite original-format boundary rather than a single bad enum.
+    for format in (0..=410)
+        .filter(|f| !ORIGINAL_IMAGE_LAYOUTS.iter().any(|row| row.0 == *f))
+        .chain([0x8000_0001, 0xffff_0001, u32::MAX])
+    {
+        let mut q = Q::with_desktop(true);
+        let before = q.state.borrow().control3d_snapshot().unwrap();
+        let raw = image_resource(format, 10, 3, 2, 0);
+        q.sync(&raw, 0x1205);
+        record_image(&mut q, "image-critic-neighbor-format", &raw);
+        assert_eq!(q.state.borrow().control3d_snapshot().unwrap(), before);
+        assert!(q.host.borrow().controls.is_empty());
+    }
+    for (format, base_bind, allowed_bits) in [
+        (65, 8, &[1, 3, 18, 20][..]),
+        (76, 8, &[3, 18, 20][..]),
+        (125, 8, &[3][..]),
+        (126, 9, &[0, 3][..]),
+    ] {
+        for bit in 0..32 {
+            let mut q = Q::with_desktop(true);
+            let before = q.state.borrow().control3d_snapshot().unwrap();
+            let raw = image_resource(format, base_bind | (1 << bit), 3, 2, 0);
+            let code = if allowed_bits.contains(&bit) {
+                0x1100
+            } else {
+                0x1205
+            };
+            q.sync(&raw, code);
+            record_image(&mut q, "image-critic-single-hint-bit", &raw);
+            if code == 0x1205 {
+                assert_eq!(q.state.borrow().control3d_snapshot().unwrap(), before);
+                assert!(q.host.borrow().controls.is_empty());
+            }
+        }
+    }
+}
+
+#[test]
+fn selected_desktop_image_critic_subrectangle_default_stride_exact_backing_end() {
+    // RGB32F mip1 is4x3. A2x2 box at(1,1) uses48-byte default rows,
+    // independent of its24-byte tight row and the base image's108-byte rows.
+    // The exact DMA end is5 +48 +24 =77; trailing last-row padding is not DMA.
+    for capacity in [76, 77] {
+        let mut q = Q::with_desktop(true);
+        q.sync(&context(), 0x1100);
+        let create = image_resource(30, 10, 9, 7, 3);
+        q.sync(&create, 0x1100);
+        let state = q.state.borrow().control3d_snapshot().unwrap();
+        assert_eq!((state.logical_bytes, state.gpu_bytes), (936, 1248));
+        let mut attach = backing();
+        put32(&mut attach, 40, 13);
+        put32(&mut attach, 56, capacity - 13);
+        for (addr, size) in [(BACKING, 13), (BACKING2, capacity - 13)] {
+            q.write(addr - 8, &vec![0xa3; size as usize + 16]);
+        }
+        q.sync(&attach, 0x1100);
+        q.sync(&id_command(0x202, 2, 3), 0x1100);
+        let source: Vec<_> = (0..capacity).map(|i| (i * 53 + 11) as u8).collect();
+        q.write(BACKING, &source[..13]);
+        q.write(BACKING2, &source[13..]);
+        let mut raw = image_transfer(false, 1, 2, 2, 5, 0);
+        put32(&mut raw, 24, 1);
+        put32(&mut raw, 28, 1);
+        if capacity == 76 {
+            let before = q.state.borrow().control3d_snapshot().unwrap();
+            q.sync(&raw, 0x1205);
+            record_image(&mut q, "image-critic-subrectangle-one-byte-short", &raw);
+            assert_eq!(q.state.borrow().control3d_snapshot().unwrap(), before);
+            assert!(q.host.borrow().work.is_empty());
+            continue;
+        }
+        q.begin(&raw);
+        let mut exchange = q.exchange(1, 5, 24);
+        exchange.rows.row_stride = 48;
+        exchange.rows.row_count = 2;
+        let mut expected = source[5..29].to_vec();
+        expected.extend_from_slice(&source[53..77]);
+        assert_eq!(q.machine.submit3d_gather(&exchange).unwrap(), expected);
+        q.finish(&raw, Ok(()));
+        record_image(&mut q, "image-critic-subrectangle-upload", &raw);
+        put32(&mut raw, 0, 0x206);
+        q.begin(&raw);
+        let mut exchange = q.exchange(1, 5, 24);
+        exchange.rows.row_stride = 48;
+        exchange.rows.row_count = 2;
+        let output: Vec<_> = expected.iter().map(|b| b ^ 0x95).collect();
+        q.machine.submit3d_scatter(&exchange, &output).unwrap();
+        assert_eq!(q.used_idx(), q.used);
+        let mut complete = source.clone();
+        complete[5..29].copy_from_slice(&output[..24]);
+        complete[53..77].copy_from_slice(&output[24..]);
+        let mut actual = q.read(BACKING, 13);
+        actual.extend(q.read(BACKING2, 64));
+        assert_eq!(actual, complete);
+        for (addr, size) in [(BACKING, 13u32), (BACKING2, 64)] {
+            assert_eq!(q.read(addr - 8, 8), vec![0xa3; 8]);
+            assert_eq!(q.read(addr + u64::from(size), 8), vec![0xa3; 8]);
+        }
+        eprintln!(
+            "NATIVE_IMAGE_CRITIC_SUBRECT {{\"source\":{:?},\"gathered\":{:?},\"output\":{:?},\"complete\":{:?}}}",
+            hex(&source),
+            hex(&expected),
+            hex(&output),
+            hex(&actual)
+        );
+        q.finish(&raw, Ok(()));
+        record_image(&mut q, "image-critic-subrectangle-readback", &raw);
+    }
+}
+
+#[test]
 fn selected_desktop_buffer_reset_reuse_rejects_high_bits_and_stale_dma() {
     let mut q = Q::with_desktop(true);
     q.sync(&context(), 0x1100);

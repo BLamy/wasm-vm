@@ -3,7 +3,7 @@ id: E6-T11d54
 epic: 6
 title: Carry qualified 2D image layouts and mip DMA through native desktop queues
 priority: 525.027039000397
-status: implemented
+status: verified
 depends_on: [E6-T11d53, E6-T11d50]
 estimate: S
 risk: high
@@ -167,3 +167,102 @@ owned staging URL rewrites were restored after preserving their deployed bodies.
 This claim introduces no new host storage, shader, capability, scanout,
 production VIRGL negotiation, RISC-V Mesa/Hyprland execution or measured MIPS.
 Those remain parent work. A fresh critic must set verified before further work.
+
+### 2026-10-12 — fresh verifier — VERDICT: verified
+
+VERDICT: verified
+
+Predictions were written before concrete state inspection in
+`evidence/virgl-native-image/verifier/predictions.json`. The critic examined the
+D53-to-worker diff independently, authenticated the original complete recordings,
+then ran fresh attacks. P0–P9 all HELD; no FAILED or NEEDS EVIDENCE result remains.
+The critic made no implementation or runtime change.
+
+- P0 authentication — HELD. Reopened all 1,179 worker bodies and 2,699 D50/D53
+  worker/critic bodies, checked 992 frozen source bodies against Git and 314
+  unchanged host/compiler/native boundaries. Cold report, receipt and hardware
+  heads equal 6799137b1df9601f02cb7347e609095553bd8951; the later worker submission
+  e4de0514066e391713298c187047c3727c830362 changes only proof/metadata.
+  Critic member `authentication.json` retains every source/seal pin.
+- P1 original costs — HELD. The independent 56-pixel model agrees for all 81
+  formats. Original format 4 is 224 public/168 owned at worker member
+  `cold/recording/native-submit.stderr:816`, transport digest
+  `3f16bd7865482b563883d94a293fca99890c8bc562183acd3e40335de555aaeb`;
+  format 30 is 672/896 at line 1410, format 126 is 448/896 at line 2868.
+  `recording-audit.json` and `verdict.json` retain all concrete points/digests.
+- P2 admission, masks and bounds — HELD. Literal original role classes and
+  hints, all malformed metadata/transfer points, exact per-resource costs and
+ 32MiB+pixel refusals preserve native/host owners before callbacks. Fresh
+  native attacks additionally refuse all 333 unsupported neighbors/high words
+  and check 128 single-bit role/hint inputs. Complete native packet/state
+  citations are in `verdict.json/nativeBoundaries`; the independent record
+  decoder checks canonical bodies, response/fence words and used-ring state.
+- P3 public DMA — HELD. Independently recomputed every original source row,
+  inverse public word, final backing byte and guard over 972 planes/13,608 pixels
+  in both recorded and fresh hardware runs. Worker native 324 complete DMA
+  points, 2,721 image guards, 3,032 canonical records and 4,143 retired guest-loop
+  traces authenticate. Fresh native adds 464 adversarial points, yielding 3,496
+  canonical records. Full raw requests, GL calls and outputs remain in the seal.
+- P4 ownership and epochs — HELD. Pending reset cancels, clears costs/owners,
+  revokes old gathers/scatters and writes no stale DMA. Same-ID recreation has
+  a fresh epoch; generation reuse is interpreted together with that epoch.
+  All81 runs per schedule and full native reset attacks retain concrete state.
+  Ordinary 67 constructors and held 64 selected/16 historical owners are preserved.
+- P5 coverage — HELD with a critic correction. The worker reporter's blanket
+  pre-arrow classification included dynamic match guards. The unchanged finest
+  LLVM export proves them: line 61 counts 119/93, line 65 counts 11/10/9. The
+  dispatcher condition at 68 has no standalone token region; it is separately
+  HELD by exact arm-entry `[68,50,1658,true,true,false]`, historical fallback
+  `[84,20,2,true,true,false]` and all 81 literal historical response points.
+  It is outside structural waivers. Corrected `coverage-audit.json` records 65
+  runtime lines, 276 directly counted operands, this one dynamic guard, 156
+  static/syntax waivers and zero gaps; every changed hunk is classified there.
+- P6 final clone/environment — HELD. The final exact-head pristine clone has
+  clean before/after states, fresh npm dependencies and 26 expected command exits.
+  Scoped clippy/native/control/GPU/Machine, no_std/default/selected Wasm, default
+  build/demo and preserved binary/export/source hashes authenticate. Both actual
+  GPU reports name Metal and exclude software fallback. Fixture and literal
+  inverse imports were inspected; exceptional host semantics remain incrementally
+  held. `environment-audit.json` retains the custody/isolation audit. The final
+  cold clone is reused once; no unrelated gates were restarted.
+- P7 fresh schedules — HELD. Native 18/control 13/GPU 80/Machine 4 tests and selected
+  Wasm build pass. Seeds 324508639,610839776,270544960 complete all 81 formats,
+ 972 mip planes,13,608 pixels and142,659 actual Metal GL calls with zero browser,
+  request, page or final GPU errors. Complete result is critic member
+  `fresh-hardware/report.json`; its independent audit is `recording-audit.json`.
+- P8 novel attack and sabotage — HELD. RGB32F 9x7 mip 1 is 4x3; box(1,1,2,2)
+  uses 24-byte public rows and 48-byte default stride. Split backing 13+64 accepts
+  exact end 77; end 76 refuses both directions before callback. A whole-plane
+  hardware baseline/readback independently verifies the nonzero patch and every
+  untouched texel,77 backing bytes and SG guards. `novel-audit.json` cites every
+  packet/digest and all 535 actual GL calls. An independent separate-checkout
+  public-pixel mutant makes format 66 cost 224/168 instead of literal 168/168;
+  exit 101 and complete point at `sabotage-public-pixel/stderr:1055` prove the
+  oracle rejects it. The worker's distinct 720-versus224 mip mutant also
+  authenticates at its stderr line 83; both full source/log/state bodies remain.
+- P9 built/live page — HELD. Both retained pages are 127/0, proof exports absent,
+  graphics partial and production acceleration disabled. Recomputed 388 served
+  body hashes against complete committed/generated assets, including exact Wasm,
+  roadmap and all owned deployed manifest rewrites; screenshots inspected.
+  `environment-audit.json` retains every body pin. No new deployment was needed.
+- SUITE: promoted two deterministic native tests for unsupported neighbors/hints
+  and nonzero subrectangle default-stride/exact backing endpoints, plus
+  `renderer/virgl-command/tests/native-image-critic.mjs` with the physical whole-
+  plane coordinate oracle. Complete runner, sources, commands, outputs, snapshots,
+  audits and sabotage are preserved. The focused format/clippy gates pass.
+
+Critic seal `evidence/virgl-native-image/verifier/` contains 218 complete bodies,
+10,645,070 compressed bytes, every member reopened:
+
+- manifest `08394b2a36a9f01e375584e12afbc5b42c46aad7da5709be107dd2a09789ecac`
+- index `f1ad2d4c224506b24cb6c322bb603b0d8278b13ebcfe8e1c6c2ebbc9c076baa1`
+- archive `13e394b2d3efb5489180b4970dee702171895896bd4ca958a737279a02f78444`
+
+Commands are in `fresh-commands.json` and `browser-commands.json`; the latter
+records the exact three-seed native-image invocation and novel runner. Independent
+sabotage command/environment is in `sabotage-public-pixel/report.json`. Task policy
+runs before queue regeneration. This test/evidence-only commit skips the broad
+Rust-path web hook via its documented `SKIP_WEB_BUILD=1`: all actual default Wasm
+inputs and committed `web/dist` bytes remain identical to the authenticated head.
+Production VIRGL, new host storage/shaders/caps/scanout, actual Linux Mesa/Hyprland
+and measured MIPS remain outside this verified slice and in the parent's scope.
