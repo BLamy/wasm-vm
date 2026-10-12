@@ -960,6 +960,121 @@ fn submit3d_span_dma_tracks_all_code_pages_once_and_rejects_before_mutation() {
 }
 
 #[test]
+fn selected_desktop_buffer_hints_live_dma_and_atomic_refusals() {
+    for bind in [0, 16, 32, 48, 64, 80, 96, 112] {
+        let mut q = Q::with_desktop(true);
+        q.sync(&context(), 0x1100);
+        let mut r = resource();
+        put32(&mut r, 36, bind);
+        eprintln!("NATIVE_BUFFER_PREDICTION hint={bind} response=0x1100");
+        q.enqueue(&r);
+        q.run();
+        q.used += 1;
+        assert_eq!(q.used_idx(), q.used);
+        q.record("desktop-buffer-create", &r);
+        assert_eq!(q.read(RESPONSE, 24), reply(&r, 0x1100));
+        let state = q.state.borrow().control3d_snapshot().unwrap();
+        assert_eq!((state.logical_bytes, state.gpu_bytes), (16, 16));
+        assert_eq!(state.resources[0].metadata.bind, bind);
+        for p in [backing(), id_command(0x202, 2, 3)] {
+            q.sync(&p, 0x1100);
+            q.record("desktop-buffer-attach", &p);
+        }
+        let fresh: Vec<u8> = (0..32).map(|v| v ^ bind as u8).collect();
+        q.write(BACKING, &fresh[..7]);
+        q.write(BACKING2, &fresh[7..]);
+        let upload = transfer(false, 4, 0xffff_ffff_ffff_ffff);
+        let accepted = q.begin(&upload);
+        assert_eq!(accepted.resources[0].metadata.bind, bind);
+        let input = q.machine.submit3d_gather(&q.exchange(1, 4, 8)).unwrap();
+        assert_eq!(input, fresh[4..12]);
+        q.record("desktop-buffer-pending", &upload);
+        q.finish(&upload, Ok(()));
+        q.record("desktop-buffer-complete", &upload);
+        for (at, value) in [
+            (36, bind | 1),
+            (36, bind | 128),
+            (36, bind | 524_288),
+            (28, 2),
+            (32, 67),
+            (40, 0),
+            (44, 2),
+            (48, 2),
+            (52, 2),
+            (56, 1),
+            (60, 1),
+            (64, 1),
+        ] {
+            let before = q.state.borrow().control3d_snapshot().unwrap();
+            let calls = q.host.borrow().controls.len();
+            let mut invalid = r.clone();
+            put32(&mut invalid, 24, 4);
+            put32(&mut invalid, at, value);
+            // CPU-only staging remains valid only with its exact historical mask.
+            if at == 36 && value == 524_288 {
+                continue;
+            }
+            q.sync(&invalid, 0x1205);
+            q.record("desktop-buffer-invalid", &invalid);
+            assert_eq!(q.state.borrow().control3d_snapshot().unwrap(), before);
+            assert_eq!(q.host.borrow().controls.len(), calls);
+        }
+        let unref = id_command(0x102, 0, 3);
+        q.sync(&unref, 0x1100);
+        q.record("desktop-buffer-release", &unref);
+        let after = q.state.borrow().control3d_snapshot().unwrap();
+        assert_eq!(
+            (after.logical_bytes, after.gpu_bytes, after.backing_bytes),
+            (0, 0, 0)
+        );
+    }
+}
+
+#[test]
+fn selected_desktop_buffer_budgets_and_historical_profiles() {
+    let mut q = Q::with_desktop(true);
+    for (id, bind) in (100..108).zip([0, 16, 32, 48, 64, 80, 96, 112]) {
+        let mut r = resource();
+        put32(&mut r, 24, id);
+        put32(&mut r, 36, bind);
+        put32(&mut r, 40, 4 * 1024 * 1024);
+        q.sync(&r, 0x1100);
+        q.record("desktop-buffer-budget", &r);
+    }
+    let before = q.state.borrow().control3d_snapshot().unwrap();
+    assert_eq!(
+        (before.logical_bytes, before.gpu_bytes),
+        (32 * 1024 * 1024, 32 * 1024 * 1024)
+    );
+    let calls = q.host.borrow().controls.len();
+    for width in [1, 4 * 1024 * 1024 + 1] {
+        let mut r = resource();
+        put32(&mut r, 24, 108);
+        put32(&mut r, 36, 112);
+        put32(&mut r, 40, width);
+        q.sync(&r, 0x1201);
+        q.record("desktop-buffer-budget-refusal", &r);
+        assert_eq!(q.state.borrow().control3d_snapshot().unwrap(), before);
+        assert_eq!(q.host.borrow().controls.len(), calls);
+    }
+    let mut old = Q::new();
+    for bind in [0, 16, 32, 48, 64, 80, 96, 112, 524_288] {
+        let mut r = resource();
+        put32(&mut r, 24, 200 + bind);
+        put32(&mut r, 36, bind);
+        let valid = matches!(bind, 16 | 32 | 524_288);
+        let before = old.state.borrow().control3d_snapshot().unwrap();
+        let calls = old.host.borrow().controls.len();
+        old.sync(&r, if valid { 0x1100 } else { 0x1205 });
+        old.record("desktop-buffer-historical", &r);
+        if !valid {
+            assert_eq!(old.state.borrow().control3d_snapshot().unwrap(), before);
+            assert_eq!(old.host.borrow().controls.len(), calls);
+        }
+    }
+}
+
+#[test]
 fn selected_desktop_submit_snapshots_all_64_canonical_owners() {
     let mut q = Q::with_desktop(true);
     q.sync(&context(), 0x1100);

@@ -34,5 +34,9 @@
   "evidence/virgl-corpus/captures/kmscube/manifest.json",
   "evidence/virgl-corpus/captures/kmscube/events.jsonl",
   "evidence/virgl-corpus/captures/glmark2-es2/manifest.json",
-  "evidence/virgl-corpus/captures/glmark2-es2/events.jsonl"
+  "evidence/virgl-corpus/captures/glmark2-es2/events.jsonl",
+  "renderer/virgl-command/tests/native-buffer-acceptance.mjs",
+  "renderer/virgl-command/tests/standard-instanced-draws.mjs",
+  "tools/virgl-command/standard-uniform-binding-fixtures.mjs",
+  "tools/virgl-command/standard-draw-oracle.mjs"
 ]

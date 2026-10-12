@@ -55,6 +55,9 @@ impl Resource3dMetadata {
             return Err(Control3dError::InvalidParameter);
         }
         let (bytes, staging) = match (self.target, self.format, self.bind) {
+            (0, 64, bind) if desktop_resources && self.height == 1 && bind & !112 == 0 => {
+                (u64::from(self.width), false)
+            }
             (0, 64, 16 | 32 | 524_288) if self.height == 1 => {
                 (u64::from(self.width), self.bind == 524_288)
             }

@@ -2486,3 +2486,7 @@ verify-E6-T11d51:
 .PHONY: verify-E6-T11d52
 verify-E6-T11d52:
 	python3 tools/virgl-desktop-submit/verify.py --output "$${VIRGL_DESKTOP_SUBMIT_EVIDENCE_DIR:-target/evidence/virgl-desktop-submit}"
+
+.PHONY: verify-E6-T11d53
+verify-E6-T11d53:
+	python3 tools/virgl-native-buffer/verify.py --output "$${VIRGL_NATIVE_BUFFER_EVIDENCE_DIR:-target/evidence/virgl-native-buffer}"

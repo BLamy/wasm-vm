@@ -11,10 +11,13 @@ import { loadDrawFixtures } from '../virgl-command/draw-fixtures.mjs';
 import { repo, sha256 } from '../virgl-command/fixtures.mjs';
 const args = process.argv.slice(2), options = {};
 for (let i = 0; i < args.length; i += 2) {
-  assert.ok(['--output', '--chrome', '--sabotage'].includes(args[i]) && args[i + 1], 'usage: --output DIR [--chrome PATH]');
+  assert.ok(['--output', '--chrome', '--sabotage', '--suite', '--seeds'].includes(args[i]) && args[i + 1], 'usage: --output DIR [--chrome PATH]');
   options[args[i].slice(2)] = args[i + 1];
 }
 assert.ok(options.output, '--output required');
+assert.ok(options.suite === undefined || options.suite === 'native-buffer', 'Unknown suite');
+const seeds=options.seeds?.split(',').map(Number);
+if(seeds)assert.ok(seeds.length===3&&new Set(seeds).size===3&&seeds.every(v=>Number.isInteger(v)&&v>=0&&v<=0xffffffff),'three distinct u32 seeds required');
 assert.ok(options.sabotage === undefined || ['old-job-bound'].includes(options.sabotage), 'Unknown sabotage');
 const output = path.resolve(options.output);
 await fs.mkdir(output, { recursive: true });
@@ -49,7 +52,7 @@ const html = `<!doctype html><meta charset="utf-8"><title>VirtIO 3D control proo
 <style>body{font:16px system-ui;background:#111720;color:#e7edf6;margin:32px;max-width:1050px}h1{font-size:27px}p{line-height:1.5}pre{white-space:pre-wrap;background:#1b2533;padding:20px;border:1px solid #435167;border-radius:8px;font-size:14px}</style>
 <h1>Selected desktop VirtIO submission owners</h1><p>Real Wasm guest queues → asynchronous host bridge → hardware WebGL2 storage</p>
 <p>Isolated proof fixture; production VIRGL and capsets remain disabled.</p><p id="status">Running packet, ownership and failure checks…</p><canvas id="gpu" width="64" height="64"></canvas><div id="draws" style="display:flex;flex-wrap:wrap"></div><pre id="results"></pre>`;
-const report = { schema: 1, task: 'E6-T11d52', status: 'running', liveGuest3d: false,
+const report = { schema: 1, task: options.suite === 'native-buffer' ? 'E6-T11d53' : 'E6-T11d52', status: 'running', liveGuest3d: false,
   boundary: 'actual Wasm control queue and hardware resource lifecycle; guest DMA and fenced submissions; no scanout or production acceleration',
   startedAt: new Date().toISOString(), command: [process.execPath, ...process.argv.slice(1)],
   gitHead: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repo, encoding: 'utf8' }).trim(),
@@ -109,12 +112,13 @@ try {
   const begin = performance.now();
   let timer;
   try {
-    report.browserResult = await Promise.race([page.evaluate(async () => {
+    report.browserResult = await Promise.race([page.evaluate(async ({suite,seeds}) => {
       try {
         const wasm = await import('/target/virgl-desktop-submit/pkg/wasm_vm_wasm.js'); const exports = await wasm.default();
         const { createVirglControlBridge, createVirglSubmitBridge, createVirglStandardDesktopSubmitBridge } = await import('/renderer/virgl-command/control-bridge.mjs');
         const { runDesktopAcceptance } = await import('/renderer/virgl-command/tests/desktop-submit-acceptance.mjs');
-        const result = await runDesktopAcceptance({ WasmVirglSubmitProof: wasm.WasmVirglSubmitProof, createVirglControlBridge, createVirglSubmitBridge, createVirglStandardDesktopSubmitBridge, inputs:await fetch('/inputs.json').then(r=>r.json()), fixtures: await fetch('/fixtures.json').then(r=>r.json()), wasmMemory: exports.memory });
+        const run = suite==='native-buffer' ? (await import('/renderer/virgl-command/tests/native-buffer-acceptance.mjs')).runNativeBufferAcceptance : runDesktopAcceptance;
+        const result = await run({ seeds, WasmVirglSubmitProof: wasm.WasmVirglSubmitProof, createVirglControlBridge, createVirglSubmitBridge, createVirglStandardDesktopSubmitBridge, inputs:await fetch('/inputs.json').then(r=>r.json()), fixtures: await fetch('/fixtures.json').then(r=>r.json()), wasmMemory: exports.memory });
         document.querySelector('#status').textContent = 'Passed: fresh DMA, ordered GPU completion and exact guest responses';
         document.querySelector('#results').textContent = JSON.stringify(result.summary ?? result, null, 2);
         return { status: 'passed', result };
@@ -123,7 +127,7 @@ try {
         document.querySelector('#results').textContent = error.stack;
         return { status: 'failed', error: { message: error.message, stack: error.stack }, partial:window.__desktopProof??null, point:window.__desktopActive?.()??null };
       }
-    }), new Promise((_, reject) => { timer = setTimeout(() => reject(new Error('browser submit proof exceeded 180 seconds')), 180000); })]);
+    }, {suite:options.suite??null,seeds}), new Promise((_, reject) => { timer = setTimeout(() => reject(new Error('browser submit proof exceeded 180 seconds')), 180000); })]);
   } finally { clearTimeout(timer); }
   report.browserMs = performance.now() - begin;
   const coverage = await coverageSession.send('Profiler.takePreciseCoverage');

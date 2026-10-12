@@ -167,3 +167,6 @@ export async function runDesktopAcceptance({WasmVirglSubmitProof,createVirglStan
     acceptedOwners:result.owners.accepted.resources.length,schedules:result.schedules.map(({seed,original,fullPlane})=>({seed,draws:original.gpuDraws,fullPlanePixels:fullPlane.pixels})),nativeCalls:nativeCalls.length};
   return result;
 }
+
+// Reuse independently qualified owner boundaries in later native admission proofs.
+export { Selected, modelOwners, acceptedOwners };
