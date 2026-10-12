@@ -1,0 +1,787 @@
+{
+  "schema": "d60-complete-submission-hunk-ledger-v1",
+  "status": "passed",
+  "base": "bc2fb1e49575b8b1a399ca7729fcec4853a48287",
+  "submission": "eb534b587d5b919e4673c537a521b21aa9b48800",
+  "files": [
+    {
+      "path": "Makefile",
+      "bytes": 130469,
+      "sha256": "62d17f48d3abdc32a767639c0bfa748b8f8fdb5d7a8dbd5d476f4607b61ebce0",
+      "hunks": [
+        "@@ -2520,0 +2521,4 @@"
+      ],
+      "classification": "recorded-configuration",
+      "reason": "Deterministic target wires the final cold verifier wrapper; the original make and scrubbed clone commands and complete logs are authenticated.",
+      "proof": "source-pristine-provenance.json"
+    },
+    {
+      "path": "evidence/virgl-dimensional-depth-views/deployment/manifest.json",
+      "bytes": 608,
+      "sha256": "e70510aa90493b955fe70c445c318bdd75b4e4f3b9144bf98201a0905b86351c",
+      "hunks": [
+        "@@ -0,0 +1,16 @@"
+      ],
+      "classification": "sealed-custody",
+      "reason": "Every archive byte, member/index body and peer sidecar has complete authenticated custody; metadata makes no independent runtime claim.",
+      "proof": "authentication.json"
+    },
+    {
+      "path": "evidence/virgl-dimensional-depth-views/deployment/recording.tar.gz",
+      "bytes": 49647931,
+      "sha256": "2938b5c97a407dbf9f3cd7e71b344bf7f4214ac052835b03fe65db733c5c5cf3",
+      "hunks": [],
+      "classification": "sealed-custody",
+      "reason": "Every archive byte, member/index body and peer sidecar has complete authenticated custody; metadata makes no independent runtime claim.",
+      "proof": "authentication.json"
+    },
+    {
+      "path": "evidence/virgl-dimensional-depth-views/deployment/records.json",
+      "bytes": 92093,
+      "sha256": "be8d78eaddb35e2fbe8d8cfe9591f60c7c7caaab9d7e2c5506c2199844a0fb08",
+      "hunks": [
+        "@@ -0,0 +1,2566 @@"
+      ],
+      "classification": "sealed-custody",
+      "reason": "Every archive byte, member/index body and peer sidecar has complete authenticated custody; metadata makes no independent runtime claim.",
+      "proof": "authentication.json"
+    },
+    {
+      "path": "evidence/virgl-dimensional-depth-views/worker/manifest.json",
+      "bytes": 9413,
+      "sha256": "6e4047173d8fefb25d1763ba2eb9e9c40534bddd70f02544cb05e843f6005145",
+      "hunks": [
+        "@@ -0,0 +1,246 @@"
+      ],
+      "classification": "sealed-custody",
+      "reason": "Every archive byte, member/index body and peer sidecar has complete authenticated custody; metadata makes no independent runtime claim.",
+      "proof": "authentication.json"
+    },
+    {
+      "path": "evidence/virgl-dimensional-depth-views/worker/recording.tar.gz.part-0000",
+      "bytes": 16777216,
+      "sha256": "6e7bf4692f3f17d35bd6a1e2c075e26e12e2a027acacc1c650ab80ae0884b126",
+      "hunks": [],
+      "classification": "sealed-custody",
+      "reason": "Every archive byte, member/index body and peer sidecar has complete authenticated custody; metadata makes no independent runtime claim.",
+      "proof": "authentication.json"
+    },
+    {
+      "path": "evidence/virgl-dimensional-depth-views/worker/recording.tar.gz.part-0001",
+      "bytes": 16777216,
+      "sha256": "52a087057f7734679684f625efd7ca170524a8d8e3dc1b4526637168154d00c5",
+      "hunks": [],
+      "classification": "sealed-custody",
+      "reason": "Every archive byte, member/index body and peer sidecar has complete authenticated custody; metadata makes no independent runtime claim.",
+      "proof": "authentication.json"
+    },
+    {
+      "path": "evidence/virgl-dimensional-depth-views/worker/recording.tar.gz.part-0002",
+      "bytes": 16777216,
+      "sha256": "287349998837e2498a8023e531664abba3fec8cc761c44d1be9f7245c43db52f",
+      "hunks": [],
+      "classification": "sealed-custody",
+      "reason": "Every archive byte, member/index body and peer sidecar has complete authenticated custody; metadata makes no independent runtime claim.",
+      "proof": "authentication.json"
+    },
+    {
+      "path": "evidence/virgl-dimensional-depth-views/worker/recording.tar.gz.part-0003",
+      "bytes": 16777216,
+      "sha256": "e0d6b5eb5624d9c364002d3cd9c18ca24acc4e147559557cac844b5248c47b22",
+      "hunks": [],
+      "classification": "sealed-custody",
+      "reason": "Every archive byte, member/index body and peer sidecar has complete authenticated custody; metadata makes no independent runtime claim.",
+      "proof": "authentication.json"
+    },
+    {
+      "path": "evidence/virgl-dimensional-depth-views/worker/recording.tar.gz.part-0004",
+      "bytes": 16777216,
+      "sha256": "5e3ec8e3a1ef13d5cf24b8e6a93d90b99c686faac85d20b7c98d476714b02e62",
+      "hunks": [],
+      "classification": "sealed-custody",
+      "reason": "Every archive byte, member/index body and peer sidecar has complete authenticated custody; metadata makes no independent runtime claim.",
+      "proof": "authentication.json"
+    },
+    {
+      "path": "evidence/virgl-dimensional-depth-views/worker/recording.tar.gz.part-0005",
+      "bytes": 16777216,
+      "sha256": "5c212a2665b55d8c69091b316173326d787402fbee90b25f717c6fc756c744a3",
+      "hunks": [],
+      "classification": "sealed-custody",
+      "reason": "Every archive byte, member/index body and peer sidecar has complete authenticated custody; metadata makes no independent runtime claim.",
+      "proof": "authentication.json"
+    },
+    {
+      "path": "evidence/virgl-dimensional-depth-views/worker/recording.tar.gz.part-0006",
+      "bytes": 16777216,
+      "sha256": "446600b28c104ba90e6fbde30eb555d64ded5881050666b93a92f3142f787efc",
+      "hunks": [],
+      "classification": "sealed-custody",
+      "reason": "Every archive byte, member/index body and peer sidecar has complete authenticated custody; metadata makes no independent runtime claim.",
+      "proof": "authentication.json"
+    },
+    {
+      "path": "evidence/virgl-dimensional-depth-views/worker/recording.tar.gz.part-0007",
+      "bytes": 16777216,
+      "sha256": "72a27b81b9c42254b9a18f3c240a52b39a21a79ce21849f52edb2e8880bf4a00",
+      "hunks": [],
+      "classification": "sealed-custody",
+      "reason": "Every archive byte, member/index body and peer sidecar has complete authenticated custody; metadata makes no independent runtime claim.",
+      "proof": "authentication.json"
+    },
+    {
+      "path": "evidence/virgl-dimensional-depth-views/worker/recording.tar.gz.part-0008",
+      "bytes": 16777216,
+      "sha256": "ff5d3aa54fde4f8355ff43a9d7fedb7210e4d87c7543907696c752b968a1bc2c",
+      "hunks": [],
+      "classification": "sealed-custody",
+      "reason": "Every archive byte, member/index body and peer sidecar has complete authenticated custody; metadata makes no independent runtime claim.",
+      "proof": "authentication.json"
+    },
+    {
+      "path": "evidence/virgl-dimensional-depth-views/worker/recording.tar.gz.part-0009",
+      "bytes": 16777216,
+      "sha256": "c127dd9288db1080fe768d106b2e4080e7439512af9b2941bb9dacf5b1f6d70a",
+      "hunks": [],
+      "classification": "sealed-custody",
+      "reason": "Every archive byte, member/index body and peer sidecar has complete authenticated custody; metadata makes no independent runtime claim.",
+      "proof": "authentication.json"
+    },
+    {
+      "path": "evidence/virgl-dimensional-depth-views/worker/recording.tar.gz.part-0010",
+      "bytes": 16777216,
+      "sha256": "3f2ad61162101ed5727614418b4412329e3e8f26af24657e051c46af99c9fe12",
+      "hunks": [],
+      "classification": "sealed-custody",
+      "reason": "Every archive byte, member/index body and peer sidecar has complete authenticated custody; metadata makes no independent runtime claim.",
+      "proof": "authentication.json"
+    },
+    {
+      "path": "evidence/virgl-dimensional-depth-views/worker/recording.tar.gz.part-0011",
+      "bytes": 16777216,
+      "sha256": "ec13c35e599c153dc59f566916ca19510040627dda0232c22ae50948a1603235",
+      "hunks": [],
+      "classification": "sealed-custody",
+      "reason": "Every archive byte, member/index body and peer sidecar has complete authenticated custody; metadata makes no independent runtime claim.",
+      "proof": "authentication.json"
+    },
+    {
+      "path": "evidence/virgl-dimensional-depth-views/worker/recording.tar.gz.part-0012",
+      "bytes": 16777216,
+      "sha256": "abf226af1281e8eeabf7f5af93322217663a2fbc08e602825125b00a83933101",
+      "hunks": [],
+      "classification": "sealed-custody",
+      "reason": "Every archive byte, member/index body and peer sidecar has complete authenticated custody; metadata makes no independent runtime claim.",
+      "proof": "authentication.json"
+    },
+    {
+      "path": "evidence/virgl-dimensional-depth-views/worker/recording.tar.gz.part-0013",
+      "bytes": 16777216,
+      "sha256": "97a30c8836d904d2a284d6481cae189b38db898047dcb35632fd38901487deef",
+      "hunks": [],
+      "classification": "sealed-custody",
+      "reason": "Every archive byte, member/index body and peer sidecar has complete authenticated custody; metadata makes no independent runtime claim.",
+      "proof": "authentication.json"
+    },
+    {
+      "path": "evidence/virgl-dimensional-depth-views/worker/recording.tar.gz.part-0014",
+      "bytes": 16777216,
+      "sha256": "411f254dd958dcd896463c49942b6f428087140f9d163df7055b9840366fc561",
+      "hunks": [],
+      "classification": "sealed-custody",
+      "reason": "Every archive byte, member/index body and peer sidecar has complete authenticated custody; metadata makes no independent runtime claim.",
+      "proof": "authentication.json"
+    },
+    {
+      "path": "evidence/virgl-dimensional-depth-views/worker/recording.tar.gz.part-0015",
+      "bytes": 16777216,
+      "sha256": "ef6fff2eae8c26e84fc44e188ed10474dbc22095e2e512d2185668fc7a42b4cf",
+      "hunks": [],
+      "classification": "sealed-custody",
+      "reason": "Every archive byte, member/index body and peer sidecar has complete authenticated custody; metadata makes no independent runtime claim.",
+      "proof": "authentication.json"
+    },
+    {
+      "path": "evidence/virgl-dimensional-depth-views/worker/recording.tar.gz.part-0016",
+      "bytes": 16777216,
+      "sha256": "aef4e76f00d1cf0100f6be61a41ba5b4759cc9278f234f67bf5636d3e082260a",
+      "hunks": [],
+      "classification": "sealed-custody",
+      "reason": "Every archive byte, member/index body and peer sidecar has complete authenticated custody; metadata makes no independent runtime claim.",
+      "proof": "authentication.json"
+    },
+    {
+      "path": "evidence/virgl-dimensional-depth-views/worker/recording.tar.gz.part-0017",
+      "bytes": 16777216,
+      "sha256": "e454fcaf996fdb9c5c2beb81e41d518c101b7872c969091a75c6fc439eff6a7a",
+      "hunks": [],
+      "classification": "sealed-custody",
+      "reason": "Every archive byte, member/index body and peer sidecar has complete authenticated custody; metadata makes no independent runtime claim.",
+      "proof": "authentication.json"
+    },
+    {
+      "path": "evidence/virgl-dimensional-depth-views/worker/recording.tar.gz.part-0018",
+      "bytes": 16777216,
+      "sha256": "fa76223894295f4f00f408ca239ceec270a34deead2f38c4759a2067ecea1be2",
+      "hunks": [],
+      "classification": "sealed-custody",
+      "reason": "Every archive byte, member/index body and peer sidecar has complete authenticated custody; metadata makes no independent runtime claim.",
+      "proof": "authentication.json"
+    },
+    {
+      "path": "evidence/virgl-dimensional-depth-views/worker/recording.tar.gz.part-0019",
+      "bytes": 16777216,
+      "sha256": "83c65db2624c5064213377b0d2863a9bea950fcb831ad6a074a45032b4fb8561",
+      "hunks": [],
+      "classification": "sealed-custody",
+      "reason": "Every archive byte, member/index body and peer sidecar has complete authenticated custody; metadata makes no independent runtime claim.",
+      "proof": "authentication.json"
+    },
+    {
+      "path": "evidence/virgl-dimensional-depth-views/worker/recording.tar.gz.part-0020",
+      "bytes": 16777216,
+      "sha256": "c604272e44c822525bd4373ef67bba21a3f2861151bc882e94568acb83fc989e",
+      "hunks": [],
+      "classification": "sealed-custody",
+      "reason": "Every archive byte, member/index body and peer sidecar has complete authenticated custody; metadata makes no independent runtime claim.",
+      "proof": "authentication.json"
+    },
+    {
+      "path": "evidence/virgl-dimensional-depth-views/worker/recording.tar.gz.part-0021",
+      "bytes": 16777216,
+      "sha256": "19b8b8d86ba29c1f94e2a8394ad3546a6af4c3316517a58c14bed962ffb63a51",
+      "hunks": [],
+      "classification": "sealed-custody",
+      "reason": "Every archive byte, member/index body and peer sidecar has complete authenticated custody; metadata makes no independent runtime claim.",
+      "proof": "authentication.json"
+    },
+    {
+      "path": "evidence/virgl-dimensional-depth-views/worker/recording.tar.gz.part-0022",
+      "bytes": 16777216,
+      "sha256": "c75ac92340e4b53b7b2d408134736491c48060c252d158f2bf7618d2f5b08229",
+      "hunks": [],
+      "classification": "sealed-custody",
+      "reason": "Every archive byte, member/index body and peer sidecar has complete authenticated custody; metadata makes no independent runtime claim.",
+      "proof": "authentication.json"
+    },
+    {
+      "path": "evidence/virgl-dimensional-depth-views/worker/recording.tar.gz.part-0023",
+      "bytes": 16777216,
+      "sha256": "be1c8977d199b0758b7015cdbaf3ad00b3e7873249d71d6f129e26efc711782a",
+      "hunks": [],
+      "classification": "sealed-custody",
+      "reason": "Every archive byte, member/index body and peer sidecar has complete authenticated custody; metadata makes no independent runtime claim.",
+      "proof": "authentication.json"
+    },
+    {
+      "path": "evidence/virgl-dimensional-depth-views/worker/recording.tar.gz.part-0024",
+      "bytes": 16777216,
+      "sha256": "252f13032586beef9d7dd82ca338e157b3236bda9f4d167c576b0179c6dc3630",
+      "hunks": [],
+      "classification": "sealed-custody",
+      "reason": "Every archive byte, member/index body and peer sidecar has complete authenticated custody; metadata makes no independent runtime claim.",
+      "proof": "authentication.json"
+    },
+    {
+      "path": "evidence/virgl-dimensional-depth-views/worker/recording.tar.gz.part-0025",
+      "bytes": 16777216,
+      "sha256": "f23dc8123dbc7f8130e6d0a01dbd6afd4724ef8072c12c79db1e4a03e4430ded",
+      "hunks": [],
+      "classification": "sealed-custody",
+      "reason": "Every archive byte, member/index body and peer sidecar has complete authenticated custody; metadata makes no independent runtime claim.",
+      "proof": "authentication.json"
+    },
+    {
+      "path": "evidence/virgl-dimensional-depth-views/worker/recording.tar.gz.part-0026",
+      "bytes": 16777216,
+      "sha256": "e01f636bd44506da34ad5ab6a5a60da4018fb1b2381333598f3bccdcb0caf069",
+      "hunks": [],
+      "classification": "sealed-custody",
+      "reason": "Every archive byte, member/index body and peer sidecar has complete authenticated custody; metadata makes no independent runtime claim.",
+      "proof": "authentication.json"
+    },
+    {
+      "path": "evidence/virgl-dimensional-depth-views/worker/recording.tar.gz.part-0027",
+      "bytes": 7982525,
+      "sha256": "7fcb23a42eaaf447a2a1f464b550f9e0ff00a461c93cfd1f025fa72887cd0291",
+      "hunks": [],
+      "classification": "sealed-custody",
+      "reason": "Every archive byte, member/index body and peer sidecar has complete authenticated custody; metadata makes no independent runtime claim.",
+      "proof": "authentication.json"
+    },
+    {
+      "path": "evidence/virgl-dimensional-depth-views/worker/records.json",
+      "bytes": 8214430,
+      "sha256": "38dc0b762d1bb5d37229a6ced3ae8b493eb93706cb26f1984b1251b7f83134b9",
+      "hunks": [
+        "@@ -0,0 +1,186347 @@"
+      ],
+      "classification": "sealed-custody",
+      "reason": "Every archive byte, member/index body and peer sidecar has complete authenticated custody; metadata makes no independent runtime claim.",
+      "proof": "authentication.json"
+    },
+    {
+      "path": "evidence/virgl-dimensional-depth-views/worker/sealing-finisher.py",
+      "bytes": 3409,
+      "sha256": "f59f289b57f8bd778dafab21bf9922679bb265e0849364ccb7307940deb9d714",
+      "hunks": [
+        "@@ -0,0 +1,32 @@"
+      ],
+      "classification": "sealed-custody",
+      "reason": "Every archive byte, member/index body and peer sidecar has complete authenticated custody; metadata makes no independent runtime claim.",
+      "proof": "authentication.json"
+    },
+    {
+      "path": "evidence/virgl-dimensional-depth-views/worker/sealing-original.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "hunks": [],
+      "classification": "sealed-custody",
+      "reason": "Every archive byte, member/index body and peer sidecar has complete authenticated custody; metadata makes no independent runtime claim.",
+      "proof": "authentication.json"
+    },
+    {
+      "path": "evidence/virgl-dimensional-depth-views/worker/sealing-resumption.json",
+      "bytes": 768,
+      "sha256": "255b5ccd55ad9191a22cc3641190d28720668137c94e9ce9421174f80a1192cc",
+      "hunks": [
+        "@@ -0,0 +1,14 @@"
+      ],
+      "classification": "sealed-custody",
+      "reason": "Every archive byte, member/index body and peer sidecar has complete authenticated custody; metadata makes no independent runtime claim.",
+      "proof": "authentication.json"
+    },
+    {
+      "path": "evidence/virgl-production-readiness/dimensional-depth-view-gap/manifest.json",
+      "bytes": 592,
+      "sha256": "c91a10ce1ed18d463e4f0f87d4adb8a285d6a6b9319d523cea686f09bf6a317a",
+      "hunks": [
+        "@@ -0,0 +1,17 @@"
+      ],
+      "classification": "sealed-custody",
+      "reason": "Every archive byte, member/index body and peer sidecar has complete authenticated custody; metadata makes no independent runtime claim.",
+      "proof": "authentication.json"
+    },
+    {
+      "path": "evidence/virgl-production-readiness/dimensional-depth-view-gap/recording.tar.gz",
+      "bytes": 4572788,
+      "sha256": "73fa924aed62bd8ff8e812469b7ae98e403202f72c2ba664706b47a9ce93df68",
+      "hunks": [],
+      "classification": "sealed-custody",
+      "reason": "Every archive byte, member/index body and peer sidecar has complete authenticated custody; metadata makes no independent runtime claim.",
+      "proof": "authentication.json"
+    },
+    {
+      "path": "evidence/virgl-production-readiness/dimensional-depth-view-gap/records.json",
+      "bytes": 14491,
+      "sha256": "f18e0e0bf22c2246363788c40ba8f696d38cabf5704decb704959d593490ddc1",
+      "hunks": [
+        "@@ -0,0 +1,401 @@"
+      ],
+      "classification": "sealed-custody",
+      "reason": "Every archive byte, member/index body and peer sidecar has complete authenticated custody; metadata makes no independent runtime claim.",
+      "proof": "authentication.json"
+    },
+    {
+      "path": "renderer/virgl-command/control-bridge.mjs",
+      "bytes": 34726,
+      "sha256": "81d44da1f43bbd57051eb81d69abfa77e4cb492505db3d47b1a64c1837b16e14",
+      "hunks": [
+        "@@ -2 +2 @@",
+        "@@ -4 +4 @@",
+        "@@ -160,0 +161,2 @@",
+        "@@ -164 +166 @@",
+        "@@ -173 +175 @@",
+        "@@ -176 +178 @@",
+        "@@ -178 +180 @@"
+      ],
+      "classification": "runtime-executed-held-or-waived",
+      "proof": "coverage-final.json",
+      "counts": {
+        "executed": 42,
+        "held": 18,
+        "waived": 1
+      }
+    },
+    {
+      "path": "renderer/virgl-command/decoder.mjs",
+      "bytes": 48061,
+      "sha256": "bac7b2320cf77719fe277e6e208c8af9d26bc3681439963ab7201a217bb3ce4f",
+      "hunks": [
+        "@@ -16,0 +17 @@",
+        "@@ -125 +126 @@",
+        "@@ -130 +131 @@",
+        "@@ -337 +338 @@",
+        "@@ -680 +681,6 @@",
+        "@@ -712 +718 @@",
+        "@@ -727 +733 @@"
+      ],
+      "classification": "runtime-executed-held-or-waived",
+      "proof": "coverage-final.json",
+      "counts": {
+        "executed": 131
+      }
+    },
+    {
+      "path": "renderer/virgl-command/floating-depth-gpu.mjs",
+      "bytes": 15338,
+      "sha256": "ebc88ac91fe55fbfeb391fe2d216d4fea41086fb17d28628a2620353f1a66b90",
+      "hunks": [
+        "@@ -78 +78 @@",
+        "@@ -87 +87,2 @@"
+      ],
+      "classification": "runtime-executed-held-or-waived",
+      "proof": "coverage-final.json",
+      "counts": {
+        "executed": 15
+      }
+    },
+    {
+      "path": "renderer/virgl-command/resources.mjs",
+      "bytes": 148308,
+      "sha256": "8093d27e015d91495d29e1ea40276c97dcd1a7793bc0265a2a1365311faf0bb2",
+      "hunks": [
+        "@@ -4,0 +5 @@",
+        "@@ -608,0 +610,4 @@",
+        "@@ -622 +627 @@",
+        "@@ -645,0 +651,2 @@",
+        "@@ -700 +707,2 @@",
+        "@@ -909 +917 @@",
+        "@@ -1191 +1199 @@",
+        "@@ -1196 +1204,3 @@",
+        "@@ -1199,6 +1209,8 @@",
+        "@@ -1208 +1220 @@",
+        "@@ -1210 +1222 @@",
+        "@@ -1212,2 +1224,6 @@",
+        "@@ -1215 +1231 @@",
+        "@@ -1253 +1269 @@",
+        "@@ -1317,0 +1334,3 @@",
+        "@@ -1319 +1338 @@",
+        "@@ -1699,0 +1719 @@",
+        "@@ -1754,0 +1775,7 @@"
+      ],
+      "classification": "runtime-executed-held-or-waived",
+      "proof": "coverage-final.json",
+      "counts": {
+        "executed": 142,
+        "waived": 1
+      }
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "bytes": 190746,
+      "sha256": "4b50235a7452753cb30e56db88c8ca13ed2cb66a1aeaecb222f6f8facae58601",
+      "hunks": [
+        "@@ -10 +10 @@",
+        "@@ -44,0 +45 @@",
+        "@@ -315 +316,6 @@",
+        "@@ -367,2 +373,2 @@",
+        "@@ -482 +488 @@",
+        "@@ -496 +502 @@",
+        "@@ -570 +576 @@",
+        "@@ -679 +685,2 @@",
+        "@@ -1387 +1394 @@",
+        "@@ -1546 +1553,3 @@"
+      ],
+      "classification": "runtime-executed-held-or-waived",
+      "proof": "coverage-final.json",
+      "counts": {
+        "executed": 121,
+        "waived": 41,
+        "held": 38
+      }
+    },
+    {
+      "path": "renderer/virgl-command/tests/native-dimensional-depth-views.mjs",
+      "bytes": 25732,
+      "sha256": "48eae3a55c1d5467779112188da78f2e5ff1fe05b4d846b7a43428ba44733253",
+      "hunks": [
+        "@@ -0,0 +1,260 @@"
+      ],
+      "classification": "recorded-harness",
+      "reason": "Complete source bodies bind each original command and selected hardware run. Fixtures are independently reconstructed and original reports, continuation failures, coverage and seal scripts interrogated.",
+      "proof": [
+        "source-pristine-provenance.json",
+        "recorded-interrogation.json",
+        "private-interrogation.json"
+      ]
+    },
+    {
+      "path": "tasks/QUEUE.md",
+      "bytes": 120368,
+      "sha256": "c094c34a39bf5a3428944aa85bb4d00eae7bdb80606cb2d8b68872f0bec4ecf6",
+      "hunks": [
+        "@@ -5 +5 @@",
+        "@@ -696,0 +697 @@",
+        "@@ -703 +704 @@"
+      ],
+      "classification": "waived-documentation",
+      "reason": "Task status, queue, boundary and historical work log are claims/documentation. They grant no runtime evidence; each submitted claim is independently checked against the actual source and sealed records."
+    },
+    {
+      "path": "tasks/epic-6-transcendence/E6-T11d-truthful-guest-virgl-bringup.md",
+      "bytes": 63510,
+      "sha256": "444104438323095dfe76ff078fd501af1e1be90c12cd629f96cfc8f3e260ae90",
+      "hunks": [
+        "@@ -7,2 +7,2 @@",
+        "@@ -756,0 +757,14 @@"
+      ],
+      "classification": "waived-documentation",
+      "reason": "Task status, queue, boundary and historical work log are claims/documentation. They grant no runtime evidence; each submitted claim is independently checked against the actual source and sealed records."
+    },
+    {
+      "path": "tasks/epic-6-transcendence/E6-T11d60-dimensional-depth-sampler-views.md",
+      "bytes": 16617,
+      "sha256": "7590b5bb0aac7b38fa98867400b5f5b66655b6cb2d45ab32bebdd69708773837",
+      "hunks": [
+        "@@ -0,0 +1,270 @@"
+      ],
+      "classification": "waived-documentation",
+      "reason": "Task status, queue, boundary and historical work log are claims/documentation. They grant no runtime evidence; each submitted claim is independently checked against the actual source and sealed records."
+    },
+    {
+      "path": "tools/verify-virgl-default-demo.mjs",
+      "bytes": 6197,
+      "sha256": "b264c717545a900a2fa3689f549c659798a844a5a8a368b0ce4a83fdcaa776fc",
+      "hunks": [
+        "@@ -13 +13 @@",
+        "@@ -66,0 +67 @@"
+      ],
+      "classification": "recorded-harness",
+      "reason": "The added D60 task allow-list and partial-pip assertion execute on the final built demo; canonical live whole bytes are authenticated separately.",
+      "proof": "deployment-interrogation.json"
+    },
+    {
+      "path": "tools/virgl-dimensional-depth-views/audit.py",
+      "bytes": 14847,
+      "sha256": "1dbab574b0725f796a2daf9534b677cd36f3e7def1d9fe6d20cde2bf343ac991",
+      "hunks": [
+        "@@ -0,0 +1,175 @@"
+      ],
+      "classification": "recorded-harness",
+      "reason": "Complete source bodies bind each original command and selected hardware run. Fixtures are independently reconstructed and original reports, continuation failures, coverage and seal scripts interrogated.",
+      "proof": [
+        "source-pristine-provenance.json",
+        "recorded-interrogation.json",
+        "private-interrogation.json"
+      ]
+    },
+    {
+      "path": "tools/virgl-dimensional-depth-views/browser.mjs",
+      "bytes": 9385,
+      "sha256": "aba80cf2f5aabf2eca13feef5fe75ce6a634137fe95366ec9666410b2772aa46",
+      "hunks": [
+        "@@ -0,0 +1,82 @@"
+      ],
+      "classification": "recorded-harness",
+      "reason": "Complete source bodies bind each original command and selected hardware run. Fixtures are independently reconstructed and original reports, continuation failures, coverage and seal scripts interrogated.",
+      "proof": [
+        "source-pristine-provenance.json",
+        "recorded-interrogation.json",
+        "private-interrogation.json"
+      ]
+    },
+    {
+      "path": "tools/virgl-dimensional-depth-views/cold.py",
+      "bytes": 4072,
+      "sha256": "1852045cc85c4e68ee21def4305f9f89b533597f41fead81caafab43ba959c59",
+      "hunks": [
+        "@@ -0,0 +1,59 @@"
+      ],
+      "classification": "recorded-harness",
+      "reason": "Complete source bodies bind each original command and selected hardware run. Fixtures are independently reconstructed and original reports, continuation failures, coverage and seal scripts interrogated.",
+      "proof": [
+        "source-pristine-provenance.json",
+        "recorded-interrogation.json",
+        "private-interrogation.json"
+      ]
+    },
+    {
+      "path": "tools/virgl-dimensional-depth-views/configurations.mjs",
+      "bytes": 2660,
+      "sha256": "b7a8be32e5d0d65cb7a020f72eb4daa015f996d0717329dbed728a52717feaf4",
+      "hunks": [
+        "@@ -0,0 +1,27 @@"
+      ],
+      "classification": "recorded-harness",
+      "reason": "Complete source bodies bind each original command and selected hardware run. Fixtures are independently reconstructed and original reports, continuation failures, coverage and seal scripts interrogated.",
+      "proof": [
+        "source-pristine-provenance.json",
+        "recorded-interrogation.json",
+        "private-interrogation.json"
+      ]
+    },
+    {
+      "path": "tools/virgl-dimensional-depth-views/coverage.py",
+      "bytes": 8525,
+      "sha256": "026b8304243fe9b1c040ae376cb3996c530db6bb653874de3a10ad2217805757",
+      "hunks": [
+        "@@ -0,0 +1,98 @@"
+      ],
+      "classification": "recorded-harness",
+      "reason": "Complete source bodies bind each original command and selected hardware run. Fixtures are independently reconstructed and original reports, continuation failures, coverage and seal scripts interrogated.",
+      "proof": [
+        "source-pristine-provenance.json",
+        "recorded-interrogation.json",
+        "private-interrogation.json"
+      ]
+    },
+    {
+      "path": "tools/virgl-dimensional-depth-views/fixtures.mjs",
+      "bytes": 11796,
+      "sha256": "0056b473329cd67147b65ed2678c6bf38376f33bfb490a00d73963f75b04307a",
+      "hunks": [
+        "@@ -0,0 +1,157 @@"
+      ],
+      "classification": "recorded-harness",
+      "reason": "Complete source bodies bind each original command and selected hardware run. Fixtures are independently reconstructed and original reports, continuation failures, coverage and seal scripts interrogated.",
+      "proof": [
+        "source-pristine-provenance.json",
+        "recorded-interrogation.json",
+        "private-interrogation.json"
+      ]
+    },
+    {
+      "path": "tools/virgl-dimensional-depth-views/predecessor.py",
+      "bytes": 5247,
+      "sha256": "5b77f50207d4e4ec3acd355b9090811b95714df1259da0128636635dd5def784",
+      "hunks": [
+        "@@ -0,0 +1,62 @@"
+      ],
+      "classification": "recorded-harness",
+      "reason": "Complete source bodies bind each original command and selected hardware run. Fixtures are independently reconstructed and original reports, continuation failures, coverage and seal scripts interrogated.",
+      "proof": [
+        "source-pristine-provenance.json",
+        "recorded-interrogation.json",
+        "private-interrogation.json"
+      ]
+    },
+    {
+      "path": "tools/virgl-dimensional-depth-views/private-body.mjs",
+      "bytes": 3381,
+      "sha256": "f516b0f116f31841d481b347411a9c5cffbe01683c8935fa8d8057ba79445d9f",
+      "hunks": [
+        "@@ -0,0 +1,32 @@"
+      ],
+      "classification": "recorded-harness",
+      "reason": "Complete source bodies bind each original command and selected hardware run. Fixtures are independently reconstructed and original reports, continuation failures, coverage and seal scripts interrogated.",
+      "proof": [
+        "source-pristine-provenance.json",
+        "recorded-interrogation.json",
+        "private-interrogation.json"
+      ]
+    },
+    {
+      "path": "tools/virgl-dimensional-depth-views/private-boundaries.mjs",
+      "bytes": 9547,
+      "sha256": "68f6a2dc28e4cad3eaa6761345110d174edd59f49fd2ab29feb0b9e2e89972f0",
+      "hunks": [
+        "@@ -0,0 +1,78 @@"
+      ],
+      "classification": "recorded-harness",
+      "reason": "Complete source bodies bind each original command and selected hardware run. Fixtures are independently reconstructed and original reports, continuation failures, coverage and seal scripts interrogated.",
+      "proof": [
+        "source-pristine-provenance.json",
+        "recorded-interrogation.json",
+        "private-interrogation.json"
+      ]
+    },
+    {
+      "path": "tools/virgl-dimensional-depth-views/private-browser.mjs",
+      "bytes": 9386,
+      "sha256": "23ab90d0e53894f65a7b3e8edf4617748ea33e10c34e3b19619d84ea8d16e214",
+      "hunks": [
+        "@@ -0,0 +1,51 @@"
+      ],
+      "classification": "recorded-harness",
+      "reason": "Complete source bodies bind each original command and selected hardware run. Fixtures are independently reconstructed and original reports, continuation failures, coverage and seal scripts interrogated.",
+      "proof": [
+        "source-pristine-provenance.json",
+        "recorded-interrogation.json",
+        "private-interrogation.json"
+      ]
+    },
+    {
+      "path": "tools/virgl-dimensional-depth-views/private.mjs",
+      "bytes": 7847,
+      "sha256": "fa5c6f2a7cbc64998af3a194c0bebd1fba0b62be5fb8f70cff53349719a05b94",
+      "hunks": [
+        "@@ -0,0 +1,76 @@"
+      ],
+      "classification": "recorded-harness",
+      "reason": "Complete source bodies bind each original command and selected hardware run. Fixtures are independently reconstructed and original reports, continuation failures, coverage and seal scripts interrogated.",
+      "proof": [
+        "source-pristine-provenance.json",
+        "recorded-interrogation.json",
+        "private-interrogation.json"
+      ]
+    },
+    {
+      "path": "tools/virgl-dimensional-depth-views/seal.py",
+      "bytes": 4028,
+      "sha256": "6c29a76d531577a50c9df64732576e8f56ad1699d891a80cb0d2557193ee5695",
+      "hunks": [
+        "@@ -0,0 +1,62 @@"
+      ],
+      "classification": "recorded-harness",
+      "reason": "Complete source bodies bind each original command and selected hardware run. Fixtures are independently reconstructed and original reports, continuation failures, coverage and seal scripts interrogated.",
+      "proof": [
+        "source-pristine-provenance.json",
+        "recorded-interrogation.json",
+        "private-interrogation.json"
+      ]
+    },
+    {
+      "path": "tools/virgl-dimensional-depth-views/verify.py",
+      "bytes": 11066,
+      "sha256": "fec10c05d0bb43f600e6bedc662ab107ea907826c7e1ceb1c66642c91a57dd34",
+      "hunks": [
+        "@@ -0,0 +1,87 @@"
+      ],
+      "classification": "recorded-harness",
+      "reason": "Complete source bodies bind each original command and selected hardware run. Fixtures are independently reconstructed and original reports, continuation failures, coverage and seal scripts interrogated.",
+      "proof": [
+        "source-pristine-provenance.json",
+        "recorded-interrogation.json",
+        "private-interrogation.json"
+      ]
+    },
+    {
+      "path": "web/dist/roadmap.js",
+      "bytes": 53701,
+      "sha256": "ac4a9b05917be731148a9855884213566d2b82d3a3d2b478d1b3394f3b75012a",
+      "hunks": [
+        "@@ -183 +183 @@"
+      ],
+      "classification": "waived-declarative",
+      "reason": "Static partial roadmap evidence label and cache stamp. Complete built/canonical bodies, queried partial pip, 127/0 and unchanged default exports are independently held.",
+      "proof": "deployment-interrogation.json"
+    },
+    {
+      "path": "web/dist/sw.js",
+      "bytes": 5053,
+      "sha256": "3300cdfd180491834f4ab457ff7348907d44780b810fe53ef74ead1ca2791fcf",
+      "hunks": [
+        "@@ -21 +21 @@"
+      ],
+      "classification": "waived-declarative",
+      "reason": "Static partial roadmap evidence label and cache stamp. Complete built/canonical bodies, queried partial pip, 127/0 and unchanged default exports are independently held.",
+      "proof": "deployment-interrogation.json"
+    },
+    {
+      "path": "web/roadmap.js",
+      "bytes": 53701,
+      "sha256": "ac4a9b05917be731148a9855884213566d2b82d3a3d2b478d1b3394f3b75012a",
+      "hunks": [
+        "@@ -183 +183 @@"
+      ],
+      "classification": "waived-declarative",
+      "reason": "Static partial roadmap evidence label and cache stamp. Complete built/canonical bodies, queried partial pip, 127/0 and unchanged default exports are independently held.",
+      "proof": "deployment-interrogation.json"
+    }
+  ],
+  "textHunks": 78,
+  "filesCount": 66,
+  "diffSha256": "ad308c882e36d0fe4994895a9b7dbd1b54bc7247ee0318d2ea39e1bb27c483ae",
+  "coldNativeCompilerDependencyUnchanged": true
+}

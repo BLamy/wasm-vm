@@ -1,0 +1,106 @@
+{
+  "schema": "d60-fresh-adversarial-verdict-v1",
+  "verdict": "verified",
+  "submission": "eb534b587d5b919e4673c537a521b21aa9b48800",
+  "runtimeFreeze": "9f2c98dd8c49a2cc226bde6a7e844227087d7f38",
+  "pristineHarnessHead": "9698c0a91086cd419087154875d7200efcfded69",
+  "proofPins": {
+    "authentication.json": {
+      "bytes": 8626,
+      "sha256": "8287f723704710ce70ff0fe1b8a6296be877887b90b6d867d6ed94c15b3434d6"
+    },
+    "source-pristine-provenance.json": {
+      "bytes": 58428,
+      "sha256": "69394cb28bfef1d57ab105bd5923524f03e1f4f1dcd77f658b3f52f05b7cc961"
+    },
+    "recorded-interrogation.json": {
+      "bytes": 2631539,
+      "sha256": "33d42187138a73e622096e45e295167ffb4e6ccd9cbd48cb835e645c4842727f"
+    },
+    "private-interrogation.json": {
+      "bytes": 10542,
+      "sha256": "a09333c2316ad2acc783157e5b264b65ba40ecb0b01bbf49d22ca84ab60b9b68"
+    },
+    "queue-ring-interrogation.json": {
+      "bytes": 3934,
+      "sha256": "28f3196b73e6623c53c28fcf40b6d1a5e11c26617d2c50c25f8c0fd5af22e3ae"
+    },
+    "coverage-final.json": {
+      "bytes": 259265,
+      "sha256": "2788332fafba9cb81bddcf2171ad6658ab96d068670b0875860f8986d8ae45f6"
+    },
+    "hunk-ledger.json": {
+      "bytes": 34913,
+      "sha256": "c6c4d694cc4c92c25d0151db1f5729e3f6cc70c1d3658c89814ef75b553c8302"
+    },
+    "deployment-interrogation.json": {
+      "bytes": 12937,
+      "sha256": "b5005d2ef7600c79bccfdaaac510f1a0b88e525e8b5fd454fac140a2f1f1e13c"
+    },
+    "fresh-custody.json": {
+      "bytes": 160948,
+      "sha256": "6c55a903ee82c930affe780cc3b43bead040c1423d99291ba1449ddbefdc177c"
+    },
+    "fresh-interrogation.json": {
+      "bytes": 2109196,
+      "sha256": "66fb2e716f6c1b6102bea2faa9c02b8a19bceb04a4790fa1bd0c23d1102b8a4c"
+    },
+    "fresh-private-interrogation.json": {
+      "bytes": 10372,
+      "sha256": "97aa406df6a279274870e18f0205b4c5ec4322c210fe057010a7fcd5b48b724f"
+    },
+    "novel-interrogation.json": {
+      "bytes": 69765,
+      "sha256": "ed1a51bf05b4c4b7a19b86341f117d12fe9291d694283e7d63a7bda74987fe92"
+    },
+    "schedule-interrogation.json": {
+      "bytes": 936543,
+      "sha256": "55365560253ddff5ccca3fd6bdd216ab35cc6ac3de33d6325c5c46a83a03daa6"
+    }
+  },
+  "findings": [],
+  "independentPhysicalRefutation": {
+    "record": "fresh-layer-sabotage-88675123/run-0000.json.gz",
+    "sha256": "3601598bf19fe5de5180638f9b87ce68fb4575b97a3539d63560cd6acc2ec94e",
+    "word": 0,
+    "expected": "0x3eb2b8b3",
+    "observed": "0x3f2487a5",
+    "fault": {
+      "sequence": 8545,
+      "kind": "physical-original-layer-binding",
+      "original": 1,
+      "delivered": 2,
+      "texture": {
+        "handle": 11,
+        "type": "WebGLTexture"
+      }
+    },
+    "drawSequence": 9147,
+    "realSuccessWait": 78,
+    "collection": 79,
+    "response": "0011000001000000ffffffffffffffff0100000000000000",
+    "machineDigest": "a8d3d2c3fc9687c3a4ca42e2cbaeb591cc54d041f778a6027ecdf56c37c59274",
+    "final": {
+      "turns": 59,
+      "fences": 13,
+      "polls": 37,
+      "collections": 2,
+      "gpuDraws": 0,
+      "pboReads": 2,
+      "stagedCopies": 0,
+      "liveObjects": 0,
+      "liveSyncs": 0
+    }
+  },
+  "heldWorkerRuns": 3196,
+  "completeFreshOriginalQueueRuns": 2542,
+  "novelAndPromotedCases": 17,
+  "finestCoverage": {
+    "executed": 451,
+    "held": 56,
+    "waived": 43
+  },
+  "productionAuthority": false,
+  "actualLinuxGuest": false,
+  "performanceClaim": false
+}

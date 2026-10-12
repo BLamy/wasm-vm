@@ -1,0 +1,376 @@
+{
+  "status": "passed",
+  "totals": {
+    "carriedD59ConversionCopies": 378,
+    "inverseCases": 30,
+    "inversePixels": 765,
+    "literalBudgetCases": 90,
+    "physicalDriverFaults": 102,
+    "rangeRefusals": 135,
+    "historicalRefusals": 1170,
+    "boundaryCases": 30,
+    "physicalCopies": 540
+  },
+  "citations": [
+    {
+      "report": "cold/recording/private-27449/report.json",
+      "sha256": "160f2996ba36b1b4d7a5a122e81edf17ebfeeae7d1c522bbcfce0b1b71201424",
+      "point": "browserResult/result/result/rows/0",
+      "target": 4,
+      "format": 16,
+      "nativeCosts": [
+        360,
+        60
+      ],
+      "verifiedInversePixels": 30
+    },
+    {
+      "report": "cold/recording/private-27449/report.json",
+      "sha256": "160f2996ba36b1b4d7a5a122e81edf17ebfeeae7d1c522bbcfce0b1b71201424",
+      "point": "browserResult/result/result/rows/1",
+      "target": 4,
+      "format": 18,
+      "nativeCosts": [
+        720,
+        120
+      ],
+      "verifiedInversePixels": 30
+    },
+    {
+      "report": "cold/recording/private-27449/report.json",
+      "sha256": "160f2996ba36b1b4d7a5a122e81edf17ebfeeae7d1c522bbcfce0b1b71201424",
+      "point": "browserResult/result/result/rows/2",
+      "target": 4,
+      "format": 20,
+      "nativeCosts": [
+        720,
+        120
+      ],
+      "verifiedInversePixels": 30
+    },
+    {
+      "report": "cold/recording/private-27449/report.json",
+      "sha256": "160f2996ba36b1b4d7a5a122e81edf17ebfeeae7d1c522bbcfce0b1b71201424",
+      "point": "browserResult/result/result/rows/3",
+      "target": 4,
+      "format": 21,
+      "nativeCosts": [
+        720,
+        120
+      ],
+      "verifiedInversePixels": 30
+    },
+    {
+      "report": "cold/recording/private-27449/report.json",
+      "sha256": "160f2996ba36b1b4d7a5a122e81edf17ebfeeae7d1c522bbcfce0b1b71201424",
+      "point": "browserResult/result/result/rows/4",
+      "target": 4,
+      "format": 126,
+      "nativeCosts": [
+        2880,
+        480
+      ],
+      "verifiedInversePixels": 30
+    },
+    {
+      "report": "cold/recording/private-27449/report.json",
+      "sha256": "160f2996ba36b1b4d7a5a122e81edf17ebfeeae7d1c522bbcfce0b1b71201424",
+      "point": "browserResult/result/result/rows/5",
+      "target": 7,
+      "format": 16,
+      "nativeCosts": [
+        588,
+        42
+      ],
+      "verifiedInversePixels": 21
+    },
+    {
+      "report": "cold/recording/private-27449/report.json",
+      "sha256": "160f2996ba36b1b4d7a5a122e81edf17ebfeeae7d1c522bbcfce0b1b71201424",
+      "point": "browserResult/result/result/rows/6",
+      "target": 7,
+      "format": 18,
+      "nativeCosts": [
+        1176,
+        84
+      ],
+      "verifiedInversePixels": 21
+    },
+    {
+      "report": "cold/recording/private-27449/report.json",
+      "sha256": "160f2996ba36b1b4d7a5a122e81edf17ebfeeae7d1c522bbcfce0b1b71201424",
+      "point": "browserResult/result/result/rows/7",
+      "target": 7,
+      "format": 20,
+      "nativeCosts": [
+        1176,
+        84
+      ],
+      "verifiedInversePixels": 21
+    },
+    {
+      "report": "cold/recording/private-27449/report.json",
+      "sha256": "160f2996ba36b1b4d7a5a122e81edf17ebfeeae7d1c522bbcfce0b1b71201424",
+      "point": "browserResult/result/result/rows/8",
+      "target": 7,
+      "format": 21,
+      "nativeCosts": [
+        1176,
+        84
+      ],
+      "verifiedInversePixels": 21
+    },
+    {
+      "report": "cold/recording/private-27449/report.json",
+      "sha256": "160f2996ba36b1b4d7a5a122e81edf17ebfeeae7d1c522bbcfce0b1b71201424",
+      "point": "browserResult/result/result/rows/9",
+      "target": 7,
+      "format": 126,
+      "nativeCosts": [
+        4704,
+        336
+      ],
+      "verifiedInversePixels": 21
+    },
+    {
+      "report": "cold/recording/private-84131/report.json",
+      "sha256": "d0f7e5fe86a5f4bf35c96cb674f710f6563bbbebf62d683ec0b88ac76b9c1f49",
+      "point": "browserResult/result/result/rows/0",
+      "target": 4,
+      "format": 16,
+      "nativeCosts": [
+        360,
+        60
+      ],
+      "verifiedInversePixels": 30
+    },
+    {
+      "report": "cold/recording/private-84131/report.json",
+      "sha256": "d0f7e5fe86a5f4bf35c96cb674f710f6563bbbebf62d683ec0b88ac76b9c1f49",
+      "point": "browserResult/result/result/rows/1",
+      "target": 4,
+      "format": 18,
+      "nativeCosts": [
+        720,
+        120
+      ],
+      "verifiedInversePixels": 30
+    },
+    {
+      "report": "cold/recording/private-84131/report.json",
+      "sha256": "d0f7e5fe86a5f4bf35c96cb674f710f6563bbbebf62d683ec0b88ac76b9c1f49",
+      "point": "browserResult/result/result/rows/2",
+      "target": 4,
+      "format": 20,
+      "nativeCosts": [
+        720,
+        120
+      ],
+      "verifiedInversePixels": 30
+    },
+    {
+      "report": "cold/recording/private-84131/report.json",
+      "sha256": "d0f7e5fe86a5f4bf35c96cb674f710f6563bbbebf62d683ec0b88ac76b9c1f49",
+      "point": "browserResult/result/result/rows/3",
+      "target": 4,
+      "format": 21,
+      "nativeCosts": [
+        720,
+        120
+      ],
+      "verifiedInversePixels": 30
+    },
+    {
+      "report": "cold/recording/private-84131/report.json",
+      "sha256": "d0f7e5fe86a5f4bf35c96cb674f710f6563bbbebf62d683ec0b88ac76b9c1f49",
+      "point": "browserResult/result/result/rows/4",
+      "target": 4,
+      "format": 126,
+      "nativeCosts": [
+        2880,
+        480
+      ],
+      "verifiedInversePixels": 30
+    },
+    {
+      "report": "cold/recording/private-84131/report.json",
+      "sha256": "d0f7e5fe86a5f4bf35c96cb674f710f6563bbbebf62d683ec0b88ac76b9c1f49",
+      "point": "browserResult/result/result/rows/5",
+      "target": 7,
+      "format": 16,
+      "nativeCosts": [
+        588,
+        42
+      ],
+      "verifiedInversePixels": 21
+    },
+    {
+      "report": "cold/recording/private-84131/report.json",
+      "sha256": "d0f7e5fe86a5f4bf35c96cb674f710f6563bbbebf62d683ec0b88ac76b9c1f49",
+      "point": "browserResult/result/result/rows/6",
+      "target": 7,
+      "format": 18,
+      "nativeCosts": [
+        1176,
+        84
+      ],
+      "verifiedInversePixels": 21
+    },
+    {
+      "report": "cold/recording/private-84131/report.json",
+      "sha256": "d0f7e5fe86a5f4bf35c96cb674f710f6563bbbebf62d683ec0b88ac76b9c1f49",
+      "point": "browserResult/result/result/rows/7",
+      "target": 7,
+      "format": 20,
+      "nativeCosts": [
+        1176,
+        84
+      ],
+      "verifiedInversePixels": 21
+    },
+    {
+      "report": "cold/recording/private-84131/report.json",
+      "sha256": "d0f7e5fe86a5f4bf35c96cb674f710f6563bbbebf62d683ec0b88ac76b9c1f49",
+      "point": "browserResult/result/result/rows/8",
+      "target": 7,
+      "format": 21,
+      "nativeCosts": [
+        1176,
+        84
+      ],
+      "verifiedInversePixels": 21
+    },
+    {
+      "report": "cold/recording/private-84131/report.json",
+      "sha256": "d0f7e5fe86a5f4bf35c96cb674f710f6563bbbebf62d683ec0b88ac76b9c1f49",
+      "point": "browserResult/result/result/rows/9",
+      "target": 7,
+      "format": 126,
+      "nativeCosts": [
+        4704,
+        336
+      ],
+      "verifiedInversePixels": 21
+    },
+    {
+      "report": "cold/recording/private-176129/report.json",
+      "sha256": "b4e773495087004180dfbc488bbe8b89a34d266a5842f4393f22babdcd8ebc7c",
+      "point": "browserResult/result/result/rows/0",
+      "target": 4,
+      "format": 16,
+      "nativeCosts": [
+        360,
+        60
+      ],
+      "verifiedInversePixels": 30
+    },
+    {
+      "report": "cold/recording/private-176129/report.json",
+      "sha256": "b4e773495087004180dfbc488bbe8b89a34d266a5842f4393f22babdcd8ebc7c",
+      "point": "browserResult/result/result/rows/1",
+      "target": 4,
+      "format": 18,
+      "nativeCosts": [
+        720,
+        120
+      ],
+      "verifiedInversePixels": 30
+    },
+    {
+      "report": "cold/recording/private-176129/report.json",
+      "sha256": "b4e773495087004180dfbc488bbe8b89a34d266a5842f4393f22babdcd8ebc7c",
+      "point": "browserResult/result/result/rows/2",
+      "target": 4,
+      "format": 20,
+      "nativeCosts": [
+        720,
+        120
+      ],
+      "verifiedInversePixels": 30
+    },
+    {
+      "report": "cold/recording/private-176129/report.json",
+      "sha256": "b4e773495087004180dfbc488bbe8b89a34d266a5842f4393f22babdcd8ebc7c",
+      "point": "browserResult/result/result/rows/3",
+      "target": 4,
+      "format": 21,
+      "nativeCosts": [
+        720,
+        120
+      ],
+      "verifiedInversePixels": 30
+    },
+    {
+      "report": "cold/recording/private-176129/report.json",
+      "sha256": "b4e773495087004180dfbc488bbe8b89a34d266a5842f4393f22babdcd8ebc7c",
+      "point": "browserResult/result/result/rows/4",
+      "target": 4,
+      "format": 126,
+      "nativeCosts": [
+        2880,
+        480
+      ],
+      "verifiedInversePixels": 30
+    },
+    {
+      "report": "cold/recording/private-176129/report.json",
+      "sha256": "b4e773495087004180dfbc488bbe8b89a34d266a5842f4393f22babdcd8ebc7c",
+      "point": "browserResult/result/result/rows/5",
+      "target": 7,
+      "format": 16,
+      "nativeCosts": [
+        588,
+        42
+      ],
+      "verifiedInversePixels": 21
+    },
+    {
+      "report": "cold/recording/private-176129/report.json",
+      "sha256": "b4e773495087004180dfbc488bbe8b89a34d266a5842f4393f22babdcd8ebc7c",
+      "point": "browserResult/result/result/rows/6",
+      "target": 7,
+      "format": 18,
+      "nativeCosts": [
+        1176,
+        84
+      ],
+      "verifiedInversePixels": 21
+    },
+    {
+      "report": "cold/recording/private-176129/report.json",
+      "sha256": "b4e773495087004180dfbc488bbe8b89a34d266a5842f4393f22babdcd8ebc7c",
+      "point": "browserResult/result/result/rows/7",
+      "target": 7,
+      "format": 20,
+      "nativeCosts": [
+        1176,
+        84
+      ],
+      "verifiedInversePixels": 21
+    },
+    {
+      "report": "cold/recording/private-176129/report.json",
+      "sha256": "b4e773495087004180dfbc488bbe8b89a34d266a5842f4393f22babdcd8ebc7c",
+      "point": "browserResult/result/result/rows/8",
+      "target": 7,
+      "format": 21,
+      "nativeCosts": [
+        1176,
+        84
+      ],
+      "verifiedInversePixels": 21
+    },
+    {
+      "report": "cold/recording/private-176129/report.json",
+      "sha256": "b4e773495087004180dfbc488bbe8b89a34d266a5842f4393f22babdcd8ebc7c",
+      "point": "browserResult/result/result/rows/9",
+      "target": 7,
+      "format": 126,
+      "nativeCosts": [
+        4704,
+        336
+      ],
+      "verifiedInversePixels": 21
+    }
+  ]
+}

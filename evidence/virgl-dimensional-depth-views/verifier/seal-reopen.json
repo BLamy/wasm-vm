@@ -1,0 +1,16 @@
+{
+  "schema": "dimensional-depth-view-verifier-reopen-v1",
+  "status": "passed",
+  "inputManifest": "seal-write.json",
+  "inputManifestSha256": "0865935a2f7410eec86be866affca434622b604a33b630041880d92c901645e2",
+  "recordIndexSha256": "6438d86a2028a1b20c1eff2e381bed399c62c44db6a4086373c0183141099a58",
+  "archiveSha256": "1f17708a5fb43cf0f6e07ace47feb2aa20ceedfa69f14f061ad83b0c59cf2cf0",
+  "archiveBytes": 334848459,
+  "reopenedMembers": 3402,
+  "uniqueCompleteBodies": 2746,
+  "deduplicatedHardlinks": 656,
+  "logicalBytes": 710657839,
+  "gzipTrailerValidated": true,
+  "additionalZeroPaddingBytes": 4608,
+  "fullSourceInputsCompared": true
+}
