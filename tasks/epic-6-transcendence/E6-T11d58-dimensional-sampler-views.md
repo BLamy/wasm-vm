@@ -3,7 +3,7 @@ id: E6-T11d58
 epic: 6
 title: Execute original RGBA8 volume cube and array sampler views
 priority: 525.027039000397
-status: pending
+status: in-progress
 depends_on: [E6-T11d57, E6-T11d56, E6-T11d55, E6-T11d49]
 estimate: S
 risk: high
