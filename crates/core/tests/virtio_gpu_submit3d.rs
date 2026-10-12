@@ -960,6 +960,113 @@ fn submit3d_span_dma_tracks_all_code_pages_once_and_rejects_before_mutation() {
 }
 
 #[test]
+fn selected_desktop_buffer_reset_reuse_rejects_high_bits_and_stale_dma() {
+    let mut q = Q::with_desktop(true);
+    q.sync(&context(), 0x1100);
+    let before = q.state.borrow().control3d_snapshot().unwrap();
+    let calls = q.host.borrow().controls.len();
+    for bind in [112 | 128, 112 | (1 << 31), u32::MAX] {
+        let mut invalid = resource();
+        put32(&mut invalid, 36, bind);
+        q.sync(&invalid, 0x1205);
+        q.record("desktop-critic-high-bit-refusal", &invalid);
+        assert_eq!(q.state.borrow().control3d_snapshot().unwrap(), before);
+        assert_eq!(q.host.borrow().controls.len(), calls);
+    }
+    let mut r = resource();
+    put32(&mut r, 36, 112);
+    q.sync(&r, 0x1100);
+    q.record("desktop-critic-original-create", &r);
+    assert_eq!(
+        q.state.borrow().control3d_snapshot().unwrap().resources[0]
+            .identity
+            .generation,
+        before.next_generation
+    );
+    for p in [backing(), id_command(0x202, 2, 3)] {
+        q.sync(&p, 0x1100);
+    }
+    let first: Vec<u8> = (0..32).map(|v| v ^ 0x69).collect();
+    q.write(BACKING, &first[..7]);
+    q.write(BACKING2, &first[7..]);
+    let upload = transfer(false, 4, u64::MAX);
+    let old = q.begin(&upload);
+    let stale_exchange = q.exchange(1, 4, 8);
+    assert_eq!(
+        q.machine.submit3d_gather(&stale_exchange).unwrap(),
+        first[4..12]
+    );
+    let late = q.completion(Ok(()), true);
+    q.record("desktop-critic-original-pending", &upload);
+    let ring = q.read(USED, 2052);
+    let response = q.read(RESPONSE, 64);
+    q.mmio(0x70, 0);
+    assert_eq!(q.host.borrow().cancelled, [old.key]);
+    assert_eq!(q.mail.post(late), Err(E::InvalidParameter));
+    assert_eq!(q.read(USED, 2052), ring);
+    assert_eq!(q.read(RESPONSE, 64), response);
+    let reset = q.state.borrow().control3d_snapshot().unwrap();
+    assert!(reset.epoch > old.key.epoch);
+    assert!(reset.resources.is_empty());
+    assert_eq!(
+        (reset.logical_bytes, reset.gpu_bytes, reset.backing_bytes),
+        (0, 0, 0)
+    );
+    q.record("desktop-critic-cancelled-reset", &upload);
+    q.configure();
+    q.negotiate();
+    q.sync(&context(), 0x1100);
+    q.sync(&r, 0x1100);
+    q.record("desktop-critic-reused-create", &r);
+    q.write(BACKING, &[0xa3; 7]);
+    q.write(BACKING2, &[0xa3; 25]);
+    for p in [backing(), id_command(0x202, 2, 3)] {
+        q.sync(&p, 0x1100);
+    }
+    let fresh: Vec<u8> = (0..32).map(|v| v ^ 0xd2).collect();
+    q.write(BACKING, &fresh[..7]);
+    q.write(BACKING2, &fresh[7..]);
+    let new = q.begin(&upload);
+    assert!(new.key.epoch > old.key.epoch);
+    assert!(new.resources[0].identity.generation > old.resources[0].identity.generation);
+    assert!(
+        new.resources[0].backing.unwrap().generation > old.resources[0].backing.unwrap().generation
+    );
+    assert_eq!(new.resources[0].metadata.bind, 112);
+    let valid = q.exchange(1, 4, 8);
+    let mut old_resource = valid;
+    old_resource.backing.resource = stale_exchange.backing.resource;
+    let mut old_backing = valid;
+    old_backing.backing.generation = stale_exchange.backing.generation;
+    let state = q.state.borrow().control3d_snapshot().unwrap();
+    let submission = q.state.borrow().submit3d_snapshot().unwrap();
+    let ring = q.read(USED, 2052);
+    let response = q.read(RESPONSE, 64);
+    for (stale, expected) in [
+        (stale_exchange, E::InvalidParameter),
+        (old_resource, E::InvalidContextId),
+        (old_backing, E::InvalidParameter),
+    ] {
+        assert_eq!(q.machine.submit3d_gather(&stale), Err(expected));
+        assert_eq!(
+            q.machine.submit3d_scatter(&stale, &[0xee; 8]),
+            Err(expected)
+        );
+        assert_eq!(q.state.borrow().control3d_snapshot().unwrap(), state);
+        assert_eq!(q.state.borrow().submit3d_snapshot().unwrap(), submission);
+        assert_eq!(q.read(USED, 2052), ring);
+        assert_eq!(q.read(RESPONSE, 64), response);
+        assert_eq!(q.read(BACKING, 7), fresh[..7]);
+        assert_eq!(q.read(BACKING2, 25), fresh[7..]);
+    }
+    assert_eq!(q.mail.post(late), Err(E::InvalidParameter));
+    assert_eq!(q.machine.submit3d_gather(&valid).unwrap(), fresh[4..12]);
+    q.record("desktop-critic-reused-fresh-dma", &upload);
+    q.finish(&upload, Ok(()));
+    q.record("desktop-critic-reused-complete", &upload);
+}
+
+#[test]
 fn selected_desktop_buffer_hints_live_dma_and_atomic_refusals() {
     for bind in [0, 16, 32, 48, 64, 80, 96, 112] {
         let mut q = Q::with_desktop(true);

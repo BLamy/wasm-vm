@@ -3,7 +3,7 @@ id: E6-T11d53
 epic: 6
 title: Carry qualified uniform and shared-role buffers through native desktop submission
 priority: 525.027039000398
-status: implemented
+status: verified
 depends_on: [E6-T11d52, E6-T11d18]
 estimate: S
 risk: high
@@ -164,3 +164,115 @@ logs, rewritten manifests, reports and screenshot are in
 buffer admission; image metadata/level-aware DMA, typed capabilities,
 worker/scanout, actual Mesa/Hyprland and throughput remain parent work.
 
+### 2026-10-12 — fresh adversarial verifier
+
+VERDICT: verified
+
+Oriented against the complete task and diff from verified D52
+`59bf446955cc2b78b84d94fcd03cb3f3f4f1c230` before opening evidence.
+Fourteen concrete predictions were recorded in `predictions.json` before
+inspection. Submission head was `ad48fc1aa47bb88759229971745891002ac8304c`;
+the authoritative unchanged product recording remains exact frozen head
+`35a1f0c2987782ded50dc7240c33671d9265ce1a`. The critic did not edit runtime.
+
+- P1 authentication — HELD. Streaming reads authenticated all1546 worker
+  bodies and all74373 bodies in the ten carried D18/D49/D50/D51/D52 seals;
+  604 cold source pins and432 held source pins match. The worker manifest/index/
+  archive identities match this claim and the prior seal identities equal the
+  verified D52 base. Citation: critic `authentication.json:1`.
+- P2 admission / P3 rollback / P4 budgets and ordinary profiles — HELD.
+  Native replies are literal0x1100 for hints0,16,32,48,64,80,96,112 at worker
+  `cold/recording/native-submit.stderr:64,117,173,229,285,341,397,453`.
+  Original metadata, generations and equal logical/GPU width accounting hold.
+  All95 native invalid points preserve complete canonical state; first refusal
+  is line79. Hardware independently records67 refusals with unchanged native/
+  host ownership and no allocation. The two budget refusals at lines29/32
+  return0x1201 at32MiB, canonical digest
+  `9ecdc1dc276d5a31cd10fed7dd6e33ec967776802af2ade8b06e8b870fdfd1af`.
+  Exact ordinary16/32/staging524288 succeed; other original hints refuse.
+  Staging at line59 adds zero GPU bytes. Full per-point digests and decoded
+  state are in critic `independent-worker-audit.json`.
+- P5 identity and live DMA / P6 pixels / P7 hardware / P8 reset — HELD.
+  For all24 runs, original bank201 retains native/host generation, backing,
+  metadata, membership and accounting. Attachment contains onlyA3; subsequent
+  full DMA input equals the dirty original bank. The same allocation supplies
+  vertex, private index and bank1 uniform input in both stages. Independent
+  uint32 arithmetic on original vector1023 words predicts every6144 worker
+  pixel and every6144 fresh-schedule pixel. Metal records24 actual draws per
+  corpus, compiled shaders, uniform ranges, index copies, fenced collection,
+  no `finish`, and zero browser errors. Every new-hint run cancels its pending
+  job, advances epoch and re-admits that hint after reset. Concrete hint112
+  points: worker `cold/recording/hardware/report.json:2974359` (accepted
+  owner) and `:2983468` (complete output), body digest
+  `cd2f60f90bf02f895295737f7e53901079ac4f7a8736d5c751dfccb1b2d2a672`.
+  Critic audit retains original words, offsets, computed outputs and each
+  canonical digest. Fresh schedules were37173,48898,30285.
+- P9 accepted-owner boundaries — HELD. Selected64/65 and ordinary16/17 remain
+  exact; metadata/generation/foreign/backing/count envelope attacks refuse
+  without host mutation. Existing store, shader and submission semantics are
+  carried through unchanged source and complete evidence identities, not
+  re-qualified as a new compiler/image/storage claim.
+- P10 changed-hunk coverage — HELD. Re-exporting the archived binary/profile
+  exactly reproduces the frozen LLVM coverage. Finest guard segments execute
+  profile139, height122, mask114 and admission91 times. Both executable lines
+  and all15 dynamic operands are hit; eight structural syntax waivers and all45
+  changed hunks are classified in critic `coverage-classification.json`.
+  There are no product coverage gaps. Counter point: worker
+  `cold/recording/changed-coverage.json:13`; raw export/profile/binary retained.
+  Browser CDP also records actual runtime and callback-marshaller execution.
+- P11 pristine/environment proof — HELD. All26 frozen command receipts and
+  stdout/stderr hashes authenticate, including fresh npm; the existing final
+  clone is still clean at the exact recorded head and all604 clone source pins
+  match. Scrubbing is explicit in the recorded runner. Receipt
+  `50893a0c943bb5ee3fd3af027619b9626bec72709b7b7f10e24f139f8d992221`;
+  citations: critic `cold-coverage-audit.json` and worker `cold/report.json`.
+- P12 sabotage — HELD. A fresh isolated mutant independently reproduces
+  hint64→0x1205 when mask112 is replaced by48. The literal0x1100 response
+  oracle fails exit101. Critic `fault-critic/stderr:226,233,234` and its
+  complete request/response/canonical/guard point in `fault-critic/report.json`
+  show that the acceptance suite detects the original admission gap.
+- P13 built/live demo — HELD. All nine deployment bodies authenticate against
+  manifest `7c5bdc81eb1865273065d34b9ae0797a1fc17676ee587f87b67dba450111a47e`.
+  Built/live127/0, absent proof exports, partial graphics and disabled
+  production hold; only live favicon404 occurs. Deployment
+  `final/report.json:1002,1006,1007`, digest
+  `373ebfb1b9b363ed53e5ad83e32a249ec0af0930da92e3de22df98a48fdf8988`,
+  retains the unchanged default Wasm62a698e3 digest named above.
+- P14 bounded novel attack — HELD. Promoted
+  `selected_desktop_buffer_reset_reuse_rejects_high_bits_and_stale_dma` proves
+  high-bit mask refusals consume no generation, then cancels a pending hint112
+  transfer and reuses its public ID with new epoch/resource/backing identities.
+  Stale epoch, resource and backing tokens reject gather/scatter without any
+  SG, ring, response or canonical-state mutation; late completion also rejects.
+  Fresh split-SG DMA and completion succeed. Critic
+  `promoted-native.stderr:525` records empty reset state, digest
+  `32d72c9b54455cf51da03fb929e606f66a05c6f2ef36c97d949ee5322d62d83a`;
+  `:534,537` record fresh DMA/completion, digest
+  `947e70aaadd3b0455477c008b189eefc40136f0476230fe7fa87faea66946d08`.
+- SUITE: promote the bounded native regression above. Touched-harness fmt,
+  clippy and all three `selected_desktop_buffer_` tests pass; full command,
+  stdout/stderr, test source and native binary are retained. This promotion
+  changes tests only, so the authenticated product/cold gates carry forward.
+
+Commands: `node tools/virgl-desktop-submit/browser.mjs --suite native-buffer
+--seeds 37173,48898,30285 --output target/evidence/virgl-native-buffer-critic-final/hardware-independent`;
+`python3 tools/virgl-native-buffer/fault.py target/evidence/virgl-native-buffer-critic-final/fault-critic`;
+`cargo fmt --check -p wasm-vm-core`;
+`cargo clippy --offline -p wasm-vm-core --features virgl-control-proof,gpu-trace,trace --test virtio_gpu_submit3d -- -D warnings`;
+`cargo test --offline -p wasm-vm-core --features virgl-control-proof,gpu-trace,trace --test virtio_gpu_submit3d selected_desktop_buffer_ -- --nocapture --test-threads=1`.
+Independent decoders/authentication/coverage exports and full commands are
+inside the critic seal. All14 prediction outcomes and precise body/line/digest
+citations are in `verdict-points.jsonl`.
+
+`evidence/virgl-native-buffer/verifier/` seals146 complete bodies,
+18684855 compressed bytes, all reopened and authenticated:
+
+- manifest `b491774df16cda3e20fc1d044b6dfe2d517023ad1da61b0b58db4c9bbef0dfe5`
+- index `506caf42ba7be99f4a4aa2c98472860b17e7626cc23639e19deb293a71900c3c`
+- archive `7e69541eaa14d27feda388731f7fd2da526426374328bb59d41a869c46273cfb`
+
+Owned browsers, servers and native/fault processes have completed and closed;
+unrelated Chrome PID23192/profile60rjcU and existing untracked evidence were
+preserved. This verdict grants only the stated selected native buffer envelope.
+Linux guest execution, production negotiation, new image semantics, scanout
+and throughput remain outside the claim.
