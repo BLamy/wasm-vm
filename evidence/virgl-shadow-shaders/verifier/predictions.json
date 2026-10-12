@@ -1,0 +1,34 @@
+{
+  "schema": "independent-shadow-critic-predictions-v1",
+  "task": "E6-T11d48",
+  "writtenBeforeOpeningEvidence": true,
+  "submissionHead": "b0bc023d80c06cf0a449eb7648632b3a9a0af137",
+  "workerFreeze": "f57db8c880684eb73cdc29c166568185fdde0a46",
+  "predecessor": "41c1aa490d19d8c307ea7bdbb5647acf346681f4",
+  "predictions": [
+    {"id":"P01", "prediction":"Every one of the 52584 worker logical records, generated binary bodies, source and browser-call/readback bodies must match its sealed index. All six carried predecessor archives must physically reopen all 213503 indexed members, and their actual compiler must match its published pins."},
+    {"id":"P02", "prediction":"The submitted runtime and harness sources equal f57, primary originals match every pin, and unchanged command/decoder/storage/Rust/web/guest boundaries equal verified 41c1aa. Prior HELD facts carry only with unchanged source, dependency and evidence identities."},
+    {"id":"P03", "prediction":"Both hot and cold matrices have complete identical native/sanitized/Wasm results, preserve every accepted original parser word and source modifier/mask, and all 4313 historical complete response bytes equal the actual carried predecessor module."},
+    {"id":"P04", "prediction":"Selected floating TEX/TXL/TXD/TXP, fragment TXB and neutral TXQ admit both 2D and SHADOW2D declarations; integer shadow views, shadow TXF, out-of-bounds slots and ordinary/shadow conflicts reject with no partial GLSL, regardless of instruction order."},
+    {"id":"P05", "prediction":"Metadata owns exactly mask/add vec4 controls for each actually sampled shadow stage/slot. Query-only and declared-unused slots add no controls. Reflection of live comparison slots is sampler2DShadow and controls are size-one FLOAT_VEC4; unused native uniforms may optimize away."},
+    {"id":"P06", "prediction":"Strict facade own-data snapshots never invoke guest getters, reject host-control fields and thrown reflection, preserve completed result custody, and separate factories use distinct fixed 16777216-byte Wasm memories."},
+    {"id":"P07", "prediction":"Each actual recorded upstream/arena allocation fault rejects without partial output, followed by exact original recovery; caller-text mutation occurs after source ownership, pressure recovers, and selected optimized stage/pair frame sums remain below 262144."},
+    {"id":"P08", "prediction":"All 896 hot and cold planes reconstruct from retained original shader/sampler/view and real uploaded depth/input bytes, covering 32456 exact words each with no mismatch; all eight comparison functions below/equal/above, LOD/gradients/projection, nonzero bias, lane masks, modifiers, alpha, packed and instance compositions agree."},
+    {"id":"P09", "prediction":"Every baseline and corrupted writer precedes a distinct real native fence, successful consumption and deletion, then its whole RGBA32UI readback. No baseline completion token or readback is reused for the corrupted result."},
+    {"id":"P10", "prediction":"The worker wrong-mask physical control retains the baseline original expectation and yields exactly three red words changed from 0x3f800000 to zero only after the corrupted draw's own fence, with no browser/page/request errors."},
+    {"id":"P11", "prediction":"Finest governing V8 and LLVM partitions from complete raw records positively execute each changed executable operand; all waivers are limited to concrete non-executable declarations/signatures/comments/punctuation, not untested branches."},
+    {"id":"P12", "prediction":"The cold checkout is at exact f57 with tracked/untracked status empty before and after, selected acceptance command passed, overrides scrubbed, and full original logs/source/generated/toolchain bodies are retained."},
+    {"id":"P13", "prediction":"Independent original novel same-slot7 vertex TXP absolute reversed coordinates and fragment TXL swizzled coordinates retain distinct stage controls. Vertex LESS at depths .5 with references .25/.5/.75 produces [1,0,0]; fragment GEQUAL at depths .25/.75 across LOD0/1 produces [1,1,1] and [0,0,1]. The full output is [vertexComparisonFloatBits, fragmentComparisonFloatBits XOR 2, 0x3f800000 XOR 3, vertexComparisonFloatBits], with query-after-comparison dimensions 2x1 and levels3, and unchanged VirglBlock656."},
+    {"id":"P14", "prediction":"Physically setting only the novel fragment slot7 mask.y to zero after its baseline and redrawing must corrupt four y words while original expected bytes stay unchanged. The vertex x/alpha and query-composed z words stay exact. The control is evaluated only after its separately created/consumed/deleted fence."}
+  ],
+  "novelPlan": {
+    "name":"same-slot7-cross-stage-projective-view-query",
+    "width":3, "height":2,
+    "vertexViewSwizzle":[2,5,4,0], "vertexMask":[1,0,0,1], "vertexAdd":[0,1,0,0],
+    "fragmentViewSwizzle":[4,1,5,3], "fragmentMask":[0,1,0,1], "fragmentAdd":[0,0,1,0],
+    "vertexDepth":[0.5,0.5,0.5], "fragmentDepth":[0.25,0.75,0.125],
+    "vertexFunction":"LESS", "fragmentFunction":"GEQUAL",
+    "baselineExpectedWords":[1065353216,1065353218,1065353219,1065353216,0,1065353218,1065353219,0,0,1065353218,1065353219,0,1065353216,2,1065353219,1065353216,0,2,1065353219,0,0,1065353218,1065353219,0],
+    "physicalCorruption":{"uniform":"fsshadmask7", "value":[0,0,0,1], "expectedBadYWord":2, "mismatchingPixels":[[0,0],[1,0],[2,0],[2,1]]}
+  }
+}
