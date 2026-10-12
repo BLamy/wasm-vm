@@ -31,6 +31,7 @@ assert not clean_before
 env = {k: v for k, v in os.environ.items() if not k.startswith(("CARGO_", "RUST", "LLVM_PROFILE", "VIRGL_", "NODE_", "npm_", "CHROME")) and k not in {"CC", "CXX", "CFLAGS", "CPPFLAGS", "LDFLAGS", "EMCC", "EM_CONFIG", "EMSDK", "PYTHONPATH", "PYTHONHOME"}}
 proof = clone / ("target/evidence/dimensional-depth-views-cold-final-"+head[:8] if previous else "target/evidence/dimensional-depth-views-cold")
 env["VIRGL_DIMENSIONAL_DEPTH_VIEW_EVIDENCE_DIR"] = str(proof)
+if previous:env['VIRGL_DIMENSIONAL_DEPTH_VIEW_CARRY_DIR']=str(previous)
 command = ["make", "verify-E6-T11d60"]
 result = subprocess.run(command, cwd=clone, env=env, capture_output=True, timeout=7200)
 output.mkdir(parents=True)

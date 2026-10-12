@@ -18,7 +18,10 @@ head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=repo,text=True).stri
 assert report['head']==receipt['head']==head
 assert not report['cleanBefore'] and not report['cleanAfter'] and report['exitCode']==0
 for seed in [27449,84131,176129]:
-    assert json.loads((cold/('recording/hardware-'+str(seed))/ 'report.json').read_bytes())['head']==head
+    name='hardware-'+str(seed);report_head=json.loads((cold/('recording/'+name)/'report.json').read_bytes())['head']
+    if report_head!=head:
+        assert name in receipt['carriedCommands'] and report_head==receipt['carriedSourceBoundary']['head'] and receipt['carriedSourceBoundary']['unchangedRuntime']
+        assert not subprocess.check_output(['git','diff','--name-only',report_head,head,'--','crates','renderer','Cargo.toml','Cargo.lock','web','tools/virgl-dimensional-depth-views/browser.mjs','tools/virgl-dimensional-depth-views/fixtures.mjs'],cwd=repo)
 assert all(v['exitCode']==v['expected'] for v in receipt['commands'])
 sha=lambda b:hashlib.sha256(b).hexdigest()
 assert report['receiptSha256']==sha((cold/'recording/receipt.json').read_bytes())
