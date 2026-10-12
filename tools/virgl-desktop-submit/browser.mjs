@@ -15,7 +15,7 @@ for (let i = 0; i < args.length; i += 2) {
   options[args[i].slice(2)] = args[i + 1];
 }
 assert.ok(options.output, '--output required');
-assert.ok(options.suite === undefined || options.suite === 'native-buffer', 'Unknown suite');
+assert.ok(options.suite === undefined || ['native-buffer','native-image'].includes(options.suite), 'Unknown suite');
 const seeds=options.seeds?.split(',').map(Number);
 if(seeds)assert.ok(seeds.length===3&&new Set(seeds).size===3&&seeds.every(v=>Number.isInteger(v)&&v>=0&&v<=0xffffffff),'three distinct u32 seeds required');
 assert.ok(options.sabotage === undefined || ['old-job-bound'].includes(options.sabotage), 'Unknown sabotage');
@@ -39,6 +39,7 @@ for (const name of ['compositor','kmscube','glmark2-es2']) {
   inputs.push({name,eventPath,eventSha256:sha256(raw),bootstrap2D:excluded[0],calls:calls.filter(c=>c.enter.resourceId!==2)});
 }
 const codePaths = JSON.parse(await fs.readFile(path.join(repo, 'tools/virgl-desktop-submit/sources.json'), 'utf8'));
+const layouts=JSON.parse(await fs.readFile(path.join(repo,'tools/virgl-native-image/original-layouts.json'),'utf8')).rows;
 for(const input of drawInputs)if(!codePaths.includes(input.path))codePaths.push(input.path);
 async function collect(directory) {
   for (const entry of await fs.readdir(path.join(repo, directory), { withFileTypes: true })) {
@@ -52,7 +53,7 @@ const html = `<!doctype html><meta charset="utf-8"><title>VirtIO 3D control proo
 <style>body{font:16px system-ui;background:#111720;color:#e7edf6;margin:32px;max-width:1050px}h1{font-size:27px}p{line-height:1.5}pre{white-space:pre-wrap;background:#1b2533;padding:20px;border:1px solid #435167;border-radius:8px;font-size:14px}</style>
 <h1>Selected desktop VirtIO submission owners</h1><p>Real Wasm guest queues → asynchronous host bridge → hardware WebGL2 storage</p>
 <p>Isolated proof fixture; production VIRGL and capsets remain disabled.</p><p id="status">Running packet, ownership and failure checks…</p><canvas id="gpu" width="64" height="64"></canvas><div id="draws" style="display:flex;flex-wrap:wrap"></div><pre id="results"></pre>`;
-const report = { schema: 1, task: options.suite === 'native-buffer' ? 'E6-T11d53' : 'E6-T11d52', status: 'running', liveGuest3d: false,
+const report = { schema: 1, task: options.suite === 'native-image' ? 'E6-T11d54' : options.suite === 'native-buffer' ? 'E6-T11d53' : 'E6-T11d52', status: 'running', liveGuest3d: false,
   boundary: 'actual Wasm control queue and hardware resource lifecycle; guest DMA and fenced submissions; no scanout or production acceleration',
   startedAt: new Date().toISOString(), command: [process.execPath, ...process.argv.slice(1)],
   gitHead: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repo, encoding: 'utf8' }).trim(),
@@ -78,6 +79,7 @@ try {
     report.sabotage = { mode: options.sabotage, path: filename, originalSha256: sha256(sources.get(filename)), servedSha256: sha256(after) };
   }
   const endpoints = new Map([['/', { bytes: Buffer.from(html), type: 'text/html' }], ['/fixtures.json', {bytes: Buffer.from(JSON.stringify(fixtures)),type:'application/json'}], ['/inputs.json', {bytes:Buffer.from(JSON.stringify(inputs)),type:'application/json'}],
+    ['/layouts.json',{bytes:Buffer.from(JSON.stringify(layouts)),type:'application/json'}],
     ...codePaths.filter((file) => /\.(m?js|wasm)$/.test(file)).map((filename) => [`/${filename}`,
       { bytes: servedSources.get(filename), type: filename.endsWith('.wasm') ? 'application/wasm' : 'text/javascript' }])]);
   server = createServer((request, response) => {
@@ -117,8 +119,8 @@ try {
         const wasm = await import('/target/virgl-desktop-submit/pkg/wasm_vm_wasm.js'); const exports = await wasm.default();
         const { createVirglControlBridge, createVirglSubmitBridge, createVirglStandardDesktopSubmitBridge } = await import('/renderer/virgl-command/control-bridge.mjs');
         const { runDesktopAcceptance } = await import('/renderer/virgl-command/tests/desktop-submit-acceptance.mjs');
-        const run = suite==='native-buffer' ? (await import('/renderer/virgl-command/tests/native-buffer-acceptance.mjs')).runNativeBufferAcceptance : runDesktopAcceptance;
-        const result = await run({ seeds, WasmVirglSubmitProof: wasm.WasmVirglSubmitProof, createVirglControlBridge, createVirglSubmitBridge, createVirglStandardDesktopSubmitBridge, inputs:await fetch('/inputs.json').then(r=>r.json()), fixtures: await fetch('/fixtures.json').then(r=>r.json()), wasmMemory: exports.memory });
+        const run = suite==='native-image' ? (await import('/renderer/virgl-command/tests/native-image-acceptance.mjs')).runNativeImageAcceptance : suite==='native-buffer' ? (await import('/renderer/virgl-command/tests/native-buffer-acceptance.mjs')).runNativeBufferAcceptance : runDesktopAcceptance;
+        const result = await run({ seeds, layouts:await fetch('/layouts.json').then(r=>r.json()), WasmVirglSubmitProof: wasm.WasmVirglSubmitProof, createVirglControlBridge, createVirglSubmitBridge, createVirglStandardDesktopSubmitBridge, inputs:await fetch('/inputs.json').then(r=>r.json()), fixtures: await fetch('/fixtures.json').then(r=>r.json()), wasmMemory: exports.memory });
         document.querySelector('#status').textContent = 'Passed: fresh DMA, ordered GPU completion and exact guest responses';
         document.querySelector('#results').textContent = JSON.stringify(result.summary ?? result, null, 2);
         return { status: 'passed', result };

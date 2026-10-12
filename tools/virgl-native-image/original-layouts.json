@@ -1,0 +1,491 @@
+{
+  "schema": "original-qualified-2d-layouts-v1",
+  "rows": [
+    {
+      "format": 1,
+      "publicPixelBytes": 4,
+      "gpuPixelBytes": 4,
+      "kind": "color"
+    },
+    {
+      "format": 2,
+      "publicPixelBytes": 4,
+      "gpuPixelBytes": 4,
+      "kind": "color"
+    },
+    {
+      "format": 3,
+      "publicPixelBytes": 4,
+      "gpuPixelBytes": 4,
+      "kind": "color"
+    },
+    {
+      "format": 4,
+      "publicPixelBytes": 4,
+      "gpuPixelBytes": 3,
+      "kind": "color"
+    },
+    {
+      "format": 5,
+      "publicPixelBytes": 2,
+      "gpuPixelBytes": 2,
+      "kind": "color"
+    },
+    {
+      "format": 6,
+      "publicPixelBytes": 2,
+      "gpuPixelBytes": 2,
+      "kind": "color"
+    },
+    {
+      "format": 7,
+      "publicPixelBytes": 2,
+      "gpuPixelBytes": 2,
+      "kind": "color"
+    },
+    {
+      "format": 8,
+      "publicPixelBytes": 4,
+      "gpuPixelBytes": 4,
+      "kind": "color"
+    },
+    {
+      "format": 16,
+      "publicPixelBytes": 2,
+      "gpuPixelBytes": 2,
+      "kind": "depth"
+    },
+    {
+      "format": 18,
+      "publicPixelBytes": 4,
+      "gpuPixelBytes": 4,
+      "kind": "depth"
+    },
+    {
+      "format": 20,
+      "publicPixelBytes": 4,
+      "gpuPixelBytes": 4,
+      "kind": "depth"
+    },
+    {
+      "format": 21,
+      "publicPixelBytes": 4,
+      "gpuPixelBytes": 4,
+      "kind": "depth"
+    },
+    {
+      "format": 28,
+      "publicPixelBytes": 4,
+      "gpuPixelBytes": 4,
+      "kind": "color"
+    },
+    {
+      "format": 29,
+      "publicPixelBytes": 8,
+      "gpuPixelBytes": 8,
+      "kind": "color"
+    },
+    {
+      "format": 30,
+      "publicPixelBytes": 12,
+      "gpuPixelBytes": 16,
+      "kind": "color"
+    },
+    {
+      "format": 31,
+      "publicPixelBytes": 16,
+      "gpuPixelBytes": 16,
+      "kind": "color"
+    },
+    {
+      "format": 64,
+      "publicPixelBytes": 1,
+      "gpuPixelBytes": 1,
+      "kind": "color"
+    },
+    {
+      "format": 65,
+      "publicPixelBytes": 2,
+      "gpuPixelBytes": 2,
+      "kind": "color"
+    },
+    {
+      "format": 66,
+      "publicPixelBytes": 3,
+      "gpuPixelBytes": 3,
+      "kind": "color"
+    },
+    {
+      "format": 67,
+      "publicPixelBytes": 4,
+      "gpuPixelBytes": 4,
+      "kind": "color"
+    },
+    {
+      "format": 68,
+      "publicPixelBytes": 4,
+      "gpuPixelBytes": 3,
+      "kind": "color"
+    },
+    {
+      "format": 74,
+      "publicPixelBytes": 1,
+      "gpuPixelBytes": 1,
+      "kind": "snorm"
+    },
+    {
+      "format": 75,
+      "publicPixelBytes": 2,
+      "gpuPixelBytes": 2,
+      "kind": "snorm"
+    },
+    {
+      "format": 76,
+      "publicPixelBytes": 3,
+      "gpuPixelBytes": 4,
+      "kind": "snorm"
+    },
+    {
+      "format": 77,
+      "publicPixelBytes": 4,
+      "gpuPixelBytes": 4,
+      "kind": "snorm"
+    },
+    {
+      "format": 91,
+      "publicPixelBytes": 2,
+      "gpuPixelBytes": 2,
+      "kind": "color"
+    },
+    {
+      "format": 92,
+      "publicPixelBytes": 4,
+      "gpuPixelBytes": 4,
+      "kind": "color"
+    },
+    {
+      "format": 93,
+      "publicPixelBytes": 6,
+      "gpuPixelBytes": 8,
+      "kind": "color"
+    },
+    {
+      "format": 94,
+      "publicPixelBytes": 8,
+      "gpuPixelBytes": 8,
+      "kind": "color"
+    },
+    {
+      "format": 97,
+      "publicPixelBytes": 3,
+      "gpuPixelBytes": 4,
+      "kind": "color"
+    },
+    {
+      "format": 98,
+      "publicPixelBytes": 4,
+      "gpuPixelBytes": 4,
+      "kind": "color"
+    },
+    {
+      "format": 99,
+      "publicPixelBytes": 4,
+      "gpuPixelBytes": 4,
+      "kind": "color"
+    },
+    {
+      "format": 100,
+      "publicPixelBytes": 4,
+      "gpuPixelBytes": 4,
+      "kind": "color"
+    },
+    {
+      "format": 101,
+      "publicPixelBytes": 4,
+      "gpuPixelBytes": 4,
+      "kind": "color"
+    },
+    {
+      "format": 102,
+      "publicPixelBytes": 4,
+      "gpuPixelBytes": 4,
+      "kind": "color"
+    },
+    {
+      "format": 103,
+      "publicPixelBytes": 4,
+      "gpuPixelBytes": 4,
+      "kind": "color"
+    },
+    {
+      "format": 104,
+      "publicPixelBytes": 4,
+      "gpuPixelBytes": 4,
+      "kind": "color"
+    },
+    {
+      "format": 121,
+      "publicPixelBytes": 4,
+      "gpuPixelBytes": 4,
+      "kind": "color"
+    },
+    {
+      "format": 122,
+      "publicPixelBytes": 2,
+      "gpuPixelBytes": 2,
+      "kind": "color"
+    },
+    {
+      "format": 124,
+      "publicPixelBytes": 4,
+      "gpuPixelBytes": 4,
+      "kind": "color"
+    },
+    {
+      "format": 125,
+      "publicPixelBytes": 4,
+      "gpuPixelBytes": 4,
+      "kind": "shared"
+    },
+    {
+      "format": 126,
+      "publicPixelBytes": 8,
+      "gpuPixelBytes": 16,
+      "kind": "depth"
+    },
+    {
+      "format": 131,
+      "publicPixelBytes": 4,
+      "gpuPixelBytes": 4,
+      "kind": "color"
+    },
+    {
+      "format": 134,
+      "publicPixelBytes": 4,
+      "gpuPixelBytes": 3,
+      "kind": "color"
+    },
+    {
+      "format": 135,
+      "publicPixelBytes": 2,
+      "gpuPixelBytes": 2,
+      "kind": "color"
+    },
+    {
+      "format": 177,
+      "publicPixelBytes": 1,
+      "gpuPixelBytes": 1,
+      "kind": "color"
+    },
+    {
+      "format": 178,
+      "publicPixelBytes": 2,
+      "gpuPixelBytes": 2,
+      "kind": "color"
+    },
+    {
+      "format": 179,
+      "publicPixelBytes": 3,
+      "gpuPixelBytes": 4,
+      "kind": "color"
+    },
+    {
+      "format": 180,
+      "publicPixelBytes": 4,
+      "gpuPixelBytes": 4,
+      "kind": "color"
+    },
+    {
+      "format": 181,
+      "publicPixelBytes": 1,
+      "gpuPixelBytes": 1,
+      "kind": "color"
+    },
+    {
+      "format": 182,
+      "publicPixelBytes": 2,
+      "gpuPixelBytes": 2,
+      "kind": "color"
+    },
+    {
+      "format": 183,
+      "publicPixelBytes": 3,
+      "gpuPixelBytes": 4,
+      "kind": "color"
+    },
+    {
+      "format": 184,
+      "publicPixelBytes": 4,
+      "gpuPixelBytes": 4,
+      "kind": "color"
+    },
+    {
+      "format": 185,
+      "publicPixelBytes": 2,
+      "gpuPixelBytes": 2,
+      "kind": "color"
+    },
+    {
+      "format": 186,
+      "publicPixelBytes": 4,
+      "gpuPixelBytes": 4,
+      "kind": "color"
+    },
+    {
+      "format": 187,
+      "publicPixelBytes": 6,
+      "gpuPixelBytes": 8,
+      "kind": "color"
+    },
+    {
+      "format": 188,
+      "publicPixelBytes": 8,
+      "gpuPixelBytes": 8,
+      "kind": "color"
+    },
+    {
+      "format": 189,
+      "publicPixelBytes": 2,
+      "gpuPixelBytes": 2,
+      "kind": "color"
+    },
+    {
+      "format": 190,
+      "publicPixelBytes": 4,
+      "gpuPixelBytes": 4,
+      "kind": "color"
+    },
+    {
+      "format": 191,
+      "publicPixelBytes": 6,
+      "gpuPixelBytes": 8,
+      "kind": "color"
+    },
+    {
+      "format": 192,
+      "publicPixelBytes": 8,
+      "gpuPixelBytes": 8,
+      "kind": "color"
+    },
+    {
+      "format": 193,
+      "publicPixelBytes": 4,
+      "gpuPixelBytes": 4,
+      "kind": "color"
+    },
+    {
+      "format": 194,
+      "publicPixelBytes": 8,
+      "gpuPixelBytes": 8,
+      "kind": "color"
+    },
+    {
+      "format": 195,
+      "publicPixelBytes": 12,
+      "gpuPixelBytes": 16,
+      "kind": "color"
+    },
+    {
+      "format": 196,
+      "publicPixelBytes": 16,
+      "gpuPixelBytes": 16,
+      "kind": "color"
+    },
+    {
+      "format": 197,
+      "publicPixelBytes": 4,
+      "gpuPixelBytes": 4,
+      "kind": "color"
+    },
+    {
+      "format": 198,
+      "publicPixelBytes": 8,
+      "gpuPixelBytes": 8,
+      "kind": "color"
+    },
+    {
+      "format": 199,
+      "publicPixelBytes": 12,
+      "gpuPixelBytes": 16,
+      "kind": "color"
+    },
+    {
+      "format": 200,
+      "publicPixelBytes": 16,
+      "gpuPixelBytes": 16,
+      "kind": "color"
+    },
+    {
+      "format": 225,
+      "publicPixelBytes": 4,
+      "gpuPixelBytes": 4,
+      "kind": "color"
+    },
+    {
+      "format": 230,
+      "publicPixelBytes": 4,
+      "gpuPixelBytes": 4,
+      "kind": "color"
+    },
+    {
+      "format": 233,
+      "publicPixelBytes": 4,
+      "gpuPixelBytes": 4,
+      "kind": "color"
+    },
+    {
+      "format": 253,
+      "publicPixelBytes": 4,
+      "gpuPixelBytes": 4,
+      "kind": "color"
+    },
+    {
+      "format": 308,
+      "publicPixelBytes": 4,
+      "gpuPixelBytes": 4,
+      "kind": "color"
+    },
+    {
+      "format": 317,
+      "publicPixelBytes": 3,
+      "gpuPixelBytes": 3,
+      "kind": "color"
+    },
+    {
+      "format": 319,
+      "publicPixelBytes": 2,
+      "gpuPixelBytes": 2,
+      "kind": "color"
+    },
+    {
+      "format": 320,
+      "publicPixelBytes": 2,
+      "gpuPixelBytes": 2,
+      "kind": "color"
+    },
+    {
+      "format": 321,
+      "publicPixelBytes": 2,
+      "gpuPixelBytes": 2,
+      "kind": "color"
+    },
+    {
+      "format": 387,
+      "publicPixelBytes": 3,
+      "gpuPixelBytes": 4,
+      "kind": "color"
+    },
+    {
+      "format": 407,
+      "publicPixelBytes": 2,
+      "gpuPixelBytes": 2,
+      "kind": "color"
+    },
+    {
+      "format": 409,
+      "publicPixelBytes": 2,
+      "gpuPixelBytes": 2,
+      "kind": "color"
+    }
+  ]
+}

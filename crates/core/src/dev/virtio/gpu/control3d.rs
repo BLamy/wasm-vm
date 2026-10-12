@@ -48,33 +48,40 @@ impl Resource3dMetadata {
             || self.height == 0
             || self.depth != 1
             || self.array_size != 1
-            || self.last_level != 0
             || self.nr_samples != 0
             || self.flags != 0
         {
             return Err(Control3dError::InvalidParameter);
         }
         let (bytes, staging) = match (self.target, self.format, self.bind) {
-            (0, 64, bind) if desktop_resources && self.height == 1 && bind & !112 == 0 => {
+            (0, 64, bind)
+                if desktop_resources
+                    && self.height == 1
+                    && self.last_level == 0
+                    && bind & !112 == 0 =>
+            {
                 (u64::from(self.width), false)
             }
-            (0, 64, 16 | 32 | 524_288) if self.height == 1 => {
+            (0, 64, 16 | 32 | 524_288) if self.height == 1 && self.last_level == 0 => {
                 (u64::from(self.width), self.bind == 524_288)
             }
-            (2, 67, 10) if self.width <= MAX_TEXTURE_SIZE && self.height <= MAX_TEXTURE_SIZE => {
-                (u64::from(self.width) * u64::from(self.height) * 4, false)
+            (2, format, bind) if desktop_resources => {
+                let (public_pixel, gpu_pixel) = image2d_format(format, bind)?;
+                self.mip_extent(0)?;
+                let (mut logical, mut gpu) = (0, 0);
+                for level in 0..=self.last_level {
+                    let (width, height) = self.mip_extent(level)?;
+                    let pixels = u64::from(width) * u64::from(height);
+                    logical += pixels * u64::from(public_pixel);
+                    gpu += pixels * u64::from(gpu_pixel);
+                    if logical > MAX_RESOURCE_BYTES || gpu > MAX_RESOURCE_BYTES {
+                        return Err(Control3dError::OutOfMemory);
+                    }
+                }
+                return Ok((logical, gpu));
             }
-            (2, 1 | 2 | 67, bind)
-                if desktop_resources
-                    && bind & 10 != 0
-                    && bind & !(10 | (1 << 18) | (1 << 20)) == 0
-                    && self.width <= MAX_TEXTURE_SIZE
-                    && self.height <= MAX_TEXTURE_SIZE =>
-            {
-                (u64::from(self.width) * u64::from(self.height) * 4, false)
-            }
-            (2, 20, 1 | 8 | 9)
-                if desktop_resources
+            (2, 67, 10)
+                if self.last_level == 0
                     && self.width <= MAX_TEXTURE_SIZE
                     && self.height <= MAX_TEXTURE_SIZE =>
             {
@@ -87,6 +94,93 @@ impl Resource3dMetadata {
         }
         Ok((bytes, if staging { 0 } else { bytes }))
     }
+
+    fn mip_extent(self, level: u32) -> Result<(u32, u32), Control3dError> {
+        if self.width == 0
+            || self.height == 0
+            || self.width > MAX_TEXTURE_SIZE
+            || self.height > MAX_TEXTURE_SIZE
+            || self.last_level > 31 - self.width.max(self.height).leading_zeros()
+            || level > self.last_level
+        {
+            return Err(Control3dError::InvalidParameter);
+        }
+        // The checked chain above bounds the shift to14. NPOT levels round down
+        // independently in each dimension, then remain at1.
+        Ok(((self.width >> level).max(1), (self.height >> level).max(1)))
+    }
+
+    /// Accepted metadata is immutable; admission chooses its historical or
+    /// selected profile. DMA always uses original public bytes, never padding.
+    pub(super) fn transfer_extent(self, level: u32) -> Result<(u32, u32, u32), Control3dError> {
+        if self.target == 0 {
+            if level != 0 {
+                return Err(Control3dError::InvalidParameter);
+            }
+            return Ok((self.width, self.height, 1));
+        }
+        let (public_pixel, _) = image2d_format(self.format, self.bind)?;
+        let (width, height) = self.mip_extent(level)?;
+        Ok((width, height, public_pixel))
+    }
+}
+
+/// Finite layouts already qualified by the selected desktop host. The second
+/// cost includes RGB padding and126's owned depth/stencil conversion storage.
+fn image2d_format(format: u32, bind: u32) -> Result<(u32, u32), Control3dError> {
+    let costs = match format {
+        64 | 74 => (1, 1),
+        5 | 6 | 7 | 16 | 65 | 75 | 91 | 122 | 135 | 319 | 320 | 321 | 407 | 409 => (2, 2),
+        66 | 317 => (3, 3),
+        76 | 97 | 387 => (3, 4),
+        4 | 68 | 134 => (4, 3),
+        1
+        | 2
+        | 3
+        | 8
+        | 18
+        | 20
+        | 21
+        | 28
+        | 67
+        | 77
+        | 92
+        | 98..=104
+        | 121
+        | 124
+        | 125
+        | 131
+        | 225
+        | 230
+        | 233
+        | 253
+        | 308 => (4, 4),
+        93 => (6, 8),
+        29 | 94 => (8, 8),
+        30 => (12, 16),
+        31 => (16, 16),
+        126 => (8, 16),
+        177..=200 => {
+            let bytes = 1 << ((format - 177) / 8);
+            let components = (format - 177) % 4 + 1;
+            (
+                bytes * components,
+                bytes * if components == 3 { 4 } else { components },
+            )
+        }
+        _ => return Err(Control3dError::InvalidParameter),
+    };
+    let color_mask = 10 | (1 << 18) | (1 << 20);
+    let supported = match format {
+        16 | 18 | 20 | 21 | 126 => matches!(bind, 1 | 8 | 9),
+        74..=77 => bind & 10 == 8 && bind & !color_mask == 0,
+        125 => bind == 8,
+        _ => bind & 10 != 0 && bind & !color_mask == 0,
+    };
+    if !supported {
+        return Err(Control3dError::InvalidParameter);
+    }
+    Ok(costs)
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

@@ -959,6 +959,461 @@ fn submit3d_span_dma_tracks_all_code_pages_once_and_rejects_before_mutation() {
     q.finish(&p, Ok(()));
 }
 
+// Complete transport digests and relevant RAM/response bodies are recorded at
+// every point. Full4MiB architectural memory hashing is an explicit checkpoint,
+// matching the Wasm harness rather than multiplying it by every GPU poll.
+fn record_image(q: &mut Q, label: &str, request: &[u8]) {
+    q.record(label, request);
+    let guard = q.read(RESPONSE + 24, 40);
+    eprintln!(
+        "NATIVE_IMAGE_GUARD_POINT {{\"case\":{label:?},\"guard\":{:?}}}",
+        hex(&guard)
+    );
+    assert_eq!(guard, vec![0xa5; 40]);
+}
+
+fn image_resource(format: u32, bind: u32, width: u32, height: u32, last: u32) -> Vec<u8> {
+    let mut raw = resource();
+    for (at, value) in [
+        (28, 2),
+        (32, format),
+        (36, bind),
+        (40, width),
+        (44, height),
+        (56, last),
+    ] {
+        put32(&mut raw, at, value);
+    }
+    raw
+}
+
+fn image_transfer(
+    read: bool,
+    level: u32,
+    width: u32,
+    height: u32,
+    offset: u64,
+    stride: u32,
+) -> Vec<u8> {
+    let mut raw = transfer(read, offset, u64::MAX);
+    for (at, value) in [(36, width), (40, height), (60, level), (64, stride)] {
+        put32(&mut raw, at, value);
+    }
+    raw
+}
+
+#[test]
+fn selected_desktop_image_layouts_live_mip_dma_and_guards() {
+    assert_eq!(ORIGINAL_IMAGE_LAYOUTS.len(), 81);
+    for &(format, public, gpu, bind) in ORIGINAL_IMAGE_LAYOUTS {
+        let mut q = Q::with_desktop(true);
+        q.sync(&context(), 0x1100);
+        let raw = image_resource(format, bind, 9, 5, 3);
+        eprintln!(
+            "NATIVE_IMAGE_PREDICTION format={format} public={} gpu={} levels=4",
+            public * 56,
+            gpu * 56
+        );
+        q.sync(&raw, 0x1100);
+        record_image(&mut q, "image-create", &raw);
+        let state = q.state.borrow().control3d_snapshot().unwrap();
+        assert_eq!(
+            (state.logical_bytes, state.gpu_bytes),
+            (u64::from(public * 56), u64::from(gpu * 56))
+        );
+        let capacity = (9 * public + 7) * 5 + 32;
+        let mut attached = backing();
+        put32(&mut attached, 56, capacity - 7);
+        q.write(BACKING - 8, &[0xa3; 23]);
+        q.write(BACKING2 - 8, &vec![0xa3; capacity as usize + 9]);
+        q.sync(&attached, 0x1100);
+        q.sync(&id_command(0x202, 2, 3), 0x1100);
+        let (mut width, mut height) = (9, 5);
+        for level in 0..4 {
+            let row_bytes = width * public;
+            let padded = level % 2 == 1;
+            let row_stride = row_bytes + if padded { 7 } else { 0 };
+            let source: Vec<_> = (0..capacity)
+                .map(|i| (i.wrapping_mul(71) ^ format ^ (level * 43)) as u8)
+                .collect();
+            q.write(BACKING, &source[..7]);
+            q.write(BACKING2, &source[7..]);
+            let expected: Vec<_> = (0..height)
+                .flat_map(|y| {
+                    let at = (5 + y * row_stride) as usize;
+                    source[at..at + row_bytes as usize].iter().copied()
+                })
+                .collect();
+            let mut upload = image_transfer(
+                false,
+                level,
+                width,
+                height,
+                5,
+                if padded { row_stride } else { 0 },
+            );
+            if padded {
+                put32(&mut upload, 68, row_stride * height + 1);
+            }
+            let accepted = q.begin(&upload);
+            assert_eq!(accepted.resources[0].metadata, state.resources[0].metadata);
+            let mut exchange = q.exchange(1, 5, row_bytes);
+            exchange.rows.row_count = height;
+            exchange.rows.row_stride = row_stride;
+            record_image(&mut q, "image-upload-pending", &upload);
+            let actual = q.machine.submit3d_gather(&exchange).unwrap();
+            assert_eq!(actual, expected);
+            q.finish(&upload, Ok(()));
+            record_image(&mut q, "image-upload-completed", &upload);
+            let mut readback = upload.clone();
+            put32(&mut readback, 0, 0x206);
+            q.begin(&readback);
+            let mut exchange = q.exchange(1, 5, row_bytes);
+            exchange.rows.row_count = height;
+            exchange.rows.row_stride = row_stride;
+            let output: Vec<_> = expected.iter().map(|b| b ^ 0x57).collect();
+            q.machine.submit3d_scatter(&exchange, &output).unwrap();
+            assert_eq!(q.used_idx(), q.used, "scatter cannot publish completion");
+            let mut complete = source.clone();
+            for y in 0..height {
+                complete[(5 + y * row_stride) as usize..(5 + y * row_stride + row_bytes) as usize]
+                    .copy_from_slice(
+                        &output[(y * row_bytes) as usize..((y + 1) * row_bytes) as usize],
+                    );
+            }
+            let mut actual = q.read(BACKING, 7);
+            actual.extend(q.read(BACKING2, (capacity - 7) as usize));
+            assert_eq!(
+                actual, complete,
+                "complete backing including untouched row padding"
+            );
+            for (at, length) in [(BACKING, 7u32), (BACKING2, capacity - 7)] {
+                assert_eq!(q.read(at - 8, 8), vec![0xa3; 8]);
+                assert_eq!(q.read(at + u64::from(length), 8), vec![0xa3; 8]);
+            }
+            eprintln!(
+                "NATIVE_IMAGE_DMA_POINT {{\"format\":{format},\"level\":{level},\"width\":{width},\"height\":{height},\"publicPixelBytes\":{public},\"rowStride\":{row_stride},\"source\":{:?},\"gathered\":{:?},\"output\":{:?},\"completeBacking\":{:?}}}",
+                hex(&source),
+                hex(&expected),
+                hex(&output),
+                hex(&actual)
+            );
+            q.finish(&readback, Ok(()));
+            record_image(&mut q, "image-readback-completed", &readback);
+            width = (width / 2).max(1);
+            height = (height / 2).max(1);
+        }
+        let release = id_command(0x102, 0, 3);
+        q.sync(&release, 0x1100);
+        record_image(&mut q, "image-release", &release);
+        let after = q.state.borrow().control3d_snapshot().unwrap();
+        assert_eq!(
+            (after.logical_bytes, after.gpu_bytes, after.backing_bytes),
+            (0, 0, 0)
+        );
+        if format == 409 {
+            let snapshot = q.machine.snapshot();
+            let memory = q.read(virt::DRAM_BASE, RAM);
+            eprintln!(
+                "NATIVE_IMAGE_MEMORY_CHECKPOINT {{\"format\":{format},\"memory\":{:?},\"sha256\":{:?}}}",
+                hex(&memory),
+                snapshot.hex_digest()
+            );
+        }
+    }
+}
+
+#[test]
+fn selected_desktop_image_roles_budget_refusals_and_historical_profile() {
+    for &(format, public, gpu, _) in ORIGINAL_IMAGE_LAYOUTS {
+        for bind in [
+            0,
+            1,
+            2,
+            8,
+            9,
+            10,
+            2 | (1 << 18),
+            2 | (1 << 20),
+            2 | (1 << 18) | (1 << 20),
+            8 | (1 << 18),
+            8 | (1 << 20),
+            8 | (1 << 18) | (1 << 20),
+            10 | (1 << 18),
+            10 | (1 << 20),
+            10 | (1 << 18) | (1 << 20),
+            16,
+            128,
+            0x8000_0008,
+        ] {
+            let expected = match format {
+                16 | 18 | 20 | 21 | 126 => matches!(bind, 1 | 8 | 9),
+                74..=77 => matches!(bind, 8 | 262_152 | 1_048_584 | 1_310_728),
+                125 => bind == 8,
+                _ => matches!(
+                    bind,
+                    2 | 8
+                        | 10
+                        | 262_146
+                        | 262_152
+                        | 262_154
+                        | 1_048_578
+                        | 1_048_584
+                        | 1_048_586
+                        | 1_310_722
+                        | 1_310_728
+                        | 1_310_730
+                ),
+            };
+            let mut q = Q::with_desktop(true);
+            let before = q.state.borrow().control3d_snapshot().unwrap();
+            let raw = image_resource(format, bind, 3, 2, 0);
+            q.sync(&raw, if expected { 0x1100 } else { 0x1205 });
+            record_image(&mut q, "image-bind-boundary", &raw);
+            if expected {
+                let state = q.state.borrow().control3d_snapshot().unwrap();
+                assert_eq!(
+                    (state.logical_bytes, state.gpu_bytes),
+                    (u64::from(6 * public), u64::from(6 * gpu))
+                );
+            } else {
+                assert_eq!(q.state.borrow().control3d_snapshot().unwrap(), before);
+                assert!(q.host.borrow().controls.is_empty());
+            }
+        }
+        let mut old = Q::new();
+        let raw = image_resource(format, 10, 3, 2, 0);
+        old.sync(&raw, if format == 67 { 0x1100 } else { 0x1205 });
+        record_image(&mut old, "image-historical", &raw);
+    }
+    for (format, width, height, last, code) in [
+        (4, 16_384, 64, 0, 0x1100),
+        (4, 16_384, 65, 0, 0x1201),
+        (30, 16_384, 16, 0, 0x1100),
+        (30, 16_384, 17, 0, 0x1201),
+        (126, 512, 512, 0, 0x1100),
+        (126, 512, 513, 0, 0x1201),
+        (67, 1024, 1024, 0, 0x1100),
+        (67, 1024, 1024, 1, 0x1201),
+        (67, 1, 31, 4, 0x1100),
+        (67, 31, 1, 4, 0x1100),
+        (67, 16_384, 1, 14, 0x1100),
+    ] {
+        let mut q = Q::with_desktop(true);
+        let before = q.state.borrow().control3d_snapshot().unwrap();
+        let raw = image_resource(
+            format,
+            if format == 126 { 9 } else { 10 },
+            width,
+            height,
+            last,
+        );
+        q.sync(&raw, code);
+        record_image(&mut q, "image-cost-boundary", &raw);
+        if code != 0x1100 {
+            assert_eq!(q.state.borrow().control3d_snapshot().unwrap(), before);
+            assert!(q.host.borrow().controls.is_empty());
+        }
+    }
+    let mut q = Q::with_desktop(true);
+    for id in 100..108 {
+        let mut raw = image_resource(126, 9, 512, 512, 0);
+        put32(&mut raw, 24, id);
+        q.sync(&raw, 0x1100);
+    }
+    let before = q.state.borrow().control3d_snapshot().unwrap();
+    assert_eq!(
+        (before.logical_bytes, before.gpu_bytes),
+        (16 * 1024 * 1024, 32 * 1024 * 1024)
+    );
+    let calls = q.host.borrow().controls.len();
+    let raw = image_resource(126, 9, 1, 1, 0);
+    q.sync(&raw, 0x1201);
+    record_image(&mut q, "image-aggregate-refusal", &raw);
+    assert_eq!(q.state.borrow().control3d_snapshot().unwrap(), before);
+    assert_eq!(q.host.borrow().controls.len(), calls);
+}
+
+#[test]
+fn selected_desktop_image_invalid_metadata_and_transfer_rollback() {
+    let mut q = Q::with_desktop(true);
+    for (at, value) in [
+        (28, 3),
+        (28, 4),
+        (32, 17),
+        (32, 0xffff_ffff),
+        (36, 11),
+        (36, 0x8000_000a),
+        (40, 0),
+        (44, 0),
+        (40, 16_385),
+        (44, 16_385),
+        (48, 0),
+        (48, 2),
+        (52, 2),
+        (56, 4),
+        (56, 32),
+        (56, u32::MAX),
+        (60, 1),
+        (64, 1),
+    ] {
+        let raw = image_resource(67, 10, 9, 5, 3);
+        let mut invalid = raw.clone();
+        put32(&mut invalid, at, value);
+        let before = q.state.borrow().control3d_snapshot().unwrap();
+        q.sync(&invalid, 0x1205);
+        record_image(&mut q, "image-metadata-refusal", &invalid);
+        assert_eq!(q.state.borrow().control3d_snapshot().unwrap(), before);
+        assert!(q.host.borrow().controls.is_empty());
+    }
+    q.sync(&context(), 0x1100);
+    q.sync(&image_resource(30, 10, 9, 5, 3), 0x1100);
+    let mut attached = backing();
+    put32(&mut attached, 56, 4096 - 7);
+    q.sync(&attached, 0x1100);
+    q.sync(&id_command(0x202, 2, 3), 0x1100);
+    let valid = image_transfer(false, 1, 4, 2, 5, 0);
+    let mut invalids = Vec::new();
+    for (at, value) in [
+        (24, 1),
+        (28, 1),
+        (32, 1),
+        (36, 0),
+        (36, 5),
+        (40, 0),
+        (40, 3),
+        (44, 2),
+        (60, 4),
+        (60, 32),
+        (60, u32::MAX),
+        (64, 47),
+        (64, u32::MAX),
+        (68, 95),
+    ] {
+        let mut raw = valid.clone();
+        put32(&mut raw, at, value);
+        invalids.push(raw);
+    }
+    for offset in [4096 - 95, u64::MAX - 1] {
+        let mut raw = valid.clone();
+        raw[48..56].copy_from_slice(&offset.to_le_bytes());
+        invalids.push(raw);
+    }
+    for raw in invalids {
+        let before = q.state.borrow().control3d_snapshot().unwrap();
+        let calls = q.host.borrow().work.len();
+        q.sync(&raw, 0x1205);
+        record_image(&mut q, "image-transfer-refusal", &raw);
+        assert_eq!(q.state.borrow().control3d_snapshot().unwrap(), before);
+        assert_eq!(q.host.borrow().work.len(), calls);
+        assert!(q.mail.inspect().active.is_none());
+    }
+    q.begin(&valid);
+    q.finish(&valid, Ok(()));
+    record_image(&mut q, "image-transfer-recovery", &valid);
+    let before = q.state.borrow().control3d_snapshot().unwrap();
+    let pending = image_transfer(true, 3, 1, 1, 0, 0);
+    let accepted = q.begin(&pending);
+    let stale = q.exchange(1, 0, 12);
+    q.mmio(0x70, 0);
+    q.run();
+    assert!(q.machine.submit3d_gather(&stale).is_err());
+    assert!(q.machine.submit3d_scatter(&stale, &[0; 12]).is_err());
+    assert_eq!(q.host.borrow().cancelled.last(), Some(&accepted.key));
+    let after = q.state.borrow().control3d_snapshot().unwrap();
+    assert_eq!(after.epoch, before.epoch + 1);
+    assert_eq!(
+        (after.logical_bytes, after.gpu_bytes, after.backing_bytes),
+        (0, 0, 0)
+    );
+    record_image(&mut q, "image-reset-cancelled", &pending);
+}
+
+// Literal expectations from pinned original formats and qualified host storage.
+const ORIGINAL_IMAGE_LAYOUTS: &[(u32, u32, u32, u32)] = &[
+    (1, 4, 4, 10),
+    (2, 4, 4, 10),
+    (3, 4, 4, 10),
+    (4, 4, 3, 10),
+    (5, 2, 2, 10),
+    (6, 2, 2, 10),
+    (7, 2, 2, 10),
+    (8, 4, 4, 10),
+    (16, 2, 2, 9),
+    (18, 4, 4, 9),
+    (20, 4, 4, 9),
+    (21, 4, 4, 9),
+    (28, 4, 4, 10),
+    (29, 8, 8, 10),
+    (30, 12, 16, 10),
+    (31, 16, 16, 10),
+    (64, 1, 1, 10),
+    (65, 2, 2, 10),
+    (66, 3, 3, 10),
+    (67, 4, 4, 10),
+    (68, 4, 3, 10),
+    (74, 1, 1, 8),
+    (75, 2, 2, 8),
+    (76, 3, 4, 8),
+    (77, 4, 4, 8),
+    (91, 2, 2, 10),
+    (92, 4, 4, 10),
+    (93, 6, 8, 10),
+    (94, 8, 8, 10),
+    (97, 3, 4, 10),
+    (98, 4, 4, 10),
+    (99, 4, 4, 10),
+    (100, 4, 4, 10),
+    (101, 4, 4, 10),
+    (102, 4, 4, 10),
+    (103, 4, 4, 10),
+    (104, 4, 4, 10),
+    (121, 4, 4, 10),
+    (122, 2, 2, 10),
+    (124, 4, 4, 10),
+    (125, 4, 4, 8),
+    (126, 8, 16, 9),
+    (131, 4, 4, 10),
+    (134, 4, 3, 10),
+    (135, 2, 2, 10),
+    (177, 1, 1, 10),
+    (178, 2, 2, 10),
+    (179, 3, 4, 10),
+    (180, 4, 4, 10),
+    (181, 1, 1, 10),
+    (182, 2, 2, 10),
+    (183, 3, 4, 10),
+    (184, 4, 4, 10),
+    (185, 2, 2, 10),
+    (186, 4, 4, 10),
+    (187, 6, 8, 10),
+    (188, 8, 8, 10),
+    (189, 2, 2, 10),
+    (190, 4, 4, 10),
+    (191, 6, 8, 10),
+    (192, 8, 8, 10),
+    (193, 4, 4, 10),
+    (194, 8, 8, 10),
+    (195, 12, 16, 10),
+    (196, 16, 16, 10),
+    (197, 4, 4, 10),
+    (198, 8, 8, 10),
+    (199, 12, 16, 10),
+    (200, 16, 16, 10),
+    (225, 4, 4, 10),
+    (230, 4, 4, 10),
+    (233, 4, 4, 10),
+    (253, 4, 4, 10),
+    (308, 4, 4, 10),
+    (317, 3, 3, 10),
+    (319, 2, 2, 10),
+    (320, 2, 2, 10),
+    (321, 2, 2, 10),
+    (387, 3, 4, 10),
+    (407, 2, 2, 10),
+    (409, 2, 2, 10),
+];
+
 #[test]
 fn selected_desktop_buffer_reset_reuse_rejects_high_bits_and_stale_dma() {
     let mut q = Q::with_desktop(true);

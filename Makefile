@@ -2490,3 +2490,7 @@ verify-E6-T11d52:
 .PHONY: verify-E6-T11d53
 verify-E6-T11d53:
 	python3 tools/virgl-native-buffer/verify.py --output "$${VIRGL_NATIVE_BUFFER_EVIDENCE_DIR:-target/evidence/virgl-native-buffer}"
+
+.PHONY: verify-E6-T11d54
+verify-E6-T11d54:
+	python3 tools/virgl-native-image/verify.py --output "$${VIRGL_NATIVE_IMAGE_EVIDENCE_DIR:-target/evidence/virgl-native-image}"

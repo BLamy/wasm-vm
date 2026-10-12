@@ -674,26 +674,25 @@ fn validate_transfer(t: Transfer3d, r: &AcceptedResource3d) -> Result<(), Contro
     let bad = Control3dError::InvalidParameter;
     let m = r.metadata;
     let b = t.box_;
+    let (width, height, scale) = m.transfer_extent(t.level)?;
     if m.bind == 524_288
-        || t.level != 0
         || b.width == 0
         || b.height == 0
         || b.depth != 1
         || b.z != 0
-        || u64::from(b.x) + u64::from(b.width) > u64::from(m.width)
-        || u64::from(b.y) + u64::from(b.height) > u64::from(m.height)
+        || u64::from(b.x) + u64::from(b.width) > u64::from(width)
+        || u64::from(b.y) + u64::from(b.height) > u64::from(height)
     {
         return Err(bad);
     }
-    let scale = if m.target == 2 { 4 } else { 1 };
     let row_bytes = b.width.checked_mul(scale).ok_or(bad)?;
     let row_stride = if t.stride == 0 {
-        m.width.checked_mul(scale).ok_or(bad)?
+        width.checked_mul(scale).ok_or(bad)?
     } else {
         t.stride
     };
     let layer = if t.layer_stride == 0 {
-        row_stride.checked_mul(m.height).ok_or(bad)?
+        row_stride.checked_mul(height).ok_or(bad)?
     } else {
         t.layer_stride
     };

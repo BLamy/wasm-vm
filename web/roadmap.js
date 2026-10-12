@@ -180,7 +180,7 @@ export const ROADMAP = [
     status: "partial",
     blurb: "Guest GPU offload in isolated fixtures; multi-hart SMP and live accelerated graphics remain in progress.",
     caps: [
-      { name: "Guest GPU offload", status: "partial", evidence: "Isolated command, DMA and retained scanout fixtures (E6-T11), with selected desktop buffer transport (E6-T11d53); production acceleration disabled" },
+      { name: "Guest GPU offload", status: "partial", evidence: "Isolated command, DMA and retained scanout fixtures (E6-T11), with selected desktop image layouts and mip transport (E6-T11d54); production acceleration disabled" },
       { name: "Multi-hart core state + SBI HSM", status: "pending" },
       { name: "SMP kernel boot (round-robin)", status: "pending" },
       { name: "RVWMO / wasm memory-model audit", status: "pending" },

@@ -154,7 +154,17 @@ fn desktop_control_metadata_roles_and_legacy_refusals() {
             );
         }
     }
-    for format in [0, 16, 17, 18, 21, 126, 233, u32::MAX] {
+    for format in [16, 18, 21, 126] {
+        let packet = resource(1, 2, format, 9, 2, 3);
+        q.expect("desktop-qualified-depth", packet.clone(), OK);
+        q.expect(
+            "desktop-qualified-depth-release",
+            id_command(0x102, 0, 1),
+            OK,
+        );
+        old.unchanged("legacy-qualified-depth-refusal", packet, INVALID_PARAMETER);
+    }
+    for format in [0, 17, 233, u32::MAX] {
         q.unchanged(
             "desktop-unqualified-format",
             resource(1, 2, format, 9, 2, 3),
@@ -169,7 +179,7 @@ fn desktop_control_metadata_roles_and_legacy_refusals() {
             (44, 0),
             (48, 2),
             (52, 2),
-            (56, 1),
+            (56, if target == 0 { 1 } else { 2 }),
             (60, 1),
             (64, 1),
             (68, 1),
