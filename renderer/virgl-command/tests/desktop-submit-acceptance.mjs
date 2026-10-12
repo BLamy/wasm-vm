@@ -99,6 +99,16 @@ async function acceptedOwners(Wasm,factory,Legacy,oldFactory,gl,shaderBridge,c) 
   const old=makeRig(Legacy,oldFactory,gl,shaderBridge,c);
   for(let id=1;id<=17;id++)await old.expect('historical count '+id,resource(300+id,0,64,16,8,1),id<=16?OK:OOM);
   await old.expect('historical packed depth still refuses',resource(400,2,20,9,2,2),BAD);
+  await old.expect('historical16 context',context(2));
+  for(let id=301;id<=316;id++)await old.expect('historical16 member '+id,idCommand(0x202,2,id));
+  await old.expect('historical16 accepted snapshot',submission(2,new Uint8Array(),16n));
+  const oldAccepted=old.events.find(e=>e.type==='beginJob');
+  c.equal(oldAccepted.resources.length,16,'historical job marshals exactly16 native owners');
+  const oldBefore=copy(old.host.bridge.inspect()),excess=structuredClone(oldAccepted);
+  excess.sequence='000000000000ffff';excess.resources.push({...structuredClone(excess.resources[0]),identity:{id:999,generation:'ffffffffffffffff'},metadata:{...excess.resources[0].metadata,id:999}});
+  c.bad(old.host.bridge.apply(excess),'historical job refuses17 before renderer','invalid-parameter');
+  c.same(old.host.bridge.inspect(),oldBefore,'historical17 full state unchanged');
+
   result.historical={records:old.q.records,events:old.events,state:copy(old.host.bridge.inspect())};old.dispose();
   const transport={gatherInput(){throw Error('unexpected DMA');},scatterOutput(){throw Error('unexpected output');},complete(){throw Error('unexpected complete');}};
   const limited=c.ok(factory({gl,shaderBridge,transport,resourceLimits:{resources:1}}),'selected tightened count');
