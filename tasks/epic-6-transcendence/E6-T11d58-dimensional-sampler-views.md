@@ -33,6 +33,12 @@ depth/array layers, private mip ranges and array-layer subsets. Both shader
 stages, sparse slots, mixed native dimensions at the same original cross-stage
 slot, source/write modifiers, swizzles/constant lanes, supported sample/query
 operations and min/mag/mip/wrap/LOD state use independent complete pixel oracles.
+Nearest, query, constants and unwritten lanes require exact 32-bit words. For
+fractional linear filtering, core GLES specifies interpolation algebra without
+bit-identical native filtering; selected Metal evidence imposes an explicit
+analytic absolute-error budget of 1/255 for each fractional written float lane.
+This is a selected-hardware test budget, not a universal GLES precision claim.
+Every original RAM padding/guard byte stays exact.
 
 Carry unchanged compiler/transport facts by exact authenticated source,
 dependency and generated-byte hashes. Native draws also pass through actual
@@ -48,7 +54,7 @@ the completed plane must contradict the unchanged original-byte expectation.
 Repeat deterministic schedules. Retain finest governing V8 counters across
 every changed executable operand, authenticated historical controls and static
 waivers only. Run the affected gate once at a frozen head and one final pristine
-scrubbed clone. Surface partial progress in the default demo, capture127/0 with
+scrubbed clone. Surface partial progress in the default demo, capture 127/0 with
 zero console errors, deploy the frozen bundle and record the live response bodies.
 
 ## Adversarial verification

@@ -1,7 +1,7 @@
 /** Explicit proof-only VirtIO bridges. Ordinary device negotiation is unchanged. */
-import { createResourceStore, createWebGL2TransferBackend, createStandardDesktopResourceStore, createStandardPackedDepthTransferBackend, createStandardDimensionalResourceStore, createStandardDimensionalTransferBackend } from './resources.mjs';
+import { createResourceStore, createWebGL2TransferBackend, createStandardDesktopResourceStore, createStandardPackedDepthTransferBackend, createStandardDimensionalResourceStore, createStandardDimensionalTransferBackend, createStandardDimensionalViewResourceStore, createStandardDimensionalViewTransferBackend } from './resources.mjs';
 import { createRetainedScanout, normalizeScanoutEvent } from './scanout.mjs';
-import { createVirglStateRenderer, createVirglAsyncRenderer, createVirglStandardShadowSamplerAsyncRenderer, createVirglStandardDimensionalAsyncRenderer } from './state.mjs';
+import { createVirglStateRenderer, createVirglAsyncRenderer, createVirglStandardShadowSamplerAsyncRenderer, createVirglStandardDimensionalAsyncRenderer, createVirglStandardDimensionalViewAsyncRenderer } from './state.mjs';
 
 const ok = () => Object.freeze({ ok: true });
 const fail = (code, message) => Object.freeze({ ok: false, error: Object.freeze({ code, message }) });
@@ -154,9 +154,12 @@ export function createVirglStandardDesktopSubmitBridge(options) { return createB
 /** Selected original layered storage/DMA; shader/surface consumers stay gated. */
 export function createVirglStandardDimensionalSubmitBridge(options) { return createBridge(options, true, false, true, true); }
 
+/** Selected original dimensional sampler consumers; production negotiation remains separate. */
+export function createVirglStandardDimensionalViewSubmitBridge(options) { return createBridge(options, true, false, true, true, true); }
+
 export function createVirglScanoutBridge(options) { return createBridge(options, true, true); }
 
-function createBridge(options, asynchronous, scanoutEnabled = false, desktop = false, dimensional = false) {
+function createBridge(options, asynchronous, scanoutEnabled = false, desktop = false, dimensional = false, dimensionalViews = false) {
   let owners = null;
   try {
     const config = record(options, ['gl', 'shaderBridge', 'resourceLimits', 'stateLimits', ...(asynchronous ? ['transport', 'jobLimits', 'drawLimits'] : []), ...(scanoutEnabled ? ['presenter'] : [])], ['gl', 'shaderBridge', ...(asynchronous ? ['transport'] : []), ...(scanoutEnabled ? ['presenter'] : [])]);
@@ -165,12 +168,12 @@ function createBridge(options, asynchronous, scanoutEnabled = false, desktop = f
     const transport = asynchronous ? record(config.transport, ['gatherInput', 'scatterOutput', 'complete', ...(dimensional ? ['gatherLayeredInput', 'scatterLayeredOutput'] : [])]) : null;
     if (asynchronous) for (const key of Object.keys(transport)) need(typeof transport[key] === 'function', 'invalid-parameter', 'Missing transport method.');
     const fresh = () => {
-      const { backend } = unwrap((dimensional ? createStandardDimensionalTransferBackend : desktop ? createStandardPackedDepthTransferBackend : createWebGL2TransferBackend)(config.gl));
+      const { backend } = unwrap((dimensionalViews ? createStandardDimensionalViewTransferBackend : dimensional ? createStandardDimensionalTransferBackend : desktop ? createStandardPackedDepthTransferBackend : createWebGL2TransferBackend)(config.gl));
       let store;
       try {
-        const created = unwrap((dimensional ? createStandardDimensionalResourceStore : desktop ? createStandardDesktopResourceStore : createResourceStore)({ backend, ...(config.resourceLimits === undefined ? {} : { limits: config.resourceLimits }) }));
+        const created = unwrap((dimensionalViews ? createStandardDimensionalViewResourceStore : dimensional ? createStandardDimensionalResourceStore : desktop ? createStandardDesktopResourceStore : createResourceStore)({ backend, ...(config.resourceLimits === undefined ? {} : { limits: config.resourceLimits }) }));
         store = created.store;
-        const { renderer } = unwrap((dimensional ? createVirglStandardDimensionalAsyncRenderer : desktop ? createVirglStandardShadowSamplerAsyncRenderer : asynchronous ? createVirglAsyncRenderer : createVirglStateRenderer)({ gl: config.gl, shaderBridge: config.shaderBridge,
+        const { renderer } = unwrap((dimensionalViews ? createVirglStandardDimensionalViewAsyncRenderer : dimensional ? createVirglStandardDimensionalAsyncRenderer : desktop ? createVirglStandardShadowSamplerAsyncRenderer : asynchronous ? createVirglAsyncRenderer : createVirglStateRenderer)({ gl: config.gl, shaderBridge: config.shaderBridge,
           ...(desktop ? { uniformAccess: created.uniformAccess, imageAccess: created.imageAccess } : {}),
           resources: store, bindings: created.bindings, ...(asynchronous ? { asyncAccess: created.asyncAccess, ...(config.jobLimits === undefined ? {} : { jobLimits: config.jobLimits }), ...(config.drawLimits === undefined ? {} : { drawLimits: config.drawLimits }) } : {}), ...(config.stateLimits === undefined ? {} : { limits: config.stateLimits }) }));
         return Object.freeze({ store, renderer, bindings: created.bindings, ...(asynchronous ? { asyncAccess: created.asyncAccess } : {}) });
