@@ -253,7 +253,7 @@ export async function runAcceptance({WasmVirglSubmitProof,createVirglStandardDim
   try{
     c.truth(fixtures.length>0,'selected original dimensional fixtures');
     for(const seed of fault?seeds.slice(0,1):seeds)for(const f of fixtures)await runCase(WasmVirglSubmitProof,createVirglStandardDimensionalDepthViewSubmitBridge,native,bridge,c,f,seed,report,{fault,boundaries});
-    
+
     c.equal(native.getError(),native.NO_ERROR,'zero final dimensional view native errors');report.status='passed';
     report.summary={status:'passed',gpu,runs:report.runs.length,schedules:seeds,assertions:c.assertions};return report;
   }finally{report.assertions=c.assertions;report.attacks=c.attacks;}
