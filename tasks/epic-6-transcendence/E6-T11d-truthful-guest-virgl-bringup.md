@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47, E6-T11d48, E6-T11d49, E6-T11d50, E6-T11d51, E6-T11d52, E6-T11d53, E6-T11d54, E6-T11d55, E6-T11d56, E6-T11d57, E6-T11d58, E6-T11d59, E6-T11d60]
-blocked_on: E6-T11d60
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47, E6-T11d48, E6-T11d49, E6-T11d50, E6-T11d51, E6-T11d52, E6-T11d53, E6-T11d54, E6-T11d55, E6-T11d56, E6-T11d57, E6-T11d58, E6-T11d59, E6-T11d60, E6-T11d61]
+blocked_on: E6-T11d61
 estimate: S
 risk: high
 capstone: false
@@ -768,3 +768,19 @@ sealed readiness is `evidence/virgl-production-readiness/dimensional-depth-view-
 This leaves the production parent blocked on the atomic retained consumer D60.
 No production capability, actual Linux graphics or measured MIPS follows from
 storage-only proof. All137 prior PRs and both native stack identities are held.
+
+### 2026-10-12 — worker — verified dimensional depth views; comparison compiler gap
+
+D60 is independently verified at04ab18042036bf0ab19864bbe38e787dd4aadf48
+and published asPR538 abovePR537 in the unchanged native stack500. At that
+exact clean head, the actual D57 compiler refuses16 original cube/array
+comparison TEX/TXQ programs in both stages while six existing controls pass.
+Exact repro:
+`node /tmp/wasmvm-dimensional-shadow-readiness.mjs 04ab18042036bf0ab19864bbe38e787dd4aadf48 /tmp/wasmvm-dimensional-shadow-gap-04ab1804`.
+Whole inputs/responses, source/module pins and append-only publication custody
+are sealed in`evidence/virgl-production-readiness/dimensional-shadow-compiler-gap/`
+(manifest`b4e2f002125e4420a3d1497069d35b9ce0d46238bb90e0cfca4f2c2601ff9adb`).
+E6-T11d61 is the ordered S compiler boundary. Later selected comparison
+consumers, dimensional surfaces, mandatory transform feedback and coherent
+production Linux/control/submit/scanout integration remain independently gated.
+No new positive capset, Mesa/Hyprland rendering or MIPS result is inferred.
