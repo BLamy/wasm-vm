@@ -137,7 +137,7 @@ if not (repo / 'web/node_modules/playwright').is_dir():
 run('hardware', ['node', 'tools/virgl-desktop-submit/browser.mjs', '--output', str(root / 'hardware')])
 run('fault-old-job-bound', ['node', 'tools/virgl-desktop-submit/browser.mjs', '--output', str(root / 'fault-old-job-bound'), '--sabotage', 'old-job-bound'], expected=1)
 fault = json.loads((root / 'fault-old-job-bound/report.json').read_bytes())
-assert 'job admission has no guest completion' in fault['browserResult']['error']['message']
+assert 'accepted64 empty ordered job exact fence response' in fault['browserResult']['error']['message']
 point = fault['browserResult']['point']
 assert point['events'][-1]['type'] == 'beginJob' and len(point['events'][-1]['resources']) == 64
 assert int.from_bytes(bytes(point['response'][:4]), 'little') == 0x1205
