@@ -145,12 +145,20 @@ impl Q {
         Self::with_desktop(false)
     }
     fn with_desktop(desktop: bool) -> Self {
+        Self::with_profile(desktop, false)
+    }
+    fn layered() -> Self {
+        Self::with_profile(true, true)
+    }
+    fn with_profile(desktop: bool, dimensional: bool) -> Self {
         let mut machine = Machine::new(RAM);
         machine.enable_plic();
         machine.enable_virtio_slots(None);
         let host = Rc::new(RefCell::new(Host::default()));
         let mail = Submit3dMailbox::new();
-        let install = if desktop {
+        let install = if dimensional {
+            Machine::enable_virtio_gpu_standard_dimensional_submit3d_proof
+        } else if desktop {
             Machine::enable_virtio_gpu_standard_desktop_submit3d_proof
         } else {
             Machine::enable_virtio_gpu_submit3d_proof
@@ -357,6 +365,9 @@ impl Q {
         );
     }
 }
+
+#[path = "virtio_gpu_submit3d/dimensional.rs"]
+mod dimensional;
 
 #[test]
 fn submit3d_portable_fresh_dma_fences_and_destroy() {

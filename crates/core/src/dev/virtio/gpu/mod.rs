@@ -726,6 +726,24 @@ impl VirtioGpu {
         (device, state)
     }
 
+    /// Selected original layered RGBA8 control and one ordered layered exchange.
+    #[cfg(feature = "virgl-control-proof")]
+    pub fn new_with_standard_dimensional_submit3d_proof_state(
+        frame_sink: Box<dyn FrameSink>,
+        control_sink: Box<dyn control3d::Control3dSink>,
+        submit_sink: Box<dyn submit3d::Submit3dSink>,
+        mailbox: submit3d::Submit3dMailbox,
+    ) -> (Self, Rc<RefCell<GpuState>>) {
+        let (device, state) = Self::new_with_sink_state(frame_sink);
+        let mut selected = state.borrow_mut();
+        selected.control3d = Some(control3d::Control3dState::new_standard_dimensional(
+            control_sink,
+        ));
+        selected.submit3d = Some(submit3d::Submit3dState::new_layered(submit_sink, mailbox));
+        drop(selected);
+        (device, state)
+    }
+
     /// Explicit proof-only global scanout assembly; ordinary and submit-only devices stay unchanged.
     #[cfg(feature = "virgl-control-proof")]
     pub fn new_with_scanout3d_proof_state(
@@ -5083,6 +5101,7 @@ pub(crate) fn submit3d_dma(
     bus: &mut SystemBus,
     exchange: &submit3d::Submit3dExchange,
     output: Option<&[u8]>,
+    layers: Option<(u32, u32)>,
 ) -> Result<Vec<u8>, control3d::Control3dError> {
     use control3d::Control3dError as E;
     let generation = state
@@ -5102,6 +5121,7 @@ pub(crate) fn submit3d_dma(
         s.submit3d.as_ref().ok_or(E::InvalidParameter)?.dma_spans(
             exchange,
             &s.control3d.as_ref().ok_or(E::InvalidParameter)?.snapshot(),
+            layers,
         )?
     };
     if output.is_some_and(|bytes| bytes.len() != length)

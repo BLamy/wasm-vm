@@ -19,6 +19,8 @@ pub const MAX_RESOURCE_BYTES: u64 = 4 * 1024 * 1024;
 pub const MAX_GPU_BYTES: u64 = 32 * 1024 * 1024;
 pub const MAX_BACKING_BYTES: u64 = 32 * 1024 * 1024;
 pub const MAX_TEXTURE_SIZE: u32 = 16_384;
+pub const MAX_TEXTURE_3D_SIZE: u32 = 2_048;
+pub const MAX_ARRAY_LAYERS: u32 = 2_048;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Control3dId {
@@ -43,14 +45,27 @@ pub struct Resource3dMetadata {
 
 impl Resource3dMetadata {
     /// Same bounded resource classes as the verified renderer; no GL dependency.
-    fn sizes(self, desktop_resources: bool) -> Result<(u64, u64), Control3dError> {
-        if self.width == 0
-            || self.height == 0
-            || self.depth != 1
-            || self.array_size != 1
-            || self.nr_samples != 0
-            || self.flags != 0
-        {
+    fn sizes(
+        self,
+        desktop_resources: bool,
+        dimensional_resources: bool,
+    ) -> Result<(u64, u64), Control3dError> {
+        if self.width == 0 || self.height == 0 || self.nr_samples != 0 || self.flags != 0 {
+            return Err(Control3dError::InvalidParameter);
+        }
+        if dimensional_resources && matches!(self.target, 3 | 4 | 7) {
+            self.dimensional_extent(0)?;
+            let mut bytes = 0;
+            for level in 0..=self.last_level {
+                let (width, height, layers) = self.dimensional_extent(level)?;
+                bytes += u64::from(width) * u64::from(height) * u64::from(layers) * 4;
+                if bytes > MAX_RESOURCE_BYTES {
+                    return Err(Control3dError::OutOfMemory);
+                }
+            }
+            return Ok((bytes, bytes));
+        }
+        if self.depth != 1 || self.array_size != 1 {
             return Err(Control3dError::InvalidParameter);
         }
         let (bytes, staging) = match (self.target, self.format, self.bind) {
@@ -112,16 +127,66 @@ impl Resource3dMetadata {
 
     /// Accepted metadata is immutable; admission chooses its historical or
     /// selected profile. DMA always uses original public bytes, never padding.
-    pub(super) fn transfer_extent(self, level: u32) -> Result<(u32, u32, u32), Control3dError> {
+    pub(super) fn transfer_extent(
+        self,
+        level: u32,
+    ) -> Result<(u32, u32, u32, u32), Control3dError> {
         if self.target == 0 {
             if level != 0 {
                 return Err(Control3dError::InvalidParameter);
             }
-            return Ok((self.width, self.height, 1));
+            return Ok((self.width, self.height, 1, 1));
+        }
+        if matches!(self.target, 3 | 4 | 7) {
+            let (width, height, layers) = self.dimensional_extent(level)?;
+            return Ok((width, height, layers, 4));
         }
         let (public_pixel, _) = image2d_format(self.format, self.bind)?;
         let (width, height) = self.mip_extent(level)?;
-        Ok((width, height, public_pixel))
+        Ok((width, height, 1, public_pixel))
+    }
+
+    fn dimensional_extent(self, level: u32) -> Result<(u32, u32, u32), Control3dError> {
+        let bad = Control3dError::InvalidParameter;
+        let roles = 10 | (1 << 18) | (1 << 20);
+        if self.format != 67
+            || self.bind & 10 == 0
+            || self.bind & !roles != 0
+            || self.depth == 0
+            || self.array_size == 0
+        {
+            return Err(bad);
+        }
+        let size = match self.target {
+            3 if self.array_size == 1 && self.depth <= MAX_TEXTURE_3D_SIZE => MAX_TEXTURE_3D_SIZE,
+            4 if self.depth == 1 && self.array_size == 6 && self.width == self.height => {
+                MAX_TEXTURE_SIZE
+            }
+            7 if self.depth == 1 && self.array_size <= MAX_ARRAY_LAYERS => MAX_TEXTURE_SIZE,
+            _ => return Err(bad),
+        };
+        let largest =
+            self.width
+                .max(self.height)
+                .max(if self.target == 3 { self.depth } else { 1 });
+        if self.width == 0
+            || self.height == 0
+            || self.width > size
+            || self.height > size
+            || self.last_level > 31 - largest.leading_zeros()
+            || level > self.last_level
+        {
+            return Err(bad);
+        }
+        Ok((
+            (self.width >> level).max(1),
+            (self.height >> level).max(1),
+            if self.target == 3 {
+                (self.depth >> level).max(1)
+            } else {
+                self.array_size
+            },
+        ))
     }
 }
 
@@ -384,6 +449,7 @@ impl Control3dSnapshot {
 pub(crate) struct Control3dState {
     sink: Box<dyn Control3dSink>,
     desktop_resources: bool,
+    dimensional_resources: bool,
     epoch: u64,
     next_generation: u64,
     next_backing_generation: u64,
@@ -397,15 +463,23 @@ pub(crate) struct Control3dState {
 
 impl Control3dState {
     pub(crate) fn new(sink: Box<dyn Control3dSink>) -> Self {
-        Self::with_resource_profile(sink, false)
+        Self::with_resource_profile(sink, false, false)
     }
     pub(crate) fn new_standard_desktop(sink: Box<dyn Control3dSink>) -> Self {
-        Self::with_resource_profile(sink, true)
+        Self::with_resource_profile(sink, true, false)
     }
-    fn with_resource_profile(sink: Box<dyn Control3dSink>, desktop_resources: bool) -> Self {
+    pub(crate) fn new_standard_dimensional(sink: Box<dyn Control3dSink>) -> Self {
+        Self::with_resource_profile(sink, true, true)
+    }
+    fn with_resource_profile(
+        sink: Box<dyn Control3dSink>,
+        desktop_resources: bool,
+        dimensional_resources: bool,
+    ) -> Self {
         Self {
             sink,
             desktop_resources,
+            dimensional_resources,
             epoch: 1,
             next_generation: 1,
             next_backing_generation: 1,
@@ -627,7 +701,8 @@ impl Control3dState {
                 {
                     return Err(Control3dError::InvalidResourceId);
                 }
-                let (logical, gpu) = metadata.sizes(self.desktop_resources)?;
+                let (logical, gpu) =
+                    metadata.sizes(self.desktop_resources, self.dimensional_resources)?;
                 let max_resources = if self.desktop_resources {
                     MAX_DESKTOP_RESOURCES
                 } else {
@@ -677,7 +752,7 @@ impl Control3dState {
                 } else {
                     let (logical, gpu) = self.resources[index]
                         .metadata
-                        .sizes(self.desktop_resources)?;
+                        .sizes(self.desktop_resources, self.dimensional_resources)?;
                     self.send(Control3dOperation::UnrefResource { resource })?;
                     self.resources.remove(index);
                     for context in &mut self.contexts {

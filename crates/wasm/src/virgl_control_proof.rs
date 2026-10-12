@@ -535,13 +535,19 @@ pub struct WasmVirglSubmitProof {
 impl WasmVirglSubmitProof {
     #[wasm_bindgen(constructor)]
     pub fn new(callback: Function, proof_enabled: bool) -> Result<WasmVirglSubmitProof, JsError> {
-        Self::assemble(callback, proof_enabled, false)
+        Self::assemble(callback, proof_enabled, false, false)
     }
 
     /// Explicit selected desktop fixture; ordinary WasmLinux remains unchanged.
     #[wasm_bindgen(js_name = standardDesktop)]
     pub fn standard_desktop(callback: Function) -> Result<WasmVirglSubmitProof, JsError> {
-        Self::assemble(callback, true, true)
+        Self::assemble(callback, true, true, false)
+    }
+
+    /// Isolated original layered allocation/DMA fixture; no production capability.
+    #[wasm_bindgen(js_name = standardDimensional)]
+    pub fn standard_dimensional(callback: Function) -> Result<WasmVirglSubmitProof, JsError> {
+        Self::assemble(callback, true, true, true)
     }
 
     pub fn layout(&self) -> Result<JsValue, JsError> {
@@ -670,6 +676,86 @@ impl WasmVirglSubmitProof {
             .map_err(|_| JsError::new("Reentrant proof access"))?;
         machine
             .submit3d_scatter(&exchange, bytes)
+            .map_err(transport_error)
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    #[wasm_bindgen(js_name = gatherLayeredInput)]
+    pub fn gather_layered_input(
+        &self,
+        epoch: &str,
+        sequence: &str,
+        exchange_sequence: &str,
+        resource_id: u32,
+        resource_generation: &str,
+        backing_generation: &str,
+        offset: &str,
+        row_bytes: u32,
+        row_stride: u32,
+        row_count: u32,
+        layer_stride: u32,
+        layer_count: u32,
+    ) -> Result<Uint8Array, JsError> {
+        let exchange = exchange(
+            epoch,
+            sequence,
+            exchange_sequence,
+            resource_id,
+            resource_generation,
+            backing_generation,
+            offset,
+            row_bytes,
+            row_stride,
+            row_count,
+        )?;
+        let mut machine = self
+            .inner
+            .machine
+            .try_borrow_mut()
+            .map_err(|_| JsError::new("Reentrant proof access"))?;
+        let bytes = machine
+            .submit3d_gather_layered(&exchange, layer_stride, layer_count)
+            .map_err(transport_error)?;
+        Ok(owned(&bytes))
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    #[wasm_bindgen(js_name = scatterLayeredOutput)]
+    pub fn scatter_layered_output(
+        &self,
+        epoch: &str,
+        sequence: &str,
+        exchange_sequence: &str,
+        resource_id: u32,
+        resource_generation: &str,
+        backing_generation: &str,
+        offset: &str,
+        row_bytes: u32,
+        row_stride: u32,
+        row_count: u32,
+        layer_stride: u32,
+        layer_count: u32,
+        bytes: &[u8],
+    ) -> Result<(), JsError> {
+        let exchange = exchange(
+            epoch,
+            sequence,
+            exchange_sequence,
+            resource_id,
+            resource_generation,
+            backing_generation,
+            offset,
+            row_bytes,
+            row_stride,
+            row_count,
+        )?;
+        let mut machine = self
+            .inner
+            .machine
+            .try_borrow_mut()
+            .map_err(|_| JsError::new("Reentrant proof access"))?;
+        machine
+            .submit3d_scatter_layered(&exchange, layer_stride, layer_count, bytes)
             .map_err(transport_error)
     }
 
@@ -845,12 +931,24 @@ impl WasmVirglSubmitProof {
 }
 
 impl WasmVirglSubmitProof {
-    fn assemble(callback: Function, proof_enabled: bool, desktop: bool) -> Result<Self, JsError> {
+    fn assemble(
+        callback: Function,
+        proof_enabled: bool,
+        desktop: bool,
+        dimensional: bool,
+    ) -> Result<Self, JsError> {
         let mut machine = Machine::new(RAM_BYTES);
         machine.enable_plic();
         machine.enable_virtio_slots(None);
         let mailbox = Submit3dMailbox::new();
-        let (_, gpu) = if desktop {
+        let (_, gpu) = if dimensional {
+            machine.enable_virtio_gpu_standard_dimensional_submit3d_proof(
+                Box::new(NullSink),
+                Box::new(JsControlSink(callback.clone())),
+                Box::new(JsSubmitSink(callback)),
+                mailbox.clone(),
+            )
+        } else if desktop {
             machine.enable_virtio_gpu_standard_desktop_submit3d_proof(
                 Box::new(NullSink),
                 Box::new(JsControlSink(callback.clone())),

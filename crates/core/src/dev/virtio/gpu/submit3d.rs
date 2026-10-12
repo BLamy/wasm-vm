@@ -299,9 +299,20 @@ pub(crate) struct Submit3dState {
     pub pending: Option<PendingSubmit3d>,
     next_sequence: u64,
     counters: Submit3dCounters,
+    layered_dma: bool,
 }
 impl Submit3dState {
     pub fn new(sink: Box<dyn Submit3dSink>, mailbox: Submit3dMailbox) -> Self {
+        Self::with_layered_dma(sink, mailbox, false)
+    }
+    pub fn new_layered(sink: Box<dyn Submit3dSink>, mailbox: Submit3dMailbox) -> Self {
+        Self::with_layered_dma(sink, mailbox, true)
+    }
+    fn with_layered_dma(
+        sink: Box<dyn Submit3dSink>,
+        mailbox: Submit3dMailbox,
+        layered_dma: bool,
+    ) -> Self {
         mailbox.revoke();
         Self {
             sink,
@@ -309,6 +320,7 @@ impl Submit3dState {
             pending: None,
             next_sequence: 1,
             counters: Submit3dCounters::default(),
+            layered_dma,
         }
     }
     pub fn snapshot(&self) -> Submit3dSnapshot {
@@ -429,6 +441,7 @@ impl Submit3dState {
         &self,
         exchange: &Submit3dExchange,
         current: &Control3dSnapshot,
+        layers: Option<(u32, u32)>,
     ) -> Result<(Vec<(u64, usize)>, usize), Control3dError> {
         let p = self
             .pending
@@ -478,7 +491,14 @@ impl Submit3dState {
             .backing
             .as_ref()
             .ok_or(Control3dError::InvalidParameter)?;
-        row_spans(exchange.rows, entries)
+        if let Some((stride, count)) = layers {
+            if !self.layered_dma {
+                return Err(Control3dError::InvalidParameter);
+            }
+            layered_row_spans(exchange.rows, stride, count, entries)
+        } else {
+            row_spans(exchange.rows, entries)
+        }
     }
 }
 
@@ -533,6 +553,72 @@ pub(crate) fn row_spans(
         }
         if left != 0 {
             return Err(bad);
+        }
+    }
+    Ok((spans, tight as usize))
+}
+
+/// One ordered exchange covers the entire layered plane set. Checked logical
+/// offsets remain monotone even when rows/layers have padding; the SG cursor
+/// advances once instead of rescanning every entry for every row.
+fn layered_row_spans(
+    rows: Submit3dRows,
+    layer_stride: u32,
+    layer_count: u32,
+    entries: &[BackingEntry],
+) -> Result<(Vec<(u64, usize)>, usize), Control3dError> {
+    let bad = Control3dError::InvalidParameter;
+    if rows.row_bytes == 0
+        || rows.row_count == 0
+        || rows.row_count > super::control3d::MAX_TEXTURE_SIZE
+        || rows.row_stride < rows.row_bytes
+        || layer_count == 0
+        || layer_count > super::control3d::MAX_ARRAY_LAYERS
+        || layer_stride < rows.row_stride.checked_mul(rows.row_count).ok_or(bad)?
+    {
+        return Err(bad);
+    }
+    let tight = u64::from(rows.row_bytes) * u64::from(rows.row_count) * u64::from(layer_count);
+    let end = rows
+        .offset
+        .checked_add(u64::from(layer_count - 1) * u64::from(layer_stride))
+        .and_then(|v| v.checked_add(u64::from(rows.row_count - 1) * u64::from(rows.row_stride)))
+        .and_then(|v| v.checked_add(u64::from(rows.row_bytes)))
+        .ok_or(bad)?;
+    let total: u64 = entries.iter().map(|e| u64::from(e.length)).sum();
+    if tight > MAX_EXCHANGE_BYTES || end > total {
+        return Err(bad);
+    }
+    let mut spans = Vec::new();
+    // Positive row bytes and the dense-byte bound also bound this allocation.
+    let max_spans = rows.row_count as usize * layer_count as usize + entries.len();
+    spans
+        .try_reserve_exact(max_spans)
+        .map_err(|_| Control3dError::OutOfMemory)?;
+    let (mut index, mut prefix) = (0, 0);
+    for layer in 0..layer_count {
+        for row in 0..rows.row_count {
+            let mut start = rows.offset
+                + u64::from(layer) * u64::from(layer_stride)
+                + u64::from(row) * u64::from(rows.row_stride);
+            // Every row start is strictly before the prevalidated complete end.
+            while prefix + u64::from(entries[index].length) <= start {
+                prefix += u64::from(entries[index].length);
+                index += 1;
+            }
+            let mut left = u64::from(rows.row_bytes);
+            while left > 0 {
+                let entry = entries[index];
+                let skip = start - prefix;
+                let take = left.min(u64::from(entry.length) - skip);
+                spans.push((entry.addr.checked_add(skip).ok_or(bad)?, take as usize));
+                start += take;
+                left -= take;
+                if left > 0 {
+                    prefix += u64::from(entry.length);
+                    index += 1;
+                }
+            }
         }
     }
     Ok((spans, tight as usize))
@@ -674,12 +760,12 @@ fn validate_transfer(t: Transfer3d, r: &AcceptedResource3d) -> Result<(), Contro
     let bad = Control3dError::InvalidParameter;
     let m = r.metadata;
     let b = t.box_;
-    let (width, height, scale) = m.transfer_extent(t.level)?;
+    let (width, height, layers, scale) = m.transfer_extent(t.level)?;
     if m.bind == 524_288
         || b.width == 0
         || b.height == 0
-        || b.depth != 1
-        || b.z != 0
+        || b.depth == 0
+        || u64::from(b.z) + u64::from(b.depth) > u64::from(layers)
         || u64::from(b.x) + u64::from(b.width) > u64::from(width)
         || u64::from(b.y) + u64::from(b.height) > u64::from(height)
     {
@@ -701,15 +787,20 @@ fn validate_transfer(t: Transfer3d, r: &AcceptedResource3d) -> Result<(), Contro
     }
     let end = t
         .offset
-        .checked_add(u64::from(b.height - 1) * u64::from(row_stride))
+        .checked_add(u64::from(b.depth - 1) * u64::from(layer))
+        .and_then(|v| v.checked_add(u64::from(b.height - 1) * u64::from(row_stride)))
         .and_then(|v| v.checked_add(u64::from(row_bytes)))
         .ok_or(bad)?;
     let backing = r.backing.ok_or(bad)?;
     if end > backing.byte_length
         || end - t.offset > MAX_EXCHANGE_BYTES
-        || u64::from(row_bytes) * u64::from(b.height) > MAX_EXCHANGE_BYTES
+        || u64::from(row_bytes) * u64::from(b.height) * u64::from(b.depth) > MAX_EXCHANGE_BYTES
     {
         return Err(bad);
     }
     Ok(())
 }
+
+#[cfg(all(test, feature = "std"))]
+#[path = "submit3d_dimensional_tests.rs"]
+mod dimensional_span_tests;

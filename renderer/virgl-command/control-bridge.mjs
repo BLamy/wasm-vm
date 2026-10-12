@@ -1,7 +1,7 @@
 /** Explicit proof-only VirtIO bridges. Ordinary device negotiation is unchanged. */
-import { createResourceStore, createWebGL2TransferBackend, createStandardDesktopResourceStore, createStandardPackedDepthTransferBackend } from './resources.mjs';
+import { createResourceStore, createWebGL2TransferBackend, createStandardDesktopResourceStore, createStandardPackedDepthTransferBackend, createStandardDimensionalResourceStore, createStandardDimensionalTransferBackend } from './resources.mjs';
 import { createRetainedScanout, normalizeScanoutEvent } from './scanout.mjs';
-import { createVirglStateRenderer, createVirglAsyncRenderer, createVirglStandardShadowSamplerAsyncRenderer } from './state.mjs';
+import { createVirglStateRenderer, createVirglAsyncRenderer, createVirglStandardShadowSamplerAsyncRenderer, createVirglStandardDimensionalAsyncRenderer } from './state.mjs';
 
 const ok = () => Object.freeze({ ok: true });
 const fail = (code, message) => Object.freeze({ ok: false, error: Object.freeze({ code, message }) });
@@ -151,23 +151,26 @@ export function createVirglSubmitBridge(options) { return createBridge(options, 
 /** Selected desktop submission owners; construction grants no production capsets. */
 export function createVirglStandardDesktopSubmitBridge(options) { return createBridge(options, true, false, true); }
 
+/** Selected original layered storage/DMA; shader/surface consumers stay gated. */
+export function createVirglStandardDimensionalSubmitBridge(options) { return createBridge(options, true, false, true, true); }
+
 export function createVirglScanoutBridge(options) { return createBridge(options, true, true); }
 
-function createBridge(options, asynchronous, scanoutEnabled = false, desktop = false) {
+function createBridge(options, asynchronous, scanoutEnabled = false, desktop = false, dimensional = false) {
   let owners = null;
   try {
     const config = record(options, ['gl', 'shaderBridge', 'resourceLimits', 'stateLimits', ...(asynchronous ? ['transport', 'jobLimits', 'drawLimits'] : []), ...(scanoutEnabled ? ['presenter'] : [])], ['gl', 'shaderBridge', ...(asynchronous ? ['transport'] : []), ...(scanoutEnabled ? ['presenter'] : [])]);
     if (scanoutEnabled) { const methods = config.presenter; need(methods && typeof methods === 'object', 'invalid-parameter', 'Missing presenter capability.');
       for (const key of ['rebind','enqueueOwned','inspect','readPixels','dispose']) need(typeof methods[key] === 'function', 'invalid-parameter', 'Invalid presenter capability.'); }
-    const transport = asynchronous ? record(config.transport, ['gatherInput', 'scatterOutput', 'complete']) : null;
+    const transport = asynchronous ? record(config.transport, ['gatherInput', 'scatterOutput', 'complete', ...(dimensional ? ['gatherLayeredInput', 'scatterLayeredOutput'] : [])]) : null;
     if (asynchronous) for (const key of Object.keys(transport)) need(typeof transport[key] === 'function', 'invalid-parameter', 'Missing transport method.');
     const fresh = () => {
-      const { backend } = unwrap((desktop ? createStandardPackedDepthTransferBackend : createWebGL2TransferBackend)(config.gl));
+      const { backend } = unwrap((dimensional ? createStandardDimensionalTransferBackend : desktop ? createStandardPackedDepthTransferBackend : createWebGL2TransferBackend)(config.gl));
       let store;
       try {
-        const created = unwrap((desktop ? createStandardDesktopResourceStore : createResourceStore)({ backend, ...(config.resourceLimits === undefined ? {} : { limits: config.resourceLimits }) }));
+        const created = unwrap((dimensional ? createStandardDimensionalResourceStore : desktop ? createStandardDesktopResourceStore : createResourceStore)({ backend, ...(config.resourceLimits === undefined ? {} : { limits: config.resourceLimits }) }));
         store = created.store;
-        const { renderer } = unwrap((desktop ? createVirglStandardShadowSamplerAsyncRenderer : asynchronous ? createVirglAsyncRenderer : createVirglStateRenderer)({ gl: config.gl, shaderBridge: config.shaderBridge,
+        const { renderer } = unwrap((dimensional ? createVirglStandardDimensionalAsyncRenderer : desktop ? createVirglStandardShadowSamplerAsyncRenderer : asynchronous ? createVirglAsyncRenderer : createVirglStateRenderer)({ gl: config.gl, shaderBridge: config.shaderBridge,
           ...(desktop ? { uniformAccess: created.uniformAccess, imageAccess: created.imageAccess } : {}),
           resources: store, bindings: created.bindings, ...(asynchronous ? { asyncAccess: created.asyncAccess, ...(config.jobLimits === undefined ? {} : { jobLimits: config.jobLimits }), ...(config.drawLimits === undefined ? {} : { drawLimits: config.drawLimits }) } : {}), ...(config.stateLimits === undefined ? {} : { limits: config.stateLimits }) }));
         return Object.freeze({ store, renderer, bindings: created.bindings, ...(asynchronous ? { asyncAccess: created.asyncAccess } : {}) });
@@ -225,6 +228,20 @@ function createBridge(options, asynchronous, scanoutEnabled = false, desktop = f
         current.backing.transportGeneration === resource.backing.transportGeneration, 'invalid-parameter', 'Stale renderer or transport backing identity.');
       const rows = request.layout;
       for (const value of [rows.offset, rows.rowBytes, rows.rowStride, rows.rowCount, rows.tightBytes]) uint(value);
+      const layered = Object.hasOwn(rows, 'layerCount');
+      if (layered) {
+        need(dimensional, 'invalid-parameter', 'Layered DMA requires its selected native transport.');
+        uint(rows.layerStride); uint(rows.layerCount);
+        need(rows.rowCount > 0 && rows.rowCount <= 16384 && rows.rowBytes > 0 && rows.rowStride >= rows.rowBytes &&
+          rows.layerCount > 0 && rows.layerCount <= 2048 && rows.rowStride * rows.rowCount <= 0xffffffff &&
+          rows.layerStride >= rows.rowStride * rows.rowCount && rows.rowBytes * rows.rowCount <= 4194304 &&
+          rows.tightBytes === rows.rowBytes * rows.rowCount * rows.layerCount && rows.tightBytes <= 4194304 &&
+          rows.offset + (rows.layerCount - 1) * rows.layerStride + (rows.rowCount - 1) * rows.rowStride + rows.rowBytes <= resource.backing.byteLength,
+        'invalid-parameter', 'Invalid layered DMA row layout.');
+        return [job.epoch, job.sequence, nextHex(job.exchangeSequence), resource.transport.id, resource.transport.generation,
+          resource.backing.transportGeneration, BigInt(rows.offset).toString(16).padStart(16, '0'), rows.rowBytes, rows.rowStride, rows.rowCount,
+          rows.layerStride, rows.layerCount];
+      }
       need(rows.rowCount > 0 && rows.rowBytes > 0 && rows.rowStride >= rows.rowBytes && rows.tightBytes === rows.rowBytes * rows.rowCount &&
         rows.tightBytes <= 4194304 && rows.offset + (rows.rowCount - 1) * rows.rowStride + rows.rowBytes <= resource.backing.byteLength,
         'invalid-parameter', 'Invalid dense DMA row layout.');
@@ -257,7 +274,7 @@ function createBridge(options, asynchronous, scanoutEnabled = false, desktop = f
           pending = null; return Object.freeze({ ok: true, status: job.cancelled ? 'cancelled' : 'completed', result: state.result });
         }
         if (state.status === 'needs-input') {
-          const args = dmaArgs(job, state.request), input = bytes(transport.gatherInput(...args));
+          const args = dmaArgs(job, state.request), input = bytes(args.length === 12 ? transport.gatherLayeredInput(...args) : transport.gatherInput(...args));
           need(input.byteLength === state.request.layout.tightBytes, 'bridge-poisoned', 'Rust gather returned the wrong byte count.');
           job.exchangeSequence = args[2];
           unwrap(owners.renderer.provideInput(job.job, state.request.token, input));
@@ -267,7 +284,7 @@ function createBridge(options, asynchronous, scanoutEnabled = false, desktop = f
           // Validate the current exchange immediately before the irreversible bus scatter.
           const current = unwrap(owners.renderer.step(job.job));
           need(current.status === 'needs-output' && current.request === request, 'bridge-poisoned', 'Output request changed before scatter.');
-          const result = transport.scatterOutput(...args, new Uint8Array(bytes(request.bytes)));
+          const result = args.length === 12 ? transport.scatterLayeredOutput(...args, new Uint8Array(bytes(request.bytes))) : transport.scatterOutput(...args, new Uint8Array(bytes(request.bytes)));
           need(result === undefined, 'bridge-poisoned', 'Scatter must return synchronously.');
           job.exchangeSequence = args[2];
           unwrap(owners.renderer.acknowledgeOutput(job.job, request.token));
