@@ -132,7 +132,7 @@ The native recording has302 canonical queue records,294 selected response-guard
 and machine-digest points, and827 retired queue-loop instruction traces; it
 claims no Linux desktop execution. The compiler's finest segments cover both
 changed executable Rust lines and all15 dynamic operands, with eight explicit
-syntax waivers and no gaps. The mask/height/profile predicates execute139/122/114
+syntax waivers and no gaps. The profile/height/mask predicates execute139/122/114
 times and the admission body91 times. The original warm reporter waived an
 inline guard too broadly; the separately retained supplemental check and final
 cold gate correct that reporting gap without a runtime edit.
