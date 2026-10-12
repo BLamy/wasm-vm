@@ -688,7 +688,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.027039000394` [E6-T11d48](epic-6-transcendence/E6-T11d48-shadow-shaders.md) — Translate original 2D shadow texture operations with owned view controls *(deps: E6-T11d47)*
 - [x] `525.027039000396` [E6-T11d49](epic-6-transcendence/E6-T11d49-shadow-samplers.md) — Execute original 2D shadow sampler state against owned native depth views *(deps: E6-T11d48)*
 - [x] `525.027039000396` [E6-T11d57](epic-6-transcendence/E6-T11d57-dimensional-texture-shaders.md) — Compile original volume, cube and array texture shaders for native GLES3 *(deps: E6-T11d56, E6-T11d48, E6-T11d49)*
-- [~] `525.027039000396` [E6-T11d59](epic-6-transcendence/E6-T11d59-dimensional-depth-transfers.md) — Allocate and transfer original cube and array depth resources *(deps: E6-T11d58, E6-T11d56, E6-T11d54)*
+- [?] `525.027039000396` [E6-T11d59](epic-6-transcendence/E6-T11d59-dimensional-depth-transfers.md) — Allocate and transfer original cube and array depth resources *(deps: E6-T11d58, E6-T11d56, E6-T11d54)*
 - [x] `525.027039000397` [E6-T11d50](epic-6-transcendence/E6-T11d50-resource-capacity.md) — Retain the compositor's original resources within a bounded native store *(deps: E6-T11d49)*
 - [x] `525.027039000397` [E6-T11d52](epic-6-transcendence/E6-T11d52-desktop-submit-bridge.md) — Connect selected desktop storage and shader jobs to VirtIO submission ownership *(deps: E6-T11d51, E6-T11b2)*
 - [x] `525.027039000397` [E6-T11d54](epic-6-transcendence/E6-T11d54-native-image-layouts.md) — Carry qualified 2D image layouts and mip DMA through native desktop queues *(deps: E6-T11d53, E6-T11d50)*

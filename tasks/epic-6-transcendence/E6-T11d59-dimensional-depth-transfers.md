@@ -3,7 +3,7 @@ id: E6-T11d59
 epic: 6
 title: Allocate and transfer original cube and array depth resources
 priority: 525.027039000396
-status: in-progress
+status: implemented
 depends_on: [E6-T11d58, E6-T11d56, E6-T11d54]
 estimate: S
 risk: high
@@ -138,3 +138,96 @@ D59 is the sole active allocation and layered DMA contract. Its D58/D56/D54
 dependencies are independently verified. Preserve historical admission,
 exercise one selected native/host path, then record the prescribed final
 pristine-clone submission and hand it to a separate adversarial critic.
+
+### 2026-10-12 — worker — implemented; sealed pristine-clone submission
+
+Runtime and browser sources froze at
+`ac6e174bbf86b94494b4213c7637f559f1b5ca8b`; the final acceptance harness head is
+`ca9481ebe67cb0678939996d5f796552c6a1bf3b`. The original scrubbed pristine clone
+completed all14 native/wasm format, clippy, recorded native test and target-build
+commands at the runtime freeze. Two historical browser servers then revealed
+incomplete hardcoded module lists. Harness-only commits4208c7b8 and ca9481eb
+repair those servers and preserve the complete already-passing recordings.
+The pristine checkout, clean before/after, source digests and empty runtime/
+dependency diff are explicitly authenticated at each continuation. Hardware,
+wrong-layer sabotage and historical dimensional-view recordings ran at4208c7b8;
+the remaining historical-image path, final audits, normal build and built demo
+ran at ca9481eb. The receipt names every carried command and its original process
+and source boundary; these are preserved results, not claims of re-execution.
+
+Exact final commands and raw custody:
+
+```sh
+python3 tools/virgl-dimensional-depth/cold.py /tmp/wasmvm-dimensional-depth-cold-ca9481eb /tmp/wasmvm-dimensional-depth-cold-4208c7b8
+# Inside the same pristine checkout, with scrubbed inherited build environment:
+make verify-E6-T11d59
+python3 tools/virgl-dimensional-depth/seal.py /tmp/wasmvm-dimensional-depth-cold-ca9481eb evidence/virgl-dimensional-depth/worker
+```
+
+The final cold report has exit0 and empty cleanBefore/cleanAfter at ca9481eb.
+`cold/recording/receipt.json` lists all44 exact commands, environments, original
+heads and expected exits. Receipt SHA256:
+`404537349eced26a90d267a66b79e502cc3954294560732dd8d3735798051491`.
+Original failed server runs remain at
+`/tmp/wasmvm-dimensional-depth-cold-ac6e174b` and
+`/tmp/wasmvm-dimensional-depth-cold-4208c7b8`, with completed runs retained in
+the final recording's carried provenance. No runtime code changed after freeze.
+
+`evidence/virgl-dimensional-depth/worker/` contains1884 complete reopened
+bodies in10 transport parts of at most16MiB, reconstructing154412607 compressed
+bytes. Manifest SHA256:
+`109f0a3a84cbf48bca63f28206a568cd0f7b78019e26202d96b8890870504a55`;
+index: `307c8af400fd4750e9b9984ef304bcdba141e630cd09d7b56d9fd39040a68130`;
+archive: `231e8733d09642346013efd0e06b5937ae457e2fa114ccfdaca3da41d7886e22`.
+The packer initially used indexing instead of joining a Path when checking its
+parts; its preserved failed attempt is
+`/tmp/wasmvm-d59-seal-failed-ca9481eb`. The one-line packaging correction was
+syntax checked and exercised by the successful seal/reopen above. The corrected
+sealing source is itself an indexed body. Product acceptance bytes are unchanged.
+
+The recording demonstrates42 actual selected Wasm queue cases across seeds27449,
+84131 and176129, both original targets, all five formats, roles1/8/9, legal NPOT
+mips and exceptional floating fields. The independent audit reopens630 complete
+observations and49770 original pixels, with1223669 native calls. All three upload
+forms and inverse forms preserve live post-attachment SG dirt, public depth/
+stencil fields, canonical ignored bits and complete padded RAM guards. Actual
+GPU-only face/layer overwrites determine inverse output. One PBO/fence precedes
+CPU collection; layered scatter precedes used-ring/IRQ publication. Fifteen
+synchronous controls,30 real WAIT_FAILED cases,92 physical driver faults,
+30 lifetime/revocation cases,115 budget neighbors,215 metadata refusals and110
+span refusals end with zero owned native objects and budgets. The retained native
+guest instruction traces and state digests cover original queue publication.
+
+The deliberately shifted native source layer finishes the GPU copy, fence,
+collection and original DMA before the unchanged oracle rejects UN16 pixel0:
+expected24780, observed24498. That expected exit1 is recorded independently from
+the happy exit0. Finest V8 coverage classifies401 executed changed regions,
+3 unchanged HELD regions and2 static waivers with no needs-evidence region;
+LLVM classifies49 executed runtime lines and81 static/declarative waivers with
+no uncovered operands. Complete source/served bodies and per-case GL calls are
+retained. The predecessor reader authenticates6612 unchanged D58/D56/D54 bodies.
+
+The normal committed default build omits every proof export. Its built demo
+passes127/0 with zero console/page/request errors and a screenshot. Frozen
+default Wasm SHA256:
+`d45b575207e0035b5c518698e7b6793b2bf12da635531723fad70813a5956c36`.
+An isolated exact-byte staging tree preserves304 previously qualified boot/
+site files and changes only the default Wasm, roadmap and service-worker stamp.
+Wrangler publishes it to Cloudflare production deployment
+`03475afc-90aa-4f18-bb8c-1a38c2fc30a4` at ca9481eb; the successful API result
+and complete staging/live response bodies are sealed separately under
+`evidence/virgl-dimensional-depth/deployment/`. The canonical live site also
+passes127/0, zero browser errors, proof exports absent and the D59 partial pip;
+its exact Wasm matches the frozen build. The original live runner, publisher,
+staging recipe and screenshot are archive members.
+
+The deployment seal reopens514 bodies,49647418 compressed bytes. Manifest:
+`370e3aa117f95484a690360032397fe9ecdf01ca1a16e2d543cdd89eacb8f52c`;
+index: `151dcce0cf8bda58ed7b35bcbe7cbd422b87226971c59ca3a82c0d3adfcd1a26`;
+archive: `1430cb5dd5613d5e9f969e77b0f0819fb9394a179c3600775d74b73004731245`.
+
+This is a selected depth allocation/transfer claim only. Historical admission,
+new dimensional depth consumers and production capabilities remain closed.
+Actual Linux Mesa/Hyprland acceleration and measured MIPS remain parent work.
+The separate adversarial verifier must decide the status; the worker does not
+claim verified.

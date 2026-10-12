@@ -50,7 +50,7 @@ with archive.open('rb') as stream:
         chunk=stream.read(16*1024*1024)
         if not chunk:break
         name='recording.tar.gz.part-'+str(len(parts)).zfill(4);(output/name).write_bytes(chunk);parts.append(dict(path=name,bytes=len(chunk),sha256=sha(chunk)))
-assert sha(b''.join((output[p['path']]).read_bytes() for p in parts))==manifest['archiveSha256']
+assert sha(b''.join((output/p['path']).read_bytes() for p in parts))==manifest['archiveSha256']
 manifest['archiveParts']=parts;manifest['guestInstructionTraces']=True
 archive.unlink()
 (output/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n');print(json.dumps(manifest))
