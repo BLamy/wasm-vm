@@ -3,7 +3,7 @@ id: E6-T11d52
 epic: 6
 title: Connect selected desktop storage and shader jobs to VirtIO submission ownership
 priority: 525.027039000397
-status: pending
+status: in-progress
 depends_on: [E6-T11d51, E6-T11b2]
 estimate: S
 risk: high
