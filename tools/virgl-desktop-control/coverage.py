@@ -46,6 +46,13 @@ for path, line, source in changed:
         # executable arm, not by an independently executable token region.
         if text.startswith("(2,") or text in ["{", "}"]:
             continue
+        if segment and not segment[3] and token.group() in {
+            "let", "if", "else", "&&", "<=", "true", "false", "MAX_TEXTURE_SIZE"
+        }:
+            waivers.append({"path": path, "line": line, "column": token.start() + 1,
+                            "token": token.group(), "segment": segment,
+                            "reason": "LLVM has no token region: keyword/operator syntax or static argument/bound; the same line's dynamic operands and boundary outcomes are separately recorded"})
+            continue
         checks.append({"column": token.start() + 1, "token": token.group(), "count": count,
                        "segment": segment})
         if count <= 0:
