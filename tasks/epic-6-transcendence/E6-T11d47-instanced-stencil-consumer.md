@@ -229,3 +229,33 @@ facts carry only by their unchanged authenticated boundaries. The diff is not
 verified until a fresh critic fails to refute it. No complete API/caps, actual
 Mesa/compositor, production worker/scanout/demo/deployment or300MIPS claim follows.
 The existing native stacks499/500 and every published PR remain intact and open.
+
+### 2026-10-11 — fresh independent verifier — predictions and promoted critic freeze
+
+This critic did not implement D47 and has made no runtime or PR-stack edit.
+Sixteen falsifiable predictions were written before opening concrete worker
+evidence in `evidence/virgl-instanced-stencil/verifier/predictions.json`, initial
+SHA256 `cd602ecbdb725761c3703f7fce8af57872c74d0d8bda35683275ef74d4cf1734`.
+All41944 worker and97179 D45/D46 predecessor logical bodies were reopened
+against their published digests, together with900 frozen D47 source identities.
+The1357-member exact-predecessor native guard recording also authenticated.
+Independent full hot/cold original-byte, native-state, completion, custody and
+finest-coverage audits are retained under that verifier directory.
+
+The original acceptance was independently rerun at worker submission
+`d88235ea7d16b2475ff9d6c7d96cc361d5589c3e` and passed all268 cases/290 frames,
+with9370 primary native calls. Fresh receipt SHA256
+`6df627e5d1c4f1dcfed35481274401464ba9b2003b671a7013b7f5b4fae40cb6`.
+Both worker hot/cold finest audits independently reconstruct344 positive
+partitions and16 exact unchanged predecessor fallback waivers, zero unexplained.
+
+The promoted `make verify-E6-T11d47-critic` adds three independent lifetime
+schedules and an original overlapping seven-instance u32 restart-strip case
+crossing divisor3 position inputs and divisor2 packed SNORM inputs. Its original
+packet/input inverse predicted112 native calls and center RGBA
+`(0.73046875,0.5,-0.4990215301513672,1)`, S8=119 before any native execution;
+full predictions are in `novel-predictions.json`. The gate also physically
+sabotages completed primitive-major order against the unchanged original-byte
+oracle. Only verifier tests/harness/evidence are promoted; runtime remains
+byte-identical to3cbb041b. Status stays implemented until the fresh final
+critic run, custody seal and adversarial verdict are complete.
