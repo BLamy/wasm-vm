@@ -39,9 +39,12 @@ export async function runAcceptance(options){
   report.uniforms=[];report.unused=[];
   for(const [stage,body]of [['vertex',pair.vertex],['fragment',pair.fragment]]){
    const prefix=stage==='vertex'?'vs':'fs';
+   need(!body.metadata.samplers.some(u=>u.index===15)&&!body.metadata.shadowUniforms.some(u=>u.index===15),'unused original declarations own no metadata binding');
+   const absent=['samp','shadmask','shadadd'].map(kind=>prefix+kind+'15');
+   for(const name of absent)need(gl.getUniformLocation(program,name)===null,'unused native binding absent '+name);
+   report.unused.push({stage,index:15,names:absent,metadataAbsent:true,nativeLocationsAbsent:true});
    for(const uniform of [...body.metadata.samplers,...body.metadata.shadowUniforms,...body.metadata.textureQueries]){
     const location=gl.getUniformLocation(program,uniform.name);
-    if(uniform.index===15){need(location===null,'declared unused shadow sampler optimizes away');report.unused.push({stage,...uniform});continue;}
     need(location!==null,'stage-owned native location '+uniform.name);const index=gl.getUniformIndices(program,[uniform.name])[0],type=gl.getActiveUniforms(program,[index],gl.UNIFORM_TYPE)[0],size=gl.getActiveUniforms(program,[index],gl.UNIFORM_SIZE)[0];
     need(size===1&&type===(uniform.type==='vec4'?gl.FLOAT_VEC4:uniform.type==='int'?gl.INT:gl.SAMPLER_2D_SHADOW),'reflected exact stage-owned type');
     const value=uniform.type==='vec4'?views[stage].map(lane=>uniform.semantic==='SHADOW_MASK'?Number(lane<4):Number(lane===5)):uniform.type==='int'?3:units[stage];

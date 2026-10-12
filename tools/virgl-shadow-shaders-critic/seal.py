@@ -23,7 +23,8 @@ def main(directory,output):
         if log.endswith(b'Independent shadow critic acceptance completed.\n'):break
         time.sleep(.01)
     else:raise ValueError('fresh critic recording incomplete')
-    names=['authentication.json','original-response-audit.json','coverage-fine.json','worker-original-physical-audit.json','environment-stack-audit.json','novel-physical-audit.json','independent/audit.json']
+    names=['authentication.json','original-response-audit.json','original-token-audit.json','coverage-fine.json','worker-original-physical-audit.json','environment-stack-audit.json','novel-physical-audit.json','independent/audit.json']
+    if (directory/'carry.json').exists():names.append('carry.json')
     audits={name:json.loads((directory/name).read_bytes()) for name in names}
     assert all(a['status']=='passed' for a in audits.values())
     report=json.loads((directory/'independent/hardware/report.json').read_bytes());assert report['status']=='passed' and report['gitHead']==head and not report['trackedChanges']

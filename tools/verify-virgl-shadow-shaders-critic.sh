@@ -14,6 +14,9 @@ git diff --check
 for file in tools/virgl-shadow-shaders-critic/*.mjs; do node --check "$file"; done
 python3 -m py_compile tools/virgl-shadow-shaders-critic/*.py
 bash -n tools/verify-virgl-shadow-shaders-critic.sh
+if [[ -n ${VIRGL_SHADOW_CRITIC_CARRY_DIR:-} ]]; then
+python3 tools/virgl-shadow-shaders-critic/carry.py "$VIRGL_SHADOW_CRITIC_CARRY_DIR" "$critic_evidence"
+else
 python3 tools/virgl-shadow-shaders-critic/authenticate.py "$critic_evidence"
 node tools/virgl-shadow-shaders-critic/audit-worker.mjs "$critic_evidence"
 python3 tools/virgl-shadow-shaders-critic/audit.py coverage "$critic_evidence"
@@ -34,6 +37,8 @@ for mode in critic allocations; do
 done
 bash renderer/virgl-shader/build.sh wasm
 NODE_V8_COVERAGE="$critic_evidence/node-coverage" node tools/virgl-shadow-shaders-critic/compiler.mjs audit "$critic_evidence/independent"
+fi
+node tools/virgl-shadow-shaders-critic/tokens.mjs "$critic_evidence"
 node tools/virgl-shadow-shaders-critic/browser.mjs --inputs "$critic_evidence/independent" --output "$critic_evidence/independent/hardware"
 python3 tools/virgl-shadow-shaders-critic/audit.py novel "$critic_evidence"
 set +x
