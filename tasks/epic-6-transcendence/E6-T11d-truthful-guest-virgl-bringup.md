@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47, E6-T11d48]
-blocked_on: E6-T11d48
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47, E6-T11d48, E6-T11d49]
+blocked_on: E6-T11d49
 estimate: S
 risk: high
 capstone: false
@@ -596,3 +596,14 @@ not relax the decoder or execute original sampler state. A dependent consumer
 qualification follows its fresh independent verdict; complete API/caps, actual
 Mesa/compositor, production worker/scanout, demo and measured throughput remain
 later gates. The explicit human graphics request continues this ordered chain.
+
+### 2026-10-12 — worker — shadow compiler verified; sampler consumer gap
+
+D48 is verified at `4e924b694715ec40e653e2e0c87ecc49c929d040`; PR526 extends
+the existing stack500 with every prior identity/order/head/base preserved. The
+actual original shadow stages now compile, but both renderer metadata parses
+and all eight original comparison-mode sampler functions refuse. Exact repro:
+`node evidence/virgl-production-readiness/standard-shadow-sampler-gap.mjs 4e924b694715ec40e653e2e0c87ecc49c929d040 evidence/virgl-production-readiness/standard-shadow-sampler-gap.json`.
+Full bytes/responses and source/generated digests are retained in that record.
+Ordered S/high prerequisite D49 fixes the native sampler consumer before this
+production gate resumes; no guest/capset/deployment/performance claim is made.
