@@ -3,7 +3,7 @@ id: E6-T11d52
 epic: 6
 title: Connect selected desktop storage and shader jobs to VirtIO submission ownership
 priority: 525.027039000397
-status: implemented
+status: verified
 depends_on: [E6-T11d51, E6-T11b2]
 estimate: S
 risk: high
@@ -163,3 +163,136 @@ real Wasm/native ordered submission boundary, while historical profiles hold.
 This proves no complete GLES API, positive capset, actual Linux Mesa/Hyprland,
 production worker/scanout or300MIPS. A fresh adversarial verifier must interrogate
 all evidence and changed hunks before setting this task verified.
+
+### 2026-10-12 — fresh verifier — VERDICT: verified
+
+VERDICT: verified
+
+I did not implement this task. I read AGENTS, the complete task and scoped diff
+before recorded states, then wrote falsifiable P1–P11 predictions in the sealed
+`predictions.md` (SHA256
+`9a03e8553f32da2f4c0e5db7127ae11dd9449542368a19dcb47b05e36279bbc5`).
+The submission is75b6a0d7, base0660eebf; authoritative runtime/harness evidence
+is the final cold17433963 recording, not the explicitly partial warm run.
+
+- **P1 authentication — HELD.** Forward streaming reopened all1022 worker
+  bodies with exact lengths/digests and all50929 bodies in the six D49/D50/D51
+  worker/verifier archives, including safely resolved hardlinks. Dependency
+  seals match base Git; carried runtime and qualified compiler pins match
+  current sources. `authentication.json` and verifier manifest
+  `/workerSeal` and `/dependencySeals` retain every identity. No stale or
+  missing body was found; unchanged facts remain held.
+- **P2 original lifetimes — HELD.** Independently decoded all original controls
+  and reconstructed IDs, metadata, generation and logical/GPU accounting.
+  Compositor56 and kmscube8 complete, with resource peaks24/4; glmark2 admits33
+  and refuses format17/event3025 before publication, peak25. Worker
+  `cold/recording/hardware/report.json` lines4206540,4216437,4307432, SHA256
+  `e1ede9d9b62c3291b49496c70f24685c9bad1f2739aa0eab826e3bb7197239a2`;
+  reopened observations are `held-points.jsonl` lines2–4. No demand remains.
+- **P3 selected64/65 — HELD.** Resource164 returns0x1201 with control ownership
+  unchanged; the actual callback carries resources100..163. Begin leaves
+  used130 and pending ownership; later completion advances used131, writes
+  the original fenced0x1100 reply and preserves the40-byte guard. Canonical
+  native digests were independently recomputed, with132 guard/digest points
+  and657 retired guest-loop instructions. Worker `native-submit.stderr`
+  lines391,394,397 under `cold/recording/`, SHA256
+  `8e02c13800a2bb30198a0068b5045a18b3a4d0fc2e10f0f63eccdae51c33f6cc`;
+  `held-points.jsonl` line1. No demand remains.
+- **P4 historical/disabled routing — HELD.** Final cold submits an actual
+  historical16-owner job and refuses a forged17-owner envelope before renderer
+  admission (`held-points.jsonl` line5). Fresh disabled construction has no
+  control/submission snapshot or VIRGL, returns0x1200 with no host event;
+  both deliberately mismatched selections retain16-owner/depth limits and
+  unchanged allocation state (`fresh-points.jsonl` line2). No demand remains.
+- **P5 refusal boundaries — HELD.** Fresh schedules0x9135,0xbf02,0x764d repeat
+  every listed attack: metadata/backing/generation/foreign/epoch/count limits,
+  tightened quota, malformed envelopes, retained refusal and full rollback.
+  Complete request/reply/ring/guard/owner captures support the explicit errors
+  in `fresh/report.json` at `/browserResult/result`, SHA256
+  `48d57c90aadd81aaa8fa75c5c15d341512197d98e7cad001ac959383dafb580d`;
+  `fresh-points.jsonl` line1. No demand remains.
+- **P6 bounded novel ownership attack — HELD.** An actual64-owner callback
+  accepts a transfer of owner163. Subsequent caller mutation removes all
+  envelope resources and corrupts context, metadata, backing and transfer;
+  guest wire/fence and source bytes also change. Completion still contains
+  the original full-width fence and literal DMA bytes021f476d95b5dffb.
+  Ordered unref/recreate changes generation0x41→0x42; new DMA isf1d3ad8967431d03,
+  the old output stays unchanged, and old generation/epoch requests refuse
+  without owner mutation. Native/host ownership remains64 and disposal owns
+  zero GL objects. `promoted-exact/report.json` line36335, SHA256
+  `b42013b78d60a6d81754f75b3d3a4fe98a75b1c975c471b789867191bd9fd3df`;
+  `fresh-points.jsonl` line2. No demand remains.
+- **P7 hardware execution — HELD.** Three fresh schedules execute nine
+  original draws through267945 actual GL calls and independently check3072
+  pixels against literal quadrant planes, SHA256
+  `f244dc2a7a61960cbad1f603961e4f324ec4f444367ca589744b3e60531f22e9`.
+  Full call records show readback after signaled fences, no `finish`, later
+  guest completion and no output-derived DMA initialization. Fresh report
+  above and `fresh-points.jsonl` line1; unchanged cold observations are
+  `held-points.jsonl` line6. No demand remains.
+- **P8 asynchronous failure/reset — HELD.** Fresh cancel, pending reset and
+  reconfiguration preserve old rings/replies, reject late completions and
+  dispose pending fences. Injected WAIT_FAILED on a real fence reports code6 with
+  gpuComplete=false, poisons until reset and recreates the selected depth
+  store; final disposal has zero objects. `fresh-points.jsonl` line1 and
+  `held-points.jsonl` line7, including cold hardware point4343139. No demand
+  remains.
+- **P9 changed-hunk sufficiency — HELD.** Raw profiles cover mapped operands
+  in13 changed native body lines; all30 changed JS dynamic token ranges have
+  positive V8 counts, including selected64 and historical16 normalization.
+  All26 native static/type declarations are waived because they have no
+  dynamic operand. Moved Wasm assembly is byte-equal to its old body aside
+  from the selector, and selected/true/false branches have actual queue
+  outcomes. Feature/config/docs declarations do not add a dynamic path.
+  There is no uncovered behavioral hunk. `held-points.jsonl` line8 pins raw
+  native coverage `fbc74d5637623f4f094b53d390b6ead7d67461eb1cb04f3cf4978877d14e0553`
+  and V8 coverage `27034e6925fa38ad5546519c52ecc662de1066bda2db2c3523aa9c72d1708cb6`.
+- **P10 cold/default provenance — HELD.** The final clean scrubbed clone at
+  17433963 passes all25 prescribed commands; its full sources match final
+  acceptance. Receipt digest1813019b…2b195 is pinned in `held-points.jsonl`
+  line9. Authenticated local/live default captures show127/0, absent proof
+  exports and existing live scalar/partial disabled graphics pips; served
+  committed Wasm remains62a698e3…3230a. Deployment report SHA256
+  `b24390bf0267e8ffc6c9674f646649449dc3ae7b77e37ab18482e25bf5b8db81`.
+  Pure test promotion retains the frozen runtime authority under incremental
+  policy; no portability finding warrants another cold clone or deployment.
+- **P11 sabotage — HELD.** Serving only the old16 snapshot bound still receives
+  the actual64 native owners, but produces0x1205, intact40-byte guard, no host
+  pending job and64 unchanged allocations. Both the acceptance oracle and
+  promoted immutable-transfer oracle independently fail their expected0x1100
+  response assertion. `sabotage/report.json` line4802 SHA256
+  `2be650563685a5d85c6645da0faf49ecd9cc16b4fb02e9d12aafd783bade83ac`;
+  `promoted-oracle-sabotage/report.json` line4797 SHA256
+  `26b34f1fbdf34010ad3a6e58bc5a77747e985317d586495c060dee59a4bf6783`.
+  Served fault body isd4de7539…041ad; normal source was untouched. No demand
+  remains.
+
+**SUITE:** Promoted `renderer/virgl-command/tests/desktop-submit-critic.mjs`
+and wired it into normal desktop acceptance plus source capture in test-only
+commit `3aa457775627311bb517b1e35b53687cbae9f5b7`. It asserts disabled/mismatched
+routing, immutable64-owner acceptance and64th-owner reuse, with2784 assertions
+and1472 actual GL calls. The full touched browser harness passes with the exact
+three-file overlay matching that commit; a subsequent clean exact-head
+regression passes at3aa45777. `source-bindings.json` binds the full captured
+bodies and committed source bytes. Both changed modules pass `node --check`.
+No implementation changed, so unrelated accepted walls remain carried.
+
+Fresh commands and complete executed source/results are retained for
+`authenticate.py`, `interrogate.py`, `browser-critic.mjs` normal and old-job-bound
+sabotage, `browser-critic-only.mjs` normal and sabotage,
+`node tools/virgl-desktop-submit/browser.mjs --output target/evidence/virgl-desktop-submit-verifier-20261012/promoted-harness`,
+`interrogate_fresh.py` and `seal_verifier.py`. Initial verifier-only auditor
+and Python3.9 sealing corrections retain their original source/error bodies;
+neither was a product contradiction.
+
+`evidence/virgl-desktop-submit/verifier/` seals651 complete reopened bodies,
+327006403 decoded bytes, in a31325365-byte archive. Point citations above are
+archive member paths; each point retains its complete originating body/digest.
+
+- manifest `a8a8af0143470aa100066d751e7fd11ef4de24f1a8b2a5311f05ef76599e97dc`
+- index `7c21fd96b97e801291e2f240b2feaf1d8034e602ac440677fff8aa15a876387b`
+- archive `c213534e2439ffc27729edb8a2a7197a32412e3a429ba637a8c6533ea1922967`
+
+This verdict covers the selected proof assembly and ownership boundary only.
+It grants no production graphics, scanout, actual Linux guest or300MIPS claim.
+Task-policy and regenerated queue checks accompany the verdict commit.
