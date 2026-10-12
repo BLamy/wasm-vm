@@ -20,7 +20,8 @@ clean_before = subprocess.check_output(["git", "status", "--porcelain"], cwd=clo
 assert not clean_before
 env = {k: v for k, v in os.environ.items() if not k.startswith(("CARGO_", "RUST", "LLVM_PROFILE", "VIRGL_", "NODE_", "npm_", "CHROME"))}
 proof = clone / "target/evidence/native-image-cold"
-command = [sys.executable, "tools/virgl-native-image/verify.py", "--output", str(proof)]
+env["VIRGL_NATIVE_IMAGE_EVIDENCE_DIR"] = str(proof)
+command = ["make", "verify-E6-T11d54"]
 result = subprocess.run(command, cwd=clone, env=env, capture_output=True, timeout=1800)
 output.mkdir(parents=True)
 (output / "cold.stdout").write_bytes(result.stdout)
@@ -28,7 +29,7 @@ output.mkdir(parents=True)
 if proof.exists():
     shutil.copytree(proof, output / "recording")
 clean_after = subprocess.check_output(["git", "status", "--porcelain"], cwd=clone, text=True)
-report = {"schema": "native-image-cold-v1", "head": head, "clone": str(clone), "command": command,
+report = {"schema": "native-image-cold-v1", "head": head, "clone": str(clone), "command": command, "evidenceOutput": str(proof),
           "cleanBefore": clean_before, "cleanAfter": clean_after, "exitCode": result.returncode,
           "receiptSha256": hashlib.sha256((proof / "receipt.json").read_bytes()).hexdigest() if (proof / "receipt.json").exists() else None}
 (output / "report.json").write_text(json.dumps(report, indent=2) + "\n")

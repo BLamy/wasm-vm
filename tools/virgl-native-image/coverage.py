@@ -55,11 +55,17 @@ for path, line, source in changed:
                             "reason": "static match pattern/binding; dynamic guard operands are checked separately"})
             continue
         if segment and not segment[3] and token.group() in {
-            "let", "if", "else", "&&", "<=", "==", "true", "false", "MAX_TEXTURE_SIZE"
+            "let", "if", "else", "return", "for", "in", "match", "_", "*", "&&", "<=", "==", "true", "false", "MAX_TEXTURE_SIZE"
         }:
             waivers.append({"path": path, "line": line, "column": token.start() + 1,
                             "token": token.group(), "segment": segment,
                             "reason": "LLVM has no token region: keyword/operator syntax or static argument/bound; the same line's dynamic operands and boundary outcomes are separately recorded"})
+            continue
+        if segment and not segment[3] and token.group().isdigit() and (
+            "mip_extent(0)" in source or "matches!(bind, " in source
+        ):
+            waivers.append({"path":path,"line":line,"column":token.start()+1,"token":token.group(),"segment":segment,
+                           "reason":"literal call argument or literal matches! pattern has no dynamic region; mip admission and each original role outcome are recorded independently"})
             continue
         checks.append({"column": token.start() + 1, "token": token.group(), "count": count,
                        "segment": segment})

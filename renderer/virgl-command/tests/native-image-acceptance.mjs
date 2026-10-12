@@ -30,6 +30,8 @@ function model(rig,layout,m,c,label) {
 }
 async function imageRun(Wasm,factory,gl,shaderBridge,c,layout,seed) {
   const rig=makeRig(Wasm,factory,gl,shaderBridge,c,seed),{q}=rig,src=specimen(layout,seed),states=[],planes=[];
+  const collect=q.collect.bind(q);
+  q.collect=entry=>{const result=collect(entry);result.responseGuard=hex(q.read(entry.responseAddress+24n,40));return result;};
   active(rig);
   await rig.expect('image context',context(1));
   await rig.expect('image create '+layout.format,packet(src.metadata));
@@ -88,7 +90,6 @@ async function imageRun(Wasm,factory,gl,shaderBridge,c,layout,seed) {
     entries:entries.map(([addr,length])=>({address:addr.toString(16),length})),records:q.records,
     events:rig.events,exchanges:rig.exchanges,completions:rig.completions,snapshot:rig.trace.snapshot(),commandTrace:q.vm.commandTrace(),
     memoryCheckpoint:layout.format===409?{memory:hex(q.read(q.base,q.vm.layout().ramBytes)),sha256:q.vm.machineDigest()}:null};
-  for(const r of result.records)r.responseGuard='a5'.repeat(40);
   window.__desktopActive=null;rig.dispose();return result;
 }
 async function boundaries(Wasm,Legacy,factory,oldFactory,gl,shaderBridge,c,layouts) {
