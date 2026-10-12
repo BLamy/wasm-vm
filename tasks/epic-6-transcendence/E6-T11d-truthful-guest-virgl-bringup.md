@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47, E6-T11d48, E6-T11d49, E6-T11d50, E6-T11d51, E6-T11d52]
-blocked_on: E6-T11d52
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47, E6-T11d48, E6-T11d49, E6-T11d50, E6-T11d51, E6-T11d52, E6-T11d53]
+blocked_on: E6-T11d53
 estimate: S
 risk: high
 capstone: false
@@ -637,3 +637,23 @@ manifest `c0e3e61ee34f77e48094fd901c318bb4fd90a1a1e1bc5340b1504e34f54b3eaa`.
 Ordered S/high D52 composes the verified control/store/consumer with real Wasm
 submission ownership. No complete API, positive capabilities, actual guest
 boot, production worker/scanout or300MIPS is claimed.
+
+### 2026-10-12 — worker — submission verified; native buffer-hint gap
+
+D52 is independently verified at59bf446955cc2b78b84d94fcd03cb3f3f4f1c230
+and published as open/draft PR530 on the existing stack500. The complete
+negative readiness matrix at that head sends identical descriptions through
+actual Wasm queues and the qualified hardware host store. Native control
+refuses uniform bind64 and combined bind112 before host callbacks/publication;
+the host allocates each64-byte original buffer. Full refusal state and GPU
+ownership remain unchanged; every allocation is disposed.
+
+The complete68-body recording is sealed in
+`evidence/virgl-production-readiness/native-buffer-role-gap/`, manifest
+00f3d741c0bee960f4c2839e922325963c80f21d802b7a480288657a6158e8e9.
+Its retained runner reproduces the exact0x1205 responses,359 hardware GL calls
+and zero browser errors. The same bounded matrix records additional image/mip
+admission gaps; no guest DMA, shader draw, Linux boot or production capability
+is claimed by this readiness run. Ordered S taskE6-T11d53 closes only original
+byte-addressed buffer hints and proves their actual uniform-fed GPU submission.
+The human's production graphics instruction continues this graphics chain.

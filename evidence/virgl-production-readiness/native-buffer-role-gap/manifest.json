@@ -1,0 +1,58 @@
+{
+  "schema": "selected-native-storage-negative-readiness-v1",
+  "sourceHead": "59bf446955cc2b78b84d94fcd03cb3f3f4f1c230",
+  "trackedChanges": [],
+  "status": "passed",
+  "command": [
+    "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+    "/tmp/wasmvm-selected-native-storage-readiness.mjs",
+    "--output",
+    "/tmp/wasmvm-selected-native-storage-readiness-verified"
+  ],
+  "recordCount": 68,
+  "completeBodies": true,
+  "decodedBytes": 12529039,
+  "index": {
+    "path": "records.json",
+    "sha256": "ac7d984aeb87341e1b169a14410b733593c3a64486e1f2d9bf5f17a7b0ca3051"
+  },
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 2698660,
+    "sha256": "2d7f61b9b143692dc46a1369d104446cfa6cf2ded86933c2fda2e52e43369b51"
+  },
+  "report": {
+    "path": "report.json",
+    "bytes": 408118,
+    "sha256": "6b70b791ae1cf68be436449652979e12a19e267bf7f3c6ef5b9ad104162f2619"
+  },
+  "runner": {
+    "bytes": 19635,
+    "sha256": "f833abc4510593714250e217924fe2170585bc865692e2852b731a820073378c",
+    "body": "readiness-runner.mjs"
+  },
+  "servedReadiness": {
+    "path": "renderer/virgl-command/tests/desktop-submit-acceptance.mjs",
+    "originalSha256": "084df4762f976e19fafb1088f867ab9da55e39f6f5ae6a07a5dbeb6c7bb2a3c1",
+    "servedSha256": "4fa005071af4fcdc93b02e9d6d07c30217ac119dd9ddcf04e2d0388ececcb9e6",
+    "body": "readiness-source.mjs"
+  },
+  "nativeGpuAllocations": true,
+  "actualLinuxGuest": false,
+  "productionAuthority": false,
+  "summary": {
+    "status": "passed",
+    "refusedNativeShapes": [
+      "uniform buffer",
+      "combined vertex index uniform buffer",
+      "RGBA8 complete mip chain",
+      "RG8 plane",
+      "RGB8 plane",
+      "floating RGBA plane",
+      "Z16 depth plane"
+    ],
+    "positiveHostShapes": 7,
+    "nativeCalls": 359,
+    "liveGuest3d": false
+  }
+}
