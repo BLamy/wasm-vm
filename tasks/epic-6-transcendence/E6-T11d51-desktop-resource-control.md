@@ -3,7 +3,7 @@ id: E6-T11d51
 epic: 6
 title: Carry original desktop resource controls through selected VirtIO ownership
 priority: 525.027039000398
-status: pending
+status: in-progress
 depends_on: [E6-T11d50]
 estimate: S
 risk: high
@@ -25,8 +25,8 @@ Do not call this narrow captured-resource envelope complete GLES support.
 
 ## Deterministic acceptance
 
-`make verify-E6-T11d51` records literal original RESOURCE_CREATE_3D/unref
-packets through a Machine's real virtqueue/service boundary. Authenticate and
+`make verify-E6-T11d51` records literal RESOURCE_CREATE_3D/unref packets reconstructed
+from the original Mesa fields through a Machine's real virtqueue/service boundary. Authenticate and
 retain complete original manifests/events and successful enter/return pairs.
 Exclude only the identified QEMU 2D bootstrap resource2/event10/flags1, with
 its complete pair retained. The selected envelope must carry all56 compositor
