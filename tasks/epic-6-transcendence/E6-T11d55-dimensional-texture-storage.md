@@ -3,7 +3,7 @@ id: E6-T11d55
 epic: 6
 title: Allocate and transfer original volume, cube and array RGBA8 resources
 priority: 525.027039000398
-status: pending
+status: in-progress
 depends_on: [E6-T11d54, E6-T11d50, E6-T11d20]
 estimate: S
 risk: high
@@ -109,3 +109,11 @@ continues production graphics ahead of unrelated general-queue work. Other
 format/target cross-products, actual sampler/surface consumers, native layout,
 truthful caps/API, Linux Mesa/Hyprland, production worker/scanout and measured
 MIPS remain ordered parent work; this slice grants none of those claims.
+
+### 2026-10-12 — worker — activated
+
+The selected dimensional RGBA8 allocation/DMA layout boundary is the sole active
+task. All three dependencies are independently verified. Use the recorded
+`make verify-E6-T11d55` acceptance, affected historical gates, one final scrubbed
+pristine clone and a separate critic. This starts no production capability or
+Linux guest rendering claim.
