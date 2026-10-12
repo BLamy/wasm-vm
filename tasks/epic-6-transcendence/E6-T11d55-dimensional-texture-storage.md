@@ -168,3 +168,33 @@ partial graphics pip; proof-only Wasm exports remain absent. Dimensional
 sampler/surface/scanout consumers, native control layout and positive production
 capsets stay gated. Actual Linux Mesa/Hyprland rendering and300MIPS remain
 successor claims. A fresh independent critic must adjudicate this submission.
+
+### 2026-10-12 — worker — publication proof gap
+
+The code and final pristine recording above are unchanged. Three attempts to
+publish the validated303-file bundle reached asset upload/header publication,
+then Cloudflare rejected the Function publish with exactly
+`Failed to publish your Function. Got error: Unknown internal error occurred.`
+Repros:
+
+- `bash tools/deploy-cloudflare.sh`
+- `npx --yes wrangler pages deploy web/dist --project-name wasm-vm --branch main --commit-dirty=true`
+- `npx --yes wrangler@4.148.0 pages deploy web/dist --project-name wasm-vm --branch main --commit-hash bae5df1f1973e93d331bc7662b3ce89bbc1c98ef --commit-dirty=true`
+
+All complete CLI outputs, validated deployment URL rewrites, the deployment
+list and current service-status response are retained in
+`evidence/virgl-dimensional-storage/deployment/`. The full original189MiB
+Omarchy snapshot and other unchanged boot artifacts passed their public digest
+checks; the two subsequent publishes reused the identical uploaded asset set.
+Wrangler4.149.0 and4.148.0 return the same server failure. No local Function or
+worker bundle was introduced by this slice. Pages is reported operational;
+the current status response does not establish the cause of this project error.
+Only the four owned staged URL rewrites were restored afterward.
+
+`node /tmp/wasmvm-dimensional-storage-live.mjs --output evidence/virgl-dimensional-storage/deployment/final --task E6-T11d55`
+confirms the existing live site still passes127/0 with zero errors, but its
+graphics evidence text remains D54 and the required D55 marker assertion fails.
+That negative capture retains full served bodies and the runner. This is a
+publication proof gap; no completed live deployment is claimed. The fresh
+critic should carry the held local results and identify the missing live proof
+without restarting the unchanged runtime gauntlet.
