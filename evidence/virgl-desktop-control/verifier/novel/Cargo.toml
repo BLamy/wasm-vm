@@ -1,0 +1,12 @@
+[package]
+name="desktop-control-critic"
+version="0.0.0"
+edition="2024"
+[features]
+default=["virgl-control-proof","gpu-trace","trace"]
+virgl-control-proof=[]
+gpu-trace=[]
+trace=[]
+zicsr-stub=[]
+[dependencies]
+wasm-vm-core={path="/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/crates/core",features=["virgl-control-proof","gpu-trace","trace"]}

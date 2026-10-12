@@ -1,0 +1,17 @@
+
+running 12 tests
+test control3d_budgets_are_bounded_before_publication ... ok
+test control3d_default_and_unnegotiated_devices_fail_closed ... ok
+test control3d_packet_boundaries_metadata_and_error_recovery ... ok
+test control3d_portable_cycles_owned_sg_and_id_reuse ... ok
+test control3d_reply_preflight_allocation_failure_reset_and_snapshot ... ok
+test control3d_sg_bounds_aliases_short_lists_and_atomicity ... ok
+test control3d_shared_2d_namespace_and_2d_fences_are_preserved ... ok
+test desktop_resources::desktop_control_byte_limits_are_separate_from_count ... ok
+test desktop_resources::desktop_control_generations_split_rings_and_reset ... ok
+test desktop_resources::desktop_control_metadata_roles_and_legacy_refusals ... ok
+test desktop_resources::desktop_control_original_mesa_lifetimes ... ok
+test desktop_resources::desktop_control_selected_counts_and_host_failure_rollback ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 97.36s
+

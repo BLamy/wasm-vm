@@ -1,0 +1,2398 @@
+{
+  "schema": "desktop-control-critic-coverage-v1",
+  "llvmSha256": "6f6d76e3b92285d53e9707f8c91e36a82acb5e6fd9dd94a738dbbbbd26eb6a56",
+  "changedLines": 68,
+  "bodyLinesIncludingMappedSignatureAndSyntax": 33,
+  "positiveMappedOperands": 120,
+  "staticLineWaivers": 35,
+  "exactUnmappedWaivers": 22,
+  "operands": [
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 65,
+      "column": 20,
+      "token": "desktop_resources",
+      "count": 26,
+      "segment": [
+        65,
+        20,
+        26,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 66,
+      "column": 24,
+      "token": "bind",
+      "count": 20,
+      "segment": [
+        66,
+        24,
+        20,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 66,
+      "column": 29,
+      "token": "&",
+      "count": 20,
+      "segment": [
+        66,
+        24,
+        20,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 66,
+      "column": 31,
+      "token": "10",
+      "count": 20,
+      "segment": [
+        66,
+        24,
+        20,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 66,
+      "column": 34,
+      "token": "!=",
+      "count": 20,
+      "segment": [
+        66,
+        24,
+        20,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 66,
+      "column": 37,
+      "token": "0",
+      "count": 20,
+      "segment": [
+        66,
+        24,
+        20,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 67,
+      "column": 24,
+      "token": "bind",
+      "count": 17,
+      "segment": [
+        67,
+        24,
+        17,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 67,
+      "column": 29,
+      "token": "&",
+      "count": 17,
+      "segment": [
+        67,
+        28,
+        17,
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 67,
+      "column": 31,
+      "token": "!",
+      "count": 17,
+      "segment": [
+        67,
+        28,
+        17,
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 67,
+      "column": 33,
+      "token": "10",
+      "count": 17,
+      "segment": [
+        67,
+        28,
+        17,
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 67,
+      "column": 39,
+      "token": "1",
+      "count": 17,
+      "segment": [
+        67,
+        28,
+        17,
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 67,
+      "column": 44,
+      "token": "18",
+      "count": 17,
+      "segment": [
+        67,
+        28,
+        17,
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 67,
+      "column": 51,
+      "token": "1",
+      "count": 17,
+      "segment": [
+        67,
+        28,
+        17,
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 67,
+      "column": 56,
+      "token": "20",
+      "count": 17,
+      "segment": [
+        67,
+        28,
+        17,
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 67,
+      "column": 61,
+      "token": "==",
+      "count": 17,
+      "segment": [
+        67,
+        28,
+        17,
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 67,
+      "column": 64,
+      "token": "0",
+      "count": 17,
+      "segment": [
+        67,
+        28,
+        17,
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 68,
+      "column": 24,
+      "token": "self",
+      "count": 15,
+      "segment": [
+        68,
+        24,
+        15,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 68,
+      "column": 29,
+      "token": "width",
+      "count": 15,
+      "segment": [
+        68,
+        24,
+        15,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 68,
+      "column": 35,
+      "token": "<=",
+      "count": 15,
+      "segment": [
+        68,
+        24,
+        15,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 68,
+      "column": 38,
+      "token": "MAX_TEXTURE_SIZE",
+      "count": 15,
+      "segment": [
+        68,
+        24,
+        15,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 69,
+      "column": 24,
+      "token": "self",
+      "count": 13,
+      "segment": [
+        69,
+        24,
+        13,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 69,
+      "column": 29,
+      "token": "height",
+      "count": 13,
+      "segment": [
+        69,
+        24,
+        13,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 71,
+      "column": 18,
+      "token": "u64",
+      "count": 67,
+      "segment": [
+        71,
+        18,
+        67,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 71,
+      "column": 23,
+      "token": "from",
+      "count": 67,
+      "segment": [
+        71,
+        18,
+        67,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 71,
+      "column": 28,
+      "token": "self",
+      "count": 67,
+      "segment": [
+        71,
+        28,
+        67,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 71,
+      "column": 33,
+      "token": "width",
+      "count": 67,
+      "segment": [
+        71,
+        28,
+        67,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 71,
+      "column": 40,
+      "token": "*",
+      "count": 67,
+      "segment": [
+        71,
+        38,
+        67,
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 71,
+      "column": 42,
+      "token": "u64",
+      "count": 67,
+      "segment": [
+        71,
+        38,
+        67,
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 71,
+      "column": 47,
+      "token": "from",
+      "count": 67,
+      "segment": [
+        71,
+        38,
+        67,
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 71,
+      "column": 52,
+      "token": "self",
+      "count": 67,
+      "segment": [
+        71,
+        38,
+        67,
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 71,
+      "column": 57,
+      "token": "height",
+      "count": 67,
+      "segment": [
+        71,
+        38,
+        67,
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 71,
+      "column": 65,
+      "token": "*",
+      "count": 67,
+      "segment": [
+        71,
+        38,
+        67,
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 71,
+      "column": 67,
+      "token": "4",
+      "count": 67,
+      "segment": [
+        71,
+        38,
+        67,
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 71,
+      "column": 70,
+      "token": "false",
+      "count": 67,
+      "segment": [
+        71,
+        38,
+        67,
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 74,
+      "column": 20,
+      "token": "desktop_resources",
+      "count": 3,
+      "segment": [
+        74,
+        20,
+        3,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 75,
+      "column": 24,
+      "token": "self",
+      "count": 2,
+      "segment": [
+        75,
+        24,
+        2,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 75,
+      "column": 29,
+      "token": "width",
+      "count": 2,
+      "segment": [
+        75,
+        24,
+        2,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 75,
+      "column": 35,
+      "token": "<=",
+      "count": 2,
+      "segment": [
+        75,
+        24,
+        2,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 75,
+      "column": 38,
+      "token": "MAX_TEXTURE_SIZE",
+      "count": 2,
+      "segment": [
+        75,
+        24,
+        2,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 76,
+      "column": 24,
+      "token": "self",
+      "count": 2,
+      "segment": [
+        76,
+        24,
+        2,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 76,
+      "column": 29,
+      "token": "height",
+      "count": 2,
+      "segment": [
+        76,
+        24,
+        2,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 78,
+      "column": 18,
+      "token": "u64",
+      "count": 21,
+      "segment": [
+        78,
+        18,
+        21,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 78,
+      "column": 23,
+      "token": "from",
+      "count": 21,
+      "segment": [
+        78,
+        18,
+        21,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 78,
+      "column": 28,
+      "token": "self",
+      "count": 21,
+      "segment": [
+        78,
+        28,
+        21,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 78,
+      "column": 33,
+      "token": "width",
+      "count": 21,
+      "segment": [
+        78,
+        28,
+        21,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 78,
+      "column": 40,
+      "token": "*",
+      "count": 21,
+      "segment": [
+        78,
+        38,
+        21,
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 78,
+      "column": 42,
+      "token": "u64",
+      "count": 21,
+      "segment": [
+        78,
+        38,
+        21,
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 78,
+      "column": 47,
+      "token": "from",
+      "count": 21,
+      "segment": [
+        78,
+        38,
+        21,
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 78,
+      "column": 52,
+      "token": "self",
+      "count": 21,
+      "segment": [
+        78,
+        38,
+        21,
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 78,
+      "column": 57,
+      "token": "height",
+      "count": 21,
+      "segment": [
+        78,
+        38,
+        21,
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 78,
+      "column": 65,
+      "token": "*",
+      "count": 21,
+      "segment": [
+        78,
+        38,
+        21,
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 78,
+      "column": 67,
+      "token": "4",
+      "count": 21,
+      "segment": [
+        78,
+        38,
+        21,
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 78,
+      "column": 70,
+      "token": "false",
+      "count": 21,
+      "segment": [
+        78,
+        38,
+        21,
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 303,
+      "column": 9,
+      "token": "Self",
+      "count": 35,
+      "segment": [
+        303,
+        9,
+        35,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 303,
+      "column": 15,
+      "token": "with_resource_profile",
+      "count": 35,
+      "segment": [
+        303,
+        9,
+        35,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 303,
+      "column": 37,
+      "token": "sink",
+      "count": 35,
+      "segment": [
+        303,
+        37,
+        35,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 306,
+      "column": 9,
+      "token": "Self",
+      "count": 8,
+      "segment": [
+        306,
+        9,
+        8,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 306,
+      "column": 15,
+      "token": "with_resource_profile",
+      "count": 8,
+      "segment": [
+        306,
+        9,
+        8,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 306,
+      "column": 37,
+      "token": "sink",
+      "count": 8,
+      "segment": [
+        306,
+        37,
+        8,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 311,
+      "column": 13,
+      "token": "desktop_resources",
+      "count": 43,
+      "segment": [
+        311,
+        13,
+        43,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 533,
+      "column": 22,
+      "token": "logical",
+      "count": 220,
+      "segment": [
+        533,
+        22,
+        220,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 533,
+      "column": 31,
+      "token": "gpu",
+      "count": 220,
+      "segment": [
+        533,
+        31,
+        220,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 533,
+      "column": 38,
+      "token": "metadata",
+      "count": 320,
+      "segment": [
+        533,
+        38,
+        320,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 533,
+      "column": 47,
+      "token": "sizes",
+      "count": 320,
+      "segment": [
+        533,
+        47,
+        320,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 533,
+      "column": 53,
+      "token": "self",
+      "count": 320,
+      "segment": [
+        533,
+        53,
+        320,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 533,
+      "column": 58,
+      "token": "desktop_resources",
+      "count": 320,
+      "segment": [
+        533,
+        53,
+        320,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 534,
+      "column": 21,
+      "token": "max_resources",
+      "count": 220,
+      "segment": [
+        534,
+        21,
+        220,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 534,
+      "column": 40,
+      "token": "self",
+      "count": 220,
+      "segment": [
+        534,
+        40,
+        220,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 534,
+      "column": 45,
+      "token": "desktop_resources",
+      "count": 220,
+      "segment": [
+        534,
+        40,
+        220,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 535,
+      "column": 21,
+      "token": "MAX_DESKTOP_RESOURCES",
+      "count": 179,
+      "segment": [
+        535,
+        21,
+        179,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 537,
+      "column": 21,
+      "token": "MAX_RESOURCES",
+      "count": 41,
+      "segment": [
+        537,
+        21,
+        41,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 539,
+      "column": 20,
+      "token": "self",
+      "count": 220,
+      "segment": [
+        539,
+        20,
+        220,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 539,
+      "column": 25,
+      "token": "resources",
+      "count": 220,
+      "segment": [
+        539,
+        20,
+        220,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 539,
+      "column": 35,
+      "token": "len",
+      "count": 220,
+      "segment": [
+        539,
+        34,
+        220,
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 539,
+      "column": 41,
+      "token": ">=",
+      "count": 220,
+      "segment": [
+        539,
+        34,
+        220,
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 539,
+      "column": 44,
+      "token": "max_resources",
+      "count": 220,
+      "segment": [
+        539,
+        34,
+        220,
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 539,
+      "column": 61,
+      "token": "gpu",
+      "count": 218,
+      "segment": [
+        539,
+        61,
+        218,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 539,
+      "column": 67,
+      "token": "MAX_GPU_BYTES",
+      "count": 218,
+      "segment": [
+        539,
+        61,
+        218,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 539,
+      "column": 83,
+      "token": "self",
+      "count": 218,
+      "segment": [
+        539,
+        61,
+        218,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 539,
+      "column": 88,
+      "token": "gpu_bytes",
+      "count": 218,
+      "segment": [
+        539,
+        61,
+        218,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 581,
+      "column": 26,
+      "token": "logical",
+      "count": 142,
+      "segment": [
+        581,
+        26,
+        142,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 581,
+      "column": 35,
+      "token": "gpu",
+      "count": 142,
+      "segment": [
+        581,
+        35,
+        142,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 581,
+      "column": 42,
+      "token": "self",
+      "count": 142,
+      "segment": [
+        581,
+        42,
+        142,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 581,
+      "column": 47,
+      "token": "resources",
+      "count": 142,
+      "segment": [
+        581,
+        42,
+        142,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 581,
+      "column": 57,
+      "token": "index",
+      "count": 142,
+      "segment": [
+        581,
+        42,
+        142,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 582,
+      "column": 26,
+      "token": "metadata",
+      "count": 142,
+      "segment": [
+        581,
+        42,
+        142,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 583,
+      "column": 26,
+      "token": "sizes",
+      "count": 142,
+      "segment": [
+        583,
+        26,
+        142,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 583,
+      "column": 32,
+      "token": "self",
+      "count": 142,
+      "segment": [
+        583,
+        32,
+        142,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 583,
+      "column": 37,
+      "token": "desktop_resources",
+      "count": 142,
+      "segment": [
+        583,
+        32,
+        142,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/mod.rs",
+      "line": 695,
+      "column": 14,
+      "token": "device",
+      "count": 8,
+      "segment": [
+        695,
+        14,
+        8,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/mod.rs",
+      "line": 695,
+      "column": 22,
+      "token": "state",
+      "count": 8,
+      "segment": [
+        695,
+        22,
+        8,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/mod.rs",
+      "line": 695,
+      "column": 31,
+      "token": "Self",
+      "count": 8,
+      "segment": [
+        695,
+        31,
+        8,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/mod.rs",
+      "line": 695,
+      "column": 37,
+      "token": "new_with_sink_state",
+      "count": 8,
+      "segment": [
+        695,
+        31,
+        8,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/mod.rs",
+      "line": 695,
+      "column": 57,
+      "token": "frame_sink",
+      "count": 8,
+      "segment": [
+        695,
+        31,
+        8,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/mod.rs",
+      "line": 696,
+      "column": 9,
+      "token": "state",
+      "count": 8,
+      "segment": [
+        696,
+        9,
+        8,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/mod.rs",
+      "line": 696,
+      "column": 15,
+      "token": "borrow_mut",
+      "count": 8,
+      "segment": [
+        696,
+        9,
+        8,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/mod.rs",
+      "line": 696,
+      "column": 28,
+      "token": "control3d",
+      "count": 8,
+      "segment": [
+        696,
+        9,
+        8,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/mod.rs",
+      "line": 696,
+      "column": 40,
+      "token": "Some",
+      "count": 8,
+      "segment": [
+        696,
+        40,
+        8,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/mod.rs",
+      "line": 696,
+      "column": 45,
+      "token": "control3d",
+      "count": 8,
+      "segment": [
+        696,
+        40,
+        8,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/mod.rs",
+      "line": 696,
+      "column": 56,
+      "token": "Control3dState",
+      "count": 8,
+      "segment": [
+        696,
+        40,
+        8,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/mod.rs",
+      "line": 696,
+      "column": 72,
+      "token": "new_standard_desktop",
+      "count": 8,
+      "segment": [
+        696,
+        40,
+        8,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/mod.rs",
+      "line": 697,
+      "column": 13,
+      "token": "control_sink",
+      "count": 8,
+      "segment": [
+        696,
+        40,
+        8,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/mod.rs",
+      "line": 699,
+      "column": 10,
+      "token": "device",
+      "count": 8,
+      "segment": [
+        699,
+        9,
+        8,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/mod.rs",
+      "line": 699,
+      "column": 18,
+      "token": "state",
+      "count": 8,
+      "segment": [
+        699,
+        9,
+        8,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "line": 1720,
+      "column": 9,
+      "token": "&",
+      "count": 8,
+      "segment": [
+        1719,
+        5,
+        8,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "line": 1720,
+      "column": 10,
+      "token": "mut",
+      "count": 8,
+      "segment": [
+        1719,
+        5,
+        8,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "line": 1720,
+      "column": 14,
+      "token": "self",
+      "count": 8,
+      "segment": [
+        1719,
+        5,
+        8,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "line": 1727,
+      "column": 14,
+      "token": "device",
+      "count": 8,
+      "segment": [
+        1727,
+        14,
+        8,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "line": 1727,
+      "column": 22,
+      "token": "state",
+      "count": 8,
+      "segment": [
+        1727,
+        22,
+        8,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "line": 1728,
+      "column": 13,
+      "token": "dev",
+      "count": 8,
+      "segment": [
+        1728,
+        13,
+        8,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "line": 1728,
+      "column": 18,
+      "token": "virtio",
+      "count": 8,
+      "segment": [
+        1728,
+        13,
+        8,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "line": 1728,
+      "column": 26,
+      "token": "gpu",
+      "count": 8,
+      "segment": [
+        1728,
+        13,
+        8,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "line": 1728,
+      "column": 31,
+      "token": "VirtioGpu",
+      "count": 8,
+      "segment": [
+        1728,
+        13,
+        8,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "line": 1728,
+      "column": 42,
+      "token": "new_with_standard_desktop_control3d_proof_state",
+      "count": 8,
+      "segment": [
+        1728,
+        13,
+        8,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "line": 1729,
+      "column": 17,
+      "token": "frame_sink",
+      "count": 8,
+      "segment": [
+        1728,
+        89,
+        8,
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "line": 1730,
+      "column": 17,
+      "token": "control_sink",
+      "count": 8,
+      "segment": [
+        1728,
+        89,
+        8,
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "line": 1732,
+      "column": 9,
+      "token": "self",
+      "count": 8,
+      "segment": [
+        1732,
+        9,
+        8,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "line": 1732,
+      "column": 14,
+      "token": "install_virtio_gpu",
+      "count": 8,
+      "segment": [
+        1732,
+        14,
+        8,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "line": 1732,
+      "column": 33,
+      "token": "device",
+      "count": 8,
+      "segment": [
+        1732,
+        33,
+        8,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "line": 1732,
+      "column": 41,
+      "token": "state",
+      "count": 8,
+      "segment": [
+        1732,
+        41,
+        8,
+        true,
+        true,
+        false
+      ]
+    }
+  ],
+  "waivers": [
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 16,
+      "source": "pub const MAX_DESKTOP_RESOURCES: usize = 64;",
+      "why": "static count declaration; exact64/65 outcome and two constructor branches prove value"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 46,
+      "source": "    fn sizes(self, desktop_resources: bool) -> Result<(u64, u64), Control3dError> {",
+      "why": "Rust declaration, type, attribute, comment or delimiter has no independent runtime behavior"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 64,
+      "source": "            (2, 1 | 2 | 67, bind)",
+      "why": "static match pattern; admitted/refused original and field cases execute both arm bodies"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 65,
+      "column": 17,
+      "token": "if",
+      "segment": [
+        64,
+        33,
+        0,
+        false,
+        false,
+        false
+      ],
+      "why": "unmapped Rust control/operator syntax; adjacent dynamic operand and branch/body counters are positive"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 66,
+      "column": 21,
+      "token": "&&",
+      "segment": [
+        65,
+        37,
+        0,
+        false,
+        false,
+        false
+      ],
+      "why": "unmapped Rust control/operator syntax; adjacent dynamic operand and branch/body counters are positive"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 67,
+      "column": 21,
+      "token": "&&",
+      "segment": [
+        66,
+        38,
+        0,
+        false,
+        false,
+        false
+      ],
+      "why": "unmapped Rust control/operator syntax; adjacent dynamic operand and branch/body counters are positive"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 68,
+      "column": 21,
+      "token": "&&",
+      "segment": [
+        67,
+        65,
+        0,
+        false,
+        false,
+        false
+      ],
+      "why": "unmapped Rust control/operator syntax; adjacent dynamic operand and branch/body counters are positive"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 69,
+      "column": 21,
+      "token": "&&",
+      "segment": [
+        68,
+        54,
+        0,
+        false,
+        false,
+        false
+      ],
+      "why": "unmapped Rust control/operator syntax; adjacent dynamic operand and branch/body counters are positive"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 69,
+      "column": 36,
+      "token": "<=",
+      "segment": [
+        69,
+        35,
+        0,
+        false,
+        false,
+        false
+      ],
+      "why": "unmapped Rust control/operator syntax; adjacent dynamic operand and branch/body counters are positive"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 69,
+      "column": 39,
+      "token": "MAX_TEXTURE_SIZE",
+      "segment": [
+        69,
+        35,
+        0,
+        false,
+        false,
+        false
+      ],
+      "why": "unmapped static argument/bound; adjacent dynamic arguments and field boundary outcomes recorded"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 70,
+      "source": "            {",
+      "why": "Rust declaration, type, attribute, comment or delimiter has no independent runtime behavior"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 72,
+      "source": "            }",
+      "why": "Rust declaration, type, attribute, comment or delimiter has no independent runtime behavior"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 73,
+      "source": "            (2, 20, 1 | 8 | 9)",
+      "why": "static match pattern; admitted/refused original and field cases execute both arm bodies"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 74,
+      "column": 17,
+      "token": "if",
+      "segment": [
+        71,
+        76,
+        0,
+        false,
+        false,
+        false
+      ],
+      "why": "unmapped Rust control/operator syntax; adjacent dynamic operand and branch/body counters are positive"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 75,
+      "column": 21,
+      "token": "&&",
+      "segment": [
+        74,
+        37,
+        0,
+        false,
+        false,
+        false
+      ],
+      "why": "unmapped Rust control/operator syntax; adjacent dynamic operand and branch/body counters are positive"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 76,
+      "column": 21,
+      "token": "&&",
+      "segment": [
+        75,
+        54,
+        0,
+        false,
+        false,
+        false
+      ],
+      "why": "unmapped Rust control/operator syntax; adjacent dynamic operand and branch/body counters are positive"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 76,
+      "column": 36,
+      "token": "<=",
+      "segment": [
+        76,
+        35,
+        0,
+        false,
+        false,
+        false
+      ],
+      "why": "unmapped Rust control/operator syntax; adjacent dynamic operand and branch/body counters are positive"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 76,
+      "column": 39,
+      "token": "MAX_TEXTURE_SIZE",
+      "segment": [
+        76,
+        35,
+        0,
+        false,
+        false,
+        false
+      ],
+      "why": "unmapped static argument/bound; adjacent dynamic arguments and field boundary outcomes recorded"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 77,
+      "source": "            {",
+      "why": "Rust declaration, type, attribute, comment or delimiter has no independent runtime behavior"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 79,
+      "source": "            }",
+      "why": "Rust declaration, type, attribute, comment or delimiter has no independent runtime behavior"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 289,
+      "source": "    desktop_resources: bool,",
+      "why": "Rust declaration, type, attribute, comment or delimiter has no independent runtime behavior"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 303,
+      "column": 43,
+      "token": "false",
+      "segment": [
+        303,
+        41,
+        0,
+        false,
+        false,
+        false
+      ],
+      "why": "unmapped static argument/bound; adjacent dynamic arguments and field boundary outcomes recorded"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 304,
+      "source": "    }",
+      "why": "Rust declaration, type, attribute, comment or delimiter has no independent runtime behavior"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 305,
+      "source": "    pub(crate) fn new_standard_desktop(sink: Box<dyn Control3dSink>) -> Self {",
+      "why": "Rust declaration, type, attribute, comment or delimiter has no independent runtime behavior"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 306,
+      "column": 43,
+      "token": "true",
+      "segment": [
+        306,
+        41,
+        0,
+        false,
+        false,
+        false
+      ],
+      "why": "unmapped static argument/bound; adjacent dynamic arguments and field boundary outcomes recorded"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 307,
+      "source": "    }",
+      "why": "Rust declaration, type, attribute, comment or delimiter has no independent runtime behavior"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 308,
+      "source": "    fn with_resource_profile(sink: Box<dyn Control3dSink>, desktop_resources: bool) -> Self {",
+      "why": "Rust declaration, type, attribute, comment or delimiter has no independent runtime behavior"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 533,
+      "column": 17,
+      "token": "let",
+      "segment": [
+        532,
+        18,
+        0,
+        false,
+        false,
+        false
+      ],
+      "why": "unmapped Rust control/operator syntax; adjacent dynamic operand and branch/body counters are positive"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 534,
+      "column": 17,
+      "token": "let",
+      "segment": [
+        533,
+        77,
+        0,
+        false,
+        false,
+        false
+      ],
+      "why": "unmapped Rust control/operator syntax; adjacent dynamic operand and branch/body counters are positive"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 534,
+      "column": 37,
+      "token": "if",
+      "segment": [
+        534,
+        34,
+        0,
+        false,
+        false,
+        false
+      ],
+      "why": "unmapped Rust control/operator syntax; adjacent dynamic operand and branch/body counters are positive"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 536,
+      "column": 19,
+      "token": "else",
+      "segment": [
+        535,
+        42,
+        0,
+        false,
+        false,
+        false
+      ],
+      "why": "unmapped Rust control/operator syntax; adjacent dynamic operand and branch/body counters are positive"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 538,
+      "source": "                };",
+      "why": "Rust declaration, type, attribute, comment or delimiter has no independent runtime behavior"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 539,
+      "column": 17,
+      "token": "if",
+      "segment": [
+        537,
+        34,
+        0,
+        false,
+        false,
+        false
+      ],
+      "why": "unmapped Rust control/operator syntax; adjacent dynamic operand and branch/body counters are positive"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "line": 581,
+      "column": 21,
+      "token": "let",
+      "segment": [
+        579,
+        68,
+        0,
+        false,
+        false,
+        false
+      ],
+      "why": "unmapped Rust control/operator syntax; adjacent dynamic operand and branch/body counters are positive"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/mod.rs",
+      "line": 689,
+      "source": "    /// Selected captured-desktop resource controls only; no capsets or submissions.",
+      "why": "Rust declaration, type, attribute, comment or delimiter has no independent runtime behavior"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/mod.rs",
+      "line": 690,
+      "source": "    #[cfg(feature = \"virgl-control-proof\")]",
+      "why": "Rust declaration, type, attribute, comment or delimiter has no independent runtime behavior"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/mod.rs",
+      "line": 691,
+      "source": "    pub fn new_with_standard_desktop_control3d_proof_state(",
+      "why": "Rust declaration, type, attribute, comment or delimiter has no independent runtime behavior"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/mod.rs",
+      "line": 692,
+      "source": "        frame_sink: Box<dyn FrameSink>,",
+      "why": "Rust declaration, type, attribute, comment or delimiter has no independent runtime behavior"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/mod.rs",
+      "line": 693,
+      "source": "        control_sink: Box<dyn control3d::Control3dSink>,",
+      "why": "Rust declaration, type, attribute, comment or delimiter has no independent runtime behavior"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/mod.rs",
+      "line": 694,
+      "source": "    ) -> (Self, Rc<RefCell<GpuState>>) {",
+      "why": "Rust declaration, type, attribute, comment or delimiter has no independent runtime behavior"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/mod.rs",
+      "line": 695,
+      "column": 9,
+      "token": "let",
+      "segment": [
+        694,
+        39,
+        0,
+        false,
+        false,
+        false
+      ],
+      "why": "unmapped Rust control/operator syntax; adjacent dynamic operand and branch/body counters are positive"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/mod.rs",
+      "line": 698,
+      "source": "        ));",
+      "why": "Rust declaration, type, attribute, comment or delimiter has no independent runtime behavior"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/mod.rs",
+      "line": 700,
+      "source": "    }",
+      "why": "Rust declaration, type, attribute, comment or delimiter has no independent runtime behavior"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/mod.rs",
+      "line": 701,
+      "source": "",
+      "why": "Rust declaration, type, attribute, comment or delimiter has no independent runtime behavior"
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "line": 1716,
+      "source": "    /// Host-selected captured-desktop control envelope; not a production API profile.",
+      "why": "Rust declaration, type, attribute, comment or delimiter has no independent runtime behavior"
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "line": 1717,
+      "source": "    #[cfg(feature = \"virgl-control-proof\")]",
+      "why": "Rust declaration, type, attribute, comment or delimiter has no independent runtime behavior"
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "line": 1718,
+      "source": "    #[allow(clippy::type_complexity)]",
+      "why": "Rust declaration, type, attribute, comment or delimiter has no independent runtime behavior"
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "line": 1719,
+      "source": "    pub fn enable_virtio_gpu_standard_desktop_control3d_proof(",
+      "why": "Rust declaration, type, attribute, comment or delimiter has no independent runtime behavior"
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "line": 1721,
+      "source": "        frame_sink: alloc::boxed::Box<dyn dev::virtio::gpu::FrameSink>,",
+      "why": "Rust declaration, type, attribute, comment or delimiter has no independent runtime behavior"
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "line": 1722,
+      "source": "        control_sink: alloc::boxed::Box<dyn dev::virtio::gpu::control3d::Control3dSink>,",
+      "why": "Rust declaration, type, attribute, comment or delimiter has no independent runtime behavior"
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "line": 1723,
+      "source": "    ) -> Option<(",
+      "why": "Rust declaration, type, attribute, comment or delimiter has no independent runtime behavior"
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "line": 1724,
+      "source": "        alloc::rc::Rc<core::cell::RefCell<dev::virtio::mmio::VirtioMmio>>,",
+      "why": "Rust declaration, type, attribute, comment or delimiter has no independent runtime behavior"
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "line": 1725,
+      "source": "        alloc::rc::Rc<core::cell::RefCell<dev::virtio::gpu::GpuState>>,",
+      "why": "Rust declaration, type, attribute, comment or delimiter has no independent runtime behavior"
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "line": 1727,
+      "column": 9,
+      "token": "let",
+      "segment": [
+        1726,
+        7,
+        0,
+        false,
+        false,
+        false
+      ],
+      "why": "unmapped Rust control/operator syntax; adjacent dynamic operand and branch/body counters are positive"
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "line": 1731,
+      "source": "            );",
+      "why": "Rust declaration, type, attribute, comment or delimiter has no independent runtime behavior"
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "line": 1733,
+      "source": "    }",
+      "why": "Rust declaration, type, attribute, comment or delimiter has no independent runtime behavior"
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "line": 1734,
+      "source": "",
+      "why": "Rust declaration, type, attribute, comment or delimiter has no independent runtime behavior"
+    }
+  ],
+  "allChangedFiles": {
+    "Makefile": "EXERCISED:recorded make verify-E6-T11d51 dispatch; declarative recipe",
+    "crates/core/src/dev/virtio/gpu/control3d.rs": "EXERCISED:120 positive finest-segment native operands;35 static line/22 unmapped lexical point waivers attached",
+    "crates/core/src/dev/virtio/gpu/mod.rs": "EXERCISED:120 positive finest-segment native operands;35 static line/22 unmapped lexical point waivers attached",
+    "crates/core/src/lib.rs": "EXERCISED:120 positive finest-segment native operands;35 static line/22 unmapped lexical point waivers attached",
+    "crates/core/tests/virtio_gpu_control3d.rs": "EXERCISED:12 native tests,608 requests,632 traces, plus isolated count-fault assertion; test setup/type/log formatting is diagnostic",
+    "crates/core/tests/virtio_gpu_control3d/desktop_resources.rs": "EXERCISED:12 native tests,608 requests,632 traces, plus isolated count-fault assertion; test setup/type/log formatting is diagnostic",
+    "evidence/virgl-desktop-control/deployment/deploy.log": "WAIVED recorded diagnostic/body data: complete archive/deployment pins reopened independently, including failed first browser recording",
+    "evidence/virgl-desktop-control/deployment/deployed-artifacts-alpine.json": "WAIVED recorded diagnostic/body data: complete archive/deployment pins reopened independently, including failed first browser recording",
+    "evidence/virgl-desktop-control/deployment/deployed-artifacts-node-alpine.json": "WAIVED recorded diagnostic/body data: complete archive/deployment pins reopened independently, including failed first browser recording",
+    "evidence/virgl-desktop-control/deployment/deployed-artifacts-omarchy.json": "WAIVED recorded diagnostic/body data: complete archive/deployment pins reopened independently, including failed first browser recording",
+    "evidence/virgl-desktop-control/deployment/deployed-artifacts.json": "WAIVED recorded diagnostic/body data: complete archive/deployment pins reopened independently, including failed first browser recording",
+    "evidence/virgl-desktop-control/deployment/final/browser.png": "WAIVED recorded diagnostic/body data: complete archive/deployment pins reopened independently, including failed first browser recording",
+    "evidence/virgl-desktop-control/deployment/final/live.log": "WAIVED recorded diagnostic/body data: complete archive/deployment pins reopened independently, including failed first browser recording",
+    "evidence/virgl-desktop-control/deployment/final/report.json": "WAIVED recorded diagnostic/body data: complete archive/deployment pins reopened independently, including failed first browser recording",
+    "evidence/virgl-desktop-control/deployment/final/source.mjs": "WAIVED recorded diagnostic/body data: complete archive/deployment pins reopened independently, including failed first browser recording",
+    "evidence/virgl-desktop-control/deployment/first-load/live.log": "WAIVED recorded diagnostic/body data: complete archive/deployment pins reopened independently, including failed first browser recording",
+    "evidence/virgl-desktop-control/deployment/first-load/manifest.json": "WAIVED recorded diagnostic/body data: complete archive/deployment pins reopened independently, including failed first browser recording",
+    "evidence/virgl-desktop-control/deployment/first-load/report.json": "WAIVED recorded diagnostic/body data: complete archive/deployment pins reopened independently, including failed first browser recording",
+    "evidence/virgl-desktop-control/deployment/first-load/source.mjs": "WAIVED recorded diagnostic/body data: complete archive/deployment pins reopened independently, including failed first browser recording",
+    "evidence/virgl-desktop-control/deployment/live.log": "WAIVED recorded diagnostic/body data: complete archive/deployment pins reopened independently, including failed first browser recording",
+    "evidence/virgl-desktop-control/deployment/manifest.json": "WAIVED recorded diagnostic/body data: complete archive/deployment pins reopened independently, including failed first browser recording",
+    "evidence/virgl-desktop-control/deployment/report.json": "WAIVED recorded diagnostic/body data: complete archive/deployment pins reopened independently, including failed first browser recording",
+    "evidence/virgl-desktop-control/deployment/source.mjs": "WAIVED recorded diagnostic/body data: complete archive/deployment pins reopened independently, including failed first browser recording",
+    "evidence/virgl-desktop-control/worker/manifest.json": "WAIVED recorded diagnostic/body data: complete archive/deployment pins reopened independently, including failed first browser recording",
+    "evidence/virgl-desktop-control/worker/recording.tar.gz": "WAIVED recorded diagnostic/body data: complete archive/deployment pins reopened independently, including failed first browser recording",
+    "evidence/virgl-desktop-control/worker/records.json": "WAIVED recorded diagnostic/body data: complete archive/deployment pins reopened independently, including failed first browser recording",
+    "evidence/virgl-production-readiness/standard-control-resource-gap.json": "WAIVED historical negative-control fixture/source:readiness state at D50 retained; independently reconstructed identical fields and current legacy refusals, not new runtime",
+    "evidence/virgl-production-readiness/standard-control-resource-gap.py": "WAIVED historical negative-control fixture/source:readiness state at D50 retained; independently reconstructed identical fields and current legacy refusals, not new runtime",
+    "tasks/QUEUE.md": "WAIVED declarative task/queue/parent dependency metadata; policy gate enforces active-lane semantics",
+    "tasks/epic-6-transcendence/E6-T11d-truthful-guest-virgl-bringup.md": "WAIVED declarative task/queue/parent dependency metadata; policy gate enforces active-lane semantics",
+    "tasks/epic-6-transcendence/E6-T11d51-desktop-resource-control.md": "WAIVED declarative task/queue/parent dependency metadata; policy gate enforces active-lane semantics",
+    "tools/verify-virgl-default-demo.mjs": "EXERCISED:task allowlist selects E6-T11d51 in hot/cold default browser127/0 recordings",
+    "tools/virgl-desktop-control/audit.py": "EXERCISED:20-command hot/cold gate, body hashes, coverage/original auditor, seal reopening and detached fault; Python exceptional/dead defensive paths are harness-only and not product claims",
+    "tools/virgl-desktop-control/cold.py": "EXERCISED:20-command hot/cold gate, body hashes, coverage/original auditor, seal reopening and detached fault; Python exceptional/dead defensive paths are harness-only and not product claims",
+    "tools/virgl-desktop-control/coverage.py": "EXERCISED:20-command hot/cold gate, body hashes, coverage/original auditor, seal reopening and detached fault; Python exceptional/dead defensive paths are harness-only and not product claims",
+    "tools/virgl-desktop-control/packets.py": "EXERCISED:20-command hot/cold gate, body hashes, coverage/original auditor, seal reopening and detached fault; Python exceptional/dead defensive paths are harness-only and not product claims",
+    "tools/virgl-desktop-control/packets.rs": "WAIVED static generated literals: all148 original create/unref controls independently reconstructed exactly;98 requests executed through refusal3025, remainder glmark controls retained after explicit unqualified failure",
+    "tools/virgl-desktop-control/seal.py": "EXERCISED:20-command hot/cold gate, body hashes, coverage/original auditor, seal reopening and detached fault; Python exceptional/dead defensive paths are harness-only and not product claims",
+    "tools/virgl-desktop-control/verify.py": "EXERCISED:20-command hot/cold gate, body hashes, coverage/original auditor, seal reopening and detached fault; Python exceptional/dead defensive paths are harness-only and not product claims",
+    "web/dist/pkg/wasm_vm_wasm_bg.wasm": "EXERCISED:default127/0 hot/cold/live served exact committed Wasm SHA; unchanged default guest/web sources hashed",
+    "web/dist/sw.js": "WAIVED build-generated static cache namespace digest; no logic change and service workers blocked in browser acceptance"
+  },
+  "needsEvidence": [],
+  "dead": []
+}

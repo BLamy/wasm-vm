@@ -3,7 +3,7 @@ id: E6-T11d51
 epic: 6
 title: Carry original desktop resource controls through selected VirtIO ownership
 priority: 525.027039000398
-status: implemented
+status: verified
 depends_on: [E6-T11d50]
 estimate: S
 risk: high
@@ -163,3 +163,130 @@ old proof/default behavior is held. It is not bound into ordinary WasmLinux and
 grants no capset/complete API. Full GLES/format17, actual guest Mesa/Hyprland,
 selected host wiring, worker/scanout and300MIPS remain parent acceptance. A fresh
 adversarial verifier must judge the diff and all recordings.
+
+### 2026-10-12 — fresh verifier — VERDICT: verified
+
+VERDICT: verified
+
+Oriented the complete task and scoped D50-to-submission diff before opening
+recorded state; wrote `verifier/predictions.md` first. Submission
+`0186b314c591d066227541ce5d3965eb9edad723`, frozen runtime/harness
+`e13dddfbb0d955abb268e4b4ac07828cbea35956`. No runtime code was changed by this
+verifier. Paths below are relative to `evidence/virgl-desktop-control/`;
+`worker/hot/*` means the fully authenticated body in the worker archive.
+
+- P1 authenticity — HELD. Independently reopened all665 complete worker bodies,
+  all1007 D50 worker/verifier bodies (including safely resolved hardlinks),
+  and checked all303 unchanged renderer/compiler source pins. The258 recorded
+  source bodies match frozen and submitted source. Worker manifest/index/archive
+  match39c771aa/c021b524/778eff96; direct deployment manifest matches074646ea.
+  Complete per-body checks are `verifier/authentication.json`. D50's physical GL,
+  hidden retained quota and compiler authority remain held by unchanged digest.
+- P2 originals — HELD. Independently paired every successful resource enter/return
+  from each complete original stream and reconstructed all148 literal controls;
+  only the exact resource2/event10/flags1 QEMU2D create is excluded, with no unref.
+  These are reconstructed UAPI headers, not captured kernel headers. Compositor
+  finishes56/peak24/empty at `worker/hot/native-control.stderr:894`, digest
+  `9d635aa5b26954b9cbc1fad532b5bfcc17d23e8da1ea0716465fd31ef699e957`;
+  kmscube finishes8/peak4/empty at line911, digest
+  `d1994aa2a525af0fa2a3babd4a7eaf03d5d54585d62a7c41982574f3da2dd00d`.
+  Glmark events276/463 succeed at lines938/962; event3025 explicitly returns
+  0x1205 at line980, with25 identities and33 sink events, unchanged from3014,
+  digest `81765d9ad503a775fae9e4837a9425d918fa7859a7baf266144c6125265e4f4a`.
+  All608 canonical records, rings, replies, guards and632 queue-loop instructions
+  were independently decoded; hot/cold/fresh native records exactly agree.
+  Complete original pairs and every point are `verifier/recording-audit.json`.
+- P3 profile/count/bytes — HELD. Selected64/65 at worker lines1109/1111 has
+  identical state digest
+  `e5e7e6faa019e5a445cf3a6a3dd662a1d0cd4179e98ba14d40c154f3141bf188`,
+ 64 publications and0x1201 for65. GPU exact32MiB/refusal lines374/376 share
+  `f3a4148a176c7ee77798b34a25fc8cd30d7b11a38c36a486da8efdf7b9de72fa`;
+  backing exact32MiB is line422 and refusal426 preserves the separately admitted
+  staging resource's line424 state. Independently seeded probes cover all36
+  color role/hint combinations, depth roles, unknown bits/formats/fields,
+  dimensions and exact/beyond4MiB and32MiB ceilings. Legacy16/admission and
+  default disabled behavior pass. See complete `verifier/novel-audit.json` and
+  `verifier/fresh/receipt.json`; no visible-count claim about D50 hidden storage.
+- P4 failure/ownership — HELD. Worker allocation-failure lines1113/1115 share
+  `6944925d04dc2ae77abd72f01f10f0c5dbc9f45624b72678e8140a175bba66f1` and65 sink
+  events. The independent653-control sequential state/publication model holds
+  with fresh seeds0x31c7/0xb92d/0xe563, shuffled IDs and split/fenced descriptors,
+ 23 insufficient reply capacities, overlapping backing copies, source/request
+  mutation, failed create/unref, duplicate/stale membership, shared2D IDs and
+  reset. At `verifier/novel/stderr.log:989` failed unref retains64 identities,
+ 22 backing bytes and69 sink events, digest
+  `1be9460ac3012e1048c35958d2c28910bb47b98de62ad3b8d6dcf07fc9dbc70a`;
+  failed create at993 retains63/70/generation67, digest
+  `d60c3db06b71d2a66edd70b855c0ffbb675189dc5854502f1f55c381107bce96`.
+  Reset/profile recovery at1016 has epoch2 and fresh generation69, digest
+  `3a20deb3f572213f35d9e416b505f28eb674afa36f2735924381b83c7df0adaf`.
+  Full request/ring/state/guard bytes and owned sink events are sealed.
+- P5 coverage — HELD. Independently read finest LLVM segments against all68
+  changed source lines:120 positive mapped operands on33 reported body/signature/
+  syntax lines,35 static line waivers and22 exact unmapped syntax/static-token
+  waivers. No mapped gap or dead runtime hunk. Re-exporting the authenticated
+  native binary `a060d1b25c1115c5a6dfa57aeb59b3d3dc8504e2fb58571743ac54dba0ec22a4`
+  with recorded profdata reproduces raw LLVM export
+  `6f6d76e3b92285d53e9707f8c91e36a82acb5e6fd9dd94a738dbbbbd26eb6a56` exactly.
+  Binary/profdata bodies, each lexical justification and every changed-file
+  classification are retained in `verifier/coverage-{audit,provenance}.json`.
+- P6 default/browser — HELD. Default web/guest source pins equal D50; source
+  inspection and ordinary native tests retain disabled VirGL/no capsets and
+  no new WasmLinux binding. Hot/cold/live captures each show127/0, absent proof
+  exports, scalar pip live and graphics partial/production disabled. Inspected
+  the final screenshot and authenticated complete served hashes/source/logs.
+  Served/committed Wasm is1634057 bytes, SHA256
+  `5ecbc124be68e42a708d18f6aaf49c94793a7d9b1c757f9922dab78c7951c4d8`.
+  The sole final console item is the exact live favicon404 allowed by AGENTS;
+  no page-response error occurred. The failed generic404 capture is retained.
+- P7 pristine provenance — HELD. Final scrubbed clone at frozen e13dddfb
+  starts/ends clean, all20 gate commands meet expected statuses, and complete
+  native records equal hot and fresh. Cold receipt
+  `ed668a0b73c3c97100dd6be9684743705ae5b6c446ad5a27f52a2af2d3ec43c7`
+  and full logs/source bodies authenticate. No portability finding; the final
+  cold proof was carried once, not rerun. Non-fault native gates contain no
+  panic or ignored-test escape.
+- P8 sabotage — HELD. Sole detached `>=` to `>` mutation changes source SHA
+  b42298c4 to595811ac. Worker fault line209 actually publishes65 identities/
+ 65 sink events at520 bytes and0x1100. The fresh oracle independently catches
+  the same fault at `verifier/fault/stderr.log:184`:65 color/depth identities,
+ 67 sink events (two contexts),1560 logical/GPU bytes and0x1100, then expected
+  OOM reply assertion exits101. Complete source/frame/state/log bodies and
+  both independent decodes are `verifier/fault-audit.json`.
+
+SUITE: promoted `crates/core/tests/virtio_gpu_control3d/desktop_critic.rs` into
+permanent native control tests. Its255 controls exactly equal the recorded
+three-schedule ownership slice; affected fmt/clippy and the promoted test pass.
+Expanded field/budget probes remain full verifier evidence because permanent
+metadata/budget/short-reply tests already cover that class. The existing
+`make verify-E6-T11d51` remains the recurring acceptance target.
+
+Fresh commands (complete command arguments, source bodies and stdout/stderr in
+receipts; compiler environment prefixes RUST/CARGO_/LLVM_PROFILE scrubbed):
+
+```sh
+python3 evidence/virgl-desktop-control/verifier/authenticate.py
+python3 evidence/virgl-desktop-control/verifier/inspect_recordings.py
+python3 evidence/virgl-desktop-control/verifier/coverage_independent.py
+python3 evidence/virgl-desktop-control/verifier/fresh_checks.py
+python3 evidence/virgl-desktop-control/verifier/run_novel.py
+python3 evidence/virgl-desktop-control/verifier/inspect_novel.py
+python3 evidence/virgl-desktop-control/verifier/run_fault.py
+python3 evidence/virgl-desktop-control/verifier/check_promoted.py
+python3 evidence/virgl-desktop-control/verifier/seal.py
+```
+
+Verifier seal reopens337 complete bodies in4,376,380 bytes, including current
+native source closure, actual mapped binary/profdata, full fresh/novel/fault/
+promoted recordings and all independent auditor source/results:
+
+- manifest `4f8cb67e861481dd0aca7f0da958051799f11a1bbf136a6805f63ee87d92f8b5`
+- index `3a9e683e5e06e8e51423b764ef6067e80def9ac547e06f704eac68d94405cb6c`
+- archive `ec14364bf7d1bce7103137c15c2fd0694730e61d7af439ef52caeb5678fc8e83`
+
+Scope remains selected native transport ownership. Queue-loop traces are not
+Linux guest execution, and a null sink grants no GL or production authority.
+Complete GLES/format17, actual guest Mesa/Hyprland, typed capsets/host wiring,
+worker/submission/transfer/scanout, production browser enablement and300MIPS
+remain parent acceptance. No PR, push, stack, merge or deployment action was
+performed by this verifier.

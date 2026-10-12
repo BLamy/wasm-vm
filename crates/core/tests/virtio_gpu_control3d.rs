@@ -15,6 +15,9 @@ use wasm_vm_core::{Machine, RunOutcome};
 #[path = "virtio_gpu_control3d/desktop_resources.rs"]
 mod desktop_resources;
 
+#[path = "virtio_gpu_control3d/desktop_critic.rs"]
+mod desktop_critic;
+
 const RAM: usize = 4 * 1024 * 1024;
 const DESC: u64 = virt::DRAM_BASE + 0x6000;
 const AVAIL: u64 = virt::DRAM_BASE + 0x7000;

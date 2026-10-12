@@ -1,0 +1,7 @@
+{
+  "mistakenManualPromotedCount": 246,
+  "observedPromotedCount": 255,
+  "completeNovelOwnershipRowsEqual": true,
+  "runtimeOrEvidenceChanged": false,
+  "initialSealLocation": "target/evidence/virgl-desktop-control-verifier/initial-seal"
+}

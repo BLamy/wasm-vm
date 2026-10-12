@@ -1,0 +1,21 @@
+{
+  "schema": "desktop-control-critic-coverage-provenance-v1",
+  "binary": {
+    "path": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/virgl-desktop-control-coverage/debug/deps/virtio_gpu_control3d-2f23f707484ffd34",
+    "bytes": 7524024,
+    "sha256": "a060d1b25c1115c5a6dfa57aeb59b3d3dc8504e2fb58571743ac54dba0ec22a4"
+  },
+  "binaryCopy": "target/evidence/virgl-desktop-control-verifier/worker-native-binary",
+  "command": [
+    "/Users/blamy/.rustup/toolchains/1.96.0-aarch64-apple-darwin/lib/rustlib/aarch64-apple-darwin/bin/llvm-cov",
+    "export",
+    "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/virgl-desktop-control-coverage/debug/deps/virtio_gpu_control3d-2f23f707484ffd34",
+    "--instr-profile=/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-desktop-control-verifier/reopened/worker/hot/native.profdata"
+  ],
+  "llvmCovSha256": "2cfe15bf5b9e4737d6a5334caf0dbe13fe0e30a44c7c12f09df67762c3d1e27a",
+  "profdataSha256": "06b703e5544b43496892713c4f718ce3f1ffc723e6d37fb1935660dacef076f3",
+  "exportSha256": "6f6d76e3b92285d53e9707f8c91e36a82acb5e6fd9dd94a738dbbbbd26eb6a56",
+  "exactExportEqual": true,
+  "exitCode": 0,
+  "rustVersion": "rustc 1.96.0 (ac68faa20 2026-05-25)\nbinary: rustc\ncommit-hash: ac68faa20c58cbccd01ee7208bf3b6e93a7d7f96\ncommit-date: 2026-05-25\nhost: aarch64-apple-darwin\nrelease: 1.96.0\nLLVM version: 22.1.2\n"
+}
