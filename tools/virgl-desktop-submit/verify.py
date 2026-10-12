@@ -115,6 +115,8 @@ for suffix, extra in [('default', []), ('selected', ['--features', 'virgl-contro
 run('wasm-proof', ['wasm-pack', 'build', 'crates/wasm', '--dev', '--target', 'web', '--out-dir', '../../target/virgl-desktop-submit/pkg', '--features', 'virgl-control-proof'])
 for name in ['renderer/virgl-command/control-bridge.mjs', 'renderer/virgl-command/tests/desktop-submit-acceptance.mjs', 'tools/virgl-desktop-submit/browser.mjs']:
     run('syntax-' + Path(name).stem, ['node', '--check', name])
+if not (repo / 'web/node_modules/playwright').is_dir():
+    run('npm-dependencies', ['npm', '--prefix', 'web', 'ci', '--no-audit', '--no-fund'])
 run('hardware', ['node', 'tools/virgl-desktop-submit/browser.mjs', '--output', str(root / 'hardware')])
 run('fault-old-job-bound', ['node', 'tools/virgl-desktop-submit/browser.mjs', '--output', str(root / 'fault-old-job-bound'), '--sabotage', 'old-job-bound'], expected=1)
 fault = json.loads((root / 'fault-old-job-bound/report.json').read_bytes())
