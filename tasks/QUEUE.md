@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E6-T11d60** — Execute original cube and array depth sampler views
 1. **E5-T26f** — Browser desktop snapshot round-trip and interaction smoke
 
 
@@ -695,7 +694,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.027039000397` [E6-T11d54](epic-6-transcendence/E6-T11d54-native-image-layouts.md) — Carry qualified 2D image layouts and mip DMA through native desktop queues *(deps: E6-T11d53, E6-T11d50)*
 - [x] `525.027039000397` [E6-T11d56](epic-6-transcendence/E6-T11d56-native-dimensional-transfers.md) — Carry original layered RGBA8 allocation and DMA through native guest queues *(deps: E6-T11d55, E6-T11d54, E6-T11d52)*
 - [x] `525.027039000397` [E6-T11d58](epic-6-transcendence/E6-T11d58-dimensional-sampler-views.md) — Execute original RGBA8 volume cube and array sampler views *(deps: E6-T11d57, E6-T11d56, E6-T11d55, E6-T11d49)*
-- [ ] `525.027039000397` [E6-T11d60](epic-6-transcendence/E6-T11d60-dimensional-depth-sampler-views.md) — Execute original cube and array depth sampler views *(deps: E6-T11d59, E6-T11d58, E6-T11d57)*
+- [~] `525.027039000397` [E6-T11d60](epic-6-transcendence/E6-T11d60-dimensional-depth-sampler-views.md) — Execute original cube and array depth sampler views *(deps: E6-T11d59, E6-T11d58, E6-T11d57)*
 - [x] `525.027039000398` [E6-T11d51](epic-6-transcendence/E6-T11d51-desktop-resource-control.md) — Carry original desktop resource controls through selected VirtIO ownership *(deps: E6-T11d50)*
 - [x] `525.027039000398` [E6-T11d53](epic-6-transcendence/E6-T11d53-native-buffer-roles.md) — Carry qualified uniform and shared-role buffers through native desktop submission *(deps: E6-T11d52, E6-T11d18)*
 - [x] `525.027039000398` [E6-T11d55](epic-6-transcendence/E6-T11d55-dimensional-texture-storage.md) — Allocate and transfer original volume, cube and array RGBA8 resources *(deps: E6-T11d54, E6-T11d50, E6-T11d20)*

@@ -3,7 +3,7 @@ id: E6-T11d60
 epic: 6
 title: Execute original cube and array depth sampler views
 priority: 525.027039000397
-status: pending
+status: in-progress
 depends_on: [E6-T11d59, E6-T11d58, E6-T11d57]
 estimate: S
 risk: high
@@ -127,3 +127,12 @@ are verified before this pending consumer enters the active lane. Dimensional
 shadow and framebuffer consumers, transform feedback, truthful capability/format
 qualification, production worker/scanout, actual Linux Mesa/Hyprland and measured
 throughput remain parent work.
+
+### 2026-10-12 — worker — activated
+
+D60 is the sole active retained cube/array depth sampler-view contract. Its
+D59/D58/D57 prerequisites are independently verified. Native allocation/DMA and
+the dimensional shader compiler remain their authenticated authorities; this
+slice selects a new host consumer, complete private-range ownership and native
+sampling. Historical consumers and production negotiation stay closed until
+their own qualification. Record final evidence and hand it to a fresh critic.
