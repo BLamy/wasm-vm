@@ -3,7 +3,7 @@ id: E6-T11d57
 epic: 6
 title: Compile original volume, cube and array texture shaders for native GLES3
 priority: 525.027039000396
-status: pending
+status: in-progress
 depends_on: [E6-T11d56, E6-T11d48, E6-T11d49]
 estimate: S
 risk: high
