@@ -54,19 +54,36 @@ for family in ['virgl-resource-capacity', 'virgl-desktop-control', 'virgl-shadow
         assert manifest_raw == subprocess.check_output(['git', 'show', f'{base}:evidence/{family}/{role}/manifest.json'], cwd=repo)
         rows = index['records'] if isinstance(index, dict) else index
         expected = {r['path']: r for r in rows}
-        with tarfile.open(archive, 'r:gz') as packed:
-            members = {m.name: m for m in packed.getmembers()}
-            assert set(members) == set(expected)
-            for name, item in expected.items():
-                raw = packed.extractfile(members[name]).read()
-                assert len(raw) == item['bytes'] and sha(raw) == item['sha256']
-                if family == 'virgl-resource-capacity' and role == 'worker' and name == 'hot/receipt.json':
-                    held = json.loads(raw)
-                    carried = {**held['sources'], **held['carriedSources']}
-                    (root / 'held-storage-receipt.json').write_bytes(raw)
-                if family == 'virgl-shadow-samplers' and role == 'worker' and name.startswith('cold-generated/renderer/virgl-shader/build/wasm/'):
-                    relative = name.removeprefix('cold-generated/')
-                    compiler[relative] = raw
+        bodies, links = {}, {}
+        with tarfile.open(archive, 'r|gz') as packed:
+            for member in packed:
+                assert member.name in expected and member.name not in bodies and member.name not in links
+                if member.isfile():
+                    bodies[member.name] = packed.extractfile(member).read()
+                else:
+                    assert member.islnk(), ("unexpected archive entry", member.name, member.type)
+                    links[member.name] = member.linkname
+        assert set(bodies) | set(links) == set(expected)
+        def body(name, visiting=None):
+            if name in bodies:
+                return bodies[name]
+            visiting = set() if visiting is None else visiting
+            assert name in links and name not in visiting, ("unknown or cyclic hardlink", name)
+            raw = body(links[name], visiting | {name})
+            bodies[name] = raw
+            return raw
+        for name, item in expected.items():
+            raw = body(name)
+            assert len(raw) == item['bytes'] and sha(raw) == item['sha256']
+            if family == 'virgl-resource-capacity' and role == 'worker' and name == 'hot/receipt.json':
+                held = json.loads(raw)
+                carried = {**held['sources'], **held['carriedSources']}
+                (root / 'held-storage-receipt.json').write_bytes(raw)
+            if family == 'virgl-shadow-samplers' and role == 'worker' and name.startswith('cold-generated/renderer/virgl-shader/build/wasm/'):
+                relative = name.removeprefix('cold-generated/')
+                compiler[relative] = raw
+        print(f"held {family}/{role}: authenticated {len(expected)} complete bodies", flush=True)
+        del bodies, links
         dependencies.append({'family': family, 'role': role, 'manifestSha256': sha(manifest_raw),
                              'indexSha256': sha(index_raw), 'archiveSha256': manifest['archiveSha256'],
                              'reopenedBodies': len(rows)})
