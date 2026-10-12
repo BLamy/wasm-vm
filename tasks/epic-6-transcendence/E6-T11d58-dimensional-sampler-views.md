@@ -385,3 +385,83 @@ It contains predictions, every audit and citation, all fresh source closures,
 complete positive and completed sabotage bodies, screenshots, promoted sources,
 correction provenance and successful policy-before-queue receipts. The archived
 verification-log snapshot precedes this digest paragraph to avoid self-reference.
+
+### 2026-10-12 — fresh verifier — incremental archive transport
+
+VERDICT: verified
+
+Authenticated only the lossless unpublished worker-archive serialization. The
+runtime and original acceptance harness remain frozen at
+`1c7f8c9b4e52e09e8f6e2201f92d7483ce7117a6`. Provenance mapping:
+worker `75f5815d0f290e92cdb77239b78facf93ca6fbbc` →
+`febf596108a16c99870147a40d36f7e93e2c332f`; original verifier tip
+`26d42890ec8fdb88869a67b6d107fa190d7865af` → replayed tip
+`e5dbc207ec68a1436e7ba5ad12f01548d44f9357`. The original audited history is
+preserved at `refs/codex-backups/d58-before-archive-chunking-26d42890`.
+Predictions T0–T5 were written before reopening parts; the original ten HELD
+runtime predictions are carried forward without repeating runtime/cold tests.
+
+- T0 boundary/provenance — HELD. Only the 13 archive serialization paths differ
+  across the old/new worker and verifier tips. Both workers have the same frozen
+  parent; the complete original/replayed verifier patch is byte-identical.
+  Runtime, original harness, task/queue, promoted critic tests, previous critic
+  seal and every unrelated tracked body are unchanged before this log entry.
+- T1 lossless bodies — HELD. Ten independently authenticated Git/worktree parts
+  are each at most 16 MiB. Their concatenation is byte-for-byte the preserved
+  151,192,332-byte original Git/archive body, retaining SHA256
+  `fb56c37995c361bece8bbe14f6ec5606580741affbb8c76a9469e6c6a231cdf5`.
+  All 2,327 logical members reopened in original index order with exact lengths
+  and SHA256s, totaling 465,608,470 uncompressed bytes. Complete body citations:
+  `transport-verifier/logical-members.jsonl:1` through `:2327`, digest
+  `bcb0d905669335b36b9b7c01fb04ef82c445275363828c1e72f0c3f229320c31`.
+- T2 manifest/HELD authority — HELD. `records.json` is byte-identical, retaining
+  `398ef4c26c719a0995bd5fbc7d14039d5dcccdb13613de7a22c945572d9a32da`.
+  `manifest.original.json` retains the complete original manifest body and
+  `366968fe114438560886832570b9c36b1ffe4e3d7526cf718fba6b6dc9a47b2c`.
+  New manifest SHA256
+  `0d33df88ff4eab46b34d7c376fda9f4d69ae1120c6bba9e82a3fd468e8afd135`
+  adds only `archiveParts` and `originalManifestSha256`; every original field
+  remains equal. The original critic manifest/index/archive digests above are
+  unchanged. All ten HELD predictions and all 61 unchanged historical operands
+  retain exact code/dependency/evidence authority. Their zero counters remain
+  historical HELD facts and are not new executed coverage.
+- T3 publishable Git ancestry — HELD. Independently inspected all 55 blobs
+  reachable from the new tip above verified base D57. Largest is 49,649,171
+  bytes; none exceeds 100 MiB. Oversized original blob
+  `42bddd288b09c9f34e6fdcc39e64592f324caf50` is absent from this publication
+  ancestry and remains preserved by the backup history/external original.
+  Complete blob citations: `transport-verifier/reachable-blobs.jsonl`, SHA256
+  `90eff71194337dec5f2efec0b7315cfc039916d8d9c2fa854c50765001f93193`.
+- T4 remote state — HELD. Exact `git ls-remote --heads origin
+  refs/heads/codex/virgl-dimensional-sampler-views` succeeded with empty output;
+  D58 remains unpublished. Receipt: `transport-verifier/remote-check.json`.
+  This critic performed no remote publication, merge or native-stack mutation.
+- T5 operation custody — HELD. Complete journal and exact executed packing
+  script are preserved in the separate transport seal. Journal SHA256
+  `030ad34debd99ca28cd0302b25594001592fb67b9b5b31633b9f58ae98648988`;
+  packing script `103416f674e309b6a5e6653e2d0ee480f63772ce899b8033ff009f201a480da4`.
+  Independently reproduced each literal 16 MiB slice, without executing the
+  script's history-mutating commands. Its journal identities, parts and changed
+  paths match Git. Original archive/manifest/journal/index/script remain at
+  `/tmp/wasmvm-d58-archive-transport-26d42890/`.
+
+No FAILED or NEEDS EVIDENCE prediction remains for this serialization boundary.
+No new runtime, Linux guest, capset, API-completeness, production or MIPS authority
+is granted. The original selected-RGBA8 verifier seal and its complete evidence
+remain unchanged. No suite promotion is needed for byte-identical transport.
+
+Commands: `python3 evidence/virgl-dimensional-views/transport-verifier/authenticate.py`;
+`python3 tools/check_task_policy.py`, then `python3 tools/build_queue.py`.
+The separate transport seal retains predictions, full journal/script/index,
+manifest/index bodies, all 2,327 member citations, Git blob/remote receipts and
+carried HELD provenance.
+
+Transport critic seal `evidence/virgl-dimensional-views/transport-verifier/`
+retains 26 complete reopened members (1,134,499 compressed bytes), separate
+from the unchanged original critic seal. Predictions SHA256
+`46d57eb67d768645cfdf3d130373ed834ee83be199fb623f1d9725ab893417ca`;
+manifest `b2b93f53f8fe0029e20cb506b33aac01406f2a5151d36601804cf334c5f88591`;
+index `5f7308a164c7878bab2e01024e3eadf11ea9b01f15355859ed7c2e732a144f86`;
+archive `332645ee4a31909ff984f5503940a18bcd7298432e05c663174e22bfecf08b99`.
+Its verification-log snapshot precedes this digest paragraph to avoid
+self-reference. Policy passed before the idempotent queue regeneration.

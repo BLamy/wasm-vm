@@ -1,0 +1,41 @@
+{
+  "schema": "E6-T11d58-incremental-transport-critic-seal-v1",
+  "task": "E6-T11d58",
+  "verdict": "verified",
+  "frozenHead": "1c7f8c9b4e52e09e8f6e2201f92d7483ce7117a6",
+  "oldTip": "26d42890ec8fdb88869a67b6d107fa190d7865af",
+  "newTip": "e5dbc207ec68a1436e7ba5ad12f01548d44f9357",
+  "oldWorker": "75f5815d0f290e92cdb77239b78facf93ca6fbbc",
+  "newWorker": "febf596108a16c99870147a40d36f7e93e2c332f",
+  "members": 26,
+  "reopenedMembers": 26,
+  "archiveBytes": 1134499,
+  "archiveSha256": "332645ee4a31909ff984f5503940a18bcd7298432e05c663174e22bfecf08b99",
+  "recordIndexSha256": "5f7308a164c7878bab2e01024e3eadf11ea9b01f15355859ed7c2e732a144f86",
+  "predictionsSha256": "46d57eb67d768645cfdf3d130373ed834ee83be199fb623f1d9725ab893417ca",
+  "auditSha256": "97a0e0e4fdd1fed1de3e41c7586369ef043bcedb42bca0e78516f04ed962d942",
+  "verdictSha256": "63fb3bb3546c221282405d159516303cd1dd938bb87a18e8e7cac75091e40a3e",
+  "logicalMembersReopened": 2327,
+  "originalArchiveSha256": "fb56c37995c361bece8bbe14f6ec5606580741affbb8c76a9469e6c6a231cdf5",
+  "originalManifestSha256": "366968fe114438560886832570b9c36b1ffe4e3d7526cf718fba6b6dc9a47b2c",
+  "chunkedManifestSha256": "0d33df88ff4eab46b34d7c376fda9f4d69ae1120c6bba9e82a3fd468e8afd135",
+  "originalRecordIndexSha256": "398ef4c26c719a0995bd5fbc7d14039d5dcccdb13613de7a22c945572d9a32da",
+  "previousCriticSeal": {
+    "manifest.json": "bf8aaeb347ad4aead9304fbfc4759fe74f1e622328f0399fc13c3b412318d590",
+    "records.json": "c2b97a36f021cc572d94490e7a341bca0a209923399d3e0c2d070b3026386958",
+    "recording.tar.gz": "b5cbdaca9aa4885a0b06b94572eaa3a92688be1ba4b0a0c89def652fc956f787"
+  },
+  "carriedPredictions": 10,
+  "carriedHistoricalZeroOperands": 61,
+  "newRuntimeCoverage": false,
+  "runtimeOrColdTestsRepeated": false,
+  "operation": {
+    "journalSha256": "030ad34debd99ca28cd0302b25594001592fb67b9b5b31633b9f58ae98648988",
+    "executedPackingScriptSha256": "103416f674e309b6a5e6653e2d0ee480f63772ce899b8033ff009f201a480da4",
+    "backupGitIndexSha256": "623841fd2498d6bb6f79375e19775a8cdf52b7761d9189f5b206ed2b7ba267b6",
+    "preservedOriginalArchive": "/tmp/wasmvm-d58-archive-transport-26d42890/recording.tar.gz",
+    "archiveSha256": "fb56c37995c361bece8bbe14f6ec5606580741affbb8c76a9469e6c6a231cdf5",
+    "packingSlicesIndependentlyReproduced": true
+  },
+  "scope": "Unpublished lossless archive serialization only; selected original RGBA8 runtime verdict unchanged; no production/guest/capset/API-completeness/MIPS authority"
+}
