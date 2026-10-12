@@ -1,0 +1,70 @@
+{
+  "schema": "native-stack-continuity-v1",
+  "sourceHead": "37a6794437424049d38acb733191a16c1cdca998",
+  "action": "gh stack submit --auto --remote origin",
+  "claims": [
+    {
+      "stack": 499,
+      "identity": 1985180,
+      "priorPreserved": 50,
+      "added": [],
+      "openDraftUnmerged": 50
+    },
+    {
+      "stack": 500,
+      "identity": 1985183,
+      "priorPreserved": 82,
+      "added": [
+        532
+      ],
+      "openDraftUnmerged": 83
+    }
+  ],
+  "priorPullRequestsPreserved": 132,
+  "totalOpenDraftUnmerged": 133,
+  "stacks": [
+    {
+      "number": 499,
+      "id": 1985180,
+      "node_id": "PRS_kwDOTLQ_184AHkqc",
+      "base": {
+        "ref": "main"
+      }
+    },
+    {
+      "number": 500,
+      "id": 1985183,
+      "node_id": "PRS_kwDOTLQ_184AHkqf",
+      "base": {
+        "ref": "codex/virgl-signed-float-conversions"
+      }
+    }
+  ],
+  "newPr": {
+    "base": {
+      "ref": "codex/virgl-native-buffer-roles",
+      "repo": {
+        "id": 1286881239,
+        "name": "wasm-vm",
+        "url": "https://api.github.com/repos/BLamy/wasm-vm"
+      },
+      "sha": "0211566e662a3512b374c69ab915c563e7daf0cc"
+    },
+    "draft": true,
+    "head": {
+      "ref": "codex/virgl-native-image-layouts",
+      "repo": {
+        "id": 1286881239,
+        "name": "wasm-vm",
+        "url": "https://api.github.com/repos/BLamy/wasm-vm"
+      },
+      "sha": "37a6794437424049d38acb733191a16c1cdca998"
+    },
+    "id": 4828921558,
+    "merged_at": null,
+    "node_id": "PR_kwDOTLQ_188AAAABH9N-1g",
+    "number": 532,
+    "state": "open"
+  },
+  "comparison": "Exact equality of each prior PR id/number/node_id/head/base/draft/state/merged_at and both stack id/number/node_id/base/open, preserving array order; only532 appended."
+}
