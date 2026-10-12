@@ -3,7 +3,7 @@ id: E6-T11d56
 epic: 6
 title: Carry original layered RGBA8 allocation and DMA through native guest queues
 priority: 525.027039000397
-status: pending
+status: in-progress
 depends_on: [E6-T11d55, E6-T11d54, E6-T11d52]
 estimate: S
 risk: high
@@ -104,3 +104,11 @@ unrelated queue work. This ordered S/high boundary carries the qualified
 original layout through checked real guest memory and native completion;
 other formats, dimensional consumers, truthful caps/API, actual Mesa/Hyprland,
 production worker/scanout and measured throughput remain successor acceptance.
+
+### 2026-10-12 — worker — activated
+
+This selected original native layered allocation/DMA boundary is the sole active
+S/high task; D55, D54 and D52 are independently verified. The frozen submission
+will record `make verify-E6-T11d56`, affected native/wasm/browser gates, one final
+scrubbed pristine clone and complete evidence for a separate adversarial critic.
+No production capabilities or Linux guest renderer are enabled by activation.
