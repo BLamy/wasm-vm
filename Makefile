@@ -2458,3 +2458,7 @@ verify-E6-T11d47:
 .PHONY: verify-E6-T11d47-critic
 verify-E6-T11d47-critic:
 	bash tools/verify-virgl-instanced-stencil-critic.sh
+
+.PHONY: verify-E6-T11d48
+verify-E6-T11d48:
+	bash tools/verify-virgl-shadow-shaders.sh

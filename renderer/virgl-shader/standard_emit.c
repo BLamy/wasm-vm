@@ -102,6 +102,9 @@ static void interface(struct output *o, const struct standard_profile *p)
       put(o, "uniform highp %s %ssamp%u;\n", standard_sampler_type(p, j), p->stage ? "fs" : "vs", j);
    for (unsigned j = 0; j < STANDARD_SAMPLERS; ++j) if (p->queried_levels & (1u << j))
       put(o, "uniform highp int %ssamplevels%u;\n", p->stage ? "fs" : "vs", j);
+   if (p->shadow_textures) for (unsigned j = 0; j < STANDARD_SAMPLERS; ++j) if (p->shadow_samples & (1u << j))
+      put(o, "uniform highp vec4 %sshadmask%u;\nuniform highp vec4 %sshadadd%u;\n",
+          p->stage ? "fs" : "vs", j, p->stage ? "fs" : "vs", j);
    if (!p->stage) put(o, "layout(std140) uniform VirglBlock {\nvec4 clipp[8];\nuint stipple_pattern[32];\nfloat winsys_adjust_y;\nfloat alpha_ref_val;\nbool clip_plane_enabled;\nint drawid_base;\n};\nuniform vec2 wv_point_size;\n");
    if (p->instance_base && standard_has_instance_id(p)) put(o, "uniform highp uint wv_instance_base;\n");
    for (unsigned j = 0; j < 16; ++j) if (p->packed_signed_inputs & (1u << j)) {
@@ -147,6 +150,25 @@ static const char *sample_conversion(const struct standard_profile *p, unsigned 
 {
    return p->integer_images && p->sampler_returns[sampler] != STD_SAMPLE_FLOAT ? "uvec4" : "floatBitsToUint";
 }
+static void shadow_sample(struct output *o, const struct standard_profile *p,
+                          const struct tgsi_full_instruction *i)
+{
+   unsigned op = i->Instruction.Opcode;
+   unsigned slot = i->Src[standard_texture_sources(op)].Register.Index;
+   const char *stage = p->stage ? "fs" : "vs";
+   if (op == TGSI_OPCODE_TEX)
+      put(o, "float sampled = texture(%ssamp%u, uintBitsToFloat(a).xyz);\n", stage, slot);
+   else if (op == TGSI_OPCODE_TXL)
+      put(o, "float sampled = textureLod(%ssamp%u, uintBitsToFloat(a).xyz, uintBitsToFloat(a).w);\n", stage, slot);
+   else if (op == TGSI_OPCODE_TXD)
+      put(o, "float sampled = textureGrad(%ssamp%u, uintBitsToFloat(a).xyz, uintBitsToFloat(b).xy, uintBitsToFloat(c).xy);\n", stage, slot);
+   else if (op == TGSI_OPCODE_TXB)
+      put(o, "float sampled = texture(%ssamp%u, uintBitsToFloat(a).xyz, uintBitsToFloat(a).w);\n", stage, slot);
+   else /* The guarded remaining comparison opcode is original projective TXP. */
+      put(o, "float sampled = textureProj(%ssamp%u, uintBitsToFloat(a));\n", stage, slot);
+   put(o, "uvec4 r = floatBitsToUint(vec4(sampled) * %sshadmask%u + %sshadadd%u);\n",
+       stage, slot, stage, slot);
+}
 static bool instruction(struct output *o, const struct standard_profile *p,
                         const struct tgsi_full_instruction *i)
 {
@@ -182,7 +204,9 @@ static bool instruction(struct output *o, const struct standard_profile *p,
 #define RAW(x) put(o, "uvec4 r = " x ";\n")
 #define FLOAT(x) RAW("floatBitsToUint(" x ")")
 #define SCALAR(x) FLOAT("vec4(" x ")")
-   switch (op) {
+   if (p->shadow_textures && texture_sources && i->Texture.Texture == TGSI_TEXTURE_SHADOW2D && op != TGSI_OPCODE_TXQ)
+      shadow_sample(o, p, i);
+   else switch (op) {
    case TGSI_OPCODE_MOV: RAW("a"); break;
    case TGSI_OPCODE_UCMP:
       RAW("uvec4(a.x != 0u ? b.x : c.x, a.y != 0u ? b.y : c.y, a.z != 0u ? b.z : c.z, a.w != 0u ? b.w : c.w)"); break;
@@ -255,6 +279,8 @@ static bool instruction(struct output *o, const struct standard_profile *p,
       put(o, "uvec4 r = %s(textureGrad(%ssamp%u, " FA ".xy, " FB ".xy, " FC ".xy));\n", sample_conversion(p, i->Src[3].Register.Index), p->stage ? "fs" : "vs", i->Src[3].Register.Index); break;
    case TGSI_OPCODE_TXB:
       put(o, "uvec4 r = %s(texture(fssamp%u, " FA ".xy, " FA ".w));\n", sample_conversion(p, i->Src[1].Register.Index), i->Src[1].Register.Index); break;
+   case TGSI_OPCODE_TXP:
+      put(o, "uvec4 r = %s(textureProj(%ssamp%u, " FA "));\n", sample_conversion(p, i->Src[1].Register.Index), p->stage ? "fs" : "vs", i->Src[1].Register.Index); break;
    case TGSI_OPCODE_TXQ:
       /* 2D z is undefined in TGSI. Zero is a representative, not a depth claim.
        * Accessible levels come from the selected host view, never guest text. */

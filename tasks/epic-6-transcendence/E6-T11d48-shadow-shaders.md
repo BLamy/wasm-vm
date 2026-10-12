@@ -115,3 +115,26 @@ execution follows in a separate dependent S task after independent verification.
 The human request to finish production graphics continues this chain ahead of
 unrelated general-queue work. Production guest graphics and performance remain
 unfinished; no positive API, capset, demo or deployment authority follows.
+
+### 2026-10-11 — worker — selected compiler implementation ready for final recording
+
+The isolated selected C/Wasm facet now preserves original floating 2D shadow
+operations and owns separate stage/slot mask/add metadata. The bounded parser
+keeps size queries neutral and refuses conflicting comparison/ordinary sampling.
+The guest request shape has no added host-control fields; historical entries
+retain their previous profile and response shape. This source freeze includes
+literal original TGSI fixtures, native/sanitized/Wasm custody and allocation
+harnesses, a headed Metal recording, an independent Python TGSI-word interpreter,
+finest governing LLVM/V8 coverage, and a pristine-clone/full-seal gate.
+
+During the ephemeral inner loop, all896 whole planes and32456 words agreed with
+the separate original-input oracle; a deliberately changed mask produced three
+actual wrong words after its distinct native fence. The selected source diff
+has23 positive JavaScript partitions and308 positive native partitions, with no
+unexecuted executable partition. The optimized selected frame sums are139616
+bytes for stage and195344 for pair within the262144-byte stack. These are
+self-validation observations, not the final recorded evidence or a verification
+verdict. Final authority is `make verify-E6-T11d48` at the frozen head, then the
+scrubbed pristine clone and independent critic. Rust, consumer, guest and demo
+sources are unchanged at the authenticated verified predecessor; only the
+affected compiler/harness gates run for this boundary.

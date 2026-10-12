@@ -190,20 +190,30 @@ static bool declaration(const char **s, struct standard_profile *p)
          if (p->declared[r.file][i] && list[i].semantic == io.semantic && list[i].sid == io.sid) return false;
       list[r.first] = io;
    } else if (r.file == STD_SVIEW) {
-      if (!take(s, ',') || !word(s, "2D") || !take(s, ',')) return false;
+      if (!take(s, ',')) return false;
+      bool shadow = p->shadow_textures && word(s, "SHADOW2D");
+      if ((!shadow && !word(s, "2D")) || !take(s, ',')) return false;
       unsigned type;
       const char *name;
       if (word(s, "FLOAT")) { type = STD_SAMPLE_FLOAT; name = "FLOAT"; }
       else if (p->integer_images && word(s, "SINT")) { type = STD_SAMPLE_SINT; name = "SINT"; }
       else if (p->integer_images && word(s, "UINT")) { type = STD_SAMPLE_UINT; name = "UINT"; }
       else return false;
+      if (shadow && type != STD_SAMPLE_FLOAT) return false;
       /* The original parser replicates an abbreviated homogeneous return
        * declaration. Only this selected facet accepts its additional fields. */
       if (p->integer_images) {
          unsigned fields = 1;
          while (take(s, ',')) if (++fields > 4 || !word(s, name)) return false;
       }
-      for (unsigned i = r.first; i <= r.last; ++i) p->sampler_returns[i] = (uint8_t)type;
+      for (unsigned i = r.first; i <= r.last; ++i) {
+         p->sampler_returns[i] = (uint8_t)type;
+         if (shadow) {
+            p->shadow_views |= (uint16_t)(1u << i);
+            p->shadow_samplers |= (uint16_t)(1u << i);
+            p->upstream_shadow_samplers |= (uint16_t)(1u << i);
+         }
+      }
    } else if (r.mask != 15) return false;
    if (!ended(s)) return false;
    if (r.file == STD_CONST && r.slot) {
@@ -290,12 +300,12 @@ unsigned standard_texture_sources(unsigned op)
 {
    switch (op) {
    case TGSI_OPCODE_TEX: case TGSI_OPCODE_TXL: case TGSI_OPCODE_TXF:
-   case TGSI_OPCODE_TXB: case TGSI_OPCODE_TXQ: return 1;
+   case TGSI_OPCODE_TXB: case TGSI_OPCODE_TXQ: case TGSI_OPCODE_TXP: return 1;
    case TGSI_OPCODE_TXD: return 3;
    default: return 0;
    }
 }
-static bool supported(unsigned op, bool texture_operations)
+static bool supported(unsigned op, const struct standard_profile *p)
 {
    switch (op) {
 #define OP(x) case TGSI_OPCODE_##x:
@@ -312,7 +322,8 @@ static bool supported(unsigned op, bool texture_operations)
 #undef OP
       return true;
    case TGSI_OPCODE_TXL: case TGSI_OPCODE_TXF: case TGSI_OPCODE_TXD:
-   case TGSI_OPCODE_TXB: case TGSI_OPCODE_TXQ: return texture_operations;
+   case TGSI_OPCODE_TXB: case TGSI_OPCODE_TXQ: return p->texture_operations;
+   case TGSI_OPCODE_TXP: return p->shadow_textures;
    default: return false;
    }
 }
@@ -333,7 +344,7 @@ static bool instruction(const char **s, struct standard_profile *p, struct flow 
    if (len >= 4 && !strcmp(mnemonic + len - 4, "_SAT")) { saturate = true; mnemonic[len -= 4] = 0; }
    unsigned op;
    for (op = 0; op < TGSI_OPCODE_LAST; ++op)
-      if (supported(op, p->texture_operations) && !strcmp(mnemonic, tgsi_get_opcode_info(op)->mnemonic)) break;
+      if (supported(op, p) && !strcmp(mnemonic, tgsi_get_opcode_info(op)->mnemonic)) break;
    if (op == TGSI_OPCODE_LAST) return false;
    const struct tgsi_opcode_info *info = tgsi_get_opcode_info(op);
    if ((saturate || precise) && (!info->num_dst || op == TGSI_OPCODE_UARL || op == TGSI_OPCODE_ARL)) return false;
@@ -371,8 +382,23 @@ static bool instruction(const char **s, struct standard_profile *p, struct flow 
       }
    }
    if (texture_sources) {
-      if (!take(s, ',') || !word(s, "2D")) return false;
-      p->used_samplers |= (uint16_t)(1u << texture_sampler);
+      if (!take(s, ',')) return false;
+      bool shadow = p->shadow_textures && word(s, "SHADOW2D");
+      if (!shadow && !word(s, "2D")) return false;
+      uint16_t bit = (uint16_t)(1u << texture_sampler);
+      if (p->shadow_textures) {
+         if (shadow && (p->sampler_returns[texture_sampler] != STD_SAMPLE_FLOAT || op == TGSI_OPCODE_TXF)) return false;
+         if (op == TGSI_OPCODE_TXQ) {
+            if (shadow) p->shadow_queries |= bit;
+         } else if (shadow) p->shadow_samples |= bit;
+         else p->ordinary_samples |= bit;
+         if ((p->shadow_views | p->shadow_samples) & p->ordinary_samples) return false;
+         p->shadow_samplers = p->shadow_views | p->shadow_samples |
+            (p->shadow_queries & (uint16_t)~p->ordinary_samples);
+         if (shadow) p->upstream_shadow_samplers |= bit;
+         else p->upstream_shadow_samplers &= (uint16_t)~bit;
+      }
+      p->used_samplers |= bit;
       if (op == TGSI_OPCODE_TXQ && (texture_mask & 8u)) p->queried_levels |= (uint16_t)(1u << texture_sampler);
    }
    /* Labels must describe the same edges as the structured blocks. The

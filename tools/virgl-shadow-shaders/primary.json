@@ -1,0 +1,60 @@
+{
+  "schema": "original-shadow-compiler-primary-v1",
+  "sources": [
+    {
+      "path": "tools/virgl-shadow-shaders/primary/tgsi.rst",
+      "repository": "Mesa",
+      "version": "26.2.2",
+      "url": "https://archive.mesa3d.org/mesa-26.2.2.tar.xz",
+      "archivePath": "mesa-26.2.2/docs/gallium/tgsi.rst",
+      "archiveSha256": "eeb29ca7e56cfaa8e8a79538dcf834e3b18e501c31bef5145e959ea437cc4216",
+      "bytes": 98804,
+      "sha256": "6ec695d90ea0b3a5d471aab114352cc2431bcfc589f6b6e6ca88e4e1ca0caabe"
+    },
+    {
+      "path": "tools/virgl-shadow-shaders/primary/nir_to_tgsi.c",
+      "repository": "Mesa",
+      "version": "26.2.2",
+      "url": "https://archive.mesa3d.org/mesa-26.2.2.tar.xz",
+      "archivePath": "mesa-26.2.2/src/gallium/auxiliary/nir/nir_to_tgsi.c",
+      "archiveSha256": "eeb29ca7e56cfaa8e8a79538dcf834e3b18e501c31bef5145e959ea437cc4216",
+      "bytes": 140573,
+      "sha256": "ee5d9d290c7b16c0ee7dd9a9982191f0bd7dfcff5fb3304a7424169e4786679b"
+    },
+    {
+      "path": "tools/virgl-instance-base/primary/glsl-es-3.00.6.pdf",
+      "bytes": 968763,
+      "sha256": "325058092a1c96a172f6e5b1e4008e94e7a2c75b63d6431f5bec273f374b6e7f"
+    },
+    {
+      "path": "tools/virgl-floating-depth/primary/es-3.0.6.pdf",
+      "bytes": 1528315,
+      "sha256": "7e831831595d3e44c267cc0a0d754f8c244cf3c8f5056f49a674f25fb9d5adeb"
+    },
+    {
+      "path": "tools/virgl-floating-depth/primary/st_extensions.c",
+      "bytes": 74811,
+      "sha256": "dbed39e3997c3fbc5e3a02c0fd6845cb43ab67f2c7972362ce20c225a24138ff"
+    },
+    {
+      "path": "tools/virgl-floating-depth-consumer/primary/vrend_renderer.c",
+      "bytes": 495473,
+      "sha256": "be7e5c63fb501cb77bd5b2c13c332f8b93c49fd04d207f17d434932c237f4ea3"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/vrend/vrend_shader.c",
+      "bytes": 333808,
+      "sha256": "e08fe8ceebfebb3e6a050b74d0ea0ebbfab35b6be742b6f0c9b9149dd484c3e2"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/include/pipe/p_shader_tokens.h",
+      "bytes": 23154,
+      "sha256": "48d2cedf0e97e4a685c20acb59bc8dd1317e0b2ba9166e9c4ac81fedda2e61f9"
+    },
+    {
+      "path": "tools/virgl-floating-depth-consumer/primary/vrend_formats.c",
+      "bytes": 43802,
+      "sha256": "1b4b48526638b7b16293e7eb552b6d6cbdea44d551358bdc02f17c99b1d86844"
+    }
+  ]
+}

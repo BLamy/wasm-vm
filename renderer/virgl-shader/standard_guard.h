@@ -29,6 +29,10 @@ struct standard_profile {
    struct standard_io input[STANDARD_IO], output[STANDARD_IO], system[2];
    uint16_t instructions, constants, immediates;
    uint16_t used_samplers, queried_levels;
+   /* Size queries do not choose comparison semantics. Keep original use and
+    * the upstream last-instruction type separate from the native type. */
+   uint16_t shadow_views, shadow_samples, ordinary_samples, shadow_queries;
+   uint16_t shadow_samplers, upstream_shadow_samplers;
    uint8_t sampler_returns[STANDARD_SAMPLERS];
    /* Host color formats select outputs; shader text cannot select these bits. */
    uint8_t signed_colors, unsigned_colors;
@@ -39,7 +43,7 @@ struct standard_profile {
     * legacy facets keep both flags zero and retain their original grammar. */
    uint32_t uniform_declared[STANDARD_UNIFORM_SLOTS][STANDARD_UNIFORM_VECTORS / 32];
    uint16_t uniform_counts[STANDARD_UNIFORM_SLOTS + 1];
-   bool uniform_buffers, buffer_zero, texture_operations, integer_images, instance_base;
+   bool uniform_buffers, buffer_zero, texture_operations, integer_images, instance_base, shadow_textures;
    uint8_t properties, broadcast;
 };
 
@@ -65,6 +69,7 @@ static inline const char *standard_color_type(const struct standard_profile *p, 
 
 static inline const char *standard_sampler_type(const struct standard_profile *p, unsigned index)
 {
+   if (p->shadow_textures && (p->shadow_samplers & (1u << index))) return "sampler2DShadow";
    return p->integer_images && p->sampler_returns[index] == STD_SAMPLE_SINT ? "isampler2D" :
           p->integer_images && p->sampler_returns[index] == STD_SAMPLE_UINT ? "usampler2D" : "sampler2D";
 }

@@ -46,11 +46,15 @@ export async function createVirglStandardIntegerImageShaderBridge(options = {}) 
 export async function createVirglStandardInstanceBaseShaderBridge(options = {}) {
   return createStandardBridge(options, true, true, true, true);
 }
-async function createStandardBridge(options, uniformBuffers, textureOperations = false, integerImages = false, instanceBase = false) {
+/** Original floating 2D comparisons with separately owned stage/view controls. */
+export async function createVirglStandardShadowTextureShaderBridge(options = {}) {
+  return createStandardBridge(options, true, true, true, true, true);
+}
+async function createStandardBridge(options, uniformBuffers, textureOperations = false, integerImages = false, instanceBase = false, shadowTextures = false) {
   const { default: createModule } = await import("./build/wasm/virgl-shader.mjs");
   const module = await createModule(options);
-  const integerStage = instanceBase ? module._bridge_translate_standard_instance_base : module._bridge_translate_standard_integer_image;
-  const integerPair = instanceBase ? module._bridge_translate_standard_instance_base_pair : module._bridge_translate_standard_integer_image_pair;
+  const integerStage = shadowTextures ? module._bridge_translate_standard_shadow_texture : instanceBase ? module._bridge_translate_standard_instance_base : module._bridge_translate_standard_integer_image;
+  const integerPair = shadowTextures ? module._bridge_translate_standard_shadow_texture_pair : instanceBase ? module._bridge_translate_standard_instance_base_pair : module._bridge_translate_standard_integer_image_pair;
   const uniformPair = integerImages ? (...args) => integerPair(...args, 0, 0) :
     textureOperations ? module._bridge_translate_standard_texture_pair : module._bridge_translate_standard_uniform_pair;
   function run(texts, call) {
