@@ -3,7 +3,7 @@ id: E6-T11d53
 epic: 6
 title: Carry qualified uniform and shared-role buffers through native desktop submission
 priority: 525.027039000398
-status: pending
+status: in-progress
 depends_on: [E6-T11d52, E6-T11d18]
 estimate: S
 risk: high
