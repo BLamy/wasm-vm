@@ -2,7 +2,7 @@
 id: E6-T11d47
 epic: 6
 title: Preserve original instanced two-face stencil draws in the selected consumer
-status: in-progress
+status: implemented
 estimate: S
 risk: high
 priority: 525.027039000392
@@ -173,3 +173,59 @@ or predecessor source changes. The exact failing seed then passed all24 runs,
 de69c90e25e7fe367fb59d3db3eec3bbca37db90a70b4a6ef0ecb302546f5a6a.
 The frozen submission will restart at the new harness head; the final pristine
 clone has not yet run.
+
+### 2026-10-11 — worker — implemented; final frozen hot/cold submission
+
+Runtime and every selected recording harness are frozen at
+`3cbb041b43928701026b5ca2ddfb3dcf9a799c2b`. Both final recordings pass
+`make verify-E6-T11d47` at that exact head. The final hot command is
+`caffeinate -disu env VIRGL_INSTANCED_STENCIL_EVIDENCE_DIR=target/evidence/virgl-instanced-stencil-final-3cbb041b-v2 make verify-E6-T11d47`.
+The final cold command is
+`caffeinate -disu python3 tools/virgl-instanced-stencil/cold.py --output target/evidence/virgl-instanced-stencil-cold-3cbb041b`.
+That script creates an exact-head pristine shared clone, scrubs build-related
+overrides, reconstructs the actual verified compiler from the published seal,
+and invokes the same acceptance command. Before/after clone status are empty.
+The full cold log and report are retained; no implementer build was copied.
+
+Each final acceptance authenticates97179 complete predecessor members, passes84
+closed metadata/refusal cases, and records268 positive/native-negative cases:
+66 matrix,4 instance binding,24 typed/packed,60 restart/tail,24 native/fetch
+failures,8 reflection/budget,8 work limits,3 independent schedules of24 lifetime
+cases, and2 unchanged ordered-consumer regressions. Their290 whole captured
+frames contain288918 pixels and9370 primary native calls; lifetime suffixes are
+independently audited in the full records. Every original packet/input/shader,
+native output and per-draw binding is retained. Each of three actual completed
+order/base/phase corruptions is independently refuted after its real native
+post-writer fence. Both finest coverage audits execute344 partitions and leave
+only16 exact corresponding unchanged predecessor operands waived; zero unexplained
+changed runtime regions remain. Browser console/page/request errors are empty.
+
+The first attempt at the same harness head timed out when macOS entered
+Clamshell Sleep at2026-10-11 18:02:40 -0400 and dark-woke at18:09:49, exactly
+when its420-second browser timer expired. Its last native case was recorded at
+22:02:41 UTC. No runtime/harness repair or timeout expansion followed; the
+unchanged awake retry passed. That interrupted run is not final evidence.
+
+The full worker seal is `evidence/virgl-instanced-stencil/worker`. Run
+`python3 tools/virgl-instanced-stencil/seal.py target/evidence/virgl-instanced-stencil-final-3cbb041b-v2 target/evidence/virgl-instanced-stencil-cold-3cbb041b evidence/virgl-instanced-stencil/worker`
+to reproduce sealing on the frozen source head. It reopens every indexed physical
+body or preceding physical hardlink, authenticates all nine stored archive parts,
+and includes the full source closure plus complete D46 worker/verifier seals.
+
+- Source head: `3cbb041b43928701026b5ca2ddfb3dcf9a799c2b`.
+- Manifest SHA256: `2387876828e65c6b958b5c0d9898a3face77af6fc26ffa5bbc114b0890da33a3`.
+- Index SHA256: `e43fb84a4a36adb043968185259061fe2a8af6b44edcb334cbe63c7975d73857`.
+- Complete archive SHA256: `af534b07ebb9a8422adebdf9cd66286f8b2c3472faff8ee38b0a5433ac320b99`; 143968194 bytes, nine parts.
+- Reopened logical members: 41944.
+- Hot receipt SHA256: `bdc6f224e844d2c0df98f02eba8341ef91f91c45237093bd90983835db3eb11b`.
+- Cold report SHA256: `2611b10d826aab641d8acb157e1450a1562ad4023bcd90609b290c6032d3770b`.
+- Cold receipt SHA256: `60747e2056d6443ff543428a8df92860a0bfda593b854d46168cfabc67eaf99d`.
+
+This demonstrates the explicitly selected original instanced asymmetric-S8
+consumer's ordering, identity/fetch/binding semantics, whole bounds, native
+failure prefixes, restoration and asynchronous lifetime boundaries on headed
+M4 Metal. Compiler/C/native/Wasm, decoder/resource/storage, Rust, guest and web
+facts carry only by their unchanged authenticated boundaries. The diff is not
+verified until a fresh critic fails to refute it. No complete API/caps, actual
+Mesa/compositor, production worker/scanout/demo/deployment or300MIPS claim follows.
+The existing native stacks499/500 and every published PR remain intact and open.

@@ -1,0 +1,67 @@
+{
+  "schema": "original-instanced-stencil-seal-v1",
+  "task": "E6-T11d47",
+  "sourceHead": "3cbb041b43928701026b5ca2ddfb3dcf9a799c2b",
+  "archiveParts": [
+    {
+      "path": "recording.tar.gz.part-0000",
+      "bytes": 16777216,
+      "sha256": "8db1fb265d87f6e0bdddfd39b135a94d9d6fa8dcad2a5222a4419fa770761a3e"
+    },
+    {
+      "path": "recording.tar.gz.part-0001",
+      "bytes": 16777216,
+      "sha256": "de1ade6102ae33f8704226dbe50f58157a6b8e9118e28989736b2e130e5782dc"
+    },
+    {
+      "path": "recording.tar.gz.part-0002",
+      "bytes": 16777216,
+      "sha256": "7280faa887eb2100688129041bff9261fa62e5a7a4c731d7f6144e0e589d765f"
+    },
+    {
+      "path": "recording.tar.gz.part-0003",
+      "bytes": 16777216,
+      "sha256": "dd6c724813e2c84dda5588a6fb462bebaad6b7c2551e43743b1ca30733cb5c2e"
+    },
+    {
+      "path": "recording.tar.gz.part-0004",
+      "bytes": 16777216,
+      "sha256": "b4b186607d9ec887181bcf0cef93b5e48b0aeb1b7427dbc3f6122d3ebe3263e0"
+    },
+    {
+      "path": "recording.tar.gz.part-0005",
+      "bytes": 16777216,
+      "sha256": "9b9f3b31bf25f8b0ef165779c740e69b4d8bee873b6ec721e62ac9afa5b83267"
+    },
+    {
+      "path": "recording.tar.gz.part-0006",
+      "bytes": 16777216,
+      "sha256": "86735ec43b73bd5d34ebf2427c5dddfd1013164d715002ca35bdab8505c3db81"
+    },
+    {
+      "path": "recording.tar.gz.part-0007",
+      "bytes": 16777216,
+      "sha256": "eac3b2fcf75635f76390e7d72a39c1dc69d09485b31e7013fa2333151b24a820"
+    },
+    {
+      "path": "recording.tar.gz.part-0008",
+      "bytes": 9750466,
+      "sha256": "2398f25282f1f7afcfcce8745021bea161a0cf71680c342fa721dbbc9545655a"
+    }
+  ],
+  "records": 41944,
+  "reopenedMembers": 41944,
+  "sourceClosureIncluded": true,
+  "archiveSha256": "af534b07ebb9a8422adebdf9cd66286f8b2c3472faff8ee38b0a5433ac320b99",
+  "archiveBytes": 143968194,
+  "recordIndexSha256": "e43fb84a4a36adb043968185259061fe2a8af6b44edcb334cbe63c7975d73857",
+  "hotReceiptSha256": "bdc6f224e844d2c0df98f02eba8341ef91f91c45237093bd90983835db3eb11b",
+  "coldReportSha256": "2611b10d826aab641d8acb157e1450a1562ad4023bcd90609b290c6032d3770b",
+  "coldReceiptSha256": "60747e2056d6443ff543428a8df92860a0bfda593b854d46168cfabc67eaf99d",
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "authority": "isolated-original-instanced-stencil-consumer",
+  "productionDrawAuthority": false,
+  "completePredecessorSealsIncluded": true,
+  "reopenedPredecessorMembers": 97179
+}
