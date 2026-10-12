@@ -12,6 +12,7 @@ export const PROFILE = "virgl-tiny-commands-v1";
 export const STANDARD_PROFILE = "virgl-standard-commands-v1";
 export const STANDARD_UNIFORM_PROFILE = "virgl-standard-uniform-commands-v1";
 export const STANDARD_TEXTURE_PROFILE = "virgl-standard-texture-commands-v1";
+export const STANDARD_DIMENSIONAL_PROFILE = "virgl-standard-dimensional-transfer-commands-v1";
 export const STANDARD_PACKED_FLOAT_IMAGE_PROFILE = "virgl-standard-r11g11b10-image-commands-v1";
 export const STANDARD_SHARED_EXPONENT_IMAGE_PROFILE = "virgl-standard-rgb9e5-image-commands-v1";
 export const STANDARD_MULTIPLE_COLOR_PROFILE = "virgl-standard-multiple-color-commands-v1";
@@ -120,12 +121,12 @@ class DecodeFault extends Error {
 
 /** Indexes in Packet match the pinned protocol: header=0, first payload word=1. */
 class Packet {
-  constructor(view, byteOffset, opcode, length, standard = false, uniform = false, textures = false, images = false, colors = false, floats = false, packed = false, shared = false, integers = false, multipleColors = false, normalized = false, unsigned = false, floatingDepth = false, unormDepth = false, packedDepth = false, stencil = false, shadowSamplers = false) {
+  constructor(view, byteOffset, opcode, length, standard = false, uniform = false, textures = false, images = false, colors = false, floats = false, packed = false, shared = false, integers = false, multipleColors = false, normalized = false, unsigned = false, floatingDepth = false, unormDepth = false, packedDepth = false, stencil = false, shadowSamplers = false, dimensional = false) {
     this.view = view;
     this.byteOffset = byteOffset;
     this.opcode = opcode;
     this.length = length;
-    this.standard = standard; this.uniform = uniform; this.textures = textures; this.images = images; this.colors = colors; this.floatingImages = floats; this.packedImages = packed; this.sharedImages = shared; this.integerImages = integers; this.multipleColors = multipleColors; this.normalizedImages = normalized; this.unsignedImages = unsigned; this.floatingDepth = floatingDepth; this.unormDepth = unormDepth; this.packedDepth = packedDepth; this.stencil = stencil; this.shadowSamplers = shadowSamplers;
+    this.standard = standard; this.uniform = uniform; this.textures = textures; this.images = images; this.colors = colors; this.floatingImages = floats; this.packedImages = packed; this.sharedImages = shared; this.integerImages = integers; this.multipleColors = multipleColors; this.normalizedImages = normalized; this.unsignedImages = unsigned; this.floatingDepth = floatingDepth; this.unormDepth = unormDepth; this.packedDepth = packedDepth; this.stencil = stencil; this.shadowSamplers = shadowSamplers; this.dimensional = dimensional;
   }
   fail(code, message) { throw new DecodeFault(code, message, this.byteOffset, this.opcode); }
   require(condition, code, message) { if (!condition) this.fail(code, message); }
@@ -368,9 +369,9 @@ function decodeTransfer(p, copy, inline = false) {
     p.require(extent > 0 && extent <= MAX_I32 && origin <= MAX_I32 - extent,
       "invalid-value", "Transfer box is negative, empty or overflows signed coordinates.");
   }
-  p.require(box.z === 0 && box.depth === 1, "unsupported-feature", "Only buffer or single-layer 2D transfers are supported.");
-  const rowSpan = stride * (box.height - 1);
-  p.require(rowSpan <= MAX_U32, "invalid-value", "Transfer row arithmetic overflows u32.");
+  p.require(p.dimensional || box.z === 0 && box.depth === 1, "unsupported-feature", "Only buffer or single-layer 2D transfers are supported.");
+  const rowSpan = stride * (box.height - 1) + (p.dimensional ? layerStride * (box.depth - 1) : 0);
+  p.require(rowSpan <= MAX_U32, "invalid-value", p.dimensional ? "Transfer row/layer arithmetic overflows u32." : "Transfer row arithmetic overflows u32.");
   const common = { resourceHandle, level, usage, stride, layerStride, box };
   if (inline) return { ...common, dataWords: p.words(12, p.length - 11) };
   if (copy) {
@@ -661,7 +662,12 @@ export function decodeStandardShadowSamplerSubmission(bytes, provenance = {}) {
   return decode(bytes, provenance, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
 }
 
-function decode(bytes, provenance, standard, uniform = false, textures = false, images = false, colors = false, floats = false, packed = false, shared = false, integers = false, multipleColors = false, normalized = false, unsigned = false, floatingDepth = false, unormDepth = false, packedDepth = false, stencil = false, shadowSamplers = false) {
+/** Original dimensional transfer coordinates require explicit host selection. */
+export function decodeStandardDimensionalSubmission(bytes, provenance = {}) {
+  return decode(bytes, provenance, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
+}
+
+function decode(bytes, provenance, standard, uniform = false, textures = false, images = false, colors = false, floats = false, packed = false, shared = false, integers = false, multipleColors = false, normalized = false, unsigned = false, floatingDepth = false, unormDepth = false, packedDepth = false, stencil = false, shadowSamplers = false, dimensional = false) {
   let byteLength, buffer, byteOffset;
   try {
     const typedArrayPrototype = Object.getPrototypeOf(Uint8Array.prototype);
@@ -693,7 +699,7 @@ function decode(bytes, provenance, standard, uniform = false, textures = false, 
     for (let offset = 0; offset < byteLength;) {
       const header = view.getUint32(offset, true), opcode = header & 255, objectType = (header >>> 8) & 255, payloadDwords = header >>> 16;
       const packetByteLength = (payloadDwords + 1) * 4;
-      const p = new Packet(view, offset, opcode, payloadDwords, standard, uniform, textures, images, colors, floats, packed, shared, integers, multipleColors, normalized, unsigned, floatingDepth, unormDepth, packedDepth, stencil, shadowSamplers);
+      const p = new Packet(view, offset, opcode, payloadDwords, standard, uniform, textures, images, colors, floats, packed, shared, integers, multipleColors, normalized, unsigned, floatingDepth, unormDepth, packedDepth, stencil, shadowSamplers, dimensional);
       p.require(commands.length < LIMITS.commands, "limit-exceeded", "Submission exceeds packet count limit.");
       p.require(packetByteLength <= byteLength - offset, "truncated-payload", "Packet payload exceeds submission.");
       p.require(Object.hasOwn(COMMAND_NAMES, opcode) || uniform && opcode === 27, "unsupported-command", "Unknown or unsupported command.");
@@ -708,5 +714,5 @@ function decode(bytes, provenance, standard, uniform = false, textures = false, 
     if (error instanceof DecodeFault) return error.result;
     throw error; // Unexpected implementation defects are not disguised as guest errors.
   }
-  return freeze({ ok: true, profile: shadowSamplers ? STANDARD_SHADOW_SAMPLER_PROFILE : stencil ? STANDARD_STENCIL_PROFILE : packedDepth ? STANDARD_PACKED_DEPTH_IMAGE_PROFILE : unormDepth ? STANDARD_UNORM_DEPTH_IMAGE_PROFILE : floatingDepth ? STANDARD_FLOATING_DEPTH_IMAGE_PROFILE : unsigned ? STANDARD_PACKED_UNSIGNED_IMAGE_PROFILE : normalized ? STANDARD_PACKED_NORMALIZED_IMAGE_PROFILE : multipleColors ? STANDARD_MULTIPLE_COLOR_PROFILE : integers ? STANDARD_INTEGER_IMAGE_PROFILE : shared ? STANDARD_SHARED_EXPONENT_IMAGE_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_PROFILE : floats ? STANDARD_FLOAT_IMAGE_PROFILE : colors ? STANDARD_COLOR_PROFILE : images ? STANDARD_IMAGE_PROFILE : textures ? STANDARD_TEXTURE_PROFILE : uniform ? STANDARD_UNIFORM_PROFILE : standard ? STANDARD_PROFILE : PROFILE, ...labels, byteLength, commands });
+  return freeze({ ok: true, profile: dimensional ? STANDARD_DIMENSIONAL_PROFILE : shadowSamplers ? STANDARD_SHADOW_SAMPLER_PROFILE : stencil ? STANDARD_STENCIL_PROFILE : packedDepth ? STANDARD_PACKED_DEPTH_IMAGE_PROFILE : unormDepth ? STANDARD_UNORM_DEPTH_IMAGE_PROFILE : floatingDepth ? STANDARD_FLOATING_DEPTH_IMAGE_PROFILE : unsigned ? STANDARD_PACKED_UNSIGNED_IMAGE_PROFILE : normalized ? STANDARD_PACKED_NORMALIZED_IMAGE_PROFILE : multipleColors ? STANDARD_MULTIPLE_COLOR_PROFILE : integers ? STANDARD_INTEGER_IMAGE_PROFILE : shared ? STANDARD_SHARED_EXPONENT_IMAGE_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_PROFILE : floats ? STANDARD_FLOAT_IMAGE_PROFILE : colors ? STANDARD_COLOR_PROFILE : images ? STANDARD_IMAGE_PROFILE : textures ? STANDARD_TEXTURE_PROFILE : uniform ? STANDARD_UNIFORM_PROFILE : standard ? STANDARD_PROFILE : PROFILE, ...labels, byteLength, commands });
 }

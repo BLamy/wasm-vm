@@ -2494,3 +2494,7 @@ verify-E6-T11d53:
 .PHONY: verify-E6-T11d54
 verify-E6-T11d54:
 	python3 tools/virgl-native-image/verify.py --output "$${VIRGL_NATIVE_IMAGE_EVIDENCE_DIR:-target/evidence/virgl-native-image}"
+
+.PHONY: verify-E6-T11d55
+verify-E6-T11d55:
+	python3 tools/virgl-dimensional-storage/verify.py --output "$${VIRGL_DIMENSIONAL_STORAGE_EVIDENCE_DIR:-target/evidence/virgl-dimensional-storage}"

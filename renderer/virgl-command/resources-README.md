@@ -446,3 +446,22 @@ original/native/public inputs, varied physical schedules, independent field
 inverses, completed native corruption controls and governing V8 partitions.
 Real guest Mesa initialization, shadow/surface consumers, capabilities, demo
 deployment and throughput remain later qualifications.
+
+E6-T11d55 separately selects `createStandardDimensionalResourceStore`,
+`createStandardDimensionalTransferBackend` and
+`decodeStandardDimensionalSubmission`. Original RGBA8 volume (target3), cube
+(target4, six square faces) and 2D array (target7) owners use actual immutable
+WebGL2 storage. Volume mip depth shrinks; cube faces and array layers stay fixed.
+The selected owner preserves original render/sampler roles and creation hints,
+clamps separate dimensions/layers to measured host limits and charges every mip
+against the existing 4MiB resource/transfer and 32MiB aggregate budgets.
+
+Original op9/43/45 transfers preserve x/y/z, row stride, layer stride, odd public
+offsets, split SG backing and synchronized staging-copy directions. Reads use
+layer/face framebuffer attachments and either native byte output or a fenced
+PBO. GPU-only overwrites supply the inverse oracle; no CPU image mirror exists.
+`make verify-E6-T11d55` records the affected historical paths, three hardware
+schedules, literal full-byte inverses, failure cleanup, native layer sabotage
+and finest changed V8 regions. Historical constructors and dimensional
+sampler/surface/scanout admission remain separately gated. Native transport,
+production capability negotiation and Linux guest rendering are later work.
