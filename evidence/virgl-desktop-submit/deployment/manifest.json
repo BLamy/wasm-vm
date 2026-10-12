@@ -1,0 +1,44 @@
+{
+  "schema": "desktop-submit-deployment-v1",
+  "head": "bcaf6ab8ed25ef7bb2fde5e08e6608c1f98fabb4",
+  "deployment": "https://caaa68b9.wasm-vm.pages.dev",
+  "production": "https://wasm-vm.pages.dev",
+  "files": {
+    "deploy.log": {
+      "bytes": 4359,
+      "sha256": "ad440394a2ad2ab430c9d18cbf670162358a6ec700195ca37b763dd5d5e1ea76"
+    },
+    "final/browser.png": {
+      "bytes": 50691,
+      "sha256": "751fd3bf90877ab8425df9cfed01698738b4c8596443c7587ca463fb5398d177"
+    },
+    "final/live.log": {
+      "bytes": 75,
+      "sha256": "ef42fe9c18f2549dba471f16a709183678f401ca9ff8c240601f4c843ba4ba96"
+    },
+    "final/report.json": {
+      "bytes": 33295,
+      "sha256": "b24390bf0267e8ffc6c9674f646649449dc3ae7b77e37ab18482e25bf5b8db81"
+    },
+    "final/source.mjs": {
+      "bytes": 6766,
+      "sha256": "38029a7d9d2c0a722f8d1d34f99c73a723e4a946fdc7c4556eafe48f244d14bf"
+    },
+    "generated/artifacts-alpine.json": {
+      "bytes": 1110,
+      "sha256": "a3e5e51a69fcda662579d367d5b46fab295ab8bebad4d38155afa3b51c034b6c"
+    },
+    "generated/artifacts-node-alpine.json": {
+      "bytes": 1255,
+      "sha256": "ab1338d6f7b54bf96b2b503aa3e12e3bc72f9de2fd7f2a40728f3cefe2fe6caf"
+    },
+    "generated/artifacts-omarchy.json": {
+      "bytes": 1193,
+      "sha256": "0fa46b08b90179bb11f6a451f86959908089f73afa19c99580f28360b7b8c22a"
+    },
+    "generated/artifacts.json": {
+      "bytes": 905,
+      "sha256": "c2a325fde02d8dbe84674699336441462eb0d891ba7793d53261986fdbaec404"
+    }
+  }
+}

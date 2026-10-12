@@ -688,7 +688,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.027039000394` [E6-T11d48](epic-6-transcendence/E6-T11d48-shadow-shaders.md) — Translate original 2D shadow texture operations with owned view controls *(deps: E6-T11d47)*
 - [x] `525.027039000396` [E6-T11d49](epic-6-transcendence/E6-T11d49-shadow-samplers.md) — Execute original 2D shadow sampler state against owned native depth views *(deps: E6-T11d48)*
 - [x] `525.027039000397` [E6-T11d50](epic-6-transcendence/E6-T11d50-resource-capacity.md) — Retain the compositor's original resources within a bounded native store *(deps: E6-T11d49)*
-- [~] `525.027039000397` [E6-T11d52](epic-6-transcendence/E6-T11d52-desktop-submit-bridge.md) — Connect selected desktop storage and shader jobs to VirtIO submission ownership *(deps: E6-T11d51, E6-T11b2)*
+- [?] `525.027039000397` [E6-T11d52](epic-6-transcendence/E6-T11d52-desktop-submit-bridge.md) — Connect selected desktop storage and shader jobs to VirtIO submission ownership *(deps: E6-T11d51, E6-T11b2)*
 - [x] `525.027039000398` [E6-T11d51](epic-6-transcendence/E6-T11d51-desktop-resource-control.md) — Carry original desktop resource controls through selected VirtIO ownership *(deps: E6-T11d50)*
 - [x] `525.027039001` [E6-T11d9](epic-6-transcendence/E6-T11d9-standard-primitive-restart.md) — Normalize owned standard index streams for primitive restart *(deps: E6-T11d8)*
 - [x] `525.02703901` [E6-T11d8](epic-6-transcendence/E6-T11d8-standard-core-topologies.md) — Execute bounded standard core line and triangle-fan draws *(deps: E6-T11d7)*
