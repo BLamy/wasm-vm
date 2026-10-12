@@ -19,6 +19,7 @@
   "renderer/virgl-command/unorm-depth-images.mjs",
   "renderer/virgl-command/tests/submit-acceptance.mjs",
   "renderer/virgl-command/tests/desktop-submit-acceptance.mjs",
+  "renderer/virgl-command/tests/desktop-submit-critic.mjs",
   "renderer/virgl-shader/index.mjs",
   "renderer/virgl-shader/standard.mjs",
   "renderer/virgl-shader/build/wasm/virgl-shader.mjs",

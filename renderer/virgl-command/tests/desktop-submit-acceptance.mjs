@@ -1,5 +1,6 @@
 // Selected composition, real Wasm queues, independently modeled owners and pixels.
 import { createVirglStandardShadowTextureShaderBridge } from '../../virgl-shader/standard.mjs';
+import { runDesktopSubmitCritic } from './desktop-submit-critic.mjs';
 import { checker, makeRig, context, resource, idCommand, header, submission,
   originalReplay, orderedDma, uncertainGpuFailure, protocolAttacks } from './submit-acceptance.mjs';
 const OK=0x1100, OOM=0x1201, BAD=0x1205;
@@ -158,6 +159,7 @@ export async function runDesktopAcceptance({WasmVirglSubmitProof,createVirglStan
   result.orderedDma=await orderedDma(Wasm,factory,recordedGl,shaderBridge,c);
   result.failure=await uncertainGpuFailure(Wasm,factory,recordedGl,shaderBridge,c);
   result.protocol=await protocolAttacks(Wasm,factory,recordedGl,shaderBridge,c);
+  result.critic=await runDesktopSubmitCritic({WasmVirglSubmitProof,createVirglStandardDesktopSubmitBridge,createVirglSubmitBridge,schedule:0x5af3});
   c.equal(gl.getError(),gl.NO_ERROR,'no final native GL error');
   result.assertions=c.assertions;result.attacks=c.attacks;result.status='passed';
   result.summary={status:result.status,gpu:result.gpu,assertions:result.assertions,
