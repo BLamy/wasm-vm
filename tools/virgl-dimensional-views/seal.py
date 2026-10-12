@@ -17,7 +17,7 @@ receipt=json.loads((cold/'recording/receipt.json').read_bytes())
 head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=repo,text=True).strip()
 assert report['head']==receipt['head']==head
 assert not report['cleanBefore'] and not report['cleanAfter'] and report['exitCode']==0
-assert receipt['head']==json.loads((cold/'recording/hardware/report.json').read_bytes())['head']
+assert all(receipt['head']==json.loads((cold/('recording/hardware-'+str(seed)+'/report.json')).read_bytes())['head'] for seed in [27449,84131,176129])
 assert all(v['exitCode']==v['expected'] for v in receipt['commands'])
 sha=lambda b:hashlib.sha256(b).hexdigest()
 assert report['receiptSha256']==sha((cold/'recording/receipt.json').read_bytes())
