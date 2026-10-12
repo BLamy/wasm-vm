@@ -1,0 +1,10 @@
+{
+  "status": "passed",
+  "manifestSha256": "9079ba5b7457d02cdf180075f049e26c542484db1c794a56c7bba676461fb7c6",
+  "indexSha256": "67c1175debe54024f70c35eadbe08733ae08930008a1928dc78af4232ce0349e",
+  "archiveSha256": "642815d0c63aee4e79645203f0cb3437582c46a899eb36dcf159150899d7a05c",
+  "actualParts": 32,
+  "actualLogicalMembers": 626,
+  "logicalBytes": 690978972,
+  "allArchivedBodiesEqualCurrentOriginalSourcesGeneratedAndRecords": true
+}
