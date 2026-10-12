@@ -49,6 +49,17 @@ async function collect(directory) {
   }
 }
 await collect('target/virgl-desktop-submit/pkg');
+// Collect the actual relative import closure, including newly split runtime modules.
+const moduleClosure=new Set();
+async function collectModule(filename){
+  if(moduleClosure.has(filename)||!(/\.m?js$/.test(filename)))return;
+  moduleClosure.add(filename);const bytes=await fs.readFile(path.join(repo,filename));
+  for(const match of bytes.toString().matchAll(/(?:from|import)\s*['"](\.\.?\/[^'"]+)['"]/g)){
+    const imported=path.posix.normalize(path.posix.join(path.posix.dirname(filename),match[1]));
+    assert.ok(!imported.startsWith('../'));if(!codePaths.includes(imported))codePaths.push(imported);await collectModule(imported);
+  }
+}
+for(const filename of [...codePaths])await collectModule(filename);
 const html = `<!doctype html><meta charset="utf-8"><title>VirtIO 3D control proof</title>
 <style>body{font:16px system-ui;background:#111720;color:#e7edf6;margin:32px;max-width:1050px}h1{font-size:27px}p{line-height:1.5}pre{white-space:pre-wrap;background:#1b2533;padding:20px;border:1px solid #435167;border-radius:8px;font-size:14px}</style>
 <h1>Selected desktop VirtIO submission owners</h1><p>Real Wasm guest queues → asynchronous host bridge → hardware WebGL2 storage</p>
