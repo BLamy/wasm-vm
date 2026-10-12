@@ -3,7 +3,7 @@ id: E6-T11d60
 epic: 6
 title: Execute original cube and array depth sampler views
 priority: 525.027039000397
-status: in-progress
+status: implemented
 depends_on: [E6-T11d59, E6-T11d58, E6-T11d57]
 estimate: S
 risk: high
@@ -186,3 +186,85 @@ These are inner checks, not the final exact-head evidence or a verifier verdict.
 The selected host factories reuse the unchanged D59 native machine and D57
 compiler. Final source freeze, full repeated schedules, pristine proof, sealed
 bytes and fresh adversarial verification remain required before status advances.
+
+### 2026-10-12 — worker — final recorded submission; fresh verdict pending
+
+Product/runtime freeze: `9f2c98dd8c49a2cc226bde6a7e844227087d7f38`.
+Final harness/pristine head: `9698c0a91086cd419087154875d7200efcfded69`. Original completed
+processes at439bf823 and843f8512 are carried with their original heads,
+commands, whole bodies and digests; they are not represented as reruns.
+The native machine and D57 shader compiler are unchanged and their complete
+D59/D58/D56/D54 authorities are authenticated by the predecessor receipt.
+
+Exact final commands:
+
+```sh
+python3 tools/virgl-dimensional-depth-views/cold.py /tmp/wasmvm-dimensional-depth-views-cold-configuration-final /tmp/wasmvm-dimensional-depth-views-cold-audit-directory-final
+make verify-E6-T11d60
+python3 tools/virgl-dimensional-depth-views/seal.py /tmp/wasmvm-dimensional-depth-views-cold-configuration-final evidence/virgl-dimensional-depth-views/worker
+python3 /tmp/wasmvm-finish-d60-seal-streaming.py
+python3 /tmp/wasmvm-publish-dimensional-depth-view-pages-9698c0a9.py
+node /tmp/wasmvm-dimensional-depth-view-live-9698c0a9.mjs --output /tmp/wasmvm-dimensional-depth-view-live-9698c0a9 --task E6-T11d60
+python3 /tmp/wasmvm-seal-dimensional-depth-view-deployment-9698c0a9.py
+```
+
+The42-command gate, including20 carried original processes, is listed in
+`cold/recording/receipt.json`, including original command paths and heads.
+Receipt SHA256: `af7182fa12ca6e359a770f329368ef4545b7105141eb9141e3575510f1cd3254`.
+The same owned pristine clone is tracked-clean before and after every
+continuation; inherited compiler/runtime settings are scrubbed.
+Native submit25/control13 tests, affected lint and default/selected Wasm builds
+pass. Three hardware schedules27449/84131/176129 each pass925 original sampler
+cases:2,775 total, both dimensions/stages and all five formats. All390 refusal,
+allocation/copy/refresh attacks and30 reset/lifetime cases pass. Three direct
+private inverse/budget runs each pass10 format/target and10 boundary cases,
+3,462 assertions and30,793 native calls, with zero terminal native objects.
+The physical wrong-layer oracle fails as required after two native draws and
+two successful original0x1100 DMA responses, with zero final objects/syncs.
+Historical browser paths pass. The additional historical renderer configuration
+executes its actual old profile/decoder, finishes an empty submission through a
+real native fence and refuses both new depth-view forms before applying commands.
+It is explicitly a direct configuration probe, not guest queue evidence.
+
+The independent complete-byte audit passes original producer inputs, native
+pixels, SG/guard padding, literal complete/private costs and actual fence/DMA
+ordering. Finest coverage:451 executed regions,5 byte-identical positive HELD
+regions and9 static configuration waivers; zero new executable gaps. The final
+built and canonical live demo each pass127/0 with zero browser errors, partial
+graphics status and no proof exports. Default Wasm remains
+`d45b575207e0035b5c518698e7b6793b2bf12da635531723fad70813a5956c36`.
+
+Every failed harness attempt is retained. The first staged diff check found a
+whitespace-only issue. An unused private-recorder import required an unbuilt
+ordinary package; removing it was proved with defaultWasmPackagePresent:false.
+The audit then treated private stderr files as directories; an is_dir filter
+fixed it. Finer historical coverage exposed two old selectors and two static
+cache-label tails: a real historical renderer run supplies the missing execution,
+and the exact unchanged cache-label constants are explicitly waived. No product
+or compiler code changed for these harness continuations. Duplicated owned-clone
+recordings were removed only after every complete body matched retained custody;
+its receipt is sealed in the final cold corpus, and the tracked clone remains.
+
+Worker archive: 37268 fully reopened logical members,
+4593 unique complete bodies and
+32675 explicitly deduplicated hardlinks;
+460967357 compressed bytes in28 parts.
+The original writer finished but its random-access gzip reopening was CPU-bound;
+only its owned reopen process was stopped. The preserved complete archive was
+then checked sequentially, including every full member body and gzip trailer.
+The exact finisher, original log and interruption receipt are pinned peer bodies
+in the manifest. Manifest SHA256: `6e4047173d8fefb25d1763ba2eb9e9c40534bddd70f02544cb05e843f6005145`;
+index: `38dc0b762d1bb5d37229a6ced3ae8b493eb93706cb26f1984b1251b7f83134b9`;
+archive: `f7fba1471496d686b5759cf773ddecdbdd0a4e90014ce7936465cb754956d639`.
+
+Deployment: `d72507c5-dc78-4fc4-92b6-f663c3bd9357`,
+<https://d72507c5.wasm-vm.pages.dev> and canonical <https://wasm-vm.pages.dev>.
+All304 staged file bindings are preserved; only roadmap.js/sw.js change from
+D59. Complete deployment/live/script custody: 512 reopened
+members, manifest `e70510aa90493b955fe70c445c318bdd75b4e4f3b9144bf98201a0905b86351c`,
+index `be8d78eaddb35e2fbe8d8cfe9591f60c7c7caaab9d7e2c5506c2199844a0fb08`,
+archive `2938b5c97a407dbf9f3cd7e71b344bf7f4214ac052835b03fe65db733c5c5cf3`. The live screenshot, served whole bodies,
+Cloudflare success metadata and staging index are included. No complete GLES,
+Linux Mesa/Hyprland, production negotiation or MIPS claim is made by this slice.
+A fresh critic must now attack the complete diff and recordings; only that
+session may set verified. Continue the existing native PR stack without merging.
