@@ -95,3 +95,42 @@ This negative readiness record has no native draw, guest or production authority
 The explicit human request to finish production graphics continues this ordered
 chain ahead of the unrelated desktop snapshot task. Only this S/high consumer
 boundary enters the active lane after its compiler dependency is verified.
+
+### 2026-10-12 — worker — bounded implementation and inner validation
+
+Added only the selected original comparison decoder, owned shadow metadata
+parser and native consumer factory. Historical factories keep their existing
+arguments. The compiler, generated Wasm and native storage remain exactly D48.
+The complete D48 worker/critic archives were reopened against their published
+indexes (53,210 logical records); the two generated bodies match their sealed
+predecessor digests. The new seal references those complete published
+dependencies rather than recursively duplicating their archives.
+
+Inner captures on headed Chrome/Apple M4 Metal passed 384 fixed/float depth
+format cases, all eight comparison functions, all supported shadow operations,
+upper/lower clamp endpoints, private mip ranges, queries and original modifiers.
+Separate captures passed same-image ordinary/shadow native samplers, different
+vertex/fragment state at original slot7, raw signed/unsigned integer image
+sampling, ten native reflection/pruning cases, eight no-draw refusals and seven
+cache/lifetime/cancellation boundaries. Six packed-SNORM/divisor/instance draws
+with ordered two-face S8 stencil passed the independent whole-plane model.
+Physical comparison and mask corruptions each completed a second, distinct
+fenced frame and contradicted the unchanged original pixel expectation.
+These inner runs are self-validation, not the final worker submission.
+
+The physical endpoint probe exposed a required GLES3.0.6 distinction: fixed-point
+depth comparisons clamp the post-projective reference to [0,1]; floating depth
+does not. Selected fixed-depth GPU helpers now derive that clamp from the
+original retained format. Comparison still executes through native
+sampler2DShadow, with no CPU depth mirror. Primary authority is the complete
+pinned GLES3.0.6 specification, section3.8.15.1. Old ordinary sampling and all
+selected float-depth paths retain their existing source behavior.
+
+The deterministic acceptance records exact original packets, input/native
+upload bodies, full compiler responses, actual native sampler/uniform queries,
+whole completed planes, every writer/fence/read ordering, finest nested V8
+partitions and terminal object custody. Authenticated predecessor modules also
+match 1,194 historical public results, and the prior instanced public factory
+is exercised directly on native Metal. The remaining older false-selector
+operands have exact source/digest waivers. No guest, capset, demo, deployment
+or throughput claim is made by this isolated boundary.

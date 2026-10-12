@@ -7,7 +7,7 @@ import {packedNormalizedColorFormat} from "./packed-normalized-images.mjs";
 import {packedUnsignedColorFormat} from "./packed-unsigned-images.mjs";
 import {floatingDepthFormat} from "./floating-depth-images.mjs";
 import {unormDepthFormat, packedDepthFormat} from "./unorm-depth-images.mjs";
-import { decodeSubmission, decodeStandardSubmission, decodeStandardUniformSubmission, decodeStandardImageSubmission, decodeStandardColorSubmission, decodeStandardFloatImageSubmission, decodeStandardPackedFloatImageSubmission, decodeStandardSharedExponentImageSubmission, decodeStandardIntegerImageSubmission, decodeStandardMultipleColorSubmission, decodeStandardPackedNormalizedImageSubmission, decodeStandardPackedUnsignedImageSubmission, decodeStandardFloatingDepthImageSubmission, decodeStandardUnormDepthImageSubmission, decodeStandardPackedDepthImageSubmission, decodeStandardStencilSubmission, vertexFormat } from "./decoder.mjs";
+import { decodeSubmission, decodeStandardSubmission, decodeStandardUniformSubmission, decodeStandardImageSubmission, decodeStandardColorSubmission, decodeStandardFloatImageSubmission, decodeStandardPackedFloatImageSubmission, decodeStandardSharedExponentImageSubmission, decodeStandardIntegerImageSubmission, decodeStandardMultipleColorSubmission, decodeStandardPackedNormalizedImageSubmission, decodeStandardPackedUnsignedImageSubmission, decodeStandardFloatingDepthImageSubmission, decodeStandardUnormDepthImageSubmission, decodeStandardPackedDepthImageSubmission, decodeStandardStencilSubmission, decodeStandardShadowSamplerSubmission, vertexFormat } from "./decoder.mjs";
 import { LIMITS as SHADER_LIMITS } from "../virgl-shader/index.mjs";
 import { createKeyCache, hashKey } from "./cache.mjs";
 import { parseConstantDomain, checkFiniteBank, checkIndirectBank, checkLoopBank, checkRadialBank, checkRasterBank, checkConversionBank, checkExactBank, COORDINATE_KEY, DISCARD_KEY,
@@ -15,7 +15,8 @@ import { parseConstantDomain, checkFiniteBank, checkIndirectBank, checkLoopBank,
   normalizeStandardUniformShaderResult, normalizeStandardUniformShaderPair, deriveStandardUniformShaderInterface, parseStandardTextureShaderMetadata, normalizeStandardTextureShaderResult, normalizeStandardTextureShaderPair, deriveStandardTextureShaderInterface,
   parseStandardIntegerImageShaderMetadata, normalizeStandardIntegerImageShaderResult, normalizeStandardIntegerImageShaderPair, deriveStandardIntegerImageShaderInterface,
   parseStandardMultipleColorShaderMetadata, normalizeStandardMultipleColorShaderResult, normalizeStandardMultipleColorShaderPair, deriveStandardMultipleColorShaderInterface,
-  parseStandardInstanceBaseShaderMetadata, normalizeStandardInstanceBaseShaderResult, normalizeStandardInstanceBaseShaderPair, deriveStandardInstanceBaseShaderInterface } from "./constant-domain.mjs";
+  parseStandardInstanceBaseShaderMetadata, normalizeStandardInstanceBaseShaderResult, normalizeStandardInstanceBaseShaderPair, deriveStandardInstanceBaseShaderInterface,
+  parseStandardShadowTextureShaderMetadata, normalizeStandardShadowTextureShaderResult, normalizeStandardShadowTextureShaderPair, deriveStandardShadowTextureShaderInterface } from "./constant-domain.mjs";
 
 export const STATE_PROFILE = "virgl-tiny-state-v1";
 export const STATE_LIMITS = Object.freeze({ contexts: 8, subContexts: 16, objects: 256,
@@ -37,6 +38,7 @@ export const STANDARD_UNORM_DEPTH_IMAGE_ASYNC_PROFILE = "virgl-standard-unorm-de
 export const STANDARD_PACKED_DEPTH_IMAGE_ASYNC_PROFILE = "virgl-standard-packed-depth-image-async-jobs-v1";
 export const STANDARD_STENCIL_ASYNC_PROFILE = "virgl-standard-stencil-async-jobs-v1";
 export const STANDARD_ORDERED_STENCIL_ASYNC_PROFILE = "virgl-standard-ordered-stencil-async-jobs-v1";
+export const STANDARD_SHADOW_SAMPLER_ASYNC_PROFILE = "virgl-standard-shadow-sampler-async-jobs-v1";
 export const STANDARD_INSTANCED_STENCIL_ASYNC_PROFILE = "virgl-standard-instanced-stencil-async-jobs-v1";
 export const STANDARD_FLOAT_IMAGE_ASYNC_PROFILE = "virgl-standard-float-image-async-jobs-v1";
 export const STANDARD_IMAGE_ASYNC_PROFILE = "virgl-standard-image-async-jobs-v1";
@@ -291,7 +293,12 @@ export function createVirglStandardInstancedStencilAsyncRenderer(options) {
   return createRenderer(options, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
 }
 
-function createRenderer(options, drawing, asynchronous = false, standard = false, uniform = false, bufferRoles = false, images = false, colors = false, textureOperations = false, floats = false, packed = false, shared = false, integers = false, multipleColors = false, normalized = false, unsigned = false, floatingDepth = false, unormDepth = false, packedDepth = false, stencil = false, orderedStencil = false, instanceBase = false) {
+/** Original 2D depth comparisons use separately owned native sampler bindings. */
+export function createVirglStandardShadowSamplerAsyncRenderer(options) {
+  return createRenderer(options, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
+}
+
+function createRenderer(options, drawing, asynchronous = false, standard = false, uniform = false, bufferRoles = false, images = false, colors = false, textureOperations = false, floats = false, packed = false, shared = false, integers = false, multipleColors = false, normalized = false, unsigned = false, floatingDepth = false, unormDepth = false, packedDepth = false, stencil = false, orderedStencil = false, instanceBase = false, shadowSamplers = false) {
   return result(() => {
     const config = dataRecord(options, ["gl", "resources", "bindings", "shaderBridge", "limits", "cacheLimits", ...(drawing ? ["drawLimits"] : []), ...(asynchronous ? ["asyncAccess", "jobLimits"] : []), ...(standard ? ["primitiveAssembly"] : []), ...(uniform ? ["uniformAccess"] : []), ...(images ? ["imageAccess"] : [])], ["gl", "resources", "bindings", "shaderBridge", ...(asynchronous ? ["asyncAccess"] : []), ...(uniform ? ["uniformAccess"] : []), ...(images ? ["imageAccess"] : [])]);
     const { gl, resources, bindings, shaderBridge } = config;
@@ -343,9 +350,9 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       "invalid-input", "Original native image range authority is required.");
     require(!integers || typeof shaderBridge.translateImages === "function", "invalid-input", "Integer images require the selected stage compiler.");
     const integerFormat = format => integerColorFormat(format) || (unsigned ? packedUnsignedColorFormat(format) : null);
-    const profile = instanceBase ? STANDARD_INSTANCED_STENCIL_ASYNC_PROFILE : orderedStencil ? STANDARD_ORDERED_STENCIL_ASYNC_PROFILE : stencil ? STANDARD_STENCIL_ASYNC_PROFILE : packedDepth ? STANDARD_PACKED_DEPTH_IMAGE_ASYNC_PROFILE : unormDepth ? STANDARD_UNORM_DEPTH_IMAGE_ASYNC_PROFILE : floatingDepth ? STANDARD_FLOATING_DEPTH_IMAGE_ASYNC_PROFILE : unsigned ? STANDARD_PACKED_UNSIGNED_IMAGE_ASYNC_PROFILE : normalized ? STANDARD_PACKED_NORMALIZED_IMAGE_ASYNC_PROFILE : multipleColors ? STANDARD_MULTIPLE_COLOR_ASYNC_PROFILE : integers ? STANDARD_INTEGER_IMAGE_ASYNC_PROFILE : shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : textureOperations ? STANDARD_TEXTURE_ASYNC_PROFILE : colors ? STANDARD_COLOR_ASYNC_PROFILE : images ? STANDARD_IMAGE_ASYNC_PROFILE : bufferRoles ? STANDARD_BUFFER_ASYNC_PROFILE : uniform ? STANDARD_UNIFORM_ASYNC_PROFILE : standard ? STANDARD_ASYNC_PROFILE : asynchronous ? ASYNC_PROFILE : drawing ? DRAW_PROFILE : STATE_PROFILE;
-    const decodeCommands = stencil ? decodeStandardStencilSubmission : packedDepth ? decodeStandardPackedDepthImageSubmission : unormDepth ? decodeStandardUnormDepthImageSubmission : floatingDepth ? decodeStandardFloatingDepthImageSubmission : unsigned ? decodeStandardPackedUnsignedImageSubmission : normalized ? decodeStandardPackedNormalizedImageSubmission : multipleColors ? decodeStandardMultipleColorSubmission : integers ? decodeStandardIntegerImageSubmission : shared ? decodeStandardSharedExponentImageSubmission : packed ? decodeStandardPackedFloatImageSubmission : floats ? decodeStandardFloatImageSubmission : colors ? decodeStandardColorSubmission : images ? decodeStandardImageSubmission : uniform ? decodeStandardUniformSubmission : standard ? decodeStandardSubmission : decodeSubmission;
-    const parseShaderMetadata = instanceBase ? parseStandardInstanceBaseShaderMetadata : multipleColors ? parseStandardMultipleColorShaderMetadata : integers ? parseStandardIntegerImageShaderMetadata : textureOperations ? parseStandardTextureShaderMetadata : uniform ? parseStandardUniformShaderMetadata : standard ? parseStandardShaderMetadata : parseConstantDomain;
+    const profile = shadowSamplers ? STANDARD_SHADOW_SAMPLER_ASYNC_PROFILE : instanceBase ? STANDARD_INSTANCED_STENCIL_ASYNC_PROFILE : orderedStencil ? STANDARD_ORDERED_STENCIL_ASYNC_PROFILE : stencil ? STANDARD_STENCIL_ASYNC_PROFILE : packedDepth ? STANDARD_PACKED_DEPTH_IMAGE_ASYNC_PROFILE : unormDepth ? STANDARD_UNORM_DEPTH_IMAGE_ASYNC_PROFILE : floatingDepth ? STANDARD_FLOATING_DEPTH_IMAGE_ASYNC_PROFILE : unsigned ? STANDARD_PACKED_UNSIGNED_IMAGE_ASYNC_PROFILE : normalized ? STANDARD_PACKED_NORMALIZED_IMAGE_ASYNC_PROFILE : multipleColors ? STANDARD_MULTIPLE_COLOR_ASYNC_PROFILE : integers ? STANDARD_INTEGER_IMAGE_ASYNC_PROFILE : shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : textureOperations ? STANDARD_TEXTURE_ASYNC_PROFILE : colors ? STANDARD_COLOR_ASYNC_PROFILE : images ? STANDARD_IMAGE_ASYNC_PROFILE : bufferRoles ? STANDARD_BUFFER_ASYNC_PROFILE : uniform ? STANDARD_UNIFORM_ASYNC_PROFILE : standard ? STANDARD_ASYNC_PROFILE : asynchronous ? ASYNC_PROFILE : drawing ? DRAW_PROFILE : STATE_PROFILE;
+    const decodeCommands = shadowSamplers ? decodeStandardShadowSamplerSubmission : stencil ? decodeStandardStencilSubmission : packedDepth ? decodeStandardPackedDepthImageSubmission : unormDepth ? decodeStandardUnormDepthImageSubmission : floatingDepth ? decodeStandardFloatingDepthImageSubmission : unsigned ? decodeStandardPackedUnsignedImageSubmission : normalized ? decodeStandardPackedNormalizedImageSubmission : multipleColors ? decodeStandardMultipleColorSubmission : integers ? decodeStandardIntegerImageSubmission : shared ? decodeStandardSharedExponentImageSubmission : packed ? decodeStandardPackedFloatImageSubmission : floats ? decodeStandardFloatImageSubmission : colors ? decodeStandardColorSubmission : images ? decodeStandardImageSubmission : uniform ? decodeStandardUniformSubmission : standard ? decodeStandardSubmission : decodeSubmission;
+    const parseShaderMetadata = shadowSamplers ? parseStandardShadowTextureShaderMetadata : instanceBase ? parseStandardInstanceBaseShaderMetadata : multipleColors ? parseStandardMultipleColorShaderMetadata : integers ? parseStandardIntegerImageShaderMetadata : textureOperations ? parseStandardTextureShaderMetadata : uniform ? parseStandardUniformShaderMetadata : standard ? parseStandardShaderMetadata : parseConstantDomain;
     const idle = () => require(activeJob === null, "busy", "A renderer job is active; cancel and drain it before changing state.");
     const contexts = new Map(), objects = new Set(), programs = new Set();
     let disposed = false, nextGeneration = 1, subCount = 0, shaderBytes = 0, uniformBytes = 0, leaseCount = 0;
@@ -458,12 +465,12 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       }
     };
     const translatedStage = (sub, request) => {
-      const key = JSON.stringify([sub.generation, "stage", request.stage, request.text, ...(textureOperations ? [instanceBase ? STANDARD_INSTANCED_STENCIL_ASYNC_PROFILE : unsigned ? STANDARD_PACKED_UNSIGNED_IMAGE_ASYNC_PROFILE : normalized ? STANDARD_PACKED_NORMALIZED_IMAGE_ASYNC_PROFILE : multipleColors ? STANDARD_MULTIPLE_COLOR_ASYNC_PROFILE : integers ? STANDARD_INTEGER_IMAGE_ASYNC_PROFILE : shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : STANDARD_TEXTURE_ASYNC_PROFILE] : [])]);
+      const key = JSON.stringify([sub.generation, "stage", request.stage, request.text, ...(textureOperations ? [shadowSamplers ? STANDARD_SHADOW_SAMPLER_ASYNC_PROFILE : instanceBase ? STANDARD_INSTANCED_STENCIL_ASYNC_PROFILE : unsigned ? STANDARD_PACKED_UNSIGNED_IMAGE_ASYNC_PROFILE : normalized ? STANDARD_PACKED_NORMALIZED_IMAGE_ASYNC_PROFILE : multipleColors ? STANDARD_MULTIPLE_COLOR_ASYNC_PROFILE : integers ? STANDARD_INTEGER_IMAGE_ASYNC_PROFILE : shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : STANDARD_TEXTURE_ASYNC_PROFILE] : [])]);
       const cached = translationCache.get(sub, key);
       if (cached) return cached;
       work.translations++;
       const response = integers ? shaderBridge.translateImages({ ...request, signedColorMask: 0, unsignedColorMask: 0 }) : shaderBridge.translate(request);
-      const translated = instanceBase ? unwrap(normalizeStandardInstanceBaseShaderResult(response, request.stage)) : multipleColors ? unwrap(normalizeStandardMultipleColorShaderResult(response, request.stage)) : integers ? unwrap(normalizeStandardIntegerImageShaderResult(response, request.stage)) : textureOperations ? unwrap(normalizeStandardTextureShaderResult(response, request.stage)) : uniform ? unwrap(normalizeStandardUniformShaderResult(response, request.stage)) : standard ? unwrap(normalizeStandardShaderResult(response, request.stage)) : freeze(unwrap(response));
+      const translated = shadowSamplers ? unwrap(normalizeStandardShadowTextureShaderResult(response, request.stage)) : instanceBase ? unwrap(normalizeStandardInstanceBaseShaderResult(response, request.stage)) : multipleColors ? unwrap(normalizeStandardMultipleColorShaderResult(response, request.stage)) : integers ? unwrap(normalizeStandardIntegerImageShaderResult(response, request.stage)) : textureOperations ? unwrap(normalizeStandardTextureShaderResult(response, request.stage)) : uniform ? unwrap(normalizeStandardUniformShaderResult(response, request.stage)) : standard ? unwrap(normalizeStandardShaderResult(response, request.stage)) : freeze(unwrap(response));
       unwrap(parseShaderMetadata(translated.metadata, request.stage));
       require(typeof translated.glsl === "string" && /^#version 300 es\b/m.test(translated.glsl),
         "shader-error", "Shader bridge returned incompatible output.");
@@ -472,7 +479,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
     };
     const translatedPair = (sub, vertex, fragment, interfaceKey, validate, inputTypes = null, bufferZeroMask = 0, colorOutputs = null) => {
       const key = JSON.stringify([sub.generation, "pair", vertex.fields.text, fragment.fields.text, interfaceKey,
-        ...(inputTypes?.key ? [inputTypes.key] : []), ...(uniform ? [bufferZeroMask] : []), ...(integers ? [colorOutputs.key] : []), ...(textureOperations ? [instanceBase ? STANDARD_INSTANCED_STENCIL_ASYNC_PROFILE : unsigned ? STANDARD_PACKED_UNSIGNED_IMAGE_ASYNC_PROFILE : normalized ? STANDARD_PACKED_NORMALIZED_IMAGE_ASYNC_PROFILE : multipleColors ? STANDARD_MULTIPLE_COLOR_ASYNC_PROFILE : integers ? STANDARD_INTEGER_IMAGE_ASYNC_PROFILE : shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : STANDARD_TEXTURE_ASYNC_PROFILE] : [])]);
+        ...(inputTypes?.key ? [inputTypes.key] : []), ...(uniform ? [bufferZeroMask] : []), ...(integers ? [colorOutputs.key] : []), ...(textureOperations ? [shadowSamplers ? STANDARD_SHADOW_SAMPLER_ASYNC_PROFILE : instanceBase ? STANDARD_INSTANCED_STENCIL_ASYNC_PROFILE : unsigned ? STANDARD_PACKED_UNSIGNED_IMAGE_ASYNC_PROFILE : normalized ? STANDARD_PACKED_NORMALIZED_IMAGE_ASYNC_PROFILE : multipleColors ? STANDARD_MULTIPLE_COLOR_ASYNC_PROFILE : integers ? STANDARD_INTEGER_IMAGE_ASYNC_PROFILE : shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : STANDARD_TEXTURE_ASYNC_PROFILE] : [])]);
       const cached = translationCache.get(sub, key);
       if (cached) { validate(cached); return cached; }
       work.pairTranslations++;
@@ -484,7 +491,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       const response = integers ? shaderBridge.translatePairImages({ ...request, ...selectors }) : uniform ? shaderBridge.translatePairUniforms({ ...request, ...selectors }) : inputTypes?.packedSignedMask ? shaderBridge.translatePairVertexFormats({ ...request, ...masks,
         packedSignedMask: inputTypes.packedSignedMask, packedNormalizedMask: inputTypes.packedNormalizedMask }) :
         masks ? shaderBridge.translatePairTyped({ ...request, ...masks }) : shaderBridge.translatePair(request);
-      const translated = instanceBase ? unwrap(normalizeStandardInstanceBaseShaderPair(response, selectors)) : multipleColors ? unwrap(normalizeStandardMultipleColorShaderPair(response, selectors)) : integers ? unwrap(normalizeStandardIntegerImageShaderPair(response, selectors)) : textureOperations ? unwrap(normalizeStandardTextureShaderPair(response, selectors)) : uniform ? unwrap(normalizeStandardUniformShaderPair(response, selectors)) : standard ? unwrap(masks ? normalizeStandardShaderTypedPair(response, masks) :
+      const translated = shadowSamplers ? unwrap(normalizeStandardShadowTextureShaderPair(response, selectors)) : instanceBase ? unwrap(normalizeStandardInstanceBaseShaderPair(response, selectors)) : multipleColors ? unwrap(normalizeStandardMultipleColorShaderPair(response, selectors)) : integers ? unwrap(normalizeStandardIntegerImageShaderPair(response, selectors)) : textureOperations ? unwrap(normalizeStandardTextureShaderPair(response, selectors)) : uniform ? unwrap(normalizeStandardUniformShaderPair(response, selectors)) : standard ? unwrap(masks ? normalizeStandardShaderTypedPair(response, masks) :
         normalizeStandardShaderPair(response)) : freeze(unwrap(response));
       validate(translated);
       translationCache.put(sub, key, translated, 1024 + 2 * (key.length + JSON.stringify(translated).length));
@@ -592,7 +599,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           gl.samplerParameteri(object.sampler, gl.TEXTURE_WRAP_R, address(fields.wrapR));
           gl.samplerParameteri(object.sampler, gl.TEXTURE_MIN_FILTER, minFilter);
           gl.samplerParameteri(object.sampler, gl.TEXTURE_MAG_FILTER, fields.magImageFilter === 0 ? gl.NEAREST : gl.LINEAR);
-          gl.samplerParameteri(object.sampler, gl.TEXTURE_COMPARE_MODE, gl.NONE);
+          gl.samplerParameteri(object.sampler, gl.TEXTURE_COMPARE_MODE, shadowSamplers && fields.compareMode === 1 ? gl.COMPARE_REF_TO_TEXTURE : gl.NONE);
           if (standard) gl.samplerParameteri(object.sampler, gl.TEXTURE_COMPARE_FUNC, gl.NEVER + fields.compareFunction);
           gl.samplerParameterf(object.sampler, gl.TEXTURE_MIN_LOD, fields.minLod);
           gl.samplerParameterf(object.sampler, gl.TEXTURE_MAX_LOD, fields.maxLod);
@@ -638,18 +645,20 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           metadata.colorOutputMasks.unsignedMask & (1 << slot) ? "uvec4" : "vec4",
         ...(slot ? { broadcastFrom: source.index } : {}) }));
     };
+    const depthFormat = format => floatingDepth && floatingDepthFormat(format) ||
+      unormDepth && unormDepthFormat(format) || packedDepth && packedDepthFormat(format);
     const samplingFor = (sub, fragment, vertex = null) => {
       const declarations = standard ? [[0, vertex], [1, fragment]].flatMap(([stage, shader]) =>
         shader.translation.metadata.samplers.map(sampler => ({ stage, sampler }))) :
         fragment.translation.metadata.samplers.map(sampler => ({ stage: 1, sampler }));
       const views = declarations.map(({ stage, sampler }) => {
-        require((integers ? ["sampler2D", "isampler2D", "usampler2D"].includes(sampler.type) : sampler.type === "sampler2D") && Number.isInteger(sampler.index) && sampler.index >= 0 && sampler.index < (standard ? 16 : 8) &&
+        require((shadowSamplers && sampler.type === "sampler2DShadow" || (integers ? ["sampler2D", "isampler2D", "usampler2D"].includes(sampler.type) : sampler.type === "sampler2D")) && Number.isInteger(sampler.index) && sampler.index >= 0 && sampler.index < (standard ? 16 : 8) &&
           sampler.name === (stage === 0 ? "vssamp" : "fssamp") + sampler.index,
         "shader-link-error", "View specialization requires the checked stage 2D TEX family.");
         const view = sub.views[stage][sampler.index], fields = view?.fields;
         if (integers && fields) {
           const image = integerFormat(fields.format), nativeType = image ? image.signed ? "isampler2D" : "usampler2D" : "sampler2D";
-          require(sampler.type === nativeType, "incompatible-resource", "Original sampler return type disagrees with retained image storage.");
+          require(shadowSamplers && sampler.type === "sampler2DShadow" ? Boolean(depthFormat(fields.format)) : sampler.type === nativeType, "incompatible-resource", "Original sampler return type disagrees with retained image storage.");
         }
         // Linking may precede view binding. The fixed legacy RGBA identity
         // specialization is safe then; draw validation still requires a view.
@@ -662,16 +671,38 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       return freeze({ key, suffix: identity ? "" : `|${key}`, views });
     };
     const specializeViews = (text, sampling, stage = 1) => {
-      const specialized = sampling.views.filter((view) => (!standard || view.stage === stage) && view.swizzle.some((value, lane) => value !== lane));
+      const specialized = sampling.views.filter((view) => (!standard || view.stage === stage) && ((shadowSamplers && view.type === "sampler2DShadow") ? Boolean(unormDepthFormat(view.format) || packedDepthFormat(view.format)) : view.swizzle.some((value, lane) => value !== lane)));
       if (!specialized.length) return null;
       let helpers = "";
       for (const view of specialized) {
+        if (shadowSamplers && view.type === "sampler2DShadow") {
+          // GLES fixed-depth comparisons clamp the post-projective reference.
+          // Derive the clamp from the original retained format instead of
+          // relying on a native implementation to apply it implicitly.
+          const operations = [["texture", "vec3 coord", "vec3(coord.xy,clamp(coord.z,0.0,1.0))"],
+            ["textureLod", "vec3 coord,float lod", "vec3(coord.xy,clamp(coord.z,0.0,1.0)),lod"],
+            ["textureGrad", "vec3 coord,vec2 dx,vec2 dy", "vec3(coord.xy,clamp(coord.z,0.0,1.0)),dx,dy"],
+            ["textureProj", "vec4 coord", "vec4(coord.xy,clamp(coord.z/coord.w,0.0,1.0)*coord.w,coord.w)"]];
+          for (const [operation, parameters, argumentsText] of operations) {
+            const name = `wv_shadow_ref_${view.index}_${operation}`,
+              pattern = new RegExp(`\\b${operation}\\s*\\(\\s*${view.name}\\s*,`, "g");
+            let hits = 0;
+            text = text.replace(pattern, () => { hits++; return `${name}(`; });
+            if (hits) {
+              helpers += `float ${name}(${parameters}){return ${operation}(${view.name},${argumentsText});}\n`;
+              if (operation === "texture" && stage === 1)
+                helpers += `float ${name}(vec3 coord,float bias){return texture(${view.name},vec3(coord.xy,clamp(coord.z,0.0,1.0)),bias);}\n`;
+            }
+          }
+          continue;
+        }
         const type = view.type === "isampler2D" ? "ivec4" : view.type === "usampler2D" ? "uvec4" : "vec4",
           lanes = ["v.r", "v.g", "v.b", "v.a", type === "uvec4" ? "0u" : type === "ivec4" ? "0" : "0.0", type === "uvec4" ? "1u" : type === "ivec4" ? "1" : "1.0"],
           swizzle = view.swizzle.map(value => lanes[value]).join(",");
         const operations = textureOperations ? [
           ["texture", "vec2 coord", "coord"], ["textureLod", "vec2 coord,float lod", "coord,lod"],
-          ["texelFetch", "ivec2 coord,int lod", "coord,lod"], ["textureGrad", "vec2 coord,vec2 dx,vec2 dy", "coord,dx,dy"]
+          ["texelFetch", "ivec2 coord,int lod", "coord,lod"], ["textureGrad", "vec2 coord,vec2 dx,vec2 dy", "coord,dx,dy"],
+          ...(shadowSamplers ? [["textureProj", "vec4 coord", "coord"]] : [])
         ] : [["texture", "vec2 coord", "coord"]];
         let total = 0;
         for (const [operation, parameters, argumentsText] of operations) {
@@ -759,7 +790,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       const bufferZeroMask = zeroMask(sub, vertex, fragment);
       let fragmentBase = fragment.translation.glsl;
       const interfaceInfo = standard ? (() => {
-        const owned = unwrap(instanceBase ? deriveStandardInstanceBaseShaderInterface(vs, fs) : multipleColors ? deriveStandardMultipleColorShaderInterface(vs, fs) : integers ? deriveStandardIntegerImageShaderInterface(vs, fs) : textureOperations ? deriveStandardTextureShaderInterface(vs, fs) : uniform ? deriveStandardUniformShaderInterface(vs, fs) : deriveStandardShaderInterface(vs, fs));
+        const owned = unwrap(shadowSamplers ? deriveStandardShadowTextureShaderInterface(vs, fs) : instanceBase ? deriveStandardInstanceBaseShaderInterface(vs, fs) : multipleColors ? deriveStandardMultipleColorShaderInterface(vs, fs) : integers ? deriveStandardIntegerImageShaderInterface(vs, fs) : textureOperations ? deriveStandardTextureShaderInterface(vs, fs) : uniform ? deriveStandardUniformShaderInterface(vs, fs) : deriveStandardShaderInterface(vs, fs));
         return { ...owned, inputs: new Map(owned.inputs.map(input => [input.semanticIndex, input])) };
       })() : shaderInterface(vs, fs, fragment.coordinateContract, fragment.discardContract);
       // Generations identify these exact owned immutable bodies/metadata, not public names.
@@ -773,8 +804,8 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         ...(integers ? { colorKey: colorOutputs.key } : {}),
         variantShader: null, fragmentVariantShader: null, variantBytes: 0,
         blendFold, blendUniform: null,
-        reflection: { attributes: [], uniforms: [], samplers: [], uniformBlocks: [], outputs: [], ...(standard ? { systemValues: [], rasterUniforms: [] } : {}), ...(textureOperations ? { textureQueries: [] } : {}), ...(instanceBase ? { instanceUniforms: [] } : {}) },
-        ...(standard ? { rasterUniforms: [] } : {}), ...(uniform ? { guestBlocks: [], bufferZeroMask } : {}), ...(textureOperations ? { textureQueries: [] } : {}), ...(instanceBase ? { instanceUniforms: [] } : {}) };
+        reflection: { attributes: [], uniforms: [], samplers: [], uniformBlocks: [], outputs: [], ...(standard ? { systemValues: [], rasterUniforms: [] } : {}), ...(textureOperations ? { textureQueries: [] } : {}), ...(instanceBase ? { instanceUniforms: [] } : {}), ...(shadowSamplers ? { shadowUniforms: [] } : {}) },
+        ...(standard ? { rasterUniforms: [] } : {}), ...(uniform ? { guestBlocks: [], bufferZeroMask } : {}), ...(textureOperations ? { textureQueries: [] } : {}), ...(instanceBase ? { instanceUniforms: [] } : {}), ...(shadowSamplers ? { shadowUniforms: [] } : {}) };
       try {
         if (standard || interfaceInfo.flat || interfaceInfo.coordinates || interfaceInfo.discard) {
           require(typeof shaderBridge.translatePair === "function", "shader-link-error", interfaceInfo.coordinates ?
@@ -848,6 +879,22 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           program.reflection.attributes.push({ ...declared, location, type: actual.type });
         }
         for (const [stage, metadata] of [[0, vs], [1, fs]]) {
+          if (shadowSamplers) for (const uniform of metadata.shadowUniforms) {
+            const location = gl.getUniformLocation(program.native, uniform.name),
+              index = gl.getUniformIndices(program.native, [uniform.name])?.[0];
+            const active = location !== null || index !== gl.INVALID_INDEX;
+            if (active) {
+              require(location !== null && index !== undefined && index !== gl.INVALID_INDEX &&
+                gl.getActiveUniforms(program.native, [index], gl.UNIFORM_TYPE)[0] === gl.FLOAT_VEC4 &&
+                gl.getActiveUniforms(program.native, [index], gl.UNIFORM_SIZE)[0] === 1,
+              "shader-reflection-error", "Shadow view control reflection mismatch.");
+              const value = gl.getUniform(program.native, location);
+              require(ArrayBuffer.isView(value) && value.length === 4 && [...value].every(component => component === 0),
+                "shader-reflection-error", "Shadow view controls require native zero defaults.");
+            }
+            program.shadowUniforms.push({ stage, index: uniform.index, semantic: uniform.semantic, location, active });
+            program.reflection.shadowUniforms.push({ ...uniform, stage: metadata.stage, active, nativeType: gl.FLOAT_VEC4 });
+          }
           if (instanceBase) for (const uniform of metadata.instanceUniforms) {
             require(stage === 0 && uniform.name === "wv_instance_base" && uniform.type === "uint" &&
               uniform.semantic === "INSTANCE_BASE" && uniform.default === 0,
@@ -916,7 +963,8 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
             program.reflection.textureQueries.push({ ...query, stage: metadata.stage, active, nativeType: gl.INT });
           }
           for (const sampler of metadata.samplers) {
-            const nativeType = ({ sampler2D: gl.SAMPLER_2D, isampler2D: gl.INT_SAMPLER_2D, usampler2D: gl.UNSIGNED_INT_SAMPLER_2D })[sampler.type];
+            const nativeType = ({ sampler2D: gl.SAMPLER_2D, isampler2D: gl.INT_SAMPLER_2D, usampler2D: gl.UNSIGNED_INT_SAMPLER_2D,
+              ...(shadowSamplers ? { sampler2DShadow: gl.SAMPLER_2D_SHADOW } : {}) })[sampler.type];
             require((integers ? nativeType !== undefined : sampler.type === "sampler2D") && sampler.index < stageSlots[stage], "shader-reflection-error", "Sampler exceeds supported host stage slots.");
             const location = gl.getUniformLocation(program.native, sampler.name), index = gl.getUniformIndices(program.native, [sampler.name])?.[0];
             const view = standard || stage === 1 ? sampling.views.find((entry) => entry.index === sampler.index && (!standard || entry.stage === stage)) : null;
@@ -927,7 +975,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
                 gl.getActiveUniforms(program.native, [index], gl.UNIFORM_TYPE)[0] === nativeType &&
                 gl.getActiveUniforms(program.native, [index], gl.UNIFORM_SIZE)[0] === 1, "shader-reflection-error", "Sampler reflection mismatch.");
             const unit = unitFor(stage, sampler.index);
-            program.samplers.push({ location, unit, stage, index: sampler.index }); program.reflection.samplers.push({ ...sampler, stage: metadata.stage, unit });
+            program.samplers.push({ location, unit, stage, index: sampler.index, ...(shadowSamplers ? { type: sampler.type } : {}) }); program.reflection.samplers.push({ ...sampler, stage: metadata.stage, unit });
           }
           if (uniform) for (const block of metadata.guestUniformBlocks) {
             const index = gl.getUniformBlockIndex(program.native, block.name), binding = 1 + stage * 13 + block.slot;
@@ -1008,10 +1056,12 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
               uniform.activeCount === actual.size && actual.type === gl.UNSIGNED_INT_VEC4) ||
             program.reflection.samplers.some(sampler => sampler.name === actual.name &&
               actual.size === 1 && actual.type === ({ sampler2D: gl.SAMPLER_2D, isampler2D: gl.INT_SAMPLER_2D,
-                usampler2D: gl.UNSIGNED_INT_SAMPLER_2D })[sampler.type]) ||
+                usampler2D: gl.UNSIGNED_INT_SAMPLER_2D, ...(shadowSamplers ? { sampler2DShadow: gl.SAMPLER_2D_SHADOW } : {}) })[sampler.type]) ||
             textureOperations && program.reflection.textureQueries.some(query => query.active && query.name === actual.name &&
               actual.size === 1 && actual.type === gl.INT) ||
             program.reflection.blend?.uniform === actual.name && actual.size === 1 && actual.type === gl.FLOAT_VEC4 ||
+            shadowSamplers && program.reflection.shadowUniforms.some(uniform => uniform.active && uniform.name === actual.name &&
+              actual.size === 1 && actual.type === gl.FLOAT_VEC4) ||
             instanceBase && program.reflection.instanceUniforms.some(uniform => uniform.active && uniform.name === actual.name &&
               actual.size === 1 && actual.type === gl.UNSIGNED_INT) ||
             program.reflection.rasterUniforms.some(uniform => uniform.active && uniform.name === actual.name &&
@@ -1022,6 +1072,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           const components = program.reflection.uniforms.filter(uniform => uniform.stage === stage).reduce((sum, uniform) => sum + uniform.activeCount * 4, 0) +
             program.reflection.rasterUniforms.filter(uniform => uniform.stage === stage && uniform.active).reduce((sum, uniform) => sum + (uniform.type === "vec2" ? 2 : 1), 0) +
             (stage === "fragment" && blendFold ? 4 : 0) +
+            (shadowSamplers ? program.reflection.shadowUniforms.filter(uniform => uniform.stage === stage && uniform.active).length * 4 : 0) +
             (instanceBase ? program.reflection.instanceUniforms.filter(uniform => uniform.stage === stage && uniform.active).length : 0) +
             (textureOperations ? program.reflection.textureQueries.filter(query => query.stage === stage && query.active).length : 0);
           require(components <= hostUniformComponents[stage === "vertex" ? 0 : 1], "shader-reflection-error", "Raster bindings exceed the host stage uniform limit.");
@@ -1329,6 +1380,11 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           gl.uniform4uiv(uniform.location, words);
         }
         for (const sampler of program.samplers) gl.uniform1i(sampler.location, sampler.unit);
+        if (shadowSamplers) for (const uniform of program.shadowUniforms) {
+          const swizzle = sub.views[uniform.stage][uniform.index]?.fields.swizzle ?? [0, 1, 2, 3];
+          const values = swizzle.map(component => uniform.semantic === "SHADOW_MASK" ? Number(component < 4) : Number(component === 5));
+          if (uniform.active) gl.uniform4fv(uniform.location, new Float32Array(values));
+        }
         if (textureOperations) for (const query of program.textureQueries) {
           const view = sub.views[query.stage][query.index];
           if (!view?.imageRange) {
@@ -1451,10 +1507,13 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       for (const sampler of program.samplers) {
         const view = sub.views[sampler.stage][sampler.index], state = sub.samplers[sampler.stage][sampler.index];
         require(view && state, "incomplete-draw", "Drawing requires an active sampler view and sampler state.");
+        if (shadowSamplers) require(sampler.type === "sampler2DShadow" ?
+          state.fields.compareMode === 1 && Boolean(depthFormat(view.fields.format)) : state.fields.compareMode === 0,
+        "unsupported-sampler", "Original sampler comparison mode disagrees with its native type or depth storage.");
         if (integers && integerFormat(view.fields.format)) require(state.fields.minImageFilter === 0 &&
           state.fields.magImageFilter === 0 && [0, 2].includes(state.fields.minMipFilter),
         "unsupported-sampler", "Integer image sampling requires native nearest-compatible filters.");
-        if (floatingDepth && floatingDepthFormat(view.fields.format) || unormDepth && unormDepthFormat(view.fields.format) || packedDepth && packedDepthFormat(view.fields.format)) require(state.fields.minImageFilter === 0 &&
+        if (depthFormat(view.fields.format) && !(shadowSamplers && sampler.type === "sampler2DShadow")) require(state.fields.minImageFilter === 0 &&
           state.fields.magImageFilter === 0 && [0, 2].includes(state.fields.minMipFilter),
         "unsupported-sampler", "Non-comparison depth sampling requires native nearest-compatible filters.");
         for (const target of floatingDepth ? [...sub.surfaces, sub.depthSurface].filter(Boolean) : multipleColors ? sub.surfaces.filter(Boolean) : [primarySurface]) {

@@ -1383,3 +1383,83 @@ export function deriveStandardInstanceBaseShaderInterface(vertex, fragment, host
       standardInstanceMetadata(fragment, "fragment", true, selectors)) });
   } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-link-error", error.message); }
 }
+
+// Only the selected shadow compiler owns these stage/slot native controls.
+export const STANDARD_SHADOW_TEXTURE_SHADER_PROFILE = "virgl-webgl2-standard-shadow-texture-gles3-v1";
+function standardShadowMetadata(value, stage, paired, selectors) {
+  const keys = [...STANDARD_METADATA_KEYS, "guestUniformBlocks", "textureQueries", "colorOutputMasks", "instanceUniforms"];
+  const input = record(value, [...keys, "shadowUniforms"]);
+  require(input.profile === STANDARD_SHADOW_TEXTURE_SHADER_PROFILE, "Shadow textures require their distinct compiler profile.");
+  const samplers = array(input.samplers, 16).map(value => {
+    const sampler = record(value, ["index", "name", "type"]);
+    require(["sampler2D", "isampler2D", "usampler2D", "sampler2DShadow"].includes(sampler.type),
+      "Unsupported original shadow sampler type.");
+    return sampler;
+  });
+  const common = Object.fromEntries(keys.map(key => [key, input[key]]));
+  common.profile = STANDARD_INSTANCE_BASE_SHADER_PROFILE;
+  common.samplers = samplers.map(sampler => ({ ...sampler, type: sampler.type === "sampler2DShadow" ? "sampler2D" : sampler.type }));
+  const metadata = standardInstanceMetadata(common, stage, paired, selectors);
+  const controls = array(input.shadowUniforms, 32).map(value => record(value, ["index", "name", "type", "semantic"]));
+  require(controls.length % 2 === 0, "Shadow controls require complete mask/add pairs.");
+  for (let at = 0; at < controls.length; at += 2) {
+    const mask = controls[at], add = controls[at + 1], index = mask.index,
+      prefix = stage === "vertex" ? "vs" : "fs";
+    require(Number.isInteger(index) && index >= 0 && index < 16 && add.index === index &&
+      (at === 0 || controls[at - 2].index < index) &&
+      samplers.some(sampler => sampler.index === index && sampler.type === "sampler2DShadow"),
+    "Shadow controls must own sorted unique declared comparison slots.");
+    require(mask.name === prefix + "shadmask" + index && add.name === prefix + "shadadd" + index &&
+      mask.type === "vec4" && add.type === "vec4" && mask.semantic === "SHADOW_MASK" && add.semantic === "SHADOW_ADD",
+    "Invalid owned shadow view controls.");
+  }
+  // Query-only shadow slots have no comparison result and need no mask/add.
+  return standardFreeze({ ...metadata, profile: input.profile,
+    samplers: metadata.samplers.map((sampler, index) => ({ ...sampler, type: samplers[index].type })),
+    shadowUniforms: controls });
+}
+function standardShadowBody(value, stage, paired, selectors) {
+  const body = record(value, ["glsl", "metadata"]);
+  require(typeof body.glsl === "string" && body.glsl.length <= 262144 && /^#version 300 es\b/m.test(body.glsl),
+    "Shadow texture compiler returned incompatible GLSL.");
+  return standardFreeze({ glsl: body.glsl, metadata: standardShadowMetadata(body.metadata, stage, paired, selectors) });
+}
+export function parseStandardShadowTextureShaderMetadata(value, stage, hostColors = STANDARD_IMAGE_COLORS) {
+  try {
+    const colors = standardMultipleColors(hostColors);
+    return standardFreeze({ ok: true, domain: null,
+      metadata: standardShadowMetadata(value, stage, false, { ...STANDARD_UNIFORM_SELECTORS, ...colors }) });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-domain-error", error.message); }
+}
+export function normalizeStandardShadowTextureShaderResult(value, stage, hostColors = STANDARD_IMAGE_COLORS) {
+  try {
+    const colors = standardMultipleColors(hostColors), response = record(value, ["ok", "glsl", "metadata", "error"], ["ok"]);
+    if (response.ok === false) { record(response, ["ok", "error"]); return standardError(response.error); }
+    require(response.ok === true, "Invalid shadow texture compiler result."); record(response, ["ok", "glsl", "metadata"]);
+    return standardFreeze({ ok: true, ...standardShadowBody({ glsl: response.glsl, metadata: response.metadata }, stage,
+      false, { ...STANDARD_UNIFORM_SELECTORS, ...colors }) });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-domain-error", error.message); }
+}
+export function normalizeStandardShadowTextureShaderPair(value, hostSelectors = STANDARD_IMAGE_SELECTORS) {
+  try {
+    const selectors = standardMultipleSelectors(hostSelectors), response = record(value, ["ok", "vertex", "fragment", "interfaceKey", "error"], ["ok"]);
+    if (response.ok === false) { record(response, ["ok", "error"]); return standardError(response.error); }
+    require(response.ok === true, "Invalid shadow texture pair result."); record(response, ["ok", "vertex", "fragment", "interfaceKey"]);
+    const vertex = standardShadowBody(response.vertex, "vertex", true, selectors),
+      fragment = standardShadowBody(response.fragment, "fragment", true, selectors), derived = standardInterface(vertex.metadata, fragment.metadata);
+    require(response.interfaceKey === derived.key, "Shadow texture pair key disagrees.");
+    for (const input of derived.inputs) {
+      const output = vertex.metadata.outputs.find(output => output.semantic === "GENERIC" && output.semanticIndex === input.semanticIndex);
+      require(output.type === input.type && output.interpolation === input.interpolation,
+        "Shadow texture pair lacks the compiler's promoted generic output.");
+    }
+    return standardFreeze({ ok: true, vertex, fragment, interfaceKey: response.interfaceKey });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-link-error", error.message); }
+}
+export function deriveStandardShadowTextureShaderInterface(vertex, fragment, hostSelectors = STANDARD_IMAGE_SELECTORS) {
+  try {
+    const selectors = standardMultipleSelectors(hostSelectors);
+    return standardFreeze({ ok: true, ...standardInterface(standardShadowMetadata(vertex, "vertex", true, selectors),
+      standardShadowMetadata(fragment, "fragment", true, selectors)) });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-link-error", error.message); }
+}

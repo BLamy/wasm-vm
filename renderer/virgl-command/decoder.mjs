@@ -20,6 +20,7 @@ export const STANDARD_PACKED_UNSIGNED_IMAGE_PROFILE = "virgl-standard-packed-uns
 export const STANDARD_FLOATING_DEPTH_IMAGE_PROFILE = "virgl-standard-floating-depth-image-commands-v1";
 export const STANDARD_UNORM_DEPTH_IMAGE_PROFILE = "virgl-standard-unorm-depth-image-commands-v1";
 export const STANDARD_PACKED_DEPTH_IMAGE_PROFILE = "virgl-standard-packed-depth-image-commands-v1";
+export const STANDARD_SHADOW_SAMPLER_PROFILE = "virgl-standard-shadow-sampler-commands-v1";
 export const STANDARD_STENCIL_PROFILE = "virgl-standard-stencil-commands-v1";
 export const STANDARD_INTEGER_IMAGE_PROFILE = "virgl-standard-integer-image-commands-v1";
 export const STANDARD_FLOAT_IMAGE_PROFILE = "virgl-standard-float-image-commands-v1";
@@ -119,12 +120,12 @@ class DecodeFault extends Error {
 
 /** Indexes in Packet match the pinned protocol: header=0, first payload word=1. */
 class Packet {
-  constructor(view, byteOffset, opcode, length, standard = false, uniform = false, textures = false, images = false, colors = false, floats = false, packed = false, shared = false, integers = false, multipleColors = false, normalized = false, unsigned = false, floatingDepth = false, unormDepth = false, packedDepth = false, stencil = false) {
+  constructor(view, byteOffset, opcode, length, standard = false, uniform = false, textures = false, images = false, colors = false, floats = false, packed = false, shared = false, integers = false, multipleColors = false, normalized = false, unsigned = false, floatingDepth = false, unormDepth = false, packedDepth = false, stencil = false, shadowSamplers = false) {
     this.view = view;
     this.byteOffset = byteOffset;
     this.opcode = opcode;
     this.length = length;
-    this.standard = standard; this.uniform = uniform; this.textures = textures; this.images = images; this.colors = colors; this.floatingImages = floats; this.packedImages = packed; this.sharedImages = shared; this.integerImages = integers; this.multipleColors = multipleColors; this.normalizedImages = normalized; this.unsignedImages = unsigned; this.floatingDepth = floatingDepth; this.unormDepth = unormDepth; this.packedDepth = packedDepth; this.stencil = stencil;
+    this.standard = standard; this.uniform = uniform; this.textures = textures; this.images = images; this.colors = colors; this.floatingImages = floats; this.packedImages = packed; this.sharedImages = shared; this.integerImages = integers; this.multipleColors = multipleColors; this.normalizedImages = normalized; this.unsignedImages = unsigned; this.floatingDepth = floatingDepth; this.unormDepth = unormDepth; this.packedDepth = packedDepth; this.stencil = stencil; this.shadowSamplers = shadowSamplers;
   }
   fail(code, message) { throw new DecodeFault(code, message, this.byteOffset, this.opcode); }
   require(condition, code, message) { if (!condition) this.fail(code, message); }
@@ -292,7 +293,8 @@ function decodeSamplerState(p, handle) {
   const seamlessCubeMap = Boolean(bits & (1 << 19)), maxAnisotropy = (bits >>> 20) & 31;
   p.require((p.standard ? [wrapS, wrapT, wrapR].every(wrap => [0, 2, 4].includes(wrap)) && minMipFilter <= 2 :
     wrapS === 2 && wrapT === 2 && [0, 2].includes(wrapR) && minMipFilter === 2) &&
-    compareMode === 0 && maxAnisotropy === 0, "unsupported-feature", p.standard ?
+    (p.shadowSamplers || compareMode === 0) && maxAnisotropy === 0, "unsupported-feature", p.standard ?
+    p.shadowSamplers ? "Only core repeat, clamp-edge and mirrored-repeat samplers are supported." :
     "Only core repeat, clamp-edge and mirrored-repeat non-shadow samplers are supported." :
     "Only clamp-edge 2D nearest/linear non-mip samplers are supported.");
   const lodBias = p.f(3), minLod = p.f(4), maxLod = p.f(5), borderColor = p.words(6, 4);
@@ -654,7 +656,12 @@ export function decodeStandardStencilSubmission(bytes, provenance = {}) {
   return decode(bytes, provenance, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
 }
 
-function decode(bytes, provenance, standard, uniform = false, textures = false, images = false, colors = false, floats = false, packed = false, shared = false, integers = false, multipleColors = false, normalized = false, unsigned = false, floatingDepth = false, unormDepth = false, packedDepth = false, stencil = false) {
+/** Original native 2D comparison samplers require explicit host selection. */
+export function decodeStandardShadowSamplerSubmission(bytes, provenance = {}) {
+  return decode(bytes, provenance, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
+}
+
+function decode(bytes, provenance, standard, uniform = false, textures = false, images = false, colors = false, floats = false, packed = false, shared = false, integers = false, multipleColors = false, normalized = false, unsigned = false, floatingDepth = false, unormDepth = false, packedDepth = false, stencil = false, shadowSamplers = false) {
   let byteLength, buffer, byteOffset;
   try {
     const typedArrayPrototype = Object.getPrototypeOf(Uint8Array.prototype);
@@ -686,7 +693,7 @@ function decode(bytes, provenance, standard, uniform = false, textures = false, 
     for (let offset = 0; offset < byteLength;) {
       const header = view.getUint32(offset, true), opcode = header & 255, objectType = (header >>> 8) & 255, payloadDwords = header >>> 16;
       const packetByteLength = (payloadDwords + 1) * 4;
-      const p = new Packet(view, offset, opcode, payloadDwords, standard, uniform, textures, images, colors, floats, packed, shared, integers, multipleColors, normalized, unsigned, floatingDepth, unormDepth, packedDepth, stencil);
+      const p = new Packet(view, offset, opcode, payloadDwords, standard, uniform, textures, images, colors, floats, packed, shared, integers, multipleColors, normalized, unsigned, floatingDepth, unormDepth, packedDepth, stencil, shadowSamplers);
       p.require(commands.length < LIMITS.commands, "limit-exceeded", "Submission exceeds packet count limit.");
       p.require(packetByteLength <= byteLength - offset, "truncated-payload", "Packet payload exceeds submission.");
       p.require(Object.hasOwn(COMMAND_NAMES, opcode) || uniform && opcode === 27, "unsupported-command", "Unknown or unsupported command.");
@@ -701,5 +708,5 @@ function decode(bytes, provenance, standard, uniform = false, textures = false, 
     if (error instanceof DecodeFault) return error.result;
     throw error; // Unexpected implementation defects are not disguised as guest errors.
   }
-  return freeze({ ok: true, profile: stencil ? STANDARD_STENCIL_PROFILE : packedDepth ? STANDARD_PACKED_DEPTH_IMAGE_PROFILE : unormDepth ? STANDARD_UNORM_DEPTH_IMAGE_PROFILE : floatingDepth ? STANDARD_FLOATING_DEPTH_IMAGE_PROFILE : unsigned ? STANDARD_PACKED_UNSIGNED_IMAGE_PROFILE : normalized ? STANDARD_PACKED_NORMALIZED_IMAGE_PROFILE : multipleColors ? STANDARD_MULTIPLE_COLOR_PROFILE : integers ? STANDARD_INTEGER_IMAGE_PROFILE : shared ? STANDARD_SHARED_EXPONENT_IMAGE_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_PROFILE : floats ? STANDARD_FLOAT_IMAGE_PROFILE : colors ? STANDARD_COLOR_PROFILE : images ? STANDARD_IMAGE_PROFILE : textures ? STANDARD_TEXTURE_PROFILE : uniform ? STANDARD_UNIFORM_PROFILE : standard ? STANDARD_PROFILE : PROFILE, ...labels, byteLength, commands });
+  return freeze({ ok: true, profile: shadowSamplers ? STANDARD_SHADOW_SAMPLER_PROFILE : stencil ? STANDARD_STENCIL_PROFILE : packedDepth ? STANDARD_PACKED_DEPTH_IMAGE_PROFILE : unormDepth ? STANDARD_UNORM_DEPTH_IMAGE_PROFILE : floatingDepth ? STANDARD_FLOATING_DEPTH_IMAGE_PROFILE : unsigned ? STANDARD_PACKED_UNSIGNED_IMAGE_PROFILE : normalized ? STANDARD_PACKED_NORMALIZED_IMAGE_PROFILE : multipleColors ? STANDARD_MULTIPLE_COLOR_PROFILE : integers ? STANDARD_INTEGER_IMAGE_PROFILE : shared ? STANDARD_SHARED_EXPONENT_IMAGE_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_PROFILE : floats ? STANDARD_FLOAT_IMAGE_PROFILE : colors ? STANDARD_COLOR_PROFILE : images ? STANDARD_IMAGE_PROFILE : textures ? STANDARD_TEXTURE_PROFILE : uniform ? STANDARD_UNIFORM_PROFILE : standard ? STANDARD_PROFILE : PROFILE, ...labels, byteLength, commands });
 }
