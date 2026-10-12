@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47, E6-T11d48, E6-T11d49, E6-T11d50, E6-T11d51, E6-T11d52, E6-T11d53]
-blocked_on: E6-T11d53
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47, E6-T11d48, E6-T11d49, E6-T11d50, E6-T11d51, E6-T11d52, E6-T11d53, E6-T11d54]
+blocked_on: E6-T11d54
 estimate: S
 risk: high
 capstone: false
@@ -657,3 +657,18 @@ admission gaps; no guest DMA, shader draw, Linux boot or production capability
 is claimed by this readiness run. Ordered S taskE6-T11d53 closes only original
 byte-addressed buffer hints and proves their actual uniform-fed GPU submission.
 The human's production graphics instruction continues this graphics chain.
+
+### 2026-10-12 — worker — native buffers verified; native image layout gap
+
+D53 is independently verified at0211566e662a3512b374c69ab915c563e7daf0cc
+and published as open/draft PR531 on unchanged native stack500. All131 prior
+PR identities/order/heads/bases and both stack identities are preserved.
+Exact-head original RGBA8 mip, RG8, RGB8, floating RGBA and Z16 native requests
+still refuse0x1205 before callback/allocation while the qualified host allocates
+them. Repro and74 complete bodies are sealed in
+`evidence/virgl-production-readiness/native-image-layout-gap/`; manifest
+1e7cb6037ab84975c5010cc8a81016986de39401178acd9a42c35e6d099bbf25.
+Ordered S/high E6-T11d54 connects the one immutable native2D layout/DMA
+boundary, preserving original public words, actual GPU costs and historical
+profiles. Typed caps/API, actual guest Mesa/Hyprland, production worker/scanout/
+deployment and300MIPS remain unproven under the continuing human request.
