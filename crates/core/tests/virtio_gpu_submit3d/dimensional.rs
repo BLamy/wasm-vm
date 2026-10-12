@@ -398,3 +398,237 @@ fn dimensional_layer_exchange_prevalidates_complete_backing_and_arguments() {
     );
     old.finish(&p, Err(E::InvalidParameter));
 }
+
+/// Critic attack: a late one-byte overrun must not consume the exchange; a
+/// subsequent exact-boundary scatter and dense replay share one authority.
+/// Replacing the used ring then revokes even a valid remaining layer exchange.
+#[test]
+fn dimensional_exact_sg_edge_replay_and_queue_relocation_are_atomic() {
+    for &shape in SHAPES {
+        let mut q = Q::layered();
+        q.sync(&context(), 0x1100);
+        q.sync(&metadata(shape), 0x1100);
+        let entries = [
+            (BACKING, 23),
+            (BACKING2, 13),
+            (BACKING2 + 0x1000, 19),
+            (BACKING2 + 0x2000, 20),
+        ];
+        for &(at, n) in &entries {
+            q.write(at - 8, &vec![0xa3; n as usize + 16]);
+        }
+        q.sync(&attachment(&entries), 0x1100);
+        q.sync(&id_command(0x202, 2, 3), 0x1100);
+        let source: Vec<u8> = (0..75).map(|i| (i * 37 + shape.0) as u8).collect();
+        put_backing(&mut q, &entries, &source);
+        let mut raw = layered_transfer(0, [1, 1, shape.5[0].2 - 2, 2, 2, 2], 23, 13, 31);
+        put32(&mut raw, 0, 0x206);
+        q.begin(&raw);
+        let exchange = layered_exchange(&q, 23, 8, 13, 2);
+        let output: Vec<u8> = (0..32).map(|i| (i * 53 + shape.0 * 11) as u8).collect();
+        let ring = q.read(USED, 2052);
+        let response = q.read(RESPONSE, 64);
+        let before = q.machine.snapshot().hex_digest();
+
+        // Only the final row overruns: 23 + 32 + 13 + 8 = 76 > 75.
+        assert_eq!(
+            q.machine
+                .submit3d_scatter_layered(&exchange, 32, 2, &output),
+            Err(E::InvalidParameter)
+        );
+        assert_eq!(q.machine.snapshot().hex_digest(), before);
+        assert_eq!(q.mail.inspect().last_exchange, 0);
+        assert_eq!(get_backing(&mut q, &entries), source);
+        assert_eq!(q.read(USED, 2052), ring);
+        assert_eq!(q.read(RESPONSE, 64), response);
+
+        // Exact edge: 23 + 31 + 13 + 8 = 75. The first row starts at
+        // an SG boundary, and every later row lands in a different SG entry.
+        q.machine
+            .submit3d_scatter_layered(&exchange, 31, 2, &output)
+            .unwrap();
+        let mut expected = source.clone();
+        for (src, dst) in [(0, 23), (8, 36), (16, 54), (24, 67)] {
+            expected[dst..dst + 8].copy_from_slice(&output[src..src + 8]);
+        }
+        assert_eq!(get_backing(&mut q, &entries), expected);
+        guards(&mut q, &entries);
+        assert_eq!(q.mail.inspect().last_exchange, 1);
+        assert_eq!(
+            q.machine.submit3d_gather(&exchange),
+            Err(E::InvalidParameter)
+        );
+        assert_eq!(q.mail.inspect().last_exchange, 1);
+        assert_eq!(
+            q.machine
+                .submit3d_scatter_layered(&exchange, 31, 2, &output),
+            Err(E::InvalidParameter)
+        );
+        assert_eq!(get_backing(&mut q, &entries), expected);
+        let next = Submit3dExchange {
+            exchange_sequence: 2,
+            ..exchange
+        };
+        assert_eq!(
+            q.machine.submit3d_gather_layered(&next, 31, 2).unwrap(),
+            output
+        );
+        assert_eq!(q.read(USED, 2052), ring);
+        assert_eq!(q.read(RESPONSE, 64), response);
+        let late = q.completion(Ok(()), true);
+        record_image(&mut q, "critic-exact-layer-edge-before-revoke", &raw);
+
+        let replacement_ring = USED + 0x1000;
+        q.write(replacement_ring, &[0x6d; 2052]);
+        q.mmio(0xa0, replacement_ring as u32);
+        let revoked = Submit3dExchange {
+            exchange_sequence: 3,
+            ..exchange
+        };
+        assert_eq!(
+            q.machine.submit3d_scatter_layered(&revoked, 31, 2, &output),
+            Err(E::BridgePoisoned)
+        );
+        assert_eq!(q.mail.post(late), Err(E::InvalidParameter));
+        assert_eq!(get_backing(&mut q, &entries), expected);
+        guards(&mut q, &entries);
+        assert_eq!(q.read(USED, 2052), ring);
+        assert_eq!(q.read(replacement_ring, 2052), [0x6d; 2052]);
+        assert_eq!(q.read(RESPONSE, 64), response);
+        assert_eq!(q.host.borrow().cancelled.len(), 1);
+        assert!(q.state.borrow().control3d_snapshot().unwrap().poisoned);
+        assert_ne!(q.read_mmio(0x70) & 64, 0);
+        record_image(&mut q, "critic-exact-layer-edge-after-revoke", &raw);
+        eprintln!(
+            "NATIVE_DIMENSIONAL_CRITIC_EDGE target={} source={} output={} fullBacking={} used={} cancelled={} machineDigest={}",
+            shape.0,
+            hex(&source),
+            hex(&output),
+            hex(&expected),
+            q.used,
+            q.host.borrow().cancelled.len(),
+            q.machine.snapshot().hex_digest()
+        );
+    }
+}
+
+#[test]
+fn dimensional_literal_exchange_budget_and_one_byte_short_backing() {
+    // Keep the ordinary queue fixture's four-MiB RAM unchanged. This probe
+    // needs room for the full four-MiB resource plus the live queue and guards.
+    let mut machine = Machine::new(8 * 1024 * 1024);
+    machine.enable_plic();
+    machine.enable_virtio_slots(None);
+    let budget_backing = virt::DRAM_BASE + 0x300000;
+    let host = Rc::new(RefCell::new(Host::default()));
+    let mail = Submit3dMailbox::new();
+    let (_, state) = machine
+        .enable_virtio_gpu_standard_dimensional_submit3d_proof(
+            Box::new(NullSink),
+            Box::new(Controls(host.clone())),
+            Box::new(Jobs(host.clone(), mail.clone())),
+            mail.clone(),
+        )
+        .unwrap();
+    let base = Platform::virtio_base(machine.virtio_gpu().unwrap().0 as u64);
+    machine
+        .bus_mut()
+        .store32(virt::KERNEL_BASE, 0x0000_006f)
+        .unwrap();
+    machine.hart_mut().regs.pc = virt::KERNEL_BASE;
+    let mut q = Q {
+        machine,
+        state,
+        host,
+        mail,
+        base,
+        avail: 0,
+        used: 0,
+    };
+    #[cfg(feature = "gpu-trace")]
+    q.state.borrow_mut().enable_command_trace();
+    q.configure();
+    q.negotiate();
+    q.sync(&context(), 0x1100);
+    let mut raw = metadata(SHAPES[0]);
+    for (at, v) in [(40, 1024), (44, 512), (48, 2), (56, 0)] {
+        put32(&mut raw, at, v);
+    }
+    q.sync(&raw, 0x1100);
+    q.sync(&attachment(&[(budget_backing, 4_194_303)]), 0x1100);
+    q.sync(&id_command(0x202, 2, 3), 0x1100);
+    let upload = layered_transfer(0, [0, 0, 0, 1024, 512, 2], 0, 0, 0);
+    q.sync(&upload, 0x1205);
+    assert!(q.host.borrow().work.is_empty());
+    q.sync(&id_command(0x107, 0, 3), 0x1100);
+    q.sync(&attachment(&[(budget_backing, 4_194_305)]), 0x1201);
+    q.sync(&attachment(&[(budget_backing, 4_194_304)]), 0x1100);
+    let source: Vec<u8> = (0..4_194_304u32)
+        .map(|i| (i.wrapping_mul(37) ^ (i >> 8).wrapping_mul(11) ^ (i >> 20) ^ 0x39) as u8)
+        .collect();
+    q.machine
+        .bus_mut()
+        .write_ram_slice(budget_backing, &source)
+        .unwrap();
+    q.write(budget_backing - 8, &[0xa3; 8]);
+    q.write(budget_backing + 4_194_304, &[0xa3; 8]);
+    q.begin(&upload);
+    let exchange = layered_exchange(&q, 0, 4096, 4096, 512);
+    let data = q
+        .machine
+        .submit3d_gather_layered(&exchange, 2_097_152, 2)
+        .unwrap();
+    assert_eq!(data.len(), 4_194_304);
+    assert_eq!(data, source);
+    q.finish(&upload, Ok(()));
+
+    let mut download = upload.clone();
+    put32(&mut download, 0, 0x206);
+    q.begin(&download);
+    let exchange = layered_exchange(&q, 0, 4096, 4096, 512);
+    let output: Vec<u8> = data.iter().map(|v| v ^ 0x6d).collect();
+    q.machine
+        .submit3d_scatter_layered(&exchange, 2_097_152, 2, &output)
+        .unwrap();
+    let mut expected = source.clone();
+    expected.copy_from_slice(&output);
+    let mut actual = vec![0; 4_194_304];
+    q.machine
+        .bus_mut()
+        .ram()
+        .read_slice(budget_backing, &mut actual)
+        .unwrap();
+    assert_eq!(actual, expected);
+    // A raw host exchange exceeding the four-MiB bound cannot publish any
+    // span or consume a sequence, even after a valid maximum-sized exchange.
+    let over_budget = Submit3dExchange {
+        exchange_sequence: 2,
+        rows: Submit3dRows {
+            offset: 0,
+            row_bytes: 4_194_305,
+            row_stride: 4_194_305,
+            row_count: 1,
+        },
+        ..exchange
+    };
+    let before = q.machine.snapshot().hex_digest();
+    assert_eq!(
+        q.machine
+            .submit3d_scatter_layered(&over_budget, 4_194_305, 1, &source),
+        Err(E::InvalidParameter)
+    );
+    assert_eq!(q.machine.snapshot().hex_digest(), before);
+    assert_eq!(q.mail.inspect().last_exchange, 1);
+    assert_eq!(q.used_idx(), q.used);
+    guards(&mut q, &[(budget_backing, 4_194_304)]);
+    record_image(&mut q, "critic-exact-four-mib-layered-exchange", &download);
+    eprintln!(
+        "NATIVE_DIMENSIONAL_CRITIC_BUDGET exactBytes=4194304 backingBytes=4194304 refusedBytes=4194305 source={} gathered={} output={} fullBacking={} machineDigest={}",
+        hex(&source),
+        hex(&data),
+        hex(&output),
+        hex(&actual),
+        before
+    );
+    q.finish(&download, Ok(()));
+}

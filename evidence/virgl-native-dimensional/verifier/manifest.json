@@ -1,0 +1,240 @@
+{
+  "schema": "native-dimensional-verifier-seal-v1",
+  "task": "E6-T11d56",
+  "role": "fresh adversarial verifier never implementer",
+  "verdict": "verified",
+  "head": "aae123e8b1c410417193e4080c48f094d852f7c6",
+  "frozenHead": "9de5721b5a9c5c0d70b94956305ba76a447a5024",
+  "base": "98187fdf222f393af27b2307667e10427027ad46",
+  "recordIndexSha256": "914145b80457bbbe323229b4323cdcc04a04001f85399c36a510063cc92bd0b5",
+  "archiveSha256": "073c067eb7fb04d5ce3747d5937e9ec05cd210ae09da8b878ad5179420158619",
+  "reopenedBodies": 792,
+  "decodedBytes": 415714871,
+  "archiveBytes": 70942831,
+  "predictionsSha256": "53fb0b33fba95813812274d740f3d3f3cfaa804317188392ffd48b8f3f177d6f",
+  "authenticatedCompleteBodies": 5422,
+  "authenticatedSourcePins": 1241,
+  "carriedSourcePins": 147,
+  "dependencySeals": [
+    {
+      "directory": "evidence/virgl-native-dimensional/worker",
+      "manifestSha256": "7c8fb3ab46b3659ce855e77a80afc161a14f808b491a6753caa6c53231b0d0e6",
+      "indexSha256": "01cb810875ddfcd1b895df24e688e798c1fe4e9d66364da2be4ea0d6aaeef418",
+      "archiveSha256": "d2f66777cdba8f6375d5958e80ca9204854bbccf151a0c3325cb63e6f91eef4b",
+      "members": 1625,
+      "decodedBytes": 325714353,
+      "archiveBytes": 38478604,
+      "baseBound": false
+    },
+    {
+      "directory": "evidence/virgl-native-dimensional/deployment",
+      "manifestSha256": "450d049061ae93404145888a34333816e0b274005a0bbbcf6bee4d1764c18740",
+      "indexSha256": "4f1761718f2197e77ffad96a3ee1467078dccfb9ced0dd6d21b31cec12532397",
+      "archiveSha256": "2edd60e5536a0ed4593e24bf8d079136406c720eb0a2c03abb6ed9178e2c24a6",
+      "members": 201,
+      "decodedBytes": 8417207,
+      "archiveBytes": 2261275,
+      "baseBound": false
+    },
+    {
+      "directory": "evidence/virgl-native-image/worker",
+      "manifestSha256": "760e7cec92d98d9cf2104e534f296429d6f8305e0d24e013a62c4eff91dfd624",
+      "indexSha256": "ca2681aab7fe795ffc508441f0b0c7db306f78ae32de55aa524109b68f85c99b",
+      "archiveSha256": "438ecaf1c7eb936ea785d93ba37792460963f7a39ce1277aaed6cc0d7878c5c2",
+      "members": 1179,
+      "decodedBytes": 212606708,
+      "archiveBytes": 15922322,
+      "baseBound": true
+    },
+    {
+      "directory": "evidence/virgl-native-image/verifier",
+      "manifestSha256": "08394b2a36a9f01e375584e12afbc5b42c46aad7da5709be107dd2a09789ecac",
+      "indexSha256": "f1ad2d4c224506b24cb6c322bb603b0d8278b13ebcfe8e1c6c2ebbc9c076baa1",
+      "archiveSha256": "13e394b2d3efb5489180b4970dee702171895896bd4ca958a737279a02f78444",
+      "members": 218,
+      "decodedBytes": 194586166,
+      "archiveBytes": 10645070,
+      "baseBound": true
+    },
+    {
+      "directory": "evidence/virgl-dimensional-storage/worker",
+      "manifestSha256": "15815d6dc767934fbb4e5fbd493c1d927edc622d6ceb1833d6d9eac062c6e8a1",
+      "indexSha256": "3818f85ddc3f083764334ef80c4c615615dafe9d9c89dbe54776e0183aaac0a4",
+      "archiveSha256": "c32c662034196c07d06ec9103bb68de55bc461fc0623930fe2fed9ee0bc8d691",
+      "members": 1516,
+      "decodedBytes": 223475959,
+      "archiveBytes": 21943887,
+      "baseBound": true
+    },
+    {
+      "directory": "evidence/virgl-dimensional-storage/verifier",
+      "manifestSha256": "3a8b2f0713ffd30165bb582dcf7fc1b769312545c2db418ad0d0dca4ad29f1b9",
+      "indexSha256": "f3fd8f6a9cea34379b208f20a595c4939d4604d58063c14851a48c30928edb55",
+      "archiveSha256": "309db5281fe1c73b06b7c7999214d37c49d9620911740bdfc8e0642928a26e1d",
+      "members": 584,
+      "decodedBytes": 53182986,
+      "archiveBytes": 6555925,
+      "baseBound": true
+    }
+  ],
+  "diagnosticGap": {
+    "manifestSha256": "ff0cb4851a89cec5d1bcceb9f27208c6cae1e8f0ad627bfd831fdb47db6c12ab",
+    "indexSha256": "e220691cc54d72de64e3fbeb36f1a7267fa9f741d9c12174c85a804e37cc66af",
+    "archiveSha256": "b35aa13f43cb33a88b3f4aeaa429545c7da06b34c06e9bf6a66ccf88320cb548",
+    "members": 99
+  },
+  "scope": "selected original RGBA8 volume/cube/array native allocation and layered guest DMA through actual Wasm queues/mailbox and D55 GPU storage",
+  "excluded": [
+    "dimensional shader consumers",
+    "surface and scanout",
+    "other formats",
+    "Linux production rendering",
+    "production capsets",
+    "300MIPS"
+  ],
+  "actualLinuxGuest": false,
+  "productionAuthority": false,
+  "independentSchedules": [
+    26719,
+    94133,
+    183823
+  ],
+  "promotedTests": {
+    "path": "crates/core/tests/virtio_gpu_submit3d/dimensional.rs",
+    "sourceSha256": "3063990af7a9012c53737ea080a2dd328cc7980daf9e891b0e9420a2f26122a9",
+    "tests": [
+      "dimensional_exact_sg_edge_replay_and_queue_relocation_are_atomic",
+      "dimensional_literal_exchange_budget_and_one_byte_short_backing"
+    ],
+    "status": "EXECUTED",
+    "witness": "restored-dimensional-tests.stderr / stdout, budget-audit.json, native-oracle-layer-sabotage.stderr; all 5 dimensional tests pass after automatic restoration"
+  },
+  "coverage": {
+    "nativeLines": 168,
+    "nativeOperands": 661,
+    "v8Executed": 128,
+    "v8Held": 36,
+    "v8StaticWaivers": [
+      {
+        "source": "renderer/virgl-command/control-bridge.mjs",
+        "line": 165,
+        "startOffset": 12003,
+        "endOffset": 12009,
+        "text": ": null",
+        "sha256": "4253b001123eab143572305c09442a3fa70aba23a7dbb1e06c8afe858a5a539e",
+        "counters": [
+          {
+            "record": "hardware",
+            "ranges": [
+              {
+                "startOffset": 12003,
+                "endOffset": 12009,
+                "count": 0
+              }
+            ],
+            "count": 0
+          },
+          {
+            "record": "historical-images",
+            "ranges": [
+              {
+                "startOffset": 12003,
+                "endOffset": 12009,
+                "count": 0
+              }
+            ],
+            "count": 0
+          }
+        ],
+        "maxCount": 0,
+        "reason": "Unchanged static null transport for synchronous constructors; new selected transport is always asynchronous."
+      }
+    ],
+    "wasmAbi": [
+      {
+        "seed": 26719,
+        "target": 3,
+        "abiInputs": 5,
+        "abiOutputs": 7,
+        "reentrantCalls": "both methods attempted synchronously in each admitted backed beginJob; unchanged checker requires throw"
+      },
+      {
+        "seed": 26719,
+        "target": 4,
+        "abiInputs": 5,
+        "abiOutputs": 7,
+        "reentrantCalls": "both methods attempted synchronously in each admitted backed beginJob; unchanged checker requires throw"
+      },
+      {
+        "seed": 26719,
+        "target": 7,
+        "abiInputs": 5,
+        "abiOutputs": 7,
+        "reentrantCalls": "both methods attempted synchronously in each admitted backed beginJob; unchanged checker requires throw"
+      },
+      {
+        "seed": 94133,
+        "target": 3,
+        "abiInputs": 5,
+        "abiOutputs": 7,
+        "reentrantCalls": "both methods attempted synchronously in each admitted backed beginJob; unchanged checker requires throw"
+      },
+      {
+        "seed": 94133,
+        "target": 4,
+        "abiInputs": 5,
+        "abiOutputs": 7,
+        "reentrantCalls": "both methods attempted synchronously in each admitted backed beginJob; unchanged checker requires throw"
+      },
+      {
+        "seed": 94133,
+        "target": 7,
+        "abiInputs": 5,
+        "abiOutputs": 7,
+        "reentrantCalls": "both methods attempted synchronously in each admitted backed beginJob; unchanged checker requires throw"
+      },
+      {
+        "seed": 183823,
+        "target": 3,
+        "abiInputs": 5,
+        "abiOutputs": 7,
+        "reentrantCalls": "both methods attempted synchronously in each admitted backed beginJob; unchanged checker requires throw"
+      },
+      {
+        "seed": 183823,
+        "target": 4,
+        "abiInputs": 5,
+        "abiOutputs": 7,
+        "reentrantCalls": "both methods attempted synchronously in each admitted backed beginJob; unchanged checker requires throw"
+      },
+      {
+        "seed": 183823,
+        "target": 7,
+        "abiInputs": 5,
+        "abiOutputs": 7,
+        "reentrantCalls": "both methods attempted synchronously in each admitted backed beginJob; unchanged checker requires throw"
+      }
+    ],
+    "hunksSha256": "cb96e0bff43da739c8bab3266c49f03765482c400e42cdcb10b37ce6f2ea01b0",
+    "needsEvidence": [],
+    "dead": []
+  },
+  "cold": {
+    "carriedOnce": true,
+    "head": "9de5721b5a9c5c0d70b94956305ba76a447a5024",
+    "cleanBefore": "",
+    "cleanAfter": "",
+    "receiptSha256": "d81c4f46a9d9d13eb61935330560ddba5e5c322ba7368419ed46f2d23d7edb6e",
+    "clonePreserved": true
+  },
+  "protectedChromePid": 23192,
+  "ownedJobsClosed": true,
+  "leasesRelease": "after scoped verifier verdict commit",
+  "duplicateBinaryGitPatch": {
+    "path": "submission-metadata.diff",
+    "bytes": 51346282,
+    "sha256": "13c58510fe35d866d97b3c58d45c3a5ba9bcb9d01a0a5552a91eae0bc15fcd38",
+    "omittedFromThisArchive": "Redundant Git binary delta encoding of already authenticated committed full-body evidence archives; exact textual diff retained as metadata-text.diff and original delta reproducible from frozen/submission Git objects. Initial oversized seal remains preserved in owned scratch."
+  },
+  "fullBodyCustody": "All new fresh runs, served sources, response bodies, traces, RAM/GPU output, screenshots, native profile objects, original gate outputs, independent auditors and failed attempts included. Remaining original worker/dependency full bodies are authenticated in byte-identical committed seals named above; no summary substitutes for those bodies."
+}
