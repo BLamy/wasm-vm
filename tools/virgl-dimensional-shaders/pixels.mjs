@@ -6,7 +6,7 @@ import {gunzipSync} from 'node:zlib';
 import {createHash} from 'node:crypto';
 import {dimensionalFixtures, expectedWords, textureInputs} from './fixtures.mjs';
 const root = path.resolve(process.argv[2]), sha = b => createHash('sha256').update(b).digest('hex'), results = [];
-for (const name of fs.readdirSync(root).filter(n => n.startsWith('hardware-') || n === 'fault-wrong-layer')) {
+for (const name of fs.readdirSync(root, {withFileTypes: true}).filter(e => e.isDirectory() && (e.name.startsWith('hardware-') || e.name === 'fault-wrong-layer')).map(e => e.name)) {
   const report = JSON.parse(fs.readFileSync(root + '/' + name + '/report.json')), a = report.acceptance;
   assert.deepEqual(report.browserErrors, {console: [], page: [], requests: []}); assert.match(a.gl.renderer, /Apple M4 Max.*Metal|Metal.*Apple M4 Max/);
   assert.equal(report.browser.launch.headless, false); assert.equal(report.browser.gpu.featureStatus[report.browser.webglFeature], 'enabled');

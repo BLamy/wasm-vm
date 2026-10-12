@@ -122,3 +122,16 @@ Initial reused historical cube-negative predictions were corrected only for
 the eighteen legal cube programs newly selected by this task; the original
 entry points still refuse them. Runtime source has not changed during that
 harness correction. These inner-loop runs are preparation, not final evidence.
+
+### 2026-10-12 — worker — first frozen recording hit audit file-filter gap
+
+The277475e9clean-clone recording completed all native/sanitized/Wasm and
+three396-plane Metal schedules plus physical layer sabotage. The combined
+pixel auditor then attempted to open the hardware-163841.stderr log as a
+directory (ENOTDIR). Its filter now requires an actual directory. Runtime,
+compiler/generated modules, original inputs and GPU oracles are unchanged.
+The failed complete recording remains at
+`/tmp/wasmvm-dimensional-shaders-cold-277475e9`; the corrected auditor reopened
+its original full bodies successfully in a separate recovery command. No
+failed log or browser body was deleted or changed. A final clean recording
+will exercise the corrected orchestration and the remaining coverage/demo gates.
