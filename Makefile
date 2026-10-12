@@ -2518,3 +2518,7 @@ verify-E6-T11d58:
 .PHONY: verify-E6-T11d59
 verify-E6-T11d59:
 	python3 tools/virgl-dimensional-depth/verify.py --output "$${VIRGL_DIMENSIONAL_DEPTH_EVIDENCE_DIR:-target/evidence/virgl-dimensional-depth}"
+
+.PHONY: verify-E6-T11d60
+verify-E6-T11d60:
+	python3 tools/virgl-dimensional-depth-views/verify.py --output "$${VIRGL_DIMENSIONAL_DEPTH_VIEW_EVIDENCE_DIR:-target/evidence/virgl-dimensional-depth-views}"

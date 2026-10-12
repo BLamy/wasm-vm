@@ -16,6 +16,9 @@ One explicitly selected retained original sampler-view contract for the D59
 cube/array depth owners, formats16/18/20/21/126 with sampler roles8/9. Original
 object6 mip and layer ranges, native retained storage identity and ordinary
 samplerCube/sampler2DArray float-return reads form one atomic consumer contract.
+Ordinary depth uses nearest or nearest-mipmap-nearest filtering; GLES3.0
+texture completeness requires these filters when comparison mode is NONE.
+Incomplete ordinary filtering must refuse before native draw.
 Retain existing dimensional RGBA8 and2D depth behavior, and reuse the qualified
 unchanged dimensional shader compiler. New depth views need complete public and
 native mip/layer costs (including126's owned upload PBO), reservation before
@@ -136,3 +139,50 @@ the dimensional shader compiler remain their authenticated authorities; this
 slice selects a new host consumer, complete private-range ownership and native
 sampling. Historical consumers and production negotiation stay closed until
 their own qualification. Record final evidence and hand it to a fresh critic.
+
+### 2026-10-12 — worker — inner sampling/filter correction
+
+Initial inner admission and20 private-range sampling cases pass. The expanded
+hardware sampler matrix then passes620 cases and detects an invalid ordinary
+linear depth cube at `run-0620.json.gz` in
+`/tmp/wasmvm-d60-sampling-inner-2`: target4, format16, vertex TXL, comparison NONE,
+native LINEAR_MIPMAP_LINEAR/LINEAR. Predicted first depth lane0.5713893175;
+observed0. The oracle and1/255 filtering budget were not relaxed.
+
+The pinned Khronos GLES3.0.6 texture completeness rule requires NEAREST magnification
+and NEAREST or NEAREST_MIPMAP_NEAREST minification for sized depth/stencil formats
+with comparison NONE. The original2D depth restriction already enforces it.
+Restore that exact restriction for new dimensions too and promote incomplete
+filtering into before-draw refusal cases. This is a worker inner-loop correction;
+no final evidence or verification status is claimed. Original complete fields,
+source, native binding, guest output and failed oracle are retained unchanged.
+Primary rule: <https://registry.khronos.org/OpenGL/specs/es/3.0/es_spec_3.0.withchanges.pdf>,
+texture completeness paragraph; the full pinned PDF is already a readiness member.
+
+### 2026-10-12 — worker — inner contract closed; final recording pending
+
+The corrected815-case sampler matrix passes at seed84131 with zero browser
+errors. The220-case filter-state matrix passes;40 private producer/sampler-role
+cases cover both roles8/9, both stages and all five formats. A130-case attack
+matrix includes original target/type/range/role refusals, allocation and actual
+copy failures, GPU-only refresh and unchanged2D depth surfaces. Direct native
+private inverses and ownership attacks pass10 format/target combinations:
+3,462 assertions,30,793 recorded native calls, zero terminal native objects.
+Literal exact and one-byte-short private/aggregate limits, actual driver argument
+failures, retained unref, same-ID replacement, retired contexts and disposal are
+exercised. Every historical store/decoder stays closed to dimensional depth views;
+D59-only backend qualification is refused before driver work.
+
+The worker's deliberately wrong physical array-layer binding fails the unchanged
+one-ULP depth oracle after both native draws and DMA reads return original
+response0x1100; its complete failed run is retained at
+`/tmp/wasmvm-d60-wrong-layer-inner-1`. Corrected sampler and private source/output
+custody audits pass. The inner finest-V8 audit records418 executed regions,
+7 byte-identical HELD regions and9 static configuration waivers, no new gap.
+The rebuilt ordinary demo passes127/0, zero errors, partial graphics status and
+no proof exports; default Wasm remains
+`d45b575207e0035b5c518698e7b6793b2bf12da635531723fad70813a5956c36`.
+These are inner checks, not the final exact-head evidence or a verifier verdict.
+The selected host factories reuse the unchanged D59 native machine and D57
+compiler. Final source freeze, full repeated schedules, pristine proof, sealed
+bytes and fresh adversarial verification remain required before status advances.

@@ -7,7 +7,7 @@ import {packedNormalizedColorFormat} from "./packed-normalized-images.mjs";
 import {packedUnsignedColorFormat} from "./packed-unsigned-images.mjs";
 import {floatingDepthFormat} from "./floating-depth-images.mjs";
 import {unormDepthFormat, packedDepthFormat} from "./unorm-depth-images.mjs";
-import { decodeSubmission, decodeStandardSubmission, decodeStandardUniformSubmission, decodeStandardImageSubmission, decodeStandardColorSubmission, decodeStandardFloatImageSubmission, decodeStandardPackedFloatImageSubmission, decodeStandardSharedExponentImageSubmission, decodeStandardIntegerImageSubmission, decodeStandardMultipleColorSubmission, decodeStandardPackedNormalizedImageSubmission, decodeStandardPackedUnsignedImageSubmission, decodeStandardFloatingDepthImageSubmission, decodeStandardUnormDepthImageSubmission, decodeStandardPackedDepthImageSubmission, decodeStandardStencilSubmission, decodeStandardShadowSamplerSubmission, decodeStandardDimensionalSubmission, decodeStandardDimensionalViewSubmission, vertexFormat } from "./decoder.mjs";
+import { decodeSubmission, decodeStandardSubmission, decodeStandardUniformSubmission, decodeStandardImageSubmission, decodeStandardColorSubmission, decodeStandardFloatImageSubmission, decodeStandardPackedFloatImageSubmission, decodeStandardSharedExponentImageSubmission, decodeStandardIntegerImageSubmission, decodeStandardMultipleColorSubmission, decodeStandardPackedNormalizedImageSubmission, decodeStandardPackedUnsignedImageSubmission, decodeStandardFloatingDepthImageSubmission, decodeStandardUnormDepthImageSubmission, decodeStandardPackedDepthImageSubmission, decodeStandardStencilSubmission, decodeStandardShadowSamplerSubmission, decodeStandardDimensionalSubmission, decodeStandardDimensionalViewSubmission, decodeStandardDimensionalDepthViewSubmission, vertexFormat } from "./decoder.mjs";
 import { LIMITS as SHADER_LIMITS } from "../virgl-shader/index.mjs";
 import { createKeyCache, hashKey } from "./cache.mjs";
 import { parseConstantDomain, checkFiniteBank, checkIndirectBank, checkLoopBank, checkRadialBank, checkRasterBank, checkConversionBank, checkExactBank, COORDINATE_KEY, DISCARD_KEY,
@@ -42,6 +42,7 @@ export const STANDARD_ORDERED_STENCIL_ASYNC_PROFILE = "virgl-standard-ordered-st
 export const STANDARD_SHADOW_SAMPLER_ASYNC_PROFILE = "virgl-standard-shadow-sampler-async-jobs-v1";
 export const STANDARD_DIMENSIONAL_ASYNC_PROFILE = "virgl-standard-dimensional-rgba8-async-jobs-v1";
 export const STANDARD_DIMENSIONAL_VIEW_ASYNC_PROFILE = "virgl-standard-dimensional-rgba8-view-async-jobs-v1";
+export const STANDARD_DIMENSIONAL_DEPTH_VIEW_ASYNC_PROFILE = "virgl-standard-dimensional-depth-view-async-jobs-v1";
 export const STANDARD_INSTANCED_STENCIL_ASYNC_PROFILE = "virgl-standard-instanced-stencil-async-jobs-v1";
 export const STANDARD_FLOAT_IMAGE_ASYNC_PROFILE = "virgl-standard-float-image-async-jobs-v1";
 export const STANDARD_IMAGE_ASYNC_PROFILE = "virgl-standard-image-async-jobs-v1";
@@ -312,7 +313,12 @@ export function createVirglStandardDimensionalViewAsyncRenderer(options) {
   return createRenderer(options, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
 }
 
-function createRenderer(options, drawing, asynchronous = false, standard = false, uniform = false, bufferRoles = false, images = false, colors = false, textureOperations = false, floats = false, packed = false, shared = false, integers = false, multipleColors = false, normalized = false, unsigned = false, floatingDepth = false, unormDepth = false, packedDepth = false, stencil = false, orderedStencil = false, instanceBase = false, shadowSamplers = false, dimensional = false, dimensionalViews = false) {
+/** Ordinary float-return samplers over retained original cube/array depth views. */
+export function createVirglStandardDimensionalDepthViewAsyncRenderer(options) {
+  return createRenderer(options, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
+}
+
+function createRenderer(options, drawing, asynchronous = false, standard = false, uniform = false, bufferRoles = false, images = false, colors = false, textureOperations = false, floats = false, packed = false, shared = false, integers = false, multipleColors = false, normalized = false, unsigned = false, floatingDepth = false, unormDepth = false, packedDepth = false, stencil = false, orderedStencil = false, instanceBase = false, shadowSamplers = false, dimensional = false, dimensionalViews = false, dimensionalDepthViews = false) {
   return result(() => {
     const config = dataRecord(options, ["gl", "resources", "bindings", "shaderBridge", "limits", "cacheLimits", ...(drawing ? ["drawLimits"] : []), ...(asynchronous ? ["asyncAccess", "jobLimits"] : []), ...(standard ? ["primitiveAssembly"] : []), ...(uniform ? ["uniformAccess"] : []), ...(images ? ["imageAccess"] : [])], ["gl", "resources", "bindings", "shaderBridge", ...(asynchronous ? ["asyncAccess"] : []), ...(uniform ? ["uniformAccess"] : []), ...(images ? ["imageAccess"] : [])]);
     const { gl, resources, bindings, shaderBridge } = config;
@@ -364,8 +370,8 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       "invalid-input", "Original native image range authority is required.");
     require(!integers || typeof shaderBridge.translateImages === "function", "invalid-input", "Integer images require the selected stage compiler.");
     const integerFormat = format => integerColorFormat(format) || (unsigned ? packedUnsignedColorFormat(format) : null);
-    const profile = dimensionalViews ? STANDARD_DIMENSIONAL_VIEW_ASYNC_PROFILE : dimensional ? STANDARD_DIMENSIONAL_ASYNC_PROFILE : shadowSamplers ? STANDARD_SHADOW_SAMPLER_ASYNC_PROFILE : instanceBase ? STANDARD_INSTANCED_STENCIL_ASYNC_PROFILE : orderedStencil ? STANDARD_ORDERED_STENCIL_ASYNC_PROFILE : stencil ? STANDARD_STENCIL_ASYNC_PROFILE : packedDepth ? STANDARD_PACKED_DEPTH_IMAGE_ASYNC_PROFILE : unormDepth ? STANDARD_UNORM_DEPTH_IMAGE_ASYNC_PROFILE : floatingDepth ? STANDARD_FLOATING_DEPTH_IMAGE_ASYNC_PROFILE : unsigned ? STANDARD_PACKED_UNSIGNED_IMAGE_ASYNC_PROFILE : normalized ? STANDARD_PACKED_NORMALIZED_IMAGE_ASYNC_PROFILE : multipleColors ? STANDARD_MULTIPLE_COLOR_ASYNC_PROFILE : integers ? STANDARD_INTEGER_IMAGE_ASYNC_PROFILE : shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : textureOperations ? STANDARD_TEXTURE_ASYNC_PROFILE : colors ? STANDARD_COLOR_ASYNC_PROFILE : images ? STANDARD_IMAGE_ASYNC_PROFILE : bufferRoles ? STANDARD_BUFFER_ASYNC_PROFILE : uniform ? STANDARD_UNIFORM_ASYNC_PROFILE : standard ? STANDARD_ASYNC_PROFILE : asynchronous ? ASYNC_PROFILE : drawing ? DRAW_PROFILE : STATE_PROFILE;
-    const decodeCommands = dimensionalViews ? decodeStandardDimensionalViewSubmission : dimensional ? decodeStandardDimensionalSubmission : shadowSamplers ? decodeStandardShadowSamplerSubmission : stencil ? decodeStandardStencilSubmission : packedDepth ? decodeStandardPackedDepthImageSubmission : unormDepth ? decodeStandardUnormDepthImageSubmission : floatingDepth ? decodeStandardFloatingDepthImageSubmission : unsigned ? decodeStandardPackedUnsignedImageSubmission : normalized ? decodeStandardPackedNormalizedImageSubmission : multipleColors ? decodeStandardMultipleColorSubmission : integers ? decodeStandardIntegerImageSubmission : shared ? decodeStandardSharedExponentImageSubmission : packed ? decodeStandardPackedFloatImageSubmission : floats ? decodeStandardFloatImageSubmission : colors ? decodeStandardColorSubmission : images ? decodeStandardImageSubmission : uniform ? decodeStandardUniformSubmission : standard ? decodeStandardSubmission : decodeSubmission;
+    const profile = dimensionalDepthViews ? STANDARD_DIMENSIONAL_DEPTH_VIEW_ASYNC_PROFILE : dimensionalViews ? STANDARD_DIMENSIONAL_VIEW_ASYNC_PROFILE : dimensional ? STANDARD_DIMENSIONAL_ASYNC_PROFILE : shadowSamplers ? STANDARD_SHADOW_SAMPLER_ASYNC_PROFILE : instanceBase ? STANDARD_INSTANCED_STENCIL_ASYNC_PROFILE : orderedStencil ? STANDARD_ORDERED_STENCIL_ASYNC_PROFILE : stencil ? STANDARD_STENCIL_ASYNC_PROFILE : packedDepth ? STANDARD_PACKED_DEPTH_IMAGE_ASYNC_PROFILE : unormDepth ? STANDARD_UNORM_DEPTH_IMAGE_ASYNC_PROFILE : floatingDepth ? STANDARD_FLOATING_DEPTH_IMAGE_ASYNC_PROFILE : unsigned ? STANDARD_PACKED_UNSIGNED_IMAGE_ASYNC_PROFILE : normalized ? STANDARD_PACKED_NORMALIZED_IMAGE_ASYNC_PROFILE : multipleColors ? STANDARD_MULTIPLE_COLOR_ASYNC_PROFILE : integers ? STANDARD_INTEGER_IMAGE_ASYNC_PROFILE : shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : textureOperations ? STANDARD_TEXTURE_ASYNC_PROFILE : colors ? STANDARD_COLOR_ASYNC_PROFILE : images ? STANDARD_IMAGE_ASYNC_PROFILE : bufferRoles ? STANDARD_BUFFER_ASYNC_PROFILE : uniform ? STANDARD_UNIFORM_ASYNC_PROFILE : standard ? STANDARD_ASYNC_PROFILE : asynchronous ? ASYNC_PROFILE : drawing ? DRAW_PROFILE : STATE_PROFILE;
+    const decodeCommands = dimensionalDepthViews ? decodeStandardDimensionalDepthViewSubmission : dimensionalViews ? decodeStandardDimensionalViewSubmission : dimensional ? decodeStandardDimensionalSubmission : shadowSamplers ? decodeStandardShadowSamplerSubmission : stencil ? decodeStandardStencilSubmission : packedDepth ? decodeStandardPackedDepthImageSubmission : unormDepth ? decodeStandardUnormDepthImageSubmission : floatingDepth ? decodeStandardFloatingDepthImageSubmission : unsigned ? decodeStandardPackedUnsignedImageSubmission : normalized ? decodeStandardPackedNormalizedImageSubmission : multipleColors ? decodeStandardMultipleColorSubmission : integers ? decodeStandardIntegerImageSubmission : shared ? decodeStandardSharedExponentImageSubmission : packed ? decodeStandardPackedFloatImageSubmission : floats ? decodeStandardFloatImageSubmission : colors ? decodeStandardColorSubmission : images ? decodeStandardImageSubmission : uniform ? decodeStandardUniformSubmission : standard ? decodeStandardSubmission : decodeSubmission;
     const parseShaderMetadata = dimensionalViews ? parseStandardDimensionalTextureShaderMetadata : shadowSamplers ? parseStandardShadowTextureShaderMetadata : instanceBase ? parseStandardInstanceBaseShaderMetadata : multipleColors ? parseStandardMultipleColorShaderMetadata : integers ? parseStandardIntegerImageShaderMetadata : textureOperations ? parseStandardTextureShaderMetadata : uniform ? parseStandardUniformShaderMetadata : standard ? parseStandardShaderMetadata : parseConstantDomain;
     const idle = () => require(activeJob === null, "busy", "A renderer job is active; cancel and drain it before changing state.");
     const contexts = new Map(), objects = new Set(), programs = new Set();
@@ -479,7 +485,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       }
     };
     const translatedStage = (sub, request) => {
-      const key = JSON.stringify([sub.generation, "stage", request.stage, request.text, ...(textureOperations ? [dimensionalViews ? STANDARD_DIMENSIONAL_VIEW_ASYNC_PROFILE : shadowSamplers ? STANDARD_SHADOW_SAMPLER_ASYNC_PROFILE : instanceBase ? STANDARD_INSTANCED_STENCIL_ASYNC_PROFILE : unsigned ? STANDARD_PACKED_UNSIGNED_IMAGE_ASYNC_PROFILE : normalized ? STANDARD_PACKED_NORMALIZED_IMAGE_ASYNC_PROFILE : multipleColors ? STANDARD_MULTIPLE_COLOR_ASYNC_PROFILE : integers ? STANDARD_INTEGER_IMAGE_ASYNC_PROFILE : shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : STANDARD_TEXTURE_ASYNC_PROFILE] : [])]);
+      const key = JSON.stringify([sub.generation, "stage", request.stage, request.text, ...(textureOperations ? [dimensionalDepthViews ? STANDARD_DIMENSIONAL_DEPTH_VIEW_ASYNC_PROFILE : dimensionalViews ? STANDARD_DIMENSIONAL_VIEW_ASYNC_PROFILE : shadowSamplers ? STANDARD_SHADOW_SAMPLER_ASYNC_PROFILE : instanceBase ? STANDARD_INSTANCED_STENCIL_ASYNC_PROFILE : unsigned ? STANDARD_PACKED_UNSIGNED_IMAGE_ASYNC_PROFILE : normalized ? STANDARD_PACKED_NORMALIZED_IMAGE_ASYNC_PROFILE : multipleColors ? STANDARD_MULTIPLE_COLOR_ASYNC_PROFILE : integers ? STANDARD_INTEGER_IMAGE_ASYNC_PROFILE : shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : STANDARD_TEXTURE_ASYNC_PROFILE] : [])]);
       const cached = translationCache.get(sub, key);
       if (cached) return cached;
       work.translations++;
@@ -493,7 +499,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
     };
     const translatedPair = (sub, vertex, fragment, interfaceKey, validate, inputTypes = null, bufferZeroMask = 0, colorOutputs = null) => {
       const key = JSON.stringify([sub.generation, "pair", vertex.fields.text, fragment.fields.text, interfaceKey,
-        ...(inputTypes?.key ? [inputTypes.key] : []), ...(uniform ? [bufferZeroMask] : []), ...(integers ? [colorOutputs.key] : []), ...(textureOperations ? [dimensionalViews ? STANDARD_DIMENSIONAL_VIEW_ASYNC_PROFILE : shadowSamplers ? STANDARD_SHADOW_SAMPLER_ASYNC_PROFILE : instanceBase ? STANDARD_INSTANCED_STENCIL_ASYNC_PROFILE : unsigned ? STANDARD_PACKED_UNSIGNED_IMAGE_ASYNC_PROFILE : normalized ? STANDARD_PACKED_NORMALIZED_IMAGE_ASYNC_PROFILE : multipleColors ? STANDARD_MULTIPLE_COLOR_ASYNC_PROFILE : integers ? STANDARD_INTEGER_IMAGE_ASYNC_PROFILE : shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : STANDARD_TEXTURE_ASYNC_PROFILE] : [])]);
+        ...(inputTypes?.key ? [inputTypes.key] : []), ...(uniform ? [bufferZeroMask] : []), ...(integers ? [colorOutputs.key] : []), ...(textureOperations ? [dimensionalDepthViews ? STANDARD_DIMENSIONAL_DEPTH_VIEW_ASYNC_PROFILE : dimensionalViews ? STANDARD_DIMENSIONAL_VIEW_ASYNC_PROFILE : shadowSamplers ? STANDARD_SHADOW_SAMPLER_ASYNC_PROFILE : instanceBase ? STANDARD_INSTANCED_STENCIL_ASYNC_PROFILE : unsigned ? STANDARD_PACKED_UNSIGNED_IMAGE_ASYNC_PROFILE : normalized ? STANDARD_PACKED_NORMALIZED_IMAGE_ASYNC_PROFILE : multipleColors ? STANDARD_MULTIPLE_COLOR_ASYNC_PROFILE : integers ? STANDARD_INTEGER_IMAGE_ASYNC_PROFILE : shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : STANDARD_TEXTURE_ASYNC_PROFILE] : [])]);
       const cached = translationCache.get(sub, key);
       if (cached) { validate(cached); return cached; }
       work.pairTranslations++;
@@ -567,7 +573,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         if (type === 6 || type === 8) {
           const floating = floatingDepth && Boolean(floatingDepthFormat(fields.format)) || unormDepth && Boolean(unormDepthFormat(fields.format)) || packedDepth && Boolean(packedDepthFormat(fields.format));
           const depth = type === 8 && (fields.format === 16 || floating);
-          Object.assign(object, retain(ctx, fields.resourceHandle, depth ? "depth-surface" : type === 6 ? "view" : "surface", floating ? ["depth-texture", "mip-depth-texture"] : depth ? "depth-texture" : images ? ["texture", "mip-texture", ...(dimensionalViews && type === 6 ? ["dimensional-texture"] : [])] : "texture"));
+          Object.assign(object, retain(ctx, fields.resourceHandle, depth ? "depth-surface" : type === 6 ? "view" : "surface", floating ? ["depth-texture", "mip-depth-texture", ...(dimensionalDepthViews && type === 6 ? ["dimensional-depth-texture"] : [])] : depth ? "depth-texture" : images ? ["texture", "mip-texture", ...(dimensionalViews && type === 6 ? ["dimensional-texture"] : [])] : "texture"));
           require(object.metadata.format === fields.format, "incompatible-resource", "View format and storage format differ.");
           if (images && (!depth || floating)) {
             if (type === 6) {
@@ -676,7 +682,8 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         const view = sub.views[stage][sampler.index], fields = view?.fields;
         const target = dimensionalViews ? dimensionalSamplerTarget(sampler.type) : 2;
         if (dimensionalViews && fields) require(fields.target === target && (target === 2 || fields.format === 67 &&
-          ["sampler3D", "samplerCube", "sampler2DArray"].includes(sampler.type)),
+          ["sampler3D", "samplerCube", "sampler2DArray"].includes(sampler.type) || dimensionalDepthViews && [4, 7].includes(target) &&
+          depthFormat(fields.format) && ["samplerCube", "sampler2DArray"].includes(sampler.type)),
         "incompatible-resource", "Original sampler dimension or return type disagrees with retained storage.");
         if (integers && fields) {
           const image = integerFormat(fields.format), nativeType = dimensionalViews && target !== 2 ? sampler.type : image ? image.signed ? "isampler2D" : "usampler2D" : "sampler2D";
@@ -1384,7 +1391,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           if (!shared && plan && program.samplers.some(entry => entry.stage === stage && entry.index === slot)) unwrap(imageAccess.refresh(view.imageRange));
           image = unwrap(imageAccess.resolve(view.imageRange));
         }
-        const nativeTarget = dimensionalViews && image?.storage.dimensional ? image.storage.target : gl.TEXTURE_2D;
+        const nativeTarget = dimensionalViews && (image?.storage.dimensional || dimensionalDepthViews && image?.storage.dimensionalDepth) ? image.storage.target : gl.TEXTURE_2D;
         gl.activeTexture(gl.TEXTURE0 + unit); gl.bindTexture(nativeTarget, view ? images ? image.storage.texture : resolve(view.lease).storage.texture : null);
         if (images && image) {
           gl.texParameteri(nativeTarget, gl.TEXTURE_BASE_LEVEL, 0); gl.texParameteri(nativeTarget, gl.TEXTURE_MAX_LEVEL, image.metadata.lastLevel);
@@ -1543,7 +1550,9 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         require(view && state, "incomplete-draw", "Drawing requires an active sampler view and sampler state.");
         if (dimensionalViews) require(view.fields.target === dimensionalSamplerTarget(sampler.type) &&
           (view.fields.target === 2 || view.metadata.kind === "dimensional-texture" && view.metadata.format === 67 &&
-            ["sampler3D", "samplerCube", "sampler2DArray"].includes(sampler.type)),
+            ["sampler3D", "samplerCube", "sampler2DArray"].includes(sampler.type) || dimensionalDepthViews &&
+            view.metadata.kind === "dimensional-depth-texture" && [4, 7].includes(view.fields.target) && depthFormat(view.fields.format) &&
+            ["samplerCube", "sampler2DArray"].includes(sampler.type)),
         "incompatible-resource", "Native dimensional sampler has no compatible original retained view.");
         if (shadowSamplers) require(sampler.type === "sampler2DShadow" ?
           state.fields.compareMode === 1 && Boolean(depthFormat(view.fields.format)) : state.fields.compareMode === 0,

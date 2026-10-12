@@ -75,7 +75,7 @@ export function createFloatingDepthPacker(gl, check, require, vao, indexed) {
     if (!scratch.delete(pair)) return;
     gl.deleteTexture(pair.depthColor); if (pair.stencilColor) gl.deleteTexture(pair.stencilColor); if (pair.depthCopy) gl.deleteTexture(pair.depthCopy);
   };
-  const copyRegion = (source, destination, stencil, sourceLevel, destinationLevel, box, sourceTarget = gl.TEXTURE_2D, sourceLayer = 0) => {
+  const copyRegion = (source, destination, stencil, sourceLevel, destinationLevel, box, sourceTarget = gl.TEXTURE_2D, sourceLayer = 0, destinationTarget = gl.TEXTURE_2D, destinationLayer = 0) => {
     framebuffers();
     const previousRead = gl.getParameter(gl.READ_FRAMEBUFFER_BINDING), previousDraw = gl.getParameter(gl.DRAW_FRAMEBUFFER_BINDING), scissor = gl.isEnabled(gl.SCISSOR_TEST);
     const attachment = stencil ? gl.DEPTH_STENCIL_ATTACHMENT : gl.DEPTH_ATTACHMENT;
@@ -84,7 +84,8 @@ export function createFloatingDepthPacker(gl, check, require, vao, indexed) {
       if (sourceTarget === gl.TEXTURE_2D_ARRAY) gl.framebufferTextureLayer(gl.READ_FRAMEBUFFER, attachment, source, sourceLevel, sourceLayer);
       else gl.framebufferTexture2D(gl.READ_FRAMEBUFFER, attachment, sourceTarget === gl.TEXTURE_CUBE_MAP ? gl.TEXTURE_CUBE_MAP_POSITIVE_X + sourceLayer : gl.TEXTURE_2D, source, sourceLevel);
       gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, drawFramebuffer); gl.drawBuffers([gl.NONE]);
-      gl.framebufferTexture2D(gl.DRAW_FRAMEBUFFER, attachment, gl.TEXTURE_2D, destination, destinationLevel);
+      if (destinationTarget === gl.TEXTURE_2D_ARRAY) gl.framebufferTextureLayer(gl.DRAW_FRAMEBUFFER, attachment, destination, destinationLevel, destinationLayer);
+      else gl.framebufferTexture2D(gl.DRAW_FRAMEBUFFER, attachment, destinationTarget === gl.TEXTURE_CUBE_MAP ? gl.TEXTURE_CUBE_MAP_POSITIVE_X + destinationLayer : gl.TEXTURE_2D, destination, destinationLevel);
       require(gl.checkFramebufferStatus(gl.READ_FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE && gl.checkFramebufferStatus(gl.DRAW_FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE,
         "backend-error", "Floating depth copy framebuffer is incomplete."); gl.disable(gl.SCISSOR_TEST);
       gl.blitFramebuffer(box.x, box.y, box.x + box.width, box.y + box.height, 0, 0, box.width, box.height,
