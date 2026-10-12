@@ -2506,3 +2506,7 @@ verify-E6-T11d56:
 .PHONY: verify-E6-T11d57
 verify-E6-T11d57:
 	python3 tools/virgl-dimensional-shaders/verify.py --output "$${VIRGL_DIMENSIONAL_SHADER_EVIDENCE_DIR:-target/evidence/virgl-dimensional-shaders}"
+
+.PHONY: verify-E6-T11d57-stage-isolation
+verify-E6-T11d57-stage-isolation:
+	node tools/virgl-dimensional-shaders/stage-isolation-test.mjs --output "$${VIRGL_DIMENSIONAL_STAGE_EVIDENCE_DIR:-target/evidence/virgl-dimensional-stage-isolation}"
