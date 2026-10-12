@@ -1,0 +1,23 @@
+{
+  "schema": "fresh-shadow-sampler-critic-predictions-v1",
+  "task": "E6-T11d49",
+  "madeBeforeOpeningRecording": true,
+  "workerSubmission": "c859d95f2a7b966480e3944010ae631316068787",
+  "runtimeHead": "17b9d9334dfa1b2b209df36e0105e2ec96549fa7",
+  "predecessor": "4e924b694715ec40e653e2e0c87ecc49c929d040",
+  "predictions": [
+    {"id":"P01","prediction":"All 44665 logical sealed members match their indexed byte lengths and SHA256, hardlinks resolve to an earlier physical body, complete archive/index/manifest match the supplied pins, and frozen source bodies equal the current runtime and exact freeze commit."},
+    {"id":"P02","prediction":"Each native shadow sampler immediately before its recorded writer has SAMPLER_2D_SHADOW type 35682, COMPARE_REF_TO_TEXTURE mode 34894, compare function 512+the original 3-bit function, and native unit slot+16 for vertex or slot for fragment; every function 0..7 has below/equal/above points."},
+    {"id":"P03","prediction":"After fixed-depth TEX/TXL/TXD/TXP/TXB with original references outside [0,1], raw results equal the original comparison with clamped reference; for format 18/126 reference remains unclamped. Projective reference is divided by original q before the clamp."},
+    {"id":"P04","prediction":"Active native stage/slot mask and add controls start at zero vec4 defaults, are then set respectively to original swizzle component<4 and component==5, and same-slot vertex and fragment bindings use their distinct original views/samplers without sharing authority."},
+    {"id":"P05","prediction":"Query-only controls contain no mask/add, original TXQ outputs depend on original qualified view dimensions/level range and preserve raw query order, and ordinary/shadow access to one depth texture uses distinct native sampler objects with modes 0/34894."},
+    {"id":"P06","prediction":"Every point frame equals a direct interpreter of original shaders/packets and original authenticated input/upload bytes, including signed/unsigned integer image raw words and source/write modifiers. No oracle obtains expected pixels from generated ESSL or product output."},
+    {"id":"P07","prediction":"Each accepted frame's native writer precedes its own fence creation, actual completion wait, deletion and CPU read, with unique completion sync per frame. Varied delayed/cancel/rebind/name-reuse schedules finish with all native objects/syncs deleted exactly once and zero terminal budgets, while caller state restoration is asserted."},
+    {"id":"P08","prediction":"Mode/type/storage mismatches, missing state, feedback, malformed reflection/defaults/budget/omitted controls fail before the corresponding native draw. Metadata malformed/accessor/proxy/extra-authority inputs fail without invoking getters; normalization returns immutable owned custody."},
+    {"id":"P09","prediction":"The composed instance/stencil records contain exact original SHADOW TEX plus MUL identity packets, native ALWAYS comparison 519 and identity mask/add, with original depth input uploaded to the exact bound native texture; therefore independent predecessor primitive/stencil model planes still agree for all original native passes and ordered diagnostics."},
+    {"id":"P10","prediction":"Each physical control first completes a matching baseline then corrupts actual native comparison or mask state, completes a second distinct native fence, and yields wrong original-expected words (36 compare and 9 mask in the worker records). A novel critic baseline plus physical sabotage will also distinguish corruption without changing its oracle."},
+    {"id":"P11","prediction":"Independent smallest-range V8 reconstruction at every changed executable partition finds positive counts or exact byte-identical historical false-selector operands with authenticated predecessor evidence; no new branch is waived by a broad line/function total."},
+    {"id":"P12","prediction":"The recorded cold clone is detached at freeze 17b9d933, starts and ends pristine with build/runtime overrides scrubbed, and generated/compiler/storage/D48 source+evidence identities match their published predecessor seals, allowing unchanged HELD facts to carry."}
+  ],
+  "novelPlan":"Original two sparse same-stage shadow samplers on distinct fixed and floating depth views, projective coordinates at both clamp endpoints, independent mask/add constants, same objects rebound with new view generations, and physical mask or comparison sabotage after a full passing frame. Expected words are derived from original input floats and sampler/view packets, never generated ESSL."
+}
