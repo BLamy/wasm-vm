@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47, E6-T11d48, E6-T11d49, E6-T11d50, E6-T11d51, E6-T11d52, E6-T11d53, E6-T11d54, E6-T11d55]
-blocked_on: E6-T11d55
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47, E6-T11d48, E6-T11d49, E6-T11d50, E6-T11d51, E6-T11d52, E6-T11d53, E6-T11d54, E6-T11d55, E6-T11d56]
+blocked_on: E6-T11d56
 estimate: S
 risk: high
 capstone: false
@@ -686,3 +686,18 @@ hashes are in D55. Ordered S/high E6-T11d55 closes the one original dimensional
 storage/DMA boundary for format67; consumers/native layout/caps, actual guest
 Mesa/Hyprland, production worker/scanout and throughput remain successors. The
 human production graphics instruction continues the same ordered stack.
+
+### 2026-10-12 — worker — dimensional storage verified; native layered DMA gap
+
+D55 is independently verified at98187fdf222f393af27b2307667e10427027ad46,
+and open/draft PR533 continues existing stack500. Both stack identities and
+all133 previous PR identities/order/heads/bases remain held; all134 stay open,
+draft and unmerged. The exact-head actual Wasm/hardware readiness probe now
+admits every D55 host chain, while native metadata and the selected submission
+consumer still reject all three dimensional original transfers. The99-body
+complete recording and full API continuity are in
+`evidence/virgl-production-readiness/native-dimensional-transport-gap/`;
+exact repro/digests are in D56. Ordered S/high D56 closes this one original
+native allocation and layered DMA boundary. Dimensional shader/surface consumers,
+full API/caps, actual guest Mesa/Hyprland, production worker/scanout and300MIPS
+remain unproven under the continuing human request.

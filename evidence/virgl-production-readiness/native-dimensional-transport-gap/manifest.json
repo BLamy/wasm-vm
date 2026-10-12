@@ -1,0 +1,37 @@
+{
+  "schema": "native-dimensional-transport-readiness-seal-v1",
+  "head": "98187fdf222f393af27b2307667e10427027ad46",
+  "records": 99,
+  "reopenedMembers": 99,
+  "recordIndexSha256": "e220691cc54d72de64e3fbeb36f1a7267fa9f741d9c12174c85a804e37cc66af",
+  "archiveSha256": "b35aa13f43cb33a88b3f4aeaa429545c7da06b34c06e9bf6a66ccf88320cb548",
+  "archiveBytes": 2867599,
+  "reportSha256": "d0b0415605f34ba8dc06a1704e2e0d1759dfe2718e94819004aed7c53b1952f4",
+  "guestExecution": false,
+  "productionAuthority": false,
+  "summary": {
+    "status": "passed",
+    "positiveControl": "2D positive control",
+    "refusedShapes": [
+      "original 3D volume",
+      "original six-face cube",
+      "original 2D array"
+    ],
+    "hostAdmittedShapes": [
+      "2D positive control",
+      "original 3D volume",
+      "original six-face cube",
+      "original 2D array"
+    ],
+    "layeredConsumerRefusals": 3,
+    "shaderRefusals": 6,
+    "nativeCalls": 290,
+    "limits": {
+      "texture2D": 16384,
+      "texture3D": 2048,
+      "cube": 16384,
+      "arrayLayers": 2048
+    },
+    "liveGuest3d": false
+  }
+}

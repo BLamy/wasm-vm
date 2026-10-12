@@ -1,0 +1,104 @@
+{
+  "schema": "native-stack-continuity-v1",
+  "sourceHead": "98187fdf222f393af27b2307667e10427027ad46",
+  "action": "gh stack submit --auto --remote origin",
+  "stacks": [
+    {
+      "number": 499,
+      "id": 1985180,
+      "nodeId": "PRS_kwDOTLQ_184AHkqc",
+      "base": {
+        "ref": "main"
+      },
+      "beforeCount": 50,
+      "afterCount": 50,
+      "priorPullRequestsPreserved": true
+    },
+    {
+      "number": 500,
+      "id": 1985183,
+      "nodeId": "PRS_kwDOTLQ_184AHkqf",
+      "base": {
+        "ref": "codex/virgl-signed-float-conversions"
+      },
+      "beforeCount": 83,
+      "afterCount": 84,
+      "priorPullRequestsPreserved": true
+    }
+  ],
+  "priorPullRequestsPreserved": 133,
+  "totalOpenDraftUnmerged": 134,
+  "createdPullRequest": {
+    "url": "https://api.github.com/repos/BLamy/wasm-vm/pulls/533",
+    "id": 4830092183,
+    "number": 533,
+    "head": {
+      "ref": "codex/virgl-dimensional-storage",
+      "sha": "98187fdf222f393af27b2307667e10427027ad46",
+      "repo": {
+        "id": 1286881239,
+        "url": "https://api.github.com/repos/BLamy/wasm-vm",
+        "name": "wasm-vm"
+      }
+    },
+    "base": {
+      "ref": "codex/virgl-native-image-layouts",
+      "sha": "37a6794437424049d38acb733191a16c1cdca998",
+      "repo": {
+        "id": 1286881239,
+        "url": "https://api.github.com/repos/BLamy/wasm-vm",
+        "name": "wasm-vm"
+      }
+    },
+    "node_id": "PR_kwDOTLQ_188AAAABH-Vblw",
+    "title": "Allocate and transfer RGBA8 volume, cube and array resources",
+    "state": "open",
+    "merged_at": null,
+    "draft": true,
+    "html_url": "https://github.com/BLamy/wasm-vm/pull/533",
+    "user": {
+      "login": "BLamy",
+      "id": 324928,
+      "node_id": "MDQ6VXNlcjMyNDkyOA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/324928?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/BLamy",
+      "html_url": "https://github.com/BLamy",
+      "followers_url": "https://api.github.com/users/BLamy/followers",
+      "following_url": "https://api.github.com/users/BLamy/following{/other_user}",
+      "gists_url": "https://api.github.com/users/BLamy/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/BLamy/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/BLamy/subscriptions",
+      "organizations_url": "https://api.github.com/users/BLamy/orgs",
+      "repos_url": "https://api.github.com/users/BLamy/repos",
+      "events_url": "https://api.github.com/users/BLamy/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/BLamy/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    }
+  },
+  "attachmentError": "thread attachment identity count exceeds 100",
+  "snapshots": [
+    {
+      "path": "stack499-before.json",
+      "bytes": 79241,
+      "sha256": "f221c656ee6ab1cc6da9cb890b5a8b3eeb66e45b757e1d4bd03466fffad643d1"
+    },
+    {
+      "path": "stack499-after.json",
+      "bytes": 79241,
+      "sha256": "f221c656ee6ab1cc6da9cb890b5a8b3eeb66e45b757e1d4bd03466fffad643d1"
+    },
+    {
+      "path": "stack500-before.json",
+      "bytes": 132222,
+      "sha256": "d70853063016e6c4a561055b2c2666edded7bfacc0fbdd90a006bb616689bd63"
+    },
+    {
+      "path": "stack500-after.json",
+      "bytes": 133807,
+      "sha256": "5bf8d4e90744a4702e4f54700b27fd646a862b7cb4c21dea3fe1c4f7b5f6f9cf"
+    }
+  ]
+}
