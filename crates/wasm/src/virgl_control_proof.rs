@@ -535,36 +535,13 @@ pub struct WasmVirglSubmitProof {
 impl WasmVirglSubmitProof {
     #[wasm_bindgen(constructor)]
     pub fn new(callback: Function, proof_enabled: bool) -> Result<WasmVirglSubmitProof, JsError> {
-        let mut machine = Machine::new(RAM_BYTES);
-        machine.enable_plic();
-        machine.enable_virtio_slots(None);
-        let mailbox = Submit3dMailbox::new();
-        let (_, gpu) = if proof_enabled {
-            machine.enable_virtio_gpu_submit3d_proof(
-                Box::new(NullSink),
-                Box::new(JsControlSink(callback.clone())),
-                Box::new(JsSubmitSink(callback)),
-                mailbox.clone(),
-            )
-        } else {
-            machine.enable_virtio_gpu(Box::new(NullSink))
-        }
-        .ok_or_else(|| JsError::new("No GPU slot available"))?;
-        gpu.borrow_mut().enable_command_trace();
-        let base = Platform::virtio_base(machine.virtio_gpu().expect("GPU installed").0 as u64);
-        machine
-            .bus_mut()
-            .store32(virt::KERNEL_BASE, 0x0000_006f)
-            .map_err(|_| JsError::new("Cannot seed proof hart"))?;
-        machine.hart_mut().regs.pc = virt::KERNEL_BASE;
-        Ok(Self {
-            inner: WasmVirglControlProof {
-                machine: RefCell::new(machine),
-                gpu,
-                base,
-            },
-            mailbox,
-        })
+        Self::assemble(callback, proof_enabled, false)
+    }
+
+    /// Explicit selected desktop fixture; ordinary WasmLinux remains unchanged.
+    #[wasm_bindgen(js_name = standardDesktop)]
+    pub fn standard_desktop(callback: Function) -> Result<WasmVirglSubmitProof, JsError> {
+        Self::assemble(callback, true, true)
     }
 
     pub fn layout(&self) -> Result<JsValue, JsError> {
@@ -864,5 +841,47 @@ impl WasmVirglSubmitProof {
         set(&out, "dropped", hex(state.command_trace_dropped())).map_err(js_error)?;
         set(&out, "cursorCommands", hex(state.cursorq_commands())).map_err(js_error)?;
         Ok(out.into())
+    }
+}
+
+impl WasmVirglSubmitProof {
+    fn assemble(callback: Function, proof_enabled: bool, desktop: bool) -> Result<Self, JsError> {
+        let mut machine = Machine::new(RAM_BYTES);
+        machine.enable_plic();
+        machine.enable_virtio_slots(None);
+        let mailbox = Submit3dMailbox::new();
+        let (_, gpu) = if desktop {
+            machine.enable_virtio_gpu_standard_desktop_submit3d_proof(
+                Box::new(NullSink),
+                Box::new(JsControlSink(callback.clone())),
+                Box::new(JsSubmitSink(callback)),
+                mailbox.clone(),
+            )
+        } else if proof_enabled {
+            machine.enable_virtio_gpu_submit3d_proof(
+                Box::new(NullSink),
+                Box::new(JsControlSink(callback.clone())),
+                Box::new(JsSubmitSink(callback)),
+                mailbox.clone(),
+            )
+        } else {
+            machine.enable_virtio_gpu(Box::new(NullSink))
+        }
+        .ok_or_else(|| JsError::new("No GPU slot available"))?;
+        gpu.borrow_mut().enable_command_trace();
+        let base = Platform::virtio_base(machine.virtio_gpu().expect("GPU installed").0 as u64);
+        machine
+            .bus_mut()
+            .store32(virt::KERNEL_BASE, 0x0000_006f)
+            .map_err(|_| JsError::new("Cannot seed proof hart"))?;
+        machine.hart_mut().regs.pc = virt::KERNEL_BASE;
+        Ok(Self {
+            inner: WasmVirglControlProof {
+                machine: RefCell::new(machine),
+                gpu,
+                base,
+            },
+            mailbox,
+        })
     }
 }

@@ -487,3 +487,6 @@ export async function runBrowserAcceptance({WasmVirglSubmitProof,createVirglSubm
   result.ordered=await hundredDraws(WasmVirglSubmitProof,createVirglSubmitBridge,gl,shaderBridge,fixtures,c);result.assertions=c.assertions;
   result.summary={status:result.status,assertions:result.assertions,minimal:result.minimal,original:{packetCount:result.original.packetCount,gpuDraws:result.original.gpuDraws,checkedPixels:result.original.checkedPixels},ordered:{queuedCommands:result.ordered.queuedCommands,gpuDraws:result.ordered.gpuDraws,maximumPending:result.ordered.maximumPending},sequencing:result.sequencing};return result;
 }
+
+// Shared literal queue and hardware-oracle fixtures; selection is supplied by the caller.
+export { checker, makeRig, context, resource, idCommand, header, submission, backing, transfer, originalReplay, orderedDma, uncertainGpuFailure, protocolAttacks };

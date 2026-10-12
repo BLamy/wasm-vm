@@ -18,3 +18,10 @@ The browser suite imports the original eight captured command bodies without mod
 Additional fixtures queue 100 real indexed draws with duplicate, descending and full-width fence IDs followed immediately by context destruction; interleave two contexts; detach and reattach backing behind an owned head; mutate a later head before admission; reset or reconfigure pending ownership; and inject labelled trusted host failures after scatter and before acknowledgment. Eight literal portable cases compare exact native/Wasm request bytes, response bytes, rings, and canonical control/submission digests. GPU wait schedules may change diagnostic turn counts. Machine digests are captured at stable checkpoints rather than on every polling turn.
 
 Run `make verify-E6-T11b2` for the submission gate. For an inner development loop, `node tools/verify-virgl-submit.mjs --output target/evidence/virgl-submit-development` records headed hardware execution. `--sabotage early-collect` must fail “async CPU collection requires a signaled fence”; `--sabotage early-completion` must fail “completion is posted only after all GPU fences retire”. These controls alter only served source bytes and record both source hashes.
+
+The explicitly selected `createVirglStandardDesktopSubmitBridge` pairs with
+`WasmVirglSubmitProof.standardDesktop(callback)`. It composes the verified
+desktop resource store, standard shader consumer and ordered transport, including
+64 accepted resource identities. Pass the qualified standard shadow compiler as
+the trusted host `shaderBridge`. Historical constructors retain their16-resource
+profiles. This isolated composition grants no production capsets or scanout.

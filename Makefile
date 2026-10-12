@@ -2482,3 +2482,7 @@ verify-E6-T11d50-critic:
 .PHONY: verify-E6-T11d51
 verify-E6-T11d51:
 	python3 tools/virgl-desktop-control/verify.py --output "$${VIRGL_DESKTOP_CONTROL_EVIDENCE_DIR:-target/evidence/virgl-desktop-control}"
+
+.PHONY: verify-E6-T11d52
+verify-E6-T11d52:
+	python3 tools/virgl-desktop-submit/verify.py --output "$${VIRGL_DESKTOP_SUBMIT_EVIDENCE_DIR:-target/evidence/virgl-desktop-submit}"

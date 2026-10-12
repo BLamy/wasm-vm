@@ -1,7 +1,7 @@
 /** Explicit proof-only VirtIO bridges. Ordinary device negotiation is unchanged. */
-import { createResourceStore, createWebGL2TransferBackend } from './resources.mjs';
+import { createResourceStore, createWebGL2TransferBackend, createStandardDesktopResourceStore, createStandardPackedDepthTransferBackend } from './resources.mjs';
 import { createRetainedScanout, normalizeScanoutEvent } from './scanout.mjs';
-import { createVirglStateRenderer, createVirglAsyncRenderer } from './state.mjs';
+import { createVirglStateRenderer, createVirglAsyncRenderer, createVirglStandardShadowSamplerAsyncRenderer } from './state.mjs';
 
 const ok = () => Object.freeze({ ok: true });
 const fail = (code, message) => Object.freeze({ ok: false, error: Object.freeze({ code, message }) });
@@ -85,7 +85,7 @@ const nextHex = (value) => {
   need(next <= 0xffffffffffffffffn, 'invalid-parameter', 'Sequence space exhausted.');
   return next.toString(16).padStart(16, '0');
 };
-function normalizeJob(input) {
+function normalizeJob(input, resourceLimit) {
   const type = Object.getOwnPropertyDescriptor(input, 'type')?.value;
   if (type === 'cancelJob') {
     const event = record(input, ['type', 'epoch', 'sequence']); hex(event.epoch); hex(event.sequence); return event;
@@ -97,7 +97,7 @@ function normalizeJob(input) {
   for (const key of ['type', 'flags', 'contextId', 'ringIndex']) uint(event.header[key]); hex(event.header.fenceId);
   need((event.header.flags === 0 || event.header.flags === 1) && event.header.ringIndex === 0 && event.header.contextId === event.context.id,
     'invalid-parameter', 'Unsupported submission header.');
-  need(Array.isArray(event.resources) && event.resources.length <= 16, 'invalid-parameter', 'Invalid accepted resource set.');
+  need(Array.isArray(event.resources) && event.resources.length <= resourceLimit, 'invalid-parameter', 'Invalid accepted resource set.');
   const ids = new Set();
   event.resources = event.resources.map((entry) => {
     const resource = record(entry, ['identity', 'metadata', 'backing']); resource.identity = identity(resource.identity);
@@ -148,9 +148,12 @@ export function createVirglControlBridge(options) { return createBridge(options,
 /** Async submission proof only; transport capabilities are trusted host functions. */
 export function createVirglSubmitBridge(options) { return createBridge(options, true); }
 
+/** Selected desktop submission owners; construction grants no production capsets. */
+export function createVirglStandardDesktopSubmitBridge(options) { return createBridge(options, true, false, true); }
+
 export function createVirglScanoutBridge(options) { return createBridge(options, true, true); }
 
-function createBridge(options, asynchronous, scanoutEnabled = false) {
+function createBridge(options, asynchronous, scanoutEnabled = false, desktop = false) {
   let owners = null;
   try {
     const config = record(options, ['gl', 'shaderBridge', 'resourceLimits', 'stateLimits', ...(asynchronous ? ['transport', 'jobLimits', 'drawLimits'] : []), ...(scanoutEnabled ? ['presenter'] : [])], ['gl', 'shaderBridge', ...(asynchronous ? ['transport'] : []), ...(scanoutEnabled ? ['presenter'] : [])]);
@@ -159,12 +162,13 @@ function createBridge(options, asynchronous, scanoutEnabled = false) {
     const transport = asynchronous ? record(config.transport, ['gatherInput', 'scatterOutput', 'complete']) : null;
     if (asynchronous) for (const key of Object.keys(transport)) need(typeof transport[key] === 'function', 'invalid-parameter', 'Missing transport method.');
     const fresh = () => {
-      const { backend } = unwrap(createWebGL2TransferBackend(config.gl));
+      const { backend } = unwrap((desktop ? createStandardPackedDepthTransferBackend : createWebGL2TransferBackend)(config.gl));
       let store;
       try {
-        const created = unwrap(createResourceStore({ backend, ...(config.resourceLimits === undefined ? {} : { limits: config.resourceLimits }) }));
+        const created = unwrap((desktop ? createStandardDesktopResourceStore : createResourceStore)({ backend, ...(config.resourceLimits === undefined ? {} : { limits: config.resourceLimits }) }));
         store = created.store;
-        const { renderer } = unwrap((asynchronous ? createVirglAsyncRenderer : createVirglStateRenderer)({ gl: config.gl, shaderBridge: config.shaderBridge,
+        const { renderer } = unwrap((desktop ? createVirglStandardShadowSamplerAsyncRenderer : asynchronous ? createVirglAsyncRenderer : createVirglStateRenderer)({ gl: config.gl, shaderBridge: config.shaderBridge,
+          ...(desktop ? { uniformAccess: created.uniformAccess, imageAccess: created.imageAccess } : {}),
           resources: store, bindings: created.bindings, ...(asynchronous ? { asyncAccess: created.asyncAccess, ...(config.jobLimits === undefined ? {} : { jobLimits: config.jobLimits }), ...(config.drawLimits === undefined ? {} : { drawLimits: config.drawLimits }) } : {}), ...(config.stateLimits === undefined ? {} : { limits: config.stateLimits }) }));
         return Object.freeze({ store, renderer, bindings: created.bindings, ...(asynchronous ? { asyncAccess: created.asyncAccess } : {}) });
       } catch (error) { if (store) store.dispose(); else backend.dispose(); throw error; }
@@ -292,7 +296,7 @@ function createBridge(options, asynchronous, scanoutEnabled = false) {
         busy = true;
         let event;
         try {
-          try { event = scanoutEnabled && ['bindScanout','beginScanout'].includes(Object.getOwnPropertyDescriptor(input, 'type')?.value) ? normalizeScanoutEvent(input) : asynchronous && (Object.getOwnPropertyDescriptor(input, 'type')?.value === 'beginJob' || Object.getOwnPropertyDescriptor(input, 'type')?.value === 'cancelJob') ? normalizeJob(input) : normalize(input, asynchronous); }
+          try { event = scanoutEnabled && ['bindScanout','beginScanout'].includes(Object.getOwnPropertyDescriptor(input, 'type')?.value) ? normalizeScanoutEvent(input) : asynchronous && (Object.getOwnPropertyDescriptor(input, 'type')?.value === 'beginJob' || Object.getOwnPropertyDescriptor(input, 'type')?.value === 'cancelJob') ? normalizeJob(input, desktop ? 64 : 16) : normalize(input, asynchronous); }
           catch (error) { return fail(error instanceof Fault ? error.code : 'invalid-parameter', 'Malformed control event.'); }
           if (event.type === 'reset') {
             need(BigInt('0x' + event.epoch) === BigInt('0x' + epoch) + 1n, 'invalid-parameter', 'Reset epoch must advance once.');

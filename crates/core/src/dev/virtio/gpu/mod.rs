@@ -712,6 +712,20 @@ impl VirtioGpu {
         (device, state)
     }
 
+    /// Selected desktop owners with the existing ordered submission mailbox.
+    #[cfg(feature = "virgl-control-proof")]
+    pub fn new_with_standard_desktop_submit3d_proof_state(
+        frame_sink: Box<dyn FrameSink>,
+        control_sink: Box<dyn control3d::Control3dSink>,
+        submit_sink: Box<dyn submit3d::Submit3dSink>,
+        mailbox: submit3d::Submit3dMailbox,
+    ) -> (Self, Rc<RefCell<GpuState>>) {
+        let (device, state) =
+            Self::new_with_standard_desktop_control3d_proof_state(frame_sink, control_sink);
+        state.borrow_mut().submit3d = Some(submit3d::Submit3dState::new(submit_sink, mailbox));
+        (device, state)
+    }
+
     /// Explicit proof-only global scanout assembly; ordinary and submit-only devices stay unchanged.
     #[cfg(feature = "virgl-control-proof")]
     pub fn new_with_scanout3d_proof_state(

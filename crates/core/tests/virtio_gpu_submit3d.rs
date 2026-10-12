@@ -142,19 +142,27 @@ struct Q {
 }
 impl Q {
     fn new() -> Self {
+        Self::with_desktop(false)
+    }
+    fn with_desktop(desktop: bool) -> Self {
         let mut machine = Machine::new(RAM);
         machine.enable_plic();
         machine.enable_virtio_slots(None);
         let host = Rc::new(RefCell::new(Host::default()));
         let mail = Submit3dMailbox::new();
-        let (_, state) = machine
-            .enable_virtio_gpu_submit3d_proof(
-                Box::new(NullSink),
-                Box::new(Controls(host.clone())),
-                Box::new(Jobs(host.clone(), mail.clone())),
-                mail.clone(),
-            )
-            .unwrap();
+        let install = if desktop {
+            Machine::enable_virtio_gpu_standard_desktop_submit3d_proof
+        } else {
+            Machine::enable_virtio_gpu_submit3d_proof
+        };
+        let (_, state) = install(
+            &mut machine,
+            Box::new(NullSink),
+            Box::new(Controls(host.clone())),
+            Box::new(Jobs(host.clone(), mail.clone())),
+            mail.clone(),
+        )
+        .unwrap();
         let base = Platform::virtio_base(machine.virtio_gpu().unwrap().0 as u64);
         machine
             .bus_mut()
@@ -216,6 +224,17 @@ impl Q {
         self.mmio(0x70, 15);
     }
     fn run(&mut self) {
+        #[cfg(feature = "trace")]
+        {
+            let mut trace = wasm_vm_core::trace::VecSink::new();
+            assert_eq!(
+                self.machine.run_traced(1, &mut trace),
+                RunOutcome::MaxInstrs
+            );
+            assert_eq!(trace.records.len(), 1);
+            eprintln!("SUBMIT3D_GUEST_TRACE {}", trace.canonical().trim());
+        }
+        #[cfg(not(feature = "trace"))]
         assert_eq!(self.machine.run(1), RunOutcome::MaxInstrs);
     }
     fn descriptor(&mut self, id: u16, addr: u64, len: u32, flags: u16, next: u16) {
@@ -313,6 +332,16 @@ impl Q {
         let ctl = self.state.borrow().control3d_snapshot().unwrap();
         let sub = self.state.borrow().submit3d_snapshot().unwrap();
         let used = self.used;
+        if label.starts_with("desktop-") {
+            let guard = self.read(RESPONSE + 24, 40);
+            eprintln!(
+                "DESKTOP_SUBMIT_POINT {{\"case\":{label:?},\"guard\":{:?},\"machineDigest\":{:?}}}",
+                hex(&guard),
+                self.machine.snapshot().hex_digest()
+            );
+            assert_eq!(guard, vec![0xa5; 40]);
+        }
+
         eprintln!(
             "SUBMIT3D_PORTABLE_RECORD {{\"case\":{label:?},\"request\":{:?},\"response\":{:?},\"usedIndex\":{},\"ring\":{{\"descriptors\":{:?},\"avail\":{:?},\"used\":{:?}}},\"transportCanonical\":{:?},\"transportDigest\":{:?},\"submitCanonical\":{:?},\"submitDigest\":{:?}}}",
             hex(request),
@@ -928,4 +957,51 @@ fn submit3d_span_dma_tracks_all_code_pages_once_and_rejects_before_mutation() {
     assert!(q.machine.bus_mut().code_write_log_mut().is_empty());
     assert_eq!(q.read(start, 3), [0x77; 3]);
     q.finish(&p, Ok(()));
+}
+
+#[test]
+fn selected_desktop_submit_snapshots_all_64_canonical_owners() {
+    let mut q = Q::with_desktop(true);
+    q.sync(&context(), 0x1100);
+    q.record("desktop-context", &context());
+    for id in 100..164 {
+        let mut r = resource();
+        put32(&mut r, 24, id);
+        q.sync(&r, 0x1100);
+        q.record("desktop-resource", &r);
+        let attach = id_command(0x202, 2, id);
+        q.sync(&attach, 0x1100);
+        q.record("desktop-attach", &attach);
+    }
+    let before = q.state.borrow().control3d_snapshot().unwrap();
+    let host_before = q.host.borrow().controls.len();
+    let mut excess = resource();
+    put32(&mut excess, 24, 164);
+    q.sync(&excess, 0x1201);
+    q.record("desktop-refuse65", &excess);
+    assert_eq!(q.host.borrow().controls.len(), host_before);
+    assert_eq!(q.state.borrow().control3d_snapshot().unwrap(), before);
+    let request = submit(&[], u64::MAX);
+    let accepted = q.begin(&request);
+    assert_eq!(accepted.resources.len(), 64);
+    let ids: Vec<_> = accepted.resources.iter().map(|r| r.identity.id).collect();
+    assert_eq!(ids, (100..164).collect::<Vec<_>>());
+    for r in &accepted.resources {
+        let owner = before
+            .resources
+            .iter()
+            .find(|v| v.identity == r.identity)
+            .unwrap();
+        assert_eq!(r.metadata, owner.metadata);
+        assert!(r.backing.is_none());
+    }
+    q.record("desktop-begin64", &request);
+    q.finish(&request, Ok(()));
+    q.record("desktop-finish64", &request);
+    assert!(q.mail.inspect().active.is_none());
+    q.mmio(0x70, 0);
+    q.run();
+    let reset = q.state.borrow().control3d_snapshot().unwrap();
+    assert!(reset.resources.is_empty());
+    assert_eq!(reset.epoch, before.epoch + 1);
 }
