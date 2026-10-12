@@ -23,6 +23,7 @@ assert.ok(options['node-only'] === undefined || options['node-only'] === 'true')
 const output = path.resolve(options.output);
 await fs.mkdir(output, { recursive: true });
 const codePaths = [
+  'renderer/virgl-command/dimensional-depth-images.mjs',
   'renderer/virgl-command/decoder.mjs', 'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs', 'renderer/virgl-command/floating-depth-images.mjs', 'renderer/virgl-command/unorm-depth-images.mjs', 'renderer/virgl-command/floating-depth-gpu.mjs',
   'renderer/virgl-command/resources-README.md', 'renderer/virgl-command/tests/resources-acceptance.mjs',
   'tools/virgl-command/fixtures.mjs', 'tools/virgl-command/resource-fixtures.mjs',
@@ -71,11 +72,7 @@ try {
   assert.equal(report.node.status, 'passed');
   console.log(`Node resource acceptance passed (${report.nodeMs.toFixed(0)} ms)`);
   if (!options['node-only']) {
-    const modulePaths = ['renderer/virgl-command/decoder.mjs', 'renderer/virgl-command/resources.mjs',
-      'renderer/virgl-command/tests/resources-acceptance.mjs', 'renderer/virgl-command/color-images.mjs',
-      'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs',
-      'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs',
-      'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs', 'renderer/virgl-command/floating-depth-images.mjs', 'renderer/virgl-command/unorm-depth-images.mjs', 'renderer/virgl-command/floating-depth-gpu.mjs'];
+    const modulePaths = codePaths.filter(name => name.startsWith('renderer/virgl-command/') && name.endsWith('.mjs'));
     let servedFixtures = fixtureBytes;
     if (options.sabotage) {
       const corrupted = structuredClone(loaded.fixtures);
