@@ -143,7 +143,7 @@ for directory in sorted(root.glob('*')):
         for row in report['browserResult']['result']['ownerAttacks']:assert row['status']=='passed' and row['caller']['scissor'] and len(row['refusals'])==7
     results.append(dict(record=directory.name,reportSha256=sha((directory/'report.json').read_bytes()),**counts))
 privateResults=[]
-for directory in sorted(root.glob('private-*')):
+for directory in sorted(p for p in root.glob('private-*') if p.is_dir()):
     r=json.loads((directory/'report.json').read_bytes());assert r['status']=='passed' and (self_validation or not r['trackedChanges']);assert r['browserErrors']==dict(console=[],page=[],requests=[])
     result=r['browserResult']['result'];assert result['summary']['liveObjects']==0 and result['summary']['cases']==result['summary']['boundaryCases']==10
     for pin in r['sources']:

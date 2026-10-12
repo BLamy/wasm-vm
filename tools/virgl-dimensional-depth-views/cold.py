@@ -9,6 +9,14 @@ import subprocess
 import sys
 import tempfile
 
+def retain_file(source, destination):
+    # Completed recordings are immutable; share their bytes on the same volume.
+    try:
+        os.link(source, destination)
+    except OSError:
+        shutil.copy2(source, destination)
+    return destination
+
 repo = pathlib.Path(__file__).resolve().parents[2]
 output = pathlib.Path(sys.argv[1]).resolve()
 assert not output.exists(), "preserve earlier recordings; choose a fresh output"
@@ -38,13 +46,13 @@ output.mkdir(parents=True)
 (output / "cold.stdout").write_bytes(result.stdout)
 (output / "cold.stderr").write_bytes(result.stderr)
 if proof.exists():
-    shutil.copytree(proof, output / "recording")
+    shutil.copytree(proof, output / "recording", copy_function=retain_file)
 clean_after = subprocess.check_output(["git", "status", "--porcelain"], cwd=clone, text=True)
 report = {"schema": "dimensional-depth-views-cold-v1", "head": head, "clone": str(clone), "command": command, "evidenceOutput": str(proof),
           "cleanBefore": clean_before, "cleanAfter": clean_after, "exitCode": result.returncode,
           "receiptSha256": hashlib.sha256((proof / "receipt.json").read_bytes()).hexdigest() if (proof / "receipt.json").exists() else None}
 if previous:
-    shutil.copytree(previous,output/'continuation-source')
+    shutil.copytree(previous,output/'continuation-source',copy_function=retain_file)
     report.update(continuedFromHead=prior['head'],continuedFromRecording=str(previous),unchangedRuntime=True)
 (output / "report.json").write_text(json.dumps(report, indent=2) + "\n")
 assert result.returncode == 0 and not clean_after, result.stderr[-4000:].decode(errors="replace")

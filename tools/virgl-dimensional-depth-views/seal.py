@@ -20,7 +20,7 @@ assert not report['cleanBefore'] and not report['cleanAfter'] and report['exitCo
 for seed in [27449,84131,176129]:
     name='hardware-'+str(seed);report_head=json.loads((cold/('recording/'+name)/'report.json').read_bytes())['head']
     if report_head!=head:
-        assert name in receipt['carriedCommands'] and report_head==receipt['carriedSourceBoundary']['head'] and receipt['carriedSourceBoundary']['unchangedRuntime']
+        assert name in receipt['carriedCommands'] and report_head==receipt['carriedCommandOrigins'][name]['head'] and receipt['carriedSourceBoundary']['unchangedRuntime']
         assert not subprocess.check_output(['git','diff','--name-only',report_head,head,'--','crates','renderer','Cargo.toml','Cargo.lock','web','tools/virgl-dimensional-depth-views/browser.mjs','tools/virgl-dimensional-depth-views/fixtures.mjs'],cwd=repo)
 assert all(v['exitCode']==v['expected'] for v in receipt['commands'])
 sha=lambda b:hashlib.sha256(b).hexdigest()
@@ -32,10 +32,15 @@ output.mkdir(parents=True)
 index={'schema':'dimensional-depth-view-index-v1','task':'E6-T11d60','head':head,'records':rows}
 raw=(json.dumps(index,indent=2)+'\n').encode();(output/'records.json').write_bytes(raw)
 archive=output/'recording.tar.gz'
+unique={};links=0
 with archive.open('wb') as stream,gzip.GzipFile(fileobj=stream,mode='wb',mtime=0,filename='') as zipped,tarfile.open(fileobj=zipped,mode='w') as packed:
     for row in rows:
         body=files[row['path']].read_bytes();info=tarfile.TarInfo(row['path']);info.size,info.mode,info.mtime=len(body),0o644,0
-        packed.addfile(info,io.BytesIO(body))
+        key=(row['bytes'],row['sha256'])
+        if key in unique:
+            info.type,info.linkname,info.size=tarfile.LNKTYPE,unique[key],0;packed.addfile(info);links+=1
+        else:
+            packed.addfile(info,io.BytesIO(body));unique[key]=row['path']
 with tarfile.open(archive,'r:gz') as packed:
     members=packed.getmembers();assert len(members)==len(rows)
     for member,row in zip(members,rows):
@@ -44,6 +49,7 @@ manifest={'schema':'dimensional-depth-view-seal-v1','task':'E6-T11d60','head':he
           'recordIndexSha256':sha(raw),'archiveSha256':sha(archive.read_bytes()),'archiveBytes':archive.stat().st_size,
           'dependencySeals':receipt['dependencySeals'],'authoritativeRecording':'cold/recording','commands':len(receipt['commands']),
           'guestExecution':False,'productionAuthority':False}
+manifest.update(uniqueCompleteBodies=len(unique),deduplicatedHardlinks=links,logicalBytes=sum(r['bytes'] for r in rows))
 parts=[]
 with archive.open('rb') as stream:
     while True:
