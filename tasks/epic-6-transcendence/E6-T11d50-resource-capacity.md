@@ -3,7 +3,7 @@ id: E6-T11d50
 epic: 6
 title: Retain the compositor's original resources within a bounded native store
 priority: 525.027039000397
-status: in-progress
+status: implemented
 depends_on: [E6-T11d49]
 estimate: S
 risk: high
@@ -104,3 +104,56 @@ format. The acceptance now requires that precise visible refusal and preserves
 the single count boundary; this task does not add or pretend to prove format17.
 The original source events remain fully authenticated and retained. Separate
 ordered format work remains necessary before glmark2/full API qualification.
+
+### 2026-10-12 — worker — implemented; frozen recording submitted
+
+Runtime/harness head: `64bf6ed58a27a52a20e1548166e12d09dd719031`.
+Final commands, all expected statuses satisfied:
+
+```sh
+VIRGL_RESOURCE_CAPACITY_EVIDENCE_DIR=target/evidence/virgl-resource-capacity-final/hot-2 make verify-E6-T11d50
+python3 tools/virgl-resource-capacity/cold.py --output target/evidence/virgl-resource-capacity-final/cold
+python3 tools/virgl-resource-capacity/seal.py target/evidence/virgl-resource-capacity-final/hot-2 target/evidence/virgl-resource-capacity-final/cold evidence/virgl-resource-capacity/worker
+```
+
+Selected native replay passes the compositor's complete56 and kmscube's eight
+Mesa lifetime calls. Glmark2 advances beyond old event463, reaches25 live
+resources, and explicitly refuses original format17/event3025 before allocating.
+Selected/old controls contain156 original calls; independent original-event
+counts/byte models agree throughout. All15 historical native factories match
+the authentic predecessor, including16/17 ceilings. There are33 limit/budget/
+host-failure cases, three lifetime seeds `0x501bc239/0x98ef03a7/0xdd31658b`,
+81,408 independently compared native GPU bytes and15 completed fence citations.
+Sixty-four buffers still count after unref while leases/reads retain storage;
+final release admits one distinct-generation replacement, and disposal/cancel
+returns every budget to zero. Count sabotage physically allocates65 and fails.
+Byte sabotage follows a clean64-buffer baseline and a distinct completed fence;
+the independent oracle catches resource1032/byte17. Browser/GL errors are zero,
+headed Chrome155 uses native M4 Metal, and inherited E6-T12b decoder/transfers
+and both original-input fault controls pass. Its browser server required one
+already-qualified UN16/UN24 endpoint; that harness repair is in the frozen head.
+
+Finest V8 covers all nine changed runtime lines with five exact non-runtime
+comment/whitespace/delimiter waivers and zero uncovered operands. The pristine
+clone `/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-resource-capacity-cold-4zv577h6/wasm-vm`
+starts/ends clean at the same frozen head and passes the same gates/controls.
+Rust/web/compiler/guest boundaries are unchanged;290 carried shader/decoder/
+state source hashes, generated Wasm/MJS identities and D49 indexes remain held.
+This unimported host factory grants no new demo capability or production capset
+and skips dist/deployment. A fresh critic must judge the worker's claim.
+
+The worker seal under `evidence/virgl-resource-capacity/worker/` completely
+reopens642 logical bodies. SHA256 identities:
+
+- manifest `59cea015984012bb2bbd8c8ac469e509ae272c5ca10814dbf80af669566dbdd7`
+- index `4a948c805eaf6d5c165a88694e81d575a630069d49292098274de625e4f1c4c8`
+- archive (2,620,778 bytes) `7abb50b55a92b45ceec07aa52a95f0a024c94837dc0a44773465e3d4d3999420`
+- hot receipt `f2ceeba4ee501604914fd07fc58fa987ad8a7a85b42b280b8c949afee72ba54c`
+- cold report `d338595e16870b8821da10e31ab57265603380f5e235e5176de660dcd507165f`
+- cold receipt `6c62e09123dd6721772db5091a025afb9ebc54125fd7a37bf5f8f4a132dc8ffc`
+
+Claim: the selected bounded store closes the original compositor's live-count
+gap within existing storage and byte ceilings, including hidden holds and real
+GPU bytes; old factories remain unchanged. Full GLES/capsets, actual guest
+Mesa/compositor, transport/worker/scanout/demo/deployment and300MIPS remain
+unproven parent acceptance.
