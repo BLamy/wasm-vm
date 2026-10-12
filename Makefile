@@ -2474,3 +2474,7 @@ verify-E6-T11d49:
 .PHONY: verify-E6-T11d50
 verify-E6-T11d50:
 	bash tools/verify-virgl-resource-capacity.sh
+
+.PHONY: verify-E6-T11d50-critic
+verify-E6-T11d50-critic:
+	bash tools/virgl-resource-capacity/critic.sh
