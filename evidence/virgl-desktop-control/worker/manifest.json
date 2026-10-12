@@ -1,0 +1,29 @@
+{
+  "schema": "desktop-control-seal-v1",
+  "task": "E6-T11d51",
+  "head": "e13dddfbb0d955abb268e4b4ac07828cbea35956",
+  "records": 665,
+  "reopenedMembers": 665,
+  "recordIndexSha256": "c021b524368f72fca6a43eca1e6056343743f914c3d9fb98c3f438164c7182f7",
+  "archiveSha256": "778eff96061490ef562821014b72a54581c07c4077b31b7e0620f6a2229ba051",
+  "archiveBytes": 6894597,
+  "dependencySeals": [
+    {
+      "role": "worker",
+      "manifestSha256": "59cea015984012bb2bbd8c8ac469e509ae272c5ca10814dbf80af669566dbdd7",
+      "indexSha256": "4a948c805eaf6d5c165a88694e81d575a630069d49292098274de625e4f1c4c8",
+      "archiveSha256": "7abb50b55a92b45ceec07aa52a95f0a024c94837dc0a44773465e3d4d3999420",
+      "reopenedBodies": 642
+    },
+    {
+      "role": "verifier",
+      "manifestSha256": "7eb6715ab4f8345cf6093d1c7ed35e43aa5b8838d36d1d0ef63410338e353745",
+      "indexSha256": "21dc44b2dd2401e5a056c1ff152fa474e1529cd62199e40596c8c6864e7e6a86",
+      "archiveSha256": "4f038098d37c82b90234fcf03807b2e05632492a368a33647f014579dd0177cc",
+      "reopenedBodies": 365
+    }
+  ],
+  "hotColdNativeRecordsEqual": true,
+  "guestExecution": false,
+  "productionAuthority": false
+}
