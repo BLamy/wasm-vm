@@ -2502,3 +2502,7 @@ verify-E6-T11d55:
 .PHONY: verify-E6-T11d56
 verify-E6-T11d56:
 	python3 tools/virgl-native-dimensional/verify.py --output "$${VIRGL_NATIVE_DIMENSIONAL_EVIDENCE_DIR:-target/evidence/virgl-native-dimensional}"
+
+.PHONY: verify-E6-T11d57
+verify-E6-T11d57:
+	python3 tools/virgl-dimensional-shaders/verify.py --output "$${VIRGL_DIMENSIONAL_SHADER_EVIDENCE_DIR:-target/evidence/virgl-dimensional-shaders}"

@@ -18,6 +18,7 @@ enum standard_file { STD_IN, STD_OUT, STD_TEMP, STD_CONST, STD_IMM,
 enum standard_semantic { STD_ATTRIBUTE, STD_POSITION, STD_GENERIC, STD_COLOR,
                          STD_VERTEXID, STD_INSTANCEID, STD_PSIZE, STD_PCOORD };
 enum standard_sampler_return { STD_SAMPLE_FLOAT, STD_SAMPLE_SINT, STD_SAMPLE_UINT };
+enum standard_texture_target { STD_TEXTURE_2D, STD_TEXTURE_3D, STD_TEXTURE_CUBE, STD_TEXTURE_ARRAY };
 struct standard_io {
    uint8_t semantic, sid, mask, writes, flat;
 };
@@ -34,6 +35,7 @@ struct standard_profile {
    uint16_t shadow_views, shadow_samples, ordinary_samples, shadow_queries;
    uint16_t shadow_samplers, upstream_shadow_samplers;
    uint8_t sampler_returns[STANDARD_SAMPLERS];
+   uint8_t sampler_targets[STANDARD_SAMPLERS];
    /* Host color formats select outputs; shader text cannot select these bits. */
    uint8_t signed_colors, unsigned_colors;
    /* Host-derived vertex format types, never TGSI/guest shader keys. */
@@ -43,7 +45,7 @@ struct standard_profile {
     * legacy facets keep both flags zero and retain their original grammar. */
    uint32_t uniform_declared[STANDARD_UNIFORM_SLOTS][STANDARD_UNIFORM_VECTORS / 32];
    uint16_t uniform_counts[STANDARD_UNIFORM_SLOTS + 1];
-   bool uniform_buffers, buffer_zero, texture_operations, integer_images, instance_base, shadow_textures;
+   bool uniform_buffers, buffer_zero, texture_operations, integer_images, instance_base, shadow_textures, dimensional_textures;
    uint8_t properties, broadcast;
 };
 
@@ -70,6 +72,14 @@ static inline const char *standard_color_type(const struct standard_profile *p, 
 static inline const char *standard_sampler_type(const struct standard_profile *p, unsigned index)
 {
    if (p->shadow_textures && (p->shadow_samplers & (1u << index))) return "sampler2DShadow";
+   if (p->dimensional_textures) {
+      static const char *const types[3][4] = {
+         {"sampler2D", "sampler3D", "samplerCube", "sampler2DArray"},
+         {"isampler2D", "isampler3D", "isamplerCube", "isampler2DArray"},
+         {"usampler2D", "usampler3D", "usamplerCube", "usampler2DArray"}
+      };
+      return types[p->sampler_returns[index]][p->sampler_targets[index]];
+   }
    return p->integer_images && p->sampler_returns[index] == STD_SAMPLE_SINT ? "isampler2D" :
           p->integer_images && p->sampler_returns[index] == STD_SAMPLE_UINT ? "usampler2D" : "sampler2D";
 }

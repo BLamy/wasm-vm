@@ -106,3 +106,19 @@ contracts are pinned Mesa26.2.2 TGSI and virglrenderer1.3.0 plus Khronos ESSL
 volume/cube/array coordinates, xyz volume/cube gradients, xy array gradients,
 ivec3 volume/array fetch and volume projection; cube fetch and cube/array
 projection have no core ESSL3.00 signatures and stay refused in this slice.
+
+### 2026-10-12 — worker — self-validation before frozen recording
+
+The selected compiler implements original native dimensional sampler types, xyz
+coordinates, volume/cube xyz gradients, array xy gradients, checked dimensional
+fetch/projection signatures and correctly sized query results. The current
+11580-case native/Wasm matrix has9791admissions and1789refusals;7163complete
+historical response bodies are byte-identical to the authenticated prior module.
+The first actual Metal run passes396whole raw planes with zero browser/GL
+errors; physically swapping array layers fails after native completion against
+the unchanged288-byte oracle. Genuine allocation instrumentation exercises213
+faults and213exact recoveries plus caller-source mutation before allocation.
+Initial reused historical cube-negative predictions were corrected only for
+the eighteen legal cube programs newly selected by this task; the original
+entry points still refuse them. Runtime source has not changed during that
+harness correction. These inner-loop runs are preparation, not final evidence.

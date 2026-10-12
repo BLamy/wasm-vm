@@ -150,6 +150,15 @@ static const char *sample_conversion(const struct standard_profile *p, unsigned 
 {
    return p->integer_images && p->sampler_returns[sampler] != STD_SAMPLE_FLOAT ? "uvec4" : "floatBitsToUint";
 }
+static const char *sample_coordinates(const struct standard_profile *p, unsigned sampler)
+{
+   return p->dimensional_textures && p->sampler_targets[sampler] != STD_TEXTURE_2D ? "xyz" : "xy";
+}
+static const char *sample_gradients(const struct standard_profile *p, unsigned sampler)
+{
+   return p->dimensional_textures &&
+      (p->sampler_targets[sampler] == STD_TEXTURE_3D || p->sampler_targets[sampler] == STD_TEXTURE_CUBE) ? "xyz" : "xy";
+}
 static void shadow_sample(struct output *o, const struct standard_profile *p,
                           const struct tgsi_full_instruction *i)
 {
@@ -270,25 +279,29 @@ static bool instruction(struct output *o, const struct standard_profile *p,
    COMPARE(SLT,"lessThan"); COMPARE(SGE,"greaterThanEqual");
 #undef COMPARE
    case TGSI_OPCODE_TEX:
-      put(o, "uvec4 r = %s(texture(%ssamp%u, " FA ".xy));\n", sample_conversion(p, i->Src[1].Register.Index), p->stage ? "fs" : "vs", i->Src[1].Register.Index); break;
+      put(o, "uvec4 r = %s(texture(%ssamp%u, " FA ".%s));\n", sample_conversion(p, i->Src[1].Register.Index), p->stage ? "fs" : "vs", i->Src[1].Register.Index, sample_coordinates(p, i->Src[1].Register.Index)); break;
    case TGSI_OPCODE_TXL:
-      put(o, "uvec4 r = %s(textureLod(%ssamp%u, " FA ".xy, " FA ".w));\n", sample_conversion(p, i->Src[1].Register.Index), p->stage ? "fs" : "vs", i->Src[1].Register.Index); break;
+      put(o, "uvec4 r = %s(textureLod(%ssamp%u, " FA ".%s, " FA ".w));\n", sample_conversion(p, i->Src[1].Register.Index), p->stage ? "fs" : "vs", i->Src[1].Register.Index, sample_coordinates(p, i->Src[1].Register.Index)); break;
    case TGSI_OPCODE_TXF:
-      put(o, "uvec4 r = %s(texelFetch(%ssamp%u, ivec2(a.xy), int(a.w)));\n", sample_conversion(p, i->Src[1].Register.Index), p->stage ? "fs" : "vs", i->Src[1].Register.Index); break;
+      put(o, "uvec4 r = %s(texelFetch(%ssamp%u, ivec%u(a.%s), int(a.w)));\n", sample_conversion(p, i->Src[1].Register.Index), p->stage ? "fs" : "vs", i->Src[1].Register.Index, (unsigned)strlen(sample_coordinates(p, i->Src[1].Register.Index)), sample_coordinates(p, i->Src[1].Register.Index)); break;
    case TGSI_OPCODE_TXD:
-      put(o, "uvec4 r = %s(textureGrad(%ssamp%u, " FA ".xy, " FB ".xy, " FC ".xy));\n", sample_conversion(p, i->Src[3].Register.Index), p->stage ? "fs" : "vs", i->Src[3].Register.Index); break;
+      put(o, "uvec4 r = %s(textureGrad(%ssamp%u, " FA ".%s, " FB ".%s, " FC ".%s));\n", sample_conversion(p, i->Src[3].Register.Index), p->stage ? "fs" : "vs", i->Src[3].Register.Index, sample_coordinates(p, i->Src[3].Register.Index), sample_gradients(p, i->Src[3].Register.Index), sample_gradients(p, i->Src[3].Register.Index)); break;
    case TGSI_OPCODE_TXB:
-      put(o, "uvec4 r = %s(texture(fssamp%u, " FA ".xy, " FA ".w));\n", sample_conversion(p, i->Src[1].Register.Index), i->Src[1].Register.Index); break;
+      put(o, "uvec4 r = %s(texture(fssamp%u, " FA ".%s, " FA ".w));\n", sample_conversion(p, i->Src[1].Register.Index), i->Src[1].Register.Index, sample_coordinates(p, i->Src[1].Register.Index)); break;
    case TGSI_OPCODE_TXP:
       put(o, "uvec4 r = %s(textureProj(%ssamp%u, " FA "));\n", sample_conversion(p, i->Src[1].Register.Index), p->stage ? "fs" : "vs", i->Src[1].Register.Index); break;
-   case TGSI_OPCODE_TXQ:
-      /* 2D z is undefined in TGSI. Zero is a representative, not a depth claim.
+   case TGSI_OPCODE_TXQ: {
+      /* 2D/cube z is undefined. Zero is a representative, not a depth claim.
        * Accessible levels come from the selected host view, never guest text. */
+      unsigned slot = i->Src[1].Register.Index;
+      const char *padding = p->dimensional_textures &&
+         (p->sampler_targets[slot] == STD_TEXTURE_3D || p->sampler_targets[slot] == STD_TEXTURE_ARRAY) ? "" : "0, ";
       if (i->Dst[0].Register.WriteMask & 8u)
-         put(o, "uvec4 r = uvec4(textureSize(%ssamp%u, int(a.x)), 0, %ssamplevels%u);\n",
-             p->stage ? "fs" : "vs", i->Src[1].Register.Index, p->stage ? "fs" : "vs", i->Src[1].Register.Index);
-      else put(o, "uvec4 r = uvec4(textureSize(%ssamp%u, int(a.x)), 0, 0);\n", p->stage ? "fs" : "vs", i->Src[1].Register.Index);
+         put(o, "uvec4 r = uvec4(textureSize(%ssamp%u, int(a.x)), %s%ssamplevels%u);\n",
+             p->stage ? "fs" : "vs", slot, padding, p->stage ? "fs" : "vs", slot);
+      else put(o, "uvec4 r = uvec4(textureSize(%ssamp%u, int(a.x)), %s0);\n", p->stage ? "fs" : "vs", slot, padding);
       break;
+   }
    default: return false;
    }
 #undef RAW

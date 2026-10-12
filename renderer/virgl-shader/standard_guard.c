@@ -143,6 +143,19 @@ static bool reg(const char **at, const struct standard_profile *p, struct operan
    if (f == STD_ADDR && (kind == SRC || (kind == DST && r->mask != 1))) return false;
    return true;
 }
+static bool texture_target(const char **s, const struct standard_profile *p,
+                           bool *shadow, uint8_t *target)
+{
+   *shadow = p->shadow_textures && word(s, "SHADOW2D");
+   *target = STD_TEXTURE_2D;
+   if (*shadow || word(s, "2D")) return true;
+   if (!p->dimensional_textures) return false;
+   if (word(s, "3D")) *target = STD_TEXTURE_3D;
+   else if (word(s, "CUBE")) *target = STD_TEXTURE_CUBE;
+   else if (word(s, "2D_ARRAY")) *target = STD_TEXTURE_ARRAY;
+   else return false;
+   return true;
+}
 static bool declaration(const char **s, struct standard_profile *p)
 {
    struct operand r;
@@ -191,8 +204,8 @@ static bool declaration(const char **s, struct standard_profile *p)
       list[r.first] = io;
    } else if (r.file == STD_SVIEW) {
       if (!take(s, ',')) return false;
-      bool shadow = p->shadow_textures && word(s, "SHADOW2D");
-      if ((!shadow && !word(s, "2D")) || !take(s, ',')) return false;
+      bool shadow; uint8_t target;
+      if (!texture_target(s, p, &shadow, &target) || !take(s, ',')) return false;
       unsigned type;
       const char *name;
       if (word(s, "FLOAT")) { type = STD_SAMPLE_FLOAT; name = "FLOAT"; }
@@ -208,6 +221,7 @@ static bool declaration(const char **s, struct standard_profile *p)
       }
       for (unsigned i = r.first; i <= r.last; ++i) {
          p->sampler_returns[i] = (uint8_t)type;
+         p->sampler_targets[i] = target;
          if (shadow) {
             p->shadow_views |= (uint16_t)(1u << i);
             p->shadow_samplers |= (uint16_t)(1u << i);
@@ -383,8 +397,15 @@ static bool instruction(const char **s, struct standard_profile *p, struct flow 
    }
    if (texture_sources) {
       if (!take(s, ',')) return false;
-      bool shadow = p->shadow_textures && word(s, "SHADOW2D");
-      if (!shadow && !word(s, "2D")) return false;
+      bool shadow; uint8_t target;
+      if (!texture_target(s, p, &shadow, &target)) return false;
+      if (p->dimensional_textures) {
+         /* One native sampler has one dimension. Original declarations and
+          * instructions must agree; 2D/shadow2D query neutrality is retained. */
+         if (target != p->sampler_targets[texture_sampler]) return false;
+         if (op == TGSI_OPCODE_TXF && target == STD_TEXTURE_CUBE) return false;
+         if (op == TGSI_OPCODE_TXP && (target == STD_TEXTURE_CUBE || target == STD_TEXTURE_ARRAY)) return false;
+      }
       uint16_t bit = (uint16_t)(1u << texture_sampler);
       if (p->shadow_textures) {
          if (shadow && (p->sampler_returns[texture_sampler] != STD_SAMPLE_FLOAT || op == TGSI_OPCODE_TXF)) return false;
