@@ -13,6 +13,7 @@ use crate::{bus::Bus, dev::virtio::queue::DescriptorChain, mmio::SystemBus};
 
 pub const MAX_CONTEXTS: usize = 8;
 pub const MAX_RESOURCES: usize = 16;
+pub const MAX_DESKTOP_RESOURCES: usize = 64;
 pub const MAX_BACKING_ENTRIES: usize = 256;
 pub const MAX_RESOURCE_BYTES: u64 = 4 * 1024 * 1024;
 pub const MAX_GPU_BYTES: u64 = 32 * 1024 * 1024;
@@ -42,7 +43,7 @@ pub struct Resource3dMetadata {
 
 impl Resource3dMetadata {
     /// Same bounded resource classes as the verified renderer; no GL dependency.
-    fn sizes(self) -> Result<(u64, u64), Control3dError> {
+    fn sizes(self, desktop_resources: bool) -> Result<(u64, u64), Control3dError> {
         if self.width == 0
             || self.height == 0
             || self.depth != 1
@@ -58,6 +59,22 @@ impl Resource3dMetadata {
                 (u64::from(self.width), self.bind == 524_288)
             }
             (2, 67, 10) if self.width <= MAX_TEXTURE_SIZE && self.height <= MAX_TEXTURE_SIZE => {
+                (u64::from(self.width) * u64::from(self.height) * 4, false)
+            }
+            (2, 1 | 2 | 67, bind)
+                if desktop_resources
+                    && bind & 10 != 0
+                    && bind & !(10 | (1 << 18) | (1 << 20)) == 0
+                    && self.width <= MAX_TEXTURE_SIZE
+                    && self.height <= MAX_TEXTURE_SIZE =>
+            {
+                (u64::from(self.width) * u64::from(self.height) * 4, false)
+            }
+            (2, 20, 1 | 8 | 9)
+                if desktop_resources
+                    && self.width <= MAX_TEXTURE_SIZE
+                    && self.height <= MAX_TEXTURE_SIZE =>
+            {
                 (u64::from(self.width) * u64::from(self.height) * 4, false)
             }
             _ => return Err(Control3dError::InvalidParameter),
@@ -269,6 +286,7 @@ impl Control3dSnapshot {
 
 pub(crate) struct Control3dState {
     sink: Box<dyn Control3dSink>,
+    desktop_resources: bool,
     epoch: u64,
     next_generation: u64,
     next_backing_generation: u64,
@@ -282,8 +300,15 @@ pub(crate) struct Control3dState {
 
 impl Control3dState {
     pub(crate) fn new(sink: Box<dyn Control3dSink>) -> Self {
+        Self::with_resource_profile(sink, false)
+    }
+    pub(crate) fn new_standard_desktop(sink: Box<dyn Control3dSink>) -> Self {
+        Self::with_resource_profile(sink, true)
+    }
+    fn with_resource_profile(sink: Box<dyn Control3dSink>, desktop_resources: bool) -> Self {
         Self {
             sink,
+            desktop_resources,
             epoch: 1,
             next_generation: 1,
             next_backing_generation: 1,
@@ -505,8 +530,13 @@ impl Control3dState {
                 {
                     return Err(Control3dError::InvalidResourceId);
                 }
-                let (logical, gpu) = metadata.sizes()?;
-                if self.resources.len() >= MAX_RESOURCES || gpu > MAX_GPU_BYTES - self.gpu_bytes {
+                let (logical, gpu) = metadata.sizes(self.desktop_resources)?;
+                let max_resources = if self.desktop_resources {
+                    MAX_DESKTOP_RESOURCES
+                } else {
+                    MAX_RESOURCES
+                };
+                if self.resources.len() >= max_resources || gpu > MAX_GPU_BYTES - self.gpu_bytes {
                     return Err(Control3dError::OutOfMemory);
                 }
                 self.resources
@@ -548,7 +578,9 @@ impl Control3dState {
                     self.resources[index].backing = None;
                     self.resources[index].backing_generation = None;
                 } else {
-                    let (logical, gpu) = self.resources[index].metadata.sizes()?;
+                    let (logical, gpu) = self.resources[index]
+                        .metadata
+                        .sizes(self.desktop_resources)?;
                     self.send(Control3dOperation::UnrefResource { resource })?;
                     self.resources.remove(index);
                     for context in &mut self.contexts {

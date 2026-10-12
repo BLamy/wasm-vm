@@ -686,6 +686,19 @@ impl VirtioGpu {
         (device, state)
     }
 
+    /// Selected captured-desktop resource controls only; no capsets or submissions.
+    #[cfg(feature = "virgl-control-proof")]
+    pub fn new_with_standard_desktop_control3d_proof_state(
+        frame_sink: Box<dyn FrameSink>,
+        control_sink: Box<dyn control3d::Control3dSink>,
+    ) -> (Self, Rc<RefCell<GpuState>>) {
+        let (device, state) = Self::new_with_sink_state(frame_sink);
+        state.borrow_mut().control3d = Some(control3d::Control3dState::new_standard_desktop(
+            control_sink,
+        ));
+        (device, state)
+    }
+
     /// Explicit asynchronous proof assembly; all existing constructors stay synchronous.
     #[cfg(feature = "virgl-control-proof")]
     pub fn new_with_submit3d_proof_state(

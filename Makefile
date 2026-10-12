@@ -2478,3 +2478,7 @@ verify-E6-T11d50:
 .PHONY: verify-E6-T11d50-critic
 verify-E6-T11d50-critic:
 	bash tools/virgl-resource-capacity/critic.sh
+
+.PHONY: verify-E6-T11d51
+verify-E6-T11d51:
+	python3 tools/virgl-desktop-control/verify.py --output "$${VIRGL_DESKTOP_CONTROL_EVIDENCE_DIR:-target/evidence/virgl-desktop-control}"

@@ -14,7 +14,7 @@ capstone: false
 
 One explicitly host-selected native control envelope, behind the existing
 fixture-constructor feature, for the original reference desktop's one-level
-BGRA/RGBA color resources (formats2/67, original render/sampler roles plus
+BGRA/RGBA color resources (formats1/2/67, original render/sampler roles plus
 scanout/shared hints), packed depth/stencil format20 (roles1/8/9), unchanged
 buffer classes and64 live transport identities. Every selected storage class
 and byte cost is already independently qualified in the D50 host store. Keep
@@ -51,7 +51,9 @@ no_std wasm32 builds, and a scrubbed pristine clone on the frozen head. Carry
 unchanged D50 host storage, original physical bytes and shader/compiler facts
 by source/evidence digest. This feature-only constructor has no Wasm binding
 or demo caller; verify that default browser/source boundaries are unchanged.
-It grants no new roadmap pip or live-site capability.
+Rebuild the committed default dist, record its127/0 suite and zero errors,
+proof-export absence and existing live/partial pips in one browser load.
+The constructor grants no new roadmap pip or live-site capability.
 
 ## Adversarial verification
 
@@ -86,3 +88,12 @@ python3 evidence/virgl-production-readiness/standard-control-resource-gap.py cf1
 This one control boundary continues the human's production offload request.
 It does not replace the later typed-capset, complete API, actual Mesa/Hyprland,
 worker, scanout, demo/deployment or measured throughput acceptance.
+
+### 2026-10-12 — worker — recorded-input self-validation refinement
+
+The first selected replay reached original glmark2 event3014 and rejected its
+format1/bind1048586 color resource. This is already qualified by the unchanged
+D50 native store; the control envelope now includes captured formats1/2/67
+at their independently proven four-byte cost. The complete original packet
+remains in the authenticated fixture. No product claim was frozen and no
+unknown packet was skipped; rerun the selected gates before submission.

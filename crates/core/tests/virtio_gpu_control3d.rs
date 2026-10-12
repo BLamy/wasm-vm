@@ -12,6 +12,9 @@ use wasm_vm_core::dev::virtio::gpu::{GpuState, NullSink, VirtioGpu};
 use wasm_vm_core::platform::{Platform, virt};
 use wasm_vm_core::{Machine, RunOutcome};
 
+#[path = "virtio_gpu_control3d/desktop_resources.rs"]
+mod desktop_resources;
+
 const RAM: usize = 4 * 1024 * 1024;
 const DESC: u64 = virt::DRAM_BASE + 0x6000;
 const AVAIL: u64 = virt::DRAM_BASE + 0x7000;
@@ -113,11 +116,22 @@ struct Queue {
 }
 impl Queue {
     fn new(proof: bool, negotiate: bool) -> Self {
+        Self::with_profile(proof, negotiate, false)
+    }
+    fn desktop(negotiate: bool) -> Self {
+        Self::with_profile(true, negotiate, true)
+    }
+    fn with_profile(proof: bool, negotiate: bool, desktop: bool) -> Self {
         let mut machine = Machine::new(RAM);
         machine.enable_plic();
         machine.enable_virtio_slots(None);
         let recorder = Rc::new(RefCell::new(Recorder::default()));
-        let (_, state) = if proof {
+        let (_, state) = if desktop {
+            machine.enable_virtio_gpu_standard_desktop_control3d_proof(
+                Box::new(NullSink),
+                Box::new(Sink(recorder.clone())),
+            )
+        } else if proof {
             machine.enable_virtio_gpu_control3d_proof(
                 Box::new(NullSink),
                 Box::new(Sink(recorder.clone())),
@@ -255,6 +269,17 @@ impl Queue {
             .store16(AVAIL + 2, self.next)
             .unwrap();
         self.mmio(0x50, 0);
+        #[cfg(feature = "trace")]
+        {
+            let mut trace = wasm_vm_core::trace::VecSink::new();
+            assert_eq!(
+                self.machine.run_traced(1, &mut trace),
+                RunOutcome::MaxInstrs
+            );
+            assert_eq!(trace.records.len(), 1);
+            eprintln!("CONTROL3D_GUEST_TRACE {}", trace.canonical().trim());
+        }
+        #[cfg(not(feature = "trace"))]
         assert_eq!(self.machine.run(1), RunOutcome::MaxInstrs);
         assert_eq!(self.machine.bus_mut().load16(USED + 2).unwrap(), self.next);
         assert_eq!(
@@ -273,6 +298,7 @@ impl Queue {
     }
     fn expect(&mut self, label: &str, request: Vec<u8>, expected: u32) {
         let (response, length) = self.submit_split(&request, &[request.len()], &[24]);
+        self.record_case(label, &request, &response);
         assert_eq!(length, 24, "{label} response length");
         assert_eq!(
             response,
@@ -284,6 +310,8 @@ impl Queue {
             vec![0xa5; 40],
             "{label} response guard"
         );
+    }
+    fn record_case(&mut self, label: &str, request: &[u8], response: &[u8]) {
         let snapshot = self.state.borrow().control3d_snapshot();
         let ring = format!(
             "{{\"descriptors\":{:?},\"avail\":{:?},\"used\":{:?}}}",
@@ -296,10 +324,11 @@ impl Queue {
         } else {
             "CONTROL3D_RECORD"
         };
+        let response_guard = hex(&self.read(RESPONSE + 24, 40));
         eprintln!(
-            "{prefix} {{\"case\":{label:?},\"request\":{:?},\"response\":{:?},\"usedIndex\":{},\"ring\":{ring},\"machineDigest\":{:?},\"transportCanonical\":{:?},\"transportDigest\":{:?}}}",
-            hex(&request),
-            hex(&response),
+            "{prefix} {{\"case\":{label:?},\"request\":{:?},\"response\":{:?},\"usedIndex\":{},\"ring\":{ring},\"machineDigest\":{:?},\"transportCanonical\":{:?},\"transportDigest\":{:?},\"responseGuard\":{:?},\"sinkEvents\":{}}}",
+            hex(request),
+            hex(response),
             self.next,
             self.machine.snapshot().hex_digest(),
             snapshot
@@ -309,7 +338,9 @@ impl Queue {
             snapshot
                 .as_ref()
                 .map(|s| s.hex_digest())
-                .unwrap_or_default()
+                .unwrap_or_default(),
+            response_guard,
+            self.recorder.borrow().events.len()
         );
     }
     fn unchanged(&mut self, label: &str, request: Vec<u8>, expected: u32) {

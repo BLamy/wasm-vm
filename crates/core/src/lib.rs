@@ -1713,6 +1713,25 @@ impl Machine {
         self.install_virtio_gpu(device, state)
     }
 
+    /// Host-selected captured-desktop control envelope; not a production API profile.
+    #[cfg(feature = "virgl-control-proof")]
+    #[allow(clippy::type_complexity)]
+    pub fn enable_virtio_gpu_standard_desktop_control3d_proof(
+        &mut self,
+        frame_sink: alloc::boxed::Box<dyn dev::virtio::gpu::FrameSink>,
+        control_sink: alloc::boxed::Box<dyn dev::virtio::gpu::control3d::Control3dSink>,
+    ) -> Option<(
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::mmio::VirtioMmio>>,
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::gpu::GpuState>>,
+    )> {
+        let (device, state) =
+            dev::virtio::gpu::VirtioGpu::new_with_standard_desktop_control3d_proof_state(
+                frame_sink,
+                control_sink,
+            );
+        self.install_virtio_gpu(device, state)
+    }
+
     #[cfg(feature = "virgl-control-proof")]
     #[allow(clippy::type_complexity)]
     pub fn enable_virtio_gpu_submit3d_proof(
