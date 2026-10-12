@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47, E6-T11d48, E6-T11d49, E6-T11d50, E6-T11d51, E6-T11d52, E6-T11d53, E6-T11d54, E6-T11d55, E6-T11d56, E6-T11d57, E6-T11d58, E6-T11d59]
-blocked_on: E6-T11d59
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47, E6-T11d48, E6-T11d49, E6-T11d50, E6-T11d51, E6-T11d52, E6-T11d53, E6-T11d54, E6-T11d55, E6-T11d56, E6-T11d57, E6-T11d58, E6-T11d59, E6-T11d60]
+blocked_on: E6-T11d60
 estimate: S
 risk: high
 capstone: false
@@ -754,3 +754,17 @@ The original Mesa GLES3 depth-cube promise still lacks executable storage/DMA.
 Ordered S task D59 couples that one original allocation/span/transfer contract
 across native and host owners; it grants no sampler or production authority.
 Real guest bring-up remains gated rather than over-advertising this API.
+
+### 2026-10-12 — worker — depth storage verified; retained consumer still closed
+
+D59 is independently verified atbc2fb1e4, published as open/draft PR537, and
+its default/live demo remains127/0 and partial. The original selected Wasm
+queue now allocates cube/array depth owners, but original object6 views for
+all five formats and sampler roles8/9 still return0x1205:20 recorded cases.
+All10 matching2D depth and3 dimensional RGBA8 controls pass and retire; every
+owner/budget and complete original packet/source/guest/GPU body is retained.
+Repro is the exact verified-head command in E6-T11d60's Verification log;
+sealed readiness is `evidence/virgl-production-readiness/dimensional-depth-view-gap/`.
+This leaves the production parent blocked on the atomic retained consumer D60.
+No production capability, actual Linux graphics or measured MIPS follows from
+storage-only proof. All137 prior PRs and both native stack identities are held.
