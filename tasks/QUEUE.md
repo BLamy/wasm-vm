@@ -692,7 +692,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.027039000397` [E6-T11d54](epic-6-transcendence/E6-T11d54-native-image-layouts.md) — Carry qualified 2D image layouts and mip DMA through native desktop queues *(deps: E6-T11d53, E6-T11d50)*
 - [x] `525.027039000398` [E6-T11d51](epic-6-transcendence/E6-T11d51-desktop-resource-control.md) — Carry original desktop resource controls through selected VirtIO ownership *(deps: E6-T11d50)*
 - [x] `525.027039000398` [E6-T11d53](epic-6-transcendence/E6-T11d53-native-buffer-roles.md) — Carry qualified uniform and shared-role buffers through native desktop submission *(deps: E6-T11d52, E6-T11d18)*
-- [~] `525.027039000398` [E6-T11d55](epic-6-transcendence/E6-T11d55-dimensional-texture-storage.md) — Allocate and transfer original volume, cube and array RGBA8 resources *(deps: E6-T11d54, E6-T11d50, E6-T11d20)*
+- [?] `525.027039000398` [E6-T11d55](epic-6-transcendence/E6-T11d55-dimensional-texture-storage.md) — Allocate and transfer original volume, cube and array RGBA8 resources *(deps: E6-T11d54, E6-T11d50, E6-T11d20)*
 - [x] `525.027039001` [E6-T11d9](epic-6-transcendence/E6-T11d9-standard-primitive-restart.md) — Normalize owned standard index streams for primitive restart *(deps: E6-T11d8)*
 - [x] `525.02703901` [E6-T11d8](epic-6-transcendence/E6-T11d8-standard-core-topologies.md) — Execute bounded standard core line and triangle-fan draws *(deps: E6-T11d7)*
 - [x] `525.0270391` [E6-T11d7](epic-6-transcendence/E6-T11d7-standard-constant-attributes.md) — Fetch standard zero-stride attributes through owned GPU jobs *(deps: E6-T11d6)*

@@ -3,7 +3,7 @@ id: E6-T11d55
 epic: 6
 title: Allocate and transfer original volume, cube and array RGBA8 resources
 priority: 525.027039000398
-status: in-progress
+status: implemented
 depends_on: [E6-T11d54, E6-T11d50, E6-T11d20]
 estimate: S
 risk: high
@@ -117,3 +117,54 @@ task. All three dependencies are independently verified. Use the recorded
 `make verify-E6-T11d55` acceptance, affected historical gates, one final scrubbed
 pristine clone and a separate critic. This starts no production capability or
 Linux guest rendering claim.
+
+### 2026-10-12 — worker — frozen submission
+
+Runtime and complete harness freeze:
+`bae5df1f1973e93d331bc7662b3ce89bbc1c98ef`.
+Exact authoritative repro:
+`python3 tools/virgl-dimensional-storage/cold.py /tmp/wasmvm-dimensional-storage-cold-bae5df1f-v2`.
+It creates a pristine shared clone at that exact head, scrubs inherited
+Rust/Cargo/Node settings, then runs `make verify-E6-T11d55`. All17 selected gates
+pass with clean checkout before and after. The full receipt retains every
+command, environment override and stdout/stderr digest. Native/compiler,
+ticket/owner and historical consumer bodies are unchanged and authenticated
+against the complete D54 and D50 worker/critic seals:2404 bodies reopened.
+No Rust semantic change warrants repeating their unchanged gauntlets.
+
+Actual Metal GL operations prove all three original shapes over three seeds,
+27 mip levels and135 complete inverse planes/6270 pixels. Complete mip costs
+are448(volume),720(cube) and504(array) bytes. Original op9/43/45 words, dirty
+split SG bytes, row/layer padding, partial x/y/z boxes, synchronous and fenced
+native bytes, staging copies, deferred dense input and GPU-only overwrites are
+retained. Revoked backing/membership/context work, retained allocation reuse,
+pending disposal and15 physical native failure cases retire all budgets and
+native objects.146 boundary cases cover original roles/hints, whole chains,
+aggregate bytes, measured dimension neighbors, malformed inputs and overflows.
+The recording has24215 actual GL calls and zero browser/page/request errors.
+
+The native cube-PBO attachment sabotage rotates real faces while synchronous
+output still passes. After the physical fence signals, the unchanged original
+600-byte oracle fails at the recorded `full initial inverse` point. Finest V8
+coverage has451 executed changed regions, two delimiter-only waivers and no
+unproven runtime region. The independent Python audit reconstructs literal
+RGBA8 predictions and every public/native inverse without product imports.
+
+`evidence/virgl-dimensional-storage/worker/` seals1516 complete bodies, every
+member reopened,21943887 compressed bytes:
+
+- index `3818f85ddc3f083764334ef80c4c615615dafe9d9c89dbe54776e0183aaac0a4`
+- archive `c32c662034196c07d06ec9103bb68de55bc461fc0623930fe2fed9ee0bc8d691`
+
+The first clone attempt filled the disk during checkout, before any acceptance
+run; `/tmp/wasmvm-dimensional-storage-cold-bae5df1f.log` preserves that failure.
+Only disposable D54 build caches, its sealed unchanged cold clone and the
+failed D55 checkout were removed. Recorded evidence was preserved; the final
+retry above passes from the scrubbed pristine checkout.
+
+`make web-dist` rebuilt and committed the demo bundle at the freeze. The built
+page records127 passed/0 failed, zero errors, a live scalar-memory pip and
+partial graphics pip; proof-only Wasm exports remain absent. Dimensional
+sampler/surface/scanout consumers, native control layout and positive production
+capsets stay gated. Actual Linux Mesa/Hyprland rendering and300MIPS remain
+successor claims. A fresh independent critic must adjudicate this submission.
