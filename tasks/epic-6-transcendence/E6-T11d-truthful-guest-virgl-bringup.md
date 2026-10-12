@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47]
-blocked_on: E6-T11d47
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47, E6-T11d48]
+blocked_on: E6-T11d48
 estimate: S
 risk: high
 capstone: false
@@ -579,3 +579,20 @@ The human request continues this graphics chain; all PRs remain open.
 ### 2026-10-11 — worker — instance compiler verified; original consumer still gated
 
 D46 is independently verified at a19b49441e932e64446f756cefe0c18e6b5b71b3 and published on open/draft PR524 in unchanged native stack500. All124 previous PR identities/order/heads/bases remain held. The exact-head original metadata probe still records three new-profile consumer refusals and three old-profile admissions. Its adjacent native recording retains both original20/126 asymmetric two-instance refusals before native drawing, in1357 completely reopened members. See the standard-instanced-stencil-consumer-gap and standard-instanced-stencil-native-gap recorders/records under evidence/virgl-production-readiness for full commands and identities. Ordered S/high E6-T11d47 connects this one selected consumer while retaining original instance IDs, divisor phases, primitive order, work/fetch bounds, resource generations and asynchronous cleanup. The explicit human request continues production graphics. Full API/caps, actual guest Mesa/compositor, worker/scanout/demo/deployment and300MIPS remain unproven.
+
+### 2026-10-11 — worker — instanced stencil verified; original shadow sampling gap
+
+D47 is independently verified at41c1aa490d19d8c307ea7bdbb5647acf346681f4.
+PR525 preserves both existing native stacks499/500 and every previous PR head,
+base, identity and order. The original negative readiness script and full record
+`evidence/virgl-production-readiness/standard-shadow-gap.{mjs,json}` reproduce22
+compiler refusals and eight comparison-sampler refusals at that exact head;
+ordinary shader/sampler controls pass. Complete request/packet/generated/source
+identities are retained. No native shadow draw or guest execution was performed.
+
+Ordered S prerequisite E6-T11d48 translates the original floating 2D-shadow
+operations and separately owned view controls. Its compiler-only boundary does
+not relax the decoder or execute original sampler state. A dependent consumer
+qualification follows its fresh independent verdict; complete API/caps, actual
+Mesa/compositor, production worker/scanout, demo and measured throughput remain
+later gates. The explicit human graphics request continues this ordered chain.
