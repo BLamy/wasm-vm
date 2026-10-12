@@ -3,7 +3,7 @@ id: E6-T11d61
 epic: 6
 title: Compile original cube and array comparison texture shaders
 priority: 525.027039000398
-status: pending
+status: in-progress
 depends_on: [E6-T11d60, E6-T11d57, E6-T11d49]
 estimate: S
 risk: high
