@@ -3,7 +3,7 @@ id: E6-T11d53
 epic: 6
 title: Carry qualified uniform and shared-role buffers through native desktop submission
 priority: 525.027039000398
-status: in-progress
+status: implemented
 depends_on: [E6-T11d52, E6-T11d18]
 estimate: S
 risk: high
@@ -87,4 +87,80 @@ sealed in `evidence/virgl-production-readiness/native-buffer-role-gap/`:
 The explicit human instruction continues production guest graphics ahead of
 unrelated general-queue work. Typed capabilities, complete API/storage/image
 transport, actual Mesa/Hyprland, worker/scanout and throughput remain parent work.
+
+### 2026-10-12 — worker — recorded selected buffer submission
+
+Runtime and literal fixtures froze at `a8974b3f750a1cc85efdcde89176be0d73592a24`.
+The only subsequent changes at final head
+`35a1f0c2987782ded50dc7240c33671d9265ce1a` tighten inline-guard coverage
+reporting and its sealing receipt; runtime, fixtures, native responses and
+canonical state records remain byte-identical. The complete final pristine
+submission at that exact head is authoritative.
+
+Commands:
+
+```sh
+VIRGL_NATIVE_BUFFER_EVIDENCE_DIR=target/evidence/virgl-native-buffer-final make verify-E6-T11d53
+python3 tools/virgl-native-buffer/coverage.py target/evidence/virgl-native-buffer-final/coverage-recheck
+python3 tools/virgl-native-buffer/cold.py target/evidence/virgl-native-buffer-cold-final
+python3 tools/virgl-native-buffer/seal.py target/evidence/virgl-native-buffer-final target/evidence/virgl-native-buffer-cold-final evidence/virgl-native-buffer/worker
+bash tools/deploy-cloudflare.sh
+node target/evidence/virgl-native-buffer-deployment/final/source.mjs --output target/evidence/virgl-native-buffer-deployment/final --task E6-T11d53
+```
+
+The warm gate passed25 commands. The final cold clone passed26 (including fresh
+npm dependencies), scrubbed inherited compiler settings and remained clean
+before/after at `/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-native-buffer-cold-dx5y2ed3/repo`.
+Its receipt is `50893a0c943bb5ee3fd3af027619b9626bec72709b7b7f10e24f139f8d992221`.
+The archive retains every command, stdout/stderr, source body, actual GL call,
+Wasm input/output, queue record, instrumented native binary/profile/export,
+fault source and literal failure point, and complete cold receipt.
+
+Across three schedules and all eight original hints, real selected Wasm
+virtqueues admit the original byte-addressed buffer. One original guest
+allocation supplies vertex, private indexed-draw source and nonzero bank1
+uniform data in both shader stages. Fresh guest SG words written after
+attachment reach hardware WebGL2; an independent word model checks all6144
+pixels from24 draws. No saved reference output initializes DMA. Full canonical
+identities, backing generations, budgets, response/ring/SG guards, later
+completion, cancellation, reset/profile retention and disposal are recorded.
+Unsupported neighboring masks/dimensions/flags and4MiB/32MiB budget failures
+preserve complete native/host state before callback/allocation. Historical
+profiles and selected64/65 versus ordinary16/17 snapshots survive.
+
+The native recording has302 canonical queue records,294 selected response-guard
+and machine-digest points, and827 retired queue-loop instruction traces; it
+claims no Linux desktop execution. The compiler's finest segments cover both
+changed executable Rust lines and all15 dynamic operands, with eight explicit
+syntax waivers and no gaps. The mask/height/profile predicates execute139/122/114
+times and the admission body91 times. The original warm reporter waived an
+inline guard too broadly; the separately retained supplemental check and final
+cold gate correct that reporting gap without a runtime edit.
+
+The independent sabotage checkout changes only selected mask112 to48. At hint64,
+the actual native queue returns0x1205 with unchanged guards; the literal0x1100
+response oracle fails. Its full request/response/state point is
+`cold/recording/fault-native-buffer/report.json` in the archive. The final GPU
+recording includes183362 actual native calls on M4 Max Metal and zero errors.
+The submission authenticates74373 complete prior D18/D49/D50/D51/D52 bodies,
+with matching unchanged source and dependency identities.
+
+`evidence/virgl-native-buffer/worker/` seals1546 complete bodies,31468235 compressed
+bytes, all reopened and checked:
+
+- manifest `4d21b3f3fbbf1bf04bfb4031018f8ef3f935c4d96fa74d7c6b1015dfbc851722`
+- index `1f53391aca79e771c27bcda31705bccb7ff21e6b39fd0552dd33e3dc4a93cdeb`
+- archive `c28313356f2f469e37e8791dd286ab131d16740a83fd166f3e22caa90b96d214`
+
+The pre-commit hook rebuilt and committed `web/dist` with the runtime change.
+Cloudflare deployment `https://db2278b9.wasm-vm.pages.dev` is live at
+`https://wasm-vm.pages.dev`. The built and live page pass127/0, expose no proof
+exports, retain the partial graphics pip and explicitly disabled production
+acceleration, and serve unchanged default Wasm digest
+`62a698e3570534437f5d668885b8df2b6a03d6d01e6081814ae1654b22e3230a`.
+Only the permitted favicon404 occurs on live. Complete deploy/live sources,
+logs, rewritten manifests, reports and screenshot are in
+`evidence/virgl-native-buffer/deployment/`. This closes only native selected
+buffer admission; image metadata/level-aware DMA, typed capabilities,
+worker/scanout, actual Mesa/Hyprland and throughput remain parent work.
 

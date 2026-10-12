@@ -1,0 +1,103 @@
+{
+  "schema": "native-buffer-seal-v1",
+  "task": "E6-T11d53",
+  "head": "35a1f0c2987782ded50dc7240c33671d9265ce1a",
+  "sealingHead": "35a1f0c2987782ded50dc7240c33671d9265ce1a",
+  "records": 1546,
+  "reopenedMembers": 1546,
+  "recordIndexSha256": "1f53391aca79e771c27bcda31705bccb7ff21e6b39fd0552dd33e3dc4a93cdeb",
+  "archiveSha256": "c28313356f2f469e37e8791dd286ab131d16740a83fd166f3e22caa90b96d214",
+  "archiveBytes": 31468235,
+  "dependencySeals": [
+    {
+      "family": "virgl-resource-capacity",
+      "role": "worker",
+      "manifestSha256": "59cea015984012bb2bbd8c8ac469e509ae272c5ca10814dbf80af669566dbdd7",
+      "indexSha256": "4a948c805eaf6d5c165a88694e81d575a630069d49292098274de625e4f1c4c8",
+      "archiveSha256": "7abb50b55a92b45ceec07aa52a95f0a024c94837dc0a44773465e3d4d3999420",
+      "reopenedBodies": 642
+    },
+    {
+      "family": "virgl-resource-capacity",
+      "role": "verifier",
+      "manifestSha256": "7eb6715ab4f8345cf6093d1c7ed35e43aa5b8838d36d1d0ef63410338e353745",
+      "indexSha256": "21dc44b2dd2401e5a056c1ff152fa474e1529cd62199e40596c8c6864e7e6a86",
+      "archiveSha256": "4f038098d37c82b90234fcf03807b2e05632492a368a33647f014579dd0177cc",
+      "reopenedBodies": 365
+    },
+    {
+      "family": "virgl-desktop-control",
+      "role": "worker",
+      "manifestSha256": "39c771aa285e5b215c26e92099f77fb63b5695d9a2ba62fe25001e47ec1da680",
+      "indexSha256": "c021b524368f72fca6a43eca1e6056343743f914c3d9fb98c3f438164c7182f7",
+      "archiveSha256": "778eff96061490ef562821014b72a54581c07c4077b31b7e0620f6a2229ba051",
+      "reopenedBodies": 665
+    },
+    {
+      "family": "virgl-desktop-control",
+      "role": "verifier",
+      "manifestSha256": "4f8cb67e861481dd0aca7f0da958051799f11a1bbf136a6805f63ee87d92f8b5",
+      "indexSha256": "3a9e683e5e06e8e51423b764ef6067e80def9ac547e06f704eac68d94405cb6c",
+      "archiveSha256": "ec14364bf7d1bce7103137c15c2fd0694730e61d7af439ef52caeb5678fc8e83",
+      "reopenedBodies": 337
+    },
+    {
+      "family": "virgl-shadow-samplers",
+      "role": "worker",
+      "manifestSha256": "f6060a1d127854fa230b3f9ba0f50e83941ded19c4e516f5f5e0908a8f901f8f",
+      "indexSha256": "7bf6f4ea3b5aaf6b53a0199dc8a3dfa6824cf2c512f5f8a7a48067aad3370192",
+      "archiveSha256": "efde5ede4f9528859ea0f762b34ac906e2e5765724efe87bd563e9615673c5cb",
+      "reopenedBodies": 44665
+    },
+    {
+      "family": "virgl-shadow-samplers",
+      "role": "verifier",
+      "manifestSha256": "c4546b2d53e1bf6923127764d3ec37b5375ab75aaf73eac53902572a814e395d",
+      "indexSha256": "07ac9236066c4890a6e64db11e7825272e44414e5237c479624f74f90decda44",
+      "archiveSha256": "3cd3e2e56aa16aa1fbe6619c57ff3980d4335cec98dd5f8aae325362961a1477",
+      "reopenedBodies": 4255
+    },
+    {
+      "family": "virgl-desktop-submit",
+      "role": "worker",
+      "manifestSha256": "b214d4b6e6e777e979e0de709c4bf29e8d35159cf370c1e259b2bea8e632e64f",
+      "indexSha256": "a18a823a7e1b0cdcdbb4f9ba11abd5e01ddb7d93334a1cbdad3611bb505ed61c",
+      "archiveSha256": "dd08f3e7f8446276c006034fae32fc0c9aada49b13030f6d4969bbd0a1d13c7b",
+      "reopenedBodies": 1022
+    },
+    {
+      "family": "virgl-desktop-submit",
+      "role": "verifier",
+      "manifestSha256": "a8a8af0143470aa100066d751e7fd11ef4de24f1a8b2a5311f05ef76599e97dc",
+      "indexSha256": "7c21fd96b97e801291e2f240b2feaf1d8034e602ac440677fff8aa15a876387b",
+      "archiveSha256": "c213534e2439ffc27729edb8a2a7197a32412e3a429ba637a8c6533ea1922967",
+      "reopenedBodies": 651
+    },
+    {
+      "family": "virgl-standard-buffer-roles",
+      "role": "worker",
+      "manifestSha256": "5293a9fe180c53e87fb442e12265d4e1b9f6f8809831858adc9e7fe6fe6ad514",
+      "indexSha256": "5d73e08e2ca930c1bcdc73ba4547d85b2740094f120cc86265f0ac149a7bc9de",
+      "archiveSha256": "c785984e6a27fd49a91b9e91b7b160a443e8ea3861d12a486c282a0efda50c8f",
+      "reopenedBodies": 16096
+    },
+    {
+      "family": "virgl-standard-buffer-roles",
+      "role": "verifier",
+      "manifestSha256": "8d2a12efd08f97b65e105d76aa6aca6519635461ac3928fd7df1e70597285f3d",
+      "indexSha256": "72c5c658d836b4544b12d725210855b3d86ec058e001949fa3c117a1f72ba834",
+      "archiveSha256": "e08b8a42c7999255b8d9c21b7865e500f5a1f8650cb7acb5c29b2ca7d4b462ee",
+      "reopenedBodies": 5675
+    }
+  ],
+  "hotColdNativeRecordsEqual": true,
+  "authoritativeRecording": "cold/recording",
+  "warmHead": "a8974b3f750a1cc85efdcde89176be0d73592a24",
+  "warmStatus": "25 gates passed; inline guard reporting tightened in supplemental coverage and final cold gate",
+  "warmEvidenceOnlyChanges": [
+    "tools/virgl-native-buffer/coverage.py",
+    "tools/virgl-native-buffer/seal.py"
+  ],
+  "guestExecution": false,
+  "productionAuthority": false
+}
