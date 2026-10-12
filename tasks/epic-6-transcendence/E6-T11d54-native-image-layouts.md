@@ -3,7 +3,7 @@ id: E6-T11d54
 epic: 6
 title: Carry qualified 2D image layouts and mip DMA through native desktop queues
 priority: 525.027039000397
-status: in-progress
+status: implemented
 depends_on: [E6-T11d53, E6-T11d50]
 estimate: S
 risk: high
@@ -99,3 +99,71 @@ bodies,2721287 compressed bytes, all reopened:
 The explicit human instruction continues production graphics ahead of unrelated
 general-queue work. Typed capabilities/API, actual RISC-V Mesa/Hyprland,
 production worker/scanout and measured responsiveness/MIPS remain parent work.
+
+### 2026-10-12 — worker — CLAIM: implemented
+
+Runtime freeze `88957c714d6ca95143a0fd958600dcd9532c2e93`; final proof-harness
+freeze and authoritative cold head `6799137b1df9601f02cb7347e609095553bd8951`.
+The intervening commit changes only coverage classification, physical response
+capture, cold invocation and sealing. No runtime semantics changed after the
+first freeze. The initial warm gate passed every product gate and detected only
+17 static-syntax coverage reporting gaps; the corrected report has no unproved
+runtime operand. That warm run is a preflight, not the evidence of record.
+
+Final commands:
+`python3 tools/virgl-native-image/cold.py target/evidence/virgl-native-image-cold-6799137b`
+(invokes `make verify-E6-T11d54` in its clean, scrubbed clone), then
+`python3 tools/virgl-native-image/seal.py target/evidence/virgl-native-image-cold-6799137b evidence/virgl-native-image/worker`.
+All 26 exact commands, environment overrides, full outputs, source pins and
+binary hashes are in archive member `cold/recording/receipt.json`. Its SHA-256 is
+`9c63c3e0bcc7f466a4915467594585752b37f263256077115ccd2225e560eece`.
+The clone is `/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-native-image-cold-0p0wrohy/repo`;
+both before and after Git status are empty, exit 0. Fresh npm installation,
+scoped default/selected/Wasm clippy, 16 submission tests, 13 control tests,
+GPU/Machine tests, both no_std Wasm builds, selected Wasm, hardware, sabotage,
+default dist/demo, LLVM and independent integration audits all pass.
+
+`evidence/virgl-native-image/worker/` seals 1,179 complete bodies,
+15,922,322 compressed bytes, every member reopened:
+
+- manifest `760e7cec92d98d9cf2104e534f296429d6f8305e0d24e013a62c4eff91dfd624`
+- index `ca2681aab7fe795ffc508441f0b0c7db306f78ae32de55aa524109b68f85c99b`
+- archive `438ecaf1c7eb936ea785d93ba37792460963f7a39ce1277aaed6cc0d7878c5c2`
+
+The recording demonstrates native admission and transport composition for all
+81 already qualified original 2D formats. Three actual Metal hardware schedules
+(14241, 33485, 58393) check 972 NPOT mip planes and all 13,608 pixels, fresh
+post-attachment split-SG source words, fenced output, every padding/guard byte,
+original immutable owners, public/owned costs, cancellation and same-ID reuse.
+The independently recomputed canonical records include 3,402 browser and 3,032
+native points, 2,721 native image guards, 324 complete native DMA points, four
+complete RAM checkpoints and 4,143 retired guest-loop traces. All 142,653 actual
+GL calls are retained; no browser, page, request or final GPU errors occurred.
+The literal Python inverse imports no product conversion or observed result.
+Normal floats and SNORM -127 make these transport inputs uniquely invertible;
+unchanged host endpoint/exception semantics remain held.
+
+Every original role class and creation hint, unsupported neighbor/high bits,
+invalid metadata and transfer geometry, NPOT ends, exact resource/aggregate
+budgets and historical constructors are covered. Finest LLVM segments cover
+65 changed runtime lines and 264 operands with 169 explicit syntax waivers and
+zero unexplained gaps. A separate-checkout mip mutant charges 720 bytes for
+format 1 instead of the independent literal 224; the queue oracle fails with
+exit 101 and complete request/response/canonical point retained. D50 and D53
+worker/verifier seals authenticate 2,699 complete dependency bodies and 314
+unchanged host/compiler/native ownership source boundaries; they are carried
+incrementally, not replaced by summaries.
+
+Deployment command `bash tools/deploy-cloudflare.sh` publishes
+`https://4ace451b.wasm-vm.pages.dev`, production `https://wasm-vm.pages.dev`.
+The retained live runner is `evidence/virgl-native-image/deployment/final/source.mjs`;
+command `node /tmp/wasmvm-native-image-live.mjs --output evidence/virgl-native-image/deployment/final --task E6-T11d54`.
+Both built and live pages reach 127/0 with zero errors, proof exports absent,
+partial graphics pip and production acceleration disabled; served Wasm and
+roadmap hashes match the committed dist. Live screenshot, responses, full
+runner/logs and generated deployment manifests are retained. Only the four
+owned staging URL rewrites were restored after preserving their deployed bodies.
+
+This claim introduces no new host storage, shader, capability, scanout,
+production VIRGL negotiation, RISC-V Mesa/Hyprland execution or measured MIPS.
+Those remain parent work. A fresh critic must set verified before further work.
