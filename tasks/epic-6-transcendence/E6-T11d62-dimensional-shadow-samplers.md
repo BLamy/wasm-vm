@@ -172,3 +172,25 @@ before copying, records copy failures, and closes its owned browser even if
 recording fails. Runtime, fixtures and expected pixels are unchanged. The final
 scrubbed-clone submission will be retried at the corrected harness head; the
 complete failed run is retained for the final seal and fresh critic.
+
+### 2026-10-12 — worker — default demo harness correction
+
+The retry at `14417fe284dbbe55e8158fab1da909febf4de79a` passed all21
+initial pristine-clone gates, including both native queue suites, affected Wasm
+builds and1180 metadata checks. Before completing the hardware matrix, source
+inspection found that `verify-virgl-default-demo.mjs` still rejected the new D62
+task ID. The worker deliberately closed only its owned verification Chrome
+process (PID54184); the actual failure,35 completed rows and clean cold report
+are preserved under
+`/tmp/wasmvm-dimensional-shadow-samplers-cold-14417fe2/`.
+Every154 original recording files were copied and authenticated byte-for-byte;
+frozen source and the actual generated Wasm are retained. The later
+`failure-custody.json` explains the deliberate stop without changing the original
+reports or claiming a runtime refutation.
+
+The default-demo harness now accepts D62 and explicitly checks its partial
+roadmap marker. The sealer also accepts the original nonzero cold exit report as
+failed custody without requiring a fabricated browser-style status field.
+Runtime, fixtures and expected pixels are unchanged. The completed owned scratch
+checkout can be removed after custody checks; the final clean cold submission
+will use the corrected harness head.

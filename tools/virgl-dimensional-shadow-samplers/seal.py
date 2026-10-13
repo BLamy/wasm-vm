@@ -32,7 +32,7 @@ earlier = []
 for i, value in enumerate(sys.argv[3:]):
     directory = Path(value).resolve()
     actual = json.loads((directory / ('report.json' if (directory / 'report.json').is_file() else 'failure-custody.json')).read_bytes())
-    assert actual['status'] == 'failed'
+    assert actual.get('status', 'failed' if actual.get('exitCode', 0) != 0 else 'passed') == 'failed'
     prefix = 'earlier-failed-inner-' + str(i).zfill(4)
     files.update({prefix + '/' + str(p.relative_to(directory)): p for p in directory.rglob('*') if p.is_file()})
     earlier.append(dict(prefix=prefix, original=str(directory), head=actual['head'], failure=actual.get('failure'),
