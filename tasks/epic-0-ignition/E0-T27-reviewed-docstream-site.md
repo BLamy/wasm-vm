@@ -3,7 +3,7 @@ id: E0-T27
 epic: 0
 title: Unify the marketing site, launcher, roadmap and Docstream library
 priority: 525.0270390004005
-status: in-progress
+status: implemented
 depends_on: [E6-T11d63]
 estimate: S
 risk: medium
@@ -127,3 +127,48 @@ against the original task sections and include its make verify-E6-T11d63 command
 The product rework remains in-progress; prior unchanged hero, docs and build
 metadata findings carry, while the changed generator/render/data boundary gets
 a new frozen build and recording.
+
+### 2026-10-13 — worker — final frozen publication submission
+
+Source c5f8ad16235a64c70e2732b0ddd7c4d4bc9c63a4 is deployed as Production/main
+92409cfe-36f8-4dd5-b967-64547d132e95 on the existing wasm-vm Pages project.
+The original fragment shader and default Wasm d45b575207e0035b5c518698e7b6793b2bf12da635531723fad70813a5956c36
+are unchanged. The authenticated638-body stage preserves the prior boot URL
+authority and removes only the retired docs-mount.js file. No guest/GPU
+qualification or performance claim follows from this frontend publication.
+
+Commands:
+- make verify-E0-T27 SITE_EVIDENCE_DIR=target/evidence/reviewed-site-final-c5f8ad16
+- python3 target/evidence/reviewed-site-continuation-tools/cold-navigation.py c5f8ad16235a64c70e2732b0ddd7c4d4bc9c63a4 target/evidence/reviewed-site-cold-c5f8ad16
+- python3 target/evidence/reviewed-site-continuation-tools/prepare-navigation.py c5f8ad16235a64c70e2732b0ddd7c4d4bc9c63a4 target/evidence/reviewed-site-release-c5f8ad16
+- python3 target/evidence/reviewed-site-continuation-tools/publish-navigation.py c5f8ad16235a64c70e2732b0ddd7c4d4bc9c63a4 target/evidence/reviewed-site-release-c5f8ad16 target/evidence/reviewed-site-final-c5f8ad16 target/evidence/reviewed-site-cold-c5f8ad16
+- node target/evidence/reviewed-site-continuation-tools/live-contract-site.mjs --output target/evidence/reviewed-site-live-c5f8ad16/site --url https://wasm-vm.pages.dev/
+- node target/evidence/reviewed-site-continuation-tools/live-contract-default.mjs --output target/evidence/reviewed-site-live-c5f8ad16/default-demo --task E0-T27
+
+The frozen local and canonical recordings pass8 route/UI groups, zero normal
+browser errors: Open demo and bare app show an unselected launcher, actual
+Gantt/Kanban/search/filter/details belong to the marketing shell, old fragments
+redirect to that roadmap and the single Docstream library, all legacy docs
+entries use its same reader, and desktop/390px views retain motion and reflow.
+The corrected detail displays verbatim original Boundary and Deterministic
+acceptance, including the D63 make command. A fresh clone regenerates all682
+authored task records identically, including291 boundaries/196 modern contracts;
+activity is retained as its separately named publication snapshot. It reproduces
+all330 generated docs bodies and633 production file identities while preserving
+all57 tracked design records. Both ordinary-demo recordings remain127/0,
+proof exports absent, scalar pip live and guest GPU pip partial/production disabled.
+
+The complete failed earlier captures are retained. Original routing HTTP bytes
+are acquired before forwarding them unchanged to the browser, so a discarded
+CDP handle cannot waive changed redirect code. Interrupted unchanged modules
+require complete original-body capture plus D63 baseline-byte identity. The
+canonical recorder compares the authenticated staged boot manifests rather than
+source-only relative manifests and drains normal document responses before
+navigation; its original failed producers remain recorded.
+
+Sealed evidence: evidence/reviewed-site/worker —6,073 logical members,905 stored
+bodies,5,168 backward links; all reopened through the gzip trailer.
+Manifest135b91d9adb9fe373b12d53a423abdd266fd3e96ca95543e1378ba7f6e515f6a;
+index284e17a274e3bf2f4eaa98fed1769e34c9bf1c99995ed54f963cdcf5eea267bc;
+archiveb22c3c167a4c105c4beaf3c0571c827f9f54c245cc0e0d231ba80b22e1e02b6b.
+This is the worker submission, not the final verifier verdict.
