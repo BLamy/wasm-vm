@@ -16,7 +16,7 @@ const output=path.resolve(process.argv[3]),dist=path.join(repo,'web/dist');
 const git=(...args)=>execFileSync('git',args,{cwd:repo,encoding:'utf8'}).trim();
 const report={schema:'reviewed-site-assembled-route-record-v1',task:'E0-T27',head:git('rev-parse','HEAD'),
  command:[process.execPath,...process.argv.slice(1)],startedAt:new Date().toISOString(),status:'running',
- actualGuestGpu:false,performanceAuthority:false,errors:[],interruptedResponseBodies:[],canceledRequests:[],requests:[],screenshots:[],served:[],steps:[]};
+ actualGuestGpu:false,performanceAuthority:false,errors:[],originalRouteBodies:[],interruptedResponseBodies:[],canceledRequests:[],requests:[],screenshots:[],served:[],steps:[]};
 await fs.mkdir(output,{recursive:true});
 let browser,server,legacyTransition=null;
 const served=new Map(),bodyReads=[];
@@ -50,6 +50,20 @@ try{
  const {chromium}=await import(pathToFileURL(path.join(repo,'web/node_modules/playwright/index.mjs')));
  browser=await chromium.launch({executablePath:process.env.CHROME||'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',headless:false,args:['--enable-gpu']});
  report.browserVersion=browser.version();
+ // Read the original HTTP response before forwarding the unchanged routing
+ // module. An immediate client redirect may otherwise destroy Chrome's CDP
+ // response handle before the recorder can retrieve this changed source.
+ const captureRouteSource=async context=>{
+  await context.route('**/tabs.js',async route=>{
+   const original=await route.fetch();assert.equal(original.status(),200);
+   const bytes=await original.body();const expected=await fs.readFile(path.join(dist,'tabs.js'));
+   assert.equal(hash(bytes),hash(expected),'original routing module drift');
+   const bodyPath='original-routes/tabs.js';await fs.mkdir(path.dirname(path.join(output,bodyPath)),{recursive:true});
+   await fs.writeFile(path.join(output,bodyPath),bytes);
+   report.originalRouteBodies.push({url:route.request().url(),path:'tabs.js',bodyPath,status:original.status(),bytes:bytes.length,sha256:hash(bytes),forwardedUnchanged:true});
+   await route.fulfill({response:original,body:bytes});
+  });
+ };
  const watch=page=>{
   page.on('console',m=>{if(m.type()==='error')report.errors.push({url:page.url(),message:m.text()});});
   page.on('pageerror',e=>report.errors.push({url:page.url(),message:e.message}));
@@ -68,6 +82,7 @@ try{
   }})());});
  };
  const desktop=await browser.newContext({viewport:{width:1280,height:720},deviceScaleFactor:1,serviceWorkers:'block'});
+ await captureRouteSource(desktop);
  const page=await desktop.newPage();watch(page);
  await page.goto(base,{waitUntil:'load'});
  await page.waitForFunction(()=>document.querySelector('#machine-canvas')?.dataset.modelReady==='true');
@@ -161,6 +176,7 @@ try{
  }
  report.steps.push({name:'legacy published entry routes',status:'passed'});
  const mobile=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:1,reducedMotion:'reduce',serviceWorkers:'block'});
+ await captureRouteSource(mobile);
  const phone=await mobile.newPage();watch(phone);await phone.goto(base,{waitUntil:'load'});
  await phone.waitForFunction(()=>document.querySelector('#machine-canvas')?.dataset.modelReady==='true');
  assert.equal(await phone.locator('#machine-canvas').getAttribute('data-motion'),'paused');
@@ -200,6 +216,12 @@ try{
  const unchangedRedirectModules=new Set(['ide.js','vendor/xterm/xterm.js','omarchy-startup-state.js','coi-serviceworker-register.js','cpu-isolation.js']);
  for(const item of report.interruptedResponseBodies){
   const name=new URL(item.url).pathname.slice(1);
+  const original=report.originalRouteBodies.find(row=>row.url===item.url&&row.forwardedUnchanged);
+  if(original){
+   item.originalBodyPath=original.bodyPath;item.sha256=original.sha256;
+   assert.equal(hash(await fs.readFile(path.join(output,original.bodyPath))),hash(await fs.readFile(path.join(dist,name))));
+   continue;
+  }
   assert.ok(unchangedRedirectModules.has(name),'unproven interrupted response '+name);
   const current=await fs.readFile(path.join(dist,name));
   const baseline=execFileSync('git',['show',`2aca65e9328aa1433fb516511ca554fdd96b422d:web/dist/${name}`],{cwd:repo,maxBuffer:16*1024*1024});
