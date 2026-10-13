@@ -3,7 +3,7 @@ id: E6-T11d66
 epic: 6
 title: Capture original stream-output buffers through the selected renderer
 priority: 525.027039000403
-status: in-progress
+status: implemented
 depends_on: [E6-T11d65, E6-T11d64, E6-T11d21]
 estimate: S
 risk: high
@@ -93,3 +93,58 @@ path error and a real uniform-range handoff ordering fault. The runtime fault wa
 fixed before final gates: restore validated state, then submit the range immediately
 before native capture. No production capability, guest Linux renderer or performance
 claim follows.
+
+
+### 2026-10-13 — worker — frozen GPU capture submission
+
+Runtime head `75c3a664a0df8f0fb3ce4ff1c248a4167411c09d`; final proof-only
+head `985a9ad1e9c8645429851f695ad486b779b96270`. Final scrubbed pristine
+continuation `python3 tools/virgl-stream-output-capture/cold.py
+ target/evidence/stream-output-capture-cold-03 --carry-from
+ target/evidence/stream-output-capture-cold-01` passed with clean tracked state
+before/after and no borrowed generated artifacts. The complete original cold run
+and its final demo-selector failure are retained, with authenticated unchanged
+runtime gates carried forward under the incremental policy. The touched harness,
+new Wasm/compiler artifacts, twelve retirement runs and ordinary build/demo were
+rerun in the final clone. Receipt SHA256
+`7cb52f5ae78edb41164ee3aaac9c8b31e893f6241375fcbca43866a94f8eeabe`.
+
+The final command transcripts contain selected/default format/clippy, affected
+native control/submission tests, selected/default wasm32 builds, original decoder
+property cases, three-seed hardware layout/primitive capture, actual shifted native
+scatter physical refutation, selected visible dimensional-depth regression, and
+schedules0/1/2 for reset/cancellation/partial-write/subcontext/resource-generation
+retirement. The independent full-word audit observes480 layout rows,115 phases,
+931 original readbacks,838 native captures and11052 native scatter calls. Every
+captured destination, untouched stride hole and DMA guard matches the independent
+original-word oracle. Old-bound capture remains on retained storage after public
+resource recycling; full old physical readback and fresh original206 prove both
+resource generations separately. No CPU shader execution or GPU-buffer mirror
+produced these words.
+
+Portable worker seal `evidence/virgl-stream-output-capture/worker` has manifest
+SHA256 `c314bff78340178b220b37b4c44506eab738f7280ce28cd025ab5a47c3eb370f`,
+index `621801cc461a625d5812174c8cb9db2b063fd2d0bde048278882fc337bd2a2f4`,
+archive `a1df907e0e4f2ba414258a051d9995664d574c0a88afb99af5c1381f63b9fac8`.
+All3218 members were reopened through the gzip trailer. It includes the complete
+cold recordings, source/served bodies, native calls/results, guest traces/digests,
+coverage and metadata supplement. The nested V8 ledger records866 positive
+partitions,21 static partitions and62 explicit zero partitions awaiting the fresh
+critic's historical/static classification or supplemental evidence; this worker
+does not claim those zero partitions executed. Rust admission/constructor paths
+are exercised by the original native/Wasm controls and complete queues; type,
+configuration and unchanged constructor operands require explicit coverage review.
+The proof-only sealer's null carried-receipt normalization is recorded separately
+and changes no selected runtime.
+
+Cloudflare production publication `05ac027f-6826-480e-808d-85d84d47afab`,
+<https://05ac027f.wasm-vm.pages.dev>, serves the partial marker and current default
+Wasm SHA256 `81a10d713ad8390c32415fefe91b23c406edd424302433e1af98b9d9dd06e5df`.
+Canonical live acceptance passed127/0, zero console/page/request errors, live
+roadmap pips and absent proof exports. Deployment custody at
+`evidence/virgl-stream-output-capture/deployment`, manifest SHA256
+`cff1bf7b31217d4539dab477f7e438c2e4d3cd910699985942ffbffe027a0597`, reopens the
+full staged files, canonical response bodies, screenshot and CLI confirmation.
+Marketing/docs, staged boot-artifact identities and both native stacks are retained.
+This selected component submission grants no positive production capset, actual
+Mesa/Hyprland boot, production worker/scanout authority or throughput claim.

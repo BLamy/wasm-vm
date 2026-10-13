@@ -23,7 +23,7 @@ with archive.open('wb') as raw_file,gzip.GzipFile(fileobj=raw_file,mode='wb',mti
         if 'target' in row:info.type=tarfile.LNKTYPE;info.linkname=row['target'];packed.addfile(info)
         else:
             body=files[row['path']].read_bytes();assert len(body)==row['bytes'] and sha(body)==row['sha256'];info.size=len(body);packed.addfile(info,io.BytesIO(body))
-manifest=dict(schema='stream-output-capture-seal-v1',task='E6-T11d66',head=report['head'],runtimeHead=receipt.get('carried',{}).get('runtimeHead',report['head']),recordIndexSha256=sha(raw),archiveSha256=sha(archive.read_bytes()),archiveBytes=archive.stat().st_size,records=len(rows),logicalBytes=sum(r['bytes'] for r in rows),authoritativeRecording='cold/recording',heldRecording='cold/recording/held-cold/recording' if receipt.get('carried') else None,actualLinuxGuest=False,productionAuthority=False)
+manifest=dict(schema='stream-output-capture-seal-v1',task='E6-T11d66',head=report['head'],runtimeHead=(receipt.get('carried') or {}).get('runtimeHead',report['head']),recordIndexSha256=sha(raw),archiveSha256=sha(archive.read_bytes()),archiveBytes=archive.stat().st_size,records=len(rows),logicalBytes=sum(r['bytes'] for r in rows),authoritativeRecording='cold/recording',heldRecording='cold/recording/held-cold/recording' if receipt.get('carried') else None,actualLinuxGuest=False,productionAuthority=False)
 if archive.stat().st_size>=50*1024*1024:
     parts=[]
     with archive.open('rb') as stream:

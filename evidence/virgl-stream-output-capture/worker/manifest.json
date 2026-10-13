@@ -1,0 +1,42 @@
+{
+  "schema": "stream-output-capture-seal-v1",
+  "task": "E6-T11d66",
+  "head": "985a9ad1e9c8645429851f695ad486b779b96270",
+  "runtimeHead": "75c3a664a0df8f0fb3ce4ff1c248a4167411c09d",
+  "recordIndexSha256": "621801cc461a625d5812174c8cb9db2b063fd2d0bde048278882fc337bd2a2f4",
+  "archiveSha256": "a1df907e0e4f2ba414258a051d9995664d574c0a88afb99af5c1381f63b9fac8",
+  "archiveBytes": 67780240,
+  "records": 3218,
+  "logicalBytes": 331272329,
+  "authoritativeRecording": "cold/recording",
+  "heldRecording": "cold/recording/held-cold/recording",
+  "actualLinuxGuest": false,
+  "productionAuthority": false,
+  "archiveParts": [
+    {
+      "path": "recording.tar.gz.part-0000",
+      "bytes": 16777216,
+      "sha256": "8e2067daa9d6355bf1fa968747cef90b1e13f1d1e0c58d78f57f2a9f6a1f3f2e"
+    },
+    {
+      "path": "recording.tar.gz.part-0001",
+      "bytes": 16777216,
+      "sha256": "57d092247efbc03e4dde15294cbd53b663b098baec75e2b0c9197be63bb40d7e"
+    },
+    {
+      "path": "recording.tar.gz.part-0002",
+      "bytes": 16777216,
+      "sha256": "2c5c341fc1a846303d8949eb45ff9749cd9b50da7fef47b402c914d480efa5a9"
+    },
+    {
+      "path": "recording.tar.gz.part-0003",
+      "bytes": 16777216,
+      "sha256": "283c0c4d91dec3c7af15c9591f914dee079070f9fb2bf3fa9e3217b093ff60d2"
+    },
+    {
+      "path": "recording.tar.gz.part-0004",
+      "bytes": 671376,
+      "sha256": "10f4a0a43ee4852edd2b4a6718450dd1b2b8fa3bdef2e87ce77c67b18b498881"
+    }
+  ]
+}

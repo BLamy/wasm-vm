@@ -710,7 +710,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 - [x] `525.027039000401` [E6-T11d64](epic-6-transcendence/E6-T11d64-dimensional-depth-surfaces.md) — Render original single-layer dimensional depth surfaces *(deps: E6-T11d63, E6-T11d62, E6-T11d60, E6-T11d56)*
 - [x] `525.027039000402` [E6-T11d65](epic-6-transcendence/E6-T11d65-stream-output-shaders.md) — Compile original stream-output layouts into typed native capture varyings *(deps: E6-T11d64, E6-T11d61, E6-T11d46)*
-- [~] `525.027039000403` [E6-T11d66](epic-6-transcendence/E6-T11d66-stream-output-capture.md) — Capture original stream-output buffers through the selected renderer *(deps: E6-T11d65, E6-T11d64, E6-T11d21)*
+- [?] `525.027039000403` [E6-T11d66](epic-6-transcendence/E6-T11d66-stream-output-capture.md) — Capture original stream-output buffers through the selected renderer *(deps: E6-T11d65, E6-T11d64, E6-T11d21)*
 - [x] `525.027039001` [E6-T11d9](epic-6-transcendence/E6-T11d9-standard-primitive-restart.md) — Normalize owned standard index streams for primitive restart *(deps: E6-T11d8)*
 - [x] `525.02703901` [E6-T11d8](epic-6-transcendence/E6-T11d8-standard-core-topologies.md) — Execute bounded standard core line and triangle-fan draws *(deps: E6-T11d7)*
 - [x] `525.0270391` [E6-T11d7](epic-6-transcendence/E6-T11d7-standard-constant-attributes.md) — Fetch standard zero-stride attributes through owned GPU jobs *(deps: E6-T11d6)*
