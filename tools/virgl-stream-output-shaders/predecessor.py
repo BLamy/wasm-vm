@@ -11,6 +11,12 @@ assert 'status: verified' in subprocess.check_output(['git','show',base+':tasks/
 for boundary in ['crates','renderer/virgl-command','tools/guest']:
     assert not subprocess.check_output(['git','diff','--name-only',base,'HEAD','--',boundary],cwd=repo),boundary
 body=subprocess.check_output(['git','archive',base,'renderer/virgl-shader'],cwd=repo);(out/'source.tar').write_bytes(body)
-with tarfile.open(out/'source.tar') as archive:archive.extractall(out/'baseline',filter='data')
+with tarfile.open(out/'source.tar') as archive:
+    for member in archive:
+        target=out/'baseline'/member.name
+        assert not Path(member.name).is_absolute() and '..' not in Path(member.name).parts and (member.isfile() or member.isdir()),member.name
+        if member.isdir():target.mkdir(parents=True,exist_ok=True)
+        else:
+            target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(archive.extractfile(member).read());target.chmod(member.mode&0o777)
 report=dict(status='passed',base=base,held=seals,originalSourceArchiveSha256=module.sha(body),unchangedBoundaries=['crates','renderer/virgl-command','tools/guest'])
 (out/'authentication.json').write_text(json.dumps(report,indent=2)+'\n');print(json.dumps(report))
