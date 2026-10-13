@@ -3,7 +3,7 @@ id: E6-T11d63
 epic: 6
 title: Render original single-layer dimensional color surfaces
 priority: 525.0270390004
-status: implemented
+status: verified
 depends_on: [E6-T11d62, E6-T11d58, E6-T11d56]
 estimate: S
 risk: high
@@ -202,3 +202,102 @@ Actual preparation/publication/confirmation/live/sealing sources, CLI bodies,
 served asset bodies and screenshots are archived. Worker satisfaction is only
 this bounded claim; a fresh critic must judge it. No full production offload,
 depth dimensional surface, transform-feedback, Mesa/Hyprland or MIPS claim follows.
+
+### 2026-10-13 — fresh verifier — VERDICT: verified
+
+Verified bounded runtime head `6a600d7c1cbf7ea7dd2df8a273465c412e13cf49`
+against base `2691b24e6c00478f8d69f81180b6827761de246a`; worker metadata
+head `2be29eca1e9461ec5935e0e1c5b3b582e9ddaadd` changes no runtime input.
+The fresh critic wrote 24 falsifiable predictions before opening evidence.
+All 24 are HELD; zero FAILED and zero NEEDS EVIDENCE. Complete individual
+predictions, observations and citations are in the reviewer seal's
+`predictions.json`, `verdict.json`, and `interrogation-*.json`.
+
+- **P01–P04 custody/profile/wire — HELD.** Fully reopen all 3,926 worker and
+  515 deployment members to the exact task-pinned digests, plus 60,213 prerequisite
+  members and 513 D62 deployment members, through gzip EOF. Independently check
+  all 1,249 frozen recorded source bodies, complete served inputs and original
+  five-word object8 packets. Historical dimensional factories remain closed;
+  selected objects preserve packed mip/layer and native resource generation.
+- **P05–P10 images/native/DMA/schedules/MRT — HELD.** Independently recompute all
+  1,235 worker original planes, including the supplemental 90108 schedule, and
+  compare them to actual native getBufferSubData bytes, every guarded 4096-byte
+  SG body, original 206, response and used-ring bytes. The original/supplemental
+  matrix contains 328 cases; the fresh matrix adds 246 cases at independent seeds
+  324508637, 610839780 and 3735928551. Count actual signaled native polls before
+  deletion: three distinct withholding cycles, not merely three seed numbers.
+  Fresh refusals/recovery, sparse MRT, lifetime/reset and private refresh produce
+  another 1,271 full planes. Example: worker `hardware-54831/run-0006.json.gz`,
+  decoded JSON line 1, SHA256
+  `2b0b3ee91c94deb197418f829bf062791229f3d6067cde45718e004529d6be15`,
+  native draw call 6556 attaches the original volume mip 1, layer 1; collections
+  6644/6707/6770 contain the complete independently predicted original images.
+- **P11–P14 rebind/cache/private ownership/reset — HELD.** Original and fresh
+  native results preserve programs across mip/layer rebind, observe actual native
+  GPU writes with poisoned guest backing and no CPU texture upload, separate old
+  and new generations, preserve exact GPU/backing charges and cancel actual pending
+  fences without late response/used publication. All 18 worker warm/GPU witnesses
+  differ. One extra even-seed cube refresh has a predicted zero model delta;
+  this is explicitly recorded and is not used to prove a changing witness. The
+  promoted test forces original alpha 255 and verifies changing native words for
+  every cube schedule. This adds no runtime requirement or implementation change.
+- **P15–P18 refusals/physical falsifiers — HELD.** Attack every stated bound,
+  range, format, role, dimensional depth, 2D layer and feedback case with independent
+  seeds. The 35 original and 105 fresh refusal/recovery cases preserve owned storage
+  and reject before dimensional attachment/draw. Both worker and fresh wrong-array-
+  layer/wrong-cube-face controls execute GPU work and original DMA, then fail the
+  unchanged oracle; their observed bytes equal the independently predicted wrong
+  attachment images.
+- **P19–P21 sufficiency/cold/deployment — HELD.** Authenticate unchanged compiler,
+  native allocation/DMA/private-copy and Rust transport boundaries. Independently
+  audit the finest V8 partitions: 242 executed, 63 byte-identical authenticated HELD
+  regions, 57 explicit static/unchanged waivers and no executable gaps or hidden
+  narrower zero counter. All 44 original prescribed commands have their expected
+  exits from the final pristine, scrubbed, clean clone; `make verify-E6-T11d63`
+  passes again at the unchanged runtime (43 commands because npm is already installed).
+  All 304 staged bodies, frozen source archive and four inherited boot manifests
+  authenticate; only roadmap.js/sw.js differ from D62 staging. Actual production
+  deployment `06b1aab9-97e9-417d-aa18-6b950dec6624` and a fresh canonical live load
+  prove built/live 127 passed, 0 failed, zero browser errors, absent proof exports
+  and a partial/production-disabled marker.
+- **P22–P23 bounded novel attack/sabotage — HELD.** Promote
+  `renderer/virgl-command/tests/dimensional-color-surface-target-reuse.mjs` and
+  `make verify-E6-T11d63-target-reuse` (after base acceptance prepares the proof
+  package/compiler). The 3→4, 4→7 and 7→3 public-name replacements pass across all
+  three independent seeds: 9 cases and 72 complete original/sampled planes. Old
+  generation 2 and new generation 6 remain distinct, with correct native images,
+  old/new shader program reuse/separation and exact differently sized storage charges.
+  Control `novel-final/run-0000.json.gz`, decoded line 1, SHA256
+  `41384773d911c5eafe42350f11aea110c952f618ef286bba9e9bacde39f53a0e`,
+  witnesses retained volume versus new cube storage. Physical control
+  `novel-sabotage/run-0000.json.gz`, decoded line 1, SHA256
+  `e1a4b897b52f42c0d19ab62fcda39dc3984c619176225fd1723f90d81e88ef60`,
+  redirects native attachment calls 17403/17862 from valid old layer 1 to layer 0.
+  Draws 18312/22928 and native collection 22989 execute; original output 206 and
+  full SG DMA then fail the same complete sampled-image oracle. The observed
+  image equals the independent wrong-layer model. Control/sabotage test and
+  oracle source hashes are identical. Native owners/syncs retire in both runs.
+- **P24 scope — HELD.** No finish or CPU rendering mirror executes. This verdict
+  qualifies only the explicitly selected original single-layer RGBA8 consumer.
+  Depth dimensional surfaces, transform feedback, production capsets/worker/scanout,
+  actual Linux/Mesa/Hyprland and 300-MIPS performance remain unqualified.
+
+**SUITE:** retain the different-target original queue test, complete byte/word and
+padding assertions, generation/program/budget checks and dedicated Make target.
+No runtime code was edited by the verifier. The seal preserves failed verifier
+harness iterations (illegal replacement mip-chain fixture, overly strict static
+waiver/boot-manifest audit and summary-print diagnostic), their source/deltas,
+complete original inputs/results and the subsequent bounded corrections. None
+refuted runtime semantics or required rerunning unrelated gates.
+
+`evidence/virgl-dimensional-color-surfaces/verifier/` seals 6,736 logical members,
+2,492 stored bodies and 4,244 backward links, 180,555,104 compressed bytes.
+Every member/body/link/length/hash reopens through gzip EOF. Manifest SHA256:
+`f048564e0495ce5f984336c5dabf0e1fb3fe90e1d86028c9624530adcde75cfe`;
+index: `6031faa2a965d9e97ea6a6de74618afc2157bb358157ae2da56b391a319339cc`;
+archive: `e027435ec3860953e3310f0762f21885453fdcb69bb59f926a42a4a555fc884a`.
+Commands, complete source/served bodies, wire, native calls, traces/digests,
+original planes, screenshots, fine coverage/provenance and promoted test bodies
+are retained. Policy precedes queue regeneration; the final verifier commit
+records only promotion/evidence/verdict/queue changes. Production graphics work
+continues through the ordered successor boundary.

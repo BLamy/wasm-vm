@@ -2534,3 +2534,8 @@ verify-E6-T11d62:
 .PHONY: verify-E6-T11d63
 verify-E6-T11d63:
 	python3 tools/virgl-dimensional-color-surfaces/verify.py --output "$${VIRGL_DIMENSIONAL_COLOR_SURFACE_EVIDENCE_DIR:-target/evidence/virgl-dimensional-color-surfaces}"
+
+# Run after verify-E6-T11d63 prepares the selected proof package/compiler.
+.PHONY: verify-E6-T11d63-target-reuse
+verify-E6-T11d63-target-reuse:
+	node tools/virgl-dimensional-color-surfaces/target-reuse-browser.mjs --output "$${VIRGL_DIMENSIONAL_COLOR_SURFACE_TARGET_REUSE_EVIDENCE_DIR:-target/evidence/virgl-dimensional-color-surface-target-reuse}"
