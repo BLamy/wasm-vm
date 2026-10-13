@@ -16,9 +16,9 @@ const output=path.resolve(process.argv[3]),dist=path.join(repo,'web/dist');
 const git=(...args)=>execFileSync('git',args,{cwd:repo,encoding:'utf8'}).trim();
 const report={schema:'reviewed-site-assembled-route-record-v1',task:'E0-T27',head:git('rev-parse','HEAD'),
  command:[process.execPath,...process.argv.slice(1)],startedAt:new Date().toISOString(),status:'running',
- actualGuestGpu:false,performanceAuthority:false,errors:[],canceledRequests:[],requests:[],screenshots:[],served:[],steps:[]};
+ actualGuestGpu:false,performanceAuthority:false,errors:[],interruptedResponseBodies:[],canceledRequests:[],requests:[],screenshots:[],served:[],steps:[]};
 await fs.mkdir(output,{recursive:true});
-let browser,server;
+let browser,server,legacyTransition=null;
 const served=new Map(),bodyReads=[];
 const screenshot=async(page,name)=>{const destination=path.join(output,name);await page.screenshot({path:destination,fullPage:false});report.screenshots.push({path:name,sha256:hash(await fs.readFile(destination))});};
 try{
@@ -55,13 +55,17 @@ try{
   page.on('pageerror',e=>report.errors.push({url:page.url(),message:e.message}));
   page.on('requestfailed',r=>{const item={url:r.url(),message:r.failure()?.errorText};
    if(item.message==='net::ERR_ABORTED')report.canceledRequests.push(item);else report.errors.push(item);});
-  page.on('response',r=>{bodyReads.push((async()=>{try{const url=new URL(r.url());if(url.origin!==new URL(base).origin||r.status()!==200)return;
+  page.on('response',r=>{const transition=legacyTransition;bodyReads.push((async()=>{try{const url=new URL(r.url());if(url.origin!==new URL(base).origin||r.status()!==200)return;
    const bytes=await r.body();const rawName=url.pathname==='/'?'index.html':url.pathname.slice(1);
    const name=path.extname(rawName)?rawName:`${rawName}.html`;
    const expected=await fs.readFile(path.join(dist,name));assert.equal(hash(bytes),hash(expected),'served body drift '+name);
    const bodyPath='served/'+name;await fs.mkdir(path.dirname(path.join(output,bodyPath)),{recursive:true});await fs.writeFile(path.join(output,bodyPath),bytes);
    report.requests.push({url:r.url(),path:name,status:r.status(),bodyPath,bytes:bytes.length,sha256:hash(bytes)});
-  }catch(error){if(r.request().failure()?.errorText!=='net::ERR_ABORTED')report.errors.push({url:r.url(),message:error.message});}})());});
+  }catch(error){
+   const item={url:r.url(),message:error.message};
+   if(transition&&/Network.getResponseBody.*No resource with given identifier found/.test(error.message))report.interruptedResponseBodies.push({...item,legacyTransition:transition});
+   else if(r.request().failure()?.errorText!=='net::ERR_ABORTED')report.errors.push(item);
+  }})());});
  };
  const desktop=await browser.newContext({viewport:{width:1280,height:720},deviceScaleFactor:1,serviceWorkers:'block'});
  const page=await desktop.newPage();watch(page);
@@ -122,14 +126,18 @@ try{
  await page.locator('#rm-view-timeline').click();
  assert.equal(await page.locator('#rm-view-timeline').getAttribute('aria-selected'),'true');
  report.steps.push({name:'marketing roadmap current ledger, Gantt/Kanban, search/filter and recorded detail',status:'passed',headline:tasks.headline});
+ legacyTransition='workbench-roadmap-bookmark';
  await page.goto(new URL('app.html#roadmap',base).href,{waitUntil:'load'});
  await page.waitForURL(/\/roadmap(?:\.html)?$/);
  await page.waitForFunction(()=>document.querySelector('#rm-headline')?.textContent.includes('tasks verified'));
+ await Promise.all(bodyReads);
+ legacyTransition='workbench-docs-bookmark';
  await page.goto(new URL('app.html?page=graphics#docs',base).href,{waitUntil:'load'});
  await page.locator('.reader-document h1').waitFor();
  assert.equal(new URL(page.url()).searchParams.get('page'),'graphics');
  assert.match(new URL(page.url()).pathname,/\/docs(?:\.html)?$/);
  assert.equal(await page.locator('iframe').count(),0);
+ await page.waitForLoadState('networkidle');await Promise.all(bodyReads);legacyTransition=null;
  report.steps.push({name:'retired workbench deep links use the canonical marketing roadmap and docs',status:'passed'});
  await page.goto(base,{waitUntil:'load'});
  await page.locator('a[href="./docs.html?page=quickstart"]').first().click();
@@ -181,6 +189,20 @@ try{
  await screenshot(phone,'mobile-reader.png');report.steps.push({name:'assembled mobile motion/search/navigation/reflow',status:'passed'});
  await Promise.all([page.waitForLoadState('networkidle'),phone.waitForLoadState('networkidle')]);
  await Promise.all(bodyReads);
+ // A redirect may retire an unchanged module's CDP resource before its body
+ // can be read. Keep that diagnostic, and require a successful original-body
+ // capture from the normal initialized app plus unchanged baseline bytes.
+ const unchangedRedirectModules=new Set(['ide.js','vendor/xterm/xterm.js','omarchy-startup-state.js','coi-serviceworker-register.js','cpu-isolation.js']);
+ for(const item of report.interruptedResponseBodies){
+  const name=new URL(item.url).pathname.slice(1);
+  assert.ok(unchangedRedirectModules.has(name),'unproven interrupted response '+name);
+  const current=await fs.readFile(path.join(dist,name));
+  const baseline=execFileSync('git',['show',`2aca65e9328aa1433fb516511ca554fdd96b422d:web/dist/${name}`],{cwd:repo,maxBuffer:16*1024*1024});
+  assert.equal(hash(current),hash(baseline),'interrupted response is changed routing code '+name);
+  const captured=report.requests.find(row=>row.path===name&&row.sha256===hash(current));
+  assert.ok(captured,'no complete original body for interrupted unchanged module '+name);
+  item.heldBodyPath=captured.bodyPath;item.sha256=captured.sha256;item.baselineHead='2aca65e9328aa1433fb516511ca554fdd96b422d';
+ }
  await Promise.all([desktop.close(),mobile.close()]);
  assert.deepEqual(report.errors,[]);assert.equal(git('rev-parse','HEAD'),report.head);assert.equal(git('status','--porcelain','--untracked-files=no'),'');
  report.status='passed';console.log(JSON.stringify({status:report.status,task:report.task,head:report.head,pages:154,records:1995,steps:report.steps.length,errors:0}));
