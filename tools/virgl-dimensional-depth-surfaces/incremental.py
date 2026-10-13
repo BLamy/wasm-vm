@@ -38,7 +38,7 @@ def verify(repo, root, head, env):
             relative = pin['path']
             body = (root / name / 'source' / relative).read_bytes()
             assert len(body) == pin['bytes'] and sha(body) == pin['sha256']
-            if not relative.startswith('target/'):
+            if not relative.startswith(('target/', 'renderer/virgl-shader/build/wasm/')):
                 assert body == (repo / relative).read_bytes()
                 assert body == subprocess.check_output(['git', 'show', head + ':' + relative], cwd=repo)
     carried = [c for c in old_commands[:-1] if c['name'] not in {'policy', 'diff-format', 'predecessor', 'python-syntax', 'physical-audit'}]
@@ -71,6 +71,11 @@ def verify(repo, root, head, env):
     run('diff-format', ['git', 'diff', '--check', 'e8eb963e821104f87aeca34dd2ac810c2d2794dd', 'HEAD'])
     run('proof-harness-syntax', ['python3', '-m', 'py_compile', *map(str, (repo / 'tools/virgl-dimensional-depth-surfaces').glob('*.py'))])
     run('predecessor', ['python3', 'tools/virgl-dimensional-depth-surfaces/predecessor.py', str(root / 'predecessor')])
+    for name in names:
+        report = json.loads((root / name / 'report.json').read_bytes())
+        for pin in report['sources']:
+            if pin['path'].startswith('renderer/virgl-shader/build/wasm/'):
+                assert (root / name / 'source' / pin['path']).read_bytes() == (repo / pin['path']).read_bytes(), 'generated compiler must match the independently authenticated D61 artifact'
     run('physical-audit', ['python3', 'tools/virgl-dimensional-depth-surfaces/audit.py', str(root)])
     run('coverage-audit', ['python3', 'tools/virgl-dimensional-depth-surfaces/coverage.py', str(root)])
     run('default-dist-build', ['make', 'web-dist'])
