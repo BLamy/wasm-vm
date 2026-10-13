@@ -1,0 +1,3820 @@
+{
+  "schema": "stream-output-shader-independent-alias-browser-v1",
+  "task": "E6-T11d65",
+  "status": "failed",
+  "command": [
+    "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+    "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/virgl-stream-output-shaders/alias-browser.mjs",
+    "--output",
+    "evidence/virgl-stream-output-shaders/verifier/alias-reversed",
+    "--authority",
+    "target/evidence/d65-critic-opened-01/worker/cold/recording",
+    "--seeds",
+    "1779033703",
+    "--fault",
+    "true"
+  ],
+  "submission": "0c167360a8d01a1e51b7be1309d6caf70fbff611",
+  "trackedChanges": "",
+  "authority": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/d65-critic-opened-01/worker/cold/recording",
+  "seeds": [
+    1779033703
+  ],
+  "fault": true,
+  "actualGuest": false,
+  "productionAuthority": false,
+  "startedAt": "2026-10-13T21:00:04.845Z",
+  "hardware": {
+    "gpu": {
+      "devices": [
+        {
+          "vendorId": 4203,
+          "deviceId": 0,
+          "vendorString": "Google Inc. (Apple)",
+          "deviceString": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+          "driverVendor": "Apple",
+          "driverVersion": "26.6.2"
+        }
+      ],
+      "auxAttributes": {
+        "amdSwitchable": false,
+        "canSupportThreadedTextureMailbox": false,
+        "directRenderingVersion": "",
+        "displayType": "ANGLE_METAL",
+        "glExtensions": "GL_AMD_performance_monitor GL_ANGLE_base_vertex_base_instance_shader_builtin GL_ANGLE_blob_cache GL_ANGLE_client_arrays GL_ANGLE_clip_cull_distance GL_ANGLE_compressed_texture_etc GL_ANGLE_depth_texture GL_ANGLE_framebuffer_blit GL_ANGLE_framebuffer_multisample GL_ANGLE_get_serialized_context_string GL_ANGLE_get_tex_level_parameter GL_ANGLE_instanced_arrays GL_ANGLE_memory_size GL_ANGLE_pack_reverse_row_order GL_ANGLE_polygon_mode GL_ANGLE_program_binary_readiness_query GL_ANGLE_program_cache_control GL_ANGLE_provoking_vertex GL_ANGLE_renderability_validation GL_ANGLE_request_extension GL_ANGLE_rgbx_internal_format GL_ANGLE_robust_client_memory GL_ANGLE_shader_pixel_local_storage GL_ANGLE_shader_pixel_local_storage_coherent GL_ANGLE_stencil_texturing GL_ANGLE_texture_compression_dxt3 GL_ANGLE_texture_compression_dxt5 GL_ANGLE_texture_multisample GL_ANGLE_translated_shader_source GL_APPLE_clip_distance GL_ARM_rgba8 GL_CHROMIUM_bind_generates_resource GL_CHROMIUM_bind_uniform_location GL_CHROMIUM_copy_texture GL_CHROMIUM_lose_context GL_EXT_base_instance GL_EXT_blend_func_extended GL_EXT_blend_minmax GL_EXT_clip_control GL_EXT_color_buffer_float GL_EXT_color_buffer_half_float GL_EXT_compressed_ETC1_RGB8_sub_texture GL_EXT_conservative_depth GL_EXT_debug_label GL_EXT_debug_marker GL_EXT_depth_clamp GL_EXT_discard_framebuffer GL_EXT_disjoint_timer_query GL_EXT_draw_buffers GL_EXT_draw_buffers_indexed GL_EXT_draw_elements_base_vertex GL_EXT_float_blend GL_EXT_frag_depth GL_EXT_instanced_arrays GL_EXT_map_buffer_range GL_EXT_multisampled_render_to_texture GL_EXT_occlusion_query_boolean GL_EXT_polygon_offset_clamp GL_EXT_pvrtc_sRGB GL_EXT_read_format_bgra GL_EXT_render_snorm GL_EXT_robustness GL_EXT_sRGB GL_EXT_shader_texture_lod GL_EXT_texture_compression_bptc GL_EXT_texture_compression_dxt1 GL_EXT_texture_compression_rgtc GL_EXT_texture_compression_s3tc_srgb GL_EXT_texture_filter_anisotropic GL_EXT_texture_format_BGRA8888 GL_EXT_texture_mirror_clamp_to_edge GL_EXT_texture_norm16 GL_EXT_texture_rg GL_EXT_texture_sRGB_R8 GL_EXT_texture_sRGB_RG8 GL_EXT_texture_shadow_lod GL_EXT_texture_storage GL_IMG_texture_compression_pvrtc GL_KHR_debug GL_KHR_parallel_shader_compile GL_KHR_robustness GL_KHR_texture_compression_astc_hdr GL_KHR_texture_compression_astc_ldr GL_KHR_texture_compression_astc_sliced_3d GL_MESA_framebuffer_flip_y GL_NV_fence GL_NV_framebuffer_blit GL_NV_pixel_buffer_object GL_NV_shader_noperspective_interpolation GL_OES_EGL_image GL_OES_EGL_sync GL_OES_compressed_ETC1_RGB8_texture GL_OES_depth24 GL_OES_depth32 GL_OES_depth_texture GL_OES_draw_buffers_indexed GL_OES_draw_elements_base_vertex GL_OES_element_index_uint GL_OES_fbo_render_mipmap GL_OES_get_program_binary GL_OES_mapbuffer GL_OES_packed_depth_stencil GL_OES_required_internalformat GL_OES_rgb8_rgba8 GL_OES_sample_variables GL_OES_shader_multisample_interpolation GL_OES_standard_derivatives GL_OES_surfaceless_context GL_OES_texture_3D GL_OES_texture_float GL_OES_texture_float_linear GL_OES_texture_half_float GL_OES_texture_half_float_linear GL_OES_texture_npot GL_OES_texture_stencil8 GL_OES_vertex_array_object GL_QCOM_render_shared_exponent ",
+        "glImplementationParts": "(gl=egl-angle,angle=metal)",
+        "glRenderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+        "glResetNotificationStrategy": 33362,
+        "glVendor": "Google Inc. (Apple)",
+        "glVersion": "OpenGL ES 3.0 (ANGLE 2.1.28853 git hash: 170484eea03a)",
+        "glWsExtensions": "",
+        "glWsVendor": "",
+        "glWsVersion": "",
+        "inProcessGpu": false,
+        "initializationTime": 0.030648,
+        "isAsan": false,
+        "isClangCoverage": false,
+        "jpegDecodeAcceleratorSupported": false,
+        "maxMsaaSamples": "4",
+        "optimus": false,
+        "passthroughCmdDecoder": true,
+        "pixelShaderVersion": "3.00",
+        "processCrashCount": 0,
+        "sandboxed": false,
+        "skiaBackendType": "GraphiteDawnMetal",
+        "subpixelFontRendering": true,
+        "targetCpuBits": 64,
+        "vertexShaderVersion": "3.00",
+        "visibilityCallbackCallCount": 0
+      },
+      "featureStatus": {
+        "2d_canvas": "enabled",
+        "direct_rendering_display_compositor": "disabled_off_ok",
+        "gpu_compositing": "enabled",
+        "multiple_raster_threads": "enabled_on",
+        "opengl": "enabled_on",
+        "rasterization": "enabled",
+        "raw_draw": "disabled_off_ok",
+        "skia_graphite": "enabled_on",
+        "trees_in_viz": "disabled_off",
+        "video_decode": "enabled",
+        "video_encode": "enabled",
+        "webgl": "enabled",
+        "webgpu": "enabled",
+        "webnn": "disabled_off"
+      },
+      "driverBugWorkarounds": [
+        "disable_2d_canvas_auto_flush",
+        "enable_webgl_timer_query_extensions",
+        "disabled_extension_GL_KHR_blend_equation_advanced",
+        "disabled_extension_GL_KHR_blend_equation_advanced_coherent"
+      ],
+      "videoDecoding": [],
+      "videoEncoding": []
+    },
+    "modelName": "Mac",
+    "modelVersion": "16.6",
+    "commandLine": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=ImprovedCookieControls,LazyFrameLoading,GlobalMediaControls,DestroyProfileOnBrowserClose,MediaRouter,DialMediaRouteProvider,AcceptCHFrame,AutoExpandDetailsElement,CertificateTransparencyComponentUpdater,AvoidUnnecessaryBeforeUnloadCheckSync,Translate,HttpsUpgrades,PaintHolding,ThirdPartyStoragePartitioning,LensOverlay,PlzDedicatedWorker --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --enable-automation --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --enable-use-zoom-for-dsf=false --no-sandbox --enable-gpu --user-data-dir=/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/playwright_chromiumdev_profile-qbUO9k --remote-debugging-pipe --no-startup-window --flag-switches-begin --flag-switches-end"
+  },
+  "browserCommand": {
+    "arguments": [
+      "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+      "--disable-field-trial-config",
+      "--disable-background-networking",
+      "--disable-background-timer-throttling",
+      "--disable-backgrounding-occluded-windows",
+      "--disable-back-forward-cache",
+      "--disable-breakpad",
+      "--disable-client-side-phishing-detection",
+      "--disable-component-extensions-with-background-pages",
+      "--disable-component-update",
+      "--no-default-browser-check",
+      "--disable-default-apps",
+      "--disable-dev-shm-usage",
+      "--disable-extensions",
+      "--disable-features=ImprovedCookieControls,LazyFrameLoading,GlobalMediaControls,DestroyProfileOnBrowserClose,MediaRouter,DialMediaRouteProvider,AcceptCHFrame,AutoExpandDetailsElement,CertificateTransparencyComponentUpdater,AvoidUnnecessaryBeforeUnloadCheckSync,Translate,HttpsUpgrades,PaintHolding,ThirdPartyStoragePartitioning,LensOverlay,PlzDedicatedWorker",
+      "--allow-pre-commit-input",
+      "--disable-hang-monitor",
+      "--disable-ipc-flooding-protection",
+      "--disable-popup-blocking",
+      "--disable-prompt-on-repost",
+      "--disable-renderer-backgrounding",
+      "--force-color-profile=srgb",
+      "--metrics-recording-only",
+      "--no-first-run",
+      "--enable-automation",
+      "--password-store=basic",
+      "--use-mock-keychain",
+      "--no-service-autorun",
+      "--export-tagged-pdf",
+      "--disable-search-engine-choice-screen",
+      "--unsafely-disable-devtools-self-xss-warnings",
+      "--enable-use-zoom-for-dsf=false",
+      "--no-sandbox",
+      "--enable-gpu",
+      "--user-data-dir=/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/playwright_chromiumdev_profile-qbUO9k",
+      "--remote-debugging-pipe",
+      "--no-startup-window",
+      "--flag-switches-begin",
+      "--flag-switches-end"
+    ]
+  },
+  "browserVersion": "155.0.8059.40",
+  "headless": false,
+  "failure": {
+    "message": "page.evaluate: Error: complete original alias word oracle failed after native readback\n    at eval (eval at evaluate (:234:30), <anonymous>:45:35)\n    at async <anonymous>:260:30",
+    "stack": "page.evaluate: Error: complete original alias word oracle failed after native readback\n    at eval (eval at evaluate (:234:30), <anonymous>:45:35)\n    at async <anonymous>:260:30\n    at /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/virgl-stream-output-shaders/alias-browser.mjs:42:27"
+  },
+  "partial": {
+    "rows": [
+      {
+        "schedule": 0,
+        "seed": 1779033703,
+        "buffer": 3,
+        "originalWords": [
+          5,
+          11,
+          23,
+          35,
+          64,
+          4155167,
+          0,
+          1124639,
+          0,
+          330783,
+          0,
+          1920287,
+          0,
+          484383,
+          0
+        ],
+        "callerAfterMutation": [
+          4294967295,
+          4294967295,
+          4294967295,
+          4294967295,
+          4294967295,
+          4294967295,
+          4294967295,
+          4294967295,
+          4294967295,
+          4294967295,
+          4294967295,
+          4294967295,
+          4294967295,
+          4294967295,
+          4294967295
+        ],
+        "request": {
+          "vertexText": "VERT\nDCL CONST[0..1]\nDCL TEMP[0]\nDCL OUT[0], POSITION\nDCL OUT[31], GENERIC[0]\nIMM[0] INT32 {0,0,0,0}\n0: MOV OUT[0], CONST[0]\n1: MOV TEMP[0], IMM[0]\n2: MOV TEMP[0].xyz, CONST[1]\n3: MOV TEMP[0].yz, TEMP[0].wxyz\n4: MOV OUT[31], TEMP[0]\n5: END\n",
+          "fragmentText": "FRAG\nDCL OUT[0], COLOR\nIMM[0] FLT32 {0.0,0.0,0.0,1.0}\n0: MOV OUT[0], IMM[0]\n1: END\n",
+          "signedMask": 0,
+          "unsignedMask": 0,
+          "packedSignedMask": 0,
+          "packedNormalizedMask": 0,
+          "bufferZeroMask": 0,
+          "signedColorMask": 0,
+          "unsignedColorMask": 0,
+          "streamOutputWords": [
+            5,
+            11,
+            23,
+            35,
+            64,
+            4155167,
+            0,
+            1124639,
+            0,
+            330783,
+            0,
+            1920287,
+            0,
+            484383,
+            0
+          ],
+          "captureBuffer": 3
+        },
+        "response": {
+          "ok": true,
+          "vertex": {
+            "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nflat out highp uint wv_so_0;\nflat out highp uint wv_so_4;\nsmooth out vec4 vso_g0;\nuniform uvec4 vsconst0[2];\nlayout(std140) uniform VirglBlock {\nvec4 clipp[8];\nuint stipple_pattern[32];\nfloat winsys_adjust_y;\nfloat alpha_ref_val;\nbool clip_plane_enabled;\nint drawid_base;\n};\nuniform vec2 wv_point_size;\nconst uvec4 imm0 = uvec4(0u, 0u, 0u, 0u);\nvoid main() {\nbool flow_condition;\nuvec4 t0;\nuvec4 o0;\nuvec4 o31 = uvec4(0u);\n{\nuvec4 a = (vsconst0[0]).xyzw;\nuvec4 r = a;\no0.xyzw = r.xyzw;\n}\n{\nuvec4 a = (imm0).xyzw;\nuvec4 r = a;\nt0.xyzw = r.xyzw;\n}\n{\nuvec4 a = (vsconst0[1]).xyzw;\nuvec4 r = a;\nt0.xyz = r.xyz;\n}\n{\nuvec4 a = (t0).wxyz;\nuvec4 r = a;\nt0.yz = r.yz;\n}\n{\nuvec4 a = (t0).xyzw;\nuvec4 r = a;\no31.xyzw = r.xyzw;\n}\nwv_so_0 = o31.w;\nwv_so_4 = o31.x;\ngl_Position = uintBitsToFloat(o0);\nvso_g0 = uintBitsToFloat(o31);\ngl_Position.y *= winsys_adjust_y;\ngl_PointSize = wv_point_size.y > 0.5 ? 1.0 : wv_point_size.x;\n}\n",
+            "metadata": {
+              "profile": "virgl-webgl2-standard-stream-output-gles3-v1",
+              "stage": "vertex",
+              "inputs": [],
+              "outputs": [
+                {
+                  "index": 0,
+                  "name": "gl_Position",
+                  "type": "vec4",
+                  "semantic": "POSITION",
+                  "semanticIndex": 0,
+                  "componentMask": 15,
+                  "syntacticWriteMask": 15
+                },
+                {
+                  "index": 31,
+                  "name": "vso_g0",
+                  "type": "vec4",
+                  "semantic": "GENERIC",
+                  "semanticIndex": 0,
+                  "componentMask": 15,
+                  "syntacticWriteMask": 15,
+                  "interpolation": "smooth"
+                }
+              ],
+              "attributes": [],
+              "systemValues": [],
+              "uniforms": [
+                {
+                  "name": "vsconst0",
+                  "type": "uvec4[]",
+                  "count": 2,
+                  "encoding": "raw-32bit-words"
+                }
+              ],
+              "samplers": [],
+              "uniformBlocks": [
+                {
+                  "name": "VirglBlock",
+                  "byteLength": 656,
+                  "members": [
+                    {
+                      "name": "winsys_adjust_y",
+                      "offset": 640,
+                      "type": "float",
+                      "default": 1
+                    }
+                  ]
+                }
+              ],
+              "rasterUniforms": [
+                {
+                  "name": "wv_point_size",
+                  "type": "vec2",
+                  "semantic": "POINT_SIZE"
+                }
+              ],
+              "instanceUniforms": [],
+              "shadowUniforms": [],
+              "guestUniformBlocks": [],
+              "textureQueries": [],
+              "colorOutputMasks": {
+                "signedMask": 0,
+                "unsignedMask": 0
+              },
+              "streamOutput": {
+                "encoding": "raw-32bit-words",
+                "captureBuffer": 3,
+                "strides": [
+                  11,
+                  23,
+                  35,
+                  64
+                ],
+                "outputs": [
+                  {
+                    "registerIndex": 31,
+                    "startComponent": 3,
+                    "numComponents": 1,
+                    "outputBuffer": 3,
+                    "destinationOffset": 63,
+                    "stream": 0
+                  },
+                  {
+                    "registerIndex": 31,
+                    "startComponent": 1,
+                    "numComponents": 2,
+                    "outputBuffer": 1,
+                    "destinationOffset": 17,
+                    "stream": 0
+                  },
+                  {
+                    "registerIndex": 31,
+                    "startComponent": 0,
+                    "numComponents": 3,
+                    "outputBuffer": 0,
+                    "destinationOffset": 5,
+                    "stream": 0
+                  },
+                  {
+                    "registerIndex": 31,
+                    "startComponent": 1,
+                    "numComponents": 3,
+                    "outputBuffer": 2,
+                    "destinationOffset": 29,
+                    "stream": 0
+                  },
+                  {
+                    "registerIndex": 31,
+                    "startComponent": 0,
+                    "numComponents": 1,
+                    "outputBuffer": 3,
+                    "destinationOffset": 7,
+                    "stream": 0
+                  }
+                ],
+                "varyings": [
+                  {
+                    "outputIndex": 0,
+                    "name": "wv_so_0",
+                    "type": "uint",
+                    "components": 1,
+                    "packedOffset": 0
+                  },
+                  {
+                    "outputIndex": 4,
+                    "name": "wv_so_4",
+                    "type": "uint",
+                    "components": 1,
+                    "packedOffset": 4
+                  }
+                ],
+                "packedStrideBytes": 8
+              },
+              "broadcastColor0": false,
+              "standardSemantics": {
+                "kind": "native-gles3-highp-v1",
+                "precision": "native-highp",
+                "undefinedDomains": "native-gles3",
+                "preciseQualifier": "no-gpu-shader5",
+                "registerStorage": "uvec4",
+                "flatVaryingStorage": "uvec4",
+                "scalarResults": "tgsi-x-replicated",
+                "exactAuthority": false,
+                "gpuExecutionBound": false
+              }
+            }
+          },
+          "fragment": {
+            "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nlayout(location=0) out vec4 fsout_c0;\nconst uvec4 imm0 = uvec4(0u, 0u, 0u, 1065353216u);\nvoid main() {\nbool flow_condition;\nuvec4 o0;\n{\nuvec4 a = (imm0).xyzw;\nuvec4 r = a;\no0.xyzw = r.xyzw;\n}\nfsout_c0 = uintBitsToFloat(o0);\n}\n",
+            "metadata": {
+              "profile": "virgl-webgl2-standard-stream-output-gles3-v1",
+              "stage": "fragment",
+              "inputs": [],
+              "outputs": [
+                {
+                  "index": 0,
+                  "name": "fsout_c0",
+                  "type": "vec4",
+                  "semantic": "COLOR",
+                  "semanticIndex": 0,
+                  "componentMask": 15,
+                  "syntacticWriteMask": 15
+                }
+              ],
+              "attributes": [],
+              "systemValues": [],
+              "uniforms": [],
+              "samplers": [],
+              "uniformBlocks": [],
+              "rasterUniforms": [],
+              "instanceUniforms": [],
+              "shadowUniforms": [],
+              "guestUniformBlocks": [],
+              "textureQueries": [],
+              "colorOutputMasks": {
+                "signedMask": 0,
+                "unsignedMask": 0
+              },
+              "streamOutput": {
+                "encoding": "raw-32bit-words",
+                "captureBuffer": 3,
+                "strides": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "outputs": [],
+                "varyings": [],
+                "packedStrideBytes": 0
+              },
+              "broadcastColor0": false,
+              "standardSemantics": {
+                "kind": "native-gles3-highp-v1",
+                "precision": "native-highp",
+                "undefinedDomains": "native-gles3",
+                "preciseQualifier": "no-gpu-shader5",
+                "registerStorage": "uvec4",
+                "flatVaryingStorage": "uvec4",
+                "scalarResults": "tgsi-x-replicated",
+                "exactAuthority": false,
+                "gpuExecutionBound": false
+              }
+            }
+          },
+          "interfaceKey": "standard-generic-interpolation-v1:"
+        },
+        "wanted": {
+          "encoding": "raw-32bit-words",
+          "captureBuffer": 3,
+          "strides": [
+            11,
+            23,
+            35,
+            64
+          ],
+          "outputs": [
+            {
+              "registerIndex": 31,
+              "startComponent": 3,
+              "numComponents": 1,
+              "outputBuffer": 3,
+              "destinationOffset": 63,
+              "stream": 0
+            },
+            {
+              "registerIndex": 31,
+              "startComponent": 1,
+              "numComponents": 2,
+              "outputBuffer": 1,
+              "destinationOffset": 17,
+              "stream": 0
+            },
+            {
+              "registerIndex": 31,
+              "startComponent": 0,
+              "numComponents": 3,
+              "outputBuffer": 0,
+              "destinationOffset": 5,
+              "stream": 0
+            },
+            {
+              "registerIndex": 31,
+              "startComponent": 1,
+              "numComponents": 3,
+              "outputBuffer": 2,
+              "destinationOffset": 29,
+              "stream": 0
+            },
+            {
+              "registerIndex": 31,
+              "startComponent": 0,
+              "numComponents": 1,
+              "outputBuffer": 3,
+              "destinationOffset": 7,
+              "stream": 0
+            }
+          ],
+          "varyings": [
+            {
+              "outputIndex": 0,
+              "name": "wv_so_0",
+              "type": "uint",
+              "components": 1,
+              "packedOffset": 0
+            },
+            {
+              "outputIndex": 4,
+              "name": "wv_so_4",
+              "type": "uint",
+              "components": 1,
+              "packedOffset": 4
+            }
+          ],
+          "packedStrideBytes": 8
+        },
+        "source": [
+          2147483648,
+          2143348327,
+          3735938663,
+          4294967295
+        ],
+        "position": [
+          0,
+          2147483648,
+          0,
+          1065353216
+        ],
+        "original": [
+          2147483648,
+          2147483648,
+          2143348327,
+          0
+        ],
+        "allocationsAfterCompile": 6,
+        "liveAfterCompile": [],
+        "nativeStart": 0,
+        "completedNativeReadback": true,
+        "expected": [
+          163,
+          163,
+          163,
+          163,
+          163,
+          163,
+          163,
+          163,
+          163,
+          163,
+          163,
+          163,
+          163,
+          163,
+          163,
+          163,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          128,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          128,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          128,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          128,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          128,
+          163,
+          163,
+          163,
+          163,
+          163,
+          163,
+          163,
+          163,
+          163,
+          163,
+          163,
+          163,
+          163,
+          163,
+          163,
+          163
+        ],
+        "actual": [
+          163,
+          163,
+          163,
+          163,
+          163,
+          163,
+          163,
+          163,
+          163,
+          163,
+          163,
+          163,
+          163,
+          163,
+          163,
+          163,
+          0,
+          0,
+          0,
+          128,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          128,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          128,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          128,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          128,
+          0,
+          0,
+          0,
+          0,
+          163,
+          163,
+          163,
+          163,
+          163,
+          163,
+          163,
+          163,
+          163,
+          163,
+          163,
+          163,
+          163,
+          163,
+          163,
+          163
+        ],
+        "fence": 37148,
+        "vertices": 5,
+        "nativeVaryings": [
+          {
+            "name": "wv_so_4",
+            "type": 5125,
+            "size": 1
+          },
+          {
+            "name": "wv_so_0",
+            "type": 5125,
+            "size": 1
+          }
+        ],
+        "mismatches": [
+          {
+            "offset": 19,
+            "expected": 0,
+            "actual": 128
+          },
+          {
+            "offset": 23,
+            "expected": 128,
+            "actual": 0
+          },
+          {
+            "offset": 27,
+            "expected": 0,
+            "actual": 128
+          },
+          {
+            "offset": 31,
+            "expected": 128,
+            "actual": 0
+          },
+          {
+            "offset": 35,
+            "expected": 0,
+            "actual": 128
+          },
+          {
+            "offset": 39,
+            "expected": 128,
+            "actual": 0
+          },
+          {
+            "offset": 43,
+            "expected": 0,
+            "actual": 128
+          },
+          {
+            "offset": 47,
+            "expected": 128,
+            "actual": 0
+          },
+          {
+            "offset": 51,
+            "expected": 0,
+            "actual": 128
+          },
+          {
+            "offset": 55,
+            "expected": 128,
+            "actual": 0
+          }
+        ],
+        "nativeEnd": 65
+      }
+    ],
+    "nativeCalls": [
+      {
+        "sequence": 0,
+        "row": 0,
+        "method": "createProgram",
+        "args": [],
+        "delivered": [],
+        "result": {
+          "object": 1,
+          "type": "WebGLProgram"
+        }
+      },
+      {
+        "sequence": 1,
+        "row": 0,
+        "method": "createShader",
+        "args": [
+          35633
+        ],
+        "delivered": [
+          35633
+        ],
+        "result": {
+          "object": 2,
+          "type": "WebGLShader"
+        }
+      },
+      {
+        "sequence": 2,
+        "row": 0,
+        "method": "shaderSource",
+        "args": [
+          {
+            "object": 2,
+            "type": "WebGLShader"
+          },
+          "#version 300 es\nprecision highp float;\nprecision highp int;\nflat out highp uint wv_so_0;\nflat out highp uint wv_so_4;\nsmooth out vec4 vso_g0;\nuniform uvec4 vsconst0[2];\nlayout(std140) uniform VirglBlock {\nvec4 clipp[8];\nuint stipple_pattern[32];\nfloat winsys_adjust_y;\nfloat alpha_ref_val;\nbool clip_plane_enabled;\nint drawid_base;\n};\nuniform vec2 wv_point_size;\nconst uvec4 imm0 = uvec4(0u, 0u, 0u, 0u);\nvoid main() {\nbool flow_condition;\nuvec4 t0;\nuvec4 o0;\nuvec4 o31 = uvec4(0u);\n{\nuvec4 a = (vsconst0[0]).xyzw;\nuvec4 r = a;\no0.xyzw = r.xyzw;\n}\n{\nuvec4 a = (imm0).xyzw;\nuvec4 r = a;\nt0.xyzw = r.xyzw;\n}\n{\nuvec4 a = (vsconst0[1]).xyzw;\nuvec4 r = a;\nt0.xyz = r.xyz;\n}\n{\nuvec4 a = (t0).wxyz;\nuvec4 r = a;\nt0.yz = r.yz;\n}\n{\nuvec4 a = (t0).xyzw;\nuvec4 r = a;\no31.xyzw = r.xyzw;\n}\nwv_so_0 = o31.w;\nwv_so_4 = o31.x;\ngl_Position = uintBitsToFloat(o0);\nvso_g0 = uintBitsToFloat(o31);\ngl_Position.y *= winsys_adjust_y;\ngl_PointSize = wv_point_size.y > 0.5 ? 1.0 : wv_point_size.x;\n}\n"
+        ],
+        "delivered": [
+          {
+            "object": 2,
+            "type": "WebGLShader"
+          },
+          "#version 300 es\nprecision highp float;\nprecision highp int;\nflat out highp uint wv_so_0;\nflat out highp uint wv_so_4;\nsmooth out vec4 vso_g0;\nuniform uvec4 vsconst0[2];\nlayout(std140) uniform VirglBlock {\nvec4 clipp[8];\nuint stipple_pattern[32];\nfloat winsys_adjust_y;\nfloat alpha_ref_val;\nbool clip_plane_enabled;\nint drawid_base;\n};\nuniform vec2 wv_point_size;\nconst uvec4 imm0 = uvec4(0u, 0u, 0u, 0u);\nvoid main() {\nbool flow_condition;\nuvec4 t0;\nuvec4 o0;\nuvec4 o31 = uvec4(0u);\n{\nuvec4 a = (vsconst0[0]).xyzw;\nuvec4 r = a;\no0.xyzw = r.xyzw;\n}\n{\nuvec4 a = (imm0).xyzw;\nuvec4 r = a;\nt0.xyzw = r.xyzw;\n}\n{\nuvec4 a = (vsconst0[1]).xyzw;\nuvec4 r = a;\nt0.xyz = r.xyz;\n}\n{\nuvec4 a = (t0).wxyz;\nuvec4 r = a;\nt0.yz = r.yz;\n}\n{\nuvec4 a = (t0).xyzw;\nuvec4 r = a;\no31.xyzw = r.xyzw;\n}\nwv_so_0 = o31.w;\nwv_so_4 = o31.x;\ngl_Position = uintBitsToFloat(o0);\nvso_g0 = uintBitsToFloat(o31);\ngl_Position.y *= winsys_adjust_y;\ngl_PointSize = wv_point_size.y > 0.5 ? 1.0 : wv_point_size.x;\n}\n"
+        ],
+        "result": {
+          "undefined": true
+        }
+      },
+      {
+        "sequence": 3,
+        "row": 0,
+        "method": "compileShader",
+        "args": [
+          {
+            "object": 2,
+            "type": "WebGLShader"
+          }
+        ],
+        "delivered": [
+          {
+            "object": 2,
+            "type": "WebGLShader"
+          }
+        ],
+        "result": {
+          "undefined": true
+        }
+      },
+      {
+        "sequence": 4,
+        "row": 0,
+        "method": "getShaderParameter",
+        "args": [
+          {
+            "object": 2,
+            "type": "WebGLShader"
+          },
+          35713
+        ],
+        "delivered": [
+          {
+            "object": 2,
+            "type": "WebGLShader"
+          },
+          35713
+        ],
+        "result": true
+      },
+      {
+        "sequence": 5,
+        "row": 0,
+        "method": "attachShader",
+        "args": [
+          {
+            "object": 1,
+            "type": "WebGLProgram"
+          },
+          {
+            "object": 2,
+            "type": "WebGLShader"
+          }
+        ],
+        "delivered": [
+          {
+            "object": 1,
+            "type": "WebGLProgram"
+          },
+          {
+            "object": 2,
+            "type": "WebGLShader"
+          }
+        ],
+        "result": {
+          "undefined": true
+        }
+      },
+      {
+        "sequence": 6,
+        "row": 0,
+        "method": "createShader",
+        "args": [
+          35632
+        ],
+        "delivered": [
+          35632
+        ],
+        "result": {
+          "object": 3,
+          "type": "WebGLShader"
+        }
+      },
+      {
+        "sequence": 7,
+        "row": 0,
+        "method": "shaderSource",
+        "args": [
+          {
+            "object": 3,
+            "type": "WebGLShader"
+          },
+          "#version 300 es\nprecision highp float;\nprecision highp int;\nlayout(location=0) out vec4 fsout_c0;\nconst uvec4 imm0 = uvec4(0u, 0u, 0u, 1065353216u);\nvoid main() {\nbool flow_condition;\nuvec4 o0;\n{\nuvec4 a = (imm0).xyzw;\nuvec4 r = a;\no0.xyzw = r.xyzw;\n}\nfsout_c0 = uintBitsToFloat(o0);\n}\n"
+        ],
+        "delivered": [
+          {
+            "object": 3,
+            "type": "WebGLShader"
+          },
+          "#version 300 es\nprecision highp float;\nprecision highp int;\nlayout(location=0) out vec4 fsout_c0;\nconst uvec4 imm0 = uvec4(0u, 0u, 0u, 1065353216u);\nvoid main() {\nbool flow_condition;\nuvec4 o0;\n{\nuvec4 a = (imm0).xyzw;\nuvec4 r = a;\no0.xyzw = r.xyzw;\n}\nfsout_c0 = uintBitsToFloat(o0);\n}\n"
+        ],
+        "result": {
+          "undefined": true
+        }
+      },
+      {
+        "sequence": 8,
+        "row": 0,
+        "method": "compileShader",
+        "args": [
+          {
+            "object": 3,
+            "type": "WebGLShader"
+          }
+        ],
+        "delivered": [
+          {
+            "object": 3,
+            "type": "WebGLShader"
+          }
+        ],
+        "result": {
+          "undefined": true
+        }
+      },
+      {
+        "sequence": 9,
+        "row": 0,
+        "method": "getShaderParameter",
+        "args": [
+          {
+            "object": 3,
+            "type": "WebGLShader"
+          },
+          35713
+        ],
+        "delivered": [
+          {
+            "object": 3,
+            "type": "WebGLShader"
+          },
+          35713
+        ],
+        "result": true
+      },
+      {
+        "sequence": 10,
+        "row": 0,
+        "method": "attachShader",
+        "args": [
+          {
+            "object": 1,
+            "type": "WebGLProgram"
+          },
+          {
+            "object": 3,
+            "type": "WebGLShader"
+          }
+        ],
+        "delivered": [
+          {
+            "object": 1,
+            "type": "WebGLProgram"
+          },
+          {
+            "object": 3,
+            "type": "WebGLShader"
+          }
+        ],
+        "result": {
+          "undefined": true
+        }
+      },
+      {
+        "sequence": 11,
+        "row": 0,
+        "method": "transformFeedbackVaryings",
+        "args": [
+          {
+            "object": 1,
+            "type": "WebGLProgram"
+          },
+          [
+            "wv_so_0",
+            "wv_so_4"
+          ],
+          35980
+        ],
+        "fault": "valid-same-type-native-order-swap",
+        "delivered": [
+          {
+            "object": 1,
+            "type": "WebGLProgram"
+          },
+          [
+            "wv_so_4",
+            "wv_so_0"
+          ],
+          35980
+        ],
+        "result": {
+          "undefined": true
+        }
+      },
+      {
+        "sequence": 12,
+        "row": 0,
+        "method": "linkProgram",
+        "args": [
+          {
+            "object": 1,
+            "type": "WebGLProgram"
+          }
+        ],
+        "delivered": [
+          {
+            "object": 1,
+            "type": "WebGLProgram"
+          }
+        ],
+        "result": {
+          "undefined": true
+        }
+      },
+      {
+        "sequence": 13,
+        "row": 0,
+        "method": "getProgramParameter",
+        "args": [
+          {
+            "object": 1,
+            "type": "WebGLProgram"
+          },
+          35714
+        ],
+        "delivered": [
+          {
+            "object": 1,
+            "type": "WebGLProgram"
+          },
+          35714
+        ],
+        "result": true
+      },
+      {
+        "sequence": 14,
+        "row": 0,
+        "method": "useProgram",
+        "args": [
+          {
+            "object": 1,
+            "type": "WebGLProgram"
+          }
+        ],
+        "delivered": [
+          {
+            "object": 1,
+            "type": "WebGLProgram"
+          }
+        ],
+        "result": {
+          "undefined": true
+        }
+      },
+      {
+        "sequence": 15,
+        "row": 0,
+        "method": "getUniformLocation",
+        "args": [
+          {
+            "object": 1,
+            "type": "WebGLProgram"
+          },
+          "vsconst0[0]"
+        ],
+        "delivered": [
+          {
+            "object": 1,
+            "type": "WebGLProgram"
+          },
+          "vsconst0[0]"
+        ],
+        "result": {
+          "object": 4,
+          "type": "WebGLUniformLocation"
+        }
+      },
+      {
+        "sequence": 16,
+        "row": 0,
+        "method": "uniform4uiv",
+        "args": [
+          {
+            "object": 4,
+            "type": "WebGLUniformLocation"
+          },
+          {
+            "type": "Uint32Array",
+            "bytes": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              128,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              128,
+              63,
+              0,
+              0,
+              0,
+              128,
+              103,
+              230,
+              192,
+              127,
+              103,
+              230,
+              173,
+              222,
+              255,
+              255,
+              255,
+              255
+            ]
+          }
+        ],
+        "delivered": [
+          {
+            "object": 4,
+            "type": "WebGLUniformLocation"
+          },
+          {
+            "type": "Uint32Array",
+            "bytes": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              128,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              128,
+              63,
+              0,
+              0,
+              0,
+              128,
+              103,
+              230,
+              192,
+              127,
+              103,
+              230,
+              173,
+              222,
+              255,
+              255,
+              255,
+              255
+            ]
+          }
+        ],
+        "result": {
+          "undefined": true
+        }
+      },
+      {
+        "sequence": 17,
+        "row": 0,
+        "method": "getUniformLocation",
+        "args": [
+          {
+            "object": 1,
+            "type": "WebGLProgram"
+          },
+          "wv_point_size"
+        ],
+        "delivered": [
+          {
+            "object": 1,
+            "type": "WebGLProgram"
+          },
+          "wv_point_size"
+        ],
+        "result": {
+          "object": 5,
+          "type": "WebGLUniformLocation"
+        }
+      },
+      {
+        "sequence": 18,
+        "row": 0,
+        "method": "uniform2f",
+        "args": [
+          {
+            "object": 5,
+            "type": "WebGLUniformLocation"
+          },
+          1,
+          0
+        ],
+        "delivered": [
+          {
+            "object": 5,
+            "type": "WebGLUniformLocation"
+          },
+          1,
+          0
+        ],
+        "result": {
+          "undefined": true
+        }
+      },
+      {
+        "sequence": 19,
+        "row": 0,
+        "method": "createBuffer",
+        "args": [],
+        "delivered": [],
+        "result": {
+          "object": 6,
+          "type": "WebGLBuffer"
+        }
+      },
+      {
+        "sequence": 20,
+        "row": 0,
+        "method": "bindBuffer",
+        "args": [
+          35345,
+          {
+            "object": 6,
+            "type": "WebGLBuffer"
+          }
+        ],
+        "delivered": [
+          35345,
+          {
+            "object": 6,
+            "type": "WebGLBuffer"
+          }
+        ],
+        "result": {
+          "undefined": true
+        }
+      },
+      {
+        "sequence": 21,
+        "row": 0,
+        "method": "bufferData",
+        "args": [
+          35345,
+          {
+            "type": "Uint8Array",
+            "bytes": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              128,
+              191,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          35044
+        ],
+        "delivered": [
+          35345,
+          {
+            "type": "Uint8Array",
+            "bytes": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              128,
+              191,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          35044
+        ],
+        "result": {
+          "undefined": true
+        }
+      },
+      {
+        "sequence": 22,
+        "row": 0,
+        "method": "getUniformBlockIndex",
+        "args": [
+          {
+            "object": 1,
+            "type": "WebGLProgram"
+          },
+          "VirglBlock"
+        ],
+        "delivered": [
+          {
+            "object": 1,
+            "type": "WebGLProgram"
+          },
+          "VirglBlock"
+        ],
+        "result": 0
+      },
+      {
+        "sequence": 23,
+        "row": 0,
+        "method": "uniformBlockBinding",
+        "args": [
+          {
+            "object": 1,
+            "type": "WebGLProgram"
+          },
+          0,
+          0
+        ],
+        "delivered": [
+          {
+            "object": 1,
+            "type": "WebGLProgram"
+          },
+          0,
+          0
+        ],
+        "result": {
+          "undefined": true
+        }
+      },
+      {
+        "sequence": 24,
+        "row": 0,
+        "method": "bindBufferBase",
+        "args": [
+          35345,
+          0,
+          {
+            "object": 6,
+            "type": "WebGLBuffer"
+          }
+        ],
+        "delivered": [
+          35345,
+          0,
+          {
+            "object": 6,
+            "type": "WebGLBuffer"
+          }
+        ],
+        "result": {
+          "undefined": true
+        }
+      },
+      {
+        "sequence": 25,
+        "row": 0,
+        "method": "createBuffer",
+        "args": [],
+        "delivered": [],
+        "result": {
+          "object": 7,
+          "type": "WebGLBuffer"
+        }
+      },
+      {
+        "sequence": 26,
+        "row": 0,
+        "method": "createTransformFeedback",
+        "args": [],
+        "delivered": [],
+        "result": {
+          "object": 8,
+          "type": "WebGLTransformFeedback"
+        }
+      },
+      {
+        "sequence": 27,
+        "row": 0,
+        "method": "bindBuffer",
+        "args": [
+          35982,
+          {
+            "object": 7,
+            "type": "WebGLBuffer"
+          }
+        ],
+        "delivered": [
+          35982,
+          {
+            "object": 7,
+            "type": "WebGLBuffer"
+          }
+        ],
+        "result": {
+          "undefined": true
+        }
+      },
+      {
+        "sequence": 28,
+        "row": 0,
+        "method": "bufferData",
+        "args": [
+          35982,
+          {
+            "type": "Uint8Array",
+            "bytes": [
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163
+            ]
+          },
+          35041
+        ],
+        "delivered": [
+          35982,
+          {
+            "type": "Uint8Array",
+            "bytes": [
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163
+            ]
+          },
+          35041
+        ],
+        "result": {
+          "undefined": true
+        }
+      },
+      {
+        "sequence": 29,
+        "row": 0,
+        "method": "bindTransformFeedback",
+        "args": [
+          36386,
+          {
+            "object": 8,
+            "type": "WebGLTransformFeedback"
+          }
+        ],
+        "delivered": [
+          36386,
+          {
+            "object": 8,
+            "type": "WebGLTransformFeedback"
+          }
+        ],
+        "result": {
+          "undefined": true
+        }
+      },
+      {
+        "sequence": 30,
+        "row": 0,
+        "method": "bindBufferRange",
+        "args": [
+          35982,
+          0,
+          {
+            "object": 7,
+            "type": "WebGLBuffer"
+          },
+          16,
+          40
+        ],
+        "delivered": [
+          35982,
+          0,
+          {
+            "object": 7,
+            "type": "WebGLBuffer"
+          },
+          16,
+          40
+        ],
+        "result": {
+          "undefined": true
+        }
+      },
+      {
+        "sequence": 31,
+        "row": 0,
+        "method": "enable",
+        "args": [
+          35977
+        ],
+        "delivered": [
+          35977
+        ],
+        "result": {
+          "undefined": true
+        }
+      },
+      {
+        "sequence": 32,
+        "row": 0,
+        "method": "beginTransformFeedback",
+        "args": [
+          0
+        ],
+        "delivered": [
+          0
+        ],
+        "result": {
+          "undefined": true
+        }
+      },
+      {
+        "sequence": 33,
+        "row": 0,
+        "method": "drawArrays",
+        "args": [
+          0,
+          0,
+          5
+        ],
+        "delivered": [
+          0,
+          0,
+          5
+        ],
+        "result": {
+          "undefined": true
+        }
+      },
+      {
+        "sequence": 34,
+        "row": 0,
+        "method": "endTransformFeedback",
+        "args": [],
+        "delivered": [],
+        "result": {
+          "undefined": true
+        }
+      },
+      {
+        "sequence": 35,
+        "row": 0,
+        "method": "getError",
+        "args": [],
+        "delivered": [],
+        "result": 0
+      },
+      {
+        "sequence": 36,
+        "row": 0,
+        "method": "bindBufferBase",
+        "args": [
+          35982,
+          0,
+          null
+        ],
+        "delivered": [
+          35982,
+          0,
+          null
+        ],
+        "result": {
+          "undefined": true
+        }
+      },
+      {
+        "sequence": 37,
+        "row": 0,
+        "method": "bindTransformFeedback",
+        "args": [
+          36386,
+          null
+        ],
+        "delivered": [
+          36386,
+          null
+        ],
+        "result": {
+          "undefined": true
+        }
+      },
+      {
+        "sequence": 38,
+        "row": 0,
+        "method": "bindBuffer",
+        "args": [
+          35982,
+          null
+        ],
+        "delivered": [
+          35982,
+          null
+        ],
+        "result": {
+          "undefined": true
+        }
+      },
+      {
+        "sequence": 39,
+        "row": 0,
+        "method": "fenceSync",
+        "args": [
+          37143,
+          0
+        ],
+        "delivered": [
+          37143,
+          0
+        ],
+        "result": {
+          "object": 9,
+          "type": "WebGLSync"
+        }
+      },
+      {
+        "sequence": 40,
+        "row": 0,
+        "method": "flush",
+        "args": [],
+        "delivered": [],
+        "result": {
+          "undefined": true
+        }
+      },
+      {
+        "sequence": 41,
+        "row": 0,
+        "method": "clientWaitSync",
+        "args": [
+          {
+            "object": 9,
+            "type": "WebGLSync"
+          },
+          0,
+          0
+        ],
+        "delivered": [
+          {
+            "object": 9,
+            "type": "WebGLSync"
+          },
+          0,
+          0
+        ],
+        "result": 37147
+      },
+      {
+        "sequence": 42,
+        "row": 0,
+        "method": "clientWaitSync",
+        "args": [
+          {
+            "object": 9,
+            "type": "WebGLSync"
+          },
+          0,
+          0
+        ],
+        "delivered": [
+          {
+            "object": 9,
+            "type": "WebGLSync"
+          },
+          0,
+          0
+        ],
+        "result": 37147
+      },
+      {
+        "sequence": 43,
+        "row": 0,
+        "method": "clientWaitSync",
+        "args": [
+          {
+            "object": 9,
+            "type": "WebGLSync"
+          },
+          0,
+          0
+        ],
+        "delivered": [
+          {
+            "object": 9,
+            "type": "WebGLSync"
+          },
+          0,
+          0
+        ],
+        "result": 37147
+      },
+      {
+        "sequence": 44,
+        "row": 0,
+        "method": "clientWaitSync",
+        "args": [
+          {
+            "object": 9,
+            "type": "WebGLSync"
+          },
+          0,
+          0
+        ],
+        "delivered": [
+          {
+            "object": 9,
+            "type": "WebGLSync"
+          },
+          0,
+          0
+        ],
+        "result": 37147
+      },
+      {
+        "sequence": 45,
+        "row": 0,
+        "method": "clientWaitSync",
+        "args": [
+          {
+            "object": 9,
+            "type": "WebGLSync"
+          },
+          0,
+          0
+        ],
+        "delivered": [
+          {
+            "object": 9,
+            "type": "WebGLSync"
+          },
+          0,
+          0
+        ],
+        "result": 37147
+      },
+      {
+        "sequence": 46,
+        "row": 0,
+        "method": "clientWaitSync",
+        "args": [
+          {
+            "object": 9,
+            "type": "WebGLSync"
+          },
+          0,
+          0
+        ],
+        "delivered": [
+          {
+            "object": 9,
+            "type": "WebGLSync"
+          },
+          0,
+          0
+        ],
+        "result": 37147
+      },
+      {
+        "sequence": 47,
+        "row": 0,
+        "method": "clientWaitSync",
+        "args": [
+          {
+            "object": 9,
+            "type": "WebGLSync"
+          },
+          0,
+          0
+        ],
+        "delivered": [
+          {
+            "object": 9,
+            "type": "WebGLSync"
+          },
+          0,
+          0
+        ],
+        "result": 37148
+      },
+      {
+        "sequence": 48,
+        "row": 0,
+        "method": "bindBuffer",
+        "args": [
+          36662,
+          {
+            "object": 7,
+            "type": "WebGLBuffer"
+          }
+        ],
+        "delivered": [
+          36662,
+          {
+            "object": 7,
+            "type": "WebGLBuffer"
+          }
+        ],
+        "result": {
+          "undefined": true
+        }
+      },
+      {
+        "sequence": 49,
+        "row": 0,
+        "method": "getBufferSubData",
+        "args": [
+          36662,
+          0,
+          {
+            "type": "Uint8Array",
+            "bytes": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        ],
+        "delivered": [
+          36662,
+          0,
+          {
+            "type": "Uint8Array",
+            "bytes": [
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              0,
+              0,
+              0,
+              128,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              128,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              128,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              128,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              128,
+              0,
+              0,
+              0,
+              0,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163
+            ]
+          }
+        ],
+        "result": {
+          "undefined": true
+        },
+        "after": [
+          36662,
+          0,
+          {
+            "type": "Uint8Array",
+            "bytes": [
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              0,
+              0,
+              0,
+              128,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              128,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              128,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              128,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              128,
+              0,
+              0,
+              0,
+              0,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163,
+              163
+            ]
+          }
+        ]
+      },
+      {
+        "sequence": 50,
+        "row": 0,
+        "method": "getError",
+        "args": [],
+        "delivered": [],
+        "result": 0
+      },
+      {
+        "sequence": 51,
+        "row": 0,
+        "method": "getProgramParameter",
+        "args": [
+          {
+            "object": 1,
+            "type": "WebGLProgram"
+          },
+          35971
+        ],
+        "delivered": [
+          {
+            "object": 1,
+            "type": "WebGLProgram"
+          },
+          35971
+        ],
+        "result": 2
+      },
+      {
+        "sequence": 52,
+        "row": 0,
+        "method": "getTransformFeedbackVarying",
+        "args": [
+          {
+            "object": 1,
+            "type": "WebGLProgram"
+          },
+          0
+        ],
+        "delivered": [
+          {
+            "object": 1,
+            "type": "WebGLProgram"
+          },
+          0
+        ],
+        "result": {
+          "object": 10,
+          "type": "WebGLActiveInfo"
+        }
+      },
+      {
+        "sequence": 53,
+        "row": 0,
+        "method": "getTransformFeedbackVarying",
+        "args": [
+          {
+            "object": 1,
+            "type": "WebGLProgram"
+          },
+          1
+        ],
+        "delivered": [
+          {
+            "object": 1,
+            "type": "WebGLProgram"
+          },
+          1
+        ],
+        "result": {
+          "object": 11,
+          "type": "WebGLActiveInfo"
+        }
+      },
+      {
+        "sequence": 54,
+        "row": 0,
+        "method": "deleteSync",
+        "args": [
+          {
+            "object": 9,
+            "type": "WebGLSync"
+          }
+        ],
+        "delivered": [
+          {
+            "object": 9,
+            "type": "WebGLSync"
+          }
+        ],
+        "result": {
+          "undefined": true
+        }
+      },
+      {
+        "sequence": 55,
+        "row": 0,
+        "method": "bindBufferBase",
+        "args": [
+          35345,
+          0,
+          null
+        ],
+        "delivered": [
+          35345,
+          0,
+          null
+        ],
+        "result": {
+          "undefined": true
+        }
+      },
+      {
+        "sequence": 56,
+        "row": 0,
+        "method": "bindBuffer",
+        "args": [
+          35345,
+          null
+        ],
+        "delivered": [
+          35345,
+          null
+        ],
+        "result": {
+          "undefined": true
+        }
+      },
+      {
+        "sequence": 57,
+        "row": 0,
+        "method": "bindBuffer",
+        "args": [
+          36662,
+          null
+        ],
+        "delivered": [
+          36662,
+          null
+        ],
+        "result": {
+          "undefined": true
+        }
+      },
+      {
+        "sequence": 58,
+        "row": 0,
+        "method": "deleteBuffer",
+        "args": [
+          {
+            "object": 7,
+            "type": "WebGLBuffer"
+          }
+        ],
+        "delivered": [
+          {
+            "object": 7,
+            "type": "WebGLBuffer"
+          }
+        ],
+        "result": {
+          "undefined": true
+        }
+      },
+      {
+        "sequence": 59,
+        "row": 0,
+        "method": "deleteBuffer",
+        "args": [
+          {
+            "object": 6,
+            "type": "WebGLBuffer"
+          }
+        ],
+        "delivered": [
+          {
+            "object": 6,
+            "type": "WebGLBuffer"
+          }
+        ],
+        "result": {
+          "undefined": true
+        }
+      },
+      {
+        "sequence": 60,
+        "row": 0,
+        "method": "deleteTransformFeedback",
+        "args": [
+          {
+            "object": 8,
+            "type": "WebGLTransformFeedback"
+          }
+        ],
+        "delivered": [
+          {
+            "object": 8,
+            "type": "WebGLTransformFeedback"
+          }
+        ],
+        "result": {
+          "undefined": true
+        }
+      },
+      {
+        "sequence": 61,
+        "row": 0,
+        "method": "deleteProgram",
+        "args": [
+          {
+            "object": 1,
+            "type": "WebGLProgram"
+          }
+        ],
+        "delivered": [
+          {
+            "object": 1,
+            "type": "WebGLProgram"
+          }
+        ],
+        "result": {
+          "undefined": true
+        }
+      },
+      {
+        "sequence": 62,
+        "row": 0,
+        "method": "deleteShader",
+        "args": [
+          {
+            "object": 2,
+            "type": "WebGLShader"
+          }
+        ],
+        "delivered": [
+          {
+            "object": 2,
+            "type": "WebGLShader"
+          }
+        ],
+        "result": {
+          "undefined": true
+        }
+      },
+      {
+        "sequence": 63,
+        "row": 0,
+        "method": "deleteShader",
+        "args": [
+          {
+            "object": 3,
+            "type": "WebGLShader"
+          }
+        ],
+        "delivered": [
+          {
+            "object": 3,
+            "type": "WebGLShader"
+          }
+        ],
+        "result": {
+          "undefined": true
+        }
+      },
+      {
+        "sequence": 64,
+        "row": 0,
+        "method": "getError",
+        "args": [],
+        "delivered": [],
+        "result": 0
+      }
+    ],
+    "allocations": [
+      {
+        "method": "malloc",
+        "pointer": 5196536,
+        "size": 60
+      },
+      {
+        "method": "malloc",
+        "pointer": 5196600,
+        "size": 241
+      },
+      {
+        "method": "malloc",
+        "pointer": 5196848,
+        "size": 84
+      },
+      {
+        "method": "free",
+        "pointer": 5196848
+      },
+      {
+        "method": "free",
+        "pointer": 5196600
+      },
+      {
+        "method": "free",
+        "pointer": 5196536
+      }
+    ],
+    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+    "fixedMemoryBytes": 16777216
+  },
+  "browserCoverage": {
+    "path": "browser-coverage.json",
+    "sha256": "86fdc0d5deaf68729479152889a88846f482bb0925edd03b46f0b2d13649b64d"
+  },
+  "screenshotSha256": "6afec02211a19855bfdf86b049b7c8f6e2f9af8445fc3747dede541293550553",
+  "errors": [],
+  "sources": [
+    {
+      "path": "renderer/virgl-shader/standard.mjs",
+      "bytes": 20285,
+      "sha256": "842b2b6041ce71d267940cb7732bc936624b410a90fe17ccc108af7fee386d92"
+    },
+    {
+      "path": "renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "bytes": 14434,
+      "sha256": "4b3d0589d178ae6e3a2ad90c0abbddccc8226690e49e8cf91f8509ba64ca4f4a"
+    },
+    {
+      "path": "renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "bytes": 446891,
+      "sha256": "5f9b5935cc4a34d7d3b1cbceb3f75572c7ba8de822e09fea365a8d6c7aefb09b"
+    }
+  ],
+  "served": [
+    "/",
+    "/renderer/virgl-shader/standard.mjs",
+    "/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+    "/renderer/virgl-shader/build/wasm/virgl-shader.wasm"
+  ],
+  "finishedAt": "2026-10-13T21:00:05.483Z"
+}

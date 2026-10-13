@@ -1,0 +1,4 @@
+page.evaluate: Error: complete original alias word oracle failed after native readback
+    at eval (eval at evaluate (:234:30), <anonymous>:45:35)
+    at async <anonymous>:260:30
+    at /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/virgl-stream-output-shaders/alias-browser.mjs:42:27

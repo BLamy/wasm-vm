@@ -1,0 +1,9 @@
+{
+  "schema": "stream-output-shaders-independent-component-wasm-v1",
+  "status": "passed",
+  "cases": 3,
+  "completeCResponseBytesIdentical": true,
+  "fixedMemoryBytes": 16777216,
+  "generatedModuleSha256": "4b3d0589d178ae6e3a2ad90c0abbddccc8226690e49e8cf91f8509ba64ca4f4a",
+  "generatedWasmSha256": "5f9b5935cc4a34d7d3b1cbceb3f75572c7ba8de822e09fea365a8d6c7aefb09b"
+}

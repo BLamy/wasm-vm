@@ -1,0 +1,55 @@
+[
+  {
+    "name": "build",
+    "command": [
+      "bash",
+      "renderer/virgl-shader/build.sh",
+      "standard-stream-output-sanitize"
+    ],
+    "cwd": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/d65-critic-component-source",
+    "exitCode": 0,
+    "stdoutSha256": "9984a58bdabe1a4f02a660f36e028df5528fb5a7b11feb54a4e83ad72bb6c3a8",
+    "stderrSha256": "9d919492d190e3af34e860126c96da760444f90fee69288fe78b210806f83bdb"
+  },
+  {
+    "name": "native",
+    "command": [
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/d65-critic-component-source/renderer/virgl-shader/build/standard-stream-output-sanitize/standard-stream-output-test",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-stream-output-shaders/verifier/native-components/cases.bin"
+    ],
+    "cwd": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/d65-critic-component-source",
+    "exitCode": 0,
+    "stdoutSha256": "adb562bc18403bcfad71bea6912f2bf963843596ed74be816ef91c706214afc1",
+    "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "profile",
+    "command": [
+      "xcrun",
+      "llvm-profdata",
+      "merge",
+      "-sparse",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-stream-output-shaders/verifier/native-components/native.profraw",
+      "-o",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-stream-output-shaders/verifier/native-components/native.profdata"
+    ],
+    "cwd": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/d65-critic-component-source",
+    "exitCode": 0,
+    "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "coverage",
+    "command": [
+      "xcrun",
+      "llvm-cov",
+      "export",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/d65-critic-component-source/renderer/virgl-shader/build/standard-stream-output-sanitize/standard-stream-output-test",
+      "-instr-profile=/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-stream-output-shaders/verifier/native-components/native.profdata"
+    ],
+    "cwd": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/d65-critic-component-source",
+    "exitCode": 0,
+    "stdoutSha256": "b7e86c8da8c48d6f579558ee0f3d46816496e0c5e4a59901e47a2d314ca5e24f",
+    "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]
