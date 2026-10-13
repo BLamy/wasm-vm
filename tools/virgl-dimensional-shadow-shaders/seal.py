@@ -3,8 +3,8 @@ import gzip,hashlib,io,json,sys,tarfile
 from pathlib import Path
 import subprocess
 repo=Path(__file__).resolve().parents[2]
-assert len(sys.argv)==3,'usage: seal.py COLD OUTPUT'
-cold,output=[Path(v).resolve() for v in sys.argv[1:]];assert not output.exists()
+assert len(sys.argv) in {3,4},'usage: seal.py COLD OUTPUT [EARLIER_FAILED_RUN]'
+cold,output=[Path(v).resolve() for v in sys.argv[1:3]];assert not output.exists()
 sha=lambda b:hashlib.sha256(b).hexdigest()
 report=json.loads((cold/'report.json').read_bytes());receipt=json.loads((cold/'recording/receipt.json').read_bytes())
 head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=repo,text=True).strip()
@@ -15,6 +15,9 @@ for name in ['hardware-27461','hardware-82013','hardware-164021','compile-link',
     r=json.loads((cold/('recording/'+name+'/report.json')).read_bytes());assert r['gitHead']==head
     assert r['status']==('failed' if name=='fault-wrong-layer' else 'passed')
 files={'cold/'+str(p.relative_to(cold)):p for p in cold.rglob('*') if p.is_file()}
+if len(sys.argv)==4:
+    earlier=Path(sys.argv[3]).resolve();failed=json.loads((earlier/'report.json').read_bytes());assert failed['exitCode']!=0
+    files.update({'earlier-failed/'+str(p.relative_to(earlier)):p for p in earlier.rglob('*') if p.is_file()})
 files['sealing/seal.py']=Path(__file__).resolve()
 rows=[];first={}
 for name,p in sorted(files.items()):
