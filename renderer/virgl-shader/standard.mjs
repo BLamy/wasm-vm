@@ -7,6 +7,10 @@ export const STANDARD_LIMITS = Object.freeze({
 export const STANDARD_UNIFORM_LIMITS = Object.freeze({
   ...STANDARD_LIMITS, uniformSlots: 12, uniformVectors: 1024, sanityScratchBytes: 2097152,
 });
+export const STANDARD_STREAM_OUTPUT_LIMITS = Object.freeze({
+  outputs: 128, buffers: 4, componentsPerBuffer: 64, layoutWords: 261,
+  strideWords: 65535, streams: 1,
+});
 const fail = (code, message) => ({ ok: false, error: { code, message } });
 function fields(request, names) {
   if (!request || typeof request !== "object" || Array.isArray(request)) return null;
@@ -58,11 +62,19 @@ export async function createVirglStandardDimensionalTextureShaderBridge(options 
 export async function createVirglStandardDimensionalShadowTextureShaderBridge(options = {}) {
   return createStandardBridge(options, true, true, true, true, true, true, true);
 }
-async function createStandardBridge(options, uniformBuffers, textureOperations = false, integerImages = false, instanceBase = false, shadowTextures = false, dimensionalTextures = false, dimensionalShadows = false) {
+/** Original packed stream-output layout; capture-buffer selection belongs to
+ * the host. This compiler grants no resource, draw or capability authority. */
+export async function createVirglStandardStreamOutputShaderBridge(options = {}) {
+  return createStandardBridge(options, true, true, true, true, true, true, true, true);
+}
+async function createStandardBridge(options, uniformBuffers, textureOperations = false, integerImages = false, instanceBase = false, shadowTextures = false, dimensionalTextures = false, dimensionalShadows = false, streamOutput = false) {
   const { default: createModule } = await import("./build/wasm/virgl-shader.mjs");
   const module = await createModule(options);
-  const integerStage = dimensionalShadows ? module._bridge_translate_standard_dimensional_shadow_texture : dimensionalTextures ? module._bridge_translate_standard_dimensional_texture : shadowTextures ? module._bridge_translate_standard_shadow_texture : instanceBase ? module._bridge_translate_standard_instance_base : module._bridge_translate_standard_integer_image;
-  const integerPair = dimensionalShadows ? module._bridge_translate_standard_dimensional_shadow_texture_pair : dimensionalTextures ? module._bridge_translate_standard_dimensional_texture_pair : shadowTextures ? module._bridge_translate_standard_shadow_texture_pair : instanceBase ? module._bridge_translate_standard_instance_base_pair : module._bridge_translate_standard_integer_image_pair;
+  if (streamOutput && (typeof module._bridge_translate_standard_stream_output !== "function" ||
+      typeof module._bridge_translate_standard_stream_output_pair !== "function"))
+    throw new Error("The selected stream-output compiler artifact is missing its C entries.");
+  const integerStage = streamOutput ? (...args) => module._bridge_translate_standard_stream_output(...args, 0, 0, 0) : dimensionalShadows ? module._bridge_translate_standard_dimensional_shadow_texture : dimensionalTextures ? module._bridge_translate_standard_dimensional_texture : shadowTextures ? module._bridge_translate_standard_shadow_texture : instanceBase ? module._bridge_translate_standard_instance_base : module._bridge_translate_standard_integer_image;
+  const integerPair = streamOutput ? (...args) => module._bridge_translate_standard_stream_output_pair(...args, 0, 0, 0) : dimensionalShadows ? module._bridge_translate_standard_dimensional_shadow_texture_pair : dimensionalTextures ? module._bridge_translate_standard_dimensional_texture_pair : shadowTextures ? module._bridge_translate_standard_shadow_texture_pair : instanceBase ? module._bridge_translate_standard_instance_base_pair : module._bridge_translate_standard_integer_image_pair;
   const uniformPair = integerImages ? (...args) => integerPair(...args, 0, 0) :
     textureOperations ? module._bridge_translate_standard_texture_pair : module._bridge_translate_standard_uniform_pair;
   function run(texts, call) {
@@ -193,6 +205,71 @@ async function createStandardBridge(options, uniformBuffers, textureOperations =
       }
       return run([vertexText, fragmentText], ([vertex, fragment]) => integerPair(
         vertex, vertexText.length, fragment, fragmentText.length, signedMask, unsignedMask, packedSignedMask, packedNormalizedMask, bufferZeroMask, signedColorMask, unsignedColorMask));
+    };
+  }
+  if (streamOutput) {
+    function layoutInput(words, captureBuffer) {
+      if (!Number.isInteger(captureBuffer) || captureBuffer < 0 || captureBuffer >= 4 || !Array.isArray(words))
+        return { error: fail("invalid-input", "Provide an original word array and capture buffer0..3.") };
+      const length = Object.getOwnPropertyDescriptor(words, "length");
+      if (!length || !("value" in length) || !Number.isInteger(length.value) || length.value < 1 ||
+          length.value > STANDARD_STREAM_OUTPUT_LIMITS.layoutWords)
+        return { error: fail("invalid-input", "Original layout length must be bounded own data.") };
+      const count = length.value, names = Array.from({ length: count }, (_, i) => String(i)).concat("length");
+      const keys = Reflect.ownKeys(words);
+      if (keys.length !== names.length || keys.some(key => !names.includes(key)))
+        return { error: fail("invalid-input", "Original layout words require dense own data elements.") };
+      const owned = [];
+      for (let i = 0; i < count; i++) {
+        const entry = Object.getOwnPropertyDescriptor(words, String(i));
+        if (!entry || !("value" in entry) || !Number.isInteger(entry.value) || entry.value < 0 || entry.value > 0xffffffff)
+          return { error: fail("invalid-input", "Original layout words require own u32 data elements.") };
+        owned.push(entry.value);
+      }
+      return { words: owned };
+    }
+    function runLayout(texts, words, call) {
+      const pointer = module._malloc(words.length * 4);
+      if (!pointer) return fail("allocation-failed", "Wasm stream-output layout allocation failed.");
+      try {
+        const view = new DataView(module.HEAPU8.buffer, module.HEAPU8.byteOffset + pointer, words.length * 4);
+        for (let i = 0; i < words.length; i++) view.setUint32(i * 4, words[i], true);
+        return run(texts, pointers => call(pointers, pointer));
+      } finally { module._free(pointer); }
+    }
+    bridge.translateStreamOutput = request => {
+      let input;
+      try {
+        input = fields(request, ["stage", "text", "signedColorMask", "unsignedColorMask", "streamOutputWords", "captureBuffer"]);
+        if (!input) return fail("invalid-input", "Provide only own stage, text, color masks and original layout data fields.");
+        const layout = layoutInput(input[4], input[5]); if (layout.error) return layout.error; input[4] = layout.words;
+      } catch { return fail("invalid-input", "Stream-output request reflection failed."); }
+      const [stage, text, signedMask, unsignedMask, words, captureBuffer] = input;
+      if (stage !== "vertex" && stage !== "fragment") return fail("unsupported-stage", "Only vertex and fragment stages are supported.");
+      if (![signedMask, unsignedMask].every(mask => Number.isInteger(mask) && mask >= 0 && mask <= 15) ||
+          (signedMask & unsignedMask) || stage === "vertex" && (signedMask | unsignedMask))
+        return fail("invalid-input", "Color format masks must be disjoint 4-bit fragment masks.");
+      const error = textError(text); if (error) return error;
+      return runLayout([text], words, ([textPointer], layoutPointer) => module._bridge_translate_standard_stream_output(
+        stage === "vertex" ? 0 : 1, textPointer, text.length, signedMask, unsignedMask, layoutPointer, words.length, captureBuffer));
+    };
+    bridge.translatePairStreamOutput = request => {
+      let input;
+      try {
+        input = fields(request, ["vertexText", "fragmentText", "signedMask", "unsignedMask", "packedSignedMask", "packedNormalizedMask", "bufferZeroMask", "signedColorMask", "unsignedColorMask", "streamOutputWords", "captureBuffer"]);
+        if (!input) return fail("invalid-input", "Provide only own texts, format masks and original layout data fields.");
+        const layout = layoutInput(input[9], input[10]); if (layout.error) return layout.error; input[9] = layout.words;
+      } catch { return fail("invalid-input", "Stream-output pair reflection failed."); }
+      const [vertex, fragment, signedMask, unsignedMask, packedSignedMask, packedNormalizedMask, bufferZeroMask, signedColorMask, unsignedColorMask, words, captureBuffer] = input;
+      if (![signedMask, unsignedMask, packedSignedMask, packedNormalizedMask].every(mask => Number.isInteger(mask) && mask >= 0 && mask <= 0xffff) ||
+          (signedMask & unsignedMask) || ((signedMask | unsignedMask) & packedSignedMask) || (packedNormalizedMask & ~packedSignedMask) ||
+          !Number.isInteger(bufferZeroMask) || bufferZeroMask < 0 || bufferZeroMask > 3 ||
+          ![signedColorMask, unsignedColorMask].every(mask => Number.isInteger(mask) && mask >= 0 && mask <= 15) || (signedColorMask & unsignedColorMask))
+        return fail("invalid-input", "Stream-output format masks have incompatible extents.");
+      for (const text of [vertex, fragment]) { const error = textError(text); if (error) return error; }
+      return runLayout([vertex, fragment], words, ([v, f], layoutPointer) => module._bridge_translate_standard_stream_output_pair(
+        v, vertex.length, f, fragment.length, signedMask, unsignedMask, packedSignedMask, packedNormalizedMask,
+        bufferZeroMask, signedColorMask, unsignedColorMask, layoutPointer, words.length, captureBuffer));
     };
   }
   return Object.freeze(bridge);

@@ -78,6 +78,12 @@ static void source(struct output *o, const struct standard_profile *p,
 static void interface(struct output *o, const struct standard_profile *p)
 {
    put(o, "#version 300 es\nprecision highp float;\nprecision highp int;\n");
+   for (unsigned i = 0; i < p->stream_output.count; ++i) {
+      const struct standard_stream_output_entry *e = &p->stream_output.outputs[i];
+      if (e->output_buffer != p->stream_output.capture_buffer) continue;
+      if (e->num_components == 1) put(o, "flat out highp uint wv_so_%u;\n", i);
+      else put(o, "flat out highp uvec%u wv_so_%u;\n", e->num_components, i);
+   }
    for (unsigned f = STD_IN; f <= STD_OUT; ++f) {
       const struct standard_io *list = f == STD_IN ? p->input : p->output;
       for (unsigned j = 0; j < STANDARD_IO; ++j) if (p->declared[f][j]) {
@@ -121,6 +127,13 @@ static void interface(struct output *o, const struct standard_profile *p)
 }
 static void exit_program(struct output *o, const struct standard_profile *p)
 {
+   for (unsigned i = 0; i < p->stream_output.count; ++i) {
+      const struct standard_stream_output_entry *e = &p->stream_output.outputs[i];
+      if (e->output_buffer != p->stream_output.capture_buffer) continue;
+      char components[5] = {0};
+      memcpy(components, &"xyzw"[e->start_component], e->num_components);
+      put(o, "wv_so_%u = o%u.%s;\n", i, e->register_index, components);
+   }
    unsigned point_size = STANDARD_IO, color_zero = 0;
    for (unsigned j = 0; j < STANDARD_IO; ++j) if (p->declared[STD_OUT][j]) {
       const struct standard_io *io = &p->output[j];
@@ -347,7 +360,10 @@ const char *standard_emit(const struct standard_profile *p, const struct tgsi_to
    }
    put(&output, "void main() {\nbool flow_condition;\n");
    for (unsigned j = 0; j < BRIDGE_MAX_TEMPORARIES; ++j) if (p->declared[STD_TEMP][j]) put(&output, "uvec4 t%u;\n", j);
-   for (unsigned j = 0; j < STANDARD_IO; ++j) if (p->declared[STD_OUT][j]) put(&output, "uvec4 o%u;\n", j);
+   for (unsigned j = 0; j < STANDARD_IO; ++j) if (p->declared[STD_OUT][j]) {
+      if (standard_stream_output_captured(p, j)) put(&output, "uvec4 o%u = uvec4(0u);\n", j);
+      else put(&output, "uvec4 o%u;\n", j);
+   }
    if (p->declared[STD_ADDR][0]) put(&output, "int addr0;\n");
    if (okay && tgsi_parse_init(&ctx, tokens) == TGSI_PARSE_OK) {
       unsigned count = 0;

@@ -2476,6 +2476,28 @@ static void standard_io_json(const struct standard_profile *p, unsigned file)
    }
    append("]");
 }
+static void standard_stream_output_json(const struct standard_stream_output *s)
+{
+   append(",\"streamOutput\":{\"encoding\":\"raw-32bit-words\",\"captureBuffer\":%u,\"strides\":[%u,%u,%u,%u],\"outputs\":[",
+      s->capture_buffer, s->strides[0], s->strides[1], s->strides[2], s->strides[3]);
+   for (unsigned i = 0; i < s->count; ++i) {
+      const struct standard_stream_output_entry *e = &s->outputs[i];
+      append("%s{\"registerIndex\":%u,\"startComponent\":%u,\"numComponents\":%u,\"outputBuffer\":%u,\"destinationOffset\":%u,\"stream\":0}",
+         i ? "," : "", e->register_index, e->start_component,
+         e->num_components, e->output_buffer, e->destination_offset);
+   }
+   append("],\"varyings\":["); unsigned packed = 0; bool comma = false;
+   for (unsigned i = 0; i < s->count; ++i) {
+      const struct standard_stream_output_entry *e = &s->outputs[i];
+      if (e->output_buffer != s->capture_buffer) continue;
+      append("%s{\"outputIndex\":%u,\"name\":\"wv_so_%u\",\"type\":\"", comma ? "," : "", i, i);
+      if (e->num_components == 1) append("uint");
+      else append("uvec%u", e->num_components);
+      append("\",\"components\":%u,\"packedOffset\":%u}", e->num_components, packed * 4);
+      packed += e->num_components; comma = true;
+   }
+   append("],\"packedStrideBytes\":%u}", packed * 4);
+}
 static void standard_result(const struct standard_conversion *c)
 {
    const struct standard_profile *p = &c->profile;
@@ -2490,7 +2512,7 @@ static void standard_result(const struct standard_conversion *c)
       }
    }
    append("\",\"metadata\":{\"profile\":\"%s\",\"stage\":\"%s\",\"inputs\":",
-          p->dimensional_shadows ? "virgl-webgl2-standard-dimensional-shadow-texture-gles3-v1" : p->dimensional_textures ? "virgl-webgl2-standard-dimensional-texture-gles3-v1" : p->shadow_textures ? "virgl-webgl2-standard-shadow-texture-gles3-v1" : p->instance_base ? "virgl-webgl2-standard-instance-base-gles3-v1" : p->integer_images ? "virgl-webgl2-standard-integer-image-gles3-v1" : p->texture_operations ? "virgl-webgl2-standard-texture-gles3-v1" : p->uniform_buffers ? "virgl-webgl2-standard-uniform-gles3-v1" : "virgl-webgl2-standard-gles3-v1",
+          p->stream_output.enabled ? "virgl-webgl2-standard-stream-output-gles3-v1" : p->dimensional_shadows ? "virgl-webgl2-standard-dimensional-shadow-texture-gles3-v1" : p->dimensional_textures ? "virgl-webgl2-standard-dimensional-texture-gles3-v1" : p->shadow_textures ? "virgl-webgl2-standard-shadow-texture-gles3-v1" : p->instance_base ? "virgl-webgl2-standard-instance-base-gles3-v1" : p->integer_images ? "virgl-webgl2-standard-integer-image-gles3-v1" : p->texture_operations ? "virgl-webgl2-standard-texture-gles3-v1" : p->uniform_buffers ? "virgl-webgl2-standard-uniform-gles3-v1" : "virgl-webgl2-standard-gles3-v1",
           p->stage ? "fragment" : "vertex");
    standard_io_json(p, STD_IN); append(",\"outputs\":"); standard_io_json(p, STD_OUT);
    append(",\"attributes\":"); if (p->stage) append("[]"); else standard_io_json(p, STD_IN);
@@ -2551,6 +2573,7 @@ static void standard_result(const struct standard_conversion *c)
       append("]");
    }
    if (p->integer_images) append(",\"colorOutputMasks\":{\"signedMask\":%u,\"unsignedMask\":%u}", p->signed_colors, p->unsigned_colors);
+   if (p->stream_output.enabled) standard_stream_output_json(&p->stream_output);
    append(",\"broadcastColor0\":%s,\"standardSemantics\":{\"kind\":\"native-gles3-highp-v1\",\"precision\":\"native-highp\",\"undefinedDomains\":\"native-gles3\",\"preciseQualifier\":\"no-gpu-shader5\",\"registerStorage\":\"uvec4\",\"flatVaryingStorage\":\"uvec4\",\"scalarResults\":\"tgsi-x-replicated\",\"exactAuthority\":false,\"gpuExecutionBound\":false}}", p->broadcast ? "true" : "false");
 }
 static bool standard_color_masks(struct standard_profile *p, uint32_t signed_colors, uint32_t unsigned_colors)
@@ -2576,8 +2599,9 @@ static const char *standard_input(struct standard_profile *p, const char *text, 
    if (!code) for (size_t i = 0; i < length; ++i) if (owned[i] == '\r') owned[i] = ' ';
    return code ? error(code, "TGSI is outside the bounded standard GLES3 grammar.") : NULL;
 }
-static const char *standard_stage(int stage, const char *text, size_t length, bool uniform_buffers, bool texture_operations,
-                                  bool integer_images, uint32_t signed_colors, uint32_t unsigned_colors, bool instance_base, bool shadow_textures, bool dimensional_textures, bool dimensional_shadows)
+static const char *standard_stage_layout(int stage, const char *text, size_t length, bool uniform_buffers, bool texture_operations,
+                                  bool integer_images, uint32_t signed_colors, uint32_t unsigned_colors, bool instance_base, bool shadow_textures, bool dimensional_textures, bool dimensional_shadows,
+                                  bool stream_output, const uint32_t *layout, size_t layout_words, uint32_t capture_buffer)
 {
    begin_response(false);
    if (stage != 0 && stage != 1) return error("unsupported-stage", "Only vertex and fragment stages are supported.");
@@ -2585,6 +2609,10 @@ static const char *standard_stage(int stage, const char *text, size_t length, bo
    struct standard_profile p = {.stage = stage, .uniform_buffers = uniform_buffers, .texture_operations = texture_operations, .integer_images = integer_images, .instance_base = instance_base, .shadow_textures = shadow_textures, .dimensional_textures = dimensional_textures, .dimensional_shadows = dimensional_shadows};
    const char *failed = standard_input(&p, text, length, owned);
    if (failed) return response;
+   if (stream_output) {
+      const char *code = standard_stream_output_validate(&p, layout, layout_words, capture_buffer);
+      if (code) return error(code, "Original stream-output layout is outside this selected facet.");
+   }
    if (!standard_color_masks(&p, signed_colors, unsigned_colors))
       return error("invalid-input", "Color format masks must be disjoint 4-bit masks naming fragment outputs.");
    struct standard_conversion *c = calloc(1, sizeof(*c));
@@ -2596,6 +2624,13 @@ static const char *standard_stage(int stage, const char *text, size_t length, bo
    if (response_overflow) return error("translation-error", "Standard JSON output exceeded its bound.");
    return response;
 }
+static const char *standard_stage(int stage, const char *text, size_t length, bool uniform_buffers, bool texture_operations,
+                                  bool integer_images, uint32_t signed_colors, uint32_t unsigned_colors, bool instance_base, bool shadow_textures, bool dimensional_textures, bool dimensional_shadows)
+{
+   return standard_stage_layout(stage, text, length, uniform_buffers, texture_operations,
+      integer_images, signed_colors, unsigned_colors, instance_base, shadow_textures,
+      dimensional_textures, dimensional_shadows, false, NULL, 0, 0);
+}
 const char *bridge_translate_standard(int stage, const char *text, size_t length)
 {
    return standard_stage(stage, text, length, false, false, false, 0, 0, false, false, false, false);
@@ -2604,12 +2639,13 @@ const char *bridge_translate_standard_uniform(int stage, const char *text, size_
 {
    return standard_stage(stage, text, length, true, false, false, 0, 0, false, false, false, false);
 }
-static const char *standard_pair(const char *vertex_text, size_t vertex_length,
+static const char *standard_pair_layout(const char *vertex_text, size_t vertex_length,
                                 const char *fragment_text, size_t fragment_length,
                                 uint32_t signed_inputs, uint32_t unsigned_inputs,
                                 uint32_t packed_signed_inputs, uint32_t packed_normalized_inputs,
                                 bool uniform_buffers, bool texture_operations, uint32_t buffer_zero_mask,
-                                bool integer_images, uint32_t signed_colors, uint32_t unsigned_colors, bool instance_base, bool shadow_textures, bool dimensional_textures, bool dimensional_shadows)
+                                bool integer_images, uint32_t signed_colors, uint32_t unsigned_colors, bool instance_base, bool shadow_textures, bool dimensional_textures, bool dimensional_shadows,
+                                bool stream_output, const uint32_t *layout, size_t layout_words, uint32_t capture_buffer)
 {
    begin_response(true);
    if ((signed_inputs | unsigned_inputs | packed_signed_inputs | packed_normalized_inputs) > 0xffffu ||
@@ -2621,6 +2657,11 @@ static const char *standard_pair(const char *vertex_text, size_t vertex_length,
                                          {.stage = 1, .uniform_buffers = uniform_buffers, .texture_operations = texture_operations, .integer_images = integer_images, .instance_base = instance_base, .shadow_textures = shadow_textures, .dimensional_textures = dimensional_textures, .dimensional_shadows = dimensional_shadows}};
    const char *failed = standard_input(&profiles[0], vertex_text, vertex_length, owned[0]);
    if (!failed) failed = standard_input(&profiles[1], fragment_text, fragment_length, owned[1]);
+   if (!failed && stream_output) {
+      const char *code = standard_stream_output_validate(&profiles[0], layout, layout_words, capture_buffer);
+      if (!code) code = standard_stream_output_validate(&profiles[1], NULL, 0, capture_buffer);
+      if (code) failed = error(code, "Original stream-output layout is outside this selected facet.");
+   }
    if (!failed && !standard_match(&profiles[0], &profiles[1]))
       failed = error("incompatible-interface", "Standard fragment inputs require matching declared vertex components.");
    if (failed) return response;
@@ -2660,6 +2701,19 @@ static const char *standard_pair(const char *vertex_text, size_t vertex_length,
    standard_cleanup(&c[0]); standard_cleanup(&c[1]); free(c);
    if (response_overflow) return error("translation-error", "Standard pair JSON output exceeded its bound.");
    return response;
+}
+static const char *standard_pair(const char *vertex_text, size_t vertex_length,
+                                const char *fragment_text, size_t fragment_length,
+                                uint32_t signed_inputs, uint32_t unsigned_inputs,
+                                uint32_t packed_signed_inputs, uint32_t packed_normalized_inputs,
+                                bool uniform_buffers, bool texture_operations, uint32_t buffer_zero_mask,
+                                bool integer_images, uint32_t signed_colors, uint32_t unsigned_colors, bool instance_base, bool shadow_textures, bool dimensional_textures, bool dimensional_shadows)
+{
+   return standard_pair_layout(vertex_text, vertex_length, fragment_text, fragment_length,
+      signed_inputs, unsigned_inputs, packed_signed_inputs, packed_normalized_inputs,
+      uniform_buffers, texture_operations, buffer_zero_mask, integer_images, signed_colors,
+      unsigned_colors, instance_base, shadow_textures, dimensional_textures, dimensional_shadows,
+      false, NULL, 0, 0);
 }
 const char *bridge_translate_standard_pair(const char *vertex_text, size_t vertex_length,
                                            const char *fragment_text, size_t fragment_length)
@@ -2786,4 +2840,24 @@ const char *bridge_translate_standard_dimensional_shadow_texture_pair(const char
    return standard_pair(vertex_text, vertex_length, fragment_text, fragment_length,
                         signed_inputs, unsigned_inputs, packed_signed_inputs, packed_normalized_inputs,
                         true, true, buffer_zero_mask, true, signed_colors, unsigned_colors, true, true, true, true);
+}
+const char *bridge_translate_standard_stream_output(int stage, const char *text, size_t length,
+   uint32_t signed_colors, uint32_t unsigned_colors,
+   const uint32_t *layout, size_t layout_words, uint32_t capture_buffer)
+{
+   return standard_stage_layout(stage, text, length, true, true, true,
+      signed_colors, unsigned_colors, true, true, true, true,
+      true, layout, layout_words, capture_buffer);
+}
+const char *bridge_translate_standard_stream_output_pair(const char *vertex_text, size_t vertex_length,
+   const char *fragment_text, size_t fragment_length,
+   uint32_t signed_inputs, uint32_t unsigned_inputs,
+   uint32_t packed_signed_inputs, uint32_t packed_normalized_inputs,
+   uint32_t buffer_zero_mask, uint32_t signed_colors, uint32_t unsigned_colors,
+   const uint32_t *layout, size_t layout_words, uint32_t capture_buffer)
+{
+   return standard_pair_layout(vertex_text, vertex_length, fragment_text, fragment_length,
+      signed_inputs, unsigned_inputs, packed_signed_inputs, packed_normalized_inputs,
+      true, true, buffer_zero_mask, true, signed_colors, unsigned_colors,
+      true, true, true, true, true, layout, layout_words, capture_buffer);
 }

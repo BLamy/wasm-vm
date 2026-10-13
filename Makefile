@@ -2563,3 +2563,7 @@ verify-E0-T27:
 .PHONY: verify-E6-T11d64
 verify-E6-T11d64:
 	python3 tools/virgl-dimensional-depth-surfaces/verify.py $(if $(filter 1,$(D64_REPLAY_UNCHANGED_GATES)),--carry-unchanged-recording,) --output "$${VIRGL_DIMENSIONAL_DEPTH_SURFACE_EVIDENCE_DIR:-target/evidence/virgl-dimensional-depth-surfaces}"
+
+.PHONY: verify-E6-T11d65
+verify-E6-T11d65:
+	python3 tools/virgl-stream-output-shaders/verify.py --output "$${VIRGL_STREAM_OUTPUT_SHADER_EVIDENCE_DIR:-target/evidence/virgl-stream-output-shaders}"

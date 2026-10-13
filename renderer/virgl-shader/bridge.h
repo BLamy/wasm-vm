@@ -162,4 +162,15 @@ const char *bridge_translate_standard_dimensional_shadow_texture_pair(const char
                                                                       uint32_t packed_signed_inputs, uint32_t packed_normalized_inputs,
                                                                       uint32_t buffer_zero_mask, uint32_t signed_colors, uint32_t unsigned_colors);
 
+/* Host-selected original packed stream-output words and capture-buffer variant.
+ * Typed layout validation precedes emission; this grants no draw authority. */
+const char *bridge_translate_standard_stream_output(int stage, const char *text, size_t length,
+   uint32_t signed_colors, uint32_t unsigned_colors,
+   const uint32_t *layout, size_t layout_words, uint32_t capture_buffer);
+const char *bridge_translate_standard_stream_output_pair(const char *vertex_text, size_t vertex_length,
+   const char *fragment_text, size_t fragment_length,
+   uint32_t signed_inputs, uint32_t unsigned_inputs,
+   uint32_t packed_signed_inputs, uint32_t packed_normalized_inputs,
+   uint32_t buffer_zero_mask, uint32_t signed_colors, uint32_t unsigned_colors,
+   const uint32_t *layout, size_t layout_words, uint32_t capture_buffer);
 #endif
