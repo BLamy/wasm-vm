@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47, E6-T11d48, E6-T11d49, E6-T11d50, E6-T11d51, E6-T11d52, E6-T11d53, E6-T11d54, E6-T11d55, E6-T11d56, E6-T11d57, E6-T11d58, E6-T11d59, E6-T11d60, E6-T11d61, E6-T11d62]
-blocked_on: E6-T11d62
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47, E6-T11d48, E6-T11d49, E6-T11d50, E6-T11d51, E6-T11d52, E6-T11d53, E6-T11d54, E6-T11d55, E6-T11d56, E6-T11d57, E6-T11d58, E6-T11d59, E6-T11d60, E6-T11d61, E6-T11d62, E6-T11d63]
+blocked_on: E6-T11d63
 estimate: S
 risk: high
 capstone: false
@@ -797,3 +797,19 @@ Reproduce with the complete archived `/tmp/wasmvm-d62-readiness.mjs` command in
 D62's log at93021c5a28b99357532844de6ea4944291774099. D62 is the ordered S/high
 consumer dependency, using the qualified D61/D60/D49 authorities. No production
 capability is advertised; actual Linux graphics and throughput remain unproven.
+
+### 2026-10-13 — worker — comparison consumer verified; dimensional color surface gap
+
+D62 is independently verified at `2691b24e6c00478f8d69f81180b6827761de246a`
+and published as open/draft PR540 on the same native stack500. All140 older PR
+identities/order/heads/bases/states and both stack identities are held. At that
+exact clean head, the actual Wasm/Metal readiness run admits13 dimensional
+allocations and13 matching2D mip-surface controls, then refuses77 original valid
+single-layer dimensional surfaces with0x1205 before dimensional attachment work.
+Complete original wire/source/served bodies, native calls, traces/digests and
+publication custody are sealed in
+`evidence/virgl-production-readiness/dimensional-color-surface-gap/`; exact repro
+and digests are in D63's log. D63 closes the single-layer RGBA8 color boundary;
+depth dimensional surfaces, transform feedback, honest qualification, production
+worker/scanout and actual Mesa/Hyprland boot remain later gates. No production
+acceleration or300-MIPS claim follows from the selected comparison consumer.
