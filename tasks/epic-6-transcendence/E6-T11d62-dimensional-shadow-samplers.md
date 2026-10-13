@@ -3,7 +3,7 @@ id: E6-T11d62
 epic: 6
 title: Execute original cube and array comparison sampler views
 priority: 525.027039000399
-status: pending
+status: in-progress
 depends_on: [E6-T11d61, E6-T11d60, E6-T11d49]
 estimate: S
 risk: high
@@ -115,3 +115,13 @@ this ordered graphics chain. D61/D60/D49 are verified before D62 enters the
 active lane. Dimensional surfaces, transform feedback, truthful capability/
 format qualification, production worker/scanout and actual Linux Mesa/Hyprland
 rendering remain parent work. The300-MIPS aspiration remains unmeasured.
+
+### 2026-10-12 — worker — activated
+
+D62 is the sole active selected dimensional comparison consumer. Its D61/D60/D49
+prerequisites are independently verified. The original decoder, native depth
+store/DMA and compiler remain exact authenticated authorities; this slice owns
+strict D61 result/metadata validation and native comparison bindings. Continue
+native stack500 on `codex/virgl-dimensional-shadow-samplers`, record the final
+run and submit it to a fresh critic. Production negotiation and actual guest
+rendering stay gated by the parent acceptance.
