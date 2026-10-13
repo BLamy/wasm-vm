@@ -1,0 +1,1031 @@
+{
+  "schema": "dimensional-depth-surfaces-critic-record-index-v1",
+  "records": [
+    {
+      "path": "verifier/authenticate.py",
+      "bytes": 8647,
+      "sha256": "e8ca417318ac2ee3606429319ef5d3b6a8c5af098b5998ed9f87f27d90f657c8",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/authentication.json",
+      "bytes": 8976,
+      "sha256": "b3e998c856adbb2e67062ad002793e971640ab4384f82fe48478c843d9ce75a8",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/authentication.log",
+      "bytes": 7455,
+      "sha256": "cb395eb985cc41b8c6865396357cb829eb946d26e07acc652b343c62a5c1013c",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/citations.jsonl",
+      "bytes": 2386584,
+      "sha256": "9813d6c79a2e764b736565c5d6d29c71e43b20df21e454196ec10e1f92f74b88",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/coverage-deployment-initial.log",
+      "bytes": 316,
+      "sha256": "dbdb9be27410e2278b6150308f0bc60c7dc40b745aeae5a8d87271285b880999",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/coverage-deployment-second.log",
+      "bytes": 271,
+      "sha256": "3d3ff2cccaa24385495d8bc025dfc3069992a7cfb0a77af90c7fd5b46c94f1ba",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/final-checks.json",
+      "bytes": 1959,
+      "sha256": "5676143b3dcf051c5ee3c8c5e19a9148e8a23e73101b948bdf3e702464ed879c",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/final-coverage-deployment.json",
+      "bytes": 182504,
+      "sha256": "d05c412185aa804ec3de985b0134811aab8eb9690dc87d7669901f5baf8a999e",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/final-coverage-deployment.log",
+      "bytes": 169,
+      "sha256": "ee76d620926a17e9b230b1ca5cbb550730635df5241d903e1fbec27c646fac60",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/final-custody.json",
+      "bytes": 571074,
+      "sha256": "cc7812b526c3915b401ae2806191adcd0cadaf6fc7aff922508b7ed3bcb7705d",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/final-custody.log",
+      "bytes": 239,
+      "sha256": "a6430b1834b41e5c623ddd31ad57ae837514054d50da18f3c0f7cb89e6da93b3",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/finish_coverage_deployment.py",
+      "bytes": 13301,
+      "sha256": "93f4a2867c41c5443810acadd89511072282da9a3a576b65ea7f5c1ec4267699",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/finish_custody.py",
+      "bytes": 8003,
+      "sha256": "39cef5976f98b1be1b65f54af023ec87c92098655e77f125263f3381334fad61",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/finish_generations.py",
+      "bytes": 14463,
+      "sha256": "534391622ab977db4eb8d55de0266d136b96697f9ef642128416e125628a7d1b",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generation-citations.jsonl",
+      "bytes": 23347,
+      "sha256": "24f301eac58de6eddf8c59ef1f0561af854dc86bb1278ed1066bcad2bbca4cc9",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generation-interrogation-initial.log",
+      "bytes": 255,
+      "sha256": "b12a43d4600b4d01499c478d4c986efbd4b204e8512e26a7401e42ad1840840e",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generation-interrogation.json",
+      "bytes": 470,
+      "sha256": "795c53d7dfc26a2c039d012d10e5740817ca49f3434ca257351c459d88917fc7",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generation-interrogation.log",
+      "bytes": 428,
+      "sha256": "420ee13b1582b402f155471a8ea132b9add1eeb7c878cee0195c4d2ac153df42",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/browser-coverage.json",
+      "bytes": 2034238,
+      "sha256": "df16ea93ff1bbf041faac58ccbf6d08f8d90303093b39d59c8e1be7a4762a520",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/browser.png",
+      "bytes": 46551,
+      "sha256": "c53a629701042b7f1c10d8de6b434e24fb7df580c1e421459b4100d0af1fbc5e",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/report.json",
+      "bytes": 35641,
+      "sha256": "630e5ca22ae7ec35b78eb5edd35eafb44b24893f5bdfea012b49052633975989",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/run-0000.json.gz",
+      "bytes": 371035,
+      "sha256": "7c51d8f1d9212fe37de6f212e0176ecd2c6db4a0e17acaa5e998f8d5b246cab1",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/run-0001.json.gz",
+      "bytes": 363967,
+      "sha256": "a0f0df3907c63ab4295d899bc39aeb0af89ccc320bbbc11624a1bb1f8b774073",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/run-0002.json.gz",
+      "bytes": 370777,
+      "sha256": "5e6d74b2ab113384bc566d3b58ab5f630b839ccba69a44c020562a2446d94e2d",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/run-0003.json.gz",
+      "bytes": 363835,
+      "sha256": "0d512dfe4db6dfc8108f3e4e70535b11e780f21a736d2b8c0e7a488a08ad451a",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/run-0004.json.gz",
+      "bytes": 370839,
+      "sha256": "2e2fec3e247129ae500214989ed669e68308f73f7d8e731992d8311d3a954e32",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/run-0005.json.gz",
+      "bytes": 364052,
+      "sha256": "3dcab206348f396bdd3d6bd10b1177db4c0b42221bbdfc990a4063dbe8834f4c",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/served/root.html",
+      "bytes": 465,
+      "sha256": "5fde94b05ad9f83c787e8bf4c3f4c75d33fa741a9367b1c783dc0f31b6507bcf",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/renderer/virgl-command/cache.mjs",
+      "bytes": 2989,
+      "sha256": "9e50cc258528e581f79cee0e4e0038994c7968f80046b9db21e7f5e0e4a92cfa",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/renderer/virgl-command/color-images.mjs",
+      "bytes": 2770,
+      "sha256": "8c1b43f830e13f73d1397398e97bf263343f88c1782c683a890cb0f1fbc5e0e1",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/renderer/virgl-command/constant-domain.mjs",
+      "bytes": 119833,
+      "sha256": "7b39ba76e418405d2e1ac5eeba466dfcb077baffe3bc37f88d01bb95cd254f97",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/renderer/virgl-command/control-bridge.mjs",
+      "bytes": 36258,
+      "sha256": "43b1ba17665a8da26f87e274350d431e47d5f3316665f110a29274f8266c87f0",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/renderer/virgl-command/decoder.mjs",
+      "bytes": 49756,
+      "sha256": "9b63a5cc4e140a585fc8df124fd7c79eda4ed4e534bd311a2d5bad7d4ac52e7b",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/renderer/virgl-command/dimensional-depth-images.mjs",
+      "bytes": 8781,
+      "sha256": "44d2d7b39145262ebd2533a8bc9625f1de500e7633cea73184a26c6727e5d68a",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/renderer/virgl-command/float-images.mjs",
+      "bytes": 3132,
+      "sha256": "69543e48426c7ded5178b659eb651b5cb765aa559a0bbf96fd8d34f5cf7cfe46",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/renderer/virgl-command/floating-depth-gpu.mjs",
+      "bytes": 15338,
+      "sha256": "ebc88ac91fe55fbfeb391fe2d216d4fea41086fb17d28628a2620353f1a66b90",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/renderer/virgl-command/floating-depth-images.mjs",
+      "bytes": 947,
+      "sha256": "76e02b32e5a24f65f360adb7cbcc0f9e5d51ee90be7cfbe1a383bfa99cc30370",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/renderer/virgl-command/integer-images.mjs",
+      "bytes": 1557,
+      "sha256": "8871226b60ad86ee1f585f8de6e5891241a361ad84aa811a36028fd003d95029",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/renderer/virgl-command/packed-float-images.mjs",
+      "bytes": 1620,
+      "sha256": "0ea28e0bfcf4a0ae04f634826d4b65cb19a6285850836412c7b06311ce1c5405",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/renderer/virgl-command/packed-normalized-images.mjs",
+      "bytes": 2046,
+      "sha256": "5ccf01336a906f3b46b0c8c790c73449331e09ac3cfee2931459d507b6dccd18",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/renderer/virgl-command/packed-unsigned-images.mjs",
+      "bytes": 991,
+      "sha256": "1170cf4d69d7281fdc32383354d7c17d6019ece0c7a6f681de86b27a57ea0d61",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/renderer/virgl-command/resources.mjs",
+      "bytes": 149255,
+      "sha256": "e4cb1937a416b907c5d405574ed51e7274342ff295ff627ec04071f93f044521",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/renderer/virgl-command/scanout.mjs",
+      "bytes": 14132,
+      "sha256": "affbac9b1b14e2a1eadb9bc29c693e120e20ffb84af02196a9eb00660eac1bac",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/renderer/virgl-command/shared-exponent-gpu.mjs",
+      "bytes": 9865,
+      "sha256": "22efbf4e0a3ae04d2e29900278db1e88880bd7c2fc7e757d0fd12d3a899531b7",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/renderer/virgl-command/shared-exponent-images.mjs",
+      "bytes": 563,
+      "sha256": "27de20239649aea73145e1f547c9265692f451fedddf3876639c173cf0d6168f",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/renderer/virgl-command/state.mjs",
+      "bytes": 198018,
+      "sha256": "64bec220bb376b7e984203ec5e86f8ea1e2f2d9af608d0e7b4bd07b4bd2e6706",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/renderer/virgl-command/tests/dimensional-color-surface-attacks.mjs",
+      "bytes": 4335,
+      "sha256": "fe14d7c83b5641f046a1672523d8d8564beaa274f5fc5d0944fee62fb8e66eba",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/renderer/virgl-command/tests/dimensional-color-surface-historical.mjs",
+      "bytes": 2803,
+      "sha256": "c91627eb02cd0b4ee505b609224fbc4cc86de6f0e6273feee145683754396ff4",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/renderer/virgl-command/tests/dimensional-color-surface-mrt.mjs",
+      "bytes": 6733,
+      "sha256": "cb274ec3d4ddf3c011a83046b7aa799d2d7b375188e0d32e5906ee7a4bd9e4ed",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/renderer/virgl-command/tests/dimensional-color-surface-retention.mjs",
+      "bytes": 16979,
+      "sha256": "52cccbe86dd1d9fc1d021f68b953552897f0c677618c4b3a45e5e1cc1c178a3f",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/renderer/virgl-command/tests/dimensional-depth-surface-attacks.mjs",
+      "bytes": 4256,
+      "sha256": "4ba60fe60f1330592a9804b1ab5872b3a2bb61c50b939ac28c76e4b31be1efb1",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/renderer/virgl-command/tests/dimensional-depth-surface-historical.mjs",
+      "bytes": 4368,
+      "sha256": "5c6b67d8df4fc4421fbd1a330c4924796675a33fc6c240c55a2d2d2b02113192",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/renderer/virgl-command/tests/dimensional-depth-surface-lifecycle.mjs",
+      "bytes": 14579,
+      "sha256": "26277c00b3990c6a6297b628cfdca6b7b73bb3cb7e9bb54385c4af17e301bb63",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/renderer/virgl-command/tests/native-dimensional-color-surfaces.mjs",
+      "bytes": 11895,
+      "sha256": "d3a21d0eb6e46c3b56bf359cea9cd89913d80d34910924ed4643bc6cf22d4203",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/renderer/virgl-command/tests/native-dimensional-depth-surface-generations.mjs",
+      "bytes": 17145,
+      "sha256": "63d4f21f9fd52ad313526fbba1792e7025d601dc843de223086c948c4e1e531d",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/renderer/virgl-command/tests/native-dimensional-depth-surfaces.mjs",
+      "bytes": 13701,
+      "sha256": "1a8128904f62dc75c0faff91c45c39a2aec6e129aaa9c918477326bcc156ffdc",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/renderer/virgl-command/tests/standard-instanced-draws.mjs",
+      "bytes": 32402,
+      "sha256": "f02cf96a50f79ef5ed71c0240784a7ae3d030231d18d320148e89252bf724afa",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/renderer/virgl-command/tests/submit-acceptance.mjs",
+      "bytes": 53417,
+      "sha256": "c65063916c5f28085604a5dca46a2221f360762c1192776dc9294e2e1ba238ed",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/renderer/virgl-command/unorm-depth-images.mjs",
+      "bytes": 1409,
+      "sha256": "7fb08881153cfd06ed1acb5dba8d6cc61525b8f742a3b0a9715fb0e68e55e1d1",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "bytes": 14038,
+      "sha256": "0e5f9c6b75eee85d9a27c6f29aaa4649545ae9a7c639e85466a6bb735f2e51c6",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "bytes": 444027,
+      "sha256": "6b2ae0184103ee1b937f11412aa4a0818c5338d5358cc9b48c04524347163752",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/renderer/virgl-shader/index.mjs",
+      "bytes": 22546,
+      "sha256": "1bae07f2e668078c4e447f65d1785815714907b7270ced01b131ce70e6d3f10e",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/renderer/virgl-shader/standard.mjs",
+      "bytes": 14035,
+      "sha256": "3ee5e75d5b3847861388364fc561e77395fe5a1e6b17a08b15cd9d6cedeae136",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "bytes": 437,
+      "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+      "bytes": 1314,
+      "sha256": "2877a95db8f6305fce95abf975c0fd7176ea2936c91eae201f662997f37f9fb2",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm.js",
+      "bytes": 174981,
+      "sha256": "0c06d38554753de457dbf9a84de5c1968c11a1b19e031b1e2e8a44e41808ed30",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm_bg.wasm",
+      "bytes": 7425956,
+      "sha256": "8c48aebb8f58bee66e4d0f69c9045e88263edfc9fb3ddd2e918828e5894e6323",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/tools/virgl-command/standard-byte-color-fixtures.mjs",
+      "bytes": 16675,
+      "sha256": "a40dffd854c7bf92ebbd33fdeedcd0f909a3b8cc2fb296ba0a9c582bb40500f4",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/tools/virgl-command/standard-draw-oracle.mjs",
+      "bytes": 4684,
+      "sha256": "8de41c4a9f041f7a9acaf8a062a525f64c0ef3d197c464753764ddada94d26e3",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/tools/virgl-command/standard-floating-depth-fixtures.mjs",
+      "bytes": 7049,
+      "sha256": "7f0619678a4fc198c9b0a3f5e680f1477829b49a60ad08725438bf16155e84d2",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/tools/virgl-command/standard-image-fixtures.mjs",
+      "bytes": 3809,
+      "sha256": "1c045bdf667fc18be16644a05dfeeb5ef7e88b4eb7eaf3f3572f20fa98954d48",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/tools/virgl-command/standard-integer-image-fixtures.mjs",
+      "bytes": 14605,
+      "sha256": "f06edea5aa2ba98dd68631630f89a47c77142626252f5c71f4acc057100e212a",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/tools/virgl-command/standard-packed-unsigned-fixtures.mjs",
+      "bytes": 5930,
+      "sha256": "b9b1a63e17c8f29aaaef688efd1de40ae6c91eb98b5a6f82415dec0c73519e61",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/tools/virgl-command/standard-sampler-fixtures.mjs",
+      "bytes": 3671,
+      "sha256": "e0977f02f9d6750b727c5e9b72f9e486b0245acc203acafeeaec16de8e25133d",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/tools/virgl-command/standard-texture-fixtures.mjs",
+      "bytes": 3872,
+      "sha256": "f32f31df7d93fdf829559b04b822ea23162de44c9e171c19ccc37c71c65c15e8",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/tools/virgl-dimensional-color-surfaces/fixtures.mjs",
+      "bytes": 3237,
+      "sha256": "29e4bbaeab22c2c0fa7fd28c20d301d6da0d0036f970d23f8ba5f504e9fc80a8",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/tools/virgl-dimensional-color-surfaces/witness.mjs",
+      "bytes": 1624,
+      "sha256": "3ffe2967ec627cf18ff507bfd1174525b3d61d8c6cb2dd70f1495513a1d86295",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/tools/virgl-dimensional-depth-surfaces/fixtures.mjs",
+      "bytes": 5654,
+      "sha256": "0c02c1be9bda4be9c6ba3bd2fa983765fb392d5ae2bfc7b8db117420826c6052",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/tools/virgl-dimensional-depth-surfaces/generations-browser.mjs",
+      "bytes": 10488,
+      "sha256": "c7ca02da8562daa0aefab1d7dea728b3ee34ffc52e68ef76c729cec365f43d0b",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/tools/virgl-dimensional-shaders/fixtures.mjs",
+      "bytes": 8582,
+      "sha256": "853e1ea6c912b600e2113bdbbdc6a01ef8082a032755f9eaeba0ced3d3d6b057",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/tools/virgl-floating-depth-consumer/fixtures.mjs",
+      "bytes": 9246,
+      "sha256": "c820767b5c34ec199d68625ca50101fe9f4a1ca1c4b242fcd1973899ed8de386",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/tools/virgl-instance-base/fixtures.mjs",
+      "bytes": 6011,
+      "sha256": "6ff14a60ea98cb044e5b391c9d1e6ef8f4fc8428bb20d1fa6067e57046013304",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/tools/virgl-packed-depth-consumer/fixtures.mjs",
+      "bytes": 6909,
+      "sha256": "31d02424ae1a36ec9329460d8590109018853708cb74ac61400fabcadd78237c",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/tools/virgl-packed-unsigned-consumer/fixtures.mjs",
+      "bytes": 9325,
+      "sha256": "6c0ac42f5439b9ff3fade5eebca0b6e229bc2d86639005579c22e96cf19ea792",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/tools/virgl-shadow-shaders/fixtures.mjs",
+      "bytes": 8653,
+      "sha256": "80b071e28005961a7d8aa06450624a01ab7b058e092384042814ee280dc1aef0",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/tools/virgl-stencil/fixtures.mjs",
+      "bytes": 9464,
+      "sha256": "d99327a0f0284d5b072e6623c0f6da3645442a61e2cafb8323b8a1b9699d8018",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean/source/tools/virgl-unorm-depth/fixtures.mjs",
+      "bytes": 6744,
+      "sha256": "918397fab72d316ce0ab60b75e103bb152e63220dbb75224942f19af87aec524",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-clean.log",
+      "bytes": 171,
+      "sha256": "634f3c9531cca7bab233eaf154d7ff4cd833e7072c4623413c8865da9d1f9908",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-redirected/browser-coverage.json",
+      "bytes": 2029370,
+      "sha256": "887e422a206535df8c8fd446ab01ad460fe67581028aca198596b742d89ae56f",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-redirected/browser.png",
+      "bytes": 28915,
+      "sha256": "44b9453d63cab204eb2099611d14245051904b1f5ee79fefaff7c045aa41acf0",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-redirected/report.json",
+      "bytes": 33524,
+      "sha256": "802b9e9fc5313d9db9d06169087da786f80314b20b2e90ba3dc3e361d13d5b31",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-redirected/run-0000.json.gz",
+      "bytes": 364545,
+      "sha256": "c5605105676155c574f667c5d7a4fbd672e40c94689e173246c7207cdd51e834",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/generations-redirected/served/root.html",
+      "bytes": 465,
+      "sha256": "5fde94b05ad9f83c787e8bf4c3f4c75d33fa741a9367b1c783dc0f31b6507bcf",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/served/root.html"
+    },
+    {
+      "path": "verifier/generations-redirected/source/renderer/virgl-command/cache.mjs",
+      "bytes": 2989,
+      "sha256": "9e50cc258528e581f79cee0e4e0038994c7968f80046b9db21e7f5e0e4a92cfa",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/renderer/virgl-command/cache.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/renderer/virgl-command/color-images.mjs",
+      "bytes": 2770,
+      "sha256": "8c1b43f830e13f73d1397398e97bf263343f88c1782c683a890cb0f1fbc5e0e1",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/renderer/virgl-command/color-images.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/renderer/virgl-command/constant-domain.mjs",
+      "bytes": 119833,
+      "sha256": "7b39ba76e418405d2e1ac5eeba466dfcb077baffe3bc37f88d01bb95cd254f97",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/renderer/virgl-command/constant-domain.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/renderer/virgl-command/control-bridge.mjs",
+      "bytes": 36258,
+      "sha256": "43b1ba17665a8da26f87e274350d431e47d5f3316665f110a29274f8266c87f0",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/renderer/virgl-command/control-bridge.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/renderer/virgl-command/decoder.mjs",
+      "bytes": 49756,
+      "sha256": "9b63a5cc4e140a585fc8df124fd7c79eda4ed4e534bd311a2d5bad7d4ac52e7b",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/renderer/virgl-command/decoder.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/renderer/virgl-command/dimensional-depth-images.mjs",
+      "bytes": 8781,
+      "sha256": "44d2d7b39145262ebd2533a8bc9625f1de500e7633cea73184a26c6727e5d68a",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/renderer/virgl-command/dimensional-depth-images.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/renderer/virgl-command/float-images.mjs",
+      "bytes": 3132,
+      "sha256": "69543e48426c7ded5178b659eb651b5cb765aa559a0bbf96fd8d34f5cf7cfe46",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/renderer/virgl-command/float-images.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/renderer/virgl-command/floating-depth-gpu.mjs",
+      "bytes": 15338,
+      "sha256": "ebc88ac91fe55fbfeb391fe2d216d4fea41086fb17d28628a2620353f1a66b90",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/renderer/virgl-command/floating-depth-gpu.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/renderer/virgl-command/floating-depth-images.mjs",
+      "bytes": 947,
+      "sha256": "76e02b32e5a24f65f360adb7cbcc0f9e5d51ee90be7cfbe1a383bfa99cc30370",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/renderer/virgl-command/floating-depth-images.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/renderer/virgl-command/integer-images.mjs",
+      "bytes": 1557,
+      "sha256": "8871226b60ad86ee1f585f8de6e5891241a361ad84aa811a36028fd003d95029",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/renderer/virgl-command/integer-images.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/renderer/virgl-command/packed-float-images.mjs",
+      "bytes": 1620,
+      "sha256": "0ea28e0bfcf4a0ae04f634826d4b65cb19a6285850836412c7b06311ce1c5405",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/renderer/virgl-command/packed-float-images.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/renderer/virgl-command/packed-normalized-images.mjs",
+      "bytes": 2046,
+      "sha256": "5ccf01336a906f3b46b0c8c790c73449331e09ac3cfee2931459d507b6dccd18",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/renderer/virgl-command/packed-normalized-images.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/renderer/virgl-command/packed-unsigned-images.mjs",
+      "bytes": 991,
+      "sha256": "1170cf4d69d7281fdc32383354d7c17d6019ece0c7a6f681de86b27a57ea0d61",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/renderer/virgl-command/packed-unsigned-images.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/renderer/virgl-command/resources.mjs",
+      "bytes": 149255,
+      "sha256": "e4cb1937a416b907c5d405574ed51e7274342ff295ff627ec04071f93f044521",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/renderer/virgl-command/resources.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/renderer/virgl-command/scanout.mjs",
+      "bytes": 14132,
+      "sha256": "affbac9b1b14e2a1eadb9bc29c693e120e20ffb84af02196a9eb00660eac1bac",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/renderer/virgl-command/scanout.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/renderer/virgl-command/shared-exponent-gpu.mjs",
+      "bytes": 9865,
+      "sha256": "22efbf4e0a3ae04d2e29900278db1e88880bd7c2fc7e757d0fd12d3a899531b7",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/renderer/virgl-command/shared-exponent-gpu.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/renderer/virgl-command/shared-exponent-images.mjs",
+      "bytes": 563,
+      "sha256": "27de20239649aea73145e1f547c9265692f451fedddf3876639c173cf0d6168f",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/renderer/virgl-command/shared-exponent-images.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/renderer/virgl-command/state.mjs",
+      "bytes": 198018,
+      "sha256": "64bec220bb376b7e984203ec5e86f8ea1e2f2d9af608d0e7b4bd07b4bd2e6706",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/renderer/virgl-command/state.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/renderer/virgl-command/tests/dimensional-color-surface-attacks.mjs",
+      "bytes": 4335,
+      "sha256": "fe14d7c83b5641f046a1672523d8d8564beaa274f5fc5d0944fee62fb8e66eba",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/renderer/virgl-command/tests/dimensional-color-surface-attacks.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/renderer/virgl-command/tests/dimensional-color-surface-historical.mjs",
+      "bytes": 2803,
+      "sha256": "c91627eb02cd0b4ee505b609224fbc4cc86de6f0e6273feee145683754396ff4",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/renderer/virgl-command/tests/dimensional-color-surface-historical.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/renderer/virgl-command/tests/dimensional-color-surface-mrt.mjs",
+      "bytes": 6733,
+      "sha256": "cb274ec3d4ddf3c011a83046b7aa799d2d7b375188e0d32e5906ee7a4bd9e4ed",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/renderer/virgl-command/tests/dimensional-color-surface-mrt.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/renderer/virgl-command/tests/dimensional-color-surface-retention.mjs",
+      "bytes": 16979,
+      "sha256": "52cccbe86dd1d9fc1d021f68b953552897f0c677618c4b3a45e5e1cc1c178a3f",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/renderer/virgl-command/tests/dimensional-color-surface-retention.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/renderer/virgl-command/tests/dimensional-depth-surface-attacks.mjs",
+      "bytes": 4256,
+      "sha256": "4ba60fe60f1330592a9804b1ab5872b3a2bb61c50b939ac28c76e4b31be1efb1",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/renderer/virgl-command/tests/dimensional-depth-surface-attacks.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/renderer/virgl-command/tests/dimensional-depth-surface-historical.mjs",
+      "bytes": 4368,
+      "sha256": "5c6b67d8df4fc4421fbd1a330c4924796675a33fc6c240c55a2d2d2b02113192",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/renderer/virgl-command/tests/dimensional-depth-surface-historical.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/renderer/virgl-command/tests/dimensional-depth-surface-lifecycle.mjs",
+      "bytes": 14579,
+      "sha256": "26277c00b3990c6a6297b628cfdca6b7b73bb3cb7e9bb54385c4af17e301bb63",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/renderer/virgl-command/tests/dimensional-depth-surface-lifecycle.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/renderer/virgl-command/tests/native-dimensional-color-surfaces.mjs",
+      "bytes": 11895,
+      "sha256": "d3a21d0eb6e46c3b56bf359cea9cd89913d80d34910924ed4643bc6cf22d4203",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/renderer/virgl-command/tests/native-dimensional-color-surfaces.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/renderer/virgl-command/tests/native-dimensional-depth-surface-generations.mjs",
+      "bytes": 17145,
+      "sha256": "63d4f21f9fd52ad313526fbba1792e7025d601dc843de223086c948c4e1e531d",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/renderer/virgl-command/tests/native-dimensional-depth-surface-generations.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/renderer/virgl-command/tests/native-dimensional-depth-surfaces.mjs",
+      "bytes": 13701,
+      "sha256": "1a8128904f62dc75c0faff91c45c39a2aec6e129aaa9c918477326bcc156ffdc",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/renderer/virgl-command/tests/native-dimensional-depth-surfaces.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/renderer/virgl-command/tests/standard-instanced-draws.mjs",
+      "bytes": 32402,
+      "sha256": "f02cf96a50f79ef5ed71c0240784a7ae3d030231d18d320148e89252bf724afa",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/renderer/virgl-command/tests/standard-instanced-draws.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/renderer/virgl-command/tests/submit-acceptance.mjs",
+      "bytes": 53417,
+      "sha256": "c65063916c5f28085604a5dca46a2221f360762c1192776dc9294e2e1ba238ed",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/renderer/virgl-command/tests/submit-acceptance.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/renderer/virgl-command/unorm-depth-images.mjs",
+      "bytes": 1409,
+      "sha256": "7fb08881153cfd06ed1acb5dba8d6cc61525b8f742a3b0a9715fb0e68e55e1d1",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/renderer/virgl-command/unorm-depth-images.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "bytes": 14038,
+      "sha256": "0e5f9c6b75eee85d9a27c6f29aaa4649545ae9a7c639e85466a6bb735f2e51c6",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "bytes": 444027,
+      "sha256": "6b2ae0184103ee1b937f11412aa4a0818c5338d5358cc9b48c04524347163752",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm"
+    },
+    {
+      "path": "verifier/generations-redirected/source/renderer/virgl-shader/index.mjs",
+      "bytes": 22546,
+      "sha256": "1bae07f2e668078c4e447f65d1785815714907b7270ced01b131ce70e6d3f10e",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/renderer/virgl-shader/index.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/renderer/virgl-shader/standard.mjs",
+      "bytes": 14035,
+      "sha256": "3ee5e75d5b3847861388364fc561e77395fe5a1e6b17a08b15cd9d6cedeae136",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/renderer/virgl-shader/standard.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "bytes": 437,
+      "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js"
+    },
+    {
+      "path": "verifier/generations-redirected/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+      "bytes": 1314,
+      "sha256": "2877a95db8f6305fce95abf975c0fd7176ea2936c91eae201f662997f37f9fb2",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js"
+    },
+    {
+      "path": "verifier/generations-redirected/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm.js",
+      "bytes": 174981,
+      "sha256": "0c06d38554753de457dbf9a84de5c1968c11a1b19e031b1e2e8a44e41808ed30",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "path": "verifier/generations-redirected/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm_bg.wasm",
+      "bytes": 7425956,
+      "sha256": "8c48aebb8f58bee66e4d0f69c9045e88263edfc9fb3ddd2e918828e5894e6323",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm_bg.wasm"
+    },
+    {
+      "path": "verifier/generations-redirected/source/tools/virgl-command/standard-byte-color-fixtures.mjs",
+      "bytes": 16675,
+      "sha256": "a40dffd854c7bf92ebbd33fdeedcd0f909a3b8cc2fb296ba0a9c582bb40500f4",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/tools/virgl-command/standard-byte-color-fixtures.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/tools/virgl-command/standard-draw-oracle.mjs",
+      "bytes": 4684,
+      "sha256": "8de41c4a9f041f7a9acaf8a062a525f64c0ef3d197c464753764ddada94d26e3",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/tools/virgl-command/standard-draw-oracle.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/tools/virgl-command/standard-floating-depth-fixtures.mjs",
+      "bytes": 7049,
+      "sha256": "7f0619678a4fc198c9b0a3f5e680f1477829b49a60ad08725438bf16155e84d2",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/tools/virgl-command/standard-floating-depth-fixtures.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/tools/virgl-command/standard-image-fixtures.mjs",
+      "bytes": 3809,
+      "sha256": "1c045bdf667fc18be16644a05dfeeb5ef7e88b4eb7eaf3f3572f20fa98954d48",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/tools/virgl-command/standard-image-fixtures.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/tools/virgl-command/standard-integer-image-fixtures.mjs",
+      "bytes": 14605,
+      "sha256": "f06edea5aa2ba98dd68631630f89a47c77142626252f5c71f4acc057100e212a",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/tools/virgl-command/standard-integer-image-fixtures.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/tools/virgl-command/standard-packed-unsigned-fixtures.mjs",
+      "bytes": 5930,
+      "sha256": "b9b1a63e17c8f29aaaef688efd1de40ae6c91eb98b5a6f82415dec0c73519e61",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/tools/virgl-command/standard-packed-unsigned-fixtures.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/tools/virgl-command/standard-sampler-fixtures.mjs",
+      "bytes": 3671,
+      "sha256": "e0977f02f9d6750b727c5e9b72f9e486b0245acc203acafeeaec16de8e25133d",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/tools/virgl-command/standard-sampler-fixtures.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/tools/virgl-command/standard-texture-fixtures.mjs",
+      "bytes": 3872,
+      "sha256": "f32f31df7d93fdf829559b04b822ea23162de44c9e171c19ccc37c71c65c15e8",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/tools/virgl-command/standard-texture-fixtures.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/tools/virgl-dimensional-color-surfaces/fixtures.mjs",
+      "bytes": 3237,
+      "sha256": "29e4bbaeab22c2c0fa7fd28c20d301d6da0d0036f970d23f8ba5f504e9fc80a8",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/tools/virgl-dimensional-color-surfaces/fixtures.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/tools/virgl-dimensional-color-surfaces/witness.mjs",
+      "bytes": 1624,
+      "sha256": "3ffe2967ec627cf18ff507bfd1174525b3d61d8c6cb2dd70f1495513a1d86295",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/tools/virgl-dimensional-color-surfaces/witness.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/tools/virgl-dimensional-depth-surfaces/fixtures.mjs",
+      "bytes": 5654,
+      "sha256": "0c02c1be9bda4be9c6ba3bd2fa983765fb392d5ae2bfc7b8db117420826c6052",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/tools/virgl-dimensional-depth-surfaces/fixtures.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/tools/virgl-dimensional-depth-surfaces/generations-browser.mjs",
+      "bytes": 10488,
+      "sha256": "c7ca02da8562daa0aefab1d7dea728b3ee34ffc52e68ef76c729cec365f43d0b",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/tools/virgl-dimensional-depth-surfaces/generations-browser.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/tools/virgl-dimensional-shaders/fixtures.mjs",
+      "bytes": 8582,
+      "sha256": "853e1ea6c912b600e2113bdbbdc6a01ef8082a032755f9eaeba0ced3d3d6b057",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/tools/virgl-dimensional-shaders/fixtures.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/tools/virgl-floating-depth-consumer/fixtures.mjs",
+      "bytes": 9246,
+      "sha256": "c820767b5c34ec199d68625ca50101fe9f4a1ca1c4b242fcd1973899ed8de386",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/tools/virgl-floating-depth-consumer/fixtures.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/tools/virgl-instance-base/fixtures.mjs",
+      "bytes": 6011,
+      "sha256": "6ff14a60ea98cb044e5b391c9d1e6ef8f4fc8428bb20d1fa6067e57046013304",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/tools/virgl-instance-base/fixtures.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/tools/virgl-packed-depth-consumer/fixtures.mjs",
+      "bytes": 6909,
+      "sha256": "31d02424ae1a36ec9329460d8590109018853708cb74ac61400fabcadd78237c",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/tools/virgl-packed-depth-consumer/fixtures.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/tools/virgl-packed-unsigned-consumer/fixtures.mjs",
+      "bytes": 9325,
+      "sha256": "6c0ac42f5439b9ff3fade5eebca0b6e229bc2d86639005579c22e96cf19ea792",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/tools/virgl-packed-unsigned-consumer/fixtures.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/tools/virgl-shadow-shaders/fixtures.mjs",
+      "bytes": 8653,
+      "sha256": "80b071e28005961a7d8aa06450624a01ab7b058e092384042814ee280dc1aef0",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/tools/virgl-shadow-shaders/fixtures.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/tools/virgl-stencil/fixtures.mjs",
+      "bytes": 9464,
+      "sha256": "d99327a0f0284d5b072e6623c0f6da3645442a61e2cafb8323b8a1b9699d8018",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/tools/virgl-stencil/fixtures.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected/source/tools/virgl-unorm-depth/fixtures.mjs",
+      "bytes": 6744,
+      "sha256": "918397fab72d316ce0ab60b75e103bb152e63220dbb75224942f19af87aec524",
+      "kind": "hardlink",
+      "target": "verifier/generations-clean/source/tools/virgl-unorm-depth/fixtures.mjs"
+    },
+    {
+      "path": "verifier/generations-redirected.log",
+      "bytes": 298,
+      "sha256": "48ad0ef4a4dcaa17dbb61c9458bd10ac0e937307cb5c1090b10f98bf798690ef",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/interrogate.py",
+      "bytes": 15679,
+      "sha256": "71e82e490da448ec0c694fcbfead3a72f2dc108134f702d9d5354e6be20778e4",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/interrogation.json",
+      "bytes": 561,
+      "sha256": "53ef84a6f1e5e998ecf74213b37e3969d05c510177f5501e891c56a2b3e7ad76",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/interrogation.log",
+      "bytes": 1100,
+      "sha256": "8640934c86b12c10bea9fabab137603a843c8a8f63e8e3e51623f53860e3c115",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/predictions.json",
+      "bytes": 3597,
+      "sha256": "694d05ccf36ecf67897ad8992b317105b77cd16b52708a3d68a8cce5c1251493",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/prior-session-framework-errors.json",
+      "bytes": 620,
+      "sha256": "e7cae3f4cf71b2b99c424396a52e88c80c72bad2f23b2cc32578d87a32a2cff7",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/seal_final.py",
+      "bytes": 4783,
+      "sha256": "15062059845b027c6cfa06e2e8b537b8f0d29b24eabd800792152c631bf2ea26",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/task.diff",
+      "bytes": 173227,
+      "sha256": "a9dae077ef86580435e88534b6cde3cfe385e711ce59271c44c23e35d2efe9ab",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/verdict.json",
+      "bytes": 3119,
+      "sha256": "8f3f0e0766082166ed16bf3ff3ff0f3a5dac689970ae68203b0fc0b99adea789",
+      "kind": "file"
+    }
+  ]
+}

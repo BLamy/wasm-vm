@@ -1,0 +1,15 @@
+hardware-54831: interrogated 330 complete rows
+hardware-90107: interrogated 330 complete rows
+hardware-171281: interrogated 330 complete rows
+boundaries-54831: interrogated 12 complete rows
+boundaries-90107: interrogated 12 complete rows
+boundaries-171281: interrogated 12 complete rows
+refresh-54831: interrogated 10 complete rows
+refresh-90107: interrogated 10 complete rows
+refresh-171281: interrogated 10 complete rows
+attacks: interrogated 130 complete rows
+mrt: interrogated 15 complete rows
+historical: interrogated 21 complete rows
+fault-layer: interrogated 1 complete rows
+fault-face: interrogated 1 complete rows
+{"schema": "dimensional-depth-surfaces-fresh-full-interrogation-v1", "status": "passed", "counts": {"rows": 1224, "hardware": 990, "refusals": 130, "historicalRefusals": 120, "historicalControls": 61, "images": 5166, "bytes": 22531176, "nativeStates": 3669, "faults": 2, "lifecycle": 66}, "predictions": {"P1": "HELD", "P2": "HELD", "P3": "HELD", "P4": "HELD", "P5": "HELD", "P6": "HELD"}, "citationsSha256": "9813d6c79a2e764b736565c5d6d29c71e43b20df21e454196ec10e1f92f74b88"}

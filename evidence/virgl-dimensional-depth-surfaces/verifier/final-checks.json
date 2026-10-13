@@ -1,0 +1,63 @@
+{
+  "schema": "dimensional-depth-surfaces-final-recorded-checks-v1",
+  "commands": [
+    {
+      "command": [
+        "node",
+        "--check",
+        "renderer/virgl-command/tests/native-dimensional-depth-surface-generations.mjs"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": "",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "node",
+        "--check",
+        "tools/virgl-dimensional-depth-surfaces/generations-browser.mjs"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": "",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "tools/check_task_policy.py"
+      ],
+      "exitCode": 0,
+      "stdout": "task-policy: OK (active=none)\n",
+      "stderr": "",
+      "stdoutSha256": "b09df388647b89ea459126a41fd92d72d5e274ddb70ffe70a741ba88cb705734",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "tools/build_queue.py"
+      ],
+      "exitCode": 0,
+      "stdout": "wrote tasks/QUEUE.md: 682 tasks, 490 verified\n",
+      "stderr": "",
+      "stdoutSha256": "c45f54482d841b2dc5eff188a1fd0f5263b4f4f69485dddb580dfbdc7815340c",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": "",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}

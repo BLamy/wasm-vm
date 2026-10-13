@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-dimensional-depth-surfaces/verifier/finish_generations.py", line 130, in <module>
+    assert row['witness']['texels'] == texels
+AssertionError

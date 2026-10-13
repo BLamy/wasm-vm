@@ -1,0 +1,5 @@
+AssertionError [ERR_ASSERTION]: independent generation byte oracle after complete GPU work and original206/DMA: expected true, got false
+
+'failed' !== 'passed'
+
+    at file:///Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/virgl-dimensional-depth-surfaces/generations-browser.mjs:74:82

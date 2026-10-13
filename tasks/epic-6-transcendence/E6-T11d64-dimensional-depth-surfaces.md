@@ -3,7 +3,7 @@ id: E6-T11d64
 epic: 6
 title: Render original single-layer dimensional depth surfaces
 priority: 525.027039000401
-status: implemented
+status: verified
 depends_on: [E6-T11d63, E6-T11d62, E6-T11d60, E6-T11d56]
 estimate: S
 risk: high
@@ -146,3 +146,87 @@ index65ed9a44410323a50cb3eea97ea99443d4dc5060399a22c90a923faf4cad1cdb,
 archive673ccd20460616243bfb4007ba6fbb8ca236de4e230c8c2f5c97c57822976fd4.
 Every final member, backward link, byte length and digest reopens through gzip EOF.
 The fresh critic receives both seals, the scoped diff and exact source heads.
+
+### 2026-10-13 — independent verifier — VERDICT: verified
+
+- P1–P6 — HELD, carried incrementally from the earlier independent critic.
+  All runtime bodies, dependency boundaries and16 prior seal identities remain
+  unchanged at submission fb8c9241678a46f1cf5f5a220add98e0ae010012. The authenticated
+  interrogation covers1224 rows,990 hardware cases,5166 complete images /
+  22,531,176 bytes,3669 native states,130 refusals, historical controls, retained
+  views, lifecycle/error paths and two physical face/layer redirects. Exact
+  recording points and full-image digests remain in
+  `verifier/citations.jsonl` (SHA256
+  9813d6c79a2e764b736565c5d6d29c71e43b20df21e454196ec10e1f92f74b88).
+- P7/P8 — HELD. Independently reopened all7818 final worker members and1168
+  deployment members through gzip EOF, and authenticated generated compiler and
+  selected Wasm bodies solely from that seal. Every changed line partitions into
+  345 finest positive regions or78 explicit static/byte-identical historical
+  waivers;0 missing regions. Each positive counter is checked against its original
+  authenticated coverage body; no enclosing positive count masks a zero branch.
+  The original cb04190a39-command authority,34 carried gates and8 executed proof
+  repairs at2f1e09f5 remain distinct. The final pristine checkout is clean before
+  and after, with no borrowed generated artifacts. See
+  `verifier/final-custody.json` and `verifier/final-coverage-deployment.json`.
+- N1 — HELD. Three independent schedules1779033703/3144134277/1013904242 each
+  recycle resource6 and surface21 with unchanged target/dimensions, switching
+  cube20→126 or array126→20. Retained bindings/aliases/private views preserve the
+  old object/resource/native texture identity; the fresh public names remain
+  disjoint. Actual headed Apple M4 Max Metal/WebGL2 runs pass253,631 assertions.
+  The independent critic reconstructs every fresh original206/DMA plane, old
+  private-view sample, color control, padded backing byte and guard from literal
+  endpoint models. See `verifier/generations-clean/run-0000.json.gz:1` through
+  `run-0005.json.gz:1` and `verifier/generation-citations.jsonl`.
+- S1 — HELD. The promoted regression's selective native redirect changes the
+  old array attachment to the fresh same-target combined texture. Valid GPU work
+  and all6 original readbacks complete before the unchanged image oracle rejects
+  the old sample and fresh mip1 image, with0 browser/native errors. The critic
+  checks42 complete images /195,568 image/backing/guard bytes and28 native write
+  states across clean and redirected runs. Point:
+  `verifier/generations-redirected/run-0000.json.gz:1`, SHA256
+  ce77ea0239be8d9e5e22e35903da13030ee896fa8fc469866d7b471cfe87c523,
+  `/samples/1`, `/outputs/1`, and `/attachmentStates`. No implementation byte
+  was changed. `verifier/generation-interrogation.json` records the verdict.
+- Deployment — HELD. Canonical recorded production run9724effa-3c8e-42ba-996a-1edf07049acb
+  at2f1e09f5 passes127/0 with0 browser errors, the partial D64 marker, absent
+  proof exports and unchanged default Wasm
+  d45b575207e0035b5c518698e7b6793b2bf12da635531723fad70813a5956c36.
+  All192 actual served bodies match the frozen source or exact authenticated
+  carried boot-manifest bytes. Reopened the previous515-member deployment too;
+  the unchanged, unserved legacy `docs-mount.js` is a static carry waiver. Actual
+  publication and deployment-list CLI receipts bind the production id/source.
+  Copied the immutable1168-member seal verbatim to
+  `evidence/virgl-dimensional-depth-surfaces/deployment`; manifest SHA256
+  44347fcebf978b74fe2d78b18b8257e18c53bf72595b26984e4d04cf4b3ef789.
+- SUITE: promote `native-dimensional-depth-surface-generations.mjs` and its
+  authenticated-body hardware runner `generations-browser.mjs`. The repeated
+  generation/format/handle regression and physically redirected negative run
+  assert stable behavior that the worker's original different-target reuse did
+  not exercise. Both syntax checks pass. Prior framework errors and the critic's
+  corrected custody/coordinate assumptions remain in the seal; no runtime or
+  recorded-image oracle changed. No production acceleration, Linux, complete
+  API or MIPS claim follows.
+
+Exact finishing commands (stdout/stderr, consumed source bodies, complete GPU
+records, traces/digests, screenshots and original predictions are sealed):
+
+```sh
+python3 evidence/virgl-dimensional-depth-surfaces/verifier/finish_custody.py
+node --check renderer/virgl-command/tests/native-dimensional-depth-surface-generations.mjs
+node --check tools/virgl-dimensional-depth-surfaces/generations-browser.mjs
+node tools/virgl-dimensional-depth-surfaces/generations-browser.mjs --output evidence/virgl-dimensional-depth-surfaces/verifier/generations-clean --authority target/evidence/d64-final-authority --seeds 1779033703,3144134277,1013904242
+node tools/virgl-dimensional-depth-surfaces/generations-browser.mjs --output evidence/virgl-dimensional-depth-surfaces/verifier/generations-redirected --authority target/evidence/d64-final-authority --seeds 1779033703 --fault true
+# The redirected command exits1 as predicted, after complete native readback.
+python3 evidence/virgl-dimensional-depth-surfaces/verifier/finish_generations.py
+python3 evidence/virgl-dimensional-depth-surfaces/verifier/finish_coverage_deployment.py
+python3 evidence/virgl-dimensional-depth-surfaces/verifier/seal_final.py
+python3 tools/check_task_policy.py
+python3 tools/build_queue.py
+```
+
+The final independent verifier seal reopens161 logical members,101 stored bodies
+and60 backward links through gzip EOF;5,702,744 compressed bytes.
+Manifest SHA256:fbac9176df4d3071f2d03759c34b9f9e3166ea8dc2927557e7cd31ebe8375bb2;
+index:b033d75be107b487dccc5fe42dbb78a155489ee5b77f943ed4e34ea694d01738;
+archive:d96e8242c18f4f6e937f3c322d4b0c87c91bc8ecbe3b974939ffdd0c733bf8b8.
+No refutation or remaining evidence gap; task verified. No PR was merged.
