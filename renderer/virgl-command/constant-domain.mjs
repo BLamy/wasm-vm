@@ -1466,14 +1466,15 @@ export function deriveStandardShadowTextureShaderInterface(vertex, fragment, hos
 
 // Dimensional metadata is admitted only through the separately selected compiler.
 export const STANDARD_DIMENSIONAL_TEXTURE_SHADER_PROFILE = "virgl-webgl2-standard-dimensional-texture-gles3-v1";
-function standardDimensionalMetadata(value, stage, paired, selectors) {
+function standardDimensionalMetadata(value, stage, paired, selectors, dimensionalShadows = false) {
   const keys = [...STANDARD_METADATA_KEYS, "guestUniformBlocks", "textureQueries", "colorOutputMasks", "instanceUniforms", "shadowUniforms"];
   const input = record(value, keys);
-  require(input.profile === STANDARD_DIMENSIONAL_TEXTURE_SHADER_PROFILE, "Dimensional textures require their distinct compiler profile.");
+  require(input.profile === (dimensionalShadows ? STANDARD_DIMENSIONAL_SHADOW_TEXTURE_SHADER_PROFILE : STANDARD_DIMENSIONAL_TEXTURE_SHADER_PROFILE), "Dimensional textures require their distinct compiler profile.");
   const types = { sampler2D: "sampler2D", isampler2D: "isampler2D", usampler2D: "usampler2D", sampler2DShadow: "sampler2DShadow",
     sampler3D: "sampler2D", isampler3D: "isampler2D", usampler3D: "usampler2D",
     samplerCube: "sampler2D", isamplerCube: "isampler2D", usamplerCube: "usampler2D",
-    sampler2DArray: "sampler2D", isampler2DArray: "isampler2D", usampler2DArray: "usampler2D" };
+    sampler2DArray: "sampler2D", isampler2DArray: "isampler2D", usampler2DArray: "usampler2D",
+    ...(dimensionalShadows ? { samplerCubeShadow: "sampler2DShadow", sampler2DArrayShadow: "sampler2DShadow" } : {}) };
   const samplers = array(input.samplers, 16).map(value => {
     const sampler = record(value, ["index", "name", "type"]);
     require(typeof sampler.type === "string" && Object.hasOwn(types, sampler.type), "Unsupported original dimensional sampler type.");
@@ -1484,11 +1485,11 @@ function standardDimensionalMetadata(value, stage, paired, selectors) {
   return standardFreeze({ ...metadata, profile: input.profile,
     samplers: metadata.samplers.map((sampler, index) => ({ ...sampler, type: samplers[index].type })) });
 }
-function standardDimensionalBody(value, stage, paired, selectors) {
+function standardDimensionalBody(value, stage, paired, selectors, dimensionalShadows = false) {
   const body = record(value, ["glsl", "metadata"]);
   require(typeof body.glsl === "string" && body.glsl.length <= 262144 && /^#version 300 es\b/m.test(body.glsl),
     "Dimensional texture compiler returned incompatible GLSL.");
-  return standardFreeze({ glsl: body.glsl, metadata: standardDimensionalMetadata(body.metadata, stage, paired, selectors) });
+  return standardFreeze({ glsl: body.glsl, metadata: standardDimensionalMetadata(body.metadata, stage, paired, selectors, dimensionalShadows) });
 }
 export function parseStandardDimensionalTextureShaderMetadata(value, stage, hostColors = STANDARD_IMAGE_COLORS) {
   try {
@@ -1527,5 +1528,47 @@ export function deriveStandardDimensionalTextureShaderInterface(vertex, fragment
     const selectors = standardMultipleSelectors(hostSelectors);
     return standardFreeze({ ok: true, ...standardInterface(standardDimensionalMetadata(vertex, "vertex", true, selectors),
       standardDimensionalMetadata(fragment, "fragment", true, selectors)) });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-link-error", error.message); }
+}
+
+// Only an explicitly selected consumer admits the D61 dimensional comparison authority.
+export const STANDARD_DIMENSIONAL_SHADOW_TEXTURE_SHADER_PROFILE = "virgl-webgl2-standard-dimensional-shadow-texture-gles3-v1";
+export function parseStandardDimensionalShadowTextureShaderMetadata(value, stage, hostColors = STANDARD_IMAGE_COLORS) {
+  try {
+    const colors = standardMultipleColors(hostColors);
+    return standardFreeze({ ok: true, domain: null,
+      metadata: standardDimensionalMetadata(value, stage, false, { ...STANDARD_UNIFORM_SELECTORS, ...colors }, true) });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-domain-error", error.message); }
+}
+export function normalizeStandardDimensionalShadowTextureShaderResult(value, stage, hostColors = STANDARD_IMAGE_COLORS) {
+  try {
+    const colors = standardMultipleColors(hostColors), response = record(value, ["ok", "glsl", "metadata", "error"], ["ok"]);
+    if (response.ok === false) { record(response, ["ok", "error"]); return standardError(response.error); }
+    require(response.ok === true, "Invalid dimensional texture compiler result."); record(response, ["ok", "glsl", "metadata"]);
+    return standardFreeze({ ok: true, ...standardDimensionalBody({ glsl: response.glsl, metadata: response.metadata }, stage,
+      false, { ...STANDARD_UNIFORM_SELECTORS, ...colors }, true) });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-domain-error", error.message); }
+}
+export function normalizeStandardDimensionalShadowTextureShaderPair(value, hostSelectors = STANDARD_IMAGE_SELECTORS) {
+  try {
+    const selectors = standardMultipleSelectors(hostSelectors), response = record(value, ["ok", "vertex", "fragment", "interfaceKey", "error"], ["ok"]);
+    if (response.ok === false) { record(response, ["ok", "error"]); return standardError(response.error); }
+    require(response.ok === true, "Invalid dimensional texture pair result."); record(response, ["ok", "vertex", "fragment", "interfaceKey"]);
+    const vertex = standardDimensionalBody(response.vertex, "vertex", true, selectors, true),
+      fragment = standardDimensionalBody(response.fragment, "fragment", true, selectors, true), derived = standardInterface(vertex.metadata, fragment.metadata);
+    require(response.interfaceKey === derived.key, "Dimensional texture pair key disagrees.");
+    for (const input of derived.inputs) {
+      const output = vertex.metadata.outputs.find(output => output.semantic === "GENERIC" && output.semanticIndex === input.semanticIndex);
+      require(output.type === input.type && output.interpolation === input.interpolation,
+        "Dimensional texture pair lacks the compiler's promoted generic output.");
+    }
+    return standardFreeze({ ok: true, vertex, fragment, interfaceKey: response.interfaceKey });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-link-error", error.message); }
+}
+export function deriveStandardDimensionalShadowTextureShaderInterface(vertex, fragment, hostSelectors = STANDARD_IMAGE_SELECTORS) {
+  try {
+    const selectors = standardMultipleSelectors(hostSelectors);
+    return standardFreeze({ ok: true, ...standardInterface(standardDimensionalMetadata(vertex, "vertex", true, selectors, true),
+      standardDimensionalMetadata(fragment, "fragment", true, selectors, true)) });
   } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-link-error", error.message); }
 }

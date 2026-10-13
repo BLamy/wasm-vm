@@ -45,7 +45,8 @@ Refuse incompatible profile/type/dimension/format/mode/state and framebuffer
 feedback before native draw. Record strict metadata/caller authority checks,
 actual native reflection/default/component faults, cache rebind/reuse, delayed/
 cancelled jobs, retained unref and reset/disposal. Native fences must precede
-original completion; restore caller state and retire every native/public owner.
+original completion; preserve the authenticated private-copy caller-state scopes,
+restore owned guest draw state and retire every native/public owner.
 Physically corrupt a real comparison or owned mask/add binding and require the
 unchanged whole-plane oracle to fail after actual hardware work and queue DMA.
 
@@ -125,3 +126,24 @@ strict D61 result/metadata validation and native comparison bindings. Continue
 native stack500 on `codex/virgl-dimensional-shadow-samplers`, record the final
 run and submit it to a fresh critic. Production negotiation and actual guest
 rendering stay gated by the parent acceptance.
+
+### 2026-10-12 — worker — inner-loop scope and recovery corrections
+
+The1040-case comparison matrix and30 shared-image/cross-stage cases passed on
+the actual selected Wasm queues and M4 Max Metal. An additional180-case refusal
+run passed after the harness stopped attempting to destroy a shader's already
+deleted public name: inspection correctly retains its non-public generation
+while a binding holds it. No renderer runtime change was needed for recovery.
+
+An attempted arbitrary caller-state check across a complete draw submission
+failed at `original-dimensional-baseline` in
+`/tmp/wasmvm-d62-boundaries-inner-1/run-0000.json.gz`. Its before/after native
+state shows the existing `state.mjs` restoration of the owned guest program,
+framebuffers, texture units and raster state. That test imposed a shared-host
+context contract the dedicated guest renderer has never had. The acceptance
+wording above now explicitly carries D60's independently verified unchanged
+private-copy caller-state scope and requires owned guest draw state. This is a
+harness scope correction, not a product restoration claim or runtime fix. The
+full failed original run and source bodies remain available for sealing and
+the fresh critic. Retained comparison images, resource name replacement and
+actual pending cancellation remain required new queue evidence.
