@@ -2549,6 +2549,8 @@ verify-E0-T27:
 	node --check tools/check-docs.mjs
 	node --check tools/verify-reviewed-site.mjs
 	node --check web/hero-scene.js
+	node --check web/tabs.js
+	node --check web/roadmap-page.js
 	node --check web/landing-page.js
 	node --check web/landing.js
 	node --check web/landing-benchmarks.js

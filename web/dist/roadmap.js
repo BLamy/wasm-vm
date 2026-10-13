@@ -208,9 +208,9 @@ export const ROADMAP = [
 // ════════════════════════════════════════════════════════════════════════════
 // Linear-style roadmap — the Roadmap tab. Reads ./tasks.json (generated from the
 // /tasks folder by tools/gen-tasks-json.py, the single source of truth). The
-// ROADMAP array above is retained ONLY because main.js/tabs.js still import it
+// ROADMAP array above is retained because main.js imports it
 // for the legacy live-suite capability panel (now hidden); this module owns the
-// visible Roadmap tab and never touches those elements.
+// public marketing roadmap and never touches those elements.
 // ════════════════════════════════════════════════════════════════════════════
 
 const STATUS = {

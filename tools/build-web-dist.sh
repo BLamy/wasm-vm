@@ -43,7 +43,7 @@ done
 # deployable bundle; omitting it leaves the generated main.js with a production-only 404.
 [ -d web/src ] && cp -R web/src "$DIST/src"
 # Docstream's compiled reader, lazy feature chunks, portable corpus, and complete
-# migration ledger are a real part of the site, including the in-app Docs tab.
+# migration ledger form the site’s single documentation library.
 [ -d web/docs-bundle ] && cp -R web/docs-bundle "$DIST/docs-bundle"
 [ -d web/docs-content ] && cp -R web/docs-content "$DIST/docs-content"
 

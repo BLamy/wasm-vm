@@ -31,7 +31,7 @@ if content.is_dir():
 bundle = dist / "docs-bundle"
 if bundle.is_dir():
     for asset in bundle.glob("*.js"):
-        text = asset.read_text().replace('href:"./index.html"', 'href:"./app.html"').replace('href:"./landing.html"', 'href:"./"')
+        text = asset.read_text().replace('href:"./index.html#ide"', 'href:"./app.html#ide"').replace('href:"./landing.html"', 'href:"./"')
         asset.write_text(text)
     revision = hashlib.sha256((bundle / "reader.js").read_bytes()).hexdigest()[:12]
     for name in ["docs.html", "docs-embedding.html", "docs-guest.html", "docs-containers.html", "docs-verification.html", "docs-explainers.html"]:

@@ -1,7 +1,7 @@
 ---
 id: E0-T27
 epic: 0
-title: Publish the reviewed marketing and Docstream website
+title: Unify the marketing site, launcher, roadmap and Docstream library
 priority: 525.0270390004005
 status: in-progress
 depends_on: [E6-T11d63]
@@ -14,6 +14,10 @@ capstone: false
 
 Build and publish one coherent version of the independently redesigned public
 website, its real Three.js architecture hero, and its Docstream1.8.0 reader.
+Open demo must land on the operating-system launcher. The actual task roadmap
+belongs to the marketing site, and every Docs entry uses one standalone library.
+Retire duplicate workbench roadmap/docs panels, preserve their old deep links,
+and regenerate the roadmap from the current repository ledger.
 Preserve the original background shader, raw benchmark inputs, pinned documentary
 records and the default emulator/boot artifact authority. This is a publication
 and frontend boundary on the existing Pages project; it changes no guest runtime,
@@ -38,6 +42,9 @@ inputs and dependency boundary are unchanged.
 
 Build and commit coherent web/dist. Record its complete bytes and source identity.
 Use an owned Playwright browser to prove desktop/mobile hero and reader routes,
+Open demo and bare app entry reaching the launcher without selecting a guest,
+marketing roadmap Gantt/Kanban/search/filter/detail behavior with current counts,
+legacy workbench roadmap/docs redirects and the same standalone docs library,
 Markdown/code actions, no overflow, reduced-motion/fallback behavior, initialized
 workbench and the ordinary127/0 suite with zero browser errors. Carry unchanged
 independent design/runtime findings and record the final assembled route boundary.
@@ -90,3 +97,14 @@ boundary and test both forms for all five legacy entries. Earlier unchanged
 design/reader facts carry forward, but the touched runtime route and affected
 submission gates must be recorded again at the new frozen head before acceptance.
 No guest runtime, shader, benchmark or production-GPU capability changed.
+
+### 2026-10-13 — worker — navigation consolidation steering
+
+The user found that Open demo still landed on the old workbench’s default
+Roadmap tab. The previously assembled c1d1efeb source was published, but it did
+not satisfy this newly clarified route boundary. Keep its complete recording
+and seal as intermediate evidence; the final submission must exercise the
+launcher default, the actual task roadmap inside the marketing shell, unified
+docs links and old bookmarked routes. The source/deploy layout swap remains
+explicit, and live-suite capability nodes remain available to the dedicated
+test-hooks path. This work changes frontend navigation only.

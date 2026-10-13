@@ -16,3 +16,5 @@
 .reader-scroll-hint:not([data-overflow=true]){display:none!important}
 
 .reader-markdown{font:10px var(--reader-mono);text-decoration:none;white-space:nowrap;min-height:44px;display:inline-flex;align-items:center}@media(max-width:700px){.reader-markdown{font-size:9px}}
+
+@media(max-width:700px){.reader-header{flex-wrap:wrap;min-height:110px;padding:8px 18px;gap:4px}.reader-brand{flex-basis:100%}.reader-header-links{width:100%;justify-content:space-between}.reader-sidebar{top:110px;height:calc(100dvh - 110px)}}

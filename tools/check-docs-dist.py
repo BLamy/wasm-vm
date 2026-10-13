@@ -42,8 +42,8 @@ for item in ledger["documents"]:
         require(item["publishedSha256"] == hashes[item["page"]], f"Published ledger hash drift: {item['path']}")
 
 reader = (DIST / "docs-bundle/reader.js").read_text()
-require('href:"./app.html"' in reader and 'href:"./"' in reader, "Reader navigation did not receive production routes")
-require('href:"./index.html"' not in reader and 'href:"./landing.html"' not in reader, "Reader retains source-layout navigation")
+require('href:"./app.html#ide"' in reader and 'href:"./"' in reader, "Reader navigation did not receive production routes")
+require('href:"./index.html#ide"' not in reader and 'href:"./landing.html"' not in reader, "Reader retains source-layout navigation")
 reader_revision = sha((DIST / "docs-bundle/reader.js").read_bytes())[:12]
 for name in ["docs.html", "docs-embedding.html", "docs-guest.html", "docs-containers.html", "docs-verification.html", "docs-explainers.html"]:
     html = (DIST / name).read_text()
@@ -61,6 +61,15 @@ for name, token in [("runtime-benchmarks.json", "__RUNTIME_BENCHMARK_VERSION__")
     require(token not in benchmark_js, f"Benchmark token was not stamped: {token}")
     require(sha((DIST / name).read_bytes())[:12] in benchmark_js, f"Benchmark identity missing: {name}")
     require((DIST / name).read_bytes() == (ROOT / "web" / name).read_bytes(), f"Raw benchmark changed: {name}")
+app = (DIST / "app.html").read_text()
+require('id="panel-ide" class="panel active"' in app, "Demo does not default to the launcher")
+require('id="panel-roadmap"' not in app and 'id="panel-docs"' not in app and 'docs-mount.js' not in app, "Duplicate workbench roadmap/docs remain")
+require(not (DIST / "docs-mount.js").exists(), "Retired docs iframe shipped")
+require('id="rm-lanes"' in (DIST / "roadmap.html").read_text(), "Marketing roadmap lacks task UI")
+require((DIST / "tasks.json").read_bytes() == (ROOT / "web/tasks.json").read_bytes(), "Published roadmap ledger drift")
+for name in ["index.html", "products.html", "security.html", "work-market.html", "roadmap.html"]:
+    text = (DIST / name).read_text()
+    require('href="./app.html#ide"' in text, f"Demo entry does not target the launcher: {name}")
 require("__SW_VERSION__" not in (DIST / "sw.js").read_text(), "Service worker version not stamped")
 features = list((DIST / "docs-bundle/features").glob("*.js"))
 require(features and not (DIST / "docs-bundle/chunks").exists(), "Lazy docs features collide with the disk-chunk cache exclusion")

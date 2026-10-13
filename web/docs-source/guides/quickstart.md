@@ -1,6 +1,6 @@
 # Boot your first guest
 
-Open the [browser demo](./index.html) to run the machine. The page contains the guest console, display paths, compliance suite, and a roadmap tied to the repository ledger.
+Open the [guest launcher](./index.html#ide) and choose an operating system to run the machine. The demo contains the guest console and display. The [roadmap](./roadmap.html) lives on the main site, and all guides and references are in this documentation library.
 
 ## Choose a boot path
 

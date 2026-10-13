@@ -1,4 +1,4 @@
-import { readFile, stat, writeFile } from "node:fs/promises";
+import { readFile, stat, writeFile, mkdir } from "node:fs/promises";
 import { execFileSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -62,6 +62,7 @@ const fragment=s=>s.match(/fragmentShader:\s*\/\* glsl \*\/\s*`([\s\S]*?)`/)[1];
 require(fragment(oldShader)===fragment(currentShader),"Background fragment shader was replaced or changed");
 for(const asset of ["web/landing.html","web/landing-page.js","web/hero-scene.js","web/landing.js","web/landing-benchmarks.js","web/docs-bundle/reader.js","web/docs-bundle/reader.css"])require((await stat(path.join(root,asset))).size>0,`Missing browser asset ${asset}`);
 const receipt={schema:1,docstreamVersion:version,sourceRevision:ledger.sourceRevision,baselineProse:baseline.length,auxiliaryRecords:auxiliary.length,ledgerDocuments:ledger.documents.length,renderedPages:catalog.pages.length,dispositions:ledger.counts,localLinks:links.length,docstreamContentRefs:contentRefs,namedCodeFences:namedFences,referenceCodeBlocks:commands.reduce((s,p)=>s+p.codeBlocks,0),shaderFragmentSha256:sha(fragment(currentShader)),roundtripExceptions:roundtrip,commands};
-await writeFile(path.join(root,"design/docs-validation.json"),JSON.stringify(receipt,null,2)+"\n");
-require(roundtrip.length===0,`Docstream round-trip changed ${roundtrip.length} pages; see design/docs-validation.json`);
+await mkdir(path.join(root,"target/docs-build"),{recursive:true});
+await writeFile(path.join(root,"target/docs-build/docs-validation.json"),JSON.stringify(receipt,null,2)+"\n");
+require(roundtrip.length===0,`Docstream round-trip changed ${roundtrip.length} pages; see target/docs-build/docs-validation.json`);
 console.log(`Docs checks passed: ${baseline.length} source documents accounted for; ${catalog.pages.length} pages parsed/round-tripped; ${links.length} local links; ${receipt.referenceCodeBlocks} unchanged code blocks; original shader SHA-256 ${receipt.shaderFragmentSha256}.`);
