@@ -3,7 +3,7 @@ id: E6-T11d63
 epic: 6
 title: Render original single-layer dimensional color surfaces
 priority: 525.0270390004
-status: pending
+status: in-progress
 depends_on: [E6-T11d62, E6-T11d58, E6-T11d56]
 estimate: S
 risk: high
@@ -114,3 +114,11 @@ archive:`b70fcf42df76ad6520e54003a6220485637aab684f5b293ce45b067893bde4ff`.
 The user's instruction to finish production guest graphics continues this
 ordered branch. All three prerequisites are verified before activation.
 Production acceleration and300-MIPS performance remain unqualified.
+
+### 2026-10-13 — worker — activated
+
+D63 is the sole active task and the top eligible queue entry. D62/D58/D56 are
+verified. Continue native stack500 on `codex/virgl-dimensional-color-surfaces`;
+implement the original one-layer RGBA8 surface boundary, then freeze, record,
+deploy and hand complete evidence to a fresh critic. Reuse authenticated native
+allocation/DMA and shader bodies; production remains gated by the parent.
