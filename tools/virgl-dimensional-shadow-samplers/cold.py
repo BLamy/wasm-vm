@@ -14,6 +14,7 @@ assert not output.exists(), 'preserve earlier recordings'
 git = lambda *args: subprocess.check_output(['git', *args], cwd=repo, text=True).strip()
 head = git('rev-parse', 'HEAD')
 assert not git('status', '--porcelain', '--untracked-files=no')
+assert shutil.disk_usage(tempfile.gettempdir()).free >= 8 * 1024**3, 'final recording needs at least8GiB free scratch space'
 clone = Path(tempfile.mkdtemp(prefix='wasm-vm-dimensional-shadow-samplers-cold-')) / 'repo'
 subprocess.run(['git', 'clone', '--shared', '--no-checkout', str(repo), str(clone)], check=True)
 directories = git('ls-tree', '-d', '--name-only', head).splitlines()
@@ -33,8 +34,6 @@ command = ['make', 'verify-E6-T11d62']
 output.mkdir(parents=True)
 with (output / 'cold.stdout').open('wb') as stdout, (output / 'cold.stderr').open('wb') as stderr:
     result = subprocess.run(command, cwd=clone, env=env, stdout=stdout, stderr=stderr, timeout=7200)
-if proof.exists():
-    shutil.copytree(proof, output / 'recording')
 after = status()
 report = dict(schema='dimensional-shadow-samplers-cold-v1', head=head, clone=str(clone), command=command, evidenceOutput=str(proof),
               cleanBefore=before, cleanAfter=after, exitCode=result.returncode,
@@ -42,5 +41,12 @@ report = dict(schema='dimensional-shadow-samplers-cold-v1', head=head, clone=str
                                   generatedCompilerAuthority='complete authenticated D61 worker seal', claim='selected dimensional comparison consumer and ordinary default demo'),
               receiptSha256=hashlib.sha256((proof / 'receipt.json').read_bytes()).hexdigest() if (proof / 'receipt.json').exists() else None)
 (output / 'report.json').write_text(json.dumps(report, indent=2) + '\n')
+if proof.exists():
+    try:
+        shutil.copytree(proof, output / 'recording')
+    except Exception as error:
+        report['copyFailure'] = dict(type=type(error).__name__, message=str(error))
+        (output / 'report.json').write_text(json.dumps(report, indent=2) + '\n')
+        raise
 assert result.returncode == 0 and not after, 'inspect preserved complete output'
 print(json.dumps(report))

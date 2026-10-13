@@ -76,9 +76,12 @@ try{
   report.status='passed';console.log(JSON.stringify(report.browserResult.result.summary));
 }catch(error){report.status='failed';report.failure={message:error.message,stack:error.stack};process.exitCode=1;console.error(error.stack);}
 finally{
+ try{
   report.runs=runs;report.servedFiles=[...served.values()];report.finishedAt=new Date().toISOString();
   await fs.mkdir(path.join(output,'served'),{recursive:true});await fs.writeFile(path.join(output,'served/root.html'),html);
   for(const[name,bytes]of sources){const file=path.join(output,'source',name);await fs.mkdir(path.dirname(file),{recursive:true});await fs.writeFile(file,bytes);}
   await fs.writeFile(path.join(output,'report.json'),JSON.stringify(report,null,2)+'\n');
+ }finally{
   await browser?.close().catch(()=>{});if(server)await new Promise(resolve=>server.close(resolve));
+ }
 }

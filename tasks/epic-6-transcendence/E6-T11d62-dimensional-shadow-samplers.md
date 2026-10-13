@@ -147,3 +147,28 @@ harness scope correction, not a product restoration claim or runtime fix. The
 full failed original run and source bodies remain available for sealing and
 the fresh critic. Retained comparison images, resource name replacement and
 actual pending cancellation remain required new queue evidence.
+
+### 2026-10-12 — worker — preserved cold recording write failure
+
+Frozen head `6c812c97e9ae2c0f47b22ce794536288990d99d5` passed the first21
+pristine-clone commands: source/dependency authentication, format/clippy, both
+native queue suites, affected Wasm builds, syntax and1180 metadata checks. The
+first hardware schedule stopped after283 complete passing rows because writing
+the next row, coverage and source files returned `ENOSPC`. The actual Node stderr
+and the subsequent cold copy failure are preserved. No completed final-run
+claim follows from this partial schedule.
+
+`/tmp/wasmvm-dimensional-shadow-samplers-cold-6c812c97/` preserves the original
+partial copy,364 complete original files copied byte-for-byte after space became
+available, the failed/truncated bodies, frozen source and actual generated Wasm.
+`failure-custody.json` is explicitly a later custody sidecar, not an invented
+original report. Only completed owned build caches and the completed failed
+checkout were removed; the recordings and immutable Git source remain. The
+actual Wasm proof SHA256 matches the earlier inner runs:
+`8c48aebb8f58bee66e4d0f69c9045e88263edfc9fb3ddd2e918828e5894e6323`.
+
+The harness now checks free scratch space before cloning, writes the cold report
+before copying, records copy failures, and closes its owned browser even if
+recording fails. Runtime, fixtures and expected pixels are unchanged. The final
+scrubbed-clone submission will be retried at the corrected harness head; the
+complete failed run is retained for the final seal and fresh critic.
