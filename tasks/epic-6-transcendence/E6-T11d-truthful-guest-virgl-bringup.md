@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47, E6-T11d48, E6-T11d49, E6-T11d50, E6-T11d51, E6-T11d52, E6-T11d53, E6-T11d54, E6-T11d55, E6-T11d56, E6-T11d57, E6-T11d58, E6-T11d59, E6-T11d60, E6-T11d61, E6-T11d62, E6-T11d63, E6-T11d64]
-blocked_on: E6-T11d64
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47, E6-T11d48, E6-T11d49, E6-T11d50, E6-T11d51, E6-T11d52, E6-T11d53, E6-T11d54, E6-T11d55, E6-T11d56, E6-T11d57, E6-T11d58, E6-T11d59, E6-T11d60, E6-T11d61, E6-T11d62, E6-T11d63, E6-T11d64, E6-T11d65, E6-T11d66]
+blocked_on: E6-T11d65
 estimate: S
 risk: high
 capstone: false
@@ -828,3 +828,32 @@ See E6-T11d64 for exact commands and digests. It is the next ordered S boundary.
 The explicitly requested reviewed website publication E0-T27 temporarily occupies
 the sole active lane; the original instruction to finish guest graphics continues
 after it. No capset, complete API, Linux renderer or300-MIPS claim is made.
+
+### 2026-10-13 — worker — dimensional depth verified; original stream output
+
+E6-T11d64 is independently verified at6f43010dfa7b3e08bfe62f62543b7ee0468e1a21
+and published as draft PR543 above PR542 in native stack500. Both existing stack
+identities and all143 prior PR identities/order/titles/bodies/heads/bases/open-draft
+states are unchanged; no PR was merged. The verified partial marker is live at
+Cloudflare deployment9724effa-3c8e-42ba-996a-1edf07049acb, with127/0 default tests
+and zero browser errors. Its reopened deployment seal is committed.
+
+Six valid original stream-output requests still refuse under the D64 decoder and
+resource policy: nonzero original shader outputs, object10 target, opcode25 target
+binding, rasterizer discard bit3, nonzero original count override and buffer
+role2048. Reproduce with
+`node target/evidence/transform-feedback-readiness-fb8c9241/readiness.mjs`
+from the recorded readiness source. The complete packets, source pins and results
+are recorded; this is JS-only readiness, with no native GPU or guest-queue claim.
+The recorded fb8c9241 runtime is byte-identical at the D64 verifier head.
+
+Pinned Mesa26.2.2 serializes four dword strides and two words per original output,
+and reports64 separate/interleaved components. STREAM_OUTPUT is original VirGL
+bind2048. The pinned virglrenderer1.3.0 source uses nonzero COUNT_FROM_SO directly
+as the nonindexed count with start0, rather than as an object handle. Complete
+primary source bodies, archive digests and67 matching vendored source pins are
+recorded. Ordered S boundaries E6-T11d65 (typed capture compiler) and E6-T11d66
+(original targets/native capture) close this API family before positive typed
+capability negotiation and actual Mesa/Hyprland worker/scanout bring-up. The
+user's explicit four-part request keeps this graphics chain ahead of unrelated
+queue entries. No production acceleration or MIPS claim follows from readiness.
