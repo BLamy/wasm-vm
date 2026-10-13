@@ -180,7 +180,7 @@ export const ROADMAP = [
     status: "partial",
     blurb: "Guest GPU offload in isolated fixtures; multi-hart SMP and live accelerated graphics remain in progress.",
     caps: [
-      { name: "Guest GPU offload", status: "partial", evidence: "Isolated command, DMA and retained scanout fixtures (E6-T11), with selected native layered RGBA8 DMA (E6-T11d56), original typed dimensional shader compilation (E6-T11d57), native RGBA8 dimensional sampler views (E6-T11d58), selected cube/array depth allocation and DMA (E6-T11d59), retained original cube/array depth sampler views (E6-T11d60), original cube/array comparison shader compilation (E6-T11d61), selected native cube/array comparison sampler views (E6-T11d62), and original single-layer dimensional color surfaces under verification (E6-T11d63); production acceleration disabled" },
+      { name: "Guest GPU offload", status: "partial", evidence: "Isolated command, DMA and retained scanout fixtures (E6-T11), with selected native layered RGBA8 DMA (E6-T11d56), original typed dimensional shader compilation (E6-T11d57), native RGBA8 dimensional sampler views (E6-T11d58), selected cube/array depth allocation and DMA (E6-T11d59), retained original cube/array depth sampler views (E6-T11d60), original cube/array comparison shader compilation (E6-T11d61), selected native cube/array comparison sampler views (E6-T11d62), original single-layer dimensional color surfaces (E6-T11d63), and selected original cube/array depth surfaces under verification (E6-T11d64); production acceleration disabled" },
       { name: "Multi-hart core state + SBI HSM", status: "pending" },
       { name: "SMP kernel boot (round-robin)", status: "pending" },
       { name: "RVWMO / wasm memory-model audit", status: "pending" },

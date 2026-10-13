@@ -2559,3 +2559,7 @@ verify-E0-T27:
 	python3 tools/check-docs-dist.py web/dist
 	node tools/verify-reviewed-site.mjs --output "$(SITE_EVIDENCE_DIR)/site"
 	node tools/verify-virgl-default-demo.mjs --output "$(SITE_EVIDENCE_DIR)/default-demo" --task E0-T27
+
+.PHONY: verify-E6-T11d64
+verify-E6-T11d64:
+	python3 tools/virgl-dimensional-depth-surfaces/verify.py --output "$${VIRGL_DIMENSIONAL_DEPTH_SURFACE_EVIDENCE_DIR:-target/evidence/virgl-dimensional-depth-surfaces}"
