@@ -1,0 +1,252 @@
+{
+  "schema": "dimensional-shadow-sampler-seal-v1",
+  "task": "E6-T11d62",
+  "head": "d853f096b3858ef390ad42b6cac33838778d849b",
+  "records": 8070,
+  "uniqueBodies": 4931,
+  "backwardLinks": 3139,
+  "recordIndexSha256": "797086b4328561b6f021697392c6a40946b76c1408172e4843d6ee4b5e7f4409",
+  "archiveSha256": "7fa6fe8345d44f52e48e9eb459dbebb52ea478d4fa6460b78335c848277fd0c6",
+  "archiveBytes": 490001728,
+  "logicalBytes": 1000894501,
+  "predecessors": {
+    "schema": "dimensional-shadow-sampler-predecessors-v1",
+    "base": "93021c5a28b99357532844de6ea4944291774099",
+    "dependencies": [
+      {
+        "family": "virgl-dimensional-shadow-shaders/worker",
+        "manifestSha256": "862ccad57dcd39ef940c2ba495c4a638e3e30f82fd4b34546240937b7ce550f1",
+        "indexSha256": "7211cf03b9264aa5215d8d90474fececa5d748bd35a43a0bed2fb1a1d89aac01",
+        "archiveSha256": "d0a39567532a609f313ef2d2a39bea3473d05e7d4d1a43bf5a29edf03221d337",
+        "archiveBytes": 32267855,
+        "reopenedMembers": 44485,
+        "gzipEofChecked": true
+      },
+      {
+        "family": "virgl-dimensional-shadow-shaders/verifier",
+        "manifestSha256": "77ef1511cf4ff3a2aceccbdb89c99bce55a6ae89ade0af6cbb9c2ceeb6ec024a",
+        "indexSha256": "e58839a053fe147e81b1ded7efd30023f8dae1fd1bdd97e49ca85ca251df647e",
+        "archiveSha256": "3fd875a25de06b25221241934b515993e0f54dfe839a8ec1c66dbad22e88f3d6",
+        "archiveBytes": 3566137,
+        "reopenedMembers": 7531,
+        "gzipEofChecked": true
+      },
+      {
+        "family": "virgl-dimensional-depth-views/worker",
+        "manifestSha256": "6e4047173d8fefb25d1763ba2eb9e9c40534bddd70f02544cb05e843f6005145",
+        "indexSha256": "38dc0b762d1bb5d37229a6ced3ae8b493eb93706cb26f1984b1251b7f83134b9",
+        "archiveSha256": "f7fba1471496d686b5759cf773ddecdbdd0a4e90014ce7936465cb754956d639",
+        "archiveBytes": 460967357,
+        "reopenedMembers": 37268,
+        "gzipEofChecked": true
+      },
+      {
+        "family": "virgl-dimensional-depth-views/verifier",
+        "manifestSha256": "1e7b66672d57a8caa6224d02f6c1e12bef85b3cf2f01d9082ee7c2f48341356e",
+        "indexSha256": "6438d86a2028a1b20c1eff2e381bed399c62c44db6a4086373c0183141099a58",
+        "archiveSha256": "1f17708a5fb43cf0f6e07ace47feb2aa20ceedfa69f14f061ad83b0c59cf2cf0",
+        "archiveBytes": 334848459,
+        "reopenedMembers": 3402,
+        "gzipEofChecked": true
+      },
+      {
+        "family": "virgl-shadow-samplers/worker",
+        "manifestSha256": "f6060a1d127854fa230b3f9ba0f50e83941ded19c4e516f5f5e0908a8f901f8f",
+        "indexSha256": "7bf6f4ea3b5aaf6b53a0199dc8a3dfa6824cf2c512f5f8a7a48067aad3370192",
+        "archiveSha256": "efde5ede4f9528859ea0f762b34ac906e2e5765724efe87bd563e9615673c5cb",
+        "archiveBytes": 28031341,
+        "reopenedMembers": 44665,
+        "gzipEofChecked": true
+      },
+      {
+        "family": "virgl-shadow-samplers/verifier",
+        "manifestSha256": "c4546b2d53e1bf6923127764d3ec37b5375ab75aaf73eac53902572a814e395d",
+        "indexSha256": "07ac9236066c4890a6e64db11e7825272e44414e5237c479624f74f90decda44",
+        "archiveSha256": "3cd3e2e56aa16aa1fbe6619c57ff3980d4335cec98dd5f8aae325362961a1477",
+        "archiveBytes": 8611431,
+        "reopenedMembers": 4255,
+        "gzipEofChecked": true
+      }
+    ],
+    "generated": {
+      "renderer/virgl-shader/build/wasm/virgl-shader.mjs": {
+        "bytes": 14038,
+        "sha256": "0e5f9c6b75eee85d9a27c6f29aaa4649545ae9a7c639e85466a6bb735f2e51c6"
+      },
+      "renderer/virgl-shader/build/wasm/virgl-shader.wasm": {
+        "bytes": 444027,
+        "sha256": "6b2ae0184103ee1b937f11412aa4a0818c5338d5358cc9b48c04524347163752"
+      }
+    },
+    "unchangedBoundaries": [
+      "D61 C/Wasm original compiler",
+      "D60 original decoder, depth storage, private native views and DMA",
+      "D49 native comparison controls and fence ownership"
+    ],
+    "actualLinuxGuest": false,
+    "productionAuthority": false,
+    "heldPrivateCopy": {
+      "path": "held-private-copy/report.json",
+      "sha256": "160f2996ba36b1b4d7a5a122e81edf17ebfeeae7d1c522bbcfce0b1b71201424",
+      "claim": "Unchanged D60 depth/private-copy scopes restore incoming native framebuffer and scissor state, including real failed blits; complete original native calls and bodies are authenticated."
+    }
+  },
+  "authoritativeRecording": "cold/recording",
+  "commands": 40,
+  "earlierFailedInner": [],
+  "guestInstructionEvidence": true,
+  "actualLinuxGuest": false,
+  "productionAuthority": false,
+  "archiveParts": [
+    {
+      "path": "recording.tar.gz.part-0000",
+      "bytes": 16777216,
+      "sha256": "0a1cec3951277d96a0cac4959b6c6571d45b4b613b4b7b7962d6fdea07edc097"
+    },
+    {
+      "path": "recording.tar.gz.part-0001",
+      "bytes": 16777216,
+      "sha256": "442428f7ed51b143cc3b004f2baac2e13090699fa87b50b784a5d950466c5dee"
+    },
+    {
+      "path": "recording.tar.gz.part-0002",
+      "bytes": 16777216,
+      "sha256": "d53d75b17d2cb41f4abf1f0e3303e556e4b0cc4ca86cbebb04b2894ff80bef19"
+    },
+    {
+      "path": "recording.tar.gz.part-0003",
+      "bytes": 16777216,
+      "sha256": "c4f129a28c31eefd3d040749df67a0474a122aee43c145a752c843e60aca7f05"
+    },
+    {
+      "path": "recording.tar.gz.part-0004",
+      "bytes": 16777216,
+      "sha256": "e61c771a4ebb2d5508944220a456c4b06478b5bf40c5c2649e14e25b6fbb9654"
+    },
+    {
+      "path": "recording.tar.gz.part-0005",
+      "bytes": 16777216,
+      "sha256": "d8bfc225ee48a80c7368a2efc25ed9c5a7376b2dc41b910cc0798ba5fd46f405"
+    },
+    {
+      "path": "recording.tar.gz.part-0006",
+      "bytes": 16777216,
+      "sha256": "8e82a0f58a454abb736c32a7d387ae5710395156e478fb2ce1334d4184b155e3"
+    },
+    {
+      "path": "recording.tar.gz.part-0007",
+      "bytes": 16777216,
+      "sha256": "6f547f4f9d2c8c13ab1e63def75385952ed713ca6059d6afa7d313426191d2e6"
+    },
+    {
+      "path": "recording.tar.gz.part-0008",
+      "bytes": 16777216,
+      "sha256": "35f9236c02f32944b1cad957ee26ebe0f2ce9dd8da205c2b66c9692fb34060a6"
+    },
+    {
+      "path": "recording.tar.gz.part-0009",
+      "bytes": 16777216,
+      "sha256": "8a0d1b90b208b887ce1e36a50bbcaea40615c7135e82161fcfcccc265878edcf"
+    },
+    {
+      "path": "recording.tar.gz.part-0010",
+      "bytes": 16777216,
+      "sha256": "b18c2385a6631dc432d3d248c4ef2fa8efba53145fd8e37f6a5733ec27801707"
+    },
+    {
+      "path": "recording.tar.gz.part-0011",
+      "bytes": 16777216,
+      "sha256": "ba63386af702545e9ad6a761701f11fe05a2f1fc4de667038b08090b53778294"
+    },
+    {
+      "path": "recording.tar.gz.part-0012",
+      "bytes": 16777216,
+      "sha256": "6d74ca957d7dd2a2f5de120099fa60e7ea7f5136d8326bf3582914a78c029af7"
+    },
+    {
+      "path": "recording.tar.gz.part-0013",
+      "bytes": 16777216,
+      "sha256": "0a0a5d606155594409b95797abb43bdd3e4e5433cbab62e6f412d685857b41d0"
+    },
+    {
+      "path": "recording.tar.gz.part-0014",
+      "bytes": 16777216,
+      "sha256": "4a9d81c9cca5aa824c013cb98946c98e25c9eeb5b566c497c9fed4ab2b188062"
+    },
+    {
+      "path": "recording.tar.gz.part-0015",
+      "bytes": 16777216,
+      "sha256": "cba8e41c58b8f71b9f9a4edaa31b84c1248a4415acc5b87c8b868625f7c35528"
+    },
+    {
+      "path": "recording.tar.gz.part-0016",
+      "bytes": 16777216,
+      "sha256": "9df3d86a1dbee1a39f665b2694631c0f385d4b706492886ebf872fae3075e496"
+    },
+    {
+      "path": "recording.tar.gz.part-0017",
+      "bytes": 16777216,
+      "sha256": "f1607fa94577d5e20612a81a5c2026952af617bd41f59d4973069e00146428b3"
+    },
+    {
+      "path": "recording.tar.gz.part-0018",
+      "bytes": 16777216,
+      "sha256": "e681e85c423d7b36aeace4392f3d4b22465492143a535b73e7984068dec120cd"
+    },
+    {
+      "path": "recording.tar.gz.part-0019",
+      "bytes": 16777216,
+      "sha256": "b110b4fae1987275d688834c49258ff92b5a181a718e06d485d940766f9be4a6"
+    },
+    {
+      "path": "recording.tar.gz.part-0020",
+      "bytes": 16777216,
+      "sha256": "cd5f14fab6a0f1d5fd56fb3d158cb462d6bcf8d677aa991a016df5c16c6dcb99"
+    },
+    {
+      "path": "recording.tar.gz.part-0021",
+      "bytes": 16777216,
+      "sha256": "0be39f168bcfee2de07616ec9f00d4406e0ec5a5597a8f409919f07995dd137d"
+    },
+    {
+      "path": "recording.tar.gz.part-0022",
+      "bytes": 16777216,
+      "sha256": "406dbe845af4e851209bdde0dac224498ec57d878955a8ef25d6f69f78f66ff9"
+    },
+    {
+      "path": "recording.tar.gz.part-0023",
+      "bytes": 16777216,
+      "sha256": "1cea87172f7c3b5e46c175566717048b4dd33c580f6a0e4fb9a81900c152296a"
+    },
+    {
+      "path": "recording.tar.gz.part-0024",
+      "bytes": 16777216,
+      "sha256": "4df434155d48caad52ae7b49ad86bdd732056e093705f24f05ac0b34e82655ea"
+    },
+    {
+      "path": "recording.tar.gz.part-0025",
+      "bytes": 16777216,
+      "sha256": "8d43126831781eadb9afbd08216c991d0f816e5722a28fb8059c98594a9151ed"
+    },
+    {
+      "path": "recording.tar.gz.part-0026",
+      "bytes": 16777216,
+      "sha256": "5f6d93506019d3a17e945893b97a8529dd715231ae60c8bcbd7a6a79926477fc"
+    },
+    {
+      "path": "recording.tar.gz.part-0027",
+      "bytes": 16777216,
+      "sha256": "e7400b386a8bc151b42820dfbccaba26bbecb3dab7ec418a45c9feaf21f20089"
+    },
+    {
+      "path": "recording.tar.gz.part-0028",
+      "bytes": 16777216,
+      "sha256": "68eebc34cc96507b1a1247a36a0cdf518c234f85e3a89a321f13eea3a94253cb"
+    },
+    {
+      "path": "recording.tar.gz.part-0029",
+      "bytes": 3462464,
+      "sha256": "554fc099e16db2463a74757ec0caa6f584dc96719c666d9e3c903fd3a14b1e26"
+    }
+  ]
+}

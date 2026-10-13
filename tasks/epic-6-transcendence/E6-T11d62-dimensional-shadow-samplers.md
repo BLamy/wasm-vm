@@ -3,7 +3,7 @@ id: E6-T11d62
 epic: 6
 title: Execute original cube and array comparison sampler views
 priority: 525.027039000399
-status: in-progress
+status: implemented
 depends_on: [E6-T11d61, E6-T11d60, E6-T11d49]
 estimate: S
 risk: high
@@ -213,3 +213,77 @@ runner now creates its scratch clone inside the persistent workspace's ignored
 `target/evidence/`; its final output will also use that persistent directory.
 Runtime, fixtures, expected pixels and the risk submission are unchanged. The
 full final recording will be repeated because its original evidence is absent.
+
+### 2026-10-13 — worker — exact-head recorded submission
+
+Frozen source head `d853f096b3858ef390ad42b6cac33838778d849b` completes
+the selected comparison consumer against verified base
+`93021c5a28b99357532844de6ea4944291774099`. The final persistent
+scrubbed pristine clone exits0, with a clean checkout before and after, and all40
+prescribed command exits matching their expectations. Complete command arguments,
+stdout/stderr, generated Wasm, source/served bodies, original packets, guest
+instruction traces/digests, native calls, whole output planes, finest coverage
+and browser screenshots are in the recording; no temporary recording is the
+authority for this submission.
+
+Exact outer commands (the cold recording contains every inner command):
+
+```sh
+python3 tools/virgl-dimensional-shadow-samplers/cold.py target/evidence/dimensional-shadow-samplers-cold-persistent
+python3 tools/virgl-dimensional-shadow-samplers/seal.py target/evidence/dimensional-shadow-samplers-cold-persistent evidence/virgl-dimensional-shadow-samplers/worker
+python3 target/evidence/d62-continuation-tools/publish.py d853f096b3858ef390ad42b6cac33838778d849b target/evidence/dimensional-shadow-samplers-cold-persistent target/evidence/d62-continuation-tools/pages-d853f096
+python3 target/evidence/d62-continuation-tools/confirm-deployment.py d853f096b3858ef390ad42b6cac33838778d849b target/evidence/d62-continuation-tools/pages-d853f096
+node target/evidence/d62-continuation-tools/live-d853f096.mjs --output target/evidence/d62-continuation-tools/live-d853f096 --task E6-T11d62
+python3 target/evidence/d62-continuation-tools/seal-deployment.py
+```
+
+The cold runner executes `make verify-E6-T11d62` in its declared cone-sparse
+clone under `target/evidence/dimensional-shadow-sampler-cold-clones/`, with no
+borrowed generated artifacts. Complete authenticated D61 compiler bytes and all
+141,606 predecessor seal members preserve the unchanged D61/D60/D49 boundaries.
+The final receipt SHA256 is
+`72194a51591035557d50c9615be1ffe4fa6ad79342ef346b3d6d317c79910c82`.
+Three1040-case hardware schedules (27467/82021/164033), three20-case retained
+generation/cancellation schedules,190 refusal/recovery cases,40 reflection and
+control cases,30 ordinary/comparison sharing and cross-stage cases, four inherited
+2D cases and1180 strict metadata cases pass. The independent original-byte audit
+checks3702 complete planes and226,032 words. Two deliberately corrupted native
+bindings fail the unchanged pixel oracle after actual GPU work and original
+readback/DMA, as required. Finest changed executable coverage records439 executed
+regions, six authenticated unchanged HELD regions,51 explicit static/configuration
+waivers and zero new executable gaps; waived regions are not execution claims.
+
+`evidence/virgl-dimensional-shadow-samplers/worker/` seals8070 logical members,
+4931 stored bodies and3139 backward links,490,001,728 compressed bytes split into
+16MiB parts. Every member, link, length and hash was reopened through gzip EOF.
+Manifest SHA256:
+`8b577966f92fc4dc89d90026a90d8fbf59a3de3d11c21d262b6ec71da062c32c`;
+index: `797086b4328561b6f021697392c6a40946b76c1408172e4843d6ee4b5e7f4409`;
+archive: `7fa6fe8345d44f52e48e9eb459dbebb52ea478d4fa6460b78335c848277fd0c6`.
+The restart diagnostic custody is included. Earlier log statements that temporary
+failed runs remained available are superseded by the restart entry: those raw
+bytes are unavailable, were not reconstructed and supply no positive evidence.
+
+The committed default dist and actual canonical deployment each pass127/0 with
+zero browser errors, the D62 partial graphics marker and proof-only exports absent.
+Cloudflare production/main deployment
+`ed51b574-df58-4909-a051-c1b58bf86eb9` serves the frozen source head at
+<https://ed51b574.wasm-vm.pages.dev>; canonical verification loads
+<https://wasm-vm.pages.dev>. All304 staged bodies and194 actual served bodies,
+the CLI publication/list receipts, staging preparation and screenshots are sealed
+in `evidence/virgl-dimensional-shadow-samplers/deployment/`:513 fully reopened
+members,49,643,323 compressed bytes. Manifest SHA256:
+`4e8ccd2c181a5ec8c781c447d0638b082bb86c0ed4e7c53f80b1ab28b38712e7`;
+index: `3dfc1c58bc68864b83d5c8b05befb7e93d9bcc89bf921efe2505bcbc50bfd161`;
+archive: `9021aa3bded6a2b53fdf3b1604e9131578b9f9206e7f68781628316c4dd12f2c`.
+The unchanged ordinary Wasm SHA256 is
+`d45b575207e0035b5c518698e7b6793b2bf12da635531723fad70813a5956c36`.
+
+The recording demonstrates original cube/array comparison shader authority,
+native dimensional shadow samplers, reference semantics, reflected controls,
+retained image generations, fenced completion and independent whole-plane output
+through selected Wasm VirtIO queues on Chrome155/M4 Max Metal. This is a worker
+claim awaiting the fresh critic. It does not qualify dimensional surfaces,
+transform feedback, production capsets/worker/scanout, an actual Mesa/Hyprland
+guest or300-MIPS performance. Production acceleration remains disabled and the
+parent task remains incomplete.
