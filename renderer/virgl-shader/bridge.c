@@ -2490,7 +2490,7 @@ static void standard_result(const struct standard_conversion *c)
       }
    }
    append("\",\"metadata\":{\"profile\":\"%s\",\"stage\":\"%s\",\"inputs\":",
-          p->dimensional_textures ? "virgl-webgl2-standard-dimensional-texture-gles3-v1" : p->shadow_textures ? "virgl-webgl2-standard-shadow-texture-gles3-v1" : p->instance_base ? "virgl-webgl2-standard-instance-base-gles3-v1" : p->integer_images ? "virgl-webgl2-standard-integer-image-gles3-v1" : p->texture_operations ? "virgl-webgl2-standard-texture-gles3-v1" : p->uniform_buffers ? "virgl-webgl2-standard-uniform-gles3-v1" : "virgl-webgl2-standard-gles3-v1",
+          p->dimensional_shadows ? "virgl-webgl2-standard-dimensional-shadow-texture-gles3-v1" : p->dimensional_textures ? "virgl-webgl2-standard-dimensional-texture-gles3-v1" : p->shadow_textures ? "virgl-webgl2-standard-shadow-texture-gles3-v1" : p->instance_base ? "virgl-webgl2-standard-instance-base-gles3-v1" : p->integer_images ? "virgl-webgl2-standard-integer-image-gles3-v1" : p->texture_operations ? "virgl-webgl2-standard-texture-gles3-v1" : p->uniform_buffers ? "virgl-webgl2-standard-uniform-gles3-v1" : "virgl-webgl2-standard-gles3-v1",
           p->stage ? "fragment" : "vertex");
    standard_io_json(p, STD_IN); append(",\"outputs\":"); standard_io_json(p, STD_OUT);
    append(",\"attributes\":"); if (p->stage) append("[]"); else standard_io_json(p, STD_IN);
@@ -2577,12 +2577,12 @@ static const char *standard_input(struct standard_profile *p, const char *text, 
    return code ? error(code, "TGSI is outside the bounded standard GLES3 grammar.") : NULL;
 }
 static const char *standard_stage(int stage, const char *text, size_t length, bool uniform_buffers, bool texture_operations,
-                                  bool integer_images, uint32_t signed_colors, uint32_t unsigned_colors, bool instance_base, bool shadow_textures, bool dimensional_textures)
+                                  bool integer_images, uint32_t signed_colors, uint32_t unsigned_colors, bool instance_base, bool shadow_textures, bool dimensional_textures, bool dimensional_shadows)
 {
    begin_response(false);
    if (stage != 0 && stage != 1) return error("unsupported-stage", "Only vertex and fragment stages are supported.");
    char owned[BRIDGE_MAX_TEXT + 1];
-   struct standard_profile p = {.stage = stage, .uniform_buffers = uniform_buffers, .texture_operations = texture_operations, .integer_images = integer_images, .instance_base = instance_base, .shadow_textures = shadow_textures, .dimensional_textures = dimensional_textures};
+   struct standard_profile p = {.stage = stage, .uniform_buffers = uniform_buffers, .texture_operations = texture_operations, .integer_images = integer_images, .instance_base = instance_base, .shadow_textures = shadow_textures, .dimensional_textures = dimensional_textures, .dimensional_shadows = dimensional_shadows};
    const char *failed = standard_input(&p, text, length, owned);
    if (failed) return response;
    if (!standard_color_masks(&p, signed_colors, unsigned_colors))
@@ -2598,18 +2598,18 @@ static const char *standard_stage(int stage, const char *text, size_t length, bo
 }
 const char *bridge_translate_standard(int stage, const char *text, size_t length)
 {
-   return standard_stage(stage, text, length, false, false, false, 0, 0, false, false, false);
+   return standard_stage(stage, text, length, false, false, false, 0, 0, false, false, false, false);
 }
 const char *bridge_translate_standard_uniform(int stage, const char *text, size_t length)
 {
-   return standard_stage(stage, text, length, true, false, false, 0, 0, false, false, false);
+   return standard_stage(stage, text, length, true, false, false, 0, 0, false, false, false, false);
 }
 static const char *standard_pair(const char *vertex_text, size_t vertex_length,
                                 const char *fragment_text, size_t fragment_length,
                                 uint32_t signed_inputs, uint32_t unsigned_inputs,
                                 uint32_t packed_signed_inputs, uint32_t packed_normalized_inputs,
                                 bool uniform_buffers, bool texture_operations, uint32_t buffer_zero_mask,
-                                bool integer_images, uint32_t signed_colors, uint32_t unsigned_colors, bool instance_base, bool shadow_textures, bool dimensional_textures)
+                                bool integer_images, uint32_t signed_colors, uint32_t unsigned_colors, bool instance_base, bool shadow_textures, bool dimensional_textures, bool dimensional_shadows)
 {
    begin_response(true);
    if ((signed_inputs | unsigned_inputs | packed_signed_inputs | packed_normalized_inputs) > 0xffffu ||
@@ -2617,8 +2617,8 @@ static const char *standard_pair(const char *vertex_text, size_t vertex_length,
        (packed_normalized_inputs & ~packed_signed_inputs) || buffer_zero_mask > 3u)
       return error("invalid-input", "Vertex format masks must be compatible 16-bit masks.");
    char owned[2][BRIDGE_MAX_TEXT + 1];
-   struct standard_profile profiles[2] = {{.stage = 0, .uniform_buffers = uniform_buffers, .texture_operations = texture_operations, .integer_images = integer_images, .instance_base = instance_base, .shadow_textures = shadow_textures, .dimensional_textures = dimensional_textures},
-                                         {.stage = 1, .uniform_buffers = uniform_buffers, .texture_operations = texture_operations, .integer_images = integer_images, .instance_base = instance_base, .shadow_textures = shadow_textures, .dimensional_textures = dimensional_textures}};
+   struct standard_profile profiles[2] = {{.stage = 0, .uniform_buffers = uniform_buffers, .texture_operations = texture_operations, .integer_images = integer_images, .instance_base = instance_base, .shadow_textures = shadow_textures, .dimensional_textures = dimensional_textures, .dimensional_shadows = dimensional_shadows},
+                                         {.stage = 1, .uniform_buffers = uniform_buffers, .texture_operations = texture_operations, .integer_images = integer_images, .instance_base = instance_base, .shadow_textures = shadow_textures, .dimensional_textures = dimensional_textures, .dimensional_shadows = dimensional_shadows}};
    const char *failed = standard_input(&profiles[0], vertex_text, vertex_length, owned[0]);
    if (!failed) failed = standard_input(&profiles[1], fragment_text, fragment_length, owned[1]);
    if (!failed && !standard_match(&profiles[0], &profiles[1]))
@@ -2664,14 +2664,14 @@ static const char *standard_pair(const char *vertex_text, size_t vertex_length,
 const char *bridge_translate_standard_pair(const char *vertex_text, size_t vertex_length,
                                            const char *fragment_text, size_t fragment_length)
 {
-   return standard_pair(vertex_text, vertex_length, fragment_text, fragment_length, 0, 0, 0, 0, false, false, 0, false, 0, 0, false, false, false);
+   return standard_pair(vertex_text, vertex_length, fragment_text, fragment_length, 0, 0, 0, 0, false, false, 0, false, 0, 0, false, false, false, false);
 }
 const char *bridge_translate_standard_pair_typed(const char *vertex_text, size_t vertex_length,
                                                  const char *fragment_text, size_t fragment_length,
                                                  uint32_t signed_inputs, uint32_t unsigned_inputs)
 {
    return standard_pair(vertex_text, vertex_length, fragment_text, fragment_length,
-                        signed_inputs, unsigned_inputs, 0, 0, false, false, 0, false, 0, 0, false, false, false);
+                        signed_inputs, unsigned_inputs, 0, 0, false, false, 0, false, 0, 0, false, false, false, false);
 }
 const char *bridge_translate_standard_pair_vertex_formats(const char *vertex_text, size_t vertex_length,
                                                           const char *fragment_text, size_t fragment_length,
@@ -2679,7 +2679,7 @@ const char *bridge_translate_standard_pair_vertex_formats(const char *vertex_tex
                                                           uint32_t packed_signed_inputs, uint32_t packed_normalized_inputs)
 {
    return standard_pair(vertex_text, vertex_length, fragment_text, fragment_length,
-                        signed_inputs, unsigned_inputs, packed_signed_inputs, packed_normalized_inputs, false, false, 0, false, 0, 0, false, false, false);
+                        signed_inputs, unsigned_inputs, packed_signed_inputs, packed_normalized_inputs, false, false, 0, false, 0, 0, false, false, false, false);
 }
 const char *bridge_translate_standard_uniform_pair(const char *vertex_text, size_t vertex_length,
                                                    const char *fragment_text, size_t fragment_length,
@@ -2689,12 +2689,12 @@ const char *bridge_translate_standard_uniform_pair(const char *vertex_text, size
 {
    return standard_pair(vertex_text, vertex_length, fragment_text, fragment_length,
                         signed_inputs, unsigned_inputs, packed_signed_inputs, packed_normalized_inputs,
-                        true, false, buffer_zero_mask, false, 0, 0, false, false, false);
+                        true, false, buffer_zero_mask, false, 0, 0, false, false, false, false);
 }
 
 const char *bridge_translate_standard_texture(int stage, const char *text, size_t length)
 {
-   return standard_stage(stage, text, length, true, true, false, 0, 0, false, false, false);
+   return standard_stage(stage, text, length, true, true, false, 0, 0, false, false, false, false);
 }
 const char *bridge_translate_standard_texture_pair(const char *vertex_text, size_t vertex_length,
                                                    const char *fragment_text, size_t fragment_length,
@@ -2704,13 +2704,13 @@ const char *bridge_translate_standard_texture_pair(const char *vertex_text, size
 {
    return standard_pair(vertex_text, vertex_length, fragment_text, fragment_length,
                         signed_inputs, unsigned_inputs, packed_signed_inputs, packed_normalized_inputs,
-                        true, true, buffer_zero_mask, false, 0, 0, false, false, false);
+                        true, true, buffer_zero_mask, false, 0, 0, false, false, false, false);
 }
 
 const char *bridge_translate_standard_integer_image(int stage, const char *text, size_t length,
                                                     uint32_t signed_colors, uint32_t unsigned_colors)
 {
-   return standard_stage(stage, text, length, true, true, true, signed_colors, unsigned_colors, false, false, false);
+   return standard_stage(stage, text, length, true, true, true, signed_colors, unsigned_colors, false, false, false, false);
 }
 const char *bridge_translate_standard_integer_image_pair(const char *vertex_text, size_t vertex_length,
                                                          const char *fragment_text, size_t fragment_length,
@@ -2720,13 +2720,13 @@ const char *bridge_translate_standard_integer_image_pair(const char *vertex_text
 {
    return standard_pair(vertex_text, vertex_length, fragment_text, fragment_length,
                         signed_inputs, unsigned_inputs, packed_signed_inputs, packed_normalized_inputs,
-                        true, true, buffer_zero_mask, true, signed_colors, unsigned_colors, false, false, false);
+                        true, true, buffer_zero_mask, true, signed_colors, unsigned_colors, false, false, false, false);
 }
 
 const char *bridge_translate_standard_instance_base(int stage, const char *text, size_t length,
                                                     uint32_t signed_colors, uint32_t unsigned_colors)
 {
-   return standard_stage(stage, text, length, true, true, true, signed_colors, unsigned_colors, true, false, false);
+   return standard_stage(stage, text, length, true, true, true, signed_colors, unsigned_colors, true, false, false, false);
 }
 
 const char *bridge_translate_standard_instance_base_pair(const char *vertex_text, size_t vertex_length,
@@ -2737,13 +2737,13 @@ const char *bridge_translate_standard_instance_base_pair(const char *vertex_text
 {
    return standard_pair(vertex_text, vertex_length, fragment_text, fragment_length,
                         signed_inputs, unsigned_inputs, packed_signed_inputs, packed_normalized_inputs,
-                        true, true, buffer_zero_mask, true, signed_colors, unsigned_colors, true, false, false);
+                        true, true, buffer_zero_mask, true, signed_colors, unsigned_colors, true, false, false, false);
 }
 
 const char *bridge_translate_standard_shadow_texture(int stage, const char *text, size_t length,
                                                      uint32_t signed_colors, uint32_t unsigned_colors)
 {
-   return standard_stage(stage, text, length, true, true, true, signed_colors, unsigned_colors, true, true, false);
+   return standard_stage(stage, text, length, true, true, true, signed_colors, unsigned_colors, true, true, false, false);
 }
 const char *bridge_translate_standard_shadow_texture_pair(const char *vertex_text, size_t vertex_length,
                                                           const char *fragment_text, size_t fragment_length,
@@ -2753,13 +2753,13 @@ const char *bridge_translate_standard_shadow_texture_pair(const char *vertex_tex
 {
    return standard_pair(vertex_text, vertex_length, fragment_text, fragment_length,
                         signed_inputs, unsigned_inputs, packed_signed_inputs, packed_normalized_inputs,
-                        true, true, buffer_zero_mask, true, signed_colors, unsigned_colors, true, true, false);
+                        true, true, buffer_zero_mask, true, signed_colors, unsigned_colors, true, true, false, false);
 }
 
 const char *bridge_translate_standard_dimensional_texture(int stage, const char *text, size_t length,
                                                           uint32_t signed_colors, uint32_t unsigned_colors)
 {
-   return standard_stage(stage, text, length, true, true, true, signed_colors, unsigned_colors, true, true, true);
+   return standard_stage(stage, text, length, true, true, true, signed_colors, unsigned_colors, true, true, true, false);
 }
 const char *bridge_translate_standard_dimensional_texture_pair(const char *vertex_text, size_t vertex_length,
                                                                const char *fragment_text, size_t fragment_length,
@@ -2769,5 +2769,21 @@ const char *bridge_translate_standard_dimensional_texture_pair(const char *verte
 {
    return standard_pair(vertex_text, vertex_length, fragment_text, fragment_length,
                         signed_inputs, unsigned_inputs, packed_signed_inputs, packed_normalized_inputs,
-                        true, true, buffer_zero_mask, true, signed_colors, unsigned_colors, true, true, true);
+                        true, true, buffer_zero_mask, true, signed_colors, unsigned_colors, true, true, true, false);
+}
+
+const char *bridge_translate_standard_dimensional_shadow_texture(int stage, const char *text, size_t length,
+                                                                 uint32_t signed_colors, uint32_t unsigned_colors)
+{
+   return standard_stage(stage, text, length, true, true, true, signed_colors, unsigned_colors, true, true, true, true);
+}
+const char *bridge_translate_standard_dimensional_shadow_texture_pair(const char *vertex_text, size_t vertex_length,
+                                                                      const char *fragment_text, size_t fragment_length,
+                                                                      uint32_t signed_inputs, uint32_t unsigned_inputs,
+                                                                      uint32_t packed_signed_inputs, uint32_t packed_normalized_inputs,
+                                                                      uint32_t buffer_zero_mask, uint32_t signed_colors, uint32_t unsigned_colors)
+{
+   return standard_pair(vertex_text, vertex_length, fragment_text, fragment_length,
+                        signed_inputs, unsigned_inputs, packed_signed_inputs, packed_normalized_inputs,
+                        true, true, buffer_zero_mask, true, signed_colors, unsigned_colors, true, true, true, true);
 }

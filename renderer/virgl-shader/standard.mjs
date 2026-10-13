@@ -54,11 +54,15 @@ export async function createVirglStandardShadowTextureShaderBridge(options = {})
 export async function createVirglStandardDimensionalTextureShaderBridge(options = {}) {
   return createStandardBridge(options, true, true, true, true, true, true);
 }
-async function createStandardBridge(options, uniformBuffers, textureOperations = false, integerImages = false, instanceBase = false, shadowTextures = false, dimensionalTextures = false) {
+/** Original cube/array comparisons with distinct reference and cube bias lanes. */
+export async function createVirglStandardDimensionalShadowTextureShaderBridge(options = {}) {
+  return createStandardBridge(options, true, true, true, true, true, true, true);
+}
+async function createStandardBridge(options, uniformBuffers, textureOperations = false, integerImages = false, instanceBase = false, shadowTextures = false, dimensionalTextures = false, dimensionalShadows = false) {
   const { default: createModule } = await import("./build/wasm/virgl-shader.mjs");
   const module = await createModule(options);
-  const integerStage = dimensionalTextures ? module._bridge_translate_standard_dimensional_texture : shadowTextures ? module._bridge_translate_standard_shadow_texture : instanceBase ? module._bridge_translate_standard_instance_base : module._bridge_translate_standard_integer_image;
-  const integerPair = dimensionalTextures ? module._bridge_translate_standard_dimensional_texture_pair : shadowTextures ? module._bridge_translate_standard_shadow_texture_pair : instanceBase ? module._bridge_translate_standard_instance_base_pair : module._bridge_translate_standard_integer_image_pair;
+  const integerStage = dimensionalShadows ? module._bridge_translate_standard_dimensional_shadow_texture : dimensionalTextures ? module._bridge_translate_standard_dimensional_texture : shadowTextures ? module._bridge_translate_standard_shadow_texture : instanceBase ? module._bridge_translate_standard_instance_base : module._bridge_translate_standard_integer_image;
+  const integerPair = dimensionalShadows ? module._bridge_translate_standard_dimensional_shadow_texture_pair : dimensionalTextures ? module._bridge_translate_standard_dimensional_texture_pair : shadowTextures ? module._bridge_translate_standard_shadow_texture_pair : instanceBase ? module._bridge_translate_standard_instance_base_pair : module._bridge_translate_standard_integer_image_pair;
   const uniformPair = integerImages ? (...args) => integerPair(...args, 0, 0) :
     textureOperations ? module._bridge_translate_standard_texture_pair : module._bridge_translate_standard_uniform_pair;
   function run(texts, call) {

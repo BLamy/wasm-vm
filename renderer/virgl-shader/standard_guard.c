@@ -150,6 +150,12 @@ static bool texture_target(const char **s, const struct standard_profile *p,
    *target = STD_TEXTURE_2D;
    if (*shadow || word(s, "2D")) return true;
    if (!p->dimensional_textures) return false;
+   if (p->dimensional_shadows && p->shadow_textures && word(s, "SHADOWCUBE")) {
+      *shadow = true; *target = STD_TEXTURE_CUBE; return true;
+   }
+   if (p->dimensional_shadows && p->shadow_textures && word(s, "SHADOW2D_ARRAY")) {
+      *shadow = true; *target = STD_TEXTURE_ARRAY; return true;
+   }
    if (word(s, "3D")) *target = STD_TEXTURE_3D;
    else if (word(s, "CUBE")) *target = STD_TEXTURE_CUBE;
    else if (word(s, "2D_ARRAY")) *target = STD_TEXTURE_ARRAY;
@@ -315,6 +321,7 @@ unsigned standard_texture_sources(unsigned op)
    switch (op) {
    case TGSI_OPCODE_TEX: case TGSI_OPCODE_TXL: case TGSI_OPCODE_TXF:
    case TGSI_OPCODE_TXB: case TGSI_OPCODE_TXQ: case TGSI_OPCODE_TXP: return 1;
+   case TGSI_OPCODE_TXB2: return 2;
    case TGSI_OPCODE_TXD: return 3;
    default: return 0;
    }
@@ -338,6 +345,7 @@ static bool supported(unsigned op, const struct standard_profile *p)
    case TGSI_OPCODE_TXL: case TGSI_OPCODE_TXF: case TGSI_OPCODE_TXD:
    case TGSI_OPCODE_TXB: case TGSI_OPCODE_TXQ: return p->texture_operations;
    case TGSI_OPCODE_TXP: return p->shadow_textures;
+   case TGSI_OPCODE_TXB2: return p->dimensional_shadows;
    default: return false;
    }
 }
@@ -363,7 +371,7 @@ static bool instruction(const char **s, struct standard_profile *p, struct flow 
    const struct tgsi_opcode_info *info = tgsi_get_opcode_info(op);
    if ((saturate || precise) && (!info->num_dst || op == TGSI_OPCODE_UARL || op == TGSI_OPCODE_ARL)) return false;
    if (!p->stage && (op == TGSI_OPCODE_KILL || op == TGSI_OPCODE_KILL_IF || op == TGSI_OPCODE_DDX || op == TGSI_OPCODE_DDY)) return false;
-   if (!p->stage && op == TGSI_OPCODE_TXB) return false;
+   if (!p->stage && (op == TGSI_OPCODE_TXB || op == TGSI_OPCODE_TXB2)) return false;
    if (op == TGSI_OPCODE_TXQ && (saturate || precise)) return false;
    unsigned texture_sampler = 0, texture_mask = 0;
    unsigned texture_sources = standard_texture_sources(op);
@@ -399,6 +407,10 @@ static bool instruction(const char **s, struct standard_profile *p, struct flow 
       if (!take(s, ',')) return false;
       bool shadow; uint8_t target;
       if (!texture_target(s, p, &shadow, &target)) return false;
+      /* Cube comparison coordinates already use w for the reference. Original
+       * TXB2 supplies a separate bias; core ESSL3 has no dimensional shadow LOD. */
+      if (op == TGSI_OPCODE_TXB2 && (!shadow || target != STD_TEXTURE_CUBE)) return false;
+      if (shadow && target != STD_TEXTURE_2D && (op == TGSI_OPCODE_TXL || op == TGSI_OPCODE_TXB)) return false;
       if (p->dimensional_textures) {
          /* One native sampler has one dimension. Original declarations and
           * instructions must agree; 2D/shadow2D query neutrality is retained. */

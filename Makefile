@@ -2522,3 +2522,7 @@ verify-E6-T11d59:
 .PHONY: verify-E6-T11d60
 verify-E6-T11d60:
 	python3 tools/virgl-dimensional-depth-views/verify.py --output "$${VIRGL_DIMENSIONAL_DEPTH_VIEW_EVIDENCE_DIR:-target/evidence/virgl-dimensional-depth-views}"
+
+.PHONY: verify-E6-T11d61
+verify-E6-T11d61:
+	python3 tools/virgl-dimensional-shadow-shaders/verify.py --output "$${VIRGL_DIMENSIONAL_SHADOW_SHADER_EVIDENCE_DIR:-target/evidence/virgl-dimensional-shadow-shaders}"

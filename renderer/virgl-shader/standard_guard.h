@@ -45,7 +45,7 @@ struct standard_profile {
     * legacy facets keep both flags zero and retain their original grammar. */
    uint32_t uniform_declared[STANDARD_UNIFORM_SLOTS][STANDARD_UNIFORM_VECTORS / 32];
    uint16_t uniform_counts[STANDARD_UNIFORM_SLOTS + 1];
-   bool uniform_buffers, buffer_zero, texture_operations, integer_images, instance_base, shadow_textures, dimensional_textures;
+   bool uniform_buffers, buffer_zero, texture_operations, integer_images, instance_base, shadow_textures, dimensional_textures, dimensional_shadows;
    uint8_t properties, broadcast;
 };
 
@@ -71,7 +71,11 @@ static inline const char *standard_color_type(const struct standard_profile *p, 
 
 static inline const char *standard_sampler_type(const struct standard_profile *p, unsigned index)
 {
-   if (p->shadow_textures && (p->shadow_samplers & (1u << index))) return "sampler2DShadow";
+   if (p->shadow_textures && (p->shadow_samplers & (1u << index))) {
+      if (p->dimensional_shadows && p->sampler_targets[index] == STD_TEXTURE_CUBE) return "samplerCubeShadow";
+      if (p->dimensional_shadows && p->sampler_targets[index] == STD_TEXTURE_ARRAY) return "sampler2DArrayShadow";
+      return "sampler2DShadow";
+   }
    if (p->dimensional_textures) {
       static const char *const types[3][4] = {
          {"sampler2D", "sampler3D", "samplerCube", "sampler2DArray"},

@@ -10,7 +10,7 @@ import { repo, sha256 } from './virgl-command/fixtures.mjs';
 assert.equal(process.argv[2], '--output'); assert.ok(process.argv[3]);
 assert.ok(process.argv.length === 4 || (process.argv.length === 6 && process.argv[4] === '--task'));
 const task = process.argv[5] ?? 'E6-T11a';
-assert.ok(['E6-T11a', 'E6-T11b2', 'E6-T11c', 'E6-T11d51', 'E6-T11d52', 'E6-T11d53', 'E6-T11d54', 'E6-T11d55', 'E6-T11d56', 'E6-T11d57', 'E6-T11d58', 'E6-T11d59', 'E6-T11d60'].includes(task));
+assert.ok(['E6-T11a', 'E6-T11b2', 'E6-T11c', 'E6-T11d51', 'E6-T11d52', 'E6-T11d53', 'E6-T11d54', 'E6-T11d55', 'E6-T11d56', 'E6-T11d57', 'E6-T11d58', 'E6-T11d59', 'E6-T11d60', 'E6-T11d61'].includes(task));
 const output = path.resolve(process.argv[3]), root = path.join(repo, 'web/dist');
 await fs.mkdir(output, { recursive: true });
 const report = { schema: 1, task, status: 'running',
@@ -65,6 +65,7 @@ try {
   if(task==='E6-T11d58') assert.match(await graphics.textContent(), /E6-T11d58/);
   if(task==='E6-T11d59') assert.match(await graphics.textContent(), /E6-T11d59/);
   if(task==='E6-T11d60') assert.match(await graphics.textContent(), /E6-T11d60/);
+  if(task==='E6-T11d61') assert.match(await graphics.textContent(), /E6-T11d61/);
   assert.deepEqual(report.errors, []);
   report.servedWasmSha256 = served.get('/pkg/wasm_vm_wasm_bg.wasm')?.sha256;
   assert.equal(report.servedWasmSha256, sha256(await fs.readFile(path.join(root, 'pkg/wasm_vm_wasm_bg.wasm'))));

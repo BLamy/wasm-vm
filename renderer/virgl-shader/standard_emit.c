@@ -165,14 +165,18 @@ static void shadow_sample(struct output *o, const struct standard_profile *p,
    unsigned op = i->Instruction.Opcode;
    unsigned slot = i->Src[standard_texture_sources(op)].Register.Index;
    const char *stage = p->stage ? "fs" : "vs";
+   const char *coordinates = p->dimensional_shadows && p->sampler_targets[slot] != STD_TEXTURE_2D ? "" : ".xyz";
    if (op == TGSI_OPCODE_TEX)
-      put(o, "float sampled = texture(%ssamp%u, uintBitsToFloat(a).xyz);\n", stage, slot);
+      put(o, "float sampled = texture(%ssamp%u, uintBitsToFloat(a)%s);\n", stage, slot, coordinates);
    else if (op == TGSI_OPCODE_TXL)
       put(o, "float sampled = textureLod(%ssamp%u, uintBitsToFloat(a).xyz, uintBitsToFloat(a).w);\n", stage, slot);
    else if (op == TGSI_OPCODE_TXD)
-      put(o, "float sampled = textureGrad(%ssamp%u, uintBitsToFloat(a).xyz, uintBitsToFloat(b).xy, uintBitsToFloat(c).xy);\n", stage, slot);
+      put(o, "float sampled = textureGrad(%ssamp%u, uintBitsToFloat(a)%s, uintBitsToFloat(b).%s, uintBitsToFloat(c).%s);\n",
+          stage, slot, coordinates, sample_gradients(p, slot), sample_gradients(p, slot));
    else if (op == TGSI_OPCODE_TXB)
       put(o, "float sampled = texture(%ssamp%u, uintBitsToFloat(a).xyz, uintBitsToFloat(a).w);\n", stage, slot);
+   else if (op == TGSI_OPCODE_TXB2)
+      put(o, "float sampled = texture(%ssamp%u, uintBitsToFloat(a), uintBitsToFloat(b).x);\n", stage, slot);
    else /* The guarded remaining comparison opcode is original projective TXP. */
       put(o, "float sampled = textureProj(%ssamp%u, uintBitsToFloat(a));\n", stage, slot);
    put(o, "uvec4 r = floatBitsToUint(vec4(sampled) * %sshadmask%u + %sshadadd%u);\n",
@@ -213,7 +217,9 @@ static bool instruction(struct output *o, const struct standard_profile *p,
 #define RAW(x) put(o, "uvec4 r = " x ";\n")
 #define FLOAT(x) RAW("floatBitsToUint(" x ")")
 #define SCALAR(x) FLOAT("vec4(" x ")")
-   if (p->shadow_textures && texture_sources && i->Texture.Texture == TGSI_TEXTURE_SHADOW2D && op != TGSI_OPCODE_TXQ)
+   if (p->shadow_textures && texture_sources &&
+       (i->Texture.Texture == TGSI_TEXTURE_SHADOW2D || (p->dimensional_shadows &&
+        (i->Texture.Texture == TGSI_TEXTURE_SHADOWCUBE || i->Texture.Texture == TGSI_TEXTURE_SHADOW2D_ARRAY))) && op != TGSI_OPCODE_TXQ)
       shadow_sample(o, p, i);
    else switch (op) {
    case TGSI_OPCODE_MOV: RAW("a"); break;
