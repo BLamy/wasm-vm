@@ -7,7 +7,7 @@ head=git('rev-parse','HEAD');assert not git('status','--porcelain','--untracked-
 parent=repo/'target/evidence/stream-output-shader-cold-clones';parent.mkdir(parents=True,exist_ok=True);assert shutil.disk_usage(parent).free>=4*1024**3
 clone=Path(tempfile.mkdtemp(prefix='original-stream-output-',dir=parent))/'repo'
 subprocess.run(['git','clone','--shared','--no-checkout',str(repo),str(clone)],check=True)
-selection=[n for n in git('ls-tree','-d','--name-only',head).splitlines() if n not in ['evidence','releases']]+['evidence/virgl-dimensional-depth-surfaces/worker','evidence/virgl-dimensional-depth-surfaces/verifier','releases/kernel','releases/initramfs','releases/boot-snapshot']
+selection=[n for n in git('ls-tree','-d','--name-only',head).splitlines() if n not in ['evidence','releases']]+['evidence/virgl-dimensional-depth-surfaces/worker','evidence/virgl-dimensional-depth-surfaces/verifier','evidence/virgl-production-readiness','releases/kernel','releases/initramfs','releases/boot-snapshot']
 for command in [['git','sparse-checkout','init','--cone'],['git','sparse-checkout','set',*selection],['git','checkout','--detach',head]]:subprocess.run(command,cwd=clone,check=True)
 status=lambda:subprocess.check_output(['git','status','--porcelain'],cwd=clone,text=True)
 before=status();assert not before
