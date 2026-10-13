@@ -3,7 +3,7 @@ id: E0-T27
 epic: 0
 title: Unify the marketing site, launcher, roadmap and Docstream library
 priority: 525.0270390004005
-status: implemented
+status: verified
 depends_on: [E6-T11d63]
 estimate: S
 risk: medium
@@ -172,3 +172,69 @@ Manifest135b91d9adb9fe373b12d53a423abdd266fd3e96ca95543e1378ba7f6e515f6a;
 index284e17a274e3bf2f4eaa98fed1769e34c9bf1c99995ed54f963cdcf5eea267bc;
 archiveb22c3c167a4c105c4beaf3c0571c827f9f54c245cc0e0d231ba80b22e1e02b6b.
 This is the worker submission, not the final verifier verdict.
+
+
+### 2026-10-13 — fresh independent critic — VERDICT: verified
+
+VERDICT: verified. Frozen source c5f8ad16235a64c70e2732b0ddd7c4d4bc9c63a4;
+worker submission15ddb655c0d5ba787baea27c695dcab9a1fd9bcc. Final design score4/25
+(composition1, empty language0, decorative simulation1, evidence distance1,
+craft1); no category exceeds2, no remaining false claim or broken primary flow.
+The complete report is evidence/reviewed-site/verifier/VERDICT.md.
+
+- P1 launcher/canonical navigation — HELD. Own uninstrumented browser records
+  initialized unselected desktop/phone launcher, bare app#ide, no duplicate
+  mounts/iframe, preserved legacy page query and all six clean/.html Docs routes.
+  Citation: reviewer recording/critic/browser-witness.json steps01–04,
+  browser-continuation-witness.json steps05–06 and browser-reader-witness.json
+  step07. No guest boot or runtime/graphics qualification follows.
+- P3 modern task contract — FAILED at d55/679, now HELD at repaired708/c5.
+  Preserve the original missing acceptance drawer and interim5/25 refutation.
+  Independent fence-aware scan matches all682 source records,291 boundaries,
+ 196 modern contracts and391 legacy-criteria tasks; actual displayed D63 source
+  text/make command and old checkbox criteria match. Citation: repaired
+  task-contract-audit.json, full task-source-bodies.json and browser-witness.json;
+  source tools/gen-tasks-json.py:83 and roadmap detail/search hunks. Retain the
+  source-comparison regression guard already in tools/verify-reviewed-site.mjs.
+- P4–7 interaction/reader/reflow — HELD. Real Gantt/Kanban, intersection/empty
+  recovery, arrow/Home/End roving focus, modal inert/trap/restore/scrim, live motion
+  preference/pause, copy/actual plain-text View/exact demo code,1995 archive,
+  unknown-page recovery, phone menu,390px reflow and Back→Devices pass with0
+  normal browser errors. Citation: browser-reader-final-witness.json and repaired
+  interaction-witness.json. Prior shader/hero/BF-cache/fallback/benchmark/provenance
+  results carry only where code/dependency/digests are unchanged.
+- P8–9 source/rebuild — HELD. Fresh alternate-path pinned npm build/check preserves
+  all48 tracked review/receipt bodies and both reports are ignored;330 generated
+  identities match final cold proof. Worker cold also preserves57 design records
+  and633 production identities. Citation: alternate-path-build.json and final-
+  custody-audit.json. Original shader/code blocks/raw benchmarks and default
+  Wasm d45b575207e0035b5c518698e7b6793b2bf12da635531723fad70813a5956c36 are exact.
+- P10 custody/publication — HELD. Independently reopen all6073 worker members,
+ 905 stored bodies/5168 backward links through full gzip EOF. Exact scoped Git
+  source archive,633 production/638 staged bodies,4 preserved D63 manifests and
+ 5 extra boot bodies authenticate; only docs-mount.js retires. All378 local and
+ 375 canonical complete site responses,5 original routing fetch/unchanged-forward
+  records each and13 interrupted CDP diagnoses authenticate. Changed tabs.js is
+  never waived; unchanged module interruptions require complete bodies plus exact
+  D63 identity. Both ordinary suites are127/0, normal errors0, proof exports absent
+  and guest GPU pip remains partial. Actual Production/main92409cfe receipt and
+  source/stage/CLI hashes match. Citation: worker-seal-authentication.json and
+  final-custody-audit.json. No source/runtime/dist/publication edits by verifier.
+
+Coverage: changed route/header/reader/generator/modal/view/motion hunks execute in
+owned desktop/mobile/action/contract/keyboard witnesses. Parser/corpus/build/
+finalizer/report paths execute in narrow fresh/cold gates and complete byte
+comparisons; declarative/generated/policy/evidence metadata has no new runtime
+semantics. No unchanged broad gate was repeated. Critic harness predicate mistakes
+remain distinguished from the real preserved refutation. No extra mirrored test
+is added; retain the actual-source regression guard and this portable record.
+
+Reviewer seal:98 logical members,84 stored bodies,14 backward links; every body
+and link reopened through gzip EOF, including complete source task bodies and
+failed/corrected witness runs. Manifest
+f48f5ca92373f97ed50d71b1146b619c37409fcd92202ff052693c3d634914df;
+index84862b4a5d04329a4eef4dc7d91d42fcc086799ff2e84e73bda12c42541a33c7;
+archive73b72da13ee342636370b0c29e8d6627822894767812f1cf796c40c8b4a176fa,
+11,742,428 bytes. Full committed bodies are under evidence/reviewed-site/verifier;
+no ignored target-folder pointer is the evidence authority. Worker seal identity
+135b91d9adb9fe373b12d53a423abdd266fd3e96ca95543e1378ba7f6e515f6a carries unchanged.

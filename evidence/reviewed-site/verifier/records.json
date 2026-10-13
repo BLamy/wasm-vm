@@ -1,0 +1,610 @@
+{
+  "schema": "reviewed-site-independent-verifier-index-v1",
+  "task": "E0-T27",
+  "sourceHead": "c5f8ad16235a64c70e2732b0ddd7c4d4bc9c63a4",
+  "submissionHead": "15ddb655c0d5ba787baea27c695dcab9a1fd9bcc",
+  "records": [
+    {
+      "path": "recording/critic/01-home-desktop.png",
+      "bytes": 1113583,
+      "sha256": "1c2b66c29577d697505b9f8715d8431033e025d95463c8565c67fb05243cc6a6",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/01-home-dom.json",
+      "bytes": 16680,
+      "sha256": "91f0b898feafbec8e25959ee1f687700199806ff24bbd8da0a1dfcafbc3ac676",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/02-home-devices-dom.json",
+      "bytes": 16714,
+      "sha256": "01055b9e71545953f547d3aa08c74514dc9534b08a8184509b015bc6d7e2f53f",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/02-home-devices.png",
+      "bytes": 1119613,
+      "sha256": "c5b8dfc4e9d1b76e01c6e8012b6367c7826ed8ffc0f809ecb55ef8d0b2b917b1",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/03-launcher-desktop.png",
+      "bytes": 169110,
+      "sha256": "7473f28857e7f9b1cf62cf8dda8d8810409def8e2d93e5a1d6c9132f5a6e99d8",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/03-launcher-dom.json",
+      "bytes": 3607,
+      "sha256": "7100fccd3305c47ee917c1c58553ea5e8a7c47bb40cbd27a9c7190ef7a0f27a9",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/04-bare-launcher-dom.json",
+      "bytes": 3581,
+      "sha256": "cfe34ae5213bc72acd1dbcca009ebfbc83851d1c55d23ce8541ba44d6a2d3003",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/04-before-roadmap-link-dom.json",
+      "bytes": 3607,
+      "sha256": "7100fccd3305c47ee917c1c58553ea5e8a7c47bb40cbd27a9c7190ef7a0f27a9",
+      "kind": "hardlink",
+      "target": "recording/critic/03-launcher-dom.json"
+    },
+    {
+      "path": "recording/critic/05-roadmap-desktop.png",
+      "bytes": 997405,
+      "sha256": "8acd51cf144071555dcf984dd0d31edcf155dcf6cf663dd2288fa6b05c9e32b2",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/05-roadmap-dom.json",
+      "bytes": 271580,
+      "sha256": "d5e8c21b2b4c2855ce99a52ba0ec08f18d5550b85d5cf43959f92257271e6a95",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/06-roadmap-search-dom.json",
+      "bytes": 7554,
+      "sha256": "5d161846c4802ed5656522d0a0fc66023b6e6adcad3e0b897c14b828053fde7e",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/07-roadmap-kanban-dom.json",
+      "bytes": 7318,
+      "sha256": "d631a904a52abb039b6593bdfb350536e810259cb9a7af0c73b42245c16c1758",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/07-roadmap-kanban.png",
+      "bytes": 1095835,
+      "sha256": "1ee6e18b1659d5c8658eb2088e95ea56804350ab76022ce54dd764d1a6f6fed9",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/08-roadmap-detail-dom.json",
+      "bytes": 24814,
+      "sha256": "d0e312fa974241bfdcd8a7d17472f4a8c240c291ba892e71551b5aec538394e7",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/08-roadmap-detail.png",
+      "bytes": 419648,
+      "sha256": "1c4e7b839611160e7e0ae680bcee2c52a070bcd775f6dadfb74bb3b89e8505b5",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/09-before-filter-dom.json",
+      "bytes": 7318,
+      "sha256": "d631a904a52abb039b6593bdfb350536e810259cb9a7af0c73b42245c16c1758",
+      "kind": "hardlink",
+      "target": "recording/critic/07-roadmap-kanban-dom.json"
+    },
+    {
+      "path": "recording/critic/actions-11-reader-desktop.png",
+      "bytes": 119486,
+      "sha256": "902d937898b0d61689a23a6c4ba8709e4f83795868994dcf0b32ba8afa1ba11a",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/actions-11-reader-dom.json",
+      "bytes": 60388,
+      "sha256": "5bf09b08d551ea771a36204b7aee065a22052efff81733c4d909b2bee9901b21",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/alternate-path-build.json",
+      "bytes": 78532,
+      "sha256": "6856340bc4d5ecd0c504bc9358d95ef7f505ca9737b7b4c11e5abbe93f59c04f",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/architecture-plain-view.md",
+      "bytes": 3950,
+      "sha256": "ba2e6bb2ebd1967cfe591eb9ccd5c2209dbf20e8649eae17737122d0c9b905ce",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/architecture-portable-clipboard.md",
+      "bytes": 3950,
+      "sha256": "ba2e6bb2ebd1967cfe591eb9ccd5c2209dbf20e8649eae17737122d0c9b905ce",
+      "kind": "hardlink",
+      "target": "recording/critic/architecture-plain-view.md"
+    },
+    {
+      "path": "recording/critic/audit-final-custody-first.py",
+      "bytes": 9291,
+      "sha256": "387664c2f64bc93ad480e7ee9cbafba7257933f386c68169b2f56e8dc698434b",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/audit-final-custody.py",
+      "bytes": 10133,
+      "sha256": "86acdb4c3ecde511675ba712448cb1abce5b2bc48d1e0b7ceb955d1972442943",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/audit-worker-seal.py",
+      "bytes": 3557,
+      "sha256": "4b88eea991e6869a057380117b774a5e958875cc3a0b3d49e70b8d76e0b4adba",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/baseline-preservation.json",
+      "bytes": 2066,
+      "sha256": "338eaead9b285ce6fd88745c273a673a5f43ae0a1e58ac050472e46bbe76428b",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/browser-actions-witness.json",
+      "bytes": 8053,
+      "sha256": "bc3448425b4595b59e619a9b51ebc246c56cd0a7dc352b71d6aa27f8c801fb95",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/browser-actions.mjs",
+      "bytes": 9592,
+      "sha256": "28c4879006acd56f231476c30ddf96cdadef51be6fedbc3eb069553a04b9676e",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/browser-check.mjs",
+      "bytes": 15069,
+      "sha256": "5466bd6cdc04ec1bf9581a70c059cec3398d4f73cfc082476fe23c1ca028f1db",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/browser-continuation-witness.json",
+      "bytes": 2163,
+      "sha256": "c8cac1c3c6b714b098df59f14be3900b9bd16b3323e71e16d26add3b0ca6eac8",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/browser-continuation.mjs",
+      "bytes": 11934,
+      "sha256": "23bae087359b6f74e294632c9dc895d9c19bff2db9273c068514b75700c6d308",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/browser-reader-final-witness.json",
+      "bytes": 3727,
+      "sha256": "cfc9c9282c9cf01eb4f84d92068d37c36a2ba8b81530b395050ea9d920901867",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/browser-reader-final.mjs",
+      "bytes": 10087,
+      "sha256": "14a50ca485a59dd3865d4a9bcb3e61de8b764fd63316b40bfa3cff51f7ccc03d",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/browser-reader-witness.json",
+      "bytes": 9980,
+      "sha256": "7e630d76216d52a47abcc51242576e4d766086a016ca05b9eb0cb97204ab3a78",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/browser-reader.mjs",
+      "bytes": 10113,
+      "sha256": "834ca078d8639d032bf65359d5935ede7d210db2235461bebd18e36ba40cd744",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/browser-witness.json",
+      "bytes": 22031,
+      "sha256": "71a35612e7bd4568ee42278eb43b1271f7dfa28e315949ecc28afcc46f8020f6",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/continuation-09-before-filter-dom.json",
+      "bytes": 7318,
+      "sha256": "2eddf852859361ee2271ffdab7e4da0bba9e8fb4270e166a7430cdbbecc4c308",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/continuation-09-empty-dom.json",
+      "bytes": 6681,
+      "sha256": "40b9b24b1f27c2102154e9f11575fb5d7cc68add4dc21aafa9cdfeec4598351a",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/continuation-10-legacy-docs-dom.json",
+      "bytes": 60128,
+      "sha256": "4fec1026eb68d79902f5bd52d2945d8131b304fc8a00f0b8c765e1f055fe4576",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/continuation-accessibility.json",
+      "bytes": 55933,
+      "sha256": "abf2d1c1c751216750bf7e5401893b2f3bdf345657e32971968faed6a3b9870f",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/custody-harness-correction.md",
+      "bytes": 671,
+      "sha256": "e58313c350bf3dbf0c44b0228f09110acb17a9c957500256c1ebb83a076ec9fa",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/final-custody-audit.json",
+      "bytes": 3124,
+      "sha256": "5ff91a596a2030269abda90827231a95e101bc0202b49ba027a58400995adfca",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/final-reader-11-reader-desktop.png",
+      "bytes": 119584,
+      "sha256": "5f16d83a9acc8f94dfeaec5b9a8da471e1e48e308ef2fda98866e987af100e59",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/final-reader-11-reader-dom.json",
+      "bytes": 60388,
+      "sha256": "8d4da867e50d14bd45d4570be0daf6020c11a06204643bee9a6bad96596f3e80",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/final-reader-12-reader-copy-dom.json",
+      "bytes": 61237,
+      "sha256": "ed0afc4d71c2d24807881b2f9e923c663a05d550a33f9d2b703adf7e4597d07f",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/final-reader-13-page-menu-dom.json",
+      "bytes": 61847,
+      "sha256": "a83fd4e0041cebabac5a483f6e7354f0ad7e4a827791c44b7c4d6f846166a991",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/final-reader-14-architecture-code-dom.json",
+      "bytes": 61237,
+      "sha256": "48d26743a8741f45fba00d6b04c3a379d91b0ce0bbc3bb916894b11c1020a651",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/final-reader-15-doc-search-dom.json",
+      "bytes": 14214,
+      "sha256": "6f65c738cddff5e7e068e6ca7aa127d188bbb92b907f50ab8da0e88c14253557",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/final-reader-16-unknown-doc-dom.json",
+      "bytes": 51836,
+      "sha256": "c50fd1cb6227f3f980698c9bf5051406d716836f855658b070c8a1899ac4196a",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/final-reader-17-before-back-dom.json",
+      "bytes": 16680,
+      "sha256": "f89240c14ab9e447680d6476537deaa374bee7897b6d1ab202a8017490ae70d7",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/final-reader-18-mobile-home-dom.json",
+      "bytes": 16187,
+      "sha256": "93adbc2afa1ef2e8ab222c3c1a29fa2c7f582f44e39f78abc8066b0a2c6741b3",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/final-reader-18-mobile-home.png",
+      "bytes": 300681,
+      "sha256": "7cd298aeef06a24df0b33afde05eca15a1f4e63e25ffd6009f74a2e2bea4f65e",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/final-reader-19-mobile-roadmap-dom.json",
+      "bytes": 270930,
+      "sha256": "3cb2d3361050df74e01b6f31b4ff43f8d168ed5a5df846e4b0af00ed7666d261",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/final-reader-19-mobile-roadmap.png",
+      "bytes": 317772,
+      "sha256": "ad268271a02e3a9ff8148923fea34f04058abf9d373d434e9d2a895e23266e6f",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/final-reader-20-mobile-detail.png",
+      "bytes": 71512,
+      "sha256": "e13baae3bbac9b999b1e9e6b4536f367fcc8a09e1161a8ac8207692c22dfd09d",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/final-reader-21-mobile-reader-dom.json",
+      "bytes": 7467,
+      "sha256": "51b4aa852115b6a1ab5f9bfb9c6da18618bd61cb7c712db1885f62bf60caf2ba",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/final-reader-21-mobile-reader.png",
+      "bytes": 60133,
+      "sha256": "7a7ae86904f00fa2906dafd55322383011e3b501b27e36f7ae2012857278d006",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/final-reader-22-mobile-docs-menu-dom.json",
+      "bytes": 57311,
+      "sha256": "97b3e77cffe8180ce6e5934074fdaaad9efd53fbd23dc727fbe05627e39fd183",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/final-reader-22-mobile-graphics.png",
+      "bytes": 71704,
+      "sha256": "112e6cd2c55419d0fcc26d7bd634dee64ab8a20fa75b84054857893d136e93f8",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/frozen-source-identities.json",
+      "bytes": 1645,
+      "sha256": "f3f5fbfe123ba9f53bad7fe6c4da450b8d98b07d184938f6c64a6d9d2e175405",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/interim-review.md",
+      "bytes": 4997,
+      "sha256": "dd3d0fd6700de53fa1ab5ef1046e13a24950638522e71d7a7907c0f4c433e7c2",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/predictions.md",
+      "bytes": 4048,
+      "sha256": "683bc3ec0f1364d304f794c156266fcc7325043f7f00d787dd0f97c8493574ec",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/reader-11-reader-desktop.png",
+      "bytes": 119486,
+      "sha256": "902d937898b0d61689a23a6c4ba8709e4f83795868994dcf0b32ba8afa1ba11a",
+      "kind": "hardlink",
+      "target": "recording/critic/actions-11-reader-desktop.png"
+    },
+    {
+      "path": "recording/critic/reader-11-reader-dom.json",
+      "bytes": 61243,
+      "sha256": "edab2bd30dfe65819f2625458f5ef0af635bdb713ec6eca36008301369f8be87",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/repair-708c99c8/01-roadmap-ready-dom.json",
+      "bytes": 271580,
+      "sha256": "0e3918a2237f7091e2d33c80850200be8cd18fa7ddf0bab9bafef490dcbedb30",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/repair-708c99c8/02-boundary-search-dom.json",
+      "bytes": 7318,
+      "sha256": "3c209b7e325d37de4936cbcb415a48f12e22969f6165149d57f9530086ab89a9",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/repair-708c99c8/03-d63-contract-desktop.png",
+      "bytes": 431024,
+      "sha256": "070d643cc9a3fc0d0808f1a96e5ba1b2d014c12466b0fd0891cdd4866ca13649",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/repair-708c99c8/03-d63-contract-dom.json",
+      "bytes": 27648,
+      "sha256": "1129f53fb133662c64f474c44d424fe794ace6caf82316cbc313bd2b5b5a5fa9",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/repair-708c99c8/04-before-legacy-search-dom.json",
+      "bytes": 7318,
+      "sha256": "3c209b7e325d37de4936cbcb415a48f12e22969f6165149d57f9530086ab89a9",
+      "kind": "hardlink",
+      "target": "recording/critic/repair-708c99c8/02-boundary-search-dom.json"
+    },
+    {
+      "path": "recording/critic/repair-708c99c8/04-legacy-criteria-desktop.png",
+      "bytes": 390668,
+      "sha256": "b0a055ae011568be34f1c923cb1e5b1cfbf1d8637acb7fe8b2be0bf7bcdddece",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/repair-708c99c8/04-legacy-criteria-dom.json",
+      "bytes": 16730,
+      "sha256": "86ffc08f6214d4a0c4b4c069b3aaaa668f8c4abdd7a8789d8cc4fe37399f461f",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/repair-708c99c8/05-phone-search-dom.json",
+      "bytes": 6668,
+      "sha256": "b3141d07695187a128ea993291de3a3e8b4b6dcb81acd5b7e34ed74ed73b5a08",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/repair-708c99c8/06-phone-contract-dom.json",
+      "bytes": 26998,
+      "sha256": "12cfe5eab0510b08b507a13aabc219504760980ce759c1be2f2ce7edff0f1a11",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/repair-708c99c8/06-phone-contract.png",
+      "bytes": 83887,
+      "sha256": "1c4dee7867b4c7afbe811104b509f58d0ba98a7021dbb95c039edbe75cdf0120",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/repair-708c99c8/07-phone-launcher-dom.json",
+      "bytes": 3605,
+      "sha256": "aeb31826fc61b13eb7752d5461192fbe0997b200b7666c3c043c70683d053145",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/repair-708c99c8/07-phone-launcher.png",
+      "bytes": 140921,
+      "sha256": "16ce2963f259bc2364e35416f744a2262522a923ac9b056328b6b80b68be58f4",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/repair-708c99c8/09-interaction-ready-dom.json",
+      "bytes": 7554,
+      "sha256": "783c2e7f33f088b26f77950f7c6b9539ccac91a04184a0847991f5875b230eec",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/repair-708c99c8/10-gantt-expanded-dom.json",
+      "bytes": 7554,
+      "sha256": "783c2e7f33f088b26f77950f7c6b9539ccac91a04184a0847991f5875b230eec",
+      "kind": "hardlink",
+      "target": "recording/critic/repair-708c99c8/09-interaction-ready-dom.json"
+    },
+    {
+      "path": "recording/critic/repair-708c99c8/11-scrim-open-dom.json",
+      "bytes": 27884,
+      "sha256": "0c595862227d20bc79c2a61a942f920142977aab0f02f32e93ea23e2125cbf8d",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/repair-708c99c8/12-motion-running-dom.json",
+      "bytes": 7554,
+      "sha256": "783c2e7f33f088b26f77950f7c6b9539ccac91a04184a0847991f5875b230eec",
+      "kind": "hardlink",
+      "target": "recording/critic/repair-708c99c8/09-interaction-ready-dom.json"
+    },
+    {
+      "path": "recording/critic/repair-708c99c8/browser-check.mjs",
+      "bytes": 8885,
+      "sha256": "ac069c65aa3073483dfed4bc2de134fa75f59be1e5772440b223b5ca0c608c48",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/repair-708c99c8/browser-witness.json",
+      "bytes": 3086,
+      "sha256": "b26175791eb7da137a9f9bbc52098f5ff1d4d4c170256cd7e3d8a787bf3f3025",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/repair-708c99c8/displayed-d63-contract.md",
+      "bytes": 1979,
+      "sha256": "d5c7fae0cfcd703c0c605f5e92bfabb284f2d6ebfbb042f3887e7bb67808f53f",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/repair-708c99c8/fresh-generated-tasks.json",
+      "bytes": 6565555,
+      "sha256": "1b135ee3de232b9a3a3bfca35570feb3cd9fd1daa6dde887bce3632e0fe0c9de",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/repair-708c99c8/interaction-check.mjs",
+      "bytes": 7588,
+      "sha256": "9dbf0d0e93ca0f154581927a72f1e1345af6c2f01e8257cfc3302d5134c964c4",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/repair-708c99c8/interaction-predictions.md",
+      "bytes": 472,
+      "sha256": "e961504c06aa70b2cecf7cda0cbe37db3cae6ca641ec33e73d9e5761151a8e91",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/repair-708c99c8/interaction-witness.json",
+      "bytes": 1361,
+      "sha256": "19f01ba3c0153001c5f9011bc555f8b6a496551b33c563693c13de8babbf17da",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/repair-708c99c8/predictions.md",
+      "bytes": 1206,
+      "sha256": "b474b970f5fc26a841395c2840ac4d7e115ebd9caa55c65bc00202f8c88be08e",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/repair-708c99c8/task-contract-audit.json",
+      "bytes": 324030,
+      "sha256": "df82408ec3dc991e11b09d0cb03382f04200dd51aa83fbccdf956a07de3b2964",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/repair-708c99c8/task-source-bodies.json",
+      "bytes": 6766586,
+      "sha256": "89242f20c7d133b39bd40908dd01ad4155294744ce40db0a2f8e8c6a359a3b21",
+      "kind": "file"
+    },
+    {
+      "path": "recording/critic/worker-seal-authentication.json",
+      "bytes": 2955,
+      "sha256": "c2054a63f64737085a9f298bbc976d2c22229c7aa58c7b09455777bfc0d77627",
+      "kind": "file"
+    },
+    {
+      "path": "review/VERDICT.md",
+      "bytes": 7274,
+      "sha256": "5a71501cf7efb14b9b199b28d692696d66b626e90d77f7dab7cd100ebb1133f7",
+      "kind": "file"
+    },
+    {
+      "path": "review/screenshots/fixed-detail.png",
+      "bytes": 431024,
+      "sha256": "070d643cc9a3fc0d0808f1a96e5ba1b2d014c12466b0fd0891cdd4866ca13649",
+      "kind": "hardlink",
+      "target": "recording/critic/repair-708c99c8/03-d63-contract-desktop.png"
+    },
+    {
+      "path": "review/screenshots/home.png",
+      "bytes": 1113583,
+      "sha256": "1c2b66c29577d697505b9f8715d8431033e025d95463c8565c67fb05243cc6a6",
+      "kind": "hardlink",
+      "target": "recording/critic/01-home-desktop.png"
+    },
+    {
+      "path": "review/screenshots/phone-contract.png",
+      "bytes": 83887,
+      "sha256": "1c4dee7867b4c7afbe811104b509f58d0ba98a7021dbb95c039edbe75cdf0120",
+      "kind": "hardlink",
+      "target": "recording/critic/repair-708c99c8/06-phone-contract.png"
+    },
+    {
+      "path": "review/screenshots/phone-launcher.png",
+      "bytes": 140921,
+      "sha256": "16ce2963f259bc2364e35416f744a2262522a923ac9b056328b6b80b68be58f4",
+      "kind": "hardlink",
+      "target": "recording/critic/repair-708c99c8/07-phone-launcher.png"
+    },
+    {
+      "path": "review/screenshots/phone-reader.png",
+      "bytes": 60133,
+      "sha256": "7a7ae86904f00fa2906dafd55322383011e3b501b27e36f7ae2012857278d006",
+      "kind": "hardlink",
+      "target": "recording/critic/final-reader-21-mobile-reader.png"
+    },
+    {
+      "path": "review/screenshots/refuted-detail.png",
+      "bytes": 419648,
+      "sha256": "1c4e7b839611160e7e0ae680bcee2c52a070bcd775f6dadfb74bb3b89e8505b5",
+      "kind": "hardlink",
+      "target": "recording/critic/08-roadmap-detail.png"
+    },
+    {
+      "path": "review/screenshots/roadmap.png",
+      "bytes": 997405,
+      "sha256": "8acd51cf144071555dcf984dd0d31edcf155dcf6cf663dd2288fa6b05c9e32b2",
+      "kind": "hardlink",
+      "target": "recording/critic/05-roadmap-desktop.png"
+    }
+  ]
+}
