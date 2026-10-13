@@ -1,0 +1,18 @@
+{
+  "schema": "dimensional-depth-surface-readiness-seal-v1",
+  "head": "2aca65e9328aa1433fb516511ca554fdd96b422d",
+  "records": 111,
+  "uniqueBodies": 95,
+  "backwardLinks": 16,
+  "recordIndexSha256": "c992214bb436e855a1d8367413a4c4d725461de6284b86d199e0a8116e3dedc8",
+  "archiveSha256": "8549db95b4ee5f59b8f04fc9ea85c9c56128bdb7bd0bf991426643e48d620ecb",
+  "archiveBytes": 5822399,
+  "reopenedMembers": 111,
+  "gzipEofChecked": true,
+  "originalSingleLayerRefusals": 60,
+  "ordinary2DMipSurfaceControls": 10,
+  "existingPrContinuityHeld": 141,
+  "addition": 541,
+  "actualLinuxGuest": false,
+  "positiveCapsetAuthority": false
+}

@@ -4,8 +4,8 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47, E6-T11d48, E6-T11d49, E6-T11d50, E6-T11d51, E6-T11d52, E6-T11d53, E6-T11d54, E6-T11d55, E6-T11d56, E6-T11d57, E6-T11d58, E6-T11d59, E6-T11d60, E6-T11d61, E6-T11d62, E6-T11d63]
-blocked_on: E6-T11d63
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47, E6-T11d48, E6-T11d49, E6-T11d50, E6-T11d51, E6-T11d52, E6-T11d53, E6-T11d54, E6-T11d55, E6-T11d56, E6-T11d57, E6-T11d58, E6-T11d59, E6-T11d60, E6-T11d61, E6-T11d62, E6-T11d63, E6-T11d64]
+blocked_on: E6-T11d64
 estimate: S
 risk: high
 capstone: false
@@ -813,3 +813,18 @@ and digests are in D63's log. D63 closes the single-layer RGBA8 color boundary;
 depth dimensional surfaces, transform feedback, honest qualification, production
 worker/scanout and actual Mesa/Hyprland boot remain later gates. No production
 acceleration or300-MIPS claim follows from the selected comparison consumer.
+
+### 2026-10-13 — worker — color surfaces verified; dimensional depth successor
+
+D63 is independently verified at2aca65e9328aa1433fb516511ca554fdd96b422d
+and published as open/draft PR541 in the continued native stack500. Original
+RGBA8 single-layer color attachments are proven; production remains disabled.
+At that clean verified head, all60 valid cube/array depth surface requests still
+refuse before native attachment publication while10 native dimensional storage
+and10 matching2D mip-depth controls pass. Original queues, Metal/WebGL2 calls,
+traces/digests, source/served bodies and a complete independent wire/ownership
+audit are sealed in evidence/virgl-production-readiness/dimensional-depth-surface-gap.
+See E6-T11d64 for exact commands and digests. It is the next ordered S boundary.
+The explicitly requested reviewed website publication E0-T27 temporarily occupies
+the sole active lane; the original instruction to finish guest graphics continues
+after it. No capset, complete API, Linux renderer or300-MIPS claim is made.
