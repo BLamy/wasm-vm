@@ -24,7 +24,7 @@ for name in ['hardware-54831', 'hardware-90107', 'hardware-171281',
              'refresh-54831', 'refresh-90107', 'refresh-171281',
              'attacks', 'mrt', 'historical', 'fault-layer', 'fault-face']:
     actual = json.loads((cold / 'recording' / name / 'report.json').read_bytes())
-    assert actual['head'] == head and not actual['trackedChanges']
+    assert actual['head'] == receipt.get('carriedRuntimeHead', head) and not actual['trackedChanges']
     assert actual['status'] == ('failed' if name.startswith('fault-') else 'passed')
 assert not json.loads((cold / 'recording/coverage-audit.json').read_bytes())['needsEvidence']
 assert json.loads((cold / 'recording/physical-audit.json').read_bytes())['completedPhysicalRefutations'] == 2
@@ -101,7 +101,7 @@ manifest = dict(schema='dimensional-depth-surface-seal-v1', task='E6-T11d64', he
                 records=len(rows), uniqueBodies=len(first), backwardLinks=len(rows) - len(first),
                 recordIndexSha256=sha(raw), archiveSha256=sha(archive.read_bytes()), archiveBytes=archive.stat().st_size,
                 logicalBytes=sum(r['bytes'] for r in rows), predecessors=receipt['predecessors'],
-                authoritativeRecording='cold/recording', commands=len(receipt['commands']), earlierFailedInner=earlier, earlierInnerCustody=inner_custody, earlierColdCustody=earlier_cold,
+                authoritativeRecording='cold/recording', commands=len(receipt['commands']), carriedRuntimeHead=receipt.get('carriedRuntimeHead'), carriedSourceCustody=receipt.get('carriedSourceCustody'), earlierFailedInner=earlier, earlierInnerCustody=inner_custody, earlierColdCustody=earlier_cold,
                 guestInstructionEvidence=True, actualLinuxGuest=False, productionAuthority=False)
 if archive.stat().st_size >= 50 * 1024 * 1024:
     parts = []

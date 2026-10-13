@@ -50,7 +50,7 @@ for family, digest in pins.items():
             assert relative in {'renderer/virgl-shader/build/wasm/virgl-shader.mjs', 'renderer/virgl-shader/build/wasm/virgl-shader.wasm'}
             generated[relative] = body
         elif name.endswith('/browser-coverage.json'):
-            file = out / 'held-coverage' / name
+            file = (out / 'held-coverage' / name) if family == 'virgl-dimensional-color-surfaces/worker' else (out / 'earlier-d62-coverage' / Path(name).parent / 'd62-browser-coverage.json')
             file.parent.mkdir(parents=True, exist_ok=True)
             file.write_bytes(body)
         elif name.endswith('/receipt.json'):

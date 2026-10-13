@@ -12,7 +12,9 @@ base = '2aca65e9328aa1433fb516511ca554fdd96b422d'
 submission_base = 'e8eb963e821104f87aeca34dd2ac810c2d2794dd'
 p = argparse.ArgumentParser()
 p.add_argument('--output', required=True)
-root = Path(p.parse_args().output).resolve()
+p.add_argument('--carry-unchanged-recording', action='store_true')
+args = p.parse_args()
+root = Path(args.output).resolve()
 assert not root.exists(), 'preserve earlier recordings'
 root.mkdir(parents=True)
 sha = lambda body: hashlib.sha256(body).hexdigest()
@@ -21,6 +23,10 @@ head = git('rev-parse', 'HEAD')
 assert not git('status', '--porcelain', '--untracked-files=no')
 env = {k: v for k, v in os.environ.items() if not k.startswith(('CARGO_', 'RUST', 'LLVM_PROFILE', 'VIRGL_', 'NODE_', 'npm_', 'NPM_', 'CHROME')) and k not in {'CC', 'CXX', 'CFLAGS', 'CPPFLAGS', 'LDFLAGS', 'EMCC', 'EM_CONFIG', 'EMSDK', 'PYTHONPATH', 'PYTHONHOME'}}
 steps = []
+if args.carry_unchanged_recording:
+    from incremental import verify
+    verify(repo, root, head, env)
+    raise SystemExit(0)
 
 
 def run(name, command, expected=0, overrides=None, timeout=1200):
