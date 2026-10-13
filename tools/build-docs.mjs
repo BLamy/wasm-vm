@@ -15,7 +15,9 @@ const result=await build({
   entryNames:"reader",chunkNames:"features/[name]-[hash]",assetNames:"assets/[name]-[hash]",logLevel:"warning",define:{"process.env.NODE_ENV":"\"production\"","__DOCS_CORPUS_REV__":JSON.stringify(corpusRev)},loader:{".woff":"file",".woff2":"file",".ttf":"file"},
   plugins:[{name:"raw-source",setup(b){b.onResolve({filter:/\?raw$/},args=>({path:path.resolve(args.resolveDir,args.path.replace(/\?raw$/,"")),namespace:"source-text"}));b.onLoad({filter:/.*/,namespace:"source-text"},async args=>({contents:await readFile(args.path,"utf8"),loader:"text"}));}}],
 });
-await writeFile(path.join(repo,"design/docs-bundle-metafile.json"),JSON.stringify(result.metafile,null,2)+"\n");
+const buildReports=path.join(repo,"target/docs-build");
+await mkdir(buildReports,{recursive:true});
+await writeFile(path.join(buildReports,"bundle-metafile.json"),JSON.stringify(result.metafile,null,2)+"\n");
 const scriptRev=createHash("sha256").update(await readFile(path.join(out,"reader.js"))).digest("hex").slice(0,12);
 const styleRev=createHash("sha256").update(await readFile(path.join(out,"reader.css"))).digest("hex").slice(0,12);
 for(const name of ["docs.html","docs-embedding.html","docs-guest.html","docs-containers.html","docs-verification.html","docs-explainers.html"]){
