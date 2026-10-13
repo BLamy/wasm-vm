@@ -2,7 +2,7 @@
 import gzip,json,sys
 from pathlib import Path
 root=Path(sys.argv[1]);counts={'layouts':0,'primitiveRows':0,'phases':0,'readbacks':0,'nativeCaptures':0,'nativeCopies':0,'physicalRefutations':0}
-for mode in ['layouts','primitives','scatter-fault','selected-regression']:
+for mode in ['layouts','primitives','retirement','scatter-fault','selected-regression']:
     p=root/mode;r=json.loads((p/'report.json').read_text());assert not any(r['browserErrors'].values())
     assert r['status']==('failed' if mode=='scatter-fault' else 'passed')
     rows=[]
@@ -33,6 +33,9 @@ for mode in ['layouts','primitives','scatter-fault','selected-regression']:
             assert row['status']=='passed' and len(row['actual'])==len(row['expected'])
             for actual,expected in zip(row['actual'],row['expected']):assert actual['bytes']==expected['bytes'];counts['readbacks']+=1
             counts['layouts']+=1
+        elif mode=='retirement':
+            for phase in row['phases']: assert phase['actual']==phase['expected']
+            if row.get('physicalOldRead'): assert row['physicalOldRead']['actual']==row['physicalOldRead']['expected']
         else:
             counts['primitiveRows']+=1
             for phase in row['phases']:
