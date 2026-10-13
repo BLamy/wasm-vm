@@ -1,7 +1,7 @@
-// Docs tab (vanilla-app interim): embed the standalone docs page in an ISOLATED iframe inside
+// Docs tab: embed the standalone Docstream reader in an isolated iframe inside
 // #docs-mount. The iframe fully sandboxes the docs' own styles/scripts (no leak into the app) AND
-// keeps the parent SPA alive — so navigating to Docs never reloads the page and the background Alpine
-// boot keeps running. (The Vite/shadcn rewrite will render @brett_lamy/docstream here natively instead.)
+// keeps the parent SPA alive — so navigating to Docs never reloads the page and the background
+// guest keeps running. The reader has its own React/Docstream bundle, theme, search, and routes.
 function ensureDocsFrame() {
   const mount = document.getElementById("docs-mount");
   if (!mount || mount.dataset.loaded === "1") return;

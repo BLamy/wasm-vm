@@ -2540,3 +2540,20 @@ verify-E6-T11d63:
 .PHONY: verify-E6-T11d63-target-reuse
 verify-E6-T11d63-target-reuse:
 	node tools/virgl-dimensional-color-surfaces/target-reuse-browser.mjs --output "$${VIRGL_DIMENSIONAL_COLOR_SURFACE_TARGET_REUSE_EVIDENCE_DIR:-target/evidence/virgl-dimensional-color-surface-target-reuse}"
+.PHONY: verify-E0-T27
+SITE_EVIDENCE_DIR ?= target/evidence/reviewed-site-final
+verify-E0-T27:
+	python3 tools/check_task_policy.py
+	git diff --check
+	node --check tools/build-docs.mjs
+	node --check tools/check-docs.mjs
+	node --check tools/verify-reviewed-site.mjs
+	node --check web/hero-scene.js
+	node --check web/landing-page.js
+	node --check web/landing.js
+	node --check web/landing-benchmarks.js
+	bash -n tools/build-web-dist.sh
+	node tools/check-docs.mjs
+	python3 tools/check-docs-dist.py web/dist
+	node tools/verify-reviewed-site.mjs --output "$(SITE_EVIDENCE_DIR)/site"
+	node tools/verify-virgl-default-demo.mjs --output "$(SITE_EVIDENCE_DIR)/default-demo" --task E0-T27

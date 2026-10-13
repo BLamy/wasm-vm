@@ -5,7 +5,7 @@
 // WebGL is unavailable. Nothing here loads from the network — three is imported from the local vendor.
 import * as THREE from "three";
 
-const REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const MOTION = matchMedia("(prefers-reduced-motion: reduce)");
 // Mobile / touch: fewer particles + a lower pixel-ratio cap so the shader stays smooth and easy on the
 // battery on phones (the fragment shader is the cost driver — halving the pixel ratio ~halves its work).
 const MOBILE = matchMedia("(max-width: 820px), (pointer: coarse)").matches;
@@ -13,12 +13,12 @@ const MOBILE = matchMedia("(max-width: 820px), (pointer: coarse)").matches;
 export function initHero(canvas) {
   let renderer;
   try {
-    renderer = new THREE.WebGLRenderer({ canvas, antialias: !MOBILE, alpha: true, powerPreference: "high-performance" });
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: !MOBILE, alpha: true, powerPreference: "low-power" });
   } catch {
     document.body.classList.add("no-webgl");
     return () => {};
   }
-  renderer.setPixelRatio(Math.min(devicePixelRatio, MOBILE ? 1.5 : 2));
+  renderer.setPixelRatio(Math.min(devicePixelRatio, MOBILE ? 0.75 : 1.25));
   renderer.setClearColor(0x000000, 0);
 
   // Full-screen shader backdrop (a plane locked to the far view).
@@ -113,33 +113,46 @@ export function initHero(canvas) {
   const mouse = new THREE.Vector2(0, 0);
   const target = new THREE.Vector2(0, 0);
   let scroll = 0;
-  addEventListener("pointermove", (e) => {
+  const onPointer = (e) => {
     target.set((e.clientX / innerWidth) * 2 - 1, -((e.clientY / innerHeight) * 2 - 1));
-  }, { passive: true });
-  addEventListener("scroll", () => {
+  };
+  addEventListener("pointermove", onPointer, { passive: true });
+  const onScroll = () => {
     scroll = Math.min(1, scrollY / (innerHeight * 0.9));
-  }, { passive: true });
+    resume();
+  };
+  addEventListener("scroll", onScroll, { passive: true });
 
   function resize() {
     const w = innerWidth, h = innerHeight;
     renderer.setSize(w, h, false);
     bg.material.uniforms.uRes.value.set(w, h);
+    if (paused) frame(performance.now());
   }
-  addEventListener("resize", resize); resize();
-
   const clock = new THREE.Clock();
-  let raf = 0;
-  function frame() {
+  let raf = 0, last = 0, paused = MOTION.matches, alive = true;
+  function frame(now = 0) {
+    if (!alive) return;
+    if (document.hidden || scrollY > innerHeight * 1.25) return;
+    if (!paused && now - last < 1000 / 30) { raf = requestAnimationFrame(frame); return; }
+    last = now;
     const t = clock.getElapsedTime();
     mouse.lerp(target, 0.05);
     bg.material.uniforms.uTime.value = t;
     bg.material.uniforms.uMouse.value.copy(mouse);
     bg.material.uniforms.uScroll.value = scroll;
     renderer.render(bgScene, bgCam);
-    if (!REDUCED) raf = requestAnimationFrame(frame);
+    canvas.dataset.motion = paused ? "paused" : "animated";
+    if (!paused) raf = requestAnimationFrame(frame);
   }
-  frame();
-  if (REDUCED) cancelAnimationFrame(raf);
-
-  return () => { cancelAnimationFrame(raf); renderer.dispose(); };
+  function resume() { cancelAnimationFrame(raf); frame(performance.now()); }
+  const onVisibility = () => resume();
+  const onReduced = () => { paused = MOTION.matches; resume(); };
+  const onMotion = (e) => { paused = e.detail.paused; resume(); };
+  addEventListener("resize", resize); resize();
+  document.addEventListener("visibilitychange", onVisibility);
+  MOTION.addEventListener("change", onReduced);
+  addEventListener("marketing-motion-change", onMotion);
+  resume();
+  return () => { alive = false; cancelAnimationFrame(raf); removeEventListener("pointermove", onPointer); removeEventListener("scroll", onScroll); removeEventListener("resize", resize); document.removeEventListener("visibilitychange", onVisibility); MOTION.removeEventListener("change", onReduced); removeEventListener("marketing-motion-change", onMotion); bg.geometry.dispose(); bg.material.dispose(); renderer.dispose(); };
 }
