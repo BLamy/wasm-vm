@@ -9,6 +9,7 @@ from pathlib import Path
 
 repo = Path(__file__).resolve().parents[2]
 base = '2aca65e9328aa1433fb516511ca554fdd96b422d'
+submission_base = 'e8eb963e821104f87aeca34dd2ac810c2d2794dd'
 p = argparse.ArgumentParser()
 p.add_argument('--output', required=True)
 root = Path(p.parse_args().output).resolve()
@@ -37,7 +38,7 @@ def run(name, command, expected=0, overrides=None, timeout=1200):
 
 
 run('policy', ['python3', 'tools/check_task_policy.py'])
-run('diff-format', ['git', 'diff', '--check', base, 'HEAD'])
+run('diff-format', ['git', 'diff', '--check', submission_base, 'HEAD'])
 run('predecessor', ['python3', 'tools/virgl-dimensional-depth-surfaces/predecessor.py', str(root / 'predecessor')])
 run('format', ['cargo', 'fmt', '--check', '-p', 'wasm-vm-core', '-p', 'wasm-vm-wasm'])
 run('clippy-default', ['cargo', 'clippy', '--offline', '-p', 'wasm-vm-core', '--lib', '--', '-D', 'warnings'])
@@ -80,7 +81,7 @@ for relative in git('ls-files', 'renderer/virgl-command', 'renderer/virgl-shader
 coverage = json.loads((root / 'coverage-audit.json').read_bytes())
 physical = json.loads((root / 'physical-audit.json').read_bytes())
 assert not coverage['needsEvidence'] and physical['completedPhysicalRefutations'] == 2
-receipt = dict(schema='dimensional-depth-surface-worker-receipt-v1', task='E6-T11d64', head=head, base=base, commands=steps, sources=sources,
+receipt = dict(schema='dimensional-depth-surface-worker-receipt-v1', task='E6-T11d64', head=head, base=base, submissionBase=submission_base, commands=steps, sources=sources,
                predecessors=json.loads((root / 'predecessor/authentication.json').read_bytes()), physical=physical,
                coverage=dict(executed=len(coverage['executed']), held=len(coverage['held']), staticWaivers=len(coverage['waived']), newExecutableGaps=0),
                actualLinuxGuest=False, productionAuthority=False)

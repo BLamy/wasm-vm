@@ -55,6 +55,19 @@ for i, value in enumerate(sys.argv[3:]):
         if adjacent.is_file(): files[prefix + '/adjacent' + suffix] = adjacent
     earlier.append(dict(prefix=prefix, original=str(directory), head=actual['head'], failure=actual.get('failure'),
                         authority='Earlier failed inner-loop custody; no positive final claim follows from this run.'))
+earlier_cold = []
+for directory in sorted((repo / 'target/evidence').glob('dimensional-depth-surfaces-cold-*')):
+    if directory.resolve() == cold or not (directory / 'report.json').is_file():
+        continue
+    actual = json.loads((directory / 'report.json').read_bytes())
+    if actual.get('exitCode') == 0:
+        continue
+    prefix = 'earlier-cold-custody/' + directory.name
+    files.update({prefix + '/' + str(p.relative_to(directory)): p for p in directory.rglob('*') if p.is_file()})
+    for suffix in ['.stdout', '.stderr']:
+        adjacent = Path(str(directory) + suffix)
+        if adjacent.is_file(): files[prefix + '/adjacent' + suffix] = adjacent
+    earlier_cold.append(dict(prefix=prefix, head=actual['head'], exitCode=actual['exitCode'], authority='Complete failed cold harness recording; no positive final claim follows.'))
 files['sealing/seal.py'] = Path(__file__).resolve()
 files['sealing/custody.py'] = repo / 'tools/virgl-dimensional-depth-surfaces/custody.py'
 rows, first = [], {}
@@ -88,7 +101,7 @@ manifest = dict(schema='dimensional-depth-surface-seal-v1', task='E6-T11d64', he
                 records=len(rows), uniqueBodies=len(first), backwardLinks=len(rows) - len(first),
                 recordIndexSha256=sha(raw), archiveSha256=sha(archive.read_bytes()), archiveBytes=archive.stat().st_size,
                 logicalBytes=sum(r['bytes'] for r in rows), predecessors=receipt['predecessors'],
-                authoritativeRecording='cold/recording', commands=len(receipt['commands']), earlierFailedInner=earlier, earlierInnerCustody=inner_custody,
+                authoritativeRecording='cold/recording', commands=len(receipt['commands']), earlierFailedInner=earlier, earlierInnerCustody=inner_custody, earlierColdCustody=earlier_cold,
                 guestInstructionEvidence=True, actualLinuxGuest=False, productionAuthority=False)
 if archive.stat().st_size >= 50 * 1024 * 1024:
     parts = []

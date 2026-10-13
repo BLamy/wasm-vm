@@ -41,7 +41,7 @@ after = status()
 report = dict(schema='dimensional-depth-surfaces-cold-v1', head=head, clone=str(clone), command=command, evidenceOutput=str(proof),
               cleanBefore=before, cleanAfter=after, exitCode=result.returncode,
               sourceCheckout=dict(mode='declared cone sparse checkout', included=selection, borrowedGeneratedArtifacts=False,
-                                  generatedCompilerAuthority='complete authenticated D61 worker seal', claim='selected dimensional color-surface consumer and ordinary default demo'),
+                                  generatedCompilerAuthority='complete authenticated D61 worker seal', claim='selected dimensional depth-surface consumer and ordinary default demo'),
               receiptSha256=hashlib.sha256((proof / 'receipt.json').read_bytes()).hexdigest() if (proof / 'receipt.json').exists() else None)
 (output / 'report.json').write_text(json.dumps(report, indent=2) + '\n')
 if proof.exists():
