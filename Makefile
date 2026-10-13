@@ -168,6 +168,7 @@ fuzz-diff-smoke:
 web-build:
 	wasm-pack build crates/wasm-web --target web --profile wasm-release --out-name wasm_vm_wasm
 	cd web && npm ci --no-audit --no-fund
+	cd web && npm run build:docs
 	mkdir -p web/pkg web/assets/riscv-tests
 	cp -R crates/wasm-web/pkg/. web/pkg/
 	cp guest/prebuilt/hello.elf guest/prebuilt/loops.elf web/assets/
