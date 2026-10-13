@@ -50,6 +50,7 @@ impl Resource3dMetadata {
         desktop_resources: bool,
         dimensional_resources: bool,
         dimensional_depth_resources: bool,
+        stream_output_resources: bool,
     ) -> Result<(u64, u64), Control3dError> {
         if self.width == 0 || self.height == 0 || self.nr_samples != 0 || self.flags != 0 {
             return Err(Control3dError::InvalidParameter);
@@ -80,7 +81,7 @@ impl Resource3dMetadata {
                 if desktop_resources
                     && self.height == 1
                     && self.last_level == 0
-                    && bind & !112 == 0 =>
+                    && bind & !(if stream_output_resources { 2160 } else { 112 }) == 0 =>
             {
                 (u64::from(self.width), false)
             }
@@ -464,6 +465,7 @@ pub(crate) struct Control3dState {
     desktop_resources: bool,
     dimensional_resources: bool,
     dimensional_depth_resources: bool,
+    stream_output_resources: bool,
     epoch: u64,
     next_generation: u64,
     next_backing_generation: u64,
@@ -477,28 +479,33 @@ pub(crate) struct Control3dState {
 
 impl Control3dState {
     pub(crate) fn new(sink: Box<dyn Control3dSink>) -> Self {
-        Self::with_resource_profile(sink, false, false, false)
+        Self::with_resource_profile(sink, false, false, false, false)
     }
     pub(crate) fn new_standard_desktop(sink: Box<dyn Control3dSink>) -> Self {
-        Self::with_resource_profile(sink, true, false, false)
+        Self::with_resource_profile(sink, true, false, false, false)
     }
     pub(crate) fn new_standard_dimensional(sink: Box<dyn Control3dSink>) -> Self {
-        Self::with_resource_profile(sink, true, true, false)
+        Self::with_resource_profile(sink, true, true, false, false)
     }
     pub(crate) fn new_standard_dimensional_depth(sink: Box<dyn Control3dSink>) -> Self {
-        Self::with_resource_profile(sink, true, true, true)
+        Self::with_resource_profile(sink, true, true, true, false)
+    }
+    pub(crate) fn new_standard_stream_output(sink: Box<dyn Control3dSink>) -> Self {
+        Self::with_resource_profile(sink, true, true, true, true)
     }
     fn with_resource_profile(
         sink: Box<dyn Control3dSink>,
         desktop_resources: bool,
         dimensional_resources: bool,
         dimensional_depth_resources: bool,
+        stream_output_resources: bool,
     ) -> Self {
         Self {
             sink,
             desktop_resources,
             dimensional_resources,
             dimensional_depth_resources,
+            stream_output_resources,
             epoch: 1,
             next_generation: 1,
             next_backing_generation: 1,
@@ -724,6 +731,7 @@ impl Control3dState {
                     self.desktop_resources,
                     self.dimensional_resources,
                     self.dimensional_depth_resources,
+                    self.stream_output_resources,
                 )?;
                 let max_resources = if self.desktop_resources {
                     MAX_DESKTOP_RESOURCES
@@ -776,6 +784,7 @@ impl Control3dState {
                         self.desktop_resources,
                         self.dimensional_resources,
                         self.dimensional_depth_resources,
+                        self.stream_output_resources,
                     )?;
                     self.send(Control3dOperation::UnrefResource { resource })?;
                     self.resources.remove(index);
@@ -888,3 +897,7 @@ fn fixed<const N: usize>(
 #[cfg(test)]
 #[path = "control3d_dimensional_depth_tests.rs"]
 mod dimensional_depth_tests;
+
+#[cfg(test)]
+#[path = "control3d_stream_output_tests.rs"]
+mod stream_output_tests;

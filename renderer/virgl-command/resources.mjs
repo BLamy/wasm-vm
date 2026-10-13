@@ -253,7 +253,7 @@ function checkedProduct(a, b, maximum, message) {
   require(a === 0 || b <= Math.floor(maximum / a), "out-of-bounds", message);
   return a * b;
 }
-function normalizeMetadata(value, limits, uniform = false, bufferRoles = false, mipmaps = false, colors = false, floats = false, packed = false, shared = false, integers = false, normalized = false, unsigned = false, floatingDepth = false, unormDepth = false, packedDepth = false, dimensional = false, dimensionalDepth = false) {
+function normalizeMetadata(value, limits, uniform = false, bufferRoles = false, mipmaps = false, colors = false, floats = false, packed = false, shared = false, integers = false, normalized = false, unsigned = false, floatingDepth = false, unormDepth = false, packedDepth = false, dimensional = false, dimensionalDepth = false, streamOutput = false) {
   const meta = record(value, META_KEYS);
   for (const key of META_KEYS) uint(meta[key], key, ["id", "width", "height", "depth", "arraySize"].includes(key));
   if (dimensional && [3, 4, 7].includes(meta.target)) return freeze(dimensionalDepth && meta.format !== 67 ?
@@ -262,7 +262,7 @@ function normalizeMetadata(value, limits, uniform = false, bufferRoles = false, 
     "unsupported-resource", mipmaps ? "Only qualified 2D levels, one layer, one sample and no flags are supported." : "Only one-level, single-layer, single-sample resources without flags are supported.");
   let kind, byteLength, levels, color, gpuByteLength;
   if (meta.target === 0 && meta.format === 64 && meta.height === 1) {
-    kind = bufferRoles && (meta.bind & ~112) === 0 ? "standard-buffer" : ({ 16: "vertex-buffer", 32: "index-buffer", 524288: "staging", ...(uniform ? { 64: "uniform-buffer", 80: "uniform-buffer" } : {}) })[meta.bind];
+    kind = bufferRoles && (meta.bind & ~(streamOutput ? 2160 : 112)) === 0 ? "standard-buffer" : ({ 16: "vertex-buffer", 32: "index-buffer", 524288: "staging", ...(uniform ? { 64: "uniform-buffer", 80: "uniform-buffer" } : {}) })[meta.bind];
     require(kind !== undefined, "unsupported-resource", "Unsupported buffer binding class.");
     byteLength = meta.width;
   } else if (meta.target === 2 && (floatingDepth && floatingDepthFormat(meta.format) || unormDepth && unormDepthFormat(meta.format) || packedDepth && packedDepthFormat(meta.format))) {
@@ -619,6 +619,10 @@ export function createStandardDimensionalColorSurfaceResourceStore(options) {
 export function createStandardDimensionalDepthSurfaceResourceStore(options) {
   return createStore(options, true, true, true, true, true, true, true, true, true, true, true, true, true, true, STANDARD_DIMENSIONAL_RESOURCE_LIMITS, true, true, true, true, true, true);
 }
+/** Selected original buffer capture; historical stores keep their masks. */
+export function createStandardStreamOutputResourceStore(options) {
+  return createStore(options, true, true, true, true, true, true, true, true, true, true, true, true, true, true, STANDARD_DIMENSIONAL_RESOURCE_LIMITS, true, true, true, true, true, true, true);
+}
 export function computeStandardDimensionalDepthTransferLayout(metadata, fields, backingByteLength, overrides = {}) {
   return result(() => {
     const limits = limitsFor(overrides, STANDARD_DIMENSIONAL_RESOURCE_LIMITS);
@@ -632,7 +636,7 @@ export function computeStandardDimensionalTransferLayout(metadata, fields, backi
   });
 }
 
-function createStore(options, uniform, bufferRoles = false, mipmaps = false, images = false, colors = false, floats = false, packed = false, shared = false, integers = false, normalized = false, unsigned = false, floatingDepth = false, unormDepth = false, packedDepth = false, resourceLimits = RESOURCE_LIMITS, dimensional = false, dimensionalViews = false, dimensionalDepth = false, dimensionalDepthViews = false, dimensionalColorSurfaces = false, dimensionalDepthSurfaces = false) {
+function createStore(options, uniform, bufferRoles = false, mipmaps = false, images = false, colors = false, floats = false, packed = false, shared = false, integers = false, normalized = false, unsigned = false, floatingDepth = false, unormDepth = false, packedDepth = false, resourceLimits = RESOURCE_LIMITS, dimensional = false, dimensionalViews = false, dimensionalDepth = false, dimensionalDepthViews = false, dimensionalColorSurfaces = false, dimensionalDepthSurfaces = false, streamOutput = false) {
   return result(() => {
     const config = record(options, ["backend", "limits"], ["backend"]), backend = config.backend;
     require(backend && typeof backend === "object", "invalid-input", "A transfer backend is required.");
@@ -662,6 +666,7 @@ function createStore(options, uniform, bufferRoles = false, mipmaps = false, ima
     const limits = Object.freeze({ ...requested, textureSize: Math.min(requested.textureSize, backend.maxTextureSize),
       ...(dimensional ? { texture3DSize: Math.min(requested.texture3DSize, backend.maxTexture3DSize),
         cubeTextureSize: Math.min(requested.cubeTextureSize, backend.maxCubeTextureSize), arrayLayers: Math.min(requested.arrayLayers, backend.maxArrayLayers) } : {}) });
+    const packedCaptures = new Map(), revokedCaptures = new Set();
     const resources = new Map(), live = new Set(), contexts = new Map(), tickets = new Map(), leases = new Map(), storageReads = new Map(), uniformRanges = new Map(), revokedAccess = new Set(), revokedUniform = new Set();
     const imageViews = new Map(), imageHolds = new Map(), liveImages = new Set(), revokedImages = new Set();
     let nextGeneration = 1, nextBackingGeneration = 1, disposed = false, backingBytes = 0, gpuBytes = 0, scratchBytes = 0, stagingBytes = 0;
@@ -841,7 +846,7 @@ function createStore(options, uniform, bufferRoles = false, mipmaps = false, ima
         return success({ context: freeze({ id, generation: ctx.generation }) });
       }),
       createResource: operation((metadata) => {
-        const meta = normalizeMetadata(metadata, limits, uniform, bufferRoles, mipmaps, colors, floats, packed, shared, integers, normalized, unsigned, floatingDepth, unormDepth, packedDepth, dimensional, dimensionalDepth);
+        const meta = normalizeMetadata(metadata, limits, uniform, bufferRoles, mipmaps, colors, floats, packed, shared, integers, normalized, unsigned, floatingDepth, unormDepth, packedDepth, dimensional, dimensionalDepth, streamOutput);
         require(!resources.has(meta.id), "resource-exists", "Resource ID is already public.");
         require(live.size < limits.resources, "limit-exceeded", "Live/retained resource count limit exceeded.");
         const allocationBytes = meta.kind === "staging" ? 0 : meta.gpuByteLength ?? meta.byteLength;
@@ -921,8 +926,8 @@ function createStore(options, uniform, bufferRoles = false, mipmaps = false, ima
       retainStorage: operation((contextId, id, role = "view") => {
         const ctx = context(contextId), res = resource(id); membership(ctx, res);
         require(res.storage !== null, "unsupported-resource", "Staging resources have no GPU storage.");
-        require(typeof role === "string" && ["view", "surface", "depth-surface", "vertex", "index", "readback", ...(uniform ? ["uniform"] : [])].includes(role), "invalid-input", "Unknown storage lease role.");
-        require(role === "readback" || (bufferRoles && res.meta.kind === "standard-buffer" && ["vertex", "index", "uniform"].includes(role)) || (role === "view" && (["texture", "mip-texture"].includes(res.meta.kind) || dimensionalViews && res.meta.kind === "dimensional-texture" || dimensionalDepthViews && res.meta.kind === "dimensional-depth-texture" || (res.meta.floatingDepth || res.meta.unormDepth || res.meta.packedDepth) && ["depth-texture", "mip-depth-texture"].includes(res.meta.kind)) && (res.meta.bind & 8) !== 0) ||
+        require(typeof role === "string" && ["view", "surface", "depth-surface", "vertex", "index", "readback", ...(uniform ? ["uniform"] : []), ...(streamOutput ? ["stream-output"] : [])].includes(role), "invalid-input", "Unknown storage lease role.");
+        require(role === "readback" || (bufferRoles && res.meta.kind === "standard-buffer" && ["vertex", "index", "uniform", ...(streamOutput ? ["stream-output"] : [])].includes(role)) || (role === "view" && (["texture", "mip-texture"].includes(res.meta.kind) || dimensionalViews && res.meta.kind === "dimensional-texture" || dimensionalDepthViews && res.meta.kind === "dimensional-depth-texture" || (res.meta.floatingDepth || res.meta.unormDepth || res.meta.packedDepth) && ["depth-texture", "mip-depth-texture"].includes(res.meta.kind)) && (res.meta.bind & 8) !== 0) ||
           (role === "surface" && (["texture", "mip-texture"].includes(res.meta.kind) || dimensionalColorSurfaces && res.meta.kind === "dimensional-texture" && res.meta.format === 67) && (res.meta.bind & 2) !== 0) ||
           (role === "depth-surface" && (res.meta.floatingDepth || res.meta.unormDepth || res.meta.packedDepth ? (["depth-texture", "mip-depth-texture"].includes(res.meta.kind) || dimensionalDepthSurfaces && res.meta.kind === "dimensional-depth-texture") && (res.meta.bind & 1) !== 0 : res.meta.kind === "depth-texture" && res.meta.bind === 1)) ||
           (role === "vertex" && (res.meta.kind === "vertex-buffer" || uniform && res.meta.kind === "uniform-buffer")) ||
@@ -977,7 +982,7 @@ function createStore(options, uniform, bufferRoles = false, mipmaps = false, ima
         return success({ disposed, limits, resources: freeze(list),
           contexts: freeze([...contexts.values()].map((ctx) => ({ id: ctx.id, generation: ctx.generation, resourceIds: [...ctx.memberships.keys()].sort((a, b) => a - b) }))),
           budgets: freeze({ resources: live.size, contexts: contexts.size, storages: [...live].filter((res) => res.storage !== null).length,
-            backingBytes, cpuBytes: backingBytes + scratchBytes, gpuBytes, scratchBytes, tickets: tickets.size, leases: leases.size, ...(uniform ? { uniformRanges: uniformRanges.size } : {}), ...(images ? { imageViews: liveImages.size, imageHolds: imageHolds.size } : {}) }) });
+            backingBytes, cpuBytes: backingBytes + scratchBytes, gpuBytes, scratchBytes, tickets: tickets.size, leases: leases.size, ...(uniform ? { uniformRanges: uniformRanges.size } : {}), ...(images ? { imageViews: liveImages.size, imageHolds: imageHolds.size } : {}), ...(streamOutput ? {packedCaptures: packedCaptures.size} : {}) }) });
       },
       dispose() {
         return result(() => {
@@ -1010,6 +1015,11 @@ function createStore(options, uniform, bufferRoles = false, mipmaps = false, ima
             try { releaseTicket(entry); } catch (error) { firstError ??= error; }
           }
           tickets.clear();
+          for (const [token, entry] of packedCaptures) {
+            revokedCaptures.add(token);gpuBytes -= entry.bytes;
+            try {host('destroy', entry.storage);} catch(error) {firstError ??= error;}
+          }
+          packedCaptures.clear();
           for (const res of [...live]) { try { collect(res); } catch (error) { firstError ??= error; } }
           try { host("dispose"); } catch (error) { firstError ??= error; }
           if (firstError) throw firstError;
@@ -1301,7 +1311,23 @@ function createStore(options, uniform, bufferRoles = false, mipmaps = false, ima
       },
       inspect() { return success({ disposed, views: imageViews.size, allocations: liveImages.size, holds: imageHolds.size }); },
     }) : null;
-    return success({ store: Object.freeze(store), bindings, asyncAccess, ...(uniform ? { uniformAccess } : {}), ...(images ? { imageAccess } : {}) });
+    const streamOutputAccess = streamOutput ? Object.freeze({
+      allocatePacked: operation(byteLength => {
+        require(Number.isSafeInteger(byteLength) && byteLength > 0 && byteLength <= limits.resourceBytes && byteLength <= limits.gpuBytes - gpuBytes && packedCaptures.size < limits.tickets, 'limit-exceeded', 'Packed capture exceeds its charged native budget.');
+        const metadata = Object.freeze({id: 0, target: 0, format: 64, bind: 16, width: byteLength, height: 1, depth: 1, arraySize: 1, lastLevel: 0, nrSamples: 0, flags: 0, kind: 'standard-buffer', byteLength});
+        const storage = host('allocate', metadata);if (!storage || storage.kind !== 'buffer') {if (storage) host('destroy', storage);throw new ResourceFault('backend-error', 'Packed capture did not allocate native buffer storage.');}
+        const token = Object.freeze({});gpuBytes += byteLength;packedCaptures.set(token, {storage, bytes: byteLength});return success({token, storage, byteLength});
+      }),
+      release(token) {return result(() => {
+        if (disposed) {require(revokedCaptures.delete(token), 'invalid-capture', 'Unknown or released revoked capture.');return success();}
+        const entry = packedCaptures.get(token);require(entry, 'invalid-capture', 'Unknown or released packed capture.');packedCaptures.delete(token);gpuBytes -= entry.bytes;host('destroy', entry.storage);return success();
+      });},
+      markWritten: operation(lease => {
+        const entry = leases.get(lease);require(entry && entry.role === 'stream-output' && entry.resource.storage, 'invalid-lease', 'Original capture requires its retained buffer lease.');
+        require(entry.resource.contentRevision < Number.MAX_SAFE_INTEGER, 'limit-exceeded', 'Capture revision space exhausted.');entry.resource.contentRevision++;return success();
+      }),
+    }) : null;
+    return success({ store: Object.freeze(store), bindings, asyncAccess, ...(uniform ? { uniformAccess } : {}), ...(images ? { imageAccess } : {}), ...(streamOutput ? {streamOutputAccess} : {}) });
   });
 }
 

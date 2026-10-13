@@ -78,3 +78,18 @@ active feedback, so this consumer must use legal real GPU array captures while
 preserving original vertex/instance/primitive identities. No C shader rewrite,
 CPU shader emulation, positive capset or production guest claim follows from
 activation. Typed qualification and actual guest worker/scanout remain successors.
+
+### 2026-10-13 — worker — inner native capture validation
+
+The selected consumer now runs actual GPU feedback and native scatter through
+original Wasm queues. Inner recordings in target/evidence demonstrate480 original
+layout specimens over seeds54831/90107/171281,99 primitive/cursor phases plus
+vertex/index/uniform reuse and target-generation/recoverable-allocation cases,
+and selected visible dimensional-depth regression. These are implementation
+checks, not a verified submission. The final immutable-head clean-checkout gate
+will replace them as authority. Earlier failing recordings preserve a missing
+object-type outer admission, two invalid TGSI/wire specimens, a recorder-source
+path error and a real uniform-range handoff ordering fault. The runtime fault was
+fixed before final gates: restore validated state, then submit the range immediately
+before native capture. No production capability, guest Linux renderer or performance
+claim follows.

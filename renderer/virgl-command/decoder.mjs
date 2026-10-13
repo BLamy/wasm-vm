@@ -98,7 +98,7 @@ const COMMAND_NAMES = Object.freeze({
 });
 const OBJECT_NAMES = Object.freeze([
   "NULL", "BLEND", "RASTERIZER", "DSA", "SHADER", "VERTEX_ELEMENTS",
-  "SAMPLER_VIEW", "SAMPLER_STATE", "SURFACE",
+  "SAMPLER_VIEW", "SAMPLER_STATE", "SURFACE", "QUERY", "STREAMOUT_TARGET",
 ]);
 const STAGE_NAMES = Object.freeze(["vertex", "fragment", "geometry", "tessControl", "tessEvaluation", "compute"]);
 const MAX_U32 = 0xffffffff;
@@ -125,12 +125,12 @@ class DecodeFault extends Error {
 
 /** Indexes in Packet match the pinned protocol: header=0, first payload word=1. */
 class Packet {
-  constructor(view, byteOffset, opcode, length, standard = false, uniform = false, textures = false, images = false, colors = false, floats = false, packed = false, shared = false, integers = false, multipleColors = false, normalized = false, unsigned = false, floatingDepth = false, unormDepth = false, packedDepth = false, stencil = false, shadowSamplers = false, dimensional = false, dimensionalViews = false, dimensionalDepthViews = false, dimensionalColorSurfaces = false, dimensionalDepthSurfaces = false) {
+  constructor(view, byteOffset, opcode, length, standard = false, uniform = false, textures = false, images = false, colors = false, floats = false, packed = false, shared = false, integers = false, multipleColors = false, normalized = false, unsigned = false, floatingDepth = false, unormDepth = false, packedDepth = false, stencil = false, shadowSamplers = false, dimensional = false, dimensionalViews = false, dimensionalDepthViews = false, dimensionalColorSurfaces = false, dimensionalDepthSurfaces = false, streamOutput = false) {
     this.view = view;
     this.byteOffset = byteOffset;
     this.opcode = opcode;
     this.length = length;
-    this.standard = standard; this.uniform = uniform; this.textures = textures; this.images = images; this.colors = colors; this.floatingImages = floats; this.packedImages = packed; this.sharedImages = shared; this.integerImages = integers; this.multipleColors = multipleColors; this.normalizedImages = normalized; this.unsignedImages = unsigned; this.floatingDepth = floatingDepth; this.unormDepth = unormDepth; this.packedDepth = packedDepth; this.stencil = stencil; this.shadowSamplers = shadowSamplers; this.dimensional = dimensional; this.dimensionalViews = dimensionalViews; this.dimensionalDepthViews = dimensionalDepthViews; this.dimensionalColorSurfaces = dimensionalColorSurfaces; this.dimensionalDepthSurfaces = dimensionalDepthSurfaces;
+    this.standard = standard; this.uniform = uniform; this.textures = textures; this.images = images; this.colors = colors; this.floatingImages = floats; this.packedImages = packed; this.sharedImages = shared; this.integerImages = integers; this.multipleColors = multipleColors; this.normalizedImages = normalized; this.unsignedImages = unsigned; this.floatingDepth = floatingDepth; this.unormDepth = unormDepth; this.packedDepth = packedDepth; this.stencil = stencil; this.shadowSamplers = shadowSamplers; this.dimensional = dimensional; this.dimensionalViews = dimensionalViews; this.dimensionalDepthViews = dimensionalDepthViews; this.dimensionalColorSurfaces = dimensionalColorSurfaces; this.dimensionalDepthSurfaces = dimensionalDepthSurfaces; this.streamOutput = streamOutput;
   }
   fail(code, message) { throw new DecodeFault(code, message, this.byteOffset, this.opcode); }
   require(condition, code, message) { if (!condition) this.fail(code, message); }
@@ -217,7 +217,7 @@ function decodeRasterizer(p, handle) {
   const bits = p.u(2);
   // The selected standard facet binds fixed/per-vertex native point size.
   // Generic sprite-coordinate replacement remains outside this boundary.
-  const allowed = 2 | 64 | 128 | (3 << 8) | (1 << 14) | (1 << 15) | (1 << 29) | (1 << 30) | (p.standard ? 1 << 24 : 0);
+  const allowed = 2 | 64 | 128 | (3 << 8) | (1 << 14) | (1 << 15) | (1 << 29) | (1 << 30) | (p.standard ? 1 << 24 : 0) | (p.streamOutput ? 8 : 0);
   p.require((bits & ~allowed) === 0 && (bits & 2) !== 0 && (bits & (1 << 29)) !== 0,
     "unsupported-feature", "Unsupported rasterizer feature or coordinate convention.");
   const cullFace = (bits >>> 8) & 3;
@@ -227,7 +227,7 @@ function decodeRasterizer(p, handle) {
   p.require((p.standard ? Number.isFinite(pointSize) && pointSize > 0 : pointSize === 1) && spriteCoordEnable === 0 && stipple === 0xffff && lineWidth === 1 &&
     offsetUnits === 0 && offsetScale === 0 && offsetClamp === 0,
   "unsupported-feature", "Unsupported point, line, clip or polygon-offset state.");
-  return { handle, flatshade: false, depthClip: true, clipHalfZ: false, rasterizerDiscard: false,
+  return { handle, flatshade: false, depthClip: true, clipHalfZ: false, rasterizerDiscard: p.streamOutput && Boolean(bits & 8),
     flatshadeFirst: false, lightTwoSide: false, spriteCoordMode: Boolean(bits & 64),
     pointQuadRasterization: Boolean(bits & 128), cullFace, fillFront: 0, fillBack: 0,
     scissor: Boolean(bits & (1 << 14)), frontCcw: Boolean(bits & (1 << 15)),
@@ -268,13 +268,15 @@ function decodeShader(p, handle) {
   const stage = p.stage(2), offset = p.u(3), tokenCount = p.u(4), streamOutputCount = p.u(5);
   p.require(stage <= 1, "unsupported-feature", "Only vertex and fragment shader creation is supported.");
   p.require((offset & 0x80000000) === 0, "unsupported-feature", "Shader continuations are unsupported.");
-  p.require(streamOutputCount === 0, "unsupported-feature", "Shader stream output is unsupported.");
+  p.require(p.streamOutput ? streamOutputCount <= 128 && (stage === 0 || streamOutputCount === 0) : streamOutputCount === 0, "unsupported-feature", "Shader stream output exceeds the selected profile.");
+  const extra = streamOutputCount ? 4 + streamOutputCount * 2 : 0;
+  const streamOutputWords = p.streamOutput ? [streamOutputCount, ...p.words(6, extra)] : null;
   const declaredTextBytes = offset;
   p.require(declaredTextBytes >= 2, "invalid-value", "Shader text must include text and its terminal NUL.");
   p.require(declaredTextBytes <= LIMITS.shaderTextBytes + 1 && tokenCount >= 1 && tokenCount <= LIMITS.shaderTokens,
     "limit-exceeded", "Shader text or token count exceeds profile limits.");
-  p.exact(5 + Math.ceil(declaredTextBytes / 4));
-  const start = p.byteOffset + 24;
+  p.exact(5 + extra + Math.ceil(declaredTextBytes / 4));
+  const start = p.byteOffset + 24 + extra * 4;
   let text = "";
   for (let index = 0; index < declaredTextBytes - 1; index++) {
     const byte = p.view.getUint8(start + index);
@@ -282,10 +284,10 @@ function decodeShader(p, handle) {
       "invalid-value", "Shader text must be printable ASCII without embedded NUL.");
     text += String.fromCharCode(byte);
   }
-  for (let index = declaredTextBytes - 1; index < (p.length - 5) * 4; index++) {
+  for (let index = declaredTextBytes - 1; index < (p.length - 5 - extra) * 4; index++) {
     p.require(p.view.getUint8(start + index) === 0, "invalid-value", "Shader terminal NUL and alignment padding must be zero.");
   }
-  return { handle, stage, stageName: STAGE_NAMES[stage], declaredTextBytes, tokenCount, streamOutputCount, text };
+  return { handle, stage, stageName: STAGE_NAMES[stage], declaredTextBytes, tokenCount, streamOutputCount, text, ...(p.streamOutput ? {streamOutputWords} : {}) };
 }
 
 function decodeSamplerState(p, handle) {
@@ -364,6 +366,12 @@ function decodeObject(p, objectType) {
       const singleDepthLayer = p.dimensionalDepthSurfaces && [16, 18, 20, 21, 126].includes(format) && firstLayer === lastLayer;
       p.require(([2, 16, 67, 233].includes(format) || (p.colors && byteColorFormat(format)?.render || p.floatingImages && floatColorFormat(format)?.render || p.packedImages && packedFloatColorFormat(format)?.render || p.integerImages && integerColorFormat(format)?.render || p.normalizedImages && packedNormalizedColorFormat(format)?.render || p.unsignedImages && packedUnsignedColorFormat(format)?.render || p.floatingDepth && floatingDepthFormat(format) || p.packedDepth && packedDepthFormat(format))) && (p.images ? level <= 14 && (format !== 16 || level === 0 || p.unormDepth) : level === 0) && (layers === 0 || singleColorLayer || singleDepthLayer), "unsupported-feature", p.floatingDepth ? "Only qualified 2D color or depth surfaces and levels are supported." : p.images ? "Only qualified 2D image levels or level-zero Z16 surfaces are supported." : "Only required level zero, layer zero color or Z16 surfaces are supported.");
       return { handle, resourceHandle, format, level, firstLayer, lastLayer };
+    }
+    case 10: {
+      p.require(p.streamOutput, 'unsupported-object', 'Original capture targets require host selection.');p.exact(4);
+      const resourceHandle = p.handle(2), bufferOffset = p.u(3), bufferSize = p.u(4);
+      p.require(bufferSize > 0 && bufferOffset % 4 === 0 && bufferSize % 4 === 0 && bufferOffset <= MAX_U32 - bufferSize, 'invalid-value', 'Invalid original capture target byte range.');
+      return {handle, resourceHandle, bufferOffset, bufferSize};
     }
     default: p.fail("unsupported-object", "Unknown or unsupported object type.");
   }
@@ -457,10 +465,10 @@ function decodeFields(p, objectType) {
         minIndex: p.u(10), maxIndex: p.u(11), countFromStreamOutput: p.u(12) };
       p.require((p.standard ? [0, 1, 2, 3, 4, 5, 6] : [4, 5]).includes(fields.mode) && (p.standard || fields.instanceCount === 1) && fields.indexBias === 0 &&
         fields.startInstance === 0 && (p.standard ? (fields.primitiveRestart ? fields.indexed : fields.restartIndex === 0) :
-          !fields.primitiveRestart && fields.restartIndex === 0) && fields.countFromStreamOutput === 0,
+          !fields.primitiveRestart && fields.restartIndex === 0) && (p.streamOutput || fields.countFromStreamOutput === 0),
       "unsupported-feature", p.standard ? "Only core points, lines and triangles with indexed restart and without base offsets or stream output are supported." :
         "Only ordinary triangles/strips without instancing, restart or stream output are supported.");
-      p.require(fields.start <= MAX_U32 - fields.count && fields.minIndex <= fields.maxIndex,
+      p.require((p.streamOutput && !fields.indexed && fields.countFromStreamOutput || fields.start <= MAX_U32 - fields.count) && fields.minIndex <= fields.maxIndex,
         "invalid-value", "Invalid draw count/index range.");
       return fields;
     }
@@ -507,7 +515,11 @@ function decodeFields(p, objectType) {
       for (let i = 1; i <= 32; i++) p.require(p.u(i) === MAX_U32, "unsupported-feature", "Only the inactive all-ones polygon stipple is supported.");
       return { pattern: p.words(1, 32) };
     case 24: p.exact(1); p.require(p.u(1) === MAX_U32, "unsupported-feature", "Only a full sample mask is supported."); return { mask: p.u(1) };
-    case 25: p.exact(1); p.zero(1, 1, "Only empty stream-output reset is supported."); return { appendBitmask: 0, handles: [] };
+    case 25: {
+      if (!p.streamOutput) {p.exact(1);p.zero(1, 1, 'Only empty stream-output reset is supported.');return {appendBitmask: 0, handles: []};}
+      p.require(p.length >= 1 && p.length <= 5, 'payload-length', 'Original capture target slots exceed four.');
+      const appendBitmask = p.u(1);return {appendBitmask, handles: p.words(2, p.length - 1)};
+    }
     case 27: {
       p.require(p.uniform, "unsupported-command", "Uniform buffer commands require explicit host selection.");
       p.exact(5);
@@ -698,7 +710,12 @@ export function decodeStandardDimensionalDepthSurfaceSubmission(bytes, provenanc
   return decode(bytes, provenance, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
 }
 
-function decode(bytes, provenance, standard, uniform = false, textures = false, images = false, colors = false, floats = false, packed = false, shared = false, integers = false, multipleColors = false, normalized = false, unsigned = false, floatingDepth = false, unormDepth = false, packedDepth = false, stencil = false, shadowSamplers = false, dimensional = false, dimensionalViews = false, dimensionalDepthViews = false, dimensionalColorSurfaces = false, dimensionalDepthSurfaces = false) {
+/** Original capture targets and layouts require this explicit host facet. */
+export function decodeStandardStreamOutputSubmission(bytes, provenance = {}) {
+  return decode(bytes, provenance, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
+}
+
+function decode(bytes, provenance, standard, uniform = false, textures = false, images = false, colors = false, floats = false, packed = false, shared = false, integers = false, multipleColors = false, normalized = false, unsigned = false, floatingDepth = false, unormDepth = false, packedDepth = false, stencil = false, shadowSamplers = false, dimensional = false, dimensionalViews = false, dimensionalDepthViews = false, dimensionalColorSurfaces = false, dimensionalDepthSurfaces = false, streamOutput = false) {
   let byteLength, buffer, byteOffset;
   try {
     const typedArrayPrototype = Object.getPrototypeOf(Uint8Array.prototype);
@@ -730,11 +747,11 @@ function decode(bytes, provenance, standard, uniform = false, textures = false, 
     for (let offset = 0; offset < byteLength;) {
       const header = view.getUint32(offset, true), opcode = header & 255, objectType = (header >>> 8) & 255, payloadDwords = header >>> 16;
       const packetByteLength = (payloadDwords + 1) * 4;
-      const p = new Packet(view, offset, opcode, payloadDwords, standard, uniform, textures, images, colors, floats, packed, shared, integers, multipleColors, normalized, unsigned, floatingDepth, unormDepth, packedDepth, stencil, shadowSamplers, dimensional, dimensionalViews, dimensionalDepthViews, dimensionalColorSurfaces, dimensionalDepthSurfaces);
+      const p = new Packet(view, offset, opcode, payloadDwords, standard, uniform, textures, images, colors, floats, packed, shared, integers, multipleColors, normalized, unsigned, floatingDepth, unormDepth, packedDepth, stencil, shadowSamplers, dimensional, dimensionalViews, dimensionalDepthViews, dimensionalColorSurfaces, dimensionalDepthSurfaces, streamOutput);
       p.require(commands.length < LIMITS.commands, "limit-exceeded", "Submission exceeds packet count limit.");
       p.require(packetByteLength <= byteLength - offset, "truncated-payload", "Packet payload exceeds submission.");
       p.require(Object.hasOwn(COMMAND_NAMES, opcode) || uniform && opcode === 27, "unsupported-command", "Unknown or unsupported command.");
-      if (opcode >= 1 && opcode <= 3) p.require(objectType >= 1 && objectType < OBJECT_NAMES.length, "unsupported-object", "Unknown or unsupported object type.");
+      if (opcode >= 1 && opcode <= 3) p.require(objectType >= 1 && objectType <= 8 || p.streamOutput && objectType === 10, "unsupported-object", "Unknown or unsupported object type.");
       else p.require(objectType === 0, "invalid-object-type", "Non-object commands require a zero object-type byte.");
       const fields = decodeFields(p, objectType);
       commands.push({ opcode, name: opcode === 27 ? "SET_UNIFORM_BUFFER" : COMMAND_NAMES[opcode], objectType, objectName: OBJECT_NAMES[objectType],

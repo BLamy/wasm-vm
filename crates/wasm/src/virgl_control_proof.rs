@@ -535,25 +535,31 @@ pub struct WasmVirglSubmitProof {
 impl WasmVirglSubmitProof {
     #[wasm_bindgen(constructor)]
     pub fn new(callback: Function, proof_enabled: bool) -> Result<WasmVirglSubmitProof, JsError> {
-        Self::assemble(callback, proof_enabled, false, false, false)
+        Self::assemble(callback, proof_enabled, false, false, false, false)
     }
 
     /// Explicit selected desktop fixture; ordinary WasmLinux remains unchanged.
     #[wasm_bindgen(js_name = standardDesktop)]
     pub fn standard_desktop(callback: Function) -> Result<WasmVirglSubmitProof, JsError> {
-        Self::assemble(callback, true, true, false, false)
+        Self::assemble(callback, true, true, false, false, false)
     }
 
     /// Isolated original layered allocation/DMA fixture; no production capability.
     #[wasm_bindgen(js_name = standardDimensional)]
     pub fn standard_dimensional(callback: Function) -> Result<WasmVirglSubmitProof, JsError> {
-        Self::assemble(callback, true, true, true, false)
+        Self::assemble(callback, true, true, true, false, false)
     }
 
     /// Selected cube/array depth allocation and DMA; no positive production caps.
     #[wasm_bindgen(js_name = standardDimensionalDepth)]
     pub fn standard_dimensional_depth(callback: Function) -> Result<WasmVirglSubmitProof, JsError> {
-        Self::assemble(callback, true, true, true, true)
+        Self::assemble(callback, true, true, true, true, false)
+    }
+
+    /// Selected original stream-output buffer admission and layered transfers.
+    #[wasm_bindgen(js_name = standardStreamOutput)]
+    pub fn standard_stream_output(callback: Function) -> Result<WasmVirglSubmitProof, JsError> {
+        Self::assemble(callback, true, true, true, true, true)
     }
 
     pub fn layout(&self) -> Result<JsValue, JsError> {
@@ -943,12 +949,20 @@ impl WasmVirglSubmitProof {
         desktop: bool,
         dimensional: bool,
         dimensional_depth: bool,
+        stream_output: bool,
     ) -> Result<Self, JsError> {
         let mut machine = Machine::new(RAM_BYTES);
         machine.enable_plic();
         machine.enable_virtio_slots(None);
         let mailbox = Submit3dMailbox::new();
-        let (_, gpu) = if dimensional_depth {
+        let (_, gpu) = if stream_output {
+            machine.enable_virtio_gpu_standard_stream_output_submit3d_proof(
+                Box::new(NullSink),
+                Box::new(JsControlSink(callback.clone())),
+                Box::new(JsSubmitSink(callback)),
+                mailbox.clone(),
+            )
+        } else if dimensional_depth {
             machine.enable_virtio_gpu_standard_dimensional_depth_submit3d_proof(
                 Box::new(NullSink),
                 Box::new(JsControlSink(callback.clone())),

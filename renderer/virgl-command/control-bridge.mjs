@@ -1,7 +1,7 @@
 /** Explicit proof-only VirtIO bridges. Ordinary device negotiation is unchanged. */
-import { createResourceStore, createWebGL2TransferBackend, createStandardDesktopResourceStore, createStandardPackedDepthTransferBackend, createStandardDimensionalResourceStore, createStandardDimensionalTransferBackend, createStandardDimensionalViewResourceStore, createStandardDimensionalViewTransferBackend, createStandardDimensionalDepthResourceStore, createStandardDimensionalDepthTransferBackend, createStandardDimensionalDepthViewResourceStore, createStandardDimensionalColorSurfaceResourceStore, createStandardDimensionalDepthSurfaceResourceStore, createStandardDimensionalDepthViewTransferBackend } from './resources.mjs';
+import { createResourceStore, createWebGL2TransferBackend, createStandardDesktopResourceStore, createStandardPackedDepthTransferBackend, createStandardDimensionalResourceStore, createStandardDimensionalTransferBackend, createStandardDimensionalViewResourceStore, createStandardDimensionalViewTransferBackend, createStandardDimensionalDepthResourceStore, createStandardDimensionalDepthTransferBackend, createStandardDimensionalDepthViewResourceStore, createStandardDimensionalColorSurfaceResourceStore, createStandardDimensionalDepthSurfaceResourceStore, createStandardStreamOutputResourceStore, createStandardDimensionalDepthViewTransferBackend } from './resources.mjs';
 import { createRetainedScanout, normalizeScanoutEvent } from './scanout.mjs';
-import { createVirglStateRenderer, createVirglAsyncRenderer, createVirglStandardShadowSamplerAsyncRenderer, createVirglStandardDimensionalAsyncRenderer, createVirglStandardDimensionalViewAsyncRenderer, createVirglStandardDimensionalDepthViewAsyncRenderer, createVirglStandardDimensionalShadowAsyncRenderer, createVirglStandardDimensionalColorSurfaceAsyncRenderer, createVirglStandardDimensionalDepthSurfaceAsyncRenderer } from './state.mjs';
+import { createVirglStateRenderer, createVirglAsyncRenderer, createVirglStandardShadowSamplerAsyncRenderer, createVirglStandardDimensionalAsyncRenderer, createVirglStandardDimensionalViewAsyncRenderer, createVirglStandardDimensionalDepthViewAsyncRenderer, createVirglStandardDimensionalShadowAsyncRenderer, createVirglStandardDimensionalColorSurfaceAsyncRenderer, createVirglStandardDimensionalDepthSurfaceAsyncRenderer, createVirglStandardStreamOutputAsyncRenderer } from './state.mjs';
 
 const ok = () => Object.freeze({ ok: true });
 const fail = (code, message) => Object.freeze({ ok: false, error: Object.freeze({ code, message }) });
@@ -168,9 +168,11 @@ export function createVirglStandardDimensionalColorSurfaceSubmitBridge(options) 
 /** Selected original one-layer cube/array depth rendering; capsets remain gated. */
 export function createVirglStandardDimensionalDepthSurfaceSubmitBridge(options) { return createBridge(options, true, false, true, true, true, true, true, true, true, true); }
 
+export function createVirglStandardStreamOutputSubmitBridge(options) {return createBridge(options, true, false, true, true, true, true, true, true, true, true, true);}
+
 export function createVirglScanoutBridge(options) { return createBridge(options, true, true); }
 
-function createBridge(options, asynchronous, scanoutEnabled = false, desktop = false, dimensional = false, dimensionalViews = false, dimensionalDepth = false, dimensionalDepthViews = false, dimensionalShadows = false, dimensionalColorSurfaces = false, dimensionalDepthSurfaces = false) {
+function createBridge(options, asynchronous, scanoutEnabled = false, desktop = false, dimensional = false, dimensionalViews = false, dimensionalDepth = false, dimensionalDepthViews = false, dimensionalShadows = false, dimensionalColorSurfaces = false, dimensionalDepthSurfaces = false, streamOutput = false) {
   let owners = null;
   try {
     const config = record(options, ['gl', 'shaderBridge', 'resourceLimits', 'stateLimits', ...(asynchronous ? ['transport', 'jobLimits', 'drawLimits'] : []), ...(scanoutEnabled ? ['presenter'] : [])], ['gl', 'shaderBridge', ...(asynchronous ? ['transport'] : []), ...(scanoutEnabled ? ['presenter'] : [])]);
@@ -182,9 +184,10 @@ function createBridge(options, asynchronous, scanoutEnabled = false, desktop = f
       const { backend } = unwrap((dimensionalDepthViews ? createStandardDimensionalDepthViewTransferBackend : dimensionalDepth ? createStandardDimensionalDepthTransferBackend : dimensionalViews ? createStandardDimensionalViewTransferBackend : dimensional ? createStandardDimensionalTransferBackend : desktop ? createStandardPackedDepthTransferBackend : createWebGL2TransferBackend)(config.gl));
       let store;
       try {
-        const created = unwrap((dimensionalDepthSurfaces ? createStandardDimensionalDepthSurfaceResourceStore : dimensionalColorSurfaces ? createStandardDimensionalColorSurfaceResourceStore : dimensionalDepthViews ? createStandardDimensionalDepthViewResourceStore : dimensionalDepth ? createStandardDimensionalDepthResourceStore : dimensionalViews ? createStandardDimensionalViewResourceStore : dimensional ? createStandardDimensionalResourceStore : desktop ? createStandardDesktopResourceStore : createResourceStore)({ backend, ...(config.resourceLimits === undefined ? {} : { limits: config.resourceLimits }) }));
+        const created = unwrap((streamOutput ? createStandardStreamOutputResourceStore : dimensionalDepthSurfaces ? createStandardDimensionalDepthSurfaceResourceStore : dimensionalColorSurfaces ? createStandardDimensionalColorSurfaceResourceStore : dimensionalDepthViews ? createStandardDimensionalDepthViewResourceStore : dimensionalDepth ? createStandardDimensionalDepthResourceStore : dimensionalViews ? createStandardDimensionalViewResourceStore : dimensional ? createStandardDimensionalResourceStore : desktop ? createStandardDesktopResourceStore : createResourceStore)({ backend, ...(config.resourceLimits === undefined ? {} : { limits: config.resourceLimits }) }));
         store = created.store;
-        const { renderer } = unwrap((dimensionalDepthSurfaces ? createVirglStandardDimensionalDepthSurfaceAsyncRenderer : dimensionalColorSurfaces ? createVirglStandardDimensionalColorSurfaceAsyncRenderer : dimensionalShadows ? createVirglStandardDimensionalShadowAsyncRenderer : dimensionalDepthViews ? createVirglStandardDimensionalDepthViewAsyncRenderer : dimensionalViews ? createVirglStandardDimensionalViewAsyncRenderer : dimensional ? createVirglStandardDimensionalAsyncRenderer : desktop ? createVirglStandardShadowSamplerAsyncRenderer : asynchronous ? createVirglAsyncRenderer : createVirglStateRenderer)({ gl: config.gl, shaderBridge: config.shaderBridge,
+        const { renderer } = unwrap((streamOutput ? createVirglStandardStreamOutputAsyncRenderer : dimensionalDepthSurfaces ? createVirglStandardDimensionalDepthSurfaceAsyncRenderer : dimensionalColorSurfaces ? createVirglStandardDimensionalColorSurfaceAsyncRenderer : dimensionalShadows ? createVirglStandardDimensionalShadowAsyncRenderer : dimensionalDepthViews ? createVirglStandardDimensionalDepthViewAsyncRenderer : dimensionalViews ? createVirglStandardDimensionalViewAsyncRenderer : dimensional ? createVirglStandardDimensionalAsyncRenderer : desktop ? createVirglStandardShadowSamplerAsyncRenderer : asynchronous ? createVirglAsyncRenderer : createVirglStateRenderer)({ gl: config.gl, shaderBridge: config.shaderBridge,
+          ...(streamOutput ? {streamOutputAccess: created.streamOutputAccess} : {}),
           ...(desktop ? { uniformAccess: created.uniformAccess, imageAccess: created.imageAccess } : {}),
           resources: store, bindings: created.bindings, ...(asynchronous ? { asyncAccess: created.asyncAccess, ...(config.jobLimits === undefined ? {} : { jobLimits: config.jobLimits }), ...(config.drawLimits === undefined ? {} : { drawLimits: config.drawLimits }) } : {}), ...(config.stateLimits === undefined ? {} : { limits: config.stateLimits }) }));
         return Object.freeze({ store, renderer, bindings: created.bindings, ...(asynchronous ? { asyncAccess: created.asyncAccess } : {}) });
@@ -193,7 +196,7 @@ function createBridge(options, asynchronous, scanoutEnabled = false, desktop = f
     owners = fresh();
     let epoch = '0000000000000001', highestGeneration = '0000000000000000', poisoned = false, disposed = false, busy = false;
     const contexts = new Map(), resources = new Map();
-    let pending = null, lastSequence = null, lastFailure = null;
+    let pending = null, lastSequence = null, lastFailure = null, lastRendererResult = null;
     const counters = { begun: 0, completed: 0, failed: 0, cancelled: 0, exchanges: 0, inputBytes: 0, outputBytes: 0, pumps: 0, draws: 0 };
     const resolve = (map, token, code) => {
       const found = map.get(token.id);
@@ -276,6 +279,7 @@ function createBridge(options, asynchronous, scanoutEnabled = false, desktop = f
         const state = job.scanout ? scanoutResult(scanout.step(job.job)) : unwrap(owners.renderer.step(job.job)); job.status = state.status; job.appliedCommands = state.appliedCommands;
         need(!job.scanout || !poisoned || job.cancelled, 'bridge-poisoned', 'Scanout ownership retirement failed.');
         if (state.status === 'done') {
+          if (streamOutput) lastRendererResult = state.result;
           if (!job.cancelled) {
             const result = state.result; job.appliedCommands = result.appliedCommands; job.draws = result.draws.length;
             const uncertain = result.gpuComplete !== true;
@@ -331,7 +335,7 @@ function createBridge(options, asynchronous, scanoutEnabled = false, desktop = f
           catch (error) { return fail(error instanceof Fault ? error.code : 'invalid-parameter', 'Malformed control event.'); }
           if (event.type === 'reset') {
             need(BigInt('0x' + event.epoch) === BigInt('0x' + epoch) + 1n, 'invalid-parameter', 'Reset epoch must advance once.');
-            poisoned = true; epoch = event.epoch; contexts.clear(); resources.clear(); pending = null; lastSequence = null; lastFailure = null;
+            poisoned = true; epoch = event.epoch; contexts.clear(); resources.clear(); pending = null; lastSequence = null; lastFailure = null; lastRendererResult = null;
             cleanup(); owners = fresh();
             // A callback may have applied before throwing, so Rust can reuse that
             // uncommitted generation. The new epoch invalidates its old identity.
@@ -416,7 +420,7 @@ function createBridge(options, asynchronous, scanoutEnabled = false, desktop = f
           contexts: [...contexts.values()].map((v) => ({ transport: { ...v.transport }, storageGeneration: v.storageGeneration })),
           resources: [...resources.values()].map((v) => ({ transport: { ...v.transport }, storageGeneration: v.storageGeneration, ...(asynchronous ? { backing: v.backing ? { ...v.backing } : null } : {}) })),
           ...(scanout ? { scanout: scanout.inspect() } : {}),
-          store: owners.store.inspect(), renderer: owners.renderer.inspect() };
+          ...(streamOutput ? {lastRendererResult} : {}), store: owners.store.inspect(), renderer: owners.renderer.inspect() };
       },
       dispose() {
         if (busy) return fail('bridge-poisoned', 'Reentrant disposal.');

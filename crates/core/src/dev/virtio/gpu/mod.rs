@@ -762,6 +762,24 @@ impl VirtioGpu {
         (device, state)
     }
 
+    /// Separately selected original buffer stream-output allocation and layered DMA.
+    #[cfg(feature = "virgl-control-proof")]
+    pub fn new_with_standard_stream_output_submit3d_proof_state(
+        frame_sink: Box<dyn FrameSink>,
+        control_sink: Box<dyn control3d::Control3dSink>,
+        submit_sink: Box<dyn submit3d::Submit3dSink>,
+        mailbox: submit3d::Submit3dMailbox,
+    ) -> (Self, Rc<RefCell<GpuState>>) {
+        let (device, state) = Self::new_with_sink_state(frame_sink);
+        let mut selected = state.borrow_mut();
+        selected.control3d = Some(control3d::Control3dState::new_standard_stream_output(
+            control_sink,
+        ));
+        selected.submit3d = Some(submit3d::Submit3dState::new_layered(submit_sink, mailbox));
+        drop(selected);
+        (device, state)
+    }
+
     /// Explicit proof-only global scanout assembly; ordinary and submit-only devices stay unchanged.
     #[cfg(feature = "virgl-control-proof")]
     pub fn new_with_scanout3d_proof_state(

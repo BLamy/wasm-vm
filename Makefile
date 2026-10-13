@@ -2567,3 +2567,8 @@ verify-E6-T11d64:
 .PHONY: verify-E6-T11d65
 verify-E6-T11d65:
 	python3 tools/virgl-stream-output-shaders/verify.py --output "$${VIRGL_STREAM_OUTPUT_SHADER_EVIDENCE_DIR:-target/evidence/virgl-stream-output-shaders}"
+
+# Original GPU stream-output targets, retained cursors and native capture.
+.PHONY: verify-E6-T11d66
+verify-E6-T11d66:
+	python3 tools/virgl-stream-output-capture/verify.py --output "$${VIRGL_STREAM_OUTPUT_CAPTURE_EVIDENCE_DIR:-target/evidence/stream-output-capture-final}"
