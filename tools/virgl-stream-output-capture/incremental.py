@@ -8,7 +8,7 @@ def authenticate(repo,output,cold,head):
     assert report['cleanBefore']==report['cleanAfter']=='' and report['sourceCheckout']['borrowedGeneratedArtifacts'] is False
     commands=json.loads((cold/'recording/commands.json').read_bytes());assert commands[-1]['name']=='default-demo' and commands[-1]['exitCode']==1
     for command in commands[:-1]:assert command['exitCode']==command['expected']
-    assert 'E6-T11d66' in (cold/'recording/default-demo.stderr').read_text() and 'includes(task)' in (cold/'recording/default-demo.stderr').read_text()
+    assert commands[-1]['command'][-1]=='E6-T11d66' and 'AssertionError' in (cold/'recording/default-demo.stderr').read_text() and 'includes(task)' in (cold/'recording/default-demo.stderr').read_text()
     allowed={'tools/virgl-stream-output-capture/audit.py','tools/virgl-stream-output-capture/verify.py','tools/virgl-stream-output-capture/cold.py','tools/virgl-stream-output-capture/incremental.py','tools/virgl-stream-output-capture/retirement-browser.mjs','tools/virgl-stream-output-capture/seal.py','renderer/virgl-command/tests/native-stream-output-retirement.mjs','tools/verify-virgl-default-demo.mjs','tasks/epic-6-transcendence/E6-T11d66-stream-output-capture.md'}
     changed=subprocess.check_output(['git','diff','--name-only',base,head],cwd=repo,text=True).splitlines();assert set(changed)<=allowed,changed
     assert not subprocess.check_output(['git','diff',base,head,'--','crates','renderer/virgl-command/state.mjs','renderer/virgl-command/resources.mjs','renderer/virgl-command/decoder.mjs','renderer/virgl-command/constant-domain.mjs','renderer/virgl-command/control-bridge.mjs','renderer/virgl-shader','web','Cargo.toml','Cargo.lock'],cwd=repo)
