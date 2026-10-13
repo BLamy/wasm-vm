@@ -108,3 +108,22 @@ launcher default, the actual task roadmap inside the marketing shell, unified
 docs links and old bookmarked routes. The source/deploy layout swap remains
 explicit, and live-suite capability nodes remain available to the dedicated
 test-hooks path. This work changes frontend navigation only.
+
+### 2026-10-13 — worker — critic refutation: omitted modern task contracts
+
+The critic predicted a task detail would expose its source acceptance rules,
+but E6-T11d63’s detail omitted them at frozen d55c051e / deployment source679dad2f.
+The generator only read the older Goal / Acceptance criteria headings, while
+the task uses Boundary / Deterministic acceptance. Its criteria array was empty.
+The independently captured failed detail is
+target/evidence/reviewed-site-verifier-d55c051e/08-roadmap-detail.png and -dom.json.
+This is a real sufficiency failure of the published roadmap, distinct from the
+retained browser response-body recording diagnostics.
+
+Export and display the complete new sections verbatim, including headings,
+whitespace and code. Preserve old checkbox criteria. The affected final browser
+acceptance must compare displayed Boundary and Acceptance contract text directly
+against the original task sections and include its make verify-E6-T11d63 command.
+The product rework remains in-progress; prior unchanged hero, docs and build
+metadata findings carry, while the changed generator/render/data boundary gets
+a new frozen build and recording.

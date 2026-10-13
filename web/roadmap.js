@@ -278,7 +278,7 @@ function matchesFilter(t) {
   if (f.status && t.status !== f.status) return false;
   if (f.search) {
     const q = f.search.toLowerCase();
-    if (!(`${t.id} ${t.title} ${t.goal}`.toLowerCase().includes(q))) return false;
+    if (!(`${t.id} ${t.title} ${t.goal} ${t.boundary || ""}`.toLowerCase().includes(q))) return false;
   }
   return true;
 }
@@ -709,6 +709,16 @@ function openDetail(id) {
   if (t.goal) {
     body.append(h("h4", "rm-detail-h", "Goal"));
     body.append(h("p", "rm-detail-text", t.goal));
+  }
+
+  if (t.boundary) {
+    body.append(h("h4", "rm-detail-h", "Boundary"));
+    body.append(h("pre", "rm-log rm-boundary", t.boundary));
+  }
+
+  if (t.acceptanceContract) {
+    body.append(h("h4", "rm-detail-h", "Acceptance contract"));
+    body.append(h("pre", "rm-log rm-acceptance-contract", t.acceptanceContract));
   }
 
   if (t.criteria && t.criteria.length) {

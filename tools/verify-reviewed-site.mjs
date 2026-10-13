@@ -111,6 +111,11 @@ try{
  await page.locator('.rm-card').click();
  await page.locator('#rm-detail:not([hidden])').waitFor();
  assert.equal(await page.locator('.rm-detail-id').innerText(),'E6-T11d63');
+ const sourceTask=await fs.readFile(path.join(repo,tasks.tasks.find(task=>task.id==='E6-T11d63').file),'utf8');
+ const authored=heading=>sourceTask.match(new RegExp(`^## ${heading}[^\\S\\n]*\\n.*?(?=^## |(?![\\s\\S]))`, 'ms'))?.[0];
+ assert.equal(await page.locator('.rm-boundary').textContent(),authored('Boundary'));
+ assert.equal(await page.locator('.rm-acceptance-contract').textContent(),authored('Deterministic acceptance'));
+ assert.match(await page.locator('.rm-acceptance-contract').innerText(),/make verify-E6-T11d63/);
  assert.match(await page.locator('.rm-detail-body').innerText(),/VERDICT: verified/);
  assert.equal(await page.locator('main').getAttribute('inert'),'');
  await page.keyboard.press('Tab');
