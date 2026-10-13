@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E6-T11d64** — Render original single-layer dimensional depth surfaces
 1. **E5-T26f** — Browser desktop snapshot round-trip and interaction smoke
 
 
@@ -709,7 +708,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Epic 6 — `epic-6-transcendence`
 
-- [ ] `525.027039000401` [E6-T11d64](epic-6-transcendence/E6-T11d64-dimensional-depth-surfaces.md) — Render original single-layer dimensional depth surfaces *(deps: E6-T11d63, E6-T11d62, E6-T11d60, E6-T11d56)*
+- [~] `525.027039000401` [E6-T11d64](epic-6-transcendence/E6-T11d64-dimensional-depth-surfaces.md) — Render original single-layer dimensional depth surfaces *(deps: E6-T11d63, E6-T11d62, E6-T11d60, E6-T11d56)*
 - [x] `525.027039001` [E6-T11d9](epic-6-transcendence/E6-T11d9-standard-primitive-restart.md) — Normalize owned standard index streams for primitive restart *(deps: E6-T11d8)*
 - [x] `525.02703901` [E6-T11d8](epic-6-transcendence/E6-T11d8-standard-core-topologies.md) — Execute bounded standard core line and triangle-fan draws *(deps: E6-T11d7)*
 - [x] `525.0270391` [E6-T11d7](epic-6-transcendence/E6-T11d7-standard-constant-attributes.md) — Fetch standard zero-stride attributes through owned GPU jobs *(deps: E6-T11d6)*
