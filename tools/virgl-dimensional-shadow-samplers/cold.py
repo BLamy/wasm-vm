@@ -14,8 +14,10 @@ assert not output.exists(), 'preserve earlier recordings'
 git = lambda *args: subprocess.check_output(['git', *args], cwd=repo, text=True).strip()
 head = git('rev-parse', 'HEAD')
 assert not git('status', '--porcelain', '--untracked-files=no')
-assert shutil.disk_usage(tempfile.gettempdir()).free >= 8 * 1024**3, 'final recording needs at least8GiB free scratch space'
-clone = Path(tempfile.mkdtemp(prefix='wasm-vm-dimensional-shadow-samplers-cold-')) / 'repo'
+persistent = repo / 'target/evidence/dimensional-shadow-sampler-cold-clones'
+persistent.mkdir(parents=True, exist_ok=True)
+assert shutil.disk_usage(persistent).free >= 8 * 1024**3, 'final recording needs at least8GiB free scratch space'
+clone = Path(tempfile.mkdtemp(prefix='wasm-vm-dimensional-shadow-samplers-cold-', dir=persistent)) / 'repo'
 subprocess.run(['git', 'clone', '--shared', '--no-checkout', str(repo), str(clone)], check=True)
 directories = git('ls-tree', '-d', '--name-only', head).splitlines()
 selection = [name for name in directories if name not in {'evidence', 'releases'}]

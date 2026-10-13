@@ -28,6 +28,10 @@ for name in ['hardware-27467', 'hardware-82021', 'hardware-164033',
 assert not json.loads((cold / 'recording/coverage-audit.json').read_bytes())['needsEvidence']
 assert json.loads((cold / 'recording/physical-audit.json').read_bytes())['completedPhysicalRefutations'] == 2
 files = {'cold/' + str(p.relative_to(cold)): p for p in cold.rglob('*') if p.is_file()}
+restart_custody = repo / 'target/evidence/dimensional-shadow-samplers-restart-custody'
+if restart_custody.is_dir():
+    files.update({'restart-custody/' + str(p.relative_to(restart_custody)): p
+                  for p in restart_custody.rglob('*') if p.is_file()})
 earlier = []
 for i, value in enumerate(sys.argv[3:]):
     directory = Path(value).resolve()

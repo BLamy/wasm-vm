@@ -194,3 +194,22 @@ failed custody without requiring a fabricated browser-style status field.
 Runtime, fixtures and expected pixels are unchanged. The completed owned scratch
 checkout can be removed after custody checks; the final clean cold submission
 will use the corrected harness head.
+
+### 2026-10-12 — worker — restart and unavailable temporary evidence
+
+Tool outputs at frozen head `fcc8358d8118446db3bb2ae6ff8c3691024aefb3`
+reported three successful1040-case hardware schedules, two complete20-case
+retention/cancellation schedules, and an independent2320-plane audit. Before
+the submission completed, the host session restarted. Current boot/process and
+filesystem observations show that the temporary clones, recordings and earlier
+failed-run custody under `/tmp` are no longer present. Those tool summaries
+cannot replace the missing full recordings and grant no final positive claim.
+The task remains in-progress; committed runtime and predecessor seals survived.
+
+Current diagnostic commands and observations are preserved under
+`target/evidence/dimensional-shadow-samplers-restart-custody/` and will be
+included in the final seal. Missing recordings are not reconstructed. The cold
+runner now creates its scratch clone inside the persistent workspace's ignored
+`target/evidence/`; its final output will also use that persistent directory.
+Runtime, fixtures, expected pixels and the risk submission are unchanged. The
+full final recording will be repeated because its original evidence is absent.
