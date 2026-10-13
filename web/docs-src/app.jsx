@@ -6,7 +6,7 @@ import "../docs.css";
 import architectureSource from "./architecture-demo.jsx?raw";
 
 const aliases={"docs-embedding.html":"embedding","docs-guest.html":"storage","docs-containers.html":"containers","docs-verification.html":"verification","docs-explainers.html":"explainers"};
-const initialPage=()=>new URLSearchParams(location.search).get("page")||aliases[location.pathname.split("/").pop()]||"overview";
+const initialPage=()=>{const entry=location.pathname.split("/").pop();return new URLSearchParams(location.search).get("page")||aliases[entry.endsWith(".html")?entry:`${entry}.html`]||"overview";};
 const demoResolver={
   list:()=>["architecture/layers"],
   meta:async()=>({title:"Execution layers",entry:"architecture-demo.jsx",status:"Interactive explanation",height:"auto"}),

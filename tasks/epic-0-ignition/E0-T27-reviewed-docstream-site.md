@@ -69,3 +69,24 @@ Markdown viewer defect was fixed. Source/cold proofs and screenshots are retaine
 under design/. The metadata-path repair preserves all330 generated bodies and
 all45 tracked review/metadata records in a fresh alternate-path build. This entry
 does not claim the integrated or deployed version is verified yet.
+
+### 2026-10-13 — worker — canonical clean-URL refutation and rework
+
+Frozen46962a249d09908595a6dfc0e14168dafe5d625c passes the selected acceptance
+and built127/0 demo. Production publication1ba629b1-a4b9-4502-a0a1-ce3b2530b4bf
+completes and the canonical default demo remains127/0, zero errors. The canonical
+website recording fails its legacy embedding-link assertion at live-site.mjs:85:
+expected one current embedding link, observed0 after the browser redirects
+docs-embedding.html to /docs-embedding. The reader's pathname aliases only include
+the .html names, so the cleaned path selects overview. The response recorder
+also needed to map cleaned HTML response paths to their original staged files.
+The complete failed run/source/served bodies remain under
+target/evidence/reviewed-site-live-46962a24/site; the published source and complete
+637-body staging/CLI receipt remain under reviewed-site-release-46962a24-v2.
+
+Runtime rework normalizes clean and .html names before the unchanged alias lookup.
+The local acceptance server and original-body recorder model the same HTML route
+boundary and test both forms for all five legacy entries. Earlier unchanged
+design/reader facts carry forward, but the touched runtime route and affected
+submission gates must be recorded again at the new frozen head before acceptance.
+No guest runtime, shader, benchmark or production-GPU capability changed.

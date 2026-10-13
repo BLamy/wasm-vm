@@ -35,7 +35,8 @@ try{
    try{
     const pathname=new URL(request.url,'http://localhost').pathname;
     if(pathname==='/favicon.ico'){response.writeHead(204).end();return;}
-    const file=path.resolve(dist,'.'+decodeURIComponent(pathname==='/'?'/index.html':pathname));
+    const servedPath=pathname==='/'?'/index.html':path.extname(pathname)?pathname:`${pathname}.html`;
+    const file=path.resolve(dist,'.'+decodeURIComponent(servedPath));
     if(!file.startsWith(dist+path.sep)){response.writeHead(404).end();return;}
     const bytes=await fs.readFile(file);served.set(pathname,{path:path.relative(dist,file),bytes:bytes.length,sha256:hash(bytes)});
     response.writeHead(200,{'Content-Type':types[path.extname(file)]??'application/octet-stream','Cache-Control':'no-store',
@@ -55,7 +56,8 @@ try{
   page.on('requestfailed',r=>{const item={url:r.url(),message:r.failure()?.errorText};
    if(item.message==='net::ERR_ABORTED')report.canceledRequests.push(item);else report.errors.push(item);});
   page.on('response',r=>{bodyReads.push((async()=>{try{const url=new URL(r.url());if(url.origin!==new URL(base).origin||r.status()!==200)return;
-   const bytes=await r.body();const name=url.pathname==='/'?'index.html':url.pathname.slice(1);
+   const bytes=await r.body();const rawName=url.pathname==='/'?'index.html':url.pathname.slice(1);
+   const name=path.extname(rawName)?rawName:`${rawName}.html`;
    const expected=await fs.readFile(path.join(dist,name));assert.equal(hash(bytes),hash(expected),'served body drift '+name);
    const bodyPath='served/'+name;await fs.mkdir(path.dirname(path.join(output,bodyPath)),{recursive:true});await fs.writeFile(path.join(output,bodyPath),bytes);
    report.requests.push({url:r.url(),path:name,status:r.status(),bodyPath,bytes:bytes.length,sha256:hash(bytes)});
@@ -81,8 +83,10 @@ try{
  assert.match(await page.locator('.reader-document').innerText(),/production acceleration disabled|production acceleration.*disabled/);
  await screenshot(page,'desktop-reader.png');report.steps.push({name:'production reader routes and truthful graphics boundary',status:'passed'});
  for(const [entry,id] of [['docs-embedding.html','embedding'],['docs-guest.html','storage'],['docs-containers.html','containers'],['docs-verification.html','verification'],['docs-explainers.html','explainers']]){
-  await page.goto(new URL(entry,base).href,{waitUntil:'load'});await page.locator('.reader-document h1').waitFor();
+  for(const address of [entry,entry.slice(0,-5)]){
+  await page.goto(new URL(address,base).href,{waitUntil:'load'});await page.locator('.reader-document h1').waitFor();
   assert.equal(await page.locator(`.reader-sidebar a[aria-current="page"][href="./docs.html?page=${id}"]`).count(),1);
+  }
  }
  report.steps.push({name:'legacy published entry routes',status:'passed'});
  const mobile=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:1,reducedMotion:'reduce',serviceWorkers:'block'});
