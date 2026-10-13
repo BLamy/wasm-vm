@@ -342,3 +342,6 @@ export async function runAcceptance({WasmVirglSubmitProof,createVirglStandardDim
     report.summary={status:'passed',gpu,runs:report.runs.length,schedules:seeds,assertions:c.assertions};return report;
   }finally{report.assertions=c.assertions;report.attacks=c.attacks;}
 }
+
+// Shared real-queue instrumentation for the fresh retained-generation regression.
+export {captureGL,initialize,guestBacking};

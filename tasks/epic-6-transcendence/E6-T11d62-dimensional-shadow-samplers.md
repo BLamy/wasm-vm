@@ -3,7 +3,7 @@ id: E6-T11d62
 epic: 6
 title: Execute original cube and array comparison sampler views
 priority: 525.027039000399
-status: implemented
+status: verified
 depends_on: [E6-T11d61, E6-T11d60, E6-T11d49]
 estimate: S
 risk: high
@@ -287,3 +287,140 @@ claim awaiting the fresh critic. It does not qualify dimensional surfaces,
 transform feedback, production capsets/worker/scanout, an actual Mesa/Hyprland
 guest or300-MIPS performance. Production acceleration remains disabled and the
 parent task remains incomplete.
+
+### 2026-10-13 — verifier — VERDICT: verified
+
+VERDICT: verified
+
+Fresh critic of submission `15accf07099127901d70369caead888d01226dbc`,
+recorded runtime/harness `d853f096b3858ef390ad42b6cac33838778d849b`,
+verified dependency base `93021c5a28b99357532844de6ea4944291774099`.
+All fourteen predictions were written before final evidence inspection in
+`orientation-and-predictions.md` (SHA256
+`9bcba03f6220dc7f4fcb80a1c85948e123e5a61d8e4095b033961b90cd3aebd5`).
+The full prediction/result map is `prediction-verdict.json`; complete exact row,
+plane, native state and byte-digest points are in the three citation indexes.
+Compressed original row bodies are single-line JSON; their line1 plus the indexed
+JSON pointer and body SHA256 is the reopening point.
+
+- P01 custody — HELD. All six predecessor seals reopen141,606 complete members;
+  current worker8070 and deployment513 members reopen through every backward
+  link, full body/hash and gzip EOF. All8057 persistent cold members match the
+  worker seal; all40 command exits, source receipts and the clean-before/after
+  pristine-clone proof authenticate. `authentication.json` names each exact
+  authority and the final receipt72194a51…10c82. No vanished temporary recording
+  or reconstructed summary supplies positive authority. The one final cold proof
+  is carried; no portability/isolation failure justified another clone.
+- P02 metadata/profile — HELD. The1180 complete rows include732 accepted,444
+  refused and four correctly propagated intrinsic faults, with zero caller getter
+  invocations. Original types/stages/slots, sorted mask/add controls, interface,
+  caller ownership and strict historical profile closure hold. Omitted active
+  controls are rejected by actual native reflection, while truly pruned controls
+  remain valid. `metadata-check.json` and the original metadata bodyd99da67f…b200
+  retain the exact inputs/results; coverage partitions include each new adapter.
+- P03 native bindings — HELD. Raw complete planes reflect cube/array shadow
+  types36293/36292, original stage units0+slot or16+slot, original mode34894,
+  functions512+fn and every owned mask/add component. All five formats, both
+  stages, slots0/7/15 and distinct ordinary/comparison samplers execute.
+  `original-plane-citations.json` indexes every `/planes/*/native/state` point;
+  `fresh-plane-citations.json` repeats the checks under independent source seeds.
+- P04–P07 original state/output — HELD. My separate raw-depth/coordinate oracle
+  reproduces3702 full worker planes and226,032 words, with exactly the two
+  intended completed corruptions; it checks14,259,264 untouched SG bytes.
+  Fixed formats16/20/21 clamp original references; floating18/126 preserve them.
+  All eight functions, source/destination modifiers, swizzles, six faces, array
+  rounding/clamping and private mip/layer rebasing, TXD, neutral/query reuse and
+  independent fragment cube bias0/2 hold. Original-byte/native points and hashes
+  are retained in `original-plane-audit.json` and its complete citation index.
+- P08 qualified filtering — HELD. Physical parameter snapshots verify3728
+  samplers:3608 nearest-image and120 linear-image instances. The inherited
+  original mip selector0 means nearest mip: native min9984/9985 and mag9728/9729,
+  wrap33071 and LOD0/1000 match original fields. Every qualified linear
+  neighborhood is independently decoded and has its claimed common comparison
+  outcome. This proves the stated constant-neighborhood qualification.
+  `filter-check.json` cites each linear row/body/plane and native state.
+- P09–P10 refusal/reflection — HELD. The190 worker refusal/recovery cases and
+  forty control/reflection cases survive fresh seeds1059227/803201. Incompatible
+  target/type/format/role/range/mode/state and original output feedback refuse
+  before draw; allocation failures preserve charges and recovery succeeds.
+  Actual native location/index/type/size/default/shape/component faults reach
+  the checked native calls, then refuse without draw. `fresh-plane-audit.json`
+  and the complete `attacks1059227`/`controls803201` rows retain the points.
+- P11–P12 ownership/state/fences — HELD. Retained unref, public-name/new-generation
+  reuse, equivalent cached ranges, shader-generation reuse and pending cancellation
+  survive fresh seed803201. Native and delivered successful fences precede output
+  collection and original completion; no finish shortcut or leaked native/public
+  owner remains. The unchanged D60 private-copy caller-state scopes carry their
+  exact authenticated authority; the dedicated renderer preserves owned guest
+  state. Arbitrary unrelated host state across an entire submission is outside
+  this contract. `boundaries803201` full rows and the raw physical event sequences
+  are indexed by `fresh-plane-citations.json`.
+- A1 independent schedules — HELD. Seeds439051/803201/1059227 exercise1322
+  complete original queue cases: full1040 matrix,20 retained/cancelled cases,
+  190 refusal/recovery,40 reflection/control,30 sharing/cross-stage and two
+  physical negatives. My fresh oracle checks1378 planes and82,704 words plus
+  5,313,472 SG bytes. Exact processes, source/served closures, coverage, screenshots,
+  requests/responses, guest traces/digests and native calls survive in the seal.
+- A2 novel retained comparison — HELD. Two seeds803201/1059227 pass twenty new
+  cases across both targets and all five formats. Original sparse comparison
+  views retain private mips1..2 (array layers1..3) after resource6 public unref;
+  ordinary slot0 then reads replacement zero-depth native storage. Cached
+  original/alternate function3/4 and mask/add rebinds keep distinct generations
+  and literal charges. Old GPU charges persist while public CPU/SG backing4096
+  retires; replacement adds its independently computed native source cost.
+  `retained-check.json` and `retained-citations.json` index22 complete rows,
+  112 planes and5376 words, including the two physical negatives.
+- P13 sabotage/test sensitivity — HELD. Four new physical negative controls
+  (two original, two novel) complete actual hardware/fence/readback/DMA, then
+  fail the unchanged whole-plane oracle. Both promoted-test corruptions fail
+  word0: predicted0x3f800000, observed0 at
+  `retained-fault-compare/run-0000.json.gz` and
+  `retained-fault-mask/run-0000.json.gz`, line1,
+  `/planes/5/observed`; `retained-citations.json` supplies full body digests.
+  Real comparison-function or owned-mask delivery faults are recorded; every
+  owner retires after the failures. A mere process exit was never the proof.
+- COVERAGE/P14 — HELD. Independently recomputed finest V8 partitions cover every
+  changed runtime character:439 executed, six exact byte/dependency HELD and51
+  byte-identical static historical configuration waivers, zero new gaps/dead
+  hunks. Inner zero branches cannot borrow enclosing counts. New adapter,
+  factory, specialization, type/reflection and draw-check operands are executed;
+  no new dimensional shadow operand is waived. `coverage-check.json` records
+  each exact source/line/offset/digest/counter; `hunk-classification.json` covers
+  all remaining test/harness, metadata, demo and custody changes.
+- P14 built/live/default — HELD. Full frozen dist bodies,304 staged and194
+  canonical served bodies, actual Cloudflare publication/list receipt and
+  inspected screenshot authenticate. Built and live each reach127/0 with zero
+  errors, the D62 partial marker and absent proof exports. Deployment
+  ed51b574-df58-4909-a051-c1b58bf86eb9 and ordinary Wasm digestd45b5752…c36
+  hold. `deployment-check.json` carries the exact canonical and source points.
+- SUITE — Promote `retained-dimensional-comparison-acceptance.mjs` and its
+  deterministic `retained-browser.mjs` runner. Existing native-test exports share
+  only real capture/setup/guarded-SG instrumentation. These are the only test
+  edits; no renderer implementation, compiler, decoder, storage or Rust changes
+  were made. Their final bodies and physical mutation guards are sealed. The
+  initial novel whole-budget assertion overconstrained public CPU retirement;
+  its complete failed row/source/coverage is preserved. Initial canonical-reader
+  path and local filter-enum calibration mistakes are recorded in
+  `critic-harness-corrections.json`; they are not product refutations.
+
+Exact new hardware commands (all full stdout/stderr and bodies retained):
+
+```sh
+python3 target/evidence/dimensional-shadow-samplers-verifier/fresh-schedules.py
+node tools/virgl-dimensional-shadow-samplers/retained-browser.mjs --output target/evidence/dimensional-shadow-samplers-verifier/retained-split-final --seeds 803201,1059227
+node tools/virgl-dimensional-shadow-samplers/retained-browser.mjs --output target/evidence/dimensional-shadow-samplers-verifier/retained-fault-compare --seeds 1059227 --fault true --sabotage compare
+node tools/virgl-dimensional-shadow-samplers/retained-browser.mjs --output target/evidence/dimensional-shadow-samplers-verifier/retained-fault-mask --seeds 1059227 --fault true --sabotage mask
+```
+
+The two fault commands must exit1. All promoted-module syntax and diff-format
+checks pass. `evidence/virgl-dimensional-shadow-samplers/verifier/` seals2443
+complete logical members,1800 stored bodies and643 backward links,
+233,085,122 compressed bytes split into16MiB parts. Every full body/link/hash
+reopens through gzip EOF. Manifest SHA256:
+`2a618ef4b0aa3695b82910ca576714ce3de544fdfc30117485bbfa4573d873dc`;
+index:`1abeb59d5facf850a5fc26a4b44d8d5533f2d397277498aa22b78155aec8dd9a`;
+archive:`023b5894c7d473030503e3aebf0b5848c7331811baa0379708f077923fadbc27`.
+
+This verdict qualifies the selected original cube/array comparison consumer.
+Dimensional surfaces, transform feedback, production capabilities/worker/scanout,
+actual Mesa/Hyprland guest rendering and300-MIPS throughput remain unproven.
