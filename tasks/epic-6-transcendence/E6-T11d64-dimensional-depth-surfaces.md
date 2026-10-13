@@ -3,7 +3,7 @@ id: E6-T11d64
 epic: 6
 title: Render original single-layer dimensional depth surfaces
 priority: 525.027039000401
-status: in-progress
+status: implemented
 depends_on: [E6-T11d63, E6-T11d62, E6-T11d60, E6-T11d56]
 estimate: S
 risk: high
@@ -91,3 +91,58 @@ states, and append only PR541 above PR540. The app again refused attachment at
 its100-identity limit; the actual response is recorded and no old artifact removed.
 This records the next graphics boundary while the explicitly requested website
 publication occupies the sole active lane.
+
+### 2026-10-13 — worker — selected dimensional depth surfaces
+
+Runtime implementation b03983136a66ce7142b8a4c6a82e5a5450a7f049 and full cold
+recording cb04190a0fd8d989fb54fb7b2caf39cc86a8a0e7 admit the explicitly selected
+original object8 cube-face and array-layer depth consumer. Three distinct hardware
+Metal/WebGL2 schedules each exercise330 cases (all faces/layers, three NPOT mips,
+five depth/stencil formats, both roles),12 retention/reset/WAIT_FAILED cases and10
+private-refresh/aspect cases through actual selected Wasm VirtIO queues. The
+record also covers130 refusals,15 mixed/2D controls,21 historical-factory controls,
+the unchanged D63 smoke path, and two physical attachment sabotages. Every
+original depth/stencil plane, color control, padded SG byte and guard is checked
+against an independent oracle after native work and original206/DMA. Wrong-layer
+and wrong-face native attachments fail that oracle after GPU execution.
+
+The original cold run passed39 commands, including affected native tests,
+fmt/clippy, wasm32/proof builds, syntax/npm checks and every hardware run. Its
+coverage gate exposed two predecessor reports sharing a filename. That harness
+failure and all earlier diagnostics are preserved. No runtime or browser-fixture
+byte changed during the custody repair. A final scrubbed pristine checkout at
+2f1e09f52ef3529b591887a08721fb234e77e500 fully reopens the original recording,
+enforces a proof-only Git-delta allowlist and source-byte equality, carries34
+unchanged gate results under their original cb04190a authority, and executes8
+repair/default-demo gates. Generated compiler equality is checked against the
+independently authenticated D61 reconstruction. No recording is relabeled.
+
+Final coverage:345 executed changed regions,78 explicit static waivers,0 missing
+regions. The repaired predecessor audit reopens113,737 complete members through
+gzip EOF. The ordinary built demo passes127 tests with0 failures and0 browser
+errors, displays the partial D64 evidence marker, and retains production-disabled
+capsets. No Linux/Mesa/Hyprland, complete transform-feedback or MIPS claim follows.
+
+Commands and original stdout/stderr bodies are sealed:
+
+```sh
+python3 tools/virgl-dimensional-depth-surfaces/cold.py target/evidence/dimensional-depth-surfaces-cold-final-01
+python3 tools/virgl-dimensional-depth-surfaces/cold.py target/evidence/dimensional-depth-surfaces-cold-final-03 --incremental
+# Final pristine checkout executes:
+make verify-E6-T11d64 D64_REPLAY_UNCHANGED_GATES=1
+python3 tools/virgl-dimensional-depth-surfaces/seal.py target/evidence/dimensional-depth-surfaces-cold-final-03 evidence/virgl-dimensional-depth-surfaces/worker
+```
+
+The committed original recording is
+`evidence/virgl-dimensional-depth-surfaces/carried-cb04190a` (2295 logical
+members,169,668,599 compressed bytes), manifest SHA256
+1222b4323df91f51bc2e4b1375fdde9cd2d1131b909edbad7492dacee1a5e683,
+index1a668a80d0a197d2d335965efa3efc6f21b818c80aaf880ecd1bf781a8734a43,
+archiveae5c9d17a1328f46fd1e763467639888262c271ff278e15dc95c3789128c5f66.
+The final worker seal is `evidence/virgl-dimensional-depth-surfaces/worker`
+(7818 logical members,203,689,432 compressed bytes), manifest SHA256
+71593ab497a192777ed4970ed58537157f217f9de901b9a91f470754d28e7f74,
+index65ed9a44410323a50cb3eea97ea99443d4dc5060399a22c90a923faf4cad1cdb,
+archive673ccd20460616243bfb4007ba6fbb8ca236de4e230c8c2f5c97c57822976fd4.
+Every final member, backward link, byte length and digest reopens through gzip EOF.
+The fresh critic receives both seals, the scoped diff and exact source heads.
