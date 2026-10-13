@@ -1,0 +1,95 @@
+{
+  "schema": "independent-stream-output-capture-verifier-seal-v1",
+  "task": "E6-T11d66",
+  "verdict": "verified",
+  "runtimeHead": "75c3a664a0df8f0fb3ce4ff1c248a4167411c09d",
+  "proofHead": "985a9ad1e9c8645429851f695ad486b779b96270",
+  "submittedHead": "4a01d7a3d26a41a33435ef4b392696b2ccb5834e",
+  "recordIndexSha256": "87e765655dc066b00c7a5206afe07a29f450779a9ba49d2bf4b9cf34ae6ee02b",
+  "archiveSha256": "b75a65f807c5bbee7a996139f627aebd32a29a94549790607695888a1114d9e5",
+  "archiveBytes": 6488387,
+  "records": 133,
+  "logicalBytes": 40436406,
+  "dependencies": [
+    {
+      "role": "worker",
+      "path": "evidence/virgl-stream-output-capture/worker",
+      "manifestSha256": "c314bff78340178b220b37b4c44506eab738f7280ce28cd025ab5a47c3eb370f",
+      "indexSha256": "621801cc461a625d5812174c8cb9db2b063fd2d0bde048278882fc337bd2a2f4",
+      "archiveSha256": "a1df907e0e4f2ba414258a051d9995664d574c0a88afb99af5c1381f63b9fac8",
+      "archiveBytes": 67780240,
+      "reopenedMembers": 3218,
+      "gzipEofChecked": true
+    },
+    {
+      "role": "deployment",
+      "path": "evidence/virgl-stream-output-capture/deployment",
+      "manifestSha256": "cff1bf7b31217d4539dab477f7e438c2e4d3cd910699985942ffbffe027a0597",
+      "indexSha256": "57a330a3e0d02cea50080768f8b61189cd2ae09adbe3f7c9233c6855be9b08da",
+      "archiveSha256": "68c635479d71f373e8d305e3423e52f511b16f66465417e395b7a5d3828816c2",
+      "archiveBytes": 55528485,
+      "reopenedMembers": 857,
+      "gzipEofChecked": true
+    }
+  ],
+  "unchangedPredecessor": [
+    {
+      "role": "worker",
+      "manifestSha256": "cd82a9b788f33e1261f62694c40f0d22d4eedbe591a8f53a7204dbdd43440b1d",
+      "indexSha256": "fbe6f40c7fa30e96fd22d7e957bc1dc870ae7c682a3d1ff06befb9fcd02cd653",
+      "archiveSha256": "08ded61150b358dfe04839c5931ca754b9681c9a6c04d009e30e3690e85eb98d",
+      "archiveBytes": 24367262,
+      "reopenedMembers": 2438,
+      "gzipEofChecked": true
+    },
+    {
+      "role": "verifier",
+      "manifestSha256": "c82404435ddd31f8ac9878f08b3cbf5e00e874eee01617cb9440baf546b490e4",
+      "indexSha256": "f7c321115248ecc39e824f690c00f248016d739618517f4295c7c602b8e6b38f",
+      "archiveSha256": "882edfef6fbb582d0a4309a9e267022273d85eba1c145fbb47260f6841e4dffc",
+      "archiveBytes": 3656915,
+      "reopenedMembers": 64,
+      "gzipEofChecked": true
+    },
+    {
+      "role": "deployment",
+      "manifestSha256": "94011feafe8720006fea2c4eab4e529c5d7b826d76cb590c86034001a673d8a0",
+      "indexSha256": "21f46e2c96ed20e1cb98dbdab017571fcc59bb3e962b3b82cebaefe8f96d67b0",
+      "archiveSha256": "195e96c562584c708853b183172ec801fe5bfaf40571be5b328ee35678e4b38c",
+      "archiveBytes": 55478869,
+      "reopenedMembers": 858,
+      "gzipEofChecked": true
+    }
+  ],
+  "summary": {
+    "positiveRuns": 27,
+    "positiveAssertions": 213269,
+    "schedules": [
+      192734,
+      314159,
+      271828
+    ],
+    "nativeCaptures": 36,
+    "readbackAudits": 60,
+    "nativeFaultCall": 12473,
+    "sabotageCaught": true
+  },
+  "originalCaptureAudit": {
+    "layouts": 480,
+    "primitives": 3,
+    "retirement": 12,
+    "readbacks": 955,
+    "nativeCaptures": 838,
+    "nativeCopies": 11052
+  },
+  "coverage": {
+    "positivePartitions": 1033,
+    "staticPunctuationComments": 5,
+    "explicitZeroWaivers": 36,
+    "needsEvidence": 0,
+    "dead": 0
+  },
+  "actualLinuxGuest": false,
+  "productionAuthority": false,
+  "implementationEdits": false
+}

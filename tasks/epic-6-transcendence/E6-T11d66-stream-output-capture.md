@@ -3,7 +3,7 @@ id: E6-T11d66
 epic: 6
 title: Capture original stream-output buffers through the selected renderer
 priority: 525.027039000403
-status: implemented
+status: verified
 depends_on: [E6-T11d65, E6-T11d64, E6-T11d21]
 estimate: S
 risk: high
@@ -148,3 +148,86 @@ full staged files, canonical response bodies, screenshot and CLI confirmation.
 Marketing/docs, staged boot-artifact identities and both native stacks are retained.
 This selected component submission grants no positive production capset, actual
 Mesa/Hyprland boot, production worker/scanout authority or throughput claim.
+
+### 2026-10-13 — fresh independent verifier — VERDICT: verified
+
+Predictions P01–P17, N1/S1, R1–R6 and C1–C8 were written before their respective
+recordings. No implementation edits. Reviewed predecessor967826b1 to frozen
+runtime75c3a664, proof985a9ad1 and submitted4a01d7a3. Detailed predictions, exact
+source/native/guest/readback points and per-hunk findings are in the verifier seal's
+`verdict.md`, `independent-audit.json`, `critic-audit.json`, `provenance.json` and
+`coverage-verdict.json`.
+
+- P01/P17 custody/reproducibility — HELD. Worker3218 and deployment857 members
+  reopened through the gzip trailer. 1576 source bodies match the proof head and414
+  runtime bodies match freeze/proof/submission; the D65 compiler and Cargo.lock are
+  unchanged. The final scrubbed clone's carried gates authenticate and its touched
+  harness/builds pass. Default/canonical demo127/0, zero errors, partial marker and
+  absent proof exports held (`provenance.json /demos`; cold receipt7cb52f5a).
+- P02/P03 admission/compiler — HELD. Actual native3/0 metadata,13/0 control and25/0
+  submit tests cover original roles/bounds and historical refusals; actual C compiler
+  stage/pair failures and generic pair metadata pass the typed boundary. See worker
+  `cold/recording/held-cold/recording/native-metadata.stdout` and
+  `cold/recording/metadata-supplement/stdout.json`.
+- P04/P05/P11 full words/native custody — HELD. The separate wire/TGSI oracle,
+  which never consumes worker expected arrays, holds480 layout rows,955 original
+  DMA readbacks,838 actual captures and11052 GPU scatter copies. All lanes, holes,
+  SG guards, max64-component/four-buffer layouts and raw bit patterns match. Every
+  output links to native readback;985 outputs additionally include30 visible
+  regression outputs (`independent-audit.json /counts,/rows`; `provenance.json
+  /nativeOutputs`). The worker's931 count omitted24 retirement readbacks;955 is
+  accurate, with no runtime correction.
+- P06/P07/P10 primitive/count/later roles — HELD. Original primitive/restart/instance
+  order, complete capacity boundaries, literal count/start0 and indexed-count ignore
+  match the independent oracle; captured vertex/index/uniform reuse holds. See worker
+  `primitives/run-0000.json.gz /phases/0..35`, body6ef9f51f, and critic C1/C2/C4 rows.
+- P08/P09/P12/P13 retained ownership — HELD. Mask0/15 resume and empty binding
+  pauses. N1 changing the same TGSI body's layout observes cursors[96,0], [96,96],
+  [116,96], then a new target tuple[20,0]. Reset/cancellation/active disposal/partial
+  scatter/subcontext destruction and detached/recycled resource generations hold
+  under schedules0/1/2, with old physical native readback and untouched fresh resource.
+  Cite worker `retirement/run-0003.json.gz /phases,/physicalOldRead`, body0526d0f1,
+  and critic `promoted-positive/run-0000,0004,0007.json.gz`. Pinned upstream marks
+  append_bitmask unused (`original-primary/vrend_renderer.c:10339`).
+- P14/P15 compatibility/budgets — HELD. Selected dimensional-depth regression,
+  actual vertex sampler, shared uniform owners, generic capture plus green original
+  raster pixel and historical no-feedback raster survive. Supplemental native active
+  failure and revoked packed release drain ownership; all final objects/syncs are0.
+  The nine promoted scenes passed27 runs at schedules192734/314159/271828 with213269
+  assertions and36 actual captures (`critic-audit.json /positive,/summary`).
+- P16/N1/S1 oracle sensitivity — HELD. Actual COPY_WRITE_BUFFER call12473 changes
+  delivered buffer10 to14 after feedback. Three complete original readbacks then
+  fail exactly at resource1/resource3 byte116: a7a7a7a7/00000080 instead of
+  00000080/a7a7a7a7. Cleanup remains0. See `promoted-wrong-binding/run-0000.json.gz
+  /calls/12473,/phases/2`, body9bf8140e. This expected negative is not a product failure.
+- COVERAGE — SUFFICIENT. 1033 positive nested V8 partitions,5 static punctuation/
+  comments and36 explicit zero waivers; no needs-evidence/dead hunk remains. Each
+  zero names exact unchanged predecessor/configuration or the concrete closed
+  factory's type/error invariant; none is claimed executed. Rust declarations/cfg/
+  unchanged false constructor operands are waived while actual masks/queues/factories
+  execute. `hunk-ledger.json` enumerates all170 runtime/proof hunks.
+- SUITE — promoted `renderer/virgl-command/tests/native-stream-output-critic.mjs`
+  and `tools/virgl-stream-output-capture/critic-browser.mjs`; positive and physical
+  wrong-binding modes retain complete source/native/guest/DMA bodies. Syntax checks,
+  independent audits and test-only promoted runs passed; unchanged high-risk gates
+  were carried under the incremental policy.
+
+Portable verifier seal `evidence/virgl-stream-output-capture/verifier`, manifest
+SHA256 `34dd0d237a4deef021c74a3eea96e145f3600c2d3b26e26d0807708f67dd8bc8`,
+index `87e765655dc066b00c7a5206afe07a29f450779a9ba49d2bf4b9cf34ae6ee02b`,
+archive `b75a65f807c5bbee7a996139f627aebd32a29a94549790607695888a1114d9e5`,
+6488387 bytes; all133 members reopened through the trailer. Worker/deployment/D65
+seal dependencies are explicitly pinned rather than duplicated.
+
+Commands: `custody.reopen` of committed seals; `independent-audit.py`, `provenance.py`,
+`coverage-combine.py`, `classify-coverage.py`, `hunk-ledger.py`; `node --check` of
+promoted fixture/driver; `node tools/virgl-stream-output-capture/critic-browser.mjs
+--output target/evidence/stream-output-capture-verifier/promoted-positive --authority
+target/evidence/stream-output-capture-verifier/reopened/worker/cold/recording/layouts
+--seeds 192734,314159,271828`; same driver with `--seeds 192734 --fault true` for
+`promoted-wrong-binding` (expected exit1); `critic-audit.py`; `seal.py` and full reopen.
+
+This verdict covers the selected original stream-output component. It grants no
+production capset, physical context-loss recovery, real Mesa/Hyprland worker/scanout
+or throughput qualification. Production integration/recovery/deployment remain
+successor work. Existing PRs stay open/unmerged and both native stacks are unchanged.
