@@ -1,0 +1,38 @@
+{
+  "schema": "dimensional-shadow-shader-seal-v1",
+  "task": "E6-T11d61",
+  "head": "7e51570851ef46eb10e8054f3a49b3bea8b79141",
+  "records": 44485,
+  "uniqueBodies": 992,
+  "backwardLinks": 43493,
+  "reopenedMembers": 44485,
+  "gzipEofChecked": true,
+  "recordIndexSha256": "7211cf03b9264aa5215d8d90474fececa5d748bd35a43a0bed2fb1a1d89aac01",
+  "archiveSha256": "d0a39567532a609f313ef2d2a39bea3473d05e7d4d1a43bf5a29edf03221d337",
+  "archiveBytes": 32267855,
+  "logicalBytes": 1273437441,
+  "compilerBaseline": {
+    "status": "passed",
+    "predecessor": "04ab18042036bf0ab19864bbe38e787dd4aadf48",
+    "reopenedMembers": 38,
+    "manifest": {
+      "schema": "dimensional-shadow-readiness-seal-v1",
+      "head": "04ab18042036bf0ab19864bbe38e787dd4aadf48",
+      "records": 38,
+      "reopenedMembers": 38,
+      "recordIndexSha256": "0147aa5ae15604247a240a4b155a5349ce093f055984a7aff97b886fad58d03e",
+      "archiveSha256": "c4ba827ff1c855cc1ab2e9f44a04224048b9a298bbb0afdc946ef05a57448c13",
+      "archiveBytes": 2173513,
+      "refused": 16,
+      "controls": 6,
+      "actualLinuxGuest": false,
+      "productionAuthority": false,
+      "originalStackPrsUnchanged": 138,
+      "newPr": 538
+    }
+  },
+  "authoritativeRecording": "cold/recording",
+  "commands": 41,
+  "guestExecution": false,
+  "productionAuthority": false
+}
