@@ -700,7 +700,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.027039000398` [E6-T11d55](epic-6-transcendence/E6-T11d55-dimensional-texture-storage.md) — Allocate and transfer original volume, cube and array RGBA8 resources *(deps: E6-T11d54, E6-T11d50, E6-T11d20)*
 - [x] `525.027039000398` [E6-T11d61](epic-6-transcendence/E6-T11d61-dimensional-shadow-shaders.md) — Compile original cube and array comparison texture shaders *(deps: E6-T11d60, E6-T11d57, E6-T11d49)*
 - [x] `525.027039000399` [E6-T11d62](epic-6-transcendence/E6-T11d62-dimensional-shadow-samplers.md) — Execute original cube and array comparison sampler views *(deps: E6-T11d61, E6-T11d60, E6-T11d49)*
-- [~] `525.0270390004` [E6-T11d63](epic-6-transcendence/E6-T11d63-dimensional-color-surfaces.md) — Render original single-layer dimensional color surfaces *(deps: E6-T11d62, E6-T11d58, E6-T11d56)*
+- [?] `525.0270390004` [E6-T11d63](epic-6-transcendence/E6-T11d63-dimensional-color-surfaces.md) — Render original single-layer dimensional color surfaces *(deps: E6-T11d62, E6-T11d58, E6-T11d56)*
 - [x] `525.027039001` [E6-T11d9](epic-6-transcendence/E6-T11d9-standard-primitive-restart.md) — Normalize owned standard index streams for primitive restart *(deps: E6-T11d8)*
 - [x] `525.02703901` [E6-T11d8](epic-6-transcendence/E6-T11d8-standard-core-topologies.md) — Execute bounded standard core line and triangle-fan draws *(deps: E6-T11d7)*
 - [x] `525.0270391` [E6-T11d7](epic-6-transcendence/E6-T11d7-standard-constant-attributes.md) — Fetch standard zero-stride attributes through owned GPU jobs *(deps: E6-T11d6)*
