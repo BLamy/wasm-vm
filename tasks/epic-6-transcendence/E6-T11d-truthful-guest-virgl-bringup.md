@@ -3,9 +3,8 @@ id: E6-T11d
 epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
-status: blocked
+status: in-progress
 depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47, E6-T11d48, E6-T11d49, E6-T11d50, E6-T11d51, E6-T11d52, E6-T11d53, E6-T11d54, E6-T11d55, E6-T11d56, E6-T11d57, E6-T11d58, E6-T11d59, E6-T11d60, E6-T11d61, E6-T11d62, E6-T11d63, E6-T11d64, E6-T11d65, E6-T11d66]
-blocked_on: E6-T11d66
 estimate: S
 risk: high
 capstone: false
@@ -857,3 +856,21 @@ recorded. Ordered S boundaries E6-T11d65 (typed capture compiler) and E6-T11d66
 capability negotiation and actual Mesa/Hyprland worker/scanout bring-up. The
 user's explicit four-part request keeps this graphics chain ahead of unrelated
 queue entries. No production acceleration or MIPS claim follows from readiness.
+
+
+### 2026-10-13 — worker — production worker/scanout integration
+
+D66 is independently verified at e092c647b8fad4948e3385d4fdca21c1ee4bc97a.
+The user's explicit request continues production graphics ahead of the unrelated
+queue entry. All dependencies are verified; this single integration boundary now
+owns typed capability negotiation, production worker marshalling and actual guest
+initialization/scanout. No new positive production capability is claimed by this
+activation. The original native stack is continued above D66; existing PRs stay open.
+
+The local immutable QEMU reference pre-check uses the shipped kernel
+3cf8bed0d9a9941a6f2f81b7c8de86cefcba3e4e6bd5e5846bd395714a25642d and original
+Omarchy image bfcde69e5eeb2b5baba96a451f0671092b5973e8cc3a7f581722adf513651200.
+Pinned Mesa26.2.2 and virglrenderer1.3.0 render kmscube successfully. Its complete
+288-event initialization/control log and source/library/package identities are
+in target/evidence/production-integration-orientation/qemu-kmscube. This reference
+pre-check is comparison data; it does not prove browser production rendering.
