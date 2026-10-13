@@ -1,7 +1,7 @@
 /** Explicit proof-only VirtIO bridges. Ordinary device negotiation is unchanged. */
-import { createResourceStore, createWebGL2TransferBackend, createStandardDesktopResourceStore, createStandardPackedDepthTransferBackend, createStandardDimensionalResourceStore, createStandardDimensionalTransferBackend, createStandardDimensionalViewResourceStore, createStandardDimensionalViewTransferBackend, createStandardDimensionalDepthResourceStore, createStandardDimensionalDepthTransferBackend, createStandardDimensionalDepthViewResourceStore, createStandardDimensionalDepthViewTransferBackend } from './resources.mjs';
+import { createResourceStore, createWebGL2TransferBackend, createStandardDesktopResourceStore, createStandardPackedDepthTransferBackend, createStandardDimensionalResourceStore, createStandardDimensionalTransferBackend, createStandardDimensionalViewResourceStore, createStandardDimensionalViewTransferBackend, createStandardDimensionalDepthResourceStore, createStandardDimensionalDepthTransferBackend, createStandardDimensionalDepthViewResourceStore, createStandardDimensionalColorSurfaceResourceStore, createStandardDimensionalDepthViewTransferBackend } from './resources.mjs';
 import { createRetainedScanout, normalizeScanoutEvent } from './scanout.mjs';
-import { createVirglStateRenderer, createVirglAsyncRenderer, createVirglStandardShadowSamplerAsyncRenderer, createVirglStandardDimensionalAsyncRenderer, createVirglStandardDimensionalViewAsyncRenderer, createVirglStandardDimensionalDepthViewAsyncRenderer, createVirglStandardDimensionalShadowAsyncRenderer } from './state.mjs';
+import { createVirglStateRenderer, createVirglAsyncRenderer, createVirglStandardShadowSamplerAsyncRenderer, createVirglStandardDimensionalAsyncRenderer, createVirglStandardDimensionalViewAsyncRenderer, createVirglStandardDimensionalDepthViewAsyncRenderer, createVirglStandardDimensionalShadowAsyncRenderer, createVirglStandardDimensionalColorSurfaceAsyncRenderer } from './state.mjs';
 
 const ok = () => Object.freeze({ ok: true });
 const fail = (code, message) => Object.freeze({ ok: false, error: Object.freeze({ code, message }) });
@@ -162,10 +162,12 @@ export function createVirglStandardDimensionalDepthSubmitBridge(options) { retur
 export function createVirglStandardDimensionalDepthViewSubmitBridge(options) { return createBridge(options, true, false, true, true, true, true, true); }
 /** Selected original cube/array comparisons; production negotiation stays separate. */
 export function createVirglStandardDimensionalShadowSubmitBridge(options) { return createBridge(options, true, false, true, true, true, true, true, true); }
+/** Selected original one-layer dimensional RGBA8 surfaces; production remains gated. */
+export function createVirglStandardDimensionalColorSurfaceSubmitBridge(options) { return createBridge(options, true, false, true, true, true, true, true, true, true); }
 
 export function createVirglScanoutBridge(options) { return createBridge(options, true, true); }
 
-function createBridge(options, asynchronous, scanoutEnabled = false, desktop = false, dimensional = false, dimensionalViews = false, dimensionalDepth = false, dimensionalDepthViews = false, dimensionalShadows = false) {
+function createBridge(options, asynchronous, scanoutEnabled = false, desktop = false, dimensional = false, dimensionalViews = false, dimensionalDepth = false, dimensionalDepthViews = false, dimensionalShadows = false, dimensionalColorSurfaces = false) {
   let owners = null;
   try {
     const config = record(options, ['gl', 'shaderBridge', 'resourceLimits', 'stateLimits', ...(asynchronous ? ['transport', 'jobLimits', 'drawLimits'] : []), ...(scanoutEnabled ? ['presenter'] : [])], ['gl', 'shaderBridge', ...(asynchronous ? ['transport'] : []), ...(scanoutEnabled ? ['presenter'] : [])]);
@@ -177,9 +179,9 @@ function createBridge(options, asynchronous, scanoutEnabled = false, desktop = f
       const { backend } = unwrap((dimensionalDepthViews ? createStandardDimensionalDepthViewTransferBackend : dimensionalDepth ? createStandardDimensionalDepthTransferBackend : dimensionalViews ? createStandardDimensionalViewTransferBackend : dimensional ? createStandardDimensionalTransferBackend : desktop ? createStandardPackedDepthTransferBackend : createWebGL2TransferBackend)(config.gl));
       let store;
       try {
-        const created = unwrap((dimensionalDepthViews ? createStandardDimensionalDepthViewResourceStore : dimensionalDepth ? createStandardDimensionalDepthResourceStore : dimensionalViews ? createStandardDimensionalViewResourceStore : dimensional ? createStandardDimensionalResourceStore : desktop ? createStandardDesktopResourceStore : createResourceStore)({ backend, ...(config.resourceLimits === undefined ? {} : { limits: config.resourceLimits }) }));
+        const created = unwrap((dimensionalColorSurfaces ? createStandardDimensionalColorSurfaceResourceStore : dimensionalDepthViews ? createStandardDimensionalDepthViewResourceStore : dimensionalDepth ? createStandardDimensionalDepthResourceStore : dimensionalViews ? createStandardDimensionalViewResourceStore : dimensional ? createStandardDimensionalResourceStore : desktop ? createStandardDesktopResourceStore : createResourceStore)({ backend, ...(config.resourceLimits === undefined ? {} : { limits: config.resourceLimits }) }));
         store = created.store;
-        const { renderer } = unwrap((dimensionalShadows ? createVirglStandardDimensionalShadowAsyncRenderer : dimensionalDepthViews ? createVirglStandardDimensionalDepthViewAsyncRenderer : dimensionalViews ? createVirglStandardDimensionalViewAsyncRenderer : dimensional ? createVirglStandardDimensionalAsyncRenderer : desktop ? createVirglStandardShadowSamplerAsyncRenderer : asynchronous ? createVirglAsyncRenderer : createVirglStateRenderer)({ gl: config.gl, shaderBridge: config.shaderBridge,
+        const { renderer } = unwrap((dimensionalColorSurfaces ? createVirglStandardDimensionalColorSurfaceAsyncRenderer : dimensionalShadows ? createVirglStandardDimensionalShadowAsyncRenderer : dimensionalDepthViews ? createVirglStandardDimensionalDepthViewAsyncRenderer : dimensionalViews ? createVirglStandardDimensionalViewAsyncRenderer : dimensional ? createVirglStandardDimensionalAsyncRenderer : desktop ? createVirglStandardShadowSamplerAsyncRenderer : asynchronous ? createVirglAsyncRenderer : createVirglStateRenderer)({ gl: config.gl, shaderBridge: config.shaderBridge,
           ...(desktop ? { uniformAccess: created.uniformAccess, imageAccess: created.imageAccess } : {}),
           resources: store, bindings: created.bindings, ...(asynchronous ? { asyncAccess: created.asyncAccess, ...(config.jobLimits === undefined ? {} : { jobLimits: config.jobLimits }), ...(config.drawLimits === undefined ? {} : { drawLimits: config.drawLimits }) } : {}), ...(config.stateLimits === undefined ? {} : { limits: config.stateLimits }) }));
         return Object.freeze({ store, renderer, bindings: created.bindings, ...(asynchronous ? { asyncAccess: created.asyncAccess } : {}) });

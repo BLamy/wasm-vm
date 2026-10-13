@@ -7,7 +7,7 @@ import {packedNormalizedColorFormat} from "./packed-normalized-images.mjs";
 import {packedUnsignedColorFormat} from "./packed-unsigned-images.mjs";
 import {floatingDepthFormat} from "./floating-depth-images.mjs";
 import {unormDepthFormat, packedDepthFormat} from "./unorm-depth-images.mjs";
-import { decodeSubmission, decodeStandardSubmission, decodeStandardUniformSubmission, decodeStandardImageSubmission, decodeStandardColorSubmission, decodeStandardFloatImageSubmission, decodeStandardPackedFloatImageSubmission, decodeStandardSharedExponentImageSubmission, decodeStandardIntegerImageSubmission, decodeStandardMultipleColorSubmission, decodeStandardPackedNormalizedImageSubmission, decodeStandardPackedUnsignedImageSubmission, decodeStandardFloatingDepthImageSubmission, decodeStandardUnormDepthImageSubmission, decodeStandardPackedDepthImageSubmission, decodeStandardStencilSubmission, decodeStandardShadowSamplerSubmission, decodeStandardDimensionalSubmission, decodeStandardDimensionalViewSubmission, decodeStandardDimensionalDepthViewSubmission, vertexFormat } from "./decoder.mjs";
+import { decodeSubmission, decodeStandardSubmission, decodeStandardUniformSubmission, decodeStandardImageSubmission, decodeStandardColorSubmission, decodeStandardFloatImageSubmission, decodeStandardPackedFloatImageSubmission, decodeStandardSharedExponentImageSubmission, decodeStandardIntegerImageSubmission, decodeStandardMultipleColorSubmission, decodeStandardPackedNormalizedImageSubmission, decodeStandardPackedUnsignedImageSubmission, decodeStandardFloatingDepthImageSubmission, decodeStandardUnormDepthImageSubmission, decodeStandardPackedDepthImageSubmission, decodeStandardStencilSubmission, decodeStandardShadowSamplerSubmission, decodeStandardDimensionalSubmission, decodeStandardDimensionalViewSubmission, decodeStandardDimensionalDepthViewSubmission, decodeStandardDimensionalColorSurfaceSubmission, vertexFormat } from "./decoder.mjs";
 import { LIMITS as SHADER_LIMITS } from "../virgl-shader/index.mjs";
 import { createKeyCache, hashKey } from "./cache.mjs";
 import { parseConstantDomain, checkFiniteBank, checkIndirectBank, checkLoopBank, checkRadialBank, checkRasterBank, checkConversionBank, checkExactBank, COORDINATE_KEY, DISCARD_KEY,
@@ -45,6 +45,7 @@ export const STANDARD_DIMENSIONAL_ASYNC_PROFILE = "virgl-standard-dimensional-rg
 export const STANDARD_DIMENSIONAL_VIEW_ASYNC_PROFILE = "virgl-standard-dimensional-rgba8-view-async-jobs-v1";
 export const STANDARD_DIMENSIONAL_DEPTH_VIEW_ASYNC_PROFILE = "virgl-standard-dimensional-depth-view-async-jobs-v1";
 export const STANDARD_DIMENSIONAL_SHADOW_ASYNC_PROFILE = "virgl-standard-dimensional-shadow-async-jobs-v1";
+export const STANDARD_DIMENSIONAL_COLOR_SURFACE_ASYNC_PROFILE = "virgl-standard-dimensional-color-surface-async-jobs-v1";
 export const STANDARD_INSTANCED_STENCIL_ASYNC_PROFILE = "virgl-standard-instanced-stencil-async-jobs-v1";
 export const STANDARD_FLOAT_IMAGE_ASYNC_PROFILE = "virgl-standard-float-image-async-jobs-v1";
 export const STANDARD_IMAGE_ASYNC_PROFILE = "virgl-standard-image-async-jobs-v1";
@@ -327,7 +328,12 @@ export function createVirglStandardDimensionalShadowAsyncRenderer(options) {
   return createRenderer(options, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
 }
 
-function createRenderer(options, drawing, asynchronous = false, standard = false, uniform = false, bufferRoles = false, images = false, colors = false, textureOperations = false, floats = false, packed = false, shared = false, integers = false, multipleColors = false, normalized = false, unsigned = false, floatingDepth = false, unormDepth = false, packedDepth = false, stencil = false, orderedStencil = false, instanceBase = false, shadowSamplers = false, dimensional = false, dimensionalViews = false, dimensionalDepthViews = false, dimensionalShadows = false) {
+/** Original one-layer RGBA8 framebuffer attachments over owned dimensional images. */
+export function createVirglStandardDimensionalColorSurfaceAsyncRenderer(options) {
+  return createRenderer(options, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
+}
+
+function createRenderer(options, drawing, asynchronous = false, standard = false, uniform = false, bufferRoles = false, images = false, colors = false, textureOperations = false, floats = false, packed = false, shared = false, integers = false, multipleColors = false, normalized = false, unsigned = false, floatingDepth = false, unormDepth = false, packedDepth = false, stencil = false, orderedStencil = false, instanceBase = false, shadowSamplers = false, dimensional = false, dimensionalViews = false, dimensionalDepthViews = false, dimensionalShadows = false, dimensionalColorSurfaces = false) {
   return result(() => {
     const config = dataRecord(options, ["gl", "resources", "bindings", "shaderBridge", "limits", "cacheLimits", ...(drawing ? ["drawLimits"] : []), ...(asynchronous ? ["asyncAccess", "jobLimits"] : []), ...(standard ? ["primitiveAssembly"] : []), ...(uniform ? ["uniformAccess"] : []), ...(images ? ["imageAccess"] : [])], ["gl", "resources", "bindings", "shaderBridge", ...(asynchronous ? ["asyncAccess"] : []), ...(uniform ? ["uniformAccess"] : []), ...(images ? ["imageAccess"] : [])]);
     const { gl, resources, bindings, shaderBridge } = config;
@@ -381,8 +387,8 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
     const integerFormat = format => integerColorFormat(format) || (unsigned ? packedUnsignedColorFormat(format) : null);
     const comparisonSampler = type => shadowSamplers && (type === "sampler2DShadow" || dimensionalShadows &&
       ["samplerCubeShadow", "sampler2DArrayShadow"].includes(type));
-    const profile = dimensionalShadows ? STANDARD_DIMENSIONAL_SHADOW_ASYNC_PROFILE : dimensionalDepthViews ? STANDARD_DIMENSIONAL_DEPTH_VIEW_ASYNC_PROFILE : dimensionalViews ? STANDARD_DIMENSIONAL_VIEW_ASYNC_PROFILE : dimensional ? STANDARD_DIMENSIONAL_ASYNC_PROFILE : shadowSamplers ? STANDARD_SHADOW_SAMPLER_ASYNC_PROFILE : instanceBase ? STANDARD_INSTANCED_STENCIL_ASYNC_PROFILE : orderedStencil ? STANDARD_ORDERED_STENCIL_ASYNC_PROFILE : stencil ? STANDARD_STENCIL_ASYNC_PROFILE : packedDepth ? STANDARD_PACKED_DEPTH_IMAGE_ASYNC_PROFILE : unormDepth ? STANDARD_UNORM_DEPTH_IMAGE_ASYNC_PROFILE : floatingDepth ? STANDARD_FLOATING_DEPTH_IMAGE_ASYNC_PROFILE : unsigned ? STANDARD_PACKED_UNSIGNED_IMAGE_ASYNC_PROFILE : normalized ? STANDARD_PACKED_NORMALIZED_IMAGE_ASYNC_PROFILE : multipleColors ? STANDARD_MULTIPLE_COLOR_ASYNC_PROFILE : integers ? STANDARD_INTEGER_IMAGE_ASYNC_PROFILE : shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : textureOperations ? STANDARD_TEXTURE_ASYNC_PROFILE : colors ? STANDARD_COLOR_ASYNC_PROFILE : images ? STANDARD_IMAGE_ASYNC_PROFILE : bufferRoles ? STANDARD_BUFFER_ASYNC_PROFILE : uniform ? STANDARD_UNIFORM_ASYNC_PROFILE : standard ? STANDARD_ASYNC_PROFILE : asynchronous ? ASYNC_PROFILE : drawing ? DRAW_PROFILE : STATE_PROFILE;
-    const decodeCommands = dimensionalDepthViews ? decodeStandardDimensionalDepthViewSubmission : dimensionalViews ? decodeStandardDimensionalViewSubmission : dimensional ? decodeStandardDimensionalSubmission : shadowSamplers ? decodeStandardShadowSamplerSubmission : stencil ? decodeStandardStencilSubmission : packedDepth ? decodeStandardPackedDepthImageSubmission : unormDepth ? decodeStandardUnormDepthImageSubmission : floatingDepth ? decodeStandardFloatingDepthImageSubmission : unsigned ? decodeStandardPackedUnsignedImageSubmission : normalized ? decodeStandardPackedNormalizedImageSubmission : multipleColors ? decodeStandardMultipleColorSubmission : integers ? decodeStandardIntegerImageSubmission : shared ? decodeStandardSharedExponentImageSubmission : packed ? decodeStandardPackedFloatImageSubmission : floats ? decodeStandardFloatImageSubmission : colors ? decodeStandardColorSubmission : images ? decodeStandardImageSubmission : uniform ? decodeStandardUniformSubmission : standard ? decodeStandardSubmission : decodeSubmission;
+    const profile = dimensionalColorSurfaces ? STANDARD_DIMENSIONAL_COLOR_SURFACE_ASYNC_PROFILE : dimensionalShadows ? STANDARD_DIMENSIONAL_SHADOW_ASYNC_PROFILE : dimensionalDepthViews ? STANDARD_DIMENSIONAL_DEPTH_VIEW_ASYNC_PROFILE : dimensionalViews ? STANDARD_DIMENSIONAL_VIEW_ASYNC_PROFILE : dimensional ? STANDARD_DIMENSIONAL_ASYNC_PROFILE : shadowSamplers ? STANDARD_SHADOW_SAMPLER_ASYNC_PROFILE : instanceBase ? STANDARD_INSTANCED_STENCIL_ASYNC_PROFILE : orderedStencil ? STANDARD_ORDERED_STENCIL_ASYNC_PROFILE : stencil ? STANDARD_STENCIL_ASYNC_PROFILE : packedDepth ? STANDARD_PACKED_DEPTH_IMAGE_ASYNC_PROFILE : unormDepth ? STANDARD_UNORM_DEPTH_IMAGE_ASYNC_PROFILE : floatingDepth ? STANDARD_FLOATING_DEPTH_IMAGE_ASYNC_PROFILE : unsigned ? STANDARD_PACKED_UNSIGNED_IMAGE_ASYNC_PROFILE : normalized ? STANDARD_PACKED_NORMALIZED_IMAGE_ASYNC_PROFILE : multipleColors ? STANDARD_MULTIPLE_COLOR_ASYNC_PROFILE : integers ? STANDARD_INTEGER_IMAGE_ASYNC_PROFILE : shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : textureOperations ? STANDARD_TEXTURE_ASYNC_PROFILE : colors ? STANDARD_COLOR_ASYNC_PROFILE : images ? STANDARD_IMAGE_ASYNC_PROFILE : bufferRoles ? STANDARD_BUFFER_ASYNC_PROFILE : uniform ? STANDARD_UNIFORM_ASYNC_PROFILE : standard ? STANDARD_ASYNC_PROFILE : asynchronous ? ASYNC_PROFILE : drawing ? DRAW_PROFILE : STATE_PROFILE;
+    const decodeCommands = dimensionalColorSurfaces ? decodeStandardDimensionalColorSurfaceSubmission : dimensionalDepthViews ? decodeStandardDimensionalDepthViewSubmission : dimensionalViews ? decodeStandardDimensionalViewSubmission : dimensional ? decodeStandardDimensionalSubmission : shadowSamplers ? decodeStandardShadowSamplerSubmission : stencil ? decodeStandardStencilSubmission : packedDepth ? decodeStandardPackedDepthImageSubmission : unormDepth ? decodeStandardUnormDepthImageSubmission : floatingDepth ? decodeStandardFloatingDepthImageSubmission : unsigned ? decodeStandardPackedUnsignedImageSubmission : normalized ? decodeStandardPackedNormalizedImageSubmission : multipleColors ? decodeStandardMultipleColorSubmission : integers ? decodeStandardIntegerImageSubmission : shared ? decodeStandardSharedExponentImageSubmission : packed ? decodeStandardPackedFloatImageSubmission : floats ? decodeStandardFloatImageSubmission : colors ? decodeStandardColorSubmission : images ? decodeStandardImageSubmission : uniform ? decodeStandardUniformSubmission : standard ? decodeStandardSubmission : decodeSubmission;
     const parseShaderMetadata = dimensionalShadows ? parseStandardDimensionalShadowTextureShaderMetadata : dimensionalViews ? parseStandardDimensionalTextureShaderMetadata : shadowSamplers ? parseStandardShadowTextureShaderMetadata : instanceBase ? parseStandardInstanceBaseShaderMetadata : multipleColors ? parseStandardMultipleColorShaderMetadata : integers ? parseStandardIntegerImageShaderMetadata : textureOperations ? parseStandardTextureShaderMetadata : uniform ? parseStandardUniformShaderMetadata : standard ? parseStandardShaderMetadata : parseConstantDomain;
     const idle = () => require(activeJob === null, "busy", "A renderer job is active; cancel and drain it before changing state.");
     const contexts = new Map(), objects = new Set(), programs = new Set();
@@ -584,7 +590,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         if (type === 6 || type === 8) {
           const floating = floatingDepth && Boolean(floatingDepthFormat(fields.format)) || unormDepth && Boolean(unormDepthFormat(fields.format)) || packedDepth && Boolean(packedDepthFormat(fields.format));
           const depth = type === 8 && (fields.format === 16 || floating);
-          Object.assign(object, retain(ctx, fields.resourceHandle, depth ? "depth-surface" : type === 6 ? "view" : "surface", floating ? ["depth-texture", "mip-depth-texture", ...(dimensionalDepthViews && type === 6 ? ["dimensional-depth-texture"] : [])] : depth ? "depth-texture" : images ? ["texture", "mip-texture", ...(dimensionalViews && type === 6 ? ["dimensional-texture"] : [])] : "texture"));
+          Object.assign(object, retain(ctx, fields.resourceHandle, depth ? "depth-surface" : type === 6 ? "view" : "surface", floating ? ["depth-texture", "mip-depth-texture", ...(dimensionalDepthViews && type === 6 ? ["dimensional-depth-texture"] : [])] : depth ? "depth-texture" : images ? ["texture", "mip-texture", ...(dimensionalViews && type === 6 || dimensionalColorSurfaces && type === 8 && fields.format === 67 ? ["dimensional-texture"] : [])] : "texture"));
           require(object.metadata.format === fields.format, "incompatible-resource", "View format and storage format differ.");
           if (images && (!depth || floating)) {
             if (type === 6) {
@@ -595,7 +601,11 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
             else {
               require(fields.level <= object.metadata.lastLevel, "out-of-bounds", "Surface mip level exceeds retained image levels.");
               const level = object.metadata.levels?.[fields.level] ?? object.metadata;
-              object.dimensions = Object.freeze({ width: level.width, height: level.height, level: fields.level });
+              if (dimensionalColorSurfaces) require(fields.firstLayer === fields.lastLayer &&
+                (object.metadata.kind === "dimensional-texture" ? fields.firstLayer < level.layers : fields.firstLayer === 0),
+              "out-of-bounds", "Original color surface layer exceeds its retained mip.");
+              object.dimensions = Object.freeze({ width: level.width, height: level.height, level: fields.level,
+                ...(dimensionalColorSurfaces ? { layer: fields.firstLayer } : {}) });
             }
           }
         }
@@ -1328,6 +1338,14 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       // Original full CLEAR restores the literal per-face DSA write masks.
       gl.stencilMaskSeparate(gl.FRONT, fields[0].writeMask); gl.stencilMaskSeparate(gl.BACK, fields[1].writeMask);
     };
+    const attachColorSurface = (slot, surface) => {
+      const attachment = gl.COLOR_ATTACHMENT0 + slot, storage = surface ? resolve(surface.lease).storage : null;
+      if (surface?.metadata.kind === "dimensional-texture") {
+        if (surface.metadata.target === 4) gl.framebufferTexture2D(gl.FRAMEBUFFER, attachment,
+          gl.TEXTURE_CUBE_MAP_POSITIVE_X + surface.fields.firstLayer, storage.texture, surface.fields.level);
+        else gl.framebufferTextureLayer(gl.FRAMEBUFFER, attachment, storage.texture, surface.fields.level, surface.fields.firstLayer);
+      } else gl.framebufferTexture2D(gl.FRAMEBUFFER, attachment, gl.TEXTURE_2D, storage?.texture ?? null, surface?.fields.level ?? 0);
+    };
     const restore = (sub, plan = null, constantAttributes = null) => {
       check(); vertexLayout(sub);
       if (plan) validateDrawPlan(plan);
@@ -1342,7 +1360,8 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       const surface = sub.surfaces[0] ?? null;
       if (multipleColors) for (let slot = 0; slot < 4; slot++) {
         const target = sub.surfaces[slot];
-        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + slot, gl.TEXTURE_2D,
+        if (dimensionalColorSurfaces) attachColorSurface(slot, target);
+        else gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + slot, gl.TEXTURE_2D,
           target ? resolve(target.lease).storage.texture : null, target?.fields.level ?? 0);
       }
       else gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, surface ? resolve(surface.lease).storage.texture : null, images ? surface?.fields.level ?? 0 : 0);
@@ -1848,10 +1867,12 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         vertexFetches, framebuffer: { resourceId: surface.metadata.id, resourceGeneration: surface.generation,
           width: images ? (plan.primarySurface ?? sub.surfaces[0]).dimensions.width : surface.metadata.width, height: images ? (plan.primarySurface ?? sub.surfaces[0]).dimensions.height : surface.metadata.height,
           ...(images ? { level: (plan.primarySurface ?? sub.surfaces[0]).fields.level } : {}),
+          ...(dimensionalColorSurfaces ? { target: plan.primarySurface.metadata.target, layer: plan.primarySurface.fields.firstLayer } : {}),
           ...(multipleColors ? { colors: Array.from({ length: 4 }, (_, slot) => {
             const target = sub.surfaces[slot];
             return target ? { slot, resourceId: target.metadata.id, resourceGeneration: target.resourceGeneration,
-              format: target.metadata.format, level: target.fields.level, width: target.dimensions.width, height: target.dimensions.height } : null;
+              format: target.metadata.format, level: target.fields.level, width: target.dimensions.width, height: target.dimensions.height,
+              ...(dimensionalColorSurfaces ? { target: target.metadata.target, layer: target.fields.firstLayer } : {}) } : null;
           }) } : {}),
           depthResourceId: sub.depthSurface?.metadata.id ?? null, depthResourceGeneration: sub.depthSurface?.resourceGeneration ?? null },
         vertexShader: ref(sub.shaders[0]), fragmentShader: ref(sub.shaders[1]),
@@ -1904,7 +1925,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
             resolve(depthSurface.lease);
           }
           for (const surface of surfaces) if (surface) {
-            require(images ? ["texture", "mip-texture"].includes(surface.metadata.kind) : surface.metadata.kind === "texture", "incompatible-resource", "A depth surface cannot be a color attachment.");
+            require(images ? (["texture", "mip-texture"].includes(surface.metadata.kind) || dimensionalColorSurfaces && surface.metadata.kind === "dimensional-texture" && surface.metadata.format === 67) : surface.metadata.kind === "texture", "incompatible-resource", "A depth surface cannot be a color attachment.");
             resolve(surface.lease);
             require(!depthSurface || ((images ? surface.dimensions.width : surface.metadata.width) === (floatingDepth ? depthSurface.dimensions?.width ?? depthSurface.metadata.width : depthSurface.metadata.width) && (images ? surface.dimensions.height : surface.metadata.height) === (floatingDepth ? depthSurface.dimensions?.height ?? depthSurface.metadata.height : depthSurface.metadata.height)),
               "incompatible-resource", "Color and depth attachment dimensions differ.");

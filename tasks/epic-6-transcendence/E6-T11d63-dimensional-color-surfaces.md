@@ -122,3 +122,26 @@ verified. Continue native stack500 on `codex/virgl-dimensional-color-surfaces`;
 implement the original one-layer RGBA8 surface boundary, then freeze, record,
 deploy and hand complete evidence to a fresh critic. Reuse authenticated native
 allocation/DMA and shader bodies; production remains gated by the parent.
+
+### 2026-10-13 — worker — prepare frozen submission
+
+The selected boundary is implemented in decoder/resource admission, retained
+surface state and native color attachment dispatch. Existing allocation/layout,
+DMA/private-copy backend, compiler, transport and production negotiation are
+unchanged. The new factory composes the verified D62 consumer and admits only
+one original RGBA8 layer at its retained mip. Native volume/array layers and
+cube faces execute through CLEAR and DRAW_VBO, including mixed/null MRT.
+
+Earlier inner runs exercise the82-case image matrix,35 refusal/recovery cases,
+three MRT mixes, three private-range GPU refreshes, three retained-generation/
+pending-reset cases and historical refusal/2D controls. All complete source
+bodies, original queues, native calls, full guarded DMA images, screenshots and
+failed harness iterations remain in `target/evidence/dimensional-color-surfaces-inner-*`.
+The independent image audit recomputes complete original byte/word images.
+Current finest coverage self-check records235 executed partitions,64 unchanged
+HELD partitions and59 explicit unchanged configuration/format/delimiter waivers,
+with zero new gaps. This is inner-loop validation, not final acceptance or a
+verification verdict. `make verify-E6-T11d63` records the three final schedules,
+both physical attachment corruptions, affected gates and default demo; the
+scrubbed clone and fully reopened worker seal precede a fresh critic. The partial
+demo marker/default-demo harness are updated before freezing.

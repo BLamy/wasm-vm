@@ -611,6 +611,10 @@ export function createStandardDimensionalDepthResourceStore(options) {
 export function createStandardDimensionalDepthViewResourceStore(options) {
   return createStore(options, true, true, true, true, true, true, true, true, true, true, true, true, true, true, STANDARD_DIMENSIONAL_RESOURCE_LIMITS, true, true, true, true);
 }
+/** Retained one-layer RGBA8 color surfaces use unchanged dimensional storage. */
+export function createStandardDimensionalColorSurfaceResourceStore(options) {
+  return createStore(options, true, true, true, true, true, true, true, true, true, true, true, true, true, true, STANDARD_DIMENSIONAL_RESOURCE_LIMITS, true, true, true, true, true);
+}
 export function computeStandardDimensionalDepthTransferLayout(metadata, fields, backingByteLength, overrides = {}) {
   return result(() => {
     const limits = limitsFor(overrides, STANDARD_DIMENSIONAL_RESOURCE_LIMITS);
@@ -624,7 +628,7 @@ export function computeStandardDimensionalTransferLayout(metadata, fields, backi
   });
 }
 
-function createStore(options, uniform, bufferRoles = false, mipmaps = false, images = false, colors = false, floats = false, packed = false, shared = false, integers = false, normalized = false, unsigned = false, floatingDepth = false, unormDepth = false, packedDepth = false, resourceLimits = RESOURCE_LIMITS, dimensional = false, dimensionalViews = false, dimensionalDepth = false, dimensionalDepthViews = false) {
+function createStore(options, uniform, bufferRoles = false, mipmaps = false, images = false, colors = false, floats = false, packed = false, shared = false, integers = false, normalized = false, unsigned = false, floatingDepth = false, unormDepth = false, packedDepth = false, resourceLimits = RESOURCE_LIMITS, dimensional = false, dimensionalViews = false, dimensionalDepth = false, dimensionalDepthViews = false, dimensionalColorSurfaces = false) {
   return result(() => {
     const config = record(options, ["backend", "limits"], ["backend"]), backend = config.backend;
     require(backend && typeof backend === "object", "invalid-input", "A transfer backend is required.");
@@ -915,7 +919,7 @@ function createStore(options, uniform, bufferRoles = false, mipmaps = false, ima
         require(res.storage !== null, "unsupported-resource", "Staging resources have no GPU storage.");
         require(typeof role === "string" && ["view", "surface", "depth-surface", "vertex", "index", "readback", ...(uniform ? ["uniform"] : [])].includes(role), "invalid-input", "Unknown storage lease role.");
         require(role === "readback" || (bufferRoles && res.meta.kind === "standard-buffer" && ["vertex", "index", "uniform"].includes(role)) || (role === "view" && (["texture", "mip-texture"].includes(res.meta.kind) || dimensionalViews && res.meta.kind === "dimensional-texture" || dimensionalDepthViews && res.meta.kind === "dimensional-depth-texture" || (res.meta.floatingDepth || res.meta.unormDepth || res.meta.packedDepth) && ["depth-texture", "mip-depth-texture"].includes(res.meta.kind)) && (res.meta.bind & 8) !== 0) ||
-          (role === "surface" && ["texture", "mip-texture"].includes(res.meta.kind) && (res.meta.bind & 2) !== 0) ||
+          (role === "surface" && (["texture", "mip-texture"].includes(res.meta.kind) || dimensionalColorSurfaces && res.meta.kind === "dimensional-texture" && res.meta.format === 67) && (res.meta.bind & 2) !== 0) ||
           (role === "depth-surface" && (res.meta.floatingDepth || res.meta.unormDepth || res.meta.packedDepth ? ["depth-texture", "mip-depth-texture"].includes(res.meta.kind) && (res.meta.bind & 1) !== 0 : res.meta.kind === "depth-texture" && res.meta.bind === 1)) ||
           (role === "vertex" && (res.meta.kind === "vertex-buffer" || uniform && res.meta.kind === "uniform-buffer")) ||
           (role === "uniform" && uniform && ["vertex-buffer", "uniform-buffer"].includes(res.meta.kind)) || (role === "index" && res.meta.kind === "index-buffer"),

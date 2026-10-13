@@ -2530,3 +2530,7 @@ verify-E6-T11d61:
 .PHONY: verify-E6-T11d62
 verify-E6-T11d62:
 	python3 tools/virgl-dimensional-shadow-samplers/verify.py --output "$${VIRGL_DIMENSIONAL_SHADOW_SAMPLER_EVIDENCE_DIR:-target/evidence/virgl-dimensional-shadow-samplers}"
+
+.PHONY: verify-E6-T11d63
+verify-E6-T11d63:
+	python3 tools/virgl-dimensional-color-surfaces/verify.py --output "$${VIRGL_DIMENSIONAL_COLOR_SURFACE_EVIDENCE_DIR:-target/evidence/virgl-dimensional-color-surfaces}"
