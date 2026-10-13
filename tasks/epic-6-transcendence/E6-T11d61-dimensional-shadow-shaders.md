@@ -3,7 +3,7 @@ id: E6-T11d61
 epic: 6
 title: Compile original cube and array comparison texture shaders
 priority: 525.027039000398
-status: implemented
+status: verified
 depends_on: [E6-T11d60, E6-T11d57, E6-T11d49]
 estimate: S
 risk: high
@@ -203,3 +203,117 @@ This recording demonstrates only the selected comparison compiler contract and
 truthful partial demo progress. It does not qualify a command consumer, resources,
 production negotiation, actual Linux rendering or MIPS. Fresh verification is
 required before this task can become verified.
+
+
+### 2026-10-12 — verifier — VERDICT: verified
+
+VERDICT: verified
+
+Fresh critic submission: `3b2ba9f24bae5932d0677caab99f3084ca2d2857`.
+Compiler runtime remains `b555747b0b51786e087a43e27b5021e4e7a1838c`;
+recorded final source/harness is `7e51570851ef46eb10e8054f3a49b3bea8b79141`.
+Predictions were written before opening the evidence. Critic files below are
+relative to the reopened verifier archive, with the full raw directory preserved
+at `/tmp/wasmvm-dimensional-shadow-verifier-3b2ba9f2`.
+
+- P1 original tokens and historical boundaries — HELD. Independent bitfield
+  decoding of the raw TGSI words agrees with literal original text and the
+  upstream parser for all 13,735 texture instructions, declarations, immediate
+  words, stages, slots, masks and source modifiers. All 20,927 complete
+  optimized-native/sanitized/Wasm responses agree. Original fragment cube
+  TXB2 at native JSONL line 20,662 retains IN[1].w reference, separate IN[2]
+  bias and SAMP[7], target13, FLOAT return4 and fssamp7 samplerCubeShadow.
+  Native array target12 and Cube/Array query dimensions and separate query
+  masks agree independently. All 15,612 original historical calls were also
+  reexecuted against the authenticated unchanged D57 module, preserving whole
+  response bytes across all seven prior facets. `token-audit.json` and
+  `fresh-compiler.json` pin the full source/module, raw token and response
+  citations; no historical boundary is relabeled as newly qualified.
+- P2 native dimensional output — HELD. A separate oracle imports no worker
+  pixel helper: it decodes literal depth/attribute bytes, derives cube face UV
+  and projected gradients, array rounded/clamped layers and ignored derivative
+  z, native query levels, fourth-lane comparison, separate bias, masks and
+  qualifiers, then compares every word of all 546 worker plus 182 fresh
+  fenced RGBA32UI planes. Actual shaderSource, buffer/texture uploads, reflected
+  native types, bound controls and fence/read order are checked against whole
+  bodies. Fresh seed314159265 is independent of the three worker schedules.
+  The physical layer0/4 swap fails the same unchanged oracle: fresh fault
+  acceptance.frames[0], writer109, fence111/consumed115, read118; pixel(1,1).x
+  is0x3f000000 instead of0xbf000000 after successful native completion.
+  Full raw output SHA256 is
+  `b7423768af01ad3faf4cc456581f5e0f7e9b490bd3b004b5b6f6dd72569f2809`;
+  all native owners still retire. `gpu-audit.json` and `citations.json` preserve
+  every frame, exact native event and output/body digest.
+- P3 bounded refusal — HELD. Independently predicted signature table admits78
+  and refuses498 of576 actual Metal cases. Every admitted original stage
+  compiles, links, reflects the predicted comparison sampler and cleans up;
+  every refused result is exactly ok/error with no GLSL or paired partial
+  success. Dimensional contradictions, return types, mixed comparison use,
+  unsupported dimensional overloads, malformed input, ABI null/stage inputs,
+  masks and239 strict host/reflection rejections hold. Getters remain uncalled.
+  `boundary-audit.json` cites complete compile-link acceptance.compiles[0..77],
+  acceptance.refusals[0..497], original matrix and facade bodies.
+- P4 failures and ownership — HELD. The pinned sanitized allocator binary was
+  rerun independently: its complete85,198-byte stream equals the sealed worker
+  stream, digest
+  `b56ef495652139953fd83f0b1dc8b890e6387c296384d1c804c1eff92bde83b3`.
+  All181 genuine fault sites reject and exactly recover. Caller-custody lines
+  27/53/99/145/191 exercise mutation after own text copies; summary line192
+  confirms181 recoveries and no partial result. Independent selected factories
+  have distinct16MiB buffers and unchanged peers. Pressure/scratch refusals
+  and recovery hold. Actual optimized stack records retain139,680/195,424-byte
+  selected frame sums below262,144 within the unchanged D57 call boundary.
+- P5 custody, coverage and novel attack — HELD. All44,485 worker and511
+  deployment members authenticate complete bytes/lengths and backward targets
+  through gzip EOF, and every authoritative raw custody body is rebound to its
+  seal. The final preserved clone is clean at exact7e515708; all source and
+  generated pins and41 actual command streams agree. Its declared checkout
+  contains all source directories and required default-demo boot inputs, with
+  no borrowed generated binaries. The earlier b555 demo-input failure remains
+  separately failed and complete. Independent full nested coverage agrees with
+  all35 worker V8 and182 LLVM positive partitions and further splits native
+  macro endpoints into308 positive lexical partitions (26 non-whitespace JS
+  partitions); no changed executable zero remains. The ten waivers are exact
+  C ABI signatures and one profile bool declaration, individually classified.
+  Every diff hunk is classified in `coverage-audit.json`. Rust, consumer, guest
+  and production Wasm remain exact unchanged HELD boundaries at verified D60.
+  A bounded novel combined slot7 cube TXB2 and slot15 array shadow-query/ordinary
+  sample attack varies query order and separately swizzled/negated bias. Six
+  admissions and24 complete conflicts/refusals agree between optimized native,
+  sanitizer and Wasm. The permanent cross-slot contract test is promoted at
+  `renderer/virgl-shader/tests/standard-dimensional-shadow-texture-cross-slot.mjs`;
+  sabotaging the query-neutral array sampler type makes that unchanged test
+  fail. Fresh physical GPU sabotage also fails. Initial critic parser,
+  stage/pair-shape and coverage-endpoint construction mistakes are documented
+  and retained; none changes runtime code or relabels a failed product run.
+- P6 truthful default demo — HELD. The304 frozen staging bodies and194 original
+  canonical served bodies authenticate; only roadmap.js/sw.js differ from the
+  qualified D60 staging. Actual Wrangler publication/list confirms production
+  deployment7112b2df-1f4f-4f2a-a039-b429e39f5835. Recorded built and live plus a
+  fresh canonical browser load pass127/0, zero errors, live compliance pip and
+  queried partial Guest GPU offload pip with D61 text. The existing compliance
+  screenshot is deliberately a127/0 crop; pip state is separately queried in
+  the real DOM. Default Wasm remains
+  `d45b575207e0035b5c518698e7b6793b2bf12da635531723fad70813a5956c36`,
+  with proof exports absent and production acceleration disabled.
+
+SUITE: the novel cross-slot literal contract test is promoted. Its30 full
+requests/results, optimized-native/sanitized agreement, positive test recording
+and expected sabotage failure remain in the verifier seal. No implementation
+code was edited. No comparison consumer/resources, capset, framebuffer,
+production integration, Linux Mesa/Hyprland rendering, MIPS or complete guest
+GPU qualification follows from this compiler verdict.
+
+Verifier seal: `evidence/virgl-dimensional-shadow-shaders/verifier/` —7,531
+complete logical members,348 stored bodies and7,183 authenticated backward links,
+reopened once by the writer and independently again through gzip EOF.
+Manifest SHA256
+`77ef1511cf4ff3a2aceccbdb89c99bce55a6ae89ade0af6cbb9c2ceeb6ec024a`;
+index `e58839a053fe147e81b1ded7efd30023f8dae1fd1bdd97e49ca85ca251df647e`;
+archive `3fd875a25de06b25221241934b515993e0f54dfe839a8ec1c66dbad22e88f3d6`.
+`verdict.json` pins every audit and citations index; predictions SHA256
+`7af750e8b32990f7e6fc6a86e25703afc082942f7c09b4c47ccf10ed8d07073b`.
+Exact fresh commands are retained in `commands.json`; the original41-command
+frozen risk-tier submission is carried without pretending an unrelated rerun.
+Policy runs before queue regeneration, then this verifier verdict is committed.
+All raw recordings, failed controls and the preserved clone remain available.
