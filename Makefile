@@ -39,6 +39,10 @@ verify-E6-T11d:
 verify-E6-T11d71:
 	python3 tools/virgl-production/verify-keyboard-wait.py --output "$${VIRGL_KEYBOARD_WAIT_EVIDENCE_DIR:-target/evidence/production-keyboard-wait-final}"
 
+.PHONY: verify-E6-T11d72
+verify-E6-T11d72:
+	python3 tools/virgl-production/verify-interactive-clock.py --output "$${VIRGL_INTERACTIVE_CLOCK_EVIDENCE_DIR:-target/evidence/production-interactive-clock-final}"
+
 verify-E6-T11e:
 	wasm-pack build crates/wasm --target web --out-dir ../../target/virgl-production/pkg --features virgl-renderer,virgl-control-proof
 	python3 tools/virgl-production/verify.py --task E6-T11e --output "$${VIRGL_RECOVERY_EVIDENCE_DIR:-target/evidence/production-recovery-final}"

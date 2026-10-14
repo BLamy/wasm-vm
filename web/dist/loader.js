@@ -26,7 +26,7 @@ import init, {
 import { decideBootPath, deriveBootSnapshotBaseId } from "./boot-path.js";
 import { deriveOverlaySeedIdentity } from "./overlay-seed-identity.js";
 import { createTaskQuiescence } from "./task-quiescence.js";
-import { validateGuestClock, validateICountDivider, createGuestClockLifecycle } from "./guest-clock.js";
+import { validateGuestClock, validateICountDivider, validateInteractiveClock, createGuestClockLifecycle } from "./guest-clock.js";
 import { validateDecodedCacheEntries, applyDecodedCacheEntries } from "./decoded-cache.js";
 import { fetchVerifiedBootAsset } from "./boot-asset-cache.js";
 import { applyAdmissionProbe } from "./admission-probe.js";
@@ -244,6 +244,9 @@ export async function startLinuxBoot(opts = {}) {
     fastInterpreter = true,
     // E5-T26i: explicit experiment; deterministic instruction time remains the default.
     guestClock = "icount",
+    // Accelerated Omarchy keeps deterministic boot time, then uses real time
+    // before staging its first keyboard make. Other callers leave this unset.
+    interactiveClock = undefined,
     // Explicit experiment only. Omission preserves the constructed or restored divider.
     icountDivider = undefined,
     // E5-T26k: explicit 4096/16384-entry experiment; omission preserves the existing capacity.
@@ -343,6 +346,8 @@ export async function startLinuxBoot(opts = {}) {
     }
     validateGuestClock(guestClock);
     validateICountDivider(icountDivider, guestClock);
+    validateInteractiveClock(interactiveClock, guestClock);
+    if (interactiveClock !== undefined && virgl !== true) throw new Error("interactiveClock requires accelerated graphics");
     if (virgl && (!workerMode || freshDesktop || opts.bootSnapshot !== false)) throw new Error("Accelerated graphics requires a cold whole-machine worker boot");
     if (freshDesktop && (!isChunked || persist || extraDiskUrl || opts.bootSnapshot === false)) {
       throw new Error("fresh desktop requires an ephemeral chunked warm boot");
@@ -917,7 +922,7 @@ export async function startLinuxBoot(opts = {}) {
 
     // All initial resume candidates are settled; selection must survive restore and precede execution.
     applyDecodedCacheEntries(machine, decodedCacheEntries);
-    const guestClockLifecycle = createGuestClockLifecycle(machine, guestClock, icountDivider);
+    const guestClockLifecycle = createGuestClockLifecycle(machine, guestClock, icountDivider, interactiveClock);
     if (jitAdmissionProbe) applyAdmissionProbe(machine, jitAdmissionProbe);
     if (jitColdCounterRecycling) applyColdCounterRecycling(machine, jitColdCounterRecycling);
 
@@ -1199,6 +1204,14 @@ export async function startLinuxBoot(opts = {}) {
       // sendKeyboardEvent immediately ahead of its matching syncKeyboard frame.
       sendKeyboardEvent: (eventType, code, value) => {
         if (stopped) return false;
+        try {
+          guestClockLifecycle.beforeKeyboardEvent(eventType, code, value);
+        } catch (error) {
+          finish("error");
+          onState("error");
+          onError(error);
+          throw error;
+        }
         machine.sendKeyboardEvent(eventType, code, value);
         return true;
       },

@@ -2099,6 +2099,7 @@ async function bootOmarchy() {
     {
       manifestUrl: accelerated ? "./artifacts-omarchy-virgl.json" : "./artifacts-omarchy.json",
       virgl: accelerated,
+      interactiveClock: accelerated ? "wall-on-keyboard" : undefined,
       gpuTrace: query.has("testHooks") && query.has("gpuTrace"),
       mode: "chunked",
       requestImageManifestBaseUrl: assetBase.replace(/\/+$/, ""),

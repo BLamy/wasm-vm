@@ -141,7 +141,7 @@ test("loader validates before its first fetch and selects after restore branches
     await assert.rejects(run(), RangeError);
     assert.equal(fetches, 0);
   }
-  const call = "const guestClockLifecycle = createGuestClockLifecycle(machine, guestClock, icountDivider);";
+  const call = "const guestClockLifecycle = createGuestClockLifecycle(machine, guestClock, icountDivider, interactiveClock);";
   const at = loader.indexOf(call);
   assert.ok(at > loader.indexOf('if (mode === "initramfs" && bootSnap'));
   assert.ok(loader.lastIndexOf("machine.loadSnapshotBlob(blob);", at) < at);

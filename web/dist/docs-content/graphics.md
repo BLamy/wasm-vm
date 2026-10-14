@@ -13,7 +13,9 @@ The accelerated image uses a pinned Mesa 26.2.2 build with VirGL and the GLES AP
 GPU rendering starts from a cold boot. The existing **Software rendering** option restores the paired Omarchy RAM snapshot and disk delta. BusyBox, Alpine and Alpine + Node retain their existing fast-boot paths.
 
 {% hint style="info" %}
-Both desktop paths use the instruction-based clock. Tickless idle pauses its timer jump while a qualified GPU request awaits the browser, so guest time cannot skip past a pending host fence or presentation receipt. Normal idle advancement resumes when the request settles.
+Both desktop paths start with instruction-based time. The accelerated desktop switches to the existing monotonic wall clock before its first original keyboard make, including a lock-state repair. This keeps interactive repeat timing tied to real time; the software snapshot retains its current clock policy. Explicit pauses freeze time and resume re-anchors it. This policy is under final independent verification in E6-T11d72.
+
+During instruction-based execution, tickless idle pauses its timer jump while a qualified GPU request awaits the browser, so guest time cannot skip past a pending host fence or presentation receipt. Original keyboard host waits are also guarded. Normal idle advancement resumes when those requests settle.
 {% endhint %}
 
 ## What is offloaded
