@@ -57,3 +57,47 @@ retires with digest `dd8c58e8d6e657e4`. Source/test/predictions/audit are in
 `target/evidence/critic-production-parent-keyboard-wfi-negative01`, including
 literal original down+SYN DMA and used.idx2. This task repairs that one boundary;
 exclusive causation of the observed Linux repeated character is not inferred.
+
+### 2026-10-14 — worker — native repair held; original desktop negatives
+
+Frozen runtime `5c0b909048eac8a7d8511be68b6d04482372527c` passed all seven
+selected native gates and the complete parent software-warm, actual Mesa/cube/
+Hyprland and original-handshake components in both hot and pristine cold runs.
+Fresh native review carries48 lifecycle,4 ordinary-retirement,8 original held/
+quiet and4 independent two-key rows, plus the isolated guard-removal control.
+Those native holds do not establish that the Linux userspace repeat failure is
+resolved.
+
+The unchanged hot stock typing at50ms produced `tttouch /tmp/gpukeyboard42touch`,
+then Bash command-not-found. All60 trusted DOM transitions and their original
+evdev frames were balanced; pending/dropped/rejected/held counts were zero. All23
+bar probes were retained, the final crop passed, and actual Foot was focused.
+Final GPU state has649 begun/649 completed/0 failed,270 draws, no pending job,
+no loss or browser timer gap. All20 marker reads failed. This is a real product
+negative, not a final acceptance; the native fix alone is insufficient.
+
+The pristine cold stock run reached the desktop and focused Foot, then requested
+the same `/app` document again at1792016236931 (initial1792014840430) during the
+fresh-monitor read before typing. Its execution context disappeared. The old
+harness did not capture the navigation initiator; no cause is assigned. This is
+missing closed stock proof, not a keyboard refutation before typing. Passive CDP
+document-request/navigation/crash observation was added to the recording harness;
+it neither retries nor alters the guest. Syntax and its two protocol tests pass.
+
+A separate diagnostic driver invokes the same unmodified trusted input helper
+on only the original software-warm Omarchy initial route. It passes the actual
+marker and displaced guest cursor. Its exact driver differences/hashes are in
+`target/evidence/production-keyboard-software-diagnostic01/harness.json`; this
+software result does not discharge GPU acceptance. A private original-GPU guest
+diagnostic is now collecting monotonic evdev and Wayland timestamps with a
+separate, source-recorded observer. It is not public stock acceptance.
+
+Commands: `VIRGL_KEYBOARD_WAIT_EVIDENCE_DIR=target/evidence/production-keyboard-host-wait-frozen01 make verify-E6-T11d71`;
+`python3 tools/virgl-production/cold.py --task E6-T11d71 --output target/evidence/production-keyboard-host-wait-cold01`;
+software diagnostic command and original output are recorded alongside its
+harness. Closed hot/cold originals and software diagnostic are sealed in
+`evidence/virgl-production-keyboard-host-wait/worker/stock-repeat-and-navigation-negatives-01.tar.gz`
+(8,417,433 bytes, SHA-256
+`a77ed05d56d25a88502a342a625abf2bb6a1b850d5307b9e4fc13c730ab4fec5`).
+All272 members were reopened and checked. The task remains in-progress; no
+deployment or verified verdict is claimed.

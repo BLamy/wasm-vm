@@ -342,6 +342,26 @@ try{
     const context=await browser.newContext({viewport:{width:1280,height:850},serviceWorkers:'allow'});
     await context.addInitScript(observeOriginalWorker);
     const page=activePage=await context.newPage();
+    // Passive document lifecycle evidence. Unexpected reloads remain failures;
+    // recording them must never retry, pause, or redirect the running guest.
+    const lifecycle = await context.newCDPSession(page);
+    const recordLifecycle = (type, event) => {
+      const row = {phase, time: Date.now(), type, event};
+      (report.pageLifecycle ??= []).push(row);
+    };
+    await lifecycle.send('Page.enable');
+    await lifecycle.send('Network.enable');
+    for (const type of ['Page.frameRequestedNavigation', 'Page.frameScheduledNavigation',
+      'Page.frameStartedNavigating', 'Page.frameNavigated'])
+      lifecycle.on(type, event => recordLifecycle(type, event));
+    lifecycle.on('Network.requestWillBeSent', event => {
+      if (event.type === 'Document') recordLifecycle('Network.documentRequest', event);
+    });
+    page.on('crash', () => recordLifecycle('page.crash', {url: page.url()}));
+    page.on('close', () => recordLifecycle('page.close', {url: page.url()}));
+    page.on('framenavigated', frame => recordLifecycle('page.framenavigated', {
+      url: frame.url(), main: frame === page.mainFrame(),
+    }));
     const liveReads = [];
     const liveReadErrors = [];
     if (remoteUrl) page.on('response', response => {
