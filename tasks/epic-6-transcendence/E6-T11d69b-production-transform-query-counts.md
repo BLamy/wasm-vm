@@ -3,7 +3,7 @@ id: E6-T11d69b
 epic: 6
 title: Measure logical original transform-feedback primitive query counts
 priority: 525.027038
-status: implemented
+status: verified
 depends_on: [E6-T11d69a]
 estimate: S
 risk: high
@@ -213,3 +213,81 @@ scanout capture-budget refusals after the C context cleanup: new02 lines7837–7
 preserved, explicitly outside the query claim, and carried to the parent scanout/
 recovery proof. The complete guest recordings are not claimed to have zero
 GPU/control errors. No positive default desktop or recovery claim is inferred.
+
+### 2026-10-14 — independent verifier
+
+VERDICT: verified
+
+- Native measurement and original data — HELD. Predicted first-output counters
+ 9/6/5 normalize to11 across mixed triangles/lines/points, with no duplicate
+ output contribution. Literal original-MMIO two-buffer/restart/asymmetric
+ capacity/empty predictions return11/5/4/0 and match every4096-byte captured
+ buffer, stride, padding and SG guard. The worker’s four-buffer primitive,
+ restart and instance matrix also holds. Independent repaired recording:
+ `target/evidence/critic-production-feedback-queries-repair-01`, eight rows/
+ 135,788 assertions; query source080270… matches the final frozen runtime.
+- Native result validation — HELD. Continuing fractional9.5, nondivisible10
+ and u32+1 delivery reject0x1201 without caching DONE or overwriting poisoned
+ WAIT words. Removing each fault rereads actual native9/6/5 and returns11.
+ Actual native getters execute before controlled fault delivery; no transport
+ replacement or CPU predicted count justifies a positive result.
+- Aggregate-error isolation — HELD after the recorded refutation. Individually
+ valid/divisible counters sum7,874,106,707. The repaired controller refuses
+ once, invalidates/collects the logical query, then accepts the independent
+ context2 ready0 and destroy/reuse/fresh-empty0. Native parts/pending0. The
+ two prior failures remain sealed; saturation or a same-query retry is not
+ required by GLES counter-overflow semantics.
+- Actual RISC-V Mesa custody — HELD. Independently authenticated C02 source
+ `1758c639…`, ELF `7895e874…`, its exact base64 command bytes, every receipt/
+ served-source pin, original9 QUERY/BEGIN/END/GET groups and16-byte result
+ transfers, plus12 complete1024-byte output readbacks. Frozen-aa451 component
+ `production-feedback-gles-probe02` admits allthree mandatory targets and
+ returns0/0/0/5/3/3/11/4/0 with exact data and no query/transfer rejection.
+ The capacity-overflow GLES draw correctly returns0x502 before original DRAW;
+ the valid LINES2 replacement yields4. Optional counter/timer requests return
+ 0x500. See `critic-production-feedback-custody-audit01/audit.json`, original
+ GPU SHA638d8b29… and the committed C source. Query context2 retires at GPU
+ line2979; later generic console scanout failures remain separate parent
+ evidence, never a claim of zero errors across the complete capture.
+- Coverage — HELD. Audited every changed runtime hunk against actual native
+ calls, CDP ranges, original records and captured bytes. Real scatter failure
+ invalidates the complete active query; virtual owners, reset and physical loss
+ collect parts. The formerly unexecuted no-active-query branch now performs
+ three actual mixed capture passes with untouched context1 query storage and
+ no context1 query allocation. The ninth promoted mode passes with the existing
+ eight modes:150,714 assertions. Guard/logging and constrained caller waivers
+ are explicit in `critic-production-feedback-final-audit01/coverage.json`.
+- Oracle attack — HELD. Served-only removal of primitive division keeps actual
+ native9/6/5 but publishes20; the literal original guest11 oracle fails at
+ decoded row SHA0939f2d6… in
+ `critic-production-feedback-normalization-oracle-01`. Tracked runtime remains
+ unchanged. This demonstrates the test detects missing normalization.
+- Final frozen proof and custody — HELD. Reopened and authenticated every
+ member of the repaired1,158-identity worker archive SHA4ecd06a3… and the
+ 47-identity test-only supplement SHAc35ee9fe…. Hot and final ordinary
+ full-history/no-hardlink/no-carry cold02 pass all13 gates at
+ `aa451b8170852b882632a6bc6ee1118bd0a2501a`; all50 hot/cold hardware rows have
+ zero leaked native owners/syncs, and default127/0 has no browser errors and
+ no proof export. The test-only no-query supplement does not change runtime
+ bytes or invalidate the final cold result. Existing69a holds carry forward.
+
+SUITE: retain the nine-mode original-MMIO hardware critic, its frozen browser
+ driver and independently compiled GLES fixture in the recurring verify target.
+ Four invalid/empty harness selector combinations refuse before device calls.
+ No remaining task-scoped correctness or coverage gap was found.
+
+Independent evidence seal:
+`evidence/virgl-production-feedback-queries/verifier/independent-original-feedback-queries-01.tar.gz`
+—11,004,535bytes;313 identities;SHA256
+`9570c50941d1c9d9b9bd36691cb944841b249fa858d7f6c7949a2acce9fe9533`.
+Every member was reopened/authenticated. It includes before/after failures,
+ literal predictions, real-native faults, sabotage, no-query proof, C source/
+ binaries/build receipts, primary Mesa source pins, original-event custody,
+ full hot/cold/member authentication and hunk coverage. Paired JSON binds the
+ exact files. Commands and source pins are preserved in each recording and
+ the independent authentication scripts.
+
+This verdict is only for logical original feedback-query counts and their
+ bounded ownership/error behavior. Default Omarchy startup/trusted keyboard,
+ post-query console scanout budget refusals, heartbeat failure, cursor recovery,
+ throughput and deployment remain unverified parent/recovery work.
