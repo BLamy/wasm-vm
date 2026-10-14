@@ -21,6 +21,7 @@ p.add_argument("--kmscube", type=Path, required=True)
 p.add_argument("--scene", type=Path, required=True)
 p.add_argument("--index-probe", type=Path, required=True)
 p.add_argument("--mesa", type=Path, required=True, help="cross-build directory with stage/ and build.json")
+p.add_argument("--quickshell-profile", type=Path, help="Quickshell-only GLES initializer and executable build receipt")
 p.add_argument("--reuse-chunks", type=Path)
 a = p.parse_args()
 a.output = a.output.resolve()
@@ -37,6 +38,12 @@ def digest(path):
             h.update(data)
     return h.hexdigest()
 base_sha = digest(a.base)
+quickshell = None
+if a.quickshell_profile:
+    quickshell = json.loads((a.quickshell_profile / "build.json").read_text())
+    for name, pin in quickshell["files"].items():
+        file = a.quickshell_profile / name
+        assert file.stat().st_size == pin["bytes"] and digest(file) == pin["sha256"], name
 with tempfile.TemporaryDirectory(prefix="preparation-", dir=a.output) as temporary:
     scratch = Path(temporary)
     overrides = "-GL_EXT_texture_border_clamp -GL_OES_texture_border_clamp -GL_EXT_texture_sRGB_decode"
@@ -56,6 +63,17 @@ with tempfile.TemporaryDirectory(prefix="preparation-", dir=a.output) as tempora
         "rm /usr/lib/libGLX_mesa.so.0.0.0",
         "mkdir /opt/virgl-proof",
     ]
+    if quickshell:
+        library = "libquickshell-browser-gles.so"
+        for name in (library, "quickshell", "quickshell-original", "build.json"):
+            shutil.copyfile(a.quickshell_profile / name, scratch / ("quickshell-" + name))
+        commands += ["mkdir /usr/lib/omarchy", "rm /usr/bin/quickshell",
+                     "write /work/quickshell-quickshell /usr/bin/quickshell",
+                     "set_inode_field /usr/bin/quickshell mode 0100755",
+                     "write /work/quickshell-" + library + " /usr/lib/omarchy/" + library,
+                     "set_inode_field /usr/lib/omarchy/" + library + " mode 0100755",
+                     "write /work/quickshell-quickshell-original /opt/virgl-proof/quickshell-original",
+                     "write /work/quickshell-build.json /opt/virgl-proof/quickshell-profile.json"]
     mesa = json.loads((a.mesa / "build.json").read_text())
     shutil.copyfile(a.mesa / "build.json", scratch / "mesa-profile.json")
     commands += ["write /work/mesa-profile.json /opt/virgl-proof/mesa-profile.json"]
@@ -91,6 +109,12 @@ with tempfile.TemporaryDirectory(prefix="preparation-", dir=a.output) as tempora
     for target in ("swrast_dri.so", "kms_swrast_dri.so"):
         actual = subprocess.run(check + ["stat /usr/lib/dri/" + target, "/disk/guest.ext4"], capture_output=True, text=True, check=True)
         assert "Inode:" not in actual.stdout, target
+    if quickshell:
+        for target, name in (("/usr/bin/quickshell", "quickshell"),
+                             ("/usr/lib/omarchy/libquickshell-browser-gles.so", "libquickshell-browser-gles.so"),
+                             ("/opt/virgl-proof/quickshell-original", "quickshell-original")):
+            actual = subprocess.check_output(check + ["cat " + target, "/disk/guest.ext4"], stderr=subprocess.DEVNULL)
+            assert hashlib.sha256(actual).hexdigest() == quickshell["files"][name]["sha256"], target
     for relative, pin in mesa["files"].items():
         if not relative.startswith("usr/lib/") or "/pkgconfig/" in relative:
             continue
@@ -120,5 +144,8 @@ manifest = {"version": 1, "image_len": image.stat().st_size, "chunk_size": 256 *
 (a.output / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
 assert digest(a.base) == base_sha, "source changed during preparation"
 receipt = {"baseSha256": base_sha, "imageSha256": digest(image), "manifestSha256": digest(a.output / "manifest.json"), "removedSoftwareDrivers": ["swrast_dri.so", "kms_swrast_dri.so"], "forcedDriver": "virgl", "mesa": mesa, "mesaBuildSha256": digest(a.mesa / "build.json"), "extensionOverride": overrides, "binaries": {name: digest(binary) for name, binary in (("eglinfo", a.eglinfo), ("kmscube", a.kmscube), ("textured-scene", a.scene), ("egl-index", a.index_probe))}}
+if quickshell:
+    receipt["quickshellProfile"] = quickshell
+    receipt["quickshellBuildSha256"] = digest(a.quickshell_profile / "build.json")
 (a.output / "preparation.json").write_text(json.dumps(receipt, indent=2) + "\n")
 print(json.dumps(receipt))
