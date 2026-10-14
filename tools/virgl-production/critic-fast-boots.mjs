@@ -178,7 +178,22 @@ server=createServer(async (request,response)=>{
 await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
 const origin='http://127.0.0.1:'+server.address().port;
 function observeOriginalWorker(){
-  globalThis.__fastBootCritic={events:[],serial:'',workerBoots:[],errors:[]};
+  globalThis.__fastBootCritic={events:[],serial:'',workerBoots:[],errors:[],wire:[],timerGaps:[],wireTotals:{}};
+  const note = (direction, message) => {
+    const data = globalThis.__fastBootCritic, type = message?.type || 'unknown';
+    const key = direction + ':' + type; data.wireTotals[key] = (data.wireTotals[key] || 0) + 1;
+    data.wire.push({time:performance.now(),direction,type,id:message?.id,method:message?.method,
+      infoType:message?.info?.type,frameType:message?.frame?.type});
+    if (data.wire.length > 4096) data.wire.splice(0,1024);
+  };
+  let previousTimer = performance.now();
+  setInterval(() => {
+    const current = performance.now(), gap = current - previousTimer; previousTimer = current;
+    if (gap > 1000) {
+      const data = globalThis.__fastBootCritic; data.timerGaps.push({time:current,gap,hidden:document.hidden});
+      if (data.timerGaps.length > 128) data.timerGaps.shift();
+    }
+  },250);
   const evidence=globalThis.__fastBootCritic;
   for(const type of ['wvm:guest-state','wvm:guest-progress','wvm:desktop-ready','wvm:guest-error'])
     globalThis.addEventListener(type,event=>evidence.events.push({type,detail:event.detail,time:performance.now()}));
@@ -187,21 +202,25 @@ function observeOriginalWorker(){
     if(!seen.has(this)){
       seen.add(this);const decoder=new TextDecoder();
       this.addEventListener('message',event=>{
+        note('receive',event.data);
         if(event.data?.type==='output')evidence.serial+=decoder.decode(new Uint8Array(event.data.buffer),{stream:true});
         if(['fatal','error'].includes(event.data?.type))evidence.errors.push(String(event.data.error));
         if(event.data?.type==='gpu-event'&&globalThis.__recordFastBootGpuEvent)
           void globalThis.__recordFastBootGpuEvent(event.data.info);
       });
     }
+    note('send',message);
     if(message?.type==='boot')evidence.workerBoots.push({time:performance.now(),options:message.opts});
     return original.call(this,message,...rest);
   };
 }
 async function snapshot(page){
+  await fs.writeFile(path.join(output,'passive-worker-timing.json'),JSON.stringify(await page.evaluate(()=>({wire:__fastBootCritic.wire,wireTotals:__fastBootCritic.wireTotals,timerGaps:__fastBootCritic.timerGaps,time:performance.now(),hidden:document.hidden})),null,2));
   return await page.evaluate(async()=>({
     restored:Boolean(window.__linux?.restoredFromBootSnapshot?.()),ready:Boolean(window.wvmDemo?.isGuestReady?.()),
     paused:await window.__linux?.isPaused?.(),events:__fastBootCritic.events,serial:__fastBootCritic.serial,
     workers:__fastBootCritic.workerBoots,workerErrors:__fastBootCritic.errors,
+    wire:__fastBootCritic.wire,wireTotals:__fastBootCritic.wireTotals,timerGaps:__fastBootCritic.timerGaps,
     manifest:document.documentElement.dataset.linuxManifest,
     bootState:window.__linuxBootStateForTest?.()||null,
     display:window.__presentation?.state?.(),cursor:window.__cursor?.snapshot?.()||null,

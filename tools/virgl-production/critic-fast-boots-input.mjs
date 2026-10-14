@@ -32,6 +32,33 @@ export async function verifyPublicDesktopInput(page, command, output, options = 
   };
   const uid = await read('id -u');
   assert.equal(uid, '1000', 'the public serial session belongs to Omarchy');
+  const canvas = page.locator('#ide-display-canvas');
+  let box = await canvas.boundingBox();
+  assert.ok(box?.width > 0 && box?.height > 0);
+  await canvas.focus();
+  if (await page.evaluate(() => document.documentElement.dataset.keyboardCapture) !== 'on') {
+    await page.locator('#ide-keyboard-toggle').click(); await canvas.focus();
+  }
+  assert.equal(await page.evaluate(() => document.documentElement.dataset.keyboardCapture), 'on');
+  await page.evaluate(() => {
+    window.__criticTrustedInputEvents = [];
+    if (window.__criticTrustedInputListener) return;
+    window.__criticTrustedInputListener = event => window.__criticTrustedInputEvents.push({
+      type: event.type, key: event.key, code: event.code, trusted: event.isTrusted,
+      repeat: event.repeat, shift: event.shiftKey, ctrl: event.ctrlKey,
+      alt: event.altKey, meta: event.metaKey, time: performance.now(),
+      target: event.target?.id, focus: document.activeElement?.id,
+    });
+    for (const type of ['keydown', 'keyup']) document.addEventListener(type, window.__criticTrustedInputListener, true);
+  });
+  const wakeScreensaver = async stage => {
+    const active = JSON.parse(await read('XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j activewindow'));
+    if (active.class === 'org.omarchy.screensaver') {
+      await canvas.focus(); await page.keyboard.press('Escape');
+      await record(stage, {activeWindowBeforeWake: active});
+    }
+  };
+  await wakeScreensaver('trusted-wake-before-bar');
   let layers, mapped;
   const visit = value => {
     if (!value || typeof value !== 'object') return;
@@ -46,6 +73,7 @@ export async function verifyPublicDesktopInput(page, command, output, options = 
     layers = JSON.parse(await read('XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers'));
     mapped = []; visit(layers);
     if (mapped.some(layer => layer.namespace === 'omarchy-bar' && layer.alpha > 0)) break;
+    await wakeScreensaver('trusted-wake-waiting-bar');
     await record('waiting-package-bar', {uid, layers});
     await new Promise(resolve => setTimeout(resolve, 1500));
   } while (Date.now() < barDeadline);
@@ -66,8 +94,7 @@ export async function verifyPublicDesktopInput(page, command, output, options = 
   const monitor = monitors.find(value => value.id === foot.monitor) || monitors[0];
   assert.ok(monitor?.width > 0 && monitor?.height > 0);
   assert.equal(monitor.scale, 1, 'default package display scale');
-  const canvas = page.locator('#ide-display-canvas');
-  const box = await canvas.boundingBox();
+  box = await canvas.boundingBox();
   assert.ok(box?.width > 0 && box?.height > 0);
   const target = {x: Math.round(foot.at[0] + foot.size[0] / 2),
     y: Math.round(foot.at[1] + foot.size[1] / 2)};
@@ -82,18 +109,6 @@ export async function verifyPublicDesktopInput(page, command, output, options = 
     await canvas.focus();
   }
   assert.equal(await page.evaluate(() => document.documentElement.dataset.keyboardCapture), 'on');
-  await page.evaluate(() => {
-    window.__criticTrustedInputEvents = [];
-    if (window.__criticTrustedInputListener) return;
-    window.__criticTrustedInputListener = event => window.__criticTrustedInputEvents.push({
-      type: event.type, key: event.key, code: event.code, trusted: event.isTrusted,
-      repeat: event.repeat, shift: event.shiftKey, ctrl: event.ctrlKey,
-      alt: event.altKey, meta: event.metaKey, time: performance.now(),
-      target: event.target?.id, focus: document.activeElement?.id,
-    });
-    for (const type of ['keydown', 'keyup'])
-      document.addEventListener(type, window.__criticTrustedInputListener, true);
-  });
   await record('focused');
   // The default package may start its fullscreen screensaver while the cold
   // boot is being observed. DOM focus alone cannot establish guest focus.
@@ -135,9 +150,22 @@ export async function verifyPublicDesktopInput(page, command, output, options = 
   // transitions. This original evdev path deliberately preserves physical codes,
   // so the acceptance command uses only unshifted keys, like actual typing.
   const text = options.text || 'touch /tmp/gpukeyboard42touch';
-  await page.keyboard.type(text, {delay: options.delay ?? 15});
+  const markerAbsent = await command(page, options.markerAbsent || 'test ! -e /tmp/gpukeyboard42touch', 300000);
+  assert.equal(markerAbsent.exit, 0, 'trusted input marker must be absent before typing');
+  await wakeScreensaver('trusted-wake-after-bar');
+  await page.mouse.click(box.x + target.x * box.width / monitor.width,
+    box.y + target.y * box.height / monitor.height);
+  await canvas.focus();
+  const immediateFocus = JSON.parse(await read('XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j activewindow'));
+  assert.equal(immediateFocus.pid, foot.pid, 'actual Foot retains guest focus immediately before typing');
+  assert.notEqual(immediateFocus.visible, false); assert.notEqual(immediateFocus.acceptsInput, false);
+  await page.mouse.click(box.x + target.x * box.width / monitor.width,
+    box.y + target.y * box.height / monitor.height);
+  await canvas.focus();
+  assert.equal(await page.evaluate(() => document.activeElement?.id), 'ide-display-canvas');
+  await page.keyboard.type(text, {delay: options.delay ?? 50});
   await page.keyboard.press('Enter');
-  await record('typed', {typedText: text});
+  await record('typed', {typedText: text, immediateFocus, markerAbsent});
   await canvas.screenshot({path: path.join(output, name + '-typed.png')});
   let marker;
   for (let i = 0; i < 20; ++i) {
@@ -153,6 +181,8 @@ export async function verifyPublicDesktopInput(page, command, output, options = 
   assert.ok(coordinates, cursor);
   assert.ok(Math.abs(Number(coordinates[1]) - target.x) <= 4, 'actual guest cursor X');
   assert.ok(Math.abs(Number(coordinates[2]) - target.y) <= 4, 'actual guest cursor Y');
+  const held = await page.evaluate(() => window.__keyboardCapture.heldSnapshot());
+  assert.deepEqual(held, [], 'no held keys after trusted physical command');
   const after = await page.evaluate(() => window.__linuxCtl.inputDeviceStats());
   await record('passed', {status: 'passed', cursor, marker, inputAfter: after});
   await canvas.screenshot({path: path.join(output, name + '.png')});
