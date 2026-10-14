@@ -88,7 +88,7 @@ const COMMAND_NAMES = Object.freeze({
   7: "CLEAR", 8: "DRAW_VBO", 9: "RESOURCE_INLINE_WRITE", 10: "SET_SAMPLER_VIEWS", 11: "SET_INDEX_BUFFER",
   12: "SET_CONSTANT_BUFFER", 13: "SET_STENCIL_REF", 14: "SET_BLEND_COLOR",
   15: "SET_SCISSOR_STATE", 16: "BLIT",
-  18: "BIND_SAMPLER_STATES", 22: "SET_POLYGON_STIPPLE", 24: "SET_SAMPLE_MASK",
+  18: "BIND_SAMPLER_STATES", 19: "BEGIN_QUERY", 20: "END_QUERY", 21: "GET_QUERY_RESULT", 22: "SET_POLYGON_STIPPLE", 24: "SET_SAMPLE_MASK",
   25: "SET_STREAMOUT_TARGETS", 28: "SET_SUB_CTX", 29: "CREATE_SUB_CTX",
   30: "DESTROY_SUB_CTX", 31: "BIND_SHADER", 32: "SET_TESS_STATE",
   33: "SET_MIN_SAMPLES", 34: "SET_SHADER_BUFFERS", 35: "SET_SHADER_IMAGES",
@@ -367,6 +367,12 @@ function decodeObject(p, objectType) {
       p.require(([2, 16, 67, 233].includes(format) || (p.colors && byteColorFormat(format)?.render || p.floatingImages && floatColorFormat(format)?.render || p.packedImages && packedFloatColorFormat(format)?.render || p.integerImages && integerColorFormat(format)?.render || p.normalizedImages && packedNormalizedColorFormat(format)?.render || p.unsignedImages && packedUnsignedColorFormat(format)?.render || p.floatingDepth && floatingDepthFormat(format) || p.packedDepth && packedDepthFormat(format))) && (p.images ? level <= 14 && (format !== 16 || level === 0 || p.unormDepth) : level === 0) && (layers === 0 || singleColorLayer || singleDepthLayer), "unsupported-feature", p.floatingDepth ? "Only qualified 2D color or depth surfaces and levels are supported." : p.images ? "Only qualified 2D image levels or level-zero Z16 surfaces are supported." : "Only required level zero, layer zero color or Z16 surfaces are supported.");
       return { handle, resourceHandle, format, level, firstLayer, lastLayer };
     }
+    case 9: {
+      p.require(p.production, 'unsupported-object', 'Original queries require the production host profile.'); p.exact(4);
+      const packed = p.u(2), queryType = packed & 0xffff, queryIndex = packed >>> 16;
+      p.require([1, 11].includes(queryType) && queryIndex === 0, 'unsupported-query', 'Only original boolean query targets at index zero are supported.');
+      return {handle, queryType, queryIndex, offset: p.u(3), resourceHandle: p.handle(4)};
+    }
     case 10: {
       p.require(p.streamOutput, 'unsupported-object', 'Original capture targets require host selection.');p.exact(4);
       const resourceHandle = p.handle(2), bufferOffset = p.u(3), bufferSize = p.u(4);
@@ -474,6 +480,12 @@ function decodeFields(p, objectType) {
     }
     case 9: return decodeTransfer(p, false, true);
     case 10: case 18: return decodeHandles(p);
+    case 19: case 20:
+      p.require(p.production, 'unsupported-command', 'Original queries require production.'); p.exact(1);
+      return {handle: p.handle(1)};
+    case 21:
+      p.require(p.production, 'unsupported-command', 'Original queries require production.'); p.exact(2);
+      return {handle: p.handle(1), wait: p.boolean(2)};
     case 11: {
       p.require(p.length === 1 || p.length === 3, "payload-length", "Index buffer payload must have one or three words.");
       const resourceHandle = p.u(1);
@@ -768,7 +780,7 @@ function decode(bytes, provenance, standard, uniform = false, textures = false, 
       p.require(commands.length < LIMITS.commands, "limit-exceeded", "Submission exceeds packet count limit.");
       p.require(packetByteLength <= byteLength - offset, "truncated-payload", "Packet payload exceeds submission.");
       p.require(Object.hasOwn(COMMAND_NAMES, opcode) || uniform && opcode === 27, "unsupported-command", "Unknown or unsupported command.");
-      if (opcode >= 1 && opcode <= 3) p.require(objectType >= 1 && objectType <= 8 || p.streamOutput && objectType === 10, "unsupported-object", "Unknown or unsupported object type.");
+      if (opcode >= 1 && opcode <= 3) p.require(objectType >= 1 && objectType <= 8 || p.streamOutput && objectType === 10 || p.production && objectType === 9, "unsupported-object", "Unknown or unsupported object type.");
       else p.require(objectType === 0, "invalid-object-type", "Non-object commands require a zero object-type byte.");
       const fields = decodeFields(p, objectType);
       commands.push({ opcode, name: opcode === 27 ? "SET_UNIFORM_BUFFER" : COMMAND_NAMES[opcode], objectType, objectName: OBJECT_NAMES[objectType],

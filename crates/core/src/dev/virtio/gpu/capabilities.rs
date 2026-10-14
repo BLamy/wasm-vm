@@ -112,13 +112,15 @@ impl QualifiedCapabilities {
         self.vertex.write(&mut out, 196);
         // Only verified primitive restart, separate blend equations, instance ID,
         // divisors, seamless cube sampling, stream pause/resume, fragment position
-        // conventions and uniform buffers. Query/indirect/multisample-texture/geometry/compute
+        // conventions, uniform buffers and GLES boolean occlusion queries.
+        // Numeric query types, indirect/multisample-texture/geometry/compute
         // and independent blend capabilities stay absent.
         let features = (1 << 6)
             | (1 << 7)
             | (1 << 8)
             | (1 << 9)
             | (1 << 10)
+            | (1 << 11)
             | (1 << 13)
             | (1 << 15)
             | (1 << 18);

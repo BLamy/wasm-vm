@@ -20,6 +20,7 @@ int main(void) {
     caps.v1.bset.instanceid = 1;
     caps.v1.bset.vertex_element_instance_divisor = 1;
     caps.v1.bset.seamless_cube_map = 1;
+    caps.v1.bset.occlusion_query = 1; /* Qualified GLES boolean targets; numeric types refuse. */
     caps.v1.bset.streamout_pause_resume = 1;
     caps.v1.bset.fragment_coord_conventions = 1;
     caps.v1.bset.ubo = 1;

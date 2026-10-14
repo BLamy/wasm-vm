@@ -50,3 +50,27 @@ The independent actual-GLES3 negative and pinned original ABI are preserved in
 E6-T11d69 and the committed original-negative seal. Public renderer remains
 virgl; no llvmpipe, invented packets, fabricated availability or CPU count may
 justify a positive result. Parent default Omarchy remains a separate acceptance.
+
+## Verification log
+
+### 2026-10-14 — worker — native query boundary and self-validation
+
+Pinned VirGL1.3.0 source create_query11659 uses original custom host-memory
+resources and ignores offset; begin/end/get11791–11873 queue real native query
+results and ignore the wait hint. Query state16bytes is state@0, result_size@4,
+u64 result@8; only physical availability permits DONE1 with size4. Original
+custom bind is131072 (VIRGL_BIND_CUSTOM), distinct from modern PIPE_BIND_CUSTOM.
+The WebGL2 specification getQueryParameter table returns GLuint for QUERY_RESULT
+and GLboolean for AVAILABLE; the first qualification self-run incorrectly expected
+a JS boolean result, and is retained as a harness negative. Corrected calls accept
+actual counters0/1. [WebGL2 query specification](https://registry.khronos.org/webgl/specs/latest/2.0/#QUERY_RESULT)
+provides the asynchronous event-loop contract.
+
+Self-validation passes six hardware rows across targets1/11 and schedules0/1/2:
+visible quad, strict depth NEVER, native conservative outcome, empty true-ready0
+versus actual-but-withheld availability, original offsetu32MAX ignored, sixteen
+state bytes/high-half0/poisoned padding, virtual context/subcontext interleaving,
+invalid states/types/private admission, resource span/role/detach/reuse and reset.
+An additional actual WEBGL_lose_context pending-query run passes uncertain GPU
+completion/no fabricated guest result and zero owners. These are worker checks;
+the frozen full submission and independent evidence review remain outstanding.

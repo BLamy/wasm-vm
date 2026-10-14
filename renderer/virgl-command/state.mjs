@@ -1,4 +1,5 @@
 import {executeFramebufferBlit} from "./multisample.mjs";
+import {createBooleanQueries} from "./queries.mjs";
 /** Typed VirGL state and bounded triangle draws. See state-README.md and draw-README.md. */
 import {byteColorFormat} from "./color-images.mjs";
 import {floatColorFormat} from "./float-images.mjs";
@@ -426,6 +427,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       require(!gl.isContextLost(), "backend-error", "WebGL context is lost.");
       const error = gl.getError(); require(error === gl.NO_ERROR, "backend-error", `WebGL error ${error}.`);
     };
+    const booleanQueries = production ? createBooleanQueries(gl, resources, require, unwrap, check) : null;
     check();
     const provoking = assemblyLists ? gl.getExtension("WEBGL_provoking_vertex") : null;
     require(!assemblyLists || provoking && typeof provoking.provokingVertexWEBGL === "function" &&
@@ -562,6 +564,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
     const collectObject = (sub, object) => {
       if (object.references !== 0) return;
       sub.live.delete(object); objects.delete(object);
+      if (object.type === 9) booleanQueries.destroy(sub, object);
       if (object.imageRange) unwrap(imageAccess.release(object.imageRange));
       if (object.lease) release(object.lease);
       if (object.shader) {
@@ -613,6 +616,10 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       require(objects.size < limits.objects, "limit-exceeded", "Live object limit exceeded.");
       const object = { handle: fields.handle, type, name: command.objectName, generation: generation(), fields, public: true, references: 1 };
       try {
+        if (type === 9 && production) {
+          Object.assign(object, retain(ctx, fields.resourceHandle, 'query', 'query-buffer'));
+          unwrap(resources.validateQueryStorage(object.lease)); booleanQueries.create(object);
+        }
         if (type === 10 && streamOutput) {
           Object.assign(object, retain(ctx, fields.resourceHandle, "stream-output", "standard-buffer"));
           require(fields.bufferOffset <= object.metadata.byteLength && fields.bufferSize <= object.metadata.byteLength - fields.bufferOffset, "out-of-bounds", "Original stream-output target exceeds retained storage.");
@@ -692,6 +699,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         if (object.shader) shaderBytes += object.shaderBytes;
         sub.names.set(object.handle, object); sub.live.add(object); objects.add(object);
       } catch (error) {
+        if (type === 9 && object.queryParts) booleanQueries.destroy(sub, object);
         if (object.imageRange) unwrap(imageAccess.release(object.imageRange));
         if (object.lease) release(object.lease);
         if (object.shader) gl.deleteShader(object.shader);
@@ -2006,7 +2014,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
             else job.uniformHolds.set(range.generation, range.token);
           }
         }
-        if (splitStencil) {
+        const raster = () => { if (splitStencil) {
           for (let instance = 0; nativeCount > 0 && instance < instances; instance++) {
             if (instanceBase) {
               applyInstanceBase(plan.program, instance); applyInstanceAttributes(plan, instance); check();
@@ -2025,7 +2033,8 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           if (plan.stencilLowering === "front") { applyStencil(sub, 0); check(); }
           if (instances > 1) gl.drawArraysInstanced(mode, fields.start, fields.count, instances);
           else gl.drawArrays(mode, fields.start, fields.count);
-        }
+        } };
+        if (production) booleanQueries.measure(sub, raster); else raster();
       } finally {
         if (instanceBase && splitStencil) {
           applyInstanceBase(plan.program, 0); applyInstanceAttributes(plan, 0);
@@ -2101,6 +2110,9 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           break;
         }
         case 3: destroyObject(sub, lookup(sub, fields.handle, command.objectType)); break;
+        case 19: booleanQueries.begin(sub, lookup(sub, fields.handle, 9)); break;
+        case 20: booleanQueries.end(sub, lookup(sub, fields.handle, 9)); break;
+        case 21: booleanQueries.get(lookup(sub, fields.handle, 9)); break;
         case 4: {
           if (fields.viewports.length === 0) break;
           const viewport = fields.viewports[0], { scale, translate } = viewport;
@@ -2380,6 +2392,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       job.imageHolds.clear(); job.imageSources.clear();
     };
     const finishJob = (job, gpuComplete) => {
+      if (production && gpuComplete && !job.error) booleanQueries.pollPending();
       releaseJobAccess(job);
       releaseNormalizedIndices(job); releaseUniformHolds(job); releaseImageHolds(job); releaseCaptures(job);
       if (job.sync) { gl.deleteSync(job.sync); job.sync = null; }
@@ -2416,6 +2429,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       const job = getJob(token);
       let polling = false;
       try {
+        if (production && !job.error && !gl.isContextLost()) booleanQueries.pollPending();
         if (job.phase === "cancelling" || job.phase === "retiring") {
           if (job.pending?.readStarted) {
             polling = true;
@@ -2601,6 +2615,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
               ...(images ? { imageHolds: activeJob?.imageHolds.size ?? 0, imageSources: activeJob?.imageSources.size ?? 0 } : {}),
             ...(uniform ? { uniformPending: activeJob?.pendingUniformRanges.size ?? 0, uniformHolds: activeJob?.uniformHolds.size ?? 0 } : {}) } : {}) } } : {}),
           budgets: { contexts: contexts.size, subContexts: subCount, objects: objects.size, programs: programs.size,
+            ...(production ? {queries: booleanQueries.inspect()} : {}),
             shaders: [...objects].filter((o) => o.type === 4).length, samplers: [...objects].filter((o) => o.type === 7).length,
             leases: leaseCount, shaderBytes, uniformBytes,
             cacheBytes: translationCache.inspect().bytes + programCache.inspect().bytes + stateCache.inspect().bytes, debugBytes },

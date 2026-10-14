@@ -113,6 +113,9 @@ impl Resource3dMetadata {
             return Err(Control3dError::InvalidParameter);
         }
         let (bytes, staging) = match (self.target, self.format, self.bind) {
+            (0, 64, 131_072) if production && self.height == 1 && self.last_level == 0 => {
+                (u64::from(self.width), false)
+            }
             (0, 64, bind)
                 if desktop_resources
                     && self.height == 1
@@ -238,6 +241,77 @@ impl Resource3dMetadata {
                 self.array_size
             },
         ))
+    }
+}
+
+#[cfg(test)]
+mod production_query_resource_tests {
+    use super::*;
+
+    #[test]
+    fn original_custom_query_buffers_are_production_only_and_byte_accounted() {
+        let buffer = Resource3dMetadata {
+            resource_id: 1,
+            target: 0,
+            format: 64,
+            bind: 131_072,
+            width: 32,
+            height: 1,
+            depth: 1,
+            array_size: 1,
+            last_level: 0,
+            nr_samples: 0,
+            flags: 0,
+        };
+        let size = |metadata: Resource3dMetadata, production| {
+            metadata.sizes_limited(true, true, true, true, 33_554_432, production)
+        };
+        assert_eq!(size(buffer, true), Ok((32, 32)));
+        assert!(size(buffer, false).is_err());
+        for invalid in [
+            Resource3dMetadata {
+                height: 2,
+                ..buffer
+            },
+            Resource3dMetadata { depth: 2, ..buffer },
+            Resource3dMetadata {
+                array_size: 2,
+                ..buffer
+            },
+            Resource3dMetadata {
+                last_level: 1,
+                ..buffer
+            },
+            Resource3dMetadata {
+                nr_samples: 2,
+                ..buffer
+            },
+            Resource3dMetadata { flags: 1, ..buffer },
+            Resource3dMetadata {
+                bind: 131_088,
+                ..buffer
+            },
+            Resource3dMetadata { width: 0, ..buffer },
+            Resource3dMetadata {
+                width: 33_554_433,
+                ..buffer
+            },
+        ] {
+            assert!(
+                size(invalid, true).is_err(),
+                "accepted invalid custom query buffer {invalid:?}"
+            );
+        }
+        assert_eq!(
+            size(
+                Resource3dMetadata {
+                    width: 33_554_432,
+                    ..buffer
+                },
+                true
+            ),
+            Ok((33_554_432, 33_554_432))
+        );
     }
 }
 

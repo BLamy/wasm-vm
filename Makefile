@@ -11,7 +11,10 @@ LOCAL_WORKSPACE = --workspace $(if $(filter Darwin,$(shell uname -s)),--exclude 
 
 ci: fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke
 
-.PHONY: verify-E6-T11d verify-E6-T11e verify-E6-T11d67 verify-E6-T11d68
+.PHONY: verify-E6-T11d verify-E6-T11e verify-E6-T11d67 verify-E6-T11d68 verify-E6-T11d69a
+verify-E6-T11d69a:
+	python3 tools/virgl-production/verify-boolean-queries.py --output "$${VIRGL_BOOLEAN_QUERIES_EVIDENCE_DIR:-target/evidence/production-boolean-queries-final}"
+
 verify-E6-T11d68:
 	python3 tools/virgl-production/verify-indexed-start.py --output "$${VIRGL_INDEXED_START_EVIDENCE_DIR:-target/evidence/production-indexed-start-final}"
 

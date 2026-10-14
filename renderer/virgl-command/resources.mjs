@@ -275,7 +275,7 @@ function normalizeMetadata(value, limits, uniform = false, bufferRoles = false, 
     "unsupported-resource", mipmaps ? "Only qualified 2D levels, one layer, one sample and no flags are supported." : "Only one-level, single-layer, single-sample resources without flags are supported.");
   let kind, byteLength, levels, color, gpuByteLength;
   if (meta.target === 0 && meta.format === 64 && meta.height === 1) {
-    kind = bufferRoles && (meta.bind & ~(streamOutput ? 2160 : 112)) === 0 ? "standard-buffer" : ({ 16: "vertex-buffer", 32: "index-buffer", 524288: "staging", ...(uniform ? { 64: "uniform-buffer", 80: "uniform-buffer" } : {}) })[meta.bind];
+    kind = production && meta.bind === 131072 ? "query-buffer" : bufferRoles && (meta.bind & ~(streamOutput ? 2160 : 112)) === 0 ? "standard-buffer" : ({ 16: "vertex-buffer", 32: "index-buffer", 524288: "staging", ...(uniform ? { 64: "uniform-buffer", 80: "uniform-buffer" } : {}) })[meta.bind];
     require(kind !== undefined, "unsupported-resource", "Unsupported buffer binding class.");
     byteLength = meta.width;
   } else if (meta.target === 2 && (floatingDepth && floatingDepthFormat(meta.format) || unormDepth && unormDepthFormat(meta.format) || packedDepth && packedDepthFormat(meta.format))) {
@@ -950,16 +950,16 @@ function createStore(options, uniform, bufferRoles = false, mipmaps = false, ima
       retainStorage: operation((contextId, id, role = "view") => {
         const ctx = context(contextId), res = resource(id); membership(ctx, res);
         require(res.storage !== null, "unsupported-resource", "Staging resources have no GPU storage.");
-        require(typeof role === "string" && ["view", "surface", "depth-surface", "vertex", "index", "readback", ...(uniform ? ["uniform"] : []), ...(streamOutput ? ["stream-output"] : [])].includes(role), "invalid-input", "Unknown storage lease role.");
+        require(typeof role === "string" && ["view", "surface", "depth-surface", "vertex", "index", "readback", ...(resourceLimits === PRODUCTION_RESOURCE_LIMITS ? ["query"] : []), ...(uniform ? ["uniform"] : []), ...(streamOutput ? ["stream-output"] : [])].includes(role), "invalid-input", "Unknown storage lease role.");
         require(role !== "view" || res.meta.nrSamples === 0, "unsupported-resource", "Multisample storage must be resolved before sampling.");
-        require(role === "readback" || (bufferRoles && res.meta.kind === "standard-buffer" && ["vertex", "index", "uniform", ...(streamOutput ? ["stream-output"] : [])].includes(role)) || (role === "view" && (["texture", "mip-texture"].includes(res.meta.kind) || dimensionalViews && res.meta.kind === "dimensional-texture" || dimensionalDepthViews && res.meta.kind === "dimensional-depth-texture" || (res.meta.floatingDepth || res.meta.unormDepth || res.meta.packedDepth) && ["depth-texture", "mip-depth-texture"].includes(res.meta.kind)) && (res.meta.bind & 8) !== 0) ||
+        require(role === "query" && res.meta.kind === "query-buffer" || role === "readback" || (bufferRoles && res.meta.kind === "standard-buffer" && ["vertex", "index", "uniform", ...(streamOutput ? ["stream-output"] : [])].includes(role)) || (role === "view" && (["texture", "mip-texture"].includes(res.meta.kind) || dimensionalViews && res.meta.kind === "dimensional-texture" || dimensionalDepthViews && res.meta.kind === "dimensional-depth-texture" || (res.meta.floatingDepth || res.meta.unormDepth || res.meta.packedDepth) && ["depth-texture", "mip-depth-texture"].includes(res.meta.kind)) && (res.meta.bind & 8) !== 0) ||
           (role === "surface" && (["texture", "mip-texture"].includes(res.meta.kind) || dimensionalColorSurfaces && res.meta.kind === "dimensional-texture" && (res.meta.format === 67 || resourceLimits === PRODUCTION_RESOURCE_LIMITS)) && (res.meta.bind & 2) !== 0) ||
           (role === "depth-surface" && (res.meta.floatingDepth || res.meta.unormDepth || res.meta.packedDepth ? (["depth-texture", "mip-depth-texture"].includes(res.meta.kind) || dimensionalDepthSurfaces && res.meta.kind === "dimensional-depth-texture") && (res.meta.bind & 1) !== 0 : res.meta.kind === "depth-texture" && res.meta.bind === 1)) ||
           (role === "vertex" && (res.meta.kind === "vertex-buffer" || uniform && res.meta.kind === "uniform-buffer")) ||
           (role === "uniform" && uniform && ["vertex-buffer", "uniform-buffer"].includes(res.meta.kind)) || (role === "index" && res.meta.kind === "index-buffer"),
         "unsupported-resource", "Storage lease role contradicts the resource binding class.");
         require(leases.size < limits.leases, "limit-exceeded", "Storage lease limit exceeded.");
-        const token = Object.freeze({}); leases.set(token, { resource: res, role, ...(role === "uniform" || images && ["view", "surface", "depth-surface"].includes(role) ? { context: ctx } : {}) }); res.references++;
+        const token = Object.freeze({}); leases.set(token, { resource: res, role, ...(role === "query" || role === "uniform" || images && ["view", "surface", "depth-surface"].includes(role) ? { context: ctx } : {}) }); res.references++;
         return success({ lease: token });
       }),
       releaseStorage: operation((token) => {
@@ -978,6 +978,32 @@ function createStore(options, uniform, bufferRoles = false, mipmaps = false, ima
         reserveScratch(scratchCharge(layout));
         try { return success({ bytes: readGpu(res, layout) }); } finally { scratchBytes -= scratchCharge(layout); }
       }),
+      ...(resourceLimits === PRODUCTION_RESOURCE_LIMITS ? {
+        validateQueryStorage: operation(token => {
+          const entry = leases.get(token), res = entry?.resource, ctx = entry?.context;
+          require(entry?.role === 'query' && res?.public && ctx?.active && contexts.get(ctx.id) === ctx && ctx.memberships.get(res.meta.id)?.resource === res,
+            'stale-storage', 'Original query resource or context membership changed.');
+          require(res.meta.byteLength >= 16 && (!res.backing || res.backing.byteLength >= 16), 'out-of-bounds', 'Original query result requires sixteen bytes.');
+          return success();
+        }),
+        publishQueryStorage: operation((token, state, value) => {
+          const entry = leases.get(token), res = entry?.resource, ctx = entry?.context;
+          require(entry?.role === 'query' && res?.public && ctx?.active && contexts.get(ctx.id) === ctx && ctx.memberships.get(res.meta.id)?.resource === res,
+            'stale-storage', 'Original query result owner changed.');
+          require(res.meta.byteLength >= 16 && (!res.backing || res.backing.byteLength >= 16), 'out-of-bounds', 'Original query result requires sixteen bytes.');
+          require(state === 2 && value === undefined || state === 1 && (value === 0 || value === 1), 'invalid-input', 'Invalid original boolean query state.');
+          // Pinned native offset is UNUSED: the host state always starts at0.
+          // WAIT_HOST writes only state, preserving prior result words.
+          const bytes = new Uint8Array(state === 1 ? 16 : 4), view = new DataView(bytes.buffer);
+          view.setUint32(0, state, true);
+          if (state === 1) { view.setUint32(4, 4, true); view.setBigUint64(8, BigInt(value), true); }
+          const fields = normalizedFields({resourceHandle: res.meta.id, level: 0, usage: 0, stride: 0, layerStride: 0,
+            box: {x: 0, y: 0, z: 0, width: bytes.length, height: 1, depth: 1}, dataOffset: 0, direction: 1});
+          uploadGpu(res, layoutFor(res.meta, fields, res.meta.byteLength, limits), bytes);
+          if (res.backing) copySegments(res.backing.segments, 0, bytes, true);
+          return success();
+        }),
+      } : {}),
       prepareTransfer: operation((contextId, command) => prepareTransfer(contextId, command)),
       executeTransfer: operation((token) => {
         const entry = consumeTicket(token);
