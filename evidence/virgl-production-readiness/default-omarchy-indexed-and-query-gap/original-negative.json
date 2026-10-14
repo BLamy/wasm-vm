@@ -1,0 +1,481 @@
+{
+  "scope": "Actual default UID1000 SDDM/uwsm/Hyprland/Foot/Quickshell negative:8 original indexed-start refusals, independent mandatory GLES query failures, and later explicit unbacked transfer refusals; includes immutable served original renderer/default Wasm, original streams, client/image/build/publication identities. No positive production or final task verdict.",
+  "checkpointHead": "f5f192c5d37b2eeccedcac21e2de857654ffe35f",
+  "archive": {
+    "path": "evidence/virgl-production-readiness/default-omarchy-indexed-and-query-gap/original-negative.tar.gz",
+    "bytes": 7348844,
+    "sha256": "02ff956cc3d933cf7dda9c0db44c4cf8d04878d5bae4bd84b78f5d4f8dbdaaaf"
+  },
+  "files": [
+    {
+      "path": "target/evidence/critic-gles-core-queries-01/build.json",
+      "bytes": 2127,
+      "sha256": "a777b7f396bc046695f173fda45e3a9e41b25d90486efd733db08f295d69adf5"
+    },
+    {
+      "path": "target/evidence/critic-gles-core-queries-01/egl-queries",
+      "bytes": 13472,
+      "sha256": "de1b19ab00172978dfb963720cb7c4000352dc18ac1746282b6722b2110e7936"
+    },
+    {
+      "path": "target/evidence/production-image-publication-12/receipt.json",
+      "bytes": 1481,
+      "sha256": "05c49089edcdb367b7df9f21f22f9574ab70b9ce79a3058f28c2aa354a982c6c"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-08-source/dist/artifacts-omarchy-virgl.json",
+      "bytes": 589,
+      "sha256": "28a5367cb9a207d72a9d679e0a61c4f981638738478690d4104e737d45fbc097"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-08-source/dist/linux-worker-host.js",
+      "bytes": 3251,
+      "sha256": "e9ae076ba6bd045811638391f49a6c9e4573b2b4e9c9f90a1c33581590572ee4"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-08-source/dist/linux-worker-protocol.js",
+      "bytes": 31368,
+      "sha256": "92b708ba29ea7375f4d18e5f0d19bd6492fe8061f3e32b0d7a3c7564bb620550"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-08-source/dist/linux-worker.js",
+      "bytes": 1188,
+      "sha256": "7783b4aecb74b83882a2ca3495ed46932ed7930543d0cab72f4035ccfc13e4b9"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-08-source/dist/loader.js",
+      "bytes": 82292,
+      "sha256": "7bfedc4bcae7057f1fafb596d1325a82a232423d9abf0144c9ed8d46466e0a32"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-08-source/dist/main.js",
+      "bytes": 153786,
+      "sha256": "55e5fed8f221bf42123d7dc579ea26a7e125e8ac89397589145049448c361024"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-08-source/dist/pkg/wasm_vm_wasm.js",
+      "bytes": 127501,
+      "sha256": "e7180ae76f643ffd2de2063d4ecb4a7348d11523313a9684990fbf475a0752b6"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-08-source/dist/pkg/wasm_vm_wasm_bg.wasm",
+      "bytes": 1743453,
+      "sha256": "c9f24482f55b6111a24f932aae95d81203beecfbb8d14458ed9d1787f1e1a3a8"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-08-source/dist/renderer/virgl-command/cache.mjs",
+      "bytes": 2989,
+      "sha256": "9e50cc258528e581f79cee0e4e0038994c7968f80046b9db21e7f5e0e4a92cfa"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-08-source/dist/renderer/virgl-command/color-images.mjs",
+      "bytes": 2770,
+      "sha256": "8c1b43f830e13f73d1397398e97bf263343f88c1782c683a890cb0f1fbc5e0e1"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-08-source/dist/renderer/virgl-command/constant-domain.mjs",
+      "bytes": 127535,
+      "sha256": "dd64536abf46bc69ff7866e9822d7acf1a3e7f5216e70919d4a03e633b7c7aca"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-08-source/dist/renderer/virgl-command/control-bridge.mjs",
+      "bytes": 38546,
+      "sha256": "a5337fbc0bf6d258200e653b13c86ba18f3f449dfaef06102c4791bfe20fe68a"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-08-source/dist/renderer/virgl-command/decoder.mjs",
+      "bytes": 53329,
+      "sha256": "e116b32fdd9b4d9cf698431f96cfd7b4a7174cd1adaf8a77fc8f45b585496d2b"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-08-source/dist/renderer/virgl-command/dimensional-depth-images.mjs",
+      "bytes": 8781,
+      "sha256": "44d2d7b39145262ebd2533a8bc9625f1de500e7633cea73184a26c6727e5d68a"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-08-source/dist/renderer/virgl-command/float-images.mjs",
+      "bytes": 3132,
+      "sha256": "69543e48426c7ded5178b659eb651b5cb765aa559a0bbf96fd8d34f5cf7cfe46"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-08-source/dist/renderer/virgl-command/floating-depth-gpu.mjs",
+      "bytes": 15338,
+      "sha256": "ebc88ac91fe55fbfeb391fe2d216d4fea41086fb17d28628a2620353f1a66b90"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-08-source/dist/renderer/virgl-command/floating-depth-images.mjs",
+      "bytes": 947,
+      "sha256": "76e02b32e5a24f65f360adb7cbcc0f9e5d51ee90be7cfbe1a383bfa99cc30370"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-08-source/dist/renderer/virgl-command/integer-images.mjs",
+      "bytes": 1557,
+      "sha256": "8871226b60ad86ee1f585f8de6e5891241a361ad84aa811a36028fd003d95029"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-08-source/dist/renderer/virgl-command/multisample.mjs",
+      "bytes": 7268,
+      "sha256": "950255f6b8c09f09540e444a381fd9396665f64ec167307c2313b53b43d00b06"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-08-source/dist/renderer/virgl-command/packed-float-images.mjs",
+      "bytes": 1620,
+      "sha256": "0ea28e0bfcf4a0ae04f634826d4b65cb19a6285850836412c7b06311ce1c5405"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-08-source/dist/renderer/virgl-command/packed-normalized-images.mjs",
+      "bytes": 2046,
+      "sha256": "5ccf01336a906f3b46b0c8c790c73449331e09ac3cfee2931459d507b6dccd18"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-08-source/dist/renderer/virgl-command/packed-unsigned-images.mjs",
+      "bytes": 991,
+      "sha256": "1170cf4d69d7281fdc32383354d7c17d6019ece0c7a6f681de86b27a57ea0d61"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-08-source/dist/renderer/virgl-command/production.mjs",
+      "bytes": 19775,
+      "sha256": "0947381800b6789acaf4dfee77d274153df487ed2634391968cc41d86d3f5dde"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-08-source/dist/renderer/virgl-command/resources.mjs",
+      "bytes": 161573,
+      "sha256": "f568c9a548b271b445e1e97fdc6e4041c553830c89974beeae748cab7eaf4bab"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-08-source/dist/renderer/virgl-command/scanout.mjs",
+      "bytes": 14960,
+      "sha256": "4d20d1dc1d74836cd26a966206e4f8b051288ea8e3685904f749bbba1716ccbe"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-08-source/dist/renderer/virgl-command/shared-exponent-gpu.mjs",
+      "bytes": 12102,
+      "sha256": "7b44ba7bc7361438807c1709c32929832dbf0b7af95966c68a65b01b23075ad8"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-08-source/dist/renderer/virgl-command/shared-exponent-images.mjs",
+      "bytes": 563,
+      "sha256": "27de20239649aea73145e1f547c9265692f451fedddf3876639c173cf0d6168f"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-08-source/dist/renderer/virgl-command/state.mjs",
+      "bytes": 220162,
+      "sha256": "acdb5c99a5173bf2f0a78574aa4a1bbb7f82b5cc4acb51449dfe5046375b5a5d"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-08-source/dist/renderer/virgl-command/unorm-depth-images.mjs",
+      "bytes": 1409,
+      "sha256": "7fb08881153cfd06ed1acb5dba8d6cc61525b8f742a3b0a9715fb0e68e55e1d1"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-08-source/dist/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "bytes": 14434,
+      "sha256": "4b3d0589d178ae6e3a2ad90c0abbddccc8226690e49e8cf91f8509ba64ca4f4a"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-08-source/dist/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "bytes": 446891,
+      "sha256": "5f9b5935cc4a34d7d3b1cbceb3f75572c7ba8de822e09fea365a8d6c7aefb09b"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-08-source/dist/renderer/virgl-shader/index.mjs",
+      "bytes": 22546,
+      "sha256": "1bae07f2e668078c4e447f65d1785815714907b7270ced01b131ce70e6d3f10e"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-08-source/dist/renderer/virgl-shader/standard.mjs",
+      "bytes": 20285,
+      "sha256": "842b2b6041ce71d267940cb7732bc936624b410a90fe17ccc108af7fee386d92"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-09/candidate-artifacts.json",
+      "bytes": 589,
+      "sha256": "927d271ec77855c865c8190b83b467b2ab073f78fd4b850ce5024419718a5850"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-09/candidate-manifest.json",
+      "bytes": 1179757,
+      "sha256": "87e23271916159e1aaed163df43caeec67cd568c4c7e8843527572412fec2c95"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-09/control-failed-original-snapshot-01.png",
+      "bytes": 7827,
+      "sha256": "dc138c519abf5c8748047aa1e53d4ce4475969698b4c1b95f9e0767f6385e245"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-09/control-query-original-snapshot-01.png",
+      "bytes": 4997,
+      "sha256": "2ae443e1176a910f5d9f188c7db88e64d41b6844976fe52f98c2172ec426d137"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-09/control-request-compositor-startup-01.json",
+      "bytes": 300,
+      "sha256": "89348062f45c4fb0e7b4a3d926fa3b2ea39a8aff20e3c1a6e688c7be72d8743f"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-09/control-request-display-manager-01.json",
+      "bytes": 264,
+      "sha256": "06d9539267d41ea8f98f2446be3140d364d012922c9f911c036e9c460ac6763b"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-09/control-request-display-manager-02.json",
+      "bytes": 321,
+      "sha256": "8deb633e35108cfe32587f6fe12f62cbb7067a59d32c76e49deffa72296332d2"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-09/control-request-failed-original-snapshot-01.json",
+      "bytes": 57,
+      "sha256": "77e1464377bfbf3a74e22b7d840285f14c0a85191c95986c4bab2783af7ff859"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-09/control-request-gles-core-queries-01.json",
+      "bytes": 18261,
+      "sha256": "04a4254584408bdeb5de82c131f6316b3ddd18899dcc747739326d74f17fc7c5"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-09/control-request-query-original-snapshot-01.json",
+      "bytes": 56,
+      "sha256": "ae2075f9b536452b0e7c0c1b6628105da6abcbe0a5eb3fd13c708667c67908f7"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-09/control-request-quickshell-startup-01.json",
+      "bytes": 235,
+      "sha256": "eab6fd7fd3a100b9b245ecdc5e373a166250e6a693ebd04283575e8771cf897a"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-09/control-request-session-startup-01.json",
+      "bytes": 234,
+      "sha256": "74c9654f3b3c184db5ea1962752004b3ab4146c62083f4134e960ddc49831290"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-09/control-request-startup-services-01.json",
+      "bytes": 244,
+      "sha256": "774336cc8481c571ba2c0ae18fa5fbd0dd1f9cc12bb83710020420b39324631e"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-09/control-request-startup-services-02.json",
+      "bytes": 244,
+      "sha256": "37e17f09c3f5f740cbbdc0fdd5456386dced6c48b98c3a1d19aab19ea3604b04"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-09/control-request-startup-services-03.json",
+      "bytes": 280,
+      "sha256": "202d0d7a6b85e4b1f1fe95b1ed3f66dec684cdc394842ee65146e27f03d9c238"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-09/control-request.json",
+      "bytes": 62,
+      "sha256": "41d506f54ba15dc6d0c1f057ac632cafce55ca49626a2ed5e4c2fef831487677"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-09/control-response-compositor-startup-01.json",
+      "bytes": 11190,
+      "sha256": "ac9204680aa78f2b9e3ee88052381e0d33aabc662d0dbbd7b6b0c1c99e28a770"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-09/control-response-display-manager-01.json",
+      "bytes": 3139,
+      "sha256": "b41628827aab8589a3746925c44d6fe4ba4d07475e2aff66ad60a7b280cde483"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-09/control-response-display-manager-02.json",
+      "bytes": 3909,
+      "sha256": "10b7d22a27b29c45e8d1e1c8fc6379a42f4e0f863710c8fb1706d89f5ef7ebad"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-09/control-response-failed-original-snapshot-01.json",
+      "bytes": 1041434,
+      "sha256": "ba9e2397bdee2fe555a3efe6c6443d2429a632996337a2d6152ce034200b985b"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-09/control-response-gles-core-queries-01.json",
+      "bytes": 20134,
+      "sha256": "56192c4f3d8b5372924acc708192414ccf1f612d39674c304ac505f4f937422b"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-09/control-response-query-original-snapshot-01.json",
+      "bytes": 1489076,
+      "sha256": "4cdd9adecc34dfe91bba5c162210488074ee0b1af99d4aabf7b110a0f2ec4c18"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-09/control-response-quickshell-startup-01.json",
+      "bytes": 4266,
+      "sha256": "a34b616e57bea614794e0d9c6ea1bc412084f3b589e2b5a37125c71d38e2bf4d"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-09/control-response-session-startup-01.json",
+      "bytes": 2455,
+      "sha256": "c5393948012a2a15bc6b81a7a35b945d258a8c89cf152073485e4f9e216dce88"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-09/control-response-startup-services-01.json",
+      "bytes": 1192,
+      "sha256": "ef4383d97ab9947eb5e8cb4472204f0194e27f1f8f6e8a48fe2a77fb45f124b6"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-09/control-response-startup-services-02.json",
+      "bytes": 764,
+      "sha256": "1166eaa872b0a9eda98721eaca7d5a024d2cfaa714b723dbf6a55b8556a99b00"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-09/control-response-startup-services-03.json",
+      "bytes": 3258,
+      "sha256": "4fa070e1437694333a2fad50c8d415cfbae251a9f8d5c2a6dfbc85e7365412d0"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-09/control-state.json",
+      "bytes": 49,
+      "sha256": "4e1a8545b5969eef1d9d084a6a9b5b6cf9547843a22682225d7077ee1d4146e1"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-09/failure.png",
+      "bytes": 7822,
+      "sha256": "04bf42b985c5fcfcd080b6f2bfffd830b0c29a1a61d75e360a299a4345ae24c3"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-09/gpu.ndjson",
+      "bytes": 182773384,
+      "sha256": "d862b1152342c73d75fcd4e9f4e41e53ce3644a6121e44d666a971350894aecb"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-09/hardware.json",
+      "bytes": 7022,
+      "sha256": "a90052ab3c1e9a3270e9bed623d00f4499891a15575c36115297ffdc7e828581"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-09/heartbeat.json",
+      "bytes": 838450,
+      "sha256": "279a48448b012a23129874b5c2a6a51a72df2730e17c0c11a04d3eacbeb7bea1"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-09/progress.png",
+      "bytes": 14911,
+      "sha256": "9a9fb1e0e2e2755f6aabed987ed0e0ef0efb509326de9c46c3965eb94301d715"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-09/public-desktop-input-failed.png",
+      "bytes": 7520,
+      "sha256": "2efbcaed5e3e446362d137bbb0e48b3f2a3633111b1db0dd06ab5694a496f01e"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-09/public-desktop-input.json",
+      "bytes": 1228,
+      "sha256": "291e0c31628c36a96581e642c7d762d364455e036d8b3f290bab3ccc032a3ce8"
+    },
+    {
+      "path": "target/evidence/production-omarchy-gpu-profile12-09/report.json",
+      "bytes": 1565175,
+      "sha256": "6c71e8281942830b9779e242b3eef98a8e22ea5d67a4b62d4da25d672abd9d0f"
+    },
+    {
+      "path": "target/evidence/production-omarchy-original-draw-failures-01.json",
+      "bytes": 126267,
+      "sha256": "ab02d8125917fa72351deb83b4610eed797481f32667e23418ea3ff479413e2b"
+    },
+    {
+      "path": "target/primary-source-downloads/mesa-api-audit/context.h",
+      "bytes": 15006,
+      "sha256": "01803aedd41fd22ce26574c7fac39516a4ccb1546ad742d334b65a8f558df4aa"
+    },
+    {
+      "path": "target/primary-source-downloads/mesa-api-audit/extensions.h",
+      "bytes": 3637,
+      "sha256": "8ecb6e6748088f4981f4fefa45cda49ac95d0cdfb503a0ef8f2d8c6e981b98cf"
+    },
+    {
+      "path": "target/primary-source-downloads/mesa-api-audit/extensions_table.h",
+      "bytes": 56702,
+      "sha256": "5b01ce55a7e44f522ed98bf9f3f8cb33d1c240afca4414d2044449bc495c57f9"
+    },
+    {
+      "path": "target/primary-source-downloads/mesa-api-audit/mtypes.h",
+      "bytes": 114882,
+      "sha256": "37959bb75ae13007caefee70cebbaac19ff339c7acf4ae07dee7f1977962744c"
+    },
+    {
+      "path": "target/primary-source-downloads/mesa-api-audit/queryobj.c",
+      "bytes": 42067,
+      "sha256": "e078eb8c88dcb6352160c7efc660d347ee6a27b0958a143c0cb4c6ccb6d4290f"
+    },
+    {
+      "path": "target/primary-source-downloads/mesa-api-audit/queryobj.h",
+      "bytes": 1803,
+      "sha256": "4b6347422159ae368022684ac5649bb610e621861b4a2de05ecbd804b5b48084"
+    },
+    {
+      "path": "target/primary-source-downloads/mesa-api-audit/st_extensions.c",
+      "bytes": 74811,
+      "sha256": "dbed39e3997c3fbc5e3a02c0fd6845cb43ab67f2c7972362ce20c225a24138ff"
+    },
+    {
+      "path": "target/primary-source-downloads/mesa-api-audit/version.c",
+      "bytes": 29380,
+      "sha256": "8d3fd4701b3ec44276fcc0bbd3cafecfcb026043c01b74d9ddf018d3a116a24b"
+    },
+    {
+      "path": "target/primary-source-downloads/mesa-api-audit/version.h",
+      "bytes": 2309,
+      "sha256": "735ddcdda0fa596f1b21b6b73177ecbe67efdcbf82ddf6cf8542e0571faa1b7a"
+    },
+    {
+      "path": "target/primary-source-downloads/mesa-api-audit/virgl_query.c",
+      "bytes": 12110,
+      "sha256": "42906a7544429bf2ffcc195908f7fc90c5a66a1a260fcfd80976b37fd930038d"
+    },
+    {
+      "path": "target/primary-source-downloads/mesa-api-audit/virgl_screen.c",
+      "bytes": 42620,
+      "sha256": "6a78bf41561a59e440d814a31a392ee07a03cf54a367ca49cfe71086aa7e85a8"
+    },
+    {
+      "path": "target/primary-source-downloads/vrend_renderer-1.3.0.c",
+      "bytes": 495473,
+      "sha256": "be7e5c63fb501cb77bd5b2c13c332f8b93c49fd04d207f17d434932c237f4ea3"
+    },
+    {
+      "path": "target/virgl-production/image-12/manifest.json",
+      "bytes": 1179757,
+      "sha256": "87e23271916159e1aaed163df43caeec67cd568c4c7e8843527572412fec2c95"
+    },
+    {
+      "path": "target/virgl-production/image-12/preparation.json",
+      "bytes": 13863,
+      "sha256": "b7d1b82a5f4d28e16a812856695645fa0669c8f51fa14bfe8ba0c2dad82f743f"
+    },
+    {
+      "path": "target/virgl-production/quickshell-profile-02/build.json",
+      "bytes": 10171,
+      "sha256": "de311415f00839fb419c09db0da535a5152e5633eeb945ea64ca2ae9b2392212"
+    },
+    {
+      "path": "target/virgl-production/quickshell-profile-02/headers.d",
+      "bytes": 4433,
+      "sha256": "af25ebc7d3bc770e0d1409dd01cc83235ed3dea5255a23c0f11da0b320e30f9b"
+    },
+    {
+      "path": "target/virgl-production/quickshell-profile-02/libquickshell-browser-gles.so",
+      "bytes": 8728,
+      "sha256": "c7751b104914e8de4deacb1b4d35ee5343e962fb02f3fc9384966c116fb00252"
+    },
+    {
+      "path": "target/virgl-production/quickshell-profile-02/quickshell",
+      "bytes": 5910368,
+      "sha256": "022978ea4d6f2b9da6edbd529ed004440185b1b8446068af67c25ca6d9525e74"
+    },
+    {
+      "path": "target/virgl-production/quickshell-profile-02/quickshell-gles-format.cpp",
+      "bytes": 772,
+      "sha256": "f3a1b760a751799c351e9a0f1758daaf8aea4bc42df486e83354df820a087324"
+    },
+    {
+      "path": "target/virgl-production/quickshell-profile-02/quickshell-original",
+      "bytes": 5813896,
+      "sha256": "357dacf32feca18746487120a1d86d9c1d5e30744f26451eaf21cef2b5bc0f71"
+    },
+    {
+      "path": "tools/virgl-production/critic-fast-boots-egl-queries.c",
+      "bytes": 4684,
+      "sha256": "fc95965fa8441ca45e3626f87330ad3726889a1c5c3fb9309e760168eb2e8c11"
+    }
+  ]
+}

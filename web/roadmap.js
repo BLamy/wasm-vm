@@ -180,6 +180,7 @@ export const ROADMAP = [
     status: "partial",
     blurb: "Guest GPU offload in isolated fixtures; multi-hart SMP and live accelerated graphics remain in progress.",
     caps: [
+      { name: "Original indexed draw hints", status: "partial", evidence: "E6-T11d68: original Quickshell indexed starts, retained buffer offsets, primitive restart and bounded GPU draws are under independent verification. Full default Omarchy rendering remains E6-T11d." },
       { name: "Native multisample resolve", status: "verified", evidence: "E6-T11d67: independently verified original fenced BLIT, actual two/four-sample GPU storage, sample-weighted byte budgets, literal depth/color resolves and partial-edge pixels; real guest Mesa and pristine-clone acceptance passed." },
       { name: "Guest GPU offload", status: "partial", evidence: "Independently verified dimensional depth and original transform feedback (E6-T11d64–66). Production WebGL2 qualification, typed VirGL caps, real Mesa/Hyprland worker rendering and retained scanout are under verification (E6-T11d), including native multisample resolve (E6-T11d67); recovery verification is E6-T11e. The launcher offers qualified GPU cold boots and the existing software warm snapshot." },
       { name: "Multi-hart core state + SBI HSM", status: "pending" },

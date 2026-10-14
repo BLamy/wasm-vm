@@ -11,7 +11,10 @@ LOCAL_WORKSPACE = --workspace $(if $(filter Darwin,$(shell uname -s)),--exclude 
 
 ci: fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke
 
-.PHONY: verify-E6-T11d verify-E6-T11e verify-E6-T11d67
+.PHONY: verify-E6-T11d verify-E6-T11e verify-E6-T11d67 verify-E6-T11d68
+verify-E6-T11d68:
+	python3 tools/virgl-production/verify-indexed-start.py --output "$${VIRGL_INDEXED_START_EVIDENCE_DIR:-target/evidence/production-indexed-start-final}"
+
 verify-E6-T11d67:
 	cargo fmt --all --check
 	cargo clippy -p wasm-vm-core --tests --features virgl-renderer,virgl-control-proof,gpu-trace,trace -- -D warnings

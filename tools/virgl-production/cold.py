@@ -9,7 +9,7 @@ import subprocess
 import time
 
 parser = argparse.ArgumentParser(description=__doc__)
-parser.add_argument("--task", choices=["E6-T11d67", "E6-T11d", "E6-T11e"], required=True)
+parser.add_argument("--task", choices=["E6-T11d67", "E6-T11d68", "E6-T11d", "E6-T11e"], required=True)
 parser.add_argument("--output", type=Path, required=True)
 args = parser.parse_args()
 repo = Path(__file__).resolve().parents[2]
@@ -22,7 +22,8 @@ clone = output / "clone"
 env = {key: value for key, value in os.environ.items()
        if key not in ("RUSTFLAGS", "RUST_LOG")
        and not key.startswith(("CARGO_", "VIRGL_", "CRITIC_"))}
-env.update(VIRGL_MULTISAMPLE_EVIDENCE_DIR=str(output / "multisample"),
+env.update(VIRGL_INDEXED_START_EVIDENCE_DIR=str(output / "indexed-start"),
+           VIRGL_MULTISAMPLE_EVIDENCE_DIR=str(output / "multisample"),
            VIRGL_NUMERIC_EVIDENCE_DIR=str(output / "numeric"),
            VIRGL_MULTISAMPLE_DEMO_EVIDENCE_DIR=str(output / "demo"),
            VIRGL_PRODUCTION_EVIDENCE_DIR=str(output / "production"),

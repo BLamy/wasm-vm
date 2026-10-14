@@ -4,7 +4,7 @@ epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
 status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47, E6-T11d48, E6-T11d49, E6-T11d50, E6-T11d51, E6-T11d52, E6-T11d53, E6-T11d54, E6-T11d55, E6-T11d56, E6-T11d57, E6-T11d58, E6-T11d59, E6-T11d60, E6-T11d61, E6-T11d62, E6-T11d63, E6-T11d64, E6-T11d65, E6-T11d66, E6-T11d67, E6-T11d68]
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47, E6-T11d48, E6-T11d49, E6-T11d50, E6-T11d51, E6-T11d52, E6-T11d53, E6-T11d54, E6-T11d55, E6-T11d56, E6-T11d57, E6-T11d58, E6-T11d59, E6-T11d60, E6-T11d61, E6-T11d62, E6-T11d63, E6-T11d64, E6-T11d65, E6-T11d66, E6-T11d67, E6-T11d68, E6-T11d69]
 blocked_on: E6-T11d68
 estimate: S
 risk: high
@@ -997,3 +997,25 @@ S68 must allow that original production hint while preserving the independently
 validated binding offset, count/span, actual fetched indices, private profile
 refusals, GPU fences and ownership. Parent remains blocked until S68 is freshly
 verified. No capset increase or completed production claim is justified here.
+
+### 2026-10-14 — worker — independent mandatory query gap preserved
+
+The independent actual GLES3 probe also refutes complete API admission: both
+mandatory boolean query BEGIN calls return GL_INVALID_ENUM; transform-feedback
+query admission has no GL error but its original result resource/commands are
+refused. Ordered pending S69 records the separate query/result ownership
+boundary after S68; positive numeric/format/source holds remain incremental.
+The default-session negative is now sealed with94 original files in
+`evidence/virgl-production-readiness/default-omarchy-indexed-and-query-gap/original-negative.tar.gz`,
+SHA25602ff956cc3d933cf7dda9c0db44c4cf8d04878d5bae4bd84b78f5d4f8dbdaaaf.
+The immutable candidate12 is staged on R2 with image SHA256
+f0a72ae2e4433df266fe57dd2443a567dd93396b98c96825b5ce6b3dc4ac9e8c and manifest
+87e23271916159e1aaed163df43caeec67cd568c4c7e8843527572412fec2c95:10422 existing
+chunks were authenticated and112 were uploaded. The live pointer remains the
+earlier candidate; this is artifact staging, not completed deployment.
+
+Later original0x205 failures target texture75,1280x800 RGBA8, bind10, without
+any attached backing. Their exact transferWords and resource control state are
+preserved for comparison against the native renderer's iovec/bounds contract.
+Do not suppress those errors or infer a valid transfer from its box alone. The
+initial default bar still lacks proven content; final public input is pending.

@@ -24,8 +24,8 @@ private proof profiles and original array draw signed-range guards.
 transfer, indexed draw and readback on hardware WebGL2. Exercise literal original
 Quickshell start1/count62/strip/restart words, starts0/1/u32MAX, valid nonzero
 binding offsets with poisoned prefix/suffix, supported index widths, and exact
-independently predicted pixels. Captured gathers must use the unchanged binding
-offset and exact selected span. Out-of-bounds binding/count/actual vertex fetch
+independently predicted pixels. Original uploads must authenticate the poisoned input bytes; retained index
+reads must select the unchanged binding offset and exact selected span. Out-of-bounds binding/count/actual vertex fetch
 refuse before a native draw; retained resources/fences/cleanup remain bounded.
 Record guest traces/digests, affected high-risk gates, built demo and one final
 pristine-clone proof. Full default Omarchy acceptance belongs to the parent.
@@ -51,3 +51,29 @@ SHA256be7e5c63fb501cb77bd5b2c13c332f8b93c49fd04d207f17d434932c237f4ea3
 Original request streams and exact outcomes are preserved; no positive claim
 comes from this negative. The explicit user request continues this single
 graphics boundary in the existing native PR stack.
+
+### 2026-10-14 — worker — original negative sealed; narrow runtime correction
+
+The actual default-session negative, immutable served renderer/default Wasm,
+complete original commands, independent GLES query probe and client/image/build
+identities are sealed in
+`evidence/virgl-production-readiness/default-omarchy-indexed-and-query-gap/original-negative.tar.gz`,
+SHA25602ff956cc3d933cf7dda9c0db44c4cf8d04878d5bae4bd84b78f5d4f8dbdaaaf,
+94 files authenticated by paired JSON. This binds request1515/failure1517 and
+all eight original Quickshell refusals to the source that executed them.
+
+The production decoder now ignores indexed start/count arithmetic because the
+pinned native indexed path ignores that hint; the consumer admits nonzero
+indexed starts only for production. Binding offsets/spans, actual fetched
+indices, original array signed-range guards and private profiles remain intact.
+The nine self-validation matrix runs pass across index widths1/2/4 and completion
+schedules0/1/2, with original start1/count62/strip/restart words, hints0/1/u32MAX,
+literal full green quad pixels and complete readback padding, span/actual-fetch
+refusals and fenced immediate context destruction. Failed harness runs remain
+preserved: the first wrongly expected a second guest-backing gather at draw
+time, although the original upload authenticates retained native storage; the
+second exposed the decoder's obsolete start/count overflow condition; the third
+used a28-byte resource-id helper rather than the original24-byte CTX_DESTROY
+header. The corrected array negative uses restart0 so it reaches the runtime
+signed-range guard. These are self-validation, not the frozen submission or
+fresh verdict.
