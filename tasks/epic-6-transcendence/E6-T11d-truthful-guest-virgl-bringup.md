@@ -3,8 +3,9 @@ id: E6-T11d
 epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
-status: in-progress
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47, E6-T11d48, E6-T11d49, E6-T11d50, E6-T11d51, E6-T11d52, E6-T11d53, E6-T11d54, E6-T11d55, E6-T11d56, E6-T11d57, E6-T11d58, E6-T11d59, E6-T11d60, E6-T11d61, E6-T11d62, E6-T11d63, E6-T11d64, E6-T11d65, E6-T11d66, E6-T11d67, E6-T11d68, E6-T11d69a, E6-T11d69b, E6-T11d70]
+status: blocked
+blocked_on: [E6-T11d71]
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47, E6-T11d48, E6-T11d49, E6-T11d50, E6-T11d51, E6-T11d52, E6-T11d53, E6-T11d54, E6-T11d55, E6-T11d56, E6-T11d57, E6-T11d58, E6-T11d59, E6-T11d60, E6-T11d61, E6-T11d62, E6-T11d63, E6-T11d64, E6-T11d65, E6-T11d66, E6-T11d67, E6-T11d68, E6-T11d69a, E6-T11d69b, E6-T11d70, E6-T11d71]
 estimate: S
 risk: high
 capstone: false
@@ -1139,3 +1140,44 @@ passed. The original parent failure runs are sealed at
 5e34795511002143829f202d0ade9823db29ae887454d32b61d54b5bec3a7b0c.
 Final new-runtime parent and clean-clone acceptance follow; earlier component
 holds survive only within their unchanged boundaries.
+
+### 2026-10-14 — worker — post-fragmented-backing proof and keyboard prerequisite
+
+Frozen runtime `5943a2df2e0e0d55290843fd1e89e5cdefe5fecf` passed all twelve
+commands in `VIRGL_PRODUCTION_EVIDENCE_DIR=target/evidence/production-parent-frozen02
+make verify-E6-T11d`. Actual guest Mesa/cube/Hyprland produced a complete original
+command stream with 5021 successful core responses, correctly framed to the end.
+All ten software fast-boot/repeat/persistence phases passed. The stock public
+UID1000 desktop produced a readable package bar, actual Foot command typed by
+sixty trusted events, and cursor movement. Its normal `gpuTrace=false` capture
+proves visible rendering and input; transport-wide error freedom is claimed only
+for the separately recorded actual-guest component. The brief hot debugger sample
+is diagnostic, so the hot run does not substantiate a clean timing claim.
+
+The untouched pristine command `python3 tools/virgl-production/cold.py --task
+E6-T11d --output target/evidence/production-parent-cold03` passed preceding gates,
+all software images, actual guest rendering and handshake. Its stock input check
+failed: original sixty balanced DOM transitions and corresponding Linux evdev
+frames spell `touch /tmp/gpukeyboard42touch`, but the final canvas shows
+`touchhhhhhhh` and the guest marker remains absent. Exact failed screenshot
+SHA256 `7d61ac2d511113e8c4654a4eea528e4bf57a5b98321439e85c2a0583c4032842`;
+`public-desktop/public-desktop-input.json` records all twenty unsuccessful marker
+reads. Fresh critic reproduced a related original held-key WFI gap with
+`cargo test -p wasm-vm-core --features virgl-renderer,trace --test
+production_keyboard_wfi_critic -- --nocapture`: one traced WFI jumps mtime0 to
+500000 or5000000000 despite an original delivered H with no release. Both cache
+modes reproduce. This identifies a clock boundary to repair, without claiming it
+is the exclusive cause of the desktop repetition. Ordered S/high E6-T11d71 must
+be independently verified before parent acceptance resumes.
+
+Durable worker artifact
+`evidence/virgl-production-bringup/worker/post-fragmented-backing-positive-and-clean-input-negative-02.tar.gz`
+contains 327 original files plus its receipt, all reopened: 10582011 bytes,
+SHA256 `1cc9f51f83fa84d30f2373130c6f49bf585d56f2e92fe6d7ab19f7f728a044b5`.
+It also preserves the Cloudflare attempt: exact public artifact byte checks passed,
+but Pages rejected the currently signed-in account. The user is switching Wrangler
+back to the existing project account. No successful deployment or final parent
+verification is claimed. Evidence-only live harness heads `6549a30b`/`ed63d292`
+retain identical runtime and original artifact pins while adding actual HTTPS
+body capture. Parent is blocked on the keyboard prerequisite; deployment remains
+an additional acceptance requirement.
