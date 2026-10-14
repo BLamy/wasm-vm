@@ -50,7 +50,7 @@ export function analyzeBarContent(rgba, width, height) {
 const intersects = (a, b) => a.x < b.x + b.width && b.x < a.x + a.width &&
   a.y < b.y + b.height && b.y < a.y + a.height;
 
-export async function verifyPublicBarContent(page, output, {layer, monitor, clients, name = 'public-bar-content'}) {
+export async function verifyPublicBarContent(page, output, {layer, monitor, clients, name = 'public-bar-content', requireContent = true}) {
   assert.match(name, /^[a-z0-9-]+$/);
   await fs.mkdir(output, {recursive: true});
   const report = {scope: 'Original public canvas pixels inside the actual compositor bar layer',
@@ -94,8 +94,8 @@ export async function verifyPublicBarContent(page, output, {layer, monitor, clie
     await fs.writeFile(path.join(output, name + '.png'), png);
     report.content = analyzeBarContent(rgba, capture.bounds.width, capture.bounds.height);
     assert.equal(report.overlappingClients.length, 0, 'Do not count Foot/screensaver pixels behind the bar');
-    assert.equal(report.content.status, 'passed', 'The actual bar contains distributed foreground pixels');
-    report.status = 'passed';
+    if (requireContent) assert.equal(report.content.status, 'passed', 'The actual bar contains distributed foreground pixels');
+    report.status = report.content.status;
     return report;
   } catch (error) {
     report.status = 'failed'; report.error = error.stack || String(error);

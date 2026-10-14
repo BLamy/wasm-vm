@@ -1041,3 +1041,29 @@ before requiring visible bar; prove absent marker and fresh real Foot focus
 immediately before trusted physical typing; preserve passive worker/timer
 timestamps across fatal cleanup. No watchdog limit or runtime behavior is
 weakened. Record the actual default run before choosing any runtime repair.
+
+### 2026-10-14 — worker — default desktop input observed; freeze final readiness proof
+
+At ordinary built head `b0655aba825d6ebbae5369d97c3aa2f70862823c`, the normal
+SDDM/UID1000 image12 session initially produced an exactly blank mapped bar.
+The first failure happened before any typing and is preserved in
+`target/evidence/production-parent-omarchy-default01/public-desktop-input*` and
+the fresh critic custody directory `critic-production-parent-default-firstpaint-negative01`.
+The later owned retry `control-input-later-bar-trusted-input01` observed readable
+bar glyphs/icons (830 contrasting pixels over12 rows), actual mapped/focused
+Foot PID673 and trusted physical typing of `touch /tmp/gpukeyboard43touch`.
+The marker was absent before typing and serial observation afterward returned
+`TRUSTED_TOUCH_43`, exit0. This is supplemental evidence; the initial report
+stays failed and the center-position check does not yet prove cursor movement.
+
+The harness now waits up to360 seconds for actual distributed bar content,
+preserves every exact probe crop, and fails immediately on invalid geometry
+or occlusion. It observes the initial guest cursor, chooses a physically
+distinct target and requires both final coordinates and actual displacement.
+The local source descriptor stages the already published immutable image12
+manifest `87e23271916159e1aaed163df43caeec67cd568c4c7e8843527572412fec2c95`;
+the live Pages site remains on its previous descriptor until deployment.
+No runtime semantics or watchdog have changed. Syntax checks, all6 existing
+bar-content/protocol tests and `make web-dist` passed; outputs are
+`target/parent-content-cursor-{checks,build}01.{stdout,stderr}`.
+Final parent acceptance and clean-clone proof follow this frozen harness.

@@ -1,5 +1,5 @@
 {
-  "generated": "Content-hashed accelerated Omarchy; pinned VirGL-only Mesa GLES3 attachment-only multisample profile, no software DRI",
+  "generated": "Content-hashed accelerated Omarchy; pinned VirGL-only Mesa GLES3, attachment-only multisample and Quickshell GLES profile, no software DRI",
   "artifacts": {
     "kernel": {
       "url": "releases/kernel/6.6.63-omarchy-evdev1024/Image",
@@ -8,8 +8,8 @@
     }
   },
   "chunkedImage": {
-    "key": "chunked-omarchy/manifest-e7e143cb9fc738643ecc09b9f1689d50e8755431788f02309a9ac7a9ba03a564.json",
-    "sha256": "e7e143cb9fc738643ecc09b9f1689d50e8755431788f02309a9ac7a9ba03a564",
+    "key": "chunked-omarchy/manifest-87e23271916159e1aaed163df43caeec67cd568c4c7e8843527572412fec2c95.json",
+    "sha256": "87e23271916159e1aaed163df43caeec67cd568c4c7e8843527572412fec2c95",
     "size": 1179757
   }
 }

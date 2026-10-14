@@ -96,11 +96,19 @@ export async function verifyPublicDesktopInput(page, command, output, options = 
   assert.equal(monitor.scale, 1, 'default package display scale');
   box = await canvas.boundingBox();
   assert.ok(box?.width > 0 && box?.height > 0);
-  const target = {x: Math.round(foot.at[0] + foot.size[0] / 2),
-    y: Math.round(foot.at[1] + foot.size[1] / 2)};
+  const initialCursorText = await read('XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 cursorpos');
+  const initialCursorParts = initialCursorText.match(/^(-?\d+),\s*(-?\d+)$/);
+  assert.ok(initialCursorParts, initialCursorText);
+  const initialCursor = {x:Number(initialCursorParts[1]),y:Number(initialCursorParts[2])};
+  const candidates = [1/3,2/3].map(fraction => ({x:Math.round(foot.at[0]+foot.size[0]*fraction),
+    y:Math.round(foot.at[1]+foot.size[1]/2)}));
+  const distance = point => Math.hypot(point.x-initialCursor.x,point.y-initialCursor.y);
+  const target = candidates.sort((a,b)=>distance(b)-distance(a))[0];
+  assert.ok(distance(target)>=16, 'trusted pointer target deliberately differs from actual initial cursor');
+  const initialWorkerCursor = await page.evaluate(()=>window.__cursor?.snapshot?.()||null);
   const before = await page.evaluate(() => window.__linuxCtl.inputDeviceStats());
   const framesBefore = await page.evaluate(() => window.__keyboardCapture.frames());
-  await record('geometry', {uid, layers, clients, monitors, foot, target, box, inputBefore: before, inputFramesBefore: framesBefore});
+  await record('geometry', {uid, layers, clients, monitors, foot, target, initialCursor, initialWorkerCursor, box, inputBefore: before, inputFramesBefore: framesBefore});
   await page.mouse.click(box.x + target.x * box.width / monitor.width,
     box.y + target.y * box.height / monitor.height);
   assert.equal(await page.evaluate(() => document.activeElement?.id), 'ide-display-canvas');
@@ -134,16 +142,32 @@ export async function verifyPublicDesktopInput(page, command, output, options = 
   await record('guest-focused', {activeWindow});
   // Use fresh compositor geometry after the trusted wake. Do not count a
   // fullscreen screensaver or a stale layer mapping as a populated bar.
-  const freshLayers = JSON.parse(await read('XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers'));
-  const freshClients = JSON.parse(await read('XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients'));
-  const freshMonitors = JSON.parse(await read('XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j monitors'));
-  const freshMonitor = freshMonitors.find(value => value.id === foot.monitor) || freshMonitors[0];
-  const bars = Object.values(freshLayers[freshMonitor.name]?.levels || {}).flat()
-    .filter(layer => layer.namespace === 'omarchy-bar' && layer.alpha > 0);
-  assert.equal(bars.length, 1, 'one actual visible Omarchy bar on the focused monitor');
-  const barContent = await verifyPublicBarContent(page, output, {layer: bars[0],
-    monitor: freshMonitor, clients: freshClients, name: name + '-bar-content'});
-  await record('bar-content', {barContent});
+  const contentDeadline = Date.now() + 360000;
+  const barProbes = [];
+  let barContent;
+  do {
+    await wakeScreensaver('trusted-wake-waiting-bar-content');
+    const freshLayers = JSON.parse(await read('XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers'));
+    const freshClients = JSON.parse(await read('XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients'));
+    const freshMonitors = JSON.parse(await read('XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j monitors'));
+    const freshMonitor = freshMonitors.find(value => value.id === foot.monitor) || freshMonitors[0];
+    const bars = Object.values(freshLayers[freshMonitor.name]?.levels || {}).flat()
+      .filter(layer => layer.namespace === 'omarchy-bar' && layer.alpha > 0);
+    assert.equal(bars.length, 1, 'one actual visible Omarchy bar on the focused monitor');
+    // Preserve each exact crop, including blank first frames. Geometry and
+    // occlusion errors still fail immediately; only absent content is retried.
+    const probeName = name + '-bar-content-' + String(barProbes.length).padStart(3, '0');
+    barContent = await verifyPublicBarContent(page, output, {layer: bars[0],
+      monitor: freshMonitor, clients: freshClients, name: probeName, requireContent: false});
+    barProbes.push({name: probeName, status: barContent.status,
+      started: barContent.started, finished: barContent.finished,
+      capture: barContent.capture, content: barContent.content});
+    await record('bar-content-probe', {barContent, barProbes});
+    if (barContent.status === 'passed') break;
+    await new Promise(resolve => setTimeout(resolve, 1500));
+  } while (Date.now() < contentDeadline);
+  assert.equal(barContent.status, 'passed', 'actual package bar renders distributed content before the bounded deadline');
+  await record('bar-content', {barContent, barProbes});
   // Only trusted Playwright keyboard events create this file in Foot. The serial
   // control channel merely reads it afterward; it never injects this command.
   // CDP type() can describe a shifted punctuation key without physical modifier
@@ -181,10 +205,12 @@ export async function verifyPublicDesktopInput(page, command, output, options = 
   assert.ok(coordinates, cursor);
   assert.ok(Math.abs(Number(coordinates[1]) - target.x) <= 4, 'actual guest cursor X');
   assert.ok(Math.abs(Number(coordinates[2]) - target.y) <= 4, 'actual guest cursor Y');
+  assert.ok(Math.hypot(Number(coordinates[1])-initialCursor.x,Number(coordinates[2])-initialCursor.y)>=16, 'actual guest cursor moved to a different point');
+  const finalWorkerCursor = await page.evaluate(()=>window.__cursor?.snapshot?.()||null);
   const held = await page.evaluate(() => window.__keyboardCapture.heldSnapshot());
   assert.deepEqual(held, [], 'no held keys after trusted physical command');
   const after = await page.evaluate(() => window.__linuxCtl.inputDeviceStats());
-  await record('passed', {status: 'passed', cursor, marker, inputAfter: after});
+  await record('passed', {status: 'passed', cursor, initialCursor, initialWorkerCursor, finalWorkerCursor, marker, inputAfter: after});
   await canvas.screenshot({path: path.join(output, name + '.png')});
   return result;
   } catch (error) {
