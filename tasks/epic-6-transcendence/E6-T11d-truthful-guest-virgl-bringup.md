@@ -3,8 +3,9 @@ id: E6-T11d
 epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
-status: in-progress
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47, E6-T11d48, E6-T11d49, E6-T11d50, E6-T11d51, E6-T11d52, E6-T11d53, E6-T11d54, E6-T11d55, E6-T11d56, E6-T11d57, E6-T11d58, E6-T11d59, E6-T11d60, E6-T11d61, E6-T11d62, E6-T11d63, E6-T11d64, E6-T11d65, E6-T11d66, E6-T11d67, E6-T11d68, E6-T11d69a, E6-T11d69b]
+status: blocked
+blocked_on: E6-T11d70
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47, E6-T11d48, E6-T11d49, E6-T11d50, E6-T11d51, E6-T11d52, E6-T11d53, E6-T11d54, E6-T11d55, E6-T11d56, E6-T11d57, E6-T11d58, E6-T11d59, E6-T11d60, E6-T11d61, E6-T11d62, E6-T11d63, E6-T11d64, E6-T11d65, E6-T11d66, E6-T11d67, E6-T11d68, E6-T11d69a, E6-T11d69b, E6-T11d70]
 estimate: S
 risk: high
 capstone: false
@@ -1103,3 +1104,20 @@ diagnostic copy is installed into the running cold02 clone before its actual
 guest phase; `supplemental-final-record-harness.json` records both source hashes
 and disclaims pristine final acceptance. No error is whitelisted or suppressed.
 `node --check tools/virgl-production/acceptance.mjs` passed.
+
+### 2026-10-14 — worker — block on original fragmented-backing boundary
+
+Fresh critic `critic-production-parent-sg-original-01` records256 valid tiny
+nonoverlapping original backing entries accepted and physically round-tripped,
+while257/420 entries receive0x1205 before host attachment despite known-valid
+RAM addresses, lengths and padding and only1028/1680 total bytes. Exact repro:
+`node target/evidence/critic-production-parent-sg-novel01/browser.mjs --output target/evidence/critic-production-parent-sg-original-repro --schedules 271828`.
+The257 row is `run-0001.json.gz`, SHA256
+c15566452a6171a3cd8734ac94c18974827be24b606d3b33dafdec972f0c8ebc;420 row
+`run-0002.json.gz`, SHA2565b250f996a411fa64ea53a153a4c91ba62bce2e4bf7be5294e96cc697749d9a1.
+Production32MiB byte capacity still inherits the historical256-entry guard in
+both Rust and JS. The pinned native QEMU mapping ceiling is16384. Ordered
+S/high E6-T11d70 closes this one original bounded attachment boundary and must
+be independently verified before final bring-up resumes. Old frozen/cold/public
+captures retain their original assets and identities; no rejection whitelist
+and no production completion or deployment claim is made.
