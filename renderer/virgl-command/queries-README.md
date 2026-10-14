@@ -35,3 +35,8 @@ gets an actual empty native query. Boolean and feedback queries may coexist
 in one virtual subcontext. A failed capture invalidates its active feedback
 query; partial capture must never publish a complete count. No result is taken
 from the CPU’s capture plan or geometry count.
+
+A sum that exceeds the original uint32 result width is refused and the logical
+query becomes invalid. Its native parts are collected before returning the error,
+so automatic polling cannot repeat that failure on another owner’s commands.
+The guest may destroy the invalid query or begin a fresh measurement.

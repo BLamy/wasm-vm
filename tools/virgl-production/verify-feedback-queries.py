@@ -37,6 +37,7 @@ try:
     run("wasm-clippy", ["cargo", "clippy", "-p", "wasm-vm-wasm", "--target", "wasm32-unknown-unknown", "--features", "virgl-renderer", "--", "-D", "warnings"])
     run("proof-build", ["wasm-pack", "build", "crates/wasm", "--target", "web", "--out-dir", "../../target/virgl-production/pkg", "--features", "virgl-renderer,virgl-control-proof"])
     run("hardware", ["node", "tools/virgl-production/worker-feedback-queries-browser.mjs", "--output", str(output / "hardware"), "--schedules", "0,1,2"])
+    run("promoted-feedback", ["node", "tools/virgl-production/critic-fast-boots-feedback-queries-browser.mjs", "--output", str(output / "promoted-feedback")])
     run("held-boolean", ["node", "tools/virgl-production/worker-boolean-queries-browser.mjs", "--output", str(output / "held-boolean"), "--schedules", "0,1,2"])
     run("promoted-novel", ["node", "tools/virgl-production/critic-fast-boots-boolean-queries-browser.mjs", "--output", str(output / "promoted-novel")])
     run("private-profile", ["node", "tools/verify-virgl-draw-replay.mjs", "--output", str(output / "private-profile")])
