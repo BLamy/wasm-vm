@@ -3,7 +3,7 @@ id: E6-T11d69a
 epic: 6
 title: Provide original boolean GPU query lifetimes and guest results
 priority: 525.027037
-status: pending
+status: in-progress
 depends_on: [E6-T11d68]
 estimate: S
 risk: high
