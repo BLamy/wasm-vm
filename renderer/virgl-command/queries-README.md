@@ -14,7 +14,7 @@ Both targets share the virtual overlap rule. Conservative results preserve
 the host's permitted false positives.
 
 Availability is asynchronous. A false result cannot stand in for unavailable.
-Only available native GLuint results0/1 can publish DONE1, result_size4 and
+For boolean targets, only available native GLuint results0/1 can publish DONE1, result_size4 and
 an eight-byte result with high-half0. WAIT_HOST2 changes only the state word.
 The original16-byte host structure lives at byte0 of a retained CUSTOM131072
 buffer; the pinned native renderer ignores create offset and get wait hints.

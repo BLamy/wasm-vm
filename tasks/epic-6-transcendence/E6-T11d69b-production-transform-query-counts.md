@@ -3,7 +3,7 @@ id: E6-T11d69b
 epic: 6
 title: Measure logical original transform-feedback primitive query counts
 priority: 525.027038
-status: in-progress
+status: implemented
 depends_on: [E6-T11d69a]
 estimate: S
 risk: high
@@ -56,3 +56,66 @@ Continue the existing native PR stack after independently verified69a at
 8ce1cc97. The execution boundary is real per-draw native feedback measurement,
 normalized per primitive and counted once across output buffers. Parent desktop
 input, recovery and deployment remain separately gated.
+
+### 2026-10-14 — worker — implemented; exact-head submission
+
+Runtime frozen at `9e97707dfd417216ec9d10e3054b12e9aad882c3` (implementation
+`b50fda32`, browser mirrors `9e97707d`). Original type6 now measures the first
+actual native POINTS capture pass of each original draw, retains that draw’s
+primitive divisor, validates native availability/uint32/divisibility, and sums
+normalized counts once across output buffers. Boolean and feedback queries
+coexist per virtual owner. Empty queries receive actual native measurements;
+a capture/scatter error invalidates its complete logical query and retires its
+native parts. All results use original CUSTOM storage and16-byte guest transfers.
+
+Recorded commands:
+
+- `python3 tools/virgl-production/verify-feedback-queries.py --output target/evidence/production-feedback-queries-frozen01` — all12 gates passed:
+  policy, format, core/native and Wasm clippy, native tests, transport/typed ABI,
+  actual proof Wasm build, feedback hardware, held boolean hardware, promoted
+ 69a attacks/framing, private profile, ordinary default demo127/0/zero errors.
+- Feedback hardware: three completion schedules and physical pending-query
+  context loss;23 direct cases per schedule;1,289,921 assertions. Literal
+  primitive identities cover every point/line/triangle mode, restart, instances,
+  four output buffers, per-draw mixed counts, unequal capacities, empty capture,
+  exact data/padding, owner interleaving, reset, active destruction, and an actual
+  GL error after real scatter followed by explicit incomplete-query refusal.
+- Held boolean matrix7 rows/192,598 assertions and promoted69a matrix6 rows/
+ 2,000,588 assertions passed unchanged.
+- `python3 tools/virgl-production/cold.py --task E6-T11d69b --output target/evidence/production-feedback-queries-cold01` — ordinary full-history
+  `--no-local --single-branch` clone, scrubbed environment, no carried build or
+  assets, `make web-dist` and all12 acceptance gates passed on the same frozen
+  head. Hardware row counts and assertions match the hot submission.
+- `VIRGL_WEB_ROOT=<frozen ordinary dist> VIRGL_GUEST_IMAGE=target/virgl-production/image-12 VIRGL_INTERACTIVE_HOLD=1 node tools/virgl-production/browser.mjs target/evidence/production-feedback-gles-probe01 probe` — default Wasm/production
+  worker and actual RISC-V kernel/Mesa26.2.2; original serial command in
+  `query-command.json` executes independently compiled GCC12 GLES C02. Public
+  renderer is `virgl (wasm-vm WebGL2 VirGL)`, no software DRI. Allthree mandatory
+  targets admit/current-query/actualempty0. Two-buffer counts5/3/3, mixed11,
+  exact-fit4 and incomplete0 passed; every12 complete1024-byte mapped buffer
+  matched literal data/padding. Expected overflow0x502 and optional numeric/
+  timer0x500 refusals passed. Probe exit0; all query owners/parts/pending0.
+
+The independent C01 originally expected partial success for an overflowing GLES
+LINE_STRIP draw. The spec §2.15.2 requires INVALID_OPERATION, so that first
+negative is preserved alongside C02’s explicit negative and valid exact-fit
+replacement. Original Gallium/MMIO capacity truncation remains independently
+exercised, including asymmetric output capacities.
+
+The ordinary image12/default-SDDM capture `production-omarchy-gpu-feedback01`
+preserved C01’s real mandatory/basic/mixed positives but later failed with an
+actual worker-heartbeat timeout during desktop startup. That full recording is
+closed and sealed as negative parent evidence. This task does not claim default
+Omarchy keyboard/bar, complete startup, recovery, performance, or deployment.
+The component query proof does not replace those parent acceptance criteria.
+
+Committed worker seal:
+`evidence/virgl-production-feedback-queries/worker/exact-head-query-submission-and-cold.tar.gz`
+—28,846,513bytes;SHA256
+`8b527cd2ba48b62479435bb78c6471732e031b8ebca9b0a5a1e83695afeb9ec4`;
+paired JSON authenticates1,038 file identities. Every archive member was reopened
+and authenticated. It includes hot/cold records (excluding the cold checkout),
+661 immutable ordinary assets, both complete actual guest recordings, both C
+sources/binaries/build receipts, original serial/GPU logs and source/image pins.
+Submission-only writes add this log, a boolean-doc qualifier and the independently
+compiled C02 fixture; renderer/browser bytes stay at the frozen head. Fresh
+verifier verdict remains required.
