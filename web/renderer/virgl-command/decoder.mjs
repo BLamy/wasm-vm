@@ -370,7 +370,7 @@ function decodeObject(p, objectType) {
     case 9: {
       p.require(p.production, 'unsupported-object', 'Original queries require the production host profile.'); p.exact(4);
       const packed = p.u(2), queryType = packed & 0xffff, queryIndex = packed >>> 16;
-      p.require([1, 11].includes(queryType) && queryIndex === 0, 'unsupported-query', 'Only original boolean query targets at index zero are supported.');
+      p.require([1, 6, 11].includes(queryType) && queryIndex === 0, 'unsupported-query', 'Only original GLES query targets at index zero are supported.');
       return {handle, queryType, queryIndex, offset: p.u(3), resourceHandle: p.handle(4)};
     }
     case 10: {
