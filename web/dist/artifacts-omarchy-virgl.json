@@ -2,7 +2,7 @@
   "generated": "Content-hashed accelerated Omarchy; pinned VirGL-only Mesa GLES3, attachment-only multisample and Quickshell GLES profile, no software DRI",
   "artifacts": {
     "kernel": {
-      "url": "releases/kernel/6.6.63-omarchy-evdev1024/Image",
+      "url": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/3cf8bed0d9a9941a6f2f81b7c8de86cefcba3e4e6bd5e5846bd395714a25642d/releases/kernel/6.6.63-omarchy-evdev1024/Image",
       "sha256": "3cf8bed0d9a9941a6f2f81b7c8de86cefcba3e4e6bd5e5846bd395714a25642d",
       "size": 24208896
     }

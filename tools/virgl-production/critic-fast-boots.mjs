@@ -26,11 +26,19 @@ const candidateDirectory = process.env.CRITIC_FAST_BOOT_IMAGE_DIRECTORY
 const snapshotPersistence = process.env.CRITIC_FAST_BOOT_PERSISTENCE !== '0';
 const saveOnRepeat = process.env.CRITIC_FAST_BOOT_SAVE_ON_REPEAT === '1';
 const gpuTrace = process.env.CRITIC_FAST_BOOT_GPU_TRACE === '1';
+const remoteUrl = process.env.CRITIC_FAST_BOOT_URL;
+if (remoteUrl) {
+  const url = new URL(remoteUrl);
+  assert.equal(url.protocol, 'https:');
+  assert.equal(url.pathname, '/');
+  assert.equal(url.search + url.hash + url.username + url.password, '');
+  assert.equal(candidateDirectory, null, 'live acceptance uses the published image');
+}
 let gpuRecording = Promise.resolve();
 await fs.mkdir(output, {recursive:false});
 const report = {status:'running', scope:'actual production UI fast boots and repeat launches',
   head:execFileSync('git',['rev-parse','HEAD'],{cwd:repo,encoding:'utf8'}).trim(),
-  webRoot:web, releaseCache, saveOnRepeat, gpuTrace, phases:[], requests:[], remoteFetches:[], sourceHashes:{}, harnessHashes:{}, errors:[]};
+  webRoot:web, releaseCache, saveOnRepeat, gpuTrace, remoteUrl, phases:[], requests:[], remoteFetches:[], liveSources:[], sourceHashes:{}, harnessHashes:{}, errors:[]};
 for(const filename of ['critic-fast-boots.mjs','critic-fast-boots-input.mjs','critic-fast-boots-bar-content.mjs'])
   report.harnessHashes[filename]=hash(await fs.readFile(path.join(repo,'tools/virgl-production',filename)));
 let browser, server, activePage, phase = 'inventory';
@@ -131,7 +139,7 @@ async function serveFile(response, filename, pathname) {
     'Cross-Origin-Embedder-Policy':'require-corp'});
   createReadStream(filename).pipe(response);
 }
-server=createServer(async (request,response)=>{
+if (!remoteUrl) server=createServer(async (request,response)=>{
   const pathname=decodeURIComponent(new URL(request.url,'http://localhost').pathname);
   const record={phase,method:request.method,pathname,time:Date.now()}; report.requests.push(record);
   try {
@@ -193,8 +201,8 @@ server=createServer(async (request,response)=>{
     await serveFile(response,filename,pathname);record.status=200;
   }catch(error){record.status=404;record.error=String(error);response.writeHead(404).end(String(error));}
 });
-await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
-const origin='http://127.0.0.1:'+server.address().port;
+if (server) await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
+const origin=remoteUrl ? new URL(remoteUrl).origin : 'http://127.0.0.1:'+server.address().port;
 function observeOriginalWorker(){
   globalThis.__fastBootCritic={events:[],serial:'',workerBoots:[],errors:[],wire:[],timerGaps:[],wireTotals:{}};
   const note = (direction, message) => {
@@ -334,6 +342,22 @@ try{
     const context=await browser.newContext({viewport:{width:1280,height:850},serviceWorkers:'allow'});
     await context.addInitScript(observeOriginalWorker);
     const page=activePage=await context.newPage();
+    const liveReads = [];
+    const liveReadErrors = [];
+    if (remoteUrl) page.on('response', response => {
+      const url = new URL(response.url());
+      if (url.origin !== origin || !/\.(?:m?js|json|wasm|html|css)$/.test(url.pathname) && !['/app','/'].includes(url.pathname)) return;
+      liveReads.push((async () => {
+        const relative = url.pathname === '/app' ? 'app.html' : url.pathname === '/' ? 'index.html' : url.pathname.slice(1);
+        try {
+          assert.equal(response.status(), 200, 'published source status ' + relative);
+          const bytes = await response.body();
+          const expected = await fs.readFile(path.join(web, relative));
+          assert.equal(hash(bytes), hash(expected), 'published source drift ' + relative);
+          report.liveSources.push({url:response.url(), path:relative, bytes:bytes.length, sha256:hash(bytes), fromServiceWorker:response.fromServiceWorker()});
+        } catch (error) { liveReadErrors.push(String(error)); }
+      })());
+    });
     if(gpuTrace)await page.exposeFunction('__recordFastBootGpuEvent',event=>{
       const body=JSON.stringify(event)+'\n';
       gpuRecording=gpuRecording.then(()=>fs.appendFile(path.join(output,'gpu.ndjson'),body));
@@ -343,7 +367,8 @@ try{
     page.on('pageerror',error=>pageErrors.push(String(error)));
     page.on('console',message=>{if(message.type()==='error'&&!/favicon\.ico/.test(message.location().url||''))pageErrors.push(message.text());});
     if(coldGpu)assert.equal(guest,'omarchy');
-    const query=new URLSearchParams({guest,gpu:coldGpu?'1':'0',assetBase:origin,omarchyAssetBase:origin});
+    const query=new URLSearchParams({guest,gpu:coldGpu?'1':'0'});
+    if (!remoteUrl) { query.set('assetBase',origin); query.set('omarchyAssetBase',origin); }
     if(gpuTrace){query.set('testHooks','1');query.set('gpuTrace','1');query.set('workerHeartbeatTimeoutMs','10000');}
     if(guest==='omarchy')query.set('desktop','1');
     const url=origin+'/app?'+query+'#ide';
@@ -397,6 +422,7 @@ try{
         }
       }
       const screenshot=phase+'.png';await page.screenshot({path:path.join(output,screenshot),fullPage:true});
+      await Promise.all(liveReads); assert.deepEqual(liveReadErrors, [], 'published original source bodies');
       report.phases.push({phase,guest,round,url,restoredMs,liveCommandMs:Date.now()-started-restoredMs,result,state,screenshot,repeatCheckpoint});
       await fs.writeFile(path.join(output,phase+'.json'),JSON.stringify(report.phases.at(-1),null,2));
       console.log(JSON.stringify({phase,restoredMs,result,display:state.display?.successfulPresents,databases:state.databases}));
@@ -421,6 +447,7 @@ try{
       console.log(JSON.stringify({phase,restoredMs:Date.now()-started,before,generation,read}));
     }
     await page.evaluate(()=>window.__linuxCtl?.stop?.()).catch(()=>{});
+    await Promise.all(liveReads); assert.deepEqual(liveReadErrors, [], 'published original source bodies');
     await context.close();activePage=null;
   }
   for(const [filename,digest]of Object.entries(report.sourceHashes))
@@ -443,5 +470,5 @@ try{
     report.gpuRecording={path:'gpu.ndjson',bytes:(await fs.stat(file)).size,sha256:digest.digest('hex')};
   }
   await fs.writeFile(path.join(output,'report.json'),JSON.stringify(report,null,2));
-  server.closeAllConnections();await new Promise(resolve=>server.close(resolve));
+  if (server) { server.closeAllConnections();await new Promise(resolve=>server.close(resolve)); }
 }
