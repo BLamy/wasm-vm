@@ -202,3 +202,14 @@ Both paired JSON inventories bind every member. Earlier worker/negative seals
 remain immutable. Normal/default Omarchy startup/input, its recorded heartbeat
 failure, cursor recovery, fast-boot/deployment and performance are expressly
 outside this task’s claim and still gated by the parent/e work.
+
+### 2026-10-14 — verifier audit carried to parent
+
+The independent original-packet sweep holds C02 query/capture/result commands
+through context2 destruction (`production-feedback-gles-probe02/gpu.ndjson`
+2755–2979), with no query/transfer rejection. It also identifies generic console
+scanout capture-budget refusals after the C context cleanup: new02 lines7837–7892
+(12 beginScanout out-of-memory replies); old01 lines50159–50313 (15). These are
+preserved, explicitly outside the query claim, and carried to the parent scanout/
+recovery proof. The complete guest recordings are not claimed to have zero
+GPU/control errors. No positive default desktop or recovery claim is inferred.
