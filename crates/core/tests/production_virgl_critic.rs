@@ -45,9 +45,11 @@ fn caps() -> QualifiedCapabilities {
             vertex_constant_vectors: 1024,
             fragment_constant_vectors: 1024,
             feedback_components: 128,
+            samples: 4,
         },
         sampler.clone(),
         sampler,
+        FormatMask::default(),
         FormatMask::default(),
         FormatMask::default(),
         "wasm-vm WebGL2 VirGL",
@@ -426,6 +428,90 @@ fn original_renderer_wait_preserves_wfi_deadline_until_completion_reset_or_loss(
                 trace.hash()
             );
         }
+    }
+}
+
+#[test]
+fn original_multisample_metadata_accounts_native_samples_and_rejects_before_host_effects() {
+    let mut r = Rig::qualified();
+    r.negotiate(true);
+    r.configure(0);
+    let make = |samples, width, height| {
+        request(
+            p::CMD_RESOURCE_CREATE_3D,
+            0,
+            &[77, 2, 67, 2, width, height, 1, 1, 0, samples, 0, 0],
+        )
+    };
+    for samples in [2, 4] {
+        r.command(&make(samples, 9, 7), 24, p::RESP_OK_NODATA, 24);
+        let state = r.state.borrow().control3d_snapshot().unwrap();
+        assert_eq!(state.logical_bytes, 9 * 7 * 4);
+        assert_eq!(state.gpu_bytes, 9 * 7 * 4 * u64::from(samples));
+        assert_eq!(state.resources[0].metadata.nr_samples, samples);
+        assert_eq!(
+            r.state.borrow().resources.len(),
+            0,
+            "no legacy CPU mirror for sample storage"
+        );
+        r.command(
+            &request(p::CMD_RESOURCE_UNREF, 0, &[77, 0]),
+            24,
+            p::RESP_OK_NODATA,
+            24,
+        );
+        let state = r.state.borrow().control3d_snapshot().unwrap();
+        assert_eq!((state.logical_bytes, state.gpu_bytes), (0, 0));
+    }
+    for samples in [1, 3, 5, 8, u32::MAX] {
+        let before = r.controls.events.borrow().len();
+        let state = r.state.borrow().control3d_snapshot().unwrap();
+        r.command(&make(samples, 9, 7), 24, p::RESP_ERR_INVALID_PARAMETER, 24);
+        assert_eq!(r.controls.events.borrow().len(), before);
+        assert_eq!(r.state.borrow().control3d_snapshot().unwrap(), state);
+    }
+    // Exactly 32 MiB of native four-sample storage, with only 8 MiB of logical pixels.
+    r.command(&make(4, 2048, 1024), 24, p::RESP_OK_NODATA, 24);
+    assert_eq!(
+        r.state.borrow().control3d_snapshot().unwrap().gpu_bytes,
+        33_554_432
+    );
+    r.command(
+        &request(p::CMD_RESOURCE_UNREF, 0, &[77, 0]),
+        24,
+        p::RESP_OK_NODATA,
+        24,
+    );
+    let before = r.controls.events.borrow().len();
+    r.command(&make(4, 2048, 1025), 24, p::RESP_ERR_OUT_OF_MEMORY, 24);
+    assert_eq!(r.controls.events.borrow().len(), before);
+    assert_eq!(r.state.borrow().control3d_snapshot().unwrap().gpu_bytes, 0);
+    // Mutate one original field at a time; every unsupported shape remains transport-only.
+    for (word_index, value) in [
+        (1, 0),
+        (1, 3),
+        (1, 4),
+        (1, 7),
+        (3, 8),
+        (6, 2),
+        (7, 2),
+        (8, 1),
+        (10, 1),
+    ] {
+        let mut bytes = make(4, 9, 7);
+        let at = 24 + word_index * 4;
+        bytes[at..at + 4].copy_from_slice(&u32::to_le_bytes(value));
+        let before = r.controls.events.borrow().len();
+        r.command(&bytes, 24, p::RESP_ERR_INVALID_PARAMETER, 24);
+        assert_eq!(r.controls.events.borrow().len(), before);
+        assert!(
+            r.state
+                .borrow()
+                .control3d_snapshot()
+                .unwrap()
+                .resources
+                .is_empty()
+        );
     }
 }
 
@@ -926,6 +1012,7 @@ fn every_typed_host_floor_is_enforced_before_wire_caps_exist() {
         vertex_constant_vectors: 512,
         fragment_constant_vectors: 512,
         feedback_components: 64,
+        samples: 4,
     };
     let construct = |limits, name: &str| {
         QualifiedCapabilities::new(
@@ -934,11 +1021,12 @@ fn every_typed_host_floor_is_enforced_before_wire_caps_exist() {
             FormatMask::default(),
             FormatMask::default(),
             FormatMask::default(),
+            FormatMask::default(),
             name,
         )
     };
     assert!(construct(baseline.clone(), "GPU").is_ok());
-    for index in 0..13 {
+    for index in 0..14 {
         let mut limits = baseline.clone();
         match index {
             0 => limits.texture_2d -= 1,
@@ -954,6 +1042,7 @@ fn every_typed_host_floor_is_enforced_before_wire_caps_exist() {
             10 => limits.vertex_constant_vectors -= 1,
             11 => limits.fragment_constant_vectors -= 1,
             12 => limits.feedback_components -= 1,
+            13 => limits.samples -= 1,
             _ => unreachable!(),
         }
         assert!(

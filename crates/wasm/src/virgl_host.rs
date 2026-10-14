@@ -325,7 +325,7 @@ pub(crate) fn qualified_capabilities(
     use wasm_vm_core::dev::virtio::gpu::capabilities::{
         FormatMask, HostLimits, QualifiedCapabilities,
     };
-    if host_words.len() != 13 || !format_roles.len().is_multiple_of(2) || format_roles.len() > 512 {
+    if host_words.len() != 14 || !format_roles.len().is_multiple_of(2) || format_roles.len() > 512 {
         return Err(JsError::new("Invalid qualified host profile"));
     }
     let limits = HostLimits {
@@ -342,8 +342,10 @@ pub(crate) fn qualified_capabilities(
         vertex_constant_vectors: host_words[10],
         fragment_constant_vectors: host_words[11],
         feedback_components: host_words[12],
+        samples: host_words[13],
     };
-    let (mut sampler, mut render, mut depth, mut vertex) = (
+    let (mut sampler, mut render, mut depth, mut vertex, mut multisample) = (
+        FormatMask::default(),
         FormatMask::default(),
         FormatMask::default(),
         FormatMask::default(),
@@ -351,7 +353,7 @@ pub(crate) fn qualified_capabilities(
     );
     for pair in format_roles.chunks_exact(2) {
         let (format, roles) = (pair[0], pair[1]);
-        if roles == 0 || roles & !15 != 0 {
+        if roles == 0 || roles & !31 != 0 {
             return Err(JsError::new("Invalid qualified format role"));
         }
         for (bit, mask) in [
@@ -359,12 +361,21 @@ pub(crate) fn qualified_capabilities(
             (2, &mut render),
             (4, &mut depth),
             (8, &mut vertex),
+            (16, &mut multisample),
         ] {
             if roles & bit != 0 {
                 mask.insert(format).map_err(JsError::new)?;
             }
         }
     }
-    QualifiedCapabilities::new(limits, sampler, render, depth, vertex, renderer)
-        .map_err(JsError::new)
+    QualifiedCapabilities::new(
+        limits,
+        sampler,
+        render,
+        depth,
+        vertex,
+        multisample,
+        renderer,
+    )
+    .map_err(JsError::new)
 }

@@ -11,7 +11,7 @@ export async function runProductionAcceptance(page, output) {
     await page.waitForFunction(({start,marker})=>['\r','\n'].some(prefix=>__production.serial.slice(start).includes(prefix+marker.trim()+'\r\n')),{start,marker},{timeout});
     return page.evaluate(start=>__production.serial.slice(start),start);
   }
-  const probe=await command(`mount -t proc proc /proc; mount -t sysfs sysfs /sys; mount -t tmpfs tmpfs /run; mkdir -p /run/user/0 /dev/pts; mount -t devpts devpts /dev/pts; export XDG_RUNTIME_DIR=/run/user/0 LANG=C.UTF-8; set -a; . /etc/environment.d/60-omarchy-browser.conf; set +a; unset LIBGL_ALWAYS_SOFTWARE LP_NUM_THREADS
+  const probe=await command(`mount -t proc proc /proc; mount -t sysfs sysfs /sys; mount -t tmpfs tmpfs /run; mkdir -p /run/user/0 /dev/pts /dev/shm; mount -t devpts devpts /dev/pts; mount -t tmpfs tmpfs /dev/shm; export XDG_RUNTIME_DIR=/run/user/0 LANG=C.UTF-8; set -a; . /etc/environment.d/60-omarchy-browser.conf; set +a; unset LIBGL_ALWAYS_SOFTWARE LP_NUM_THREADS
 test ! -e /usr/lib/dri/swrast_dri.so && test ! -e /usr/lib/dri/kms_swrast_dri.so && echo SOFTWARE_DRI_ABSENT
 /opt/virgl-proof/eglinfo -p gbm -a gles; echo EGLINFO_RC=$?
 /opt/virgl-proof/egl-index; echo EGL_INDEX_RC=$?

@@ -11,12 +11,23 @@ LOCAL_WORKSPACE = --workspace $(if $(filter Darwin,$(shell uname -s)),--exclude 
 
 ci: fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke
 
-.PHONY: verify-E6-T11d verify-E6-T11e
+.PHONY: verify-E6-T11d verify-E6-T11e verify-E6-T11d67
+verify-E6-T11d67:
+	cargo fmt --all --check
+	cargo clippy -p wasm-vm-core --tests --features virgl-renderer,virgl-control-proof,gpu-trace,trace -- -D warnings
+	cargo test -p wasm-vm-core --lib --features virgl-renderer,virgl-control-proof,gpu-trace,trace
+	cargo test -p wasm-vm-core --features virgl-renderer,virgl-control-proof,gpu-trace,trace --test production_virgl_critic --test virgl_capabilities
+	cargo clippy -p wasm-vm-wasm --target wasm32-unknown-unknown --features virgl-renderer -- -D warnings
+	wasm-pack build crates/wasm --target web --out-dir ../../target/virgl-production/pkg --features virgl-renderer,virgl-control-proof
+	node tools/virgl-production/worker-multisample-browser.mjs --output "$${VIRGL_MULTISAMPLE_EVIDENCE_DIR:-target/evidence/production-multisample-final}" --schedules 0,1,2
+	VIRGL_WEB_ROOT=web/dist node tools/virgl-production/browser.mjs "$${VIRGL_NUMERIC_EVIDENCE_DIR:-target/evidence/production-numeric-final}" numeric
+	node tools/verify-virgl-default-demo.mjs --output "$${VIRGL_MULTISAMPLE_DEMO_EVIDENCE_DIR:-target/evidence/production-multisample-demo-final}" --task E6-T11d67
+
 verify-E6-T11d:
 	python3 tools/virgl-production/verify.py --task E6-T11d --output "$${VIRGL_PRODUCTION_EVIDENCE_DIR:-target/evidence/production-guest-final}"
 
 verify-E6-T11e:
-	wasm-pack build crates/wasm --target web --features virgl-renderer,virgl-control-proof --out-dir ../../target/virgl-production/pkg
+	wasm-pack build crates/wasm --target web --out-dir ../../target/virgl-production/pkg --features virgl-renderer,virgl-control-proof
 	python3 tools/virgl-production/verify.py --task E6-T11e --output "$${VIRGL_RECOVERY_EVIDENCE_DIR:-target/evidence/production-recovery-final}"
 
 # Isolated upstream TGSI translator: native hostile-input sanitizers and real
@@ -100,7 +111,7 @@ test-riscv:
 	cargo test -p wasm-vm-core --features zicsr-stub --test riscv_tests
 	@command -v wasm-pack >/dev/null 2>&1 || { \
 		echo "note: wasm-pack absent — skipping the wasm rv64ui-p run"; exit 0; }
-	wasm-pack test --node crates/wasm --features zicsr-stub
+	wasm-pack test --node crates/wasm --features zicsr-stub --test riscv_tests
 
 # E1-T19: the full riscv-tests regression wall over the committed ELFs (real E1 CSR file),
 # emitting target/riscv-tests-report.{md,json} and enforcing tests/riscv-tests-allowlist.txt.

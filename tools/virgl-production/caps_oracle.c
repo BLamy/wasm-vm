@@ -27,7 +27,9 @@ int main(void) {
     caps.v1.max_texture_array_layers = 1024;
     caps.v1.max_streamout_buffers = 4;
     caps.v1.max_render_targets = 4;
-    caps.v1.max_samples = 1;
+    caps.v1.max_samples = 4;
+    caps.supported_multisample_formats.bitmask[0] = (1u << 2) | (1u << 16);
+    caps.supported_multisample_formats.bitmask[2] = 1u << 3;
     caps.v1.prim_mask = 127;
     caps.v1.max_uniform_blocks = 13;
     caps.v1.max_viewports = 1;

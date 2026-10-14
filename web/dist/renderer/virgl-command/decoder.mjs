@@ -87,7 +87,7 @@ const COMMAND_NAMES = Object.freeze({
   4: "SET_VIEWPORT_STATE", 5: "SET_FRAMEBUFFER_STATE", 6: "SET_VERTEX_BUFFERS",
   7: "CLEAR", 8: "DRAW_VBO", 9: "RESOURCE_INLINE_WRITE", 10: "SET_SAMPLER_VIEWS", 11: "SET_INDEX_BUFFER",
   12: "SET_CONSTANT_BUFFER", 13: "SET_STENCIL_REF", 14: "SET_BLEND_COLOR",
-  15: "SET_SCISSOR_STATE",
+  15: "SET_SCISSOR_STATE", 16: "BLIT",
   18: "BIND_SAMPLER_STATES", 22: "SET_POLYGON_STIPPLE", 24: "SET_SAMPLE_MASK",
   25: "SET_STREAMOUT_TARGETS", 28: "SET_SUB_CTX", 29: "CREATE_SUB_CTX",
   30: "DESTROY_SUB_CTX", 31: "BIND_SHADER", 32: "SET_TESS_STATE",
@@ -217,7 +217,7 @@ function decodeRasterizer(p, handle) {
   const bits = p.u(2);
   // The selected standard facet binds fixed/per-vertex native point size.
   // Generic sprite-coordinate replacement remains outside this boundary.
-  const allowed = 2 | 64 | 128 | (3 << 8) | (1 << 14) | (1 << 15) | (1 << 29) | (1 << 30) | (p.standard ? 1 << 24 : 0) | (p.streamOutput ? 8 : 0);
+  const allowed = 2 | 64 | 128 | (3 << 8) | (1 << 14) | (1 << 15) | (1 << 29) | (1 << 30) | (p.standard ? 1 << 24 : 0) | (p.streamOutput ? 8 : 0) | (p.production ? 1 << 25 : 0);
   p.require((bits & ~allowed) === 0 && (bits & 2) !== 0 && (bits & (1 << 29)) !== 0,
     "unsupported-feature", "Unsupported rasterizer feature or coordinate convention.");
   const cullFace = (bits >>> 8) & 3;
@@ -233,7 +233,7 @@ function decodeRasterizer(p, handle) {
     scissor: Boolean(bits & (1 << 14)), frontCcw: Boolean(bits & (1 << 15)),
     clampVertexColor: false, clampFragmentColor: false, offsetLine: false, offsetPoint: false,
     offsetTri: false, polygonSmooth: false, polygonStippleEnable: false, pointSmooth: false,
-    pointSizePerVertex: Boolean(bits & (1 << 24)), multisample: false, lineSmooth: false, lineStippleEnable: false,
+    pointSizePerVertex: Boolean(bits & (1 << 24)), multisample: p.production && Boolean(bits & (1 << 25)), lineSmooth: false, lineStippleEnable: false,
     lineLastPixel: false, halfPixelCenter: true, bottomEdgeRule: Boolean(bits & (1 << 30)), forcePerSampleInterpolation: false,
     pointSize, spriteCoordEnable, lineStipplePattern: 0xffff, lineStippleFactor: 0,
     clipPlaneEnable: 0, lineWidth, offsetUnits, offsetScale, offsetClamp };
@@ -509,6 +509,19 @@ function decodeFields(p, objectType) {
         p.require(bounds.maxX >= bounds.minX && bounds.maxY >= bounds.minY, "invalid-value", "Scissor bounds are reversed.");
         return bounds;
       }) };
+    }
+    case 16: {
+      p.require(p.production, "unsupported-command", "Original BLIT requires production host selection.");
+      p.exact(21); const bits = p.u(1), mask = bits & 255, filter = (bits >>> 8) & 3;
+      p.require((bits & ~0x7ff) === 0 && filter <= 1 && (mask === 15 || [16,32,48].includes(mask)),
+        "unsupported-feature", "BLIT mask, filter, condition or blend is unsupported.");
+      const min = p.u(2), max = p.u(3);
+      const scissor = {minX:min & 65535,minY:min >>> 16,maxX:max & 65535,maxY:max >>> 16};
+      p.require(!(bits & 1024) || scissor.maxX >= scissor.minX && scissor.maxY >= scissor.minY,
+        "invalid-value", "BLIT scissor is reversed.");
+      const box = index => ({resourceHandle:p.handle(index),level:p.u(index+1),format:p.u(index+2),
+        x:p.i(index+3),y:p.i(index+4),z:p.i(index+5),width:p.i(index+6),height:p.i(index+7),depth:p.i(index+8)});
+      return {mask,filter,scissor:bits & 1024 ? scissor : null,destination:box(4),source:box(13)};
     }
     case 22:
       p.exact(32);

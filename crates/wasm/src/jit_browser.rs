@@ -2550,7 +2550,9 @@ mod inline_tlb_context_tests {
 
 // Keep authority-word observations private: these tests run the real Machine and BrowserExecutor,
 // not a test executor, and do not add cache-inspection APIs to the production browser boundary.
-#[cfg(all(test, target_arch = "wasm32"))]
+// These tests require real supervisor/SBI semantics, which the quarantined CSR
+// stub deliberately does not implement. The default Wasm gate runs them.
+#[cfg(all(test, target_arch = "wasm32", not(feature = "zicsr-stub")))]
 mod spp_guest_tests {
     use super::*;
     use core::ptr::NonNull;

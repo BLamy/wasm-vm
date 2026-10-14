@@ -1,3 +1,4 @@
+import {qualifyMultisampleStorage} from "./multisample.mjs";
 /** Host qualification and the production Linux device. Guest bytes never select this profile. */
 import {createVirglProductionBridge} from './control-bridge.mjs';
 import {createVirglStandardStreamOutputShaderBridge} from '../virgl-shader/standard.mjs';
@@ -25,9 +26,10 @@ export async function qualifyVirglHost(gl) {
   const names = ['MAX_TEXTURE_SIZE','MAX_3D_TEXTURE_SIZE','MAX_CUBE_MAP_TEXTURE_SIZE','MAX_ARRAY_TEXTURE_LAYERS',
     'MAX_VARYING_VECTORS','MAX_VERTEX_ATTRIBS','MAX_UNIFORM_BLOCK_SIZE','UNIFORM_BUFFER_OFFSET_ALIGNMENT',
     'MAX_VERTEX_TEXTURE_IMAGE_UNITS','MAX_TEXTURE_IMAGE_UNITS','MAX_VERTEX_UNIFORM_VECTORS',
-    'MAX_FRAGMENT_UNIFORM_VECTORS','MAX_TRANSFORM_FEEDBACK_INTERLEAVED_COMPONENTS'];
+    'MAX_FRAGMENT_UNIFORM_VECTORS','MAX_TRANSFORM_FEEDBACK_INTERLEAVED_COMPONENTS','MAX_SAMPLES'];
+  const multisample = qualifyMultisampleStorage(gl);
   const hostWords = Uint32Array.from(names.map(name => gl.getParameter(gl[name])));
-  const floors = [2048,256,2048,256,16,16,16384,1,16,16,512,512,64];
+  const floors = [2048,256,2048,256,16,16,16384,1,16,16,512,512,64,4];
   if (names.some((name, i) => !Number.isInteger(gl.getParameter(gl[name])) || hostWords[i] < floors[i]) ||
       gl.getParameter(gl.MAX_DRAW_BUFFERS) < 4 || gl.getParameter(gl.MAX_COLOR_ATTACHMENTS) < 4 ||
       gl.getParameter(gl.MAX_UNIFORM_BUFFER_BINDINGS) < 27 || gl.getParameter(gl.MAX_COMBINED_UNIFORM_BLOCKS) < 27 || gl.getParameter(gl.MAX_VERTEX_UNIFORM_BLOCKS) < 14 ||
@@ -127,6 +129,19 @@ export async function qualifyVirglHost(gl) {
         }
         if(accepted)mask|=role;
       }
+      if (mask & 6) {
+        const metadata={id:1,target:2,format,bind:mask & 4 ? 1 : 2,width:1,height:1,depth:1,arraySize:1,lastLevel:0,nrSamples:4,flags:0};
+        const result=store.createResource(metadata),probe={format,role:16,target:2,samples:4,ok:result.ok};probes.push(probe);
+        if(result.ok) {
+          let lease;try {
+            unwrap(store.attachContext(1,1));lease=unwrap(store.retainStorage(1,1,mask & 4 ? 'depth-surface':'surface')).lease;
+            const storage=unwrap(bindings.resolve(lease)).storage,previous=gl.getParameter(gl.RENDERBUFFER_BINDING);
+            gl.bindRenderbuffer(gl.RENDERBUFFER,storage.renderbuffer);probe.nativeSamples=gl.getRenderbufferParameter(gl.RENDERBUFFER,gl.RENDERBUFFER_SAMPLES);gl.bindRenderbuffer(gl.RENDERBUFFER,previous);
+            if(probe.nativeSamples !== 4)throw Error('Native format samples disagree');mask|=16;
+          }catch(error){probe.ok=false;probe.error={message:String(error.message)};}
+          finally{if(lease)unwrap(store.releaseStorage(lease));unwrap(store.detachContext(1,1));unwrap(store.unref(1));}
+        }
+      }
       if (mask) roles.push(format, mask);
     }
     sync=gl.fenceSync(gl.SYNC_GPU_COMMANDS_COMPLETE,0);if(!sync)throw Error('Qualification fence allocation failed');gl.flush();
@@ -148,7 +163,7 @@ export async function qualifyVirglHost(gl) {
   }
   if (gl.getError() !== gl.NO_ERROR || gl.isContextLost()) throw Error('GPU qualification failed');
   return Object.freeze({hostWords,formatRoles:Uint32Array.from(roles),identity,
-    renderer: 'wasm-vm WebGL2 VirGL',probes,limits:Object.fromEntries(names.map((name, i) => [name,hostWords[i]]))});
+    renderer: 'wasm-vm WebGL2 VirGL',probes,multisample,limits:Object.fromEntries(names.map((name, i) => [name,hostWords[i]]))});
 }
 
 /** Bounded retained presentation across the worker/page boundary. */

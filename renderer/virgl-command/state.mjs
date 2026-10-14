@@ -1,3 +1,4 @@
+import {executeFramebufferBlit} from "./multisample.mjs";
 /** Typed VirGL state and bounded triangle draws. See state-README.md and draw-README.md. */
 import {byteColorFormat} from "./color-images.mjs";
 import {floatColorFormat} from "./float-images.mjs";
@@ -1396,7 +1397,8 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
     };
     const attachColorSurface = (slot, surface) => {
       const attachment = gl.COLOR_ATTACHMENT0 + slot, storage = surface ? resolve(surface.lease).storage : null;
-      if (surface?.metadata.kind === "dimensional-texture") {
+      if (storage?.renderbuffer) gl.framebufferRenderbuffer(gl.FRAMEBUFFER, attachment, gl.RENDERBUFFER, storage.renderbuffer);
+      else if (surface?.metadata.kind === "dimensional-texture") {
         if (surface.metadata.target === 4) gl.framebufferTexture2D(gl.FRAMEBUFFER, attachment,
           gl.TEXTURE_CUBE_MAP_POSITIVE_X + surface.fields.firstLayer, storage.texture, surface.fields.level);
         else gl.framebufferTextureLayer(gl.FRAMEBUFFER, attachment, storage.texture, surface.fields.level, surface.fields.firstLayer);
@@ -1426,9 +1428,10 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, null, 0);
         gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.STENCIL_ATTACHMENT, gl.TEXTURE_2D, null, 0);
         if (sub.depthSurface) {
-          const target = sub.depthSurface, texture = resolve(target.lease).storage.texture;
+          const target = sub.depthSurface, storage = resolve(target.lease).storage, texture = storage.texture;
           const attachment = (floatingDepthFormat(target.fields.format)?.stencil || packedDepth && packedDepthFormat(target.fields.format)?.stencil) ? gl.DEPTH_STENCIL_ATTACHMENT : gl.DEPTH_ATTACHMENT;
-          if (dimensionalDepthSurfaces && target.metadata.kind === "dimensional-depth-texture") {
+          if (storage.renderbuffer) gl.framebufferRenderbuffer(gl.FRAMEBUFFER, attachment, gl.RENDERBUFFER, storage.renderbuffer);
+          else if (dimensionalDepthSurfaces && target.metadata.kind === "dimensional-depth-texture") {
             if (target.metadata.target === 4) gl.framebufferTexture2D(gl.FRAMEBUFFER, attachment,
               gl.TEXTURE_CUBE_MAP_POSITIVE_X + target.fields.firstLayer, texture, target.fields.level);
             else gl.framebufferTextureLayer(gl.FRAMEBUFFER, attachment, texture, target.fields.level, target.fields.firstLayer);
@@ -2119,6 +2122,9 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
             require(!depthSurface || ((images ? surface.dimensions.width : surface.metadata.width) === (floatingDepth ? depthSurface.dimensions?.width ?? depthSurface.metadata.width : depthSurface.metadata.width) && (images ? surface.dimensions.height : surface.metadata.height) === (floatingDepth ? depthSurface.dimensions?.height ?? depthSurface.metadata.height : depthSurface.metadata.height)),
               "incompatible-resource", "Color and depth attachment dimensions differ.");
           }
+          const attachments = [...surfaces,depthSurface].filter(Boolean);
+          require(attachments.every(target => target.metadata.nrSamples === attachments[0].metadata.nrSamples),
+            "incompatible-resource", "Framebuffer attachment sample counts differ.");
           for (let index = 0; index < Math.max(sub.surfaces.length, surfaces.length); index++) objectRef(sub, sub.surfaces[index], surfaces[index]);
           sub.depthSurface = objectRef(sub, sub.depthSurface, depthSurface);
           sub.surfaces = surfaces; break;
@@ -2136,6 +2142,20 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           } catch (error) { for (const buffer of buffers) if (buffer) release(buffer.lease); throw error; }
           for (const buffer of sub.vertexBuffers) if (buffer) release(buffer.lease);
           sub.vertexBuffers = buffers; break;
+        }
+        case 16: {
+          require(production && job, "unsupported-blit", "BLIT requires a retained production job.");
+          let source = null, destination = null;
+          const role = fields.mask & 48 ? "depth-surface" : "surface";
+          try {
+            source = retain(ctx,fields.source.resourceHandle,role,["texture","mip-texture","depth-texture","mip-depth-texture"]);
+            destination = retain(ctx,fields.destination.resourceHandle,role,["texture","mip-texture","depth-texture","mip-depth-texture"]);
+            for (const entry of [source,destination]) if (!job.imageSources.has(entry.resourceGeneration)) {
+              const held = unwrap(imageAccess.holdStorage(entry.lease));job.imageSources.set(held.generation,held.token);
+            }
+            executeFramebufferBlit(gl,fields,resolve(source.lease),resolve(destination.lease),require,check);
+            unwrap(imageAccess.markWritten(destination.lease));return;
+          } finally {if (source) release(source.lease);if (destination) release(destination.lease);}
         }
         case 7: {
           require(!images || job, "unsupported-clear", "Original image clears require an owned completion job.");

@@ -180,7 +180,8 @@ export const ROADMAP = [
     status: "partial",
     blurb: "Guest GPU offload in isolated fixtures; multi-hart SMP and live accelerated graphics remain in progress.",
     caps: [
-      { name: "Guest GPU offload", status: "partial", evidence: "Independently verified dimensional depth and original transform feedback (E6-T11d64–66). Production WebGL2 qualification, typed VirGL caps, real Mesa/Hyprland worker rendering and retained scanout are in final verification (E6-T11d); recovery verification is E6-T11e. The launcher offers qualified GPU cold boots and the existing software warm snapshot." },
+      { name: "Native multisample resolve", status: "partial", evidence: "E6-T11d67: original fenced BLIT, real two/four-sample GPU storage, dimensional byte budgets and partial-edge pixels are under independent verification." },
+      { name: "Guest GPU offload", status: "partial", evidence: "Independently verified dimensional depth and original transform feedback (E6-T11d64–66). Production WebGL2 qualification, typed VirGL caps, real Mesa/Hyprland worker rendering and retained scanout are under verification (E6-T11d), including native multisample resolve (E6-T11d67); recovery verification is E6-T11e. The launcher offers qualified GPU cold boots and the existing software warm snapshot." },
       { name: "Multi-hart core state + SBI HSM", status: "pending" },
       { name: "SMP kernel boot (round-robin)", status: "pending" },
       { name: "RVWMO / wasm memory-model audit", status: "pending" },

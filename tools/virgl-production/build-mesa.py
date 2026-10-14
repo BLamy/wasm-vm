@@ -86,6 +86,27 @@ if guard not in text:
     assert text.count(anchor) == 1
     egl.write_text(text.replace(anchor, guard))
 changed = ["src/mesa/main/consts_exts.h", "src/mesa/main/extensions_table.h", "src/mesa/main/extensions.c", "src/egl/drivers/dri2/egl_dri2.c"]
+# The original VirGL flag describes multisample *textures*. GLES 3.0 only
+# needs multisample renderbuffers; keep texture/image queries disabled while
+# admitting attachment-only queries against the real host format/sample mask.
+name = "src/gallium/drivers/virgl/virgl_screen.c"
+virgl = source / name
+text = virgl.read_text()
+anchor = "      if (!caps->v1.bset.texture_multisample)\n         return false;"
+replacement = """      if (!caps->v1.bset.texture_multisample &&
+          (target != PIPE_TEXTURE_2D ||
+           !(bind & (PIPE_BIND_RENDER_TARGET | PIPE_BIND_DEPTH_STENCIL)) ||
+           (bind & ~(PIPE_BIND_RENDER_TARGET | PIPE_BIND_DEPTH_STENCIL))))
+         return false;"""
+if replacement not in text:
+    assert text.count(anchor) == 1
+    virgl.write_text(text.replace(anchor, replacement))
+original = args.output / "pristine" / name
+if not original.exists():
+    original.parent.mkdir(parents=True, exist_ok=True)
+    with tarfile.open(args.archive) as archive:
+        original.write_bytes(archive.extractfile("mesa-26.2.2/" + name).read())
+changed.append(name)
 patch = b""
 for name in changed:
     result = subprocess.run(["diff", "-u", "--label", "a/" + name, "--label", "b/" + name, str(args.output / "pristine" / name), str(source / name)], capture_output=True)

@@ -73,7 +73,13 @@ impl Resource3dMetadata {
     ) -> Result<(u64, u64), Control3dError> {
         if self.width == 0
             || self.height == 0
-            || self.nr_samples != 0
+            || (self.nr_samples != 0
+                && !(production
+                    && self.target == 2
+                    && self.last_level == 0
+                    && matches!(self.nr_samples, 2 | 4)
+                    && self.bind & 3 != 0
+                    && self.flags == 0))
             || (self.flags != 0
                 && !(production
                     && self.flags == 1
@@ -126,7 +132,7 @@ impl Resource3dMetadata {
                     let (width, height) = self.mip_extent(level)?;
                     let pixels = u64::from(width) * u64::from(height);
                     logical += pixels * u64::from(public_pixel);
-                    gpu += pixels * u64::from(gpu_pixel);
+                    gpu += pixels * u64::from(gpu_pixel) * u64::from(self.nr_samples.max(1));
                     if logical > resource_limit || gpu > resource_limit {
                         return Err(Control3dError::OutOfMemory);
                     }
@@ -169,6 +175,9 @@ impl Resource3dMetadata {
         self,
         level: u32,
     ) -> Result<(u32, u32, u32, u32), Control3dError> {
+        if self.nr_samples != 0 {
+            return Err(Control3dError::InvalidParameter);
+        }
         if self.target == 0 {
             if level != 0 {
                 return Err(Control3dError::InvalidParameter);
@@ -229,6 +238,86 @@ impl Resource3dMetadata {
                 self.array_size
             },
         ))
+    }
+}
+
+#[cfg(test)]
+mod production_multisample_tests {
+    use super::*;
+
+    fn image() -> Resource3dMetadata {
+        Resource3dMetadata {
+            resource_id: 1,
+            target: 2,
+            format: 67,
+            bind: 2,
+            width: 2048,
+            height: 1024,
+            depth: 1,
+            array_size: 1,
+            last_level: 0,
+            nr_samples: 4,
+            flags: 0,
+        }
+    }
+
+    #[test]
+    fn sample_storage_is_bounded_and_cannot_cross_the_old_profile() {
+        let image = image();
+        let limit = 32 * 1024 * 1024;
+        assert_eq!(
+            image.sizes_limited(true, true, true, true, limit, true),
+            Ok((8 * 1024 * 1024, limit))
+        );
+        assert_eq!(
+            image.sizes_limited(true, true, true, true, limit, false),
+            Err(Control3dError::InvalidParameter)
+        );
+        assert_eq!(
+            Resource3dMetadata {
+                height: 1025,
+                ..image
+            }
+            .sizes_limited(true, true, true, true, limit, true),
+            Err(Control3dError::OutOfMemory)
+        );
+        for nr_samples in [1, 3, 5, u32::MAX] {
+            assert_eq!(
+                Resource3dMetadata {
+                    nr_samples,
+                    ..image
+                }
+                .sizes_limited(true, true, true, true, limit, true),
+                Err(Control3dError::InvalidParameter)
+            );
+        }
+        for metadata in [
+            Resource3dMetadata { target: 3, ..image },
+            Resource3dMetadata {
+                last_level: 1,
+                ..image
+            },
+            Resource3dMetadata { flags: 1, ..image },
+            Resource3dMetadata { bind: 8, ..image },
+        ] {
+            assert_eq!(
+                metadata.sizes_limited(true, true, true, true, limit, true),
+                Err(Control3dError::InvalidParameter)
+            );
+        }
+        assert_eq!(
+            image.transfer_extent(0),
+            Err(Control3dError::InvalidParameter)
+        );
+        assert_eq!(
+            Resource3dMetadata {
+                format: 16,
+                bind: 1,
+                ..image
+            }
+            .sizes_limited(true, true, true, true, limit, true),
+            Ok((4 * 1024 * 1024, 16 * 1024 * 1024))
+        );
     }
 }
 

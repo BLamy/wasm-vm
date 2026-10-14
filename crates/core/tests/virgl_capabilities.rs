@@ -17,6 +17,7 @@ fn limits() -> HostLimits {
         vertex_constant_vectors: 1024,
         fragment_constant_vectors: 1024,
         feedback_components: 128,
+        samples: 4,
     }
 }
 fn mask(values: &[u32]) -> FormatMask {
@@ -59,6 +60,7 @@ fn complete_wire_matches_independent_pinned_c_abi() {
         mask(&[2, 67]),
         mask(&[16]),
         mask(&[28, 67]),
+        mask(&[2, 16, 67]),
         "wasm-vm WebGL2 VirGL",
     )
     .unwrap();
@@ -73,19 +75,36 @@ fn host_floor_and_format_mask_fail_closed() {
     let mut invalid = limits();
     invalid.uniform_alignment = 3;
     assert!(
-        QualifiedCapabilities::new(invalid, mask(&[]), mask(&[]), mask(&[]), mask(&[]), "GPU")
-            .is_err()
+        QualifiedCapabilities::new(
+            invalid,
+            mask(&[]),
+            mask(&[]),
+            mask(&[]),
+            mask(&[]),
+            mask(&[]),
+            "GPU"
+        )
+        .is_err()
     );
     let mut invalid = limits();
     invalid.feedback_components = 63;
     assert!(
-        QualifiedCapabilities::new(invalid, mask(&[]), mask(&[]), mask(&[]), mask(&[]), "GPU")
-            .is_err()
+        QualifiedCapabilities::new(
+            invalid,
+            mask(&[]),
+            mask(&[]),
+            mask(&[]),
+            mask(&[]),
+            mask(&[]),
+            "GPU"
+        )
+        .is_err()
     );
     assert!(FormatMask::default().insert(512).is_err());
     assert!(
         QualifiedCapabilities::new(
             limits(),
+            mask(&[]),
             mask(&[]),
             mask(&[]),
             mask(&[]),

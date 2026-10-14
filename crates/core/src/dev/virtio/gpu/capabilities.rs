@@ -23,6 +23,7 @@ pub struct HostLimits {
     pub vertex_constant_vectors: u32,
     pub fragment_constant_vectors: u32,
     pub feedback_components: u32,
+    pub samples: u32,
 }
 
 #[derive(Clone, Debug, Default)]
@@ -49,6 +50,7 @@ pub struct QualifiedCapabilities {
     render: FormatMask,
     depth: FormatMask,
     vertex: FormatMask,
+    multisample: FormatMask,
     renderer: Vec<u8>,
 }
 fn word(out: &mut [u8], at: usize, value: u32) {
@@ -63,6 +65,7 @@ impl QualifiedCapabilities {
         render: FormatMask,
         depth: FormatMask,
         vertex: FormatMask,
+        multisample: FormatMask,
         renderer: &str,
     ) -> Result<Self, &'static str> {
         if limits.texture_2d < 2048
@@ -79,6 +82,7 @@ impl QualifiedCapabilities {
             || limits.vertex_constant_vectors < 512
             || limits.fragment_constant_vectors < 512
             || limits.feedback_components < 64
+            || limits.samples < 4
         {
             return Err("Host does not meet the selected renderer floor");
         }
@@ -95,6 +99,7 @@ impl QualifiedCapabilities {
             render,
             depth,
             vertex,
+            multisample,
             renderer: renderer.as_bytes().to_vec(),
         })
     }
@@ -107,7 +112,7 @@ impl QualifiedCapabilities {
         self.vertex.write(&mut out, 196);
         // Only verified primitive restart, separate blend equations, instance ID,
         // divisors, seamless cube sampling, stream pause/resume, fragment position
-        // conventions and uniform buffers. Query/indirect/MSAA/geometry/compute
+        // conventions and uniform buffers. Query/indirect/multisample-texture/geometry/compute
         // and independent blend capabilities stay absent.
         let features = (1 << 6)
             | (1 << 7)
@@ -122,7 +127,7 @@ impl QualifiedCapabilities {
         word(&mut out, 268, self.limits.array_layers.min(2048));
         word(&mut out, 272, 4);
         word(&mut out, 280, 4);
-        word(&mut out, 284, 1);
+        word(&mut out, 284, self.limits.samples.min(4));
         word(
             &mut out,
             288,
@@ -144,6 +149,7 @@ impl QualifiedCapabilities {
         word(&mut out, 492, self.limits.texture_cube.min(16384));
         word(&mut out, 556, 22); // Avoid historical implicit query/stream assumptions.
         self.sampler.write(&mut out, 560);
+        self.multisample.write(&mut out, 768);
         let mut scanout = FormatMask::default();
         for format in [1, 2, 67] {
             scanout.insert(format).expect("pinned scanout format");

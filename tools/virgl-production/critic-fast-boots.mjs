@@ -206,11 +206,58 @@ async function snapshot(page){
     databases:await indexedDB.databases(),caches:await caches.keys(),
   }));
 }
+// Diagnostic requests are handled only at idle capture boundaries. In particular,
+// no serial RPC can overlap the trusted keyboard test. They use the same owned
+// page and original public controller; no worker or guest output is substituted.
+async function serviceOwnedControl(page) {
+  const filename = path.join(output, 'control-request.json');
+  const bytes = await fs.readFile(filename).catch(error => {
+    if (error.code === 'ENOENT') return null;
+    throw error;
+  });
+  if (!bytes) return false;
+  const request = JSON.parse(bytes);
+  assert.match(request.id, /^[a-z0-9-]+$/);
+  await fs.rename(filename, path.join(output, 'control-request-' + request.id + '.json'));
+  const response = {scope: 'critic-owned original public controller', request, started: Date.now()};
+  try {
+    if (request.kind === 'guest-command') {
+      assert.equal(typeof request.command, 'string');
+      response.result = await guestCommand(page, request.command, request.timeout || 300000);
+    } else if (request.kind === 'snapshot') {
+      response.result = await snapshot(page);
+      await page.screenshot({path: path.join(output, 'control-' + request.id + '.png'), fullPage: true});
+    } else if (request.kind === 'retry-input') {
+      const {verifyPublicDesktopInput} = await import('./critic-fast-boots-input.mjs');
+      response.result = await verifyPublicDesktopInput(page, guestCommand, output,
+        {...request.options, name: 'control-input-' + request.id});
+    } else {
+      assert.equal(request.kind, 'release');
+      response.result = {release: true};
+    }
+  } catch (error) {
+    response.error = error.stack || String(error);
+  }
+  response.finished = Date.now();
+  await fs.writeFile(path.join(output, 'control-response-' + request.id + '.json'), JSON.stringify(response, null, 2));
+  return request.kind === 'release';
+}
+async function holdOwnedFailure(page) {
+  if (process.env.CRITIC_FAST_BOOT_HOLD_FAILURE !== '1') return;
+  const deadline = Date.now() + 1800000;
+  await fs.writeFile(path.join(output, 'control-state.json'), JSON.stringify({state: 'held-failure', deadline}));
+  while (Date.now() < deadline) {
+    if (await fs.stat(path.join(output, 'abort')).then(() => true, () => false)) break;
+    if (await serviceOwnedControl(page)) break;
+    await new Promise(resolve => setTimeout(resolve, 1000));
+  }
+}
 async function waitActualReady(page,guest,started){
   const deadline=Date.now()+(coldGpu?1800000:guest==='omarchy'?600000:300000);
   let observedAt=0;
   while(Date.now()<deadline){
     if(await fs.stat(path.join(output,'abort')).then(()=>true,()=>false))throw Error('Owned capture stopped by its abort file');
+    await serviceOwnedControl(page);
     const state=await page.evaluate(()=>({ready:window.wvmDemo?.isGuestReady?.(),
       restored:window.__linux?.restoredFromBootSnapshot?.(),errors:__fastBootCritic?.errors,
       desktop:__fastBootCritic?.events.some(e=>e.type==='wvm:desktop-ready'),
@@ -318,6 +365,8 @@ try{
   report.status='failed';report.failedPhase=phase;report.errors.push(error.stack||String(error));process.exitCode=1;
   if(activePage){report.failureState=await snapshot(activePage).catch(error=>({error:String(error)}));await activePage.screenshot({path:path.join(output,'failure.png'),fullPage:true}).catch(()=>{});}
   console.error(error.stack);
+  await fs.writeFile(path.join(output,'report.json'),JSON.stringify(report,null,2));
+  if(activePage)await holdOwnedFailure(activePage);
 }finally{
   await fs.writeFile(path.join(output,'report.json'),JSON.stringify(report,null,2));
   await browser?.close();server.closeAllConnections();await new Promise(resolve=>server.close(resolve));
