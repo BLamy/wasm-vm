@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import {verifyPublicBarContent} from './critic-fast-boots-bar-content.mjs';
 
 export async function verifyPublicDesktopInput(page, command, output, options = {}) {
   const name = options.name || 'public-desktop-input';
@@ -107,6 +108,18 @@ export async function verifyPublicDesktopInput(page, command, output, options = 
   assert.notEqual(activeWindow.visible, false, 'actual focused Foot is visible');
   assert.notEqual(activeWindow.acceptsInput, false, 'actual focused Foot accepts input');
   await record('guest-focused', {activeWindow});
+  // Use fresh compositor geometry after the trusted wake. Do not count a
+  // fullscreen screensaver or a stale layer mapping as a populated bar.
+  const freshLayers = JSON.parse(await read('XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers'));
+  const freshClients = JSON.parse(await read('XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients'));
+  const freshMonitors = JSON.parse(await read('XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j monitors'));
+  const freshMonitor = freshMonitors.find(value => value.id === foot.monitor) || freshMonitors[0];
+  const bars = Object.values(freshLayers[freshMonitor.name]?.levels || {}).flat()
+    .filter(layer => layer.namespace === 'omarchy-bar' && layer.alpha > 0);
+  assert.equal(bars.length, 1, 'one actual visible Omarchy bar on the focused monitor');
+  const barContent = await verifyPublicBarContent(page, output, {layer: bars[0],
+    monitor: freshMonitor, clients: freshClients, name: name + '-bar-content'});
+  await record('bar-content', {barContent});
   // Only trusted Playwright keyboard events create this file in Foot. The serial
   // control channel merely reads it afterward; it never injects this command.
   // CDP type() can describe a shifted punctuation key without physical modifier

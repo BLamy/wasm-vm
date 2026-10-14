@@ -946,3 +946,21 @@ servicing diagnostic serial commands during desktop startup. Command injection
 before that boundary could lose the request during kernel boot; this is a
 capture orchestration correction. `node --check tools/virgl-production/critic-fast-boots.mjs`
 and `node --test tools/virgl-production/critic-fast-boots-protocol.test.mjs` pass.
+
+### 2026-10-14 — verifier — promoted default bar-content acceptance
+
+The fresh verifier authored `critic-fast-boots-bar-content.mjs` and its four
+bounded tests. Actual old blank-bar pixels from the sealed diagnostic screenshot
+eebbda015d2dcc2e7d4f7ba240e59c53ef2400a8efb0e68719271d626834bd6e are the
+authenticated negative fixture: foregroundPixels0, rejected. A cursor-sized
+mark and a single horizontal divider also fail; separated literal glyph cells
+pass. The helper captures unchanged RGBA and PNG from the same original canvas
+frame inside the fresh actual compositor layer, excludes its border and refuses
+overlapping visible clients. It demands distributed foreground contrast rather
+than merely a positive-alpha mapped rectangle; readable text/icons still require
+independent visual inspection. The existing public input proof invokes it after
+trusted screensaver wake and confirmed original Foot focus, before typing the
+trusted guest marker. `node --check tools/virgl-production/critic-fast-boots-input.mjs`
+and `node --test tools/virgl-production/critic-fast-boots-bar-content.test.mjs`
+pass. This promotes a proof requirement; actual final populated-bar acceptance
+is still pending and no task status changes.

@@ -1,0 +1,15 @@
+{
+  "source": "evidence/virgl-production-bringup/verifier/independent-integration-inspections-01.tar.gz / critic-omarchy-gpu-ui-local11-05/control-gles-bar-visible-18.png",
+  "sourcePngSha256": "eebbda015d2dcc2e7d4f7ba240e59c53ef2400a8efb0e68719271d626834bd6e",
+  "sourceBounds": {
+    "x": 0,
+    "y": 799,
+    "width": 1280,
+    "height": 26
+  },
+  "scope": "Actual old diagnostic bar after GLES surface creation, before production integration fixes; no glyph/icon pixels",
+  "rgbaBytes": 133120,
+  "rgbaSha256": "c5af7e95aca9ef2cfbe437f23032f1c488af2edcdce816b1becce727075b5537",
+  "gzipBytes": 169,
+  "gzipSha256": "de0ffe1ad5817034d5dfe943d0eb1d1616a2c7b6ef02a08d9a30ea104bd69669"
+}
