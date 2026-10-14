@@ -991,7 +991,7 @@ function createStore(options, uniform, bufferRoles = false, mipmaps = false, ima
           require(entry?.role === 'query' && res?.public && ctx?.active && contexts.get(ctx.id) === ctx && ctx.memberships.get(res.meta.id)?.resource === res,
             'stale-storage', 'Original query result owner changed.');
           require(res.meta.byteLength >= 16 && (!res.backing || res.backing.byteLength >= 16), 'out-of-bounds', 'Original query result requires sixteen bytes.');
-          require(state === 2 && value === undefined || state === 1 && (value === 0 || value === 1), 'invalid-input', 'Invalid original boolean query state.');
+          require(state === 2 && value === undefined || state === 1 && Number.isInteger(value) && value >= 0 && value <= 0xffffffff, 'invalid-input', 'Invalid original GLES query state.');
           // Pinned native offset is UNUSED: the host state always starts at0.
           // WAIT_HOST writes only state, preserving prior result words.
           const bytes = new Uint8Array(state === 1 ? 16 : 4), view = new DataView(bytes.buffer);

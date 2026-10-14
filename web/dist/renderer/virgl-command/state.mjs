@@ -1800,7 +1800,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         captures.push({capture, metadata, target, buffer, packed, feedback, cursor: tuple.cursors[buffer]});
       }
       if (captures.length) tuple.failed = true;
-      for (const entry of captures) {
+      for (const [captureIndex, entry] of captures.entries()) {
         const {capture, metadata, target, buffer, packed, feedback, cursor} = entry;
         const owned = resolve(target.lease);
         if (!job.streamHolds.has(target.generation)) {objectRef(sub, null, target);job.streamHolds.set(target.generation, {sub, object: target});}
@@ -1818,7 +1818,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);gl.drawBuffers([gl.BACK]);gl.readBuffer(gl.BACK);gl.enable(gl.RASTERIZER_DISCARD);
         gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, feedback);gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 0, packed.storage.buffer);gl.bindBuffer(gl.TRANSFORM_FEEDBACK_BUFFER, null);check();
         let active = false, out = 0;
-        try {
+        const runCapture = () => { try {
           gl.beginTransformFeedback(gl.POINTS);active = true;check();
           for (let instance = 0; out < vertices && instance < instances; instance++) {
             applyInstanceBase(capture.program, instance);applyInstanceAttributes(capture, instance);check();
@@ -1833,7 +1833,10 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           if (active && !gl.isContextLost()) gl.endTransformFeedback();
           gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 0, null);gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, null);gl.bindBuffer(gl.TRANSFORM_FEEDBACK_BUFFER, null);
           gl.disable(gl.RASTERIZER_DISCARD);
-        }
+        } };
+        // Each physical pass captures POINTS. Measure only the first output
+        // buffer and normalize that draw by its own original primitive size.
+        if (production && captureIndex === 0) booleanQueries.measureFeedback(sub, primitiveSize, runCapture); else runCapture();
         // Invalidate readers before any partial native write. A failed scatter
         // drains with this job and never presents old contents as current.
         unwrap(captureAccess.markWritten(target.lease));
@@ -1904,7 +1907,11 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       });
       // readStorage changes copy/pixel bindings. Restore every supported binding
       // after its synchronous GPU read, immediately before issuing the real draw.
-      const captured = streamOutput && plan.capturePlans.length ? captureOriginal(plan, bytes, constantAttributes, job) : null;
+      let captured = null;
+      if (streamOutput && plan.capturePlans.length) {
+        try { captured = captureOriginal(plan, bytes, constantAttributes, job); }
+        catch (error) { if (production) booleanQueries.invalidateFeedback(sub); throw error; }
+      }
       const stateKey = restore(sub, plan, constantAttributes);
       if (plan.discard && !surface) {gl.bindFramebuffer(gl.FRAMEBUFFER, null);gl.drawBuffers([gl.BACK]);gl.readBuffer(gl.BACK);}
       if (plan.discard) gl.enable(gl.RASTERIZER_DISCARD);

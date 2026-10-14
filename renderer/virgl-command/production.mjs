@@ -145,10 +145,10 @@ export async function qualifyVirglHost(gl) {
       }
       if (mask) roles.push(format, mask);
     }
-    for (const target of [gl.ANY_SAMPLES_PASSED, gl.ANY_SAMPLES_PASSED_CONSERVATIVE]) {
+    for (const target of [gl.ANY_SAMPLES_PASSED, gl.ANY_SAMPLES_PASSED_CONSERVATIVE, gl.TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN]) {
       const native=gl.createQuery();if(!native)throw Error('Qualification query allocation failed');
       queryProbes.push({target,native});gl.beginQuery(target,native);gl.endQuery(target);
-      if(gl.getError()!==gl.NO_ERROR)throw Error('Physical boolean query admission failed');
+      if(gl.getError()!==gl.NO_ERROR)throw Error('Physical GLES query admission failed');
     }
     sync=gl.fenceSync(gl.SYNC_GPU_COMMANDS_COMPLETE,0);if(!sync)throw Error('Qualification fence allocation failed');gl.flush();
     const deadline=performance.now()+5000;

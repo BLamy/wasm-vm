@@ -77,7 +77,7 @@ async function one(Wasm, profile, native, compiler, schedule, type) {
     await read(13,1,0);await send('original subcontext query end',join(end(90),get(90)));await read(10,1,0);
     await send('end inactive refuses',end(90),1,0x1205);await send('get active refuses',join(begin(90),get(90)),1,0x1205);
     await send('overlap aliases refuses',begin(91),1,0x1205);await send('end original after refusal',join(end(90),get(90)));
-    for(const unsupported of [0,2,3,4,5,6,7,8,9,10,12,0xffff])c.bad(decodeProductionSubmission(query(200,unsupported,14)),'unsupported query'+unsupported,'unsupported-query');
+    for(const unsupported of [0,2,3,4,5,7,8,9,10,12,0xffff])c.bad(decodeProductionSubmission(query(200,unsupported,14)),'unsupported query'+unsupported,'unsupported-query');
     c.bad(decodeProductionSubmission(query(200,type|(1<<16),14)),'query index1','unsupported-query');
     c.bad(decodeProductionSubmission(get(90,2)),'invalid wait','invalid-value');
     c.bad(decodeStandardStreamOutputSubmission(query(200,type,14)),'private query admission','unsupported-object');
@@ -107,15 +107,15 @@ async function one(Wasm, profile, native, compiler, schedule, type) {
   finally{row.records=copy(rig.q.records);row.events=copy(rig.events);row.exchanges=copy(rig.exchanges);row.completions=copy(rig.completions);row.beforeDispose=copy(rig.host.bridge.inspect());row.guestTrace=rig.q.vm.commandTrace();row.machineDigest=rig.q.vm.machineDigest();row.disposed=copy(rig.host.bridge.dispose());rig.q.vm.free();row.cleaned=copy(rig.trace.snapshot());row.assertions=c.assertions;if(row.cleaned.liveObjects||row.cleaned.liveSyncs){row.status='failed';row.cleanupFailure='Native owners leaked';}}
   return row;
 }
-async function loss(Wasm,profile,compiler) {
+export async function loss(Wasm,profile,compiler,type=1) {
   const c=checker(),canvas=document.createElement('canvas');canvas.width=4;canvas.height=4;document.body.append(canvas);
-  const native=canvas.getContext('webgl2',{antialias:false,failIfMajorPerformanceCaveat:true}),row={name:'physical-context-loss-pending-query',predictions:{loss:'Pending actual query cannot publish DONE or mutate guest result after native context loss.'}};
+  const native=canvas.getContext('webgl2',{antialias:false,failIfMajorPerformanceCaveat:true}),row={name:'physical-context-loss-pending-query'+type,predictions:{loss:'Pending actual query cannot publish DONE or mutate guest result after native context loss.'}};
   const Selected=class{constructor(callback){return Wasm.qualified(callback,profile.hostWords,profile.formatRoles,profile.renderer);}};
   const rig=makeRig(Selected,options=>createVirglProductionBridge({...options,presenter:createWorkerScanoutPresenter(()=>{})}),native,compiler,c,31337,true,false,true),address=rig.q.base+0x240000n;
   try{
     await rig.expect('loss context',context(1));await rig.expect('loss query resource',allocation(1,0,64,131072,32));
     rig.q.write(address,new Uint8Array(64).fill(0x6d));await rig.expect('loss query backing',backing(1,[[address,64]]));await rig.expect('loss query membership',idCommand(0x202,1,1));
-    const entry=rig.q.enqueue('physical loss original query',submission(1,join(query(90,1,1),begin(90),end(90),get(90)),101n),0x1200);
+    const entry=rig.q.enqueue('physical loss original query',submission(1,join(query(90,type,1),begin(90),end(90),get(90)),101n),0x1200);
     rig.q.kick();rig.q.run();await rig.step();c.equal(rig.q.usedIndex(),entry.number,'query original response remains pending');
     row.beforeLoss=copy(rig.host.bridge.inspect());c.truth(rig.trace.syncs.size>0,'actual native query completion fence pending');c.equal(row.beforeLoss.renderer.budgets.queries.nativeParts,1,'one actual empty query retained');
     canvas.addEventListener('webglcontextlost',e=>e.preventDefault(),{once:true});native.getExtension('WEBGL_lose_context').loseContext();
