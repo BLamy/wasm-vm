@@ -60,7 +60,10 @@ try {
         assert.equal(response.status(), 200, 'published source status ' + url.pathname);
         const bytes = await response.body(), relative = url.pathname.slice(1);
         assert.equal(sha256(bytes), sha256(await fs.readFile(path.join(root, relative))), 'published source drift ' + relative);
-        served.set(url.pathname, {path:'web/dist/' + relative, bytes:bytes.length, sha256:sha256(bytes), url:response.url()});
+        const bodyPath = path.join('served', relative);
+        await fs.mkdir(path.dirname(path.join(output, bodyPath)), {recursive:true});
+        await fs.writeFile(path.join(output, bodyPath), bytes);
+        served.set(url.pathname, {path:'web/dist/' + relative, bodyPath, bytes:bytes.length, sha256:sha256(bytes), url:response.url()});
       } catch (error) { report.errors.push(String(error)); }
     })());
   });

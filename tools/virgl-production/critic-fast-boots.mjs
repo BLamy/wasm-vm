@@ -354,7 +354,10 @@ try{
           const bytes = await response.body();
           const expected = await fs.readFile(path.join(web, relative));
           assert.equal(hash(bytes), hash(expected), 'published source drift ' + relative);
-          report.liveSources.push({url:response.url(), path:relative, bytes:bytes.length, sha256:hash(bytes), fromServiceWorker:response.fromServiceWorker()});
+          const bodyPath = path.join('live-source', relative);
+          await fs.mkdir(path.dirname(path.join(output, bodyPath)), {recursive:true});
+          await fs.writeFile(path.join(output, bodyPath), bytes);
+          report.liveSources.push({url:response.url(), path:relative, bodyPath, bytes:bytes.length, sha256:hash(bytes), fromServiceWorker:response.fromServiceWorker()});
         } catch (error) { liveReadErrors.push(String(error)); }
       })());
     });
