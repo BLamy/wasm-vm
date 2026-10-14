@@ -888,3 +888,61 @@ raising the capability. Existing production integration is checkpointed without
 a verified claim. The old four warm boots and the independent dimensional,
 shader binding, WFI, and original-command boundary results remain held where
 their source and evidence digests are unchanged.
+
+### 2026-10-14 — worker — independently held components; default Omarchy still pending
+
+D67 is independently verified at caccaf2b after its frozen runtime
+3bb4ba9b93f19165cf61d4c2cea82f128430e1a6, real multisample/resolve and exact-head
+pristine-clone proof. The parent resumed its integration lane; this entry does
+not claim full production completion. Runtime integration checkpoints are
+deab12b4 (reference-derived framebuffer origin/front-face), c43a7ce3 (coherent
+public snapshot write draining and literal rejected-transfer tracing), and
+1aa4e465962e119a632cec57768a383ffc411d5a (Quickshell-only GLES client format).
+
+The completed component submission is sealed in
+`evidence/virgl-production-bringup/worker/integration-components-and-fast-boots-01.tar.gz`
+with SHA256 d6d7cb47a50dcc8280d0832b6a01bb377dc9761fe04a9228d0cd8fc58e54febb;
+its paired JSON authenticates 95 files. Original acceptance21 demonstrates
+actual Mesa, all29 numeric limits, required multisample formats and actual GL
+resolve, a1000-frame kmscube run, Hyprland/Foot and readable upright GPU pixels.
+Its guest digest is5a0121bc99fc6617714d737bdb0c7a24389838e07fc83e8318c3de29d155adde.
+The archived QEMU comparison holds13 actual initialization/control families
+and correctly framed original draws; implicit backing detach at resource-unref
+is explicitly bound to pinned QEMU source. This private component run does not
+substitute for the full default Omarchy session.
+
+All four original software boot profiles pass initial/repeat launches in
+`production-fast-boots-all-fixed-05`: BusyBox2.118/1.025 seconds; Alpine2.079/1.025;
+Node Alpine2.066/2.028; Omarchy7.061/6.034. Both Alpine variants also preserve an
+actual durable guest marker through public coherent snapshot save/reload. Actual
+Node v20.15.1 runs on each launch. A paused public save drains a subsequently
+queued guest write rather than bypassing disk/RAM generation coherence; the
+recorded original write-in-flight refusal and four independent negative tests
+remain preserved. These are gpu=0 software warm claims; accelerated guest boots
+still intentionally require cold restart. Default built demo is127 passed/0
+failed with zero console errors and no private proof VM/RAM exports.
+
+Fresh adversarial intermediate inspection is sealed separately in
+`evidence/virgl-production-bringup/verifier/independent-integration-inspections-01.tar.gz`,
+SHA2562dcbf6c70d1d04eba422a62957299adbc9240f10f66a1162ece01b27db3e31f3,
+251 files. It holds all12 asymmetric origin/culling cases, all-four warm boots,
+public snapshot negative boundaries/sabotage, and the Quickshell client API
+selection. Existing native capset/attachment/WFI and D67 results are carried
+when their source/dependency/evidence identities are unchanged.
+
+The full Omarchy session remains unproven: its Qt6.11.2 desktop-GL default asks
+EGL for renderable-bit8 and gets no config. The app-local public QSurfaceFormat
+GLES3 selector instead requests bit64, gets three real configs and non-null
+window surfaces. Independent ELF inspection holds original28 dependency order,
+RPATH/RUNPATH and unchanged .text/.rodata. However, the original diagnostic
+default bar has only two colors and eight host submission failures; the core
+also rejects transfer commands. Candidate image12 installs that same narrowly
+scoped adapter without LD_PRELOAD. Original-command trace captures and actual
+default-session service logs are now required to identify the concrete remaining
+failures. No parent/recovery/deployment verified verdict or300-MIPS claim is made.
+
+The owned capture harness now waits for the public guest-ready boundary before
+servicing diagnostic serial commands during desktop startup. Command injection
+before that boundary could lose the request during kernel boot; this is a
+capture orchestration correction. `node --check tools/virgl-production/critic-fast-boots.mjs`
+and `node --test tools/virgl-production/critic-fast-boots-protocol.test.mjs` pass.

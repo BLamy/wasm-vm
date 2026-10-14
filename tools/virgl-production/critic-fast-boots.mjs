@@ -262,7 +262,6 @@ async function waitActualReady(page,guest,started){
   let observedAt=0;
   while(Date.now()<deadline){
     if(await fs.stat(path.join(output,'abort')).then(()=>true,()=>false))throw Error('Owned capture stopped by its abort file');
-    await serviceOwnedControl(page);
     const state=await page.evaluate(()=>({ready:window.wvmDemo?.isGuestReady?.(),
       restored:window.__linux?.restoredFromBootSnapshot?.(),errors:__fastBootCritic?.errors,
       desktop:__fastBootCritic?.events.some(e=>e.type==='wvm:desktop-ready'),
@@ -273,6 +272,7 @@ async function waitActualReady(page,guest,started){
       coreReady:window.__ready,gpuQualified:document.documentElement.dataset.gpuQualified}));
     assert.deepEqual(state.errors||[],[],guest+' worker failure');
     if(/linux worker fatal|cannot boot:/i.test(state.uiStatus||''))throw Error(state.uiStatus);
+    if(coldGpu&&state.ready&&await serviceOwnedControl(page))throw Error('Owned capture released during startup');
     if(state.ready&&(coldGpu?state.gpuQualified==='true':state.restored)&&(guest!=='omarchy'||state.desktop))return;
     if(coldGpu&&Date.now()-observedAt>30000){
       observedAt=Date.now();const full=await snapshot(page);
