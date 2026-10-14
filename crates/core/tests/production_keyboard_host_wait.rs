@@ -153,6 +153,7 @@ fn original_keyboard_lifecycle_preserves_wait_and_releases_idle_jump() {
                 "absent",
                 "quiet",
                 "refused",
+                "dropped",
                 "staged",
                 "pending",
                 "delivered",
@@ -178,6 +179,18 @@ fn original_keyboard_lifecycle_preserves_wait_and_releases_idle_jump() {
                                 .inject_event(EV_KEY, 35, 2)
                         );
                         r.input.as_ref().unwrap().borrow_mut().sync();
+                    }
+                    "dropped" => {
+                        r.input
+                            .as_ref()
+                            .unwrap()
+                            .borrow_mut()
+                            .set_pending_event_budget(1);
+                        r.edge(1, true);
+                        let input = r.input.as_ref().unwrap().borrow();
+                        assert_eq!(input.dropped_frames, 1);
+                        assert_eq!(input.pending_events(), 0);
+                        assert_eq!(r.machine.bus_mut().load16(USED + 2).unwrap(), 0);
                     }
                     "staged" => r.edge(1, false),
                     "pending" => r.edge(1, true),
