@@ -57,7 +57,7 @@ export function executeFramebufferBlit(gl, fields, source, destination, require,
   require(depth ? !(fields.mask & 15) : fields.mask === 15,
     'unsupported-blit', 'BLIT mask contradicts its original attachment role.');
   require(!depth || fields.filter === 0, 'unsupported-blit', 'Depth and stencil require nearest copies.');
-  require(!(fields.mask & 32) || [18,20,126].includes(a.format),
+  require(!(fields.mask & 32) || [20,126].includes(a.format),
     'unsupported-blit', 'Stencil BLIT requires combined depth/stencil storage.');
   const attachment = depth ? fields.mask & 32 ? gl.DEPTH_STENCIL_ATTACHMENT : gl.DEPTH_ATTACHMENT : gl.COLOR_ATTACHMENT0;
   const mask = (fields.mask & 15 ? gl.COLOR_BUFFER_BIT : 0) |
