@@ -3,7 +3,7 @@ id: E6-T11d72
 epic: 6
 title: Pace accelerated desktop interaction with the existing monotonic clock
 priority: 525.027037
-status: pending
+status: in-progress
 depends_on: [E5-T26i, E6-T11d70]
 estimate: S
 risk: high

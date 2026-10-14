@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E6-T11d72** — Pace accelerated desktop interaction with the existing monotonic clock
 1. **E5-T26f** — Browser desktop snapshot round-trip and interaction smoke
 
 
@@ -650,7 +649,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.027037` [E6-T11d4](epic-6-transcendence/E6-T11d4-standard-shader-compiler.md) — Compile bounded ordinary guest shaders with standard WebGL2 semantics *(deps: E6-T11d3)*
 - [-] `525.027037` [E6-T11d69](epic-6-transcendence/E6-T11d69-production-core-queries.md) — Provide original query admission and results for the GLES3 core *(deps: E6-T11d68)*
 - [x] `525.027037` [E6-T11d69a](epic-6-transcendence/E6-T11d69a-production-boolean-queries.md) — Provide original boolean GPU query lifetimes and guest results *(deps: E6-T11d68)*
-- [ ] `525.027037` [E6-T11d72](epic-6-transcendence/E6-T11d72-interactive-keyboard-clock.md) — Pace accelerated desktop interaction with the existing monotonic clock *(deps: E5-T26i, E6-T11d70)*
+- [~] `525.027037` [E6-T11d72](epic-6-transcendence/E6-T11d72-interactive-keyboard-clock.md) — Pace accelerated desktop interaction with the existing monotonic clock *(deps: E5-T26i, E6-T11d70)*
 - [x] `525.027038` [E6-T11d5](epic-6-transcendence/E6-T11d5-standard-shader-state-binding.md) — Execute standard guest shader bindings through owned renderer jobs *(deps: E6-T11d4)*
 - [x] `525.027038` [E6-T11d69b](epic-6-transcendence/E6-T11d69b-production-transform-query-counts.md) — Measure logical original transform-feedback primitive query counts *(deps: E6-T11d69a)*
 - [b] `525.027038` [E6-T11d71](epic-6-transcendence/E6-T11d71-keyboard-host-wait.md) — Preserve original keyboard host waits across tickless guest idle *(deps: E6-T11d70)*
