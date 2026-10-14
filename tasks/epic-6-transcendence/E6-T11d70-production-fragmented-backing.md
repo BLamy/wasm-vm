@@ -3,7 +3,7 @@ id: E6-T11d70
 epic: 6
 title: Admit bounded fragmented original production GPU backing
 priority: 525.027049
-status: in-progress
+status: implemented
 depends_on: [E6-T11d69b]
 estimate: S
 risk: high
@@ -75,3 +75,23 @@ Commands/logs: `target/production-fragmented-native-precheck02.{stdout,stderr}`,
 `target/evidence/production-fragmented-backing-precheck05`; `make web-dist`
 passed with production sources mirrored into the committed ordinary browser.
 Parent integration, actual final Omarchy, recovery and deployment remain gated.
+
+### 2026-10-14 — worker — exact-head implemented submission
+
+Frozen runtime/source `759e1e98af078b40cee3ce9b758befd541c9585b` passes all11
+commands in `production-fragmented-backing-frozen01` and the final pristine
+`production-fragmented-backing-cold01` (full-history/no-local clone, scrubbed
+compiler environment, fresh builds, same11 acceptance gates). Commands:
+`VIRGL_FRAGMENTED_BACKING_EVIDENCE_DIR=target/evidence/production-fragmented-backing-frozen01 make verify-E6-T11d70`;
+`python3 tools/virgl-production/cold.py --task E6-T11d70 --output target/evidence/production-fragmented-backing-cold01`.
+Hardware48 rows cover16 cases under schedules0/1/2; the independently promoted
+split-tail rows under271828/314159 exercise the final reserved byte in a
+separate original DMA descriptor. Native/libraries/transport/Wasm/clippy/fmt,
+private-profile replay and ordinary demo127 passed/0 failed with no browser
+errors and no proof exports all pass. Complete original SG literals, GPU
+roundtrips, guards, canonical state/guest traces and ownership cleanup are
+recorded. Private Rust and JS ceilings remain256; valid production16384 works
+and16385 refuses; range/packet/padding/byte/budget/generation refusals are atomic.
+
+Worker seal: `evidence/virgl-production-fragmented-backing/worker/exact-head-fragmented-backing-submission-and-cold.tar.gz`, 6970324 bytes, SHA256b4b51198c6621bf37290e8b73b5c03ce97dad078019cd1c056a0df6b371d0571, 304 members; every member was reopened and authenticated.
+Parent integration, real final default Omarchy, recovery and production deployment remain outside this component claim. Fresh verifier owns the verdict.
