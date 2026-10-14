@@ -1087,3 +1087,19 @@ Syntax checks and all6 affected harness tests passed, outputs
 are unchanged; the ongoing old-head actual Mesa/cube/compositor run is component
 evidence, never relabelled. Record the repaired server in a new final cold clone
 (the failed first clone is retained as the portability negative).
+
+### 2026-10-14 — worker — preserve unexplained final transport rejection
+
+The old-head full parent run reached actual VirGL-only Mesa,768 checked
+textured pixels,1000 cube frames (6006 draws,2017 completions,1007 presents,
+49301ms wall), Hyprland IPC and mapped Foot client, with zero failed GPU jobs
+and no browser errors. It then failed the blanket assertion that every guest
+transport response is below0x1200. `production-parent-frozen01/guest/failure.json`
+and its original GPU/serial logs are preserved. This is not a passed run.
+The prior unbacked-transfer finding is not assumed to explain this rejection.
+The harness now persists the original final transport records, Hyprland output
+and display screenshot before unchanged assertions. An explicitly labelled
+diagnostic copy is installed into the running cold02 clone before its actual
+guest phase; `supplemental-final-record-harness.json` records both source hashes
+and disclaims pristine final acceptance. No error is whitelisted or suppressed.
+`node --check tools/virgl-production/acceptance.mjs` passed.

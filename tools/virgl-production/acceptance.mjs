@@ -54,10 +54,15 @@ echo __PRODUCTION_CLIENT_STARTED`, '\r__PRODUCTION_CLIENT_STARTED\r\n');
   await page.waitForFunction(async ({completed,draws,presents})=>{const g=await __production.controller.gpuStats();return g.counters.completed>completed&&g.counters.draws>draws&&__production.presentation.snapshot().drawnPresents>presents;},{completed:before.gpu.counters.completed,draws:before.gpu.counters.draws,presents:before.display.drawnPresents},{timeout:300000,polling:1000});
   const clients=await command(`timeout 180 sh -c 'until XDG_RUNTIME_DIR=/run/user/0 hyprctl -i 0 -j clients > /tmp/production-clients.json && grep -q "GPU rendering verified" /tmp/production-clients.json; do sleep 2; done'; echo CLIENT_MAPPING_RC=$?
 cat /tmp/production-clients.json; cat /tmp/production-foot.log; echo __PRODUCTION_CLIENTS_COMPLETE`,'\r__PRODUCTION_CLIENTS_COMPLETE\r\n');assert.match(clients,/CLIENT_MAPPING_RC=0/);assert.match(clients,/GPU rendering verified/);
-  const final=await state();assert.equal(final.gpu.counters.failed,0);assert.equal(final.gpu.guestCommands.dropped,0);assert.deepEqual(final.errors,[]);
+  const final=await state();
+  // Preserve the original transport's final request/response records even if
+  // an assertion fails. Never infer a rejected packet from renderer counters.
+  await fs.writeFile(path.join(output,'final-state.json'),JSON.stringify(final,null,2));
+  await fs.writeFile(path.join(output,'hyprland.txt'),ready+'\n'+clients);
+  await page.locator('#display').screenshot({path:path.join(output,'hyprland.png')});
+  assert.equal(final.gpu.counters.failed,0);assert.equal(final.gpu.guestCommands.dropped,0);assert.deepEqual(final.errors,[]);
   const records=final.gpu.guestCommands.records;assert.ok(records.every(r=>r.response<0x1200));for(const type of [0x108,0x109,0x200,0x204,0x106,0x202,0x205,0x206,0x207,0x103,0x104])assert.ok(records.some(r=>r.type===type),'original command family '+type.toString(16));
   const digest=await page.evaluate(()=>__production.controller.stateDigest());assert.match(digest,/^[a-f0-9]{64}$/);
   await fs.writeFile(path.join(output,'hyprland.txt'),ready+'\n'+clients);await fs.writeFile(path.join(output,'acceptance.json'),JSON.stringify({status:'passed',probe:{pixels:768,draws:3},cube:{frames:1000},hyprland:true,guestDigest:digest,final},null,2));
-  await page.locator('#display').screenshot({path:path.join(output,'hyprland.png')});
   console.log('Actual VirGL-only Mesa,1000 cube frames,Hyprland client and scanout passed.');
 }
