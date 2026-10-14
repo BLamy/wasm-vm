@@ -3,7 +3,7 @@ id: E6-T11d69b
 epic: 6
 title: Measure logical original transform-feedback primitive query counts
 priority: 525.027038
-status: in-progress
+status: implemented
 depends_on: [E6-T11d69a]
 estimate: S
 risk: high
@@ -140,3 +140,65 @@ particular same-query retry are not required. The verifier carries HELD mixed/
 capacity/restart/empty data/counts, actual C02 valid-host proof, and transient
 fractional/nondivisible/u32+1 rejection plus healthy retry. Worker restores the
 active lane and repairs only this boundary; no broader parent claim is made.
+
+### 2026-10-14 — worker — repaired exact-head resubmission
+
+The independently reproduced aggregate-isolation failure is repaired at
+`ad3798a2`; ordinary browser mirrors/dist freeze at
+`aa451b8170852b882632a6bc6ee1118bd0a2501a`. Query source SHA256
+`08027068614d5501746515918ec423a30188448d3ce031bb619ef08805fe9e0d`.
+Before refusing an unrepresentable aggregate, the controller clears native
+parts, stops polling and marks that logical query invalid. It returns the
+original error once; another owner’s ready query and the rejected query’s
+destroy/fresh-BEGIN paths remain usable. Existing per-part transactional
+retries, count calculation, boolean queries and capability negotiation are
+unchanged. The old failure and both independent reproductions remain preserved.
+
+The narrow original fixture passes on both271828/316227 schedules at
+`production-feedback-aggregate-repair-self01` (20,106/20,107 assertions). The
+independent nine-mode test is permanently promoted in
+`critic-fast-boots-feedback-queries.mjs`/`-browser.mjs` and included in acceptance.
+
+Recorded repaired submission commands:
+
+- `python3 tools/virgl-production/verify-feedback-queries.py --output target/evidence/production-feedback-queries-frozen02` — all13 high-risk gates pass on
+  the frozen head. Four feedback rows/1,289,895 assertions; eight promoted
+  feedback rows/135,788 assertions; seven held boolean rows/192,598 assertions;
+  six promoted boolean rows/2,000,588 assertions; private profile and ordinary
+  default demo127/0 with zero browser errors. All preceding native/Wasm format,
+  clippy, native tests, transport/typed ABI and proof build pass.
+- `python3 tools/virgl-production/cold.py --task E6-T11d69b --output target/evidence/production-feedback-queries-cold02` — final full-history, no-hardlink,
+  no-carry clone builds ordinary dist and passes all13 acceptance gates on the
+  same exact frozen head with scrubbed Rust/Cargo/VirGL/critic environment.
+- The independently compiled C02 is rerun through the actual default Wasm/
+  production worker/RISC-V kernel/Mesa image12 using the immutable661-asset
+  `production-feedback-queries-normal-dist02/dist`, existing `browser.mjs probe`
+  and original serial command in `production-feedback-gles-probe02/query-command.json`.
+  Allthree mandatory admission/current-query/empty results, counts5/3/3,11,4,0,
+  twelve full1024-byte captured outputs, expected overflowing-draw0x502 and
+  optional counter/timer0x500 pass again with actual VirGL/no software DRI.
+  Probe exit0; query owners/parts/pending0; component closed successfully.
+  Its whole original GPU record is12,310,373bytes/SHA256
+  `638d8b2999781d0c39b8806c4a5ee2c86abc3a203ae23f7351a9888f3ec08729`.
+
+Fresh coverage review identified the production capture-without-query path as
+a narrow proof gap. The verifier recorded real mixed two-output capture with
+untouched context1 query storage and no context1 native query allocation. It
+promoted that ninth mode after the final cold proof. The worker reruns only
+this touched test harness, per incremental policy:
+`node tools/virgl-production/critic-fast-boots-feedback-queries-browser.mjs --output target/evidence/production-feedback-queries-promoted-final01` — nine rows/
+150,714 assertions pass. No runtime bytes change and no unrelated cold proof
+is restarted. Invalid/empty selector guards are test harness input validation.
+
+Reopened/authenticated repair seal:
+`evidence/virgl-production-feedback-queries/worker/repaired-query-submission-and-cold.tar.gz`
+—32,312,349bytes,1,158 file identities,SHA256
+`4ecd06a35fe8a867d689e419ae431e5e274c117d7d78e31991717194d4f909aa`.
+Test-only supplement:
+`evidence/virgl-production-feedback-queries/worker/promoted-no-query-supplement.tar.gz`
+—1,596,024bytes,47 identities,SHA256
+`c35ee9fe3775a6cc5bd6ea816236596446bf06f5eb01575e735d6ea361e3c23d`.
+Both paired JSON inventories bind every member. Earlier worker/negative seals
+remain immutable. Normal/default Omarchy startup/input, its recorded heartbeat
+failure, cursor recovery, fast-boot/deployment and performance are expressly
+outside this task’s claim and still gated by the parent/e work.

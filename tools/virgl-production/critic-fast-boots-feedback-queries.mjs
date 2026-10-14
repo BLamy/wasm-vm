@@ -19,11 +19,12 @@ const SPECS=[
  {name:'restart-asymmetric-capacity',capacity:[14,13],count:5,index:[3,1,4,0xffffffff,6,2,5,7],phases:[{mode:5,n:8,indexed:true,order:[3,1,4,6,2,5,5,2,7],raw:9},{mode:3,n:4,order:[0,1,1,2],raw:4},{mode:0,n:5,order:[],raw:0}]},
  {name:'zero-complete-primitive',capacity:[1,1],count:0,phases:[{mode:4,n:1,order:[],raw:0}]}
 ];
+SPECS.push({...SPECS[0],name:'mixed-without-query',noQuery:true});
 for(const fault of ['fractional','nonintegral','out-of-u32','aggregate-overflow'])SPECS.push({...SPECS[0],name:'native-'+fault,fault});
 function memory(rig,id,size,c){const lengths=[7,11,19,size-37],segments=[];let at=rig.q.base+0x210000n+BigInt(id)*0x2000n;
  for(const n of lengths){const p=at+8n;rig.q.write(at,new Uint8Array(n+16).fill(0xa3));segments.push([p,n]);at+=BigInt(n+16);}return {attach:backing(id,segments),write(b){c.equal(b.length,size,'original SG extent');let o=0;for(const[p,n]of segments){rig.q.write(p,b.subarray(o,o+n));o+=n;}},read(){const b=new Uint8Array(size);let o=0;for(const[p,n]of segments){b.set(rig.q.read(p,n),o);o+=n;}return b;},guards(){for(const[p,n]of segments){c.same([...rig.q.read(p-8n,8)],Array(8).fill(0xa3),'SG prefix');c.same([...rig.q.read(p+BigInt(n),8)],Array(8).fill(0xa3),'SG suffix');}}};}
 async function one(Wasm,profile,native,compiler,schedule,spec){
- const c=checker(),row={name:spec.name+'/schedule'+schedule,spec,predictions:{logical:spec.count,rawFirstOutput:spec.phases.filter(x=>x.raw).map(x=>x.raw),duplicate:'Each second output pass physically captures matching data but contributes no query measurement.',pending:'Unavailable isWAIT2 with prior poisoned words, never DONE/false.'},native:[],outputs:[],reads:[]};
+ const c=checker(),row={name:spec.name+'/schedule'+schedule,spec,predictions:{logical:spec.noQuery?'not requested':spec.count,rawFirstOutput:spec.noQuery?[]:spec.phases.filter(x=>x.raw).map(x=>x.raw),duplicate:'Each second output pass physically captures matching data but contributes no query measurement.',pending:'Unavailable isWAIT2 with prior poisoned words, never DONE/false.'},native:[],outputs:[],reads:[]};
  const identities=new WeakMap(),handles=[];let next=1,holdFirst=false,injectFault=false;const enc=v=>ArrayBuffer.isView(v)?[...v]:v&&typeof v==='object'?(()=>{if(!identities.has(v))identities.set(v,next++);return {object:identities.get(v),type:v.constructor.name};})():v;
  const gl=new Proxy(native,{get(t,k){const f=Reflect.get(t,k,t);if(typeof f!=='function')return f;return(...a)=>{const actual=f.apply(t,a);if(k==='createQuery'&&actual)handles.push(actual);let delivered=k==='getQueryParameter'&&a[1]===native.QUERY_RESULT_AVAILABLE&&holdFirst&&(spec.fault?a[0]!==handles[1]:a[0]===handles[spec.count===0?1:0])?false:actual;
  if(k==='getQueryParameter'&&a[1]===native.QUERY_RESULT&&injectFault&&a[0]!==handles[1]){
@@ -42,15 +43,16 @@ async function one(Wasm,profile,native,compiler,schedule,spec){
   }
   const input=Array.from({length:8},(_,i)=>[i+1,i+11,i+21,i+31]),source=new Uint8Array(4096).fill(0xa7);source.set(new Uint8Array(new Float32Array(input.flat()).buffer));ram.get(3).write(source);await rig.expect('literal original vertices',transfer(1,3,1,[0,0,0,4096,1,1]));
   if(spec.index){const b=new Uint8Array(4096).fill(0xed);b.set(new Uint8Array(new Uint32Array(spec.index).buffer),8);ram.get(4).write(b);await rig.expect('literal original index words/prefix',transfer(1,4,1,[0,0,0,4096,1,1]));}
-  await send('original captures/shader/layout',join(shader(10,0,vertex,words),shader(11,1,fragmentText),packet(1,5,[20,0,0,0,31]),packet(2,5,[20]),packet(6,0,[16,0,3]),packet(1,2,[21,2|8|1<<29,word(1),0,65535,word(1),0,0,0]),packet(2,2,[21]),packet(31,0,[10,0]),packet(31,0,[11,1]),packet(1,10,[40,1,16,spec.capacity[0]*40]),packet(1,10,[41,2,16,spec.capacity[1]*48]),packet(25,0,[0,40,41]),query(300,10),begin(300)));
-  const expected=[new Uint8Array(4096).fill(0xa7),new Uint8Array(4096).fill(0xa7)];let cursor=0;holdFirst=true;
+  await send('original captures/shader/layout',join(shader(10,0,vertex,words),shader(11,1,fragmentText),packet(1,5,[20,0,0,0,31]),packet(2,5,[20]),packet(6,0,[16,0,3]),packet(1,2,[21,2|8|1<<29,word(1),0,65535,word(1),0,0,0]),packet(2,2,[21]),packet(31,0,[10,0]),packet(31,0,[11,1]),packet(1,10,[40,1,16,spec.capacity[0]*40]),packet(1,10,[41,2,16,spec.capacity[1]*48]),packet(25,0,[0,40,41]),...(spec.noQuery?[]:[query(300,10),begin(300)])));
+  const expected=[new Uint8Array(4096).fill(0xa7),new Uint8Array(4096).fill(0xa7)];let cursor=0;holdFirst=!spec.noQuery;
   for(const [i,phase]of spec.phases.entries()){
    await send('original topology'+i,join(packet(11,0,phase.indexed?[4,4,8]:[0]),draw(phase.mode,phase.n,phase.indexed)));
    for(const v of phase.order){for(let b=0;b<2;b++)for(let lane=0;lane<4;lane++)new DataView(expected[b].buffer).setFloat32(16+cursor*(b?48:40)+(b?3:2)*4+lane*4,input[v][lane]*(b?[2,3,4,5][lane]:1),true);cursor++;}
    if(i===0){await send('other context same query handle empty',join(query(300,11),begin(300),end(300),get(300)),2);await result(11,1,0,2);}
   }
-  await send('original feedback query pending',join(end(300),get(300)));await result(10,2,undefined);
-  c.truth(row.native.some(x=>x.name==='getQueryParameter'&&x.actual===true&&x.delivered===false),'actual native availability withheld for first part');
+  if(!spec.noQuery){await send('original feedback query pending',join(end(300),get(300)));await result(10,2,undefined);
+  c.truth(row.native.some(x=>x.name==='getQueryParameter'&&x.actual===true&&x.delivered===false),'actual native availability withheld for first part');}
+  else await result(10,0,undefined);
   holdFirst=false;
   if(spec.fault){
    injectFault=true;const writes=row.native.filter(x=>x.name==='bufferSubData').length;
@@ -65,17 +67,19 @@ async function one(Wasm,profile,native,compiler,schedule,spec){
     await send('original rejected query can be destroyed',packet(3,9,[300]));
     await send('original same-name fresh empty query recovers',join(query(300,10),begin(300),end(300),get(300)));await result(10,1,0);
    }else{await send('fresh validated native count after removal',get(300));await result(10,1,spec.count);}
-  }else{await send('original logical count after real ready',get(300));await result(10,1,spec.count);}
+  }else if(!spec.noQuery){await send('original logical count after real ready',get(300));await result(10,1,spec.count);}
   await result(11,1,0,2);
   for(let b=0;b<2;b++){ram.get(b+1).write(new Uint8Array(4096).fill(0x6b));await rig.expect('complete native captured output'+b,transfer(1,b+1,2,[0,0,0,4096,1,1]));const actual=ram.get(b+1).read();row.outputs.push({buffer:b,expected:[...expected[b]],actual:[...actual]});c.same([...actual],[...expected[b]],'literal captured values/stride/padding in complete4096-byte output'+b);ram.get(b+1).guards();}
   const raw=row.native.filter(x=>x.name==='getQueryParameter'&&x.args[1]===native.QUERY_RESULT&&x.delivered===x.actual).map(x=>x.actual);row.actualRawResults=raw;
   // Other context's empty query contributes0; every original capture measures first pass only.
-  if(spec.fault!=='aggregate-overflow')c.same(raw.filter(x=>x!==0).sort((a,b)=>a-b),spec.phases.filter(x=>x.raw).map(x=>x.raw).sort((a,b)=>a-b),'actual nonzero native point counts are measured once per original draw');
+  if(!spec.noQuery&&spec.fault!=='aggregate-overflow')c.same(raw.filter(x=>x!==0).sort((a,b)=>a-b),spec.phases.filter(x=>x.raw).map(x=>x.raw).sort((a,b)=>a-b),'actual nonzero native point counts are measured once per original draw');
+  if(spec.noQuery){c.same(raw,[0],'only other owner empty measurement, no queried capture parts');c.equal(row.native.filter(x=>x.name==='beginQuery').length,1,'only other owner empty native query');}
   c.equal(rig.host.bridge.inspect().renderer.budgets.queries.nativeParts,0,'all physical measurements retired');c.equal(native.getError(),native.NO_ERROR,'native feedback/query APIs error-free');row.status='passed';
  }catch(error){row.status='failed';row.failure={message:error.message,stack:error.stack};}
  finally{row.records=copy(rig.q.records);row.events=copy(rig.events);row.exchanges=copy(rig.exchanges);row.completions=copy(rig.completions);row.guestTrace=rig.q.vm.commandTrace();row.machineDigest=rig.q.vm.machineDigest();row.beforeDispose=copy(rig.host.bridge.inspect());row.disposed=copy(rig.host.bridge.dispose());rig.q.vm.free();row.cleaned=copy(rig.trace.snapshot());row.assertions=c.assertions;if(row.cleaned.liveObjects||row.cleaned.liveSyncs){row.status='failed';row.cleanupFailure='Native owners leaked';}}return row;
 }
 export async function runProductionFeedbackQueriesCritic({WasmVirglSubmitProof,schedules=[271828],modes=SPECS.map(x=>x.name)}){
+ if(!schedules.length||schedules.some(x=>!Number.isInteger(x)||x<0||x>0xffffffff)||!modes.length||modes.some(name=>!SPECS.some(spec=>spec.name===name)))throw Error('Original feedback critic requires valid schedules and known modes.');
  const native=document.querySelector('#gpu').getContext('webgl2',{antialias:false,failIfMajorPerformanceCaveat:true}),profile=await qualifyVirglHost(native),compiler=await createVirglStandardStreamOutputShaderBridge(),report={status:'running',rows:[],hardware:profile.identity};window.__productionCriticReport=report;
  for(const schedule of schedules)for(const spec of SPECS.filter(x=>modes.includes(x.name))){const row=await one(WasmVirglSubmitProof,profile,native,compiler,schedule,spec),pin=await window.__recordProductionCriticRun(report.rows.length,JSON.stringify(row));report.rows.push({...pin,name:row.name,status:row.status,...(row.failure?{failure:row.failure}:{})});}
  report.status=report.rows.every(r=>r.status==='passed')?'passed':'failed';report.summary={status:report.status,runs:report.rows.length,failed:report.rows.filter(r=>r.status!=='passed'),hardware:profile.identity};return report;
