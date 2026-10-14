@@ -62,8 +62,8 @@ try {
   report.graphicsRoadmapPip = await graphics.locator('.cap-pip').getAttribute('class');
   assert.match(report.graphicsRoadmapPip, /\bpartial\b/);
   if (['E6-T11d67','E6-T11d68','E6-T11d','E6-T11e'].includes(task)) assert.match(await graphics.textContent(), /qualified GPU cold boots/);
-  if (task === 'E6-T11d68') assert.match(await page.locator('.cap', {hasText: 'Original indexed draw hints'}).textContent(), /E6-T11d68/);
   else assert.match(await graphics.textContent(), /production acceleration disabled/);
+  if (task === 'E6-T11d68') assert.match(await page.locator('.cap', {hasText: 'Original indexed draw hints'}).textContent(), /E6-T11d68/);
   if(task==='E6-T11d58') assert.match(await graphics.textContent(), /E6-T11d58/);
   if(task==='E6-T11d59') assert.match(await graphics.textContent(), /E6-T11d59/);
   if(task==='E6-T11d60') assert.match(await graphics.textContent(), /E6-T11d60/);

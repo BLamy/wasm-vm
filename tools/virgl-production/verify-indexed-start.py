@@ -37,6 +37,7 @@ try:
     run("wasm-clippy", ["cargo", "clippy", "-p", "wasm-vm-wasm", "--target", "wasm32-unknown-unknown", "--features", "virgl-renderer", "--", "-D", "warnings"])
     run("proof-build", ["wasm-pack", "build", "crates/wasm", "--target", "web", "--out-dir", "../../target/virgl-production/pkg", "--features", "virgl-renderer,virgl-control-proof"])
     run("hardware", ["node", "tools/virgl-production/worker-indexed-start-browser.mjs", "--output", str(output / "hardware"), "--schedules", "0,1,2"])
+    run("promoted-novel", ["node", "tools/virgl-production/critic-fast-boots-indexed-start-browser.mjs", "--output", str(output / "promoted-novel"), "--schedules", "173205,987654"])
     run("private-profile", ["node", "tools/verify-virgl-draw-replay.mjs", "--output", str(output / "private-profile")])
     run("default-demo", ["node", "tools/verify-virgl-default-demo.mjs", "--output", str(output / "default-demo"), "--task", "E6-T11d68"])
     report["status"] = "passed"

@@ -1624,8 +1624,8 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       require(!images || job, "unsupported-draw", "Original image draws require an owned completion job.");
       // VirGL1.3 uses zero to select an ordinary draw, still with one instance.
       const instances = standard ? Math.max(1, fields.instanceCount) : 1;
-      require(fields.count > 0 && (fields.indexed ? fields.start === 0 : fields.start <= 0x7fffffff - fields.count),
-        "unsupported-draw", "Draws must be nonempty; indexed start must be zero and array ranges must fit signed GL integers.");
+      require(fields.count > 0 && (fields.indexed ? production || fields.start === 0 : fields.start <= 0x7fffffff - fields.count),
+        "unsupported-draw", "Draws must be nonempty; private indexed starts must be zero and array ranges must fit signed GL integers.");
       require(submission.draws.length < drawLimits.drawsPerSubmission && fields.count <= Math.floor((drawLimits.indicesPerSubmission - submission.indices) / instances),
         "limit-exceeded", "Submission draw or index budget exceeded.");
       require(sub.shaders[0] && (discard || sub.shaders[1]), "incomplete-draw", "Drawing requires the selected shader stages.");

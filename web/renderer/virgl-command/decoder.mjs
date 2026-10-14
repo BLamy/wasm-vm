@@ -468,7 +468,7 @@ function decodeFields(p, objectType) {
           !fields.primitiveRestart && fields.restartIndex === 0) && (p.streamOutput || fields.countFromStreamOutput === 0),
       "unsupported-feature", p.standard ? "Only core points, lines and triangles with indexed restart and without base offsets or stream output are supported." :
         "Only ordinary triangles/strips without instancing, restart or stream output are supported.");
-      p.require((p.streamOutput && !fields.indexed && fields.countFromStreamOutput || fields.start <= MAX_U32 - fields.count) && fields.minIndex <= fields.maxIndex,
+      p.require((p.production && fields.indexed || p.streamOutput && !fields.indexed && fields.countFromStreamOutput || fields.start <= MAX_U32 - fields.count) && fields.minIndex <= fields.maxIndex,
         "invalid-value", "Invalid draw count/index range.");
       return fields;
     }
