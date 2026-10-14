@@ -1,0 +1,1561 @@
+{
+  "status": "HELD",
+  "scope": "Final D70 worker seal and final ordinary clone custody, carrying unchanged independent runtime/physical/negative-control predictions. Parent desktop, recovery and deployment excluded.",
+  "reviewHead": "1be656c281a1715789d8e20eef44faf1d3bb4e02",
+  "frozenHead": "759e1e98af078b40cee3ce9b758befd541c9585b",
+  "workerArchive": {
+    "path": "evidence/virgl-production-fragmented-backing/worker/exact-head-fragmented-backing-submission-and-cold.tar.gz",
+    "bytes": 6970324,
+    "sha256": "b4b51198c6621bf37290e8b73b5c03ce97dad078019cd1c056a0df6b371d0571",
+    "members": 304
+  },
+  "workerMembersAuthenticated": 304,
+  "pairedSubmissionAuthenticated": true,
+  "all303OriginalFilesMatchArchive": true,
+  "independentArchive": {
+    "path": "evidence/virgl-production-fragmented-backing/verifier/independent-original-fragmented-backing-01.tar.gz",
+    "bytes": 7411309,
+    "sha256": "ce782122de4e512e83a3e7b7311c54ae5f031d0acc808612a72f16ce9a237c46",
+    "allMembersReopened": true
+  },
+  "independentMembersAuthenticated": 207,
+  "independentReceiptMatchesPairedJson": true,
+  "reports": {
+    "hot": {
+      "path": "target/evidence/production-fragmented-backing-frozen01/report.json",
+      "sha256": "dd624eb5bc1ce0f7c40a258c293d00546cc5b384cca668e129382c08edc4decb",
+      "status": "passed",
+      "commands": 11
+    },
+    "cold": {
+      "path": "target/evidence/production-fragmented-backing-cold01/report.json",
+      "sha256": "f64c0affc9e7a484ba60a6343edf8dade9190c1442b9aabb37553dcc581cb616",
+      "status": "passed",
+      "commands": 3
+    },
+    "coldAcceptance": {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/report.json",
+      "sha256": "cc2fc38da8087b2c5c79a4e8fc354d5057579e6c2aeb53626efc62b050d87954",
+      "status": "passed",
+      "commands": 11
+    }
+  },
+  "authenticatedAt": 1792010390.127556,
+  "files": [
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/core-clippy.stderr",
+      "bytes": 173,
+      "sha256": "1d40bedffd2572803b7422f5264866872938824c6600295a1e7a972162d388ce"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/core-clippy.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/default-demo/browser.png",
+      "bytes": 50151,
+      "sha256": "34ba64804aa3b92ced1c957858e1d0b346dc7dbeadc46eb638df86d345d2bed4"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/default-demo/report.json",
+      "bytes": 34557,
+      "sha256": "f2f75940675b7bb968dc8ac3b891b44ac27b3b5aa1ca6da82a8ec956330c923b"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/default-demo.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/default-demo.stdout",
+      "bytes": 75,
+      "sha256": "ef42fe9c18f2549dba471f16a709183678f401ca9ff8c240601f4c843ba4ba96"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/format.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/format.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/browser-coverage.json",
+      "bytes": 1595596,
+      "sha256": "34092f64577ec96984b40fb33ab485699f0a2d68df3d8089d37f806fb55bd07d"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/browser.png",
+      "bytes": 35994,
+      "sha256": "f4f38a1ffd49f1a73cf5a36dd1d020464c3af7cefff0c5b8e9e17396a5bfba7c"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/report.json",
+      "bytes": 50753,
+      "sha256": "dfd4831636d6b611162b0f3dcb462c9432319a58812e74c9abe60f12008c32cb"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0000.json.gz",
+      "bytes": 11770,
+      "sha256": "6436152151d66c8c832e594d4d2c0815c2814c5eacd5acfcfaead4303d3204b6"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0001.json.gz",
+      "bytes": 11809,
+      "sha256": "21323b905e15d2d83f2539cb53f515523b337e65563cd15c4b2500042f354b15"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0002.json.gz",
+      "bytes": 16066,
+      "sha256": "c0adb9a679848289e8969a89fba9e9828829cbdda6c7b770aceec364ff522f1c"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0003.json.gz",
+      "bytes": 584222,
+      "sha256": "1028a53c7febbd890f8eec7e62562209a97d353be38787c1304f3f93195d894b"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0004.json.gz",
+      "bytes": 136481,
+      "sha256": "d3b5cc5587427b5d074084803e82f4cc78084c8e02e088a046e62e9516bbb15a"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0005.json.gz",
+      "bytes": 2995,
+      "sha256": "d1e89acfd07e32b8386386072050db860c190c0a109fb793197aa43ea666096e"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0006.json.gz",
+      "bytes": 10857,
+      "sha256": "69a513324994760b0a5bb097c0e8bde2706fa0919bf0228cd5960098125925bd"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0007.json.gz",
+      "bytes": 10858,
+      "sha256": "9f85709ee70f9acf423742261b7f766a2ff061b23f118ac42a30420f9a303422"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0008.json.gz",
+      "bytes": 10862,
+      "sha256": "8627f80a48722367a8d581e36b63f9199b9d251b4afe02ef687f1e9a6477c61b"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0009.json.gz",
+      "bytes": 10865,
+      "sha256": "0cc276a6f999fb7c40ed2f9371cd9eba11f87d2c379d7e38ba0cfce0a7fa7998"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0010.json.gz",
+      "bytes": 151336,
+      "sha256": "a79275439f2d54404a6e41d00f6d400783d83421d10ac23f92253c746ace4d6b"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0011.json.gz",
+      "bytes": 11772,
+      "sha256": "7a464612fd45133d27b07ecb16812b6fa89601710d5d94fa6b5688be1bfefcaa"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0012.json.gz",
+      "bytes": 9226,
+      "sha256": "0decff2fc06eff2a622f9d087db727eb99cf97a964ce94965c0e49f7a044961b"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0013.json.gz",
+      "bytes": 9503,
+      "sha256": "ef0aaced12aa8d00f81030f6926935b0b261f0c59c69a6b6ef7ce650849fe628"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0014.json.gz",
+      "bytes": 11422,
+      "sha256": "297b54f32f2f09484d136c54105da8349750876df50fcd3236d378a4c12f205c"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0015.json.gz",
+      "bytes": 9164,
+      "sha256": "eb857638c2aaf72ce872507b6ba4965a24099d83da36da79ac765724a2054e52"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0016.json.gz",
+      "bytes": 11771,
+      "sha256": "4445f611a8d677754250559b8ab373a582918137a6d7ebd0e3a93230b31c908b"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0017.json.gz",
+      "bytes": 11810,
+      "sha256": "4280b2b992bc2658452b600837fb9f58e23792f0a912ab8dc578ae35e5a42b54"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0018.json.gz",
+      "bytes": 16066,
+      "sha256": "915b8b2960a98720b48d429f0c09915ae3ef86c5f1bc3fdd57b670cab7a481e3"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0019.json.gz",
+      "bytes": 584223,
+      "sha256": "88a844eb75e0f9d699ebe37cfe511a66a1b26a2272ff49a4ebfbc529d2c8e98d"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0020.json.gz",
+      "bytes": 136481,
+      "sha256": "95464ef78f2d0a79afbcadab8f25099012e7c4a80cf2b9545a126ea6bcade38c"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0021.json.gz",
+      "bytes": 2995,
+      "sha256": "f047711b7cc92e09c0f4784a25fe42934d6d8b84a49c59d11551400b2d9a3d7b"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0022.json.gz",
+      "bytes": 10857,
+      "sha256": "97b654d76bc4f0d3f1e08ed0506cbf4fa37a751630a4ede4d92479f70e047306"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0023.json.gz",
+      "bytes": 10857,
+      "sha256": "030961a8cad4e158904e16375c185a2261a4a52c222e556b5f914eddb556666d"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0024.json.gz",
+      "bytes": 10862,
+      "sha256": "c1cd71dc22ea35b105ed5f8d9dc599ab8aa932031006ae500075c1161e07e2c6"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0025.json.gz",
+      "bytes": 10864,
+      "sha256": "7cc8285e2431b81c41cacb8b74dd994af387bb5d007a491558ccf3b81314e306"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0026.json.gz",
+      "bytes": 151335,
+      "sha256": "0114409334c291ef8dc39bb59c6549af8e13e412f1540630bb9f93a93ad454ef"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0027.json.gz",
+      "bytes": 11773,
+      "sha256": "79bfa767c953c22c7a37626c2336c643fb378df3cf5a5323c8e0c6a215f042c3"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0028.json.gz",
+      "bytes": 9226,
+      "sha256": "4f0daf094e09ad6b1a7bd482301a6cff737c770b1363f54534d49ff8a43003ab"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0029.json.gz",
+      "bytes": 9503,
+      "sha256": "82096483ba2c5eb3822c3a5673b6a61cbe890a201ef1154c8810037c116636e7"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0030.json.gz",
+      "bytes": 11423,
+      "sha256": "9e884160a8e36e61eefde51aae0fe9276c40b259acb6271510c5a1ee56341389"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0031.json.gz",
+      "bytes": 9164,
+      "sha256": "893ea5197360e31e0eebe5acab6fd3f10368f81ea49d53f81713588434e610a9"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0032.json.gz",
+      "bytes": 11769,
+      "sha256": "047620b182f757abb0a737d9c56413b0e0116b3173062720985c9d575b303aab"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0033.json.gz",
+      "bytes": 11808,
+      "sha256": "5f9ec97b41ff51e08955d79299df675ce2bde350fa0dc364cb4707b500d3d0bd"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0034.json.gz",
+      "bytes": 16065,
+      "sha256": "bc440a0e3297d4efbac79671d1f0ef4034f4bc975f098c1f13fd88a5022ad5d9"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0035.json.gz",
+      "bytes": 584221,
+      "sha256": "4ef7bbae247a546bf4e50a02b5284262425f3a2434d49f912f9ab178b62acf27"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0036.json.gz",
+      "bytes": 136481,
+      "sha256": "7eddbbe848b37153d9c42fff3ca0c4aa97c59b3126b6d7ff2b82903395bae4d3"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0037.json.gz",
+      "bytes": 2995,
+      "sha256": "0ed6e445a952bd5476721fa3be63061d2929221098581ce421dd132c4a9ab61a"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0038.json.gz",
+      "bytes": 10857,
+      "sha256": "44ac64a060375cb27e4a39ea9fb29cba29dfc23cb033fdf24cd6c3778ccc35d9"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0039.json.gz",
+      "bytes": 10857,
+      "sha256": "6a1dc6f44bcbaec4f82900ac12b08b0036085f6838190020e09ec72173244d25"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0040.json.gz",
+      "bytes": 10862,
+      "sha256": "aa958179940a465d8fb5cba384363ff4f25c99886f82ee8566854f2a92050c7d"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0041.json.gz",
+      "bytes": 10865,
+      "sha256": "e2a2f01dad476ca2258aea22d7b8e7759063f0c82a453e8ac829540e19744dba"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0042.json.gz",
+      "bytes": 151335,
+      "sha256": "d0754cf7689d851619a2fa7e0272bfd6ace9433a8819e103cead6d6dad4325d3"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0043.json.gz",
+      "bytes": 11772,
+      "sha256": "f07417460930c18e02375925be54734e52bbdc2970d5c772d4146ff3a8fbc8c0"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0044.json.gz",
+      "bytes": 9225,
+      "sha256": "caf6182a81039e9594dc4474753819dd68b230bca295cc9ad44960f44c8ad6a8"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0045.json.gz",
+      "bytes": 9502,
+      "sha256": "7ba932127fa3283ce7e8d06ba4417735b7321e9594ee59411c911deea6ef3215"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0046.json.gz",
+      "bytes": 11421,
+      "sha256": "a27690d794d4bcd9cda6e7f6cc418aa6ed0d473559eab1d1dc6a610578fd2f5a"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/run-0047.json.gz",
+      "bytes": 9163,
+      "sha256": "cdd414c98835e7bf64cb446236fc291edf414421b5388ac8974ededd7edbec47"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/source/renderer/virgl-command/cache.mjs",
+      "bytes": 2989,
+      "sha256": "9e50cc258528e581f79cee0e4e0038994c7968f80046b9db21e7f5e0e4a92cfa"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/source/renderer/virgl-command/color-images.mjs",
+      "bytes": 2770,
+      "sha256": "8c1b43f830e13f73d1397398e97bf263343f88c1782c683a890cb0f1fbc5e0e1"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/source/renderer/virgl-command/constant-domain.mjs",
+      "bytes": 127535,
+      "sha256": "dd64536abf46bc69ff7866e9822d7acf1a3e7f5216e70919d4a03e633b7c7aca"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/source/renderer/virgl-command/control-bridge.mjs",
+      "bytes": 38659,
+      "sha256": "e2579dffe9831bef36e3491d86372a7d2c253b92960ec19842b9773323e0445d"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/source/renderer/virgl-command/decoder.mjs",
+      "bytes": 54272,
+      "sha256": "804134a7ba9a52c7335ec3ff14e5ac2a55a09307ed833e2c7266268ae7a704e2"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/source/renderer/virgl-command/dimensional-depth-images.mjs",
+      "bytes": 8781,
+      "sha256": "44d2d7b39145262ebd2533a8bc9625f1de500e7633cea73184a26c6727e5d68a"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/source/renderer/virgl-command/float-images.mjs",
+      "bytes": 3132,
+      "sha256": "69543e48426c7ded5178b659eb651b5cb765aa559a0bbf96fd8d34f5cf7cfe46"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/source/renderer/virgl-command/floating-depth-gpu.mjs",
+      "bytes": 15338,
+      "sha256": "ebc88ac91fe55fbfeb391fe2d216d4fea41086fb17d28628a2620353f1a66b90"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/source/renderer/virgl-command/floating-depth-images.mjs",
+      "bytes": 947,
+      "sha256": "76e02b32e5a24f65f360adb7cbcc0f9e5d51ee90be7cfbe1a383bfa99cc30370"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/source/renderer/virgl-command/integer-images.mjs",
+      "bytes": 1557,
+      "sha256": "8871226b60ad86ee1f585f8de6e5891241a361ad84aa811a36028fd003d95029"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/source/renderer/virgl-command/multisample.mjs",
+      "bytes": 7268,
+      "sha256": "950255f6b8c09f09540e444a381fd9396665f64ec167307c2313b53b43d00b06"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/source/renderer/virgl-command/packed-float-images.mjs",
+      "bytes": 1620,
+      "sha256": "0ea28e0bfcf4a0ae04f634826d4b65cb19a6285850836412c7b06311ce1c5405"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/source/renderer/virgl-command/packed-normalized-images.mjs",
+      "bytes": 2046,
+      "sha256": "5ccf01336a906f3b46b0c8c790c73449331e09ac3cfee2931459d507b6dccd18"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/source/renderer/virgl-command/packed-unsigned-images.mjs",
+      "bytes": 991,
+      "sha256": "1170cf4d69d7281fdc32383354d7c17d6019ece0c7a6f681de86b27a57ea0d61"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/source/renderer/virgl-command/production.mjs",
+      "bytes": 20872,
+      "sha256": "105263735ccdc1db90f2b865d7175932d393286259434794f55b058269982732"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/source/renderer/virgl-command/queries.mjs",
+      "bytes": 5910,
+      "sha256": "08027068614d5501746515918ec423a30188448d3ce031bb619ef08805fe9e0d"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/source/renderer/virgl-command/resources.mjs",
+      "bytes": 164020,
+      "sha256": "63d718e87d54dc0683a91ccfd9e0be062b1b591716e63e9844cda322794c647b"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/source/renderer/virgl-command/scanout.mjs",
+      "bytes": 14960,
+      "sha256": "4d20d1dc1d74836cd26a966206e4f8b051288ea8e3685904f749bbba1716ccbe"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/source/renderer/virgl-command/shared-exponent-gpu.mjs",
+      "bytes": 12102,
+      "sha256": "7b44ba7bc7361438807c1709c32929832dbf0b7af95966c68a65b01b23075ad8"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/source/renderer/virgl-command/shared-exponent-images.mjs",
+      "bytes": 563,
+      "sha256": "27de20239649aea73145e1f547c9265692f451fedddf3876639c173cf0d6168f"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/source/renderer/virgl-command/state.mjs",
+      "bytes": 221793,
+      "sha256": "c7ae7eec9c91dec76d1d02da95e868dbb1f1b518036aaa4fe4780437221d79fe"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/source/renderer/virgl-command/tests/production-fragmented-backing.mjs",
+      "bytes": 6928,
+      "sha256": "0eaefe5e86b512c7247a2090ecf8c621487bfb234ec572003c0e69b714b2d3fa"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/source/renderer/virgl-command/tests/submit-acceptance.mjs",
+      "bytes": 53429,
+      "sha256": "76f1a6cdb1faf9763d12794bf030d7a030efae6cc4e61a17b8d66b60fbb793d6"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/source/renderer/virgl-command/unorm-depth-images.mjs",
+      "bytes": 1409,
+      "sha256": "7fb08881153cfd06ed1acb5dba8d6cc61525b8f742a3b0a9715fb0e68e55e1d1"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "bytes": 14434,
+      "sha256": "4b3d0589d178ae6e3a2ad90c0abbddccc8226690e49e8cf91f8509ba64ca4f4a"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "bytes": 446891,
+      "sha256": "5f9b5935cc4a34d7d3b1cbceb3f75572c7ba8de822e09fea365a8d6c7aefb09b"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/source/renderer/virgl-shader/index.mjs",
+      "bytes": 22546,
+      "sha256": "1bae07f2e668078c4e447f65d1785815714907b7270ced01b131ce70e6d3f10e"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/source/renderer/virgl-shader/standard.mjs",
+      "bytes": 20285,
+      "sha256": "842b2b6041ce71d267940cb7732bc936624b410a90fe17ccc108af7fee386d92"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/source/target/virgl-production/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "bytes": 1314,
+      "sha256": "2877a95db8f6305fce95abf975c0fd7176ea2936c91eae201f662997f37f9fb2"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/source/target/virgl-production/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+      "bytes": 437,
+      "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/source/target/virgl-production/pkg/wasm_vm_wasm.js",
+      "bytes": 158077,
+      "sha256": "c8c619368f71b82d50b72a0916856ac91e966cea07e0222f4c32eb0fa2fdd1f2"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware/source/target/virgl-production/pkg/wasm_vm_wasm_bg.wasm",
+      "bytes": 1747037,
+      "sha256": "3e7fc4fca4e44e40666b25dd440b1825ba3b25d1ac6f31f1c0fea92174d430b3"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/hardware.stdout",
+      "bytes": 126,
+      "sha256": "af7ee20bfe88a8ffff5b2eb97ca8f77c11fdf9f86058552ca359aa042dc4e4b8"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/native.stderr",
+      "bytes": 258,
+      "sha256": "ac7fa9a621c6c89989d1178deb12060efb2202a56fd5aaca07ffdc4a48695aed"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/native.stdout",
+      "bytes": 33620,
+      "sha256": "b2d86c94c6266ecdfc6ee04d503b8d35f9c2757d37677d689a90b7d4760d1177"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/policy.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/policy.stdout",
+      "bytes": 35,
+      "sha256": "4bad532c09e29bbe670af99ca718942f456e572d6b497386c0d7c1fcc4660e23"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/private-profile/browser-coverage.json",
+      "bytes": 320922,
+      "sha256": "cb250305ff9cfa57767c584d0d595beafda5df52955e46f72dcf77df41025252"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/private-profile/browser.png",
+      "bytes": 78420,
+      "sha256": "ea2ce168cdfe014b7c20cf953ea1701c20f208ad21f8b4917fda137dec4d779f"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/private-profile/report.json",
+      "bytes": 281413,
+      "sha256": "33d576117fce694a78d3a02ce0cdd1373a21cd55aa65e95d38158c00e119d0f1"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/private-profile.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/private-profile.stdout",
+      "bytes": 37,
+      "sha256": "b1c052900ddde0e00af068e2bf2cfa2da0de5717ce048ccf9e7d955447d62b18"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/promoted-split-tail/browser-coverage.json",
+      "bytes": 1582237,
+      "sha256": "dc59f1d31e43a23c7a526f36ee2901249d462212dcd79e2ae6e963d45d79e9e0"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/promoted-split-tail/browser.png",
+      "bytes": 36470,
+      "sha256": "950525da8b7453c03cdd4ea0ecd1fb598f538ab0fdaf537655715c1c04268ea2"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/promoted-split-tail/report.json",
+      "bytes": 22123,
+      "sha256": "66af5c4074718060630d10119e8586a8bb02a6c5fd0ac3b893f3f755fba2a3ef"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/promoted-split-tail/run-0000.json.gz",
+      "bytes": 543833,
+      "sha256": "96e7f3e3cb6f94432f85913a299a24a2e26cf7761a52ae08d43fa5a510dec941"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/promoted-split-tail/run-0001.json.gz",
+      "bytes": 543829,
+      "sha256": "281b1f8bdb72b57d9b02e39d913a7fdf0c44cbc1f72de3c1564d94e0b616379c"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/promoted-split-tail/source/renderer/virgl-command/cache.mjs",
+      "bytes": 2989,
+      "sha256": "9e50cc258528e581f79cee0e4e0038994c7968f80046b9db21e7f5e0e4a92cfa"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/promoted-split-tail/source/renderer/virgl-command/color-images.mjs",
+      "bytes": 2770,
+      "sha256": "8c1b43f830e13f73d1397398e97bf263343f88c1782c683a890cb0f1fbc5e0e1"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/promoted-split-tail/source/renderer/virgl-command/constant-domain.mjs",
+      "bytes": 127535,
+      "sha256": "dd64536abf46bc69ff7866e9822d7acf1a3e7f5216e70919d4a03e633b7c7aca"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/promoted-split-tail/source/renderer/virgl-command/control-bridge.mjs",
+      "bytes": 38659,
+      "sha256": "e2579dffe9831bef36e3491d86372a7d2c253b92960ec19842b9773323e0445d"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/promoted-split-tail/source/renderer/virgl-command/decoder.mjs",
+      "bytes": 54272,
+      "sha256": "804134a7ba9a52c7335ec3ff14e5ac2a55a09307ed833e2c7266268ae7a704e2"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/promoted-split-tail/source/renderer/virgl-command/dimensional-depth-images.mjs",
+      "bytes": 8781,
+      "sha256": "44d2d7b39145262ebd2533a8bc9625f1de500e7633cea73184a26c6727e5d68a"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/promoted-split-tail/source/renderer/virgl-command/float-images.mjs",
+      "bytes": 3132,
+      "sha256": "69543e48426c7ded5178b659eb651b5cb765aa559a0bbf96fd8d34f5cf7cfe46"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/promoted-split-tail/source/renderer/virgl-command/floating-depth-gpu.mjs",
+      "bytes": 15338,
+      "sha256": "ebc88ac91fe55fbfeb391fe2d216d4fea41086fb17d28628a2620353f1a66b90"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/promoted-split-tail/source/renderer/virgl-command/floating-depth-images.mjs",
+      "bytes": 947,
+      "sha256": "76e02b32e5a24f65f360adb7cbcc0f9e5d51ee90be7cfbe1a383bfa99cc30370"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/promoted-split-tail/source/renderer/virgl-command/integer-images.mjs",
+      "bytes": 1557,
+      "sha256": "8871226b60ad86ee1f585f8de6e5891241a361ad84aa811a36028fd003d95029"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/promoted-split-tail/source/renderer/virgl-command/multisample.mjs",
+      "bytes": 7268,
+      "sha256": "950255f6b8c09f09540e444a381fd9396665f64ec167307c2313b53b43d00b06"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/promoted-split-tail/source/renderer/virgl-command/packed-float-images.mjs",
+      "bytes": 1620,
+      "sha256": "0ea28e0bfcf4a0ae04f634826d4b65cb19a6285850836412c7b06311ce1c5405"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/promoted-split-tail/source/renderer/virgl-command/packed-normalized-images.mjs",
+      "bytes": 2046,
+      "sha256": "5ccf01336a906f3b46b0c8c790c73449331e09ac3cfee2931459d507b6dccd18"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/promoted-split-tail/source/renderer/virgl-command/packed-unsigned-images.mjs",
+      "bytes": 991,
+      "sha256": "1170cf4d69d7281fdc32383354d7c17d6019ece0c7a6f681de86b27a57ea0d61"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/promoted-split-tail/source/renderer/virgl-command/production.mjs",
+      "bytes": 20872,
+      "sha256": "105263735ccdc1db90f2b865d7175932d393286259434794f55b058269982732"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/promoted-split-tail/source/renderer/virgl-command/queries.mjs",
+      "bytes": 5910,
+      "sha256": "08027068614d5501746515918ec423a30188448d3ce031bb619ef08805fe9e0d"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/promoted-split-tail/source/renderer/virgl-command/resources.mjs",
+      "bytes": 164020,
+      "sha256": "63d718e87d54dc0683a91ccfd9e0be062b1b591716e63e9844cda322794c647b"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/promoted-split-tail/source/renderer/virgl-command/scanout.mjs",
+      "bytes": 14960,
+      "sha256": "4d20d1dc1d74836cd26a966206e4f8b051288ea8e3685904f749bbba1716ccbe"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/promoted-split-tail/source/renderer/virgl-command/shared-exponent-gpu.mjs",
+      "bytes": 12102,
+      "sha256": "7b44ba7bc7361438807c1709c32929832dbf0b7af95966c68a65b01b23075ad8"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/promoted-split-tail/source/renderer/virgl-command/shared-exponent-images.mjs",
+      "bytes": 563,
+      "sha256": "27de20239649aea73145e1f547c9265692f451fedddf3876639c173cf0d6168f"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/promoted-split-tail/source/renderer/virgl-command/state.mjs",
+      "bytes": 221793,
+      "sha256": "c7ae7eec9c91dec76d1d02da95e868dbb1f1b518036aaa4fe4780437221d79fe"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/promoted-split-tail/source/renderer/virgl-command/tests/submit-acceptance.mjs",
+      "bytes": 53429,
+      "sha256": "76f1a6cdb1faf9763d12794bf030d7a030efae6cc4e61a17b8d66b60fbb793d6"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/promoted-split-tail/source/renderer/virgl-command/unorm-depth-images.mjs",
+      "bytes": 1409,
+      "sha256": "7fb08881153cfd06ed1acb5dba8d6cc61525b8f742a3b0a9715fb0e68e55e1d1"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/promoted-split-tail/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "bytes": 14434,
+      "sha256": "4b3d0589d178ae6e3a2ad90c0abbddccc8226690e49e8cf91f8509ba64ca4f4a"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/promoted-split-tail/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "bytes": 446891,
+      "sha256": "5f9b5935cc4a34d7d3b1cbceb3f75572c7ba8de822e09fea365a8d6c7aefb09b"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/promoted-split-tail/source/renderer/virgl-shader/index.mjs",
+      "bytes": 22546,
+      "sha256": "1bae07f2e668078c4e447f65d1785815714907b7270ced01b131ce70e6d3f10e"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/promoted-split-tail/source/renderer/virgl-shader/standard.mjs",
+      "bytes": 20285,
+      "sha256": "842b2b6041ce71d267940cb7732bc936624b410a90fe17ccc108af7fee386d92"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/promoted-split-tail/source/target/virgl-production/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "bytes": 1314,
+      "sha256": "2877a95db8f6305fce95abf975c0fd7176ea2936c91eae201f662997f37f9fb2"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/promoted-split-tail/source/target/virgl-production/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+      "bytes": 437,
+      "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/promoted-split-tail/source/target/virgl-production/pkg/wasm_vm_wasm.js",
+      "bytes": 158077,
+      "sha256": "c8c619368f71b82d50b72a0916856ac91e966cea07e0222f4c32eb0fa2fdd1f2"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/promoted-split-tail/source/target/virgl-production/pkg/wasm_vm_wasm_bg.wasm",
+      "bytes": 1747037,
+      "sha256": "3e7fc4fca4e44e40666b25dd440b1825ba3b25d1ac6f31f1c0fea92174d430b3"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/promoted-split-tail/source/tools/virgl-production/critic-fast-boots-fragmented-backing.mjs",
+      "bytes": 8635,
+      "sha256": "7ab89195f6c3c76d03928a90b487e6264dc129ce10d97c342d7845b04eb518ab"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/promoted-split-tail.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/promoted-split-tail.stdout",
+      "bytes": 125,
+      "sha256": "ededbba8469b00b25b3466993740de560bd723657acb1586d560c5e2e4d05ec7"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/proof-build.stderr",
+      "bytes": 492,
+      "sha256": "2a132d89e62ea15b752865c118916e80295088e835b0f7f44ae60438f3b5d92c"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/proof-build.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/report.json",
+      "bytes": 29325,
+      "sha256": "dd624eb5bc1ce0f7c40a258c293d00546cc5b384cca668e129382c08edc4decb"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/transport.stderr",
+      "bytes": 378,
+      "sha256": "895a73539efc26e0553872a8c00e45eb62b413c20745d9e2a7756e1de4d4d6a0"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/transport.stdout",
+      "bytes": 1498,
+      "sha256": "30032b37565aab33684c8ff812db06935d020334f7e9eb0100414af4795592b0"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/wasm-clippy.stderr",
+      "bytes": 496,
+      "sha256": "a3850c40c8ab9c932357ba71d7da77bb98b24a4fa795babab6c1e5e3f0221c1e"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-frozen01/wasm-clippy.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/acceptance.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/acceptance.stdout",
+      "bytes": 290,
+      "sha256": "e78bc4eafc124ad003d71bc53605df13b0704fa5b603278a73de60970307c3ec"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/build.stderr",
+      "bytes": 5275,
+      "sha256": "948d434044519bc0533bacd5ec71a3b89901bebfb20fa01b6139a43bba959c50"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/build.stdout",
+      "bytes": 2298,
+      "sha256": "1331f0301630246fcbe18ac2415ffa89dfbc188973e5aa288baef08e61cf70f7"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/clone.stderr",
+      "bytes": 3612,
+      "sha256": "352be98081e217a5030c7179438e56362a3d128280fcdcfcfcfe02db254fa0c2"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/clone.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/core-clippy.stderr",
+      "bytes": 2553,
+      "sha256": "451a725e28618734c8869a2cd992c673d7439b4e2bef67c03aec2ca7990bf4ad"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/core-clippy.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/default-demo/browser.png",
+      "bytes": 50201,
+      "sha256": "e96fe6d3fb6532c12f283c65d04df61d43286ad4d6e5d6e06f998bd00d90df1c"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/default-demo/report.json",
+      "bytes": 34633,
+      "sha256": "0bea5b5ed119b756711d92b9f10ac3cbd8da012603813b81c9ec056843ac9521"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/default-demo.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/default-demo.stdout",
+      "bytes": 75,
+      "sha256": "ef42fe9c18f2549dba471f16a709183678f401ca9ff8c240601f4c843ba4ba96"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/format.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/format.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/browser-coverage.json",
+      "bytes": 1595596,
+      "sha256": "a867217a387bd95162dfcd038bc0a6faf1228ee28607d959333aad31d37d1823"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/browser.png",
+      "bytes": 35994,
+      "sha256": "f4f38a1ffd49f1a73cf5a36dd1d020464c3af7cefff0c5b8e9e17396a5bfba7c"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/report.json",
+      "bytes": 50829,
+      "sha256": "9b0832abc029d8dcac049f5d8d1f0cbf40094390f0efd27ecedc046674f78cfe"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0000.json.gz",
+      "bytes": 11770,
+      "sha256": "6436152151d66c8c832e594d4d2c0815c2814c5eacd5acfcfaead4303d3204b6"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0001.json.gz",
+      "bytes": 11809,
+      "sha256": "21323b905e15d2d83f2539cb53f515523b337e65563cd15c4b2500042f354b15"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0002.json.gz",
+      "bytes": 16066,
+      "sha256": "c0adb9a679848289e8969a89fba9e9828829cbdda6c7b770aceec364ff522f1c"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0003.json.gz",
+      "bytes": 584222,
+      "sha256": "1028a53c7febbd890f8eec7e62562209a97d353be38787c1304f3f93195d894b"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0004.json.gz",
+      "bytes": 136481,
+      "sha256": "d3b5cc5587427b5d074084803e82f4cc78084c8e02e088a046e62e9516bbb15a"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0005.json.gz",
+      "bytes": 2995,
+      "sha256": "d1e89acfd07e32b8386386072050db860c190c0a109fb793197aa43ea666096e"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0006.json.gz",
+      "bytes": 10857,
+      "sha256": "69a513324994760b0a5bb097c0e8bde2706fa0919bf0228cd5960098125925bd"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0007.json.gz",
+      "bytes": 10858,
+      "sha256": "9f85709ee70f9acf423742261b7f766a2ff061b23f118ac42a30420f9a303422"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0008.json.gz",
+      "bytes": 10862,
+      "sha256": "8627f80a48722367a8d581e36b63f9199b9d251b4afe02ef687f1e9a6477c61b"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0009.json.gz",
+      "bytes": 10865,
+      "sha256": "0cc276a6f999fb7c40ed2f9371cd9eba11f87d2c379d7e38ba0cfce0a7fa7998"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0010.json.gz",
+      "bytes": 151336,
+      "sha256": "a79275439f2d54404a6e41d00f6d400783d83421d10ac23f92253c746ace4d6b"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0011.json.gz",
+      "bytes": 11772,
+      "sha256": "7a464612fd45133d27b07ecb16812b6fa89601710d5d94fa6b5688be1bfefcaa"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0012.json.gz",
+      "bytes": 9226,
+      "sha256": "0decff2fc06eff2a622f9d087db727eb99cf97a964ce94965c0e49f7a044961b"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0013.json.gz",
+      "bytes": 9503,
+      "sha256": "ef0aaced12aa8d00f81030f6926935b0b261f0c59c69a6b6ef7ce650849fe628"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0014.json.gz",
+      "bytes": 11422,
+      "sha256": "297b54f32f2f09484d136c54105da8349750876df50fcd3236d378a4c12f205c"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0015.json.gz",
+      "bytes": 9164,
+      "sha256": "eb857638c2aaf72ce872507b6ba4965a24099d83da36da79ac765724a2054e52"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0016.json.gz",
+      "bytes": 11771,
+      "sha256": "4445f611a8d677754250559b8ab373a582918137a6d7ebd0e3a93230b31c908b"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0017.json.gz",
+      "bytes": 11810,
+      "sha256": "4280b2b992bc2658452b600837fb9f58e23792f0a912ab8dc578ae35e5a42b54"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0018.json.gz",
+      "bytes": 16066,
+      "sha256": "915b8b2960a98720b48d429f0c09915ae3ef86c5f1bc3fdd57b670cab7a481e3"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0019.json.gz",
+      "bytes": 584223,
+      "sha256": "88a844eb75e0f9d699ebe37cfe511a66a1b26a2272ff49a4ebfbc529d2c8e98d"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0020.json.gz",
+      "bytes": 136481,
+      "sha256": "95464ef78f2d0a79afbcadab8f25099012e7c4a80cf2b9545a126ea6bcade38c"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0021.json.gz",
+      "bytes": 2995,
+      "sha256": "f047711b7cc92e09c0f4784a25fe42934d6d8b84a49c59d11551400b2d9a3d7b"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0022.json.gz",
+      "bytes": 10857,
+      "sha256": "97b654d76bc4f0d3f1e08ed0506cbf4fa37a751630a4ede4d92479f70e047306"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0023.json.gz",
+      "bytes": 10857,
+      "sha256": "030961a8cad4e158904e16375c185a2261a4a52c222e556b5f914eddb556666d"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0024.json.gz",
+      "bytes": 10862,
+      "sha256": "c1cd71dc22ea35b105ed5f8d9dc599ab8aa932031006ae500075c1161e07e2c6"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0025.json.gz",
+      "bytes": 10864,
+      "sha256": "7cc8285e2431b81c41cacb8b74dd994af387bb5d007a491558ccf3b81314e306"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0026.json.gz",
+      "bytes": 151335,
+      "sha256": "0114409334c291ef8dc39bb59c6549af8e13e412f1540630bb9f93a93ad454ef"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0027.json.gz",
+      "bytes": 11773,
+      "sha256": "79bfa767c953c22c7a37626c2336c643fb378df3cf5a5323c8e0c6a215f042c3"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0028.json.gz",
+      "bytes": 9226,
+      "sha256": "4f0daf094e09ad6b1a7bd482301a6cff737c770b1363f54534d49ff8a43003ab"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0029.json.gz",
+      "bytes": 9503,
+      "sha256": "82096483ba2c5eb3822c3a5673b6a61cbe890a201ef1154c8810037c116636e7"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0030.json.gz",
+      "bytes": 11423,
+      "sha256": "9e884160a8e36e61eefde51aae0fe9276c40b259acb6271510c5a1ee56341389"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0031.json.gz",
+      "bytes": 9164,
+      "sha256": "893ea5197360e31e0eebe5acab6fd3f10368f81ea49d53f81713588434e610a9"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0032.json.gz",
+      "bytes": 11769,
+      "sha256": "047620b182f757abb0a737d9c56413b0e0116b3173062720985c9d575b303aab"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0033.json.gz",
+      "bytes": 11808,
+      "sha256": "5f9ec97b41ff51e08955d79299df675ce2bde350fa0dc364cb4707b500d3d0bd"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0034.json.gz",
+      "bytes": 16065,
+      "sha256": "bc440a0e3297d4efbac79671d1f0ef4034f4bc975f098c1f13fd88a5022ad5d9"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0035.json.gz",
+      "bytes": 584221,
+      "sha256": "4ef7bbae247a546bf4e50a02b5284262425f3a2434d49f912f9ab178b62acf27"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0036.json.gz",
+      "bytes": 136481,
+      "sha256": "7eddbbe848b37153d9c42fff3ca0c4aa97c59b3126b6d7ff2b82903395bae4d3"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0037.json.gz",
+      "bytes": 2995,
+      "sha256": "0ed6e445a952bd5476721fa3be63061d2929221098581ce421dd132c4a9ab61a"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0038.json.gz",
+      "bytes": 10857,
+      "sha256": "44ac64a060375cb27e4a39ea9fb29cba29dfc23cb033fdf24cd6c3778ccc35d9"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0039.json.gz",
+      "bytes": 10857,
+      "sha256": "6a1dc6f44bcbaec4f82900ac12b08b0036085f6838190020e09ec72173244d25"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0040.json.gz",
+      "bytes": 10862,
+      "sha256": "aa958179940a465d8fb5cba384363ff4f25c99886f82ee8566854f2a92050c7d"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0041.json.gz",
+      "bytes": 10865,
+      "sha256": "e2a2f01dad476ca2258aea22d7b8e7759063f0c82a453e8ac829540e19744dba"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0042.json.gz",
+      "bytes": 151335,
+      "sha256": "d0754cf7689d851619a2fa7e0272bfd6ace9433a8819e103cead6d6dad4325d3"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0043.json.gz",
+      "bytes": 11772,
+      "sha256": "f07417460930c18e02375925be54734e52bbdc2970d5c772d4146ff3a8fbc8c0"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0044.json.gz",
+      "bytes": 9225,
+      "sha256": "caf6182a81039e9594dc4474753819dd68b230bca295cc9ad44960f44c8ad6a8"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0045.json.gz",
+      "bytes": 9502,
+      "sha256": "7ba932127fa3283ce7e8d06ba4417735b7321e9594ee59411c911deea6ef3215"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0046.json.gz",
+      "bytes": 11421,
+      "sha256": "a27690d794d4bcd9cda6e7f6cc418aa6ed0d473559eab1d1dc6a610578fd2f5a"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/run-0047.json.gz",
+      "bytes": 9163,
+      "sha256": "cdd414c98835e7bf64cb446236fc291edf414421b5388ac8974ededd7edbec47"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/source/renderer/virgl-command/cache.mjs",
+      "bytes": 2989,
+      "sha256": "9e50cc258528e581f79cee0e4e0038994c7968f80046b9db21e7f5e0e4a92cfa"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/source/renderer/virgl-command/color-images.mjs",
+      "bytes": 2770,
+      "sha256": "8c1b43f830e13f73d1397398e97bf263343f88c1782c683a890cb0f1fbc5e0e1"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/source/renderer/virgl-command/constant-domain.mjs",
+      "bytes": 127535,
+      "sha256": "dd64536abf46bc69ff7866e9822d7acf1a3e7f5216e70919d4a03e633b7c7aca"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/source/renderer/virgl-command/control-bridge.mjs",
+      "bytes": 38659,
+      "sha256": "e2579dffe9831bef36e3491d86372a7d2c253b92960ec19842b9773323e0445d"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/source/renderer/virgl-command/decoder.mjs",
+      "bytes": 54272,
+      "sha256": "804134a7ba9a52c7335ec3ff14e5ac2a55a09307ed833e2c7266268ae7a704e2"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/source/renderer/virgl-command/dimensional-depth-images.mjs",
+      "bytes": 8781,
+      "sha256": "44d2d7b39145262ebd2533a8bc9625f1de500e7633cea73184a26c6727e5d68a"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/source/renderer/virgl-command/float-images.mjs",
+      "bytes": 3132,
+      "sha256": "69543e48426c7ded5178b659eb651b5cb765aa559a0bbf96fd8d34f5cf7cfe46"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/source/renderer/virgl-command/floating-depth-gpu.mjs",
+      "bytes": 15338,
+      "sha256": "ebc88ac91fe55fbfeb391fe2d216d4fea41086fb17d28628a2620353f1a66b90"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/source/renderer/virgl-command/floating-depth-images.mjs",
+      "bytes": 947,
+      "sha256": "76e02b32e5a24f65f360adb7cbcc0f9e5d51ee90be7cfbe1a383bfa99cc30370"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/source/renderer/virgl-command/integer-images.mjs",
+      "bytes": 1557,
+      "sha256": "8871226b60ad86ee1f585f8de6e5891241a361ad84aa811a36028fd003d95029"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/source/renderer/virgl-command/multisample.mjs",
+      "bytes": 7268,
+      "sha256": "950255f6b8c09f09540e444a381fd9396665f64ec167307c2313b53b43d00b06"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/source/renderer/virgl-command/packed-float-images.mjs",
+      "bytes": 1620,
+      "sha256": "0ea28e0bfcf4a0ae04f634826d4b65cb19a6285850836412c7b06311ce1c5405"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/source/renderer/virgl-command/packed-normalized-images.mjs",
+      "bytes": 2046,
+      "sha256": "5ccf01336a906f3b46b0c8c790c73449331e09ac3cfee2931459d507b6dccd18"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/source/renderer/virgl-command/packed-unsigned-images.mjs",
+      "bytes": 991,
+      "sha256": "1170cf4d69d7281fdc32383354d7c17d6019ece0c7a6f681de86b27a57ea0d61"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/source/renderer/virgl-command/production.mjs",
+      "bytes": 20872,
+      "sha256": "105263735ccdc1db90f2b865d7175932d393286259434794f55b058269982732"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/source/renderer/virgl-command/queries.mjs",
+      "bytes": 5910,
+      "sha256": "08027068614d5501746515918ec423a30188448d3ce031bb619ef08805fe9e0d"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/source/renderer/virgl-command/resources.mjs",
+      "bytes": 164020,
+      "sha256": "63d718e87d54dc0683a91ccfd9e0be062b1b591716e63e9844cda322794c647b"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/source/renderer/virgl-command/scanout.mjs",
+      "bytes": 14960,
+      "sha256": "4d20d1dc1d74836cd26a966206e4f8b051288ea8e3685904f749bbba1716ccbe"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/source/renderer/virgl-command/shared-exponent-gpu.mjs",
+      "bytes": 12102,
+      "sha256": "7b44ba7bc7361438807c1709c32929832dbf0b7af95966c68a65b01b23075ad8"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/source/renderer/virgl-command/shared-exponent-images.mjs",
+      "bytes": 563,
+      "sha256": "27de20239649aea73145e1f547c9265692f451fedddf3876639c173cf0d6168f"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/source/renderer/virgl-command/state.mjs",
+      "bytes": 221793,
+      "sha256": "c7ae7eec9c91dec76d1d02da95e868dbb1f1b518036aaa4fe4780437221d79fe"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/source/renderer/virgl-command/tests/production-fragmented-backing.mjs",
+      "bytes": 6928,
+      "sha256": "0eaefe5e86b512c7247a2090ecf8c621487bfb234ec572003c0e69b714b2d3fa"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/source/renderer/virgl-command/tests/submit-acceptance.mjs",
+      "bytes": 53429,
+      "sha256": "76f1a6cdb1faf9763d12794bf030d7a030efae6cc4e61a17b8d66b60fbb793d6"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/source/renderer/virgl-command/unorm-depth-images.mjs",
+      "bytes": 1409,
+      "sha256": "7fb08881153cfd06ed1acb5dba8d6cc61525b8f742a3b0a9715fb0e68e55e1d1"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "bytes": 14434,
+      "sha256": "4b3d0589d178ae6e3a2ad90c0abbddccc8226690e49e8cf91f8509ba64ca4f4a"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "bytes": 446891,
+      "sha256": "5f9b5935cc4a34d7d3b1cbceb3f75572c7ba8de822e09fea365a8d6c7aefb09b"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/source/renderer/virgl-shader/index.mjs",
+      "bytes": 22546,
+      "sha256": "1bae07f2e668078c4e447f65d1785815714907b7270ced01b131ce70e6d3f10e"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/source/renderer/virgl-shader/standard.mjs",
+      "bytes": 20285,
+      "sha256": "842b2b6041ce71d267940cb7732bc936624b410a90fe17ccc108af7fee386d92"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/source/target/virgl-production/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "bytes": 1314,
+      "sha256": "2877a95db8f6305fce95abf975c0fd7176ea2936c91eae201f662997f37f9fb2"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/source/target/virgl-production/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+      "bytes": 437,
+      "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/source/target/virgl-production/pkg/wasm_vm_wasm.js",
+      "bytes": 158077,
+      "sha256": "c8c619368f71b82d50b72a0916856ac91e966cea07e0222f4c32eb0fa2fdd1f2"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware/source/target/virgl-production/pkg/wasm_vm_wasm_bg.wasm",
+      "bytes": 1747037,
+      "sha256": "3e7fc4fca4e44e40666b25dd440b1825ba3b25d1ac6f31f1c0fea92174d430b3"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/hardware.stdout",
+      "bytes": 126,
+      "sha256": "af7ee20bfe88a8ffff5b2eb97ca8f77c11fdf9f86058552ca359aa042dc4e4b8"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/native.stderr",
+      "bytes": 2576,
+      "sha256": "db221d33c0799d5385585e2cf738eac0f47a476d9e588fd5e30fd70d75303db5"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/native.stdout",
+      "bytes": 33620,
+      "sha256": "4b13b24599972438ffb3239aa6a0651441c69076546b8ab596eba330b57c53db"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/policy.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/policy.stdout",
+      "bytes": 35,
+      "sha256": "4bad532c09e29bbe670af99ca718942f456e572d6b497386c0d7c1fcc4660e23"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/private-profile/browser-coverage.json",
+      "bytes": 320922,
+      "sha256": "670a8c19b082143e69bef85655e68185c4709e240df79fd92ddfd06395398ff2"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/private-profile/browser.png",
+      "bytes": 78420,
+      "sha256": "ea2ce168cdfe014b7c20cf953ea1701c20f208ad21f8b4917fda137dec4d779f"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/private-profile/report.json",
+      "bytes": 281497,
+      "sha256": "0d5455262e6a1e3628b5226ca051369edaef349629e90d00f24536e531bac0c2"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/private-profile.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/private-profile.stdout",
+      "bytes": 37,
+      "sha256": "a5646a63185c146a040f0e821dd5518a27d1edaf7c529486cb71b031385f6a43"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/promoted-split-tail/browser-coverage.json",
+      "bytes": 1582237,
+      "sha256": "f1536c1673378234eca1a778dadfd568ed1a0a32d940bd0ce08e0d8905dd6147"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/promoted-split-tail/browser.png",
+      "bytes": 36470,
+      "sha256": "950525da8b7453c03cdd4ea0ecd1fb598f538ab0fdaf537655715c1c04268ea2"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/promoted-split-tail/report.json",
+      "bytes": 22199,
+      "sha256": "25b9e0d619959f297630a0496eb14c687b37a6994c09dcbe210a926740425ed1"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/promoted-split-tail/run-0000.json.gz",
+      "bytes": 543833,
+      "sha256": "96e7f3e3cb6f94432f85913a299a24a2e26cf7761a52ae08d43fa5a510dec941"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/promoted-split-tail/run-0001.json.gz",
+      "bytes": 543829,
+      "sha256": "281b1f8bdb72b57d9b02e39d913a7fdf0c44cbc1f72de3c1564d94e0b616379c"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/promoted-split-tail/source/renderer/virgl-command/cache.mjs",
+      "bytes": 2989,
+      "sha256": "9e50cc258528e581f79cee0e4e0038994c7968f80046b9db21e7f5e0e4a92cfa"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/promoted-split-tail/source/renderer/virgl-command/color-images.mjs",
+      "bytes": 2770,
+      "sha256": "8c1b43f830e13f73d1397398e97bf263343f88c1782c683a890cb0f1fbc5e0e1"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/promoted-split-tail/source/renderer/virgl-command/constant-domain.mjs",
+      "bytes": 127535,
+      "sha256": "dd64536abf46bc69ff7866e9822d7acf1a3e7f5216e70919d4a03e633b7c7aca"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/promoted-split-tail/source/renderer/virgl-command/control-bridge.mjs",
+      "bytes": 38659,
+      "sha256": "e2579dffe9831bef36e3491d86372a7d2c253b92960ec19842b9773323e0445d"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/promoted-split-tail/source/renderer/virgl-command/decoder.mjs",
+      "bytes": 54272,
+      "sha256": "804134a7ba9a52c7335ec3ff14e5ac2a55a09307ed833e2c7266268ae7a704e2"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/promoted-split-tail/source/renderer/virgl-command/dimensional-depth-images.mjs",
+      "bytes": 8781,
+      "sha256": "44d2d7b39145262ebd2533a8bc9625f1de500e7633cea73184a26c6727e5d68a"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/promoted-split-tail/source/renderer/virgl-command/float-images.mjs",
+      "bytes": 3132,
+      "sha256": "69543e48426c7ded5178b659eb651b5cb765aa559a0bbf96fd8d34f5cf7cfe46"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/promoted-split-tail/source/renderer/virgl-command/floating-depth-gpu.mjs",
+      "bytes": 15338,
+      "sha256": "ebc88ac91fe55fbfeb391fe2d216d4fea41086fb17d28628a2620353f1a66b90"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/promoted-split-tail/source/renderer/virgl-command/floating-depth-images.mjs",
+      "bytes": 947,
+      "sha256": "76e02b32e5a24f65f360adb7cbcc0f9e5d51ee90be7cfbe1a383bfa99cc30370"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/promoted-split-tail/source/renderer/virgl-command/integer-images.mjs",
+      "bytes": 1557,
+      "sha256": "8871226b60ad86ee1f585f8de6e5891241a361ad84aa811a36028fd003d95029"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/promoted-split-tail/source/renderer/virgl-command/multisample.mjs",
+      "bytes": 7268,
+      "sha256": "950255f6b8c09f09540e444a381fd9396665f64ec167307c2313b53b43d00b06"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/promoted-split-tail/source/renderer/virgl-command/packed-float-images.mjs",
+      "bytes": 1620,
+      "sha256": "0ea28e0bfcf4a0ae04f634826d4b65cb19a6285850836412c7b06311ce1c5405"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/promoted-split-tail/source/renderer/virgl-command/packed-normalized-images.mjs",
+      "bytes": 2046,
+      "sha256": "5ccf01336a906f3b46b0c8c790c73449331e09ac3cfee2931459d507b6dccd18"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/promoted-split-tail/source/renderer/virgl-command/packed-unsigned-images.mjs",
+      "bytes": 991,
+      "sha256": "1170cf4d69d7281fdc32383354d7c17d6019ece0c7a6f681de86b27a57ea0d61"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/promoted-split-tail/source/renderer/virgl-command/production.mjs",
+      "bytes": 20872,
+      "sha256": "105263735ccdc1db90f2b865d7175932d393286259434794f55b058269982732"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/promoted-split-tail/source/renderer/virgl-command/queries.mjs",
+      "bytes": 5910,
+      "sha256": "08027068614d5501746515918ec423a30188448d3ce031bb619ef08805fe9e0d"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/promoted-split-tail/source/renderer/virgl-command/resources.mjs",
+      "bytes": 164020,
+      "sha256": "63d718e87d54dc0683a91ccfd9e0be062b1b591716e63e9844cda322794c647b"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/promoted-split-tail/source/renderer/virgl-command/scanout.mjs",
+      "bytes": 14960,
+      "sha256": "4d20d1dc1d74836cd26a966206e4f8b051288ea8e3685904f749bbba1716ccbe"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/promoted-split-tail/source/renderer/virgl-command/shared-exponent-gpu.mjs",
+      "bytes": 12102,
+      "sha256": "7b44ba7bc7361438807c1709c32929832dbf0b7af95966c68a65b01b23075ad8"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/promoted-split-tail/source/renderer/virgl-command/shared-exponent-images.mjs",
+      "bytes": 563,
+      "sha256": "27de20239649aea73145e1f547c9265692f451fedddf3876639c173cf0d6168f"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/promoted-split-tail/source/renderer/virgl-command/state.mjs",
+      "bytes": 221793,
+      "sha256": "c7ae7eec9c91dec76d1d02da95e868dbb1f1b518036aaa4fe4780437221d79fe"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/promoted-split-tail/source/renderer/virgl-command/tests/submit-acceptance.mjs",
+      "bytes": 53429,
+      "sha256": "76f1a6cdb1faf9763d12794bf030d7a030efae6cc4e61a17b8d66b60fbb793d6"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/promoted-split-tail/source/renderer/virgl-command/unorm-depth-images.mjs",
+      "bytes": 1409,
+      "sha256": "7fb08881153cfd06ed1acb5dba8d6cc61525b8f742a3b0a9715fb0e68e55e1d1"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/promoted-split-tail/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "bytes": 14434,
+      "sha256": "4b3d0589d178ae6e3a2ad90c0abbddccc8226690e49e8cf91f8509ba64ca4f4a"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/promoted-split-tail/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "bytes": 446891,
+      "sha256": "5f9b5935cc4a34d7d3b1cbceb3f75572c7ba8de822e09fea365a8d6c7aefb09b"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/promoted-split-tail/source/renderer/virgl-shader/index.mjs",
+      "bytes": 22546,
+      "sha256": "1bae07f2e668078c4e447f65d1785815714907b7270ced01b131ce70e6d3f10e"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/promoted-split-tail/source/renderer/virgl-shader/standard.mjs",
+      "bytes": 20285,
+      "sha256": "842b2b6041ce71d267940cb7732bc936624b410a90fe17ccc108af7fee386d92"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/promoted-split-tail/source/target/virgl-production/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "bytes": 1314,
+      "sha256": "2877a95db8f6305fce95abf975c0fd7176ea2936c91eae201f662997f37f9fb2"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/promoted-split-tail/source/target/virgl-production/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+      "bytes": 437,
+      "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/promoted-split-tail/source/target/virgl-production/pkg/wasm_vm_wasm.js",
+      "bytes": 158077,
+      "sha256": "c8c619368f71b82d50b72a0916856ac91e966cea07e0222f4c32eb0fa2fdd1f2"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/promoted-split-tail/source/target/virgl-production/pkg/wasm_vm_wasm_bg.wasm",
+      "bytes": 1747037,
+      "sha256": "3e7fc4fca4e44e40666b25dd440b1825ba3b25d1ac6f31f1c0fea92174d430b3"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/promoted-split-tail/source/tools/virgl-production/critic-fast-boots-fragmented-backing.mjs",
+      "bytes": 8635,
+      "sha256": "7ab89195f6c3c76d03928a90b487e6264dc129ce10d97c342d7845b04eb518ab"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/promoted-split-tail.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/promoted-split-tail.stdout",
+      "bytes": 125,
+      "sha256": "ededbba8469b00b25b3466993740de560bd723657acb1586d560c5e2e4d05ec7"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/proof-build.stderr",
+      "bytes": 3157,
+      "sha256": "d748eacf5d1e0cf4e7bb9fe77cd3dafaa0d21c90ce237237555e0e32723502c3"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/proof-build.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/report.json",
+      "bytes": 29401,
+      "sha256": "cc2fc38da8087b2c5c79a4e8fc354d5057579e6c2aeb53626efc62b050d87954"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/transport.stderr",
+      "bytes": 437,
+      "sha256": "0bbec61002027975d585243d4d4d5a798f2c525f6b50f76293d45328a1be6b50"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/transport.stdout",
+      "bytes": 1498,
+      "sha256": "c3301ac4c402667cf95a1a043baeef7e956dd10dc099647cc9178616e8f9c768"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/wasm-clippy.stderr",
+      "bytes": 2736,
+      "sha256": "c3f112fae532eb8d51602d3f8b023e6156ef020e80d7f93ace977e9a0bb048d5"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/fragmented-backing/wasm-clippy.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-fragmented-backing-cold01/report.json",
+      "bytes": 30116,
+      "sha256": "f64c0affc9e7a484ba60a6343edf8dade9190c1442b9aabb37553dcc581cb616"
+    }
+  ]
+}
