@@ -3,7 +3,8 @@ id: E6-T11d71
 epic: 6
 title: Preserve original keyboard host waits across tickless guest idle
 priority: 525.027038
-status: in-progress
+status: blocked
+blocked_on: [E6-T11d72]
 depends_on: [E6-T11d70]
 estimate: S
 risk: high
@@ -101,3 +102,13 @@ harness. Closed hot/cold originals and software diagnostic are sealed in
 `a77ed05d56d25a88502a342a625abf2bb6a1b850d5307b9e4fc13c730ab4fec5`).
 All272 members were reopened and checked. The task remains in-progress; no
 deployment or verified verdict is claimed.
+
+### 2026-10-14 — worker — blocked on explicit interactive clock policy
+
+Exact repro: run `make verify-E6-T11d71` at frozen5c. The original stock50ms
+physical typing ends in `tttouch`, Bash command-not-found and20 failed marker
+reads, as preserved above. The valid native guard does not establish correct
+userspace interactive timing. Ordered S/high `E6-T11d72` owns an explicit
+accelerated-desktop clock policy and its actual browser measurements;71 may
+reuse that final full parent proof after its fresh verdict. This leaves no
+unverified native dependency for72, which reuses verified E5-T26i timekeeping.
