@@ -3,7 +3,7 @@ id: E6-T11d67
 epic: 6
 title: Provide real four-sample rendering and original VirGL resolve
 priority: 525.027035
-status: implemented
+status: verified
 depends_on: [E6-T11d66]
 estimate: S
 risk: high
@@ -95,3 +95,78 @@ manifest `e7e143cb9fc738643ecc09b9f1689d50e8755431788f02309a9ac7a9ba03a564`.
 Publication verified 10527 existing objects and uploaded eight new objects plus
 the immutable manifest; its receipt is included. This is an artifact
 publication, not a claim that the unfinished parent is deployed or verified.
+
+### 2026-10-14 — fresh verifier — VERDICT: verified
+
+Reviewed runtime head `3bb4ba9b93f19165cf61d4c2cea82f128430e1a6` against
+`8f502340`, the worker claim, exact recorded source identities and sealed
+hot/cold evidence. The later worker-log commit changes no runtime source.
+This verdict covers D67; the parent still needs correct production scanout
+orientation, rendered default desktop shell, and its final deployment proof.
+
+- **HELD — physical samples and independent pixels.** Predicted native requested
+  samples 2/4 equal actual storage, magenta clear resolves exactly, Z16 0.75
+  stays within one UN16 step of 49151, and triangle edges mix channels without
+  changing opaque alpha. `critic-production-multisample-final-10/run-0000.json.gz`
+  records 19631 assertions, 89 original requests, all seven exact native sample
+  allocations, eleven literal mixed edge pixels, RGBX opaque alpha, signed
+  single-sample/scissored copies, stencil-only and combined depth/stencil copies.
+  Guest state digest `7ebf0cf5ee4e84dbfe4ac15ee1f6644d1670064b2bb10f3c5d708de7a8e13a3f`.
+- **HELD — admission and no-effects refusals.** Predicted unsupported sample counts,
+  shapes, overflow, attachment mismatch, format reinterpretation, Z32 stencil,
+  and multisampled BLIT destinations refuse before allocation/binding/copy.
+  The promoted original-MMIO native test and independent final10 records hold;
+  the two independently found stencil/destination errors are fixed in this
+  head. Historical profiles still refuse samples 2/4 (59 assertions). The exact
+  32 MiB native budget and one-row overflow pass/fail boundary is held.
+- **HELD — ownership and loss.** Predicted original queued destroy/unref waits for
+  physical completion. Final10 records retained resources through the real
+  fence and zero owners after cleanup. Its separate `run-0002.json.gz` injects
+  actual `WEBGL_lose_context` while original BLIT holds both resources and a
+  native sync: 1529 assertions, uncertain completion, original used-head
+  retirement, zero holds/syncs/renderbuffers. Digest
+  `975b7b01e08be360a868ce0136085f8d63d52bd1e512a9a32b5eaafe71485062`.
+- **HELD — new failure cleanup.** Predicted negative hardware qualification cannot
+  return a positive result and restores bindings/write masks. The promoted
+  failure-cleanup final04 recording covers below-four samples, null temporary
+  framebuffer/renderbuffer, wrong actual samples, incomplete FBO, bad real
+  readback pixels and native error. Original resource-create failures cover
+  unsupported native sample query, null renderbuffer and an exception after
+  real native allocation; all leave metadata/budgets unchanged and no live
+  owners. Owned multisample storage also refuses sampler/scanout leases. All
+  ten cases pass; report SHA-256
+  `cedf4e1885fb17534deee1b249cac5db1e5dc103a48c03b24af9deb771d9b9e3`.
+- **HELD — truthful guest and clean build.** Authenticated all 124 worker sealed
+  identities and 61 cold recording files. Exact-head ordinary full-history
+  clone, build and acceptance exit 0 with scrubbed build/proof environment;
+  public immutable image11 supplies the guest. All 29 numeric floors, all 15
+  required real renderbuffer allocations, and actual Mesa clear/original
+  BLIT/readPixels pass. MAX_SAMPLES=4; texture-MS and public desktop OpenGL
+  remain absent. The ordinary built demo passes 127/0, no errors/proof exports.
+  The shallow-clone diagnostic is superseded by successful cold02, not counted
+  as proof. Its report is
+  `31abfc992eee7e27558df4a9436bc50f743873efc8127cb78326551e3dbfd6d7`.
+- **HELD — sufficiency and sabotage.** `verifier/audit.py` authenticates recordings,
+  verifies current runtime digests, and confirms execution of all 179 added
+  executable JavaScript lines across hot, cold and independent fault recordings.
+  Rust gates/C ABI tests exercise sample accounting and typed mask fields;
+  the actual patched Mesa profile exercises attachment-only capability queries.
+  Types/comments/generated copies/docs/test-only CSR-stub harness fixes are
+  classified in `final-audit.json`. In an isolated served copy, omitting only
+  native original BLIT immediately changes the first expected magenta pixel
+  to zero and fails. Later fixes change refusal guards only; its sabotage result
+  is carried with unchanged native resolve/oracle dependency digests.
+
+**SUITE:** retain the original-MMIO sample accounting regression, literal
+physical pixel/lifetime/loss fixtures, independent GLES probe, failure-cleanup
+mode, and `make verify-E6-T11d67`. The new recurring negative command is:
+
+```sh
+node tools/virgl-production/critic-fast-boots-multisample-browser.mjs \
+  --mode failure-cleanup --output target/evidence/critic-ms-failure-cleanup
+python3 evidence/virgl-production-multisample/verifier/audit.py
+```
+
+Independent recordings are sealed in
+`evidence/virgl-production-multisample/verifier/independent-multisample-and-cleanup.tar.gz`
+with paired file identities. Archive SHA-256: `7a3d49a245b19e813cb209eac4907c7ca9251b9dcd11754124e3b4b1c3862d93`.

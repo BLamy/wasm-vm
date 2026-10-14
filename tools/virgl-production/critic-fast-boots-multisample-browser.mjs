@@ -16,7 +16,7 @@ async function source(name){
   if(sources.has(name))return;const bytes=await fs.readFile(path.join(repo,name));sources.set(name,bytes);
   if(/\.m?js$/.test(name))for(const m of bytes.toString().matchAll(/(?:from|import)\s*['"](\.\.?\/[^'"]+)['"]/g))await source(path.posix.normalize(path.posix.join(path.posix.dirname(name),m[1])));
 }
-for(const name of ['tools/virgl-production/critic-fast-boots-multisample.mjs','renderer/virgl-command/tests/production-critic-shader-bindings.mjs','renderer/virgl-command/tests/production-critic-bounds.mjs','renderer/virgl-shader/build/wasm/virgl-shader.mjs','renderer/virgl-shader/build/wasm/virgl-shader.wasm','tools/virgl-production/critic-dimensional-browser.mjs'])await source(name);
+for(const name of ['tools/virgl-production/critic-fast-boots-multisample-failure-cleanup.mjs','tools/virgl-production/critic-fast-boots-multisample.mjs','renderer/virgl-command/tests/production-critic-shader-bindings.mjs','renderer/virgl-command/tests/production-critic-bounds.mjs','renderer/virgl-shader/build/wasm/virgl-shader.mjs','renderer/virgl-shader/build/wasm/virgl-shader.wasm','tools/virgl-production/critic-dimensional-browser.mjs'])await source(name);
 for(const name of await fs.readdir(path.join(repo,'target/virgl-production/pkg')))if(/\.(m?js|wasm)$/.test(name))await source('target/virgl-production/pkg/'+name);
 assert.ok(sources.has('target/virgl-production/pkg/wasm_vm_wasm.js'),'root-owned production proof build is required');
 let sabotage=null;
@@ -51,7 +51,9 @@ try{
   report.result=await page.evaluate(async options=>{
     try{
       const wasm=await import('/target/virgl-production/pkg/wasm_vm_wasm.js');await wasm.default();
-      const result=await(await import('/tools/virgl-production/critic-fast-boots-multisample.mjs')).runProductionMultisampleCritic({...options,WasmVirglSubmitProof:wasm.WasmVirglSubmitProof});
+      const result=options.mode==='failure-cleanup'
+        ? await(await import('/tools/virgl-production/critic-fast-boots-multisample-failure-cleanup.mjs')).runProductionMultisampleFailureCritic({WasmVirglSubmitProof:wasm.WasmVirglSubmitProof})
+        : await(await import('/tools/virgl-production/critic-fast-boots-multisample.mjs')).runProductionMultisampleCritic({...options,WasmVirglSubmitProof:wasm.WasmVirglSubmitProof});
       document.querySelector('#status').textContent='Independent hardware matrix '+result.status;document.querySelector('#results').textContent=JSON.stringify(result.summary,null,2);return result;
     }catch(error){document.querySelector('#status').textContent='Failed: '+error.message;return {status:'failed',failure:{message:error.message,stack:error.stack},partial:window.__productionCriticReport??null,active:window.__productionCriticActive?.()??null};}
   },{mode:options.mode??'dimensional',formatIds:options.formats?.split(',').map(Number)??null,targets:options.targets?.split(',').map(Number)??[3,4,7],schedules:options.schedules?.split(',').map(Number)??[0]});
