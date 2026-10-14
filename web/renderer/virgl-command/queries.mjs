@@ -50,11 +50,14 @@ export function createBooleanQueries(gl, resources, require, unwrap, check) {
       if (!object.queryRequested) return false;
       unwrap(resources.validateQueryStorage(object.lease));
       for (const part of object.queryParts) if (!part.available) {
-        part.available = gl.getQueryParameter(part.native, gl.QUERY_RESULT_AVAILABLE); check();
-        require(typeof part.available === 'boolean', 'backend-error', 'Invalid native query availability.');
-        if (part.available) {
-          part.result = gl.getQueryParameter(part.native, gl.QUERY_RESULT); check();
-          require(part.result === 0 || part.result === 1, 'backend-error', 'Invalid native boolean query counter.');
+        const available = gl.getQueryParameter(part.native, gl.QUERY_RESULT_AVAILABLE); check();
+        require(typeof available === 'boolean', 'backend-error', 'Invalid native query availability.');
+        if (available) {
+          const result = gl.getQueryParameter(part.native, gl.QUERY_RESULT); check();
+          require(result === 0 || result === 1, 'backend-error', 'Invalid native boolean query counter.');
+          // Commit neither field until both actual native reads validate.
+          // A rejected read must remain pending and be re-read on retry.
+          part.result = result; part.available = true;
         }
       }
       if (object.queryParts.some(part => !part.available)) return false;
