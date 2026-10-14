@@ -31,6 +31,9 @@ const LONG_RPC_GRACE_MS = Object.freeze({
 export const LINUX_CONTROLLER_METHODS = Object.freeze([
   "setDisplay",
   "displayStats",
+  "gpuStats",
+  "loseGpuContext",
+  "acknowledgeGpuFrame",
   "sendKeyboardEvent",
   "syncKeyboard",
   "sendTabletEvent",
@@ -299,6 +302,7 @@ export function createLinuxWorkerClient(endpoint, callbacks = {}) {
       case "writer": callbacks.onWriterStatus?.(message.info); break;
       case "quota": callbacks.onQuota?.(message.info); break;
       case "capture-start": callbacks.onCaptureStart?.(message.info); break;
+      case "gpu-event": callbacks.onGpuEvent?.(message.info); break;
       case "display": {
         const frame = message.frame;
         if (frame?.type === "clear") {
@@ -316,6 +320,9 @@ export function createLinuxWorkerClient(endpoint, callbacks = {}) {
           resourceWidth: frame.resourceWidth,
           resourceHeight: frame.resourceHeight,
           pixels: new Uint32Array(frame.pixels),
+          ...(frame.presentationToken ? {onRetired:(status,record) => {
+            post(endpoint,{type:'display-retired',version:LINUX_WORKER_PROTOCOL_VERSION,token:frame.presentationToken,status,record});
+          }} : {}),
         });
         break;
       }
@@ -725,6 +732,7 @@ export function createLinuxWorkerRuntime(endpoint, {
     onWriterStatus: (info) => send({ type: "writer", info }),
     onQuota: (info) => send({ type: "quota", info }),
     onCaptureStart: (info) => send({ type: "capture-start", info }),
+    onGpuEvent: (info) => send({type:'gpu-event',info}),
     onDisplayFrame: (frame) => {
       try {
         if (frame?.type === "clear") {
@@ -742,6 +750,7 @@ export function createLinuxWorkerRuntime(endpoint, {
             resourceWidth: frame?.resourceWidth,
             resourceHeight: frame?.resourceHeight,
             pixels: pixels.buffer,
+            ...(frame?.presentationToken ? {presentationToken:frame.presentationToken} : {}),
           },
         }, [pixels.buffer]);
       } catch (error) {
@@ -860,6 +869,9 @@ export function createLinuxWorkerRuntime(endpoint, {
         if (terminalizing) return;
         // The page already transferred an exact private ArrayBuffer. Re-wrap it without a second copy.
         controller.sendInput(new Uint8Array(message.bytes));
+        return;
+      case "display-retired":
+        if (!terminalizing) controller?.acknowledgeGpuFrame?.(message.token,message.status,message.record);
         return;
       case "call": return handleCall(message);
       case "ping":

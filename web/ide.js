@@ -492,6 +492,7 @@ if (root) {
         <div class="omarchy-boot-actions">
           <button id="omarchy-boot-log-toggle" type="button" aria-expanded="false">View boot log</button>
           <button id="omarchy-boot-exit" type="button">Exit desktop</button>
+          <a id="omarchy-gpu-retry" hidden href="./app?guest=omarchy&amp;desktop=1&amp;gpu=0#ide">Restart with software graphics</a>
         </div>
         <pre class="omarchy-boot-log" id="omarchy-boot-log" hidden>No serial output yet.</pre>
       </div>
@@ -731,6 +732,8 @@ if (root) {
       appendBootOutput(`[boot error] ${message}\n`);
       if (bootOverlay) bootOverlay.hidden = false;
       if (desktopToolbar) desktopToolbar.dataset.state = "error";
+      const retry = q("#omarchy-gpu-retry");
+      if (retry) retry.hidden = !event.detail?.gpuContextLost;
       setOverlayInteractive(false);
     });
     window.addEventListener("wvm:guest-halted", (event) => {

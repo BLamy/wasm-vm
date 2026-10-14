@@ -4,15 +4,17 @@
 //! registers, and keeps the protocol wire formats in [`protocol`]. E5-T02a adds the first
 //! host-owned resource store and CREATE_2D command; later slices add backing and presentation.
 
-#[cfg(feature = "virgl-control-proof")]
+#[cfg(feature = "virgl-renderer")]
+pub mod capabilities;
+#[cfg(feature = "virgl-renderer")]
 pub mod control3d;
 pub mod damage;
 pub mod edid;
 pub mod protocol;
 pub mod resources;
-#[cfg(feature = "virgl-control-proof")]
+#[cfg(feature = "virgl-renderer")]
 pub mod scanout3d;
-#[cfg(feature = "virgl-control-proof")]
+#[cfg(feature = "virgl-renderer")]
 pub mod submit3d;
 pub mod tiles;
 
@@ -95,6 +97,8 @@ pub struct CommandTraceRecord {
     /// display dimensions; commands without a live resource use `None`.
     pub resource_width: Option<u32>,
     pub resource_height: Option<u32>,
+    /// Original attachment entry count, including rejected backing requests.
+    pub backing_entries: Option<u32>,
     /// Queue shadow positions after the request was consumed and its used entry published.
     pub avail_idx: u16,
     pub used_idx: u16,
@@ -299,7 +303,7 @@ pub const MAX_CURSOR_DIMENSION: u32 = 256;
 /// E5-T01a exposes no 3D capsets.
 pub const DEFAULT_NUM_CAPSETS: u32 = 0;
 /// Offered only by the explicit proof constructor, never the default device.
-#[cfg(feature = "virgl-control-proof")]
+#[cfg(feature = "virgl-renderer")]
 pub const VIRTIO_GPU_F_VIRGL: u64 = 1;
 /// Preferred virtio-mmio slot for the browser display. Slot 6 is the first optional slot;
 /// callers may fall back to slot 6 when the preferred slot is already occupied by another
@@ -322,12 +326,16 @@ pub struct GpuState {
     reset_pending: bool,
     /// Host-owned 2D resource store. Backing entries are added by E5-T02b.
     pub resources: resources::ResourceMap,
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     control3d: Option<control3d::Control3dState>,
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     submit3d: Option<submit3d::Submit3dState>,
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     scanout3d: Option<scanout3d::Scanout3dState>,
+    #[cfg(feature = "virgl-renderer")]
+    capabilities: Option<capabilities::QualifiedCapabilities>,
+    #[cfg(feature = "virgl-renderer")]
+    production_selected: bool,
     /// Resource currently bound to scanout 0, if any. SET_SCANOUT is owned by E5-T03;
     /// RESOURCE_UNREF clears this before dropping a bound resource.
     pub scanout_resource: Option<u32>,
@@ -373,12 +381,16 @@ impl GpuState {
             cursor_kicked: false,
             reset_pending: false,
             resources: resources::ResourceMap::new(),
-            #[cfg(feature = "virgl-control-proof")]
+            #[cfg(feature = "virgl-renderer")]
             control3d: None,
-            #[cfg(feature = "virgl-control-proof")]
+            #[cfg(feature = "virgl-renderer")]
             submit3d: None,
-            #[cfg(feature = "virgl-control-proof")]
+            #[cfg(feature = "virgl-renderer")]
             scanout3d: None,
+            #[cfg(feature = "virgl-renderer")]
+            capabilities: None,
+            #[cfg(feature = "virgl-renderer")]
+            production_selected: false,
             scanout_resource: None,
             cursor_states: [CursorState::hidden(0); DEFAULT_NUM_SCANOUTS as usize],
             frame_sink: sink,
@@ -469,6 +481,69 @@ impl GpuState {
         }
     }
 
+    #[cfg(feature = "virgl-renderer")]
+    fn renderer_qualified(&self) -> bool {
+        !self.production_selected || self.capabilities.is_some()
+    }
+    /// Loss revokes positive negotiation. Existing completed work can still retire;
+    /// future renderer requests fail while ordinary CPU display/input remains usable.
+    #[cfg(feature = "virgl-renderer")]
+    pub fn invalidate_renderer_qualification(&mut self) -> bool {
+        if !self.production_selected {
+            return false;
+        }
+        self.capabilities = None;
+        true
+    }
+
+    /// A qualified asynchronous request needs a host turn before guest timers
+    /// may be skipped. A posted completion can retire at the next boundary.
+    #[cfg(feature = "virgl-renderer")]
+    pub(crate) fn external_renderer_io_pending(&self) -> bool {
+        self.production_selected
+            && self
+                .submit3d
+                .as_ref()
+                .is_some_and(|submit| submit.pending.is_some() && !submit.mailbox.inspect().ready)
+    }
+
+    #[cfg(feature = "virgl-renderer")]
+    pub(crate) fn mirror_legacy_input(
+        &mut self,
+        exchange: &submit3d::Submit3dExchange,
+        bytes: &[u8],
+    ) -> Result<(), control3d::Control3dError> {
+        let Some(pending) = self.submit3d.as_ref().and_then(|s| s.pending.as_ref()) else {
+            return Ok(());
+        };
+        let submit3d::PendingRequest::Render(request) = &pending.request else {
+            return Ok(());
+        };
+        if request.header.ty != protocol::CMD_TRANSFER_TO_HOST_2D {
+            return Ok(());
+        }
+        let submit3d::Submit3dKind::Transfer(t) = request.kind else {
+            return Ok(());
+        };
+        if t.resource_id != exchange.backing.resource.id
+            || self.resources.get(t.resource_id).is_none()
+        {
+            return Ok(());
+        }
+        self.resources
+            .mirror_dense_upload(
+                t.resource_id,
+                Rect {
+                    x: t.box_.x,
+                    y: t.box_.y,
+                    width: t.box_.width,
+                    height: t.box_.height,
+                },
+                bytes,
+            )
+            .map_err(|_| control3d::Control3dError::InvalidParameter)
+    }
+
     /// E5-T07a: arm the bounded guest command trace. Recording is opt-in even when the
     /// `gpu-trace` feature is compiled, so normal native and browser boots retain the
     /// null-sink behavior and do not allocate trace storage.
@@ -538,6 +613,7 @@ impl GpuState {
             resource_id: meta.resource_id,
             resource_width: meta.resource_width,
             resource_height: meta.resource_height,
+            backing_entries: meta.backing_entries,
             avail_idx,
             used_idx,
             used_head,
@@ -560,15 +636,15 @@ impl GpuState {
     }
 
     fn reset(&mut self) {
-        #[cfg(feature = "virgl-control-proof")]
+        #[cfg(feature = "virgl-renderer")]
         if let Some(submit) = &mut self.submit3d {
             submit.revoke();
         }
-        #[cfg(feature = "virgl-control-proof")]
+        #[cfg(feature = "virgl-renderer")]
         if let Some(control) = &mut self.control3d {
             control.reset();
         }
-        #[cfg(feature = "virgl-control-proof")]
+        #[cfg(feature = "virgl-renderer")]
         if let Some(scanout) = &mut self.scanout3d {
             scanout.reset();
         }
@@ -606,31 +682,31 @@ impl GpuState {
     }
 
     /// A proof owner cannot be represented by the existing 2D snapshot codec.
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     pub fn control3d_proof_installed(&self) -> bool {
         self.control3d.is_some()
     }
 
     /// Bounded copied diagnostics, separate from renderer-owned retained storage.
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     pub fn control3d_snapshot(&self) -> Option<control3d::Control3dSnapshot> {
         self.control3d
             .as_ref()
             .map(control3d::Control3dState::snapshot)
     }
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     pub fn submit3d_snapshot(&self) -> Option<submit3d::Submit3dSnapshot> {
         self.submit3d
             .as_ref()
             .map(submit3d::Submit3dState::snapshot)
     }
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     pub fn scanout3d_snapshot(&self) -> Option<scanout3d::Scanout3dSnapshot> {
         self.scanout3d
             .as_ref()
             .map(scanout3d::Scanout3dState::snapshot)
     }
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     fn revoke_submit3d(&mut self) {
         if let Some(submit) = &mut self.submit3d {
             submit.revoke();
@@ -676,7 +752,7 @@ impl VirtioGpu {
 
     /// Test-only negotiated control transport. Merely compiling the feature does
     /// not change any existing constructor or advertise capsets.
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     pub fn new_with_control3d_proof_state(
         frame_sink: Box<dyn FrameSink>,
         control_sink: Box<dyn control3d::Control3dSink>,
@@ -687,7 +763,7 @@ impl VirtioGpu {
     }
 
     /// Selected captured-desktop resource controls only; no capsets or submissions.
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     pub fn new_with_standard_desktop_control3d_proof_state(
         frame_sink: Box<dyn FrameSink>,
         control_sink: Box<dyn control3d::Control3dSink>,
@@ -700,7 +776,7 @@ impl VirtioGpu {
     }
 
     /// Explicit asynchronous proof assembly; all existing constructors stay synchronous.
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     pub fn new_with_submit3d_proof_state(
         frame_sink: Box<dyn FrameSink>,
         control_sink: Box<dyn control3d::Control3dSink>,
@@ -713,7 +789,7 @@ impl VirtioGpu {
     }
 
     /// Selected desktop owners with the existing ordered submission mailbox.
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     pub fn new_with_standard_desktop_submit3d_proof_state(
         frame_sink: Box<dyn FrameSink>,
         control_sink: Box<dyn control3d::Control3dSink>,
@@ -727,7 +803,7 @@ impl VirtioGpu {
     }
 
     /// Selected original layered RGBA8 control and one ordered layered exchange.
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     pub fn new_with_standard_dimensional_submit3d_proof_state(
         frame_sink: Box<dyn FrameSink>,
         control_sink: Box<dyn control3d::Control3dSink>,
@@ -745,7 +821,7 @@ impl VirtioGpu {
     }
 
     /// Separately selected original cube/array depth allocation and layered DMA.
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     pub fn new_with_standard_dimensional_depth_submit3d_proof_state(
         frame_sink: Box<dyn FrameSink>,
         control_sink: Box<dyn control3d::Control3dSink>,
@@ -763,7 +839,7 @@ impl VirtioGpu {
     }
 
     /// Separately selected original buffer stream-output allocation and layered DMA.
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     pub fn new_with_standard_stream_output_submit3d_proof_state(
         frame_sink: Box<dyn FrameSink>,
         control_sink: Box<dyn control3d::Control3dSink>,
@@ -780,8 +856,31 @@ impl VirtioGpu {
         (device, state)
     }
 
+    /// A production host installs this before Linux's first device probe.
+    #[cfg(feature = "virgl-renderer")]
+    pub fn new_with_qualified_renderer(
+        frame_sink: Box<dyn FrameSink>,
+        control_sink: Box<dyn control3d::Control3dSink>,
+        submit_sink: Box<dyn submit3d::Submit3dSink>,
+        mailbox: submit3d::Submit3dMailbox,
+        capabilities: capabilities::QualifiedCapabilities,
+    ) -> (Self, Rc<RefCell<GpuState>>) {
+        let (device, state) = Self::new_with_sink_state(frame_sink);
+        let mut selected = state.borrow_mut();
+        selected.submit3d = Some(submit3d::Submit3dState::new_production(
+            submit_sink,
+            mailbox,
+        ));
+        selected.scanout3d = Some(scanout3d::Scanout3dState::new());
+        selected.control3d = Some(control3d::Control3dState::new_production(control_sink));
+        selected.capabilities = Some(capabilities);
+        selected.production_selected = true;
+        drop(selected);
+        (device, state)
+    }
+
     /// Explicit proof-only global scanout assembly; ordinary and submit-only devices stay unchanged.
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     pub fn new_with_scanout3d_proof_state(
         frame_sink: Box<dyn FrameSink>,
         control_sink: Box<dyn control3d::Control3dSink>,
@@ -852,6 +951,10 @@ impl VirtioGpu {
         // `events_clear` is a write-one-to-clear register.  It has no latched read value.
         out[8..12].copy_from_slice(&DEFAULT_NUM_SCANOUTS.to_le_bytes());
         out[12..16].copy_from_slice(&DEFAULT_NUM_CAPSETS.to_le_bytes());
+        #[cfg(feature = "virgl-renderer")]
+        if self.state.borrow().capabilities.is_some() {
+            out[12..16].copy_from_slice(&1u32.to_le_bytes());
+        }
         out
     }
 }
@@ -868,8 +971,10 @@ impl VirtioDevice for VirtioGpu {
     }
 
     fn device_features(&self) -> u64 {
-        #[cfg(feature = "virgl-control-proof")]
-        if self.state.borrow().control3d_proof_installed() {
+        #[cfg(feature = "virgl-renderer")]
+        if self.state.borrow().control3d_proof_installed()
+            && self.state.borrow().renderer_qualified()
+        {
             return VIRTIO_GPU_F_EDID | VIRTIO_GPU_F_VIRGL;
         }
         VIRTIO_GPU_F_EDID
@@ -1051,6 +1156,7 @@ pub(crate) struct CommandTraceMeta {
     resource_id: Option<u32>,
     resource_width: Option<u32>,
     resource_height: Option<u32>,
+    backing_entries: Option<u32>,
 }
 
 #[cfg(feature = "gpu-trace")]
@@ -1101,6 +1207,9 @@ fn command_trace_meta(
                 && let Some(attach) = protocol::ResourceAttachBacking::from_bytes(&bytes)
             {
                 meta.resource_id = Some(attach.resource_id);
+                meta.backing_entries = Some(u32::from_le_bytes(
+                    bytes[28..32].try_into().expect("header word"),
+                ));
             }
         }
         protocol::CMD_RESOURCE_DETACH_BACKING => {
@@ -1216,11 +1325,12 @@ fn create_error_response(error: resources::CreateError) -> u32 {
 }
 
 fn create_2d_resource(state: &mut GpuState, create: protocol::ResourceCreate2d) -> u32 {
-    #[cfg(feature = "virgl-control-proof")]
-    if state
-        .control3d
-        .as_ref()
-        .is_some_and(|control| control.contains(create.resource_id))
+    #[cfg(feature = "virgl-renderer")]
+    if state.renderer_qualified()
+        && state
+            .control3d
+            .as_ref()
+            .is_some_and(|control| control.contains(create.resource_id))
     {
         return protocol::RESP_ERR_INVALID_RESOURCE_ID;
     }
@@ -1235,7 +1345,7 @@ fn create_2d_resource(state: &mut GpuState, create: protocol::ResourceCreate2d) 
     }
 }
 
-#[cfg(feature = "virgl-control-proof")]
+#[cfg(feature = "virgl-renderer")]
 fn is_control3d_request(
     chain: &DescriptorChain,
     bus: &mut SystemBus,
@@ -1252,10 +1362,11 @@ fn is_control3d_request(
         | protocol::CMD_RESOURCE_DETACH_BACKING
         | protocol::CMD_RESOURCE_UNREF => {
             read_readable_at::<4>(chain, bus, 24).is_some_and(|bytes| {
-                state
-                    .control3d
-                    .as_ref()
-                    .is_some_and(|control| control.contains(u32::from_le_bytes(bytes)))
+                state.renderer_qualified()
+                    && state
+                        .control3d
+                        .as_ref()
+                        .is_some_and(|control| control.contains(u32::from_le_bytes(bytes)))
             })
         }
         _ => false,
@@ -1651,7 +1762,7 @@ pub fn service(
     // Host APIs retain only the GPU state handle.  Let the transport turn a pending state change
     // into its latched config interrupt before queue work (or an early no-kick return) is handled.
     let latched = slot.borrow_mut().sync_backend_config_irq();
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     match service_submit3d_completion(slot, vq, state, bus) {
         PendingService::Waiting => {
             state.borrow_mut().kicked = false;
@@ -1689,7 +1800,7 @@ fn service_kicked(
         *vq = None;
         return;
     }
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     if state.borrow().submit3d.is_some()
         && !bus
             .ram()
@@ -1699,7 +1810,7 @@ fn service_kicked(
         *vq = None;
         return;
     }
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     if state.borrow().submit3d.is_some()
         && vq.as_ref().is_some_and(|q| !q.matches_state(&queue_state))
     {
@@ -1732,9 +1843,78 @@ fn service_kicked(
         #[cfg(feature = "gpu-trace")]
         let trace_meta = command_trace_meta(&chain, bus, state, request);
         let written = match request {
-            #[cfg(feature = "virgl-control-proof")]
+            #[cfg(feature = "virgl-renderer")]
             Some(request)
-                if (is_submit3d_type(request.ty) && state.borrow().submit3d.is_some())
+                if matches!(
+                    request.ty,
+                    protocol::CMD_GET_CAPSET_INFO | protocol::CMD_GET_CAPSET
+                ) && state.borrow().capabilities.is_some() =>
+            {
+                let transport = slot.borrow();
+                let selected = state.borrow();
+                let caps = selected
+                    .capabilities
+                    .as_ref()
+                    .filter(|_| transport.driver_has_feature(VIRTIO_GPU_F_VIRGL));
+                let mut body = Vec::new();
+                let mut response_type = protocol::RESP_ERR_INVALID_PARAMETER;
+                if let (Some(caps), Some(bytes)) = (caps, read_request::<32>(&chain, bus))
+                    && readable_len(&chain) == Some(32)
+                    && request.ctx_id == 0
+                    && request.ring_idx == 0
+                    && request.padding == [0; 3]
+                    && request.flags & !protocol::FLAG_FENCE == 0
+                {
+                    let first = u32::from_le_bytes(bytes[24..28].try_into().expect("request word"));
+                    let second =
+                        u32::from_le_bytes(bytes[28..32].try_into().expect("request word"));
+                    if request.ty == protocol::CMD_GET_CAPSET_INFO && first == 0 && second == 0 {
+                        response_type = protocol::RESP_OK_CAPSET_INFO;
+                        for value in [
+                            capabilities::CAPSET_ID,
+                            capabilities::CAPSET_VERSION,
+                            capabilities::CAPSET_BYTES as u32,
+                            0,
+                        ] {
+                            body.extend_from_slice(&value.to_le_bytes());
+                        }
+                    } else if request.ty == protocol::CMD_GET_CAPSET
+                        && first == capabilities::CAPSET_ID
+                        && second <= capabilities::CAPSET_VERSION
+                    {
+                        response_type = protocol::RESP_OK_CAPSET;
+                        body = caps.to_bytes();
+                    }
+                }
+                let mut response = response_header(request, response_type).to_bytes().to_vec();
+                response.extend_from_slice(&body);
+                if chain.writable_len() < response.len() as u64 {
+                    response = response_header(request, protocol::RESP_ERR_INVALID_PARAMETER)
+                        .to_bytes()
+                        .to_vec();
+                }
+                drop(selected);
+                drop(transport);
+                match if chain.writable_len() < 24 {
+                    Ok(0)
+                } else {
+                    write_prefix(&chain, bus, &response)
+                } {
+                    Ok(written) => written,
+                    Err(()) => {
+                        slot.borrow_mut().protocol_violation();
+                        *vq = None;
+                        return;
+                    }
+                }
+            }
+            #[cfg(feature = "virgl-renderer")]
+            Some(request)
+                if ((is_submit3d_type(request.ty)
+                    || (request.ty == protocol::CMD_TRANSFER_TO_HOST_2D
+                        && state.borrow().capabilities.is_some()
+                        && slot.borrow().driver_has_feature(VIRTIO_GPU_F_VIRGL)))
+                    && state.borrow().submit3d.is_some())
                     || scanout3d::is_capture(&chain, bus, &state.borrow(), request) =>
             {
                 let admitted = {
@@ -1746,7 +1926,8 @@ fn service_kicked(
                             chain.clone(),
                             bus,
                             request,
-                            transport.driver_has_feature(VIRTIO_GPU_F_VIRGL),
+                            transport.driver_has_feature(VIRTIO_GPU_F_VIRGL)
+                                && state_ref.renderer_qualified(),
                             transport.queue_generation(0),
                         )
                     } else {
@@ -1760,7 +1941,8 @@ fn service_kicked(
                             chain.clone(),
                             bus,
                             request,
-                            transport.driver_has_feature(VIRTIO_GPU_F_VIRGL),
+                            transport.driver_has_feature(VIRTIO_GPU_F_VIRGL)
+                                && state_ref.renderer_qualified(),
                             transport.queue_generation(0),
                         )
                     }
@@ -1815,10 +1997,55 @@ fn service_kicked(
                     }
                 }
             }
-            #[cfg(feature = "virgl-control-proof")]
-            Some(request) if is_control3d_request(&chain, bus, &state.borrow(), request) => {
-                let negotiated = slot.borrow().driver_has_feature(VIRTIO_GPU_F_VIRGL);
-                let result = {
+            #[cfg(feature = "virgl-renderer")]
+            Some(request)
+                if is_control3d_request(&chain, bus, &state.borrow(), request)
+                    || (request.ty == protocol::CMD_RESOURCE_CREATE_2D
+                        && state.borrow().capabilities.is_some()
+                        && slot.borrow().driver_has_feature(VIRTIO_GPU_F_VIRGL)) =>
+            {
+                let mut mirrored = None;
+                let preflight = if request.ty == protocol::CMD_RESOURCE_CREATE_2D
+                    && state.borrow().capabilities.is_some()
+                {
+                    if let Some(create) = read_request::<40>(&chain, bus)
+                        .and_then(|b| protocol::ResourceCreate2d::from_bytes(&b))
+                    {
+                        let size = u64::from(create.width) * u64::from(create.height) * 4;
+                        if size > 32 * 1024 * 1024 {
+                            Err(control3d::Control3dError::OutOfMemory)
+                        } else {
+                            state
+                                .borrow_mut()
+                                .resources
+                                .create(
+                                    create.resource_id,
+                                    create.format,
+                                    create.width,
+                                    create.height,
+                                )
+                                .map(|_| {
+                                    mirrored = Some(create.resource_id);
+                                })
+                                .map_err(|e| match create_error_response(e) {
+                                    protocol::RESP_ERR_OUT_OF_MEMORY => {
+                                        control3d::Control3dError::OutOfMemory
+                                    }
+                                    protocol::RESP_ERR_INVALID_RESOURCE_ID => {
+                                        control3d::Control3dError::InvalidResourceId
+                                    }
+                                    _ => control3d::Control3dError::InvalidParameter,
+                                })
+                        }
+                    } else {
+                        Err(control3d::Control3dError::InvalidParameter)
+                    }
+                } else {
+                    Ok(())
+                };
+                let negotiated = slot.borrow().driver_has_feature(VIRTIO_GPU_F_VIRGL)
+                    && state.borrow().renderer_qualified();
+                let result = preflight.and_then(|()| {
                     let mut state = state.borrow_mut();
                     let GpuState {
                         control3d,
@@ -1831,7 +2058,42 @@ fn service_kicked(
                         }
                         None => Err(control3d::Control3dError::Unspecified),
                     }
-                };
+                });
+                if result.is_err()
+                    && let Some(id) = mirrored
+                {
+                    let _ = state.borrow_mut().resources.remove(id);
+                }
+                let result = result.and_then(|()| {
+                    let id = read_readable_at::<4>(&chain, bus, 24).map(u32::from_le_bytes);
+                    if id.is_some_and(|id| {
+                        state.borrow().capabilities.is_some()
+                            && state.borrow().resources.get(id).is_some()
+                    }) {
+                        let code = match request.ty {
+                            protocol::CMD_RESOURCE_ATTACH_BACKING => {
+                                attach_backing(&chain, bus, state).map_err(backing_error_response)
+                            }
+                            protocol::CMD_RESOURCE_DETACH_BACKING => {
+                                detach_backing(&chain, bus, state).map_err(backing_error_response)
+                            }
+                            protocol::CMD_RESOURCE_UNREF => {
+                                unref_resource(&chain, bus, state).map_err(unref_error_response)
+                            }
+                            _ => Ok(()),
+                        };
+                        if code.is_err() {
+                            state
+                                .borrow_mut()
+                                .control3d
+                                .as_mut()
+                                .expect("qualified control")
+                                .poison();
+                            return Err(control3d::Control3dError::BridgePoisoned);
+                        }
+                    }
+                    Ok(())
+                });
                 let response_type = result
                     .map_or_else(control3d::Control3dError::response_type, |()| {
                         protocol::RESP_OK_NODATA
@@ -1958,10 +2220,11 @@ fn service_kicked(
                     }
                 }
             }
-            #[cfg(feature = "virgl-control-proof")]
+            #[cfg(feature = "virgl-renderer")]
             Some(request)
                 if request.ty == protocol::CMD_SET_SCANOUT
-                    && state.borrow().scanout3d.is_some() =>
+                    && state.borrow().scanout3d.is_some()
+                    && state.borrow().renderer_qualified() =>
             {
                 let result = scanout3d::bind(
                     &chain,
@@ -2234,6 +2497,7 @@ pub fn service_with_cursor(
 }
 
 #[cfg(test)]
+#[allow(clippy::items_after_test_module)]
 mod tests {
     include!("reset_verifier_tests.rs");
 
@@ -5007,7 +5271,7 @@ mod tests {
     }
 }
 
-#[cfg(feature = "virgl-control-proof")]
+#[cfg(feature = "virgl-renderer")]
 fn is_submit3d_type(ty: u32) -> bool {
     matches!(
         ty,
@@ -5016,14 +5280,14 @@ fn is_submit3d_type(ty: u32) -> bool {
             | protocol::CMD_TRANSFER_FROM_HOST_3D
     )
 }
-#[cfg(feature = "virgl-control-proof")]
+#[cfg(feature = "virgl-renderer")]
 enum PendingService {
     Absent,
     Waiting,
     Completed,
     Revoked,
 }
-#[cfg(feature = "virgl-control-proof")]
+#[cfg(feature = "virgl-renderer")]
 fn service_submit3d_completion(
     slot: &Rc<RefCell<VirtioMmio>>,
     vq: &mut Option<Virtqueue>,
@@ -5130,7 +5394,7 @@ fn service_submit3d_completion(
 
 /// Fresh DMA, callable only by the host outside Machine::run. Every row and SG
 /// span is checked before access; scatter uses checked Bus spans to invalidate caches.
-#[cfg(feature = "virgl-control-proof")]
+#[cfg(feature = "virgl-renderer")]
 pub(crate) fn submit3d_dma(
     slot: &Rc<RefCell<VirtioMmio>>,
     state: &Rc<RefCell<GpuState>>,

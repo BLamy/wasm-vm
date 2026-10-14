@@ -15,7 +15,7 @@ const hex = (v) => { need(typeof v === 'string' && /^[0-9a-f]{16}$/.test(v), 'Ex
 const nextHex = (v) => { const n = BigInt('0x' + v) + 1n; need(n <= 0xffffffffffffffffn, 'Presentation generation exhausted.'); return n.toString(16).padStart(16, '0'); };
 const META = ['id','target','format','bind','width','height','depth','arraySize','lastLevel','nrSamples','flags'];
 function identity(value) { const id = record(value, ['id','generation']); need(uint(id.id) > 0 && hex(id.generation) !== '0000000000000000', 'Invalid resource identity.'); return Object.freeze(id); }
-function binding(value) {
+function binding(value, production) {
   const b = record(value, ['generation','rect','target']); need(hex(b.generation) !== '0000000000000000', 'Binding generation must be nonzero.');
   b.rect = record(b.rect, ['x','y','width','height']); Object.values(b.rect).forEach(uint);
   const kind = Object.getOwnPropertyDescriptor(b.target, 'kind')?.value;
@@ -29,16 +29,16 @@ function binding(value) {
     need(kind === 'renderer', 'Unknown scanout target kind.');
     b.target = record(b.target, ['kind','resource','metadata']); b.target.resource = identity(b.target.resource);
     const m = b.target.metadata = record(b.target.metadata, META); Object.values(m).forEach(uint); Object.freeze(m);
-    need(m.id === b.target.resource.id && m.target === 2 && m.format === 67 && m.bind === 10 && m.depth === 1 && m.arraySize === 1 && m.lastLevel === 0 && m.nrSamples === 0 && m.flags === 0 && m.width > 0 && m.height > 0 && m.width * m.height <= 1048576, 'Unsupported renderer scanout.');
+    need(m.id === b.target.resource.id && m.target === 2 && (m.format === 67 || (production && [1, 2].includes(m.format))) && (production ? (m.bind & 2) !== 0 && (m.bind & ~(10 | (1 << 18) | (1 << 20))) === 0 : m.bind === 10) && m.depth === 1 && m.arraySize === 1 && m.lastLevel === 0 && m.nrSamples === 0 && (m.flags === 0 || (production && m.flags === 1)) && m.width > 0 && m.height > 0 && m.width * m.height <= (production ? 8388608 : 1048576), 'Unsupported renderer scanout.');
     need(b.rect.x === 0 && b.rect.y === 0 && b.rect.width === m.width && b.rect.height === m.height, 'Only whole-resource renderer scanout is supported.');
   }
   Object.freeze(b.rect); Object.freeze(b.target); return Object.freeze(b);
 }
-export function normalizeScanoutEvent(input) {
+export function normalizeScanoutEvent(input, production = false) {
   const type = Object.getOwnPropertyDescriptor(input, 'type')?.value;
   need(type === 'bindScanout' || type === 'beginScanout', 'Unknown scanout event.');
   const event = record(input, type === 'bindScanout' ? ['type','epoch','binding'] : ['type','epoch','sequence','header','binding']);
-  hex(event.epoch); event.binding = binding(event.binding);
+  hex(event.epoch); event.binding = binding(event.binding, production);
   if (type === 'beginScanout') {
     hex(event.sequence); event.header = record(event.header, ['type','flags','fenceId','contextId','ringIndex']);
     for (const key of ['type','flags','contextId','ringIndex']) uint(event.header[key]); hex(event.header.fenceId);
@@ -62,12 +62,13 @@ function pixelWords(value) {
   const offset = Object.getOwnPropertyDescriptor(proto, 'byteOffset').get.call(value), length = Object.getOwnPropertyDescriptor(proto, 'length').get.call(value);
   return new Uint32Array(buffer, offset, length);
 }
-function convertRgba(bytes, width, height) {
+function convertRgba(bytes, width, height, format, yTop) {
   need(bytes instanceof Uint8Array && bytes.byteLength === width * height * 4 && bytes.byteOffset % 4 === 0, 'Invalid RGBA readback size.');
   const words = new Uint32Array(bytes.buffer, bytes.byteOffset, width * height);
   // The renderer returns little-endian RGBA; the established browser contract is BGRA words.
-  for (let i = 0; i < words.length; i++) { const word = words[i]; words[i] = (word & 0xff00ff00) | ((word & 255) << 16) | ((word >>> 16) & 255); }
-  for (let row = 0; row < Math.floor(height / 2); row++) {
+  if (format === 67) for (let i = 0; i < words.length; i++) { const word = words[i]; words[i] = (word & 0xff00ff00) | ((word & 255) << 16) | ((word >>> 16) & 255); }
+  if (format === 2) for (let i = 0; i < words.length; i++) words[i] |= 0xff000000;
+  for (let row = 0; !yTop && row < Math.floor(height / 2); row++) {
     const sourceRow = height - 1 - row;
     for (let x = 0; x < width; x++) { const a = row * width + x, b = sourceRow * width + x, temporary = words[a]; words[a] = words[b]; words[b] = temporary; }
   }
@@ -130,7 +131,7 @@ export function createRetainedScanout({ getOwners, resolveResource, presenter, o
       if (job.cancelled) { release(job); return ok({ status: 'done', result: { ok: false, error: { code: 'cancelled', message: 'Scanout cancelled.' }, gpuComplete: true, appliedCommands: 0, draws: [] } }); }
       const { width, height } = job.binding.target.metadata, bytes = polled.bytes;
       counters.captureReady++; counters.readbackBytes += bytes.byteLength;
-      const pixels = convertRgba(bytes, width, height); counters.rgbaConversionBytes += bytes.byteLength; counters.rowMoveBytes += Math.floor(height / 2) * 2 * width * 4;
+      const pixels = convertRgba(bytes, width, height, job.binding.target.metadata.format, job.binding.target.metadata.flags === 1); counters.rgbaConversionBytes += bytes.byteLength; counters.rowMoveBytes += Math.floor(height / 2) * 2 * width * 4;
       const queued = presenter.enqueueOwned({ bindingGeneration: job.presenterGeneration,
         frame: { scanout: 0, format: 1, rect: { x: 0, y: 0, width, height }, resourceWidth: width, resourceHeight: height, pixels } }, (receipt) => safeRetire(job, receipt));
       if (!queued.ok) { release(job); return ok({ status: 'done', result: { ...queued, gpuComplete: true, appliedCommands: 0, draws: [] } }); }

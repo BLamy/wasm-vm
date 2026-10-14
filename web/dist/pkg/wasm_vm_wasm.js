@@ -1,6 +1,7 @@
 /* @ts-self-types="./wasm_vm_wasm.d.ts" */
-import { invokeJitBlock } from './snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js';
+import { invokeJitBlock } from './snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js';
 import * as import1 from "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js"
+import * as import2 from "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js"
 
 
 /**
@@ -144,6 +145,24 @@ export class WasmLinux {
         return ret[0] !== 0;
     }
     /**
+     * @param {Uint32Array} host_words
+     * @param {Uint32Array} format_roles
+     * @param {string} renderer
+     * @param {Function} callback
+     */
+    attachVirgl(host_words, format_roles, renderer, callback) {
+        const ptr0 = passArray32ToWasm0(host_words, wasm.__wbindgen_malloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ptr1 = passArray32ToWasm0(format_roles, wasm.__wbindgen_malloc);
+        const len1 = WASM_VECTOR_LEN;
+        const ptr2 = passStringToWasm0(renderer, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len2 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_attachVirgl(this.__wbg_ptr, ptr0, len0, ptr1, len1, ptr2, len2, callback);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
      * E5-T21d: report whether this guest owns the page-provided capture ring.
      * @returns {boolean}
      */
@@ -239,6 +258,29 @@ export class WasmLinux {
         }
     }
     /**
+     * This deliberately borrows only the independent mailbox. It can be called
+     * synchronously by begin_job while Machine/GpuState are already borrowed.
+     * @param {string} epoch
+     * @param {string} sequence
+     * @param {string} exchange_sequence
+     * @param {number} outcome_code
+     * @param {boolean} gpu_complete
+     * @param {number} applied_commands
+     * @param {number} draws
+     */
+    complete(epoch, sequence, exchange_sequence, outcome_code, gpu_complete, applied_commands, draws) {
+        const ptr0 = passStringToWasm0(epoch, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ptr1 = passStringToWasm0(sequence, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len1 = WASM_VECTOR_LEN;
+        const ptr2 = passStringToWasm0(exchange_sequence, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len2 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_complete(this.__wbg_ptr, ptr0, len0, ptr1, len1, ptr2, len2, outcome_code, gpu_complete, applied_commands, draws);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
      * E5-T26e: acknowledge a fresh application HELLO from the host T23d Channel. The console
      * transport must already be open; a true result is the only value accepted by the browser
      * restore bridge before it asks the core to publish a desktop snapshot.
@@ -295,6 +337,12 @@ export class WasmLinux {
             throw takeFromExternrefTable0(ret[1]);
         }
         return takeFromExternrefTable0(ret[0]);
+    }
+    enableGpuCommandTrace() {
+        const ret = wasm.wasmlinux_enableGpuCommandTrace(this.__wbg_ptr);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
     }
     /**
      * E4-T29 Phase 2 (browser Linux path): attach the in-wasm JIT executor to THIS Linux guest and
@@ -389,6 +437,73 @@ export class WasmLinux {
         }
     }
     /**
+     * Exact identities and row arithmetic are validated by core before RAM access.
+     * @param {string} epoch
+     * @param {string} sequence
+     * @param {string} exchange_sequence
+     * @param {number} resource_id
+     * @param {string} resource_generation
+     * @param {string} backing_generation
+     * @param {string} offset
+     * @param {number} row_bytes
+     * @param {number} row_stride
+     * @param {number} row_count
+     * @returns {Uint8Array}
+     */
+    gatherInput(epoch, sequence, exchange_sequence, resource_id, resource_generation, backing_generation, offset, row_bytes, row_stride, row_count) {
+        const ptr0 = passStringToWasm0(epoch, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ptr1 = passStringToWasm0(sequence, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len1 = WASM_VECTOR_LEN;
+        const ptr2 = passStringToWasm0(exchange_sequence, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len2 = WASM_VECTOR_LEN;
+        const ptr3 = passStringToWasm0(resource_generation, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len3 = WASM_VECTOR_LEN;
+        const ptr4 = passStringToWasm0(backing_generation, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len4 = WASM_VECTOR_LEN;
+        const ptr5 = passStringToWasm0(offset, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len5 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_gatherInput(this.__wbg_ptr, ptr0, len0, ptr1, len1, ptr2, len2, resource_id, ptr3, len3, ptr4, len4, ptr5, len5, row_bytes, row_stride, row_count);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * @param {string} epoch
+     * @param {string} sequence
+     * @param {string} exchange_sequence
+     * @param {number} resource_id
+     * @param {string} resource_generation
+     * @param {string} backing_generation
+     * @param {string} offset
+     * @param {number} row_bytes
+     * @param {number} row_stride
+     * @param {number} row_count
+     * @param {number} layer_stride
+     * @param {number} layer_count
+     * @returns {Uint8Array}
+     */
+    gatherLayeredInput(epoch, sequence, exchange_sequence, resource_id, resource_generation, backing_generation, offset, row_bytes, row_stride, row_count, layer_stride, layer_count) {
+        const ptr0 = passStringToWasm0(epoch, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ptr1 = passStringToWasm0(sequence, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len1 = WASM_VECTOR_LEN;
+        const ptr2 = passStringToWasm0(exchange_sequence, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len2 = WASM_VECTOR_LEN;
+        const ptr3 = passStringToWasm0(resource_generation, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len3 = WASM_VECTOR_LEN;
+        const ptr4 = passStringToWasm0(backing_generation, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len4 = WASM_VECTOR_LEN;
+        const ptr5 = passStringToWasm0(offset, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len5 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_gatherLayeredInput(this.__wbg_ptr, ptr0, len0, ptr1, len1, ptr2, len2, resource_id, ptr3, len3, ptr4, len4, ptr5, len5, row_bytes, row_stride, row_count, layer_stride, layer_count);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
      * E4-T01: the accumulated profile as a plain JS object — `{ totalNs, sampleCount, walkCount,
      * collisions, regions: [{ pc, samples, pct }], subsystems: [{ name, ns }] }` — mirroring the
      * `getStats` surface the UI already consumes. `pc` is a hex string (a guest PC exceeds 2^53).
@@ -400,6 +515,27 @@ export class WasmLinux {
             throw takeFromExternrefTable0(ret[1]);
         }
         return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * @returns {string}
+     */
+    gpuCommandTrace() {
+        let deferred2_0;
+        let deferred2_1;
+        try {
+            const ret = wasm.wasmlinux_gpuCommandTrace(this.__wbg_ptr);
+            var ptr1 = ret[0];
+            var len1 = ret[1];
+            if (ret[3]) {
+                ptr1 = 0; len1 = 0;
+                throw takeFromExternrefTable0(ret[2]);
+            }
+            deferred2_0 = ptr1;
+            deferred2_1 = len1;
+            return getStringFromWasm0(ptr1, len1);
+        } finally {
+            wasm.__wbindgen_free(deferred2_0, deferred2_1, 1);
+        }
     }
     /**
      * Read-only state: does not sample the clock or consume jump notifications. mtime is a decimal
@@ -455,6 +591,12 @@ export class WasmLinux {
             throw takeFromExternrefTable0(ret[1]);
         }
         return takeFromExternrefTable0(ret[0]);
+    }
+    invalidateVirgl() {
+        const ret = wasm.wasmlinux_invalidateVirgl(this.__wbg_ptr);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
     }
     /**
      * E4-T29: the "JIT actually ran" proof for the browser Linux guest. Returns
@@ -938,6 +1080,74 @@ export class WasmLinux {
             throw takeFromExternrefTable0(ret[1]);
         }
         return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * @param {string} epoch
+     * @param {string} sequence
+     * @param {string} exchange_sequence
+     * @param {number} resource_id
+     * @param {string} resource_generation
+     * @param {string} backing_generation
+     * @param {string} offset
+     * @param {number} row_bytes
+     * @param {number} row_stride
+     * @param {number} row_count
+     * @param {number} layer_stride
+     * @param {number} layer_count
+     * @param {Uint8Array} bytes
+     */
+    scatterLayeredOutput(epoch, sequence, exchange_sequence, resource_id, resource_generation, backing_generation, offset, row_bytes, row_stride, row_count, layer_stride, layer_count, bytes) {
+        const ptr0 = passStringToWasm0(epoch, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ptr1 = passStringToWasm0(sequence, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len1 = WASM_VECTOR_LEN;
+        const ptr2 = passStringToWasm0(exchange_sequence, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len2 = WASM_VECTOR_LEN;
+        const ptr3 = passStringToWasm0(resource_generation, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len3 = WASM_VECTOR_LEN;
+        const ptr4 = passStringToWasm0(backing_generation, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len4 = WASM_VECTOR_LEN;
+        const ptr5 = passStringToWasm0(offset, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len5 = WASM_VECTOR_LEN;
+        const ptr6 = passArray8ToWasm0(bytes, wasm.__wbindgen_malloc);
+        const len6 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_scatterLayeredOutput(this.__wbg_ptr, ptr0, len0, ptr1, len1, ptr2, len2, resource_id, ptr3, len3, ptr4, len4, ptr5, len5, row_bytes, row_stride, row_count, layer_stride, layer_count, ptr6, len6);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * @param {string} epoch
+     * @param {string} sequence
+     * @param {string} exchange_sequence
+     * @param {number} resource_id
+     * @param {string} resource_generation
+     * @param {string} backing_generation
+     * @param {string} offset
+     * @param {number} row_bytes
+     * @param {number} row_stride
+     * @param {number} row_count
+     * @param {Uint8Array} bytes
+     */
+    scatterOutput(epoch, sequence, exchange_sequence, resource_id, resource_generation, backing_generation, offset, row_bytes, row_stride, row_count, bytes) {
+        const ptr0 = passStringToWasm0(epoch, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ptr1 = passStringToWasm0(sequence, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len1 = WASM_VECTOR_LEN;
+        const ptr2 = passStringToWasm0(exchange_sequence, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len2 = WASM_VECTOR_LEN;
+        const ptr3 = passStringToWasm0(resource_generation, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len3 = WASM_VECTOR_LEN;
+        const ptr4 = passStringToWasm0(backing_generation, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len4 = WASM_VECTOR_LEN;
+        const ptr5 = passStringToWasm0(offset, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len5 = WASM_VECTOR_LEN;
+        const ptr6 = passArray8ToWasm0(bytes, wasm.__wbindgen_malloc);
+        const len6 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_scatterOutput(this.__wbg_ptr, ptr0, len0, ptr1, len1, ptr2, len2, resource_id, ptr3, len3, ptr4, len4, ptr5, len5, row_bytes, row_stride, row_count, ptr6, len6);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
     }
     /**
      * E5-T26f: enqueue one owned host-to-guest frame on the named virtio-console agent port.
@@ -2456,27 +2666,27 @@ function __wbg_get_imports() {
         },
         __wbindgen_cast_0000000000000002: function(arg0, arg1) {
             // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("ErrorEvent")], shim_idx: 72, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
-            const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h659a05315284d40e);
+            const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h14f61cc30d442270);
             return ret;
         },
         __wbindgen_cast_0000000000000003: function(arg0, arg1) {
             // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("Event")], shim_idx: 72, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
-            const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h659a05315284d40e_2);
+            const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h14f61cc30d442270_2);
             return ret;
         },
         __wbindgen_cast_0000000000000004: function(arg0, arg1) {
             // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("IDBVersionChangeEvent")], shim_idx: 72, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
-            const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h659a05315284d40e_3);
+            const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h14f61cc30d442270_3);
             return ret;
         },
         __wbindgen_cast_0000000000000005: function(arg0, arg1) {
             // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("MessageEvent")], shim_idx: 72, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
-            const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h659a05315284d40e_4);
+            const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h14f61cc30d442270_4);
             return ret;
         },
         __wbindgen_cast_0000000000000006: function(arg0, arg1) {
             // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [], shim_idx: 90, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
-            const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h23dbae85235c57c2);
+            const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__had759ba7c4081673);
             return ret;
         },
         __wbindgen_cast_0000000000000007: function(arg0) {
@@ -2513,27 +2723,28 @@ function __wbg_get_imports() {
         __proto__: null,
         "./wasm_vm_wasm_bg.js": import0,
         "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js": import1,
+        "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js": import2,
     };
 }
 
-function wasm_bindgen__convert__closures_____invoke__h23dbae85235c57c2(arg0, arg1) {
-    wasm.wasm_bindgen__convert__closures_____invoke__h23dbae85235c57c2(arg0, arg1);
+function wasm_bindgen__convert__closures_____invoke__had759ba7c4081673(arg0, arg1) {
+    wasm.wasm_bindgen__convert__closures_____invoke__had759ba7c4081673(arg0, arg1);
 }
 
-function wasm_bindgen__convert__closures_____invoke__h659a05315284d40e(arg0, arg1, arg2) {
-    wasm.wasm_bindgen__convert__closures_____invoke__h659a05315284d40e(arg0, arg1, arg2);
+function wasm_bindgen__convert__closures_____invoke__h14f61cc30d442270(arg0, arg1, arg2) {
+    wasm.wasm_bindgen__convert__closures_____invoke__h14f61cc30d442270(arg0, arg1, arg2);
 }
 
-function wasm_bindgen__convert__closures_____invoke__h659a05315284d40e_2(arg0, arg1, arg2) {
-    wasm.wasm_bindgen__convert__closures_____invoke__h659a05315284d40e_2(arg0, arg1, arg2);
+function wasm_bindgen__convert__closures_____invoke__h14f61cc30d442270_2(arg0, arg1, arg2) {
+    wasm.wasm_bindgen__convert__closures_____invoke__h14f61cc30d442270_2(arg0, arg1, arg2);
 }
 
-function wasm_bindgen__convert__closures_____invoke__h659a05315284d40e_3(arg0, arg1, arg2) {
-    wasm.wasm_bindgen__convert__closures_____invoke__h659a05315284d40e_3(arg0, arg1, arg2);
+function wasm_bindgen__convert__closures_____invoke__h14f61cc30d442270_3(arg0, arg1, arg2) {
+    wasm.wasm_bindgen__convert__closures_____invoke__h14f61cc30d442270_3(arg0, arg1, arg2);
 }
 
-function wasm_bindgen__convert__closures_____invoke__h659a05315284d40e_4(arg0, arg1, arg2) {
-    wasm.wasm_bindgen__convert__closures_____invoke__h659a05315284d40e_4(arg0, arg1, arg2);
+function wasm_bindgen__convert__closures_____invoke__h14f61cc30d442270_4(arg0, arg1, arg2) {
+    wasm.wasm_bindgen__convert__closures_____invoke__h14f61cc30d442270_4(arg0, arg1, arg2);
 }
 
 function wasm_bindgen__convert__closures_____invoke__h53288473eff8cf56(arg0, arg1, arg2) {

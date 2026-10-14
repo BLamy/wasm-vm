@@ -205,6 +205,8 @@ export async function startLinuxBoot(opts = {}) {
     // A demo desktop always starts from the shipped RAM+disk pair in memory. No shared writer
     // lock, durable user overlay, or long cold boot on the next visit.
     freshDesktop = false,
+    virgl = false,
+    onGpuEvent = null,
     ramMib = 256,
     onState = () => {},
     onProgress = () => {},
@@ -341,6 +343,7 @@ export async function startLinuxBoot(opts = {}) {
     }
     validateGuestClock(guestClock);
     validateICountDivider(icountDivider, guestClock);
+    if (virgl && (!workerMode || freshDesktop || opts.bootSnapshot !== false)) throw new Error("Accelerated graphics requires a cold whole-machine worker boot");
     if (freshDesktop && (!isChunked || persist || extraDiskUrl || opts.bootSnapshot === false)) {
       throw new Error("fresh desktop requires an ephemeral chunked warm boot");
     }
@@ -626,6 +629,14 @@ export async function startLinuxBoot(opts = {}) {
       machine = new WasmLinux(ramMib, kernel, secondaryBytes, bootargs, emitOutput, enableMic);
     }
 
+    let productionGpu = null;
+    if (virgl) {
+      const {attachProductionVirgl,createWorkerScanoutPresenter} = await import('./renderer/virgl-command/production.mjs');
+      const presenter = createWorkerScanoutPresenter(frame => onDisplayFrame?.(frame));
+      productionGpu = await attachProductionVirgl(machine,{presenter,onEvent:event => { if (opts.gpuTrace || ["qualified","context-lost"].includes(event.type)) onGpuEvent?.(event); }});
+      if (opts.gpuTrace) machine.enableGpuCommandTrace();
+    }
+
     // E5-T06d: attach the page-owned display sink only after the complete machine exists. This
     // leaves the core's headless NullSink as the safe constructor default and keeps the same
     // callback seam available to direct and whole-machine-worker boot paths.
@@ -780,7 +791,7 @@ export async function startLinuxBoot(opts = {}) {
     let storedSnapshotRestoreObservation = Object.freeze({
       attempted: false, decision: null, overlayGeneration: null,
     });
-    if (usePersist && typeof machine.restoreStoredSnapshot === "function") {
+    if (!virgl && usePersist && typeof machine.restoreStoredSnapshot === "function") {
       try {
         const decision = await machine.restoreStoredSnapshot();
         let overlayGeneration = null;
@@ -974,6 +985,7 @@ export async function startLinuxBoot(opts = {}) {
       pendingFinishState = state;
       stopped = true;
       tickScheduled = false;
+      productionGpu?.dispose();
       settleFinished();
     };
     const schedule = () => {
@@ -1067,6 +1079,7 @@ export async function startLinuxBoot(opts = {}) {
         if (lastSliceStart) stretchMaxMs = Math.max(stretchMaxMs, sliceStart - lastSliceStart);
         lastSliceStart = sliceStart;
         res = machine.runChunk(runQuantum, usePersist ? maxDirtyBytes : undefined);
+        productionGpu?.pump();
         if (typeof machine.takeAgentOutput === "function") {
           const agentBytes = machine.takeAgentOutput();
           if (agentBytes?.byteLength) onAgentOutput(agentBytes);
@@ -1166,6 +1179,9 @@ export async function startLinuxBoot(opts = {}) {
       // Host hotplug is separate from guest mode adoption; stats come from the actual GPU map.
       setDisplay: (width, height) => !stopped && machine.setDisplay(width, height),
       displayStats: () => stopped ? null : machine.displayStats(),
+      gpuStats: () => ({...(productionGpu?.inspect() ?? {qualified:false}),...(opts.gpuTrace ? {guestCommands:JSON.parse(machine.gpuCommandTrace())} : {})}),
+      loseGpuContext: (when="now") => {if (!opts.gpuTrace || !productionGpu) return false;productionGpu.loseContext(when);return true;},
+      acknowledgeGpuFrame: (token,status,record) => productionGpu?.acknowledge(token,status,record) ?? false,
       sendInput: (bytes) => {
         if (!stopped) {
           inputCalls += 1;
@@ -1272,6 +1288,7 @@ export async function startLinuxBoot(opts = {}) {
       // E5-T26f: serialize the live composite desktop envelope through the same controller
       // surface used by the page in both direct and whole-machine-worker boot modes.
       saveDesktopSnapshot: () => {
+        if (virgl) throw new Error("Accelerated GPU sessions require a cold restart; graphics handles cannot be saved.");
         if (typeof machine.saveDesktopSnapshot !== "function") {
           throw new Error("desktop snapshot save is unavailable in this wasm build");
         }
@@ -1280,6 +1297,7 @@ export async function startLinuxBoot(opts = {}) {
       // E5-T26e: restore the actual composite envelope through the production Machine boundary.
       // The browser bridge applies the returned hostViewport through T22's PresentationController.
       restoreDesktopSnapshot: (bytes, width, height) => {
+        if (virgl) throw new Error("Accelerated GPU sessions require a cold restart; graphics handles cannot be restored.");
         if (typeof machine.restoreDesktopSnapshot !== "function") {
           throw new Error("desktop restore is unavailable in this wasm build");
         }
@@ -1371,6 +1389,7 @@ export async function startLinuxBoot(opts = {}) {
       // path (persistSnapshot returns "not_persistent"); swallowed to a rejected Promise the caller
       // handles.
       snapshotSave: () => {
+        if (virgl) return Promise.reject(new Error("Accelerated GPU sessions require a cold restart; graphics handles cannot be saved."));
         if (lockReadOnly) return Promise.reject(new Error("read_only"));
         return machine.persistSnapshot();
       },
@@ -1394,10 +1413,12 @@ export async function startLinuxBoot(opts = {}) {
       // snapshot store (still coherence-guarded on restore).
       snapshotExport: () => machine.readStoredSnapshot(),
       snapshotRestore: () => {
+        if (virgl) return Promise.reject(new Error("Accelerated GPU sessions require a cold restart; graphics handles cannot be restored."));
         if (!usePersist || typeof machine.restoreStoredSnapshot !== "function") return Promise.resolve("missing");
         return machine.restoreStoredSnapshot();
       },
       snapshotImport: (bytes) => {
+        if (virgl) return Promise.reject(new Error("Accelerated GPU sessions require a cold restart; graphics handles cannot be imported."));
         if (lockReadOnly) return Promise.reject(new Error("read_only"));
         return machine.importStoredSnapshot(bytes);
       },

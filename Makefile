@@ -1,6 +1,8 @@
-# Local mirror of .github/workflows/ci.yml — identical commands. CI runs the jobs in
-# parallel; locally they run in the order listed under `ci`. If this file and ci.yml
-# disagree, that's a bug (E0-T02).
+# Local validation. GitHub Actions is disabled; deploys use Cloudflare Pages.
+# wvseccomp is a Linux/RISC-V guest executable using Linux-only libc APIs. Its
+# prescribed guest build remains tools/build-wvseccomp.sh; Darwin host gates do
+# not compile it against macOS libc. Linux workspace gates include it normally.
+LOCAL_WORKSPACE = --workspace $(if $(filter Darwin,$(shell uname -s)),--exclude wasm-vm-wvseccomp)
 
 .PHONY: ci fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke perf-gate perf-trend bench-l1 riscof diff-all diff-selftest diff-qemu \
         exhaustive fuzz-decode-smoke fuzz-diff-smoke web-build web-serve web-dist hooks bench capstone-e0 level1-gate tasks-json \
@@ -8,6 +10,14 @@
         web-test-cpu-worker verify-E5-T16a verify-E5-T18a verify-E5-T18c verify-E5-T25a verify-E5-T25b verify-E5-T26a verify-E5-T26b verify-E5-T26c verify-E5-T26d verify-E5-T26e verify-E5-T26f verify-E5-T26m verify-E5-T26m-runtime
 
 ci: fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke
+
+.PHONY: verify-E6-T11d verify-E6-T11e
+verify-E6-T11d:
+	python3 tools/virgl-production/verify.py --task E6-T11d --output "$${VIRGL_PRODUCTION_EVIDENCE_DIR:-target/evidence/production-guest-final}"
+
+verify-E6-T11e:
+	wasm-pack build crates/wasm --target web --features virgl-renderer,virgl-control-proof --out-dir ../../target/virgl-production/pkg
+	python3 tools/virgl-production/verify.py --task E6-T11e --output "$${VIRGL_RECOVERY_EVIDENCE_DIR:-target/evidence/production-recovery-final}"
 
 # Isolated upstream TGSI translator: native hostile-input sanitizers and real
 # hardware WebGL2 pixel oracles. Does not change the emulator or demo device.
@@ -35,10 +45,13 @@ fmt:
 	cargo fmt --all --check
 
 clippy:
-	cargo clippy --workspace --all-targets --all-features -- -D warnings
+	# zicsr-stub is a quarantined alternative to real CSR semantics, so enabling
+	# every feature together disables APIs used by the production JIT test wall.
+	cargo clippy $(LOCAL_WORKSPACE) --all-targets --features wasm-vm-core/trace,wasm-vm-core/virgl-control-proof,wasm-vm-core/gpu-trace -- -D warnings
+	cargo clippy -p wasm-vm-core --no-default-features --features std,trace,zicsr-stub --lib -- -D warnings
 
 test:
-	cargo test --workspace
+	cargo test $(LOCAL_WORKSPACE)
 	bash tools/ci/no-host-float.sh
 	bash tools/ci/determinism-hazards.sh
 
@@ -166,6 +179,7 @@ fuzz-diff-smoke:
 # itself because it is also an rlib. `--out-name wasm_vm_wasm` keeps the file names the page imports.
 # A/B evidence: evidence/perf-overhaul/webbuild/README.md.
 web-build:
+	bash tools/build-virgl-runtime.sh
 	wasm-pack build crates/wasm-web --target web --profile wasm-release --out-name wasm_vm_wasm
 	cd web && npm ci --no-audit --no-fund
 	cd web && npm run build:docs

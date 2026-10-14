@@ -1698,7 +1698,7 @@ impl Machine {
     }
 
     /// Explicit proof-only constructor; default assembly remains unaccelerated.
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     #[allow(clippy::type_complexity)]
     pub fn enable_virtio_gpu_control3d_proof(
         &mut self,
@@ -1714,7 +1714,7 @@ impl Machine {
     }
 
     /// Host-selected captured-desktop control envelope; not a production API profile.
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     #[allow(clippy::type_complexity)]
     pub fn enable_virtio_gpu_standard_desktop_control3d_proof(
         &mut self,
@@ -1732,7 +1732,7 @@ impl Machine {
         self.install_virtio_gpu(device, state)
     }
 
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     #[allow(clippy::type_complexity)]
     pub fn enable_virtio_gpu_submit3d_proof(
         &mut self,
@@ -1754,7 +1754,7 @@ impl Machine {
     }
 
     /// Host-selected desktop control/store profile with ordered submission ownership.
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     #[allow(clippy::type_complexity)]
     pub fn enable_virtio_gpu_standard_desktop_submit3d_proof(
         &mut self,
@@ -1777,7 +1777,7 @@ impl Machine {
     }
 
     /// Host-selected original layered allocation/DMA; this grants no capsets.
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     #[allow(clippy::type_complexity)]
     pub fn enable_virtio_gpu_standard_dimensional_submit3d_proof(
         &mut self,
@@ -1800,7 +1800,7 @@ impl Machine {
     }
 
     /// Host-selected original cube/array depth layout; production caps stay off.
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     #[allow(clippy::type_complexity)]
     pub fn enable_virtio_gpu_standard_dimensional_depth_submit3d_proof(
         &mut self,
@@ -1823,7 +1823,7 @@ impl Machine {
     }
 
     /// Host-selected original buffer stream-output layout; production caps stay off.
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     #[allow(clippy::type_complexity)]
     pub fn enable_virtio_gpu_standard_stream_output_submit3d_proof(
         &mut self,
@@ -1845,7 +1845,7 @@ impl Machine {
         self.install_virtio_gpu(device, state)
     }
 
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     #[allow(clippy::type_complexity)]
     pub fn enable_virtio_gpu_scanout3d_proof(
         &mut self,
@@ -1866,7 +1866,7 @@ impl Machine {
         self.install_virtio_gpu(device, state)
     }
 
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     pub fn submit3d_gather(
         &mut self,
         exchange: &dev::virtio::gpu::submit3d::Submit3dExchange,
@@ -1875,16 +1875,18 @@ impl Machine {
             .gpu
             .as_ref()
             .ok_or(dev::virtio::gpu::control3d::Control3dError::InvalidParameter)?;
-        dev::virtio::gpu::submit3d_dma(
+        let bytes = dev::virtio::gpu::submit3d_dma(
             &self.virtio[*index].0,
             state,
             &mut self.bus,
             exchange,
             None,
             None,
-        )
+        )?;
+        state.borrow_mut().mirror_legacy_input(exchange, &bytes)?;
+        Ok(bytes)
     }
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     pub fn submit3d_scatter(
         &mut self,
         exchange: &dev::virtio::gpu::submit3d::Submit3dExchange,
@@ -1905,7 +1907,7 @@ impl Machine {
         .map(|_| ())
     }
 
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     pub fn submit3d_gather_layered(
         &mut self,
         exchange: &dev::virtio::gpu::submit3d::Submit3dExchange,
@@ -1926,7 +1928,7 @@ impl Machine {
         )
     }
 
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     pub fn submit3d_scatter_layered(
         &mut self,
         exchange: &dev::virtio::gpu::submit3d::Submit3dExchange,
@@ -1947,6 +1949,46 @@ impl Machine {
             Some((layer_stride, layer_count)),
         )
         .map(|_| ())
+    }
+
+    #[allow(clippy::type_complexity)]
+    /// Replace the never-negotiated assembly device with a qualified host GPU.
+    /// The transport itself remains at the same DTB/MMIO/IRQ address.
+    #[cfg(feature = "virgl-renderer")]
+    pub fn attach_qualified_virgl(
+        &mut self,
+        control_sink: alloc::boxed::Box<dyn dev::virtio::gpu::control3d::Control3dSink>,
+        submit_sink: alloc::boxed::Box<dyn dev::virtio::gpu::submit3d::Submit3dSink>,
+        mailbox: dev::virtio::gpu::submit3d::Submit3dMailbox,
+        capabilities: dev::virtio::gpu::capabilities::QualifiedCapabilities,
+    ) -> Result<(), &'static str> {
+        if self.irq_stats().retired != 0 {
+            return Err("GPU must be attached before guest execution");
+        }
+        let Some((old, control_queue, cursor_queue, index)) = self.gpu.as_ref() else {
+            return Err("No GPU slot is installed");
+        };
+        if old.borrow().control3d_proof_installed()
+            || control_queue.is_some()
+            || cursor_queue.is_some()
+        {
+            return Err("GPU must be attached before its first probe");
+        }
+        let index = *index;
+        let (device, state) = dev::virtio::gpu::VirtioGpu::new_with_qualified_renderer(
+            alloc::boxed::Box::new(dev::virtio::gpu::NullSink),
+            control_sink,
+            submit_sink,
+            mailbox,
+            capabilities,
+        );
+        self.virtio[index]
+            .0
+            .borrow_mut()
+            .replace_unnegotiated_device(alloc::boxed::Box::new(device))
+            .map_err(|_| "GPU transport has already been negotiated")?;
+        self.gpu = Some((state, None, None, index));
+        Ok(())
     }
 
     #[allow(clippy::type_complexity)]
@@ -1980,7 +2022,7 @@ impl Machine {
 
     /// Snapshots cannot describe the installed proof renderer, even when its
     /// public maps are empty: independent renderer leases may still exist.
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     pub fn control3d_proof_installed(&self) -> bool {
         self.gpu
             .as_ref()
@@ -2380,7 +2422,7 @@ impl Machine {
         blob: &[u8],
         host_viewport: desktop_restore::DisplaySize,
     ) -> Result<desktop_restore::DesktopRestoreReport, desktop_restore::DesktopRestoreError> {
-        #[cfg(feature = "virgl-control-proof")]
+        #[cfg(feature = "virgl-renderer")]
         if self.control3d_proof_installed() {
             return Err(desktop_restore::DesktopRestoreError::CommitRefused {
                 code: "proof_3d_installed",
@@ -2491,7 +2533,7 @@ impl Machine {
     pub fn save_desktop_snapshot(
         &mut self,
     ) -> Result<alloc::vec::Vec<u8>, desktop_snapshot::DesktopSnapshotSaveError> {
-        #[cfg(feature = "virgl-control-proof")]
+        #[cfg(feature = "virgl-renderer")]
         if self.control3d_proof_installed() {
             return Err(
                 desktop_snapshot::DesktopSnapshotSaveError::ComponentRefused {
@@ -3147,7 +3189,7 @@ impl Machine {
     /// [`crate::resume::SnapshotError::NotQuiesced`], no blob emitted) rather than serialize a torn
     /// boundary — a parked descriptor chain must never be captured half-processed.
     pub fn save_resume(&mut self) -> Result<alloc::vec::Vec<u8>, crate::resume::SnapshotError> {
-        #[cfg(feature = "virgl-control-proof")]
+        #[cfg(feature = "virgl-renderer")]
         if self.control3d_proof_installed() {
             return Err(crate::resume::SnapshotError::BadComponentState {
                 tag: crate::resume::section::VIRTIO_GPU,
@@ -3371,7 +3413,7 @@ impl Machine {
     /// [`crate::resume::SnapshotError::OverlayGenerationMismatch`]) with the target machine left
     /// byte-identical to its pre-restore state — a resumed CPU/RAM never lands on a diverged disk.
     pub fn load_resume(&mut self, blob: &[u8]) -> Result<(), crate::resume::SnapshotError> {
-        #[cfg(feature = "virgl-control-proof")]
+        #[cfg(feature = "virgl-renderer")]
         if self.control3d_proof_installed() {
             return Err(crate::resume::SnapshotError::BadComponentState {
                 tag: crate::resume::section::VIRTIO_GPU,
@@ -4200,6 +4242,20 @@ impl Machine {
         self.net
             .as_ref()
             .is_some_and(|(state, _, _)| state.borrow().backend.external_io_pending())
+    }
+
+    /// Browser GPU fences and retained scanout receipts complete between CPU
+    /// chunks. Tickless idle must not turn that wait into an immediate timeout.
+    #[cfg(not(feature = "zicsr-stub"))]
+    fn external_gpu_io_pending(&self) -> bool {
+        #[cfg(feature = "virgl-renderer")]
+        {
+            self.gpu
+                .as_ref()
+                .is_some_and(|(state, _, _, _)| state.borrow().external_renderer_io_pending())
+        }
+        #[cfg(not(feature = "virgl-renderer"))]
+        false
     }
 
     /// E2-T20: run the sliding-window interrupt-storm detector. Called only when a trap lands
@@ -5635,7 +5691,7 @@ impl Machine {
         // this block ran), so this WFI is a real idle wait. Skip the idle spin by jumping mtime to
         // the nearest armed timer deadline — deterministic, so native and wasm agree. Turns a ~20×
         // `sleep` into near-real-time. No-op if no timer armed.
-        if !self.external_net_io_pending() {
+        if !self.external_net_io_pending() && !self.external_gpu_io_pending() {
             self.wfi_fast_forward();
         }
     }

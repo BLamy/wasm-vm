@@ -42,6 +42,7 @@ done
 # The app shell imports the no-bundler input modules from ./src/. Keep that source tree in the
 # deployable bundle; omitting it leaves the generated main.js with a production-only 404.
 [ -d web/src ] && cp -R web/src "$DIST/src"
+[ -d web/renderer ] && cp -R web/renderer "$DIST/renderer"
 # Docstream's compiled reader, lazy feature chunks, portable corpus, and complete
 # migration ledger form the site’s single documentation library.
 [ -d web/docs-bundle ] && cp -R web/docs-bundle "$DIST/docs-bundle"
@@ -144,6 +145,9 @@ python3 tools/finalize-docs-dist.py "$DIST"
 # shell-owned resources too.
 if [ -e "$DIST/sw.js" ]; then
   ver=$( { cat "$DIST"/pkg/*_bg.wasm "$DIST"/*.js "$DIST"/*.html "$DIST"/*.json "$DIST"/*.css 2>/dev/null;
+    if [ -d "$DIST/renderer" ]; then
+      rg --files "$DIST/renderer" | LC_ALL=C sort | while IFS= read -r gpu_asset; do cat "$gpu_asset"; done
+    fi
     if [ -d "$DIST/docs-bundle" ] && [ -d "$DIST/docs-content" ]; then
       rg --files "$DIST/docs-bundle" "$DIST/docs-content" | LC_ALL=C sort | while IFS= read -r docs_asset; do cat "$docs_asset"; done
     fi

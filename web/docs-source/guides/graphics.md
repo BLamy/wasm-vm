@@ -1,41 +1,51 @@
-# Guest graphics: the admitted boundary
+# Guest graphics
 
-The workbench can present guest-rendered pixels and route keyboard and pointer input. Guest GPU offload is a separate, partial implementation. The default public demo keeps production acceleration disabled; an attractive browser-rendered scene does not establish guest acceleration.
+The accelerated Omarchy path sends the guest's VirGL commands to WebGL2 in the production Linux worker. Mesa chooses OpenGL ES 3.0; Hyprland retries that API after its GLES 3.2 request. Frames reach the visible canvas through retained, fenced scanout and a page presentation receipt.
 
-## Display is not GPU offload
+This integration is undergoing final independent verification. The command, shader, dimensional depth and transform-feedback prerequisites have already been independently verified. See the current roadmap and task records for the final production verdict.
 
-The 2D display path uploads pixels rendered by the guest CPU. The VirGL path interprets guest commands, owns resources and state, translates admitted shaders, and issues browser graphics work. Each of those boundaries has its own acceptance criteria.
+## Launch the desktop
 
-The homepage cutaway is a Three.js illustration running directly in the host browser. It never passes through the guest's VirGL device. Use it to understand execution layers, not to measure the guest renderer.
+Choose **Omarchy** in the [launcher](./app#ide), with **GPU rendering** selected. The worker checks actual WebGL2 limits, texture roles, native renderability and nonzero sampled results before advertising VirGL. An unsupported host produces a visible error; it does not justify positive guest capabilities.
 
-## What the recorded work establishes
+The accelerated image uses a pinned Mesa 26.2.2 build with VirGL and the GLES API exposed through EGL. Its small, recorded source patch makes both border-clamp extension names independently configurable, and rejects desktop OpenGL contexts while retaining GBM's internal buffer-mapping context. Unsupported border-clamp and sRGB-decode extensions are disabled in both legacy and indexed queries. The software DRI entrypoints are removed.
 
-The implementation has independently verified slices for command framing, guest DMA, retained scanout, selected resource formats, typed dimensional shader compilation, and selected native sampler views. These are bounded fixture and contract results. The source roadmap marks guest GPU offload **partial**, with production acceleration disabled.
+GPU rendering starts from a cold boot. The existing **Software rendering** option restores the paired Omarchy RAM snapshot and disk delta. BusyBox, Alpine and Alpine + Node retain their existing fast-boot paths.
 
-The unchanged nineteen-body shader corpus has its own [closure task and evidence](https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/tasks/epic-6-transcendence/E6-T12f6-original-shader-closure.md). Its successful translation, compile/link, and bounded execution do not admit arbitrary shaders or establish complete compositor rendering. Loop, numeric, resource, state, and draw-time contracts still matter.
-
-{% hint style="warning" %}
-The historical graphics decision opens with an earlier v5 profile: twelve of nineteen shaders, CONST indices through 45, PRECISE rejection, and an old Chrome qualification. Later tasks extend that work. Those older paragraphs remain readable as provenance; they are not the current API limit table.
+{% hint style="info" %}
+Both desktop paths use the instruction-based clock. Tickless idle pauses its timer jump while a qualified GPU request awaits the browser, so guest time cannot skip past a pending host fence or presentation receipt. Normal idle advancement resumes when the request settles.
 {% endhint %}
 
-## Choose the exact reference
+## What is offloaded
 
-Read the relevant resource, state, shader, or draw contract together with its named task and evidence. A source hash identifies the implementation under test. A successful compile does not prove a draw; a correct isolated draw does not prove a complete guest workload or a frame-rate budget.
+Guest shader translation uses the pinned VirGL TGSI frontend. Admitted commands create retained GPU storage, configure native rendering state and issue actual browser GPU draws. The renderer supports the proven dimensional color/depth views and layer surfaces, uniform buffers, multiple render targets, instancing, stencil operations and original transform-feedback targets.
+
+The production profile has bounded resources and work: 32 MiB per resource or transfer, 128 MiB aggregate GPU storage, one pending queue job, 256 draws and 262,144 index/instance work units per submission. Older isolated proof profiles keep their original limits. Unsupported commands return explicit errors.
+
+Capabilities are typed Rust fields serialized to the pinned 1,408-byte VirGL capset ABI. Reported formats and limits come from host qualification. A feature bit is not inferred from a successful allocation or from the browser's extension string alone.
+
+The page shows completed jobs, draws and transfers for the real guest. The homepage cutaway is a host illustration; it is unrelated to these counters.
+
+## Loss and snapshots
+
+GPU context loss revokes qualification and fails uncertain pending work. Existing CPU display and cursor state remain separate. Restart the accelerated session, or use **Restart with software graphics** to open the warm desktop.
+
+Accelerated GPU snapshots and restores reject explicitly: native WebGL objects cannot be saved into guest RAM. Software sessions retain their snapshot and persistence behavior.
+
+## Reproduce the checks
+
+`make verify-E6-T11d` records the actual VirGL-only Mesa probe, 1,000-frame cube, Hyprland client, original GPU command families and visible scanout. `make verify-E6-T11e` covers queue lifetimes, deterministic protocol properties and real context loss. Run the named target at its recorded source revision and inspect its evidence digest.
+
+{% content-ref url="./docs.html?page=verification" %}
+How worker evidence and independent verification work
+{% endcontent-ref %}
 
 {% content-ref url="./docs.html?page=reference-renderer-virgl-command-readme" %}
-Command renderer and selected acceptance targets
+Original command framing and renderer contracts
 {% endcontent-ref %}
 
 {% content-ref url="./docs.html?page=reference-renderer-virgl-shader-readme" %}
-Shader frontend, contracts, and admission
+Shader frontend and admission contracts
 {% endcontent-ref %}
 
-{% content-ref url="./docs.html?page=reference-docs-gpu-3d-decision" %}
-Historical graphics decision and proof notes
-{% endcontent-ref %}
-
-## Reproduce a claim
-
-Use the [verification guide](./docs.html?page=verification) to select the named acceptance command and frozen evidence. The [pinned source roadmap](https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/web/roadmap.js) describes the publication baseline; current task and verifier records determine later status. This reader neither enables acceleration nor refreshes historical measurements.
-
-There is no general GPU-compatibility, complete desktop-offload, or 300-MIPS claim here. The [performance guide](./docs.html?page=performance) keeps native diagnostics, browser measurements, and unmeasured results separate.
+GPU offload does not establish a 300-MIPS or frame-rate claim. CPU throughput and responsiveness require their own browser measurements in the [performance guide](./docs.html?page=performance).

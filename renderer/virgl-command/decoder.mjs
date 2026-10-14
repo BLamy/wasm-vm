@@ -125,12 +125,12 @@ class DecodeFault extends Error {
 
 /** Indexes in Packet match the pinned protocol: header=0, first payload word=1. */
 class Packet {
-  constructor(view, byteOffset, opcode, length, standard = false, uniform = false, textures = false, images = false, colors = false, floats = false, packed = false, shared = false, integers = false, multipleColors = false, normalized = false, unsigned = false, floatingDepth = false, unormDepth = false, packedDepth = false, stencil = false, shadowSamplers = false, dimensional = false, dimensionalViews = false, dimensionalDepthViews = false, dimensionalColorSurfaces = false, dimensionalDepthSurfaces = false, streamOutput = false) {
+  constructor(view, byteOffset, opcode, length, standard = false, uniform = false, textures = false, images = false, colors = false, floats = false, packed = false, shared = false, integers = false, multipleColors = false, normalized = false, unsigned = false, floatingDepth = false, unormDepth = false, packedDepth = false, stencil = false, shadowSamplers = false, dimensional = false, dimensionalViews = false, dimensionalDepthViews = false, dimensionalColorSurfaces = false, dimensionalDepthSurfaces = false, streamOutput = false, production = false) {
     this.view = view;
     this.byteOffset = byteOffset;
     this.opcode = opcode;
     this.length = length;
-    this.standard = standard; this.uniform = uniform; this.textures = textures; this.images = images; this.colors = colors; this.floatingImages = floats; this.packedImages = packed; this.sharedImages = shared; this.integerImages = integers; this.multipleColors = multipleColors; this.normalizedImages = normalized; this.unsignedImages = unsigned; this.floatingDepth = floatingDepth; this.unormDepth = unormDepth; this.packedDepth = packedDepth; this.stencil = stencil; this.shadowSamplers = shadowSamplers; this.dimensional = dimensional; this.dimensionalViews = dimensionalViews; this.dimensionalDepthViews = dimensionalDepthViews; this.dimensionalColorSurfaces = dimensionalColorSurfaces; this.dimensionalDepthSurfaces = dimensionalDepthSurfaces; this.streamOutput = streamOutput;
+    this.standard = standard; this.uniform = uniform; this.textures = textures; this.images = images; this.colors = colors; this.floatingImages = floats; this.packedImages = packed; this.sharedImages = shared; this.integerImages = integers; this.multipleColors = multipleColors; this.normalizedImages = normalized; this.unsignedImages = unsigned; this.floatingDepth = floatingDepth; this.unormDepth = unormDepth; this.packedDepth = packedDepth; this.stencil = stencil; this.shadowSamplers = shadowSamplers; this.dimensional = dimensional; this.dimensionalViews = dimensionalViews; this.dimensionalDepthViews = dimensionalDepthViews; this.dimensionalColorSurfaces = dimensionalColorSurfaces; this.dimensionalDepthSurfaces = dimensionalDepthSurfaces; this.streamOutput = streamOutput; this.production = production;
   }
   fail(code, message) { throw new DecodeFault(code, message, this.byteOffset, this.opcode); }
   require(condition, code, message) { if (!condition) this.fail(code, message); }
@@ -224,7 +224,7 @@ function decodeRasterizer(p, handle) {
   p.require(cullFace === 0 || cullFace === 2, "unsupported-feature", "Only no culling or back-face culling is supported.");
   const pointSize = p.f(3), spriteCoordEnable = p.u(4), stipple = p.u(5), lineWidth = p.f(6);
   const offsetUnits = p.f(7), offsetScale = p.f(8), offsetClamp = p.f(9);
-  p.require((p.standard ? Number.isFinite(pointSize) && pointSize > 0 : pointSize === 1) && spriteCoordEnable === 0 && stipple === 0xffff && lineWidth === 1 &&
+  p.require((p.standard ? Number.isFinite(pointSize) && (pointSize > 0 || p.production && pointSize === 0) : pointSize === 1) && spriteCoordEnable === 0 && (stipple === 0xffff || p.production && stipple === 0) && (lineWidth === 1 || p.production && lineWidth === 0) &&
     offsetUnits === 0 && offsetScale === 0 && offsetClamp === 0,
   "unsupported-feature", "Unsupported point, line, clip or polygon-offset state.");
   return { handle, flatshade: false, depthClip: true, clipHalfZ: false, rasterizerDiscard: p.streamOutput && Boolean(bits & 8),
@@ -339,7 +339,7 @@ function decodeObject(p, objectType) {
     case 6: {
       p.exact(6);
       const resourceHandle = p.handle(2), packedFormat = p.u(3), format = packedFormat & 0xffffff, target = packedFormat >>> 24;
-      p.require(([2, 67, 233].includes(format) || (p.colors && byteColorFormat(format) || p.floatingImages && floatColorFormat(format) || p.packedImages && packedFloatColorFormat(format) || p.sharedImages && sharedExponentColorFormat(format) || p.integerImages && integerColorFormat(format) || p.normalizedImages && packedNormalizedColorFormat(format) || p.unsignedImages && packedUnsignedColorFormat(format) || p.floatingDepth && floatingDepthFormat(format) || p.unormDepth && unormDepthFormat(format) || p.packedDepth && packedDepthFormat(format))) && target === 2 || p.dimensionalViews && format === 67 && [3, 4, 7].includes(target) || p.dimensionalDepthViews && [4, 7].includes(target) && (floatingDepthFormat(format) || unormDepthFormat(format) || packedDepthFormat(format)), "unsupported-feature", p.floatingDepth ? "Only qualified color or floating depth 2D views are supported." : p.integerImages ? "Only qualified color 2D sampler views are supported." : "Only required normalized color 2D sampler views are supported.");
+      p.require(([2, 67, 233].includes(format) || (p.colors && byteColorFormat(format) || p.floatingImages && floatColorFormat(format) || p.packedImages && packedFloatColorFormat(format) || p.sharedImages && sharedExponentColorFormat(format) || p.integerImages && integerColorFormat(format) || p.normalizedImages && packedNormalizedColorFormat(format) || p.unsignedImages && packedUnsignedColorFormat(format) || p.floatingDepth && floatingDepthFormat(format) || p.unormDepth && unormDepthFormat(format) || p.packedDepth && packedDepthFormat(format))) && (target === 2 || p.production && target === 0) || p.dimensionalViews && (format === 67 || p.production && ![16,18,20,21,126].includes(format) && ([2,233].includes(format) || byteColorFormat(format) || floatColorFormat(format) || packedFloatColorFormat(format) || sharedExponentColorFormat(format) || integerColorFormat(format) || packedNormalizedColorFormat(format) || packedUnsignedColorFormat(format))) && [3, 4, 7].includes(target) || p.dimensionalDepthViews && [4, 7].includes(target) && (floatingDepthFormat(format) || unormDepthFormat(format) || packedDepthFormat(format)), "unsupported-feature", p.floatingDepth ? "Only qualified color or floating depth 2D views are supported." : p.integerImages ? "Only qualified color 2D sampler views are supported." : "Only required normalized color 2D sampler views are supported.");
       let firstLevel = 0, lastLevel = 0, firstLayer = 0, lastLayer = 0;
       if (p.images) {
         if (p.dimensionalViews && target !== 2) {
@@ -362,7 +362,7 @@ function decodeObject(p, objectType) {
       p.exact(5);
       const resourceHandle = p.handle(2), format = p.u(3), level = p.u(4), layers = p.u(5);
       const firstLayer = layers & 0xffff, lastLayer = layers >>> 16;
-      const singleColorLayer = p.dimensionalColorSurfaces && format === 67 && firstLayer === lastLayer;
+      const singleColorLayer = p.dimensionalColorSurfaces && (format === 67 || p.production) && firstLayer === lastLayer;
       const singleDepthLayer = p.dimensionalDepthSurfaces && [16, 18, 20, 21, 126].includes(format) && firstLayer === lastLayer;
       p.require(([2, 16, 67, 233].includes(format) || (p.colors && byteColorFormat(format)?.render || p.floatingImages && floatColorFormat(format)?.render || p.packedImages && packedFloatColorFormat(format)?.render || p.integerImages && integerColorFormat(format)?.render || p.normalizedImages && packedNormalizedColorFormat(format)?.render || p.unsignedImages && packedUnsignedColorFormat(format)?.render || p.floatingDepth && floatingDepthFormat(format) || p.packedDepth && packedDepthFormat(format))) && (p.images ? level <= 14 && (format !== 16 || level === 0 || p.unormDepth) : level === 0) && (layers === 0 || singleColorLayer || singleDepthLayer), "unsupported-feature", p.floatingDepth ? "Only qualified 2D color or depth surfaces and levels are supported." : p.images ? "Only qualified 2D image levels or level-zero Z16 surfaces are supported." : "Only required level zero, layer zero color or Z16 surfaces are supported.");
       return { handle, resourceHandle, format, level, firstLayer, lastLayer };
@@ -715,7 +715,11 @@ export function decodeStandardStreamOutputSubmission(bytes, provenance = {}) {
   return decode(bytes, provenance, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
 }
 
-function decode(bytes, provenance, standard, uniform = false, textures = false, images = false, colors = false, floats = false, packed = false, shared = false, integers = false, multipleColors = false, normalized = false, unsigned = false, floatingDepth = false, unormDepth = false, packedDepth = false, stencil = false, shadowSamplers = false, dimensional = false, dimensionalViews = false, dimensionalDepthViews = false, dimensionalColorSurfaces = false, dimensionalDepthSurfaces = false, streamOutput = false) {
+export function decodeProductionSubmission(bytes, provenance = {}) {
+  return decode(bytes, provenance, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
+}
+
+function decode(bytes, provenance, standard, uniform = false, textures = false, images = false, colors = false, floats = false, packed = false, shared = false, integers = false, multipleColors = false, normalized = false, unsigned = false, floatingDepth = false, unormDepth = false, packedDepth = false, stencil = false, shadowSamplers = false, dimensional = false, dimensionalViews = false, dimensionalDepthViews = false, dimensionalColorSurfaces = false, dimensionalDepthSurfaces = false, streamOutput = false, production = false) {
   let byteLength, buffer, byteOffset;
   try {
     const typedArrayPrototype = Object.getPrototypeOf(Uint8Array.prototype);
@@ -747,7 +751,7 @@ function decode(bytes, provenance, standard, uniform = false, textures = false, 
     for (let offset = 0; offset < byteLength;) {
       const header = view.getUint32(offset, true), opcode = header & 255, objectType = (header >>> 8) & 255, payloadDwords = header >>> 16;
       const packetByteLength = (payloadDwords + 1) * 4;
-      const p = new Packet(view, offset, opcode, payloadDwords, standard, uniform, textures, images, colors, floats, packed, shared, integers, multipleColors, normalized, unsigned, floatingDepth, unormDepth, packedDepth, stencil, shadowSamplers, dimensional, dimensionalViews, dimensionalDepthViews, dimensionalColorSurfaces, dimensionalDepthSurfaces, streamOutput);
+      const p = new Packet(view, offset, opcode, payloadDwords, standard, uniform, textures, images, colors, floats, packed, shared, integers, multipleColors, normalized, unsigned, floatingDepth, unormDepth, packedDepth, stencil, shadowSamplers, dimensional, dimensionalViews, dimensionalDepthViews, dimensionalColorSurfaces, dimensionalDepthSurfaces, streamOutput, production);
       p.require(commands.length < LIMITS.commands, "limit-exceeded", "Submission exceeds packet count limit.");
       p.require(packetByteLength <= byteLength - offset, "truncated-payload", "Packet payload exceeds submission.");
       p.require(Object.hasOwn(COMMAND_NAMES, opcode) || uniform && opcode === 27, "unsupported-command", "Unknown or unsupported command.");

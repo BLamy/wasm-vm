@@ -7,12 +7,12 @@ import {dimensionalDepthMetadata, dimensionalDepthTransferCosts, createDimension
 export {STANDARD_DIMENSIONAL_DEPTH_TRANSFER_PROFILE};
 const DIMENSIONAL_LIMITS = Object.freeze({ texture3DSize: 2048, cubeTextureSize: 16384, arrayLayers: 2048 });
 
-function dimensionalMetadata(meta, limits, require, product) {
+function dimensionalMetadata(meta, limits, require, product, color = null) {
   const target = meta.target;
-  require([3, 4, 7].includes(target) && meta.format === 67 && meta.nrSamples === 0 && meta.flags === 0,
+  require([3, 4, 7].includes(target) && (meta.format === 67 || color) && meta.nrSamples === 0 && meta.flags === 0,
     "unsupported-resource", "Only original single-sample RGBA8 volume, cube and array storage is selected.");
   const roles = meta.bind & 10, hints = (1 << 18) | (1 << 20);
-  require(roles !== 0 && (meta.bind & ~(10 | hints)) === 0, "unsupported-resource", "Unqualified dimensional image role.");
+  require(roles !== 0 && (!color?.snorm && !color?.sharedExponent || roles === 8) && (meta.bind & ~(10 | hints)) === 0, "unsupported-resource", "Unqualified dimensional image role.");
   require(target === 3 ? meta.arraySize === 1 : target === 4 ? meta.depth === 1 && meta.arraySize === 6 && meta.width === meta.height : meta.depth === 1,
     "unsupported-resource", "Original volume, cube or array shape is inconsistent.");
   const size = target === 3 ? limits.texture3DSize : target === 4 ? limits.cubeTextureSize : limits.textureSize;
@@ -21,17 +21,18 @@ function dimensionalMetadata(meta, limits, require, product) {
   const largest = Math.max(meta.width, meta.height, target === 3 ? meta.depth : 1);
   require(meta.lastLevel <= Math.floor(Math.log2(largest)), "unsupported-resource", "Mip chain extends beyond its final dimensional level.");
   const levels = [];
-  let width = meta.width, height = meta.height, layers = target === 3 ? meta.depth : meta.arraySize, byteLength = 0;
+  let width = meta.width, height = meta.height, layers = target === 3 ? meta.depth : meta.arraySize, byteLength = 0, gpuByteLength = 0;
   for (let level = 0; level <= meta.lastLevel; level++) {
     const pixels = product(product(width, height, limits.resourceBytes, "Dimensional plane exceeds the byte limit."), layers,
       limits.resourceBytes, "Dimensional level exceeds the byte limit.");
-    const bytes = product(pixels, 4, limits.resourceBytes, "RGBA8 dimensional level exceeds the byte limit.");
-    require(bytes <= limits.resourceBytes - byteLength, "limit-exceeded", "Complete dimensional mip chain exceeds the resource limit.");
-    levels.push({ level, width, height, layers, byteLength: bytes, gpuByteLength: bytes });
-    byteLength += bytes; width = Math.max(1, Math.floor(width / 2)); height = Math.max(1, Math.floor(height / 2));
+    const bytes = product(pixels, color?.pixelBytes ?? 4, limits.resourceBytes, "Dimensional level exceeds the byte limit.");
+    const nativeBytes = product(pixels, color?.nativePixelBytes ?? 4, limits.resourceBytes, "Native dimensional level exceeds byte limit.");
+    require(bytes <= limits.resourceBytes - byteLength && nativeBytes <= limits.resourceBytes - gpuByteLength, "limit-exceeded", "Complete dimensional mip chain exceeds the resource limit.");
+    levels.push({ level, width, height, layers, byteLength: bytes, gpuByteLength: nativeBytes });
+    byteLength += bytes; gpuByteLength += nativeBytes; width = Math.max(1, Math.floor(width / 2)); height = Math.max(1, Math.floor(height / 2));
     if (target === 3) layers = Math.max(1, Math.floor(layers / 2));
   }
-  return { ...meta, kind: "dimensional-texture", pixelBytes: 4, byteLength, gpuByteLength: byteLength, levels };
+  return { ...meta, kind: "dimensional-texture", pixelBytes: color?.pixelBytes ?? 4, byteLength, gpuByteLength, levels, ...(color?.precision ? {floatPrecision:color.precision} : {}), ...(color?.packedFloat ? {packedFloat:true} : {}), ...(color?.sharedExponent ? {sharedExponent:true} : {}), ...(color?.integerBits ? {integerBits:color.integerBits} : {}), ...(color?.packedNormalized ? {packedNormalized:true} : {}), ...(color?.packedUnsigned ? {packedUnsigned:true} : {}) };
 }
 
 function dimensionalLayout(meta, fields, backingBytes, limits, require, product) {
@@ -63,7 +64,13 @@ function dimensionalLayout(meta, fields, backingBytes, limits, require, product)
   const layout = { kind: "texture", box: { ...box }, level: fields.level, levelWidth: selected.width, levelHeight: selected.height,
     offset, rowBytes, rowCount: box.height, layerCount: box.depth, rowStride, layerStride, footprintBytes, requiredEnd: offset + footprintBytes, tightBytes,
     direction: fields.direction === 2 || fields.flags === 3 ? "readback" : "upload" };
-  return meta.kind === "dimensional-depth-texture" ? { ...layout, ...dimensionalDepthTransferCosts(meta, layout, limits, product) } : layout;
+  if (meta.kind === "dimensional-depth-texture") return {...layout,...dimensionalDepthTransferCosts(meta,layout,limits,product)};
+  const color = ownedColorFormat(meta), pixels = product(product(box.width,box.height,limits.scratchBytes,"Color plane too large"),box.depth,limits.scratchBytes,"Color layers too large");
+  if (!color && meta.format === 67) return layout;
+  const nativeReadBytes = product(pixels,color?.readPixelBytes ?? 4,limits.scratchBytes,"Native layered read too large");
+  const scratchBytes = fields.direction === 2 || fields.flags === 3 ? nativeReadBytes : product(pixels,Math.max(meta.pixelBytes,color?.nativePixelBytes ?? (meta.format === 2 ? 3 : 4)),limits.scratchBytes,"Layered upload too large");
+  const conversionBytes = color?.sharedExponent && layout.direction === "readback" ? product(box.width*box.height,4,limits.gpuBytes,"Shared layer conversion too large") : 0;
+  return {...layout,scratchBytes,nativeReadBytes,...(layout.direction === "readback" ? {stagingBytes:nativeReadBytes+conversionBytes,conversionBytes} : {})};
 }
 
 function* dimensionalRows(layout) {
@@ -73,7 +80,7 @@ function* dimensionalRows(layout) {
   }
 }
 
-function createDimensionalGpuAccess(gl, framebuffer, check, require) {
+function createDimensionalGpuAccess(gl, framebuffer, check, require, colorFormat, nativeUpload) {
   require(["texStorage3D", "texSubImage3D", "framebufferTextureLayer"].every(name => typeof gl[name] === "function"),
     "invalid-input", "Dimensional storage requires a WebGL2 context.");
   const nativeLimits = { texture3DSize: gl.getParameter(gl.MAX_3D_TEXTURE_SIZE), cubeTextureSize: gl.getParameter(gl.MAX_CUBE_MAP_TEXTURE_SIZE),
@@ -93,34 +100,36 @@ function createDimensionalGpuAccess(gl, framebuffer, check, require) {
     allocate(meta) {
       const texture = gl.createTexture();
       require(texture !== null, "backend-error", "Dimensional texture allocation failed.");
-      const target = textureTarget(meta.target);
+      const target = textureTarget(meta.target), profile = colorFormat(meta);
       try {
         gl.activeTexture(gl.TEXTURE0); gl.bindTexture(target, texture);
-        if (meta.target === 4) gl.texStorage2D(target, meta.lastLevel + 1, gl.RGBA8, meta.width, meta.height);
-        else gl.texStorage3D(target, meta.lastLevel + 1, gl.RGBA8, meta.width, meta.height, meta.target === 3 ? meta.depth : meta.arraySize);
+        if (meta.target === 4) gl.texStorage2D(target, meta.lastLevel + 1, profile.internal, meta.width, meta.height);
+        else gl.texStorage3D(target, meta.lastLevel + 1, profile.internal, meta.width, meta.height, meta.target === 3 ? meta.depth : meta.arraySize);
         gl.texParameteri(target, gl.TEXTURE_MIN_FILTER, gl.NEAREST); gl.texParameteri(target, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
         for (const axis of [gl.TEXTURE_WRAP_S, gl.TEXTURE_WRAP_T, gl.TEXTURE_WRAP_R]) gl.texParameteri(target, axis, gl.CLAMP_TO_EDGE);
-        check(); return Object.freeze({ kind: "texture", dimensional: true, texture, target });
+        check(); return Object.freeze({ kind: "texture", dimensional: true, texture, target, format:meta.format });
       } catch (error) { gl.deleteTexture(texture); throw error; }
     },
-    upload(storage, layout, bytes) {
+    upload(storage, layout, bytes, meta) {
+      const profile=colorFormat(meta), native=nativeUpload(meta.format,bytes);
       gl.activeTexture(gl.TEXTURE0); gl.bindTexture(storage.target, storage.texture);
       const box = layout.box;
       if (storage.target === gl.TEXTURE_CUBE_MAP) {
-        const planeBytes = layout.rowBytes * layout.rowCount;
+        const planeElements = native.length / box.depth;
         for (let layer = 0; layer < box.depth; layer++) gl.texSubImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X + box.z + layer,
-          layout.level, box.x, box.y, box.width, box.height, gl.RGBA, gl.UNSIGNED_BYTE, bytes.subarray(layer * planeBytes, (layer + 1) * planeBytes));
+          layout.level, box.x, box.y, box.width, box.height, profile.upload, profile.type, native.subarray(layer * planeElements, (layer + 1) * planeElements));
       } else gl.texSubImage3D(storage.target, layout.level, box.x, box.y, box.z, box.width, box.height, box.depth,
-        gl.RGBA, gl.UNSIGNED_BYTE, bytes);
+        profile.upload, profile.type, native);
       check();
     },
     read(storage, layout, bytes = null) {
+      const profile=colorFormat({format:storage.format});
       gl.bindFramebuffer(gl.READ_FRAMEBUFFER, framebuffer);
       try {
-        const planeBytes = layout.rowBytes * layout.rowCount;
+        const planeBytes = (layout.nativeReadBytes ?? layout.tightBytes) / layout.layerCount;
         for (let layer = 0; layer < layout.layerCount; layer++) {
           attach(storage, layout, layer);
-          gl.readPixels(layout.box.x, layout.box.y, layout.box.width, layout.box.height, gl.RGBA, gl.UNSIGNED_BYTE,
+          gl.readPixels(layout.box.x, layout.box.y, layout.box.width, layout.box.height, profile.readFormat ?? gl.RGBA, profile.readType ?? profile.type,
             bytes === null ? layer * planeBytes : bytes.subarray(layer * planeBytes, (layer + 1) * planeBytes));
         }
       } finally { gl.framebufferTexture2D(gl.READ_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, null, 0); }
@@ -183,6 +192,9 @@ export const RESOURCE_LIMITS = Object.freeze({
 // storage admission and every historical store's defaults remain unchanged.
 export const STANDARD_DESKTOP_RESOURCE_LIMITS = Object.freeze({ ...RESOURCE_LIMITS, resources: 64 });
 export const STANDARD_DIMENSIONAL_RESOURCE_LIMITS = Object.freeze({ ...STANDARD_DESKTOP_RESOURCE_LIMITS, ...DIMENSIONAL_LIMITS });
+export const PRODUCTION_RESOURCE_LIMITS = Object.freeze({ ...STANDARD_DIMENSIONAL_RESOURCE_LIMITS,
+  resourceBytes: 33554432, transferBytes: 33554432, cpuBytes: 201326592,
+  gpuBytes: 134217728, scratchBytes: 67108864 });
 const U32 = 0xffffffff;
 const META_KEYS = ["id", "target", "format", "bind", "width", "height", "depth", "arraySize", "lastLevel", "nrSamples", "flags"];
 const COMMON_KEYS = ["resourceHandle", "level", "usage", "stride", "layerStride", "box"];
@@ -253,12 +265,13 @@ function checkedProduct(a, b, maximum, message) {
   require(a === 0 || b <= Math.floor(maximum / a), "out-of-bounds", message);
   return a * b;
 }
-function normalizeMetadata(value, limits, uniform = false, bufferRoles = false, mipmaps = false, colors = false, floats = false, packed = false, shared = false, integers = false, normalized = false, unsigned = false, floatingDepth = false, unormDepth = false, packedDepth = false, dimensional = false, dimensionalDepth = false, streamOutput = false) {
+function normalizeMetadata(value, limits, uniform = false, bufferRoles = false, mipmaps = false, colors = false, floats = false, packed = false, shared = false, integers = false, normalized = false, unsigned = false, floatingDepth = false, unormDepth = false, packedDepth = false, dimensional = false, dimensionalDepth = false, streamOutput = false, production = false) {
   const meta = record(value, META_KEYS);
   for (const key of META_KEYS) uint(meta[key], key, ["id", "width", "height", "depth", "arraySize"].includes(key));
-  if (dimensional && [3, 4, 7].includes(meta.target)) return freeze(dimensionalDepth && meta.format !== 67 ?
-    dimensionalDepthMetadata(meta, limits, require, checkedProduct) : dimensionalMetadata(meta, limits, require, checkedProduct));
-  require(meta.depth === 1 && meta.arraySize === 1 && (meta.lastLevel === 0 || mipmaps && meta.target === 2 && ([2, 67, 233].includes(meta.format) || colors && byteColorFormat(meta.format) || floats && floatColorFormat(meta.format) || packed && packedFloatColorFormat(meta.format) || shared && sharedExponentColorFormat(meta.format) || integers && integerColorFormat(meta.format) || normalized && packedNormalizedColorFormat(meta.format) || unsigned && packedUnsignedColorFormat(meta.format) || floatingDepth && floatingDepthFormat(meta.format) || unormDepth && unormDepthFormat(meta.format) || packedDepth && packedDepthFormat(meta.format))) && meta.nrSamples === 0 && meta.flags === 0,
+  const dimensionalColor = production ? byteColorFormat(meta.format) || floatColorFormat(meta.format) || packedFloatColorFormat(meta.format) || sharedExponentColorFormat(meta.format) || integerColorFormat(meta.format) || packedNormalizedColorFormat(meta.format) || packedUnsignedColorFormat(meta.format) || ([2,233].includes(meta.format) ? {pixelBytes:4,nativePixelBytes:meta.format === 2 ? 3 : 4} : null) : null;
+  if (dimensional && [3, 4, 7].includes(meta.target)) return freeze(dimensionalDepth && meta.format !== 67 && !dimensionalColor ?
+    dimensionalDepthMetadata(meta, limits, require, checkedProduct) : dimensionalMetadata(meta, limits, require, checkedProduct, dimensionalColor));
+  require(meta.depth === 1 && meta.arraySize === 1 && (meta.lastLevel === 0 || mipmaps && meta.target === 2 && ([2, 67, 233].includes(meta.format) || colors && byteColorFormat(meta.format) || floats && floatColorFormat(meta.format) || packed && packedFloatColorFormat(meta.format) || shared && sharedExponentColorFormat(meta.format) || integers && integerColorFormat(meta.format) || normalized && packedNormalizedColorFormat(meta.format) || unsigned && packedUnsignedColorFormat(meta.format) || floatingDepth && floatingDepthFormat(meta.format) || unormDepth && unormDepthFormat(meta.format) || packedDepth && packedDepthFormat(meta.format))) && meta.nrSamples === 0 && (meta.flags === 0 || (production && meta.flags === 1 && meta.target === 2 && [1,2,67].includes(meta.format))),
     "unsupported-resource", mipmaps ? "Only qualified 2D levels, one layer, one sample and no flags are supported." : "Only one-level, single-layer, single-sample resources without flags are supported.");
   let kind, byteLength, levels, color, gpuByteLength;
   if (meta.target === 0 && meta.format === 64 && meta.height === 1) {
@@ -623,6 +636,10 @@ export function createStandardDimensionalDepthSurfaceResourceStore(options) {
 export function createStandardStreamOutputResourceStore(options) {
   return createStore(options, true, true, true, true, true, true, true, true, true, true, true, true, true, true, STANDARD_DIMENSIONAL_RESOURCE_LIMITS, true, true, true, true, true, true, true);
 }
+/** Larger selected desktop budget; historical fixtures retain their fixed limits. */
+export function createProductionResourceStore(options) {
+  return createStore(options, true, true, true, true, true, true, true, true, true, true, true, true, true, true, PRODUCTION_RESOURCE_LIMITS, true, true, true, true, true, true, true);
+}
 export function computeStandardDimensionalDepthTransferLayout(metadata, fields, backingByteLength, overrides = {}) {
   return result(() => {
     const limits = limitsFor(overrides, STANDARD_DIMENSIONAL_RESOURCE_LIMITS);
@@ -846,7 +863,7 @@ function createStore(options, uniform, bufferRoles = false, mipmaps = false, ima
         return success({ context: freeze({ id, generation: ctx.generation }) });
       }),
       createResource: operation((metadata) => {
-        const meta = normalizeMetadata(metadata, limits, uniform, bufferRoles, mipmaps, colors, floats, packed, shared, integers, normalized, unsigned, floatingDepth, unormDepth, packedDepth, dimensional, dimensionalDepth, streamOutput);
+        const meta = normalizeMetadata(metadata, limits, uniform, bufferRoles, mipmaps, colors, floats, packed, shared, integers, normalized, unsigned, floatingDepth, unormDepth, packedDepth, dimensional, dimensionalDepth, streamOutput, resourceLimits === PRODUCTION_RESOURCE_LIMITS);
         require(!resources.has(meta.id), "resource-exists", "Resource ID is already public.");
         require(live.size < limits.resources, "limit-exceeded", "Live/retained resource count limit exceeded.");
         const allocationBytes = meta.kind === "staging" ? 0 : meta.gpuByteLength ?? meta.byteLength;
@@ -928,7 +945,7 @@ function createStore(options, uniform, bufferRoles = false, mipmaps = false, ima
         require(res.storage !== null, "unsupported-resource", "Staging resources have no GPU storage.");
         require(typeof role === "string" && ["view", "surface", "depth-surface", "vertex", "index", "readback", ...(uniform ? ["uniform"] : []), ...(streamOutput ? ["stream-output"] : [])].includes(role), "invalid-input", "Unknown storage lease role.");
         require(role === "readback" || (bufferRoles && res.meta.kind === "standard-buffer" && ["vertex", "index", "uniform", ...(streamOutput ? ["stream-output"] : [])].includes(role)) || (role === "view" && (["texture", "mip-texture"].includes(res.meta.kind) || dimensionalViews && res.meta.kind === "dimensional-texture" || dimensionalDepthViews && res.meta.kind === "dimensional-depth-texture" || (res.meta.floatingDepth || res.meta.unormDepth || res.meta.packedDepth) && ["depth-texture", "mip-depth-texture"].includes(res.meta.kind)) && (res.meta.bind & 8) !== 0) ||
-          (role === "surface" && (["texture", "mip-texture"].includes(res.meta.kind) || dimensionalColorSurfaces && res.meta.kind === "dimensional-texture" && res.meta.format === 67) && (res.meta.bind & 2) !== 0) ||
+          (role === "surface" && (["texture", "mip-texture"].includes(res.meta.kind) || dimensionalColorSurfaces && res.meta.kind === "dimensional-texture" && (res.meta.format === 67 || resourceLimits === PRODUCTION_RESOURCE_LIMITS)) && (res.meta.bind & 2) !== 0) ||
           (role === "depth-surface" && (res.meta.floatingDepth || res.meta.unormDepth || res.meta.packedDepth ? (["depth-texture", "mip-depth-texture"].includes(res.meta.kind) || dimensionalDepthSurfaces && res.meta.kind === "dimensional-depth-texture") && (res.meta.bind & 1) !== 0 : res.meta.kind === "depth-texture" && res.meta.bind === 1)) ||
           (role === "vertex" && (res.meta.kind === "vertex-buffer" || uniform && res.meta.kind === "uniform-buffer")) ||
           (role === "uniform" && uniform && ["vertex-buffer", "uniform-buffer"].includes(res.meta.kind)) || (role === "index" && res.meta.kind === "index-buffer"),
@@ -1034,7 +1051,7 @@ function createStore(options, uniform, bufferRoles = false, mipmaps = false, ima
         const res = resource(id);
         require(Number.isSafeInteger(expectedGeneration) && expectedGeneration > 0 && res.generation === expectedGeneration,
           "stale-resource", "Scanout resource generation changed.");
-        require(res.meta.kind === "texture" && res.meta.format === 67 && res.meta.flags === 0 && (res.meta.bind & 2) !== 0,
+        require(res.meta.kind === "texture" && (res.meta.format === 67 || (resourceLimits === PRODUCTION_RESOURCE_LIMITS && [1, 2].includes(res.meta.format))) && (res.meta.flags === 0 || (resourceLimits === PRODUCTION_RESOURCE_LIMITS && res.meta.flags === 1)) && (res.meta.bind & 2) !== 0,
           "unsupported-resource", "Scanout requires a supported renderable RGBA8 texture.");
         require(leases.size < limits.leases, "limit-exceeded", "Storage lease limit exceeded.");
         const lease = Object.freeze({}); leases.set(lease, { resource: res, role: "scanout" }); res.references++;
@@ -1219,8 +1236,8 @@ function createStore(options, uniform, bufferRoles = false, mipmaps = false, ima
           require(meta.target === 3 ? firstLayer === 0 && lastLayer === 0 : meta.target === 4 ? firstLayer === 0 && lastLayer === 5 :
             firstLayer <= lastLayer && lastLayer < meta.arraySize, "out-of-bounds", "Original view range exceeds retained image layers.");
           const selected = meta.levels.slice(firstLevel, lastLevel + 1), arraySize = meta.target === 7 ? lastLayer - firstLayer + 1 : meta.arraySize;
-          const depth = meta.kind === "dimensional-depth-texture", pixelBytes = depth ? meta.pixelBytes : 4,
-            nativePixelBytes = depth ? ownedColorFormat(meta).allocationPixelBytes : 4;
+          const depth = meta.kind === "dimensional-depth-texture", pixelBytes = meta.pixelBytes,
+            nativePixelBytes = depth ? ownedColorFormat(meta).allocationPixelBytes : ownedColorFormat(meta)?.nativePixelBytes ?? (meta.format === 2 ? 3 : 4);
           let byteLength = 0, gpuByteLength = 0;
           const levels = selected.map((source, level) => {
             const layers = meta.target === 7 ? arraySize : source.layers;
@@ -1237,17 +1254,19 @@ function createStore(options, uniform, bufferRoles = false, mipmaps = false, ima
             depth: meta.target === 3 ? base.layers : 1, arraySize, lastLevel: lastLevel - firstLevel,
             byteLength, gpuByteLength, levels });
           const privateRange = firstLevel !== 0 || lastLevel !== meta.lastLevel || meta.target === 7 && (firstLayer !== 0 || lastLayer !== meta.arraySize - 1);
-          const allocationBytes = privateRange ? gpuByteLength : 0;
+          const sharedCopyScratchBytes = privateRange && meta.sharedExponent ? checkedProduct(base.width*base.height,8,limits.gpuBytes,"Shared layered copy scratch is too large") : 0;
+          const metadataWithScratch = sharedCopyScratchBytes ? freeze({...metadata,sharedCopyScratchBytes}) : metadata;
+          const allocationBytes = privateRange ? gpuByteLength+sharedCopyScratchBytes : 0;
           require(allocationBytes <= limits.gpuBytes - gpuBytes, "limit-exceeded", "Native dimensional view byte budget exceeded.");
           if (depth) gpuBytes += allocationBytes;
           let storage;
           try {
-            storage = allocationBytes ? host("allocate", metadata) : res.storage;
+            storage = allocationBytes ? host("allocate", metadataWithScratch) : res.storage;
             require(storage && typeof storage === "object", "backend-error", "Native dimensional view allocation returned no storage.");
           } catch (error) { if (depth) gpuBytes -= allocationBytes; throw error; }
-          const token = Object.freeze({}), entry = { resource: res, lease, metadata, firstLevel, lastLevel, firstLayer, storage, allocationBytes, references: 1 };
+          const token = Object.freeze({}), entry = { resource: res, lease, metadata:metadataWithScratch, firstLevel, lastLevel, firstLayer, storage, allocationBytes, references: 1 };
           if (!depth) gpuBytes += allocationBytes; res.references++; liveImages.add(entry); imageViews.set(token, entry);
-          return success({ token, metadata, generation: res.generation });
+          return success({ token, metadata:metadataWithScratch, generation: res.generation });
         }
         const width = Math.max(1, Math.floor(meta.width / 2 ** firstLevel)), height = Math.max(1, Math.floor(meta.height / 2 ** firstLevel));
         const levels = []; let byteLength = 0, gpuByteLength = 0;
@@ -1368,15 +1387,18 @@ export function createStandardDimensionalDepthTransferBackend(gl) {
 export function createStandardDimensionalDepthViewTransferBackend(gl) {
   return createTransferBackend(gl, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
 }
+export function createProductionTransferBackend(gl) {
+  return createTransferBackend(gl, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
+}
 
-function createTransferBackend(gl, colors, rawBufferReadbacks = false, floats = false, packed = false, shared = false, integers = false, normalized = false, unsigned = false, floatingDepth = false, unormDepth = false, packedDepth = false, dimensional = false, dimensionalViews = false, dimensionalDepth = false, dimensionalDepthViews = false) {
+function createTransferBackend(gl, colors, rawBufferReadbacks = false, floats = false, packed = false, shared = false, integers = false, normalized = false, unsigned = false, floatingDepth = false, unormDepth = false, packedDepth = false, dimensional = false, dimensionalViews = false, dimensionalDepth = false, dimensionalDepthViews = false, production = false) {
   return result(() => {
     require(gl && typeof gl.getBufferSubData === "function" && typeof gl.texStorage2D === "function", "invalid-input", "A WebGL2 context is required.");
     require(!colors || gl.getExtension("EXT_render_snorm"), "unsupported-host", "Native signed color copies/readbacks require EXT_render_snorm.");
     require(!floats || gl.getExtension("EXT_color_buffer_float"), "unsupported-host", "Native floating planes require EXT_color_buffer_float.");
     const indexedMasks = normalized ? gl.getExtension("OES_draw_buffers_indexed") : null;
     let vao = null, framebuffer = null, depthProgram = null, sharedPacker = null, floatingDepthPacker = null, disposed = false;
-    const allocations = new Set(), pendingReads = new Set();
+    const allocations = new Set(), pendingReads = new Set(), dimensionalSharedPackers = new Map();
     const colorFormats = {
       16: { internal: gl.DEPTH_COMPONENT16, upload: gl.DEPTH_COMPONENT, type: gl.UNSIGNED_SHORT },
       2: { internal: gl.RGB8, upload: gl.RGB, type: gl.UNSIGNED_BYTE },
@@ -1635,7 +1657,12 @@ function createTransferBackend(gl, colors, rawBufferReadbacks = false, floats = 
       const error = gl.getError();
       require(error === gl.NO_ERROR, "backend-error", `WebGL error ${error}.`);
     };
-    const sharedHelper = () => {
+    const sharedHelper = (target=2) => {
+      if (target !== 2) {
+        require(production && [3,4,7].includes(target),"unsupported-resource","Dimensional shared conversion is not selected");
+        if (!dimensionalSharedPackers.has(target)) dimensionalSharedPackers.set(target,createSharedExponentPacker(gl,check,require,vao,target));
+        return dimensionalSharedPackers.get(target);
+      }
       require(shared, "unsupported-resource", "Shared exponent GPU conversion is not selected.");
       return sharedPacker ??= createSharedExponentPacker(gl, check, require, vao);
     };
@@ -1731,19 +1758,19 @@ function createTransferBackend(gl, colors, rawBufferReadbacks = false, floats = 
       vao = gl.createVertexArray(); framebuffer = gl.createFramebuffer();
       require(vao && framebuffer, "backend-error", "WebGL helper allocation failed.");
       const maxTextureSize = gl.getParameter(gl.MAX_TEXTURE_SIZE);
-      const dimensionalAccess = dimensional ? createDimensionalGpuAccess(gl, framebuffer, check, require) : null;
+      const dimensionalAccess = dimensional ? createDimensionalGpuAccess(gl, framebuffer, check, require, colorFormat, nativeUpload) : null;
       const dimensionalDepthAccess = dimensionalDepth ? createDimensionalDepthGpuAccess(gl, check, require, colorFormat, floatingDepthHelper) : null;
       check();
       const destroy = (storage) => {
         if (!allocations.has(storage)) return;
-        if (storage.kind === "texture") { gl.deleteTexture(storage.texture); if (storage.depthUploadBuffer) gl.deleteBuffer(storage.depthUploadBuffer); if (storage.sharedCopyScratch) sharedHelper().releaseScratch(storage.sharedCopyScratch); } else gl.deleteBuffer(storage.buffer);
+        if (storage.kind === "texture") { gl.deleteTexture(storage.texture); if (storage.depthUploadBuffer) gl.deleteBuffer(storage.depthUploadBuffer); if (storage.sharedCopyScratch) sharedHelper(storage.sharedCopyScratchTarget??2).releaseScratch(storage.sharedCopyScratch); } else gl.deleteBuffer(storage.buffer);
         allocations.delete(storage);
       };
       const releaseReadback = (entry) => {
         if (!pendingReads.delete(entry)) return;
         if (entry.sync) gl.deleteSync(entry.sync);
         if (entry.buffer) gl.deleteBuffer(entry.buffer);
-        if (entry.sharedConversion) sharedHelper().releaseScratch(entry.sharedConversion);
+        if (entry.sharedConversion) sharedHelper(entry.sharedConversionTarget??2).releaseScratch(entry.sharedConversion);
         if (entry.floatingDepthConversion) floatingDepthHelper().releaseScratch(entry.floatingDepthConversion);
         if (entry.dimensionalDepthConversion) dimensionalDepthAccess.release(entry.dimensionalDepthConversion);
       };
@@ -1760,7 +1787,10 @@ function createTransferBackend(gl, colors, rawBufferReadbacks = false, floats = 
           let storage = null;
           try {
             if (dimensionalDepth && meta.kind === "dimensional-depth-texture") storage = dimensionalDepthAccess.allocate(meta);
-            else if (dimensional && meta.kind === "dimensional-texture") storage = dimensionalAccess.allocate(meta);
+            else if (dimensional && meta.kind === "dimensional-texture") {
+              storage = dimensionalAccess.allocate(meta);
+              if (meta.sharedCopyScratchBytes) storage = {...storage,sharedCopyScratch:sharedHelper(meta.target).createScratch(meta.width,meta.height,true),sharedCopyScratchTarget:meta.target};
+            }
             else if (meta.kind === "texture" || meta.kind === "mip-texture" || meta.kind === "depth-texture" || meta.kind === "mip-depth-texture") {
               if (meta.format === 16 || shared && sharedExponentColorFormat(meta.format) || floatingDepth && floatingDepthFormat(meta.format) || packedDepth && packedDepthFormat(meta.format)) require(gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER, gl.HIGH_FLOAT)?.precision >= 23,
                 "unsupported-resource", "Faithful UN16 reconstruction requires highp binary32 shader precision.");
@@ -1798,7 +1828,7 @@ function createTransferBackend(gl, colors, rawBufferReadbacks = false, floats = 
             }
             check(); allocations.add(storage); return storage;
           } catch (error) {
-            if (storage?.kind === "texture") { gl.deleteTexture(storage.texture); if (storage.depthUploadBuffer) gl.deleteBuffer(storage.depthUploadBuffer); if (storage.sharedCopyScratch) sharedHelper().releaseScratch(storage.sharedCopyScratch); }
+            if (storage?.kind === "texture") { gl.deleteTexture(storage.texture); if (storage.depthUploadBuffer) gl.deleteBuffer(storage.depthUploadBuffer); if (storage.sharedCopyScratch) sharedHelper(storage.sharedCopyScratchTarget??2).releaseScratch(storage.sharedCopyScratch); }
             else if (storage) gl.deleteBuffer(storage.buffer);
             throw error;
           }
@@ -1812,6 +1842,9 @@ function createTransferBackend(gl, colors, rawBufferReadbacks = false, floats = 
                 firstLevel + level.level, level.level, { x: 0, y: 0, width: level.width, height: level.height },
                 source.target, firstLayer + layer, destination.target, layer);
             return;
+          }
+          if (production && meta.kind === "dimensional-texture" && meta.sharedExponent) {
+            sharedHelper(meta.target).copy(destination.sharedCopyScratch,source.texture,destination.texture,firstLevel,meta.levels,firstLayer); return;
           }
           if (dimensionalViews && meta.kind === "dimensional-texture") {
             copyDimensionalTextureRange(gl, source, destination, meta, firstLevel, firstLayer, check, require);
@@ -1858,7 +1891,7 @@ function createTransferBackend(gl, colors, rawBufferReadbacks = false, floats = 
             gl.bindBuffer(gl.COPY_WRITE_BUFFER, storage.buffer);
             gl.bufferSubData(gl.COPY_WRITE_BUFFER, layout.box.x, bytes);
           } else if (storage.dimensionalDepth) dimensionalDepthAccess.upload(storage, meta, layout, nativeUpload(meta.format, bytes));
-          else if (storage.dimensional) dimensionalAccess.upload(storage, layout, bytes);
+          else if (storage.dimensional) dimensionalAccess.upload(storage, layout, bytes, meta);
           else {
             gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, storage.texture);
             const profile = colorFormat(meta);
@@ -1886,6 +1919,14 @@ function createTransferBackend(gl, colors, rawBufferReadbacks = false, floats = 
             let converted = null;
             try { converted = dimensionalDepthAccess.createConversion(meta, layout); dimensionalDepthAccess.read(converted, storage, meta, layout, bytes); }
             finally { if (converted) dimensionalDepthAccess.release(converted); }
+          } else if (storage.dimensional && meta.sharedExponent) {
+            const helper=sharedHelper(meta.target),pair=helper.createScratch(layout.box.width,layout.box.height);
+            try { for(let layer=0;layer<layout.layerCount;layer++) {
+              helper.pack(pair,storage.texture,layout.level,layout.box,layout.box.z+layer);
+              gl.bindFramebuffer(gl.READ_FRAMEBUFFER,framebuffer);gl.framebufferTexture2D(gl.READ_FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,pair.texture,0);gl.readBuffer(gl.COLOR_ATTACHMENT0);
+              require(gl.checkFramebufferStatus(gl.READ_FRAMEBUFFER)===gl.FRAMEBUFFER_COMPLETE,"backend-error","Dimensional shared read framebuffer is incomplete");
+              const n=layout.rowBytes*layout.rowCount;gl.readPixels(0,0,layout.box.width,layout.box.height,gl.RGBA,gl.UNSIGNED_BYTE,bytes.subarray(layer*n,(layer+1)*n));
+            } } finally {gl.bindFramebuffer(gl.READ_FRAMEBUFFER,framebuffer);gl.framebufferTexture2D(gl.READ_FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,null,0);helper.releaseScratch(pair);}
           } else if (storage.dimensional) dimensionalAccess.read(storage, layout, bytes);
           else if (selectedDepthFormat(meta.format)) {
             let converted = null;
@@ -1948,6 +1989,15 @@ function createTransferBackend(gl, colors, rawBufferReadbacks = false, floats = 
                 if (storage.dimensionalDepth) {
                   entry.dimensionalDepthConversion = dimensionalDepthAccess.createConversion(meta, layout);
                   dimensionalDepthAccess.read(entry.dimensionalDepthConversion, storage, meta, layout);
+                } else if (storage.dimensional && meta.sharedExponent) {
+                  const helper=sharedHelper(meta.target), pair=helper.createScratch(layout.box.width,layout.box.height);
+                  entry.sharedConversion=pair; entry.sharedConversionTarget=meta.target;
+                  for(let layer=0;layer<layout.layerCount;layer++) {
+                    helper.pack(pair,storage.texture,layout.level,layout.box,layout.box.z+layer);
+                    gl.bindFramebuffer(gl.READ_FRAMEBUFFER,framebuffer);gl.framebufferTexture2D(gl.READ_FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,pair.texture,0);gl.readBuffer(gl.COLOR_ATTACHMENT0);
+                    require(gl.checkFramebufferStatus(gl.READ_FRAMEBUFFER)===gl.FRAMEBUFFER_COMPLETE,"backend-error","Dimensional shared read framebuffer is incomplete");
+                    gl.readPixels(0,0,layout.box.width,layout.box.height,gl.RGBA,gl.UNSIGNED_BYTE,layer*layout.rowBytes*layout.rowCount);
+                  }
                 } else if (storage.dimensional) dimensionalAccess.read(storage, layout);
                 else if (selectedDepthFormat(meta.format)) {
                   entry.floatingDepthConversion = floatingDepthConversion(storage, meta, layout);
@@ -2011,6 +2061,7 @@ function createTransferBackend(gl, colors, rawBufferReadbacks = false, floats = 
             gl.deleteProgram(depthProgram.program);
           }
           if (sharedPacker) sharedPacker.dispose();
+          for(const helper of dimensionalSharedPackers.values())helper.dispose();dimensionalSharedPackers.clear();
           if (dimensionalDepthAccess) dimensionalDepthAccess.dispose();
           if (floatingDepthPacker) floatingDepthPacker.dispose();
           gl.deleteVertexArray(vao); gl.deleteFramebuffer(framebuffer); disposed = true;

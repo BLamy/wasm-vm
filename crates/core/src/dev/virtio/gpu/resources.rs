@@ -735,6 +735,44 @@ impl ResourceMap {
         Ok(resource)
     }
 
+    /// Retain the accepted legacy upload for the CPU cursor and recovery path.
+    /// The caller has already validated/gathered the exact original DMA rows.
+    #[cfg(feature = "virgl-renderer")]
+    pub(crate) fn mirror_dense_upload(
+        &mut self,
+        id: u32,
+        rect: protocol::Rect,
+        bytes: &[u8],
+    ) -> Result<(), TransferError> {
+        let resource = self
+            .resources
+            .get_mut(&id)
+            .ok_or(TransferError::InvalidResourceId)?;
+        if u64::from(rect.x) + u64::from(rect.width) > u64::from(resource.width)
+            || u64::from(rect.y) + u64::from(rect.height) > u64::from(resource.height)
+            || u64::from(rect.width) * u64::from(rect.height) * 4 != bytes.len() as u64
+        {
+            return Err(TransferError::InvalidParameter);
+        }
+        let mut changed = false;
+        for y in 0..rect.height as usize {
+            for x in 0..rect.width as usize {
+                let at = (y * rect.width as usize + x) * 4;
+                let value = u32::from_le_bytes(
+                    bytes[at..at + 4].try_into().expect("validated dense pixel"),
+                );
+                let index = (rect.y as usize + y) * resource.width as usize + rect.x as usize + x;
+                changed |= resource.host_pixels[index] != value;
+                resource.host_pixels[index] = value;
+            }
+        }
+        if changed {
+            resource.pending_damage.push(rect);
+        }
+        resource.dirty_tiles.mark_rect(rect);
+        Ok(())
+    }
+
     /// Copy one checked rectangle from guest backing into the host shadow buffer.
     ///
     /// Every arithmetic and backing range is validated before the first shadow write. The guest

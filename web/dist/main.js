@@ -109,7 +109,32 @@ if (presentation && displayViewportEl) {
     },
   });
 }
+let pendingGpuFrame = null, gpuFrameRequest = null;
 function handleDisplayFrame(frame) {
+  if (frame?.type === 'clear' && pendingGpuFrame) {
+    pendingGpuFrame.onRetired('cancelled'); pendingGpuFrame = null;
+    if (gpuFrameRequest !== null) cancelAnimationFrame(gpuFrameRequest);
+    gpuFrameRequest = null;
+  }
+  if (typeof frame?.onRetired === 'function') {
+    if (!presentation) { frame.onRetired('failed'); return false; }
+    if (pendingGpuFrame) pendingGpuFrame.onRetired('superseded');
+    pendingGpuFrame = frame;
+    if (gpuFrameRequest === null) gpuFrameRequest = requestAnimationFrame(() => {
+      gpuFrameRequest = null;
+      const owned = pendingGpuFrame; pendingGpuFrame = null;
+      if (!owned) return;
+      try {
+        const before = presentation.snapshot().drawnPresents;
+        const accepted = presentation.presentNow(owned);
+        displayViewport?.applyCanvasStyle();
+        const after = presentation.snapshot();
+        owned.onRetired(accepted && after.drawnPresents > before ? 'drawn' : 'failed',
+          {backend:after.backend,resourceWidth:owned.resourceWidth,resourceHeight:owned.resourceHeight});
+      } catch { owned.onRetired('failed'); }
+    });
+    return true;
+  }
   if (!presentation) return false;
   try {
     const reached = presentation.present(frame);
@@ -935,6 +960,8 @@ function clearLinuxOwnerUi({ clearBootError = true } = {}) {
   updatePointerIndicator();
   ui.detachSink();
   fileTransferUI.attachController(null);
+  clearInterval(gpuStatsTimer);
+  gpuStatsTimer = null;
   if (diagnosticJitStatsTimer !== null) {
     clearInterval(diagnosticJitStatsTimer);
   diagnosticJitStatsTimer = null;
@@ -1367,6 +1394,13 @@ async function runLinuxBootOwned(opts, banner, request) {
           if (cursorDiagnostics.length > 256) cursorDiagnostics.shift();
         }
       },
+      onGpuEvent: (event) => {
+        if (!linuxRequestIsCurrent(request)) return;
+        if (event.type === "qualified") {
+          document.documentElement.dataset.gpuQualified = "true";
+          if (gpuStatusEl) gpuStatusEl.textContent = "GPU qualified. Starting the accelerated guest…";
+        } else if (event.type === "context-lost") showGpuStatus({lost:true,qualified:false});
+      },
       onState: (s) => {
         if (!linuxRequestIsCurrent(request)) return;
         emitGuestLifecycleEvent("wvm:guest-state", { state: s });
@@ -1462,6 +1496,12 @@ async function runLinuxBootOwned(opts, banner, request) {
       return;
     }
     linuxCtl = bootController;
+    clearInterval(gpuStatsTimer);
+    if (opts.virgl) {
+      const publishGpu = async () => { if (linuxCtl === bootController) showGpuStatus(await bootController.gpuStats()); };
+      void publishGpu();
+      gpuStatsTimer = setInterval(() => void publishGpu().catch(() => {}), 2000);
+    }
     try {
       agentSession.attach(bootController);
       window.__agentChannel = agentSession.channel;
@@ -1939,6 +1979,22 @@ let nodeAlpineAvailable = false;
 // E5.5-T03a: whether the immutable Omarchy desktop manifest is present. Its 4 GiB image is
 // chunked on R2 and deliberately does not participate in Alpine's persistent overlay/snapshot path.
 let omarchyAvailable = false;
+const graphicsSelect = document.getElementById("desktop-graphics");
+if (graphicsSelect) graphicsSelect.value = _startupQuery.get("gpu") === "0" || !_useCpuWorker ? "software" : "gpu";
+const gpuStatusEl = document.getElementById("gpu-status");
+let gpuStatsTimer = null;
+function showGpuStatus(stats) {
+  if (!gpuStatusEl || !stats) return;
+  document.documentElement.dataset.gpuQualified = String(Boolean(stats.qualified));
+  if (stats.lost) {
+    const retry = document.getElementById("gpu-retry"); if (retry) retry.hidden = false;
+    gpuStatusEl.textContent = "GPU connection lost. Reload to restart, or choose software rendering in the launcher.";
+    emitGuestLifecycleEvent("wvm:guest-error", { message: gpuStatusEl.textContent, gpuContextLost: true });
+  } else if (stats.qualified) {
+    const counts = stats.counters ?? {};
+    gpuStatusEl.textContent = `GPU active · ${counts.completed ?? 0} completed jobs · ${counts.draws ?? 0} draws · ${counts.exchanges ?? 0} transfers`;
+  }
+}
 // Guest readiness: flips true when the booted guest reaches a usable shell prompt. The Docker/IDE tabs
 // gate on this; a `wvm:guest-ready` window event fires once per boot. Reset when a new boot starts.
 let guestReady = false;
@@ -2037,9 +2093,13 @@ async function bootAlpineFlavor(manifestUrl, chip, imageManifestUrl, bootProfile
 async function bootOmarchy() {
   const query = new URLSearchParams(location.search);
   const assetBase = query.get("omarchyAssetBase") || R2_ASSETS;
+  const accelerated = graphicsSelect?.value !== "software" && _useCpuWorker && !query.has("persist");
+  if (gpuStatusEl) gpuStatusEl.textContent = accelerated ? "Checking GPU support…" : "Software desktop snapshot selected.";
   const boot = await runLinuxBoot(
     {
-      manifestUrl: "./artifacts-omarchy.json",
+      manifestUrl: accelerated ? "./artifacts-omarchy-virgl.json" : "./artifacts-omarchy.json",
+      virgl: accelerated,
+      gpuTrace: query.has("testHooks") && query.has("gpuTrace"),
       mode: "chunked",
       requestImageManifestBaseUrl: assetBase.replace(/\/+$/, ""),
       bootProfileUrl: null,
@@ -2049,8 +2109,8 @@ async function bootOmarchy() {
       // Explicit cold/persistent options are diagnostic capture tools; the launcher's default is
       // an independent in-memory copy of the shipped desktop, including on repeat visits.
       persist: query.get("persist") === "1",
-      freshDesktop: !query.has("noSnapshot") && !query.has("persist"),
-      bootSnapshot: !query.has("noSnapshot"),
+      freshDesktop: !accelerated && !query.has("noSnapshot") && !query.has("persist"),
+      bootSnapshot: !accelerated && !query.has("noSnapshot"),
       ramMib: 1024,
       imageLen: 4 * 1024 * 1024 * 1024,
       fileTransfer: false,
@@ -2091,6 +2151,8 @@ window.wvmDemo = {
   isGuestUp: () => !!linuxCtl,
   async setDisplay(width, height) { return await linuxCtl?.setDisplay?.(width, height) ?? false; },
   async displayStats() { return await linuxCtl?.displayStats?.() ?? null; },
+  async gpuStats() { return await linuxCtl?.gpuStats?.() ?? null; },
+  async loseGpuContext(when="now") { return await linuxCtl?.loseGpuContext?.(when) ?? false; },
   // E5-T20d/T20e: inspect the real context/ring pair without exposing a second unlock path.
   audioAutoplay: () => audioAutoplayPolicy,
   audioSink: () => audioSink,
@@ -3193,6 +3255,8 @@ setInteractiveState();
     if (normalized === "omarchy" && navigateToDesktop && !_omarchyDesktopMode) {
       const next = new URL(location.href);
       next.searchParams.set("guest", "omarchy");
+      if (graphicsSelect?.value === "software") next.searchParams.set("gpu", "0");
+      else next.searchParams.delete("gpu");
       next.searchParams.set("desktop", "1");
       next.hash = "ide";
       location.assign(next.href);

@@ -11,19 +11,7 @@ here="$(cd "$(dirname "$0")" && pwd)"
 repo_root="$(cd "${here}/../.." && pwd)"
 cd "${repo_root}"
 
-# Hazards banned in crates/core/src (guest-visible). BTreeMap/BTreeSet are fine (ordered).
-patterns='HashMap|HashSet|std::time|SystemTime|Instant::|rand::|thread_rng|Date::now'
-
-# grep -n prefixes `file:line:`; strip that + leading whitespace, then drop lines whose CODE
-# starts with `//` (a comment mention like "No HashMap" is not a real use).
-hits="$(grep -rnE "${patterns}" crates/core/src/ 2>/dev/null \
-  | awk '{ code=$0; sub(/^[^:]*:[0-9]+:/, "", code); gsub(/^[ \t]+/, "", code); if (code !~ /^\/\//) print }' \
-  || true)"
-
-if [[ -n "${hits}" ]]; then
-  echo "determinism-hazards: banned nondeterminism source(s) in crates/core/src:" >&2
-  echo "${hits}" >&2
-  echo "  (use BTreeMap for ordered maps; the only legal clock is the T12 retire-count CLINT)" >&2
-  exit 1
-fi
-echo "determinism-hazards: crates/core/src is clean (no HashMap/HashSet/time/rand in code)."
+# The syntax audit follows the actual module graph and excludes only test-only
+# scopes. Test recordings may use host clocks; production core code may not.
+cargo test -p wasm-vm-core --test no_stdout_in_core core_has_no_stdout_macros -- --nocapture
+echo "determinism-hazards: production core has no ambient time, random or unordered-map source."

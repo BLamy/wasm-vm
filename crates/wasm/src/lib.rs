@@ -17,6 +17,19 @@
 ))]
 mod virgl_control_proof;
 
+#[cfg(all(
+    target_arch = "wasm32",
+    any(feature = "virgl-renderer", feature = "virgl-control-proof"),
+    not(feature = "zicsr-stub")
+))]
+mod virgl_host;
+#[cfg(all(
+    target_arch = "wasm32",
+    feature = "virgl-renderer",
+    not(feature = "zicsr-stub")
+))]
+mod virgl_linux;
+
 use core::cell::RefCell;
 use core::fmt::Write as _;
 use core::sync::atomic::{AtomicBool, Ordering};
@@ -2093,6 +2106,8 @@ impl wasm_vm_core::dev::virtio::snd::AudioClock for SharedAudioClock {
 #[wasm_bindgen]
 pub struct WasmLinux {
     inner: RefCell<LinuxInner>,
+    #[cfg(feature = "virgl-renderer")]
+    gpu_mailbox: RefCell<Option<wasm_vm_core::dev::virtio::gpu::submit3d::Submit3dMailbox>>,
 }
 
 #[cfg(all(test, target_arch = "wasm32", not(feature = "zicsr-stub")))]
@@ -3034,6 +3049,8 @@ impl WasmLinux {
             .place_and_boot(kernel, initrd, bootargs)
             .map_err(|e| JsError::new(&format!("boot layout failed: {e:?}")))?;
         Ok(WasmLinux {
+            #[cfg(feature = "virgl-renderer")]
+            gpu_mailbox: RefCell::new(None),
             inner: RefCell::new(LinuxInner {
                 machine,
                 audio_attached: false,

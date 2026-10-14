@@ -598,7 +598,7 @@ impl VirtioDesktopRestoreBackend {
         agent: Option<Rc<RefCell<ConsoleState>>>,
         host: Rc<RefCell<DesktopRestoreHostState>>,
     ) -> Result<Self, RestoreCallbackError> {
-        #[cfg(feature = "virgl-control-proof")]
+        #[cfg(feature = "virgl-renderer")]
         if gpu.borrow().control3d_proof_installed() {
             return Err(RestoreCallbackError::new("proof_3d_installed"));
         }

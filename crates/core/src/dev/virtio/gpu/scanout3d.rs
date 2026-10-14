@@ -212,15 +212,16 @@ fn preflight(
     }
     Ok(())
 }
-fn full_rect(rect: Rect, m: Resource3dMetadata) -> bool {
+fn full_rect(rect: Rect, m: Resource3dMetadata, production: bool) -> bool {
     m.target == 2
-        && m.format == 67
-        && m.bind == 10
+        && (m.format == 67 || (production && matches!(m.format, 1 | 2)))
+        && (m.bind == 10
+            || (production && m.bind & 2 != 0 && m.bind & !(10 | (1 << 18) | (1 << 20)) == 0))
         && m.depth == 1
         && m.array_size == 1
         && m.last_level == 0
         && m.nr_samples == 0
-        && m.flags == 0
+        && (m.flags == 0 || (production && m.flags == 1))
         && rect
             == (Rect {
                 x: 0,
@@ -259,7 +260,11 @@ pub(crate) fn bind(
                 height: 0,
             },
         )
-    } else if let Some(r) = state.resources.get(request.resource_id) {
+    } else if let Some(r) = state
+        .resources
+        .get(request.resource_id)
+        .filter(|_| state.capabilities.is_none())
+    {
         if !super::rect_within(request.rect, r.width, r.height) {
             return Err(E::InvalidParameter);
         }
@@ -279,7 +284,7 @@ pub(crate) fn bind(
             .iter()
             .find(|r| r.identity.id == request.resource_id)
             .ok_or(E::InvalidResourceId)?;
-        if !full_rect(request.rect, r.metadata) {
+        if !full_rect(request.rect, r.metadata, state.capabilities.is_some()) {
             return Err(E::InvalidParameter);
         }
         (
@@ -333,7 +338,10 @@ pub(crate) fn is_capture(
     state: &GpuState,
     header: CtrlHeader,
 ) -> bool {
-    if state.scanout3d.is_none() || header.ty != p::CMD_RESOURCE_FLUSH {
+    if state.scanout3d.is_none()
+        || !state.renderer_qualified()
+        || header.ty != p::CMD_RESOURCE_FLUSH
+    {
         return false;
     }
     let Some(bytes) = super::read_readable_at::<44>(chain, bus, 0) else {
@@ -341,6 +349,7 @@ pub(crate) fn is_capture(
     };
     let id = u32::from_le_bytes(bytes[40..44].try_into().expect("resource id"));
     state.resources.get(id).is_none()
+        || state.capabilities.is_some() && state.control3d.as_ref().is_some_and(|c| c.contains(id))
 }
 pub(crate) fn admit(
     state: &GpuState,
@@ -378,7 +387,11 @@ pub(crate) fn admit(
             resource: resource.identity,
             metadata: resource.metadata,
         })
-        || !full_rect(request.rect, resource.metadata)
+        || !full_rect(
+            request.rect,
+            resource.metadata,
+            state.capabilities.is_some(),
+        )
     {
         return Err(E::InvalidParameter);
     }

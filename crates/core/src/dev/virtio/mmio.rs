@@ -94,7 +94,7 @@ pub struct VirtioMmio {
     driver_features: u64,
     queue_sel: u32,
     queues: [QueueState; MAX_QUEUES],
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     queue_generations: [Option<u64>; MAX_QUEUES],
     int_status: u32,
     config_gen: u32,
@@ -130,6 +130,25 @@ impl VirtioMmio {
         Ok(())
     }
 
+    /// Assembly-time replacement only; no live driver or configured ring can
+    /// be displaced. The normal install_device contract remains unchanged.
+    #[cfg(feature = "virgl-renderer")]
+    pub(crate) fn replace_unnegotiated_device(
+        &mut self,
+        dev: Box<dyn VirtioDevice>,
+    ) -> Result<(), Box<dyn VirtioDevice>> {
+        if self.status != 0
+            || self.notify_count != 0
+            || self.driver_features != 0
+            || self.queues.iter().any(|q| *q != QueueState::default())
+        {
+            return Err(dev);
+        }
+        self.dev = Some(dev);
+        self.config_gen = self.config_gen.wrapping_add(1);
+        Ok(())
+    }
+
     /// Device id currently installed in this slot, or zero for an empty slot. Machine assembly
     /// uses this read-only view to place optional devices without disturbing established slots.
     pub fn device_id(&self) -> u32 {
@@ -148,7 +167,7 @@ impl VirtioMmio {
             driver_features: 0,
             queue_sel: 0,
             queues: [QueueState::default(); MAX_QUEUES],
-            #[cfg(feature = "virgl-control-proof")]
+            #[cfg(feature = "virgl-renderer")]
             queue_generations: [Some(1); MAX_QUEUES],
             int_status: 0,
             config_gen: 0,
@@ -215,11 +234,11 @@ impl VirtioMmio {
     }
 
     /// Host ownership revision, incremented even for same-value guest writes.
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     pub fn queue_generation(&self, idx: usize) -> Option<u64> {
         self.queue_generations.get(idx).copied().flatten()
     }
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     fn bump_queue_generation(&mut self, idx: usize) {
         self.queue_generations[idx] = self.queue_generations[idx].and_then(|n| n.checked_add(1));
     }
@@ -300,7 +319,7 @@ impl VirtioMmio {
         self.last_notify = if has_notify { Some(notify_q) } else { None };
         self.notify_count = notify_count;
         self.queues = queues;
-        #[cfg(feature = "virgl-control-proof")]
+        #[cfg(feature = "virgl-renderer")]
         for idx in 0..MAX_QUEUES {
             self.bump_queue_generation(idx);
         }
@@ -312,7 +331,7 @@ impl VirtioMmio {
     #[cfg(test)]
     pub(crate) fn set_queue_for_test(&mut self, idx: usize, qs: QueueState) {
         self.queues[idx % MAX_QUEUES] = qs;
-        #[cfg(feature = "virgl-control-proof")]
+        #[cfg(feature = "virgl-renderer")]
         self.bump_queue_generation(idx % MAX_QUEUES);
     }
 
@@ -336,7 +355,7 @@ impl VirtioMmio {
         self.driver_features = 0;
         self.queue_sel = 0;
         self.queues = [QueueState::default(); MAX_QUEUES];
-        #[cfg(feature = "virgl-control-proof")]
+        #[cfg(feature = "virgl-renderer")]
         for idx in 0..MAX_QUEUES {
             self.bump_queue_generation(idx);
         }
@@ -400,7 +419,7 @@ impl VirtioMmio {
         if self.dev.is_none() {
             return;
         }
-        #[cfg(feature = "virgl-control-proof")]
+        #[cfg(feature = "virgl-renderer")]
         if self.queue_sel_valid()
             && matches!(
                 offset,

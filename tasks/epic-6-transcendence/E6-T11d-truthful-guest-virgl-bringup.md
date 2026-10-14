@@ -3,10 +3,11 @@ id: E6-T11d
 epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
-status: in-progress
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47, E6-T11d48, E6-T11d49, E6-T11d50, E6-T11d51, E6-T11d52, E6-T11d53, E6-T11d54, E6-T11d55, E6-T11d56, E6-T11d57, E6-T11d58, E6-T11d59, E6-T11d60, E6-T11d61, E6-T11d62, E6-T11d63, E6-T11d64, E6-T11d65, E6-T11d66]
+status: blocked
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47, E6-T11d48, E6-T11d49, E6-T11d50, E6-T11d51, E6-T11d52, E6-T11d53, E6-T11d54, E6-T11d55, E6-T11d56, E6-T11d57, E6-T11d58, E6-T11d59, E6-T11d60, E6-T11d61, E6-T11d62, E6-T11d63, E6-T11d64, E6-T11d65, E6-T11d66, E6-T11d67]
 estimate: S
 risk: high
+blocked_on: E6-T11d67 — real four-sample rendering and original resolve required by GLES 3.0
 capstone: false
 ---
 
@@ -874,3 +875,17 @@ Pinned Mesa26.2.2 and virglrenderer1.3.0 render kmscube successfully. Its comple
 288-event initialization/control log and source/library/package identities are
 in target/evidence/production-integration-orientation/qemu-kmscube. This reference
 pre-check is comparison data; it does not prove browser production rendering.
+
+### 2026-10-13 — worker — concrete GLES floor gap; integration checkpoint
+
+The independent public-route numeric probe reports `GL_MAX_SAMPLES=1`, below the
+GLES 3.0 minimum of four. Exact reproduction: run the pinned binary
+`target/evidence/critic-egl-index-03/egl-index` in the actual GPU Omarchy serial
+shell after sourcing `/etc/environment.d/60-omarchy-browser.conf`. The transcript
+`target/evidence/critic-omarchy-gpu-ui-local07-03/numeric-guest.log` records all 29
+limits and `GL_CORE_NUMERIC_FAIL`. This task is blocked on ordered S prerequisite
+E6-T11d67, which must add real native multisample storage and resolve before
+raising the capability. Existing production integration is checkpointed without
+a verified claim. The old four warm boots and the independent dimensional,
+shader binding, WFI, and original-command boundary results remain held where
+their source and evidence digests are unchanged.

@@ -447,6 +447,19 @@ export class PresentationController {
     return this._scheduler ? this._scheduler.enqueue(checked) : this._deliver(checked);
   }
 
+  /** A retained renderer frame is already paced by its host owner. Deliver on that owner's rAF. */
+  presentNow(frame) {
+    if (this._disposed) throw new Error("PresentationController is disposed");
+    const checked = checkedFrame(frame);
+    this._framesReceived += 1;
+    this._scheduler?.discardPending();
+    if (!this._fixedViewport && (checked.resourceWidth !== this._width || checked.resourceHeight !== this._height)) {
+      this.resize(checked.resourceWidth, checked.resourceHeight);
+    }
+    this._latest = checked;
+    return this._deliver(checked);
+  }
+
   /** Clear the visible surface and discard any frame retained across a failed restore. */
   clear() {
     if (this._disposed) throw new Error("PresentationController is disposed");
