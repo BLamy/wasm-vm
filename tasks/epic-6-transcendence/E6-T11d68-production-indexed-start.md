@@ -3,7 +3,7 @@ id: E6-T11d68
 epic: 6
 title: Preserve original indexed DRAW start hints in production
 priority: 525.027036
-status: implemented
+status: verified
 depends_on: [E6-T11d67]
 estimate: S
 risk: high
@@ -118,3 +118,75 @@ reads, exact pixel/readback-padding oracles, refusals, fences and destruction
 are recorded. This proves the indexed hint correction and preserved guards;
 it does not claim complete default Omarchy, GLES queries or final deployment.
 Fresh adversarial verdict remains independent.
+
+### 2026-10-14 — fresh verifier
+
+VERDICT: verified
+
+- P1 original indexed hint — HELD. Before inspecting the result, predicted
+  from pinned VirGL1.3.0 `vrend_renderer.c6139–6157` that indexed GL calls use
+  only `sub_ctx->ib.offset`, including nonzero and overflowing start hints.
+  The nine recorded width1/2/4, schedule0/1/2 rows authenticate the literal
+  original Quickshell packet, complete poisoned uploads, unchanged offset8
+  and exact62-index native copies. Starts0/1/u32MAX and the repaired follow-up
+  produce all independently recomputed green pixels and untouched strided RAM
+  padding. Citation: sealed cold `indexed-start/hardware/run-0000..0008.json.gz`
+  and the pinned native source; no remaining demand.
+- P2 bounded novel offset/restart — HELD. Predicted that offset12 selects
+  seven u32 indices0,1,2,MAX,2,1,3 despite dishonest min/max hints2..2, and that
+  the two strip segments cover all16 pixels magenta. Both independent schedules
+  173205/987654 hold exact native copy offsets, returned index bytes, actual
+  bounds0..3, restart count1 and literal pixels. Poisoned suffix, storage-span
+  and valid signed-array negatives have no native draw effects. The private
+  profile admits start0 and refuses start1. Citation: independent novel03 and
+  final cold `indexed-start/promoted-novel/run-0000..0003.json.gz`; no remaining
+  demand. The original upload is authenticated at transfer time; the draw reads
+  retained native storage rather than gathering guest backing again.
+- P3 test sensitivity — HELD. Predicted that adding start-times-index-size
+  would change the selected poisoned span. A single isolated served-copy
+  mutation produces original0x1205 for start1 instead of required0x1100, while
+  start0 and the private profile still pass. The repository runtime is
+  unchanged and all native owners/syncs retire. Citation: independent
+  `critic-production-indexed-start-sabotage-01`; no remaining demand.
+- P4 ownership and preserved guards — HELD. Each worker row records five
+  physical draws, exact original responses/fence echoes, the original24-byte
+  CTX_DESTROY after a pending fenced draw, and zero final native owners/syncs.
+  Zero-count, span, actual-fetch and array-range refusals remain explicit.
+  Existing native transport/capability, private-profile and earlier unchanged
+  ABI/budget/loss predictions carry forward; no remaining demand.
+- COVERAGE — HELD. The changed `prepareDraw` and `decodeFields` guards execute
+  in both production and private profiles, including nonindexed refusal and
+  u32MAX admission; independent precise coverage records22 executions of each
+  enclosing changed path. Canonical, web-source and built-dist modules are
+  byte-identical. Message text is waived as diagnostic-only; mirrors are
+  exact copies; roadmap metadata is exercised in the built demo. The new
+  recording target, full cold path, source inventory and authenticated hot
+  continuation execute. The separately recorded pending query probe/metadata
+  grants no production API claim.
+- P5 final custody and clean clone — HELD. Reopened all257 worker archive
+  identities and all123 cold file identities; independently interrogated all13
+  cold rows (131108 assertions), their guest command traces/machine digests,
+  exact sources and rebuilt proof Wasm. Frozen head is
+  `01730dff4bb381755d560910cddb0380da096404`; later commits only add evidence and
+  task metadata. Ordinary full-history clone uses `--no-local`, scrubbed
+  environment, fresh build and all11 acceptance gates with no carry. Native
+  389+13+2 tests pass without ignored tests; private replay and built demo127/0
+  pass without unexpected errors or proof exports. The introduced default-demo
+  else-association was independently reproduced and its harness-only fix
+  rechecked. No remaining D68 evidence gap.
+
+Worker evidence: `worker/exact-head-submission-and-cold.tar.gz`, SHA256
+`c973a1abcd9f5f6ae81cd8cedccc050d79ac3294d20473267f9c6a6cd2e85021`.
+Independent evidence: `verifier/independent-original-indexed-start-01.tar.gz`,
+SHA256`7ccc6d6522045181a658e8c9fb653b901bf9a126fbaff29ff75400e555ddf00a`,
+95 reopened identities. Both are under `evidence/virgl-production-indexed-start/`.
+`verifier/final-audit.json` binds the cold rows, source/binary identities and
+scope. SUITE: promoted original-queue indexed-start critic/browser harness,
+worker matrix and `make verify-E6-T11d68`; retained served-copy sabotage.
+
+Commands: independent critic browser with schedules173205,987654; isolated
+`--sabotage indexed-offset`; actual default-demo taskD before/fixed replay;
+worker archive/record custody and literal-byte audits; final full cold
+`make verify-E6-T11d68`; task policy and queue regeneration.
+This verdict covers the original indexed-start boundary. Complete default
+Omarchy, mandatory queries69a/69b, recovery and deployment remain separate.
