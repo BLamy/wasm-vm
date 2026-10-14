@@ -3,7 +3,7 @@ id: E6-T11d69b
 epic: 6
 title: Measure logical original transform-feedback primitive query counts
 priority: 525.027038
-status: implemented
+status: in-progress
 depends_on: [E6-T11d69a]
 estimate: S
 risk: high
@@ -119,3 +119,24 @@ sources/binaries/build receipts, original serial/GPU logs and source/image pins.
 Submission-only writes add this log, a boolean-doc qualifier and the independently
 compiled C02 fixture; renderer/browser bytes stay at the frozen head. Fresh
 verifier verdict remains required.
+
+### 2026-10-14 — fresh verifier finding — VERDICT: refuted
+
+Aggregate-error isolation — FAILED twice on frozen9e97707d. Independent
+actual native counts9/6/5 were observed, then the fixture delivered individually
+valid uint32/divisible counters whose logical sum7,874,106,707 exceeds the
+original result width. The GET correctly refused0x1201 and wrote no DONE, but
+queries.mjs70/74–75 retained three available parts and queryRequestedtrue.
+After removing the fault, global pollPending80–85 rejected an already-ready
+independent context2 GET0x1201 rather than0x1100. NativeParts3/pending1
+remained. Exact fault row `target/evidence/critic-production-feedback-queries-faults-01/run-0003.json.gz` SHA256
+`cf98407d17e7bb42991aa9467efd1acdc098fe254d019220f94616f946142d2e`; independent316227 recheck report
+`target/evidence/critic-production-feedback-queries-overflow-recheck-01/report.json` SHA256
+`f679262e2304208bf79b6d2df59d443a9b237801509e02bd308d143145e4af9d`.
+
+Demand: quarantine/clear the unrepresentable aggregate or permit validated
+reread so other owners and query destruction stay usable. Saturation and a
+particular same-query retry are not required. The verifier carries HELD mixed/
+capacity/restart/empty data/counts, actual C02 valid-host proof, and transient
+fractional/nondivisible/u32+1 rejection plus healthy retry. Worker restores the
+active lane and repairs only this boundary; no broader parent claim is made.
