@@ -59,7 +59,7 @@ async function one(Wasm,qualification,native,compiler,schedule) {
   };
   try {
     await rig.expect('independent original context',context(1));
-    for(const [id,format,bind,samples] of [[1,67,2,4],[2,67,2,0],[3,16,1,4],[4,16,1,0],[6,67,2,2],[7,2,2,4],[8,2,2,0]]){
+    for(const [id,format,bind,samples] of [[1,67,2,4],[2,67,2,0],[3,16,1,4],[4,16,1,0],[6,67,2,2],[7,2,2,4],[8,2,2,0],[10,18,1,4],[11,18,1,0]]){
       await rig.expect('independent original allocation'+id,allocation(id,format,bind,samples));
       await rig.expect('independent original membership'+id,idCommand(0x202,1,id));
     }
@@ -90,6 +90,12 @@ async function one(Wasm,qualification,native,compiler,schedule) {
       c.same(after.depthSurface,before.depthSurface,'mismatched samples preserve original depth binding');
       c.truth(!row.native.slice(nativeAt).some(v=>v.name==='bindFramebuffer'||v.name==='framebufferRenderbuffer'),
         'mismatched samples reject before native attachment effects');
+    }
+    {
+      const nativeAt=row.native.length;
+      await rig.expect('independent stencil BLIT on depth-only Z32_FLOAT18',submission(1,blit(10,11,18,32),75n),0x1205);
+      c.truth(!row.native.slice(nativeAt).some(v=>v.name==='createFramebuffer'||v.name==='framebufferTexture2D'||v.name==='framebufferRenderbuffer'),
+        'depth-only format rejects stencil BLIT before native attachment effects');
     }
     // Vertex data and shader are literal and unrelated to the worker triangle.
     await rig.expect('independent original vertex storage',allocation(5,64,16,0,0,48,1));
@@ -135,7 +141,7 @@ async function one(Wasm,qualification,native,compiler,schedule) {
     }
     const first=rig.q.enqueue('independent queued retained resolve',submission(1,blit(1,2),83n));
     const destroy=rig.q.enqueue('independent destroy while resolve retained',header(0x201,1,24));
-    const unrefs=[1,2,3,4,5,6,7,8].map(id=>rig.q.enqueue('independent unref while resolve retained'+id,idCommand(0x102,0,id)));
+    const unrefs=[1,2,3,4,5,6,7,8,10,11].map(id=>rig.q.enqueue('independent unref while resolve retained'+id,idCommand(0x102,0,id)));
     rig.q.kick();rig.q.run();c.equal(rig.q.usedIndex(),first.number,'original resolve owns head');
     await rig.step();c.equal(rig.q.usedIndex(),first.number,'native fence does not publish guest head');
     c.truth(rig.host.bridge.inspect().renderer.jobs.imageSources>=2,'both native resources held during actual resolve');
