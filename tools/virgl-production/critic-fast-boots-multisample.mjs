@@ -17,9 +17,9 @@ function allocation(id,format,bind,samples,target=2,width=12,height=12) {
 function blit(src,dst,format=67,mask=15,side=12) {
   return packet(16,0,[mask,0,0,dst,0,format,0,0,0,side,side,1,src,0,format,0,0,0,side,side,1]);
 }
-function clear(mask,color,depth=.75) {
+function clear(mask,color,depth=.75,stencil=0) {
   const encoded=new DataView(new ArrayBuffer(8));encoded.setFloat64(0,depth,true);
-  return packet(7,0,[mask,...color.map(word),encoded.getUint32(0,true),encoded.getUint32(4,true),0]);
+  return packet(7,0,[mask,...color.map(word),encoded.getUint32(0,true),encoded.getUint32(4,true),stencil]);
 }
 const vs='VERT\nDCL IN[0]\nDCL OUT[0], POSITION\n0: MOV OUT[0], IN[0]\n1: END\n';
 const fs='FRAG\nDCL OUT[0], COLOR\nIMM[0] FLT32 {1,0,1,1}\n0: MOV OUT[0], IMM[0]\n1: END\n';
@@ -59,13 +59,15 @@ async function one(Wasm,qualification,native,compiler,schedule) {
   };
   try {
     await rig.expect('independent original context',context(1));
-    for(const [id,format,bind,samples] of [[1,67,2,4],[2,67,2,0],[3,16,1,4],[4,16,1,0],[6,67,2,2],[7,2,2,4],[8,2,2,0],[10,18,1,4],[11,18,1,0]]){
+    for(const [id,format,bind,samples] of [[1,67,2,4],[2,67,2,0],[3,16,1,4],[4,16,1,0],[6,67,2,2],[7,2,2,4],[8,2,2,0],[9,67,2,0],[10,18,1,4],[11,18,1,0],[12,20,1,4],[13,20,1,0]]){
       await rig.expect('independent original allocation'+id,allocation(id,format,bind,samples));
       await rig.expect('independent original membership'+id,idCommand(0x202,1,id));
     }
     await rig.expect('independent color backing',backing(2,[[output,4096]]));
     await rig.expect('independent depth backing',backing(4,[[output+0x2000n,4096]]));
     await rig.expect('independent RGBX backing',backing(8,[[output+0x4000n,4096]]));
+    await rig.expect('independent single-sample copy backing',backing(9,[[output+0x6000n,4096]]));
+    await rig.expect('independent depth/stencil backing',backing(13,[[output+0x8000n,4096]]));
     await rig.expect('independent four-sample color+depth clear',submission(1,join(
       packet(1,8,[20,1,67,0,0]),packet(1,8,[21,3,16,0,0]),packet(1,8,[26,6,67,0,0]),
       packet(5,0,[1,21,20]),clear(5,[1,0,1,1]),blit(1,2),blit(3,4,16,16)),71n));
@@ -80,6 +82,34 @@ async function one(Wasm,qualification,native,compiler,schedule) {
       const actual=row.rgbxPixels.slice(i*4,i*4+4);
       for(let k=0;k<3;k++)c.truth(Math.abs(actual[k]-[191,128,64][k])<=1,'independent BGRX byte channel');
       c.equal(actual[3],255,'unused BGRX alpha remains opaque after native resolve');
+    }
+    const clipped=blit(2,9);put(clipped,4,15|256|1024);put(clipped,8,1|2<<16);put(clipped,12,5|8<<16);
+    const scissorBefore=[...native.getParameter(native.SCISSOR_BOX)],enabledBefore=native.isEnabled(native.SCISSOR_TEST);
+    await rig.expect('independent linear single-sample scissored copy',submission(1,join(
+      packet(1,8,[29,9,67,0,0]),packet(5,0,[1,0,29]),clear(4,[0,0,1,1]),clipped),76n));
+    const copied=await read(9,576);row.scissoredCopyPixels=[...copied];
+    for(let y=0;y<12;y++)for(let x=0;x<12;x++)c.same([...copied.slice((y*12+x)*4,(y*12+x)*4+4)],
+      x>=1&&x<5&&y>=2&&y<8?[255,0,255,255]:[0,0,255,255],'independent clipped copy pixel');
+    c.same([...native.getParameter(native.SCISSOR_BOX)],scissorBefore,'BLIT restores actual scissor rectangle');
+    c.equal(native.isEnabled(native.SCISSOR_TEST),enabledBefore,'BLIT restores actual scissor enable');
+    const reversed=blit(9,2);put(reversed,16*4,12);put(reversed,19*4,-12);
+    await rig.expect('independent signed horizontal single-sample copy',submission(1,reversed,77n));
+    const flipped=await read(2,576);row.reversedCopyPixels=[...flipped];
+    for(let y=0;y<12;y++)for(let x=0;x<12;x++)c.same([...flipped.slice((y*12+x)*4,(y*12+x)*4+4)],
+      x>=7&&x<11&&y>=2&&y<8?[255,0,255,255]:[0,0,255,255],'independent signed copy pixel');
+    await rig.expect('independent depth/stencil surfaces',submission(1,join(packet(1,8,[32,12,20,0,0]),packet(1,8,[33,13,20,0,0]))));
+    await rig.expect('independent original stencil-only resolve',submission(1,join(
+      packet(5,0,[0,32]),clear(3,[0,0,0,0],.25,93),packet(5,0,[0,33]),clear(3,[0,0,0,0],.75,7),blit(12,13,20,32)),78n));
+    const stencil=await read(13,576);row.stencilOnlyPixels=[...stencil];
+    for(const value of new Uint32Array(stencil.buffer)){
+      c.equal(value&255,93,'original stencil-only resolve copies exactly stencil');
+      c.truth(Math.abs((value>>>8)-12582911)<=1,'stencil-only resolve preserves destination depth');
+    }
+    await rig.expect('independent original combined depth/stencil resolve',submission(1,blit(12,13,20,48),80n));
+    const combined=await read(13,576);row.combinedDepthStencilPixels=[...combined];
+    for(const value of new Uint32Array(combined.buffer)){
+      c.equal(value&255,93,'original combined resolve copies stencil');
+      c.truth(Math.abs((value>>>8)-4194304)<=1,'original combined resolve copies source depth');
     }
     await rig.expect('independent single-sample depth surface',submission(1,packet(1,8,[24,4,16,0,0])));
     for(const [name,fields] of [['mixed color/depth',[1,24,20]],['mixed color targets',[2,0,20,26]]]){
@@ -141,7 +171,7 @@ async function one(Wasm,qualification,native,compiler,schedule) {
     }
     const first=rig.q.enqueue('independent queued retained resolve',submission(1,blit(1,2),83n));
     const destroy=rig.q.enqueue('independent destroy while resolve retained',header(0x201,1,24));
-    const unrefs=[1,2,3,4,5,6,7,8,10,11].map(id=>rig.q.enqueue('independent unref while resolve retained'+id,idCommand(0x102,0,id)));
+    const unrefs=[1,2,3,4,5,6,7,8,9,10,11,12,13].map(id=>rig.q.enqueue('independent unref while resolve retained'+id,idCommand(0x102,0,id)));
     rig.q.kick();rig.q.run();c.equal(rig.q.usedIndex(),first.number,'original resolve owns head');
     await rig.step();c.equal(rig.q.usedIndex(),first.number,'native fence does not publish guest head');
     c.truth(rig.host.bridge.inspect().renderer.jobs.imageSources>=2,'both native resources held during actual resolve');
