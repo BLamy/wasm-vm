@@ -3,8 +3,9 @@ id: E6-T11d
 epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
-status: in-progress
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47, E6-T11d48, E6-T11d49, E6-T11d50, E6-T11d51, E6-T11d52, E6-T11d53, E6-T11d54, E6-T11d55, E6-T11d56, E6-T11d57, E6-T11d58, E6-T11d59, E6-T11d60, E6-T11d61, E6-T11d62, E6-T11d63, E6-T11d64, E6-T11d65, E6-T11d66, E6-T11d67]
+status: blocked
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47, E6-T11d48, E6-T11d49, E6-T11d50, E6-T11d51, E6-T11d52, E6-T11d53, E6-T11d54, E6-T11d55, E6-T11d56, E6-T11d57, E6-T11d58, E6-T11d59, E6-T11d60, E6-T11d61, E6-T11d62, E6-T11d63, E6-T11d64, E6-T11d65, E6-T11d66, E6-T11d67, E6-T11d68]
+blocked_on: E6-T11d68
 estimate: S
 risk: high
 capstone: false
@@ -964,3 +965,35 @@ trusted guest marker. `node --check tools/virgl-production/critic-fast-boots-inp
 and `node --test tools/virgl-production/critic-fast-boots-bar-content.test.mjs`
 pass. This promotes a proof requirement; actual final populated-bar acceptance
 is still pending and no task status changes.
+
+### 2026-10-14 — worker — original Qt indexed-start refusal; ordered S68
+
+Actual installed candidate12 uses the unmodified default SDDM/uwsm/Hyprland/Foot/
+Quickshell session at UID1000 and the scoped GLES3 initializer. Its original
+production worker completes Mesa/Hyprland draws, but Quickshell submits eight
+valid indexed draws with start1/count62/triangle-strip/primitive-restart. The
+consumer returns unsupported-draw at state.mjs1627 before each native draw.
+The first exact original words are
+[786440,1,62,5,1,1,0,0,1,65535,0,4294967295,0], context9, sequence0183,
+byteOffset4244: gpu.ndjson request1515/failure1517 in
+target/evidence/production-omarchy-gpu-profile12-09. The complete failed streams
+are preserved in target/evidence/production-omarchy-original-draw-failures-01.json.
+At the original post-failure snapshot, all eight original0x207 requests receive
+0x1205 and no0x205 request is rejected; the prior diagnostic transfer failures
+are not reproduced by this installed default candidate.
+
+Exact reproducer: CRITIC_FAST_BOOT_WEB_ROOT=web/dist CRITIC_FAST_BOOT_GPU=1
+CRITIC_FAST_BOOT_GPU_TRACE=1 CRITIC_FAST_BOOT_GUESTS=omarchy
+CRITIC_FAST_BOOT_PERSISTENCE=0 CRITIC_FAST_BOOT_HOLD_FAILURE=1
+CRITIC_FAST_BOOT_IMAGE_DIRECTORY=target/virgl-production/image-12
+node tools/virgl-production/critic-fast-boots.mjs OUTPUT. Original built runtime
+and source hashes are in the capture's report/source records. The first mapped
+bar has alpha0 before its real rendering; the capture preserves both that early
+input-acceptance refusal and the subsequent eight actual GPU failures.
+
+Pinned VirGL1.3.0 vrend_draw_vbo6139–6157 uses only sub_ctx->ib.offset for indexed
+GL calls. DRAW.start is ignored, not multiplied into the byte offset. Ordered
+S68 must allow that original production hint while preserving the independently
+validated binding offset, count/span, actual fetched indices, private profile
+refusals, GPU fences and ownership. Parent remains blocked until S68 is freshly
+verified. No capset increase or completed production claim is justified here.
