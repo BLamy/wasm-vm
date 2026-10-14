@@ -38,7 +38,9 @@ def run(name, command, cwd, timeout=3600):
     assert result.returncode == 0, name + " failed; inspect recorded output"
 
 try:
-    run("clone", ["git", "clone", "--depth", "1", "--no-local", "--single-branch", "--branch", branch, str(repo), str(clone)], repo)
+    # The Docstream corpus deliberately cites a historical source commit. Keep
+    # repository history as an ordinary clone does, while forbidding hardlinks.
+    run("clone", ["git", "clone", "--no-local", "--single-branch", "--branch", branch, str(repo), str(clone)], repo)
     assert subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=clone, text=True).strip() == head
     assert not subprocess.check_output(["git", "status", "--porcelain"], cwd=clone)
     run("build", ["make", "web-dist"], clone)

@@ -59,7 +59,7 @@ async function one(Wasm,qualification,native,compiler,schedule) {
   };
   try {
     await rig.expect('independent original context',context(1));
-    for(const [id,format,bind,samples] of [[1,67,2,4],[2,67,2,0],[3,16,1,4],[4,16,1,0],[6,67,2,2],[7,2,2,4],[8,2,2,0],[9,67,2,0],[10,18,1,4],[11,18,1,0],[12,20,1,4],[13,20,1,0]]){
+    for(const [id,format,bind,samples] of [[1,67,2,4],[2,67,2,0],[3,16,1,4],[4,16,1,0],[6,67,2,2],[7,2,2,4],[8,2,2,0],[9,67,2,0],[10,18,1,4],[11,18,1,0],[12,20,1,4],[13,20,1,0],[14,67,2,4]]){
       await rig.expect('independent original allocation'+id,allocation(id,format,bind,samples));
       await rig.expect('independent original membership'+id,idCommand(0x202,1,id));
     }
@@ -165,13 +165,16 @@ async function one(Wasm,qualification,native,compiler,schedule) {
       ['stretch',(()=>{const b=blit(1,2);put(b,10*4,11);return b;})()],
       ['linear resolve',(()=>{const b=blit(1,2);put(b,4,15|256);return b;})()],
       ['format reinterpretation',blit(1,2,104)],['sample expansion',blit(2,1)],['sample mismatch',blit(1,6)],
+      ['same-sample multisample destination',blit(1,14)],
     ]){
-      const before=nativeBlits();await rig.expect('independent BLIT refused '+label,submission(1,bytes,79n),0x1205);
+      const before=nativeBlits(),nativeAt=row.native.length;await rig.expect('independent BLIT refused '+label,submission(1,bytes,79n),0x1205);
       c.equal(nativeBlits(),before,'refused BLIT has no native copy');
+      c.truth(!row.native.slice(nativeAt).some(v=>v.name==='createFramebuffer'||v.name==='framebufferTexture2D'||v.name==='framebufferRenderbuffer'),
+        'refused BLIT has no native attachment effects');
     }
     const first=rig.q.enqueue('independent queued retained resolve',submission(1,blit(1,2),83n));
     const destroy=rig.q.enqueue('independent destroy while resolve retained',header(0x201,1,24));
-    const unrefs=[1,2,3,4,5,6,7,8,9,10,11,12,13].map(id=>rig.q.enqueue('independent unref while resolve retained'+id,idCommand(0x102,0,id)));
+    const unrefs=[1,2,3,4,5,6,7,8,9,10,11,12,13,14].map(id=>rig.q.enqueue('independent unref while resolve retained'+id,idCommand(0x102,0,id)));
     rig.q.kick();rig.q.run();c.equal(rig.q.usedIndex(),first.number,'original resolve owns head');
     await rig.step();c.equal(rig.q.usedIndex(),first.number,'native fence does not publish guest head');
     c.truth(rig.host.bridge.inspect().renderer.jobs.imageSources>=2,'both native resources held during actual resolve');

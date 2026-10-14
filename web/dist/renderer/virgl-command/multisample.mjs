@@ -49,8 +49,8 @@ export function executeFramebufferBlit(gl, fields, source, destination, require,
     }
   };
   validate(fields.source, a); validate(fields.destination, b);
-  require(!b.nrSamples || a.nrSamples === b.nrSamples, 'unsupported-blit', 'BLIT cannot expand or change sample counts.');
-  if (a.nrSamples || b.nrSamples) require(fields.filter === 0 &&
+  require(b.nrSamples === 0, 'unsupported-blit', 'GLES BLIT requires a single-sample destination.');
+  if (a.nrSamples) require(fields.filter === 0 &&
     ['x','y','width','height'].every(key => fields.source[key] === fields.destination[key]),
     'unsupported-blit', 'Native multisample resolve requires identical nearest rectangles.');
   const depth = (a.bind & 1) !== 0;
@@ -65,16 +65,17 @@ export function executeFramebufferBlit(gl, fields, source, destination, require,
   const previous = {read:gl.getParameter(gl.READ_FRAMEBUFFER_BINDING),draw:gl.getParameter(gl.DRAW_FRAMEBUFFER_BINDING),
     scissor:gl.isEnabled(gl.SCISSOR_TEST),box:gl.getParameter(gl.SCISSOR_BOX)};
   let read = null, draw = null;
-  const attach = (target, entry, box) => {
-    if (entry.storage.renderbuffer) gl.framebufferRenderbuffer(target, attachment, gl.RENDERBUFFER, entry.storage.renderbuffer);
-    else gl.framebufferTexture2D(target, attachment, gl.TEXTURE_2D, entry.storage.texture, box.level);
+  const attachRead = (entry, box) => {
+    if (entry.storage.renderbuffer) gl.framebufferRenderbuffer(gl.READ_FRAMEBUFFER, attachment, gl.RENDERBUFFER, entry.storage.renderbuffer);
+    else gl.framebufferTexture2D(gl.READ_FRAMEBUFFER, attachment, gl.TEXTURE_2D, entry.storage.texture, box.level);
   };
   try {
     read = gl.createFramebuffer(); draw = gl.createFramebuffer();
     require(read && draw, 'backend-error', 'BLIT framebuffer allocation failed.');
-    gl.bindFramebuffer(gl.READ_FRAMEBUFFER, read); attach(gl.READ_FRAMEBUFFER, source, fields.source);
+    gl.bindFramebuffer(gl.READ_FRAMEBUFFER, read); attachRead(source, fields.source);
     gl.readBuffer(depth ? gl.NONE : gl.COLOR_ATTACHMENT0);
-    gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, draw); attach(gl.DRAW_FRAMEBUFFER, destination, fields.destination);
+    gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, draw);
+    gl.framebufferTexture2D(gl.DRAW_FRAMEBUFFER, attachment, gl.TEXTURE_2D, destination.storage.texture, fields.destination.level);
     gl.drawBuffers([depth ? gl.NONE : gl.COLOR_ATTACHMENT0]);
     require(gl.checkFramebufferStatus(gl.READ_FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE &&
       gl.checkFramebufferStatus(gl.DRAW_FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE,
