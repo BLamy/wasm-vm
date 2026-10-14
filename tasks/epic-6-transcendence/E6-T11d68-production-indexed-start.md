@@ -3,7 +3,7 @@ id: E6-T11d68
 epic: 6
 title: Preserve original indexed DRAW start hints in production
 priority: 525.027036
-status: in-progress
+status: implemented
 depends_on: [E6-T11d67]
 estimate: S
 risk: high
@@ -94,3 +94,27 @@ passing gate statuses and exact current served source/proof-binary hashes. It
 allows only the two recording scripts and this task log to change; any runtime
 or dependency change forbids carry. It repeats the missing private/default
 proof. The final pristine-clone run remains full and does not use carry.
+
+### 2026-10-14 — worker — exact-head submission
+
+Frozen runtime head `01730dff4bb381755d560910cddb0380da096404`. Full ordinary
+pristine clone: `python3 tools/virgl-production/cold.py --task E6-T11d68 --output
+target/evidence/production-indexed-start-cold-01`. Its clone (no local hardlinks),
+`make web-dist`, and full `make verify-E6-T11d68` all exit0 with scrubbed proving
+environment. All11 acceptance gates pass, including9 original hardware matrix
+rows,4 promoted independent offset/restart rows, private historical replay and
+the default built demo127passed/0failed with zero console errors. The full cold
+run uses no carry. The hot evidence-only continuation
+`python3 tools/virgl-production/verify-indexed-start.py --output
+target/evidence/production-indexed-start-frozen-02 --carry-from
+target/evidence/production-indexed-start-frozen-01` also passes. The earlier
+missing-module404 is preserved and its held gates authenticated.
+
+The reopened worker seal is
+`evidence/virgl-production-indexed-start/worker/exact-head-submission-and-cold.tar.gz`, SHA256
+`c973a1abcd9f5f6ae81cd8cedccc050d79ac3294d20473267f9c6a6cd2e85021`, 257 files with paired JSON
+identities. Native source, actual Wasm/MMIO input uploads, retained binding
+reads, exact pixel/readback-padding oracles, refusals, fences and destruction
+are recorded. This proves the indexed hint correction and preserved guards;
+it does not claim complete default Omarchy, GLES queries or final deployment.
+Fresh adversarial verdict remains independent.
