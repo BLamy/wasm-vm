@@ -8,6 +8,7 @@ import {createReadStream} from 'node:fs';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
 import {createServer} from 'node:http';
+import {execFileSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {chromium} from '../../web/node_modules/playwright/index.mjs';
 
@@ -28,7 +29,10 @@ const gpuTrace = process.env.CRITIC_FAST_BOOT_GPU_TRACE === '1';
 let gpuRecording = Promise.resolve();
 await fs.mkdir(output, {recursive:false});
 const report = {status:'running', scope:'actual production UI fast boots and repeat launches',
-  webRoot:web, releaseCache, saveOnRepeat, gpuTrace, phases:[], requests:[], sourceHashes:{}, errors:[]};
+  head:execFileSync('git',['rev-parse','HEAD'],{cwd:repo,encoding:'utf8'}).trim(),
+  webRoot:web, releaseCache, saveOnRepeat, gpuTrace, phases:[], requests:[], remoteFetches:[], sourceHashes:{}, harnessHashes:{}, errors:[]};
+for(const filename of ['critic-fast-boots.mjs','critic-fast-boots-input.mjs','critic-fast-boots-bar-content.mjs'])
+  report.harnessHashes[filename]=hash(await fs.readFile(path.join(repo,'tools/virgl-production',filename)));
 let browser, server, activePage, phase = 'inventory';
 const sourcePaths = ['index.html','main.js','loader.js','linux-worker.js','linux-worker-protocol.js',
   'linux-worker-host.js','pkg/wasm_vm_wasm.js','pkg/wasm_vm_wasm_bg.wasm','src/sink/presentation.js',
@@ -86,9 +90,23 @@ const remoteChunks = new Map();
 const remoteAssets = new Map();
 async function fetchOriginal(pathname) {
   if(!remoteAssets.has(pathname))remoteAssets.set(pathname,(async()=>{
-    const remote=await fetch(r2+pathname,{signal:AbortSignal.timeout(180000)});
-    assert.equal(remote.status,200,pathname+' original R2 status');
-    return Buffer.from(await remote.arrayBuffer());
+    const pin=releasePins.get(pathname);
+    // Deployment publishes large releases at content-addressed keys. A clean
+    // checkout has no ignored snapshot cache and must resolve those same bytes.
+    // Small historical assets can still exist only at their legacy URL; either
+    // path remains subject to the original manifest's exact size/hash check.
+    const routes=pin?['/sha256/'+pin.sha256+pathname,pathname]:[pathname];
+    for(const route of routes){
+      const remote=await fetch(r2+route,{signal:AbortSignal.timeout(180000)});
+      const receipt={pathname,url:r2+route,status:remote.status};report.remoteFetches.push(receipt);
+      if(remote.status===404&&route!==routes.at(-1)){await remote.body?.cancel();continue;}
+      assert.equal(remote.status,200,route+' original R2 status');
+      const bytes=Buffer.from(await remote.arrayBuffer());
+      if(pin)checkPin(bytes,pin,pathname);
+      Object.assign(receipt,{bytes:bytes.length,sha256:hash(bytes)});
+      return bytes;
+    }
+    throw Error('No original R2 asset for '+pathname);
   })());
   return remoteAssets.get(pathname);
 }
@@ -223,7 +241,7 @@ async function snapshot(page){
     wire:__fastBootCritic.wire,wireTotals:__fastBootCritic.wireTotals,timerGaps:__fastBootCritic.timerGaps,
     manifest:document.documentElement.dataset.linuxManifest,
     bootState:window.__linuxBootStateForTest?.()||null,
-    display:window.__presentation?.state?.(),cursor:window.__cursor?.snapshot?.()||null,
+    display:window.__presentation?.state?.(),cursor:window.__cursor?.state?.()||null,
     gpu:await window.wvmDemo?.gpuStats?.(),fetch:await window.__chunkedStats?.(),
     desktopStatus:document.querySelector('#omarchy-desktop-status')?.textContent,
     overlayHidden:document.querySelector('#omarchy-boot-overlay')?.hidden,

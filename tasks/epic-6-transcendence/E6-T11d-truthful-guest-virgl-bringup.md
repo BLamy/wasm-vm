@@ -1067,3 +1067,23 @@ No runtime semantics or watchdog have changed. Syntax checks, all6 existing
 bar-content/protocol tests and `make web-dist` passed; outputs are
 `target/parent-content-cursor-{checks,build}01.{stdout,stderr}`.
 Final parent acceptance and clean-clone proof follow this frozen harness.
+
+### 2026-10-14 — worker — clean-clone asset-resolution negative
+
+`production-parent-cold01/production/fast-boot-images/report.json` refutes
+portability of the old test-server resolver: Omarchy failed before restore
+because the ignored198380324-byte boot snapshot was requested at its retired
+legacy R2 URL (404). The published exact object is at
+`sha256/0c34dc9389c52af167ed8e5f9e34c543b58c91205fc6b4e383bc3b0711ead256/releases/boot-snapshot/omarchy-ready.snap.gz`
+(HTTP200 and matching extent observed by HEAD). Local cached fast-boot success
+is insufficient for this portability claim. The resolver now tries the same
+content-addressed R2 key used by deployment, falling back to the legacy key
+only after404 for older small assets. Every returned release still must match
+its original manifest size/SHA256. Each attempted URL/status and successful
+byte digest is recorded; host harness hashes and current head are also explicit.
+Cursor diagnostics now use the existing `window.__cursor.state()` API.
+Syntax checks and all6 affected harness tests passed, outputs
+`target/parent-r2-portability-checks01.{stdout,stderr}`. Runtime/image/dist bytes
+are unchanged; the ongoing old-head actual Mesa/cube/compositor run is component
+evidence, never relabelled. Record the repaired server in a new final cold clone
+(the failed first clone is retained as the portability negative).

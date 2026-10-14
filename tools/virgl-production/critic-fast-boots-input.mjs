@@ -105,7 +105,7 @@ export async function verifyPublicDesktopInput(page, command, output, options = 
   const distance = point => Math.hypot(point.x-initialCursor.x,point.y-initialCursor.y);
   const target = candidates.sort((a,b)=>distance(b)-distance(a))[0];
   assert.ok(distance(target)>=16, 'trusted pointer target deliberately differs from actual initial cursor');
-  const initialWorkerCursor = await page.evaluate(()=>window.__cursor?.snapshot?.()||null);
+  const initialWorkerCursor = await page.evaluate(()=>window.__cursor?.state?.()||null);
   const before = await page.evaluate(() => window.__linuxCtl.inputDeviceStats());
   const framesBefore = await page.evaluate(() => window.__keyboardCapture.frames());
   await record('geometry', {uid, layers, clients, monitors, foot, target, initialCursor, initialWorkerCursor, box, inputBefore: before, inputFramesBefore: framesBefore});
@@ -206,7 +206,7 @@ export async function verifyPublicDesktopInput(page, command, output, options = 
   assert.ok(Math.abs(Number(coordinates[1]) - target.x) <= 4, 'actual guest cursor X');
   assert.ok(Math.abs(Number(coordinates[2]) - target.y) <= 4, 'actual guest cursor Y');
   assert.ok(Math.hypot(Number(coordinates[1])-initialCursor.x,Number(coordinates[2])-initialCursor.y)>=16, 'actual guest cursor moved to a different point');
-  const finalWorkerCursor = await page.evaluate(()=>window.__cursor?.snapshot?.()||null);
+  const finalWorkerCursor = await page.evaluate(()=>window.__cursor?.state?.()||null);
   const held = await page.evaluate(() => window.__keyboardCapture.heldSnapshot());
   assert.deepEqual(held, [], 'no held keys after trusted physical command');
   const after = await page.evaluate(() => window.__linuxCtl.inputDeviceStats());
