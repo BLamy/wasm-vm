@@ -4258,6 +4258,16 @@ impl Machine {
         false
     }
 
+    /// Original keyboard breaks arrive between host execution chunks. Skipping
+    /// directly to a repeat timer before that turn would manufacture a long
+    /// guest key hold from a short physical press.
+    #[cfg(not(feature = "zicsr-stub"))]
+    fn external_keyboard_io_pending(&self) -> bool {
+        self.keyboard
+            .as_ref()
+            .is_some_and(|(state, _, _)| state.borrow().awaiting_host_key_release())
+    }
+
     /// E2-T20: run the sliding-window interrupt-storm detector. Called only when a trap lands
     /// (event-driven, so zero cost while quiet — a trap during normal operation is rare, and
     /// during a storm the detector is exactly what we want running). Syncs the PLIC claim
@@ -5691,7 +5701,10 @@ impl Machine {
         // this block ran), so this WFI is a real idle wait. Skip the idle spin by jumping mtime to
         // the nearest armed timer deadline — deterministic, so native and wasm agree. Turns a ~20×
         // `sleep` into near-real-time. No-op if no timer armed.
-        if !self.external_net_io_pending() && !self.external_gpu_io_pending() {
+        if !self.external_net_io_pending()
+            && !self.external_gpu_io_pending()
+            && !self.external_keyboard_io_pending()
+        {
             self.wfi_fast_forward();
         }
     }
