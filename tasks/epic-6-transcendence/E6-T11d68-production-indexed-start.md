@@ -77,3 +77,20 @@ used a28-byte resource-id helper rather than the original24-byte CTX_DESTROY
 header. The corrected array negative uses restart0 so it reaches the runtime
 signed-range guard. These are self-validation, not the frozen submission or
 fresh verdict.
+
+### 2026-10-14 — worker — evidence harness repair; prior gates carried
+
+Frozen f9874e31944d215658a4f81190a9651352fbb3df passed policy, format, core/wasm
+clippy,389 core library tests, original transport/capability tests, proof build,
+all9 selected hardware runs and the promoted independent offset/restart rows.
+Its submission stopped at the historical private-profile server: two imported
+modules (dimensional-depth-images.mjs and multisample.mjs) were absent from its
+strict served-source inventory, producing actual404 errors before runtime import.
+This is a proof-harness gap. Adding those exact dependencies makes the original
+private replay pass without runtime changes.
+
+The evidence-only continuation authenticates the completed prior report/files,
+passing gate statuses and exact current served source/proof-binary hashes. It
+allows only the two recording scripts and this task log to change; any runtime
+or dependency change forbids carry. It repeats the missing private/default
+proof. The final pristine-clone run remains full and does not use carry.
