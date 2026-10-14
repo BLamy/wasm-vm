@@ -3,7 +3,7 @@ id: E6-T11d69b
 epic: 6
 title: Measure logical original transform-feedback primitive query counts
 priority: 525.027038
-status: pending
+status: in-progress
 depends_on: [E6-T11d69a]
 estimate: S
 risk: high
@@ -47,3 +47,12 @@ The independent actual-GLES3 negative and pinned original ABI are preserved in
 E6-T11d69 and the committed original-negative seal. Public renderer remains
 virgl; no llvmpipe, invented packets, fabricated availability or CPU count may
 justify a positive result. Parent default Omarchy remains a separate acceptance.
+
+## Verification log
+
+### 2026-10-14 — worker — active
+
+Continue the existing native PR stack after independently verified69a at
+8ce1cc97. The execution boundary is real per-draw native feedback measurement,
+normalized per primitive and counted once across output buffers. Parent desktop
+input, recovery and deployment remain separately gated.
