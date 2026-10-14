@@ -3,9 +3,8 @@ id: E6-T11d
 epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
-status: blocked
+status: in-progress
 depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47, E6-T11d48, E6-T11d49, E6-T11d50, E6-T11d51, E6-T11d52, E6-T11d53, E6-T11d54, E6-T11d55, E6-T11d56, E6-T11d57, E6-T11d58, E6-T11d59, E6-T11d60, E6-T11d61, E6-T11d62, E6-T11d63, E6-T11d64, E6-T11d65, E6-T11d66, E6-T11d67, E6-T11d68, E6-T11d69a, E6-T11d69b]
-blocked_on: E6-T11d69b
 estimate: S
 risk: high
 capstone: false
@@ -1026,3 +1025,19 @@ Pending core-query planning69 is cancelled in favor of ordered69a(boolean
 lifetime/result publication) and69b(real logical TF counts). Their exact
 independent negative remains recorded; complete API/default Omarchy and final
 recovery/deployment remain unclaimed.
+
+### 2026-10-14 — worker — resume final default desktop integration
+
+D69a and D69b are independently verified, including mandatory GLES queries;
+D69b verdict commit `dd8cf845` retains frozen runtimeaa451b81. Continue the
+existing native PR stack with one final desktop-acceptance layer. Parent scope
+now proves original default image12/SDDM/UID1000/Quickshell/Foot startup and
+trusted keyboard/cursor through the production worker and scanout. Previous
+actual default keyboard, startup-heartbeat and post-query console scanout
+budget negatives remain preserved and unclaimed.
+
+First iteration changes only the acceptance harness: wake actual screensaver
+before requiring visible bar; prove absent marker and fresh real Foot focus
+immediately before trusted physical typing; preserve passive worker/timer
+timestamps across fatal cleanup. No watchdog limit or runtime behavior is
+weakened. Record the actual default run before choosing any runtime repair.
