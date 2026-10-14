@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E6-T11d71** — Preserve original keyboard host waits across tickless guest idle
 1. **E5-T26f** — Browser desktop snapshot round-trip and interaction smoke
 
 
@@ -652,7 +651,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.027037` [E6-T11d69a](epic-6-transcendence/E6-T11d69a-production-boolean-queries.md) — Provide original boolean GPU query lifetimes and guest results *(deps: E6-T11d68)*
 - [x] `525.027038` [E6-T11d5](epic-6-transcendence/E6-T11d5-standard-shader-state-binding.md) — Execute standard guest shader bindings through owned renderer jobs *(deps: E6-T11d4)*
 - [x] `525.027038` [E6-T11d69b](epic-6-transcendence/E6-T11d69b-production-transform-query-counts.md) — Measure logical original transform-feedback primitive query counts *(deps: E6-T11d69a)*
-- [ ] `525.027038` [E6-T11d71](epic-6-transcendence/E6-T11d71-keyboard-host-wait.md) — Preserve original keyboard host waits across tickless guest idle *(deps: E6-T11d70)*
+- [~] `525.027038` [E6-T11d71](epic-6-transcendence/E6-T11d71-keyboard-host-wait.md) — Preserve original keyboard host waits across tickless guest idle *(deps: E6-T11d70)*
 - [x] `525.027039` [E6-T11d6](epic-6-transcendence/E6-T11d6-standard-instanced-draws.md) — Execute standard instanced and wide-index vertex draws *(deps: E6-T11d5)*
 - [x] `525.0270390001` [E6-T11d10](epic-6-transcendence/E6-T11d10-standard-primitive-assembly.md) — Preserve original provoking vertices with bounded native primitive lists *(deps: E6-T11d9)*
 - [x] `525.0270390002` [E6-T11d11](epic-6-transcendence/E6-T11d11-standard-native-points.md) — Execute bounded standard native point primitives and shader built-ins *(deps: E6-T11d10)*

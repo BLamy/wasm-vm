@@ -3,7 +3,7 @@ id: E6-T11d71
 epic: 6
 title: Preserve original keyboard host waits across tickless guest idle
 priority: 525.027038
-status: pending
+status: in-progress
 depends_on: [E6-T11d70]
 estimate: S
 risk: high
