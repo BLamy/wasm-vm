@@ -1,5 +1,6 @@
 // Actual public Omarchy session: default uid/config/bar/Foot and trusted UI input.
 import assert from 'node:assert/strict';
+import {assertInteractivePauseProbe} from './critic-fast-boots-final.mjs';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {verifyPublicBarContent} from './critic-fast-boots-bar-content.mjs';
@@ -221,21 +222,22 @@ export async function verifyPublicDesktopInput(page, command, output, options = 
       return window.__linuxCtl.guestClockState();
     });
     assert.equal(beforePause.mode, 'wall', 'original worker handed interaction to wall time');
-    const pauseStarted = Date.now();
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    const pauseStarted = performance.now();
+    await new Promise(resolve => setTimeout(resolve, 5000));
     const afterPause = await page.evaluate(() => window.__linuxCtl.guestClockState());
     assert.equal(afterPause.mtime, beforePause.mtime, 'explicit pause freezes actual machine time');
-    const pauseMillis = Date.now() - pauseStarted;
+    const pauseMillis = performance.now() - pauseStarted;
+    const resumeSent = performance.now();
     await page.evaluate(() => window.__linuxCtl.resume());
     const resumed = await page.evaluate(() => window.__linuxCtl.guestClockState());
-    const resumeTicks = BigInt(resumed.mtime) - BigInt(afterPause.mtime);
-    assert.ok(resumeTicks >= 0n && resumeTicks < BigInt(Math.floor(pauseMillis / 2)) * 10000n,
-      'resume excludes the measured paused host interval');
     await new Promise(resolve => setTimeout(resolve, 250));
     const progressed = await page.evaluate(() => window.__linuxCtl.guestClockState());
     assert.equal(progressed.mode, 'wall');
     assert.ok(BigInt(progressed.mtime) > BigInt(resumed.mtime), 'actual resumed wall clock progresses');
-    await record('interactive-clock', {clockProbe: {beforePause, afterPause, pauseMillis, resumed, progressed}});
+    const progressReceived = performance.now();
+    const clockProbe = {beforePause, afterPause, pauseMillis, resumeSent, resumed, progressed, progressReceived, measurementRealm: 'Node performance.now'};
+    clockProbe.bound = assertInteractivePauseProbe(clockProbe);
+    await record('interactive-clock', {clockProbe});
   }
   const after = await page.evaluate(() => window.__linuxCtl.inputDeviceStats());
   await record('passed', {status: 'passed', cursor, initialCursor, initialWorkerCursor, finalWorkerCursor, marker, inputAfter: after});

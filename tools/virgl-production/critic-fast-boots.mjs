@@ -3,6 +3,7 @@
 // Local assets are hash-bound originals; missing disk chunks are fetched from the
 // production R2 origin and verified before serving. No guest output is fabricated.
 import assert from 'node:assert/strict';
+import {assertPublicDesktopFinal} from './critic-fast-boots-final.mjs';
 import fs from 'node:fs/promises';
 import {createReadStream} from 'node:fs';
 import path from 'node:path';
@@ -39,7 +40,7 @@ await fs.mkdir(output, {recursive:false});
 const report = {status:'running', scope:'actual production UI fast boots and repeat launches',
   head:execFileSync('git',['rev-parse','HEAD'],{cwd:repo,encoding:'utf8'}).trim(),
   webRoot:web, releaseCache, saveOnRepeat, gpuTrace, remoteUrl, phases:[], requests:[], remoteFetches:[], liveSources:[], sourceHashes:{}, harnessHashes:{}, errors:[]};
-for(const filename of ['critic-fast-boots.mjs','critic-fast-boots-input.mjs','critic-fast-boots-bar-content.mjs'])
+for(const filename of ['critic-fast-boots.mjs','critic-fast-boots-input.mjs','critic-fast-boots-bar-content.mjs','critic-fast-boots-final.mjs'])
   report.harnessHashes[filename]=hash(await fs.readFile(path.join(repo,'tools/virgl-production',filename)));
 let browser, server, activePage, phase = 'inventory';
 const sourcePaths = ['index.html','main.js','loader.js','linux-worker.js','linux-worker-protocol.js',
@@ -442,6 +443,10 @@ try{
           report.gpuEgl=egl;
           const {verifyPublicDesktopInput}=await import('./critic-fast-boots-input.mjs');
           report.publicDesktopInput=await verifyPublicDesktopInput(page,guestCommand,output);
+          report.publicDesktopFinal=await snapshot(page);
+          report.publicDesktopFinal.pageErrors=[...pageErrors];
+          await fs.writeFile(path.join(output,'public-desktop-final.json'),JSON.stringify(report.publicDesktopFinal,null,2)+'\n');
+          assertPublicDesktopFinal(report.publicDesktopFinal);
         }
       }
       const screenshot=phase+'.png';await page.screenshot({path:path.join(output,screenshot),fullPage:true});

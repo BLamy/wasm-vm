@@ -39,7 +39,8 @@ try:
                          'web/tests/e6-t11d72-interactive-clock-critic.test.mjs',
                          'web/tests/e5-t26i-guest-clock.test.mjs', 'web/tests/e5-t26j-icount-divider.test.mjs',
                          'web/tests/e4-t32-worker-protocol.test.mjs',
-                         'tools/virgl-production/critic-fast-boots-protocol.test.mjs'])
+                         'tools/virgl-production/critic-fast-boots-protocol.test.mjs',
+                         'tools/virgl-production/critic-fast-boots-final.test.mjs'])
     run('native-clock', ['cargo', 'test', '-p', 'wasm-vm-core', '--features', 'virgl-renderer,trace',
                          '--test', 'guest_clock', '--test', 'production_keyboard_host_wait',
                          '--test', 'production_keyboard_wfi_critic', '--', '--nocapture'])
