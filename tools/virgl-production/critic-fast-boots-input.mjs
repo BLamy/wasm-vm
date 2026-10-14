@@ -39,7 +39,8 @@ export async function verifyPublicDesktopInput(page, command, output, options = 
     for (const child of Object.values(value)) if (child && typeof child === 'object') visit(child);
   };
   visit(layers);
-  assert.ok(mapped.some(layer => layer.namespace === 'omarchy-bar'), 'actual package bar is mapped');
+  assert.ok(mapped.some(layer => layer.namespace === 'omarchy-bar' && layer.alpha > 0),
+    'actual package bar is mapped and visible');
   let clients, foot;
   const deadline = Date.now() + 360000;
   while (Date.now() < deadline) {
@@ -84,6 +85,28 @@ export async function verifyPublicDesktopInput(page, command, output, options = 
       document.addEventListener(type, window.__criticTrustedInputListener, true);
   });
   await record('focused');
+  // The default package may start its fullscreen screensaver while the cold
+  // boot is being observed. DOM focus alone cannot establish guest focus.
+  // Wake it through the same trusted input path, then inspect the actual
+  // compositor before issuing the command whose effect we will assert.
+  let activeWindow = JSON.parse(await read('XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j activewindow'));
+  if (activeWindow.class === 'org.omarchy.screensaver') {
+    await page.keyboard.press('Escape');
+    await record('trusted-wake', {activeWindowBeforeWake: activeWindow});
+  }
+  const focusDeadline = Date.now() + 120000;
+  while (Date.now() < focusDeadline) {
+    activeWindow = JSON.parse(await read('XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j activewindow'));
+    if (activeWindow.pid === foot.pid && activeWindow.visible !== false &&
+        activeWindow.acceptsInput !== false) break;
+    await page.mouse.click(box.x + target.x * box.width / monitor.width,
+      box.y + target.y * box.height / monitor.height);
+    await new Promise(resolve => setTimeout(resolve, 1000));
+  }
+  assert.equal(activeWindow.pid, foot.pid, 'actual default Foot receives guest focus');
+  assert.notEqual(activeWindow.visible, false, 'actual focused Foot is visible');
+  assert.notEqual(activeWindow.acceptsInput, false, 'actual focused Foot accepts input');
+  await record('guest-focused', {activeWindow});
   // Only trusted Playwright keyboard events create this file in Foot. The serial
   // control channel merely reads it afterward; it never injects this command.
   // CDP type() can describe a shifted punctuation key without physical modifier

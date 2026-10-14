@@ -23,9 +23,12 @@ const coldGpu = process.env.CRITIC_FAST_BOOT_GPU === '1';
 const candidateDirectory = process.env.CRITIC_FAST_BOOT_IMAGE_DIRECTORY
   ? path.resolve(process.env.CRITIC_FAST_BOOT_IMAGE_DIRECTORY) : null;
 const snapshotPersistence = process.env.CRITIC_FAST_BOOT_PERSISTENCE !== '0';
+const saveOnRepeat = process.env.CRITIC_FAST_BOOT_SAVE_ON_REPEAT === '1';
+const gpuTrace = process.env.CRITIC_FAST_BOOT_GPU_TRACE === '1';
+let gpuRecording = Promise.resolve();
 await fs.mkdir(output, {recursive:false});
 const report = {status:'running', scope:'actual production UI fast boots and repeat launches',
-  webRoot:web, releaseCache, phases:[], requests:[], sourceHashes:{}, errors:[]};
+  webRoot:web, releaseCache, saveOnRepeat, gpuTrace, phases:[], requests:[], sourceHashes:{}, errors:[]};
 let browser, server, activePage, phase = 'inventory';
 const sourcePaths = ['index.html','main.js','loader.js','linux-worker.js','linux-worker-protocol.js',
   'linux-worker-host.js','pkg/wasm_vm_wasm.js','pkg/wasm_vm_wasm_bg.wasm','src/sink/presentation.js',
@@ -186,6 +189,8 @@ function observeOriginalWorker(){
       this.addEventListener('message',event=>{
         if(event.data?.type==='output')evidence.serial+=decoder.decode(new Uint8Array(event.data.buffer),{stream:true});
         if(['fatal','error'].includes(event.data?.type))evidence.errors.push(String(event.data.error));
+        if(event.data?.type==='gpu-event'&&globalThis.__recordFastBootGpuEvent)
+          void globalThis.__recordFastBootGpuEvent(event.data.info);
       });
     }
     if(message?.type==='boot')evidence.workerBoots.push({time:performance.now(),options:message.opts});
@@ -292,16 +297,41 @@ try{
     const context=await browser.newContext({viewport:{width:1280,height:850},serviceWorkers:'allow'});
     await context.addInitScript(observeOriginalWorker);
     const page=activePage=await context.newPage();
+    if(gpuTrace)await page.exposeFunction('__recordFastBootGpuEvent',event=>{
+      const body=JSON.stringify(event)+'\n';
+      gpuRecording=gpuRecording.then(()=>fs.appendFile(path.join(output,'gpu.ndjson'),body));
+      return gpuRecording;
+    });
     const pageErrors=[];
     page.on('pageerror',error=>pageErrors.push(String(error)));
     page.on('console',message=>{if(message.type()==='error'&&!/favicon\.ico/.test(message.location().url||''))pageErrors.push(message.text());});
     if(coldGpu)assert.equal(guest,'omarchy');
     const query=new URLSearchParams({guest,gpu:coldGpu?'1':'0',assetBase:origin,omarchyAssetBase:origin});
+    if(gpuTrace){query.set('testHooks','1');query.set('gpuTrace','1');query.set('workerHeartbeatTimeoutMs','10000');}
     if(guest==='omarchy')query.set('desktop','1');
     const url=origin+'/app?'+query+'#ide';
     for(const round of coldGpu?['initial']:['initial','repeat']){
-      phase=guest+'-'+round;const started=Date.now();
-      if(round==='initial')await page.goto(url);else await page.reload();
+      phase=guest+'-'+round;let started=Date.now();
+      let repeatCheckpoint;
+      if(round==='initial')await page.goto(url);
+      else {
+        if(saveOnRepeat&&['alpine','node-alpine'].includes(guest)) {
+          // Guest reads can dirty atime/history and advance the durable disk.
+          // Save the live RAM/disk pair through the public paused/flush boundary
+          // instead of trying the old shipped RAM against a changed overlay.
+          await page.evaluate(()=>window.__linux.pause());
+          repeatCheckpoint=await page.evaluate(()=>window.wvmDemo.snapshotSave());
+          repeatCheckpoint.decision=await page.evaluate(()=>window.__snapshotDecision());
+          repeatCheckpoint.generation=await page.evaluate(()=>window.__snapshotGeneration());
+          repeatCheckpoint.paused=await page.evaluate(()=>window.__linux.isPaused());
+          await fs.writeFile(path.join(output,phase+'-checkpoint.json'),JSON.stringify(repeatCheckpoint,null,2));
+          assert.equal(repeatCheckpoint.ok,true,phase+' public coherent snapshot save');
+          assert.equal(repeatCheckpoint.decision,'resume');
+          assert.equal(repeatCheckpoint.paused,true,phase+' saved pair frozen until reload');
+        }
+        started=Date.now();
+        await page.reload();
+      }
       await waitActualReady(page,guest,started);
       const restoredMs=Date.now()-started;
       const command=guest==='node-alpine'
@@ -330,7 +360,7 @@ try{
         }
       }
       const screenshot=phase+'.png';await page.screenshot({path:path.join(output,screenshot),fullPage:true});
-      report.phases.push({phase,guest,round,url,restoredMs,liveCommandMs:Date.now()-started-restoredMs,result,state,screenshot});
+      report.phases.push({phase,guest,round,url,restoredMs,liveCommandMs:Date.now()-started-restoredMs,result,state,screenshot,repeatCheckpoint});
       await fs.writeFile(path.join(output,phase+'.json'),JSON.stringify(report.phases.at(-1),null,2));
       console.log(JSON.stringify({phase,restoredMs,result,display:state.display?.successfulPresents,databases:state.databases}));
     }
@@ -339,9 +369,9 @@ try{
       const write=await guestCommand(page,`printf 'DURABLE_${guest}_42_PASS' > ${marker}; sync`,180000);
       assert.equal(write.exit,0);
       await page.evaluate(()=>window.__linux.pause());
-      await page.evaluate(()=>window.__persist());
+      const checkpoint=await page.evaluate(()=>window.wvmDemo.snapshotSave());
+      assert.equal(checkpoint.ok,true,phase+' public durable snapshot save');
       const before=await page.evaluate(()=>window.__snapshotGeneration());
-      assert.equal(await page.evaluate(()=>window.__snapshotSave()),true);
       assert.equal(await page.evaluate(()=>window.__snapshotDecision()),'resume');
       const started=Date.now();await page.reload();await waitActualReady(page,guest,started);
       const read=await guestCommand(page,`cat ${marker}`,180000);
@@ -349,7 +379,7 @@ try{
       const generation=await page.evaluate(()=>window.__snapshotGeneration());
       assert.equal(generation,before,phase+' durable generation preserved');
       const state=await snapshot(page);
-      report.phases.push({phase,restoredMs:Date.now()-started,write,read,before,generation,state});
+      report.phases.push({phase,restoredMs:Date.now()-started,write,read,before,generation,state,checkpoint});
       await fs.writeFile(path.join(output,phase+'.json'),JSON.stringify(report.phases.at(-1),null,2));
       console.log(JSON.stringify({phase,restoredMs:Date.now()-started,before,generation,read}));
     }
@@ -368,6 +398,13 @@ try{
   await fs.writeFile(path.join(output,'report.json'),JSON.stringify(report,null,2));
   if(activePage)await holdOwnedFailure(activePage);
 }finally{
+  await browser?.close();
+  await gpuRecording;
+  if(gpuTrace){
+    const file=path.join(output,'gpu.ndjson'),digest=createHash('sha256');
+    for await(const bytes of createReadStream(file))digest.update(bytes);
+    report.gpuRecording={path:'gpu.ndjson',bytes:(await fs.stat(file)).size,sha256:digest.digest('hex')};
+  }
   await fs.writeFile(path.join(output,'report.json'),JSON.stringify(report,null,2));
-  await browser?.close();server.closeAllConnections();await new Promise(resolve=>server.close(resolve));
+  server.closeAllConnections();await new Promise(resolve=>server.close(resolve));
 }

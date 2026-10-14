@@ -9,11 +9,11 @@ import path from 'node:path';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 import {gzipSync} from 'node:zlib';
 const repo=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..'),sha=b=>createHash('sha256').update(b).digest('hex'),options={};
-for(let i=2;i<process.argv.length;i+=2){assert.ok(['--output','--chrome','--formats','--targets','--schedules','--mode','--sabotage'].includes(process.argv[i])&&process.argv[i+1]);options[process.argv[i].slice(2)]=process.argv[i+1];}
+for(let i=2;i<process.argv.length;i+=2){assert.ok(['--output','--chrome','--formats','--targets','--schedules','--mode','--sabotage','--reference-head'].includes(process.argv[i])&&process.argv[i+1]);options[process.argv[i].slice(2)]=process.argv[i+1];}
 assert.ok(options.output);const output=path.resolve(options.output);await fs.mkdir(output,{recursive:true});
 const sources=new Map(),runs=[],served=new Map(),errors={console:[],page:[],requests:[]};
 async function source(name){
-  if(sources.has(name))return;const bytes=await fs.readFile(path.join(repo,name));sources.set(name,bytes);
+  if(sources.has(name))return;const bytes=options['reference-head']&&name.startsWith('renderer/')&&!name.startsWith('renderer/virgl-shader/build/')?execFileSync('git',['show',options['reference-head']+':'+name],{cwd:repo}):await fs.readFile(path.join(repo,name));sources.set(name,bytes);
   if(/\.m?js$/.test(name))for(const m of bytes.toString().matchAll(/(?:from|import)\s*['"](\.\.?\/[^'"]+)['"]/g))await source(path.posix.normalize(path.posix.join(path.posix.dirname(name),m[1])));
 }
 for(const name of ['tools/virgl-production/critic-fast-boots-y-top.mjs','renderer/virgl-command/tests/production-critic-shader-bindings.mjs','renderer/virgl-command/tests/production-critic-bounds.mjs','renderer/virgl-shader/build/wasm/virgl-shader.mjs','renderer/virgl-shader/build/wasm/virgl-shader.wasm','tools/virgl-production/critic-dimensional-browser.mjs'])await source(name);
@@ -29,7 +29,7 @@ if(options.sabotage){
   sources.set(name,changed);sabotage={kind:options.sabotage,path:name,originalSha256:sha(original),servedSha256:sha(changed),scope:'served immutable test copy only; repository runtime untouched'};
 }
 const html=Buffer.from('<!doctype html><meta charset="utf-8"><title>Production GPU critic</title><style>body{background:#111720;color:#e7edf6;font:16px system-ui;margin:30px}pre{white-space:pre-wrap}</style><h1>Production GPU critic</h1><p>Original qualified device, original DMA, dimensional colors and retained views.</p><canvas id="gpu" width="32" height="32"></canvas><p id="status">Running independent hardware probes…</p><pre id="results"></pre>');
-const report={schema:'independent-production-origin-critic-v1',task:'E6-T11d',status:'running',head:execFileSync('git',['rev-parse','HEAD'],{cwd:repo,encoding:'utf8'}).trim(),trackedChanges:execFileSync('git',['status','--porcelain','--untracked-files=no'],{cwd:repo,encoding:'utf8'}),command:[process.execPath,...process.argv.slice(1)],startedAt:new Date().toISOString(),browserErrors:errors,sources:[...sources].map(([name,b])=>({path:name,bytes:b.length,sha256:sha(b)})),sabotage};
+const report={schema:'independent-production-origin-critic-v1',task:'E6-T11d',referenceHead:options['reference-head']??null,status:'running',head:execFileSync('git',['rev-parse','HEAD'],{cwd:repo,encoding:'utf8'}).trim(),trackedChanges:execFileSync('git',['status','--porcelain','--untracked-files=no'],{cwd:repo,encoding:'utf8'}),command:[process.execPath,...process.argv.slice(1)],startedAt:new Date().toISOString(),browserErrors:errors,sources:[...sources].map(([name,b])=>({path:name,bytes:b.length,sha256:sha(b)})),sabotage};
 let server,browser,page;
 try{
   const endpoints=new Map([['/',{bytes:html,type:'text/html'}],...[...sources].filter(([name])=>/\.(m?js|wasm)$/.test(name)).map(([name,bytes])=>['/'+name,{bytes,type:name.endsWith('.wasm')?'application/wasm':'text/javascript'}])]);

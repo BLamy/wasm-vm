@@ -75,7 +75,7 @@ impl WasmLinux {
             .virtio_gpu()
             .ok_or_else(|| JsError::new("GPU unavailable"))?;
         let state = gpu.try_borrow().map_err(|_| reentrant())?;
-        let records = state.command_trace().iter().map(|r| format!("{{\"sequence\":{},\"type\":{},\"response\":{},\"responseLength\":{},\"avail\":{},\"used\":{},\"head\":{},\"resourceId\":{},\"backingEntries\":{}}}",r.sequence,r.command_type,r.response_type,r.response_len,r.avail_idx,r.used_idx,r.used_head,r.resource_id.map_or("null".into(),|v|v.to_string()),r.backing_entries.map_or("null".into(),|v|v.to_string()))).collect::<Vec<_>>().join(",");
+        let records = state.command_trace().iter().map(|r| format!("{{\"sequence\":{},\"type\":{},\"response\":{},\"responseLength\":{},\"avail\":{},\"used\":{},\"head\":{},\"resourceId\":{},\"backingEntries\":{},\"transferWords\":{}}}",r.sequence,r.command_type,r.response_type,r.response_len,r.avail_idx,r.used_idx,r.used_head,r.resource_id.map_or("null".into(),|v|v.to_string()),r.backing_entries.map_or("null".into(),|v|v.to_string()),r.transfer_words.map_or("null".into(),|words|format!("{:?}",words)))).collect::<Vec<_>>().join(",");
         Ok(format!(
             "{{\"dropped\":{},\"records\":[{}]}}",
             state.command_trace_dropped(),

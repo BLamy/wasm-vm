@@ -99,6 +99,9 @@ pub struct CommandTraceRecord {
     pub resource_height: Option<u32>,
     /// Original attachment entry count, including rejected backing requests.
     pub backing_entries: Option<u32>,
+    /// Exact original 3D-transfer payload, including requests rejected before
+    /// the host renderer can observe their extent, offset or row strides.
+    pub transfer_words: Option<[u32; 12]>,
     /// Queue shadow positions after the request was consumed and its used entry published.
     pub avail_idx: u16,
     pub used_idx: u16,
@@ -614,6 +617,7 @@ impl GpuState {
             resource_width: meta.resource_width,
             resource_height: meta.resource_height,
             backing_entries: meta.backing_entries,
+            transfer_words: meta.transfer_words,
             avail_idx,
             used_idx,
             used_head,
@@ -1157,6 +1161,7 @@ pub(crate) struct CommandTraceMeta {
     resource_width: Option<u32>,
     resource_height: Option<u32>,
     backing_entries: Option<u32>,
+    transfer_words: Option<[u32; 12]>,
 }
 
 #[cfg(feature = "gpu-trace")]
@@ -1240,6 +1245,19 @@ fn command_trace_meta(
                 && let Some(transfer) = protocol::TransferToHost2d::from_bytes(&bytes)
             {
                 meta.resource_id = Some(transfer.resource_id);
+            }
+        }
+        protocol::CMD_TRANSFER_TO_HOST_3D | protocol::CMD_TRANSFER_FROM_HOST_3D => {
+            if let Some(bytes) = read_request::<72>(chain, bus) {
+                let words = core::array::from_fn(|index| {
+                    u32::from_le_bytes(
+                        bytes[24 + index * 4..28 + index * 4]
+                            .try_into()
+                            .expect("transfer payload word"),
+                    )
+                });
+                meta.resource_id = Some(words[8]);
+                meta.transfer_words = Some(words);
             }
         }
         protocol::CMD_RESOURCE_FLUSH => {

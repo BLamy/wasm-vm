@@ -40,6 +40,9 @@ try:
         run("protocol", ["node", "--test", "web/tests/e4-t32-worker-protocol.test.mjs", "tools/virgl-production/critic-fast-boots-protocol.test.mjs"])
     run("qualification", ["node", "tools/virgl-production/browser.mjs", str(output / "qualification"), "qualify"])
     if args.task == "E6-T11d":
+        run("fast-boot-images", ["node", "tools/virgl-production/critic-fast-boots.mjs", str(output / "fast-boot-images")], 1200,
+            {"CRITIC_FAST_BOOT_WEB_ROOT": str(repo / "web/dist"), "CRITIC_FAST_BOOT_GPU": "0",
+             "CRITIC_FAST_BOOT_GUESTS": "busybox,alpine,node-alpine,omarchy", "CRITIC_FAST_BOOT_SAVE_ON_REPEAT": "1"})
         run("actual-guest", ["node", "tools/virgl-production/browser.mjs", str(output / "guest"), "accept"], 2400)
         run("original-handshake", ["python3", "tools/virgl-production/compare-handshake.py",
             "--reference", "evidence/virgl-production-bringup/worker/qemu-kmscube-reference.tar.gz",

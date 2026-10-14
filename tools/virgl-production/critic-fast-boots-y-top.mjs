@@ -12,9 +12,11 @@ function resource(id,target,format,bind,width,height,flags=0){
 function display(opcode){const bytes=header(opcode,0,48);[0,0,12,12].forEach((v,i)=>put(bytes,24+i*4,v));put(bytes,opcode===0x103?44:40,1);return bytes;}
 const vertex='VERT\nDCL IN[0]\nDCL IN[1]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\n0: MOV OUT[0], IN[0]\n1: MOV OUT[1], IN[1]\n2: END\n';
 const fragment='FRAG\nDCL IN[0], GENERIC[0], CONSTANT\nDCL OUT[0], COLOR\n0: MOV OUT[0], IN[0]\n1: END\n';
-async function one(Wasm,qualification,gl,compiler,flags){
-  const c=checker(),frames=[],row={name:'original-draw-scanout-y-origin-'+flags,flags,predictions:{
-    screen:'Clip-space positiveY green appears in every top-half display pixel and negativeY red in every bottom-half display pixel, for either resource storage origin.'}};
+async function one(Wasm,qualification,gl,compiler,flags,viewportSign,cullFace,frontCcw){
+  const expectedFrontCcw=frontCcw !== (flags===0),visible=cullFace!==2||expectedFrontCcw===(viewportSign===1),redTop=(flags===0)===(viewportSign===1);
+  const c=checker(),frames=[],row={name:'original-scanout-origin'+flags+'-viewport'+viewportSign+'-cull'+cullFace+'-front'+Number(frontCcw),flags,viewportSign,cullFace,frontCcw,
+    predictions:{screen:'Pinned VirGL1.3.0 and QEMU7.2 SDL GL scanout: flag0 reads raw row0 at screen top, flag1 reads raw last row. Viewport sign alone flips vertex Y; front_ccw XOR lower-left origin determines actual front winding.',visible,redTop},
+    reference:{virglRevision:'ca50e008863837e094747a69974dde3ae148aeaa',nativeReference:'target/evidence/production-integration-orientation/native-origin-reference/run-03.stdout',nativeReferenceSha256:'bbd234d53f1ed80cb2300d03ff4217d118dfe32c023dc87473ba6353f49bea38',qemuTag:'v7.2.0',primaryPoints:'vrend_renderer.c3228,3323,6678; ui/sdl2-gl.c240; ui/egl-helpers.c91-119'}};
   const painted=document.createElement('canvas');painted.width=painted.height=12;
   const presenter=createWorkerScanoutPresenter(frame=>{
     frames.push(copy(frame));
@@ -50,17 +52,20 @@ async function one(Wasm,qualification,gl,compiler,flags){
     await rig.expect('origin original asymmetric GPU draw',submission(1,join(
       shader(10,0,vertex),shader(11,1,fragment),packet(31,0,[10,0]),packet(31,0,[11,1]),
       packet(1,5,[12,0,0,0,31,16,0,0,31]),packet(2,5,[12]),packet(6,0,[32,0,5]),
-      packet(1,8,[20,1,67,0,0]),packet(5,0,[1,0,20]),packet(4,0,[0,...[6,6,.5,6,6,.5].map(word)]),
-      packet(1,2,[40,2|1<<29,word(1),0,0xffff,word(1),0,0,0]),packet(2,2,[40]),
+      packet(1,8,[20,1,67,0,0]),packet(5,0,[1,0,20]),packet(4,0,[0,...[6,6*viewportSign,.5,6,6,.5].map(word)]),
+      packet(1,1,[30,0,0,15<<27,0,0,0,0,0,0,0]),packet(2,1,[30]),
+      packet(7,0,[4,word(0),word(0),word(1),word(1),0,0x3fe00000,0]),
+      packet(1,2,[40,2|1<<29|cullFace<<8|(frontCcw?1<<15:0),word(1),0,0xffff,word(1),0,0,0]),packet(2,2,[40]),
       packet(8,0,[0,12,4,0,1,0,0,0,0,0,0xffffffff,0])),109n));
     await rig.expect('origin original scanout bind',display(0x103));
     await rig.expect('origin original scanout capture',display(0x104));
     const captured=frames.findLast(frame=>Array.isArray(frame.pixels));row.frame=captured;
     c.truth(captured,'actual worker presenter receives original GPU pixels');
     c.equal(captured.pixels.length,144,'full physical display pixels');
+    c.equal(rig.host.bridge.inspect().scanout.rowMoveBytes,flags===1?576:0,'production row accounting counts only actual flag1 row reversal');
     row.canvasPixels=[...painted.getContext('2d').getImageData(0,0,12,12).data];
     for(let y=0;y<12;y++)for(let x=0;x<12;x++)
-      c.equal(captured.pixels[y*12+x],y<6?0xff00ff00:0xffff0000,'independent display top/bottom at'+x+','+y);
+      c.equal(captured.pixels[y*12+x],visible?((y<6)===redTop?0xffff0000:0xff00ff00):0xff0000ff,'reference display orientation and culling at'+x+','+y);
     row.status='passed';
   }catch(error){row.status='failed';row.failure={message:error.message,stack:error.stack};}
   finally{
@@ -74,6 +79,6 @@ async function one(Wasm,qualification,gl,compiler,flags){
 export async function runProductionOriginCritic({WasmVirglSubmitProof}){
   const gl=document.querySelector('#gpu').getContext('webgl2',{antialias:false,failIfMajorPerformanceCaveat:true}),qualification=await qualifyVirglHost(gl),compiler=await createVirglStandardStreamOutputShaderBridge();
   const report={status:'running',qualification:copy(qualification),rows:[],actualLinuxGuest:false};window.__productionCriticReport=report;
-  for(const flags of [0,1]){const row=await one(WasmVirglSubmitProof,qualification,gl,compiler,flags),pin=await window.__recordProductionCriticRun(report.rows.length,JSON.stringify(row));report.rows.push({...pin,name:row.name,status:row.status,...(row.failure?{failure:row.failure}:{})});}
+  for(const flags of [0,1])for(const viewportSign of [1,-1])for(const [cullFace,frontCcw] of [[0,false],[2,false],[2,true]]){const row=await one(WasmVirglSubmitProof,qualification,gl,compiler,flags,viewportSign,cullFace,frontCcw),pin=await window.__recordProductionCriticRun(report.rows.length,JSON.stringify(row));report.rows.push({...pin,name:row.name,status:row.status,...(row.failure?{failure:row.failure}:{})});}
   report.status=report.rows.every(row=>row.status==='passed')?'passed':'failed';report.summary={status:report.status,runs:report.rows.length,failed:report.rows.filter(row=>row.status!=='passed'),hardware:qualification.identity};return report;
 }

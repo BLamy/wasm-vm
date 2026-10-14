@@ -272,6 +272,34 @@ fn request(ty: u32, context: u32, words: &[u32]) -> Vec<u8> {
     }
     out
 }
+
+#[cfg(feature = "gpu-trace")]
+#[test]
+fn original_rejected_transfer_trace_keeps_literal_payload_without_host_effects() {
+    let mut r = Rig::qualified();
+    r.negotiate(true);
+    r.configure(0);
+    r.state.borrow_mut().enable_command_trace();
+    let words = [1, 2, 0, 3, 4, 1, 0xffff_fffc, 1, 777, 0, 12, 48];
+    for ty in [p::CMD_TRANSFER_TO_HOST_3D, p::CMD_TRANSFER_FROM_HOST_3D] {
+        r.publish(0, &request(ty, 0, &words), 24);
+        let response = r.response(0, 24);
+        let row = *r.state.borrow().command_trace().last().unwrap();
+        assert_eq!(row.command_type, ty);
+        assert_eq!(row.response_type, word(&response, 0));
+        assert!(row.response_type >= p::RESP_ERR_UNSPEC);
+        assert_eq!(row.resource_id, Some(777));
+        assert_eq!(row.transfer_words, Some(words));
+        assert!(r.submits.0.borrow().is_empty());
+        assert!(r.controls.events.borrow().is_empty());
+    }
+    r.publish(0, &request(p::CMD_TRANSFER_TO_HOST_3D, 0, &[1, 2]), 24);
+    r.response(0, 24);
+    let row = *r.state.borrow().command_trace().last().unwrap();
+    assert_eq!(row.transfer_words, None, "short SG body is not invented");
+    assert_eq!(row.resource_id, None);
+    assert_eq!(r.state.borrow().command_trace_dropped(), 0);
+}
 fn context(id: u32) -> Vec<u8> {
     let mut out = request(p::CMD_CTX_CREATE, id, &[0, 0]);
     out.resize(96, 0);

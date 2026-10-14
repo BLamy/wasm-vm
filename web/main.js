@@ -2295,22 +2295,33 @@ window.wvmDemo = {
       // serialized machine describe one coherent filesystem rather than a RAM-only write.
       const overlayStable = (stats) => !stats ||
         (Number(stats.pendingBlocks || 0) === 0 && !stats.flushWaiting && !stats.writeWaiting);
-      if (controller.persist) {
-        for (let attempt = 0; attempt < 20; attempt += 1) {
-          await controller.persist();
-          if (!controller.persistStats) break;
-          const stats = await controller.persistStats();
-          if (overlayStable(stats)) {
-            // A guest WRITE can enqueue its overlay block in the tick that delivered the fenced
-            // command marker. Require a second idle sample after yielding so that late queue work
-            // cannot advance the generation immediately after the snapshot is recorded.
-            await new Promise((resolve) => setTimeout(resolve, 50));
-            if (overlayStable(await controller.persistStats())) break;
+      for (let snapshotAttempt = 0; snapshotAttempt < 20; snapshotAttempt += 1) {
+        if (controller.persist) {
+          for (let attempt = 0; attempt < 20; attempt += 1) {
+            await controller.persist();
+            if (!controller.persistStats) break;
+            const stats = await controller.persistStats();
+            if (overlayStable(stats)) {
+              // A guest WRITE can enqueue its overlay block in the tick that delivered the fenced
+              // command marker. Require a second idle sample after yielding so that late queue work
+              // cannot advance the generation immediately after the snapshot is recorded.
+              await new Promise((resolve) => setTimeout(resolve, 50));
+              if (overlayStable(await controller.persistStats())) break;
+            }
+            await new Promise((resolve) => setTimeout(resolve, 25));
           }
+        }
+        try {
+          await controller.snapshotSave();
+          break;
+        } catch (error) {
+          // Core quiescence may acknowledge the durable WRITE and then park
+          // the next queued WRITE. Flush that new batch before trying again;
+          // preserve its refusal until the disk/RAM pair is actually coherent.
+          if (snapshotAttempt === 19 || !String(error?.message || error).startsWith("not_quiesced:")) throw error;
           await new Promise((resolve) => setTimeout(resolve, 25));
         }
       }
-      await controller.snapshotSave();
       const state = await this.snapshotStatus();
       return { ok: true, elapsedMs: performance.now() - started, ...state };
     } catch (error) {

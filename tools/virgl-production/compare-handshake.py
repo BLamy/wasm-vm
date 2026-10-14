@@ -45,8 +45,11 @@ mapping = {"get_cap_set": [0x108], "fill_caps": [0x109], "context_create": [0x20
            "context_create_with_flags": [0x200], "resource_create": [0x101, 0x204],
            "resource_attach_iov": [0x106], "ctx_attach_resource": [0x202],
            "transfer_write_iov": [0x105, 0x205], "submit_cmd": [0x207],
-           "ctx_detach_resource": [0x203], "resource_detach_iov": [0x107],
+           "ctx_detach_resource": [0x203], "resource_detach_iov": [0x107, 0x102],
            "resource_unref": [0x102], "context_destroy": [0x201]}
+# QEMU's API recorder observes detach inside virgl_cmd_resource_unref even
+# when the guest sends no RESOURCE_DETACH_BACKING. Compare that original UNREF
+# as the same lifecycle family instead of requiring a nonexistent guest packet.
 original_counts = Counter(row["type"] for row in reference if row.get("phase") == "enter")
 guest_counts = Counter(row["type"] for row in commands)
 coverage = {}
@@ -88,6 +91,9 @@ assert reference_ops[8] > 0 and guest_ops[8] >= 1000 and fences > 0
 report = {"status": "passed", "scope": "original control/initialization families and correctly framed DRAW_VBO, order-independent; caps are independently qualified rather than copied from QEMU",
           "referenceManifestSha256": hash_file(a.reference / "manifest.json"), "guestAcceptanceSha256": hash_file(a.guest / "acceptance.json"),
           "guestCommandLogSha256": hash_file(a.guest / "gpu.ndjson"), "coverage": coverage,
+          "implicitDetach": {"guestOpcode": "RESOURCE_UNREF (0x102)",
+            "referencePoint": "QEMU v7.2.0 hw/display/virtio-gpu-virgl.c:82; virgl_cmd_resource_unref calls resource_detach_iov before resource_unref",
+            "source": "https://github.com/qemu/qemu/blob/v7.2.0/hw/display/virtio-gpu-virgl.c#L82"},
           "referenceOpcodes": dict(reference_ops), "guestOpcodes": dict(guest_ops), "guestFencedSubmissions": fences}
 a.output.write_text(json.dumps(report, indent=2) + "\n")
 print(json.dumps({"status": report["status"], "families": len(coverage), "draws": guest_ops[8]}))
