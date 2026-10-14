@@ -3,7 +3,7 @@ id: E6-T11d69a
 epic: 6
 title: Provide original boolean GPU query lifetimes and guest results
 priority: 525.027037
-status: in-progress
+status: implemented
 depends_on: [E6-T11d68]
 estimate: S
 risk: high
@@ -107,3 +107,31 @@ native getter GL-error. Faults remain active for two refused original polls
 without result publication; after removal, a new validated native0 publishes
 exact DONE1/size4/false0/high0. All native owners/syncs and browser errors are0.
 The failed old runtime and independently repeated failure remain preserved.
+
+### 2026-10-14 — worker — final exact-head submission
+
+Runtime head `7eef61fe41d050f3f128f6dff4c88a52c4a0b1cc`. Commands:
+`python3 tools/virgl-production/verify-boolean-queries.py --output
+target/evidence/production-boolean-queries-frozen02` and
+`python3 tools/virgl-production/cold.py --task E6-T11d69a --output
+target/evidence/production-boolean-queries-cold01`. Both pass all11 gates;
+the cold proof uses an ordinary full-history clone without hardlinks and a
+scrubbed proving environment, local `make web-dist` and full
+`make verify-E6-T11d69a`, with no carry.390 native tests, typed ABI/original
+transport, affected core/wasm clippy/build,7 worker physical cases,5 promoted
+critic rows (~2million assertions), historical private replay and default
+demo127passed/0failed/proof exports absent/zero errors all pass.
+
+Reopened worker seal `evidence/virgl-production-boolean-queries/worker/exact-head-query-submission-and-cold.tar.gz`,
+SHA256`28f17e3938b135f00207055d9922de053fc0997543558507e77b32925c03532d`, 1023 exact paired identities. It includes
+both frozen runs, final clean clone outputs/captures (checkout excluded),
+complete actual ordinary guest GPU recording, immutable intermediate default
+dist and the independent C source/build/binary. Actual real-Mesa C/public
+pixels used nominal runtime9ef83920 before the fault-only transactional repair;
+its valid-host observations are independently held, while final exact-head
+original hardware proofs exercise the repaired hunk and all three rejected
+getter paths. The ordinary capture is a parent negative: early bar assertion,
+then visible readable package bar/Foot, failed keyboard marker, and a later
+confirmed fullscreen screensaver with baralpha0. Those failures remain intact;
+this task claims boolean queries, safe native reads/publication and ownership
+only. Fresh verdict/status is independent; TF and full desktop remain gated.
