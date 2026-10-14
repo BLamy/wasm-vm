@@ -2606,3 +2606,7 @@ verify-E6-T11d65:
 .PHONY: verify-E6-T11d66
 verify-E6-T11d66:
 	python3 tools/virgl-stream-output-capture/verify.py --output "$${VIRGL_STREAM_OUTPUT_CAPTURE_EVIDENCE_DIR:-target/evidence/stream-output-capture-final}"
+
+.PHONY: verify-E6-T11d70
+verify-E6-T11d70:
+	python3 tools/virgl-production/verify-fragmented-backing.py --output "$${VIRGL_FRAGMENTED_BACKING_EVIDENCE_DIR:-target/evidence/production-fragmented-backing-final}"

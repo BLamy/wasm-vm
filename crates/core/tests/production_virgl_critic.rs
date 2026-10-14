@@ -101,6 +101,7 @@ struct Rig {
     submits: SubmitRecorder,
     mailbox: Submit3dMailbox,
     next: [u16; 2],
+    request_base: u64,
 }
 impl Rig {
     fn unqualified() -> Self {
@@ -122,6 +123,7 @@ impl Rig {
             submits: SubmitRecorder::default(),
             mailbox: Submit3dMailbox::new(),
             next: [0; 2],
+            request_base: REQUEST,
         }
     }
     fn qualified() -> Self {
@@ -176,7 +178,7 @@ impl Rig {
         for (i, b) in request.iter().enumerate() {
             self.machine
                 .bus_mut()
-                .store8(REQUEST + delta + i as u64, *b)
+                .store8(self.request_base + delta + i as u64, *b)
                 .unwrap();
         }
         for i in 0..1600 {
@@ -186,7 +188,7 @@ impl Rig {
                 .unwrap();
         }
         for (index, address, len, flags, next) in [
-            (0, REQUEST + delta, request.len(), 1, 1),
+            (0, self.request_base + delta, request.len(), 1, 1),
             (1, RESPONSE + delta, capacity, 2, 0),
         ] {
             let at = DESC + delta + index * 16;
@@ -705,6 +707,7 @@ fn historical_renderer_proofs_cannot_publish_positive_production_capsets() {
         submits,
         mailbox,
         next: [0; 2],
+        request_base: REQUEST,
     };
     assert_eq!(
         r.read_mmio(0x10c),
@@ -1263,4 +1266,92 @@ fn capset_header_and_body_cross_original_scatter_gather_boundaries() {
     }
     assert_eq!(word(&body, 0), p::RESP_OK_CAPSET);
     assert_eq!(&body[24..], caps().to_bytes());
+}
+
+#[test]
+fn original_production_fragmented_backing_counts_are_bounded_and_atomic() {
+    for count in [0usize, 256, 257, 420, 16_384, 16_385] {
+        let mut r = Rig::qualified();
+        r.request_base = virt::DRAM_BASE + 0x600000;
+        r.negotiate(true);
+        r.configure(0);
+        r.command(
+            &request(
+                p::CMD_RESOURCE_CREATE_3D,
+                0,
+                &[77, 0, 64, 16, 65536, 1, 1, 1, 0, 0, 0, 0],
+            ),
+            24,
+            p::RESP_OK_NODATA,
+            24,
+        );
+        let mut bytes = request(p::CMD_RESOURCE_ATTACH_BACKING, 0, &[77, count as u32]);
+        for i in 0..count {
+            let address = BACKING + i as u64 * 16;
+            let literal = [i as u8, (i >> 8) as u8, 0x3f, 0x7b];
+            for (j, value) in literal.iter().enumerate() {
+                r.machine
+                    .bus_mut()
+                    .store8(address + j as u64, *value)
+                    .unwrap();
+            }
+            bytes.extend_from_slice(&address.to_le_bytes());
+            bytes.extend_from_slice(&4u32.to_le_bytes());
+            bytes.extend_from_slice(&0u32.to_le_bytes());
+        }
+        let valid = count > 0 && count <= 16_384;
+        r.command(
+            &bytes,
+            24,
+            if valid {
+                p::RESP_OK_NODATA
+            } else {
+                p::RESP_ERR_INVALID_PARAMETER
+            },
+            24,
+        );
+        let state = r.state.borrow().control3d_snapshot().unwrap();
+        assert_eq!(
+            state.backing_bytes,
+            if valid { count as u64 * 4 } else { 0 }
+        );
+        assert_eq!(state.next_backing_generation, if valid { 2 } else { 1 });
+        assert_eq!(
+            state.resources[0].backing.as_ref().map(Vec::len),
+            if valid { Some(count) } else { None }
+        );
+        if valid {
+            let events = r.controls.events.borrow();
+            let Control3dOperation::AttachBacking { segments, .. } =
+                &events.last().unwrap().operation
+            else {
+                panic!("missing original attachment");
+            };
+            assert_eq!(segments.len(), count);
+            for (i, segment) in segments.iter().enumerate() {
+                assert_eq!(segment.addr, BACKING + i as u64 * 16);
+                assert_eq!(segment.length, 4);
+                assert_eq!(segment.bytes, [i as u8, (i >> 8) as u8, 0x3f, 0x7b]);
+            }
+        } else {
+            assert_eq!(
+                r.controls.events.borrow().len(),
+                1,
+                "refusal never publishes a partial attachment"
+            );
+            r.command(&backing(77), 24, p::RESP_OK_NODATA, 24);
+            assert_eq!(
+                r.state.borrow().control3d_snapshot().unwrap().backing_bytes,
+                24
+            );
+        }
+        let mut trace = HashSink::default();
+        assert_eq!(r.machine.run_traced(1, &mut trace), RunOutcome::MaxInstrs);
+        eprintln!(
+            "ORIGINAL_SG count={count} valid={valid} retired={} trace={:016x} state={}",
+            trace.retired(),
+            trace.hash(),
+            state.hex_digest()
+        );
+    }
 }

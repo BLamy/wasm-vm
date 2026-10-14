@@ -1,5 +1,5 @@
 /** Explicit proof-only VirtIO bridges. Ordinary device negotiation is unchanged. */
-import { createResourceStore, createProductionResourceStore, createProductionTransferBackend, createWebGL2TransferBackend, createStandardDesktopResourceStore, createStandardPackedDepthTransferBackend, createStandardDimensionalResourceStore, createStandardDimensionalTransferBackend, createStandardDimensionalViewResourceStore, createStandardDimensionalViewTransferBackend, createStandardDimensionalDepthResourceStore, createStandardDimensionalDepthTransferBackend, createStandardDimensionalDepthViewResourceStore, createStandardDimensionalColorSurfaceResourceStore, createStandardDimensionalDepthSurfaceResourceStore, createStandardStreamOutputResourceStore, createStandardDimensionalDepthViewTransferBackend } from './resources.mjs';
+import { PRODUCTION_RESOURCE_LIMITS, createResourceStore, createProductionResourceStore, createProductionTransferBackend, createWebGL2TransferBackend, createStandardDesktopResourceStore, createStandardPackedDepthTransferBackend, createStandardDimensionalResourceStore, createStandardDimensionalTransferBackend, createStandardDimensionalViewResourceStore, createStandardDimensionalViewTransferBackend, createStandardDimensionalDepthResourceStore, createStandardDimensionalDepthTransferBackend, createStandardDimensionalDepthViewResourceStore, createStandardDimensionalColorSurfaceResourceStore, createStandardDimensionalDepthSurfaceResourceStore, createStandardStreamOutputResourceStore, createStandardDimensionalDepthViewTransferBackend } from './resources.mjs';
 import { createRetainedScanout, normalizeScanoutEvent } from './scanout.mjs';
 import { createVirglStateRenderer, createVirglAsyncRenderer, createVirglStandardShadowSamplerAsyncRenderer, createVirglStandardDimensionalAsyncRenderer, createVirglStandardDimensionalViewAsyncRenderer, createVirglStandardDimensionalDepthViewAsyncRenderer, createVirglStandardDimensionalShadowAsyncRenderer, createVirglStandardDimensionalColorSurfaceAsyncRenderer, createVirglStandardDimensionalDepthSurfaceAsyncRenderer, createVirglStandardStreamOutputAsyncRenderer, createVirglProductionAsyncRenderer } from './state.mjs';
 
@@ -43,7 +43,7 @@ const shapes = Object.freeze({
   detachBacking: ['resource'], unrefResource: ['resource'], reset: [],
 });
 const META = ['id', 'target', 'format', 'bind', 'width', 'height', 'depth', 'arraySize', 'lastLevel', 'nrSamples', 'flags'];
-function normalize(input, asynchronous = false, byteLimit = 4194304) {
+function normalize(input, asynchronous = false, byteLimit = 4194304, segmentLimit = 256) {
   const common = record(input, ['epoch', 'type', 'context', 'resource', 'metadata', 'debugName', 'segments', 'backingGeneration'], ['epoch', 'type']);
   need(typeof common.type === 'string' && Object.hasOwn(shapes, common.type), 'invalid-parameter', 'Unknown control operation.');
   const required = ['epoch', 'type', ...shapes[common.type]];
@@ -63,7 +63,7 @@ function normalize(input, asynchronous = false, byteLimit = 4194304) {
     need(event.metadata.id === event.resource.id, 'invalid-parameter', 'Metadata identity differs.');
   }
   if (event.type === 'attachBacking') {
-    need(Array.isArray(event.segments) && event.segments.length > 0 && event.segments.length <= 256,
+    need(Array.isArray(event.segments) && event.segments.length > 0 && event.segments.length <= segmentLimit,
       'invalid-parameter', 'Invalid backing segment count.');
     let total = 0;
     event.segments = event.segments.map((value) => {
@@ -342,7 +342,7 @@ function createBridge(options, asynchronous, scanoutEnabled = false, desktop = f
         busy = true;
         let event;
         try {
-          try { event = scanoutEnabled && ['bindScanout','beginScanout'].includes(Object.getOwnPropertyDescriptor(input, 'type')?.value) ? normalizeScanoutEvent(input, production) : asynchronous && (Object.getOwnPropertyDescriptor(input, 'type')?.value === 'beginJob' || Object.getOwnPropertyDescriptor(input, 'type')?.value === 'cancelJob') ? normalizeJob(input, desktop ? 64 : 16, byteLimit, production) : normalize(input, asynchronous, byteLimit); }
+          try { event = scanoutEnabled && ['bindScanout','beginScanout'].includes(Object.getOwnPropertyDescriptor(input, 'type')?.value) ? normalizeScanoutEvent(input, production) : asynchronous && (Object.getOwnPropertyDescriptor(input, 'type')?.value === 'beginJob' || Object.getOwnPropertyDescriptor(input, 'type')?.value === 'cancelJob') ? normalizeJob(input, desktop ? 64 : 16, byteLimit, production) : normalize(input, asynchronous, byteLimit, production ? PRODUCTION_RESOURCE_LIMITS.segments : 256); }
           catch (error) { return fail(error instanceof Fault ? error.code : 'invalid-parameter', 'Malformed control event.'); }
           if (event.type === 'reset') {
             need(BigInt('0x' + event.epoch) === BigInt('0x' + epoch) + 1n, 'invalid-parameter', 'Reset epoch must advance once.');

@@ -54,3 +54,24 @@ attachment rejected with0x1205 and the shared256 limit at
 MMIO reproduction distinguishes count admission from malformed source entries.
 The parent is not complete; old failures and original SG validity remain
 preserved rather than inferred harmless.
+
+### 2026-10-14 — worker — implementation and narrow prechecks
+
+Select16384 only for qualified production in Rust, original control-event
+normalization and the retained resource store; private ceilings remain256.
+All original range/padding/packet/byte/generation checks are unchanged.
+Native original MMIO tests pass0/256/257/420/16384/16385 with literal copied
+segments, exact responses and full canonical state digests. Hardware precheck05
+passes16 cases: full guarded GPU roundtrips at256/257/420/16384; excess/empty,
+truncated packet, final padding/zero length/outside-RAM and byte-budget rejects;
+post-refusal valid attachment retains generation1; private Rust and private JS
+bridge256/257 boundaries; tightened host ceiling. The host cannot raise16384.
+Precheck01's method-name typo, precheck02's missing bridge selector and
+precheck03's wrong tightened-limit expected response are preserved negatives;
+precheck05 is the final narrow passing loop, not risk-tier submission.
+The critic's independent split-tail fixture is promoted separately, unchanged,
+and included in the frozen acceptance before one final clean clone.
+Commands/logs: `target/production-fragmented-native-precheck02.{stdout,stderr}`,
+`target/evidence/production-fragmented-backing-precheck05`; `make web-dist`
+passed with production sources mirrored into the committed ordinary browser.
+Parent integration, actual final Omarchy, recovery and deployment remain gated.

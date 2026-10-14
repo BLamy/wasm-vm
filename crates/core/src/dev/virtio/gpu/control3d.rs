@@ -15,6 +15,8 @@ pub const MAX_CONTEXTS: usize = 8;
 pub const MAX_RESOURCES: usize = 16;
 pub const MAX_DESKTOP_RESOURCES: usize = 64;
 pub const MAX_BACKING_ENTRIES: usize = 256;
+/// Bounded original Linux page-fragmented lists; private proof profiles stay256.
+pub const MAX_PRODUCTION_BACKING_ENTRIES: usize = 16_384;
 pub const MAX_RESOURCE_BYTES: u64 = 4 * 1024 * 1024;
 pub const MAX_GPU_BYTES: u64 = 32 * 1024 * 1024;
 pub const MAX_BACKING_BYTES: u64 = 32 * 1024 * 1024;
@@ -690,6 +692,13 @@ impl Control3dState {
         state.production_limits = true;
         state
     }
+    fn backing_entries_limit(&self) -> usize {
+        if self.production_limits {
+            MAX_PRODUCTION_BACKING_ENTRIES
+        } else {
+            MAX_BACKING_ENTRIES
+        }
+    }
     fn resource_limit(&self) -> u64 {
         if self.production_limits {
             32 * 1024 * 1024
@@ -1060,7 +1069,7 @@ impl Control3dState {
             .ok_or(Control3dError::OutOfMemory)?;
         let count = word(&bytes, 28) as usize;
         if count == 0
-            || count > MAX_BACKING_ENTRIES
+            || count > self.backing_entries_limit()
             || readable_len(chain) != Some(32 + count as u64 * 16)
         {
             return Err(Control3dError::InvalidParameter);

@@ -193,6 +193,7 @@ export const RESOURCE_LIMITS = Object.freeze({
 export const STANDARD_DESKTOP_RESOURCE_LIMITS = Object.freeze({ ...RESOURCE_LIMITS, resources: 64 });
 export const STANDARD_DIMENSIONAL_RESOURCE_LIMITS = Object.freeze({ ...STANDARD_DESKTOP_RESOURCE_LIMITS, ...DIMENSIONAL_LIMITS });
 export const PRODUCTION_RESOURCE_LIMITS = Object.freeze({ ...STANDARD_DIMENSIONAL_RESOURCE_LIMITS,
+  segments: 16384,
   resourceBytes: 33554432, transferBytes: 33554432, cpuBytes: 201326592,
   gpuBytes: 134217728, scratchBytes: 67108864 });
 const U32 = 0xffffffff;
