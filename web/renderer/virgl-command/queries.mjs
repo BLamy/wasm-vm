@@ -72,6 +72,12 @@ export function createBooleanQueries(gl, resources, require, unwrap, check) {
       }
       if (object.queryParts.some(part => !part.available)) return false;
       const value = object.fields.queryType === 6 ? object.queryParts.reduce((sum, part) => sum + part.result / part.divisor, 0) : object.queryParts.some(part => part.result) ? 1 : 0;
+      if (!Number.isInteger(value) || value > 0xffffffff) {
+        // The available native parts cannot represent an original result.
+        // Quarantine this logical query before refusing it once; a cached
+        // invalid aggregate must not fail unrelated owners' later jobs.
+        object.queryRequested = false; object.queryState = 'invalid'; clear(object);
+      }
       require(Number.isInteger(value) && value <= 0xffffffff, 'backend-error', 'Original query counter exceeds its result width.');
       unwrap(resources.publishQueryStorage(object.lease, 1, value)); object.queryValue = value;
       object.queryRequested = false; object.queryState = 'ready'; clear(object); return true;
