@@ -32,14 +32,23 @@ export async function verifyPublicDesktopInput(page, command, output, options = 
   };
   const uid = await read('id -u');
   assert.equal(uid, '1000', 'the public serial session belongs to Omarchy');
-  const layers = JSON.parse(await read('XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers'));
-  const mapped = [];
+  let layers, mapped;
   const visit = value => {
     if (!value || typeof value !== 'object') return;
     if (value.namespace && value.w > 0 && value.h > 0 && value.pid > 0) mapped.push(value);
     for (const child of Object.values(value)) if (child && typeof child === 'object') visit(child);
   };
-  visit(layers);
+  // Desktop-ready is a compositor milestone. The package's independent bar
+  // process can still be compiling its first frame when that milestone fires.
+  // Observe actual mapping/alpha, with a bounded deadline; never force startup.
+  const barDeadline = Date.now() + 360000;
+  do {
+    layers = JSON.parse(await read('XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j layers'));
+    mapped = []; visit(layers);
+    if (mapped.some(layer => layer.namespace === 'omarchy-bar' && layer.alpha > 0)) break;
+    await record('waiting-package-bar', {uid, layers});
+    await new Promise(resolve => setTimeout(resolve, 1500));
+  } while (Date.now() < barDeadline);
   assert.ok(mapped.some(layer => layer.namespace === 'omarchy-bar' && layer.alpha > 0),
     'actual package bar is mapped and visible');
   let clients, foot;

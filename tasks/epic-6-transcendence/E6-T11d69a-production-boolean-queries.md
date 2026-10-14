@@ -74,3 +74,36 @@ invalid states/types/private admission, resource span/role/detach/reuse and rese
 An additional actual WEBGL_lose_context pending-query run passes uncertain GPU
 completion/no fabricated guest result and zero owners. These are worker checks;
 the frozen full submission and independent evidence review remain outstanding.
+
+### 2026-10-14 — worker — fresh native-result refutation repaired
+
+Fresh original-MMIO verifier reproduced a real query getter fault observer:
+the actual empty result0 was observed, then invalid2 deliberately delivered.
+GET correctly rejected it, but available/result fields had already mutated;
+a later FROM_HOST read skipped validation and published DONE/true. Source9ef83920,
+queries.mjs53–57; independent novel02 run0002 and independent schedule271828
+both reproduce the issue. The repair commits availability and result together
+only after both actual native getter values validate. Rejected values remain
+pending and are re-read on retry. Healthy interleaving, actual4096/4097 native
+budget/refusal/cleanup and actual guest GLES six-case pixel results are held.
+Runtime changed, so the selected full risk-tier gates are re-earned on the
+new frozen head; final cold proof has not run yet.
+
+### 2026-10-14 — worker — actual GLES and promoted repair proof
+
+Actual ordinary image12/default Wasm capture production-omarchy-gpu-boolean01
+runs the independent compiled RISC-V probe (ELFec3f014b6dac36f4d5838b6163da92110b37e059e783dc7f0092fff46570cc0b,
+20,544bytes) through the original public serial controller. Its guest sha256sum
+matches; renderer is virgl/OpenGL ES3.0 Mesa26.2.2. Allsix visible/depth-rejected/
+empty cases return available correct actual native results and16/16 literal
+pixels, probeexit0. Optional SamplesPassed and TimeElapsed return INVALID_ENUM.
+Original control commands, guest response and GPU packets remain recorded.
+This boolean/API claim is held independently; full desktop input remains parent.
+
+Promoted fresh original-MMIO proof passes five rows after the transactional
+repair: healthy interleaving, actual4096 native parts/4097 no-effect refusal
+and complete retirement, repeatedly invalid result, invalid availability and
+native getter GL-error. Faults remain active for two refused original polls
+without result publication; after removal, a new validated native0 publishes
+exact DONE1/size4/false0/high0. All native owners/syncs and browser errors are0.
+The failed old runtime and independently repeated failure remain preserved.
