@@ -19,6 +19,7 @@ const clean = value => JSON.parse(JSON.stringify(value, (_, v) => ArrayBuffer.is
 
 export async function qualifyVirglHost(gl) {
   if (!gl || gl.isContextLost()) throw Error('Hardware WebGL2 is unavailable');
+  if (!['createQuery','beginQuery','endQuery','getQueryParameter','deleteQuery'].every(name => typeof gl[name] === 'function')) throw Error('Native boolean queries are unavailable');
   if (!gl.getExtension('OES_texture_float_linear')) throw Error('Qualified Mesa requires native floating texture linear filtering');
   const debug = gl.getExtension('WEBGL_debug_renderer_info');
   const identity = String(debug ? gl.getParameter(debug.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER));
@@ -62,7 +63,7 @@ export async function qualifyVirglHost(gl) {
       const result={program,source};programs.set(key,result);return result;
     }catch(error){gl.deleteProgram(program);throw error;}finally{for(const shader of shaders)gl.deleteShader(shader);}
   };
-  let sync=null;
+  let sync=null; const queryProbes=[];
   try {
     unwrap(store.createContext(1));
     gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,output);gl.texStorage2D(gl.TEXTURE_2D,1,gl.RGBA8,1,1);
@@ -144,6 +145,11 @@ export async function qualifyVirglHost(gl) {
       }
       if (mask) roles.push(format, mask);
     }
+    for (const target of [gl.ANY_SAMPLES_PASSED, gl.ANY_SAMPLES_PASSED_CONSERVATIVE]) {
+      const native=gl.createQuery();if(!native)throw Error('Qualification query allocation failed');
+      queryProbes.push({target,native});gl.beginQuery(target,native);gl.endQuery(target);
+      if(gl.getError()!==gl.NO_ERROR)throw Error('Physical boolean query admission failed');
+    }
     sync=gl.fenceSync(gl.SYNC_GPU_COMMANDS_COMPLETE,0);if(!sync)throw Error('Qualification fence allocation failed');gl.flush();
     const deadline=performance.now()+5000;
     for(;;){await new Promise(resolve=>setTimeout(resolve,0));const result=gl.clientWaitSync(sync,0,0);if(result===gl.ALREADY_SIGNALED||result===gl.CONDITION_SATISFIED)break;if(result===gl.WAIT_FAILED||performance.now()>deadline)throw Error('Qualification GPU fence failed');}
@@ -152,7 +158,14 @@ export async function qualifyVirglHost(gl) {
       entry.probe.pixel=[...bytes.subarray(i*4,i*4+4)];
       if(entry.probe.pixel[0]!==entry.expected||entry.probe.pixel[1]!==0||entry.probe.pixel[2]!==0||entry.probe.pixel[3]!==255)throw Error('Qualification pixel oracle failed: '+JSON.stringify(entry.probe));
     }
+    for(const probe of queryProbes) {
+      probe.available=gl.getQueryParameter(probe.native,gl.QUERY_RESULT_AVAILABLE);
+      if(probe.available!==true)throw Error('Qualification query did not become available');
+      probe.result=gl.getQueryParameter(probe.native,gl.QUERY_RESULT);
+      if(probe.result!==0)throw Error('Empty physical query did not return zero');
+    }
   } finally {
+    for(const probe of queryProbes) {gl.deleteQuery(probe.native);delete probe.native;}
     if(sync)gl.deleteSync(sync);gl.bindBuffer(gl.PIXEL_PACK_BUFFER,null);gl.bindFramebuffer(gl.FRAMEBUFFER,null);gl.bindVertexArray(null);gl.useProgram(null);
     for(const p of programs.values())gl.deleteProgram(p.program);gl.deleteBuffer(buffer);gl.deleteTexture(output);gl.deleteFramebuffer(framebuffer);gl.deleteVertexArray(vao);unwrap(store.dispose());
   }
@@ -163,7 +176,7 @@ export async function qualifyVirglHost(gl) {
   }
   if (gl.getError() !== gl.NO_ERROR || gl.isContextLost()) throw Error('GPU qualification failed');
   return Object.freeze({hostWords,formatRoles:Uint32Array.from(roles),identity,
-    renderer: 'wasm-vm WebGL2 VirGL',probes,multisample,limits:Object.fromEntries(names.map((name, i) => [name,hostWords[i]]))});
+    renderer: 'wasm-vm WebGL2 VirGL',probes,queryProbes,multisample,limits:Object.fromEntries(names.map((name, i) => [name,hostWords[i]]))});
 }
 
 /** Bounded retained presentation across the worker/page boundary. */
