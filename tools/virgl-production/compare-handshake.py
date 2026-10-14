@@ -6,6 +6,8 @@ import hashlib
 import json
 from pathlib import Path
 import struct
+import tarfile
+import tempfile
 
 p = argparse.ArgumentParser(description=__doc__)
 p.add_argument("--reference", required=True, type=Path)
@@ -13,6 +15,22 @@ p.add_argument("--guest", required=True, type=Path)
 p.add_argument("--output", required=True, type=Path)
 a = p.parse_args()
 hash_file = lambda path: hashlib.sha256(path.read_bytes()).hexdigest()
+if a.reference.is_file():
+    receipt = json.loads(a.reference.with_suffix("").with_suffix(".json").read_text())
+    assert hash_file(a.reference) == receipt["archive"]["sha256"]
+    unpacked = tempfile.TemporaryDirectory(prefix="virgl-original-reference-")
+    directory = Path(unpacked.name)
+    with tarfile.open(a.reference, "r:gz") as archive:
+        for member in archive.getmembers():
+            name = Path(member.name)
+            assert member.isfile() and not name.is_absolute() and ".." not in name.parts
+            destination = directory / name
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            destination.write_bytes(archive.extractfile(member).read())
+    for record in receipt["files"]:
+        file = directory / record["path"]
+        assert file.stat().st_size == record["bytes"] and hash_file(file) == record["sha256"]
+    a.reference = directory
 manifest = json.loads((a.reference / "manifest.json").read_text())
 assert manifest["versions"]["host"]["virglrenderer"] == "1.3.0"
 assert manifest["versions"]["guest"]["mesa"] == "1:26.2.2-1"

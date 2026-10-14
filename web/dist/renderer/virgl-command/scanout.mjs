@@ -62,20 +62,20 @@ function pixelWords(value) {
   const offset = Object.getOwnPropertyDescriptor(proto, 'byteOffset').get.call(value), length = Object.getOwnPropertyDescriptor(proto, 'length').get.call(value);
   return new Uint32Array(buffer, offset, length);
 }
-function convertRgba(bytes, width, height, format, yTop) {
+function convertRgba(bytes, width, height, format, reverseRows) {
   need(bytes instanceof Uint8Array && bytes.byteLength === width * height * 4 && bytes.byteOffset % 4 === 0, 'Invalid RGBA readback size.');
   const words = new Uint32Array(bytes.buffer, bytes.byteOffset, width * height);
   // The renderer returns little-endian RGBA; the established browser contract is BGRA words.
   if (format === 67) for (let i = 0; i < words.length; i++) { const word = words[i]; words[i] = (word & 0xff00ff00) | ((word & 255) << 16) | ((word >>> 16) & 255); }
   if (format === 2) for (let i = 0; i < words.length; i++) words[i] |= 0xff000000;
-  for (let row = 0; !yTop && row < Math.floor(height / 2); row++) {
+  for (let row = 0; reverseRows && row < Math.floor(height / 2); row++) {
     const sourceRow = height - 1 - row;
     for (let x = 0; x < width; x++) { const a = row * width + x, b = sourceRow * width + x, temporary = words[a]; words[a] = words[b]; words[b] = temporary; }
   }
   return words;
 }
 
-export function createRetainedScanout({ getOwners, resolveResource, presenter, onFault }) {
+export function createRetainedScanout({ getOwners, resolveResource, presenter, onFault, production = false }) {
   let current = null, localGeneration = '0000000000000000', disposed = false;
   const jobs = new Set(), held = new Set(), retirements = [];
   const counters = { bound: 0, captures: 0, captureReady: 0, queued: 0, drawn: 0, superseded: 0, cancelled: 0, failed: 0,
@@ -131,7 +131,13 @@ export function createRetainedScanout({ getOwners, resolveResource, presenter, o
       if (job.cancelled) { release(job); return ok({ status: 'done', result: { ok: false, error: { code: 'cancelled', message: 'Scanout cancelled.' }, gpuComplete: true, appliedCommands: 0, draws: [] } }); }
       const { width, height } = job.binding.target.metadata, bytes = polled.bytes;
       counters.captureReady++; counters.readbackBytes += bytes.byteLength;
-      const pixels = convertRgba(bytes, width, height, job.binding.target.metadata.format, job.binding.target.metadata.flags === 1); counters.rgbaConversionBytes += bytes.byteLength; counters.rowMoveBytes += Math.floor(height / 2) * 2 * width * 4;
+      // QEMU's GL scanout flips lower-left storage before the display reads
+      // destination rows top first. Our CPU readback starts at GL row zero,
+      // so production reverses only Y_0_TOP. Keep the isolated proof profile.
+      const reverseRows = production ? job.binding.target.metadata.flags === 1 : job.binding.target.metadata.flags !== 1;
+      const pixels = convertRgba(bytes, width, height, job.binding.target.metadata.format, reverseRows);
+      counters.rgbaConversionBytes += bytes.byteLength;
+      if (reverseRows) counters.rowMoveBytes += Math.floor(height / 2) * 2 * width * 4;
       const queued = presenter.enqueueOwned({ bindingGeneration: job.presenterGeneration,
         frame: { scanout: 0, format: 1, rect: { x: 0, y: 0, width, height }, resourceWidth: width, resourceHeight: height, pixels } }, (receipt) => safeRetire(job, receipt));
       if (!queued.ok) { release(job); return ok({ status: 'done', result: { ...queued, gpuComplete: true, appliedCommands: 0, draws: [] } }); }

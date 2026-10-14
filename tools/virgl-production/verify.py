@@ -41,6 +41,9 @@ try:
     run("qualification", ["node", "tools/virgl-production/browser.mjs", str(output / "qualification"), "qualify"])
     if args.task == "E6-T11d":
         run("actual-guest", ["node", "tools/virgl-production/browser.mjs", str(output / "guest"), "accept"], 2400)
+        run("original-handshake", ["python3", "tools/virgl-production/compare-handshake.py",
+            "--reference", "evidence/virgl-production-bringup/worker/qemu-kmscube-reference.tar.gz",
+            "--guest", str(output / "guest"), "--output", str(output / "original-handshake.json")])
         run("public-desktop", ["node", "tools/virgl-production/critic-fast-boots.mjs", str(output / "public-desktop")], 2400,
             {"CRITIC_FAST_BOOT_WEB_ROOT": str(repo / "web/dist"), "CRITIC_FAST_BOOT_GPU": "1", "CRITIC_FAST_BOOT_GUESTS": "omarchy", "CRITIC_FAST_BOOT_PERSISTENCE": "0"})
     else:

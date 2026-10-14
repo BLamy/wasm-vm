@@ -1292,6 +1292,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         state = freeze({ blend: sub.blend?.fields ?? null, rasterizer: sub.rasterizer?.fields ?? null, dsa: sub.dsa?.fields ?? null,
           viewport: sub.viewport, scissor: sub.scissor, blendColor: [...sub.blendColor], stencilRef: { ...sub.stencilRef },
           mask: colorMask(sub), ...(multipleColors ? { colorMasks: Array.from({ length: 4 }, (_, slot) => colorMask(sub, slot)) } : {}),
+          originUpperLeft: production && Boolean((sub.surfaces.find(Boolean) ?? sub.depthSurface)?.metadata.flags & 1),
           winsysY: sub.viewport?.scale[1] < 0 ? -1 : 1 });
         stateCache.put(sub, key, state, 512 + 2 * (key.length + JSON.stringify(state).length));
       }
@@ -1590,9 +1591,9 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       const scissor = state.scissor;
       gl.scissor(scissor?.minX ?? 0, scissor?.minY ?? 0, scissor ? scissor.maxX - scissor.minX : 0, scissor ? scissor.maxY - scissor.minY : 0);
       if (rasterizer?.cullFace === 2) gl.enable(gl.CULL_FACE); else gl.disable(gl.CULL_FACE);
-      // All supported resource flags are zero: pinned lower-left FBOs invert
-      // Gallium front_ccw (vrend_update_frontface_state).
-      gl.cullFace(gl.BACK); gl.frontFace(rasterizer?.frontCcw ? gl.CW : gl.CCW);
+      // Pinned vrend_update_frontface_state inverts Gallium front_ccw only
+      // for a lower-left framebuffer; production also admits Y_0_TOP.
+      gl.cullFace(gl.BACK); gl.frontFace(Boolean(rasterizer?.frontCcw) !== state.originUpperLeft ? gl.CW : gl.CCW);
       const blend = state.blend, target = blend?.renderTargets[0];
       if (blend?.dither) gl.enable(gl.DITHER); else gl.disable(gl.DITHER);
       const enabled = target?.blendEnable === true && !(!multipleColors && integers && integerFormat(sub.surfaces[0]?.metadata.format));
