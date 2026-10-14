@@ -45,7 +45,7 @@ try{
       const result=await(await import('/tools/virgl-production/critic-fast-boots-boolean-queries.mjs')).runProductionBooleanQueriesCritic({...options,WasmVirglSubmitProof:wasm.WasmVirglSubmitProof});
       document.querySelector('#status').textContent='Original boolean-query hardware matrix '+result.status;document.querySelector('#results').textContent=JSON.stringify(result.summary,null,2);return result;
     }catch(error){document.querySelector('#status').textContent='Failed: '+error.message;return {status:'failed',failure:{message:error.message,stack:error.stack},partial:window.__productionCriticReport??null,active:window.__productionCriticActive?.()??null};}
-  },{schedules:options.schedules?.split(',').map(Number)??[161803],modes:options.modes?.split(',')??['interleave','budget','invalid-result','invalid-availability','native-result-error']});
+  },{schedules:options.schedules?.split(',').map(Number)??[161803],modes:options.modes?.split(',')??['interleave','budget','invalid-result','invalid-availability','native-result-error','framing']});
   const coverage=await profiler.send('Profiler.takePreciseCoverage'),scripts=[];
   for(const [name,bytes]of sources)if(/\.m?js$/.test(name)){const matches=coverage.result.filter(s=>s.url.endsWith('/'+name));if(matches.length){assert.equal(matches.length,1);scripts.push({source:name,sha256:sha(bytes),sourceBody:bytes.toString(),coverage:matches[0]});}}
   const raw=Buffer.from(JSON.stringify({schema:1,scripts},null,2)+'\n');await fs.writeFile(path.join(output,'browser-coverage.json'),raw);report.browserCoverage={path:'browser-coverage.json',sha256:sha(raw)};await profiler.send('Profiler.stopPreciseCoverage');

@@ -18,7 +18,8 @@ async function one(Wasm,profile,native,compiler,schedule,mode){
  const c=checker(),row={name:mode+'/schedule'+schedule,predictions:{
   interleave:'A strict greater-depth quad is true; different-context and different-subcontext empty queries with the same handle are independently ready false. Pending preserves the poisoned prior twelve result bytes.',
   budget:'Sixteen original jobs of256 native quad draws retain4096 real query parts; next draw refuses before draw/query allocation; END/GET retires all parts and returns actual true.',
-  invalid:'Repeated invalid native result/availability/error delivery must refuse with no result-buffer write; after removal a fresh validated native empty result0 publishes exact DONE/false.'},native:[],reads:[]};
+  invalid:'Repeated invalid native result/availability/error delivery must refuse with no result-buffer write; after removal a fresh validated native empty result0 publishes exact DONE/false.',
+  framing:'Each original query command refuses short and long payloads before native query or result-write effects; the following valid empty lifecycle remains false.'},native:[],reads:[]};
  const handles=[];let holdFirst=false,invalidResult=false,invalidAvailability=false,nativeResultError=false,pendingError=false;
  const gl=new Proxy(native,{get(target,name){const fn=Reflect.get(target,name,target);if(typeof fn!=='function')return fn;
   return(...args)=>{const actual=fn.apply(target,args);if(name==='createQuery'&&actual)handles.push(actual);
@@ -58,7 +59,12 @@ async function one(Wasm,profile,native,compiler,schedule,mode){
    packet(1,5,[12,0,0,0,31]),packet(2,5,[12]),packet(6,0,[16,0,2]),packet(1,8,[20,1,67,0,0]),packet(1,8,[21,3,16,0,0]),packet(5,0,[1,21,20]),
    packet(4,0,[0,...[2,2,.5,2,2,.5].map(word)]),packet(1,1,[30,0,0,15<<27,0,0,0,0,0,0,0]),packet(2,1,[30]),
    packet(1,2,[40,2|1<<29,word(1),0,0xffff,word(1),0,0,0]),packet(2,2,[40]),packet(1,3,[50,17,0,0,0]),packet(2,3,[50]),clear(),query(300,1,10)));
-  if(mode==='interleave'){
+  if(mode==='framing'){
+   const beforeQueries=nativeCalls('createQuery'),beforeWrites=nativeCalls('bufferSubData');
+   for(const [label,op,type,fields]of [['short query',1,9,[301,1,0]],['long query',1,9,[301,1,0,10,0]],['short begin',19,0,[]],['long begin',19,0,[300,0]],['short end',20,0,[]],['long end',20,0,[300,0]],['short get',21,0,[300]],['long get',21,0,[300,0,0]]])await send('critic exact original framing '+label,packet(op,type,fields),1,0x1205);
+   c.equal(nativeCalls('createQuery'),beforeQueries,'malformed packets have no native query effect');c.equal(nativeCalls('bufferSubData'),beforeWrites,'malformed packets have no native result publication');
+   await send('critic valid lifecycle after malformed packets',join(begin(300),end(300),get(300)));await read(10,1,0);
+  }else if(mode==='interleave'){
    holdFirst=true;await send('critic A active draw',join(begin(300),draw()));
    await send('critic B empty same handle other context',join(query(300,11,11),begin(300),end(300),get(300)),2);await read(11,1,0,2);
    await send('critic C empty same handle other subcontext',join(packet(29,0,[4]),packet(28,0,[4]),query(300,1,12),begin(300),end(300),get(300),packet(28,0,[0])));await read(12,1,0);
@@ -100,7 +106,7 @@ async function one(Wasm,profile,native,compiler,schedule,mode){
  finally{row.records=copy(rig.q.records);row.events=copy(rig.events);row.exchanges=copy(rig.exchanges);row.completions=copy(rig.completions);row.guestTrace=rig.q.vm.commandTrace();row.machineDigest=rig.q.vm.machineDigest();row.beforeDispose=copy(rig.host.bridge.inspect());row.disposed=copy(rig.host.bridge.dispose());rig.q.vm.free();row.cleaned=copy(rig.trace.snapshot());row.assertions=c.assertions;if(row.cleaned.liveObjects||row.cleaned.liveSyncs){row.status='failed';row.cleanupFailure='Native owners leaked';}}
  return row;
 }
-export async function runProductionBooleanQueriesCritic({WasmVirglSubmitProof,schedules=[161803],modes=['interleave','budget','invalid-result','invalid-availability','native-result-error']}){
+export async function runProductionBooleanQueriesCritic({WasmVirglSubmitProof,schedules=[161803],modes=['interleave','budget','invalid-result','invalid-availability','native-result-error','framing']}){
  const native=document.querySelector('#gpu').getContext('webgl2',{antialias:false,failIfMajorPerformanceCaveat:true}),profile=await qualifyVirglHost(native),compiler=await createVirglStandardStreamOutputShaderBridge();
  const report={status:'running',rows:[],hardware:profile.identity};window.__productionCriticReport=report;
  for(const schedule of schedules)for(const mode of modes){const row=await one(WasmVirglSubmitProof,profile,native,compiler,schedule,mode),pin=await window.__recordProductionCriticRun(report.rows.length,JSON.stringify(row));report.rows.push({...pin,name:row.name,status:row.status,...(row.failure?{failure:row.failure}:{})});}

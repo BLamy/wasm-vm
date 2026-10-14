@@ -3,7 +3,7 @@ id: E6-T11d69a
 epic: 6
 title: Provide original boolean GPU query lifetimes and guest results
 priority: 525.027037
-status: implemented
+status: verified
 depends_on: [E6-T11d68]
 estimate: S
 risk: high
@@ -135,3 +135,88 @@ then visible readable package bar/Foot, failed keyboard marker, and a later
 confirmed fullscreen screensaver with baralpha0. Those failures remain intact;
 this task claims boolean queries, safe native reads/publication and ownership
 only. Fresh verdict/status is independent; TF and full desktop remain gated.
+
+
+### 2026-10-14 — independent verifier
+
+VERDICT: verified
+
+- P1 rejected native values — initially FAILED at9ef83920. Predicted an invalid
+  delivered result cannot later become a guest true result. Two original-MMIO
+  recordings observed actual native empty0, delivered invalid2, rejected GET0x1201,
+  then FROM_HOST `[DONE1,size4,true1,high0]` (novel02 run0002 SHA262e00cf…;
+  independent schedule271828 rowd26a828c…). The transactional repair737c8245…
+  is HELD: result2, nonboolean availability1 and an injected getter GL error each
+  refuse two polls without result-buffer writes, then re-read actual0 and publish
+  exact DONE/false. Original transport and physical getters remain in every run.
+- P2 outcomes/isolation — HELD. Independent quarter-depth GREATER quad is true,
+  LESS is false and all16 pixels remain literal yellow. Same handle300 in another
+  context and subcontext independently returns empty false. Withheld actual native
+  availability leaves WAIT2 and preserves poisoned size/result words
+  `0x33557799/0x87654321/0x1234abcd`; all32 result bytes and64-byte guarded DMA
+  extent match. Worker types1/11 across schedules0/1/2 cover repeated ready GET,
+  invalid states, detached/reused owners, destruction, reset and physical loss.
+- P3 native ceiling — HELD. Sixteen original256-draw jobs execute4096 actual
+  drawArrays and retain4096 native query parts. Draw4097 returns0x1201 before query
+  allocation or drawing; END/GET returns actual true and retires all4096 parts.
+  Frozen hot and cold promoted budget rows each assert1,937,673 checks.
+- P4 exact framing/private/optional gates — HELD. Independent original QUERY,
+  BEGIN, END and GET each refuse both short and long payloads with0x1205 before
+  native query/result writes; subsequent valid empty query returnsfalse. Private
+  query admission remains closed; optional query types/index/wait values refuse.
+  The supplemental framing row is promoted after the cold run as a tests-only
+  addition. Its touched six-row matrix passes2,000,601 assertions without changing
+  runtime or repeating unrelated gates.
+- P5 actual Mesa API and capability11 — HELD within the public GLES-only profile.
+  Independently built ELFec3f014b… authenticates in the ordinary production guest;
+  receipt2e01265a… reports strict/conservative visible1, depth-rejected0 and empty0,
+  each16/16 literal pixels, and SamplesPassed/TimeElapsed INVALID_ENUM. Original
+  gpu.ndjson1121–1123 creates CUSTOM131072/format64/target0/width16 resource6/gen7,
+  attaches real backing and context2/gen3. Streams1128/1139/1150/1161/1172/1183
+  contain types1/11, BEGIN19/END20/GET21; transfers1131/1142/1153/1164/1175/1186
+  read the original16-byte result. Pinned Mesa virgl_screen284,
+  st_extensions1061, context.h539 and extensions_table277 distinguish GLES
+  boolean exposure from desktop counters. Public desktop EGL contexts stay refused.
+  Valid-host source/ABI results carry across the transactional fault-only repair;
+  the repaired branch is independently re-executed, not inferred from that carry.
+- P6 coverage — HELD. Recorded V8 coverage executes new native lifecycle,
+  query ownership/lease/span validation, WAIT/DONE publication, retained-part
+  cleanup, pending polling and renderer integration. Native390 tests exercise new
+  custom byte accounting and its bounds. Original Mesa and typed capset/transport
+  evidence exercise the positive field. Comments/docs/name tables and diagnostic
+  tracking are waived as declarations/observers; unchanged raster implementations
+  carry their prior indexed/MS/instancing/culling holds. No new runtime hunk is
+  left supported only by a worker assertion.
+- P7 oracle sabotage — HELD. Served-only aggregation changed to constanttrue;
+  the unchanged empty-false oracle rejects native0→guesttrue immediately.
+  Report2869c8ef… records original source737c8245… and sabotagedc2f65fd9…;
+  tracked runtime remains untouched. The earlier wrong test expectations0x1205
+  for budget/native-backend errors are retained and corrected to observed0x1201.
+- P8 final custody/cold — HELD. Frozen runtime
+  `7eef61fe41d050f3f128f6dff4c88a52c4a0b1cc`, worker submission854c4452.
+  Reopened every1023 worker archive identities, SHA
+  `28f17e3938b135f00207055d9922de053fc0997543558507e77b32925c03532d`.
+  The ordinary full-history, no-hardlink clone rebuilds and runs all11 gates with
+  no carry. All121 unique cold files (236 nested inventory entries) and12 physical row blobs/source pins
+  authenticate;2,182,311 assertions, zero native owners/syncs/browser errors,
+  private replay passes and the default suite127/0 has no proof exports.
+- SUITE: permanent original-MMIO interleaving/depth/poison/budget/native-fault/
+  framing regression matrix, independent guest C boolean probe and the existing
+  `make verify-E6-T11d69a` target. Independent archive01 SHA
+  `e31192b678d2503f58fe81029db15b3b16d999fa6d973f07674f192bdec6bdca`
+  contains229 reopened identities; supplemental exact-framing archive02 and
+  final custody/coverage audit are paired in
+  `evidence/virgl-production-boolean-queries/verifier/`.
+
+Commands: recorded `make verify-E6-T11d69a`; ordinary
+`python3 tools/virgl-production/cold.py --task E6-T11d69a --output
+ target/evidence/production-boolean-queries-cold01`; independent
+`node tools/virgl-production/critic-fast-boots-boolean-queries-browser.mjs
+ --output target/evidence/critic-production-boolean-queries-framing-promoted-01`
+plus recorded independent schedules161803/271828/314159/223606, source and
+archive custody checks. Native fault observers call the actual native API before
+controlled delivery; no original device, MMIO, DMA, renderer or result transport
+is replaced. This verdict covers boolean query ownership/results only. Logical
+transform-feedback counts, complete public desktop interaction, recovery and
+deployment remain separate pending acceptance; the readable bar/Foot evidence
+does not establish the missing trusted keyboard marker.
