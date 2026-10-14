@@ -3,9 +3,9 @@ id: E6-T11d69
 epic: 6
 title: Provide original query admission and results for the GLES3 core
 priority: 525.027037
-status: pending
+status: cancelled
 depends_on: [E6-T11d68]
-estimate: S
+estimate: M
 risk: high
 capstone: false
 ---
@@ -67,3 +67,11 @@ Mesa26.2.2 version computation does not ensure these query paths. This is a
 concrete missing mandatory API, not a request to advertise optional features.
 The parent remains blocked; this ordered successor does not enter the active
 lane until S68 is independently verified.
+
+### 2026-10-14 — planning — decompose original queries
+
+Replaced by ordered S tasks E6-T11d69a and E6-T11d69b. Fresh source inspection
+shows boolean lifetime/result publication and logical transform-feedback counts
+are separate boundaries: the latter must measure actual capture while accounting
+for POINTS lowering and multiple output-buffer passes. No task activates before
+its independently verified dependency.
