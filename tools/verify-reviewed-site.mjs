@@ -109,6 +109,11 @@ try{
  await page.locator('nav[aria-label="Primary navigation"] a[href="./roadmap.html"]').click();
  await page.waitForFunction(()=>document.querySelector('#rm-headline')?.textContent.includes('tasks verified'));
  const tasks=JSON.parse(await fs.readFile(path.join(dist,'tasks.json')));
+ const queue=await fs.readFile(path.join(repo,'tasks/QUEUE.md'),'utf8');
+ const counts=queue.match(/\*\*(\d+) \/ (\d+) tasks verified\.\*\*/);assert.ok(counts,'canonical queue headline');
+ assert.deepEqual(tasks.headline,{verified:Number(counts[1]),total:Number(counts[2])},'published task counts match canonical queue');
+ for(const id of ['E6-T11d70','E6-T11d71','E6-T11d72','E6-T11d73'])assert.equal(tasks.tasks.find(task=>task.id===id)?.status,'verified','published prerequisite '+id);
+ report.taskLedger={...tasks.headline,verifiedGraphicsPrerequisites:['E6-T11d70','E6-T11d71','E6-T11d72','E6-T11d73']};
  assert.equal(await page.locator('#rm-headline').innerText(),`${tasks.headline.verified} / ${tasks.headline.total} tasks verified across ${tasks.epics.length} epics`);
  assert.equal(await page.locator('.site-header .brand[href="./"]').count(),1);
  assert.equal(await page.locator('#panel-ide, #docs-mount').count(),0);

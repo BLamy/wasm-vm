@@ -16,6 +16,9 @@ DIST=web/dist
 echo "[web-dist] building wasm + installing pinned deps (make web-build)…"
 make web-build
 
+# Publish the current task ledger with the bundle rather than a stale source snapshot.
+python3 tools/gen-tasks-json.py
+
 echo "[web-dist] assembling $DIST …"
 rm -rf "$DIST"
 mkdir -p "$DIST"
