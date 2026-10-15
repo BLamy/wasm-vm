@@ -189,10 +189,10 @@ export function createWorkerScanoutPresenter(send) {
     counters[status]++; entry.onRetired({token:entry.token,status,...(presentation ? {presentation} : {})});
   };
   return Object.freeze({
-    rebind(next) {
-      if (disposed || !/^[0-9a-f]{16}$/.test(next) || next <= generation) return {ok:false,error:{code:'invalid-parameter',message:'Stale display binding'}};
+    rebind(next,preserveDisplay = false) {
+      if (disposed || typeof preserveDisplay !== 'boolean' || !/^[0-9a-f]{16}$/.test(next) || next <= generation) return {ok:false,error:{code:'invalid-parameter',message:'Stale display binding'}};
       for (const entry of [...frames.values()]) settle(entry,'cancelled');
-      generation = next; send({type:'clear'}); return {ok:true};
+      generation = next; send({type:preserveDisplay?'invalidate':'clear'}); return {ok:true};
     },
     enqueueOwned(value,onRetired) {
       if (disposed || value.bindingGeneration !== generation || frames.size >= 2 || typeof onRetired !== 'function') return {ok:false,error:{code:'invalid-parameter',message:'Invalid retained display frame'}};

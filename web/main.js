@@ -111,7 +111,7 @@ if (presentation && displayViewportEl) {
 }
 let pendingGpuFrame = null, gpuFrameRequest = null;
 function handleDisplayFrame(frame) {
-  if (frame?.type === 'clear' && pendingGpuFrame) {
+  if ((frame?.type === 'clear' || frame?.type === 'invalidate') && pendingGpuFrame) {
     pendingGpuFrame.onRetired('cancelled'); pendingGpuFrame = null;
     if (gpuFrameRequest !== null) cancelAnimationFrame(gpuFrameRequest);
     gpuFrameRequest = null;
@@ -120,19 +120,23 @@ function handleDisplayFrame(frame) {
     if (!presentation) { frame.onRetired('failed'); return false; }
     if (pendingGpuFrame) pendingGpuFrame.onRetired('superseded');
     pendingGpuFrame = frame;
-    if (gpuFrameRequest === null) gpuFrameRequest = requestAnimationFrame(() => {
-      gpuFrameRequest = null;
-      const owned = pendingGpuFrame; pendingGpuFrame = null;
-      if (!owned) return;
-      try {
-        const before = presentation.snapshot().drawnPresents;
-        const accepted = presentation.presentNow(owned);
-        displayViewport?.applyCanvasStyle();
-        const after = presentation.snapshot();
-        owned.onRetired(accepted && after.drawnPresents > before ? 'drawn' : 'failed',
-          {backend:after.backend,resourceWidth:owned.resourceWidth,resourceHeight:owned.resourceHeight});
-      } catch { owned.onRetired('failed'); }
-    });
+    if (gpuFrameRequest === null) {
+      const request = requestAnimationFrame(() => {
+        if (gpuFrameRequest !== request) return;
+        gpuFrameRequest = null;
+        const owned = pendingGpuFrame; pendingGpuFrame = null;
+        if (!owned) return;
+        try {
+          const before = presentation.snapshot().drawnPresents;
+          const accepted = presentation.presentNow(owned);
+          displayViewport?.applyCanvasStyle();
+          const after = presentation.snapshot();
+          owned.onRetired(accepted && after.drawnPresents > before ? 'drawn' : 'failed',
+            {backend:after.backend,resourceWidth:owned.resourceWidth,resourceHeight:owned.resourceHeight});
+        } catch { owned.onRetired('failed'); }
+      });
+      gpuFrameRequest = request;
+    }
     return true;
   }
   if (!presentation) return false;

@@ -59,6 +59,10 @@ verify-E6-T11d74b:
 verify-E6-T11d74c:
 	python3 tools/virgl-production/verify-paired-worker.py --output "$${VIRGL_PAIRED_WORKER_EVIDENCE_DIR:-target/evidence/production-paired-worker-final}"
 
+.PHONY: verify-E6-T11d74d1
+verify-E6-T11d74d1:
+	python3 tools/virgl-production/verify-scanout-continuity.py --output "$${VIRGL_SCANOUT_CONTINUITY_EVIDENCE_DIR:-target/evidence/production-scanout-continuity-final}"
+
 verify-E6-T11e:
 	wasm-pack build crates/wasm --target web --out-dir ../../target/virgl-production/pkg --features virgl-renderer,virgl-control-proof
 	python3 tools/virgl-production/verify.py --task E6-T11e --output "$${VIRGL_RECOVERY_EVIDENCE_DIR:-target/evidence/production-recovery-final}"

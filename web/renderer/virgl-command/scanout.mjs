@@ -91,7 +91,7 @@ export function createRetainedScanout({ getOwners, resolveResource, presenter, o
   };
   const safeRetire = (entry, receipt) => { try { retire(entry, receipt); } catch (error) { onFault(error); } };
   const dropBinding = () => { if (current?.lease) { unwrap(current.owner.store.releaseStorage(current.lease)); current.lease = null; } };
-  const invalidate = () => { const next = nextHex(localGeneration); unwrap(presenter.rebind(next)); localGeneration = next; };
+  const invalidate = (preserveDisplay = false) => { const next = nextHex(localGeneration); unwrap(presenter.rebind(next,preserveDisplay)); localGeneration = next; };
   const release = (entry) => { if (entry.ticket) { unwrap(entry.owner.asyncAccess.release(entry.ticket)); entry.ticket = null; held.delete(entry); } };
   const api = {
     bind(event) {
@@ -103,7 +103,7 @@ export function createRetainedScanout({ getOwners, resolveResource, presenter, o
         need(META.every((key) => res.metadata[key] === target.metadata[key]), 'Scanout metadata differs from allocation.');
         accepted.lease = unwrap(accepted.owner.bindings.retainScanout(target.resource.id, res.storageGeneration)).lease;
       }
-      try { invalidate(); } catch (error) { if (accepted.lease) accepted.owner.store.releaseStorage(accepted.lease); onFault(error); throw error; }
+      try { invalidate(production && event.binding.target.kind !== 'disabled'); } catch (error) { if (accepted.lease) accepted.owner.store.releaseStorage(accepted.lease); onFault(error); throw error; }
       try { dropBinding(); } catch (error) { if (accepted.lease) accepted.owner.store.releaseStorage(accepted.lease); onFault(error); throw error; }
       current = accepted; counters.bound++; return ok();
     },

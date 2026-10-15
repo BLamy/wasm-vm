@@ -1,8 +1,8 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 502,
-    "total": 698
+    "verified": 503,
+    "total": 700
   },
   "epics": [
     {
@@ -29700,7 +29700,7 @@
       "epicKey": "6",
       "title": "Restore RAM, disk and reconstructed GPU atomically in the production worker",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E6-T11d74b"
       ],
@@ -29713,21 +29713,24 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "### 2026-10-15 — worker — explicit accelerated warm-boot scope\n\nThe user's clarified goal is warm boot with GPU rendering. This is an ordered\nimplementation boundary of that request, not the cancelled software-default\nworkaround. Existing independent rendering/timekeeping proofs carry only across\nunchanged code and dependency identities; new checkpoint behavior needs its own\nrecorded acceptance and fresh verifier.\n\n### 2026-10-15 — worker — paired accelerated boundary started\n\nRenderer74b is independently verified at1c1eca625ef139ed9248b956918ea3fe8bd7265c;\nnative74a at e26e3e83. Continue the existing native PR stack. The implementation\nplan is recorded before code in\n`target/evidence/production-gpu-warm-restore-plan01/paired-design.json`.\nThis boundary composes explicit native witness APIs, an actual COW disk snapshot,\na bounded compressed pair, genuine GPU capability compatibility, and staged fresh\nworker reconstruction. Ordinary software restore paths stay under their existing\ncoherence guards. No production GPU warm-boot claim yet;74d publishes the final\nactual Omarchy factory image and verifies public warm/repeat behavior.\n\n### 2026-10-15 — worker — scale failures retained before freeze\n\nThe first original Omarchy run made268 original jobs/134 transfers and\n548,864,000 DMA input bytes before its first3D draw. The bounded512MiB journal\ncorrectly refused further capture (`journal budget exceeded`); rendering continued.\nThe negative observation is retained in\n`target/evidence/production-gpu-paired-stock-cold01/report.json` and its original\nheartbeat. A lossless, per-transfer32MiB-bounded word-run representation now\nretains exact original DMA without raising the journal budget. The next original\nrun retained229,376,000 input bytes in a4,230,292-byte available journal before\nbeing deliberately stopped for the independent RAM fix below.\n\nAn actual1024MiB production worker save succeeded but fresh restore trapped in\n`loadAcceleratedSnapshotBlob` (large-self01). `Ram::restore` allocated a second\nguest-sized growable Vec; its sparse high-address DTB caused a further geometric\nreallocation within the wasm32 address space. Restore now validates the entire\nunchanged sparse wire format before applying the same immutable input directly\nto existing RAM. Six native RAM tests, including late malformed refusal against\nnonzero destination bytes, pass. The actual1024MiB original-MMIO worker's\nsave/fresh-worker restore, new real draws/retirement, trusted keyboard, two native\ncursor positions, exact saved clock, changed disk and repeat restore now pass\n(`target/evidence/production-paired-worker-large-self02/report.json`), with\n553.885ms first warm and603.505ms repeat in this small supervisor fixture. This\nis not a Linux/Mesa/production-site latency claim. Omarchy cold03 is running on\nruntime identity5dd286c9663c5740e1d26873c26e0ea81d1d32bf67b9c31c758842dbf23f3f09;\nfinal frozen submission and independent verification remain required.",
+      "verificationLog": "### 2026-10-15 — worker — explicit accelerated warm-boot scope\n\nThe user's clarified goal is warm boot with GPU rendering. This is an ordered\nimplementation boundary of that request, not the cancelled software-default\nworkaround. Existing independent rendering/timekeeping proofs carry only across\nunchanged code and dependency identities; new checkpoint behavior needs its own\nrecorded acceptance and fresh verifier.\n\n### 2026-10-15 — worker — paired accelerated boundary started\n\nRenderer74b is independently verified at1c1eca625ef139ed9248b956918ea3fe8bd7265c;\nnative74a at e26e3e83. Continue the existing native PR stack. The implementation\nplan is recorded before code in\n`target/evidence/production-gpu-warm-restore-plan01/paired-design.json`.\nThis boundary composes explicit native witness APIs, an actual COW disk snapshot,\na bounded compressed pair, genuine GPU capability compatibility, and staged fresh\nworker reconstruction. Ordinary software restore paths stay under their existing\ncoherence guards. No production GPU warm-boot claim yet;74d publishes the final\nactual Omarchy factory image and verifies public warm/repeat behavior.\n\n### 2026-10-15 — worker — scale failures retained before freeze\n\nThe first original Omarchy run made268 original jobs/134 transfers and\n548,864,000 DMA input bytes before its first3D draw. The bounded512MiB journal\ncorrectly refused further capture (`journal budget exceeded`); rendering continued.\nThe negative observation is retained in\n`target/evidence/production-gpu-paired-stock-cold01/report.json` and its original\nheartbeat. A lossless, per-transfer32MiB-bounded word-run representation now\nretains exact original DMA without raising the journal budget. The next original\nrun retained229,376,000 input bytes in a4,230,292-byte available journal before\nbeing deliberately stopped for the independent RAM fix below.\n\nAn actual1024MiB production worker save succeeded but fresh restore trapped in\n`loadAcceleratedSnapshotBlob` (large-self01). `Ram::restore` allocated a second\nguest-sized growable Vec; its sparse high-address DTB caused a further geometric\nreallocation within the wasm32 address space. Restore now validates the entire\nunchanged sparse wire format before applying the same immutable input directly\nto existing RAM. Six native RAM tests, including late malformed refusal against\nnonzero destination bytes, pass. The actual1024MiB original-MMIO worker's\nsave/fresh-worker restore, new real draws/retirement, trusted keyboard, two native\ncursor positions, exact saved clock, changed disk and repeat restore now pass\n(`target/evidence/production-paired-worker-large-self02/report.json`), with\n553.885ms first warm and603.505ms repeat in this small supervisor fixture. This\nis not a Linux/Mesa/production-site latency claim. Omarchy cold03 is running on\nruntime identity5dd286c9663c5740e1d26873c26e0ea81d1d32bf67b9c31c758842dbf23f3f09;\nfinal frozen submission and independent verification remain required.\n\n### 2026-10-15 — worker — paired production worker submitted\n\nFrozen source `4c40697be9c009a5f04780203a5a22cef5c1610e` passed all22\ncommands in `VIRGL_PAIRED_WORKER_EVIDENCE_DIR=target/evidence/production-paired-worker-frozen02\nmake verify-E6-T11d74c`. Final tools-only head\n`906a05274c8b60a34bbd83a3b76511d469d2aca9` adds the independent descriptor/\nfailed-drawn-receipt supplement to the recurring target. The untouched full\n`git clone --no-local` at that exact head (no alternates; scrubbed Rust/Cargo/\nVirGL/critic environment) passed all23 commands, recorded by\n`python3 target/evidence/production-gpu-warm-restore-plan01/paired-cold.py` in\n`target/evidence/production-paired-worker-cold01`. Tracked files stayed clean.\n\nThe actual original-MMIO supervisor worker saves, closes and restores in fresh\nphysical workers at64 and1024MiB. Original fenced responses, newly completed\nGPU draws and fresh original-sequence drawn receipts precede readiness. Trusted\nkeyboard changes pixels and disk state; two actual native cursor positions and\nrepeat restore preserve the changed marker. The selected guest clock matches\nexactly before guest execution, including a previously selected paced policy.\nIndependent tests reject mismatched RAM/disk/GPU, corruption, unsupported real\nprofiles, invalid publication descriptors, paused/persistent warm selection,\nphysical context loss and old receipts. Withholding all successful fresh drawn\nreceipts leaves READY unpublished despite actual new completed draws. Removing\nonly disk binding from the served witness encoder reaches forbidden native\napplication and fails its precise oracle. The final clone also passes392 core\nunit tests, original-wire/legacy-resume/storage/Wasm gates, physical reconstruction,\nall ten initial/repeat/persistence phases across four software images, and the\nordinary built page127 passed/0 failed with no unexpected browser errors.\n\nAn additional actual Omarchy worker self-validation restores the real\n137111825-byte pair95ef658cb259f13c542b36c6742a85cca0ef61af63f0780af297420845dabbc5\nwith unchanged critical source identity5dd286c9 and ordinary Wasm9b7fd924.\nIt advances saved epoch2 to fresh3, completes new draws and drawn receipts,\nand executes a real guest EGL query showing Mesa26.2.2 VirGL, no software DRI.\nThe13607ms observation is worker readiness in a local served-selection supplement;\nfull package bar/input/default/HTTPS warm behavior remains74d. The originating\ncold recorder's Node message-size failure after the complete binary POST is\nretained as a failed run. Its pair footer, compressed and raw component digests\nvalidate; it is not relabelled a passed cold recording.\n\nDurable worker capsule\n`evidence/virgl-production-paired-worker/worker/paired-production-worker-submission.tar.gz`\nis27837205 bytes,1981 members/1980 individually reopened identities, SHA256\n`353bf7155806c99f89d083a32822aaae41f50daae0f70946be9f6457ce9913a1`.\nIt contains the exact diff/source, hot and pristine acceptance, retained scale/\nlint negatives, independent modes, stock worker supplement and identity index.\nFresh adversarial verification is required; this worker does not set verified.\n\n### 2026-10-15 — independent verifier — VERDICT: verified\n\n- **Coherence and original queues — HELD.** The pre-data C1–C3 predictions survive the\n  native and actual-worker evidence. Original-MMIO 64/1024 MiB workers retain literal\n  disk markers 77/122 with the same base/generation. Native A + renderer A + disk B\n  refuses before application/guest execution. The original flagged\n  `0x0020000000000071` fence drains exactly one used response without CPU/mtime\n  progress in both cache schedules. Removing only the served witness's disk binding\n  reaches forbidden native application (saved epoch 2 → fresh 3), failing the exact\n  oracle. Citations: worker capsule `cold01/acceptance/original-wire.stdout`,\n  `independent-attacks/mixed-disk-native-refusal.json`, and\n  `disk-negative/mixed-disk-native-refusal.json`; independent capsule\n  `review/final-authentication01/authentication.json`.\n- **Clock, input and authority — HELD.** Source capture has no retirement/clock\n  progress, releases held original keyboard/tablet transitions, and restores the exact\n  saved pre-execution ICount or selected paced clock. Trusted input changes pixels\n  and actual disk state; native cursor positions change and repeat restore succeeds.\n  Two concurrent real save RPCs serialize into equal raw native/disk/renderer\n  components; 33 late old-endpoint receipt capabilities leave the fresh paused owner\n  unchanged. Citations: cold `independent-attacks/report.json`, `production-ram/`\n  phase records, and the authenticated original native drain transcript.\n- **Publication and loss — HELD.** Invalid descriptors, corrupt/foreign pairs,\n  unsupported profiles, paused and persistent warm requests refuse explicitly.\n  Physical context loss during actual replay draw and original save hashing refuses\n  publication. New GPU draws and painted frames with every receipt deliberately\n  failed do not publish READY during the bounded observation; successful readiness\n  has a fresh-epoch original-sequence drawn receipt. This is not historical repair\n  pixel readiness. Citations: cold `release-readiness/report.json` (18 physical\n  frames in its recorded window) and `independent-attacks/` loss/refusal records.\n- **Scale and bounded encoding — HELD.** Eleven codec, five qualified-profile, five\n  restored-clock, six independent DMA and three native sparse-wire tests cover the\n  changed boundaries. All 535 proper sparse prefixes and eight late-invalid forms\n  preserve nonzero target RAM/allocation; valid zero runs clear old bytes. Removing\n  only sparse preflight in an isolated native copy fails at the predicted prefix 518.\n  The DMA corpus includes 97 varied patterns, independent literal/run words,\n  unaligned views, legacy raw data, malformed extents and the exact 32 MiB ceiling.\n  The journal's 512 MiB limit is unchanged. The actual 1 GiB save/fresh restore\n  supplies the allocation-scale proof. Citations: independent capsule\n  `review/scale-boundaries-{native,dma}01/`, `review/sparse-preflight-negative02/`,\n  and final cold `production-ram/` / `physical-checkpoint/` records.\n- **Coverage, portability and custody — HELD.** I reopened all 1,980 worker identities\n  and compared 72 source objects to frozen Git head\n  `906a05274c8b60a34bbd83a3b76511d469d2aca9`. The single untouched full-history\n  `--no-local` clone has no alternates, uses scrubbed environment and passes all\n  23 recurring commands. Earlier hot 22 commands carry unchanged; the final clone\n  includes the added readiness mode. Native core 392 tests, affected native/Wasm/\n  legacy gates, three physical renderer schedules, all 10 software warm phases and\n  built default 127/0 pass. Independent 46-file identity reconstruction equals\n  `5dd286c9663c5740e1d26873c26e0ea81d1d32bf67b9c31c758842dbf23f3f09`;\n  ordinary Wasm equals\n  `9b7fd9243787a69747d421b3cffe8606d16796d97adbab4fe8e292f6035e1e96`.\n  Changed-hunk coverage/explicit adapter waivers are in\n  `review/final-coverage.json`. Prior scale/lint negatives and the critic's\n  corrected fixture/setup failures remain intact; they are not relabelled passes.\n- **Scope and suite.** Keep the promoted sparse/DMA/codec/profile/clock tests,\n  original-MMIO worker, healthy/isolated-negative/readiness modes and recurring\n  target. Native 74a and renderer 74b holds carry only across unchanged boundaries;\n  the affected RAM and record/replay paths were rerun. The optional stock worker\n  supplement has all 46 delivered critical body hashes, saved 2 → fresh 3,\n  a new drawn receipt, 466/466 jobs, 122 draws and real guest Mesa/VirGL output.\n  Its 13,607 ms measurement is local worker readiness with the package desktop\n  overlay still pending. Full default Omarchy desktop/input/repeat, HTTPS\n  publication, deployment, recovery and any 300 MIPS claim remain outside this\n  verdict and are not discharged by it.\n\nWorker submission `7cfdafef` and capsule SHA\n`353bf7155806c99f89d083a32822aaae41f50daae0f70946be9f6457ce9913a1`\nare authenticated. Independent evidence:\n`evidence/virgl-production-paired-worker/verifier/independent-paired-worker-review.tar.gz`\n(12,416,397 bytes; 1,485 members / 1,484 authenticated identities), SHA256\n`ef197d650267209f370faf5c1cef46bdbdf43031f13ae2b0ec0999b325dd4e64`;\npaired JSON includes the identity index. Its `review/verdict.md` begins\n`VERDICT: verified`; original pre-data predictions, source captures, novel attacks,\nexact negative controls and final cold authentication are sealed inside.",
       "adversarial": "Attack a torn publication between GPU/RAM/delta, concurrent save/restore,\ncontext loss during checkpoint/reconstruction and late old-worker receipts.\nUse varied schedules and remove one coherence/generation guard in isolation.\nNo changed snapshot or persistence boundary may be asserted on screenshots\nalone; inspect original device state, outputs and commits.",
       "file": "tasks/epic-6-transcendence/E6-T11d74c-paired-gpu-worker-resume.md",
       "activity": [
         {
           "date": "2026-10-15",
-          "commits": 1,
+          "commits": 4,
           "labels": [
+            "Verify coherent production GPU worker checkpoints",
+            "proof: submit paired GPU worker restoration and pristine evidence",
+            "Restore production GPU workers from coherent RAM disk and renderer checkpoints",
             "Start coherent RAM disk and GPU worker warm restore"
           ]
         }
       ],
       "firstActivity": "2026-10-15",
       "lastActivity": "2026-10-15",
-      "commitCount": 1
+      "commitCount": 4
     },
     {
       "id": "E6-T11d74d",
@@ -29735,9 +29738,11 @@
       "epicKey": "6",
       "title": "Publish and prove an accelerated Omarchy warm-boot artifact",
       "priority": null,
-      "status": "pending",
+      "status": "blocked",
       "depends_on": [
-        "E6-T11d74c"
+        "E6-T11d74c",
+        "E6-T11d74d1",
+        "E6-T11d74d2"
       ],
       "decomposed_into": [],
       "estimate": "S",
@@ -29748,19 +29753,93 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "### 2026-10-15 — worker — explicit accelerated warm-boot scope\n\nThe user's clarified goal is warm boot with GPU rendering. This is an ordered\nimplementation boundary of that request, not the cancelled software-default\nworkaround. Existing independent rendering/timekeeping proofs carry only across\nunchanged code and dependency identities; new checkpoint behavior needs its own\nrecorded acceptance and fresh verifier.",
+      "verificationLog": "### 2026-10-15 — worker — explicit accelerated warm-boot scope\n\nThe user's clarified goal is warm boot with GPU rendering. This is an ordered\nimplementation boundary of that request, not the cancelled software-default\nworkaround. Existing independent rendering/timekeeping proofs carry only across\nunchanged code and dependency identities; new checkpoint behavior needs its own\nrecorded acceptance and fresh verifier.\n\n### 2026-10-15 — worker — production warm publication started\n\nPaired production workers74c are independently verified at\nbaf3d1035eec4e184eb2704bc52c2ce17066b1ed. Continue existing native stack557\nabove PR565; no stack is replaced and no merge is authorized. Critical runtime\n5dd286c9 / ordinary Wasm9b7fd924 remain frozen. Restore the authenticated actual\nOmarchy source pair, let the real package bar and Foot finish, verify trusted\ninput/cursor, remove the test marker and capture a ready factory pair. Preserve\nits selected clock exactly. Bound binary recording uploads to1MiB requests so\nPlaywright cannot serialize one137MiB POST as an over-limit protocol string.\nThen pin/publish the actual final pair, switch the default launcher/direct URL,\nand prove local/clean-clone/HTTPS initial and repeat rendering. Earlier component\nholds carry only across unchanged code/dependency/evidence identities.\n\n### 2026-10-15 — worker — publication gated on reproduced desktop faults\n\nThe user reports that the bar cannot be clicked and that pointer movement flashes\nthe entire desktop. Original owned warm worker evidence under\n`target/evidence/production-gpu-ready-warm-self04/pointer-flicker.json` records40\nfully transparent rAF samples out of379 during trusted pointer movement, alongside\noriginal display-clear messages. Production `createWorkerScanoutPresenter.rebind`\nclears the visible canvas on every buffer switch. Same-coordinate120ms original\ntablet/mouse click diagnostics reach guest65,12 but leave workspace3 unchanged.\n\nThe independent critic also records an exact2304-byte24x24 RGBA texture refusal at\noriginal `gpu.ndjson` line1408: the production live/retained resource count reaches\n64. Native command494 previously refuses before a host create event, so its\nunrecorded descriptor is not guessed. See\n`target/evidence/critic-production-gpu-warm-publication74d/resource-refusals01`.\nPublication is blocked on ordered small fixes74d1 (scanout continuity) and74d2\n(coherent production ownership capacity). No diagnostic pair is published.\nWarm publication edits are preserved in the named Git stash on the existing\nstack; this is not a replacement PR stack. Runtime changes require a new exact\nfactory artifact and fresh acceptance before publication resumes.",
       "adversarial": "Reject a software screenshot, cached readiness event, cold boot relabelled warm,\nwrong checkpoint/profile/disk pair or old worker output. Independently query\nactual Mesa and advance a new real GPU workload after restore. Force stale\nservice-worker/artifact variants and a failed restore; require the declared\nvisible policy and keep original failures. Bound measured cached restoration\nseparately from artifact downloading.",
       "file": "tasks/epic-6-transcendence/E6-T11d74d-production-gpu-warm-boot.md",
       "activity": [
         {
           "date": "2026-10-15",
-          "commits": 0,
-          "labels": []
+          "commits": 3,
+          "labels": [
+            "task: gate GPU warm publication on reproduced desktop faults",
+            "task: publish actual Omarchy GPU warm boot on existing stack",
+            "On codex/omarchy-gpu-warm-default: E6-T11d74d warm publication WIP before scanout and allocation fixes"
+          ]
         }
       ],
       "firstActivity": "2026-10-15",
       "lastActivity": "2026-10-15",
-      "commitCount": 0
+      "commitCount": 3
+    },
+    {
+      "id": "E6-T11d74d1",
+      "epic": "6",
+      "epicKey": "6",
+      "title": "Preserve the displayed GPU front buffer until the next valid frame",
+      "priority": null,
+      "status": "in-progress",
+      "depends_on": [
+        "E6-T11d74c"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "boundary": "## Boundary\n\nSeparate cancellation of obsolete scanout ownership/recovery state from erasing\nthe visible front buffer. Valid renderer/2D page flips retain the displayed pixels\nuntil a fresh binding frame is drawn; explicit display disable/reset/teardown\nstill clears them. Old queued frames cannot draw or satisfy new receipts.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\n`make verify-E6-T11d74d1` records original worker/native-MMIO GPU buffer switches,\nphysical browser pixels across the between-bind-and-present interval, exact old\nreceipt cancellation and fresh receipt acceptance. Cover explicit disable/reset,\ncontext loss before replacement, rapid rebind, partial next frame and both\nordinary scheduled and retained production presentation. Build the ordinary\nWasm/dist, run relevant native/protocol/physical regressions and default127/0,\nthen one final complete pristine clone without alternates. Actual Omarchy final\nfactory/input/publication remains74d after74d2; no old factory is relabelled\ncompatible with new runtime bytes.\n\n",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "### 2026-10-15 — worker — reproduce before changing runtime\n\nOriginal worker build5dd286c9 / ordinary Wasm9b7fd924 reproduces40 completely\ntransparent samples out of379 during six trusted pointer moves and a bar click;\n`target/evidence/production-gpu-ready-warm-self04/pointer-flicker.json` retains\nthe executed read-only sampler, original wire messages, GPU counters, pointer\nframes and raw transparent PNGs. Separate allocation refusals remain74d2.",
+      "adversarial": "Fresh verifier predicts actual canvas bytes before each transition, then attacks\nqueued old receipt delivery, disable, reset and recovery replay. A screenshot\nafter the replacement frame does not prove continuity between frames. Sabotage\nthe new no-blank assertion with the original unconditional clear once. Carry\nunchanged native/DMA/security proofs by their recorded dependency identities.",
+      "file": "tasks/epic-6-transcendence/E6-T11d74d1-production-scanout-continuity.md",
+      "activity": [
+        {
+          "date": "2026-10-15",
+          "commits": 1,
+          "labels": [
+            "task: gate GPU warm publication on reproduced desktop faults"
+          ]
+        }
+      ],
+      "firstActivity": "2026-10-15",
+      "lastActivity": "2026-10-15",
+      "commitCount": 1
+    },
+    {
+      "id": "E6-T11d74d2",
+      "epic": "6",
+      "epicKey": "6",
+      "title": "Admit normal desktop GPU objects within coherent production budgets",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E6-T11d74d1"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "",
+      "boundary": "## Boundary\n\nGive the host-selected production GPU profile explicit coherent object/context\ncapacity adequate for the recorded real desktop, retaining byte/lease/storage\naccounting and all existing isolated proof defaults. Native admission, physical\nstore, renderer state and checkpoint validation must agree. Do not drop live\nreferences or reinterpret allocation failures as successes.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\n`make verify-E6-T11d74d2` replays the recorded ownership/count boundary through\noriginal native and physical paths, admits the exact small popup texture beyond\nthe former64-object ceiling, and rejects the new finite count and unchanged byte\nlimits atomically. Cover retained-unref storage, context teardown, live leases,\nsnapshot roundtrip and historical proof profiles. Record native traces/digests,\nphysical browser pixels and one final complete pristine clone. The final actual\nOmarchy bar/click/workload/repeat and deployment are74d.\n\n",
+      "criteria": [],
+      "criteriaTotal": 0,
+      "criteriaDone": 0,
+      "verificationLog": "",
+      "adversarial": "Fresh verifier challenges native/host/state/checkpoint count disagreement, count\nversus bytes, retained storage and failed-admission identity consumption. Reuse\nof an old ID must not release old storage or satisfy a stale receipt. Sabotage\nthe promoted beyond64-object regression with the old production limit once.",
+      "file": "tasks/epic-6-transcendence/E6-T11d74d2-production-desktop-capacity.md",
+      "activity": [
+        {
+          "date": "2026-10-15",
+          "commits": 1,
+          "labels": [
+            "task: gate GPU warm publication on reproduced desktop faults"
+          ]
+        }
+      ],
+      "firstActivity": "2026-10-15",
+      "lastActivity": "2026-10-15",
+      "commitCount": 1
     },
     {
       "id": "E6-T11d8",

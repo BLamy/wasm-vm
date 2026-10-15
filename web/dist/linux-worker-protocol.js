@@ -4,7 +4,7 @@
 // controller surface is deliberately an allow-list. Adding a loader controller method therefore
 // requires an intentional protocol change instead of silently exposing arbitrary worker objects.
 
-export const LINUX_WORKER_PROTOCOL_VERSION = 1;
+export const LINUX_WORKER_PROTOCOL_VERSION = 2;
 export const MAX_OUTPUT_BATCH_BYTES = 64 * 1024;
 const DEFAULT_STOP_TIMEOUT_MS = 5_000;
 const DEFAULT_CLEANUP_TIMEOUT_MS = 4_000;
@@ -308,8 +308,8 @@ export function createLinuxWorkerClient(endpoint, callbacks = {}) {
       case "gpu-event": callbacks.onGpuEvent?.(message.info); break;
       case "display": {
         const frame = message.frame;
-        if (frame?.type === "clear") {
-          callbacks.onDisplayFrame?.({ type: "clear" });
+        if (frame?.type === "clear" || frame?.type === "invalidate") {
+          callbacks.onDisplayFrame?.({ type: frame.type });
           break;
         }
         if (!frame || !(frame.pixels instanceof ArrayBuffer)) {
@@ -741,8 +741,8 @@ export function createLinuxWorkerRuntime(endpoint, {
     onGpuEvent: (info) => send({type:'gpu-event',info}),
     onDisplayFrame: (frame) => {
       try {
-        if (frame?.type === "clear") {
-          send({ type: "display", frame: { type: "clear" } });
+        if (frame?.type === "clear" || frame?.type === "invalidate") {
+          send({ type: "display", frame: { type: frame.type } });
           return;
         }
         const source = frame?.pixels;

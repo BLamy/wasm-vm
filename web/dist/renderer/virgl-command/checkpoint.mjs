@@ -32,8 +32,8 @@ async function contentIdentity(contents) {
 function presentationGate(target, enabled) {
   let active=enabled,generation='0000000000000000',sequence=0,disposed=false;
   const presenter={
-    rebind(next) {
-      if(active)return target.rebind(next);
+    rebind(next,preserveDisplay = false) {
+      if(active)return target.rebind(next,preserveDisplay);
       need(!disposed && /^[0-9a-f]{16}$/.test(next) && next>generation,'stale replay presentation');generation=next;return {ok:true};
     },
     enqueueOwned(value,onRetired) {
