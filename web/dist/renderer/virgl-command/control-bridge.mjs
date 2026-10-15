@@ -342,7 +342,7 @@ function createBridge(options, asynchronous, scanoutEnabled = false, desktop = f
         busy = true;
         let event;
         try {
-          try { event = scanoutEnabled && ['bindScanout','beginScanout'].includes(Object.getOwnPropertyDescriptor(input, 'type')?.value) ? normalizeScanoutEvent(input, production) : asynchronous && (Object.getOwnPropertyDescriptor(input, 'type')?.value === 'beginJob' || Object.getOwnPropertyDescriptor(input, 'type')?.value === 'cancelJob') ? normalizeJob(input, desktop ? 64 : 16, byteLimit, production) : normalize(input, asynchronous, byteLimit, production ? PRODUCTION_RESOURCE_LIMITS.segments : 256); }
+          try { event = scanoutEnabled && ['bindScanout','beginScanout'].includes(Object.getOwnPropertyDescriptor(input, 'type')?.value) ? normalizeScanoutEvent(input, production) : asynchronous && (Object.getOwnPropertyDescriptor(input, 'type')?.value === 'beginJob' || Object.getOwnPropertyDescriptor(input, 'type')?.value === 'cancelJob') ? normalizeJob(input, production ? PRODUCTION_RESOURCE_LIMITS.resources : desktop ? 64 : 16, byteLimit, production) : normalize(input, asynchronous, byteLimit, production ? PRODUCTION_RESOURCE_LIMITS.segments : 256); }
           catch (error) { return fail(error instanceof Fault ? error.code : 'invalid-parameter', 'Malformed control event.'); }
           if (event.type === 'reset') {
             need(BigInt('0x' + event.epoch) === BigInt('0x' + epoch) + 1n, 'invalid-parameter', 'Reset epoch must advance once.');

@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 503,
+    "verified": 504,
     "total": 700
   },
   "epics": [
@@ -29255,8 +29255,9 @@
       "activity": [
         {
           "date": "2026-10-15",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "Activate coherent production desktop GPU capacity after frame continuity verification",
             "task: gate GPU warm publication on reproduced desktop faults",
             "task: publish actual Omarchy GPU warm boot on existing stack"
           ]
@@ -29264,7 +29265,7 @@
       ],
       "firstActivity": "2026-10-15",
       "lastActivity": "2026-10-15",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E6-T11d74d1",
@@ -29272,7 +29273,7 @@
       "epicKey": "6",
       "title": "Preserve the displayed GPU front buffer until the next valid frame",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E6-T11d74c"
       ],
@@ -29285,21 +29286,23 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "### 2026-10-15 — worker — reproduce before changing runtime\n\nOriginal worker build5dd286c9 / ordinary Wasm9b7fd924 reproduces40 completely\ntransparent samples out of379 during six trusted pointer moves and a bar click;\n`target/evidence/production-gpu-ready-warm-self04/pointer-flicker.json` retains\nthe executed read-only sampler, original wire messages, GPU counters, pointer\nframes and raw transparent PNGs. Separate allocation refusals remain74d2.",
+      "verificationLog": "### 2026-10-15 — worker — reproduce before changing runtime\n\nOriginal worker build5dd286c9 / ordinary Wasm9b7fd924 reproduces40 completely\ntransparent samples out of379 during six trusted pointer moves and a bar click;\n`target/evidence/production-gpu-ready-warm-self04/pointer-flicker.json` retains\nthe executed read-only sampler, original wire messages, GPU counters, pointer\nframes and raw transparent PNGs. Separate allocation refusals remain74d2.\n\n### 2026-10-15 — worker — recorded submission\n\nRuntime and final harness head `afd26047a3751a55d4bee376ecf668769d06bca5`;\nordinary worker identity `f76a37284d175ecba88ade0de496d3f232fd7dbeefef166a79c537e6ffc7f6bc`.\nClaim: valid production renderer/2D buffer switches preserve the displayed front\nwhile revoking queued/recovery ownership. Actual original-MMIO worker frames\nretain4096 literal green pixels before replacement, reject a cancelled old\ncallback after a new frame queues, draw fresh blue, explicitly disable/re-enable,\nand clear without replay after actual worker WebGL context loss. The original\nunconditional-clear single-hunk negative fails at the no-blank assertion.\nIndependent promoted drivers additionally cover partial full-backing repaint,\nnonfixed/scheduled presenters, invalid flags, stale receipts, reset/teardown,\nwirev1 rejection and staged checkpoint presentation suppression.\n\nFinal authoritative command is recorded by\n`target/evidence/production-gpu-warm-restore-plan01/continue-scanout-cold.py`:\nadvance the complete `git clone --no-local` pristine02 clone to the exact head,\nassert no alternates/shallow state or copied release/build cache, run clean\n`make web-dist`, then\n`python3 tools/virgl-production/verify-scanout-continuity.py --output .../scanout-continuity-repaired01`.\nAll15 acceptance commands and the preceding clean build pass, with the intentional negative exit1. This includes\nfmt, native/wasm clippy and GPU original-wire/checkpoint tests, no-std wasm,\npresentation/protocol/clock tests, reproducible original-MMIO guest, ordinary\nWasm/dist equality, actual Metal worker and independent state/pixel attacks,\nall4software images/10boot-persistence phases and default127passed/0failed.\nAll recorded browser paths have zero unexpected errors. No Linux/Mesa publication\nclaim is made by the supervisor fixture.\n\nEvidence: `evidence/virgl-production-scanout-continuity/worker/submission.tar.gz`,\n4269219bytes, SHA256\n`07c10a5a5ea3c4edeb56ffcac862c1199460e34a81e5699cc1de525131f3b3bd`;\n418members, every identity reopened and rehashed. It includes final pristine\nreceipts, original native GPU events/digest, phase pixels, exact executed source\nand driver, tests/stdout/stderr, screenshots and the recorded continuation.\nUnchanged native/DMA/profile security holds carry from independently verified74c\nat `baf3d1035eec4e184eb2704bc52c2ce17066b1ed` by unchanged dependency bytes.\n\nPreserved failures: pristine01/02 initially stopped before runtime acceptance\nbecause generated roadmap activity depended on unrelated local refs. The\ncanonical HEAD-only generator repair makes the clean build identical; the\nindependent verifier's extra-ref/legacy-negative challenge exercises this fix.\nThe exploratory hot run at38d51d39 is not final exact-head evidence. Its Node\ncommand timeout preserved60 successful original1MiB disk fetches over145s;\nthe harness now records chunk latency and retains the same original result\npredicate with a finite300s command budget. Actual snapshot restore timing is\nseparate (Node2053ms; Omarchy139398msnetwork and6031msrepeat in the pristine run).\nNo acceptance output is fabricated, no old factory is relabelled and no artifact\nhas yet been published. Independent verifier verdict is still required.\n\n### 2026-10-15 — verifier — VERDICT: verified\n\nFresh independent review did not implement GPU/runtime code. Worker commit\n`4784111bb4e12c8e948ff6254dd91edbcd34311e` submits exact runtime/harness\n`afd26047a3751a55d4bee376ecf668769d06bca5`. Full verdict and point citations:\n`evidence/virgl-production-scanout-continuity/verifier/VERDICT.md`.\n\n- P1/P2/P6 — HELD. Original native/MMIO rebind retains all 4,096 green pixels;\n  old sequence 6 / binding 1 retires once as cancelled, fresh sequence 8 /\n  binding 3 draws blue. A revoked callback after blue queues leaves it pending.\n  Literal phase pixels, exact retirement keys and source identities were checked.\n- P3/P4/P5/P7/P8/P9 — HELD. Independent recorded real Canvas2D checks cover\n  fixed/nonfixed first-partial repaint, ordinary scheduling, stale receipt and\n  protocol-1 rejection, invalid preservation flags, explicit disable/reset/\n  teardown, staged checkpoint suppression and activation clear. Actual Metal\n  worker context loss clears without recovery replay. The initial nonfixed\n  partial-frame refutation and checkpoint-wrapper omission remain preserved.\n- P10 — HELD. Independently reopened/rehashed the 4,269,219-byte worker capsule:\n  all 418 members / 417 manifest identities match. All 132 frozen worker sources\n  match candidate blobs; the clean complete clone is exact, nonshallow, without\n  alternates/promisor packs and passes independent object-connectivity checks.\n  All 15 expected command exits hold: 26 native GPU/checkpoint tests, 66 protocol/\n  presentation/clock tests, 8 independent state groups, 47 physical pixel\n  assertions, all four software guests / 10 original boot-persistence phases,\n  and ordinary 127 passed / 0 failed, no proof exports or unexpected browser errors.\n- NEGATIVE — HELD. Healthy/negative frozen inputs differ only in the production\n  presenter's original unconditional-clear hunk. The exact between-bind\n  no-blank assertion fails. Generator extra-ref invariance holds; a scratch\n  legacy `--all` negative fails at its intended assertion. Earlier missing-ref\n  clone failures and external Node chunk timeout remain preserved.\n- COVERAGE/SUITE — Runtime hunks are executed by the recorded native worker and\n  independent state/pixel checks; comments, generated mirror copies and the\n  direct Make alias are waived with reasons in the full verdict. Unchanged\n  native/DMA/security proofs carry from the recorded 74c dependency. Promoted\n  `tools/test_gen_tasks_json_head.py` passes and guards published activity against\n  unrelated branch/remote/stash refs while retaining real HEAD changes.\n\nIndependent review capsule:\n`evidence/virgl-production-scanout-continuity/verifier/review.tar.gz`,\n538,549 bytes, 80 members, SHA256\n`b0df7f502f64c4999bc27443272c3776ac8618c755fe274617e498a74917b013`.\nEvery member was reopened and rehashed. It preserves pre-outcome predictions,\noriginal refutations, executed drivers, CDP coverage, generator positive/negative,\nportability/network failure provenance and the sealed-submission audit.\n\nVerifier commands: `python3 tools/test_gen_tasks_json_head.py`;\n`python3 target/evidence/critic-production-scanout-continuity74d1/audit-sealed-submission.py`;\nrecorded bounded independent headless Chrome drivers and scratch-ref challenge.\nNo runtime edits, protected-guest interaction, factory relabelling or publication\noccurred in this review. This supervisor boundary verdict does not verify final\nOmarchy warm publication (74d) or allocation diagnostics (74d2).",
       "adversarial": "Fresh verifier predicts actual canvas bytes before each transition, then attacks\nqueued old receipt delivery, disable, reset and recovery replay. A screenshot\nafter the replacement frame does not prove continuity between frames. Sabotage\nthe new no-blank assertion with the original unconditional clear once. Carry\nunchanged native/DMA/security proofs by their recorded dependency identities.",
       "file": "tasks/epic-6-transcendence/E6-T11d74d1-production-scanout-continuity.md",
       "activity": [
         {
           "date": "2026-10-15",
-          "commits": 1,
+          "commits": 3,
           "labels": [
+            "Verify production scanout continuity with independent replay evidence",
+            "Submit recorded production scanout continuity evidence for independent review",
             "task: gate GPU warm publication on reproduced desktop faults"
           ]
         }
       ],
       "firstActivity": "2026-10-15",
       "lastActivity": "2026-10-15",
-      "commitCount": 1
+      "commitCount": 3
     },
     {
       "id": "E6-T11d74d2",
@@ -29307,7 +29310,7 @@
       "epicKey": "6",
       "title": "Admit normal desktop GPU objects within coherent production budgets",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E6-T11d74d1"
       ],
@@ -29320,21 +29323,22 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "",
+      "verificationLog": "### 2026-10-15 — worker — production capacity selected\n\nBegin after74d1 independent verification at612b1b7b on the same native stack557,\nnext layer above PR566. Select512live/retained production resources,32contexts\nand64renderer subcontexts. Private resource16/desktop64/context8 defaults,\nobjects256, programs/shader/uniform and byte/lease/ticket budgets stay unchanged.\nThe actual old factory started with7of8contexts and11–12of16subcontexts, but only\n36–47of256state objects, so no speculative state-object increase is selected.\nOriginal ID104 popup baseline is24×24RGBA/2304bytes and isolates count admission.",
       "adversarial": "Fresh verifier challenges native/host/state/checkpoint count disagreement, count\nversus bytes, retained storage and failed-admission identity consumption. Reuse\nof an old ID must not release old storage or satisfy a stale receipt. Sabotage\nthe promoted beyond64-object regression with the old production limit once.",
       "file": "tasks/epic-6-transcendence/E6-T11d74d2-production-desktop-capacity.md",
       "activity": [
         {
           "date": "2026-10-15",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "Activate coherent production desktop GPU capacity after frame continuity verification",
             "task: gate GPU warm publication on reproduced desktop faults"
           ]
         }
       ],
       "firstActivity": "2026-10-15",
       "lastActivity": "2026-10-15",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E6-T11d8",

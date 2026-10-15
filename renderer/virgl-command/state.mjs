@@ -1,5 +1,6 @@
 import {executeFramebufferBlit} from "./multisample.mjs";
 import {createBooleanQueries} from "./queries.mjs";
+import {PRODUCTION_RESOURCE_LIMITS} from "./resources.mjs";
 /** Typed VirGL state and bounded triangle draws. See state-README.md and draw-README.md. */
 import {byteColorFormat} from "./color-images.mjs";
 import {floatColorFormat} from "./float-images.mjs";
@@ -26,6 +27,8 @@ import { parseConstantDomain, checkFiniteBank, checkIndirectBank, checkLoopBank,
 export const STATE_PROFILE = "virgl-tiny-state-v1";
 export const STATE_LIMITS = Object.freeze({ contexts: 8, subContexts: 16, objects: 256,
   programs: 64, shaderBytes: 1048576, uniformBytes: 65536 });
+export const PRODUCTION_STATE_LIMITS = Object.freeze({ ...STATE_LIMITS,
+  contexts: PRODUCTION_RESOURCE_LIMITS.contexts, subContexts: 64 });
 export const DRAW_PROFILE = "virgl-tiny-indexed-draw-v1";
 export const DRAW_LIMITS = Object.freeze({ drawsPerSubmission: 64, indicesPerSubmission: 65536 });
 export const PRODUCTION_DRAW_LIMITS = Object.freeze({ drawsPerSubmission: 256, indicesPerSubmission: 262144 });
@@ -370,8 +373,9 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
     require(resources && ["inspect", "retainStorage", "releaseStorage", "prepareTransfer", "executeTransfer"].every((name) => typeof resources[name] === "function") &&
       bindings && typeof bindings.resolve === "function" && shaderBridge && typeof shaderBridge.translate === "function", "invalid-input", "Resource and shader capabilities are required.");
     require(!drawing || typeof resources.readStorage === "function", "invalid-input", "Drawing requires actual storage readback.");
-    const supplied = dataRecord(config.limits ?? {}, Object.keys(STATE_LIMITS), []), limits = { ...STATE_LIMITS, ...supplied };
-    for (const key of Object.keys(limits)) require(Number.isSafeInteger(limits[key]) && limits[key] >= 0 && limits[key] <= STATE_LIMITS[key], "invalid-input", "Limits may only tighten defaults.");
+    const stateLimits = production ? PRODUCTION_STATE_LIMITS : STATE_LIMITS;
+    const supplied = dataRecord(config.limits ?? {}, Object.keys(stateLimits), []), limits = { ...stateLimits, ...supplied };
+    for (const key of Object.keys(limits)) require(Number.isSafeInteger(limits[key]) && limits[key] >= 0 && limits[key] <= stateLimits[key], "invalid-input", "Limits may only tighten defaults.");
     Object.freeze(limits);
     const cacheLimits = { ...CACHE_LIMITS, ...dataRecord(config.cacheLimits ?? {}, Object.keys(CACHE_LIMITS), []) };
     for (const key of Object.keys(cacheLimits)) require(Number.isSafeInteger(cacheLimits[key]) && cacheLimits[key] >= 0 && cacheLimits[key] <= CACHE_LIMITS[key],

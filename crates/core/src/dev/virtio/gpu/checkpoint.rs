@@ -136,7 +136,7 @@ fn control(
             && value.next_backing_generation > 0,
     )?;
     let mut generations = BTreeSet::new();
-    for _ in 0..r.count(MAX_CONTEXTS, 20)? {
+    for _ in 0..r.count(MAX_PRODUCTION_CONTEXTS, 20)? {
         let identity = r.id()?;
         need(
             identity.generation < value.next_generation && generations.insert(identity.generation),
@@ -149,7 +149,7 @@ fn control(
         )?;
         let debug_name = r.blob(64)?.to_vec();
         let mut resources = Vec::new();
-        for _ in 0..r.count(MAX_DESKTOP_RESOURCES, 12)? {
+        for _ in 0..r.count(MAX_PRODUCTION_RESOURCES, 12)? {
             let id = r.id()?;
             need(
                 resources
@@ -169,7 +169,7 @@ fn control(
     let mut gpu = 0u64;
     let mut backed = 0u64;
     let ram_end = ram_base.checked_add(ram_len).ok_or(Error::Invalid)?;
-    for _ in 0..r.count(MAX_DESKTOP_RESOURCES, 57)? {
+    for _ in 0..r.count(MAX_PRODUCTION_RESOURCES, 57)? {
         let identity = r.id()?;
         need(
             identity.generation < value.next_generation && generations.insert(identity.generation),

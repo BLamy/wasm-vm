@@ -878,14 +878,17 @@
       "version": 2
     },
     "clock": "wall for accelerated cold boots; historical software snapshots unchanged",
+    "contexts": 32,
     "drawsPerSubmission": 256,
     "factory": "createVirglProductionBridge",
     "guestApi": "OpenGL ES 3.0 / GLSL ES 3.00",
     "historicalProfileLimits": "unchanged",
     "indexWorkPerSubmission": 262144,
+    "liveRetainedResources": 512,
     "pendingJobs": 1,
     "perResourceBytes": 33554432,
     "perTransferBytes": 33554432,
+    "rendererSubContexts": 64,
     "snapshot": "accelerated save/import/restore reject; cold restart required",
     "softwareFallback": "existing paired Omarchy warm image through gpu=0",
     "status": "final-verification-in-progress"

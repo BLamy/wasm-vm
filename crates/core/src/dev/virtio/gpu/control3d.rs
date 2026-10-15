@@ -14,6 +14,8 @@ use crate::{bus::Bus, dev::virtio::queue::DescriptorChain, mmio::SystemBus};
 pub const MAX_CONTEXTS: usize = 8;
 pub const MAX_RESOURCES: usize = 16;
 pub const MAX_DESKTOP_RESOURCES: usize = 64;
+pub const MAX_PRODUCTION_RESOURCES: usize = 512;
+pub const MAX_PRODUCTION_CONTEXTS: usize = 32;
 pub const MAX_BACKING_ENTRIES: usize = 256;
 /// Bounded original Linux page-fragmented lists; private proof profiles stay256.
 pub const MAX_PRODUCTION_BACKING_ENTRIES: usize = 16_384;
@@ -692,6 +694,22 @@ impl Control3dState {
         state.production_limits = true;
         state
     }
+    fn context_count_limit(&self) -> usize {
+        if self.production_limits {
+            MAX_PRODUCTION_CONTEXTS
+        } else {
+            MAX_CONTEXTS
+        }
+    }
+    fn resource_count_limit(&self) -> usize {
+        if self.production_limits {
+            MAX_PRODUCTION_RESOURCES
+        } else if self.desktop_resources {
+            MAX_DESKTOP_RESOURCES
+        } else {
+            MAX_RESOURCES
+        }
+    }
     fn backing_entries_limit(&self) -> usize {
         if self.production_limits {
             MAX_PRODUCTION_BACKING_ENTRIES
@@ -890,7 +908,7 @@ impl Control3dState {
                 if self.contexts.iter().any(|c| c.identity.id == header.ctx_id) {
                     return Err(Control3dError::InvalidContextId);
                 }
-                if self.contexts.len() >= MAX_CONTEXTS {
+                if self.contexts.len() >= self.context_count_limit() {
                     return Err(Control3dError::OutOfMemory);
                 }
                 self.contexts
@@ -1008,12 +1026,8 @@ impl Control3dState {
                     self.resource_limit(),
                     self.production_limits,
                 )?;
-                let max_resources = if self.desktop_resources {
-                    MAX_DESKTOP_RESOURCES
-                } else {
-                    MAX_RESOURCES
-                };
-                if self.resources.len() >= max_resources || gpu > self.gpu_limit() - self.gpu_bytes
+                if self.resources.len() >= self.resource_count_limit()
+                    || gpu > self.gpu_limit() - self.gpu_bytes
                 {
                     return Err(Control3dError::OutOfMemory);
                 }
