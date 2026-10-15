@@ -124,6 +124,10 @@ profile. The Foot interop patch is retained in both profiles.
 `make verify-E5.5-T05c` boots the GPU candidate cold through the original public
 worker and scanout. Set `OMARCHY_DESKTOP_IMAGE_DIRECTORY` to the prepared GPU
 image and `OMARCHY_APP_DESKTOP_EVIDENCE_DIR` to a new recording directory.
+`CRITIC_FAST_BOOT_APPLICATION_INVENTORY` names the independently accepted T05b
+`runtime-elf.json` input (default: the T05b final evidence directory). The recorder
+copies and hashes it, then compares the running Chromium and Writer executable
+hashes and installed Node hash with its native RISC-V entries.
 The application workload uses trusted keyboard input to launch native Chromium,
 submit a note to a guest loopback fixture, launch Writer, type/save/close/reopen
 and edit an actual ODT, and execute Node/npm in Foot. RPC only prepares the
