@@ -21,7 +21,7 @@ const report={schema:'reviewed-site-assembled-route-record-v1',task:'E0-T27',hea
  actualGuestGpu:false,performanceAuthority:false,errors:[],originalRouteBodies:[],interruptedResponseBodies:[],canceledRequests:[],requests:[],screenshots:[],served:[],steps:[]};
 await fs.mkdir(output,{recursive:true});
 let browser,server,legacyTransition=null;
-const served=new Map(),bodyReads=[];
+const served=new Map(),bodyReads=[],capturedRequests=new WeakMap();
 const screenshot=async(page,name)=>{const destination=path.join(output,name);await page.screenshot({path:destination,fullPage:false});report.screenshots.push({path:name,sha256:hash(await fs.readFile(destination))});};
 try{
  assert.equal(git('status','--porcelain','--untracked-files=no'),'','record from a clean committed source');
@@ -56,13 +56,15 @@ try{
  // module. An immediate client redirect may otherwise destroy Chrome's CDP
  // response handle before the recorder can retrieve this changed source.
  const captureRouteSource=async context=>{
-  for(const name of ['tabs.js','ide.js'])await context.route('**/'+name,async route=>{
+  for(const name of ['tabs.js','ide.js','omarchy-startup-state.js','artifacts-busybox.json','artifacts-alpine.json','artifacts-node-alpine.json','artifacts-omarchy.json','artifacts-omarchy-virgl.json'])await context.route('**/'+name,async route=>{
    const original=await route.fetch();assert.equal(original.status(),200);
-   const bytes=await original.body();const expected=await fs.readFile(path.join(dist,name));
+   const bytes=await original.body(),raw=await fs.readFile(path.join(dist,name));
+   const expected=remote?expectedPublishedSource(name,raw):raw;
    assert.equal(hash(bytes),hash(expected),'original routing module drift');
-   const bodyPath='original-routes/'+name;await fs.mkdir(path.dirname(path.join(output,bodyPath)),{recursive:true});
+   const bodyPath=`original-routes/${report.originalRouteBodies.length}/${name}`;await fs.mkdir(path.dirname(path.join(output,bodyPath)),{recursive:true});
    await fs.writeFile(path.join(output,bodyPath),bytes);
-   report.originalRouteBodies.push({url:route.request().url(),path:name,bodyPath,status:original.status(),bytes:bytes.length,sha256:hash(bytes),forwardedUnchanged:true});
+   const receipt={url:route.request().url(),path:name,bodyPath,status:original.status(),bytes:bytes.length,sha256:hash(bytes),forwardedUnchanged:true};
+   report.originalRouteBodies.push(receipt);capturedRequests.set(route.request(),receipt);
    await route.fulfill({response:original,body:bytes});
   });
  };
@@ -79,7 +81,9 @@ try{
    report.requests.push({url:r.url(),path:name,status:r.status(),bodyPath,bytes:bytes.length,sha256:hash(bytes)});
   }catch(error){
    const item={url:r.url(),message:error.message};
-   if(transition&&/Network.getResponseBody.*No resource with given identifier found/.test(error.message))report.interruptedResponseBodies.push({...item,legacyTransition:transition});
+   const original=capturedRequests.get(r.request());
+   if(original&&/Network.getResponseBody.*No resource with given identifier found/.test(error.message))report.interruptedResponseBodies.push({...item,legacyTransition:transition,originalBodyPath:original.bodyPath,sha256:original.sha256,acquisition:'exact-request-original-response-forwarded-unchanged'});
+   else if(transition&&/Network.getResponseBody.*No resource with given identifier found/.test(error.message))report.interruptedResponseBodies.push({...item,legacyTransition:transition});
    else if(r.request().failure()?.errorText!=='net::ERR_ABORTED')report.errors.push(item);
   }})());});
  };
@@ -106,6 +110,7 @@ try{
   assert.match(await page.locator('#os-launcher').innerText(),/first warm launch downloads a checkpoint/);
   assert.equal(await page.locator('#panel-ide').getAttribute('data-os-selected'),null);
   assert.equal(await page.locator('#rm-lanes, #panel-docs, #docs-mount, iframe').count(),0);
+  await page.waitForLoadState('networkidle');await Promise.all(bodyReads);
  };
  await page.locator('.nav-cta').click();await launcher();
  assert.equal(await page.locator('nav[aria-label="Primary navigation"] a[href="./docs.html"]').count(),1);
@@ -230,13 +235,14 @@ try{
  // A redirect may retire an unchanged module's CDP resource before its body
  // can be read. Keep that diagnostic, and require a successful original-body
  // capture from the normal initialized app plus unchanged baseline bytes.
- const unchangedRedirectModules=new Set(['ide.js','vendor/xterm/xterm.js','omarchy-startup-state.js','coi-serviceworker-register.js','cpu-isolation.js']);
+ const unchangedRedirectModules=new Set(['vendor/xterm/xterm.js','coi-serviceworker-register.js','cpu-isolation.js']);
  for(const item of report.interruptedResponseBodies){
   const name=new URL(item.url).pathname.slice(1);
-  const original=report.originalRouteBodies.find(row=>row.url===item.url&&row.forwardedUnchanged);
+  const original=report.originalRouteBodies.find(row=>row.url===item.url&&row.forwardedUnchanged&&(!item.originalBodyPath||row.bodyPath===item.originalBodyPath));
   if(original){
    item.originalBodyPath=original.bodyPath;item.sha256=original.sha256;
-   assert.equal(hash(await fs.readFile(path.join(output,original.bodyPath))),hash(await fs.readFile(path.join(dist,name))));
+   const raw=await fs.readFile(path.join(dist,name));
+   assert.equal(hash(await fs.readFile(path.join(output,original.bodyPath))),hash(remote?expectedPublishedSource(name,raw):raw));
    continue;
   }
   assert.ok(unchangedRedirectModules.has(name),'unproven interrupted response '+name);
