@@ -61,3 +61,35 @@ Journal overflow makes checkpointing unavailable while ordinary rendering
 continues. Detailed pre-implementation plan is in
 `target/evidence/production-gpu-warm-restore-plan01/renderer-design.json`;
 fresh critic recorded ten predictions before implementation.
+
+### 2026-10-15 — worker — physical implementation frozen for acceptance
+
+The canonical production renderer now has an opt-in bounded immutable event/DMA
+journal, portable value codec, exact qualified-profile check, and unpublished
+fresh-context reconstruction. Replay checks real GPU outputs, query measurements,
+logical ownership and all live GPU allocation bytes, including private mip/layer
+views and unreferenced retained generations. It never invokes live guest DMA or
+completion. Historical scanout captures retire silently; activation reads current
+restored GPU storage through the real scanout path. Epoch rebasing preserves
+sequence/generation ownership. Failed/cancelled activation disposes all allocations.
+MSAA, undrained query/presentation state, failed event prefixes and journal overflow
+refuse checkpointing; overflow does not stop ordinary original rendering.
+
+`make verify-E6-T11d74b` is the frozen acceptance. It builds the proof Wasm and
+ordinary web target, records three worker hardware rows, the independent critic's
+six-mode hardware matrix and isolated stale-epoch sabotage, the unchanged real
+multisample regression, codec hostile-input tests, and the default demo. Native74a's
+unchanged core evidence carries. One full-history pristine clone runs the same
+command with scrubbed compiler/Cargo/critic environment. This boundary does not
+claim the default worker or a production guest has GPU warm boot yet;74c/d compose
+and publish that path.
+
+Self-validation: worker self09 passed three physical rows, including literal blue
+private mip sampling before/after old-ID reuse, dimensional packed depth/stencil,
+GPU-written transform feedback with preserved append cursor, original WAIT_HOST
+and ready queries plus independently delayed fresh physical availability, scanout
+FLUSH/receipt, malformed/profile refusal, MSAA/ended-query/failed-prefix refusal,
+overlapping capture refusal and budget-exhausted rendering. All native objects and
+fences are released. The retained self08 failure was a test fixture passing float
+values where the existing clear helper expects IEEE754 words; changing only that
+fixture to `.map(word)` produced self09. It was not a runtime rendering fix.

@@ -2586,6 +2586,11 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         alive(); idle(); programCache.clear(); translationCache.clear(); stateCache.clear();
         activeFrame = null; lastFrame = null; debugBytes = 0; return success();
       }); },
+      ...(production ? {checkpointQueryState() { return result(() => {
+        alive(); idle();const state=booleanQueries.checkpointState();
+        require(state.every(q=>!q.requested && q.nativeParts===0 && q.state!=='active' && q.state!=='ended'),
+          'busy','Checkpoint requires drained original queries.');return success({queries:state});
+      }); }} : {}),
       beginFrame(number) { return result(() => {
         alive(); idle(); require(Number.isSafeInteger(number) && number >= 0 && number > lastFrameNumber, "invalid-frame", "Host frame numbers must be increasing safe integers.");
         require(activeFrame === null, "busy", "A host frame capture is active.");

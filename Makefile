@@ -51,6 +51,10 @@ verify-E6-T11d73:
 verify-E6-T11d74a:
 	python3 tools/virgl-production/verify-gpu-checkpoint.py --output "$${VIRGL_GPU_CHECKPOINT_EVIDENCE_DIR:-target/evidence/production-gpu-checkpoint-final}"
 
+.PHONY: verify-E6-T11d74b
+verify-E6-T11d74b:
+	python3 tools/virgl-production/verify-renderer-checkpoint.py --output "$${VIRGL_RENDERER_CHECKPOINT_EVIDENCE_DIR:-target/evidence/production-renderer-checkpoint-final}"
+
 verify-E6-T11e:
 	wasm-pack build crates/wasm --target web --out-dir ../../target/virgl-production/pkg --features virgl-renderer,virgl-control-proof
 	python3 tools/virgl-production/verify.py --task E6-T11e --output "$${VIRGL_RECOVERY_EVIDENCE_DIR:-target/evidence/production-recovery-final}"

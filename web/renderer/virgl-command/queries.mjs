@@ -91,6 +91,10 @@ export function createBooleanQueries(gl, resources, require, unwrap, check) {
         this.poll(object);
       }
     },
+    checkpointState() {
+      return [...objects].map(o=>({state:o.queryState,requested:o.queryRequested,value:o.queryValue ?? null,
+        nativeParts:o.queryParts.length}));
+    },
     inspect() { return { objects: objects.size, nativeParts, pending: [...objects].filter(o => o.queryRequested).length }; },
   });
 }

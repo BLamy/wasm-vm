@@ -1016,6 +1016,47 @@ function createStore(options, uniform, bufferRoles = false, mipmaps = false, ima
         } finally { releaseTicket(entry); }
       }),
       cancelTransfer: operation((token) => { releaseTicket(consumeTicket(token)); return success(); }),
+      ...(resourceLimits === PRODUCTION_RESOURCE_LIMITS ? {
+        checkpointContents: operation(() => {
+          require(tickets.size === 0 && storageReads.size === 0 && uniformRanges.size === 0 &&
+            imageHolds.size === 0 && packedCaptures.size === 0 && scratchBytes === 0,
+          'busy', 'Checkpoint requires drained resource access.');
+          const allocations = [], resources = [], views = [], seen = new Map();
+          let total = 0;
+          const charge = n => {
+            require(Number.isSafeInteger(n) && n >= 0 && n <= 256 * 1024 * 1024-total,
+              'limit-exceeded', 'Checkpoint content read budget exceeded.'); total += n;
+          };
+          const storage = (native, meta) => {
+            require(meta.nrSamples === 0, 'unsupported-resource', 'Checkpoint requires resolved single-sample storage.');
+            if (seen.has(native)) return seen.get(native);
+            const index = allocations.length, levels = [];
+            seen.set(native, index);
+            for (const level of meta.levels ?? [{level:0,width:meta.width,height:meta.height,layers:1}]) {
+              const fields = normalizedFields({resourceHandle:meta.id,level:level.level,usage:0,stride:0,layerStride:0,
+                box:{x:0,y:0,z:0,width:level.width,height:level.height,depth:level.layers ?? 1},dataOffset:0,direction:2});
+              const layout = layoutFor(meta, fields, meta.byteLength, limits);
+              charge(layout.tightBytes); reserveScratch(scratchCharge(layout));
+              try { levels.push({level:level.level,bytes:new Uint8Array(readGpu({storage:native,meta},layout))}); }
+              finally { scratchBytes -= scratchCharge(layout); }
+            }
+            allocations.push({metadata:meta,levels}); return index;
+          };
+          for (const res of [...live].sort((a,b)=>a.generation-b.generation)) {
+            const record = {metadata:res.meta,generation:res.generation,public:res.public,
+              storage:res.storage === null ? null : storage(res.storage,res.meta)};
+            if (res.storage === null && res.backing) {
+              charge(res.backing.byteLength);const bytes=new Uint8Array(res.backing.byteLength);
+              copySegments(res.backing.segments,0,bytes,false);record.backing=bytes;
+            }
+            resources.push(record);
+          }
+          for (const view of liveImages) views.push({resourceGeneration:view.resource.generation,
+            metadata:view.metadata,firstLevel:view.firstLevel,lastLevel:view.lastLevel,firstLayer:view.firstLayer ?? 0,
+            storage:storage(view.storage,view.metadata)});
+          return success({allocations,resources,views,byteLength:total});
+        }),
+      } : {}),
       unref: operation((id) => {
         const res = resource(id); resources.delete(id); res.public = false;
         for (const member of [...res.memberships]) removeMember(member);

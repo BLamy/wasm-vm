@@ -163,6 +163,28 @@ export function createRetainedScanout({ getOwners, resolveResource, presenter, o
       for (const job of [...held]) release(job);
       jobs.clear(); dropBinding(); current = null; return ok();
     },
+    rebaseCheckpointEpoch(expected,next) {
+      need(!disposed && jobs.size===0 && held.size===0 && (!current || current.epoch===expected), 'Checkpoint display epoch is not idle.');
+      hex(expected);hex(next);need(next>expected && next!=='ffffffffffffffff','Invalid checkpoint display epoch.');
+      if(current)current.epoch=next;return ok();
+    },
+    async repairCheckpointFrame(cancelled=()=>false) {
+      need(!disposed && jobs.size===0 && held.size===0,'Checkpoint display is not idle.');
+      if(!current || current.binding.target.kind==='disabled')return ok({status:'disabled'});
+      need(current.binding.target.kind==='renderer','Checkpoint display requires a renderer binding.');
+      // This is a host repair read, with no native request key or used-ring completion.
+      const job={epoch:current.epoch,sequence:null,binding:current.binding,owner:current.owner,lease:current.lease,
+        ticket:null,phase:'ready',cancelled:false,retired:false,presenterGeneration:localGeneration};
+      const deadline=performance.now()+10000;jobs.add(job);
+      try {
+        for(;;) {
+          need(!cancelled(),'Checkpoint display repair was cancelled.');need(performance.now()<deadline,'Checkpoint display repair timed out.');
+          const state=unwrap(api.step(job));
+          if(state.status==='done') { unwrap(state.result);return ok({status:'queued',authority:'restored-gpu-readback'}); }
+          await new Promise(resolve=>setTimeout(resolve,0));
+        }
+      } catch(error) { release(job);jobs.delete(job);throw error; }
+    },
     dispose() { if (disposed) return ok(); api.reset(); disposed = true; return presenter.dispose(); },
     inspect() { return { disposed, binding: current ? { epoch: current.epoch, ...current.binding } : null, localGeneration,
       activeCaptures: jobs.size, retainedFrames: held.size, ...counters, retirements: [...retirements], presenter: presenter.inspect() }; },

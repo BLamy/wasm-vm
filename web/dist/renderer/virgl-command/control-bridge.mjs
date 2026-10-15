@@ -443,6 +443,47 @@ function createBridge(options, asynchronous, scanoutEnabled = false, desktop = f
       },
     };
     if (asynchronous) bridge.pump = pump;
+    if (production) {
+      const checkpointReady = () => {
+        need(!busy && !disposed && !poisoned && pending === null && !config.gl.isContextLost(),
+          'bridge-poisoned','Checkpoint requires a healthy idle renderer.');
+        const display=scanout.inspect();
+        need(display.activeCaptures===0 && display.retainedFrames===0 && display.presenter.retainedFrames===0,
+          'invalid-parameter','Checkpoint requires drained presentation.');
+      };
+      bridge.checkpointState = () => {
+        let owned=false;
+        try {
+          checkpointReady();busy=true;owned=true;
+          const queries=unwrap(owners.renderer.checkpointQueryState()).queries;
+          const contents=unwrap(owners.store.checkpointContents());
+          const store=unwrap(owners.store.inspect()), renderer=unwrap(owners.renderer.inspect());
+          return Object.freeze({ok:true,contents,logical:{epoch,highestGeneration,lastSequence,
+            contexts:[...contexts.values()].map(v=>({transport:v.transport,storageGeneration:v.storageGeneration,resources:[...v.resources].sort((a,b)=>a-b)})),
+            resources:[...resources.values()].map(v=>({transport:v.transport,storageGeneration:v.storageGeneration,metadata:v.metadata,backing:v.backing ?? null})),
+            store:{resources:store.resources,contexts:store.contexts},renderer:renderer.contexts,queries,
+            scanout:scanout.inspect().binding}});
+        } catch(error) { return fail(error instanceof Fault?error.code:'invalid-parameter',String(error.message)); }
+        finally { if(owned)busy=false; }
+      };
+      bridge.checkpointReady = () => {
+        try { checkpointReady();unwrap(owners.renderer.checkpointQueryState());return ok(); }
+        catch(error) { return fail(error instanceof Fault?error.code:'invalid-parameter',String(error.message)); }
+      };
+      bridge.rebaseCheckpointEpoch = (expected,next) => {
+        try {
+          checkpointReady();hex(expected);hex(next);
+          need(expected===epoch && next>epoch && next!=='ffffffffffffffff','invalid-parameter','Stale checkpoint epoch rebase.');
+          scanoutResult(scanout.rebaseCheckpointEpoch(expected,next));epoch=next;return ok();
+        } catch(error) { return fail(error instanceof Fault?error.code:'invalid-parameter',String(error.message)); }
+      };
+      bridge.repairCheckpointScanout = async (cancelled=()=>false) => {
+        let owned=false;
+        try { need(typeof cancelled==='function','invalid-parameter','Invalid checkpoint cancellation capability.');checkpointReady();busy=true;owned=true;return scanoutResult(await scanout.repairCheckpointFrame(cancelled)); }
+        catch(error) { return fail(error instanceof Fault?error.code:'invalid-parameter',String(error.message)); }
+        finally { if(owned)busy=false; }
+      };
+    }
     if (scanout) bridge.present2D = (frame) => {
       if (busy || disposed || poisoned) return fail('bridge-poisoned', 'Bridge is not available for presentation.');
       busy = true; try { return scanout.present2D(frame); } finally { busy = false; }

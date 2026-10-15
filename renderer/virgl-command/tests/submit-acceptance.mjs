@@ -494,4 +494,4 @@ export async function runBrowserAcceptance({WasmVirglSubmitProof,createVirglSubm
 }
 
 // Shared literal queue and hardware-oracle fixtures; selection is supplied by the caller.
-export { checker, makeRig, context, resource, idCommand, header, submission, backing, transfer, originalReplay, orderedDma, uncertainGpuFailure, protocolAttacks };
+export { checker, makeRig, Queue, context, resource, idCommand, header, submission, backing, transfer, originalReplay, orderedDma, uncertainGpuFailure, protocolAttacks };

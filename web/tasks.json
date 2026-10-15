@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 500,
+    "verified": 501,
     "total": 698
   },
   "epics": [
@@ -29621,7 +29621,7 @@
       "epicKey": "6",
       "title": "Capture and restore quiescent production GPU device state",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E5-T26h",
         "E6-T11d71",
@@ -29637,21 +29637,24 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "### 2026-10-15 — worker — explicit accelerated warm-boot scope\n\nThe user's clarified goal is warm boot with GPU rendering. This is an ordered\nimplementation boundary of that request, not the cancelled software-default\nworkaround. Existing independent rendering/timekeeping proofs carry only across\nunchanged code and dependency identities; new checkpoint behavior needs its own\nrecorded acceptance and fresh verifier.",
+      "verificationLog": "### 2026-10-15 — worker — explicit accelerated warm-boot scope\n\nThe user's clarified goal is warm boot with GPU rendering. This is an ordered\nimplementation boundary of that request, not the cancelled software-default\nworkaround. Existing independent rendering/timekeeping proofs carry only across\nunchanged code and dependency identities; new checkpoint behavior needs its own\nrecorded acceptance and fresh verifier.\n\n### 2026-10-15 — worker — native checkpoint submission\n\nRuntime frozen at `3505a7c480ec855bd1d64d7c0188dea8fc3ab4e8`; final exact\nacceptance head `268019aed7c5f61b0bcab660c6f82b32da828e59` adds only the\nnew task's current roadmap-copy oracle to the browser recorder. The new explicit\nnative APIs authenticate the complete CPU/RAM/device container and renderer\nwitness, stage all GPU/device validation before commit, preserve the two\ntransport queues, contexts/resources/backing and retained scanout/cursor, and\nreserve an epoch above both source and destination. Ordinary accelerated\nsave/load still refuse. No new Wasm checkpoint export is exposed in this layer.\n\nCommands: `make web-dist` (recorded before freeze),\n`VIRGL_GPU_CHECKPOINT_EVIDENCE_DIR=target/evidence/production-gpu-checkpoint-frozen01 make verify-E6-T11d74a`,\n`node tools/verify-virgl-default-demo.mjs --output target/evidence/production-gpu-checkpoint-browser02 --task E6-T11d74a`,\nand one full-history `git clone --no-local` of final head with no alternates,\nscrubbed Rust/Cargo environment, followed by `make verify-E6-T11d74a`.\nThe initial outer recording remains **failed**: its ten native/build components\npassed, and browser127/0/errors[] preceded an obsolete roadmap-copy expectation.\nOnly that harness line changed; the narrow corrected browser run passed. The\nfinal pristine run passed the entire unmodified acceptance command.\n\nEvidence of record:\n`evidence/virgl-production-gpu-checkpoint/worker/native-gpu-checkpoint-submission.tar.gz`\n(5,445,692 bytes; SHA256\n`44bae635eecccc9c202df4e51777031d2ed1c53bb0817180c18336512210871a`;\n84 reopened members,83 verified file identities). Contains exact diff/sources,\nall commands/stdout/stderr, initial failed recorder, corrected browser capture,\nand pristine report. Local unpacked records are in\n`target/evidence/production-gpu-checkpoint-{frozen01,browser02,cold01}`.\n\n391 core tests,23 original-wire tests and30 legacy resume/coherence tests passed.\nWorker original-wire cases compare exact guest snapshots, cached/uncached\ninstruction hashes and final digests, serialized MMIO/both ring positions,\narmed CLINT deadlines, noninitial backing generations, cursor and scanout.\nIndependent promoted cases exercise outer CPU corruption,26 correctly rehashed\nsemantic mutations, missing/duplicate CPU sections, pending versus unconsumed\ncompletion, retained renderer scanout after original CREATE_2D/CREATE_3D unref,\nand repeated restores with colliding old sequence keys. Isolated fresh-critic\nremoval of epoch increment fails as predicted; its own recording/verdict follows.\n\nThis is the native half only. Actual physical GPU contents/reconstruction,\npaired production worker publication and default Omarchy GPU warm boot are the\nordered74b–d dependencies. Existing rendering proofs are carried across unchanged\nrenderer code; new accelerated browser behavior will be surfaced and deployed\nwith that complete paired path. Built `web/dist` is committed in3505a7c4.\n\n### 2026-10-15 — worker — bounded guard coverage supplement\n\nFresh review requested direct evidence for live poison, reset-pending and\nunsupported owners. Added only the original-wire fixture at `1c76deec48ed104798c1ee0a8f4816512ad5346a`;\nnative/browser sources and compiled dist are unchanged from the frozen proof.\nRecorded fmt, target-specific clippy and\n`cargo test -p wasm-vm-core --features virgl-renderer,trace --test production_virgl_critic gpu_checkpoint_poison_reset -- --nocapture`.\nBoth cache modes refuse save/load atomically after an original BridgePoisoned\ncontrol error while positive VIRGL negotiation remains present, and after MMIO\nreset before normal service. Normal reset service permits capture and restore\nat fresh epoch3. Absent GPU, NullSink/unqualified and private-proof owners refuse.\nThe first private fixture setup omitted enable_plic and failed before that row;\nit is preserved in plan01/poison-reset01, corrected without runtime changes.\nFinal supplement passes, with archive `evidence/virgl-production-gpu-checkpoint/worker/poison-reset-guard-supplement.tar.gz`\n(5808 bytes; SHA256 `f89e1ad5e15ec31a90021bc896da06e458b629aa80d8cbb2d95fd9adc1d2afb1`;\n11 reopened members/10 identities).\nThe prior pristine proof and all unchanged results carry incrementally.\n\n\n### 2026-10-15 — independent verifier — native checkpoint\n\nVERDICT: verified\n\n- P1/P7 state and execution — HELD. At runtime3505a7c4 and final acceptance\n  268019ae, eight original MMIO/DMA cache/ID/fresh rows preserve exact guest\n  snapshots, both queue/MMIO prefixes, cursor/retained scanout, armed deadlines\n  1000003/1000079 and backing generation2/next3. Subsequent original fenced\n  requests complete once; cached/uncached instruction hash9133162342038612928\n  and final state digests match. Citation: worker main archive,\n  `cold01/acceptance/original-wire.stdout:53` through its eight printed rows.\n- P2/P3/P5 ownership — HELD. Pending and ready-but-unconsumed requests refuse\n  capture/restore without retirement, used-ring or owner changes. Same-sequence\n  old-epoch completions refuse after repeated restores; next original requests\n  preserve sequence/creation/backing high waters. The separate guard supplement\n  records live poison with positive capabilities, reset-before-service refusal,\n  normal reset recovery at epoch3 and absent/NullSink/private-owner refusals\n  (`guards.stdout:3`). No physical renderer is substituted by these native\n  recording sinks.\n- P4 corruption — HELD after concrete repairs. Preserved independent\n  `outer-corruption01.stdout:3` accepted changed CPU x5=0x1235/epoch2; full native\n  framing now refuses that byte before mutation. Preserved\n  `native-self03.stdout:3` and :4 show unloadable successful captures after\n  original CREATE_2D/CREATE_3D then UNREF; both repaired captures restore retained\n  Renderer metadata. These command variants do not prove a native TwoD target.\n  Final tests reject26 correctly rehashed semantic mutations, missing/duplicate\n  CPU sections, all4216 proper prefixes, two trailing-data variants and rehashed\n  epochMAX with complete native target bytes unchanged.\n- Negative control — HELD. An archived exact3505 native source copy passes the\n  promoted original-MMIO test. Removing only the fresh-epoch increment produces\n  epoch1 instead of2 and exit101 (`epoch-negative01/epoch-increment-removed.stderr:5`).\n  Product sources were not changed. Earlier recording-script preparation errors\n  are retained and are not product failures.\n- Custody and coverage — HELD. Independently reopened all84/83 main and11/10\n  guard-package members/identities. The ordinary full-history --no-local clone\n  has no alternates, clean tracked state and all11 acceptance commands passed:\n  391core,23original-wire and30legacy resume/coherence tests, affected native/\n  no-std/Wasm builds and default127/0/errors[], no proof exports. The ten initial\n  hot prefixes carry; its outer report remains failed at the obsolete roadmap\n  oracle. Corrected browser02 and the complete pristine run are distinct passes.\n  Later changes are tests/harness/evidence only. Runtime hunk mapping and passive\n  declaration/shared-compatibility metadata waivers are in `final-ledger.json`.\n- SUITE: the committed independent critic fixture now has seven tests; the final\n  50-line prefix/epoch addition passed focused fmt, target clippy and all seven\n  native tests. No repeated cold or unrelated gauntlet was required for this\n  test-only supplement. Reviewed implementations/dependencies remain frozen;\n  host time-policy selection/rebase composition belongs to74c.\n\nIndependent evidence:\n`evidence/virgl-production-gpu-checkpoint/verifier/independent-native-gpu-checkpoint-review.tar.gz`\n(2,432,746 bytes, SHA256\n`5d3f86807f0ff66909243981dbae7ba4c99ec93ffdff20fe9aefdb2354ffc3fb`,\n75 reopened members/74 identities), paired JSON receipt in the same directory.\nIt includes pre-data predictions, both original negatives and exact sources,\nrepaired/provisional runs, archive/cold authentication, the isolated negative\ncontrol, final test supplement, hunk/scope ledger and promoted source.\n\nCommands: independent original-MMIO critic cargo target; isolated frozen-source\nhealthy/epoch-increment-removed target; archive SHA/member/source validation;\nfocused rustfmt/clippy and seven-test native supplement. Scope is the native\ncheckpoint half only. Physical contents/reconstruction, paired worker restore,\nactual default GPU warm boot, publication, recovery and300MIPS remain pending\noutside this verdict. This review changes tests/status/evidence only; it does\nnot change or rebuild the frozen production implementation.",
       "adversarial": "Independently vary resource/backing IDs, epochs, two queues and deadlines. Attack\nold completion keys before/after restoration and a result not yet consumed by\nMachine.run. Remove one generation/digest/quiescence guard in an isolated copy;\nthe deterministic original-wire test must fail. Carry unchanged render proofs;\nthis native boundary does not claim a complete GPU warm boot.",
       "file": "tasks/epic-6-transcendence/E6-T11d74a-native-gpu-checkpoint.md",
       "activity": [
         {
           "date": "2026-10-15",
-          "commits": 1,
+          "commits": 4,
           "labels": [
+            "Verify native accelerated checkpoint integrity and ownership",
+            "Record direct poison reset and unsupported GPU checkpoint guard evidence",
+            "Submit recorded native GPU checkpoint boundary for independent verification",
             "Start quiescent native GPU checkpoint boundary"
           ]
         }
       ],
       "firstActivity": "2026-10-15",
       "lastActivity": "2026-10-15",
-      "commitCount": 1
+      "commitCount": 4
     },
     {
       "id": "E6-T11d74b",
@@ -29659,7 +29662,7 @@
       "epicKey": "6",
       "title": "Reconstruct a production renderer in a fresh physical GPU context",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E6-T11d74a"
       ],
@@ -29672,19 +29675,21 @@
       "criteria": [],
       "criteriaTotal": 0,
       "criteriaDone": 0,
-      "verificationLog": "### 2026-10-15 — worker — explicit accelerated warm-boot scope\n\nThe user's clarified goal is warm boot with GPU rendering. This is an ordered\nimplementation boundary of that request, not the cancelled software-default\nworkaround. Existing independent rendering/timekeeping proofs carry only across\nunchanged code and dependency identities; new checkpoint behavior needs its own\nrecorded acceptance and fresh verifier.",
+      "verificationLog": "### 2026-10-15 — worker — explicit accelerated warm-boot scope\n\nThe user's clarified goal is warm boot with GPU rendering. This is an ordered\nimplementation boundary of that request, not the cancelled software-default\nworkaround. Existing independent rendering/timekeeping proofs carry only across\nunchanged code and dependency identities; new checkpoint behavior needs its own\nrecorded acceptance and fresh verifier.\n\n### 2026-10-15 — worker — production reconstruction profile\n\nNative74a is independently verified at e26e3e83. This layer records immutable\noriginal events/DMA inputs and checks physical resource contents after replay in\na new context, with no live-native DMA or completion during reconstruction.\nThe initial checkpoint profile explicitly refuses multisample storage,\nactive/ended-native/pending queries, pending jobs/presentation and failed applied\nprefixes. Ready queries, retained resources/private image views, dimensional\npacked depth/stencil and transform-feedback-written buffers require proof.\nJournal overflow makes checkpointing unavailable while ordinary rendering\ncontinues. Detailed pre-implementation plan is in\n`target/evidence/production-gpu-warm-restore-plan01/renderer-design.json`;\nfresh critic recorded ten predictions before implementation.",
       "adversarial": "Invent a data/state mutation not covered by the happy path. Check true physical\ncontext identity changes, no stale native handles or completion callbacks, no\nself-generated expected pixels, and no replay DMA into resumed RAM. Corrupt one\njournal frame/data digest and remove a generation guard in isolated copies;\nrestoration must fail rather than display a saved screenshot.",
       "file": "tasks/epic-6-transcendence/E6-T11d74b-gpu-renderer-reconstruction.md",
       "activity": [
         {
           "date": "2026-10-15",
-          "commits": 0,
-          "labels": []
+          "commits": 1,
+          "labels": [
+            "Start fresh physical GPU renderer reconstruction boundary"
+          ]
         }
       ],
       "firstActivity": "2026-10-15",
       "lastActivity": "2026-10-15",
-      "commitCount": 0
+      "commitCount": 1
     },
     {
       "id": "E6-T11d74c",
