@@ -622,7 +622,7 @@ try{
             await fs.writeFile(path.join(output,'factory-capture.json'),JSON.stringify(report.factoryCapture,null,2)+'\n');
             console.log(JSON.stringify({phase:'factory-captured',pin:report.factoryCapture.pin}));
           }:undefined;
-          report.publicDesktopInput=await verifyPublicDesktopInput(page,guestCommand,output,{name:phase+'-public-desktop-input',initialClockMode:expectedGpuPair?.clockState.mode||'icount',prepareFactory:captureGpuPair});
+          report.publicDesktopInput=await verifyPublicDesktopInput(page,guestCommand,output,{name:phase+'-public-desktop-input',initialClockMode:applicationWorkload?'paced-icount':expectedGpuPair?.clockState.mode||'icount',prepareFactory:captureGpuPair});
           if(captureFactory){
             const cleanup=await guestCommand(page,'rm -- /tmp/gpukeyboard42touch',300000);assert.equal(cleanup.exit,0);
             await captureFactory(report.publicDesktopInput);

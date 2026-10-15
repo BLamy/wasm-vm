@@ -106,10 +106,10 @@ export async function verifyOmarchyApplications(page, command, output, options =
       for(const type of ['keydown','keyup','pointerdown','pointerup'])document.addEventListener(type,window.__appTrustedListener,true);
     });
     report.beforeGpu=await shot('initial');
-    const setup=await run('test ! -e /tmp/omarchyapps && test ! -e '+document+' && install -d -m 700 -o 1000 -g 1000 /tmp/omarchyapps');assert.equal(setup.exit,0);
+    const setup=await run('test "$(id -u)" = 1000 && test ! -e /tmp/omarchyapps && test ! -e '+document+' && mkdir -m 700 /tmp/omarchyapps');assert.equal(setup.exit,0);
     const payload=Buffer.from(server).toString('base64');
-    const fixture=await run(`printf '%s' '${payload}' | base64 -d > /tmp/omarchyapps/server.py; chown 1000:1000 /tmp/omarchyapps/server.py; setpriv --reuid=1000 --regid=1000 --clear-groups python3 /tmp/omarchyapps/server.py > /tmp/omarchyapps/server.log 2>&1 < /dev/null & echo $! > /tmp/omarchyapps/server.pid`);assert.equal(fixture.exit,0);
-    report.defaults=await run('setpriv --reuid=1000 --regid=1000 --clear-groups env HOME=/home/omarchy XDG_CURRENT_DESKTOP=Hyprland xdg-settings get default-web-browser; '+hypr+'binds; free -m; uname -m');assert.equal(report.defaults.exit,0);assert.match(report.defaults.stdout,/chromium.desktop/);
+    const fixture=await run(`printf '%s' '${payload}' | base64 -d > /tmp/omarchyapps/server.py; python3 /tmp/omarchyapps/server.py > /tmp/omarchyapps/server.log 2>&1 < /dev/null & echo $! > /tmp/omarchyapps/server.pid`);assert.equal(fixture.exit,0);
+    report.defaults=await run('env XDG_CURRENT_DESKTOP=Hyprland xdg-settings get default-web-browser; '+hypr+'binds; free -m; uname -m');assert.equal(report.defaults.exit,0);assert.match(report.defaults.stdout,/chromium.desktop/);
     await press('Meta+Shift+b');
     const chromium=await waitWindow(row=>/chromium/i.test(row.class));report.chromium=await identity(chromium);
     assert.match(report.chromium.process.stdout,/\/usr\/lib\/chromium\/chromium/);
