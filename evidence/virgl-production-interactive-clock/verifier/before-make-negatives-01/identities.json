@@ -1,0 +1,92 @@
+{
+  "schema": 1,
+  "scope": "Independent preservation of two genuine pre-make stock heartbeat failures and host power correlation; no final clock/task/parent verdict",
+  "root": "critic-production-interactive-clock-final-public-negatives01",
+  "identities": [
+    {
+      "path": "audit.json",
+      "bytes": 14137,
+      "sha256": "2c6992808a1d9dd95902a0104f8d80f666ec0a4d613c46256f2335f3dba3cec3"
+    },
+    {
+      "path": "cold/failure.png",
+      "bytes": 5005,
+      "sha256": "cd177d45187bcbc808165aa109ec35ee3ae4be4ae1287eccc5bd600debdb3464"
+    },
+    {
+      "path": "cold/hardware.json",
+      "bytes": 7022,
+      "sha256": "6a7210b9a697728602fd68bdb80b760c1d09ff1824ab7ce4cd4df1f69bfe2d54"
+    },
+    {
+      "path": "cold/heartbeat.json",
+      "bytes": 1008552,
+      "sha256": "54d8b2316da833579c1a24678c8827b88c6d23243bc2732f1215759a62806291"
+    },
+    {
+      "path": "cold/passive-worker-timing.json",
+      "bytes": 426442,
+      "sha256": "4d52ff670030f5fa6febdcd93891f7a00bbb460dbeeaa092d66837cf0803470e"
+    },
+    {
+      "path": "cold/progress.png",
+      "bytes": 12382,
+      "sha256": "2b8b832afb65b9093a3685a0783856f0fbfdd96f5156680a9818d4080f313092"
+    },
+    {
+      "path": "cold/report.json",
+      "bytes": 1077762,
+      "sha256": "65b5bbfe8b724454826e09cec1cc6c04641e43c422ddcefdd14d554b9db8a9d9"
+    },
+    {
+      "path": "power-correlation/authentication.json",
+      "bytes": 1641,
+      "sha256": "8368a1865e4d36e6615aefafc1b80aa73e83258e846aeed77959c46b1682b264"
+    },
+    {
+      "path": "power-correlation/correlation.json",
+      "bytes": 1895,
+      "sha256": "7beedafa2af0763cb45fae802b67760c3f08c2adfa5671f197b4363ad5f6a24c"
+    },
+    {
+      "path": "power-correlation/power-events.json",
+      "bytes": 18073,
+      "sha256": "7ffe270aadc66680b107b66f655cc8468b70d7ee7e294e984049b73b51ef0115"
+    },
+    {
+      "path": "root/failure.png",
+      "bytes": 5005,
+      "sha256": "cd177d45187bcbc808165aa109ec35ee3ae4be4ae1287eccc5bd600debdb3464"
+    },
+    {
+      "path": "root/hardware.json",
+      "bytes": 7022,
+      "sha256": "1e3e079d235a7fa1ef844c4f5bb56401b5ce02eb0b303378a0f8fd679c88dcd2"
+    },
+    {
+      "path": "root/heartbeat.json",
+      "bytes": 1229149,
+      "sha256": "036abbb3526156a4cfd3dc2b557e0894a5b7b7f9f96c51f542749e7cff3a031d"
+    },
+    {
+      "path": "root/passive-worker-timing.json",
+      "bytes": 422046,
+      "sha256": "b57759726fccb13b25ee9e096f8abb2e6616b0c525e2fd28255347ca3050e79f"
+    },
+    {
+      "path": "root/progress.png",
+      "bytes": 14802,
+      "sha256": "e8fc1ccca6d20b4d8412f5e5f399ed0b8738cd798bcb71651f39326a103056aa"
+    },
+    {
+      "path": "root/public-desktop-input.json",
+      "bytes": 7614,
+      "sha256": "7e99d86207cb1f6ea054c5e34f3f4a8705ff9abe25ea0b4368cbcb7230d95497"
+    },
+    {
+      "path": "root/report.json",
+      "bytes": 1180093,
+      "sha256": "fcd4aa72ebe52e6648b455362cd4c8b45069cd5721e42012db7b723ff2eb6df2"
+    }
+  ]
+}
