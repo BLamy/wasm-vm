@@ -147,6 +147,7 @@ def install(source, output, archives, lock_path, selection, source_overlays, fin
     (root / "etc/group").write_text("root:x:0:root\n")
     (root / "etc/pacman.conf").write_text("[options]\nArchitecture = riscv64\nSigLevel = Required DatabaseOptional\nLocalFileSigLevel = Required\n")
     mounted = []
+    gpg_started = False
     try:
         run("mount", "-t", "tmpfs", "-o", "nosuid,noexec,size=4m", "tmpfs", root / "dev")
         mounted.append(root / "dev")
@@ -161,6 +162,8 @@ def install(source, output, archives, lock_path, selection, source_overlays, fin
         run("mount", "-o", "remount,bind,ro", root / "var/cache/pacman/pkg")
         for command in (("/usr/bin/systemd-sysusers",), ("/usr/bin/pacman-key", "--init"),
                         ("/usr/bin/pacman-key", "--populate", "archlinux")):
+            if command[0] == "/usr/bin/pacman-key":
+                gpg_started = True
             run("chroot", root, *command)
         for record in records:
             if record["name"] in ("chromium", "libreoffice-fresh", "nodejs", "npm"):
@@ -176,6 +179,13 @@ def install(source, output, archives, lock_path, selection, source_overlays, fin
             run("chroot", root, "/usr/lib/ld-linux-riscv64-lp64d.so.1", "--list", binary)
     finally:
         errors = []
+        # GnuPG agents retain /dev/null and random-device descriptors. Stop
+        # only this disposable root's agents before ordinary, strict unmounts.
+        if gpg_started:
+            try:
+                run("chroot", root, "/usr/bin/gpgconf", "--homedir", "/etc/pacman.d/gnupg", "--kill", "all")
+            except Exception as error:
+                errors.append(str(error))
         for mount in reversed(mounted):
             try:
                 run("umount", mount)
