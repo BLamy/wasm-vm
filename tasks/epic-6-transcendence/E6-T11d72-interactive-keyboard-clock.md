@@ -281,3 +281,32 @@ The production policy layer continues the existing native stack above D73.
 The new boundary uses paced-icount for idle ceilings while preserving busy guest
 retirement timing; historical wall-policy stock negatives remain unmodified.
 No stock success, parent completion or deployment is claimed by activation.
+
+### 2026-10-15 — worker — preserve private compositor deadline negatives
+
+Pristine runtime `e17f8caf` passed all six selected clock gates, all preceding
+parent native/Wasm/protocol/qualification gates, all ten software warm phases,
+real Mesa GLES initialization/index checks,768 exact pixels and1000 cube frames.
+Its private compositor-ready marker did not arrive within the recording helper's
+300000ms host wait. The outer report remains failed in
+`target/evidence/production-paced-policy-cold-final01`.
+
+A paired actual paused-worker control confirms that this older private harness
+returned HTML before setting production COOP/COEP headers: original isolation
+false/hasExecutor false versus corrected true/true, both0 retired. Commits
+`d209f994`/`fba69588` fix recording headers and retain actual JIT/failure state;
+all product sources, dependencies and ordinary Wasm remain unchanged. The
+corrected private03 still times out at300000ms: actual ICount64,mtime260892015,
+8332552364 retired,3450480653 via JIT,246920108 executed blocks,14042 GPU draws,
+2613 begun/2612 completed/one pending and zero failed/cancelled. There is no final
+healthy-state or exclusive timeout-cause claim. Diagnostic02 was intentionally
+interrupted after a target-only catch-scope bug was found; it is not product proof.
+
+The task and parent require functional compositor/scanout proof without a host
+startup latency budget. A missing-path recording now allows900000ms for the
+private compositor-ready marker, matching the existing cube observation budget.
+Its internal180-second guest timeout, executable/configuration/image and every
+semantic assertion stay identical. This is a longer bounded evidence window,
+not a reinterpretation of either prior failure or a performance claim. Stock
+50ms typing,20 marker attempts, keyboard repeat and production heartbeat budgets
+remain unchanged. No successful stock input or deployment is claimed here.

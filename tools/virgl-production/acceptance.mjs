@@ -46,7 +46,7 @@ Hyprland --i-am-really-stupid --config /tmp/production-hyprland.conf >/tmp/produ
 echo __PRODUCTION_COMPOSITOR_STARTED`, '\r__PRODUCTION_COMPOSITOR_STARTED\r\n');
   const ready=await command(`timeout 180 sh -c 'until XDG_RUNTIME_DIR=/run/user/0 hyprctl -i 0 monitors >/tmp/production-monitors.txt 2>&1; do sleep 1; done'; echo HYPRLAND_IPC_RC=$?
 grep -E 'Using: OpenGL|Renderer:|eglCreateContext failed with GLES' /run/user/0/hypr/*/hyprland.log
-echo __PRODUCTION_COMPOSITOR_READY`, '\r__PRODUCTION_COMPOSITOR_READY\r\n');
+echo __PRODUCTION_COMPOSITOR_READY`, '\r__PRODUCTION_COMPOSITOR_READY\r\n', 900000);
   assert.match(ready,/HYPRLAND_IPC_RC=0/);assert.match(ready,/retrying GLES 3\.0/);assert.match(ready,/Using: OpenGL ES 3\.0 Mesa/);assert.match(ready,/Renderer: virgl \(wasm-vm WebGL2 VirGL\)/);
   const before=await state();
   await command(`XDG_RUNTIME_DIR=/run/user/0 WAYLAND_DISPLAY=wayland-1 foot --app-id=virgl-production-proof --title='GPU rendering verified' sh -c 'printf "\\033[42m Real Mesa + Hyprland on WebGL2 \\033[0m\\n"; sleep 300' >/tmp/production-foot.log 2>&1 &
