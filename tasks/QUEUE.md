@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E5.5-T05c** — Restore Omarchy launchers and prove Chromium and LibreOffice in the guest
 1. **E6-T11e** — Survive hostile guest 3D requests and browser graphics context loss
 1. **E5-T26f** — Browser desktop snapshot round-trip and interaction smoke
 
@@ -737,7 +736,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 - [x] `525.027041` [E5.5-T05a](epic-5.5-omarchy/E5.5-T05a-omarchy-application-catalog.md) — Account for the complete upstream Omarchy application set *(deps: E6-T11d)*
 - [x] `525.027042` [E5.5-T05b](epic-5.5-omarchy/E5.5-T05b-omarchy-native-application-image.md) — Assemble native Chromium and LibreOffice into the Omarchy image *(deps: E5.5-T05a)*
-- [ ] `525.027043` [E5.5-T05c](epic-5.5-omarchy/E5.5-T05c-omarchy-applications-desktop.md) — Restore Omarchy launchers and prove Chromium and LibreOffice in the guest *(deps: E5.5-T05b)*
+- [~] `525.027043` [E5.5-T05c](epic-5.5-omarchy/E5.5-T05c-omarchy-applications-desktop.md) — Restore Omarchy launchers and prove Chromium and LibreOffice in the guest *(deps: E5.5-T05b)*
 - [ ] `525.027044` [E5.5-T05d](epic-5.5-omarchy/E5.5-T05d-omarchy-application-warm-release.md) — Publish the application image with accelerated and software warm boots *(deps: E5.5-T05c, E6-T11d74d)*
 
 ## Epic 6 — `epic-6-transcendence`
