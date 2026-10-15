@@ -3,7 +3,7 @@ id: E6-T11d74d
 epic: 6
 title: Publish and prove an accelerated Omarchy warm-boot artifact
 priority: 525.0270384
-status: pending
+status: in-progress
 depends_on: [E6-T11d74c]
 estimate: S
 risk: high
@@ -46,3 +46,17 @@ implementation boundary of that request, not the cancelled software-default
 workaround. Existing independent rendering/timekeeping proofs carry only across
 unchanged code and dependency identities; new checkpoint behavior needs its own
 recorded acceptance and fresh verifier.
+
+### 2026-10-15 — worker — production warm publication started
+
+Paired production workers74c are independently verified at
+baf3d1035eec4e184eb2704bc52c2ce17066b1ed. Continue existing native stack557
+above PR565; no stack is replaced and no merge is authorized. Critical runtime
+5dd286c9 / ordinary Wasm9b7fd924 remain frozen. Restore the authenticated actual
+Omarchy source pair, let the real package bar and Foot finish, verify trusted
+input/cursor, remove the test marker and capture a ready factory pair. Preserve
+its selected clock exactly. Bound binary recording uploads to1MiB requests so
+Playwright cannot serialize one137MiB POST as an over-limit protocol string.
+Then pin/publish the actual final pair, switch the default launcher/direct URL,
+and prove local/clean-clone/HTTPS initial and repeat rendering. Earlier component
+holds carry only across unchanged code/dependency/evidence identities.
