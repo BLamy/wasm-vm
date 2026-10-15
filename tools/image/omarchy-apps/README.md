@@ -128,10 +128,19 @@ image and `OMARCHY_APP_DESKTOP_EVIDENCE_DIR` to a new recording directory.
 `runtime-elf.json` input (default: the T05b final evidence directory). The recorder
 copies and hashes it, then compares the running Chromium and Writer executable
 hashes and installed Node hash with its native RISC-V entries.
+Large executable hashes run on the host over the actual captured guest disk:
+the recorder follows `/proc/PID/exe`, retains stable process/device/inode and
+ownership metadata on both sides of a public GPU checkpoint, authenticates the
+original pair and disk delta, and reconstructs its exact filesystem on a
+disposable APFS copy. Read-only `debugfs` checks the observed inode against the
+pathname before dumping and hashing its bytes. Tiny executables use the direct
+guest hash. Original pairs, deltas and extraction commands remain evidence;
+the accepted base image is never modified. This identifies executable files,
+without claiming that their process memory is unchanged.
 The application workload uses trusted keyboard input to launch native Chromium,
 submit a note to a guest loopback fixture, launch Writer, type/save/close/reopen
 and edit an actual ODT, and execute Node/npm in Foot. RPC only prepares the
-loopback server and reads the application results. External guest networking
+loopback server, flushes the filesystem for identity capture, and reads results. External guest networking
 remains explicitly offline in this test. Screenshots, actual process maps,
 saved documents, input events and phase GPU counters are retained; installation
 alone is never treated as a working application.

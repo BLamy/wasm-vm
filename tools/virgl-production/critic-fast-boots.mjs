@@ -59,9 +59,11 @@ const applicationExecutables={};
 const applicationProofAssets=new Map();
 if(applicationWorkload){
   assert.ok(acceleratedGpu,'native application acceptance uses the qualified GPU route');
-  const bytes=await fs.readFile(path.join(repo,'tools/virgl-production/omarchy-applications.mjs'));
-  report.harnessHashes['omarchy-applications.mjs']=hash(bytes);
-  await fs.writeFile(path.join(output,'executed-harness/omarchy-applications.mjs'),bytes);
+  for(const filename of ['omarchy-applications.mjs','application-identity.mjs']){
+    const bytes=await fs.readFile(path.join(repo,'tools/virgl-production',filename));
+    report.harnessHashes[filename]=hash(bytes);
+    await fs.writeFile(path.join(output,'executed-harness',filename),bytes);
+  }
   const inventoryFile=path.resolve(process.env.CRITIC_FAST_BOOT_APPLICATION_INVENTORY||path.join(repo,'target/evidence/omarchy-native-app-image-final01/runtime-elf.json'));
   const inventoryBytes=await fs.readFile(inventoryFile),inventory=JSON.parse(inventoryBytes);
   for(const filename of ['usr/lib/chromium/chromium','usr/lib/libreoffice/program/soffice.bin','usr/bin/node']){

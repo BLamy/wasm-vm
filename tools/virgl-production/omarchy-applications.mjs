@@ -5,6 +5,9 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
+import {createApplicationIdentityProof} from './application-identity.mjs';
+import {verifyPublicDesktopInput} from './critic-fast-boots-input.mjs';
+import {assertPublicDesktopFinal} from './critic-fast-boots-final.mjs';
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 const sha = bytes => createHash('sha256').update(bytes).digest('hex');
@@ -56,6 +59,12 @@ export async function verifyOmarchyApplications(page, command, output, options =
   const name = options.name || 'native-applications';
   const report = {status:'running',networking:{provider:'offline',fixture:'http://127.0.0.1:8765/',externalBrowsingClaim:false},phases:[]};
   const file = path.join(output,name+'.json');
+  const identityProof=createApplicationIdentityProof(page,command,output,options);
+  let identitySequence=0;
+  const pageErrors=[];
+  const onError=error=>pageErrors.push(String(error));
+  const onConsole=message=>{if(message.type()==='error'&&!/favicon\.ico/.test(message.location().url||''))pageErrors.push(message.text());};
+  page.on('pageerror',onError);page.on('console',onConsole);
   async function save() {await fs.writeFile(file,JSON.stringify(report,null,2)+'\n');}
   async function run(text, timeout=300000) {
     const result = await command(page,text,timeout);
@@ -96,13 +105,8 @@ export async function verifyOmarchyApplications(page, command, output, options =
     report.phases.push({kind:'screenshot',label,gpu,time:Date.now()});await save();return gpu;
   }
   async function identity(client, executable) {
-    assert.ok(Number.isInteger(client.pid)&&client.pid>1);
-    const result=await run(`readlink /proc/${client.pid}/exe; sha256sum /proc/${client.pid}/exe; cat /proc/${client.pid}/status; tr '\\0' ' ' < /proc/${client.pid}/cmdline; printf '\\n'; cat /proc/${client.pid}/maps`);
-    assert.equal(result.exit,0);assert.match(result.stdout,/Uid:\s+1000\s+1000/);
-    const lines=result.stdout.trim().split(/\r?\n/);assert.equal(lines[0],executable);
-    const executableSha256=lines[1].split(/\s+/)[0];assert.match(executableSha256,/^[0-9a-f]{64}$/);
-    if(options.executables)assert.equal(executableSha256,options.executables[executable],'running executable matches the independently verified image inventory');
-    return {window:client,process:result,executable,executableSha256};
+    const proof=await identityProof.process(client,executable,name+'-identity-'+identitySequence++);
+    report.phases.push({kind:'native-executable-identity',proof,time:Date.now()});await save();return proof;
   }
   async function press(key){report.phases.push({kind:'trusted-key',key,time:Date.now()});await page.keyboard.press(key,{delay:100});await save();}
   async function type(text){report.phases.push({kind:'trusted-text',text,time:Date.now()});await typeGuestText(page,text);await save();}
@@ -203,8 +207,7 @@ export async function verifyOmarchyApplications(page, command, output, options =
     let tools;
     for(let n=0;n<40;n++){tools=await run('test -s /tmp/omarchyapps/npm && cat /tmp/omarchyapps/node /tmp/omarchyapps/npm');if(tools.exit===0)break;await sleep(1500);}
     assert.equal(tools.exit,0);assert.match(tools.stdout,/^riscv64\s+12\.2\.0\s*$/);report.nodeNpm=tools;
-    report.nodeExecutable=await run('sha256sum /usr/bin/node');assert.equal(report.nodeExecutable.exit,0);
-    if(options.executables)assert.equal(report.nodeExecutable.stdout.trim().split(/\s+/)[0],options.executables['/usr/bin/node']);
+    report.nodeExecutable=await identityProof.file('/usr/bin/node',name+'-node-identity');
     report.afterGpu=await shot('node-npm');
     let previousGpu=report.beforeGpu;
     for(const phase of [report.chromiumGpu,report.writerGpu,report.afterGpu]){
@@ -214,12 +217,22 @@ export async function verifyOmarchyApplications(page, command, output, options =
       previousGpu=phase;
     }
     report.trusted=await page.evaluate(()=>window.__appTrusted);assert.ok(report.trusted.length>100);assert.ok(report.trusted.every(row=>row.trusted));
+    if(name.startsWith('control-applications-')){
+      // The original cold wrapper deliberately remains failed. This explicitly
+      // recorded component retry also earns the stock post-app desktop proof.
+      report.publicDesktopInput=await verifyPublicDesktopInput(page,command,output,{name:name+'-public-desktop-input',initialClockMode:'paced-icount'});
+      report.publicDesktopFinal=await page.evaluate(async()=>({serial:__fastBootCritic.serial,workerErrors:__fastBootCritic.errors,
+        gpu:await window.wvmDemo.gpuStats(),display:window.__presentation?.state?.(),cursor:window.__cursor?.state?.()}));
+      report.publicDesktopFinal.pageErrors=[...pageErrors];assertPublicDesktopFinal(report.publicDesktopFinal);
+    }
+    assert.deepEqual(pageErrors,[]);report.pageErrors=pageErrors;
     report.status='passed';await save();return report;
   } catch(error) {
     report.status='failed';report.error=error.stack||String(error);
     report.trusted=await page.evaluate(()=>window.__appTrusted).catch(()=>null);
     await shot('failed').catch(()=>{});await save();throw error;
   } finally {
+    page.off('pageerror',onError);page.off('console',onConsole);
     await page.evaluate(()=>{if(window.__appTrustedListener)for(const type of ['keydown','keyup','pointerdown','pointerup'])document.removeEventListener(type,window.__appTrustedListener,true);}).catch(()=>{});
   }
 }
