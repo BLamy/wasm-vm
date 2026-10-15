@@ -6,7 +6,7 @@ The command, shader, dimensional depth, transform-feedback and native multisampl
 
 ## Launch the desktop
 
-Choose **Omarchy** in the [launcher](./app#ide), with **GPU rendering** selected. The worker checks actual WebGL2 limits, texture roles, native renderability and nonzero sampled results before advertising VirGL. An unsupported host produces a visible error; it does not justify positive guest capabilities.
+Choose **Omarchy** in the [launcher](./index.html#ide), with **GPU rendering** selected. The worker checks actual WebGL2 limits, texture roles, native renderability and nonzero sampled results before advertising VirGL. An unsupported host produces a visible error; it does not justify positive guest capabilities.
 
 The accelerated image uses a pinned Mesa 26.2.2 build with VirGL and the GLES API exposed through EGL. Its small, recorded source patch makes both border-clamp extension names independently configurable, and rejects desktop OpenGL contexts while retaining GBM's internal buffer-mapping context. It separates multisample renderbuffer support from multisample texture sampling: only qualified two-dimensional color/depth attachment queries can use the measured sample count and format mask. Unsupported border-clamp and sRGB-decode extensions are disabled in both legacy and indexed queries. The software DRI entrypoints are removed.
 
