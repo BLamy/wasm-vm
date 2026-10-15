@@ -4,13 +4,15 @@
 // production R2 origin and verified before serving. No guest output is fabricated.
 import assert from 'node:assert/strict';
 import {assertPublicDesktopFinal} from './critic-fast-boots-final.mjs';
+import {verifyWarmGpuPixels} from './critic-warm-pixels.mjs';
+import {expectedPublishedSource} from './published-source.mjs';
 import fs from 'node:fs/promises';
 import {createReadStream} from 'node:fs';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
 import {createServer} from 'node:http';
 import {execFileSync} from 'node:child_process';
-import {fileURLToPath} from 'node:url';
+import {fileURLToPath, pathToFileURL} from 'node:url';
 import {chromium} from '../../web/node_modules/playwright/index.mjs';
 
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
@@ -22,6 +24,9 @@ const r2 = 'https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev';
 const hash = bytes => createHash('sha256').update(bytes).digest('hex');
 const guests = (process.env.CRITIC_FAST_BOOT_GUESTS || 'busybox,alpine,node-alpine,omarchy').split(',');
 const coldGpu = process.env.CRITIC_FAST_BOOT_GPU === '1';
+const warmGpu = process.env.CRITIC_FAST_BOOT_GPU === 'warm';
+const acceleratedGpu = coldGpu || warmGpu;
+const localGpuPairFile = process.env.CRITIC_FAST_BOOT_GPU_PAIR_FILE;
 const candidateDirectory = process.env.CRITIC_FAST_BOOT_IMAGE_DIRECTORY
   ? path.resolve(process.env.CRITIC_FAST_BOOT_IMAGE_DIRECTORY) : null;
 const snapshotPersistence = process.env.CRITIC_FAST_BOOT_PERSISTENCE !== '0';
@@ -29,7 +34,7 @@ const saveOnRepeat = process.env.CRITIC_FAST_BOOT_SAVE_ON_REPEAT === '1';
 const gpuTrace = process.env.CRITIC_FAST_BOOT_GPU_TRACE === '1';
 const captureGpuPair = process.env.CRITIC_FAST_BOOT_CAPTURE_GPU_PAIR === '1';
 const remoteUrl = process.env.CRITIC_FAST_BOOT_URL;
-if(captureGpuPair)assert.ok(coldGpu&&!remoteUrl,'GPU factory capture requires the owned local accelerated session');
+if(captureGpuPair||localGpuPairFile)assert.ok(acceleratedGpu&&!remoteUrl,'GPU factory capture requires the owned local accelerated session');
 if (remoteUrl) {
   const url = new URL(remoteUrl);
   assert.equal(url.protocol, 'https:');
@@ -39,22 +44,32 @@ if (remoteUrl) {
 }
 let gpuRecording = Promise.resolve();
 await fs.mkdir(output, {recursive:false});
+if(gpuTrace)await fs.writeFile(path.join(output,'gpu.ndjson'),'');
 const report = {status:'running', scope:'actual production UI fast boots and repeat launches',
   head:execFileSync('git',['rev-parse','HEAD'],{cwd:repo,encoding:'utf8'}).trim(),
-  webRoot:web, releaseCache, saveOnRepeat, gpuTrace, remoteUrl, phases:[], requests:[], remoteFetches:[], liveSources:[], sourceHashes:{}, harnessHashes:{}, errors:[]};
-for(const filename of ['critic-fast-boots.mjs','critic-fast-boots-input.mjs','critic-fast-boots-bar-content.mjs','critic-fast-boots-final.mjs'])
-  report.harnessHashes[filename]=hash(await fs.readFile(path.join(repo,'tools/virgl-production',filename)));
+  webRoot:web, releaseCache, saveOnRepeat, gpuTrace, remoteUrl, warmGpu, phases:[], requests:[], remoteFetches:[], liveSources:[], sourceHashes:{}, harnessHashes:{}, errors:[]};
+for(const filename of ['critic-fast-boots.mjs','critic-fast-boots-input.mjs','critic-fast-boots-bar-content.mjs','critic-fast-boots-final.mjs','critic-desktop-actions.mjs','critic-warm-pixels.mjs','published-source.mjs']){
+  const bytes=await fs.readFile(path.join(repo,'tools/virgl-production',filename));
+  report.harnessHashes[filename]=hash(bytes);
+  await fs.mkdir(path.join(output,'executed-harness'),{recursive:true});
+  await fs.writeFile(path.join(output,'executed-harness',filename),bytes);
+}
 let browser, server, activePage, phase = 'inventory';
 const sourcePaths = ['index.html','main.js','loader.js','linux-worker.js','linux-worker-protocol.js',
   'linux-worker-host.js','pkg/wasm_vm_wasm.js','pkg/wasm_vm_wasm_bg.wasm','src/sink/presentation.js',
   'artifacts.json','artifacts-alpine.json','artifacts-node-alpine.json','artifacts-omarchy.json'];
 if (web.endsWith('/dist')) sourcePaths[0]='app.html';
-if(coldGpu)sourcePaths.push('artifacts-omarchy-virgl.json');
-for (const filename of sourcePaths) report.sourceHashes[filename] = hash(await fs.readFile(path.join(web,filename)));
+if(acceleratedGpu)sourcePaths.push('artifacts-omarchy-virgl.json');
+for (const filename of sourcePaths){
+  const bytes=await fs.readFile(path.join(web,filename));
+  report.sourceHashes[filename]=hash(bytes);
+  await fs.mkdir(path.dirname(path.join(output,'executed-source',filename)),{recursive:true});
+  await fs.writeFile(path.join(output,'executed-source',filename),bytes);
+}
 let candidateManifestBytes, candidateDescriptorBytes, candidateManifestHash;
 const candidateChunks = new Set();
 if(candidateDirectory){
-  assert.ok(coldGpu, 'local accelerated image requires the explicit cold GPU route');
+  assert.ok(acceleratedGpu, 'local accelerated image requires the GPU route');
   candidateManifestBytes=await fs.readFile(path.join(candidateDirectory,'manifest.json'));
   candidateManifestHash=hash(candidateManifestBytes);
   const manifest=JSON.parse(candidateManifestBytes);
@@ -74,6 +89,15 @@ if(candidateDirectory){
     scope:'local immutable candidate, not publication evidence'};
   await fs.writeFile(path.join(output,'candidate-manifest.json'),candidateManifestBytes);
   await fs.writeFile(path.join(output,'candidate-artifacts.json'),candidateDescriptorBytes);
+}
+let localGpuPair;
+if(localGpuPairFile){
+  localGpuPair=await fs.readFile(path.resolve(localGpuPairFile));
+  const descriptor=JSON.parse(candidateDescriptorBytes??await fs.readFile(path.join(web,'artifacts-omarchy-virgl.json')));
+  descriptor.artifacts.gpuCheckpoint={url:'/__bootstrap-gpu-pair',size:localGpuPair.length,sha256:hash(localGpuPair)};
+  candidateDescriptorBytes=Buffer.from(JSON.stringify(descriptor,null,2)+'\n');
+  report.localGpuPair={file:path.resolve(localGpuPairFile),bytes:localGpuPair.length,sha256:hash(localGpuPair),scope:'owned source for ready-factory capture; not final publication'};
+  await fs.writeFile(path.join(output,'bootstrap-artifacts.json'),candidateDescriptorBytes);
 }
 const releasePins = new Map();
 // Original shipped disk-manifest identities, independently checked against R2
@@ -97,6 +121,7 @@ for (const filename of sourcePaths.filter(f=>f.startsWith('artifacts'))) {
 }
 report.manifestPins=Object.fromEntries(manifestPins);
 const verifiedReleaseFiles = new Set();
+let factoryUpload=null;
 const remoteChunks = new Map();
 const remoteAssets = new Map();
 async function fetchOriginal(pathname) {
@@ -147,13 +172,21 @@ if (!remoteUrl) server=createServer(async (request,response)=>{
   const record={phase,method:request.method,pathname,time:Date.now()}; report.requests.push(record);
   try {
     if(pathname==='/favicon.ico'){response.writeHead(204).end();record.status=204;return;}
-    if(captureGpuPair&&request.method==='POST'&&pathname==='/__factory-gpu-pair'){
-      const parts=[];let size=0;for await(const part of request){size+=part.length;assert.ok(size<=512*1024*1024,'factory pair budget');parts.push(part);}
-      const bytes=Buffer.concat(parts);await fs.writeFile(path.join(output,'factory.wvgpair'),bytes);
-      const pin={path:'factory.wvgpair',bytes:bytes.length,sha256:hash(bytes)};record.status=200;Object.assign(record,pin);
+    const upload=pathname.match(/^\/__factory-gpu-pair\/(\d+)\/(\d+)$/);
+    if(captureGpuPair&&request.method==='POST'&&upload){
+      const offset=Number(upload[1]),total=Number(upload[2]);
+      assert.ok(Number.isSafeInteger(total)&&total>0&&total<=512*1024*1024,'factory pair budget');
+      if(!factoryUpload){assert.equal(offset,0);factoryUpload={file:await fs.open(path.join(output,'factory.wvgpair'),'wx'),hash:createHash('sha256'),written:0,total};}
+      assert.equal(total,factoryUpload.total);assert.equal(offset,factoryUpload.written);assert.ok(factoryUpload.file,'factory already complete');
+      const parts=[];let size=0;for await(const part of request){size+=part.length;assert.ok(size<=1024*1024,'bounded recorder request');parts.push(part);}
+      assert.ok(size>0&&size<=total-offset);const bytes=Buffer.concat(parts);await factoryUpload.file.writeFile(bytes);factoryUpload.hash.update(bytes);factoryUpload.written+=size;
+      let pin={written:factoryUpload.written,total,complete:false};
+      if(factoryUpload.written===total){await factoryUpload.file.close();factoryUpload.file=null;pin={path:'factory.wvgpair',bytes:total,sha256:factoryUpload.hash.digest('hex'),complete:true};await fs.writeFile(path.join(output,'factory-upload.json'),JSON.stringify(pin,null,2)+'\n');}
+      record.status=200;record.uploadBytes=size;record.written=factoryUpload.written;
       response.writeHead(200,{'Content-Type':'application/json'}).end(JSON.stringify(pin));return;
     }
-    if(candidateDirectory&&pathname==='/artifacts-omarchy-virgl.json'){
+    if(localGpuPair&&pathname==='/__bootstrap-gpu-pair'){record.status=200;record.size=localGpuPair.length;response.writeHead(200,{'Content-Type':'application/octet-stream','Content-Length':localGpuPair.length}).end(localGpuPair);return;}
+    if(candidateDescriptorBytes&&pathname==='/artifacts-omarchy-virgl.json'){
       record.status=200;record.source='local-immutable-candidate-descriptor';
       record.sha256=hash(candidateDescriptorBytes);record.size=candidateDescriptorBytes.length;
       response.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-store'}).end(candidateDescriptorBytes);return;
@@ -212,6 +245,32 @@ if (!remoteUrl) server=createServer(async (request,response)=>{
 });
 if (server) await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
 const origin=remoteUrl ? new URL(remoteUrl).origin : 'http://127.0.0.1:'+server.address().port;
+let expectedGpuPair;
+async function readExpectedGpuPair() {
+  if (!warmGpu) return;
+  const descriptor = JSON.parse(candidateDescriptorBytes ?? await fs.readFile(path.join(web, 'artifacts-omarchy-virgl.json')));
+  const pin = descriptor.artifacts.gpuCheckpoint;
+  assert.ok(pin, 'warm acceptance requires the pinned actual GPU pair');
+  const pathname = new URL(pin.url, r2 + '/').pathname;
+  const relative = pathname.replace(/^\/sha256\/[a-f0-9]{64}/, '').replace(/^\/releases\//, '');
+  let bytes = localGpuPair ?? await fs.readFile(path.join(releaseCache, relative)).catch(() => null);
+  if (!bytes) bytes = await fetchOriginal(pathname);
+  checkPin(bytes, pin, pathname);
+  assert.equal(bytes.subarray(0, 8).toString(), 'WVGPAIR1');
+  assert.equal(bytes.readUInt32LE(8), 1);
+  assert.equal(bytes.readUInt32LE(12), bytes.length - 48);
+  assert.equal(hash(bytes.subarray(0, -32)), bytes.subarray(-32).toString('hex'));
+  const {decodeCheckpointData} = await import(pathToFileURL(path.join(web, 'renderer/virgl-command/checkpoint-codec.mjs')));
+  const metadata = decodeCheckpointData(new Uint8Array(bytes.subarray(16, -32)));
+  const {GPU_CHECKPOINT_BUILD_ID} = await import(pathToFileURL(path.join(web, 'gpu-checkpoint-build.js')));
+  assert.equal(metadata.schema, 'production-gpu-pair-v1');
+  assert.equal(metadata.identity.buildId, GPU_CHECKPOINT_BUILD_ID);
+  assert.ok(['icount', 'paced-icount'].includes(metadata.clockState.mode));
+  expectedGpuPair = {pin, identity: metadata.identity, profile: metadata.profile, clockState: metadata.clockState,
+    epoch: metadata.epoch, parts: Object.fromEntries(Object.entries(metadata.parts).map(([name, part]) => [name, {sha256: part.sha256, bytes: part.bytes.length}]))};
+  report.expectedGpuPair = expectedGpuPair;
+  await fs.writeFile(path.join(output, 'expected-gpu-pair.json'), JSON.stringify(expectedGpuPair, null, 2) + '\n');
+}
 function observeOriginalWorker(){
   globalThis.__fastBootCritic={events:[],serial:'',workerBoots:[],errors:[],wire:[],timerGaps:[],wireTotals:{}};
   const note = (direction, message) => {
@@ -326,9 +385,10 @@ async function waitActualReady(page,guest,started){
       coreReady:window.__ready,gpuQualified:document.documentElement.dataset.gpuQualified}));
     assert.deepEqual(state.errors||[],[],guest+' worker failure');
     if(/linux worker fatal|cannot boot:/i.test(state.uiStatus||''))throw Error(state.uiStatus);
+    if(/GPU desktop could not start/i.test(state.guestError||''))throw Error(state.guestError);
     if(coldGpu&&state.ready&&await serviceOwnedControl(page))throw Error('Owned capture released during startup');
-    if(state.ready&&(coldGpu?state.gpuQualified==='true':state.restored)&&(guest!=='omarchy'||state.desktop))return;
-    if(coldGpu&&Date.now()-observedAt>30000){
+    if(state.ready&&(acceleratedGpu?state.gpuQualified==='true'&&state.restored===warmGpu:state.restored)&&(guest!=='omarchy'||state.desktop))return;
+    if(acceleratedGpu&&Date.now()-observedAt>30000){
       observedAt=Date.now();const full=await snapshot(page);
       await fs.writeFile(path.join(output,'heartbeat.json'),JSON.stringify({phase,elapsedMs:Date.now()-started,state:full},null,2));
       await page.screenshot({path:path.join(output,'progress.png'),fullPage:true});
@@ -342,10 +402,30 @@ async function waitActualReady(page,guest,started){
 async function guestCommand(page,command,timeout=120000){
   return await page.evaluate(async({command,timeout})=>window.wvmDemo.run(command,timeout),{command,timeout});
 }
+function gpuWarmTiming(state,round){
+  const progress=state.events.filter(event=>event.type==='wvm:guest-progress'&&event.detail.phase.startsWith('gpuCheckpoint:'));
+  const first=progress[0],last=progress.at(-1);
+  assert.ok(first&&last,'original checkpoint read progress is recorded');
+  assert.equal(last.detail.loaded,last.detail.total,'original checkpoint read finished');
+  const sources=[...new Set(progress.map(event=>event.detail.phase.includes('reading cache')?'cache':'network'))];
+  assert.deepEqual(sources,[round==='initial'?'network':'cache'],'fresh load downloads and repeat reads verified CacheStorage');
+  const restored=state.events.find(event=>event.type==='wvm:guest-state'&&event.detail.state==='restored');
+  const desktop=state.events.find(event=>event.type==='wvm:desktop-ready');
+  assert.ok(restored&&desktop,'original restore and fresh desktop milestones are recorded');
+  assert.ok(first.time<=last.time&&last.time<=restored.time&&restored.time<=desktop.time);
+  return {source:sources[0],checkpointBytes:last.detail.total,
+    checkpointReadMs:last.time-first.time,afterCheckpointReadToRestoredMs:restored.time-last.time,
+    restoredToDesktopMs:desktop.time-restored.time,navigationToDesktopMs:desktop.time,
+    scope:'Observed original progress/milestone timestamps; first network read and verified repeat cache are separate'};
+}
 try{
+  await readExpectedGpuPair();
   browser=await chromium.launch({headless:true,executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',args:['--enable-gpu','--use-gl=angle','--use-angle=metal']});
-  if(coldGpu){const hardware=await(await browser.newBrowserCDPSession()).send('SystemInfo.getInfo');
-    await fs.writeFile(path.join(output,'hardware.json'),JSON.stringify(hardware,null,2));}
+  if(acceleratedGpu){const session=await browser.newBrowserCDPSession(), hardware=await session.send('SystemInfo.getInfo');
+    const commandLine=await session.send('Browser.getBrowserCommandLine');
+    assert.equal(hardware.gpu.featureStatus.webgl2??hardware.gpu.featureStatus.webgl,'enabled');
+    assert.ok(!commandLine.arguments.some(value=>/swiftshader|llvmpipe|softpipe|--disable-gpu(?:$|=)/i.test(value)));
+    await fs.writeFile(path.join(output,'hardware.json'),JSON.stringify({hardware,commandLine},null,2));}
   for(const guest of guests){
     assert.ok(['busybox','alpine','node-alpine','omarchy'].includes(guest));
     const context=await browser.newContext({viewport:{width:1280,height:850},serviceWorkers:'allow'});
@@ -381,7 +461,7 @@ try{
         try {
           assert.equal(response.status(), 200, 'published source status ' + relative);
           const bytes = await response.body();
-          const expected = await fs.readFile(path.join(web, relative));
+          const expected = expectedPublishedSource(relative, await fs.readFile(path.join(web, relative)));
           assert.equal(hash(bytes), hash(expected), 'published source drift ' + relative);
           const bodyPath = path.join('live-source', relative);
           await fs.mkdir(path.dirname(path.join(output, bodyPath)), {recursive:true});
@@ -398,15 +478,17 @@ try{
     const pageErrors=[];
     page.on('pageerror',error=>pageErrors.push(String(error)));
     page.on('console',message=>{if(message.type()==='error'&&!/favicon\.ico/.test(message.location().url||''))pageErrors.push(message.text());});
-    if(coldGpu)assert.equal(guest,'omarchy');
-    const query=new URLSearchParams({guest,gpu:coldGpu?'1':'0'});
+    if(acceleratedGpu)assert.equal(guest,'omarchy');
+    const query=new URLSearchParams({guest});
+    if(!warmGpu)query.set('gpu',coldGpu?'1':'0');
+    if(coldGpu)query.set('noSnapshot','1');
     if (!remoteUrl) { query.set('assetBase',origin); query.set('omarchyAssetBase',origin); }
     if(gpuTrace){query.set('testHooks','1');query.set('gpuTrace','1');query.set('workerHeartbeatTimeoutMs','10000');}
     if(guest==='omarchy')query.set('desktop','1');
     const url=origin+'/app?'+query+'#ide';
-    for(const round of coldGpu?['initial']:['initial','repeat']){
+    for(const round of coldGpu||captureGpuPair?['initial']:['initial','repeat']){
       phase=guest+'-'+round;let started=Date.now();
-      let repeatCheckpoint;
+      let repeatCheckpoint,phaseEgl,publicDesktopInput,publicDesktopFinal,warmPixels,warmTiming,postWorkloadInput;
       if(round==='initial')await page.goto(url);
       else {
         if(saveOnRepeat&&['alpine','node-alpine'].includes(guest)) {
@@ -438,6 +520,7 @@ try{
       assert.equal(result.exit,0,phase+' live guest command');
       assert.match(result.stdout,guest==='node-alpine'?/FAST_NODE_42_PASS/:/FAST_.*_42_PASS/);
       const state=await snapshot(page);
+      if(warmGpu&&!captureGpuPair)warmTiming=gpuWarmTiming(state,round);
       assert.equal(state.restored,!coldGpu,phase+' selected cold/warm path');
       assert.ok(state.workers.length>=1,phase+' actual worker');
       assert.deepEqual(state.workerErrors,[]);
@@ -445,38 +528,58 @@ try{
       if(guest==='omarchy'){
         assert.ok(state.display?.successfulPresents>0,phase+' actual guest scanout');
         assert.equal(state.overlayHidden,true,phase+' desktop ready surface');
-        assert.equal(state.gpu?.qualified??false,coldGpu,phase+' selected graphics route');
-        if(coldGpu){
+        assert.equal(state.gpu?.qualified??false,acceleratedGpu,phase+' selected graphics route');
+        if(acceleratedGpu){
           assert.ok(state.gpu.counters?.completed>0,phase+' actual GPU completion');
           assert.ok(state.gpu.counters?.draws>0,phase+' actual GPU draws');
           const egl=await guestCommand(page,'/opt/virgl-proof/eglinfo -B -p gbm -a gles',300000);
           assert.equal(egl.exit,0);assert.match(egl.stdout,/virgl\s*\(/);assert.doesNotMatch(egl.stdout,/llvmpipe|softpipe/i);
           report.gpuEgl=egl;
-          if(captureGpuPair){
+          phaseEgl=egl;
+          const {verifyPublicDesktopInput}=await import('./critic-fast-boots-input.mjs');
+          const captureFactory=captureGpuPair?async({foot,barContent})=>{
+            const active=await guestCommand(page,'XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j activewindow',300000);assert.equal(active.exit,0);assert.equal(JSON.parse(active.stdout).pid,foot.pid,'factory captures actual Foot, not the screensaver');
             report.factoryCapture=await page.evaluate(async()=>{
               const c=window.__linuxCtl;await c.pause();
               const before={clock:await c.guestClockState(),scheduler:await c.schedulerStats(),gpu:await c.gpuStats()};
               const pair=await c.saveGpuCheckpoint();
               const after={clock:await c.guestClockState(),scheduler:await c.schedulerStats(),gpu:await c.gpuStats()};
-              const response=await fetch('/__factory-gpu-pair',{method:'POST',body:pair});if(!response.ok)throw Error('factory pair publication failed');
-              const pin=await response.json();await c.resume();return {before,after,pin};
+              let pin;
+              for(let at=0;at<pair.length;at+=1024*1024){
+                const response=await fetch('/__factory-gpu-pair/'+at+'/'+pair.length,{method:'POST',body:pair.subarray(at,Math.min(pair.length,at+1024*1024))});if(!response.ok)throw Error('factory pair publication failed');pin=await response.json();
+              }
+              if(!pin?.complete)throw Error('factory pair is incomplete');await c.resume();return {before,after,pin};
             });
             assert.deepEqual(report.factoryCapture.after.clock,report.factoryCapture.before.clock);
             assert.equal(report.factoryCapture.after.scheduler.retiredInstructions,report.factoryCapture.before.scheduler.retiredInstructions);
+            await page.screenshot({path:path.join(output,'factory-source.png'),fullPage:true});
+            report.factoryCapture.activeWindow=JSON.parse(active.stdout);report.factoryCapture.barContent=barContent;
             await fs.writeFile(path.join(output,'factory-capture.json'),JSON.stringify(report.factoryCapture,null,2)+'\n');
             console.log(JSON.stringify({phase:'factory-captured',pin:report.factoryCapture.pin}));
+          }:undefined;
+          report.publicDesktopInput=await verifyPublicDesktopInput(page,guestCommand,output,{name:phase+'-public-desktop-input',initialClockMode:expectedGpuPair?.clockState.mode||'icount',prepareFactory:captureGpuPair});
+          if(captureFactory){
+            const cleanup=await guestCommand(page,'rm -- /tmp/gpukeyboard42touch',300000);assert.equal(cleanup.exit,0);
+            await captureFactory(report.publicDesktopInput);
           }
-          const {verifyPublicDesktopInput}=await import('./critic-fast-boots-input.mjs');
-          report.publicDesktopInput=await verifyPublicDesktopInput(page,guestCommand,output);
+          publicDesktopInput=report.publicDesktopInput;
+          if(warmGpu&&!captureGpuPair){
+            warmPixels=await verifyWarmGpuPixels(page,{outputDir:output,label:phase+'-literal-pixels'});
+            postWorkloadInput=await verifyPublicDesktopInput(page,guestCommand,output,{name:phase+'-post-workload-input',
+              initialClockMode:'paced-icount',barActions:false,text:'touch /tmp/gpukeyboard84touch',
+              markerAbsent:'test ! -e /tmp/gpukeyboard84touch',markerRead:'test -f /tmp/gpukeyboard84touch && echo TRUSTED_TOUCH_84',expected:'TRUSTED_TOUCH_84'});
+          }
           report.publicDesktopFinal=await snapshot(page);
+          publicDesktopFinal=report.publicDesktopFinal;
           report.publicDesktopFinal.pageErrors=[...pageErrors];
-          await fs.writeFile(path.join(output,'public-desktop-final.json'),JSON.stringify(report.publicDesktopFinal,null,2)+'\n');
+          await fs.writeFile(path.join(output,phase+'-public-desktop-final.json'),JSON.stringify(report.publicDesktopFinal,null,2)+'\n');
           assertPublicDesktopFinal(report.publicDesktopFinal);
+
         }
       }
       const screenshot=phase+'.png';await page.screenshot({path:path.join(output,screenshot),fullPage:true});
       await Promise.all(liveReads); assert.deepEqual(liveReadErrors, [], 'published original source bodies');
-      report.phases.push({phase,guest,round,url,restoredMs,commandTimeoutMs,liveCommandMs:Date.now()-started-restoredMs,result,state,screenshot,repeatCheckpoint});
+      report.phases.push({phase,guest,round,url,restoredMs,commandTimeoutMs,liveCommandMs:Date.now()-started-restoredMs,result,state,screenshot,repeatCheckpoint,phaseEgl,publicDesktopInput,publicDesktopFinal,warmPixels,warmTiming,postWorkloadInput});
       await fs.writeFile(path.join(output,phase+'.json'),JSON.stringify(report.phases.at(-1),null,2));
       console.log(JSON.stringify({phase,restoredMs,result,display:state.display?.successfulPresents,databases:state.databases}));
     }
@@ -516,6 +619,7 @@ try{
   if(activePage)await holdOwnedFailure(activePage);
 }finally{
   await browser?.close();
+  await factoryUpload?.file?.close();
   await gpuRecording;
   if(gpuTrace){
     const file=path.join(output,'gpu.ndjson'),digest=createHash('sha256');

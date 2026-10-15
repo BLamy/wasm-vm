@@ -67,6 +67,10 @@ verify-E6-T11d74d1:
 verify-E6-T11d74d2:
 	python3 tools/virgl-production/verify-desktop-capacity.py --output "$${VIRGL_DESKTOP_CAPACITY_EVIDENCE_DIR:-target/evidence/production-desktop-capacity-final}"
 
+.PHONY: verify-E6-T11d74d
+verify-E6-T11d74d:
+	python3 tools/virgl-production/verify-public-gpu-warm.py --output "$${VIRGL_PUBLIC_GPU_WARM_EVIDENCE_DIR:-target/evidence/production-public-gpu-warm-final}"
+
 verify-E6-T11e:
 	wasm-pack build crates/wasm --target web --out-dir ../../target/virgl-production/pkg --features virgl-renderer,virgl-control-proof
 	python3 tools/virgl-production/verify.py --task E6-T11e --output "$${VIRGL_RECOVERY_EVIDENCE_DIR:-target/evidence/production-recovery-final}"

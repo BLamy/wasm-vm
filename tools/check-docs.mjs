@@ -51,7 +51,7 @@ for(const page of catalog.pages){
   for(const target of [...localTargets,...refs]){
     const url=new URL(target,"https://local.test/");
     if(url.pathname==="/docs.html")require(ids.has(url.searchParams.get("page")||"overview"),`Broken reader route ${target} in ${page.id}`);
-    else {try{await stat(path.join(root,"web",decodeURIComponent(url.pathname)));}catch{throw new Error(`Missing local resource ${target} in ${page.id}`);}}
+    else {const localPath=["/app","/app.html"].includes(url.pathname)?"index.html":decodeURIComponent(url.pathname);try{await stat(path.join(root,"web",localPath));}catch{throw new Error(`Missing local resource ${target} in ${page.id}`);}}
     links.push({page:page.id,target});
   }
 }

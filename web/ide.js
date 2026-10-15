@@ -274,6 +274,10 @@ html[data-wvm-desktop="omarchy"] .ide-term-pane,
 html[data-wvm-desktop="omarchy"] .ide-statusbar {
   display: none !important;
 }
+html[data-wvm-desktop="omarchy"][data-gpu-boot-error="true"] .os-launcher:not([hidden]) {
+  display: block !important; position: fixed; inset: 0; z-index: 100;
+  overflow: auto;
+}
 html[data-wvm-desktop="omarchy"] #panel-ide.active {
   display: flex; height: 100vh; min-height: 100vh; overflow: hidden;
 }

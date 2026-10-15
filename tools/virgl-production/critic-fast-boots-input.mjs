@@ -4,6 +4,7 @@ import {assertInteractivePauseProbe} from './critic-fast-boots-final.mjs';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {verifyPublicBarContent} from './critic-fast-boots-bar-content.mjs';
+import {verifyDesktopActions} from './critic-desktop-actions.mjs';
 
 export async function verifyPublicDesktopInput(page, command, output, options = {}) {
   const name = options.name || 'public-desktop-input';
@@ -39,7 +40,7 @@ export async function verifyPublicDesktopInput(page, command, output, options = 
   const initialClock = await page.evaluate(() => window.__linuxCtl.guestClockState());
   const interactiveMode = interactivePolicy === 'paced-on-keyboard' ? 'paced-icount' :
     interactivePolicy === 'wall-on-keyboard' ? 'wall' : null;
-  if (interactiveMode) assert.equal(initialClock.mode, 'icount');
+  if (interactiveMode) assert.equal(initialClock.mode, options.initialClockMode || 'icount');
   await record('initial-clock', {interactivePolicy, initialClock});
   const canvas = page.locator('#ide-display-canvas');
   let box = await canvas.boundingBox();
@@ -63,7 +64,7 @@ export async function verifyPublicDesktopInput(page, command, output, options = 
   const wakeScreensaver = async stage => {
     const active = JSON.parse(await read('XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j activewindow'));
     if (active.class === 'org.omarchy.screensaver') {
-      await canvas.focus(); await page.keyboard.press('Escape');
+      await canvas.focus(); await page.keyboard.press('Escape', {delay: 100});
       await record(stage, {activeWindowBeforeWake: active});
     }
   };
@@ -133,7 +134,7 @@ export async function verifyPublicDesktopInput(page, command, output, options = 
   // compositor before issuing the command whose effect we will assert.
   let activeWindow = JSON.parse(await read('XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j activewindow'));
   if (activeWindow.class === 'org.omarchy.screensaver') {
-    await page.keyboard.press('Escape');
+    await page.keyboard.press('Escape', {delay: 100});
     await record('trusted-wake', {activeWindowBeforeWake: activeWindow});
   }
   const focusDeadline = Date.now() + 120000;
@@ -149,6 +150,13 @@ export async function verifyPublicDesktopInput(page, command, output, options = 
   assert.notEqual(activeWindow.visible, false, 'actual focused Foot is visible');
   assert.notEqual(activeWindow.acceptsInput, false, 'actual focused Foot accepts input');
   await record('guest-focused', {activeWindow});
+  if (options.prepareFactory) {
+    // A factory capture is prepared through genuine input. Clear an unfinished
+    // prompt and select the production paced clock before the desktop can idle.
+    await canvas.focus();
+    await page.keyboard.press('Control+c', {delay: 100});
+    await record('trusted-factory-prompt-reset');
+  }
   // Use fresh compositor geometry after the trusted wake. Do not count a
   // fullscreen screensaver or a stale layer mapping as a populated bar.
   const contentDeadline = Date.now() + 360000;
@@ -177,6 +185,14 @@ export async function verifyPublicDesktopInput(page, command, output, options = 
   } while (Date.now() < contentDeadline);
   assert.equal(barContent.status, 'passed', 'actual package bar renders distributed content before the bounded deadline');
   await record('bar-content', {barContent, barProbes});
+  if (options.barActions !== false) {
+    const barActions = await verifyDesktopActions(page, command, output, {name, monitor: barContent.monitor, layer: barContent.layer, foot});
+    await record('bar-actions', {barActions});
+    await page.mouse.click(box.x + target.x * box.width / monitor.width,
+      box.y + target.y * box.height / monitor.height);
+    await canvas.focus();
+  }
+  if(options.beforeTyping){await options.beforeTyping({foot,barContent});await record('factory-captured-before-typing');}
   // Only trusted Playwright keyboard events create this file in Foot. The serial
   // control channel merely reads it afterward; it never injects this command.
   // CDP type() can describe a shifted punctuation key without physical modifier
@@ -201,10 +217,11 @@ export async function verifyPublicDesktopInput(page, command, output, options = 
   await record('typed', {typedText: text, immediateFocus, markerAbsent});
   await canvas.screenshot({path: path.join(output, name + '-typed.png')});
   let marker;
-  for (let i = 0; i < 20; ++i) {
+  const markerDeadline = Date.now() + 120000;
+  for (let i = 0; ; ++i) {
     marker = await command(page, options.markerRead || 'test -f /tmp/gpukeyboard42touch && echo TRUSTED_TOUCH_42', 300000);
     await record('marker-' + i, {marker});
-    if (marker.exit === 0) break;
+    if (marker.exit === 0 || Date.now() >= markerDeadline) break;
     await new Promise(resolve => setTimeout(resolve, 1000));
   }
   assert.equal(marker.exit, 0, 'trusted Foot keyboard command ran');

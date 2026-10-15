@@ -1772,7 +1772,15 @@ async function runLinuxBootOwned(opts, banner, request) {
     lastBootError = e.message || String(e); // surfaced to the Docker tab's typed-error path
     term.writeln(`\x1b[31mcannot boot: ${e.message || e}\x1b[0m`);
     emitGuestLifecycleEvent("wvm:guest-error", { message: lastBootError });
-    setStatus(_useCpuWorker
+    if (opts.virgl) {
+      for (const id of ["gpu-retry", "gpu-cold-retry"]) {
+        const action = document.getElementById(id); if (action) action.hidden = false;
+      }
+      if (gpuStatusEl) gpuStatusEl.textContent = "The GPU desktop could not start. Try a cold GPU boot or software rendering.";
+      document.documentElement.dataset.gpuBootError = "true";
+      setOsLauncherVisible(true, "The GPU desktop could not start. Retry Omarchy, or choose a recovery option.");
+    }
+    setStatus(opts.virgl ? "GPU desktop could not start. Choose a cold boot or software rendering below." : _useCpuWorker
       ? `linux worker fatal: ${lastBootError} — reload with ?worker=0 for the main-thread fallback`
       : `cannot boot: ${lastBootError}`);
     bootBtns.forEach((b) => b && !b.dataset.unavailable && (b.disabled = false));
@@ -2098,6 +2106,10 @@ async function bootOmarchy() {
   const query = new URLSearchParams(location.search);
   const assetBase = query.get("omarchyAssetBase") || R2_ASSETS;
   const accelerated = graphicsSelect?.value !== "software" && _useCpuWorker && !query.has("persist");
+  delete document.documentElement.dataset.gpuBootError;
+  for (const id of ["gpu-retry", "gpu-cold-retry"]) {
+    const action = document.getElementById(id); if (action) action.hidden = true;
+  }
   if (gpuStatusEl) gpuStatusEl.textContent = accelerated ? "Checking GPU support…" : "Software desktop snapshot selected.";
   const boot = await runLinuxBoot(
     {
@@ -2115,7 +2127,7 @@ async function bootOmarchy() {
       // an independent in-memory copy of the shipped desktop, including on repeat visits.
       persist: query.get("persist") === "1",
       freshDesktop: !accelerated && !query.has("noSnapshot") && !query.has("persist"),
-      bootSnapshot: !accelerated && !query.has("noSnapshot"),
+      bootSnapshot: !query.has("noSnapshot"),
       ramMib: 1024,
       imageLen: 4 * 1024 * 1024 * 1024,
       fileTransfer: false,
@@ -2139,7 +2151,9 @@ async function bootOmarchy() {
           "Booting <b>Omarchy</b> (immutable desktop image)… the display and serial console are live guest output.",
         );
         setGuestChip("omarchy");
-        if (osLauncherStatusEl) osLauncherStatusEl.textContent = "Starting Omarchy — first boot downloads only the desktop chunks it touches.";
+        if (osLauncherStatusEl) osLauncherStatusEl.textContent = query.has("noSnapshot")
+          ? "Starting Omarchy — downloading the desktop chunks it needs."
+          : "Restoring Omarchy’s desktop and graphics…";
       },
     },
   );

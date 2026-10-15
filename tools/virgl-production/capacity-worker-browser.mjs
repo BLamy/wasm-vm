@@ -117,9 +117,10 @@ try{
   if(mode==='roundtrip'){
     report.captureA=await page.evaluate(()=>__savePair('green'));assert.deepEqual(report.captureA.after.clock,report.captureA.before.clock);assert.equal(report.captureA.after.scheduler.retiredInstructions,report.captureA.before.scheduler.retiredInstructions);
     report.warm=await page.evaluate(()=>__startPair('green'));console.log('GPU warm ready',JSON.stringify(report.warm));assert.equal(report.warm.restored,true);
-    const warm=await state('warm');checkCapacity(warm);assert.deepEqual(warm.errors,[]);assert.ok(!warm.serial.includes('PAIR_GUEST_START'));assert.ok(warm.gpu.renderer.work.draws>cold.gpu.renderer.work.draws);assert.deepEqual(warm.pixel,[0,255,0,255]);assert.deepEqual(warm.events.find(e=>e.type==='checkpoint-loaded').clockState,report.captureA.before.clock);
+    const warm=await state('warm');checkCapacity(warm);assert.deepEqual(warm.errors,[]);assert.ok(!warm.serial.includes('PAIR_GUEST_START'));assert.ok(warm.gpu.renderer.work.draws>=cold.gpu.renderer.work.draws);assert.deepEqual(warm.pixel,[0,255,0,255]);assert.deepEqual(warm.events.find(e=>e.type==='checkpoint-loaded').clockState,report.captureA.before.clock);
     await page.locator('#display').focus();await page.keyboard.press('a');await page.waitForFunction(()=>__paired.serial.includes('PAIR_KEY_RED'),null,{timeout:15000});
-    const typed=await state('warm-input');assert.deepEqual(typed.errors,[]);assert.equal(typed.clock.mode,'paced-icount');assert.ok(typed.trusted.some(e=>e.type==='keydown'&&e.isTrusted));
+    await page.waitForFunction(()=>{const p=document.querySelector('#display').getContext('2d').getImageData(32,32,1,1).data;return p[0]===255&&p[1]===0&&p[2]===0&&p[3]===255;},null,{timeout:15000});
+    const typed=await state('warm-input');assert.ok(typed.gpu.renderer.work.draws>warm.gpu.renderer.work.draws);assert.deepEqual(typed.pixel,[255,0,0,255]);assert.deepEqual(typed.errors,[]);assert.equal(typed.clock.mode,'paced-icount');assert.ok(typed.trusted.some(e=>e.type==='keydown'&&e.isTrusted));
     await page.keyboard.press('b');await page.waitForFunction(()=>__paired.serial.includes('PAIR_KEY_BLUE'),null,{timeout:15000});
     await page.waitForTimeout(100);report.captureB=await page.evaluate(()=>__savePair('blue'));assert.deepEqual(report.captureB.after.clock,report.captureB.before.clock);
     report.repeat=await page.evaluate(()=>__startPair('blue'));assert.equal(report.repeat.restored,true);

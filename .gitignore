@@ -81,6 +81,8 @@ releases/chunked-node-alpine/
 # exact bytes are pinned in web/artifacts-omarchy.json and hosted immutably on R2.
 # Restore it for local acceptance/deployment with tools/fetch-omarchy-snapshot.mjs.
 releases/boot-snapshot/omarchy-ready.snap.gz
+# Accelerated factory RAM/disk/GPU bytes are pinned in the public manifest and R2.
+releases/boot-snapshot/omarchy-virgl-ready.wvgpair
 
 # Full paused guest RAM is local replay evidence; committed receipts pin its SHA-256.
 evidence/omarchy-profile/input-wait-r*/desktop/failed-input.ram.gz

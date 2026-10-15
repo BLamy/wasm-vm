@@ -7,12 +7,14 @@ import {fileURLToPath,pathToFileURL} from 'node:url';
 import {createServer} from 'node:http';
 import {createHash} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
+import {expectedPublishedSource} from './virgl-production/published-source.mjs';
 
 const repo=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const hash=bytes=>createHash('sha256').update(bytes).digest('hex');
 assert.equal(process.argv[2],'--output');assert.ok(process.argv[3]);
 assert.ok(process.argv.length===4||(process.argv.length===6&&process.argv[4]==='--url'));
 const output=path.resolve(process.argv[3]),dist=path.join(repo,'web/dist');
+const remote=process.argv[4]==='--url';
 const git=(...args)=>execFileSync('git',args,{cwd:repo,encoding:'utf8'}).trim();
 const report={schema:'reviewed-site-assembled-route-record-v1',task:'E0-T27',head:git('rev-parse','HEAD'),
  command:[process.execPath,...process.argv.slice(1)],startedAt:new Date().toISOString(),status:'running',
@@ -48,19 +50,19 @@ try{
  }
  report.base=base;
  const {chromium}=await import(pathToFileURL(path.join(repo,'web/node_modules/playwright/index.mjs')));
- browser=await chromium.launch({executablePath:process.env.CHROME||'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',headless:false,args:['--enable-gpu']});
+ browser=await chromium.launch({executablePath:process.env.CHROME||'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',headless:true,args:['--enable-gpu','--use-gl=angle','--use-angle=metal']});
  report.browserVersion=browser.version();
  // Read the original HTTP response before forwarding the unchanged routing
  // module. An immediate client redirect may otherwise destroy Chrome's CDP
  // response handle before the recorder can retrieve this changed source.
  const captureRouteSource=async context=>{
-  await context.route('**/tabs.js',async route=>{
+  for(const name of ['tabs.js','ide.js'])await context.route('**/'+name,async route=>{
    const original=await route.fetch();assert.equal(original.status(),200);
-   const bytes=await original.body();const expected=await fs.readFile(path.join(dist,'tabs.js'));
+   const bytes=await original.body();const expected=await fs.readFile(path.join(dist,name));
    assert.equal(hash(bytes),hash(expected),'original routing module drift');
-   const bodyPath='original-routes/tabs.js';await fs.mkdir(path.dirname(path.join(output,bodyPath)),{recursive:true});
+   const bodyPath='original-routes/'+name;await fs.mkdir(path.dirname(path.join(output,bodyPath)),{recursive:true});
    await fs.writeFile(path.join(output,bodyPath),bytes);
-   report.originalRouteBodies.push({url:route.request().url(),path:'tabs.js',bodyPath,status:original.status(),bytes:bytes.length,sha256:hash(bytes),forwardedUnchanged:true});
+   report.originalRouteBodies.push({url:route.request().url(),path:name,bodyPath,status:original.status(),bytes:bytes.length,sha256:hash(bytes),forwardedUnchanged:true});
    await route.fulfill({response:original,body:bytes});
   });
  };
@@ -72,7 +74,7 @@ try{
   page.on('response',r=>{const transition=legacyTransition;bodyReads.push((async()=>{try{const url=new URL(r.url());if(url.origin!==new URL(base).origin||r.status()!==200)return;
    const bytes=await r.body();const rawName=url.pathname==='/'?'index.html':url.pathname.slice(1);
    const name=path.extname(rawName)?rawName:`${rawName}.html`;
-   const expected=await fs.readFile(path.join(dist,name));assert.equal(hash(bytes),hash(expected),'served body drift '+name);
+   const raw=await fs.readFile(path.join(dist,name)),expected=remote?expectedPublishedSource(name,raw):raw;assert.equal(hash(bytes),hash(expected),'served body drift '+name);
    const bodyPath='served/'+name;await fs.mkdir(path.dirname(path.join(output,bodyPath)),{recursive:true});await fs.writeFile(path.join(output,bodyPath),bytes);
    report.requests.push({url:r.url(),path:name,status:r.status(),bodyPath,bytes:bytes.length,sha256:hash(bytes)});
   }catch(error){

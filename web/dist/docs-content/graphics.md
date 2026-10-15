@@ -6,14 +6,16 @@ The command, shader, dimensional depth, transform-feedback and native multisampl
 
 ## Launch the desktop
 
-Choose **Omarchy** in the [launcher](./app.html#ide), with **GPU rendering** selected. The worker checks actual WebGL2 limits, texture roles, native renderability and nonzero sampled results before advertising VirGL. An unsupported host produces a visible error; it does not justify positive guest capabilities.
+Choose **Omarchy** in the [launcher](./app), with **GPU rendering** selected. The worker checks actual WebGL2 limits, texture roles, native renderability and nonzero sampled results before advertising VirGL. An unsupported host produces a visible error; it does not justify positive guest capabilities.
 
 The accelerated image uses a pinned Mesa 26.2.2 build with VirGL and the GLES API exposed through EGL. Its small, recorded source patch makes both border-clamp extension names independently configurable, and rejects desktop OpenGL contexts while retaining GBM's internal buffer-mapping context. It separates multisample renderbuffer support from multisample texture sampling: only qualified two-dimensional color/depth attachment queries can use the measured sample count and format mask. Unsupported border-clamp and sRGB-decode extensions are disabled in both legacy and indexed queries. The software DRI entrypoints are removed.
 
-GPU rendering starts from a cold boot. The existing **Software rendering** option restores the paired Omarchy RAM snapshot and disk delta. BusyBox, Alpine and Alpine + Node retain their existing fast-boot paths.
+GPU rendering restores an authenticated Omarchy warm checkpoint on compatible hosts. RAM, the complete disk overlay, the selected guest clock and the original GPU command/DMA journal belong to one pinned artifact. A fresh worker rebuilds actual GPU resources, then completes new guest draws and a successfully presented fresh frame before reporting ready. Repeat launches restore an independent copy of the same factory desktop.
+
+Use `?guest=omarchy&desktop=1&noSnapshot=1` on the launcher for an explicit GPU cold boot. The **Software rendering** option retains its paired RAM snapshot and disk delta. BusyBox, Alpine and Alpine + Node keep their fast-boot paths. A corrupt or incompatible GPU checkpoint produces a visible error; it cannot silently become a cold boot or a software session.
 
 {% hint style="info" %}
-Both desktop paths start with instruction-based time. Before its first original keyboard make, including a lock-state repair, the accelerated desktop selects host-paced idle. Busy execution and JIT timing continue to follow retired instructions; idle timer jumps are bounded by elapsed host time. Explicit pauses exclude paused time, and resume re-anchors the bound. The software snapshot retains its existing clock policy. This accelerated policy is independently verified in E6-T11d72 and E6-T11d73.
+An accelerated cold boot starts with instruction-based time. Before its first original keyboard make, including a lock-state repair, it selects host-paced idle. A warm boot preserves the checkpoint's selected mode and exact guest time, then re-anchors its host clock; time spent offline is excluded. Busy execution and JIT timing follow retired instructions, while idle timer jumps are bounded by elapsed host time. Explicit pauses exclude paused time. The software snapshot retains its existing clock policy. The accelerated timing policy is independently verified in E6-T11d72 and E6-T11d73; paired clock restoration is covered by E6-T11d74c.
 
 During instruction-based execution, tickless idle pauses its timer jump while a qualified GPU request awaits the browser, so guest time cannot skip past a pending host fence or presentation receipt. Original keyboard host waits are also guarded. Normal idle advancement resumes when those requests settle.
 {% endhint %}
@@ -32,7 +34,7 @@ The page shows completed jobs, draws and transfers for the real guest. The homep
 
 GPU context loss revokes qualification and fails uncertain pending work. Existing CPU display and cursor state remain separate. Restart the accelerated session, or use **Restart with software graphics** to open the warm desktop.
 
-Accelerated GPU snapshots and restores reject explicitly: native WebGL objects cannot be saved into guest RAM. Software sessions retain their snapshot and persistence behavior.
+The accelerated factory checkpoint reconstructs GPU resources from original work; it never serializes native WebGL handles. Its identity includes the runtime, kernel, disk image, host capability profile, complete overlay and component digests. General software snapshot/import APIs still reject accelerated sessions. GPU warm boots currently use an ephemeral disk; persistent software sessions retain their existing snapshot behavior.
 
 ## Reproduce the checks
 

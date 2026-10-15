@@ -651,10 +651,9 @@ export async function startLinuxBoot(opts = {}) {
     }
 
     let productionGpu = null;
-    let gpuVisibleFrames=0;
     if (virgl) {
       const {attachProductionVirgl,createWorkerScanoutPresenter} = await import('./renderer/virgl-command/production.mjs');
-      const presenter = createWorkerScanoutPresenter(frame => { gpuVisibleFrames++; onDisplayFrame?.(frame); });
+      const presenter = createWorkerScanoutPresenter(frame => onDisplayFrame?.(frame));
       opts.onGpuFrameAcknowledger?.((...args)=>presenter.acknowledge(...args));
       productionGpu = await attachProductionVirgl(machine,{presenter,checkpoint:gpuWarmData,onEvent:event => { if (opts.gpuTrace || ["qualified","context-lost"].includes(event.type)) onGpuEvent?.(event); }});
       if (opts.gpuTrace) machine.enableGpuCommandTrace();
@@ -1230,17 +1229,20 @@ export async function startLinuxBoot(opts = {}) {
         return pair;
       }finally{gpuCaptureBusy=false;if(!wasPaused&&!stopped){guestClockLifecycle.resume();paused=false;schedule();}}
     };
-    // A warm worker is not ready merely because historical pixels were reconstructed.
-    // Execute the resumed guest until NEW original GPU work and a NEW physical frame exist.
+    // The reconstructed renderer must physically present in its fresh epoch and
+    // the resumed CPU must execute before input connects. A desktop need not
+    // submit another draw until that input arrives; requiring one here strands
+    // valid static desktops behind the boot gate. New guest work is proved after
+    // startup through the ordinary input and GPU command paths.
     if(gpuWarmData) {
       try {
-        const before=productionGpu.inspect(),frames=gpuVisibleFrames,deadline=performance.now()+30000;
+        const epoch=productionGpu.inspect().epoch,deadline=performance.now()+30000;
         while(true) {
-          if(stopped || !productionGpu.inspect().qualified)throw Error('gpu_checkpoint: resumed worker stopped or lost before a fresh frame');
           const current=productionGpu.inspect();
-          const freshDrawn=current.scanout.retirements.some(receipt=>receipt.epoch===current.epoch&&typeof receipt.sequence==='string'&&receipt.status==='drawn');
-          if(current.counters.completed>before.counters.completed && current.renderer.work.draws>before.renderer.work.draws && gpuVisibleFrames>frames&&freshDrawn)break;
-          if(performance.now()>deadline)throw Error('gpu_checkpoint: resumed guest did not produce new GPU work and scanout');
+          if(stopped || !current.qualified || current.lost || current.disposed || current.poisoned || current.epoch!==epoch || current.counters.failed>0)throw Error('gpu_checkpoint: resumed worker stopped or GPU owner became unusable');
+          const freshDrawn=current.scanout.retirements.some(receipt=>receipt.epoch===epoch&&receipt.status==='drawn');
+          if(retiredInstructions>0&&freshDrawn)break;
+          if(performance.now()>deadline)throw Error('gpu_checkpoint: resumed CPU or fresh physical scanout did not become ready');
           await new Promise(resolve=>setTimeout(resolve,20));
         }
         onState('restored');gpuWarmData=null;

@@ -155,16 +155,22 @@ test('paced critic: actual main defaults scope handoff to accelerated ephemeral 
     {search:'',worker:false,graphics:'software',accelerated:false},
     {search:'?persist=1',worker:true,graphics:'gpu',accelerated:false},
     {search:'?persist=0',worker:true,graphics:'gpu',accelerated:false},
+    {search:'?noSnapshot=1',worker:true,graphics:'gpu',accelerated:true},
+    {search:'?gpu=0&noSnapshot=1',worker:true,graphics:'software',accelerated:false},
   ]) {
     let observed=null;
+    const actions=new Map(['gpu-retry','gpu-cold-retry'].map(id=>[id,{hidden:false}]));
     const context=vm.createContext({URLSearchParams,location:{search:c.search},_useCpuWorker:c.worker,
       graphicsSelect:{value:c.graphics},gpuStatusEl:{textContent:''},R2_ASSETS:'https://owned-assets.invalid',
+      document:{documentElement:{dataset:{gpuBootError:'true'}},getElementById(id){assert.ok(actions.has(id));return actions.get(id);}},
       linuxCtl:{},async runLinuxBoot(opts){observed=opts;return {winner:'omarchy'};}});
     await vm.runInContext(`(async()=>{${body}\n})()`,context);
+    assert.ok([...actions.values()].every(action=>action.hidden),'fresh launch clears previous recovery choices');
+    assert.equal(context.document.documentElement.dataset.gpuBootError,undefined,'fresh launch clears previous failure overlay');
     assert.equal(observed.virgl,c.accelerated);
     assert.equal(observed.interactiveClock,c.accelerated?'paced-on-keyboard':undefined);
     assert.equal(observed.guestClock,'icount');assert.equal(observed.icountDivider,64);
-    assert.equal(observed.bootSnapshot,!c.accelerated);
+    assert.equal(observed.bootSnapshot,!new URLSearchParams(c.search).has('noSnapshot'));
   }
 });
 

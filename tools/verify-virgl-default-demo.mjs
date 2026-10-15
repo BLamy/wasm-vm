@@ -7,6 +7,7 @@ import { createServer } from 'node:http';
 import { execFileSync } from 'node:child_process';
 import { pathToFileURL } from 'node:url';
 import { repo, sha256 } from './virgl-command/fixtures.mjs';
+import {expectedPublishedSource} from './virgl-production/published-source.mjs';
 assert.equal(process.argv[2], '--output'); assert.ok(process.argv[3]);
 const options = {};
 for (let i = 4; i < process.argv.length; i += 2) {
@@ -21,7 +22,7 @@ if (remoteUrl) {
   assert.equal(url.protocol, 'https:'); assert.equal(url.pathname, '/');
   assert.equal(url.search + url.hash + url.username + url.password, '');
 }
-assert.ok(['E0-T27', 'E6-T11a', 'E6-T11b2', 'E6-T11c', 'E6-T11d51', 'E6-T11d52', 'E6-T11d53', 'E6-T11d54', 'E6-T11d55', 'E6-T11d56', 'E6-T11d57', 'E6-T11d58', 'E6-T11d59', 'E6-T11d60', 'E6-T11d61', 'E6-T11d62', 'E6-T11d63', 'E6-T11d64', 'E6-T11d65', 'E6-T11d66', 'E6-T11d67', 'E6-T11d68', 'E6-T11d69a','E6-T11d69b', 'E6-T11d70', 'E6-T11d71', 'E6-T11d72', 'E6-T11d73', 'E6-T11d74a', 'E6-T11d74b', 'E6-T11d74c', 'E6-T11d74d1', 'E6-T11d74d2', 'E6-T11d', 'E6-T11e'].includes(task));
+assert.ok(['E0-T27', 'E6-T11a', 'E6-T11b2', 'E6-T11c', 'E6-T11d51', 'E6-T11d52', 'E6-T11d53', 'E6-T11d54', 'E6-T11d55', 'E6-T11d56', 'E6-T11d57', 'E6-T11d58', 'E6-T11d59', 'E6-T11d60', 'E6-T11d61', 'E6-T11d62', 'E6-T11d63', 'E6-T11d64', 'E6-T11d65', 'E6-T11d66', 'E6-T11d67', 'E6-T11d68', 'E6-T11d69a','E6-T11d69b', 'E6-T11d70', 'E6-T11d71', 'E6-T11d72', 'E6-T11d73', 'E6-T11d74a', 'E6-T11d74b', 'E6-T11d74c', 'E6-T11d74d1', 'E6-T11d74d2', 'E6-T11d74d', 'E6-T11d', 'E6-T11e'].includes(task));
 const output = path.resolve(process.argv[3]), root = path.join(repo, 'web/dist');
 await fs.mkdir(output, { recursive: true });
 const report = { schema: 1, task, status: 'running',
@@ -65,7 +66,7 @@ try {
         }
         assert.equal(response.status(), 200, 'published source status ' + url.pathname);
         const bytes = await response.body(), relative = url.pathname==='/app'?'app.html':url.pathname.slice(1);
-        assert.equal(sha256(bytes), sha256(await fs.readFile(path.join(root, relative))), 'published source drift ' + relative);
+        assert.equal(sha256(bytes), sha256(expectedPublishedSource(relative, await fs.readFile(path.join(root, relative)))), 'published source drift ' + relative);
         const bodyPath = path.join('served', relative);
         await fs.mkdir(path.dirname(path.join(output, bodyPath)), {recursive:true});
         await fs.writeFile(path.join(output, bodyPath), bytes);
@@ -94,7 +95,8 @@ try {
   const graphics = page.locator('.cap', { hasText: 'Guest GPU offload' });
   report.graphicsRoadmapPip = await graphics.locator('.cap-pip').getAttribute('class');
   assert.match(report.graphicsRoadmapPip, /\bpartial\b/);
-  if (['E6-T11d67','E6-T11d68','E6-T11d69a','E6-T11d69b','E6-T11d70','E6-T11d71','E6-T11d72','E6-T11d73','E6-T11d74a', 'E6-T11d74b', 'E6-T11d74c', 'E6-T11d74d1', 'E6-T11d74d2','E6-T11d','E6-T11e'].includes(task)) assert.match(await graphics.textContent(), /qualified GPU cold boots/);
+  if (['E6-T11d74d','E6-T11d','E6-T11e'].includes(task)) assert.match(await graphics.textContent(), /qualified GPU warm boots/);
+  else if (['E6-T11d67','E6-T11d68','E6-T11d69a','E6-T11d69b','E6-T11d70','E6-T11d71','E6-T11d72','E6-T11d73','E6-T11d74a', 'E6-T11d74b', 'E6-T11d74c', 'E6-T11d74d1', 'E6-T11d74d2','E6-T11d','E6-T11e'].includes(task)) assert.match(await graphics.textContent(), /qualified GPU (?:cold|warm) boots/);
   else assert.match(await graphics.textContent(), /production acceleration disabled/);
   if (task === 'E6-T11d74d2') assert.match(await page.locator('.cap', {hasText: 'Production desktop GPU capacity'}).textContent(), /512.*32.*64/);
   if (task === 'E6-T11d74d1') assert.match(await page.locator('.cap', {hasText: 'GPU frame continuity'}).textContent(), /E6-T11d74d1/);

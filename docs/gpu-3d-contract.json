@@ -877,7 +877,7 @@
       "source": "typed Rust QualifiedCapabilities after physical host qualification",
       "version": 2
     },
-    "clock": "wall for accelerated cold boots; historical software snapshots unchanged",
+    "clock": "instruction time with paced idle selected by original keyboard; warm restore preserves the selected mode and exact guest time, then re-anchors the host clock",
     "contexts": 32,
     "drawsPerSubmission": 256,
     "factory": "createVirglProductionBridge",
@@ -889,7 +889,7 @@
     "perResourceBytes": 33554432,
     "perTransferBytes": 33554432,
     "rendererSubContexts": 64,
-    "snapshot": "accelerated save/import/restore reject; cold restart required",
+    "snapshot": "authenticated factory RAM/disk/GPU/clock pairs reconstruct a fresh physical renderer; ordinary software snapshot/import APIs reject accelerated sessions",
     "softwareFallback": "existing paired Omarchy warm image through gpu=0",
     "status": "final-verification-in-progress"
   },

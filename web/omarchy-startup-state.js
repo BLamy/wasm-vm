@@ -9,6 +9,7 @@ const ROLE_LABELS = Object.freeze({
   chunkManifest: "chunk manifest",
   overlayDelta: "overlay delta",
   bootSnapshot: "boot snapshot",
+  gpuCheckpoint: "GPU desktop checkpoint",
 });
 
 const PHASE_LABELS = Object.freeze({
