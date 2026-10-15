@@ -146,6 +146,9 @@ impl Scanout3dState {
     pub fn snapshot(&self) -> Scanout3dSnapshot {
         self.snapshot
     }
+    pub(super) fn commit_checkpoint(&mut self, snapshot: Scanout3dSnapshot) {
+        self.snapshot = snapshot;
+    }
     pub fn reset(&mut self) {
         self.snapshot.binding = None;
     }
@@ -212,7 +215,7 @@ fn preflight(
     }
     Ok(())
 }
-fn full_rect(rect: Rect, m: Resource3dMetadata, production: bool) -> bool {
+pub(super) fn full_rect(rect: Rect, m: Resource3dMetadata, production: bool) -> bool {
     m.target == 2
         && (m.format == 67 || (production && matches!(m.format, 1 | 2)))
         && (m.bind == 10

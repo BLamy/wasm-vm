@@ -3192,11 +3192,47 @@ impl Machine {
     /// [`crate::resume::SnapshotError::NotQuiesced`], no blob emitted) rather than serialize a torn
     /// boundary — a parked descriptor chain must never be captured half-processed.
     pub fn save_resume(&mut self) -> Result<alloc::vec::Vec<u8>, crate::resume::SnapshotError> {
+        self.save_resume_inner(None)
+    }
+
+    /// Native half of an explicitly paired accelerated checkpoint. `renderer_digest` identifies
+    /// the separately reconstructed physical renderer; it is never a WebGL handle or RAM fallback.
+    #[cfg(feature = "virgl-renderer")]
+    pub fn save_accelerated_resume(
+        &mut self,
+        renderer_digest: &[u8; 32],
+    ) -> Result<alloc::vec::Vec<u8>, crate::resume::SnapshotError> {
+        let bytes = self.save_resume_inner(Some(renderer_digest))?;
+        dev::virtio::gpu::checkpoint::seal_resume(bytes, renderer_digest).map_err(|_| {
+            crate::resume::SnapshotError::BadComponentState {
+                tag: crate::resume::section::VIRTIO_GPU,
+            }
+        })
+    }
+
+    fn save_resume_inner(
+        &mut self,
+        gpu_witness: Option<&[u8; 32]>,
+    ) -> Result<alloc::vec::Vec<u8>, crate::resume::SnapshotError> {
+        #[cfg(not(feature = "virgl-renderer"))]
+        let _ = gpu_witness;
         #[cfg(feature = "virgl-renderer")]
-        if self.control3d_proof_installed() {
+        if self.control3d_proof_installed() && gpu_witness.is_none() {
             return Err(crate::resume::SnapshotError::BadComponentState {
                 tag: crate::resume::section::VIRTIO_GPU,
             });
+        }
+        #[cfg(feature = "virgl-renderer")]
+        if let Some(witness) = gpu_witness {
+            let error = crate::resume::SnapshotError::BadComponentState {
+                tag: crate::resume::section::VIRTIO_GPU,
+            };
+            let Some((state, ..)) = &self.gpu else {
+                return Err(error);
+            };
+            if witness.iter().all(|b| *b == 0) || state.borrow().checkpoint_ready().is_err() {
+                return Err(error);
+            }
         }
         self.quiesce()?;
         use crate::resume::{ComponentSnapshot, SnapshotWriter, section};
@@ -3282,11 +3318,26 @@ impl Machine {
                 .snapshot_transport(&mut v);
             append_resume_queue(&mut v, vq);
             append_resume_queue(&mut v, cursor_vq);
-            let payload = state.borrow().to_snapshot().map_err(|_| {
-                crate::resume::SnapshotError::BadComponentState {
-                    tag: section::VIRTIO_GPU,
-                }
-            })?;
+            let gpu = state.borrow();
+            #[cfg(feature = "virgl-renderer")]
+            let payload = if let Some(witness) = gpu_witness {
+                gpu.to_gpu_checkpoint(witness).map_err(|_| {
+                    crate::resume::SnapshotError::BadComponentState {
+                        tag: section::VIRTIO_GPU,
+                    }
+                })?
+            } else {
+                gpu.to_snapshot()
+                    .map_err(|_| crate::resume::SnapshotError::BadComponentState {
+                        tag: section::VIRTIO_GPU,
+                    })?
+            };
+            #[cfg(not(feature = "virgl-renderer"))]
+            let payload =
+                gpu.to_snapshot()
+                    .map_err(|_| crate::resume::SnapshotError::BadComponentState {
+                        tag: section::VIRTIO_GPU,
+                    })?;
             v.extend_from_slice(&payload);
             w.section(section::VIRTIO_GPU, &v);
         }
@@ -3416,8 +3467,41 @@ impl Machine {
     /// [`crate::resume::SnapshotError::OverlayGenerationMismatch`]) with the target machine left
     /// byte-identical to its pre-restore state — a resumed CPU/RAM never lands on a diverged disk.
     pub fn load_resume(&mut self, blob: &[u8]) -> Result<(), crate::resume::SnapshotError> {
+        self.load_resume_inner(blob, None).map(|_| ())
+    }
+
+    /// Restore only the native half of a matching, independently reconstructed GPU checkpoint.
+    /// Return the saved and fresh transport epochs so the host reconstruction lane can remap its
+    /// logical identities. The ordinary load API retains its explicit accelerated refusal.
+    #[cfg(feature = "virgl-renderer")]
+    pub fn load_accelerated_resume(
+        &mut self,
+        blob: &[u8],
+        renderer_digest: &[u8; 32],
+    ) -> Result<(u64, u64), crate::resume::SnapshotError> {
+        let payload =
+            dev::virtio::gpu::checkpoint::open_resume(blob, renderer_digest).map_err(|_| {
+                crate::resume::SnapshotError::BadComponentState {
+                    tag: crate::resume::section::VIRTIO_GPU,
+                }
+            })?;
+        self.load_resume_inner(payload, Some(renderer_digest))?
+            .ok_or(crate::resume::SnapshotError::BadComponentState {
+                tag: crate::resume::section::VIRTIO_GPU,
+            })
+    }
+
+    fn load_resume_inner(
+        &mut self,
+        blob: &[u8],
+        gpu_witness: Option<&[u8; 32]>,
+    ) -> Result<Option<(u64, u64)>, crate::resume::SnapshotError> {
+        #[cfg(not(feature = "virgl-renderer"))]
+        let _ = gpu_witness;
         #[cfg(feature = "virgl-renderer")]
-        if self.control3d_proof_installed() {
+        if (self.control3d_proof_installed() && gpu_witness.is_none())
+            || (gpu_witness.is_some() && !self.control3d_proof_installed())
+        {
             return Err(crate::resume::SnapshotError::BadComponentState {
                 tag: crate::resume::section::VIRTIO_GPU,
             });
@@ -3440,6 +3524,39 @@ impl Machine {
         for sec in reader {
             sections.push(sec?);
         }
+        #[cfg(feature = "virgl-renderer")]
+        if gpu_witness.is_some() {
+            // The accelerated envelope is an exact machine boundary. Missing, duplicate or
+            // unknown sections must not leave destination CPU/RAM/device state mixed with it.
+            let mut expected = alloc::vec![section::CPU, section::RAM, section::CLOCK];
+            for (tag, present) in [
+                (section::CLINT, self.clint.is_some()),
+                (section::PLIC, self.plic.is_some()),
+                (section::UART, self.uart.is_some()),
+                (section::RTC, self.rtc.is_some()),
+                (section::VIRTIO_BLK, self.blk.is_some()),
+                (section::VIRTIO_NET, self.net.is_some()),
+                (section::VIRTIO_GPU, self.gpu.is_some()),
+                (section::VIRTIO_KEYBOARD, self.keyboard.is_some()),
+                (section::VIRTIO_TABLET, self.tablet.is_some()),
+                (section::VIRTIO_MOUSE, self.mouse.is_some()),
+                (section::VIRTIO_SND, self.snd.is_some()),
+                (section::VIRTIO_CONSOLE, self.console.is_some()),
+                (section::VIRTIO_RNG, self.rng.is_some()),
+            ] {
+                if present {
+                    expected.push(tag);
+                }
+            }
+            expected.sort_unstable();
+            let mut actual: alloc::vec::Vec<_> = sections.iter().map(|s| s.tag).collect();
+            actual.sort_unstable();
+            if actual != expected {
+                return Err(crate::resume::SnapshotError::BadComponentState {
+                    tag: section::VIRTIO_GPU,
+                });
+            }
+        }
         let desktop_sections = [
             (section::VIRTIO_GPU, self.gpu.is_some()),
             (section::VIRTIO_KEYBOARD, self.keyboard.is_some()),
@@ -3455,6 +3572,12 @@ impl Machine {
                 return Err(crate::resume::SnapshotError::BadComponentState { tag });
             }
         }
+        #[cfg(feature = "virgl-renderer")]
+        let mut staged_gpu_checkpoint = None;
+        #[cfg(feature = "virgl-renderer")]
+        let mut gpu_epochs = None;
+        #[cfg(not(feature = "virgl-renderer"))]
+        let gpu_epochs = None;
         for sec in &sections {
             match sec.tag {
                 section::CPU => Hart::new().restore(sec.payload)?,
@@ -3503,6 +3626,28 @@ impl Machine {
                 }
                 section::VIRTIO_GPU => {
                     let (_, _, payload) = parse_resume_device_prefix(sec.payload, sec.tag, 2)?;
+                    #[cfg(feature = "virgl-renderer")]
+                    if let Some(witness) = gpu_witness {
+                        let Some((state, ..)) = &self.gpu else {
+                            return Err(crate::resume::SnapshotError::BadComponentState {
+                                tag: sec.tag,
+                            });
+                        };
+                        staged_gpu_checkpoint = Some(
+                            state
+                                .borrow()
+                                .prepare_gpu_checkpoint(
+                                    payload,
+                                    witness,
+                                    self.ram_base(),
+                                    self.ram_len() as u64,
+                                )
+                                .map_err(|_| crate::resume::SnapshotError::BadComponentState {
+                                    tag: sec.tag,
+                                })?,
+                        );
+                        continue;
+                    }
                     let mut device = dev::virtio::gpu::VirtioGpu::new();
                     device.restore_snapshot(payload).map_err(|_| {
                         crate::resume::SnapshotError::BadComponentState { tag: sec.tag }
@@ -3578,6 +3723,16 @@ impl Machine {
                         reader.u16()?;
                     }
                     let mut queues = restore_resume_queues(&slot, &rings, sec.tag)?;
+                    #[cfg(feature = "virgl-renderer")]
+                    if let Some(prepared) = staged_gpu_checkpoint.take() {
+                        gpu_epochs = Some((prepared.saved_epoch, prepared.restored_epoch));
+                        state.borrow_mut().commit_gpu_checkpoint(prepared);
+                    } else {
+                        state.borrow_mut().restore_snapshot(payload).map_err(|_| {
+                            crate::resume::SnapshotError::BadComponentState { tag: sec.tag }
+                        })?;
+                    }
+                    #[cfg(not(feature = "virgl-renderer"))]
                     state.borrow_mut().restore_snapshot(payload).map_err(|_| {
                         crate::resume::SnapshotError::BadComponentState { tag: sec.tag }
                     })?;
@@ -3862,7 +4017,7 @@ impl Machine {
         // may discard the previous wall anchor; every refusal above preserves it untouched.
         #[cfg(not(feature = "zicsr-stub"))]
         self.rebase_guest_clock();
-        Ok(())
+        Ok(gpu_epochs)
     }
 
     /// RISCOF signature dump (E1-T20): the memory region `[begin, end)` formatted as the

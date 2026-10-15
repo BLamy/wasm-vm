@@ -1379,3 +1379,6 @@ fn original_production_fragmented_backing_counts_are_bounded_and_atomic() {
         );
     }
 }
+
+#[path = "production_gpu_checkpoint/mod.rs"]
+mod gpu_checkpoint;

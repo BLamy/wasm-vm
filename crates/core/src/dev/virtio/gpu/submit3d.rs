@@ -362,6 +362,12 @@ impl Submit3dState {
             }),
         }
     }
+    pub(super) fn commit_checkpoint(&mut self, snapshot: Submit3dSnapshot) {
+        self.mailbox.revoke();
+        self.pending = None;
+        self.next_sequence = snapshot.next_sequence;
+        self.counters = snapshot.counters;
+    }
     pub fn next_key(&self, epoch: u64) -> Result<Submit3dKey, Control3dError> {
         self.next_sequence
             .checked_add(1)

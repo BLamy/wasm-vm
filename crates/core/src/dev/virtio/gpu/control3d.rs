@@ -768,6 +768,31 @@ impl Control3dState {
             backing_bytes: self.backing_bytes,
         }
     }
+    pub(super) fn checkpoint_sizes(
+        &self,
+        metadata: Resource3dMetadata,
+    ) -> Result<(u64, u64), Control3dError> {
+        metadata.sizes_limited(
+            self.desktop_resources,
+            self.dimensional_resources,
+            self.dimensional_depth_resources,
+            self.stream_output_resources,
+            32 * 1024 * 1024,
+            self.production_limits,
+        )
+    }
+    /// Only the detached, bounded production checkpoint decoder constructs this state.
+    pub(super) fn commit_checkpoint(&mut self, snapshot: Control3dSnapshot, epoch: u64) {
+        self.epoch = epoch;
+        self.next_generation = snapshot.next_generation;
+        self.next_backing_generation = snapshot.next_backing_generation;
+        self.poisoned = false;
+        self.contexts = snapshot.contexts;
+        self.resources = snapshot.resources;
+        self.logical_bytes = snapshot.logical_bytes;
+        self.gpu_bytes = snapshot.gpu_bytes;
+        self.backing_bytes = snapshot.backing_bytes;
+    }
     pub(crate) fn poison(&mut self) {
         self.poisoned = true;
     }

@@ -7,6 +7,8 @@
 #[cfg(feature = "virgl-renderer")]
 pub mod capabilities;
 #[cfg(feature = "virgl-renderer")]
+pub mod checkpoint;
+#[cfg(feature = "virgl-renderer")]
 pub mod control3d;
 pub mod damage;
 pub mod edid;
