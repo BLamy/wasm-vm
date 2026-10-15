@@ -247,6 +247,18 @@ export class WasmLinux {
         }
     }
     /**
+     * Exact COW bytes from the same ephemeral disk backend used by the guest.
+     * Persistent and secondary-drive shapes explicitly remain outside this factory profile.
+     * @returns {Uint8Array}
+     */
+    captureGpuDiskDelta() {
+        const ret = wasm.wasmlinux_captureGpuDiskDelta(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
      * E3-T10 (critic BUG-4): close the IndexedDB connection so a `deleteDatabase` (reset-disk)
      * can proceed instead of blocking on our open handle. Call before wiping; the machine must
      * not persist afterward. No-op off the persistent path.
@@ -337,6 +349,17 @@ export class WasmLinux {
             throw takeFromExternrefTable0(ret[1]);
         }
         return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * Drain original queued GPU work while paused, without executing another guest instruction.
+     * @returns {boolean}
+     */
+    drainGpuCheckpointBoundary() {
+        const ret = wasm.wasmlinux_drainGpuCheckpointBoundary(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return ret[0] !== 0;
     }
     enableGpuCommandTrace() {
         const ret = wasm.wasmlinux_enableGpuCommandTrace(this.__wbg_ptr);
@@ -619,6 +642,22 @@ export class WasmLinux {
      */
     keyboardLedState() {
         const ret = wasm.wasmlinux_keyboardLedState(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * @param {Uint8Array} blob
+     * @param {Uint8Array} renderer_digest
+     * @returns {any}
+     */
+    loadAcceleratedSnapshotBlob(blob, renderer_digest) {
+        const ptr0 = passArray8ToWasm0(blob, wasm.__wbindgen_malloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ptr1 = passArray8ToWasm0(renderer_digest, wasm.__wbindgen_malloc);
+        const len1 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_loadAcceleratedSnapshotBlob(this.__wbg_ptr, ptr0, len0, ptr1, len1);
         if (ret[2]) {
             throw takeFromExternrefTable0(ret[1]);
         }
@@ -1048,6 +1087,19 @@ export class WasmLinux {
      */
     runChunk(max_instrs, persist_max_dirty_bytes) {
         const ret = wasm.wasmlinux_runChunk(this.__wbg_ptr, max_instrs, isLikeNone(persist_max_dirty_bytes) ? Number.MAX_SAFE_INTEGER : (persist_max_dirty_bytes) >>> 0);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * @param {Uint8Array} renderer_digest
+     * @returns {Uint8Array}
+     */
+    saveAcceleratedSnapshot(renderer_digest) {
+        const ptr0 = passArray8ToWasm0(renderer_digest, wasm.__wbindgen_malloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_saveAcceleratedSnapshot(this.__wbg_ptr, ptr0, len0);
         if (ret[2]) {
             throw takeFromExternrefTable0(ret[1]);
         }

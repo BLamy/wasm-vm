@@ -110,7 +110,7 @@ for (const method of ["resume", "resumeAfterQuota", "continueReadOnly"]) {
     for (const fails of [false, true]) {
       const calls = [];
       const failure = new Error("rebase refused");
-      const sandbox = { paused: true, quotaPaused: true, quotaReadOnly: false, stopped: false, lastPersistRetry: 99 };
+      const sandbox = { paused: true, quotaPaused: true, quotaReadOnly: false, stopped: false, gpuCaptureBusy:false, lastPersistRetry: 99 };
       const machine = {
         setGuestClock() {}, guestClockState: () => null,
         rebaseGuestClock() {

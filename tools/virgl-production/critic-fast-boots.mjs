@@ -27,7 +27,9 @@ const candidateDirectory = process.env.CRITIC_FAST_BOOT_IMAGE_DIRECTORY
 const snapshotPersistence = process.env.CRITIC_FAST_BOOT_PERSISTENCE !== '0';
 const saveOnRepeat = process.env.CRITIC_FAST_BOOT_SAVE_ON_REPEAT === '1';
 const gpuTrace = process.env.CRITIC_FAST_BOOT_GPU_TRACE === '1';
+const captureGpuPair = process.env.CRITIC_FAST_BOOT_CAPTURE_GPU_PAIR === '1';
 const remoteUrl = process.env.CRITIC_FAST_BOOT_URL;
+if(captureGpuPair)assert.ok(coldGpu&&!remoteUrl,'GPU factory capture requires the owned local accelerated session');
 if (remoteUrl) {
   const url = new URL(remoteUrl);
   assert.equal(url.protocol, 'https:');
@@ -145,6 +147,12 @@ if (!remoteUrl) server=createServer(async (request,response)=>{
   const record={phase,method:request.method,pathname,time:Date.now()}; report.requests.push(record);
   try {
     if(pathname==='/favicon.ico'){response.writeHead(204).end();record.status=204;return;}
+    if(captureGpuPair&&request.method==='POST'&&pathname==='/__factory-gpu-pair'){
+      const parts=[];let size=0;for await(const part of request){size+=part.length;assert.ok(size<=512*1024*1024,'factory pair budget');parts.push(part);}
+      const bytes=Buffer.concat(parts);await fs.writeFile(path.join(output,'factory.wvgpair'),bytes);
+      const pin={path:'factory.wvgpair',bytes:bytes.length,sha256:hash(bytes)};record.status=200;Object.assign(record,pin);
+      response.writeHead(200,{'Content-Type':'application/json'}).end(JSON.stringify(pin));return;
+    }
     if(candidateDirectory&&pathname==='/artifacts-omarchy-virgl.json'){
       record.status=200;record.source='local-immutable-candidate-descriptor';
       record.sha256=hash(candidateDescriptorBytes);record.size=candidateDescriptorBytes.length;
@@ -441,6 +449,20 @@ try{
           const egl=await guestCommand(page,'/opt/virgl-proof/eglinfo -B -p gbm -a gles',300000);
           assert.equal(egl.exit,0);assert.match(egl.stdout,/virgl\s*\(/);assert.doesNotMatch(egl.stdout,/llvmpipe|softpipe/i);
           report.gpuEgl=egl;
+          if(captureGpuPair){
+            report.factoryCapture=await page.evaluate(async()=>{
+              const c=window.__linuxCtl;await c.pause();
+              const before={clock:await c.guestClockState(),scheduler:await c.schedulerStats(),gpu:await c.gpuStats()};
+              const pair=await c.saveGpuCheckpoint();
+              const after={clock:await c.guestClockState(),scheduler:await c.schedulerStats(),gpu:await c.gpuStats()};
+              const response=await fetch('/__factory-gpu-pair',{method:'POST',body:pair});if(!response.ok)throw Error('factory pair publication failed');
+              const pin=await response.json();await c.resume();return {before,after,pin};
+            });
+            assert.deepEqual(report.factoryCapture.after.clock,report.factoryCapture.before.clock);
+            assert.equal(report.factoryCapture.after.scheduler.retiredInstructions,report.factoryCapture.before.scheduler.retiredInstructions);
+            await fs.writeFile(path.join(output,'factory-capture.json'),JSON.stringify(report.factoryCapture,null,2)+'\n');
+            console.log(JSON.stringify({phase:'factory-captured',pin:report.factoryCapture.pin}));
+          }
           const {verifyPublicDesktopInput}=await import('./critic-fast-boots-input.mjs');
           report.publicDesktopInput=await verifyPublicDesktopInput(page,guestCommand,output);
           report.publicDesktopFinal=await snapshot(page);

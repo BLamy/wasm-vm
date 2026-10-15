@@ -58,3 +58,30 @@ a bounded compressed pair, genuine GPU capability compatibility, and staged fres
 worker reconstruction. Ordinary software restore paths stay under their existing
 coherence guards. No production GPU warm-boot claim yet;74d publishes the final
 actual Omarchy factory image and verifies public warm/repeat behavior.
+
+### 2026-10-15 — worker — scale failures retained before freeze
+
+The first original Omarchy run made268 original jobs/134 transfers and
+548,864,000 DMA input bytes before its first3D draw. The bounded512MiB journal
+correctly refused further capture (`journal budget exceeded`); rendering continued.
+The negative observation is retained in
+`target/evidence/production-gpu-paired-stock-cold01/report.json` and its original
+heartbeat. A lossless, per-transfer32MiB-bounded word-run representation now
+retains exact original DMA without raising the journal budget. The next original
+run retained229,376,000 input bytes in a4,230,292-byte available journal before
+being deliberately stopped for the independent RAM fix below.
+
+An actual1024MiB production worker save succeeded but fresh restore trapped in
+`loadAcceleratedSnapshotBlob` (large-self01). `Ram::restore` allocated a second
+guest-sized growable Vec; its sparse high-address DTB caused a further geometric
+reallocation within the wasm32 address space. Restore now validates the entire
+unchanged sparse wire format before applying the same immutable input directly
+to existing RAM. Six native RAM tests, including late malformed refusal against
+nonzero destination bytes, pass. The actual1024MiB original-MMIO worker's
+save/fresh-worker restore, new real draws/retirement, trusted keyboard, two native
+cursor positions, exact saved clock, changed disk and repeat restore now pass
+(`target/evidence/production-paired-worker-large-self02/report.json`), with
+553.885ms first warm and603.505ms repeat in this small supervisor fixture. This
+is not a Linux/Mesa/production-site latency claim. Omarchy cold03 is running on
+runtime identity5dd286c9663c5740e1d26873c26e0ea81d1d32bf67b9c31c758842dbf23f3f09;
+final frozen submission and independent verification remain required.

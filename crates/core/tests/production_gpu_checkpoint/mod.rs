@@ -157,6 +157,51 @@ fn fingerprint(r: &mut Rig) -> Fingerprint {
     )
 }
 #[test]
+fn gpu_checkpoint_drain_completes_original_fence_without_cpu_or_clock_progress() {
+    for cached in [false, true] {
+        let mut r = rig(cached);
+        setup(&mut r, 7);
+        let fence = 0x0020_0000_0000_0071;
+        let pending = start(&mut r, 7, fence);
+        let retired = r.machine.irq_stats().retired;
+        let before = r.machine.snapshot();
+        let mtime = r.machine.clint_mtime();
+        let used = r.machine.bus_mut().load16(USED + 2).unwrap();
+        for _ in 0..3 {
+            assert!(!r.machine.drain_accelerated_checkpoint_boundary().unwrap());
+            assert_eq!(r.machine.snapshot(), before);
+            assert_eq!(r.machine.clint_mtime(), mtime);
+            assert_eq!(r.machine.irq_stats().retired, retired);
+        }
+        r.mailbox.post(completion(&pending)).unwrap();
+        assert!(r.machine.drain_accelerated_checkpoint_boundary().unwrap());
+        assert_eq!(r.machine.irq_stats().retired, retired);
+        assert_eq!(r.machine.clint_mtime(), mtime);
+        let after = r.machine.snapshot();
+        assert_eq!(after.pc, before.pc);
+        assert_eq!(after.xregs, before.xregs);
+        assert_eq!(r.machine.bus_mut().load16(USED + 2).unwrap(), used + 1);
+        let response = r.response(0, 24);
+        assert_eq!(word(&response, 0), p::RESP_OK_NODATA);
+        assert_eq!(word(&response, 4), 1);
+        assert_eq!(&response[8..16], &fence.to_le_bytes());
+        assert_ne!(r.read_mmio(0x60) & 1, 0);
+        for _ in 0..3 {
+            assert!(r.machine.drain_accelerated_checkpoint_boundary().unwrap());
+            assert_eq!(r.machine.snapshot(), after);
+            assert_eq!(r.machine.irq_stats().retired, retired);
+            assert_eq!(r.machine.clint_mtime(), mtime);
+        }
+        let blob = r.machine.save_accelerated_resume(&WITNESS).unwrap();
+        println!(
+            "GPU_DRAIN cache={cached} retired={retired} mtime={mtime} fence={fence:016x} used_before={used} used_after={} blob_sha={:x} state={}",
+            used + 1,
+            Sha256::digest(&blob),
+            after.hex_digest()
+        );
+    }
+}
+#[test]
 fn gpu_checkpoint_original_rings_state_and_fresh_epoch_roundtrip() {
     let mut reference = Vec::new();
     for cached in [false, true] {

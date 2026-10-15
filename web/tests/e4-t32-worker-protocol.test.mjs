@@ -84,6 +84,7 @@ function fakeController(events, done) {
     captureState: () => ({ enabled: true, state: "running", startCount: 1 }),
     notifyCaptureEvent: (event) => { events.push(["capture", event]); return true; },
     confirmAgentHello: () => { events.push("agent-hello"); return true; },
+    saveGpuCheckpoint: async () => Uint8Array.of(71,80,85),
     saveDesktopSnapshot: () => Uint8Array.of(11, 12),
     sendAgentInput: (bytes) => bytes.byteLength,
     takeAgentOutput: () => Uint8Array.of(13, 14),
@@ -152,6 +153,64 @@ test("loader task quiescence joins held persistence and permanently closes sched
   assert.deepEqual(events, ["persist-start", "persist-end", "idle", "idle", "stop-settled"]);
   assert.equal(await barrier.run(() => events.push("post-stop-tick")), false);
   assert.equal(events.includes("post-stop-tick"), false, "no pump can be scheduled after stop");
+});
+
+test("checkpoint idle wait joins the active lazy fetch without permanently closing scheduling", async () => {
+  let release;const held=new Promise(resolve=>{release=resolve;});const events=[];
+  const barrier=createTaskQuiescence(()=>events.push('idle'));
+  const task=barrier.run(async()=>{events.push('fetch');await held;events.push('fetched');});
+  await Promise.resolve();let settled=false;const waiting=barrier.waitForIdle().then(()=>{settled=true;});
+  await Promise.resolve();assert.equal(settled,false);assert.equal(barrier.isStopping(),false);
+  release();await Promise.all([task,waiting]);assert.equal(settled,true);
+  await barrier.run(()=>events.push('resumed'));
+  assert.deepEqual(events,['fetch','fetched','idle','resumed','idle']);
+});
+
+test("retained GPU receipt can complete boot while guest RPCs remain behind boot", async () => {
+  const events=[],{page,worker}=endpointPair(events),token={sequence:7,generation:'0000000000000002'};
+  let done;const whenDone=new Promise(resolve=>{done=resolve;});
+  let release;const receipt=new Promise(resolve=>{release=resolve;});
+  createLinuxWorkerRuntime(worker,{startBoot:async opts=>{
+    events.push('boot-held');opts.onGpuFrameAcknowledger((value,status)=>{
+      if(value?.sequence!==token.sequence||value?.generation!==token.generation||status!=='drawn')return false;
+      events.push('boot-receipt');release();return true;
+    });
+    opts.onDisplayFrame({pixels:Uint32Array.of(0xff00ff00),rect:{x:0,y:0,width:1,height:1},resourceWidth:1,resourceHeight:1,presentationToken:token});
+    await receipt;events.push('boot-ready');const inner=fakeController(events,whenDone);inner.stop=async()=>{events.push('inner-stop');done('stopped');};return inner;
+  }});
+  let frame;const client=createLinuxWorkerClient(page,{onDisplayFrame:value=>{frame=value;}});
+  const boot=client.boot({}),queued=client.controller.sendKeyboardEvent(1,30,1);
+  for(let i=0;i<12;i++)await Promise.resolve();assert.ok(frame);assert.deepEqual(events,['boot-held']);
+  page.postMessage({type:'display-retired',version:LINUX_WORKER_PROTOCOL_VERSION,token:{...token,generation:'0000000000000001'},status:'drawn'});
+  for(let i=0;i<8;i++)await Promise.resolve();assert.deepEqual(events,['boot-held']);
+  frame.onRetired('drawn');const controller=await boot;await queued;
+  assert.deepEqual(events.slice(0,4),['boot-held','boot-receipt','boot-ready',['keyboard',1,30,1]]);
+  await controller.stop();
+});
+
+test("retained GPU receipt drains an awaited checkpoint without bypassing queued guest calls", async () => {
+  const events=[],{page,worker}=endpointPair(events),token={sequence:19,generation:'0000000000000003'};
+  let done;const whenDone=new Promise(resolve=>{done=resolve;});
+  let frame,release;const receipt=new Promise(resolve=>{release=resolve;});
+  createLinuxWorkerRuntime(worker,{startBoot:async opts=>{
+    const inner=fakeController(events,whenDone);inner.stop=async()=>{events.push('inner-stop');done('stopped');};
+    inner.acknowledgeGpuFrame=(value,status)=>{
+      if(value?.sequence!==token.sequence||value?.generation!==token.generation||status!=='drawn')return false;
+      events.push('checkpoint-receipt');release();return true;
+    };
+    inner.saveGpuCheckpoint=async()=>{
+      events.push('checkpoint-held');opts.onDisplayFrame({pixels:Uint32Array.of(0xff0000ff),rect:{x:0,y:0,width:1,height:1},resourceWidth:1,resourceHeight:1,presentationToken:token});
+      await receipt;events.push('checkpoint-saved');return Uint8Array.of(71,80,85);
+    };return inner;
+  }});
+  const client=createLinuxWorkerClient(page,{onDisplayFrame:value=>{frame=value;}}),controller=await client.boot({});
+  const saved=controller.saveGpuCheckpoint(),queued=controller.sendKeyboardEvent(1,48,1);
+  for(let i=0;i<12;i++)await Promise.resolve();assert.ok(frame);assert.deepEqual(events,['checkpoint-held']);
+  page.postMessage({type:'display-retired',version:LINUX_WORKER_PROTOCOL_VERSION,token:{...token,sequence:18},status:'drawn'});
+  for(let i=0;i<8;i++)await Promise.resolve();assert.deepEqual(events,['checkpoint-held']);
+  frame.onRetired('drawn');assert.deepEqual([...await saved],[71,80,85]);await queued;
+  assert.deepEqual(events.slice(0,4),['checkpoint-held','checkpoint-receipt','checkpoint-saved',['keyboard',1,48,1]]);
+  await controller.stop();
 });
 
 test("explicit surface, FIFO input/RPC, exact transferable ownership, Tailscale, and stop order", async () => {

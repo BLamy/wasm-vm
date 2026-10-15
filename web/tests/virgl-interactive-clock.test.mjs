@@ -61,7 +61,7 @@ const loader=readFileSync(new URL('../loader.js',import.meta.url),'utf8');
 const keyboardBody=loader.match(/      sendKeyboardEvent: \(eventType, code, value\) => \{([\s\S]*?)\n      \},/)?.[1];
 assert.ok(keyboardBody);
 function actualKeyboardCallback(model,lifecycle,{stopped=false,paused=false}={}) {
-  const sandbox={...model,guestClockLifecycle:lifecycle,stopped,paused,
+  const sandbox={...model,guestClockLifecycle:lifecycle,stopped,paused,gpuCaptureBusy:false,heldKeyboard:new Set(),
     finish(status){model.calls.push('finish:'+status);sandbox.stopped=true;},
     onState(status){model.calls.push('status:'+status);},
     onError(error){model.calls.push('error:'+error.message);},

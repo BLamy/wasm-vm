@@ -25,6 +25,8 @@ import init, {
 } from "./pkg/wasm_vm_wasm.js";
 import { decideBootPath, deriveBootSnapshotBaseId } from "./boot-path.js";
 import { deriveOverlaySeedIdentity } from "./overlay-seed-identity.js";
+import { GPU_CHECKPOINT_BUILD_ID } from "./gpu-checkpoint-build.js";
+import { encodeGpuCheckpointPair, decodeGpuCheckpointPair, deriveGpuCheckpointWitness, gpuCheckpointDigestBytes } from "./gpu-checkpoint.js";
 import { createTaskQuiescence } from "./task-quiescence.js";
 import { validateGuestClock, validateICountDivider, validateInteractiveClock, createGuestClockLifecycle } from "./guest-clock.js";
 import { validateDecodedCacheEntries, applyDecodedCacheEntries } from "./decoded-cache.js";
@@ -348,7 +350,9 @@ export async function startLinuxBoot(opts = {}) {
     validateICountDivider(icountDivider, guestClock);
     validateInteractiveClock(interactiveClock, guestClock);
     if (interactiveClock !== undefined && virgl !== true) throw new Error("interactiveClock requires accelerated graphics");
-    if (virgl && (!workerMode || freshDesktop || opts.bootSnapshot !== false)) throw new Error("Accelerated graphics requires a cold whole-machine worker boot");
+    if (virgl && (!workerMode || freshDesktop || !isChunked || extraDiskUrl)) throw new Error("Accelerated graphics requires a whole-machine chunked worker boot");
+    if (virgl && opts.bootSnapshot !== false && startPaused) throw new Error("GPU warm boot must render new guest work before ready; startPaused is unsupported");
+    if (virgl && opts.bootSnapshot !== false && persist) throw new Error("GPU warm boot currently requires persist=false");
     if (freshDesktop && (!isChunked || persist || extraDiskUrl || opts.bootSnapshot === false)) {
       throw new Error("fresh desktop requires an ephemeral chunked warm boot");
     }
@@ -497,7 +501,17 @@ export async function startLinuxBoot(opts = {}) {
     // disk → in-memory virtio-blk backend (whole image); chunked → a ChunkedBackend that lazily
     // HTTP-fetches chunks under baseUrl (+ E3-T05 persist: writes survive reload via IndexedDB);
     // initramfs → the image as the initrd.
-    const usePersist = isChunked && persist;
+    const gpuIdentity = virgl ? {buildId:GPU_CHECKPOINT_BUILD_ID,kernelSha256:km.sha256,imageManifestSha256:await sha256hex(new TextEncoder().encode(imageManifestText)),ramMib,bootargs:bootargs??'',guestClock:guestClock??null,icountDivider:icountDivider??null,interactiveClock:interactiveClock??null} : null;
+    let gpuWarmData = null;
+    if(virgl && opts.bootSnapshot !== false) {
+      const entry=manifest.artifacts?.gpuCheckpoint;
+      if(!entry)throw Error('gpu_checkpoint: accelerated warm artifact is not published; explicit cold boot is available');
+      onState('restoring');const bytes=await readBootAsset('gpuCheckpoint',entry);
+      if(bytes.length!==entry.size || await sha256hex(bytes)!==entry.sha256)throw Error('gpu_checkpoint: release integrity differs');
+      gpuWarmData=await decodeGpuCheckpointPair(bytes,gpuIdentity);
+      gpuWarmData.witnessBytes=gpuCheckpointDigestBytes(gpuWarmData.witness);
+    }
+    const usePersist = isChunked && persist && !gpuWarmData;
     // A persistent boot may resume a whole-machine snapshot immediately after the machine is
     // constructed. Do not label that path as a fresh guest boot; the state is emitted below only
     // after the stored/build-time resume candidates have been rejected. This makes the browser
@@ -517,7 +531,9 @@ export async function startLinuxBoot(opts = {}) {
     // resume the VM behind the dialog. It gates the pump/run independently of `paused`.
     let quotaPaused = false;
     let lastPersistRetry = 0; // throttle pending-byte retries while quotaReadOnly
-    if (freshDesktop) {
+    if(gpuWarmData) {
+      machine=WasmLinux.newChunkedDiskSeeded(ramMib,kernel,imageManifestText,baseUrl,cacheBudgetMib,bootProfile,bootargs,emitOutput,enableMic,gpuWarmData.disk);
+    } else if (freshDesktop) {
       onState("restoring");
       const dgz = await readBootAsset("overlayDelta", overlayDeltaEntry);
       if ((await sha256hex(dgz)) !== overlayDeltaEntry.sha256) throw new Error("desktop overlay delta integrity check failed");
@@ -635,10 +651,12 @@ export async function startLinuxBoot(opts = {}) {
     }
 
     let productionGpu = null;
+    let gpuVisibleFrames=0;
     if (virgl) {
       const {attachProductionVirgl,createWorkerScanoutPresenter} = await import('./renderer/virgl-command/production.mjs');
-      const presenter = createWorkerScanoutPresenter(frame => onDisplayFrame?.(frame));
-      productionGpu = await attachProductionVirgl(machine,{presenter,onEvent:event => { if (opts.gpuTrace || ["qualified","context-lost"].includes(event.type)) onGpuEvent?.(event); }});
+      const presenter = createWorkerScanoutPresenter(frame => { gpuVisibleFrames++; onDisplayFrame?.(frame); });
+      opts.onGpuFrameAcknowledger?.((...args)=>presenter.acknowledge(...args));
+      productionGpu = await attachProductionVirgl(machine,{presenter,checkpoint:gpuWarmData,onEvent:event => { if (opts.gpuTrace || ["qualified","context-lost"].includes(event.type)) onGpuEvent?.(event); }});
       if (opts.gpuTrace) machine.enableGpuCommandTrace();
     }
 
@@ -849,7 +867,7 @@ export async function startLinuxBoot(opts = {}) {
     // (crypto.getRandomValues) are LIVE browser-backed sources read on demand, not frozen snapshot
     // state, so wall-clock time and entropy self-reseed after restore; a fresh DHCP lease is a slirp
     // (Alpine) concern, N/A for the offline busybox default.
-    let restoredFromBootSnapshot = restoredFromStoredSnapshot;
+    let restoredFromBootSnapshot = restoredFromStoredSnapshot || Boolean(gpuWarmData);
     // E4 Alpine (chunked/persistent) restore: the overlay was already seeded with the post-boot disk
     // delta BEFORE construction; now restore the paired RAM blob. The persistent machine's snapshot
     // identity is already the chunk manifest's base_hash (set in newChunkedDiskPersistent), so
@@ -922,7 +940,11 @@ export async function startLinuxBoot(opts = {}) {
 
     // All initial resume candidates are settled; selection must survive restore and precede execution.
     applyDecodedCacheEntries(machine, decodedCacheEntries);
-    const guestClockLifecycle = createGuestClockLifecycle(machine, guestClock, icountDivider, interactiveClock);
+    let guestClockLifecycle;
+    try {
+      guestClockLifecycle = createGuestClockLifecycle(machine, guestClock, icountDivider, interactiveClock, gpuWarmData?.clockState);
+      if(gpuWarmData)await productionGpu.activateCheckpoint();
+    }catch(error){productionGpu?.dispose();machine.closeStorage?.();throw error;}
     if (jitAdmissionProbe) applyAdmissionProbe(machine, jitAdmissionProbe);
     if (jitColdCounterRecycling) applyColdCounterRecycling(machine, jitColdCounterRecycling);
 
@@ -932,6 +954,8 @@ export async function startLinuxBoot(opts = {}) {
 
     let stopped = false;
     let paused = Boolean(startPaused);
+    let gpuCaptureBusy=false;
+    const heldKeyboard=new Set(),heldTablet=new Set(),heldMouse=new Set();
     let observedCaptureStartCount = 0;
     const observeCaptureStart = () => {
       if (typeof machine.virtioSndCaptureState !== "function") return;
@@ -1179,6 +1203,52 @@ export async function startLinuxBoot(opts = {}) {
     const tick = () => taskQuiescence.run(runTick);
     schedule();
 
+    const saveGpuCheckpoint = async () => {
+      if(!productionGpu || !gpuIdentity || usePersist || extraDiskBytes || stopped || gpuCaptureBusy)throw Error('gpu_checkpoint: capture is unavailable or busy');
+      gpuCaptureBusy=true;const wasPaused=paused;paused=true;
+      try {
+        await taskQuiescence.waitForIdle();
+        for(const [held,send,sync]of [[heldKeyboard,'sendKeyboardEvent','syncKeyboard'],[heldTablet,'sendTabletEvent','syncTablet'],[heldMouse,'sendMouseEvent','syncMouse']]) {
+          for(const code of held)machine[send](1,code,0);if(held.size)machine[sync]();held.clear();
+        }
+        const deadline=performance.now()+10000;
+        for(;;) {
+          if(stopped || !productionGpu.inspect().qualified)throw Error('gpu_checkpoint: owner stopped or lost');
+          productionGpu.pump();const nativeReady=machine.drainGpuCheckpointBoundary(),hostReady=productionGpu.checkpointReady();
+          if(nativeReady&&hostReady.ok)break;
+          if(performance.now()>deadline)throw Error('gpu_checkpoint: original GPU work or presentation did not drain');
+          await new Promise(resolve=>setTimeout(resolve,0));
+        }
+        const renderer=await productionGpu.saveCheckpoint();
+        if(renderer.epoch==='0000000000000000')throw Error('gpu_checkpoint: guest graphics is not initialized');
+        const disk=machine.captureGpuDiskDelta(),profile=productionGpu.checkpointProfile(),clockState=guestClockLifecycle.state();
+        const witness=await deriveGpuCheckpointWitness({identity:gpuIdentity,profile,epoch:renderer.epoch,clockState,rendererSha256:renderer.sha256,diskSha256:await sha256hex(disk)});
+        if(stopped || !productionGpu.inspect().qualified)throw Error('gpu_checkpoint: capture owner was revoked');
+        const native=machine.saveAcceleratedSnapshot(gpuCheckpointDigestBytes(witness));
+        const pair=await encodeGpuCheckpointPair({identity:gpuIdentity,profile,epoch:renderer.epoch,clockState,renderer:renderer.bytes,disk,native});
+        if(stopped || !productionGpu.inspect().qualified)throw Error('gpu_checkpoint: capture owner was revoked');
+        return pair;
+      }finally{gpuCaptureBusy=false;if(!wasPaused&&!stopped){guestClockLifecycle.resume();paused=false;schedule();}}
+    };
+    // A warm worker is not ready merely because historical pixels were reconstructed.
+    // Execute the resumed guest until NEW original GPU work and a NEW physical frame exist.
+    if(gpuWarmData) {
+      try {
+        const before=productionGpu.inspect(),frames=gpuVisibleFrames,deadline=performance.now()+30000;
+        while(true) {
+          if(stopped || !productionGpu.inspect().qualified)throw Error('gpu_checkpoint: resumed worker stopped or lost before a fresh frame');
+          const current=productionGpu.inspect();
+          const freshDrawn=current.scanout.retirements.some(receipt=>receipt.epoch===current.epoch&&typeof receipt.sequence==='string'&&receipt.status==='drawn');
+          if(current.counters.completed>before.counters.completed && current.renderer.work.draws>before.renderer.work.draws && gpuVisibleFrames>frames&&freshDrawn)break;
+          if(performance.now()>deadline)throw Error('gpu_checkpoint: resumed guest did not produce new GPU work and scanout');
+          await new Promise(resolve=>setTimeout(resolve,20));
+        }
+        onState('restored');gpuWarmData=null;
+      } catch(error) {
+        finish('error');await taskQuiescence.stop();machine.closeStorage?.();throw error;
+      }
+    }
+
     return {
       backend: "main-thread",
       // Host hotplug is separate from guest mode adoption; stats come from the actual GPU map.
@@ -1188,7 +1258,7 @@ export async function startLinuxBoot(opts = {}) {
       loseGpuContext: (when="now") => {if (!opts.gpuTrace || !productionGpu) return false;productionGpu.loseContext(when);return true;},
       acknowledgeGpuFrame: (token,status,record) => productionGpu?.acknowledge(token,status,record) ?? false,
       sendInput: (bytes) => {
-        if (!stopped) {
+        if (!stopped && !gpuCaptureBusy) {
           inputCalls += 1;
           inputBytes += bytes?.byteLength ?? bytes?.length ?? 0;
           machine.sendInput(bytes);
@@ -1196,14 +1266,14 @@ export async function startLinuxBoot(opts = {}) {
       },
       // E5-T26f: the T23d page Channel writes framed bytes through the named virtio-console port.
       sendAgentInput: (bytes) => {
-        if (stopped || typeof machine.sendAgentInput !== "function") return 0;
+        if (stopped || gpuCaptureBusy || typeof machine.sendAgentInput !== "function") return 0;
         return machine.sendAgentInput(bytes);
       },
       // E5-T12b: the DOM keyboard bridge publishes physical evdev frames through the same
       // controller on both the direct and whole-machine-worker paths. Worker RPC ordering keeps
       // sendKeyboardEvent immediately ahead of its matching syncKeyboard frame.
       sendKeyboardEvent: (eventType, code, value) => {
-        if (stopped) return false;
+        if (stopped || gpuCaptureBusy) return false;
         // The Wasm u16/i32 ABI coerces fractions and wraps out-of-range values.
         // Require exact wire integers before either clock eligibility or staging.
         if (!Number.isInteger(eventType) || eventType < 0 || eventType > 0xffff ||
@@ -1217,33 +1287,36 @@ export async function startLinuxBoot(opts = {}) {
           onError(error);
           throw error;
         }
+        if(eventType===1){if(value===1)heldKeyboard.add(code);else if(value===0)heldKeyboard.delete(code);}
         machine.sendKeyboardEvent(eventType, code, value);
         return true;
       },
       syncKeyboard: () => {
-        if (stopped) return false;
+        if (stopped || gpuCaptureBusy) return false;
         machine.syncKeyboard();
         return true;
       },
       // E5-T14b: the DOM pointer bridge keeps tablet and mouse frames on separate controller
       // methods, preserving T14a's independent slot/queue contract in both boot backends.
       sendTabletEvent: (eventType, code, value) => {
-        if (stopped) return false;
+        if (stopped || gpuCaptureBusy) return false;
+        if(eventType===1){if(value===1)heldTablet.add(code);else if(value===0)heldTablet.delete(code);}
         machine.sendTabletEvent(eventType, code, value);
         return true;
       },
       syncTablet: () => {
-        if (stopped) return false;
+        if (stopped || gpuCaptureBusy) return false;
         machine.syncTablet();
         return true;
       },
       sendMouseEvent: (eventType, code, value) => {
-        if (stopped) return false;
+        if (stopped || gpuCaptureBusy) return false;
+        if(eventType===1){if(value===1)heldMouse.add(code);else if(value===0)heldMouse.delete(code);}
         machine.sendMouseEvent(eventType, code, value);
         return true;
       },
       syncMouse: () => {
-        if (stopped) return false;
+        if (stopped || gpuCaptureBusy) return false;
         machine.syncMouse();
         return true;
       },
@@ -1267,6 +1340,7 @@ export async function startLinuxBoot(opts = {}) {
       // the desktop worker route does not pause on visibility changes.
       pause: () => { paused = true; },
       resume: () => {
+        if(gpuCaptureBusy)throw Error("gpu_checkpoint: capture is busy");
         if (paused && !stopped) {
           guestClockLifecycle.resume();
           paused = false;
@@ -1305,6 +1379,7 @@ export async function startLinuxBoot(opts = {}) {
       },
       // E5-T26f: serialize the live composite desktop envelope through the same controller
       // surface used by the page in both direct and whole-machine-worker boot modes.
+      saveGpuCheckpoint,
       saveDesktopSnapshot: () => {
         if (virgl) throw new Error("Accelerated GPU sessions require a cold restart; graphics handles cannot be saved.");
         if (typeof machine.saveDesktopSnapshot !== "function") {

@@ -139,6 +139,31 @@ pub struct OverlayDisk<B: OverlayBackend> {
     index: ChunkIndex,
 }
 
+impl OverlayDisk<MemOverlay> {
+    /// Own the complete current COW write set, bound to its base and resume generation.
+    /// This includes seeded blocks as well as writes made since the seed was loaded.
+    pub fn snapshot_delta(
+        &self,
+        generation: u64,
+        max_blocks: usize,
+    ) -> Option<crate::OverlayDelta> {
+        if self.overlay.blocks.len() > max_blocks {
+            return None;
+        }
+        Some(crate::OverlayDelta {
+            image_len: self.overlay.image_len,
+            base_binding: self.overlay.base_binding,
+            generation,
+            blocks: self
+                .overlay
+                .blocks
+                .iter()
+                .map(|(index, bytes)| (*index, *bytes))
+                .collect(),
+        })
+    }
+}
+
 impl<B: OverlayBackend> OverlayDisk<B> {
     /// Attach `overlay` to the base described by `manifest`. Fails with [`OverlayError::BaseMismatch`]
     /// BEFORE any I/O if the overlay was bound to a different base (by manifest hash) — an overlay

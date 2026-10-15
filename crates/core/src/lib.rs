@@ -3195,6 +3195,33 @@ impl Machine {
         self.save_resume_inner(None)
     }
 
+    /// Service only original GPU queue work and completion mailboxes while the guest is paused.
+    /// No instruction, guest clock tick, other device poll or translated block executes here.
+    #[cfg(feature = "virgl-renderer")]
+    pub fn drain_accelerated_checkpoint_boundary(&mut self) -> Result<bool, &'static str> {
+        if !self.control3d_proof_installed() {
+            return Err("qualified renderer required");
+        }
+        let Some((state, control_vq, cursor_vq, index)) = &mut self.gpu else {
+            return Err("GPU unavailable");
+        };
+        dev::virtio::gpu::service_with_cursor(
+            &self.virtio[*index].0,
+            control_vq,
+            cursor_vq,
+            state,
+            &mut self.bus,
+        );
+        self.virtio[*index]
+            .1
+            .set(self.virtio[*index].0.borrow().irq_level());
+        let ready = state.borrow().checkpoint_ready().is_ok();
+        self.sync_plic();
+        self.drain_code_writes();
+        self.fabric_idle_epoch = None;
+        Ok(ready)
+    }
+
     /// Native half of an explicitly paired accelerated checkpoint. `renderer_digest` identifies
     /// the separately reconstructed physical renderer; it is never a WebGL handle or RAM fallback.
     #[cfg(feature = "virgl-renderer")]

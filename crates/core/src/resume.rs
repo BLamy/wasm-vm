@@ -642,6 +642,22 @@ pub(crate) fn validate_sparse(enc: &[u8], expected_len: usize) -> Result<(), Sna
     walk_sparse(enc, expected_len, |_, _| {})
 }
 
+/// Validate the complete sparse payload before writing the already allocated guest RAM.
+/// This avoids a second guest-sized growable Vec (and its temporary reallocation) on wasm32.
+/// The immutable payload and destination length are identical across both parser passes.
+pub(crate) fn restore_sparse_into(enc: &[u8], destination: &mut [u8]) -> Result<(), SnapshotError> {
+    validate_sparse(enc, destination.len())?;
+    let mut offset = 0;
+    walk_sparse(enc, destination.len(), |len, bytes| {
+        let region = &mut destination[offset..offset + len];
+        match bytes {
+            Some(bytes) => region.copy_from_slice(bytes),
+            None => region.fill(0),
+        }
+        offset += len;
+    })
+}
+
 fn walk_sparse(
     enc: &[u8],
     expected_len: usize,

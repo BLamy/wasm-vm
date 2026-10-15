@@ -72,6 +72,11 @@ export class WasmLinux {
     cancelFileDownload(id: number): void;
     cancelFileUpload(stream: number): void;
     /**
+     * Exact COW bytes from the same ephemeral disk backend used by the guest.
+     * Persistent and secondary-drive shapes explicitly remain outside this factory profile.
+     */
+    captureGpuDiskDelta(): Uint8Array;
+    /**
      * E3-T10 (critic BUG-4): close the IndexedDB connection so a `deleteDatabase` (reset-disk)
      * can proceed instead of blocking on our open handle. Call before wiping; the machine must
      * not persist afterward. No-op off the persistent path.
@@ -99,6 +104,10 @@ export class WasmLinux {
      * deliberately separate: only guest SET_SCANOUT can change the latter. EDID is a copy.
      */
     displayStats(): any;
+    /**
+     * Drain original queued GPU work while paused, without executing another guest instruction.
+     */
+    drainGpuCheckpointBoundary(): boolean;
     enableGpuCommandTrace(): void;
     /**
      * E4-T29 Phase 2 (browser Linux path): attach the in-wasm JIT executor to THIS Linux guest and
@@ -179,6 +188,7 @@ export class WasmLinux {
      * result means that this machine was assembled without the virtio-input keyboard capability.
      */
     keyboardLedState(): any;
+    loadAcceleratedSnapshotBlob(blob: Uint8Array, renderer_digest: Uint8Array): any;
     /**
      * Restore machine state from a resume blob (all-or-nothing; the coherence header is validated
      * FIRST). A rejected blob is mapped through [`resume::ColdBootReason`] so the JS boundary gets the
@@ -330,6 +340,7 @@ export class WasmLinux {
      * `"trap:<cause>"` once terminal.
      */
     runChunk(max_instrs: number, persist_max_dirty_bytes?: number | null): any;
+    saveAcceleratedSnapshot(renderer_digest: Uint8Array): Uint8Array;
     /**
      * E5-T26f: take the live GPU/input/sound/agent component state at one bounded scheduler
      * boundary. The core composes the existing codecs; this boundary only owns the JS byte copy.
@@ -809,12 +820,16 @@ export interface InitOutput {
     readonly __jit_sc: (a: bigint, b: bigint, c: number) => bigint;
     readonly __jit_store: (a: bigint, b: bigint, c: number) => void;
     readonly wasmlinux_attachVirgl: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any) => [number, number];
+    readonly wasmlinux_captureGpuDiskDelta: (a: number) => [number, number, number];
     readonly wasmlinux_complete: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number) => [number, number];
+    readonly wasmlinux_drainGpuCheckpointBoundary: (a: number) => [number, number, number];
     readonly wasmlinux_enableGpuCommandTrace: (a: number) => [number, number];
     readonly wasmlinux_gatherInput: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: number, p: number, q: number) => [number, number, number];
     readonly wasmlinux_gatherLayeredInput: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: number, p: number, q: number, r: number, s: number) => [number, number, number];
     readonly wasmlinux_gpuCommandTrace: (a: number) => [number, number, number, number];
     readonly wasmlinux_invalidateVirgl: (a: number) => [number, number];
+    readonly wasmlinux_loadAcceleratedSnapshotBlob: (a: number, b: number, c: number, d: number, e: number) => [number, number, number];
+    readonly wasmlinux_saveAcceleratedSnapshot: (a: number, b: number, c: number) => [number, number, number];
     readonly wasmlinux_scatterLayeredOutput: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: number, p: number, q: number, r: number, s: number, t: number, u: number) => [number, number];
     readonly wasmlinux_scatterOutput: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: number, p: number, q: number, r: number, s: number) => [number, number];
     readonly setSlirpDhcpLeaseSeconds: (a: number) => void;

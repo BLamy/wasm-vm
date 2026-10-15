@@ -62,7 +62,7 @@ test("actual loader arms only after all restores and before the first run, with 
   const at = loader.indexOf(selection);
   assert.equal(loader.split(selection).length, 2);
   assert.ok(at > loader.lastIndexOf("machine.loadSnapshotBlob(blob);", at));
-  assert.ok(at > loader.indexOf("const guestClockLifecycle = createGuestClockLifecycle"));
+  assert.ok(at > loader.indexOf("guestClockLifecycle = createGuestClockLifecycle"));
   assert.ok(at < loader.indexOf("const runTick = async () =>"));
   for (const enabled of [false, true]) {
     const f = fixture(); f.calls.push("restore");

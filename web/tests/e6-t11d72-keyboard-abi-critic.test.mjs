@@ -26,7 +26,7 @@ function callback(name,parameters='') {
 function originalMachine(policy) {
   const machine=new WasmLinux(8,kernel,new Uint8Array(),'',()=>{},false);
   const lifecycle=createGuestClockLifecycle(machine,'icount',64,policy);
-  const context=vm.createContext({machine,guestClockLifecycle:lifecycle,stopped:false,
+  const context=vm.createContext({machine,guestClockLifecycle:lifecycle,stopped:false,gpuCaptureBusy:false,heldKeyboard:new Set(),
     finish(){context.stopped=true;},onState(){},onError(){}});
   const send=vm.runInContext(callback('sendKeyboardEvent','eventType, code, value'),context);
   const sync=vm.runInContext(callback('syncKeyboard'),context);

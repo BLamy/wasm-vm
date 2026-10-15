@@ -383,7 +383,7 @@ mod tests {
 /// guest RAM doesn't serialize to its full size). RAM state IS its bytes — nothing hidden — so this
 /// is complete by construction. `base` is fixed platform config (bound by the header's base-image
 /// hash), not dynamic state, so it isn't part of the payload. Restore into a RAM of a DIFFERENT size
-/// is refused: `decode_sparse` reconstructs to exactly the current length or errors, so a snapshot of
+/// is refused: the sparse parser requires exactly the current length, so a snapshot of
 /// a differently-sized RAM cannot be applied.
 impl crate::resume::ComponentSnapshot for Ram {
     const SECTION: u32 = crate::resume::section::RAM;
@@ -393,11 +393,9 @@ impl crate::resume::ComponentSnapshot for Ram {
     }
 
     fn restore(&mut self, payload: &[u8]) -> Result<(), crate::resume::SnapshotError> {
-        // decode_sparse guarantees the result is exactly `self.data.len()` bytes (or errors), so the
-        // copy is length-safe and a wrong-size snapshot is rejected before any mutation.
-        let bytes = crate::resume::decode_sparse(payload, self.data.len())?;
-        self.data.copy_from_slice(&bytes);
-        Ok(())
+        // Validate every run before modifying existing RAM; do not allocate a second guest-sized
+        // growable buffer whose reallocation can exhaust the wasm32 address space at1GiB.
+        crate::resume::restore_sparse_into(payload, &mut self.data)
     }
 }
 
@@ -428,6 +426,27 @@ mod resume_snapshot_tests {
         restored.restore(&bytes).unwrap();
         // Every byte survives — RAM state is exactly its bytes.
         assert_eq!(restored.as_bytes(), r.as_bytes());
+    }
+
+    #[test]
+    fn sparse_restore_late_refusal_is_atomic_and_valid_zero_runs_replace_old_bytes() {
+        let source = patterned(4096);
+        let valid = source.to_snapshot();
+        let mut destination = Ram::new(4096).unwrap();
+        destination.data.fill(0xa7);
+        let original = destination.as_bytes().to_vec();
+        for suffix in [
+            vec![0, 1, 0, 0, 0],
+            vec![255, 0, 0, 0, 0],
+            vec![1, 3, 0, 0, 0, 9],
+        ] {
+            let mut invalid = valid.clone();
+            invalid.extend_from_slice(&suffix);
+            assert!(destination.restore(&invalid).is_err());
+            assert_eq!(destination.as_bytes(), original);
+        }
+        destination.restore(&valid).unwrap();
+        assert_eq!(destination.as_bytes(), source.as_bytes());
     }
 
     #[test]

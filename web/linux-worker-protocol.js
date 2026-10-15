@@ -17,6 +17,7 @@ const DEFAULT_BOOT_TIMEOUT_MS = 180_000;
 // stalls retain the strict 10s watchdog.
 const LONG_RPC_GRACE_MS = Object.freeze({
   stateDigest: 60_000,
+  saveGpuCheckpoint: 240_000,
   snapshotSave: 120_000,
   snapshotRead: 120_000,
   snapshotDecision: 60_000,
@@ -46,6 +47,7 @@ export const LINUX_CONTROLLER_METHODS = Object.freeze([
   "resume",
   "isPaused",
   "stateDigest",
+  "saveGpuCheckpoint",
   "saveDesktopSnapshot",
   "confirmAgentHello",
   "sendAgentInput",
@@ -106,6 +108,7 @@ const BYTE_RESULT = new Set([
   "takeFileDownloadChunk",
   "snapshotRead",
   "snapshotExport",
+  "saveGpuCheckpoint",
   "saveDesktopSnapshot",
   "takeAgentOutput",
 ]);
@@ -649,6 +652,7 @@ export function createLinuxWorkerRuntime(endpoint, {
   };
 
   const cleanup = () => {
+    bootGpuAcknowledger=null;
     if (!controller) return Promise.resolve();
     if (!cleanupPromise) cleanupPromise = (async () => {
       // The loader may still be awaiting a lazy fetch or persistence transaction. `stop()` is its
@@ -709,6 +713,7 @@ export function createLinuxWorkerRuntime(endpoint, {
     chain = launch.catch((error) => fail(error));
   };
 
+  let bootGpuAcknowledger=null;
   const callbacks = {
     onState: (state) => send({ type: "state", state }),
     onProgress: (label, loaded, total) => send({ type: "progress", label, loaded, total }),
@@ -732,6 +737,7 @@ export function createLinuxWorkerRuntime(endpoint, {
     onWriterStatus: (info) => send({ type: "writer", info }),
     onQuota: (info) => send({ type: "quota", info }),
     onCaptureStart: (info) => send({ type: "capture-start", info }),
+    onGpuFrameAcknowledger: (acknowledge) => { if(typeof acknowledge!=="function")throw Error("Invalid GPU receipt capability");bootGpuAcknowledger=acknowledge; },
     onGpuEvent: (info) => send({type:'gpu-event',info}),
     onDisplayFrame: (frame) => {
       try {
@@ -891,6 +897,11 @@ export function createLinuxWorkerRuntime(endpoint, {
         message.version === LINUX_WORKER_PROTOCOL_VERSION && !fatal) {
       send({ type: "pong" });
       return;
+    }
+    // A real presentation receipt must release its retained frame while an awaited
+    // checkpoint/boot owns the FIFO. It carries no guest execution or arbitrary RPC.
+    if(message?.type==='display-retired' && message.version===LINUX_WORKER_PROTOCOL_VERSION && !fatal && !stopping && (controller || bootGpuAcknowledger)) {
+      try{(controller?.acknowledgeGpuFrame??bootGpuAcknowledger)(message.token,message.status,message.record);}catch(error){void fail(error);}return;
     }
     chain = chain.then(() => handle(event?.data)).catch((error) => fail(error));
   };

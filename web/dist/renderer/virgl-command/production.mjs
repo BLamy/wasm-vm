@@ -1,6 +1,7 @@
+import {createJournalledProductionBridge,restoreProductionRenderer} from './checkpoint.mjs';
+import {selectCheckpointProfile} from './checkpoint-profile.mjs';
 import {qualifyMultisampleStorage} from "./multisample.mjs";
 /** Host qualification and the production Linux device. Guest bytes never select this profile. */
-import {createVirglProductionBridge} from './control-bridge.mjs';
 import {createVirglStandardStreamOutputShaderBridge} from '../virgl-shader/standard.mjs';
 import {createProductionTransferBackend, createProductionResourceStore} from './resources.mjs';
 import {vertexFormat} from './decoder.mjs';
@@ -213,23 +214,44 @@ export function createWorkerScanoutPresenter(send) {
 }
 
 /** Install only before guest execution. Pumping happens after runChunk releases Machine's borrow. */
-export async function attachProductionVirgl(machine, {presenter,onEvent = null,canvas = new OffscreenCanvas(1,1)} = {}) {
+export async function attachProductionVirgl(machine, {presenter,onEvent = null,canvas = new OffscreenCanvas(1,1),checkpoint = null} = {}) {
   const gl = canvas.getContext('webgl2',{antialias:false,alpha:true,depth:true,stencil:true,failIfMajorPerformanceCaveat:true});
   const qualification = await qualifyVirglHost(gl), shaderBridge = await createVirglStandardStreamOutputShaderBridge();
   const transport = Object.fromEntries(['gatherInput','scatterOutput','gatherLayeredInput','scatterLayeredOutput','complete'].map(name => [name,(...args) => machine[name](...args)]));
-  const {bridge} = unwrap(createVirglProductionBridge({gl,shaderBridge,transport,presenter}));
+  const profile=checkpoint?selectCheckpointProfile(qualification,checkpoint.profile):qualification;
+  let bridge=null,pendingCheckpoint=null;
   let lost = false, disposed = false, lastError = null, pendingLoss = false;
   const lose = () => { const extension=gl.getExtension("WEBGL_lose_context"); if(!extension)throw Error("Context loss injection unavailable");extension.loseContext(); };
-  canvas.addEventListener('webglcontextlost',event => { event.preventDefault(); if (disposed) return; lost=true; machine.invalidateVirgl(); bridge.dispose(); onEvent?.({type:'context-lost'}); });
+  canvas.addEventListener('webglcontextlost',event => { event.preventDefault(); if (disposed) return; lost=true; machine.invalidateVirgl(); bridge?.dispose(); onEvent?.({type:'context-lost'}); });
   try {
-    machine.attachVirgl(qualification.hostWords,qualification.formatRoles,qualification.renderer,event => {
-      const result = bridge.apply(event);
+    machine.attachVirgl(profile.hostWords,profile.formatRoles,profile.renderer,event => {
+      const result = bridge?.apply(event) ?? {ok:false,error:{code:'bridge-poisoned',message:'GPU owner is not published'}};
       if (onEvent) onEvent({type:'control',event:clean(event),result:clean(result)});
       return result;
     });
-  } catch (error) { bridge.dispose(); throw error; }
+    if(checkpoint) {
+      const restored=await restoreProductionRenderer(checkpoint.renderer,{gl,profile,shaderBridge,transport,presenter});
+      bridge=restored.bridge;
+      if(restored.epoch!==checkpoint.epoch)throw Error('gpu_checkpoint: renderer epoch differs');
+      const epochs=machine.loadAcceleratedSnapshotBlob(checkpoint.native,checkpoint.witnessBytes);
+      if(epochs.savedEpoch!==checkpoint.epoch)throw Error('gpu_checkpoint: native epoch differs');
+      unwrap(bridge.rebaseCheckpointEpoch(epochs.savedEpoch,epochs.freshEpoch));
+      pendingCheckpoint={type:'checkpoint-loaded',savedEpoch:epochs.savedEpoch,freshEpoch:epochs.freshEpoch,sha256:checkpoint.sha256,rendererSha256:checkpoint.rendererSha256};
+    } else bridge=unwrap(createJournalledProductionBridge({gl,profile,shaderBridge,transport,presenter})).bridge;
+  } catch (error) { bridge?.dispose(); throw error; }
   onEvent?.({type:'qualified',profile:clean(qualification)});
   return Object.freeze({qualification,
+    async activateCheckpoint() {
+      if(!pendingCheckpoint)return false;
+      if(disposed||lost)throw Error('gpu_checkpoint: staged owner was revoked');
+      const event=pendingCheckpoint;pendingCheckpoint=null;
+      await bridge.activate();
+      if(disposed||lost)throw Error('gpu_checkpoint: activation owner was revoked');
+      onEvent?.({...event,clockState:machine.guestClockState()});return true;
+    },
+    checkpointProfile:()=>({hostWords:Array.from(profile.hostWords),formatRoles:Array.from(profile.formatRoles),renderer:profile.renderer}),
+    saveCheckpoint:()=>bridge.saveCheckpoint(),
+    checkpointReady:()=>bridge.checkpointReady(),
     pump() { if (!disposed && !lost) { const result=bridge.pump(); if (pendingLoss && result.status === "waiting-gpu") { pendingLoss=false; onEvent?.({type:"loss-injected",pending:clean(bridge.inspect().pending)}); lose(); } if (onEvent && result.status !== 'idle' && (result.ok || result.error?.message !== lastError)) onEvent({type:'pump',result:clean(result)}); lastError=result.ok?null:result.error?.message; return result; } return null; },
     loseContext(when="now") { if (!['now','pending'].includes(when) || lost || disposed) throw Error("Invalid context loss injection"); if (when === "pending") pendingLoss=true; else lose(); },
     acknowledge: (...args) => presenter.acknowledge(...args),

@@ -55,6 +55,10 @@ verify-E6-T11d74a:
 verify-E6-T11d74b:
 	python3 tools/virgl-production/verify-renderer-checkpoint.py --output "$${VIRGL_RENDERER_CHECKPOINT_EVIDENCE_DIR:-target/evidence/production-renderer-checkpoint-final}"
 
+.PHONY: verify-E6-T11d74c
+verify-E6-T11d74c:
+	python3 tools/virgl-production/verify-paired-worker.py --output "$${VIRGL_PAIRED_WORKER_EVIDENCE_DIR:-target/evidence/production-paired-worker-final}"
+
 verify-E6-T11e:
 	wasm-pack build crates/wasm --target web --out-dir ../../target/virgl-production/pkg --features virgl-renderer,virgl-control-proof
 	python3 tools/virgl-production/verify.py --task E6-T11e --output "$${VIRGL_RECOVERY_EVIDENCE_DIR:-target/evidence/production-recovery-final}"
@@ -239,6 +243,7 @@ web-build:
 	  cp releases/boot-snapshot/busybox-ready.snap.gz web/releases/boot-snapshot/busybox-ready.snap.gz; \
 	fi
 	bash tools/gen-web-manifest.sh
+	python3 tools/gen-gpu-checkpoint-build.py
 
 # Regenerate web/tasks.json from the /tasks folder (the roadmap's single source of truth).
 # Run after editing any task file; the Roadmap tab fetches ./tasks.json at load.

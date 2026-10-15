@@ -1,6 +1,7 @@
 /** Bounded original-event reconstruction. Replay transport never touches a guest machine. */
 import {createVirglProductionBridge} from './control-bridge.mjs';
 import {CHECKPOINT_MAX_BYTES,checkpointBytes,checkpointHash,encodeCheckpointData,decodeCheckpointData,equalCheckpointBytes} from './checkpoint-codec.mjs';
+import {packCheckpointDma,unpackCheckpointDma} from './checkpoint-dma.mjs';
 
 const MAGIC=new TextEncoder().encode('WVGJRN01'), MAX_FRAMES=100000;
 const TRANSPORT=['gatherInput','scatterOutput','gatherLayeredInput','scatterLayeredOutput','complete'];
@@ -96,15 +97,15 @@ function owner(options, replay=null) {
   }});
   const transport=Object.fromEntries(TRANSPORT.map(name=>[name,(...args)=>{
     if(mode==='replay') {
-      if(name.startsWith('gather'))return new Uint8Array(consume(name,args).data);
-      if(name.startsWith('scatter')) {const data=checkpointBytes(args.at(-1));const frame=consume(name,args.slice(0,-1));need(equalCheckpointBytes(frame.data,data),'fresh GPU output differs');return;}
+      if(name.startsWith('gather'))return unpackCheckpointDma(consume(name,args).data);
+      if(name.startsWith('scatter')) {const data=checkpointBytes(args.at(-1));const frame=consume(name,args.slice(0,-1));need(equalCheckpointBytes(unpackCheckpointDma(frame.data),data),'fresh GPU output differs');return;}
       consume(name,args);return;
     }
     if(unavailable)return options.transport[name](...args);
     try {
-      const data=name.startsWith('scatter')?new Uint8Array(checkpointBytes(args.at(-1))):null;
+      const data=name.startsWith('scatter')?packCheckpointDma(args.at(-1)):null;
       const result=options.transport[name](...args);
-      if(name.startsWith('gather'))append({op:name,args,data:new Uint8Array(checkpointBytes(result))});
+      if(name.startsWith('gather'))append({op:name,args,data:packCheckpointDma(result)});
       else if(data)append({op:name,args:args.slice(0,-1),data});
       else {append({op:name,args});if(args[3]!==0 || args[4]!==true)unavailable='a GPU job failed or has an unproved applied prefix';}
       return result;
@@ -127,6 +128,7 @@ function owner(options, replay=null) {
       if(activating){disposeRequested=true;return {ok:true,pending:true};}
       const result=raw.dispose();if(result.ok){disposed=true;frames.length=0;}return result;
     },
+    checkpointReady(){if(!active||disposed||unavailable)return {ok:false,error:{code:'invalid-parameter',message:unavailable??'owner is inactive'}};return raw.checkpointReady();},
     async saveCheckpoint() {
       need(active && !disposed && !unavailable && !saving,unavailable ?? 'owner is inactive or already capturing');saving=true;
       try {const before=version;

@@ -281,6 +281,57 @@ impl<B: OverlayBackend> BlockBackend for ChunkedBackend<B> {
     }
 }
 
+/// Shared handle to the actual ephemeral disk, not a mirror of its writes.
+/// The machine's forwarding backend and checkpoint exporter own the same COW store.
+#[derive(Clone)]
+pub(crate) struct CheckpointDisk(Rc<RefCell<ChunkedBackend>>);
+
+impl CheckpointDisk {
+    pub(crate) fn new(backend: ChunkedBackend) -> Self {
+        Self(Rc::new(RefCell::new(backend)))
+    }
+    pub(crate) fn snapshot_delta(&self, generation: u64) -> Result<OverlayDelta, BlockError> {
+        let backend = self.0.try_borrow().map_err(|_| BlockError::Io)?;
+        if backend.pending_write.is_some() || backend.flush_barrier.is_some() {
+            return Err(BlockError::Io);
+        }
+        backend
+            .disk
+            .snapshot_delta(generation, 65536)
+            .ok_or(BlockError::Io)
+    }
+}
+impl BlockBackend for CheckpointDisk {
+    fn capacity_sectors(&self) -> u64 {
+        self.0.borrow().capacity_sectors()
+    }
+    fn read(&mut self, sector: u64, bytes: &mut [u8]) -> Result<(), BlockError> {
+        self.0
+            .try_borrow_mut()
+            .map_err(|_| BlockError::Io)?
+            .read(sector, bytes)
+    }
+    fn write(&mut self, sector: u64, bytes: &[u8]) -> Result<(), BlockError> {
+        self.0
+            .try_borrow_mut()
+            .map_err(|_| BlockError::Io)?
+            .write(sector, bytes)
+    }
+    fn flush(&mut self) -> Result<(), BlockError> {
+        self.0.try_borrow_mut().map_err(|_| BlockError::Io)?.flush()
+    }
+    fn flush_reset(&mut self) {
+        if let Ok(mut backend) = self.0.try_borrow_mut() {
+            backend.flush_reset();
+        }
+    }
+    fn write_reset(&mut self) {
+        if let Ok(mut backend) = self.0.try_borrow_mut() {
+            backend.write_reset();
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -290,6 +341,51 @@ mod tests {
     fn sha_hex(bytes: &[u8]) -> String {
         let d = Sha256::digest(bytes);
         d.iter().map(|b| format!("{b:02x}")).collect()
+    }
+
+    #[test]
+    fn checkpoint_disk_owns_complete_detached_seed_and_new_write_set() {
+        let (data, manifest, cache, backend) = setup(32, 8192);
+        for (index, bytes) in data.chunks(8192).enumerate() {
+            cache.borrow_mut().insert(index, bytes.to_vec());
+        }
+        let mut disk = CheckpointDisk::new(backend);
+        disk.write(1, &[0x53; 512]).unwrap();
+        let first = disk.snapshot_delta(7).unwrap();
+        assert_eq!(first.generation, 7);
+        assert_eq!(first.base_binding, manifest.base_hash());
+        assert_eq!(first.blocks.len(), 1);
+        assert_eq!(&first.blocks[0].1[512..1024], &[0x53; 512]);
+        assert_eq!(&first.blocks[0].1[..512], &data[..512]);
+        let seed = seeded_overlay(&manifest, &first).unwrap();
+        let mut next =
+            CheckpointDisk::new(ChunkedBackend::with_overlay(seed, &manifest, cache).unwrap());
+        next.write(17, &[0xa7; 512]).unwrap();
+        disk.write(1, &[0x66; 512]).unwrap();
+        let second = next.snapshot_delta(8).unwrap();
+        assert_eq!(second.blocks.len(), 2);
+        assert!(next.0.borrow().disk.snapshot_delta(8, 1).is_none());
+        assert_eq!(
+            next.0
+                .borrow()
+                .disk
+                .snapshot_delta(8, 2)
+                .unwrap()
+                .to_bytes(),
+            second.to_bytes()
+        );
+        assert_eq!(second.generation, 8);
+        assert_eq!(&second.blocks[0].1[512..1024], &[0x53; 512]);
+        assert_eq!(&second.blocks[1].1[512..1024], &[0xa7; 512]);
+        let mut loaded = [0; 512];
+        next.read(1, &mut loaded).unwrap();
+        assert_eq!(loaded, [0x53; 512]);
+        let mut other = next.clone();
+        other.write(17, &[0x11; 512]).unwrap();
+        assert_eq!(
+            &next.snapshot_delta(9).unwrap().blocks[1].1[512..1024],
+            &[0x11; 512]
+        );
     }
 
     /// An image of `nsec` sectors with `chunk_size`-byte chunks, plus a shared empty store and a

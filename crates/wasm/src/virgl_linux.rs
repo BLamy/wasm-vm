@@ -27,9 +27,88 @@ impl WasmLinux {
                 caps,
             )
             .map_err(JsError::new)?;
+        // Only successful attachment stamps the ephemeral disk's checkpoint identity.
+        // Ordinary software construction keeps its legacy behavior.
+        if inner.resume_base.is_none() {
+            if let Some(fetch) = &inner.fetch {
+                let base = fetch.manifest.base_hash();
+                let generation = inner.machine.overlay_generation();
+                inner.machine.set_snapshot_identity_with_generation(
+                    build_core_hash(),
+                    base,
+                    generation,
+                );
+                inner.resume_base = Some(base);
+            }
+        }
         *self.gpu_mailbox.try_borrow_mut().map_err(|_| reentrant())? = Some(mailbox);
         Ok(())
     }
+    /// Drain original queued GPU work while paused, without executing another guest instruction.
+    #[wasm_bindgen(js_name = drainGpuCheckpointBoundary)]
+    pub fn drain_gpu_checkpoint_boundary(&self) -> Result<bool, JsError> {
+        self.inner
+            .try_borrow_mut()
+            .map_err(|_| reentrant())?
+            .machine
+            .drain_accelerated_checkpoint_boundary()
+            .map_err(JsError::new)
+    }
+
+    /// Exact COW bytes from the same ephemeral disk backend used by the guest.
+    /// Persistent and secondary-drive shapes explicitly remain outside this factory profile.
+    #[wasm_bindgen(js_name = captureGpuDiskDelta)]
+    pub fn capture_gpu_disk_delta(&self) -> Result<Uint8Array, JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner
+            .machine
+            .quiesce()
+            .map_err(|e| JsError::new(&format!("not_quiesced: {e:?}")))?;
+        let disk = inner
+            .checkpoint_disk
+            .as_ref()
+            .ok_or_else(|| JsError::new("gpu_checkpoint_unsupported_disk"))?;
+        let delta = disk
+            .snapshot_delta(inner.machine.overlay_generation())
+            .map_err(|_| JsError::new("gpu_checkpoint_disk_busy_or_budget"))?;
+        Ok(owned(&delta.to_bytes()))
+    }
+
+    #[wasm_bindgen(js_name = saveAcceleratedSnapshot)]
+    pub fn save_accelerated_snapshot(&self, renderer_digest: &[u8]) -> Result<Uint8Array, JsError> {
+        let witness: &[u8; 32] = renderer_digest
+            .try_into()
+            .map_err(|_| JsError::new("renderer digest must have32bytes"))?;
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        let blob = inner
+            .machine
+            .save_accelerated_resume(witness)
+            .map_err(|e| JsError::new(&format!("gpu_checkpoint_save: {e:?}")))?;
+        Ok(owned(&blob))
+    }
+
+    #[wasm_bindgen(js_name = loadAcceleratedSnapshotBlob)]
+    pub fn load_accelerated_snapshot_blob(
+        &self,
+        blob: Vec<u8>,
+        renderer_digest: &[u8],
+    ) -> Result<JsValue, JsError> {
+        let witness: &[u8; 32] = renderer_digest
+            .try_into()
+            .map_err(|_| JsError::new("renderer digest must have32bytes"))?;
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        let (saved, fresh) = inner
+            .machine
+            .load_accelerated_resume(&blob, witness)
+            .map_err(|e| JsError::new(&format!("gpu_checkpoint_restore: {e:?}")))?;
+        let result = js_sys::Object::new();
+        set(&result, "savedEpoch", hex(saved))
+            .map_err(|_| JsError::new("checkpoint epoch result"))?;
+        set(&result, "freshEpoch", hex(fresh))
+            .map_err(|_| JsError::new("checkpoint epoch result"))?;
+        Ok(result.into())
+    }
+
     #[wasm_bindgen(js_name = invalidateVirgl)]
     pub fn invalidate_virgl(&self) -> Result<(), JsError> {
         {

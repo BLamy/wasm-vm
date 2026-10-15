@@ -50,7 +50,7 @@ function rig({ paused = true, fault = null } = {}) {
   selected = true;
   calls.length = 0;
   const sandbox = vm.createContext({
-    machine, guestClockLifecycle: lifecycle, stopped: false, paused,
+    machine, guestClockLifecycle: lifecycle, stopped: false, paused, gpuCaptureBusy:false, heldKeyboard:new Set(),
     quotaPaused: false, quotaReadOnly: false, lastPersistRetry: 99,
     doneSettled: false, pendingFinishState: null, tickScheduled: false,
     productionGpu: { dispose() { calls.push(["dispose"]); } },

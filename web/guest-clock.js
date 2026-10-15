@@ -54,10 +54,22 @@ function readICountState(machine) {
 
 // Apply only AFTER a boot snapshot is restored, but BEFORE the first execution slice.
 // Explicit pauses freeze guest time; unpaused background gaps are left to the core policy.
-export function createGuestClockLifecycle(machine, mode = "icount", requestedDivider = undefined, interactiveClock = undefined) {
+export function createGuestClockLifecycle(machine, mode = "icount", requestedDivider = undefined, interactiveClock = undefined, restoredClock = undefined) {
   clockLabel(mode);
   validateInteractiveClock(interactiveClock, mode);
   const divider = validateICountDivider(requestedDivider, mode);
+  if (restoredClock !== undefined) {
+    const native = machine.guestClockState();
+    const selectedMode = interactiveClock === "paced-on-keyboard" ? "paced-icount"
+      : interactiveClock === "wall-on-keyboard" ? "wall" : mode;
+    if (!restoredClock || (restoredClock.mode !== mode &&
+        (mode !== "icount" || restoredClock.mode !== selectedMode)) ||
+        native?.mtime !== restoredClock.mtime || native?.clockDiv !== restoredClock.clockDiv ||
+        native?.timebaseHz !== restoredClock.timebaseHz ||
+        (divider !== undefined && native.clockDiv !== divider)) {
+      throw new Error("GPU checkpoint clock differs from native state or selected policy");
+    }
+  }
   if (mode !== "icount" || interactiveClock !== undefined) {
     for (const method of ["setGuestClock", "rebaseGuestClock", "guestClockState"]) {
       if (typeof machine?.[method] !== "function") {
@@ -80,6 +92,18 @@ export function createGuestClockLifecycle(machine, mode = "icount", requestedDiv
     }
     selection = Object.freeze({ requested: divider, before, after });
   } else if (typeof machine?.setGuestClock === "function") machine.setGuestClock(mode);
+  if (restoredClock !== undefined) {
+    // CLOCK carries architectural time, but deliberately omits host clock objects and anchors.
+    // Restore the authenticated selected policy without charging the offline interval to mtime.
+    machine.setGuestClock(restoredClock.mode);
+    const after = machine.guestClockState();
+    if (after?.mode !== restoredClock.mode || after.mtime !== restoredClock.mtime ||
+        after.clockDiv !== restoredClock.clockDiv || after.timebaseHz !== restoredClock.timebaseHz) {
+      throw new Error("GPU checkpoint clock selection changed architectural time");
+    }
+    mode = restoredClock.mode;
+    if (mode !== "icount") machine.rebaseGuestClock();
+  }
   let failed = false;
   return {
     dividerSelection() {

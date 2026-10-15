@@ -2231,6 +2231,8 @@ struct LinuxInner {
     /// disk live (the "continue read-only" choice after a storage-quota hit). `None` off the
     /// persistent path.
     disk_ro: Option<std::rc::Rc<std::cell::Cell<bool>>>,
+    /// The actual ephemeral COW backend shared with the machine, for paired GPU checkpoints.
+    checkpoint_disk: Option<chunked::CheckpointDisk>,
     /// E3-T21c: bounded browser producer/consumer queues plus the shared slirp backend handle.
     /// Present only for slirp boots; the emulator still owns the sole `NetBackend` adapter.
     file_transfers: Option<browser_file_transfer::BrowserFileTransfers>,
@@ -2884,6 +2886,7 @@ impl WasmLinux {
         let mut persist = None;
         let mut disk_ro: Option<std::rc::Rc<std::cell::Cell<bool>>> = None;
         let mut file_transfers = None;
+        let mut checkpoint_disk = None;
         // E3-T12d: the base binding for the durable resume-snapshot store. Raw in-memory resume
         // wrappers use the separate `resume_base`; this remains None until a persistent namespace
         // (or an explicitly stamped boot-snapshot identity) is selected.
@@ -2904,7 +2907,11 @@ impl WasmLinux {
             } => {
                 let store =
                     std::rc::Rc::new(RefCell::new(wasm_vm_storage::BlockCache::new(budget)));
-                let backend = chunked::ChunkedBackend::new(&manifest, store.clone());
+                let backend = chunked::CheckpointDisk::new(chunked::ChunkedBackend::new(
+                    &manifest,
+                    store.clone(),
+                ));
+                checkpoint_disk = Some(backend.clone());
                 machine.enable_virtio_blk(Box::new(backend));
                 fetch = Some(std::rc::Rc::new(http_fetch::FetchState::new(
                     manifest, base_url, store, profile,
@@ -2930,6 +2937,8 @@ impl WasmLinux {
                 let backend =
                     chunked::ChunkedBackend::with_overlay(overlay, &manifest, store.clone())
                         .map_err(|e| JsError::new(&format!("overlay attach: {e:?}")))?;
+                let backend = chunked::CheckpointDisk::new(backend);
+                checkpoint_disk = Some(backend.clone());
                 machine.enable_virtio_blk(Box::new(backend));
                 fetch = Some(std::rc::Rc::new(http_fetch::FetchState::new(
                     manifest, base_url, store, profile,
@@ -3144,6 +3153,7 @@ impl WasmLinux {
                 persist,
                 disk_ro,
                 file_transfers,
+                checkpoint_disk,
                 snapshot_base,
                 resume_base,
                 snapshot_read_only,

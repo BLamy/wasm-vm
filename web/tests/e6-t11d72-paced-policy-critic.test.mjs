@@ -47,7 +47,7 @@ function rig({paused=true,fault=null,policy='paced-on-keyboard'}={}) {
   };
   const lifecycle=createGuestClockLifecycle(machine,'icount',64,policy);
   armed=true;calls.length=0;
-  const context=vm.createContext({machine,guestClockLifecycle:lifecycle,stopped:false,paused,
+  const context=vm.createContext({machine,guestClockLifecycle:lifecycle,stopped:false,paused,gpuCaptureBusy:false,heldKeyboard:new Set(),
     quotaPaused:false,quotaReadOnly:false,lastPersistRetry:99,doneSettled:false,
     pendingFinishState:null,tickScheduled:false,
     productionGpu:{dispose(){calls.push(['dispose']);}},
