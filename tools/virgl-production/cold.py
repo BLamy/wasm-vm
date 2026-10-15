@@ -48,7 +48,10 @@ def run(name, command, cwd, timeout=3600):
 try:
     # The Docstream corpus deliberately cites a historical source commit. Keep
     # repository history as an ordinary clone does, while forbidding hardlinks.
-    run("clone", ["git", "clone", "--no-local", "--single-branch", "--branch", branch, str(repo), str(clone)], repo)
+    # Roadmap activity reads all branch history, so a single-branch clone is not
+    # an equivalent build environment even though its runtime HEAD is complete.
+    run("clone", ["git", "clone", "--no-local", str(repo), str(clone)], repo)
+    run("exact-head", ["git", "checkout", "--detach", head], clone)
     assert subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=clone, text=True).strip() == head
     assert not (clone / ".git/objects/info/alternates").exists()
     assert not subprocess.check_output(["git", "status", "--porcelain"], cwd=clone)
