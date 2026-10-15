@@ -1,0 +1,189 @@
+{
+  "sourceHead": "7344482caf8eb27a07820aceb505cff96e684e1f",
+  "commands": [
+    {
+      "command": [
+        "python3",
+        "tools/image/check-omarchy-app-catalog.py"
+      ],
+      "exitCode": 0,
+      "log": "evidence/omarchy-app-catalog/acceptance-0.log",
+      "sha256": "120453e2fb622f594a21e8aae85b6972d0c476207062edb57cadf68529c9c657"
+    },
+    {
+      "command": [
+        "python3",
+        "tools/image/check-omarchy-app-catalog.py",
+        "--archives",
+        "target/omarchy-full/packages"
+      ],
+      "exitCode": 0,
+      "log": "evidence/omarchy-app-catalog/acceptance-1.log",
+      "sha256": "bc071a57a790e70259ffa0487984f39a989cd6e3546aab747b578f9203b647be"
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "py_compile",
+        "tools/image/check-omarchy-app-catalog.py"
+      ],
+      "exitCode": 0,
+      "log": "evidence/omarchy-app-catalog/acceptance-2.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "log": "evidence/omarchy-app-catalog/acceptance-3.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "files": [
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/archive-fetch.json",
+      "bytes": 2679,
+      "sha256": "c9adebd82f60ef625a7692cf4f983254d3187290c1c26268a4ee2747d6bda7a5"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/archive-inspection.json",
+      "bytes": 60529,
+      "sha256": "db7fd155e084b082e8cafac40ff0f926f78a1696f00ea0aa8c1e72fb27c3f3f8"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/core.db",
+      "bytes": 70563,
+      "sha256": "140ede5be92402bd63fd0ac31d245cce57f6173e5957aa72520e2d159408360c"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/extra.db",
+      "bytes": 3168817,
+      "sha256": "beb38fc4d04d9d129a0b0cec7d6578c1bf96da3e0ba1d29ff1557d4b133719b9"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/recipes/aether.PKGBUILD",
+      "bytes": 1783,
+      "sha256": "69fcf24b4a3ee76be64a13daf485dede2e45f2242e9e3fc8bf1582c59588df8c"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/recipes/asdcontrol.PKGBUILD",
+      "bytes": 898,
+      "sha256": "e28612f2405e8ab2d15ebf0fab120904202c06e0b539ce9dedb296fe8950ddc9"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/recipes/cliamp.PKGBUILD",
+      "bytes": 1258,
+      "sha256": "b21afa56fa6e1fd341be0eb077f660a31004746b9cf2f7c640e71ce1fc4facee"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/recipes/herdr.PKGBUILD",
+      "bytes": 1439,
+      "sha256": "888bc3a1bbf4e886c1c0611f5c801209aa36ea65140dc308261f590182e2985a"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/recipes/hyprland-preview-share-picker.PKGBUILD",
+      "bytes": 1912,
+      "sha256": "12894c62f73be59897144a0b31085c607d734217f6be127a669888b2a391f6b3"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/recipes/localsend.PKGBUILD",
+      "bytes": 4225,
+      "sha256": "199904d43d737961beab7e2724d33b56d84c6b438a45ecedd325c702f406d187"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/recipes/omacalc.PKGBUILD",
+      "bytes": 1100,
+      "sha256": "04cadb48d33910fbf5514fabc15cc647582a704c0042e0b17453d24c29f800f0"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/recipes/omacut.PKGBUILD",
+      "bytes": 1099,
+      "sha256": "2cef88164f8f8f200177a81e5dd404c4e27cad21590ae6544e1fbb69967aa376"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/recipes/omarchy-nvim.PKGBUILD",
+      "bytes": 6003,
+      "sha256": "04f941abd0def9962d8bd9b6949aae30013765d7aab371b9adb02f2742e1b287"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/recipes/omawrite.PKGBUILD",
+      "bytes": 1146,
+      "sha256": "01ec7dcc33e19a55728eae6adc13fc425b03341600c2f3165e1bad16cfc21730"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/recipes/pinta.PKGBUILD",
+      "bytes": 1198,
+      "sha256": "d17ddf79e1d42b2cb91a7ffd97508b78a4dc1b505f38dee9525a34c6d8dee21a"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/recipes/tensaku.PKGBUILD",
+      "bytes": 2247,
+      "sha256": "0244f87bcae04cb15fecba17375c569ec21c65c1cdcc2c98afa92c0d140c0209"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/recipes/tobi-try.PKGBUILD",
+      "bytes": 1239,
+      "sha256": "ba67fd3554e2f156c296716b80f253ba354a3bc8a86db209fd05539a4b1d14d1"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/recipes/ttf-ia-writer.PKGBUILD",
+      "bytes": 4152,
+      "sha256": "696be02932d39f80795408413b210bd03f6ce473678eb6d751e2951302d777a7"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/recipes/ttfx.PKGBUILD",
+      "bytes": 1264,
+      "sha256": "af21bcbe1bd8ba2d804b7d886eb766fb0e50690ef581479b4fdc7676f0f0d976"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/recipes/tzupdate.PKGBUILD",
+      "bytes": 591,
+      "sha256": "6479cca9287a85452e220e4b4a3e65f374472178ee55710efbb552ff0776ea22"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/recipes/ufw-docker.PKGBUILD",
+      "bytes": 899,
+      "sha256": "e8d6fce2615db2cae9b22d05ee860b8f02f1c664b0809f4061d61f7ea27bf03b"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/recipes/yaru-icon-theme.PKGBUILD",
+      "bytes": 4158,
+      "sha256": "203fbba0ad539e86ad2d55191306ecd7cacd187e9d6e651e5034a1f4785c49eb"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/recipes/yay.PKGBUILD",
+      "bytes": 1035,
+      "sha256": "5c1cb01eca47edb4e4665d8734a23bd71d33ba240093ff5a125e0bb2daa8e473"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/unsupported.db",
+      "bytes": 5146,
+      "sha256": "e649d8afb9bd2fbbb93c288ae9be53eab3d14308f2f2591d115347d6f81e9deb"
+    },
+    {
+      "path": "tools/image/check-omarchy-app-catalog.py",
+      "bytes": 8323,
+      "sha256": "12755cc8585d5c0c58ad759e9c698e74c7d7050516836de9ca7dad735d1341b2"
+    },
+    {
+      "path": "tools/image/omarchy-apps/README.md",
+      "bytes": 2913,
+      "sha256": "ec1a86ac5360427f83977798e8358993fbb178110cf30761cee68c4f71ac42d8"
+    },
+    {
+      "path": "tools/image/omarchy-apps/catalog.json",
+      "bytes": 61897,
+      "sha256": "495b0b9605a80e0264bd9158cb2e14754f9066cb023309e00339035cf09042ee"
+    },
+    {
+      "path": "tools/image/omarchy-apps/upstream-v4.0.2.packages",
+      "bytes": 1675,
+      "sha256": "99434167d84b242050bbb32485679e92c29934fd5102df01265f7673612167fc"
+    }
+  ],
+  "claim": "Static complete upstream accounting and actual priority archive metadata/ELF inspection only; installation, signature authentication and execution remain unclaimed."
+}
