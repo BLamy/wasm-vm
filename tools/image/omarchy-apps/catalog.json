@@ -1,0 +1,1806 @@
+{
+  "schema": 1,
+  "targetOmarchyVersion": "4.0.2",
+  "claims": {
+    "installed": false,
+    "executionProven": false,
+    "signaturesVerified": false,
+    "missingOrLargeMeansIncompatible": false
+  },
+  "upstream": {
+    "path": "tools/image/omarchy-apps/upstream-v4.0.2.packages",
+    "bytes": 1675,
+    "sha256": "99434167d84b242050bbb32485679e92c29934fd5102df01265f7673612167fc",
+    "url": "https://raw.githubusercontent.com/omacom/omarchy/346e69e1cec6c4e8924531874af6ba010a1bc99e/install/omarchy-base.packages"
+  },
+  "existingSelection": {
+    "path": "evidence/omarchy-preparation/package-selection.json",
+    "bytes": 18309,
+    "sha256": "661f8f550e0cf223cae8602ccd46033a6195bc0816645182dc1ff4b0410f8e32"
+  },
+  "repositories": [
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/core.db",
+      "bytes": 70563,
+      "sha256": "140ede5be92402bd63fd0ac31d245cce57f6173e5957aa72520e2d159408360c",
+      "url": "https://riscv.mirror.pkgbuild.com/repo/core/core.db",
+      "name": "core"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/extra.db",
+      "bytes": 3168817,
+      "sha256": "beb38fc4d04d9d129a0b0cec7d6578c1bf96da3e0ba1d29ff1557d4b133719b9",
+      "url": "https://riscv.mirror.pkgbuild.com/repo/extra/extra.db",
+      "name": "extra"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/unsupported.db",
+      "bytes": 5146,
+      "sha256": "e649d8afb9bd2fbbb93c288ae9be53eab3d14308f2f2591d115347d6f81e9deb",
+      "url": "https://riscv.mirror.pkgbuild.com/repo/unsupported/unsupported.db",
+      "name": "unsupported"
+    }
+  ],
+  "recipes": [
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/recipes/aether.PKGBUILD",
+      "bytes": 1783,
+      "sha256": "69fcf24b4a3ee76be64a13daf485dede2e45f2242e9e3fc8bf1582c59588df8c",
+      "url": "https://raw.githubusercontent.com/omacom/omarchy-pkgs/ab9fee78560f22a6fa2a51669246357bb4832a99/pkgbuilds/aether/PKGBUILD",
+      "name": "aether"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/recipes/asdcontrol.PKGBUILD",
+      "bytes": 898,
+      "sha256": "e28612f2405e8ab2d15ebf0fab120904202c06e0b539ce9dedb296fe8950ddc9",
+      "url": "https://raw.githubusercontent.com/omacom/omarchy-pkgs/ab9fee78560f22a6fa2a51669246357bb4832a99/pkgbuilds/asdcontrol/PKGBUILD",
+      "name": "asdcontrol"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/recipes/cliamp.PKGBUILD",
+      "bytes": 1258,
+      "sha256": "b21afa56fa6e1fd341be0eb077f660a31004746b9cf2f7c640e71ce1fc4facee",
+      "url": "https://raw.githubusercontent.com/omacom/omarchy-pkgs/ab9fee78560f22a6fa2a51669246357bb4832a99/pkgbuilds/cliamp/PKGBUILD",
+      "name": "cliamp"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/recipes/herdr.PKGBUILD",
+      "bytes": 1439,
+      "sha256": "888bc3a1bbf4e886c1c0611f5c801209aa36ea65140dc308261f590182e2985a",
+      "url": "https://raw.githubusercontent.com/omacom/omarchy-pkgs/ab9fee78560f22a6fa2a51669246357bb4832a99/pkgbuilds/herdr/PKGBUILD",
+      "name": "herdr"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/recipes/hyprland-preview-share-picker.PKGBUILD",
+      "bytes": 1912,
+      "sha256": "12894c62f73be59897144a0b31085c607d734217f6be127a669888b2a391f6b3",
+      "url": "https://raw.githubusercontent.com/omacom/omarchy-pkgs/ab9fee78560f22a6fa2a51669246357bb4832a99/pkgbuilds/hyprland-preview-share-picker/PKGBUILD",
+      "name": "hyprland-preview-share-picker"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/recipes/localsend.PKGBUILD",
+      "bytes": 4225,
+      "sha256": "199904d43d737961beab7e2724d33b56d84c6b438a45ecedd325c702f406d187",
+      "url": "https://raw.githubusercontent.com/omacom/omarchy-pkgs/ab9fee78560f22a6fa2a51669246357bb4832a99/pkgbuilds/localsend/PKGBUILD",
+      "name": "localsend"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/recipes/omacalc.PKGBUILD",
+      "bytes": 1100,
+      "sha256": "04cadb48d33910fbf5514fabc15cc647582a704c0042e0b17453d24c29f800f0",
+      "url": "https://raw.githubusercontent.com/omacom/omarchy-pkgs/ab9fee78560f22a6fa2a51669246357bb4832a99/pkgbuilds/omacalc/PKGBUILD",
+      "name": "omacalc"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/recipes/omacut.PKGBUILD",
+      "bytes": 1099,
+      "sha256": "2cef88164f8f8f200177a81e5dd404c4e27cad21590ae6544e1fbb69967aa376",
+      "url": "https://raw.githubusercontent.com/omacom/omarchy-pkgs/ab9fee78560f22a6fa2a51669246357bb4832a99/pkgbuilds/omacut/PKGBUILD",
+      "name": "omacut"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/recipes/omarchy-nvim.PKGBUILD",
+      "bytes": 6003,
+      "sha256": "04f941abd0def9962d8bd9b6949aae30013765d7aab371b9adb02f2742e1b287",
+      "url": "https://raw.githubusercontent.com/omacom/omarchy-pkgs/ab9fee78560f22a6fa2a51669246357bb4832a99/pkgbuilds/omarchy-nvim/PKGBUILD",
+      "name": "omarchy-nvim"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/recipes/omawrite.PKGBUILD",
+      "bytes": 1146,
+      "sha256": "01ec7dcc33e19a55728eae6adc13fc425b03341600c2f3165e1bad16cfc21730",
+      "url": "https://raw.githubusercontent.com/omacom/omarchy-pkgs/ab9fee78560f22a6fa2a51669246357bb4832a99/pkgbuilds/omawrite/PKGBUILD",
+      "name": "omawrite"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/recipes/pinta.PKGBUILD",
+      "bytes": 1198,
+      "sha256": "d17ddf79e1d42b2cb91a7ffd97508b78a4dc1b505f38dee9525a34c6d8dee21a",
+      "url": "https://raw.githubusercontent.com/omacom/omarchy-pkgs/ab9fee78560f22a6fa2a51669246357bb4832a99/pkgbuilds/pinta/PKGBUILD",
+      "name": "pinta"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/recipes/tensaku.PKGBUILD",
+      "bytes": 2247,
+      "sha256": "0244f87bcae04cb15fecba17375c569ec21c65c1cdcc2c98afa92c0d140c0209",
+      "url": "https://raw.githubusercontent.com/omacom/omarchy-pkgs/ab9fee78560f22a6fa2a51669246357bb4832a99/pkgbuilds/tensaku/PKGBUILD",
+      "name": "tensaku"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/recipes/tobi-try.PKGBUILD",
+      "bytes": 1239,
+      "sha256": "ba67fd3554e2f156c296716b80f253ba354a3bc8a86db209fd05539a4b1d14d1",
+      "url": "https://raw.githubusercontent.com/omacom/omarchy-pkgs/ab9fee78560f22a6fa2a51669246357bb4832a99/pkgbuilds/tobi-try/PKGBUILD",
+      "name": "tobi-try"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/recipes/ttf-ia-writer.PKGBUILD",
+      "bytes": 4152,
+      "sha256": "696be02932d39f80795408413b210bd03f6ce473678eb6d751e2951302d777a7",
+      "url": "https://raw.githubusercontent.com/omacom/omarchy-pkgs/ab9fee78560f22a6fa2a51669246357bb4832a99/pkgbuilds/ttf-ia-writer/PKGBUILD",
+      "name": "ttf-ia-writer"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/recipes/ttfx.PKGBUILD",
+      "bytes": 1264,
+      "sha256": "af21bcbe1bd8ba2d804b7d886eb766fb0e50690ef581479b4fdc7676f0f0d976",
+      "url": "https://raw.githubusercontent.com/omacom/omarchy-pkgs/ab9fee78560f22a6fa2a51669246357bb4832a99/pkgbuilds/ttfx/PKGBUILD",
+      "name": "ttfx"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/recipes/tzupdate.PKGBUILD",
+      "bytes": 591,
+      "sha256": "6479cca9287a85452e220e4b4a3e65f374472178ee55710efbb552ff0776ea22",
+      "url": "https://raw.githubusercontent.com/omacom/omarchy-pkgs/ab9fee78560f22a6fa2a51669246357bb4832a99/pkgbuilds/tzupdate/PKGBUILD",
+      "name": "tzupdate"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/recipes/ufw-docker.PKGBUILD",
+      "bytes": 899,
+      "sha256": "e8d6fce2615db2cae9b22d05ee860b8f02f1c664b0809f4061d61f7ea27bf03b",
+      "url": "https://raw.githubusercontent.com/omacom/omarchy-pkgs/ab9fee78560f22a6fa2a51669246357bb4832a99/pkgbuilds/ufw-docker/PKGBUILD",
+      "name": "ufw-docker"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/recipes/yaru-icon-theme.PKGBUILD",
+      "bytes": 4158,
+      "sha256": "203fbba0ad539e86ad2d55191306ecd7cacd187e9d6e651e5034a1f4785c49eb",
+      "url": "https://raw.githubusercontent.com/omacom/omarchy-pkgs/ab9fee78560f22a6fa2a51669246357bb4832a99/pkgbuilds/yaru-icon-theme/PKGBUILD",
+      "name": "yaru-icon-theme"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/recipes/yay.PKGBUILD",
+      "bytes": 1035,
+      "sha256": "5c1cb01eca47edb4e4665d8734a23bd71d33ba240093ff5a125e0bb2daa8e473",
+      "url": "https://raw.githubusercontent.com/omacom/omarchy-pkgs/ab9fee78560f22a6fa2a51669246357bb4832a99/pkgbuilds/yay/PKGBUILD",
+      "name": "yay"
+    }
+  ],
+  "archiveEvidence": [
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/archive-fetch.json",
+      "bytes": 2679,
+      "sha256": "c9adebd82f60ef625a7692cf4f983254d3187290c1c26268a4ee2747d6bda7a5"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/inputs/archive-inspection.json",
+      "bytes": 60529,
+      "sha256": "db7fd155e084b082e8cafac40ff0f926f78a1696f00ea0aa8c1e72fb27c3f3f8"
+    }
+  ],
+  "invalidRepositoryRecords": [
+    {
+      "repo": "extra",
+      "member": "ntk-1.3.1001-4/desc",
+      "sha256": "1a0295f4bf5986c5f74eca9153a6a4cb10b073a01a76ba4a457fd862c78966a4"
+    }
+  ],
+  "entries": [
+    {
+      "upstreamName": "aether",
+      "package": "aether",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "source-port-required",
+      "recipe": "evidence/omarchy-app-catalog/inputs/recipes/aether.PKGBUILD",
+      "executionProven": false
+    },
+    {
+      "upstreamName": "alsa-utils",
+      "package": "alsa-utils",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "1.2.16-1",
+      "architecture": "riscv64",
+      "archive": "alsa-utils-1.2.16-1-riscv64.pkg.tar.zst",
+      "sha256": "8d68cac876ae22d7abaca111e3d8aceecbcb014d558ddf596497accb0afda61d"
+    },
+    {
+      "upstreamName": "asdcontrol",
+      "package": "asdcontrol",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "source-port-required",
+      "recipe": "evidence/omarchy-app-catalog/inputs/recipes/asdcontrol.PKGBUILD",
+      "executionProven": false
+    },
+    {
+      "upstreamName": "avahi",
+      "package": "avahi",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "existing-image",
+      "version": "1:0.9rc5-1"
+    },
+    {
+      "upstreamName": "bash-completion",
+      "package": "bash-completion",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "existing-image",
+      "version": "2.18.0-1"
+    },
+    {
+      "upstreamName": "bat",
+      "package": "bat",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "0.26.1-3",
+      "architecture": "riscv64",
+      "archive": "bat-0.26.1-3-riscv64.pkg.tar.zst",
+      "sha256": "9d5bab496b45517affa7245f3c2450ff79890cd37ca85ded4733ba862024c80e"
+    },
+    {
+      "upstreamName": "bluez",
+      "package": "bluez",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "5.87-2",
+      "architecture": "riscv64",
+      "archive": "bluez-5.87-2-riscv64.pkg.tar.zst",
+      "sha256": "fac0286752312fefa2cdb8580cadf15f28624a63a35e385c4658fe2955d2db0c"
+    },
+    {
+      "upstreamName": "bluez-tools",
+      "package": "bluez-tools",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "0.2.0-6",
+      "architecture": "riscv64",
+      "archive": "bluez-tools-0.2.0-6-riscv64.pkg.tar.zst",
+      "sha256": "2688c7e040ff0ec3767b7d2e8731bbf310dd939f00cec4ab99149d4ce1d153ee"
+    },
+    {
+      "upstreamName": "bluez-utils",
+      "package": "bluez-utils",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "5.87-2",
+      "architecture": "riscv64",
+      "archive": "bluez-utils-5.87-2-riscv64.pkg.tar.zst",
+      "sha256": "ff8703698957316d5e3176692c2ffeaeb1ab66f5867eeef50c3340fb5c84f3a1"
+    },
+    {
+      "upstreamName": "bolt",
+      "package": "bolt",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "0.9.11-3",
+      "architecture": "riscv64",
+      "archive": "bolt-0.9.11-3-riscv64.pkg.tar.zst",
+      "sha256": "8e62bbeab6052d6da56396650764a2653371f308ed760ab5ff3f868b391003eb"
+    },
+    {
+      "upstreamName": "brightnessctl",
+      "package": "brightnessctl",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "existing-image",
+      "version": "0.5.1-3.1"
+    },
+    {
+      "upstreamName": "btop",
+      "package": "btop",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "1.4.7-1",
+      "architecture": "riscv64",
+      "archive": "btop-1.4.7-1-riscv64.pkg.tar.zst",
+      "sha256": "8c86d3f52a93918f71874d5ee5863b97f6e6084b7ea56688652cb4852dbd60e7"
+    },
+    {
+      "upstreamName": "chromium",
+      "package": "chromium",
+      "origin": "upstream",
+      "priority": true,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "153.0.8010.52-1",
+      "architecture": "riscv64",
+      "archive": "chromium-153.0.8010.52-1-riscv64.pkg.tar.zst",
+      "sha256": "97852f4a211c1c479d490a81ad6e5aa89e017406c113c3a2a21fbb4033995f51"
+    },
+    {
+      "upstreamName": "clang",
+      "package": "clang",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "23.1.1-1",
+      "architecture": "riscv64",
+      "archive": "clang-23.1.1-1-riscv64.pkg.tar.zst",
+      "sha256": "29eb452b8a8ce9cd615e4885b17f4f89b52a344b9b5087f24c41d49e323582d0"
+    },
+    {
+      "upstreamName": "cliamp",
+      "package": "cliamp",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "source-port-required",
+      "recipe": "evidence/omarchy-app-catalog/inputs/recipes/cliamp.PKGBUILD",
+      "executionProven": false
+    },
+    {
+      "upstreamName": "cups",
+      "package": "cups",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "2:2.4.20-1",
+      "architecture": "riscv64",
+      "archive": "cups-2:2.4.20-1-riscv64.pkg.tar.zst",
+      "sha256": "3da3b31db8149aac2de5c7629b3709d09ac76b81754b0b12d1f3ece802f7f243"
+    },
+    {
+      "upstreamName": "cups-filters",
+      "package": "cups-filters",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "2.0.1-3",
+      "architecture": "riscv64",
+      "archive": "cups-filters-2.0.1-3-riscv64.pkg.tar.zst",
+      "sha256": "f769ffd14acf3a40f2fc32d97a78ae475029db3e407c9254bc6b113702588c9a"
+    },
+    {
+      "upstreamName": "cups-pk-helper",
+      "package": "cups-pk-helper",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "0.2.7-2",
+      "architecture": "riscv64",
+      "archive": "cups-pk-helper-0.2.7-2-riscv64.pkg.tar.zst",
+      "sha256": "e4ad3bb69f2a8d696cbfd04492166399650715e98ff8c5422670b81cbfc605fc"
+    },
+    {
+      "upstreamName": "ddcutil",
+      "package": "ddcutil",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "3.0.2-1",
+      "architecture": "riscv64",
+      "archive": "ddcutil-3.0.2-1-riscv64.pkg.tar.zst",
+      "sha256": "24d0e9376f691d2a4e230af2dba276fa8bc0a56734d337625c3190e3d837aec9"
+    },
+    {
+      "upstreamName": "docker",
+      "package": "docker",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "1:29.9.0-1",
+      "architecture": "riscv64",
+      "archive": "docker-1:29.9.0-1-riscv64.pkg.tar.zst",
+      "sha256": "779ecb0b7baeb222c22e9c42657e1e3fecc73114afddb69e33fb1c2d8e6e092f"
+    },
+    {
+      "upstreamName": "docker-buildx",
+      "package": "docker-buildx",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "0.38.0-1",
+      "architecture": "riscv64",
+      "archive": "docker-buildx-0.38.0-1-riscv64.pkg.tar.zst",
+      "sha256": "8fc8387c38290f11130b0d9959cee15541b4897c018fe93c3664cc34b32a9b1b"
+    },
+    {
+      "upstreamName": "docker-compose",
+      "package": "docker-compose",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "5.6.0-1",
+      "architecture": "riscv64",
+      "archive": "docker-compose-5.6.0-1-riscv64.pkg.tar.zst",
+      "sha256": "810eb2cd2e7c8d931beb9f3ba628e143f383da56be8570fd28f325d871546059"
+    },
+    {
+      "upstreamName": "dosfstools",
+      "package": "dosfstools",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "core",
+      "version": "4.2-5",
+      "architecture": "riscv64",
+      "archive": "dosfstools-4.2-5-riscv64.pkg.tar.zst",
+      "sha256": "530dd6b81c8fa6be880110d00b74f44bb52d5804d79420849cc23314851539ad"
+    },
+    {
+      "upstreamName": "dotnet-runtime",
+      "package": "dotnet-runtime",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "9.0.7.sdk108-1.1",
+      "architecture": "any",
+      "archive": "dotnet-runtime-9.0.7.sdk108-1.1-any.pkg.tar.zst",
+      "sha256": "d05cc7634f2c8bfd64bf06ce8c430c567f80d7b3af60cff1b08984b504c9ed14"
+    },
+    {
+      "upstreamName": "dua-cli",
+      "package": "dua-cli",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "2.45.1-1",
+      "architecture": "riscv64",
+      "archive": "dua-cli-2.45.1-1-riscv64.pkg.tar.zst",
+      "sha256": "b7a77e69771e1df25becef27e9f856bf66862b1e8453eb4ec3875db2be3a72d3"
+    },
+    {
+      "upstreamName": "evince",
+      "package": "evince",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "1:48.4-1",
+      "architecture": "riscv64",
+      "archive": "evince-1:48.4-1-riscv64.pkg.tar.zst",
+      "sha256": "861a375ba61d08cce0c596c6472096ab6a1124e355d67da56c197c6779477084"
+    },
+    {
+      "upstreamName": "exfatprogs",
+      "package": "exfatprogs",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "1.4.3-1",
+      "architecture": "riscv64",
+      "archive": "exfatprogs-1.4.3-1-riscv64.pkg.tar.zst",
+      "sha256": "7a63134b4b7c521345762d8b2597c3f64c7dd850a7038fe0564d4f68cbfed21d"
+    },
+    {
+      "upstreamName": "expac",
+      "package": "expac",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "10-13",
+      "architecture": "riscv64",
+      "archive": "expac-10-13-riscv64.pkg.tar.zst",
+      "sha256": "471f4c4b9acc173138168624e9b127b4f99634193fe7ffdcd6d9efe4beedafb8"
+    },
+    {
+      "upstreamName": "eza",
+      "package": "eza",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "0.23.5-2",
+      "architecture": "riscv64",
+      "archive": "eza-0.23.5-2-riscv64.pkg.tar.zst",
+      "sha256": "c66fd27a2a66b7b358385088bad90d9d812ffb1b94b4c6d6d853145dfab3fd87"
+    },
+    {
+      "upstreamName": "fakeroot",
+      "package": "fakeroot",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "existing-image",
+      "version": "1:1.37.2-3"
+    },
+    {
+      "upstreamName": "fastfetch",
+      "package": "fastfetch",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "2.69.0-1",
+      "architecture": "riscv64",
+      "archive": "fastfetch-2.69.0-1-riscv64.pkg.tar.zst",
+      "sha256": "2cfe1303ec7a1bb5ce7d112faa0e43dac72b581c36ca2ccf1b945e69be27d4a9"
+    },
+    {
+      "upstreamName": "fcitx5",
+      "package": "fcitx5",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "5.1.23-1",
+      "architecture": "riscv64",
+      "archive": "fcitx5-5.1.23-1-riscv64.pkg.tar.zst",
+      "sha256": "bd5c93457c46d14afaea4546cd8f62433726714bd0d03e95262e2f6f4ff268fd"
+    },
+    {
+      "upstreamName": "fcitx5-gtk",
+      "package": "fcitx5-gtk",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "5.1.7-1",
+      "architecture": "riscv64",
+      "archive": "fcitx5-gtk-5.1.7-1-riscv64.pkg.tar.zst",
+      "sha256": "6681226cb024b659d96949fdb822392dcdd5158b530de4d7917b24eb42169471"
+    },
+    {
+      "upstreamName": "fcitx5-qt",
+      "package": "fcitx5-qt",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "5.1.16-1",
+      "architecture": "riscv64",
+      "archive": "fcitx5-qt-5.1.16-1-riscv64.pkg.tar.zst",
+      "sha256": "166719205dbcb7ad0cc54bf4ac01be8b640c5185b74b431ef598ad25b47a9c81"
+    },
+    {
+      "upstreamName": "fd",
+      "package": "fd",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "10.5.0-3",
+      "architecture": "riscv64",
+      "archive": "fd-10.5.0-3-riscv64.pkg.tar.zst",
+      "sha256": "7e72f6cc8ca60d5c988ddae2ac5d7bc09f9ef39a0739f2d4ec967fbc93f30f63"
+    },
+    {
+      "upstreamName": "ffmpegthumbnailer",
+      "package": "ffmpegthumbnailer",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "2.3.1-1",
+      "architecture": "riscv64",
+      "archive": "ffmpegthumbnailer-2.3.1-1-riscv64.pkg.tar.zst",
+      "sha256": "eff9fa73c57d1c4ddb4e5a650d65094f5593374d913b905d1bd3212de8dd83a8"
+    },
+    {
+      "upstreamName": "fontconfig",
+      "package": "fontconfig",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "existing-image",
+      "version": "2:2.18.3-2"
+    },
+    {
+      "upstreamName": "foot",
+      "package": "foot",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "existing-image",
+      "version": "1.28.0-1"
+    },
+    {
+      "upstreamName": "fzf",
+      "package": "fzf",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "0.74.5-1",
+      "architecture": "riscv64",
+      "archive": "fzf-0.74.5-1-riscv64.pkg.tar.zst",
+      "sha256": "0ffd894fd05cb2d3657e577e42d0d0a16a9523161b1588e7f0c280f2e264abd0"
+    },
+    {
+      "upstreamName": "git",
+      "package": "git",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "existing-image",
+      "version": "2.55.0-1"
+    },
+    {
+      "upstreamName": "gnome-keyring",
+      "package": "gnome-keyring",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "existing-image",
+      "version": "1:50.0-1"
+    },
+    {
+      "upstreamName": "gnome-themes-extra",
+      "package": "gnome-themes-extra",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "1:3.28-1",
+      "architecture": "any",
+      "archive": "gnome-themes-extra-1:3.28-1-any.pkg.tar.zst",
+      "sha256": "0f0ed6280f6c1466dfe5b8060ea3045af998eb14e8d15a94e4efe82c3f6f44c2"
+    },
+    {
+      "upstreamName": "grim",
+      "package": "grim",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "1.5.0-2",
+      "architecture": "riscv64",
+      "archive": "grim-1.5.0-2-riscv64.pkg.tar.zst",
+      "sha256": "f2db4256ad21fcc7a82901becde2082e2ee582a601935f96542d9d9731e4cd66"
+    },
+    {
+      "upstreamName": "gpu-screen-recorder",
+      "package": "gpu-screen-recorder",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "6.1.4-1",
+      "architecture": "riscv64",
+      "archive": "gpu-screen-recorder-6.1.4-1-riscv64.pkg.tar.zst",
+      "sha256": "dc009a4e3b6d7bd5f3c7ec863632c0df58da1e0b23a6c6b5f9f130cdbef7f5b2"
+    },
+    {
+      "upstreamName": "gum",
+      "package": "gum",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "existing-image",
+      "version": "2.0.0-1"
+    },
+    {
+      "upstreamName": "gvfs-mtp",
+      "package": "gvfs-mtp",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "1.60.3-3",
+      "architecture": "riscv64",
+      "archive": "gvfs-mtp-1.60.3-3-riscv64.pkg.tar.zst",
+      "sha256": "2313e8420d1644ee39c3a19a73c3cea251108b19a5a912374203f6c9ebac525a"
+    },
+    {
+      "upstreamName": "gvfs-nfs",
+      "package": "gvfs-nfs",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "1.60.3-3",
+      "architecture": "riscv64",
+      "archive": "gvfs-nfs-1.60.3-3-riscv64.pkg.tar.zst",
+      "sha256": "89715f49a748935e85b0ca6b294843dfd8fe529b831d4508dd36cf0d5e0c72ee"
+    },
+    {
+      "upstreamName": "gvfs-smb",
+      "package": "gvfs-smb",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "1.60.3-3",
+      "architecture": "riscv64",
+      "archive": "gvfs-smb-1.60.3-3-riscv64.pkg.tar.zst",
+      "sha256": "a0801f3f3e2057ee2116c0f66a9040488f85c10e2d234d64c77d7dce9bdfc750"
+    },
+    {
+      "upstreamName": "herdr",
+      "package": "herdr",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "source-port-required",
+      "recipe": "evidence/omarchy-app-catalog/inputs/recipes/herdr.PKGBUILD",
+      "executionProven": false
+    },
+    {
+      "upstreamName": "hyprland",
+      "package": "hyprland",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "existing-image",
+      "version": "0.56.2-3"
+    },
+    {
+      "upstreamName": "hyprland-guiutils",
+      "package": "hyprland-guiutils",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "existing-image",
+      "version": "0.2.2-2"
+    },
+    {
+      "upstreamName": "hyprland-preview-share-picker",
+      "package": "hyprland-preview-share-picker",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "source-port-required",
+      "recipe": "evidence/omarchy-app-catalog/inputs/recipes/hyprland-preview-share-picker.PKGBUILD",
+      "executionProven": false
+    },
+    {
+      "upstreamName": "hyprpicker",
+      "package": "hyprpicker",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "0.4.7-4",
+      "architecture": "riscv64",
+      "archive": "hyprpicker-0.4.7-4-riscv64.pkg.tar.zst",
+      "sha256": "8206ddc714b443ec28cc172facc67df4a2f5373349f3e9a09f1eec737533225e"
+    },
+    {
+      "upstreamName": "hyprsunset",
+      "package": "hyprsunset",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "existing-image",
+      "version": "0.4.0-3"
+    },
+    {
+      "upstreamName": "imagemagick",
+      "package": "imagemagick",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "7.1.2.32-1",
+      "architecture": "riscv64",
+      "archive": "imagemagick-7.1.2.32-1-riscv64.pkg.tar.zst",
+      "sha256": "cfc9a58d492aa8d2c1ea7385411dc70d822701b258ef5cd79d668c7faa60c596"
+    },
+    {
+      "upstreamName": "imv",
+      "package": "imv",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "5.0.1-2",
+      "architecture": "riscv64",
+      "archive": "imv-5.0.1-2-riscv64.pkg.tar.zst",
+      "sha256": "8aeef786fc4f0aeab8c6dc2d75cbb86bc4fc2f39594cd1adc4a875209ed1818b"
+    },
+    {
+      "upstreamName": "inetutils",
+      "package": "inetutils",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "core",
+      "version": "2.8-1",
+      "architecture": "riscv64",
+      "archive": "inetutils-2.8-1-riscv64.pkg.tar.zst",
+      "sha256": "30456442487715a436f415386d7bb5a4594f0bffabc5619c7a343bcc9605706f"
+    },
+    {
+      "upstreamName": "inotify-tools",
+      "package": "inotify-tools",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "4.26.270-1",
+      "architecture": "riscv64",
+      "archive": "inotify-tools-4.26.270-1-riscv64.pkg.tar.zst",
+      "sha256": "2a20c6c2fbcfd1ed83e902866de140039f16e7f3736fb3517751e596a2db957c"
+    },
+    {
+      "upstreamName": "inxi",
+      "package": "inxi",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "3.3.40.1-1",
+      "architecture": "any",
+      "archive": "inxi-3.3.40.1-1-any.pkg.tar.zst",
+      "sha256": "ae3209deb476b23e74ebca0ea845f99eeaf9bf1721f1317510a82050a31e5fa7"
+    },
+    {
+      "upstreamName": "networkmanager",
+      "package": "networkmanager",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "existing-image",
+      "version": "1.58.1-1"
+    },
+    {
+      "upstreamName": "jq",
+      "package": "jq",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "existing-image",
+      "version": "1.8.2-1"
+    },
+    {
+      "upstreamName": "kdenlive",
+      "package": "kdenlive",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "26.08.1-1",
+      "architecture": "riscv64",
+      "archive": "kdenlive-26.08.1-1-riscv64.pkg.tar.zst",
+      "sha256": "297254e2e63b3ea8eaf44f0ef91bffec81469d1e7523ddb7a6487f35884282ec"
+    },
+    {
+      "upstreamName": "kernel-modules-hook",
+      "package": "kernel-modules-hook",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "0.1.7-3",
+      "architecture": "any",
+      "archive": "kernel-modules-hook-0.1.7-3-any.pkg.tar.zst",
+      "sha256": "45b134d3335a1b3a1ce27a1f67e1393492a6ba6cffbcf1e8918198c51b939014"
+    },
+    {
+      "upstreamName": "lazydocker",
+      "package": "lazydocker",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "0.25.2-1",
+      "architecture": "riscv64",
+      "archive": "lazydocker-0.25.2-1-riscv64.pkg.tar.zst",
+      "sha256": "b54b0b8b72dca1387e251d6243f2bd9d8d4a526fd82170d9db323e5dd7cb0008"
+    },
+    {
+      "upstreamName": "lazygit",
+      "package": "lazygit",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "0.66.1-1",
+      "architecture": "riscv64",
+      "archive": "lazygit-0.66.1-1-riscv64.pkg.tar.zst",
+      "sha256": "dbf95a1cba9f21cea8cb79b3c765d8f8a0ed91ae346a7e23c0eea172d79fb028"
+    },
+    {
+      "upstreamName": "less",
+      "package": "less",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "core",
+      "version": "1:710-1",
+      "architecture": "riscv64",
+      "archive": "less-1:710-1-riscv64.pkg.tar.zst",
+      "sha256": "b1fed2e7b8f848ecfef2c539a6d8c84a25c7f24999dddb00cb8545f97a586c74"
+    },
+    {
+      "upstreamName": "libsecret",
+      "package": "libsecret",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "existing-image",
+      "version": "0.21.7-1"
+    },
+    {
+      "upstreamName": "libvips",
+      "package": "libvips",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "8.18.7-1",
+      "architecture": "riscv64",
+      "archive": "libvips-8.18.7-1-riscv64.pkg.tar.zst",
+      "sha256": "beaf5f03d5b9fcacc7721b54c03dbb6a13a3df92d97d47743852344ebed86947"
+    },
+    {
+      "upstreamName": "libyaml",
+      "package": "libyaml",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "existing-image",
+      "version": "0.2.5-3"
+    },
+    {
+      "upstreamName": "libreoffice-fresh",
+      "package": "libreoffice-fresh",
+      "origin": "upstream",
+      "priority": true,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "26.8.0-2",
+      "architecture": "riscv64",
+      "archive": "libreoffice-fresh-26.8.0-2-riscv64.pkg.tar.zst",
+      "sha256": "f750564f25d382d3e43c2e91e805418e0cfaf44b48e8bcd473cdc9d992a2dfb1"
+    },
+    {
+      "upstreamName": "llvm",
+      "package": "llvm",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "23.1.1-1",
+      "architecture": "riscv64",
+      "archive": "llvm-23.1.1-1-riscv64.pkg.tar.zst",
+      "sha256": "5c36ddf3e2f52aa04d585d32ce579b10c2851b3e2378c5362c233171e4d0d0ce"
+    },
+    {
+      "upstreamName": "localsend",
+      "package": "localsend",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "source-port-required",
+      "recipe": "evidence/omarchy-app-catalog/inputs/recipes/localsend.PKGBUILD",
+      "executionProven": false
+    },
+    {
+      "upstreamName": "lua51",
+      "package": "lua51",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "5.1.5-13",
+      "architecture": "riscv64",
+      "archive": "lua51-5.1.5-13-riscv64.pkg.tar.zst",
+      "sha256": "0b4aae9bd784a4714ea22f53eee5e0840e01744c5675dd05f0c02fda2276015c"
+    },
+    {
+      "upstreamName": "luarocks",
+      "package": "luarocks",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "3.13.0-5",
+      "architecture": "any",
+      "archive": "luarocks-3.13.0-5-any.pkg.tar.zst",
+      "sha256": "2d8ee4bfc896a595c76c4423cb8676e41740229290853f3eee3238dce5faa97f"
+    },
+    {
+      "upstreamName": "man-db",
+      "package": "man-db",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "core",
+      "version": "2.13.1-2",
+      "architecture": "riscv64",
+      "archive": "man-db-2.13.1-2-riscv64.pkg.tar.zst",
+      "sha256": "86ad821da9bd6ab075ac19fc236affaf9a4fba150b32a9af8217672274aa1e72"
+    },
+    {
+      "upstreamName": "mariadb-libs",
+      "package": "mariadb-libs",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "13.0.2-2",
+      "architecture": "riscv64",
+      "archive": "mariadb-libs-13.0.2-2-riscv64.pkg.tar.zst",
+      "sha256": "38f44e8a7ecfd92c533dd0666477514748d6c6eab35457e5fd4ed9a632ae9646"
+    },
+    {
+      "upstreamName": "mise-bin",
+      "package": "mise",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "2026.10.8-1",
+      "architecture": "riscv64",
+      "archive": "mise-2026.10.8-1-riscv64.pkg.tar.zst",
+      "sha256": "77dd5a9ff43bc74f908402f17ac7bde5bac92503979c25af8211280c11a43ff0"
+    },
+    {
+      "upstreamName": "moonlight-qt",
+      "package": "moonlight-qt",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "6.1.0-7",
+      "architecture": "riscv64",
+      "archive": "moonlight-qt-6.1.0-7-riscv64.pkg.tar.zst",
+      "sha256": "3c2e5267c540c83e7e67aabd6150dca4c2ab5a7c8bb1afd7e602bd245d4c625a"
+    },
+    {
+      "upstreamName": "mpv",
+      "package": "mpv",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "1:0.41.0-6",
+      "architecture": "riscv64",
+      "archive": "mpv-1:0.41.0-6-riscv64.pkg.tar.zst",
+      "sha256": "bcce3d23813340814320b7df3c4f3a1fb5a7a163fd616af45a0eabb650df9e97"
+    },
+    {
+      "upstreamName": "mpv-mpris",
+      "package": "mpv-mpris",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "1.3-1",
+      "architecture": "riscv64",
+      "archive": "mpv-mpris-1.3-1-riscv64.pkg.tar.zst",
+      "sha256": "108d6238b25b58feea8db411914e2f89e938b8e6f3fe1b6a8b51582040cd00b3"
+    },
+    {
+      "upstreamName": "nautilus",
+      "package": "nautilus",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "50.3.1-1",
+      "architecture": "riscv64",
+      "archive": "nautilus-50.3.1-1-riscv64.pkg.tar.zst",
+      "sha256": "3711a374390b491f8455448af1cdb4f7c75b317b5997c75f9fe14268db540d8d"
+    },
+    {
+      "upstreamName": "nautilus-python",
+      "package": "nautilus-python",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "4.2.0-1",
+      "architecture": "riscv64",
+      "archive": "nautilus-python-4.2.0-1-riscv64.pkg.tar.zst",
+      "sha256": "53bdc3e99064f6bf24ad5bd590467ae4833eac7697b7f9efd8817aa577f7cf49"
+    },
+    {
+      "upstreamName": "gnome-disk-utility",
+      "package": "gnome-disk-utility",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "46.1-3",
+      "architecture": "riscv64",
+      "archive": "gnome-disk-utility-46.1-3-riscv64.pkg.tar.zst",
+      "sha256": "a89d06986854ba7fab87a9efca7e51dc9e25e3d949e5bf12a20b504e54921969"
+    },
+    {
+      "upstreamName": "noto-fonts",
+      "package": "noto-fonts",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "existing-image",
+      "version": "1:2026.09.01-1"
+    },
+    {
+      "upstreamName": "noto-fonts-cjk",
+      "package": "noto-fonts-cjk",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "20240730-1",
+      "architecture": "any",
+      "archive": "noto-fonts-cjk-20240730-1-any.pkg.tar.zst",
+      "sha256": "85f856f783cf9a57af3a7f4b9564b4be752cd5a60a61119de9b2ab9b3574c3e0"
+    },
+    {
+      "upstreamName": "noto-fonts-emoji",
+      "package": "noto-fonts-emoji",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "existing-image",
+      "version": "1:2.051-1"
+    },
+    {
+      "upstreamName": "nss-mdns",
+      "package": "nss-mdns",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "0.15.1-3",
+      "architecture": "riscv64",
+      "archive": "nss-mdns-0.15.1-3-riscv64.pkg.tar.zst",
+      "sha256": "9d317d55a4ce4f299d09d32821c2afe68863ccb553964c53478603f9e70814b2"
+    },
+    {
+      "upstreamName": "nvim",
+      "package": "neovim",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "0.12.6-1",
+      "architecture": "riscv64",
+      "archive": "neovim-0.12.6-1-riscv64.pkg.tar.zst",
+      "sha256": "de25476e9ed954e26cb9ceeacdd385d1dd60c43d415ae57ea6b6f565c5e8eb98"
+    },
+    {
+      "upstreamName": "obs-studio",
+      "package": "obs-studio",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "32.2.2-1",
+      "architecture": "riscv64",
+      "archive": "obs-studio-32.2.2-1-riscv64.pkg.tar.zst",
+      "sha256": "500b11937d606bd01f632ddcb0104178be11d2ef309664721ab19eaaea6a1e5b"
+    },
+    {
+      "upstreamName": "obsidian",
+      "package": "obsidian",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "1.9.12-1",
+      "architecture": "riscv64",
+      "archive": "obsidian-1.9.12-1-riscv64.pkg.tar.zst",
+      "sha256": "5205e0a861f6912c0c7701212d71126d5bb37d4902fff4a1714adc899156f026"
+    },
+    {
+      "upstreamName": "omacalc",
+      "package": "omacalc",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "source-port-required",
+      "recipe": "evidence/omarchy-app-catalog/inputs/recipes/omacalc.PKGBUILD",
+      "executionProven": false
+    },
+    {
+      "upstreamName": "omacut",
+      "package": "omacut",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "source-port-required",
+      "recipe": "evidence/omarchy-app-catalog/inputs/recipes/omacut.PKGBUILD",
+      "executionProven": false
+    },
+    {
+      "upstreamName": "omawrite",
+      "package": "omawrite",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "source-port-required",
+      "recipe": "evidence/omarchy-app-catalog/inputs/recipes/omawrite.PKGBUILD",
+      "executionProven": false
+    },
+    {
+      "upstreamName": "omarchy-nvim",
+      "package": "omarchy-nvim",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "portable-data-or-script",
+      "recipe": "evidence/omarchy-app-catalog/inputs/recipes/omarchy-nvim.PKGBUILD",
+      "executionProven": false
+    },
+    {
+      "upstreamName": "pacman-contrib",
+      "package": "pacman-contrib",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "existing-image",
+      "version": "1.13.1-1"
+    },
+    {
+      "upstreamName": "pamixer",
+      "package": "pamixer",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "1.6-4",
+      "architecture": "riscv64",
+      "archive": "pamixer-1.6-4-riscv64.pkg.tar.zst",
+      "sha256": "c1d8bff36b8f0817b1b1cfc32b8e0320088aa871e114010a572f16694a16b847"
+    },
+    {
+      "upstreamName": "pinta",
+      "package": "pinta",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "source-port-required",
+      "recipe": "evidence/omarchy-app-catalog/inputs/recipes/pinta.PKGBUILD",
+      "executionProven": false
+    },
+    {
+      "upstreamName": "plocate",
+      "package": "plocate",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "1.1.25-1",
+      "architecture": "riscv64",
+      "archive": "plocate-1.1.25-1-riscv64.pkg.tar.zst",
+      "sha256": "1537e209e69978eb5c6377ec84cd54900362338e609658144a772e9cb7c576ee"
+    },
+    {
+      "upstreamName": "plymouth",
+      "package": "plymouth",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "existing-image",
+      "version": "26.134.222-2"
+    },
+    {
+      "upstreamName": "postgresql-libs",
+      "package": "postgresql-libs",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "18.6-2",
+      "architecture": "riscv64",
+      "archive": "postgresql-libs-18.6-2-riscv64.pkg.tar.zst",
+      "sha256": "33e694c23de70aaf3bb00cffa639f59af56588b3fb1b9a24d4332e1d0ad3d057"
+    },
+    {
+      "upstreamName": "power-profiles-daemon",
+      "package": "power-profiles-daemon",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "0.30-1",
+      "architecture": "riscv64",
+      "archive": "power-profiles-daemon-0.30-1-riscv64.pkg.tar.zst",
+      "sha256": "439f7c63741b0978a6ee4ae75fbd41e6e787f03b1b3188d66998be2d725242d2"
+    },
+    {
+      "upstreamName": "python-gobject",
+      "package": "python-gobject",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "existing-image",
+      "version": "3.56.3-1"
+    },
+    {
+      "upstreamName": "python-poetry-core",
+      "package": "python-poetry-core",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "2.5.0-1",
+      "architecture": "any",
+      "archive": "python-poetry-core-2.5.0-1-any.pkg.tar.zst",
+      "sha256": "5ff5a2512ec43b8fba1bc88320b39bd0b381ddec228b87d0016419e5ff6eebd4"
+    },
+    {
+      "upstreamName": "ttfx",
+      "package": "ttfx",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "source-port-required",
+      "recipe": "evidence/omarchy-app-catalog/inputs/recipes/ttfx.PKGBUILD",
+      "executionProven": false
+    },
+    {
+      "upstreamName": "qemu-user-static-binfmt",
+      "package": "qemu-user-static-binfmt",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "11.1.1-4",
+      "architecture": "riscv64",
+      "archive": "qemu-user-static-binfmt-11.1.1-4-riscv64.pkg.tar.zst",
+      "sha256": "d565052e136843f1e5b44bf91c93e4f93cfb4c0890ba6fbd852d0d2b30f57495"
+    },
+    {
+      "upstreamName": "qrencode",
+      "package": "qrencode",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "4.1.1-4",
+      "architecture": "riscv64",
+      "archive": "qrencode-4.1.1-4-riscv64.pkg.tar.zst",
+      "sha256": "0154947ecaf2aa2dee02fd7b9ca19c1c5f7de3a639f03585f044e10747241de4"
+    },
+    {
+      "upstreamName": "qt6-imageformats",
+      "package": "qt6-imageformats",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "6.11.2-1",
+      "architecture": "riscv64",
+      "archive": "qt6-imageformats-6.11.2-1-riscv64.pkg.tar.zst",
+      "sha256": "a514c69d6192bb2248790f46beef6d85b5cbe858e93b5a372822522631884c85"
+    },
+    {
+      "upstreamName": "quickshell",
+      "package": "quickshell",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "existing-image",
+      "version": "0.3.1-1"
+    },
+    {
+      "upstreamName": "ripgrep",
+      "package": "ripgrep",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "15.2.0-1",
+      "architecture": "riscv64",
+      "archive": "ripgrep-15.2.0-1-riscv64.pkg.tar.zst",
+      "sha256": "44b704ae7a7b2a689d94fdcfeeff1f833d5ba3d774d87494897d448c299f7367"
+    },
+    {
+      "upstreamName": "ruby",
+      "package": "ruby",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "3.4.10-1.1",
+      "architecture": "riscv64",
+      "archive": "ruby-3.4.10-1.1-riscv64.pkg.tar.zst",
+      "sha256": "c02337bf47ea1c03d5cb2c98ac5648b8dedad9bea096a831a7e446c10788a9c4"
+    },
+    {
+      "upstreamName": "tensaku",
+      "package": "tensaku",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "source-port-required",
+      "recipe": "evidence/omarchy-app-catalog/inputs/recipes/tensaku.PKGBUILD",
+      "executionProven": false
+    },
+    {
+      "upstreamName": "sddm",
+      "package": "sddm",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "existing-image",
+      "version": "0.21.0-7"
+    },
+    {
+      "upstreamName": "slurp",
+      "package": "slurp",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "1.5.0-2",
+      "architecture": "riscv64",
+      "archive": "slurp-1.5.0-2-riscv64.pkg.tar.zst",
+      "sha256": "d5329c611221d95d107f02232b09d109faa7ae71fec1cd3c63b16d57cde339b6"
+    },
+    {
+      "upstreamName": "socat",
+      "package": "socat",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "1.8.1.3-1",
+      "architecture": "riscv64",
+      "archive": "socat-1.8.1.3-1-riscv64.pkg.tar.zst",
+      "sha256": "d39c6f327a2cc2a32aca6d494a01f755382cc097846475750570dd905add6c86"
+    },
+    {
+      "upstreamName": "starship",
+      "package": "starship",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "1.22.1-1",
+      "architecture": "riscv64",
+      "archive": "starship-1.22.1-1-riscv64.pkg.tar.zst",
+      "sha256": "3b29946a4bb5c3a8b217b8a59c3caabccceacc3e09efa3dca1baa11fb9f2a2c3"
+    },
+    {
+      "upstreamName": "sushi",
+      "package": "sushi",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "50.0-1",
+      "architecture": "riscv64",
+      "archive": "sushi-50.0-1-riscv64.pkg.tar.zst",
+      "sha256": "709de9c4fe9e5e839bc73011fb74c8349ad8d84308e7f1c37d5cf4b91b5189ee"
+    },
+    {
+      "upstreamName": "system-config-printer",
+      "package": "system-config-printer",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "1.5.18-7",
+      "architecture": "riscv64",
+      "archive": "system-config-printer-1.5.18-7-riscv64.pkg.tar.zst",
+      "sha256": "4f97ce096a491157f4984eec3e0dd2a7dac1c7e2049a5b23d56dd3519df427f6"
+    },
+    {
+      "upstreamName": "tesseract",
+      "package": "tesseract",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "5.5.3-1",
+      "architecture": "riscv64",
+      "archive": "tesseract-5.5.3-1-riscv64.pkg.tar.zst",
+      "sha256": "38af8131c2971c1e16932b1f8d435cdd53538f18ca94fb3410cff604e6bd180f"
+    },
+    {
+      "upstreamName": "tesseract-data-eng",
+      "package": "tesseract-data-eng",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "2:4.1.0-5",
+      "architecture": "any",
+      "archive": "tesseract-data-eng-2:4.1.0-5-any.pkg.tar.zst",
+      "sha256": "141015726bad279a779bf7290aad42733c52093a5d13093bdfe1bc7aaea21915"
+    },
+    {
+      "upstreamName": "tldr",
+      "package": "tldr",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "3.4.4-1",
+      "architecture": "any",
+      "archive": "tldr-3.4.4-1-any.pkg.tar.zst",
+      "sha256": "6a8af5a6dc3c23ba6c7beae4a0e41ed652cc49dccec484451310ec5c2bfa5908"
+    },
+    {
+      "upstreamName": "tree-sitter-cli",
+      "package": "tree-sitter-cli",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "0.26.9-1",
+      "architecture": "riscv64",
+      "archive": "tree-sitter-cli-0.26.9-1-riscv64.pkg.tar.zst",
+      "sha256": "ed6a85f18dd7279432c5391825553719e6f4190aea5934f6b088e915752fc64a"
+    },
+    {
+      "upstreamName": "tmux",
+      "package": "tmux",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "3.8-1",
+      "architecture": "riscv64",
+      "archive": "tmux-3.8-1-riscv64.pkg.tar.zst",
+      "sha256": "c0dcb63a7b86d558dd800cee775780ccf3f6cee9782fec95bfcddd43e7aa5d52"
+    },
+    {
+      "upstreamName": "tobi-try",
+      "package": "tobi-try",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "portable-data-or-script",
+      "recipe": "evidence/omarchy-app-catalog/inputs/recipes/tobi-try.PKGBUILD",
+      "executionProven": false
+    },
+    {
+      "upstreamName": "ttf-ia-writer",
+      "package": "ttf-ia-writer",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "portable-data-or-script",
+      "recipe": "evidence/omarchy-app-catalog/inputs/recipes/ttf-ia-writer.PKGBUILD",
+      "executionProven": false
+    },
+    {
+      "upstreamName": "ttf-jetbrains-mono-nerd-basic",
+      "package": "ttf-jetbrains-mono-nerd-basic",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "existing-image",
+      "version": "3.5.1-1"
+    },
+    {
+      "upstreamName": "tzupdate",
+      "package": "tzupdate",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "source-port-required",
+      "recipe": "evidence/omarchy-app-catalog/inputs/recipes/tzupdate.PKGBUILD",
+      "executionProven": false
+    },
+    {
+      "upstreamName": "udiskie",
+      "package": "udiskie",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "existing-image",
+      "version": "2.7.0-2"
+    },
+    {
+      "upstreamName": "ufw",
+      "package": "ufw",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "existing-image",
+      "version": "0.36.2-7"
+    },
+    {
+      "upstreamName": "ufw-docker",
+      "package": "ufw-docker",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "portable-data-or-script",
+      "recipe": "evidence/omarchy-app-catalog/inputs/recipes/ufw-docker.PKGBUILD",
+      "executionProven": false
+    },
+    {
+      "upstreamName": "unzip",
+      "package": "unzip",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "6.0-23",
+      "architecture": "riscv64",
+      "archive": "unzip-6.0-23-riscv64.pkg.tar.zst",
+      "sha256": "518ef3ba61a47be5fd22400d8e99625a966f48162df5f82ba358db48ed315b48"
+    },
+    {
+      "upstreamName": "usage",
+      "package": "usage",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "6.12.1-1",
+      "architecture": "riscv64",
+      "archive": "usage-6.12.1-1-riscv64.pkg.tar.zst",
+      "sha256": "aec8f3335f799942ee9eede37db4a4d18ca4b3e9bcb3cfe74c537613c9af7937"
+    },
+    {
+      "upstreamName": "uwsm",
+      "package": "uwsm",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "existing-image",
+      "version": "0.26.7-1"
+    },
+    {
+      "upstreamName": "whois",
+      "package": "whois",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "5.6.6-1",
+      "architecture": "riscv64",
+      "archive": "whois-5.6.6-1-riscv64.pkg.tar.zst",
+      "sha256": "50fcdb2c700b68dea943dac87f34dc49f19a849903b957174c8ddb2dec61057a"
+    },
+    {
+      "upstreamName": "wireless-regdb",
+      "package": "wireless-regdb",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "core",
+      "version": "2026.09.03-1",
+      "architecture": "any",
+      "archive": "wireless-regdb-2026.09.03-1-any.pkg.tar.zst",
+      "sha256": "fae70f3370463a03d838268f74980484b50307c035c0b015ed365b157f93f14a"
+    },
+    {
+      "upstreamName": "wireplumber",
+      "package": "wireplumber",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "existing-image",
+      "version": "0.5.16-1"
+    },
+    {
+      "upstreamName": "wl-clipboard",
+      "package": "wl-clipboard",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "existing-image",
+      "version": "1:2.3.0-1"
+    },
+    {
+      "upstreamName": "wtype",
+      "package": "wtype",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "0.4-2",
+      "architecture": "riscv64",
+      "archive": "wtype-0.4-2-riscv64.pkg.tar.zst",
+      "sha256": "c70f0460d79718eb975b73c221f81867f25f05bd42b70c95bb3811bbafd8102e"
+    },
+    {
+      "upstreamName": "woff2-font-awesome",
+      "package": "woff2-font-awesome",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "7.3.1-1",
+      "architecture": "any",
+      "archive": "woff2-font-awesome-7.3.1-1-any.pkg.tar.zst",
+      "sha256": "4011796cbcc80b78191d96bc5aa0b79bd81c91835bb4134452f4627f51870f63"
+    },
+    {
+      "upstreamName": "xdg-desktop-portal-gtk",
+      "package": "xdg-desktop-portal-gtk",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "existing-image",
+      "version": "1.15.3-1"
+    },
+    {
+      "upstreamName": "xdg-desktop-portal-hyprland",
+      "package": "xdg-desktop-portal-hyprland",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "existing-image",
+      "version": "1.4.1-2"
+    },
+    {
+      "upstreamName": "xdg-terminal-exec",
+      "package": "xdg-terminal-exec",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "existing-image",
+      "version": "0.14.3-1"
+    },
+    {
+      "upstreamName": "xournalpp",
+      "package": "xournalpp",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "1.3.8-1",
+      "architecture": "riscv64",
+      "archive": "xournalpp-1.3.8-1-riscv64.pkg.tar.zst",
+      "sha256": "5764e93bb5e7609ec2d7c836db26914afd1eec4aeb08e8bd4610a33a0a6924f5"
+    },
+    {
+      "upstreamName": "yaru-icon-theme",
+      "package": "yaru-icon-theme",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "portable-data-or-script",
+      "recipe": "evidence/omarchy-app-catalog/inputs/recipes/yaru-icon-theme.PKGBUILD",
+      "executionProven": false
+    },
+    {
+      "upstreamName": "yay",
+      "package": "yay",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "unsupported",
+      "version": "12.1.3-1",
+      "architecture": "riscv64",
+      "archive": "yay-12.1.3-1-riscv64.pkg.tar.zst",
+      "sha256": "ad0af28e90f90e6a47b1148e3a2a557b41f44558cc9fb9cf37c01ae5b450d35d"
+    },
+    {
+      "upstreamName": "yt-dlp",
+      "package": "yt-dlp",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "2026.08.19-1",
+      "architecture": "any",
+      "archive": "yt-dlp-2026.08.19-1-any.pkg.tar.zst",
+      "sha256": "ec2bf8f81892052c415187fd39cf15f041ccbe183f6a8395e5f0b5db665d2b17"
+    },
+    {
+      "upstreamName": "zbar",
+      "package": "zbar",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "0.23.93-7",
+      "architecture": "riscv64",
+      "archive": "zbar-0.23.93-7-riscv64.pkg.tar.zst",
+      "sha256": "d31cf44e55e7f5ca76115eeb3f06eaca0d4d7d67a6d200cef511aefa0edb4411"
+    },
+    {
+      "upstreamName": "zoxide",
+      "package": "zoxide",
+      "origin": "upstream",
+      "priority": false,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "0.10.0-1",
+      "architecture": "riscv64",
+      "archive": "zoxide-0.10.0-1-riscv64.pkg.tar.zst",
+      "sha256": "6224b89bcb97575b3bb9bc165a94c81e2f9f516488522fb2d5205fca79a1567f"
+    },
+    {
+      "upstreamName": "nodejs",
+      "package": "nodejs",
+      "origin": "user-request",
+      "priority": true,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "26.11.1-1",
+      "architecture": "riscv64",
+      "archive": "nodejs-26.11.1-1-riscv64.pkg.tar.zst",
+      "sha256": "23b487e63357bedd57419e1c08637911b8bfd5046a0fddd9eacd26199d0a622a"
+    },
+    {
+      "upstreamName": "npm",
+      "package": "npm",
+      "origin": "user-request",
+      "priority": true,
+      "disposition": "native-repository-candidate",
+      "repository": "extra",
+      "version": "12.2.0-1",
+      "architecture": "any",
+      "archive": "npm-12.2.0-1-any.pkg.tar.zst",
+      "sha256": "c9b2c6858857a9c643fbc42ff3ea6643e6e4e3c969e7260480aea0aa89358a5f"
+    }
+  ]
+}
