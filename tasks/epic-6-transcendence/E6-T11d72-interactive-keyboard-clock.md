@@ -3,7 +3,7 @@ id: E6-T11d72
 epic: 6
 title: Bound accelerated desktop idle time during keyboard interaction
 priority: 525.027037
-status: in-progress
+status: implemented
 depends_on: [E5-T26i, E6-T11d70, E6-T11d73]
 estimate: S
 risk: high
@@ -362,3 +362,65 @@ valid-path custody instead of another30-minute stock boot. Native73, the earlier
 new-runtime native gates, software warm matrix and final private/handshake
 components carry by their unchanged code/evidence boundaries. No failed wrapper
 is relabelled passed, and no unexecuted browser path is claimed.
+
+### 2026-10-15 — worker — final paced policy submission
+
+Claim at frozen code `61eeb1b59902c9c52f0c4fdf3880a0081ebb2db2`: qualified
+GPU Omarchy boots in ICount64 and selects the verified native paced-icount idle
+policy before the first canonical original keyboard make, preserving exact time,
+divider and timebase. Selection/readback failures poison before staging, repeated
+makes do not reanchor, and explicit pause/resume excludes paused host time.
+Malformed u16/u16/i32 ABI fields are rejected before both selection and native
+staging; valid signed scan events and integer KEY forwarding remain intact.
+
+Recorded commands and exact reports:
+
+- `python3 tools/virgl-production/verify-interactive-clock.py --input-boundary-only --output target/evidence/production-paced-policy-guard-frozen01`:
+  four commands0;89 clock/protocol/actual-Wasm tests; actual production worker's
+  14 malformed and3 signed-MSC rows, original make handoff and two pause intervals;
+  ordinary demo127passed/0failed,zeroerrors,no proof exports.
+- `python3 target/evidence/production-paced-policy-guard-cold-launch01/run.py`:
+  `git clone --no-local --single-branch`, no alternates, clean exact61eeb1b5,
+  own `make web-dist`, then identical incremental acceptance. All3 outer and4
+  inner commands0; same89tests/17workerrows/default127/0. The original selected
+  six clock and eight preceding parent commands at e17 remain passed components
+  of the explicitly failed original-cold report; unchanged native73 remains
+  independently verified. No failed outer wrapper is called passed.
+- Original `critic-fast-boots.mjs` stock GPU run from the pristine e17 clone:
+  `production-paced-policy-cold-stock02/browser/report.json` passed with60trusted
+  transitions/62original frames, absent-before marker then TRUSTED_TOUCH_42,
+  readable actual package bar,cursor displacement,5-second pause,657/657GPUjobs,
+  308draws,no pending/failed/cancelled job and zero worker/page errors. Its outer
+  wrapper failed a pre-browser default-task option; the corrected default passes
+  on both final root and final cold. The pure guard carry command is
+  `node target/evidence/production-paced-policy-valid-frame-carry01/check.mjs`:
+  all62 original frames accepted and only the new five-line guard differs in the
+  loader. Actual new-worker and real-Wasm controls cover that changed boundary.
+- Original four-image software matrix has all10initial/repeat/persistence phases
+  passed in `production-paced-policy-cold-final01/interactive-clock/production/fast-boot-images`.
+  Omarchy84.265s first restore includes198MB download; repeat6.027s. This is
+  functional/warm-path proof, not a GPU warm snapshot or latency-budget claim.
+- Private missing-path `production-paced-policy-private-window04` is closed0:
+  original real Mesa/index83/textured768pixels,1000cube frames, Hyprland GLES3.0,
+  actual mapped Foot and scanout. Final-state GPU snapshot contains31192draws;
+  later full raw trace totals31516 DRAW packets in the original13-family
+  `compare-handshake.py` report. These are different recorded points, not a
+  drained-owner assertion. Actual JIT291649836blocks/3937142435retiredViaJit.
+  Both earlier300000ms readiness failures, their actual pending states, and the
+  interrupted target-only recording experiment are preserved and remain negative.
+- Isolated single-hunk handoff/rebase/ABI-guard removals fail the relevant tests.
+  Guard negative uses the actual ordinary Wasm and fails on the first fractional
+  type; malformed code cannot masquerade as a valid make. Self-validation's
+  unsigned-value prototype and all earlier stock wall-policy failures remain
+  available separately and are not positive product proof.
+
+Ordinary Wasm is unchanged `d055c473b686ce543d8b87da68034e240ba0f66cf8aacbb482e03a405a64363f`.
+Source, guest/image identities, raw GPU/serial records, all original reports,
+screenshots, controls and both final root/cold records are sealed in
+`evidence/virgl-production-interactive-clock/worker/paced-keyboard-policy-submission.tar.gz`:
+9,318,782bytes,SHA-256`01f6feaca7b0079b0a4dfa83fc4bdfeb757ca8b258af26c9bd8882273374a37d`,
+416members/415identities; every member reopened and byte-compared. The fresh
+verifier must still judge sufficiency/coverage. Host cursor publication remains
+resource0 in the stock record; native cursor displacement is proven, not cursor
+plane recovery. Parent71/D,context-loss recovery,deployment and300MIPS are not
+verified by this worker submission.
