@@ -3,8 +3,7 @@ id: E6-T11d
 epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
-status: blocked
-blocked_on: [E6-T11d71]
+status: in-progress
 depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47, E6-T11d48, E6-T11d49, E6-T11d50, E6-T11d51, E6-T11d52, E6-T11d53, E6-T11d54, E6-T11d55, E6-T11d56, E6-T11d57, E6-T11d58, E6-T11d59, E6-T11d60, E6-T11d61, E6-T11d62, E6-T11d63, E6-T11d64, E6-T11d65, E6-T11d66, E6-T11d67, E6-T11d68, E6-T11d69a, E6-T11d69b, E6-T11d70, E6-T11d71]
 estimate: S
 risk: high
@@ -1181,3 +1180,16 @@ verification is claimed. Evidence-only live harness heads `6549a30b`/`ed63d292`
 retain identical runtime and original artifact pins while adding actual HTTPS
 body capture. Parent is blocked on the keyboard prerequisite; deployment remains
 an additional acceptance requirement.
+
+### 2026-10-15 — worker — resume final publishing after clock verification
+
+The ordered keyboard and pacing prerequisites now have independent verdicts.
+The final D72 worker/verifier archives carry actual production Mesa,1000 cube
+frames, Hyprland/Foot scanout, original stock keyboard/bar/cursor and all four
+software image fast-boot proofs at the unchanged ordinary d055 Wasm boundary.
+D71 closure and D73 preserve native wait/idle predictions and controls. Parent
+resumes for current marketing/docs/roadmap copy, deployable bundle and actual
+Cloudflare publication/source/default/site/software checks. Native/rendering
+and successful long-boot components carry by explicit code/dependency/digest
+equivalence; failed historical wrappers remain failed. Context-loss recovery
+remains E6-T11e and no300MIPS claim is introduced.
