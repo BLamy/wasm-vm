@@ -34,7 +34,7 @@ export function parseIdentityDelta(bytes,manifest){
 
 export function createApplicationIdentityProof(page,command,output,options={}){
   const cache=new Map();
-  const imageDirectory=path.resolve(options.imageDirectory||process.env.CRITIC_FAST_BOOT_IMAGE_DIRECTORY||process.env.OMARCHY_DESKTOP_IMAGE_DIRECTORY||path.join(repo,'target/virgl-production/image-13'));
+  const imageDirectory=path.resolve(options.imageDirectory||process.env.CRITIC_FAST_BOOT_IMAGE_DIRECTORY||process.env.OMARCHY_DESKTOP_IMAGE_DIRECTORY||path.join(repo,'target/virgl-production/image-14'));
   let baseHash;
   async function run(text){const result=await command(page,text,300000);await fs.appendFile(path.join(output,'application-identity-commands.ndjson'),JSON.stringify({scope:options.name,command:text,result,time:Date.now()})+'\n');assert.equal(result.exit,0,text);return result;}
   async function metadata(pid,executable){

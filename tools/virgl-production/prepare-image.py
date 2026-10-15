@@ -9,6 +9,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import tempfile
@@ -81,6 +82,30 @@ with tempfile.TemporaryDirectory(prefix="preparation-", dir=a.output) as tempora
             visual_profile[target] = {"source": original, "bytes": len(data), "sha256": hashlib.sha256(data).hexdigest()}
             commands += ["rm " + target, "write /work/desktop-" + name + " " + target,
                          "set_inode_field " + target + " uid 1000", "set_inode_field " + target + " gid 1000"]
+        # The packaged 6016x3384 wallpaper otherwise becomes an 81 MB texture,
+        # exceeding the device's 32 MiB resource budget. Decode for the actual
+        # display, as the packaged lock screen already does. Keep the original
+        # artwork, crop, transitions and GLES rendering.
+        target = "/usr/share/omarchy/shell/plugins/background/Background.qml"
+        original = subprocess.check_output(read + ["cat " + target, "/disk/guest.ext4"], stderr=subprocess.DEVNULL)
+        text = original.decode("utf-8")
+        assert "sourceSize" not in text, "review changed upstream wallpaper sizing"
+        for name in ("base", "oldFrame", "incomingFrame"):
+            assert len(re.findall(r"(?m)^\s+id: " + name + r"$", text)) == 1, name
+        def size_wallpaper(match):
+            indent = match[1]
+            return (match[0] + "\n" + indent + "sourceSize.width: Math.max(1, Math.ceil(width * panel.screen.devicePixelRatio))"
+                    + "\n" + indent + "sourceSize.height: Math.max(1, Math.ceil(height * panel.screen.devicePixelRatio))")
+        bounded, count = re.subn(r"(?m)^( +)fillMode: Image.PreserveAspectCrop$", size_wallpaper, text)
+        assert count == 3, "review changed upstream wallpaper components"
+        (scratch / "Background.original.qml").write_bytes(original)
+        (scratch / "Background.qml").write_text(bounded)
+        visual_profile[target] = {"source": target, "originalBytes": len(original),
+                                 "originalSha256": hashlib.sha256(original).hexdigest(),
+                                 "bytes": len(bounded.encode()), "sha256": hashlib.sha256(bounded.encode()).hexdigest(),
+                                 "sizing": "physical display dimensions; original artwork and crop retained"}
+        commands += ["write /work/Background.original.qml /opt/virgl-proof/Background.original.qml",
+                     "rm " + target, "write /work/Background.qml " + target]
     if quickshell:
         library = "libquickshell-browser-gles.so"
         for name in (library, "quickshell", "quickshell-original", "build.json"):
