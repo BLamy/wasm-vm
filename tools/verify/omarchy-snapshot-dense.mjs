@@ -86,6 +86,10 @@ if(fillMib===null){
   try{
     const api=await import(pathToFileURL(js)),wasm=api.initSync({module:fs.readFileSync(binary)});let serial='';
     machine=new api.WasmLinux(1024,guest,new Uint8Array(),'',bytes=>{serial+=new TextDecoder().decode(bytes);},false);
+    // The no-disk constructor has no resume base until the normal initramfs identity API stamps
+    // its kernel binding. Bind this literal kernel before saving; never weaken a restore guard.
+    const resumeIdentity=createHash('sha256').update(guest).digest();
+    machine.stampBootSnapshotIdentity(resumeIdentity);report.resumeIdentity=resumeIdentity.toString('hex');
     machine.enableJit(1);const deadline=performance.now()+120000;let retired=0;
     while(!serial.includes('X')){
       assert.ok(performance.now()<deadline);const result=machine.runChunk(2000000);retired+=Number(result.retired);
