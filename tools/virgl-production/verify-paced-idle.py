@@ -41,7 +41,7 @@ try:
     run('core-unit', ['cargo', 'test', '-p', 'wasm-vm-core', '--lib', '--features',
                       'virgl-renderer,virgl-control-proof,gpu-trace,trace'])
     run('native-clock', ['cargo', 'test', '-p', 'wasm-vm-core', '--features', 'virgl-renderer,trace',
-                         '--test', 'paced_idle_clock', '--test', 'guest_clock', '--test', 'clock_advance',
+                         '--test', 'paced_idle_clock', '--test', 'production_paced_idle_critic', '--test', 'guest_clock', '--test', 'clock_advance',
                          '--test', 'icount_divider', '--test', 'production_keyboard_host_wait',
                          '--test', 'production_keyboard_wfi_critic', '--', '--nocapture', '--test-threads=1'])
     run('wasm-clippy', ['cargo', 'clippy', '-p', 'wasm-vm-wasm', '--target', 'wasm32-unknown-unknown',

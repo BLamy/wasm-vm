@@ -6189,6 +6189,9 @@ mod clock_advance_tests;
 #[cfg(all(test, not(feature = "zicsr-stub")))]
 mod partial_resume_tests;
 
+#[cfg(all(test, not(feature = "zicsr-stub")))]
+mod paced_idle_clock_tests;
+
 #[cfg(test)]
 mod tests {
     use super::*;
