@@ -5,7 +5,7 @@ title: Publish and prove an accelerated Omarchy warm-boot artifact
 priority: 525.0270384
 status: blocked
 depends_on: [E6-T11d74c, E6-T11d74d1, E6-T11d74d2]
-blocked_on: [E6-T11d74d1, E6-T11d74d2]
+blocked_on: [E6-T11d74d2]
 estimate: S
 risk: high
 capstone: false
