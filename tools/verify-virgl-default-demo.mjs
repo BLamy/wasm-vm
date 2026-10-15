@@ -93,7 +93,7 @@ try {
   const graphics = page.locator('.cap', { hasText: 'Guest GPU offload' });
   report.graphicsRoadmapPip = await graphics.locator('.cap-pip').getAttribute('class');
   assert.match(report.graphicsRoadmapPip, /\bpartial\b/);
-  if (['E6-T11d67','E6-T11d68','E6-T11d69a','E6-T11d69b','E6-T11d70','E6-T11d71','E6-T11d72','E6-T11d73','E6-T11d','E6-T11e'].includes(task)) assert.match(await graphics.textContent(), /qualified GPU cold boots/);
+  if (['E6-T11d67','E6-T11d68','E6-T11d69a','E6-T11d69b','E6-T11d70','E6-T11d71','E6-T11d72','E6-T11d73','E6-T11d74a','E6-T11d','E6-T11e'].includes(task)) assert.match(await graphics.textContent(), /qualified GPU cold boots/);
   else assert.match(await graphics.textContent(), /production acceleration disabled/);
   if (task === 'E6-T11d73') assert.match(await page.locator('.cap', {hasText: 'Host-paced guest idle'}).textContent(), /E6-T11d73/);
   if (task === 'E6-T11d72') assert.match(await page.locator('.cap', {hasText: 'Interactive desktop time'}).textContent(), /E6-T11d72/);
