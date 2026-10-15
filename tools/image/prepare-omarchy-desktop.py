@@ -100,7 +100,8 @@ with open('/work/software/omarchy.ext4','rb') as source,open('/out/guest.ext4','
         (output / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
         run(["docker", "run", "--rm", "--network", "none", "-v", volume + ":/work", args.tool_image,
              "python3", "-c", "import shutil;from pathlib import Path;shutil.rmtree('/work/software/root');Path('/work/software/omarchy.ext4').unlink()"])
-        if subprocess.check_output(["git", "status", "--porcelain", "--untracked-files=no"], cwd=ROOT):
+        final_head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
+        if final_head != report["head"] or subprocess.check_output(["git", "status", "--porcelain", "--untracked-files=no"], cwd=ROOT):
             raise ValueError("desktop preparation changed frozen tracked source")
         report.update(status="passed", image=build["image"], manifestSha256=digest(output / "manifest.json"),
                       chunks=len(hashes), uniqueChunks=len(set(hashes)))
