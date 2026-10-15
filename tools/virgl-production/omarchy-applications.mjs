@@ -7,6 +7,7 @@ import path from 'node:path';
 import {createHash} from 'node:crypto';
 import {verifyPublicDesktopInput} from './critic-fast-boots-input.mjs';
 import {assertPublicDesktopFinal} from './critic-fast-boots-final.mjs';
+import {verifyPublicBarContent} from './critic-fast-boots-bar-content.mjs';
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 const sha = bytes => createHash('sha256').update(bytes).digest('hex');
@@ -109,6 +110,25 @@ export async function verifyOmarchyApplications(page, command, output, options =
     const gpu=await page.evaluate(()=>window.wvmDemo.gpuStats());
     report.phases.push({kind:'screenshot',label,gpu,time:Date.now()});await save();return gpu;
   }
+  async function waitReadableBar() {
+    const started=Date.now();let attempt=0;
+    while(Date.now()-started<600000){
+      await gpuHealth();
+      const result=await run(hypr+'layers');assert.equal(result.exit,0);
+      const layer=Object.values(JSON.parse(result.stdout)).flatMap(monitor=>Object.values(monitor.levels||{}).flat())
+        .find(layer=>layer.namespace==='omarchy-bar'&&layer.alpha>0);
+      if(layer){
+        const monitors=await run(hypr+'monitors');assert.equal(monitors.exit,0);
+        const monitor=JSON.parse(monitors.stdout)[0];
+        const observed=await verifyPublicBarContent(page,output,{layer,monitor,clients:await clients(),
+          name:name+'-initial-bar-'+attempt++,requireContent:false});
+        report.phases.push({kind:'initial-bar-content',observed,time:Date.now()});await save();
+        if(observed.status==='passed'){report.initialBar={...observed,elapsedMs:Date.now()-started};return;}
+      }
+      await sleep(1500);
+    }
+    throw Error('The normal Omarchy bar did not finish rendering before application launch');
+  }
   async function identity(client, executable) {
     const proof=await identityProof.process(client,executable,name+'-identity-'+identitySequence++);
     report.phases.push({kind:'native-executable-identity',proof,time:Date.now()});await save();return proof;
@@ -168,8 +188,26 @@ export async function verifyOmarchyApplications(page, command, output, options =
     assert.ok(menu,'normal Omarchy Apps menu is actually mapped');
     await type('libreoffice writer');await sleep(1500);
     await shot('writer-launcher');await press('Enter');
-    const window=await waitWindow(row=>/libreoffice|soffice/i.test(row.class)&&row.size?.[0]>300);
+    const window=await waitWindow(row=>/libreoffice|soffice/i.test(row.class)&&row.visible!==false&&row.size?.[0]>300,600000);
     await waitActive(row=>row.pid===window.pid);await shot('writer-open');return window;
+  }
+  async function verifySandboxedImage() {
+    const code="import gi,hashlib,json,os,base64;gi.require_version('GdkPixbuf','2.0');from gi.repository import GdkPixbuf;assert 'GLYCIN_DISABLE_SANDBOX' not in os.environ;p='/usr/share/icons/Adwaita/scalable/status/image-missing.svg';source=open(p,'rb').read();b=GdkPixbuf.Pixbuf.new_from_file_at_scale(p,48,48,True);pixels=b.get_pixels();print(json.dumps({'width':b.get_width(),'height':b.get_height(),'channels':b.get_n_channels(),'stride':b.get_rowstride(),'pixelSha256':hashlib.sha256(pixels).hexdigest(),'sourceSha256':hashlib.sha256(source).hexdigest(),'pixels':base64.b64encode(pixels).decode(),'source':base64.b64encode(source).decode()}),flush=True)";
+    const result=await run('timeout -k 1s 10s env RUST_LOG=debug python3 -c '+"'"+code.replaceAll("'","'\\''")+"'");
+    assert.equal(result.exit,0,'native GdkPixbuf decodes the packaged icon under the normal sandbox');
+    assert.match(result.stdout,/bwrap sandboxing available: true/);
+    assert.match(result.stdout,/"bwrap"[^\n]+"--seccomp"/);
+    assert.doesNotMatch(result.stdout,/running without sandbox/i);
+    const value=JSON.parse(result.stdout.split('\n').findLast(line=>line.startsWith('{')));
+    assert.equal(value.width,48);assert.equal(value.height,48);assert.equal(value.channels,4);assert.equal(value.stride,192);
+    const pixels=Buffer.from(value.pixels,'base64'),source=Buffer.from(value.source,'base64');
+    assert.equal(pixels.length,48*48*4);assert.equal(sha(pixels),value.pixelSha256);assert.equal(sha(source),value.sourceSha256);
+    assert.equal(value.sourceSha256,'af6b1fbc74b1dec2431352153b747e8cd584b11fcb762d97b1563dc03a2b6a18');
+    assert.ok(pixels.some((value,index)=>index%4===3&&value>0),'actual icon has foreground pixels');
+    assert.ok(pixels.some((value,index)=>index%4===3&&value===0),'actual icon retains transparent background');
+    await fs.writeFile(path.join(output,name+'-sandboxed-icon.rgba'),pixels);
+    await fs.writeFile(path.join(output,name+'-sandboxed-icon.svg'),source);
+    delete value.pixels;delete value.source;report.sandboxedImage=value;await save();
   }
   const document='/home/omarchy/Documents/omarchy-native-applications-42.odt';
   async function readDocument(label, expectedText) {
@@ -196,6 +234,16 @@ export async function verifyOmarchyApplications(page, command, output, options =
       for(const type of ['keydown','keyup','pointerdown','pointerup'])document.addEventListener(type,window.__appTrustedListener,true);
     });
     report.beforeGpu=await shot('initial');
+    await waitReadableBar();
+    const memoryCode="from pathlib import Path;import json,stat;p=Path('/var/lib/wasm-vm-applications/swapfile');s=p.lstat();assert stat.S_ISREG(s.st_mode) and stat.S_IMODE(s.st_mode)==0o600 and s.st_uid==s.st_gid==0 and s.st_nlink==1 and s.st_size==536870912;rows=[x.split() for x in Path('/proc/swaps').read_text().splitlines()[1:]];matches=[x for x in rows if x[0]==str(p)];assert len(matches)==1 and matches[0][1]=='file' and int(matches[0][2])*1024==536866816 and int(matches[0][4])==10;print(json.dumps({'activeSwap':matches[0],'stat':{'uid':s.st_uid,'gid':s.st_gid,'mode':oct(stat.S_IMODE(s.st_mode)),'bytes':s.st_size,'blocks':s.st_blocks},'meminfo':Path('/proc/meminfo').read_text(),'profile':json.loads(Path('/etc/wasm-vm/application-memory.json').read_text())}))";
+    const memory=await run('python3 -c '+"'"+memoryCode.replaceAll("'","'\\''")+"'");assert.equal(memory.exit,0,'the real kernel activated the bounded root-owned swap file');
+    report.memory=JSON.parse(memory.stdout);
+    const pagingCode="import mmap,hashlib,json,re,time;from pathlib import Path;size=4194304;data=bytes(range(256))*(size//256);status=lambda:int(re.search(r'^VmSwap:\\s+(\\d+)',Path('/proc/self/status').read_text(),re.M)[1])*1024;m=mmap.mmap(-1,size,flags=mmap.MAP_PRIVATE|mmap.MAP_ANONYMOUS,prot=mmap.PROT_READ|mmap.PROT_WRITE);m[:]=data;before=status();m.madvise(mmap.MADV_PAGEOUT);paged=status();assert paged-before>=size-65536,(before,paged);observed=m[:];assert observed==data;after=status();assert after<=before+65536,(before,after);print(json.dumps({'bytes':size,'pattern':'repeated literal bytes0..255','beforeSwapBytes':before,'pagedSwapBytes':paged,'afterRefaultSwapBytes':after,'sha256':hashlib.sha256(observed).hexdigest(),'blockStats':Path('/sys/block/vda/stat').read_text()}),flush=True);m.close()";
+    const paging=await run('timeout -k 1s 10s python3 -c '+"'"+pagingCode.replaceAll("'","'\\''")+"'");assert.equal(paging.exit,0,'actual anonymous pageout and byte-preserving refault');
+    report.paging=JSON.parse(paging.stdout);
+    const pagingExpected=Buffer.alloc(4194304);
+    for(let i=0;i<pagingExpected.length;i++)pagingExpected[i]=i&255;
+    assert.equal(report.paging.sha256,sha(pagingExpected),'independently generated complete refault bytes');
     report.wallpaper=await run('readlink -f "$HOME/.local/state/omarchy/current/background"; sha256sum "$HOME/.local/state/omarchy/current/background" /usr/share/omarchy/shell/plugins/background/Background.qml; '+hypr+'monitors');
     assert.equal(report.wallpaper.exit,0);
     const setup=await run('test "$(id -u)" = 1000 && test ! -e /tmp/omarchyapps && test ! -e '+document+' && mkdir -m 700 /tmp/omarchyapps');assert.equal(setup.exit,0);
@@ -206,8 +254,8 @@ export async function verifyOmarchyApplications(page, command, output, options =
     await press('Meta+Shift+b');
     // The native Arch first-run dialog has no Wayland app ID. Its exact title
     // selects a candidate only; identity() still checks the running signed ELF.
-    let chromium=await waitWindow(row=>/chromium/i.test(row.class)||
-      (initialEula.exit===1&&row.class===''&&row.title==='Chromium Additional Terms of Service'),600000);
+    let chromium=await waitWindow(row=>row.visible!==false&&(/chromium/i.test(row.class)||
+      (initialEula.exit===1&&row.class===''&&row.title==='Chromium Additional Terms of Service')),600000);
     if(initialEula.exit===1){
       report.firstRunWindow=await identity(chromium,'/usr/lib/chromium/chromium');
       await waitActive(row=>row.pid===chromium.pid);
@@ -216,16 +264,17 @@ export async function verifyOmarchyApplications(page, command, output, options =
       for(let n=0;n<100;n++){accepted=await run('test -f "$HOME/.config/chromium/EULA Accepted" && test -f "$HOME/.config/chromium/First Run"');if(accepted.exit===0)break;await sleep(1500);}
       assert.equal(accepted.exit,0,'native Chromium completed its first-run dialog through trusted input');
       const dialogAddress=chromium.address;
-      chromium=await waitWindow(row=>/chromium/i.test(row.class)&&row.address!==dialogAddress,600000);
+      chromium=await waitWindow(row=>/chromium/i.test(row.class)&&row.visible!==false&&row.address!==dialogAddress,600000);
     }
     report.chromium=await identity(chromium,'/usr/lib/chromium/chromium');
     await waitActive(row=>row.pid===chromium.pid);
     assert.match(report.chromium.process.stdout,/\/usr\/lib\/chromium\/chromium/);
     await shot('chromium-open');
     await press('Control+l');await type('http://127.0.0.1:8765/');await press('Enter');
-    let ready;
-    for(let n=0;n<100;n++){await gpuHealth();ready=await run('cat /tmp/omarchyapps/ready.json');if(ready.exit===0)break;await sleep(1500);}
+    let ready;const navigationStarted=Date.now();
+    do {await gpuHealth();ready=await run('cat /tmp/omarchyapps/ready.json');if(ready.exit===0)break;await sleep(1500);} while(Date.now()-navigationStarted<600000);
     assert.equal(ready.exit,0,'native Chromium loaded and focused the guest loopback page');
+    report.browserNavigationMs=Date.now()-navigationStarted;
     report.browserReady=JSON.parse(ready.stdout);assert.deepEqual(report.browserReady,{readyState:'complete',hasFocus:true,activeElement:'note',location:'http://127.0.0.1:8765/'});
     await shot('chromium-fixture');
     const note='omarchy chromium riscv 42';await type(note);await press('Tab');await press('Space');
@@ -235,6 +284,7 @@ export async function verifyOmarchyApplications(page, command, output, options =
     assert.equal(report.browserSubmission.message,note);assert.equal(report.browserSubmission.clickTrusted,true);
     assert.ok(report.browserSubmission.inputTrusted.length>=note.length);assert.ok(report.browserSubmission.inputTrusted.every(value=>value===true));
     report.chromiumGpu=await shot('chromium-submitted');
+    await verifySandboxedImage();
     await press('Control+Shift+w');await waitClosed(row=>/chromium/i.test(row.class));
 
     report.writer=await identity(await launchWriter(),'/usr/lib/libreoffice/program/soffice.bin');assert.match(report.writer.process.stdout,/\/usr\/lib\/libreoffice\/program\/soffice.bin/);
@@ -250,7 +300,7 @@ export async function verifyOmarchyApplications(page, command, output, options =
     await press('Control+q');await waitClosed(row=>/libreoffice|soffice/i.test(row.class));
 
     const existingFoot=new Set((await clients()).filter(row=>/foot/i.test(row.class)).map(row=>row.pid));
-    await press('Meta+Return');report.terminal=await waitActive(row=>/foot/i.test(row.class)&&!existingFoot.has(row.pid));
+    await press('Meta+Enter');report.terminal=await waitActive(row=>/foot/i.test(row.class)&&!existingFoot.has(row.pid));
     const absent=await run('test ! -e /tmp/omarchyapps/node && test ! -e /tmp/omarchyapps/npm');assert.equal(absent.exit,0);
     await type('node -p process.arch > /tmp/omarchyapps/node; npm --version > /tmp/omarchyapps/npm');await press('Enter');
     let tools;
