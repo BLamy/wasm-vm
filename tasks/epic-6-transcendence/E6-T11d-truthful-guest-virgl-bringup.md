@@ -3,9 +3,8 @@ id: E6-T11d
 epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
-status: blocked
-blocked_on: [E6-T11d74d]
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47, E6-T11d48, E6-T11d49, E6-T11d50, E6-T11d51, E6-T11d52, E6-T11d53, E6-T11d54, E6-T11d55, E6-T11d56, E6-T11d57, E6-T11d58, E6-T11d59, E6-T11d60, E6-T11d61, E6-T11d62, E6-T11d63, E6-T11d64, E6-T11d65, E6-T11d66, E6-T11d67, E6-T11d68, E6-T11d69a, E6-T11d69b, E6-T11d70, E6-T11d71]
+status: in-progress
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47, E6-T11d48, E6-T11d49, E6-T11d50, E6-T11d51, E6-T11d52, E6-T11d53, E6-T11d54, E6-T11d55, E6-T11d56, E6-T11d57, E6-T11d58, E6-T11d59, E6-T11d60, E6-T11d61, E6-T11d62, E6-T11d63, E6-T11d64, E6-T11d65, E6-T11d66, E6-T11d67, E6-T11d68, E6-T11d69a, E6-T11d69b, E6-T11d70, E6-T11d71, E6-T11d74d]
 estimate: S
 risk: high
 capstone: false
@@ -1221,3 +1220,20 @@ The user clarified that GPU rendering must remain enabled for warm boots.
 The unshipped software-default proposal is cancelled, with ordered native/host/
 worker/public warm-checkpoint slices74a–d. Parent publication now waits for
 74d; earlier rendering and source-delivery evidence is unchanged.
+
+
+### 2026-10-15 — worker — resume final production closure after verified warm publication
+
+E6-T11d74d is independently verified at
+`2f16a7553bb721e770830f27b13984f3b577be49`. Resume the parent solely to close
+its accumulated rendering/negotiation/production evidence. The runtime, image,
+clock and public pair stay frozen. Under the incremental rule, unchanged
+capability ABI, actual Mesa/no-software rendering and1000-frame/cube holds carry;
+verified fragmented backing, timekeeping, production worker ownership, scanout,
+capacity and warm-publication successors cover their changed boundaries. This
+closure does not claim full Omarchy application coverage or failure survival;
+the user has separately requested Chromium, LibreOffice and the compatible
+upstream application set, and E6-T11e remains a separate ordered boundary.
+
+Continue the same native stack above PR568 on
+`codex/production-guest-gpu-closure`; no stack is replaced or PR merged.
