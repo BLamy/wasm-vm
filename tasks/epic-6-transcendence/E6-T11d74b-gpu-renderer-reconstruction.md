@@ -3,7 +3,7 @@ id: E6-T11d74b
 epic: 6
 title: Reconstruct a production renderer in a fresh physical GPU context
 priority: 525.0270382
-status: implemented
+status: verified
 depends_on: [E6-T11d74a]
 estimate: S
 risk: high
@@ -114,7 +114,7 @@ Commands: `make web-dist` recorded before freeze;
 then `python3 target/evidence/production-gpu-warm-restore-plan01/renderer-cold.py`
 cloned full history with `git clone --no-local`, no alternates, checked out the
 exact acceptance head, scrubbed RUSTFLAGS/RUSTDOCFLAGS/RUST_LOG/CARGO_*/VIRGL_*/
-CRITIC_* and ran the complete23-gate acceptance. All corrected gates passed:
+CRITIC_* and ran the complete22-gate acceptance. All corrected gates passed:
 5 codec tests, proof/ordinary web builds, three worker GPU rows, six independent
 attack rows, exact guard-removal negative, three original multisample schedules,
 and default demo127passed/0failed/errors[] with screenshot. Captures include
@@ -133,3 +133,81 @@ logs. Unpacked evidence: `target/evidence/production-renderer-checkpoint-cold01`
 `...-submission01/receipt.json`. Fresh verifier must inspect the diff against
 these exact records, including its independent pending/active/partial/incomplete
 supplement; only that verifier may set `verified`.
+
+### 2026-10-15 — fresh verifier — VERDICT: verified
+
+VERDICT: verified
+
+- R1–R3 physical contents/fresh ownership/isolated replay — HELD. Before inspecting
+  the implementation, predicted all retained GPU-written bytes and new draws would
+  survive a different real context without live guest DMA/completion. The final
+  original-queue recording preserves literal dimensional D24S8 mip/layer bytes,
+  blue private image sampling after resource-ID reuse, transform-feedback data and
+  append cursor; new physical query/draw outputs remain correct. Independent
+  poisoned-RAM magenta/Z16 and asymmetric draw tests preserve the entire native
+  digest, used ring and RAM across replay. Source and fresh owners both release
+  all objects/syncs. Citations: capsule cold01/acceptance/physical-checkpoint,
+  independent-attacks; independent promoted-flush-all02 and coverage ledger R1–R3.
+- R4–R6 identities/epochs/bounds/applied failures — HELD. The independent rehashed
+  gather-data mutation fails fresh physical identity, and deleting only the exact
+  expected-epoch comparison makes the promoted stale1->3 assertion fail with
+  observed epoch3. The positive check refuses at epoch2. Tightened byte/frame
+  budgets refuse capture while original GPU rendering continues. Four promoted
+  guard cases additionally exercise a pending original job, active query with
+  zero native parts, an actually applied blue CLEAR followed by invalid DRAW
+  (appliedCommands1/0x1205), and a rehashed incomplete journal; all refuse capture
+  or reconstruction, preserve the original owner and clean failed staged owners.
+  Citations: epoch-control-authentication.json; final-guard-supplement01, four
+  physical rows/658 assertions; guard-supplement-authentication.json.
+- R7–R10 actual query waits/state/cancellation/refusals — HELD. The independently
+  decoded journal contains WAIT_HOST [2,0,0,0] then ready [1,4,2,0], measured native
+  count6 divided by original triangle3. A final test-only count-based readiness
+  supplement withholds only actual-ready measurements for16 reads after8 recorded
+  false polls: checkpoint.mjs canPump return-false offsets11072–11085 execute8
+  times, then fresh and NEW native queries each return6/logical2. Three physical
+  rows pass (858 assertions), native parts/pending0, objects/syncs0, errors[]. The
+  independent activation/disposal race originally leaked14 native objects twice;
+  the frozen cancellation repair now rejects activation and releases them all.
+  Actual context loss and concurrent capture mutation refuse without publication.
+  Live MSAA is explicitly outside checkpoint support; three unchanged MSAA
+  hardware schedules pass. Citations: abort-activation-finding.json,
+  promoted-flush-all02, self05-query-journal-audit.json,
+  query-wait-supplement01/authentication.json; coverage-and-verdict.json R7–R10.
+- Exact custody/cold/coverage — HELD. Reopened all589 worker capsule members and
+  authenticated all588 identities plus34 frozen source copies. Final pristine
+  full-history --no-local clone at d38bec548bf0884067d639c7e13b1798b75d483c has no
+  alternates, clean tracked source and all22 named commands passing, including13
+  hardware rows (the intentional negative is expected exit1) and default127/0,
+  zero errors, ordinary proof exports absent and193 pinned local served assets.
+  Runtime de33c99f and native74a dependency remain unchanged. Earlier “23” counts
+  were a log typo: that recorded target has22 commands; the recurring target now
+  has23 after the new guard command. No evidence is relabelled or re-recorded.
+  Test-only guard/query supplements carry the unchanged final cold; no duplicate
+  clone/build/native run is warranted. Failed frozen01 expected-exit wrapper,
+  self08 float-vs-word fixture, own race-handler and pre-supplement wait coverage
+  remain preserved. Coverage ledger classifies every new module/hunk, generated
+  mirrors and defensive numeric/error guards; no runtime behavior was edited by
+  this verifier.
+- SUITE: retain six independent modes, four original-queue guard modes, the
+  epoch-removal negative, deterministic actual-query withholding, codec tests and
+  recurring verify-E6-T11d74b. This verdict proves only physical renderer
+  reconstruction.74c paired worker/CPU/RAM/disk/native restore and74d actual
+  Omarchy GPU warm artifact/repeat/deployment are still required. It proves no
+  default guest GPU warm boot, recovery, deployment or300MIPS result.
+
+Commands: independent final authentication; the existing six-mode/negative
+recordings; `python3 target/evidence/critic-production-renderer-checkpoint74b/final-guard-supplement01/run.py`
+(four commands, all0); `node --check renderer/virgl-command/tests/production-checkpoint.mjs`;
+`node tools/virgl-production/worker-checkpoint-browser.mjs --output target/evidence/critic-production-renderer-checkpoint74b/query-wait-supplement01/browser`
+(three rows, all0). Policy/queue regenerated before this review-only commit;
+`SKIP_WEB_BUILD=1` avoids rebuilding unchanged product bytes for tests/evidence.
+
+Independent reopened seal:
+`evidence/virgl-production-renderer-checkpoint/verifier/independent-renderer-reconstruction-review.tar.gz`
+(28,182,270bytes; SHA256
+`ae6a9d429d23e63e64d14332b0e04fa654a3bd3e7d759ab34ec91f7db1359339`;
+849members /848 authenticated identities), paired JSON beside it. It includes
+pre-data predictions, full independent observations and failed controls, original
+source snapshots, worker/cold authentication, hunk ledger and both narrow final
+supplements. The worker capsule remains separately pinned at SHA256
+`69e04e2d872fd3915c1aaa978d67885dc5d8489565078811e13166c486cc210e`.

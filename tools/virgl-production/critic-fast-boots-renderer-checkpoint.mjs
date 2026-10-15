@@ -20,7 +20,7 @@ function observer(gl,domain) {
       events.push({n:events.length,phase,name,args:args.map(value),...(name==='getError'?{result}:{})});return result;};}});
   return{gl:observed,events,objects,syncs,setPhase:v=>{phase=v;}};
 }
-async function one(Wasm,compiler,label,attack=false,abort=false,race=null) {
+async function one(Wasm,compiler,label,attack=false,abort=false,race=null,guard=null) {
   const c=checker(),canvases=[document.createElement('canvas'),document.createElement('canvas')];for(const canvas of canvases)canvas.width=canvas.height=4;
   const native=canvases.map(canvas=>canvas.getContext('webgl2',{antialias:false,failIfMajorPerformanceCaveat:true}));
   c.truth(native[0]!==native[1],'two different genuine physical GL contexts');
@@ -34,7 +34,7 @@ async function one(Wasm,compiler,label,attack=false,abort=false,race=null) {
   current=c.ok(createJournalledProductionBridge({gl:observed[0].gl,profile:profiles[0],shaderBridge:compiler,transport,presenter:presenter()}),'real journal owner').bridge;const original=current;
   const Selected=class{constructor(callback){return Wasm.qualified(callback,profiles[0].hostWords,profiles[0].formatRoles,profiles[0].renderer);}};
   q=new Queue(Selected,event=>current.apply(event),c);
-  const expect=async(label,wire)=>{const entry=q.enqueue(label,wire);q.kick();let turns=0;while(q.usedIndex()<q.next){c.truth(++turns<20000,'bounded original queue completion');q.run();if(q.usedIndex()<q.next)c.ok(current.pump(),'real physical completion pump');await turn();}const value=q.collect(entry);q.vm.writeMmio(0x64,1);return value;};
+  const expect=async(label,wire,expected=0x1100)=>{const entry=q.enqueue(label,wire,expected);q.kick();let turns=0;while(q.usedIndex()<q.next){c.truth(++turns<20000,'bounded original queue completion');q.run();if(q.usedIndex()<q.next)c.ok(current.pump(),'real physical completion pump');await turn();}const value=q.collect(entry);q.vm.writeMmio(0x64,1);return value;};
   const base=q.base,addresses={color:base+0x210000n,vertex:base+0x220000n,depth:base+0x230000n};
   const row={name:'immutable-DMA-GPU-only-data-and-cached-state/'+label,predictions:{
     color:'Sixteen GPU pixels are literal magenta while original guest color backing remains0xd3.',
@@ -57,6 +57,23 @@ async function one(Wasm,compiler,label,attack=false,abort=false,race=null) {
       packet(5,0,[1,21,20]),packet(4,0,[0,...[2,2,.5,2,2,.5].map(word)]),packet(1,1,[30,0,0,15<<27,0,0,0,0,0,0,0]),packet(2,1,[30]),
       packet(1,2,[40,2|1<<29,word(1),0,0xffff,word(1),0,0,0]),packet(2,2,[40]),packet(1,3,[50,31,0,0,0]),packet(2,3,[50]),draw()));
     c.same([...q.read(addresses.color,64)],[...new Uint8Array(64).fill(0xd3)],'draw preserved CPU color poison');c.same([...q.read(addresses.depth,32)],[...new Uint8Array(32).fill(0xe1)],'draw preserved CPU depth poison');
+    if(guard) {
+      const rejectCapture=async label=>{const before={used:q.usedIndex(),calls,digest:q.vm.machineDigest()};let error=null;try{await original.saveCheckpoint();}catch(e){error={message:e.message,stack:e.stack};}c.truth(error!==null,label+' capture refuses');c.same({used:q.usedIndex(),calls,digest:q.vm.machineDigest()},before,label+' refusal leaves native state unchanged');row.guardRefusal=error;};
+      if(guard==='pending') {
+        const entry=q.enqueue('original draw pending at checkpoint',submission(7,draw()));q.kick();q.run();c.truth(current.inspect().pending!==null,'one actual original renderer job pending');
+        await rejectCapture('pending original job');let turns=0;while(q.usedIndex()<q.next){c.truth(++turns<20000,'bounded original pending completion');q.run();if(q.usedIndex()<q.next)c.ok(current.pump(),'physical pending job pump');await turn();}q.collect(entry);q.vm.writeMmio(0x64,1);row.afterGuardCheckpoint=copy(await original.saveCheckpoint());
+      }else if(guard==='active') {
+        const address=base+0x240000n;await expect('original query result buffer',resource(29,0,64,131072,32,1));await expect('original query membership',idCommand(0x202,7,29));await expect('original query backing',backing(29,[[address,32]]));
+        await send('original active query',join(packet(1,9,[90,1,0,29]),packet(19,0,[90])));c.equal(current.inspect().renderer.budgets.queries.nativeParts,0,'active query has not measured a draw yet');await rejectCapture('active original query');
+        await send('original query ends and drains',join(packet(20,0,[90]),packet(21,0,[90,1])));row.afterGuardCheckpoint=copy(await original.saveCheckpoint());
+      }else {
+        const bad=packet(8,0,[0,1000,5,0,1,0,0,0,0,0,0xffffffff,0]);await expect('real applied CLEAR prefix then invalid vertex range',submission(7,join(packet(7,0,[4,word(0),word(0),word(1),word(1),0,0,0]),bad)),0x1205);
+        row.actualPrefix=copy(current.inspect().lastRendererResult);c.equal(row.actualPrefix.ok,false,'original job actually failed');c.equal(row.actualPrefix.gpuComplete,true,'physical applied prefix settled');c.equal(row.actualPrefix.appliedCommands,1,'one real CLEAR applied before failing DRAW');
+        c.equal(current.inspect().checkpoint.available,false,'failed GPU prefix disables journal capture');await rejectCapture('actual applied GPU failure prefix');
+        c.same([...await originalRead('physical blue prefix remains readable')],Array.from({length:16},()=>[0,0,255,255]).flat(),'original CLEAR really applied, not merely a printed count');c.equal(current.inspect().poisoned,false,'settled prefix failure allows ordinary rendering');
+      }
+      row.status='passed';return row;
+    }
     if(race) {
       let raced=null;const promise=original.saveCheckpoint().then(value=>({resolved:copy(value)}),error=>({rejected:{message:error.message,stack:error.stack}}));
       if(race==='loss') {
@@ -83,13 +100,14 @@ async function one(Wasm,compiler,label,attack=false,abort=false,race=null) {
     const checkpoint=await original.saveCheckpoint();row.checkpoint={...checkpoint,bytes:[...checkpoint.bytes]};
     if(attack) {
       const bytes=new Uint8Array(checkpoint.bytes),payload=decodeCheckpointData(bytes.subarray(16,bytes.length-32));
-      const index=payload.frames.findIndex(b=>{const f=decodeCheckpointData(b);return f.op==='gatherInput'&&f.data?.length===64;});c.truth(index>=0,'one immutable original vertex gather selected');
-      const frame=decodeCheckpointData(payload.frames[index]);row.changedInput={index,op:frame.op,args:copy(frame.args),before:[...frame.data]};frame.data[0]^=1;row.changedInput.after=[...frame.data];payload.frames[index]=encodeCheckpointData(frame);
+      if(attack==='incomplete'){const removed=decodeCheckpointData(payload.frames.pop());c.equal(removed.op,'complete','removed exactly last original completion');row.removedCompletion=copy(removed);}
+      else {const index=payload.frames.findIndex(b=>{const f=decodeCheckpointData(b);return f.op==='gatherInput'&&f.data?.length===64;});c.truth(index>=0,'one immutable original vertex gather selected');
+      const frame=decodeCheckpointData(payload.frames[index]);row.changedInput={index,op:frame.op,args:copy(frame.args),before:[...frame.data]};frame.data[0]^=1;row.changedInput.after=[...frame.data];payload.frames[index]=encodeCheckpointData(frame);}
       const body=encodeCheckpointData(payload),changed=new Uint8Array(body.length+48);changed.set(bytes.subarray(0,12));new DataView(changed.buffer).setUint32(12,body.length,true);changed.set(body,16);changed.set(Uint8Array.from((await sha(changed.subarray(0,-32))).match(/../g),x=>parseInt(x,16)),changed.length-32);
       row.changedArtifact={bytes:[...changed],sha256:await sha(changed)};
       const beforeBad={calls,used:q.usedIndex(),digest:q.vm.machineDigest(),oldOwners:observed[0].objects.size,newOwners:observed[1].objects.size};let error=null;
       reconstructing=true;observed[1].setPhase('corrupt-reconstruction');try{await restoreProductionRenderer(changed,{gl:observed[1].gl,profile:profiles[1],shaderBridge:compiler,transport,presenter:presenter()});}catch(e){error={message:e.message,stack:e.stack};}finally{reconstructing=false;}
-      row.corruptRefusal=error;c.truth(error!==null,'rehashed one-byte journal DMA mutation must refuse');c.truth(/physical contents or state differ/.test(error.message),'refusal is actual final GPU identity mismatch');
+      row.corruptRefusal=error;c.truth(error!==null,'rehashed one-byte journal DMA mutation must refuse');c.truth((attack==='incomplete'?/healthy idle renderer/.test(error.message):/physical contents or state differ/.test(error.message)),attack==='incomplete'?'refusal detects the missing completion':'refusal is actual final GPU identity mismatch');
       c.same({calls,used:q.usedIndex(),digest:q.vm.machineDigest(),oldOwners:observed[0].objects.size,newOwners:observed[1].objects.size},beforeBad,'failed isolated candidate cleans every allocation without live-native/source mutation');
       observed[0].setPhase('original-after-refusal');await send('source original still draws after rejected reconstruction',draw());
       // The successful source request advanced the native sequence: recapture the
@@ -140,10 +158,11 @@ async function oneEpoch(Wasm,compiler) {
   return row;
 }
 export async function runProductionRendererCheckpointCritic({WasmVirglSubmitProof,mode='all'}){
-  const modes=['contents','corrupt','epoch','abort','loss','save-race'];if(mode!=='all'&&!modes.includes(mode))throw Error('Unknown independent checkpoint mode');
+  const primary=['contents','corrupt','epoch','abort','loss','save-race'],guards=['pending','active','prefix','incomplete'];
+  const selectedModes=mode==='all'?primary:mode==='guards'?guards:[mode];if(!selectedModes.every(value=>primary.includes(value)||guards.includes(value)))throw Error('Unknown independent checkpoint mode');
   const compiler=await createVirglStandardStreamOutputShaderBridge(),report={status:'running',rows:[]};window.__productionCriticReport=report;
-  for(const selected of mode==='all'?modes:[mode]){
-    const row=selected==='epoch'?await oneEpoch(WasmVirglSubmitProof,compiler):await one(WasmVirglSubmitProof,compiler,selected,selected==='corrupt',selected==='abort',selected==='loss'?'loss':selected==='save-race'?'mutation':null);
+  for(const selected of selectedModes){
+    const row=selected==='epoch'?await oneEpoch(WasmVirglSubmitProof,compiler):await one(WasmVirglSubmitProof,compiler,selected,selected==='incomplete'?'incomplete':selected==='corrupt',selected==='abort',selected==='loss'?'loss':selected==='save-race'?'mutation':null,['pending','active','prefix'].includes(selected)?selected:null);
     const pin=await window.__recordProductionCriticRun(report.rows.length,JSON.stringify(row));report.rows.push({...pin,name:row.name,status:row.status,...(row.failure?{failure:row.failure}:{})});
   }
   report.status=report.rows.every(r=>r.status==='passed')?'passed':'failed';report.summary={status:report.status,runs:report.rows.length,failed:report.rows.filter(r=>r.status!=='passed')};return report;

@@ -51,6 +51,7 @@ try:
     run("web-build", ["make", "web-build"])
     run("physical-checkpoint", ["node", "tools/virgl-production/worker-checkpoint-browser.mjs", "--output", str(output/"physical-checkpoint")])
     run("independent-attacks", ["node", "tools/virgl-production/critic-fast-boots-renderer-checkpoint-browser.mjs", "--output", str(output/"independent-attacks")])
+    run("independent-guard-supplement", ["node", "tools/virgl-production/critic-fast-boots-renderer-checkpoint-browser.mjs", "--output", str(output/"independent-guards"), "--mode", "guards"])
     run("generation-negative", ["node", "tools/virgl-production/critic-fast-boots-renderer-checkpoint-browser.mjs", "--output", str(output/"generation-negative"), "--mode", "epoch", "--negative-control", "stale-epoch"], expected=1)
     negative = json.loads((output/"generation-negative/report.json").read_text())
     assert negative["status"] == "failed" and negative["browserErrors"] == {"console": [], "page": [], "requests": []}

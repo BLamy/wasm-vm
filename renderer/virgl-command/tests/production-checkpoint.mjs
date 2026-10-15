@@ -3,6 +3,7 @@ import {packet,join,shader,word} from '../../../tools/virgl-command/standard-ima
 import {qualifyVirglHost,createWorkerScanoutPresenter} from '../production.mjs';
 import {createVirglStandardStreamOutputShaderBridge} from '../../virgl-shader/standard.mjs';
 import {createJournalledProductionBridge,restoreProductionRenderer} from '../checkpoint.mjs';
+import {decodeCheckpointData} from '../checkpoint-codec.mjs';
 import {clear} from '../../../tools/virgl-dimensional-depth-surfaces/fixtures.mjs';
 import {entry,layout} from '../../../tools/virgl-stream-output-shaders/fixtures.mjs';
 
@@ -28,7 +29,7 @@ function observed(gl,events,control={}) {
     if((/^create/.test(name)||name==='fenceSync') && value && typeof value==='object')control.objects.add(value);if(/^delete/.test(name))control.objects.delete(args[0]);
     const delivered=name==='getQueryParameter' && args[1]===target.QUERY_RESULT_AVAILABLE && control.holdAvailability?false:value;
     if(delivered!==value)row.delivered=delivered;
-    if(name==='getQueryParameter' && args[1]===target.QUERY_RESULT_AVAILABLE && value===true && control.releaseAfterReady && !control.releaseScheduled){control.releaseScheduled=true;setTimeout(()=>{control.holdAvailability=false;},20);}
+    if(name==='getQueryParameter' && args[1]===target.QUERY_RESULT_AVAILABLE && value===true && control.holdAvailability && control.releaseAfterReadyReads){control.withheldReadyReads=(control.withheldReadyReads??0)+1;if(control.withheldReadyReads>=control.releaseAfterReadyReads){control.releaseScheduled=true;control.holdAvailability=false;}}
     if(name==='getBufferSubData')row.output=args.map(encode);return delivered;
   };}});
 }
@@ -110,10 +111,17 @@ export async function runProductionCheckpoint({WasmVirglSubmitProof}) {
     row.refusals=[];for(const [label,bytes,profile]of [['truncated',saved.subarray(0,-1),profiles[1]],['digest',saved.map((v,i)=>i===20?v^1:v),profiles[1]],['profile',saved,{...profiles[1],renderer:'incompatible renderer'}]]) {
       const count=row.native[1].length;await restoreProductionRenderer(bytes,{gl:gl[1],profile,shaderBridge:compiler,transport,presenter:presenter()}).then(()=>{throw Error(label+' was accepted');},error=>row.refusals.push({label,message:error.message}));c.equal(row.native[1].length,count,label+' refuses before physical allocations');
     }
-    controls[1].holdAvailability=true;controls[1].releaseAfterReady=true;
+    const capturedFrames=decodeCheckpointData(saved.subarray(16,saved.length-32)).frames.map(frame=>decodeCheckpointData(frame));
+    const recordedFalsePolls=capturedFrames.filter(frame=>frame.op==='query' && frame.parameter==='availability' && frame.value===false).length;
+    c.truth(recordedFalsePolls>0,'source journal retains unavailable polls');
+    // Every recorded false poll may consume one ready read. Withhold additional real-ready
+    // reads so reconstruction also reaches the recorded-true wait branch deterministically.
+    controls[1].holdAvailability=true;controls[1].releaseAfterReadyReads=recordedFalsePolls+8;
     const restored=await restoreProductionRenderer(saved,{gl:gl[1],profile:profiles[1],shaderBridge:compiler,transport,presenter:presenter()});
     c.equal(calls,before.calls,'reconstruction invoked no live-native DMA or completion');c.equal(q.usedIndex(),before.used,'reconstruction preserves original used ring');c.same(q.vm.machineDigest(),before.digest,'reconstruction preserves complete native digest');c.same([...q.read(q.base,4096)],before.ram,'reconstruction leaves native RAM untouched');
     c.truth(controls[1].releaseScheduled && row.native[1].some(e=>e.name==='getQueryParameter' && e.result===true && e.delivered===false),'fresh physical readiness was legally delayed before replay continued');
+    row.freshAvailabilitySchedule={recordedFalsePolls,withheldReadyReads:controls[1].withheldReadyReads};
+    c.equal(controls[1].withheldReadyReads,recordedFalsePolls+8,'bounded actual-ready withholding count');
     c.equal(row.frames.length,1,'historical replay never posts a live presenter frame');
     current=restored.bridge;c.ok(await current.activate(),'fresh physical scanout repair');await turn();
     row.restore=copy({...restored,bridge:undefined});
