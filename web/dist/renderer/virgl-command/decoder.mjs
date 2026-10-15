@@ -284,7 +284,11 @@ function decodeShader(p, handle) {
       "invalid-value", "Shader text must be printable ASCII without embedded NUL.");
     text += String.fromCharCode(byte);
   }
-  for (let index = declaredTextBytes - 1; index < (p.length - 5 - extra) * 4; index++) {
+  // Mesa copies strlen+1 bytes into dwords whose alignment suffix is unspecified.
+  // Production ignores only that suffix; the private canonical profiles retain
+  // their zero-padding rule. The declared terminal is required in every profile.
+  const checkedTextBytes = p.production ? declaredTextBytes : (p.length - 5 - extra) * 4;
+  for (let index = declaredTextBytes - 1; index < checkedTextBytes; index++) {
     p.require(p.view.getUint8(start + index) === 0, "invalid-value", "Shader terminal NUL and alignment padding must be zero.");
   }
   return { handle, stage, stageName: STAGE_NAMES[stage], declaredTextBytes, tokenCount, streamOutputCount, text, ...(p.streamOutput ? {streamOutputWords} : {}) };

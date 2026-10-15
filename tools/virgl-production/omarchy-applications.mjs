@@ -66,19 +66,28 @@ export async function verifyOmarchyApplications(page, command, output, options =
     const result=await run(hypr+'clients');assert.equal(result.exit,0);
     return JSON.parse(result.stdout);
   }
+  let nextGpuProbe=0;
+  async function gpuHealth() {
+    if(Date.now()<nextGpuProbe)return;nextGpuProbe=Date.now()+30000;
+    const gpu=await page.evaluate(()=>window.wvmDemo.gpuStats());
+    const state={epoch:gpu.epoch,qualified:gpu.qualified,lost:gpu.lost,poisoned:gpu.poisoned,disposed:gpu.disposed,counters:gpu.counters,lastFailure:gpu.lastFailure};
+    report.phases.push({kind:'gpu-health',state,time:Date.now()});await save();
+    assert.equal(state.qualified,true);assert.equal(state.lost,false);assert.equal(state.poisoned,false);assert.equal(state.disposed,false);
+    assert.equal(state.counters.failed,0,'actual application GPU work was refused; inspect the original GPU trace');
+  }
   async function waitWindow(predicate, timeout=300000) {
     const deadline=Date.now()+timeout;
-    while(Date.now()<deadline){const rows=await clients();const found=rows.find(predicate);if(found)return found;await sleep(1500);}
+    while(Date.now()<deadline){await gpuHealth();const rows=await clients();const found=rows.find(predicate);if(found)return found;await sleep(1500);}
     throw Error('Actual guest application window did not appear');
   }
   async function waitActive(predicate, timeout=300000) {
     const deadline=Date.now()+timeout;
-    while(Date.now()<deadline){const result=await run(hypr+'activewindow');assert.equal(result.exit,0);const active=JSON.parse(result.stdout);if(predicate(active))return active;await sleep(1500);}
+    while(Date.now()<deadline){await gpuHealth();const result=await run(hypr+'activewindow');assert.equal(result.exit,0);const active=JSON.parse(result.stdout);if(predicate(active))return active;await sleep(1500);}
     throw Error('Actual guest application did not acquire focus');
   }
   async function waitClosed(predicate, timeout=120000) {
     const deadline=Date.now()+timeout;
-    while(Date.now()<deadline){if(!(await clients()).some(predicate))return;await sleep(1500);}
+    while(Date.now()<deadline){await gpuHealth();if(!(await clients()).some(predicate))return;await sleep(1500);}
     throw Error('Actual guest application window did not close');
   }
   async function shot(label) {
@@ -98,7 +107,15 @@ export async function verifyOmarchyApplications(page, command, output, options =
   async function press(key){report.phases.push({kind:'trusted-key',key,time:Date.now()});await page.keyboard.press(key,{delay:100});await save();}
   async function type(text){report.phases.push({kind:'trusted-text',text,time:Date.now()});await typeGuestText(page,text);await save();}
   async function launchWriter() {
-    await press('Meta+Space');await sleep(1500);await type('libreoffice writer');await sleep(1500);
+    await press('Meta+Alt+Space');
+    const deadline=Date.now()+300000;let menu;
+    while(Date.now()<deadline){
+      const result=await run(hypr+'layers');assert.equal(result.exit,0);
+      menu=Object.values(JSON.parse(result.stdout)).flatMap(monitor=>Object.values(monitor.levels||{}).flat()).find(layer=>layer.namespace==='omarchy-menu'&&layer.alpha>0);
+      if(menu)break;await sleep(1500);
+    }
+    assert.ok(menu,'normal Omarchy Apps menu is actually mapped');
+    await type('libreoffice writer');await sleep(1500);
     await shot('writer-launcher');await press('Enter');
     const window=await waitWindow(row=>/libreoffice|soffice/i.test(row.class)&&row.size?.[0]>300);
     await waitActive(row=>row.pid===window.pid);await shot('writer-open');return window;
@@ -108,7 +125,7 @@ export async function verifyOmarchyApplications(page, command, output, options =
     const code=`from pathlib import Path;import base64,hashlib,json,zipfile;from xml.etree import ElementTree as ET;p=Path(${JSON.stringify(document)});assert p.stat().st_size<1048576;b=p.read_bytes();z=zipfile.ZipFile(p);assert z.getinfo('content.xml').file_size<2097152;print(json.dumps({'sha256':hashlib.sha256(b).hexdigest(),'bytes':len(b),'text':' '.join(ET.fromstring(z.read('content.xml')).itertext()),'base64':base64.b64encode(b).decode()}))`;
     const deadline=Date.now()+120000;let saved;
     while(Date.now()<deadline){
-      const result=await run('python3 -c '+"'"+code.replaceAll("'","'\\''")+"'");
+      await gpuHealth();const result=await run('python3 -c '+"'"+code.replaceAll("'","'\\''")+"'");
       if(result.exit===0){const candidate=JSON.parse(result.stdout);if(expectedText.every(text=>candidate.text.includes(text))){saved=candidate;break;}}
       await sleep(1500);
     }
@@ -150,7 +167,7 @@ export async function verifyOmarchyApplications(page, command, output, options =
     await shot('chromium-open');
     await press('Control+l');await type('http://127.0.0.1:8765/');await press('Enter');
     let ready;
-    for(let n=0;n<100;n++){ready=await run('cat /tmp/omarchyapps/ready.json');if(ready.exit===0)break;await sleep(1500);}
+    for(let n=0;n<100;n++){await gpuHealth();ready=await run('cat /tmp/omarchyapps/ready.json');if(ready.exit===0)break;await sleep(1500);}
     assert.equal(ready.exit,0,'native Chromium loaded and focused the guest loopback page');
     report.browserReady=JSON.parse(ready.stdout);assert.deepEqual(report.browserReady,{readyState:'complete',hasFocus:true,activeElement:'note',location:'http://127.0.0.1:8765/'});
     await shot('chromium-fixture');
@@ -168,7 +185,7 @@ export async function verifyOmarchyApplications(page, command, output, options =
     await press('Control+l');await type(document);await press('Enter');
     report.firstSave=await readDocument('first-save',[first]);assert.ok(report.firstSave.text.includes(first));
     await shot('writer-saved');await press('Control+q');await waitClosed(row=>/libreoffice|soffice/i.test(row.class));
-    await launchWriter();await press('Control+o');await sleep(1500);await type(document);await press('Enter');
+    await launchWriter();await press('Control+o');await sleep(1500);await press('Control+l');await type(document);await press('Enter');
     report.reopenedWindow=await waitWindow(row=>/omarchy-native-applications-42/i.test(row.title));
     await shot('writer-reopened');await press('Control+End');await press('Enter');await type('reopened and saved');await press('Control+s');await sleep(2000);
     report.secondSave=await readDocument('second-save',[first,'reopened and saved']);assert.ok(report.secondSave.text.includes(first));assert.ok(report.secondSave.text.includes('reopened and saved'));

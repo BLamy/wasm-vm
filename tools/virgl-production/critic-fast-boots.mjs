@@ -56,6 +56,7 @@ for(const filename of ['critic-fast-boots.mjs','critic-fast-boots-input.mjs','cr
   await fs.writeFile(path.join(output,'executed-harness',filename),bytes);
 }
 const applicationExecutables={};
+const applicationProofAssets=new Map();
 if(applicationWorkload){
   assert.ok(acceleratedGpu,'native application acceptance uses the qualified GPU route');
   const bytes=await fs.readFile(path.join(repo,'tools/virgl-production/omarchy-applications.mjs'));
@@ -70,6 +71,11 @@ if(applicationWorkload){
   }
   report.applicationImageInventory={path:inventoryFile,sha256:hash(inventoryBytes),executables:applicationExecutables};
   await fs.writeFile(path.join(output,'input-runtime-elf.json'),inventoryBytes);
+  for(const filename of ['renderer/virgl-command/tests/production-shader-padding.mjs','renderer/virgl-command/tests/omarchy-chromium-shader-padding.json']){
+    const body=await fs.readFile(path.join(repo,filename));applicationProofAssets.set('/'+filename,body);
+    report.harnessHashes[filename]=hash(body);
+    const copy=path.join(output,'executed-harness',filename);await fs.mkdir(path.dirname(copy),{recursive:true});await fs.writeFile(copy,body);
+  }
 }
 let browser, server, activePage, phase = 'inventory';
 const sourcePaths = ['index.html','main.js','loader.js','linux-worker.js','linux-worker-protocol.js',
@@ -138,6 +144,7 @@ for (const filename of sourcePaths.filter(f=>f.startsWith('artifacts'))) {
 }
 report.manifestPins=Object.fromEntries(manifestPins);
 const verifiedReleaseFiles = new Set();
+const localRuntimeBodies=new Map();
 let factoryUpload=null;
 const remoteChunks = new Map();
 const remoteAssets = new Map();
@@ -167,9 +174,20 @@ function checkPin(bytes,pin,pathname) {
   assert.equal(bytes.length,pin.size,pathname+' original extent');
   assert.equal(hash(bytes),pin.sha256,pathname+' original digest');
 }
-async function serveFile(response, filename, pathname) {
+async function serveFile(response, filename, pathname, record) {
   const stat = await fs.stat(filename);
   assert.ok(stat.isFile());
+  if(applicationWorkload&&/\.(?:m?js|wasm)$/.test(filename)){
+    if(!localRuntimeBodies.has(filename))localRuntimeBodies.set(filename,(async()=>{
+      const bytes=await fs.readFile(filename),relative=path.relative(web,filename);assert.ok(!relative.startsWith('..'));
+      const bodyPath=path.join('served-runtime',relative),copy=path.join(output,bodyPath);await fs.mkdir(path.dirname(copy),{recursive:true});await fs.writeFile(copy,bytes);
+      const receipt={path:relative,bodyPath,bytes:bytes.length,sha256:hash(bytes)};(report.localRuntimeSources??=[]).push(receipt);return {bytes,receipt};
+    })());
+    const frozen=await localRuntimeBodies.get(filename);assert.equal(frozen.bytes.length,stat.size);
+    Object.assign(record,{source:'frozen-local-runtime',...frozen.receipt});
+    response.writeHead(200,{'Content-Length':frozen.bytes.length,'Content-Type':filename.endsWith('.wasm')?'application/wasm':'text/javascript',
+      'Cache-Control':'no-store','Cross-Origin-Opener-Policy':'same-origin','Cross-Origin-Embedder-Policy':'require-corp'}).end(frozen.bytes);return;
+  }
   const pin = releasePins.get(pathname);
   if (pin && !verifiedReleaseFiles.has(filename)) {
     const bytes = await fs.readFile(filename);
@@ -189,6 +207,11 @@ if (!remoteUrl) server=createServer(async (request,response)=>{
   const record={phase,method:request.method,pathname,time:Date.now()}; report.requests.push(record);
   try {
     if(pathname==='/favicon.ico'){response.writeHead(204).end();record.status=204;return;}
+    if(applicationProofAssets.has(pathname)){
+      const bytes=applicationProofAssets.get(pathname);Object.assign(record,{status:200,source:'frozen-application-proof',bytes:bytes.length,sha256:hash(bytes)});
+      response.writeHead(200,{'Content-Type':pathname.endsWith('.json')?'application/json':'text/javascript','Cache-Control':'no-store',
+        'Cross-Origin-Opener-Policy':'same-origin','Cross-Origin-Embedder-Policy':'require-corp'}).end(bytes);return;
+    }
     const upload=pathname.match(/^\/__factory-gpu-pair\/(\d+)\/(\d+)$/);
     if(captureGpuPair&&request.method==='POST'&&upload){
       const offset=Number(upload[1]),total=Number(upload[2]);
@@ -257,7 +280,7 @@ if (!remoteUrl) server=createServer(async (request,response)=>{
     filename=path.join(web,pathname==='/app'||pathname==='/app.html'
       ? web.endsWith('/dist')?'app.html':'index.html' : pathname==='/index.html'?'index.html':pathname);
     assert.ok(filename.startsWith(repo+'/'), 'asset outside workspace');
-    await serveFile(response,filename,pathname);record.status=200;
+    await serveFile(response,filename,pathname,record);record.status=200;
   }catch(error){record.status=404;record.error=String(error);response.writeHead(404).end(String(error));}
 });
 if (server) await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
@@ -371,6 +394,14 @@ async function serviceOwnedControl(page) {
       const {verifyPublicDesktopInput} = await import('./critic-fast-boots-input.mjs');
       response.result = await verifyPublicDesktopInput(page, guestCommand, output,
         {...request.options, name: 'control-input-' + request.id});
+    } else if(request.kind==='retry-applications'){
+      assert.ok(applicationWorkload,'application retry belongs to this owned application capture');
+      const filename=path.join(repo,'tools/virgl-production/omarchy-applications.mjs'),bytes=await fs.readFile(filename),digest=hash(bytes);
+      const bodyPath='control-applications-'+request.id+'-source.mjs';await fs.writeFile(path.join(output,bodyPath),bytes);
+      response.source={head:execFileSync('git',['rev-parse','HEAD'],{cwd:repo,encoding:'utf8'}).trim(),bodyPath,sha256:digest,
+        scope:'Explicit incremental application proof; original failed report is retained. Caller must clean only its owned test fixture before retry.'};
+      const {verifyOmarchyApplications}=await import(pathToFileURL(filename).href+'?recording='+digest);
+      response.result=await verifyOmarchyApplications(page,guestCommand,output,{name:'control-applications-'+request.id,executables:applicationExecutables});
     } else if (request.kind === 'desktop-input') {
       assert.ok(Array.isArray(request.actions)&&request.actions.length<=100,'bounded owned-page diagnostic input');
       const {typeGuestText}=await import('./omarchy-applications.mjs');
@@ -579,6 +610,15 @@ try{
         started=Date.now();
         await page.reload();
       }
+      if(applicationWorkload){
+        report.applicationShaderPadding=await page.evaluate(async()=>{
+          const {runProductionShaderPadding}=await import('/renderer/virgl-command/tests/production-shader-padding.mjs');
+          const fixtures=await(await fetch('/renderer/virgl-command/tests/omarchy-chromium-shader-padding.json')).json();
+          return runProductionShaderPadding(fixtures);
+        });
+        assert.equal(report.applicationShaderPadding.status,'passed');
+        await fs.writeFile(path.join(output,phase+'-shader-padding.json'),JSON.stringify(report.applicationShaderPadding,null,2)+'\n');
+      }
       await waitActualReady(page,guest,started);
       const restoredMs=Date.now()-started;
       const command=guest==='node-alpine'
@@ -685,6 +725,7 @@ try{
     assert.equal(hash(await fs.readFile(path.join(web,filename))),digest,'source changed during capture: '+filename);
   if(candidateDirectory)assert.equal(hash(await fs.readFile(path.join(candidateDirectory,'manifest.json'))),
     candidateManifestHash,'candidate image manifest changed during capture');
+  for(const receipt of report.localRuntimeSources??[])assert.equal(hash(await fs.readFile(path.join(web,receipt.path))),receipt.sha256,'served runtime changed: '+receipt.path);
   report.status='passed';
 }catch(error){
   report.status='failed';report.failedPhase=phase;report.errors.push(error.stack||String(error));process.exitCode=1;
