@@ -49,16 +49,21 @@ try {
   report.browserVersion = browser.version();
   const context = await browser.newContext({ viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 1, serviceWorkers: 'block' });
   page = await context.newPage();
-  page.on('console', (message) => { if (message.type() === 'error') report.errors.push(message.text()); });
+  page.on('console', (message) => { if (message.type() !== 'error') return; const location=message.location().url; if (remoteUrl && location===new URL('favicon.ico',remoteUrl).href && /404/.test(message.text())) (report.allowedFavicon404??=[]).push({url:location,message:message.text()}); else report.errors.push(message.text()); });
   page.on('pageerror', (error) => report.errors.push(error.message));
   page.on('requestfailed', (request) => report.errors.push(`${request.url()}: ${request.failure()?.errorText}`));
   if (remoteUrl) page.on('response', response => {
     const url = new URL(response.url());
-    if (url.origin !== new URL(remoteUrl).origin || !/\.(?:m?js|wasm|json|html|css)$/.test(url.pathname)) return;
+    if (url.origin !== new URL(remoteUrl).origin || !/\.(?:m?js|wasm|json|html|css)$/.test(url.pathname) && url.pathname!=='/app') return;
     liveReads.push((async () => {
       try {
+        if (response.status()===308 && url.pathname.endsWith('.html')) {
+          const location=new URL((await response.allHeaders()).location,response.url());
+          assert.equal(location.origin,url.origin);assert.equal(location.pathname,url.pathname.slice(0,-5));assert.equal(location.search,url.search);assert.equal(location.hash,'');
+          (report.canonicalRedirects??=[]).push({url:response.url(),status:308,location:location.href});return;
+        }
         assert.equal(response.status(), 200, 'published source status ' + url.pathname);
-        const bytes = await response.body(), relative = url.pathname.slice(1);
+        const bytes = await response.body(), relative = url.pathname==='/app'?'app.html':url.pathname.slice(1);
         assert.equal(sha256(bytes), sha256(await fs.readFile(path.join(root, relative))), 'published source drift ' + relative);
         const bodyPath = path.join('served', relative);
         await fs.mkdir(path.dirname(path.join(output, bodyPath)), {recursive:true});

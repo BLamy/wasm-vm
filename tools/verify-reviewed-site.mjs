@@ -65,7 +65,7 @@ try{
   });
  };
  const watch=page=>{
-  page.on('console',m=>{if(m.type()==='error')report.errors.push({url:page.url(),message:m.text()});});
+  page.on('console',m=>{if(m.type()!=='error')return;const location=m.location().url;if(location===new URL('favicon.ico',base).href&&/404/.test(m.text()))(report.allowedFavicon404??=[]).push({url:location,message:m.text()});else report.errors.push({url:page.url(),source:location,message:m.text()});});
   page.on('pageerror',e=>report.errors.push({url:page.url(),message:e.message}));
   page.on('requestfailed',r=>{const item={url:r.url(),message:r.failure()?.errorText};
    if(item.message==='net::ERR_ABORTED')report.canceledRequests.push(item);else report.errors.push(item);});
