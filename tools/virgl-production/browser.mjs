@@ -116,6 +116,9 @@ try {
     if (mode==='accept') { const {runProductionAcceptance}=await import('./acceptance.mjs');await runProductionAcceptance(page,output); }
     if (mode==='recover') { const {runProductionRecovery}=await import('./recovery.mjs');await runProductionRecovery(page,output); }
     if (mode==='numeric') { const {runProductionNumeric}=await import('./numeric.mjs');await runProductionNumeric(page,output); }
+    const finalJit=await page.evaluate(()=>__production.controller.jitStats());
+    await fs.writeFile(path.join(output,'final-jit.json'),JSON.stringify(finalJit,null,2));
+    assert.ok(finalJit.executedBlocks>0&&finalJit.retiredViaJit>0,'actual compiled guest work executed');
     // Keep this owned live session available while the next guest command is prepared.
     await fs.writeFile(path.join(output,'ready'),String(Date.now()));
     if(process.env.VIRGL_INTERACTIVE_HOLD==='1')for(let i=0;i<1800;i++){
