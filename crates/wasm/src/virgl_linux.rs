@@ -29,17 +29,17 @@ impl WasmLinux {
             .map_err(JsError::new)?;
         // Only successful attachment stamps the ephemeral disk's checkpoint identity.
         // Ordinary software construction keeps its legacy behavior.
-        if inner.resume_base.is_none() {
-            if let Some(fetch) = &inner.fetch {
-                let base = fetch.manifest.base_hash();
-                let generation = inner.machine.overlay_generation();
-                inner.machine.set_snapshot_identity_with_generation(
-                    build_core_hash(),
-                    base,
-                    generation,
-                );
-                inner.resume_base = Some(base);
-            }
+        if inner.resume_base.is_none()
+            && let Some(fetch) = &inner.fetch
+        {
+            let base = fetch.manifest.base_hash();
+            let generation = inner.machine.overlay_generation();
+            inner.machine.set_snapshot_identity_with_generation(
+                build_core_hash(),
+                base,
+                generation,
+            );
+            inner.resume_base = Some(base);
         }
         *self.gpu_mailbox.try_borrow_mut().map_err(|_| reentrant())? = Some(mailbox);
         Ok(())
