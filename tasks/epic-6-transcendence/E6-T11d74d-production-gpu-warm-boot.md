@@ -3,9 +3,8 @@ id: E6-T11d74d
 epic: 6
 title: Publish and prove an accelerated Omarchy warm-boot artifact
 priority: 525.0270384
-status: blocked
+status: in-progress
 depends_on: [E6-T11d74c, E6-T11d74d1, E6-T11d74d2]
-blocked_on: [E6-T11d74d2]
 estimate: S
 risk: high
 capstone: false
@@ -82,3 +81,16 @@ Publication is blocked on ordered small fixes74d1 (scanout continuity) and74d2
 Warm publication edits are preserved in the named Git stash on the existing
 stack; this is not a replacement PR stack. Runtime changes require a new exact
 factory artifact and fresh acceptance before publication resumes.
+
+### 2026-10-15 — worker — publication resumes after both verified desktop fixes
+
+Scanout continuity is independently verified at612b1b7b and coherent production
+capacity at3027442a. Resume the preserved74d warm-publication work above PR567 on
+the existing native stack557. The new exact worker identity is520128f2417a3defe539eace3f4bb60896dbd1f393ee16a129d59ecd9aface6c;
+all earlier5dd286c9 factory pairs remain incompatible diagnostics and are never
+relabelled. Capture a genuine new cold Omarchy on the pinned image12, verify
+real top-bar clicks and continuous display opacity during trusted pointer
+movement, then build the warm/repeat/publication proof. Correct the recorded
+hidden-ancestor failed-restore UI and prove visible, hit-testable recovery
+choices. New artifact clock expectations come from its saved metadata rather
+than assuming a previously selected clock mode.
