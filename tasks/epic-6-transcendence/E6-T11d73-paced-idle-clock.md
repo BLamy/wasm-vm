@@ -3,7 +3,7 @@ id: E6-T11d73
 epic: 6
 title: Bound opt-in ICount idle jumps by monotonic host progress
 priority: 525.027036
-status: implemented
+status: verified
 depends_on: [E5-T26i, E6-T11d70]
 estimate: S
 risk: high
@@ -132,3 +132,77 @@ this explicit opt-in clock contract. The production launcher still selects
 wall-on-keyboard; D72's stock input remains refuted and blocked until this
 fresh verdict. No stock-input fix, deployment, full GPU offload completion or
 300MIPS result is claimed here.
+
+
+### 2026-10-15 — independent verifier
+
+VERDICT: verified
+
+- P1 selection/refusal — HELD. Predicted admission preserves architectural time,
+  phase and snapshot bytes; invalid source/mode/CLINT/private phase refuses before
+  replacement. Native/actual-Wasm fixtures hold. Clean private rows divider/residue
+  `0/0`, `7/7`, `7/8` each sample the new source zero times and preserve the old
+  wall policy, anchor and jump. After restoring only the test-invalid phase, an
+  actual retirement still uses the old source and reaches mtime133456. Citation:
+  worker archive `production-paced-idle-final-supplement01/private.stderr` and
+  independent `final-worker-authentication.json`.
+- P2–P7 idle, IRQ and lifecycle — HELD. Original WFI stalled/advancing/backward
+  traces hold literal0/50000/200000 and71M-offset controls, then execute the real
+  timer handler. Independent cache0/1 × initial0/`2^53+1234`, divider37 rows preserve
+  residue and exact time through busy77, replacing the host source, a pending
+  original MSIP, backward samples and exact1000-tick deadline/MTIP. All40 promoted
+  state/digest lines exactly match my original four-row run. With an earned host
+  ceiling10M exceeding deadline500000, the original GPU mailbox still holds
+  mtime0 until success/failure/reset/loss settlement, then500000: eight paced plus
+  eight unpaced controls. Rebase/restore fixtures exclude paused elapsed time;
+  snapshot fields contain no host epoch. Citations: independent
+  `novel-positive01/stderr`, `literal-state-and-browser-audit.json`, worker
+  `root/native-clock.stderr` and `production-paced-idle-final-gpu01/gpu.stderr`.
+- P8/P9 defaults, real Wasm and JIT — HELD. Predicted busy retirement remains
+  retire-derived and default ICount remains unchanged. Actual ordinary-Wasm
+  compiled control retires16384 at divider64 to mtime256,128 executed JIT blocks
+  and16258 retirements via JIT. Actual modern SBI_TIME/WFI runChunk returns within
+  its work budget before a future deadline and progresses on later host turns;
+  the explicit pause/rebase bound holds. Six Wasm API and11 integration fixtures
+  pass, with truthful lossless mode/time and rejection paths. Both default demo
+  suites are127/0 with no browser errors. Citations: worker `root/browser-clock/`
+  and `cold/acceptance/browser-clock/`, plus independent literal/browser audit.
+- P10 evidence/environment — HELD. Reopened all146 worker archive members and
+  authenticated145 identities, full13-gate hot and full-history `--no-local`
+  pristine-clone/build/13-gate cold at5537fbe6. The clone has no alternates, is
+  tracked-clean after build and uses the scrubbed command environment. The
+  clean73bd four-command and2192 three-command supplements change tests/harness
+  only: production lib equality after removing its exact cfg(test) declaration,
+  time/Wasm/dependency equality, and identical1744311-byte ordinary Wasm SHA-256
+  `d055c473b686ce543d8b87da68034e240ba0f66cf8aacbb482e03a405a64363f`
+  carry earlier results forward. Citations: independent
+  `frozen-hot-cold-authentication.json` and `final-worker-authentication.json`.
+- P11 novel/control — HELD. My original-Machine four-row literal attack passes.
+  Removing only the idle-ceiling call in a separate copied core compiles, then
+  fails101 at first WFI: observedmtime1000 versus predicted2; the original source
+  is unchanged. Exact commands, delta and raw failure are in independent
+  `novel-positive01/report.json`, `isolated-ceiling-control/source.delta` and
+  `novel-ceiling-control01/report.json`/`stderr`.
+- COVERAGE/SUITE — Every changed semantic boundary is exercised or explicitly
+  waived in `verdict-and-coverage.json`. Declarations/docs and the unreachable
+  public-invariant missing-source tuple are waived. The Wasm harness emits no
+  raw eprintln trace rows, so no raw native/Wasm logging equality is claimed;
+  the shared literal fixtures and real Wasm API/browser execution prove the
+  required states. Retain the promoted independent test SHA-256
+  `4fbf10ace355a5256caa57f88fd3b11481fe15b08df5962a0b4e7a43f9cac2be`,
+  private guard/GPU combination tests and `make verify-E6-T11d73`.
+
+Independent archive
+`evidence/virgl-production-paced-idle-clock/verifier/independent-paced-idle-clock-review.tar.gz`
+is 607608 bytes, SHA-256
+`496e53dbccffd922e1fd63287cf1b2038f62f3abd6c82ef360eadac35935a14f`; all118 members/117 identities reopened. Its paired JSON
+pins every member, the original pre-data predictions, both independent runs,
+raw traces/digests, exact copied-core delta and worker authentication. The
+canonical worker archive remains pinned at SHA-256
+`bea622c1049539743340a05e7dd874914e2b844da785b8df9bedd58e8df09c1c`.
+
+This verifies only the explicit opt-in native/Wasm primitive. No production JS
+selects it yet. D72's stock50ms input remains refuted/blocked pending its own
+selection and proof; parent, recovery, live deployment, complete guest GPU
+offload and300MIPS are not established by this verdict. Original diagnostic
+negatives and earlier component holds remain intact.
