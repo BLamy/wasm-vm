@@ -121,7 +121,8 @@ def install(source, output, archives, lock_path, selection, source_overlays, fin
     # Fail before copying or executing guest code if any archive identity is wrong.
     lock = json.loads(lock_path.read_text())
     records = preflight(lock, archives)
-    frozen = {str(path): digest(path) for path in (lock_path, selection, source_overlays, final_overlays)}
+    frozen = {str(path): digest(path) for path in (lock_path, selection, source_overlays, final_overlays,
+              Path(__file__), Path(__file__).with_name("assemble-omarchy.py"), Path(__file__).with_name("select-omarchy-packages.py"))}
     output.mkdir(mode=0o700)
     log = output / "commands.log"
     commands = []
@@ -177,6 +178,32 @@ def install(source, output, archives, lock_path, selection, source_overlays, fin
         run("chroot", root, "/usr/bin/ldconfig")
         for binary in ("/usr/lib/chromium/chromium", "/usr/lib/libreoffice/program/soffice.bin", "/usr/bin/node"):
             run("chroot", root, "/usr/lib/ld-linux-riscv64-lp64d.so.1", "--list", binary)
+        # A real absent shared library must fail the actual loader. Restore
+        # bytes and ownership before any final package admission/image build.
+        library = (root / "usr/lib/libuv.so.1").resolve()
+        if library.parent != root / "usr/lib" or not library.is_file():
+            raise ValueError("unexpected libuv dependency layout")
+        hidden = library.with_name(library.name + ".wasm-vm-negative")
+        if hidden.exists():
+            raise ValueError("dependency negative must use a fresh path")
+        before = digest(library)
+        metadata = library.stat()
+        library.rename(hidden)
+        try:
+            command = ["chroot", str(root), "/usr/lib/ld-linux-riscv64-lp64d.so.1", "--list", "/usr/bin/node"]
+            failure = subprocess.run(command, capture_output=True, text=True)
+            (output / "missing-dependency.log").write_text(failure.stdout + failure.stderr)
+            commands.append({"command": command, "exitCode": failure.returncode, "expected": "nonzero: libuv.so.1 missing",
+                             "log": "missing-dependency.log"})
+            if failure.returncode == 0 or "libuv.so.1" not in failure.stdout + failure.stderr:
+                raise ValueError("actual ELF loader did not reject the missing shared library")
+        finally:
+            hidden.rename(library)
+        restored = library.stat()
+        if digest(library) != before or (restored.st_ino, restored.st_uid, restored.st_gid, restored.st_mode) != (
+                metadata.st_ino, metadata.st_uid, metadata.st_gid, metadata.st_mode):
+            raise ValueError("dependency negative changed restored package identity")
+        run("chroot", root, "/usr/lib/ld-linux-riscv64-lp64d.so.1", "--list", "/usr/bin/node")
     finally:
         errors = []
         # GnuPG agents retain /dev/null and random-device descriptors. Stop
@@ -222,6 +249,7 @@ def install(source, output, archives, lock_path, selection, source_overlays, fin
                "packageCount": len(installed), "newSignedArchives": len(records), "commands": commands,
                "selectionSha256": digest(selection_out), "elfInventorySha256": digest(output / "runtime-elf.json"),
                "assemblySha256": digest(assembled / "etc/wasm-vm/omarchy-assembly.json"),
+               "priorityLoaderClosure": ["chromium", "libreoffice-fresh", "nodejs"], "missingSharedLibraryRejected": True,
                "desktopVerified": False, "emulatorExecutionVerified": False}
     (output / "receipt.json").write_text(json.dumps(receipt, indent=2) + "\n")
     print(json.dumps({"packageCount": len(installed), "newSignedArchives": len(records), "assembled": str(assembled)}), flush=True)

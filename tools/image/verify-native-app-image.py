@@ -20,6 +20,8 @@ def digest(path):
 
 
 def verify(args):
+    if subprocess.check_output(["git", "status", "--porcelain", "--untracked-files=no"], cwd=ROOT):
+        raise ValueError("frozen clean tracked source required")
     output = args.output.resolve()
     if output.exists():
         raise ValueError("new output directory required")
@@ -63,11 +65,15 @@ def verify(args):
         run(common + [args.tool_image, "python3", "/tools/build-omarchy-image.py", "/work/native/assembled", "/work/image",
                       "--selection", "/work/native/package-selection.json", "--overlays", "/tools/omarchy-apps/reviewed-overlays.json",
                       "--image-mib", "12288"])
+        run(common + [args.tool_image, "python3", "/tools/check-native-app-filesystem.py", "--image", "/work/image/omarchy.ext4",
+                      "--overlays", "/tools/omarchy-apps/reviewed-overlays.json", "--output", "/work/filesystem-metadata.json"])
         export = '''from pathlib import Path
 import json, shutil
 out=Path('/out')
 for src, dst in [('native/commands.log','install.log'),('native/receipt.json','install-receipt.json'),('native/package-selection.json','package-selection.json'),('native/runtime-elf.json','runtime-elf.json'),('native/assembled/etc/wasm-vm/omarchy-assembly.json','assembly.json'),('image/commands.log','build.log'),('image/build-receipt.json','build-receipt.json')]:
  shutil.copyfile(Path('/work')/src,out/dst)
+shutil.copyfile('/work/filesystem-metadata.json',out/'filesystem-metadata.json')
+shutil.copyfile('/work/native/missing-dependency.log',out/'missing-dependency.log')
 source=Path('/work/image/omarchy.ext4')
 with source.open('rb') as src, (out/'omarchy.ext4').open('xb') as dst:
  for block in iter(lambda:src.read(1024*1024),b''):
@@ -84,15 +90,25 @@ with source.open('rb') as src, (out/'omarchy.ext4').open('xb') as dst:
         chunks = output / "chunks"
         chunks.mkdir()
         hashes = []
+        image_hash = hashlib.sha256()
         with (output / "omarchy.ext4").open("rb") as stream:
             for block in iter(lambda: stream.read(256 * 1024), b""):
+                image_hash.update(block)
                 pin = hashlib.sha256(block).hexdigest()
                 hashes.append(pin)
                 path = chunks / (pin + ".bin")
                 if not path.exists():
                     path.write_bytes(block)
+        if image_hash.hexdigest() != build["image"]["sha256"]:
+            raise ValueError("fresh image changed during chunk creation")
         manifest = {"version": 1, "image_len": build["image"]["size"], "chunk_size": 256 * 1024, "layout": "split", "chunks": hashes}
         (output / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+        # These are only this run's owned intermediates. Keep the accepted
+        # package assembly, host image, chunks and receipts for the verifier.
+        run(["docker", "run", "--rm", "--network", "none", "-v", volume + ":/work", args.tool_image,
+             "python3", "-c", "import shutil;from pathlib import Path;shutil.rmtree('/work/native/transaction-root');shutil.rmtree('/work/image/root');Path('/work/image/omarchy.ext4').unlink()"])
+        if subprocess.check_output(["git", "status", "--porcelain", "--untracked-files=no"], cwd=ROOT):
+            raise ValueError("acceptance changed frozen tracked source")
         report.update(status="passed", image=build["image"], manifestSha256=digest(output / "manifest.json"),
                       chunkCount=len(hashes), uniqueChunks=len(set(hashes)))
         save()
