@@ -126,7 +126,7 @@ export async function verifyOmarchyApplications(page, command, output, options =
     assert.equal(report.browserSubmission.message,note);assert.equal(report.browserSubmission.clickTrusted,true);
     assert.ok(report.browserSubmission.inputTrusted.length>=note.length);assert.ok(report.browserSubmission.inputTrusted.every(value=>value===true));
     report.chromiumGpu=await shot('chromium-submitted');
-    await press('Control+Shift+q');await sleep(1500);
+    await press('Control+Shift+w');await sleep(1500);
     assert.ok(!(await clients()).some(row=>/chromium/i.test(row.class)),'browser closes through trusted input');
 
     report.writer=await identity(await launchWriter());assert.match(report.writer.process.stdout,/\/usr\/lib\/libreoffice\/program\/soffice.bin/);
