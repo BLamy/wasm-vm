@@ -3,7 +3,7 @@ id: E6-T11d74
 epic: 6
 title: Default Omarchy launches to the existing software warm snapshot
 priority: 525.027039
-status: pending
+status: in-progress
 depends_on: [E6-T11d70, E6-T11d71, E6-T11d72, E6-T11d73]
 estimate: S
 risk: medium
