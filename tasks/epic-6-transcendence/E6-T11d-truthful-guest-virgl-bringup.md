@@ -3,7 +3,7 @@ id: E6-T11d
 epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
-status: implemented
+status: verified
 depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47, E6-T11d48, E6-T11d49, E6-T11d50, E6-T11d51, E6-T11d52, E6-T11d53, E6-T11d54, E6-T11d55, E6-T11d56, E6-T11d57, E6-T11d58, E6-T11d59, E6-T11d60, E6-T11d61, E6-T11d62, E6-T11d63, E6-T11d64, E6-T11d65, E6-T11d66, E6-T11d67, E6-T11d68, E6-T11d69a, E6-T11d69b, E6-T11d70, E6-T11d71, E6-T11d74d]
 estimate: S
 risk: high
@@ -1272,7 +1272,7 @@ internal prefix `production-paced-policy-private-window04/`. It binds actual
 Mesa26.2.2 GLES3 VirGL,768literal pixels,1000cube frames,13handshake families,
 Hyprland/Foot and no software DRI. Original full GPU log SHA256
 `a5aafe364806b475cbb7c437a31c26c6ef0e58ebe0d0b14b7672994645f2d6df`
-contains31516DRAWs and1347fenced submits. The earlier cube-state point has
+contains31516DRAWs and1347fenced submits. The later final-state point has
 31192draws+1pending and is not described as drained. Guest digest is
 `d27ddf4d5d4b6e6007ed6836750fbbaf31500d87a74f7747bd8431f83fe1faaa`.
 Original report, acceptance, Mesa probe, cube state, full trace, QEMU/reference
@@ -1305,3 +1305,61 @@ This does not claim300MIPS, arbitrary host support, complete Omarchy application
 or recovery/context-loss survival. E6-T11e and the user's explicit Chromium/
 LibreOffice/full-compatible-application image remain separate work. Fresh
 `production_boundary_critic` receives this exact capsule/diff and owns the verdict.
+
+
+### 2026-10-15 — independent verifier — production parent closure
+
+VERDICT: verified
+
+Fresh adversarial review of worker `9077193b`, metadata source `423edd8c`;
+no production implementation edits. This verdict closes qualified production
+VirGL/Mesa/compositor bring-up and its useful published GPU warm path. It does
+not close recovery, the newly requested application image or300MIPS.
+
+- **Custody/source — HELD.** Rehashed all25 unique parent capsule members and
+  the exact38 inherited path/size/hash tuples. Preserved prepared map0b8c766b
+  and original independent cap-negative archiveff5bc0b9 are embedded unchanged.
+  Portable independent replay resolves the original raw records from committed
+  D72/embedded archives with **zero ignored scratch inputs read**. All74 parent
+  dependencies are verified. Serializer4c05de5b, fixed independent C oracle5d684396
+  and decoder804134a7 match D72/e17; current main, loader, build identity and
+  ordinary Wasm7a99aa33 match frozen847. Native/RAM/renderer/clock/scanout/capacity
+  changes carry only from their named verified successors.
+- **Actual guest — HELD.** Durable D72 `production-paced-policy-private-window04/`
+  proves VirGL-only Mesa26.2.2 GLES3,29 actual numeric limits,15 multisample
+  allocations/resolve,768 literal pixels,1000 cube frames and Hyprland/Foot.
+  The13-family handshake and raw GPUa5aafe36/guestd27ddf4d remain exact. Corrected
+  one worker-log citation: cube after6009draws/delta6006; the later **final-state**
+  snapshot has31192draws+1ready-pending; full trace31516DRAWs/1347fenced submits.
+  No drained-owner claim follows. Original sealed worker prose remains intact.
+- **Publication/regression — HELD.** Fresh74d `2f16a755` and its exact worker
+  f8b2fd2f/verifier8bd65228 capsules carry their full physical/source coverage.
+  Independently authenticated original847 full-pristine16 gates and923 build,
+  actual HTTPS initial/repeat pair2aa/worker06622 with new real Mesa seeds5/2,
+  each+5completed/+4draws/+256output bytes, trusted markers42/84, usable bar
+  workspace effects and healthy final GPU. All10 software phases/default127/0
+  pass. Site14 separately passes8 local+8HTTPS flows. HTTPS12 remains failed
+  at its site recorder; its three exit0 runtime components compose with site14.
+- **Attacks/coverage — HELD.** Equal-count reference substitution fails the
+  independent exact-set oracle. An owned isolated one-byte archive change fails
+  the unchanged authenticator at its digest assertion, exit1 before references;
+  the original is unchanged. Original cap-byte284=3 versus independent oracle4
+  retains healthy0/changed101. Python tracing executes all31 new helper lines;
+  no changed statement is unexecuted. Other new paths are authenticated
+  declarative metadata/status/index/claim text. No new runtime diff exists;
+  unchanged held native/cold/cube evidence was not needlessly restarted.
+
+Full predictions, citations, coverage and preserved setup correction are in
+`evidence/virgl-production-final-closure/verifier/VERDICT.md` and
+`review.tar.gz` (2376752bytes,32members/31indexed files), SHA256
+`024aba3526514193e57b9668a166acdda09e7c3e21dcc5e6d526a1e2dfaaf2eb`;
+manifest SHA256
+`3fd6ed3cc56872be21910e25cf28d7627896e134e184289ae5cd1f0777462436`.
+Every member was reopened and rehashed. Its paired receipt is adjacent.
+SUITE: retain the portable read-only verifier `authenticate.py`, exact-reference
+omission check, archive negative and existing promoted physical/ABI/queue tests.
+Commands: `python3 evidence/virgl-production-final-closure/verifier/authenticate.py
+--repo <checkout> --output <audit.json>`; worker helper line tracing and isolated
+archive negative; Python AST; policy/queue. Overall GPU recovery/full-offload,
+arbitrary host/application compatibility, Chromium/LibreOffice and300MIPS are
+not certified. E6-T11e and the application-image request remain separate work.

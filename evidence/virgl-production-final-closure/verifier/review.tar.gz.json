@@ -1,0 +1,12 @@
+{
+  "schema": "independent-parent-closure-capsule-receipt-v1",
+  "path": "evidence/virgl-production-final-closure/verifier/review.tar.gz",
+  "bytes": 2376752,
+  "sha256": "024aba3526514193e57b9668a166acdda09e7c3e21dcc5e6d526a1e2dfaaf2eb",
+  "members": 32,
+  "indexedFiles": 31,
+  "allMemberBodiesReopenedAndRehashed": true,
+  "manifestSha256": "3fd6ed3cc56872be21910e25cf28d7627896e134e184289ae5cd1f0777462436",
+  "verdict": "verified",
+  "scope": "Qualified production VirGL/Mesa/compositor/GPU warm publication; not recovery/apps/300MIPS"
+}
