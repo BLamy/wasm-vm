@@ -3,9 +3,8 @@ id: E6-T11d71
 epic: 6
 title: Preserve original keyboard host waits across tickless guest idle
 priority: 525.027038
-status: blocked
-blocked_on: [E6-T11d72]
-depends_on: [E6-T11d70]
+status: in-progress
+depends_on: [E6-T11d70, E6-T11d72, E6-T11d73]
 estimate: S
 risk: high
 capstone: false
@@ -112,3 +111,14 @@ userspace interactive timing. Ordered S/high `E6-T11d72` owns an explicit
 accelerated-desktop clock policy and its actual browser measurements;71 may
 reuse that final full parent proof after its fresh verdict. This leaves no
 unverified native dependency for72, which reuses verified E5-T26i timekeeping.
+
+### 2026-10-15 — worker — resume for incremental proof closure
+
+D72 is independently verified at `8c902c7076fcb6eee3075abc42b4a3a662558a93`;
+D73 is independently verified at `7e2739f28b9c539be894ecd8f693cf743c35258e`.
+Resume this native guard task for evidence-only closure. The final D72 original
+stock, software, private Mesa/Hyprland, pristine clone and valid-frame carry
+close the previously missing desktop proof. Native guard/lifecycle predictions
+and their negative control remain HELD within the unchanged boundary. No new
+runtime edit, broad suite, cold clone or long stock boot is required by the
+incremental rule. The original native-only repeated-t run remains failed.
