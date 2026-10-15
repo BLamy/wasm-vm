@@ -79,6 +79,7 @@ try:
     run("proof-wasm", ["wasm-pack", "build", "crates/wasm", "--target", "web", "--out-dir", "../../target/virgl-production/pkg", "--features", "virgl-renderer,virgl-control-proof"])
     run("physical-checkpoint-regression", ["node", "tools/virgl-production/worker-checkpoint-browser.mjs", "--output", str(output/"physical-checkpoint")])
     run("independent-pair-attacks", ["node", "tools/virgl-production/critic-paired-worker-browser.mjs", str(output/"independent-attacks"), "healthy"])
+    run("independent-release-readiness", ["node", "tools/virgl-production/critic-paired-worker-browser.mjs", str(output/"release-readiness"), "release-readiness"])
     run("independent-disk-negative", ["node", "tools/virgl-production/critic-paired-worker-browser.mjs", str(output/"disk-negative"), "no-disk-witness"], expected=1)
     negative_dir = output/"disk-negative"
     negative = json.loads((negative_dir/"report.json").read_text())

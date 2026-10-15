@@ -10,7 +10,7 @@ import {fileURLToPath,pathToFileURL} from 'node:url';
 const repo=path.resolve(process.cwd());
 const output=path.resolve(process.argv[2]),mode=process.argv[3]??'healthy';
 const driverBytes=await fs.readFile(fileURLToPath(import.meta.url));
-assert.ok(['healthy','no-disk-witness'].includes(mode));await fs.mkdir(output,{recursive:true});await fs.writeFile(path.join(output,'driver-executed.mjs'),driverBytes);
+assert.ok(['healthy','no-disk-witness','release-readiness'].includes(mode));await fs.mkdir(output,{recursive:true});await fs.writeFile(path.join(output,'driver-executed.mjs'),driverBytes);
 const sha=b=>createHash('sha256').update(b).digest('hex'),sources=new Map(),served=new Map(),pairs=new Map(),errors=[];
 async function freeze(directory){for(const entry of await fs.readdir(path.join(repo,directory),{withFileTypes:true})){
   const name=path.posix.join(directory,entry.name);
@@ -55,7 +55,7 @@ const server=createServer(async(req,res)=>{
     else if(name==='/boot.json'){
       const pairName=url.searchParams.get('pair'),pair=pairName?pairs.get('/pair/'+pairName):null;
       assert.ok(!pairName||pair,'unknown saved pair');
-      bytes=Buffer.from(JSON.stringify({artifacts:{kernel:{url:'/kernel.bin',size:kernel.length,sha256:sha(kernel)},...(pair?{gpuCheckpoint:{url:'/pair/'+pairName,size:pair.length,sha256:sha(pair)}}:{})}}));type='application/json';
+      bytes=Buffer.from(JSON.stringify({artifacts:{kernel:{url:'/kernel.bin',size:kernel.length,sha256:sha(kernel)},...(pair&&url.searchParams.get('entry')!=='missing'?{gpuCheckpoint:{url:'/pair/'+pairName,size:pair.length+(url.searchParams.get('entry')==='size'?1:0),sha256:url.searchParams.get('entry')==='hash'?'0'.repeat(64):sha(pair)}}:{})}}));type='application/json';
     }else if(pairs.has(name))bytes=pairs.get(name);
     else if(sources.has(name)){source=sources.get(name);bytes=source.bytes;type=name.endsWith('.wasm')?'application/wasm':'text/javascript';}
     else throw Error('unknown frozen path '+name);
@@ -85,7 +85,7 @@ try{
     const {createKeyboardBridge,createWasmKeyboardAdapter,attachKeyboardBridge}=await import('/src/input/keyboard.js');
     const {createPointerBridge,createWasmPointerAdapter,attachPointerBridge}=await import('/src/input/pointer.js');
     const canvas=document.querySelector('#display');
-    globalThis.__startPair=async (pair,{lossObserver=false,stopOnApplied=false,extra={}}={})=>{
+    globalThis.__startPair=async (pair,{lossObserver=false,stopOnApplied=false,extra={},retireStatus='drawn',recordAllGpu=false}={})=>{
       const previous=globalThis.__paired;if(previous){for(const detach of previous.detach)detach();if(previous.controller)await previous.controller.stop();previous.worker.terminate();}
       const worker=new Worker(lossObserver?'/critic-loss-worker.js?phase='+((lossObserver===true)?'replay':lossObserver):'/linux-worker.js',{type:'module'});if(lossObserver)await new Promise(resolve=>worker.addEventListener('message',function ready(event){if(event.data?.criticObserverReady){worker.removeEventListener('message',ready);resolve();}}));const presentation=new PresentationController(canvas,{scheduleFrames:false}),decoder=new TextDecoder();
       const p=globalThis.__paired={worker,presentation,serial:'',errors:[],states:[],cursor:[],frames:[],trusted:[],events:[],detach:[],retirements:[],wire:[]};
@@ -94,11 +94,11 @@ try{
       const client=createLinuxWorkerClient(worker,{bootTimeoutMs:90000,
         onOutput(bytes){p.serial+=decoder.decode(bytes,{stream:true});document.querySelector('#serial').textContent=p.serial.slice(-6000);},
         onState(value){p.states.push(value);},onCursorState(value){p.cursor.push(value);},onError(error){p.errors.push(String(error));},
-        onGpuEvent(event){if(event.type==='context-lost')p.errors.push('context lost');if(['checkpoint-loaded','context-lost','loss-injected','qualified'].includes(event.type))p.events.push(event);if(event.type==='checkpoint-loaded')appliedResolve({forbiddenNativeApplication:true,event});},
+        onGpuEvent(event){if(event.type==='context-lost')p.errors.push('context lost');if(['checkpoint-loaded','context-lost','loss-injected','qualified'].includes(event.type)||(recordAllGpu&&['pump','control'].includes(event.type)))p.events.push(event);if(event.type==='checkpoint-loaded')appliedResolve({forbiddenNativeApplication:true,event});},
         onDisplayFrame(frame){if(frame.onRetired)p.retirements.push(frame.onRetired);if(frame.type==='clear'){presentation.clear();return;}requestAnimationFrame(()=>{try{
           const before=presentation.snapshot().drawnPresents,accepted=presentation.present(frame),after=presentation.snapshot();
-          p.frames.push({token:frame.token??frame.retirementToken,accepted,drawn:after.drawnPresents>before});
-          frame.onRetired?.(accepted&&after.drawnPresents>before?'drawn':'failed',{backend:after.backend});
+          p.frames.push({token:frame.token??frame.retirementToken,accepted,drawn:after.drawnPresents>before,retired:retireStatus});
+          frame.onRetired?.(retireStatus==='drawn'&&accepted&&after.drawnPresents>before?'drawn':'failed',{backend:after.backend});
         }catch(error){p.errors.push(String(error));frame.onRetired?.('failed');}});},
       });
       const start=performance.now();const boot=client.boot({mode:'chunked',manifestUrl:'/boot.json'+(pair?'?pair='+pair:''),imageManifestUrl:'/guest/manifest.json',baseUrl:location.origin+'/guest/',bootProfileUrl:null,persist:false,bootSnapshot:!!pair,ramMib:64,bootargs:'console=ttyS0',virgl:true,gpuTrace:true,guestClock:'icount',icountDivider:64,interactiveClock:'paced-on-keyboard',jit:true,quantum:10000,...extra});if(stopOnApplied){const outcome=await Promise.race([boot.then(controller=>({controller}),error=>({error:String(error.message||error)})),applied]);if(outcome.forbiddenNativeApplication){p.forbiddenNativeApplication=outcome;worker.terminate();return outcome;}if(outcome.error){worker.terminate();throw Error(outcome.error);}p.controller=outcome.controller;}else p.controller=await boot;p.bootMs=performance.now()-start;
@@ -121,6 +121,22 @@ try{
   const cold=await state('source-green');assert.ok(!cold.serial.includes('PAIR_FAIL'));assert.deepEqual(cold.pixel,[0,255,0,255]);assert.deepEqual(cold.errors,[]);
   report.captureA=await page.evaluate(()=>__savePair('a'));
   assert.deepEqual(report.captureA.before,report.captureA.after,'save drains without clock/retirement progress');
+  if(mode==='release-readiness'){
+  report.releaseCases=[];
+  for(const [entry,pattern] of [['missing',/not published/],['size',/release integrity differs/],['hash',/release integrity differs/]]){
+    const result=await page.evaluate(async entry=>{try{await __startPair('a',{extra:{manifestUrl:'/boot.json?pair=a&entry='+entry}});return {accepted:true};}catch(error){return {accepted:false,error:String(error.message||error),serial:__paired.serial,states:__paired.states,events:__paired.events,errors:__paired.errors};}},entry);
+    assert.equal(result.accepted,false);assert.match(result.error,pattern);assert.equal(result.serial,'');assert.equal(result.events.some(e=>e.type==='checkpoint-loaded'),false);report.releaseCases.push({entry,result});
+  }
+  report.readiness=await page.evaluate(async()=>{
+    const start=performance.now(),pending=__startPair('a',{retireStatus:'failed',recordAllGpu:true}).then(result=>({ready:true,result}),error=>({error:String(error.message||error)}));
+    const outcome=await Promise.race([pending,new Promise(resolve=>setTimeout(()=>resolve({waiting:true}),2500))]);
+    const p=__paired,value={outcome,observedMs:performance.now()-start,serial:p.serial,states:p.states,events:p.events,frames:p.frames,errors:p.errors,scope:'All actual frames are painted but receipts explicitly report failed; bounded observer then terminates its owned candidate without a product timeout claim'};p.worker.terminate();return value;
+  });
+  assert.equal(report.readiness.outcome.waiting,true,'must not publish warm ready without a drawn receipt');assert.equal(report.readiness.errors.length,0);
+  assert.ok(report.readiness.frames.length>1&&report.readiness.frames.every(f=>f.retired==='failed'),'fresh actual frames were deliberately retired failed');
+  assert.ok(report.readiness.events.some(e=>e.type==='pump'&&e.result?.status==='completed'&&e.result?.result?.draws?.length>0),'actual new native GPU draw completion occurred during the waiting window');
+  assert.ok(report.readiness.events.some(e=>e.type==='checkpoint-loaded'),'candidate applied authenticated native state before fresh-frame readiness test');
+  }else{
   await page.evaluate(()=>__paired.controller.resume());await page.locator('#display').focus();await page.keyboard.press('b',{delay:50});
   await page.waitForFunction(()=>__paired.serial.includes('PAIR_KEY_BLUE')&&__paired.serial.includes('PAIR_FRAME_Z'),null,{timeout:15000});
   await page.waitForTimeout(30);report.captureB=await page.evaluate(()=>__savePair('b'));assert.deepEqual(report.captureB.before,report.captureB.after);
@@ -164,6 +180,7 @@ try{
     report.captureLossBoot=await page.evaluate(()=>__startPair('a',{lossObserver:'capture'}));assert.equal(report.captureLossBoot.restored,true);
     report.lossSave=await page.evaluate(async()=>{const p=__paired;await p.controller.pause();try{const bytes=await p.controller.saveGpuCheckpoint();return {accepted:true,bytes:bytes.length,events:p.events,errors:p.errors};}catch(error){return {accepted:false,error:String(error.message||error),events:p.events,errors:p.errors};}});assert.equal(report.lossSave.accepted,false,'physical loss while checkpoint hashing must refuse publication');assert.match(report.lossSave.error,/lost|checkpoint|renderer|GPU/i);assert.ok(report.observations.some(e=>e.text.includes('CRITIC_CONTEXT_LOSS_TRIGGER')&&e.text.includes('capture')&&e.text.includes('true')),'actual native capture context was lost');
     report.contextLossObserver.captureScope='Real context loss after original saveGpuCheckpoint began, at the first unchanged native digest promise; not an explicit pending command-fence proof';
+  }
   }
   await page.screenshot({path:path.join(output,'browser.png'),fullPage:true});assert.deepEqual(errors,[]);report.status='passed';
 }catch(error){report.status='failed';report.failure={message:error.message,stack:error.stack};process.exitCode=1;console.error(error.stack);
