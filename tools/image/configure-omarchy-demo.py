@@ -53,10 +53,7 @@ def compatible_application_bindings(text):
         '"obsidian"': "obsidian", '"omawrite"': "omawrite", '"1password"': "1password",
     }
     counts = {name: 0 for name in commands}
-    result = ["-- Optional native applications use their actual guest PATH.\n",
-              "local function application_present(name)\n",
-              '  local status = os.execute("command -v " .. name .. " >/dev/null 2>&1")\n',
-              "  return status == true or status == 0\nend\n"]
+    result = ["-- Optional native applications use Omarchy's actual guest PATH helper.\n"]
     for line in text.splitlines(keepends=True):
         matching = [name for name in commands if name in line and "o.bind(" in line]
         if len(matching) > 1:
@@ -64,7 +61,7 @@ def compatible_application_bindings(text):
         if matching:
             name = matching[0]
             counts[name] += 1
-            result.append(f'  if application_present("{commands[name]}") then\n')
+            result.append(f'  if o.cmd_present("{commands[name]}") then\n')
             result.append("  " + line)
             result.append("  end\n")
         else:
