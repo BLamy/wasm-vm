@@ -3,7 +3,7 @@ id: E6-T11d71
 epic: 6
 title: Preserve original keyboard host waits across tickless guest idle
 priority: 525.027038
-status: implemented
+status: verified
 depends_on: [E6-T11d70, E6-T11d72, E6-T11d73]
 estimate: S
 risk: high
@@ -169,3 +169,77 @@ Artifact: `evidence/virgl-production-keyboard-host-wait/worker/keyboard-host-wai
 and all their members reopened. D72 verifier8c902c70 and D73 verifier7e2739f2
 remain the independent authority for unchanged components. Fresh D71 verdict
 is required before the parent can resume.
+
+
+### 2026-10-15 — verifier — original host-wait evidence closure
+
+VERDICT: verified
+
+- **Original P1–P4 native predictions — HELD by unchanged evidence.** Staged,
+  pending and delivered keyboard makes block only the WFI idle jump; original
+  break/release-all/reset settlement restores it. Quiet, absent, refused and
+  dropped controls still jump; normal128 instruction retirements advance2ticks.
+  Renewed pristine e17 native recording contains48 lifecycle,4 retirement,
+  8 held/quiet and4 independent two-key rows, all literal expectations intact.
+  Original WFI digest `dd8c58e8d6e657e4`,128-retirement digest
+  `f1ab8763a78f2b25` and two-key259-retirement digest `5af09e729e0aa754` bind
+  these points. Original MMIO/DMA used extents and bytes, multiple initial times,
+  deadlines and cached/uncached schedules remain independently held.
+- **Novel attack / negative control — HELD.** Carry the original four two-key
+  rows and healthy12-row isolated run. Removing only the original keyboard wait
+  condition compiled and exited101: `production_keyboard_wfi_critic.rs:215`
+  observed500037 instead of39, with four original held-key refusals also failing.
+  Raw original sources, predictions and output remain embedded in the591-member
+  native archive SHA-256
+  `a5d28ab63f64cdffbc67fb2871f90dd3f8e595a5a82272be74eae37702143c5d`.
+  This held attack was not rerun or weakened.
+- **C1 / P5 source and timing dependency — HELD.** Independently compared exact
+  `awaiting_host_key_release`, `external_keyboard_io_pending` and
+  `after_wfi_retire` function bodies: unchanged from original5c to frozen61.
+  Entire input/mod.rs and independent critic test are unchanged. All current
+  native/renderer/dependency code equals independently verified D73. Its10
+  paced-mode original transport rows preserve the keyboard wait while the host
+  ceiling exceeds the deadline; break/reset restores idle progress. D73 is the
+  verified timing dependency, not an unreviewed change folded into this task.
+- **C2–C3 / P6–P9 composed final acceptance — HELD.** D72 verifier8c902c70
+  authenticates all10 software initial/repeat/persistence phases, actual
+  Mesa768pixel/index83/cube1000/Hyprland/Foot/13-family handshake, and original
+  stock UID1000 package bar and unchanged nominal50ms physical typing. Sixty
+  trusted transitions/62 original frames create the absent-before marker at
+  serial5577, with guest cursor640,400→430,412 and finalGPU657/657,308draws,
+  no pending/failed/cancelled job or worker/page errors. The actual five-second
+  pause and measured retirement-aware bound hold. The new pure ABI guard accepts
+  all62 original integer frames; stripping its five lines restores the original
+  e17 loader exactly. Final61 hot and new pristine own-build input proof supplies
+  89 tests,17 actual worker rows and default127/0, ordinary Wasm
+  `d055c473b686ce543d8b87da68034e240ba0f66cf8aacbb482e03a405a64363f`.
+  Required native and desktop observations are thereby closed by explicit
+  incremental component custody, without inventing another full successful
+  wrapper or repeating unchanged long boots.
+- **C4–C5 custody and preserved negatives — HELD.** Rehashed/reopened every
+  closure member:23 members/22 identities; all eight source copies match61 and
+  the scoped product diff is empty. Reopened all five referenced proof archives,
+  including the raw native archive's590 paired identities. Worker closure
+  archive SHA-256 is
+  `c37868db24a5938b2592cabfa34605497a5cca927271b44fd0f77df8c2ccd4df`.
+  Original D71 repeated-t/navigation archive remains exact
+  `a77ed05d56d25a88502a342a625abf2bb6a1b850d5307b9e4fc13c730ab4fec5`;
+  native guard alone was insufficient. D72 full-cold/private timeout and stock
+  outer task-option failures remain failed. The pacing dependency's later valid
+  recording does not relabel them or establish exclusive causation.
+- **COVERAGE / SUITE.** No native runtime hunk changed during this closure;
+  original predicate/after-WFI paths and lifecycle/retirement controls remain
+  executed under their held source boundary. Keep both original critic tests
+  and worker lifecycle tests. The independent closure ledger maps C1–C5 and
+  each changed boundary; there is no remaining required D71 proof gap.
+  Seal `evidence/virgl-production-keyboard-host-wait/verifier/final-closure/independent-keyboard-host-wait-closure.tar.gz`:
+  10172bytes, SHA-256
+  `9271161e07450a82169fb332655636e9bcab53d8232d27aa42a25eec16d25ab8`,
+  8members/7identities reopened. Stock cursor resource0 does not prove cursor-plane
+  recovery; parent deployment, E6e recovery and300MIPS remain outside this verdict.
+
+Read-only command:
+`python3 target/evidence/critic-production-keyboard-wfi-closure02/audit-closure.py`.
+Original selected native/negative-control commands and raw bytes are preserved
+inside the embedded independent archive. No implementation, runtime test,
+pristine clone or long browser boot was changed or repeated for this closure.
