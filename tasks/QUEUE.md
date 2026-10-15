@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E6-T11d74a** — Capture and restore quiescent production GPU device state
 1. **E5-T26f** — Browser desktop snapshot round-trip and interaction smoke
 
 
@@ -655,7 +654,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.027038` [E6-T11d5](epic-6-transcendence/E6-T11d5-standard-shader-state-binding.md) — Execute standard guest shader bindings through owned renderer jobs *(deps: E6-T11d4)*
 - [x] `525.027038` [E6-T11d69b](epic-6-transcendence/E6-T11d69b-production-transform-query-counts.md) — Measure logical original transform-feedback primitive query counts *(deps: E6-T11d69a)*
 - [x] `525.027038` [E6-T11d71](epic-6-transcendence/E6-T11d71-keyboard-host-wait.md) — Preserve original keyboard host waits across tickless guest idle *(deps: E6-T11d70, E6-T11d72, E6-T11d73)*
-- [ ] `525.0270381` [E6-T11d74a](epic-6-transcendence/E6-T11d74a-native-gpu-checkpoint.md) — Capture and restore quiescent production GPU device state *(deps: E5-T26h, E6-T11d71, E6-T11d72, E6-T11d73)*
+- [~] `525.0270381` [E6-T11d74a](epic-6-transcendence/E6-T11d74a-native-gpu-checkpoint.md) — Capture and restore quiescent production GPU device state *(deps: E5-T26h, E6-T11d71, E6-T11d72, E6-T11d73)*
 - [ ] `525.0270382` [E6-T11d74b](epic-6-transcendence/E6-T11d74b-gpu-renderer-reconstruction.md) — Reconstruct a production renderer in a fresh physical GPU context *(deps: E6-T11d74a)*
 - [ ] `525.0270383` [E6-T11d74c](epic-6-transcendence/E6-T11d74c-paired-gpu-worker-resume.md) — Restore RAM, disk and reconstructed GPU atomically in the production worker *(deps: E6-T11d74b)*
 - [ ] `525.0270384` [E6-T11d74d](epic-6-transcendence/E6-T11d74d-production-gpu-warm-boot.md) — Publish and prove an accelerated Omarchy warm-boot artifact *(deps: E6-T11d74c)*

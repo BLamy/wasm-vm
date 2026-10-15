@@ -3,7 +3,7 @@ id: E6-T11d74a
 epic: 6
 title: Capture and restore quiescent production GPU device state
 priority: 525.0270381
-status: pending
+status: in-progress
 depends_on: [E5-T26h, E6-T11d71, E6-T11d72, E6-T11d73]
 estimate: S
 risk: high
