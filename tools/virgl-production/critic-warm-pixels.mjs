@@ -103,7 +103,7 @@ export async function verifyWarmGpuPixels(page, {outputDir, label = 'warm-gpu-li
   const save = async () => fs.writeFile(path.join(outputDir, label + '.json'), JSON.stringify(report, null, 2) + '\n');
   const originalRun = command => page.evaluate(async command => globalThis.wvmDemo.run(command, 300000), command);
   const snapshot = () => page.evaluate(async () => ({
-    time: performance.now(), restored: await globalThis.wvmDemo.restoredFromBootSnapshot(),
+    time: performance.now(), restored: globalThis.__linux.restoredFromBootSnapshot(),
     clock: await globalThis.__linuxCtl.guestClockState(), gpu: await globalThis.wvmDemo.gpuStats(),
   }));
   const onPageError = error => report.errors.push({type: 'pageerror', message: String(error)});

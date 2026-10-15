@@ -142,7 +142,7 @@ async function state(page, pageErrors) {
         visible: Boolean(el?.getClientRects().length && getComputedStyle(el).visibility !== 'hidden'), text: el?.textContent};
     };
     return {...globalThis.__criticWarmUi, isolated: crossOriginIsolated, ready: Boolean(wvmDemo?.isGuestReady?.()), up: Boolean(wvmDemo?.isGuestUp?.()),
-      restored: Boolean(wvmDemo?.restoredFromBootSnapshot?.()), graphics: document.querySelector('#desktop-graphics')?.value,
+      restored: globalThis.__linux.restoredFromBootSnapshot(), graphics: document.querySelector('#desktop-graphics')?.value,
       message: document.querySelector('#gpu-status')?.textContent, actions: {software: action('#gpu-retry'), cold: action('#gpu-cold-retry'), retry: action('[data-os="omarchy"]')},
       serviceWorker: navigator.serviceWorker.controller?.scriptURL ?? null};
   });

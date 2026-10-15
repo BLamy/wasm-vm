@@ -1,10 +1,15 @@
 {
-  "generated": "Content-hashed accelerated Omarchy; pinned VirGL-only Mesa GLES3, attachment-only multisample and Quickshell GLES profile, no software DRI",
+  "generated": "Content-hashed accelerated Omarchy; prepared RAM/disk/GPU/clock pair, pinned VirGL-only Mesa GLES3 and Quickshell GLES profile, no software DRI",
   "artifacts": {
     "kernel": {
       "url": "releases/kernel/6.6.63-omarchy-evdev1024/Image",
       "sha256": "3cf8bed0d9a9941a6f2f81b7c8de86cefcba3e4e6bd5e5846bd395714a25642d",
       "size": 24208896
+    },
+    "gpuCheckpoint": {
+      "url": "releases/boot-snapshot/omarchy-virgl-ready.wvgpair",
+      "sha256": "2aa73b5d39fa6702cecc5c57193896b8798271a3075e1b0294bed3db864deb4f",
+      "size": 173104561
     }
   },
   "chunkedImage": {
