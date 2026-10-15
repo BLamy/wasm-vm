@@ -3,7 +3,7 @@ id: E6-T11d72
 epic: 6
 title: Bound accelerated desktop idle time during keyboard interaction
 priority: 525.027037
-status: implemented
+status: verified
 depends_on: [E5-T26i, E6-T11d70, E6-T11d73]
 estimate: S
 risk: high
@@ -424,3 +424,121 @@ verifier must still judge sufficiency/coverage. Host cursor publication remains
 resource0 in the stock record; native cursor displacement is proven, not cursor
 plane recovery. Parent71/D,context-loss recovery,deployment and300MIPS are not
 verified by this worker submission.
+
+
+### 2026-10-15 — verifier — paced policy and exact numeric ABI
+
+VERDICT: verified
+
+- **A1–A3 policy, ordering and failure boundaries — HELD.** The independent
+  pre-data predictions in `critic-paced-keyboard-policy72/pre-data-predictions.json`
+  are discharged by the actual extracted loader/main bodies and final selected
+  tests. Accelerated ephemeral Omarchy alone defaults to paced-on-keyboard;
+  exact realm/API admission precedes fetch/execution. A paused original NumLock
+  make selects and reads back exact mode/decimal mtime/divider/timebase before
+  staging. Repeated makes do not reanchor; stale/throwing/drifting readback and
+  failed rebase stop before publication and poison the lifecycle. Release,
+  repeat, omitted-policy, quota and explicit pause paths retain their stated
+  behavior. The seven independent policy/oracle tests are promoted unchanged.
+- **Numeric ABI novel attack — FAILED before repair; final A2 HELD.** With actual
+  ordinary Wasm, original `sendKeyboardEvent(1,30.5,1)` plus SYN admitted two
+  native events/one frame while clock remained ICount0/divider64: u16 coercion
+  bypassed make eligibility. The independently rechecked literal is retained in
+  `numeric-native-staging-result.json` (SHA-256
+  `2bcf2ef68bb6c492bec7daba15a5cc648346f89e9e5d21386df802e501078564`).
+  Final loader lines1207–1216 now reject nonrepresentable u16/u16/i32 inputs
+  before clock selection or staging. Five promoted tests use the actual ordinary
+  Wasm, covering26 malformed frames under paced/wall/omitted policies, exact
+  signed MSC_SCAN min/-1/max and valid original KEY controls. The original
+  unsigned-value prototype was corrected before freeze; signed native data is
+  preserved. Removing only the guard in an isolated copy makes the actual-Wasm
+  test fail on its first fractional type. Removing only the handoff separately
+  fails paused-lock ordering. Original source bytes remain unchanged by either
+  negative control.
+- **A4–A5 real worker and pause — HELD.** Reopened final frozen61 hot and pristine
+  worker recordings each contain14 rejected no-effect numeric rows,3 accepted
+  signed MSC rows, then actual ICount→paced-icount at unchanged mtime0,
+  retired0,timebase10M,divider64 while paused. Both49 served-body pins match
+  frozen source objects. Recomputed hot pause bounds375000≤3292263 and
+  210937≤3300750; cold445313≤3300475 and164062≤3120726. Exact paused retirement
+  and clock are frozen; bounds include measured host time and ceil(actual
+  retired delta/divider), including phase slack. Independent divider37 boundary
+  and one-excess-tick refusal hold. Ten events/five frames in this component are
+  staged, not claimed consumed by Linux. D73 native/JIT semantics carry by
+  unchanged code/dependency and ordinary Wasm SHA-256
+  `d055c473b686ce543d8b87da68034e240ba0f66cf8aacbb482e03a405a64363f`.
+- **A6 stock interaction and valid-domain carry — HELD.** Original pristine e17
+  stock `production-paced-policy-cold-stock02/browser/report.json` passes.
+  All60 trusted balanced transitions match the literal command and62 original
+  frames (including balanced NumLock repair); original nominal50ms helper is
+  unchanged. First T hold is51.825ms; actual letter holds49.550–52.345ms are
+  retained, without inventing a minimum50ms condition. Marker is absent before
+  typing; original serial line5577/tag`mv8z4e7v189` reports
+  `TRUSTED_TOUCH_42`/exit0 after four failed read-only observations. Final original
+  PNG shows one correct touch command and new prompt. Bar crop021 is visibly
+  readable with722 reported foreground pixels, exact PNG SHA-256
+  `960996228cdf900b7f42e56ac0e67b5c557b563502ce59fc83b0924f3f44b4f5`;
+  earlier blank crops remain preserved. Actual guest cursor640,400→430,412
+  moves210px. Five-second pause freezesmtime1177933052/retired48240469040;
+  resumed62497ticks≤2986154 bound. Final GPU657begun=657completed,308draws,
+  no pending/failed/cancelled job, no held/pending/dropped/rejected input,
+  worker/page errors[] and no observed original DRM response refusal.
+  Every one of those62 original integer frames passes the new pure guard;
+  removing exactly its five lines restores the original e17 loader. All other
+  clock/main/worker/native/renderer/Wasm boundaries are identical. Final actual
+  worker and actual-Wasm controls exercise this changed guard, so that explicit
+  domain-equivalence proof carries the valid stock path without another long boot.
+- **A6 software/private components — HELD.** All10 original four-image
+  initial/repeat/persistence phases pass, including actual Node20.15.1 and
+  coherent durable markers. Omarchy84.265s initial includes198MB download;
+  repeat6.027s, not a universal latency claim. Private window04 closes actual
+  Mesa768pixel/index83,1000cube frames and real Hyprland/Foot scanout;
+  serial lines608/632 prove IPC and mapping, line650 contains the mapped title.
+  Guest digest is
+  `d27ddf4d5d4b6e6007ed6836750fbbaf31500d87a74f7747bd8431f83fe1faaa`.
+  Actual JIT291649836blocks/3937142435retiredViaJit and the13-family original
+  handshake hold. Private final31192draws/3269begun/3268completed has one
+  pending ready request; later full trace31516DRAW packets is a different point,
+  not a drained-owner assertion. The upright green-text Foot screenshot was
+  directly inspected. This root/config component does not substitute for stock.
+- **Exact-head cold custody and A7 — HELD.** Final input-boundary proof at
+  `61eeb1b59902c9c52f0c4fdf3880a0081ebb2db2` passes four hot commands and
+  three pristine outer/four inner commands:89 tests,17 actual worker rows and
+  default127passed/0failed, errors[], no proof exports; graphics pip remains
+  partial. Independently checked ordinary `clone --no-local`, scrubbed
+  RUSTFLAGS/RUST_LOG/CARGO_/VIRGL_/CRITIC_ environment, own `make web-dist`,
+  exact clean clone HEAD and no alternates. All report payload pins authenticate.
+  Rehashed/reopened all416 worker archive members/415 identities and all39
+  frozen source copies; later294a570f changes no product source. Worker archive
+  SHA-256 is
+  `01f6feaca7b0079b0a4dfa83fc4bdfeb757ca8b258af26c9bd8882273374a37d`.
+- **COVERAGE / preserved failures.** The independent seal's
+  `prediction-and-coverage.json` maps each runtime/harness hunk to executed
+  proof; documentation/config/generated metadata is explicitly classified.
+  Original full-cold/private300000ms wrappers remain failed; corrected isolation
+  enables genuine JIT but did not alone resolve readiness. Private900000ms
+  missing-path proof changes only the bounded observation window; this task
+  states no host-startup budget. Original stock outer wrapper's pre-browser
+  default-task allowlist failure remains failed; final default checks close only
+  that missing path. Recording interruptions and earlier wall-policy repeated-t
+  refutations remain negative. No whole failed wrapper is relabelled passed.
+  No required D72 runtime hunk remains unexecuted or unclassified.
+- **SUITE / limits.** Keep the seven policy/oracle and five actual-Wasm tests in
+  the selected clock gate. Independent seal:
+  `evidence/virgl-production-interactive-clock/verifier/paced-policy-final/independent-paced-keyboard-policy-review.tar.gz`,
+  910543bytes, SHA-256
+  `57c6a9e4851218571fd4b81990757a1b3fe21b406d97b5f9d640d5f63bcec8a9`,
+  87members/86identities reopened. It retains pre-data predictions, controls,
+  original coercion, failed reader-preparation attempts and final custody audits.
+  Stock host cursor remains resource0; this verifies guest cursor displacement,
+  not cursor-plane recovery. D71, parentD, E6e recovery, deployment and300MIPS
+  remain outside this verdict and require their own transitions.
+
+Commands: original recorded commands and exact outputs are in the independent
+seal's `report.json`, `keyboard-abi-report.json`, `handoff-negative-report.json`
+and `keyboard-abi-negative-report.json`. Final read-only authentication:
+`python3 target/evidence/critic-paced-keyboard-policy72/audit-private-component.py`,
+`python3 target/evidence/critic-paced-keyboard-policy72/audit-stock-and-carry.py`,
+`python3 target/evidence/critic-paced-keyboard-policy72/audit-final-submission.py`.
+Native73 verifier commit7e2739f2 and unchanged held boundaries are carried;
+no unrelated native suite or successful stock boot was repeated for this review.
