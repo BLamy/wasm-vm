@@ -1,0 +1,82 @@
+{
+  "schema": 1,
+  "task": "E5.5-T05b",
+  "source": "2f27c1d8efb734ce115b1a7f07840c456916d816",
+  "diffBase": "df4cbf174b15b06736701c2088e05e9232684328",
+  "archive": "submission.tar.gz",
+  "bytes": 4040126,
+  "sha256": "0bae80d9170bcb55d110b861aa7e6818bd9ad51e618f00a1334b290319485195",
+  "members": 104,
+  "claims": {
+    "nativeSignedPackages": 473,
+    "totalPackages": 860,
+    "runtimeElf64Riscv": 6167,
+    "priorityLoaderClosure": [
+      "chromium",
+      "libreoffice-fresh",
+      "nodejs"
+    ],
+    "actualMissingLibuvRefusedAndRestored": true,
+    "freshImageMiB": 12288,
+    "rawImageSha256": "c48b9c50382d69b1eb5211290fe479256ab02200dee5713d0f006a3a0577c38b",
+    "manifestSha256": "0265349cdbc17cdd94eef59aa83c0ec282c705ac020d2e3884d0c1325a767eb7",
+    "sameSourcePristineBuild": true,
+    "allRuntimeElfClosureClaimed": false,
+    "browserOrDesktopVerified": false,
+    "deployed": false
+  },
+  "binaryCustody": {
+    "mainRaw": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/omarchy-native-app-image-final01/omarchy.ext4",
+    "mainManifest": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/omarchy-native-app-image-final01/manifest.json",
+    "mainChunks": "removed only after independent full hash comparison; reconstructible from retained raw",
+    "acceptedAssemblyVolume": "wasm-vm-omarchy-app-proof-98c3d1ef00e9",
+    "pristineRaw": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/omarchy-native-app-pristine01/run/omarchy.ext4",
+    "pristineChunks": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/omarchy-native-app-pristine01/run/chunks",
+    "archives": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/omarchy-full/packages"
+  },
+  "comparison": {
+    "schema": 1,
+    "status": "passed",
+    "source": "2f27c1d8efb734ce115b1a7f07840c456916d816",
+    "pristineSource": "2f27c1d8efb734ce115b1a7f07840c456916d816",
+    "standaloneGit": true,
+    "identities": {
+      "package-selection.json": {
+        "main": "d02141d3386d42553954723f3cdeea1af4dc1ece5012ad1f6e8abb6689a9854e",
+        "pristine": "d02141d3386d42553954723f3cdeea1af4dc1ece5012ad1f6e8abb6689a9854e",
+        "equal": true
+      },
+      "runtime-elf.json": {
+        "main": "ae72ccdf528974e203726b058a639201bfa19950ee4190658baad14e0440ab86",
+        "pristine": "ae72ccdf528974e203726b058a639201bfa19950ee4190658baad14e0440ab86",
+        "equal": true
+      },
+      "assembly.json": {
+        "main": "74c27e72069809141a85c222704263df065440c0d2ce8c51df2ae89e64bab5fb",
+        "pristine": "74c27e72069809141a85c222704263df065440c0d2ce8c51df2ae89e64bab5fb",
+        "equal": true
+      },
+      "filesystem-metadata.json": {
+        "main": "15ca6c075d30c40dfa6e9c9ff43b43e43330c216182018ed5a1d327a0ac844ce",
+        "pristine": "4bbda78fb5f1295f022e806ee0cda3f8d1b49d07c13c43d543b7ed42060d0ed7",
+        "equal": false
+      }
+    },
+    "rawImageContract": "fresh ext4; UUID/timestamps intentionally not bit reproducible",
+    "mainImage": {
+      "name": "omarchy.ext4",
+      "sha256": "c48b9c50382d69b1eb5211290fe479256ab02200dee5713d0f006a3a0577c38b",
+      "size": 12884901888
+    },
+    "pristineImage": {
+      "name": "omarchy.ext4",
+      "sha256": "1935883e5851c6f0a9a2de59cf4c3cefded9d4a046650338f1e85279f699e56e",
+      "size": 12884901888
+    },
+    "mainSlots": 49152,
+    "mainUniqueChunks": 34787,
+    "pristineSlots": 49152,
+    "pristineUniqueChunks": 34787,
+    "runtimeOrDesktopClaim": false
+  }
+}
