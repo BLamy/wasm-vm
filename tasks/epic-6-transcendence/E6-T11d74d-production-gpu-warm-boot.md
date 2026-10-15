@@ -3,7 +3,7 @@ id: E6-T11d74d
 epic: 6
 title: Publish and prove an accelerated Omarchy warm-boot artifact
 priority: 525.0270384
-status: in-progress
+status: implemented
 depends_on: [E6-T11d74c, E6-T11d74d1, E6-T11d74d2]
 estimate: S
 risk: high
@@ -94,3 +94,103 @@ movement, then build the warm/repeat/publication proof. Correct the recorded
 hidden-ancestor failed-restore UI and prove visible, hit-testable recovery
 choices. New artifact clock expectations come from its saved metadata rather
 than assuming a previously selected clock mode.
+
+
+### 2026-10-15 — worker — genuine accelerated warm publication submitted
+
+Frozen source `db04c369fe3915537d8cdcf05e59d81bba5bf8dd`; final runtime
+`847f51927637c9ff8226068986a771c9e2a5bedc`; public browser/labels source
+`9236bc1b7f89f662ae093d4fe95a15e57e909747`. The final two commits change only
+the marketing evidence recorder. Genuine factory07 executes worker
+`06622e33ac7fa11a0163e8c58e9f8f36dc2043830d79a04f41e001b847916527`
+and image12 `f0a72ae2e4433df266fe57dd2443a567dd93396b98c96825b5ce6b3dc4ac9e8c`.
+Its original report head6297df65 predates the runtime freeze; actual executed
+response bodies, independent comparisons and exact image/kernel custody are
+preserved. It is not relabelled an exact847 factory run.
+
+Factory07 passes real package-bar workspace effects, trusted typing and5454
+nine-point rAF observations without a whole-canvas transparent sample, then
+captures the original RAM/disk/GPU pair. Warm readiness requires fresh physical
+current-epoch scanout/repair and actual new CPU execution; idle guests need not
+spontaneously submit a draw before input is connected. Separate post-start guest
+GLES workloads verify all64 literal pixels for seeds5/2, new GPU jobs/draws/
+readbacks and trusted typing42/84 before/after. Finite30s restore admission,
+failed/stale/lost-epoch refusal and explicit retry/cold/software choices remain.
+The saved paced-icount/div64 clock is preserved.
+
+The immutable pair is173104561bytes, SHA256
+`2aa73b5d39fa6702cecc5c57193896b8798271a3075e1b0294bed3db864deb4f`.
+Canonical public URL and original GET/envelope/component identities are in the
+submission's custody record. Pair parts are already gzip compressed. Older
+recorder fields ambiguously combined compressed byte counts and declared raw
+hashes; the loader checked both correctly. Source923 names compressed/raw
+lengths and hashes separately. The large immutable artifact is not duplicated
+in Git.
+
+Final proof is sealed in
+`evidence/virgl-production-gpu-warm-default/worker/submission.tar.gz`:
+53628705bytes, SHA256
+`f8b2fd2f41903497bf3a6a39313cde23a2661df1b44c932ef17042a450dc6eab`.
+`records.json` SHA256
+`aba4910d68993e973e710af918556b0f3584d5f5ec3a49be223f21ec8805a21f`
+indexes3600logical members; all were reopened and rehashed, including safe
+internal hardlinks. The capsule contains exact diff, deployable runtime/Wasm
+closure, original traces/screenshots/logs, failed attempts and explicit path map.
+Its README states each authority and limitation.
+
+Commands and results:
+
+- Factory: original `CRITIC_FAST_BOOT_CAPTURE_GPU_PAIR=1` command recorded in
+  `runs/plan01/public-ready-factory07.log`; exact cold image12/worker66,
+  actual Hyprland/Quickshell/Foot, no software DRI.
+- Self warm/repeat: `critic-fast-boots.mjs` in
+  `runs/warm-self08` and `runs/plan01/public-ready-warm-self08.log`, passed.
+- Final runtime pristine:
+  `python3 tools/virgl-production/verify-public-gpu-warm-cold.py --output target/evidence/production-gpu-warm-pristine11`
+  at847, full-history `git clone --no-local`, scrubbed environment, no
+  alternates/copied caches. All16 commands pass: fmt/clippy,423native and101JS
+  checks, real reproducible wasm/web-dist, docs, original idle-GPU roundtrip,
+  six actual failed-warm UI variants, GPU warm/repeat, all ten software fast-boot/
+  persistence phases, default127/0 and unified site.
+- Incremental923 checkout in that isolated clone authenticates unchanged runtime/
+  Wasm/worker identities, performs a real clean `make web-dist`, touched recorder
+  tests and launcher/site assertions; all pass. Labels/recorders do not restart
+  unrelated runtime gates under the incremental policy.
+- `bash tools/deploy-cloudflare.sh` deploy09 publishes genuinepair2aa and checks
+  immutable public GET identities. Subsequent Pages-only deployments11/12 carry
+  these unchanged object identities and authenticate exact transformed manifests.
+  Production deploymentb320083f serves923 at `https://wasm-vm.pages.dev/`.
+- Actual HTTPS12:
+  `python3 tools/virgl-production/verify-public-gpu-warm.py --url https://wasm-vm.pages.dev/ --output target/evidence/production-gpu-warm-https12`
+  passes default GPU initial/repeat, all ten software/persistence phases and
+  default127/0. Actual original worker bootstrap1188bytes is authenticated twice
+  from the existing controlling production service-worker cache; workers remain
+  enabled and the GPU boot forwards no source mock.
+- The HTTPS12 outer report remains **failed**: all eight site UI steps passed,
+  but its recorder compared a changed startup-state body to an old baseline and
+  lost several CDP response handles during navigation. Site13 preserves another
+  recorder-only runtime-benchmark response eviction after all UI steps passed.
+  Only `tools/verify-reviewed-site.mjs` changed: each same-origin GET200 original
+  body is now authenticated before forwarding identical bytes; a WeakMap binds
+  an expired handle to its exact request receipt, never another same-URL request.
+  `python3 target/evidence/production-gpu-warm-restore-plan01/record-site14.py`
+  separately passes all eight local **and actual HTTPS** site flows atdb04c369,
+  zero unexpected errors. This marketing-only recorder blocks service workers;
+  it makes no GPU runtime claim. The three completed HTTPS12 runtime holds carry.
+
+Measured actual HTTPS12 network checkpoint read77514ms, read-to-restored18985ms,
+restored-to-desktop3882ms, navigation-to-desktop109783ms. Verified cached repeat:
+read27ms, read-to-restored17661ms, restored-to-desktop3981ms,
+navigation-to-desktop22860ms. These are full-recording observations on this
+AppleM4Max/owned headless Chrome/ANGLE Metal, not a universal speed budget.
+The initial173MB download remains network-dependent; localhost timings do not
+measure it. No300MIPS or full Omarchy application-set claim is made.
+
+Preserved genuine product failure HTTPS10 completed its download at171064ms
+but hit the old combined180000ms worker startup limit;847 raises only the
+existing warm-GPU client option to600000ms while preserving explicit overrides,
+cold/software defaults and the separate finite admission guard. HTTPS11's initial
+runtime checks passed but worker-bootstrap CDP capture failed; source923 reads
+and authenticates the original SW cache body. Earlier wrong-API/recorder failures
+stay failed. Fresh adversarial verifier receives this sealed submission and the
+unchanged predecessor holds; only that session may set verified.

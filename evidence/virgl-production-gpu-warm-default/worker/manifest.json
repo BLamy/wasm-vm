@@ -1,0 +1,14 @@
+{
+  "task": "E6-T11d74d",
+  "status": "worker-submission",
+  "sourceHead": "db04c369fe3915537d8cdcf05e59d81bba5bf8dd",
+  "runtimeHead": "847f51927637c9ff8226068986a771c9e2a5bedc",
+  "archive": "submission.tar.gz",
+  "archiveBytes": 53628705,
+  "archiveSha256": "f8b2fd2f41903497bf3a6a39313cde23a2661df1b44c932ef17042a450dc6eab",
+  "records": 3600,
+  "reopenedAndRehashedMembers": 3600,
+  "recordIndexSha256": "aba4910d68993e973e710af918556b0f3584d5f5ec3a49be223f21ec8805a21f",
+  "sourceClosureIncluded": true,
+  "largePairInPublicContentAddressedStorage": true
+}
