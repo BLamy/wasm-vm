@@ -2,7 +2,7 @@
 
 The accelerated Omarchy path sends the guest's VirGL commands to WebGL2 in the production Linux worker. Mesa chooses OpenGL ES 3.0; Hyprland retries that API after its GLES 3.2 request. Frames reach the visible canvas through retained, fenced scanout and a page presentation receipt.
 
-This integration is undergoing final independent verification, including real two/four-sample renderbuffers and original fenced BLIT resolves (E6-T11d67). The command, shader, dimensional depth and transform-feedback prerequisites have already been independently verified. See the current roadmap and task records for the final production verdict.
+The command, shader, dimensional depth, transform-feedback and native multisample resolve prerequisites have been independently verified. Recorded production runs cover the real Mesa probe, 1,000 cube frames, Hyprland/Foot scanout and stock desktop typing. Final production deployment and context-loss recovery have separate verification records on the roadmap.
 
 ## Launch the desktop
 
@@ -13,7 +13,7 @@ The accelerated image uses a pinned Mesa 26.2.2 build with VirGL and the GLES AP
 GPU rendering starts from a cold boot. The existing **Software rendering** option restores the paired Omarchy RAM snapshot and disk delta. BusyBox, Alpine and Alpine + Node retain their existing fast-boot paths.
 
 {% hint style="info" %}
-Both desktop paths start with instruction-based time. The accelerated desktop switches to the existing monotonic wall clock before its first original keyboard make, including a lock-state repair. This keeps interactive repeat timing tied to real time; the software snapshot retains its current clock policy. Explicit pauses freeze time and resume re-anchors it. This policy is under final independent verification in E6-T11d72.
+Both desktop paths start with instruction-based time. Before its first original keyboard make, including a lock-state repair, the accelerated desktop selects host-paced idle. Busy execution and JIT timing continue to follow retired instructions; idle timer jumps are bounded by elapsed host time. Explicit pauses exclude paused time, and resume re-anchors the bound. The software snapshot retains its existing clock policy. This accelerated policy is independently verified in E6-T11d72 and E6-T11d73.
 
 During instruction-based execution, tickless idle pauses its timer jump while a qualified GPU request awaits the browser, so guest time cannot skip past a pending host fence or presentation receipt. Original keyboard host waits are also guarded. Normal idle advancement resumes when those requests settle.
 {% endhint %}

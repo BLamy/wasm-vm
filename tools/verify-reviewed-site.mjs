@@ -166,7 +166,11 @@ try{
  assert.equal(await page.locator('.reader-header a[href="./app.html#ide"]').count(),1);
  assert.equal(await page.locator('.reader-header a[href="./"]').count(),1);
  await page.goto(new URL('docs.html?page=graphics',base).href,{waitUntil:'load'});await page.locator('.reader-document h1').waitFor();
- assert.match(await page.locator('.reader-document').innerText(),/production acceleration disabled|production acceleration.*disabled/);
+ const graphicsText=await page.locator('.reader-document').innerText();
+ assert.match(graphicsText,/GPU rendering starts from a cold boot/);
+ assert.match(graphicsText,/Software rendering/);
+ assert.match(graphicsText,/WebGL2/);
+ assert.match(graphicsText,/300-MIPS/);
  await screenshot(page,'desktop-reader.png');report.steps.push({name:'production reader routes and truthful graphics boundary',status:'passed'});
  for(const [entry,id] of [['docs-embedding.html','embedding'],['docs-guest.html','storage'],['docs-containers.html','containers'],['docs-verification.html','verification'],['docs-explainers.html','explainers']]){
   for(const address of [entry,entry.slice(0,-5)]){

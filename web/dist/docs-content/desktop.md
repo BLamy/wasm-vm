@@ -4,7 +4,7 @@ The host workbench exposes display and serial surfaces. Guest input passes throu
 
 ## Display and guest graphics
 
-Read the display contract before choosing a present path. Desktop bring-up uses named images and a documented boot order. The [current graphics guide](./docs.html?page=graphics) separates the guest-rendered display from partial VirGL offload and its selected command, resource, state, shader, and draw boundaries. Default production acceleration remains disabled.
+Read the display contract before choosing a present path. Desktop bring-up uses named images and a documented boot order. The [current graphics guide](./docs.html?page=graphics) describes Omarchy's qualified GPU cold boot, its software warm snapshot, and the admitted command, resource, state, shader, and draw boundaries. GPU context-loss recovery has a separate verification task.
 
 {% hint style="info" %}
 The marketing hero is a Three.js architecture illustration rendered directly by the browser. It is independent of guest VirGL support and is not evidence of a guest GPU feature.
