@@ -26,9 +26,11 @@ const chunkIndices=new Map(imageManifest.chunks.map((digest,index)=>[digest,inde
 const originalImage=imageDirectory ? await fs.open(path.join(imageDirectory,'guest.ext4'),'r') : null;
 const chunkCache=new Map();
 await fs.writeFile(path.join(output,'image-identity.json'),JSON.stringify({manifestSha256:createHash('sha256').update(manifestBytes).digest('hex'),imageLength:imageManifest.image_len,source:imageDirectory??publicBase+'/'+artifact.chunkedImage.key},null,2));
-let browser;
+let browser, page;
 const server=createServer(async(req,res)=>{
   try {
+    res.setHeader('Cross-Origin-Opener-Policy','same-origin');
+    res.setHeader('Cross-Origin-Embedder-Policy','require-corp');
     const name=new URL(req.url,'http://localhost').pathname;
     if(name==='/'){res.setHeader('Content-Type','text/html');res.end(html);return;}
     if(name==='/favicon.ico'){res.writeHead(204).end();return;}
@@ -51,7 +53,6 @@ const server=createServer(async(req,res)=>{
     else file=path.join(webRoot,name);
     if(!file.startsWith(repo+'/')&&!file.startsWith('/Users/blamy/Documents/Codex/wasm-vm/releases/chunked-omarchy/'))throw Error('Invalid asset path');
     res.setHeader('Content-Type',file.endsWith('.wasm')?'application/wasm':/\.m?js$/.test(file)?'text/javascript':file.endsWith('.json')?'application/json':'application/octet-stream');
-    res.setHeader('Cross-Origin-Opener-Policy','same-origin');res.setHeader('Cross-Origin-Embedder-Policy','require-corp');
     const body=await fs.readFile(file);
     served.set(name,{path:path.relative(repo,file),bytes:body.length,sha256:createHash('sha256').update(body).digest('hex')});
     res.end(body);
@@ -64,11 +65,14 @@ try {
   const info=await (await browser.newBrowserCDPSession()).send('SystemInfo.getInfo');
   await fs.writeFile(path.join(output,'hardware.json'),JSON.stringify(info,null,2));
   assert.equal(info.gpu.featureStatus.webgl2??info.gpu.featureStatus.webgl,'enabled');
-  const page=await browser.newPage({viewport:{width:1280,height:960}});
+  page=await browser.newPage({viewport:{width:1280,height:960}});
   page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});page.on('pageerror',e=>errors.push(e.stack));
   await page.exposeFunction('recordGpu',async event=>{gpu.push(event);const body=JSON.stringify(event)+'\n';recording=recording.then(()=>fs.appendFile(path.join(output,'gpu.ndjson'),body));await recording;});
   await page.exposeFunction('recordSerial',async text=>{serial.push(text);recording=recording.then(()=>fs.appendFile(path.join(output,'serial.log'),text));await recording;});
   await page.goto('http://127.0.0.1:'+server.address().port+'/');
+  const environment=await page.evaluate(()=>({crossOriginIsolated,secureContext:isSecureContext}));
+  await fs.writeFile(path.join(output,'environment.json'),JSON.stringify(environment,null,2));
+  assert.equal(environment.crossOriginIsolated,true,'private acceptance uses production document isolation');
   if(mode==='qualify') {
     const result=await page.evaluate(async()=>{
       const {attachProductionVirgl,createWorkerScanoutPresenter}=await import('/renderer/virgl-command/production.mjs');
@@ -97,6 +101,9 @@ try {
         ramMib:1024,bootargs:'root=/dev/vda rw console=ttyS0 init=/bin/bash',virgl:true,gpuTrace:true,guestClock:'icount',icountDivider:64,jit:true,quantum:500000});
     });
     console.log('production worker running');
+    const initialJit=await page.evaluate(()=>__production.controller.jitStats());
+    await fs.writeFile(path.join(output,'initial-jit.json'),JSON.stringify(initialJit,null,2));
+    assert.equal(initialJit.hasExecutor,true,'requested production JIT is attached in the actual worker');
     for(let i=0;i<1200;i++){
       await new Promise(r=>setTimeout(r,1000));
       if(i%15===0){const state=await page.evaluate(()=>({serial:__production.serial.slice(-300),errors:__production.errors,stats:__production.controller.schedulerStats()}));console.log(JSON.stringify(state));}
@@ -130,5 +137,19 @@ try {
   }
   await page.screenshot({path:path.join(output,'browser.png'),fullPage:true});
   assert.deepEqual(errors,[]);
-}catch(error){process.exitCode=1;await fs.writeFile(path.join(output,'failure.json'),JSON.stringify({message:error.message,stack:error.stack,errors},null,2));console.error(error.stack);}
+}catch(error){
+  process.exitCode=1;
+  await fs.writeFile(path.join(output,'failure.json'),JSON.stringify({message:error.message,stack:error.stack,errors},null,2));
+  console.error(error.stack);
+  if(page)try {
+    const failureState=await page.evaluate(async()=>({serial:__production?.serial,errors:__production?.errors,
+      gpu:await __production?.controller?.gpuStats(),display:__production?.presentation?.snapshot(),
+      scheduler:await __production?.controller?.schedulerStats(),clock:await __production?.controller?.guestClockState(),
+      jit:await __production?.controller?.jitStats()}));
+    await fs.writeFile(path.join(output,'failure-state.json'),JSON.stringify(failureState,null,2));
+    await page.screenshot({path:path.join(output,'failure.png'),fullPage:true});
+  } catch(captureError) {
+    await fs.writeFile(path.join(output,'failure-capture-error.json'),JSON.stringify({message:captureError.message},null,2));
+  }
+}
 finally{await recording;await fs.writeFile(path.join(output,'served-source.json'),JSON.stringify([...served.values()],null,2));await originalImage?.close();await browser?.close();server.closeAllConnections();await new Promise(resolve=>server.close(resolve));}
