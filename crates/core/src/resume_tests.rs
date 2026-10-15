@@ -271,6 +271,74 @@ fn a_mostly_zero_buffer_compresses_far_under_ram_size() {
 }
 
 #[test]
+fn short_zero_runs_stay_literal_and_profitable_runs_keep_legacy_framing() {
+    let short = [vec![7], vec![0; 10], vec![9]].concat();
+    let mut literal = vec![1, 12, 0, 0, 0];
+    literal.extend_from_slice(&short);
+    assert_eq!(encode_sparse(&short), literal);
+
+    let long = [vec![7], vec![0; 11], vec![9]].concat();
+    let legacy_chunks = [1, 1, 0, 0, 0, 7, 0, 11, 0, 0, 0, 1, 1, 0, 0, 0, 9];
+    assert_eq!(encode_sparse(&long), legacy_chunks);
+    assert_eq!(decode_sparse(&legacy_chunks, long.len()).unwrap(), long);
+    // Literal chunks have always permitted zero bytes; no decoder or format-version change.
+    assert_eq!(decode_sparse(&literal, short.len()).unwrap(), short);
+}
+
+#[test]
+fn sparse_encoding_is_bounded_for_exhaustive_transitions_and_zero_run_edges() {
+    // Exhaust every placement of short zero runs, then test both sides of the elision boundary at
+    // the beginning, middle and end. The old encoder inflates alternating bytes to 5.5 times input.
+    for len in 0..=13 {
+        for mask in 0..1usize << len {
+            let bytes: Vec<_> = (0..len).map(|bit| ((mask >> bit) & 1) as u8).collect();
+            let encoded = encode_sparse(&bytes);
+            assert!(encoded.len() <= bytes.len() + 5);
+            assert_eq!(
+                encoded.capacity(),
+                encoded.len(),
+                "no geometric spare capacity"
+            );
+            assert_eq!(decode_sparse(&encoded, bytes.len()).unwrap(), bytes);
+        }
+    }
+    for leading in [0, 1, 10, 11, 12, 128] {
+        for interior in [0, 1, 10, 11, 12, 128] {
+            for trailing in [0, 1, 10, 11, 12, 128] {
+                let bytes = [
+                    vec![0; leading],
+                    vec![4],
+                    vec![0; interior],
+                    vec![8],
+                    vec![0; trailing],
+                ]
+                .concat();
+                let encoded = encode_sparse(&bytes);
+                assert!(encoded.len() <= bytes.len() + 5);
+                assert_eq!(decode_sparse(&encoded, bytes.len()).unwrap(), bytes);
+            }
+        }
+    }
+}
+
+#[test]
+fn pointer_shaped_ram_does_not_expand_or_change_restored_bytes() {
+    let mut bytes = vec![0u8; 1 << 20];
+    for word in bytes.chunks_exact_mut(8) {
+        word.copy_from_slice(&0x0000_0000_0100_0100u64.to_le_bytes());
+    }
+    let encoded = encode_sparse(&bytes);
+    assert_eq!(encoded.len(), bytes.len() + 5);
+    assert_eq!(encoded.capacity(), encoded.len());
+    let mut restored = vec![0xCC; bytes.len()];
+    super::restore_sparse_into(&encoded, &mut restored).unwrap();
+    assert_eq!(restored, bytes);
+    // A malformed new literal is still rejected before mutating live RAM.
+    assert!(super::restore_sparse_into(&encoded[..encoded.len() - 1], &mut restored).is_err());
+    assert_eq!(restored, bytes);
+}
+
+#[test]
 fn decode_sparse_rejects_malformed_payloads() {
     // A data chunk claiming more bytes than are present.
     let mut bad = vec![1u8]; // CHUNK_DATA

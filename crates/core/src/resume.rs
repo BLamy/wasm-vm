@@ -590,35 +590,57 @@ pub fn validate_container(blob: &[u8]) -> Result<(), SnapshotError> {
 const CHUNK_ZERO: u8 = 0;
 const CHUNK_DATA: u8 = 1;
 
-/// Encode `buf` with zero-run elision. A mostly-zero buffer shrinks to roughly the size of its
-/// non-zero spans.
+/// Encode `buf` with zero-run elision. Short zero runs remain literal: encoding every zero/nonzero
+/// transition can expand alternating bytes to 5.5 times RAM and overflow wasm32 Vec capacity.
+/// For an input no longer than u32::MAX, the payload is at most `buf.len() + 5` bytes.
 pub fn encode_sparse(buf: &[u8]) -> Vec<u8> {
-    let mut out = Vec::new();
+    // Two passes reserve exactly what the second emits. Geometric growth can ask for a 2 GiB
+    // allocation even when the actual encoded 1 GiB guest fits well below that wasm32 limit.
+    let mut encoded_len = 0usize;
+    sparse_chunks(buf, |zero, chunk| {
+        encoded_len = encoded_len
+            .checked_add(5 + if zero { 0 } else { chunk.len() })
+            .expect("sparse snapshot size overflow");
+    });
+    let mut out = Vec::with_capacity(encoded_len);
+    sparse_chunks(buf, |zero, chunk| {
+        out.push(if zero { CHUNK_ZERO } else { CHUNK_DATA });
+        out.extend_from_slice(&(chunk.len() as u32).to_le_bytes());
+        if !zero {
+            out.extend_from_slice(chunk);
+        }
+    });
+    out
+}
+
+fn sparse_chunks(buf: &[u8], mut emit: impl FnMut(bool, &[u8])) {
+    // An internal zero span introduces both a zero header and another literal header. Elide only
+    // spans larger than those ten bytes, so each split reduces size rather than inflating RAM.
+    const MIN_ZERO_RUN: usize = 11;
+    let mut literal_start = 0;
     let mut i = 0;
     while i < buf.len() {
-        let is_zero = buf[i] == 0;
-        let start = i;
-        while i < buf.len() && (buf[i] == 0) == is_zero {
+        if buf[i] != 0 {
+            i += 1;
+            continue;
+        }
+        let zero_start = i;
+        while i < buf.len() && buf[i] == 0 {
             i += 1;
         }
-        // Split a run longer than u32::MAX into multiple chunks (unreachable on wasm32 usize=u32).
-        let mut run = i - start;
-        let mut span_start = start;
-        while run > 0 {
-            let take = run.min(u32::MAX as usize);
-            if is_zero {
-                out.push(CHUNK_ZERO);
-                out.extend_from_slice(&(take as u32).to_le_bytes());
-            } else {
-                out.push(CHUNK_DATA);
-                out.extend_from_slice(&(take as u32).to_le_bytes());
-                out.extend_from_slice(&buf[span_start..span_start + take]);
+        if i - zero_start >= MIN_ZERO_RUN {
+            for chunk in buf[literal_start..zero_start].chunks(u32::MAX as usize) {
+                emit(false, chunk);
             }
-            span_start += take;
-            run -= take;
+            for chunk in buf[zero_start..i].chunks(u32::MAX as usize) {
+                emit(true, chunk);
+            }
+            literal_start = i;
         }
     }
-    out
+    for chunk in buf[literal_start..].chunks(u32::MAX as usize) {
+        emit(false, chunk);
+    }
 }
 
 /// Decode a [`encode_sparse`] payload back to exactly `expected_len` bytes. A payload that is

@@ -3,7 +3,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import {createReadStream,appendFileSync} from 'node:fs';
-import {createHash} from 'node:crypto';
+import {createHash,randomUUID} from 'node:crypto';
 import {execFileSync,spawnSync} from 'node:child_process';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
@@ -66,7 +66,7 @@ export function createApplicationIdentityProof(page,command,output,options={}){
       bootargs:'root=/dev/vda rw console=ttyS0 earlycon=sbi plymouth.enable=0',guestClock:'icount',icountDivider:64,interactiveClock:'paced-on-keyboard'};
     const sync=await run('sync');
     const pairPath=path.join(directory,'actual.wvgpair'),file=await fs.open(pairPath,'wx');let next=0,total;
-    const binding='__appIdentityUpload'+process.pid+'_'+uploadSequence++;
+    const binding='__appIdentityUpload'+process.pid+'_'+uploadSequence+++'_'+randomUUID().replaceAll('-','');
     await page.exposeFunction(binding,async entry=>{
       assert.equal(entry.offset,next);assert.ok(Number.isSafeInteger(entry.total)&&entry.total>0&&entry.total<=512*1024*1024);
       if(total===undefined)total=entry.total;assert.equal(entry.total,total);
@@ -74,15 +74,27 @@ export function createApplicationIdentityProof(page,command,output,options={}){
       const result=await file.write(b,0,b.length,next);assert.equal(result.bytesWritten,b.length);next+=b.length;
     });
     let capture;
-    try{capture=await page.evaluate(async binding=>{
+    try{const outcome=await page.evaluate(async binding=>{
       const c=window.__linuxCtl,wasPaused=await c.isPaused();await c.pause();
+      let stage='before-clock',value,error,cleanupError;
+      const describe=error=>({name:error.name,message:error.message,stack:error.stack});
       try{
         const before={clock:await c.guestClockState(),scheduler:await c.schedulerStats()};
+        stage='native-gpu-checkpoint';
         const bytes=await c.saveGpuCheckpoint();
+        stage='retained-pair-upload';
         for(let at=0;at<bytes.length;at+=49152){const b=bytes.subarray(at,Math.min(bytes.length,at+49152));await window[binding]({offset:at,total:bytes.length,base64:btoa(String.fromCharCode(...b))});}
-        const after={clock:await c.guestClockState(),scheduler:await c.schedulerStats()};return{before,after,bytes:bytes.length};
-      }finally{if(!wasPaused)await c.resume();}
-    },binding);}finally{await file.close();}
+        stage='after-clock';
+        const after={clock:await c.guestClockState(),scheduler:await c.schedulerStats()};value={before,after,bytes:bytes.length};
+      }catch(failure){error=describe(failure);}
+      finally{if(!wasPaused)try{await c.resume();}catch(failure){cleanupError=describe(failure);}}
+      return{stage,value,error,cleanupError};
+    },binding);
+      await fs.writeFile(path.join(directory,'capture-outcome.json'),JSON.stringify(outcome,null,2)+'\n');
+      if(outcome.error)throw Error(outcome.stage+': '+(outcome.error.stack||outcome.error.message));
+      if(outcome.cleanupError)throw Error('capture resume: '+(outcome.cleanupError.stack||outcome.cleanupError.message));
+      capture=outcome.value;
+    }finally{await file.close();}
     assert.equal(next,total);assert.equal(next,capture.bytes);assert.deepEqual(capture.after.clock,capture.before.clock);
     assert.equal(capture.after.scheduler.retiredInstructions,capture.before.scheduler.retiredInstructions);
     const bytes=await fs.readFile(pairPath),decoded=await decodeGpuCheckpointPair(bytes,expectedIdentity),delta=Buffer.from(decoded.disk);

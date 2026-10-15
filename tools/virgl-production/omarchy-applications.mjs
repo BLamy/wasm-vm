@@ -279,6 +279,7 @@ export async function verifyOmarchyApplications(page, command, output, options =
     report.status='passed';await save();return report;
   } catch(error) {
     report.status='failed';report.error=error.stack||String(error);
+    report.pageErrors=[...pageErrors];
     report.trusted=await page.evaluate(()=>window.__appTrusted).catch(()=>null);
     await shot('failed').catch(()=>{});await save();throw error;
   } finally {
