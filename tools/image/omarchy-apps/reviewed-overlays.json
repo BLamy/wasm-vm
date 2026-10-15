@@ -33,6 +33,54 @@
       "path": "/usr/share/omarchy/install/user/mise-work.sh",
       "sha256": "c790d007e2ed23fe29739635d9740a6d3c8bdba7b5046b321ba9d0a2b6573c20",
       "reason": "The prepared RISC-V runtime branch uses the distro Node via node@system. This is reviewed installed code, not imported user Work state; executing full user provisioning is separately unproven."
+    },
+    {
+      "path": "/usr/bin/btop",
+      "sha256": "dd9ff5dc24c7ab0c59b097f795f4d8edcc3a5ef29eee8ba2e17fc8635eb2079c",
+      "xattrs": {
+        "security.capability": "AQAAAgQAAAAAAAAAQAAAAAAAAAA="
+      },
+      "reason": "Preserve the exact capability xattr embedded in the signature-validated btop1.4.7-1 archive; independently extracted metadata matches installed bytes and xattrs."
+    },
+    {
+      "path": "/usr/bin/rlogin",
+      "sha256": "0d4514a16f6795ffeb69677860584297279ea9d69fa0b70f555dda6344ea71f8",
+      "xattrs": {
+        "security.capability": "AQAAAgAEAAAAAAAAAAAAAAAAAAA="
+      },
+      "reason": "Preserve the standard installed capability explicitly set by the signature-validated native inetutils2.8-1 package install script; content matches its signed-package mtree."
+    },
+    {
+      "path": "/usr/bin/rcp",
+      "sha256": "0205710f536e2c64de8a69da4b44a22704bc7229c3e4383911179d51550c17dd",
+      "xattrs": {
+        "security.capability": "AQAAAgAEAAAAAAAAAAAAAAAAAAA="
+      },
+      "reason": "Preserve the standard installed capability explicitly set by the signature-validated native inetutils2.8-1 package install script; content matches its signed-package mtree."
+    },
+    {
+      "path": "/usr/bin/gsr-kms-server",
+      "sha256": "2407753d0c9294f3077cf9a75d5efbfec93a940517434da86b49859e36ba24ce",
+      "xattrs": {
+        "security.capability": "AQAAAgAAIAAAAAAAAAAAAAAAAAA="
+      },
+      "reason": "Preserve the exact capability xattr embedded in the signature-validated gpu-screen-recorder6.1.4-1 archive; independently extracted metadata matches installed bytes and xattrs."
+    },
+    {
+      "path": "/usr/bin/rsh",
+      "sha256": "949c625492bb65535a2ebb571e1b426e9157a64a80ba418202119b8a147c012a",
+      "xattrs": {
+        "security.capability": "AQAAAgAEAAAAAAAAAAAAAAAAAAA="
+      },
+      "reason": "Preserve the standard installed capability explicitly set by the signature-validated native inetutils2.8-1 package install script; content matches its signed-package mtree."
+    },
+    {
+      "path": "/usr/lib/gvfsd-nfs",
+      "sha256": "cae8afa4f9b87bd87fad6d3050822cd79f8e68dc47f1f417ae03e92ee010bc04",
+      "xattrs": {
+        "security.capability": "AQAAAgAEAAAAAAAAAAAAAAAAAAA="
+      },
+      "reason": "Preserve the standard installed capability explicitly set by the signature-validated native gvfs-nfs1.60.3-3 package install script; content matches its signed-package mtree."
     }
   ]
 }
