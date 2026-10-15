@@ -3,8 +3,9 @@ id: E6-T11d74d
 epic: 6
 title: Publish and prove an accelerated Omarchy warm-boot artifact
 priority: 525.0270384
-status: in-progress
-depends_on: [E6-T11d74c]
+status: blocked
+depends_on: [E6-T11d74c, E6-T11d74d1, E6-T11d74d2]
+blocked_on: [E6-T11d74d1, E6-T11d74d2]
 estimate: S
 risk: high
 capstone: false
@@ -60,3 +61,24 @@ Playwright cannot serialize one137MiB POST as an over-limit protocol string.
 Then pin/publish the actual final pair, switch the default launcher/direct URL,
 and prove local/clean-clone/HTTPS initial and repeat rendering. Earlier component
 holds carry only across unchanged code/dependency/evidence identities.
+
+### 2026-10-15 — worker — publication gated on reproduced desktop faults
+
+The user reports that the bar cannot be clicked and that pointer movement flashes
+the entire desktop. Original owned warm worker evidence under
+`target/evidence/production-gpu-ready-warm-self04/pointer-flicker.json` records40
+fully transparent rAF samples out of379 during trusted pointer movement, alongside
+original display-clear messages. Production `createWorkerScanoutPresenter.rebind`
+clears the visible canvas on every buffer switch. Same-coordinate120ms original
+tablet/mouse click diagnostics reach guest65,12 but leave workspace3 unchanged.
+
+The independent critic also records an exact2304-byte24x24 RGBA texture refusal at
+original `gpu.ndjson` line1408: the production live/retained resource count reaches
+64. Native command494 previously refuses before a host create event, so its
+unrecorded descriptor is not guessed. See
+`target/evidence/critic-production-gpu-warm-publication74d/resource-refusals01`.
+Publication is blocked on ordered small fixes74d1 (scanout continuity) and74d2
+(coherent production ownership capacity). No diagnostic pair is published.
+Warm publication edits are preserved in the named Git stash on the existing
+stack; this is not a replacement PR stack. Runtime changes require a new exact
+factory artifact and fresh acceptance before publication resumes.
