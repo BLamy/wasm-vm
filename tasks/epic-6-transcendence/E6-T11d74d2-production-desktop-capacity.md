@@ -3,7 +3,7 @@ id: E6-T11d74d2
 epic: 6
 title: Admit normal desktop GPU objects within coherent production budgets
 priority: 525.02703832
-status: implemented
+status: verified
 depends_on: [E6-T11d74d1]
 estimate: S
 risk: high
@@ -81,3 +81,60 @@ passing; the built default browser runs127passed/0failed with no unexpected
 errors. Existing74d1 all-four-software-image evidence carries across the unchanged
 software profile boundary; all-image final publication repeats in74d. This is a
 component capacity claim, not an actual Omarchy bar or deployment claim.
+
+### 2026-10-15 — independent verifier — VERDICT: verified
+
+- C1/C2/C3/C4 — HELD. Predicted the exact24×24 popup succeeds as creation65,
+  production512resources/32contexts/64subcontexts agree, N+1 refuses without
+  consuming identity, and private16/desktop64/context8/subcontext16 remain.
+  Original native/MMIO tests pass in both cache modes with exact24-byte used
+  responses and the literal fenced-u64 echo. In the final actual worker trace,
+  `recording/desktop-capacity/actual-worker/gpu.ndjson:294` is accepted popup104;
+  line1198 is an original512-resource command roster with flags1 and fence
+  `0020000000000093`. The six physical rows pass4,837assertions; malformed513,
+  duplicate and stale last roster entries leave owners/DMA/completions unchanged.
+- C5/C6/C7 — HELD. Predicted complete, independently rehashed33-context/
+  513-resource/513-unique-member sections and tail duplicates refuse detached;
+  all12 semantic cases across both caches preserve CPU/RAM, whole serialized
+  machine/queues, GPU control/submit ownership and host callback count. Actual
+  retained512 allocations,64 unref-held generations and a pending native read
+  cannot evade the count; final release alone reopens the slot, and stale leases
+  cannot target its reused ID. Actual128MiB GPU/192MiB copied-backing and64
+  lease/ticket guards remain bounded. A genuinely fresh physical512/32/64
+  reconstruction invokes no live transport during replay and produces all576
+  NEW blue pixels after the saved green contents.
+- C8 — HELD. In `old64-negative01`, restoring only the isolated production
+  resource selector512→64 makes the promoted physical regression fail exactly
+  at creation65 before allocation; all native owners retire and browser errors
+  stay empty. The original source is untouched. The first presenter-reuse and
+  historical-construction setup failures remain failed records; their narrow
+  corrected runs and the final pristine six-row run pass.
+- C9/COVERAGE — HELD. Independently rehashed the worker capsule
+  `6c4a82aa2bb909fd29f56db4634bda5b12b6bac28ad87f18c5414de8948c54fc`
+  and reopened all418members/417identities. The clean full-history/no-local,
+  no-alternates clone at `f0f36214f770551bd867f33b5177698107a5c00f`
+  builds byte-identical source/mirrors/dist and passes all16 prescribed gates.
+  Final original-worker cold/warm/trusted-input/repeat snapshots preserve
+  512/32/64 with draws2/4/6/8, green/green/red/blue pixels, fresh epochs2→3→4,
+  exact pre-execution saved clocks, no GPU failures and no pending work.
+  Ordinary built demo127/0 has errors[] and proof exports absent. Every changed
+  runtime hunk is exercised; constants, contract/pip metadata and generated
+  mirrors are waived as declarative after value and byte checks. Unchanged
+  four-software-image evidence carries from74d1 by the production-only boundary.
+- SUITE: retain the isolated original-MMIO six-test package and rehashed codec
+  corpus, six-row physical owner/typed-event oracle, real original supervisor
+  worker checkpoint fixture and recurring `make verify-E6-T11d74d2` gate.
+  This verifies capacity composition; actual Omarchy bar clicks, pointer
+  workload, final warm factory/repeat/HTTPS publication and recovery remain74d,
+  parentD and E6e. No300MIPS or merge claim is made.
+
+Independent evidence:
+`evidence/virgl-production-desktop-capacity/verifier/independent-capacity-verification.tar.gz`
+(2,139,568bytes; SHA256
+`5bce8ed9d4d74f970b151e33841537f636f14f0b02e1b8e19b8807c9f323a0d3`;
+211members/210authenticated identities), paired JSON adjacent. The capsule
+contains pre-data predictions, original negative control and setup negatives,
+source copies, independent native/physical records, full final authentication
+script/results, changed-hunk coverage and scope. Commands: promoted native
+recorder; independent headless Metal physical driver and isolated `--sabotage
+old64`; `review01/authenticate-final.py` over the final worker/pristine records.
