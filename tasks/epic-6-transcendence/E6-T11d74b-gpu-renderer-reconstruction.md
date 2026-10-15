@@ -3,7 +3,7 @@ id: E6-T11d74b
 epic: 6
 title: Reconstruct a production renderer in a fresh physical GPU context
 priority: 525.0270382
-status: pending
+status: in-progress
 depends_on: [E6-T11d74a]
 estimate: S
 risk: high
@@ -47,3 +47,17 @@ implementation boundary of that request, not the cancelled software-default
 workaround. Existing independent rendering/timekeeping proofs carry only across
 unchanged code and dependency identities; new checkpoint behavior needs its own
 recorded acceptance and fresh verifier.
+
+### 2026-10-15 — worker — production reconstruction profile
+
+Native74a is independently verified at e26e3e83. This layer records immutable
+original events/DMA inputs and checks physical resource contents after replay in
+a new context, with no live-native DMA or completion during reconstruction.
+The initial checkpoint profile explicitly refuses multisample storage,
+active/ended-native/pending queries, pending jobs/presentation and failed applied
+prefixes. Ready queries, retained resources/private image views, dimensional
+packed depth/stencil and transform-feedback-written buffers require proof.
+Journal overflow makes checkpointing unavailable while ordinary rendering
+continues. Detailed pre-implementation plan is in
+`target/evidence/production-gpu-warm-restore-plan01/renderer-design.json`;
+fresh critic recorded ten predictions before implementation.
