@@ -61,6 +61,13 @@ export function createApplicationIdentityProof(page,command,output,options={}){
     const manifestBytes=await fs.readFile(path.join(imageDirectory,'manifest.json')),manifest=JSON.parse(manifestBytes);
     const preparation=JSON.parse(await fs.readFile(path.join(imageDirectory,'preparation.json')));
     assert.equal(sha(manifestBytes),preparation.manifestSha256);
+    const expectedImageSha256=preparation.imageSha256??preparation.image?.sha256;
+    assert.match(expectedImageSha256,/^[a-f0-9]{64}$/,'authenticated preparation image digest');
+    if(preparation.image){
+      assert.equal(preparation.status,'passed');
+      assert.equal(preparation.image.bytes,manifest.image_len);
+      assert.equal(preparation.image.sha256,expectedImageSha256,'preparation image identities agree');
+    }
     const descriptor=JSON.parse(await fs.readFile(path.join(repo,'web/artifacts-omarchy-virgl.json')));
     const expectedIdentity={buildId:GPU_CHECKPOINT_BUILD_ID,kernelSha256:descriptor.artifacts.kernel.sha256,imageManifestSha256:sha(manifestBytes),ramMib:1024,
       bootargs:'root=/dev/vda rw console=ttyS0 earlycon=sbi plymouth.enable=0',guestClock:'icount',icountDivider:64,interactiveClock:'paced-on-keyboard'};
@@ -108,7 +115,7 @@ export function createApplicationIdentityProof(page,command,output,options={}){
     assert.equal(native.readBigUInt64LE(76),delta.readBigUInt64LE(49));
     const rows=parseIdentityDelta(delta,manifest);await fs.writeFile(path.join(directory,'actual.wvod'),delta);
     await fs.writeFile(path.join(directory,'base-manifest.json'),manifestBytes);
-    const base=path.join(imageDirectory,'guest.ext4');baseHash??=await hashFile(base);assert.equal(baseHash,preparation.imageSha256);
+    const base=path.join(imageDirectory,'guest.ext4');baseHash??=await hashFile(base);assert.equal(baseHash,expectedImageSha256);
     const disk=path.join(directory,'reconstructed.ext4');execFileSync('cp',['-c',base,disk]);assert.equal(await hashFile(disk),baseHash);
     const handle=await fs.open(disk,'r+');try{for(const row of rows){const result=await handle.write(delta,row.at,4096,row.offset);assert.equal(result.bytesWritten,4096);}}finally{await handle.close();}
     return {sync,capture,pair:{path:path.relative(output,pairPath),bytes:bytes.length,sha256:sha(bytes)},identity:decoded.identity,epoch:decoded.epoch,clockState:decoded.clockState,witness:decoded.witness,
