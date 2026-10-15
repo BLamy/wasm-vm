@@ -653,7 +653,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.027037` [E6-T11d72](epic-6-transcendence/E6-T11d72-interactive-keyboard-clock.md) — Bound accelerated desktop idle time during keyboard interaction *(deps: E5-T26i, E6-T11d70, E6-T11d73)*
 - [x] `525.027038` [E6-T11d5](epic-6-transcendence/E6-T11d5-standard-shader-state-binding.md) — Execute standard guest shader bindings through owned renderer jobs *(deps: E6-T11d4)*
 - [x] `525.027038` [E6-T11d69b](epic-6-transcendence/E6-T11d69b-production-transform-query-counts.md) — Measure logical original transform-feedback primitive query counts *(deps: E6-T11d69a)*
-- [~] `525.027038` [E6-T11d71](epic-6-transcendence/E6-T11d71-keyboard-host-wait.md) — Preserve original keyboard host waits across tickless guest idle *(deps: E6-T11d70, E6-T11d72, E6-T11d73)*
+- [?] `525.027038` [E6-T11d71](epic-6-transcendence/E6-T11d71-keyboard-host-wait.md) — Preserve original keyboard host waits across tickless guest idle *(deps: E6-T11d70, E6-T11d72, E6-T11d73)*
 - [x] `525.027039` [E6-T11d6](epic-6-transcendence/E6-T11d6-standard-instanced-draws.md) — Execute standard instanced and wide-index vertex draws *(deps: E6-T11d5)*
 - [x] `525.0270390001` [E6-T11d10](epic-6-transcendence/E6-T11d10-standard-primitive-assembly.md) — Preserve original provoking vertices with bounded native primitive lists *(deps: E6-T11d9)*
 - [x] `525.0270390002` [E6-T11d11](epic-6-transcendence/E6-T11d11-standard-native-points.md) — Execute bounded standard native point primitives and shader built-ins *(deps: E6-T11d10)*

@@ -3,7 +3,7 @@ id: E6-T11d71
 epic: 6
 title: Preserve original keyboard host waits across tickless guest idle
 priority: 525.027038
-status: in-progress
+status: implemented
 depends_on: [E6-T11d70, E6-T11d72, E6-T11d73]
 estimate: S
 risk: high
@@ -122,3 +122,50 @@ close the previously missing desktop proof. Native guard/lifecycle predictions
 and their negative control remain HELD within the unchanged boundary. No new
 runtime edit, broad suite, cold clone or long stock boot is required by the
 incremental rule. The original native-only repeated-t run remains failed.
+
+### 2026-10-15 — worker — final native host-wait claim with verified components
+
+Submission head `8b895e75` changes only task/queue metadata from D72 verifier
+head8c902c70. The original native keyboard guard, transport lifecycle, tests,
+Wasm adapter and renderer are byte-identical to frozen61. The closure archive's
+empty scoped diff and eight source copies bind that statement. The D73 timing
+implementation supersedes the old unpaced dependency and is independently
+verified; its original keyboard/GPU wait and busy-retirement predictions carry.
+
+Native evidence carries the original independent48 lifecycle,4 ordinary
+retirement,8 held/quiet and4 two-key rows with the isolated guard-removal
+negative. Their raw independent archive is included, not merely its summary.
+The final D72 pristine run also executes both native host-wait tests and both
+independent original-keyboard critic tests, all passing. Native retirement is
+not frozen; staged/pending/delivered keys hold only idle jumps, and original
+breaks, release-all and transport reset clear the wait.
+
+D72's independently verified final components close the earlier desktop gap:
+all10 software fast-boot/repeat/persistence phases; actual VirGL-only Mesa with
+768 textured pixels and index83,1000 cube frames, Hyprland/Foot scanout and
+13-family original handshake; stock UID1000 keyboard literal command from60
+trusted transitions/62 original frames, absent-before/present-after marker,
+readable bar and displaced guest cursor. Stock final657 begun/completed,308
+draws, no pending/failed/cancelled job and worker/page errors[] hold. The
+original five-second pause and retirement-aware resume bound also hold.
+Stock cursor resource0 is not cursor-plane recovery evidence.
+
+The final input boundary passed hot and pristine no-local/full-history clone
+proof at61eeb1b5, with own build, no alternates,89 tests,17 actual-worker rows
+and default127/0. The ordinary Wasm digest is
+`d055c473b686ce543d8b87da68034e240ba0f66cf8aacbb482e03a405a64363f`.
+D72's explicit five-line guard domain-equivalence proof carries the valid stock
+frames from e17, while new rejection paths are exercised by actual shipping
+Wasm and worker. This is incremental composed acceptance, not a relabelled
+whole earlier wrapper. The old native-only repeated-t stock failure, cold
+navigation failure, private readiness timeouts and task-allowlist wrapper
+failure remain failed. No deployment, recovery or300MIPS claim is made.
+
+Command: `python3 target/evidence/production-keyboard-host-wait-closure01/seal.py`.
+Artifact: `evidence/virgl-production-keyboard-host-wait/worker/keyboard-host-wait-proof-closure.tar.gz`,
+2,902,259bytes, SHA-256
+`c37868db24a5938b2592cabfa34605497a5cca927271b44fd0f77df8c2ccd4df`,
+23members/22identities all reopened. Five referenced proof archives are rehashed
+and all their members reopened. D72 verifier8c902c70 and D73 verifier7e2739f2
+remain the independent authority for unchanged components. Fresh D71 verdict
+is required before the parent can resume.
