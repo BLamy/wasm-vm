@@ -150,3 +150,34 @@ marker blocks and 124 keyboard method ID/timing pairs, direct unmodified PNG
 inspection, and deterministic archive reopen/hash checks. No browser or broad
 suite was rerun by the verifier during the live recordings. The worker's exact
 selected command prefix and final02 commands remain in their original reports.
+
+### 2026-10-14 — worker — preserve stock wall-clock input refutation
+
+The original pristine continuation at recorder head `4619a4d1` failed all20
+marker reads after62 original frames (60 trusted DOM transitions plus NumLock
+repair). The terminal visibly contains a long run of `t` followed by the intended
+command suffix and `command not found`. Actual mode is wall; no keys remain held,
+no events/frames were dropped or rejected, all124 original send/sync RPCs have
+matching results (maximum23.230ms). RPC completion does not attest Linux or
+Wayland consumption. Post-failure original state remains qualified, live and
+unpoisoned,687 begun/completed,321 draws, zero failed/cancelled/pending jobs,
+zero original DRM refusals, zero worker errors and no page timer gaps. The actual
+bar content is crop022; its preceding blank crops are retained.
+
+Worker negative archive
+`evidence/virgl-production-interactive-clock/worker/stock-wall-clock-repeat-negative-02.tar.gz`
+is417,826bytes, SHA-256
+`49e3d57af16f950460a5b266afee70e1a5a7d33c84327bfc14db8208ef7173c2`,
+83 members reopened and rehashed. Fresh refutation is recorded below/above in
+the verifier log and commit `847eb56f`; unaffected component holds carry forward.
+The skipped final02 default stage is not called passed; the separate original
+root default127/0 record remains valid by unchanged source identity.
+
+Self-validation now adds a passive, memory-buffered evdev timestamp observer to
+a disposable image12 copy, retaining the stock uid1000/config/Foot/compositor.
+Its service opens the keyboard then drops uid/gid1000, without grabbing input,
+changing repeat settings, or changing production assets. Source, compiler,
+image/chunk and original-driver diff pins are recorded in
+`target/evidence/production-stock-repeat-investigation01`. It changes scheduling
+and cannot discharge untouched-stock acceptance. No cause or runtime repair is
+claimed until the original kernel/Wayland delivery is measured.
