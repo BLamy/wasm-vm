@@ -3,7 +3,7 @@ id: E6-T11d74d1
 epic: 6
 title: Preserve the displayed GPU front buffer until the next valid frame
 priority: 525.02703831
-status: implemented
+status: verified
 depends_on: [E6-T11d74c]
 estimate: S
 risk: high
@@ -95,3 +95,55 @@ predicate with a finite300s command budget. Actual snapshot restore timing is
 separate (Node2053ms; Omarchy139398msnetwork and6031msrepeat in the pristine run).
 No acceptance output is fabricated, no old factory is relabelled and no artifact
 has yet been published. Independent verifier verdict is still required.
+
+### 2026-10-15 — verifier — VERDICT: verified
+
+Fresh independent review did not implement GPU/runtime code. Worker commit
+`4784111bb4e12c8e948ff6254dd91edbcd34311e` submits exact runtime/harness
+`afd26047a3751a55d4bee376ecf668769d06bca5`. Full verdict and point citations:
+`evidence/virgl-production-scanout-continuity/verifier/VERDICT.md`.
+
+- P1/P2/P6 — HELD. Original native/MMIO rebind retains all 4,096 green pixels;
+  old sequence 6 / binding 1 retires once as cancelled, fresh sequence 8 /
+  binding 3 draws blue. A revoked callback after blue queues leaves it pending.
+  Literal phase pixels, exact retirement keys and source identities were checked.
+- P3/P4/P5/P7/P8/P9 — HELD. Independent recorded real Canvas2D checks cover
+  fixed/nonfixed first-partial repaint, ordinary scheduling, stale receipt and
+  protocol-1 rejection, invalid preservation flags, explicit disable/reset/
+  teardown, staged checkpoint suppression and activation clear. Actual Metal
+  worker context loss clears without recovery replay. The initial nonfixed
+  partial-frame refutation and checkpoint-wrapper omission remain preserved.
+- P10 — HELD. Independently reopened/rehashed the 4,269,219-byte worker capsule:
+  all 418 members / 417 manifest identities match. All 132 frozen worker sources
+  match candidate blobs; the clean complete clone is exact, nonshallow, without
+  alternates/promisor packs and passes independent object-connectivity checks.
+  All 15 expected command exits hold: 26 native GPU/checkpoint tests, 66 protocol/
+  presentation/clock tests, 8 independent state groups, 47 physical pixel
+  assertions, all four software guests / 10 original boot-persistence phases,
+  and ordinary 127 passed / 0 failed, no proof exports or unexpected browser errors.
+- NEGATIVE — HELD. Healthy/negative frozen inputs differ only in the production
+  presenter's original unconditional-clear hunk. The exact between-bind
+  no-blank assertion fails. Generator extra-ref invariance holds; a scratch
+  legacy `--all` negative fails at its intended assertion. Earlier missing-ref
+  clone failures and external Node chunk timeout remain preserved.
+- COVERAGE/SUITE — Runtime hunks are executed by the recorded native worker and
+  independent state/pixel checks; comments, generated mirror copies and the
+  direct Make alias are waived with reasons in the full verdict. Unchanged
+  native/DMA/security proofs carry from the recorded 74c dependency. Promoted
+  `tools/test_gen_tasks_json_head.py` passes and guards published activity against
+  unrelated branch/remote/stash refs while retaining real HEAD changes.
+
+Independent review capsule:
+`evidence/virgl-production-scanout-continuity/verifier/review.tar.gz`,
+538,549 bytes, 80 members, SHA256
+`b0df7f502f64c4999bc27443272c3776ac8618c755fe274617e498a74917b013`.
+Every member was reopened and rehashed. It preserves pre-outcome predictions,
+original refutations, executed drivers, CDP coverage, generator positive/negative,
+portability/network failure provenance and the sealed-submission audit.
+
+Verifier commands: `python3 tools/test_gen_tasks_json_head.py`;
+`python3 target/evidence/critic-production-scanout-continuity74d1/audit-sealed-submission.py`;
+recorded bounded independent headless Chrome drivers and scratch-ref challenge.
+No runtime edits, protected-guest interaction, factory relabelling or publication
+occurred in this review. This supervisor boundary verdict does not verify final
+Omarchy warm publication (74d) or allocation diagnostics (74d2).
