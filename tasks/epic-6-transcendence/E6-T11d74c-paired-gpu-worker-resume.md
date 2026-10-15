@@ -3,7 +3,7 @@ id: E6-T11d74c
 epic: 6
 title: Restore RAM, disk and reconstructed GPU atomically in the production worker
 priority: 525.0270383
-status: implemented
+status: verified
 depends_on: [E6-T11d74b]
 estimate: S
 risk: high
@@ -132,3 +132,78 @@ is27837205 bytes,1981 members/1980 individually reopened identities, SHA256
 It contains the exact diff/source, hot and pristine acceptance, retained scale/
 lint negatives, independent modes, stock worker supplement and identity index.
 Fresh adversarial verification is required; this worker does not set verified.
+
+### 2026-10-15 — independent verifier — VERDICT: verified
+
+- **Coherence and original queues — HELD.** The pre-data C1–C3 predictions survive the
+  native and actual-worker evidence. Original-MMIO 64/1024 MiB workers retain literal
+  disk markers 77/122 with the same base/generation. Native A + renderer A + disk B
+  refuses before application/guest execution. The original flagged
+  `0x0020000000000071` fence drains exactly one used response without CPU/mtime
+  progress in both cache schedules. Removing only the served witness's disk binding
+  reaches forbidden native application (saved epoch 2 → fresh 3), failing the exact
+  oracle. Citations: worker capsule `cold01/acceptance/original-wire.stdout`,
+  `independent-attacks/mixed-disk-native-refusal.json`, and
+  `disk-negative/mixed-disk-native-refusal.json`; independent capsule
+  `review/final-authentication01/authentication.json`.
+- **Clock, input and authority — HELD.** Source capture has no retirement/clock
+  progress, releases held original keyboard/tablet transitions, and restores the exact
+  saved pre-execution ICount or selected paced clock. Trusted input changes pixels
+  and actual disk state; native cursor positions change and repeat restore succeeds.
+  Two concurrent real save RPCs serialize into equal raw native/disk/renderer
+  components; 33 late old-endpoint receipt capabilities leave the fresh paused owner
+  unchanged. Citations: cold `independent-attacks/report.json`, `production-ram/`
+  phase records, and the authenticated original native drain transcript.
+- **Publication and loss — HELD.** Invalid descriptors, corrupt/foreign pairs,
+  unsupported profiles, paused and persistent warm requests refuse explicitly.
+  Physical context loss during actual replay draw and original save hashing refuses
+  publication. New GPU draws and painted frames with every receipt deliberately
+  failed do not publish READY during the bounded observation; successful readiness
+  has a fresh-epoch original-sequence drawn receipt. This is not historical repair
+  pixel readiness. Citations: cold `release-readiness/report.json` (18 physical
+  frames in its recorded window) and `independent-attacks/` loss/refusal records.
+- **Scale and bounded encoding — HELD.** Eleven codec, five qualified-profile, five
+  restored-clock, six independent DMA and three native sparse-wire tests cover the
+  changed boundaries. All 535 proper sparse prefixes and eight late-invalid forms
+  preserve nonzero target RAM/allocation; valid zero runs clear old bytes. Removing
+  only sparse preflight in an isolated native copy fails at the predicted prefix 518.
+  The DMA corpus includes 97 varied patterns, independent literal/run words,
+  unaligned views, legacy raw data, malformed extents and the exact 32 MiB ceiling.
+  The journal's 512 MiB limit is unchanged. The actual 1 GiB save/fresh restore
+  supplies the allocation-scale proof. Citations: independent capsule
+  `review/scale-boundaries-{native,dma}01/`, `review/sparse-preflight-negative02/`,
+  and final cold `production-ram/` / `physical-checkpoint/` records.
+- **Coverage, portability and custody — HELD.** I reopened all 1,980 worker identities
+  and compared 72 source objects to frozen Git head
+  `906a05274c8b60a34bbd83a3b76511d469d2aca9`. The single untouched full-history
+  `--no-local` clone has no alternates, uses scrubbed environment and passes all
+  23 recurring commands. Earlier hot 22 commands carry unchanged; the final clone
+  includes the added readiness mode. Native core 392 tests, affected native/Wasm/
+  legacy gates, three physical renderer schedules, all 10 software warm phases and
+  built default 127/0 pass. Independent 46-file identity reconstruction equals
+  `5dd286c9663c5740e1d26873c26e0ea81d1d32bf67b9c31c758842dbf23f3f09`;
+  ordinary Wasm equals
+  `9b7fd9243787a69747d421b3cffe8606d16796d97adbab4fe8e292f6035e1e96`.
+  Changed-hunk coverage/explicit adapter waivers are in
+  `review/final-coverage.json`. Prior scale/lint negatives and the critic's
+  corrected fixture/setup failures remain intact; they are not relabelled passes.
+- **Scope and suite.** Keep the promoted sparse/DMA/codec/profile/clock tests,
+  original-MMIO worker, healthy/isolated-negative/readiness modes and recurring
+  target. Native 74a and renderer 74b holds carry only across unchanged boundaries;
+  the affected RAM and record/replay paths were rerun. The optional stock worker
+  supplement has all 46 delivered critical body hashes, saved 2 → fresh 3,
+  a new drawn receipt, 466/466 jobs, 122 draws and real guest Mesa/VirGL output.
+  Its 13,607 ms measurement is local worker readiness with the package desktop
+  overlay still pending. Full default Omarchy desktop/input/repeat, HTTPS
+  publication, deployment, recovery and any 300 MIPS claim remain outside this
+  verdict and are not discharged by it.
+
+Worker submission `7cfdafef` and capsule SHA
+`353bf7155806c99f89d083a32822aaae41f50daae0f70946be9f6457ce9913a1`
+are authenticated. Independent evidence:
+`evidence/virgl-production-paired-worker/verifier/independent-paired-worker-review.tar.gz`
+(12,416,397 bytes; 1,485 members / 1,484 authenticated identities), SHA256
+`ef197d650267209f370faf5c1cef46bdbdf43031f13ae2b0ec0999b325dd4e64`;
+paired JSON includes the identity index. Its `review/verdict.md` begins
+`VERDICT: verified`; original pre-data predictions, source captures, novel attacks,
+exact negative controls and final cold authentication are sealed inside.
