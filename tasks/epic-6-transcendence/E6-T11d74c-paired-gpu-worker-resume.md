@@ -3,7 +3,7 @@ id: E6-T11d74c
 epic: 6
 title: Restore RAM, disk and reconstructed GPU atomically in the production worker
 priority: 525.0270383
-status: in-progress
+status: implemented
 depends_on: [E6-T11d74b]
 estimate: S
 risk: high
@@ -85,3 +85,50 @@ cursor positions, exact saved clock, changed disk and repeat restore now pass
 is not a Linux/Mesa/production-site latency claim. Omarchy cold03 is running on
 runtime identity5dd286c9663c5740e1d26873c26e0ea81d1d32bf67b9c31c758842dbf23f3f09;
 final frozen submission and independent verification remain required.
+
+### 2026-10-15 — worker — paired production worker submitted
+
+Frozen source `4c40697be9c009a5f04780203a5a22cef5c1610e` passed all22
+commands in `VIRGL_PAIRED_WORKER_EVIDENCE_DIR=target/evidence/production-paired-worker-frozen02
+make verify-E6-T11d74c`. Final tools-only head
+`906a05274c8b60a34bbd83a3b76511d469d2aca9` adds the independent descriptor/
+failed-drawn-receipt supplement to the recurring target. The untouched full
+`git clone --no-local` at that exact head (no alternates; scrubbed Rust/Cargo/
+VirGL/critic environment) passed all23 commands, recorded by
+`python3 target/evidence/production-gpu-warm-restore-plan01/paired-cold.py` in
+`target/evidence/production-paired-worker-cold01`. Tracked files stayed clean.
+
+The actual original-MMIO supervisor worker saves, closes and restores in fresh
+physical workers at64 and1024MiB. Original fenced responses, newly completed
+GPU draws and fresh original-sequence drawn receipts precede readiness. Trusted
+keyboard changes pixels and disk state; two actual native cursor positions and
+repeat restore preserve the changed marker. The selected guest clock matches
+exactly before guest execution, including a previously selected paced policy.
+Independent tests reject mismatched RAM/disk/GPU, corruption, unsupported real
+profiles, invalid publication descriptors, paused/persistent warm selection,
+physical context loss and old receipts. Withholding all successful fresh drawn
+receipts leaves READY unpublished despite actual new completed draws. Removing
+only disk binding from the served witness encoder reaches forbidden native
+application and fails its precise oracle. The final clone also passes392 core
+unit tests, original-wire/legacy-resume/storage/Wasm gates, physical reconstruction,
+all ten initial/repeat/persistence phases across four software images, and the
+ordinary built page127 passed/0 failed with no unexpected browser errors.
+
+An additional actual Omarchy worker self-validation restores the real
+137111825-byte pair95ef658cb259f13c542b36c6742a85cca0ef61af63f0780af297420845dabbc5
+with unchanged critical source identity5dd286c9 and ordinary Wasm9b7fd924.
+It advances saved epoch2 to fresh3, completes new draws and drawn receipts,
+and executes a real guest EGL query showing Mesa26.2.2 VirGL, no software DRI.
+The13607ms observation is worker readiness in a local served-selection supplement;
+full package bar/input/default/HTTPS warm behavior remains74d. The originating
+cold recorder's Node message-size failure after the complete binary POST is
+retained as a failed run. Its pair footer, compressed and raw component digests
+validate; it is not relabelled a passed cold recording.
+
+Durable worker capsule
+`evidence/virgl-production-paired-worker/worker/paired-production-worker-submission.tar.gz`
+is27837205 bytes,1981 members/1980 individually reopened identities, SHA256
+`353bf7155806c99f89d083a32822aaae41f50daae0f70946be9f6457ce9913a1`.
+It contains the exact diff/source, hot and pristine acceptance, retained scale/
+lint negatives, independent modes, stock worker supplement and identity index.
+Fresh adversarial verification is required; this worker does not set verified.
