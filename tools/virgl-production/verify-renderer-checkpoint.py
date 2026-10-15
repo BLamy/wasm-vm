@@ -2,6 +2,7 @@
 """Record the fresh physical production renderer checkpoint boundary at a frozen head."""
 import argparse
 import hashlib
+import gzip
 import json
 import os
 from pathlib import Path
@@ -22,14 +23,14 @@ report = {"task": "E6-T11d74b", "head": subprocess.check_output(["git", "rev-par
           "scope": "Physical renderer reconstruction only; worker pairing and production guest GPU warm boot follow in74c/74d",
           "status": "running", "commands": [], "started": time.time()}
 
-def run(name, command, timeout=1800):
+def run(name, command, timeout=1800, expected=0):
     print(name, flush=True)
     started = time.time()
     with (output/(name+".stdout")).open("wb") as stdout, (output/(name+".stderr")).open("wb") as stderr:
         result = subprocess.run(command, cwd=repo, env=env, stdout=stdout, stderr=stderr, timeout=timeout)
-    report["commands"].append({"name": name, "command": command, "seconds": time.time()-started, "exitCode": result.returncode})
+    report["commands"].append({"name": name, "command": command, "seconds": time.time()-started, "exitCode": result.returncode, "expectedExitCode": expected})
     (output/"report.json").write_text(json.dumps(report, indent=2)+"\n")
-    assert result.returncode == 0, name+" failed; inspect recorded output"
+    assert result.returncode == expected, name+" failed; inspect recorded output"
 
 try:
     run("policy", ["python3", "tools/check_task_policy.py"])
@@ -50,7 +51,17 @@ try:
     run("web-build", ["make", "web-build"])
     run("physical-checkpoint", ["node", "tools/virgl-production/worker-checkpoint-browser.mjs", "--output", str(output/"physical-checkpoint")])
     run("independent-attacks", ["node", "tools/virgl-production/critic-fast-boots-renderer-checkpoint-browser.mjs", "--output", str(output/"independent-attacks")])
-    run("generation-negative", ["node", "tools/virgl-production/critic-fast-boots-renderer-checkpoint-browser.mjs", "--output", str(output/"generation-negative"), "--mode", "epoch", "--negative-control", "stale-epoch"])
+    run("generation-negative", ["node", "tools/virgl-production/critic-fast-boots-renderer-checkpoint-browser.mjs", "--output", str(output/"generation-negative"), "--mode", "epoch", "--negative-control", "stale-epoch"], expected=1)
+    negative = json.loads((output/"generation-negative/report.json").read_text())
+    assert negative["status"] == "failed" and negative["browserErrors"] == {"console": [], "page": [], "requests": []}
+    assert negative["negativeControl"]["sourceSha256"] != negative["negativeControl"]["servedSha256"]
+    assert len(negative["runs"]) == 1
+    negative_bytes = gzip.decompress((output/"generation-negative"/negative["runs"][0]["path"]).read_bytes())
+    assert hashlib.sha256(negative_bytes).hexdigest() == negative["runs"][0]["sha256"]
+    row = json.loads(negative_bytes)
+    assert row["failure"]["message"] == "stale expected epoch refuses rejected: expected false, got true"
+    assert row["stale"]["ok"] is True and row["after"]["epoch"] == "0000000000000003"
+    assert row["ownersAfter"] == {"objects": 0, "syncs": 0}
     run("multisample-regression", ["node", "tools/virgl-production/worker-multisample-browser.mjs", "--output", str(output/"multisample-regression"), "--schedules", "0,1,2"])
     built = repo/"web/pkg/wasm_vm_wasm_bg.wasm"
     committed = repo/"web/dist/pkg/wasm_vm_wasm_bg.wasm"

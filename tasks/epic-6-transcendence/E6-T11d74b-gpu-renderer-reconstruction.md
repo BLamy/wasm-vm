@@ -93,3 +93,14 @@ overlapping capture refusal and budget-exhausted rendering. All native objects a
 fences are released. The retained self08 failure was a test fixture passing float
 values where the existing clear helper expects IEEE754 words; changing only that
 fixture to `.map(word)` produced self09. It was not a runtime rendering fix.
+
+Frozen01 at de33c99f passed policy,13 syntax checks, codec, both builds,
+three worker hardware rows and six independent hardware attack rows. Its outer
+runner then failed because it incorrectly required exit0 from the intentionally
+sabotaged stale-epoch negative control. The browser correctly exited1 and recorded
+stale expected epoch acceptance/epoch3 after removal of that one guard, with zero
+browser errors/owners. This is a recording-wrapper failure, preserved in frozen01.
+The runner now requires that exact exit1, authenticates its compressed row and
+checks the precise failure/state/cleanup; arbitrary browser failure cannot pass.
+Only the recording harness changed. Prior physical prefixes carry; the one final
+pristine run executes the corrected full command and remaining default/MSAA gates.
