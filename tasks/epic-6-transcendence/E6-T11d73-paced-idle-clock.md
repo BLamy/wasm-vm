@@ -37,8 +37,8 @@ host samples, ordinary retirement, timer/external IRQ delivery, held/broken/rese
 keyboard, active GPU waits, selection/refusal and explicit rebase. Assert literal
 mtime/deadline and architectural states; retain deterministic unpaced controls.
 Run affected native format/lint/tests, no_std Wasm build, actual Wasm API tests
-and the built default demo suite. A final pristine proof may be shared with D72
-when its exact frozen runtime includes this task. No production-default policy,
+and the built default demo suite. Run this acceptance once from a pristine exact-head clone without borrowed
+outputs; D72 may carry the unchanged native component proof forward. No production-default policy,
 GPU performance, stock-input fix, deployment or snapshot portability is implied
 by an isolated clock test.
 

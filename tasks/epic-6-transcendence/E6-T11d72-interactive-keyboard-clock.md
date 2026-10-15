@@ -239,3 +239,33 @@ OrderedS/high E6-T11d73 introduces an opt-in retire-derived clock with host-pace
 idle jumps. D72 remains blocked until that primitive is independently verified,
 then owns its explicit loader policy and unchanged final stock proof. This is
 a proposed pacing repair, not a declaration that the observed failure is fixed.
+
+### 2026-10-15 — worker — preserve independently audited pipeline negative
+
+The fresh critic independently parsed diagnostic03's actual PID696 Foot and
+PID592 Hyprland prefixes, matched all62 original events across four layers and
+held all442 native timer bounds (zero exclusions/violations). First T20 kernel
+hold is47.750ms, compositor serialization gap1.013250s, Foot callback gap
+30.423785s. Exact compositor release row816 is followed by58 backend events and
+58 corresponding key emissions before observed flush933,29.457760s later;
+Foot read1543/dispatch1545/release1546 follow. All native call pairs are complete.
+Repeat fd5 has334 reads/1195 expirations before release consumption; these are
+consistent with actual elapsed time. Public flush attempts do not certify
+per-client socket delivery and missing hooks cannot exclude internal writes.
+
+Both stable raw prefixes have overflow0. The original image-build stdout pins
+an earlier source hash8ec40ca9 while the frozen outer receipt pins9178f7a1;
+this discrepancy is preserved. A fresh compile of the final frozen9178f7a1
+source using the authenticated original source basename produces byte-identical
+installed libraryd03b8ce3. The first differing-basename rebuild and its mismatch
+are retained too; no comment-only source history is invented.
+
+Independent archive
+`evidence/virgl-production-interactive-clock/verifier/diagnostics-03/concurrent-pipeline-input-boundary-diagnostic.tar.gz`
+is7,217,914bytes, SHA-256
+`ba738841b0f54bb8b7b338ee4ce289d0cddd6c9b899b545ca8a48a32e61a62e3`;
+all183 members/182 identities were reopened. It includes the full failed first
+helper,20 original failed marker blocks, source/build receipts, raw buffers,
+pre-data independent predictions/decoder, exact crops, final failed PNG and
+separately marked post-helper metadata. The diagnostic closed exit1 after owned
+release. No product verdict, runtime repair or deployment is claimed.

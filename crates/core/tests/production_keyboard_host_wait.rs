@@ -17,6 +17,14 @@ const USED: u64 = virt::DRAM_BASE + 0x12_0000;
 const DATA: u64 = virt::DRAM_BASE + 0x13_0000;
 const HANDLER: u64 = virt::KERNEL_BASE + 0x4000;
 
+#[derive(Clone)]
+struct HostClock(Rc<std::cell::Cell<u64>>);
+impl wasm_vm_core::time::MonotonicClock for HostClock {
+    fn now_nanos(&self) -> u64 {
+        self.0.get()
+    }
+}
+
 struct Rig {
     machine: Machine,
     input: Option<Rc<RefCell<InputState>>>,
@@ -141,6 +149,40 @@ impl Rig {
         );
         assert_eq!(trace.retired(), budget);
         (self.clock.borrow().mtime, trace.hash())
+    }
+}
+
+#[test]
+fn paced_idle_still_honors_original_keyboard_waits_and_transport_reset() {
+    for cached in [false, true] {
+        for phase in ["staged", "pending", "delivered", "break", "reset"] {
+            let mut r = Rig::new(true);
+            let host = Rc::new(std::cell::Cell::new(0));
+            r.machine
+                .set_paced_icount_clock(Box::new(HostClock(host.clone())))
+                .unwrap();
+            r.edge(1, phase != "staged");
+            if matches!(phase, "delivered" | "break" | "reset") {
+                r.deliver(2);
+            }
+            if phase == "break" {
+                r.edge(0, true);
+                r.deliver(2);
+            } else if phase == "reset" {
+                r.write(0x70, 0);
+            }
+            host.set(1_000_000_000);
+            let expected = if matches!(phase, "break" | "reset") {
+                100_000
+            } else {
+                0
+            };
+            let (actual, hash) = r.idle(cached, 0, 100_000, 1);
+            assert_eq!(actual, expected, "{phase},cached={cached}");
+            eprintln!(
+                "PACED_KEYBOARD phase={phase} cached={cached} actual={actual} expected={expected} trace={hash:016x}"
+            );
+        }
     }
 }
 

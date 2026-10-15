@@ -1497,6 +1497,10 @@ fn select_guest_clock(
 ) -> Result<(), &'static str> {
     match mode {
         "icount" => machine.set_icount_clock(),
+        "paced-icount" => {
+            let clock = source().ok_or("guest_clock_source_unavailable")?;
+            machine.set_paced_icount_clock(clock)?;
+        }
         "wall" => {
             let clock = source().ok_or("guest_clock_source_unavailable")?;
             machine.set_wall_clock(clock, wasm_vm_core::time::WallClockPolicy::DEFAULT);
@@ -1520,6 +1524,41 @@ mod guest_clock_tests {
         fn now_nanos(&self) -> u64 {
             self.0.get()
         }
+    }
+
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    fn paced_selection_refuses_missing_source_or_clint_without_replacing_policy() {
+        let mut m = Machine::new(64 * 1024);
+        let host = Rc::new(Cell::new(0));
+        assert!(
+            select_guest_clock(&mut m, "paced-icount", || Some(Box::new(Clock(
+                host.clone()
+            ))))
+            .is_err()
+        );
+        assert_eq!(m.guest_clock_mode(), TimeMode::ICount);
+        m.enable_clint(64);
+        m.bus_mut().store32(virt::DRAM_BASE, 0x0000_006f).unwrap();
+        m.hart_mut().regs.pc = virt::DRAM_BASE;
+        m.run(7);
+        let before = m.save_resume().unwrap();
+        assert_eq!(
+            select_guest_clock(&mut m, "paced-icount", || None),
+            Err("guest_clock_source_unavailable")
+        );
+        assert_eq!(m.save_resume().unwrap(), before);
+        select_guest_clock(&mut m, "paced-icount", || {
+            Some(Box::new(Clock(host.clone())))
+        })
+        .unwrap();
+        assert_eq!(m.guest_clock_mode(), TimeMode::PacedICount);
+        assert_eq!(m.save_resume().unwrap(), before);
+        host.set(90_000_000_000);
+        m.run(57);
+        assert_eq!(m.clint_mtime(), 1, "busy time retains the original phase");
+        assert!(select_guest_clock(&mut m, "paced-icount", || None).is_err());
+        assert_eq!(m.guest_clock_mode(), TimeMode::PacedICount);
     }
 
     #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
@@ -1595,6 +1634,46 @@ mod guest_clock_tests {
     #[cfg(target_arch = "wasm32")]
     fn field(state: &JsValue, name: &str) -> JsValue {
         js_sys::Reflect::get(state, &JsValue::from_str(name)).unwrap()
+    }
+
+    #[cfg(target_arch = "wasm32")]
+    #[wasm_bindgen_test::wasm_bindgen_test]
+    fn exported_paced_selection_preserves_lossless_time_and_truthful_source_refusal() {
+        let m = linux();
+        let saved = (1u64 << 53) + 71;
+        m.inner
+            .borrow_mut()
+            .machine
+            .bus_mut()
+            .store64(virt::CLINT_BASE + 0xbff8, saved)
+            .unwrap();
+        if JsHostTimer::new().is_some() {
+            m.set_guest_clock("paced-icount").unwrap();
+            assert_eq!(
+                field(&m.guest_clock_state().unwrap(), "mode")
+                    .as_string()
+                    .as_deref(),
+                Some("paced-icount")
+            );
+            m.rebase_guest_clock().unwrap();
+        } else {
+            assert!(m.set_guest_clock("paced-icount").is_err());
+            assert_eq!(
+                field(&m.guest_clock_state().unwrap(), "mode")
+                    .as_string()
+                    .as_deref(),
+                Some("icount")
+            );
+        }
+        assert_eq!(
+            field(&m.guest_clock_state().unwrap(), "mtime").as_string(),
+            Some(saved.to_string())
+        );
+        m.run_chunk(10, None).unwrap();
+        assert_eq!(
+            field(&m.guest_clock_state().unwrap(), "mtime").as_string(),
+            Some((saved + 1).to_string())
+        );
     }
 
     #[cfg(target_arch = "wasm32")]
@@ -3503,6 +3582,7 @@ impl WasmLinux {
         };
         let mode = match inner.machine.guest_clock_mode() {
             wasm_vm_core::time::TimeMode::ICount => "icount",
+            wasm_vm_core::time::TimeMode::PacedICount => "paced-icount",
             wasm_vm_core::time::TimeMode::WallClock => "wall",
         };
         set("mode", JsValue::from_str(mode));

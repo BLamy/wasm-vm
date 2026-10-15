@@ -295,8 +295,10 @@ pub struct Machine {
     /// [`Self::mono_clock`]. `None` (the default) keeps the deterministic ICount clock so every
     /// existing determinism / lockstep / predecode-diff gate stays byte-identical.
     wall_time: Option<time::TimeSource>,
+    /// Opt-in ICount idle ceiling. Busy execution retains the deterministic retire clock.
+    idle_pacer: Option<time::IdlePacer>,
     /// E4-T24: the injected monotonic host clock (CLI `Instant`, browser `performance.now()`, or a
-    /// test mock). Read only on the wall-clock path so `crates/core` never names a host time API.
+    /// test mock). Read only for wall time or opt-in idle pacing; core names no host time API.
     mono_clock: Option<alloc::boxed::Box<dyn time::MonotonicClock>>,
     /// E4-T24: the last discontinuous `mtime` jump (the documented suspend/resume exception), for the
     /// host to surface / the guest to resync from the RTC. Cleared by [`Self::take_time_jump`].
@@ -1016,6 +1018,7 @@ impl Machine {
             jit_enabled: false,
             compile_queue: compile_queue::CompileQueue::default(),
             wall_time: None,
+            idle_pacer: None,
             mono_clock: None,
             last_time_jump: None,
             fabric_epoch: alloc::rc::Rc::new(core::cell::Cell::new(0)),
@@ -4111,6 +4114,7 @@ impl Machine {
             ts.sync_floor(clint.borrow().mtime);
         }
         self.wall_time = Some(ts);
+        self.idle_pacer = None;
         self.mono_clock = Some(clock);
         self.rebase_guest_clock();
     }
@@ -4119,9 +4123,39 @@ impl Machine {
     pub fn guest_clock_mode(&self) -> time::TimeMode {
         if self.wall_time.is_some() {
             time::TimeMode::WallClock
+        } else if self.idle_pacer.is_some() {
+            time::TimeMode::PacedICount
         } else {
             time::TimeMode::ICount
         }
+    }
+
+    /// Keep retire-derived busy time, but prevent idle jumps from outrunning host input.
+    /// Selection is explicit and preserves guest time, deadlines and the sub-tick phase.
+    #[cfg(not(feature = "zicsr-stub"))]
+    pub fn set_paced_icount_clock(
+        &mut self,
+        clock: alloc::boxed::Box<dyn time::MonotonicClock>,
+    ) -> Result<(), &'static str> {
+        let mtime = self
+            .clint
+            .as_ref()
+            .ok_or("paced ICount requires an attached CLINT")?
+            .borrow()
+            .mtime;
+        if self.clock_div == 0 || self.tick_accum >= self.clock_div {
+            return Err("paced ICount requires a valid saved clock phase");
+        }
+        let pacer = time::IdlePacer::new(
+            clock.now_nanos(),
+            mtime,
+            u64::from(platform::virt::TIMEBASE_FREQ_HZ),
+        );
+        self.wall_time = None;
+        self.idle_pacer = Some(pacer);
+        self.mono_clock = Some(clock);
+        self.last_time_jump = None;
+        Ok(())
     }
 
     /// Retirements per tick in ICount mode; retained, but inactive, in wall mode.
@@ -4139,7 +4173,7 @@ impl Machine {
         if self.clint.is_none() {
             return Err("ICount divider requires an attached CLINT");
         }
-        if self.wall_time.is_some() {
+        if self.wall_time.is_some() || self.idle_pacer.is_some() {
             return Err("ICount divider requires ICount mode");
         }
         if self.clock_div == 0 || self.tick_accum >= self.clock_div {
@@ -4165,11 +4199,18 @@ impl Machine {
             ts.rebase_wall(clock.now_nanos(), clint.borrow().mtime);
             self.last_time_jump = None;
         }
+        if let (Some(pacer), Some(clock), Some(clint)) =
+            (&mut self.idle_pacer, &self.mono_clock, &self.clint)
+        {
+            pacer.rebase(clock.now_nanos(), clint.borrow().mtime);
+            self.last_time_jump = None;
+        }
     }
 
     /// E4-T24: revert to the deterministic ICount clock (retire-derived `mtime`).
     pub fn set_icount_clock(&mut self) {
         self.wall_time = None;
+        self.idle_pacer = None;
         self.mono_clock = None;
         self.last_time_jump = None;
     }
@@ -4227,6 +4268,10 @@ impl Machine {
             deadline = Some(deadline.map_or(stimecmp, |d| d.min(stimecmp)));
         }
         if let Some(d) = deadline {
+            let d = match (&mut self.idle_pacer, &self.mono_clock) {
+                (Some(pacer), Some(clock)) => pacer.limit_deadline(clock.now_nanos(), mtime, d),
+                _ => d,
+            };
             // Jump the machine clock to the deadline; next boundary re-evaluates MTIP/STIP as a
             // level (mtime >= cmp) and delivers the timer. tick_accum (sub-tick remainder from
             // retirements) is left untouched — whole-tick jumps are independent of the divider.

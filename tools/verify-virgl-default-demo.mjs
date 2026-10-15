@@ -21,7 +21,7 @@ if (remoteUrl) {
   assert.equal(url.protocol, 'https:'); assert.equal(url.pathname, '/');
   assert.equal(url.search + url.hash + url.username + url.password, '');
 }
-assert.ok(['E0-T27', 'E6-T11a', 'E6-T11b2', 'E6-T11c', 'E6-T11d51', 'E6-T11d52', 'E6-T11d53', 'E6-T11d54', 'E6-T11d55', 'E6-T11d56', 'E6-T11d57', 'E6-T11d58', 'E6-T11d59', 'E6-T11d60', 'E6-T11d61', 'E6-T11d62', 'E6-T11d63', 'E6-T11d64', 'E6-T11d65', 'E6-T11d66', 'E6-T11d67', 'E6-T11d68', 'E6-T11d69a','E6-T11d69b', 'E6-T11d70', 'E6-T11d', 'E6-T11e'].includes(task));
+assert.ok(['E0-T27', 'E6-T11a', 'E6-T11b2', 'E6-T11c', 'E6-T11d51', 'E6-T11d52', 'E6-T11d53', 'E6-T11d54', 'E6-T11d55', 'E6-T11d56', 'E6-T11d57', 'E6-T11d58', 'E6-T11d59', 'E6-T11d60', 'E6-T11d61', 'E6-T11d62', 'E6-T11d63', 'E6-T11d64', 'E6-T11d65', 'E6-T11d66', 'E6-T11d67', 'E6-T11d68', 'E6-T11d69a','E6-T11d69b', 'E6-T11d70', 'E6-T11d73', 'E6-T11d', 'E6-T11e'].includes(task));
 const output = path.resolve(process.argv[3]), root = path.join(repo, 'web/dist');
 await fs.mkdir(output, { recursive: true });
 const report = { schema: 1, task, status: 'running',
@@ -88,8 +88,9 @@ try {
   const graphics = page.locator('.cap', { hasText: 'Guest GPU offload' });
   report.graphicsRoadmapPip = await graphics.locator('.cap-pip').getAttribute('class');
   assert.match(report.graphicsRoadmapPip, /\bpartial\b/);
-  if (['E6-T11d67','E6-T11d68','E6-T11d69a','E6-T11d69b','E6-T11d70','E6-T11d','E6-T11e'].includes(task)) assert.match(await graphics.textContent(), /qualified GPU cold boots/);
+  if (['E6-T11d67','E6-T11d68','E6-T11d69a','E6-T11d69b','E6-T11d70','E6-T11d73','E6-T11d','E6-T11e'].includes(task)) assert.match(await graphics.textContent(), /qualified GPU cold boots/);
   else assert.match(await graphics.textContent(), /production acceleration disabled/);
+  if (task === 'E6-T11d73') assert.match(await page.locator('.cap', {hasText: 'Host-paced guest idle'}).textContent(), /E6-T11d73/);
   if (task === 'E6-T11d70') assert.match(await page.locator('.cap', {hasText: 'Original fragmented GPU backing'}).textContent(), /16384/);
   if (task === 'E6-T11d68') assert.match(await page.locator('.cap', {hasText: 'Original indexed draw hints'}).textContent(), /E6-T11d68/);
   if (task === 'E6-T11d69a' || task === 'E6-T11d69b') assert.match(await page.locator('.cap', {hasText: 'Original GLES queries'}).textContent(), /E6-T11d69a/);

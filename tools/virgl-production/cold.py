@@ -9,7 +9,7 @@ import subprocess
 import time
 
 parser = argparse.ArgumentParser(description=__doc__)
-parser.add_argument("--task", choices=["E6-T11d67", "E6-T11d68", "E6-T11d69a", "E6-T11d69b", "E6-T11d70", "E6-T11d71", "E6-T11d72", "E6-T11d", "E6-T11e"], required=True)
+parser.add_argument("--task", choices=["E6-T11d67", "E6-T11d68", "E6-T11d69a", "E6-T11d69b", "E6-T11d70", "E6-T11d71", "E6-T11d72", "E6-T11d73", "E6-T11d", "E6-T11e"], required=True)
 parser.add_argument("--output", type=Path, required=True)
 args = parser.parse_args()
 repo = Path(__file__).resolve().parents[2]
@@ -22,7 +22,8 @@ clone = output / "clone"
 env = {key: value for key, value in os.environ.items()
        if key not in ("RUSTFLAGS", "RUST_LOG")
        and not key.startswith(("CARGO_", "VIRGL_", "CRITIC_"))}
-env.update(VIRGL_INTERACTIVE_CLOCK_EVIDENCE_DIR=str(output / "interactive-clock"),
+env.update(VIRGL_PACED_IDLE_EVIDENCE_DIR=str(output / "paced-idle"),
+           VIRGL_INTERACTIVE_CLOCK_EVIDENCE_DIR=str(output / "interactive-clock"),
            VIRGL_KEYBOARD_WAIT_EVIDENCE_DIR=str(output / "keyboard-wait"),
            VIRGL_FRAGMENTED_BACKING_EVIDENCE_DIR=str(output / "fragmented-backing"),
            VIRGL_FEEDBACK_QUERIES_EVIDENCE_DIR=str(output / "feedback-queries"),
