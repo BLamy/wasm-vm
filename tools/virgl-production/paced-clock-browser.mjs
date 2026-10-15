@@ -17,6 +17,8 @@ let server,browser,page;
 try {
   server=createServer(async(request,response)=>{
     try {
+      response.setHeader('Cross-Origin-Opener-Policy','same-origin');
+      response.setHeader('Cross-Origin-Embedder-Policy','require-corp');
       const route=new URL(request.url,'http://localhost').pathname;
       if(route==='/favicon.ico'){response.writeHead(204).end();return;}
       if(route==='/__paced-clock'){
@@ -68,7 +70,26 @@ try {
       check(BigInt(resumed.mtime)<=maximum,'Explicit resume excludes elapsed paused host time');
       m.setGuestClock('icount');m.runChunk(256);const unpaced=m.guestClockState();
       check(unpaced.mode==='icount'&&BigInt(unpaced.mtime)>=30_000_000n,'Unpaced control reaches the actual guest-armed timer');
-      return {words,initial,selected,selectStart,selectEnd,firstRun,firstEnd,first,idleRead,secondRun,secondEnd,second,beforeRebase,rebaseStart,rebaseEnd,resumedRun,resumedEnd,resumed,unpaced,proofExportsAbsent:true};
+      // The new busy policy also composes with the actual compiled tier. This
+      // guest has no WFI and its mtime must be exactly retired/64 despite yields.
+      const busyWords=[0x00130313,0xffdff06f],busyBytes=new Uint8Array(8),busyView=new DataView(busyBytes.buffer);
+      busyWords.forEach((w,i)=>busyView.setUint32(i*4,w,true));
+      const busy=new api.WasmLinux(8,busyBytes,new Uint8Array(),'',()=>{},false);
+      let retired=0,busyState,jitStats;
+      try {
+        check(crossOriginIsolated,'Actual browser JIT isolation');
+        busy.setICountDivider(64);busy.setGuestClock('paced-icount');busy.enableJit(1);
+        for(let i=0;i<32;i++){
+          retired+=busy.runChunk(16384).retired;
+          busyState=busy.guestClockState();jitStats=busy.jitStats();
+          check(BigInt(busyState.mtime)===BigInt(Math.floor(retired/64)),'Compiled busy time remains retire-derived');
+          if(jitStats.executedBlocks>0&&jitStats.retiredViaJit>0)break;
+          await new Promise(resolve=>setTimeout(resolve,0));
+        }
+        check(jitStats.executedBlocks>0&&jitStats.retiredViaJit>0,'Actual compiled guest blocks executed');
+      } finally {busy.free();}
+      return {words,initial,selected,selectStart,selectEnd,firstRun,firstEnd,first,idleRead,secondRun,secondEnd,second,beforeRebase,rebaseStart,rebaseEnd,resumedRun,resumedEnd,resumed,unpaced,
+        compiledBusy:{busyWords,retired,state:busyState,stats:jitStats},proofExportsAbsent:true};
     } finally {m.free();}
   });
   assert.deepEqual(report.errors,[]);
