@@ -778,3 +778,53 @@ fn correctly_framed_but_invalid_native_state_is_rejected_before_commit() {
         println!("CRITIC_CHECKPOINT semantic={name} offset={offset} result={result:?}");
     }
 }
+
+#[test]
+fn every_truncated_prefix_trailing_data_and_exhausted_epoch_refuse() {
+    let mut source = Rig::new(false);
+    source.seed(47, 157);
+    let blob = source.machine.save_accelerated_resume(&WITNESS).unwrap();
+    let mut target = Rig::new(false);
+    target.machine.hart_mut().regs.write(5, 0xbeef);
+    let before = target.machine.save_accelerated_resume(&WITNESS).unwrap();
+    for end in 0..blob.len() {
+        assert!(
+            target
+                .machine
+                .load_accelerated_resume(&blob[..end], &WITNESS)
+                .is_err(),
+            "accepted truncated prefix {end}/{}",
+            blob.len()
+        );
+        assert_eq!(target.machine.hart().regs.read(5), 0xbeef);
+        assert_eq!(target.gpu.borrow().control3d_snapshot().unwrap().epoch, 1);
+    }
+    for suffix in [&b"trailing"[..], &blob[blob.len() - 84..]] {
+        let mut extra = blob.clone();
+        extra.extend_from_slice(suffix);
+        assert!(
+            target
+                .machine
+                .load_accelerated_resume(&extra, &WITNESS)
+                .is_err()
+        );
+    }
+    assert_eq!(
+        target.machine.save_accelerated_resume(&WITNESS).unwrap(),
+        before
+    );
+    let f = fields(&blob);
+    let mut exhausted = blob.clone();
+    exhausted[f.control.start + 8..f.control.start + 16].copy_from_slice(&u64::MAX.to_le_bytes());
+    reseal(&mut exhausted, &f);
+    let result = target.machine.load_accelerated_resume(&exhausted, &WITNESS);
+    assert!(result.is_err());
+    assert_eq!(
+        target.machine.save_accelerated_resume(&WITNESS).unwrap(),
+        before
+    );
+    println!(
+        "CRITIC_CHECKPOINT prefixes={} trailing=2 epochMAX={result:?} native_unchanged=true",
+        blob.len()
+    );
+}
