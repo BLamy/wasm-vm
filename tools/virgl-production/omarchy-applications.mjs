@@ -26,6 +26,9 @@ const html = `<!doctype html><meta charset="utf-8"><title>Omarchy native Chromiu
 <h1>Native Chromium on RISC-V</h1><p>Guest loopback fixture. External networking is offline.</p>
 <label>Note<br><input id="note" autofocus></label><button id="save">Save note</button><p id="result"></p>
 <script>let trusted=[];note.addEventListener('input',e=>trusted.push(e.isTrusted));
+function ready(){if(document.readyState==='complete'&&document.hasFocus()&&document.activeElement===note){
+fetch('/ready',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({readyState:document.readyState,hasFocus:document.hasFocus(),activeElement:document.activeElement.id,location:location.href})});
+}else requestAnimationFrame(ready);}requestAnimationFrame(ready);
 save.addEventListener('click',async e=>{let data={message:note.value,clickTrusted:e.isTrusted,inputTrusted:trusted};
 let r=await fetch('/submit',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(data)});
 result.textContent=r.ok?'Saved inside the RISC-V guest':'Save failed';});</script>`;
@@ -43,8 +46,8 @@ class Handler(BaseHTTPRequestHandler):
   self.send_response(200);self.send_header('Content-Type','text/html; charset=utf-8');self.send_header('Content-Length',str(len(HTML)));self.end_headers();self.wfile.write(HTML)
  def do_POST(self):
   length=int(self.headers.get('Content-Length','0'))
-  if self.path!='/submit' or not 0<length<=8192: self.send_error(400);return
-  data=json.loads(self.rfile.read(length));(ROOT/'submission.json').write_text(json.dumps(data))
+  if self.path not in ('/submit','/ready') or not 0<length<=8192: self.send_error(400);return
+  data=json.loads(self.rfile.read(length));(ROOT/('ready.json' if self.path=='/ready' else 'submission.json')).write_text(json.dumps(data))
   self.send_response(200);self.end_headers();self.wfile.write(b'ok')
 HTTPServer(('127.0.0.1',8765),Handler).serve_forever()
 `;
@@ -68,6 +71,16 @@ export async function verifyOmarchyApplications(page, command, output, options =
     while(Date.now()<deadline){const rows=await clients();const found=rows.find(predicate);if(found)return found;await sleep(1500);}
     throw Error('Actual guest application window did not appear');
   }
+  async function waitActive(predicate, timeout=300000) {
+    const deadline=Date.now()+timeout;
+    while(Date.now()<deadline){const result=await run(hypr+'activewindow');assert.equal(result.exit,0);const active=JSON.parse(result.stdout);if(predicate(active))return active;await sleep(1500);}
+    throw Error('Actual guest application did not acquire focus');
+  }
+  async function waitClosed(predicate, timeout=120000) {
+    const deadline=Date.now()+timeout;
+    while(Date.now()<deadline){if(!(await clients()).some(predicate))return;await sleep(1500);}
+    throw Error('Actual guest application window did not close');
+  }
   async function shot(label) {
     await page.locator('#ide-display-canvas').screenshot({path:path.join(output,name+'-'+label+'.png')});
     const gpu=await page.evaluate(()=>window.wvmDemo.gpuStats());
@@ -85,13 +98,19 @@ export async function verifyOmarchyApplications(page, command, output, options =
     await press('Meta+Space');await sleep(1500);await type('libreoffice writer');await sleep(1500);
     await shot('writer-launcher');await press('Enter');
     const window=await waitWindow(row=>/libreoffice|soffice/i.test(row.class)&&row.size?.[0]>300);
-    await sleep(2000);await shot('writer-open');return window;
+    await waitActive(row=>row.pid===window.pid);await shot('writer-open');return window;
   }
   const document='/home/omarchy/Documents/omarchy-native-applications-42.odt';
-  async function readDocument(label) {
+  async function readDocument(label, expectedText) {
     const code=`from pathlib import Path;import base64,hashlib,json,zipfile;from xml.etree import ElementTree as ET;p=Path(${JSON.stringify(document)});assert p.stat().st_size<1048576;b=p.read_bytes();z=zipfile.ZipFile(p);assert z.getinfo('content.xml').file_size<2097152;print(json.dumps({'sha256':hashlib.sha256(b).hexdigest(),'bytes':len(b),'text':' '.join(ET.fromstring(z.read('content.xml')).itertext()),'base64':base64.b64encode(b).decode()}))`;
-    const result=await run('python3 -c '+"'"+code.replaceAll("'","'\\''")+"'");assert.equal(result.exit,0,'actual saved ODT exists');
-    const saved=JSON.parse(result.stdout),bytes=Buffer.from(saved.base64,'base64');delete saved.base64;
+    const deadline=Date.now()+120000;let saved;
+    while(Date.now()<deadline){
+      const result=await run('python3 -c '+"'"+code.replaceAll("'","'\\''")+"'");
+      if(result.exit===0){const candidate=JSON.parse(result.stdout);if(expectedText.every(text=>candidate.text.includes(text))){saved=candidate;break;}}
+      await sleep(1500);
+    }
+    assert.ok(saved,'actual completed ODT contains the expected text');
+    const bytes=Buffer.from(saved.base64,'base64');delete saved.base64;
     assert.equal(bytes.length,saved.bytes);assert.equal(sha(bytes),saved.sha256);
     await fs.writeFile(path.join(output,name+'-'+label+'.odt'),bytes);return saved;
   }
@@ -115,10 +134,11 @@ export async function verifyOmarchyApplications(page, command, output, options =
     assert.match(report.chromium.process.stdout,/\/usr\/lib\/chromium\/chromium/);
     await shot('chromium-open');
     await press('Control+l');await type('http://127.0.0.1:8765/');await press('Enter');
-    let requested;
-    for(let n=0;n<60;n++){requested=await run('test -f /tmp/omarchyapps/requested');if(requested.exit===0)break;await sleep(1500);}
-    assert.equal(requested.exit,0,'real native Chromium requested the guest loopback page');
-    await sleep(2000);await shot('chromium-fixture');
+    let ready;
+    for(let n=0;n<100;n++){ready=await run('cat /tmp/omarchyapps/ready.json');if(ready.exit===0)break;await sleep(1500);}
+    assert.equal(ready.exit,0,'native Chromium loaded and focused the guest loopback page');
+    report.browserReady=JSON.parse(ready.stdout);assert.deepEqual(report.browserReady,{readyState:'complete',hasFocus:true,activeElement:'note',location:'http://127.0.0.1:8765/'});
+    await shot('chromium-fixture');
     const note='omarchy chromium riscv 42';await type(note);await press('Tab');await press('Space');
     let submitted;
     for(let n=0;n<30;n++){submitted=await run('cat /tmp/omarchyapps/submission.json');if(submitted.exit===0)break;await sleep(1000);}
@@ -126,32 +146,34 @@ export async function verifyOmarchyApplications(page, command, output, options =
     assert.equal(report.browserSubmission.message,note);assert.equal(report.browserSubmission.clickTrusted,true);
     assert.ok(report.browserSubmission.inputTrusted.length>=note.length);assert.ok(report.browserSubmission.inputTrusted.every(value=>value===true));
     report.chromiumGpu=await shot('chromium-submitted');
-    await press('Control+Shift+w');await sleep(1500);
-    assert.ok(!(await clients()).some(row=>/chromium/i.test(row.class)),'browser closes through trusted input');
+    await press('Control+Shift+w');await waitClosed(row=>/chromium/i.test(row.class));
 
     report.writer=await identity(await launchWriter());assert.match(report.writer.process.stdout,/\/usr\/lib\/libreoffice\/program\/soffice.bin/);
     const first='omarchy riscv document 42';await type(first);await press('Control+s');await sleep(2000);await shot('writer-save-dialog');
-    await press('Control+l');await type(document);await press('Enter');await sleep(2000);
-    report.firstSave=await readDocument('first-save');assert.ok(report.firstSave.text.includes(first));
-    await shot('writer-saved');await press('Control+q');await sleep(1500);
-    assert.ok(!(await clients()).some(row=>/libreoffice|soffice/i.test(row.class)),'Writer closes before reopening the saved file');
+    await press('Control+l');await type(document);await press('Enter');
+    report.firstSave=await readDocument('first-save',[first]);assert.ok(report.firstSave.text.includes(first));
+    await shot('writer-saved');await press('Control+q');await waitClosed(row=>/libreoffice|soffice/i.test(row.class));
     await launchWriter();await press('Control+o');await sleep(1500);await type(document);await press('Enter');
     report.reopenedWindow=await waitWindow(row=>/omarchy-native-applications-42/i.test(row.title));
     await shot('writer-reopened');await press('Control+End');await press('Enter');await type('reopened and saved');await press('Control+s');await sleep(2000);
-    report.secondSave=await readDocument('second-save');assert.ok(report.secondSave.text.includes(first));assert.ok(report.secondSave.text.includes('reopened and saved'));
+    report.secondSave=await readDocument('second-save',[first,'reopened and saved']);assert.ok(report.secondSave.text.includes(first));assert.ok(report.secondSave.text.includes('reopened and saved'));
     assert.notEqual(report.firstSave.sha256,report.secondSave.sha256);report.writerGpu=await shot('writer-resaved');
-    await press('Control+q');await sleep(1500);
+    await press('Control+q');await waitClosed(row=>/libreoffice|soffice/i.test(row.class));
 
-    await press('Meta+Return');await waitWindow(row=>/foot/i.test(row.class));
+    const existingFoot=new Set((await clients()).filter(row=>/foot/i.test(row.class)).map(row=>row.pid));
+    await press('Meta+Return');report.terminal=await waitActive(row=>/foot/i.test(row.class)&&!existingFoot.has(row.pid));
     const absent=await run('test ! -e /tmp/omarchyapps/node && test ! -e /tmp/omarchyapps/npm');assert.equal(absent.exit,0);
     await type('node -p process.arch > /tmp/omarchyapps/node; npm --version > /tmp/omarchyapps/npm');await press('Enter');
     let tools;
     for(let n=0;n<40;n++){tools=await run('test -s /tmp/omarchyapps/npm && cat /tmp/omarchyapps/node /tmp/omarchyapps/npm');if(tools.exit===0)break;await sleep(1500);}
     assert.equal(tools.exit,0);assert.match(tools.stdout,/^riscv64\s+12\.2\.0\s*$/);report.nodeNpm=tools;
     report.afterGpu=await shot('node-npm');
+    let previousGpu=report.beforeGpu;
     for(const phase of [report.chromiumGpu,report.writerGpu,report.afterGpu]){
       assert.equal(phase.qualified,true);assert.equal(phase.lost,false);assert.equal(phase.counters.failed,0);
-      assert.ok(phase.counters.draws>report.beforeGpu.counters.draws);assert.ok(phase.counters.completed>report.beforeGpu.counters.completed);
+      assert.equal(phase.epoch,previousGpu.epoch);assert.equal(phase.poisoned,false);assert.equal(phase.disposed,false);
+      assert.ok(phase.counters.draws>previousGpu.counters.draws);assert.ok(phase.counters.completed>previousGpu.counters.completed);
+      previousGpu=phase;
     }
     report.trusted=await page.evaluate(()=>window.__appTrusted);assert.ok(report.trusted.length>100);assert.ok(report.trusted.every(row=>row.trusted));
     report.status='passed';await save();return report;
