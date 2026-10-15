@@ -3,7 +3,8 @@ id: E6-T11d
 epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
-status: in-progress
+status: blocked
+blocked_on: [E6-T11d74]
 depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47, E6-T11d48, E6-T11d49, E6-T11d50, E6-T11d51, E6-T11d52, E6-T11d53, E6-T11d54, E6-T11d55, E6-T11d56, E6-T11d57, E6-T11d58, E6-T11d59, E6-T11d60, E6-T11d61, E6-T11d62, E6-T11d63, E6-T11d64, E6-T11d65, E6-T11d66, E6-T11d67, E6-T11d68, E6-T11d69a, E6-T11d69b, E6-T11d70, E6-T11d71]
 estimate: S
 risk: high
@@ -1193,3 +1194,23 @@ Cloudflare publication/source/default/site/software checks. Native/rendering
 and successful long-boot components carry by explicit code/dependency/digest
 equivalence; failed historical wrappers remain failed. Context-loss recovery
 remains E6-T11e and no300MIPS claim is introduced.
+
+### 2026-10-15 — worker — published source, default boot follow-up
+
+Cloudflare uploaded committedf0357748 successfully (deployment6f079192).
+Declared narrow ledger supersession accounts for seven changed dist assets;
+Bash exit0 and preupload/after inventory equality are recorded in
+`target/evidence/production-parent-final-publishing03`. The old deployment13
+outer wrapper remains failed at its stricter artifact-only postcondition.
+Local03 docs/default127/0/site checks pass. First HTTPS default127/0 holds but
+its recorder rejects Cloudflare's legitimate308 .html canonicalization; the
+paused actual HTTPS GPU worker qualifies/JIT-attaches at0 retired but its
+recording also assumed localrequire-corp rather than shippedcredentialless.
+Preserved raw failures are not product passes; narrow recorder corrections
+retain exact bodies/redirect destinations and the permitted favicon404.
+
+The user reports that production Omarchy does not fast-boot. Exact current
+repro: `/app?guest=omarchy&desktop=1#ide` omitsgpu, selectsGPU/cold boot in
+main.js1983. The paired warm snapshot belongs tosoftwaregraphics. Ordered
+S/mediumD74 makes the existing warm route default while preserving explicit
+GPU selection. Parent publication waits for that independent verdict.
