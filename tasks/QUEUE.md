@@ -657,7 +657,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `525.0270381` [E6-T11d74a](epic-6-transcendence/E6-T11d74a-native-gpu-checkpoint.md) — Capture and restore quiescent production GPU device state *(deps: E5-T26h, E6-T11d71, E6-T11d72, E6-T11d73)*
 - [x] `525.0270382` [E6-T11d74b](epic-6-transcendence/E6-T11d74b-gpu-renderer-reconstruction.md) — Reconstruct a production renderer in a fresh physical GPU context *(deps: E6-T11d74a)*
 - [x] `525.0270383` [E6-T11d74c](epic-6-transcendence/E6-T11d74c-paired-gpu-worker-resume.md) — Restore RAM, disk and reconstructed GPU atomically in the production worker *(deps: E6-T11d74b)*
-- [~] `525.02703831` [E6-T11d74d1](epic-6-transcendence/E6-T11d74d1-production-scanout-continuity.md) — Preserve the displayed GPU front buffer until the next valid frame *(deps: E6-T11d74c)*
+- [?] `525.02703831` [E6-T11d74d1](epic-6-transcendence/E6-T11d74d1-production-scanout-continuity.md) — Preserve the displayed GPU front buffer until the next valid frame *(deps: E6-T11d74c)*
 - [ ] `525.02703832` [E6-T11d74d2](epic-6-transcendence/E6-T11d74d2-production-desktop-capacity.md) — Admit normal desktop GPU objects within coherent production budgets *(deps: E6-T11d74d1)*
 - [b] `525.0270384` [E6-T11d74d](epic-6-transcendence/E6-T11d74d-production-gpu-warm-boot.md) — Publish and prove an accelerated Omarchy warm-boot artifact *(deps: E6-T11d74c, E6-T11d74d1, E6-T11d74d2)*
 - [x] `525.027039` [E6-T11d6](epic-6-transcendence/E6-T11d6-standard-instanced-draws.md) — Execute standard instanced and wide-index vertex draws *(deps: E6-T11d5)*
