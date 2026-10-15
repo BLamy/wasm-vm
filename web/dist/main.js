@@ -1356,9 +1356,12 @@ async function runLinuxBootOwned(opts, banner, request) {
       workerHeartbeatTimeoutMs: query.has("workerHeartbeatTimeoutMs")
         ? Math.max(1, Number(query.get("workerHeartbeatTimeoutMs")) || 1)
         : query.has("testHooks") ? 300 : undefined,
+      // The authenticated GPU warm artifact is large: allow its download and
+      // reconstruction to finish on slower links. The loader separately bounds
+      // fresh-frame/CPU readiness after reconstruction to 30 seconds.
       workerBootTimeoutMs: query.has("workerBootTimeoutMs")
         ? Math.max(1, Number(query.get("workerBootTimeoutMs")) || 1)
-        : undefined,
+        : opts.virgl && opts.bootSnapshot !== false ? 600_000 : undefined,
       // E3-net: `?slirpNet` in the URL boots with the slirp local stack (real DHCP/ARP/ICMP) instead
       // of the loopback backend — so the guest can pull a real IP and reach the gateway.
       slirpNet: opts.slirpNet ?? (

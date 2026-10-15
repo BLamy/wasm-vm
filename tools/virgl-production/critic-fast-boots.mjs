@@ -381,11 +381,13 @@ async function waitActualReady(page,guest,started){
       workerBoots:__fastBootCritic?.workerBoots.length,
       serialTail:__fastBootCritic?.serial.slice(-600),
       uiStatus:document.querySelector('#status')?.textContent,
+      bootError:window.__linuxBootStateForTest?.()?.lastBootError ?? null,
       guestError:document.querySelector('#os-launcher-status')?.textContent,
       coreReady:window.__ready,gpuQualified:document.documentElement.dataset.gpuQualified}));
     assert.deepEqual(state.errors||[],[],guest+' worker failure');
     if(/linux worker fatal|cannot boot:/i.test(state.uiStatus||''))throw Error(state.uiStatus);
-    if(/GPU desktop could not start/i.test(state.guestError||''))throw Error(state.guestError);
+    if(state.bootError)throw Error(state.bootError);
+    if(/GPU desktop could not start/i.test((state.uiStatus||'')+' '+(state.guestError||'')))throw Error(state.uiStatus||state.guestError);
     if(coldGpu&&state.ready&&await serviceOwnedControl(page))throw Error('Owned capture released during startup');
     if(state.ready&&(acceleratedGpu?state.gpuQualified==='true'&&state.restored===warmGpu:state.restored)&&(guest!=='omarchy'||state.desktop))return;
     if(acceleratedGpu&&Date.now()-observedAt>30000){
