@@ -1,11 +1,10 @@
 ---
 id: E6-T11d72
 epic: 6
-title: Pace accelerated desktop interaction with the existing monotonic clock
+title: Bound accelerated desktop idle time during keyboard interaction
 priority: 525.027037
-status: blocked
-blocked_on: [E6-T11d73]
-depends_on: [E5-T26i, E6-T11d70]
+status: in-progress
+depends_on: [E5-T26i, E6-T11d70, E6-T11d73]
 estimate: S
 risk: high
 capstone: false
@@ -13,32 +12,36 @@ capstone: false
 
 ## Boundary
 
-Define one explicit GPU-Omarchy input clock policy: boot in ICount64, then select
-the existing realm-monotonic wall clock before the first original eligible EV_KEY
-make is staged. The numeric original interface does not attest DOM trust; a lock
-reconciliation make can be first. Input may arrive while booting, so do not claim
-that this waits for desktop-ready. Eligibility follows the original keyboard's
-EV_KEY make and PC105 code range. Other guests and omitted policy retain their
-existing clocks and fast boots.
+Define an explicit GPU-Omarchy `paced-on-keyboard` policy: boot in ICount64,
+then select the verified native `paced-icount` clock before the first original
+eligible EV_KEY make is staged. Keep normal retirement time and bound idle jumps
+by elapsed monotonic host time. The numeric original interface does not attest
+DOM trust; a lock reconciliation make can be first. Input may arrive during
+boot. Eligibility follows the original keyboard's EV_KEY make and PC105 range.
+Other guests and omitted policy retain their existing clocks and fast boots;
+explicit `wall-on-keyboard` remains supported.
 
-Validate the exact option and monotonic source before fetch, and all actual
-machine APIs before execution. Read back wall mode and unchanged decimal mtime
-before publishing the make; commit one-way selection only after success. Keep
-normal original send/sync ordering, and rebase explicit pauses after handoff.
-Reuse the verified native clock and conservative wall-mode JIT behavior; do not
-change native timekeeping, repeat settings, typing delay, snapshot formats or
-renderer capability claims. This defines interactive pacing; exclusive causation
-of the earlier stock repeat is not claimed.
+Validate exact options and monotonic source before fetch, and actual machine
+APIs before execution. Read back the selected mode and unchanged decimal mtime,
+divider and timebase before publishing the make. Commit the one-way selection
+only after success; poison the lifecycle on failed selection. Preserve original
+send/sync ordering and rebase explicit pauses in both host-paced modes. Reuse
+D73's verified native implementation without changing repeat settings, typing
+delay, snapshot formats or renderer capabilities. The historical wall-policy
+stock failure below remains a failure; this new policy needs its own stock proof.
 
 ## Deterministic acceptance
 
-`make verify-E6-T11d72` records policy validation, actual loader callback ordering,
-selection failure and pause/resume tests, affected native/Wasm clock gates and
-the full existing parent acceptance at one frozen head. Record actual worker boot
-policy and clock before/after original keyboard input; no handoff before a make,
-wall after it, mtime continuity, actual monotonic progress and excluded pause time.
-Unchanged50ms trusted stock Foot typing must create its absent-before marker, with
-correct original transitions, visible package bar and displaced guest cursor.
+`make verify-E6-T11d72` records exact policy/realm/API validation, actual loader
+callback ordering, failure poisoning and pause/resume. Record the actual worker
+policy and clock before/after original keyboard input: ICount before a make,
+paced-icount afterward, unchanged mtime/divider/timebase, monotonic progress and
+excluded pause time. Bound a resumed observation by measured host time plus
+actual retired-instruction contribution, retaining exact clock-divider phase
+slack. Carry D73 native/Wasm gates by unchanged source and evidence identity.
+
+Unchanged 50 ms trusted stock Foot typing must create its absent-before marker,
+with correct original transitions, visible package bar and displaced guest cursor.
 Prove all software fast boots, real VirGL-only Mesa/cube/Hyprland/scanout, normal
 default build and final pristine clone. Carry unchanged native71 and earlier
 component holds by source/evidence identity. The same final full parent run may
@@ -269,3 +272,12 @@ helper,20 original failed marker blocks, source/build receipts, raw buffers,
 pre-data independent predictions/decoder, exact crops, final failed PNG and
 separately marked post-helper metadata. The diagnostic closed exit1 after owned
 release. No product verdict, runtime repair or deployment is claimed.
+
+### 2026-10-15 — worker — resume after independently verified native prerequisite
+
+D73 is verified at `7e2739f28b9c539be894ecd8f693cf743c35258e`. Its independent
+archive SHA-256 is `496e53dbccffd922e1fd63287cf1b2038f62f3abd6c82ef360eadac35935a14f`.
+The production policy layer continues the existing native stack above D73.
+The new boundary uses paced-icount for idle ceilings while preserving busy guest
+retirement timing; historical wall-policy stock negatives remain unmodified.
+No stock success, parent completion or deployment is claimed by activation.
