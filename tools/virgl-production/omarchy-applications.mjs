@@ -11,12 +11,6 @@ import {verifyPublicBarContent} from './critic-fast-boots-bar-content.mjs';
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 const sha = bytes => createHash('sha256').update(bytes).digest('hex');
-// Explicit component retries must also load the current, authenticated helper,
-// rather than Node's cached helper from the original failed recording.
-const identityModule=new URL('./application-identity.mjs',import.meta.url);
-const identityModuleSha256=sha(await fs.readFile(identityModule));
-identityModule.searchParams.set('recording',identityModuleSha256);
-const {createApplicationIdentityProof}=await import(identityModule.href);
 const hypr = 'XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j ';
 
 export async function typeGuestText(page, text) {
@@ -62,6 +56,12 @@ HTTPServer(('127.0.0.1',8765),Handler).serve_forever()
 `;
 
 export async function verifyOmarchyApplications(page, command, output, options = {}) {
+  // Re-read at each invocation: a retry can update only this helper's dependency
+  // while Node retains the application module from the previous recording.
+  const identityModule=new URL('./application-identity.mjs',import.meta.url);
+  const identityModuleSha256=sha(await fs.readFile(identityModule));
+  identityModule.searchParams.set('recording',identityModuleSha256);
+  const {createApplicationIdentityProof}=await import(identityModule.href);
   const name = options.name || 'native-applications';
   const report = {status:'running',identityModuleSha256,networking:{provider:'offline',fixture:'http://127.0.0.1:8765/',externalBrowsingClaim:false},phases:[]};
   const file = path.join(output,name+'.json');
