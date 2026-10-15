@@ -275,6 +275,7 @@ export async function verifyOmarchyApplications(page, command, output, options =
     do {await gpuHealth();ready=await run('cat /tmp/omarchyapps/ready.json');if(ready.exit===0)break;await sleep(1500);} while(Date.now()-navigationStarted<600000);
     assert.equal(ready.exit,0,'native Chromium loaded and focused the guest loopback page');
     report.browserNavigationMs=Date.now()-navigationStarted;
+    assert.ok(report.browserNavigationMs<=600000,'native Chromium navigation finished within the measured 600-second deadline');
     report.browserReady=JSON.parse(ready.stdout);assert.deepEqual(report.browserReady,{readyState:'complete',hasFocus:true,activeElement:'note',location:'http://127.0.0.1:8765/'});
     await shot('chromium-fixture');
     const note='omarchy chromium riscv 42';await type(note);await press('Tab');await press('Space');
