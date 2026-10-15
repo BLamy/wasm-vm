@@ -66,7 +66,7 @@ try:
         run("idle-guest-build", ["node", "tools/virgl-production/paired-guest/build-idle.mjs"])
         assert not subprocess.check_output(["git", "status", "--porcelain", "--untracked-files=no"], cwd=repo), "original idle guest binary did not reproduce"
         run("idle-gpu-warm", ["node", "tools/virgl-production/idle-worker-browser.mjs", str(output/"idle-gpu-warm"), "roundtrip"])
-        run("failed-warm-restore", ["node", "tools/virgl-production/critic-warm-ui-browser.mjs", str(output/"failed-warm-restore")],
+        run("failed-warm-restore", ["node", "--max-old-space-size=16384", "tools/virgl-production/critic-warm-ui-browser.mjs", str(output/"failed-warm-restore")],
             extra={"CRITIC_WARM_UI_WEB_ROOT": str(repo/"web/dist")})
     gpu_env = {"CRITIC_FAST_BOOT_WEB_ROOT": str(repo/"web/dist"), "CRITIC_FAST_BOOT_GPU": "warm",
                "CRITIC_FAST_BOOT_GUESTS": "omarchy", "CRITIC_FAST_BOOT_GPU_TRACE": "1",
@@ -78,7 +78,7 @@ try:
                     "CRITIC_FAST_BOOT_GUESTS": "busybox,alpine,node-alpine,omarchy", "CRITIC_FAST_BOOT_SAVE_ON_REPEAT": "1"}
     if args.url:
         software_env["CRITIC_FAST_BOOT_URL"] = args.url
-    run("software-fast-boots", ["node", "tools/virgl-production/critic-fast-boots.mjs", str(output/"software-fast-boots")], 1800, software_env)
+    run("software-fast-boots", ["node", "--max-old-space-size=16384", "tools/virgl-production/critic-fast-boots.mjs", str(output/"software-fast-boots")], 1800, software_env)
     remote = ["--url", args.url] if args.url else []
     run("default-browser", ["node", "tools/verify-virgl-default-demo.mjs", "--output", str(output/"default-browser"), "--task", "E6-T11d74d", *remote])
     run("unified-site", ["node", "tools/verify-reviewed-site.mjs", "--output", str(output/"unified-site"), *remote])
