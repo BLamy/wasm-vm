@@ -79,6 +79,24 @@ test(policy+': actual loader first NumLock repair selects before staging and sto
     sandbox.stopped=true;model.calls.length=0;assert.equal(send(1,20,1),false);assert.deepEqual(model.calls,[]);
   }
 });
+test(policy+': actual loader rejects nonrepresentable ABI frames before clock or native staging',()=>{
+  const model=machineModel(),lifecycle=createGuestClockLifecycle(model.machine,'icount',64,policy);
+  model.calls.length=0;const {send,sandbox}=actualKeyboardCallback(model,lifecycle);
+  for(const frame of [[1,30.5,1],[1.5,30,1],[1,30,1.5],[-65535,30,1],
+    [65537,30,1],[1,65566,1],[1,30,0x100000001],[1,-1,1],
+    [1,30,-0x80000001],[1,30,0x80000000],['1',30,1],[1,'30',1],[1,30,'1'],[NaN,30,1],
+    [1,Infinity,1],[1,30,null],[1,30,undefined]]) {
+    assert.equal(send(...frame),false,JSON.stringify(frame));
+    assert.deepEqual(model.calls,[]);assert.equal(sandbox.stopped,false);
+  }
+  for(const value of [-0x80000000,-1,0x7fffffff]) {
+    assert.equal(send(4,4,value),true,'original signed MSC_SCAN stays representable');
+    assert.deepEqual(model.calls,[['make',4,4,value]]);model.calls.length=0;
+    assert.equal(model.state.mode,'icount');
+  }
+  assert.equal(send(1,30,1),true);
+  assert.deepEqual(model.calls,['state','select:'+selectedMode,'state',['make',1,30,1]]);
+});
 test(policy+': actual loader refuses staging and stops on thrown or invalid clock readback',()=>{
   for(const failure of ['throw','mode','mtime','timebase','divider']) {
     const model=machineModel(),lifecycle=createGuestClockLifecycle(model.machine,'icount',64,policy);

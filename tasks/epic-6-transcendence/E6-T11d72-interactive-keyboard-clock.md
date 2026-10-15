@@ -310,3 +310,55 @@ semantic assertion stay identical. This is a longer bounded evidence window,
 not a reinterpretation of either prior failure or a performance claim. Stock
 50ms typing,20 marker attempts, keyboard repeat and production heartbeat budgets
 remain unchanged. No successful stock input or deployment is claimed here.
+
+### 2026-10-15 — worker — successful stock and missing private component; ABI fix
+
+The unchanged image12 stock helper at frozen production `e17f8caf` passed its
+50ms trusted command: absent-before marker created, actual UID1000 Foot focused,
+bar crop021 contains722 contrasting foreground pixels, and the guest cursor
+moved640,400→430,412. Actual mode switched ICount64→paced-icount. Five-second
+pause holdsmtime1177933052 and retired48240469040 exactly; resumed observed
+62497ticks are bounded by2986154ticks including actual retirement contribution.
+The original post-input state is657begun=657completed,308draws,no pending job,
+zero failed/cancelled,workerErrors[] and pageErrors[]. Original report
+`production-paced-policy-cold-stock02/browser/report.json` is passed. Its outer
+wrapper remains failed because the default helper rejected task72 before loading
+any browser: it lacked task72 in its allowlist. That recording-harness option
+support is corrected separately; no stock helper retry or claim of default success.
+
+Private window04 completes the identical real Mesa768pixel/index83 checks,
+1000cube frames, Hyprland GLES3.0 renderer/IPC/client mapping and scanout within
+the documented longer bounded observation window. Actual JIT has291649836
+executedblocks/3937142435retiredViaJit. It is a passed missing component, not a
+reinterpretation of the earlier300000ms negatives; reports/sourcepins are under
+`target/evidence/production-paced-policy-private-window04`.
+
+Fresh actual-Wasm interrogation found that fractional numeric codes could be
+coerced by the u16/u16/i32 native ABI into a valid make without clock selection.
+The loader now refuses noninteger or out-of-domain fields before eligibility or
+native staging, preserving exact signed32 MSC_SCAN values and original valid
+integer forwarding. The worker's first uncommitted unsigned-value prototype
+was corrected after the critic checked the actual i32 ABI; both self-validation
+records are retained. The corrected selected77tests pass; actual ABI/worker and
+final pristine scope are still required. All native/core/renderer/dependency and
+ordinary Wasm bytes remain unchanged. No deployment is claimed by this entry.
+
+The independent regression is promoted byte-for-byte into
+`web/tests/e6-t11d72-keyboard-abi-critic.test.mjs` (five actual shipping-Wasm tests,
+26 malformed frames across paced/wall/omitted policies and real signed MSC/KEY
+positive controls). Removing only the guard fails that actual-Wasm test. The
+separate seven-test policy/oracle fixture is also promoted unchanged. Actual
+hardware-worker self-validation rejects14 malformed RPC frames without staging,
+preserves signed MSC_SCAN min/-1/max, then selects actual paced-icount before a
+valid make; all17rows and two pause intervals pass with zero errors.
+
+Incremental final proof uses `verify-interactive-clock.py --input-boundary-only`
+from both the frozen tree and a newly built pristine exact-head clone. It covers
+all selected/promotion tests, the actual worker ABI/handoff/pause and the default
+127-test demo. The successful original stock run's62integer frames must all
+satisfy the new pure guard; its unchanged valid forwarding/selection body is
+covered by the new actual-worker control. Fresh critic accepts that explicit
+valid-path custody instead of another30-minute stock boot. Native73, the earlier
+new-runtime native gates, software warm matrix and final private/handshake
+components carry by their unchanged code/evidence boundaries. No failed wrapper
+is relabelled passed, and no unexecuted browser path is claimed.

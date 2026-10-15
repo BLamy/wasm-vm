@@ -1204,6 +1204,11 @@ export async function startLinuxBoot(opts = {}) {
       // sendKeyboardEvent immediately ahead of its matching syncKeyboard frame.
       sendKeyboardEvent: (eventType, code, value) => {
         if (stopped) return false;
+        // The Wasm u16/i32 ABI coerces fractions and wraps out-of-range values.
+        // Require exact wire integers before either clock eligibility or staging.
+        if (!Number.isInteger(eventType) || eventType < 0 || eventType > 0xffff ||
+            !Number.isInteger(code) || code < 0 || code > 0xffff ||
+            !Number.isInteger(value) || value < -0x80000000 || value > 0x7fffffff) return false;
         try {
           guestClockLifecycle.beforeKeyboardEvent(eventType, code, value);
         } catch (error) {
