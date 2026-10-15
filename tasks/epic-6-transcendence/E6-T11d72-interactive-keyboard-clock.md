@@ -3,7 +3,8 @@ id: E6-T11d72
 epic: 6
 title: Pace accelerated desktop interaction with the existing monotonic clock
 priority: 525.027037
-status: in-progress
+status: blocked
+blocked_on: [E6-T11d73]
 depends_on: [E5-T26i, E6-T11d70]
 estimate: S
 risk: high
@@ -226,3 +227,15 @@ The first helper's stock refutation and prior component holds remain in force.
 The next bounded diagnostic adds official Wayland server logging, libinput and
 client read/dispatch timings, keeping original binary basenames and no signals.
 Wrangler whoami now confirms the intended Cloudflare account; no deploy occurred.
+
+### 2026-10-15 — worker — blocked on native paced-idle prerequisite
+
+Exact repro at944ac6f8: the unchanged stock helper in concurrent diagnostic03
+fails all20 marker reads after62 balanced original frames, as in the preserved
+untouched-stock refutation. Independent raw pipeline timing now locates a long
+compositor-serialization to observed-flush/client-read interval while native
+repeat timers remain valid. Selecting wall time alone has not met acceptance.
+OrderedS/high E6-T11d73 introduces an opt-in retire-derived clock with host-paced
+idle jumps. D72 remains blocked until that primitive is independently verified,
+then owns its explicit loader policy and unchanged final stock proof. This is
+a proposed pacing repair, not a declaration that the observed failure is fixed.
