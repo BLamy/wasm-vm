@@ -201,9 +201,9 @@ class BuildGuardTests(unittest.TestCase):
             mock.patch.object(builder.os, "geteuid", return_value=0),
             mock.patch.object(builder, "load", return_value=fake_sanitizer),
         ):
-            for image_mib in (3071, 8193):
+            for image_mib in (3071, 16385):
                 with self.subTest(image_mib=image_mib):
-                    with self.assertRaisesRegex(ValueError, "image size must be 3072..8192 MiB"):
+                    with self.assertRaisesRegex(ValueError, "image size must be 3072..16384 MiB"):
                         self._build(output, image_mib=image_mib)
                     self.assertFalse(output.exists())
 

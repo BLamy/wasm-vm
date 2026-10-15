@@ -71,8 +71,8 @@ def build(source, output, selection, overlays, image_mib=4096):
     reviewed = json.loads(overlays.read_text())
     if sorted(assembly["overlays"]) != sorted(p["path"].lstrip("/") for p in reviewed["entries"]):
         raise ValueError("reviewed overlays differ from assembly provenance")
-    if not 3072 <= image_mib <= 8192:
-        raise ValueError("image size must be 3072..8192 MiB")
+    if not 3072 <= image_mib <= 16384:
+        raise ValueError("image size must be 3072..16384 MiB")
     sanitizer = load("sanitize-omarchy")
     sanitizer._require_input(source)
     sanitizer._preflight_source(source)

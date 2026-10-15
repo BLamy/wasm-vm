@@ -83,9 +83,9 @@ def configure(root):
     write("etc/locale.conf", "LANG=C.UTF-8\n")
     write("etc/locale.gen", "# The demo uses the built-in C.UTF-8 locale.\n")
     write("etc/shells", "/bin/sh\n/bin/bash\n/usr/bin/sh\n/usr/bin/bash\n")
-    write("etc/pacman.d/mirrorlist", "Server = https://riscv.mirror.pkgbuild.com/$repo/os/$arch\n")
+    write("etc/pacman.d/mirrorlist", "Server = https://riscv.mirror.pkgbuild.com/repo/$repo\n")
     write("etc/machine-id", "")
-    write("etc/pacman.conf", "[options]\nArchitecture = riscv64\nCheckSpace\nSigLevel = Required DatabaseOptional\nLocalFileSigLevel = Required\n\n[core]\nServer = https://riscv.mirror.pkgbuild.com/$repo/os/$arch\n\n[extra]\nServer = https://riscv.mirror.pkgbuild.com/$repo/os/$arch\n")
+    write("etc/pacman.conf", "[options]\nArchitecture = riscv64\nCheckSpace\nSigLevel = Required DatabaseOptional\nLocalFileSigLevel = Required\n\n[core]\nServer = https://riscv.mirror.pkgbuild.com/repo/$repo\n\n[extra]\nServer = https://riscv.mirror.pkgbuild.com/repo/$repo\n\n[unsupported]\nServer = https://riscv.mirror.pkgbuild.com/repo/$repo\n")
     # LP_NUM_THREADS=0: llvmpipe rasterizes inside the flush on the compositor's own thread. With a
     # rasterizer thread, Hyprland on virtio-gpu (no explicit sync; its software check reads the DRM
     # driver name) commits after a bare glFlush, and the commit can copy a half-rasterized frame

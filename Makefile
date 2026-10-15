@@ -2647,3 +2647,9 @@ verify-E6-T11d66:
 .PHONY: verify-E6-T11d70
 verify-E6-T11d70:
 	python3 tools/virgl-production/verify-fragmented-backing.py --output "$${VIRGL_FRAGMENTED_BACKING_EVIDENCE_DIR:-target/evidence/production-fragmented-backing-final}"
+
+.PHONY: verify-E5.5-T05b
+verify-E5.5-T05b:
+	python3 tools/check_task_policy.py
+	git diff --check
+	python3 tools/image/verify-native-app-image.py --output "$${OMARCHY_APP_EVIDENCE_DIR:-target/evidence/omarchy-native-app-image}"
