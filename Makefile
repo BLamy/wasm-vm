@@ -2661,6 +2661,7 @@ verify-E5.5-T05c:
 	node --check tools/virgl-production/omarchy-applications.mjs
 	node --check tools/virgl-production/application-identity.mjs
 	node tools/virgl-production/omarchy-shader-padding.mjs
+	node tools/virgl-production/omarchy-storage-leases-browser.mjs "$${OMARCHY_STORAGE_LEASE_EVIDENCE_DIR:-target/evidence/omarchy-storage-leases}"
 	CRITIC_FAST_BOOT_WEB_ROOT=web/dist CRITIC_FAST_BOOT_GPU=1 CRITIC_FAST_BOOT_GUESTS=omarchy CRITIC_FAST_BOOT_GPU_TRACE=1 CRITIC_FAST_BOOT_PERSISTENCE=0 CRITIC_FAST_BOOT_APPLICATIONS=1 CRITIC_FAST_BOOT_IMAGE_DIRECTORY="$${OMARCHY_DESKTOP_IMAGE_DIRECTORY:-target/virgl-production/image-14}" node tools/virgl-production/critic-fast-boots.mjs "$${OMARCHY_APP_DESKTOP_EVIDENCE_DIR:-target/evidence/omarchy-applications-desktop-final}"
 
 .PHONY: verify-omarchy-dense-snapshot
