@@ -3,7 +3,7 @@ id: E6-T11d74b
 epic: 6
 title: Reconstruct a production renderer in a fresh physical GPU context
 priority: 525.0270382
-status: in-progress
+status: implemented
 depends_on: [E6-T11d74a]
 estimate: S
 risk: high
@@ -104,3 +104,32 @@ The runner now requires that exact exit1, authenticates its compressed row and
 checks the precise failure/state/cleanup; arbitrary browser failure cannot pass.
 Only the recording harness changed. Prior physical prefixes carry; the one final
 pristine run executes the corrected full command and remaining default/MSAA gates.
+
+### 2026-10-15 — worker — physical renderer reconstruction submission
+
+Acceptance head `d38bec548bf0884067d639c7e13b1798b75d483c`; runtime head
+`de33c99f` (the later change only fixes exact expected-negative handling/log).
+Commands: `make web-dist` recorded before freeze;
+`VIRGL_RENDERER_CHECKPOINT_EVIDENCE_DIR=... make verify-E6-T11d74b`;
+then `python3 target/evidence/production-gpu-warm-restore-plan01/renderer-cold.py`
+cloned full history with `git clone --no-local`, no alternates, checked out the
+exact acceptance head, scrubbed RUSTFLAGS/RUSTDOCFLAGS/RUST_LOG/CARGO_*/VIRGL_*/
+CRITIC_* and ran the complete23-gate acceptance. All corrected gates passed:
+5 codec tests, proof/ordinary web builds, three worker GPU rows, six independent
+attack rows, exact guard-removal negative, three original multisample schedules,
+and default demo127passed/0failed/errors[] with screenshot. Captures include
+original guest command trace/native state digests, hardware command/result rows,
+fresh-context GPU content identities, source pins and browser coverage. Native74a
+claims carry only over unchanged core code; no worker pairing or production guest
+warm-boot claim is made at this layer.
+
+Reopened durable worker capsule:
+`evidence/virgl-production-renderer-checkpoint/worker/physical-renderer-reconstruction-submission.tar.gz`
+(20,019,730bytes; SHA256 `69e04e2d872fd3915c1aaa978d67885dc5d8489565078811e13166c486cc210e`; 589members / 588authenticated identities).
+It preserves the original frozen01 wrapper failure and self08 fixture failure,
+self09 corrected hardware rows, the final full pristine run, source/diff and build
+logs. Unpacked evidence: `target/evidence/production-renderer-checkpoint-cold01`
+(exclude its `.git`/checkout from archives), `...-frozen01`, `...-self09`, and
+`...-submission01/receipt.json`. Fresh verifier must inspect the diff against
+these exact records, including its independent pending/active/partial/incomplete
+supplement; only that verifier may set `verified`.
