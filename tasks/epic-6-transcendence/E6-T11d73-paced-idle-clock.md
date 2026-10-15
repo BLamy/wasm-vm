@@ -3,7 +3,7 @@ id: E6-T11d73
 epic: 6
 title: Bound opt-in ICount idle jumps by monotonic host progress
 priority: 525.027036
-status: pending
+status: in-progress
 depends_on: [E5-T26i, E6-T11d70]
 estimate: S
 risk: high
