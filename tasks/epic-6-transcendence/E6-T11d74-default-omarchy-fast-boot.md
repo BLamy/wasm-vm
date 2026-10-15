@@ -3,11 +3,12 @@ id: E6-T11d74
 epic: 6
 title: Default Omarchy launches to the existing software warm snapshot
 priority: 525.027039
-status: in-progress
+status: cancelled
 depends_on: [E6-T11d70, E6-T11d71, E6-T11d72, E6-T11d73]
 estimate: S
 risk: medium
 capstone: false
+decomposed_into: [E6-T11d74a, E6-T11d74b, E6-T11d74c, E6-T11d74d]
 ---
 
 ## Boundary
@@ -48,3 +49,13 @@ Omarchy URL therefore cold-boots even though the existing paired software
 snapshot fast-boots. Existing software checks explicitly appendedgpu=0, so
 they did not exercise this missing default choice. Correct that one launch
 boundary and record the exact no-override route.
+
+### 2026-10-15 — worker — superseded by explicit accelerated warm-boot request
+
+The user explicitly requests warm boot with GPU rendering. The uncommitted
+software-default workaround was preserved under
+`target/evidence/production-gpu-warm-restore-plan01/unshipped-software-default-abandoned.patch`
+and reverted before any build or deployment. It is not a solution or a verified
+claim. Ordered S/high replacements are E6-T11d74a,b,c,d: native device
+checkpoint, physical renderer reconstruction, paired worker restore, and actual
+production Omarchy GPU warm artifact/public boot proof. GPU remains selected.
