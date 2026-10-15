@@ -39,15 +39,23 @@ export function createApplicationIdentityProof(page,command,output,options={}){
   async function run(text){const result=await command(page,text,300000);await fs.appendFile(path.join(output,'application-identity-commands.ndjson'),JSON.stringify({scope:options.name,command:text,result,time:Date.now()})+'\n');assert.equal(result.exit,0,text);return result;}
   async function metadata(pid,executable){
     assert.ok(Number.isInteger(pid)&&pid>1);
-    const code=`import os,json,stat;from pathlib import Path;p=Path('/proc/${pid}');e=p/'exe';f=Path(${JSON.stringify(executable)});fields=lambda s:dict(dev=s.st_dev,ino=s.st_ino,size=s.st_size,mode=stat.S_IMODE(s.st_mode),uid=s.st_uid,gid=s.st_gid,mtimeNs=str(s.st_mtime_ns),ctimeNs=str(s.st_ctime_ns));raw=(p/'stat').read_text();print(json.dumps(dict(pid=${pid},exe=os.readlink(e),exeStat=fields(e.stat()),pathStat=fields(f.stat()),rootStat=fields((p/'root').stat()),starttime=raw[raw.rfind(')')+2:].split()[19],status=(p/'status').read_text(),maps=(p/'maps').read_text(),cmdline=(p/'cmdline').read_bytes().replace(bytes([0]),b' ').decode(),mountinfo=(p/'mountinfo').read_text())))`;
+    const code=`import os,json,stat;from pathlib import Path;p=Path('/proc/${pid}');e=p/'exe';f=Path(${JSON.stringify(executable)});root=(p/'root').stat();block=os.stat('/dev/vda');device=Path('/sys/dev/block')/(str(os.major(root.st_dev))+':'+str(os.minor(root.st_dev)));fields=lambda s:dict(dev=s.st_dev,ino=s.st_ino,size=s.st_size,mode=stat.S_IMODE(s.st_mode),uid=s.st_uid,gid=s.st_gid,mtimeNs=str(s.st_mtime_ns),ctimeNs=str(s.st_ctime_ns));raw=(p/'stat').read_text();print(json.dumps(dict(pid=${pid},exe=os.readlink(e),exeStat=fields(e.stat()),pathStat=fields(f.stat()),rootStat=fields(root),rootBlock=dict(isBlock=stat.S_ISBLK(block.st_mode),rdev=block.st_rdev,major=os.major(root.st_dev),minor=os.minor(root.st_dev),name=device.resolve().name,bytes=int((device/'size').read_text())*512),starttime=raw[raw.rfind(')')+2:].split()[19],status=(p/'status').read_text(),maps=(p/'maps').read_text(),cmdline=(p/'cmdline').read_bytes().replace(bytes([0]),b' ').decode(),mountinfo=(p/'mountinfo').read_text())))`;
     const result=await run('python3 -c '+quote(code)),data=JSON.parse(result.stdout);
     assert.equal(data.exe,executable);assert.match(data.status,/Uid:\s+1000\s+1000\s+1000\s+1000/);
     assert.deepEqual(data.exeStat,data.pathStat);assert.equal(data.exeStat.dev,data.rootStat.dev);
     assert.equal(data.rootStat.ino,2);assert.equal(data.exeStat.uid,0);assert.equal(data.exeStat.mode&0o022,0);
-    assert.ok(data.mountinfo.split('\n').some(line=>/ \/ \/ .* - ext4 \/dev\/vda /.test(line)),'actual process uses the expected root filesystem');
+    assert.equal(data.rootBlock.isBlock,true);assert.equal(data.rootBlock.rdev,data.rootStat.dev);
+    assert.equal(data.rootBlock.name,'vda');
+    assert.equal(data.rootBlock.bytes,JSON.parse(await fs.readFile(path.join(imageDirectory,'manifest.json'))).image_len);
+    const roots=data.mountinfo.split('\n').filter(line=>{
+      const [mount,filesystem]=line.split(' - '),fields=mount.split(' '),fs=filesystem?.split(' ');
+      return fields[2]===data.rootBlock.major+':'+data.rootBlock.minor&&fields[3]==='/'&&fields[4]==='/'&&
+        fs?.[0]==='ext4'&&['/dev/vda','/dev/root'].includes(fs[1]);
+    });
+    assert.equal(roots.length,1,'actual process root is the manifest-sized vda block device');
     return {data,result};
   }
-  const stable=(a,b)=>{assert.equal(a.pid,b.pid);assert.equal(a.exe,b.exe);assert.equal(a.starttime,b.starttime);assert.deepEqual(a.exeStat,b.exeStat);assert.deepEqual(a.pathStat,b.pathStat);assert.deepEqual(a.rootStat,b.rootStat);};
+  const stable=(a,b)=>{assert.equal(a.pid,b.pid);assert.equal(a.exe,b.exe);assert.equal(a.starttime,b.starttime);assert.deepEqual(a.exeStat,b.exeStat);assert.deepEqual(a.pathStat,b.pathStat);assert.deepEqual(a.rootStat,b.rootStat);assert.deepEqual(a.rootBlock,b.rootBlock);};
   async function capture(directory){
     await fs.copyFile(fileURLToPath(import.meta.url),path.join(directory,'application-identity-source.mjs'));
     const manifestBytes=await fs.readFile(path.join(imageDirectory,'manifest.json')),manifest=JSON.parse(manifestBytes);
