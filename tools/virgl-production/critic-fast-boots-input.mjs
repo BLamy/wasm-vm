@@ -37,7 +37,9 @@ export async function verifyPublicDesktopInput(page, command, output, options = 
   const interactivePolicy = await page.evaluate(() =>
     window.__fastBootCritic?.workerBoots?.at(-1)?.options?.interactiveClock);
   const initialClock = await page.evaluate(() => window.__linuxCtl.guestClockState());
-  if (interactivePolicy === 'wall-on-keyboard') assert.equal(initialClock.mode, 'icount');
+  const interactiveMode = interactivePolicy === 'paced-on-keyboard' ? 'paced-icount' :
+    interactivePolicy === 'wall-on-keyboard' ? 'wall' : null;
+  if (interactiveMode) assert.equal(initialClock.mode, 'icount');
   await record('initial-clock', {interactivePolicy, initialClock});
   const canvas = page.locator('#ide-display-canvas');
   let box = await canvas.boundingBox();
@@ -216,26 +218,31 @@ export async function verifyPublicDesktopInput(page, command, output, options = 
   const finalWorkerCursor = await page.evaluate(()=>window.__cursor?.state?.()||null);
   const held = await page.evaluate(() => window.__keyboardCapture.heldSnapshot());
   assert.deepEqual(held, [], 'no held keys after trusted physical command');
-  if (interactivePolicy === 'wall-on-keyboard') {
-    const beforePause = await page.evaluate(async () => {
-      await window.__linuxCtl.pause();
-      return window.__linuxCtl.guestClockState();
-    });
-    assert.equal(beforePause.mode, 'wall', 'original worker handed interaction to wall time');
+  if (interactiveMode) {
+    const sample = () => page.evaluate(async () => ({
+      clock: await window.__linuxCtl.guestClockState(),
+      retired: (await window.__linuxCtl.jitStats()).guestRetired,
+    }));
+    await page.evaluate(() => window.__linuxCtl.pause());
+    const before = await sample();
+    assert.equal(before.clock.mode, interactiveMode, 'actual worker selected the requested interaction clock');
     const pauseStarted = performance.now();
     await new Promise(resolve => setTimeout(resolve, 5000));
-    const afterPause = await page.evaluate(() => window.__linuxCtl.guestClockState());
-    assert.equal(afterPause.mtime, beforePause.mtime, 'explicit pause freezes actual machine time');
+    const after = await sample();
+    assert.equal(after.clock.mtime, before.clock.mtime, 'explicit pause freezes actual machine time');
+    assert.equal(after.retired, before.retired, 'explicit pause freezes actual retirement count');
     const pauseMillis = performance.now() - pauseStarted;
     const resumeSent = performance.now();
     await page.evaluate(() => window.__linuxCtl.resume());
-    const resumed = await page.evaluate(() => window.__linuxCtl.guestClockState());
+    const resumed = await sample();
     await new Promise(resolve => setTimeout(resolve, 250));
-    const progressed = await page.evaluate(() => window.__linuxCtl.guestClockState());
-    assert.equal(progressed.mode, 'wall');
-    assert.ok(BigInt(progressed.mtime) > BigInt(resumed.mtime), 'actual resumed wall clock progresses');
+    const progressed = await sample();
     const progressReceived = performance.now();
-    const clockProbe = {beforePause, afterPause, pauseMillis, resumeSent, resumed, progressed, progressReceived, measurementRealm: 'Node performance.now'};
+    const clockProbe = {beforePause: before.clock, afterPause: after.clock,
+      resumed: resumed.clock, progressed: progressed.clock,
+      retired: {beforePause: before.retired, afterPause: after.retired,
+        resumed: resumed.retired, progressed: progressed.retired},
+      pauseMillis, resumeSent, progressReceived, measurementRealm: 'Node performance.now'};
     clockProbe.bound = assertInteractivePauseProbe(clockProbe);
     await record('interactive-clock', {clockProbe});
   }

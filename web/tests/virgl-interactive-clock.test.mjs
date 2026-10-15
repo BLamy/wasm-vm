@@ -4,7 +4,7 @@ import test from 'node:test';
 import vm from 'node:vm';
 import {createGuestClockLifecycle,validateGuestClock,validateICountDivider,validateInteractiveClock} from '../guest-clock.js';
 
-const policy='wall-on-keyboard';
+for (const [policy,selectedMode] of [['wall-on-keyboard','wall'],['paced-on-keyboard','paced-icount']]) {
 function machineModel() {
   const calls=[],state={mode:'icount',mtime:'9007199254740997',timebaseHz:10000000,clockDiv:64};
   const machine={
@@ -16,7 +16,7 @@ function machineModel() {
   };
   return {machine,calls,state};
 }
-test('policy validation is exact and omitted policy never reads host time',()=>{
+test(policy+': policy validation is exact and omitted policy never reads host time',()=>{
   const poison=new Proxy({},{get(){throw Error('unexpected realm read');}});
   assert.equal(validateInteractiveClock(undefined,'icount',poison),undefined);
   for(const value of [null,false,0,'wall','wall-on-keyboard ',[],{}])
@@ -26,14 +26,14 @@ test('policy validation is exact and omitted policy never reads host time',()=>{
     assert.throws(()=>validateInteractiveClock(policy,'icount',{performance:{now:()=>sample}}),/finite nonnegative/);
   assert.equal(validateInteractiveClock(policy,'icount',{performance:{now:()=>0}}),policy);
 });
-test('all handoff APIs are required before initial divider mutation',()=>{
+test(policy+': all handoff APIs are required before initial divider mutation',()=>{
   for(const method of ['setGuestClock','rebaseGuestClock','guestClockState']) {
     const {machine,calls}=machineModel();machine[method]=undefined;
     assert.throws(()=>createGuestClockLifecycle(machine,'icount',64,policy),new RegExp(method));
     assert.deepEqual(calls,[]);
   }
 });
-test('only original PC105 makes select, preserving decimal mtime and boot divider receipt',()=>{
+test(policy+': only original PC105 makes select, preserving decimal mtime and boot divider receipt',()=>{
   const {machine,calls,state}=machineModel();
   const lifecycle=createGuestClockLifecycle(machine,'icount',64,policy),initial=lifecycle.dividerSelection();
   calls.length=0;
@@ -41,8 +41,8 @@ test('only original PC105 makes select, preserving decimal mtime and boot divide
     assert.equal(lifecycle.beforeKeyboardEvent(...args),false);
   assert.deepEqual(calls,[]);
   assert.equal(lifecycle.beforeKeyboardEvent(1,1,1),true);
-  assert.deepEqual(calls,['state','select:wall','state']);
-  assert.equal(state.mtime,'9007199254740997');assert.equal(state.mode,'wall');
+  assert.deepEqual(calls,['state','select:'+selectedMode,'state']);
+  assert.equal(state.mtime,'9007199254740997');assert.equal(state.mode,selectedMode);
   assert.deepEqual(lifecycle.dividerSelection(),initial);
   calls.length=0;
   for(const code of [20,69,248])assert.equal(lifecycle.beforeKeyboardEvent(1,code,1),false);
@@ -51,8 +51,8 @@ test('only original PC105 makes select, preserving decimal mtime and boot divide
   const native=readFileSync(new URL('../../crates/core/src/dev/virtio/input/keyboard.rs',import.meta.url),'utf8');
   assert.match(native,/PC105_KEY_RANGE[^\n]*= 1\.\.=248;/,'handoff range must track original keyboard capability');
 });
-test('omitted policy and plain wall lifecycle do not select on keyboard input',()=>{
-  for(const mode of ['icount','wall']) {
+test(policy+': omitted policy and plain wall lifecycle do not select on keyboard input',()=>{
+  for(const mode of ['icount','wall','paced-icount']) {
     const {machine,calls}=machineModel();const lifecycle=createGuestClockLifecycle(machine,mode);
     calls.length=0;assert.equal(lifecycle.beforeKeyboardEvent(1,20,1),false);assert.deepEqual(calls,[]);
   }
@@ -68,18 +68,18 @@ function actualKeyboardCallback(model,lifecycle,{stopped=false,paused=false}={})
   };
   return {sandbox,send:vm.runInNewContext('(eventType,code,value)=>{'+keyboardBody+'}',sandbox)};
 }
-test('actual loader first NumLock repair selects before staging and stopped input cannot select',()=>{
+test(policy+': actual loader first NumLock repair selects before staging and stopped input cannot select',()=>{
   for(const paused of [false,true]) {
     const model=machineModel(),lifecycle=createGuestClockLifecycle(model.machine,'icount',64,policy);
     model.calls.length=0;const {send,sandbox}=actualKeyboardCallback(model,lifecycle,{paused});
     assert.equal(send(1,69,1),true);
-    assert.deepEqual(model.calls,['state','select:wall','state',['make',1,69,1]]);
+    assert.deepEqual(model.calls,['state','select:'+selectedMode,'state',['make',1,69,1]]);
     assert.equal(sandbox.paused,paused,'handoff never schedules or unpauses');
     model.calls.length=0;lifecycle.resume();assert.deepEqual(model.calls,['rebase']);
     sandbox.stopped=true;model.calls.length=0;assert.equal(send(1,20,1),false);assert.deepEqual(model.calls,[]);
   }
 });
-test('actual loader refuses staging and stops on thrown or invalid clock readback',()=>{
+test(policy+': actual loader refuses staging and stops on thrown or invalid clock readback',()=>{
   for(const failure of ['throw','mode','mtime','timebase','divider']) {
     const model=machineModel(),lifecycle=createGuestClockLifecycle(model.machine,'icount',64,policy);
     const original=model.machine.setGuestClock;
@@ -99,7 +99,7 @@ test('actual loader refuses staging and stops on thrown or invalid clock readbac
     assert.throws(()=>lifecycle.beforeKeyboardEvent(1,20,1),/restart required/);
   }
 });
-test('actual prefetch validation rejects nonaccelerated policy before boot work',()=>{
+test(policy+': actual prefetch validation rejects nonaccelerated policy before boot work',()=>{
   const begin=loader.indexOf('    validateGuestClock(guestClock);');
   const end=loader.indexOf('    const manifest = await fetchJsonAsset',begin);
   assert.ok(begin>0&&end>begin);
@@ -112,3 +112,5 @@ test('actual prefetch validation rejects nonaccelerated policy before boot work'
     if(virgl===true)run();else assert.throws(run,/requires accelerated graphics/);
   }
 });
+
+}

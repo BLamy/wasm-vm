@@ -23,8 +23,9 @@ export function assertPublicDesktopFinal(state) {
 
 export function assertInteractivePauseProbe(probe) {
   const {beforePause,afterPause,resumed,progressed,pauseMillis,resumeSent,progressReceived}=probe;
+  assert.ok(['wall','paced-icount'].includes(beforePause.mode),'actual host-paced interaction mode');
   for(const clock of [beforePause,afterPause,resumed,progressed]) {
-    assert.equal(clock.mode,'wall');assert.equal(clock.timebaseHz,10000000);
+    assert.equal(clock.mode,beforePause.mode);assert.equal(clock.timebaseHz,10000000);
     assert.equal(typeof clock.mtime,'string');assert.match(clock.mtime,/^[0-9]+$/);
   }
   assert.equal(afterPause.mtime,beforePause.mtime,'explicit pause freezes actual time');
@@ -34,8 +35,23 @@ export function assertInteractivePauseProbe(probe) {
   assert.ok(Number.isFinite(elapsedMillis)&&elapsedMillis>0&&elapsedMillis<pauseMillis,
     'measured observation is shorter than the excluded pause');
   const actualTicks=BigInt(progressed.mtime)-BigInt(afterPause.mtime);
-  const maximumTicks=BigInt(Math.ceil(elapsedMillis*10000))+10000n;
-  assert.ok(actualTicks>0n,'actual resumed wall clock progresses');
+  let retirementTicks=0n;
+  if(beforePause.mode==='paced-icount') {
+    const retired=probe.retired;
+    for(const point of ['beforePause','afterPause','resumed','progressed']) {
+      assert.ok(Number.isSafeInteger(retired?.[point])&&retired[point]>=0,'exact actual retirement count');
+    }
+    assert.equal(retired.afterPause,retired.beforePause,'pause freezes retirement count');
+    assert.ok(retired.resumed>=retired.afterPause&&retired.progressed>=retired.resumed,'retirement count never moves backward');
+    for(const clock of [beforePause,afterPause,resumed,progressed]) {
+      assert.ok(Number.isSafeInteger(clock.clockDiv)&&clock.clockDiv>=1&&clock.clockDiv<=1024,'actual ICount divider');
+      assert.equal(clock.clockDiv,beforePause.clockDiv,'interaction preserves the divider');
+    }
+    const delta=BigInt(retired.progressed)-BigInt(retired.afterPause),divisor=BigInt(beforePause.clockDiv);
+    retirementTicks=(delta+divisor-1n)/divisor;
+  }
+  const maximumTicks=BigInt(Math.ceil(elapsedMillis*10000))+retirementTicks+10000n;
+  assert.ok(actualTicks>0n,'actual resumed clock progresses');
   assert.ok(actualTicks<=maximumTicks,'actual resumed clock excludes the paused host interval');
-  return {actualTicks:actualTicks.toString(),maximumTicks:maximumTicks.toString(),elapsedMillis};
+  return {actualTicks:actualTicks.toString(),maximumTicks:maximumTicks.toString(),retirementTicks:retirementTicks.toString(),elapsedMillis};
 }

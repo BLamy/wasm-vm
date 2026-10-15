@@ -1,7 +1,7 @@
 // E5-T26i: opt-in browser clock policy, kept separate from the RTC and scheduler.
 // The WASM adapter owns actual timekeeping; these checks fail before boot side effects.
 function clockLabel(mode) {
-  if (mode !== "icount" && mode !== "wall") {
+  if (mode !== "icount" && mode !== "wall" && mode !== "paced-icount") {
     throw new RangeError(`unsupported guestClock: ${String(mode)}`);
   }
   return mode;
@@ -9,14 +9,14 @@ function clockLabel(mode) {
 
 export function validateGuestClock(mode = "icount", realm = globalThis) {
   clockLabel(mode);
-  if (mode === "wall") {
+  if (mode !== "icount") {
     const source = realm?.performance;
     if (typeof source?.now !== "function") {
-      throw new Error("wall guestClock requires a monotonic performance.now source");
+      throw new Error(`${mode} guestClock requires a monotonic performance.now source`);
     }
     const sample = source.now();
     if (!Number.isFinite(sample) || sample < 0) {
-      throw new Error("wall guestClock requires a finite nonnegative monotonic source");
+      throw new Error(`${mode} guestClock requires a finite nonnegative monotonic source`);
     }
   }
   return mode;
@@ -24,9 +24,9 @@ export function validateGuestClock(mode = "icount", realm = globalThis) {
 
 export function validateInteractiveClock(policy, mode = "icount", realm = globalThis) {
   if (policy === undefined) return undefined;
-  if (policy !== "wall-on-keyboard") throw new RangeError("unsupported interactiveClock");
+  if (policy !== "wall-on-keyboard" && policy !== "paced-on-keyboard") throw new RangeError("unsupported interactiveClock");
   if (mode !== "icount") throw new RangeError("interactiveClock requires guestClock=icount");
-  validateGuestClock("wall", realm);
+  validateGuestClock(policy === "paced-on-keyboard" ? "paced-icount" : "wall", realm);
   return policy;
 }
 
@@ -58,7 +58,7 @@ export function createGuestClockLifecycle(machine, mode = "icount", requestedDiv
   clockLabel(mode);
   validateInteractiveClock(interactiveClock, mode);
   const divider = validateICountDivider(requestedDivider, mode);
-  if (mode === "wall" || interactiveClock !== undefined) {
+  if (mode !== "icount" || interactiveClock !== undefined) {
     for (const method of ["setGuestClock", "rebaseGuestClock", "guestClockState"]) {
       if (typeof machine?.[method] !== "function") {
         throw new Error(`wall guestClock requires WASM ${method}`);
@@ -87,23 +87,24 @@ export function createGuestClockLifecycle(machine, mode = "icount", requestedDiv
     },
     resume() {
       if (failed) throw new Error("interactive clock selection failed; restart required");
-      if (mode === "wall") machine.rebaseGuestClock();
+      if (mode !== "icount") machine.rebaseGuestClock();
     },
     beforeKeyboardEvent(eventType, code, value) {
       if (failed) throw new Error("interactive clock selection failed; restart required");
       // Match the original keyboard's PC105_KEY_RANGE (keyboard.rs), not browser
       // repeat notifications or a claimed DOM trust bit. Lock repairs qualify.
-      if (interactiveClock === undefined || mode === "wall" || eventType !== 1 || value !== 1 ||
+      if (interactiveClock === undefined || mode !== "icount" || eventType !== 1 || value !== 1 ||
           !Number.isInteger(code) || code < 1 || code > 248) return false;
       try {
         const before = readICountState(machine);
-        machine.setGuestClock("wall");
+        const selectedMode = interactiveClock === "paced-on-keyboard" ? "paced-icount" : "wall";
+        machine.setGuestClock(selectedMode);
         const after = machine.guestClockState();
-        if (after?.mode !== "wall" || after.mtime !== before.mtime ||
+        if (after?.mode !== selectedMode || after.mtime !== before.mtime ||
             after.timebaseHz !== before.timebaseHz || after.clockDiv !== before.clockDiv) {
-          throw new Error("interactive clock selection changed time or did not reach wall mode");
+          throw new Error(`interactive clock selection changed time or did not reach ${selectedMode} mode`);
         }
-        mode = "wall";
+        mode = selectedMode;
         return true;
       } catch (error) {
         failed = true;

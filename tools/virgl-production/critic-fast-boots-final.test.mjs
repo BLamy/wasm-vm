@@ -32,3 +32,26 @@ test('clock samples retain decimal precision and cannot move backward',async()=>
   probe.progressed=clock(9007199256740997n);probe.resumed.mtime=9007199255740997;
   assert.throws(()=>assertInteractivePauseProbe(probe));
 });
+
+
+test('paced pause budget includes actual retire time and rejects hidden pause debt',async()=>{
+  const {assertInteractivePauseProbe}=await import('./critic-fast-boots-final.mjs');
+  const clock=mtime=>({mode:'paced-icount',mtime:String(mtime),timebaseHz:10000000,clockDiv:64});
+  const probe={beforePause:clock(9007199254740997n),afterPause:clock(9007199254740997n),
+    resumed:clock(9007199255740997n),progressed:clock(9007199267240997n),
+    retired:{beforePause:9007190254740000,afterPause:9007190254740000,
+      resumed:9007190318740000,progressed:9007190894740000},
+    pauseMillis:5000,resumeSent:2000,progressReceived:2250};
+  const bound=assertInteractivePauseProbe(probe);
+  assert.equal(bound.retirementTicks,'10000000');
+  assert.equal(bound.maximumTicks,'12510000');
+  assert.equal(bound.actualTicks,'12500000');
+  const valid=structuredClone(probe);
+  probe.progressed.mtime=String(BigInt(probe.progressed.mtime)+50000000n);
+  assert.throws(()=>assertInteractivePauseProbe(probe),/excludes the paused/);
+  for(const attack of [p=>p.retired.progressed=2**53,p=>p.retired.afterPause++,
+    p=>p.retired.resumed=p.retired.afterPause-1,p=>p.progressed.clockDiv=63,
+    p=>p.beforePause.clockDiv=0,p=>p.resumed.mode='wall',p=>delete p.retired]) {
+    const value=structuredClone(valid);attack(value);assert.throws(()=>assertInteractivePauseProbe(value));
+  }
+});
