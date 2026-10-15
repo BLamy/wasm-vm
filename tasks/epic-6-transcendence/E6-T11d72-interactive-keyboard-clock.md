@@ -181,3 +181,48 @@ image/chunk and original-driver diff pins are recorded in
 `target/evidence/production-stock-repeat-investigation01`. It changes scheduling
 and cannot discharge untouched-stock acceptance. No cause or runtime repair is
 claimed until the original kernel/Wayland delivery is measured.
+
+### 2026-10-15 — worker — concurrent input delay isolated; stock still refuted
+
+Both disposable observed-image runs reproduced the unchanged trusted50ms Foot
+command failure. The first passive evdev recording contains128 complete records,
+62 balanced original key frames, no kernel repeats or dropped SYN, and a44.925ms
+first-T hold. The second adds a buffer around the unchanged Foot listener/timer
+APIs. Its128 evdev records again match all62 original frames; first-T is45.845ms.
+Actual Foot PID695/UID1000 receives all62 matching source-time/key/state values,
+but its first-T callbacks are28.5886399s apart. The down callback itself takes
+47.21ms wall/2.1099ms thread CPU; the interval between callbacks contains
+1.1762437s of that same thread's CPU. The original40Hz/250ms timerfd6 yields1126
+expirations before release disarm, all consistent with elapsed guest time.
+This establishes delayed userspace release consumption, without locating the
+Hyprland-emission versus client-socket boundary or claiming exclusive cause.
+
+The second probe's constructor SIGUSR2 handler was overwritten by Foot's normal
+signal initialization. Its automatic post-helper signal requests the light
+palette and produces an empty diagnostic file; that harness failure is preserved.
+A separate read-only `/proc/695/mem` helper recovers1687 published rows, with two
+identical raw prefixes, three equal used counters, overflow0 and exact library/
+original-ELF identities. It does not stop/write/signal the process or fabricate
+a successful C END. Executable relocation changes diagnostic02's process comm;
+this scheduling difference further excludes it from untouched-stock acceptance.
+
+The fresh critic independently authenticates, parses and seals both recordings:
+`evidence/virgl-production-interactive-clock/verifier/diagnostics-01/first-helper-kernel-input-audit.tar.gz`
+is536428bytes/94 reopened members, SHA-256
+`8bf19ea577b2175b219bdf65264d211ceeecfce0369fb0e1472011d991aa60e7`;
+`concurrent-input-callback-and-timer-diagnostic.tar.gz` in that directory is
+1005960bytes/129 reopened members, SHA-256
+`509ae5bd33b3fd98c4974c78cda147931935c35c753e1a77cb4560beaa38a4f6`.
+The archive's raw callback rows61/64/1442 and first kernel-T pair are the concrete
+points; the missing signal dump remains failed. The critic held459 conservative
+timer bounds and matched62 original kernel/client pairs. A diagnostic Linux
+host-ABI check proves forwarding/data/results/errors and child preload exclusion;
+it is not emulated-guest acceptance.
+
+No product runtime repair, new stock success, recovery verdict or deployment is
+claimed. Wasm remains`a653fe3a4828fb46e4ced12668174c71e8d817a5bf5611117f17da3008a6aa82`,
+clock-policy module`62a268c0766733860f422d80870790ca48a899fc37600420f66ef5fc802fd4a7`.
+The first helper's stock refutation and prior component holds remain in force.
+The next bounded diagnostic adds official Wayland server logging, libinput and
+client read/dispatch timings, keeping original binary basenames and no signals.
+Wrangler whoami now confirms the intended Cloudflare account; no deploy occurred.
