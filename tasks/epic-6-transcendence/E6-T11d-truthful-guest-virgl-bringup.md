@@ -3,7 +3,7 @@ id: E6-T11d
 epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
-status: in-progress
+status: implemented
 depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47, E6-T11d48, E6-T11d49, E6-T11d50, E6-T11d51, E6-T11d52, E6-T11d53, E6-T11d54, E6-T11d55, E6-T11d56, E6-T11d57, E6-T11d58, E6-T11d59, E6-T11d60, E6-T11d61, E6-T11d62, E6-T11d63, E6-T11d64, E6-T11d65, E6-T11d66, E6-T11d67, E6-T11d68, E6-T11d69a, E6-T11d69b, E6-T11d70, E6-T11d71, E6-T11d74d]
 estimate: S
 risk: high
@@ -1237,3 +1237,71 @@ upstream application set, and E6-T11e remains a separate ordered boundary.
 
 Continue the same native stack above PR568 on
 `codex/production-guest-gpu-closure`; no stack is replaced or PR merged.
+
+
+### 2026-10-15 — worker — source-bound production parent closure submitted
+
+Metadata source `423edd8c084f969f5171af93b683dbd1534f2fa8`; no runtime,
+artifact or browser behavior changes. Closure capsule
+`evidence/virgl-production-final-closure/worker/closure.tar.gz` is2313686bytes,
+SHA256 `9b92e4b8a7d1471f92ec575654835e647a499a72111df36bf672db624d6591df`;
+`records.json` SHA256
+`8f7ae10758c136ff60e1d61a3931fbd4802816ea30a35213e5c82146418fe6a1`.
+All25members were reopened/rehash checked. Exact read-only command
+`python3 evidence/virgl-production-final-closure/worker/authenticate.py`
+passes25member hashes, all38inherited file/manifest references without dropping
+a reference, and current critical source bodies. Task/status changes are the
+only implementation difference; the helper authenticates the composed claim.
+
+The prepared map is the fresh critic's original13604-byte metadata record, SHA256
+`0b8c766bb4755c0e7a70d549e8b04a49b079d0b680a6da527972d608dae00045`.
+Its observed1a172cf3head is retained, not relabelled current. It maps unchanged
+capability serializer SHA256
+`4c05de5b32c0482ba3135967a067959d0f4c890767c64679531704fbceef2244`,
+independent fixed caps oracle
+`5d6843966a88cc394213808779f9daaadbab19ef7fe07b7d94c45368afc6cd3b`,
+and decoder
+`804134a7ba9a52c7335ec3ff14e5ac2a55a09307ed833e2c7266268ae7a704e2`
+to the unchanged D72/e17 boundary. Changed worker/RAM/loader/journal/renderer/
+capacity behavior is covered by verified successors, never by blanket equality.
+
+The durable original D72 component is
+`evidence/virgl-production-interactive-clock/worker/paced-keyboard-policy-submission.tar.gz`,
+SHA256 `01f6feaca7b0079b0a4dfa83fc4bdfeb757ca8b258af26c9bd8882273374a37d`;
+internal prefix `production-paced-policy-private-window04/`. It binds actual
+Mesa26.2.2 GLES3 VirGL,768literal pixels,1000cube frames,13handshake families,
+Hyprland/Foot and no software DRI. Original full GPU log SHA256
+`a5aafe364806b475cbb7c437a31c26c6ef0e58ebe0d0b14b7672994645f2d6df`
+contains31516DRAWs and1347fenced submits. The earlier cube-state point has
+31192draws+1pending and is not described as drained. Guest digest is
+`d27ddf4d5d4b6e6007ed6836750fbbaf31500d87a74f7747bd8431f83fe1faaa`.
+Original report, acceptance, Mesa probe, cube state, full trace, QEMU/reference
+handshake comparison and exact hashes remain in that published archive/map.
+
+The independent capability-byte negative control is embedded verbatim under
+`independent-capability-negative/` in this closure capsule. Its original sealed
+archive is2005109bytes, SHA256
+`ff5bc0b9f9f4bd0d68f96dd2e4bb860d446dca863b462fe3bcb4ea78dd9893e4`;
+receipt SHA256
+`d247387f1a137efa279b3f7de923daf5f0a47c320670eb3903ddaaaf8e7bdaf6`.
+Healthy exits0; changing actual cap byte284 to3 contradicts independent oracle4
+and exits101. This is the critic's test/evidence, not a worker-generated oracle.
+
+Verified successors: D72 `8c902c70`, D73 `7e2739f2`,74c `baf3d103`,
+74d1 `612b1b7b`,74d2 `3027442a`,74d `2f16a755`. Their task logs,
+worker/verifier archives and digest manifests are bound in the capsule. The
+final847full-pristine high-risk gauntlet and actual HTTPS923 GPU initial/repeat,
+ten software fast-boot/persistence phases,127/0 and unified-site db04 recorder
+closure are held by the fresh74d verdict. Runtime main/loader remain exactly847.
+Production Pagesb320083f uses originalpair2aa173104561bytes/worker06622;
+rawimagef0a72 and manifest87e232 identify distinct authenticated objects.
+
+Claim: qualified, truthfully advertised production VirGL initializes real guest
+Mesa/Hyprland and renders through the production worker/physical scanout, including
+useful GPU warm restoration. No new runtime boundary changed, so the repository's
+incremental rule carries unchanged high-risk/pristine/cube holds. Failed original
+wrappers remain failed and their narrowly missing proofs are explicitly mapped.
+This does not claim300MIPS, arbitrary host support, complete Omarchy applications
+or recovery/context-loss survival. E6-T11e and the user's explicit Chromium/
+LibreOffice/full-compatible-application image remain separate work. Fresh
+`production_boundary_critic` receives this exact capsule/diff and owns the verdict.
