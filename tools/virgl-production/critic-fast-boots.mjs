@@ -267,7 +267,12 @@ async function readExpectedGpuPair() {
   assert.equal(metadata.identity.buildId, GPU_CHECKPOINT_BUILD_ID);
   assert.ok(['icount', 'paced-icount'].includes(metadata.clockState.mode));
   expectedGpuPair = {pin, identity: metadata.identity, profile: metadata.profile, clockState: metadata.clockState,
-    epoch: metadata.epoch, parts: Object.fromEntries(Object.entries(metadata.parts).map(([name, part]) => [name, {sha256: part.sha256, bytes: part.bytes.length}]))};
+    epoch: metadata.epoch, parts: Object.fromEntries(Object.entries(metadata.parts).map(([name, part]) => {
+      assert.equal(part.encoding, 'gzip');
+      assert.equal(hash(part.bytes), part.compressedSha256, name + ' stored component digest');
+      return [name, {encoding: part.encoding, compressedBytes: part.bytes.length, compressedSha256: part.compressedSha256,
+        uncompressedBytes: part.length, uncompressedSha256: part.sha256}];
+    }))};
   report.expectedGpuPair = expectedGpuPair;
   await fs.writeFile(path.join(output, 'expected-gpu-pair.json'), JSON.stringify(expectedGpuPair, null, 2) + '\n');
 }
@@ -455,12 +460,44 @@ try{
     }));
     const liveReads = [];
     const liveReadErrors = [];
+    const workerShellReceipts = [];
+    const shellVersion = remoteUrl ? (await fs.readFile(path.join(web, 'sw.js'), 'utf8')).match(/const VERSION = "([a-f0-9]{12})";/)?.[1] : null;
+    if (remoteUrl) assert.ok(shellVersion, 'frozen production shell cache version');
+    async function captureWorkerShellSources() {
+      for (const receipt of workerShellReceipts.filter(item => !item.acquired)) {
+        // Chromium cannot expose this dedicated-worker body through page CDP.
+        // The observed SW response came from this exact cache-first shell entry.
+        const cached = await page.evaluate(async ({cacheName, url}) => {
+          if (!(await caches.keys()).includes(cacheName)) return null;
+          const response = await (await caches.open(cacheName)).match(url);
+          if (!response) return null;
+          return {cacheName, url: response.url, status: response.status,
+            controller: navigator.serviceWorker.controller?.scriptURL ?? null,
+            bytes: Array.from(new Uint8Array(await response.arrayBuffer()))};
+        }, {cacheName: 'wasm-vm-shell-' + shellVersion, url: receipt.url});
+        assert.ok(cached?.controller, 'original worker response has a controlling service worker');
+        assert.equal(cached.status, receipt.status); assert.equal(cached.url, receipt.url);
+        const bytes = Buffer.from(cached.bytes), expected = await fs.readFile(path.join(web, receipt.path));
+        assert.equal(hash(bytes), hash(expected), 'actual cached worker bootstrap source');
+        const bodyPath = path.join('live-source', receipt.path);
+        await fs.mkdir(path.dirname(path.join(output, bodyPath)), {recursive: true});
+        await fs.writeFile(path.join(output, bodyPath), bytes);
+        Object.assign(receipt, {acquired: true, acquisition: 'original-service-worker-cache', cacheName: cached.cacheName,
+          controller: cached.controller, bodyPath, bytes: bytes.length, sha256: hash(bytes)});
+        report.liveSources.push({...receipt});
+      }
+    }
     if (remoteUrl) page.on('response', response => {
       const url = new URL(response.url());
       if (url.origin !== origin || !/\.(?:m?js|json|wasm|html|css)$/.test(url.pathname) && !['/app','/'].includes(url.pathname)) return;
       liveReads.push((async () => {
         const relative = url.pathname === '/app' ? 'app.html' : url.pathname === '/' ? 'index.html' : url.pathname.slice(1);
         try {
+          if (relative === 'linux-worker.js' && response.fromServiceWorker()) {
+            const receipt = {phase, url: response.url(), path: relative, status: response.status(), fromServiceWorker: true};
+            assert.equal(receipt.status, 200, 'original worker bootstrap response status');
+            workerShellReceipts.push(receipt); (report.originalWorkerResponses ??= []).push(receipt); return;
+          }
           assert.equal(response.status(), 200, 'published source status ' + relative);
           const bytes = await response.body();
           const expected = expectedPublishedSource(relative, await fs.readFile(path.join(web, relative)));
@@ -469,7 +506,7 @@ try{
           await fs.mkdir(path.dirname(path.join(output, bodyPath)), {recursive:true});
           await fs.writeFile(path.join(output, bodyPath), bytes);
           report.liveSources.push({url:response.url(), path:relative, bodyPath, bytes:bytes.length, sha256:hash(bytes), fromServiceWorker:response.fromServiceWorker()});
-        } catch (error) { liveReadErrors.push(String(error)); }
+        } catch (error) { liveReadErrors.push(relative + ': ' + String(error)); }
       })());
     });
     if(gpuTrace)await page.exposeFunction('__recordFastBootGpuEvent',event=>{
@@ -580,7 +617,7 @@ try{
         }
       }
       const screenshot=phase+'.png';await page.screenshot({path:path.join(output,screenshot),fullPage:true});
-      await Promise.all(liveReads); assert.deepEqual(liveReadErrors, [], 'published original source bodies');
+      await Promise.all(liveReads); await captureWorkerShellSources(); assert.deepEqual(liveReadErrors, [], 'published original source bodies');
       report.phases.push({phase,guest,round,url,restoredMs,commandTimeoutMs,liveCommandMs:Date.now()-started-restoredMs,result,state,screenshot,repeatCheckpoint,phaseEgl,publicDesktopInput,publicDesktopFinal,warmPixels,warmTiming,postWorkloadInput});
       await fs.writeFile(path.join(output,phase+'.json'),JSON.stringify(report.phases.at(-1),null,2));
       console.log(JSON.stringify({phase,restoredMs,result,display:state.display?.successfulPresents,databases:state.databases}));
@@ -605,7 +642,7 @@ try{
       console.log(JSON.stringify({phase,restoredMs:Date.now()-started,before,generation,read}));
     }
     await page.evaluate(()=>window.__linuxCtl?.stop?.()).catch(()=>{});
-    await Promise.all(liveReads); assert.deepEqual(liveReadErrors, [], 'published original source bodies');
+    await Promise.all(liveReads); await captureWorkerShellSources(); assert.deepEqual(liveReadErrors, [], 'published original source bodies');
     await context.close();activePage=null;
   }
   for(const [filename,digest]of Object.entries(report.sourceHashes))

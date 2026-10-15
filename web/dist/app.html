@@ -929,13 +929,12 @@
         <p class="os-launcher-kicker">RISC-V guest launcher</p>
         <h2 id="os-launcher-title">Choose an operating system</h2>
         <p class="os-launcher-copy">
-          Each option boots a real guest in this browser. Warm images restore in seconds when their
-          identity matches the current kernel and disk; Omarchy is the graphical desktop image and
-          uses its own immutable chunk set.
+          Each option runs a real guest in this browser. The first warm launch downloads a checkpoint.
+          Later launches can reuse the cached copy. Omarchy is the graphical desktop.
         </p>
         <label for="desktop-graphics">Desktop graphics</label>
         <select id="desktop-graphics">
-          <option value="gpu">GPU rendering · cold boot</option>
+          <option value="gpu">GPU rendering · warm boot</option>
           <option value="software">Software rendering · warm snapshot</option>
         </select>
         <output id="gpu-status" aria-live="polite"></output>
@@ -944,7 +943,7 @@
         <div class="os-options" role="list" aria-label="Operating system choices">
           <button class="os-option" type="button" data-os="omarchy" role="listitem">
             <span class="os-option-title">Omarchy</span>
-            <span class="os-option-detail">Open the Hyprland desktop with Foot and the Omarchy shell, fitted to your window. Guest rendering runs on your GPU after a hardware check. The accelerated desktop starts from a cold boot.</span>
+            <span class="os-option-detail">Open the Hyprland desktop with Foot and the Omarchy shell, fitted to your window. Guest rendering runs on your GPU after a hardware check. The accelerated desktop restores from a GPU warm checkpoint.</span>
             <span class="os-option-meta" data-os-meta="omarchy" data-state="checking">checking image…</span>
           </button>
           <button class="os-option" type="button" data-os="node-alpine" role="listitem">
