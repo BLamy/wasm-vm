@@ -319,3 +319,68 @@ fn gpu_checkpoint_corruption_foreign_witness_and_truncation_are_atomic() {
         before.0
     );
 }
+
+#[test]
+fn gpu_checkpoint_poison_reset_and_unsupported_owners_refuse_before_capture() {
+    for cached in [false, true] {
+        let mut r = rig(cached);
+        setup(&mut r, 13);
+        let blob = r.machine.save_accelerated_resume(&WITNESS).unwrap();
+        *r.controls.fail_next.borrow_mut() = Some(Control3dError::BridgePoisoned);
+        r.command(&context(14), 24, p::RESP_ERR_UNSPEC, 24);
+        assert!(r.state.borrow().control3d_snapshot().unwrap().poisoned);
+        r.mmio(0x14, 0);
+        assert_ne!(
+            r.read_mmio(0x10) & 1,
+            0,
+            "positive qualification is retained"
+        );
+        let before = fingerprint(&mut r);
+        assert!(r.machine.save_accelerated_resume(&WITNESS).is_err());
+        assert!(r.machine.load_accelerated_resume(&blob, &WITNESS).is_err());
+        assert_eq!(fingerprint(&mut r), before);
+        r.mmio(0x70, 0);
+        assert!(!r.state.borrow().control3d_snapshot().unwrap().poisoned);
+        let before = fingerprint(&mut r);
+        assert!(r.machine.save_accelerated_resume(&WITNESS).is_err());
+        assert!(r.machine.load_accelerated_resume(&blob, &WITNESS).is_err());
+        assert_eq!(
+            fingerprint(&mut r),
+            before,
+            "reset awaits normal device service"
+        );
+        r.tick();
+        let healthy = r.machine.save_accelerated_resume(&WITNESS).unwrap();
+        assert!(
+            r.machine
+                .load_accelerated_resume(&healthy, &WITNESS)
+                .is_ok()
+        );
+        println!(
+            "GPU_CHECKPOINT_POISON_RESET cache={cached} recovered_epoch={}",
+            r.state.borrow().control3d_snapshot().unwrap().epoch
+        );
+    }
+    let mut absent = Machine::new(1024 * 1024);
+    let before = absent.snapshot();
+    assert!(absent.save_accelerated_resume(&WITNESS).is_err());
+    assert_eq!(absent.snapshot(), before);
+    let mut unqualified = Rig::unqualified();
+    let before = unqualified.machine.snapshot();
+    assert!(
+        unqualified
+            .machine
+            .save_accelerated_resume(&WITNESS)
+            .is_err()
+    );
+    assert_eq!(unqualified.machine.snapshot(), before);
+    let mut private = Machine::new(1024 * 1024);
+    private.enable_plic();
+    private.enable_virtio_slots(None);
+    private
+        .enable_virtio_gpu_control3d_proof(Box::new(NullSink), Box::new(ControlRecorder::default()))
+        .unwrap();
+    let before = private.snapshot();
+    assert!(private.save_accelerated_resume(&WITNESS).is_err());
+    assert_eq!(private.snapshot(), before);
+}
