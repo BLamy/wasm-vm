@@ -151,9 +151,13 @@ export async function verifyOmarchyApplications(page, command, output, options =
     report.defaults=await run('env XDG_CURRENT_DESKTOP=Hyprland xdg-settings get default-web-browser; '+hypr+'binds; free -m; uname -m');assert.equal(report.defaults.exit,0);assert.match(report.defaults.stdout,/chromium.desktop/);
     const initialEula=await run('test -f "$HOME/.config/chromium/EULA Accepted"');assert.ok([0,1].includes(initialEula.exit));
     await press('Meta+Shift+b');
-    let chromium=await waitWindow(row=>/chromium/i.test(row.class),600000);
+    // The native Arch first-run dialog has no Wayland app ID. Its exact title
+    // selects a candidate only; identity() still checks the running signed ELF.
+    let chromium=await waitWindow(row=>/chromium/i.test(row.class)||
+      (initialEula.exit===1&&row.class===''&&row.title==='Chromium Additional Terms of Service'),600000);
     if(initialEula.exit===1){
       report.firstRunWindow=await identity(chromium,'/usr/lib/chromium/chromium');
+      await waitActive(row=>row.pid===chromium.pid);
       await shot('chromium-first-run');await press('Enter');
       let accepted;
       for(let n=0;n<100;n++){accepted=await run('test -f "$HOME/.config/chromium/EULA Accepted" && test -f "$HOME/.config/chromium/First Run"');if(accepted.exit===0)break;await sleep(1500);}
