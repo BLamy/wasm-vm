@@ -343,7 +343,7 @@ async function guestCommand(page,command,timeout=120000){
   return await page.evaluate(async({command,timeout})=>window.wvmDemo.run(command,timeout),{command,timeout});
 }
 try{
-  browser=await chromium.launch({headless:false,executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',args:['--enable-gpu']});
+  browser=await chromium.launch({headless:true,executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',args:['--enable-gpu','--use-gl=angle','--use-angle=metal']});
   if(coldGpu){const hardware=await(await browser.newBrowserCDPSession()).send('SystemInfo.getInfo');
     await fs.writeFile(path.join(output,'hardware.json'),JSON.stringify(hardware,null,2));}
   for(const guest of guests){
