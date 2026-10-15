@@ -174,7 +174,9 @@ try{
  assert.equal(await page.locator('.reader-header a[href="./"]').count(),1);
  await page.goto(new URL('docs.html?page=graphics',base).href,{waitUntil:'load'});await page.locator('.reader-document h1').waitFor();
  const graphicsText=await page.locator('.reader-document').innerText();
- assert.match(graphicsText,/GPU rendering starts from a cold boot/);
+ assert.match(graphicsText,/GPU rendering restores an authenticated Omarchy warm checkpoint/);
+ assert.match(graphicsText,/Acceptance checks new guest GPU work after startup/);
+ assert.match(graphicsText,/cannot silently become a cold boot or a software session/);
  assert.match(graphicsText,/Software rendering/);
  assert.match(graphicsText,/WebGL2/);
  assert.match(graphicsText,/300-MIPS/);
