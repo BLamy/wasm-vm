@@ -110,6 +110,47 @@ export async function verifyOmarchyApplications(page, command, output, options =
   }
   async function press(key){report.phases.push({kind:'trusted-key',key,time:Date.now()});await page.keyboard.press(key,{delay:100});await save();}
   async function type(text){report.phases.push({kind:'trusted-text',text,time:Date.now()});await typeGuestText(page,text);await save();}
+  async function wallpaperTransition() {
+    const current=await run(hypr+'activeworkspace');assert.equal(current.exit,0);
+    const workspace=JSON.parse(current.stdout).id;
+    assert.ok(!(await clients()).some(row=>row.workspace?.id===5),'wallpaper test workspace is empty');
+    await press('Meta+5');
+    const active=await run(hypr+'activeworkspace');assert.equal(active.exit,0);assert.equal(JSON.parse(active.stdout).id,5);
+    const code="from pathlib import Path;import hashlib,json;p=Path.home()/'.local/state/omarchy/current/background';a=p.resolve();b=a.parent/'1-quattro.webp';assert a!=b and b.is_file();print(json.dumps([dict(path=str(f),sha256=hashlib.sha256(f.read_bytes()).hexdigest()) for f in (a,b)]))";
+    const assets=await run('python3 -c '+"'"+code.replaceAll("'","'\\''")+"'");assert.equal(assets.exit,0);
+    const [original,alternate]=JSON.parse(assets.stdout);report.wallpaperTransitions={assets:[original,alternate],samples:[]};
+    async function settled(label,{different,expected}={}) {
+      const started=Date.now(),clock=await page.evaluate(()=>__linuxCtl.guestClockState());let previous,count=0;
+      while(Date.now()-started<300000){
+        await gpuHealth();
+        const sample=await page.evaluate(async()=>{
+          const c=document.getElementById('ide-display-canvas'),context=c.getContext('2d'),data=[];
+          for(let y=0;y<24;y++)for(let x=0;x<40;x++)data.push(...context.getImageData(Math.floor(c.width*(0.1+0.8*x/39)),Math.floor(c.height*(0.15+0.7*y/23)),1,1).data);
+          return {rgba:data,clock:await __linuxCtl.guestClockState(),presentation:__presentation.state()};
+        });
+        const bytes=Buffer.from(sample.rgba),hash=sha(bytes);delete sample.rgba;
+        const colors=new Set(Array.from({length:bytes.length/4},(_,i)=>bytes.subarray(i*4,i*4+3).toString('hex'))).size;
+        count=hash===previous?count+1:1;previous=hash;
+        report.wallpaperTransitions.samples.push({label,time:Date.now(),hash,colors,...sample});await save();
+        if(count>=8&&colors>=16&&BigInt(sample.clock.mtime)-BigInt(clock.mtime)>=20000000n&&hash!==different&&(!expected||hash===expected)){
+          const gpu=await shot('wallpaper-'+label);assert.equal(gpu.counters.failed,0);return {hash,gpu};
+        }
+        await sleep(750);
+      }
+      throw Error('Actual wallpaper did not visibly finish '+label);
+    }
+    const before=await settled('original');
+    const set=async asset=>{
+      assert.match(asset.path,/^\/home\/omarchy\/[A-Za-z0-9_./-]+$/);
+      const result=await run('OMARCHY_PATH=/usr/share/omarchy XDG_RUNTIME_DIR=/run/user/1000 OMARCHY_SHELL_IPC_TIMEOUT=120s omarchy-shell background set '+"'"+asset.path+"'");
+      assert.equal(result.exit,0,'original nonquiet Omarchy background IPC');
+    };
+    await set(alternate);const changed=await settled('alternate',{different:before.hash});
+    await set(original);const restored=await settled('restored',{different:changed.hash,expected:before.hash});
+    assert.ok(changed.gpu.counters.draws>before.gpu.counters.draws&&restored.gpu.counters.draws>changed.gpu.counters.draws);
+    report.wallpaperTransitions.result={status:'passed',before,changed,restored};
+    await press('Meta+'+workspace);
+  }
   async function launchWriter() {
     await press('Meta+Alt+Space');
     const deadline=Date.now()+300000;let menu;
@@ -211,6 +252,7 @@ export async function verifyOmarchyApplications(page, command, output, options =
     assert.equal(tools.exit,0);assert.match(tools.stdout,/^riscv64\s+12\.2\.0\s*$/);report.nodeNpm=tools;
     report.nodeExecutable=await identityProof.file('/usr/bin/node',name+'-node-identity');
     report.afterGpu=await shot('node-npm');
+    await wallpaperTransition();
     let previousGpu=report.beforeGpu;
     for(const phase of [report.chromiumGpu,report.writerGpu,report.afterGpu]){
       assert.equal(phase.qualified,true);assert.equal(phase.lost,false);assert.equal(phase.counters.failed,0);
