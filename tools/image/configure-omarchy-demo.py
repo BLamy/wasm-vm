@@ -39,7 +39,42 @@ def responsive_shell_config(defaults_text):
     return json.dumps(config, indent=2) + "\n"
 
 
-def configure(root):
+def compatible_application_bindings(text):
+    """Keep upstream bindings, guarded when an optional native app is absent.
+
+    These names are literals from the pinned Omarchy package. Check the guest's
+    live PATH at config load so installing a port later also enables its binding.
+    A missing port must not invoke an upstream x86-only installer by accident.
+    """
+    commands = {
+        '"terminal-tmux"': "tmux", '"terminal-herdr"': "herdr",
+        '"spotify"': "spotify", '"cliamp"': "cliamp",
+        '"omarchy-launch-docker-tui"': "lazydocker", '"signal"': "signal-desktop",
+        '"obsidian"': "obsidian", '"omawrite"': "omawrite", '"1password"': "1password",
+    }
+    counts = {name: 0 for name in commands}
+    result = ["-- Optional native applications use their actual guest PATH.\n",
+              "local function application_present(name)\n",
+              '  local status = os.execute("command -v " .. name .. " >/dev/null 2>&1")\n',
+              "  return status == true or status == 0\nend\n"]
+    for line in text.splitlines(keepends=True):
+        matching = [name for name in commands if name in line and "o.bind(" in line]
+        if len(matching) > 1:
+            raise ValueError("ambiguous packaged application binding")
+        if matching:
+            name = matching[0]
+            counts[name] += 1
+            result.append(f'  if application_present("{commands[name]}") then\n')
+            result.append("  " + line)
+            result.append("  end\n")
+        else:
+            result.append(line)
+    if any(count != 1 for count in counts.values()):
+        raise ValueError("unexpected packaged native application bindings")
+    return "".join(result)
+
+
+def configure(root, applications=False):
     if os.geteuid() != 0:
         raise ValueError("image ownership configuration requires container root")
     if not root.is_absolute() or root.resolve() != root or not root.is_dir():
@@ -70,6 +105,23 @@ def configure(root):
         destination.write_bytes(data)
         destination.chmod(mode)
         changes[relative] = {"sha256": hashlib.sha256(data).hexdigest(), "mode": oct(mode)}
+
+    if applications:
+        for relative in ("usr/lib/chromium/chromium", "usr/lib/libreoffice/program/soffice.bin", "usr/bin/node"):
+            executable = path(relative)
+            with executable.open("rb") as stream:
+                header = stream.read(64)
+            if header[:6] != b"\x7fELF\x02\x01" or header[18:20] != b"\xf3\x00":
+                raise ValueError(f"native RISC-V application required: {relative}")
+        for name in ("chromium.desktop", "libreoffice-writer.desktop", "libreoffice-calc.desktop", "libreoffice-impress.desktop"):
+            launcher = path("usr/share/applications") / name
+            if launcher.is_symlink():
+                expected = "/usr/lib/libreoffice/share/xdg/" + name.removeprefix("libreoffice-")
+                if not name.startswith("libreoffice-") or os.readlink(launcher) != expected:
+                    raise ValueError(f"unexpected packaged application link: {name}")
+                launcher = path(expected.lstrip("/"))
+            if not launcher.is_file():
+                raise ValueError(f"application launcher missing: {name}")
 
     # Configuration is copied only from package-provenance-checked content.
     source = path("usr/share/omarchy/config")
@@ -124,6 +176,35 @@ require("hypr.looknfeel")
 require("hypr.autostart")
 require("default.hypr.toggles")
 ''')
+    if applications:
+        write("home/omarchy/.config/hypr/hyprland.lua", path("usr/share/omarchy/config/hypr/hyprland.lua").read_text())
+        write("home/omarchy/.config/default/hypr/bindings/applications.lua", compatible_application_bindings(
+            path("usr/share/omarchy/default/hypr/bindings/applications.lua").read_text()))
+        write("home/omarchy/.config/default/hypr/autostart.lua", '''-- Offline, package-owned browser desktop; no architecture-specific installers.
+hl.on("hyprland.start", function()
+  hl.exec_cmd("systemctl --user import-environment $(env | cut -d'=' -f 1)")
+  hl.exec_cmd("dbus-update-activation-environment --systemd --all")
+  hl.exec_cmd("omarchy-launch-shell")
+  hl.exec_cmd("/usr/local/bin/omarchy-demo-session")
+end)
+''')
+        write("home/omarchy/.config/mimeapps.list", """[Default Applications]
+text/html=chromium.desktop
+x-scheme-handler/http=chromium.desktop
+x-scheme-handler/https=chromium.desktop
+application/xhtml+xml=chromium.desktop
+application/vnd.oasis.opendocument.text=libreoffice-writer.desktop
+application/vnd.oasis.opendocument.spreadsheet=libreoffice-calc.desktop
+application/vnd.oasis.opendocument.presentation=libreoffice-impress.desktop
+application/msword=libreoffice-writer.desktop
+application/vnd.openxmlformats-officedocument.wordprocessingml.document=libreoffice-writer.desktop
+application/vnd.openxmlformats-officedocument.spreadsheetml.sheet=libreoffice-calc.desktop
+application/vnd.openxmlformats-officedocument.presentationml.presentation=libreoffice-impress.desktop
+""")
+        for desktop in sorted(path("usr/share/omarchy/applications").glob("*.desktop")):
+            if desktop.is_symlink() or not desktop.is_file():
+                raise ValueError("packaged application launcher must be a regular file")
+            write("home/omarchy/.local/share/applications/" + desktop.name, desktop.read_bytes())
     write("usr/local/bin/omarchy-demo-session", Path(__file__).with_name("omarchy-demo-session.sh").read_text(), 0o755)
     # Responsive browser profile, measured in evidence/omarchy-responsive/README.md. Identical to
     # what omarchy-responsive-profile.sh applies to an already prepared session, except that a
@@ -139,7 +220,10 @@ require("default.hypr.toggles")
     if not packaged_foot.is_file():
         raise ValueError("packaged foot is required")
     write("usr/local/bin/foot", patch_foot(packaged_foot.read_bytes()), 0o755)
-    write("etc/motd", "Omarchy RISC-V browser demo candidate\nOptional applications and toolchains are not bundled.\nNo personal accounts, credentials or VM session state were imported.\nDesktop/browser verification is recorded separately.\n")
+    if applications:
+        write("etc/motd", "Omarchy RISC-V\nChromium, LibreOffice, Node.js/npm and native Omarchy applications are installed.\nUnresolved RISC-V ports remain listed in the application catalogue.\nNo personal accounts, credentials or VM session state were imported.\n")
+    else:
+        write("etc/motd", "Omarchy RISC-V browser demo candidate\nOptional applications and toolchains are not bundled.\nNo personal accounts, credentials or VM session state were imported.\nDesktop/browser verification is recorded separately.\n")
 
     links = {
         "etc/systemd/system/default.target": "/usr/lib/systemd/system/graphical.target",
@@ -163,7 +247,7 @@ require("default.hypr.toggles")
         os.lchown(entry, 1000, 1000)
     # Keep an explicit overlay identity separate from upstream package identity.
     write("etc/wasm-vm/demo-overlay.json", json.dumps({"schema": 1, "files": changes,
-        "profile": "lean-browser-session-v1+responsive-v2",
+        "profile": "native-applications-v1+responsive-v2" if applications else "lean-browser-session-v1+responsive-v2",
         "upstreamFullUserProvisioning": False,
         "configurationSource": "package-verified usr/share/omarchy/config",
         "desktopVerified": False}, indent=2, sort_keys=True) + "\n")
@@ -173,8 +257,9 @@ require("default.hypr.toggles")
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("root", type=Path)
+    parser.add_argument("--applications", action="store_true")
     args = parser.parse_args()
-    changed = configure(args.root)
+    changed = configure(args.root, applications=args.applications)
     print(f"Configured {len(changed)} reviewed demo overlays; desktop not yet verified")
 
 

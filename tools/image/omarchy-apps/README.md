@@ -95,3 +95,39 @@ Image processing and 256 KiB chunk creation stream with bounded memory. Package
 availability, signature validation, loader checks and filesystem population are
 separate from authoritative application execution in the emulator and from a
 published warm release. A successful build alone establishes neither.
+
+## Native desktop integration
+
+`build-omarchy-image.py --applications` uses the accepted native package assembly
+to seed Chromium as the default browser, LibreOffice document associations and
+the package's normal application configuration. Optional native shortcuts check
+their command in the live guest PATH before being registered; pending ports do
+not launch architecture-specific upstream installers. Packaged desktop entries
+and web apps remain available through the Omarchy launcher. This does not mark
+upstream first-user provisioning complete or run network installers.
+
+Prepare a new software desktop from the output volume recorded by T05b:
+
+```sh
+python3 tools/image/prepare-omarchy-desktop.py \
+  --assembly-volume ACCEPTED_T05B_OUTPUT_VOLUME \
+  --output target/omarchy-applications/software
+```
+
+The source volume is read-only; the wrapper records the actual builder, native
+MIME/default checks, final ext4 metadata and bounded immutable chunks. GPU image
+preparation uses the existing qualified Mesa/Quickshell inputs and
+`prepare-image.py --desktop-visuals` to restore the package's GPU visual settings
+and background. Software fallback keeps its previously measured responsive
+profile. The Foot interop patch is retained in both profiles.
+
+`make verify-E5.5-T05c` boots the GPU candidate cold through the original public
+worker and scanout. Set `OMARCHY_DESKTOP_IMAGE_DIRECTORY` to the prepared GPU
+image and `OMARCHY_APP_DESKTOP_EVIDENCE_DIR` to a new recording directory.
+The application workload uses trusted keyboard input to launch native Chromium,
+submit a note to a guest loopback fixture, launch Writer, type/save/close/reopen
+and edit an actual ODT, and execute Node/npm in Foot. RPC only prepares the
+loopback server and reads the application results. External guest networking
+remains explicitly offline in this test. Screenshots, actual process maps,
+saved documents, input events and phase GPU counters are retained; installation
+alone is never treated as a working application.

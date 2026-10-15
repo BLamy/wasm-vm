@@ -2653,3 +2653,10 @@ verify-E5.5-T05b:
 	python3 tools/check_task_policy.py
 	git diff --check
 	python3 tools/image/verify-native-app-image.py --output "$${OMARCHY_APP_EVIDENCE_DIR:-target/evidence/omarchy-native-app-image}"
+
+.PHONY: verify-E5.5-T05c
+verify-E5.5-T05c:
+	python3 tools/check_task_policy.py
+	git diff --check
+	node --check tools/virgl-production/omarchy-applications.mjs
+	CRITIC_FAST_BOOT_WEB_ROOT=web/dist CRITIC_FAST_BOOT_GPU=1 CRITIC_FAST_BOOT_GUESTS=omarchy CRITIC_FAST_BOOT_GPU_TRACE=1 CRITIC_FAST_BOOT_PERSISTENCE=0 CRITIC_FAST_BOOT_APPLICATIONS=1 CRITIC_FAST_BOOT_IMAGE_DIRECTORY="$${OMARCHY_DESKTOP_IMAGE_DIRECTORY:-target/virgl-production/image-13}" node tools/virgl-production/critic-fast-boots.mjs "$${OMARCHY_APP_DESKTOP_EVIDENCE_DIR:-target/evidence/omarchy-applications-desktop-final}"

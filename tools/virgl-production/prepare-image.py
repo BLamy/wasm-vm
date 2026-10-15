@@ -23,6 +23,7 @@ p.add_argument("--index-probe", type=Path, required=True)
 p.add_argument("--mesa", type=Path, required=True, help="cross-build directory with stage/ and build.json")
 p.add_argument("--quickshell-profile", type=Path, help="Quickshell-only GLES initializer and executable build receipt")
 p.add_argument("--reuse-chunks", type=Path)
+p.add_argument("--desktop-visuals", action="store_true", help="restore the packaged GPU look and background")
 a = p.parse_args()
 a.output = a.output.resolve()
 a.output.mkdir(parents=True, exist_ok=False)
@@ -63,6 +64,23 @@ with tempfile.TemporaryDirectory(prefix="preparation-", dir=a.output) as tempora
         "rm /usr/lib/libGLX_mesa.so.0.0.0",
         "mkdir /opt/virgl-proof",
     ]
+    visual_profile = None
+    if a.desktop_visuals:
+        read = ["docker", "run", "--rm", "--network", "none", "-v", str(image) + ":/disk/guest.ext4:ro",
+                "wasm-vm-virgl-reference:1.3.0", "debugfs", "-R"]
+        visual_profile = {}
+        for original, target, name in (
+            ("/usr/share/omarchy/config/hypr/looknfeel.lua", "/home/omarchy/.config/hypr/looknfeel.lua", "looknfeel"),
+            ("/usr/share/omarchy/config/omarchy/shell.json", "/home/omarchy/.config/omarchy/shell.json", "shell"),
+        ):
+            data = subprocess.check_output(read + ["cat " + original, "/disk/guest.ext4"], stderr=subprocess.DEVNULL)
+            assert data, original
+            if name == "shell":
+                assert json.loads(data)["version"] == 1
+            (scratch / ("desktop-" + name)).write_bytes(data)
+            visual_profile[target] = {"source": original, "bytes": len(data), "sha256": hashlib.sha256(data).hexdigest()}
+            commands += ["rm " + target, "write /work/desktop-" + name + " " + target,
+                         "set_inode_field " + target + " uid 1000", "set_inode_field " + target + " gid 1000"]
     if quickshell:
         library = "libquickshell-browser-gles.so"
         for name in (library, "quickshell", "quickshell-original", "build.json"):
@@ -115,6 +133,10 @@ with tempfile.TemporaryDirectory(prefix="preparation-", dir=a.output) as tempora
                              ("/opt/virgl-proof/quickshell-original", "quickshell-original")):
             actual = subprocess.check_output(check + ["cat " + target, "/disk/guest.ext4"], stderr=subprocess.DEVNULL)
             assert hashlib.sha256(actual).hexdigest() == quickshell["files"][name]["sha256"], target
+    if visual_profile:
+        for target, pin in visual_profile.items():
+            data = subprocess.check_output(check + ["cat " + target, "/disk/guest.ext4"], stderr=subprocess.DEVNULL)
+            assert len(data) == pin["bytes"] and hashlib.sha256(data).hexdigest() == pin["sha256"], target
     for relative, pin in mesa["files"].items():
         if not relative.startswith("usr/lib/") or "/pkgconfig/" in relative:
             continue
@@ -147,5 +169,7 @@ receipt = {"baseSha256": base_sha, "imageSha256": digest(image), "manifestSha256
 if quickshell:
     receipt["quickshellProfile"] = quickshell
     receipt["quickshellBuildSha256"] = digest(a.quickshell_profile / "build.json")
+if visual_profile:
+    receipt["packagedDesktopVisuals"] = visual_profile
 (a.output / "preparation.json").write_text(json.dumps(receipt, indent=2) + "\n")
 print(json.dumps(receipt))

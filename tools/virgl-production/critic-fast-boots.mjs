@@ -33,6 +33,7 @@ const snapshotPersistence = process.env.CRITIC_FAST_BOOT_PERSISTENCE !== '0';
 const saveOnRepeat = process.env.CRITIC_FAST_BOOT_SAVE_ON_REPEAT === '1';
 const gpuTrace = process.env.CRITIC_FAST_BOOT_GPU_TRACE === '1';
 const captureGpuPair = process.env.CRITIC_FAST_BOOT_CAPTURE_GPU_PAIR === '1';
+const applicationWorkload = process.env.CRITIC_FAST_BOOT_APPLICATIONS === '1';
 const remoteUrl = process.env.CRITIC_FAST_BOOT_URL;
 if(captureGpuPair||localGpuPairFile)assert.ok(acceleratedGpu&&!remoteUrl,'GPU factory capture requires the owned local accelerated session');
 if (remoteUrl) {
@@ -53,6 +54,12 @@ for(const filename of ['critic-fast-boots.mjs','critic-fast-boots-input.mjs','cr
   report.harnessHashes[filename]=hash(bytes);
   await fs.mkdir(path.join(output,'executed-harness'),{recursive:true});
   await fs.writeFile(path.join(output,'executed-harness',filename),bytes);
+}
+if(applicationWorkload){
+  assert.ok(acceleratedGpu,'native application acceptance uses the qualified GPU route');
+  const bytes=await fs.readFile(path.join(repo,'tools/virgl-production/omarchy-applications.mjs'));
+  report.harnessHashes['omarchy-applications.mjs']=hash(bytes);
+  await fs.writeFile(path.join(output,'executed-harness/omarchy-applications.mjs'),bytes);
 }
 let browser, server, activePage, phase = 'inventory';
 const sourcePaths = ['index.html','main.js','loader.js','linux-worker.js','linux-worker-protocol.js',
@@ -354,6 +361,21 @@ async function serviceOwnedControl(page) {
       const {verifyPublicDesktopInput} = await import('./critic-fast-boots-input.mjs');
       response.result = await verifyPublicDesktopInput(page, guestCommand, output,
         {...request.options, name: 'control-input-' + request.id});
+    } else if (request.kind === 'desktop-input') {
+      assert.ok(Array.isArray(request.actions)&&request.actions.length<=100,'bounded owned-page diagnostic input');
+      const {typeGuestText}=await import('./omarchy-applications.mjs');
+      for(const action of request.actions){
+        if(action.kind==='press'){
+          assert.ok(typeof action.key==='string'&&action.key.length<=100);
+          await page.keyboard.press(action.key,{delay:100});
+        }else if(action.kind==='text'){
+          assert.ok(typeof action.text==='string'&&action.text.length<=2048);await typeGuestText(page,action.text);
+        }else{
+          assert.equal(action.kind,'click');assert.ok(Number.isFinite(action.x)&&Number.isFinite(action.y));
+          await page.mouse.click(action.x,action.y,{delay:120});
+        }
+      }
+      response.result={actions:request.actions,scope:'trusted Playwright input in this critic-owned page'};
     } else {
       assert.equal(request.kind, 'release');
       response.result = {release: true};
@@ -575,6 +597,10 @@ try{
           assert.equal(egl.exit,0);assert.match(egl.stdout,/virgl\s*\(/);assert.doesNotMatch(egl.stdout,/llvmpipe|softpipe/i);
           report.gpuEgl=egl;
           phaseEgl=egl;
+          if(applicationWorkload){
+            const {verifyOmarchyApplications}=await import('./omarchy-applications.mjs');
+            report.applications=await verifyOmarchyApplications(page,guestCommand,output,{name:phase+'-native-applications'});
+          }
           const {verifyPublicDesktopInput}=await import('./critic-fast-boots-input.mjs');
           const captureFactory=captureGpuPair?async({foot,barContent})=>{
             const active=await guestCommand(page,'XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j activewindow',300000);assert.equal(active.exit,0);assert.equal(JSON.parse(active.stdout).pid,foot.pid,'factory captures actual Foot, not the screensaver');

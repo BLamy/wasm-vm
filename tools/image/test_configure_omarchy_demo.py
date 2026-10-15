@@ -121,6 +121,14 @@ class ConfigureOmarchyDemoTests(unittest.TestCase):
         self.assertIn("shadow = { enabled = false }", profile)
         self.assertIn("render = { cm_enabled = false }", profile)
 
+    def test_application_profile_rejects_missing_or_foreign_binaries_before_copy(self) -> None:
+        for binary in (None, b"\x7fELF\x02\x01" + bytes(12) + b"\x3e\x00" + bytes(44)):
+            if binary is not None:
+                self._write("usr/lib/chromium/chromium", binary)
+            with self.assertRaises((ValueError, FileNotFoundError)):
+                configure_omarchy_demo.configure(self.root, applications=True)
+            self.assertFalse((self.root / "home/omarchy/.config").exists())
+
     def test_responsive_profile_stops_per_frame_full_damage_sources(self) -> None:
         changes = configure_omarchy_demo.configure(self.root)
 
