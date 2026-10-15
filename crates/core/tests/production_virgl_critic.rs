@@ -322,6 +322,15 @@ fn backing(id: u32) -> Vec<u8> {
 /// receives completion. This checks time/transport ownership, not GPU pixels.
 #[test]
 fn original_renderer_wait_preserves_wfi_deadline_until_completion_reset_or_loss() {
+    renderer_host_wait(false);
+}
+
+#[test]
+fn paced_renderer_wait_preserves_wfi_deadline_until_completion_reset_or_loss() {
+    renderer_host_wait(true);
+}
+
+fn renderer_host_wait(paced: bool) {
     const DEADLINE: u64 = 500_000;
     const HANDLER: u64 = virt::KERNEL_BASE + 0x4000;
     for cached in [false, true] {
@@ -344,6 +353,21 @@ fn original_renderer_wait_preserves_wfi_deadline_until_completion_reset_or_loss(
 
             // Original guest WFI/JAL loop; timer is armed through its real MMIO.
             let clint = r.machine.enable_clint(64);
+            if paced {
+                struct Clock(Rc<std::cell::Cell<u64>>);
+                impl wasm_vm_core::time::MonotonicClock for Clock {
+                    fn now_nanos(&self) -> u64 {
+                        self.0.get()
+                    }
+                }
+                let host = Rc::new(std::cell::Cell::new(0));
+                r.machine
+                    .set_paced_icount_clock(Box::new(Clock(host.clone())))
+                    .unwrap();
+                // Make the idle ceiling exceed the timer. Only the original
+                // active-job guard can prevent the pending transport's jump.
+                host.set(1_000_000_000);
+            }
             r.machine
                 .bus_mut()
                 .store64(virt::CLINT_BASE + 0x4000, DEADLINE)
@@ -452,7 +476,7 @@ fn original_renderer_wait_preserves_wfi_deadline_until_completion_reset_or_loss(
             );
             assert_eq!(trace.retired(), 21);
             eprintln!(
-                "WFI host wait: cached={cached}, ending={ending}, parked_mtime=0, settled_mtime={DEADLINE}, retired={}, trace_retires={}, trace_hash={:016x}",
+                "WFI host wait: paced={paced}, cached={cached}, ending={ending}, parked_mtime=0, settled_mtime={DEADLINE}, retired={}, trace_retires={}, trace_hash={:016x}",
                 r.machine.irq_stats().retired,
                 trace.retired(),
                 trace.hash()

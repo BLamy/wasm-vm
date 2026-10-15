@@ -46,6 +46,9 @@ try:
                          '--test', 'production_keyboard_wfi_critic', '--', '--nocapture', '--test-threads=1'])
     run('wasm-clippy', ['cargo', 'clippy', '-p', 'wasm-vm-wasm', '--target', 'wasm32-unknown-unknown',
                         '--features', 'virgl-renderer', '--', '-D', 'warnings'])
+    run('native-gpu-clock', ['cargo', 'test', '-p', 'wasm-vm-core', '--features', 'virgl-renderer,trace',
+                             '--test', 'production_virgl_critic', 'renderer_wait_preserves_wfi_deadline',
+                             '--', '--nocapture', '--test-threads=1'])
     run('no-std-wasm', ['cargo', 'build', '-p', 'wasm-vm-core', '--no-default-features', '--target', 'wasm32-unknown-unknown'])
     run('stub-build', ['cargo', 'check', '-p', 'wasm-vm-core', '--features', 'zicsr-stub'])
     run('native-adapter', ['cargo', 'test', '-p', 'wasm-vm-wasm', '--lib', 'guest_clock_tests', '--', '--nocapture'])
