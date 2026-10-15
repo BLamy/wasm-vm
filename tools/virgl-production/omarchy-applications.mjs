@@ -132,8 +132,20 @@ export async function verifyOmarchyApplications(page, command, output, options =
     const payload=Buffer.from(server).toString('base64');
     const fixture=await run(`printf '%s' '${payload}' | base64 -d > /tmp/omarchyapps/server.py; python3 /tmp/omarchyapps/server.py > /tmp/omarchyapps/server.log 2>&1 < /dev/null & echo $! > /tmp/omarchyapps/server.pid`);assert.equal(fixture.exit,0);
     report.defaults=await run('env XDG_CURRENT_DESKTOP=Hyprland xdg-settings get default-web-browser; '+hypr+'binds; free -m; uname -m');assert.equal(report.defaults.exit,0);assert.match(report.defaults.stdout,/chromium.desktop/);
+    const initialEula=await run('test -f "$HOME/.config/chromium/EULA Accepted"');assert.ok([0,1].includes(initialEula.exit));
     await press('Meta+Shift+b');
-    const chromium=await waitWindow(row=>/chromium/i.test(row.class));report.chromium=await identity(chromium,'/usr/lib/chromium/chromium');
+    let chromium=await waitWindow(row=>/chromium/i.test(row.class),600000);
+    if(initialEula.exit===1){
+      report.firstRunWindow=await identity(chromium,'/usr/lib/chromium/chromium');
+      await shot('chromium-first-run');await press('Enter');
+      let accepted;
+      for(let n=0;n<100;n++){accepted=await run('test -f "$HOME/.config/chromium/EULA Accepted" && test -f "$HOME/.config/chromium/First Run"');if(accepted.exit===0)break;await sleep(1500);}
+      assert.equal(accepted.exit,0,'native Chromium completed its first-run dialog through trusted input');
+      const dialogAddress=chromium.address;
+      chromium=await waitWindow(row=>/chromium/i.test(row.class)&&row.address!==dialogAddress,600000);
+    }
+    report.chromium=await identity(chromium,'/usr/lib/chromium/chromium');
+    await waitActive(row=>row.pid===chromium.pid);
     assert.match(report.chromium.process.stdout,/\/usr\/lib\/chromium\/chromium/);
     await shot('chromium-open');
     await press('Control+l');await type('http://127.0.0.1:8765/');await press('Enter');
@@ -183,7 +195,9 @@ export async function verifyOmarchyApplications(page, command, output, options =
     report.trusted=await page.evaluate(()=>window.__appTrusted);assert.ok(report.trusted.length>100);assert.ok(report.trusted.every(row=>row.trusted));
     report.status='passed';await save();return report;
   } catch(error) {
-    report.status='failed';report.error=error.stack||String(error);await shot('failed').catch(()=>{});await save();throw error;
+    report.status='failed';report.error=error.stack||String(error);
+    report.trusted=await page.evaluate(()=>window.__appTrusted).catch(()=>null);
+    await shot('failed').catch(()=>{});await save();throw error;
   } finally {
     await page.evaluate(()=>{if(window.__appTrustedListener)for(const type of ['keydown','keyup','pointerdown','pointerup'])document.removeEventListener(type,window.__appTrustedListener,true);}).catch(()=>{});
   }
