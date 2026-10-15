@@ -86,11 +86,14 @@ export async function verifyOmarchyApplications(page, command, output, options =
     const gpu=await page.evaluate(()=>window.wvmDemo.gpuStats());
     report.phases.push({kind:'screenshot',label,gpu,time:Date.now()});await save();return gpu;
   }
-  async function identity(client) {
+  async function identity(client, executable) {
     assert.ok(Number.isInteger(client.pid)&&client.pid>1);
     const result=await run(`readlink /proc/${client.pid}/exe; sha256sum /proc/${client.pid}/exe; cat /proc/${client.pid}/status; tr '\\0' ' ' < /proc/${client.pid}/cmdline; printf '\\n'; cat /proc/${client.pid}/maps`);
     assert.equal(result.exit,0);assert.match(result.stdout,/Uid:\s+1000\s+1000/);
-    return {window:client,process:result};
+    const lines=result.stdout.trim().split(/\r?\n/);assert.equal(lines[0],executable);
+    const executableSha256=lines[1].split(/\s+/)[0];assert.match(executableSha256,/^[0-9a-f]{64}$/);
+    if(options.executables)assert.equal(executableSha256,options.executables[executable],'running executable matches the independently verified image inventory');
+    return {window:client,process:result,executable,executableSha256};
   }
   async function press(key){report.phases.push({kind:'trusted-key',key,time:Date.now()});await page.keyboard.press(key,{delay:100});await save();}
   async function type(text){report.phases.push({kind:'trusted-text',text,time:Date.now()});await typeGuestText(page,text);await save();}
@@ -130,7 +133,7 @@ export async function verifyOmarchyApplications(page, command, output, options =
     const fixture=await run(`printf '%s' '${payload}' | base64 -d > /tmp/omarchyapps/server.py; python3 /tmp/omarchyapps/server.py > /tmp/omarchyapps/server.log 2>&1 < /dev/null & echo $! > /tmp/omarchyapps/server.pid`);assert.equal(fixture.exit,0);
     report.defaults=await run('env XDG_CURRENT_DESKTOP=Hyprland xdg-settings get default-web-browser; '+hypr+'binds; free -m; uname -m');assert.equal(report.defaults.exit,0);assert.match(report.defaults.stdout,/chromium.desktop/);
     await press('Meta+Shift+b');
-    const chromium=await waitWindow(row=>/chromium/i.test(row.class));report.chromium=await identity(chromium);
+    const chromium=await waitWindow(row=>/chromium/i.test(row.class));report.chromium=await identity(chromium,'/usr/lib/chromium/chromium');
     assert.match(report.chromium.process.stdout,/\/usr\/lib\/chromium\/chromium/);
     await shot('chromium-open');
     await press('Control+l');await type('http://127.0.0.1:8765/');await press('Enter');
@@ -148,7 +151,7 @@ export async function verifyOmarchyApplications(page, command, output, options =
     report.chromiumGpu=await shot('chromium-submitted');
     await press('Control+Shift+w');await waitClosed(row=>/chromium/i.test(row.class));
 
-    report.writer=await identity(await launchWriter());assert.match(report.writer.process.stdout,/\/usr\/lib\/libreoffice\/program\/soffice.bin/);
+    report.writer=await identity(await launchWriter(),'/usr/lib/libreoffice/program/soffice.bin');assert.match(report.writer.process.stdout,/\/usr\/lib\/libreoffice\/program\/soffice.bin/);
     const first='omarchy riscv document 42';await type(first);await press('Control+s');await sleep(2000);await shot('writer-save-dialog');
     await press('Control+l');await type(document);await press('Enter');
     report.firstSave=await readDocument('first-save',[first]);assert.ok(report.firstSave.text.includes(first));
@@ -167,6 +170,8 @@ export async function verifyOmarchyApplications(page, command, output, options =
     let tools;
     for(let n=0;n<40;n++){tools=await run('test -s /tmp/omarchyapps/npm && cat /tmp/omarchyapps/node /tmp/omarchyapps/npm');if(tools.exit===0)break;await sleep(1500);}
     assert.equal(tools.exit,0);assert.match(tools.stdout,/^riscv64\s+12\.2\.0\s*$/);report.nodeNpm=tools;
+    report.nodeExecutable=await run('sha256sum /usr/bin/node');assert.equal(report.nodeExecutable.exit,0);
+    if(options.executables)assert.equal(report.nodeExecutable.stdout.trim().split(/\s+/)[0],options.executables['/usr/bin/node']);
     report.afterGpu=await shot('node-npm');
     let previousGpu=report.beforeGpu;
     for(const phase of [report.chromiumGpu,report.writerGpu,report.afterGpu]){

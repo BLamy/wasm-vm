@@ -55,11 +55,21 @@ for(const filename of ['critic-fast-boots.mjs','critic-fast-boots-input.mjs','cr
   await fs.mkdir(path.join(output,'executed-harness'),{recursive:true});
   await fs.writeFile(path.join(output,'executed-harness',filename),bytes);
 }
+const applicationExecutables={};
 if(applicationWorkload){
   assert.ok(acceleratedGpu,'native application acceptance uses the qualified GPU route');
   const bytes=await fs.readFile(path.join(repo,'tools/virgl-production/omarchy-applications.mjs'));
   report.harnessHashes['omarchy-applications.mjs']=hash(bytes);
   await fs.writeFile(path.join(output,'executed-harness/omarchy-applications.mjs'),bytes);
+  const inventoryFile=path.resolve(process.env.CRITIC_FAST_BOOT_APPLICATION_INVENTORY||path.join(repo,'target/evidence/omarchy-native-app-image-final01/runtime-elf.json'));
+  const inventoryBytes=await fs.readFile(inventoryFile),inventory=JSON.parse(inventoryBytes);
+  for(const filename of ['usr/lib/chromium/chromium','usr/lib/libreoffice/program/soffice.bin','usr/bin/node']){
+    const entries=inventory.filter(row=>row.path===filename);assert.equal(entries.length,1);
+    const entry=entries[0];assert.equal(entry.machine,243);assert.match(entry.sha256,/^[0-9a-f]{64}$/);
+    applicationExecutables['/'+filename]=entry.sha256;
+  }
+  report.applicationImageInventory={path:inventoryFile,sha256:hash(inventoryBytes),executables:applicationExecutables};
+  await fs.writeFile(path.join(output,'input-runtime-elf.json'),inventoryBytes);
 }
 let browser, server, activePage, phase = 'inventory';
 const sourcePaths = ['index.html','main.js','loader.js','linux-worker.js','linux-worker-protocol.js',
@@ -599,7 +609,7 @@ try{
           phaseEgl=egl;
           if(applicationWorkload){
             const {verifyOmarchyApplications}=await import('./omarchy-applications.mjs');
-            report.applications=await verifyOmarchyApplications(page,guestCommand,output,{name:phase+'-native-applications'});
+            report.applications=await verifyOmarchyApplications(page,guestCommand,output,{name:phase+'-native-applications',executables:applicationExecutables});
           }
           const {verifyPublicDesktopInput}=await import('./critic-fast-boots-input.mjs');
           const captureFactory=captureGpuPair?async({foot,barContent})=>{
