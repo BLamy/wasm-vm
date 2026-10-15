@@ -3,7 +3,7 @@ id: E6-T11d74c
 epic: 6
 title: Restore RAM, disk and reconstructed GPU atomically in the production worker
 priority: 525.0270383
-status: pending
+status: in-progress
 depends_on: [E6-T11d74b]
 estimate: S
 risk: high
@@ -46,3 +46,15 @@ implementation boundary of that request, not the cancelled software-default
 workaround. Existing independent rendering/timekeeping proofs carry only across
 unchanged code and dependency identities; new checkpoint behavior needs its own
 recorded acceptance and fresh verifier.
+
+### 2026-10-15 — worker — paired accelerated boundary started
+
+Renderer74b is independently verified at1c1eca625ef139ed9248b956918ea3fe8bd7265c;
+native74a at e26e3e83. Continue the existing native PR stack. The implementation
+plan is recorded before code in
+`target/evidence/production-gpu-warm-restore-plan01/paired-design.json`.
+This boundary composes explicit native witness APIs, an actual COW disk snapshot,
+a bounded compressed pair, genuine GPU capability compatibility, and staged fresh
+worker reconstruction. Ordinary software restore paths stay under their existing
+coherence guards. No production GPU warm-boot claim yet;74d publishes the final
+actual Omarchy factory image and verifies public warm/repeat behavior.
