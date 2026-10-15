@@ -91,3 +91,21 @@ paired production worker publication and default Omarchy GPU warm boot are the
 ordered74b–d dependencies. Existing rendering proofs are carried across unchanged
 renderer code; new accelerated browser behavior will be surfaced and deployed
 with that complete paired path. Built `web/dist` is committed in3505a7c4.
+
+### 2026-10-15 — worker — bounded guard coverage supplement
+
+Fresh review requested direct evidence for live poison, reset-pending and
+unsupported owners. Added only the original-wire fixture at `1c76deec48ed104798c1ee0a8f4816512ad5346a`;
+native/browser sources and compiled dist are unchanged from the frozen proof.
+Recorded fmt, target-specific clippy and
+`cargo test -p wasm-vm-core --features virgl-renderer,trace --test production_virgl_critic gpu_checkpoint_poison_reset -- --nocapture`.
+Both cache modes refuse save/load atomically after an original BridgePoisoned
+control error while positive VIRGL negotiation remains present, and after MMIO
+reset before normal service. Normal reset service permits capture and restore
+at fresh epoch3. Absent GPU, NullSink/unqualified and private-proof owners refuse.
+The first private fixture setup omitted enable_plic and failed before that row;
+it is preserved in plan01/poison-reset01, corrected without runtime changes.
+Final supplement passes, with archive `evidence/virgl-production-gpu-checkpoint/worker/poison-reset-guard-supplement.tar.gz`
+(5808 bytes; SHA256 `f89e1ad5e15ec31a90021bc896da06e458b629aa80d8cbb2d95fd9adc1d2afb1`;
+11 reopened members/10 identities).
+The prior pristine proof and all unchanged results carry incrementally.
