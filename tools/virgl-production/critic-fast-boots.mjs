@@ -175,7 +175,7 @@ if (!remoteUrl) server=createServer(async (request,response)=>{
         bytes=await remoteChunks.get(pathname);
       }else record.source=isCandidate?'pinned-local-candidate-chunk':'pinned-local-production-chunk';
       assert.equal(hash(bytes),chunk[2],pathname+' chunk digest');
-      record.status=200;record.size=bytes.length;record.sha256=chunk[2];
+      record.status=200;record.size=bytes.length;record.sha256=chunk[2];record.elapsedMs=Date.now()-record.time;
       response.writeHead(200,{'Content-Type':'application/octet-stream','Cache-Control':'no-store'}).end(bytes);return;
     }
     const manifest=pathname.match(/^\/(chunked-(?:alpine|node-alpine|omarchy))\/manifest(?:-([a-f0-9]{64}))?\.json$/);
@@ -431,7 +431,10 @@ try{
       const command=guest==='node-alpine'
         ? `node -e 'console.log("FAST_NODE_"+(6*7)+"_PASS");console.log(process.version)'`
         : `printf 'FAST_${guest.toUpperCase().replaceAll('-','_')}_%s_PASS\n' "$((6*7))"; uname -m`;
-      const result=await guestCommand(page,command,guest==='omarchy'?300000:120000);
+      // The first Node exec streams original executable/library disk pages from
+      // R2. Keep restore timing separate from this bounded live-command budget.
+      const commandTimeoutMs=['omarchy','node-alpine'].includes(guest)?300000:120000;
+      const result=await guestCommand(page,command,commandTimeoutMs);
       assert.equal(result.exit,0,phase+' live guest command');
       assert.match(result.stdout,guest==='node-alpine'?/FAST_NODE_42_PASS/:/FAST_.*_42_PASS/);
       const state=await snapshot(page);
@@ -473,7 +476,7 @@ try{
       }
       const screenshot=phase+'.png';await page.screenshot({path:path.join(output,screenshot),fullPage:true});
       await Promise.all(liveReads); assert.deepEqual(liveReadErrors, [], 'published original source bodies');
-      report.phases.push({phase,guest,round,url,restoredMs,liveCommandMs:Date.now()-started-restoredMs,result,state,screenshot,repeatCheckpoint});
+      report.phases.push({phase,guest,round,url,restoredMs,commandTimeoutMs,liveCommandMs:Date.now()-started-restoredMs,result,state,screenshot,repeatCheckpoint});
       await fs.writeFile(path.join(output,phase+'.json'),JSON.stringify(report.phases.at(-1),null,2));
       console.log(JSON.stringify({phase,restoredMs,result,display:state.display?.successfulPresents,databases:state.databases}));
     }

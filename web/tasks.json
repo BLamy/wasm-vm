@@ -111,13 +111,8 @@
       "activity": [
         {
           "date": "2026-07-02",
-          "commits": 4,
-          "labels": [
-            "E0-T01: verified — critic evidence in log, suite rework applied",
-            "E0-T01: worker claim — status implemented",
-            "E0-T01: status in-progress",
-            "E0-T01: scaffold cargo workspace — no_std core, wasm-bindgen boundary, native CLI"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-04",
@@ -129,7 +124,7 @@
       ],
       "firstActivity": "2026-07-02",
       "lastActivity": "2026-07-04",
-      "commitCount": 5
+      "commitCount": 1
     },
     {
       "id": "E0-T02",
@@ -173,13 +168,8 @@
       "activity": [
         {
           "date": "2026-07-02",
-          "commits": 4,
-          "labels": [
-            "E0-T02: verified — critic evidence in log",
-            "E0-T02: worker claim — status implemented, red-run evidence linked",
-            "E0-T02: status in-progress",
-            "E0-T02: CI pipeline — fmt/clippy/test/wasm/features jobs + make ci mirror"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-04",
@@ -191,7 +181,7 @@
       ],
       "firstActivity": "2026-07-02",
       "lastActivity": "2026-07-04",
-      "commitCount": 5
+      "commitCount": 1
     },
     {
       "id": "E0-T03",
@@ -243,13 +233,8 @@
       "activity": [
         {
           "date": "2026-07-02",
-          "commits": 4,
-          "labels": [
-            "E0-T03: verified — critic evidence in log, verifier fuzz suite promoted",
-            "E0-T03: worker claim — status implemented (CI green run 28587670133)",
-            "E0-T03: status in-progress",
-            "E0-T03: guest RAM + Bus trait — fallible LE accessors, overflow-proof bounds"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-04",
@@ -261,7 +246,7 @@
       ],
       "firstActivity": "2026-07-02",
       "lastActivity": "2026-07-04",
-      "commitCount": 5
+      "commitCount": 1
     },
     {
       "id": "E0-T04",
@@ -309,13 +294,8 @@
       "activity": [
         {
           "date": "2026-07-02",
-          "commits": 4,
-          "labels": [
-            "E0-T04: verified — critic evidence in log, verifier suite promoted, doc demand applied",
-            "E0-T04: worker claim — status implemented (CI green run 28593201900)",
-            "E0-T04: MMIO dispatch — SystemBus, MmioDevice trait, RecordingDevice, paired perf harness",
-            "E0-T04: status in-progress"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-04",
@@ -327,7 +307,7 @@
       ],
       "firstActivity": "2026-07-02",
       "lastActivity": "2026-07-04",
-      "commitCount": 5
+      "commitCount": 1
     },
     {
       "id": "E0-T05",
@@ -371,13 +351,8 @@
       "activity": [
         {
           "date": "2026-07-02",
-          "commits": 5,
-          "labels": [
-            "E0-T05: verified on re-verification — refutation cycle closed",
-            "E0-T05: REFUTED then reworked — full golden literal, critic suite promoted",
-            "E0-T05: worker claim — status implemented (CI green run 28599251822)",
-            "E0-T05: status in-progress"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-04",
@@ -389,7 +364,7 @@
       ],
       "firstActivity": "2026-07-02",
       "lastActivity": "2026-07-04",
-      "commitCount": 6
+      "commitCount": 1
     },
     {
       "id": "E0-T06",
@@ -437,13 +412,8 @@
       "activity": [
         {
           "date": "2026-07-02",
-          "commits": 4,
-          "labels": [
-            "E0-T06: verified — provenance authenticated, verifier suites promoted",
-            "E0-T06: worker claim — status implemented (CI green run 28604047843)",
-            "E0-T06: status in-progress",
-            "E0-T06: RV64I decoder — const fn, all six formats, assembler-derived golden table"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-04",
@@ -455,7 +425,7 @@
       ],
       "firstActivity": "2026-07-02",
       "lastActivity": "2026-07-04",
-      "commitCount": 5
+      "commitCount": 1
     },
     {
       "id": "E0-T07",
@@ -509,13 +479,8 @@
       "activity": [
         {
           "date": "2026-07-02",
-          "commits": 6,
-          "labels": [
-            "E0-T07: verified on re-verification — refutation cycle closed",
-            "E0-T07: REFUTED then reworked — verifier suites promoted, mutants killed, miri fixed",
-            "E0-T07: worker claim — status implemented (CI green run 28610086802)",
-            "E0-T07: status in-progress"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-04",
@@ -527,7 +492,7 @@
       ],
       "firstActivity": "2026-07-02",
       "lastActivity": "2026-07-04",
-      "commitCount": 7
+      "commitCount": 1
     },
     {
       "id": "E0-T08",
@@ -579,13 +544,8 @@
       "activity": [
         {
           "date": "2026-07-02",
-          "commits": 5,
-          "labels": [
-            "E0-T08: verified on re-verification — third refutation cycle closed",
-            "E0-T08: REFUTED then reworked — store register-purity closed, critic suites promoted",
-            "E0-T08: worker claim — status implemented (CI green run 28624358764)",
-            "E0-T08: status in-progress"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-04",
@@ -597,7 +557,7 @@
       ],
       "firstActivity": "2026-07-02",
       "lastActivity": "2026-07-04",
-      "commitCount": 6
+      "commitCount": 1
     },
     {
       "id": "E0-T09",
@@ -649,13 +609,8 @@
       "activity": [
         {
           "date": "2026-07-02",
-          "commits": 4,
-          "labels": [
-            "E0-T09: verified first-pass — 7/7 mutants killed by committed suites",
-            "E0-T09: worker claim — status implemented (CI green run 28626903893)",
-            "E0-T09: status in-progress",
-            "E0-T09: control flow — JAL/JALR/branches with §2.5 misalignment semantics"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-04",
@@ -667,7 +622,7 @@
       ],
       "firstActivity": "2026-07-02",
       "lastActivity": "2026-07-04",
-      "commitCount": 5
+      "commitCount": 1
     },
     {
       "id": "E0-T10",
@@ -715,13 +670,8 @@
       "activity": [
         {
           "date": "2026-07-02",
-          "commits": 5,
-          "labels": [
-            "E0-T10: verified — refutation closed + residual class-ordering gap closed proactively",
-            "E0-T10: REFUTED then reworked — genuine-artifact error-precision test added",
-            "E0-T10: worker claim — status implemented (CI green run 28628224873)",
-            "E0-T10: status in-progress"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-04",
@@ -733,7 +683,7 @@
       ],
       "firstActivity": "2026-07-02",
       "lastActivity": "2026-07-04",
-      "commitCount": 6
+      "commitCount": 1
     },
     {
       "id": "E0-T11",
@@ -778,13 +728,8 @@
       "activity": [
         {
           "date": "2026-07-02",
-          "commits": 6,
-          "labels": [
-            "E0-T11: verified — fifth refutation closed + N2 residual pinned proactively",
-            "E0-T11: REFUTED then reworked — exit-on-final-budgeted-instruction boundary test",
-            "E0-T11: worker claim — status implemented (CI green run 28629640389)",
-            "E0-T11: status in-progress"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-04",
@@ -796,7 +741,7 @@
       ],
       "firstActivity": "2026-07-02",
       "lastActivity": "2026-07-04",
-      "commitCount": 7
+      "commitCount": 1
     },
     {
       "id": "E0-T12",
@@ -844,13 +789,8 @@
       "activity": [
         {
           "date": "2026-07-02",
-          "commits": 4,
-          "labels": [
-            "E0-T12: verified first-pass — 7/7 mutations killed by committed suite",
-            "E0-T12: worker claim — status implemented (CI green run 28631679218)",
-            "E0-T12: status in-progress",
-            "E0-T12: stub MMIO console — Uart0Stub, ConsoleSink, byte-exact putchar"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-04",
@@ -862,7 +802,7 @@
       ],
       "firstActivity": "2026-07-02",
       "lastActivity": "2026-07-04",
-      "commitCount": 5
+      "commitCount": 1
     },
     {
       "id": "E0-T13",
@@ -910,13 +850,8 @@
       "activity": [
         {
           "date": "2026-07-02",
-          "commits": 4,
-          "labels": [
-            "E0-T13: verified — cold rebuild reproduces exact pins; README + durability nits applied",
-            "E0-T13: worker claim — status implemented (CI green run 28635157699)",
-            "E0-T13: status in-progress",
-            "E0-T13: reproducible riscv64 toolchain (gcc + Spike + QEMU) via Docker"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-04",
@@ -928,7 +863,7 @@
       ],
       "firstActivity": "2026-07-02",
       "lastActivity": "2026-07-04",
-      "commitCount": 5
+      "commitCount": 1
     },
     {
       "id": "E0-T14",
@@ -978,13 +913,8 @@
       "activity": [
         {
           "date": "2026-07-02",
-          "commits": 4,
-          "labels": [
-            "E0-T14: verified — emulator agrees byte-for-byte with Spike on real binaries",
-            "E0-T14: worker claim — status implemented (CI green run 28636616766)",
-            "E0-T14: status in-progress",
-            "E0-T14: golden bare-metal guest binaries — our emulator runs real gcc output"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-04",
@@ -996,7 +926,7 @@
       ],
       "firstActivity": "2026-07-02",
       "lastActivity": "2026-07-04",
-      "commitCount": 5
+      "commitCount": 1
     },
     {
       "id": "E0-T15",
@@ -1039,20 +969,9 @@
       "file": "tasks/epic-0-ignition/E0-T15-logging-and-feature-flags.md",
       "activity": [
         {
-          "date": "2026-07-02",
-          "commits": 1,
-          "labels": [
-            "E0-T15: status in-progress"
-          ]
-        },
-        {
           "date": "2026-07-03",
-          "commits": 3,
-          "labels": [
-            "E0-T15: verified — retire-purity test promoted (kills the one coverage gap)",
-            "E0-T15: worker claim — status implemented (CI green run 28637684830)",
-            "E0-T15: logging + zero-cost trace scaffold + feature matrix"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-04",
@@ -1062,9 +981,9 @@
           ]
         }
       ],
-      "firstActivity": "2026-07-02",
+      "firstActivity": "2026-07-03",
       "lastActivity": "2026-07-04",
-      "commitCount": 5
+      "commitCount": 1
     },
     {
       "id": "E0-T16",
@@ -1114,13 +1033,8 @@
       "activity": [
         {
           "date": "2026-07-03",
-          "commits": 5,
-          "labels": [
-            "E0-T16: VERIFIED — re-verification passed; residual closed",
-            "E0-T16: REFUTED then reworked — execution-level mem-capture assertions",
-            "E0-T16: worker claim — status implemented (CI green run 28638769751)",
-            "E0-T16: status in-progress"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-04",
@@ -1132,7 +1046,7 @@
       ],
       "firstActivity": "2026-07-03",
       "lastActivity": "2026-07-04",
-      "commitCount": 6
+      "commitCount": 1
     },
     {
       "id": "E0-T17",
@@ -1180,13 +1094,8 @@
       "activity": [
         {
           "date": "2026-07-03",
-          "commits": 4,
-          "labels": [
-            "E0-T17: VERIFIED — re-verification passed (MUT-H/MUT-I killed, non-vacuous)",
-            "E0-T17: REFUTED then reworked — pin the frozen --dump-state contract",
-            "E0-T17: log worker claim, status implemented",
-            "E0-T17: machine-state snapshot + deterministic SHA-256 digest"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-04",
@@ -1198,7 +1107,7 @@
       ],
       "firstActivity": "2026-07-03",
       "lastActivity": "2026-07-04",
-      "commitCount": 5
+      "commitCount": 1
     },
     {
       "id": "E0-T18",
@@ -1250,12 +1159,8 @@
       "activity": [
         {
           "date": "2026-07-03",
-          "commits": 3,
-          "labels": [
-            "E0-T18: VERIFIED — re-verification passed (MUT-A/B/C/D/E killed, non-vacuous)",
-            "E0-T18: REFUTED then reworked — cover --trace-json, Truncated=67, trace-IO=74",
-            "E0-T18: native CLI runner — run <elf>, trace, dump state"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-04",
@@ -1267,7 +1172,7 @@
       ],
       "firstActivity": "2026-07-03",
       "lastActivity": "2026-07-04",
-      "commitCount": 4
+      "commitCount": 1
     },
     {
       "id": "E0-T19",
@@ -1316,11 +1221,8 @@
       "activity": [
         {
           "date": "2026-07-03",
-          "commits": 2,
-          "labels": [
-            "E0-T19: VERIFIED — first-pass, no refutation",
-            "E0-T19: riscv-tests rv64ui-p smoke gate + quarantined zicsr-stub"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-04",
@@ -1332,7 +1234,7 @@
       ],
       "firstActivity": "2026-07-03",
       "lastActivity": "2026-07-04",
-      "commitCount": 3
+      "commitCount": 1
     },
     {
       "id": "E0-T20",
@@ -1381,12 +1283,8 @@
       "activity": [
         {
           "date": "2026-07-03",
-          "commits": 3,
-          "labels": [
-            "E0-T20: VERIFIED — re-verification passed (false-MATCH fixed + pinned)",
-            "E0-T20: REFUTED then reworked — reject crash-truncated false-MATCH",
-            "E0-T20: Spike differential trace harness (byte-for-byte)"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-04",
@@ -1398,7 +1296,7 @@
       ],
       "firstActivity": "2026-07-03",
       "lastActivity": "2026-07-04",
-      "commitCount": 4
+      "commitCount": 1
     },
     {
       "id": "E0-T21",
@@ -1446,12 +1344,8 @@
       "activity": [
         {
           "date": "2026-07-03",
-          "commits": 3,
-          "labels": [
-            "E0-T21: VERIFIED — re-verification passed (sign-ext oracle across imm_i/s/b/j)",
-            "E0-T21: REFUTED then reworked — add immediate sign-extension oracle",
-            "E0-T21: decoder property tests, exhaustive sweep, fuzz scaffold"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-04",
@@ -1463,7 +1357,7 @@
       ],
       "firstActivity": "2026-07-03",
       "lastActivity": "2026-07-04",
-      "commitCount": 4
+      "commitCount": 1
     },
     {
       "id": "E0-T22",
@@ -1515,11 +1409,8 @@
       "activity": [
         {
           "date": "2026-07-03",
-          "commits": 2,
-          "labels": [
-            "E0-T22: VERIFIED + hardened — fallible constructor (no abort on hostile ram_mib)",
-            "E0-T22: wasm-bindgen wrapper — machine handle, run/step, console callback"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-04",
@@ -1531,7 +1422,7 @@
       ],
       "firstActivity": "2026-07-03",
       "lastActivity": "2026-07-04",
-      "commitCount": 3
+      "commitCount": 1
     },
     {
       "id": "E0-T23",
@@ -1579,11 +1470,8 @@
       "activity": [
         {
           "date": "2026-07-03",
-          "commits": 2,
-          "labels": [
-            "E0-T23: VERIFIED — first-pass, real-browser end-to-end",
-            "E0-T23: browser demo — WasmMachine wired to an xterm.js console"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-04",
@@ -1595,7 +1483,7 @@
       ],
       "firstActivity": "2026-07-03",
       "lastActivity": "2026-07-04",
-      "commitCount": 3
+      "commitCount": 1
     },
     {
       "id": "E0-T24",
@@ -1645,11 +1533,8 @@
       "activity": [
         {
           "date": "2026-07-03",
-          "commits": 2,
-          "labels": [
-            "E0-T24: VERIFIED — first-pass, interpreter proven live",
-            "E0-T24: interpreter MIPS benchmark + recorded Level 0 baseline"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-04",
@@ -1661,7 +1546,7 @@
       ],
       "firstActivity": "2026-07-03",
       "lastActivity": "2026-07-04",
-      "commitCount": 3
+      "commitCount": 1
     },
     {
       "id": "E0-T25",
@@ -1718,13 +1603,8 @@
         },
         {
           "date": "2026-07-03",
-          "commits": 4,
-          "labels": [
-            "E0-T25: VERIFIED — ignore-errors prefix class exhaustively caught",
-            "E0-T25: second rework — catch whitespace-separated ignore-errors prefixes",
-            "E0-T25: REFUTED then reworked — catch make's inline ignore-errors prefix",
-            "E0-T25: adversarial-verify tooling — verify-E0-Tnn targets + cold clone + runbook"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-04",
@@ -1736,7 +1616,7 @@
       ],
       "firstActivity": "2026-07-02",
       "lastActivity": "2026-07-04",
-      "commitCount": 6
+      "commitCount": 2
     },
     {
       "id": "E0-T26",
@@ -1790,12 +1670,8 @@
       "activity": [
         {
           "date": "2026-07-03",
-          "commits": 3,
-          "labels": [
-            "E0-T26: VERIFIED + close the golden-less caveat with a frozen digest anchor",
-            "E0-T26: REFUTED then reworked — make the capstone gate actually bite",
-            "E0-T26: capstone — Hello from RV64, byte-for-byte against Spike"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-04",
@@ -1807,7 +1683,7 @@
       ],
       "firstActivity": "2026-07-03",
       "lastActivity": "2026-07-04",
-      "commitCount": 4
+      "commitCount": 1
     },
     {
       "id": "E0-T27",
@@ -1893,11 +1769,8 @@
       "activity": [
         {
           "date": "2026-07-03",
-          "commits": 2,
-          "labels": [
-            "E1-T01: VERIFIED — first-pass, every reset field mutation-covered",
-            "E1-T01: spec-correct machine reset and initial architectural state"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-04",
@@ -1909,7 +1782,7 @@
       ],
       "firstActivity": "2026-07-03",
       "lastActivity": "2026-07-04",
-      "commitCount": 3
+      "commitCount": 1
     },
     {
       "id": "E1-T02",
@@ -1957,11 +1830,8 @@
       "activity": [
         {
           "date": "2026-07-03",
-          "commits": 2,
-          "labels": [
-            "E1-T02: VERIFIED + CI fix — scope csr tests out of the zicsr-stub build",
-            "E1-T02: Zicsr CSR file with WARL masking, privilege checks, and Zifencei"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-04",
@@ -1973,7 +1843,7 @@
       ],
       "firstActivity": "2026-07-03",
       "lastActivity": "2026-07-04",
-      "commitCount": 3
+      "commitCount": 1
     },
     {
       "id": "E1-T03",
@@ -2025,11 +1895,8 @@
       "activity": [
         {
           "date": "2026-07-03",
-          "commits": 2,
-          "labels": [
-            "E1-T03: log adversarial-verifier VERDICT: verified",
-            "E1-T03: RV64M multiply/divide with trap-free div/overflow semantics"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-04",
@@ -2041,7 +1908,7 @@
       ],
       "firstActivity": "2026-07-03",
       "lastActivity": "2026-07-04",
-      "commitCount": 3
+      "commitCount": 1
     },
     {
       "id": "E1-T04",
@@ -2089,11 +1956,8 @@
       "activity": [
         {
           "date": "2026-07-03",
-          "commits": 2,
-          "labels": [
-            "E1-T04: log adversarial-verifier VERDICT: verified",
-            "E1-T04: RV64A atomics — LR/SC reservation + all 18 AMOs"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-04",
@@ -2105,7 +1969,7 @@
       ],
       "firstActivity": "2026-07-03",
       "lastActivity": "2026-07-04",
-      "commitCount": 3
+      "commitCount": 1
     },
     {
       "id": "E1-T05",
@@ -2157,12 +2021,8 @@
       "activity": [
         {
           "date": "2026-07-03",
-          "commits": 3,
-          "labels": [
-            "E1-T05: VERIFIED (round 2) + RMM tie hardening",
-            "E1-T05: close directed-mode arith coverage hole (critic round 1)",
-            "E1-T05: softfloat backend — rustc_apfloat + hand-rolled correctly-rounded sqrt"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-04",
@@ -2174,7 +2034,7 @@
       ],
       "firstActivity": "2026-07-03",
       "lastActivity": "2026-07-04",
-      "commitCount": 4
+      "commitCount": 1
     },
     {
       "id": "E1-T06",
@@ -2231,12 +2091,8 @@
       "activity": [
         {
           "date": "2026-07-03",
-          "commits": 3,
-          "labels": [
-            "E1-T06: log adversarial-verifier VERDICT: verified",
-            "E1-T06: RV64F single-precision FPU — tests, wasm mirror, verdict-ready",
-            "E1-T06 WIP: RV64F core — fregs, FP CSRs, decode, execute; rv64uf-p passes"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-04",
@@ -2248,7 +2104,7 @@
       ],
       "firstActivity": "2026-07-03",
       "lastActivity": "2026-07-04",
-      "commitCount": 4
+      "commitCount": 1
     },
     {
       "id": "E1-T07",
@@ -2300,11 +2156,8 @@
       "activity": [
         {
           "date": "2026-07-03",
-          "commits": 2,
-          "labels": [
-            "E1-T07: log adversarial-verifier VERDICT: verified",
-            "E1-T07: RV64D double-precision + F/D interaction — rv64ud-p passes"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-04",
@@ -2316,7 +2169,7 @@
       ],
       "firstActivity": "2026-07-03",
       "lastActivity": "2026-07-04",
-      "commitCount": 3
+      "commitCount": 1
     },
     {
       "id": "E1-T08",
@@ -2368,11 +2221,8 @@
       "activity": [
         {
           "date": "2026-07-03",
-          "commits": 2,
-          "labels": [
-            "E1-T08: log adversarial-verifier VERDICT: verified",
-            "E1-T08: RV64C compressed instructions — expansion, IALIGN=16, rv64uc-p passes"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-04",
@@ -2384,7 +2234,7 @@
       ],
       "firstActivity": "2026-07-03",
       "lastActivity": "2026-07-04",
-      "commitCount": 3
+      "commitCount": 1
     },
     {
       "id": "E1-T09",
@@ -2436,13 +2286,8 @@
       "activity": [
         {
           "date": "2026-07-03",
-          "commits": 5,
-          "labels": [
-            "E1-T09: log round-4 VERDICT: verified; mark task verified",
-            "E1-T09: add symmetric sip read-gate test (critic round 3, coverage)",
-            "E1-T09: sip write-mask is SSIP-only; test the sie read gate (critic round 2)",
-            "E1-T09: gate sie/sip on mideleg (critic round 1)"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-04",
@@ -2454,7 +2299,7 @@
       ],
       "firstActivity": "2026-07-03",
       "lastActivity": "2026-07-04",
-      "commitCount": 6
+      "commitCount": 1
     },
     {
       "id": "E1-T10",
@@ -2510,11 +2355,8 @@
       "activity": [
         {
           "date": "2026-07-03",
-          "commits": 2,
-          "labels": [
-            "E1-T10: log round-1 VERDICT: verified; mark task verified",
-            "E1-T10: precise synchronous exceptions — mtval/mepc/mcause, mtvec dispatch, delivery"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-04",
@@ -2526,7 +2368,7 @@
       ],
       "firstActivity": "2026-07-03",
       "lastActivity": "2026-07-04",
-      "commitCount": 3
+      "commitCount": 1
     },
     {
       "id": "E1-T11",
@@ -2582,13 +2424,8 @@
       "activity": [
         {
           "date": "2026-07-03",
-          "commits": 4,
-          "labels": [
-            "E1-T11: close the M-mode-non-delegation coverage gap; VERDICT verified",
-            "E1-T11: correct the rv64mi-p illegal exclusion note (SFENCE.VMA, not TESTNUM 5)",
-            "E1-T11: tidy verification-log trailing marker",
-            "E1-T11: interrupt architecture — mie/mip, mideleg/medeleg, priority, WFI"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-04",
@@ -2600,7 +2437,7 @@
       ],
       "firstActivity": "2026-07-03",
       "lastActivity": "2026-07-04",
-      "commitCount": 5
+      "commitCount": 1
     },
     {
       "id": "E1-T12",
@@ -2652,11 +2489,8 @@
       "activity": [
         {
           "date": "2026-07-03",
-          "commits": 2,
-          "labels": [
-            "E1-T12: close 2 CLINT coverage gaps; VERDICT verified",
-            "E1-T12: CLINT — mtime/mtimecmp/msip machine timer + software interrupt"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-04",
@@ -2668,7 +2502,7 @@
       ],
       "firstActivity": "2026-07-03",
       "lastActivity": "2026-07-04",
-      "commitCount": 3
+      "commitCount": 1
     },
     {
       "id": "E1-T13",
@@ -2720,11 +2554,8 @@
       "activity": [
         {
           "date": "2026-07-03",
-          "commits": 2,
-          "labels": [
-            "E1-T13: document the sync_plic SEIP simplification; VERDICT verified",
-            "E1-T13: PLIC — priorities, enables, thresholds, claim/complete, M+S contexts"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-04",
@@ -2736,7 +2567,7 @@
       ],
       "firstActivity": "2026-07-03",
       "lastActivity": "2026-07-04",
-      "commitCount": 3
+      "commitCount": 1
     },
     {
       "id": "E1-T14",
@@ -2789,12 +2620,8 @@
       "activity": [
         {
           "date": "2026-07-03",
-          "commits": 3,
-          "labels": [
-            "E1-T14: log round-2 VERDICT: verified; mark task verified",
-            "E1-T14: suppress the writing instruction's own counter increment (critic round 1)",
-            "E1-T14: Zicntr counters — cycle/time/instret + mcounteren/scounteren gating"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-04",
@@ -2806,7 +2633,7 @@
       ],
       "firstActivity": "2026-07-03",
       "lastActivity": "2026-07-04",
-      "commitCount": 4
+      "commitCount": 1
     },
     {
       "id": "E1-T15",
@@ -2862,12 +2689,8 @@
       "activity": [
         {
           "date": "2026-07-03",
-          "commits": 3,
-          "labels": [
-            "E1-T15: close mutation-h coverage + add rv64mi-p-pmpaddr; VERDICT verified",
-            "E1-T15: legalize the reserved pmpcfg R=0,W=1 combo (critic round 1)",
-            "E1-T15: PMP — pmpcfg/pmpaddr TOR/NA4/NAPOT, locking, R/W/X, MPRV"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-04",
@@ -2879,7 +2702,7 @@
       ],
       "firstActivity": "2026-07-03",
       "lastActivity": "2026-07-04",
-      "commitCount": 4
+      "commitCount": 1
     },
     {
       "id": "E1-T16",
@@ -2940,11 +2763,8 @@
       "activity": [
         {
           "date": "2026-07-03",
-          "commits": 2,
-          "labels": [
-            "E1-T16: log round-1 VERDICT: verified; mark task verified",
-            "E1-T16: Sv39 page-table walker — PTE bits, superpages, page faults, Svade A/D"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-04",
@@ -2956,7 +2776,7 @@
       ],
       "firstActivity": "2026-07-03",
       "lastActivity": "2026-07-04",
-      "commitCount": 3
+      "commitCount": 1
     },
     {
       "id": "E1-T17",
@@ -3012,25 +2832,20 @@
       "activity": [
         {
           "date": "2026-07-03",
-          "commits": 1,
-          "labels": [
-            "E1-T17: software TLB (ASID-tagged, set-associative) + SFENCE.VMA"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-04",
-          "commits": 6,
+          "commits": 1,
           "labels": [
-            "E1-T17: software TLB (ASID-tagged) + SFENCE.VMA (all four scopes) (#44)",
-            "E1-T17: log round-1 VERDICT: verified; mark task verified",
-            "E1-T17 follow-up: exhaustive analytic tally +2^10 for SFENCE.VMA",
-            "E1-T17 follow-up: exhaustive analytic tally +2^10 for SFENCE.VMA"
+            "E1-T17: software TLB (ASID-tagged) + SFENCE.VMA (all four scopes) (#44)"
           ]
         }
       ],
       "firstActivity": "2026-07-03",
       "lastActivity": "2026-07-04",
-      "commitCount": 7
+      "commitCount": 1
     },
     {
       "id": "E1-T18",
@@ -3083,17 +2898,15 @@
       "activity": [
         {
           "date": "2026-07-04",
-          "commits": 3,
+          "commits": 1,
           "labels": [
-            "E1-T18: satp mode switching (Bare/Sv39/Sv48) + config-gated Sv48 (#45)",
-            "E1-T18: log round-1 VERDICT: verified; mark task verified",
-            "E1-T18: satp mode switching (Bare/Sv39/Sv48), config-gated Sv48"
+            "E1-T18: satp mode switching (Bare/Sv39/Sv48) + config-gated Sv48 (#45)"
           ]
         }
       ],
       "firstActivity": "2026-07-04",
       "lastActivity": "2026-07-04",
-      "commitCount": 3
+      "commitCount": 1
     },
     {
       "id": "E1-T19",
@@ -3150,17 +2963,15 @@
       "activity": [
         {
           "date": "2026-07-04",
-          "commits": 3,
+          "commits": 1,
           "labels": [
-            "E1-T19: riscv-tests regression wall — unified native runner + report + CI (#46)",
-            "E1-T19: log round-1 VERDICT: verified; mark task verified",
-            "E1-T19: riscv-tests regression wall — unified native runner + report + CI"
+            "E1-T19: riscv-tests regression wall — unified native runner + report + CI (#46)"
           ]
         }
       ],
       "firstActivity": "2026-07-04",
       "lastActivity": "2026-07-04",
-      "commitCount": 3
+      "commitCount": 1
     },
     {
       "id": "E1-T20",
@@ -3208,18 +3019,15 @@
       "activity": [
         {
           "date": "2026-07-04",
-          "commits": 20,
+          "commits": 1,
           "labels": [
-            "E1-T20: RISCOF architectural compliance (353/395 vs Spike; 3 real gaps fixed) (#49)",
-            "E1-T20: mark verified — critic round 2 (cold clone) confirms RISCOF compliance",
-            "E1-T20: fix critic refutation (stale allowlist) + defer exception-priority",
-            "E1-T20: log 2 fixes confirmed (352/395) + full triage of remaining 43"
+            "E1-T20: RISCOF architectural compliance (353/395 vs Spike; 3 real gaps fixed) (#49)"
           ]
         }
       ],
       "firstActivity": "2026-07-04",
       "lastActivity": "2026-07-04",
-      "commitCount": 20
+      "commitCount": 1
     },
     {
       "id": "E1-T21",
@@ -3271,17 +3079,15 @@
       "activity": [
         {
           "date": "2026-07-04",
-          "commits": 3,
+          "commits": 1,
           "labels": [
-            "E1-T21: differential fuzzer vs Spike — RV64IM generator + lockstep + minimizer (#50)",
-            "E1-T21: mark verified — critic round 1 (cold clone) confirms differential fuzzer",
-            "E1-T21: differential fuzzer vs Spike — RV64IM generator + lockstep + minimizer"
+            "E1-T21: differential fuzzer vs Spike — RV64IM generator + lockstep + minimizer (#50)"
           ]
         }
       ],
       "firstActivity": "2026-07-04",
       "lastActivity": "2026-07-04",
-      "commitCount": 3
+      "commitCount": 1
     },
     {
       "id": "E1-T22",
@@ -3333,18 +3139,15 @@
       "activity": [
         {
           "date": "2026-07-04",
-          "commits": 4,
+          "commits": 1,
           "labels": [
-            "E1-T22: native-vs-WASM determinism — trace-hash fingerprint + live proof (#47)",
-            "E1-T22: log round-1 VERDICT: verified; mark task verified",
-            "E1-T22: native-vs-WASM determinism — trace-hash fingerprint + proof",
-            "E1-T22 fix: gate wasm determinism test against zicsr-stub"
+            "E1-T22: native-vs-WASM determinism — trace-hash fingerprint + live proof (#47)"
           ]
         }
       ],
       "firstActivity": "2026-07-04",
       "lastActivity": "2026-07-04",
-      "commitCount": 4
+      "commitCount": 1
     },
     {
       "id": "E1-T23",
@@ -3396,17 +3199,15 @@
       "activity": [
         {
           "date": "2026-07-04",
-          "commits": 3,
+          "commits": 1,
           "labels": [
-            "E1-T23: Level-1 interpreter perf baseline (native MIPS) + CI perf-smoke (#48)",
-            "E1-T23: log round-1 VERDICT: verified; mark task verified",
-            "E1-T23: Level-1 interpreter perf baseline (native MIPS) + CI perf-smoke"
+            "E1-T23: Level-1 interpreter perf baseline (native MIPS) + CI perf-smoke (#48)"
           ]
         }
       ],
       "firstActivity": "2026-07-04",
       "lastActivity": "2026-07-04",
-      "commitCount": 3
+      "commitCount": 1
     },
     {
       "id": "E1-T24",
@@ -3467,18 +3268,17 @@
       "activity": [
         {
           "date": "2026-07-04",
-          "commits": 8,
+          "commits": 3,
           "labels": [
             "E1-T24: CAPSTONE COMPLETE — Level 1 threshold MET (395/0, zero deferrals) (#55)",
             "E1-T26: misaligned support + Sail reference → RISCOF 395/0, EXCLUSIONS emptied (#53)",
-            "E1-T24: capstone VERIFIED (critic) — Level 1 confirmed; honest wasm-sha caveat",
-            "E1-T24: CAPSTONE COMPLETE — Level 1 threshold MET (gate exit 0, zero deferrals)"
+            "E1-T24: Level 1 gate harness (honest) + no_std regression fix (#51)"
           ]
         }
       ],
       "firstActivity": "2026-07-04",
       "lastActivity": "2026-07-04",
-      "commitCount": 8
+      "commitCount": 3
     },
     {
       "id": "E1-T25",
@@ -3518,17 +3318,15 @@
       "activity": [
         {
           "date": "2026-07-04",
-          "commits": 3,
+          "commits": 1,
           "labels": [
-            "E1-T25: exception-priority §3.7.1 — misaligned outranks access/page fault (#52)",
-            "E1-T25: mark verified — critic round 1 (cold clone) confirms §3.7.1 fix",
-            "E1-T25: exception-priority §3.7.1 — misaligned outranks access/page fault"
+            "E1-T25: exception-priority §3.7.1 — misaligned outranks access/page fault (#52)"
           ]
         }
       ],
       "firstActivity": "2026-07-04",
       "lastActivity": "2026-07-04",
-      "commitCount": 3
+      "commitCount": 1
     },
     {
       "id": "E1-T26",
@@ -3568,18 +3366,15 @@
       "activity": [
         {
           "date": "2026-07-04",
-          "commits": 6,
+          "commits": 1,
           "labels": [
-            "E1-T26: misaligned support + Sail reference → RISCOF 395/0, EXCLUSIONS emptied (#53)",
-            "E1-T26: mark verified (critic) + restructure obsoleted T27/T28",
-            "E1-T26: misaligned support COMPLETE — §3.7.1 fix + Sail reference → RISCOF 395/0",
-            "E1-T26 (WIP): Sail diagnostic — 8 misalign-* pass; Sail caught a §3.7.1 bug"
+            "E1-T26: misaligned support + Sail reference → RISCOF 395/0, EXCLUSIONS emptied (#53)"
           ]
         }
       ],
       "firstActivity": "2026-07-04",
       "lastActivity": "2026-07-04",
-      "commitCount": 6
+      "commitCount": 1
     },
     {
       "id": "E1-T27",
@@ -3619,18 +3414,16 @@
       "activity": [
         {
           "date": "2026-07-04",
-          "commits": 5,
+          "commits": 2,
           "labels": [
             "E1-T27: expand PMP 16 → 64 entries (real feature, unit-tested) (#56)",
-            "E1-T26: misaligned support + Sail reference → RISCOF 395/0, EXCLUSIONS emptied (#53)",
-            "E1-T27: mark verified (critic) — 64-entry PMP",
-            "E1-T27: expand PMP 16 → 64 entries (real feature; unit-tested)"
+            "E1-T26: misaligned support + Sail reference → RISCOF 395/0, EXCLUSIONS emptied (#53)"
           ]
         }
       ],
       "firstActivity": "2026-07-04",
       "lastActivity": "2026-07-04",
-      "commitCount": 5
+      "commitCount": 2
     },
     {
       "id": "E1-T28",
@@ -3674,12 +3467,10 @@
       "activity": [
         {
           "date": "2026-07-04",
-          "commits": 5,
+          "commits": 2,
           "labels": [
             "ci(pages): build + deploy the web demo to GitHub Pages on every PR (#57)",
-            "E1-T26: misaligned support + Sail reference → RISCOF 395/0, EXCLUSIONS emptied (#53)",
-            "E1-T28 (WIP): Sv57 5-level paging + genuine RISCOF testing (diagnosing 5 divergences)",
-            "E1-T26: mark verified (critic) + restructure obsoleted T27/T28"
+            "E1-T26: misaligned support + Sail reference → RISCOF 395/0, EXCLUSIONS emptied (#53)"
           ]
         },
         {
@@ -3699,7 +3490,7 @@
       ],
       "firstActivity": "2026-07-04",
       "lastActivity": "2026-07-31",
-      "commitCount": 7
+      "commitCount": 4
     },
     {
       "id": "E1-T29",
@@ -3739,12 +3530,9 @@
       "activity": [
         {
           "date": "2026-07-04",
-          "commits": 4,
+          "commits": 1,
           "labels": [
-            "E1-T29: debug-spec mcontrol triggers → rv64mi-p-breakpoint passes (0 deferrals) (#54)",
-            "E1-T29: mark verified (critic) — final capstone deferral cleared",
-            "E1-T29: debug-spec mcontrol triggers → rv64mi-p-breakpoint passes (0 deferrals)",
-            "E1-T29: scope debug triggers (last capstone deferral) — branch + plan"
+            "E1-T29: debug-spec mcontrol triggers → rv64mi-p-breakpoint passes (0 deferrals) (#54)"
           ]
         },
         {
@@ -3765,7 +3553,7 @@
       ],
       "firstActivity": "2026-07-04",
       "lastActivity": "2026-08-02",
-      "commitCount": 7
+      "commitCount": 4
     },
     {
       "id": "E1-T30",
@@ -3865,16 +3653,6 @@
       "file": "tasks/epic-2-first-light/E2-T01-machine-platform-definition.md",
       "activity": [
         {
-          "date": "2026-07-04",
-          "commits": 5,
-          "labels": [
-            "E2-T01: mark verified — critic round 2 CONFIRMED (all 12 DTB nodes covered)",
-            "E2-T01: critic round 1 (REFUTED→fixed) — complete the QEMU-virt deviations list",
-            "E2-T01: define the \"wasm-vm virt\" machine platform (map, harts, boot contract)",
-            "E2-T01: fmt + clippy fixes (green the fmt/clippy CI jobs)"
-          ]
-        },
-        {
           "date": "2026-07-05",
           "commits": 0,
           "labels": []
@@ -3887,9 +3665,9 @@
           ]
         }
       ],
-      "firstActivity": "2026-07-04",
+      "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-08",
-      "commitCount": 6
+      "commitCount": 1
     },
     {
       "id": "E2-T02",
@@ -3932,14 +3710,6 @@
       "file": "tasks/epic-2-first-light/E2-T02-fdt-devicetree-builder.md",
       "activity": [
         {
-          "date": "2026-07-04",
-          "commits": 2,
-          "labels": [
-            "E2-T02: mark verified (critic CONFIRMED, 8/8 angles) + fix latent unit-address weakness",
-            "E2-T02: pure-Rust FDT builder — dtc-clean DTB for the virt platform"
-          ]
-        },
-        {
           "date": "2026-07-05",
           "commits": 0,
           "labels": []
@@ -3952,9 +3722,9 @@
           ]
         }
       ],
-      "firstActivity": "2026-07-04",
+      "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-08",
-      "commitCount": 3
+      "commitCount": 1
     },
     {
       "id": "E2-T03",
@@ -3997,15 +3767,6 @@
       "file": "tasks/epic-2-first-light/E2-T03-firmware-strategy-decision.md",
       "activity": [
         {
-          "date": "2026-07-04",
-          "commits": 3,
-          "labels": [
-            "E2-T03: mark verified (critic CONFIRMED 6/6) + fold in SRST finding (scoped to E2-T06)",
-            "E2-T03: ADR 0002 — built-in Rust SBI; OpenSBI boots FULLY as the standing M-mode testcase",
-            "E2-T03: fix clippy --all-features (zicsr-stub dead_code on builtin_sbi)"
-          ]
-        },
-        {
           "date": "2026-07-05",
           "commits": 0,
           "labels": []
@@ -4018,9 +3779,9 @@
           ]
         }
       ],
-      "firstActivity": "2026-07-04",
+      "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-08",
-      "commitCount": 4
+      "commitCount": 1
     },
     {
       "id": "E2-T04",
@@ -4067,14 +3828,6 @@
       "file": "tasks/epic-2-first-light/E2-T04-sbi-base-and-debug-console.md",
       "activity": [
         {
-          "date": "2026-07-04",
-          "commits": 2,
-          "labels": [
-            "E2-T04: mark verified — critic CONFIRMED (spec-fetch, 200k-ecall fuzz, OpenSBI differential)",
-            "E2-T04: SBI Base + DBCN debug console + legacy console (v2.0)"
-          ]
-        },
-        {
           "date": "2026-07-05",
           "commits": 0,
           "labels": []
@@ -4087,9 +3840,9 @@
           ]
         }
       ],
-      "firstActivity": "2026-07-04",
+      "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-08",
-      "commitCount": 3
+      "commitCount": 1
     },
     {
       "id": "E2-T05",
@@ -4136,19 +3889,9 @@
       "file": "tasks/epic-2-first-light/E2-T05-sbi-time-extension.md",
       "activity": [
         {
-          "date": "2026-07-04",
-          "commits": 1,
-          "labels": [
-            "E2-T05: SBI TIME — set_timer driving the S-mode timer as a boundary-derived level"
-          ]
-        },
-        {
           "date": "2026-07-05",
-          "commits": 2,
-          "labels": [
-            "E2-T05: mark verified + adopt the critic's attack suite (10^6-ecall fuzz, OpenSBI diff)",
-            "E2-T05: green the wasm CI leg (stub-gate the timer mirror; probe(TIME) now 1)"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-08",
@@ -4158,9 +3901,9 @@
           ]
         }
       ],
-      "firstActivity": "2026-07-04",
+      "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-08",
-      "commitCount": 4
+      "commitCount": 1
     },
     {
       "id": "E2-T06",
@@ -4207,19 +3950,9 @@
       "file": "tasks/epic-2-first-light/E2-T06-sbi-ipi-rfence-hsm.md",
       "activity": [
         {
-          "date": "2026-07-04",
-          "commits": 1,
-          "labels": [
-            "E2-T03: mark verified (critic CONFIRMED 6/6) + fold in SRST finding (scoped to E2-T06)"
-          ]
-        },
-        {
           "date": "2026-07-05",
-          "commits": 2,
-          "labels": [
-            "E2-T06: fix critic round-1 findings (RFENCE overflow panic + 2 spec codes) + adopt suite",
-            "E2-T06: SBI IPI + RFENCE + HSM + SRST — the full Epic-2 SBI surface is live"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-08",
@@ -4230,9 +3963,9 @@
           ]
         }
       ],
-      "firstActivity": "2026-07-04",
+      "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-08",
-      "commitCount": 5
+      "commitCount": 2
     },
     {
       "id": "E2-T07",
@@ -4280,13 +4013,8 @@
       "activity": [
         {
           "date": "2026-07-05",
-          "commits": 4,
-          "labels": [
-            "E2-T07: mark verified — critic CONFIRMED (QEMU serial.c table 9/9, 10k flood, THRE storm)",
-            "E2-T07 (3/3): wasm mirrors + gates — ns16550a complete",
-            "E2-T07 (WIP 2/3): Machine integration + interrupt-only echo through PLIC claim/complete",
-            "E2-T07 (WIP): ns16550a UART device — register file + interrupt-cause state machine"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-08",
@@ -4298,7 +4026,7 @@
       ],
       "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-08",
-      "commitCount": 5
+      "commitCount": 1
     },
     {
       "id": "E2-T08",
@@ -4346,11 +4074,8 @@
       "activity": [
         {
           "date": "2026-07-05",
-          "commits": 2,
-          "labels": [
-            "E2-T08: mark verified + fix the critic's 3 advisories (QueueSel alias, NEEDS_RESET notify, SHM)",
-            "E2-T08: virtio-mmio v2 transport — full register file, lifecycle rules, 8 wired slots"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-08",
@@ -4362,7 +4087,7 @@
       ],
       "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-08",
-      "commitCount": 3
+      "commitCount": 1
     },
     {
       "id": "E2-T09",
@@ -4410,11 +4135,8 @@
       "activity": [
         {
           "date": "2026-07-05",
-          "commits": 2,
-          "labels": [
-            "E2-T09: critic round 1 (REFUTED->fixed) — true QEMU zero-len parity + advisories pinned",
-            "E2-T09: split virtqueue — hostile-guest-proof ring engine"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-08",
@@ -4426,7 +4148,7 @@
       ],
       "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-08",
-      "commitCount": 3
+      "commitCount": 1
     },
     {
       "id": "E2-T10",
@@ -4470,11 +4192,8 @@
       "activity": [
         {
           "date": "2026-07-05",
-          "commits": 2,
-          "labels": [
-            "E2-T10: mark verified — critic CONFIRMED 6/6 (kill-loop x5 zero tears, RO storm hash-stable, 100k fuzz) + doc the 2^55 quirk",
-            "E2-T10: pluggable BlockBackend — MemBackend + SparseMemBackend (core) + mmap FileBackend (cli)"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-08",
@@ -4486,7 +4205,7 @@
       ],
       "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-08",
-      "commitCount": 3
+      "commitCount": 1
     },
     {
       "id": "E2-T11",
@@ -4535,12 +4254,8 @@
       "activity": [
         {
           "date": "2026-07-05",
-          "commits": 3,
-          "labels": [
-            "E2-T11: fix critic round-1 (stale ring view after transport reset) + adopt torture suite",
-            "E2-T11: gates green (clippy lints, unused imports) + task log",
-            "E2-T11: virtio-blk device — request engine, config space, kick-deferred service, --drive"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-08",
@@ -4552,7 +4267,7 @@
       ],
       "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-08",
-      "commitCount": 4
+      "commitCount": 1
     },
     {
       "id": "E2-T12",
@@ -4596,11 +4311,8 @@
       "activity": [
         {
           "date": "2026-07-05",
-          "commits": 2,
-          "labels": [
-            "E2-T12: fix critic round-1 (reproducibility) — pin .version so clean builds are byte-identical",
-            "E2-T12: reproducible riscv64 6.6.63 kernel build (Docker-only) + pinned artifacts"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-08",
@@ -4612,7 +4324,7 @@
       ],
       "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-08",
-      "commitCount": 3
+      "commitCount": 1
     },
     {
       "id": "E2-T13",
@@ -4656,11 +4368,8 @@
       "activity": [
         {
           "date": "2026-07-05",
-          "commits": 2,
-          "labels": [
-            "E2-T13: mark verified — critic CONFIRMED 6/6 (reproducible rebuild, corrupt-archive delivery attack, boot+^C)",
-            "E2-T13: static busybox initramfs (reproducible) + initrd placement/DTB props"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-08",
@@ -4672,7 +4381,7 @@
       ],
       "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-08",
-      "commitCount": 3
+      "commitCount": 1
     },
     {
       "id": "E2-T14",
@@ -4717,11 +4426,8 @@
       "activity": [
         {
           "date": "2026-07-05",
-          "commits": 2,
-          "labels": [
-            "E2-T14: fix critic round-1 — honest --trace-last overhead (was a bogus loops.elf number)",
-            "E2-T14: boot-debugging tooling (pc-histogram, trace-last, hang watchdog, symbolize) + playbook"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-08",
@@ -4733,7 +4439,7 @@
       ],
       "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-08",
-      "commitCount": 3
+      "commitCount": 1
     },
     {
       "id": "E2-T15",
@@ -4789,11 +4495,8 @@
       "activity": [
         {
           "date": "2026-07-05",
-          "commits": 2,
-          "labels": [
-            "E2-T15: fold in dual-critic findings — widen medeleg + bound kernel footprint",
-            "E2-T15 (Linux half): boot unmodified Linux 6.6.63 to an interactive busybox shell"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-06",
@@ -4810,7 +4513,7 @@
       ],
       "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-08",
-      "commitCount": 3
+      "commitCount": 1
     },
     {
       "id": "E2-T16",
@@ -4854,11 +4557,8 @@
       "activity": [
         {
           "date": "2026-07-05",
-          "commits": 2,
-          "labels": [
-            "E2-T16: fix critic REFUTATION — order-independent time-set (date -s was ~4.29s wrong)",
-            "E2-T16: real wall-clock goldfish RTC (guest boots at real time, not 1970)"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-06",
@@ -4875,7 +4575,7 @@
       ],
       "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-08",
-      "commitCount": 3
+      "commitCount": 1
     },
     {
       "id": "E2-T17",
@@ -4919,12 +4619,8 @@
       "activity": [
         {
           "date": "2026-07-05",
-          "commits": 3,
-          "labels": [
-            "E2-T17: fold critic advisories — cfg-gate enable_syscon, final reset drain, test",
-            "E2-T17: syscon poweroff/reboot finisher + clean-shutdown plumbing",
-            "E2-T17: fix CI regression — SRST reboot now ends the run (fuzz-test invariant)"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-06",
@@ -4941,7 +4637,7 @@
       ],
       "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-08",
-      "commitCount": 4
+      "commitCount": 1
     },
     {
       "id": "E2-T18",
@@ -4985,12 +4681,8 @@
       "activity": [
         {
           "date": "2026-07-05",
-          "commits": 3,
-          "labels": [
-            "E2-T18: fold critic supply-chain refutations — verify signatures, lock the package set",
-            "E2-T18: Alpine riscv64 ext4 rootfs — cross-installed, boots to login:",
-            "E2-T18: gitignore the transient MANIFEST.new build artifact"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-06",
@@ -5007,7 +4699,7 @@
       ],
       "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-08",
-      "commitCount": 4
+      "commitCount": 1
     },
     {
       "id": "E2-T19",
@@ -5057,11 +4749,8 @@
       "activity": [
         {
           "date": "2026-07-05",
-          "commits": 2,
-          "labels": [
-            "E2-T19: fix critic REFUTATION — the wtmp EBADMSG was ext4 metadata_csum, not the emulator",
-            "E2-T19: Alpine boots to a usable interactive root login (+ --blk-log tracer)"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-06",
@@ -5086,7 +4775,7 @@
       ],
       "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-31",
-      "commitCount": 5
+      "commitCount": 3
     },
     {
       "id": "E2-T20",
@@ -5134,19 +4823,13 @@
       "activity": [
         {
           "date": "2026-07-05",
-          "commits": 3,
-          "labels": [
-            "E2-T20: fix critic REFUTATIONS — interrupt storms undetectable; per-line naming; overhead framing",
-            "E2-T20: storm/deadlock integration tests + wasm getStats + boot flags + overhead",
-            "E2-T20: interrupt-storm / WFI-deadlock detection — core instrumentation + wiring"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-06",
-          "commits": 1,
-          "labels": [
-            "sweep: guard the E2-T20 early-fire against the degenerate threshold=0 test config"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-08",
@@ -5158,7 +4841,7 @@
       ],
       "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-08",
-      "commitCount": 5
+      "commitCount": 1
     },
     {
       "id": "E2-T21",
@@ -5207,13 +4890,8 @@
       "activity": [
         {
           "date": "2026-07-05",
-          "commits": 5,
-          "labels": [
-            "E2-T21: mark implemented + critic-CONFIRMED verification log",
-            "E2-T21: wire Boot Linux into the page + Playwright browser-verification spec",
-            "E2-T21: web loading pipeline — streamed fetch + sha256 integrity + chunked boot + dev server",
-            "E2-T21: wasm WasmLinux boundary — boot unmodified Linux in the browser"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-06",
@@ -5230,7 +4908,7 @@
       ],
       "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-08",
-      "commitCount": 6
+      "commitCount": 1
     },
     {
       "id": "E2-T22",
@@ -5275,11 +4953,8 @@
       "activity": [
         {
           "date": "2026-07-05",
-          "commits": 2,
-          "labels": [
-            "E2-T22: mark implemented + critic-CONFIRMED verification log",
-            "E2-T22: xterm.js ↔ 16550 UART wiring — input bridge, ^C, resize, throughput"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-06",
@@ -5296,7 +4971,7 @@
       ],
       "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-08",
-      "commitCount": 3
+      "commitCount": 1
     },
     {
       "id": "E2-T23",
@@ -5341,12 +5016,8 @@
       "activity": [
         {
           "date": "2026-07-05",
-          "commits": 3,
-          "labels": [
-            "E2-T23: mark implemented + critic verification log",
-            "E2-T23: fix critic findings — pause/resume race (C3) + vacuous suspend assertions (C4)",
-            "E2-T23: browser timekeeping — document + verify the deterministic two-clock model"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-06",
@@ -5363,7 +5034,7 @@
       ],
       "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-08",
-      "commitCount": 4
+      "commitCount": 1
     },
     {
       "id": "E2-T23b",
@@ -5403,11 +5074,8 @@
       "activity": [
         {
           "date": "2026-07-05",
-          "commits": 2,
-          "labels": [
-            "E2-T23b: mark implemented + critic-CONFIRMED verification log",
-            "E2-T23b: deterministic WFI fast-forward — fix idle/sleep slowdown, keep determinism"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-06",
@@ -5424,7 +5092,7 @@
       ],
       "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-08",
-      "commitCount": 3
+      "commitCount": 1
     },
     {
       "id": "E2-T24",
@@ -5473,13 +5141,8 @@
       "activity": [
         {
           "date": "2026-07-05",
-          "commits": 4,
-          "labels": [
-            "E2-T24: verification log — critic found harness vacuous, 4 defects fixed",
-            "E2-T24: stress-validation harness — disk torture, process storm, crash gate, reproducibility",
-            "E2-T24: robust poweroff detection — match the Power-down marker, generous budget",
-            "E2-T24: fix critic findings — vacuous PASS needles (C1), self-poisoning kill gate (C2), repro diff (C3)"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-06",
@@ -5503,7 +5166,7 @@
       ],
       "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-31",
-      "commitCount": 6
+      "commitCount": 2
     },
     {
       "id": "E2-T25",
@@ -5551,13 +5214,8 @@
       "activity": [
         {
           "date": "2026-07-05",
-          "commits": 7,
-          "labels": [
-            "E2-T25: mark implemented + critic verification log",
-            "E2-T25: record design decision — keep profiling timing OUT of core (determinism gate)",
-            "E2-T25: fix critic findings — honest docs (dispatch-bound, non-determinism) + profile-stop message",
-            "E2-T25: char-boundary-safe tail trim — --profile-boot must never panic on non-ASCII dmesg"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-06",
@@ -5574,7 +5232,7 @@
       ],
       "firstActivity": "2026-07-05",
       "lastActivity": "2026-07-08",
-      "commitCount": 8
+      "commitCount": 1
     },
     {
       "id": "E2-T26",
@@ -5618,16 +5276,6 @@
       "file": "tasks/epic-2-first-light/E2-T26-capstone-alpine-login-in-browser.md",
       "activity": [
         {
-          "date": "2026-07-05",
-          "commits": 5,
-          "labels": [
-            "E2-T26: mark implemented + capstone verification log",
-            "E2-T26: loader.js disk mode (Alpine via WasmLinux.newDisk) — CI-neutral",
-            "E2-T26 (capstone foundation): WasmLinux.newDisk — boot Alpine from virtio-blk in the browser",
-            "E2-T26: halted-UI state + capstone e2e + README Level-2 — Alpine boots to login IN THE BROWSER"
-          ]
-        },
-        {
           "date": "2026-07-06",
           "commits": 0,
           "labels": []
@@ -5648,9 +5296,9 @@
           ]
         }
       ],
-      "firstActivity": "2026-07-05",
+      "firstActivity": "2026-07-06",
       "lastActivity": "2026-07-31",
-      "commitCount": 8
+      "commitCount": 3
     },
     {
       "id": "E2-T26a",
@@ -5746,15 +5394,6 @@
       "file": "tasks/epic-3-civilization/E3-T01-chunked-disk-image-format.md",
       "activity": [
         {
-          "date": "2026-07-05",
-          "commits": 3,
-          "labels": [
-            "E3-T01: mark implemented + critic verification log",
-            "E3-T01: harden public API against unvalidated manifests (critic C2 footgun)",
-            "E3-T01: chunked disk-image format — hashed manifest + core reader (crates/storage)"
-          ]
-        },
-        {
           "date": "2026-07-06",
           "commits": 0,
           "labels": []
@@ -5767,9 +5406,9 @@
           ]
         }
       ],
-      "firstActivity": "2026-07-05",
+      "firstActivity": "2026-07-06",
       "lastActivity": "2026-07-08",
-      "commitCount": 4
+      "commitCount": 1
     },
     {
       "id": "E3-T02",
@@ -5816,24 +5455,9 @@
       "file": "tasks/epic-3-civilization/E3-T02-http-range-lazy-block-fetch.md",
       "activity": [
         {
-          "date": "2026-07-05",
-          "commits": 4,
-          "labels": [
-            "E3-T02: record precise pass-2 mechanics (deferred used-ring completion)",
-            "E3-T02: scope the async-fetch design — deferred virtio-blk completion (invasive)",
-            "E3-T02 (core pass 2): deferred virtio-blk completion (WouldBlock park path)",
-            "E3-T02 (core pass 1): deterministic lazy read-path in the storage layer"
-          ]
-        },
-        {
           "date": "2026-07-06",
-          "commits": 10,
-          "labels": [
-            "E3-T02: record pass 4 + critic SHIP + browser acceptance; mark verified",
-            "E3-T02: record pass 3 + critic round-3 in the verification log",
-            "E3-T02: record passes 1+2 + critic round-2 in the verification log",
-            "E3-T02 (pass 4b): chunked-boot UI trigger, fetch-stats hook, and e2e test"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-08",
@@ -5845,9 +5469,9 @@
           ]
         }
       ],
-      "firstActivity": "2026-07-05",
+      "firstActivity": "2026-07-06",
       "lastActivity": "2026-07-08",
-      "commitCount": 17
+      "commitCount": 3
     },
     {
       "id": "E3-T03",
@@ -5895,13 +5519,8 @@
       "activity": [
         {
           "date": "2026-07-06",
-          "commits": 10,
-          "labels": [
-            "E3-T03: record pass 4 + critic + budget-bound acceptance; mark verified",
-            "E3-T03: record pass 3 (wasm wiring) + critic SHIP in the verification log",
-            "E3-T03: record cache+prefetch core (pass 1+2) + critic SHIP + F1 fix in the log",
-            "E3-T03 (pass 4b): budget-bound-under-eviction browser acceptance test"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-08",
@@ -5914,7 +5533,7 @@
       ],
       "firstActivity": "2026-07-06",
       "lastActivity": "2026-07-08",
-      "commitCount": 12
+      "commitCount": 2
     },
     {
       "id": "E3-T04",
@@ -5962,13 +5581,8 @@
       "activity": [
         {
           "date": "2026-07-06",
-          "commits": 6,
-          "labels": [
-            "E3-T04: record pass 2 + critic SHIP + read-write boot acceptance; mark verified",
-            "E3-T04: record CoW overlay core (pass 1) + critic SHIP in the verification log",
-            "E3-T04 (pass 2b): browser read-write boot acceptance test",
-            "E3-T04: regression test for the parked-WRITE exactly-once path"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-08",
@@ -5981,7 +5595,7 @@
       ],
       "firstActivity": "2026-07-06",
       "lastActivity": "2026-07-08",
-      "commitCount": 8
+      "commitCount": 2
     },
     {
       "id": "E3-T05",
@@ -6029,13 +5643,8 @@
       "activity": [
         {
           "date": "2026-07-06",
-          "commits": 10,
-          "labels": [
-            "E3-T05: record pass 2b + critic FIX-FIRST→fixed + reload-persistence; mark verified",
-            "E3-T05: record write-back core (pass 1) + critic FIX-FIRST→fixed in the log",
-            "E3-T05: fix reload-persistence test — don't assert the explicit persist count",
-            "E3-T05: use durability:\"strict\" on commit transactions (critic F1)"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-08",
@@ -6049,7 +5658,7 @@
       ],
       "firstActivity": "2026-07-06",
       "lastActivity": "2026-07-08",
-      "commitCount": 13
+      "commitCount": 3
     },
     {
       "id": "E3-T06",
@@ -6195,13 +5804,8 @@
       "activity": [
         {
           "date": "2026-07-06",
-          "commits": 4,
-          "labels": [
-            "E3-T08: browser crashtest PASSED (2 tab-kill cycles, 53.1 min) — mark verified",
-            "E3-T08: fix critic BUG 1 (HIGH) — stale flush barrier survived transport reset",
-            "E3-T08 (pass 1): honest FLUSH — virtio-blk ack waits for the durable commit barrier",
-            "E3-T08 (pass 2a): persistStats + flush-priority pump + dirty-bytes backpressure"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-09",
@@ -6213,7 +5817,7 @@
       ],
       "firstActivity": "2026-07-06",
       "lastActivity": "2026-07-09",
-      "commitCount": 5
+      "commitCount": 1
     },
     {
       "id": "E3-T09",
@@ -6261,13 +5865,8 @@
       "activity": [
         {
           "date": "2026-07-06",
-          "commits": 5,
-          "labels": [
-            "E3-T09: RO-guest + takeover acceptance PASSED (21.7 min) — mark verified",
-            "E3-T09: fix critic BUG-1/2/3 + NOTE-1 — lock lifecycle hardening",
-            "E3-T09 (pass 1): single-writer Web Lock + read-only mode — 20/20 race acceptance",
-            "E3-T09: rustfmt"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-09",
@@ -6280,7 +5879,7 @@
       ],
       "firstActivity": "2026-07-06",
       "lastActivity": "2026-07-09",
-      "commitCount": 7
+      "commitCount": 2
     },
     {
       "id": "E3-T10",
@@ -6328,11 +5927,8 @@
       "activity": [
         {
           "date": "2026-07-06",
-          "commits": 2,
-          "labels": [
-            "E3-T10: fix critic BUG-1/2/3/4/6 + classifier — lock-vs-quota RO split, honest reset",
-            "E3-T10 (pass 1): storage-quota handling (no lost write) + reset-disk + indicator"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-09",
@@ -6362,7 +5958,7 @@
       ],
       "firstActivity": "2026-07-06",
       "lastActivity": "2026-07-19",
-      "commitCount": 10
+      "commitCount": 8
     },
     {
       "id": "E3-T11",
@@ -6410,12 +6006,8 @@
       "activity": [
         {
           "date": "2026-07-06",
-          "commits": 3,
-          "labels": [
-            "E3-T11: root-cause the repro churn via dumpe2fs (superblock s_wtime) — 11.2%→4.7%, residual parked",
-            "E3-T11: honest correction — hash_seed did NOT resolve the repro churn; byte-repro unmet",
-            "E3-T11 (pass 1): reproducible image pipeline + integrity/churn gates + fix htree nondeterminism"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-09",
@@ -6436,7 +6028,7 @@
       ],
       "firstActivity": "2026-07-06",
       "lastActivity": "2026-07-17",
-      "commitCount": 7
+      "commitCount": 4
     },
     {
       "id": "E3-T12",
@@ -6494,16 +6086,6 @@
       "file": "tasks/epic-3-civilization/E3-T12-machine-snapshot-restore.md",
       "activity": [
         {
-          "date": "2026-07-08",
-          "commits": 15,
-          "labels": [
-            "docs(E3-T12): fold RAM critic (CLEAN) + web focus fix into verification log",
-            "E3-T12 (pass 4): fold RTC critic evidence into task log",
-            "E3-T12 (pass 3): fold UART critic evidence into task Verification log",
-            "E3-T12 (pass 2): fold critic evidence into task Verification log"
-          ]
-        },
-        {
           "date": "2026-07-09",
           "commits": 4,
           "labels": [
@@ -6519,9 +6101,9 @@
           "labels": []
         }
       ],
-      "firstActivity": "2026-07-08",
+      "firstActivity": "2026-07-09",
       "lastActivity": "2026-07-27",
-      "commitCount": 19
+      "commitCount": 4
     },
     {
       "id": "E3-T12a",
@@ -7039,13 +6621,8 @@
       "activity": [
         {
           "date": "2026-07-06",
-          "commits": 6,
-          "labels": [
-            "E3-T13: browser eth0 acceptance PASSED (15.8 min) — mark verified",
-            "E3-T13 (pass 2): wire virtio-net into the Machine — Alpine detects eth0, loopback flows",
-            "E3-T13: fix critic MED (rx-descriptor leak on lying backend) + adopt critic suite",
-            "E3-T13: regenerate web/artifacts.json for the net-enabled kernel (sha + size)"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-08",
@@ -7064,7 +6641,7 @@
       ],
       "firstActivity": "2026-07-06",
       "lastActivity": "2026-07-09",
-      "commitCount": 8
+      "commitCount": 2
     },
     {
       "id": "E3-T14",
@@ -7117,22 +6694,13 @@
       "activity": [
         {
           "date": "2026-07-07",
-          "commits": 24,
-          "labels": [
-            "E3-T14 (pass 2l): fix critic MAJOR — bound the outbound→guest path (remote OOM)",
-            "E3-T14 (pass 2l): Bridge::service — lift the data path into the control plane",
-            "E3-T14 (pass 2k): end-to-end data path — guest bytes round-trip through the pump",
-            "E3-T14 (pass 2j): fix critic MAJOR — write-error false-ack data loss in the pump"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-08",
-          "commits": 3,
-          "labels": [
-            "fix(net)+test: fold cold-clone critic findings for SlirpBackend (E3-T14)",
-            "feat(net): wire slirp into the machine's virtio-net via SlirpBackend (E3-T14)",
-            "chore: update Cargo.lock for cli slirp + tokio deps (E3-T14)"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-09",
@@ -7167,7 +6735,7 @@
       ],
       "firstActivity": "2026-07-07",
       "lastActivity": "2026-07-15",
-      "commitCount": 48
+      "commitCount": 21
     },
     {
       "id": "E3-T15",
@@ -7215,27 +6783,17 @@
       "activity": [
         {
           "date": "2026-07-07",
-          "commits": 8,
-          "labels": [
-            "E3-T15 (pass 1d): fold critic — reply carries explicit from/to ports",
-            "E3-T15 (pass 1d): UDP service dispatch — route guest UDP to DHCP/DNS",
-            "E3-T15 (pass 1c): fix critic — don't cache empty A results; validate qclass",
-            "E3-T15 (pass 1c): DNS forwarder control layer — Resolver trait + TTL cache"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-08",
-          "commits": 20,
-          "labels": [
-            "E3-T15 (pass 1n): fold critic — DNS-over-TCP CLEAN, TC=1-triggers-retry verified",
-            "E3-T15 (pass 1n): DNS-over-TCP framing + TC=1 truncation",
-            "E3-T15 (pass 1m): fold critic — make the session's cache assertion load-bearing",
-            "E3-T15 (pass 1m): unified service() entry point + full-session capstone"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-09",
-          "commits": 15,
+          "commits": 14,
           "labels": [
             "E3-T15 (pass 1n): DNS-over-TCP framing + TC=1 truncation (#143)",
             "E3-T15 (pass 1m): unified service() entry point + full-session capstone (#142)",
@@ -7264,7 +6822,7 @@
       ],
       "firstActivity": "2026-07-07",
       "lastActivity": "2026-07-16",
-      "commitCount": 49
+      "commitCount": 20
     },
     {
       "id": "E3-T16",
@@ -7315,16 +6873,6 @@
       "file": "tasks/epic-3-civilization/E3-T16-websocket-tcp-proxy.md",
       "activity": [
         {
-          "date": "2026-07-08",
-          "commits": 17,
-          "labels": [
-            "E3-T16 (pass 1g): fold critic evidence into task Verification log",
-            "E3-T16 (pass 1f): fold critic evidence into task Verification log",
-            "E3-T16 (pass 1e): fold critic evidence into task Verification log",
-            "E3-T16 (pass 1d): fold critic — Session CLEAN; strengthen reset-attack test"
-          ]
-        },
-        {
           "date": "2026-07-09",
           "commits": 7,
           "labels": [
@@ -7357,9 +6905,9 @@
           ]
         }
       ],
-      "firstActivity": "2026-07-08",
+      "firstActivity": "2026-07-09",
       "lastActivity": "2026-07-31",
-      "commitCount": 30
+      "commitCount": 13
     },
     {
       "id": "E3-T17",
@@ -9881,11 +9429,8 @@
       "activity": [
         {
           "date": "2026-07-06",
-          "commits": 2,
-          "labels": [
-            "E3.5-T01: fix critic CRITICAL container escape + 2 MAJOR bugs (symlink/opaque/bomb)",
-            "E3.5-T01 (pass 1): OCI unpack core — whiteout applier + digest-verified layout unpack"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-09",
@@ -9911,7 +9456,7 @@
       ],
       "firstActivity": "2026-07-06",
       "lastActivity": "2026-08-02",
-      "commitCount": 5
+      "commitCount": 3
     },
     {
       "id": "E3.5-T02",
@@ -9959,11 +9504,8 @@
       "activity": [
         {
           "date": "2026-07-06",
-          "commits": 2,
-          "labels": [
-            "E3.5-T02 (pass 2): harden smoke-script asserts against false-passes (critic)",
-            "E3.5-T02 (pass 1): container kernel audit + in-guest smoke script + TUN/SQUASHFS decisions"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-09",
@@ -9984,7 +9526,7 @@
       ],
       "firstActivity": "2026-07-06",
       "lastActivity": "2026-07-29",
-      "commitCount": 6
+      "commitCount": 4
     },
     {
       "id": "E3.5-T03",
@@ -10037,12 +9579,8 @@
       "activity": [
         {
           "date": "2026-07-06",
-          "commits": 3,
-          "labels": [
-            "E3.5-T03: fix critic MAJORs — wvrun shell-quoting (env spaces, argv globs)",
-            "E3.5-T03 (pass 1): OCI runtime-config bundle + tiny `wvrun` runner",
-            "E3.5-T02 (pass 2): harden smoke-script asserts against false-passes (critic)"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-09",
@@ -10069,7 +9607,7 @@
       ],
       "firstActivity": "2026-07-06",
       "lastActivity": "2026-07-30",
-      "commitCount": 7
+      "commitCount": 4
     },
     {
       "id": "E3.5-T04",
@@ -10121,16 +9659,6 @@
       "file": "tasks/epic-3.5-oci-workloads/E3.5-T04-registry-layer-persistence.md",
       "activity": [
         {
-          "date": "2026-07-08",
-          "commits": 6,
-          "labels": [
-            "E3.5-T04 (pass 2): fold critic evidence into task Verification log",
-            "E3.5-T04 (pass 1): fold critic evidence into task Verification log",
-            "E3.5-T04 (pass 2): fold critic — CLEAN; document partial-pull + eviction seams",
-            "E3.5-T04 (pass 2): pull-through layer cache — native cacheStats + dedupe"
-          ]
-        },
-        {
           "date": "2026-07-09",
           "commits": 2,
           "labels": [
@@ -10147,9 +9675,9 @@
           ]
         }
       ],
-      "firstActivity": "2026-07-08",
+      "firstActivity": "2026-07-09",
       "lastActivity": "2026-08-02",
-      "commitCount": 10
+      "commitCount": 4
     },
     {
       "id": "E3.5-T04a",
@@ -10189,12 +9717,8 @@
       "activity": [
         {
           "date": "2026-07-06",
-          "commits": 3,
-          "labels": [
-            "E3.5-T04a: prove the pipeline on real postgres:18 (capstone input)",
-            "E3.5-T04a: fix critic MAJOR — verify manifest-by-digest in sideload",
-            "E3.5-T04a: native OCI sideload (registry→layout) + fix real-image unpack bug"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-09",
@@ -10213,7 +9737,7 @@
       ],
       "firstActivity": "2026-07-06",
       "lastActivity": "2026-07-30",
-      "commitCount": 5
+      "commitCount": 2
     },
     {
       "id": "E3.5-T04b",
@@ -10262,11 +9786,8 @@
       "activity": [
         {
           "date": "2026-07-06",
-          "commits": 2,
-          "labels": [
-            "E3.5-T04b: fix critic — harness false-passed 4 ways, rewrite + self-test",
-            "E3.5-T04b: container matrix — prove the pipeline runs any riscv64 image"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-09",
@@ -10285,7 +9806,7 @@
       ],
       "firstActivity": "2026-07-06",
       "lastActivity": "2026-08-02",
-      "commitCount": 4
+      "commitCount": 2
     },
     {
       "id": "E3.5-T04c",
@@ -10325,11 +9846,8 @@
       "activity": [
         {
           "date": "2026-07-06",
-          "commits": 2,
-          "labels": [
-            "E3.5-T04c: adopt critic LOW notes (SOUND verdict) — stronger bomb test",
-            "E3.5-T04c: zstd-compressed layers — unpack modern buildkit images"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-09",
@@ -10348,7 +9866,7 @@
       ],
       "firstActivity": "2026-07-06",
       "lastActivity": "2026-08-02",
-      "commitCount": 4
+      "commitCount": 2
     },
     {
       "id": "E3.5-T04d",
@@ -10396,11 +9914,8 @@
       "activity": [
         {
           "date": "2026-07-06",
-          "commits": 2,
-          "labels": [
-            "E3.5-T04d: fix critic MAJOR — attacker-controlled auth realm SSRF/file-read",
-            "E3.5-T04d: multi-registry sideload — ghcr/quay/gcr/any v2 registry"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-09",
@@ -10419,7 +9934,7 @@
       ],
       "firstActivity": "2026-07-06",
       "lastActivity": "2026-07-31",
-      "commitCount": 4
+      "commitCount": 2
     },
     {
       "id": "E3.5-T04e",
@@ -10467,11 +9982,8 @@
       "activity": [
         {
           "date": "2026-07-07",
-          "commits": 2,
-          "labels": [
-            "E3.5-T04e: fix critic MAJOR false-reject (relative bundle path) + 2 MINOR",
-            "E3.5-T04e: `oci validate` — native, boot-free bundle preflight"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-09",
@@ -10490,7 +10002,7 @@
       ],
       "firstActivity": "2026-07-07",
       "lastActivity": "2026-07-31",
-      "commitCount": 4
+      "commitCount": 2
     },
     {
       "id": "E3.5-T04f",
@@ -10692,13 +10204,8 @@
       "activity": [
         {
           "date": "2026-07-07",
-          "commits": 4,
-          "labels": [
-            "E3.5-T05 (pass 2): de-fake the Docker tab — remove the mock shell + fabricated data",
-            "E3.5-T05 (pass 1): fix critic MAJOR — hardlink correctness under whiteout/override",
-            "E3.5-T05 (pass 1): oci unpack preserves hardlinks (busybox 412MB→3.2MB) + bundle build tool",
-            "E3.5-T05 (pass 2): fold critic — fix Images overclaim + commit bundle provenance"
-          ]
+          "commits": 0,
+          "labels": []
         },
         {
           "date": "2026-07-09",
@@ -10718,7 +10225,7 @@
       ],
       "firstActivity": "2026-07-07",
       "lastActivity": "2026-09-02",
-      "commitCount": 7
+      "commitCount": 3
     },
     {
       "id": "E3.5-T05a",
@@ -10766,16 +10273,6 @@
       "file": "tasks/epic-3.5-oci-workloads/E3.5-T05a-visible-docker-busybox.md",
       "activity": [
         {
-          "date": "2026-07-08",
-          "commits": 4,
-          "labels": [
-            "fix(web)+docs: fold in cold-clone critic findings for the Docker Run fix",
-            "docs(E3.5-T05a): pass 2 — acceptance executed, re-entrancy bug found + fixed",
-            "E3.5-T05a: fold no-fake-audit critic (CLEAN) into task Verification log",
-            "E3.5-T05a: visible Docker tab — Run boots busybox + runs one REAL guest command"
-          ]
-        },
-        {
           "date": "2026-07-09",
           "commits": 2,
           "labels": [
@@ -10791,9 +10288,9 @@
           ]
         }
       ],
-      "firstActivity": "2026-07-08",
+      "firstActivity": "2026-07-09",
       "lastActivity": "2026-07-29",
-      "commitCount": 7
+      "commitCount": 3
     },
     {
       "id": "E3.5-T05b",
@@ -14905,9 +14402,8 @@
         },
         {
           "date": "2026-08-07",
-          "commits": 2,
+          "commits": 1,
           "labels": [
-            "docs(e4-t22): verification log — CPU-on-worker pragmatic first cut",
             "docs(e4-t22): verification log — CPU-on-worker pragmatic first cut"
           ]
         },
@@ -14921,7 +14417,7 @@
       ],
       "firstActivity": "2026-08-06",
       "lastActivity": "2026-09-03",
-      "commitCount": 4
+      "commitCount": 3
     },
     {
       "id": "E4-T22a",
@@ -28789,18 +28285,18 @@
       "activity": [
         {
           "date": "2026-10-12",
-          "commits": 8,
+          "commits": 6,
           "labels": [
             "Authenticate lossless dimensional-view archive transport",
             "Verify original dimensional sampler-view execution",
             "Record dimensional sampler-view hardware proof and live demo",
-            "Verify original dimensional sampler-view execution"
+            "Execute original RGBA8 dimensional sampler views on native GPU"
           ]
         }
       ],
       "firstActivity": "2026-10-12",
       "lastActivity": "2026-10-12",
-      "commitCount": 8
+      "commitCount": 6
     },
     {
       "id": "E6-T11d59",
@@ -29606,8 +29102,8 @@
           "date": "2026-10-15",
           "commits": 2,
           "labels": [
-            "Isolate the reported default Omarchy fast-boot gap",
-            "Start default Omarchy warm-boot correction"
+            "Start default Omarchy warm-boot correction",
+            "Isolate the reported default Omarchy fast-boot gap"
           ]
         }
       ],
@@ -29759,17 +29255,16 @@
       "activity": [
         {
           "date": "2026-10-15",
-          "commits": 3,
+          "commits": 2,
           "labels": [
             "task: gate GPU warm publication on reproduced desktop faults",
-            "task: publish actual Omarchy GPU warm boot on existing stack",
-            "On codex/omarchy-gpu-warm-default: E6-T11d74d warm publication WIP before scanout and allocation fixes"
+            "task: publish actual Omarchy GPU warm boot on existing stack"
           ]
         }
       ],
       "firstActivity": "2026-10-15",
       "lastActivity": "2026-10-15",
-      "commitCount": 3
+      "commitCount": 2
     },
     {
       "id": "E6-T11d74d1",
