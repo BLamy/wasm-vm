@@ -1,0 +1,31 @@
+{
+  "schema": "omarchy-static-catalogue-independent-pre-data-v1",
+  "time": "2026-10-15T17:56:21.488754+00:00",
+  "workerHead": "d52f9b8beed4a94e3f523a56f3506830a4b178a3",
+  "sourceHead": "7344482caf8eb27a07820aceb505cff96e684e1f",
+  "base": "41b9e397",
+  "risk": "low",
+  "predictions": [
+    {
+      "id": "P1",
+      "prediction": "The pinned original upstream list has147unique entries and catalogue contains each once in the same source order, then exactlynodejs/npm; only nvim\u2192neovim and mise-bin\u2192mise mapnames."
+    },
+    {
+      "id": "P2",
+      "prediction": "Captured database,recipe,existing-selection and archive-inspection digests agree with committed references. Independent DB parsing yields32existing,97upstream native/any candidates,5portable recipes and13explicit unresolved source-port entries; Node/npm add2native/any candidates. No entry is labelled incompatible or omitted for size/availability."
+    },
+    {
+      "id": "P3",
+      "prediction": "The unrelated all-NUL ntk desc is explicitly recorded and supplies no entry; core-first argon2 precedence never substitutes a wrong application. Chromium and LibreOffice are mandatory priority entries and the downloaded priority package metadata/names/versions match native/any DB entries, without x86 substitution."
+    },
+    {
+      "id": "P4",
+      "prediction": "Direct four-archive+signature rehash matches captured metadata, and actual Chromium/LibreOffice/Node executable headers identify ELF64 LE machine243. npm is any/data. Signature availability remains separate from verification, and no execution/installation claim appears."
+    },
+    {
+      "id": "P5",
+      "prediction": "The two direct acceptance commands pass at frozen head. All changed checker result paths are exercised or declarative/validation-guard waivers; only static tools/catalogue/evidence/task records changed and no runtime consumes the catalogue."
+    }
+  ],
+  "scope": "Read source/task/diff first; this precedes opening worker acceptance records, captured database/recipe evidence and executing direct acceptance. No native/browser/cold-clone/sabotage expansion."
+}

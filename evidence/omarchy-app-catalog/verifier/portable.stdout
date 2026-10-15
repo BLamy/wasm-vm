@@ -1,0 +1,28 @@
+{
+  "actualArchivesReopened": false,
+  "additionalUserEntries": 2,
+  "dispositions": {
+    "existing-image": 32,
+    "native-repository-candidate": 99,
+    "portable-data-or-script": 5,
+    "source-port-required": 13
+  },
+  "scope": "static discovery only",
+  "status": "passed",
+  "unresolvedPorts": [
+    "aether",
+    "asdcontrol",
+    "cliamp",
+    "herdr",
+    "hyprland-preview-share-picker",
+    "localsend",
+    "omacalc",
+    "omacut",
+    "omawrite",
+    "pinta",
+    "ttfx",
+    "tensaku",
+    "tzupdate"
+  ],
+  "upstreamEntries": 147
+}
