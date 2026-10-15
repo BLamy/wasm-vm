@@ -52,15 +52,20 @@ try{
  const {chromium}=await import(pathToFileURL(path.join(repo,'web/node_modules/playwright/index.mjs')));
  browser=await chromium.launch({executablePath:process.env.CHROME||'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',headless:true,args:['--enable-gpu','--use-gl=angle','--use-angle=metal']});
  report.browserVersion=browser.version();
- // Read the original HTTP response before forwarding the unchanged routing
- // module. An immediate client redirect may otherwise destroy Chrome's CDP
- // response handle before the recorder can retrieve this changed source.
+ // Authenticate each original same-origin response before forwarding its
+ // unchanged body. Navigation can retire Chrome's response handle before the
+ // asynchronous recorder reads it, including assets unrelated to a redirect.
  const captureRouteSource=async context=>{
-  for(const name of ['tabs.js','ide.js','omarchy-startup-state.js','artifacts-busybox.json','artifacts-alpine.json','artifacts-node-alpine.json','artifacts-omarchy.json','artifacts-omarchy-virgl.json'])await context.route('**/'+name,async route=>{
-   const original=await route.fetch();assert.equal(original.status(),200);
+  await context.route('**/*',async route=>{
+   const url=new URL(route.request().url());
+   if(url.origin!==new URL(base).origin||route.request().method()!=='GET'){await route.continue();return;}
+   const original=await route.fetch();
+   if(original.status()!==200){await route.fulfill({response:original});return;}
+   const rawName=url.pathname==='/'?'index.html':decodeURIComponent(url.pathname.slice(1));
+   const name=path.extname(rawName)?rawName:`${rawName}.html`;
    const bytes=await original.body(),raw=await fs.readFile(path.join(dist,name));
    const expected=remote?expectedPublishedSource(name,raw):raw;
-   assert.equal(hash(bytes),hash(expected),'original routing module drift');
+   assert.equal(hash(bytes),hash(expected),'original source drift '+name);
    const bodyPath=`original-routes/${report.originalRouteBodies.length}/${name}`;await fs.mkdir(path.dirname(path.join(output,bodyPath)),{recursive:true});
    await fs.writeFile(path.join(output,bodyPath),bytes);
    const receipt={url:route.request().url(),path:name,bodyPath,status:original.status(),bytes:bytes.length,sha256:hash(bytes),forwardedUnchanged:true};
@@ -232,26 +237,14 @@ try{
  await screenshot(phone,'mobile-reader.png');report.steps.push({name:'assembled mobile motion/search/navigation/reflow',status:'passed'});
  await Promise.all([page.waitForLoadState('networkidle'),phone.waitForLoadState('networkidle')]);
  await Promise.all(bodyReads);
- // A redirect may retire an unchanged module's CDP resource before its body
- // can be read. Keep that diagnostic, and require a successful original-body
- // capture from the normal initialized app plus unchanged baseline bytes.
- const unchangedRedirectModules=new Set(['vendor/xterm/xterm.js','coi-serviceworker-register.js','cpu-isolation.js']);
+ // Every retired response must have its own authenticated original response;
+ // a different request for the same URL cannot satisfy this receipt.
  for(const item of report.interruptedResponseBodies){
   const name=new URL(item.url).pathname.slice(1);
-  const original=report.originalRouteBodies.find(row=>row.url===item.url&&row.forwardedUnchanged&&(!item.originalBodyPath||row.bodyPath===item.originalBodyPath));
-  if(original){
-   item.originalBodyPath=original.bodyPath;item.sha256=original.sha256;
-   const raw=await fs.readFile(path.join(dist,name));
-   assert.equal(hash(await fs.readFile(path.join(output,original.bodyPath))),hash(remote?expectedPublishedSource(name,raw):raw));
-   continue;
-  }
-  assert.ok(unchangedRedirectModules.has(name),'unproven interrupted response '+name);
-  const current=await fs.readFile(path.join(dist,name));
-  const baseline=execFileSync('git',['show',`2aca65e9328aa1433fb516511ca554fdd96b422d:web/dist/${name}`],{cwd:repo,maxBuffer:16*1024*1024});
-  assert.equal(hash(current),hash(baseline),'interrupted response is changed routing code '+name);
-  const captured=report.requests.find(row=>row.path===name&&row.sha256===hash(current));
-  assert.ok(captured,'no complete original body for interrupted unchanged module '+name);
-  item.heldBodyPath=captured.bodyPath;item.sha256=captured.sha256;item.baselineHead='2aca65e9328aa1433fb516511ca554fdd96b422d';
+  const original=report.originalRouteBodies.find(row=>row.url===item.url&&row.forwardedUnchanged&&row.bodyPath===item.originalBodyPath);
+  assert.ok(original,'unproven interrupted response '+name);
+  const raw=await fs.readFile(path.join(dist,original.path));
+  assert.equal(hash(await fs.readFile(path.join(output,original.bodyPath))),hash(remote?expectedPublishedSource(original.path,raw):raw));
  }
  await Promise.all([desktop.close(),mobile.close()]);
  assert.deepEqual(report.errors,[]);assert.equal(git('rev-parse','HEAD'),report.head);assert.equal(git('status','--porcelain','--untracked-files=no'),'');
