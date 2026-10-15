@@ -133,6 +133,7 @@ export async function verifyOmarchyApplications(page, command, output, options =
         count=hash===previous?count+1:1;previous=hash;
         report.wallpaperTransitions.samples.push({label,time:Date.now(),hash,colors,...sample});await save();
         if(count>=8&&colors>=16&&BigInt(sample.clock.mtime)-BigInt(clock.mtime)>=20000000n&&hash!==different&&(!expected||hash===expected)){
+          await fs.writeFile(path.join(output,name+'-wallpaper-'+label+'.rgba'),bytes);
           const gpu=await shot('wallpaper-'+label);assert.equal(gpu.counters.failed,0);return {hash,gpu};
         }
         await sleep(750);
