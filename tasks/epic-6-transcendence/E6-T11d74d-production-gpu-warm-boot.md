@@ -3,7 +3,7 @@ id: E6-T11d74d
 epic: 6
 title: Publish and prove an accelerated Omarchy warm-boot artifact
 priority: 525.0270384
-status: implemented
+status: verified
 depends_on: [E6-T11d74c, E6-T11d74d1, E6-T11d74d2]
 estimate: S
 risk: high
@@ -194,3 +194,67 @@ runtime checks passed but worker-bootstrap CDP capture failed; source923 reads
 and authenticates the original SW cache body. Earlier wrong-API/recorder failures
 stay failed. Fresh adversarial verifier receives this sealed submission and the
 unchanged predecessor holds; only that session may set verified.
+
+
+### 2026-10-15 — fresh verifier — VERDICT: verified
+
+Independent session; no implementation or runtime fixes. Full point-by-point
+predictions, observations, coverage waivers and custody are in
+`evidence/virgl-production-gpu-warm-default/verifier/VERDICT.md`. Reviewed worker
+submission `1a172cf3bb88f12cf945a1c250badda1f8e202f6`, source db04c369,
+runtime847 and public923. This verifies the pinned GPU warm publication;
+the separately requested full Omarchy application inventory is not this claim.
+
+- CUSTODY — HELD. Rehashed all3600 worker capsule members,317 source records
+  including the diff, and all71 changed paths against Git. Worker archive
+  SHA256 `f8b2fd2f41903497bf3a6a39313cde23a2661df1b44c932ef17042a450dc6eab`.
+  Factory07 logged6297 predates freeze;14 actual executed source bodies match
+  ccc8/final worker06622. Genuine newly captured pair2aa/173104561bytes,
+  image12/kernel and saved paced-icount/div64 clock agree with public custody.
+- READINESS — HELD. Six actual Metal original-worker runs cover healthy
+  cold/warm/repeat, original old-loader refusal, withheld/cancelled/stale ACK
+  and physical context loss. Exact-source17vectors/3mutants cover remaining
+  owner flags/zero CPU; historical counters alone cannot satisfy admission.
+- USEFUL PUBLIC WORK — HELD. Actual initial/repeat HTTPS each prove literal
+  new Mesa seeds5/2, +5completed/+4draws/+256readback bytes per seed, trusted
+  Foot markers42/84 before/after, real workspace2→1, and1892/1978 nine-point
+  rAF samples with0 entirely transparent samples. Novel public seed7 equals
+  all64 pre-data pixels; genuine seed5 rejects the seed7 oracle.
+- FAILURE/NETWORK — HELD. Six real failed-restore variants stay unready and
+  show enabled, visible, hit-testable retry/cold/software, without automatic
+  fallback. Actual public1000ms override fails visibly. An original185006ms
+  pair request delay, followed unchanged to R2, survives the former180s limit
+  and restores;30s physical/CPU admission remains independent and finite.
+- SOURCE/REGRESSION — HELD. All1102 recorded public source bodies match frozen
+  Git/literal published URI rewrites. Actual production-SW bootstrap1188bytes
+  is authenticated twice. Exact-helper real-SW missing-cache and genuinely
+  wrong cached-body controls reject. All10 four-guest software/persistence
+  phases and default127/0 pass. Site14 passes8 local and8 HTTPS flows;
+  all395 original bodies per scope and exact-request retired-handle receipts
+  authenticate. Original HTTPS12/site13 recorder failures remain failed.
+- ISOLATION/COVERAGE — HELD. Final runtime847 full-history --no-local pristine
+  clone has no alternates/copied caches, scrubbed environment, all16 gates
+  passed including423 native/101JS and real web-dist. Its exact923 checkout
+  reproduces labels/recorder build and site; finaldb04 marketing-only recorder
+  runs site14. All71files/197hunks executed or have explicit declarative,
+  generated-output or test/recording waivers. Unchanged74d1/74d2 holds carry by
+  exact source and predecessor capsule digests. No remaining runtime proof gap.
+
+SUITE: promoted `tools/virgl-production/critic-warm-readiness.test.mjs` and its
+one authorized protocol-list registration. `node --test
+ tools/virgl-production/critic-warm-readiness.test.mjs` passes17 guard vectors,
+3 weakened guard mutants,11 budget vectors and2 weakened budget mutants;
+Python AST validates the registration. Independent source/capsule/interrogation
+scripts and raw negative records are preserved in the verifier capsule.
+
+Verifier capsule `evidence/virgl-production-gpu-warm-default/verifier/review.tar.gz`:
+3997729bytes, SHA256
+`8bd65228d807d1b616b00e9e0fbcda94f8f94ffdeef7e4e55a6c908fd17f8ffb`,
+1208members/1207 indexed files, every member body reopened and rehashed.
+`review.tar.gz.json` is its receipt. Predictions preceded observations; raw
+failed product/recorder/parser setup attempts are retained. No deployment,
+merge, runtime/web edit or user-owned browser operation by the verifier.
+Commands: independent `authenticate-worker.py`, `site14-authentication.py`,
+`interrogate-final.py`, `authenticate-live-sources.py` and `seal-review.py`
+(under capsule review/closure10 or review/); promoted node test; Python AST;
+`python3 tools/check_task_policy.py`, then `python3 tools/build_queue.py`.

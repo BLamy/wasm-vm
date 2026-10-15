@@ -1,0 +1,11 @@
+{
+  "schema": "independent-warm-verifier-capsule-receipt-v1",
+  "path": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-production-gpu-warm-default/verifier/review.tar.gz",
+  "bytes": 3997729,
+  "sha256": "8bd65228d807d1b616b00e9e0fbcda94f8f94ffdeef7e4e55a6c908fd17f8ffb",
+  "members": 1208,
+  "indexedFiles": 1207,
+  "uniqueBodies": 313,
+  "allMemberBodiesRehashed": true,
+  "manifestSha256": "b802edfcba594652e4e9ce073fc982df24300f6c97e20329132559bfc2419de2"
+}

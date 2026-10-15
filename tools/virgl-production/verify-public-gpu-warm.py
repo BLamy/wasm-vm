@@ -57,7 +57,8 @@ try:
                          "tools/virgl-production/critic-fast-boots-final.test.mjs",
                          "tools/virgl-production/critic-warm-ui-fixtures.test.mjs",
                          "tools/virgl-production/published-source.test.mjs",
-                         "tools/virgl-production/critic-warm-pixels.test.mjs"])
+                         "tools/virgl-production/critic-warm-pixels.test.mjs",
+                         "tools/virgl-production/critic-warm-readiness.test.mjs"])
         run("web-dist", ["make", "web-dist"])
         assert not subprocess.check_output(["git", "status", "--porcelain", "--untracked-files=no"], cwd=repo), "fresh deployable build differs from the committed bundle"
         assert hashlib.sha256((repo/"web/pkg/wasm_vm_wasm_bg.wasm").read_bytes()).digest() == hashlib.sha256((repo/"web/dist/pkg/wasm_vm_wasm_bg.wasm").read_bytes()).digest(), "committed Wasm differs"
