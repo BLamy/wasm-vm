@@ -424,7 +424,8 @@ function layoutFor(meta, fields, backingBytes, limits) {
   const direction = (fields.direction === 2 || fields.flags === 3) ? "readback" : "upload";
   const legacyDepth = depth && !meta.floatingDepth && !meta.unormDepth && !meta.packedDepth;
   const packedBytes = legacyDepth && direction === "readback" ? checkedProduct(tightBytes, 2, RESOURCE_LIMITS.scratchBytes, "Depth conversion exceeds scratch byte limit.") : tightBytes;
-  const colorScratch = color ? checkedProduct(checkedProduct(box.width, box.height, RESOURCE_LIMITS.scratchBytes, "Color transfer is too large."), direction === "readback" ? color.floatingDepth && color.stencil ? 16 : color.readPixelBytes ?? 4 : Math.max(color.pixelBytes, color.nativePixelBytes), RESOURCE_LIMITS.scratchBytes, "Native color scratch exceeds byte limit.") : 0;
+  const colorScratchLimit = depth ? RESOURCE_LIMITS.scratchBytes : limits.scratchBytes;
+  const colorScratch = color ? checkedProduct(checkedProduct(box.width, box.height, colorScratchLimit, "Color transfer is too large."), direction === "readback" ? color.floatingDepth && color.stencil ? 16 : color.readPixelBytes ?? 4 : Math.max(color.pixelBytes, color.nativePixelBytes), colorScratchLimit, "Native color scratch exceeds byte limit.") : 0;
   const nativeDepthRead = (color?.floatingDepth || color?.unormDepth || color?.packedDepth) && direction === "readback" ? checkedProduct(box.width * box.height, color.readPixelBytes, RESOURCE_LIMITS.scratchBytes, "Native depth read exceeds scratch limit.") : 0;
   const depthConversion = nativeDepthRead ? checkedProduct(box.width * box.height, color.conversionPixelBytes, RESOURCE_LIMITS.gpuBytes, "Depth conversion exceeds GPU byte limit.") : 0;
   return freeze({ kind: texture ? "texture" : "buffer", box: { ...box }, offset, rowBytes, rowCount: box.height,

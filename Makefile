@@ -2673,3 +2673,16 @@ verify-E5.5-T05c:
 verify-omarchy-dense-snapshot:
 	node --check tools/verify/omarchy-snapshot-dense.mjs
 	node tools/verify/omarchy-snapshot-dense.mjs "$${OMARCHY_DENSE_SNAPSHOT_EVIDENCE_DIR:-target/evidence/omarchy-snapshot-dense}"
+
+.PHONY: verify-E5.5-T05c1
+verify-E5.5-T05c1:
+	python3 tools/check_task_policy.py
+	git diff --check
+	node --check renderer/virgl-command/resources.mjs
+	node --check renderer/virgl-command/tests/production-color-checkpoint.mjs
+	node --check tools/virgl-production/omarchy-color-checkpoint-browser.mjs
+	node --test tools/virgl-production/omarchy-color-checkpoint.test.mjs
+	node tools/verify-virgl-resource-transfers.mjs --node-only true --output "$${OMARCHY_COLOR_LAYOUT_EVIDENCE_DIR:-target/evidence/omarchy-color-layout}"
+	wasm-pack build crates/wasm --target web --out-dir ../../target/virgl-production/pkg --features virgl-renderer,virgl-control-proof
+	$(MAKE) web-dist
+	node tools/virgl-production/omarchy-color-checkpoint-browser.mjs --output "$${OMARCHY_COLOR_CHECKPOINT_EVIDENCE_DIR:-target/evidence/omarchy-color-checkpoint-hardware}"
