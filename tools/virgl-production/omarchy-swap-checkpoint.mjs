@@ -1,0 +1,103 @@
+// Separate acceptance fixture: never install or run this in a factory capture.
+import assert from 'node:assert/strict';
+import {createHash} from 'node:crypto';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+const hash=b=>createHash('sha256').update(b).digest('hex');
+const quote=s=>"'"+s.replaceAll("'","'\\''")+"'";
+export const SWAP_PROBE_BYTES=4194304;
+
+export function swapLiteral(seed) {
+  assert.ok(Number.isSafeInteger(seed)&&seed>=0&&seed<=0xffffffff);
+  const b=Buffer.alloc(SWAP_PROBE_BYTES),block=Buffer.from(Array.from({length:256},(_,i)=>i));
+  for(let at=0;at<b.length;at+=256)b.set(block,at);
+  for(let page=0;page<1024;page++){
+    const a=BigInt(page)^BigInt(seed),v=BigInt.asUintN(64,BigInt(page)*0x9e3779b97f4a7c15n^BigInt(seed));
+    b.writeBigUInt64LE(a,page*4096);b.writeBigUInt64LE(v,page*4096+8);
+    b.writeBigUInt64LE(a^0xa5a5a5a5a5a5a5a5n,page*4096+4080);b.writeBigUInt64LE(BigInt.asUintN(64,~v),page*4096+4088);
+  }
+  return b;
+}
+
+export function swapProbeSource(directory,seed) {
+  assert.match(directory,/^\/tmp\/wvm-[a-z0-9-]+$/);
+  assert.ok(Number.isSafeInteger(seed)&&seed>=0&&seed<=0xffffffff);
+  return `import os,json,mmap,ctypes,struct,hashlib,time,re
+from pathlib import Path
+root=Path(${JSON.stringify(directory)}); size=4194304; pages=1024; seed=${seed}; mask=(1<<64)-1
+assert os.getuid()==1000 and os.sysconf('SC_PAGE_SIZE')==4096
+def start(): return Path('/proc/self/stat').read_text().rsplit(')',1)[1].split()[19]
+def swap(): return int(re.search(r'^VmSwap:\\s+(\\d+)',Path('/proc/self/status').read_text(),re.M)[1])*1024
+def write(name,value):
+ p=root/(name+'.tmp');p.write_text(json.dumps(value));p.replace(root/(name+'.json'))
+data=bytearray(bytes(range(256))*(size//256))
+for page in range(pages):
+ a=page^seed;v=((page*0x9e3779b97f4a7c15)^seed)&mask
+ data[page*4096:page*4096+16]=struct.pack('<QQ',a,v)
+ data[page*4096+4080:page*4096+4096]=struct.pack('<QQ',a^0xa5a5a5a5a5a5a5a5,~v&mask)
+m=mmap.mmap(-1,size,flags=mmap.MAP_PRIVATE|mmap.MAP_ANONYMOUS,prot=mmap.PROT_READ|mmap.PROT_WRITE);m[:]=data
+address=ctypes.addressof(ctypes.c_char.from_buffer(m))
+def mapstate():
+ with open('/proc/self/pagemap','rb',buffering=0) as f:f.seek(address//4096*8);raw=f.read(pages*8)
+ assert len(raw)==pages*8
+ entries=struct.unpack('<1024Q',raw)
+ return {'present':sum(bool(v&(1<<63)) for v in entries),'swapped':sum(bool(v&(1<<62)) for v in entries),'entriesSha256':hashlib.sha256(raw).hexdigest()}
+before=mapstate();beforeSwap=swap();assert before['present']==pages and before['swapped']==0
+m.madvise(getattr(mmap,'MADV_PAGEOUT',21));paged=mapstate();pagedSwap=swap()
+assert paged['present']==0 and paged['swapped']==pages,(before,paged,beforeSwap,pagedSwap)
+exe=Path('/proc/self/exe').resolve();elf=exe.read_bytes();assert elf[:4]==bytes([127,69,76,70]) and struct.unpack_from('<H',elf,18)[0]==243
+identity={'pid':os.getpid(),'starttime':start(),'address':address,'bytes':size,'pages':pages,'seed':seed,'expectedSha256':hashlib.sha256(data).hexdigest(),'scriptSha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),'exe':str(exe),'exeSha256':hashlib.sha256(elf).hexdigest()}
+write('paged',dict(identity,before=before,paged=paged,beforeSwapBytes=beforeSwap,pagedSwapBytes=pagedSwap))
+deadline=time.monotonic()+1200
+while not (root/'refault').exists():
+ assert time.monotonic()<deadline,'owned restore fixture deadline'
+ time.sleep(0.2)
+restoredBefore=mapstate();assert restoredBefore['present']==0 and restoredBefore['swapped']==pages
+observed=m[:];assert observed==data;after=mapstate();assert after['present']==pages and after['swapped']==0
+write('result',dict(identity,restoredBefore=restoredBefore,after=after,observedSha256=hashlib.sha256(observed).hexdigest(),afterSwapBytes=swap(),blockStats=Path('/sys/block/vda/stat').read_text()))
+m.close()
+`;
+}
+
+async function run(command,page,text,timeout=300000) {
+  const result=await command(page,text,timeout);assert.equal(result.exit,0,result.stdout+'\n'+text);return result;
+}
+async function waitJson(page,command,filename,output,label) {
+  const deadline=Date.now()+600000,probes=[];
+  do{
+    const code=`from pathlib import Path;import json;p=Path(${JSON.stringify(filename)});r=p.parent;pid=json.loads((r/'launch.json').read_text())['pid'];s=Path('/proc')/str(pid)/'stat';alive=s.exists() and s.read_text().rsplit(')',1)[1].split()[0]!='Z';print(json.dumps({'value':json.loads(p.read_text()) if p.exists() else None,'alive':alive,'stderr':(r/'probe.log').read_text()[-8192:]}))`;
+    const value=await run(command,page,'python3 -c '+quote(code));probes.push(value);
+    await fs.writeFile(path.join(output,label+'-polls.json'),JSON.stringify(probes,null,2)+'\n');
+    const parsed=JSON.parse(value.stdout.trim());assert.equal(parsed.stderr,'','actual swap probe stderr');
+    if(parsed.value)return parsed.value;
+    assert.equal(parsed.alive,true,'actual swap probe remains alive while waiting');
+    await new Promise(resolve=>setTimeout(resolve,1000));
+  }while(Date.now()<deadline);
+  throw Error('Owned swapped-page fixture did not reach '+filename);
+}
+
+export async function prepareSwapFixture(page,command,output,{name='swap-checkpoint',seed=42}={}) {
+  assert.match(name,/^[a-z0-9-]+$/);const directory='/tmp/wvm-'+name;
+  const literal=swapLiteral(seed),script=swapProbeSource(directory,seed),scriptBytes=Buffer.from(script);
+  await fs.writeFile(path.join(output,name+'-literal.bin'),literal);await fs.writeFile(path.join(output,name+'-probe.py'),scriptBytes);
+  const code=`from pathlib import Path;import os,base64,subprocess,json;assert os.getuid()==1000;p=Path(${JSON.stringify(directory)});p.mkdir(mode=0o700);s=p/'probe.py';s.write_bytes(base64.b64decode(${JSON.stringify(scriptBytes.toString('base64'))}));log=(p/'probe.log').open('wb');child=subprocess.Popen(['python3','-u',str(s)],stdin=subprocess.DEVNULL,stdout=log,stderr=subprocess.STDOUT,start_new_session=True);v={'pid':child.pid,'directory':str(p)};(p/'launch.json').write_text(json.dumps(v));print(json.dumps(v))`;
+  const launch=await run(command,page,'python3 -c '+quote(code));
+  const paged=await waitJson(page,command,directory+'/paged.json',output,name+'-paged');
+  assert.equal(paged.pid,JSON.parse(launch.stdout).pid);assert.equal(paged.scriptSha256,hash(scriptBytes));assert.equal(paged.expectedSha256,hash(literal));
+  assert.equal(paged.paged.present,0);assert.equal(paged.paged.swapped,1024);
+  const prepared={name,directory,seed,launch,paged,literalBytes:literal.length,literalSha256:hash(literal),scriptSha256:hash(scriptBytes),scope:'Separate owned anonymous swap fixture; clean factory has already been captured and contains none of these files/processes'};
+  await fs.writeFile(path.join(output,name+'-prepared.json'),JSON.stringify(prepared,null,2)+'\n');return prepared;
+}
+
+export async function refaultSwapFixture(page,command,output,prepared) {
+  const {name,directory,paged}=prepared;assert.match(directory,/^\/tmp\/wvm-[a-z0-9-]+$/);
+  const code=`from pathlib import Path;import json;p=Path(${JSON.stringify(directory)});q=json.loads((p/'paged.json').read_text());assert q['pid']==${paged.pid} and q['starttime']==${JSON.stringify(paged.starttime)};s=Path('/proc')/str(q['pid']);assert s.stat().st_uid==1000;assert s.joinpath('stat').read_text().rsplit(')',1)[1].split()[19]==q['starttime'];assert not (p/'result.json').exists() and not (p/'refault').exists();(p/'refault').write_text('after-real-restore');print(json.dumps(q))`;
+  const trigger=await run(command,page,'python3 -c '+quote(code));
+  assert.deepEqual(JSON.parse(trigger.stdout),paged,'same original paged fixture identity after restore');
+  const result=await waitJson(page,command,directory+'/result.json',output,name+'-refault');
+  for(const field of ['pid','starttime','address','seed','expectedSha256','scriptSha256','exe','exeSha256'])assert.equal(result[field],paged[field]);
+  assert.equal(result.restoredBefore.present,0);assert.equal(result.restoredBefore.swapped,1024);
+  assert.equal(result.after.present,1024);assert.equal(result.after.swapped,0);assert.equal(result.observedSha256,prepared.literalSha256);
+  const receipt={status:'passed',scope:'All4MiB page-unique literal bytes refault after real paired restore; source mapping had1024 nonresident swap PTEs',prepared,trigger,result};
+  await fs.writeFile(path.join(output,name+'-refault-result.json'),JSON.stringify(receipt,null,2)+'\n');return receipt;
+}

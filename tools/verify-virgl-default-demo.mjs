@@ -22,7 +22,7 @@ if (remoteUrl) {
   assert.equal(url.protocol, 'https:'); assert.equal(url.pathname, '/');
   assert.equal(url.search + url.hash + url.username + url.password, '');
 }
-assert.ok(['E5.5-T05c', 'E5.5-T05c1', 'E0-T27', 'E6-T11a', 'E6-T11b2', 'E6-T11c', 'E6-T11d51', 'E6-T11d52', 'E6-T11d53', 'E6-T11d54', 'E6-T11d55', 'E6-T11d56', 'E6-T11d57', 'E6-T11d58', 'E6-T11d59', 'E6-T11d60', 'E6-T11d61', 'E6-T11d62', 'E6-T11d63', 'E6-T11d64', 'E6-T11d65', 'E6-T11d66', 'E6-T11d67', 'E6-T11d68', 'E6-T11d69a','E6-T11d69b', 'E6-T11d70', 'E6-T11d71', 'E6-T11d72', 'E6-T11d73', 'E6-T11d74a', 'E6-T11d74b', 'E6-T11d74c', 'E6-T11d74d1', 'E6-T11d74d2', 'E6-T11d74d', 'E6-T11d', 'E6-T11e'].includes(task));
+assert.ok(['E5.5-T05c', 'E5.5-T05c1', 'E5.5-T05d', 'E0-T27', 'E6-T11a', 'E6-T11b2', 'E6-T11c', 'E6-T11d51', 'E6-T11d52', 'E6-T11d53', 'E6-T11d54', 'E6-T11d55', 'E6-T11d56', 'E6-T11d57', 'E6-T11d58', 'E6-T11d59', 'E6-T11d60', 'E6-T11d61', 'E6-T11d62', 'E6-T11d63', 'E6-T11d64', 'E6-T11d65', 'E6-T11d66', 'E6-T11d67', 'E6-T11d68', 'E6-T11d69a','E6-T11d69b', 'E6-T11d70', 'E6-T11d71', 'E6-T11d72', 'E6-T11d73', 'E6-T11d74a', 'E6-T11d74b', 'E6-T11d74c', 'E6-T11d74d1', 'E6-T11d74d2', 'E6-T11d74d', 'E6-T11d', 'E6-T11e'].includes(task));
 const output = path.resolve(process.argv[3]), root = path.join(repo, 'web/dist');
 await fs.mkdir(output, { recursive: true });
 const report = { schema: 1, task, status: 'running',
@@ -92,7 +92,7 @@ try {
   const capability = page.locator('.cap', { hasText: 'Scalar memory across virtual-page boundaries' });
   report.roadmapPip = await capability.locator('.cap-pip').getAttribute('class');
   assert.match(report.roadmapPip, /\blive\b/);
-  if (['E5.5-T05c','E5.5-T05c1'].includes(task)) {
+  if (['E5.5-T05c','E5.5-T05c1','E5.5-T05d'].includes(task)) {
     const applications = page.locator('.cap', {hasText: 'Native desktop applications'});
     report.applicationsRoadmapPip = await applications.locator('.cap-pip').getAttribute('class');
     assert.match(report.applicationsRoadmapPip, /\bin-progress\b/);
@@ -101,7 +101,7 @@ try {
   const graphics = page.locator('.cap', { hasText: 'Guest GPU offload' });
   report.graphicsRoadmapPip = await graphics.locator('.cap-pip').getAttribute('class');
   assert.match(report.graphicsRoadmapPip, /\bpartial\b/);
-  if (['E5.5-T05c','E5.5-T05c1','E6-T11d74d','E6-T11d','E6-T11e'].includes(task)) assert.match(await graphics.textContent(), /qualified GPU warm boots/);
+  if (['E5.5-T05c','E5.5-T05c1','E5.5-T05d','E6-T11d74d','E6-T11d','E6-T11e'].includes(task)) assert.match(await graphics.textContent(), /qualified GPU warm boots/);
   else if (['E6-T11d67','E6-T11d68','E6-T11d69a','E6-T11d69b','E6-T11d70','E6-T11d71','E6-T11d72','E6-T11d73','E6-T11d74a', 'E6-T11d74b', 'E6-T11d74c', 'E6-T11d74d1', 'E6-T11d74d2','E6-T11d','E6-T11e'].includes(task)) assert.match(await graphics.textContent(), /qualified GPU (?:cold|warm) boots/);
   else assert.match(await graphics.textContent(), /production acceleration disabled/);
   if (task === 'E6-T11d74d2') assert.match(await page.locator('.cap', {hasText: 'Production desktop GPU capacity'}).textContent(), /512.*32.*64/);

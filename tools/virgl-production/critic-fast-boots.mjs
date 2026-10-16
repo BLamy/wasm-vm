@@ -34,11 +34,15 @@ const saveOnRepeat = process.env.CRITIC_FAST_BOOT_SAVE_ON_REPEAT === '1';
 const gpuTrace = process.env.CRITIC_FAST_BOOT_GPU_TRACE === '1';
 const captureGpuPair = process.env.CRITIC_FAST_BOOT_CAPTURE_GPU_PAIR === '1';
 const applicationWorkload = process.env.CRITIC_FAST_BOOT_APPLICATIONS === '1';
+const restoredApplications = process.env.CRITIC_FAST_BOOT_RESTORED_APPLICATIONS === '1';
+const swapCheckpoint = process.env.CRITIC_FAST_BOOT_SWAP === '1';
 const shellIpcWorkload = process.env.CRITIC_FAST_BOOT_SHELL_IPC === '1';
 const applicationContinuation = process.env.CRITIC_FAST_BOOT_APPLICATION_CONTINUATION === '1';
 const applicationComponent=process.env.CRITIC_FAST_BOOT_APPLICATION_COMPONENT;
 assert.ok(applicationComponent===undefined||applicationComponent==='writer','known explicit application component');
 const remoteUrl = process.env.CRITIC_FAST_BOOT_URL;
+if(restoredApplications)assert.ok(warmGpu&&!applicationWorkload&&!captureGpuPair&&!swapCheckpoint,'restored application launch proof uses its own warm session');
+if(swapCheckpoint)assert.ok(guests.length===1&&guests[0]==='omarchy'&&!coldGpu&&!captureGpuPair&&!applicationWorkload&&!restoredApplications&&!remoteUrl,'separate local Omarchy warm swap fixture, never the clean factory or publication timing');
 const failureHoldMs=Number(process.env.CRITIC_FAST_BOOT_HOLD_FAILURE_MS||1800000);
 assert.ok(Number.isSafeInteger(failureHoldMs)&&failureHoldMs>=60000&&failureHoldMs<=7200000,'bounded diagnostic hold');
 if(applicationContinuation)assert.ok(applicationWorkload&&warmGpu&&localGpuPairFile&&candidateDirectory&&!remoteUrl,
@@ -59,7 +63,7 @@ noteRecorderMemory();const recorderMemoryTimer=setInterval(noteRecorderMemory,30
 if(gpuTrace)await fs.writeFile(path.join(output,'gpu.ndjson'),'');
 const report = {status:'running', scope:'actual production UI fast boots and repeat launches',
   head:execFileSync('git',['rev-parse','HEAD'],{cwd:repo,encoding:'utf8'}).trim(),
-  webRoot:web, releaseCache, saveOnRepeat, gpuTrace, remoteUrl, warmGpu, applicationContinuation, phases:[], requests:[], remoteFetches:[], liveSources:[], sourceHashes:{}, harnessHashes:{}, errors:[]};
+  webRoot:web, releaseCache, saveOnRepeat, gpuTrace, remoteUrl, warmGpu, applicationContinuation, restoredApplications, swapCheckpointMode:swapCheckpoint, phases:[], requests:[], remoteFetches:[], liveSources:[], sourceHashes:{}, harnessHashes:{}, errors:[]};
 if(applicationComponent)report.applicationComponent={name:applicationComponent,scope:'Only missing native Writer/Node/npm/wallpaper and final desktop proof; not Chromium/SVG or publication timing.'};
 for(const filename of ['critic-fast-boots.mjs','critic-fast-boots-input.mjs','critic-fast-boots-bar-content.mjs','critic-fast-boots-final.mjs','critic-desktop-actions.mjs','critic-warm-pixels.mjs','published-source.mjs','critic-canvas-observation.mjs']){
   const bytes=await fs.readFile(path.join(repo,'tools/virgl-production',filename));
@@ -74,27 +78,31 @@ if(shellIpcWorkload){
 }
 const applicationExecutables={};
 const applicationProofAssets=new Map();
-if(applicationWorkload){
+if(applicationWorkload||restoredApplications){
   assert.ok(acceleratedGpu,'native application acceptance uses the qualified GPU route');
-  for(const filename of ['omarchy-applications.mjs','application-identity.mjs']){
+  for(const filename of ['omarchy-applications.mjs','application-identity.mjs',...(restoredApplications?['omarchy-restored-app-launches.mjs']:[])]){
     const bytes=await fs.readFile(path.join(repo,'tools/virgl-production',filename));
     report.harnessHashes[filename]=hash(bytes);
     await fs.writeFile(path.join(output,'executed-harness',filename),bytes);
   }
   const inventoryFile=path.resolve(process.env.CRITIC_FAST_BOOT_APPLICATION_INVENTORY||path.join(repo,'target/evidence/omarchy-native-app-image-final01/runtime-elf.json'));
   const inventoryBytes=await fs.readFile(inventoryFile),inventory=JSON.parse(inventoryBytes);
-  for(const filename of ['usr/lib/chromium/chromium','usr/lib/libreoffice/program/soffice.bin','usr/bin/node']){
+  for(const filename of ['usr/lib/chromium/chromium','usr/lib/libreoffice/program/soffice.bin','usr/bin/node',...(restoredApplications?['usr/lib/gcr-prompter']:[])]){
     const entries=inventory.filter(row=>row.path===filename);assert.equal(entries.length,1);
     const entry=entries[0];assert.equal(entry.machine,243);assert.match(entry.sha256,/^[0-9a-f]{64}$/);
     applicationExecutables['/'+filename]=entry.sha256;
   }
   report.applicationImageInventory={path:inventoryFile,sha256:hash(inventoryBytes),executables:applicationExecutables};
   await fs.writeFile(path.join(output,'input-runtime-elf.json'),inventoryBytes);
-  for(const filename of ['renderer/virgl-command/tests/production-shader-padding.mjs','renderer/virgl-command/tests/omarchy-chromium-shader-padding.json']){
+  for(const filename of applicationWorkload?['renderer/virgl-command/tests/production-shader-padding.mjs','renderer/virgl-command/tests/omarchy-chromium-shader-padding.json']:[]){
     const body=await fs.readFile(path.join(repo,filename));applicationProofAssets.set('/'+filename,body);
     report.harnessHashes[filename]=hash(body);
     const copy=path.join(output,'executed-harness',filename);await fs.mkdir(path.dirname(copy),{recursive:true});await fs.writeFile(copy,body);
   }
+}
+if(swapCheckpoint){
+  const filename='omarchy-swap-checkpoint.mjs',bytes=await fs.readFile(path.join(repo,'tools/virgl-production',filename));
+  report.harnessHashes[filename]=hash(bytes);await fs.writeFile(path.join(output,'executed-harness',filename),bytes);
 }
 let browser, server, activePage, phase = 'inventory';
 const sourcePaths = ['index.html','main.js','loader.js','linux-worker.js','linux-worker-protocol.js',
@@ -196,7 +204,7 @@ function checkPin(bytes,pin,pathname) {
 async function serveFile(response, filename, pathname, record) {
   const stat = await fs.stat(filename);
   assert.ok(stat.isFile());
-  if(applicationWorkload&&/\.(?:m?js|wasm)$/.test(filename)){
+  if((applicationWorkload||restoredApplications)&&/\.(?:m?js|wasm)$/.test(filename)){
     if(!localRuntimeBodies.has(filename))localRuntimeBodies.set(filename,(async()=>{
       const bytes=await fs.readFile(filename),relative=path.relative(web,filename);assert.ok(!relative.startsWith('..'));
       const bodyPath=path.join('served-runtime',relative),copy=path.join(output,bodyPath);await fs.mkdir(path.dirname(copy),{recursive:true});await fs.writeFile(copy,bytes);
@@ -232,15 +240,16 @@ if (!remoteUrl) server=createServer(async (request,response)=>{
         'Cross-Origin-Opener-Policy':'same-origin','Cross-Origin-Embedder-Policy':'require-corp'}).end(bytes);return;
     }
     const upload=pathname.match(/^\/__factory-gpu-pair\/(\d+)\/(\d+)$/);
-    if(captureGpuPair&&request.method==='POST'&&upload){
+    if((captureGpuPair||swapCheckpoint)&&request.method==='POST'&&upload){
+      const label=captureGpuPair?'factory':'swap';
       const offset=Number(upload[1]),total=Number(upload[2]);
       assert.ok(Number.isSafeInteger(total)&&total>0&&total<=512*1024*1024,'factory pair budget');
-      if(!factoryUpload){assert.equal(offset,0);factoryUpload={file:await fs.open(path.join(output,'factory.wvgpair'),'wx'),hash:createHash('sha256'),written:0,total};}
+      if(!factoryUpload){assert.equal(offset,0);factoryUpload={file:await fs.open(path.join(output,label+'.wvgpair'),'wx'),hash:createHash('sha256'),written:0,total};}
       assert.equal(total,factoryUpload.total);assert.equal(offset,factoryUpload.written);assert.ok(factoryUpload.file,'factory already complete');
       const parts=[];let size=0;for await(const part of request){size+=part.length;assert.ok(size<=1024*1024,'bounded recorder request');parts.push(part);}
       assert.ok(size>0&&size<=total-offset);const bytes=Buffer.concat(parts);await factoryUpload.file.writeFile(bytes);factoryUpload.hash.update(bytes);factoryUpload.written+=size;
       let pin={written:factoryUpload.written,total,complete:false};
-      if(factoryUpload.written===total){await factoryUpload.file.close();factoryUpload.file=null;pin={path:'factory.wvgpair',bytes:total,sha256:factoryUpload.hash.digest('hex'),complete:true};await fs.writeFile(path.join(output,'factory-upload.json'),JSON.stringify(pin,null,2)+'\n');}
+      if(factoryUpload.written===total){await factoryUpload.file.close();factoryUpload.file=null;pin={path:label+'.wvgpair',bytes:total,sha256:factoryUpload.hash.digest('hex'),complete:true};await fs.writeFile(path.join(output,label+'-upload.json'),JSON.stringify(pin,null,2)+'\n');}
       record.status=200;record.uploadBytes=size;record.written=factoryUpload.written;
       response.writeHead(200,{'Content-Type':'application/json'}).end(JSON.stringify(pin));return;
     }
@@ -305,7 +314,7 @@ if (!remoteUrl) server=createServer(async (request,response)=>{
 if (server) await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
 const origin=remoteUrl ? new URL(remoteUrl).origin : 'http://127.0.0.1:'+server.address().port;
 let expectedGpuPair;
-async function readExpectedGpuPair() {
+async function readExpectedGpuPair(label='expected-gpu-pair') {
   if (!warmGpu) return;
   const descriptor = JSON.parse(candidateDescriptorBytes ?? await fs.readFile(path.join(web, 'artifacts-omarchy-virgl.json')));
   const pin = descriptor.artifacts.gpuCheckpoint;
@@ -333,7 +342,7 @@ async function readExpectedGpuPair() {
         uncompressedBytes: part.length, uncompressedSha256: part.sha256}];
     }))};
   report.expectedGpuPair = expectedGpuPair;
-  await fs.writeFile(path.join(output, 'expected-gpu-pair.json'), JSON.stringify(expectedGpuPair, null, 2) + '\n');
+  await fs.writeFile(path.join(output, label+'.json'), JSON.stringify(expectedGpuPair, null, 2) + '\n');
 }
 function observeOriginalWorker(){
   globalThis.__fastBootCritic={events:[],serial:'',workerBoots:[],errors:[],wire:[],timerGaps:[],wireTotals:{}};
@@ -622,10 +631,10 @@ try{
     const url=origin+'/app?'+query+'#ide';
     for(const round of coldGpu||captureGpuPair||applicationContinuation?['initial']:['initial','repeat']){
       phase=guest+'-'+round;let started=Date.now();
-      let repeatCheckpoint,phaseEgl,publicDesktopInput,publicDesktopFinal,warmPixels,warmTiming,postWorkloadInput;
+      let repeatCheckpoint,phaseEgl,publicDesktopInput,publicDesktopFinal,warmPixels,warmTiming,postWorkloadInput,restoredAppLaunches,swapResult;
       if(round==='initial')await page.goto(url);
       else {
-        if(saveOnRepeat&&['alpine','node-alpine'].includes(guest)) {
+        if(saveOnRepeat&&!swapCheckpoint&&!acceleratedGpu&&['alpine','node-alpine','omarchy'].includes(guest)) {
           // Guest reads can dirty atime/history and advance the durable disk.
           // Save the live RAM/disk pair through the public paused/flush boundary
           // instead of trying the old shipped RAM against a changed overlay.
@@ -663,7 +672,7 @@ try{
       assert.equal(result.exit,0,phase+' live guest command');
       assert.match(result.stdout,guest==='node-alpine'?/FAST_NODE_42_PASS/:/FAST_.*_42_PASS/);
       const state=await snapshot(page);
-      if(warmGpu&&!captureGpuPair&&!applicationContinuation)warmTiming=gpuWarmTiming(state,round);
+      if(warmGpu&&!captureGpuPair&&!applicationContinuation&&!swapCheckpoint)warmTiming=gpuWarmTiming(state,round);
       assert.equal(state.restored,!coldGpu,phase+' selected cold/warm path');
       assert.ok(state.workers.length>=1,phase+' actual worker');
       assert.deepEqual(state.workerErrors,[]);
@@ -697,6 +706,7 @@ try{
             const {verifyOmarchyApplications}=await import('./omarchy-applications.mjs');
             report.applications=await verifyOmarchyApplications(page,guestCommand,output,{name:phase+'-native-applications',executables:applicationExecutables,component:applicationComponent});
           }
+          if(!swapCheckpoint){
           const {verifyPublicDesktopInput}=await import('./critic-fast-boots-input.mjs');
           const captureFactory=captureGpuPair?async({foot,barContent})=>{
             const active=await guestCommand(page,'XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j activewindow',300000);assert.equal(active.exit,0);assert.equal(JSON.parse(active.stdout).pid,foot.pid,'factory captures actual Foot, not the screensaver');
@@ -749,22 +759,72 @@ try{
             const {verifyOmarchyShellIpc}=await import('./omarchy-shell-ipc.mjs');
             report.shellIpc=await verifyOmarchyShellIpc(page,guestCommand,output,{name:phase+'-shell-ipc'});
           }
+          if(restoredApplications&&round==='repeat'){
+            const {verifyRestoredApplicationLaunches}=await import('./omarchy-restored-app-launches.mjs');
+            restoredAppLaunches=await verifyRestoredApplicationLaunches(page,guestCommand,output,{name:phase+'-restored-applications',executables:applicationExecutables});
+            report.restoredAppLaunches=restoredAppLaunches;
+          }
           report.publicDesktopFinal=await snapshot(page);
           publicDesktopFinal=report.publicDesktopFinal;
           report.publicDesktopFinal.pageErrors=[...pageErrors];
           await fs.writeFile(path.join(output,phase+'-public-desktop-final.json'),JSON.stringify(report.publicDesktopFinal,null,2)+'\n');
           assertPublicDesktopFinal(report.publicDesktopFinal);
-
+          }
+        }
+      }
+      if(swapCheckpoint){
+        const {prepareSwapFixture,refaultSwapFixture}=await import('./omarchy-swap-checkpoint.mjs');
+        if(round==='initial'){
+          const prepared=await prepareSwapFixture(page,guestCommand,output,{name:'swap-checkpoint',seed:42});
+          const sync=await guestCommand(page,'sync',300000);assert.equal(sync.exit,0);
+          report.swapFixture={scope:'Separate nonresident anonymous mapping across actual paired checkpoint restore; never a clean factory or cached-publication latency claim',prepared,sync,sourceDocumentTimeOrigin:await page.evaluate(()=>performance.timeOrigin)};
+          if(acceleratedGpu){
+            const saved=await page.evaluate(async()=>{
+              const c=window.__linuxCtl;await c.pause();
+              const before={clock:await c.guestClockState(),scheduler:await c.schedulerStats()};
+              const bytes=await c.saveGpuCheckpoint();
+              const after={clock:await c.guestClockState(),scheduler:await c.schedulerStats()};let pin;
+              for(let at=0;at<bytes.length;at+=1024*1024){
+                const response=await fetch('/__factory-gpu-pair/'+at+'/'+bytes.length,{method:'POST',body:bytes.subarray(at,Math.min(bytes.length,at+1024*1024))});
+                if(!response.ok)throw Error('swap pair recording failed');pin=await response.json();
+              }
+              if(!pin?.complete)throw Error('swap pair recording is incomplete');return {before,after,pin,paused:await c.isPaused()};
+            });
+            assert.deepEqual(saved.after.clock,saved.before.clock);assert.equal(saved.after.scheduler.retiredInstructions,saved.before.scheduler.retiredInstructions);assert.equal(saved.paused,true);
+            localGpuPair=await fs.readFile(path.join(output,saved.pin.path));checkPin(localGpuPair,{size:saved.pin.bytes,sha256:saved.pin.sha256},'saved swapped-page pair');
+            const descriptor=JSON.parse(candidateDescriptorBytes??await fs.readFile(path.join(web,'artifacts-omarchy-virgl.json')));
+            descriptor.artifacts.gpuCheckpoint={url:'/__bootstrap-gpu-pair',size:localGpuPair.length,sha256:hash(localGpuPair)};
+            candidateDescriptorBytes=Buffer.from(JSON.stringify(descriptor,null,2)+'\n');await fs.writeFile(path.join(output,'swap-artifacts.json'),candidateDescriptorBytes);
+            report.swapFixture.saved=saved;report.swapFixture.initialExpectedGpuPair=expectedGpuPair;
+            await readExpectedGpuPair('swap-expected-gpu-pair');report.swapFixture.savedExpectedGpuPair=expectedGpuPair;
+          }else{
+            await page.evaluate(()=>window.__linuxCtl.pause());
+            const before=await page.evaluate(async()=>({clock:await __linuxCtl.guestClockState(),scheduler:await __linuxCtl.schedulerStats()}));
+            const saved=await page.evaluate(()=>window.wvmDemo.snapshotSave());assert.equal(saved.ok,true,'real persistent software snapshot');
+            const after=await page.evaluate(async()=>({clock:await __linuxCtl.guestClockState(),scheduler:await __linuxCtl.schedulerStats(),paused:await __linuxCtl.isPaused(),generation:await __snapshotGeneration(),decision:await __snapshotDecision()}));
+            assert.deepEqual(after.clock,before.clock);assert.equal(after.scheduler.retiredInstructions,before.scheduler.retiredInstructions);assert.equal(after.paused,true);assert.equal(after.decision,'resume');
+            report.swapFixture.saved={before,after,result:saved};
+          }
+          swapResult=report.swapFixture;
+          await fs.writeFile(path.join(output,'swap-capture.json'),JSON.stringify(report.swapFixture,null,2)+'\n');
+        }else{
+          assert.notEqual(await page.evaluate(()=>performance.timeOrigin),report.swapFixture.sourceDocumentTimeOrigin,'actual reload creates a fresh document and worker');
+          assert.equal(state.workers.length,1,'fresh worker boots once');
+          if(!acceleratedGpu)assert.equal(await page.evaluate(()=>__snapshotGeneration()),report.swapFixture.saved.after.generation,'software restores the exact saved disk generation');
+          swapResult=await refaultSwapFixture(page,guestCommand,output,report.swapFixture.prepared);report.swapFixture.restored=swapResult;
+          const final=await snapshot(page);final.pageErrors=[...pageErrors];assert.deepEqual(final.workerErrors,[]);assert.deepEqual(final.pageErrors,[]);
+          if(acceleratedGpu)assertPublicDesktopFinal(final);
+          await fs.writeFile(path.join(output,'swap-restored-state.json'),JSON.stringify(final,null,2)+'\n');
         }
       }
       const screenshot=phase+'.png';await page.screenshot({path:path.join(output,screenshot),fullPage:true});
       await Promise.all(liveReads); await captureWorkerShellSources(); assert.deepEqual(liveReadErrors, [], 'published original source bodies');
-      report.phases.push({phase,guest,round,url,restoredMs,commandTimeoutMs,liveCommandMs:Date.now()-started-restoredMs,result,state,screenshot,repeatCheckpoint,phaseEgl,publicDesktopInput,publicDesktopFinal,warmPixels,warmTiming,postWorkloadInput});
+      report.phases.push({phase,guest,round,url,restoredMs,commandTimeoutMs,liveCommandMs:Date.now()-started-restoredMs,result,state,screenshot,repeatCheckpoint,phaseEgl,publicDesktopInput,publicDesktopFinal,warmPixels,warmTiming,postWorkloadInput,restoredAppLaunches,swapResult});
       await fs.writeFile(path.join(output,phase+'.json'),JSON.stringify(report.phases.at(-1),null,2));
       console.log(JSON.stringify({phase,restoredMs,result,display:state.display?.successfulPresents,databases:state.databases}));
     }
-    if(snapshotPersistence&&['alpine','node-alpine'].includes(guest)){
-      phase=guest+'-persistence';const marker='/root/critic-fast-boot-'+guest;
+    if(snapshotPersistence&&!acceleratedGpu&&!swapCheckpoint&&['alpine','node-alpine','omarchy'].includes(guest)){
+      phase=guest+'-persistence';const marker=(guest==='omarchy'?'/home/omarchy/':'/root/')+'critic-fast-boot-'+guest;
       const write=await guestCommand(page,`printf 'DURABLE_${guest}_42_PASS' > ${marker}; sync`,180000);
       assert.equal(write.exit,0);
       await page.evaluate(()=>window.__linux.pause());
@@ -781,6 +841,12 @@ try{
       report.phases.push({phase,restoredMs:Date.now()-started,write,read,before,generation,state,checkpoint});
       await fs.writeFile(path.join(output,phase+'.json'),JSON.stringify(report.phases.at(-1),null,2));
       console.log(JSON.stringify({phase,restoredMs:Date.now()-started,before,generation,read}));
+    }
+    if(snapshotPersistence&&guest==='busybox'){
+      const checkpoint=await page.evaluate(()=>window.wvmDemo.snapshotSave());
+      assert.equal(checkpoint.ok,false);assert.equal(checkpoint.code,'SNAPSHOT_NOT_PERSISTENT');
+      const result={phase:'busybox-persistence-capability',checkpoint,scope:'Flat BusyBox initramfs has no persistent chunked disk; the two shipped-snapshot fast boots above remain the supported repeat path'};
+      report.phases.push(result);await fs.writeFile(path.join(output,'busybox-persistence-capability.json'),JSON.stringify(result,null,2)+'\n');
     }
     await page.evaluate(()=>window.__linuxCtl?.stop?.()).catch(()=>{});
     await Promise.all(liveReads); await captureWorkerShellSources(); assert.deepEqual(liveReadErrors, [], 'published original source bodies');
