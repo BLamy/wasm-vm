@@ -10,7 +10,8 @@ const stall=ms=>{const until=performance.now()+ms;while(performance.now()<until)
 test('physical key and mouse releases survive a blocked recorder event loop',{timeout:30000},async()=>{
   const output=process.env.OMARCHY_INPUT_TEST_OUTPUT||await fs.mkdtemp(path.join(os.tmpdir(),'wasm-vm-input-test-'));
   await fs.mkdir(output,{recursive:true});
-  const report={status:'running',scope:'Real Chrome trusted DOM events under an intentionally blocked recorder; no guest runtime claim',pageErrors:[]};
+  const report={status:'running',scope:'Real Chrome trusted DOM events under an intentionally blocked recorder; no guest runtime claim',
+    clock:{timeOrigin:performance.timeOrigin,unit:'process-monotonic milliseconds'},stalls:[],pageErrors:[]};
   const browser=await chromium.launch({headless:true,executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',args:['--remote-debugging-port=0']});
   let driver;
   try{
@@ -30,7 +31,7 @@ test('physical key and mouse releases survive a blocked recorder event loop',{ti
     // Sabotage control: the old in-process timer really manufactures a long hold.
     await page.keyboard.down('m');
     const delayedRelease=new Promise(resolve=>setTimeout(resolve,50)).then(()=>page.keyboard.up('m'));
-    stall(800);await delayedRelease;
+    report.controlStall={started:performance.now()};stall(800);report.controlStall.finished=performance.now();await delayedRelease;
     report.control=await page.evaluate(()=>({events:[...events],frames:[...frames]}));
     const controlDown=report.control.events.find(row=>row.type==='keydown'&&row.code==='KeyM');
     const controlUp=report.control.events.find(row=>row.type==='keyup'&&row.code==='KeyM');
@@ -40,9 +41,35 @@ test('physical key and mouse releases survive a blocked recorder event loop',{ti
     assert.throws(()=>assertPhysicalKeyHolds(report.control.events),/short physical key hold exceeded/);
     assert.ok(report.control.frames.filter(time=>time>controlDown.time&&time<controlUp.time).length>=10,'browser keeps running while the recorder is blocked');
     await page.evaluate(()=>{events.length=0;frames.length=0;});
-    driver=await attachIsolatedInput(browser,page,path.join(output,'input.ndjson'));
-    const typing=page.keyboard.type('mm',{delay:50});stall(800);await typing;
-    const clicking=page.mouse.click(120,120,{delay:120});stall(800);await clicking;
+    const inputLog=path.join(output,'input.ndjson');
+    driver=await attachIsolatedInput(browser,page,inputLog);
+    const duringStall=async(label,method,action)=>{
+      const receipt={label,started:performance.now()};report.stalls.push(receipt);
+      const pending=action();receipt.busyStarted=performance.now();stall(800);receipt.finished=performance.now();await pending;
+      const rows=(await fs.readFile(inputLog,'utf8')).trim().split('\n').map(line=>JSON.parse(line));
+      const operation=rows.find(row=>row.kind==='operation-start'&&row.method===method&&row.time>=receipt.started);
+      assert.ok(operation,label+' has a correlated physical input operation');
+      const completed=rows.find(row=>row.kind==='operation-end'&&row.request===operation.request);
+      assert.ok(completed,label+' physical input operation completed');
+      receipt.operation={request:operation.request,method,args:operation.args,started:operation.time,finished:completed.time};
+      const dispatched=rows.filter(row=>row.kind==='dispatch'&&row.time>=operation.time&&row.time<=completed.time);
+      const make=dispatched.find(row=>row.params?.type==='keyDown'||row.params?.type==='mousePressed');
+      assert.ok(make,label+' has a physical make');
+      const release=dispatched.find(row=>row.time>=make.time&&(make.params.type==='keyDown'
+        ?row.params?.type==='keyUp'&&row.params.code===make.params.code
+        :row.params?.type==='mouseReleased'&&row.params.button===make.params.button));
+      assert.ok(release,label+' has a matching physical release');
+      const makeAck=rows.find(row=>row.kind==='ack'&&row.id===make.id);
+      const releaseAck=rows.find(row=>row.kind==='ack'&&row.id===release.id);
+      assert.ok(makeAck&&releaseAck,label+' physical make and release were acknowledged');
+      receipt.firstCycle={make,makeAck,release,releaseAck};
+      for(const [step,row]of Object.entries(receipt.firstCycle))
+        assert.ok(row.time>=receipt.started&&row.time<receipt.finished,label+' '+step+' occurs inside the recorded parent stall');
+      assert.ok(release.time>=receipt.busyStarted&&releaseAck.time>=receipt.busyStarted,
+        label+' physical release completes while the parent event loop is blocked');
+    };
+    await duringStall('letters','keyboard.type',()=>page.keyboard.type('mm',{delay:50}));
+    await duringStall('pointer','mouse.click',()=>page.mouse.click(120,120,{delay:120}));
     await page.keyboard.press('Meta+Alt+Space',{delay:50});
     report.isolated=await page.evaluate(()=>({events:[...events],frames:[...frames]}));
     const letters=report.isolated.events.filter(row=>row.code==='KeyM');
@@ -63,7 +90,7 @@ test('physical key and mouse releases survive a blocked recorder event loop',{ti
     assert.ok(chord.every(row=>row.trusted));assert.ok(chord[2].alt&&chord[2].meta);
     report.isolatedTiming=assertPhysicalKeyHolds(report.isolated.events);
     await page.evaluate(()=>{events.length=0;});
-    const search=page.keyboard.type('libreoffice writer',{delay:100});stall(800);await search;
+    await duringStall('complete-query','keyboard.type',()=>page.keyboard.type('libreoffice writer',{delay:100}));
     report.search=await page.evaluate(()=>[...events]);
     assert.equal(report.search.filter(row=>row.type==='keydown').map(row=>row.key).join(''),'libreoffice writer');
     assert.equal(report.search.length,36);assert.ok(report.search.every(row=>row.trusted&&!row.repeat));
