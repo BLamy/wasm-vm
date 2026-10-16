@@ -264,3 +264,21 @@ parameters use the pinned Gallium mapping. Reversed LOD limits have undefined
 sampling under GLES; their parameter values are preserved. Texture storage is
 still the proven single-level 2D profile, and shadow/border/anisotropy/nonzero LOD
 bias remain gated. Legacy finite admissions and native parameter shape stay intact.
+
+The production factory additionally consumes original RESOURCE_COPY_REGION17
+with the thirteen-dword layout pinned in `virgl_protocol.h`. Its current native
+consumer requires matching single-sample 2D RGBA8/BGRA8 renderable images. It
+copies exactly the source extent to the destination origin with nearest native
+framebuffer transfer, without scaling or format conversion. Both resources must
+belong to the submitting context. Temporary leases and completion holds retain
+their exact allocations through the GPU fence; a successful destination write
+invalidates derived image views. Other copy binding/format/sample classes reject.
+
+Production BLIT can read and write different mip levels of the same allocation.
+The same image at the same level still rejects, as do invalid levels, layers,
+rectangles and format reinterpretation. This supplies the original packaged
+wallpaper's base copy and ten-level mip chain. The hardware regression retains
+the original complete-job bytes and checks the full 1422x800 base, every mip,
+nonzero subregions, varying alpha, rejection accounting and fenced retirement.
+Run `node tools/virgl-production/omarchy-resource-copy-wire.mjs` and
+`node tools/virgl-production/omarchy-resource-copy-browser.mjs --output <new-dir>`.

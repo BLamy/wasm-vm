@@ -2167,17 +2167,23 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           for (const buffer of sub.vertexBuffers) if (buffer) release(buffer.lease);
           sub.vertexBuffers = buffers; break;
         }
-        case 16: {
-          require(production && job, "unsupported-blit", "BLIT requires a retained production job.");
+        case 16: case 17: {
+          require(production && job, "unsupported-blit", "Image copies require a retained production job.");
           let source = null, destination = null;
-          const role = fields.mask & 48 ? "depth-surface" : "surface";
+          const copying = op === 17, role = !copying && fields.mask & 48 ? "depth-surface" : "surface";
           try {
             source = retain(ctx,fields.source.resourceHandle,role,["texture","mip-texture","depth-texture","mip-depth-texture"]);
             destination = retain(ctx,fields.destination.resourceHandle,role,["texture","mip-texture","depth-texture","mip-depth-texture"]);
+            require(!copying || source.metadata.nrSamples === 0 && destination.metadata.nrSamples === 0 &&
+              [1, 67].includes(source.metadata.format) && source.metadata.format === destination.metadata.format,
+              "unsupported-blit", "Resource copies require matching single-sample RGBA8 or BGRA8 images.");
+            const blit = copying ? {mask: 15, filter: 0, scissor: null,
+              source: {...fields.source, format: source.metadata.format},
+              destination: {...fields.destination, format: destination.metadata.format}} : fields;
             for (const entry of [source,destination]) if (!job.imageSources.has(entry.resourceGeneration)) {
               const held = unwrap(imageAccess.holdStorage(entry.lease));job.imageSources.set(held.generation,held.token);
             }
-            executeFramebufferBlit(gl,fields,resolve(source.lease),resolve(destination.lease),require,check);
+            executeFramebufferBlit(gl,blit,resolve(source.lease),resolve(destination.lease),require,check);
             unwrap(imageAccess.markWritten(destination.lease));return;
           } finally {if (source) release(source.lease);if (destination) release(destination.lease);}
         }

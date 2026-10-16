@@ -87,7 +87,7 @@ const COMMAND_NAMES = Object.freeze({
   4: "SET_VIEWPORT_STATE", 5: "SET_FRAMEBUFFER_STATE", 6: "SET_VERTEX_BUFFERS",
   7: "CLEAR", 8: "DRAW_VBO", 9: "RESOURCE_INLINE_WRITE", 10: "SET_SAMPLER_VIEWS", 11: "SET_INDEX_BUFFER",
   12: "SET_CONSTANT_BUFFER", 13: "SET_STENCIL_REF", 14: "SET_BLEND_COLOR",
-  15: "SET_SCISSOR_STATE", 16: "BLIT",
+  15: "SET_SCISSOR_STATE", 16: "BLIT", 17: "RESOURCE_COPY_REGION",
   18: "BIND_SAMPLER_STATES", 19: "BEGIN_QUERY", 20: "END_QUERY", 21: "GET_QUERY_RESULT", 22: "SET_POLYGON_STIPPLE", 24: "SET_SAMPLE_MASK",
   25: "SET_STREAMOUT_TARGETS", 28: "SET_SUB_CTX", 29: "CREATE_SUB_CTX",
   30: "DESTROY_SUB_CTX", 31: "BIND_SHADER", 32: "SET_TESS_STATE",
@@ -538,6 +538,16 @@ function decodeFields(p, objectType) {
       const box = index => ({resourceHandle:p.handle(index),level:p.u(index+1),format:p.u(index+2),
         x:p.i(index+3),y:p.i(index+4),z:p.i(index+5),width:p.i(index+6),height:p.i(index+7),depth:p.i(index+8)});
       return {mask,filter,scissor:bits & 1024 ? scissor : null,destination:box(4),source:box(13)};
+    }
+    case 17: {
+      p.require(p.production, "unsupported-command", "Original resource copies require production host selection.");
+      p.exact(13);
+      const width = p.i(11), height = p.i(12), depth = p.i(13);
+      p.require(width > 0 && height > 0 && depth > 0, "invalid-value", "Resource copy extents must be positive.");
+      return {
+        destination: { resourceHandle: p.handle(1), level: p.u(2), x: p.u(3), y: p.u(4), z: p.u(5), width, height, depth },
+        source: { resourceHandle: p.handle(6), level: p.u(7), x: p.i(8), y: p.i(9), z: p.i(10), width, height, depth },
+      };
     }
     case 22:
       p.exact(32);

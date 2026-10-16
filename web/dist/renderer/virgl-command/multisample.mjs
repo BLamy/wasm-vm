@@ -35,8 +35,9 @@ export function qualifyMultisampleStorage(gl) {
 
 export function executeFramebufferBlit(gl, fields, source, destination, require, check) {
   const a = source.metadata, b = destination.metadata;
-  require(a.target === 2 && b.target === 2 && a.id !== b.id,
-    'unsupported-blit', 'BLIT requires distinct owned 2D attachments.');
+  require(a.target === 2 && b.target === 2 &&
+    (source.storage !== destination.storage || fields.source.level !== fields.destination.level),
+    'unsupported-blit', 'BLIT requires distinct owned 2D images or mip levels.');
   require(fields.source.format === a.format && fields.destination.format === b.format && a.format === b.format,
     'unsupported-blit', 'BLIT cannot reinterpret the original storage format.');
   const validate = (box, meta) => {
