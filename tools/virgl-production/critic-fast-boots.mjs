@@ -901,7 +901,9 @@ try{
       assert.equal(read.exit,0);assert.equal(read.stdout.trim(),'DURABLE_'+guest+'_42_PASS');
       const generation=await page.evaluate(()=>window.__snapshotGeneration());
       assert.equal(generation,before,phase+' durable generation preserved');
-      const state=await snapshot(page);
+      const state=await snapshot(page);state.pageErrors=[...pageErrors];
+      assert.deepEqual(state.workerErrors,[],phase+' final worker errors');
+      assert.deepEqual(state.pageErrors,[],phase+' final page/console errors');
       report.phases.push({phase,restoredMs:Date.now()-started,write,read,before,generation,state,checkpoint,persistenceKind:guest==='busybox'?'whole-machine RAM including initramfs filesystem':'whole-machine RAM and chunked disk'});
       await fs.writeFile(path.join(output,phase+'.json'),JSON.stringify(report.phases.at(-1),null,2));
       console.log(JSON.stringify({phase,restoredMs:Date.now()-started,before,generation,read}));
@@ -909,6 +911,8 @@ try{
     await page.evaluate(()=>window.__linuxCtl?.stop?.()).catch(()=>{});
     await Promise.all(liveReads); await captureWorkerShellSources(); assert.deepEqual(liveReadErrors, [], 'published original source bodies');
     await context.close();activePage=null;
+    (report.browserErrors??=[]).push({guest,errors:[...pageErrors]});
+    assert.deepEqual(pageErrors,[],guest+' complete-context page/console errors');
   }
   for(const [filename,digest]of Object.entries(report.sourceHashes))
     assert.equal(hash(await fs.readFile(path.join(web,filename))),digest,'source changed during capture: '+filename);
