@@ -35,13 +35,18 @@ export async function verifyPublicDesktopInput(page, command, output, options = 
   };
   const uid = await read('id -u');
   assert.equal(uid, '1000', 'the public serial session belongs to Omarchy');
-  const interactivePolicy = await page.evaluate(() =>
-    window.__fastBootCritic?.workerBoots?.at(-1)?.options?.interactiveClock);
+  const clockPolicy = await page.evaluate(() => {
+    const options=window.__fastBootCritic?.workerBoots?.at(-1)?.options;
+    return {guest:options?.guestClock,interactive:options?.interactiveClock};
+  });
+  const interactivePolicy=clockPolicy.interactive;
   const initialClock = await page.evaluate(() => window.__linuxCtl.guestClockState());
   const interactiveMode = interactivePolicy === 'paced-on-keyboard' ? 'paced-icount' :
-    interactivePolicy === 'wall-on-keyboard' ? 'wall' : null;
-  if (interactiveMode) assert.equal(initialClock.mode, options.initialClockMode || 'icount');
-  await record('initial-clock', {interactivePolicy, initialClock});
+    interactivePolicy === 'wall-on-keyboard' ? 'wall' :
+    ['paced-icount','wall'].includes(clockPolicy.guest) ? clockPolicy.guest : null;
+  if (interactiveMode) assert.equal(initialClock.mode, options.initialClockMode ||
+    (interactivePolicy ? 'icount' : clockPolicy.guest));
+  await record('initial-clock', {clockPolicy, interactivePolicy, initialClock});
   const canvas = page.locator('#ide-display-canvas');
   let box = await canvas.boundingBox();
   assert.ok(box?.width > 0 && box?.height > 0);

@@ -146,7 +146,7 @@ test('paced critic: direct paced mode validates source receiver, exact labels an
   assert.throws(()=>validateInteractiveClock('paced-on-keyboard','paced-icount',poison),/requires guestClock=icount/);
 });
 
-test('paced critic: actual main defaults scope handoff to accelerated ephemeral Omarchy',async()=>{
+test('paced critic: main retains GPU handoff and bounds default software time',async()=>{
   const body=main.match(/async function bootOmarchy\(\) \{([\s\S]*?)\n\}\n\nwindow\.wvmDemo/)?.[1];
   assert.ok(body,'execute actual production option construction');
   for(const c of [
@@ -157,6 +157,8 @@ test('paced critic: actual main defaults scope handoff to accelerated ephemeral 
     {search:'?persist=0',worker:true,graphics:'gpu',accelerated:false},
     {search:'?noSnapshot=1',worker:true,graphics:'gpu',accelerated:true},
     {search:'?gpu=0&noSnapshot=1',worker:true,graphics:'software',accelerated:false},
+    {search:'?gpu=0&omarchyDivider=37',worker:true,graphics:'software',accelerated:false},
+    {search:'?omarchyDivider=37',worker:true,graphics:'gpu',accelerated:true},
   ]) {
     let observed=null;
     const actions=new Map(['gpu-retry','gpu-cold-retry'].map(id=>[id,{hidden:false}]));
@@ -169,7 +171,9 @@ test('paced critic: actual main defaults scope handoff to accelerated ephemeral 
     assert.equal(context.document.documentElement.dataset.gpuBootError,undefined,'fresh launch clears previous failure overlay');
     assert.equal(observed.virgl,c.accelerated);
     assert.equal(observed.interactiveClock,c.accelerated?'paced-on-keyboard':undefined);
-    assert.equal(observed.guestClock,'icount');assert.equal(observed.icountDivider,64);
+    const query=new URLSearchParams(c.search),pacedSoftware=!c.accelerated&&!query.has('omarchyDivider');
+    assert.equal(observed.guestClock,pacedSoftware?'paced-icount':'icount');
+    assert.equal(observed.icountDivider,pacedSoftware?undefined:Number(query.get('omarchyDivider'))||64);
     assert.equal(observed.bootSnapshot,!new URLSearchParams(c.search).has('noSnapshot'));
   }
 });

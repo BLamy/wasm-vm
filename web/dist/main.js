@@ -2109,6 +2109,10 @@ async function bootOmarchy() {
   const query = new URLSearchParams(location.search);
   const assetBase = query.get("omarchyAssetBase") || R2_ASSETS;
   const accelerated = graphicsSelect?.value !== "software" && _useCpuWorker && !query.has("persist");
+  // Software desktop input also needs bounded idle time. Preserve explicit
+  // divider diagnostics in ICount mode; ordinary software restores use the
+  // existing paced clock from their first execution slice.
+  const pacedSoftware = !accelerated && !query.has("omarchyDivider");
   delete document.documentElement.dataset.gpuBootError;
   for (const id of ["gpu-retry", "gpu-cold-retry"]) {
     const action = document.getElementById(id); if (action) action.hidden = true;
@@ -2137,8 +2141,8 @@ async function bootOmarchy() {
       slirpNet: false,
       slirpProvider: "offline",
       enableMic: false,
-      guestClock: "icount",
-      icountDivider: Number(query.get("omarchyDivider")) || 64,
+      guestClock: pacedSoftware ? "paced-icount" : "icount",
+      icountDivider: pacedSoftware ? undefined : Number(query.get("omarchyDivider")) || 64,
       jitAdmissionProbe: query.get("jitAdmissionProbe") === "1",
       jitColdCounterRecycling: query.get("jitColdCounterRecycling") === "1" && isLoopbackOrigin(location),
       fastInterpreter: true,
