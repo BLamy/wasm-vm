@@ -80,6 +80,16 @@ def prepare(args):
             raise ValueError("unexpected source fstab; do not overwrite unknown configuration")
         if run(debug("stat /var/lib/wasm-vm-applications"), "directory-before.txt").strip():
             raise ValueError("owned application swap directory already exists")
+        hyprland_path = "/home/omarchy/.config/hypr/hyprland.lua"
+        hyprland = run(debug("cat " + hyprland_path), "hyprland-original.lua")
+        if "OMARCHY_SHELL_IPC_TIMEOUT" in hyprland:
+            raise ValueError("review the source shell IPC configuration")
+        shell_environment = Path(__file__).with_name("omarchy-application-shell.lua").read_text()
+        configured_hyprland = hyprland + "\n" + shell_environment
+        receipt["shellIpc"] = {"path": hyprland_path, "timeout": "120s",
+                               "originalSha256": hashlib.sha256(hyprland.encode()).hexdigest(),
+                               "sha256": hashlib.sha256(configured_hyprland.encode()).hexdigest(),
+                               "packagedScriptsChanged": False}
         with tempfile.TemporaryDirectory(prefix="memory-", dir=output) as temporary:
             scratch = Path(temporary)
             swap = scratch / "swapfile"
@@ -97,12 +107,17 @@ def prepare(args):
             with swap.open("rb") as stream:
                 (output / "swap-header.bin").write_bytes(stream.read(4096))
             (scratch / "fstab").write_text(fstab + SWAP_PATH + " none swap defaults,pri=10 0 0\n")
+            (scratch / "hyprland.lua").write_text(configured_hyprland)
             profile = {"schema": 1, "baseSha256": args.expected_sha256, "swap": dict(receipt["swap"]),
                        "ramMiB": 1024, "sandboxMutation": False, "reason": "native desktop applications"}
             (scratch / "memory-profile.json").write_text(json.dumps(profile, indent=2) + "\n")
             commands = ["mkdir /var/lib/wasm-vm-applications", "write /work/swapfile " + SWAP_PATH,
                         "set_inode_field " + SWAP_PATH + " mode 0100600",
                         "rm /etc/fstab", "write /work/fstab /etc/fstab",
+                        "rm " + hyprland_path, "write /work/hyprland.lua " + hyprland_path,
+                        "set_inode_field " + hyprland_path + " mode 0100644",
+                        "set_inode_field " + hyprland_path + " uid 1000",
+                        "set_inode_field " + hyprland_path + " gid 1000",
                         "write /work/memory-profile.json /etc/wasm-vm/application-memory.json"]
             (scratch / "commands").write_text("\n".join(commands) + "\n")
             run(["docker", "run", "--rm", "--network", "none", "-v", str(image) + ":/disk/guest.ext4",
@@ -139,6 +154,8 @@ def prepare(args):
                 raise ValueError("swap activation entry differs")
             if run(debug("cat /etc/wasm-vm/application-memory.json"), "memory-profile-final.json") != (scratch / "memory-profile.json").read_text():
                 raise ValueError("application memory profile differs")
+            if run(debug("cat " + hyprland_path), "hyprland-final.lua") != configured_hyprland:
+                raise ValueError("application shell environment differs")
             receipt["swap"]["sha256"] = swap_sha
             receipt["swap"]["dataBlocks"] = SWAP_BYTES // 4096
             receipt["swap"]["listedBlocks"] = len(blocks)

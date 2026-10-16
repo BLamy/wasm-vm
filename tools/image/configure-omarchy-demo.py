@@ -174,7 +174,11 @@ require("hypr.autostart")
 require("default.hypr.toggles")
 ''')
     if applications:
-        write("home/omarchy/.config/hypr/hyprland.lua", path("usr/share/omarchy/config/hypr/hyprland.lua").read_text())
+        hyprland = path("usr/share/omarchy/config/hypr/hyprland.lua").read_text()
+        if "OMARCHY_SHELL_IPC_TIMEOUT" in hyprland:
+            raise ValueError("review the packaged shell IPC configuration")
+        shell_environment = Path(__file__).with_name("omarchy-application-shell.lua").read_text()
+        write("home/omarchy/.config/hypr/hyprland.lua", hyprland + "\n" + shell_environment)
         write("home/omarchy/.config/default/hypr/bindings/applications.lua", compatible_application_bindings(
             path("usr/share/omarchy/default/hypr/bindings/applications.lua").read_text()))
         write("home/omarchy/.config/default/hypr/autostart.lua", '''-- Offline, package-owned browser desktop; no architecture-specific installers.
