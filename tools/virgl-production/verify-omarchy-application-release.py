@@ -96,6 +96,8 @@ try:
             run("policy", ["python3", "tools/check_task_policy.py"])
             run("whitespace", ["git", "diff", "--check"])
             run("publisher-tests", ["node", "--test", "tools/publish-omarchy-chunks.test.mjs", "tools/verify/omarchy-r2-proxy.test.mjs"])
+            run("software-manifest-tests", ["node", "--test", "tools/gen-omarchy-manifest.test.mjs"])
+            run("snapshot-fetch-syntax", ["node", "--check", "tools/fetch-omarchy-snapshot.mjs"])
             run("capture-syntax", ["node", "--check", "tools/verify/omarchy-native-capture.mjs"])
             run("software-builder-syntax", ["bash", "-n", "tools/build-omarchy-snapshot.sh"])
             for name in ("critic-fast-boots", "critic-fast-boots-input", "critic-desktop-actions",

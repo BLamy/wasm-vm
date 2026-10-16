@@ -98,6 +98,8 @@ try:
     # the corpus checker, then prohibit every later lazy read from the worker.
     run("historical-doc-inputs", ["node", "tools/check-docs.mjs"], clone)
     run("sever-source-remote", ["git", "config", "remote.origin.url", str(output/"unavailable-source")], clone)
+    run("fresh-software-snapshot", ["node", "tools/fetch-omarchy-snapshot.mjs"], clone, timeout=900)
+    run("existing-software-snapshot", ["node", "tools/fetch-omarchy-snapshot.mjs"], clone)
     run("acceptance", ["python3", "tools/virgl-production/verify-omarchy-application-release.py",
                        "--output", str(output/"acceptance"), "--url", args.url,
                        "--application-image", str(owned), "--inventory", str(inventory)], clone, timeout=18000)
