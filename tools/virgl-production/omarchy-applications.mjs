@@ -244,7 +244,7 @@ export async function verifyOmarchyApplications(page, command, output, options =
     throw Error('Actual guest application window did not close');
   }
   async function shot(label) {
-    await page.locator('#ide-display-canvas').screenshot({path:path.join(output,name+'-'+label+'.png')});
+    await page.locator('#ide-display-canvas').screenshot({path:path.join(output,name+'-'+label+'.png'),timeout:120000});
     const gpu=await page.evaluate(()=>window.wvmDemo.gpuStats());
     report.phases.push({kind:'screenshot',label,gpu,time:Date.now()});await save();return gpu;
   }
@@ -363,7 +363,7 @@ export async function verifyOmarchyApplications(page, command, output, options =
   async function launchWriter(pendingPid) {
     if(pendingPid){
       const window=await waitWindow(row=>row.pid===pendingPid&&isWriterDocumentWindow(row),1200000);
-      await waitActive(row=>row.address===window.address&&isWriterDocumentWindow(row));await shot('writer-open');return window;
+      await finishWriterWelcome(window);await shot('writer-open');return window;
     }
     await press('Meta+Alt+Space');
     const deadline=Date.now()+300000;let menu;
@@ -376,7 +376,31 @@ export async function verifyOmarchyApplications(page, command, output, options =
     await type('libreoffice writer');await sleep(1500);
     await shot('writer-launcher');await press('Enter');
     const window=await waitWindow(isWriterDocumentWindow,1200000);
-    await waitActive(row=>row.address===window.address&&isWriterDocumentWindow(row));await shot('writer-open');return window;
+    await finishWriterWelcome(window);await shot('writer-open');return window;
+  }
+  async function finishWriterWelcome(window){
+    const initial=await run(hypr+'activewindow');assert.equal(initial.exit,0);const active=JSON.parse(initial.stdout);
+    if(active.pid===window.pid&&active.title==='Welcome to LibreOffice!'){
+      const proof=await identity(active,'/usr/lib/libreoffice/program/soffice.bin');
+      report.writerWelcome??=[];assert.ok(report.writerWelcome.length<3,'bounded normal first-run welcome pages');
+      for(let step=0;step<3;step++){
+        const result=await run(hypr+'activewindow');assert.equal(result.exit,0);const dialog=JSON.parse(result.stdout);
+        if(dialog.address===window.address&&isWriterDocumentWindow(dialog))break;
+        assert.equal(dialog.pid,window.pid);assert.equal(dialog.title,'Welcome to LibreOffice!');assert.equal(dialog.class,'soffice');
+        const monitors=await run(hypr+'monitors');assert.equal(monitors.exit,0);
+        const monitor=JSON.parse(monitors.stdout).find(row=>row.id===dialog.monitor);assert.equal(monitor.scale,1);
+        // The standard Next/Finish button is at the dialog's bottom right. A
+        // tiled parent can place its edge outside the small guest display;
+        // click the visible portion of that same native button.
+        const target={x:Math.min(dialog.at[0]+dialog.size[0]-45,monitor.width-15),y:dialog.at[1]+dialog.size[1]-27};
+        assert.ok(target.x>=0&&target.y>=0&&target.y<monitor.height);
+        await shot('writer-welcome-'+report.writerWelcome.length);await focusInput();
+        const box=await page.locator('#ide-display-canvas').boundingBox();assert.ok(box?.width>0&&box.height>0);
+        await page.mouse.click(box.x+target.x*box.width/monitor.width,box.y+target.y*box.height/monitor.height,{delay:120});
+        report.writerWelcome.push({dialog,target,proof,action:'trusted native Next/Finish button',time:Date.now()});await save();
+      }
+    }
+    await waitActive(row=>row.address===window.address&&isWriterDocumentWindow(row));
   }
   async function focusWriterContent(window){
     await focusInput();const rows=await clients(),client=rows.find(row=>row.address===window.address);
@@ -539,7 +563,7 @@ export async function verifyOmarchyApplications(page, command, output, options =
     }
 
     report.writer=await identity(await launchWriter(sandboxPrefix?.prior.writer.window.pid),'/usr/lib/libreoffice/program/soffice.bin');assert.match(report.writer.process.stdout,/\/usr\/lib\/libreoffice\/program\/soffice.bin/);
-    await focusWriterContent(report.writer.window);
+    await finishWriterWelcome(report.writer.window);await focusWriterContent(report.writer.window);
     const first='omarchy riscv document 42';await press('Control+a');await type(first);await press('Control+s');
     report.saveDialog=await waitActive(row=>/^Save(?: As)?$/i.test(row.title));await shot('writer-save-dialog');
     await press('Control+l');await type(document);await press('Enter');await waitClosed(row=>row.address===report.saveDialog.address);
