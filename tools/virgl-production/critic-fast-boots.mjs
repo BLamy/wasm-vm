@@ -775,7 +775,7 @@ try{
       if(swapCheckpoint){
         const {prepareSwapFixture,refaultSwapFixture}=await import('./omarchy-swap-checkpoint.mjs');
         if(round==='initial'){
-          const prepared=await prepareSwapFixture(page,guestCommand,output,{name:'swap-checkpoint',seed:42});
+          const prepared=await prepareSwapFixture(page,guestCommand,output,{name:'swap-checkpoint',seed:Number(process.env.CRITIC_FAST_BOOT_SWAP_SEED??42)});
           const sync=await guestCommand(page,'sync',300000);assert.equal(sync.exit,0);
           report.swapFixture={scope:'Separate nonresident anonymous mapping across actual paired checkpoint restore; never a clean factory or cached-publication latency claim',prepared,sync,sourceDocumentTimeOrigin:await page.evaluate(()=>performance.timeOrigin)};
           if(acceleratedGpu){
