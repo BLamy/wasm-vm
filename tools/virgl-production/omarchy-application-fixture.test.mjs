@@ -9,7 +9,7 @@ import {spawn} from 'node:child_process';
 import {createHash} from 'node:crypto';
 import {once} from 'node:events';
 import {createInterface} from 'node:readline';
-import {createApplicationFixture,readFixtureTransition,authenticateBrowserPrefix} from './omarchy-applications.mjs';
+import {createApplicationFixture,readFixtureTransition,authenticateBrowserPrefix,isWriterDocumentWindow} from './omarchy-applications.mjs';
 
 test('the original Bash job notification cannot obscure or replace a fixture transition receipt',()=>{
   const token='8203261826a440b9bd4746d04943f145';
@@ -82,4 +82,15 @@ test('a retained browser prefix rejects altered identity, stale navigation and m
     const value=structuredClone(original);mutate(value);const altered=encode(value);
     assert.throws(()=>authenticateBrowserPrefix(altered,digest(altered)));
   }
+});
+
+test('LibreOffice native and Xwayland splash windows cannot accept document typing',()=>{
+  const nativeSplash={mapped:true,visible:true,class:'soffice',title:'LibreOffice 26.8',size:[644,199]};
+  const xwaylandSplash={mapped:true,visible:true,class:'',title:'LibreOffice',size:[644,199]};
+  const editor={mapped:true,visible:true,class:'libreoffice-writer',title:'Untitled 1 - LibreOffice Writer',size:[621,750]};
+  assert.equal(isWriterDocumentWindow(nativeSplash),false);assert.equal(isWriterDocumentWindow(xwaylandSplash),false);
+  assert.equal(isWriterDocumentWindow(editor),true);
+  assert.equal(isWriterDocumentWindow({...editor,size:[644,199]}),false);
+  assert.equal(isWriterDocumentWindow({...editor,visible:false}),false);
+  assert.equal(isWriterDocumentWindow({...editor,class:'foot',title:'omarchy@omarchy-demo:~'}),false);
 });
