@@ -2692,4 +2692,8 @@ verify-E5.5-T05c1:
 # phase records its omitted phases; it cannot pass as the full release verdict.
 .PHONY: verify-E5.5-T05d
 verify-E5.5-T05d:
-	python3 tools/virgl-production/verify-omarchy-application-release.py --output "$${OMARCHY_RELEASE_EVIDENCE_DIR:-target/evidence/omarchy-application-release-final}" --url "$${OMARCHY_RELEASE_URL:-https://wasm-vm.pages.dev/}" --phase "$${OMARCHY_RELEASE_PHASE:-all}" --application-image "$${OMARCHY_DESKTOP_IMAGE_DIRECTORY:-target/virgl-production/image-18}" --inventory "$${OMARCHY_APPLICATION_INVENTORY:-target/evidence/omarchy-native-app-image-final01/runtime-elf.json}"
+	@if [ "$${OMARCHY_RELEASE_PHASE:-all}" = all ]; then \
+	  python3 tools/virgl-production/verify-omarchy-application-release-cold.py --output "$${OMARCHY_RELEASE_EVIDENCE_DIR:-target/evidence/omarchy-application-release-final}" --url "$${OMARCHY_RELEASE_URL:-https://wasm-vm.pages.dev/}" --application-image "$${OMARCHY_DESKTOP_IMAGE_DIRECTORY:-target/virgl-production/image-18}" --inventory "$${OMARCHY_APPLICATION_INVENTORY:-target/evidence/omarchy-native-app-image-final01/runtime-elf.json}"; \
+	else \
+	  python3 tools/virgl-production/verify-omarchy-application-release.py --output "$${OMARCHY_RELEASE_EVIDENCE_DIR:-target/evidence/omarchy-application-release-final}" --url "$${OMARCHY_RELEASE_URL:-https://wasm-vm.pages.dev/}" --phase "$${OMARCHY_RELEASE_PHASE}" --application-image "$${OMARCHY_DESKTOP_IMAGE_DIRECTORY:-target/virgl-production/image-18}" --inventory "$${OMARCHY_APPLICATION_INVENTORY:-target/evidence/omarchy-native-app-image-final01/runtime-elf.json}"; \
+	fi
