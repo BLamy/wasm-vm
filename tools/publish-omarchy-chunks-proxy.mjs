@@ -119,17 +119,19 @@ export async function wranglerProxy({modulePath,configPath,record=async()=>{}}) 
 }
 
 function args(argv) {
-  const options={manifestPath:null,output:null,modulePath:null,publish:false};
+  const options={manifestPath:null,output:null,modulePath:null,publish:false,uploadConcurrency:32};
   for(let i=0;i<argv.length;i++){
     const k=argv[i];
     if(k==='--publish')options.publish=true;
     else if(k==='--manifest')options.manifestPath=argv[++i];
     else if(k==='--output')options.output=argv[++i];
     else if(k==='--wrangler-module')options.modulePath=argv[++i];
+    else if(k==='--upload-concurrency')options.uploadConcurrency=Number(argv[++i]);
     else throw Error('unknown argument '+k);
   }
   assert.ok(options.manifestPath&&options.output,'--manifest and --output are required');
   if(options.publish)assert.ok(options.modulePath,'--publish requires --wrangler-module');
+  assert.ok(Number.isSafeInteger(options.uploadConcurrency)&&options.uploadConcurrency>=1&&options.uploadConcurrency<=32,'upload concurrency1..32');
   return options;
 }
 
@@ -164,6 +166,7 @@ async function main() {
     let lastPrint=0;
     result=await publishChunks({manifestPath:path.resolve(options.manifestPath),publish:options.publish,
       validatedManifest:validated,objectChecker:options.publish?adapter.check:null,
+      uploadConcurrency:options.uploadConcurrency,
       bucket:DEFAULT_BUCKET,publicBase:DEFAULT_PUBLIC_BASE,uploader:adapter.upload,
       onProgress:event=>{
         if(recordingError)throw recordingError;
@@ -182,7 +185,7 @@ async function main() {
     failure={message:'Publisher source changed during the recorded run: '+source.path};
   const receipt={schema:1,startedUtc:start,finishedUtc:new Date().toISOString(),status:failure||cleanupError?'failed':'passed',
     mode:options.publish?'publish':'plan',scriptSha256:hash(await readFile(fileURLToPath(import.meta.url))),
-    wranglerVersion:WRANGLER_VERSION,verificationTransport:options.publish?'authenticated-wrangler-r2':'local-plan',config,sourcePins,
+    wranglerVersion:WRANGLER_VERSION,uploadConcurrency:options.uploadConcurrency,verificationTransport:options.publish?'authenticated-wrangler-r2':'local-plan',config,sourcePins,
     manifest:{path:path.resolve(options.manifestPath),bytes:inputManifest.length,sha256:hash(inputManifest)},result,failure,cleanupError,
     uploadJournal:{path:'uploads.ndjson',bytes:(await stat(journal)).size,sha256:hash(await readFile(journal))}};
   await writeFile(path.join(output,'receipt.json'),JSON.stringify(receipt,null,2)+'\n');

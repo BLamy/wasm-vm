@@ -17,6 +17,7 @@ export const DEFAULT_PUBLIC_BASE = "https://pub-c7188e40d3a0463183db72f9dd03cae2
 export const DEFAULT_BUCKET = "wasm-vm";
 export const CHUNK_SIZE = 256 * 1024;
 export const CONCURRENCY = 4;
+export const MAX_UPLOAD_CONCURRENCY = 32;
 export const PUBLIC_CONCURRENCY = 16;
 export const PUBLIC_TIMEOUT_MS = 20_000;
 export const PUBLIC_RETRY_BACKOFF_MS = [500, 1_000];
@@ -462,11 +463,13 @@ export async function publishChunks({
   provenance = null,
   onProgress = () => {},
   objectChecker = null,
+  uploadConcurrency = CONCURRENCY,
 }) {
   if (!manifestPath) fail("manifest path is required");
   publicBase = validatePublicBase(publicBase);
   bucket = validateBucket(bucket);
   if (typeof fetchImpl !== "function") fail("fetch is unavailable");
+  assert.ok(Number.isSafeInteger(uploadConcurrency) && uploadConcurrency >= 1 && uploadConcurrency <= MAX_UPLOAD_CONCURRENCY, "bounded upload concurrency");
   const validated = validatedManifest || await validateLocalManifest(manifestPath);
   // The default verifies public HTTPS. Bulk release tools may explicitly use
   // the same bucket's authenticated full-byte checker and label that transport
@@ -529,7 +532,7 @@ export async function publishChunks({
   const pending = preflight.filter(({ check }) => check.state !== "exact");
   const outcomes = await mapLimit(
     pending,
-    CONCURRENCY,
+    uploadConcurrency,
     async ({ object }) => {
       const outcome = await ensureUploaded({
         object,

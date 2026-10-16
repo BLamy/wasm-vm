@@ -1,6 +1,10 @@
 import assert from 'node:assert/strict';
+import {execFileSync} from 'node:child_process';
 import {wranglerProxy,MAX_MANIFEST_BYTES} from '../publish-omarchy-chunks-proxy.mjs';
 const [modulePath,configPath]=process.argv.slice(2);
+assert.equal(typeof process.send,'function','owned IPC process only');
+assert.equal(Number(execFileSync('ps',['-p',String(process.pid),'-o','pgid='],{encoding:'utf8'}).trim()),process.pid,'owned private process group');
+process.once('disconnect',()=>{process.kill(-process.pid,'SIGKILL');});
 const send=message=>new Promise((resolve,reject)=>process.send(message,error=>error?reject(error):resolve()));
 let proxy;
 try{
