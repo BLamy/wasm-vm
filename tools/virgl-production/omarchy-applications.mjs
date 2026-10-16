@@ -141,6 +141,8 @@ export async function verifyOmarchyApplications(page, command, output, options =
   identityModule.searchParams.set('recording',identityModuleSha256);
   const {createApplicationIdentityProof}=await import(identityModule.href);
   const name = options.name || 'native-applications';
+  const writerOnly=options.component==='writer';
+  assert.ok(options.component===undefined||writerOnly,'known explicit application component');
   let continueExistingBrowser=options.continueExistingBrowser===true,continuationRequest,processWitness,browserPrefix,sandboxPrefix,writerComponent;
   async function retainedComponent(reference,authenticate,scope){
     assert.ok(processWitness,'same-process native witness is required');
@@ -213,6 +215,12 @@ export async function verifyOmarchyApplications(page, command, output, options =
   if(continueExistingBrowser)assert.ok(continuationRequest,'existing browser continuation requires the retained owned failure and request');
   const fixtureSpec=writerComponent?.fixture||sandboxPrefix?.fixture||browserPrefix?.fixture||createApplicationFixture(randomUUID().replaceAll('-',''));
   const report = {status:'running',identityModuleSha256,continueExistingBrowser,fixtureToken:fixtureSpec.token,fixtureServerSha256:sha(Buffer.from(fixtureSpec.source)),networking:{provider:'offline',fixture:fixtureSpec.url,externalBrowsingClaim:false},phases:[]};
+  if(writerOnly){
+    assert.ok(!name.startsWith('control-applications-')&&!continueExistingBrowser&&!writerComponent&&!browserPrefix&&!sandboxPrefix);
+    assert.equal(process.env.CRITIC_FAST_BOOT_APPLICATION_CONTINUATION,'1');
+    report.component={name:'writer',scope:'New Writer save/reopen/edit, native Node/npm, wallpaper and final desktop only; prior Chromium/SVG evidence remains separate.'};
+    report.networking.fixture=null;
+  }
   if(continuationRequest)report.continuationRequest=continuationRequest;
   if(processWitness)report.processWitness=processWitness;
   if(writerComponent)report.writerComponent=writerComponent.reference;
@@ -253,7 +261,7 @@ export async function verifyOmarchyApplications(page, command, output, options =
   // Native hyprctl processes are expensive inside an interpreted guest. The
   // missing-only component yields between observations without changing any
   // wall-clock deadline or the normal canonical scenario.
-  const nativePollMs=writerComponent?10000:1500;
+  const nativePollMs=(writerComponent||writerOnly)?10000:1500;
   async function waitWindow(predicate, timeout=300000) {
     const deadline=Date.now()+timeout;let nextCapture=Date.now()+60000;
     while(Date.now()<deadline){await gpuHealth();const rows=await clients();const found=rows.find(predicate);if(found)return found;if(Date.now()>=nextCapture){nextCapture=Date.now()+60000;await shot('window-wait-'+waitCaptureSequence++);}await sleep(nativePollMs);}
@@ -269,10 +277,19 @@ export async function verifyOmarchyApplications(page, command, output, options =
     while(Date.now()<deadline){await gpuHealth();if(!(await clients()).some(predicate))return;await sleep(nativePollMs);}
     throw Error('Actual guest application window did not close');
   }
+  const shotCounts=new Map();
   async function shot(label) {
-    await page.locator('#ide-display-canvas').screenshot({path:path.join(output,name+'-'+label+'.png'),timeout:120000});
+    const count=(shotCounts.get(label)||0)+1;shotCounts.set(label,count);
+    const stem=name+'-'+label+(count>1?'-'+count:'');
+    await page.locator('#ide-display-canvas').screenshot({path:path.join(output,stem+'.png'),timeout:120000});
     const gpu=await page.evaluate(()=>window.wvmDemo.gpuStats());
-    report.phases.push({kind:'screenshot',label,gpu,time:Date.now()});await save();return gpu;
+    // Preserve every original sample on disk; repeated native waits must not
+    // retain large resource/command trees in the controller's live heap.
+    const body=Buffer.from(JSON.stringify(gpu,null,2)+'\n'),sample={path:stem+'-gpu.json',bytes:body.length,sha256:sha(body)};
+    await fs.writeFile(path.join(output,sample.path),body);
+    const summary=Object.fromEntries(['qualified','lost','epoch','highestGeneration','poisoned','disposed','pending','counters','lastFailure'].map(key=>[key,gpu[key]]));
+    summary.sample=sample;
+    report.phases.push({kind:'screenshot',label,image:stem+'.png',gpu:summary,time:Date.now()});await save();return summary;
   }
   async function waitReadableBar() {
     const started=Date.now();let attempt=0;
@@ -429,15 +446,33 @@ export async function verifyOmarchyApplications(page, command, output, options =
     await waitActive(row=>row.address===window.address&&isWriterDocumentWindow(row));
   }
   async function focusWriterContent(window){
-    await focusInput();const rows=await clients(),client=rows.find(row=>row.address===window.address);
-    assert.ok(isWriterDocumentWindow(client));
-    const result=await run(hypr+'monitors');assert.equal(result.exit,0);
-    const monitor=JSON.parse(result.stdout).find(row=>row.id===client.monitor);assert.equal(monitor.scale,1);
-    const box=await page.locator('#ide-display-canvas').boundingBox();assert.ok(box?.width>0&&box.height>0);
-    const target={x:client.at[0]+client.size[0]*0.5,y:client.at[1]+client.size[1]*0.5};
-    await page.mouse.click(box.x+target.x*box.width/monitor.width,box.y+target.y*box.height/monitor.height,{delay:120});
-    report.phases.push({kind:'native-writer-content-click',client,target,time:Date.now()});await save();
-    await waitActive(row=>row.address===window.address&&isWriterDocumentWindow(row));
+    for(let attempt=0;attempt<2;attempt++){
+      await focusInput();const rows=await clients(),client=rows.find(row=>row.address===window.address);
+      assert.ok(isWriterDocumentWindow(client));
+      const result=await run(hypr+'monitors');assert.equal(result.exit,0);
+      const monitor=JSON.parse(result.stdout).find(row=>row.id===client.monitor);assert.equal(monitor.scale,1);
+      const box=await page.locator('#ide-display-canvas').boundingBox();assert.ok(box?.width>0&&box.height>0);
+      const target={x:client.at[0]+client.size[0]*0.5,y:client.at[1]+client.size[1]*0.5};
+      await page.mouse.click(box.x+target.x*box.width/monitor.width,box.y+target.y*box.height/monitor.height,{delay:120});
+      report.phases.push({kind:'native-writer-content-click',client,target,time:Date.now()});await save();
+      const active=await waitActive(row=>(row.address===window.address&&isWriterDocumentWindow(row))||
+        (row.pid===window.pid&&row.class==='soffice'&&row.title==='Welcome to LibreOffice!'));
+      if(active.title!=='Welcome to LibreOffice!')return;
+      await finishWriterWelcome(window);
+    }
+    throw Error('The bounded native Welcome handling did not focus the Writer document');
+  }
+  async function saveWriterText(window,text){
+    for(let attempt=0;attempt<2;attempt++){
+      await finishWriterWelcome(window);await focusWriterContent(window);
+      await press('Control+a');await type(text);await press('Control+s');
+      const active=await waitActive(row=>(row.pid===window.pid&&/^Save(?: As)?$/i.test(row.title))||
+        (row.pid===window.pid&&row.class==='soffice'&&row.title==='Welcome to LibreOffice!'));
+      if(/^Save(?: As)?$/i.test(active.title))return active;
+      report.phases.push({kind:'native-delayed-writer-welcome',dialog:active,attempt,time:Date.now()});await save();
+      await finishWriterWelcome(window);
+    }
+    throw Error('The bounded native Welcome handling did not reach Save');
   }
   async function focusFileDialog(dialog){
     const result=await run(hypr+'monitors');assert.equal(result.exit,0);
@@ -505,7 +540,12 @@ export async function verifyOmarchyApplications(page, command, output, options =
     report.beforeGpu=await shot('initial');
     await waitReadableBar();
     let chromium;
-    if(writerComponent){
+    if(writerOnly){
+      const windows=await clients();assert.ok(!windows.some(row=>/chromium/i.test(row.class)||row.title==='Chromium Additional Terms of Service'),
+        'the controller completed its authenticated owned baseline cleanup');
+      const code=`from pathlib import Path;import json,stat;p=Path('/tmp/omarchyapps');assert not p.exists() and not Path(${JSON.stringify(document)}).exists();p.mkdir(mode=0o700);s=p.stat();assert s.st_uid==1000 and stat.S_IMODE(s.st_mode)==0o700;rows=[x.split() for x in Path('/proc/swaps').read_text().splitlines()[1:]];active=[x for x in rows if x[0]=='/var/lib/wasm-vm-applications/swapfile'];assert len(active)==1 and int(active[0][2])*1024==536866816 and int(active[0][4])==10;print(json.dumps(dict(scope='empty owned terminal-output directory only; no document, app-profile or browser-output setup',directory=str(p),activeSwap=active[0])))`;
+      const prepared=await run('python3 -c '+"'"+code.replaceAll("'","'\\''")+"'");assert.equal(prepared.exit,0);report.writerPreparation=JSON.parse(prepared.stdout);
+    }else if(writerComponent){
       assert.equal(report.beforeGpu.epoch,writerComponent.prior.beforeGpu.epoch,'same live GPU epoch as original failed08');
       const code=`from pathlib import Path;import hashlib,json,stat,os;p=Path('/tmp/omarchyapps');s=p.lstat();assert stat.S_ISDIR(s.st_mode) and s.st_uid==1000 and stat.S_IMODE(s.st_mode)==0o700;f=p/'server.py';s=f.lstat();assert stat.S_ISREG(s.st_mode) and s.st_uid==1000 and s.st_nlink==1;digest=hashlib.sha256(f.read_bytes()).hexdigest();assert digest==${JSON.stringify(report.fixtureServerSha256)};pid=int((p/'server.pid').read_text());q=Path('/proc')/str(pid);assert q.stat().st_uid==1000 and str(f).encode() in (q/'cmdline').read_bytes().split(bytes([0])) and (q/'exe').resolve()==Path('/usr/bin/python3').resolve();assert not Path(${JSON.stringify(document)}).exists() and not (p/'node').exists() and not (p/'npm').exists();print(json.dumps(dict(scope='read-only authentication of the untouched failed08 fixture, not a browser success',serverPid=pid,serverSha256=digest)))`;
       const guard=await run('python3 -c '+"'"+code.replaceAll("'","'\\''")+"'");assert.equal(guard.exit,0);report.retainedWriterFixture=JSON.parse(guard.stdout);
@@ -610,15 +650,14 @@ export async function verifyOmarchyApplications(page, command, output, options =
     assert.ok(report.browserSubmission.inputTrusted.length>=note.length);assert.ok(report.browserSubmission.inputTrusted.every(value=>value===true));
     report.chromiumGpu=await shot('chromium-submitted');
     }
-    if(!sandboxPrefix&&!writerComponent){
+    if(!sandboxPrefix&&!writerComponent&&!writerOnly){
       await verifySandboxedImage(chromium);
       await press('Meta+w');await waitClosed(row=>/chromium/i.test(row.class));
     }
 
     report.writer=await identity(await launchWriter(sandboxPrefix?.prior.writer.window.pid),'/usr/lib/libreoffice/program/soffice.bin');assert.match(report.writer.process.stdout,/\/usr\/lib\/libreoffice\/program\/soffice.bin/);
-    await finishWriterWelcome(report.writer.window);await focusWriterContent(report.writer.window);
-    const first='Omarchy riscv document 42';await press('Control+a');await type(first);await press('Control+s');
-    report.saveDialog=await waitActive(row=>/^Save(?: As)?$/i.test(row.title));report.fittedSaveDialog=await focusFileDialog(report.saveDialog);await shot('writer-save-dialog');
+    const first='Omarchy riscv document 42';report.saveDialog=await saveWriterText(report.writer.window,first);
+    report.fittedSaveDialog=await focusFileDialog(report.saveDialog);await shot('writer-save-dialog');
     await press('Control+l');await type(document);await press('Enter');await waitClosed(row=>row.address===report.saveDialog.address);
     report.firstSave=await readDocument('first-save',[first]);assert.ok(report.firstSave.text.includes(first));
     await shot('writer-saved');await press('Control+q');await waitClosed(row=>/libreoffice|soffice/i.test(row.class));
@@ -641,7 +680,7 @@ export async function verifyOmarchyApplications(page, command, output, options =
     report.afterGpu=await shot('node-npm');
     await wallpaperTransition();
     let previousGpu=report.beforeGpu;
-    for(const phase of ((browserPrefix||sandboxPrefix||writerComponent)?[report.writerGpu,report.afterGpu]:[report.chromiumGpu,report.writerGpu,report.afterGpu])){
+    for(const phase of ((browserPrefix||sandboxPrefix||writerComponent||writerOnly)?[report.writerGpu,report.afterGpu]:[report.chromiumGpu,report.writerGpu,report.afterGpu])){
       assert.equal(phase.qualified,true);assert.equal(phase.lost,false);assert.equal(phase.counters.failed,0);
       assert.equal(phase.epoch,previousGpu.epoch);assert.equal(phase.poisoned,false);assert.equal(phase.disposed,false);
       assert.ok(phase.counters.draws>previousGpu.counters.draws);assert.ok(phase.counters.completed>previousGpu.counters.completed);

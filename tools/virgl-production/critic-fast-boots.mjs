@@ -7,7 +7,7 @@ import {assertPublicDesktopFinal} from './critic-fast-boots-final.mjs';
 import {verifyWarmGpuPixels} from './critic-warm-pixels.mjs';
 import {expectedPublishedSource} from './published-source.mjs';
 import fs from 'node:fs/promises';
-import {createReadStream} from 'node:fs';
+import {createReadStream,appendFileSync} from 'node:fs';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
 import {createServer} from 'node:http';
@@ -35,11 +35,14 @@ const gpuTrace = process.env.CRITIC_FAST_BOOT_GPU_TRACE === '1';
 const captureGpuPair = process.env.CRITIC_FAST_BOOT_CAPTURE_GPU_PAIR === '1';
 const applicationWorkload = process.env.CRITIC_FAST_BOOT_APPLICATIONS === '1';
 const applicationContinuation = process.env.CRITIC_FAST_BOOT_APPLICATION_CONTINUATION === '1';
+const applicationComponent=process.env.CRITIC_FAST_BOOT_APPLICATION_COMPONENT;
+assert.ok(applicationComponent===undefined||applicationComponent==='writer','known explicit application component');
 const remoteUrl = process.env.CRITIC_FAST_BOOT_URL;
 const failureHoldMs=Number(process.env.CRITIC_FAST_BOOT_HOLD_FAILURE_MS||1800000);
 assert.ok(Number.isSafeInteger(failureHoldMs)&&failureHoldMs>=60000&&failureHoldMs<=7200000,'bounded diagnostic hold');
 if(applicationContinuation)assert.ok(applicationWorkload&&warmGpu&&localGpuPairFile&&candidateDirectory&&!remoteUrl,
   'application continuation requires the explicitly owned local recorded pair and image; no repeat/publication claim');
+if(applicationComponent)assert.ok(applicationContinuation,'a missing-only application component requires the owned local recorded baseline');
 if(captureGpuPair||localGpuPairFile)assert.ok(acceleratedGpu&&!remoteUrl,'GPU factory capture requires the owned local accelerated session');
 if (remoteUrl) {
   const url = new URL(remoteUrl);
@@ -50,10 +53,13 @@ if (remoteUrl) {
 }
 let gpuRecording = Promise.resolve();
 await fs.mkdir(output, {recursive:false});
+const noteRecorderMemory=()=>appendFileSync(path.join(output,'recorder-memory.ndjson'),JSON.stringify({time:Date.now(),...process.memoryUsage()})+'\n');
+noteRecorderMemory();const recorderMemoryTimer=setInterval(noteRecorderMemory,30000);recorderMemoryTimer.unref();
 if(gpuTrace)await fs.writeFile(path.join(output,'gpu.ndjson'),'');
 const report = {status:'running', scope:'actual production UI fast boots and repeat launches',
   head:execFileSync('git',['rev-parse','HEAD'],{cwd:repo,encoding:'utf8'}).trim(),
   webRoot:web, releaseCache, saveOnRepeat, gpuTrace, remoteUrl, warmGpu, applicationContinuation, phases:[], requests:[], remoteFetches:[], liveSources:[], sourceHashes:{}, harnessHashes:{}, errors:[]};
+if(applicationComponent)report.applicationComponent={name:applicationComponent,scope:'Only missing native Writer/Node/npm/wallpaper and final desktop proof; not Chromium/SVG or publication timing.'};
 for(const filename of ['critic-fast-boots.mjs','critic-fast-boots-input.mjs','critic-fast-boots-bar-content.mjs','critic-fast-boots-final.mjs','critic-desktop-actions.mjs','critic-warm-pixels.mjs','published-source.mjs']){
   const bytes=await fs.readFile(path.join(repo,'tools/virgl-production',filename));
   report.harnessHashes[filename]=hash(bytes);
@@ -670,7 +676,7 @@ try{
               assert.ok(!rows.some(row=>/chromium/i.test(row.class)||row.title==='Chromium Additional Terms of Service'),'recorded first-run browser closed before fresh trusted launch');
             }
             const {verifyOmarchyApplications}=await import('./omarchy-applications.mjs');
-            report.applications=await verifyOmarchyApplications(page,guestCommand,output,{name:phase+'-native-applications',executables:applicationExecutables});
+            report.applications=await verifyOmarchyApplications(page,guestCommand,output,{name:phase+'-native-applications',executables:applicationExecutables,component:applicationComponent});
           }
           const {verifyPublicDesktopInput}=await import('./critic-fast-boots-input.mjs');
           const captureFactory=captureGpuPair?async({foot,barContent})=>{
@@ -755,6 +761,7 @@ try{
   await fs.writeFile(path.join(output,'report.json'),JSON.stringify(report,null,2));
   if(activePage)await holdOwnedFailure(activePage);
 }finally{
+  clearInterval(recorderMemoryTimer);noteRecorderMemory();
   await browser?.close();
   await factoryUpload?.file?.close();
   await gpuRecording;
