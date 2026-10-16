@@ -34,6 +34,7 @@ const saveOnRepeat = process.env.CRITIC_FAST_BOOT_SAVE_ON_REPEAT === '1';
 const gpuTrace = process.env.CRITIC_FAST_BOOT_GPU_TRACE === '1';
 const captureGpuPair = process.env.CRITIC_FAST_BOOT_CAPTURE_GPU_PAIR === '1';
 const applicationWorkload = process.env.CRITIC_FAST_BOOT_APPLICATIONS === '1';
+const shellIpcWorkload = process.env.CRITIC_FAST_BOOT_SHELL_IPC === '1';
 const applicationContinuation = process.env.CRITIC_FAST_BOOT_APPLICATION_CONTINUATION === '1';
 const applicationComponent=process.env.CRITIC_FAST_BOOT_APPLICATION_COMPONENT;
 assert.ok(applicationComponent===undefined||applicationComponent==='writer','known explicit application component');
@@ -65,6 +66,11 @@ for(const filename of ['critic-fast-boots.mjs','critic-fast-boots-input.mjs','cr
   report.harnessHashes[filename]=hash(bytes);
   await fs.mkdir(path.join(output,'executed-harness'),{recursive:true});
   await fs.writeFile(path.join(output,'executed-harness',filename),bytes);
+}
+if(shellIpcWorkload){
+  assert.ok(acceleratedGpu&&candidateDirectory&&!remoteUrl,'explicit owned application-image shell proof');
+  const filename='omarchy-shell-ipc.mjs',bytes=await fs.readFile(path.join(repo,'tools/virgl-production',filename));
+  report.harnessHashes[filename]=hash(bytes);await fs.writeFile(path.join(output,'executed-harness',filename),bytes);
 }
 const applicationExecutables={};
 const applicationProofAssets=new Map();
@@ -710,6 +716,10 @@ try{
             postWorkloadInput=await verifyPublicDesktopInput(page,guestCommand,output,{name:phase+'-post-workload-input',
               initialClockMode:'paced-icount',barActions:false,text:'touch /tmp/gpukeyboard84touch',
               markerAbsent:'test ! -e /tmp/gpukeyboard84touch',markerRead:'test -f /tmp/gpukeyboard84touch && echo TRUSTED_TOUCH_84',expected:'TRUSTED_TOUCH_84'});
+          }
+          if(shellIpcWorkload){
+            const {verifyOmarchyShellIpc}=await import('./omarchy-shell-ipc.mjs');
+            report.shellIpc=await verifyOmarchyShellIpc(page,guestCommand,output,{name:phase+'-shell-ipc'});
           }
           report.publicDesktopFinal=await snapshot(page);
           publicDesktopFinal=report.publicDesktopFinal;

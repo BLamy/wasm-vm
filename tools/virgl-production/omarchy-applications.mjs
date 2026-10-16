@@ -294,7 +294,7 @@ export async function verifyOmarchyApplications(page, command, output, options =
     if(request.resumeWriterReopen){
       assert.ok(!continueExistingBrowser&&!request.writerComponent&&!request.resumeAfterBrowser&&!request.resumeAfterSandbox&&!request.processWitness&&!request.resumeWriterLaunch&&!request.resumeWriterSave&&!request.resumeWriterSavedDocument);
       const reference=request.resumeWriterReopen;assert.equal(reference.path,'control-applications-writer-reopen65.json');
-      for(const key of ['sha256','sourceSha256','responseSha256','controllerSha256','shellConfigResponseSha256','shellConfigSha256'])assert.match(reference[key],/^[a-f0-9]{64}$/);
+      for(const key of ['sha256','sourceSha256','responseSha256','controllerSha256','shellConfigResponseSha256','shellConfigConfirmationSha256','shellConfigSha256'])assert.match(reference[key],/^[a-f0-9]{64}$/);
       const parentBytes=await fs.readFile(path.join(output,'report.json'));assert.equal(sha(parentBytes),reference.controllerSha256);
       const parent=JSON.parse(parentBytes);assert.equal(parent.status,'failed');assert.equal(parent.applicationComponent.name,'writer');
       assert.equal(parent.applicationContinuation,true);assert.equal(parent.warmGpu,true);assert.ok(!parent.remoteUrl);
@@ -314,9 +314,17 @@ export async function verifyOmarchyApplications(page, command, output, options =
       assert.equal(documentBytes.length,authenticated.prior.firstSave.bytes);assert.equal(sha(documentBytes),authenticated.prior.firstSave.sha256);
       const configured=await fs.readFile(path.join(output,'control-response-application-shell-config68.json'));
       assert.equal(sha(configured),reference.shellConfigResponseSha256);const applied=JSON.parse(configured);
-      assert.equal(applied.request.id,'application-shell-config68');assert.equal(applied.request.kind,'guest-command');assert.equal(applied.result.exit,0);
-      const receipt=JSON.parse(applied.result.stdout);assert.equal(receipt.scope,'one owned Hyprland user-config append and normal reload; no document or package writes');
-      assert.equal(receipt.sha256,reference.shellConfigSha256);assert.deepEqual(receipt.configErrors,[]);
+      assert.equal(applied.request.id,'application-shell-config68');assert.equal(applied.request.kind,'guest-command');assert.equal(applied.result.exit,1);
+      assert.match(applied.result.stdout,/AssertionError/); // The original final [] assertion remains failed.
+      const confirmed=await fs.readFile(path.join(output,'control-response-application-shell-readonly69.json'));
+      assert.equal(sha(confirmed),reference.shellConfigConfirmationSha256);const observed=JSON.parse(confirmed);
+      assert.equal(observed.request.id,'application-shell-readonly69');assert.equal(observed.request.kind,'guest-command');assert.equal(observed.result.exit,0);
+      const receipt=JSON.parse(observed.result.stdout);assert.equal(receipt.scope,'read-only current configuration confirmation; original68 final assertion remains failed');
+      const configuration=Buffer.from(receipt.base64,'base64');assert.equal(configuration.length,1161);assert.equal(sha(configuration),reference.shellConfigSha256);
+      assert.equal(receipt.sha256,reference.shellConfigSha256);assert.equal(receipt.uid,1000);assert.equal(receipt.mode,'0o644');assert.equal(receipt.nlink,1);assert.equal(receipt.isRegular,true);
+      assert.equal(receipt.documentSha256,authenticated.prior.firstSave.sha256);assert.equal(receipt.packagedShellSha256,'538ece231aba80154c76ab48df8ab013b2f02c5171241d08bddbf08a5fe5ac34');
+      assert.equal(receipt.configErrors.exit,0);assert.equal(receipt.configErrors.stderr,'');
+      const errors=JSON.parse(receipt.configErrors.stdout);assert.ok(Array.isArray(errors)&&errors.every(line=>line===''),'no nonempty native configuration errors');
       continuationRequest={id,sha256:sha(bytes),scope:'fresh first ODT/read and normal Apps reopen after the explicit guest shell-budget correction; original65 menu failure remains failed'};
       writerOnly=true;writerReopenResume={...authenticated,reference:{...reference,sourcePath}};
     }
