@@ -3,14 +3,15 @@ import {fork} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import assert from 'node:assert/strict';
 
-export async function createWranglerProcessProxy({modulePath,configPath,record=async()=>{},startupTimeoutMs=45000,callTimeoutMs=300000,readTimeoutMs=20000,closeTimeoutMs=3000,workerPath=fileURLToPath(new URL('./omarchy-r2-worker.mjs',import.meta.url))}) {
+export async function createWranglerProcessProxy({modulePath,configPath,record=async()=>{},startupTimeoutMs=45000,callTimeoutMs=300000,readTimeoutMs=90000,closeTimeoutMs=3000,workerPath=fileURLToPath(new URL('./omarchy-r2-worker.mjs',import.meta.url))}) {
   assert.notEqual(process.platform,'win32','owned Unix process groups are required');
   const env={...process.env,WRANGLER_LOG:'error'};
   delete env.NODE_OPTIONS;delete env.VSCODE_INSPECTOR_OPTIONS;
   const child=fork(workerPath,[modulePath,configPath],{detached:true,serialization:'advanced',stdio:['ignore','ignore','ignore','ipc'],env});
-  const calls=new Map();let next=0,exited=false,closed=false,events=Promise.resolve(),eventError;
+  const calls=new Map();let next=0,exited=false,closed=false,killSent=false,events=Promise.resolve(),eventError;
   const killed=()=>{
-    if(!Number.isInteger(child.pid))return;
+    if(killSent||!Number.isInteger(child.pid))return;
+    killSent=true;
     try{process.kill(-child.pid,'SIGKILL');}catch(error){if(error.code!=='ESRCH')throw error;}
   };
   const rejectCalls=error=>{for(const item of calls.values()){clearTimeout(item.timer);item.reject(error);}calls.clear();};

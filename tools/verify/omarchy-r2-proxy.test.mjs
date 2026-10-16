@@ -81,3 +81,24 @@ test('a stalled owned Wrangler startup kills its complete private process group'
     }
   }finally{await rm(dir,{recursive:true,force:true});}
 });
+
+test('a stalled authenticated read kills its owner and child and rejects concurrent calls',async()=>{
+  const dir=await mkdtemp(path.join(os.tmpdir(),'omarchy-proxy-read-'));
+  try{
+    const worker=path.join(dir,'worker.mjs'),pids=path.join(dir,'pids.json');
+    await writeFile(worker,"import {spawn} from 'node:child_process';import {writeFileSync} from 'node:fs';const child=spawn(process.execPath,['-e','setInterval(()=>{},1000)'],{stdio:'ignore'});writeFileSync(process.argv[2],JSON.stringify([process.pid,child.pid]));process.on('message',()=>{});process.send({kind:'ready'});\n");
+    const proxy=await createWranglerProcessProxy({workerPath:worker,modulePath:pids,configPath:dir,readTimeoutMs:100});
+    const start=performance.now();
+    const calls=await Promise.allSettled([proxy.env.ASSETS.read('held-read',1),proxy.env.ASSETS.read('another-read',1)]);
+    assert.ok(calls.every(result=>result.status==='rejected'&&/timed out|process exited/.test(result.reason.message)));
+    assert.ok(performance.now()-start<2500,'stalled reads settle after bounded forced cleanup');
+    const owned=JSON.parse(await readFile(pids));assert.equal(owned.length,2);
+    await new Promise(resolve=>setTimeout(resolve,100));
+    for(const pid of owned){
+      let state='';try{state=execFileSync('ps',['-p',String(pid),'-o','stat='],{encoding:'utf8',stdio:['ignore','pipe','ignore']}).trim();}catch{}
+      assert.ok(!state||state.startsWith('Z'),'owned process is gone or reaped zombie: '+pid+' '+state);
+    }
+    await proxy.dispose();await proxy.dispose();
+    await assert.rejects(proxy.env.ASSETS.read('after-close',1),/process is closed/);
+  }finally{await rm(dir,{recursive:true,force:true});}
+});
