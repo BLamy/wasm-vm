@@ -1,0 +1,18 @@
+{
+  "schema": "original-unorm-depth-seal-v1",
+  "task": "E6-T11d41",
+  "sourceHead": "eda91e2569c38de3f56b92fd38b5326b2c6ae3fd",
+  "records": 37121,
+  "reopenedMembers": 37121,
+  "sourceClosureIncluded": true,
+  "archiveSha256": "c04d93daf4f37cca8b9f9423fbe4776fe88d63c6a006709345691f9bcbc31afe",
+  "archiveBytes": 33512700,
+  "recordIndexSha256": "1d86135fbe288343f0d67d15cf7b355956e53400ea343324d3dae789a0e8d609",
+  "hotReceiptSha256": "80292c7965691175b079b6c591de17a3038b28e0dea1693186d75b34a3402bdb",
+  "coldReportSha256": "7b708cfe8bd3c3cd99affe1f62529a2c9a00511ed6f3cd921a76dd753c0b3738",
+  "coldReceiptSha256": "602f358ec0569544a9ea5315c9d62b0e0cc19e1734e600b59ef0118c6602cc2e",
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "authority": "isolated-original-unorm-depths",
+  "productionDrawAuthority": false
+}

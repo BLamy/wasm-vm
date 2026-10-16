@@ -1,0 +1,2398 @@
+{
+  "schema": 1,
+  "task": "E6-T10d",
+  "boundary": "two unmodified captured TGSI bodies -> bounded converter -> hardware WebGL2; explicit original workload bindings",
+  "currentGuest3dAdvertisement": false,
+  "commandStreamReplay": false,
+  "guestExecution": false,
+  "status": "failed",
+  "command": [
+    "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+    "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/verify-virgl-captured-shaders.mjs",
+    "--output",
+    "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-numeric-floats/worker/float-regression/regression/regression/components/regression/sabotage",
+    "--sabotage",
+    "texture-texel"
+  ],
+  "startedAt": "2026-10-03T11:19:15.823Z",
+  "host": {
+    "platform": "darwin",
+    "architecture": "arm64",
+    "release": "25.6.0",
+    "node": "v24.20.0"
+  },
+  "gitHead": "1ce9b75b182b5411aee9922f329dc898e2a28b4e",
+  "trackedChanges": [],
+  "sources": [
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "size": 29673,
+      "sha256": "ac3cf490270000d1d983a24a7df83e9c95c4b7000b1291b9238ae283ee9ed9f3"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.h",
+      "size": 1061,
+      "sha256": "c3829828586db64f5c628210404c329d3805b814b9fad63c8aa619fe2e6d0105"
+    },
+    {
+      "path": "renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "size": 9285,
+      "sha256": "45dccef6ff61f9f01a63b86b40eb6c621fa442e39cbf04bbbb79446e5b372e65"
+    },
+    {
+      "path": "renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "size": 275914,
+      "sha256": "eefc0899be746bdbb246285e9c8bfe8c802d29e0480bf052be9790c78631c02d"
+    },
+    {
+      "path": "renderer/virgl-shader/build.sh",
+      "size": 5553,
+      "sha256": "1914828b0acfc56663436337f1c53081e6eb6cba746019350116fad32f4ac3d0"
+    },
+    {
+      "path": "renderer/virgl-shader/cli.c",
+      "size": 454,
+      "sha256": "65c9e5a0a3c58ddad36e520f335ca054c8eeec33e851df24db474546a8d7afb3"
+    },
+    {
+      "path": "renderer/virgl-shader/generated/u_format_gen.h",
+      "size": 48398,
+      "sha256": "ac83c3095bf8d81e84eeb448e7743135ce14cf7b35efdc0b75fef8d9c941f068"
+    },
+    {
+      "path": "renderer/virgl-shader/generated/u_format_table.c",
+      "size": 554830,
+      "sha256": "9b654addadc5a17ae283381ba93c8f745a9416171284821e3da381571a49b4f4"
+    },
+    {
+      "path": "renderer/virgl-shader/generated/virgl-version.h",
+      "size": 2149,
+      "sha256": "bea8c6c3b5f6509840d7365bfd0a6bb1d9671118e38da04464a419372faa97fb"
+    },
+    {
+      "path": "renderer/virgl-shader/index.mjs",
+      "size": 4404,
+      "sha256": "3bde28f884a70558ca052cc51c75695a55b3de867b878e21b237cf41567a5a1e"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/banks.c",
+      "size": 9108,
+      "sha256": "bbdb308cf8eb69b1ad5d53e33ad8e49051b58ac1ceed8b390d143db63b3f81e7"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/captured.c",
+      "size": 10446,
+      "sha256": "b0339483f3cb999932be8ae3e2dda9afefbec706f745bcb821d9df4ea8881abf"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/components.c",
+      "size": 6760,
+      "sha256": "6fd3bf132a80e5d8b9776967cd2d335433f54fba4937271c2d8e1e4504aea938"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/float_masks.c",
+      "size": 12298,
+      "sha256": "afc41f061f6d6427fe85ec35510512910e03bb893d35bb05ebe4d5ecbe5a2455"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/hostile.c",
+      "size": 7478,
+      "sha256": "cff3b387a16d438a12dd1af57b47128c815a9f1a9fc1966a365cee51e1119696"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/integer_masks.c",
+      "size": 12136,
+      "sha256": "ac712922b538298a97bd67af2a1eddb4dd8bd060ca3d6c2f5e8b31c153112fe4"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/numeric_floats.c",
+      "size": 12549,
+      "sha256": "1c86ce4e37632eebf76e5c0d085bbf344845a4427e85c562ce9d758eb84504b8"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/pairs.c",
+      "size": 8708,
+      "sha256": "19dc85ec25b16230e813996531e3a8235b396c4dfb9331304ad815cc784f46c2"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/raw_bits.c",
+      "size": 11721,
+      "sha256": "8959695ea4436938389c64eb93e356fc83c1ad070941419d0184f57f25dd01bc"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "size": 17884,
+      "sha256": "43609200b4e60b741a6f17234d3442af3cda56f5dc07b26d3631e63555ef2444"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.h",
+      "size": 3512,
+      "sha256": "529f5af9eba18334be5fc4c59b0f60c2c9c5438961e71a2000428c63c420dac7"
+    },
+    {
+      "path": "renderer/virgl-shader/README.md",
+      "size": 34997,
+      "sha256": "a7d77e0c233e7fc8b580eb5447f273136d5f8b9d790ab92fa89c2aab4e703161"
+    },
+    {
+      "path": "renderer/virgl-shader/regenerate.py",
+      "size": 1696,
+      "sha256": "04121f0bbc2438b885c88737b03886c27a7024ea75454858c1bed9e40e89b399"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/alpha.frag.tgsi",
+      "size": 145,
+      "sha256": "b76a6ab3958192db11de2e1e300e2761e6c6db359e00afeb3e6527d8fa70b53e"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/arithmetic.frag.tgsi",
+      "size": 160,
+      "sha256": "e05362e13188b954051e39bccf3da5201ebaf967ee9a60ac0f987ee38383600f"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/bank-cases.json",
+      "size": 192995,
+      "sha256": "a6582a8578b5e0b3e71c9ee49e4fdf0328fb8f40a8ffac1e2984498495513a75"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/banks.mjs",
+      "size": 23946,
+      "sha256": "b0f538bf1c61c9eb83d3b9b3a0e1567d2981bcbb728e1a2eba9f54e66bcd007d"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/browser.mjs",
+      "size": 18232,
+      "sha256": "98c06c9083ac761ebec44ebc2b051dd0faf8e917014ce7287dc8aa079bb7e1ef"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/captured-invalid.json",
+      "size": 20802,
+      "sha256": "fd7769f258bc5d51ce6e1c10c8e91345124676e6ce1777b30999e23a19cdbd80"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/captured-textured-scene.mjs",
+      "size": 17303,
+      "sha256": "53f95875da947dd6644e993fcb7310601d12e6f1dd7c6ec7859d6b3d597434c0"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/component-cases.json",
+      "size": 54311,
+      "sha256": "92752e2bfc8d5712dc77d84b9502ed54c14fbecac6a717191dd556d09c122b40"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/components.mjs",
+      "size": 20021,
+      "sha256": "28feb47ddaa30ba18704f63f150ce3e150b040be9788c146620635965c9a5f0c"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/corpus.mjs",
+      "size": 4442,
+      "sha256": "4f88a7a4f4a301f1a60e3f1b046d71635373a273cbc07e60b43c35aae33d0245"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/float-mask-cases.json",
+      "size": 229820,
+      "sha256": "c3029ca0c4b5083bcb8c3854045ef8cb6a4e923e087ab6d78e99772d860c5311"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/float-mask-hardware.json",
+      "size": 58605,
+      "sha256": "77e86508296cd98ee7b0844e635874124dadead9d932f8c03780c83c26c53458"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/float-masks.mjs",
+      "size": 45102,
+      "sha256": "46a919670247c8e31bd21c81a584c28e5ad46b3f440112f5976ebf7b3e883e75"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/integer-mask-cases.json",
+      "size": 313645,
+      "sha256": "9f6d3c95508e3088e0a468d55fa77ef578e57c61ca4d10c7339e4d3762d177a6"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/integer-mask-hardware.json",
+      "size": 57298,
+      "sha256": "7ff7c4e8f9d95b0dd1df94ef6ca9e0ba7e776ea2af4f4e879ca3554ebb9bedda"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/integer-masks.mjs",
+      "size": 44611,
+      "sha256": "b4e5ca48168907ba566b8d7eb2f0599721d1e528c7812229057416e9a1018a28"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/linkage.frag.tgsi",
+      "size": 80,
+      "sha256": "bf50dd29e6dadcc16e16e538731a72e47498881e38154fc15059bc2997d846c9"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/numeric-float-cases.json",
+      "size": 210709,
+      "sha256": "3848982cd7c4c5893931290ddb0480b65c528ef49ed9e76962b9e18b8e35db0b"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/numeric-float-hardware.json",
+      "size": 92929,
+      "sha256": "635559a8b3d3d3c85399bd9a4fa0b20a970374293f00854d25569433251d0ba0"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/numeric-floats.mjs",
+      "size": 47489,
+      "sha256": "06ce68ff9abdcdb7b33d71b75db37ee54f57ecae6e326b8a04ad90803bf44b76"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/pair-cases.json",
+      "size": 199393,
+      "sha256": "1b230d356463f1adb1155631a5377e7f8e65ab6f78bc4404eeba26c0b7b52d63"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/pairs.mjs",
+      "size": 15961,
+      "sha256": "a837403ff169cfb40b015256fb29b32da6c0f7b2f07eaf975c57392f8a690e3a"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/passthrough.vert.tgsi",
+      "size": 109,
+      "sha256": "396294ea197243b64d61cc6207e76f5043f791d318d5dc90d8ec3da1fc496ce4"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/raw-bit-cases.json",
+      "size": 107467,
+      "sha256": "f39f7650f947d53370c4d0ecd45eaa282b3610f42a28ca70af24473ee4077e4a"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/raw-bit-hardware.json",
+      "size": 41731,
+      "sha256": "da9d08b03fa8cbe853f9b9813be9946c9b3d836b9a2c5cf879db9f98510aaae2"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/raw-bits.mjs",
+      "size": 38247,
+      "sha256": "0ed981c535e859e63556082e70336a250ea8254e876f0b6b5311d569c9de0986"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/texture.frag.tgsi",
+      "size": 185,
+      "sha256": "4ca512b5dfd3afac60eddf009cdc542fe6effa5b9817143ff404210ffce3fa00"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/transform.vert.tgsi",
+      "size": 165,
+      "sha256": "320d661e3f13f88dd6c3e874ffe1a43320211a28b69d505cc9e0e6c3fe4908ff"
+    },
+    {
+      "path": "renderer/virgl-shader/UPSTREAM.json",
+      "size": 8594,
+      "sha256": "6f7866d3a3a5e502f6516506909c0d43dec60902fd251a2eecec9610bd992a71"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/cso_cache/cso_cache.c",
+      "size": 8950,
+      "sha256": "88a296ad627e49f22d3e58b6c70c2a656f8c3e7a6fba652f16332c172b12737c"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/cso_cache/cso_cache.h",
+      "size": 5609,
+      "sha256": "84ce8070d4af061f51e887ce7d80ce8fa9d81633205cf16bd61e42832d2cf1a0"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/cso_cache/cso_hash.c",
+      "size": 11319,
+      "sha256": "385fbd6abb5cfdb8fe0b982f07bdc2b98e2edaa50910b26681ab500c48d88514"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/cso_cache/cso_hash.h",
+      "size": 4178,
+      "sha256": "189444cd8c4b98327d79f0c33c5b63231854ab6419f9fe18b20e829510bcd66f"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_build.c",
+      "size": 35054,
+      "sha256": "45867deeb665f4ca86bc0b755ea3e72d320cb01ef881b6a808e9f332b0a040c3"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_build.h",
+      "size": 2838,
+      "sha256": "5f3c327979b3043649b9df678b0e359d387f334e9573c16bd4a263c5452da039"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_dump.c",
+      "size": 23084,
+      "sha256": "747fc8eb4df95202ea8192b377751021480ec7f430ba458936045a999d7f39bc"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_dump.h",
+      "size": 2696,
+      "sha256": "94cb5b4d80dc53937819a8dce44344ae63633e418174d3f8674668e1a74f49f4"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_info.c",
+      "size": 22172,
+      "sha256": "2419cdd3a6322cee5da57d666012504c7b6500acb228418334b8183aa7ec1833"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_info.h",
+      "size": 3230,
+      "sha256": "d20f7d0697a35196c5893d9454016b1cbe58d0b5dfe1eadec23b692271de0568"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_iterate.c",
+      "size": 2910,
+      "sha256": "1767a12cd5be68c04ec5f94a8ec27559913708c9eee13ba524919ee376c85879"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_iterate.h",
+      "size": 2323,
+      "sha256": "29a5f6c96dc4e3483a8afc1f6fdd035fabb29dbcd354bb316d5a005c7feb34db"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_parse.c",
+      "size": 9241,
+      "sha256": "c08c03b75cc74dc8d30231773ed357ddbcbf5b792d303164882ad996c89d91bd"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_parse.h",
+      "size": 4672,
+      "sha256": "3fb35f0187777fffcbbd9b5f12d3f17f7012e925439f5b959fc9c6876230ef1c"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_sanity.c",
+      "size": 15277,
+      "sha256": "f5bc791e3488f2ae35ef1156b7953620de38601bbb4418984d039af5a0c14e51"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_sanity.h",
+      "size": 1879,
+      "sha256": "beac1b1c6680faf9cbcb660324b445a7664ea22fdc1ffb69f9ccfbac5fbf0bac"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_scan.c",
+      "size": 24473,
+      "sha256": "c77892860df340b883c5e191577006f6ba5b0f07eb4ca6d74ec5e6466eac0975"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_scan.h",
+      "size": 5283,
+      "sha256": "16f4742f1f8563703686aec4dbfade31ebaee2d1357f69ff525678919e0fc928"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_strings.c",
+      "size": 5859,
+      "sha256": "e1c3909633b5acd3ff445ce3ddde249457ca92d1ba571269162b7eb5903f513f"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_strings.h",
+      "size": 2378,
+      "sha256": "12d42a3b23f78824c93a5115e479d437f21bb03745b647a9004feaef74a42abb"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_text.c",
+      "size": 49657,
+      "sha256": "692188a36d9cb4cb714dfc3eaf8fc9f7be4f5428550d8ad243fa3d6247d25b0c"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_text.h",
+      "size": 1628,
+      "sha256": "e3a4c2c7af363e952c4b32b71c9b6f5517718392ed9572b86f27d27151e8af9c"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_util.c",
+      "size": 11690,
+      "sha256": "dbab8d2d314a647c9639d9dd9e6947d3b920346a4680d3fe8102e7497241e4ce"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_util.h",
+      "size": 2715,
+      "sha256": "f3b4b296b9f0ccc1b8ad802bca91597efd12e08c551ccbce3b94fc23467a8fc1"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_debug_describe.h",
+      "size": 2040,
+      "sha256": "002511b4833ea6665b0aa6bd9010a0d999a58a4f8d91cb32de7fc30ff28f76ab"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_debug_refcnt.h",
+      "size": 1789,
+      "sha256": "2f173c1b54038fcd432933611687632ab2eac27a94511c615a9ab0c302a8c7b9"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_format_parse.py",
+      "size": 20341,
+      "sha256": "718ba46b27fbec2e0026ca8e2480a6b4992583a9b2bd4e2a90eee2a64f8a6ee7"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_format_s3tc.h",
+      "size": 1601,
+      "sha256": "653113e5628c6ab84f5dd680cc658a992901011435332b2c445adabd0131587c"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_format_table.py",
+      "size": 20834,
+      "sha256": "4fd54a3df7c3ccd37c3cd429953956799fa4d5113d147d60d8cf5d48e6415087"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_format.h",
+      "size": 24095,
+      "sha256": "3e2f6ad3d5c933ca9fd0124b3ae66a1584fc2ae57f761f2e147b497473384f51"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_inlines.h",
+      "size": 7051,
+      "sha256": "52961188ed9a0cd849baabdbcce5fb1701f0bb8dc02e64115e82cbe2cac89866"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_prim.h",
+      "size": 7979,
+      "sha256": "8b4fddd7a11f08c7dd2d90a2b8f1f91abbfeaf849cc5f21425a5c80375b396d4"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/include/pipe/p_defines.h",
+      "size": 25281,
+      "sha256": "29b02c15399768ab74054e711f6633c407cf5f952f591c046e7542b82e54a008"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/include/pipe/p_shader_tokens.h",
+      "size": 23154,
+      "sha256": "48d2cedf0e97e4a685c20acb59bc8dd1317e0b2ba9166e9c4ac81fedda2e61f9"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/include/pipe/p_state.h",
+      "size": 19681,
+      "sha256": "4c9b59a7e9827314dcac5b7492ecd0cc62bd585d662f0611e542af70858c9dbe"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/compat/c11_compat.h",
+      "size": 483,
+      "sha256": "103fedb48f658d36cb416c9c9e5ea4d70dff181aab551fcb1028107d098ffa3e"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/compat/c99_compat.h",
+      "size": 2754,
+      "sha256": "92445314d5fb3eff3a12eaf4cc864f9b459862a99594403b36ea79dfe149d267"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/compat/no_extern_c.h",
+      "size": 2051,
+      "sha256": "60883a8d2b2978b861ef686c5a9afb41cf91ffec7c56baca89c626e7fea2d385"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/pipe/p_compiler.h",
+      "size": 4021,
+      "sha256": "cea977fedff656415c98ca4ac98d7ba4649c7bde65730f76a2e7a94034519e81"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/pipe/p_config.h",
+      "size": 4036,
+      "sha256": "86c0234de12412f65f8a53f1e9f619841d2e60a2b0e32b1ba99961b78c698985"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/bitscan.h",
+      "size": 8438,
+      "sha256": "afa4325d0ed38985bf00b547788a3b73c66a97a4513a3beb516e55b5fead5879"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/detect_os.h",
+      "size": 2522,
+      "sha256": "6d45904758bf3b5a67c0fa3829534461f1c8b276f55328f58a7cbac1d3770f95"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/hash_table.h",
+      "size": 7376,
+      "sha256": "9189e93d161af045eee3fca6f47aa164313e1668ab7341c69987a0f3ada24352"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/macros.h",
+      "size": 15240,
+      "sha256": "a6d424c804a9dd0e22f9bfe5fe332554b3440a13929d0aecf93f571ce9e9db8d"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/os_memory_aligned.h",
+      "size": 3383,
+      "sha256": "12d86fa94be38c13f7eeebdf313795e1267dd5a7187d2f0072e0e896f41702f6"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/os_memory_stdc.h",
+      "size": 2088,
+      "sha256": "07360363b88c927065e10df71bebf6c8a0cc3b9167c9dfce55f2d65f11e6f787"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/os_memory.h",
+      "size": 1938,
+      "sha256": "d77e951306a5027123a7c64675e10b23af8de03ea0673e84cbd935f93284e73f"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/os_misc.h",
+      "size": 2695,
+      "sha256": "3b88b89e0227de413926a9907d660c4b967ee5fe15c9e47977ecfe7091823ceb"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_atomic.h",
+      "size": 11209,
+      "sha256": "cd3c5ca84af9a2aae50517e8735aacf7e72edce326504d60c9c239f5c7ab3d0c"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_debug.c",
+      "size": 10824,
+      "sha256": "9a3f45a3ed1cb45cd6b8543181b06aa30a6ef1ca57a0fca2678900f9c42b5a4d"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_debug.h",
+      "size": 11537,
+      "sha256": "652e2cbc07d44cee7de3fa8cf2e30edc816bb061393de2f43f6d99d99e798ad8"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_endian.h",
+      "size": 1712,
+      "sha256": "088a97ceb214f120fabfe4a0eb8924fb1655de982525548bd867e3b45931b409"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_formats.h",
+      "size": 1818,
+      "sha256": "3fb34a11387b6c625a20862bd5204fc1b5dfb874d2a5f718ba6fa37953925cfc"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_math.h",
+      "size": 17141,
+      "sha256": "1ba82ca8f9eaaac9b48b5ffbb3fa59edbd4f91051f6bbdd8bf2dc6d375a2620a"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_memory.h",
+      "size": 2735,
+      "sha256": "c5db17c724c70283ddbe04165722f6988d4e0eb9aa3602ae472feff016649af9"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_string.h",
+      "size": 3055,
+      "sha256": "2c5615fc0be8f391051e2302dd1b1985eba5c5ece4922f511f8da07c59cf2598"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/virgl_hw.h",
+      "size": 36318,
+      "sha256": "191ca5cea527949a29e9753b1e31d550f2fed922895d78dabc5c5c3585aa2ff7"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/virgl_protocol.h",
+      "size": 30358,
+      "sha256": "094a6e2b210f1d3dd0f1ac254ed8820c1d889e57d2735c0c6194dbc94f3b1ac7"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/virgl_util.h",
+      "size": 4932,
+      "sha256": "d96d902c2b4d27083e5982fc90c7e887841cce07e0f95f42aa07ae64d9b53b77"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/virglrenderer.h",
+      "size": 19876,
+      "sha256": "0b39479c6dbad50d0b94adbd681e124d3c1a77cb0560309ed493241644730cf8"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/vrend/vrend_debug.h",
+      "size": 3279,
+      "sha256": "89f086d99d07d01753de837068fa510e00d6447961f994d3a7bb7d2dbbe5a62f"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/vrend/vrend_shader.c",
+      "size": 333808,
+      "sha256": "e08fe8ceebfebb3e6a050b74d0ea0ebbfab35b6be742b6f0c9b9149dd484c3e2"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/vrend/vrend_shader.h",
+      "size": 9367,
+      "sha256": "0df385cd9953620e9531db813a54fc582594f56364e5bf1efb1e7cd1ba2a2d09"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/vrend/vrend_strbuf.h",
+      "size": 6786,
+      "sha256": "b5909235cf614798d6cc89e6d9236e1653faf14b0493e1e912b68098841cae6f"
+    },
+    {
+      "path": "renderer/virgl-shader/verify_sources.py",
+      "size": 951,
+      "sha256": "2f473d2719bddcecea8828cd9eb02b98671d23fb6879f41946847998c8fea287"
+    },
+    {
+      "path": "tools/lib/virgl-browser-runner.mjs",
+      "size": 12831,
+      "sha256": "8ef93b0898858329aca938219b3532424aa4bb65945ddba3a59ae799af26f0e2"
+    },
+    {
+      "path": "tools/verify-virgl-captured-shaders.mjs",
+      "size": 2002,
+      "sha256": "c848b7cc37b77667e7bdaa3a7d7bc655e21409bbba5c2954c20a107dd80d42d4"
+    },
+    {
+      "path": "evidence/virgl-corpus/captures/textured-scene/shaders/e96102a3202dde8b0b05ffa142eb6064c5fe916b673bbf1d31464bcbac56fb33.tgsi",
+      "size": 256,
+      "sha256": "e96102a3202dde8b0b05ffa142eb6064c5fe916b673bbf1d31464bcbac56fb33"
+    },
+    {
+      "path": "evidence/virgl-corpus/captures/textured-scene/shaders/80d6db6a6f10b93770698cfdd47232fed0fca94f4cb07ba7381bb38563de9808.tgsi",
+      "size": 261,
+      "sha256": "80d6db6a6f10b93770698cfdd47232fed0fca94f4cb07ba7381bb38563de9808"
+    },
+    {
+      "path": "tools/virgl-capture/workloads/textured-scene.c",
+      "size": 8299,
+      "sha256": "067d289393bc8671e971e9b93912042580446d3e5492598eb229904039a9e9ea"
+    }
+  ],
+  "servedFiles": [
+    {
+      "path": "evidence/virgl-corpus/captures/textured-scene/shaders/80d6db6a6f10b93770698cfdd47232fed0fca94f4cb07ba7381bb38563de9808.tgsi",
+      "size": 261,
+      "sha256": "80d6db6a6f10b93770698cfdd47232fed0fca94f4cb07ba7381bb38563de9808"
+    },
+    {
+      "path": "evidence/virgl-corpus/captures/textured-scene/shaders/e96102a3202dde8b0b05ffa142eb6064c5fe916b673bbf1d31464bcbac56fb33.tgsi",
+      "size": 256,
+      "sha256": "e96102a3202dde8b0b05ffa142eb6064c5fe916b673bbf1d31464bcbac56fb33"
+    },
+    {
+      "path": "renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "size": 9285,
+      "sha256": "45dccef6ff61f9f01a63b86b40eb6c621fa442e39cbf04bbbb79446e5b372e65"
+    },
+    {
+      "path": "renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "size": 275914,
+      "sha256": "eefc0899be746bdbb246285e9c8bfe8c802d29e0480bf052be9790c78631c02d"
+    },
+    {
+      "path": "renderer/virgl-shader/index.mjs",
+      "size": 4404,
+      "sha256": "3bde28f884a70558ca052cc51c75695a55b3de867b878e21b237cf41567a5a1e"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/browser.mjs",
+      "size": 18232,
+      "sha256": "98c06c9083ac761ebec44ebc2b051dd0faf8e917014ce7287dc8aa079bb7e1ef"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/captured-invalid.json",
+      "size": 20802,
+      "sha256": "fd7769f258bc5d51ce6e1c10c8e91345124676e6ce1777b30999e23a19cdbd80"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/captured-textured-scene.mjs",
+      "size": 17303,
+      "sha256": "53f95875da947dd6644e993fcb7310601d12e6f1dd7c6ec7859d6b3d597434c0"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/corpus.mjs",
+      "size": 4442,
+      "sha256": "4f88a7a4f4a301f1a60e3f1b046d71635373a273cbc07e60b43c35aae33d0245"
+    }
+  ],
+  "browserErrors": {
+    "console": [],
+    "page": [],
+    "requests": []
+  },
+  "browser": {
+    "executablePath": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    "executableSha256": "b4a14b08946ab78756169696fd272d6c3040a22df52da4f83f665225685f4c10",
+    "version": "154.0.8037.93",
+    "launch": {
+      "executablePath": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+      "headless": false,
+      "args": [
+        "--enable-gpu"
+      ]
+    },
+    "actualCommandLine": [
+      "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+      "--disable-field-trial-config",
+      "--disable-background-networking",
+      "--disable-background-timer-throttling",
+      "--disable-backgrounding-occluded-windows",
+      "--disable-back-forward-cache",
+      "--disable-breakpad",
+      "--disable-client-side-phishing-detection",
+      "--disable-component-extensions-with-background-pages",
+      "--disable-component-update",
+      "--no-default-browser-check",
+      "--disable-default-apps",
+      "--disable-dev-shm-usage",
+      "--disable-extensions",
+      "--disable-features=ImprovedCookieControls,LazyFrameLoading,GlobalMediaControls,DestroyProfileOnBrowserClose,MediaRouter,DialMediaRouteProvider,AcceptCHFrame,AutoExpandDetailsElement,CertificateTransparencyComponentUpdater,AvoidUnnecessaryBeforeUnloadCheckSync,Translate,HttpsUpgrades,PaintHolding,ThirdPartyStoragePartitioning,LensOverlay,PlzDedicatedWorker",
+      "--allow-pre-commit-input",
+      "--disable-hang-monitor",
+      "--disable-ipc-flooding-protection",
+      "--disable-popup-blocking",
+      "--disable-prompt-on-repost",
+      "--disable-renderer-backgrounding",
+      "--force-color-profile=srgb",
+      "--metrics-recording-only",
+      "--no-first-run",
+      "--enable-automation",
+      "--password-store=basic",
+      "--use-mock-keychain",
+      "--no-service-autorun",
+      "--export-tagged-pdf",
+      "--disable-search-engine-choice-screen",
+      "--unsafely-disable-devtools-self-xss-warnings",
+      "--enable-use-zoom-for-dsf=false",
+      "--no-sandbox",
+      "--enable-gpu",
+      "--user-data-dir=/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/playwright_chromiumdev_profile-JotQV8",
+      "--remote-debugging-pipe",
+      "--no-startup-window",
+      "--flag-switches-begin",
+      "--flag-switches-end"
+    ],
+    "cdpVersion": {
+      "protocolVersion": "1.3",
+      "product": "Chrome/154.0.8037.93",
+      "revision": "@f89f3a4363808e117c592adedcf9947882ac3b79",
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "jsVersion": "15.4.80.19"
+    },
+    "gpu": {
+      "devices": [
+        {
+          "vendorId": 4203,
+          "deviceId": 0,
+          "vendorString": "Google Inc. (Apple)",
+          "deviceString": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+          "driverVendor": "Apple",
+          "driverVersion": "26.6.2"
+        }
+      ],
+      "auxAttributes": {
+        "amdSwitchable": false,
+        "canSupportThreadedTextureMailbox": false,
+        "directRenderingVersion": "",
+        "displayType": "ANGLE_METAL",
+        "glExtensions": "GL_AMD_performance_monitor GL_ANGLE_base_vertex_base_instance_shader_builtin GL_ANGLE_blob_cache GL_ANGLE_client_arrays GL_ANGLE_clip_cull_distance GL_ANGLE_compressed_texture_etc GL_ANGLE_depth_texture GL_ANGLE_framebuffer_blit GL_ANGLE_framebuffer_multisample GL_ANGLE_get_serialized_context_string GL_ANGLE_get_tex_level_parameter GL_ANGLE_instanced_arrays GL_ANGLE_memory_size GL_ANGLE_pack_reverse_row_order GL_ANGLE_polygon_mode GL_ANGLE_program_binary_readiness_query GL_ANGLE_program_cache_control GL_ANGLE_provoking_vertex GL_ANGLE_renderability_validation GL_ANGLE_request_extension GL_ANGLE_rgbx_internal_format GL_ANGLE_robust_client_memory GL_ANGLE_shader_pixel_local_storage GL_ANGLE_shader_pixel_local_storage_coherent GL_ANGLE_stencil_texturing GL_ANGLE_texture_compression_dxt3 GL_ANGLE_texture_compression_dxt5 GL_ANGLE_texture_multisample GL_ANGLE_translated_shader_source GL_APPLE_clip_distance GL_ARM_rgba8 GL_CHROMIUM_bind_generates_resource GL_CHROMIUM_bind_uniform_location GL_CHROMIUM_copy_texture GL_CHROMIUM_lose_context GL_EXT_base_instance GL_EXT_blend_func_extended GL_EXT_blend_minmax GL_EXT_clip_control GL_EXT_color_buffer_float GL_EXT_color_buffer_half_float GL_EXT_compressed_ETC1_RGB8_sub_texture GL_EXT_conservative_depth GL_EXT_debug_label GL_EXT_debug_marker GL_EXT_depth_clamp GL_EXT_discard_framebuffer GL_EXT_disjoint_timer_query GL_EXT_draw_buffers GL_EXT_draw_buffers_indexed GL_EXT_draw_elements_base_vertex GL_EXT_float_blend GL_EXT_frag_depth GL_EXT_instanced_arrays GL_EXT_map_buffer_range GL_EXT_multisampled_render_to_texture GL_EXT_occlusion_query_boolean GL_EXT_polygon_offset_clamp GL_EXT_pvrtc_sRGB GL_EXT_read_format_bgra GL_EXT_render_snorm GL_EXT_robustness GL_EXT_sRGB GL_EXT_shader_texture_lod GL_EXT_texture_compression_bptc GL_EXT_texture_compression_dxt1 GL_EXT_texture_compression_rgtc GL_EXT_texture_compression_s3tc_srgb GL_EXT_texture_filter_anisotropic GL_EXT_texture_format_BGRA8888 GL_EXT_texture_mirror_clamp_to_edge GL_EXT_texture_norm16 GL_EXT_texture_rg GL_EXT_texture_sRGB_R8 GL_EXT_texture_sRGB_RG8 GL_EXT_texture_shadow_lod GL_EXT_texture_storage GL_IMG_texture_compression_pvrtc GL_KHR_debug GL_KHR_parallel_shader_compile GL_KHR_robustness GL_KHR_texture_compression_astc_hdr GL_KHR_texture_compression_astc_ldr GL_KHR_texture_compression_astc_sliced_3d GL_MESA_framebuffer_flip_y GL_NV_fence GL_NV_framebuffer_blit GL_NV_pixel_buffer_object GL_NV_shader_noperspective_interpolation GL_OES_EGL_image GL_OES_EGL_sync GL_OES_compressed_ETC1_RGB8_texture GL_OES_depth24 GL_OES_depth32 GL_OES_depth_texture GL_OES_draw_buffers_indexed GL_OES_draw_elements_base_vertex GL_OES_element_index_uint GL_OES_fbo_render_mipmap GL_OES_get_program_binary GL_OES_mapbuffer GL_OES_packed_depth_stencil GL_OES_required_internalformat GL_OES_rgb8_rgba8 GL_OES_sample_variables GL_OES_shader_multisample_interpolation GL_OES_standard_derivatives GL_OES_surfaceless_context GL_OES_texture_3D GL_OES_texture_float GL_OES_texture_float_linear GL_OES_texture_half_float GL_OES_texture_half_float_linear GL_OES_texture_npot GL_OES_texture_stencil8 GL_OES_vertex_array_object GL_QCOM_render_shared_exponent ",
+        "glImplementationParts": "(gl=egl-angle,angle=metal)",
+        "glRenderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+        "glResetNotificationStrategy": 33362,
+        "glVendor": "Google Inc. (Apple)",
+        "glVersion": "OpenGL ES 3.0 (ANGLE 2.1.28733 git hash: 802a8704ca94)",
+        "glWsExtensions": "",
+        "glWsVendor": "",
+        "glWsVersion": "",
+        "inProcessGpu": false,
+        "initializationTime": 0.030106,
+        "isAsan": false,
+        "isClangCoverage": false,
+        "jpegDecodeAcceleratorSupported": false,
+        "maxMsaaSamples": "4",
+        "optimus": false,
+        "passthroughCmdDecoder": true,
+        "pixelShaderVersion": "3.00",
+        "processCrashCount": 0,
+        "sandboxed": false,
+        "skiaBackendType": "GraphiteDawnMetal",
+        "subpixelFontRendering": true,
+        "targetCpuBits": 64,
+        "vertexShaderVersion": "3.00",
+        "visibilityCallbackCallCount": 0
+      },
+      "featureStatus": {
+        "2d_canvas": "enabled",
+        "direct_rendering_display_compositor": "disabled_off_ok",
+        "gpu_compositing": "enabled",
+        "multiple_raster_threads": "enabled_on",
+        "opengl": "enabled_on",
+        "rasterization": "enabled",
+        "raw_draw": "disabled_off_ok",
+        "skia_graphite": "enabled_on",
+        "trees_in_viz": "disabled_off",
+        "video_decode": "enabled",
+        "video_encode": "enabled",
+        "webgl": "enabled",
+        "webgpu": "enabled",
+        "webnn": "disabled_off"
+      },
+      "driverBugWorkarounds": [
+        "disable_2d_canvas_auto_flush",
+        "enable_webgl_timer_query_extensions",
+        "disabled_extension_GL_KHR_blend_equation_advanced",
+        "disabled_extension_GL_KHR_blend_equation_advanced_coherent"
+      ],
+      "videoDecoding": [],
+      "videoEncoding": []
+    },
+    "webglFeature": "webgl"
+  },
+  "failure": {
+    "message": "page.evaluate: Error: original-texture phase=0 pixel(4,4): expected [255,0,0,255], observed [0,0,0,255]\n    at require (http://127.0.0.1:56608/renderer/virgl-shader/tests/captured-textured-scene.mjs:14:65)\n    at equal (http://127.0.0.1:56608/renderer/virgl-shader/tests/captured-textured-scene.mjs:15:44)\n    at renderPhases (http://127.0.0.1:56608/renderer/virgl-shader/tests/captured-textured-scene.mjs:204:11)\n    at async runAcceptance (http://127.0.0.1:56608/renderer/virgl-shader/tests/captured-textured-scene.mjs:243:3)\n    at async eval (eval at evaluate (:234:30), <anonymous>:3:14)\n    at async <anonymous>:260:30",
+    "stack": "page.evaluate: Error: original-texture phase=0 pixel(4,4): expected [255,0,0,255], observed [0,0,0,255]\n    at require (http://127.0.0.1:56608/renderer/virgl-shader/tests/captured-textured-scene.mjs:14:65)\n    at equal (http://127.0.0.1:56608/renderer/virgl-shader/tests/captured-textured-scene.mjs:15:44)\n    at renderPhases (http://127.0.0.1:56608/renderer/virgl-shader/tests/captured-textured-scene.mjs:204:11)\n    at async runAcceptance (http://127.0.0.1:56608/renderer/virgl-shader/tests/captured-textured-scene.mjs:243:3)\n    at async eval (eval at evaluate (:234:30), <anonymous>:3:14)\n    at async <anonymous>:260:30\n    at runVirglBrowser (/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/lib/virgl-browser-runner.mjs:145:57)\n    at /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/async file:/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/verify-virgl-captured-shaders.mjs:9:1"
+  },
+  "acceptance": {
+    "kind": "captured-textured-scene-shaders",
+    "guestExecution": false,
+    "commandStreamReplay": false,
+    "status": "running",
+    "sabotage": "texture-texel",
+    "translations": [
+      {
+        "stage": "vertex",
+        "size": 256,
+        "sha256": "e96102a3202dde8b0b05ffa142eb6064c5fe916b673bbf1d31464bcbac56fb33",
+        "path": "evidence/virgl-corpus/captures/textured-scene/shaders/e96102a3202dde8b0b05ffa142eb6064c5fe916b673bbf1d31464bcbac56fb33.tgsi",
+        "event": 161,
+        "byteOffset": 4136,
+        "sourceSha256": "e96102a3202dde8b0b05ffa142eb6064c5fe916b673bbf1d31464bcbac56fb33",
+        "sourceText": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL OUT[0], POSITION\nDCL OUT[1].xy, GENERIC[0]\nIMM[0] UINT32 {0, 1065353216, 0, 0}\nDCL TEMP[0..3]\n  0: MOV OUT[0].xy, IN[0].xyxx\n  1: MOV OUT[0].z, IMM[0].xxxx\n  2: MOV OUT[0].w, IMM[0].yyyy\n  3: MOV OUT[1].xy, IN[1].xyxx\n  4: END\n",
+        "glslSha256": "8319f427810bac8279ac78ae56d0a098d6c4cb0ff8ef3f9fd84aaf5c5b210c1e",
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nin vec4 in_1;\n   out  vec4 vso_g0;\n vec4 temp0;\n vec4 temp1;\n vec4 temp2;\n vec4 temp3;\nlayout (std140) uniform VirglBlock {\n\tvec4 clipp[8];\n\tuint stipple_pattern[32];\n\tfloat winsys_adjust_y;\n\tfloat alpha_ref_val;\n\tbool clip_plane_enabled;\n\tint drawid_base;\n};\nvoid main(void)\n{\ngl_Position.xy = vec2(((in_0.xyxx).xy));\ngl_Position.z = float((uintBitsToFloat(uvec4(0U,0U,0U,0U)).z));\ngl_Position.w = float((uintBitsToFloat(uvec4(1065353216U,1065353216U,1065353216U,1065353216U)).w));\nvso_g0.xy = vec2(((in_1.xyxx).xy));\ngl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-straight-line-v5",
+          "stage": "vertex",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 1,
+              "name": "in_1",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "gl_Position",
+              "type": "vec4",
+              "semantic": "POSITION",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            },
+            {
+              "index": 1,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 3,
+              "writtenMask": 3,
+              "interpolation": "smooth"
+            }
+          ],
+          "attributes": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 1,
+              "name": "in_1",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "uniforms": [],
+          "samplers": [],
+          "uniformBlocks": [
+            {
+              "name": "VirglBlock",
+              "byteLength": 656,
+              "members": [
+                {
+                  "name": "winsys_adjust_y",
+                  "offset": 640,
+                  "type": "float",
+                  "default": 1
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "stage": "fragment",
+        "size": 261,
+        "sha256": "80d6db6a6f10b93770698cfdd47232fed0fca94f4cb07ba7381bb38563de9808",
+        "path": "evidence/virgl-corpus/captures/textured-scene/shaders/80d6db6a6f10b93770698cfdd47232fed0fca94f4cb07ba7381bb38563de9808.tgsi",
+        "event": 161,
+        "byteOffset": 4420,
+        "sourceSha256": "80d6db6a6f10b93770698cfdd47232fed0fca94f4cb07ba7381bb38563de9808",
+        "sourceText": "FRAG\nPROPERTY FS_COLOR0_WRITES_ALL_CBUFS 1\nDCL IN[0].xy, GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nDCL CONST[0]\nDCL TEMP[0]\nDCL TEMP[1..4]\n  0: TEX TEMP[0], IN[0].xyyy, SAMP[0], 2D\n  1: MUL OUT[0], TEMP[0], CONST[0]\n  2: END\n",
+        "glslSha256": "3cbf54ead220c52846448db17e7448e258f65f61155d54f6280f617aa3a00ff4",
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\n smooth    in  vec4 vso_g0;\nlayout (location=0) out vec4 fsout_c0;\n vec4 temp0;\n vec4 temp1;\n vec4 temp2;\n vec4 temp3;\n vec4 temp4;\nuniform uvec4 fsconst0[1];\nuniform highp  sampler2D fssamp0;\nvoid main(void)\n{\ntemp0 = vec4((texture(fssamp0, (vso_g0.xyyy).xy)));\nfsout_c0 = vec4((( vec4(temp0)  * uintBitsToFloat(fsconst0[0]))));\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-straight-line-v5",
+          "stage": "fragment",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 3,
+              "interpolation": "smooth"
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "fsout_c0",
+              "type": "vec4",
+              "semantic": "COLOR",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            }
+          ],
+          "attributes": [],
+          "uniforms": [
+            {
+              "name": "fsconst0",
+              "type": "uvec4[]",
+              "count": 1,
+              "encoding": "float32-bits"
+            }
+          ],
+          "samplers": [
+            {
+              "index": 0,
+              "name": "fssamp0",
+              "type": "sampler2D"
+            }
+          ],
+          "uniformBlocks": []
+        }
+      }
+    ],
+    "draws": [
+      {
+        "phase": 0,
+        "name": "original-texture",
+        "uniforms": [
+          {
+            "name": "fsconst0[0]",
+            "stage": "fragment",
+            "type": "uvec4[]",
+            "values": [
+              [
+                1,
+                1,
+                1,
+                1
+              ]
+            ],
+            "bits": [
+              1065353216,
+              1065353216,
+              1065353216,
+              1065353216
+            ]
+          }
+        ],
+        "blend": false,
+        "clear": [
+          0,
+          0,
+          1,
+          1
+        ],
+        "drawCall": {
+          "mode": "TRIANGLES",
+          "count": 6,
+          "indexType": "UNSIGNED_SHORT",
+          "offsetBytes": 0
+        },
+        "expectedQuadrants": [
+          [
+            255,
+            0,
+            0,
+            255
+          ],
+          [
+            0,
+            255,
+            0,
+            255
+          ],
+          [
+            0,
+            0,
+            255,
+            255
+          ],
+          [
+            255,
+            255,
+            0,
+            255
+          ]
+        ],
+        "checkedPixels": 0,
+        "checks": [],
+        "rgbaSha256": "c5c8ef47f4f3451a1c2bc5f3b58523ce77d6a9854558720e7850d5db9221f2be",
+        "glError": 0,
+        "failure": {
+          "x": 4,
+          "y": 4,
+          "expected": [
+            255,
+            0,
+            0,
+            255
+          ],
+          "observed": [
+            0,
+            0,
+            0,
+            255
+          ]
+        }
+      }
+    ],
+    "limits": {
+      "textBytes": 16384,
+      "tokens": 8192,
+      "glslBytes": 65536,
+      "instructions": 179,
+      "registerIndex": 7,
+      "temporaryRegisterIndex": 117,
+      "constantRegisterIndex": 45
+    },
+    "renderer": {
+      "vendor": "Google Inc. (Apple)",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+      "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "shadingLanguageVersion": "WebGL GLSL ES 3.00 (OpenGL ES GLSL ES 3.0 Chromium)",
+      "contextAttributes": {
+        "alpha": true,
+        "antialias": false,
+        "depth": true,
+        "desynchronized": false,
+        "failIfMajorPerformanceCaveat": true,
+        "powerPreference": "default",
+        "premultipliedAlpha": false,
+        "preserveDrawingBuffer": true,
+        "stencil": false,
+        "xrCompatible": false
+      },
+      "extensions": [
+        "EXT_clip_control",
+        "EXT_color_buffer_float",
+        "EXT_color_buffer_half_float",
+        "EXT_conservative_depth",
+        "EXT_depth_clamp",
+        "EXT_disjoint_timer_query_webgl2",
+        "EXT_float_blend",
+        "EXT_polygon_offset_clamp",
+        "EXT_render_snorm",
+        "EXT_texture_compression_bptc",
+        "EXT_texture_compression_rgtc",
+        "EXT_texture_filter_anisotropic",
+        "EXT_texture_mirror_clamp_to_edge",
+        "EXT_texture_norm16",
+        "KHR_parallel_shader_compile",
+        "NV_shader_noperspective_interpolation",
+        "OES_draw_buffers_indexed",
+        "OES_sample_variables",
+        "OES_shader_multisample_interpolation",
+        "OES_texture_float_linear",
+        "WEBGL_blend_func_extended",
+        "WEBGL_clip_cull_distance",
+        "WEBGL_compressed_texture_astc",
+        "WEBGL_compressed_texture_etc",
+        "WEBGL_compressed_texture_etc1",
+        "WEBGL_compressed_texture_pvrtc",
+        "WEBGL_compressed_texture_s3tc",
+        "WEBGL_compressed_texture_s3tc_srgb",
+        "WEBGL_debug_renderer_info",
+        "WEBGL_debug_shaders",
+        "WEBGL_lose_context",
+        "WEBGL_multi_draw",
+        "WEBGL_polygon_mode",
+        "WEBGL_provoking_vertex",
+        "WEBGL_render_shared_exponent",
+        "WEBGL_stencil_texturing"
+      ]
+    },
+    "grammarAttacks": {
+      "sourceSha256": "fd7769f258bc5d51ce6e1c10c8e91345124676e6ce1777b30999e23a19cdbd80",
+      "cases": [
+        {
+          "name": "reversed-temp-range",
+          "stage": "vertex",
+          "inputSha256": "e48ec02ecd7f2239e56815ce9aef75be5ee208aa3cb0040e93a0b23d33c3fe64",
+          "inputBytes": 73,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "oversized-temp-range",
+          "stage": "vertex",
+          "inputSha256": "dbec40d29925299865788879acb672c1f5f0dfd42bf00c3d0978c53c2f206e1e",
+          "inputBytes": 75,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "negative-temp-range",
+          "stage": "vertex",
+          "inputSha256": "0197639f68285d358dea28536d905d330b8586036bef4655c7399f401fa1ce8e",
+          "inputBytes": 74,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "overflow-temp-range",
+          "stage": "vertex",
+          "inputSha256": "2ac72825cc3b25d9127eb8249c7d563a4a3df7be12138ce34b6fe9aec4b394c8",
+          "inputBytes": 82,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "long-temp-range",
+          "stage": "vertex",
+          "inputSha256": "b5271e967e2ed5bd766501db30f09196a718a2256ea1a4ede801d1a15d2192eb",
+          "inputBytes": 94,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "missing-temp-range-end",
+          "stage": "vertex",
+          "inputSha256": "8464e55bf412b451531188db1ca6c323567570f475ee48e512feb710f3129e99",
+          "inputBytes": 72,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "bad-temp-range-separator",
+          "stage": "vertex",
+          "inputSha256": "12fc005f0e3ddf34ae1ffbda99cedc053f8be13599ef92ef3f6b2c1f40ec854b",
+          "inputBytes": 74,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "nested-temp-range",
+          "stage": "vertex",
+          "inputSha256": "d6a0486b945a3ef2b38796668c045753a489a9509cda3f30bde0f23dbace79cf",
+          "inputBytes": 76,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "overlapping-temp-ranges",
+          "stage": "vertex",
+          "inputSha256": "1f70ac214a671e78c30c19f1af2c9957c4b0424900b77bfc778256ca68695c4b",
+          "inputBytes": 88,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "range-overlaps-prior-scalar",
+          "stage": "vertex",
+          "inputSha256": "e6bfb1b5b4ce383a04f339beccf165322ca34cf2b15867edfa9e3d262955df15",
+          "inputBytes": 85,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "scalar-overlaps-prior-range",
+          "stage": "vertex",
+          "inputSha256": "592649da69a8bc1f989d39542cb5d7b8e8edf5a79d8319f961d4cee1b5c9218b",
+          "inputBytes": 85,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "duplicate-temp-range",
+          "stage": "vertex",
+          "inputSha256": "5d791364e394ceaaa6341936fdbbca04fe6bf38bc0aff53200869238ae5c1ef8",
+          "inputBytes": 88,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "overlapping-const-range",
+          "stage": "vertex",
+          "inputSha256": "179ab0604bd51922563349d63798a71bc859d4c24958652e3066900b35b66290",
+          "inputBytes": 90,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "input-range-remains-rejected",
+          "stage": "vertex",
+          "inputSha256": "a9e50f9cdfbee843c1d0b12a44a710d7d68aa66fb37d95da2c621fd15efd6e1b",
+          "inputBytes": 71,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "output-range-remains-rejected",
+          "stage": "vertex",
+          "inputSha256": "8f6a380816c4ca088fa6296b1dd79b2e98c156b0320512a5623c56cd9ed1f79d",
+          "inputBytes": 84,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "address-register-remains-rejected",
+          "stage": "vertex",
+          "inputSha256": "9a4e82c93173abbf14841c73e3e01395e5b854c136f3d19156f0e7ed13ba1642",
+          "inputBytes": 70,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "sampler-range-remains-rejected",
+          "stage": "fragment",
+          "inputSha256": "c8b89a434327799b7327c4af458e1c7704af9b28650d1bcb0a10bf257afa1cb5",
+          "inputBytes": 103,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "view-range-remains-rejected",
+          "stage": "fragment",
+          "inputSha256": "c68791d5a3b9f3f726901a7d4eebb60dd1800b60780b07d5c4dfdcffcbc2d72e",
+          "inputBytes": 115,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "generic-declaration-mask-x",
+          "stage": "vertex",
+          "inputSha256": "da4827351398b5cebb1876794782ce1fda78c4e34eabb1628a053efd0ec7cd12",
+          "inputBytes": 101,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "generic-declaration-mask-y",
+          "stage": "vertex",
+          "inputSha256": "a4c0f1615ba5836ea1db28a64e4138925800e875e35420841ff8273036bcf05e",
+          "inputBytes": 101,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "generic-declaration-mask-z",
+          "stage": "vertex",
+          "inputSha256": "780a69a063ac15e452f2ef2d94d5cbd9e870e45d42839b5eaf973c7150306585",
+          "inputBytes": 101,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "generic-declaration-mask-w",
+          "stage": "vertex",
+          "inputSha256": "f23d727c479a72b2829d44626e55c342378d81a03789758e60e27de5add4e777",
+          "inputBytes": 101,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "generic-xyz-full-write-undeclared-w",
+          "stage": "vertex",
+          "inputSha256": "0cfbdb01500e84c35c4b3947f65e05163870e60ad9fd2df9640e49859dc23f4e",
+          "inputBytes": 103,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "generic-declaration-mask-xyzw",
+          "stage": "vertex",
+          "inputSha256": "2dd1ebf3e904fe9b3b6e9062faa31926b8dc4a2c963eb6410376db1144b45835",
+          "inputBytes": 104,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "generic-declaration-mask-yx",
+          "stage": "vertex",
+          "inputSha256": "d8138d94979cff447ef7ae765b48b1c6787ed5958a700383db58eb48da652578",
+          "inputBytes": 102,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "generic-declaration-mask-xyy",
+          "stage": "vertex",
+          "inputSha256": "70548d3ee183bbd8d1ab1c1293705139dd1b06f032b172addfa31c2ee94c8ac7",
+          "inputBytes": 103,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "attribute-mask",
+          "stage": "vertex",
+          "inputSha256": "480a1c508e99967730e7df8aad849a6a724a0da14763cc2fbe90e50d0ab6268b",
+          "inputBytes": 71,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "position-mask",
+          "stage": "vertex",
+          "inputSha256": "98d668f099c02e7800ecad2d2e4b57a02bbcbcac8de07b60ed16640ac88a1475",
+          "inputBytes": 64,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "temporary-mask",
+          "stage": "vertex",
+          "inputSha256": "908bdeb913125ad088ba9981dac5df12d5e2128b4340acefc63501c33bf19cfc",
+          "inputBytes": 73,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "constant-mask",
+          "stage": "vertex",
+          "inputSha256": "65fee559d2db6e7c97698fbfa8688d0047321567f6faebee3e00aa4857df9834",
+          "inputBytes": 74,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "color-mask",
+          "stage": "fragment",
+          "inputSha256": "7c26ebd2999435357a40eb36dae2882dca1936ffda5b06dd2e6809bb4afe0218",
+          "inputBytes": 94,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "sampler-mask",
+          "stage": "fragment",
+          "inputSha256": "f0dad05800ac543a8c9123944a9592f97247ab936f8d755e5e98a2dc3e0b91bd",
+          "inputBytes": 103,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "view-mask",
+          "stage": "fragment",
+          "inputSha256": "267347a9e6d04ef5f30cc532fe359f9eee40aefef1d5ce80d4ec99af4bb3e4ab",
+          "inputBytes": 115,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "partial-temp-write-xy-then-unwritten-read",
+          "stage": "vertex",
+          "inputSha256": "02f6807eb6e0d4a631693a7bc09e7a7bdefa74c2c271f83ba691b695123703ba",
+          "inputBytes": 97,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "partial-temp-write-z-then-unwritten-read",
+          "stage": "vertex",
+          "inputSha256": "a9f056a2c36cb4312647adf63a67502a8867f2adb068c4bc3372cc6fe9d4ea86",
+          "inputBytes": 96,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "partial-temp-write-w-then-unwritten-read",
+          "stage": "vertex",
+          "inputSha256": "04fb151a1bb6cc5144a1b6e7a68a03ffdfba63a8a72d276d692711db1fd66ac1",
+          "inputBytes": 96,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "partial-temp-write-xyzw",
+          "stage": "vertex",
+          "inputSha256": "78a65c66fc7b7e519e52d630343596c54092ca7302f6aa248a8a4ef38f5f2390",
+          "inputBytes": 97,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "incomplete-output-mask-x",
+          "stage": "vertex",
+          "inputSha256": "16b6a4a0e32373126b9f412fb4d4c51226eb18e7a344916cd3486b3d526d95ea",
+          "inputBytes": 60,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "incomplete-output-mask-y",
+          "stage": "vertex",
+          "inputSha256": "3ad6567203c84e2067ff7c8de080ed66cba72440fa2e3555072636c600ca55a0",
+          "inputBytes": 60,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "unsupported-output-mask-zw",
+          "stage": "vertex",
+          "inputSha256": "62cc0a59c8f680882b0c492eecfbc37c5dca142012b4d249ff8c3fde4d73f68b",
+          "inputBytes": 79,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "incomplete-output-mask-xyz",
+          "stage": "vertex",
+          "inputSha256": "8d28cbb9d837b34da68cb79ced85d44cf436aba8ded3bea9209b877c498051ad",
+          "inputBytes": 62,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "unsupported-output-mask-xyzw",
+          "stage": "vertex",
+          "inputSha256": "19f4ca3d24ca5a0e1afb91ec8bd4f9d77faf68e3bf14343e56ba55bceb8a0126",
+          "inputBytes": 81,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "unsupported-output-mask-xx",
+          "stage": "vertex",
+          "inputSha256": "38b7c638c260f559ecf922ac0cb101bf2a20a81e210ec94794ced20e9454239d",
+          "inputBytes": 79,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "unsupported-output-mask-yx",
+          "stage": "vertex",
+          "inputSha256": "4fb208a30d9e989846eb4cb54ef418b55a81e647a20a7274e12b285cae868e5c",
+          "inputBytes": 79,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "masked-add-output-missing-second-source-lanes",
+          "stage": "vertex",
+          "inputSha256": "d0fd38c80a223dd60a3285ba119f24dc3b44a760f944a817106a8b99b5b11b70",
+          "inputBytes": 126,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "masked-mul-output-missing-second-source-lanes",
+          "stage": "vertex",
+          "inputSha256": "bc4ebe69d44df4bd06058d1167eb12f22a3ebfc6f75dead64c8ec1fca6c95f17",
+          "inputBytes": 126,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "masked-mad-output",
+          "stage": "vertex",
+          "inputSha256": "b369c7aca09fc8d62b38d4d2f91273a1c2a18ca4a388175e76914373398df7dd",
+          "inputBytes": 93,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "masked-tex-output",
+          "stage": "fragment",
+          "inputSha256": "179eceec6f35ed4783f2ce9932d3ce7765f03e50d7ba5b5db400d340711a8a68",
+          "inputBytes": 163,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "read-unwritten-range-first",
+          "stage": "vertex",
+          "inputSha256": "ff9c6ade839ced6f2785ad5f571229938039ab7641ac2203facf89a2bf4fc057",
+          "inputBytes": 75,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "read-unwritten-range-last",
+          "stage": "vertex",
+          "inputSha256": "eb37c8feebbb0bc01539f8b6e4bfcac43a4c98d5ed495dae4dc83f4022a35a48",
+          "inputBytes": 94,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "write-undeclared-output-component",
+          "stage": "vertex",
+          "inputSha256": "d0efd935ac6979d10e55f19a31886f684a4346c300e95cd9b4de46f8c732a37f",
+          "inputBytes": 125,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "missing-position-w",
+          "stage": "vertex",
+          "inputSha256": "eb7e5bedec9df651ca579181cf299b86683642ec56e9ad73b81728e5f3abaf98",
+          "inputBytes": 81,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "missing-position-z",
+          "stage": "vertex",
+          "inputSha256": "5b1c82a76a7ff07f599b4e8a3a23c14416c809e9a49dc870ed00143680dda5f4",
+          "inputBytes": 81,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "missing-position-xy",
+          "stage": "vertex",
+          "inputSha256": "8546aefd34bb5a00b01b65350a09f5f6ac061e4091998f18fe6b8e4a13bcdcf1",
+          "inputBytes": 80,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "missing-generic-xy",
+          "stage": "vertex",
+          "inputSha256": "9cb0224c892173a3a0e1efa53e372d45d6ac9790bec9df7803f9ccb8ea08b2fc",
+          "inputBytes": 84,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "missing-full-generic-w",
+          "stage": "vertex",
+          "inputSha256": "a1cc97c970fbe32d9d3147388ad188a11a10635f0a07493e684043d0406e290a",
+          "inputBytes": 122,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "missing-color-w",
+          "stage": "fragment",
+          "inputSha256": "b78f597f8768c1552cb327f961f2b7b88ac8da5a8783cc4d9d16a0239a6fc3c1",
+          "inputBytes": 116,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "implicit-undeclared-generic-components",
+          "stage": "fragment",
+          "inputSha256": "7acef80a486290e93018916a013e51e6177e42f427cb8310adab37061f202af9",
+          "inputBytes": 83,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "swizzled-undeclared-generic-z",
+          "stage": "fragment",
+          "inputSha256": "c75cc6b8d24d134288d07cadafbc5a48c64a63eb63e88ae25e83af4770699cc2",
+          "inputBytes": 88,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "swizzled-undeclared-generic-w",
+          "stage": "fragment",
+          "inputSha256": "a120e898b9e6d3301841ac5599bf64ca45db51b281e827ae97f4da7bae850cca",
+          "inputBytes": 88,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "consumed-swizzle-lane-remains-bounded",
+          "stage": "fragment",
+          "inputSha256": "24ce1a3a4dbf3c3be8c5c772f8ec703a73cf306bd845aabab4311f0b6827046b",
+          "inputBytes": 141,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "malformed-swizzle-x",
+          "stage": "vertex",
+          "inputSha256": "5852d109ca8f1e3ab3bea067f50a4866498390c53864e030e96a6a07b74fa138",
+          "inputBytes": 60,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "malformed-swizzle-xy",
+          "stage": "vertex",
+          "inputSha256": "94734cb3762d56a449b462a3aa2dc631c51fe2c3ed8a432c833f9d561c195327",
+          "inputBytes": 61,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "malformed-swizzle-xyz",
+          "stage": "vertex",
+          "inputSha256": "43596a4f3dceb31dbac8da9b2561b27882804699b112114d5acab82b666a7d0a",
+          "inputBytes": 62,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "malformed-swizzle-xyzwx",
+          "stage": "vertex",
+          "inputSha256": "b1f83093942243b921b54dcd5cb78fa63c09d365e8c7308542707f2aec487c95",
+          "inputBytes": 64,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "malformed-swizzle-qxyz",
+          "stage": "vertex",
+          "inputSha256": "5745f420ecbdbb96a02651730e81197d4040665af206ee59fb56ba8f994886fb",
+          "inputBytes": 63,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "malformed-swizzle-rgba",
+          "stage": "vertex",
+          "inputSha256": "9aee43ca42d9496764d2e7cabb13b220d0f35fd28172096a213c98d5f495d18d",
+          "inputBytes": 63,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "malformed-swizzle-XYZW",
+          "stage": "vertex",
+          "inputSha256": "43ab80b4a28a3cbf2f61a41d0926903ddcc9f30417f8675f0db4bd404894537c",
+          "inputBytes": 63,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "malformed-swizzle-empty",
+          "stage": "vertex",
+          "inputSha256": "48e6117faa1ef3244dfecf1a017997cc604997b3d982fe76e37239fc6c037d1c",
+          "inputBytes": 59,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "swizzled-sampler",
+          "stage": "fragment",
+          "inputSha256": "c7927bc6a0a3a01ac9ae60e5c98885b7723a13dcb149c7d4ec837a3c77b4cbc9",
+          "inputBytes": 142,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "uint32-overflow",
+          "stage": "vertex",
+          "inputSha256": "7d6a939cafee1d3b83e72273684b796dfb456ca17d28a3532232d177d8d1b238",
+          "inputBytes": 95,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "uint32-long",
+          "stage": "vertex",
+          "inputSha256": "a21be7636a24c3873de74eddd051b14bbd9904cb8ea96bf02dea5bd506203b17",
+          "inputBytes": 118,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "uint32-long-leading-zeroes",
+          "stage": "vertex",
+          "inputSha256": "f1487287505fc2aa824b8d2c38e3c72cdfe977fb7c22fac701554bda03eb5292",
+          "inputBytes": 96,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "uint32-negative",
+          "stage": "vertex",
+          "inputSha256": "7c8cdbc39fbfd1eb903e5b33c632e52b7daeb513c16a851e470c11e3eadd1636",
+          "inputBytes": 87,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "uint32-plus-sign",
+          "stage": "vertex",
+          "inputSha256": "8fc6f4b3a65490fe0956b2e667ff9f52785e6d88478f2f54b24d4b3b84a9cf57",
+          "inputBytes": 87,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "uint32-hex",
+          "stage": "vertex",
+          "inputSha256": "040cd5fb69b7542bc176e0b7884fe6065e3273b83747995f21c011f4d4286c3d",
+          "inputBytes": 95,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "uint32-exponent",
+          "stage": "vertex",
+          "inputSha256": "b17ddb1bc28098ada567e463395e56c0365cb668c3aaba240560f88e6bc598c6",
+          "inputBytes": 88,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "uint32-decimal-point",
+          "stage": "vertex",
+          "inputSha256": "9c9cd6dd554038a13ed8251952f1b41e2c4dedb864187f0c9328ae74fc355e5f",
+          "inputBytes": 88,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "uint32-text-nan",
+          "stage": "vertex",
+          "inputSha256": "613aecaa47a4035f97135c71bcbc46179531f81ac3cf4f2e42f211a6614dbfb1",
+          "inputBytes": 88,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "uint32-qnan",
+          "stage": "vertex",
+          "inputSha256": "441e30ba11cd732e58f9b70e2c04bd2b845e9653ecd67051c9deae0f0a65de6b",
+          "inputBytes": 95,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "uint32-negative-qnan",
+          "stage": "vertex",
+          "inputSha256": "f3bbe23d1308ba8ac5769145efd302e5185f2ee9976feb146c01bcc254fa88ca",
+          "inputBytes": 95,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "uint32-infinity",
+          "stage": "vertex",
+          "inputSha256": "63de508ff954ec0bf6d6fb2e8e66e3897ba64e04e5e0bf3f33157230fdbd9498",
+          "inputBytes": 95,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "uint32-negative-infinity",
+          "stage": "vertex",
+          "inputSha256": "ec3b9b95e11c349ca25d130118bc8058231e9479e4f3c9963509664fe302f157",
+          "inputBytes": 95,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "uint32-subnormal-min",
+          "stage": "vertex",
+          "inputSha256": "b30bc1e96147bec1d0be2330ec62735986db8b5e8e470554513d457a9fbac9c5",
+          "inputBytes": 86,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "uint32-subnormal-max",
+          "stage": "vertex",
+          "inputSha256": "1659723f855dcfe35f1d7c1f14ff51ea5e7a66eed410b0d2e3a82bc0c08b492c",
+          "inputBytes": 92,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "uint32-negative-subnormal-min",
+          "stage": "vertex",
+          "inputSha256": "7f2dca6f6ce7671da7bc719769c9982d353b247833db330a857d31c6a79ee116",
+          "inputBytes": 95,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "uint32-negative-subnormal-max",
+          "stage": "vertex",
+          "inputSha256": "8aeb7acf35c5662f82abd2952f846e2c95a7e4c757448f59cd992c4a4ce9b952",
+          "inputBytes": 95,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "uint32-above-float-limit",
+          "stage": "vertex",
+          "inputSha256": "b8e0ff810c4ed465d6398741c3b3ada024840f8980b5ca24709fad9bbb02c633",
+          "inputBytes": 95,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "uint32-below-negative-float-limit",
+          "stage": "vertex",
+          "inputSha256": "75459069b0a18f335f787bde7e8ded1ff868d8a460bad912e4fd222e8282f15e",
+          "inputBytes": 95,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "uint32-max-finite",
+          "stage": "vertex",
+          "inputSha256": "3ead996b2a1e3a71aec12c526c02c74b99c2f6bc2fb1e025ef1b4988ab561aee",
+          "inputBytes": 95,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "uint32-too-few-lanes",
+          "stage": "vertex",
+          "inputSha256": "42c235fc3f8999705000bf44ca0fda80433972f5fe62930faba8ff7d81a845d4",
+          "inputBytes": 91,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "uint32-too-many-lanes",
+          "stage": "vertex",
+          "inputSha256": "97bc8a28df6d42526d2165efa4039b1e3377e3f71167f6305e2ff0b006a62b02",
+          "inputBytes": 97,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "signed-integer-immediate",
+          "stage": "vertex",
+          "inputSha256": "838dfa651d8829b003d6b183fb2c72c86302595e0beb754dc6b4a144d085ecd3",
+          "inputBytes": 84,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "property-zero",
+          "stage": "fragment",
+          "inputSha256": "2b83810da18022f98ad287acdd53fee8588090b2f5180ab8b2d81416d8936f73",
+          "inputBytes": 126,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "property-two",
+          "stage": "fragment",
+          "inputSha256": "907bf6bb4e70aef018a85c6b7da3d50909af2ecb1bc790aaa9904798c155d70b",
+          "inputBytes": 126,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "property-negative",
+          "stage": "fragment",
+          "inputSha256": "e58061362ee1748140e6be68c327e0ce1ba9a7de863a57e56c5c54e2d22f7e86",
+          "inputBytes": 127,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "property-overflow",
+          "stage": "fragment",
+          "inputSha256": "a94321fdc85c74691c2213b9bfef81a5d307acc76f7f3ec3460ad4f0f5bf0743",
+          "inputBytes": 135,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "property-leading-zero",
+          "stage": "fragment",
+          "inputSha256": "5fda6c1c02a6bd110a717dd718888391b364819f5a568efdf79299321a8884e2",
+          "inputBytes": 127,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "property-missing",
+          "stage": "fragment",
+          "inputSha256": "673b60201926f15031a6a4df087c5e20795b29aa2a8359cf2b59975d4d9bd192",
+          "inputBytes": 125,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "property-trailing",
+          "stage": "fragment",
+          "inputSha256": "a7bd9b90b0f7734ccc4176dad009074dc728e8e99d9861a7f6deb41bba335ed6",
+          "inputBytes": 128,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "property-equals",
+          "stage": "fragment",
+          "inputSha256": "fbdc063d400af2e9fe78c74bd6bba3c860a1b366dc10cf95a41b473141d0b231",
+          "inputBytes": 128,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "duplicate-fragment-property",
+          "stage": "fragment",
+          "inputSha256": "c8fbca9788cea644188cc4ef03f9fa1d02d045a28a5e3767e1b57a8e80fd1bcf",
+          "inputBytes": 164,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "vertex-fragment-property",
+          "stage": "vertex",
+          "inputSha256": "e48b5e29e38c7ec6e83b5751f5f15e85ba275ca7e108d024327d6bdad3fcdb02",
+          "inputBytes": 96,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "property-after-instruction",
+          "stage": "fragment",
+          "inputSha256": "9bbbc6fc38857df419e0043f6c56625994bb8c61717919b4a8c3dad6f3efec5b",
+          "inputBytes": 126,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "unknown-property",
+          "stage": "fragment",
+          "inputSha256": "db925a88dbf0318cbb3208fc13a19f19da7a527d6fa378ba451f40c6db7bf078",
+          "inputBytes": 124,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "interpolation-linear",
+          "stage": "fragment",
+          "inputSha256": "dc7d52ea8d6bf970de44e970bb12ed1b4d0b9de4d190eb66b5b69410cd5c6aeb",
+          "inputBytes": 83,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "unsupported-flat-centroid",
+          "stage": "fragment",
+          "inputSha256": "f5eda6c21296fcc9d1dec8a1e863e78a54521e6a970898bb699610e6ea7f147f",
+          "inputBytes": 95,
+          "error": {
+            "code": "parse-error",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "precise-remains-rejected",
+          "stage": "vertex",
+          "inputSha256": "674c816dac1878c8a9a43f3d7b43f2d31e8324090071a760b49d11e53875821c",
+          "inputBytes": 84,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "loop-remains-rejected",
+          "stage": "vertex",
+          "inputSha256": "9679257e1ea6a08c66309fcefca9f358d54457ce6580141fbe4e548ce47b3146",
+          "inputBytes": 66,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "integer-opcode-remains-rejected",
+          "stage": "vertex",
+          "inputSha256": "b12f3fc01fc46783084b0ebcc08215268ac6e06ca4f9562ad75fc9661642cbb9",
+          "inputBytes": 84,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "indirect-source-remains-rejected",
+          "stage": "vertex",
+          "inputSha256": "b700f57c05406e9fae21209de9433cfeab2a5a1a8f956e3e358289686b69c5fa",
+          "inputBytes": 87,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        {
+          "name": "key-override-remains-rejected",
+          "stage": "vertex",
+          "inputSha256": "cffbea4d27fea1a24fc1a38d52fc93dfed9499dd1a632e231c2519e59638f511",
+          "inputBytes": 86,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        }
+      ],
+      "recoveryRounds": 8,
+      "rejections": 1008,
+      "recoveries": 1792
+    },
+    "bindings": {
+      "programCount": 1,
+      "sameProgramAcrossPhases": true,
+      "vertices": [
+        -1,
+        -1,
+        0,
+        0,
+        1,
+        -1,
+        1,
+        0,
+        -1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "indices": [
+        0,
+        1,
+        2,
+        2,
+        1,
+        3
+      ],
+      "vertexBytesSha256": "d5b966acc074a48bd1726049a326b333877d2667fab65f01c11a019aab584d8d",
+      "indexBytesSha256": "769df21c80974149d13f85ca9f01b8361bfe89e3fcadf7aac71e3c59c247ef7b",
+      "attributes": [
+        {
+          "index": 0,
+          "name": "in_0",
+          "type": "vec4",
+          "semantic": "ATTRIBUTE",
+          "semanticIndex": 0,
+          "componentMask": 15,
+          "location": 0,
+          "reflectedType": 35666,
+          "reflectedSize": 1,
+          "boundComponents": 2,
+          "strideBytes": 16,
+          "offsetBytes": 0
+        },
+        {
+          "index": 1,
+          "name": "in_1",
+          "type": "vec4",
+          "semantic": "ATTRIBUTE",
+          "semanticIndex": 0,
+          "componentMask": 15,
+          "location": 1,
+          "reflectedType": 35666,
+          "reflectedSize": 1,
+          "boundComponents": 2,
+          "strideBytes": 16,
+          "offsetBytes": 8
+        }
+      ],
+      "uniformBlocks": [
+        {
+          "name": "VirglBlock",
+          "index": 0,
+          "byteLength": 656,
+          "members": [
+            {
+              "name": "winsys_adjust_y",
+              "reflectedName": "winsys_adjust_y",
+              "offset": 640,
+              "type": 5126,
+              "value": 1
+            }
+          ]
+        }
+      ],
+      "generic": {
+        "name": "vso_g0",
+        "type": 35666,
+        "size": 1,
+        "reflection": "transform-feedback varying; no TF execution"
+      },
+      "fragmentOutput": {
+        "name": "fsout_c0",
+        "location": 0
+      },
+      "sampler": {
+        "name": "fssamp0",
+        "type": 35678,
+        "unit": 0,
+        "texels": [
+          0,
+          0,
+          0,
+          255,
+          0,
+          255,
+          0,
+          255,
+          0,
+          0,
+          255,
+          255,
+          255,
+          255,
+          0,
+          255
+        ],
+        "originalTexels": [
+          255,
+          0,
+          0,
+          255,
+          0,
+          255,
+          0,
+          255,
+          0,
+          0,
+          255,
+          255,
+          255,
+          255,
+          0,
+          255
+        ],
+        "width": 2,
+        "height": 2,
+        "filter": "NEAREST",
+        "wrap": "CLAMP_TO_EDGE"
+      },
+      "logs": {
+        "vertex": "",
+        "fragment": "",
+        "link": "",
+        "reflectionLink": ""
+      }
+    }
+  },
+  "failureScreenshot": {
+    "path": "failure.png",
+    "sha256": "0965b1e012d215ae083c2683b2b1f6d5e147a899367faea40442d3168c4ae400"
+  },
+  "finishedAt": "2026-10-03T11:19:16.418Z"
+}

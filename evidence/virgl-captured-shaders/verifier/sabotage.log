@@ -1,0 +1,9 @@
+page.evaluate: Error: original-texture phase=0 pixel(4,4): expected [255,0,0,255], observed [0,0,0,255]
+    at require (http://127.0.0.1:57757/renderer/virgl-shader/tests/captured-textured-scene.mjs:14:65)
+    at equal (http://127.0.0.1:57757/renderer/virgl-shader/tests/captured-textured-scene.mjs:15:44)
+    at renderPhases (http://127.0.0.1:57757/renderer/virgl-shader/tests/captured-textured-scene.mjs:204:11)
+    at async runAcceptance (http://127.0.0.1:57757/renderer/virgl-shader/tests/captured-textured-scene.mjs:243:3)
+    at async eval (eval at evaluate (:234:30), <anonymous>:3:14)
+    at async <anonymous>:260:30
+    at runVirglBrowser (/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/lib/virgl-browser-runner.mjs:139:57)
+    at /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/async file:/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/verify-virgl-captured-shaders.mjs:9:1

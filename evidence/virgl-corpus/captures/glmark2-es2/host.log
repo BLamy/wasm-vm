@@ -1,0 +1,1 @@
+qemu-system-riscv64: -serial unix:/capture/final-corpus/glmark2-es2/serial.sock,server=on,wait=on: info: QEMU waiting for connection on: disconnected:unix:/capture/final-corpus/glmark2-es2/serial.sock,server=on

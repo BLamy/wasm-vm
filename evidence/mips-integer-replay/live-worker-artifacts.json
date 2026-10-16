@@ -1,0 +1,25 @@
+{
+  "url": "https://wasm-vm.pages.dev",
+  "recordedAt": "2026-10-02T20:35:05.683611+00:00",
+  "fetch": "curl --fail --silent --show-error --location --max-time 60",
+  "records": [
+    {
+      "path": "pkg/wasm_vm_wasm_bg.wasm",
+      "sha256": "70de75fd1a2cfb6b51893773a394c0276189a1e54fe9a57dca1fbc47dea1f873",
+      "size": 1633329,
+      "matchesLocalDist": true
+    },
+    {
+      "path": "roadmap.js",
+      "sha256": "bb8d6f7b7ee5f39d4c1e76da6c4afa4dde30ad0cbb3b98f50db8f54a6ac751c6",
+      "size": 52600,
+      "matchesLocalDist": true
+    },
+    {
+      "path": "tasks.json",
+      "sha256": "ee917f4a67d783f603a5147d20e614911aa2db4fe2ad5ac53a8ea73ccf05db28",
+      "size": 3772629,
+      "matchesLocalDist": true
+    }
+  ]
+}

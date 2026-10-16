@@ -1,0 +1,99 @@
+{
+  "schema": 1,
+  "task": "E6-T12e6b",
+  "verdict": "verified",
+  "sourceHead": "d3565d11c2133aacbaa628ffa82342b5d308ab10",
+  "records": [
+    {
+      "path": "audit-current-build.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "audit-output-fault-build.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "browser-audit.json",
+      "bytes": 40305,
+      "sha256": "df465f67f6589324f912e7564b7ca12d738e0defe60c090b1986daec8599e07d"
+    },
+    {
+      "path": "browser_audit.py",
+      "bytes": 2617,
+      "sha256": "22d839a62e1c65bf975edb23c96dcb20913a76d95f33a9ae97b780f76de3ea25"
+    },
+    {
+      "path": "changed-line-coverage.json",
+      "bytes": 25952,
+      "sha256": "d1199b34d2153cf0742682553bcc77ea20e410ba43e65ea3bff56e509877d7a8"
+    },
+    {
+      "path": "extent-inputs.json",
+      "bytes": 1739,
+      "sha256": "3cf6fb0d5b0cfff300e30aa0dcb24a3c4bc9813ec8d6cf62e09d22061db59246"
+    },
+    {
+      "path": "extent-report.json",
+      "bytes": 112053,
+      "sha256": "7cc7087577c2dd806d3d645784d9e9514101ad4afd9c8487d2ef418f88f43147"
+    },
+    {
+      "path": "extent_attack.py",
+      "bytes": 2616,
+      "sha256": "9229b9ed9c73069c6945381f2f2880bc5a5c63e93446b59dfa30ac8a93c3b9b7"
+    },
+    {
+      "path": "fault-output-permission.c",
+      "bytes": 21780,
+      "sha256": "bcc745dbe9d51e7e9749b31d04de064d80d66018482dedc679853d253f6ea03e"
+    },
+    {
+      "path": "final-cold-audit.json",
+      "bytes": 5040,
+      "sha256": "6243b2edbfa26810b0eab7ef71ce898f8c153822b40b07e86944ab7bfc0f5137"
+    },
+    {
+      "path": "final-cold-receipt-replay.log",
+      "bytes": 2887,
+      "sha256": "3a09ac778233f4650783857cbbcb04fba5021a4e7a295e52cd868b568eae161e"
+    },
+    {
+      "path": "final_cold_audit.py",
+      "bytes": 3832,
+      "sha256": "751bb5125cba8c11172f696483259a0897ec95d0989465b08f734c2803198197"
+    },
+    {
+      "path": "independent-calls.jsonl",
+      "bytes": 4310898,
+      "sha256": "e41e56aa6662f8ce726d0ef679fe506ecfb4969535cefbab6ef6cec299745cdd"
+    },
+    {
+      "path": "independent-inputs.json",
+      "bytes": 421625,
+      "sha256": "bddbbceeca4e5d89c4c2def06c6580e86d57fc17d081c7725c19050210c79c35"
+    },
+    {
+      "path": "independent-report.json",
+      "bytes": 12312,
+      "sha256": "f551e51617650712b0815e87d6614dcff8fd242e60802d0b5d58798599823593"
+    },
+    {
+      "path": "independent_attack.py",
+      "bytes": 6286,
+      "sha256": "3cf3e4205b98d84178591405c797a128396682d4e17e82a29ad69874e2f08fe4"
+    },
+    {
+      "path": "native-wasm-audit.json",
+      "bytes": 2795,
+      "sha256": "6c018e5b7b9ff271e9c2ee4627e480ecb1736cd2f45a32940c4b2231e1f48024"
+    },
+    {
+      "path": "predictions.json",
+      "bytes": 7067,
+      "sha256": "a6aa0d402275cc6e3e0c50fa6e7f50a479c8fb4b70636363d7be4a6d59809be3"
+    }
+  ],
+  "uncommittedBuildArtifacts": "The two verifier dylibs and dSYM bundles are reproducible scratch outputs; their binary hashes and exact commands remain in independent-report.json."
+}

@@ -1,0 +1,6 @@
+{
+  "executable_lines": 264,
+  "covered_lines": 264,
+  "uncovered_lines": [],
+  "method": "LLVM line execution union of independently seeded real upstream sanitizer run and isolated defensive fault injection, bridge source unchanged"
+}

@@ -1,0 +1,72 @@
+{
+  "activation": "3695b900",
+  "priorVerifiedCommit": "ab5f3a85cbf25dd151b6ae74904dd5e1fc793820",
+  "priorSources": [
+    {
+      "path": "renderer/virgl-command/resources.mjs",
+      "bytes": 47264,
+      "sha256": "7c7a1d62b7649e058d3b406ea42289286f487b55f7f55623f850ee030453b1e2"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "bytes": 60013,
+      "sha256": "08130dcfe18de3ca1b5efdb187b88e2a8028c30493f4e64bcbd00572dad245d9"
+    },
+    {
+      "path": "renderer/virgl-command/control-bridge.mjs",
+      "bytes": 27522,
+      "sha256": "544d9b7b16fba4079b0d6f28f054ddfd730b9c450734642278543234199c0b99"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/submit3d.rs",
+      "bytes": 22294,
+      "sha256": "e717284d102e81c5dc1d87982d9f84b24b233df0da4b82b9ea4a777d365266a4"
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/mod.rs",
+      "bytes": 185654,
+      "sha256": "9f5d48edc939cc8cee6d5844bd5ebac4e5872d34127c0d842b5c4a3e2270ebe6"
+    },
+    {
+      "path": "crates/wasm/src/virgl_control_proof.rs",
+      "bytes": 31383,
+      "sha256": "5d281c6888762a3565e33de01a2dc6682aeea622e307ca80ca9999113aa8aa0f"
+    },
+    {
+      "path": "web/src/sink/presentation.js",
+      "bytes": 22791,
+      "sha256": "21a3004137a46720b8a10f9392a48e6e8b3166c98dbc83b9ae931e6ade048819"
+    },
+    {
+      "path": "web/dist/src/sink/presentation.js",
+      "bytes": 22791,
+      "sha256": "21a3004137a46720b8a10f9392a48e6e8b3166c98dbc83b9ae931e6ade048819"
+    },
+    {
+      "path": "web/src/sink/frame-scheduler.js",
+      "bytes": 6059,
+      "sha256": "4ab11b844262f32bf3c1f6e0cfa36a866f241273c36e66d1aa8c4679f770e54d"
+    },
+    {
+      "path": "web/src/sink/present-backend.js",
+      "bytes": 4367,
+      "sha256": "8bf892f96f3710dd9050d7a16c38bda87daa17dcaa024560c4ecc97aeecb24f7"
+    },
+    {
+      "path": "web/src/sink/canvas2d.js",
+      "bytes": 3751,
+      "sha256": "719b95ae13dbda214ed8b123ae6a72cdf459f88806c0d52832f56e6a96233936"
+    }
+  ],
+  "preparedBeforeEvidence": true,
+  "files": [
+    {
+      "path": "pixel-oracle.mjs",
+      "sha256": "0d459281117404313b0e3916c963217a1ca7c9cb46fc8efcc0ea7228543ac994"
+    },
+    {
+      "path": "predictions.md",
+      "sha256": "274196136e3bf17fa5c8a3f9e190dc29b99ede19d39c276fd4d2f2c6afd7d982"
+    }
+  ]
+}

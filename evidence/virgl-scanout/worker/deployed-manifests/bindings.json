@@ -1,0 +1,29 @@
+{
+  "deploymentUrl": "https://b5863307.wasm-vm.pages.dev",
+  "records": [
+    {
+      "source": "web/dist/artifacts.json",
+      "path": "artifacts.json",
+      "bytes": 905,
+      "sha256": "c2a325fde02d8dbe84674699336441462eb0d891ba7793d53261986fdbaec404"
+    },
+    {
+      "source": "web/dist/artifacts-alpine.json",
+      "path": "artifacts-alpine.json",
+      "bytes": 1110,
+      "sha256": "a3e5e51a69fcda662579d367d5b46fab295ab8bebad4d38155afa3b51c034b6c"
+    },
+    {
+      "source": "web/dist/artifacts-node-alpine.json",
+      "path": "artifacts-node-alpine.json",
+      "bytes": 1255,
+      "sha256": "ab1338d6f7b54bf96b2b503aa3e12e3bc72f9de2fd7f2a40728f3cefe2fe6caf"
+    },
+    {
+      "source": "web/dist/artifacts-omarchy.json",
+      "path": "artifacts-omarchy.json",
+      "bytes": 1193,
+      "sha256": "0fa46b08b90179bb11f6a451f86959908089f73afa19c99580f28360b7b8c22a"
+    }
+  ]
+}

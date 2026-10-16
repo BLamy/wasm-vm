@@ -1,0 +1,3 @@
+   Compiling wasm-vm-wasm v0.0.1 (/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/crates/wasm)
+   Compiling wasm-vm-wasm-web v0.0.1 (/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/crates/wasm-web)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.89s

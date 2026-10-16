@@ -334,7 +334,7 @@ export class PresentationController {
       // Decide at paint time, not receipt time: the scheduler can replace any pending
       // full repaint with a newer partial frame before its animation callback runs.
       // Until a resource size has actually reached this backend, replay its full copy.
-      const repaint = this._fixedViewport && (!this._paintedResource ||
+      const repaint = (!this._paintedResource ||
         this._paintedResource.width !== frame.resourceWidth ||
         this._paintedResource.height !== frame.resourceHeight)
         ? { ...frame, rect: { x: 0, y: 0, width: frame.resourceWidth, height: frame.resourceHeight } }
@@ -438,6 +438,9 @@ export class PresentationController {
     if (frame !== null && typeof frame === "object" && frame.type === "clear") {
       return this.clear();
     }
+    if (frame !== null && typeof frame === "object" && frame.type === "invalidate") {
+      return this.invalidate();
+    }
     const checked = checkedFrame(frame);
     this._framesReceived += 1;
     if (!this._fixedViewport && (checked.resourceWidth !== this._width || checked.resourceHeight !== this._height)) {
@@ -447,12 +450,31 @@ export class PresentationController {
     return this._scheduler ? this._scheduler.enqueue(checked) : this._deliver(checked);
   }
 
-  /** Clear the visible surface and discard any frame retained across a failed restore. */
-  clear() {
+  /** A retained renderer frame is already paced by its host owner. Deliver on that owner's rAF. */
+  presentNow(frame) {
+    if (this._disposed) throw new Error("PresentationController is disposed");
+    const checked = checkedFrame(frame);
+    this._framesReceived += 1;
+    this._scheduler?.discardPending();
+    if (!this._fixedViewport && (checked.resourceWidth !== this._width || checked.resourceHeight !== this._height)) {
+      this.resize(checked.resourceWidth, checked.resourceHeight);
+    }
+    this._latest = checked;
+    return this._deliver(checked);
+  }
+
+  /** Revoke queued/recovery pixels while the displayed front buffer stays visible. */
+  invalidate() {
     if (this._disposed) throw new Error("PresentationController is disposed");
     this._scheduler?.discardPending();
     this._latest = null;
     this._paintedResource = null;
+    return true;
+  }
+
+  /** Explicit disable/reset also erases the visible front buffer. */
+  clear() {
+    this.invalidate();
     if (this._backend) this._backend.resize(this._width, this._height);
     else this._ensureCanvasSize();
     return true;

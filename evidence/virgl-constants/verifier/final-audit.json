@@ -1,0 +1,772 @@
+{
+  "schema": 1,
+  "status": "passed",
+  "frozenHead": "81cd3a4c403176be4b0191fa00ed37f4fd1e1e35",
+  "claim": "68186f6edf63a6f3c0e2160892a2bc5b868ab8f8",
+  "workerHardwareSha256": "605e77cc268e735c2fb572b0a69c5b9e8dd41369753a45f5a7f32b25aa6856d4",
+  "summary": {
+    "reflection": [
+      {
+        "rig": "low",
+        "extents": [
+          {
+            "stage": "vertex",
+            "count": 46,
+            "activeCount": 46,
+            "uploadCount": 46
+          },
+          {
+            "stage": "fragment",
+            "count": 46,
+            "activeCount": 46,
+            "uploadCount": 46
+          }
+        ]
+      },
+      {
+        "rig": "order",
+        "extents": [
+          {
+            "stage": "vertex",
+            "count": 47,
+            "activeCount": 47,
+            "uploadCount": 46
+          },
+          {
+            "stage": "fragment",
+            "count": 47,
+            "activeCount": 47,
+            "uploadCount": 46
+          }
+        ]
+      },
+      {
+        "rig": "inactive-vertex",
+        "extents": [
+          {
+            "stage": "vertex",
+            "count": 46,
+            "activeCount": 0,
+            "uploadCount": 0
+          },
+          {
+            "stage": "fragment",
+            "count": 46,
+            "activeCount": 46,
+            "uploadCount": 46
+          }
+        ]
+      },
+      {
+        "rig": "inactive-fragment",
+        "extents": [
+          {
+            "stage": "vertex",
+            "count": 46,
+            "activeCount": 46,
+            "uploadCount": 46
+          },
+          {
+            "stage": "fragment",
+            "count": 46,
+            "activeCount": 0,
+            "uploadCount": 0
+          }
+        ]
+      },
+      {
+        "rig": "both-inactive",
+        "extents": [
+          {
+            "stage": "vertex",
+            "count": 46,
+            "activeCount": 0,
+            "uploadCount": 0
+          },
+          {
+            "stage": "fragment",
+            "count": 46,
+            "activeCount": 0,
+            "uploadCount": 0
+          }
+        ]
+      }
+    ],
+    "rollback": [
+      {
+        "rig": "vs-wrong-type",
+        "code": "shader-reflection-error",
+        "unchanged": true
+      },
+      {
+        "rig": "fs-wrong-type",
+        "code": "shader-reflection-error",
+        "unchanged": true
+      },
+      {
+        "rig": "vs-size48",
+        "code": "shader-reflection-error",
+        "unchanged": true
+      },
+      {
+        "rig": "vs-exceeds-declared",
+        "code": "shader-reflection-error",
+        "unchanged": true
+      },
+      {
+        "rig": "vs-size-zero",
+        "code": "shader-reflection-error",
+        "unchanged": true
+      },
+      {
+        "rig": "vs-size-negative",
+        "code": "shader-reflection-error",
+        "unchanged": true
+      },
+      {
+        "rig": "vs-size-fraction",
+        "code": "shader-reflection-error",
+        "unchanged": true
+      },
+      {
+        "rig": "vs-size-nan",
+        "code": "shader-reflection-error",
+        "unchanged": true
+      },
+      {
+        "rig": "vs-missing-index",
+        "code": "shader-reflection-error",
+        "unchanged": true
+      },
+      {
+        "rig": "vs-missing-location",
+        "code": "shader-reflection-error",
+        "unchanged": true
+      },
+      {
+        "rig": "fs-missing-index",
+        "code": "shader-reflection-error",
+        "unchanged": true
+      },
+      {
+        "rig": "fs-missing-location",
+        "code": "shader-reflection-error",
+        "unchanged": true
+      },
+      {
+        "rig": "vs-limit",
+        "code": "shader-reflection-error",
+        "unchanged": true
+      },
+      {
+        "rig": "fs-limit",
+        "code": "shader-reflection-error",
+        "unchanged": true
+      },
+      {
+        "rig": "order-limit",
+        "code": "shader-reflection-error",
+        "unchanged": true
+      }
+    ],
+    "incomplete": [
+      {
+        "rig": "primary",
+        "attack": "recreated subcontext lacks inherited data",
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "incomplete-draw",
+            "message": "Drawing requires every active constant word.",
+            "byteOffset": 0,
+            "opcode": 8
+          },
+          "appliedCommands": 0,
+          "draws": []
+        },
+        "events": []
+      },
+      {
+        "rig": "primary",
+        "attack": "recreated context lacks inherited data",
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "incomplete-draw",
+            "message": "Drawing requires every active constant word.",
+            "byteOffset": 0,
+            "opcode": 8
+          },
+          "appliedCommands": 0,
+          "draws": []
+        },
+        "events": []
+      },
+      {
+        "rig": "primary",
+        "attack": "stage0 short180 replaces184",
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "incomplete-draw",
+            "message": "Drawing requires every active constant word.",
+            "byteOffset": 0,
+            "opcode": 8
+          },
+          "appliedCommands": 0,
+          "draws": []
+        },
+        "events": []
+      },
+      {
+        "rig": "primary",
+        "attack": "stage0 empty replaces184",
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "incomplete-draw",
+            "message": "Drawing requires every active constant word.",
+            "byteOffset": 0,
+            "opcode": 8
+          },
+          "appliedCommands": 0,
+          "draws": []
+        },
+        "events": []
+      },
+      {
+        "rig": "primary",
+        "attack": "stage0 valid prefix then failed draw",
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "incomplete-draw",
+            "message": "Drawing requires every active constant word.",
+            "byteOffset": 732,
+            "opcode": 8
+          },
+          "appliedCommands": 1,
+          "draws": []
+        },
+        "events": [
+          "uniform4uiv",
+          "uniform4uiv"
+        ]
+      },
+      {
+        "rig": "primary",
+        "attack": "stage1 short180 replaces184",
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "incomplete-draw",
+            "message": "Drawing requires every active constant word.",
+            "byteOffset": 0,
+            "opcode": 8
+          },
+          "appliedCommands": 0,
+          "draws": []
+        },
+        "events": []
+      },
+      {
+        "rig": "primary",
+        "attack": "stage1 empty replaces184",
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "incomplete-draw",
+            "message": "Drawing requires every active constant word.",
+            "byteOffset": 0,
+            "opcode": 8
+          },
+          "appliedCommands": 0,
+          "draws": []
+        },
+        "events": []
+      },
+      {
+        "rig": "primary",
+        "attack": "stage1 valid prefix then failed draw",
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "incomplete-draw",
+            "message": "Drawing requires every active constant word.",
+            "byteOffset": 732,
+            "opcode": 8
+          },
+          "appliedCommands": 1,
+          "draws": []
+        },
+        "events": [
+          "uniform4uiv",
+          "uniform4uiv"
+        ]
+      },
+      {
+        "rig": "primary",
+        "attack": "malformed-tail",
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "limit-exceeded",
+            "message": "Array exceeds profile count limit.",
+            "byteOffset": 748,
+            "opcode": 12
+          },
+          "appliedCommands": 0,
+          "draws": []
+        },
+        "events": []
+      },
+      {
+        "rig": "low",
+        "attack": "low shader conservatively needs retained prefix",
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "incomplete-draw",
+            "message": "Drawing requires every active constant word.",
+            "byteOffset": 0,
+            "opcode": 8
+          },
+          "appliedCommands": 0,
+          "draws": []
+        },
+        "events": []
+      },
+      {
+        "rig": "async-7c1209ad",
+        "attack": "async-short180",
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "incomplete-draw",
+            "message": "Drawing requires every active constant word.",
+            "byteOffset": 0,
+            "opcode": 8
+          },
+          "appliedCommands": 0,
+          "draws": [],
+          "gpuComplete": true
+        },
+        "events": [
+          "fenceSync",
+          "fenceSync",
+          "clientWaitSync",
+          "deleteSync"
+        ]
+      },
+      {
+        "rig": "async-7c1209ad",
+        "attack": "async-empty",
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "incomplete-draw",
+            "message": "Drawing requires every active constant word.",
+            "byteOffset": 0,
+            "opcode": 8
+          },
+          "appliedCommands": 0,
+          "draws": [],
+          "gpuComplete": true
+        },
+        "events": [
+          "fenceSync",
+          "fenceSync",
+          "clientWaitSync",
+          "deleteSync"
+        ]
+      },
+      {
+        "rig": "async-491be583",
+        "attack": "async-short180",
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "incomplete-draw",
+            "message": "Drawing requires every active constant word.",
+            "byteOffset": 0,
+            "opcode": 8
+          },
+          "appliedCommands": 0,
+          "draws": [],
+          "gpuComplete": true
+        },
+        "events": [
+          "fenceSync",
+          "fenceSync",
+          "clientWaitSync",
+          "deleteSync"
+        ]
+      },
+      {
+        "rig": "async-491be583",
+        "attack": "async-empty",
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "incomplete-draw",
+            "message": "Drawing requires every active constant word.",
+            "byteOffset": 0,
+            "opcode": 8
+          },
+          "appliedCommands": 0,
+          "draws": [],
+          "gpuComplete": true
+        },
+        "events": [
+          "fenceSync",
+          "fenceSync",
+          "clientWaitSync",
+          "deleteSync"
+        ]
+      },
+      {
+        "rig": "async-ea016f35",
+        "attack": "async-short180",
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "incomplete-draw",
+            "message": "Drawing requires every active constant word.",
+            "byteOffset": 0,
+            "opcode": 8
+          },
+          "appliedCommands": 0,
+          "draws": [],
+          "gpuComplete": true
+        },
+        "events": [
+          "fenceSync",
+          "fenceSync",
+          "clientWaitSync",
+          "deleteSync"
+        ]
+      },
+      {
+        "rig": "async-ea016f35",
+        "attack": "async-empty",
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "incomplete-draw",
+            "message": "Drawing requires every active constant word.",
+            "byteOffset": 0,
+            "opcode": 8
+          },
+          "appliedCommands": 0,
+          "draws": [],
+          "gpuComplete": true
+        },
+        "events": [
+          "fenceSync",
+          "fenceSync",
+          "clientWaitSync",
+          "deleteSync"
+        ]
+      },
+      {
+        "rig": "async-265d8cb7",
+        "attack": "async-short180",
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "incomplete-draw",
+            "message": "Drawing requires every active constant word.",
+            "byteOffset": 0,
+            "opcode": 8
+          },
+          "appliedCommands": 0,
+          "draws": [],
+          "gpuComplete": true
+        },
+        "events": [
+          "fenceSync",
+          "fenceSync",
+          "clientWaitSync",
+          "deleteSync"
+        ]
+      },
+      {
+        "rig": "async-265d8cb7",
+        "attack": "async-empty",
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "incomplete-draw",
+            "message": "Drawing requires every active constant word.",
+            "byteOffset": 0,
+            "opcode": 8
+          },
+          "appliedCommands": 0,
+          "draws": [],
+          "gpuComplete": true
+        },
+        "events": [
+          "fenceSync",
+          "fenceSync",
+          "clientWaitSync",
+          "deleteSync"
+        ]
+      }
+    ],
+    "padding": [
+      {
+        "poisoned": {
+          "nativeProgramId": "Program:10",
+          "entries": [
+            {
+              "name": "vsconst0[46]",
+              "values": [
+                1098907648,
+                3238002688,
+                1082130432,
+                3221225472
+              ],
+              "observed": [
+                1098907648,
+                3238002688,
+                1082130432,
+                3221225472
+              ]
+            },
+            {
+              "name": "fsconst0[46]",
+              "values": [
+                1098907648,
+                3238002688,
+                1082130432,
+                3221225472
+              ],
+              "observed": [
+                1098907648,
+                3238002688,
+                1082130432,
+                3221225472
+              ]
+            }
+          ]
+        },
+        "after": [
+          {
+            "name": "vsconst0[46]",
+            "observed": [
+              1098907648,
+              3238002688,
+              1082130432,
+              3221225472
+            ]
+          },
+          {
+            "name": "fsconst0[46]",
+            "observed": [
+              1098907648,
+              3238002688,
+              1082130432,
+              3221225472
+            ]
+          }
+        ],
+        "drawName": "order47 restored with poisoned host padding"
+      },
+      {
+        "poisoned": {
+          "nativeProgramId": "Program:10",
+          "entries": [
+            {
+              "name": "vsconst0[46]",
+              "values": [
+                3212836864,
+                1107296256,
+                3246391296,
+                1090519040
+              ],
+              "observed": [
+                3212836864,
+                1107296256,
+                3246391296,
+                1090519040
+              ]
+            },
+            {
+              "name": "fsconst0[46]",
+              "values": [
+                3212836864,
+                1107296256,
+                3246391296,
+                1090519040
+              ],
+              "observed": [
+                3212836864,
+                1107296256,
+                3246391296,
+                1090519040
+              ]
+            }
+          ]
+        },
+        "after": [
+          {
+            "name": "vsconst0[46]",
+            "observed": [
+              3212836864,
+              1107296256,
+              3246391296,
+              1090519040
+            ]
+          },
+          {
+            "name": "fsconst0[46]",
+            "observed": [
+              3212836864,
+              1107296256,
+              3246391296,
+              1090519040
+            ]
+          }
+        ],
+        "drawName": "order47 restored with poisoned host padding"
+      }
+    ],
+    "ownership": [
+      {
+        "rig": "primary",
+        "name": "destroy/recreate-subcontext7"
+      },
+      {
+        "rig": "primary",
+        "name": "destroy/recreate-context2"
+      }
+    ],
+    "async": [
+      {
+        "rig": "async-7c1209ad",
+        "schedule": {
+          "seed": 2081556909,
+          "commandsPerStep": 1
+        }
+      },
+      {
+        "rig": "async-491be583",
+        "schedule": {
+          "seed": 1226564995,
+          "commandsPerStep": 2
+        }
+      },
+      {
+        "rig": "async-ea016f35",
+        "schedule": {
+          "seed": 3925962549,
+          "commandsPerStep": 3
+        }
+      },
+      {
+        "rig": "async-265d8cb7",
+        "schedule": {
+          "seed": 643665079,
+          "commandsPerStep": 8
+        }
+      }
+    ]
+  },
+  "workerNativeObjectsReleased": 432,
+  "criticAssertions": 19654,
+  "criticPixels": 19456,
+  "decoderCases": 1046,
+  "executableAddedLines": 20,
+  "artifactDigests": [
+    {
+      "path": "evidence/virgl-constants/verifier/alias-sabotage/browser.png",
+      "bytes": 10496,
+      "sha256": "77b71d9955ff739371a709ce09f0ae4c1313faafb8244db3797ebb3878b1a196"
+    },
+    {
+      "path": "evidence/virgl-constants/verifier/alias-sabotage/coverage.json",
+      "bytes": 180094,
+      "sha256": "c88e162e02141cc42a8b7c7796262fdb159136b769fb8b61f4e822a6ccd8c7f5"
+    },
+    {
+      "path": "evidence/virgl-constants/verifier/alias-sabotage/report.json",
+      "bytes": 256681,
+      "sha256": "0a291b4217a6ceace7bf0fccf23592259855e070d1a24c3e9947f333ac2115bb"
+    },
+    {
+      "path": "evidence/virgl-constants/verifier/attack-browser.mjs",
+      "bytes": 15117,
+      "sha256": "719ec363a25aa13401198b4f0f7706d956275db06d6e2a508b99019ffc219f61"
+    },
+    {
+      "path": "evidence/virgl-constants/verifier/binding-audit.py",
+      "bytes": 14088,
+      "sha256": "ef00d356b31491daa9d042a06c642064f591ef19fedb55906c59d5bb357d9c7f"
+    },
+    {
+      "path": "evidence/virgl-constants/verifier/binding-cold-acceptance-audit.json",
+      "bytes": 37241,
+      "sha256": "048f4089c498e2a1584c0c9cd71f488ef2266af9a2dd5ba2b030884b823543f3"
+    },
+    {
+      "path": "evidence/virgl-constants/verifier/binding-cold-claim-audit.json",
+      "bytes": 2518,
+      "sha256": "f8c9067fd9c54f9d5781ececb3310e3a9aa429c54ac7754b505dbfd86e399ae8"
+    },
+    {
+      "path": "evidence/virgl-constants/verifier/binding-cold-claim-audit.py",
+      "bytes": 7196,
+      "sha256": "f2e339dc42e4a5ab705989e6469c8b9ce8007a2e552a484df2f35f0ed39dac46"
+    },
+    {
+      "path": "evidence/virgl-constants/verifier/binding-worker-audit.json",
+      "bytes": 37280,
+      "sha256": "356f2691034b652399e9d5bdbdd1db21bbf3c73ab934979c29b79d25aaaf579d"
+    },
+    {
+      "path": "evidence/virgl-constants/verifier/coverage-audit.json",
+      "bytes": 24932,
+      "sha256": "1b73b69eb038529d49e83cd81fd5415f417a40379a1872032af0888e6bbf91d2"
+    },
+    {
+      "path": "evidence/virgl-constants/verifier/coverage-audit.py",
+      "bytes": 5238,
+      "sha256": "35bce495e6a9d9f1141566709ffd496ee28817438ec6ed7ea1357b15904af021"
+    },
+    {
+      "path": "evidence/virgl-constants/verifier/decoder-attacks.json",
+      "bytes": 1524706,
+      "sha256": "bdc65c03ff34dffebc569fc455a43dc83db29706be387d389b4f253478f4b202"
+    },
+    {
+      "path": "evidence/virgl-constants/verifier/decoder-attacks.mjs",
+      "bytes": 3463,
+      "sha256": "34f258475672d7618b0f214d1a27dcabaf050e5c0ec52c5bcfc57099293d0747"
+    },
+    {
+      "path": "evidence/virgl-constants/verifier/final-audit.py",
+      "bytes": 8489,
+      "sha256": "f2fa6de490b02f66f7bd3d7b7c9b74d12115f0c3b69cbbed59b9a3d45d5b6f2b"
+    },
+    {
+      "path": "evidence/virgl-constants/verifier/normal/browser.png",
+      "bytes": 10496,
+      "sha256": "77b71d9955ff739371a709ce09f0ae4c1313faafb8244db3797ebb3878b1a196"
+    },
+    {
+      "path": "evidence/virgl-constants/verifier/normal/coverage.json",
+      "bytes": 199390,
+      "sha256": "45e81a341f1c9e519225d6ef917e2f56da3458bce586f3b316e76b82927df320"
+    },
+    {
+      "path": "evidence/virgl-constants/verifier/normal/report.json",
+      "bytes": 5331042,
+      "sha256": "6847cad502aa615bac799bb7ff0e123b1be3b2f1a4bca356ce1056873c94a38c"
+    },
+    {
+      "path": "evidence/virgl-constants/verifier/run-attacks.mjs",
+      "bytes": 5957,
+      "sha256": "63ef25ff436ba9606bcef41920c1b9f3f8c5bcf774240965701e6c3d949cb876"
+    }
+  ]
+}

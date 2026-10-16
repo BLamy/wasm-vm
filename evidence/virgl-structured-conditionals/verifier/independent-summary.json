@@ -1,0 +1,136 @@
+{
+  "status": "passed",
+  "sourceHead": "242ad5705dbdfd07b269c3e5850857c893af41e7",
+  "seed": "b39d0271",
+  "cases": 17904,
+  "accepted": 10957,
+  "rejected": 6947,
+  "kinds": {
+    "exhaustive-join": 16384,
+    "nested-initialization": 1500,
+    "structure": 20
+  },
+  "resultsSha256": "9297990a21dec42cd9d7c7fe16a40f47342cc6bd3988f30d7ca4d2214e36337c",
+  "sources": [
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "sha256": "d9d1e35ca4ff820691c7221abb1e56961e7a6c28007e5d9a3bf637d263be7bb5"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "sha256": "f6098f263309fed318023f13b54ef1b793d73488be6674159d938834a7b1bb76"
+    },
+    {
+      "path": "renderer/virgl-shader/generated/u_format_table.c",
+      "sha256": "9b654addadc5a17ae283381ba93c8f745a9416171284821e3da381571a49b4f4"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/vrend/vrend_shader.c",
+      "sha256": "e08fe8ceebfebb3e6a050b74d0ea0ebbfab35b6be742b6f0c9b9149dd484c3e2"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_build.c",
+      "sha256": "45867deeb665f4ca86bc0b755ea3e72d320cb01ef881b6a808e9f332b0a040c3"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_dump.c",
+      "sha256": "747fc8eb4df95202ea8192b377751021480ec7f430ba458936045a999d7f39bc"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_info.c",
+      "sha256": "2419cdd3a6322cee5da57d666012504c7b6500acb228418334b8183aa7ec1833"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_iterate.c",
+      "sha256": "1767a12cd5be68c04ec5f94a8ec27559913708c9eee13ba524919ee376c85879"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_parse.c",
+      "sha256": "c08c03b75cc74dc8d30231773ed357ddbcbf5b792d303164882ad996c89d91bd"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_sanity.c",
+      "sha256": "f5bc791e3488f2ae35ef1156b7953620de38601bbb4418984d039af5a0c14e51"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_scan.c",
+      "sha256": "c77892860df340b883c5e191577006f6ba5b0f07eb4ca6d74ec5e6466eac0975"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_strings.c",
+      "sha256": "e1c3909633b5acd3ff445ce3ddde249457ca92d1ba571269162b7eb5903f513f"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_text.c",
+      "sha256": "692188a36d9cb4cb714dfc3eaf8fc9f7be4f5428550d8ad243fa3d6247d25b0c"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_util.c",
+      "sha256": "dbab8d2d314a647c9639d9dd9e6947d3b920346a4680d3fe8102e7497241e4ce"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/cso_cache/cso_hash.c",
+      "sha256": "385fbd6abb5cfdb8fe0b982f07bdc2b98e2edaa50910b26681ab500c48d88514"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/cso_cache/cso_cache.c",
+      "sha256": "88a296ad627e49f22d3e58b6c70c2a656f8c3e7a6fba652f16332c172b12737c"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_debug.c",
+      "sha256": "9a3f45a3ed1cb45cd6b8543181b06aa30a6ef1ca57a0fca2678900f9c42b5a4d"
+    }
+  ],
+  "buildCommand": [
+    "clang",
+    "-shared",
+    "-fPIC",
+    "-O1",
+    "-g",
+    "-std=gnu11",
+    "-D_GNU_SOURCE",
+    "-D_DARWIN_C_SOURCE",
+    "-DUTIL_ARCH_LITTLE_ENDIAN=1",
+    "-DUTIL_ARCH_BIG_ENDIAN=0",
+    "-DHAVE___BUILTIN_CLZ=1",
+    "-DHAVE___BUILTIN_CLZLL=1",
+    "-DHAVE___BUILTIN_POPCOUNT=1",
+    "-I.",
+    "-Igenerated",
+    "-Ivendor/src",
+    "-Ivendor/src/mesa",
+    "-Ivendor/src/mesa/pipe",
+    "-Ivendor/src/mesa/compat",
+    "-Ivendor/src/gallium/include",
+    "-Ivendor/src/gallium/auxiliary",
+    "-Ivendor/src/gallium/auxiliary/util",
+    "bridge.c",
+    "raw_bits.c",
+    "generated/u_format_table.c",
+    "vendor/src/vrend/vrend_shader.c",
+    "vendor/src/gallium/auxiliary/tgsi/tgsi_build.c",
+    "vendor/src/gallium/auxiliary/tgsi/tgsi_dump.c",
+    "vendor/src/gallium/auxiliary/tgsi/tgsi_info.c",
+    "vendor/src/gallium/auxiliary/tgsi/tgsi_iterate.c",
+    "vendor/src/gallium/auxiliary/tgsi/tgsi_parse.c",
+    "vendor/src/gallium/auxiliary/tgsi/tgsi_sanity.c",
+    "vendor/src/gallium/auxiliary/tgsi/tgsi_scan.c",
+    "vendor/src/gallium/auxiliary/tgsi/tgsi_strings.c",
+    "vendor/src/gallium/auxiliary/tgsi/tgsi_text.c",
+    "vendor/src/gallium/auxiliary/tgsi/tgsi_util.c",
+    "vendor/src/gallium/auxiliary/cso_cache/cso_hash.c",
+    "vendor/src/gallium/auxiliary/cso_cache/cso_cache.c",
+    "vendor/src/mesa/util/u_debug.c",
+    "-lm",
+    "-o",
+    "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-structured-conditionals/verifier/audit-current.dylib"
+  ],
+  "binarySha256": "7ef96f83d8d97baeb43822b94ac91e798b7fefe3bcf2ca55d49e81e7b3ffddc2",
+  "resultsArtifact": {
+    "path": "independent-results.jsonl.gz",
+    "bytes": 1186424,
+    "sha256": "d9c9c92fcfde8b897954592e0b3508f16134d87a4060e2f201e380b5e8a99c44",
+    "uncompressedBytes": 39547778,
+    "uncompressedSha256": "9297990a21dec42cd9d7c7fe16a40f47342cc6bd3988f30d7ca4d2214e36337c"
+  }
+}

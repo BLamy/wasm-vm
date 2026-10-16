@@ -1,0 +1,302 @@
+diff --git a/renderer/virgl-command/standard-state-README.md b/renderer/virgl-command/standard-state-README.md
+index eb126067..bc8d9291 100644
+--- a/renderer/virgl-command/standard-state-README.md
++++ b/renderer/virgl-command/standard-state-README.md
+@@ -27,6 +27,12 @@ appear as active attributes: only checked integer system values with location
+ match native reflection. Execution remains single-target COLOR0; MRT and color
+ broadcast fail explicitly.
+ 
++After linking, the standard facet accounts for every active native uniform.
++Default-block entries must match checked raw constants, stage samplers or the
++renderer's inserted blend uniform. System-block entries must belong to the
++already validated native block. Coherent stage/pair metadata cannot omit an
++active binding; legitimately eliminated native declarations remain admissible.
++
+ `make verify-E6-T11d5` records literal wire/metadata predictions, hardware queued
+ draws, actual uniforms/reflection/buffer bytes, later-task zero-timeout fences,
+ owned input/output exchanges and independent full-pixel predictions. It covers
+@@ -34,7 +40,9 @@ short banks, A/B/A restoration, cache pressure/relinking, retained selectors,
+ both-stage slot15 images and view variants, native coordinates/discard/IDs,
+ complete captured 92cb/c580 sources with authenticated original banks, structured
+ errors, cancellation and cleanup. A served upload mutation must fail the
+-short-bank pixel oracle. The offline audit reconstructs shader/constant/view
++short-bank pixel oracle. A separate served mutation disables native binding
++accounting and must fail the coherent omission oracle after a real native draw.
++The offline audit reconstructs shader/constant/view
+ state from literal command bytes and checks the saved physical pixels.
+ 
+ This factory is an isolated production prerequisite. It does not negotiate
+diff --git a/renderer/virgl-command/state.mjs b/renderer/virgl-command/state.mjs
+index a78f0f1f..f8e8db5b 100644
+--- a/renderer/virgl-command/state.mjs
++++ b/renderer/virgl-command/state.mjs
+@@ -594,6 +594,20 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
+           require(components <= hostUniformComponents[1], "shader-reflection-error", "Blend factor exceeds the host fragment uniform limit.");
+           program.reflection.blend = { sourceFactor: blendFold, uniform: name, type: "vec4", count: 1 };
+         }
++        if (standard) for (let index = 0; index < gl.getProgramParameter(program.native, gl.ACTIVE_UNIFORMS); index++) {
++          const actual = gl.getActiveUniform(program.native, index);
++          require(actual, "shader-reflection-error", "Missing active native uniform reflection.");
++          const blockIndex = gl.getActiveUniforms(program.native, [index], gl.UNIFORM_BLOCK_INDEX)[0];
++          // The measured system block includes upstream reserved members. Its
++          // complete native extent and owned zero-filled data were checked above.
++          const accounted = program.blocks.some(block => block.index === blockIndex) ||
++            program.reflection.uniforms.some(uniform => uniform.name === actual.name &&
++              uniform.activeCount === actual.size && actual.type === gl.UNSIGNED_INT_VEC4) ||
++            program.reflection.samplers.some(sampler => sampler.name === actual.name &&
++              actual.size === 1 && actual.type === gl.SAMPLER_2D) ||
++            program.reflection.blend?.uniform === actual.name && actual.size === 1 && actual.type === gl.FLOAT_VEC4;
++          require(accounted, "shader-reflection-error", `Active native uniform ${actual.name} has no checked binding metadata.`);
++        }
+         for (const output of fs.outputs) {
+           const location = gl.getFragDataLocation(program.native, output.name);
+           require(output.semantic === "COLOR" && (location === 0 || location === -1 && (standard || fragment.discardContract?.alwaysDiscards === true)),
+diff --git a/renderer/virgl-command/tests/standard-state-binding.mjs b/renderer/virgl-command/tests/standard-state-binding.mjs
+index 130a0858..65dad4c8 100644
+--- a/renderer/virgl-command/tests/standard-state-binding.mjs
++++ b/renderer/virgl-command/tests/standard-state-binding.mjs
+@@ -159,7 +159,7 @@ function traceGL(gl, c, delay) {
+       if (name === "drawArrays" || name === "drawElements") calls.push({ name, args: [...args], turn, label: currentLabel,
+         program: gl.getParameter(gl.CURRENT_PROGRAM), activeTexture: gl.getParameter(gl.ACTIVE_TEXTURE) });
+       const result = value.apply(target, args);
+-      if (name === "getActiveAttrib") events.push({ name, turn, label: currentLabel,
++      if (name === "getActiveAttrib" || name === "getActiveUniform") events.push({ name, turn, label: currentLabel,
+         index: args[1], result: result ? { name: result.name, type: result.type, size: result.size } : null });
+       if (/^create(Buffer|Texture|Framebuffer|VertexArray|Sampler|Program|Shader)$/.test(name) && result) objects.set(result, next++);
+       if (name === "fenceSync" && result) {
+@@ -285,8 +285,16 @@ function nativeState(r, record) {
+       resourceId: r.allocations.find(entry => entry.storage.texture === texture)?.metadata.id ?? null,
+       samplerObject: r.trace.id(gl.getParameter(gl.SAMPLER_BINDING)) });
+   }
++  const activeUniforms = [];
++  for (let index = 0; index < gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS); index++) {
++    const actual = gl.getActiveUniform(program, index);
++    activeUniforms.push({ index, name: actual.name, type: actual.type, size: actual.size,
++      blockIndex: gl.getActiveUniforms(program, [index], gl.UNIFORM_BLOCK_INDEX)[0] });
++  }
++  const blendLocation = gl.getUniformLocation(program, "wv_rgb_blend_factor");
++  const blend = blendLocation === null ? null : { words: [...gl.getUniform(program, blendLocation)] };
+   gl.activeTexture(gl.TEXTURE0);
+-  return { op: call.name, args: call.args, programObject: r.trace.id(program), uniforms, attributes, systemValues, samplers };
++  return { op: call.name, args: call.args, programObject: r.trace.id(program), uniforms, attributes, systemValues, samplers, activeUniforms, blend };
+ }
+ async function frame(r, record, expected, fixture) {
+   const { c, gl } = r;
+@@ -416,6 +424,18 @@ export async function runAcceptance({ geometryPath = null, banksPath = null, ori
+     done(r);
+   }
+   if (smoke) { report.status = "passed"; return report; }
++  {
++    const r = make({ delay: 2, step: 1 }), factor = [.25, .5, .75, .25], source = [.25, .5, .75, 1];
++    const target = 1 | 7 << 4 | 8 << 9 | 1 << 17 | 17 << 22 | 15 << 27;
++    const rec = await submit(r, 1, join(setup(r), packet(1, 1, [5, 0, 0, target, ...Array(7).fill(0)]),
++      packet(2, 1, [5]), packet(14, 0, factor.map(word)), draw()), "standard-owned-blend-uniform");
++    const saved = await frame(r, rec, colorOracle([source[0] * factor[0], source[1] * factor[1], source[2] * factor[2], 1]),
++      { kind: "owned-blend", source, factor });
++    c.same(saved.native.blend.words, [...factor.slice(0, 3), 1], "actual renderer-owned native blend uniform");
++    c.same(saved.native.activeUniforms.some(u => u.name === "wv_rgb_blend_factor" && u.type === gl.FLOAT_VEC4 && u.size === 1),
++      true, "owned blend uniform participates in complete active reflection");
++    done(r);
++  }
+   {
+     const r = make({ delay: 5, step: 1 }), vsDecl = ["DCL IN[15]", "DCL OUT[0], POSITION", "DCL CONST[0..15]"],
+       fsDecl = ["DCL OUT[31], COLOR", "DCL TEMP[0]", "IMM[0] FLT32 {0.0625, 0.0625, 0.0625, 0.0625}"],
+@@ -543,6 +563,44 @@ async function rejectionCases(gl, bridge, c, report) {
+     report.runs.push({ history: r.history, events: r.trace.events, exchanges: r.exchanges }); dispose(r);
+   }
+   c.same(getters, 0, "standard result accessor is never invoked");
++  const omit = (stage, field) => ({ ...bridge,
++    translate(request) {
++      const out = copy(bridge.translate(request));
++      if (request.stage === stage) out.metadata[field] = [];
++      return out;
++    },
++    translatePair(request) {
++      const out = copy(bridge.translatePair(request)); out[stage].metadata[field] = []; return out;
++    },
++  });
++  report.nativeBindingRejections = [];
++  for (const stage of ["vertex", "fragment"]) for (const field of ["uniforms", "samplers"]) {
++    const r = rig(gl, omit(stage, field), c, { delay: 2, step: 1 }), label = `omitted-active-${stage}-${field}`;
++    let vertex = VS, fragment = FS, extra = new Uint8Array();
++    if (field === "uniforms" && stage === "vertex") vertex = tgsi("vertex",
++      "DCL IN[0]\nDCL OUT[0], POSITION\nDCL CONST[0]", ["ADD OUT[0], IN[0], CONST[0]"]);
++    if (field === "samplers") {
++      const declaration = "DCL SAMP[15]\nDCL SVIEW[15], 2D, FLOAT\nIMM[0] FLT32 {0.5,0.5,0,1}";
++      if (stage === "vertex") vertex = tgsi("vertex", "DCL IN[0]\nDCL OUT[0], POSITION\nDCL TEMP[0]\n" + declaration,
++        ["TEX TEMP[0], IMM[0], SAMP[15], 2D", "ADD OUT[0], IN[0], TEMP[0]"]);
++      else fragment = tgsi("fragment", "DCL OUT[0], COLOR\n" + declaration, ["TEX OUT[0], IMM[0], SAMP[15], 2D"]);
++      add(r, meta(5, 2, 67, 8, 1), new Uint8Array(4));
++      extra = join(transfer(5, 1), packet(1, 7, [8, 2 | 2 << 3 | 2 << 11, 0, 0, word(1), 0, 0, 0, 0]),
++        samplerView(6, 5, [0, 1, 2, 3]), bindSampler(stage === "vertex" ? 0 : 1, 6));
++    }
++    const rec = await submit(r, 1, join(extra, setup(r, { vertex, fragment }), draw()), label);
++    const name = (stage === "vertex" ? "vs" : "fs") + (field === "uniforms" ? "const0[0]" : "samp15");
++    report.nativeBindingRejections.push({ label, name, result: rec.result,
++      native: r.trace.events.filter(event => event.name === "getActiveUniform"),
++      nativeDraws: r.trace.calls.map(call => ({ name: call.name, args: call.args, turn: call.turn })) });
++    c.same(rec.result.ok, false, label + " coherently spoofed stage/pair metadata rejects");
++    c.same(rec.result.error.code, "shader-reflection-error", label + " fails native completeness check");
++    c.same(rec.result.error.message.includes(name), true, label + " names missing actual native binding");
++    c.same(r.trace.calls.length, 0, label + " fails before any native draw");
++    c.same(r.trace.events.some(event => event.name === "getActiveUniform" && event.result?.name === name), true,
++      label + " records independently active native uniform");
++    report.runs.push({ history: r.history, events: r.trace.events, exchanges: r.exchanges }); dispose(r);
++  }
+   {
+     const r = rig(gl, bridge, c);
+     const rec = await submit(r, 1, join(constants(1, [1, 2, 3, 4]), packet(8, 0, [])), "malformed-tail-zero-mutation");
+diff --git a/tools/verify-virgl-standard-state.mjs b/tools/verify-virgl-standard-state.mjs
+index 46b10662..ef3c0fda 100644
+--- a/tools/verify-virgl-standard-state.mjs
++++ b/tools/verify-virgl-standard-state.mjs
+@@ -13,7 +13,7 @@ for (let index = 2; index < process.argv.length; index += 2) {
+   assert.ok(["--output", "--node-only", "--mutation", "--smoke", "--inputs"].includes(process.argv[index]));
+   assert.ok(process.argv[index + 1]); options[process.argv[index].slice(2)] = process.argv[index + 1];
+ }
+-assert.ok(options.output); assert.ok(!options.mutation || options.mutation === "suffix");
++assert.ok(options.output); assert.ok(!options.mutation || ["suffix", "metadata"].includes(options.mutation));
+ for (const flag of ["node-only", "smoke"]) assert.ok(!options[flag] || options[flag] === "true");
+ const output = path.resolve(options.output); await fs.mkdir(output, { recursive: true });
+ const sourcePaths = [
+@@ -45,8 +45,10 @@ try {
+   if (!options["node-only"]) {
+     if (options.mutation) {
+       const name = "renderer/virgl-command/state.mjs", before = sources.get(name).toString(),
+-        needle = "const shader = uniform.stage === 0 ? program.vertex : program.fragment;",
+-        replacement = needle + "\n      if (standard && bank.length < count) return [];";
++        needle = options.mutation === "suffix" ? "const shader = uniform.stage === 0 ? program.vertex : program.fragment;" :
++          "if (standard) for (let index = 0; index < gl.getProgramParameter(program.native, gl.ACTIVE_UNIFORMS); index++) {",
++        replacement = options.mutation === "suffix" ? needle + "\n      if (standard && bank.length < count) return [];" :
++          needle.replace("if (standard)", "if (false)");
+       assert.equal(before.split(needle).length, 2, "real upload mutation has one site");
+       const bytes = Buffer.from(before.replace(needle, replacement)); sources.set(name, bytes);
+       await fs.writeFile(path.join(output, "mutation-source.mjs"), bytes);
+diff --git a/tools/verify-virgl-standard-state.sh b/tools/verify-virgl-standard-state.sh
+index 1aa36790..865bde4a 100644
+--- a/tools/verify-virgl-standard-state.sh
++++ b/tools/verify-virgl-standard-state.sh
+@@ -26,6 +26,10 @@ if node tools/verify-virgl-standard-state.mjs --output "$evidence/fault-suffix"
+   echo 'ERROR: actual short-bank upload corruption escaped its independent pixel oracle' >&2
+   exit 1
+ fi
++if node tools/verify-virgl-standard-state.mjs --output "$evidence/fault-metadata" --mutation metadata; then
++  echo 'ERROR: actual native metadata admission corruption escaped its independent rejection oracle' >&2
++  exit 1
++fi
+ node tools/virgl-command/standard-state-pixels.mjs "$evidence"
+ # Direct affected old paths, once each. Their unchanged numerical/cold/sabotage
+ # proofs carry forward; this submission does not repeat unrelated gate chains.
+diff --git a/tools/virgl-command/standard-state-pixels.mjs b/tools/virgl-command/standard-state-pixels.mjs
+index cee0a171..58e54ddb 100644
+--- a/tools/virgl-command/standard-state-pixels.mjs
++++ b/tools/virgl-command/standard-state-pixels.mjs
+@@ -27,7 +27,7 @@ function packets(encoded) {
+ function state(frame) {
+   const draw = frame.dump.draws.at(-1), ctx = draw.command.contextId,
+     banks = [[], []], names = new Map(), selected = [null, null], views = [[], []], samplerStates = [[], []];
+-  let clear = [0, 0, 0, 0], elements = null, boundElements = null, buffers = [];
++  let clear = [0, 0, 0, 0], elements = null, boundElements = null, buffers = [], blend = null, blendColor = [0, 0, 0, 0];
+   for (const row of frame.history) {
+     if (row.ctx !== ctx) continue;
+     assert.equal(row.result.ok, true, "pixel history must be successful");
+@@ -46,6 +46,8 @@ function state(frame) {
+       else if (packet.op === 31) selected[w[1]] = w[0] ? names.get(w[0]) : null;
+       else if (packet.op === 12 && w[0] < 2 && w[1] === 0) banks[w[0]] = w.slice(2);
+       else if (packet.op === 7) clear = w.slice(1, 5).map(f).map(quant);
++      else if (packet.op === 2 && packet.kind === 1) blend = w[0] ? names.get(w[0]) : null;
++      else if (packet.op === 14) blendColor = w.map(f);
+       else if (packet.op === 2 && packet.kind === 5) boundElements = w[0] ? names.get(w[0]) : null;
+       else if (packet.op === 6) buffers = Array.from({ length: w.length / 3 }, (_, i) => w.slice(i * 3, i * 3 + 3));
+       else if (packet.op === 10 || packet.op === 18) {
+@@ -67,7 +69,7 @@ function state(frame) {
+     assert.equal(fetch.resourceGeneration, attribute.generation);
+     assert.ok(fetch.requiredEnd <= raw.length); assert.equal(fetch.offset, attribute.offset);
+   }
+-  return { banks, selected, views, samplerStates, clear, program, draw };
++  return { banks, selected, views, samplerStates, clear, program, draw, blend, blendColor };
+ }
+ function expected(frame, st) {
+   const { banks: [v, b], selected, clear } = st, get = (bank, slot) => Array.from({ length: 4 }, (_, lane) => f(bank[slot * 4 + lane] ?? 0));
+@@ -80,6 +82,17 @@ function expected(frame, st) {
+     else output = get(b, 0);
+     return () => color(output);
+   }
++  if (fixture.kind === "owned-blend") {
++    const source = get(b, 0), factor = st.blendColor;
++    assert.deepEqual(source, fixture.source); assert.deepEqual(factor, fixture.factor);
++    // Literal Gallium fields: ADD, CONSTANT_COLOR / CONSTANT_ALPHA in RGB,
++    // ONE / ZERO in alpha. The fixture's clear color is transparent black.
++    assert.deepEqual(st.blend.words.slice(1), [0, 0, (1 | 7 << 4 | 8 << 9 | 1 << 17 | 17 << 22 | 15 << 27) >>> 0, ...Array(7).fill(0)]);
++    assert.deepEqual(clear, [0, 0, 0, 0]);
++    assert.deepEqual(frame.native.blend.words, [...factor.slice(0, 3), 1]);
++    assert.ok(frame.native.activeUniforms.some(uniform => uniform.name === "wv_rgb_blend_factor" && uniform.type === 35666 && uniform.size === 1));
++    return () => color([source[0] * factor[0], source[1] * factor[1], source[2] * factor[2], source[3]]);
++  }
+   if (fixture.kind === "flat") {
+     assert.ok(st.program.vertexESSL300.includes("flat out uvec4 vso_g15"));
+     return () => [.25, .5, .75, 1].map((n, lane) => v[2044 + lane] === b[lane] ? quant(n) : 0);
+@@ -168,7 +181,7 @@ for (const name of ["hardware", "fault-suffix"]) {
+   }
+   assert.deepEqual(failed, fault ? ["short-bank-0"] : [], "saved pixel sensitivity");
+ }
+-assert.equal(audit.frames.length, 55); audit.pixels = audit.frames.reduce((n, row) => n + row.pixels, 0);
+-assert.equal(audit.pixels, 2371168); audit.status = "passed";
++assert.equal(audit.frames.length, 56); audit.pixels = audit.frames.reduce((n, row) => n + row.pixels, 0);
++assert.equal(audit.pixels, 2371424); audit.status = "passed";
+ await fs.writeFile(path.join(directory, "physical-audit.json"), JSON.stringify(audit, null, 2) + "\n");
+ console.log("Offline audit passed: " + audit.frames.length + " frames, " + audit.pixels + " pixels; actual upload mutation detected");
+diff --git a/tools/virgl-command/standard-state-receipt.py b/tools/virgl-command/standard-state-receipt.py
+index 09b59057..9091ff7e 100644
+--- a/tools/virgl-command/standard-state-receipt.py
++++ b/tools/virgl-command/standard-state-receipt.py
+@@ -89,15 +89,35 @@ def main(directory):
+             need(row['sha256'] == served['/' + row['source']], 'coverage/source custody')
+         result = report['partial'] if fault else report['browserResult']['result']
+         if fault:
+-            need(mutation['mode'] == 'suffix' and report['partial']['frames'][-1]['label'] == 'short-bank-0'
+-                 and 'short-bank-0 independent physical pixel oracle' in report['browserResult']['error']['message'], 'unrelated failure cannot count as sabotage')
++            if name == 'fault-suffix':
++                need(mutation['mode'] == 'suffix' and report['partial']['frames'][-1]['label'] == 'short-bank-0'
++                     and 'short-bank-0 independent physical pixel oracle' in report['browserResult']['error']['message'],
++                     'unrelated failure cannot count as upload sabotage')
++            else:
++                need(name == 'fault-metadata' and mutation['mode'] == 'metadata' and
++                     'omitted-active-vertex-uniforms coherently spoofed stage/pair metadata rejects' in report['browserResult']['error']['message'],
++                     'unrelated failure cannot count as admission sabotage')
++                omissions = result['nativeBindingRejections']
++                need(len(omissions) == 1 and omissions[0]['label'] == 'omitted-active-vertex-uniforms' and
++                     omissions[0]['result']['ok'] and omissions[0]['result']['gpuComplete'] and
++                     len(omissions[0]['nativeDraws']) == 1 and omissions[0]['nativeDraws'][0]['name'] == 'drawArrays',
++                     'real incomplete-metadata native draw must contradict the rejection prediction')
+             original = (ROOT / mutation['path']).read_bytes()
+             changed = record(name + '/mutation-source.mjs', mutation['servedSha256'])
+             need(sha(original) == mutation['originalSha256'] and original.count(mutation['needle'].encode()) == 1
+                  and original.replace(mutation['needle'].encode(), mutation['replacement'].encode()) == changed, 'actual upload mutation custody')
+         else:
+-            need(result['status'] == 'passed' and len(result['frames']) == 55
++            need(result['status'] == 'passed' and len(result['frames']) == 56
+                  and all(row['held'] for row in result['predictions']), 'physical acceptance matrix')
++            omissions = result['nativeBindingRejections']
++            need(len(omissions) == 4 and
++                 {row['label'] for row in omissions} ==
++                 {f'omitted-active-{stage}-{field}' for stage in ['vertex', 'fragment'] for field in ['uniforms', 'samplers']} and
++                 all(not row['result']['ok'] and row['result']['error']['code'] == 'shader-reflection-error' and
++                     row['name'] in row['result']['error']['message'] and
++                     row['nativeDraws'] == [] and
++                     any(event['result'] and event['result']['name'] == row['name'] for event in row['native']) for row in omissions),
++                 'complete active native constant/sampler metadata admission')
+             need(not result['guestExecution'] and not result['productionNegotiation'], 'isolated authority')
+             need([row['delay'] for row in result['cancelledJobs']] == [2, 5]
+                  and all(row['result']['gpuComplete'] and row['result']['error']['code'] == 'cancelled' for row in result['cancelledJobs']), 'actual cancellation/drain')
+@@ -120,8 +140,9 @@ def main(directory):
+ 
+     physical('hardware')
+     physical('fault-suffix', True)
++    physical('fault-metadata', True)
+     audit = json.loads(record('physical-audit.json'))
+-    need(audit['status'] == 'passed' and len(audit['frames']) == 55 and audit['pixels'] == 2371168
++    need(audit['status'] == 'passed' and len(audit['frames']) == 56 and audit['pixels'] == 2371424
+          and all(row['held'] for row in audit['frames'])
+          and [row['label'] for row in audit['faults'] if not row['held']] == ['short-bank-0'], 'offline physical oracle')
+     for gate in GATES + ['blend', 'float']:

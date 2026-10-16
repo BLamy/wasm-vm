@@ -1,0 +1,337 @@
+{
+  "predictions": "predictions.md",
+  "runtimeDigests": {
+    "renderer/virgl-shader/bridge.c": "69d5e2a431e7606473a06377f7406f34d4b5b79dc15c9f38056439e07b810e3b",
+    "renderer/virgl-shader/raw_bits.c": "d7e3c1f29d950e0e8b0bd7320980b5dac8a641bcb5665f1e3f532de61c75ceca",
+    "renderer/virgl-shader/raw_bits.h": "5e8380baa687236e06cc46db36c3bc39168b5d2a287b019f4d71c140dbe767c4",
+    "renderer/virgl-shader/bridge.h": "c3829828586db64f5c628210404c329d3805b814b9fad63c8aa619fe2e6d0105"
+  },
+  "parent": "67ca333c05fb70d719c49b3dc5cb8c1f8bb2f6de",
+  "historicalFixtureBodies": 2025,
+  "intendedAdmissions": 6,
+  "originalBodies": 19,
+  "acceptedOriginalBodies": 12,
+  "inventoryInstructions": 39,
+  "inventoryNegations": 6,
+  "independentParserAuthorityAttacks": 113,
+  "independentGpuPrograms": 15,
+  "independentGpuVectors": 360,
+  "independentGpuDraws": 1440,
+  "independentGpuLaneCaptureChecks": 5760,
+  "independentSeed": "851ac309",
+  "sabotage": {
+    "source": "sabotage-source/raw_bits.c",
+    "mutation": "Remove the minus in float_operand without changing the typed-parser flags or oracle.",
+    "expectedFirstLane": 0.625,
+    "observedFirstLane": 1.875
+  },
+  "frozenImplementationHead": "6a8d3841e18379d665af4c7d8f9449322529636f",
+  "workerReceiptSha256": "170666b1f0a6dd52b5dc53f4206162711e1c596001a891b0f974cf78c7f4a365",
+  "schema": 1,
+  "task": "E6-T12e5",
+  "status": "verified",
+  "frozenHead": "6a8d3841e18379d665af4c7d8f9449322529636f",
+  "workerSubmissionHead": "1dacb4fc30dd4206e73800f184b15a607f459556",
+  "predictionResults": [
+    {
+      "prediction": 1,
+      "result": "HELD",
+      "evidence": [
+        "audit-results.json: attacks",
+        "worker-review.json: counts",
+        "worker/native/coverage-show.txt: bridge.c new operation/profile branches"
+      ],
+      "conclusion": "Plain new operations and single minus on numeric source positions/TEX coordinates select checked raw-v5; old valid profiles remain byte-identical."
+    },
+    {
+      "prediction": 2,
+      "result": "HELD",
+      "evidence": [
+        "audit-results.json: attacks",
+        "worker-review.json: counts.observations"
+      ],
+      "conclusion": "Authorized IN and computed/sample shadows are admitted without numerical range guards; raw authority requires proven safe words and only consumed lanes."
+    },
+    {
+      "prediction": 3,
+      "result": "HELD",
+      "evidence": [
+        "audit-results.json: attacks",
+        "gpu-rational-check.json",
+        "gpu-results.json"
+      ],
+      "conclusion": "Aliased and partial writes use both pre-write snapshots; unaffected float/raw lanes survive while touched integer lanes invalidate prior shadow authority."
+    },
+    {
+      "prediction": 4,
+      "result": "HELD",
+      "evidence": [
+        "audit-results.json: attacks",
+        "worker/native/native.log: STATS",
+        "worker-review.json"
+      ],
+      "conclusion": "All specified forbidden flags and source/sampler modifiers reject structurally with recoverable bounded state."
+    },
+    {
+      "prediction": 5,
+      "result": "HELD",
+      "evidence": [
+        "audit-results.json: legacyResultBindings and legacyDifferences",
+        "originals-audit.json",
+        "worker-review.json: previousNumericRegressions"
+      ],
+      "conclusion": "2025 historical bodies have identical complete serialized responses except six intended admissions; all 19 original full responses match, with 12 accepted. Original 39-op/six-negation inventory retained."
+    },
+    {
+      "prediction": 6,
+      "result": "HELD",
+      "evidence": [
+        "primary-source-notes.md",
+        "gpu-rational-check.json",
+        "worker-review.json: counts and receiptTamper",
+        "cold-review.json"
+      ],
+      "conclusion": "Pinned TGSI/ESSL equations and positive-denominator 2.5-ULP division contract are checked with independent rational bounds; no exact-word quotient or CPU exceptional-arithmetic equivalence claimed."
+    },
+    {
+      "prediction": 7,
+      "result": "HELD",
+      "evidence": [
+        "changed-coverage.json",
+        "native-coverage-review.json",
+        "worker-review.json",
+        "cold-review.json",
+        "cold-binding.json",
+        "sabotage-results.json"
+      ],
+      "conclusion": "All 57 changed runtime branch records have both directions hit. Both receipts rehash 251 sources/169 records, warm and cold acceptance pass, and sabotage/capture mutation fail the oracle."
+    },
+    {
+      "prediction": 8,
+      "result": "HELD",
+      "evidence": [
+        "audit-results.json: attacks",
+        "gpu-inputs.json",
+        "gpu-results.json",
+        "gpu-rational-check.json"
+      ],
+      "conclusion": "113 independent parser/authority attacks and 360 seeded alias/swizzle vectors survive; hardware performed 1440 draws with 5760 float and simultaneous raw lane checks."
+    }
+  ],
+  "coverage": {
+    "status": "passed",
+    "head": "6a8d3841e18379d665af4c7d8f9449322529636f",
+    "nativeReportSha256": "f7a06c2b645275543ee25324646bf79b48fb62a42f528ec396d728be6c891267",
+    "componentCases": 574,
+    "componentPairs": 37,
+    "originals": 19,
+    "stats": {
+      "originals": 19,
+      "acceptedOriginals": 12,
+      "cases": 2083,
+      "pairs": 162,
+      "calls": 316282,
+      "standaloneRecoveries": 164916,
+      "pairRecoveries": 137430,
+      "truncations": 7240,
+      "hostileCases": 324,
+      "mutations": 4096,
+      "maxSingleResultBytes": 54603,
+      "maxPairResultBytes": 107416
+    },
+    "layout": {
+      "pointerBytes": 8,
+      "rawIrBytes": 26232,
+      "rawInstructionBytes": 112,
+      "rawDestinationBytes": 12,
+      "rawLaneBytes": 12,
+      "registerBytes": 36,
+      "rawSourceBytes": 24,
+      "profileBytes": 7608,
+      "rawIrBoundBytes": 32768,
+      "profileBoundBytes": 8192,
+      "fixedWasmMemoryBytes": 16777216,
+      "fixedWasmStackBytes": 262144
+    },
+    "binarySha256": "092c0d36e83b10946fe7ee9f06ae15ec32bd30fb417ad60c65905ce33e9376a0",
+    "changedRuntimeBranches": 57,
+    "bothDirectionsExecuted": true,
+    "waivers": {
+      "renderer/virgl-shader/raw_bits.h": "Enum/mask constants and compact flag definitions have no distinct executable regions. Both feature/profile directions and all new opcodes are exercised in bridge.c/raw_bits.c. Existing layout assertions and sanitizer transcript confirm112-byte instruction/26232-byte IR.",
+      "C comments and braces": "No independent runtime semantics; surrounding executable region counts carry their enclosing block evidence.",
+      "Build, Makefile, Python/JS test infrastructure and fixtures": "Evidence generation and independent checking machinery. Frozen worker and pristine-clone acceptance ran the new build/native/browser/oracle/receipt and nested-regression paths, with four source-bound operator sabotages, a fresh compiler-negation sabotage, and coherent capture tampering rejected. Non-executed diagnostic/assertion error messages do not introduce guest/runtime semantics; native product branch counters are in changed-coverage.json.",
+      "Documentation/task/queue metadata": "Non-executable contract and lifecycle material checked against pinned equations, observed boundary, and outcome records."
+    }
+  },
+  "scope": [
+    "Isolated checked compiler with native, Wasm and direct hardware browser proof. Production negotiation and guest constant transport remain unchanged.",
+    "Ordinary ESSL semantics only; no PRECISE, LEGACY_MATH_RULES, CPU fmax equivalence, NaN payload or signed-zero preservation after ordinary arithmetic claim.",
+    "No Mesa boot, demo acceleration or MIPS claim."
+  ],
+  "suite": "Retain verify-E6-T12e5, bound shared fixtures, independent rational and byte/orientation validators, source-bound sabotage and prior gate chain as permanent regressions; retain fresh deterministic seed/corpus and reproduction scripts here.",
+  "records": [
+    {
+      "path": "audit-results.json",
+      "bytes": 1147412,
+      "sha256": "e68be858b7e70c7a6fa528452a895593617f4a9a674cc11da8d139a34f750993"
+    },
+    {
+      "path": "audit.py",
+      "bytes": 4710,
+      "sha256": "dfeb302062caeb3a7057124d12c350a3e25979ab50a0524051c18a233a14d24e"
+    },
+    {
+      "path": "build-commands.json",
+      "bytes": 5046,
+      "sha256": "6465f0a8c370389abefce6933ad863fab44037f018bac8b94ebe77c4a8fc98e3"
+    },
+    {
+      "path": "build-independent.py",
+      "bytes": 2020,
+      "sha256": "f2adcda1b210e6c3cb9cdba3e0c4cee664529502abd9625e7022eb931f469b58"
+    },
+    {
+      "path": "changed-coverage.json",
+      "bytes": 55883,
+      "sha256": "5a2a7c15691c217c80d898d332fd5230553ccac219259f1f87186a1716202dad"
+    },
+    {
+      "path": "check-cold.py",
+      "bytes": 2530,
+      "sha256": "c6e45c890003de57d013289f4fda92c9eba5c343f0c4cbf59a0525720edfbed5"
+    },
+    {
+      "path": "check-gpu-rationals.py",
+      "bytes": 2502,
+      "sha256": "53309c7b4a0914e7c4b661c4b7890f89a1b8a5a4222fff4186256e1e90cece46"
+    },
+    {
+      "path": "cold-binding.json",
+      "bytes": 932,
+      "sha256": "5e7fe6e5762655460f12def29a2e264e9390e54f2b348a14cf755d2f97fff066"
+    },
+    {
+      "path": "cold-review.json",
+      "bytes": 3572,
+      "sha256": "2690f73f224f97e575ee8370ebe6b7dff145f550d1f6d29d07fbd80b89095d8b"
+    },
+    {
+      "path": "cold-review.log",
+      "bytes": 1527,
+      "sha256": "b2966d2a1ebf14dda88a1fd0d1f92a7186c551291004564552bcc1dc6f8ee309"
+    },
+    {
+      "path": "coverage-plan.json",
+      "bytes": 841,
+      "sha256": "2c9c5402c604c3d421a345e654948538e4fed994ac7b693603e5fc5df74ea3c5"
+    },
+    {
+      "path": "diff-coverage.md",
+      "bytes": 4370,
+      "sha256": "820c9d1b2eca719257a2c384bdaba777406e0d9d573329a85c6938e0227449d5"
+    },
+    {
+      "path": "generate-gpu.py",
+      "bytes": 2968,
+      "sha256": "519254fe69867fba8d288ae9fd8b528fb92ba23b98e757b7379fa2f64b912151"
+    },
+    {
+      "path": "gpu-audit.mjs",
+      "bytes": 5066,
+      "sha256": "72326767c29fce25e81624b82bb06c78ad3af7d789a83a271b7e5f5fc02d90ab"
+    },
+    {
+      "path": "gpu-inputs.json",
+      "bytes": 410512,
+      "sha256": "48e88133e4c37e005a1a2ebbfef875298884646609e4b34f1a6672504f87a901"
+    },
+    {
+      "path": "gpu-rational-check.json",
+      "bytes": 463,
+      "sha256": "9ca03e9c8bdd16dfc90bb0a98422508c36254e06b69ccf270147eead4edf1882"
+    },
+    {
+      "path": "gpu-results.json",
+      "bytes": 481376,
+      "sha256": "bc540aeff6e1d0b35d69a460b75e29ab079fc824611953661ba6906d4c643fad"
+    },
+    {
+      "path": "initial-runtime-digests.json",
+      "bytes": 423,
+      "sha256": "ba314203828a1e25a6a208ed68bef8c916928f87e44b63008d1d3f9367a91187"
+    },
+    {
+      "path": "native-coverage-review.json",
+      "bytes": 2246,
+      "sha256": "e3c0a81c88178c3832a4de6f2f5587e890bf236577f8023171c9e88699c3f803"
+    },
+    {
+      "path": "originals-audit.json",
+      "bytes": 38348,
+      "sha256": "3e1537cd5fe447caeb54bea2b5998324a6adbda9f134ae7f8af56ded2bbb4726"
+    },
+    {
+      "path": "predictions.md",
+      "bytes": 2514,
+      "sha256": "b5adfc9c4fc0548cfa16467110e701a3e91350e985b1c3cd4976646eebd7b023"
+    },
+    {
+      "path": "primary-source-notes.md",
+      "bytes": 1308,
+      "sha256": "2b0ac7d2c7bd1cc53a9a47184f828bf1b7b9bb2f03d4e9a384efdc7d96f6d70a"
+    },
+    {
+      "path": "reproduce.md",
+      "bytes": 2298,
+      "sha256": "c21448b97e5c40c366dffcb50717bcefa164f473df8f22c92764aaf110096138"
+    },
+    {
+      "path": "review-worker.py",
+      "bytes": 4664,
+      "sha256": "723bca7599ce4e73e958567ae074511489b56e1aa590db4a50967e5166df3ef7"
+    },
+    {
+      "path": "sabotage-build-command.json",
+      "bytes": 2438,
+      "sha256": "149024f97235e4440cbccf34b6829d3b2327899d7d9d3045ee32588e9c9fab9e"
+    },
+    {
+      "path": "sabotage-inputs.json",
+      "bytes": 410464,
+      "sha256": "95f1296bb4318c5b60e33fda281b10ef6450d687753c65306ef83041be739ec1"
+    },
+    {
+      "path": "sabotage-results.json",
+      "bytes": 933,
+      "sha256": "754365719b047f96145635f8957bc677bffde7be38e5ceecbb80dd5be96bbaf7"
+    },
+    {
+      "path": "sabotage.log",
+      "bytes": 542,
+      "sha256": "d80982464f7d28566558fb78356645b4fb6e1d1e601630b91db5788848f279a1"
+    },
+    {
+      "path": "worker-review.json",
+      "bytes": 3572,
+      "sha256": "c4a10d2dbeb0d7e4f982167143eb7603b46904f26783f4fbb0e9e661bc6cbb1a"
+    }
+  ],
+  "localBuildArtifacts": [
+    {
+      "path": "audit-current.dylib",
+      "bytes": 317664,
+      "sha256": "8ac27ab3f945c8538337f0409fb5191f1b95b9856ae7af1fa0ab15378ac23c1e"
+    },
+    {
+      "path": "audit-parent.dylib",
+      "bytes": 317680,
+      "sha256": "515ce767fde4d86c564dba92abcf4770639741e05fd32ddac8795cb1d6f38760"
+    },
+    {
+      "path": "audit-sabotage.dylib",
+      "bytes": 317704,
+      "sha256": "1035cc087674d1ecd22dc56b47dde597f4378914a6128fc0c3622f8d972a2b07"
+    }
+  ],
+  "diffCoverageDisposition": "diff-coverage.md"
+}

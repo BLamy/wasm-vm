@@ -1,0 +1,427 @@
+{
+  "archive": {
+    "bytes": 306487,
+    "path": "target/evidence/critic-production-interactive-clock-components-seal01/clock-policy-unit-and-pause-controls.tar.gz",
+    "sha256": "0fa7e848bf8ed256ffcf40d707abb1ab62957b257e4446e0116728a80cb90cec"
+  },
+  "exclusions": [
+    "No stock post-policy keyboard/GUI final verdict yet.",
+    "No parent or E6e recovery verification, no deployment, no300MIPS claim.",
+    "Full original worker prefix recordings live separately at authenticated source paths and must accompany any final submission.",
+    "Unmodified copied-web bytes excluded; every original/copy identity is retained in preconditions and the frozen Git tree."
+  ],
+  "held": [
+    "Promoted four-group independent loader/lifecycle attack; isolated handoff omission fails unchanged tests.",
+    "Actual default-Wasm/qualified production-worker paused first-make continuity and two measured pause intervals.",
+    "Real-worker copy-only resume-rebase removal fails measured wall bound.",
+    "Complete closed hot/cold native/software/private prefixes authenticated with their deliberate public interruptions preserved.",
+    "Root default suite127/0 and source pins; stock still pending.",
+    "Original private ICount/wall diagnostic limits and old stock negative context retained."
+  ],
+  "identities": [
+    {
+      "bytes": 5506,
+      "path": "target/evidence/critic-production-keyboard-wfi-private-comparison01/audit_icount.py",
+      "sha256": "952198bc4fd3cee37ee3823093f416a0dd05397cc7e7a538159f92b684a7294b"
+    },
+    {
+      "bytes": 4645,
+      "path": "target/evidence/critic-production-keyboard-wfi-private-comparison01/audit_wall.py",
+      "sha256": "fa04904aab01fb5eb9f46f0c283e7feba582ac1adc34d98c790987fe5911e560"
+    },
+    {
+      "bytes": 4681,
+      "path": "target/evidence/critic-production-keyboard-wfi-private-comparison01/d72-preimplementation-predictions.json",
+      "sha256": "e20c57be974f5f6692000655fb84b72d233af081baf5b0aaf384f2c0ce8724a0"
+    },
+    {
+      "bytes": 16432,
+      "path": "target/evidence/critic-production-keyboard-wfi-private-comparison01/diagnostic-final.png",
+      "sha256": "d79f253b82e7a54aa1e8e7ece9f52852cde966e8040b9fd3b59d0ccbc4bb1fb3"
+    },
+    {
+      "bytes": 43762,
+      "path": "target/evidence/critic-production-keyboard-wfi-private-comparison01/diagnostic-logs.txt",
+      "sha256": "1d978c822a1eaaefaf89146fceeb1fb72bdab45ba86f8f1ff3ae808c4bc721ad"
+    },
+    {
+      "bytes": 14704,
+      "path": "target/evidence/critic-production-keyboard-wfi-private-comparison01/diagnostic-typed.png",
+      "sha256": "4afc3be0437c6c961f2641cd8a600c924f0f2d41619bcc08e24888ae872b00d9"
+    },
+    {
+      "bytes": 14298,
+      "path": "target/evidence/critic-production-keyboard-wfi-private-comparison01/icount-audit.json",
+      "sha256": "f83fb3f5ed9094c8ee636fb37283a63c0c8d74b033c7a11559c5843fff4c119e"
+    },
+    {
+      "bytes": 12306,
+      "path": "target/evidence/critic-production-keyboard-wfi-private-comparison01/icount-holds.json",
+      "sha256": "a0d1f9d804342f4419cb5b67b2c28b2423be01c76229008611148d3020b92fee"
+    },
+    {
+      "bytes": 699,
+      "path": "target/evidence/critic-production-keyboard-wfi-private-comparison01/icount-visual.json",
+      "sha256": "141694b143379ddfa5624b4fc786b43a1bda4c466aa1a7e3d9325bc2047ac14f"
+    },
+    {
+      "bytes": 6267,
+      "path": "target/evidence/critic-production-keyboard-wfi-private-comparison01/icount-wayland-keys.json",
+      "sha256": "ef653b1e7b4c33b39adeece1ff30874605e2e3f04eabe6fd51142dc50625a46e"
+    },
+    {
+      "bytes": 281,
+      "path": "target/evidence/critic-production-keyboard-wfi-private-comparison01/image-identity.json",
+      "sha256": "1366fa250202f615b5b43b36f76c2e7c22a4ad3a64d8e243fa952da553d356e4"
+    },
+    {
+      "bytes": 64719,
+      "path": "target/evidence/critic-production-keyboard-wfi-private-comparison01/keyboard-diagnostic.json",
+      "sha256": "b4ca0ca839d6957c14b98a402527dfa0c71b179d8263ab9a8a4a6e20254493f2"
+    },
+    {
+      "bytes": 2926,
+      "path": "target/evidence/critic-production-keyboard-wfi-private-comparison01/negative_control_d72.py",
+      "sha256": "21f81694e89ec82deebca67fd104fe48630b36ebbf3d9538cd0252c7d37717ce"
+    },
+    {
+      "bytes": 8831,
+      "path": "target/evidence/critic-production-keyboard-wfi-private-comparison01/served-source.json",
+      "sha256": "9870596cdc81e7960de6842ba7dc873e0b5cfa896e3c7115b46585d92d425ee9"
+    },
+    {
+      "bytes": 1990,
+      "path": "target/evidence/critic-production-keyboard-wfi-private-comparison01/sources/target/evidence/keyboard-evdev-observer01/observer.c",
+      "sha256": "1c37307b0b6c19949e9e0d0f2bd641e7c6aa080be5868d419b8c53e5ddd21856"
+    },
+    {
+      "bytes": 13786,
+      "path": "target/evidence/critic-production-keyboard-wfi-private-comparison01/sources/tools/virgl-production/critic-fast-boots-input.mjs",
+      "sha256": "10049d3ecffc7b96bdcffccbefd90ce617dbaa6ad5e49a2b90663b75c270d852"
+    },
+    {
+      "bytes": 5387,
+      "path": "target/evidence/critic-production-keyboard-wfi-private-comparison01/sources/tools/virgl-production/keyboard-diagnostic.mjs",
+      "sha256": "881d9365b6cbd9d977cc6d45e82533e022dc7b1d29f18a1d551e3d783e44ba5e"
+    },
+    {
+      "bytes": 10825,
+      "path": "target/evidence/critic-production-keyboard-wfi-private-comparison01/sources/web/node_modules/playwright-core/lib/server/input.js",
+      "sha256": "e3ee6dc31e7e77ad56d437f9328d2fd679b1f4979d04b45c5372bd0dd7342435"
+    },
+    {
+      "bytes": 14584,
+      "path": "target/evidence/critic-production-keyboard-wfi-private-comparison01/wall/audit.json",
+      "sha256": "d38fd6402d04d17cbc94952d2540e8edf8413e25fd844332c4a0e56d96329aaf"
+    },
+    {
+      "bytes": 4712,
+      "path": "target/evidence/critic-production-keyboard-wfi-private-comparison01/wall/diagnostic-final.png",
+      "sha256": "eb41b14818496692eb335b7a6efa1b506de6f41a5ef65b61d0738f6add3860da"
+    },
+    {
+      "bytes": 49076,
+      "path": "target/evidence/critic-production-keyboard-wfi-private-comparison01/wall/diagnostic-logs.txt",
+      "sha256": "f6c9b9c2abf8df4f2048bfd7187463c0e42789e8101a3630875428bf1ea7af79"
+    },
+    {
+      "bytes": 4712,
+      "path": "target/evidence/critic-production-keyboard-wfi-private-comparison01/wall/diagnostic-typed.png",
+      "sha256": "eb41b14818496692eb335b7a6efa1b506de6f41a5ef65b61d0738f6add3860da"
+    },
+    {
+      "bytes": 281,
+      "path": "target/evidence/critic-production-keyboard-wfi-private-comparison01/wall/image-identity.json",
+      "sha256": "1366fa250202f615b5b43b36f76c2e7c22a4ad3a64d8e243fa952da553d356e4"
+    },
+    {
+      "bytes": 70454,
+      "path": "target/evidence/critic-production-keyboard-wfi-private-comparison01/wall/keyboard-diagnostic.json",
+      "sha256": "fce0cdbf23d52c7bdce0d298a6c98297acdf5377bc7b71bab7597d29c73c9878"
+    },
+    {
+      "bytes": 82672,
+      "path": "target/evidence/critic-production-keyboard-wfi-private-comparison01/wall/serial.log",
+      "sha256": "796bf311c55f8412d1299aacbfc03a7647ff32e14548c1ddc4a203926cc9d9bc"
+    },
+    {
+      "bytes": 8831,
+      "path": "target/evidence/critic-production-keyboard-wfi-private-comparison01/wall/served-source.json",
+      "sha256": "f7a19ad9e200024a1b16bb2815da453b919516e536e1240499c33b40d09d0e4a"
+    },
+    {
+      "bytes": 512,
+      "path": "target/evidence/critic-production-keyboard-wfi-private-comparison01/wall-original-failure-rows.json",
+      "sha256": "8d97b5950579f2ddfa744dcb2d1ef3ae312960edb6ca323ae0bc1862a481ff8c"
+    },
+    {
+      "bytes": 5470,
+      "path": "target/evidence/critic-production-interactive-clock-final-review01/authenticate_cold_prefix.py",
+      "sha256": "ba319e37333ab4a7eb7bd0548579b950958f2c5369ee007693b802b9a42e12bf"
+    },
+    {
+      "bytes": 4563,
+      "path": "target/evidence/critic-production-interactive-clock-final-review01/authenticate_pause_supplement.py",
+      "sha256": "38c0aec7a0c8f594f26999d4a438d382755626beb93a6ee84d9f3636b258f97b"
+    },
+    {
+      "bytes": 4651,
+      "path": "target/evidence/critic-production-interactive-clock-final-review01/authenticate_root_prefix.py",
+      "sha256": "6f6c7ff0ddbb3b6fd577d028708c2248b6b5f55dd85d185acc220a8fc2e55694"
+    },
+    {
+      "bytes": 13231,
+      "path": "target/evidence/critic-production-interactive-clock-final-review01/cold-prefix-authentication.json",
+      "sha256": "d980b6f53bd4517a4e5528827a8a6949a2eca4e0acbe054e31dc5b681c4353c2"
+    },
+    {
+      "bytes": 7201,
+      "path": "target/evidence/critic-production-interactive-clock-final-review01/coverage-working.json",
+      "sha256": "a287df5ff694d143bf16b339ec57b371846f8278185a98cc42c790bbe64a155d"
+    },
+    {
+      "bytes": 1581,
+      "path": "target/evidence/critic-production-interactive-clock-final-review01/final-oracle-tests/audit.json",
+      "sha256": "2b4048bdb1c998aa08508a20c59ecafb1c2d3dc242a1bca9f6ccb55ac29dfda1"
+    },
+    {
+      "bytes": 0,
+      "path": "target/evidence/critic-production-interactive-clock-final-review01/final-oracle-tests/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 718,
+      "path": "target/evidence/critic-production-interactive-clock-final-review01/final-oracle-tests/stdout",
+      "sha256": "1bbe652baa7daf720cfa87b135c26a53050571aca00565d804bd040441b1125f"
+    },
+    {
+      "bytes": 13248,
+      "path": "target/evidence/critic-production-interactive-clock-final-review01/frozen-source.diff",
+      "sha256": "e172c15ad23d64b5bf3d2ae7a5ea67eb0ad4c8ae61cb86b1954eacb822cb55bc"
+    },
+    {
+      "bytes": 2602,
+      "path": "target/evidence/critic-production-interactive-clock-final-review01/jit-clock-source-audit.json",
+      "sha256": "fe05c805717a9cf8106dedcbec2f1e347ccb34d52e461977c810aae1adec6b3d"
+    },
+    {
+      "bytes": 4199,
+      "path": "target/evidence/critic-production-interactive-clock-final-review01/negative_rebase_worker.py",
+      "sha256": "e2b3b75645e1a5612a9e3d03a185e1ba445e9710e86074bcdc6130dc09511c6e"
+    },
+    {
+      "bytes": 12905,
+      "path": "target/evidence/critic-production-interactive-clock-final-review01/pause-positive/authentication.json",
+      "sha256": "81f5a626495647c93e8e1cc63cea54663326c544f95cd76ce46833ed457d9d14"
+    },
+    {
+      "bytes": 199296,
+      "path": "target/evidence/critic-production-interactive-clock-final-review01/pause-positive/browser/clock.json",
+      "sha256": "7ac298d8bcbc57a5d178e6f6058f1bc4271ef98624fd90b38c2d2209fe92010e"
+    },
+    {
+      "bytes": 3,
+      "path": "target/evidence/critic-production-interactive-clock-final-review01/pause-positive/browser/errors.json",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "bytes": 76025,
+      "path": "target/evidence/critic-production-interactive-clock-final-review01/pause-positive/browser/gpu.ndjson",
+      "sha256": "7aef10d67aea7e4efe7d292de28065a502e6b1dd23db987d35c056a84ae177fd"
+    },
+    {
+      "bytes": 7022,
+      "path": "target/evidence/critic-production-interactive-clock-final-review01/pause-positive/browser/hardware.json",
+      "sha256": "7727b334114c44a9aed0dda68058261d0afa78b61951e2a30f7516ccec93317f"
+    },
+    {
+      "bytes": 281,
+      "path": "target/evidence/critic-production-interactive-clock-final-review01/pause-positive/browser/image-identity.json",
+      "sha256": "1366fa250202f615b5b43b36f76c2e7c22a4ad3a64d8e243fa952da553d356e4"
+    },
+    {
+      "bytes": 8212,
+      "path": "target/evidence/critic-production-interactive-clock-final-review01/pause-positive/browser/served.json",
+      "sha256": "6c73120a039e45a28a3d58984cb3a62923532e20b3d3436f075a85e913d0260a"
+    },
+    {
+      "bytes": 12448,
+      "path": "target/evidence/critic-production-interactive-clock-final-review01/pause-positive/browser/worker-clock.png",
+      "sha256": "ae276f420c216d39678b7518f06f5cf3a262bc2440c1ae597539054cb5b63df0"
+    },
+    {
+      "bytes": 8349,
+      "path": "target/evidence/critic-production-interactive-clock-final-review01/pause-positive/driver.diff",
+      "sha256": "19aa41d30e58d0f193df8288e0611ef6e783c88057676cc91c3bf89381cb0086"
+    },
+    {
+      "bytes": 12076,
+      "path": "target/evidence/critic-production-interactive-clock-final-review01/pause-positive/driver.mjs",
+      "sha256": "bf6fe887fe43bf287e9ee36b9783c303d18c2b7b946897d79af0c82e0b20c801"
+    },
+    {
+      "bytes": 465,
+      "path": "target/evidence/critic-production-interactive-clock-final-review01/pause-positive/harness.json",
+      "sha256": "1fe1242c4ff37413b8178724cafb5b0843eb1c75641e91c2bd4ca8ee1e60f1c0"
+    },
+    {
+      "bytes": 4556,
+      "path": "target/evidence/critic-production-interactive-clock-final-review01/pause-positive/prepare.py",
+      "sha256": "c16043cd98a49f73e19d203afe124c790ef89470035a6ecdf8363534045a0425"
+    },
+    {
+      "bytes": 1249,
+      "path": "target/evidence/critic-production-interactive-clock-final-review01/pause-probe-counterexample.json",
+      "sha256": "01528826b92571b06e69e3e7ace62ebac0af18e3833391a11f1a49fd1ac0a882"
+    },
+    {
+      "bytes": 2710,
+      "path": "target/evidence/critic-production-interactive-clock-final-review01/pause_probe_counterexample.mjs",
+      "sha256": "016f95d3ff989c7c445d8b03486c3ab47895744e627a3148ff734029d4a6ccc8"
+    },
+    {
+      "bytes": 34385,
+      "path": "target/evidence/critic-production-interactive-clock-final-review01/root-default-authentication.json",
+      "sha256": "4b0d558518068dd6cc92209a8d0c9c74bbdd7b79846f7aa920f1febe47fde8b7"
+    },
+    {
+      "bytes": 20135,
+      "path": "target/evidence/critic-production-interactive-clock-final-review01/root-prefix-authentication.json",
+      "sha256": "bdac1b0ed1cf785a7d0e546bec1c95f8fc3a25bf40d6a7862dcf4490e3eed61a"
+    },
+    {
+      "bytes": 3770,
+      "path": "target/evidence/critic-production-interactive-clock-final-review01/seal_components.py",
+      "sha256": "905c4cb714a676c87768db40bbfe937ae424c3a1f107de8678412eda691d98eb"
+    },
+    {
+      "bytes": 3851,
+      "path": "target/evidence/critic-production-interactive-clock-negative-control01/audit.json",
+      "sha256": "9807bc3108fce710eba79fbaa88652a2e8873f01cb0b6a5c48393c30798a4521"
+    },
+    {
+      "bytes": 429,
+      "path": "target/evidence/critic-production-interactive-clock-negative-control01/exact-negative-control.diff",
+      "sha256": "4b877c4023f00039768d550f3378bb3445f806e7d3e5ae769dfeb5a45a329f65"
+    },
+    {
+      "bytes": 0,
+      "path": "target/evidence/critic-production-interactive-clock-negative-control01/handoff-omitted.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 4067,
+      "path": "target/evidence/critic-production-interactive-clock-negative-control01/handoff-omitted.stdout",
+      "sha256": "9e4eb2978c6bb67af355a6ad16b90b1583fd6c8c180b7b80e87ce0d5bafe8864"
+    },
+    {
+      "bytes": 0,
+      "path": "target/evidence/critic-production-interactive-clock-negative-control01/healthy.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 499,
+      "path": "target/evidence/critic-production-interactive-clock-negative-control01/healthy.stdout",
+      "sha256": "a45b95a89e068535de430c556c100ce2b2481cbdb53d50a4e2a95131bea82753"
+    },
+    {
+      "bytes": 82941,
+      "path": "target/evidence/critic-production-interactive-clock-negative-control01/loader-before.js",
+      "sha256": "f1a5ea01c553d6be92a6435311e45236892ba6ae86624d221b7c57598d82f500"
+    },
+    {
+      "bytes": 5444,
+      "path": "target/evidence/critic-production-interactive-clock-negative-control01/owned-copy/web/guest-clock.js",
+      "sha256": "62a268c0766733860f422d80870790ca48a899fc37600420f66ef5fc802fd4a7"
+    },
+    {
+      "bytes": 82947,
+      "path": "target/evidence/critic-production-interactive-clock-negative-control01/owned-copy/web/loader.js",
+      "sha256": "8cd3d4eb5491b3c08f2ec6281f45c288ac0a02691f2acf8eea4abe230686aad5"
+    },
+    {
+      "bytes": 1114,
+      "path": "target/evidence/critic-production-interactive-clock-negative-control01/owned-copy/web/package.json",
+      "sha256": "cd3af43280af6e21aa7e2474dda4f4d7dbc0233eb4c547a2c7e34f32837e7970"
+    },
+    {
+      "bytes": 7939,
+      "path": "target/evidence/critic-production-interactive-clock-negative-control01/owned-copy/web/tests/e6-t11d72-interactive-clock-critic.test.mjs",
+      "sha256": "46b18933d8bda13d0adad49ed8407e91502285fb73cb3221ccb3fbd3fd960af9"
+    },
+    {
+      "bytes": 2536,
+      "path": "target/evidence/critic-production-interactive-clock-rebase-negative01/audit.json",
+      "sha256": "fd34ea8f0a602ab4da91647658e02b75c784c38e76d2f6d8cee05c6e50abd268"
+    },
+    {
+      "bytes": 198984,
+      "path": "target/evidence/critic-production-interactive-clock-rebase-negative01/browser/clock.json",
+      "sha256": "ec1ea8b3cf92abc447322d0dcacb4667d22bfccd78ba02309d582dd4b6d0ae7b"
+    },
+    {
+      "bytes": 3,
+      "path": "target/evidence/critic-production-interactive-clock-rebase-negative01/browser/errors.json",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "bytes": 76025,
+      "path": "target/evidence/critic-production-interactive-clock-rebase-negative01/browser/gpu.ndjson",
+      "sha256": "7aef10d67aea7e4efe7d292de28065a502e6b1dd23db987d35c056a84ae177fd"
+    },
+    {
+      "bytes": 7022,
+      "path": "target/evidence/critic-production-interactive-clock-rebase-negative01/browser/hardware.json",
+      "sha256": "6d2d3056f8869217b40881c3d6f14c6a64aef9c8475e4323c08f90cccaec63c7"
+    },
+    {
+      "bytes": 281,
+      "path": "target/evidence/critic-production-interactive-clock-rebase-negative01/browser/image-identity.json",
+      "sha256": "1366fa250202f615b5b43b36f76c2e7c22a4ad3a64d8e243fa952da553d356e4"
+    },
+    {
+      "bytes": 11668,
+      "path": "target/evidence/critic-production-interactive-clock-rebase-negative01/browser/served.json",
+      "sha256": "6ae4a430877f51d76d16528103440dbc56be3d3a06fdf2c2084122a1f444244e"
+    },
+    {
+      "bytes": 481,
+      "path": "target/evidence/critic-production-interactive-clock-rebase-negative01/change.diff",
+      "sha256": "496467fc4c44d5ccef360a20bde856388c83a81e8341f393747276af819a2136"
+    },
+    {
+      "bytes": 5468,
+      "path": "target/evidence/critic-production-interactive-clock-rebase-negative01/copied-web/guest-clock.js",
+      "sha256": "319eabaaf06f167eeba2b375a6ec41f550a30cba250aedbcba923da47ec26484"
+    },
+    {
+      "bytes": 12076,
+      "path": "target/evidence/critic-production-interactive-clock-rebase-negative01/driver.mjs",
+      "sha256": "bf6fe887fe43bf287e9ee36b9783c303d18c2b7b946897d79af0c82e0b20c801"
+    },
+    {
+      "bytes": 5444,
+      "path": "target/evidence/critic-production-interactive-clock-rebase-negative01/original-guest-clock.js",
+      "sha256": "62a268c0766733860f422d80870790ca48a899fc37600420f66ef5fc802fd4a7"
+    },
+    {
+      "bytes": 324310,
+      "path": "target/evidence/critic-production-interactive-clock-rebase-negative01/preconditions.json",
+      "sha256": "3d2726a5b239ba4c7b9347aef0a9e1995dccc89f49335eb39ddc4b57cda3cb3f"
+    },
+    {
+      "bytes": 427,
+      "path": "target/evidence/critic-production-interactive-clock-rebase-negative01/run.stderr",
+      "sha256": "e91b9391b08050df127419381e2a1e78a498ce8dced3a985b40926c22c83628d"
+    },
+    {
+      "bytes": 0,
+      "path": "target/evidence/critic-production-interactive-clock-rebase-negative01/run.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "recordingHarnessHead": "4619a4d11007f3d6bc221e67048b074c8f4eafeb",
+  "runtimeHead": "97021186ba6b1274edc4d9f50b2005a1a034d77d",
+  "schema": 1,
+  "scope": "Independent D72 partial component review, not a verified task or parent/recovery/deployment verdict"
+}

@@ -1,0 +1,122 @@
+[
+  {
+    "path": "admission.json",
+    "bytes": 1940823,
+    "sha256": "cc52a523d51fd602e9213e80535f71f656f458d879518a84981b6818f1507e2b"
+  },
+  {
+    "path": "admission.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "attacks/another-valid-original-compiled-source.json",
+    "bytes": 5130800,
+    "sha256": "4d09a4cfaee3ed7e1ae7a90ed702522f26ffb4085088bace37760be83488c529"
+  },
+  {
+    "path": "attacks/omitted-original-modifiers.json",
+    "bytes": 5125123,
+    "sha256": "5c97dc742c5b16a8c8963c54ea3f1039599b93f803842dd7e78caed0ee892fb8"
+  },
+  {
+    "path": "attacks/wrong-physical-lighting-word.json",
+    "bytes": 5125130,
+    "sha256": "7ce71173f495eb9b73675bb9f2302ef3621d3c5572b0fbbcf087858c3d441eae"
+  },
+  {
+    "path": "attacks.json",
+    "bytes": 1236,
+    "sha256": "2ca1e81c200e8147082ecc3f7fc66dba6ed0d18cf86ad8d170ba432c05832d81"
+  },
+  {
+    "path": "fresh-gpu/browser-coverage.json",
+    "bytes": 59844,
+    "sha256": "c14af6ed0980e55693f6290bf46b560bf375675da04af994e660e014227177b5"
+  },
+  {
+    "path": "fresh-gpu/browser.png",
+    "bytes": 55991,
+    "sha256": "e4d81358076a95bf65af0ac897e0923df3c54e05936c2b26d3d035265a976062"
+  },
+  {
+    "path": "fresh-gpu/report.json",
+    "bytes": 17403717,
+    "sha256": "bececa9837f74419c4540cc8ec788d2d8a257267419fd31944313c1e7814dac7"
+  },
+  {
+    "path": "fresh-gpu.log",
+    "bytes": 82,
+    "sha256": "7b26b66859e4a49c5e00adddf419fcb947b6bb5310b82e5d72c8f284696b02a7"
+  },
+  {
+    "path": "integrity.json",
+    "bytes": 164,
+    "sha256": "083d1b54fd6319ac3dc840915926ca445b4bcaa6b37647ad8a03e9f395ae41ff"
+  },
+  {
+    "path": "literal-audit.jsonl",
+    "bytes": 3191,
+    "sha256": "4244440e9f86d325d6ecd3496fc4066a74be70637e0703db53a5b303c7008b86"
+  },
+  {
+    "path": "literal-contracts.json",
+    "bytes": 21099,
+    "sha256": "8b403d9fe5ff1aacefba44afef2a6f86c52246f22759d8cdaeb0d012b37366f8"
+  },
+  {
+    "path": "native-coverage.json",
+    "bytes": 13573691,
+    "sha256": "82b0deeb2da501ad540243e6b12215ee5c55a870c34cf3528401bccc950f31f6"
+  },
+  {
+    "path": "original_corpus.coverage.txt",
+    "bytes": 5372,
+    "sha256": "f2787549d854a857bf9b91cb07a58e2bee02e6cb4572cdc15995401c67dcf517"
+  },
+  {
+    "path": "predictions.md",
+    "bytes": 2783,
+    "sha256": "ca4f36a17c5ed740e265c70cdba761686551ccde7e6813f8a7f6e440b562e8f0"
+  },
+  {
+    "path": "replay-native.log",
+    "bytes": 1230968,
+    "sha256": "2bafaaa25630b5e5563c632090f6f63d85dc73c03afb29c6ac872f0ce6d6e702"
+  },
+  {
+    "path": "replay-wasm/calls.jsonl",
+    "bytes": 17222561,
+    "sha256": "ba8577266e010459ee6ebc583ec67ff415399a5eb23ccaa17c9856fa19e66b17"
+  },
+  {
+    "path": "replay-wasm/report.json",
+    "bytes": 1266031,
+    "sha256": "e4a33f1a6d7c705feaccb830d00776807b7981e8b994221d844add11b1de46e5"
+  },
+  {
+    "path": "replay.profraw",
+    "bytes": 97632,
+    "sha256": "993b857fcea5983bb8a25e0cd6c0cecada072819c1e0a519e46237fa9301bd44"
+  },
+  {
+    "path": "source-order-sabotage.py",
+    "bytes": 15091,
+    "sha256": "03970a0c8e09ff405adae8f1f7f0bf146d2eea6eb4f4f5a01260cd04363e55b3"
+  },
+  {
+    "path": "strict-replay.log",
+    "bytes": 298,
+    "sha256": "7f9ed502c318a67308963318c87c4c8929f8130d0ee7496d9d6de985d00a510a"
+  },
+  {
+    "path": "verdict.md",
+    "bytes": 6389,
+    "sha256": "9e1e75ae158d93885745822120b3e12798d012516a2f6f2b659580890817337a"
+  },
+  {
+    "path": "worker.profdata",
+    "bytes": 74144,
+    "sha256": "ba5ee71e0de2ff598f7cc6b07f0ea7ed40b514759666228a4b6f01bc86f23433"
+  }
+]

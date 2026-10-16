@@ -1,0 +1,241 @@
+{
+  "schema": "wasm-vm-raw-bits-independent-verdict-v1",
+  "verdict": "verified",
+  "status": "passed",
+  "runtimeHead": "347dc59d60fa7e77cec58b14a36bcc8adb88db8d",
+  "harnessHead": "2484d01736e15b6aee05cef12a3215f283705762",
+  "workerSubmissionHead": "71dc9b428fbbc325f885f257c95e2fff8b9e8079",
+  "predictions": {
+    "P01": "HELD",
+    "P02": "HELD",
+    "P03": "HELD",
+    "P04": "HELD",
+    "P05": "HELD",
+    "P06": "HELD",
+    "P07": "HELD",
+    "P08": "HELD",
+    "P09": "HELD",
+    "P10": "HELD",
+    "P11": "HELD",
+    "P12": "HELD",
+    "P13": "HELD",
+    "P14": "HELD",
+    "P15": "HELD",
+    "P16": "HELD",
+    "P17": "HELD",
+    "P18": "HELD",
+    "P19": "HELD",
+    "P20": "HELD"
+  },
+  "findings": [],
+  "nativeCases": 1408,
+  "nativeCalls": 4224,
+  "nativeRecoveries": 2816,
+  "legacyParentComparisons": 28,
+  "fullNativeWasmParity": 1408,
+  "knownBitAssertions": 444976,
+  "independentHardwareWords": 96,
+  "workerSemanticAssertions": 14850,
+  "changedExecutableLines": 213,
+  "coverageWaivers": [
+    "raw_bits.c:107 guard-excluded enum default",
+    "raw_bits.c:83,88,167 fixed-format defensive writer error branches; bounds shown in VERIFICATION.md"
+  ],
+  "bindingAuditSha256": "7c616a2bbda8bf126e2e29316bae21060feab62978a252a742cb7e11015f2c51",
+  "runtimeSources": [
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "sha256": "cd93e40e913290552a9eaf0eacb7272b6e54ffee863929e106b96755ef2f1778"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "sha256": "754359c34956612478c3bab9415f0ab8a1fd1bffabe44e2f1a08154e0e53bf62"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.h",
+      "sha256": "cb55fbabb674313eb04b2df6c1cec17ca78530f429342e81cc6c38568297efe5"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.h",
+      "sha256": "c3829828586db64f5c628210404c329d3805b814b9fad63c8aa619fe2e6d0105"
+    },
+    {
+      "path": "renderer/virgl-shader/index.mjs",
+      "sha256": "3bde28f884a70558ca052cc51c75695a55b3de867b878e21b237cf41567a5a1e"
+    },
+    {
+      "path": "renderer/virgl-shader/build.sh",
+      "sha256": "a593b1c953c8c2c4549d84e00188a80b73b8bbaa7ef0c7e068931364566c0140"
+    }
+  ],
+  "wasm": {
+    "path": "renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+    "size": 270080,
+    "sha256": "64b4dd240932ab30031b81485d78e321cc1e6b4ec9d7cbf967e3ceebe87ca1a2"
+  },
+  "toolchain": "Apple clang version 21.0.0 (clang-2100.3.34.2)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin",
+  "localRebuildableBinaries": [
+    {
+      "path": "audit-native",
+      "sha256": "446eddae0b700e95fab4650ff4c48e1f98d3287fbfdf0d9db1fdf9271388a598"
+    },
+    {
+      "path": "audit-parent",
+      "sha256": "82a942df80656c1988ef7deed5772a73005a8f16859b05b958baf676fca4b51a"
+    },
+    {
+      "path": "knowledge-attack",
+      "sha256": "fc579d0781271e9a07b3706eccd36f1b10dad2eee6a92819b9a2650c1c67208e"
+    }
+  ],
+  "records": [
+    {
+      "path": "VERIFICATION.md",
+      "bytes": 11693,
+      "sha256": "314e04e1ca466cc84604485e1bd37bd81b0e83da8f871294da1e8dfc3dc45630"
+    },
+    {
+      "path": "audit-native.input",
+      "bytes": 513436,
+      "sha256": "f472048467683703b48bb95688929bbec39e5f7ba5d27c2bc0adda19af5838b9"
+    },
+    {
+      "path": "audit-native.jsonl",
+      "bytes": 5285788,
+      "sha256": "70e6cea0250f9954552558699fa784187ee86cd884249ce4decafabfea44a7d4"
+    },
+    {
+      "path": "audit-native.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "audit-parent.input",
+      "bytes": 3080,
+      "sha256": "e21fd4fc064aabde0a13d17523f8d4259adb34ed0fb69110808184f0bece65e8"
+    },
+    {
+      "path": "audit-parent.jsonl",
+      "bytes": 18859,
+      "sha256": "5a01d551a31880b10815b59781cdc94e0a0d68a7c23e483e44cd9a12574d726c"
+    },
+    {
+      "path": "audit-parent.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "binding-audit.json",
+      "bytes": 5742,
+      "sha256": "7c616a2bbda8bf126e2e29316bae21060feab62978a252a742cb7e11015f2c51"
+    },
+    {
+      "path": "binding-audit.py",
+      "bytes": 26535,
+      "sha256": "cd42e60ca6761fdd5bd3d4e9fee2c694e3e25dddf244c45a7de92af3b0f563c3"
+    },
+    {
+      "path": "browser_audit.mjs",
+      "bytes": 10174,
+      "sha256": "fbcf4da1ced07cad1b9236b91cb56d7ace2a299b533c5a78e05f3b94cb3530bb"
+    },
+    {
+      "path": "driver.c",
+      "bytes": 738,
+      "sha256": "599467fdd3e83d6d618b620a7d216757417f2e7afb48d86ad5d978c3007ab5ed"
+    },
+    {
+      "path": "hardware/browser.png",
+      "bytes": 38356,
+      "sha256": "bbe3f106f2b7229fb8d7a94dbe12674e1103de26fef1ce8a82517fe88260a4e2"
+    },
+    {
+      "path": "hardware/report.json",
+      "bytes": 677478,
+      "sha256": "33d92f3384de850586a52f46c9d97b83d7e6447224a7f8b5e6767fe159ca4e21"
+    },
+    {
+      "path": "hardware-fixture.json",
+      "bytes": 11468,
+      "sha256": "ca981af9a089b931fb306d3133e28665f5daf82296b2b1f57300dfcdd3781994"
+    },
+    {
+      "path": "hardware-initial-wrapper-assumption/failure.png",
+      "bytes": 24009,
+      "sha256": "e988a4143d2f713354cef2017b670dc6fe0ab0b0c3e70620e0ed4707daa3e101"
+    },
+    {
+      "path": "hardware-initial-wrapper-assumption/report.json",
+      "bytes": 90998,
+      "sha256": "5fc6b4edba591ea357a6b00f1385873bff02af74edf621fe4ecd36aef14bcc50"
+    },
+    {
+      "path": "hardware_fixture.py",
+      "bytes": 2845,
+      "sha256": "54753ac1f7391a3bd86b2e65392940272ebffb2818515726c166fbf389f09045"
+    },
+    {
+      "path": "knowledge-report.json",
+      "bytes": 192,
+      "sha256": "c2299973f503f6bc9c8806366efe79fc3390d9b1bbca659e6f17652553d2c9c0"
+    },
+    {
+      "path": "knowledge_attack.c",
+      "bytes": 3945,
+      "sha256": "d4f0659eeb484d3e75e99cbb2dd812bc5dafb052e246286b57b7f702399ea223"
+    },
+    {
+      "path": "native-cases.json",
+      "bytes": 736807,
+      "sha256": "f2f16cd3cab6e80382eeff5549dfe5fa6b07b20e1d02ee2ff604ca320a3e371d"
+    },
+    {
+      "path": "native-report.json",
+      "bytes": 8960,
+      "sha256": "ea99a7971c2122d604a37c0f94611a1505397f18eee02db976ed13974b59a4f7"
+    },
+    {
+      "path": "native_audit.py",
+      "bytes": 11079,
+      "sha256": "26b1361492ae26a719fb53d614c692781b4b48b49ed6f75ad2d76b0a46d90c5b"
+    },
+    {
+      "path": "parent-bridge.c",
+      "bytes": 24363,
+      "sha256": "eea6467ae207e56057ed54cdf25cb1dd992fefd61f433b3190ced073a9beca88"
+    },
+    {
+      "path": "predictions.md",
+      "bytes": 14246,
+      "sha256": "86bf220049e1ef3e434c1adc7e2bb78e4e09e83795df3c9a6b3973c3c7e17469"
+    },
+    {
+      "path": "run_browser.mjs",
+      "bytes": 1307,
+      "sha256": "504777ec676d34f5b45bc8119408024b64987a810fbdec84640236e0c812d706"
+    },
+    {
+      "path": "sabotage/failure.png",
+      "bytes": 24009,
+      "sha256": "e988a4143d2f713354cef2017b670dc6fe0ab0b0c3e70620e0ed4707daa3e101"
+    },
+    {
+      "path": "sabotage/report.json",
+      "bytes": 279172,
+      "sha256": "6c0ed51ff09fafc52cbc5e0dd70bb041984aa2812fa606db2de578e1334e9969"
+    },
+    {
+      "path": "worker-semantics.json",
+      "bytes": 33113,
+      "sha256": "896fb15da6e6f1f72b8df63da49d5f15d354ec3c9a5a7ba3fcb0218e69c74810"
+    },
+    {
+      "path": "worker_semantics.py",
+      "bytes": 7374,
+      "sha256": "d1c2ab1d7faecc443fc2302f60685b01e56b3fa65e5a5c8c3b63885b97544aed"
+    }
+  ],
+  "productionClaim": false,
+  "guestExecutionClaim": false,
+  "mipsOrFpsClaim": false
+}

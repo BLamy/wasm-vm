@@ -1,0 +1,61 @@
+{
+  "schema": "original-rgb9e5-layout-v1",
+  "format": 125,
+  "name": "R9G9B9E5_FLOAT",
+  "originalPixelBytes": 4,
+  "nativePixelBytes": 4,
+  "nativeReadPixelBytes": 4,
+  "conversionPixelBytes": 4,
+  "privateCopyAuxiliaryPixelBytes": 8,
+  "implicitAlpha": 1,
+  "fields": [
+    {
+      "lane": "R",
+      "offset": 0,
+      "width": 9
+    },
+    {
+      "lane": "G",
+      "offset": 9,
+      "width": 9
+    },
+    {
+      "lane": "B",
+      "offset": 18,
+      "width": 9
+    },
+    {
+      "lane": "sharedExponent",
+      "offset": 27,
+      "width": 5,
+      "exponentBias": 15,
+      "valueFormula": "mantissa * 2^(exponent - 24)"
+    }
+  ],
+  "native": {
+    "internal": "RGB9_E5",
+    "upload": "RGB",
+    "type": "UNSIGNED_INT_5_9_9_9_REV",
+    "read": "RGBA",
+    "readType": "UNSIGNED_BYTE",
+    "conversionInternal": "RGBA8"
+  },
+  "primarySources": [
+    {
+      "path": "renderer/virgl-shader/vendor/src/virgl_hw.h",
+      "sha256": "191ca5cea527949a29e9753b1e31d550f2fed922895d78dabc5c5c3585aa2ff7"
+    },
+    {
+      "path": "tools/virgl-command/standard-float-image-mesa-formats.yaml",
+      "sha256": "f0fef33544456468def10d5dffc72a61e8b0e7acc599b700fc65366e6f495a10"
+    }
+  ],
+  "primarySharedExponentSpec": {
+    "url": "https://registry.khronos.org/OpenGL/extensions/EXT/EXT_texture_shared_exponent.txt",
+    "sha256": "7f4bf01aea3c7feb543e435afc3c9424c9ce9cf1ecdf563d3025beaa64ce4b94",
+    "conversion": "Appendix A lines 488-494"
+  },
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "productionDrawAuthority": false
+}

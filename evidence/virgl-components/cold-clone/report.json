@@ -1,0 +1,133 @@
+{
+  "schema": 1,
+  "task": "E6-T12e1",
+  "status": "passed",
+  "gitHead": "ae3bdf0f1d707f239b00907269f5c783fcf597e5",
+  "clone": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-components-cold-22v3wa1x/wasm-vm",
+  "removedEnvironmentNames": [
+    "GIT_PAGER",
+    "RUST_LOG"
+  ],
+  "command": [
+    "make",
+    "verify-E6-T12e1"
+  ],
+  "timeoutSeconds": 1800,
+  "startedAt": "2026-10-03T07:55:36.135103+00:00",
+  "harnessSha256": "bd86c2615a3c0b9bcb8f8179e8eb7b119d130eff9187927b7a64c671addcc0b0",
+  "cloneHead": "ae3bdf0f1d707f239b00907269f5c783fcf597e5",
+  "statusBefore": "",
+  "exitCode": 0,
+  "cloneHeadAfter": "ae3bdf0f1d707f239b00907269f5c783fcf597e5",
+  "statusAfter": "",
+  "receiptSha256": "32d2d19d454a92d977bb52193faaa7e1291a1875559a56991d416273e10be7c5",
+  "acceptanceFiles": [
+    {
+      "path": "acceptance/acceptance.log",
+      "bytes": 233877,
+      "sha256": "174a31abb3f517570f1937481eb1c4d6565cb743e9a1f1d4fb65ab320cca4e4a"
+    },
+    {
+      "path": "acceptance/hardware/browser.png",
+      "bytes": 72469,
+      "sha256": "8c709a10d2419700f4e6118022b3e67b5bddf3d712a352eac6b43964f6dfc8ad"
+    },
+    {
+      "path": "acceptance/hardware/report.json",
+      "bytes": 2044430,
+      "sha256": "804cd605d72a3549afd5e58c971333cff793807f789f04c6be8b8dda326d9f4b"
+    },
+    {
+      "path": "acceptance/native/native-report.json",
+      "bytes": 372913,
+      "sha256": "cf6f8eec055106c7324d1379d701e0f9a27a57697c6b9cf91b7f0d12252159d8"
+    },
+    {
+      "path": "acceptance/native/native.log",
+      "bytes": 207164,
+      "sha256": "5aabb17c301af8b286d3dd4c996faa0ad4f3f9f369236de85c6ea9a9171c456c"
+    },
+    {
+      "path": "acceptance/receipt.json",
+      "bytes": 25378,
+      "sha256": "32d2d19d454a92d977bb52193faaa7e1291a1875559a56991d416273e10be7c5"
+    },
+    {
+      "path": "acceptance/regression/acceptance.log",
+      "bytes": 19080,
+      "sha256": "e7d2cc0b935be88137ef72e698620252f96137feffeb9f3423057ec42b38beef"
+    },
+    {
+      "path": "acceptance/regression/captured/browser.png",
+      "bytes": 48982,
+      "sha256": "408a80c650dec6109ab1cbb1ebe2ce5c23cb52f2762c74b4d17a13a59c7549ed"
+    },
+    {
+      "path": "acceptance/regression/captured/report.json",
+      "bytes": 92315,
+      "sha256": "e17f370e44d49a108b7f43a64f78ca3ef3dafcf00f3db33e6303fe610653348f"
+    },
+    {
+      "path": "acceptance/regression/contract/browser/browser.png",
+      "bytes": 132263,
+      "sha256": "fe563a2ebe78c7e999a4cdd909ddde5a8d2c3d4b63741b8185701d7b5df642c2"
+    },
+    {
+      "path": "acceptance/regression/contract/browser/report.json",
+      "bytes": 102556,
+      "sha256": "eb5c505928467b0746536ae1d2ff66e70ac24f91fafdd7431c605e43231a7581"
+    },
+    {
+      "path": "acceptance/regression/contract/receipt.json",
+      "bytes": 25458,
+      "sha256": "4ab0d6cda349ab7e01a246d0785a62554cd8dfdbfd43b2b117a9838817dae996"
+    },
+    {
+      "path": "acceptance/regression/literal/browser.png",
+      "bytes": 63249,
+      "sha256": "02bcd7de28b6291ef619f63fa2149170350c56262949cd4925e273f678d38e32"
+    },
+    {
+      "path": "acceptance/regression/literal/report.json",
+      "bytes": 72508,
+      "sha256": "864d765158b3177610ba5fdca10b5523dd96e7caf42a9ad12725e514402e0f5f"
+    },
+    {
+      "path": "acceptance/regression/native/native-report.json",
+      "bytes": 1778,
+      "sha256": "1b58aa5604094f11772d570bc90d50ed75a9a658966c4ed2bd4663b0425c8595"
+    },
+    {
+      "path": "acceptance/regression/native/native.log",
+      "bytes": 6618,
+      "sha256": "57c7475d34a49631aa0052c6f0edfcaffeff23bd836a23fcb4362ec908891f71"
+    },
+    {
+      "path": "acceptance/regression/receipt.json",
+      "bytes": 15572,
+      "sha256": "69559b316a5b35be49c410357f00ea83e164701a2de1bbfc2d90d748f12e13ff"
+    },
+    {
+      "path": "acceptance/regression/sabotage/failure.png",
+      "bytes": 36216,
+      "sha256": "0965b1e012d215ae083c2683b2b1f6d5e147a899367faea40442d3168c4ae400"
+    },
+    {
+      "path": "acceptance/regression/sabotage/report.json",
+      "bytes": 87092,
+      "sha256": "ad07a76d10c0127a081b83d8a96c3b056ec67eb1d23cf2a9beb9cc9b139db63f"
+    },
+    {
+      "path": "acceptance/sabotage/failure.png",
+      "bytes": 49911,
+      "sha256": "0c336b3df3d7b666c2cfc7580f357926e45c906344f1175621e11e1808f93b1f"
+    },
+    {
+      "path": "acceptance/sabotage/report.json",
+      "bytes": 1041956,
+      "sha256": "6da0540aa4189477e1d03972318101830bd70e40cd772ea8c980c94a6e9ab27e"
+    }
+  ],
+  "logSha256": "6c902b8b84f00c5d260463aad44354e767d355dafc653b6a64d7a47765c0f722",
+  "finishedAt": "2026-10-03T07:56:17.045838+00:00"
+}

@@ -1,0 +1,9 @@
+{
+  "status": "passed",
+  "promotedTest": "renderer/virgl-command/tests/precise-arithmetic-verifier-regressions.mjs",
+  "testSha256": "1f5507fa2fdaf58346c24f923d5d30cdf3134f5db270cd786c9bb71f3cc01538",
+  "assertion": "private output/vertex actual true != expected false",
+  "sourceFault": "raw_bits.c:255 float_mode(a)&&float_mode(b) replaced with true",
+  "normalResultSha256": "e3c578ba0f4320580ffe46d085f4af864802cdedda8a294e99f55aa97faac3f1",
+  "faultLogSha256": "2abceed99b62575a9596fbe5df03a26f5e30feff1846198a8966d111bae12abd"
+}

@@ -1,0 +1,41 @@
+{
+  "schema": "critic-signed-conversion-seal-v1",
+  "task": "E6-T12g6e",
+  "role": "fresh adversarial verifier",
+  "verdict": "verified",
+  "base": "7f2cdec89ca53b37bac120538bb168aaa153d62f",
+  "runtimeHead": "c4b811d7686e4fa59706324fcec6c3eecdc559d0",
+  "sourceHead": "2e67fac91552702add11c701f61d6c4c0af2260c",
+  "submissionHead": "4c001e35",
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 6548892,
+    "sha256": "ccec7ef4231c2aaac9ed93167ab7e025283a14a9efe28a3be5c91f6a43e41cca",
+    "members": 47
+  },
+  "index": {
+    "path": "records.json",
+    "sha256": "fc9b55d8d34a2dc287d2193dafcefec1291e8098fee9aa7386205535e7b0ffc9"
+  },
+  "report": {
+    "path": "verdict.json",
+    "sha256": "a9150bdc4bb87913a267e98c3881f81928b593129da4dafd0c3d7e29b5a407b7"
+  },
+  "promotedTest": {
+    "path": "renderer/virgl-shader/tests/signed-conversion-regressions.mjs",
+    "sha256": "af656f9a8a7bc00d12fc4d8562dbc889ea19c63c2428917c37a6e45ad471ae0a"
+  },
+  "workerDependency": {
+    "archive": "../worker/recording.tar.gz",
+    "sha256": "0302fd33c25937206456e6549502f89122fdb73f622c920c573be8bc4da6b336",
+    "indexSha256": "b7028f12a864bc0b716ce20ad870caaa0a771a617bf82df1c17696e720edc833",
+    "members": 81
+  },
+  "scope": "private signed32 I2F/F2I only; full-word owned semantics, documented normal/zero Mesa TEMP comparisons; complete compositors and production imports/caps/guest boots/MIPS/FPS remain gated",
+  "predictionsHeld": 11,
+  "failed": [],
+  "needsEvidence": [],
+  "memberAuthentication": "all members reopened and length/SHA256 checked",
+  "implementationEdited": false,
+  "duplicateColdCloneRun": false
+}

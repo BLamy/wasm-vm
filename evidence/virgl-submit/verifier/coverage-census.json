@@ -1,0 +1,1605 @@
+{
+  "base": "3e5bf674b019d3055bc880ffeb48f8bd4d8d7102",
+  "frozen": "f0f125fd0578a22ce08c4bc255ca63708c6e6566",
+  "nativeObjects": [
+    {
+      "path": "target/virgl-submit-verifier-native/debug/deps/virgl_submit_independent_verifier-33ac396114c9de7c",
+      "sha256": "c95b1f578e9f9c960cc3d97011863ce61a1e5ddc29c8449f18fb4ad9c98b6353"
+    },
+    {
+      "path": "target/virgl-submit-verifier-mmio/debug/deps/wasm_vm_core-8f3aeb3a35649c3e",
+      "sha256": "d6240d1d95597b66e537c701cc20ecd3c8a8f857931eebfdba93bf89d785c07c"
+    }
+  ],
+  "profiles": [
+    {
+      "path": "target/virgl-submit-verifier-native/39699-5378301767277730478_0.profraw",
+      "sha256": "d44c231df0da0271f5b8bb7d8ae08d58df638b7feb28cc161f9552d0e5e24d94"
+    },
+    {
+      "path": "target/virgl-submit-verifier-mmio/36941-16437475645012196642_0.profraw",
+      "sha256": "a0e8958cdc55d8f55e072c4a416956c63832b44317081ae7fb16734bf473a3c3"
+    }
+  ],
+  "native": [
+    {
+      "path": "crates/core/src/dev/virtio/gpu/control3d.rs",
+      "sha256": "96154391adf03b33a9c7f15e900ed850ecac003b74a4abee1c19155a14a33419",
+      "added": 34,
+      "positiveLineCounts": 27,
+      "zeroLines": [],
+      "unmapped": [
+        1,
+        109,
+        113,
+        177,
+        185,
+        250,
+        274
+      ],
+      "zeroRegions": [
+        {
+          "start": [
+            579,
+            48
+          ],
+          "end": [
+            579,
+            49
+          ]
+        },
+        {
+          "start": [
+            547,
+            23
+          ],
+          "end": [
+            547,
+            24
+          ]
+        }
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/mod.rs",
+      "sha256": "9f5d48edc939cc8cee6d5844bd5ebac4e5872d34127c0d842b5c4a3e2270ebe6",
+      "added": 306,
+      "positiveLineCounts": 221,
+      "zeroLines": [
+        {
+          "line": 1594,
+          "text": "    {"
+        },
+        {
+          "line": 1595,
+          "text": "        *vq = None;"
+        },
+        {
+          "line": 1674,
+          "text": "                        slot.borrow_mut().protocol_violation();"
+        },
+        {
+          "line": 1675,
+          "text": "                        *vq = None;"
+        },
+        {
+          "line": 1676,
+          "text": "                        return;"
+        },
+        {
+          "line": 4914,
+          "text": "        state.borrow_mut().revoke_submit3d();"
+        },
+        {
+          "line": 4915,
+          "text": "        slot.borrow_mut().protocol_violation();"
+        },
+        {
+          "line": 4916,
+          "text": "        *vq = None;"
+        },
+        {
+          "line": 4917,
+          "text": "        return PendingService::Revoked;"
+        },
+        {
+          "line": 4920,
+          "text": "        state.borrow_mut().revoke_submit3d();"
+        },
+        {
+          "line": 4921,
+          "text": "        slot.borrow_mut().protocol_violation();"
+        },
+        {
+          "line": 4922,
+          "text": "        *vq = None;"
+        },
+        {
+          "line": 4923,
+          "text": "        return PendingService::Revoked;"
+        },
+        {
+          "line": 4927,
+          "text": "        state.borrow_mut().revoke_submit3d();"
+        },
+        {
+          "line": 4928,
+          "text": "        slot.borrow_mut().protocol_violation();"
+        },
+        {
+          "line": 4929,
+          "text": "        *vq = None;"
+        },
+        {
+          "line": 4930,
+          "text": "        return PendingService::Revoked;"
+        }
+      ],
+      "unmapped": [
+        13,
+        14,
+        83,
+        84,
+        325,
+        326,
+        557,
+        611,
+        617,
+        673,
+        674,
+        685,
+        935,
+        937,
+        938,
+        1543,
+        1545,
+        1548,
+        1552,
+        1581,
+        1586,
+        1591,
+        1624,
+        1641,
+        1642,
+        1645,
+        1651,
+        1658,
+        1663,
+        1665,
+        1669,
+        1671,
+        1673,
+        1677,
+        1678,
+        1679,
+        4842,
+        4843,
+        4847,
+        4848,
+        4849,
+        4850,
+        4852,
+        4853,
+        4854,
+        4855,
+        4856,
+        4857,
+        4858,
+        4859,
+        4870,
+        4873,
+        4875,
+        4906,
+        4907,
+        4913,
+        4924,
+        4932,
+        4955,
+        4956,
+        4957,
+        4958,
+        4966,
+        4985,
+        4990,
+        5005,
+        5009,
+        5011
+      ],
+      "zeroRegions": [
+        {
+          "start": [
+            621,
+            9
+          ],
+          "end": [
+            621,
+            10
+          ]
+        },
+        {
+          "start": [
+            624,
+            9
+          ],
+          "end": [
+            624,
+            10
+          ]
+        },
+        {
+          "start": [
+            4981,
+            55
+          ],
+          "end": [
+            4981,
+            56
+          ]
+        },
+        {
+          "start": [
+            4983,
+            61
+          ],
+          "end": [
+            4983,
+            62
+          ]
+        },
+        {
+          "start": [
+            4997,
+            41
+          ],
+          "end": [
+            4997,
+            42
+          ]
+        },
+        {
+          "start": [
+            5004,
+            48
+          ],
+          "end": [
+            5004,
+            49
+          ]
+        },
+        {
+          "start": [
+            5008,
+            48
+          ],
+          "end": [
+            5008,
+            49
+          ]
+        },
+        {
+          "start": [
+            1594,
+            5
+          ],
+          "end": [
+            1596,
+            6
+          ]
+        },
+        {
+          "start": [
+            1674,
+            25
+          ],
+          "end": [
+            1674,
+            63
+          ]
+        },
+        {
+          "start": [
+            1675,
+            25
+          ],
+          "end": [
+            1675,
+            35
+          ]
+        },
+        {
+          "start": [
+            1676,
+            25
+          ],
+          "end": [
+            1676,
+            31
+          ]
+        },
+        {
+          "start": [
+            4914,
+            9
+          ],
+          "end": [
+            4914,
+            45
+          ]
+        },
+        {
+          "start": [
+            4915,
+            9
+          ],
+          "end": [
+            4915,
+            47
+          ]
+        },
+        {
+          "start": [
+            4916,
+            9
+          ],
+          "end": [
+            4916,
+            19
+          ]
+        },
+        {
+          "start": [
+            4917,
+            16
+          ],
+          "end": [
+            4917,
+            39
+          ]
+        },
+        {
+          "start": [
+            4920,
+            9
+          ],
+          "end": [
+            4920,
+            45
+          ]
+        },
+        {
+          "start": [
+            4921,
+            9
+          ],
+          "end": [
+            4921,
+            47
+          ]
+        },
+        {
+          "start": [
+            4922,
+            9
+          ],
+          "end": [
+            4922,
+            19
+          ]
+        },
+        {
+          "start": [
+            4923,
+            16
+          ],
+          "end": [
+            4923,
+            39
+          ]
+        },
+        {
+          "start": [
+            4927,
+            9
+          ],
+          "end": [
+            4927,
+            45
+          ]
+        },
+        {
+          "start": [
+            4928,
+            9
+          ],
+          "end": [
+            4928,
+            47
+          ]
+        },
+        {
+          "start": [
+            4929,
+            9
+          ],
+          "end": [
+            4929,
+            19
+          ]
+        },
+        {
+          "start": [
+            4930,
+            16
+          ],
+          "end": [
+            4930,
+            39
+          ]
+        },
+        {
+          "start": [
+            4952,
+            5
+          ],
+          "end": [
+            4952,
+            6
+          ]
+        }
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/submit3d.rs",
+      "sha256": "e717284d102e81c5dc1d87982d9f84b24b233df0da4b82b9ea4a777d365266a4",
+      "added": 655,
+      "positiveLineCounts": 405,
+      "zeroLines": [
+        {
+          "line": 210,
+          "text": "            for v in ["
+        },
+        {
+          "line": 211,
+          "text": "                p.key.epoch,"
+        },
+        {
+          "line": 212,
+          "text": "                p.key.sequence,"
+        },
+        {
+          "line": 213,
+          "text": "                p.context.generation,"
+        },
+        {
+          "line": 214,
+          "text": "                p.fence_id,"
+        },
+        {
+          "line": 215,
+          "text": "                p.byte_length,"
+        },
+        {
+          "line": 216,
+          "text": "                p.last_exchange,"
+        },
+        {
+          "line": 217,
+          "text": "            ] {"
+        },
+        {
+          "line": 218,
+          "text": "                out.extend_from_slice(&v.to_le_bytes());"
+        },
+        {
+          "line": 219,
+          "text": "            }"
+        },
+        {
+          "line": 220,
+          "text": "            for v in [p.context.id, p.command_type, p.flags, p.backing_entries] {"
+        },
+        {
+          "line": 221,
+          "text": "                out.extend_from_slice(&v.to_le_bytes());"
+        },
+        {
+          "line": 222,
+          "text": "            }"
+        },
+        {
+          "line": 223,
+          "text": "            out.push(u8::from(p.completion_ready));"
+        },
+        {
+          "line": 269,
+          "text": "                key: p.request.key,"
+        },
+        {
+          "line": 270,
+          "text": "                context: p.request.context,"
+        },
+        {
+          "line": 271,
+          "text": "                command_type: p.request.header.ty,"
+        },
+        {
+          "line": 272,
+          "text": "                fence_id: p.request.header.fence_id,"
+        },
+        {
+          "line": 273,
+          "text": "                flags: p.request.header.flags,"
+        },
+        {
+          "line": 274,
+          "text": "                byte_length: match &p.request.kind {"
+        },
+        {
+          "line": 275,
+          "text": "                    Submit3dKind::Commands(bytes) => bytes.len() as u64,"
+        },
+        {
+          "line": 276,
+          "text": "                    Submit3dKind::Transfer(_) => 72,"
+        },
+        {
+          "line": 278,
+          "text": "                backing_entries: p"
+        },
+        {
+          "line": 279,
+          "text": "                    .accepted"
+        },
+        {
+          "line": 280,
+          "text": "                    .resources"
+        },
+        {
+          "line": 281,
+          "text": "                    .iter()"
+        },
+        {
+          "line": 282,
+          "text": "                    .map(|r| r.backing.as_ref().map_or(0, |v| v.len() as u32))"
+        },
+        {
+          "line": 283,
+          "text": "                    .sum(),"
+        },
+        {
+          "line": 284,
+          "text": "                last_exchange: mailbox.last_exchange,"
+        },
+        {
+          "line": 285,
+          "text": "                completion_ready: mailbox.ready,"
+        },
+        {
+          "line": 286,
+          "text": "            }),"
+        },
+        {
+          "line": 382,
+          "text": "            return Err(Control3dError::BridgePoisoned);"
+        },
+        {
+          "line": 474,
+          "text": "            return Err(bad);"
+        },
+        {
+          "line": 496,
+          "text": "        return Err(Control3dError::BridgePoisoned);"
+        },
+        {
+          "line": 595,
+          "text": "        _ => return Err(Control3dError::Unspecified),"
+        }
+      ],
+      "unmapped": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        74,
+        75,
+        76,
+        77,
+        78,
+        79,
+        80,
+        81,
+        82,
+        83,
+        84,
+        85,
+        86,
+        87,
+        88,
+        89,
+        90,
+        91,
+        92,
+        93,
+        94,
+        95,
+        96,
+        97,
+        98,
+        99,
+        100,
+        101,
+        102,
+        103,
+        104,
+        105,
+        106,
+        107,
+        108,
+        109,
+        110,
+        111,
+        112,
+        113,
+        130,
+        131,
+        140,
+        155,
+        156,
+        157,
+        158,
+        159,
+        160,
+        161,
+        162,
+        163,
+        164,
+        165,
+        166,
+        167,
+        168,
+        169,
+        170,
+        171,
+        172,
+        173,
+        174,
+        175,
+        176,
+        177,
+        178,
+        179,
+        180,
+        181,
+        182,
+        183,
+        184,
+        185,
+        186,
+        187,
+        188,
+        228,
+        235,
+        236,
+        237,
+        238,
+        239,
+        240,
+        241,
+        242,
+        243,
+        244,
+        245,
+        246,
+        247,
+        248,
+        249,
+        250,
+        251,
+        252,
+        265,
+        277,
+        287,
+        316,
+        317,
+        324,
+        326,
+        366,
+        368,
+        389,
+        396,
+        413,
+        422,
+        423,
+        437,
+        450,
+        472,
+        476,
+        479,
+        489,
+        490,
+        505,
+        530,
+        531,
+        533,
+        540,
+        555,
+        557,
+        559,
+        560,
+        584,
+        586,
+        587,
+        594,
+        596,
+        597,
+        598,
+        604,
+        608,
+        610,
+        624,
+        631,
+        633,
+        636,
+        638,
+        651
+      ],
+      "zeroRegions": [
+        {
+          "start": [
+            345,
+            71
+          ],
+          "end": [
+            345,
+            72
+          ]
+        },
+        {
+          "start": [
+            303,
+            9
+          ],
+          "end": [
+            303,
+            10
+          ]
+        },
+        {
+          "start": [
+            342,
+            9
+          ],
+          "end": [
+            342,
+            10
+          ]
+        },
+        {
+          "start": [
+            292,
+            48
+          ],
+          "end": [
+            292,
+            49
+          ]
+        },
+        {
+          "start": [
+            379,
+            53
+          ],
+          "end": [
+            379,
+            54
+          ]
+        },
+        {
+          "start": [
+            382,
+            20
+          ],
+          "end": [
+            382,
+            55
+          ]
+        },
+        {
+          "start": [
+            404,
+            54
+          ],
+          "end": [
+            404,
+            55
+          ]
+        },
+        {
+          "start": [
+            409,
+            54
+          ],
+          "end": [
+            409,
+            55
+          ]
+        },
+        {
+          "start": [
+            419,
+            53
+          ],
+          "end": [
+            419,
+            54
+          ]
+        },
+        {
+          "start": [
+            209,
+            21
+          ],
+          "end": [
+            209,
+            22
+          ]
+        },
+        {
+          "start": [
+            210,
+            17
+          ],
+          "end": [
+            210,
+            18
+          ]
+        },
+        {
+          "start": [
+            210,
+            22
+          ],
+          "end": [
+            217,
+            14
+          ]
+        },
+        {
+          "start": [
+            211,
+            17
+          ],
+          "end": [
+            211,
+            28
+          ]
+        },
+        {
+          "start": [
+            212,
+            17
+          ],
+          "end": [
+            212,
+            31
+          ]
+        },
+        {
+          "start": [
+            213,
+            17
+          ],
+          "end": [
+            213,
+            37
+          ]
+        },
+        {
+          "start": [
+            214,
+            17
+          ],
+          "end": [
+            214,
+            27
+          ]
+        },
+        {
+          "start": [
+            217,
+            15
+          ],
+          "end": [
+            219,
+            14
+          ]
+        },
+        {
+          "start": [
+            218,
+            17
+          ],
+          "end": [
+            218,
+            20
+          ]
+        },
+        {
+          "start": [
+            218,
+            21
+          ],
+          "end": [
+            218,
+            38
+          ]
+        },
+        {
+          "start": [
+            220,
+            17
+          ],
+          "end": [
+            220,
+            18
+          ]
+        },
+        {
+          "start": [
+            220,
+            22
+          ],
+          "end": [
+            220,
+            80
+          ]
+        },
+        {
+          "start": [
+            220,
+            23
+          ],
+          "end": [
+            220,
+            35
+          ]
+        },
+        {
+          "start": [
+            220,
+            37
+          ],
+          "end": [
+            220,
+            51
+          ]
+        },
+        {
+          "start": [
+            220,
+            81
+          ],
+          "end": [
+            222,
+            14
+          ]
+        },
+        {
+          "start": [
+            221,
+            17
+          ],
+          "end": [
+            221,
+            20
+          ]
+        },
+        {
+          "start": [
+            221,
+            21
+          ],
+          "end": [
+            221,
+            38
+          ]
+        },
+        {
+          "start": [
+            223,
+            13
+          ],
+          "end": [
+            223,
+            16
+          ]
+        },
+        {
+          "start": [
+            223,
+            17
+          ],
+          "end": [
+            223,
+            21
+          ]
+        },
+        {
+          "start": [
+            223,
+            22
+          ],
+          "end": [
+            223,
+            30
+          ]
+        },
+        {
+          "start": [
+            223,
+            31
+          ],
+          "end": [
+            223,
+            49
+          ]
+        },
+        {
+          "start": [
+            628,
+            58
+          ],
+          "end": [
+            628,
+            59
+          ]
+        },
+        {
+          "start": [
+            630,
+            46
+          ],
+          "end": [
+            630,
+            47
+          ]
+        },
+        {
+          "start": [
+            639,
+            85
+          ],
+          "end": [
+            639,
+            86
+          ]
+        },
+        {
+          "start": [
+            647,
+            39
+          ],
+          "end": [
+            647,
+            40
+          ]
+        },
+        {
+          "start": [
+            496,
+            16
+          ],
+          "end": [
+            496,
+            51
+          ]
+        },
+        {
+          "start": [
+            516,
+            50
+          ],
+          "end": [
+            516,
+            51
+          ]
+        },
+        {
+          "start": [
+            522,
+            54
+          ],
+          "end": [
+            522,
+            55
+          ]
+        },
+        {
+          "start": [
+            534,
+            70
+          ],
+          "end": [
+            534,
+            71
+          ]
+        },
+        {
+          "start": [
+            546,
+            58
+          ],
+          "end": [
+            546,
+            59
+          ]
+        },
+        {
+          "start": [
+            554,
+            81
+          ],
+          "end": [
+            554,
+            82
+          ]
+        },
+        {
+          "start": [
+            564,
+            70
+          ],
+          "end": [
+            564,
+            71
+          ]
+        },
+        {
+          "start": [
+            595,
+            21
+          ],
+          "end": [
+            595,
+            53
+          ]
+        },
+        {
+          "start": [
+            599,
+            47
+          ],
+          "end": [
+            599,
+            48
+          ]
+        },
+        {
+          "start": [
+            606,
+            81
+          ],
+          "end": [
+            606,
+            82
+          ]
+        },
+        {
+          "start": [
+            431,
+            20
+          ],
+          "end": [
+            431,
+            21
+          ]
+        },
+        {
+          "start": [
+            453,
+            20
+          ],
+          "end": [
+            453,
+            21
+          ]
+        },
+        {
+          "start": [
+            456,
+            50
+          ],
+          "end": [
+            456,
+            51
+          ]
+        },
+        {
+          "start": [
+            466,
+            61
+          ],
+          "end": [
+            466,
+            62
+          ]
+        },
+        {
+          "start": [
+            474,
+            20
+          ],
+          "end": [
+            474,
+            28
+          ]
+        },
+        {
+          "start": [
+            282,
+            63
+          ],
+          "end": [
+            282,
+            64
+          ]
+        },
+        {
+          "start": [
+            282,
+            65
+          ],
+          "end": [
+            282,
+            68
+          ]
+        },
+        {
+          "start": [
+            282,
+            30
+          ],
+          "end": [
+            282,
+            39
+          ]
+        },
+        {
+          "start": [
+            282,
+            40
+          ],
+          "end": [
+            282,
+            46
+          ]
+        },
+        {
+          "start": [
+            282,
+            49
+          ],
+          "end": [
+            282,
+            55
+          ]
+        },
+        {
+          "start": [
+            269,
+            22
+          ],
+          "end": [
+            269,
+            35
+          ]
+        },
+        {
+          "start": [
+            270,
+            26
+          ],
+          "end": [
+            270,
+            43
+          ]
+        },
+        {
+          "start": [
+            271,
+            31
+          ],
+          "end": [
+            271,
+            50
+          ]
+        },
+        {
+          "start": [
+            272,
+            27
+          ],
+          "end": [
+            272,
+            52
+          ]
+        },
+        {
+          "start": [
+            273,
+            24
+          ],
+          "end": [
+            273,
+            46
+          ]
+        },
+        {
+          "start": [
+            274,
+            36
+          ],
+          "end": [
+            274,
+            51
+          ]
+        },
+        {
+          "start": [
+            275,
+            44
+          ],
+          "end": [
+            275,
+            49
+          ]
+        },
+        {
+          "start": [
+            275,
+            54
+          ],
+          "end": [
+            275,
+            72
+          ]
+        },
+        {
+          "start": [
+            276,
+            50
+          ],
+          "end": [
+            276,
+            52
+          ]
+        },
+        {
+          "start": [
+            278,
+            34
+          ],
+          "end": [
+            281,
+            28
+          ]
+        },
+        {
+          "start": [
+            282,
+            22
+          ],
+          "end": [
+            282,
+            25
+          ]
+        },
+        {
+          "start": [
+            283,
+            22
+          ],
+          "end": [
+            283,
+            25
+          ]
+        },
+        {
+          "start": [
+            284,
+            32
+          ],
+          "end": [
+            284,
+            53
+          ]
+        },
+        {
+          "start": [
+            285,
+            35
+          ],
+          "end": [
+            285,
+            48
+          ]
+        },
+        {
+          "start": [
+            286,
+            13
+          ],
+          "end": [
+            286,
+            14
+          ]
+        }
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/mmio.rs",
+      "sha256": "ba0f726b8519ccc0ccb1a264a8bec29c7f3aa89ade47846e622d02cddbc6b884",
+      "added": 40,
+      "positiveLineCounts": 21,
+      "zeroLines": [],
+      "unmapped": [
+        97,
+        98,
+        217,
+        218,
+        222,
+        226,
+        303,
+        315,
+        339,
+        403,
+        407,
+        408,
+        409,
+        410,
+        411,
+        412,
+        413,
+        414,
+        415
+      ],
+      "zeroRegions": []
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "sha256": "c68a40ab9b68aebd148d5ce7cb820683c47749bbb7fa102e82e1546d9b95b87c",
+      "added": 52,
+      "positiveLineCounts": 45,
+      "zeroLines": [],
+      "unmapped": [
+        1716,
+        1717,
+        1736,
+        1737,
+        1748,
+        1764,
+        1767
+      ],
+      "zeroRegions": []
+    },
+    {
+      "path": "crates/core/src/mmio.rs",
+      "sha256": "a4afe120a1c9e43e61c409330b9963248b5cc068231ad9a855dcfbf14ca0dea6",
+      "added": 14,
+      "positiveLineCounts": 10,
+      "zeroLines": [],
+      "unmapped": [
+        220,
+        221,
+        222,
+        233
+      ],
+      "zeroRegions": []
+    }
+  ],
+  "javascript": [
+    {
+      "path": "renderer/virgl-command/control-bridge.mjs",
+      "sha256": "544d9b7b16fba4079b0d6f28f054ddfd730b9c450734642278543234199c0b99",
+      "added": 197,
+      "uncoveredChangedRanges": [
+        {
+          "startLine": 132,
+          "endLine": 132,
+          "startOffset": 9255,
+          "endOffset": 9259,
+          "text": "?? 5"
+        },
+        {
+          "startLine": 228,
+          "endLine": 228,
+          "startOffset": 16740,
+          "endOffset": 16797,
+          "text": "return fail('bridge-poisoned', 'Bridge requires reset.');"
+        },
+        {
+          "startLine": 338,
+          "endLine": 338,
+          "startOffset": 24995,
+          "endOffset": 25042,
+          "text": "catch (error) { poisoned = true; throw error; }"
+        }
+      ]
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "sha256": "08130dcfe18de3ca1b5efdb187b88e2a8028c30493f4e64bcbd00572dad245d9",
+      "added": 1,
+      "uncoveredChangedRanges": []
+    }
+  ]
+}

@@ -1,0 +1,1610 @@
+{
+  "passed": true,
+  "parent": "96f30bdee9d0a98672336b223004054677baee36",
+  "frozenHead": "7e51177d966e05f7ae8b3ae23c7d5d0d028c404b",
+  "expectedArtifacts": {
+    "baseline": "70de75fd1a2cfb6b51893773a394c0276189a1e54fe9a57dca1fbc47dea1f873",
+    "candidate": "4f1005a174e6dba3cf698d503a21a10168f4ff37db2c2419fbae86fb2f8a787b"
+  },
+  "planSha256": "5a10e792d6e32bc8957c188b92d946cf855041dd72f7dda49626ce95bf95b659",
+  "rawHashes": {
+    "micro-final-1/report.json": "64fa008c7578078431b59e192441164571b510deb5f162bdc6d7f3396a040752",
+    "micro-final-2/report.json": "e745a6b14ee8ece62ab06aea208808a88c8538b4cb9ebce71a23c50e42bb7888",
+    "browser-final/browser.json": "0c7e2c8ec0d9362ff9d7b0ce5d46c74bcf08c1b2da252e5b6d059873cee03b97"
+  },
+  "recomputerSha256": "6a93d9e34e85773a6fa3ef5331b00eed5828c5ae6a3eb95bb67518ec7617d158",
+  "measurements": [
+    {
+      "batch": 1,
+      "workload": "amoadd-d",
+      "baselineMs": 252.84500002861023,
+      "candidateMs": 209.6799999475479,
+      "timeRatio": 0.8292827618652611,
+      "pairedTimeRatio": 0.8322372306043344,
+      "speedup": 1.2058613129142512,
+      "pairedSpeedup": 1.2015804667544656,
+      "baselineMips": 15.819968753771628,
+      "candidateMips": 19.076688291685485,
+      "held": true
+    },
+    {
+      "batch": 1,
+      "workload": "lr-sc-d",
+      "baselineMs": 172.21000003814697,
+      "candidateMs": 126.0349999666214,
+      "timeRatio": 0.7318680677004985,
+      "pairedTimeRatio": 0.7342557523833225,
+      "speedup": 1.366366486164592,
+      "pairedSpeedup": 1.3619232763980365,
+      "baselineMips": 23.22745484648942,
+      "candidateMips": 31.737215861144474,
+      "held": true
+    },
+    {
+      "batch": 1,
+      "workload": "tlb-collision",
+      "baselineMs": 96.43999993801117,
+      "candidateMs": 38.57000005245209,
+      "timeRatio": 0.399937785952341,
+      "pairedTimeRatio": 0.401062555321502,
+      "speedup": 2.50038889828521,
+      "pairedSpeedup": 2.4933766235004775,
+      "baselineMips": 41.47656576701663,
+      "candidateMips": 103.70754458284478,
+      "held": true
+    },
+    {
+      "batch": 1,
+      "workload": "tlb-hit-control",
+      "baselineMs": 50.81499993801117,
+      "candidateMs": 49.764999985694885,
+      "timeRatio": 0.97933681091022,
+      "pairedTimeRatio": 0.9792981058569935,
+      "speedup": 1.021099165128466,
+      "pairedSpeedup": 1.021139522295808,
+      "baselineMips": 393.5845719649286,
+      "candidateMips": 401.8888778408333,
+      "held": true
+    },
+    {
+      "batch": 1,
+      "workload": "integer-control",
+      "baselineMs": 125.86000001430511,
+      "candidateMs": 121.99500000476837,
+      "timeRatio": 0.9692912759486934,
+      "pairedTimeRatio": 0.9673109609841702,
+      "speedup": 1.0316816263730946,
+      "pairedSpeedup": 1.0337937233571415,
+      "baselineMips": 635.6268869450762,
+      "candidateMips": 655.7645804899632,
+      "held": true
+    },
+    {
+      "batch": 2,
+      "workload": "amoadd-d",
+      "baselineMs": 249.3949999809265,
+      "candidateMs": 208.77500009536743,
+      "timeRatio": 0.8371258449902137,
+      "pairedTimeRatio": 0.8364867557852491,
+      "speedup": 1.1945635246892783,
+      "pairedSpeedup": 1.195476190249125,
+      "baselineMips": 16.03881393093653,
+      "candidateMips": 19.15938210117504,
+      "held": true
+    },
+    {
+      "batch": 2,
+      "workload": "lr-sc-d",
+      "baselineMs": 171.66499996185303,
+      "candidateMs": 124.59500002861023,
+      "timeRatio": 0.7258031634654555,
+      "pairedTimeRatio": 0.7258031634654555,
+      "speedup": 1.3777840196029882,
+      "pairedSpeedup": 1.3777840196029882,
+      "baselineMips": 23.301197104178897,
+      "candidateMips": 32.10401700775711,
+      "held": true
+    },
+    {
+      "batch": 2,
+      "workload": "tlb-collision",
+      "baselineMs": 95.30499994754791,
+      "candidateMs": 37.80499994754791,
+      "timeRatio": 0.39667383629772085,
+      "pairedTimeRatio": 0.3958046400337277,
+      "speedup": 2.520962837713997,
+      "pairedSpeedup": 2.5264989311767216,
+      "baselineMips": 41.97051573581072,
+      "candidateMips": 105.80611044966939,
+      "held": true
+    },
+    {
+      "batch": 2,
+      "workload": "tlb-hit-control",
+      "baselineMs": 51.34500002861023,
+      "candidateMs": 50.40499997138977,
+      "timeRatio": 0.9816924713857887,
+      "pairedTimeRatio": 0.9857627115873101,
+      "speedup": 1.018648944702986,
+      "pairedSpeedup": 1.0144429163786937,
+      "baselineMips": 389.5218616974523,
+      "candidateMips": 396.78603335685233,
+      "held": true
+    },
+    {
+      "batch": 2,
+      "workload": "integer-control",
+      "baselineMs": 125.86500000953674,
+      "candidateMs": 121.75999999046326,
+      "timeRatio": 0.9673856908690863,
+      "pairedTimeRatio": 0.9647582402006736,
+      "speedup": 1.0337138634970022,
+      "pairedSpeedup": 1.0365291099166938,
+      "baselineMips": 635.6016366260551,
+      "candidateMips": 657.0302234417372,
+      "held": true
+    },
+    {
+      "workload": "busybox-jit",
+      "phase": "readyMs",
+      "baselineMs": 4869.075000047684,
+      "candidateMs": 4784.4349999427795,
+      "timeRatio": 0.9826168214488223,
+      "pairedTimeRatio": 0.9831682609033312,
+      "held": true
+    },
+    {
+      "workload": "busybox-jit",
+      "phase": "regionMs",
+      "baselineMs": 3919.7850000858307,
+      "candidateMs": 3867.8700000047684,
+      "timeRatio": 0.986755651118639,
+      "pairedTimeRatio": 0.9913862871201843,
+      "held": true
+    },
+    {
+      "workload": "busybox-nojit",
+      "phase": "readyMs",
+      "baselineMs": 4683.304999947548,
+      "candidateMs": 4724.889999985695,
+      "timeRatio": 1.0088794131577192,
+      "pairedTimeRatio": 1.008646130265434,
+      "held": true
+    },
+    {
+      "workload": "busybox-nojit",
+      "phase": "regionMs",
+      "baselineMs": 2857.274999976158,
+      "candidateMs": 2868.8550000190735,
+      "timeRatio": 1.0040528125724728,
+      "pairedTimeRatio": 1.0004761221661373,
+      "held": true
+    }
+  ],
+  "checks": [
+    {
+      "check": "pre-sample plan unchanged",
+      "held": true
+    },
+    {
+      "check": "micro 1 exact artifacts",
+      "held": true
+    },
+    {
+      "check": "micro 1 harness fixed",
+      "held": true
+    },
+    {
+      "check": "micro 1 no errors",
+      "held": true
+    },
+    {
+      "check": "micro 1 cases",
+      "held": true
+    },
+    {
+      "check": "micro 1 amoadd-d bounded interpreter oracle",
+      "held": true
+    },
+    {
+      "check": "micro 1 amoadd-d exact pair count",
+      "held": true
+    },
+    {
+      "check": "micro 1 amoadd-d order 0",
+      "held": true
+    },
+    {
+      "check": "micro 1 amoadd-d order 1",
+      "held": true
+    },
+    {
+      "check": "micro 1 amoadd-d order 2",
+      "held": true
+    },
+    {
+      "check": "micro 1 amoadd-d order 3",
+      "held": true
+    },
+    {
+      "check": "micro 1 amoadd-d order 4",
+      "held": true
+    },
+    {
+      "check": "micro 1 amoadd-d order 5",
+      "held": true
+    },
+    {
+      "check": "micro 1 amoadd-d order 6",
+      "held": true
+    },
+    {
+      "check": "micro 1 amoadd-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 amoadd-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 amoadd-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 amoadd-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 amoadd-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 amoadd-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 amoadd-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 amoadd-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 amoadd-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 amoadd-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 amoadd-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 amoadd-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 amoadd-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 amoadd-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 amoadd-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 amoadd-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 amoadd-d predeclared budget",
+      "held": true
+    },
+    {
+      "check": "micro 1 lr-sc-d bounded interpreter oracle",
+      "held": true
+    },
+    {
+      "check": "micro 1 lr-sc-d exact pair count",
+      "held": true
+    },
+    {
+      "check": "micro 1 lr-sc-d order 0",
+      "held": true
+    },
+    {
+      "check": "micro 1 lr-sc-d order 1",
+      "held": true
+    },
+    {
+      "check": "micro 1 lr-sc-d order 2",
+      "held": true
+    },
+    {
+      "check": "micro 1 lr-sc-d order 3",
+      "held": true
+    },
+    {
+      "check": "micro 1 lr-sc-d order 4",
+      "held": true
+    },
+    {
+      "check": "micro 1 lr-sc-d order 5",
+      "held": true
+    },
+    {
+      "check": "micro 1 lr-sc-d order 6",
+      "held": true
+    },
+    {
+      "check": "micro 1 lr-sc-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 lr-sc-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 lr-sc-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 lr-sc-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 lr-sc-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 lr-sc-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 lr-sc-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 lr-sc-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 lr-sc-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 lr-sc-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 lr-sc-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 lr-sc-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 lr-sc-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 lr-sc-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 lr-sc-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 lr-sc-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 lr-sc-d predeclared budget",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-collision bounded interpreter oracle",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-collision exact pair count",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-collision order 0",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-collision order 1",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-collision order 2",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-collision order 3",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-collision order 4",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-collision order 5",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-collision order 6",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-collision fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-collision fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-collision fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-collision fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-collision fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-collision fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-collision fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-collision fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-collision fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-collision fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-collision fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-collision fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-collision fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-collision fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-collision fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-collision fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-collision predeclared budget",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-hit-control bounded interpreter oracle",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-hit-control exact pair count",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-hit-control order 0",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-hit-control order 1",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-hit-control order 2",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-hit-control order 3",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-hit-control order 4",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-hit-control order 5",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-hit-control order 6",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-hit-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-hit-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-hit-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-hit-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-hit-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-hit-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-hit-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-hit-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-hit-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-hit-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-hit-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-hit-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-hit-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-hit-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-hit-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-hit-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 tlb-hit-control predeclared budget",
+      "held": true
+    },
+    {
+      "check": "micro 1 integer-control bounded interpreter oracle",
+      "held": true
+    },
+    {
+      "check": "micro 1 integer-control exact pair count",
+      "held": true
+    },
+    {
+      "check": "micro 1 integer-control order 0",
+      "held": true
+    },
+    {
+      "check": "micro 1 integer-control order 1",
+      "held": true
+    },
+    {
+      "check": "micro 1 integer-control order 2",
+      "held": true
+    },
+    {
+      "check": "micro 1 integer-control order 3",
+      "held": true
+    },
+    {
+      "check": "micro 1 integer-control order 4",
+      "held": true
+    },
+    {
+      "check": "micro 1 integer-control order 5",
+      "held": true
+    },
+    {
+      "check": "micro 1 integer-control order 6",
+      "held": true
+    },
+    {
+      "check": "micro 1 integer-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 integer-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 integer-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 integer-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 integer-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 integer-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 integer-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 integer-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 integer-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 integer-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 integer-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 integer-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 integer-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 integer-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 integer-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 integer-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 1 integer-control predeclared budget",
+      "held": true
+    },
+    {
+      "check": "micro 2 exact artifacts",
+      "held": true
+    },
+    {
+      "check": "micro 2 harness fixed",
+      "held": true
+    },
+    {
+      "check": "micro 2 no errors",
+      "held": true
+    },
+    {
+      "check": "micro 2 cases",
+      "held": true
+    },
+    {
+      "check": "micro 2 amoadd-d bounded interpreter oracle",
+      "held": true
+    },
+    {
+      "check": "micro 2 amoadd-d exact pair count",
+      "held": true
+    },
+    {
+      "check": "micro 2 amoadd-d order 0",
+      "held": true
+    },
+    {
+      "check": "micro 2 amoadd-d order 1",
+      "held": true
+    },
+    {
+      "check": "micro 2 amoadd-d order 2",
+      "held": true
+    },
+    {
+      "check": "micro 2 amoadd-d order 3",
+      "held": true
+    },
+    {
+      "check": "micro 2 amoadd-d order 4",
+      "held": true
+    },
+    {
+      "check": "micro 2 amoadd-d order 5",
+      "held": true
+    },
+    {
+      "check": "micro 2 amoadd-d order 6",
+      "held": true
+    },
+    {
+      "check": "micro 2 amoadd-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 amoadd-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 amoadd-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 amoadd-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 amoadd-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 amoadd-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 amoadd-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 amoadd-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 amoadd-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 amoadd-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 amoadd-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 amoadd-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 amoadd-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 amoadd-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 amoadd-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 amoadd-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 amoadd-d predeclared budget",
+      "held": true
+    },
+    {
+      "check": "micro 2 lr-sc-d bounded interpreter oracle",
+      "held": true
+    },
+    {
+      "check": "micro 2 lr-sc-d exact pair count",
+      "held": true
+    },
+    {
+      "check": "micro 2 lr-sc-d order 0",
+      "held": true
+    },
+    {
+      "check": "micro 2 lr-sc-d order 1",
+      "held": true
+    },
+    {
+      "check": "micro 2 lr-sc-d order 2",
+      "held": true
+    },
+    {
+      "check": "micro 2 lr-sc-d order 3",
+      "held": true
+    },
+    {
+      "check": "micro 2 lr-sc-d order 4",
+      "held": true
+    },
+    {
+      "check": "micro 2 lr-sc-d order 5",
+      "held": true
+    },
+    {
+      "check": "micro 2 lr-sc-d order 6",
+      "held": true
+    },
+    {
+      "check": "micro 2 lr-sc-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 lr-sc-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 lr-sc-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 lr-sc-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 lr-sc-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 lr-sc-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 lr-sc-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 lr-sc-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 lr-sc-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 lr-sc-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 lr-sc-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 lr-sc-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 lr-sc-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 lr-sc-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 lr-sc-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 lr-sc-d fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 lr-sc-d predeclared budget",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-collision bounded interpreter oracle",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-collision exact pair count",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-collision order 0",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-collision order 1",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-collision order 2",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-collision order 3",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-collision order 4",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-collision order 5",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-collision order 6",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-collision fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-collision fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-collision fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-collision fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-collision fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-collision fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-collision fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-collision fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-collision fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-collision fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-collision fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-collision fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-collision fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-collision fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-collision fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-collision fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-collision predeclared budget",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-hit-control bounded interpreter oracle",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-hit-control exact pair count",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-hit-control order 0",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-hit-control order 1",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-hit-control order 2",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-hit-control order 3",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-hit-control order 4",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-hit-control order 5",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-hit-control order 6",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-hit-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-hit-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-hit-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-hit-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-hit-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-hit-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-hit-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-hit-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-hit-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-hit-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-hit-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-hit-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-hit-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-hit-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-hit-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-hit-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 tlb-hit-control predeclared budget",
+      "held": true
+    },
+    {
+      "check": "micro 2 integer-control bounded interpreter oracle",
+      "held": true
+    },
+    {
+      "check": "micro 2 integer-control exact pair count",
+      "held": true
+    },
+    {
+      "check": "micro 2 integer-control order 0",
+      "held": true
+    },
+    {
+      "check": "micro 2 integer-control order 1",
+      "held": true
+    },
+    {
+      "check": "micro 2 integer-control order 2",
+      "held": true
+    },
+    {
+      "check": "micro 2 integer-control order 3",
+      "held": true
+    },
+    {
+      "check": "micro 2 integer-control order 4",
+      "held": true
+    },
+    {
+      "check": "micro 2 integer-control order 5",
+      "held": true
+    },
+    {
+      "check": "micro 2 integer-control order 6",
+      "held": true
+    },
+    {
+      "check": "micro 2 integer-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 integer-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 integer-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 integer-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 integer-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 integer-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 integer-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 integer-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 integer-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 integer-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 integer-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 integer-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 integer-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 integer-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 integer-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 integer-control fixed work/state",
+      "held": true
+    },
+    {
+      "check": "micro 2 integer-control predeclared budget",
+      "held": true
+    },
+    {
+      "check": "real exact artifacts",
+      "held": true
+    },
+    {
+      "check": "real plan",
+      "held": true
+    },
+    {
+      "check": "real sample count",
+      "held": true
+    },
+    {
+      "check": "busybox-jit baseline 0 completion/policy",
+      "held": true
+    },
+    {
+      "check": "busybox-jit baseline 0 cold boot",
+      "held": true
+    },
+    {
+      "check": "busybox-jit baseline 0 only identified favicon errors",
+      "held": true
+    },
+    {
+      "check": "busybox-jit candidate 0 completion/policy",
+      "held": true
+    },
+    {
+      "check": "busybox-jit candidate 0 cold boot",
+      "held": true
+    },
+    {
+      "check": "busybox-jit candidate 0 only identified favicon errors",
+      "held": true
+    },
+    {
+      "check": "busybox-nojit baseline 0 completion/policy",
+      "held": true
+    },
+    {
+      "check": "busybox-nojit baseline 0 cold boot",
+      "held": true
+    },
+    {
+      "check": "busybox-nojit baseline 0 only identified favicon errors",
+      "held": true
+    },
+    {
+      "check": "busybox-nojit candidate 0 completion/policy",
+      "held": true
+    },
+    {
+      "check": "busybox-nojit candidate 0 cold boot",
+      "held": true
+    },
+    {
+      "check": "busybox-nojit candidate 0 only identified favicon errors",
+      "held": true
+    },
+    {
+      "check": "busybox-jit candidate 1 completion/policy",
+      "held": true
+    },
+    {
+      "check": "busybox-jit candidate 1 cold boot",
+      "held": true
+    },
+    {
+      "check": "busybox-jit candidate 1 only identified favicon errors",
+      "held": true
+    },
+    {
+      "check": "busybox-jit baseline 1 completion/policy",
+      "held": true
+    },
+    {
+      "check": "busybox-jit baseline 1 cold boot",
+      "held": true
+    },
+    {
+      "check": "busybox-jit baseline 1 only identified favicon errors",
+      "held": true
+    },
+    {
+      "check": "busybox-nojit candidate 1 completion/policy",
+      "held": true
+    },
+    {
+      "check": "busybox-nojit candidate 1 cold boot",
+      "held": true
+    },
+    {
+      "check": "busybox-nojit candidate 1 only identified favicon errors",
+      "held": true
+    },
+    {
+      "check": "busybox-nojit baseline 1 completion/policy",
+      "held": true
+    },
+    {
+      "check": "busybox-nojit baseline 1 cold boot",
+      "held": true
+    },
+    {
+      "check": "busybox-nojit baseline 1 only identified favicon errors",
+      "held": true
+    },
+    {
+      "check": "busybox-jit baseline 2 completion/policy",
+      "held": true
+    },
+    {
+      "check": "busybox-jit baseline 2 cold boot",
+      "held": true
+    },
+    {
+      "check": "busybox-jit baseline 2 only identified favicon errors",
+      "held": true
+    },
+    {
+      "check": "busybox-jit candidate 2 completion/policy",
+      "held": true
+    },
+    {
+      "check": "busybox-jit candidate 2 cold boot",
+      "held": true
+    },
+    {
+      "check": "busybox-jit candidate 2 only identified favicon errors",
+      "held": true
+    },
+    {
+      "check": "busybox-nojit baseline 2 completion/policy",
+      "held": true
+    },
+    {
+      "check": "busybox-nojit baseline 2 cold boot",
+      "held": true
+    },
+    {
+      "check": "busybox-nojit baseline 2 only identified favicon errors",
+      "held": true
+    },
+    {
+      "check": "busybox-nojit candidate 2 completion/policy",
+      "held": true
+    },
+    {
+      "check": "busybox-nojit candidate 2 cold boot",
+      "held": true
+    },
+    {
+      "check": "busybox-nojit candidate 2 only identified favicon errors",
+      "held": true
+    },
+    {
+      "check": "busybox-jit candidate 3 completion/policy",
+      "held": true
+    },
+    {
+      "check": "busybox-jit candidate 3 cold boot",
+      "held": true
+    },
+    {
+      "check": "busybox-jit candidate 3 only identified favicon errors",
+      "held": true
+    },
+    {
+      "check": "busybox-jit baseline 3 completion/policy",
+      "held": true
+    },
+    {
+      "check": "busybox-jit baseline 3 cold boot",
+      "held": true
+    },
+    {
+      "check": "busybox-jit baseline 3 only identified favicon errors",
+      "held": true
+    },
+    {
+      "check": "busybox-nojit candidate 3 completion/policy",
+      "held": true
+    },
+    {
+      "check": "busybox-nojit candidate 3 cold boot",
+      "held": true
+    },
+    {
+      "check": "busybox-nojit candidate 3 only identified favicon errors",
+      "held": true
+    },
+    {
+      "check": "busybox-nojit baseline 3 completion/policy",
+      "held": true
+    },
+    {
+      "check": "busybox-nojit baseline 3 cold boot",
+      "held": true
+    },
+    {
+      "check": "busybox-nojit baseline 3 only identified favicon errors",
+      "held": true
+    },
+    {
+      "check": "busybox-jit baseline 4 completion/policy",
+      "held": true
+    },
+    {
+      "check": "busybox-jit baseline 4 cold boot",
+      "held": true
+    },
+    {
+      "check": "busybox-jit baseline 4 only identified favicon errors",
+      "held": true
+    },
+    {
+      "check": "busybox-jit candidate 4 completion/policy",
+      "held": true
+    },
+    {
+      "check": "busybox-jit candidate 4 cold boot",
+      "held": true
+    },
+    {
+      "check": "busybox-jit candidate 4 only identified favicon errors",
+      "held": true
+    },
+    {
+      "check": "busybox-nojit baseline 4 completion/policy",
+      "held": true
+    },
+    {
+      "check": "busybox-nojit baseline 4 cold boot",
+      "held": true
+    },
+    {
+      "check": "busybox-nojit baseline 4 only identified favicon errors",
+      "held": true
+    },
+    {
+      "check": "busybox-nojit candidate 4 completion/policy",
+      "held": true
+    },
+    {
+      "check": "busybox-nojit candidate 4 cold boot",
+      "held": true
+    },
+    {
+      "check": "busybox-nojit candidate 4 only identified favicon errors",
+      "held": true
+    },
+    {
+      "check": "real busybox-jit pair 0",
+      "held": true
+    },
+    {
+      "check": "real busybox-jit same policy 0",
+      "held": true
+    },
+    {
+      "check": "real busybox-jit pair 1",
+      "held": true
+    },
+    {
+      "check": "real busybox-jit same policy 1",
+      "held": true
+    },
+    {
+      "check": "real busybox-jit pair 2",
+      "held": true
+    },
+    {
+      "check": "real busybox-jit same policy 2",
+      "held": true
+    },
+    {
+      "check": "real busybox-jit pair 3",
+      "held": true
+    },
+    {
+      "check": "real busybox-jit same policy 3",
+      "held": true
+    },
+    {
+      "check": "real busybox-jit pair 4",
+      "held": true
+    },
+    {
+      "check": "real busybox-jit same policy 4",
+      "held": true
+    },
+    {
+      "check": "real busybox-jit readyMs predeclared budget",
+      "held": true
+    },
+    {
+      "check": "real busybox-jit regionMs predeclared budget",
+      "held": true
+    },
+    {
+      "check": "real busybox-nojit pair 0",
+      "held": true
+    },
+    {
+      "check": "real busybox-nojit same policy 0",
+      "held": true
+    },
+    {
+      "check": "real busybox-nojit pair 1",
+      "held": true
+    },
+    {
+      "check": "real busybox-nojit same policy 1",
+      "held": true
+    },
+    {
+      "check": "real busybox-nojit pair 2",
+      "held": true
+    },
+    {
+      "check": "real busybox-nojit same policy 2",
+      "held": true
+    },
+    {
+      "check": "real busybox-nojit pair 3",
+      "held": true
+    },
+    {
+      "check": "real busybox-nojit same policy 3",
+      "held": true
+    },
+    {
+      "check": "real busybox-nojit pair 4",
+      "held": true
+    },
+    {
+      "check": "real busybox-nojit same policy 4",
+      "held": true
+    },
+    {
+      "check": "real busybox-nojit readyMs predeclared budget",
+      "held": true
+    },
+    {
+      "check": "real busybox-nojit regionMs predeclared budget",
+      "held": true
+    }
+  ]
+}

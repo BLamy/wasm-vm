@@ -1,0 +1,16 @@
+{
+  "head": "ee7ed352dae84efac4a2fa867ee9aaa99ec83af2",
+  "frozenRuntimeHead": "9123bc06cec84f4c581aa877b1126babff245a99",
+  "sha256": {
+    "crates/core/src/hart/mod.rs": "ad30a3bd92fd2f0070eb5e286b9e3645f75e932f5d8f9350fa4e1a40178b3bae",
+    "crates/core/src/lib.rs": "c401d8fff4e027c9815cbf2e47376a860bca31d199347ce47ee91b7daf47fab6",
+    "crates/core/tests/integer_replay.rs": "1db60893bcb537be4de11c798913a7af425b0cbd7dfdf563a926bac504fccdb2",
+    "crates/core/tests/integer_replay_alias.rs": "f2bd1a92f51165d50dd17973ae82391002ef9f8ef40458bfdc776aaa58ddd226",
+    "crates/wasm/tests/integer_replay.rs": "1b68a90357ab1f15c721b8679eaf401c00f0cd78c564746f770ce003ae7d0285",
+    "Makefile": "706bc71e87cfbdfe7e561af0b96e86c96be60d30b37de0b2cb1ba2fb92d1b1d7",
+    "tools/verify/e5-t18e-demo-smoke.mjs": "38e20c33f093f9ce4592c9f43723b47d2586ca479d0c2a9b0b43b112ad1206ce",
+    "web/roadmap.js": "bb8d6f7b7ee5f39d4c1e76da6c4afa4dde30ad0cbb3b98f50db8f54a6ac751c6",
+    "web/dist/pkg/wasm_vm_wasm_bg.wasm": "70de75fd1a2cfb6b51893773a394c0276189a1e54fe9a57dca1fbc47dea1f873"
+  },
+  "note": "Only verifier tests, acceptance recipe and demo assertions/metadata changed after runtime freeze; no runtime rebuild or cold clone reset was needed."
+}

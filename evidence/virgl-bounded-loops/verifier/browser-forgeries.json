@@ -1,0 +1,42 @@
+[
+  {
+    "name": "draws-float",
+    "rejected": true,
+    "message": "fractional observation outside authored viewport depth at ('drawCount',)"
+  },
+  {
+    "name": "pixels-float",
+    "rejected": true,
+    "message": "fractional observation outside authored viewport depth at ('checkedPixels',)"
+  },
+  {
+    "name": "word-bool",
+    "rejected": true,
+    "message": "unexpected boolean/non-JSON observation at ('rigs', 0, 'atlases', 0, 'pages', 0, 'observedWords', 0)"
+  },
+  {
+    "name": "pixel-float",
+    "rejected": true,
+    "message": "byte observations contain only integer octets"
+  },
+  {
+    "name": "fence-seed-float",
+    "rejected": true,
+    "message": "fractional observation outside authored viewport depth at ('rigs', 3, 'schedule', 'seed')"
+  },
+  {
+    "name": "shader-ok-int",
+    "rejected": true,
+    "message": "boolean observation at ('shaderFixtures', 0, 'result', 'ok')"
+  },
+  {
+    "name": "coverage-count-float",
+    "rejected": true,
+    "message": "fractional observation outside authored viewport depth at (0, 'coverage', 'functions', 0, 'ranges', 0, 'count')"
+  },
+  {
+    "name": "coverage-count-bool",
+    "rejected": true,
+    "message": "unexpected boolean/non-JSON observation at (0, 'coverage', 'functions', 0, 'ranges', 0, 'count')"
+  }
+]

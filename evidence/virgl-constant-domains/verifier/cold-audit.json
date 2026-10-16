@@ -1,0 +1,26 @@
+{
+  "status": "passed",
+  "frozenHead": "32509356c18af1c18e59bf14375f4402b434bd7d",
+  "submissionHead": "cce60b927a04f99c5f019bca237a2601bc59b814",
+  "clone": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-constant-domains-cold-75e9fsyy/wasm-vm",
+  "coldReportSha256": "d877a5c5d25bf88b68887d6a820658bc9a01e29d53c3cf85d4e4abe39be7f95c",
+  "coldReceiptSha256": "c910b5fac8ba5e11d2b0e8388268d9f6fbf2d1f5a4738b7fb4b1162d0e6563e6",
+  "coldLogSha256": "c2adbd2a4578fcc1818294fc6b6ab9a5d01e60396a51fba2b8911eec9bf76814",
+  "copiedArtifacts": 48,
+  "retainedCloneCleanBeforeAndAfterAudit": true,
+  "receiptReplay": {
+    "status": "passed",
+    "sources": 245,
+    "records": 45,
+    "gitHead": "32509356c18af1c18e59bf14375f4402b434bd7d"
+  },
+  "warmColdSourcesEqual": true,
+  "warmColdCompilerBytesEqual": true,
+  "warmColdFullNativeResultsEqual": true,
+  "warmColdUnitResultsEqual": true,
+  "submissionOnlyEvidenceAndTaskMetadata": true,
+  "removedEnvironmentNames": [
+    "GIT_PAGER",
+    "RUST_LOG"
+  ]
+}

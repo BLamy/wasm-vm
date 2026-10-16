@@ -1,0 +1,83 @@
+{
+  "scope": "Independent actual guest GLES challenge, not a renderer substitute",
+  "status": "passed",
+  "commands": [
+    [
+      "docker",
+      "exec",
+      "wasm-vm-production-graphics-reference",
+      "mkdir",
+      "-p",
+      "/tmp/wvm-critic-warm-pixels-268dadbcc0b14ee9a29c409642a4e6bc"
+    ],
+    [
+      "docker",
+      "cp",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/virgl-production/probes/critic-warm-pixels.c",
+      "wasm-vm-production-graphics-reference:/tmp/wvm-critic-warm-pixels-268dadbcc0b14ee9a29c409642a4e6bc/critic-warm-pixels.c"
+    ],
+    [
+      "docker",
+      "exec",
+      "wasm-vm-production-graphics-reference",
+      "riscv64-linux-gnu-gcc",
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-Os",
+      "--sysroot=/capture/mesa-profile/sysroot",
+      "-I/capture/mesa-profile/sysroot/usr/include",
+      "/tmp/wvm-critic-warm-pixels-268dadbcc0b14ee9a29c409642a4e6bc/critic-warm-pixels.c",
+      "-L/capture/mesa-profile/sysroot/usr/lib",
+      "-lGLESv2",
+      "-lEGL",
+      "-Wl,--build-id=none",
+      "-o",
+      "/tmp/wvm-critic-warm-pixels-268dadbcc0b14ee9a29c409642a4e6bc/warm-pixels"
+    ],
+    [
+      "docker",
+      "cp",
+      "wasm-vm-production-graphics-reference:/tmp/wvm-critic-warm-pixels-268dadbcc0b14ee9a29c409642a4e6bc/warm-pixels",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/virgl-production/fixtures/critic-warm-pixels-riscv64.elf"
+    ],
+    [
+      "docker",
+      "exec",
+      "wasm-vm-production-graphics-reference",
+      "riscv64-linux-gnu-gcc",
+      "--version"
+    ],
+    [
+      "docker",
+      "inspect",
+      "wasm-vm-production-graphics-reference",
+      "--format",
+      "{{.Image}}"
+    ],
+    [
+      "docker",
+      "exec",
+      "wasm-vm-production-graphics-reference",
+      "sha256sum",
+      "/capture/mesa-profile/sysroot/usr/include/GLES3/gl3.h",
+      "/capture/mesa-profile/sysroot/usr/include/EGL/egl.h"
+    ]
+  ],
+  "compiler": "riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0\nCopyright (C) 2022 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+  "containerImage": "sha256:986b9aec6385491294c550e1a95275e05f56fa76b0581b606527f7871daefce8",
+  "headers": "cb0c9d09a19ced327f457a6c2a1e5d5d418703978cae9efe9664c60640edae04  /capture/mesa-profile/sysroot/usr/include/GLES3/gl3.h\nb7fc152de7981da4e36957a8c8d085075c7366c81bbd27e920880464b87b7f7c  /capture/mesa-profile/sysroot/usr/include/EGL/egl.h\n",
+  "files": [
+    {
+      "path": "tools/virgl-production/probes/critic-warm-pixels.c",
+      "bytes": 6039,
+      "sha256": "1af0439dc948a5f03486ff06bdbf5ee2f0145916b132bd536fa66268e51b0e34"
+    },
+    {
+      "path": "tools/virgl-production/fixtures/critic-warm-pixels-riscv64.elf",
+      "bytes": 19680,
+      "sha256": "a6e473f2f2b5f73aba2f1605b18912a981fe047a7c3ca501b1c177e24c60f79c"
+    }
+  ]
+}

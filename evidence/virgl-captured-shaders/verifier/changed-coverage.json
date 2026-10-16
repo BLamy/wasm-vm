@@ -1,0 +1,954 @@
+{
+  "runtime": "8759a30622e6604b8cd3d5c35d110260c6fd1943",
+  "summary": {
+    "branches": {
+      "count": 462,
+      "covered": 413,
+      "notcovered": 49,
+      "percent": 89.39393939393939
+    },
+    "functions": {
+      "count": 22,
+      "covered": 20,
+      "percent": 90.9090909090909
+    },
+    "instantiations": {
+      "count": 22,
+      "covered": 20,
+      "percent": 90.9090909090909
+    },
+    "lines": {
+      "count": 318,
+      "covered": 308,
+      "percent": 96.85534591194968
+    },
+    "mcdc": {
+      "count": 0,
+      "covered": 0,
+      "notcovered": 0,
+      "percent": 0
+    },
+    "regions": {
+      "count": 708,
+      "covered": 663,
+      "notcovered": 45,
+      "percent": 93.64406779661016
+    }
+  },
+  "addedLines": 93,
+  "instrumentedAddedLines": 81,
+  "changedLines": [
+    {
+      "line": 4,
+      "count": "",
+      "source": " * TGSI parser sees it. No unbounded numeric/range value, unsupported property,"
+    },
+    {
+      "line": 15,
+      "count": "",
+      "source": "#include <stdint.h>"
+    },
+    {
+      "line": 21,
+      "count": "",
+      "source": "enum operand_kind { DECLARATION, DESTINATION, SOURCE };"
+    },
+    {
+      "line": 22,
+      "count": "",
+      "source": "struct reg { enum file file; unsigned index, last, mask; bool explicit_mask; };"
+    },
+    {
+      "line": 25,
+      "count": "",
+      "source": "   unsigned components[FILE_COUNT][8];"
+    },
+    {
+      "line": 30,
+      "count": "",
+      "source": "   bool ended, started, color0_property;"
+    },
+    {
+      "line": 119,
+      "count": "",
+      "source": "static bool register_name(const char **p, struct reg *r, enum operand_kind kind)"
+    },
+    {
+      "line": 124,
+      "count": "297k",
+      "source": "   if (f == FILE_COUNT || !punctuation(p, '[') || !index_number(p, &r->index)) return false;"
+    },
+    {
+      "line": 126,
+      "count": "297k",
+      "source": "   r->last = r->index;"
+    },
+    {
+      "line": 127,
+      "count": "297k",
+      "source": "   space(p);"
+    },
+    {
+      "line": 128,
+      "count": "297k",
+      "source": "   if (!strncmp(*p, \"..\", 2)) {"
+    },
+    {
+      "line": 129,
+      "count": "22.4k",
+      "source": "      if (kind != DECLARATION || f != TEMP) { failure_code = \"unsupported-feature\"; return false; }"
+    },
+    {
+      "line": 130,
+      "count": "22.4k",
+      "source": "      *p += 2;"
+    },
+    {
+      "line": 131,
+      "count": "22.4k",
+      "source": "      if (!index_number(p, &r->last) || r->last < r->index) return false;"
+    },
+    {
+      "line": 132,
+      "count": "22.4k",
+      "source": "   }"
+    },
+    {
+      "line": 133,
+      "count": "297k",
+      "source": "   if (!punctuation(p, ']')) return false;"
+    },
+    {
+      "line": 135,
+      "count": "297k",
+      "source": "   r->explicit_mask = punctuation(p, '.');"
+    },
+    {
+      "line": 136,
+      "count": "297k",
+      "source": "   if (r->explicit_mask) {"
+    },
+    {
+      "line": 137,
+      "count": "123k",
+      "source": "      static const char components[] = \"xyzw\";"
+    },
+    {
+      "line": 138,
+      "count": "123k",
+      "source": "      const char *begin = *p;"
+    },
+    {
+      "line": 139,
+      "count": "123k",
+      "source": "      r->mask = 0;"
+    },
+    {
+      "line": 140,
+      "count": "123k",
+      "source": "      unsigned count = 0, previous = 0;"
+    },
+    {
+      "line": 141,
+      "count": "460k",
+      "source": "      while (**p && strchr(components, **p)) {"
+    },
+    {
+      "line": 142,
+      "count": "336k",
+      "source": "         unsigned component = (unsigned)(strchr(components, **p) - components);"
+    },
+    {
+      "line": 143,
+      "count": "336k",
+      "source": "         if (++count > 4 || (kind != SOURCE && count > 1 && component <= previous)) return false;"
+    },
+    {
+      "line": 144,
+      "count": "336k",
+      "source": "         previous = component;"
+    },
+    {
+      "line": 145,
+      "count": "336k",
+      "source": "         r->mask |= 1u << component;"
+    },
+    {
+      "line": 146,
+      "count": "336k",
+      "source": "         ++*p;"
+    },
+    {
+      "line": 147,
+      "count": "336k",
+      "source": "      }"
+    },
+    {
+      "line": 148,
+      "count": "123k",
+      "source": "      if (kind == SOURCE) {"
+    },
+    {
+      "line": 149,
+      "count": "56.0k",
+      "source": "         if (count != 4) return false;"
+    },
+    {
+      "line": 150,
+      "count": "67.6k",
+      "source": "      } else if (!((count == 2 && !strncmp(begin, \"xy\", 2)) ||"
+    },
+    {
+      "line": 151,
+      "count": "67.6k",
+      "source": "                   (kind == DESTINATION && count == 1 && (*begin == 'z' || *begin == 'w')))) {"
+    },
+    {
+      "line": 152,
+      "count": "37",
+      "source": "         failure_code = \"unsupported-feature\";"
+    },
+    {
+      "line": 153,
+      "count": "37",
+      "source": "         return false;"
+    },
+    {
+      "line": 154,
+      "count": "37",
+      "source": "      }"
+    },
+    {
+      "line": 161,
+      "count": "79.1k",
+      "source": "   if (!register_name(p, &r, SOURCE) || r.file == OUT || r.file >= SAMP || !s->declared[r.file][r.index] ||"
+    },
+    {
+      "line": 162,
+      "count": "79.1k",
+      "source": "       (s->components[r.file][r.index] & r.mask) != r.mask) return false;"
+    },
+    {
+      "line": 163,
+      "count": "",
+      "source": "   /* Deliberately conservative: all selected lanes must be declared, including"
+    },
+    {
+      "line": 164,
+      "count": "",
+      "source": "    * lanes a masked destination may not consume. TEMP writes remain full. */"
+    },
+    {
+      "line": 165,
+      "count": "78.7k",
+      "source": "   return r.file != TEMP || s->written[TEMP][r.index] == 15;"
+    },
+    {
+      "line": 181,
+      "count": "",
+      "source": "static bool literal_float_bits(const char **p)"
+    },
+    {
+      "line": 182,
+      "count": "49.5k",
+      "source": "{"
+    },
+    {
+      "line": 183,
+      "count": "49.5k",
+      "source": "   space(p);"
+    },
+    {
+      "line": 184,
+      "count": "49.5k",
+      "source": "   uint32_t bits = 0;"
+    },
+    {
+      "line": 185,
+      "count": "49.5k",
+      "source": "   unsigned digits = 0;"
+    },
+    {
+      "line": 186,
+      "count": "215k",
+      "source": "   while (isdigit((unsigned char)**p)) {"
+    },
+    {
+      "line": 187,
+      "count": "165k",
+      "source": "      unsigned digit = (unsigned)(**p - '0');"
+    },
+    {
+      "line": 188,
+      "count": "165k",
+      "source": "      if (++digits > 10 || bits > (UINT32_MAX - digit) / 10) return false;"
+    },
+    {
+      "line": 189,
+      "count": "165k",
+      "source": "      bits = bits * 10 + digit;"
+    },
+    {
+      "line": 190,
+      "count": "165k",
+      "source": "      ++*p;"
+    },
+    {
+      "line": 191,
+      "count": "165k",
+      "source": "   }"
+    },
+    {
+      "line": 192,
+      "count": "49.5k",
+      "source": "   if (!digits || ((bits & UINT32_C(0x7f800000)) == 0 && (bits & UINT32_C(0x007fffff)) != 0)) return false;"
+    },
+    {
+      "line": 193,
+      "count": "49.5k",
+      "source": "   float value;"
+    },
+    {
+      "line": 194,
+      "count": "49.5k",
+      "source": "   memcpy(&value, &bits, sizeof(value));"
+    },
+    {
+      "line": 195,
+      "count": "49.5k",
+      "source": "   return isfinite(value) && fabsf(value) <= 1000000.0f;"
+    },
+    {
+      "line": 196,
+      "count": "49.5k",
+      "source": "}"
+    },
+    {
+      "line": 197,
+      "count": "",
+      "source": ""
+    },
+    {
+      "line": 201,
+      "count": "139k",
+      "source": "   if (s->started || !register_name(p, &r, DECLARATION) || r.file == IMM) return false;"
+    },
+    {
+      "line": 202,
+      "count": "345k",
+      "source": "   for (unsigned i = r.index; i <= r.last; ++i) if (s->declared[r.file][i]) return false;"
+    },
+    {
+      "line": 223,
+      "count": "138k",
+      "source": "   if (r.mask != 15 && (semantic != 2 || r.mask != 3)) return false;"
+    },
+    {
+      "line": 225,
+      "count": "344k",
+      "source": "   for (unsigned i = r.index; i <= r.last; ++i) {"
+    },
+    {
+      "line": 226,
+      "count": "205k",
+      "source": "      s->declared[r.file][i] = true;"
+    },
+    {
+      "line": 227,
+      "count": "205k",
+      "source": "      s->components[r.file][i] = r.mask;"
+    },
+    {
+      "line": 228,
+      "count": "205k",
+      "source": "   }"
+    },
+    {
+      "line": 239,
+      "count": "91.6k",
+      "source": "   bool tex = false, mov = false;"
+    },
+    {
+      "line": 241,
+      "count": "68.5k",
+      "source": "   if (word(p, \"MOV\")) { arity = 1; mov = true; }"
+    },
+    {
+      "line": 248,
+      "count": "68.3k",
+      "source": "   if (!register_name(p, &dst, DESTINATION) || (dst.file != OUT && dst.file != TEMP) ||"
+    },
+    {
+      "line": 249,
+      "count": "68.3k",
+      "source": "       !s->declared[dst.file][dst.index] || (s->components[dst.file][dst.index] & dst.mask) != dst.mask) return false;"
+    },
+    {
+      "line": 250,
+      "count": "68.1k",
+      "source": "   if (dst.explicit_mask && (!mov || dst.file != OUT)) { failure_code = \"unsupported-feature\"; return false; }"
+    },
+    {
+      "line": 255,
+      "count": "11.0k",
+      "source": "      if (s->stage != 1 || !punctuation(p, ',') || !register_name(p, &sampler, SOURCE) || sampler.file != SAMP || sampler.explicit_mask ||"
+    },
+    {
+      "line": 280,
+      "count": "12.9k",
+      "source": "         if (s->started || !punctuation(&p, '[') || !index_number(&p, &i) || i != s->immediates || !punctuation(&p, ']')) return false;"
+    },
+    {
+      "line": 281,
+      "count": "12.9k",
+      "source": "         bool bits = false;"
+    },
+    {
+      "line": 282,
+      "count": "12.9k",
+      "source": "         if (!word(&p, \"FLT32\")) {"
+    },
+    {
+      "line": 283,
+      "count": "12.9k",
+      "source": "            if (!word(&p, \"UINT32\")) return false;"
+    },
+    {
+      "line": 284,
+      "count": "12.9k",
+      "source": "            bits = true;"
+    },
+    {
+      "line": 285,
+      "count": "12.9k",
+      "source": "         }"
+    },
+    {
+      "line": 286,
+      "count": "12.9k",
+      "source": "         if (!punctuation(&p, '{')) return false;"
+    },
+    {
+      "line": 288,
+      "count": "49.6k",
+      "source": "            if ((c && !punctuation(&p, ',')) || !(bits ? literal_float_bits(&p) : literal_float(&p))) return false;"
+    },
+    {
+      "line": 290,
+      "count": "12.1k",
+      "source": "         s->declared[IMM][i] = true; s->components[IMM][i] = 15; ++s->immediates;"
+    },
+    {
+      "line": 291,
+      "count": "103k",
+      "source": "      } else if (word(&p, \"PROPERTY\")) {"
+    },
+    {
+      "line": 292,
+      "count": "11.5k",
+      "source": "         if (s->stage != 1 || s->started || s->color0_property ||"
+    },
+    {
+      "line": 293,
+      "count": "11.5k",
+      "source": "             !word(&p, \"FS_COLOR0_WRITES_ALL_CBUFS\") || !word(&p, \"1\") || !end(&p)) {"
+    },
+    {
+      "line": 294,
+      "count": "104",
+      "source": "            failure_code = \"unsupported-feature\";"
+    },
+    {
+      "line": 295,
+      "count": "104",
+      "source": "            return false;"
+    },
+    {
+      "line": 296,
+      "count": "104",
+      "source": "         }"
+    },
+    {
+      "line": 297,
+      "count": "",
+      "source": "         /* Fixed cfg.max_draw_buffers=1 makes this exactly COLOR0, not MRT. */"
+    },
+    {
+      "line": 298,
+      "count": "11.4k",
+      "source": "         s->color0_property = true;"
+    },
+    {
+      "line": 315,
+      "count": "185k",
+      "source": "      if (s->declared[OUT][i] && s->written[OUT][i] != s->components[OUT][i]) return false;"
+    },
+    {
+      "line": 331,
+      "count": "89.6k",
+      "source": "      append(\"%s{\\\"index\\\":%u,\\\"name\\\":\\\"%s\\\",\\\"type\\\":\\\"vec4\\\",\\\"semantic\\\":\\\"%s\\\",\\\"semanticIndex\\\":%u,\\\"componentMask\\\":%u\", comma ? \",\" : \"\", i, name, names[semantic], sid, s->components[f][i]);"
+    },
+    {
+      "line": 332,
+      "count": "89.6k",
+      "source": "      if (f == OUT) append(\",\\\"writtenMask\\\":%u\", s->written[f][i]);"
+    },
+    {
+      "line": 333,
+      "count": "89.6k",
+      "source": "      append(\"}\");"
+    },
+    {
+      "line": 384,
+      "count": "23.1k",
+      "source": "   append(\"\\\",\\\"metadata\\\":{\\\"profile\\\":\\\"virgl-webgl2-straight-line-v2\\\",\\\"stage\\\":\\\"%s\\\",\\\"inputs\\\":\", stage ? \"fragment\" : \"vertex\");"
+    }
+  ],
+  "changedLineBranches": [
+    {
+      "line": 124,
+      "column": 8,
+      "counts": "[True: 239, False: 297k]"
+    },
+    {
+      "line": 124,
+      "column": 27,
+      "counts": "[True: 38, False: 297k]"
+    },
+    {
+      "line": 124,
+      "column": 51,
+      "counts": "[True: 59, False: 297k]"
+    },
+    {
+      "line": 128,
+      "column": 8,
+      "counts": "[True: 22.4k, False: 274k]"
+    },
+    {
+      "line": 129,
+      "column": 11,
+      "counts": "[True: 2, False: 22.4k]"
+    },
+    {
+      "line": 129,
+      "column": 34,
+      "counts": "[True: 5, False: 22.4k]"
+    },
+    {
+      "line": 131,
+      "column": 11,
+      "counts": "[True: 8, False: 22.4k]"
+    },
+    {
+      "line": 131,
+      "column": 41,
+      "counts": "[True: 1, False: 22.4k]"
+    },
+    {
+      "line": 133,
+      "column": 8,
+      "counts": "[True: 56, False: 297k]"
+    },
+    {
+      "line": 136,
+      "column": 8,
+      "counts": "[True: 123k, False: 173k]"
+    },
+    {
+      "line": 141,
+      "column": 14,
+      "counts": "[True: 415k, False: 44.9k]"
+    },
+    {
+      "line": 141,
+      "column": 21,
+      "counts": "[True: 336k, False: 78.7k]"
+    },
+    {
+      "line": 143,
+      "column": 14,
+      "counts": "[True: 1, False: 336k]"
+    },
+    {
+      "line": 143,
+      "column": 30,
+      "counts": "[True: 112k, False: 224k]"
+    },
+    {
+      "line": 143,
+      "column": 48,
+      "counts": "[True: 45.3k, False: 67.6k]"
+    },
+    {
+      "line": 143,
+      "column": 61,
+      "counts": "[True: 6, False: 45.3k]"
+    },
+    {
+      "line": 148,
+      "column": 11,
+      "counts": "[True: 56.0k, False: 67.6k]"
+    },
+    {
+      "line": 149,
+      "column": 14,
+      "counts": "[True: 47, False: 55.9k]"
+    },
+    {
+      "line": 150,
+      "column": 21,
+      "counts": "[True: 45.3k, False: 22.2k]"
+    },
+    {
+      "line": 150,
+      "column": 35,
+      "counts": "[True: 45.3k, False: 2]"
+    },
+    {
+      "line": 151,
+      "column": 21,
+      "counts": "[True: 22.2k, False: 18]"
+    },
+    {
+      "line": 151,
+      "column": 44,
+      "counts": "[True: 22.2k, False: 13]"
+    },
+    {
+      "line": 151,
+      "column": 59,
+      "counts": "[True: 11.1k, False: 11.1k]"
+    },
+    {
+      "line": 151,
+      "column": 76,
+      "counts": "[True: 11.0k, False: 6]"
+    },
+    {
+      "line": 161,
+      "column": 8,
+      "counts": "[True: 144, False: 79.0k]"
+    },
+    {
+      "line": 161,
+      "column": 41,
+      "counts": "[True: 1, False: 79.0k]"
+    },
+    {
+      "line": 161,
+      "column": 58,
+      "counts": "[True: 1, False: 79.0k]"
+    },
+    {
+      "line": 161,
+      "column": 76,
+      "counts": "[True: 1, False: 79.0k]"
+    },
+    {
+      "line": 162,
+      "column": 8,
+      "counts": "[True: 245, False: 78.7k]"
+    },
+    {
+      "line": 165,
+      "column": 11,
+      "counts": "[True: 67.7k, False: 11.0k]"
+    },
+    {
+      "line": 165,
+      "column": 29,
+      "counts": "[True: 11.0k, False: 2]"
+    },
+    {
+      "line": 186,
+      "column": 11,
+      "counts": "[True: 165k, False: 49.5k]"
+    },
+    {
+      "line": 188,
+      "column": 11,
+      "counts": "[True: 14, False: 165k]"
+    },
+    {
+      "line": 188,
+      "column": 28,
+      "counts": "[True: 7, False: 165k]"
+    },
+    {
+      "line": 192,
+      "column": 8,
+      "counts": "[True: 21, False: 49.5k]"
+    },
+    {
+      "line": 192,
+      "column": 20,
+      "counts": "[True: 36.6k, False: 12.8k]"
+    },
+    {
+      "line": 192,
+      "column": 58,
+      "counts": "[True: 29, False: 36.6k]"
+    },
+    {
+      "line": 195,
+      "column": 11,
+      "counts": "[Folded, False: 0]"
+    },
+    {
+      "line": 195,
+      "column": 11,
+      "counts": "[True: 49.5k, Folded]"
+    },
+    {
+      "line": 195,
+      "column": 11,
+      "counts": "[True: 49.5k, False: 12]"
+    },
+    {
+      "line": 195,
+      "column": 30,
+      "counts": "[True: 48.8k, False: 654]"
+    },
+    {
+      "line": 201,
+      "column": 8,
+      "counts": "[True: 1, False: 139k]"
+    },
+    {
+      "line": 201,
+      "column": 22,
+      "counts": "[True: 243, False: 138k]"
+    },
+    {
+      "line": 201,
+      "column": 60,
+      "counts": "[True: 1, False: 138k]"
+    },
+    {
+      "line": 202,
+      "column": 31,
+      "counts": "[True: 206k, False: 138k]"
+    },
+    {
+      "line": 202,
+      "column": 53,
+      "counts": "[True: 4, False: 206k]"
+    },
+    {
+      "line": 223,
+      "column": 8,
+      "counts": "[True: 22.9k, False: 115k]"
+    },
+    {
+      "line": 223,
+      "column": 25,
+      "counts": "[True: 7, False: 22.9k]"
+    },
+    {
+      "line": 223,
+      "column": 42,
+      "counts": "[True: 0, False: 22.9k]"
+    },
+    {
+      "line": 225,
+      "column": 31,
+      "counts": "[True: 205k, False: 138k]"
+    },
+    {
+      "line": 241,
+      "column": 8,
+      "counts": "[True: 46.1k, False: 22.3k]"
+    },
+    {
+      "line": 248,
+      "column": 8,
+      "counts": "[True: 99, False: 68.2k]"
+    },
+    {
+      "line": 248,
+      "column": 49,
+      "counts": "[True: 11.1k, False: 57.0k]"
+    },
+    {
+      "line": 248,
+      "column": 68,
+      "counts": "[True: 1, False: 11.1k]"
+    },
+    {
+      "line": 249,
+      "column": 8,
+      "counts": "[True: 1, False: 68.1k]"
+    },
+    {
+      "line": 249,
+      "column": 45,
+      "counts": "[True: 5, False: 68.1k]"
+    },
+    {
+      "line": 250,
+      "column": 8,
+      "counts": "[True: 44.5k, False: 23.6k]"
+    },
+    {
+      "line": 250,
+      "column": 30,
+      "counts": "[True: 4, False: 44.5k]"
+    },
+    {
+      "line": 250,
+      "column": 38,
+      "counts": "[True: 3, False: 44.4k]"
+    },
+    {
+      "line": 255,
+      "column": 11,
+      "counts": "[True: 1, False: 11.0k]"
+    },
+    {
+      "line": 255,
+      "column": 28,
+      "counts": "[True: 1, False: 11.0k]"
+    },
+    {
+      "line": 255,
+      "column": 52,
+      "counts": "[True: 13, False: 11.0k]"
+    },
+    {
+      "line": 255,
+      "column": 91,
+      "counts": "[True: 1, False: 11.0k]"
+    },
+    {
+      "line": 255,
+      "column": 115,
+      "counts": "[True: 1, False: 11.0k]"
+    },
+    {
+      "line": 280,
+      "column": 14,
+      "counts": "[True: 1, False: 12.9k]"
+    },
+    {
+      "line": 280,
+      "column": 28,
+      "counts": "[True: 3, False: 12.9k]"
+    },
+    {
+      "line": 280,
+      "column": 53,
+      "counts": "[True: 1, False: 12.9k]"
+    },
+    {
+      "line": 280,
+      "column": 78,
+      "counts": "[True: 1, False: 12.9k]"
+    },
+    {
+      "line": 280,
+      "column": 100,
+      "counts": "[True: 1, False: 12.9k]"
+    },
+    {
+      "line": 282,
+      "column": 14,
+      "counts": "[True: 12.9k, False: 1]"
+    },
+    {
+      "line": 283,
+      "column": 17,
+      "counts": "[True: 27, False: 12.9k]"
+    },
+    {
+      "line": 286,
+      "column": 14,
+      "counts": "[True: 4, False: 12.9k]"
+    },
+    {
+      "line": 288,
+      "column": 18,
+      "counts": "[True: 36.6k, False: 12.9k]"
+    },
+    {
+      "line": 288,
+      "column": 23,
+      "counts": "[True: 15, False: 36.6k]"
+    },
+    {
+      "line": 288,
+      "column": 49,
+      "counts": "[True: 737, False: 48.8k]"
+    },
+    {
+      "line": 288,
+      "column": 51,
+      "counts": "[True: 49.5k, False: 4]"
+    },
+    {
+      "line": 291,
+      "column": 18,
+      "counts": "[True: 11.5k, False: 91.7k]"
+    },
+    {
+      "line": 292,
+      "column": 14,
+      "counts": "[True: 2, False: 11.5k]"
+    },
+    {
+      "line": 292,
+      "column": 31,
+      "counts": "[True: 1, False: 11.5k]"
+    },
+    {
+      "line": 292,
+      "column": 45,
+      "counts": "[True: 1, False: 11.5k]"
+    },
+    {
+      "line": 293,
+      "column": 14,
+      "counts": "[True: 86, False: 11.4k]"
+    },
+    {
+      "line": 293,
+      "column": 57,
+      "counts": "[True: 13, False: 11.4k]"
+    },
+    {
+      "line": 293,
+      "column": 75,
+      "counts": "[True: 1, False: 11.4k]"
+    },
+    {
+      "line": 315,
+      "column": 11,
+      "counts": "[True: 34.1k, False: 151k]"
+    },
+    {
+      "line": 315,
+      "column": 34,
+      "counts": "[True: 6, False: 34.1k]"
+    },
+    {
+      "line": 331,
+      "column": 129,
+      "counts": "[True: 32.9k, False: 56.7k]"
+    },
+    {
+      "line": 332,
+      "column": 11,
+      "counts": "[True: 34.1k, False: 55.4k]"
+    },
+    {
+      "line": 384,
+      "column": 106,
+      "counts": "[True: 10.9k, False: 12.1k]"
+    }
+  ],
+  "zeroCountChangedLines": [],
+  "branchWaivers": {
+    "195:11": "Clang isfinite macro contains compile-time folded branches; dynamic finite/nonfinite outcome both hit.",
+    "223:42": "Declaration register parser only permits default xyzw (15) or explicit xy (3), so r.mask != 3 after r.mask != 15 is structurally unreachable defensive redundancy."
+  }
+}

@@ -1,0 +1,38 @@
+[
+  {
+    "case": "busybox-legacy",
+    "equal": true,
+    "sha256": "f0a27e4a09df871fb64305b5199ab5557ebaca168f9071aca04a62d9d79ee4a7",
+    "contents": "wasm-vm boot evidence v1\ntrace fnv64=2c8704b261e119d1\ntrace retired=399973130\ntrace mode=retirement-records\nstate sha256=8f158c565d0d1b738f35371da0c957a6854de2f3faa14d1e42e69cd4e2fc2a71\noutcome=MaxInstrs\n"
+  },
+  {
+    "case": "busybox-cache",
+    "equal": true,
+    "sha256": "f0a27e4a09df871fb64305b5199ab5557ebaca168f9071aca04a62d9d79ee4a7",
+    "contents": "wasm-vm boot evidence v1\ntrace fnv64=2c8704b261e119d1\ntrace retired=399973130\ntrace mode=retirement-records\nstate sha256=8f158c565d0d1b738f35371da0c957a6854de2f3faa14d1e42e69cd4e2fc2a71\noutcome=MaxInstrs\n"
+  },
+  {
+    "case": "busybox-fast",
+    "equal": true,
+    "sha256": "7c71f1051ea640077f8cb3a83aa4298a3e0589c888090950462dcd5d6e36aac0",
+    "contents": "wasm-vm boot evidence v1\ntrace fnv64=fe3dfd50462479f9\ntrace retired=399972858\ntrace mode=retirement-records\nstate sha256=e1abd6fa7e02c2d52e583aff0e430cbf0b558cce2e52683fc0a3c30cfb17f55d\noutcome=MaxInstrs\n"
+  },
+  {
+    "case": "busybox-jit",
+    "equal": true,
+    "sha256": "a119747b8a76c5fae2c47f8aa13aa139a4756ba36251776b258ec1ef25c669e7",
+    "contents": "wasm-vm boot evidence v1\ntrace fnv64=cbf29ce484222325\ntrace retired=399972858\ntrace mode=jit-retired-counter-only\nstate sha256=e1abd6fa7e02c2d52e583aff0e430cbf0b558cce2e52683fc0a3c30cfb17f55d\noutcome=MaxInstrs\n"
+  },
+  {
+    "case": "alpine-fast",
+    "equal": true,
+    "sha256": "a4086776d90e8f43c1f4e1c23e73cf675a4f97f62e93a3130f6897cea9cfe55d",
+    "contents": "wasm-vm boot evidence v1\ntrace fnv64=e70c57644fe9e498\ntrace retired=1999855301\ntrace mode=retirement-records\nstate sha256=b2b319f3869506cb1761181832d7529a4ac7dece5d524729cdc156ba1146715f\noutcome=MaxInstrs\n"
+  },
+  {
+    "case": "alpine-jit",
+    "equal": true,
+    "sha256": "5f53dd20ea4646cb1833ea63174c203929ea713e8cb9c38a16af2fc1807389e0",
+    "contents": "wasm-vm boot evidence v1\ntrace fnv64=cbf29ce484222325\ntrace retired=1999855301\ntrace mode=jit-retired-counter-only\nstate sha256=b2b319f3869506cb1761181832d7529a4ac7dece5d524729cdc156ba1146715f\noutcome=MaxInstrs\n"
+  }
+]

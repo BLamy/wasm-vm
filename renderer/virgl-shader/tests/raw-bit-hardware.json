@@ -1,0 +1,667 @@
+{
+  "schema": "wasm-vm-raw-bit-hardware-v1",
+  "shaders": [
+    {
+      "name": "raw-mov-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nOR TEMP[9], CONST[0], IMM[0].xxxx\nMOV TEMP[117], TEMP[9]\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[0].yyyy\nSHL TEMP[116], TEMP[116], IMM[0].zzzz\nOR TEMP[116], TEMP[116], IMM[0].wwww\nMOV OUT[1], TEMP[116]\nMOV OUT[0], IN[0]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v1",
+      "instructions": 8
+    },
+    {
+      "name": "raw-mov-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nOR TEMP[9], CONST[0], IMM[0].xxxx\nMOV TEMP[117], TEMP[9]\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[1].xxxx\nSHL TEMP[9], TEMP[116], IMM[1].yyyy\nSHL TEMP[17], TEMP[116], IMM[1].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[1].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].xxxx\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].yyyy\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nMOV OUT[0], TEMP[9]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v1",
+      "instructions": 18
+    },
+    {
+      "name": "raw-and-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nAND TEMP[117], CONST[0], CONST[45]\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[0].yyyy\nSHL TEMP[116], TEMP[116], IMM[0].zzzz\nOR TEMP[116], TEMP[116], IMM[0].wwww\nMOV OUT[1], TEMP[116]\nMOV OUT[0], IN[0]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v1",
+      "instructions": 7
+    },
+    {
+      "name": "raw-and-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nAND TEMP[117], CONST[0], CONST[45]\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[1].xxxx\nSHL TEMP[9], TEMP[116], IMM[1].yyyy\nSHL TEMP[17], TEMP[116], IMM[1].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[1].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].xxxx\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].yyyy\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nMOV OUT[0], TEMP[9]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v1",
+      "instructions": 17
+    },
+    {
+      "name": "raw-or-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nOR TEMP[117], CONST[0], CONST[45]\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[0].yyyy\nSHL TEMP[116], TEMP[116], IMM[0].zzzz\nOR TEMP[116], TEMP[116], IMM[0].wwww\nMOV OUT[1], TEMP[116]\nMOV OUT[0], IN[0]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v1",
+      "instructions": 7
+    },
+    {
+      "name": "raw-or-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nOR TEMP[117], CONST[0], CONST[45]\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[1].xxxx\nSHL TEMP[9], TEMP[116], IMM[1].yyyy\nSHL TEMP[17], TEMP[116], IMM[1].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[1].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].xxxx\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].yyyy\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nMOV OUT[0], TEMP[9]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v1",
+      "instructions": 17
+    },
+    {
+      "name": "raw-not-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nNOT TEMP[117], CONST[0]\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[0].yyyy\nSHL TEMP[116], TEMP[116], IMM[0].zzzz\nOR TEMP[116], TEMP[116], IMM[0].wwww\nMOV OUT[1], TEMP[116]\nMOV OUT[0], IN[0]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v1",
+      "instructions": 7
+    },
+    {
+      "name": "raw-not-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nNOT TEMP[117], CONST[0]\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[1].xxxx\nSHL TEMP[9], TEMP[116], IMM[1].yyyy\nSHL TEMP[17], TEMP[116], IMM[1].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[1].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].xxxx\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].yyyy\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nMOV OUT[0], TEMP[9]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v1",
+      "instructions": 17
+    },
+    {
+      "name": "raw-shl-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nSHL TEMP[117], CONST[0], CONST[45]\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[0].yyyy\nSHL TEMP[116], TEMP[116], IMM[0].zzzz\nOR TEMP[116], TEMP[116], IMM[0].wwww\nMOV OUT[1], TEMP[116]\nMOV OUT[0], IN[0]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v1",
+      "instructions": 7
+    },
+    {
+      "name": "raw-shl-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nSHL TEMP[117], CONST[0], CONST[45]\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[1].xxxx\nSHL TEMP[9], TEMP[116], IMM[1].yyyy\nSHL TEMP[17], TEMP[116], IMM[1].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[1].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].xxxx\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].yyyy\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nMOV OUT[0], TEMP[9]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v1",
+      "instructions": 17
+    },
+    {
+      "name": "raw-ushr-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nUSHR TEMP[117], CONST[0], CONST[45]\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[0].yyyy\nSHL TEMP[116], TEMP[116], IMM[0].zzzz\nOR TEMP[116], TEMP[116], IMM[0].wwww\nMOV OUT[1], TEMP[116]\nMOV OUT[0], IN[0]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v1",
+      "instructions": 7
+    },
+    {
+      "name": "raw-ushr-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nUSHR TEMP[117], CONST[0], CONST[45]\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[1].xxxx\nSHL TEMP[9], TEMP[116], IMM[1].yyyy\nSHL TEMP[17], TEMP[116], IMM[1].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[1].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].xxxx\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].yyyy\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nMOV OUT[0], TEMP[9]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v1",
+      "instructions": 17
+    },
+    {
+      "name": "raw-alias-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nMOV TEMP[117], CONST[0]\nOR TEMP[17], CONST[45], IMM[0].xxxx\nNOT TEMP[117].xy, TEMP[117].yxzw\nSHL TEMP[117].xy, TEMP[117].yxzw, TEMP[17].yxzw\nOR TEMP[117].z, TEMP[117].zzzz, TEMP[17].wwww\nNOT TEMP[117].w, TEMP[117].wwww\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[0].yyyy\nSHL TEMP[116], TEMP[116], IMM[0].zzzz\nOR TEMP[116], TEMP[116], IMM[0].wwww\nMOV OUT[1], TEMP[116]\nMOV OUT[0], IN[0]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v1",
+      "instructions": 12
+    },
+    {
+      "name": "raw-alias-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nMOV TEMP[117], CONST[0]\nOR TEMP[17], CONST[45], IMM[0].xxxx\nNOT TEMP[117].xy, TEMP[117].yxzw\nSHL TEMP[117].xy, TEMP[117].yxzw, TEMP[17].yxzw\nOR TEMP[117].z, TEMP[117].zzzz, TEMP[17].wwww\nNOT TEMP[117].w, TEMP[117].wwww\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[1].xxxx\nSHL TEMP[9], TEMP[116], IMM[1].yyyy\nSHL TEMP[17], TEMP[116], IMM[1].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[1].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].xxxx\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].yyyy\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nMOV OUT[0], TEMP[9]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v1",
+      "instructions": 22
+    },
+    {
+      "name": "raw-immediate-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] UINT32 {2147483648, 0, 2147483647, 4294967295}\nIMM[4] UINT32 {2139095040, 4286578688, 2143289345, 4290772993}\nIMM[5] UINT32 {1, 8388607, 2147483649, 2155872255}\nIMM[6] UINT32 {1431655765, 2863311530, 0, 4294967295}\nIMM[7] UINT32 {4294967295, 2143289345, 2139095040, 1}\nMOV TEMP[117], IMM[7]\nOR TEMP[117], TEMP[117], CONST[0]\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[0].yyyy\nSHL TEMP[116], TEMP[116], IMM[0].zzzz\nOR TEMP[116], TEMP[116], IMM[0].wwww\nMOV OUT[1], TEMP[116]\nMOV OUT[0], IN[0]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v1",
+      "instructions": 8
+    },
+    {
+      "name": "raw-immediate-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nIMM[3] UINT32 {2147483648, 0, 2147483647, 4294967295}\nIMM[4] UINT32 {2139095040, 4286578688, 2143289345, 4290772993}\nIMM[5] UINT32 {1, 8388607, 2147483649, 2155872255}\nIMM[6] UINT32 {1431655765, 2863311530, 0, 4294967295}\nIMM[7] UINT32 {4294967295, 2143289345, 2139095040, 1}\nMOV TEMP[117], IMM[7]\nOR TEMP[117], TEMP[117], CONST[0]\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[1].xxxx\nSHL TEMP[9], TEMP[116], IMM[1].yyyy\nSHL TEMP[17], TEMP[116], IMM[1].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[1].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].xxxx\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].yyyy\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nMOV OUT[0], TEMP[9]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v1",
+      "instructions": 18
+    },
+    {
+      "name": "raw-maximal-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nOR TEMP[117], CONST[0], CONST[45]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[0].yyyy\nSHL TEMP[116], TEMP[116], IMM[0].zzzz\nOR TEMP[116], TEMP[116], IMM[0].wwww\nMOV OUT[1], TEMP[116]\nMOV OUT[0], IN[0]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v1",
+      "instructions": 179
+    },
+    {
+      "name": "raw-maximal-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nOR TEMP[117], CONST[0], CONST[45]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nNOT TEMP[117], TEMP[117]\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[1].xxxx\nSHL TEMP[9], TEMP[116], IMM[1].yyyy\nSHL TEMP[17], TEMP[116], IMM[1].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[1].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].xxxx\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].yyyy\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nMOV OUT[0], TEMP[9]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v1",
+      "instructions": 179
+    },
+    {
+      "name": "legacy-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nMOV OUT[0], IN[0]\nEND\n",
+      "profile": "virgl-webgl2-straight-line-v5",
+      "instructions": 1
+    },
+    {
+      "name": "legacy-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL OUT[0], COLOR\nIMM[0] FLT32 {1, 0, 0, 1}\nMOV OUT[0], IMM[0]\nEND\n",
+      "profile": "virgl-webgl2-straight-line-v5",
+      "instructions": 1
+    },
+    {
+      "name": "legacy-varying-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nMOV OUT[0], IN[0]\nMOV OUT[1], IN[1]\nEND\n",
+      "profile": "virgl-webgl2-straight-line-v5",
+      "instructions": 2
+    },
+    {
+      "name": "raw-varying-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL TEMP[0]\nIMM[0] UINT32 {0, 0, 0, 0}\nOR TEMP[0], IMM[0], IMM[0]\nMOV OUT[0], IN[0]\nMOV OUT[1], IN[1]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v1",
+      "instructions": 3
+    },
+    {
+      "name": "legacy-varying-smooth-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nMOV OUT[0], IN[0]\nEND\n",
+      "profile": "virgl-webgl2-straight-line-v5",
+      "instructions": 1
+    },
+    {
+      "name": "raw-varying-smooth-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0]\nIMM[0] UINT32 {0, 0, 0, 0}\nOR TEMP[0], IMM[0], IMM[0]\nMOV OUT[0], IN[0]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v1",
+      "instructions": 2
+    },
+    {
+      "name": "legacy-varying-flat-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[0], GENERIC[0], CONSTANT\nDCL OUT[0], COLOR\nMOV OUT[0], IN[0]\nEND\n",
+      "profile": "virgl-webgl2-straight-line-v5",
+      "instructions": 1
+    },
+    {
+      "name": "raw-varying-flat-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[0], GENERIC[0], CONSTANT\nDCL OUT[0], COLOR\nDCL TEMP[0]\nIMM[0] UINT32 {0, 0, 0, 0}\nOR TEMP[0], IMM[0], IMM[0]\nMOV OUT[0], IN[0]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v1",
+      "instructions": 2
+    },
+    {
+      "name": "raw-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nOR TEMP[9], CONST[0], IMM[0].xxxx\nMOV TEMP[117], TEMP[9]\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[0].yyyy\nSHL TEMP[116], TEMP[116], IMM[0].zzzz\nOR TEMP[116], TEMP[116], IMM[0].wwww\nMOV OUT[1], TEMP[116]\nMOV OUT[0], IN[0]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v1",
+      "instructions": 8
+    },
+    {
+      "name": "raw-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nOR TEMP[9], CONST[0], IMM[0].xxxx\nMOV TEMP[117], TEMP[9]\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[1].xxxx\nSHL TEMP[9], TEMP[116], IMM[1].yyyy\nSHL TEMP[17], TEMP[116], IMM[1].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[1].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].xxxx\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].yyyy\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nMOV OUT[0], TEMP[9]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v1",
+      "instructions": 18
+    },
+    {
+      "name": "raw-order-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[45]\nDCL CONST[44]\nDCL CONST[0]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nOR TEMP[117], CONST[0], CONST[45]\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[0].yyyy\nSHL TEMP[116], TEMP[116], IMM[0].zzzz\nOR TEMP[116], TEMP[116], IMM[0].wwww\nMOV OUT[1], TEMP[116]\nMOV OUT[0], IN[0]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v1",
+      "instructions": 7
+    },
+    {
+      "name": "raw-inactive-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0]\nIMM[0] UINT32 {0, 0, 0, 0}\nOR TEMP[0], IMM[0], IMM[0]\nMOV OUT[0], IN[0]\nMOV OUT[1], IN[1]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v1",
+      "instructions": 3
+    },
+    {
+      "name": "raw-order-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[45]\nDCL CONST[44]\nDCL CONST[0]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 255, 15, 1056964608}\nIMM[1] UINT32 {1, 23, 24, 25}\nIMM[2] UINT32 {26, 27, 28, 29}\nOR TEMP[117], CONST[0], CONST[45]\nUSHR TEMP[116], TEMP[117], CONST[44].xxxx\nAND TEMP[116], TEMP[116], IMM[1].xxxx\nSHL TEMP[9], TEMP[116], IMM[1].yyyy\nSHL TEMP[17], TEMP[116], IMM[1].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[1].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].xxxx\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].yyyy\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].zzzz\nOR TEMP[9], TEMP[9], TEMP[17]\nSHL TEMP[17], TEMP[116], IMM[2].wwww\nOR TEMP[9], TEMP[9], TEMP[17]\nMOV OUT[0], TEMP[9]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v1",
+      "instructions": 17
+    },
+    {
+      "name": "raw-inactive-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0]\nIMM[0] UINT32 {0, 0, 0, 0}\nOR TEMP[0], IMM[0], IMM[0]\nMOV OUT[0], IN[0]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v1",
+      "instructions": 2
+    },
+    {
+      "name": "partial-xy-raw-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL OUT[0], POSITION\nDCL OUT[3].xy, GENERIC[5]\nDCL TEMP[0]\nIMM[0] UINT32 {0, 0, 0, 0}\nOR TEMP[0], IMM[0], IMM[0]\nMOV OUT[0], IN[0]\nMOV OUT[3].xy, IN[1]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v1",
+      "instructions": 3
+    },
+    {
+      "name": "partial-xy-raw-smooth-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2].xy, GENERIC[5], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0]\nIMM[0] UINT32 {0, 0, 0, 1065353216}\nOR TEMP[0], IMM[0], IMM[0]\nMOV OUT[0], IMM[0]\nMOV OUT[0].xy, IN[2]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v1",
+      "instructions": 3
+    },
+    {
+      "name": "partial-xy-raw-flat-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2].xy, GENERIC[5], CONSTANT\nDCL OUT[0], COLOR\nDCL TEMP[0]\nIMM[0] UINT32 {0, 0, 0, 1065353216}\nOR TEMP[0], IMM[0], IMM[0]\nMOV OUT[0], IMM[0]\nMOV OUT[0].xy, IN[2]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v1",
+      "instructions": 3
+    },
+    {
+      "name": "partial-xy-legacy-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL OUT[0], POSITION\nDCL OUT[3].xy, GENERIC[5]\nMOV OUT[0], IN[0]\nMOV OUT[3].xy, IN[1]\nEND\n",
+      "profile": "virgl-webgl2-straight-line-v5",
+      "instructions": 2
+    },
+    {
+      "name": "partial-xy-legacy-smooth-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2].xy, GENERIC[5], PERSPECTIVE\nDCL OUT[0], COLOR\nIMM[0] FLT32 {0, 0, 0, 1}\nMOV OUT[0], IMM[0]\nMOV OUT[0].xy, IN[2]\nEND\n",
+      "profile": "virgl-webgl2-straight-line-v5",
+      "instructions": 2
+    },
+    {
+      "name": "partial-xy-legacy-flat-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2].xy, GENERIC[5], CONSTANT\nDCL OUT[0], COLOR\nIMM[0] FLT32 {0, 0, 0, 1}\nMOV OUT[0], IMM[0]\nMOV OUT[0].xy, IN[2]\nEND\n",
+      "profile": "virgl-webgl2-straight-line-v5",
+      "instructions": 2
+    },
+    {
+      "name": "partial-xyz-raw-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL OUT[0], POSITION\nDCL OUT[3].xyz, GENERIC[5]\nDCL TEMP[0]\nIMM[0] UINT32 {0, 0, 0, 0}\nOR TEMP[0], IMM[0], IMM[0]\nMOV OUT[0], IN[0]\nMOV OUT[3].xyz, IN[1]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v1",
+      "instructions": 3
+    },
+    {
+      "name": "partial-xyz-raw-smooth-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2].xyz, GENERIC[5], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0]\nIMM[0] UINT32 {0, 0, 0, 1065353216}\nOR TEMP[0], IMM[0], IMM[0]\nMOV OUT[0], IMM[0]\nMOV OUT[0].xyz, IN[2]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v1",
+      "instructions": 3
+    },
+    {
+      "name": "partial-xyz-raw-flat-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2].xyz, GENERIC[5], CONSTANT\nDCL OUT[0], COLOR\nDCL TEMP[0]\nIMM[0] UINT32 {0, 0, 0, 1065353216}\nOR TEMP[0], IMM[0], IMM[0]\nMOV OUT[0], IMM[0]\nMOV OUT[0].xyz, IN[2]\nEND\n",
+      "profile": "virgl-webgl2-raw-bits-v1",
+      "instructions": 3
+    },
+    {
+      "name": "partial-xyz-legacy-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL OUT[0], POSITION\nDCL OUT[3].xyz, GENERIC[5]\nMOV OUT[0], IN[0]\nMOV OUT[3].xyz, IN[1]\nEND\n",
+      "profile": "virgl-webgl2-straight-line-v5",
+      "instructions": 2
+    },
+    {
+      "name": "partial-xyz-legacy-smooth-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2].xyz, GENERIC[5], PERSPECTIVE\nDCL OUT[0], COLOR\nIMM[0] FLT32 {0, 0, 0, 1}\nMOV OUT[0], IMM[0]\nMOV OUT[0].xyz, IN[2]\nEND\n",
+      "profile": "virgl-webgl2-straight-line-v5",
+      "instructions": 2
+    },
+    {
+      "name": "partial-xyz-legacy-flat-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[2].xyz, GENERIC[5], CONSTANT\nDCL OUT[0], COLOR\nIMM[0] FLT32 {0, 0, 0, 1}\nMOV OUT[0], IMM[0]\nMOV OUT[0].xyz, IN[2]\nEND\n",
+      "profile": "virgl-webgl2-straight-line-v5",
+      "instructions": 2
+    }
+  ],
+  "pairs": [
+    {
+      "name": "raw-legacy-smooth",
+      "vertex": "raw-varying-vertex",
+      "fragment": "legacy-varying-smooth-fragment",
+      "interfaceKey": "generic-interpolation-v1:g0/15/smooth"
+    },
+    {
+      "name": "legacy-raw-smooth",
+      "vertex": "legacy-varying-vertex",
+      "fragment": "raw-varying-smooth-fragment",
+      "interfaceKey": "generic-interpolation-v1:g0/15/smooth"
+    },
+    {
+      "name": "raw-raw-smooth",
+      "vertex": "raw-varying-vertex",
+      "fragment": "raw-varying-smooth-fragment",
+      "interfaceKey": "generic-interpolation-v1:g0/15/smooth"
+    },
+    {
+      "name": "raw-legacy-flat",
+      "vertex": "raw-varying-vertex",
+      "fragment": "legacy-varying-flat-fragment",
+      "interfaceKey": "generic-interpolation-v1:g0/15/flat"
+    },
+    {
+      "name": "legacy-raw-flat",
+      "vertex": "legacy-varying-vertex",
+      "fragment": "raw-varying-flat-fragment",
+      "interfaceKey": "generic-interpolation-v1:g0/15/flat"
+    },
+    {
+      "name": "raw-raw-flat",
+      "vertex": "raw-varying-vertex",
+      "fragment": "raw-varying-flat-fragment",
+      "interfaceKey": "generic-interpolation-v1:g0/15/flat"
+    },
+    {
+      "name": "recovery-legacy-pair",
+      "vertex": "legacy-vertex",
+      "fragment": "legacy-fragment",
+      "interfaceKey": "generic-interpolation-v1:"
+    },
+    {
+      "name": "recovery-raw-pair",
+      "vertex": "raw-vertex",
+      "fragment": "raw-fragment",
+      "interfaceKey": "generic-interpolation-v1:"
+    },
+    {
+      "name": "maximal-raw-pair",
+      "vertex": "raw-maximal-vertex",
+      "fragment": "raw-maximal-fragment",
+      "interfaceKey": "generic-interpolation-v1:"
+    },
+    {
+      "name": "inactive-raw-smooth",
+      "vertex": "raw-inactive-vertex",
+      "fragment": "raw-inactive-fragment",
+      "interfaceKey": "generic-interpolation-v1:g0/15/smooth"
+    },
+    {
+      "name": "partial-xy-raw-legacy-smooth",
+      "vertex": "partial-xy-raw-vertex",
+      "fragment": "partial-xy-legacy-smooth-fragment",
+      "interfaceKey": "generic-interpolation-v1:g5/3/smooth"
+    },
+    {
+      "name": "partial-xy-raw-legacy-flat",
+      "vertex": "partial-xy-raw-vertex",
+      "fragment": "partial-xy-legacy-flat-fragment",
+      "interfaceKey": "generic-interpolation-v1:g5/3/flat"
+    },
+    {
+      "name": "partial-xy-legacy-raw-smooth",
+      "vertex": "partial-xy-legacy-vertex",
+      "fragment": "partial-xy-raw-smooth-fragment",
+      "interfaceKey": "generic-interpolation-v1:g5/3/smooth"
+    },
+    {
+      "name": "partial-xy-legacy-raw-flat",
+      "vertex": "partial-xy-legacy-vertex",
+      "fragment": "partial-xy-raw-flat-fragment",
+      "interfaceKey": "generic-interpolation-v1:g5/3/flat"
+    },
+    {
+      "name": "partial-xyz-raw-legacy-smooth",
+      "vertex": "partial-xyz-raw-vertex",
+      "fragment": "partial-xyz-legacy-smooth-fragment",
+      "interfaceKey": "generic-interpolation-v1:g5/7/smooth"
+    },
+    {
+      "name": "partial-xyz-raw-legacy-flat",
+      "vertex": "partial-xyz-raw-vertex",
+      "fragment": "partial-xyz-legacy-flat-fragment",
+      "interfaceKey": "generic-interpolation-v1:g5/7/flat"
+    },
+    {
+      "name": "partial-xyz-legacy-raw-smooth",
+      "vertex": "partial-xyz-legacy-vertex",
+      "fragment": "partial-xyz-raw-smooth-fragment",
+      "interfaceKey": "generic-interpolation-v1:g5/7/smooth"
+    },
+    {
+      "name": "partial-xyz-legacy-raw-flat",
+      "vertex": "partial-xyz-legacy-vertex",
+      "fragment": "partial-xyz-raw-flat-fragment",
+      "interfaceKey": "generic-interpolation-v1:g5/7/flat"
+    }
+  ],
+  "vectors": [
+    {
+      "name": "zeros-edges",
+      "a": [
+        0,
+        1,
+        2147483647,
+        2147483648
+      ],
+      "b": [
+        4294967295,
+        2147483648,
+        1,
+        0
+      ]
+    },
+    {
+      "name": "nan-inf",
+      "a": [
+        2143289345,
+        2139095040,
+        4286578688,
+        4290772993
+      ],
+      "b": [
+        0,
+        1,
+        31,
+        32
+      ]
+    },
+    {
+      "name": "subnormal-sign",
+      "a": [
+        1,
+        8388607,
+        2147483649,
+        2147483648
+      ],
+      "b": [
+        33,
+        63,
+        2147483648,
+        4294967295
+      ]
+    },
+    {
+      "name": "alternating",
+      "a": [
+        1431655765,
+        2863311530,
+        4294967295,
+        0
+      ],
+      "b": [
+        2863311530,
+        1431655765,
+        2147483647,
+        4294967295
+      ]
+    },
+    {
+      "name": "shift-small",
+      "a": [
+        4294967295,
+        2147483648,
+        2147483647,
+        2143289345
+      ],
+      "b": [
+        0,
+        1,
+        31,
+        32
+      ]
+    },
+    {
+      "name": "shift-large",
+      "a": [
+        2147483649,
+        2139095040,
+        4286578688,
+        4294967295
+      ],
+      "b": [
+        33,
+        63,
+        2147483648,
+        4294967295
+      ]
+    }
+  ],
+  "probes": [
+    {
+      "name": "mov",
+      "vertex": "raw-mov-vertex",
+      "fragment": "raw-mov-fragment",
+      "oracle": "mov",
+      "vectors": [
+        "zeros-edges",
+        "nan-inf",
+        "subnormal-sign",
+        "alternating",
+        "shift-small",
+        "shift-large"
+      ]
+    },
+    {
+      "name": "and",
+      "vertex": "raw-and-vertex",
+      "fragment": "raw-and-fragment",
+      "oracle": "and",
+      "vectors": [
+        "zeros-edges",
+        "nan-inf",
+        "subnormal-sign",
+        "alternating",
+        "shift-small",
+        "shift-large"
+      ]
+    },
+    {
+      "name": "or",
+      "vertex": "raw-or-vertex",
+      "fragment": "raw-or-fragment",
+      "oracle": "or",
+      "vectors": [
+        "zeros-edges",
+        "nan-inf",
+        "subnormal-sign",
+        "alternating",
+        "shift-small",
+        "shift-large"
+      ]
+    },
+    {
+      "name": "not",
+      "vertex": "raw-not-vertex",
+      "fragment": "raw-not-fragment",
+      "oracle": "not",
+      "vectors": [
+        "zeros-edges",
+        "nan-inf",
+        "subnormal-sign",
+        "alternating",
+        "shift-small",
+        "shift-large"
+      ]
+    },
+    {
+      "name": "shl",
+      "vertex": "raw-shl-vertex",
+      "fragment": "raw-shl-fragment",
+      "oracle": "shl",
+      "vectors": [
+        "zeros-edges",
+        "nan-inf",
+        "subnormal-sign",
+        "alternating",
+        "shift-small",
+        "shift-large"
+      ]
+    },
+    {
+      "name": "ushr",
+      "vertex": "raw-ushr-vertex",
+      "fragment": "raw-ushr-fragment",
+      "oracle": "ushr",
+      "vectors": [
+        "zeros-edges",
+        "nan-inf",
+        "subnormal-sign",
+        "alternating",
+        "shift-small",
+        "shift-large"
+      ]
+    },
+    {
+      "name": "alias",
+      "vertex": "raw-alias-vertex",
+      "fragment": "raw-alias-fragment",
+      "oracle": "alias",
+      "vectors": [
+        "zeros-edges",
+        "nan-inf",
+        "subnormal-sign",
+        "alternating",
+        "shift-small",
+        "shift-large"
+      ]
+    },
+    {
+      "name": "immediate",
+      "vertex": "raw-immediate-vertex",
+      "fragment": "raw-immediate-fragment",
+      "oracle": "immediate",
+      "vectors": [
+        "zeros-edges",
+        "nan-inf",
+        "subnormal-sign",
+        "alternating",
+        "shift-small",
+        "shift-large"
+      ]
+    },
+    {
+      "name": "maximal",
+      "vertex": "raw-maximal-vertex",
+      "fragment": "raw-maximal-fragment",
+      "oracle": "maximal",
+      "vectors": [
+        "zeros-edges",
+        "nan-inf",
+        "subnormal-sign",
+        "alternating",
+        "shift-small",
+        "shift-large"
+      ]
+    },
+    {
+      "name": "order",
+      "vertex": "raw-order-vertex",
+      "fragment": "raw-order-fragment",
+      "oracle": "or",
+      "vectors": [
+        "zeros-edges",
+        "nan-inf",
+        "subnormal-sign",
+        "alternating",
+        "shift-small",
+        "shift-large"
+      ]
+    }
+  ],
+  "recoverySingles": [
+    "legacy-vertex",
+    "legacy-fragment",
+    "raw-vertex",
+    "raw-fragment"
+  ],
+  "recoveryPairs": [
+    "raw-legacy-flat",
+    "legacy-raw-smooth"
+  ]
+}

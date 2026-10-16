@@ -1,0 +1,40 @@
+{
+  "runtime_head": "9123bc06cec84f4c581aa877b1126babff245a99",
+  "isolated_checkout": "/tmp/wasm-vm-mips-verifier-9123bc",
+  "new_test": "crates/core/tests/integer_replay_alias.rs",
+  "commands": [
+    {
+      "command": "cargo fmt --all --check",
+      "exit": 0,
+      "log": "novel-fmt.log"
+    },
+    {
+      "command": "INTEGER_REPLAY_EVIDENCE_DIR=<verifier/guest> cargo test -j 4 -p wasm-vm-core --features trace --test integer_replay_alias -- --nocapture",
+      "exit": 0,
+      "log": "novel-attacks.log",
+      "passed": 2
+    },
+    {
+      "command": "cargo clippy -j 4 -p wasm-vm-core --features trace --test integer_replay_alias -- -D warnings",
+      "exit": 0,
+      "log": "novel-clippy.log"
+    }
+  ],
+  "artifacts": {
+    "crates/core/tests/integer_replay_alias.rs": "f2bd1a92f51165d50dd17973ae82391002ef9f8ef40458bfdc776aaa58ddd226",
+    "evidence/mips-integer-replay/verifier/guest/integer-boundaries.states": "b7b550585168ebd78293f05a84cc1673d4c5fcf52f4dfbdac808ef49718f0286",
+    "evidence/mips-integer-replay/verifier/guest/integer-boundaries.trace": "351c42e4d7a7f8bd3c31a28e2ae07821d1034396ab4551aa22459bc314f07ae5",
+    "evidence/mips-integer-replay/verifier/guest/integer-compressed-trap.states": "8d1380e24f5fb405a054cfd3ea56751bee6bb2fc0aff964cda493400e515023c",
+    "evidence/mips-integer-replay/verifier/guest/integer-compressed-trap.trace": "1e5914c58ff2cc0509298fe6600b11f0da5a9a368fcd97e7a097a1bc5094a455",
+    "evidence/mips-integer-replay/verifier/guest/integer-deferred-wrap.trace": "6598d6945c5ea57e928d6042f31bdea0e978736cbe689825f9aa93a90f306e9c",
+    "evidence/mips-integer-replay/verifier/guest/integer-invalidation.states": "afdfc3e1eeb9806aa1853bc83f3562ba08f97bfc36d7f76b426d92d7669f2fc6",
+    "evidence/mips-integer-replay/verifier/guest/integer-invalidation.trace": "4b7e6c14394e1cc95a3f762185304469b3b8ca874c60fd7ad842b1f8b78690cb",
+    "evidence/mips-integer-replay/verifier/guest/integer-opcodes.states": "9013fafb34ab4e982dd2b29284892aee450b6c67304a80b43a97e496fc8ff62b",
+    "evidence/mips-integer-replay/verifier/guest/integer-opcodes.trace": "92edf427357e284f1d747473ace567557fffc68544f84881cdd3382397cb4dce",
+    "evidence/mips-integer-replay/verifier/guest/integer-virtual-alias.trace": "eca4d9ba3aa696b36bdc3017f0d1502cd32a09241b8f0791886fa06bcb98fbd4",
+    "evidence/mips-integer-replay/verifier/guest/integer-wrapping-auipc.states": "85eba745abb3a917d3b9db624f176308790da2d880217342e2123c4ee3918d00",
+    "evidence/mips-integer-replay/verifier/guest/integer-wrapping-auipc.trace": "8d75f8ea5fcde9a5e2ec4d0d01904ad6559681a7048a2e626e1f12c7ecbdf8f0",
+    "evidence/mips-integer-replay/verifier/guest/integer-wrapping-c.states": "4e85467db94e0a440e10fa909d99b2768d43548862784e53f66f19f5533065f9",
+    "evidence/mips-integer-replay/verifier/guest/integer-wrapping-c.trace": "83890c42a906a8e393051bddb27a6aaddfc72f377cefdd116a03b255c4841eee"
+  }
+}

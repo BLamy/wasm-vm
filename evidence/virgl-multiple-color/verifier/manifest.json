@@ -1,0 +1,69 @@
+{
+  "schema": "original-multiple-color-critic-seal-v1",
+  "task": "E6-T11d34",
+  "verdict": "verified",
+  "runtimeSourceHead": "fd425d1052ab139e89178729bbb72ce89a3521f1",
+  "workerSubmissionHead": "d1d5c3914b020c90e91fd633ccfe0adf2dc57d29",
+  "predecessor": "1206a5beb3026de10457cd395d249daf8aff9966",
+  "records": 2156,
+  "reopenedMembers": 2156,
+  "uncompressedBytes": 210429716,
+  "archiveBytes": 45992711,
+  "archiveSha256": "a9efc528ee4266f421aa47deaec2edb8004fce6a5ec0a618dde4795ddc7d56b5",
+  "recordIndexSha256": "59d66f1a5f47ac43eef8f02d1438df324b27799707c03c93fb48a81541871968",
+  "workerArchiveSha256": "5a2bb69d86959fa0eda75da40342a31c760cae2b713dc2a956e9451490d322b9",
+  "nestedWorkerReopenedMembers": 102863,
+  "completeDependencyAuthentication": [
+    {
+      "path": "evidence/virgl-integer-image-consumer/worker",
+      "members": 78714,
+      "bytes": 846541987,
+      "manifest": "aa8415f0b6d7518553110f222032203e5c5fd570eb29f658696e22cb38ec4404",
+      "index": "2220c476a1feafe3fe7c9228347d0fae4af07f3888f87a52bbc51c8e869568ce",
+      "archive": "4bf86adde84cf2ea958e195f6740a848d67f0641952cf4ab00d613f5cae6db3a",
+      "sourceHead": "ba5370a38126048d64d9353e9be5317a69e2d538"
+    },
+    {
+      "path": "evidence/virgl-integer-image-consumer/verifier",
+      "members": 82519,
+      "bytes": 1120265735,
+      "manifest": "9e0bf783f5bfbafea6f8b7a477dbe7f70872036bcbba5650081977b641ab8f20",
+      "index": "ebf663a084b5b0b8e3b932129416a31e5fec5ec945f6dab3ba442a020b35430d",
+      "archive": "9a6be3ab3b55cf5c8d1cfb2a7f3283213a5a8bfa8769cad190840c6edbc2592c",
+      "sourceHead": "ba5370a38126048d64d9353e9be5317a69e2d538"
+    },
+    {
+      "path": "evidence/virgl-integer-image-shader/worker",
+      "members": 22894,
+      "bytes": 309309472,
+      "manifest": "43f667bc6a3f300e08ed945e507afc3b31ae1eab06208019f2676309e56968f1",
+      "index": "7d670a9b824d7fc96f02c307b5e98d505658af4876430e80e77ac61b41e3f8dd",
+      "archive": "6489b7d7b97effba826b3f8555efc192b9dcfae59ca8a232142cea6355f68be0",
+      "sourceHead": "3c0a3e348048c0ff293a6b67638a96fb5c3561cb"
+    },
+    {
+      "path": "evidence/virgl-integer-image-shader/verifier",
+      "members": 17249,
+      "bytes": 192955632,
+      "manifest": "13ae15bb1c1c83c83227661bd6c53eaefcd65abf96dbf4664b9d14e510906a4c",
+      "index": "0ed286ce446acf0c406cd1d578254778ea47e00e9430f1d5f6ccab1494e8de5d",
+      "archive": "1fbd03f22c08eeb555df4645fa1d4ba67d5093e8cd1fb8309854676cc8bd5bf8",
+      "sourceHead": "a899bee2eb6a50cf472c11181eb3bb9f89746e6d"
+    }
+  ],
+  "predictionsSha256": "e9abcc463e0e4e4f922dff8908e791e76208abb473c622f8e6b4162bcb81a3d0",
+  "verdictSha256": "807f22dfb7941e5c2f020301755e90ad7b8965c2c4ce19fc3a07153ea4901ebe",
+  "sourceClosureIncluded": true,
+  "promotedSources": {
+    "renderer/virgl-command/tests/standard-multiple-color-critic.mjs": "eb17ae4f2d6177d83abd6abec6cf9225e47953bfae0cbdb62f5043a1cc9988ac",
+    "renderer/virgl-command/tests/standard-multiple-color.mjs": "da5df6634be6b3709f93cffcec0edef3f313d7613938270d4ca128066a5aae70",
+    "tools/verify-virgl-standard-multiple-color.mjs": "8494be63246245dcbfca52fccf0628a5e36b525797672ecd43203234854a2e7d",
+    "tools/verify-virgl-standard-multiple-color.sh": "772d5be8155eff4f680900741cfe143c8a6a1cd835ca202d9f5e45243d5181a0",
+    "tools/virgl-multiple-color/receipt.py": "80a3a0cdf520e098d5dad8508704a23ee32d4420bde5eff100f641ebe6075e0b"
+  },
+  "actualWasmSha256": "acbe036afcdc4f1d8aa8cfb0fb107f48ba27759a6af4a7b9d6c83e3aa679d6cc",
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "productionDrawAuthority": false,
+  "remainingOwnedProcesses": []
+}

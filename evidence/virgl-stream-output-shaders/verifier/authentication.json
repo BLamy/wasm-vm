@@ -1,0 +1,59 @@
+{
+  "schema": "stream-output-shaders-independent-authentication-v1",
+  "status": "passed",
+  "worker": {
+    "family": "virgl-stream-output-shaders/worker",
+    "manifestSha256": "cd82a9b788f33e1261f62694c40f0d22d4eedbe591a8f53a7204dbdd43440b1d",
+    "indexSha256": "fbe6f40c7fa30e96fd22d7e957bc1dc870ae7c682a3d1ff06befb9fcd02cd653",
+    "archiveSha256": "08ded61150b358dfe04839c5931ca754b9681c9a6c04d009e30e3690e85eb98d",
+    "archiveBytes": 24367262,
+    "reopenedMembers": 2438,
+    "storedBodies": 1186,
+    "backwardLinks": 1252,
+    "gzipEofChecked": true,
+    "reopenedRoot": "target/evidence/d65-critic-opened-01/worker"
+  },
+  "deployment": {
+    "family": "virgl-stream-output-shaders/deployment",
+    "manifestSha256": "94011feafe8720006fea2c4eab4e529c5d7b826d76cb590c86034001a673d8a0",
+    "indexSha256": "21f46e2c96ed20e1cb98dbdab017571fcc59bb3e962b3b82cebaefe8f96d67b0",
+    "archiveSha256": "195e96c562584c708853b183172ec801fe5bfaf40571be5b328ee35678e4b38c",
+    "archiveBytes": 55478869,
+    "reopenedMembers": 858,
+    "storedBodies": 646,
+    "backwardLinks": 212,
+    "gzipEofChecked": true,
+    "reopenedRoot": "target/evidence/d65-critic-opened-01/deployment"
+  },
+  "heldPredecessors": [
+    {
+      "path": "evidence/virgl-dimensional-depth-surfaces/worker",
+      "manifestSha256": "71593ab497a192777ed4970ed58537157f217f9de901b9a91f470754d28e7f74",
+      "indexSha256": "65ed9a44410323a50cb3eea97ea99443d4dc5060399a22c90a923faf4cad1cdb",
+      "archiveSha256": "673ccd20460616243bfb4007ba6fbb8ca236de4e230c8c2f5c97c57822976fd4",
+      "archiveBytes": 203689432,
+      "reopenedMembers": 7818,
+      "gzipEofChecked": true,
+      "unchanged": true,
+      "authority": "Carried independent HELD D64 facts at the unchanged source/dependency/evidence boundary."
+    },
+    {
+      "path": "evidence/virgl-dimensional-depth-surfaces/verifier",
+      "manifestSha256": "fbac9176df4d3071f2d03759c34b9f9e3166ea8dc2927557e7cd31ebe8375bb2",
+      "indexSha256": "b033d75be107b487dccc5fe42dbb78a155489ee5b77f943ed4e34ea694d01738",
+      "archiveSha256": "d96e8242c18f4f6e937f3c322d4b0c87c91bc8ecbe3b974939ffdd0c733bf8b8",
+      "archiveBytes": 5702744,
+      "reopenedMembers": 161,
+      "gzipEofChecked": true,
+      "unchanged": true,
+      "authority": "Carried independent HELD D64 facts at the unchanged source/dependency/evidence boundary."
+    }
+  ],
+  "coldHead": "31bf0781db74fea94f51c9d6fa3217d16227bc99",
+  "submission": "0c167360a8d01a1e51b7be1309d6caf70fbff611",
+  "coldCommands": 42,
+  "coldCleanBefore": true,
+  "coldCleanAfter": true,
+  "runtimeUnchangedByProofRepair": true,
+  "currentSourceBodiesEqualFrozenReceipt": true
+}

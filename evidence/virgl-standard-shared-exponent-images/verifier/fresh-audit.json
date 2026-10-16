@@ -1,0 +1,73 @@
+{
+  "schema": "fresh-original-native-boundaries-audit-v1",
+  "status": "HELD",
+  "predictions": [
+    "P1",
+    "P2",
+    "P3",
+    "P4",
+    "P5",
+    "P6",
+    "P7",
+    "P8",
+    "P9"
+  ],
+  "frozenCriticHead": "90dd309b800762309df6fa2431ba25e76d44a3f5",
+  "counts": {
+    "runs": 102,
+    "originalInputBytes": 27408,
+    "fenceCitations": 135,
+    "nativeComponents": 14832,
+    "publicBytes": 2640,
+    "physicalAllocations": 126,
+    "nativeUploadBytes": 26928,
+    "pboUploads": 66,
+    "paddingBytes": 9978,
+    "physicalFailureCases": 63
+  },
+  "closures": [
+    {
+      "report": "final/sabotage-blue-field/report.json",
+      "sha256": "496a3f7b20aa05b46180995dcb8f620f07851bf8e4f1d64414ad486c2682ea5e",
+      "sources": 279,
+      "served": 19,
+      "status": "failed",
+      "gitHead": "90dd309b800762309df6fa2431ba25e76d44a3f5"
+    },
+    {
+      "report": "final/novel-native/report.json",
+      "sha256": "6ff073db92b29da6ea161740bd5afcd5c254642e883efa316947082e629c4f35",
+      "sources": 279,
+      "served": 19,
+      "status": "passed",
+      "gitHead": "90dd309b800762309df6fa2431ba25e76d44a3f5"
+    },
+    {
+      "report": "final/fresh-boundaries-0xbb67ae85/report.json",
+      "sha256": "ea68283e0e14366c46852f23fdaf6998ec0134595d74031f7eabd8df145f9f66",
+      "sources": 276,
+      "served": 19,
+      "status": "passed",
+      "gitHead": "90dd309b800762309df6fa2431ba25e76d44a3f5"
+    },
+    {
+      "report": "final/fresh-boundaries-0x3c6ef372/report.json",
+      "sha256": "3f30032599d622080d23676f9d06e1969979b5c17f9f6ebcdb7f6f13852b3636",
+      "sources": 276,
+      "served": 19,
+      "status": "passed",
+      "gitHead": "90dd309b800762309df6fa2431ba25e76d44a3f5"
+    },
+    {
+      "report": "final/fresh-boundaries-0x6a09e667/report.json",
+      "sha256": "899465975529977ab6d1db785736011dbaf005620bb199f508cab20466d4a59c",
+      "sources": 276,
+      "served": 19,
+      "status": "passed",
+      "gitHead": "90dd309b800762309df6fa2431ba25e76d44a3f5"
+    }
+  ],
+  "citations": 300,
+  "citationsSha256": "effb5e23f62dcc38f3c511b7c0bb4960e10b71561951c67451ae545038b9ab81",
+  "originalRuntimeUnchanged": true
+}

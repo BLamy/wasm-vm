@@ -1,0 +1,63 @@
+{
+  "status": "passed",
+  "head": "f695429d0b2ba00ede5ef229ca7c1fea468ac3bb",
+  "commands": [
+    [
+      "clang",
+      "-std=gnu11",
+      "-g",
+      "-O1",
+      "-fsanitize=address,undefined",
+      "-fno-omit-frame-pointer",
+      "-I",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/raw_bits.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-numeric-floats/verifier/knowledge_attack.c",
+      "-o",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-numeric-floats/verifier/knowledge-attack"
+    ],
+    [
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-numeric-floats/verifier/knowledge-attack"
+    ]
+  ],
+  "stats": {
+    "ok": true,
+    "instructions": 74110,
+    "rejectedWithoutMutation": 18050,
+    "factAssertions": 23715200,
+    "instructionModeAssertions": 889320,
+    "shadowAssertions": 3051568,
+    "decodeAssertions": 718784,
+    "aliases": 15248,
+    "opcodes": [
+      5399,
+      5337,
+      5366,
+      5424,
+      5408,
+      5402,
+      5283,
+      5461,
+      5431,
+      5432,
+      5473,
+      5533,
+      5461,
+      718,
+      695,
+      276,
+      2011
+    ]
+  },
+  "sources": {
+    "renderer/virgl-shader/raw_bits.c": "43609200b4e60b741a6f17234d3442af3cda56f5dc07b26d3631e63555ef2444",
+    "renderer/virgl-shader/raw_bits.h": "529f5af9eba18334be5fc4c59b0f60c2c9c5438961e71a2000428c63c420dac7",
+    "evidence/virgl-numeric-floats/verifier/knowledge_attack.c": "04cc03e9bbf011a84dace86267de2965ab316e054432457f5ee306474b3b4226",
+    "evidence/virgl-numeric-floats/verifier/run_knowledge.py": "b5347ad2a0f41ecf7258c7b7f8d330e1c6222e0691b20c9e2d4dcf8e650defd2"
+  },
+  "records": {
+    "knowledge-report.json": "d8579e5f3320bd89d8a2dce58a6570afbd76df6c3e36b76941d793928b9fd3a1",
+    "knowledge.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "binarySha256": "0a102481c4bb4ddc90800c072b48165af0f512a669e24daff1317ebc0b17d90b"
+}

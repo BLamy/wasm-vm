@@ -1,0 +1,134 @@
+{
+  "outcome": "negative; no production optimization retained",
+  "baselineRuntime": "0a5f7bd7a1f4e55878d314cd4d65420a6ba1ff98",
+  "baselineAndFinalWasmSha256": "f8b40d93039a9bb454250df40592e8c1d62144cac600bdcd82ea74098d7bb516",
+  "candidates": [
+    {
+      "name": "Sparse bit iteration",
+      "report": "evidence/omarchy-profile/sparse-handoff-r1/screen2/report.json",
+      "reportSha256": "4b402c8695b3f3eca48434ac8f6c60028db7a0062b4bbc35f601c489e5460ff6",
+      "sourceSha256": "970f5a73f8474b6df205ad69f13ce699a2475e587fb74b2c960e35d9d02b50c7",
+      "harnessSha256": "a299bd2be92b4486ed233b38c5e972aac63c53f13321d8f014c5ca46e13b6d04",
+      "wasmSha256": "ec25747bd86524ac7cacf6dc6a687c98bbcea055bbbdfca658088772ec32f2ad",
+      "pairedRatios": {
+        "empty": 1.028436509041963,
+        "one": 1.0268921994943567,
+        "sparse": 1.010453828845618,
+        "dense": 0.9391066342834689
+      },
+      "reportedAcceptanceHeld": false
+    },
+    {
+      "name": "Sparse + full bulk copy (expanded run)",
+      "report": "evidence/omarchy-profile/sparse-handoff-r1/final/paired/report.json",
+      "reportSha256": "0348675cfbd8405720949fd4cad44f017497a73072bd075db25855f3b188f9d9",
+      "sourceSha256": "40f9a9dabc7c209e7d0deef18392c5b0444104a5538329c5e3df2fe9548fcc22",
+      "harnessSha256": "d63a39d2cb67e548698ba0ba289cab705f6e263ce1b2966872ec32b911ad9cfe",
+      "wasmSha256": "10bfb9c87f14e1e9f483466bb323ec79a981bb75d2d4c1a66d72c8f5f2d711f3",
+      "pairedRatios": {
+        "empty": 1.02379218230949,
+        "one": 1.0341440593510378,
+        "sparse": 1.0088354683919818,
+        "half-dense": 0.985102422707686,
+        "near-dense": 0.9314317080811633,
+        "dense": 1.0695364211004457
+      },
+      "reportedAcceptanceHeld": false
+    },
+    {
+      "name": "Threshold + iterator scan",
+      "report": "evidence/omarchy-profile/sparse-handoff-r2/screen/report.json",
+      "reportSha256": "ed42b9bc959d1921b254298a7d1f9932c2fff2341e99cc3fd6d16049e9b12dd7",
+      "sourceSha256": "ef5fec57a9aff96caf6acb4519c6c2c8cc0c06a112876d325ea43b7d648b7e37",
+      "harnessSha256": "7482deb3fe9594e254b6a4f52f696637c03ea0558d11b17c1283eb76cdd1d612",
+      "wasmSha256": "5bf3564ccc65cf6a62177608d75a729949d80001850eb63d6126d5702b616302",
+      "pairedRatios": {
+        "empty": 1.020857229359569,
+        "one": 1.0313601129567525,
+        "sparse": 1.0112875310318,
+        "eight": 0.9926546845452608,
+        "nine": 0.8579549879499656,
+        "half-dense": 0.8702481413320636,
+        "near-dense": 0.8941937592157294,
+        "dense": 1.0534537696633854
+      },
+      "reportedAcceptanceHeld": false
+    },
+    {
+      "name": "Threshold + fixed-slice scan",
+      "report": "evidence/omarchy-profile/sparse-handoff-r3/screen/report.json",
+      "reportSha256": "a3853ef5e824b48e1bddf780a69ae19bd12fa42999bb73470b177727061fd537",
+      "sourceSha256": "689214793df34abf045eba977162489bb6c7451d5132375bd22f63b901e967fe",
+      "harnessSha256": "a1cc6d85aaab219d01c4bf6d47f5256f15c8b46b7c1a4b83c6cce18f43c4a55d",
+      "wasmSha256": "884c65000d297f7dfb2031686d937abd5f397aae5e790621121c1ebab879771c",
+      "pairedRatios": {
+        "empty": 1.06686963881927,
+        "one": 0.9857066921584231,
+        "sparse": 1.0157737811446266,
+        "eight": 1.004529236531667,
+        "nine": 1.0390231004814188,
+        "half-dense": 1.0518936395516234,
+        "near-dense": 1.0478862769932682,
+        "dense": 1.044185676778876
+      },
+      "reportedAcceptanceHeld": false
+    },
+    {
+      "name": "Empty/full fast paths + fixed-slice scan",
+      "report": "evidence/omarchy-profile/sparse-handoff-r4/screen/report.json",
+      "reportSha256": "843ce839955e2a6caacc228c670e8d9c73478333a7088505c4a9e99f44ca9ccd",
+      "sourceSha256": "67717cb2f4892cb52e0ccba228330e6168d226aeb212229c799f0589d933eb96",
+      "harnessSha256": "a1cc6d85aaab219d01c4bf6d47f5256f15c8b46b7c1a4b83c6cce18f43c4a55d",
+      "wasmSha256": "71a1de48f3c71dfca8f1ccb726a511b52f230930b563d8e7b436126318d30e25",
+      "pairedRatios": {
+        "empty": 1.028090021402047,
+        "one": 0.9761668791428136,
+        "sparse": 1.004268035738096,
+        "eight": 1.0313177733765329,
+        "nine": 1.0277916474315854,
+        "half-dense": 1.0425655021938174,
+        "near-dense": 1.0455864536073658,
+        "dense": 1.0595438378001458
+      },
+      "reportedAcceptanceHeld": false
+    },
+    {
+      "name": "Threshold + forced inlining (screen)",
+      "report": "evidence/omarchy-profile/sparse-handoff-r5/screen/report.json",
+      "reportSha256": "b507fee184b8c0d93c0fd8bb70252d9915d90441c8ff4c871ac30a72f6672af4",
+      "sourceSha256": "fdfed6c0466a7126e2c3b13b632c6b003fbcda9e17e28b901638ffd760ed92f7",
+      "harnessSha256": "a1cc6d85aaab219d01c4bf6d47f5256f15c8b46b7c1a4b83c6cce18f43c4a55d",
+      "wasmSha256": "bf72dd4d1a4fca44be4d1b1b0006466f3cef8faaa9a8d09acd43ef2f5842749b",
+      "pairedRatios": {
+        "empty": 1.0375865842316332,
+        "one": 0.9882404825189609,
+        "sparse": 1.02005391968668,
+        "eight": 0.9945833220477015,
+        "nine": 1.053098019109185,
+        "half-dense": 1.0496405076870394,
+        "near-dense": 1.0530468095292127,
+        "dense": 1.069550007828639
+      },
+      "reportedAcceptanceHeld": true
+    },
+    {
+      "name": "Threshold + forced inlining (repeat)",
+      "report": "evidence/omarchy-profile/sparse-handoff-r5/final/paired/report.json",
+      "reportSha256": "90d62a79cce40186f951c9d4efef6c1879cd4313abb4ca51a4fd3ae972e09f26",
+      "sourceSha256": "fdfed6c0466a7126e2c3b13b632c6b003fbcda9e17e28b901638ffd760ed92f7",
+      "harnessSha256": "4f52599d5f87ac84805ed01e67bc1ac1f65bb7c5fece1695f6da2dd6a42cb974",
+      "wasmSha256": "bf72dd4d1a4fca44be4d1b1b0006466f3cef8faaa9a8d09acd43ef2f5842749b",
+      "pairedRatios": {
+        "empty": 1.0270528555750258,
+        "one": 1.0306173770847833,
+        "sparse": 1.0138260311494256,
+        "eight": 1.0058319665538562,
+        "nine": 1.0390175583668275,
+        "half-dense": 1.0514150113726335,
+        "near-dense": 1.0445386073875524,
+        "dense": 1.0667074533174679
+      },
+      "reportedAcceptanceHeld": false
+    }
+  ]
+}

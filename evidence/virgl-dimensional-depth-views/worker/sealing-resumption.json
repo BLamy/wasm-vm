@@ -1,0 +1,14 @@
+{
+  "schema": "d60-sealing-reopen-interruption-v1",
+  "head": "9698c0a91086cd419087154875d7200efcfded69",
+  "ownedProcess": [
+    "88772",
+    "2012",
+    "04:27",
+    "100.0",
+    "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/Resources/Python.app/Contents/MacOS/Python tools/virgl-dimensional-depth-views/seal.py /tmp/wasmvm-dimensional-depth-views-cold-configuration-final evidence/virgl-dimensional-depth-views/worker"
+  ],
+  "reason": "Archive writer complete; random-access reopening of deduplicated gzip members was CPU-bound. Preserve full archive and finish full-byte checks sequentially.",
+  "archiveBytes": 460967357,
+  "recordIndexSha256": "38dc0b762d1bb5d37229a6ced3ae8b493eb93706cb26f1984b1251b7f83134b9"
+}

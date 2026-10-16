@@ -1,0 +1,34 @@
+{
+  "status": "passed",
+  "sourceHead": "e0bdfe31f959547a1794de5027187ef29abe3d42",
+  "coldCoverageSha256": "a06bf8e24410e66c57073b9404ab7adebe18ac374333a797dba45ad8cebb5a36",
+  "heldWarmCoverageSha256": "e3e008b423761880ee9835c4ba135f5d2f6ed64c65172f1ca6124ac0055ed441",
+  "changedBranchCount": 96,
+  "files": [
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "branches": 66,
+      "allRecordedCountsEqualWarm": true,
+      "unreachableWaivers": []
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "branches": 30,
+      "allRecordedCountsEqualWarm": true,
+      "unreachableWaivers": [
+        {
+          "line": 201,
+          "reason": "Exhaustive opcode switch label is unreachable: raw_record returns for all structured opcodes before reaching any destination-lane switch. The destination-free path has a positive recorded execution count."
+        },
+        {
+          "line": 202,
+          "reason": "Exhaustive opcode switch label is unreachable: raw_record returns for all structured opcodes before reaching any destination-lane switch. The destination-free path has a positive recorded execution count."
+        },
+        {
+          "line": 203,
+          "reason": "Exhaustive opcode switch label is unreachable: raw_record returns for all structured opcodes before reaching any destination-lane switch. The destination-free path has a positive recorded execution count."
+        }
+      ]
+    }
+  ]
+}

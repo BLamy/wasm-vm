@@ -1,0 +1,216 @@
+{
+  "schema": "E6-T11d16-fresh-verifier-verdict-v1",
+  "verdict": "refuted",
+  "status": "in-progress",
+  "workerSubmission": "5dc84364",
+  "recordedRuntimeHead": "01988ea2625edab1669efefec3b7daecd52d64df",
+  "sealingHead": "5535d247a43fd8a04183d8df4fc715a74b451055",
+  "predictions": [
+    {
+      "id": "P1",
+      "result": "HELD",
+      "observed": "Complete worker index/archive,784 exact-head sources,93 generated binaries and273 unchanged carried evidence identities authenticate; exact sole108-byte log appends admitted and16 independent actual-log tamper attacks reject.",
+      "citations": [
+        {
+          "path": "authentication.json",
+          "sha256": "d4c0108295df03ad2c21721453fb95657d182822a8f2b4ccdb427af097047aba"
+        },
+        {
+          "path": "incremental-sealing-attacks.json",
+          "sha256": "6362a82f7e9d692262da5f56065394b953d49a325daf0e361d42c9a2c2079bc3"
+        }
+      ]
+    },
+    {
+      "id": "P2",
+      "result": "HELD",
+      "observed": "Pristine hot/cold custody and frozen-runtime exact head hold; recorded physical hardware is headed Apple M4 Max Metal, enabled WebGL2 and zero browser errors.",
+      "citations": [
+        {
+          "path": "authentication.json",
+          "sha256": "d4c0108295df03ad2c21721453fb95657d182822a8f2b4ccdb427af097047aba"
+        },
+        {
+          "path": "recording-audit.json",
+          "sha256": "a43b420cad59a79f3c52808aa9592dffd3bc22b97ff7b30793222a0b40511a82"
+        }
+      ]
+    },
+    {
+      "id": "P3",
+      "result": "HELD",
+      "observed": "Declared static dimensions0/1/12, vector bounds, sparse holes, duplicate/overlapping declarations and malformed/indirect dimensions behave as recorded; narrow16-case native/Wasm negatives close new grammar paths.",
+      "citations": [
+        {
+          "path": "native-audit.jsonl",
+          "sha256": "6046b7f53fe269e561189cf42ba2ad1d65bd019fb5e4d7256e75978cc9a42135"
+        },
+        {
+          "path": "narrow-audit.jsonl",
+          "sha256": "6f84b653c5b35830487fd0041e45c6a9dd391ad5ed2497599846e775276481e0"
+        }
+      ]
+    },
+    {
+      "id": "P4",
+      "result": "HELD",
+      "observed": "338 complete native/sanitized/Wasm cases per run and all independently reconstructed original token indices/metadata hold within exercised relative offsets up to +/-511 and +/-1023; P13 separately refutes wider valid original offsets.",
+      "citations": [
+        {
+          "path": "native-audit.jsonl",
+          "sha256": "6046b7f53fe269e561189cf42ba2ad1d65bd019fb5e4d7256e75978cc9a42135"
+        }
+      ]
+    },
+    {
+      "id": "P5",
+      "result": "HELD",
+      "observed": "All four stage-zero variants and vertex format composition hold; exact frozen affected old compiler/typed/packed gates preserve old admission isolation.",
+      "citations": [
+        {
+          "path": "native-audit.jsonl",
+          "sha256": "6046b7f53fe269e561189cf42ba2ad1d65bd019fb5e4d7256e75978cc9a42135"
+        },
+        {
+          "path": "retained-audit.json",
+          "sha256": "e56523db7c4c8d488a64ccb2ffc92d948dc144c101ddccee1506695cb8f7247e"
+        }
+      ]
+    },
+    {
+      "id": "P6",
+      "result": "HELD",
+      "observed": "125 healthy physical draws per run and all original GPU buffers/raw words/native ranges/reflection reconstruct correctly; slot12 direct words and all27 simultaneous native blocks hold.",
+      "citations": [
+        {
+          "path": "hardware-audit.jsonl",
+          "sha256": "81bba698d9747706a160b0098b406637514f7955e6fb3ea93a71c46c04993afe"
+        },
+        {
+          "path": "recording-audit.json",
+          "sha256": "a43b420cad59a79f3c52808aa9592dffd3bc22b97ff7b30793222a0b40511a82"
+        }
+      ]
+    },
+    {
+      "id": "P7",
+      "result": "HELD",
+      "observed": "Every complete all-bank pixel is[273,299,325,351], every four-format pixel[-0.75,11.5,10.75,8]; unused declarations remain metadata and native reflection holds.",
+      "citations": [
+        {
+          "path": "hardware-audit.jsonl",
+          "sha256": "81bba698d9747706a160b0098b406637514f7955e6fb3ea93a71c46c04993afe"
+        }
+      ]
+    },
+    {
+      "id": "P8",
+      "result": "HELD",
+      "observed": "All six worker hardware faults and one critic oracle sabotage finish actual fences before pixel assertion fails. Critic48 native draws/3072 pixels hold across3 distinct seeds, high unsigned attribute15, all slot0 variants, reversed stage ranges and storage after caller mutation.",
+      "citations": [
+        {
+          "path": "hardware-audit.jsonl",
+          "sha256": "81bba698d9747706a160b0098b406637514f7955e6fb3ea93a71c46c04993afe"
+        },
+        {
+          "path": "novel-hardware-audit.json",
+          "sha256": "82ce6f4c9738682c02b4470b09b67730cdc7986c18b03326a79ffb05f94641de"
+        },
+        {
+          "path": "novel-hardware-audit.jsonl",
+          "sha256": "5acd0be3f53b342416731d8d71cfd75216df387bd9697874e388766ae44e0657"
+        }
+      ]
+    },
+    {
+      "id": "P9",
+      "result": "HELD",
+      "observed": "93 genuine allocation faults per run recover exactly; complete caller sources are owned before first semantic allocation. Actual fixed16MiB memory/checker OOM recover, optimized pair195072 and stage139376 stay below262144.",
+      "citations": [
+        {
+          "path": "authentication.json",
+          "sha256": "d4c0108295df03ad2c21721453fb95657d182822a8f2b4ccdb427af097047aba"
+        },
+        {
+          "path": "native-audit.jsonl",
+          "sha256": "6046b7f53fe269e561189cf42ba2ad1d65bd019fb5e4d7256e75978cc9a42135"
+        }
+      ]
+    },
+    {
+      "id": "P10",
+      "result": "HELD",
+      "observed": "Strict getter/proxy/metadata selectors, owned snapshots/deep freeze, separate factory memory and fixed OOM recovery hold in authenticated actual node transcripts and code counters.",
+      "citations": [
+        {
+          "path": "recording-audit.json",
+          "sha256": "a43b420cad59a79f3c52808aa9592dffd3bc22b97ff7b30793222a0b40511a82"
+        },
+        {
+          "path": "coverage-classification.json",
+          "sha256": "3a64dbb5731bb7eb3b9d19b8fd0413973f336f4f4946f0a67e21d4cf9d89dead"
+        }
+      ]
+    },
+    {
+      "id": "P11",
+      "result": "HELD",
+      "observed": "All33 files/57 renderer hunks classified against811 full LLVM regions,195 branches and351 per-record narrow V8 intervals; all16 full LLVM exports independently regenerated from sealed raw profiles/binaries; explicit defensive/harness/vendor diagnostic waivers only.",
+      "citations": [
+        {
+          "path": "coverage-classification.json",
+          "sha256": "3a64dbb5731bb7eb3b9d19b8fd0413973f336f4f4946f0a67e21d4cf9d89dead"
+        }
+      ]
+    },
+    {
+      "id": "P12",
+      "result": "HELD",
+      "observed": "All273 historical evidence records are unchanged at the dependency head; affected669/59/48-case and129/214/348-frame frozen gates hold. No production resource, API/capset or guest execution claim.",
+      "citations": [
+        {
+          "path": "authentication.json",
+          "sha256": "d4c0108295df03ad2c21721453fb95657d182822a8f2b4ccdb427af097047aba"
+        },
+        {
+          "path": "retained-audit.json",
+          "sha256": "e56523db7c4c8d488a64ccb2ffc92d948dc144c101ddccee1506695cb8f7247e"
+        }
+      ]
+    },
+    {
+      "id": "P13",
+      "result": "FAILED",
+      "prediction": "Preserve valid original signed16 relative offsets with compensating ARL address selecting declared vector0.",
+      "observed": "Original tgsi_text_translate including upstream sanity admits all66 probes, with exact token slot/index. Selected native and fixed-memory Wasm reject38 valid in-range reads. VS slot12+1024 with base-1024 rejects at line32; corresponding FS rejects at65. Slot0 +/-512 and full signed16 endpoints also reject.",
+      "citation": {
+        "path": "original-offsets.jsonl",
+        "lines": [
+          32,
+          65
+        ],
+        "sha256": "dbd3a12d8c3415de6ae297e5a8dc834734642f8b17feb3de0c9b0156796dcb6b"
+      },
+      "recheck": {
+        "path": "offsets-wasm-recheck.jsonl",
+        "lines": [
+          32,
+          65
+        ],
+        "sha256": "d9dad325231998ae721659c47325a818c06c9842517b91356bac5a4455c665d3"
+      },
+      "diffCitation": "renderer/virgl-shader/standard_guard.c:72 bounds indirect signed offset with the storage-vector maximum; constant_indices passes511/1023.",
+      "primaryCitations": [
+        "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_text.c:1948 (translate includes original sanity)",
+        "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_text.c:979 (original signed vector index)",
+        "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_sanity.c:279 (indirect Index is relative offset, no range checking)",
+        "renderer/virgl-shader/vendor/src/gallium/include/pipe/p_shader_tokens.h:757 (signed16 Index)"
+      ],
+      "demand": "Keep direct vector/dimension/declaration bounds; admit and preserve the representable original signed16 relative offset, and record original token/native/Wasm/real GPU raw-word evidence for compensating bases in both stages, slots0/1/12 and plain slot0. Reject unrepresentable +32768/-32769, rerun risk-selected runtime gates at final frozen head and final pristine clone; carry unchanged HELD proofs."
+    }
+  ],
+  "incrementalSealingException": "HELD: only two packaging files changed; runtime/acceptance sources and final scrubbed cold clone identical, receipt prefix and exact final suffix separately preserved and independently authenticated.",
+  "suite": "Permanent promotion deferred under AGENTS SUITE-only-if-correctness-and-coverage-hold. Preserve complete novel oracle and native finding for semantic repair.",
+  "implementationEdited": false,
+  "productionAuthority": false
+}

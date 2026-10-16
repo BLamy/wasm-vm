@@ -1,0 +1,101 @@
+{
+  "schema": "original-corpus-lossless-evidence-v1",
+  "task": "E6-T12f6",
+  "gitHead": "b961c772d0c79141c0c7050f9deb0c1cb94905f4",
+  "runtimeParent": "a80ba9e929698c6d582589856822c18aad8c513c",
+  "integrationCommit": "f19544c691c7ada4182a81517210188488d5c151",
+  "archives": [
+    {
+      "path": "worker.tar.gz",
+      "bytes": 23967104,
+      "sha256": "1fc14df7ef7abf6c59d4bb41647636be90b2dcbb3d2f80d071e8b05b82f8482d"
+    },
+    {
+      "path": "cold.tar.gz",
+      "bytes": 23981965,
+      "sha256": "dff685c3c517135f43df8a2212d573e2c03e12330ebbaf69c01651aaff149028"
+    }
+  ],
+  "receipts": [
+    {
+      "path": "worker-receipt.json",
+      "bytes": 41432,
+      "sha256": "70991e5b2576d307aef795a0d2563611ec7a47051339cada7793c2d53029689f"
+    },
+    {
+      "path": "cold-receipt.json",
+      "bytes": 41432,
+      "sha256": "70991e5b2576d307aef795a0d2563611ec7a47051339cada7793c2d53029689f"
+    },
+    {
+      "path": "cold-report.json",
+      "bytes": 43257,
+      "sha256": "727c23defc30f850a746cd1bca92e0b64b3ac0ce17d3fd6c0b740479d89a9fd1"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "worker-native",
+      "bytes": 3318936,
+      "sha256": "6e0cd01bf98112b8871aae832b689251523d195f95e38b47728ea8e71d8a647a"
+    },
+    {
+      "path": "artifacts/worker/virgl-shader.mjs",
+      "bytes": 9285,
+      "sha256": "45dccef6ff61f9f01a63b86b40eb6c621fa442e39cbf04bbbb79446e5b372e65"
+    },
+    {
+      "path": "artifacts/worker/virgl-shader.wasm",
+      "bytes": 313935,
+      "sha256": "1f26f78f5ba3516e98ea701f3e85e46364b3334cc855e86f08772dd949de299a"
+    },
+    {
+      "path": "cold-native",
+      "bytes": 3318936,
+      "sha256": "6e0cd01bf98112b8871aae832b689251523d195f95e38b47728ea8e71d8a647a"
+    },
+    {
+      "path": "artifacts/cold/virgl-shader.mjs",
+      "bytes": 9285,
+      "sha256": "45dccef6ff61f9f01a63b86b40eb6c621fa442e39cbf04bbbb79446e5b372e65"
+    },
+    {
+      "path": "artifacts/cold/virgl-shader.wasm",
+      "bytes": 313935,
+      "sha256": "1f26f78f5ba3516e98ea701f3e85e46364b3334cc855e86f08772dd949de299a"
+    }
+  ],
+  "screenshot": {
+    "path": "browser.png",
+    "bytes": 55991,
+    "sha256": "e4d81358076a95bf65af0ac897e0923df3c54e05936c2b26d3d035265a976062"
+  },
+  "inventories": [
+    {
+      "path": "worker-records.json",
+      "bytes": 37538,
+      "sha256": "6ebe980e8f41ba06072876ed1530fffb131165d4768eccea215499efeea95ef7"
+    },
+    {
+      "path": "cold-records.json",
+      "bytes": 40306,
+      "sha256": "cc630b8b39bc49c5b9a883ed776a470cd509830dd73002362af029405c987dd1"
+    }
+  ],
+  "workerRecordedFiles": 227,
+  "coldRecordedFiles": 229,
+  "coldAcceptanceFiles": 227,
+  "diagnostics": [
+    {
+      "path": "diagnostics/initial-receipt-gap.log",
+      "bytes": 14242,
+      "sha256": "4b57ed255a52587fd118ac59a2f1d915e60a29b0eb6937edeb3d14b2a17a2802"
+    },
+    {
+      "path": "diagnostics/initial-cold-report.json",
+      "bytes": 903,
+      "sha256": "314df3a1aa1021b6506acb6ac8921404cdd3fb08a4448f9bffae3ff2618c606d"
+    }
+  ],
+  "boundary": "The final pristine-clone canonical acceptance is also the worker happy recording. Every acceptance and cold report/log file is included. Each archive member was streamed and compared to the original size and SHA-256; original inventories were rechecked. Actual native/Wasm artifacts match recorded source/binary digests. No production guest negotiation, full compositor, MIPS/FPS or deployment claim."
+}

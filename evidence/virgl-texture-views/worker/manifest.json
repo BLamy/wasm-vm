@@ -1,0 +1,23 @@
+{
+  "schema": "virgl-texture-view-worker-seal-v1",
+  "task": "E6-T12g4",
+  "sourceHead": "7b4fbb11b3d386319b7050d7fc1e0442494d4f68",
+  "base": "96d6b83fcde1765fc5e931a95808629f78d37b60",
+  "boundary": "Original selected VIEW/SAMPLER and independent synthetic hardware view pixels, canonical programs and bounded variants; production negotiation remains disabled.",
+  "records": 63,
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 3120435,
+    "sha256": "de6d0334fed7059bb9af7dfaa5bd52ed2531089091ef1ce74e65970bb0789830"
+  },
+  "recordIndex": {
+    "path": "records.json",
+    "bytes": 10328,
+    "sha256": "5df25538360b1290ceec6cb23213b4c139635a8bdb0ca146317b9207ca0d58e0"
+  },
+  "receiptSha256": "0e05457e623069ada8754571f567d1dc625189fa7440a2e1ee1dab7f76070849",
+  "coldReportSha256": "ed88346b27cf7b1f9312e8a5f675ff7a8d2322bf03b44f9d21fc596dd790de0a",
+  "coldReceiptSha256": "33530f41598a57c020cefe28988fdac00af6104e07388bfec1a20bbb5ff570d6",
+  "nativeAssertions": 294,
+  "hardwareAssertions": 4870
+}

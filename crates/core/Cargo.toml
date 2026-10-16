@@ -21,6 +21,11 @@ trace = []
 # E5-T07a: retain a bounded, host-readable virtio-gpu controlq command log for the
 # native first-light proof. The production path never enables recording at runtime.
 gpu-trace = []
+# Explicit fixture constructors only; never changes default GPU negotiation.
+virgl-control-proof = ["virgl-renderer"]
+# Retained renderer transport. Default devices still negotiate the 2D profile;
+# production capabilities require an explicit qualified host installation.
+virgl-renderer = []
 # E4-T05: default the predecoded block cache ON at construction (the runtime `set_block_cache`
 # toggle still overrides). OFF by default so the normal build keeps the legacy decode path; the
 # differential harness flips the runtime flag in one binary to prove byte-identical traces.
@@ -45,6 +50,8 @@ criterion = { version = "0.5", default-features = false, features = ["cargo_benc
 proptest = "1"
 # Parallelizes the exhaustive 2^32 decode sweep (E0-T21); native-only, test-scoped.
 rayon = "1"
+syn = { version = "2", features = ["full", "visit"] }
+proc-macro2 = "1"
 
 [[bench]]
 name = "mmio_dispatch"

@@ -1,0 +1,66 @@
+bash tools/verify-virgl-instanced-stencil-critic.sh
++ git rev-parse HEAD
+ea48669715abe39b966627a6ed7606d901aa2263
++ git diff --check
++ for file in renderer/virgl-command/tests/standard-instanced-stencil-critic.mjs tools/virgl-instanced-stencil/critic-fixtures.mjs tools/verify-virgl-instanced-stencil.mjs
++ node --check renderer/virgl-command/tests/standard-instanced-stencil-critic.mjs
++ for file in renderer/virgl-command/tests/standard-instanced-stencil-critic.mjs tools/virgl-instanced-stencil/critic-fixtures.mjs tools/verify-virgl-instanced-stencil.mjs
++ node --check tools/virgl-instanced-stencil/critic-fixtures.mjs
++ for file in renderer/virgl-command/tests/standard-instanced-stencil-critic.mjs tools/virgl-instanced-stencil/critic-fixtures.mjs tools/verify-virgl-instanced-stencil.mjs
++ node --check tools/verify-virgl-instanced-stencil.mjs
++ python3 -m py_compile tools/virgl-instanced-stencil/critic_receipt.py
++ bash -n tools/verify-virgl-instanced-stencil-critic.sh
++ python3 tools/virgl-instanced-stencil/predecessor.py /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-critic-ea486697/predecessor
+{"status": "passed", "reopenedMembers": 97179, "generated": {"renderer/virgl-shader/build/wasm/virgl-shader.mjs": "2fe4bfc079c0149817f8842e400e4567757da05b0e4e6d73689605a42aea0e05", "renderer/virgl-shader/build/wasm/virgl-shader.wasm": "41afa61d8a42c547c7a8c4cc261ee4e689039d0edc62b98d3ecf448c3fca965d"}}
++ node tools/virgl-instanced-stencil/metadata.mjs /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-critic-ea486697/metadata
+{"status":"passed","rows":84,"sha256":"b3bf8afe269b60fff1de63c4b08558465e3e2263b68423d6dc5f3858ae26f33d"}
++ for seed in 0x510e527f 0x9b05688c 0x1f83d9ab
++ node tools/verify-virgl-instanced-stencil.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-critic-ea486697/boundaries-0x510e527f --mode boundaries --seed 0x510e527f
+Original instanced native S8 stencil acceptance passed
++ node tools/virgl-instanced-stencil/values.mjs /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-critic-ea486697/boundaries-0x510e527f
+{"status":"passed","counts":{"runs":24,"frames":40,"pixels":20480,"nativePasses":960,"normalizedBytes":1152},"differences":0}
++ python3 tools/virgl-ordered-stencil/physical.py /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-critic-ea486697/boundaries-0x510e527f
+{"schema": "original-ordered-stencil-physical-v1", "status": "passed", "reportSha256": "0d59c79f5dbb8213a8322dc82b56141a77025a441c1113aa31709683ecf2b56d", "counts": {"runs": 24, "bodies": 1596, "consumedSyncs": 424, "disposalOnlySyncs": 8, "blitWriters": 32, "fencedCPUReads": 372, "synchronousCPUReads": 0}, "oracleImportsProductCode": false, "allCompleteBodiesReopened": true}
++ node tools/verify-virgl-instanced-stencil.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-critic-ea486697/novel-0x510e527f --mode critic-novel --seed 0x510e527f
+Original instanced native S8 stencil acceptance passed
++ node tools/virgl-instanced-stencil/values.mjs /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-critic-ea486697/novel-0x510e527f
+{"status":"passed","counts":{"runs":2,"frames":2,"pixels":4290,"nativePasses":224,"normalizedBytes":192},"differences":0}
++ python3 tools/virgl-ordered-stencil/physical.py /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-critic-ea486697/novel-0x510e527f
+{"schema": "original-ordered-stencil-physical-v1", "status": "passed", "reportSha256": "0c4d1f908ab2d1012321a9c6dddff30ad084fdc24f86ef82e80505cda5c3a597", "counts": {"runs": 2, "bodies": 84, "consumedSyncs": 14, "disposalOnlySyncs": 0, "blitWriters": 0, "fencedCPUReads": 16, "synchronousCPUReads": 0}, "oracleImportsProductCode": false, "allCompleteBodiesReopened": true}
++ for seed in 0x510e527f 0x9b05688c 0x1f83d9ab
++ node tools/verify-virgl-instanced-stencil.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-critic-ea486697/boundaries-0x9b05688c --mode boundaries --seed 0x9b05688c
+Original instanced native S8 stencil acceptance passed
++ node tools/virgl-instanced-stencil/values.mjs /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-critic-ea486697/boundaries-0x9b05688c
+{"status":"passed","counts":{"runs":24,"frames":40,"pixels":20480,"nativePasses":960,"normalizedBytes":1152},"differences":0}
++ python3 tools/virgl-ordered-stencil/physical.py /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-critic-ea486697/boundaries-0x9b05688c
+{"schema": "original-ordered-stencil-physical-v1", "status": "passed", "reportSha256": "14b921972428db157da303c734c29c5b60071eaa00ad6e45fb0f9ea55e21ad11", "counts": {"runs": 24, "bodies": 1596, "consumedSyncs": 424, "disposalOnlySyncs": 8, "blitWriters": 32, "fencedCPUReads": 372, "synchronousCPUReads": 0}, "oracleImportsProductCode": false, "allCompleteBodiesReopened": true}
++ node tools/verify-virgl-instanced-stencil.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-critic-ea486697/novel-0x9b05688c --mode critic-novel --seed 0x9b05688c
+Original instanced native S8 stencil acceptance passed
++ node tools/virgl-instanced-stencil/values.mjs /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-critic-ea486697/novel-0x9b05688c
+{"status":"passed","counts":{"runs":2,"frames":2,"pixels":4290,"nativePasses":224,"normalizedBytes":192},"differences":0}
++ python3 tools/virgl-ordered-stencil/physical.py /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-critic-ea486697/novel-0x9b05688c
+{"schema": "original-ordered-stencil-physical-v1", "status": "passed", "reportSha256": "1e23611124ba2964b4448130f06f5390814caf421f8f857a047b19cb7b68b93d", "counts": {"runs": 2, "bodies": 84, "consumedSyncs": 14, "disposalOnlySyncs": 0, "blitWriters": 0, "fencedCPUReads": 16, "synchronousCPUReads": 0}, "oracleImportsProductCode": false, "allCompleteBodiesReopened": true}
++ for seed in 0x510e527f 0x9b05688c 0x1f83d9ab
++ node tools/verify-virgl-instanced-stencil.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-critic-ea486697/boundaries-0x1f83d9ab --mode boundaries --seed 0x1f83d9ab
+Original instanced native S8 stencil acceptance passed
++ node tools/virgl-instanced-stencil/values.mjs /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-critic-ea486697/boundaries-0x1f83d9ab
+{"status":"passed","counts":{"runs":24,"frames":40,"pixels":20480,"nativePasses":960,"normalizedBytes":1152},"differences":0}
++ python3 tools/virgl-ordered-stencil/physical.py /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-critic-ea486697/boundaries-0x1f83d9ab
+{"schema": "original-ordered-stencil-physical-v1", "status": "passed", "reportSha256": "b9e9624344a9de3c34b17c37639286f18e2d34f85868fe30862a8b33c885b05b", "counts": {"runs": 24, "bodies": 1596, "consumedSyncs": 424, "disposalOnlySyncs": 8, "blitWriters": 32, "fencedCPUReads": 372, "synchronousCPUReads": 0}, "oracleImportsProductCode": false, "allCompleteBodiesReopened": true}
++ node tools/verify-virgl-instanced-stencil.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-critic-ea486697/novel-0x1f83d9ab --mode critic-novel --seed 0x1f83d9ab
+Original instanced native S8 stencil acceptance passed
++ node tools/virgl-instanced-stencil/values.mjs /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-critic-ea486697/novel-0x1f83d9ab
+{"status":"passed","counts":{"runs":2,"frames":2,"pixels":4290,"nativePasses":224,"normalizedBytes":192},"differences":0}
++ python3 tools/virgl-ordered-stencil/physical.py /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-critic-ea486697/novel-0x1f83d9ab
+{"schema": "original-ordered-stencil-physical-v1", "status": "passed", "reportSha256": "e12838ee2e1792d32fe5aad75feb32056d7ca920997f940fe151427dce4b3fa4", "counts": {"runs": 2, "bodies": 84, "consumedSyncs": 14, "disposalOnlySyncs": 0, "blitWriters": 0, "fencedCPUReads": 16, "synchronousCPUReads": 0}, "oracleImportsProductCode": false, "allCompleteBodiesReopened": true}
++ node tools/verify-virgl-instanced-stencil.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-critic-ea486697/fault-novel-order --mode critic-novel --seed 0x510e527f --fault order
+AssertionError [ERR_ASSERTION]: full original critic RGBA/depth/S8 against physical native bodies: expected [], observed [{"pixel":132,"observed":{"color":[1060831232,1056964608,3204415424,1065353216],"stencil":223,"depth":0},"wanted":[{"color":[0.73046875,0.375,0.4990215301513672,1],"stencil":119,"depth":0},{"color":[0.73046875,0.5,-0.4990215301513672,1],"stencil":117,"depth":0},{"color":[0.19921875,0.5,-0.4990215301513672,1],"stencil":125,"depth":0},{"color":[0.19921875,0.5,-0.4990215301513672,1],"stencil":119,"depth":0},{"color":[0.55078125,0.5,-0.4990215301513672,1],"stencil":117,"depth":0},{"color":[0.73046875,0.5,-0.4990215301513672,1],"stencil":125,"depth":0},{"color":[0.73046875,0.5,-0.4990215301513672,1],"stencil":119,"depth":0},{"color":[0.73046875,0.5,-0.4990215301513672,1],"stencil":127,"depth":0},{"color":[0.19921875,0.5,-0.4990215301513672,1],"stencil":127,"depth":0},{"color":[0.19921875,0.5,-0.4990215301513672,1],"stencil":213,"depth":0},{"color":[0.73046875,0.5,-0.4990215301513672,1],"stencil":213,"depth":0},{"color":[0.73046875,0.5,-0.4990215301513672,1],"stencil":215,"depth":0}]},{"pixel":133,"observed":{"color":[1060831232,1056964608,3204415424,1065353216],"stencil":223,"depth":1048576001},"wanted":[{"color":[0.73046875,0.5,-0.4990215301513672,1],"stencil":119,"depth":0.2500000149011621}]},{"pixel":134,"observed":{"color":[1060831232,1056964608,3204415424,1065353216],"stencil":223,"depth":1061158912},"wanted":[{"color":[0.73046875,0.5,-0.4990215301513672,1],"stencil":119,"depth":0.7499999850988379}]},{"pixel":135,"observed":{"color":[1060831232,1056964608,3204415424,1065353216],"stencil":223,"depth":1065353216},"wanted":[{"color":[0.73046875,0.5,-0.4990215301513672,1],"stencil":119,"depth":1}]},{"pixel":136,"observed":{"color":[1060831232,1056964608,3204415424,1065353216],"stencil":223,"depth":0},"wanted":[{"color":[0.73046875,0.5,-0.4990215301513672,1],"stencil":119,"depth":0}]},{"pixel":137,"observed":{"color":[1060831232,1056964608,3204415424,1065353216],"stencil":223,"depth":1048576001},"wanted":[{"color":[0.73046875,0.5,-0.4990215301513672,1],"stencil":119,"depth":0.2500000149011621}]},{"pixel":138,"observed":{"color":[1060831232,1056964608,3204415424,1065353216],"stencil":223,"depth":1061158912},"wanted":[{"color":[0.73046875,0.5,-0.4990215301513672,1],"stencil":119,"depth":0.7499999850988379}]},{"pixel":139,"observed":{"color":[1060831232,1056964608,3204415424,1065353216],"stencil":223,"depth":1065353216},"wanted":[{"color":[0.73046875,0.5,-0.4990215301513672,1],"stencil":119,"depth":1}]}]
+
+'failed' !== 'passed'
+
+    at file:///Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/verify-virgl-instanced-stencil.mjs:128:12
++ node tools/virgl-instanced-stencil/values.mjs /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-instanced-stencil-critic-ea486697/fault-novel-order --control
+{"status":"refuted","counts":{"runs":1,"frames":1,"pixels":2145,"nativePasses":112,"normalizedBytes":96},"differences":1}
++ set +x
+INSTANCED_STENCIL_CRITIC_RECORDING_COMPLETE
+Frozen fresh instanced-stencil critic bodies authenticated.

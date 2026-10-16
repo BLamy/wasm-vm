@@ -1,0 +1,11 @@
+# E6-T10d independent verifier predictions
+Frozen runtime: 8759a30622e6604b8cd3d5c35d110260c6fd1943; baseline d0a5b1fc.
+Recorded after reading task/full runtime and acceptance diff, before inspecting worker evidence.
+
+- P1: Worker and cold-clone manifests bind runtime head 8759a30622e6604b8cd3d5c35d110260c6fd1943; all evidence file digests match and captured source SHA256 values are e96102a3202dde8b0b05ffa142eb6064c5fe916b673bbf1d31464bcbac56fb33 / 80d6db6a6f10b93770698cfdd47232fed0fca94f4cb07ba7381bb38563de9808. Native and Wasm pair translations report success without normalized input.
+- P2: Hardware Chrome reflection records two FLOAT_VEC4 inputs bound as two floats (stride 16, offsets 0/8), FLOAT_VEC4 generic output with declared/written xy masks, COLOR0 location 0, sampler2D unit 0. Three indexed u16 triangle draws produce literal expected quadrant bytes for 256 interior pixels apiece; no browser error appears.
+- P3: All 112 negative new grammar fixtures reject in the guard; reject-to-valid recovery is byte-identical. Native ASan/UBSan mutations and independent seeds produce no sanitizer failure. Wasm recovery remains bounded and unchanged.
+- P4: TEMP ranges remain within 0..7 and nonoverlapping; partial TEMP writes, undeclared source lanes, incomplete POSITION/COLOR/generic outputs, invalid masks/swizzles, unsigned overflow/long/NaN/Inf/subnormal literals, incorrect properties and unsupported opcode/key families reject. Every changed runtime guard line is exercised or explicitly waived.
+- P5: Literal T10a regression has nine draws / 4336 checked pixels. Corpus reports exactly seven accepted and twelve rejected bodies, preserves PRECISE/Z32_UNORM rejection, and makes no full-corpus/guest-device claim.
+- P6: One corrupted texture texel fails the independent pixel oracle at phase 0, pixel(4,4), expected [255,0,0,255], observed [0,0,0,255].
+- P7 novel bounded attack: For each newly accepted four-lane swizzle and each UINT32 exponent/mantissa boundary, independent known-good recovery remains unchanged; IEEE bit predicates independently predict acceptance for +-zero and finite normal floats <=1e6, and rejection for subnormals/NaN/Inf/out-of-range. Numeric boundaries and zero-padded words must agree between native and Wasm, without overflow reinterpretation. Captured render acceptance remains as separately measured in P2.

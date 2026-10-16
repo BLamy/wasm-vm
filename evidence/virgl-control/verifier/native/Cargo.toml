@@ -1,0 +1,10 @@
+[package]
+name = "virgl-control-independent-verifier"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+[workspace]
+
+[dependencies]
+wasm-vm-core = { path = "../../../../crates/core", features = ["virgl-control-proof", "gpu-trace"] }

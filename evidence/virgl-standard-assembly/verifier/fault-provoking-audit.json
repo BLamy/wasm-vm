@@ -1,0 +1,226 @@
+{
+  "schema": "standard-assembly-critic-audit-v1",
+  "status": "passed",
+  "kind": "fault",
+  "frames": [],
+  "faults": [
+    {
+      "label": "mode-2-custom-0",
+      "report": "/report.json",
+      "frameIndex": 0,
+      "reportSha256": "910bbe16fd9c23d9c29579b444004ad72c37ba697243abeb78c98dc5e3266ee8",
+      "originalIds": [
+        51,
+        67,
+        109,
+        151,
+        17,
+        55,
+        85,
+        127,
+        179
+      ],
+      "nativeCount": 16,
+      "nativeBytes": 64,
+      "nativeBytesSha256": "1b4fd6caf325dda99bc5621ee6440dbc502cf8cb7326e36c5eced334641770e0",
+      "nativeMode": 1,
+      "sourceWork": 36,
+      "nativeWork": 64,
+      "actualPrivateBuffers": 1,
+      "draws": 1,
+      "pixelBlobSha256": "6a8f084716f5634872c056f2dabdfea40c3fcbc33b6563c7259c4e163e88f97e",
+      "held": false,
+      "pixels": 1024,
+      "maxError": 115,
+      "misses": [
+        {
+          "x": 3,
+          "y": 2,
+          "expected": [
+            [
+              115,
+              56,
+              51,
+              128
+            ]
+          ],
+          "observed": [
+            99,
+            56,
+            51,
+            128
+          ],
+          "error": 16
+        },
+        {
+          "x": 4,
+          "y": 2,
+          "expected": [
+            [
+              115,
+              56,
+              51,
+              128
+            ]
+          ],
+          "observed": [
+            99,
+            56,
+            51,
+            128
+          ],
+          "error": 16
+        },
+        {
+          "x": 5,
+          "y": 2,
+          "expected": [
+            [
+              115,
+              56,
+              51,
+              128
+            ]
+          ],
+          "observed": [
+            99,
+            56,
+            51,
+            128
+          ],
+          "error": 16
+        },
+        {
+          "x": 19,
+          "y": 2,
+          "expected": [
+            [
+              115,
+              56,
+              51,
+              128
+            ]
+          ],
+          "observed": [
+            99,
+            56,
+            51,
+            128
+          ],
+          "error": 16
+        },
+        {
+          "x": 20,
+          "y": 2,
+          "expected": [
+            [
+              115,
+              56,
+              51,
+              128
+            ]
+          ],
+          "observed": [
+            99,
+            56,
+            51,
+            128
+          ],
+          "error": 16
+        },
+        {
+          "x": 21,
+          "y": 2,
+          "expected": [
+            [
+              115,
+              56,
+              51,
+              128
+            ]
+          ],
+          "observed": [
+            99,
+            56,
+            51,
+            128
+          ],
+          "error": 16
+        },
+        {
+          "x": 35,
+          "y": 2,
+          "expected": [
+            [
+              115,
+              47,
+              54,
+              128
+            ]
+          ],
+          "observed": [
+            99,
+            47,
+            54,
+            128
+          ],
+          "error": 16
+        },
+        {
+          "x": 36,
+          "y": 2,
+          "expected": [
+            [
+              115,
+              47,
+              54,
+              128
+            ]
+          ],
+          "observed": [
+            99,
+            47,
+            54,
+            128
+          ],
+          "error": 16
+        }
+      ],
+      "nativeFenceCoverage": [
+        {
+          "source": "mutation-source.mjs",
+          "sourceSha256": "bc8506c6b0080a1166b90a6dafa335ac9fe7d2634f7f60458a085b62dd7b5d92",
+          "line": 1248,
+          "offset": 93739,
+          "count": 1,
+          "operation": "job.sync = gl.fenceSync(gl.SYNC_GPU_COMMANDS_COMPLETE, 0);"
+        },
+        {
+          "source": "mutation-source.mjs",
+          "sourceSha256": "bc8506c6b0080a1166b90a6dafa335ac9fe7d2634f7f60458a085b62dd7b5d92",
+          "line": 1284,
+          "offset": 95704,
+          "count": 3,
+          "operation": "const status = gl.clientWaitSync(job.sync, 0, 0);"
+        },
+        {
+          "source": "mutation-source.mjs",
+          "sourceSha256": "bc8506c6b0080a1166b90a6dafa335ac9fe7d2634f7f60458a085b62dd7b5d92",
+          "line": 1289,
+          "offset": 96049,
+          "count": 1,
+          "operation": "job.completedSerial = job.fenceSerial; return finishJob(job, true);"
+        }
+      ],
+      "actualNativeBytesSha256": "1b4fd6caf325dda99bc5621ee6440dbc502cf8cb7326e36c5eced334641770e0",
+      "convention": 36429
+    }
+  ],
+  "runs": [],
+  "ownership": [],
+  "rejections": [],
+  "suspensions": [],
+  "pixels": 0,
+  "nativeDraws": 0,
+  "privateBuffers": 0
+}

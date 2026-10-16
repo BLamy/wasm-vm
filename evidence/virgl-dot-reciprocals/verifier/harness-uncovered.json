@@ -1,0 +1,200 @@
+[
+  {
+    "start": 2844,
+    "end": 2896,
+    "line": 35,
+    "text": "catch(error){gl.deleteProgram(program);throw error;}"
+  },
+  {
+    "start": 11552,
+    "end": 11571,
+    "line": 95,
+    "text": "(n,d=1n)=>SCALE*n/d"
+  },
+  {
+    "start": 13299,
+    "end": 13320,
+    "line": 117,
+    "text": "&&actual===0x80000000"
+  },
+  {
+    "start": 13472,
+    "end": 13525,
+    "line": 118,
+    "text": "||(classify(word)==='zero'&&classify(first)==='zero')"
+  },
+  {
+    "start": 14702,
+    "end": 14707,
+    "line": 124,
+    "text": ":null"
+  },
+  {
+    "start": 20592,
+    "end": 20649,
+    "line": 157,
+    "text": "||(oracle.words[i]===0&&selector===24&&word===0x3f400000)"
+  },
+  {
+    "start": 21580,
+    "end": 21606,
+    "line": 161,
+    "text": "gl.endTransformFeedback();"
+  },
+  {
+    "start": 24260,
+    "end": 24318,
+    "line": 172,
+    "text": "||(!cross&&oracle.words[i]===0&&selector===31&&byte===255)"
+  },
+  {
+    "start": 24330,
+    "end": 24373,
+    "line": 172,
+    "text": "draw.failure={expectedBytes,observedBytes};"
+  },
+  {
+    "start": 28578,
+    "end": 28640,
+    "line": 193,
+    "text": "||(i>=4&&i<8&&record.oracle.words[i-4]===0&&word===0x80000000)"
+  },
+  {
+    "start": 28725,
+    "end": 28751,
+    "line": 195,
+    "text": "gl.endTransformFeedback();"
+  },
+  {
+    "start": 29598,
+    "end": 29600,
+    "line": 202,
+    "text": ":5"
+  },
+  {
+    "start": 31832,
+    "end": 31834,
+    "line": 214,
+    "text": ":1"
+  },
+  {
+    "start": 33918,
+    "end": 33936,
+    "line": 226,
+    "text": "&&value!==0?-value"
+  },
+  {
+    "start": 35197,
+    "end": 35250,
+    "line": 228,
+    "text": "record.failure={pixel:[x,y],texel,expected,observed};"
+  },
+  {
+    "start": 35887,
+    "end": 35899,
+    "line": 232,
+    "text": "{n=-n;d=-d;}"
+  },
+  {
+    "start": 36437,
+    "end": 36449,
+    "line": 235,
+    "text": "?'subnormal'"
+  },
+  {
+    "start": 36723,
+    "end": 36732,
+    "line": 236,
+    "text": "?mantissa"
+  },
+  {
+    "start": 36770,
+    "end": 36775,
+    "line": 236,
+    "text": "?-149"
+  },
+  {
+    "start": 36841,
+    "end": 36850,
+    "line": 237,
+    "text": "?-value.n"
+  },
+  {
+    "start": 37037,
+    "end": 37046,
+    "line": 238,
+    "text": "return 0;"
+  },
+  {
+    "start": 37086,
+    "end": 37095,
+    "line": 238,
+    "text": "?-value.n"
+  },
+  {
+    "start": 37179,
+    "end": 37183,
+    "line": 238,
+    "text": "?!up"
+  },
+  {
+    "start": 37336,
+    "end": 37347,
+    "line": 238,
+    "text": "?2147483648"
+  },
+  {
+    "start": 37554,
+    "end": 37559,
+    "line": 239,
+    "text": "?-q.n"
+  },
+  {
+    "start": 38134,
+    "end": 38143,
+    "line": 242,
+    "text": "return n;"
+  },
+  {
+    "start": 40673,
+    "end": 40732,
+    "line": 258,
+    "text": "\n  else throw new Error('unknown reciprocal oracle '+name);"
+  },
+  {
+    "start": 41092,
+    "end": 41095,
+    "line": 263,
+    "text": ":{}"
+  },
+  {
+    "start": 41188,
+    "end": 41265,
+    "line": 264,
+    "text": "return {...lane,observedWord:word,classification:kind,withinEnclosure:false};"
+  },
+  {
+    "start": 45195,
+    "end": 45221,
+    "line": 275,
+    "text": "gl.endTransformFeedback();"
+  },
+  {
+    "start": 54185,
+    "end": 54211,
+    "line": 297,
+    "text": "gl.endTransformFeedback();"
+  },
+  {
+    "start": 61635,
+    "end": 61746,
+    "line": 330,
+    "text": "equal(result.metadata?.uniforms[0]?.count,test.expected.constantCount,`${test.name} declared constant extent`);"
+  },
+  {
+    "start": 62040,
+    "end": 62043,
+    "line": 330,
+    "text": ":{}"
+  }
+]

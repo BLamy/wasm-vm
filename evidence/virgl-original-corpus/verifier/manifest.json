@@ -1,0 +1,27 @@
+{
+  "schema": "original-corpus-fresh-verifier-v1",
+  "task": "E6-T12f6",
+  "verdict": "needs-evidence",
+  "submission": "bd26d254da04ae56f9ac6866057a8adc5e927118",
+  "workerFrozenHead": "b961c772d0c79141c0c7050f9deb0c1cb94905f4",
+  "runtimeParent": "a80ba9e929698c6d582589856822c18aad8c513c",
+  "recording": {
+    "path": "recording.tar.gz",
+    "bytes": 3863659,
+    "sha256": "78d141bca7fe28bf81b85d6a114bc26f1c918a97be1b922dd9bc315dc49124e8"
+  },
+  "files": 24,
+  "rawBytes": 68362160,
+  "workerArchiveSha256": "1fc14df7ef7abf6c59d4bb41647636be90b2dcbb3d2f80d071e8b05b82f8482d",
+  "newTests": [
+    {
+      "path": "tools/virgl-original-corpus/verifier.py",
+      "sha256": "8635684cc2c0a2219a19a1bed601a90324acc6953eb83b5e18d2da2614d036f4"
+    },
+    {
+      "path": "tools/virgl-original-corpus/verifier-regressions.mjs",
+      "sha256": "4f3ca9e71e89f52595b233d8b8c2cb4227e14874dd43716634b32c46010072a5"
+    }
+  ],
+  "boundary": "Complete original/pair/physical claims held; new unused indirect helper throws and requires narrow repair/proof. No production semantics change or guest/desktop/performance claim."
+}

@@ -1,0 +1,93 @@
+FRAG
+PROPERTY FS_COLOR0_WRITES_ALL_CBUFS 1
+DCL IN[0].xy, GENERIC[0], PERSPECTIVE
+DCL OUT[0], COLOR
+DCL CONST[0..45]
+DCL TEMP[0..57]
+DCL ADDR[0]
+IMM[0] UINT32 {3212836864, 0, 1, 3}
+IMM[1] UINT32 {1056964608, 1065353216, 11, 16}
+IMM[2] UINT32 {4, 176, 432, 144}
+IMM[3] UINT32 {897988541, 1073741824, 448, 0}
+DCL TEMP[58..61]
+  0: MUL TEMP[5].xyz, CONST[0].xyzz, IN[0].xxxx
+  1: MUL TEMP[6].xyz, CONST[1].xyzz, IN[0].yyyx
+  2: ADD TEMP[7].xyz, TEMP[5].xyzx, CONST[2].xyzx
+  3: ADD TEMP[8].xyz, TEMP[7].xyzx, TEMP[6].xyzx
+  4: MUL TEMP[9].x, TEMP[8].xxxx, CONST[5].xxxx
+  5: MUL TEMP[10].x, TEMP[9].xxxx, IMM[0].xxxx
+  6: ADD TEMP[11].x, TEMP[8].yxxx, TEMP[10].xxxx
+  7: MUL TEMP[12].x, TEMP[11].xxxx, CONST[6].xxxx
+  8: MUL TEMP[13].x, TEMP[8].zxxx, CONST[8].xxxx
+  9: MUL TEMP[14].x, TEMP[8].zxxx, CONST[7].xxxx
+ 10: MUL TEMP[15].x, TEMP[14].xxxx, IMM[0].xxxx
+ 11: USEQ TEMP[16].x, CONST[4].xxxx, IMM[0].yyyy
+ 12: UCMP TEMP[17].x, TEMP[16].xxxx, TEMP[12].xxxx, TEMP[8].xyzx
+ 13: ADD TEMP[18].x, TEMP[17].xxxx, TEMP[15].xxxx
+ 14: DIV TEMP[19].x, TEMP[18].xxxx, TEMP[13].xxxx
+ 15: FRC TEMP[20].x, TEMP[19].xxxx
+ 16: USEQ TEMP[21].xy, CONST[3].xxxx, IMM[0].zwzz
+ 17: UCMP TEMP[22].x, TEMP[21].xxxx, TEMP[20].xxxx, TEMP[19].xxxx
+ 18: MUL TEMP[23].x, TEMP[22].xxxx, IMM[1].xxxx
+ 19: ADD TEMP[24].x, TEMP[23].xxxx, IMM[1].xxxx
+ 20: FRC TEMP[25].x, TEMP[24].xxxx
+ 21: LRP TEMP[26].x, TEMP[25].xxxx, IMM[1].yyyy, IMM[0].xxxx
+ 22: MAX TEMP[27].x, TEMP[26].xxxx, -TEMP[26].xxxx
+ 23: UCMP TEMP[28].x, TEMP[21].yxxx, TEMP[27].xxxx, TEMP[22].xxxx
+ 24: FSGE TEMP[29].x, TEMP[28].xxxx, CONST[10].xxxx
+ 25: UIF TEMP[29].xxxx :77
+ 26:   MOV TEMP[2].x, IMM[1].zzzz
+ 27:   MOV TEMP[4].x, IMM[1].wwww
+ 28:   MOV TEMP[3].x, IMM[0].zzzz
+ 29:   BGNLOOP :0
+ 30:     UARL ADDR[0].x, TEMP[2]
+ 31:     MOV TEMP[30].x, CONST[ADDR[0].x].xxxx
+ 32:     FSLT TEMP[31].x, TEMP[28].xxxx, TEMP[30].xxxx
+ 33:     ISGE TEMP[32].x, TEMP[3].xxxx, CONST[9].xxxx
+ 34:     OR TEMP[33].x, TEMP[31].xxxx, TEMP[32].xxxx
+ 35:     UIF TEMP[33].xxxx :37
+ 36:       BRK
+ 37:     ENDIF
+ 38:     UADD TEMP[1].x, TEMP[3].xxxx, IMM[0].zzzz
+ 39:     SHL TEMP[34].x, TEMP[3].xxxx, IMM[2].xxxx
+ 40:     UADD TEMP[4].x, TEMP[34].xxxx, IMM[1].wwww
+ 41:     UADD TEMP[35].x, IMM[2].yyyy, TEMP[34].xxxx
+ 42:     USHR TEMP[2].x, TEMP[35].xxxx, IMM[2].xxxx
+ 43:     MOV TEMP[3].x, TEMP[1].xxxx
+ 44:   ENDLOOP :0
+ 45:   USNE TEMP[36].x, TEMP[3].xxxx, CONST[9].xxxx
+ 46:   UIF TEMP[36].xxxx :74
+ 47:     SHL TEMP[37].x, TEMP[3].xxxx, IMM[2].xxxx
+ 48:     UADD TEMP[38].xy, IMM[2].zwzz, TEMP[37].xxxx
+ 49:     USHR TEMP[39].xy, TEMP[38].xyxx, IMM[2].xxxx
+ 50:     MOV TEMP[40].x, TEMP[39].yxxx
+ 51:     UARL ADDR[0].x, TEMP[40].xxxx
+ 52:     MOV TEMP[41].x, CONST[ADDR[0].x].xxxx
+ 53:     MUL TEMP[42].x, TEMP[41].xxxx, IMM[0].xxxx
+ 54:     ADD TEMP[43].x, TEMP[30].xxxx, TEMP[42].xxxx
+ 55:     FSLT TEMP[44].x, TEMP[43].xxxx, IMM[3].xxxx
+ 56:     FSLT TEMP[45].x, IMM[3].yyyy, TEMP[43].xxxx
+ 57:     OR TEMP[46].x, TEMP[44].xxxx, TEMP[45].xxxx
+ 58:     ADD TEMP[47].x, TEMP[28].xxxx, TEMP[42].xxxx
+ 59:     DIV TEMP[48].x, TEMP[47].xxxx, TEMP[43].xxxx
+ 60:     UCMP TEMP[49].x, TEMP[46].xxxx, IMM[0].yyyy, TEMP[48].xxxx
+ 61:     UADD TEMP[50].x, IMM[3].zzzz, TEMP[4].xxxx
+ 62:     USHR TEMP[51].x, TEMP[50].xxxx, IMM[2].xxxx
+ 63:     UARL ADDR[0].x, TEMP[51].xxxx
+ 64:     MOV TEMP[52], CONST[ADDR[0].x]
+ 65:     MOV TEMP[53].x, TEMP[39].xxxx
+ 66:     UARL ADDR[0].x, TEMP[53].xxxx
+ 67:     MOV TEMP[54], CONST[ADDR[0].x]
+ 68:     LRP TEMP[55], TEMP[49].xxxx, TEMP[52], TEMP[54]
+ 69:     FSNE_PRECISE TEMP[56].x, TEMP[49].xxxx, IMM[0].yyyy
+ 70:     UCMP TEMP[57], TEMP[56].xxxx, TEMP[55], TEMP[54]
+ 71:     MUL TEMP[0].xyz, TEMP[57].xyzx, TEMP[57].wwww
+ 72:     MOV TEMP[0].w, TEMP[57].xxxw
+ 73:     MOV OUT[0], TEMP[0]
+ 74:   ELSE :76
+ 75:     MOV OUT[0], IMM[0].yyyy
+ 76:   ENDIF
+ 77: ELSE :79
+ 78:   MOV OUT[0], IMM[0].yyyy
+ 79: ENDIF
+ 80: END

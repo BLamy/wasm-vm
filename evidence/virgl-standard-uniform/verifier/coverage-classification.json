@@ -1,0 +1,1744 @@
+{
+  "status": "held-for-covered-boundary",
+  "separateSemanticRefutation": "P13 original signed offset admission",
+  "files": [
+    {
+      "source": "Makefile",
+      "classification": "executed-or-explicitly-waived",
+      "reason": "Task lifecycle prose/queue/build recipe only; no runtime semantics."
+    },
+    {
+      "source": "evidence/virgl-production-readiness/standard-uniform-buffer-gap.json",
+      "classification": "executed-or-explicitly-waived",
+      "reason": "Declarative source-hashed readiness fixture or complete binary worker recording/index; independently authenticated all records and source pins."
+    },
+    {
+      "source": "evidence/virgl-standard-uniform/worker/manifest.json",
+      "classification": "executed-or-explicitly-waived",
+      "reason": "Declarative source-hashed readiness fixture or complete binary worker recording/index; independently authenticated all records and source pins."
+    },
+    {
+      "source": "evidence/virgl-standard-uniform/worker/recording.tar.gz",
+      "classification": "executed-or-explicitly-waived",
+      "reason": "Declarative source-hashed readiness fixture or complete binary worker recording/index; independently authenticated all records and source pins."
+    },
+    {
+      "source": "evidence/virgl-standard-uniform/worker/records.json",
+      "classification": "executed-or-explicitly-waived",
+      "reason": "Declarative source-hashed readiness fixture or complete binary worker recording/index; independently authenticated all records and source pins."
+    },
+    {
+      "source": "renderer/virgl-command/constant-domain.mjs",
+      "classification": "executed-or-explicitly-waived",
+      "reason": "Full bound LLVM regions/branches or per-record narrow V8 counters plus exact waivers; declaration/header/build metadata has no independent executable region."
+    },
+    {
+      "source": "renderer/virgl-shader/bridge.c",
+      "classification": "executed-or-explicitly-waived",
+      "reason": "Full bound LLVM regions/branches or per-record narrow V8 counters plus exact waivers; declaration/header/build metadata has no independent executable region."
+    },
+    {
+      "source": "renderer/virgl-shader/bridge.h",
+      "classification": "executed-or-explicitly-waived",
+      "reason": "Full bound LLVM regions/branches or per-record narrow V8 counters plus exact waivers; declaration/header/build metadata has no independent executable region."
+    },
+    {
+      "source": "renderer/virgl-shader/build.sh",
+      "classification": "executed-or-explicitly-waived",
+      "reason": "Full bound LLVM regions/branches or per-record narrow V8 counters plus exact waivers; declaration/header/build metadata has no independent executable region."
+    },
+    {
+      "source": "renderer/virgl-shader/checked_tgsi_heap.h",
+      "classification": "executed-or-explicitly-waived",
+      "reason": "Full bound LLVM regions/branches or per-record narrow V8 counters plus exact waivers; declaration/header/build metadata has no independent executable region."
+    },
+    {
+      "source": "renderer/virgl-shader/checked_tgsi_sanity.c",
+      "classification": "executed-or-explicitly-waived",
+      "reason": "Full bound LLVM regions/branches or per-record narrow V8 counters plus exact waivers; declaration/header/build metadata has no independent executable region."
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_allocations.c",
+      "classification": "executed-or-explicitly-waived",
+      "reason": "Full bound LLVM regions/branches or per-record narrow V8 counters plus exact waivers; declaration/header/build metadata has no independent executable region."
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_inputs.c",
+      "classification": "executed-or-explicitly-waived",
+      "reason": "Full bound LLVM regions/branches or per-record narrow V8 counters plus exact waivers; declaration/header/build metadata has no independent executable region."
+    },
+    {
+      "source": "renderer/virgl-shader/standard.mjs",
+      "classification": "executed-or-explicitly-waived",
+      "reason": "Full bound LLVM regions/branches or per-record narrow V8 counters plus exact waivers; declaration/header/build metadata has no independent executable region."
+    },
+    {
+      "source": "renderer/virgl-shader/standard_emit.c",
+      "classification": "executed-or-explicitly-waived",
+      "reason": "Full bound LLVM regions/branches or per-record narrow V8 counters plus exact waivers; declaration/header/build metadata has no independent executable region."
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "classification": "executed-or-explicitly-waived",
+      "reason": "Full bound LLVM regions/branches or per-record narrow V8 counters plus exact waivers; declaration/header/build metadata has no independent executable region."
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.h",
+      "classification": "executed-or-explicitly-waived",
+      "reason": "Full bound LLVM regions/branches or per-record narrow V8 counters plus exact waivers; declaration/header/build metadata has no independent executable region."
+    },
+    {
+      "source": "renderer/virgl-shader/tests/standard-uniform-browser.mjs",
+      "classification": "executed-or-explicitly-waived",
+      "reason": "Full bound LLVM regions/branches or per-record narrow V8 counters plus exact waivers; declaration/header/build metadata has no independent executable region."
+    },
+    {
+      "source": "tasks/QUEUE.md",
+      "classification": "executed-or-explicitly-waived",
+      "reason": "Task lifecycle prose/queue/build recipe only; no runtime semantics."
+    },
+    {
+      "source": "tasks/epic-6-transcendence/E6-T11d-truthful-guest-virgl-bringup.md",
+      "classification": "executed-or-explicitly-waived",
+      "reason": "Task lifecycle prose/queue/build recipe only; no runtime semantics."
+    },
+    {
+      "source": "tasks/epic-6-transcendence/E6-T11d16-standard-uniform-shader.md",
+      "classification": "executed-or-explicitly-waived",
+      "reason": "Task lifecycle prose/queue/build recipe only; no runtime semantics."
+    },
+    {
+      "source": "tools/verify-virgl-standard-uniform.sh",
+      "classification": "executed-or-explicitly-waived",
+      "reason": "Acceptance/evidence harness executed in exact hot/cold recordings; independently replayed integrity, pixels, original tokens and raw counter reexport. Harness usage/tamper/error scaffolding is waived."
+    },
+    {
+      "source": "tools/virgl-standard-uniform/browser.mjs",
+      "classification": "executed-or-explicitly-waived",
+      "reason": "Acceptance/evidence harness executed in exact hot/cold recordings; independently replayed integrity, pixels, original tokens and raw counter reexport. Harness usage/tamper/error scaffolding is waived."
+    },
+    {
+      "source": "tools/virgl-standard-uniform/cases.mjs",
+      "classification": "executed-or-explicitly-waived",
+      "reason": "Acceptance/evidence harness executed in exact hot/cold recordings; independently replayed integrity, pixels, original tokens and raw counter reexport. Harness usage/tamper/error scaffolding is waived."
+    },
+    {
+      "source": "tools/virgl-standard-uniform/cold.py",
+      "classification": "executed-or-explicitly-waived",
+      "reason": "Acceptance/evidence harness executed in exact hot/cold recordings; independently replayed integrity, pixels, original tokens and raw counter reexport. Harness usage/tamper/error scaffolding is waived."
+    },
+    {
+      "source": "tools/virgl-standard-uniform/compiler.mjs",
+      "classification": "executed-or-explicitly-waived",
+      "reason": "Acceptance/evidence harness executed in exact hot/cold recordings; independently replayed integrity, pixels, original tokens and raw counter reexport. Harness usage/tamper/error scaffolding is waived."
+    },
+    {
+      "source": "tools/virgl-standard-uniform/coverage.py",
+      "classification": "executed-or-explicitly-waived",
+      "reason": "Acceptance/evidence harness executed in exact hot/cold recordings; independently replayed integrity, pixels, original tokens and raw counter reexport. Harness usage/tamper/error scaffolding is waived."
+    },
+    {
+      "source": "tools/virgl-standard-uniform/hardware-fixtures.mjs",
+      "classification": "executed-or-explicitly-waived",
+      "reason": "Acceptance/evidence harness executed in exact hot/cold recordings; independently replayed integrity, pixels, original tokens and raw counter reexport. Harness usage/tamper/error scaffolding is waived."
+    },
+    {
+      "source": "tools/virgl-standard-uniform/metadata-attacks.mjs",
+      "classification": "executed-or-explicitly-waived",
+      "reason": "Acceptance/evidence harness executed in exact hot/cold recordings; independently replayed integrity, pixels, original tokens and raw counter reexport. Harness usage/tamper/error scaffolding is waived."
+    },
+    {
+      "source": "tools/virgl-standard-uniform/pixels.mjs",
+      "classification": "executed-or-explicitly-waived",
+      "reason": "Acceptance/evidence harness executed in exact hot/cold recordings; independently replayed integrity, pixels, original tokens and raw counter reexport. Harness usage/tamper/error scaffolding is waived."
+    },
+    {
+      "source": "tools/virgl-standard-uniform/receipt.py",
+      "classification": "executed-or-explicitly-waived",
+      "reason": "Acceptance/evidence harness executed in exact hot/cold recordings; independently replayed integrity, pixels, original tokens and raw counter reexport. Harness usage/tamper/error scaffolding is waived."
+    },
+    {
+      "source": "tools/virgl-standard-uniform/seal-test.py",
+      "classification": "executed-or-explicitly-waived",
+      "reason": "Acceptance/evidence harness executed in exact hot/cold recordings; independently replayed integrity, pixels, original tokens and raw counter reexport. Harness usage/tamper/error scaffolding is waived."
+    },
+    {
+      "source": "tools/virgl-standard-uniform/seal.py",
+      "classification": "executed-or-explicitly-waived",
+      "reason": "Acceptance/evidence harness executed in exact hot/cold recordings; independently replayed integrity, pixels, original tokens and raw counter reexport. Harness usage/tamper/error scaffolding is waived."
+    }
+  ],
+  "changedFileCount": 33,
+  "rendererHunks": [
+    {
+      "file": "renderer/virgl-command/constant-domain.mjs",
+      "hunk": "@@ -980,0 +981,87 @@ export function deriveStandardShaderInterface(vertex, fragment) {"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "hunk": "@@ -2285 +2284,0 @@ static bool standard_constant_order(struct tgsi_token *tokens)"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "hunk": "@@ -2286,0 +2286,2 @@ static bool standard_constant_order(struct tgsi_token *tokens)"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "hunk": "@@ -2288 +2289,2 @@ static bool standard_constant_order(struct tgsi_token *tokens)"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "hunk": "@@ -2291,4 +2293,4 @@ static bool standard_constant_order(struct tgsi_token *tokens)"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "hunk": "@@ -2369 +2371,3 @@ static const char *standard_convert(struct standard_conversion *c, const char *o"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "hunk": "@@ -2398,0 +2403,3 @@ static const char *standard_convert(struct standard_conversion *c, const char *o"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "hunk": "@@ -2400 +2407,2 @@ static const char *standard_convert(struct standard_conversion *c, const char *o"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "hunk": "@@ -2401,0 +2410,11 @@ static const char *standard_convert(struct standard_conversion *c, const char *o"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "hunk": "@@ -2467 +2486,3 @@ static void standard_result(const struct standard_conversion *c)"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "hunk": "@@ -2472 +2493 @@ static void standard_result(const struct standard_conversion *c)"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "hunk": "@@ -2488 +2509,14 @@ static void standard_result(const struct standard_conversion *c)"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "hunk": "@@ -2502 +2536 @@ static const char *standard_input(struct standard_profile *p, const char *text,"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "hunk": "@@ -2507 +2541 @@ const char *bridge_translate_standard(int stage, const char *text, size_t length"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "hunk": "@@ -2518,0 +2553,8 @@ const char *bridge_translate_standard(int stage, const char *text, size_t length"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "hunk": "@@ -2522 +2564,2 @@ static const char *standard_pair(const char *vertex_text, size_t vertex_length,"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "hunk": "@@ -2527 +2570 @@ static const char *standard_pair(const char *vertex_text, size_t vertex_length,"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "hunk": "@@ -2530 +2573,2 @@ static const char *standard_pair(const char *vertex_text, size_t vertex_length,"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "hunk": "@@ -2535,0 +2580,4 @@ static const char *standard_pair(const char *vertex_text, size_t vertex_length,"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "hunk": "@@ -2570 +2618 @@ const char *bridge_translate_standard_pair(const char *vertex_text, size_t verte"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "hunk": "@@ -2577 +2625 @@ const char *bridge_translate_standard_pair_typed(const char *vertex_text, size_t"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "hunk": "@@ -2585 +2633,11 @@ const char *bridge_translate_standard_pair_vertex_formats(const char *vertex_tex"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.h",
+      "hunk": "@@ -97,0 +98,11 @@ const char *bridge_translate_standard_pair_vertex_formats(const char *vertex_tex"
+    },
+    {
+      "file": "renderer/virgl-shader/build.sh",
+      "hunk": "@@ -19,0 +20,26 @@ case \"$mode\" in"
+    },
+    {
+      "file": "renderer/virgl-shader/build.sh",
+      "hunk": "@@ -629 +655 @@ case \"$mode\" in"
+    },
+    {
+      "file": "renderer/virgl-shader/checked_tgsi_heap.h",
+      "hunk": "@@ -10,0 +11 @@"
+    },
+    {
+      "file": "renderer/virgl-shader/checked_tgsi_heap.h",
+      "hunk": "@@ -11,0 +13 @@ void bridge_tgsi_scratch_begin(void);"
+    },
+    {
+      "file": "renderer/virgl-shader/checked_tgsi_sanity.c",
+      "hunk": "@@ -11,0 +12 @@ static size_t scratch_used;"
+    },
+    {
+      "file": "renderer/virgl-shader/checked_tgsi_sanity.c",
+      "hunk": "@@ -15 +16,2 @@ static jmp_buf exhausted;"
+    },
+    {
+      "file": "renderer/virgl-shader/checked_tgsi_sanity.c",
+      "hunk": "@@ -22 +24 @@ void *bridge_tgsi_scratch_malloc(size_t bytes)"
+    },
+    {
+      "file": "renderer/virgl-shader/checked_tgsi_sanity.c",
+      "hunk": "@@ -47 +49 @@ bool tgsi_sanity_check(const struct tgsi_token *tokens)"
+    },
+    {
+      "file": "renderer/virgl-shader/native_tests/standard_uniform_allocations.c",
+      "hunk": "@@ -0,0 +1,75 @@"
+    },
+    {
+      "file": "renderer/virgl-shader/native_tests/standard_uniform_inputs.c",
+      "hunk": "@@ -0,0 +1,94 @@"
+    },
+    {
+      "file": "renderer/virgl-shader/standard.mjs",
+      "hunk": "@@ -6,0 +7,3 @@ export const STANDARD_LIMITS = Object.freeze({"
+    },
+    {
+      "file": "renderer/virgl-shader/standard.mjs",
+      "hunk": "@@ -25,0 +29,8 @@ export async function createVirglStandardShaderBridge(options = {}) {"
+    },
+    {
+      "file": "renderer/virgl-shader/standard.mjs",
+      "hunk": "@@ -43 +54 @@ export async function createVirglStandardShaderBridge(options = {}) {"
+    },
+    {
+      "file": "renderer/virgl-shader/standard.mjs",
+      "hunk": "@@ -53 +64,2 @@ export async function createVirglStandardShaderBridge(options = {}) {"
+    },
+    {
+      "file": "renderer/virgl-shader/standard.mjs",
+      "hunk": "@@ -65 +77,3 @@ export async function createVirglStandardShaderBridge(options = {}) {"
+    },
+    {
+      "file": "renderer/virgl-shader/standard.mjs",
+      "hunk": "@@ -79,2 +93,3 @@ export async function createVirglStandardShaderBridge(options = {}) {"
+    },
+    {
+      "file": "renderer/virgl-shader/standard.mjs",
+      "hunk": "@@ -95,2 +110,3 @@ export async function createVirglStandardShaderBridge(options = {}) {"
+    },
+    {
+      "file": "renderer/virgl-shader/standard.mjs",
+      "hunk": "@@ -98 +114,19 @@ export async function createVirglStandardShaderBridge(options = {}) {"
+    },
+    {
+      "file": "renderer/virgl-shader/standard_emit.c",
+      "hunk": "@@ -59,2 +59,5 @@ static void source(struct output *o, const struct standard_profile *p,"
+    },
+    {
+      "file": "renderer/virgl-shader/standard_emit.c",
+      "hunk": "@@ -88 +91,8 @@ static void interface(struct output *o, const struct standard_profile *p)"
+    },
+    {
+      "file": "renderer/virgl-shader/standard_guard.c",
+      "hunk": "@@ -57 +57 @@ static unsigned limit(const struct standard_profile *p, unsigned f)"
+    },
+    {
+      "file": "renderer/virgl-shader/standard_guard.c",
+      "hunk": "@@ -59 +59,4 @@ enum operand_kind { DECL, DST, SRC };"
+    },
+    {
+      "file": "renderer/virgl-shader/standard_guard.c",
+      "hunk": "@@ -61,6 +63,0 @@ static bool reg(const char **at, const struct standard_profile *p, struct operan"
+    },
+    {
+      "file": "renderer/virgl-shader/standard_guard.c",
+      "hunk": "@@ -68 +65,2 @@ static bool reg(const char **at, const struct standard_profile *p, struct operan"
+    },
+    {
+      "file": "renderer/virgl-shader/standard_guard.c",
+      "hunk": "@@ -71,0 +70,5 @@ static bool reg(const char **at, const struct standard_profile *p, struct operan"
+    },
+    {
+      "file": "renderer/virgl-shader/standard_guard.c",
+      "hunk": "@@ -73 +76 @@ static bool reg(const char **at, const struct standard_profile *p, struct operan"
+    },
+    {
+      "file": "renderer/virgl-shader/standard_guard.c",
+      "hunk": "@@ -77 +80,2 @@ static bool reg(const char **at, const struct standard_profile *p, struct operan"
+    },
+    {
+      "file": "renderer/virgl-shader/standard_guard.c",
+      "hunk": "@@ -79 +83 @@ static bool reg(const char **at, const struct standard_profile *p, struct operan"
+    },
+    {
+      "file": "renderer/virgl-shader/standard_guard.c",
+      "hunk": "@@ -83 +87,43 @@ static bool reg(const char **at, const struct standard_profile *p, struct operan"
+    },
+    {
+      "file": "renderer/virgl-shader/standard_guard.c",
+      "hunk": "@@ -146,0 +193,8 @@ static bool declaration(const char **s, struct standard_profile *p)"
+    },
+    {
+      "file": "renderer/virgl-shader/standard_guard.c",
+      "hunk": "@@ -270,2 +324,4 @@ static bool instruction(const char **s, struct standard_profile *p, struct flow"
+    },
+    {
+      "file": "renderer/virgl-shader/standard_guard.h",
+      "hunk": "@@ -12,0 +13,2 @@"
+    },
+    {
+      "file": "renderer/virgl-shader/standard_guard.h",
+      "hunk": "@@ -31,0 +34,5 @@ struct standard_profile {"
+    },
+    {
+      "file": "renderer/virgl-shader/tests/standard-uniform-browser.mjs",
+      "hunk": "@@ -0,0 +1,161 @@"
+    }
+  ],
+  "llvmRegions": 811,
+  "llvmBranches": 195,
+  "v8FullRanges": 565,
+  "v8NarrowIntervals": 351,
+  "completeRawProfileReexports": [
+    {
+      "run": "hot",
+      "profile": "coverage/matrix",
+      "rawSha256": "084479a5cbb4a7c2cb1f93e048e2398cf5af1d1e87eaaab3171c85e0ff3009be",
+      "binarySha256": "5d1f7027e8011ea334ee42719089624b1c67518b84a42c64c21f4ac8e2f75ebd",
+      "completeExportEqual": true,
+      "exportSha256": "7f9f68fdd0782b77292bc55daba1f0a9305701fa0b6931e0682d147656755d38"
+    },
+    {
+      "run": "hot",
+      "profile": "coverage/allocations",
+      "rawSha256": "b32f1b157a8d9d6794a158927494c64c6d4a15d89670e0ed0c9eb5cbedd185e2",
+      "binarySha256": "e9e5bbae86297defa58652a5359cd930972577b61a0b81dd643785e8a1fac259",
+      "completeExportEqual": true,
+      "exportSha256": "c28400ccabd7e1dd26b5f7111e60d950db4d0e7973a9866ef61cd92f7623df65"
+    },
+    {
+      "run": "hot",
+      "profile": "compiler-retained/coverage/matrix",
+      "rawSha256": "8ae008db4e39fb73a75971e8b21054c3c679a38a00d1834d8718c24e488a35a2",
+      "binarySha256": "dffd79f0c3fa320396ed420c993bb9543248c83baf1bc0c56489d2fb79b71397",
+      "completeExportEqual": true,
+      "exportSha256": "78d0dc6ae2ba5ad3d2ca307ab6fa7913af3d1a41428627eb7d10ef078c3084c0"
+    },
+    {
+      "run": "hot",
+      "profile": "compiler-retained/coverage/allocations",
+      "rawSha256": "9e6cc157fe5db01ca853a795fa28aa96b5fccf3ae323bdfc04331f40fd811413",
+      "binarySha256": "e56899c4be0bc7823ed7a1b311799c115c758356263438533694715170eee7d3",
+      "completeExportEqual": true,
+      "exportSha256": "ee9cf5cbdab86c91fc0cb551bdcb9c787be15c277b5e537b3264f47720abb498"
+    },
+    {
+      "run": "hot",
+      "profile": "coverage/packed-matrix",
+      "rawSha256": "3df4f9dc9047284f2106e85b22d00f2571e67ec94730d1094ffa3afb2e619b39",
+      "binarySha256": "b25fae992e1058b6b32a6b480455bcc06385428de7f1aff20c07da089ab63650",
+      "completeExportEqual": true,
+      "exportSha256": "f7bc0cb3a1f8fdc55abef8257416e10df7433ff048ebdf4ea5b9677dccb3f669"
+    },
+    {
+      "run": "hot",
+      "profile": "coverage/packed-allocations",
+      "rawSha256": "17573304ef215dac246cbb0c1b191153b301b66328dce53e78a92ddb62fe94cf",
+      "binarySha256": "8c48d33e41e2411d367cbc3d34c09a42e25bd67d7f98d7e3f3466c79290167f1",
+      "completeExportEqual": true,
+      "exportSha256": "7794917ba81b41a277e4013a30f39209582643c74cac947ce0b74f30cc8a5fc3"
+    },
+    {
+      "run": "hot",
+      "profile": "coverage/integer-matrix",
+      "rawSha256": "90a4ed4a619470807517571347b3a405599b4732c168239179fab72cfe2030da",
+      "binarySha256": "cee2dc6f80f6572185e8bbd3567c2bf41adaa663e0b0126a430fd482ac563490",
+      "completeExportEqual": true,
+      "exportSha256": "24eec27a86c54f83ca37ee8d65e3c9b2d0b1186328cc2a9ff78e490e8d1552d5"
+    },
+    {
+      "run": "hot",
+      "profile": "coverage/integer-allocations",
+      "rawSha256": "23c0670142c5c1953e12bda7f6494a4154da03dd0714f9cc061175f1cdc3fc72",
+      "binarySha256": "0cb25c97f6effe384fa8d5eca19ba9cb841c35c601a4d1a68c935dd345a74e86",
+      "completeExportEqual": true,
+      "exportSha256": "d4a4c566e9f5a83b56464108545dadd119e32a77b3d0c594c6e69eb702589ac5"
+    },
+    {
+      "run": "cold",
+      "profile": "coverage/matrix",
+      "rawSha256": "6f4d40a970aeb0baf45fd51972bacff5eec72df3565f46fa7056b7a338538523",
+      "binarySha256": "7b1edfdd7ad80489110bdf0fb4911964dd7b289da3dd1e726b1933792904cecc",
+      "completeExportEqual": true,
+      "exportSha256": "2705a138df765132350cd5d019a0bfcf28812fb6316346262825c49e4d60511a"
+    },
+    {
+      "run": "cold",
+      "profile": "coverage/allocations",
+      "rawSha256": "288817ba408a02a59590cdbab9f01d36e69ee1f22caeb998947be774869aa901",
+      "binarySha256": "5b5e1b9b9127bc35137b6dd554f19f98d698bd3efd91ad3c8d42a56f6c1effc5",
+      "completeExportEqual": true,
+      "exportSha256": "844d7a7d1bc146da2c292db36a01f28ee59bad625437bc8621899891412204b7"
+    },
+    {
+      "run": "cold",
+      "profile": "compiler-retained/coverage/matrix",
+      "rawSha256": "60402690edf1f3119e4603141396307530cf24c583b6ece9ef622b1833be51e0",
+      "binarySha256": "963634e8b58ca70102a553c34569dbbc2199e2acfef90ab09ad2375037fac415",
+      "completeExportEqual": true,
+      "exportSha256": "deed8196ea6cd89d1ec34f9e84b3686baedd2c9a43cabfb0084b79613866f4ec"
+    },
+    {
+      "run": "cold",
+      "profile": "compiler-retained/coverage/allocations",
+      "rawSha256": "2d8bc2a26def61b0cc1eb7698f08e596b0476c4f6745076d61dd1b481a349a7b",
+      "binarySha256": "f37b0cde51cc13091d67cd804b2b23d375f1c7fdc93e1fcdfa29b974f45de265",
+      "completeExportEqual": true,
+      "exportSha256": "b676f2eae4b052196aade785f1130012a387b83e868313bac564a5be8f734707"
+    },
+    {
+      "run": "cold",
+      "profile": "coverage/packed-matrix",
+      "rawSha256": "c6cbfd6b274f83a9ccf5502d87055b4c0678895dae0efe8068d4c0e275b03df8",
+      "binarySha256": "73ad6a05d8a4c83b199fecf6dd035968aa7f65392d42b8969abb7e92fc1aeb0f",
+      "completeExportEqual": true,
+      "exportSha256": "40d21f275b2054fec450e8812437f575911a531d1717cbaa063653e078f8dbe3"
+    },
+    {
+      "run": "cold",
+      "profile": "coverage/packed-allocations",
+      "rawSha256": "7f79751433733f4bbaa90d6b7f46a811626e57a21f0b26cd8d71e3cb499e5062",
+      "binarySha256": "425a0eaab224d8d061b37be40e7f42fd57288d2ec2cb4509eafd0911b36cf623",
+      "completeExportEqual": true,
+      "exportSha256": "fd36bf81a6e7ac860d92906e14da4ed51202c24ce3debe69734da880cf1a473d"
+    },
+    {
+      "run": "cold",
+      "profile": "coverage/integer-matrix",
+      "rawSha256": "c636a6b3ff0a5abcd8fd851fede066888d9a4063e27d17227447464bfd8ce452",
+      "binarySha256": "50f25bac323efb12d126b970fe103bdc344d3881ecd966661d46f977653d8a7e",
+      "completeExportEqual": true,
+      "exportSha256": "32d2838d8c5d6717ab3a0a5485dee724dd4a52f62a831ce7563611ac6015b92e"
+    },
+    {
+      "run": "cold",
+      "profile": "coverage/integer-allocations",
+      "rawSha256": "b6a9e3ecdd6eb1efc6e41b1055b2c2242cd1bb71d4b241e761883383a33b1d4c",
+      "binarySha256": "59edc629def8d9c76f9703c457ec643f6c9e05cc40f4ab3c375ab0dd084f210b",
+      "completeExportEqual": true,
+      "exportSha256": "e314f7ddd6a2628927fd83a9509e9c59ab3ed6a8ffb0b055addbe5c18b2e98f4"
+    }
+  ],
+  "criticNarrowCases": 16,
+  "waivers": [
+    {
+      "kind": "LLVM region",
+      "source": "renderer/virgl-shader/bridge.c",
+      "point": [
+        2419,
+        25,
+        2419,
+        99,
+        0,
+        0,
+        0
+      ],
+      "classification": "waived",
+      "reason": "Pinned producer mask and exact declaration-size cross-check failure; independently validated bounded original declarations never contradict the immutable upstream producer. Defensive fail-closed branch only."
+    },
+    {
+      "kind": "LLVM region",
+      "source": "renderer/virgl-shader/bridge.c",
+      "point": [
+        2290,
+        66,
+        2292,
+        8,
+        0,
+        0,
+        0
+      ],
+      "classification": "waived",
+      "reason": "Guard-admitted slot0 scalar declaration has first0 and pinned original token width2/3; impossible parser corruption guard. Both actual widths and reorder success are covered."
+    },
+    {
+      "kind": "LLVM region",
+      "source": "renderer/virgl-shader/checked_tgsi_sanity.c",
+      "point": [
+        24,
+        70,
+        27,
+        5,
+        0,
+        0,
+        0
+      ],
+      "classification": "waived",
+      "reason": "Internal arena-capacity longjmp existed before this task; selected2MiB budget handles the recorded complete simultaneous limits. Actual2MiB allocation-failed checker transaction and recovery are exercised, independently authenticated; capacity counter failure under unsupported tokens is not an admitted product claim."
+    },
+    {
+      "kind": "LLVM region",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_inputs.c",
+      "point": [
+        60,
+        19,
+        60,
+        27,
+        0,
+        0,
+        0
+      ],
+      "classification": "waived",
+      "reason": "Failed deterministic test assertion, malformed evidence-driver IO or original immutable parser failure; direct test-driver/error scaffolding rather than admitted compiler behavior."
+    },
+    {
+      "kind": "LLVM region",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_inputs.c",
+      "point": [
+        61,
+        44,
+        61,
+        52,
+        0,
+        0,
+        0
+      ],
+      "classification": "waived",
+      "reason": "Failed deterministic test assertion, malformed evidence-driver IO or original immutable parser failure; direct test-driver/error scaffolding rather than admitted compiler behavior."
+    },
+    {
+      "kind": "LLVM region",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_inputs.c",
+      "point": [
+        62,
+        51,
+        62,
+        59,
+        0,
+        0,
+        0
+      ],
+      "classification": "waived",
+      "reason": "Failed deterministic test assertion, malformed evidence-driver IO or original immutable parser failure; direct test-driver/error scaffolding rather than admitted compiler behavior."
+    },
+    {
+      "kind": "LLVM region",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_inputs.c",
+      "point": [
+        80,
+        7,
+        80,
+        24,
+        0,
+        0,
+        0
+      ],
+      "classification": "waived",
+      "reason": "Failed deterministic test assertion, malformed evidence-driver IO or original immutable parser failure; direct test-driver/error scaffolding rather than admitted compiler behavior."
+    },
+    {
+      "kind": "LLVM region",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_inputs.c",
+      "point": [
+        82,
+        63,
+        82,
+        71,
+        0,
+        0,
+        0
+      ],
+      "classification": "waived",
+      "reason": "Failed deterministic test assertion, malformed evidence-driver IO or original immutable parser failure; direct test-driver/error scaffolding rather than admitted compiler behavior."
+    },
+    {
+      "kind": "LLVM region",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_inputs.c",
+      "point": [
+        92,
+        38,
+        92,
+        46,
+        0,
+        0,
+        0
+      ],
+      "classification": "waived",
+      "reason": "Failed deterministic test assertion, malformed evidence-driver IO or original immutable parser failure; direct test-driver/error scaffolding rather than admitted compiler behavior."
+    },
+    {
+      "kind": "LLVM region",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_inputs.c",
+      "point": [
+        12,
+        32,
+        12,
+        39,
+        0,
+        0,
+        0
+      ],
+      "classification": "waived",
+      "reason": "Failed deterministic test assertion, malformed evidence-driver IO or original immutable parser failure; direct test-driver/error scaffolding rather than admitted compiler behavior."
+    },
+    {
+      "kind": "LLVM region",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_inputs.c",
+      "point": [
+        18,
+        39,
+        18,
+        46,
+        0,
+        0,
+        0
+      ],
+      "classification": "waived",
+      "reason": "Failed deterministic test assertion, malformed evidence-driver IO or original immutable parser failure; direct test-driver/error scaffolding rather than admitted compiler behavior."
+    },
+    {
+      "kind": "LLVM region",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_inputs.c",
+      "point": [
+        20,
+        50,
+        20,
+        57,
+        0,
+        0,
+        0
+      ],
+      "classification": "waived",
+      "reason": "Failed deterministic test assertion, malformed evidence-driver IO or original immutable parser failure; direct test-driver/error scaffolding rather than admitted compiler behavior."
+    },
+    {
+      "kind": "LLVM region",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_inputs.c",
+      "point": [
+        27,
+        65,
+        27,
+        72,
+        0,
+        0,
+        0
+      ],
+      "classification": "waived",
+      "reason": "Failed deterministic test assertion, malformed evidence-driver IO or original immutable parser failure; direct test-driver/error scaffolding rather than admitted compiler behavior."
+    },
+    {
+      "kind": "LLVM region",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_inputs.c",
+      "point": [
+        29,
+        59,
+        29,
+        66,
+        0,
+        0,
+        0
+      ],
+      "classification": "waived",
+      "reason": "Failed deterministic test assertion, malformed evidence-driver IO or original immutable parser failure; direct test-driver/error scaffolding rather than admitted compiler behavior."
+    },
+    {
+      "kind": "LLVM region",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_inputs.c",
+      "point": [
+        32,
+        39,
+        32,
+        46,
+        0,
+        0,
+        0
+      ],
+      "classification": "waived",
+      "reason": "Failed deterministic test assertion, malformed evidence-driver IO or original immutable parser failure; direct test-driver/error scaffolding rather than admitted compiler behavior."
+    },
+    {
+      "kind": "LLVM region",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_inputs.c",
+      "point": [
+        41,
+        59,
+        41,
+        66,
+        0,
+        0,
+        0
+      ],
+      "classification": "waived",
+      "reason": "Failed deterministic test assertion, malformed evidence-driver IO or original immutable parser failure; direct test-driver/error scaffolding rather than admitted compiler behavior."
+    },
+    {
+      "kind": "LLVM region",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_inputs.c",
+      "point": [
+        44,
+        39,
+        44,
+        46,
+        0,
+        0,
+        0
+      ],
+      "classification": "waived",
+      "reason": "Failed deterministic test assertion, malformed evidence-driver IO or original immutable parser failure; direct test-driver/error scaffolding rather than admitted compiler behavior."
+    },
+    {
+      "kind": "LLVM region",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_inputs.c",
+      "point": [
+        52,
+        107,
+        52,
+        113,
+        0,
+        0,
+        0
+      ],
+      "classification": "waived",
+      "reason": "Failed deterministic test assertion, malformed evidence-driver IO or original immutable parser failure; direct test-driver/error scaffolding rather than admitted compiler behavior."
+    },
+    {
+      "kind": "LLVM region",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_allocations.c",
+      "point": [
+        28,
+        15,
+        28,
+        151,
+        0,
+        0,
+        0
+      ],
+      "classification": "waived",
+      "reason": "Failed deterministic test assertion, malformed evidence-driver IO or original immutable parser failure; direct test-driver/error scaffolding rather than admitted compiler behavior."
+    },
+    {
+      "kind": "LLVM region",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_allocations.c",
+      "point": [
+        28,
+        25,
+        28,
+        25,
+        0,
+        0,
+        0
+      ],
+      "classification": "waived",
+      "reason": "Failed deterministic test assertion, malformed evidence-driver IO or original immutable parser failure; direct test-driver/error scaffolding rather than admitted compiler behavior."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/bridge.c",
+      "point": [
+        2407,
+        8,
+        2407,
+        50,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 0,
+      "heldFalse": 378,
+      "reason": "Pinned upstream/parser metadata corruption guards; task accepts original valid producer output, which is independently checked. All admitted metadata and slot0-order paths executed."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/bridge.c",
+      "point": [
+        2407,
+        54,
+        2407,
+        101,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 0,
+      "heldFalse": 378,
+      "reason": "Pinned upstream/parser metadata corruption guards; task accepts original valid producer output, which is independently checked. All admitted metadata and slot0-order paths executed."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/bridge.c",
+      "point": [
+        2408,
+        8,
+        2408,
+        50,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 0,
+      "heldFalse": 378,
+      "reason": "Pinned upstream/parser metadata corruption guards; task accepts original valid producer output, which is independently checked. All admitted metadata and slot0-order paths executed."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/bridge.c",
+      "point": [
+        2408,
+        54,
+        2408,
+        74,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 0,
+      "heldFalse": 378,
+      "reason": "Pinned upstream/parser metadata corruption guards; task accepts original valid producer output, which is independently checked. All admitted metadata and slot0-order paths executed."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/bridge.c",
+      "point": [
+        2419,
+        11,
+        2419,
+        23,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 0,
+      "heldFalse": 448,
+      "reason": "Pinned upstream/parser metadata corruption guards; task accepts original valid producer output, which is independently checked. All admitted metadata and slot0-order paths executed."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/bridge.c",
+      "point": [
+        2290,
+        11,
+        2290,
+        28,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 0,
+      "heldFalse": 12,
+      "reason": "Pinned upstream/parser metadata corruption guards; task accepts original valid producer output, which is independently checked. All admitted metadata and slot0-order paths executed."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/bridge.c",
+      "point": [
+        2290,
+        32,
+        2290,
+        64,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 0,
+      "heldFalse": 12,
+      "reason": "Pinned upstream/parser metadata corruption guards; task accepts original valid producer output, which is independently checked. All admitted metadata and slot0-order paths executed."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/checked_tgsi_sanity.c",
+      "point": [
+        24,
+        8,
+        24,
+        32,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 0,
+      "heldFalse": 1679412,
+      "reason": "Existing internal scratch-capacity guard; full-limit selected2MiB arena and genuine failed arena allocation/recovery recorded, no unsupported-token claim."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/checked_tgsi_sanity.c",
+      "point": [
+        24,
+        36,
+        24,
+        68,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 0,
+      "heldFalse": 1679412,
+      "reason": "Existing internal scratch-capacity guard; full-limit selected2MiB arena and genuine failed arena allocation/recovery recorded, no unsupported-token claim."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "point": [
+        107,
+        26,
+        107,
+        39,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 0,
+      "heldFalse": 60151,
+      "reason": "Byte-identical relocated legacy grammar checks, carried predecessor HELD evidence with actual retained669-case compiler/typed/packed gates; new facet has separate constant parser."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "point": [
+        114,
+        43,
+        114,
+        56,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 0,
+      "heldFalse": 223,
+      "reason": "Byte-identical relocated legacy grammar checks, carried predecessor HELD evidence with actual retained669-case compiler/typed/packed gates; new facet has separate constant parser."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "point": [
+        114,
+        60,
+        114,
+        77,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 0,
+      "heldFalse": 223,
+      "reason": "Byte-identical relocated legacy grammar checks, carried predecessor HELD evidence with actual retained669-case compiler/typed/packed gates; new facet has separate constant parser."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "point": [
+        114,
+        81,
+        114,
+        94,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 0,
+      "heldFalse": 223,
+      "reason": "Byte-identical relocated legacy grammar checks, carried predecessor HELD evidence with actual retained669-case compiler/typed/packed gates; new facet has separate constant parser."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "point": [
+        115,
+        14,
+        115,
+        27,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 0,
+      "heldFalse": 223,
+      "reason": "Byte-identical relocated legacy grammar checks, carried predecessor HELD evidence with actual retained669-case compiler/typed/packed gates; new facet has separate constant parser."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "point": [
+        115,
+        31,
+        115,
+        44,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 0,
+      "heldFalse": 223,
+      "reason": "Byte-identical relocated legacy grammar checks, carried predecessor HELD evidence with actual retained669-case compiler/typed/packed gates; new facet has separate constant parser."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "point": [
+        122,
+        51,
+        122,
+        65,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 0,
+      "heldFalse": 252,
+      "reason": "Byte-identical relocated legacy grammar checks, carried predecessor HELD evidence with actual retained669-case compiler/typed/packed gates; new facet has separate constant parser."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_inputs.c",
+      "point": [
+        60,
+        8,
+        60,
+        17,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 0,
+      "heldFalse": 1,
+      "reason": "Harness assertions, input-IO validation and exact recovery fail branches; successful assertions and fault/recovery loop executed."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_inputs.c",
+      "point": [
+        61,
+        40,
+        61,
+        42,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 0,
+      "heldFalse": 1,
+      "reason": "Harness assertions, input-IO validation and exact recovery fail branches; successful assertions and fault/recovery loop executed."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_inputs.c",
+      "point": [
+        62,
+        36,
+        62,
+        49,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 0,
+      "heldFalse": 1,
+      "reason": "Harness assertions, input-IO validation and exact recovery fail branches; successful assertions and fault/recovery loop executed."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_inputs.c",
+      "point": [
+        80,
+        7,
+        80,
+        14,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 0,
+      "heldFalse": 338,
+      "reason": "Harness assertions, input-IO validation and exact recovery fail branches; successful assertions and fault/recovery loop executed."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_inputs.c",
+      "point": [
+        82,
+        11,
+        82,
+        18,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 0,
+      "heldFalse": 338,
+      "reason": "Harness assertions, input-IO validation and exact recovery fail branches; successful assertions and fault/recovery loop executed."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_inputs.c",
+      "point": [
+        82,
+        22,
+        82,
+        61,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 0,
+      "heldFalse": 338,
+      "reason": "Harness assertions, input-IO validation and exact recovery fail branches; successful assertions and fault/recovery loop executed."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_inputs.c",
+      "point": [
+        92,
+        8,
+        92,
+        23,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 0,
+      "heldFalse": 1,
+      "reason": "Harness assertions, input-IO validation and exact recovery fail branches; successful assertions and fault/recovery loop executed."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_inputs.c",
+      "point": [
+        92,
+        27,
+        92,
+        36,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 0,
+      "heldFalse": 1,
+      "reason": "Harness assertions, input-IO validation and exact recovery fail branches; successful assertions and fault/recovery loop executed."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_inputs.c",
+      "point": [
+        12,
+        8,
+        12,
+        30,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 0,
+      "heldFalse": 2705,
+      "reason": "Harness assertions, input-IO validation and exact recovery fail branches; successful assertions and fault/recovery loop executed."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_inputs.c",
+      "point": [
+        18,
+        8,
+        18,
+        37,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 0,
+      "heldFalse": 676,
+      "reason": "Harness assertions, input-IO validation and exact recovery fail branches; successful assertions and fault/recovery loop executed."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_inputs.c",
+      "point": [
+        20,
+        8,
+        20,
+        10,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 0,
+      "heldFalse": 676,
+      "reason": "Harness assertions, input-IO validation and exact recovery fail branches; successful assertions and fault/recovery loop executed."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_inputs.c",
+      "point": [
+        20,
+        14,
+        20,
+        48,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 0,
+      "heldFalse": 676,
+      "reason": "Harness assertions, input-IO validation and exact recovery fail branches; successful assertions and fault/recovery loop executed."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_inputs.c",
+      "point": [
+        27,
+        8,
+        27,
+        63,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 0,
+      "heldFalse": 378,
+      "reason": "Harness assertions, input-IO validation and exact recovery fail branches; successful assertions and fault/recovery loop executed."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_inputs.c",
+      "point": [
+        29,
+        8,
+        29,
+        57,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 0,
+      "heldFalse": 378,
+      "reason": "Harness assertions, input-IO validation and exact recovery fail branches; successful assertions and fault/recovery loop executed."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_inputs.c",
+      "point": [
+        32,
+        11,
+        32,
+        37,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 0,
+      "heldFalse": 4128,
+      "reason": "Harness assertions, input-IO validation and exact recovery fail branches; successful assertions and fault/recovery loop executed."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_inputs.c",
+      "point": [
+        41,
+        8,
+        41,
+        57,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 0,
+      "heldFalse": 378,
+      "reason": "Harness assertions, input-IO validation and exact recovery fail branches; successful assertions and fault/recovery loop executed."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_inputs.c",
+      "point": [
+        44,
+        11,
+        44,
+        37,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 0,
+      "heldFalse": 4128,
+      "reason": "Harness assertions, input-IO validation and exact recovery fail branches; successful assertions and fault/recovery loop executed."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_inputs.c",
+      "point": [
+        52,
+        83,
+        52,
+        104,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 0,
+      "heldFalse": 437,
+      "reason": "Harness assertions, input-IO validation and exact recovery fail branches; successful assertions and fault/recovery loop executed."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_allocations.c",
+      "point": [
+        47,
+        15,
+        47,
+        16,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 5,
+      "heldFalse": 0,
+      "reason": "Harness assertions, input-IO validation and exact recovery fail branches; successful assertions and fault/recovery loop executed."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_allocations.c",
+      "point": [
+        47,
+        20,
+        47,
+        44,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 5,
+      "heldFalse": 0,
+      "reason": "Harness assertions, input-IO validation and exact recovery fail branches; successful assertions and fault/recovery loop executed."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_allocations.c",
+      "point": [
+        49,
+        15,
+        49,
+        26,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 5,
+      "heldFalse": 0,
+      "reason": "Harness assertions, input-IO validation and exact recovery fail branches; successful assertions and fault/recovery loop executed."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_allocations.c",
+      "point": [
+        49,
+        30,
+        49,
+        39,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 5,
+      "heldFalse": 0,
+      "reason": "Harness assertions, input-IO validation and exact recovery fail branches; successful assertions and fault/recovery loop executed."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_allocations.c",
+      "point": [
+        49,
+        43,
+        49,
+        55,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 5,
+      "heldFalse": 0,
+      "reason": "Harness assertions, input-IO validation and exact recovery fail branches; successful assertions and fault/recovery loop executed."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_allocations.c",
+      "point": [
+        49,
+        59,
+        49,
+        71,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 5,
+      "heldFalse": 0,
+      "reason": "Harness assertions, input-IO validation and exact recovery fail branches; successful assertions and fault/recovery loop executed."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_allocations.c",
+      "point": [
+        49,
+        75,
+        49,
+        92,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 5,
+      "heldFalse": 0,
+      "reason": "Harness assertions, input-IO validation and exact recovery fail branches; successful assertions and fault/recovery loop executed."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_allocations.c",
+      "point": [
+        69,
+        29,
+        69,
+        34,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 4,
+      "heldFalse": 0,
+      "reason": "Harness assertions, input-IO validation and exact recovery fail branches; successful assertions and fault/recovery loop executed."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_allocations.c",
+      "point": [
+        69,
+        53,
+        69,
+        58,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 4,
+      "heldFalse": 0,
+      "reason": "Harness assertions, input-IO validation and exact recovery fail branches; successful assertions and fault/recovery loop executed."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_allocations.c",
+      "point": [
+        28,
+        8,
+        28,
+        13,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 0,
+      "heldFalse": 407,
+      "reason": "Harness assertions, input-IO validation and exact recovery fail branches; successful assertions and fault/recovery loop executed."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_allocations.c",
+      "point": [
+        39,
+        12,
+        39,
+        13,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 98,
+      "heldFalse": 0,
+      "reason": "Harness assertions, input-IO validation and exact recovery fail branches; successful assertions and fault/recovery loop executed."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_allocations.c",
+      "point": [
+        39,
+        17,
+        39,
+        42,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 98,
+      "heldFalse": 0,
+      "reason": "Harness assertions, input-IO validation and exact recovery fail branches; successful assertions and fault/recovery loop executed."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_allocations.c",
+      "point": [
+        40,
+        12,
+        40,
+        34,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 98,
+      "heldFalse": 0,
+      "reason": "Harness assertions, input-IO validation and exact recovery fail branches; successful assertions and fault/recovery loop executed."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_allocations.c",
+      "point": [
+        40,
+        38,
+        40,
+        62,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 98,
+      "heldFalse": 0,
+      "reason": "Harness assertions, input-IO validation and exact recovery fail branches; successful assertions and fault/recovery loop executed."
+    },
+    {
+      "kind": "LLVM branch",
+      "source": "renderer/virgl-shader/native_tests/standard_uniform_allocations.c",
+      "point": [
+        40,
+        66,
+        40,
+        92,
+        0,
+        0,
+        4
+      ],
+      "classification": "waived",
+      "heldTrue": 98,
+      "heldFalse": 0,
+      "reason": "Harness assertions, input-IO validation and exact recovery fail branches; successful assertions and fault/recovery loop executed."
+    },
+    {
+      "kind": "V8 interval",
+      "source": "renderer/virgl-command/constant-domain.mjs",
+      "point": [
+        77859,
+        77871,
+        1037,
+        1037
+      ],
+      "classification": "waived",
+      "reason": "Rethrow of unexpected non-DomainFault runtime exception; strict reflection/proxy/type faults themselves are recorded and handled. Fatal interpreter bugs are not task acceptance input."
+    },
+    {
+      "kind": "V8 interval",
+      "source": "renderer/virgl-command/constant-domain.mjs",
+      "point": [
+        78541,
+        78553,
+        1047,
+        1047
+      ],
+      "classification": "waived",
+      "reason": "Rethrow of unexpected non-DomainFault runtime exception; strict reflection/proxy/type faults themselves are recorded and handled. Fatal interpreter bugs are not task acceptance input."
+    },
+    {
+      "kind": "V8 interval",
+      "source": "renderer/virgl-command/constant-domain.mjs",
+      "point": [
+        79571,
+        79583,
+        1059,
+        1059
+      ],
+      "classification": "waived",
+      "reason": "Rethrow of unexpected non-DomainFault runtime exception; strict reflection/proxy/type faults themselves are recorded and handled. Fatal interpreter bugs are not task acceptance input."
+    },
+    {
+      "kind": "V8 interval",
+      "source": "renderer/virgl-command/constant-domain.mjs",
+      "point": [
+        80078,
+        80090,
+        1066,
+        1066
+      ],
+      "classification": "waived",
+      "reason": "Rethrow of unexpected non-DomainFault runtime exception; strict reflection/proxy/type faults themselves are recorded and handled. Fatal interpreter bugs are not task acceptance input."
+    },
+    {
+      "kind": "V8 interval",
+      "source": "renderer/virgl-shader/tests/standard-uniform-browser.mjs",
+      "point": [
+        2089,
+        2161,
+        24,
+        24
+      ],
+      "classification": "waived",
+      "reason": "Hardware diagnostic fallback for optional qualified system member name; actual M4 Metal uses authenticated unqualified name at offset640."
+    },
+    {
+      "kind": "V8 interval",
+      "source": "renderer/virgl-shader/tests/standard-uniform-browser.mjs",
+      "point": [
+        8937,
+        8982,
+        85,
+        85
+      ],
+      "classification": "waived",
+      "reason": "Optional unused-bank elimination diagnostic; this exact Metal host retains both unused declarations. Compiler metadata and retained native reflection are authenticated, no portability/elimination behavior claimed."
+    }
+  ]
+}

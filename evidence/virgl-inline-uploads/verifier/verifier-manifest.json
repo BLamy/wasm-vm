@@ -1,0 +1,31 @@
+{
+  "schema": "virgl-inline-verifier-seal-v1",
+  "task": "E6-T12g5",
+  "verdict": "verified",
+  "frozenRuntimeHead": "7c155f8ff630d4a83786cb2f4c982ddb26e3ab69",
+  "base": "feb78352200139079db61257acf1de1004456037",
+  "submission": "ecabcafb4862224866eda7451a32052881540cc1",
+  "records": 27,
+  "archive": {
+    "path": "verifier-recording.tar.gz",
+    "bytes": 364478,
+    "sha256": "afcc8f01446a1c38bce509eb8208142b4c8e2fac11861ee1cb927c9dcb78cabe"
+  },
+  "recordIndex": {
+    "path": "verifier-records.json",
+    "bytes": 4014,
+    "sha256": "d356775028bb57cac39780872d26a92d3a1dabc8eacc686993df8cfbe9a7ad8f"
+  },
+  "workerBinding": {
+    "manifest.json": "775063b3741c2d88fcd7b9c8bc1debce14334fc69bda8325bde6e4aa246e8150",
+    "records.json": "992ce84526079024210ad159f0910e1d30954d349b4b2e0df4f6c7386f4f6bf1",
+    "recording.tar.gz": "04553ec60232a633120c7de041e13e297ce46134684712f6a6d39d75c76df157"
+  },
+  "excludedWorkerDuplicates": "recording/ extracted original archive members are excluded; original worker archive is bound above",
+  "predictionResultsSha256": "ac48d6be72d4e5d7cd631b481ee9cd190863df7c76767fd79d3ee58ea71b5281",
+  "verdictSha256": "be8b38a0b936cd6280d327c2911c43e32cc2a476ba038e7133b9044059a24dad",
+  "novelCleanSha256": "9d1011ce3f11a91fadc8a19e97be7e51434ab86d5605b4b05f959fb10b32f335",
+  "hardwareAssertions": 19594,
+  "productionNegotiation": false,
+  "guestExecution": false
+}

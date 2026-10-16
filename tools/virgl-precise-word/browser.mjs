@@ -1,0 +1,13 @@
+#!/usr/bin/env node
+import assert from 'node:assert/strict';
+import {createHash} from 'node:crypto';
+import fs from 'node:fs';import path from 'node:path';import {fileURLToPath} from 'node:url';
+import {browserDocument,browserOptions,runVirglBrowser} from '../lib/virgl-browser-runner.mjs';
+const options=browserOptions(['--fault','--fault-artifacts']),repo=fs.realpathSync(path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..'));
+const fault=options.fault??null;assert.ok(fault===null||['max-source-order','zero-equality','ne-unordered'].includes(fault));
+let faultWasm=null,faultFiles=[];
+if(fault){const manifest=JSON.parse(fs.readFileSync(path.join(options['fault-artifacts'],'manifest.json'))),artifact=fs.realpathSync(path.join(options['fault-artifacts'],manifest.modes[fault].wasm.path)),relative=path.relative(repo,artifact);assert.ok(relative&&!relative.startsWith('..'+path.sep)&&!path.isAbsolute(relative),'fault artifact stays inside canonical checkout');faultWasm='/'+relative.split(path.sep).join('/');faultFiles.push(relative);}
+const runtime=fs.readdirSync(path.join(repo,'renderer/virgl-command')).filter(x=>x.endsWith('.mjs')).map(x=>'renderer/virgl-command/'+x);
+runtime.push('renderer/virgl-command/tests/precise-words.mjs','tools/virgl-precise-word/oracle.mjs','renderer/virgl-command/tests/bounded-loops-shaders.json');
+const pinnedFiles=runtime.map(filename=>{const bytes=fs.readFileSync(path.join(repo,filename));return{path:filename,size:bytes.length,sha256:createHash('sha256').update(bytes).digest('hex')};});
+await runVirglBrowser({options,task:'E6-T12f4',serializedAcceptance:true,boundary:'Instruction-local PRECISE word operations in the isolated shared renderer',reportFields:{currentGuest3dAdvertisement:false},modulePath:'/renderer/virgl-command/tests/precise-words.mjs',windowReportKey:'__virglPreciseWordsReport',browserArguments:{faultWasm},servedFiles:[...runtime,...faultFiles],pinnedFiles,coveragePaths:['renderer/virgl-command/tests/precise-words.mjs','tools/virgl-precise-word/oracle.mjs','renderer/virgl-command/state.mjs','renderer/virgl-command/constant-domain.mjs'],html:browserDocument({title:'PRECISE word proof',heading:'Exact comparison, selection and copy',description:'Literal word oracle through actual shared hardware draws'}),validate(r){assert.equal(r.status,'passed');assert.equal(r.rigs.length,50);assert.equal(r.drawCount,830);assert.equal(r.checkedWords,3320);assert.equal(r.checkedPixels,830*4096);assert.ok(r.rigs.every(x=>x.objects.live===0));},successMessage:r=>`${r.checkedWords} exact GPU words; ${r.checkedPixels} checked pixels.`});

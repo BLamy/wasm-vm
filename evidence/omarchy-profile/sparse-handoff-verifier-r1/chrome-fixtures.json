@@ -1,0 +1,14 @@
+[
+  {
+    "fixture": "jit_sparse_handoff",
+    "artifactSha256": "f74486b08b6c8a0fbb22e6cf381db1f7d50bd7ba52535f44a39d647f3aee9f9a",
+    "result": "test result: ok. 3 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.95s",
+    "passed": true
+  },
+  {
+    "fixture": "jit_browser_parity",
+    "artifactSha256": "8365e851293654326c5ce7b8e6a41aa7bc2c7e78ba446e677fac904c48f81e7c",
+    "result": "test result: ok. 38 passed; 0 failed; 1 ignored; 0 filtered out; finished in 5.38s",
+    "passed": true
+  }
+]

@@ -1,0 +1,24 @@
+{
+  "schema": "virgl-saturation-worker-seal-v1",
+  "task": "E6-T12g6h",
+  "sourceHead": "81dfb7c010eb117d93335bc3a7c91878546449f8",
+  "base": "bad92bfdaba16295b064a78c0767652da09be158",
+  "records": 123,
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 35509986,
+    "sha256": "0f23bfac558168d1207a3841028243ba5d0d1c4cb9f34faac2d2ebf8fa220b53"
+  },
+  "recordIndex": {
+    "path": "records.json",
+    "bytes": 21447,
+    "sha256": "3652615c51b879418d967067e6394b978f30fa118085b0b04a3d4c6ef18b185b"
+  },
+  "hotReceiptSha256": "0273c4d54a0d67f7fc2ea64c3f9eacb04c09f94205eda3f0a0b0ecf27620690f",
+  "coldReportSha256": "5fba3a708ade8fba2ec9a4d850da5dbe91a2c88f4738b0f2f5b966c2ba2d9f79",
+  "coldReceiptSha256": "55e23cf85c16f7fcd7b1dcb5468e826c7c1be0aa322cbf21e6536b073da82ab3",
+  "checkedWords": 121032,
+  "checkedPixels": 79872,
+  "productionNegotiation": false,
+  "guestExecution": false
+}

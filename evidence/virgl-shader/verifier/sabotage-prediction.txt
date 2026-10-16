@@ -1,0 +1,1 @@
+Before execution: modify generated fragment GLSL immediately before compilation by swapping fsout_c0.rgb to bgr at the end of main. The red linkage draw must still compile/link, then fail at pixel(4,4): expected [255,0,0,255], observed [0,0,255,255]. This run is deliberate sabotage of browser-fed shader output; frozen source and Wasm are unchanged.

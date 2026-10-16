@@ -1,0 +1,25 @@
+{
+  "schema": "original-ordered-stencil-seal-v1",
+  "task": "E6-T11d45",
+  "sourceHead": "c510692cc77e0f0c99d1e2f28dff9de6de2f3372",
+  "archiveParts": [
+    {
+      "path": "recording.tar.gz",
+      "bytes": 75846524,
+      "sha256": "5d40d9cf0650b561637863b24cd52984cf1fbaf08ebf988e8a57940add1f13ed"
+    }
+  ],
+  "records": 83324,
+  "reopenedMembers": 83324,
+  "sourceClosureIncluded": true,
+  "archiveSha256": "5d40d9cf0650b561637863b24cd52984cf1fbaf08ebf988e8a57940add1f13ed",
+  "archiveBytes": 75846524,
+  "recordIndexSha256": "bfee67b4e66aa3645f1f05a7847ef0e8f6ee5f092904a60ff56ab28c22aae8eb",
+  "hotReceiptSha256": "1963002b56559bdf2c7efed661a1e54eb389d2a291eb8d0f63db63db935ceecf",
+  "coldReportSha256": "7a6e6cbd87183e8385f9fef867bf184756630752fb1961c511591e495e34331b",
+  "coldReceiptSha256": "e045b25dfd225076460d96f85c681d7963c3d2f99b25ba71aa240d22bb9df980",
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "authority": "isolated-original-ordered-stencils",
+  "productionDrawAuthority": false
+}

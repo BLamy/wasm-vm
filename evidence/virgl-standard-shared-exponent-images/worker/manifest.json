@@ -1,0 +1,16 @@
+{
+  "schema": "original-shared-exponent-image-seal-v1",
+  "task": "E6-T11d29",
+  "sourceHead": "7e88b69a565d0042297e3001c8c4044efdf4cca9",
+  "records": 11096,
+  "archiveSha256": "5867b3470f9efc59feb41276c38aefad463197cf1f8a705c0bb03d0478a537ae",
+  "archiveBytes": 31778302,
+  "recordIndexSha256": "8451bac5629992d907a3d14de3eaae5eff4ac3b38b1c62a3f639b40b3fab3412",
+  "hotReceiptSha256": "76eb289b5f8b72886b313ac9a1cfaeec1a8f86ab06cdf3999b09ebcf12f19a7c",
+  "coldReportSha256": "626e77f1541d16123a35867a349199fc569b081f07a1a297c258f49fed54ec89",
+  "coldReceiptSha256": "167c5c7fe9a58f604db57ca1b47320c3e8e601929f37105320c0607de4e9ada9",
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "authority": "isolated-original-shared-exponent-images",
+  "productionDrawAuthority": false
+}

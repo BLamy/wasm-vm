@@ -1,0 +1,48 @@
+{
+  "schema": "resource-capacity-critic-seal-v1",
+  "task": "E6-T11d50",
+  "verdict": "verified",
+  "sourceHead": "64bf6ed58a27a52a20e1548166e12d09dd719031",
+  "workerSubmissionHead": "2678da14d56640c5a1a9f680fa4aae7129c71efe",
+  "records": 365,
+  "reopenedMembers": 365,
+  "recordIndexSha256": "21dc44b2dd2401e5a056c1ff152fa474e1529cd62199e40596c8c6864e7e6a86",
+  "archiveParts": [
+    {
+      "path": "recording.tar.gz",
+      "bytes": 1595381,
+      "sha256": "4f038098d37c82b90234fcf03807b2e05632492a368a33647f014579dd0177cc"
+    }
+  ],
+  "archiveBytes": 1595381,
+  "archiveSha256": "4f038098d37c82b90234fcf03807b2e05632492a368a33647f014579dd0177cc",
+  "workerPins": {
+    "manifest.json": "59cea015984012bb2bbd8c8ac469e509ae272c5ca10814dbf80af669566dbdd7",
+    "records.json": "4a948c805eaf6d5c165a88694e81d575a630069d49292098274de625e4f1c4c8",
+    "recording.tar.gz": "7abb50b55a92b45ceec07aa52a95f0a024c94837dc0a44773465e3d4d3999420"
+  },
+  "publishedDependencySeals": [
+    {
+      "role": "worker",
+      "manifestSha256": "f6060a1d127854fa230b3f9ba0f50e83941ded19c4e516f5f5e0908a8f901f8f",
+      "indexSha256": "7bf6f4ea3b5aaf6b53a0199dc8a3dfa6824cf2c512f5f8a7a48067aad3370192",
+      "archiveSha256": "efde5ede4f9528859ea0f762b34ac906e2e5765724efe87bd563e9615673c5cb",
+      "logicalBodies": 44665
+    },
+    {
+      "role": "verifier",
+      "manifestSha256": "c4546b2d53e1bf6923127764d3ec37b5375ab75aaf73eac53902572a814e395d",
+      "indexSha256": "07ac9236066c4890a6e64db11e7825272e44414e5237c479624f74f90decda44",
+      "archiveSha256": "3cd3e2e56aa16aa1fbe6619c57ff3980d4335cec98dd5f8aae325362961a1477",
+      "logicalBodies": 4255
+    }
+  ],
+  "workerAuditSha256": "7f0d6c6ceefee3210ae343491805b9798b6caa19aa1dff41bb1383e43f891055",
+  "predictionsSha256": "c25d2eddc3634fcadbfb9e7a3cdc3f66f8a25ba854f1a3120ce4925581aaa6ba",
+  "novelReportSha256": "5ecf017cbd67f48f35c370ab39a2f0d67e655167ea0481bd8d6d3ae00a45e5a3",
+  "nativeBytes": 81792,
+  "finestV8RuntimeLines": 9,
+  "nonRuntimeWaivers": 5,
+  "guestExecution": false,
+  "productionAuthority": false
+}

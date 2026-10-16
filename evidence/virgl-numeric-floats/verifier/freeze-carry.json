@@ -1,0 +1,37 @@
+{
+  "status": "held",
+  "frozenHead": "1ce9b75b182b5411aee9922f329dc898e2a28b4e",
+  "records": [
+    {
+      "report": "native-report.json",
+      "path": "renderer/virgl-shader/bridge.c",
+      "sha256": "ac3cf490270000d1d983a24a7df83e9c95c4b7000b1291b9238ae283ee9ed9f3"
+    },
+    {
+      "report": "native-report.json",
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "sha256": "43609200b4e60b741a6f17234d3442af3cda56f5dc07b26d3631e63555ef2444"
+    },
+    {
+      "report": "native-report.json",
+      "path": "renderer/virgl-shader/raw_bits.h",
+      "sha256": "529f5af9eba18334be5fc4c59b0f60c2c9c5438961e71a2000428c63c420dac7"
+    },
+    {
+      "report": "knowledge-binding.json",
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "sha256": "43609200b4e60b741a6f17234d3442af3cda56f5dc07b26d3631e63555ef2444"
+    },
+    {
+      "report": "knowledge-binding.json",
+      "path": "renderer/virgl-shader/raw_bits.h",
+      "sha256": "529f5af9eba18334be5fc4c59b0f60c2c9c5438961e71a2000428c63c420dac7"
+    }
+  ],
+  "wasm": {
+    "path": "renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+    "size": 275914,
+    "sha256": "eefc0899be746bdbb246285e9c8bfe8c802d29e0480bf052be9790c78631c02d"
+  },
+  "meaning": "Pre-freeze independent executions remain held because every exercised implementation source and Wasm module digest equals the frozen boundary."
+}

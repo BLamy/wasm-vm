@@ -1,0 +1,15 @@
+[package]
+name = "critic-desktop-capacity-native"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[workspace]
+
+[features]
+default = []
+old-production = []
+
+[dependencies]
+wasm-vm-core = { path = "../../../crates/core", features = ["virgl-control-proof", "gpu-trace"] }
+sha2 = "0.10"

@@ -1,0 +1,20 @@
+{
+  "generated": "Content-hashed native application desktop; coherent RAM/disk/GPU/clock pair with Mesa VirGL and a clean Omarchy session",
+  "artifacts": {
+    "kernel": {
+      "url": "releases/kernel/6.6.63-omarchy-evdev1024/Image",
+      "sha256": "3cf8bed0d9a9941a6f2f81b7c8de86cefcba3e4e6bd5e5846bd395714a25642d",
+      "size": 24208896
+    },
+    "gpuCheckpoint": {
+      "url": "releases/boot-snapshot/omarchy-apps-virgl-ready-3583ea9927d1.wvgpair",
+      "sha256": "3583ea9927d142e33c9b1de5963d89bd1f0b1022df7047c8a8b02d7f734a01bd",
+      "size": 204057731
+    }
+  },
+  "chunkedImage": {
+    "key": "chunked-omarchy/manifest-8a793846f109a08242688fa32d531f230d7a3e2a7bdb3c694dbfc1abb70367a8.json",
+    "sha256": "8a793846f109a08242688fa32d531f230d7a3e2a7bdb3c694dbfc1abb70367a8",
+    "size": 3539054
+  }
+}

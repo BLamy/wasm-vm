@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "task": "E6-T12g6m3a",
+  "prediction": "P1",
+  "status": "HELD",
+  "claimHead": "b3dd41b2633adf4dd5d29d8cac848294b8fa4e9f",
+  "sourceHead": "38d7f930e012d8430e112d5dc3192a17ea4e164d",
+  "digests": {
+    "manifest.json": "fa75a5bb326f970d56a8634696e8cdf6e38213b0ba0ac6939946e5c84af16d90",
+    "records.json": "f1cda6ea72729fdb682cebf9bdc48c06c9c672741e7570e07baed8725dd9a639",
+    "recording.tar.gz": "aa1fc589c46a0ce20fac6b76284583aefa4be61878d78a5b2c9aedf16ad955d2"
+  },
+  "members": 104,
+  "bindings": [
+    {
+      "prefix": "hot/",
+      "originalBinary": "generated/known-branch-sanitize/known-branch-test",
+      "sha256": "c8ec34225ed6bcd0e46ac7606916bdcd7fc3ad100892c4a67235101b84b8a3fa",
+      "sourceCount": 346,
+      "recordCount": 31
+    },
+    {
+      "prefix": "cold/acceptance/",
+      "originalBinary": "cold-generated/known-branch-sanitize/known-branch-test",
+      "sha256": "f942a5b35753c884c8d15ce66f1c61ea70291db56ab5ab68c4d1f039fb1cdcfa",
+      "sourceCount": 322,
+      "recordCount": 31
+    }
+  ],
+  "coldClone": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-exact-bank-cold-owf0t9wu/wasm-vm",
+  "coldLogSha256": "f493c0be6ce275111412cb2195c9f22bbf2b0ea7bf6401e838291475ef94e599",
+  "removedEnvironmentNames": [
+    "RUST_LOG"
+  ],
+  "oldEvidenceChanges": [],
+  "originalColdBinaryAuthenticated": true
+}

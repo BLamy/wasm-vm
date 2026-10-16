@@ -1,0 +1,30 @@
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.24s
+     Running tests/integer_replay.rs (target/debug/deps/integer_replay-e328fb444c4e4f43)
+
+running 5 tests
+integer-invalidation: retired=4 trace-fnv=0xcccac346058ffa25 states-sha256=afdfc3e1eeb9806aa1853bc83f3562ba08f97bfc36d7f76b426d92d7669f2fc6
+integer-wrapping-auipc: retired=2 trace-fnv=0x58cfb93a95631c7d states-sha256=85eba745abb3a917d3b9db624f176308790da2d880217342e2123c4ee3918d00
+integer-compressed-trap: retired=4 trace-fnv=0xb501cc97e4a905b5 states-sha256=8d1380e24f5fb405a054cfd3ea56751bee6bb2fc0aff964cda493400e515023c
+integer-compressed-trap: retired=4 trace-fnv=0xb501cc97e4a905b5 states-sha256=8d1380e24f5fb405a054cfd3ea56751bee6bb2fc0aff964cda493400e515023c
+integer-invalidation: retired=4 trace-fnv=0xcccac346058ffa25 states-sha256=afdfc3e1eeb9806aa1853bc83f3562ba08f97bfc36d7f76b426d92d7669f2fc6
+integer-wrapping-auipc: retired=2 trace-fnv=0x58cfb93a95631c7d states-sha256=85eba745abb3a917d3b9db624f176308790da2d880217342e2123c4ee3918d00
+integer-wrapping-auipc: retired=2 trace-fnv=0x58cfb93a95631c7d states-sha256=85eba745abb3a917d3b9db624f176308790da2d880217342e2123c4ee3918d00
+integer-invalidation: retired=4 trace-fnv=0xcccac346058ffa25 states-sha256=afdfc3e1eeb9806aa1853bc83f3562ba08f97bfc36d7f76b426d92d7669f2fc6
+integer-compressed-trap: retired=4 trace-fnv=0xb501cc97e4a905b5 states-sha256=8d1380e24f5fb405a054cfd3ea56751bee6bb2fc0aff964cda493400e515023c
+test cached_integer_prefix_sees_code_replacement_between_slices ... ok
+integer-wrapping-c: retired=2 trace-fnv=0xd075022a987ecaac states-sha256=4e85467db94e0a440e10fa909d99b2768d43548862784e53f66f19f5533065f9
+integer-compressed-trap: retired=4 trace-fnv=0xb501cc97e4a905b5 states-sha256=8d1380e24f5fb405a054cfd3ea56751bee6bb2fc0aff964cda493400e515023c
+integer-wrapping-c: retired=2 trace-fnv=0xd075022a987ecaac states-sha256=4e85467db94e0a440e10fa909d99b2768d43548862784e53f66f19f5533065f9
+integer-compressed-trap: retired=4 trace-fnv=0xb501cc97e4a905b5 states-sha256=8d1380e24f5fb405a054cfd3ea56751bee6bb2fc0aff964cda493400e515023c
+integer-wrapping-c: retired=2 trace-fnv=0xd075022a987ecaac states-sha256=4e85467db94e0a440e10fa909d99b2768d43548862784e53f66f19f5533065f9
+integer-compressed-trap: retired=4 trace-fnv=0xb501cc97e4a905b5 states-sha256=8d1380e24f5fb405a054cfd3ea56751bee6bb2fc0aff964cda493400e515023c
+test cached_auipc_and_compressed_retirement_wrap_the_virtual_pc ... ok
+test compressed_lengths_and_trap_after_integer_prefix_are_precise ... ok
+integer-boundaries: retired=175 trace-fnv=0x18ec5c9b6882fa8d states-sha256=b7b550585168ebd78293f05a84cc1673d4c5fcf52f4dfbdac808ef49718f0286
+test arithmetic_boundaries_match_literal_results_in_every_replay_mode ... ok
+integer-opcodes: retired=301 trace-fnv=0x8fda1ff71b29377d states-sha256=9013fafb34ab4e982dd2b29284892aee450b6c67304a80b43a97e496fc8ff62b
+test all_43_integer_opcodes_match_literal_results_in_every_replay_mode ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.02s
+

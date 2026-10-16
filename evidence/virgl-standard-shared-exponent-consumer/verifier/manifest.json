@@ -1,0 +1,23 @@
+{
+  "schema": "d30-full-independent-critic-seal-v1",
+  "task": "E6-T11d30",
+  "verdict": "verified",
+  "nativeHead": "d740431ef45572660dd80fed5b90c424d9853392",
+  "runtimeHead": "62011567d7616e2b9bbe888e4754aa2064bde3ee",
+  "workerSubmission": "691d75bcbae32edd8ee76a824164165f714b0e9e",
+  "records": 18457,
+  "unpackedBytes": 244912040,
+  "archiveBytes": 22542223,
+  "archiveSha256": "90d564fdf045a320ab7bf4f4e0418a85b7d6ecb68c4c2fe9c059e52bf6e2fff9",
+  "recordIndexSha256": "f946b031072a466238290da5146174d97291649a6e9f8e967b9ec0e6eefe5a79",
+  "auditSha256": "108f5be7f7af046a235083a6137f574dbccfd7ebd9a75cd341579a63fb8628ea",
+  "coverageSha256": "7f8c9b12ce0dad29326aad3dfab01efdbf6a885b4ae5fa8a05fb133fa16e7824",
+  "verdictSha256": "2c1b3f428b561f20ab93201cd649608b3bef6d93e6d3f12a443629dcaf46ff74",
+  "workerArchiveSha256": "319c7460a407c940302aa5023c328e945a7e7d082a6fb9668c02b214851a859d",
+  "workerIndexSha256": "e0c86f2beb30fec38a27951a967c7844ea9cd496d56477f05ae07d3894395250",
+  "allTaskPredictionsHeld": true,
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "productionDrawAuthority": false,
+  "authority": "isolated-original-RGB9E5-native-sampler-consumer"
+}

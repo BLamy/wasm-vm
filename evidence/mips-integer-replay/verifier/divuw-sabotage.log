@@ -1,0 +1,21 @@
+   Compiling wasm-vm-core v0.0.1 (/private/tmp/wasm-vm-mips-verifier-9123bc/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.88s
+     Running tests/integer_replay.rs (target/debug/deps/integer_replay-0679b3867de7aace)
+
+running 1 test
+
+thread 'all_43_integer_opcodes_match_literal_results_in_every_replay_mode' (32017481) panicked at crates/core/tests/integer_replay.rs:323:13:
+assertion `left == right` failed: divuw prefix=0
+  left: 4294967295
+ right: 18446744073709551615
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test all_43_integer_opcodes_match_literal_results_in_every_replay_mode ... FAILED
+
+failures:
+
+failures:
+    all_43_integer_opcodes_match_literal_results_in_every_replay_mode
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 4 filtered out; finished in 2.78s
+
+error: test failed, to rerun pass `-p wasm-vm-core --test integer_replay`

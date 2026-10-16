@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "sourceHead": "fcb908e756a5e2fe7eb6f29864e23b0e46652b37",
+  "authority": "negative-readiness-only",
+  "productionNegotiation": false,
+  "stage": "vertex",
+  "uniformVectors": 128,
+  "minimumSource": "https://registry.khronos.org/OpenGL/specs/es/2.0/es_full_spec_2.0.pdf",
+  "text": "VERT\nDCL CONST[0..127]\nDCL OUT[0], POSITION\n0: MOV OUT[0], CONST[127]\n1: END\n",
+  "result": {
+    "ok": false,
+    "error": {
+      "code": "unsupported-feature",
+      "message": "TGSI is malformed or outside the documented straight-line profile."
+    }
+  },
+  "sources": {
+    "renderer/virgl-shader/bridge.c": "be2f21fb4713a17cd85685f73a9e06e26c71d2314d6210cac7b51f4f809880a4",
+    "renderer/virgl-shader/bridge.h": "95d8df14b0b7ceb1513b3f3e9d5285dae255edddf0ce50e815f3066452a01533",
+    "renderer/virgl-shader/raw_bits.h": "c3380721eaa83606bd8dd780de23a1f296e829de7efd3f62ff00606d04fd56f8",
+    "renderer/virgl-shader/index.mjs": "22f746748fd5d30ff42f81600fa74e02ec66047db6ec97f7b631d1e5b25b4def",
+    "renderer/virgl-command/state.mjs": "9a4c485ebd172ee8814d5c2a6ee2fca0c95b237b9e34970be6efbc7bb10778cf",
+    "renderer/virgl-shader/build/wasm/virgl-shader.wasm": "342d6c56a31d09b38d652595f530fe140c790468bd7b8aea8738a1c1aace199a"
+  }
+}

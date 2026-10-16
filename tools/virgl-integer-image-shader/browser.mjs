@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import {createHash} from 'node:crypto';
+import {gunzipSync} from 'node:zlib';
+import {runVirglBrowser,browserOptions,browserDocument} from '../lib/virgl-browser-runner.mjs';
+const options=browserOptions(['--inputs','--fault']);assert.ok(options.inputs);assert.ok(!options.fault||['wrong-level','wrong-words'].includes(options.fault));
+const root=await fs.realpath(path.resolve(import.meta.dirname,'../..')),inputs=path.relative(root,await fs.realpath(path.resolve(options.inputs))).split(path.sep).join('/'),matrix=inputs+'/native/cases.json',native=inputs+'/native/native.jsonl',hash=b=>createHash('sha256').update(b).digest('hex');
+const files=[matrix,native,'tools/virgl-integer-image-shader/fixtures.mjs'],pins=[];
+for(const name of files){const bytes=await fs.readFile(path.join(root,name));pins.push({path:name,size:bytes.length,sha256:hash(bytes)});}
+const report=await runVirglBrowser({options,task:'E6-T11d32',boundary:'Original integer sampler/raw-word color compiler',reportFields:{productionNegotiation:false},modulePath:'/renderer/virgl-shader/tests/standard-integer-image-shader-browser.mjs',windowReportKey:'__integerImageShaderReport',serializedAcceptance:true,browserArguments:{matrixPath:'/'+matrix,nativePath:'/'+native,fault:options.fault??null},servedFiles:files,pinnedFiles:pins,coveragePaths:['renderer/virgl-shader/standard.mjs','renderer/virgl-shader/tests/standard-integer-image-shader-browser.mjs'],html:browserDocument({title:'Original integer image shaders',heading:'Original integer shader words on the GPU',description:'Original signed/unsigned formats and tokens · full native words · typed outputs and physical fences'}),validate(a){assert.equal(a.frames.length,542);assert.ok(a.compiles.length>=1962);assert.equal(a.typeControls.length,1);assert.equal(a.typeControls[0].okay,false);assert.ok(a.frames.every(f=>f.gpuComplete?.fenced&&f.cleaned&&f.audit.held));},successMessage:a=>a.frames.length+' original integer shader native frames passed.'});
+for(const item of report.acceptance?.blobs??[]){const zipped=Buffer.from(item.gzipBase64,'base64');assert.equal(hash(zipped),item.gzipSha256);const bytes=gunzipSync(zipped);assert.equal(bytes.length,item.bytes);assert.equal(hash(bytes),item.sha256);delete item.gzipBase64;item.path=item.key+'.bin.gz';await fs.writeFile(path.join(path.resolve(options.output),item.path),zipped);}
+await fs.writeFile(path.join(path.resolve(options.output),'report.json'),JSON.stringify(report,null,2)+'\n');process.exit(report.status==='passed'?0:1);

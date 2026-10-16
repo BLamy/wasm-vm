@@ -1,0 +1,116 @@
+{
+  "status": "passed",
+  "head": "6a8d3841e18379d665af4c7d8f9449322529636f",
+  "workerReceiptSha256": "8846e747513422097b14b490383b68e5326f835c3e77e6d434425cd19f1f9286",
+  "sourcesVerified": 251,
+  "recordsVerified": 169,
+  "counts": {
+    "numeric": [
+      336,
+      38
+    ],
+    "texture": [
+      64,
+      16,
+      4096
+    ],
+    "division": {
+      "exactWords": 6,
+      "boundedWords": 42,
+      "crossDraws": 6
+    },
+    "observations": {
+      "words": 96,
+      "probes": 8,
+      "vectors": 24,
+      "requiredRawClassChecks": 4,
+      "requiredNumericClassChecks": 8
+    },
+    "interfacePixels": 29760
+  },
+  "sourceBoundSabotages": [
+    {
+      "mode": "lrp-order",
+      "program": "component-lrp-vertex",
+      "mutationSites": 4,
+      "actualMismatches": 1
+    },
+    {
+      "mode": "frc-floor",
+      "program": "component-frc-vertex",
+      "mutationSites": 4,
+      "actualMismatches": 1
+    },
+    {
+      "mode": "div-operands",
+      "program": "component-div-vertex",
+      "mutationSites": 4,
+      "actualMismatches": 1
+    },
+    {
+      "mode": "numeric-negate",
+      "program": "component-negate-mad-vertex",
+      "mutationSites": 1,
+      "actualMismatches": 1
+    }
+  ],
+  "receiptTamper": {
+    "rejected": true,
+    "observedWord": 1077936128,
+    "message": "actual ordinary DIV captures satisfy independent rational enclosures",
+    "reason": "Actual float word, byte capture, byte digest and decoded observation were changed together; the independent rational enclosure still rejects."
+  },
+  "browserErrors": {
+    "console": [],
+    "page": [],
+    "requests": []
+  },
+  "compilerSha256": {
+    "nativeSanitizer": "7fe9f7e6a02195b72d616b10dc4bd8489ad27d83a121e25f8d72be94d540c43c",
+    "wasm": "96c1a85b59f9a6d8d05ae6074ac19010773d4df0d6327e9efb5195c8d7a044a7"
+  },
+  "previousNumericRegressions": {
+    "heldNumericHead": "67ca333c05fb70d719c49b3dc5cb8c1f8bb2f6de",
+    "recordedHead": "6a8d3841e18379d665af4c7d8f9449322529636f",
+    "boundary": "Complete numeric gate and prior gates independently rechecked; exactly six source-bound adjacent negative replacements retain all previous result bytes.",
+    "numericCases": 350,
+    "numericPairs": 33,
+    "numericWords": 288,
+    "textureWords": 64,
+    "numericCrossConsumerDraws": 48,
+    "numericTexturePixels": 4096,
+    "numericInterpolationPixels": 25792,
+    "migrationSource": {
+      "path": "renderer/virgl-shader/tests/component-float-migrations.json",
+      "bytes": 3184,
+      "sha256": "f430bf73c2d29663d9ef406be7b55be2a6c590f2ad57e1584907a03974f88002"
+    },
+    "receipt": {
+      "path": "numeric-regression/receipt.json",
+      "bytes": 83934,
+      "sha256": "7fa24be93c3a8f8d7f7af3307910c6be6260458c94a64b20bae9c11cdcbfabd3"
+    },
+    "reports": [
+      {
+        "path": "numeric-regression/hardware/report.json",
+        "bytes": 6974150,
+        "sha256": "41dbc28c3df233695c29b0f8dc8086ba701959a5deacdd87d6ce5b36bbb75068"
+      },
+      {
+        "path": "numeric-regression/sabotage-stale-shadow/report.json",
+        "bytes": 2005812,
+        "sha256": "2e5929b5877fb585d1f7b6344aa79269d1f5f74b5bebce2e20f3563e86202671"
+      },
+      {
+        "path": "numeric-regression/sabotage-numeric-decode/report.json",
+        "bytes": 3426344,
+        "sha256": "288371945e4263419d442c11eb368463d8d5ce5ef7294945cd43d1dea11b6ea9"
+      },
+      {
+        "path": "numeric-regression/sabotage-sampler-index/report.json",
+        "bytes": 4794829,
+        "sha256": "e81d3ec20d6229020e1d2c46ace2111be76380f4f57887263e7b39ba98db41b1"
+      }
+    ]
+  }
+}

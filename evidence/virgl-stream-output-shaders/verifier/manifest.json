@@ -1,0 +1,37 @@
+{
+  "schema": "stream-output-shaders-independent-verifier-seal-v1",
+  "task": "E6-T11d65",
+  "submission": "0c167360a8d01a1e51b7be1309d6caf70fbff611",
+  "frozenSource": "31bf0781db74fea94f51c9d6fa3217d16227bc99",
+  "runtimeImplementation": "cefb45fd363e3f3d03d6cf72615b9b9273ccdc6e",
+  "verifiedBase": "6f43010dfa7b3e08bfe62f62543b7ee0468e1a21",
+  "verdict": "verified",
+  "predictions": {
+    "P1": "HELD",
+    "P2": "HELD",
+    "P3": "HELD",
+    "P4": "HELD",
+    "P5": "HELD",
+    "P6": "HELD",
+    "P7": "HELD",
+    "P8": "HELD",
+    "N1": "HELD",
+    "S1": "HELD"
+  },
+  "records": 64,
+  "storedBodies": 54,
+  "recordIndexSha256": "f7c321115248ecc39e824f690c00f248016d739618517f4295c7c602b8e6b38f",
+  "archiveSha256": "882edfef6fbb582d0a4309a9e267022273d85eba1c145fbb47260f6841e4dffc",
+  "archiveBytes": 3656915,
+  "archiveParts": [
+    {
+      "path": "recording.tar.gz.part-0000",
+      "bytes": 3656915,
+      "sha256": "882edfef6fbb582d0a4309a9e267022273d85eba1c145fbb47260f6841e4dffc"
+    }
+  ],
+  "workerManifestSha256": "cd82a9b788f33e1261f62694c40f0d22d4eedbe591a8f53a7204dbdd43440b1d",
+  "deploymentManifestSha256": "94011feafe8720006fea2c4eab4e529c5d7b826d76cb590c86034001a673d8a0",
+  "promotedRegressionSha256": "32aceb2cb0d75fca4fab263182344b88bf75e786f56fcb4f0a32cde06d653a23",
+  "criticRuntimeChanges": false
+}

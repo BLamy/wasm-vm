@@ -2328,10 +2328,12 @@ version = "0.0.1"
 dependencies = [
  "criterion",
  "log",
+ "proc-macro2",
  "proptest",
  "rayon",
  "rustc_apfloat",
  "sha2",
+ "syn 2.0.118",
 ]
 
 [[package]]

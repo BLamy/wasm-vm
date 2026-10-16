@@ -1,0 +1,59 @@
+{
+  "width": 1280,
+  "height": 800,
+  "rectangles": [
+    {
+      "name": "query",
+      "x": 509,
+      "y": 110,
+      "width": 180,
+      "height": 20,
+      "columns": 18
+    },
+    {
+      "name": "writer",
+      "x": 560,
+      "y": 153,
+      "width": 180,
+      "height": 20,
+      "columns": 18
+    },
+    {
+      "name": "icon",
+      "x": 528,
+      "y": 153,
+      "width": 20,
+      "height": 22,
+      "columns": 1
+    },
+    {
+      "name": "panel-bottom",
+      "x": 490,
+      "y": 215,
+      "width": 300,
+      "height": 2,
+      "columns": 1
+    }
+  ],
+  "expectedQuery": "libreoffice writer",
+  "expectedResult": "LibreOffice Writer",
+  "provenance": "Original independently held local warm02 native search pixels; partial filter from retained failed cold03 run. Read-only PNG decode and rectangular sampling; no generated glyphs or guest mutation.",
+  "fixtures": [
+    {
+      "name": "original",
+      "source": "target/evidence/omarchy-application-warm-release01/gpu-full-ready-warm02/omarchy-initial-factory-ready-writer-search.png",
+      "sourceBytes": 748747,
+      "sourceSha256": "d30cd695e97346b3aeef09f4df6b5da6d40adb1391159ccedec1a8be03abc0a3",
+      "bytes": 32960,
+      "sha256": "62ee8dcfce8d1c26b044b413e19e8b09695e8f12ead3619a9336570d8a70a595"
+    },
+    {
+      "name": "partial",
+      "source": "target/evidence/omarchy-application-warm-release01/production-cold03/acceptance/gpu-functional/omarchy-initial-factory-ready-writer-search.png",
+      "sourceBytes": 671126,
+      "sourceSha256": "1dac40366428dd9b37dcd549f66905da326f72ea1551b217367a9f7e77d7b2f5",
+      "bytes": 32960,
+      "sha256": "37aa49f87658b63e09591a600d9fb84306ab0fbcf4ceed5cdf5052b21c87a8e4"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+// Predictions use complete original TGSI immediates and public input words only.
+import {originalValues} from './standard-shared-exponent-fixtures.mjs';
+const shrink=(n,l)=>Math.max(1,Math.floor(n/2**l));
+export function originalImmediates(text){const values={};for(const m of text.matchAll(/^IMM\[(\d+)\] (FLT32|INT32|UINT32) \{([^}]+)\}$/gm))values[Number(m[1])]=m[3].split(',').map(n=>m[2]==='FLT32'?Math.fround(Number(n)):Number(n));return values;}
+export function outputValue(format,color){if(format!==31)throw Error('Shared-exponent consumer uses the already-qualified original RGBA32F output');return color.map(Math.fround);}
+export function originalColor(f){
+ const text=f.stage==='vertex'?f.vertex:f.fragment,imm=originalImmediates(text),[_,op,operands]=text.match(/^\d+: (TEX|TXL|TXF|TXD|TXB|TXQ) (.*)$/m),first=f.firstLevel,last=f.lastLevel,levels=last-first+1;
+ if(op==='TXQ'){const lod=imm[1][0];return [shrink(f.source.metadata.width,first+lod),shrink(f.source.metadata.height,first+lod),0,levels];}
+ const texel=(local,x,y)=>{if(f.source.metadata.format!==125)throw Error('Expected the original RGB9E5 source format');const plane=f.source.planes[first+local],at=(y*plane.width+x)*4;return originalValues(125,plane.input.subarray(at,at+4));};
+ const sample=(local,u,v,filter)=>{const plane=f.source.planes[first+local],w=plane.width,h=plane.height,clamp=(n,max)=>Math.max(0,Math.min(max-1,n));if(!filter)return texel(local,clamp(Math.floor(u*w),w),clamp(Math.floor(v*h),h));const px=u*w-.5,py=v*h-.5,x=Math.floor(px),y=Math.floor(py),a=px-x,b=py-y,[A,B,C,D]=[[0,0],[1,0],[0,1],[1,1]].map(([dx,dy])=>texel(local,clamp(x+dx,w),clamp(y+dy,h)));return A.map((_,k)=>(A[k]*(1-a)+B[k]*a)*(1-b)+(C[k]*(1-a)+D[k]*a)*b);};
+ let color;
+ if(op==='TXF'){const [x,y,,level]=imm[1];color=texel(level,x,y);}
+ else{const[u,v,,requested]=imm[0],w=shrink(f.source.metadata.width,first),h=shrink(f.source.metadata.height,first);let lod=op==='TEX'||op==='TXB'?0:requested;if(op==='TXD')lod=Math.log2(Math.max(Math.hypot(imm[2][0]*w,imm[2][1]*h),Math.hypot(imm[3][0]*w,imm[3][1]*h)));lod=Math.max(f.parameters.minLod,Math.min(f.parameters.maxLod,lod));const filter=lod<=0?f.parameters.mag:f.parameters.min;if(lod<=0||f.parameters.mip===2)color=sample(0,u,v,filter);else if(f.parameters.mip===0)color=sample(Math.max(0,Math.min(levels-1,Math.floor(lod+.5))),u,v,filter);else{lod=Math.max(0,Math.min(levels-1,lod));const a=Math.floor(lod),b=Math.min(levels-1,a+1),weight=lod-a,A=sample(a,u,v,filter),B=sample(b,u,v,filter);color=A.map((n,k)=>n*(1-weight)+B[k]*weight);}}
+ return f.swizzle.map(k=>k===4?0:k===5?1:color[k]);
+}
+export function expectedFrame(f,kind='draw',previous=null,mask=15,blend=false){const color=kind==='clear'?f.clearColor??[-.5,.25,2,1]:originalColor(f);let result=color.map((n,k)=>kind==='clear'||mask&(1<<k)?(blend?n+(previous?.[k]??0):n):(previous?.[k]??0));result=outputValue(f.outputFormat,result);const frame=new Float32Array(f.width*f.height*4);for(let i=0;i<f.width*f.height;i++)frame.set(result,i*4);return frame;}
+export function frameMisses(actual,expected){const data=new Float32Array(actual.buffer,actual.byteOffset,actual.byteLength/4),rows=[];if(data.length!==expected.length)return [{length:data.length,expected:expected.length}];for(let i=0;i<data.length;i++){const budget=2e-6*Math.max(1,Math.abs(expected[i]));if(!Number.isFinite(data[i])||Math.abs(data[i]-expected[i])>budget)rows.push({at:i,actual:data[i],expected:expected[i],budget});}return rows;}

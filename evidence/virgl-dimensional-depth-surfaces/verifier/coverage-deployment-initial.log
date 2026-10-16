@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-dimensional-depth-surfaces/verifier/finish_coverage_deployment.py", line 163, in <module>
+    assert actual == git('show', HEAD + ':web/dist/' + deployed_path), path
+AssertionError: artifacts-alpine.json

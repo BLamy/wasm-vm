@@ -1,0 +1,88 @@
+{
+  "schema": 1,
+  "head": "b4ee940d78f651553c2b900be95f8b083085cdf9",
+  "evidenceDirectory": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-indirect-constants/worker",
+  "results": [
+    {
+      "name": "native-clean",
+      "result": "HELD"
+    },
+    {
+      "name": "consumer-unit-clean",
+      "result": "HELD"
+    },
+    {
+      "name": "profiles-clean",
+      "result": "HELD"
+    },
+    {
+      "name": "wasm-clean",
+      "result": "HELD"
+    },
+    {
+      "name": "max-float-maxSingleResultBytes",
+      "result": "HELD",
+      "rejection": "nonnegative JSON integer: native.stats.maxSingleResultBytes"
+    },
+    {
+      "name": "max-float-maxPairResultBytes",
+      "result": "HELD",
+      "rejection": "nonnegative JSON integer: native.stats.maxPairResultBytes"
+    },
+    {
+      "name": "wasm-calls-float",
+      "result": "HELD",
+      "rejection": "independent exact call/recovery/output accounting"
+    },
+    {
+      "name": "wasm-schedule-bool",
+      "result": "HELD",
+      "rejection": "bounded real allocator pressure matrix"
+    },
+    {
+      "name": "wasm-capacity-float",
+      "result": "HELD",
+      "rejection": "real bounded malloc capacity record"
+    },
+    {
+      "name": "consumer-coverage-float",
+      "result": "HELD",
+      "rejection": "integer-only V8 offsets and execution counters"
+    },
+    {
+      "name": "consumer-coverage-bool",
+      "result": "HELD",
+      "rejection": "integer-only V8 offsets and execution counters"
+    },
+    {
+      "name": "profile-coverage-float",
+      "result": "HELD",
+      "rejection": "integer-only V8 offsets and execution counters"
+    },
+    {
+      "name": "metadata-slot-bool",
+      "result": "HELD",
+      "rejection": "all 206 independently authored metadata inputs and full results"
+    },
+    {
+      "name": "schema-result-ok-int",
+      "result": "HELD",
+      "rejection": "all 206 independently authored metadata inputs and full results"
+    },
+    {
+      "name": "omitted-source",
+      "result": "HELD",
+      "rejection": "consumer and recording source bytes"
+    },
+    {
+      "name": "source-bytes-float",
+      "result": "HELD",
+      "rejection": "consumer and recording source bytes"
+    },
+    {
+      "name": "metadata-index-bool",
+      "result": "HELD",
+      "rejection": "sorted unique typed complete index set"
+    }
+  ]
+}

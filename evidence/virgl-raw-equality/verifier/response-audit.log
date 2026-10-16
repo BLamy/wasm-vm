@@ -1,0 +1,96 @@
+{
+  "schema": "fresh-raw-equality-response-audit-v1",
+  "status": "passed",
+  "head": "02d39991b1589deff0c74ec3d62770eb09a407a8",
+  "evidence": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-raw-equality/proof-response",
+  "receipt": {
+    "path": "receipt.json",
+    "bytes": 56273,
+    "sha256": "3ab15d401d6e870d082905397cfb57c3356567975f518c34467760fcc16a19ca"
+  },
+  "cleanControls": "passed",
+  "maxima": {
+    "singleResultBytes": 63369,
+    "pairResultBytes": 109235,
+    "stageGlslBytes": 58201
+  },
+  "consumerChecks": 2535,
+  "parseCalls": 2545,
+  "getterRange": [
+    {
+      "startOffset": 1830,
+      "endOffset": 1874,
+      "count": 0
+    }
+  ],
+  "llvmReexport": {
+    "command": [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/llvm-cov",
+      "export",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/build/raw-equality-sanitize/raw-equality-test",
+      "-instr-profile=/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-raw-equality/proof-response/native/native.profdata",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/bridge.c",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/raw_bits.c"
+    ],
+    "sha256": "e4174ffe453c7ff717a22a5dc00932cbe3407869dd4b870b6696d2b086e2a9b0",
+    "exact": true
+  },
+  "loadedModules": [
+    "tools/virgl-bounded-loops/compat_common.py",
+    "tools/virgl-bounded-loops/native_receipt.py",
+    "tools/virgl-bounded-loops/shader_compat.py",
+    "tools/virgl-component-floats/native_receipt.py",
+    "tools/virgl-constants/receipt.py",
+    "tools/virgl-dot-reciprocals/native_receipt.py",
+    "tools/virgl-float-masks/receipt.py",
+    "tools/virgl-integer-masks/receipt.py",
+    "tools/virgl-raw-bits/receipt.py",
+    "tools/virgl-raw-equality/consumer_receipt.py",
+    "tools/virgl-raw-equality/faults.py",
+    "tools/virgl-raw-equality/native.py",
+    "tools/virgl-raw-equality/native_receipt.py",
+    "tools/virgl-raw-equality/receipt.py",
+    "tools/virgl-raw-equality/shared.py",
+    "tools/virgl-raw-equality/wasm_receipt.py"
+  ],
+  "sourceBindings": 177,
+  "recordBindings": 75,
+  "promotedChecks": 38,
+  "sensitivity": [
+    {
+      "name": "disabled-verify_maxima",
+      "auditor": "full",
+      "rejected": false
+    },
+    {
+      "name": "disabled-verify_sources",
+      "auditor": "full",
+      "rejected": false
+    },
+    {
+      "name": "disabled-verify_coverage_sources",
+      "auditor": "full",
+      "rejected": false
+    },
+    {
+      "name": "disabled-exact-consumer-ledger",
+      "auditor": "full",
+      "rejected": false
+    },
+    {
+      "name": "disabled-consumer-getters-bool",
+      "auditor": "full",
+      "rejected": false
+    },
+    {
+      "name": "disabled-wrong-parse-schedule",
+      "auditor": "full",
+      "rejected": false
+    },
+    {
+      "name": "disabled-invoked-getter-counter",
+      "auditor": "full",
+      "rejected": false
+    }
+  ]
+}

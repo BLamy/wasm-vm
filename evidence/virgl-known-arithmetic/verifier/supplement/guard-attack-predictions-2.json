@@ -1,0 +1,21 @@
+{
+  "schema": "virgl-known-arithmetic-incremental-guard-attack-predictions-v1",
+  "faults": [
+    {
+      "name": "word",
+      "mutation": "first public raw_rhs.x literal 1069547520 -> 1069547521",
+      "expected": "native executable succeeds but supplement.mjs literal word guard fails before profile export"
+    },
+    {
+      "name": "shadow",
+      "mutation": "both duplicate first-public known:shadow uintBitsToFloat(1069547520) -> (1069547521)",
+      "expected": "native executable succeeds but supplement.mjs literal shadow guard fails before profile export"
+    },
+    {
+      "name": "metadata",
+      "mutation": "valid both-operation wrapper operations [ADD,MUL] -> [MUL,ADD]",
+      "expected": "original parseConstantDomain rejects and supplement.mjs approval assertion fails"
+    }
+  ],
+  "receipt": "matching positive receipt passes; executable mismatch, every zero/missing native/V8 range, count/rounding cardinality and stale head/status/task fail"
+}

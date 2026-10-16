@@ -1,0 +1,259 @@
+{
+  "schema": "d60-independent-verifier-predictions-v1",
+  "recordedBeforeEvidenceInspection": true,
+  "base": "bc2fb1e49575b8b1a399ca7729fcec4853a48287",
+  "submission": "eb534b587d5b919e4673c537a521b21aa9b48800",
+  "predictions": [
+    {
+      "id": "P01-custody",
+      "state": "HELD",
+      "prediction": "Every archive member, backward hardlink, index, complete source/served body, native/compiler binary and sealing peer matches its pinned length and SHA256. The final cold report and receipt name 9698c0a9; carried processes retain original heads and commands, and only harness files differ at those boundaries. No newly changed product operand is proven by a predecessor counter.",
+      "citations": [
+        {
+          "path": "authentication.json",
+          "bytes": 8626,
+          "sha256": "8287f723704710ce70ff0fe1b8a6296be877887b90b6d867d6ed94c15b3434d6"
+        },
+        {
+          "path": "source-pristine-provenance.json",
+          "bytes": 58428,
+          "sha256": "69394cb28bfef1d57ab105bd5923524f03e1f4f1dcd77f658b3f52f05b7cc961"
+        },
+        {
+          "path": "fresh-custody.json",
+          "bytes": 160948,
+          "sha256": "6c55a903ee82c930affe780cc3b43bead040c1423d99291ba1449ddbefdc177c"
+        }
+      ]
+    },
+    {
+      "id": "P02-admission",
+      "state": "HELD",
+      "prediction": "Only the new host-selected decoder/store/backend/renderer accepts original object6 target4 or7 formats16,18,20,21,126. Bind8 and9 admit view leases; bind1, wrong native qualifier, volume/cube-array/MSAA, target/format/role/type disagreement and invalid ranges refuse before allocation or draw. Historical stores and decoders remain closed and historical renderer uses its original profile/decoder.",
+      "citations": [
+        {
+          "path": "private-interrogation.json",
+          "bytes": 10542,
+          "sha256": "a09333c2316ad2acc783157e5b264b65ba40ecb0b01bbf49d22ca84ab60b9b68"
+        },
+        {
+          "path": "fresh-private-interrogation.json",
+          "bytes": 10372,
+          "sha256": "97aa406df6a279274870e18f0205b4c5ec4322c210fe057010a7fcd5b48b724f"
+        },
+        {
+          "path": "recorded-interrogation.json",
+          "bytes": 2631539,
+          "sha256": "33d42187138a73e622096e45e295167ffb4e6ccd9cbd48cb835e645c4842727f"
+        }
+      ]
+    },
+    {
+      "id": "P03-original-fields",
+      "state": "HELD",
+      "prediction": "For each producer, raw original wire selects the recorded id, mip, full box and public byte size (16:2,18:4,20:4,21:4,126:8). Upload bytes are independently regenerated from seed +739*level +977*layer +109*x +541*y modulo2^32:16 depth=(code*19003)&65535;20/21 depth=(code*104729)&0xffffff;18/126 depth=((code%4095)+1)/4096.20 packs depth<<8|stencil,21 ignores upper8,126 takes float and low8 stencil. SG padding and guards survive the original205/inline9/staging45 uploads and206 output DMA.",
+      "citations": [
+        {
+          "path": "recorded-interrogation.json",
+          "bytes": 2631539,
+          "sha256": "33d42187138a73e622096e45e295167ffb4e6ccd9cbd48cb835e645c4842727f"
+        },
+        {
+          "path": "fresh-interrogation.json",
+          "bytes": 2109196,
+          "sha256": "66fb2e716f6c1b6102bea2faa9c02b8a19bceb04a4790fa1bd0c23d1102b8a4c"
+        },
+        {
+          "path": "queue-ring-interrogation.json",
+          "bytes": 3934,
+          "sha256": "28f3196b73e6623c53c28fcf40b6d1a5e11c26617d2c50c25f8c0fd5af22e3ae"
+        }
+      ]
+    },
+    {
+      "id": "P04-range-and-native-copy",
+      "state": "HELD",
+      "prediction": "Each original cube view covers exactly faces0..5. An array subset firstLayer..lastLayer copies source firstLayer+localLayer into native localLayer; original firstLevel+localMip copies to localMip. Dimensions are max(1,floor(width/2^originalMip)), max(1,floor(height/2^originalMip)); array layers never shrink with mip. Cube face orientations match GLES +/-X,+/-Y,+/-Z. Native immutable allocation, attachment targets/levels/layers and depth plus stencil blit masks agree; private inverse returns original depth and canonical stencil/X bits.",
+      "citations": [
+        {
+          "path": "recorded-interrogation.json",
+          "bytes": 2631539,
+          "sha256": "33d42187138a73e622096e45e295167ffb4e6ccd9cbd48cb835e645c4842727f"
+        },
+        {
+          "path": "private-interrogation.json",
+          "bytes": 10542,
+          "sha256": "a09333c2316ad2acc783157e5b264b65ba40ecb0b01bbf49d22ca84ab60b9b68"
+        },
+        {
+          "path": "novel-interrogation.json",
+          "bytes": 69765,
+          "sha256": "ed1a51bf05b4c4b7a19b86341f117d12fe9291d694283e7d63a7bda74987fe92"
+        }
+      ]
+    },
+    {
+      "id": "P05-sampling",
+      "state": "HELD",
+      "prediction": "Both vertex and fragment float-return samplerCube/sampler2DArray reflection matches original target, stage unit (vertex16+slot, fragment slot), compareNONE, relative base0 and selected last mip. Independent sampling derives coordinates from original input bytes and texture values from original producer bytes. TXQ dimensions and level count, TXF rebased layer/mip, explicit/implicit LOD, gradients, source transforms, swizzle and masked lanes agree; UNORM depth differs by at most one float32 ULP, all other lanes exact. Ordinary depth linear/minlinear/maglinear/miplinear refuses before draw.",
+      "citations": [
+        {
+          "path": "recorded-interrogation.json",
+          "bytes": 2631539,
+          "sha256": "33d42187138a73e622096e45e295167ffb4e6ccd9cbd48cb835e645c4842727f"
+        },
+        {
+          "path": "fresh-interrogation.json",
+          "bytes": 2109196,
+          "sha256": "66fb2e716f6c1b6102bea2faa9c02b8a19bceb04a4790fa1bd0c23d1102b8a4c"
+        }
+      ]
+    },
+    {
+      "id": "P06-literal-costs",
+      "state": "HELD",
+      "prediction": "Native allocation charge per pixel is2/4/4/4/16 for formats16/18/20/21/126, including126's8-byte native storage plus8-byte owned upload PBO. Public charge is2/4/4/4/8. Complete NPOT cube5x5 levels5,2,1 faces6=180 pixels; private levels1..2=30. Array7x5 layers7 levels7x5,3x2,1x1=294; private mips1..2 layers1..3=21. Full views share source with zero extra GPU bytes. Private ranges reserve complete native charge before first driver call; exact, one-byte-short and aggregate neighbors obey literal limits.",
+      "citations": [
+        {
+          "path": "private-interrogation.json",
+          "bytes": 10542,
+          "sha256": "a09333c2316ad2acc783157e5b264b65ba40ecb0b01bbf49d22ca84ab60b9b68"
+        },
+        {
+          "path": "fresh-private-interrogation.json",
+          "bytes": 10372,
+          "sha256": "97aa406df6a279274870e18f0205b4c5ec4322c210fe057010a7fcd5b48b724f"
+        },
+        {
+          "path": "novel-interrogation.json",
+          "bytes": 69765,
+          "sha256": "ed1a51bf05b4c4b7a19b86341f117d12fe9291d694283e7d63a7bda74987fe92"
+        }
+      ]
+    },
+    {
+      "id": "P07-driver-failure",
+      "state": "HELD",
+      "prediction": "Actual null texture/buffer, invalid storage/bufferData and invalid physical blit each execute once and fail without publication or leaked bytes. Allocation restores pre-reservation budgets. Copy failure retains exactly source/private owners, restores read/draw framebuffer and scissor, consumes GL error, and a subsequent correct copy succeeds.",
+      "citations": [
+        {
+          "path": "private-interrogation.json",
+          "bytes": 10542,
+          "sha256": "a09333c2316ad2acc783157e5b264b65ba40ecb0b01bbf49d22ca84ab60b9b68"
+        },
+        {
+          "path": "fresh-private-interrogation.json",
+          "bytes": 10372,
+          "sha256": "97aa406df6a279274870e18f0205b4c5ec4322c210fe057010a7fcd5b48b724f"
+        }
+      ]
+    },
+    {
+      "id": "P08-gpu-refresh",
+      "state": "HELD",
+      "prediction": "GPU-only source clear overwrites each native level/layer including stencil where present. Guest backing stays poisoned0xbd, no further texture upload occurs, private refresh copies native storage and original sampled206 output changes to independently predicted cleared values.",
+      "citations": [
+        {
+          "path": "recorded-interrogation.json",
+          "bytes": 2631539,
+          "sha256": "33d42187138a73e622096e45e295167ffb4e6ccd9cbd48cb835e645c4842727f"
+        },
+        {
+          "path": "fresh-interrogation.json",
+          "bytes": 2109196,
+          "sha256": "66fb2e716f6c1b6102bea2faa9c02b8a19bceb04a4790fa1bd0c23d1102b8a4c"
+        },
+        {
+          "path": "novel-interrogation.json",
+          "bytes": 69765,
+          "sha256": "ed1a51bf05b4c4b7a19b86341f117d12fe9291d694283e7d63a7bda74987fe92"
+        }
+      ]
+    },
+    {
+      "id": "P09-lifetime-and-fence",
+      "state": "HELD",
+      "prediction": "Retained unref and private holds preserve original native identity and exact budgets through source name retirement and same-ID replacement. Released/stale token and retired context never alias replacement. Pending original queue submission withholds used publication; native fence success precedes buffer collection and completion. Reset/dispose revokes generations, drains syncs, and terminal GPU/public/scratch ownership is zero; revoked tokens release at most once.",
+      "citations": [
+        {
+          "path": "queue-ring-interrogation.json",
+          "bytes": 3934,
+          "sha256": "28f3196b73e6623c53c28fcf40b6d1a5e11c26617d2c50c25f8c0fd5af22e3ae"
+        },
+        {
+          "path": "schedule-interrogation.json",
+          "bytes": 936543,
+          "sha256": "55365560253ddff5ccca3fd6bdd216ab35cc6ac3de33d6325c5c46a83a03daa6"
+        },
+        {
+          "path": "novel-interrogation.json",
+          "bytes": 69765,
+          "sha256": "ed1a51bf05b4c4b7a19b86341f117d12fe9291d694283e7d63a7bda74987fe92"
+        }
+      ]
+    },
+    {
+      "id": "P10-sabotage",
+      "state": "HELD",
+      "prediction": "Changing a real READ_FRAMEBUFFER array layer by+1 modulo original layers yields incorrect native sampled depth. Original draws and206 DMA still complete successfully0x1100 after real fences, then the unchanged independent oracle fails. Terminal objects/syncs remain zero. The sabotage must not alter expected values or runtime source.",
+      "citations": [
+        {
+          "path": "fresh-interrogation.json",
+          "bytes": 2109196,
+          "sha256": "66fb2e716f6c1b6102bea2faa9c02b8a19bceb04a4790fa1bd0c23d1102b8a4c"
+        },
+        {
+          "path": "novel-interrogation.json",
+          "bytes": 69765,
+          "sha256": "ed1a51bf05b4c4b7a19b86341f117d12fe9291d694283e7d63a7bda74987fe92"
+        }
+      ]
+    },
+    {
+      "id": "P11-coverage-and-pristine",
+      "state": "HELD",
+      "prediction": "Every added/changed executable finest V8 operand has a positive authenticated counter at its correct exact source, or byte-identical previously HELD proof at unchanged dependencies; every static waiver is genuinely unchanged configuration/delimiter without a new operation. The scrubbed tracked-clean final owned pristine clone preserves every failed harness attempt and all original commands/heads; no product/compiler change hides under a harness continuation.",
+      "citations": [
+        {
+          "path": "coverage-final.json",
+          "bytes": 259265,
+          "sha256": "2788332fafba9cb81bddcf2171ad6658ab96d068670b0875860f8986d8ae45f6"
+        },
+        {
+          "path": "hunk-ledger.json",
+          "bytes": 34913,
+          "sha256": "c6c4d694cc4c92c25d0151db1f5729e3f6cc70c1d3658c89814ef75b553c8302"
+        },
+        {
+          "path": "source-pristine-provenance.json",
+          "bytes": 58428,
+          "sha256": "69394cb28bfef1d57ab105bd5923524f03e1f4f1dcd77f658b3f52f05b7cc961"
+        }
+      ]
+    },
+    {
+      "id": "P12-demo",
+      "state": "HELD",
+      "prediction": "Built and canonical served complete bytes bind to committed web/dist;127 tests pass,0 fail, no console/page/request errors, screenshot shows partial graphics with D60 proof and production acceleration disabled. Ordinary Wasm has no proof exports and preserves default digest d45b575207e0035b5c518698e7b6793b2bf12da635531723fad70813a5956c36. Deployment changes only roadmap/sw from D59 and grants no production, shadow, framebuffer, Linux Mesa/Hyprland or throughput authority.",
+      "citations": [
+        {
+          "path": "deployment-interrogation.json",
+          "bytes": 12937,
+          "sha256": "b5005d2ef7600c79bccfdaaac510f1a0b88e525e8b5fd454fac140a2f1f1e13c"
+        }
+      ],
+      "imageScopeCorrection": {
+        "initialForecast": "screenshot shows partial graphics pip",
+        "forecastStatus": "FAILED",
+        "observed": "Authenticated screenshot intentionally captures only #panel-tests and shows127/0. The separate actual DOM query authenticates partial D60 graphics and disabled production. The task requires a screenshot plus the demo checks; it does not require the graphics pip in that crop. The corrected acceptance scope is HELD, without changing any evidence or acceptance requirement."
+      }
+    }
+  ],
+  "independentSeeds": [
+    362436069,
+    521288629,
+    88675123
+  ],
+  "boundedNovelAttack": "Capture two overlapping NPOT array depth private views including a one-mip tail and last source layer, hold each, retire public source/backing, replace the same original ID with different native data, refresh/read the old private view before a real fence retirement and prove it still samples original source; then retire/recreate context1 and prove stale original views cannot alias the replacement. Predict literal concurrent budgets and final zero ownership.",
+  "suiteIntent": "Promote the useful single-tail array range and retained old-identity assertion after it survives, with literal independently predicted costs/output and a physical layer or stencil sabotage control."
+}

@@ -1,0 +1,25 @@
+{
+  "schema": "virgl-exact-reciprocal-worker-seal-v1",
+  "task": "E6-T12g6m4a",
+  "sourceHead": "bcf97ceb60d139e38d924525c7c00f72092ba576",
+  "records": 154,
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 34362229,
+    "sha256": "ad2cdc4bda86e02f04eb24b88ae9270372dd26849d98f098c53c9839917a70ce"
+  },
+  "recordIndex": {
+    "path": "records.json",
+    "bytes": 27049,
+    "sha256": "287233f71a76f857c9f42a3440e48af307645f0e35bef5ea6a217067287f1bef"
+  },
+  "hotReceiptSha256": "34d9be135506ddfb918b72a53c59444e0be6fec334e26877aeba7fec080449d9",
+  "coldReportSha256": "37adcf81c123d70280b3e1c6d211890af5797f491fa1bf5367dbc3a812c1abe6",
+  "coldReceiptSha256": "b1d7bc9e29d776a19c31da8aed35630310e0c993ab6efbef959471cad3d3e521",
+  "originalDraws": 2271,
+  "nativeCases": 39,
+  "physicalFrames": 18,
+  "checkedChannels": 1152,
+  "guestExecution": false,
+  "productionNegotiation": false
+}

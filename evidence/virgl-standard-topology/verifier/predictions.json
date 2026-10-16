@@ -1,0 +1,19 @@
+{
+  "schema": "standard-topology-verifier-predictions-v1",
+  "task": "E6-T11d8",
+  "submission": "2d1303bfd1f476ac33eda616ea380f5df52d1e0f",
+  "runtimeHead": "dff28ee8cb1c494a52a6fbb5af872ed377605f66",
+  "recordedBeforeEvidenceInspection": true,
+  "predictions": [
+    {"id":"P1-custody","prediction":"The sealed archive and index exactly match the claimed digests and 2716 unique safe records. Both receipts and the cold report bind dff28ee8; every tracked source equals that git blob, every generated binary and physical source/coverage/blob digest matches, and cold status before/after is clean with the prescribed environment removal."},
+    {"id":"P2-wire","prediction":"An independent literal parser will classify exactly standard Gallium modes 1..6 as admitted and legacy modes 4/5 with instance count 1 as admitted; points, other modes, base offset/restart/stream/indexed flag corruption, empty/short tails are rejected atomically. Native enum selection is respectively 1/2/3/6 for new modes in all four call kinds."},
+    {"id":"P3-physical","prediction":"Reconstructing buffers from original upload bytes and parsing original packets/source shaders without renderer or worker oracle imports will predict every recorded pixel. Line endpoints alone may admit color/clear; every line interior/outside and loop closing interior is strict. Fan shared-diagonal/interior pixels require color; a strict region omitted by strip order is present."},
+    {"id":"P4-bounds-work","prediction":"Independent actual u8/u16/u32 index reads despite zero hints determine all fetch ranges. Every exact end is admitted; count 1/2/3/5 incomplete primitives keep native no-geometry semantics while all input records/work are charged. One-byte-short vertex/index and work 8-versus-7 failures happen before any native draw."},
+    {"id":"P5-state-lifetime","prediction":"Every A/B/A frame reselects mode and restores native state. In pending constant/index batches, revision changes cause stale-storage, cancellation causes cancelled, public-name reuse uses the retained original generation, and every outcome drains GPU fences and releases all read/staging ownership."},
+    {"id":"P6-sensitivity","prediction":"The served actual LINE_LOOP-to-LINE_STRIP mutation reaches drawElementsInstanced and GPU completion, then a strict missing closing-edge pixel refutes it. A fresh promoted independent oracle will also reject this mutation after a real draw/fence."},
+    {"id":"P7-carry-coverage","prediction":"Changed runtime hunks have positive recorded V8 coverage; fixed mode-table metadata and wording alone need narrow waivers. D6/D7 retained physical gates and original D7 worker/critic evidence authenticate unchanged compiler/resources/cache/constant ownership and native link/uniform boundaries without rewriting historical receipts."},
+    {"id":"P8-novel","prediction":"A separate bounded seed with changed aligned binding/index offsets, nonmonotonic u32 indices above 65535, changed axis-aligned geometry and native schedule will produce independently predicted full pixels/calls, exact-end admission, malformed/short/work rejection, mode restoration and delayed lifetime outcomes without leaked reads/staging."}
+  ],
+  "rasterAuthority": "https://registry.khronos.org/OpenGL/specs/es/3.0/es_spec_3.0.pdf sections 2.7.1 and 3.5",
+  "enumAuthority": "renderer/virgl-shader/vendor/src/gallium/include/pipe/p_defines.h"
+}

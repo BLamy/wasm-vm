@@ -1,0 +1,79 @@
+{
+  "status": "passed",
+  "sourceHead": "e0bdfe31f959547a1794de5027187ef29abe3d42",
+  "runtimeHead": "242ad5705dbdfd07b269c3e5850857c893af41e7",
+  "boundary": "Original runtime and independent semantic attacks carried forward unchanged; all six repaired receipt helpers match frozen source. Final clone records are primary. Warm records remain historical and are not relabeled.",
+  "coldReportSha256": "1895f2a1ed8908d0862e6ce15d3955f90c91bbc2d6a3b418cd1bb1cc0d06c643",
+  "coldReceiptSha256": "e009cdbc56f728247f02cd69da53fb8789d71b07e6514f4144f6ea6d720be865",
+  "coldLogSha256": "ccb6ddcaf7eb8e3df7a869d62db46749f9ac47411b4f3bf01402db68d7c0dded",
+  "coldClone": "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-structured-conditionals-cold-kmq8d6wj/wasm-vm",
+  "coldCheckoutClean": true,
+  "acceptanceFileCount": 126,
+  "acceptanceBytes": 202717058,
+  "allFileBindingsChecked": true,
+  "cloneCopiesMatch": true,
+  "sourceContinuity": [
+    "tools/virgl-structured-conditionals/browser_receipt.py",
+    "tools/virgl-structured-conditionals/consumer_compat.py",
+    "tools/virgl-structured-conditionals/faults.py",
+    "tools/virgl-structured-conditionals/native_receipt.py",
+    "tools/virgl-structured-conditionals/profiles_receipt.py",
+    "tools/virgl-structured-conditionals/wasm_receipt.py"
+  ],
+  "recomputedReceipt": {
+    "status": "passed",
+    "sourceRoot": "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-structured-conditionals-cold-kmq8d6wj/wasm-vm",
+    "head": "e0bdfe31f959547a1794de5027187ef29abe3d42",
+    "sources": 362,
+    "records": 124,
+    "nativeCalls": 790883,
+    "wasmCalls": 16557,
+    "browserModes": [
+      {
+        "mode": "normal",
+        "draws": 39,
+        "pixels": 159744,
+        "words": 1088,
+        "mismatches": 0,
+        "fences": 60,
+        "withheldPolls": 90,
+        "rejections": 6,
+        "report": {
+          "path": "hardware/report.json",
+          "bytes": 9473826,
+          "sha256": "8182505e2da960e8b2c3861adb4042d71d3c034edf4be8f2ec3115302405d486"
+        }
+      },
+      {
+        "mode": "branch-polarity",
+        "draws": 1,
+        "pixels": 4096,
+        "words": 52,
+        "mismatches": 48,
+        "fences": 0,
+        "withheldPolls": 0,
+        "rejections": 0,
+        "report": {
+          "path": "sabotage-branch-polarity/report.json",
+          "bytes": 1245600,
+          "sha256": "d6cbd40241eb823b1c314790126d4418e57ec14f9776ff208ff3503e3246cc0f"
+        }
+      }
+    ]
+  },
+  "recomputeCommand": [
+    "python3",
+    "-c",
+    "import json,sys\nfrom pathlib import Path\nsys.path.insert(0,str(Path('tools/virgl-structured-conditionals').resolve()))\nimport receipt\nhead=sys.argv[1];directory=Path('target/evidence/virgl-structured-conditionals-cold').resolve()\nactual=receipt.verify(directory,head);saved=json.loads((directory/'receipt.json').read_bytes())\ncanonical=lambda x:json.dumps(x,sort_keys=True,separators=(',',':'),allow_nan=False)\nassert canonical(actual)==canonical(saved),'complete recomputed receipt changed'\nprint(json.dumps({'status':'passed','sourceRoot':str(receipt.ROOT),'head':head,'sources':len(actual['sources']),'records':len(actual['records']),'nativeCalls':actual['native']['stats']['calls'],'wasmCalls':actual['wasm']['counts']['calls'],'browserModes':actual['browser']['modes']}))\n",
+    "e0bdfe31f959547a1794de5027187ef29abe3d42"
+  ],
+  "receiptSourceHead": "e0bdfe31f959547a1794de5027187ef29abe3d42",
+  "typedControls": 27,
+  "independentRuntimeCases": 17904,
+  "production": {
+    "capsets": [],
+    "guestRendererImplemented": false,
+    "numCapsets": 0,
+    "virglFeature": false
+  }
+}

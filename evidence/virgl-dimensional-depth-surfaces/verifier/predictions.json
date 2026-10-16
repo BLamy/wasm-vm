@@ -1,0 +1,21 @@
+{
+  "schema": "dimensional-depth-surfaces-independent-predictions-v1",
+  "task": "E6-T11d64",
+  "declaredBeforeEvidence": true,
+  "runtimeImplementationHead": "b03983136a66ce7142b8a4c6a82e5a5450a7f049",
+  "originalRuntimeRecordingHead": "cb04190a0fd8d989fb54fb7b2caf39cc86a8a0e7",
+  "harnessHead": "2f1e09f52ef3529b591887a08721fb234e77e500",
+  "base": "2aca65e9328aa1433fb516511ca554fdd96b422d",
+  "predictions": [
+    {"id":"P1", "prediction":"For target4 cube and target7 array, formats16/18/20/21/126 and roles1/9, every original object8 CLEAR/DRAW attaches the exact retained texture generation, selected mip and single face/layer. Cube attachment uses POSITIVE_X+layer; array attachment uses framebufferTextureLayer. Formats20/126 attach both depth and stencil;16/18/21 attach depth only after detaching both old planes."},
+    {"id":"P2", "prediction":"After original CLEAR and near/far DRAW_VBO, every full original206 output and guarded padded SG byte equals an independent model: selected-plane clear depth1, near-point depth0, rejected far-point color preserved, combined stencil near replacement then far inversion, and all other planes unchanged apart from previously authenticated X-padding canonicalization."},
+    {"id":"P3", "prediction":"Invalid mip/layer, layer65535, multiple/reversed layers, non-depth/mismatched format or role, mismatched view target, nonzero2D layer, role-confused or unequal framebuffer and feedback requests return0x1205 before native attachment/draw, preserving resource owners and budgets."},
+    {"id":"P4", "prediction":"Historical D62/D63 factories reject dimensional depth surfaces at every tested mip and first/last layer while admitting unchanged original2D controls; base Z16 admission and ordinary production-disabled demo remain intact."},
+    {"id":"P5", "prediction":"Different-target/format public name reuse cannot retarget an old retained surface or view. Pending work withholds publication; reset and WAIT_FAILED retire all syncs, guest SG owners and GPU charges without late completion."},
+    {"id":"P6", "prediction":"A native depth write dirties the retained private view; the subsequent real sample refresh observes changed old depth values with no CPU texture upload or additional checked-program link."},
+    {"id":"P7", "prediction":"Each new executable runtime operand has a finest positive V8 counter. Static waivers concern only comments/delimiters or unchanged closed historical selection operands; no D62 counter is misapplied at D63 offsets."},
+    {"id":"P8", "prediction":"Both complete seals reopen with exact member/body/link digests through gzip EOF. Original cb authority is not relabeled; the final pristine clone's strict allowlist permits only proof repair, all runtime/browser fixture bytes are identical, and touched proof plus default demo gates run at the new harness head."},
+    {"id":"N1", "prediction":"After recycling resource name6 and public surface handle21 with the same target/dimensions but combined format20 versus126, a bound old surface and old alias retain original object/resource generation. Alternate native clears/draws and all fresh206 images plus old private-view samples stay disjoint. Old-format-on-fresh-name surface creation refuses0x1205 without publication."},
+    {"id":"S1", "prediction":"Selectively redirecting the retained old surface's valid native attachment to the fresh same-target combined-format texture performs valid GPU work and original206/DMA, then fails unchanged complete-image oracles. Native identity assertions are deferred until those complete readbacks."}
+  ]
+}

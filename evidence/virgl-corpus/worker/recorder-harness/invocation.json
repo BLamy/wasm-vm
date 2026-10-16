@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "docker",
+    "exec",
+    "wasm-vm-virgl-reference-research",
+    "python3",
+    "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/inputs/recorder_harness.py",
+    "--inside",
+    "--inputs",
+    "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/inputs",
+    "--output",
+    "/tmp/virgl-recorder-harness-dc50be91ef4d496395d0827a23fe5251/run"
+  ],
+  "container": "wasm-vm-virgl-reference-research",
+  "exitCode": 0
+}

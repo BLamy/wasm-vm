@@ -1,0 +1,415 @@
+{
+  "custody_sha256": "cb47154101a11b111f61fa98d80e9095ef8181956cf19ba44e9c76e82d745f57",
+  "files": 62,
+  "total_bytes": 251012081,
+  "head": "43f227ae83acb3fc1c5f9c3bcd9766d2710d0875",
+  "all_exact_readonly_regular_unique": true,
+  "all_tracked_served_sources_match_frozen_head": [
+    "renderer/virgl-command/tests/production-color-checkpoint.mjs",
+    "renderer/virgl-command/tests/submit-acceptance.mjs",
+    "renderer/virgl-shader/index.mjs",
+    "renderer/virgl-command/production.mjs",
+    "renderer/virgl-command/checkpoint.mjs",
+    "renderer/virgl-command/control-bridge.mjs",
+    "renderer/virgl-command/resources.mjs",
+    "renderer/virgl-command/dimensional-depth-images.mjs",
+    "renderer/virgl-command/floating-depth-images.mjs",
+    "renderer/virgl-command/unorm-depth-images.mjs",
+    "renderer/virgl-command/color-images.mjs",
+    "renderer/virgl-command/float-images.mjs",
+    "renderer/virgl-command/packed-float-images.mjs",
+    "renderer/virgl-command/shared-exponent-images.mjs",
+    "renderer/virgl-command/integer-images.mjs",
+    "renderer/virgl-command/packed-normalized-images.mjs",
+    "renderer/virgl-command/packed-unsigned-images.mjs",
+    "renderer/virgl-command/shared-exponent-gpu.mjs",
+    "renderer/virgl-command/floating-depth-gpu.mjs",
+    "renderer/virgl-command/scanout.mjs",
+    "renderer/virgl-command/state.mjs",
+    "renderer/virgl-command/multisample.mjs",
+    "renderer/virgl-command/queries.mjs",
+    "renderer/virgl-command/decoder.mjs",
+    "renderer/virgl-command/cache.mjs",
+    "renderer/virgl-command/constant-domain.mjs",
+    "renderer/virgl-command/checkpoint-codec.mjs",
+    "renderer/virgl-command/checkpoint-dma.mjs",
+    "renderer/virgl-command/checkpoint-profile.mjs",
+    "renderer/virgl-shader/standard.mjs",
+    "gpu-checkpoint-build.js"
+  ],
+  "runs_decompressed_and_hash_checked": 3,
+  "originals": [
+    {
+      "path": "acceptance.json",
+      "bytes": 1150,
+      "sha256": "5506da908cdc6651c91e9b8568cea57e541f7e7f1423fcd6dec1fa8102b65cda",
+      "read_only": true
+    },
+    {
+      "path": "acceptance.log",
+      "bytes": 7606,
+      "sha256": "2be1ef96c64cff0ffd812be670a7ca960b04e6af53b2501553f1b9be63c9c954",
+      "read_only": true
+    },
+    {
+      "path": "default-demo/browser.png",
+      "bytes": 48851,
+      "sha256": "4a5e07f938a3b3117646d77308a51401e7cd5611b6d509c1d9d28c9804545d57",
+      "read_only": true
+    },
+    {
+      "path": "default-demo/report.json",
+      "bytes": 35120,
+      "sha256": "1710dd36a7fcf206287ef0c545addfe81ba7d0edfe3e9f9db8346d2f64c75e83",
+      "read_only": true
+    },
+    {
+      "path": "hardware/browser-coverage.json",
+      "bytes": 1700490,
+      "sha256": "190c5ae51ff652b051b9f8748d3af0b722f5b93961c6945b6ddcd3d6bedc1ec3",
+      "read_only": true
+    },
+    {
+      "path": "hardware/browser.png",
+      "bytes": 52970,
+      "sha256": "52f4594ff295c5c36778bd784dded378aff2aa257b93a4e42bfdf34f8892220f",
+      "read_only": true
+    },
+    {
+      "path": "hardware/bytes/historical-R8-eight-MiB-literal.bin",
+      "bytes": 2097152,
+      "sha256": "5a8b63c4aa09926c6166069e10a4c1241f6a1817ebbe6e49c5b781473eb3d83e",
+      "read_only": true
+    },
+    {
+      "path": "hardware/bytes/historical-R8-eight-MiB-native.bin",
+      "bytes": 8388608,
+      "sha256": "aae4fc0866fd32ab10388ed23db3d41f4a5b7ab583b9223e1357a213f40e4d82",
+      "read_only": true
+    },
+    {
+      "path": "hardware/bytes/historical-R8-eight-MiB-read.bin",
+      "bytes": 2097152,
+      "sha256": "5a8b63c4aa09926c6166069e10a4c1241f6a1817ebbe6e49c5b781473eb3d83e",
+      "read_only": true
+    },
+    {
+      "path": "hardware/bytes/production-R8-2048-literal.bin",
+      "bytes": 4194304,
+      "sha256": "7bb984b4dd0113d5c8f61ae4ee52695b5f6e59d5d8f85e979188de48569fcf54",
+      "read_only": true
+    },
+    {
+      "path": "hardware/bytes/production-R8-2048-native-0.bin",
+      "bytes": 16777216,
+      "sha256": "9296f687ff46c102271ee1dc19b51132b1832db9ff814c93d15a2bd7d8fae0e9",
+      "read_only": true
+    },
+    {
+      "path": "hardware/bytes/production-R8-2048-native-1.bin",
+      "bytes": 16777216,
+      "sha256": "9296f687ff46c102271ee1dc19b51132b1832db9ff814c93d15a2bd7d8fae0e9",
+      "read_only": true
+    },
+    {
+      "path": "hardware/bytes/production-R8-2048-restored.bin",
+      "bytes": 4194304,
+      "sha256": "7bb984b4dd0113d5c8f61ae4ee52695b5f6e59d5d8f85e979188de48569fcf54",
+      "read_only": true
+    },
+    {
+      "path": "hardware/bytes/production-R8-2048.wvgjrn",
+      "bytes": 5255450,
+      "sha256": "7f7ad46f516c6f40545f90ea37676d560c742abb29ca575b979d8f7a3351b996",
+      "read_only": true
+    },
+    {
+      "path": "hardware/bytes/production-R8-4096-literal.bin",
+      "bytes": 16777216,
+      "sha256": "d3500d461ad21b57207003822a7030134e97568cd63ef0d45541ff0d5759af56",
+      "read_only": true
+    },
+    {
+      "path": "hardware/bytes/production-R8-4096-native-0.bin",
+      "bytes": 67108864,
+      "sha256": "a20012d6aa76d8696aad15c13c2364d6b57dec1725cc06feb301dace42300e46",
+      "read_only": true
+    },
+    {
+      "path": "hardware/bytes/production-R8-4096-native-1.bin",
+      "bytes": 67108864,
+      "sha256": "a20012d6aa76d8696aad15c13c2364d6b57dec1725cc06feb301dace42300e46",
+      "read_only": true
+    },
+    {
+      "path": "hardware/bytes/production-R8-4096-restored.bin",
+      "bytes": 16777216,
+      "sha256": "d3500d461ad21b57207003822a7030134e97568cd63ef0d45541ff0d5759af56",
+      "read_only": true
+    },
+    {
+      "path": "hardware/bytes/production-R8-4096.wvgjrn",
+      "bytes": 17855114,
+      "sha256": "356877c112f0f02dca4b5fe2d9376886957c3bbff0e40c423ec0e21c3b59bf05",
+      "read_only": true
+    },
+    {
+      "path": "hardware/report.json",
+      "bytes": 28799,
+      "sha256": "ae23d967a29174c3c97b39286397d8ed5dff7372dffcd875bb43ba8c8f80809b",
+      "read_only": true
+    },
+    {
+      "path": "hardware/run-0000.json.gz",
+      "bytes": 16663,
+      "sha256": "e14fb9691d32d675fdbcc4e6b46ffbd5fce435ef183c84d6c66935ed366667fb",
+      "read_only": true
+    },
+    {
+      "path": "hardware/run-0001.json.gz",
+      "bytes": 26373,
+      "sha256": "7face97a75beaa1cbf5da92730b162f039a84ddc75f0a6ea33237ba98ddc1967",
+      "read_only": true
+    },
+    {
+      "path": "hardware/run-0002.json.gz",
+      "bytes": 1503,
+      "sha256": "838b290798338ef03dcf5d1be291661595d2ef558e48194f92ea0f0d4b3aac51",
+      "read_only": true
+    },
+    {
+      "path": "hardware/source/gpu-checkpoint-build.js",
+      "bytes": 174,
+      "sha256": "11465609b9eee469237c6a31f6718c0a1bab06729e7f361a685b51ac0b48d3aa",
+      "read_only": true
+    },
+    {
+      "path": "hardware/source/renderer/virgl-command/cache.mjs",
+      "bytes": 2989,
+      "sha256": "9e50cc258528e581f79cee0e4e0038994c7968f80046b9db21e7f5e0e4a92cfa",
+      "read_only": true
+    },
+    {
+      "path": "hardware/source/renderer/virgl-command/checkpoint-codec.mjs",
+      "bytes": 5017,
+      "sha256": "a744a9c9bc0f5fb0543d929429f00dfae55fac7afc6563447d789f2bd3fd6eff",
+      "read_only": true
+    },
+    {
+      "path": "hardware/source/renderer/virgl-command/checkpoint-dma.mjs",
+      "bytes": 2754,
+      "sha256": "2e7dd9826390cab02558403026625bac4567b1e43d2a604af42de03d630603ac",
+      "read_only": true
+    },
+    {
+      "path": "hardware/source/renderer/virgl-command/checkpoint-profile.mjs",
+      "bytes": 1517,
+      "sha256": "d4394fe4493527ec8d4f7abdbd3c2d476373ba43d9f9acf3c0c90062ebf8a27d",
+      "read_only": true
+    },
+    {
+      "path": "hardware/source/renderer/virgl-command/checkpoint.mjs",
+      "bytes": 14336,
+      "sha256": "ba463beecf7d0b1fd141a607a82dd17b37ef407582a23f46d00c6bef85d911af",
+      "read_only": true
+    },
+    {
+      "path": "hardware/source/renderer/virgl-command/color-images.mjs",
+      "bytes": 2770,
+      "sha256": "8c1b43f830e13f73d1397398e97bf263343f88c1782c683a890cb0f1fbc5e0e1",
+      "read_only": true
+    },
+    {
+      "path": "hardware/source/renderer/virgl-command/constant-domain.mjs",
+      "bytes": 127535,
+      "sha256": "dd64536abf46bc69ff7866e9822d7acf1a3e7f5216e70919d4a03e633b7c7aca",
+      "read_only": true
+    },
+    {
+      "path": "hardware/source/renderer/virgl-command/control-bridge.mjs",
+      "bytes": 41527,
+      "sha256": "27aecae3704b053d6c01d6d933e6592bcea334ca243047d3fe14536b365a3c5a",
+      "read_only": true
+    },
+    {
+      "path": "hardware/source/renderer/virgl-command/decoder.mjs",
+      "bytes": 55229,
+      "sha256": "794147c4251303f662f47d00715c6cbc7e4455c8f4f9677a972b80d0026e3c7b",
+      "read_only": true
+    },
+    {
+      "path": "hardware/source/renderer/virgl-command/dimensional-depth-images.mjs",
+      "bytes": 8781,
+      "sha256": "44d2d7b39145262ebd2533a8bc9625f1de500e7633cea73184a26c6727e5d68a",
+      "read_only": true
+    },
+    {
+      "path": "hardware/source/renderer/virgl-command/float-images.mjs",
+      "bytes": 3132,
+      "sha256": "69543e48426c7ded5178b659eb651b5cb765aa559a0bbf96fd8d34f5cf7cfe46",
+      "read_only": true
+    },
+    {
+      "path": "hardware/source/renderer/virgl-command/floating-depth-gpu.mjs",
+      "bytes": 15338,
+      "sha256": "ebc88ac91fe55fbfeb391fe2d216d4fea41086fb17d28628a2620353f1a66b90",
+      "read_only": true
+    },
+    {
+      "path": "hardware/source/renderer/virgl-command/floating-depth-images.mjs",
+      "bytes": 947,
+      "sha256": "76e02b32e5a24f65f360adb7cbcc0f9e5d51ee90be7cfbe1a383bfa99cc30370",
+      "read_only": true
+    },
+    {
+      "path": "hardware/source/renderer/virgl-command/integer-images.mjs",
+      "bytes": 1557,
+      "sha256": "8871226b60ad86ee1f585f8de6e5891241a361ad84aa811a36028fd003d95029",
+      "read_only": true
+    },
+    {
+      "path": "hardware/source/renderer/virgl-command/multisample.mjs",
+      "bytes": 7360,
+      "sha256": "ffe98e8c3a615403f792905d30dc35d947c1a89a82338ccf60022dd5d34b3c38",
+      "read_only": true
+    },
+    {
+      "path": "hardware/source/renderer/virgl-command/packed-float-images.mjs",
+      "bytes": 1620,
+      "sha256": "0ea28e0bfcf4a0ae04f634826d4b65cb19a6285850836412c7b06311ce1c5405",
+      "read_only": true
+    },
+    {
+      "path": "hardware/source/renderer/virgl-command/packed-normalized-images.mjs",
+      "bytes": 2046,
+      "sha256": "5ccf01336a906f3b46b0c8c790c73449331e09ac3cfee2931459d507b6dccd18",
+      "read_only": true
+    },
+    {
+      "path": "hardware/source/renderer/virgl-command/packed-unsigned-images.mjs",
+      "bytes": 991,
+      "sha256": "1170cf4d69d7281fdc32383354d7c17d6019ece0c7a6f681de86b27a57ea0d61",
+      "read_only": true
+    },
+    {
+      "path": "hardware/source/renderer/virgl-command/production.mjs",
+      "bytes": 22685,
+      "sha256": "42ad3fc6cbcae3cd30bd37bb22f65411c6b8938f4413d7e7f3ca1c5f9a1ec0b7",
+      "read_only": true
+    },
+    {
+      "path": "hardware/source/renderer/virgl-command/queries.mjs",
+      "bytes": 6094,
+      "sha256": "8a7dd9c146ff437691108f0749c89a2d4ac8573ec35690c02e39cbdbbaca8860",
+      "read_only": true
+    },
+    {
+      "path": "hardware/source/renderer/virgl-command/resources.mjs",
+      "bytes": 167021,
+      "sha256": "ce1b15fdbe4fbcb8cf6f21477879cf201c3ae8a803f6b0fecf48264956207bd9",
+      "read_only": true
+    },
+    {
+      "path": "hardware/source/renderer/virgl-command/scanout.mjs",
+      "bytes": 16610,
+      "sha256": "cbbacc075f94c07797e69b2c778472f36964c567725002efef42717b1ca59436",
+      "read_only": true
+    },
+    {
+      "path": "hardware/source/renderer/virgl-command/shared-exponent-gpu.mjs",
+      "bytes": 12102,
+      "sha256": "7b44ba7bc7361438807c1709c32929832dbf0b7af95966c68a65b01b23075ad8",
+      "read_only": true
+    },
+    {
+      "path": "hardware/source/renderer/virgl-command/shared-exponent-images.mjs",
+      "bytes": 563,
+      "sha256": "27de20239649aea73145e1f547c9265692f451fedddf3876639c173cf0d6168f",
+      "read_only": true
+    },
+    {
+      "path": "hardware/source/renderer/virgl-command/state.mjs",
+      "bytes": 223059,
+      "sha256": "30a429f0edc9aefbe5b00b3a5cfabcb1a1f9ddf089eea9212e0f751a9b3149a0",
+      "read_only": true
+    },
+    {
+      "path": "hardware/source/renderer/virgl-command/tests/production-color-checkpoint.mjs",
+      "bytes": 16333,
+      "sha256": "01e2a18572528bbb583ec9fb80cd51e8a5f153e3b3995b1234bded18c0e37436",
+      "read_only": true
+    },
+    {
+      "path": "hardware/source/renderer/virgl-command/tests/submit-acceptance.mjs",
+      "bytes": 53436,
+      "sha256": "61e97481796533bc715b019ef40ff51847020384123011bff27ccc2c01fd1b18",
+      "read_only": true
+    },
+    {
+      "path": "hardware/source/renderer/virgl-command/unorm-depth-images.mjs",
+      "bytes": 1409,
+      "sha256": "7fb08881153cfd06ed1acb5dba8d6cc61525b8f742a3b0a9715fb0e68e55e1d1",
+      "read_only": true
+    },
+    {
+      "path": "hardware/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "bytes": 14434,
+      "sha256": "4b3d0589d178ae6e3a2ad90c0abbddccc8226690e49e8cf91f8509ba64ca4f4a",
+      "read_only": true
+    },
+    {
+      "path": "hardware/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "bytes": 446891,
+      "sha256": "5f9b5935cc4a34d7d3b1cbceb3f75572c7ba8de822e09fea365a8d6c7aefb09b",
+      "read_only": true
+    },
+    {
+      "path": "hardware/source/renderer/virgl-shader/index.mjs",
+      "bytes": 22546,
+      "sha256": "1bae07f2e668078c4e447f65d1785815714907b7270ced01b131ce70e6d3f10e",
+      "read_only": true
+    },
+    {
+      "path": "hardware/source/renderer/virgl-shader/standard.mjs",
+      "bytes": 20285,
+      "sha256": "842b2b6041ce71d267940cb7732bc936624b410a90fe17ccc108af7fee386d92",
+      "read_only": true
+    },
+    {
+      "path": "hardware/source/target/virgl-production/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "bytes": 1314,
+      "sha256": "2877a95db8f6305fce95abf975c0fd7176ea2936c91eae201f662997f37f9fb2",
+      "read_only": true
+    },
+    {
+      "path": "hardware/source/target/virgl-production/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+      "bytes": 437,
+      "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804",
+      "read_only": true
+    },
+    {
+      "path": "hardware/source/target/virgl-production/pkg/wasm_vm_wasm.js",
+      "bytes": 160019,
+      "sha256": "c35066ca29b5513421a0306ff46f00ee777496651ad040606280c46527ede1ae",
+      "read_only": true
+    },
+    {
+      "path": "hardware/source/target/virgl-production/pkg/wasm_vm_wasm_bg.wasm",
+      "bytes": 1778544,
+      "sha256": "40f99b55d9a7d7df55d03ea831a39a037f407070de4fd851495cbe3325cbfb1a",
+      "read_only": true
+    },
+    {
+      "path": "layout/report.json",
+      "bytes": 22826,
+      "sha256": "5c8377af2cea2f00d49baadddc5d337e5fb368e1f6ca861f46e87139fb5d2974",
+      "read_only": true
+    },
+    {
+      "path": "source.diff",
+      "bytes": 401652,
+      "sha256": "734d963fb9dad590a809f9e6beaa45f7dc9cab19ac9f9f102b19654ad3ecb0ed",
+      "read_only": true
+    }
+  ]
+}

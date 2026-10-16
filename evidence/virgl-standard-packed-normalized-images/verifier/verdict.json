@@ -1,0 +1,371 @@
+{
+  "schema": "d35-fresh-adversarial-verdict-v1",
+  "verdict": "verified",
+  "workerSubmission": "1398a86992e0575a29c56a9a93bd5e9d11d80e11",
+  "base": "b57c3ae04e0bd306e6bb5877ff94c5d8f4d6df06",
+  "runtimeFreeze": "2acc572aaea2368f1c2f2aad0def5c2d08ecc2d8",
+  "recordedSource": "b6434e33c9e5399f48fc191656e02f318cd78075",
+  "predictionsSha256": "815681b6ae7923f97296768f6abce632433b4b6a87f00be7795081614ee58950",
+  "predictions": [
+    {
+      "id": "P01",
+      "state": "HELD",
+      "observed": "Authenticated all28896 worker and223159 predecessor members, unique regular files with exact indexed bytes.",
+      "evidence": [
+        {
+          "file": "custody.json",
+          "point": "/worker",
+          "sha256": "d96b05463448bfd8f4cdab4b0542a088d045b2c064482058182548d431063774"
+        },
+        {
+          "file": "custody.json",
+          "point": "/predecessors",
+          "sha256": "d96b05463448bfd8f4cdab4b0542a088d045b2c064482058182548d431063774"
+        }
+      ]
+    },
+    {
+      "id": "P02",
+      "state": "HELD",
+      "observed": "All13 fields independently derived from full pinned primary files and GLES packed offsets; original ignored X alone implies alpha one.",
+      "evidence": [
+        {
+          "file": "primary-derived.json",
+          "point": "/records",
+          "sha256": "cfe43eebf895e8a78c8c1679c7eb9be94b881b3e65954a9c628222ad228cd8ec"
+        },
+        {
+          "file": "primary-mesa-excerpt.yaml",
+          "point": "/",
+          "sha256": "7b994f15b8a044a675a1a2b2b7e6e35f4eb5d5e1be64ed6bf9cb2e2ec0a4245e"
+        }
+      ]
+    },
+    {
+      "id": "P03",
+      "state": "HELD",
+      "observed": "Exact78 original D34 inputs replayed before allocation; current780 old owners/702 old layouts remain closed.",
+      "evidence": [
+        {
+          "file": "baseline-refusals.json",
+          "point": "/records",
+          "sha256": "59630395f2ab72747b80cb4976b8bcaf6bb58ad18cb69606be186ffd3b3c8686"
+        },
+        {
+          "file": "receipt-values.json",
+          "point": "/freshWire",
+          "sha256": "10866f0b52cf36fffca8db1ca4313d7a4a412b3d06a4e43ed41d69e71a48b5ab"
+        }
+      ]
+    },
+    {
+      "id": "P04",
+      "state": "HELD",
+      "observed": "Ten exhaustive16-bit and three dense32-bit cases have exact original/native defined fields and actual packed-sized texStorage2D.",
+      "evidence": [
+        {
+          "file": "fresh-values.json",
+          "point": "/dense",
+          "sha256": "dd7ff1857978d34dd25181e91b5a5e29e14149d15e773f416e27ff4aa655d3d1"
+        },
+        {
+          "file": "worker-hot-values.json",
+          "point": "/dense",
+          "sha256": "c7e900f552bec299fd43364c1e092429c8343fe9be1f0b14ff8abdb72e950aa6"
+        },
+        {
+          "file": "worker-cold-values.json",
+          "point": "/dense",
+          "sha256": "a362700621e4581d9aa91751e4e8a3e415940358cd89cc8e744b400aa5361d20"
+        }
+      ]
+    },
+    {
+      "id": "P05",
+      "state": "HELD",
+      "observed": "Full native mips, original/private range correspondence, GPU-only clear/refresh, SG outputs and all padding hold.",
+      "evidence": [
+        {
+          "file": "fresh-values.json",
+          "point": "/",
+          "sha256": "dd7ff1857978d34dd25181e91b5a5e29e14149d15e773f416e27ff4aa655d3d1"
+        },
+        {
+          "file": "novel-promoted/independent-values.json",
+          "point": "/",
+          "sha256": "a924fe378441757cab595b824264b4ef179d8273025b57b7e7618e5eb2983840"
+        },
+        {
+          "file": "novel-promoted/report.json",
+          "point": "/browserResult/result/runs/0/observations",
+          "sha256": "291502c8bbe9bbeefe6bb77a5dd3d9365fbf6864298d59005235683e92288418"
+        }
+      ]
+    },
+    {
+      "id": "P06",
+      "state": "HELD",
+      "observed": "Corrected source-contract prediction HELD: opaque init and range FBO/mask/scissor state restore; transfers establish dense pack/unpack and owned bindings.",
+      "evidence": [
+        {
+          "file": "novel-promoted/report.json",
+          "point": "/browserResult/result/runs/0/callerBefore",
+          "sha256": "291502c8bbe9bbeefe6bb77a5dd3d9365fbf6864298d59005235683e92288418"
+        },
+        {
+          "file": "novel-promoted/report.json",
+          "point": "/browserResult/result/runs/0/copyCallerBefore",
+          "sha256": "291502c8bbe9bbeefe6bb77a5dd3d9365fbf6864298d59005235683e92288418"
+        },
+        {
+          "file": "worker-hot-values.json",
+          "point": "/",
+          "sha256": "c7e900f552bec299fd43364c1e092429c8343fe9be1f0b14ff8abdb72e950aa6"
+        }
+      ]
+    },
+    {
+      "id": "P07",
+      "state": "HELD",
+      "observed": "Native packed mip sizes, CPU-only public backings, charged read scratch and PBO issue/release match exact stages; exact/one-short limits hold.",
+      "evidence": [
+        {
+          "file": "fresh-values.json",
+          "point": "/",
+          "sha256": "dd7ff1857978d34dd25181e91b5a5e29e14149d15e773f416e27ff4aa655d3d1"
+        },
+        {
+          "file": "novel-promoted/report.json",
+          "point": "/browserResult/result/runs/0/reads",
+          "sha256": "291502c8bbe9bbeefe6bb77a5dd3d9365fbf6864298d59005235683e92288418"
+        },
+        {
+          "file": "novel-promoted/independent-values.json",
+          "point": "/budgetCases",
+          "sha256": "a924fe378441757cab595b824264b4ef179d8273025b57b7e7618e5eb2983840"
+        }
+      ]
+    },
+    {
+      "id": "P08",
+      "state": "HELD",
+      "observed": "Each CPU native capture follows its live actually completed owned fence; all allocated objects/syncs retire once and final budgets are zero.",
+      "evidence": [
+        {
+          "file": "fresh-values.json",
+          "point": "/",
+          "sha256": "dd7ff1857978d34dd25181e91b5a5e29e14149d15e773f416e27ff4aa655d3d1"
+        },
+        {
+          "file": "novel-promoted/independent-values.json",
+          "point": "/",
+          "sha256": "a924fe378441757cab595b824264b4ef179d8273025b57b7e7618e5eb2983840"
+        },
+        {
+          "file": "novel-promoted/report.json",
+          "point": "/browserResult/result/runs/0/events",
+          "sha256": "291502c8bbe9bbeefe6bb77a5dd3d9365fbf6864298d59005235683e92288418"
+        }
+      ]
+    },
+    {
+      "id": "P09",
+      "state": "HELD",
+      "observed": "Old private words survive alias ID reuse; replacement generation differs, stale public tickets refuse and pending old read is physically discarded.",
+      "evidence": [
+        {
+          "file": "novel-promoted/report.json",
+          "point": "/browserResult/result/runs/0/replacementGeneration",
+          "sha256": "291502c8bbe9bbeefe6bb77a5dd3d9365fbf6864298d59005235683e92288418"
+        },
+        {
+          "file": "novel-promoted/report.json",
+          "point": "/browserResult/result/runs/0/discardFence",
+          "sha256": "291502c8bbe9bbeefe6bb77a5dd3d9365fbf6864298d59005235683e92288418"
+        },
+        {
+          "file": "fresh-values.json",
+          "point": "/",
+          "sha256": "dd7ff1857978d34dd25181e91b5a5e29e14149d15e773f416e27ff4aa655d3d1"
+        }
+      ]
+    },
+    {
+      "id": "P10",
+      "state": "HELD",
+      "observed": "Getter/trap/unknown/prototype, role/level/stride/unsigned-coordinate/dataOffset refusals leave ownership/native state unchanged; caller byte mutation cannot change owned upload.",
+      "evidence": [
+        {
+          "file": "receipt-values.json",
+          "point": "/freshWire",
+          "sha256": "10866f0b52cf36fffca8db1ca4313d7a4a412b3d06a4e43ed41d69e71a48b5ab"
+        },
+        {
+          "file": "novel-promoted/report.json",
+          "point": "/browserResult/result/runs/0/negatives",
+          "sha256": "291502c8bbe9bbeefe6bb77a5dd3d9365fbf6864298d59005235683e92288418"
+        }
+      ]
+    },
+    {
+      "id": "P11",
+      "state": "HELD",
+      "observed": "Three fresh schedules exercise all native failures and cancellation/disposal/context-loss with backend refusal and exactly-once cleanup.",
+      "evidence": [
+        {
+          "file": "fresh-values.json",
+          "point": "/records",
+          "sha256": "dd7ff1857978d34dd25181e91b5a5e29e14149d15e773f416e27ff4aa655d3d1"
+        }
+      ]
+    },
+    {
+      "id": "P12",
+      "state": "HELD",
+      "observed": "All three physical corruption controls fail unchanged independent inverse. Post-completion packed R bit changes expected21 to observed20 after a distinct sabotage fence.",
+      "evidence": [
+        {
+          "file": "fresh-values.json",
+          "point": "/faults/0",
+          "sha256": "dd7ff1857978d34dd25181e91b5a5e29e14149d15e773f416e27ff4aa655d3d1"
+        },
+        {
+          "file": "fault-completed-word/report.json",
+          "point": "/partial/runs/0/sabotageFence",
+          "sha256": "2f3572eaf6298e74acf7f019785f421ec71f6a6651fe220bc879680281ce6f9a"
+        },
+        {
+          "file": "fault-completed-word/report.json",
+          "point": "/partial/runs/0/faultEvents",
+          "sha256": "2f3572eaf6298e74acf7f019785f421ec71f6a6651fe220bc879680281ce6f9a"
+        },
+        {
+          "file": "fresh-values.json",
+          "point": "/faults/1",
+          "sha256": "dd7ff1857978d34dd25181e91b5a5e29e14149d15e773f416e27ff4aa655d3d1"
+        },
+        {
+          "file": "fresh-values.json",
+          "point": "/faults/2",
+          "sha256": "dd7ff1857978d34dd25181e91b5a5e29e14149d15e773f416e27ff4aa655d3d1"
+        }
+      ]
+    },
+    {
+      "id": "P13",
+      "state": "HELD",
+      "observed": "Both independently reconstructed smallest-governing V8 audits match449 positive partitions; zero missing/zero-hit partitions and zero runtime waivers.",
+      "evidence": [
+        {
+          "file": "worker-hot-coverage.json",
+          "point": "/partitions",
+          "sha256": "ab184377fa8ab22c0fd1589516ce1b76140bfb3e63b55b9873395a585fc1621e"
+        },
+        {
+          "file": "worker-cold-coverage.json",
+          "point": "/partitions",
+          "sha256": "4dc24e094c938ecea7d3a477115ae1d25669bc88bc6a415ffda6f64d880477f6"
+        }
+      ]
+    },
+    {
+      "id": "P14",
+      "state": "HELD",
+      "observed": "Both exact b643 acceptance receipts,805 recorded source pins, actual generated bytes, pristine/scrubbed cold report and logs bind correctly; runtime equals freeze and submission.",
+      "evidence": [
+        {
+          "file": "receipt-values.json",
+          "point": "/records",
+          "sha256": "10866f0b52cf36fffca8db1ca4313d7a4a412b3d06a4e43ed41d69e71a48b5ab"
+        },
+        {
+          "file": "receipt-values.json",
+          "point": "/cold",
+          "sha256": "10866f0b52cf36fffca8db1ca4313d7a4a412b3d06a4e43ed41d69e71a48b5ab"
+        },
+        {
+          "file": "custody.json",
+          "point": "/",
+          "sha256": "d96b05463448bfd8f4cdab4b0542a088d045b2c064482058182548d431063774"
+        }
+      ]
+    },
+    {
+      "id": "P15",
+      "state": "HELD",
+      "observed": "All seven historical native gates pass in both lanes; all27 server diffs reverse to exact D34 declarations. Held decoder/state/compiler and production boundaries remain gated.",
+      "evidence": [
+        {
+          "file": "receipt-values.json",
+          "point": "/records",
+          "sha256": "10866f0b52cf36fffca8db1ca4313d7a4a412b3d06a4e43ed41d69e71a48b5ab"
+        },
+        {
+          "file": "receipt-values.json",
+          "point": "/servers",
+          "sha256": "10866f0b52cf36fffca8db1ca4313d7a4a412b3d06a4e43ed41d69e71a48b5ab"
+        }
+      ]
+    },
+    {
+      "id": "P16",
+      "state": "HELD",
+      "observed": "Final promoted19-case bounded novel original alias/mip/partial-box/state/budget test and independent inverse held; six exact/one-short bounds and all87 physical fences covered.",
+      "evidence": [
+        {
+          "file": "novel-promoted/report.json",
+          "point": "/browserResult/result/runs",
+          "sha256": "291502c8bbe9bbeefe6bb77a5dd3d9365fbf6864298d59005235683e92288418"
+        },
+        {
+          "file": "novel-promoted/independent-values.json",
+          "point": "/",
+          "sha256": "a924fe378441757cab595b824264b4ef179d8273025b57b7e7618e5eb2983840"
+        }
+      ]
+    }
+  ],
+  "productFindings": [],
+  "needsEvidence": [],
+  "coverage": {
+    "positive": 449,
+    "zero": 0,
+    "runtimeWaivers": 0,
+    "policy": "smallest governing nested V8 range for every changed runtime partition; no enclosing positive credit",
+    "nonRuntimeDisposition": "primary/config/README/task/Make declarations are facts or acceptance recipes;27 historical module lists exactly reverse to original source; touched critic/worker harnesses actually run"
+  },
+  "predictionCorrections": {
+    "ids": [
+      "P06",
+      "P16"
+    ],
+    "source": "renderer/virgl-command/resources-README.md:270-276",
+    "sourceSha256": "c94890f1888be12eeef4cba4d5834760cc526c071e9538e7a3120e110b7ef190",
+    "madeBeforeNovelCapture": true,
+    "originalExpectationPreserved": true
+  },
+  "harnessIterations": {
+    "firstFailedCapture": "novel-harness-v0/report.json",
+    "reason": "decoder correctly refused overflow before owner construction; corrected critic creates hostile decoded own fields",
+    "earlierPassedCapture": "novel-promoted-v1/report.json",
+    "finalCapture": "novel-promoted/report.json",
+    "finalOffsetProbe": "dataOffset=0xffffffff"
+  },
+  "counts": {
+    "freshMatrix": 169,
+    "freshBoundaries": 78,
+    "freshExpectedFailedPhysicalControls": 3,
+    "finalNovel": 19,
+    "fullPositiveNativeComponentsPerLane": 15144484,
+    "refutedControlPlaneComponentsPerLane": 304,
+    "workerCountingConvention": "15144788 includes304 complete components in the three intentionally refuted control planes; critic success counter excludes them"
+  },
+  "suite": {
+    "decision": "promoted",
+    "target": "make verify-E6-T11d35-adversarial",
+    "test": "renderer/virgl-command/tests/standard-packed-normalized-critic.mjs",
+    "independentAuditor": "tools/virgl-command/standard-packed-normalized-critic-novel-audit.py",
+    "primary": "tools/virgl-command/standard-packed-normalized-critic-primary.json"
+  },
+  "scope": "Only private selected13-format packed normalized storage/transfer ownership; no original command consumer, guest execution, capset, production API or deployment authority; parent remains blocked; no merge authorized"
+}

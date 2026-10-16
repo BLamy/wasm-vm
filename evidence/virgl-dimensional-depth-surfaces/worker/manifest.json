@@ -1,0 +1,1721 @@
+{
+  "schema": "dimensional-depth-surface-seal-v1",
+  "task": "E6-T11d64",
+  "head": "2f1e09f52ef3529b591887a08721fb234e77e500",
+  "records": 7818,
+  "uniqueBodies": 3084,
+  "backwardLinks": 4734,
+  "recordIndexSha256": "65ed9a44410323a50cb3eea97ea99443d4dc5060399a22c90a923faf4cad1cdb",
+  "archiveSha256": "673ccd20460616243bfb4007ba6fbb8ca236de4e230c8c2f5c97c57822976fd4",
+  "archiveBytes": 203689432,
+  "logicalBytes": 1203258962,
+  "predecessors": {
+    "schema": "dimensional-depth-surface-predecessors-v1",
+    "base": "2aca65e9328aa1433fb516511ca554fdd96b422d",
+    "dependencies": [
+      {
+        "family": "virgl-dimensional-color-surfaces/worker",
+        "manifestSha256": "cdcaa8ba0a2a80d789c7df623818b31cdd491af575ac9a92540b8df25d39cc4e",
+        "indexSha256": "43558e49104803535ea74b29dae6b145bdd8c762163013087f5cb475e22ef624",
+        "archiveSha256": "d3453c44d2c50557d19718d33c9e3949a64418c1eceff5e20ff60fc0c1ed6ec2",
+        "archiveBytes": 93448693,
+        "reopenedMembers": 3926,
+        "gzipEofChecked": true
+      },
+      {
+        "family": "virgl-dimensional-color-surfaces/verifier",
+        "manifestSha256": "f048564e0495ce5f984336c5dabf0e1fb3fe90e1d86028c9624530adcde75cfe",
+        "indexSha256": "6031faa2a965d9e97ea6a6de74618afc2157bb358157ae2da56b391a319339cc",
+        "archiveSha256": "e027435ec3860953e3310f0762f21885453fdcb69bb59f926a42a4a555fc884a",
+        "archiveBytes": 180555104,
+        "reopenedMembers": 6736,
+        "gzipEofChecked": true
+      },
+      {
+        "family": "virgl-dimensional-depth-views/worker",
+        "manifestSha256": "6e4047173d8fefb25d1763ba2eb9e9c40534bddd70f02544cb05e843f6005145",
+        "indexSha256": "38dc0b762d1bb5d37229a6ced3ae8b493eb93706cb26f1984b1251b7f83134b9",
+        "archiveSha256": "f7fba1471496d686b5759cf773ddecdbdd0a4e90014ce7936465cb754956d639",
+        "archiveBytes": 460967357,
+        "reopenedMembers": 37268,
+        "gzipEofChecked": true
+      },
+      {
+        "family": "virgl-dimensional-depth-views/verifier",
+        "manifestSha256": "1e7b66672d57a8caa6224d02f6c1e12bef85b3cf2f01d9082ee7c2f48341356e",
+        "indexSha256": "6438d86a2028a1b20c1eff2e381bed399c62c44db6a4086373c0183141099a58",
+        "archiveSha256": "1f17708a5fb43cf0f6e07ace47feb2aa20ceedfa69f14f061ad83b0c59cf2cf0",
+        "archiveBytes": 334848459,
+        "reopenedMembers": 3402,
+        "gzipEofChecked": true
+      },
+      {
+        "family": "virgl-dimensional-depth/worker",
+        "manifestSha256": "109f0a3a84cbf48bca63f28206a568cd0f7b78019e26202d96b8890870504a55",
+        "indexSha256": "307c8af400fd4750e9b9984ef304bcdba141e630cd09d7b56d9fd39040a68130",
+        "archiveSha256": "231e8733d09642346013efd0e06b5937ae457e2fa114ccfdaca3da41d7886e22",
+        "archiveBytes": 154412607,
+        "reopenedMembers": 1884,
+        "gzipEofChecked": true
+      },
+      {
+        "family": "virgl-dimensional-depth/verifier",
+        "manifestSha256": "69815fdc9b938a99b5022c6f876c43eea3656beb336855f2ce49df187b3da4a5",
+        "indexSha256": "0f5636d1b4f07d815b0864b430892f6724bde0dbe50dff5c03d7a125c927f3d8",
+        "archiveSha256": "2872dbc59dfeb308a758497220a18d6e67fac6f127cb8ad1ddab948116fa23f2",
+        "archiveBytes": 37705730,
+        "reopenedMembers": 308,
+        "gzipEofChecked": true
+      },
+      {
+        "family": "virgl-dimensional-shadow-samplers/worker",
+        "manifestSha256": "8b577966f92fc4dc89d90026a90d8fbf59a3de3d11c21d262b6ec71da062c32c",
+        "indexSha256": "797086b4328561b6f021697392c6a40946b76c1408172e4843d6ee4b5e7f4409",
+        "archiveSha256": "7fa6fe8345d44f52e48e9eb459dbebb52ea478d4fa6460b78335c848277fd0c6",
+        "archiveBytes": 490001728,
+        "reopenedMembers": 8070,
+        "gzipEofChecked": true
+      },
+      {
+        "family": "virgl-dimensional-shadow-samplers/verifier",
+        "manifestSha256": "2a618ef4b0aa3695b82910ca576714ce3de544fdfc30117485bbfa4573d873dc",
+        "indexSha256": "1abeb59d5facf850a5fc26a4b44d8d5533f2d397277498aa22b78155aec8dd9a",
+        "archiveSha256": "023b5894c7d473030503e3aebf0b5848c7331811baa0379708f077923fadbc27",
+        "archiveBytes": 233085122,
+        "reopenedMembers": 2443,
+        "gzipEofChecked": true
+      },
+      {
+        "family": "virgl-dimensional-views/worker",
+        "manifestSha256": "0d33df88ff4eab46b34d7c376fda9f4d69ae1120c6bba9e82a3fd468e8afd135",
+        "indexSha256": "398ef4c26c719a0995bd5fbc7d14039d5dcccdb13613de7a22c945572d9a32da",
+        "archiveSha256": "fb56c37995c361bece8bbe14f6ec5606580741affbb8c76a9469e6c6a231cdf5",
+        "archiveBytes": 151192332,
+        "reopenedMembers": 2327,
+        "gzipEofChecked": true
+      },
+      {
+        "family": "virgl-dimensional-views/verifier",
+        "manifestSha256": "bf8aaeb347ad4aead9304fbfc4759fe74f1e622328f0399fc13c3b412318d590",
+        "indexSha256": "c2b97a36f021cc572d94490e7a341bca0a209923399d3e0c2d070b3026386958",
+        "archiveSha256": "b5cbdaca9aa4885a0b06b94572eaa3a92688be1ba4b0a0c89def652fc956f787",
+        "archiveBytes": 29945836,
+        "reopenedMembers": 445,
+        "gzipEofChecked": true
+      },
+      {
+        "family": "virgl-dimensional-views/transport-verifier",
+        "manifestSha256": "b2b93f53f8fe0029e20cb506b33aac01406f2a5151d36601804cf334c5f88591",
+        "indexSha256": "5f7308a164c7878bab2e01024e3eadf11ea9b01f15355859ed7c2e732a144f86",
+        "archiveSha256": "332645ee4a31909ff984f5503940a18bcd7298432e05c663174e22bfecf08b99",
+        "archiveBytes": 1134499,
+        "reopenedMembers": 26,
+        "gzipEofChecked": true
+      },
+      {
+        "family": "virgl-native-dimensional/worker",
+        "manifestSha256": "7c8fb3ab46b3659ce855e77a80afc161a14f808b491a6753caa6c53231b0d0e6",
+        "indexSha256": "01cb810875ddfcd1b895df24e688e798c1fe4e9d66364da2be4ea0d6aaeef418",
+        "archiveSha256": "d2f66777cdba8f6375d5958e80ca9204854bbccf151a0c3325cb63e6f91eef4b",
+        "archiveBytes": 38478604,
+        "reopenedMembers": 1625,
+        "gzipEofChecked": true
+      },
+      {
+        "family": "virgl-native-dimensional/verifier",
+        "manifestSha256": "d290f464b5be7dbd39e01cc588aa9d4ed580bb4d7e688c345443e86e87ec2dc5",
+        "indexSha256": "914145b80457bbbe323229b4323cdcc04a04001f85399c36a510063cc92bd0b5",
+        "archiveSha256": "073c067eb7fb04d5ce3747d5937e9ec05cd210ae09da8b878ad5179420158619",
+        "archiveBytes": 70942831,
+        "reopenedMembers": 792,
+        "gzipEofChecked": true
+      },
+      {
+        "family": "virgl-dimensional-shadow-shaders/worker",
+        "manifestSha256": "862ccad57dcd39ef940c2ba495c4a638e3e30f82fd4b34546240937b7ce550f1",
+        "indexSha256": "7211cf03b9264aa5215d8d90474fececa5d748bd35a43a0bed2fb1a1d89aac01",
+        "archiveSha256": "d0a39567532a609f313ef2d2a39bea3473d05e7d4d1a43bf5a29edf03221d337",
+        "archiveBytes": 32267855,
+        "reopenedMembers": 44485,
+        "gzipEofChecked": true
+      }
+    ],
+    "generated": {
+      "renderer/virgl-shader/build/wasm/virgl-shader.mjs": {
+        "bytes": 14038,
+        "sha256": "0e5f9c6b75eee85d9a27c6f29aaa4649545ae9a7c639e85466a6bb735f2e51c6"
+      },
+      "renderer/virgl-shader/build/wasm/virgl-shader.wasm": {
+        "bytes": 444027,
+        "sha256": "6b2ae0184103ee1b937f11412aa4a0818c5338d5358cc9b48c04524347163752"
+      }
+    },
+    "unchangedBoundaries": [
+      "D61 original C/Wasm shader compiler",
+      "D62 shader metadata, comparison controls and existing selectors",
+      "D58/D56 original native allocation, private-copy and guarded DMA backend",
+      "all native/Wasm guest execution and transport code"
+    ],
+    "nativeBackendSha256": "486a790144ecedd7d45d1d3145fee8c0181c5fd8a32301705e3ee07fbc3cecb3",
+    "actualLinuxGuest": false,
+    "productionAuthority": false
+  },
+  "authoritativeRecording": "cold/recording",
+  "commands": 8,
+  "carriedRuntimeHead": "cb04190a0fd8d989fb54fb7b2caf39cc86a8a0e7",
+  "carriedSourceCustody": {
+    "schema": "dimensional-depth-surface-incremental-source-custody-v1",
+    "originalColdHead": "cb04190a0fd8d989fb54fb7b2caf39cc86a8a0e7",
+    "harnessHead": "2f1e09f52ef3529b591887a08721fb234e77e500",
+    "recordingsRelabeled": false,
+    "allowedProofOnlyChanges": [
+      "Makefile",
+      "evidence/virgl-dimensional-depth-surfaces/carried-cb04190a/manifest.json",
+      "evidence/virgl-dimensional-depth-surfaces/carried-cb04190a/recording.tar.gz.part-0000",
+      "evidence/virgl-dimensional-depth-surfaces/carried-cb04190a/recording.tar.gz.part-0001",
+      "evidence/virgl-dimensional-depth-surfaces/carried-cb04190a/recording.tar.gz.part-0002",
+      "evidence/virgl-dimensional-depth-surfaces/carried-cb04190a/recording.tar.gz.part-0003",
+      "evidence/virgl-dimensional-depth-surfaces/carried-cb04190a/recording.tar.gz.part-0004",
+      "evidence/virgl-dimensional-depth-surfaces/carried-cb04190a/recording.tar.gz.part-0005",
+      "evidence/virgl-dimensional-depth-surfaces/carried-cb04190a/recording.tar.gz.part-0006",
+      "evidence/virgl-dimensional-depth-surfaces/carried-cb04190a/recording.tar.gz.part-0007",
+      "evidence/virgl-dimensional-depth-surfaces/carried-cb04190a/recording.tar.gz.part-0008",
+      "evidence/virgl-dimensional-depth-surfaces/carried-cb04190a/recording.tar.gz.part-0009",
+      "evidence/virgl-dimensional-depth-surfaces/carried-cb04190a/recording.tar.gz.part-0010",
+      "evidence/virgl-dimensional-depth-surfaces/carried-cb04190a/records.json",
+      "tools/virgl-dimensional-depth-surfaces/cold.py",
+      "tools/virgl-dimensional-depth-surfaces/incremental.py",
+      "tools/virgl-dimensional-depth-surfaces/predecessor.py",
+      "tools/virgl-dimensional-depth-surfaces/seal.py",
+      "tools/virgl-dimensional-depth-surfaces/verify.py"
+    ],
+    "originalCold": {
+      "schema": "dimensional-depth-surfaces-cold-v1",
+      "head": "cb04190a0fd8d989fb54fb7b2caf39cc86a8a0e7",
+      "clone": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo",
+      "command": [
+        "make",
+        "verify-E6-T11d64"
+      ],
+      "evidenceOutput": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/target/evidence/dimensional-depth-surfaces-cold",
+      "cleanBefore": "",
+      "cleanAfter": "",
+      "exitCode": 2,
+      "sourceCheckout": {
+        "mode": "declared cone sparse checkout",
+        "included": [
+          ".cargo",
+          ".github",
+          "bench",
+          "compliance",
+          "configs",
+          "crates",
+          "deploy",
+          "design",
+          "docs",
+          "fuzz",
+          "guest",
+          "renderer",
+          "tasks",
+          "tests",
+          "third_party",
+          "tools",
+          "web",
+          "evidence/virgl-dimensional-shadow-samplers/worker",
+          "evidence/virgl-dimensional-shadow-samplers/verifier",
+          "evidence/virgl-dimensional-views/worker",
+          "evidence/virgl-dimensional-views/verifier",
+          "evidence/virgl-native-dimensional/worker",
+          "evidence/virgl-native-dimensional/verifier",
+          "evidence/virgl-dimensional-shadow-shaders/worker",
+          "evidence/virgl-dimensional-shadow-shaders/verifier",
+          "evidence/virgl-dimensional-color-surfaces/worker",
+          "evidence/virgl-dimensional-color-surfaces/verifier",
+          "evidence/virgl-dimensional-depth-views/worker",
+          "evidence/virgl-dimensional-depth-views/verifier",
+          "evidence/virgl-dimensional-depth/worker",
+          "evidence/virgl-dimensional-depth/verifier",
+          "evidence/virgl-dimensional-views/transport-verifier",
+          "releases/kernel",
+          "releases/initramfs",
+          "releases/boot-snapshot"
+        ],
+        "borrowedGeneratedArtifacts": false,
+        "generatedCompilerAuthority": "complete authenticated D61 worker seal",
+        "claim": "selected dimensional depth-surface consumer and ordinary default demo"
+      },
+      "receiptSha256": null
+    },
+    "originalCommands": [
+      {
+        "name": "policy",
+        "command": [
+          "python3",
+          "tools/check_task_policy.py"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 0.046795874999999994,
+        "stdoutSha256": "a9725c756323d35edc881f6ceb8e7942948d53589309b0527daa50df7d63608d",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "diff-format",
+        "command": [
+          "git",
+          "diff",
+          "--check",
+          "e8eb963e821104f87aeca34dd2ac810c2d2794dd",
+          "HEAD"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 0.019006874999999993,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "predecessor",
+        "command": [
+          "python3",
+          "tools/virgl-dimensional-depth-surfaces/predecessor.py",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/target/evidence/dimensional-depth-surfaces-cold/predecessor"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 15.890419833,
+        "stdoutSha256": "2c191f5b7be0317708f53c8402746138c5a0e676098a7b1dd64aa522ef4601e9",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "format",
+        "command": [
+          "cargo",
+          "fmt",
+          "--check",
+          "-p",
+          "wasm-vm-core",
+          "-p",
+          "wasm-vm-wasm"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 0.6866310830000018,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "clippy-default",
+        "command": [
+          "cargo",
+          "clippy",
+          "--offline",
+          "-p",
+          "wasm-vm-core",
+          "--lib",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 2.8709330410000007,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "6accc093808d3c08dd2ad6784e5150b1497c41a65072afaaf91ad88451bbfc14"
+      },
+      {
+        "name": "clippy-wasm",
+        "command": [
+          "cargo",
+          "clippy",
+          "--offline",
+          "-p",
+          "wasm-vm-wasm",
+          "--lib",
+          "--target",
+          "wasm32-unknown-unknown",
+          "--features",
+          "virgl-control-proof",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 11.587064959,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "61bd7fe465a4d40d397c4bcef71a9d038f613e0f2494da7ec74bdab684385f54"
+      },
+      {
+        "name": "native-virtio_gpu_submit3d",
+        "command": [
+          "cargo",
+          "test",
+          "--offline",
+          "-p",
+          "wasm-vm-core",
+          "--features",
+          "virgl-control-proof,gpu-trace,trace",
+          "--test",
+          "virtio_gpu_submit3d",
+          "--",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 91.527412834,
+        "stdoutSha256": "2708daeb8413e578996c4b51c15b03bf94149cfd255e91c0682e87cade1a7ad4",
+        "stderrSha256": "86d4cf38d70871657201a23a08dbd1ab3b9505f6ddd2b3e7af2b3b8e4cee15a5"
+      },
+      {
+        "name": "native-virtio_gpu_control3d",
+        "command": [
+          "cargo",
+          "test",
+          "--offline",
+          "-p",
+          "wasm-vm-core",
+          "--features",
+          "virgl-control-proof,gpu-trace,trace",
+          "--test",
+          "virtio_gpu_control3d",
+          "--",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 137.511078084,
+        "stdoutSha256": "f06397e7529ffedba4fbb0fb75a6e3fdf37edc3bb78654af2af17957cba6e25b",
+        "stderrSha256": "54540eeba38d66e4e2b68a0096ae4c451c21ad463c7357eca1b1eeffb4ce6c69"
+      },
+      {
+        "name": "wasm-core-default",
+        "command": [
+          "cargo",
+          "build",
+          "--offline",
+          "-p",
+          "wasm-vm-core",
+          "--no-default-features",
+          "--target",
+          "wasm32-unknown-unknown"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 2.4360604589999753,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "73f9ad07fac6dfdb8a48ea325cce03db10afecc1a67340c58b013d4c9bf198f6"
+      },
+      {
+        "name": "wasm-core-selected",
+        "command": [
+          "cargo",
+          "build",
+          "--offline",
+          "-p",
+          "wasm-vm-core",
+          "--no-default-features",
+          "--target",
+          "wasm32-unknown-unknown",
+          "--features",
+          "virgl-control-proof"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 2.0588547080000126,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "5d809220a028c75086d37cb2b99bdb2403878511792e118cc5d363cd630b25a2"
+      },
+      {
+        "name": "wasm-proof",
+        "command": [
+          "wasm-pack",
+          "build",
+          "crates/wasm",
+          "--dev",
+          "--target",
+          "web",
+          "--out-dir",
+          "../../target/virgl-desktop-submit/pkg",
+          "--features",
+          "virgl-control-proof"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 9.920727666000005,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "d83a2583bd0f9983736965f4e0afec9916a4ed1ef22ecbfac246d609bdfb5712"
+      },
+      {
+        "name": "syntax-decoder",
+        "command": [
+          "node",
+          "--check",
+          "renderer/virgl-command/decoder.mjs"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 0.023478624999995645,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "syntax-resources",
+        "command": [
+          "node",
+          "--check",
+          "renderer/virgl-command/resources.mjs"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 0.023328250000020034,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "syntax-state",
+        "command": [
+          "node",
+          "--check",
+          "renderer/virgl-command/state.mjs"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 0.02355383299999403,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "syntax-control-bridge",
+        "command": [
+          "node",
+          "--check",
+          "renderer/virgl-command/control-bridge.mjs"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 0.023001416999989033,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "syntax-native-dimensional-depth-surfaces",
+        "command": [
+          "node",
+          "--check",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/renderer/virgl-command/tests/native-dimensional-depth-surfaces.mjs"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 0.025843833000010363,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "syntax-dimensional-depth-surface-historical",
+        "command": [
+          "node",
+          "--check",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/renderer/virgl-command/tests/dimensional-depth-surface-historical.mjs"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 0.02407349999998587,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "syntax-dimensional-depth-surface-lifecycle",
+        "command": [
+          "node",
+          "--check",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/renderer/virgl-command/tests/dimensional-depth-surface-lifecycle.mjs"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 0.021208415999979024,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "syntax-dimensional-depth-surface-attacks",
+        "command": [
+          "node",
+          "--check",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/renderer/virgl-command/tests/dimensional-depth-surface-attacks.mjs"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 0.023382332999972277,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "syntax-browser",
+        "command": [
+          "node",
+          "--check",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/tools/virgl-dimensional-depth-surfaces/browser.mjs"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 0.022060500000009142,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "syntax-fixtures",
+        "command": [
+          "node",
+          "--check",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/tools/virgl-dimensional-depth-surfaces/fixtures.mjs"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 0.023544583000045805,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "python-syntax",
+        "command": [
+          "python3",
+          "-m",
+          "py_compile",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/tools/virgl-dimensional-depth-surfaces/audit.py",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/tools/virgl-dimensional-depth-surfaces/seal.py",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/tools/virgl-dimensional-depth-surfaces/predecessor.py",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/tools/virgl-dimensional-depth-surfaces/coverage.py",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/tools/virgl-dimensional-depth-surfaces/cold.py",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/tools/virgl-dimensional-depth-surfaces/verify.py",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/tools/virgl-dimensional-depth-surfaces/custody.py"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 0.0411577919999786,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "npm-dependencies",
+        "command": [
+          "npm",
+          "--prefix",
+          "web",
+          "ci",
+          "--no-audit",
+          "--no-fund"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 2.882505582999954,
+        "stdoutSha256": "4f74abfc8fcd2a423a10d569456fd30e0ec38c3e0410270a0b71118b76f7cafa",
+        "stderrSha256": "09781d73839399ad42327b4503ab4ab316de9bf3ccb399d2fab8c2bae7e0b822"
+      },
+      {
+        "name": "hardware-54831",
+        "command": [
+          "node",
+          "tools/virgl-dimensional-depth-surfaces/browser.mjs",
+          "--output",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/target/evidence/dimensional-depth-surfaces-cold/hardware-54831",
+          "--seeds",
+          "54831"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 202.948790708,
+        "stdoutSha256": "c8931b2a90f97c88489e05a65ab400ec284b2c7a30c21616d92fed89eddb0939",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "boundaries-54831",
+        "command": [
+          "node",
+          "tools/virgl-dimensional-depth-surfaces/browser.mjs",
+          "--output",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/target/evidence/dimensional-depth-surfaces-cold/boundaries-54831",
+          "--seeds",
+          "54831",
+          "--boundaries",
+          "true"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 19.525213749999978,
+        "stdoutSha256": "b2f85114a2d7bc0ee1bf41105913c5019c1e4cd17533363b8627543838a65cec",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "refresh-54831",
+        "command": [
+          "node",
+          "tools/virgl-dimensional-depth-surfaces/browser.mjs",
+          "--output",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/target/evidence/dimensional-depth-surfaces-cold/refresh-54831",
+          "--seeds",
+          "54831",
+          "--refresh",
+          "true"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 13.556731207999974,
+        "stdoutSha256": "edaa77c25ee6bb27d7ca7deb98538b72b26c6df57fa8c2e3db1c20642e771eb7",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "hardware-90107",
+        "command": [
+          "node",
+          "tools/virgl-dimensional-depth-surfaces/browser.mjs",
+          "--output",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/target/evidence/dimensional-depth-surfaces-cold/hardware-90107",
+          "--seeds",
+          "90107"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 201.20525699999996,
+        "stdoutSha256": "748f664b9501f8466d441ed47e6303bde8e901092f9855c1fc09ebe0af318398",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "boundaries-90107",
+        "command": [
+          "node",
+          "tools/virgl-dimensional-depth-surfaces/browser.mjs",
+          "--output",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/target/evidence/dimensional-depth-surfaces-cold/boundaries-90107",
+          "--seeds",
+          "90107",
+          "--boundaries",
+          "true"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 45.768532875000005,
+        "stdoutSha256": "b405c79fcd77e1eaec3316126b18546c91f039f23efb890a9da438ac0d8ae33a",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "refresh-90107",
+        "command": [
+          "node",
+          "tools/virgl-dimensional-depth-surfaces/browser.mjs",
+          "--output",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/target/evidence/dimensional-depth-surfaces-cold/refresh-90107",
+          "--seeds",
+          "90107",
+          "--refresh",
+          "true"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 14.050144666999927,
+        "stdoutSha256": "a9a7bbdccca70a477fb9479c029810838d61698ae4e47e750a413a7e456db4d2",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "hardware-171281",
+        "command": [
+          "node",
+          "tools/virgl-dimensional-depth-surfaces/browser.mjs",
+          "--output",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/target/evidence/dimensional-depth-surfaces-cold/hardware-171281",
+          "--seeds",
+          "171281"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 198.84351208299995,
+        "stdoutSha256": "74a84e8fd4d46f171b750644a29b7c559a56eb28717a5ea02a34382e2beded26",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "boundaries-171281",
+        "command": [
+          "node",
+          "tools/virgl-dimensional-depth-surfaces/browser.mjs",
+          "--output",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/target/evidence/dimensional-depth-surfaces-cold/boundaries-171281",
+          "--seeds",
+          "171281",
+          "--boundaries",
+          "true"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 19.137568584000064,
+        "stdoutSha256": "cf2b17c531850c179b00db2a39567770a7e137bb76f1806dcc4a86d5f264959f",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "refresh-171281",
+        "command": [
+          "node",
+          "tools/virgl-dimensional-depth-surfaces/browser.mjs",
+          "--output",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/target/evidence/dimensional-depth-surfaces-cold/refresh-171281",
+          "--seeds",
+          "171281",
+          "--refresh",
+          "true"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 13.460539917000006,
+        "stdoutSha256": "64ebb283c276edfd08cc2dedece06ea4a2e7775a83744fb59bafd5a525b33e60",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "attacks",
+        "command": [
+          "node",
+          "tools/virgl-dimensional-depth-surfaces/browser.mjs",
+          "--output",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/target/evidence/dimensional-depth-surfaces-cold/attacks",
+          "--seeds",
+          "54831",
+          "--attacks",
+          "true"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 84.23022183299997,
+        "stdoutSha256": "e6bdacc43c59b0abff4290a07d5cd268cad5dd8372230dfb1f51540bf5ead4c4",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "mrt",
+        "command": [
+          "node",
+          "tools/virgl-dimensional-depth-surfaces/browser.mjs",
+          "--output",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/target/evidence/dimensional-depth-surfaces-cold/mrt",
+          "--seeds",
+          "54831",
+          "--mrt",
+          "true"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 10.129776875000061,
+        "stdoutSha256": "9af3f8d671a5f1b537d69c15b20f3c15b0ee747fd6c57785347d7552b86e8f7a",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "historical",
+        "command": [
+          "node",
+          "tools/virgl-dimensional-depth-surfaces/browser.mjs",
+          "--output",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/target/evidence/dimensional-depth-surfaces-cold/historical",
+          "--seeds",
+          "54831",
+          "--historical",
+          "true"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 7.720306665999942,
+        "stdoutSha256": "f5ab95154955718e198fd9d5d47036f615a67a4446b1f17cddd2363e38cb9735",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "fault-layer",
+        "command": [
+          "node",
+          "tools/virgl-dimensional-depth-surfaces/browser.mjs",
+          "--output",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/target/evidence/dimensional-depth-surfaces-cold/fault-layer",
+          "--fault",
+          "true",
+          "--sabotage",
+          "layer",
+          "--seeds",
+          "171281"
+        ],
+        "exitCode": 1,
+        "expected": 1,
+        "overrides": {},
+        "seconds": 1.8141799160000573,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "f3027985559704643a9c646082d108ecd6515d5ab419d5767e276c4eeb97c777"
+      },
+      {
+        "name": "fault-face",
+        "command": [
+          "node",
+          "tools/virgl-dimensional-depth-surfaces/browser.mjs",
+          "--output",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/target/evidence/dimensional-depth-surfaces-cold/fault-face",
+          "--fault",
+          "true",
+          "--sabotage",
+          "face",
+          "--seeds",
+          "171281"
+        ],
+        "exitCode": 1,
+        "expected": 1,
+        "overrides": {},
+        "seconds": 1.8424021249998077,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "f8a082966e515157df83461a38441a3812c380f8398e567258619a4b87156db5"
+      },
+      {
+        "name": "historical-dimensional-color-surfaces",
+        "command": [
+          "node",
+          "tools/virgl-dimensional-color-surfaces/browser.mjs",
+          "--output",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/target/evidence/dimensional-depth-surfaces-cold/historical-dimensional-color-surfaces",
+          "--smoke",
+          "true",
+          "--seeds",
+          "27467"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 5.296273791999965,
+        "stdoutSha256": "da8e347e89a471c09e6c8b61d2945deffb377cbcfc3b7278695fdf4fd2f30f81",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "physical-audit",
+        "command": [
+          "python3",
+          "tools/virgl-dimensional-depth-surfaces/audit.py",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/target/evidence/dimensional-depth-surfaces-cold"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 23.25119487500001,
+        "stdoutSha256": "b9dd01637a8623fe1537be0c4c9caaf7cac01b26d7ba7d909b880f9b70a7ac33",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "coverage-audit",
+        "command": [
+          "python3",
+          "tools/virgl-dimensional-depth-surfaces/coverage.py",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/target/evidence/dimensional-depth-surfaces-cold"
+        ],
+        "exitCode": 1,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 0.5132962500001668,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "ea36831f86081b9908537108017a58edef75d0eb09c967462cb1fff62b21f379"
+      }
+    ],
+    "carriedPassedCommands": [
+      {
+        "name": "format",
+        "command": [
+          "cargo",
+          "fmt",
+          "--check",
+          "-p",
+          "wasm-vm-core",
+          "-p",
+          "wasm-vm-wasm"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 0.6866310830000018,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "clippy-default",
+        "command": [
+          "cargo",
+          "clippy",
+          "--offline",
+          "-p",
+          "wasm-vm-core",
+          "--lib",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 2.8709330410000007,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "6accc093808d3c08dd2ad6784e5150b1497c41a65072afaaf91ad88451bbfc14"
+      },
+      {
+        "name": "clippy-wasm",
+        "command": [
+          "cargo",
+          "clippy",
+          "--offline",
+          "-p",
+          "wasm-vm-wasm",
+          "--lib",
+          "--target",
+          "wasm32-unknown-unknown",
+          "--features",
+          "virgl-control-proof",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 11.587064959,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "61bd7fe465a4d40d397c4bcef71a9d038f613e0f2494da7ec74bdab684385f54"
+      },
+      {
+        "name": "native-virtio_gpu_submit3d",
+        "command": [
+          "cargo",
+          "test",
+          "--offline",
+          "-p",
+          "wasm-vm-core",
+          "--features",
+          "virgl-control-proof,gpu-trace,trace",
+          "--test",
+          "virtio_gpu_submit3d",
+          "--",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 91.527412834,
+        "stdoutSha256": "2708daeb8413e578996c4b51c15b03bf94149cfd255e91c0682e87cade1a7ad4",
+        "stderrSha256": "86d4cf38d70871657201a23a08dbd1ab3b9505f6ddd2b3e7af2b3b8e4cee15a5"
+      },
+      {
+        "name": "native-virtio_gpu_control3d",
+        "command": [
+          "cargo",
+          "test",
+          "--offline",
+          "-p",
+          "wasm-vm-core",
+          "--features",
+          "virgl-control-proof,gpu-trace,trace",
+          "--test",
+          "virtio_gpu_control3d",
+          "--",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 137.511078084,
+        "stdoutSha256": "f06397e7529ffedba4fbb0fb75a6e3fdf37edc3bb78654af2af17957cba6e25b",
+        "stderrSha256": "54540eeba38d66e4e2b68a0096ae4c451c21ad463c7357eca1b1eeffb4ce6c69"
+      },
+      {
+        "name": "wasm-core-default",
+        "command": [
+          "cargo",
+          "build",
+          "--offline",
+          "-p",
+          "wasm-vm-core",
+          "--no-default-features",
+          "--target",
+          "wasm32-unknown-unknown"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 2.4360604589999753,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "73f9ad07fac6dfdb8a48ea325cce03db10afecc1a67340c58b013d4c9bf198f6"
+      },
+      {
+        "name": "wasm-core-selected",
+        "command": [
+          "cargo",
+          "build",
+          "--offline",
+          "-p",
+          "wasm-vm-core",
+          "--no-default-features",
+          "--target",
+          "wasm32-unknown-unknown",
+          "--features",
+          "virgl-control-proof"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 2.0588547080000126,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "5d809220a028c75086d37cb2b99bdb2403878511792e118cc5d363cd630b25a2"
+      },
+      {
+        "name": "wasm-proof",
+        "command": [
+          "wasm-pack",
+          "build",
+          "crates/wasm",
+          "--dev",
+          "--target",
+          "web",
+          "--out-dir",
+          "../../target/virgl-desktop-submit/pkg",
+          "--features",
+          "virgl-control-proof"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 9.920727666000005,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "d83a2583bd0f9983736965f4e0afec9916a4ed1ef22ecbfac246d609bdfb5712"
+      },
+      {
+        "name": "syntax-decoder",
+        "command": [
+          "node",
+          "--check",
+          "renderer/virgl-command/decoder.mjs"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 0.023478624999995645,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "syntax-resources",
+        "command": [
+          "node",
+          "--check",
+          "renderer/virgl-command/resources.mjs"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 0.023328250000020034,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "syntax-state",
+        "command": [
+          "node",
+          "--check",
+          "renderer/virgl-command/state.mjs"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 0.02355383299999403,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "syntax-control-bridge",
+        "command": [
+          "node",
+          "--check",
+          "renderer/virgl-command/control-bridge.mjs"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 0.023001416999989033,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "syntax-native-dimensional-depth-surfaces",
+        "command": [
+          "node",
+          "--check",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/renderer/virgl-command/tests/native-dimensional-depth-surfaces.mjs"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 0.025843833000010363,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "syntax-dimensional-depth-surface-historical",
+        "command": [
+          "node",
+          "--check",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/renderer/virgl-command/tests/dimensional-depth-surface-historical.mjs"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 0.02407349999998587,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "syntax-dimensional-depth-surface-lifecycle",
+        "command": [
+          "node",
+          "--check",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/renderer/virgl-command/tests/dimensional-depth-surface-lifecycle.mjs"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 0.021208415999979024,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "syntax-dimensional-depth-surface-attacks",
+        "command": [
+          "node",
+          "--check",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/renderer/virgl-command/tests/dimensional-depth-surface-attacks.mjs"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 0.023382332999972277,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "syntax-browser",
+        "command": [
+          "node",
+          "--check",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/tools/virgl-dimensional-depth-surfaces/browser.mjs"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 0.022060500000009142,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "syntax-fixtures",
+        "command": [
+          "node",
+          "--check",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/tools/virgl-dimensional-depth-surfaces/fixtures.mjs"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 0.023544583000045805,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "npm-dependencies",
+        "command": [
+          "npm",
+          "--prefix",
+          "web",
+          "ci",
+          "--no-audit",
+          "--no-fund"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 2.882505582999954,
+        "stdoutSha256": "4f74abfc8fcd2a423a10d569456fd30e0ec38c3e0410270a0b71118b76f7cafa",
+        "stderrSha256": "09781d73839399ad42327b4503ab4ab316de9bf3ccb399d2fab8c2bae7e0b822"
+      },
+      {
+        "name": "hardware-54831",
+        "command": [
+          "node",
+          "tools/virgl-dimensional-depth-surfaces/browser.mjs",
+          "--output",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/target/evidence/dimensional-depth-surfaces-cold/hardware-54831",
+          "--seeds",
+          "54831"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 202.948790708,
+        "stdoutSha256": "c8931b2a90f97c88489e05a65ab400ec284b2c7a30c21616d92fed89eddb0939",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "boundaries-54831",
+        "command": [
+          "node",
+          "tools/virgl-dimensional-depth-surfaces/browser.mjs",
+          "--output",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/target/evidence/dimensional-depth-surfaces-cold/boundaries-54831",
+          "--seeds",
+          "54831",
+          "--boundaries",
+          "true"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 19.525213749999978,
+        "stdoutSha256": "b2f85114a2d7bc0ee1bf41105913c5019c1e4cd17533363b8627543838a65cec",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "refresh-54831",
+        "command": [
+          "node",
+          "tools/virgl-dimensional-depth-surfaces/browser.mjs",
+          "--output",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/target/evidence/dimensional-depth-surfaces-cold/refresh-54831",
+          "--seeds",
+          "54831",
+          "--refresh",
+          "true"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 13.556731207999974,
+        "stdoutSha256": "edaa77c25ee6bb27d7ca7deb98538b72b26c6df57fa8c2e3db1c20642e771eb7",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "hardware-90107",
+        "command": [
+          "node",
+          "tools/virgl-dimensional-depth-surfaces/browser.mjs",
+          "--output",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/target/evidence/dimensional-depth-surfaces-cold/hardware-90107",
+          "--seeds",
+          "90107"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 201.20525699999996,
+        "stdoutSha256": "748f664b9501f8466d441ed47e6303bde8e901092f9855c1fc09ebe0af318398",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "boundaries-90107",
+        "command": [
+          "node",
+          "tools/virgl-dimensional-depth-surfaces/browser.mjs",
+          "--output",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/target/evidence/dimensional-depth-surfaces-cold/boundaries-90107",
+          "--seeds",
+          "90107",
+          "--boundaries",
+          "true"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 45.768532875000005,
+        "stdoutSha256": "b405c79fcd77e1eaec3316126b18546c91f039f23efb890a9da438ac0d8ae33a",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "refresh-90107",
+        "command": [
+          "node",
+          "tools/virgl-dimensional-depth-surfaces/browser.mjs",
+          "--output",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/target/evidence/dimensional-depth-surfaces-cold/refresh-90107",
+          "--seeds",
+          "90107",
+          "--refresh",
+          "true"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 14.050144666999927,
+        "stdoutSha256": "a9a7bbdccca70a477fb9479c029810838d61698ae4e47e750a413a7e456db4d2",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "hardware-171281",
+        "command": [
+          "node",
+          "tools/virgl-dimensional-depth-surfaces/browser.mjs",
+          "--output",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/target/evidence/dimensional-depth-surfaces-cold/hardware-171281",
+          "--seeds",
+          "171281"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 198.84351208299995,
+        "stdoutSha256": "74a84e8fd4d46f171b750644a29b7c559a56eb28717a5ea02a34382e2beded26",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "boundaries-171281",
+        "command": [
+          "node",
+          "tools/virgl-dimensional-depth-surfaces/browser.mjs",
+          "--output",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/target/evidence/dimensional-depth-surfaces-cold/boundaries-171281",
+          "--seeds",
+          "171281",
+          "--boundaries",
+          "true"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 19.137568584000064,
+        "stdoutSha256": "cf2b17c531850c179b00db2a39567770a7e137bb76f1806dcc4a86d5f264959f",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "refresh-171281",
+        "command": [
+          "node",
+          "tools/virgl-dimensional-depth-surfaces/browser.mjs",
+          "--output",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/target/evidence/dimensional-depth-surfaces-cold/refresh-171281",
+          "--seeds",
+          "171281",
+          "--refresh",
+          "true"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 13.460539917000006,
+        "stdoutSha256": "64ebb283c276edfd08cc2dedece06ea4a2e7775a83744fb59bafd5a525b33e60",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "attacks",
+        "command": [
+          "node",
+          "tools/virgl-dimensional-depth-surfaces/browser.mjs",
+          "--output",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/target/evidence/dimensional-depth-surfaces-cold/attacks",
+          "--seeds",
+          "54831",
+          "--attacks",
+          "true"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 84.23022183299997,
+        "stdoutSha256": "e6bdacc43c59b0abff4290a07d5cd268cad5dd8372230dfb1f51540bf5ead4c4",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "mrt",
+        "command": [
+          "node",
+          "tools/virgl-dimensional-depth-surfaces/browser.mjs",
+          "--output",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/target/evidence/dimensional-depth-surfaces-cold/mrt",
+          "--seeds",
+          "54831",
+          "--mrt",
+          "true"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 10.129776875000061,
+        "stdoutSha256": "9af3f8d671a5f1b537d69c15b20f3c15b0ee747fd6c57785347d7552b86e8f7a",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "historical",
+        "command": [
+          "node",
+          "tools/virgl-dimensional-depth-surfaces/browser.mjs",
+          "--output",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/target/evidence/dimensional-depth-surfaces-cold/historical",
+          "--seeds",
+          "54831",
+          "--historical",
+          "true"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 7.720306665999942,
+        "stdoutSha256": "f5ab95154955718e198fd9d5d47036f615a67a4446b1f17cddd2363e38cb9735",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "fault-layer",
+        "command": [
+          "node",
+          "tools/virgl-dimensional-depth-surfaces/browser.mjs",
+          "--output",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/target/evidence/dimensional-depth-surfaces-cold/fault-layer",
+          "--fault",
+          "true",
+          "--sabotage",
+          "layer",
+          "--seeds",
+          "171281"
+        ],
+        "exitCode": 1,
+        "expected": 1,
+        "overrides": {},
+        "seconds": 1.8141799160000573,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "f3027985559704643a9c646082d108ecd6515d5ab419d5767e276c4eeb97c777"
+      },
+      {
+        "name": "fault-face",
+        "command": [
+          "node",
+          "tools/virgl-dimensional-depth-surfaces/browser.mjs",
+          "--output",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/target/evidence/dimensional-depth-surfaces-cold/fault-face",
+          "--fault",
+          "true",
+          "--sabotage",
+          "face",
+          "--seeds",
+          "171281"
+        ],
+        "exitCode": 1,
+        "expected": 1,
+        "overrides": {},
+        "seconds": 1.8424021249998077,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "f8a082966e515157df83461a38441a3812c380f8398e567258619a4b87156db5"
+      },
+      {
+        "name": "historical-dimensional-color-surfaces",
+        "command": [
+          "node",
+          "tools/virgl-dimensional-color-surfaces/browser.mjs",
+          "--output",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surface-cold-clones/wasm-vm-dimensional-depth-surfaces-cold-hganb9yx/repo/target/evidence/dimensional-depth-surfaces-cold/historical-dimensional-color-surfaces",
+          "--smoke",
+          "true",
+          "--seeds",
+          "27467"
+        ],
+        "exitCode": 0,
+        "expected": 0,
+        "overrides": {},
+        "seconds": 5.296273791999965,
+        "stdoutSha256": "da8e347e89a471c09e6c8b61d2945deffb377cbcfc3b7278695fdf4fd2f30f81",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "authentication": {
+      "manifestSha256": "1222b4323df91f51bc2e4b1375fdde9cd2d1131b909edbad7492dacee1a5e683",
+      "indexSha256": "1a668a80d0a197d2d335965efa3efc6f21b818c80aaf880ecd1bf781a8734a43",
+      "archiveSha256": "ae5c9d17a1328f46fd1e763467639888262c271ff278e15dc95c3789128c5f66",
+      "archiveBytes": 169668599,
+      "reopenedMembers": 2295,
+      "gzipEofChecked": true
+    },
+    "runtimeAndBrowserFixtureBytesIdentical": true
+  },
+  "earlierFailedInner": [],
+  "earlierInnerCustody": [
+    {
+      "prefix": "earlier-inner-custody/dimensional-depth-surfaces-inner-01",
+      "original": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surfaces-inner-01",
+      "authority": "Complete earlier inner-loop diagnostics, successes and failures; final acceptance authority is only the exact-head cold recording."
+    },
+    {
+      "prefix": "earlier-inner-custody/dimensional-depth-surfaces-inner-02",
+      "original": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surfaces-inner-02",
+      "authority": "Complete earlier inner-loop diagnostics, successes and failures; final acceptance authority is only the exact-head cold recording."
+    },
+    {
+      "prefix": "earlier-inner-custody/dimensional-depth-surfaces-inner-03",
+      "original": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surfaces-inner-03",
+      "authority": "Complete earlier inner-loop diagnostics, successes and failures; final acceptance authority is only the exact-head cold recording."
+    },
+    {
+      "prefix": "earlier-inner-custody/dimensional-depth-surfaces-inner-04",
+      "original": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surfaces-inner-04",
+      "authority": "Complete earlier inner-loop diagnostics, successes and failures; final acceptance authority is only the exact-head cold recording."
+    },
+    {
+      "prefix": "earlier-inner-custody/dimensional-depth-surfaces-inner-05",
+      "original": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surfaces-inner-05",
+      "authority": "Complete earlier inner-loop diagnostics, successes and failures; final acceptance authority is only the exact-head cold recording."
+    },
+    {
+      "prefix": "earlier-inner-custody/dimensional-depth-surfaces-inner-06",
+      "original": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surfaces-inner-06",
+      "authority": "Complete earlier inner-loop diagnostics, successes and failures; final acceptance authority is only the exact-head cold recording."
+    },
+    {
+      "prefix": "earlier-inner-custody/dimensional-depth-surfaces-inner-07",
+      "original": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surfaces-inner-07",
+      "authority": "Complete earlier inner-loop diagnostics, successes and failures; final acceptance authority is only the exact-head cold recording."
+    },
+    {
+      "prefix": "earlier-inner-custody/dimensional-depth-surfaces-inner-08",
+      "original": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surfaces-inner-08",
+      "authority": "Complete earlier inner-loop diagnostics, successes and failures; final acceptance authority is only the exact-head cold recording."
+    },
+    {
+      "prefix": "earlier-inner-custody/dimensional-depth-surfaces-inner-09",
+      "original": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surfaces-inner-09",
+      "authority": "Complete earlier inner-loop diagnostics, successes and failures; final acceptance authority is only the exact-head cold recording."
+    },
+    {
+      "prefix": "earlier-inner-custody/dimensional-depth-surfaces-inner-10",
+      "original": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surfaces-inner-10",
+      "authority": "Complete earlier inner-loop diagnostics, successes and failures; final acceptance authority is only the exact-head cold recording."
+    },
+    {
+      "prefix": "earlier-inner-custody/dimensional-depth-surfaces-inner-11",
+      "original": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/dimensional-depth-surfaces-inner-11",
+      "authority": "Complete earlier inner-loop diagnostics, successes and failures; final acceptance authority is only the exact-head cold recording."
+    }
+  ],
+  "earlierColdCustody": [
+    {
+      "prefix": "earlier-cold-custody/dimensional-depth-surfaces-cold-b0398313",
+      "head": "b03983136a66ce7142b8a4c6a82e5a5450a7f049",
+      "exitCode": 2,
+      "authority": "Complete failed cold harness recording; no positive final claim follows."
+    },
+    {
+      "prefix": "earlier-cold-custody/dimensional-depth-surfaces-cold-final-01",
+      "head": "cb04190a0fd8d989fb54fb7b2caf39cc86a8a0e7",
+      "exitCode": 2,
+      "authority": "Complete failed cold harness recording; no positive final claim follows."
+    },
+    {
+      "prefix": "earlier-cold-custody/dimensional-depth-surfaces-cold-final-02",
+      "head": "86ca43eab10dca33a61e5c7b924dbc201b5fd9b1",
+      "exitCode": 2,
+      "authority": "Complete failed cold harness recording; no positive final claim follows."
+    }
+  ],
+  "guestInstructionEvidence": true,
+  "actualLinuxGuest": false,
+  "productionAuthority": false,
+  "archiveParts": [
+    {
+      "path": "recording.tar.gz.part-0000",
+      "bytes": 16777216,
+      "sha256": "7928b17813091a8660c6b8ddc7aa7067bc36f14ade93d57c676c3a30a01efa40"
+    },
+    {
+      "path": "recording.tar.gz.part-0001",
+      "bytes": 16777216,
+      "sha256": "b226ba10bd9792b60988173607ad40e60a93be8059cbd6ef0c85cc3b6763ccef"
+    },
+    {
+      "path": "recording.tar.gz.part-0002",
+      "bytes": 16777216,
+      "sha256": "3aecd6e4d915bc1c25eb7a740b0d7e8251d4de1cad047abee51e12e3130cf4fa"
+    },
+    {
+      "path": "recording.tar.gz.part-0003",
+      "bytes": 16777216,
+      "sha256": "7333c7bfd4077749169a94a3013da0006aafd8b4eff3cf1fa7f11f2f7480981c"
+    },
+    {
+      "path": "recording.tar.gz.part-0004",
+      "bytes": 16777216,
+      "sha256": "4763a201e5fe580c9375bb7ff83304df02b7ed35eed4dc6cfe926257fd140b26"
+    },
+    {
+      "path": "recording.tar.gz.part-0005",
+      "bytes": 16777216,
+      "sha256": "2cf83cfb137ca46a16cd04b91c7042e62e5a3cc50c0cbae8b87fa835e26d8eb7"
+    },
+    {
+      "path": "recording.tar.gz.part-0006",
+      "bytes": 16777216,
+      "sha256": "50813065b7f34f24c6bdf5cfa67f9f091bca7481e5e2cfe17cb493e15f3f26ab"
+    },
+    {
+      "path": "recording.tar.gz.part-0007",
+      "bytes": 16777216,
+      "sha256": "f173dca9b536875a22d0e68f8e20c75aff1a413c6713ce80b6fd03b74860aaa8"
+    },
+    {
+      "path": "recording.tar.gz.part-0008",
+      "bytes": 16777216,
+      "sha256": "47ad0c26171af6e82e378b354a7e13f9364f9ee1d3dd1f5ac08d88c70db03849"
+    },
+    {
+      "path": "recording.tar.gz.part-0009",
+      "bytes": 16777216,
+      "sha256": "3835d6b61b308fc61b4c599c68f168d892f723b2b5e5038355bf24ff243dfd57"
+    },
+    {
+      "path": "recording.tar.gz.part-0010",
+      "bytes": 16777216,
+      "sha256": "499956176e1be79ff22d3733994b381ea3db5fbf5ad187f3cb8a114121518ff5"
+    },
+    {
+      "path": "recording.tar.gz.part-0011",
+      "bytes": 16777216,
+      "sha256": "d7d3d14f846b1a2ff3b13b48569e13b37537d3bb711964ebed66d5f914ba8ccb"
+    },
+    {
+      "path": "recording.tar.gz.part-0012",
+      "bytes": 2362840,
+      "sha256": "19f11cc7ea5aef5860468072bf57d35e87f4a9966819580513aca4b552a88cbf"
+    }
+  ]
+}

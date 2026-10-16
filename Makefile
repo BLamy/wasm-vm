@@ -1,6 +1,8 @@
-# Local mirror of .github/workflows/ci.yml — identical commands. CI runs the jobs in
-# parallel; locally they run in the order listed under `ci`. If this file and ci.yml
-# disagree, that's a bug (E0-T02).
+# Local validation. GitHub Actions is disabled; deploys use Cloudflare Pages.
+# wvseccomp is a Linux/RISC-V guest executable using Linux-only libc APIs. Its
+# prescribed guest build remains tools/build-wvseccomp.sh; Darwin host gates do
+# not compile it against macOS libc. Linux workspace gates include it normally.
+LOCAL_WORKSPACE = --workspace $(if $(filter Darwin,$(shell uname -s)),--exclude wasm-vm-wvseccomp)
 
 .PHONY: ci fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke perf-gate perf-trend bench-l1 riscof diff-all diff-selftest diff-qemu \
         exhaustive fuzz-decode-smoke fuzz-diff-smoke web-build web-serve web-dist hooks bench capstone-e0 level1-gate tasks-json \
@@ -9,14 +11,103 @@
 
 ci: fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke
 
+.PHONY: verify-E6-T11d verify-E6-T11e verify-E6-T11d67 verify-E6-T11d68 verify-E6-T11d69a verify-E6-T11d69b
+verify-E6-T11d69b:
+	python3 tools/virgl-production/verify-feedback-queries.py --output "$${VIRGL_FEEDBACK_QUERIES_EVIDENCE_DIR:-target/evidence/production-feedback-queries-final}"
+
+verify-E6-T11d69a:
+	python3 tools/virgl-production/verify-boolean-queries.py --output "$${VIRGL_BOOLEAN_QUERIES_EVIDENCE_DIR:-target/evidence/production-boolean-queries-final}"
+
+verify-E6-T11d68:
+	python3 tools/virgl-production/verify-indexed-start.py --output "$${VIRGL_INDEXED_START_EVIDENCE_DIR:-target/evidence/production-indexed-start-final}"
+
+verify-E6-T11d67:
+	cargo fmt --all --check
+	cargo clippy -p wasm-vm-core --tests --features virgl-renderer,virgl-control-proof,gpu-trace,trace -- -D warnings
+	cargo test -p wasm-vm-core --lib --features virgl-renderer,virgl-control-proof,gpu-trace,trace
+	cargo test -p wasm-vm-core --features virgl-renderer,virgl-control-proof,gpu-trace,trace --test production_virgl_critic --test virgl_capabilities
+	cargo clippy -p wasm-vm-wasm --target wasm32-unknown-unknown --features virgl-renderer -- -D warnings
+	wasm-pack build crates/wasm --target web --out-dir ../../target/virgl-production/pkg --features virgl-renderer,virgl-control-proof
+	node tools/virgl-production/worker-multisample-browser.mjs --output "$${VIRGL_MULTISAMPLE_EVIDENCE_DIR:-target/evidence/production-multisample-final}" --schedules 0,1,2
+	VIRGL_WEB_ROOT=web/dist node tools/virgl-production/browser.mjs "$${VIRGL_NUMERIC_EVIDENCE_DIR:-target/evidence/production-numeric-final}" numeric
+	node tools/verify-virgl-default-demo.mjs --output "$${VIRGL_MULTISAMPLE_DEMO_EVIDENCE_DIR:-target/evidence/production-multisample-demo-final}" --task E6-T11d67
+
+verify-E6-T11d:
+	python3 tools/virgl-production/verify.py --task E6-T11d --output "$${VIRGL_PRODUCTION_EVIDENCE_DIR:-target/evidence/production-guest-final}"
+
+.PHONY: verify-E6-T11d71
+verify-E6-T11d71:
+	python3 tools/virgl-production/verify-keyboard-wait.py --output "$${VIRGL_KEYBOARD_WAIT_EVIDENCE_DIR:-target/evidence/production-keyboard-wait-final}"
+
+.PHONY: verify-E6-T11d72
+verify-E6-T11d72:
+	python3 tools/virgl-production/verify-interactive-clock.py --output "$${VIRGL_INTERACTIVE_CLOCK_EVIDENCE_DIR:-target/evidence/production-interactive-clock-final}"
+
+.PHONY: verify-E6-T11d73
+verify-E6-T11d73:
+	python3 tools/virgl-production/verify-paced-idle.py --output "$${VIRGL_PACED_IDLE_EVIDENCE_DIR:-target/evidence/production-paced-idle-final}"
+
+.PHONY: verify-E6-T11d74a
+verify-E6-T11d74a:
+	python3 tools/virgl-production/verify-gpu-checkpoint.py --output "$${VIRGL_GPU_CHECKPOINT_EVIDENCE_DIR:-target/evidence/production-gpu-checkpoint-final}"
+
+.PHONY: verify-E6-T11d74b
+verify-E6-T11d74b:
+	python3 tools/virgl-production/verify-renderer-checkpoint.py --output "$${VIRGL_RENDERER_CHECKPOINT_EVIDENCE_DIR:-target/evidence/production-renderer-checkpoint-final}"
+
+.PHONY: verify-E6-T11d74c
+verify-E6-T11d74c:
+	python3 tools/virgl-production/verify-paired-worker.py --output "$${VIRGL_PAIRED_WORKER_EVIDENCE_DIR:-target/evidence/production-paired-worker-final}"
+
+.PHONY: verify-E6-T11d74d1
+verify-E6-T11d74d1:
+	python3 tools/virgl-production/verify-scanout-continuity.py --output "$${VIRGL_SCANOUT_CONTINUITY_EVIDENCE_DIR:-target/evidence/production-scanout-continuity-final}"
+
+.PHONY: verify-E6-T11d74d2
+verify-E6-T11d74d2:
+	python3 tools/virgl-production/verify-desktop-capacity.py --output "$${VIRGL_DESKTOP_CAPACITY_EVIDENCE_DIR:-target/evidence/production-desktop-capacity-final}"
+
+.PHONY: verify-E6-T11d74d
+verify-E6-T11d74d:
+	python3 tools/virgl-production/verify-public-gpu-warm.py --output "$${VIRGL_PUBLIC_GPU_WARM_EVIDENCE_DIR:-target/evidence/production-public-gpu-warm-final}"
+
+verify-E6-T11e:
+	wasm-pack build crates/wasm --target web --out-dir ../../target/virgl-production/pkg --features virgl-renderer,virgl-control-proof
+	python3 tools/virgl-production/verify.py --task E6-T11e --output "$${VIRGL_RECOVERY_EVIDENCE_DIR:-target/evidence/production-recovery-final}"
+
+# Isolated upstream TGSI translator: native hostile-input sanitizers and real
+# hardware WebGL2 pixel oracles. Does not change the emulator or demo device.
+.PHONY: verify-E6-T10a
+verify-E6-T10a:
+	bash tools/verify-virgl-shader.sh
+
+# E5.5-T03bf: shared literal-oracle fixtures run on both native and wasm engines.
+.PHONY: verify-E5.5-T03bf
+verify-E5.5-T03bf:
+	cargo test -p wasm-vm-core --features trace --test integer_replay --test integer_replay_alias -- --nocapture
+	wasm-pack test --node crates/wasm --test integer_replay
+
+# E5.5-T03bg: actual raw-memory import ABI, inactive guards, directed state
+# differentials, independent lifetime attacks, and the existing browser wall.
+.PHONY: verify-E5.5-T03bg
+verify-E5.5-T03bg:
+	cargo fmt --all --check
+	cargo clippy -p wasm-vm-wasm --target wasm32-unknown-unknown --test jit_memory_direct_imports --test jit_memory_direct_imports_verifier --test jit_browser_parity -- -D warnings
+	wasm-pack test --node crates/wasm --test jit_memory_direct_imports -- --nocapture
+	wasm-pack test --node crates/wasm --test jit_memory_direct_imports_verifier -- --nocapture
+	wasm-pack test --node crates/wasm --test jit_browser_parity
+
 fmt:
 	cargo fmt --all --check
 
 clippy:
-	cargo clippy --workspace --all-targets --all-features -- -D warnings
+	# zicsr-stub is a quarantined alternative to real CSR semantics, so enabling
+	# every feature together disables APIs used by the production JIT test wall.
+	cargo clippy $(LOCAL_WORKSPACE) --all-targets --features wasm-vm-core/trace,wasm-vm-core/virgl-control-proof,wasm-vm-core/gpu-trace -- -D warnings
+	cargo clippy -p wasm-vm-core --no-default-features --features std,trace,zicsr-stub --lib -- -D warnings
 
 test:
-	cargo test --workspace
+	cargo test $(LOCAL_WORKSPACE)
 	bash tools/ci/no-host-float.sh
 	bash tools/ci/determinism-hazards.sh
 
@@ -65,7 +156,7 @@ test-riscv:
 	cargo test -p wasm-vm-core --features zicsr-stub --test riscv_tests
 	@command -v wasm-pack >/dev/null 2>&1 || { \
 		echo "note: wasm-pack absent — skipping the wasm rv64ui-p run"; exit 0; }
-	wasm-pack test --node crates/wasm --features zicsr-stub
+	wasm-pack test --node crates/wasm --features zicsr-stub --test riscv_tests
 
 # E1-T19: the full riscv-tests regression wall over the committed ELFs (real E1 CSR file),
 # emitting target/riscv-tests-report.{md,json} and enforcing tests/riscv-tests-allowlist.txt.
@@ -144,8 +235,10 @@ fuzz-diff-smoke:
 # itself because it is also an rlib. `--out-name wasm_vm_wasm` keeps the file names the page imports.
 # A/B evidence: evidence/perf-overhaul/webbuild/README.md.
 web-build:
+	bash tools/build-virgl-runtime.sh
 	wasm-pack build crates/wasm-web --target web --profile wasm-release --out-name wasm_vm_wasm
 	cd web && npm ci --no-audit --no-fund
+	cd web && npm run build:docs
 	mkdir -p web/pkg web/assets/riscv-tests
 	cp -R crates/wasm-web/pkg/. web/pkg/
 	cp guest/prebuilt/hello.elf guest/prebuilt/loops.elf web/assets/
@@ -162,6 +255,7 @@ web-build:
 	  cp releases/boot-snapshot/busybox-ready.snap.gz web/releases/boot-snapshot/busybox-ready.snap.gz; \
 	fi
 	bash tools/gen-web-manifest.sh
+	python3 tools/gen-gpu-checkpoint-build.py
 
 # Regenerate web/tasks.json from the /tasks folder (the roadmap's single source of truth).
 # Run after editing any task file; the Roadmap tab fetches ./tasks.json at load.
@@ -1765,3 +1859,841 @@ verify-E5_5-T03aw:
 verify-E5_5-T03ax:
 	node --test tools/verify/omarchy-input-trial.test.mjs tools/verify/omarchy-input-kernel-response.test.mjs tools/verify/omarchy-user-input.test.mjs tools/verify/omarchy-desktop-live.test.mjs tools/verify/omarchy-owned-trial.test.mjs
 	node tools/verify/omarchy-input-kernel-response.mjs $(or $(DECODED_CACHE_OUT),evidence/omarchy-profile/residency-decoded-cache16384-r1)/response $(or $(INPUT_KERNEL_PREPARED_PAIR),target/omarchy-input-kernel-prepared-pair-r1) --prepared-cap-1024-cache16384
+
+.PHONY: verify-E5.5-T03bd
+verify-E5.5-T03bd:
+	cargo fmt --all --check
+	node --check tools/verify/clock-fast-path-benchmark.mjs
+	node --test tools/verify/clock-fast-path-benchmark.test.mjs
+	cargo clippy -p wasm-vm-core --lib --test clock_advance --example clock_loop_probe --features trace -- -D warnings
+	cargo test -p wasm-vm-core --lib clock_advance_tests
+	cargo test -p wasm-vm-core --features trace --test clock_advance -- --nocapture
+	wasm-pack test --node crates/wasm --test clock_advance
+
+.PHONY: verify-E5.5-T03be
+verify-E5.5-T03be:
+	cargo fmt --all --check
+	node --check tools/verify/jit-sparse-handoff-benchmark.mjs
+	cargo clippy -p wasm-vm-core --lib --test jit_sparse_handoff --example jit_handoff_probe --features trace -- -D warnings
+	cargo test -p wasm-vm-core --lib sparse_mask_stamp
+	cargo test -p wasm-vm-core --test jit_sparse_handoff -- --nocapture
+	wasm-pack test --node crates/wasm --test jit_sparse_handoff
+	wasm-pack test --node crates/wasm --test jit_browser_parity
+	wasm-pack test --node crates/wasm --test jit_fp_comparisons_verifier
+
+.PHONY: verify-E6-T10b
+verify-E6-T10b:
+	python3 -m py_compile tools/virgl-capture/validate.py tools/virgl-capture/capture.py tools/virgl-capture/workloads/build.py tools/virgl-capture/workloads/build_in_container.py
+	sh -n tools/virgl-capture/recorder.build.sh tools/virgl-capture/reference.sh
+	python3 -m unittest discover -s tools/virgl-capture/tests -v
+	python3 tools/virgl-capture/validate.py $(or $(VIRGL_CORPUS),evidence/virgl-corpus/captures)
+
+.PHONY: verify-E6-T10c
+verify-E6-T10c:
+	bash tools/verify-virgl-contract.sh
+
+.PHONY: verify-E6-T10d
+verify-E6-T10d:
+	bash tools/verify-virgl-captured-shaders.sh
+
+# Bounded portable command parsing; no production GPU feature activation.
+.PHONY: verify-E6-T12a
+verify-E6-T12a:
+	bash tools/verify-virgl-command-decoder.sh
+
+# Original buffer/texture transfers on real WebGL2 storage; no guest 3D advertisement.
+.PHONY: verify-E6-T12b
+verify-E6-T12b:
+	bash tools/verify-virgl-resource-transfers.sh
+
+# Captured guest objects/render state and clear; DRAW_VBO remains gated.
+.PHONY: verify-E6-T12c
+verify-E6-T12c:
+	bash tools/verify-virgl-object-state.sh
+
+# Replay the original captured indexed scene on actual hardware WebGL2.
+.PHONY: verify-E6-T12d
+verify-E6-T12d:
+	bash tools/verify-virgl-draw-replay.sh
+
+# Proof-only live virtio 3D context/resource control; no production activation.
+.PHONY: verify-E6-T11a
+verify-E6-T11a:
+	bash tools/verify-virgl-control.sh
+
+# Owned renderer jobs with staged GPU readbacks; no guest DMA or 3D activation.
+.PHONY: verify-E6-T11b1
+verify-E6-T11b1:
+	bash tools/verify-virgl-async-jobs.sh
+
+.PHONY: verify-E6-T11b2
+verify-E6-T11b2:
+	bash tools/verify-virgl-submit.sh
+
+.PHONY: verify-E6-T11c
+verify-E6-T11c:
+	bash tools/verify-virgl-scanout.sh
+
+.PHONY: verify-E6-T12e1
+verify-E6-T12e1:
+	bash tools/verify-virgl-components.sh
+
+.PHONY: verify-E6-T12e2
+verify-E6-T12e2:
+	bash tools/verify-virgl-pairs.sh
+
+.PHONY: verify-E6-T12e3
+verify-E6-T12e3:
+	bash tools/verify-virgl-banks.sh
+
+.PHONY: verify-E6-T12e3b
+verify-E6-T12e3b:
+	bash tools/verify-virgl-constants.sh
+
+.PHONY: verify-E6-T12e4a
+verify-E6-T12e4a:
+	bash tools/verify-virgl-raw-bits.sh
+
+.PHONY: verify-E6-T12e4b
+verify-E6-T12e4b:
+	bash tools/verify-virgl-integer-masks.sh
+
+.PHONY: verify-E6-T12e4c1
+verify-E6-T12e4c1:
+	bash tools/verify-virgl-float-masks.sh
+
+.PHONY: verify-E6-T12e4c2
+verify-E6-T12e4c2:
+	bash tools/verify-virgl-numeric-floats.sh
+
+.PHONY: verify-E6-T12e5
+verify-E6-T12e5:
+	bash tools/verify-virgl-component-floats.sh
+
+.PHONY: verify-E6-T12e6
+verify-E6-T12e6:
+	bash tools/verify-virgl-dot-reciprocals.sh
+
+.PHONY: verify-E6-T12e6a
+verify-E6-T12e6a:
+	bash tools/verify-virgl-constant-domains.sh
+
+.PHONY: verify-E6-T12e6b
+verify-E6-T12e6b:
+	bash tools/verify-virgl-constant-compiler.sh
+
+.PHONY: verify-E6-T12e7
+verify-E6-T12e7:
+	bash tools/verify-virgl-structured-conditionals.sh
+
+.PHONY: verify-E6-T12e8
+verify-E6-T12e8:
+	bash tools/verify-virgl-indirect-constants.sh
+
+.PHONY: verify-E6-T12e9
+verify-E6-T12e9:
+	bash tools/verify-virgl-bounded-loops.sh
+
+.PHONY: verify-E6-T12f1
+verify-E6-T12f1:
+	bash tools/verify-virgl-raw-equality.sh
+
+.PHONY: verify-E6-T12f2
+verify-E6-T12f2:
+	bash tools/verify-virgl-selected-lanes.sh
+
+.PHONY: verify-E6-T12f3
+verify-E6-T12f3:
+	bash tools/verify-virgl-radial-domain.sh
+
+# Exact instruction-local PRECISE comparison, selection and copy; isolated compiler.
+.PHONY: verify-E6-T12f4
+verify-E6-T12f4:
+	bash tools/verify-virgl-precise-word.sh
+
+# Ordered masked writes, unchanged lighting bodies and independent GPU observations.
+.PHONY: verify-E6-T12f4a
+verify-E6-T12f4a:
+	bash tools/verify-virgl-ordered-masks.sh
+
+.PHONY: verify-E6-T12f4b
+verify-E6-T12f4b:
+	bash tools/verify-virgl-raster-bank.sh
+
+.PHONY: verify-E6-T12f5
+verify-E6-T12f5:
+	bash tools/verify-virgl-precise-arithmetic.sh
+
+.PHONY: verify-E6-T12f6
+verify-E6-T12f6:
+	bash tools/verify-virgl-original-corpus.sh
+
+# Real unchanged Mesa demos client, authenticated original packets and roles.
+.PHONY: verify-E6-T12g
+verify-E6-T12g:
+	bash tools/verify-virgl-required-formats.sh
+
+.PHONY: verify-E6-T12g1
+verify-E6-T12g1:
+	bash tools/verify-virgl-workload-inventory.sh
+
+# Synthetic decoder variants, separate from real guest/rendering claims.
+.PHONY: verify-E6-T12g1-variants
+verify-E6-T12g1-variants:
+	bash tools/verify-virgl-inventory-variants.sh
+
+.PHONY: verify-E6-T12g2
+verify-E6-T12g2:
+	bash tools/verify-virgl-color-formats.sh
+
+.PHONY: verify-E6-T12g3
+verify-E6-T12g3:
+	bash tools/verify-virgl-depth-formats.sh
+
+.PHONY: verify-E6-T12g4
+verify-E6-T12g4:
+	bash tools/verify-virgl-texture-views.sh
+
+.PHONY: verify-E6-T12g5
+verify-E6-T12g5:
+	bash tools/verify-virgl-inline-uploads.sh
+
+.PHONY: verify-E6-T12g6a
+verify-E6-T12g6a:
+	bash tools/verify-virgl-gears-shaders.sh
+
+.PHONY: verify-E6-T12g6b
+verify-E6-T12g6b:
+	bash tools/verify-virgl-compiler-bounds.sh
+
+.PHONY: verify-E6-T12g6c
+verify-E6-T12g6c:
+	bash tools/verify-virgl-hex-literals.sh
+
+.PHONY: verify-E6-T12g6d
+verify-E6-T12g6d:
+	bash tools/verify-virgl-signed-integers.sh
+
+.PHONY: verify-E6-T12g6e
+verify-E6-T12g6e:
+	bash tools/verify-virgl-signed-conversions.sh
+
+.PHONY: verify-E6-T12g6f
+verify-E6-T12g6f:
+	bash tools/verify-virgl-scalar-operations.sh
+
+.PHONY: verify-E6-T12g6g1
+verify-E6-T12g6g1:
+	bash tools/verify-virgl-minimum-selection.sh
+
+.PHONY: verify-E6-T12g6g2
+verify-E6-T12g6g2:
+	bash tools/verify-virgl-precise-fraction.sh
+
+.PHONY: verify-E6-T12g6h
+verify-E6-T12g6h:
+	bash tools/verify-virgl-saturation.sh
+
+.PHONY: verify-E6-T12g6i
+verify-E6-T12g6i:
+	bash tools/verify-virgl-exponent-logarithm.sh
+
+.PHONY: verify-E6-T12g6j1
+verify-E6-T12g6j1:
+	bash tools/verify-virgl-sine.sh
+
+.PHONY: verify-E6-T12g6j2
+verify-E6-T12g6j2:
+	bash tools/verify-virgl-power.sh
+
+.PHONY: verify-E6-T12g6k
+verify-E6-T12g6k:
+	bash tools/verify-virgl-fragment-coordinates.sh
+
+.PHONY: verify-E6-T12g6l
+verify-E6-T12g6l:
+	bash tools/verify-virgl-fragment-discard.sh
+
+.PHONY: verify-E6-T12g6m1
+verify-E6-T12g6m1:
+	bash tools/verify-virgl-known-arithmetic.sh
+
+.PHONY: verify-E6-T12g6m2
+verify-E6-T12g6m2:
+	bash tools/verify-virgl-known-branches.sh
+
+.PHONY: verify-E6-T12g6m3a
+verify-E6-T12g6m3a:
+	bash tools/verify-virgl-exact-bank.sh
+
+.PHONY: verify-E6-T12g6m3b
+verify-E6-T12g6m3b:
+	bash tools/verify-virgl-exact-producer.sh
+
+.PHONY: verify-E6-T12g6m3c
+verify-E6-T12g6m3c:
+	bash tools/verify-virgl-exact-pair.sh
+
+.PHONY: verify-E6-T12g6m4a
+verify-E6-T12g6m4a:
+	bash tools/verify-virgl-exact-reciprocal.sh
+
+.PHONY: verify-E6-T12g6m4b
+verify-E6-T12g6m4b:
+	bash tools/verify-virgl-coordinate-prefix.sh
+
+.PHONY: verify-E6-T12g6m4c
+verify-E6-T12g6m4c:
+	bash tools/verify-virgl-zero-cap.sh
+
+.PHONY: verify-E6-T12g6m5a
+verify-E6-T12g6m5a:
+	bash tools/verify-virgl-original-c580.sh
+
+.PHONY: verify-E6-T12g6m5b1
+verify-E6-T12g6m5b1:
+	bash tools/verify-virgl-original-92cb-geometry.sh
+
+.PHONY: verify-E6-T12g6m5b2a
+verify-E6-T12g6m5b2a:
+	bash tools/verify-virgl-original-92cb-raster.sh
+
+.PHONY: verify-E6-T12g6m5b2b1
+verify-E6-T12g6m5b2b1:
+	bash tools/verify-virgl-original-92cb-power-domain.sh
+
+.PHONY: verify-E6-T12g6m5b2b2
+verify-E6-T12g6m5b2b2:
+	bash tools/verify-virgl-original-92cb-private-power.sh
+
+.PHONY: verify-E6-T12g6m
+verify-E6-T12g6m:
+	bash tools/verify-virgl-original-programs.sh
+
+.PHONY: verify-E6-T12h
+verify-E6-T12h:
+	bash tools/verify-virgl-raster-depth.sh
+
+.PHONY: verify-E6-T12i
+verify-E6-T12i:
+	bash tools/verify-virgl-render-cache.sh
+
+.PHONY: verify-E6-T11d1
+verify-E6-T11d1:
+	bash tools/verify-virgl-vertex-constants.sh
+
+.PHONY: verify-E6-T11d2
+verify-E6-T11d2:
+	bash tools/verify-virgl-blend-equations.sh
+
+.PHONY: verify-E6-T11d3
+verify-E6-T11d3:
+	bash tools/verify-virgl-float-vertex-fetch.sh
+
+.PHONY: verify-E6-T11d4
+verify-E6-T11d4:
+	bash tools/verify-virgl-standard-shader.sh
+
+.PHONY: verify-E6-T11d4-adversarial
+verify-E6-T11d4-adversarial:
+	bash tools/verify-virgl-standard-shader-adversarial.sh
+
+.PHONY: verify-E6-T11d5
+verify-E6-T11d5:
+	bash tools/verify-virgl-standard-state.sh
+
+.PHONY: verify-E6-T11d5-adversarial
+verify-E6-T11d5-adversarial:
+	bash tools/verify-virgl-standard-state-adversarial.sh
+
+.PHONY: verify-E6-T11d6
+verify-E6-T11d6:
+	bash tools/verify-virgl-standard-draw.sh
+
+.PHONY: verify-E6-T11d6-adversarial
+verify-E6-T11d6-adversarial:
+	bash tools/verify-virgl-standard-draw-adversarial.sh
+
+.PHONY: verify-E6-T11d7
+verify-E6-T11d7:
+	bash tools/verify-virgl-standard-constant.sh
+
+.PHONY: verify-E6-T11d7-adversarial
+verify-E6-T11d7-adversarial:
+	bash tools/verify-virgl-standard-constant-adversarial.sh
+
+.PHONY: verify-E6-T11d8
+verify-E6-T11d8:
+	bash tools/verify-virgl-standard-topology.sh
+
+.PHONY: verify-E6-T11d8-adversarial
+verify-E6-T11d8-adversarial:
+	bash tools/verify-virgl-standard-topology-adversarial.sh
+
+.PHONY: verify-E6-T11d9
+verify-E6-T11d9:
+	bash tools/verify-virgl-standard-restart.sh
+
+.PHONY: verify-E6-T11d9-adversarial
+verify-E6-T11d9-adversarial:
+	bash tools/verify-virgl-standard-restart-adversarial.sh
+
+.PHONY: verify-E6-T11d10
+verify-E6-T11d10:
+	bash tools/verify-virgl-standard-assembly.sh
+
+.PHONY: verify-E6-T11d11
+verify-E6-T11d11:
+	bash tools/verify-virgl-standard-points.sh
+
+.PHONY: verify-E6-T11d12
+verify-E6-T11d12:
+	bash tools/verify-virgl-standard-compact.sh
+
+.PHONY: verify-E6-T11d13
+verify-E6-T11d13:
+	bash tools/verify-virgl-standard-scalar.sh
+
+.PHONY: verify-E6-T11d14
+verify-E6-T11d14:
+	bash tools/verify-virgl-standard-integer.sh
+
+.PHONY: verify-E6-T11d15
+verify-E6-T11d15:
+	bash tools/verify-virgl-standard-packed.sh
+
+.PHONY: verify-E6-T11d15-adversarial
+verify-E6-T11d15-adversarial:
+	node tools/verify-virgl-standard-packed-adversarial.mjs
+
+.PHONY: verify-E6-T11d16
+verify-E6-T11d16:
+	bash tools/verify-virgl-standard-uniform.sh
+
+.PHONY: verify-E6-T11d16-adversarial
+verify-E6-T11d16-adversarial:
+	bash tools/virgl-standard-uniform/adversarial/verify.sh
+
+.PHONY: verify-E6-T11d17
+verify-E6-T11d17:
+	bash tools/verify-virgl-standard-uniform-bindings.sh
+
+.PHONY: verify-E6-T11d17-adversarial
+verify-E6-T11d17-adversarial:
+	bash tools/verify-virgl-standard-uniform-bindings-adversarial.sh
+
+.PHONY: verify-E6-T11d18
+verify-E6-T11d18:
+	bash tools/verify-virgl-standard-buffer-roles.sh
+
+.PHONY: verify-E6-T11d18-adversarial
+verify-E6-T11d18-adversarial:
+	bash tools/verify-virgl-standard-buffer-roles-adversarial.sh
+
+.PHONY: verify-E6-T11d19
+verify-E6-T11d19:
+	bash tools/verify-virgl-standard-sampler-state.sh
+
+.PHONY: verify-E6-T11d19-adversarial
+verify-E6-T11d19-adversarial:
+	bash tools/verify-virgl-standard-sampler-state-adversarial.sh
+
+.PHONY: verify-E6-T11d20
+verify-E6-T11d20:
+	bash tools/verify-virgl-standard-texture-storage.sh
+
+.PHONY: verify-E6-T11d20-adversarial
+verify-E6-T11d20-adversarial:
+	bash tools/verify-virgl-standard-texture-storage-adversarial.sh
+
+.PHONY: verify-E6-T11d21
+verify-E6-T11d21:
+	bash tools/verify-virgl-standard-image-subresources.sh
+
+.PHONY: verify-E6-T11d21-adversarial
+verify-E6-T11d21-adversarial:
+	bash tools/verify-virgl-standard-image-subresources-adversarial.sh
+
+.PHONY: verify-E6-T11d22
+verify-E6-T11d22:
+	bash tools/verify-virgl-standard-byte-color-images.sh
+
+.PHONY: verify-E6-T11d23
+verify-E6-T11d23:
+	bash tools/verify-virgl-standard-texture.sh
+
+.PHONY: verify-E6-T11d23-adversarial
+verify-E6-T11d23-adversarial:
+	bash tools/verify-virgl-standard-texture-adversarial.sh
+
+.PHONY: verify-E6-T11d22-adversarial
+verify-E6-T11d22-adversarial:
+	bash tools/verify-virgl-standard-byte-color-adversarial.sh
+
+.PHONY: verify-E6-T11d24
+verify-E6-T11d24:
+	bash tools/verify-virgl-standard-texture-operations.sh
+
+.PHONY: verify-E6-T11d24-adversarial
+verify-E6-T11d24-adversarial:
+	bash tools/verify-virgl-standard-texture-operations-adversarial.sh
+
+.PHONY: verify-E6-T11d25
+verify-E6-T11d25:
+	bash tools/verify-virgl-standard-float-images.sh
+
+.PHONY: verify-E6-T11d25-adversarial
+verify-E6-T11d25-adversarial:
+	bash tools/verify-virgl-standard-float-images-adversarial.sh
+
+.PHONY: verify-E6-T11d26
+verify-E6-T11d26:
+	bash tools/verify-virgl-standard-float-consumer.sh
+
+.PHONY: verify-E6-T11d26-adversarial
+verify-E6-T11d26-adversarial:
+	bash tools/verify-virgl-standard-float-consumer-adversarial.sh
+
+.PHONY: verify-E6-T11d27
+verify-E6-T11d27:
+	bash tools/verify-virgl-standard-packed-float-images.sh
+
+.PHONY: verify-E6-T11d27-adversarial
+verify-E6-T11d27-adversarial:
+	bash tools/verify-virgl-standard-packed-float-images-adversarial.sh
+
+.PHONY: verify-E6-T11d28
+verify-E6-T11d28:
+	bash tools/verify-virgl-standard-packed-float-consumer.sh
+
+.PHONY: verify-E6-T11d28-adversarial
+verify-E6-T11d28-adversarial:
+	bash tools/verify-virgl-standard-packed-float-consumer-adversarial.sh
+
+.PHONY: verify-E6-T11d29
+verify-E6-T11d29:
+	bash tools/verify-virgl-standard-shared-exponent-images.sh
+
+.PHONY: verify-E6-T11d31
+verify-E6-T11d31:
+	bash tools/verify-virgl-standard-integer-images.sh
+
+.PHONY: verify-E6-T11d32
+verify-E6-T11d32:
+	bash tools/verify-virgl-integer-image-shader.sh
+
+.PHONY: verify-E6-T11d32-adversarial
+verify-E6-T11d32-adversarial:
+	bash tools/verify-virgl-integer-image-shader-adversarial.sh
+
+.PHONY: verify-E6-T11d29-adversarial
+verify-E6-T11d29-adversarial:
+	bash tools/verify-virgl-standard-shared-exponent-adversarial.sh
+
+.PHONY: verify-E6-T11d30
+verify-E6-T11d30:
+	bash tools/verify-virgl-standard-shared-exponent-consumer.sh
+
+.PHONY: verify-E6-T11d30-adversarial
+verify-E6-T11d30-adversarial:
+	bash tools/verify-virgl-standard-shared-exponent-consumer-adversarial.sh
+
+.PHONY: verify-E6-T11d33
+verify-E6-T11d33:
+	bash tools/verify-virgl-standard-integer-image-consumer.sh
+
+.PHONY: verify-E6-T11d33-adversarial
+verify-E6-T11d33-adversarial:
+	bash tools/verify-virgl-standard-integer-image-consumer-adversarial.sh
+
+.PHONY: verify-E6-T11d34
+verify-E6-T11d34:
+	bash tools/verify-virgl-standard-multiple-color.sh
+
+.PHONY: verify-E6-T11d35
+verify-E6-T11d35:
+	bash tools/verify-virgl-standard-packed-normalized-images.sh
+
+.PHONY: verify-E6-T11d35-adversarial
+verify-E6-T11d35-adversarial:
+	node tools/verify-virgl-standard-packed-normalized-critic.mjs --output target/evidence/virgl-standard-packed-normalized-critic-promoted
+	python3 tools/virgl-command/standard-packed-normalized-critic-novel-audit.py --directory target/evidence/virgl-standard-packed-normalized-critic-promoted --primary tools/virgl-command/standard-packed-normalized-critic-primary.json --output target/evidence/virgl-standard-packed-normalized-critic-promoted/independent-values.json
+
+.PHONY: verify-E6-T11d36
+verify-E6-T11d36:
+	bash tools/verify-virgl-standard-packed-normalized-consumer.sh
+
+.PHONY: verify-E6-T11d36-adversarial
+verify-E6-T11d36-adversarial:
+	node tools/verify-virgl-standard-packed-normalized-consumer-critic.mjs --output target/evidence/virgl-packed-normalized-consumer-critic-promoted
+	python3 tools/virgl-packed-normalized-consumer/critic.py target/evidence/virgl-packed-normalized-consumer-critic-promoted
+
+.PHONY: verify-E6-T11d37
+verify-E6-T11d37:
+	bash tools/verify-virgl-standard-packed-unsigned-images.sh
+
+.PHONY: verify-E6-T11d37-adversarial
+verify-E6-T11d37-adversarial:
+	node tools/verify-virgl-standard-packed-unsigned-critic.mjs --output target/evidence/virgl-packed-unsigned-critic-promoted --seed 0x62e31a97
+	python3 tools/virgl-command/standard-packed-unsigned-critic-values.py target/evidence/virgl-packed-unsigned-critic-promoted
+
+.PHONY: verify-E6-T11d38
+verify-E6-T11d38:
+	bash tools/verify-virgl-standard-packed-unsigned-consumer.sh
+
+.PHONY: verify-E6-T11d38-adversarial
+verify-E6-T11d38-adversarial:
+	node tools/verify-virgl-standard-packed-unsigned-consumer-critic.mjs --output target/evidence/virgl-packed-unsigned-consumer-critic-promoted --seed 0x510e527f
+	python3 tools/virgl-packed-unsigned-consumer/critic.py target/evidence/virgl-packed-unsigned-consumer-critic-promoted
+	! node tools/verify-virgl-standard-packed-unsigned-consumer-critic.mjs --output target/evidence/virgl-packed-unsigned-consumer-critic-sabotage --seed 0x510e527f --fault completed-output
+	python3 tools/virgl-packed-unsigned-consumer/critic.py target/evidence/virgl-packed-unsigned-consumer-critic-sabotage --control
+
+.PHONY: verify-E6-T11d39
+verify-E6-T11d39:
+	bash tools/verify-virgl-standard-floating-depth-images.sh
+
+.PHONY: verify-E6-T11d39-critic
+verify-E6-T11d39-critic:
+	node tools/verify-virgl-standard-floating-depth-images-critic.mjs --output target/evidence/virgl-standard-floating-depth-critic/novel
+	node tools/verify-virgl-standard-floating-depth-images-critic.mjs --output target/evidence/virgl-standard-floating-depth-critic/states --mode states
+	@if node tools/verify-virgl-standard-floating-depth-images-critic.mjs --output target/evidence/virgl-standard-floating-depth-critic/fault-completed-private-stencil --fault completed-private-stencil; then echo 'ERROR: completed private native stencil corruption escaped the original inverse' >&2; exit 1; fi
+	python3 tools/virgl-floating-depth/critic.py --novel target/evidence/virgl-standard-floating-depth-critic --states target/evidence/virgl-standard-floating-depth-critic --output target/evidence/virgl-standard-floating-depth-critic/independent-fields.json
+
+.PHONY: verify-E6-T11d40
+verify-E6-T11d40:
+	bash tools/verify-virgl-standard-floating-depth-consumer.sh
+
+.PHONY: verify-E6-T11d40-critic
+verify-E6-T11d40-critic:
+	node tools/verify-virgl-standard-floating-depth-consumer-critic.mjs --output target/evidence/virgl-standard-floating-depth-consumer-critic/promoted
+	python3 tools/virgl-floating-depth-consumer/values.py target/evidence/virgl-standard-floating-depth-consumer-critic/promoted
+	@if node tools/verify-virgl-standard-floating-depth-consumer-critic.mjs --output target/evidence/virgl-standard-floating-depth-consumer-critic/fault-completed-stencil --fault completed-stencil; then echo 'ERROR: actual completed retained stencil corruption escaped the unchanged inverse' >&2; exit 1; fi
+	python3 tools/virgl-floating-depth-consumer/values.py target/evidence/virgl-standard-floating-depth-consumer-critic/fault-completed-stencil --control
+
+.PHONY: verify-E6-T11d41
+verify-E6-T11d41:
+	bash tools/verify-virgl-standard-unorm-depth.sh
+
+.PHONY: verify-E6-T11d42
+verify-E6-T11d42:
+	bash tools/verify-virgl-standard-packed-depth-images.sh
+
+.PHONY: verify-E6-T11d43
+verify-E6-T11d43:
+	bash tools/verify-virgl-standard-packed-depth-consumer.sh
+
+.PHONY: verify-E6-T11d43-critic
+verify-E6-T11d43-critic:
+	bash tools/verify-virgl-packed-depth-consumer-critic.sh
+
+.PHONY: verify-E6-T11d41-critic
+verify-E6-T11d41-critic:
+	node tools/verify-virgl-standard-unorm-depth-critic.mjs --output target/evidence/virgl-standard-unorm-depth-critic/promoted
+	python3 tools/virgl-unorm-depth/critic.py target/evidence/virgl-standard-unorm-depth-critic/promoted
+	@if node tools/verify-virgl-standard-unorm-depth.mjs --output target/evidence/virgl-standard-unorm-depth-critic/fault-completed-depth --mode surfaces --fault completed-depth --smoke true; then echo 'ERROR: completed native UN16 depth corruption escaped the unchanged inverse' >&2; exit 1; fi
+	python3 tools/virgl-unorm-depth/values.py target/evidence/virgl-standard-unorm-depth-critic/fault-completed-depth --control
+
+.PHONY: verify-E6-T11d42-critic
+verify-E6-T11d42-critic:
+	node --check renderer/virgl-command/tests/standard-packed-depth-critic.mjs
+	node --check tools/verify-virgl-standard-packed-depth-critic.mjs
+	node tools/verify-virgl-standard-packed-depth-critic.mjs --output $${VIRGL_PACKED_DEPTH_CRITIC_EVIDENCE_DIR:-target/evidence/d42-critic-novel} --seed 0x6d2a91c7
+
+.PHONY: verify-E6-T11d44
+verify-E6-T11d44:
+	bash tools/verify-virgl-standard-stencil.sh
+
+.PHONY: verify-E6-T11d44-critic
+verify-E6-T11d44-critic:
+	bash tools/verify-virgl-standard-stencil-critic.sh
+
+.PHONY: verify-E6-T11d45
+verify-E6-T11d45:
+	bash tools/verify-virgl-ordered-stencil.sh
+
+.PHONY: verify-E6-T11d45-critic
+verify-E6-T11d45-critic:
+	bash tools/verify-virgl-ordered-stencil-critic.sh
+
+.PHONY: verify-E6-T11d46
+verify-E6-T11d46:
+	bash tools/verify-virgl-instance-base.sh
+
+.PHONY: verify-E6-T11d46-critic
+verify-E6-T11d46-critic:
+	bash tools/verify-virgl-instance-base-critic.sh
+
+.PHONY: verify-E6-T11d47
+verify-E6-T11d47:
+	bash tools/verify-virgl-instanced-stencil.sh
+
+.PHONY: verify-E6-T11d47-critic
+verify-E6-T11d47-critic:
+	bash tools/verify-virgl-instanced-stencil-critic.sh
+
+.PHONY: verify-E6-T11d48
+verify-E6-T11d48:
+	bash tools/verify-virgl-shadow-shaders.sh
+
+.PHONY: verify-E6-T11d48-critic
+verify-E6-T11d48-critic:
+	bash tools/verify-virgl-shadow-shaders-critic.sh
+
+.PHONY: verify-E6-T11d49
+verify-E6-T11d49:
+	bash tools/verify-virgl-shadow-samplers.sh
+
+.PHONY: verify-E6-T11d50
+verify-E6-T11d50:
+	bash tools/verify-virgl-resource-capacity.sh
+
+.PHONY: verify-E6-T11d50-critic
+verify-E6-T11d50-critic:
+	bash tools/virgl-resource-capacity/critic.sh
+
+.PHONY: verify-E6-T11d51
+verify-E6-T11d51:
+	python3 tools/virgl-desktop-control/verify.py --output "$${VIRGL_DESKTOP_CONTROL_EVIDENCE_DIR:-target/evidence/virgl-desktop-control}"
+
+.PHONY: verify-E6-T11d52
+verify-E6-T11d52:
+	python3 tools/virgl-desktop-submit/verify.py --output "$${VIRGL_DESKTOP_SUBMIT_EVIDENCE_DIR:-target/evidence/virgl-desktop-submit}"
+
+.PHONY: verify-E6-T11d53
+verify-E6-T11d53:
+	python3 tools/virgl-native-buffer/verify.py --output "$${VIRGL_NATIVE_BUFFER_EVIDENCE_DIR:-target/evidence/virgl-native-buffer}"
+
+.PHONY: verify-E6-T11d54
+verify-E6-T11d54:
+	python3 tools/virgl-native-image/verify.py --output "$${VIRGL_NATIVE_IMAGE_EVIDENCE_DIR:-target/evidence/virgl-native-image}"
+
+.PHONY: verify-E6-T11d55
+verify-E6-T11d55:
+	python3 tools/virgl-dimensional-storage/verify.py --output "$${VIRGL_DIMENSIONAL_STORAGE_EVIDENCE_DIR:-target/evidence/virgl-dimensional-storage}"
+
+.PHONY: verify-E6-T11d56
+verify-E6-T11d56:
+	python3 tools/virgl-native-dimensional/verify.py --output "$${VIRGL_NATIVE_DIMENSIONAL_EVIDENCE_DIR:-target/evidence/virgl-native-dimensional}"
+
+.PHONY: verify-E6-T11d57
+verify-E6-T11d57:
+	python3 tools/virgl-dimensional-shaders/verify.py --output "$${VIRGL_DIMENSIONAL_SHADER_EVIDENCE_DIR:-target/evidence/virgl-dimensional-shaders}"
+
+.PHONY: verify-E6-T11d57-stage-isolation
+verify-E6-T11d57-stage-isolation:
+	node tools/virgl-dimensional-shaders/stage-isolation-test.mjs --output "$${VIRGL_DIMENSIONAL_STAGE_EVIDENCE_DIR:-target/evidence/virgl-dimensional-stage-isolation}"
+
+.PHONY: verify-E6-T11d58
+verify-E6-T11d58:
+	python3 tools/virgl-dimensional-views/verify.py --output "$${VIRGL_DIMENSIONAL_VIEW_EVIDENCE_DIR:-target/evidence/virgl-dimensional-views}"
+
+.PHONY: verify-E6-T11d59
+verify-E6-T11d59:
+	python3 tools/virgl-dimensional-depth/verify.py --output "$${VIRGL_DIMENSIONAL_DEPTH_EVIDENCE_DIR:-target/evidence/virgl-dimensional-depth}"
+
+.PHONY: verify-E6-T11d60
+verify-E6-T11d60:
+	python3 tools/virgl-dimensional-depth-views/verify.py --output "$${VIRGL_DIMENSIONAL_DEPTH_VIEW_EVIDENCE_DIR:-target/evidence/virgl-dimensional-depth-views}"
+
+.PHONY: verify-E6-T11d61
+verify-E6-T11d61:
+	python3 tools/virgl-dimensional-shadow-shaders/verify.py --output "$${VIRGL_DIMENSIONAL_SHADOW_SHADER_EVIDENCE_DIR:-target/evidence/virgl-dimensional-shadow-shaders}"
+
+.PHONY: verify-E6-T11d62
+verify-E6-T11d62:
+	python3 tools/virgl-dimensional-shadow-samplers/verify.py --output "$${VIRGL_DIMENSIONAL_SHADOW_SAMPLER_EVIDENCE_DIR:-target/evidence/virgl-dimensional-shadow-samplers}"
+
+.PHONY: verify-E6-T11d63
+verify-E6-T11d63:
+	python3 tools/virgl-dimensional-color-surfaces/verify.py --output "$${VIRGL_DIMENSIONAL_COLOR_SURFACE_EVIDENCE_DIR:-target/evidence/virgl-dimensional-color-surfaces}"
+
+# Run after verify-E6-T11d63 prepares the selected proof package/compiler.
+.PHONY: verify-E6-T11d63-target-reuse
+verify-E6-T11d63-target-reuse:
+	node tools/virgl-dimensional-color-surfaces/target-reuse-browser.mjs --output "$${VIRGL_DIMENSIONAL_COLOR_SURFACE_TARGET_REUSE_EVIDENCE_DIR:-target/evidence/virgl-dimensional-color-surface-target-reuse}"
+.PHONY: verify-E0-T27
+SITE_EVIDENCE_DIR ?= target/evidence/reviewed-site-final
+verify-E0-T27:
+	python3 tools/check_task_policy.py
+	git diff --check
+	node --check tools/build-docs.mjs
+	node --check tools/check-docs.mjs
+	node --check tools/verify-reviewed-site.mjs
+	node --check web/hero-scene.js
+	node --check web/tabs.js
+	node --check web/roadmap-page.js
+	node --check web/landing-page.js
+	node --check web/landing.js
+	node --check web/landing-benchmarks.js
+	bash -n tools/build-web-dist.sh
+	node tools/check-docs.mjs
+	python3 tools/check-docs-dist.py web/dist
+	node tools/verify-reviewed-site.mjs --output "$(SITE_EVIDENCE_DIR)/site"
+	node tools/verify-virgl-default-demo.mjs --output "$(SITE_EVIDENCE_DIR)/default-demo" --task E0-T27
+
+.PHONY: verify-E6-T11d64
+verify-E6-T11d64:
+	python3 tools/virgl-dimensional-depth-surfaces/verify.py $(if $(filter 1,$(D64_REPLAY_UNCHANGED_GATES)),--carry-unchanged-recording,) --output "$${VIRGL_DIMENSIONAL_DEPTH_SURFACE_EVIDENCE_DIR:-target/evidence/virgl-dimensional-depth-surfaces}"
+
+.PHONY: verify-E6-T11d65
+verify-E6-T11d65:
+	python3 tools/virgl-stream-output-shaders/verify.py --output "$${VIRGL_STREAM_OUTPUT_SHADER_EVIDENCE_DIR:-target/evidence/virgl-stream-output-shaders}"
+
+# Original GPU stream-output targets, retained cursors and native capture.
+.PHONY: verify-E6-T11d66
+verify-E6-T11d66:
+	python3 tools/virgl-stream-output-capture/verify.py --output "$${VIRGL_STREAM_OUTPUT_CAPTURE_EVIDENCE_DIR:-target/evidence/stream-output-capture-final}"
+
+.PHONY: verify-E6-T11d70
+verify-E6-T11d70:
+	python3 tools/virgl-production/verify-fragmented-backing.py --output "$${VIRGL_FRAGMENTED_BACKING_EVIDENCE_DIR:-target/evidence/production-fragmented-backing-final}"
+
+.PHONY: verify-E5.5-T05b
+verify-E5.5-T05b:
+	python3 tools/check_task_policy.py
+	git diff --check
+	python3 tools/image/verify-native-app-image.py --output "$${OMARCHY_APP_EVIDENCE_DIR:-target/evidence/omarchy-native-app-image}"
+
+.PHONY: verify-E5.5-T05c
+verify-E5.5-T05c:
+	python3 tools/check_task_policy.py
+	git diff --check
+	node --check tools/virgl-production/omarchy-applications.mjs
+	node --check tools/virgl-production/application-identity.mjs
+	node --test tools/virgl-production/omarchy-application-fixture.test.mjs
+	python3 -m py_compile tools/image/prepare-omarchy-application-memory.py
+	docker run --rm --network none -v "$(CURDIR)/tools/image:/tools:ro" wasm-vm-omarchy-image:profile python3 /tools/test_configure_omarchy_demo.py
+	node tools/virgl-production/omarchy-shader-padding.mjs
+	node tools/virgl-production/omarchy-resource-copy-wire.mjs
+	node tools/virgl-production/omarchy-resource-copy-browser.mjs --output "$${OMARCHY_RESOURCE_COPY_EVIDENCE_DIR:-target/evidence/omarchy-resource-copy}"
+	node tools/virgl-production/omarchy-storage-leases-browser.mjs "$${OMARCHY_STORAGE_LEASE_EVIDENCE_DIR:-target/evidence/omarchy-storage-leases}"
+	CRITIC_FAST_BOOT_WEB_ROOT=web/dist CRITIC_FAST_BOOT_GPU=1 CRITIC_FAST_BOOT_GUESTS=omarchy CRITIC_FAST_BOOT_GPU_TRACE=1 CRITIC_FAST_BOOT_PERSISTENCE=0 CRITIC_FAST_BOOT_APPLICATIONS=1 CRITIC_FAST_BOOT_IMAGE_DIRECTORY="$${OMARCHY_DESKTOP_IMAGE_DIRECTORY:-target/virgl-production/image-18}" node tools/virgl-production/critic-fast-boots.mjs "$${OMARCHY_APP_DESKTOP_EVIDENCE_DIR:-target/evidence/omarchy-applications-desktop-final}"
+
+.PHONY: verify-omarchy-dense-snapshot
+verify-omarchy-dense-snapshot:
+	node --check tools/verify/omarchy-snapshot-dense.mjs
+	node tools/verify/omarchy-snapshot-dense.mjs "$${OMARCHY_DENSE_SNAPSHOT_EVIDENCE_DIR:-target/evidence/omarchy-snapshot-dense}"
+
+.PHONY: verify-E5.5-T05c1
+verify-E5.5-T05c1:
+	python3 tools/check_task_policy.py
+	git diff --check
+	node --check renderer/virgl-command/resources.mjs
+	node --check renderer/virgl-command/tests/production-color-checkpoint.mjs
+	node --check tools/virgl-production/omarchy-color-checkpoint-browser.mjs
+	node --test tools/virgl-production/omarchy-color-checkpoint.test.mjs
+	node tools/verify-virgl-resource-transfers.mjs --node-only true --output "$${OMARCHY_COLOR_LAYOUT_EVIDENCE_DIR:-target/evidence/omarchy-color-layout}"
+	wasm-pack build crates/wasm --target web --out-dir ../../target/virgl-production/pkg --features virgl-renderer,virgl-control-proof
+	$(MAKE) web-dist
+	node tools/virgl-production/omarchy-color-checkpoint-browser.mjs --output "$${OMARCHY_COLOR_CHECKPOINT_EVIDENCE_DIR:-target/evidence/omarchy-color-checkpoint-hardware}"
+	node tools/verify-virgl-default-demo.mjs --output "$${OMARCHY_COLOR_DEMO_EVIDENCE_DIR:-target/evidence/omarchy-color-checkpoint-demo}" --task E5.5-T05c1
+
+# Release phases execute actual browser paths. An explicitly selected incremental
+# phase records its omitted phases; it cannot pass as the full release verdict.
+.PHONY: verify-E5.5-T05d
+verify-E5.5-T05d:
+	@if [ "$${OMARCHY_RELEASE_PHASE:-all}" = all ]; then \
+	  python3 tools/virgl-production/verify-omarchy-application-release-cold.py --output "$${OMARCHY_RELEASE_EVIDENCE_DIR:-target/evidence/omarchy-application-release-final}" --url "$${OMARCHY_RELEASE_URL:-https://wasm-vm.pages.dev/}" --application-image "$${OMARCHY_DESKTOP_IMAGE_DIRECTORY:-target/virgl-production/image-18}" --inventory "$${OMARCHY_APPLICATION_INVENTORY:-target/evidence/omarchy-native-app-image-final01/runtime-elf.json}"; \
+	else \
+	  python3 tools/virgl-production/verify-omarchy-application-release.py --output "$${OMARCHY_RELEASE_EVIDENCE_DIR:-target/evidence/omarchy-application-release-final}" --url "$${OMARCHY_RELEASE_URL:-https://wasm-vm.pages.dev/}" --phase "$${OMARCHY_RELEASE_PHASE}" --application-image "$${OMARCHY_DESKTOP_IMAGE_DIRECTORY:-target/virgl-production/image-18}" --inventory "$${OMARCHY_APPLICATION_INVENTORY:-target/evidence/omarchy-native-app-image-final01/runtime-elf.json}"; \
+	fi

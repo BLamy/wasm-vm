@@ -1,0 +1,2213 @@
+{
+  "schema": "standard-integer-verifier-authentication-v1",
+  "status": "HELD",
+  "predictions": [
+    "P1"
+  ],
+  "sourceHead": "12bb78e1b7f4b9d636f8d46091b9a1a1766fbe4b",
+  "archiveSha256": "a4f79256677d3f5ef6e2de5f1b2c15ca6b85b6b9c7f7ba5ccbb222424459b93a",
+  "recordIndexSha256": "506e7ff96e26d0a7098c5cd2b6d30c43aa79d9a67b468b3e30b5a8e86ce44df9",
+  "records": 14584,
+  "audit": [
+    {
+      "prefix": "hot",
+      "receipt": "8ba7b61ed65d40469766f8f8bb793e479b74f73434718589f54f49655c6d3e03",
+      "files": 7276,
+      "sources": 768,
+      "generated": 14,
+      "blobs": 7011,
+      "authenticatedV8Scripts": 148,
+      "reports": [
+        {
+          "path": "wire/report.json",
+          "wire": true
+        },
+        {
+          "path": "hardware/report.json",
+          "status": "passed",
+          "frames": 348,
+          "gpu": [
+            {
+              "vendorId": 4203,
+              "deviceId": 0,
+              "vendorString": "Google Inc. (Apple)",
+              "deviceString": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+              "driverVendor": "Apple",
+              "driverVersion": "26.6.2"
+            }
+          ]
+        },
+        {
+          "path": "fault-native-signedness/report.json",
+          "status": "failed",
+          "frames": 1,
+          "gpu": [
+            {
+              "vendorId": 4203,
+              "deviceId": 0,
+              "vendorString": "Google Inc. (Apple)",
+              "deviceString": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+              "driverVendor": "Apple",
+              "driverVersion": "26.6.2"
+            }
+          ]
+        },
+        {
+          "path": "fault-constant-word/report.json",
+          "status": "failed",
+          "frames": 1,
+          "gpu": [
+            {
+              "vendorId": 4203,
+              "deviceId": 0,
+              "vendorString": "Google Inc. (Apple)",
+              "deviceString": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+              "driverVendor": "Apple",
+              "driverVersion": "26.6.2"
+            }
+          ]
+        },
+        {
+          "path": "fault-shader-conversion/report.json",
+          "status": "failed",
+          "frames": 1,
+          "gpu": [
+            {
+              "vendorId": 4203,
+              "deviceId": 0,
+              "vendorString": "Google Inc. (Apple)",
+              "deviceString": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+              "driverVendor": "Apple",
+              "driverVersion": "26.6.2"
+            }
+          ]
+        },
+        {
+          "path": "retained-scalar/hardware/report.json",
+          "status": "passed",
+          "frames": 391,
+          "gpu": [
+            {
+              "vendorId": 4203,
+              "deviceId": 0,
+              "vendorString": "Google Inc. (Apple)",
+              "deviceString": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+              "driverVendor": "Apple",
+              "driverVersion": "26.6.2"
+            }
+          ]
+        },
+        {
+          "path": "retained-scalar/fault-native-signedness/report.json",
+          "status": "failed",
+          "frames": 1,
+          "gpu": [
+            {
+              "vendorId": 4203,
+              "deviceId": 0,
+              "vendorString": "Google Inc. (Apple)",
+              "deviceString": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+              "driverVendor": "Apple",
+              "driverVersion": "26.6.2"
+            }
+          ]
+        },
+        {
+          "path": "retained-scalar/fault-constant-scaled/report.json",
+          "status": "failed",
+          "frames": 1,
+          "gpu": [
+            {
+              "vendorId": 4203,
+              "deviceId": 0,
+              "vendorString": "Google Inc. (Apple)",
+              "deviceString": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+              "driverVendor": "Apple",
+              "driverVersion": "26.6.2"
+            }
+          ]
+        },
+        {
+          "path": "retained-compact/hardware/report.json",
+          "status": "passed",
+          "frames": 225,
+          "gpu": [
+            {
+              "vendorId": 4203,
+              "deviceId": 0,
+              "vendorString": "Google Inc. (Apple)",
+              "deviceString": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+              "driverVendor": "Apple",
+              "driverVersion": "26.6.2"
+            }
+          ]
+        },
+        {
+          "path": "retained-compact/fault-native-normalize/report.json",
+          "status": "failed",
+          "frames": 1,
+          "gpu": [
+            {
+              "vendorId": 4203,
+              "deviceId": 0,
+              "vendorString": "Google Inc. (Apple)",
+              "deviceString": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+              "driverVendor": "Apple",
+              "driverVersion": "26.6.2"
+            }
+          ]
+        },
+        {
+          "path": "retained-compact/fault-constant-unpack/report.json",
+          "status": "failed",
+          "frames": 1,
+          "gpu": [
+            {
+              "vendorId": 4203,
+              "deviceId": 0,
+              "vendorString": "Google Inc. (Apple)",
+              "deviceString": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+              "driverVendor": "Apple",
+              "driverVersion": "26.6.2"
+            }
+          ]
+        },
+        {
+          "path": "compiler-retained/hardware/report.json",
+          "status": "passed",
+          "frames": 129,
+          "gpu": [
+            {
+              "vendorId": 4203,
+              "deviceId": 0,
+              "vendorString": "Google Inc. (Apple)",
+              "deviceString": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+              "driverVendor": "Apple",
+              "driverVersion": "26.6.2"
+            }
+          ]
+        },
+        {
+          "path": "compiler-retained/retained-private-c580/report.json",
+          "status": "passed",
+          "frames": 6,
+          "gpu": [
+            {
+              "vendorId": 4203,
+              "deviceId": 0,
+              "vendorString": "Google Inc. (Apple)",
+              "deviceString": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+              "driverVendor": "Apple",
+              "driverVersion": "26.6.2"
+            }
+          ]
+        },
+        {
+          "path": "compiler-retained/retained-raw/report.json",
+          "status": "passed",
+          "frames": 42,
+          "gpu": [
+            {
+              "vendorId": 4203,
+              "deviceId": 0,
+              "vendorString": "Google Inc. (Apple)",
+              "deviceString": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+              "driverVendor": "Apple",
+              "driverVersion": "26.6.2"
+            }
+          ]
+        },
+        {
+          "path": "compiler-retained/fault-sine/report.json",
+          "status": "failed",
+          "frames": 1,
+          "gpu": [
+            {
+              "vendorId": 4203,
+              "deviceId": 0,
+              "vendorString": "Google Inc. (Apple)",
+              "deviceString": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+              "driverVendor": "Apple",
+              "driverVersion": "26.6.2"
+            }
+          ]
+        },
+        {
+          "path": "compiler-retained/retained-private-92cb/report.json",
+          "status": "passed",
+          "frames": 0,
+          "gpu": [
+            {
+              "vendorId": 4203,
+              "deviceId": 0,
+              "vendorString": "Google Inc. (Apple)",
+              "deviceString": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+              "driverVendor": "Apple",
+              "driverVersion": "26.6.2"
+            }
+          ]
+        },
+        {
+          "path": "compiler-retained/retained-ordinary/report.json",
+          "status": "passed",
+          "frames": 0,
+          "gpu": [
+            {
+              "vendorId": 4203,
+              "deviceId": 0,
+              "vendorString": "Google Inc. (Apple)",
+              "deviceString": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+              "driverVendor": "Apple",
+              "driverVersion": "26.6.2"
+            }
+          ]
+        },
+        {
+          "path": "retained-scalar/wire/report.json",
+          "wire": true
+        }
+      ],
+      "unservedIgnoredInventory": [
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-prefix-wasm/coordinate-prefix.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-prefix-wasm/coordinate-prefix.mjs",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-prefix-wasm/coordinate-prefix.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-reference-2242054355.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-reference-2654435769.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-reference-3737844652.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-reference-608135816.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/discard-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/discard-reference-2242054355.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/discard-reference-2654435769.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/discard-reference-608135816.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/exponent-logarithm-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/exponent-logarithm-reference.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/minimum-selection-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-complete-wasm/fragment.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-complete-wasm/original-92cb-complete.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-complete-wasm/original-92cb-complete.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-complete-wasm/vertex.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-geometry-wasm/fragment.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-geometry-wasm/original-92cb-geometry.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-geometry-wasm/original-92cb-geometry.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-geometry-wasm/vertex.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-power-domain-wasm/original-92cb-power-domain.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-power-domain-wasm/original-92cb-power-domain.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-private-power-wasm/fragment.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-private-power-wasm/original-92cb-private-power.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-private-power-wasm/original-92cb-private-power.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-private-power-wasm/vertex.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-raster-wasm/original-92cb-raster.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-raster-wasm/original-92cb-raster.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/original-c580-wasm/fragment.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/original-c580-wasm/original-c580.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/original-c580-wasm/original-c580.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/original-c580-wasm/vertex.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/power-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/power-reference.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/precise-fraction-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/saturation-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/scalar-operations-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/signed-conversions-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/signed-conversions-range-constant.mjs",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/signed-conversions-range-fault.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/signed-conversions-range-state.mjs",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/signed-integers-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/sine-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/sine-reference.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/zero-cap-wasm/zero-cap.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/hardware/report.json",
+          "path": "renderer/virgl-shader/build/zero-cap-wasm/zero-cap.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-prefix-wasm/coordinate-prefix.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-prefix-wasm/coordinate-prefix.mjs",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-prefix-wasm/coordinate-prefix.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-reference-2242054355.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-reference-2654435769.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-reference-3737844652.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-reference-608135816.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/discard-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/discard-reference-2242054355.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/discard-reference-2654435769.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/discard-reference-608135816.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/exponent-logarithm-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/exponent-logarithm-reference.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/minimum-selection-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-complete-wasm/fragment.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-complete-wasm/original-92cb-complete.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-complete-wasm/original-92cb-complete.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-complete-wasm/vertex.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-geometry-wasm/fragment.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-geometry-wasm/original-92cb-geometry.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-geometry-wasm/original-92cb-geometry.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-geometry-wasm/vertex.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-power-domain-wasm/original-92cb-power-domain.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-power-domain-wasm/original-92cb-power-domain.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-private-power-wasm/fragment.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-private-power-wasm/original-92cb-private-power.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-private-power-wasm/original-92cb-private-power.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-private-power-wasm/vertex.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-raster-wasm/original-92cb-raster.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-raster-wasm/original-92cb-raster.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/original-c580-wasm/fragment.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/original-c580-wasm/original-c580.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/original-c580-wasm/original-c580.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/original-c580-wasm/vertex.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/power-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/power-reference.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/precise-fraction-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/saturation-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/scalar-operations-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/signed-conversions-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/signed-conversions-range-constant.mjs",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/signed-conversions-range-fault.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/signed-conversions-range-state.mjs",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/signed-integers-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/sine-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/sine-reference.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/zero-cap-wasm/zero-cap.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-c580/report.json",
+          "path": "renderer/virgl-shader/build/zero-cap-wasm/zero-cap.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-prefix-wasm/coordinate-prefix.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-prefix-wasm/coordinate-prefix.mjs",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-prefix-wasm/coordinate-prefix.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-reference-2242054355.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-reference-2654435769.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-reference-3737844652.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-reference-608135816.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/discard-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/discard-reference-2242054355.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/discard-reference-2654435769.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/discard-reference-608135816.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/exponent-logarithm-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/exponent-logarithm-reference.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/minimum-selection-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-complete-wasm/fragment.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-complete-wasm/original-92cb-complete.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-complete-wasm/original-92cb-complete.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-complete-wasm/vertex.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-geometry-wasm/fragment.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-geometry-wasm/original-92cb-geometry.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-geometry-wasm/original-92cb-geometry.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-geometry-wasm/vertex.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-power-domain-wasm/original-92cb-power-domain.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-power-domain-wasm/original-92cb-power-domain.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-private-power-wasm/fragment.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-private-power-wasm/original-92cb-private-power.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-private-power-wasm/original-92cb-private-power.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-private-power-wasm/vertex.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-raster-wasm/original-92cb-raster.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-raster-wasm/original-92cb-raster.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/original-c580-wasm/fragment.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/original-c580-wasm/original-c580.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/original-c580-wasm/original-c580.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/original-c580-wasm/vertex.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/power-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/power-reference.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/precise-fraction-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/saturation-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/scalar-operations-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/signed-conversions-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/signed-conversions-range-constant.mjs",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/signed-conversions-range-fault.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/signed-conversions-range-state.mjs",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/signed-integers-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/sine-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/sine-reference.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/zero-cap-wasm/zero-cap.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-raw/report.json",
+          "path": "renderer/virgl-shader/build/zero-cap-wasm/zero-cap.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-prefix-wasm/coordinate-prefix.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-prefix-wasm/coordinate-prefix.mjs",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-prefix-wasm/coordinate-prefix.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-reference-2242054355.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-reference-2654435769.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-reference-3737844652.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-reference-608135816.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/discard-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/discard-reference-2242054355.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/discard-reference-2654435769.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/discard-reference-608135816.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/exponent-logarithm-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/exponent-logarithm-reference.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/minimum-selection-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-complete-wasm/fragment.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-complete-wasm/original-92cb-complete.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-complete-wasm/original-92cb-complete.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-complete-wasm/vertex.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-geometry-wasm/fragment.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-geometry-wasm/original-92cb-geometry.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-geometry-wasm/original-92cb-geometry.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-geometry-wasm/vertex.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-power-domain-wasm/original-92cb-power-domain.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-power-domain-wasm/original-92cb-power-domain.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-private-power-wasm/fragment.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-private-power-wasm/original-92cb-private-power.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-private-power-wasm/original-92cb-private-power.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-private-power-wasm/vertex.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-raster-wasm/original-92cb-raster.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-raster-wasm/original-92cb-raster.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/original-c580-wasm/fragment.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/original-c580-wasm/original-c580.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/original-c580-wasm/original-c580.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/original-c580-wasm/vertex.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/power-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/power-reference.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/precise-fraction-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/saturation-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/scalar-operations-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/signed-conversions-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/signed-conversions-range-constant.mjs",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/signed-conversions-range-fault.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/signed-conversions-range-state.mjs",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/signed-integers-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/sine-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/sine-reference.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/zero-cap-wasm/zero-cap.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/fault-sine/report.json",
+          "path": "renderer/virgl-shader/build/zero-cap-wasm/zero-cap.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-prefix-wasm/coordinate-prefix.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-prefix-wasm/coordinate-prefix.mjs",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-prefix-wasm/coordinate-prefix.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-reference-2242054355.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-reference-2654435769.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-reference-3737844652.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-reference-608135816.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/discard-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/discard-reference-2242054355.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/discard-reference-2654435769.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/discard-reference-608135816.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/exponent-logarithm-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/exponent-logarithm-reference.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/minimum-selection-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-complete-wasm/fragment.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-complete-wasm/original-92cb-complete.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-complete-wasm/original-92cb-complete.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-complete-wasm/vertex.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-geometry-wasm/fragment.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-geometry-wasm/original-92cb-geometry.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-geometry-wasm/original-92cb-geometry.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-geometry-wasm/vertex.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-power-domain-wasm/original-92cb-power-domain.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-power-domain-wasm/original-92cb-power-domain.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-private-power-wasm/fragment.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-private-power-wasm/original-92cb-private-power.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-private-power-wasm/original-92cb-private-power.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-private-power-wasm/vertex.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-raster-wasm/original-92cb-raster.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-raster-wasm/original-92cb-raster.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/original-c580-wasm/fragment.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/original-c580-wasm/original-c580.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/original-c580-wasm/original-c580.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/original-c580-wasm/vertex.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/power-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/power-reference.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/precise-fraction-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/saturation-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/scalar-operations-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/signed-conversions-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/signed-conversions-range-constant.mjs",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/signed-conversions-range-fault.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/signed-conversions-range-state.mjs",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/signed-integers-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/sine-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/sine-reference.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/zero-cap-wasm/zero-cap.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-private-92cb/report.json",
+          "path": "renderer/virgl-shader/build/zero-cap-wasm/zero-cap.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-prefix-wasm/coordinate-prefix.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-prefix-wasm/coordinate-prefix.mjs",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-prefix-wasm/coordinate-prefix.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-reference-2242054355.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-reference-2654435769.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-reference-3737844652.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/coordinate-reference-608135816.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/discard-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/discard-reference-2242054355.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/discard-reference-2654435769.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/discard-reference-608135816.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/exponent-logarithm-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/exponent-logarithm-reference.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/minimum-selection-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-complete-wasm/fragment.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-complete-wasm/original-92cb-complete.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-complete-wasm/original-92cb-complete.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-complete-wasm/vertex.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-geometry-wasm/fragment.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-geometry-wasm/original-92cb-geometry.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-geometry-wasm/original-92cb-geometry.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-geometry-wasm/vertex.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-power-domain-wasm/original-92cb-power-domain.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-power-domain-wasm/original-92cb-power-domain.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-private-power-wasm/fragment.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-private-power-wasm/original-92cb-private-power.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-private-power-wasm/original-92cb-private-power.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-private-power-wasm/vertex.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-raster-wasm/original-92cb-raster.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/original-92cb-raster-wasm/original-92cb-raster.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/original-c580-wasm/fragment.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/original-c580-wasm/original-c580.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/original-c580-wasm/original-c580.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/original-c580-wasm/vertex.tgsi",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/power-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/power-reference.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/precise-fraction-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/saturation-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/scalar-operations-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/signed-conversions-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/signed-conversions-range-constant.mjs",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/signed-conversions-range-fault.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/signed-conversions-range-state.mjs",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/signed-integers-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/sine-primary.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/sine-reference.json",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/zero-cap-wasm/zero-cap.js",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        },
+        {
+          "report": "compiler-retained/retained-ordinary/report.json",
+          "path": "renderer/virgl-shader/build/zero-cap-wasm/zero-cap.wasm",
+          "reason": "broad ignored build inventory; never loaded/served in this recording"
+        }
+      ]
+    },
+    {
+      "prefix": "cold",
+      "receipt": "592509c490a69714c38326c6b410068bbada883984a93931830bc517e82826af",
+      "files": 7276,
+      "sources": 768,
+      "generated": 14,
+      "blobs": 7011,
+      "authenticatedV8Scripts": 148,
+      "reports": [
+        {
+          "path": "wire/report.json",
+          "wire": true
+        },
+        {
+          "path": "hardware/report.json",
+          "status": "passed",
+          "frames": 348,
+          "gpu": [
+            {
+              "vendorId": 4203,
+              "deviceId": 0,
+              "vendorString": "Google Inc. (Apple)",
+              "deviceString": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+              "driverVendor": "Apple",
+              "driverVersion": "26.6.2"
+            }
+          ]
+        },
+        {
+          "path": "fault-native-signedness/report.json",
+          "status": "failed",
+          "frames": 1,
+          "gpu": [
+            {
+              "vendorId": 4203,
+              "deviceId": 0,
+              "vendorString": "Google Inc. (Apple)",
+              "deviceString": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+              "driverVendor": "Apple",
+              "driverVersion": "26.6.2"
+            }
+          ]
+        },
+        {
+          "path": "fault-constant-word/report.json",
+          "status": "failed",
+          "frames": 1,
+          "gpu": [
+            {
+              "vendorId": 4203,
+              "deviceId": 0,
+              "vendorString": "Google Inc. (Apple)",
+              "deviceString": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+              "driverVendor": "Apple",
+              "driverVersion": "26.6.2"
+            }
+          ]
+        },
+        {
+          "path": "fault-shader-conversion/report.json",
+          "status": "failed",
+          "frames": 1,
+          "gpu": [
+            {
+              "vendorId": 4203,
+              "deviceId": 0,
+              "vendorString": "Google Inc. (Apple)",
+              "deviceString": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+              "driverVendor": "Apple",
+              "driverVersion": "26.6.2"
+            }
+          ]
+        },
+        {
+          "path": "retained-scalar/hardware/report.json",
+          "status": "passed",
+          "frames": 391,
+          "gpu": [
+            {
+              "vendorId": 4203,
+              "deviceId": 0,
+              "vendorString": "Google Inc. (Apple)",
+              "deviceString": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+              "driverVendor": "Apple",
+              "driverVersion": "26.6.2"
+            }
+          ]
+        },
+        {
+          "path": "retained-scalar/fault-native-signedness/report.json",
+          "status": "failed",
+          "frames": 1,
+          "gpu": [
+            {
+              "vendorId": 4203,
+              "deviceId": 0,
+              "vendorString": "Google Inc. (Apple)",
+              "deviceString": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+              "driverVendor": "Apple",
+              "driverVersion": "26.6.2"
+            }
+          ]
+        },
+        {
+          "path": "retained-scalar/fault-constant-scaled/report.json",
+          "status": "failed",
+          "frames": 1,
+          "gpu": [
+            {
+              "vendorId": 4203,
+              "deviceId": 0,
+              "vendorString": "Google Inc. (Apple)",
+              "deviceString": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+              "driverVendor": "Apple",
+              "driverVersion": "26.6.2"
+            }
+          ]
+        },
+        {
+          "path": "retained-compact/hardware/report.json",
+          "status": "passed",
+          "frames": 225,
+          "gpu": [
+            {
+              "vendorId": 4203,
+              "deviceId": 0,
+              "vendorString": "Google Inc. (Apple)",
+              "deviceString": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+              "driverVendor": "Apple",
+              "driverVersion": "26.6.2"
+            }
+          ]
+        },
+        {
+          "path": "retained-compact/fault-native-normalize/report.json",
+          "status": "failed",
+          "frames": 1,
+          "gpu": [
+            {
+              "vendorId": 4203,
+              "deviceId": 0,
+              "vendorString": "Google Inc. (Apple)",
+              "deviceString": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+              "driverVendor": "Apple",
+              "driverVersion": "26.6.2"
+            }
+          ]
+        },
+        {
+          "path": "retained-compact/fault-constant-unpack/report.json",
+          "status": "failed",
+          "frames": 1,
+          "gpu": [
+            {
+              "vendorId": 4203,
+              "deviceId": 0,
+              "vendorString": "Google Inc. (Apple)",
+              "deviceString": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+              "driverVendor": "Apple",
+              "driverVersion": "26.6.2"
+            }
+          ]
+        },
+        {
+          "path": "compiler-retained/hardware/report.json",
+          "status": "passed",
+          "frames": 129,
+          "gpu": [
+            {
+              "vendorId": 4203,
+              "deviceId": 0,
+              "vendorString": "Google Inc. (Apple)",
+              "deviceString": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+              "driverVendor": "Apple",
+              "driverVersion": "26.6.2"
+            }
+          ]
+        },
+        {
+          "path": "compiler-retained/retained-private-c580/report.json",
+          "status": "passed",
+          "frames": 6,
+          "gpu": [
+            {
+              "vendorId": 4203,
+              "deviceId": 0,
+              "vendorString": "Google Inc. (Apple)",
+              "deviceString": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+              "driverVendor": "Apple",
+              "driverVersion": "26.6.2"
+            }
+          ]
+        },
+        {
+          "path": "compiler-retained/retained-raw/report.json",
+          "status": "passed",
+          "frames": 42,
+          "gpu": [
+            {
+              "vendorId": 4203,
+              "deviceId": 0,
+              "vendorString": "Google Inc. (Apple)",
+              "deviceString": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+              "driverVendor": "Apple",
+              "driverVersion": "26.6.2"
+            }
+          ]
+        },
+        {
+          "path": "compiler-retained/fault-sine/report.json",
+          "status": "failed",
+          "frames": 1,
+          "gpu": [
+            {
+              "vendorId": 4203,
+              "deviceId": 0,
+              "vendorString": "Google Inc. (Apple)",
+              "deviceString": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+              "driverVendor": "Apple",
+              "driverVersion": "26.6.2"
+            }
+          ]
+        },
+        {
+          "path": "compiler-retained/retained-private-92cb/report.json",
+          "status": "passed",
+          "frames": 0,
+          "gpu": [
+            {
+              "vendorId": 4203,
+              "deviceId": 0,
+              "vendorString": "Google Inc. (Apple)",
+              "deviceString": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+              "driverVendor": "Apple",
+              "driverVersion": "26.6.2"
+            }
+          ]
+        },
+        {
+          "path": "compiler-retained/retained-ordinary/report.json",
+          "status": "passed",
+          "frames": 0,
+          "gpu": [
+            {
+              "vendorId": 4203,
+              "deviceId": 0,
+              "vendorString": "Google Inc. (Apple)",
+              "deviceString": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+              "driverVendor": "Apple",
+              "driverVersion": "26.6.2"
+            }
+          ]
+        },
+        {
+          "path": "retained-scalar/wire/report.json",
+          "wire": true
+        }
+      ],
+      "unservedIgnoredInventory": []
+    }
+  ],
+  "cold": {
+    "schema": 1,
+    "task": "E6-T11d14",
+    "gitHead": "12bb78e1b7f4b9d636f8d46091b9a1a1766fbe4b",
+    "clone": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-standard-integer-cold-h_p80g2r/wasm-vm",
+    "removedEnvironmentNames": [
+      "RUST_LOG"
+    ],
+    "command": [
+      "make",
+      "verify-E6-T11d14"
+    ],
+    "status": "passed",
+    "cloneHead": "12bb78e1b7f4b9d636f8d46091b9a1a1766fbe4b",
+    "statusBefore": "",
+    "exitCode": 0,
+    "statusAfter": "",
+    "receiptSha256": "592509c490a69714c38326c6b410068bbada883984a93931830bc517e82826af",
+    "logSha256": "ce3f564a8e6eb41869c68212bc57eff31016e47efd6181ea9fc038b7dc8eff93"
+  },
+  "carriedVerifiedEvidence": {
+    "evidence/virgl-standard-shader/verifier/finding/build-debug.sh": "67cfe8d6c30666e25bcc9ee567dd336ff2bd7bd0f52fd65f4962cb1fc0a28dfb",
+    "evidence/virgl-standard-shader/verifier/finding/case.bin": "3fb773f5e83b180d400369057b52bc70d5901183f81edd209a8bccb9351b88c2",
+    "evidence/virgl-standard-shader/verifier/finding/case.tgsi": "bb7035381dcc5d4ff767d815cf581fcd704ec1ad1ff62e900b03c624968a0a29",
+    "evidence/virgl-standard-shader/verifier/finding/lldb-debug.log": "36ce777862c86b6e606d101d88ecd2d75fe8bc664575ecd7fa04df24ade8cac2",
+    "evidence/virgl-standard-shader/verifier/finding/native.jsonl": "357de8726a0fcaf3eb1ce6410170e2281fb9d60fd1d6b8892d944c58bb4e6400",
+    "evidence/virgl-standard-shader/verifier/finding/prediction.json": "9f561c1b8433641aee29714f9b3002e42ac0838eef81d6fdaf11af98e6a8dd2a",
+    "evidence/virgl-standard-shader/verifier/finding/sanitize.jsonl": "357de8726a0fcaf3eb1ce6410170e2281fb9d60fd1d6b8892d944c58bb4e6400",
+    "evidence/virgl-standard-shader/verifier/finding/wasm.json": "5e470285bdec23d618178ba564883a46c8b1604b285976cc71d591b65cabe7ca",
+    "evidence/virgl-standard-shader/verifier/finding/wasm.mjs": "821fefa2e882c11464f4433e4047b0c03dad17b861ae54a665f3309b44feb256",
+    "evidence/virgl-standard-shader/verifier/manifest.json": "ad881fa4585e6adcb57eafe5428a4ea3b4bef523e351dfd3ad7cf54f1a39cff4",
+    "evidence/virgl-standard-shader/verifier/recording.tar.gz": "1f59cd3fc8c56509ef73b9d02f766d02e488a9eae70df1e607a4ac036061e78c",
+    "evidence/virgl-standard-shader/verifier/records.json": "2435c54371b4db9a5935683aec13881f6925db8993996b48b38024df864f86cd",
+    "evidence/virgl-standard-shader/verifier/verdict.json": "4abe8fba7590be899066c9677e8c46799cf4005b7347265497060dcf57ecc1cc",
+    "evidence/virgl-standard-draw/verifier/acceptance-replay-audit.json": "2a21948cea3dac0ba74d25c2a4adb2da68fd39887a79d9543e5d23258a3d844e",
+    "evidence/virgl-standard-draw/verifier/acceptance-replay-audit.jsonl": "27ddd6081b76d6915d6b0c2273e2a33e3c3c695766317e5f6c14817032154932",
+    "evidence/virgl-standard-draw/verifier/authenticate.py": "ea207928b5e3273b5b97c99caf048c5392899107a2661a6e92b56e8f398f5bd8",
+    "evidence/virgl-standard-draw/verifier/authentication.json": "1c019e6c6e798cc71aa558128c0ae49442a9bde907ea162ecbc0be085e56c23b",
+    "evidence/virgl-standard-draw/verifier/boundary-integrity.json": "d78eccefce0201cbcb969f107bcf6799da63b3b7c8c567c21b65c324fed49ec3",
+    "evidence/virgl-standard-draw/verifier/calibration-refinement.json": "097ed3e5c4131c9f8ff650259389344690fe6639128ca8075ffa69763ca89f6c",
+    "evidence/virgl-standard-draw/verifier/carry-forward.json": "df3f9c4b2e6cbc3c0f6391dc102dd1f54dba0a96c92419709fa95bb7162c3989",
+    "evidence/virgl-standard-draw/verifier/coverage-audit.json": "7682446901381ab5ac07a4f4ecfd17802430ad9a388c05e2215419a71673800b",
+    "evidence/virgl-standard-draw/verifier/coverage_audit.py": "25c74abb275de6717fbff6d6450d9d06e18c630e07d99a3e33e8f06896227582",
+    "evidence/virgl-standard-draw/verifier/harness-corrections.json": "9624ccbdc5b57292c7f6c9ba7817682088d15fdc454c08b335bf8200f8ccaab7",
+    "evidence/virgl-standard-draw/verifier/manifest.json": "795ab0071efbc9ef0232420d979715512ceebb004941cc2322119d4dbd0c54f6",
+    "evidence/virgl-standard-draw/verifier/prediction-refinement.json": "9e4f73c1c366c2449c0f95c2500d6b09cbbe5fe1d130c51edf781e1085373562",
+    "evidence/virgl-standard-draw/verifier/prediction-results.json": "d88a23fa1f42e9413ec505be29777ef337bf3f1d05d31eec48cb402da0151704",
+    "evidence/virgl-standard-draw/verifier/predictions.json": "124619939c6b9543a07d04a2a133e19a2f491240d9992fb15dc15d32b67a1caf",
+    "evidence/virgl-standard-draw/verifier/promoted-harness.diff": "0e3b47128fb84874cb2424bca837b54c1b4d34e5f76840be59346e37c36ec079",
+    "evidence/virgl-standard-draw/verifier/recording.tar.gz": "a0da501deed127a1f9359c2ce511606efd15135a65d6e8338d84f97a5fb05905",
+    "evidence/virgl-standard-draw/verifier/records.json": "775ab1789688128b44ff3e6e3933509e67404d32eb39b4e290ed2ffb7f91b1ef",
+    "evidence/virgl-standard-draw/verifier/retained-routing-audit.json": "37ffb7b2415501109b1e72e6884149b025449a663a3a7f68c33acdd39e4e5010",
+    "evidence/virgl-standard-draw/verifier/seal.py": "46d9c6a1f32c1575cc56115006a5a3e030525b69d71904523f5d2ad78476998d",
+    "evidence/virgl-standard-draw/verifier/verdict.md": "efbb9d7f13b8056c7ba9e160350470096265f34a3b9976f0be32c4f8a9633a9d",
+    "evidence/virgl-standard-draw/verifier/worker-cold-audit.json": "eb560df589850190ca931afa0b388fe6a3e18e686a5d1723c8a5c782db5bd3a2",
+    "evidence/virgl-standard-draw/verifier/worker-cold-audit.jsonl": "6ec3a5d9e079e5fc127697427eebf5a428d91f23cd09eeccee05df65e6654720",
+    "evidence/virgl-standard-draw/verifier/worker-hot-audit.json": "b70de6369ce648685899a6dcfa8f6fee8c09b9d325f472e852ce3d27aea5639a",
+    "evidence/virgl-standard-draw/verifier/worker-hot-audit.jsonl": "7e0ecf5ac2a59d36e9d9d880864a2d0ac18d850eae7049f72161b984932abd68",
+    "evidence/virgl-standard-draw/verifier/worker-task.diff": "719794e3b05b0ead420d46fcaffcb592385705c6e6c78744164aa43726c7bab9",
+    "evidence/virgl-standard-draw/worker/manifest.json": "2a46c901bd571f8e231ce2d12005109f9a8b15f9c0f96defec059c504191d5fd",
+    "evidence/virgl-standard-draw/worker/recording.tar.gz": "4a6c5816f8979dbf7e6ed75abd05bedf53073becae307e6a0d970d9c0382270b",
+    "evidence/virgl-standard-draw/worker/records.json": "6613d8d1075325f89a0cca63c78b0a65b73c138f629780b786d21dcad03d77dd",
+    "evidence/virgl-standard-constant/verifier/audit_coverage.py": "3256e487d0c7872ddeab70ba41b0ceb38fda4c2a3b7aa0a91916a88786f9b64c",
+    "evidence/virgl-standard-constant/verifier/audit_originals.py": "9bc53b33956b5f023d855d673a60525af016035f911ceb9c0ad408f025d05f4f",
+    "evidence/virgl-standard-constant/verifier/authenticate.py": "14d33f039058c0dbf28124efe945b66c10a040d723e09dc89b453067c834a183",
+    "evidence/virgl-standard-constant/verifier/authentication.json": "45c96c9a04f5464e5117f909d62ddfcc87c3a5a84896920003794ecbb5b7961a",
+    "evidence/virgl-standard-constant/verifier/citations.json": "ad036c5bdae9bba101775687294c1726915dab6cd6b9cfee6e0e4fdd4cdac20b",
+    "evidence/virgl-standard-constant/verifier/coverage-audit.json": "e58cb7a11966c20568b82b2ca6344e86f89f092720e6d79b1775d15a2e81e1e8",
+    "evidence/virgl-standard-constant/verifier/manifest.json": "724dc99c0ec26dfe6de101560bb7452a320884a7d914659868d8fb42ca3de06d",
+    "evidence/virgl-standard-constant/verifier/original-audit.json": "52f1bb96713dc0157b4c706fc127fe3dbe9028ecbceab035a38da7aa635037cd",
+    "evidence/virgl-standard-constant/verifier/predictions.json": "0d221b9ae82d3b3edf2b1042e5b9e034b08be011cbbe8ac978c776844659c438",
+    "evidence/virgl-standard-constant/verifier/recording.tar.gz": "0e7c1966aba67f0276d371a2414f065c0396d65088310b253e54a6857911d231",
+    "evidence/virgl-standard-constant/verifier/records.json": "d6d452707e41890f5a1726f8b66d7a956dd6a5caa69fa22dcfd70a0e45a1c6ba",
+    "evidence/virgl-standard-constant/verifier/seal_critic.py": "2138f8953a866919447bd8ca6398fd95d54392b93d044b3a7fab1e6aeab304be",
+    "evidence/virgl-standard-constant/verifier/source-scope.json": "1fdbd9c597350817502bbc7f86041e07e31908f0290a5124068a5c1212ab3692",
+    "evidence/virgl-standard-constant/verifier/verdict.json": "45264a9b070fe72231e90378e81fa1bc7698473fb3a1142ef820aa55d12028c8",
+    "evidence/virgl-standard-constant/worker/manifest.json": "3029e840ffc4d864af8a4186fd320b3012e3005a42cefa7d283956c3ec49d796",
+    "evidence/virgl-standard-constant/worker/recording.tar.gz": "598acb64caacea419f099a5fc1bb25fe763c4ce8dfb3eb8c0a76126acea28aca",
+    "evidence/virgl-standard-constant/worker/records.json": "36217166ebf678e6dd701ec7ec66f042891963be7638dc2c77a920903694d65a",
+    "evidence/virgl-standard-topology/verifier/audit_coverage.py": "acd101cac83b23c33a78edb8f0a45806e469f47e957516422e8ba04c29cddd8d",
+    "evidence/virgl-standard-topology/verifier/audit_originals.mjs": "3c909ce56b76f60e7dc9f96c9473c9dd3116e39f5cbf1a37e030c9e7fa22047c",
+    "evidence/virgl-standard-topology/verifier/authenticate.py": "c45cd393289481ec44a01b7648c699207abd36eed7cd258f6922505b72681e30",
+    "evidence/virgl-standard-topology/verifier/authentication.json": "e9701a52d9cf5582798c6040c47888671d17d2997653ddad15730d8390df7a64",
+    "evidence/virgl-standard-topology/verifier/coverage-audit.json": "34796c8f10a18cbab4c6228c1a00832729b2d278b92342522a165c996d1703ee",
+    "evidence/virgl-standard-topology/verifier/manifest.json": "20cf75ad768e1b7eaa60ca744b0215dc337b88a488241ef11d23f8e891b92087",
+    "evidence/virgl-standard-topology/verifier/original-audit.json": "0e1beee2d1dc73f290f53e6e099a98f792b910f5d27f6438e2a70c6813e6b3cc",
+    "evidence/virgl-standard-topology/verifier/predictions.json": "f5fc51d22dad4a8c1069cb2e7f108630c341bbc54831fcbc55ce0ea317887f33",
+    "evidence/virgl-standard-topology/verifier/recording.tar.gz": "2a7eaca7ad6b474ca29dc7d4977ec97507d69ec5c9d9a61b26b89c930e6fdd24",
+    "evidence/virgl-standard-topology/verifier/records.json": "d5daecd5bd4d655978b0e7925d9e2e5cc08fb8fce46676d3a39291473a700c12",
+    "evidence/virgl-standard-topology/verifier/seal_critic.py": "816a280cea40d6055a8bee09d02780bd2c172a09a2e70fca586a27d3eca9c9aa",
+    "evidence/virgl-standard-topology/verifier/verdict.json": "2972e3de4a3dc08612e16a92c0b0154c0f09aaa9575815ff3a70f38aa28fb2cf",
+    "evidence/virgl-standard-topology/verifier/write_verdict.py": "8ed06410634985c902a79ea825c724be1149aa81df7889962a64f15acf619b43",
+    "evidence/virgl-standard-topology/worker/manifest.json": "ca65a70e68f5ff437e9795a737548c009ad8ad609c06d8342b184018f464d319",
+    "evidence/virgl-standard-topology/worker/recording.tar.gz": "c192468202cec8d341e6074cc241d19d699cde78d58e7361b2e09d58da1ba8cf",
+    "evidence/virgl-standard-topology/worker/records.json": "387bbf495d4e22e397636147874974a08c01f7ffe0dee6828be8ddd1e637c8af",
+    "evidence/virgl-standard-restart/verifier/authenticate.py": "ee50e3bf28f78f20f7f81c705dd5a817d1af7904508b4068b19cdabc4c45ac5a",
+    "evidence/virgl-standard-restart/verifier/authentication.json": "8e6ceeda7c21c82667d2f85a1c1c42700582270986c620e0968214f42f440ab1",
+    "evidence/virgl-standard-restart/verifier/boundary-audit.json": "0b2370e34ddcae68bde4b1955a16002fc45b1d2a5822a8f783ffb1b1470754d4",
+    "evidence/virgl-standard-restart/verifier/boundary_audit.py": "ca6b6f5846b310b229d50a22d472677e523be4b72fc091d63e278ed7f8885663",
+    "evidence/virgl-standard-restart/verifier/carry-forward.json": "57166916d7a96bfaf19101eacd1c84702a821b5b01044fe47e2f639216d77a51",
+    "evidence/virgl-standard-restart/verifier/citations.json": "3eeb6e0765dd0ab4ba8d999615361e3ba9c86117aeaa53c866fabfe84eb034f2",
+    "evidence/virgl-standard-restart/verifier/cold-physical-audit.json": "b2f7742ac032a6e0cc0b28189fc8bf1a4bcd084167b0831ca92a157c91912676",
+    "evidence/virgl-standard-restart/verifier/coverage-audit.json": "03ee0eda43939d109ce4097176b660c239a1773ba94a55f251aa3338fca186c0",
+    "evidence/virgl-standard-restart/verifier/coverage_audit.py": "596c96d08b8eefc9de6a2c80e401f0835ed2642255975f39fdeb7b035c862646",
+    "evidence/virgl-standard-restart/verifier/hot-physical-audit.json": "78299acd4c57f71bce1a94af72904db0898325eb549e9afc706ff97f2a8d3ca8",
+    "evidence/virgl-standard-restart/verifier/initial-harness.mjs": "62965ac667e842f5c2a454f009b3ade8053fa541a2d1421d0728dd6b992cdbd6",
+    "evidence/virgl-standard-restart/verifier/manifest.json": "e65470776a322bc808f755f3c3820f6cfbae0d90875bab29111ad2ef1c1fb0d4",
+    "evidence/virgl-standard-restart/verifier/predictions.json": "a08d42dca27adb305ed5750f52610622e8fd1439264fd030a66a8991802c56cd",
+    "evidence/virgl-standard-restart/verifier/recording.tar.gz": "eba0398049413c1cafebb0ce44c5122ead642406449689587f5ab968dd5fc7fd",
+    "evidence/virgl-standard-restart/verifier/records.json": "5e8254fed99a4de6beaa72e2fdeba756346c1f8ab83fbce4495cabd47c4999fe",
+    "evidence/virgl-standard-restart/verifier/sabotage-prediction-clarification.json": "34fc8d1de4aee8062f83d3b19d18ae11ab70e267f0625d8da1c9e87827302210",
+    "evidence/virgl-standard-restart/verifier/seal.py": "0840e31316acb9f51b2c89305e816862546f173c5de7a8730fdbf4909588afc4",
+    "evidence/virgl-standard-restart/verifier/verdict.json": "51374d95e7254266a389bc757d060e19e9ae2ee4d99219d097040f4dbd5e182c",
+    "evidence/virgl-standard-restart/verifier/write_verdict.py": "2aefe596e6ef953ad6d02d8b10fb10f7579652ee597e5da097796b510181f0bc",
+    "evidence/virgl-standard-restart/worker/manifest.json": "84c7d23d32581a9ec831f4a272d848e65fbd07901b63ba0821a9defd8ab3be5d",
+    "evidence/virgl-standard-restart/worker/recording.tar.gz": "bc713cc04fc443130c36a98abcd87586d4df52fad6ff2ffea16416b7ed618764",
+    "evidence/virgl-standard-restart/worker/records.json": "3508f8a5acec1ed9ee54ed54e3ab886f37d9ee4083fd3ad3b8c08f74fa4ce779",
+    "evidence/virgl-standard-assembly/verifier/audit-harness-correction.json": "c644eac9edb00eb00397b3c1b1b2a815795f26993c69b38b8963fd60320fee1a",
+    "evidence/virgl-standard-assembly/verifier/authenticate.py": "f7c17b01a0bb9550c7a76b71e98b223492b3cb3134f5be662431ab103d81d282",
+    "evidence/virgl-standard-assembly/verifier/authentication.json": "24262574bc0537016a5888396c3ab0a68b0e298d1dcea25d12e7d8da4c051e99",
+    "evidence/virgl-standard-assembly/verifier/checks.json": "df59399b1dd2dc1f1ca9936bc2ae33eda02d45533a2760929892df72412c269f",
+    "evidence/virgl-standard-assembly/verifier/cold-audit-drain-initial.json": "43b16184d6a9ee3236c62caed49b40b9b45e82f95c2e9bfdbb21c5269475e4b4",
+    "evidence/virgl-standard-assembly/verifier/cold-audit-drain-initial.log": "0404fa242ca159615aad4c4385610d1f8c6d2971930e0d56686a4e89d0a7cfb1",
+    "evidence/virgl-standard-assembly/verifier/cold-audit.json": "8f94efbad84c37966caea39d627b7efb7cea872ceb45b966807599e70cb42cf9",
+    "evidence/virgl-standard-assembly/verifier/cold-audit.log": "71bc844a2380a506a056a403e84f23a0384d93775c56384a32310cf2db32e2bb",
+    "evidence/virgl-standard-assembly/verifier/coverage-audit.json": "7a3c300e95d80c6874766feee35c89e67bf713f873889e8b45132f0d62ee0dd0",
+    "evidence/virgl-standard-assembly/verifier/coverage-audit.log": "2a573d2e8cf2e92fce1b751fa5cfb1dfe729d41171a9e5268512ae98b745a03e",
+    "evidence/virgl-standard-assembly/verifier/coverage_audit.py": "842f5c9be9dae4d404bf680f4493215fd595490ed7f67f00c86f90c1b7120a14",
+    "evidence/virgl-standard-assembly/verifier/fault-list-order-audit.json": "9189f5c47628298ab233d0174cb450388debe4a7b8a12d2c82cd5dfb296f884b",
+    "evidence/virgl-standard-assembly/verifier/fault-list-order.log": "02f9349e5acec5ccb1ecf8785c4cce2c1766be81fbff2143747e84419d015ef6",
+    "evidence/virgl-standard-assembly/verifier/fault-provoking-audit.json": "d36d128a4f46b6db47b6925ab8255d92ef64c0f7ac1dd2d847f50facee48ca53",
+    "evidence/virgl-standard-assembly/verifier/fault-provoking.log": "02f9349e5acec5ccb1ecf8785c4cce2c1766be81fbff2143747e84419d015ef6",
+    "evidence/virgl-standard-assembly/verifier/hot-audit-drain-initial.json": "f0a305eb3c2d802f0801fe257c6c0a5ddcc44ece32867c1c11f528d6310703cb",
+    "evidence/virgl-standard-assembly/verifier/hot-audit-drain-initial.log": "0404fa242ca159615aad4c4385610d1f8c6d2971930e0d56686a4e89d0a7cfb1",
+    "evidence/virgl-standard-assembly/verifier/hot-audit-initial.json": "4c6d209269a4a6322d023c1b053b7b29078b7e085bffc2dd9ca781867427c906",
+    "evidence/virgl-standard-assembly/verifier/hot-audit-initial.log": "912cd6861ffa37db066b830c4666e43349fa172d9299dbc5408e4cf59470070f",
+    "evidence/virgl-standard-assembly/verifier/hot-audit.json": "2bcfc620d5102c9f4620811c525cf1a0e630aa0309635880f65fefb7ecded213",
+    "evidence/virgl-standard-assembly/verifier/hot-audit.log": "71bc844a2380a506a056a403e84f23a0384d93775c56384a32310cf2db32e2bb",
+    "evidence/virgl-standard-assembly/verifier/independent-audit.json": "e427d6f1e4b9354c72c402354f06f7c54e1c6f9bbadd903b6a43f6a77e01a4d6",
+    "evidence/virgl-standard-assembly/verifier/independent-audit.log": "d570f39c4b77b1e09b6e76698787afb40bc4cdda86e8faa281e6f10544fd23fe",
+    "evidence/virgl-standard-assembly/verifier/independent.log": "be938db90209636f161bb21508192161b382f172a3fa4fde6abf9c32f2682aa3",
+    "evidence/virgl-standard-assembly/verifier/manifest.json": "5d5cbcb0120bfefd6f7eb710c146e0cf9dc205e7934fcaedebd47611b23f3759",
+    "evidence/virgl-standard-assembly/verifier/novel-plan.json": "c42b2864224bb562f531e5323fa483bcbcc08784226b418e6a1104031e8d1459",
+    "evidence/virgl-standard-assembly/verifier/policy.log": "b09df388647b89ea459126a41fd92d72d5e274ddb70ffe70a741ba88cb705734",
+    "evidence/virgl-standard-assembly/verifier/predictions.json": "c0a5b76c29f3a37a03a59fe7a0d14bae2f18168c2749e232315b771f2a68ed30",
+    "evidence/virgl-standard-assembly/verifier/queue.log": "47ef1a16e3b9a4110541eadb16675951a12cd45aef15b977ddf00cf54d18f125",
+    "evidence/virgl-standard-assembly/verifier/recording.tar.gz": "3cc7d41e5ab953fa134ed31d94379397a94b059d03b5b9eb3b69274cc95c3424",
+    "evidence/virgl-standard-assembly/verifier/records.json": "0fcd46f302ed397441ff0e5fb0d1af456a15077eea2d0b67426e35c77ad08c4d",
+    "evidence/virgl-standard-assembly/verifier/runtime.diff": "75acfa155e1980f403252bca0cf4e77e44edd8554a13c8469263b1e2206964fd",
+    "evidence/virgl-standard-assembly/verifier/seal.py": "323591776bb941f54949b719aa6f42fcd38304f5e212596046f504d7cddd67f9",
+    "evidence/virgl-standard-assembly/verifier/verdict.json": "4403d2a5cd1a0a0ba42227b22c2320f0b95ecf98e133fc3d18e30f2cb553b9ea",
+    "evidence/virgl-standard-assembly/worker/manifest.json": "3d7c34e9a0f4dd8ecc4ac10498282a5a44d2c01bf5ebb3fca784cd2aeccf1270",
+    "evidence/virgl-standard-assembly/worker/recording.tar.gz": "51ff1c7fa589480cdc626d715771364164aa3540086dbc9ea443986503d84177",
+    "evidence/virgl-standard-assembly/worker/records.json": "54312872d7bb67b194478a04e5e12039b49d582fa15b9e4c59c1ad766a5a0331",
+    "evidence/virgl-standard-points/verifier/authenticate.py": "07c448bb940e6233b9fd0f84a41c2f13568503451828f13e6f10500c03a28c0d",
+    "evidence/virgl-standard-points/verifier/authentication.json": "e66c53c29008dd4bcaa939c3fe5de5958d77934350149c7bd92ff60a26fcc1b1",
+    "evidence/virgl-standard-points/verifier/checks.json": "b7eef05e510c80cd57bb7e02b660b7afce260028295a170273ab46da2f274d87",
+    "evidence/virgl-standard-points/verifier/coverage-audit.json": "44c62237126754abf3359a4c17907992c3b57d6cbdbf74c8de0d0d344ecfdca8",
+    "evidence/virgl-standard-points/verifier/coverage_audit.py": "8509cd75f5222da376a23fba14609a8f4d16b4e2d2a871235ed8da5aaf8f6328",
+    "evidence/virgl-standard-points/verifier/independent-replay.json": "55925918eeaa02f4404369408312f9340161a4d969dbe5452afecac7b3fd87da",
+    "evidence/virgl-standard-points/verifier/manifest.json": "0b4b7aa34798257f11d92d39a4e2045eec688c30e109b0c1e2f492b471708f2d",
+    "evidence/virgl-standard-points/verifier/novel-replay.json": "f3c3cbda0dc8aa6dd91b11f7035e6460796dcd9197a2d29f1335f0c9d9993f2a",
+    "evidence/virgl-standard-points/verifier/predictions.json": "407c19e7db95500ae0b28924e02a659f16019b95984e8875730436f0816fad4a",
+    "evidence/virgl-standard-points/verifier/recording.tar.gz": "47527ba78396a7efb9d1f0986665d32c3bef08b64038c857d610549926d5a7cd",
+    "evidence/virgl-standard-points/verifier/records.json": "54d4c071a76a4188a5acac85f8046af3e727dd0f7d86c128ca5a233deda6833b",
+    "evidence/virgl-standard-points/verifier/seal.py": "4129afd12fcb312e27b4f5ed1a6fadc05e690c4ab4c0fe66d7fcfb656f89d34b",
+    "evidence/virgl-standard-points/verifier/verdict.json": "a5261826f16963b52d7d1fe67ed44edb830e595f77460280fde7a8223085e0f8",
+    "evidence/virgl-standard-points/worker/manifest.json": "3886cabf853ca767d17e4b6518cbabad24e197299e8dabea3fa089bef2b1ad98",
+    "evidence/virgl-standard-points/worker/recording.tar.gz": "797426c742a74686db9e4dbdf02135a58b8d30fec3433cd17a4f73e3bb78f846",
+    "evidence/virgl-standard-points/worker/records.json": "a0b3157348f6575e700686d6339c84a5c47b0b6ff236ccb6ff655481cba07ea4",
+    "evidence/virgl-standard-compact/verifier/audit.mjs": "b202e110a23861e99e3aee9c3e378ab0ef85ed9828ccae4826fcfb4745f1f06b",
+    "evidence/virgl-standard-compact/verifier/authenticate.py": "a420640da6bb07e92149120ab32fb28897c418442020c8769c300839e42212dd",
+    "evidence/virgl-standard-compact/verifier/authentication.json": "e8ae697acb03aa4777824cb5190077983ec818b5122966dd5e7ef8fddd1dbec4",
+    "evidence/virgl-standard-compact/verifier/citations.json": "3afd4638b57a189c98cb4a75ac7ade1ac02b4e3cc163e84f742d7d26a25ad9d6",
+    "evidence/virgl-standard-compact/verifier/coverage-audit.json": "7013572f4bf857679cfbca7bee283540586c1615b4d5c5340abe38d53168a344",
+    "evidence/virgl-standard-compact/verifier/coverage.py": "a518ed27f4fe788b665776fa8c086b0ac9f4c7dafd855e95a187b5d95ce0a44a",
+    "evidence/virgl-standard-compact/verifier/fresh-audit.json": "7a2fb804bff0ed18fdda8c5771ab010e23283e52e688b175dc3ff404fe52809f",
+    "evidence/virgl-standard-compact/verifier/fresh-audit.mjs": "3aff64b5742de919fa40356bcf40d920b9df86bd01e0cac767e175604ae2148d",
+    "evidence/virgl-standard-compact/verifier/manifest.json": "df40ff020c608ad2c16b8200d0e832cd9f92f2ce21cafa5a98cc4c1c2b3a74db",
+    "evidence/virgl-standard-compact/verifier/physical-audit.json": "7edd0a5129434a69249a230e10f5c923a72b3d49f0c41c8765929022654ba734",
+    "evidence/virgl-standard-compact/verifier/predictions.json": "85d488263ecec13ad1928a96d1d1452653a5f2a2bb1a1e6124fdf2e05ab74487",
+    "evidence/virgl-standard-compact/verifier/recording.tar.gz": "905bbffa7111083b74923a6d2d7df455aa9dc3a85487abf8d4df286b8c85a3f9",
+    "evidence/virgl-standard-compact/verifier/records.json": "ae175766fbbe6075521bfb86e8f0e39134f2297325d8a43466485c0e802068db",
+    "evidence/virgl-standard-compact/verifier/seal.py": "efe812c1ccde7fc33eac50769709131653a1a6138d1827ffa32d5ee0fe7d82df",
+    "evidence/virgl-standard-compact/verifier/verdict.json": "f05cb1d37a209b2f83d75b4a96f367f0f5c803405177c10ae7d15d74e5b9b690",
+    "evidence/virgl-standard-compact/worker/manifest.json": "6e87e6b96159e727884151c0351ff8b81fca5f30b311a4ee10e2b0da1404fc40",
+    "evidence/virgl-standard-compact/worker/recording.tar.gz": "fcf9e7c4490eda1974668d22a8d1f1f2d28fbea28a8d157b31675d56fba860c4",
+    "evidence/virgl-standard-compact/worker/records.json": "0b90efc9b0106526f4e54294377d4e01c7a1e464ee1daa4c24038385d8f2f480",
+    "evidence/virgl-standard-scalar/verifier/audit.mjs": "3702043d83ff80f76bc1d59e44671b3d930afbdd3b7cbbe068e6db40b52f864d",
+    "evidence/virgl-standard-scalar/verifier/authenticate.py": "c9a7f00f56c230eecca08afb0c9db93ea1a216dc6691439c8fe42b35921e4148",
+    "evidence/virgl-standard-scalar/verifier/authentication.json": "4e06d7d90211a04adc4d9ada39ea2a6ea4038eee864781be641a86712a0e6997",
+    "evidence/virgl-standard-scalar/verifier/citations.json": "26f6215b1685e687d07f65b032a9e600ac0dd87090c60cb89f76e5e5ba480746",
+    "evidence/virgl-standard-scalar/verifier/coverage-audit.json": "2ece049352a62659cd888e4efee6703229dc9d8b15445fc45581b379c261e1f3",
+    "evidence/virgl-standard-scalar/verifier/coverage.py": "6ad561b5f1b5b94ba43977289bfcf01accb3331540e5b0e9cf2196fe0327b9e6",
+    "evidence/virgl-standard-scalar/verifier/finish.py": "a1e45787ef26e25a3428024fa070290868198a341cf16fdd858450678f0f596d",
+    "evidence/virgl-standard-scalar/verifier/fresh-audit.json": "38cb06c3678196f58aeaa1c4793c056b69fd87fd6d7c758b60c5af33fd5f52da",
+    "evidence/virgl-standard-scalar/verifier/fresh-authenticate.py": "a6752dc7a7100efac9c220ba9a6fff7a664edcc37787590c519c1126dc87917b",
+    "evidence/virgl-standard-scalar/verifier/hunk-audit.json": "441209a8307a6875a99824f3d72bb31448e3b9c7f8a18bf43bddbe053819cef0",
+    "evidence/virgl-standard-scalar/verifier/manifest.json": "a2f9b4fb9b3566ad6b6a97786c4655dccf6b11518d52bd20da5791f06a92daed",
+    "evidence/virgl-standard-scalar/verifier/physical-audit.json": "4fd386bc3b85cdc4216567cfc5a55b6bd0580693df0863fd4ee5bea67385e066",
+    "evidence/virgl-standard-scalar/verifier/predictions.json": "a79505adea19c2bc7243e32884339257265cd83bfac18a8bb5b1245b988dc6fe",
+    "evidence/virgl-standard-scalar/verifier/recording.tar.gz": "bd65fa424aac4dd77166240f7f2dea90bcd0b06d5a537d8c74c322bbe9c87942",
+    "evidence/virgl-standard-scalar/verifier/records.json": "7a68ed058a40b31cadc85ff8cea838ee35b60d5fc593925137d75299a8a4704f",
+    "evidence/virgl-standard-scalar/verifier/seal.py": "2143ecb66b5abfdafbf38db384dfbd3728219859b29b4d0d552a9fd9509f0352",
+    "evidence/virgl-standard-scalar/verifier/verdict.json": "16122283a6b50b2d129177c14f00512a76699240d5ad851ea58533302b194ef5",
+    "evidence/virgl-standard-scalar/worker/manifest.json": "bbb348759aaaf734e27543c85532097b0fe8fb096c1cfbd2f74c29087b81bfce",
+    "evidence/virgl-standard-scalar/worker/recording.tar.gz": "99c79728c82a3c7ddef092b1faa10420192df535be67da662e1724b3aab596d2",
+    "evidence/virgl-standard-scalar/worker/records.json": "8f1c71adc3cce4358b72b8fa80c2bcf4c8e90d8c02c30cfde28c2967869c1097"
+  }
+}

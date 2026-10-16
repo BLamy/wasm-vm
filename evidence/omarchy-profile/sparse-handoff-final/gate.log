@@ -1,0 +1,138 @@
+cargo fmt --all --check
+node --check tools/verify/jit-sparse-handoff-benchmark.mjs
+cargo clippy -p wasm-vm-core --lib --test jit_sparse_handoff --example jit_handoff_probe --features trace -- -D warnings
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.14s
+cargo test -p wasm-vm-core --lib sparse_mask_stamp
+    Blocking waiting for file lock on build directory
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/.codex/worktrees/emulator-speed-next/wasm-vm/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.18s
+     Running unittests src/lib.rs (target/debug/deps/wasm_vm_core-a59d5c538677c031)
+
+running 1 test
+test hart::regs::tests::sparse_mask_stamp_wraps_once_and_empty_masks_do_not_mutate ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 381 filtered out; finished in 0.00s
+
+cargo test -p wasm-vm-core --test jit_sparse_handoff -- --nocapture
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running tests/jit_sparse_handoff.rs (target/debug/deps/jit_sparse_handoff-01374ea6a8da2c56)
+
+running 2 tests
+SPARSE_HANDOFF masks=10598 state_sha256=4dace58378d14297762d010665b9d3bf1ac0fd376e5565ccbe4f122f34e6d1f2
+test sparse_handoff_matches_full_array_oracle ... ok
+VERIFIER_HANDOFF cases=5952 state_sha256=091a8d5c6853b91d309bae75e9c8b6f7a88b6291f5fd9771e48127942f567d64
+test disjoint_rotated_masks_compose_without_losing_same_value_stamps ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.81s
+
+wasm-pack test --node crates/wasm --test jit_sparse_handoff
+[INFO]: 🎯  Checking for the Wasm target...
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.07s
+[INFO]: ⬇️  Installing wasm-bindgen...
+[WARN  wasm_pack::install] could not download pre-built `wasm-bindgen`: no prebuilt wasm-bindgen binaries are available for this platform: Unrecognized target!. Falling back to `cargo install`.
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running tests/jit_sparse_handoff.rs (/Users/blamy/.codex/worktrees/emulator-speed-next/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_sparse_handoff-d8ae1a4f9ed0f998.wasm)
+running 3 tests
+test core_jit_sparse_handoff::sparse_handoff_matches_full_array_oracle ... ok
+test core_jit_sparse_handoff::disjoint_rotated_masks_compose_without_losing_same_value_stamps ... ok
+test compiled_sparse_and_dense_resumes_match_recorded_interpreter ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 filtered out; finished in 1.12s
+
+wasm-pack test --node crates/wasm --test jit_browser_parity
+[INFO]: 🎯  Checking for the Wasm target...
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.06s
+[INFO]: ⬇️  Installing wasm-bindgen...
+[WARN  wasm_pack::install] could not download pre-built `wasm-bindgen`: no prebuilt wasm-bindgen binaries are available for this platform: Unrecognized target!. Falling back to `cargo install`.
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running tests/jit_browser_parity.rs (/Users/blamy/.codex/worktrees/emulator-speed-next/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_browser_parity-6cc578c42c9ecada.wasm)
+running 39 tests
+test browser_handles_remain_bounded_across_retranslation_churn ... ignored, long browser externref/eviction churn; run explicitly for E4-T33 evidence
+test unexpected_js_exception_fails_closed_without_commit_and_cleans_host ... ok
+test production_browser_budget_stays_below_measured_instance_cliff ... ok
+test page_write_invalidates_compiled_block ... ok
+test execute_miss_preserves_public_guard_and_guest_state ... ok
+test directed_eviction_through_the_single_ordered_path ... ok
+test compile_instantiate_and_cache_by_phys_pc ... ok
+test chain_edge_links_and_unlinks_on_invalidation ... ok
+test bulk_handoff_preserves_all_registers_and_virtual_pc_on_precise_fault ... ok
+test browser_run_chunk_scope_caps_all_internal_subruns_to_eight_installs ... ok
+test browser_machine_xie_enable_preempts_reused_inline_target ... ok
+test browser_jit_six_op_loop_is_exactly_budgeted ... ok
+test browser_jit_matches_interpreter_m_block ... ok
+test browser_jit_matches_interpreter_i_block ... ok
+test browser_jit_matches_interpreter_a_block ... ok
+test browser_inline_tlb_matches_interpreter_for_ram_loop ... ok
+test browser_inline_static_link_unlinks_and_rearms_after_target_reinstall ... ok
+test browser_inline_static_link_retains_across_interrupt_stack_bits ... ok
+test browser_inline_static_link_refuses_after_execute_permission_change ... ok
+test browser_inline_static_guard_rejects_remapped_target_page ... ok
+test browser_inline_static_cross_page_tail_refuses_before_target_entry ... ok
+test browser_inline_static_cross_batch_target_fault_is_precise ... ok
+test browser_inline_static_cross_batch_load_store_matches_interpreter ... ok
+test browser_inline_static_cross_batch_link_executes_and_misses_safely ... ok
+test browser_inline_static_code_store_cuts_link_before_target_reuse ... ok
+test browser_inline_static_chain_reaches_five_blocks_in_one_engine_call ... ok
+test browser_inline_raw_store_to_compiled_page_aborts_before_successor ... ok
+test browser_inline_raw_store_commits_reservation_and_code_log ... ok
+test browser_inline_dynamic_link_retains_across_interrupt_stack_bits_and_sum_invalidates ... ok
+test browser_inline_dynamic_jalr_links_switch_and_unlinks ... ok
+test browser_inline_direct_chain_reports_bounded_retirement ... ok
+test browser_inline_direct_chain_honors_depth_budget ... ok
+test browser_inline_data_store_stays_chained_but_atomic_successor_waits_for_commit ... ok
+test browser_inline_combined_interrupt_bits_plus_sum_invalidates_all_links ... ok
+test browser_handoff_refreshes_after_outer_growth_on_recorded_precise_fault ... ok
+test browser_handoff_refreshes_after_outer_growth_during_compiled_call ... ok
+test browser_dispatch_reuses_memory_views_without_subarray_allocation ... ok
+test browser_clean_dispatch_reuses_cached_outer_view_without_constructor ... ok
+test browser_batch_skips_unsupported_members_without_fragmenting_valid_blocks ... ok
+
+test result: ok. 38 passed; 0 failed; 1 ignored; 0 filtered out; finished in 5.78s
+
+wasm-pack test --node crates/wasm --test jit_fp_comparisons_verifier
+[INFO]: 🎯  Checking for the Wasm target...
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.05s
+[INFO]: ⬇️  Installing wasm-bindgen...
+[WARN  wasm_pack::install] could not download pre-built `wasm-bindgen`: no prebuilt wasm-bindgen binaries are available for this platform: Unrecognized target!. Falling back to `cargo install`.
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests/jit_fp_comparisons_verifier.rs (/Users/blamy/.codex/worktrees/emulator-speed-next/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_fp_comparisons_verifier-715f978417416b00.wasm)
+running 6 tests
+test verifier_shared_comparisons ... ok
+test verifier_shared_comparison_flags_survive_growth ... ok
+test verifier_same_module_comparison_successors ... ok
+test verifier_private_comparisons ... ok
+test verifier_private_comparison_flags_survive_growth ... ok
+test verifier_cross_module_comparison_successors ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 filtered out; finished in 5.86s
+

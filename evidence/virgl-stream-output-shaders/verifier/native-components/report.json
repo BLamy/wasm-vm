@@ -1,0 +1,136 @@
+{
+  "schema": "stream-output-shaders-independent-component-native-supplement-v1",
+  "status": "passed",
+  "frozenSource": "31bf0781db74fea94f51c9d6fa3217d16227bc99",
+  "sourceArchiveSha256": "18b5b7861fcc480bb5d8275c9e993568d82bc03617cf32769f82557f4352236c",
+  "binarySha256": "70d5362e451218d2d0f5337af2403fb1ed6427918bedf64f26d1776393801464",
+  "cases": 3,
+  "requestSha256": "509b04b81164052e1b7c193184d43063d1fceb16a50672d7b3467405f38ede55",
+  "responseSha256": "adb562bc18403bcfad71bea6912f2bf963843596ed74be816ef91c706214afc1",
+  "coverageSha256": "b7e86c8da8c48d6f579558ee0f3d46816496e0c5e4a59901e47a2d314ca5e24f",
+  "nativeBranches": {
+    "declaredComponentMismatch": [
+      39,
+      11,
+      39,
+      47,
+      1,
+      3,
+      0,
+      0,
+      4
+    ],
+    "reversedDisjointIntervals": [
+      46,
+      14,
+      46,
+      57,
+      0,
+      1,
+      0,
+      0,
+      4
+    ]
+  },
+  "originalTokens": [
+    [
+      [
+        3842,
+        1,
+        987168,
+        65536,
+        3092528,
+        0,
+        0,
+        2306096,
+        2031647,
+        5,
+        20979746,
+        243,
+        956301313,
+        20979746,
+        31795,
+        956301377,
+        802818
+      ]
+    ],
+    [],
+    [
+      [
+        3842,
+        1,
+        987168,
+        65536,
+        3092528,
+        0,
+        0,
+        3092528,
+        2031647,
+        5,
+        20979746,
+        243,
+        956301313,
+        20979746,
+        31987,
+        956301377,
+        802818
+      ]
+    ]
+  ],
+  "commands": [
+    {
+      "name": "build",
+      "command": [
+        "bash",
+        "renderer/virgl-shader/build.sh",
+        "standard-stream-output-sanitize"
+      ],
+      "cwd": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/d65-critic-component-source",
+      "exitCode": 0,
+      "stdoutSha256": "9984a58bdabe1a4f02a660f36e028df5528fb5a7b11feb54a4e83ad72bb6c3a8",
+      "stderrSha256": "9d919492d190e3af34e860126c96da760444f90fee69288fe78b210806f83bdb"
+    },
+    {
+      "name": "native",
+      "command": [
+        "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/d65-critic-component-source/renderer/virgl-shader/build/standard-stream-output-sanitize/standard-stream-output-test",
+        "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-stream-output-shaders/verifier/native-components/cases.bin"
+      ],
+      "cwd": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/d65-critic-component-source",
+      "exitCode": 0,
+      "stdoutSha256": "adb562bc18403bcfad71bea6912f2bf963843596ed74be816ef91c706214afc1",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "profile",
+      "command": [
+        "xcrun",
+        "llvm-profdata",
+        "merge",
+        "-sparse",
+        "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-stream-output-shaders/verifier/native-components/native.profraw",
+        "-o",
+        "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-stream-output-shaders/verifier/native-components/native.profdata"
+      ],
+      "cwd": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/d65-critic-component-source",
+      "exitCode": 0,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "coverage",
+      "command": [
+        "xcrun",
+        "llvm-cov",
+        "export",
+        "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/d65-critic-component-source/renderer/virgl-shader/build/standard-stream-output-sanitize/standard-stream-output-test",
+        "-instr-profile=/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-stream-output-shaders/verifier/native-components/native.profdata"
+      ],
+      "cwd": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/d65-critic-component-source",
+      "exitCode": 0,
+      "stdoutSha256": "b7e86c8da8c48d6f579558ee0f3d46816496e0c5e4a59901e47a2d314ca5e24f",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "noImplementationChanges": true
+}

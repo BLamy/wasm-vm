@@ -1,0 +1,88 @@
+{
+  "schema": "critic-c1-durable-recordings-v1",
+  "path": "evidence/omarchy-color-checkpoint/verifier/recordings.tar.xz",
+  "bytes": 2945192,
+  "sha256": "8f8e4a69273600875f6bbeca4106326ab70c6d719061f8a8958ab07bc80f857f",
+  "recordsSha256": "c0d82e7e58fca82fca3b14ccd966a936ba5906eebcb26f2701cfd90bf0e1b195",
+  "originalFiles": 126,
+  "originalBytes": 263681740,
+  "distinctPayloads": 86,
+  "curated": [
+    {
+      "path": "VERDICT.md",
+      "sha256": "4c80d75bd09acaeff26c2148e29eac7d9b159ddd57d0be672c55cd560a4ece25"
+    },
+    {
+      "path": "PREDICTIONS.md",
+      "sha256": "c14d18ee5c905596d8a09ea621d0846f9d3f70ea6841f47ca4b793ff6bf07b7f"
+    },
+    {
+      "path": "PREDICTIONS.sha256",
+      "sha256": "deb4877567e2bb8d2abde54637c790a62810433d1d0e5f285b16e43c6fe572cb"
+    },
+    {
+      "path": "prediction-origin.json",
+      "sha256": "1ee214c661d19c4c4de49a8b53bacfa9b9144dcb6865ae474cdc9c136e9f6d6d"
+    },
+    {
+      "path": "attack-predictions.json",
+      "sha256": "d430b79e356871bde4ef5f7aaa4c322e55a35ed55b8520582d52a1b9baef3fd2"
+    },
+    {
+      "path": "attack-predictions.sha256",
+      "sha256": "a827592af4955c1e7b547a00d7e00cec9e451db38454a9661b0f5dc502fa59e2"
+    },
+    {
+      "path": "worker-authentication.json",
+      "sha256": "c61db3ec2a4113001fe4f7116e5162202835d251a8511dce362b5bc150fc0732"
+    },
+    {
+      "path": "worker-byte-and-journal-audit.json",
+      "sha256": "e7bee3cd696d38c629217a324cb6657f1344b899ed15072a1d8c02109416b2d7"
+    },
+    {
+      "path": "worker-coverage-audit.json",
+      "sha256": "c11aa269ca0ba56cbd3873e902899512cda075125574a3645a8964dfba26adb1"
+    },
+    {
+      "path": "incremental-carry-audit.json",
+      "sha256": "65e90397e03baf009fd824f452ad2cb2355b8f9a05882ca1892f4ef863198f20"
+    },
+    {
+      "path": "attack-audit.json",
+      "sha256": "250e432e231c935e6e385f6f45fd1adfe96e8e828eb4b0806d3fd4a89e5a4b37"
+    },
+    {
+      "path": "worker-submission-pristine-audit.json",
+      "sha256": "c950706ec05dd146b3bd46e67c355bde895d762ed7b45e20564685cb622c8cf6"
+    },
+    {
+      "path": "audit-worker.py",
+      "sha256": "93cd07e634a011b68cec74813d3de07ed74597e39c04e831c74fe29a2c189b84"
+    },
+    {
+      "path": "run-scratch-attacks.py",
+      "sha256": "5b88ef99f9725c747b109c526aed32ced9bee543dd5108d2c392972e207a6c67"
+    },
+    {
+      "path": "audit-attacks.py",
+      "sha256": "274a1a85c1f8ad16663691f61b524e5efb85b2fc4c039a386cf371bbf94a4d82"
+    },
+    {
+      "path": "audit-submission.py",
+      "sha256": "dc3122ec31369107e54be77c8a66e9f7975c0899686126c924acad1d1f908295"
+    },
+    {
+      "path": "literal-pattern-hardware-receipt.json",
+      "sha256": "9fe5871af8d48c0ae023e0bc6022954f7b4d04358bcffbde26e74faf3e4363a1"
+    },
+    {
+      "path": "old-limit-sabotage-hardware-receipt.json",
+      "sha256": "0837a13c654f801f6fcf0bf529a7552700343579edb22f79d8e866b145e7e4e6"
+    },
+    {
+      "path": "scratch-attack-launch-summary.json",
+      "sha256": "b3110aea3428c95753f01ac2616832adbafcf58c6e3e1db82135373dedabead9"
+    }
+  ]
+}

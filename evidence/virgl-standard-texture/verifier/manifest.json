@@ -1,0 +1,119 @@
+{
+  "schema": "independent-original-texture-verifier-seal-v1",
+  "task": "E6-T11d23",
+  "status": "HELD",
+  "verdict": "verified",
+  "sourceHead": "c1d6643cdf9b7849a86b945b167f57585cccec8f",
+  "workerSubmission": "3595fdc062bf4649461d3aba05ddab3fe9ddbe56",
+  "unchangedProductHead": "bd1f39244d74a86a811a064eaa4e9a8989bcee8c",
+  "recurringGateHead": "1b13f9e0c176fee1d043e483bf705d8267f99cd6",
+  "predecessor": "ac2b1ed7a77e82afb21321d6dfdabe0b2da12d4c",
+  "records": 1467,
+  "uncompressedBytes": 164213544,
+  "archiveBytes": 11421287,
+  "archiveSha256": "4be6d67386d3b1dca314258e75fc2f5d1b0f45ca10162b51a33329f3f6a86fd4",
+  "recordIndexSha256": "267197ab2c329c4956aa909d5e69f3a90cf8ada2108bc2113e8771d336e1513a",
+  "workerArchiveSha256": "0e3941c6a1dc117bc27f4e319ca2f768357ec20e733841410d8ad74ac7b73e20",
+  "workerIndexSha256": "35159ac22757fd992efc8184a023207850eeef29286e7372f432a714ccbea792",
+  "dependencies": [
+    {
+      "role": "worker",
+      "members": 30256,
+      "unpackedBytes": 424408462,
+      "manifestSha256": "c164345e3b2f989ca2474846c7e563f382d8e1e2dbbbdfdcf02edefc0492e396",
+      "recordIndexSha256": "846ce5b67333ea0f3aac751d3c5aed448979ca2f17c2fd1cae569c73974166a7",
+      "archiveSha256": "06406c64da6f9117633df916eb307c466df9d73c3fcc13abec640f7efcb5ac4e"
+    },
+    {
+      "role": "verifier",
+      "members": 1824,
+      "unpackedBytes": 86399827,
+      "manifestSha256": "b53e5c6a568d008d2be9504cbdcdda5a26dee5f0c2de78a551dea948d59f6c01",
+      "recordIndexSha256": "98d712a443dac42b6e5a436ecc3997faec888f3bc35dec3a51eb1bc1b173f4cd",
+      "archiveSha256": "378a8544edca4ff2126ed67c38f1c065dde4f58463b0a2f3b22437ca0c6834df"
+    }
+  ],
+  "coldCarry": {
+    "head": "bd1f39244d74a86a811a064eaa4e9a8989bcee8c",
+    "reportSha256": "014be7a0dec5eb110f8055773986944404543e29cf2de833366f03f22088c92a",
+    "receiptSha256": "b61c7abeccd10b0a5de14a765c876bbb783d1db136667593481ad4a053c1c6f9",
+    "reason": "The single final exact-head scrubbed pristine clone is authenticated. Subsequent changes are only sealing/test/evidence/log/status/queue; no product/dependency/portability failure or runtime edit."
+  },
+  "predictionsSha256": "2fe26988e42b633648bb7969432680647d992007b550f36dad03f587b6a98a98",
+  "coverage": {
+    "exactMigrations": 39,
+    "fullNestedIntervals": 250,
+    "intervalCounts": {
+      "WAIVED": 30,
+      "EXECUTED": 220
+    },
+    "unprovenExecutableRegions": 0,
+    "fullChangedConditionalBranches": 53,
+    "conditionalBothDirectionsCovered": 49,
+    "conditionalWaivers": 4,
+    "conditionalWaiverAuthority": "audit/llvm-branches-classified.json: two retained dimensional checks, one defensive pinned query-bit consistency invariant, one forbidden vertex TXB stage label.",
+    "permittedZeroLabel": "Vertex TXB stage-label configuration in a covered fragment formatter; all original vertex TXB forms refuse at the actual guard before emission."
+  },
+  "pathMap": [
+    {
+      "original": "/tmp/d23-independent-verifier/native-replay",
+      "archive": "native-replay"
+    },
+    {
+      "original": "/tmp/d23-independent-verifier/source-snapshots",
+      "archive": "source-snapshots"
+    },
+    {
+      "original": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-standard-texture-critic-final",
+      "archive": "final"
+    },
+    {
+      "original": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-standard-texture-critic-covered",
+      "archive": "covered"
+    },
+    {
+      "original": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-standard-texture-critic-precheck",
+      "archive": "precheck"
+    },
+    {
+      "original": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-standard-texture-critic-precheck-corrected",
+      "archive": "precheck-corrected"
+    },
+    {
+      "original": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-standard-texture-critic-precheck-control",
+      "archive": "precheck-control"
+    }
+  ],
+  "suite": {
+    "command": "make verify-E6-T11d23-adversarial",
+    "sourceHead": "1b13f9e0c176fee1d043e483bf705d8267f99cd6",
+    "status": "passed",
+    "healthySeeds": [
+      826366247,
+      655894553
+    ],
+    "physicalControl": "Actual TEXTURE_BASE_LEVEL=1 completes consumed native fence37148 and fails original complete pixels unchanged.",
+    "focusedCounterHead": "c1d6643cdf9b7849a86b945b167f57585cccec8f",
+    "healthyFrames": 32,
+    "nativeStandaloneCompiles": 64,
+    "fullPixelControlFrames": 1,
+    "pixels": 2112,
+    "rawWords": 8448,
+    "nativeTexels": 2244
+  },
+  "stack": {
+    "originalWasmSha256": "41d5c79624d7799cb9339b3fb754bfb4b744ee959b70d8cc2daedfb0a1fb4ac8",
+    "memoryMinMaxPages": 256,
+    "fixedMemoryBytes": 16777216,
+    "stackBudgetBytes": 262144,
+    "actualObservedStagePeakBytes": 147040,
+    "actualObservedPairPeakBytes": 202736,
+    "method": "Scratch observer of all305 original stack-pointer writes;964 cases retain all exact response bytes. Repository/generated product untouched."
+  },
+  "precheck": "Three precheck directories preserve one critic-only unused dimensional block binding assumption and its correction. They carry no additional runtime claim; final/covered records are authority.",
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "resourceConsumerAuthority": false,
+  "productionDrawAuthority": false,
+  "scope": "Local original explicitly host-selected2D/FLOAT texture compiler and sorted owned integer query metadata."
+}

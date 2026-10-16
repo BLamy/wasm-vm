@@ -1,0 +1,13 @@
+{
+  "archive": {
+    "bytes": 192771,
+    "path": "recording.tar.gz",
+    "sha256": "0ce29d3b8e2f6911eeff48e6ecf3aa123b8b14981bea55473bb0b5282edd438a"
+  },
+  "excluded": "Extracted copies of already sealed archives are not duplicated.",
+  "records": 146,
+  "reportSha256": "3f1dc1b67f3cf371a239325a74ea8e37c249520dbe26aa885afa6c5699b9c8bb",
+  "schema": "virgl-workload-inventory-verifier-v1",
+  "sourceHead": "1b2cbf44ced51747d582afc5686334cc897fad1c",
+  "verdict": "needs-evidence"
+}

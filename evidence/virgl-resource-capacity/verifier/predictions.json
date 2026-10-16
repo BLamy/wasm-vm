@@ -1,0 +1,21 @@
+{
+  "schema": "resource-capacity-verifier-predictions-v1",
+  "task": "E6-T11d50",
+  "role": "fresh-adversarial-verifier",
+  "sourceHead": "64bf6ed58a27a52a20e1548166e12d09dd719031",
+  "submissionHead": "2678da14d56640c5a1a9f680fa4aae7129c71efe",
+  "predecessor": "e1066c663b64df546f9644f1a25508b4e71db636",
+  "writtenBeforeWorkerEvidenceInspection": true,
+  "predictions": [
+    {"id":"P1","prediction":"All 642 logical worker archive bodies match their index, every served source matches the frozen source and current implementation, and carried source/generated/D49 seal identities match the verified predecessor. The cold acceptance starts and ends clean at the frozen head with removed environment overrides."},
+    {"id":"P2","prediction":"Original compositor and glmark2 old-store controls refuse at event454 and event463, respectively, with 16 retained resources and no new backend allocation. The selected compositor consumes all 56 Mesa calls at peak24; kmscube consumes all eight calls. Selected glmark2 advances beyond event463 and refuses original format17/resource32/event3025 with 25 resources and unchanged native allocation count. The sole excluded bootstrap is resource2/create event10/target2/format2/flags1/iovCount0."},
+    {"id":"P3","prediction":"Each original admitted buffer charges its original width bytes (or zero GPU bytes for staging bind524288); each admitted original target2 image charges width*height*4 GPU bytes. Every original create/unref state matches independent counters, with no browser or GL errors and a completed hardware fence."},
+    {"id":"P4","prediction":"Selected resources default to64 with all other ceilings equal to RESOURCE_LIMITS. Counts0/1/16/63/64 admit exactly their ceilings; the next create returns limit-exceeded before allocate. Count65, negative, fractional, nonfinite, sparse, accessor and unknown overrides return invalid-input; accessors never run. Old non-count limit escalation and dimension/resource/aggregate budget violations still refuse."},
+    {"id":"P5","prediction":"Every one of the15 authentic predecessor public factories produces identical current/default/admission/error/cleanup values, remains16, and refuses its17th create and resources17 override."},
+    {"id":"P6","prediction":"Each fresh lifetime seed uploads64 distinct actual GPU buffers and reads every original byte after a completed native fence. Allocation65 and creates after all64 unrefs fail before allocate because leases/read holds retain storage. Releasing the lease while its asynchronous read remains alive does not recover a slot. Releasing the read recovers exactly one slot; reuse has a distinct generation; stale tokens cannot target it. Outstanding read disposal/cancel returns every budget to zero."},
+    {"id":"P7","prediction":"An actual injected backend allocation failure returns backend-error with the full inspected store state unchanged. A novel schedule reusing an ID while the original generation remains leased rejects it without allocate; after final release only one replacement is admitted, and stale leases from the old store or generation cannot resolve/read/release the replacement. Failure does not consume that replacement's identity or budget."},
+    {"id":"P8","prediction":"Count sabotage first completes a clean64-buffer baseline, then physically allocates65 and fails the exact count oracle. Byte sabotage has a clean64-buffer baseline, changes only resource1032/offset17 by XOR128, completes a distinct fence, and fails the independently derived native byte oracle."},
+    {"id":"P9","prediction":"The finest V8 range containing each operand in all nine changed runtime lines has a positive execution counter in at least one clean recording. The five comment/whitespace/delimiter lines introduce no runtime operands. The inherited transfer endpoint serves the exact qualified unorm-depth-images.mjs body, with decoder/resource tests and both original-input fault controls passing their expected outcomes."}
+  ],
+  "freshSeeds": ["0x73a9e20d", "0xb48f1637", "0x0c62d5ab"]
+}

@@ -1,0 +1,973 @@
+{
+  "schema": "precise-word-receipt-v1",
+  "task": "E6-T12f4",
+  "status": "passed",
+  "gitHead": "09afcaa29bda5206b98fb14e019f41395d669fec",
+  "guestExecution": false,
+  "currentGuest3dAdvertisement": false,
+  "nativeStats": {
+    "originals": 19,
+    "acceptedOriginals": 12,
+    "cases": 4428,
+    "pairs": 511,
+    "calls": 1404199,
+    "standaloneRecoveries": 707890,
+    "pairRecoveries": 683480,
+    "truncations": 3128,
+    "hostileCases": 324,
+    "mutations": 4096,
+    "allocationFaults": 229,
+    "upstreamAllocationFaults": 20,
+    "maxSingleResultBytes": 63369,
+    "maxPairResultBytes": 109235
+  },
+  "wasm": {
+    "schema": "wasm-vm-precise-word-wasm-v1",
+    "status": "passed",
+    "counts": {
+      "calls": 24556,
+      "originals": 19,
+      "singles": 4428,
+      "pairs": 511,
+      "recoverySingles": 9918,
+      "recoveryPairs": 9576,
+      "stress": 64,
+      "pressure": 31
+    },
+    "memory": {
+      "initialBytes": 16777216,
+      "finalBytes": 16777216,
+      "bufferIdentityStable": true
+    },
+    "maxima": {
+      "singleJSBytes": 60377,
+      "pairJSBytes": 104384,
+      "glslBytes": 58201
+    },
+    "allocationPressure": {
+      "targets": 3,
+      "calls": 31,
+      "errorCodes": [
+        "translation-error",
+        "unsupported-feature"
+      ]
+    },
+    "sources": [
+      {
+        "path": "renderer/virgl-shader/index.mjs",
+        "bytes": 4404,
+        "sha256": "3bde28f884a70558ca052cc51c75695a55b3de867b878e21b237cf41567a5a1e"
+      },
+      {
+        "path": "renderer/virgl-shader/bridge.c",
+        "bytes": 74232,
+        "sha256": "0c72b97c7e75684475d2612bc48aefae3ef07ab31bd34b7048fd51a1f105c3ae"
+      },
+      {
+        "path": "renderer/virgl-shader/raw_bits.c",
+        "bytes": 30376,
+        "sha256": "2b4ad3a198810848572f00fab5f28b9eddd8eaee25daaaae5ce1cc55efb60608"
+      },
+      {
+        "path": "renderer/virgl-shader/raw_bits.h",
+        "bytes": 7666,
+        "sha256": "1ae2d43437811c98e6344c5f78dae90de707866e76b1e63f5985c2fb8954ed0d"
+      },
+      {
+        "path": "renderer/virgl-shader/bridge.h",
+        "bytes": 1061,
+        "sha256": "c3829828586db64f5c628210404c329d3805b814b9fad63c8aa619fe2e6d0105"
+      },
+      {
+        "path": "renderer/virgl-shader/checked_upstream.c",
+        "bytes": 3266,
+        "sha256": "a1d60b4e9b214466f2fec6baabde855f78024bee68199aef524ef84f1f7f772b"
+      },
+      {
+        "path": "renderer/virgl-shader/checked_upstream.h",
+        "bytes": 304,
+        "sha256": "bdd21214e97b6e9a63516e2b96e4753f8aaaa9f69ad48dee1d133129872f8aac"
+      },
+      {
+        "path": "renderer/virgl-shader/build.sh",
+        "bytes": 13000,
+        "sha256": "f92168d50111fc683f653b5714d128673c2be38678752ca2e946f543abc63e29"
+      },
+      {
+        "path": "renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+        "bytes": 9285,
+        "sha256": "45dccef6ff61f9f01a63b86b40eb6c621fa442e39cbf04bbbb79446e5b372e65"
+      },
+      {
+        "path": "renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+        "bytes": 304555,
+        "sha256": "35f654c4bc18d39c09187099bf3c0af493514b66da96a4cac5ef6d529e941227"
+      },
+      {
+        "path": "tools/virgl-precise-word/wasm.mjs",
+        "bytes": 11196,
+        "sha256": "b87d146645ba6a1f3d59230891a7b960143a39bb154b6471c101a704d244bd40"
+      },
+      {
+        "path": "tools/virgl-precise-word/wasm_receipt.py",
+        "bytes": 11758,
+        "sha256": "ec97fc42b5171dc0cce48e522794c9c1a92cdac3a940fce9f8b5605e929d24e0"
+      },
+      {
+        "path": "evidence/virgl-corpus/captures/kmscube/shaders/003270109615e05345631cf8a2273ebc1bf3d86c7590e05ddc8424c441db7605.tgsi",
+        "bytes": 389,
+        "sha256": "003270109615e05345631cf8a2273ebc1bf3d86c7590e05ddc8424c441db7605"
+      },
+      {
+        "path": "evidence/virgl-corpus/captures/glmark2-es2/shaders/0ec6a7a8741638e5a62cbf4a1f6896dd91bb2d60182e8e01f60866adf40fbed6.tgsi",
+        "bytes": 83,
+        "sha256": "0ec6a7a8741638e5a62cbf4a1f6896dd91bb2d60182e8e01f60866adf40fbed6"
+      },
+      {
+        "path": "evidence/virgl-corpus/captures/glmark2-es2/shaders/12f6d594f42e244d2d35c6a0b51cee809d219cc0729d9cee697b40725139f373.tgsi",
+        "bytes": 969,
+        "sha256": "12f6d594f42e244d2d35c6a0b51cee809d219cc0729d9cee697b40725139f373"
+      },
+      {
+        "path": "evidence/virgl-corpus/captures/glmark2-es2/shaders/23b5f8a83172e68c9365028d2f3fedbb4d0a12d3b02a39b694388e89304910d3.tgsi",
+        "bytes": 150,
+        "sha256": "23b5f8a83172e68c9365028d2f3fedbb4d0a12d3b02a39b694388e89304910d3"
+      },
+      {
+        "path": "evidence/virgl-corpus/captures/glmark2-es2/shaders/3f78a90d838490257666b66477683b24c6ff110c6469504ecba701815312a572.tgsi",
+        "bytes": 466,
+        "sha256": "3f78a90d838490257666b66477683b24c6ff110c6469504ecba701815312a572"
+      },
+      {
+        "path": "evidence/virgl-corpus/captures/glmark2-es2/shaders/403b0529c632d3d2ffe4584ede810f5745e8b76ca2ab4f575e1073d8f29fcf0c.tgsi",
+        "bytes": 419,
+        "sha256": "403b0529c632d3d2ffe4584ede810f5745e8b76ca2ab4f575e1073d8f29fcf0c"
+      },
+      {
+        "path": "evidence/virgl-corpus/captures/glmark2-es2/shaders/5a243fc7a19476612a000906c6060a6c1883fee7f2d87d7137d508269a0cd998.tgsi",
+        "bytes": 5593,
+        "sha256": "5a243fc7a19476612a000906c6060a6c1883fee7f2d87d7137d508269a0cd998"
+      },
+      {
+        "path": "evidence/virgl-corpus/captures/glmark2-es2/shaders/616a643d02f33f502b08d9bd6368de93ba1bd9c7e6bacdee0e0aa946a2c3e4ad.tgsi",
+        "bytes": 3881,
+        "sha256": "616a643d02f33f502b08d9bd6368de93ba1bd9c7e6bacdee0e0aa946a2c3e4ad"
+      },
+      {
+        "path": "evidence/virgl-corpus/captures/glmark2-es2/shaders/67c701faf0ee06bcefdc246cd8b73f7b8d6278cc2403aa99c18d1912fbb9a0aa.tgsi",
+        "bytes": 102,
+        "sha256": "67c701faf0ee06bcefdc246cd8b73f7b8d6278cc2403aa99c18d1912fbb9a0aa"
+      },
+      {
+        "path": "evidence/virgl-corpus/captures/textured-scene/shaders/80d6db6a6f10b93770698cfdd47232fed0fca94f4cb07ba7381bb38563de9808.tgsi",
+        "bytes": 261,
+        "sha256": "80d6db6a6f10b93770698cfdd47232fed0fca94f4cb07ba7381bb38563de9808"
+      },
+      {
+        "path": "evidence/virgl-corpus/captures/glmark2-es2/shaders/9819066def2df1cd09f36f142fd2bc6b659395aa21bea6db7f58fbcc122c7c83.tgsi",
+        "bytes": 389,
+        "sha256": "9819066def2df1cd09f36f142fd2bc6b659395aa21bea6db7f58fbcc122c7c83"
+      },
+      {
+        "path": "evidence/virgl-corpus/captures/glmark2-es2/shaders/a6143f113a7d0a3ce6118a518c12bc7c537bebfdfa9a0af6580496709188379e.tgsi",
+        "bytes": 8800,
+        "sha256": "a6143f113a7d0a3ce6118a518c12bc7c537bebfdfa9a0af6580496709188379e"
+      },
+      {
+        "path": "evidence/virgl-corpus/captures/glmark2-es2/shaders/b28f0dbcbc79d9931938c29cb77b62a42ba8e95d65bbd1a720d9aecd3f8ec030.tgsi",
+        "bytes": 228,
+        "sha256": "b28f0dbcbc79d9931938c29cb77b62a42ba8e95d65bbd1a720d9aecd3f8ec030"
+      },
+      {
+        "path": "evidence/virgl-corpus/captures/glmark2-es2/shaders/c00de140c2e9b128f07f7fba74bd60f3257b832d3251ae52a044bf8e68d90518.tgsi",
+        "bytes": 124,
+        "sha256": "c00de140c2e9b128f07f7fba74bd60f3257b832d3251ae52a044bf8e68d90518"
+      },
+      {
+        "path": "evidence/virgl-corpus/captures/kmscube/shaders/d4f702f7a846a93b6f767bc73ed99a9c0f4fbe5fcb55662bca99e3f07f47d450.tgsi",
+        "bytes": 1396,
+        "sha256": "d4f702f7a846a93b6f767bc73ed99a9c0f4fbe5fcb55662bca99e3f07f47d450"
+      },
+      {
+        "path": "evidence/virgl-corpus/captures/glmark2-es2/shaders/e911b393909ab041c24f608b41497143eba765cc8d7db1206a47896934d43c51.tgsi",
+        "bytes": 6783,
+        "sha256": "e911b393909ab041c24f608b41497143eba765cc8d7db1206a47896934d43c51"
+      },
+      {
+        "path": "evidence/virgl-corpus/captures/textured-scene/shaders/e96102a3202dde8b0b05ffa142eb6064c5fe916b673bbf1d31464bcbac56fb33.tgsi",
+        "bytes": 256,
+        "sha256": "e96102a3202dde8b0b05ffa142eb6064c5fe916b673bbf1d31464bcbac56fb33"
+      },
+      {
+        "path": "evidence/virgl-corpus/captures/glmark2-es2/shaders/e9bc6d3b61e3cda2c215ac8b44a432e2eb1bd4891cfa921c6f914fd3fd86b551.tgsi",
+        "bytes": 351,
+        "sha256": "e9bc6d3b61e3cda2c215ac8b44a432e2eb1bd4891cfa921c6f914fd3fd86b551"
+      },
+      {
+        "path": "evidence/virgl-corpus/captures/glmark2-es2/shaders/ef095954837a421fd04071ffd1d99e70f56b258614d47a40fc9148238d6d3c88.tgsi",
+        "bytes": 162,
+        "sha256": "ef095954837a421fd04071ffd1d99e70f56b258614d47a40fc9148238d6d3c88"
+      }
+    ]
+  },
+  "gpu": {
+    "status": "passed",
+    "draws": 830,
+    "words": 3320,
+    "pixels": 3399680,
+    "mismatches": []
+  },
+  "sabotage": {
+    "max-source-order": {
+      "status": "refuted-source-fault",
+      "draws": 0,
+      "words": 0,
+      "pixels": 0,
+      "mismatches": [
+        {
+          "kernel": "word-max-direct-vertex",
+          "vector": "signed-zero-ties",
+          "failure": {
+            "x": 62,
+            "y": 0,
+            "expectedPixel": [
+              255,
+              0,
+              0,
+              255
+            ],
+            "observedPixel": [
+              0,
+              255,
+              0,
+              255
+            ]
+          }
+        }
+      ]
+    },
+    "zero-equality": {
+      "status": "refuted-source-fault",
+      "draws": 157,
+      "words": 628,
+      "pixels": 643072,
+      "mismatches": [
+        {
+          "kernel": "word-fseq-direct-vertex",
+          "vector": "signed-zero-ties",
+          "failure": {
+            "x": 0,
+            "y": 0,
+            "expectedPixel": [
+              255,
+              255,
+              255,
+              255
+            ],
+            "observedPixel": [
+              0,
+              0,
+              255,
+              255
+            ]
+          }
+        }
+      ]
+    },
+    "ne-unordered": {
+      "status": "refuted-source-fault",
+      "draws": 230,
+      "words": 920,
+      "pixels": 942080,
+      "mismatches": [
+        {
+          "kernel": "word-fsne-direct-vertex",
+          "vector": "source0-unordered",
+          "failure": {
+            "x": 0,
+            "y": 0,
+            "expectedPixel": [
+              255,
+              255,
+              255,
+              255
+            ],
+            "observedPixel": [
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "retained": {
+    "equality": {
+      "status": "passed",
+      "checkedWords": 640,
+      "checkedPixels": null
+    },
+    "selected": {
+      "status": "passed",
+      "checkedWords": 1216,
+      "checkedPixels": 1245184
+    },
+    "radial": {
+      "status": "passed",
+      "checkedWords": null,
+      "checkedPixels": 565248
+    }
+  },
+  "semantic": {
+    "path": "tokens.jsonl",
+    "bytes": 602,
+    "sha256": "d182d2523fc925ecb08526914ad48fc6ed90b1daa2dd77b385ad891898c550f8"
+  },
+  "domain": {
+    "profiles": 20,
+    "forgeries": 334,
+    "combined": 24
+  },
+  "migrationInventory": [
+    {
+      "kind": "single",
+      "name": "component::precise-MAX-vertex",
+      "inputSha256": "df2dd30f4160625562283cf9093f69ebb3f1d47224951537052d4167809a28c9",
+      "before": {
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        "resultBytes": 130,
+        "resultSha256": "99b95a7c00a9d1a6fc5eb7b38444565d23e95ceaff4d25bda0fd0c043c2abc1e"
+      }
+    },
+    {
+      "kind": "single",
+      "name": "component::precise-MAX-fragment",
+      "inputSha256": "6b3031d5a9ebaa6cc3d2ac34bb2e85d8b368316acd0f4e1dc270bdca4bd6b571",
+      "before": {
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        "resultBytes": 130,
+        "resultSha256": "99b95a7c00a9d1a6fc5eb7b38444565d23e95ceaff4d25bda0fd0c043c2abc1e"
+      }
+    },
+    {
+      "kind": "rejection",
+      "name": "structured::reject-precise-vertex",
+      "inputSha256": "b5be35f8d8ff23fdb30591af419ecf2524e17806b0c91dedc7b41e2c96997a4d",
+      "before": {
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        "resultBytes": 130,
+        "resultSha256": "99b95a7c00a9d1a6fc5eb7b38444565d23e95ceaff4d25bda0fd0c043c2abc1e"
+      }
+    },
+    {
+      "kind": "single",
+      "name": "structured::retry-later-precise-False-vertex",
+      "inputSha256": "67e8301c53ab712638c9ca717fdd12e646afb40bc662ace78acb29b226da6e02",
+      "before": {
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        "resultBytes": 130,
+        "resultSha256": "99b95a7c00a9d1a6fc5eb7b38444565d23e95ceaff4d25bda0fd0c043c2abc1e"
+      }
+    },
+    {
+      "kind": "single",
+      "name": "structured::retry-later-precise-True-vertex",
+      "inputSha256": "8065d9ac7561ed5588db344ddd62d5c97b5d538925dbe4f2b567d7220703f4fb",
+      "before": {
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        "resultBytes": 130,
+        "resultSha256": "99b95a7c00a9d1a6fc5eb7b38444565d23e95ceaff4d25bda0fd0c043c2abc1e"
+      }
+    },
+    {
+      "kind": "rejection",
+      "name": "structured::reject-precise-fragment",
+      "inputSha256": "d939e8cac0ae52256ad4a68ae377a0cd1a95aa9e2f720c42c11452ecae6d7c2b",
+      "before": {
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        "resultBytes": 130,
+        "resultSha256": "99b95a7c00a9d1a6fc5eb7b38444565d23e95ceaff4d25bda0fd0c043c2abc1e"
+      }
+    },
+    {
+      "kind": "single",
+      "name": "structured::retry-later-precise-False-fragment",
+      "inputSha256": "4bc9b8b144c3ac72d9974258bb5f7f62f06c77cd2a048e4aad8e0cf73b8b1afb",
+      "before": {
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        "resultBytes": 130,
+        "resultSha256": "99b95a7c00a9d1a6fc5eb7b38444565d23e95ceaff4d25bda0fd0c043c2abc1e"
+      }
+    },
+    {
+      "kind": "single",
+      "name": "structured::retry-later-precise-True-fragment",
+      "inputSha256": "dbdf71a0b654a28cb57b07a4c75aca46accf05b5e886b6780ab60344be8bb9ff",
+      "before": {
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        "resultBytes": 130,
+        "resultSha256": "99b95a7c00a9d1a6fc5eb7b38444565d23e95ceaff4d25bda0fd0c043c2abc1e"
+      }
+    },
+    {
+      "kind": "single",
+      "name": "indirect::reject-suffix-precise-vertex",
+      "inputSha256": "b9c3570f96cd919b28849b84b27f20b7850ab987907e8197dfc949f29d278daf",
+      "before": {
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        "resultBytes": 130,
+        "resultSha256": "99b95a7c00a9d1a6fc5eb7b38444565d23e95ceaff4d25bda0fd0c043c2abc1e"
+      }
+    },
+    {
+      "kind": "single",
+      "name": "indirect::reject-suffix-precise-fragment",
+      "inputSha256": "b99a30286fc1b51e02a9b9de5ebac7ad855dbe03dacebc9307ddac2f17810e26",
+      "before": {
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        "resultBytes": 130,
+        "resultSha256": "99b95a7c00a9d1a6fc5eb7b38444565d23e95ceaff4d25bda0fd0c043c2abc1e"
+      }
+    },
+    {
+      "kind": "single",
+      "name": "loop::reject-precise-suffix-vertex",
+      "inputSha256": "3a9560f62b159edfb0e43bb0a7b4424f3a896377849377e3faa41ce6a15dd453",
+      "before": {
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        "resultBytes": 130,
+        "resultSha256": "99b95a7c00a9d1a6fc5eb7b38444565d23e95ceaff4d25bda0fd0c043c2abc1e"
+      }
+    },
+    {
+      "kind": "single",
+      "name": "loop::reject-precise-suffix-fragment",
+      "inputSha256": "12f0055d0084f7f02b024da6b1a23137dc732d64caf266cb14ec0bc9592c72d1",
+      "before": {
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        "resultBytes": 130,
+        "resultSha256": "99b95a7c00a9d1a6fc5eb7b38444565d23e95ceaff4d25bda0fd0c043c2abc1e"
+      }
+    },
+    {
+      "kind": "single",
+      "name": "equality::reject-FSEQ_PRECISE-vertex",
+      "inputSha256": "3aa5aed2601f5c276bed196fcd9db785430aa8d3d4d31e8e2c7cf21f0ec8275a",
+      "before": {
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        "resultBytes": 130,
+        "resultSha256": "99b95a7c00a9d1a6fc5eb7b38444565d23e95ceaff4d25bda0fd0c043c2abc1e"
+      }
+    },
+    {
+      "kind": "single",
+      "name": "equality::reject-FSNE_PRECISE-vertex",
+      "inputSha256": "2024c22c5aafa4d10a146807c28c00eb0a1eeafa5355df191059fb91279b8ed9",
+      "before": {
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        "resultBytes": 130,
+        "resultSha256": "99b95a7c00a9d1a6fc5eb7b38444565d23e95ceaff4d25bda0fd0c043c2abc1e"
+      }
+    },
+    {
+      "kind": "single",
+      "name": "equality::reject-FSEQ_PRECISE-fragment",
+      "inputSha256": "fb6940ccf20057ae844a4f6bfb9b33b0ac9f1fa2e934883870e367034c045a0f",
+      "before": {
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        "resultBytes": 130,
+        "resultSha256": "99b95a7c00a9d1a6fc5eb7b38444565d23e95ceaff4d25bda0fd0c043c2abc1e"
+      }
+    },
+    {
+      "kind": "single",
+      "name": "equality::reject-FSNE_PRECISE-fragment",
+      "inputSha256": "32215fde17de315dae7b1ea2a57e104c16575da26c0bd2d1bf383ecba4cdef3e",
+      "before": {
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        "resultBytes": 130,
+        "resultSha256": "99b95a7c00a9d1a6fc5eb7b38444565d23e95ceaff4d25bda0fd0c043c2abc1e"
+      }
+    },
+    {
+      "kind": "single",
+      "name": "selected::reject-a-precise-vertex",
+      "inputSha256": "7439d5244e8e034c5ccc26ff8534627e8eedbfc85c772975cabb7f9900a962c1",
+      "before": {
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        "resultBytes": 130,
+        "resultSha256": "99b95a7c00a9d1a6fc5eb7b38444565d23e95ceaff4d25bda0fd0c043c2abc1e"
+      }
+    },
+    {
+      "kind": "single",
+      "name": "selected::reject-b-precise-vertex",
+      "inputSha256": "07cf44c5d8fc5183abdee83cc80deb80c0254c2b75b20abf72420570b01e1859",
+      "before": {
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        "resultBytes": 130,
+        "resultSha256": "99b95a7c00a9d1a6fc5eb7b38444565d23e95ceaff4d25bda0fd0c043c2abc1e"
+      }
+    },
+    {
+      "kind": "single",
+      "name": "selected::reject-a-precise-fragment",
+      "inputSha256": "a5ea4e3c3c0d4571b0aea3bdb5435bf892b4c72cbf9e0af0f16e77ab28a7a620",
+      "before": {
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        "resultBytes": 130,
+        "resultSha256": "99b95a7c00a9d1a6fc5eb7b38444565d23e95ceaff4d25bda0fd0c043c2abc1e"
+      }
+    },
+    {
+      "kind": "single",
+      "name": "selected::reject-b-precise-fragment",
+      "inputSha256": "d8535ebd1abb35243c8e7f84a520602e769ec2cbf6dc38b52c6ac454e09d4341",
+      "before": {
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        "resultBytes": 130,
+        "resultSha256": "99b95a7c00a9d1a6fc5eb7b38444565d23e95ceaff4d25bda0fd0c043c2abc1e"
+      }
+    },
+    {
+      "kind": "single",
+      "name": "radial::reject-precise-gated-vertex",
+      "inputSha256": "759c43ff72137f10bf8190c5e0f956443f34985911d28fcf3f5c3bc591952636",
+      "before": {
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        "resultBytes": 130,
+        "resultSha256": "99b95a7c00a9d1a6fc5eb7b38444565d23e95ceaff4d25bda0fd0c043c2abc1e"
+      }
+    },
+    {
+      "kind": "single",
+      "name": "radial::reject-precise-gated-fragment",
+      "inputSha256": "632bbdc9216d56e1455510d1b11bd7807036056ea67bcc394f7b76dd56a6ed17",
+      "before": {
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        "resultBytes": 130,
+        "resultSha256": "99b95a7c00a9d1a6fc5eb7b38444565d23e95ceaff4d25bda0fd0c043c2abc1e"
+      }
+    },
+    {
+      "kind": "pair",
+      "name": "radial::reject-precise-gated-vertex-pair",
+      "vertexSha256": "759c43ff72137f10bf8190c5e0f956443f34985911d28fcf3f5c3bc591952636",
+      "fragmentSha256": "b14db265362281743a707c90962fc98082bb8bdd6e53c987a6bfadfcc730d06f",
+      "before": {
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        "resultBytes": 130,
+        "resultSha256": "99b95a7c00a9d1a6fc5eb7b38444565d23e95ceaff4d25bda0fd0c043c2abc1e"
+      }
+    },
+    {
+      "kind": "pair",
+      "name": "radial::reject-precise-gated-fragment-pair",
+      "vertexSha256": "729a861d9aacfa07489978fe1da63d630c9fc8d84fd89c5a5d983f16615f373b",
+      "fragmentSha256": "632bbdc9216d56e1455510d1b11bd7807036056ea67bcc394f7b76dd56a6ed17",
+      "before": {
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        },
+        "resultBytes": 130,
+        "resultSha256": "99b95a7c00a9d1a6fc5eb7b38444565d23e95ceaff4d25bda0fd0c043c2abc1e"
+      }
+    }
+  ],
+  "records": [
+    {
+      "path": "domain/report.json",
+      "bytes": 869387,
+      "sha256": "68858b739fefbe6212c106bc45d2556b2e93b28f8fa596ad0ccd6333d3669b8a"
+    },
+    {
+      "path": "faults/manifest.json",
+      "bytes": 4852,
+      "sha256": "2969232fed0daadd169e73ba396ce463e9a0de30c5adea80ec53faa022efc402"
+    },
+    {
+      "path": "faults/max-source-order/build.log",
+      "bytes": 69,
+      "sha256": "9984a58bdabe1a4f02a660f36e028df5528fb5a7b11feb54a4e83ad72bb6c3a8"
+    },
+    {
+      "path": "faults/max-source-order/fault.wasm",
+      "bytes": 304555,
+      "sha256": "8264ec755006f6b77619ee9c4eef0f72dc8a1f8b84ef1349b15b8aff0e54c229"
+    },
+    {
+      "path": "faults/max-source-order/gpu/browser-coverage.json",
+      "bytes": 106317,
+      "sha256": "b6517288639ec1fbac16e133052a36a759f8d0c27211485a7e248aa7acffa8a0"
+    },
+    {
+      "path": "faults/max-source-order/gpu/failure.png",
+      "bytes": 30756,
+      "sha256": "5c85489c741e2b0d320cec4ed4c18893c76f19f2fd623826357f1f27309e119b"
+    },
+    {
+      "path": "faults/max-source-order/gpu/report.json",
+      "bytes": 974030,
+      "sha256": "61d70a40535db68dfd2f5fe513f77c2efb61f3f205266688b9cdb14c0c5f1a51"
+    },
+    {
+      "path": "faults/max-source-order/gpu.log",
+      "bytes": 338,
+      "sha256": "5c2e25601ebd91dc6d5b104e850c78dabaf5b8d7f2f8ae3b5b1f285796da4632"
+    },
+    {
+      "path": "faults/ne-unordered/build.log",
+      "bytes": 69,
+      "sha256": "9984a58bdabe1a4f02a660f36e028df5528fb5a7b11feb54a4e83ad72bb6c3a8"
+    },
+    {
+      "path": "faults/ne-unordered/fault.wasm",
+      "bytes": 304569,
+      "sha256": "2790040207d525b4db646641c801d246531345f2b3282ed5ec9e9e999f635751"
+    },
+    {
+      "path": "faults/ne-unordered/gpu/browser-coverage.json",
+      "bytes": 109564,
+      "sha256": "78aa1be214dcb3e80665fe3742792f2d9475b0cf2c375a706403a890a3b3b540"
+    },
+    {
+      "path": "faults/ne-unordered/gpu/failure.png",
+      "bytes": 31218,
+      "sha256": "22b412cc6da4890f7a30a749d3b2e84e60aa1d21d8b1bba093224792b367ea8f"
+    },
+    {
+      "path": "faults/ne-unordered/gpu/report.json",
+      "bytes": 80403696,
+      "sha256": "4955b5013f629c5fd5711b8fc24cf3db0ea5afd955bc13056dd4ae134b20d2f0"
+    },
+    {
+      "path": "faults/ne-unordered/gpu.log",
+      "bytes": 338,
+      "sha256": "5c2e25601ebd91dc6d5b104e850c78dabaf5b8d7f2f8ae3b5b1f285796da4632"
+    },
+    {
+      "path": "faults/zero-equality/build.log",
+      "bytes": 69,
+      "sha256": "9984a58bdabe1a4f02a660f36e028df5528fb5a7b11feb54a4e83ad72bb6c3a8"
+    },
+    {
+      "path": "faults/zero-equality/fault.wasm",
+      "bytes": 304510,
+      "sha256": "c4f89ba0de73bdcb02ded6b9cdf62aaa50f6c6e771eca6db09459e000e5ac104"
+    },
+    {
+      "path": "faults/zero-equality/gpu/browser-coverage.json",
+      "bytes": 109514,
+      "sha256": "b6755b969423cadd5117dfa8f6ff88f2da3e46039c1ce5cfc9e56329e1f19b1d"
+    },
+    {
+      "path": "faults/zero-equality/gpu/failure.png",
+      "bytes": 32404,
+      "sha256": "3c387eb59089ad91020e795b719d29b47bb461f6c7ea5fba8ea3d8ad365221b6"
+    },
+    {
+      "path": "faults/zero-equality/gpu/report.json",
+      "bytes": 55192347,
+      "sha256": "5bd663ed8128a5daab47761144ce71b3175e92a4aa45efdd14419f501bef8761"
+    },
+    {
+      "path": "faults/zero-equality/gpu.log",
+      "bytes": 338,
+      "sha256": "5c2e25601ebd91dc6d5b104e850c78dabaf5b8d7f2f8ae3b5b1f285796da4632"
+    },
+    {
+      "path": "gpu/browser-coverage.json",
+      "bytes": 118539,
+      "sha256": "d680211859005d31c8e1e34768fe695827b7dcdda08a0a2188a86a8f29ea3b5b"
+    },
+    {
+      "path": "gpu/browser.png",
+      "bytes": 31515,
+      "sha256": "78be2f2c478ced2564a86103ae92664471c5219b6ecc663f83d18400d1c42a02"
+    },
+    {
+      "path": "gpu/report.json",
+      "bytes": 290635047,
+      "sha256": "c1635f95ff92cf161653afcfa3088c9d1e5d95c21acb191383de8b8b50b9b003"
+    },
+    {
+      "path": "native/bridge.su",
+      "bytes": 1872,
+      "sha256": "8cf50c46ff7d91e81a27b923ff8fd63186006ed54b6b76a0784c0c0c97f9b4f7"
+    },
+    {
+      "path": "native/checked_upstream.su",
+      "bytes": 8491,
+      "sha256": "ba1339448b065dfc167d50b75213069afbb661a31688542d5e45c138efd533c7"
+    },
+    {
+      "path": "native/coverage-merge.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "native/coverage-report.txt",
+      "bytes": 1302,
+      "sha256": "3a5719c81ece912c20726c8c32f78e513974916de77905dbc0d08ec6b2678ce0"
+    },
+    {
+      "path": "native/coverage-show.txt",
+      "bytes": 278571,
+      "sha256": "6077dd89c43cb8763876c4629a7cef5da64efa07d1a99a7d814f609d21b1aa1c"
+    },
+    {
+      "path": "native/coverage.json",
+      "bytes": 1842050,
+      "sha256": "ea3603be8fdd9f51ab839edf528fac85e0b226b3ccf42d8db728a2317c01d4a7"
+    },
+    {
+      "path": "native/native-input.bin",
+      "bytes": 3141309,
+      "sha256": "97e2f8c52e1d6ba8c14cea2d0aa51f0c882927dd64fb6ef5b5380dd35db4feaf"
+    },
+    {
+      "path": "native/native-report.json",
+      "bytes": 24419708,
+      "sha256": "02fd7ae897fa9f6b46f56d73d129baa41140a41cd87d9358ed1585e7d4b9a5d0"
+    },
+    {
+      "path": "native/native.log",
+      "bytes": 14903378,
+      "sha256": "a9a62f476d9bc867dfb0b7cad483eddf480964f11f9c66f7863165de730163a7"
+    },
+    {
+      "path": "native/native.profdata",
+      "bytes": 75640,
+      "sha256": "ed076f2118803b0faf8f65c3c82d564d79806b9f12636b9bc973433c3a2cd05a"
+    },
+    {
+      "path": "native/native.profraw",
+      "bytes": 98000,
+      "sha256": "f8d23c558597ff0a8b3c71e2a11be35eecf8de097a76dfceb68333f10215c304"
+    },
+    {
+      "path": "native/raw_bits.su",
+      "bytes": 688,
+      "sha256": "9fbc270009da8cd572b34b31f8c3c78811611adf4b80074d443711963a8d2538"
+    },
+    {
+      "path": "reference.json",
+      "bytes": 411424,
+      "sha256": "b072667e0a134bbaed9ee5b847ff3044ade95042122de87e32b1b43883fb5568"
+    },
+    {
+      "path": "retained-equality/browser-coverage.json",
+      "bytes": 34663,
+      "sha256": "75ce3a9e985ddcb5bce32fd9ac6a6f4e89074e2c9008541a3836677cdc418b54"
+    },
+    {
+      "path": "retained-equality/browser.png",
+      "bytes": 29005,
+      "sha256": "414597eaf92d0beb3251a0ee9f8f356a18b82a24ce957ffc86a3e5849c19e510"
+    },
+    {
+      "path": "retained-equality/report.json",
+      "bytes": 4101276,
+      "sha256": "69b13f39457bd8c6668627793ad7da1c832d7278ce81696dac1ac9c7f15f6507"
+    },
+    {
+      "path": "retained-radial/browser-coverage.json",
+      "bytes": 145363,
+      "sha256": "eb30a24ca2d1176bb7b36d2cb8d53687c71c4807037a06c672bb365b7dc413a7"
+    },
+    {
+      "path": "retained-radial/browser.png",
+      "bytes": 74690,
+      "sha256": "ea5339d52387b39ef782743c4fd185edfe55877f3ff166252f37f1e71a8d1906"
+    },
+    {
+      "path": "retained-radial/report.json",
+      "bytes": 365250092,
+      "sha256": "b104551f11932da85675eed4a22780c7333276ae9971068acdc8b77a37dbc5ef"
+    },
+    {
+      "path": "retained-radial-regressions.log",
+      "bytes": 2817,
+      "sha256": "b2c16bd0045a3a158a904709375ed4bb39b14fb629655bba981ce56d5bdc417c"
+    },
+    {
+      "path": "retained-selected/browser-coverage.json",
+      "bytes": 108371,
+      "sha256": "2bb98da4f08e2ff3195b748e01b61fec089f8007e1c550251ec99ccccff5fee3"
+    },
+    {
+      "path": "retained-selected/browser.png",
+      "bytes": 29802,
+      "sha256": "9005a6dce324cb0423e406a7a3153a0317de19ea22a086ee785723c176e7a41a"
+    },
+    {
+      "path": "retained-selected/report.json",
+      "bytes": 186585814,
+      "sha256": "ae0adeafe6a7fcd3fccad40a780c210aba81c76dd705a8d5af27b56e787aee64"
+    },
+    {
+      "path": "semantic/report.json",
+      "bytes": 4437,
+      "sha256": "6c84898494aecbd58472b878c82a98ee6391c2793f87247afeeb9e2bb94243d5"
+    },
+    {
+      "path": "semantic/tokens.jsonl",
+      "bytes": 602,
+      "sha256": "d182d2523fc925ecb08526914ad48fc6ed90b1daa2dd77b385ad891898c550f8"
+    },
+    {
+      "path": "wasm/calls.jsonl",
+      "bytes": 18392257,
+      "sha256": "7b2ca5b7078b2d1ffd045e4cf46bf800c2a60ad8cb9c2cc4a160095c3f850b95"
+    },
+    {
+      "path": "wasm/report.json",
+      "bytes": 222311,
+      "sha256": "e182eb0159d05147fcb5544dafb36747b6053c5769beca5011b065007f9e6d2f"
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+[
+  {
+    "source": "/tmp/wasm-vm-virgl-pinned-inspection/vrend_renderer.c",
+    "sha256": "be7e5c63fb501cb77bd5b2c13c332f8b93c49fd04d207f17d434932c237f4ea3",
+    "claimedPinnedCommit": "ca50e008863837e094747a69974dde3ae148aeaa",
+    "regions": [
+      {
+        "startLine": 9140,
+        "endLine": 9190,
+        "text": "static bool check_iov_bounds(struct vrend_resource *res,\n                             const struct vrend_transfer_info *info,\n                             const struct iovec *iov, int num_iovs)\n{\n   GLuint transfer_size;\n   GLuint iovsize = vrend_get_iovec_size(iov, num_iovs);\n   GLuint valid_stride, valid_layer_stride;\n\n   /* If the transfer specifies a stride, verify that it's at least as large as\n    * the minimum required for the transfer. If no stride is specified use the\n    * image stride for the specified level.\n    */\n   if (info->stride) {\n      GLuint min_stride = util_format_get_stride(res->base.format, info->box->width);\n      if (info->stride < min_stride)\n         return false;\n      valid_stride = info->stride;\n   } else {\n      valid_stride = util_format_get_stride(res->base.format,\n                                            u_minify(res->base.width0, info->level));\n   }\n\n   /* If the transfer specifies a layer_stride, verify that it's at least as\n    * large as the minimum required for the transfer. If no layer_stride is\n    * specified use the image layer_stride for the specified level.\n    */\n   if (info->layer_stride) {\n      GLuint min_layer_stride = util_format_get_2d_size(res->base.format,\n                                                        valid_stride,\n                                                        info->box->height);\n      if (info->layer_stride < min_layer_stride)\n         return false;\n      valid_layer_stride = info->layer_stride;\n   } else {\n      valid_layer_stride =\n         util_format_get_2d_size(res->base.format, valid_stride,\n                                 u_minify(res->base.height0, info->level));\n   }\n\n   /* Calculate the size required for the transferred data, based on the\n    * calculated or provided strides, and ensure that the iov, starting at the\n    * specified offset, is able to hold at least that size.\n    */\n   transfer_size = vrend_transfer_size(res, info,\n                                       valid_stride,\n                                       valid_layer_stride);\n   if (iovsize < info->offset)\n      return false;\n   if (iovsize < transfer_size)\n      return false;\n   if (iovsize < info->offset + transfer_size)"
+      },
+      {
+        "startLine": 10109,
+        "endLine": 10124,
+        "text": "int vrend_renderer_copy_transfer3d(struct vrend_context *ctx,\n                                   uint32_t dst_handle,\n\n                                   struct vrend_resource *dst_res,\n                                   struct vrend_resource *src_res,\n                                   const struct vrend_transfer_info *info)\n{\n   if (!resource_contains_box(dst_res, info->box, info->level)) {\n      vrend_report_context_error(ctx, VIRGL_ERROR_CTX_ILLEGAL_CMD_BUFFER, dst_handle);\n      return EINVAL;\n   }\n\n   if (!check_iov_bounds(dst_res, info, src_res->iov, src_res->num_iovs)) {\n      vrend_report_context_error(ctx, VIRGL_ERROR_CTX_ILLEGAL_CMD_BUFFER, dst_handle);\n      return EINVAL;\n   }"
+      },
+      {
+        "startLine": 10166,
+        "endLine": 10181,
+        "text": "int vrend_renderer_copy_transfer3d_from_host(struct vrend_context *ctx,\n                                             uint32_t dst_handle,\n                                             uint32_t src_handle,\n                                             struct vrend_resource *dst_res,\n                                             struct vrend_resource *src_res,\n                                             const struct vrend_transfer_info *info)\n{\n   if (!resource_contains_box(src_res, info->box, info->level)) {\n      vrend_report_context_error(ctx, VIRGL_ERROR_CTX_RESOURCE_OUT_OF_RANGE, src_handle);\n      return EINVAL;\n   }\n\n   if (!check_iov_bounds(src_res, info, dst_res->iov, dst_res->num_iovs)) {\n      vrend_report_context_error(ctx, VIRGL_ERROR_CTX_ILLEGAL_CMD_BUFFER, dst_handle);\n      return EINVAL;\n   }"
+      }
+    ]
+  },
+  {
+    "source": "/tmp/wasm-vm-virgl-pinned-inspection/vrend_decode.c",
+    "sha256": "fa74df51019af22c73edf8a12643cf5301191104cbe9e48c398d30013864537f",
+    "claimedPinnedCommit": "ca50e008863837e094747a69974dde3ae148aeaa",
+    "regions": [
+      {
+        "startLine": 1522,
+        "endLine": 1578,
+        "text": "static int vrend_decode_copy_transfer3d(struct vrend_context *ctx, const uint32_t *buf, uint32_t length)\n{\n   struct pipe_box box;\n   struct vrend_transfer_info info;\n   uint32_t dst_handle;\n   uint32_t src_handle;\n   struct vrend_resource *src_res, *dst_res;\n\n   if (length != VIRGL_COPY_TRANSFER3D_SIZE)\n      return EINVAL;\n\n   memset(&info, 0, sizeof(info));\n   info.box = &box;\n\n   // synchronized is set either to 1 or 0. This means that we can use other bits\n   // to identify the direction of copy transfer\n   uint32_t flags = get_buf_entry(buf, VIRGL_COPY_TRANSFER3D_FLAGS);\n   bool read_from_host = (flags & VIRGL_COPY_TRANSFER3D_FLAGS_READ_FROM_HOST) != 0;\n   info.synchronized = (flags & VIRGL_COPY_TRANSFER3D_FLAGS_SYNCHRONIZED) != 0;\n   info.offset = get_buf_entry(buf, VIRGL_COPY_TRANSFER3D_SRC_RES_OFFSET);\n\n#ifdef ENABLE_TESTS\n   info.no_gbm_mapping = (flags & VIRGL_COPY_TRANSFER3D_FLAGS_DEBUG_TEST_NO_GBM_MAPPING) != 0;\n#endif\n\n   if (unlikely(read_from_host)) {\n      vrend_decode_transfer_common(buf, &src_handle, &info);\n      dst_handle = get_buf_entry(buf, VIRGL_COPY_TRANSFER3D_SRC_RES_HANDLE);\n\n      src_res = vrend_renderer_ctx_res_lookup(ctx, src_handle);\n      dst_res = vrend_renderer_ctx_res_lookup(ctx, dst_handle);\n\n      int ret = check_copy_transfer3d_handles(ctx, src_handle, dst_handle, src_res, dst_res);\n      if (ret)\n         return ret;\n\n      return vrend_renderer_copy_transfer3d_from_host(ctx, dst_handle, src_handle, dst_res, src_res,\n                                                      &info);\n   } else {\n      // this means that guest would like to make transfer to host\n      // it can also mean that guest is using legacy copy transfer path\n      vrend_decode_transfer_common(buf, &dst_handle, &info);\n      src_handle = get_buf_entry(buf, VIRGL_COPY_TRANSFER3D_SRC_RES_HANDLE);\n\n      src_res = vrend_renderer_ctx_res_lookup(ctx, src_handle);\n      dst_res = vrend_renderer_ctx_res_lookup(ctx, dst_handle);\n\n      int ret = check_copy_transfer3d_handles(ctx, src_handle, dst_handle, src_res, dst_res);\n      if (ret)\n         return ret;\n\n      return vrend_renderer_copy_transfer3d(ctx, dst_handle, dst_res, src_res,\n                                            &info);\n   }\n}\n\nstatic int vrend_decode_pipe_resource_create(struct vrend_context *ctx, const uint32_t *buf, uint32_t length)"
+      }
+    ]
+  }
+]

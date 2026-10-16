@@ -1,0 +1,197 @@
+{
+  "schema": "fresh-original-shadow-sampler-critic-seal-v1",
+  "task": "E6-T11d49",
+  "verdict": "verified",
+  "sourceHead": "58138a0d370718744e8c74f52860faa1200d0928",
+  "runtimeHead": "17b9d9334dfa1b2b209df36e0105e2ec96549fa7",
+  "workerSubmission": "c859d95f2a7b966480e3944010ae631316068787",
+  "archiveParts": [
+    {
+      "path": "recording.tar.gz",
+      "bytes": 8611431,
+      "sha256": "3cd3e2e56aa16aa1fbe6619c57ff3980d4335cec98dd5f8aae325362961a1477"
+    }
+  ],
+  "archiveBytes": 8611431,
+  "archiveSha256": "3cd3e2e56aa16aa1fbe6619c57ff3980d4335cec98dd5f8aae325362961a1477",
+  "recordIndexSha256": "07ac9236066c4890a6e64db11e7825272e44414e5237c479624f74f90decda44",
+  "records": 4255,
+  "reopenedMembers": 4255,
+  "physicalBodies": 307,
+  "hardlinks": 3948,
+  "dependencies": [
+    {
+      "evidence": "evidence/virgl-shadow-samplers/worker",
+      "manifestSha256": "f6060a1d127854fa230b3f9ba0f50e83941ded19c4e516f5f5e0908a8f901f8f",
+      "recordsSha256": "7bf6f4ea3b5aaf6b53a0199dc8a3dfa6824cf2c512f5f8a7a48067aad3370192",
+      "archiveSha256": "efde5ede4f9528859ea0f762b34ac906e2e5765724efe87bd563e9615673c5cb",
+      "records": 44665,
+      "sourceHead": "17b9d9334dfa1b2b209df36e0105e2ec96549fa7",
+      "authority": "published external seal; archives deliberately not recursively copied"
+    },
+    {
+      "evidence": "evidence/virgl-shadow-shaders/worker",
+      "manifestSha256": "6e3dac963bac00e954134e0f9ffe3f9f86b595b183b42f823beaa11aacf7b77a",
+      "recordsSha256": "29ca252c9abaf1c2d29fd0f39d53ff4dc73a416a2f3fa13d5bb6d1b95807733f",
+      "archiveSha256": "49c9951e44f0aac20e4d709034e606803698ca7465d7f110078acccd29534c8a",
+      "records": 52584,
+      "sourceHead": "f57db8c880684eb73cdc29c166568185fdde0a46",
+      "authority": "published external seal; archives deliberately not recursively copied"
+    },
+    {
+      "evidence": "evidence/virgl-shadow-shaders/verifier",
+      "manifestSha256": "9079ba5b7457d02cdf180075f049e26c542484db1c794a56c7bba676461fb7c6",
+      "recordsSha256": "67c1175debe54024f70c35eadbe08733ae08930008a1928dc78af4232ce0349e",
+      "archiveSha256": "642815d0c63aee4e79645203f0cb3437582c46a899eb36dcf159150899d7a05c",
+      "records": 626,
+      "sourceHead": "44e3f1301b6253a1fdf066fd102ca68b81dce3ff",
+      "authority": "published external seal; archives deliberately not recursively copied"
+    },
+    {
+      "evidence": "evidence/virgl-instanced-stencil/worker",
+      "manifestSha256": "2387876828e65c6b958b5c0d9898a3face77af6fc26ffa5bbc114b0890da33a3",
+      "recordsSha256": "e43fb84a4a36adb043968185259061fe2a8af6b44edcb334cbe63c7975d73857",
+      "archiveSha256": "af534b07ebb9a8422adebdf9cd66286f8b2c3472faff8ee38b0a5433ac320b99",
+      "records": 41944,
+      "sourceHead": "3cbb041b43928701026b5ca2ddfb3dcf9a799c2b",
+      "authority": "published external seal; archives deliberately not recursively copied"
+    }
+  ],
+  "reopenedCurrentWorkerMembers": 44665,
+  "reopenedD48Members": 53210,
+  "reports": {
+    "hardware-bindings": {
+      "reportSha256": "e615e0128667d9916adda402a4916c8fb62223277cec6989e0672e739d3e6f1b",
+      "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+      "seed": 1638107097,
+      "fault": null,
+      "runs": 1
+    },
+    "hardware-boundaries-0x6ac47308": {
+      "reportSha256": "f010c5c976b616ba02cb7e3f901782b74adcf58be032187fe6debcc59585570f",
+      "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+      "seed": 1791259400,
+      "fault": null,
+      "runs": 7
+    },
+    "hardware-boundaries-0xb59d7a1d": {
+      "reportSha256": "dbc4b0b86083594f322d92601895a0c33bacc9a06a4fc28ff1d06224852dad4e",
+      "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+      "seed": 3046996509,
+      "fault": null,
+      "runs": 7
+    },
+    "hardware-boundaries-0xe174cf53": {
+      "reportSha256": "2622a6cacfa88edd23b45ca0b366bcdedb8b4790e94f164fa188ac4cd6e3d92f",
+      "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+      "seed": 3782528851,
+      "fault": null,
+      "runs": 7
+    },
+    "hardware-historical": {
+      "reportSha256": "3cc8de38c8b5c5a0bb368b1e8ae193a4a21210766587095d882dc36abf258d6c",
+      "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+      "seed": 1204917667,
+      "fault": null,
+      "runs": 2
+    },
+    "hardware-inherited": {
+      "reportSha256": "aac3593ca4f08f8ffc2d607b5ac6833c395d706d8de61c4949aae4327e7c36c8",
+      "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+      "seed": 1638107097,
+      "fault": null,
+      "runs": 6
+    },
+    "hardware-mips": {
+      "reportSha256": "d11563c5a2eb86407feba6c784c57589b573968f7167fc231f1f9faa70bbd5a6",
+      "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+      "seed": 1638107097,
+      "fault": null,
+      "runs": 9
+    },
+    "hardware-query-only": {
+      "reportSha256": "de13c98ccc38b3677a9036bc64038572538c027e804765c57f5b82460559c677",
+      "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+      "seed": 1638107097,
+      "fault": null,
+      "runs": 2
+    },
+    "hardware-reflection": {
+      "reportSha256": "63d0bfd12bfbb47a54827cc5c429cccb92fab5f1d54e4743ce535c4008b568b7",
+      "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+      "seed": 1638107097,
+      "fault": null,
+      "runs": 10
+    },
+    "hardware-refusals": {
+      "reportSha256": "db5828594496bfac8e3247e371f5874aedb0653b99aa8124c1ba280f495945b4",
+      "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+      "seed": 1638107097,
+      "fault": null,
+      "runs": 8
+    },
+    "hardware-same-image": {
+      "reportSha256": "aa3155bf1fd6d5e8beb25b4772f5ce2a20abe04ccfbcdb074b4c6eb340183fff",
+      "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+      "seed": 1638107097,
+      "fault": null,
+      "runs": 1
+    },
+    "hardware-typed": {
+      "reportSha256": "50806c095f9faa6cd19facfb5c53e5f696dbf4c55b9b5b2d2d43b27c2b535f1e",
+      "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+      "seed": 1638107097,
+      "fault": null,
+      "runs": 4
+    },
+    "novel-0x61a387d9": {
+      "reportSha256": "8e2a1522a025184ca01150316405f36db6c9c22a126d6f91e08b0d8d7b6e5608",
+      "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+      "seed": 1638107097,
+      "fault": null,
+      "runs": 4
+    },
+    "novel-0x94ce720a": {
+      "reportSha256": "a9bf52ef92333f9dd938aa135822edc66205f1d858af34d3aa2aa4206a3fc38d",
+      "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+      "seed": 2496557578,
+      "fault": null,
+      "runs": 4
+    },
+    "novel-0xd73ab56b": {
+      "reportSha256": "ca3648c28c65a35254a44eee2d5fb70ee217b34eba3fd9c8ce940b088694f003",
+      "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+      "seed": 3610948971,
+      "fault": null,
+      "runs": 4
+    },
+    "novel-fault-compare": {
+      "reportSha256": "af383106a57f2a7c4b6e2a05b6e36b0a84fed3c42eb0ded646d0b17ab100f888",
+      "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+      "seed": 2496557578,
+      "fault": "compare",
+      "runs": 4
+    },
+    "novel-fault-mask": {
+      "reportSha256": "383611d9c21b771acaae52d14bdaae66516556fdca7f40fab6cbd32b70e8bf0e",
+      "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+      "seed": 2496557578,
+      "fault": "mask",
+      "runs": 4
+    }
+  },
+  "sourceClosureIncluded": true,
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "productionDrawAuthority": false,
+  "authority": "isolated original native comparison sampler consumer; fresh critic",
+  "generated": {
+    "renderer/virgl-shader/build/wasm/virgl-shader.mjs": "4da9f1ed30cff697193e0688a26ee93e48a3e1216485d5184301fec6c31d4879",
+    "renderer/virgl-shader/build/wasm/virgl-shader.wasm": "aba0c891ad406ef876da6f1a86883b3fcdd98de12c1137a4f2feff566f5459f2"
+  },
+  "sourceDigests": {
+    "renderer/virgl-command/state.mjs": "011f6b308b6e99fe5a1513c28fac20a79498122e95f6f31e1062b35221b5be63",
+    "renderer/virgl-command/decoder.mjs": "55ec838b53c0ffa0085193ef5f067141f1316fa754eb3045efb93b2a20c5cad2",
+    "renderer/virgl-command/constant-domain.mjs": "4a35c325ff9a0247fbf4639c78c59daa1afb6fa95aeca92b21cf2d0c8d9a918e"
+  }
+}

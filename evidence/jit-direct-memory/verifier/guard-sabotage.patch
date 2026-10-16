@@ -1,0 +1,12 @@
+diff --git a/crates/wasm/src/jit_browser.rs b/crates/wasm/src/jit_browser.rs
+index 88ce07d5..c37c10d7 100644
+--- a/crates/wasm/src/jit_browser.rs
++++ b/crates/wasm/src/jit_browser.rs
+@@ -812,7 +812,6 @@ fn require_active_host() {
+ 
+ #[unsafe(export_name = "__jit_load")]
+ pub extern "C" fn jit_load(addr: i64, kind: i32) -> i64 {
+-    require_active_host();
+     with_ctx_load(addr, kind)
+ }
+ 

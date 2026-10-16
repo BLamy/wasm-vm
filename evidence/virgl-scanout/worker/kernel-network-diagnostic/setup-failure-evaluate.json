@@ -1,0 +1,124 @@
+{
+  "schema": 1,
+  "task": "E6-T11c",
+  "boundary": "fetch-only; no VM or desktop execution",
+  "gitHead": "fbceeb4d07f1afe24e9e99a01db8b19e181cdd3e",
+  "command": [
+    "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+    "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-scanout/worker/kernel-network-diagnostic/repro.mjs"
+  ],
+  "startedAt": "2026-10-03T07:27:18.311Z",
+  "status": "failed",
+  "inputs": {
+    "kernel": {
+      "path": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/releases/kernel/6.6.63/Image",
+      "bytes": 24208896,
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+    },
+    "loader": {
+      "path": "web/dist/loader.js",
+      "sha256": "55135e9789993bca8e15e71bcd9c81b5c89923b60bedf4c271d3212cff3e51eb"
+    },
+    "fetchFunctionSha256": "6a31ec1c11b27a542b53ea31014def25a9cfaf75146d32b32f5bb8653794f0dd",
+    "harnessSha256": "9b819540943c72a4e4ad3691c7d48d3e08ad4316db27768638778afe4d8ec1be"
+  },
+  "cases": [
+    {
+      "label": "page-no-store-0",
+      "location": "page",
+      "policy": "no-store",
+      "repetition": 0,
+      "cacheDisabled": true,
+      "freshContext": true,
+      "terminal": null,
+      "response": null,
+      "errors": [],
+      "cdpSetup": [],
+      "progressMessages": 0
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-10-03T07:27:18.841Z",
+      "kind": "server-request",
+      "requestId": "server-1",
+      "url": "/",
+      "method": "GET",
+      "requestHeaders": {
+        "host": "127.0.0.1:54123",
+        "connection": "keep-alive",
+        "pragma": "no-cache",
+        "cache-control": "no-cache",
+        "sec-ch-ua": "\"Chromium\";v=\"154\", \"Google Chrome\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"macOS\"",
+        "upgrade-insecure-requests": "1",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+        "sec-fetch-site": "none",
+        "sec-fetch-mode": "navigate",
+        "sec-fetch-user": "?1",
+        "sec-fetch-dest": "document",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US,en;q=0.9"
+      },
+      "responseHeaders": {
+        "Cache-Control": "no-store",
+        "Cross-Origin-Opener-Policy": "same-origin",
+        "Cross-Origin-Embedder-Policy": "require-corp",
+        "Content-Type": "text/html",
+        "Content-Length": 55,
+        "X-Diagnostic-Request-Id": "server-1"
+      },
+      "bytes": 55,
+      "sha256": "b8c04fc59c7efd5fec67c6f820abf4339d3e659b49c235a0f898bfe06b8f08dc"
+    },
+    {
+      "at": "2026-10-03T07:27:18.842Z",
+      "kind": "server-finish",
+      "requestId": "server-1",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:18.843Z",
+      "kind": "server-close",
+      "requestId": "server-1",
+      "writableFinished": true
+    },
+    {
+      "at": "2026-10-03T07:27:18.848Z",
+      "kind": "cdp",
+      "label": "page-no-store-0",
+      "session": "page",
+      "event": "Network.loadingFinished",
+      "data": {
+        "requestId": "C99D2331DFDAE5F3BBF35D334EAF1648",
+        "timestamp": 869577.63931,
+        "encodedDataLength": 348
+      }
+    },
+    {
+      "at": "2026-10-03T07:27:18.856Z",
+      "kind": "cdp",
+      "label": "page-no-store-0",
+      "session": "page",
+      "event": "Network.loadingFinished",
+      "data": {
+        "requestId": "70753.2",
+        "timestamp": 869577.652431,
+        "encodedDataLength": 111
+      }
+    }
+  ],
+  "browser": {
+    "version": "154.0.8037.93",
+    "executablePath": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    "headed": true,
+    "playwrightVersion": "1.49.1"
+  },
+  "failure": {
+    "message": "page.evaluate: SyntaxError: Unexpected token 'async'\n    at eval (<anonymous>)\n    at UtilityScript.evaluate (<anonymous>:234:30)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)",
+    "stack": "page.evaluate: SyntaxError: Unexpected token 'async'\n    at eval (<anonymous>)\n    at UtilityScript.evaluate (<anonymous>:234:30)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-scanout/worker/kernel-network-diagnostic/repro.mjs:133:18"
+  },
+  "finishedAt": "2026-10-03T07:27:18.921Z"
+}

@@ -1,0 +1,2049 @@
+{
+  "sourceHead": "242ad5705dbdfd07b269c3e5850857c893af41e7",
+  "parent": "26ed74a31e0ee3c1d43b4e174c8096d67898d920",
+  "coverageSha256": "e3e008b423761880ee9835c4ba135f5d2f6ed64c65172f1ca6124ac0055ed441",
+  "sourceBindings": [
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "bytes": 38863,
+      "sha256": "d9d1e35ca4ff820691c7221abb1e56961e7a6c28007e5d9a3bf637d263be7bb5",
+      "summary": {
+        "branches": {
+          "count": 944,
+          "covered": 866,
+          "notcovered": 78,
+          "percent": 91.73728813559322
+        },
+        "functions": {
+          "count": 37,
+          "covered": 34,
+          "percent": 91.8918918918919
+        },
+        "instantiations": {
+          "count": 37,
+          "covered": 34,
+          "percent": 91.8918918918919
+        },
+        "lines": {
+          "count": 678,
+          "covered": 668,
+          "percent": 98.52507374631269
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0
+        },
+        "regions": {
+          "count": 1439,
+          "covered": 1384,
+          "notcovered": 55,
+          "percent": 96.17790132036136
+        }
+      }
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "bytes": 23905,
+      "sha256": "f6098f263309fed318023f13b54ef1b793d73488be6674159d938834a7b1bb76",
+      "summary": {
+        "branches": {
+          "count": 512,
+          "covered": 505,
+          "notcovered": 7,
+          "percent": 98.6328125
+        },
+        "functions": {
+          "count": 20,
+          "covered": 20,
+          "percent": 100
+        },
+        "instantiations": {
+          "count": 20,
+          "covered": 20,
+          "percent": 100
+        },
+        "lines": {
+          "count": 405,
+          "covered": 401,
+          "percent": 99.01234567901234
+        },
+        "mcdc": {
+          "count": 0,
+          "covered": 0,
+          "notcovered": 0,
+          "percent": 0
+        },
+        "regions": {
+          "count": 678,
+          "covered": 674,
+          "notcovered": 4,
+          "percent": 99.41002949852508
+        }
+      }
+    }
+  ],
+  "files": [
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "sha256": "d9d1e35ca4ff820691c7221abb1e56961e7a6c28007e5d9a3bf637d263be7bb5",
+      "addedLines": [
+        {
+          "line": 281,
+          "count": "",
+          "source": "enum { FLOW_DEPTH = 8 };"
+        },
+        {
+          "line": 282,
+          "count": "",
+          "source": "struct flow_frame {"
+        },
+        {
+          "line": 283,
+          "count": "",
+          "source": "   struct raw_lane temporary[TEMP_REGISTERS][4], output[FILE_REGISTERS][4];"
+        },
+        {
+          "line": 284,
+          "count": "",
+          "source": "   unsigned temporary_written[TEMP_REGISTERS], output_written[FILE_REGISTERS];"
+        },
+        {
+          "line": 285,
+          "count": "",
+          "source": "   unsigned target, else_target;"
+        },
+        {
+          "line": 286,
+          "count": "",
+          "source": "   bool has_target, has_else, has_else_target;"
+        },
+        {
+          "line": 287,
+          "count": "",
+          "source": "};"
+        },
+        {
+          "line": 288,
+          "count": "",
+          "source": "struct flow_context { struct flow_frame frames[FLOW_DEPTH]; unsigned depth; };"
+        },
+        {
+          "line": 289,
+          "count": "",
+          "source": "_Static_assert(sizeof(struct flow_context) <= 53248, \"bounded conditional heap arena\");"
+        },
+        {
+          "line": 290,
+          "count": "",
+          "source": ""
+        },
+        {
+          "line": 291,
+          "count": "",
+          "source": "/* A frame initially owns entry state. ELSE swaps it with the completed true"
+        },
+        {
+          "line": 292,
+          "count": "",
+          "source": " * predecessor, so only one snapshot per level is needed. Declarations and"
+        },
+        {
+          "line": 293,
+          "count": "",
+          "source": " * recorded instructions are global and never participate in this swap. */"
+        },
+        {
+          "line": 294,
+          "count": "",
+          "source": "static void flow_snapshot(struct profile *s, struct flow_frame *frame, bool swap)"
+        },
+        {
+          "line": 295,
+          "count": "491k",
+          "source": "{"
+        },
+        {
+          "line": 296,
+          "count": "1.47M",
+          "source": "   for (unsigned file = OUT; file <= TEMP; ++file) {"
+        },
+        {
+          "line": 297,
+          "count": "983k",
+          "source": "      unsigned count = file == TEMP ? TEMP_REGISTERS : FILE_REGISTERS;"
+        },
+        {
+          "line": 298,
+          "count": "983k",
+          "source": "      unsigned *saved_written = file == TEMP ? frame->temporary_written : frame->output_written;"
+        },
+        {
+          "line": 299,
+          "count": "983k",
+          "source": "      struct raw_lane (*saved)[4] = file == TEMP ? frame->temporary : frame->output;"
+        },
+        {
+          "line": 300,
+          "count": "983k",
+          "source": "      struct raw_lane (*current)[4] = file == TEMP ? s->raw->temporary : s->raw->output;"
+        },
+        {
+          "line": 301,
+          "count": "62.9M",
+          "source": "      for (unsigned index = 0; index < count; ++index) {"
+        },
+        {
+          "line": 302,
+          "count": "61.9M",
+          "source": "         unsigned written = saved_written[index];"
+        },
+        {
+          "line": 303,
+          "count": "61.9M",
+          "source": "         saved_written[index] = s->written[file][index];"
+        },
+        {
+          "line": 304,
+          "count": "61.9M",
+          "source": "         if (swap) s->written[file][index] = written;"
+        },
+        {
+          "line": 305,
+          "count": "309M",
+          "source": "         for (unsigned lane = 0; lane < 4; ++lane) {"
+        },
+        {
+          "line": 306,
+          "count": "247M",
+          "source": "            struct raw_lane value = saved[index][lane];"
+        },
+        {
+          "line": 307,
+          "count": "247M",
+          "source": "            saved[index][lane] = current[index][lane];"
+        },
+        {
+          "line": 308,
+          "count": "247M",
+          "source": "            if (swap) current[index][lane] = value;"
+        },
+        {
+          "line": 309,
+          "count": "247M",
+          "source": "         }"
+        },
+        {
+          "line": 310,
+          "count": "61.9M",
+          "source": "      }"
+        },
+        {
+          "line": 311,
+          "count": "983k",
+          "source": "   }"
+        },
+        {
+          "line": 312,
+          "count": "491k",
+          "source": "}"
+        },
+        {
+          "line": 313,
+          "count": "",
+          "source": ""
+        },
+        {
+          "line": 314,
+          "count": "",
+          "source": "static void flow_join(struct profile *s, const struct flow_frame *frame)"
+        },
+        {
+          "line": 315,
+          "count": "245k",
+          "source": "{"
+        },
+        {
+          "line": 316,
+          "count": "735k",
+          "source": "   for (unsigned file = OUT; file <= TEMP; ++file) {"
+        },
+        {
+          "line": 317,
+          "count": "490k",
+          "source": "      unsigned count = file == TEMP ? TEMP_REGISTERS : FILE_REGISTERS;"
+        },
+        {
+          "line": 318,
+          "count": "490k",
+          "source": "      const unsigned *saved_written = file == TEMP ? frame->temporary_written : frame->output_written;"
+        },
+        {
+          "line": 319,
+          "count": "490k",
+          "source": "      const struct raw_lane (*saved)[4] = file == TEMP ? frame->temporary : frame->output;"
+        },
+        {
+          "line": 320,
+          "count": "490k",
+          "source": "      struct raw_lane (*current)[4] = file == TEMP ? s->raw->temporary : s->raw->output;"
+        },
+        {
+          "line": 321,
+          "count": "31.3M",
+          "source": "      for (unsigned index = 0; index < count; ++index) {"
+        },
+        {
+          "line": 322,
+          "count": "30.8M",
+          "source": "         s->written[file][index] &= saved_written[index];"
+        },
+        {
+          "line": 323,
+          "count": "154M",
+          "source": "         for (unsigned lane = 0; lane < 4; ++lane)"
+        },
+        {
+          "line": 324,
+          "count": "123M",
+          "source": "            current[index][lane] = s->written[file][index] & (1u << lane) ?"
+        },
+        {
+          "line": 325,
+          "count": "122M",
+          "source": "               raw_join(current[index][lane], saved[index][lane]) : (struct raw_lane){0};"
+        },
+        {
+          "line": 326,
+          "count": "30.8M",
+          "source": "      }"
+        },
+        {
+          "line": 327,
+          "count": "490k",
+          "source": "   }"
+        },
+        {
+          "line": 328,
+          "count": "245k",
+          "source": "}"
+        },
+        {
+          "line": 329,
+          "count": "",
+          "source": ""
+        },
+        {
+          "line": 330,
+          "count": "",
+          "source": "static bool control(const char **p, struct profile *s, struct flow_context *flow, enum raw_opcode opcode)"
+        },
+        {
+          "line": 331,
+          "count": "737k",
+          "source": "{"
+        },
+        {
+          "line": 332,
+          "count": "737k",
+          "source": "   failure_code = \"unsupported-feature\";"
+        },
+        {
+          "line": 333,
+          "count": "737k",
+          "source": "   struct raw_instruction raw = {.opcode = opcode, .flags = s->raw_flags};"
+        },
+        {
+          "line": 334,
+          "count": "737k",
+          "source": "   if (opcode == RAW_UIF && !source(p, s, 1u, &raw.src[0])) return false;"
+        },
+        {
+          "line": 335,
+          "count": "737k",
+          "source": "   unsigned target = 0;"
+        },
+        {
+          "line": 336,
+          "count": "737k",
+          "source": "   bool has_target = opcode != RAW_ENDIF && punctuation(p, ':');"
+        },
+        {
+          "line": 337,
+          "count": "737k",
+          "source": "   if (has_target && (!index_number(p, &target, BRIDGE_MAX_INSTRUCTIONS) || target <= s->instructions)) return false;"
+        },
+        {
+          "line": 338,
+          "count": "737k",
+          "source": "   if (!end(p) || s->instructions >= BRIDGE_MAX_INSTRUCTIONS) return false;"
+        },
+        {
+          "line": 339,
+          "count": "737k",
+          "source": "   if (opcode == RAW_UIF) {"
+        },
+        {
+          "line": 340,
+          "count": "247k",
+          "source": "      if (flow->depth == FLOW_DEPTH) return false;"
+        },
+        {
+          "line": 341,
+          "count": "247k",
+          "source": "      struct flow_frame *frame = &flow->frames[flow->depth++];"
+        },
+        {
+          "line": 342,
+          "count": "247k",
+          "source": "      frame->target = target; frame->has_target = has_target;"
+        },
+        {
+          "line": 343,
+          "count": "247k",
+          "source": "      frame->has_else = frame->has_else_target = false;"
+        },
+        {
+          "line": 344,
+          "count": "247k",
+          "source": "      flow_snapshot(s, frame, false);"
+        },
+        {
+          "line": 345,
+          "count": "489k",
+          "source": "   } else {"
+        },
+        {
+          "line": 346,
+          "count": "489k",
+          "source": "      if (!flow->depth) return false;"
+        },
+        {
+          "line": 347,
+          "count": "489k",
+          "source": "      struct flow_frame *frame = &flow->frames[flow->depth - 1];"
+        },
+        {
+          "line": 348,
+          "count": "489k",
+          "source": "      if (opcode == RAW_ELSE) {"
+        },
+        {
+          "line": 349,
+          "count": "244k",
+          "source": "         if (frame->has_else || (frame->has_target && frame->target != s->instructions)) return false;"
+        },
+        {
+          "line": 350,
+          "count": "244k",
+          "source": "         frame->has_else = true; frame->has_else_target = has_target; frame->else_target = target;"
+        },
+        {
+          "line": 351,
+          "count": "244k",
+          "source": "         flow_snapshot(s, frame, true);"
+        },
+        {
+          "line": 352,
+          "count": "245k",
+          "source": "      } else {"
+        },
+        {
+          "line": 353,
+          "count": "245k",
+          "source": "         if ((frame->has_else ? frame->has_else_target && frame->else_target != s->instructions :"
+        },
+        {
+          "line": 354,
+          "count": "245k",
+          "source": "              frame->has_target && frame->target != s->instructions)) return false;"
+        },
+        {
+          "line": 355,
+          "count": "245k",
+          "source": "         flow_join(s, frame);"
+        },
+        {
+          "line": 356,
+          "count": "245k",
+          "source": "         --flow->depth;"
+        },
+        {
+          "line": 357,
+          "count": "245k",
+          "source": "      }"
+        },
+        {
+          "line": 358,
+          "count": "489k",
+          "source": "   }"
+        },
+        {
+          "line": 359,
+          "count": "736k",
+          "source": "   ++s->instructions;"
+        },
+        {
+          "line": 360,
+          "count": "736k",
+          "source": "   raw_record(s->raw, &raw);"
+        },
+        {
+          "line": 361,
+          "count": "736k",
+          "source": "   failure_code = \"parse-error\";"
+        },
+        {
+          "line": 362,
+          "count": "736k",
+          "source": "   return true;"
+        },
+        {
+          "line": 363,
+          "count": "737k",
+          "source": "}"
+        },
+        {
+          "line": 364,
+          "count": "",
+          "source": ""
+        },
+        {
+          "line": 365,
+          "count": "",
+          "source": "static bool instruction(const char **p, struct profile *s, struct flow_context *flow)"
+        },
+        {
+          "line": 370,
+          "count": "7.64M",
+          "source": "   if (word(p, \"END\")) {"
+        },
+        {
+          "line": 371,
+          "count": "1.13M",
+          "source": "      if (flow && flow->depth) { failure_code = \"unsupported-feature\"; return false; }"
+        },
+        {
+          "line": 372,
+          "count": "1.13M",
+          "source": "      s->ended = true; return end(p);"
+        },
+        {
+          "line": 373,
+          "count": "1.13M",
+          "source": "   }"
+        },
+        {
+          "line": 374,
+          "count": "6.50M",
+          "source": "   if (flow) {"
+        },
+        {
+          "line": 375,
+          "count": "1.55M",
+          "source": "      if (word(p, \"UIF\")) return control(p, s, flow, RAW_UIF);"
+        },
+        {
+          "line": 376,
+          "count": "1.30M",
+          "source": "      if (word(p, \"ELSE\")) return control(p, s, flow, RAW_ELSE);"
+        },
+        {
+          "line": 377,
+          "count": "1.06M",
+          "source": "      if (word(p, \"ENDIF\")) return control(p, s, flow, RAW_ENDIF);"
+        },
+        {
+          "line": 378,
+          "count": "1.06M",
+          "source": "   }"
+        },
+        {
+          "line": 453,
+          "count": "",
+          "source": "static bool validate_body(char *text, struct profile *s, struct flow_context *flow)"
+        },
+        {
+          "line": 502,
+          "count": "7.64M",
+          "source": "         if (!instruction(&p, s, flow)) return false;"
+        },
+        {
+          "line": 505,
+          "count": "1.13M",
+          "source": "   if (flow && flow->depth) { failure_code = \"unsupported-feature\"; return false; }"
+        },
+        {
+          "line": 516,
+          "count": "",
+          "source": "static bool validate(char *text, struct profile *s)"
+        },
+        {
+          "line": 517,
+          "count": "1.31M",
+          "source": "{"
+        },
+        {
+          "line": 518,
+          "count": "1.31M",
+          "source": "   struct flow_context *flow = NULL;"
+        },
+        {
+          "line": 519,
+          "count": "1.31M",
+          "source": "   if (s->raw_flags & RAW_STRUCTURED) {"
+        },
+        {
+          "line": 520,
+          "count": "245k",
+          "source": "      flow = calloc(1, sizeof(*flow));"
+        },
+        {
+          "line": 521,
+          "count": "245k",
+          "source": "      if (!flow) { failure_code = \"translation-error\"; return false; }"
+        },
+        {
+          "line": 522,
+          "count": "245k",
+          "source": "   }"
+        },
+        {
+          "line": 523,
+          "count": "1.31M",
+          "source": "   bool valid = validate_body(text, s, flow);"
+        },
+        {
+          "line": 524,
+          "count": "1.31M",
+          "source": "   free(flow);"
+        },
+        {
+          "line": 525,
+          "count": "1.31M",
+          "source": "   return valid;"
+        },
+        {
+          "line": 526,
+          "count": "1.31M",
+          "source": "}"
+        },
+        {
+          "line": 527,
+          "count": "",
+          "source": ""
+        },
+        {
+          "line": 597,
+          "count": "1.15M",
+          "source": "   bool candidate = false, numeric_candidate = false, structured_candidate = false;"
+        },
+        {
+          "line": 606,
+          "count": "15.3M",
+          "source": "      if (word(&p, \"UIF\") || word(&p, \"ELSE\") || word(&p, \"ENDIF\")) {"
+        },
+        {
+          "line": 607,
+          "count": "493k",
+          "source": "         candidate = structured_candidate = true;"
+        },
+        {
+          "line": 608,
+          "count": "14.8M",
+          "source": "      } else if (word(&p, \"AND\") || word(&p, \"OR\") || word(&p, \"NOT\") || word(&p, \"SHL\") || word(&p, \"USHR\") ||"
+        },
+        {
+          "line": 627,
+          "count": "740k",
+          "source": "      profile->raw_flags = (numeric_candidate || structured_candidate ? RAW_MIXED : 0) |"
+        },
+        {
+          "line": 628,
+          "count": "740k",
+          "source": "         (structured_candidate ? RAW_STRUCTURED : 0);"
+        },
+        {
+          "line": 637,
+          "count": "13.6k",
+          "source": "      return error(failure_code, !strcmp(failure_code, \"translation-error\") ? \"Structured flow allocation failed.\" :"
+        },
+        {
+          "line": 638,
+          "count": "13.6k",
+          "source": "         \"TGSI is malformed or outside the documented straight-line profile.\");"
+        },
+        {
+          "line": 644,
+          "count": "163k",
+          "source": "   *profile = (struct profile){.stage = stage, .raw_flags = RAW_MIXED | RAW_CONDITIONAL |"
+        },
+        {
+          "line": 645,
+          "count": "163k",
+          "source": "      (structured_candidate ? RAW_STRUCTURED : 0)};"
+        },
+        {
+          "line": 769,
+          "count": "1.13M",
+          "source": "      c->profile.raw->opcode_mask & RAW_STRUCTURED_OPCODES ?"
+        },
+        {
+          "line": 770,
+          "count": "162k",
+          "source": "         (c->profile.raw->opcode_mask & RAW_FINITE_BANK_USED ? \"virgl-webgl2-raw-bits-v9\" : \"virgl-webgl2-raw-bits-v8\") :"
+        }
+      ],
+      "changedBranchCounters": [
+        [
+          606,
+          11,
+          606,
+          26,
+          166486,
+          15144038,
+          0,
+          0,
+          4
+        ],
+        [
+          606,
+          30,
+          606,
+          46,
+          163210,
+          14980828,
+          0,
+          0,
+          4
+        ],
+        [
+          606,
+          50,
+          606,
+          67,
+          164051,
+          14816777,
+          0,
+          0,
+          4
+        ],
+        [
+          608,
+          18,
+          608,
+          33,
+          248985,
+          14567792,
+          0,
+          0,
+          4
+        ],
+        [
+          608,
+          37,
+          608,
+          51,
+          944367,
+          13623425,
+          0,
+          0,
+          4
+        ],
+        [
+          608,
+          55,
+          608,
+          70,
+          802,
+          13622623,
+          0,
+          0,
+          4
+        ],
+        [
+          608,
+          74,
+          608,
+          89,
+          987576,
+          12635047,
+          0,
+          0,
+          4
+        ],
+        [
+          608,
+          93,
+          608,
+          109,
+          248194,
+          12386853,
+          0,
+          0,
+          4
+        ],
+        [
+          627,
+          29,
+          627,
+          46,
+          410519,
+          329580,
+          0,
+          0,
+          4
+        ],
+        [
+          627,
+          50,
+          627,
+          70,
+          82344,
+          247236,
+          0,
+          0,
+          4
+        ],
+        [
+          628,
+          11,
+          628,
+          31,
+          163781,
+          576318,
+          0,
+          0,
+          4
+        ],
+        [
+          637,
+          34,
+          637,
+          76,
+          6,
+          13663,
+          0,
+          0,
+          4
+        ],
+        [
+          645,
+          8,
+          645,
+          28,
+          81309,
+          81764,
+          0,
+          0,
+          4
+        ],
+        [
+          519,
+          8,
+          519,
+          37,
+          245080,
+          1069876,
+          0,
+          0,
+          4
+        ],
+        [
+          521,
+          11,
+          521,
+          16,
+          10,
+          245070,
+          0,
+          0,
+          4
+        ],
+        [
+          502,
+          14,
+          502,
+          39,
+          170350,
+          7476967,
+          0,
+          0,
+          4
+        ],
+        [
+          505,
+          8,
+          505,
+          12,
+          162616,
+          976439,
+          0,
+          0,
+          4
+        ],
+        [
+          505,
+          16,
+          505,
+          27,
+          166,
+          162450,
+          0,
+          0,
+          4
+        ],
+        [
+          370,
+          8,
+          370,
+          22,
+          1138099,
+          6509218,
+          0,
+          0,
+          4
+        ],
+        [
+          371,
+          11,
+          371,
+          15,
+          162437,
+          975662,
+          0,
+          0,
+          4
+        ],
+        [
+          371,
+          19,
+          371,
+          30,
+          28,
+          162409,
+          0,
+          0,
+          4
+        ],
+        [
+          374,
+          8,
+          374,
+          12,
+          1555322,
+          4953896,
+          0,
+          0,
+          4
+        ],
+        [
+          375,
+          11,
+          375,
+          25,
+          247722,
+          1307600,
+          0,
+          0,
+          4
+        ],
+        [
+          376,
+          11,
+          376,
+          26,
+          244403,
+          1063197,
+          0,
+          0,
+          4
+        ],
+        [
+          377,
+          11,
+          377,
+          27,
+          245179,
+          818018,
+          0,
+          0,
+          4
+        ],
+        [
+          334,
+          8,
+          334,
+          25,
+          247722,
+          489582,
+          0,
+          0,
+          4
+        ],
+        [
+          334,
+          29,
+          334,
+          59,
+          262,
+          247460,
+          0,
+          0,
+          4
+        ],
+        [
+          336,
+          22,
+          336,
+          41,
+          491863,
+          245179,
+          0,
+          0,
+          4
+        ],
+        [
+          336,
+          45,
+          336,
+          64,
+          987,
+          490876,
+          0,
+          0,
+          4
+        ],
+        [
+          337,
+          8,
+          337,
+          18,
+          987,
+          736055,
+          0,
+          0,
+          4
+        ],
+        [
+          337,
+          23,
+          337,
+          73,
+          16,
+          971,
+          0,
+          0,
+          4
+        ],
+        [
+          337,
+          77,
+          337,
+          102,
+          2,
+          969,
+          0,
+          0,
+          4
+        ],
+        [
+          338,
+          8,
+          338,
+          15,
+          10,
+          737014,
+          0,
+          0,
+          4
+        ],
+        [
+          338,
+          19,
+          338,
+          61,
+          2,
+          737012,
+          0,
+          0,
+          4
+        ],
+        [
+          339,
+          8,
+          339,
+          25,
+          247440,
+          489572,
+          0,
+          0,
+          4
+        ],
+        [
+          340,
+          11,
+          340,
+          36,
+          4,
+          247436,
+          0,
+          0,
+          4
+        ],
+        [
+          346,
+          11,
+          346,
+          23,
+          8,
+          489564,
+          0,
+          0,
+          4
+        ],
+        [
+          348,
+          11,
+          348,
+          29,
+          244391,
+          245173,
+          0,
+          0,
+          4
+        ],
+        [
+          349,
+          14,
+          349,
+          29,
+          2,
+          244389,
+          0,
+          0,
+          4
+        ],
+        [
+          349,
+          34,
+          349,
+          51,
+          366,
+          244023,
+          0,
+          0,
+          4
+        ],
+        [
+          349,
+          55,
+          349,
+          87,
+          4,
+          362,
+          0,
+          0,
+          4
+        ],
+        [
+          353,
+          14,
+          354,
+          69,
+          4,
+          245169,
+          0,
+          0,
+          4
+        ],
+        [
+          353,
+          15,
+          353,
+          30,
+          244147,
+          1026,
+          0,
+          0,
+          4
+        ],
+        [
+          353,
+          33,
+          353,
+          55,
+          234,
+          243913,
+          0,
+          0,
+          4
+        ],
+        [
+          353,
+          59,
+          353,
+          96,
+          2,
+          232,
+          0,
+          0,
+          4
+        ],
+        [
+          354,
+          15,
+          354,
+          32,
+          4,
+          1022,
+          0,
+          0,
+          4
+        ],
+        [
+          354,
+          36,
+          354,
+          68,
+          2,
+          2,
+          0,
+          0,
+          4
+        ],
+        [
+          296,
+          30,
+          296,
+          42,
+          983642,
+          491821,
+          0,
+          0,
+          4
+        ],
+        [
+          297,
+          24,
+          297,
+          36,
+          491821,
+          491821,
+          0,
+          0,
+          4
+        ],
+        [
+          298,
+          33,
+          298,
+          45,
+          491821,
+          491821,
+          0,
+          0,
+          4
+        ],
+        [
+          299,
+          37,
+          299,
+          49,
+          491821,
+          491821,
+          0,
+          0,
+          4
+        ],
+        [
+          300,
+          39,
+          300,
+          51,
+          491821,
+          491821,
+          0,
+          0,
+          4
+        ],
+        [
+          301,
+          32,
+          301,
+          45,
+          61969446,
+          983642,
+          0,
+          0,
+          4
+        ],
+        [
+          304,
+          14,
+          304,
+          18,
+          30792510,
+          31176936,
+          0,
+          0,
+          4
+        ],
+        [
+          305,
+          34,
+          305,
+          42,
+          247877784,
+          61969446,
+          0,
+          0,
+          4
+        ],
+        [
+          308,
+          17,
+          308,
+          21,
+          123170040,
+          124707744,
+          0,
+          0,
+          4
+        ],
+        [
+          316,
+          30,
+          316,
+          42,
+          490338,
+          245169,
+          0,
+          0,
+          4
+        ],
+        [
+          317,
+          24,
+          317,
+          36,
+          245169,
+          245169,
+          0,
+          0,
+          4
+        ],
+        [
+          318,
+          39,
+          318,
+          51,
+          245169,
+          245169,
+          0,
+          0,
+          4
+        ],
+        [
+          319,
+          43,
+          319,
+          55,
+          245169,
+          245169,
+          0,
+          0,
+          4
+        ],
+        [
+          320,
+          39,
+          320,
+          51,
+          245169,
+          245169,
+          0,
+          0,
+          4
+        ],
+        [
+          321,
+          32,
+          321,
+          45,
+          30891294,
+          490338,
+          0,
+          0,
+          4
+        ],
+        [
+          323,
+          34,
+          323,
+          42,
+          123565176,
+          30891294,
+          0,
+          0,
+          4
+        ],
+        [
+          324,
+          36,
+          324,
+          74,
+          983948,
+          122581228,
+          0,
+          0,
+          4
+        ],
+        [
+          769,
+          7,
+          769,
+          59,
+          162387,
+          569784,
+          0,
+          0,
+          4
+        ],
+        [
+          770,
+          11,
+          770,
+          61,
+          81193,
+          81194,
+          0,
+          0,
+          4
+        ]
+      ],
+      "unexecutedBranches": [],
+      "waivers": [],
+      "nonExecutableLines": "Blank lines, comments, declarations, function signatures and static layout bound assertions have no execution counter; compiled by guard and native/Wasm builds."
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "sha256": "f6098f263309fed318023f13b54ef1b793d73488be6674159d938834a7b1bb76",
+      "addedLines": [
+        {
+          "line": 79,
+          "count": "",
+          "source": "struct raw_lane raw_join(struct raw_lane yes, struct raw_lane no)"
+        },
+        {
+          "line": 80,
+          "count": "983k",
+          "source": "{"
+        },
+        {
+          "line": 81,
+          "count": "983k",
+          "source": "   unsigned origin = 0;"
+        },
+        {
+          "line": 82,
+          "count": "983k",
+          "source": "   if (float_mode(yes) && float_mode(no))"
+        },
+        {
+          "line": 83,
+          "count": "657k",
+          "source": "      origin = RAW_FLOAT_SHADOW | ((yes.origin | no.origin) & RAW_BANK_DEPENDENCY) |"
+        },
+        {
+          "line": 84,
+          "count": "657k",
+          "source": "         (output_legal(yes) && output_legal(no) ? RAW_OUTPUT : 0);"
+        },
+        {
+          "line": 85,
+          "count": "983k",
+          "source": "   return (struct raw_lane){.zero = yes.zero & no.zero, .one = yes.one & no.one, .origin = origin};"
+        },
+        {
+          "line": 86,
+          "count": "983k",
+          "source": "}"
+        },
+        {
+          "line": 87,
+          "count": "",
+          "source": ""
+        },
+        {
+          "line": 113,
+          "count": "5.75M",
+          "source": "   if ((1u << input->opcode) & RAW_STRUCTURED_OPCODES) {"
+        },
+        {
+          "line": 114,
+          "count": "736k",
+          "source": "      ir->instructions[ir->count++] = *input;"
+        },
+        {
+          "line": 115,
+          "count": "736k",
+          "source": "      ir->opcode_mask |= 1u << input->opcode;"
+        },
+        {
+          "line": 116,
+          "count": "736k",
+          "source": "      return true;"
+        },
+        {
+          "line": 117,
+          "count": "736k",
+          "source": "   }"
+        },
+        {
+          "line": 124,
+          "count": "5.01M",
+          "source": "   bool structured = (instruction->flags & RAW_STRUCTURED) != 0;"
+        },
+        {
+          "line": 143,
+          "count": "4.85M",
+          "source": "   if ((conditional || structured) && instruction->opcode == RAW_UCMP)"
+        },
+        {
+          "line": 201,
+          "count": "0",
+          "source": "      case RAW_UIF:"
+        },
+        {
+          "line": 202,
+          "count": "0",
+          "source": "      case RAW_ELSE:"
+        },
+        {
+          "line": 203,
+          "count": "0",
+          "source": "      case RAW_ENDIF: break; /* Recorded above without a destination. */"
+        },
+        {
+          "line": 205,
+          "count": "",
+          "source": "      /* Each structured predecessor owns a physical shadow for every value"
+        },
+        {
+          "line": 206,
+          "count": "",
+          "source": "       * with numerical authority. A join can therefore retain a value without"
+        },
+        {
+          "line": 207,
+          "count": "",
+          "source": "       * borrowing another arm's IN locator or decoding a computed raw value. */"
+        },
+        {
+          "line": 208,
+          "count": "19.3M",
+          "source": "      if (structured && float_mode(result[lane]))"
+        },
+        {
+          "line": 209,
+          "count": "2.45M",
+          "source": "         result[lane].origin = RAW_FLOAT_SHADOW | (result[lane].origin & RAW_BANK_DEPENDENCY) |"
+        },
+        {
+          "line": 210,
+          "count": "2.45M",
+          "source": "            (output_legal(result[lane]) ? RAW_OUTPUT : 0);"
+        },
+        {
+          "line": 385,
+          "count": "732k",
+          "source": "   if (p->raw->opcode_mask & (RAW_NUMERIC_OPCODES | RAW_STRUCTURED_OPCODES))"
+        },
+        {
+          "line": 389,
+          "count": "5.05M",
+          "source": "      if (instruction->opcode == RAW_UIF) {"
+        },
+        {
+          "line": 390,
+          "count": "162k",
+          "source": "         emit(&w, \" if (\"); operand(&w, p, &instruction->src[0], 0); emit(&w, \" != 0u) {\\n\");"
+        },
+        {
+          "line": 391,
+          "count": "162k",
+          "source": "         continue;"
+        },
+        {
+          "line": 392,
+          "count": "162k",
+          "source": "      }"
+        },
+        {
+          "line": 393,
+          "count": "4.88M",
+          "source": "      if (instruction->opcode == RAW_ELSE) { emit(&w, \" } else {\\n\"); continue; }"
+        },
+        {
+          "line": 394,
+          "count": "4.72M",
+          "source": "      if (instruction->opcode == RAW_ENDIF) { emit(&w, \" }\\n\"); continue; }"
+        },
+        {
+          "line": 396,
+          "count": "4.56M",
+          "source": "      bool raw_shadow = (instruction->flags & RAW_STRUCTURED) && !numeric &&"
+        },
+        {
+          "line": 397,
+          "count": "4.56M",
+          "source": "         instruction->opcode != RAW_MOV && instruction->opcode != RAW_UCMP;"
+        },
+        {
+          "line": 398,
+          "count": "4.56M",
+          "source": "      if (instruction->float_mask && !raw_shadow) float_snapshot(&w, p, instruction);"
+        },
+        {
+          "line": 434,
+          "count": "4.56M",
+          "source": "      emit(&w, \");\\n\");"
+        },
+        {
+          "line": 435,
+          "count": "4.56M",
+          "source": "      if (instruction->float_mask && raw_shadow) {"
+        },
+        {
+          "line": 436,
+          "count": "8",
+          "source": "         emit(&w, \" float_rhs = vec4(\");"
+        },
+        {
+          "line": 437,
+          "count": "40",
+          "source": "         for (unsigned lane = 0; lane < 4; ++lane) {"
+        },
+        {
+          "line": 438,
+          "count": "32",
+          "source": "            if (lane) emit(&w, \", \");"
+        },
+        {
+          "line": 439,
+          "count": "32",
+          "source": "            if (instruction->float_mask & (1u << lane)) emit(&w, \"uintBitsToFloat(raw_rhs.%c)\", \"xyzw\"[lane]);"
+        },
+        {
+          "line": 440,
+          "count": "12",
+          "source": "            else emit(&w, \"0.0\");"
+        },
+        {
+          "line": 441,
+          "count": "32",
+          "source": "         }"
+        },
+        {
+          "line": 442,
+          "count": "8",
+          "source": "         emit(&w, \");\\n\");"
+        },
+        {
+          "line": 443,
+          "count": "8",
+          "source": "      }"
+        },
+        {
+          "line": 444,
+          "count": "4.56M",
+          "source": "      emit(&w, \" raw_%s[%u].\", instruction->dst.file == TEMP ? \"temp\" : \"out\", instruction->dst.index);"
+        }
+      ],
+      "changedBranchCounters": [
+        [
+          82,
+          8,
+          82,
+          23,
+          819790,
+          164158,
+          0,
+          0,
+          4
+        ],
+        [
+          82,
+          27,
+          82,
+          41,
+          657126,
+          162664,
+          0,
+          0,
+          4
+        ],
+        [
+          84,
+          11,
+          84,
+          28,
+          494050,
+          163076,
+          0,
+          0,
+          4
+        ],
+        [
+          84,
+          32,
+          84,
+          48,
+          331594,
+          162456,
+          0,
+          0,
+          4
+        ],
+        [
+          113,
+          8,
+          113,
+          54,
+          736990,
+          5014605,
+          0,
+          0,
+          4
+        ],
+        [
+          143,
+          9,
+          143,
+          20,
+          574744,
+          4276574,
+          0,
+          0,
+          4
+        ],
+        [
+          143,
+          24,
+          143,
+          34,
+          368319,
+          3908255,
+          0,
+          0,
+          4
+        ],
+        [
+          143,
+          39,
+          143,
+          70,
+          81786,
+          861277,
+          0,
+          0,
+          4
+        ],
+        [
+          201,
+          7,
+          201,
+          19,
+          0,
+          19391218,
+          0,
+          0,
+          4
+        ],
+        [
+          202,
+          7,
+          202,
+          20,
+          0,
+          19391218,
+          0,
+          0,
+          4
+        ],
+        [
+          203,
+          7,
+          203,
+          21,
+          0,
+          19391218,
+          0,
+          0,
+          4
+        ],
+        [
+          208,
+          11,
+          208,
+          21,
+          2943497,
+          16447721,
+          0,
+          0,
+          4
+        ],
+        [
+          208,
+          25,
+          208,
+          49,
+          2453169,
+          490328,
+          0,
+          0,
+          4
+        ],
+        [
+          210,
+          14,
+          210,
+          40,
+          1965063,
+          488106,
+          0,
+          0,
+          4
+        ],
+        [
+          385,
+          8,
+          385,
+          76,
+          488093,
+          244089,
+          0,
+          0,
+          4
+        ],
+        [
+          389,
+          11,
+          389,
+          41,
+          162556,
+          4889510,
+          0,
+          0,
+          4
+        ],
+        [
+          393,
+          11,
+          393,
+          42,
+          162456,
+          4727054,
+          0,
+          0,
+          4
+        ],
+        [
+          394,
+          11,
+          394,
+          43,
+          162556,
+          4564498,
+          0,
+          0,
+          4
+        ],
+        [
+          396,
+          25,
+          396,
+          62,
+          570230,
+          3994268,
+          0,
+          0,
+          4
+        ],
+        [
+          396,
+          66,
+          396,
+          74,
+          488583,
+          81647,
+          0,
+          0,
+          4
+        ],
+        [
+          397,
+          10,
+          397,
+          40,
+          468,
+          488115,
+          0,
+          0,
+          4
+        ],
+        [
+          397,
+          44,
+          397,
+          75,
+          296,
+          172,
+          0,
+          0,
+          4
+        ],
+        [
+          398,
+          11,
+          398,
+          34,
+          1208259,
+          3356239,
+          0,
+          0,
+          4
+        ],
+        [
+          398,
+          38,
+          398,
+          49,
+          1208251,
+          8,
+          0,
+          0,
+          4
+        ],
+        [
+          435,
+          11,
+          435,
+          34,
+          1208259,
+          3356239,
+          0,
+          0,
+          4
+        ],
+        [
+          435,
+          38,
+          435,
+          48,
+          8,
+          1208251,
+          0,
+          0,
+          4
+        ],
+        [
+          437,
+          34,
+          437,
+          42,
+          32,
+          8,
+          0,
+          0,
+          4
+        ],
+        [
+          438,
+          17,
+          438,
+          21,
+          24,
+          8,
+          0,
+          0,
+          4
+        ],
+        [
+          439,
+          17,
+          439,
+          55,
+          20,
+          12,
+          0,
+          0,
+          4
+        ],
+        [
+          444,
+          32,
+          444,
+          61,
+          3182269,
+          1382229,
+          0,
+          0,
+          4
+        ]
+      ],
+      "unexecutedBranches": [
+        [
+          201,
+          7,
+          201,
+          19,
+          0,
+          19391218,
+          0,
+          0,
+          4
+        ],
+        [
+          202,
+          7,
+          202,
+          20,
+          0,
+          19391218,
+          0,
+          0,
+          4
+        ],
+        [
+          203,
+          7,
+          203,
+          21,
+          0,
+          19391218,
+          0,
+          0,
+          4
+        ]
+      ],
+      "waivers": [
+        {
+          "line": 201,
+          "reason": "Exhaustive opcode switch label is unreachable: raw_record returns for all structured opcodes before reaching any destination-lane switch. The destination-free path has a positive recorded execution count."
+        },
+        {
+          "line": 202,
+          "reason": "Exhaustive opcode switch label is unreachable: raw_record returns for all structured opcodes before reaching any destination-lane switch. The destination-free path has a positive recorded execution count."
+        },
+        {
+          "line": 203,
+          "reason": "Exhaustive opcode switch label is unreachable: raw_record returns for all structured opcodes before reaching any destination-lane switch. The destination-free path has a positive recorded execution count."
+        }
+      ],
+      "nonExecutableLines": "Blank lines, comments, declarations, function signatures and static layout bound assertions have no execution counter; compiled by guard and native/Wasm builds."
+    }
+  ]
+}

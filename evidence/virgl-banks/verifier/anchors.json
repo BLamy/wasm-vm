@@ -1,0 +1,36 @@
+{
+  "vertexText": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nMOV TEMP[17], CONST[5]\nMOV TEMP[117], CONST[45]\nMUL TEMP[117], TEMP[117], CONST[44]\nADD OUT[1], TEMP[117], TEMP[17]\nMOV OUT[0], IN[0]\nEND\n",
+  "fragmentText": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nMOV TEMP[17], CONST[5]\nMOV TEMP[117], CONST[45]\nMUL TEMP[117], TEMP[117], CONST[44]\nADD OUT[0], TEMP[117], TEMP[17]\nEND\n",
+  "constants": {
+    "5": [
+      0.125,
+      0.0625,
+      0,
+      0.25
+    ],
+    "44": [
+      0.5,
+      0.25,
+      1,
+      0.5
+    ],
+    "45": [
+      0.25,
+      0.5,
+      0.75,
+      1
+    ]
+  },
+  "expectedFloatBits": [
+    1048576000,
+    1044381696,
+    1061158912,
+    1061158912
+  ],
+  "expectedRGBA": [
+    64,
+    48,
+    191,
+    191
+  ]
+}

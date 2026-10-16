@@ -1,0 +1,9 @@
+
+running 4 tests
+test gpu_cursor_plane_integration_preserves_pixels_and_transform_only_moves ... ok
+test gpu_cursorq_sequence_matches_wasm_through_machine_boundary ... ok
+test gpu_falls_back_to_slot_six_without_replacing_an_existing_optional_device ... ok
+test gpu_uses_the_remaining_optional_slot_and_machine_boundary_drains_controlq ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.14s
+

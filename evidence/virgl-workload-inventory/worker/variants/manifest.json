@@ -1,0 +1,49 @@
+{
+  "archive": {
+    "bytes": 194473,
+    "path": "recording.tar.gz",
+    "sha256": "4b30d21ff2e39ed54fedabe2e966140a84043676b8682ab9ada98e739c4a5c41"
+  },
+  "assertions": 66,
+  "boundary": "Synthetic decoder proof supplement only; preserved real guest and final cold proof boundaries unchanged.",
+  "cases": 7,
+  "heldEvidence": [
+    {
+      "path": "evidence/virgl-workload-inventory/captures/es2gears/manifest.json",
+      "sha256": "202500d87a7e31a5c04f192852bb9a23dedce8681fb3ee4850e0738aee30e8a8"
+    },
+    {
+      "path": "evidence/virgl-workload-inventory/es2gears-inventory.json",
+      "sha256": "fb91301b9e14b098e0d8a590ddb7fa33ead15972195211741a5efcc3d58e9a3c"
+    },
+    {
+      "path": "evidence/virgl-workload-inventory/kmscube-inventory.json",
+      "sha256": "8a1fb71fdd3f4d4c3696104690e11af480e5f1b95634bd077a1fcef1636b7b8c"
+    },
+    {
+      "path": "evidence/virgl-workload-inventory/index.json",
+      "sha256": "a3c6974bdf3e19b17d2150af66337bd36040191b6f23599f7ce1a3990927189f"
+    },
+    {
+      "path": "evidence/virgl-workload-inventory/worker/recording.tar.gz",
+      "sha256": "fd2b5faf08ab77133937fa8d09183a24f16bfe2f88913ca4f08d2fbacc14e7dc"
+    },
+    {
+      "path": "evidence/virgl-workload-inventory/worker/cold/recording.tar.gz",
+      "sha256": "155e1eb8a75cc790513d19abae489953952384df7900e4bd835c854a6dcc05d4"
+    },
+    {
+      "path": "evidence/virgl-workload-inventory/negative/recording.tar.gz",
+      "sha256": "4d6d63999632fc23088343403aac4d54c3a0e7beb0dc4ab41a6af96ed595b257"
+    },
+    {
+      "path": "evidence/virgl-workload-inventory/verifier/initial/recording.tar.gz",
+      "sha256": "0ce29d3b8e2f6911eeff48e6ecf3aa123b8b14981bea55473bb0b5282edd438a"
+    }
+  ],
+  "heldRuntimeSourcesUnchanged": true,
+  "records": 225,
+  "schema": "virgl-inventory-variants-worker-seal-v1",
+  "sourceFault": "index offset changes 19 to 23; literal index binding assertion rejects",
+  "sourceHead": "cfbe69fae8fc1b4befe85785d186a4449144f961"
+}

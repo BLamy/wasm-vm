@@ -1,0 +1,9 @@
+Compile: ['rustc', '--edition=2024', '--test', '/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/handoff-critic-sabotage-16_yfr5x/wrapper.rs', '-L', 'dependency=/Users/blamy/.codex/worktrees/emulator-speed-next/wasm-vm/target/debug/deps', '--extern', 'proptest=/Users/blamy/.codex/worktrees/emulator-speed-next/wasm-vm/target/debug/deps/libproptest-e81e24b929139576.rlib', '-o', '/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/handoff-critic-sabotage-16_yfr5x/tests']
+
+Run: ['/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/handoff-critic-sabotage-16_yfr5x/tests', '--exact', 'regs::tests::sparse_mask_stamp_wraps_once_and_empty_masks_do_not_mutate', '--nocapture']
+
+running 1 test
+test regs::tests::sparse_mask_stamp_wraps_once_and_empty_masks_do_not_mutate ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s
+

@@ -1,0 +1,168 @@
+{
+  "task": "E6-T12e9",
+  "sourceHead": "bfcd3a4076a163648c67bf7674e94d616c42c1e1",
+  "workerClaimCommit": "9e647be3c69fe4bfd3706ba198cd1630cd454400",
+  "status": "verified",
+  "records": [
+    {
+      "path": "aggregate-control.json",
+      "bytes": 212,
+      "sha256": "ece1556f7e9f9e26cb9693bb4831a51fc8141f7fe67cf1a37f9f8d5ef7d64532"
+    },
+    {
+      "path": "attack-results.json",
+      "bytes": 2357507,
+      "sha256": "15a860bb27fb6d8ef1d8df46733fcf3ce884f9757244e7e61e1da91f9938cd71"
+    },
+    {
+      "path": "attack.py",
+      "bytes": 4546,
+      "sha256": "ebea4ede4ec6308f461cf2697d083e43507c104590205525216c40f88ff7fa56"
+    },
+    {
+      "path": "audit-submission.py",
+      "bytes": 1620,
+      "sha256": "835d78633a3e0cf753f53e3c665d6ef09c2ab043ea79f1f4831d220011adbb0d"
+    },
+    {
+      "path": "browser-fault-control.json",
+      "bytes": 3719,
+      "sha256": "19ea9c1ed77d363ee46572fb4d95c50e6653be1468d13bbce54da9fdddb37d7d"
+    },
+    {
+      "path": "browser-forgeries.json",
+      "bytes": 1283,
+      "sha256": "009a29257670694253a176cfab07e4e255341a6c676fd0689b5d30d315550bb9"
+    },
+    {
+      "path": "browser-forgeries.py",
+      "bytes": 2417,
+      "sha256": "b81cebfb79fddb25cd6050de3d35595fa4ae7c86851878f889bf53f600a05afa"
+    },
+    {
+      "path": "cold-bindings.json",
+      "bytes": 779,
+      "sha256": "e1b89fae9aa3109f5fedd69d40273a72d6f9eaa616fab9e85a21931a50268f27"
+    },
+    {
+      "path": "cold-bindings.py",
+      "bytes": 2509,
+      "sha256": "f594bd11050c269a62f2bd459bece19a8a21c5e19fbc8f6bde7dfe8adfd19d64"
+    },
+    {
+      "path": "cold-control.json",
+      "bytes": 716,
+      "sha256": "186b6d3210b5036b5a8cee3b8a561d094d1d94bfff8cd87d1c11723a51c3e6aa"
+    },
+    {
+      "path": "commands.json",
+      "bytes": 12785,
+      "sha256": "68f2b6b3aa191bf31f6a959c69d72a4934b0856f789a9ab47356fdd7d89d7200"
+    },
+    {
+      "path": "consumer-results.json",
+      "bytes": 406203,
+      "sha256": "3e3a776b7dc9161e5f11d0396ece79b9343af8c85117e0764006c3a7d5e45f29"
+    },
+    {
+      "path": "consumer.mjs",
+      "bytes": 2740,
+      "sha256": "8b803e68eff6c2fa1b34e7e6a48c16ef99c439738faefe1ff73aa6b1f6118443"
+    },
+    {
+      "path": "coverage-audit.json",
+      "bytes": 44023,
+      "sha256": "eb028ebef95a1505d063822be86c3387ae203ccfdc163fd78d9304c40efb084b"
+    },
+    {
+      "path": "coverage-reexport.json",
+      "bytes": 710,
+      "sha256": "d29985eee39eedf9779b833fd60685509d053e3dcc808d82998837dce7edaaea"
+    },
+    {
+      "path": "coverage.py",
+      "bytes": 1473,
+      "sha256": "1cdded6bab0faa7ee2429dcac8ca03b72785ac70158a2003684ab63afcbc708d"
+    },
+    {
+      "path": "dynamic-address-results.json",
+      "bytes": 2642894,
+      "sha256": "58a9ffc6cec88451e47161e2497d82d73d3b17eb2d16b753e863062d07479796"
+    },
+    {
+      "path": "interpret.py",
+      "bytes": 3143,
+      "sha256": "0a8e316fc29533f58666bc434ea9209e4bd95b3fb252ee3fc2f7ee1f78724e8e"
+    },
+    {
+      "path": "js-coverage-audit.json",
+      "bytes": 6892,
+      "sha256": "dbc85aa654ce9a766fc9b63936e033c9c642322d4e47d1898cda454f8140c58f"
+    },
+    {
+      "path": "js-coverage.py",
+      "bytes": 1928,
+      "sha256": "9ffaf7007cd327e17f6a7d197de99f9bcc61fb93349bf6006fc96dc7f61cdd71"
+    },
+    {
+      "path": "native-wasm-control.json",
+      "bytes": 656,
+      "sha256": "c78e5d4c438e7ea07c40bad535f65bc9ed2de5b120cd4fc7266c4ff6cbd97a3a"
+    },
+    {
+      "path": "native-wasm-forgeries.json",
+      "bytes": 2144,
+      "sha256": "032890dd6e6bd66b86d3a9f62d814d34564c222b66c684aeb8aea8e94cfc164e"
+    },
+    {
+      "path": "native-wasm-forgeries.py",
+      "bytes": 3331,
+      "sha256": "ca02cc937fb68fd9909a17be2d35d4ac1ec80ca66de19e2e80d5dacf9b4ac5ad"
+    },
+    {
+      "path": "pixel-reconstruction.json",
+      "bytes": 22542,
+      "sha256": "c82a5f707b5bbed03cb6c2514f163a52950eed3daae012ffe2a48ffa65b4d8e4"
+    },
+    {
+      "path": "pixels.py",
+      "bytes": 2143,
+      "sha256": "6c2d5d3d88f057e99c002108202550ba2d02dc46503a311a14b1f4f6ab4b8703"
+    },
+    {
+      "path": "predictions.md",
+      "bytes": 1850,
+      "sha256": "4e16f1a0b76a029b5ab17ce7f10de3320d0d7a867748ab98595838a33bb1c515"
+    },
+    {
+      "path": "receipt-attacks.json",
+      "bytes": 1764,
+      "sha256": "3e4dce3c6a09b0eb2275c9015bda263e6eed5766696833e205d76f07cd76cece"
+    },
+    {
+      "path": "receipt-attacks.py",
+      "bytes": 1634,
+      "sha256": "ad0e00250d48e962dd117942a88815200f77803e6a5ce7c9aca9092f106f88ff"
+    },
+    {
+      "path": "report.json",
+      "bytes": 7306,
+      "sha256": "d59319322274e417725c29f51c51ac2f0de2aebabe2f162c281a6d369e0fe05f"
+    },
+    {
+      "path": "run-verifier.py",
+      "bytes": 886,
+      "sha256": "bdf157aa066db99c05909e9cb966d225a721c8f1f0d8b86583d6323096f01dce"
+    },
+    {
+      "path": "sabotage-results.json",
+      "bytes": 11775,
+      "sha256": "4b534d55a169e1a815789b144df4b1161a55b10a370f037aa0ab0dab5d53980c"
+    },
+    {
+      "path": "sabotage.py",
+      "bytes": 3126,
+      "sha256": "db8e636036fbf64fdda79e26b858c8b056b670e7cd874099fb4b951d9ce2a992"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "schema": "original-floating-depth-image-seal-v1",
+  "task": "E6-T11d39",
+  "sourceHead": "2ef416185b8b4ddd85e39efd0913c8eb8eeb71e3",
+  "records": 21200,
+  "reopenedMembers": 21200,
+  "sourceClosureIncluded": true,
+  "archiveSha256": "43ae2cd2d362ba708121e9d3d23789eae24c738324b43a2261f29e3bf5ebdc16",
+  "archiveBytes": 77123950,
+  "recordIndexSha256": "b853257bc25b5e71da6854ed8c35fb55ffe61b3e3c0cffc34942ed4e1f797891",
+  "hotReceiptSha256": "1eb6a28ecd0210a6a4e1b428d1488b623a93bbd5def3689d566fa21645a8d576",
+  "coldReportSha256": "da27f6a07f8d0d375949cdbac5e84f33f3ecd065815bb1ff314ac03b6abb3028",
+  "coldReceiptSha256": "2aae0643d3c37f90ffc75f8be70c0261e69f52f3f131e272d593265e54cefa99",
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "authority": "isolated-original-floating-depth-images",
+  "productionDrawAuthority": false
+}

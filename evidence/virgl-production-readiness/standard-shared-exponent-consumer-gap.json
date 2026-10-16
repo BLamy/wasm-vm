@@ -1,0 +1,146 @@
+{
+  "schema": "original-shared-exponent-consumer-gap-v1",
+  "task": "E6-T11d30",
+  "gitHead": "b76fa7d63703e3cf2a3dfc3b2d7c835c3f3db5e1",
+  "verifiedDependency": "E6-T11d29",
+  "authority": "literal-original-wire-refusal-only",
+  "nativeExecuted": false,
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "productionDrawAuthority": false,
+  "sources": [
+    {
+      "path": "renderer/virgl-command/decoder.mjs",
+      "bytes": 37960,
+      "sha256": "dfac7979df8b0cda51ac5cfeb17763157f1f742eeafc3ea9920a8b6cd48990aa"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "bytes": 147645,
+      "sha256": "16c27a3e9d7a11223dd91be999b9c37def0461e6137b45a43a2a52f64efae413"
+    },
+    {
+      "path": "renderer/virgl-command/resources.mjs",
+      "bytes": 96755,
+      "sha256": "e41c1d3fb8c3ba2ed81a99a4f1072a6c531957766fa87dd1265bb1bca57697a8"
+    },
+    {
+      "path": "renderer/virgl-command/shared-exponent-images.mjs",
+      "bytes": 563,
+      "sha256": "27de20239649aea73145e1f547c9265692f451fedddf3876639c173cf0d6168f"
+    },
+    {
+      "path": "renderer/virgl-command/shared-exponent-gpu.mjs",
+      "bytes": 9865,
+      "sha256": "22efbf4e0a3ae04d2e29900278db1e88880bd7c2fc7e757d0fd12d3a899531b7"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/virgl_hw.h",
+      "bytes": 36318,
+      "sha256": "191ca5cea527949a29e9753b1e31d550f2fed922895d78dabc5c5c3585aa2ff7"
+    },
+    {
+      "path": "tools/virgl-command/standard-float-image-mesa-formats.yaml",
+      "bytes": 80486,
+      "sha256": "f0fef33544456468def10d5dffc72a61e8b0e7acc599b700fc65366e6f495a10"
+    },
+    {
+      "path": "tools/virgl-command/standard-image-fixtures.mjs",
+      "bytes": 3809,
+      "sha256": "1c045bdf667fc18be16644a05dfeeb5ef7e88b4eb7eaf3f3572f20fa98954d48"
+    }
+  ],
+  "predecessorSeals": [
+    {
+      "path": "evidence/virgl-standard-shared-exponent-images/worker/manifest.json",
+      "bytes": 793,
+      "sha256": "d0d8ade6eeba3953b1ddfe70738127503a5db516aef56b48630c83f4309d64db"
+    },
+    {
+      "path": "evidence/virgl-standard-shared-exponent-images/worker/records.json",
+      "bytes": 1965614,
+      "sha256": "8451bac5629992d907a3d14de3eaae5eff4ac3b38b1c62a3f639b40b3fab3412"
+    },
+    {
+      "path": "evidence/virgl-standard-shared-exponent-images/worker/recording.tar.gz",
+      "bytes": 31778302,
+      "sha256": "5867b3470f9efc59feb41276c38aefad463197cf1f8a705c0bb03d0478a537ae"
+    },
+    {
+      "path": "evidence/virgl-standard-shared-exponent-images/verifier/manifest.json",
+      "bytes": 4309,
+      "sha256": "63805000d66b232b41fada5c2e2866aa998850979ebe67ba054cd765da5604dc"
+    },
+    {
+      "path": "evidence/virgl-standard-shared-exponent-images/verifier/records.json",
+      "bytes": 265346,
+      "sha256": "1fc05fdf5fc8aa54a45ce448cafeea5022380e633b010e3374465321e53fe2f9"
+    },
+    {
+      "path": "evidence/virgl-standard-shared-exponent-images/verifier/recording.tar.gz",
+      "bytes": 4064392,
+      "sha256": "fadf4c70cfcb707a409036c58ce7750967b7787a303e6b6a3bb4ec5ed38c2f5d"
+    }
+  ],
+  "rows": [
+    {
+      "kind": "sampler-range",
+      "format": 125,
+      "firstLevel": 1,
+      "lastLevel": 3,
+      "swizzle": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "hex": "0106060009000000060000007d000002000000000103000088060000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "sampler-range",
+      "format": 125,
+      "firstLevel": 1,
+      "lastLevel": 3,
+      "swizzle": [
+        2,
+        4,
+        0,
+        5
+      ],
+      "hex": "0106060009000000060000007d0000020000000001030000220a0000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface-mip",
+      "format": 125,
+      "level": 2,
+      "hex": "010805000a000000060000007d0000000200000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    }
+  ]
+}

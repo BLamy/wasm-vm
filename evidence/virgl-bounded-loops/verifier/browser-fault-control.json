@@ -1,0 +1,121 @@
+{
+  "browserModes": [
+    {
+      "mode": "normal",
+      "draws": 39,
+      "pixels": 159744,
+      "words": 768,
+      "mismatches": 0,
+      "fences": 96,
+      "withheldPolls": 144,
+      "rejections": 26,
+      "report": {
+        "path": "hardware/report.json",
+        "bytes": 15931499,
+        "sha256": "aca113213bb648c8bd07ad7bef0a5f610f219836bd1089915379c19e2ddc40e7"
+      }
+    },
+    {
+      "mode": "decoder-bypass",
+      "draws": 5,
+      "pixels": 20480,
+      "words": 0,
+      "mismatches": 0,
+      "fences": 0,
+      "withheldPolls": 0,
+      "rejections": 14,
+      "report": {
+        "path": "sabotage-decoder-bypass/report.json",
+        "bytes": 6737219,
+        "sha256": "d3fe02caca5447c9329f91a0b06d6721695e8d60f0de51a82c6bf61025245940"
+      }
+    },
+    {
+      "mode": "early-break",
+      "draws": 1,
+      "pixels": 4096,
+      "words": 32,
+      "mismatches": 26,
+      "fences": 0,
+      "withheldPolls": 0,
+      "rejections": 0,
+      "report": {
+        "path": "sabotage-early-break/report.json",
+        "bytes": 1049908,
+        "sha256": "d0a7b74e585f575508c07b1a5f0115be1ca2cb9f06d0e1378eed27b5999f4f22"
+      }
+    }
+  ],
+  "faults": {
+    "manifest": {
+      "path": "manifest.json",
+      "bytes": 88697,
+      "sha256": "ca234daf5d8c70766974507931e70150c3da9fd4d3825177a6b5693abcce33f7"
+    },
+    "modes": {
+      "early-break": {
+        "translatedStages": 14,
+        "changedStages": 4,
+        "artifacts": {
+          "module": {
+            "path": "early-break/wasm/virgl-shader.mjs",
+            "bytes": 9285,
+            "sha256": "45dccef6ff61f9f01a63b86b40eb6c621fa442e39cbf04bbbb79446e5b372e65"
+          },
+          "wasm": {
+            "path": "early-break/wasm/virgl-shader.wasm",
+            "bytes": 294400,
+            "sha256": "3f32ca5c6a991ce4eae6bd57cced726b1d3c0dfe7d11f62eb1be19f09a63baa7"
+          },
+          "native": {
+            "path": "early-break/native/virgl-shader",
+            "bytes": 330432,
+            "sha256": "38f15522a978d19cf08945a0bd2ed16a73b238f49f81af235a9d307b17ffa9b3"
+          }
+        },
+        "nativeTranslations": {
+          "path": "early-break/native.json",
+          "bytes": 159450,
+          "sha256": "0a1a90942febda13a5bfdaa0a530026c73c38143a6c6e12ccfe05cae4e8b5710"
+        },
+        "wasmTranslations": {
+          "path": "early-break/wasm.json",
+          "bytes": 91751,
+          "sha256": "ad6f48621fb5a342720b04d84507da6e03f692f3e03a7c6dfddf76dae3816912"
+        }
+      },
+      "recurrence-guard": {
+        "translatedStages": 14,
+        "changedStages": 2,
+        "artifacts": {
+          "module": {
+            "path": "recurrence-guard/wasm/virgl-shader.mjs",
+            "bytes": 9285,
+            "sha256": "45dccef6ff61f9f01a63b86b40eb6c621fa442e39cbf04bbbb79446e5b372e65"
+          },
+          "wasm": {
+            "path": "recurrence-guard/wasm/virgl-shader.wasm",
+            "bytes": 294349,
+            "sha256": "6d895f33b1e715cd0c13803160da0bc550b7917d25c54b9dcfc0a1c458e64212"
+          },
+          "native": {
+            "path": "recurrence-guard/native/virgl-shader",
+            "bytes": 330432,
+            "sha256": "4d5880667d61c51b94064fe1ec8f5900ad6bb4cb5b48f40014bf470fd30e3b09"
+          }
+        },
+        "nativeTranslations": {
+          "path": "recurrence-guard/native.json",
+          "bytes": 199664,
+          "sha256": "0d8800c6b1e38f751a118f7623846edfe19e32307918c3155a931964d7718a91"
+        },
+        "wasmTranslations": {
+          "path": "recurrence-guard/wasm.json",
+          "bytes": 115694,
+          "sha256": "ef974101a3f55d5fd02754e7f98018fea2298fdad2a8c849845a0c987e004004"
+        }
+      }
+    },
+    "preview": false
+  }
+}

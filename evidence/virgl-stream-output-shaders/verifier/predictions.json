@@ -1,0 +1,20 @@
+{
+  "schema": "stream-output-shaders-independent-predictions-v1",
+  "task": "E6-T11d65",
+  "declaredBeforeEvidence": true,
+  "declarationAuthority": "Prior independent review turn and collaboration messages before frozen evidence handoff",
+  "base": "6f43010dfa7b3e08bfe62f62543b7ee0468e1a21",
+  "predictions": {
+    "P1": "Typed original count/stride/output bounds and declarations admit only valid layouts; all malformed/stage/stream/range/overlap edges refuse before source emission.",
+    "P2": "All original layout entries and strides survive; each buffer variant exposes original-index uint/uvecN varyings in original order with checked packed offsets/stride.",
+    "P3": "Complete hardware words preserve raw endpoints/masks/NaNs, partial/aliased writes and unwritten zeros; POSITION capture precedes host adjustment.",
+    "P4": "Only selected C/Wasm entries generate strings/tokens/layouts/metadata; JS does data custody/transport without source rewriting/fallback or production authority.",
+    "P5": "Own-data/reflection boundaries and copied layout ownership hold; forced allocations free owners and recover with identical complete output.",
+    "P6": "Complete historical response bytes remain identical, carrying only authenticated unchanged predecessor partitions.",
+    "P7": "Finest new JS/native counters cover all changed executable regions or explicit static/unchanged waivers; fixed16-MiB Wasm and256-KiB stack remain bounded.",
+    "P8": "Exact-head cold/portable/deployment custody binds full source and native work; default demo127/0 retains partial graphics/absent proof exports.",
+    "N1": "Zero TEMP0, assign TEMP0.xyz from bankA, alias MOV TEMP0.yz,TEMP0.wxyz, MOV OUT31,TEMP0 must yield[Ax,Ax,Ay,0]. Interleaved entries across buffers with nonzero gaps retain immutable pre-mutation metadata/layout and full capture words.",
+    "S1": "Swap two valid same-type uint entries in one native buffer variant; valid capture and full readback complete, then the unchanged complete-word oracle fails."
+  },
+  "grammarCorrection": "Inherited OUT registers are write-only; TEMP alias is the legal prediction and no OUT-read grammar expansion is required."
+}

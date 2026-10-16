@@ -1,0 +1,35 @@
+Pinned virglrenderer 1.3.0: 70 source/generated SHA-256 hashes match
+vendor/src/vrend/vrend_shader.c:4717:13: warning: 'sprintf' is deprecated: This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead. [-Wdeprecated-declarations]
+ 4717 |             sprintf(arrayname, "[addr%d]", src->DimIndirect.Index);
+      |             ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/_stdio.h:278:1: note: 'sprintf' has been explicitly marked deprecated here
+  278 | __deprecated_msg("This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead.")
+      | ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h:227:48: note: expanded from macro '__deprecated_msg'
+  227 |         #define __deprecated_msg(_msg) __attribute__((__deprecated__(_msg)))
+      |                                                       ^
+vendor/src/vrend/vrend_shader.c:4719:13: warning: 'sprintf' is deprecated: This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead. [-Wdeprecated-declarations]
+ 4719 |             sprintf(arrayname, "[%d]", src->Dimension.Index);
+      |             ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/_stdio.h:278:1: note: 'sprintf' has been explicitly marked deprecated here
+  278 | __deprecated_msg("This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead.")
+      | ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h:227:48: note: expanded from macro '__deprecated_msg'
+  227 |         #define __deprecated_msg(_msg) __attribute__((__deprecated__(_msg)))
+      |                                                       ^
+vendor/src/vrend/vrend_shader.c:7349:16: warning: 'sprintf' is deprecated: This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead. [-Wdeprecated-declarations]
+ 7349 |                sprintf(prefix, "layout(location = %d)", ctx->outputs[i].sid);
+      |                ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/_stdio.h:278:1: note: 'sprintf' has been explicitly marked deprecated here
+  278 | __deprecated_msg("This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead.")
+      | ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h:227:48: note: expanded from macro '__deprecated_msg'
+  227 |         #define __deprecated_msg(_msg) __attribute__((__deprecated__(_msg)))
+      |                                                       ^
+3 warnings generated.
+injected_failure=1 result={"ok":false,"error":{"code":"translation-error","message":"Shader output allocation failed."}}
+injected_failure=2 result={"ok":false,"error":{"code":"translation-error","message":"Upstream translation failed, logged a diagnostic, or exceeded the output bound."}}
+injected_failure=3 result={"ok":false,"error":{"code":"translation-error","message":"Upstream translation failed, logged a diagnostic, or exceeded the output bound."}}
+injected_failure=4 result={"ok":false,"error":{"code":"translation-error","message":"Upstream translation failed, logged a diagnostic, or exceeded the output bound."}}
+injected_failure=5 result={"ok":false,"error":{"code":"translation-error","message":"JSON output exceeded its bound."}}
+PASS five defensive fault paths returned bounded errors and recovered byte-identically; diagnostic shims executed

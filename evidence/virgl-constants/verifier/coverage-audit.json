@@ -1,0 +1,906 @@
+{
+  "schema": 1,
+  "base": "5af5600c33c69e926c96a3dc82369c31da391565",
+  "frozenHead": "81cd3a4c403176be4b0191fa00ed37f4fd1e1e35",
+  "coverage": [
+    {
+      "path": "evidence/virgl-constants/worker/hardware/browser-coverage.json",
+      "sha256": "487e19f2c0b5ee08017631e8c224b9d8a5319d8331f333894c9a1c5509c59f58"
+    },
+    {
+      "path": "evidence/virgl-constants/verifier/normal/coverage.json",
+      "sha256": "45e81a341f1c9e519225d6ef917e2f56da3458bce586f3b316e76b82927df320"
+    },
+    {
+      "path": "evidence/virgl-constants/worker/regression/regression/state/browser-coverage.json",
+      "sha256": "eab95415bbbcfdfeb01c51eb85ada5d0d4115643e9015497fe6e84f5a8426f8f"
+    }
+  ],
+  "files": [
+    {
+      "path": "renderer/virgl-command/decoder.mjs",
+      "sha256": "ff34a6ef400308500c5dd7891b3f8a2ab2f25f45ac6456dc33b91b5955e3c736",
+      "lines": [
+        {
+          "line": 12,
+          "text": "  constantWords: 184,",
+          "classification": "executed",
+          "hits": [
+            {
+              "run": "worker",
+              "count": 1,
+              "function": "",
+              "range": {
+                "startOffset": 0,
+                "endOffset": 28127,
+                "count": 1
+              }
+            },
+            {
+              "run": "critic",
+              "count": 1,
+              "function": "",
+              "range": {
+                "startOffset": 0,
+                "endOffset": 28127,
+                "count": 1
+              }
+            }
+          ]
+        }
+      ],
+      "zeroBranches": []
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "sha256": "48226610b453a0fbeea78e10ffe4252875e299c931141b928607b9ea6079e8eb",
+      "lines": [
+        {
+          "line": 142,
+          "text": "    const hostUniformComponents = [gl.getParameter(gl.MAX_VERTEX_UNIFORM_COMPONENTS), gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_COMPONENTS)];",
+          "classification": "executed",
+          "hits": [
+            {
+              "run": "worker",
+              "count": 35,
+              "function": "",
+              "range": {
+                "startOffset": 5683,
+                "endOffset": 65608,
+                "count": 35
+              }
+            },
+            {
+              "run": "critic",
+              "count": 24,
+              "function": "",
+              "range": {
+                "startOffset": 5683,
+                "endOffset": 65608,
+                "count": 24
+              }
+            },
+            {
+              "run": "state-regression",
+              "count": 21,
+              "function": "",
+              "range": {
+                "startOffset": 5683,
+                "endOffset": 65608,
+                "count": 21
+              }
+            }
+          ]
+        },
+        {
+          "line": 145,
+          "text": "    require(hostUniformComponents.every((count) => Number.isSafeInteger(count) && count > 0),",
+          "classification": "executed",
+          "hits": [
+            {
+              "run": "worker",
+              "count": 35,
+              "function": "",
+              "range": {
+                "startOffset": 5683,
+                "endOffset": 65608,
+                "count": 35
+              }
+            },
+            {
+              "run": "critic",
+              "count": 24,
+              "function": "",
+              "range": {
+                "startOffset": 5683,
+                "endOffset": 65608,
+                "count": 24
+              }
+            },
+            {
+              "run": "state-regression",
+              "count": 21,
+              "function": "",
+              "range": {
+                "startOffset": 5683,
+                "endOffset": 65608,
+                "count": 21
+              }
+            }
+          ]
+        },
+        {
+          "line": 146,
+          "text": "      \"unsupported-host\", \"WebGL stage uniform component limits must be positive integers.\");",
+          "classification": "executed",
+          "hits": [
+            {
+              "run": "worker",
+              "count": 35,
+              "function": "",
+              "range": {
+                "startOffset": 5683,
+                "endOffset": 65608,
+                "count": 35
+              }
+            },
+            {
+              "run": "critic",
+              "count": 24,
+              "function": "",
+              "range": {
+                "startOffset": 5683,
+                "endOffset": 65608,
+                "count": 24
+              }
+            },
+            {
+              "run": "state-regression",
+              "count": 21,
+              "function": "",
+              "range": {
+                "startOffset": 5683,
+                "endOffset": 65608,
+                "count": 21
+              }
+            }
+          ]
+        },
+        {
+          "line": 147,
+          "text": "    Object.freeze(hostUniformComponents);",
+          "classification": "executed",
+          "hits": [
+            {
+              "run": "worker",
+              "count": 35,
+              "function": "",
+              "range": {
+                "startOffset": 5683,
+                "endOffset": 65608,
+                "count": 35
+              }
+            },
+            {
+              "run": "critic",
+              "count": 24,
+              "function": "",
+              "range": {
+                "startOffset": 5683,
+                "endOffset": 65608,
+                "count": 24
+              }
+            },
+            {
+              "run": "state-regression",
+              "count": 21,
+              "function": "",
+              "range": {
+                "startOffset": 5683,
+                "endOffset": 65608,
+                "count": 21
+              }
+            }
+          ]
+        },
+        {
+          "line": 342,
+          "text": "            require(uniform.type === \"uvec4[]\" && uniform.encoding === \"float32-bits\" && Number.isInteger(uniform.count) && uniform.count > 0 && uniform.count <= 47,",
+          "classification": "executed",
+          "hits": [
+            {
+              "run": "worker",
+              "count": 79,
+              "function": "link",
+              "range": {
+                "startOffset": 24117,
+                "endOffset": 29221,
+                "count": 79
+              }
+            },
+            {
+              "run": "critic",
+              "count": 36,
+              "function": "link",
+              "range": {
+                "startOffset": 24117,
+                "endOffset": 29221,
+                "count": 36
+              }
+            },
+            {
+              "run": "state-regression",
+              "count": 9,
+              "function": "link",
+              "range": {
+                "startOffset": 24170,
+                "endOffset": 25784,
+                "count": 9
+              }
+            }
+          ]
+        },
+        {
+          "line": 346,
+          "text": "            let activeCount = 0;",
+          "classification": "executed",
+          "hits": [
+            {
+              "run": "worker",
+              "count": 79,
+              "function": "link",
+              "range": {
+                "startOffset": 24117,
+                "endOffset": 29221,
+                "count": 79
+              }
+            },
+            {
+              "run": "critic",
+              "count": 36,
+              "function": "link",
+              "range": {
+                "startOffset": 24117,
+                "endOffset": 29221,
+                "count": 36
+              }
+            },
+            {
+              "run": "state-regression",
+              "count": 9,
+              "function": "link",
+              "range": {
+                "startOffset": 24170,
+                "endOffset": 25784,
+                "count": 9
+              }
+            }
+          ]
+        },
+        {
+          "line": 347,
+          "text": "            if (location !== null || index !== gl.INVALID_INDEX) {",
+          "classification": "executed",
+          "hits": [
+            {
+              "run": "worker",
+              "count": 79,
+              "function": "link",
+              "range": {
+                "startOffset": 24117,
+                "endOffset": 29221,
+                "count": 79
+              }
+            },
+            {
+              "run": "critic",
+              "count": 36,
+              "function": "link",
+              "range": {
+                "startOffset": 24117,
+                "endOffset": 29221,
+                "count": 36
+              }
+            },
+            {
+              "run": "state-regression",
+              "count": 9,
+              "function": "link",
+              "range": {
+                "startOffset": 24170,
+                "endOffset": 25784,
+                "count": 9
+              }
+            }
+          ]
+        },
+        {
+          "line": 348,
+          "text": "              require(location !== null && index !== undefined && index !== gl.INVALID_INDEX &&",
+          "classification": "executed",
+          "hits": [
+            {
+              "run": "worker",
+              "count": 73,
+              "function": "link",
+              "range": {
+                "startOffset": 24691,
+                "endOffset": 25343,
+                "count": 73
+              }
+            },
+            {
+              "run": "critic",
+              "count": 31,
+              "function": "link",
+              "range": {
+                "startOffset": 24691,
+                "endOffset": 25343,
+                "count": 31
+              }
+            },
+            {
+              "run": "state-regression",
+              "count": 9,
+              "function": "link",
+              "range": {
+                "startOffset": 24170,
+                "endOffset": 25784,
+                "count": 9
+              }
+            }
+          ]
+        },
+        {
+          "line": 349,
+          "text": "                gl.getActiveUniforms(program.native, [index], gl.UNIFORM_TYPE)[0] === gl.UNSIGNED_INT_VEC4,",
+          "classification": "executed",
+          "hits": [
+            {
+              "run": "worker",
+              "count": 69,
+              "function": "link",
+              "range": {
+                "startOffset": 24786,
+                "endOffset": 24895,
+                "count": 69
+              }
+            },
+            {
+              "run": "critic",
+              "count": 31,
+              "function": "link",
+              "range": {
+                "startOffset": 24691,
+                "endOffset": 25343,
+                "count": 31
+              }
+            },
+            {
+              "run": "state-regression",
+              "count": 9,
+              "function": "link",
+              "range": {
+                "startOffset": 24170,
+                "endOffset": 25784,
+                "count": 9
+              }
+            }
+          ]
+        },
+        {
+          "line": 350,
+          "text": "              \"shader-reflection-error\", \"Constant reflection mismatch.\");",
+          "classification": "executed",
+          "hits": [
+            {
+              "run": "worker",
+              "count": 73,
+              "function": "link",
+              "range": {
+                "startOffset": 24691,
+                "endOffset": 25343,
+                "count": 73
+              }
+            },
+            {
+              "run": "critic",
+              "count": 31,
+              "function": "link",
+              "range": {
+                "startOffset": 24691,
+                "endOffset": 25343,
+                "count": 31
+              }
+            },
+            {
+              "run": "state-regression",
+              "count": 9,
+              "function": "link",
+              "range": {
+                "startOffset": 24170,
+                "endOffset": 25784,
+                "count": 9
+              }
+            }
+          ]
+        },
+        {
+          "line": 351,
+          "text": "              activeCount = gl.getActiveUniforms(program.native, [index], gl.UNIFORM_SIZE)[0];",
+          "classification": "executed",
+          "hits": [
+            {
+              "run": "worker",
+              "count": 73,
+              "function": "link",
+              "range": {
+                "startOffset": 24691,
+                "endOffset": 25343,
+                "count": 73
+              }
+            },
+            {
+              "run": "critic",
+              "count": 31,
+              "function": "link",
+              "range": {
+                "startOffset": 24691,
+                "endOffset": 25343,
+                "count": 31
+              }
+            },
+            {
+              "run": "state-regression",
+              "count": 9,
+              "function": "link",
+              "range": {
+                "startOffset": 24170,
+                "endOffset": 25784,
+                "count": 9
+              }
+            }
+          ]
+        },
+        {
+          "line": 352,
+          "text": "              require(Number.isInteger(activeCount) && activeCount > 0 && activeCount <= uniform.count &&",
+          "classification": "executed",
+          "hits": [
+            {
+              "run": "worker",
+              "count": 73,
+              "function": "link",
+              "range": {
+                "startOffset": 24691,
+                "endOffset": 25343,
+                "count": 73
+              }
+            },
+            {
+              "run": "critic",
+              "count": 31,
+              "function": "link",
+              "range": {
+                "startOffset": 24691,
+                "endOffset": 25343,
+                "count": 31
+              }
+            },
+            {
+              "run": "state-regression",
+              "count": 9,
+              "function": "link",
+              "range": {
+                "startOffset": 24170,
+                "endOffset": 25784,
+                "count": 9
+              }
+            }
+          ]
+        },
+        {
+          "line": 353,
+          "text": "                activeCount * 4 <= hostUniformComponents[stage], \"shader-reflection-error\", \"Constant extent exceeds its declaration or host stage limit.\");",
+          "classification": "executed",
+          "hits": [
+            {
+              "run": "worker",
+              "count": 61,
+              "function": "link",
+              "range": {
+                "startOffset": 25170,
+                "endOffset": 25236,
+                "count": 61
+              }
+            },
+            {
+              "run": "critic",
+              "count": 31,
+              "function": "link",
+              "range": {
+                "startOffset": 24691,
+                "endOffset": 25343,
+                "count": 31
+              }
+            },
+            {
+              "run": "state-regression",
+              "count": 9,
+              "function": "link",
+              "range": {
+                "startOffset": 24170,
+                "endOffset": 25784,
+                "count": 9
+              }
+            }
+          ]
+        },
+        {
+          "line": 354,
+          "text": "            }",
+          "classification": "waived",
+          "reason": "Comment or structural delimiter, no executable behavior."
+        },
+        {
+          "line": 355,
+          "text": "            // The upstream declaration can include an unaddressable 47th element.",
+          "classification": "waived",
+          "reason": "Comment or structural delimiter, no executable behavior."
+        },
+        {
+          "line": 356,
+          "text": "            // Driver-retained suffixes are not permission to upload guest CONST46.",
+          "classification": "waived",
+          "reason": "Comment or structural delimiter, no executable behavior."
+        },
+        {
+          "line": 357,
+          "text": "            const uploadCount = Math.min(activeCount, 46);",
+          "classification": "executed",
+          "hits": [
+            {
+              "run": "worker",
+              "count": 64,
+              "function": "link",
+              "range": {
+                "startOffset": 25343,
+                "endOffset": 25599,
+                "count": 64
+              }
+            },
+            {
+              "run": "critic",
+              "count": 27,
+              "function": "link",
+              "range": {
+                "startOffset": 25343,
+                "endOffset": 25836,
+                "count": 27
+              }
+            },
+            {
+              "run": "state-regression",
+              "count": 9,
+              "function": "link",
+              "range": {
+                "startOffset": 24170,
+                "endOffset": 25784,
+                "count": 9
+              }
+            }
+          ]
+        },
+        {
+          "line": 358,
+          "text": "            if (uploadCount) program.uniforms.push({ stage, uploadCount, location });",
+          "classification": "executed",
+          "hits": [
+            {
+              "run": "worker",
+              "count": 64,
+              "function": "link",
+              "range": {
+                "startOffset": 25343,
+                "endOffset": 25599,
+                "count": 64
+              }
+            },
+            {
+              "run": "critic",
+              "count": 27,
+              "function": "link",
+              "range": {
+                "startOffset": 25343,
+                "endOffset": 25836,
+                "count": 27
+              }
+            },
+            {
+              "run": "state-regression",
+              "count": 9,
+              "function": "link",
+              "range": {
+                "startOffset": 24170,
+                "endOffset": 25784,
+                "count": 9
+              }
+            }
+          ]
+        },
+        {
+          "line": 359,
+          "text": "            program.reflection.uniforms.push({ ...uniform, name, stage: metadata.stage, activeCount, uploadCount });",
+          "classification": "executed",
+          "hits": [
+            {
+              "run": "worker",
+              "count": 64,
+              "function": "link",
+              "range": {
+                "startOffset": 25655,
+                "endOffset": 25836,
+                "count": 64
+              }
+            },
+            {
+              "run": "critic",
+              "count": 27,
+              "function": "link",
+              "range": {
+                "startOffset": 25343,
+                "endOffset": 25836,
+                "count": 27
+              }
+            },
+            {
+              "run": "state-regression",
+              "count": 9,
+              "function": "link",
+              "range": {
+                "startOffset": 24170,
+                "endOffset": 25784,
+                "count": 9
+              }
+            }
+          ]
+        },
+        {
+          "line": 470,
+          "text": "          const words = new Uint32Array(uniform.uploadCount * 4);",
+          "classification": "executed",
+          "hits": [
+            {
+              "run": "worker",
+              "count": 326,
+              "function": "restore",
+              "range": {
+                "startOffset": 34158,
+                "endOffset": 34360,
+                "count": 326
+              }
+            },
+            {
+              "run": "critic",
+              "count": 126,
+              "function": "restore",
+              "range": {
+                "startOffset": 34158,
+                "endOffset": 34360,
+                "count": 126
+              }
+            },
+            {
+              "run": "state-regression",
+              "count": 185,
+              "function": "restore",
+              "range": {
+                "startOffset": 33821,
+                "endOffset": 34462,
+                "count": 185
+              }
+            }
+          ]
+        },
+        {
+          "line": 522,
+          "text": "      for (const uniform of program.uniforms) require(sub.constants[uniform.stage].length >= uniform.uploadCount * 4,",
+          "classification": "executed",
+          "hits": [
+            {
+              "run": "worker",
+              "count": 61,
+              "function": "prepareDraw",
+              "range": {
+                "startOffset": 37169,
+                "endOffset": 39840,
+                "count": 61
+              }
+            },
+            {
+              "run": "critic",
+              "count": 24,
+              "function": "prepareDraw",
+              "range": {
+                "startOffset": 37169,
+                "endOffset": 39840,
+                "count": 24
+              }
+            },
+            {
+              "run": "state-regression",
+              "count": 0,
+              "function": "prepareDraw",
+              "range": {
+                "startOffset": 37169,
+                "endOffset": 39840,
+                "count": 0
+              }
+            }
+          ]
+        },
+        {
+          "line": 861,
+          "text": "        return success({ profile, disposed, limits, hostUniformComponents, ...(drawing ? { drawLimits } : {}),",
+          "classification": "executed",
+          "hits": [
+            {
+              "run": "worker",
+              "count": 191,
+              "function": "",
+              "range": {
+                "startOffset": 60936,
+                "endOffset": 62447,
+                "count": 191
+              }
+            },
+            {
+              "run": "critic",
+              "count": 78,
+              "function": "",
+              "range": {
+                "startOffset": 60936,
+                "endOffset": 62447,
+                "count": 78
+              }
+            },
+            {
+              "run": "state-regression",
+              "count": 85,
+              "function": "",
+              "range": {
+                "startOffset": 60936,
+                "endOffset": 62447,
+                "count": 85
+              }
+            }
+          ]
+        }
+      ],
+      "zeroBranches": [
+        {
+          "run": "worker",
+          "function": "",
+          "range": {
+            "startOffset": 61273,
+            "endOffset": 61277,
+            "count": 0
+          },
+          "source": ": {}",
+          "heldByOtherCapture": [
+            {
+              "run": "worker",
+              "count": 0
+            },
+            {
+              "run": "critic",
+              "count": 0
+            },
+            {
+              "run": "state-regression",
+              "count": 85
+            }
+          ]
+        },
+        {
+          "run": "critic",
+          "function": "link",
+          "range": {
+            "startOffset": 24660,
+            "endOffset": 24689,
+            "count": 0
+          },
+          "source": "|| index !== gl.INVALID_INDEX",
+          "heldByOtherCapture": [
+            {
+              "run": "worker",
+              "count": 8
+            },
+            {
+              "run": "critic",
+              "count": 0
+            },
+            {
+              "run": "state-regression",
+              "count": 0
+            }
+          ]
+        },
+        {
+          "run": "critic",
+          "function": "",
+          "range": {
+            "startOffset": 61273,
+            "endOffset": 61277,
+            "count": 0
+          },
+          "source": ": {}",
+          "heldByOtherCapture": [
+            {
+              "run": "worker",
+              "count": 0
+            },
+            {
+              "run": "critic",
+              "count": 0
+            },
+            {
+              "run": "state-regression",
+              "count": 85
+            }
+          ]
+        },
+        {
+          "run": "state-regression",
+          "function": "link",
+          "range": {
+            "startOffset": 24660,
+            "endOffset": 24689,
+            "count": 0
+          },
+          "source": "|| index !== gl.INVALID_INDEX",
+          "heldByOtherCapture": [
+            {
+              "run": "worker",
+              "count": 8
+            },
+            {
+              "run": "critic",
+              "count": 0
+            },
+            {
+              "run": "state-regression",
+              "count": 0
+            }
+          ]
+        },
+        {
+          "run": "state-regression",
+          "function": "",
+          "range": {
+            "startOffset": 61256,
+            "endOffset": 61272,
+            "count": 0
+          },
+          "source": "? { drawLimits }",
+          "heldByOtherCapture": [
+            {
+              "run": "worker",
+              "count": 191
+            },
+            {
+              "run": "critic",
+              "count": 78
+            },
+            {
+              "run": "state-regression",
+              "count": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "status": "passed",
+  "executableAddedLines": 20
+}

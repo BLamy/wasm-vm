@@ -1,0 +1,18 @@
+{
+  "schema": "original-packed-normalized-consumer-seal-v1",
+  "task": "E6-T11d36",
+  "sourceHead": "001f3d42f3d55f2c225af65a81996d0c8b9d087c",
+  "records": 83780,
+  "reopenedMembers": 83780,
+  "sourceClosureIncluded": true,
+  "archiveSha256": "c3ad79b7cc0fb58e1cbc93929f509719ccbd832214a65b00fbe154224b645c4f",
+  "archiveBytes": 39962909,
+  "recordIndexSha256": "79362e795d016d5653defb8c017cde0f40e51eea807a6e32e6b36d666b9328f7",
+  "hotReceiptSha256": "aff2dcd143e6bed1e190d583958ab1408fd7e196d313bbb3b169c03ec7845437",
+  "coldReportSha256": "6d2f2b2dc62137e8e7d740d333f42ce6ebe52b4057d3e4cbbb1aa86c61206ced",
+  "coldReceiptSha256": "6fe4aa9fdcaaa0f9c767d54392f424fa83e3eaa25127c666aa90f2fdf7a44fa3",
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "authority": "isolated-original-packed-normalized-consumer-attachments",
+  "productionDrawAuthority": false
+}

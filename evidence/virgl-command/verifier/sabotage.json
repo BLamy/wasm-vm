@@ -1,0 +1,10 @@
+{
+  "status": "passed",
+  "mode": "typed-field-extraction",
+  "field": "subContextId",
+  "mutation": "+1",
+  "originalSha256": "8a3123cd1f11803b5c48d9535f51fcd5eaf42f78f99ca76a58af92bf2e9af0fd",
+  "sabotagedSha256": "eac9052640e14ef600e2f67c14f0e78e2a5d58bbece22e9d0d5a3c4670712bac",
+  "observedFailure": "invalid-to-valid recovery",
+  "runtimeFilesModified": false
+}

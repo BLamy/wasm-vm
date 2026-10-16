@@ -1,0 +1,36 @@
++ git rev-parse HEAD
+5dc0c408b105b432b9558b8dbaa7928998378123
++ node --check renderer/virgl-command/resources.mjs
++ node --check renderer/virgl-command/state.mjs
++ node --check renderer/virgl-command/tests/async-acceptance.mjs
++ node --check tools/verify-virgl-async-jobs.mjs
++ python3 -m py_compile tools/virgl-command/async-receipt.py tools/virgl-command/async-cold.py
++ bash renderer/virgl-shader/build.sh wasm
+Pinned virglrenderer 1.3.0: 70 source/generated SHA-256 hashes match
++ node tools/verify-virgl-command-decoder.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-async/worker/regression/decoder --node-only true
+Node command acceptance passed (550 ms)
++ node tools/verify-virgl-resource-transfers.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-async/worker/regression/resources
+Node resource acceptance passed (61 ms)
+Hardware resource acceptance passed (126 ms)
++ node tools/verify-virgl-object-state.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-async/worker/regression/state
+Hardware state acceptance passed (158 ms)
++ node tools/verify-virgl-draw-replay.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-async/worker/regression/draw
+Hardware draw replay passed (331 ms)
++ node tools/verify-virgl-async-jobs.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-async/worker/hardware
+Hardware async jobs passed (2810 ms)
++ for attack in early-collect index-class
++ node tools/verify-virgl-async-jobs.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-async/worker/sabotage-early-collect --sabotage early-collect
+AssertionError [ERR_ASSERTION]: async CPU collection requires a signaled fence: expected true, got false
+
+'failed' !== 'passed'
+
+    at file:///Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/verify-virgl-async-jobs.mjs:154:12
++ for attack in early-collect index-class
++ node tools/verify-virgl-async-jobs.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-async/worker/sabotage-index-class --sabotage index-class
+AssertionError [ERR_ASSERTION]: async index staging uses element-array class: expected true, got false
+
+'failed' !== 'passed'
+
+    at file:///Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/verify-virgl-async-jobs.mjs:154:12
++ python3 tools/virgl-command/async-receipt.py /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-async/worker
+E6-T11b1 receipt passed: asynchronous jobs, original pixels, sequencing controls and synchronous regressions

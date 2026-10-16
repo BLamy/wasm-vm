@@ -1,0 +1,808 @@
+{
+  "status": "passed",
+  "scope": "static discovery/source accounting only",
+  "workerHead": "d52f9b8beed4a94e3f523a56f3506830a4b178a3",
+  "sourceRecordsRehashed": 26,
+  "workerRecordedBodiesRehashed": 28,
+  "upstreamEntries": 147,
+  "additionalUserEntries": 2,
+  "upstreamDispositions": {
+    "source-port-required": 13,
+    "native-repository-candidate": 97,
+    "existing-image": 32,
+    "portable-data-or-script": 5
+  },
+  "aliases": {
+    "nvim": "neovim",
+    "mise-bin": "mise"
+  },
+  "invalidRecords": [
+    {
+      "repo": "extra",
+      "member": "ntk-1.3.1001-4/desc",
+      "sha256": "1a0295f4bf5986c5f74eca9153a6a4cb10b073a01a76ba4a457fd862c78966a4",
+      "allNul": true
+    }
+  ],
+  "duplicateArgon2Repositories": [
+    "core",
+    "extra"
+  ],
+  "entries": [
+    {
+      "upstreamName": "aether",
+      "package": "aether",
+      "disposition": "source-port-required"
+    },
+    {
+      "upstreamName": "alsa-utils",
+      "package": "alsa-utils",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "asdcontrol",
+      "package": "asdcontrol",
+      "disposition": "source-port-required"
+    },
+    {
+      "upstreamName": "avahi",
+      "package": "avahi",
+      "disposition": "existing-image"
+    },
+    {
+      "upstreamName": "bash-completion",
+      "package": "bash-completion",
+      "disposition": "existing-image"
+    },
+    {
+      "upstreamName": "bat",
+      "package": "bat",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "bluez",
+      "package": "bluez",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "bluez-tools",
+      "package": "bluez-tools",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "bluez-utils",
+      "package": "bluez-utils",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "bolt",
+      "package": "bolt",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "brightnessctl",
+      "package": "brightnessctl",
+      "disposition": "existing-image"
+    },
+    {
+      "upstreamName": "btop",
+      "package": "btop",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "chromium",
+      "package": "chromium",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "clang",
+      "package": "clang",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "cliamp",
+      "package": "cliamp",
+      "disposition": "source-port-required"
+    },
+    {
+      "upstreamName": "cups",
+      "package": "cups",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "cups-filters",
+      "package": "cups-filters",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "cups-pk-helper",
+      "package": "cups-pk-helper",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "ddcutil",
+      "package": "ddcutil",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "docker",
+      "package": "docker",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "docker-buildx",
+      "package": "docker-buildx",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "docker-compose",
+      "package": "docker-compose",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "dosfstools",
+      "package": "dosfstools",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "dotnet-runtime",
+      "package": "dotnet-runtime",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "dua-cli",
+      "package": "dua-cli",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "evince",
+      "package": "evince",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "exfatprogs",
+      "package": "exfatprogs",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "expac",
+      "package": "expac",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "eza",
+      "package": "eza",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "fakeroot",
+      "package": "fakeroot",
+      "disposition": "existing-image"
+    },
+    {
+      "upstreamName": "fastfetch",
+      "package": "fastfetch",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "fcitx5",
+      "package": "fcitx5",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "fcitx5-gtk",
+      "package": "fcitx5-gtk",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "fcitx5-qt",
+      "package": "fcitx5-qt",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "fd",
+      "package": "fd",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "ffmpegthumbnailer",
+      "package": "ffmpegthumbnailer",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "fontconfig",
+      "package": "fontconfig",
+      "disposition": "existing-image"
+    },
+    {
+      "upstreamName": "foot",
+      "package": "foot",
+      "disposition": "existing-image"
+    },
+    {
+      "upstreamName": "fzf",
+      "package": "fzf",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "git",
+      "package": "git",
+      "disposition": "existing-image"
+    },
+    {
+      "upstreamName": "gnome-keyring",
+      "package": "gnome-keyring",
+      "disposition": "existing-image"
+    },
+    {
+      "upstreamName": "gnome-themes-extra",
+      "package": "gnome-themes-extra",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "grim",
+      "package": "grim",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "gpu-screen-recorder",
+      "package": "gpu-screen-recorder",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "gum",
+      "package": "gum",
+      "disposition": "existing-image"
+    },
+    {
+      "upstreamName": "gvfs-mtp",
+      "package": "gvfs-mtp",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "gvfs-nfs",
+      "package": "gvfs-nfs",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "gvfs-smb",
+      "package": "gvfs-smb",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "herdr",
+      "package": "herdr",
+      "disposition": "source-port-required"
+    },
+    {
+      "upstreamName": "hyprland",
+      "package": "hyprland",
+      "disposition": "existing-image"
+    },
+    {
+      "upstreamName": "hyprland-guiutils",
+      "package": "hyprland-guiutils",
+      "disposition": "existing-image"
+    },
+    {
+      "upstreamName": "hyprland-preview-share-picker",
+      "package": "hyprland-preview-share-picker",
+      "disposition": "source-port-required"
+    },
+    {
+      "upstreamName": "hyprpicker",
+      "package": "hyprpicker",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "hyprsunset",
+      "package": "hyprsunset",
+      "disposition": "existing-image"
+    },
+    {
+      "upstreamName": "imagemagick",
+      "package": "imagemagick",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "imv",
+      "package": "imv",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "inetutils",
+      "package": "inetutils",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "inotify-tools",
+      "package": "inotify-tools",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "inxi",
+      "package": "inxi",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "networkmanager",
+      "package": "networkmanager",
+      "disposition": "existing-image"
+    },
+    {
+      "upstreamName": "jq",
+      "package": "jq",
+      "disposition": "existing-image"
+    },
+    {
+      "upstreamName": "kdenlive",
+      "package": "kdenlive",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "kernel-modules-hook",
+      "package": "kernel-modules-hook",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "lazydocker",
+      "package": "lazydocker",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "lazygit",
+      "package": "lazygit",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "less",
+      "package": "less",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "libsecret",
+      "package": "libsecret",
+      "disposition": "existing-image"
+    },
+    {
+      "upstreamName": "libvips",
+      "package": "libvips",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "libyaml",
+      "package": "libyaml",
+      "disposition": "existing-image"
+    },
+    {
+      "upstreamName": "libreoffice-fresh",
+      "package": "libreoffice-fresh",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "llvm",
+      "package": "llvm",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "localsend",
+      "package": "localsend",
+      "disposition": "source-port-required"
+    },
+    {
+      "upstreamName": "lua51",
+      "package": "lua51",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "luarocks",
+      "package": "luarocks",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "man-db",
+      "package": "man-db",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "mariadb-libs",
+      "package": "mariadb-libs",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "mise-bin",
+      "package": "mise",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "moonlight-qt",
+      "package": "moonlight-qt",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "mpv",
+      "package": "mpv",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "mpv-mpris",
+      "package": "mpv-mpris",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "nautilus",
+      "package": "nautilus",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "nautilus-python",
+      "package": "nautilus-python",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "gnome-disk-utility",
+      "package": "gnome-disk-utility",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "noto-fonts",
+      "package": "noto-fonts",
+      "disposition": "existing-image"
+    },
+    {
+      "upstreamName": "noto-fonts-cjk",
+      "package": "noto-fonts-cjk",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "noto-fonts-emoji",
+      "package": "noto-fonts-emoji",
+      "disposition": "existing-image"
+    },
+    {
+      "upstreamName": "nss-mdns",
+      "package": "nss-mdns",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "nvim",
+      "package": "neovim",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "obs-studio",
+      "package": "obs-studio",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "obsidian",
+      "package": "obsidian",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "omacalc",
+      "package": "omacalc",
+      "disposition": "source-port-required"
+    },
+    {
+      "upstreamName": "omacut",
+      "package": "omacut",
+      "disposition": "source-port-required"
+    },
+    {
+      "upstreamName": "omawrite",
+      "package": "omawrite",
+      "disposition": "source-port-required"
+    },
+    {
+      "upstreamName": "omarchy-nvim",
+      "package": "omarchy-nvim",
+      "disposition": "portable-data-or-script"
+    },
+    {
+      "upstreamName": "pacman-contrib",
+      "package": "pacman-contrib",
+      "disposition": "existing-image"
+    },
+    {
+      "upstreamName": "pamixer",
+      "package": "pamixer",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "pinta",
+      "package": "pinta",
+      "disposition": "source-port-required"
+    },
+    {
+      "upstreamName": "plocate",
+      "package": "plocate",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "plymouth",
+      "package": "plymouth",
+      "disposition": "existing-image"
+    },
+    {
+      "upstreamName": "postgresql-libs",
+      "package": "postgresql-libs",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "power-profiles-daemon",
+      "package": "power-profiles-daemon",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "python-gobject",
+      "package": "python-gobject",
+      "disposition": "existing-image"
+    },
+    {
+      "upstreamName": "python-poetry-core",
+      "package": "python-poetry-core",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "ttfx",
+      "package": "ttfx",
+      "disposition": "source-port-required"
+    },
+    {
+      "upstreamName": "qemu-user-static-binfmt",
+      "package": "qemu-user-static-binfmt",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "qrencode",
+      "package": "qrencode",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "qt6-imageformats",
+      "package": "qt6-imageformats",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "quickshell",
+      "package": "quickshell",
+      "disposition": "existing-image"
+    },
+    {
+      "upstreamName": "ripgrep",
+      "package": "ripgrep",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "ruby",
+      "package": "ruby",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "tensaku",
+      "package": "tensaku",
+      "disposition": "source-port-required"
+    },
+    {
+      "upstreamName": "sddm",
+      "package": "sddm",
+      "disposition": "existing-image"
+    },
+    {
+      "upstreamName": "slurp",
+      "package": "slurp",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "socat",
+      "package": "socat",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "starship",
+      "package": "starship",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "sushi",
+      "package": "sushi",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "system-config-printer",
+      "package": "system-config-printer",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "tesseract",
+      "package": "tesseract",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "tesseract-data-eng",
+      "package": "tesseract-data-eng",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "tldr",
+      "package": "tldr",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "tree-sitter-cli",
+      "package": "tree-sitter-cli",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "tmux",
+      "package": "tmux",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "tobi-try",
+      "package": "tobi-try",
+      "disposition": "portable-data-or-script"
+    },
+    {
+      "upstreamName": "ttf-ia-writer",
+      "package": "ttf-ia-writer",
+      "disposition": "portable-data-or-script"
+    },
+    {
+      "upstreamName": "ttf-jetbrains-mono-nerd-basic",
+      "package": "ttf-jetbrains-mono-nerd-basic",
+      "disposition": "existing-image"
+    },
+    {
+      "upstreamName": "tzupdate",
+      "package": "tzupdate",
+      "disposition": "source-port-required"
+    },
+    {
+      "upstreamName": "udiskie",
+      "package": "udiskie",
+      "disposition": "existing-image"
+    },
+    {
+      "upstreamName": "ufw",
+      "package": "ufw",
+      "disposition": "existing-image"
+    },
+    {
+      "upstreamName": "ufw-docker",
+      "package": "ufw-docker",
+      "disposition": "portable-data-or-script"
+    },
+    {
+      "upstreamName": "unzip",
+      "package": "unzip",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "usage",
+      "package": "usage",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "uwsm",
+      "package": "uwsm",
+      "disposition": "existing-image"
+    },
+    {
+      "upstreamName": "whois",
+      "package": "whois",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "wireless-regdb",
+      "package": "wireless-regdb",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "wireplumber",
+      "package": "wireplumber",
+      "disposition": "existing-image"
+    },
+    {
+      "upstreamName": "wl-clipboard",
+      "package": "wl-clipboard",
+      "disposition": "existing-image"
+    },
+    {
+      "upstreamName": "wtype",
+      "package": "wtype",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "woff2-font-awesome",
+      "package": "woff2-font-awesome",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "xdg-desktop-portal-gtk",
+      "package": "xdg-desktop-portal-gtk",
+      "disposition": "existing-image"
+    },
+    {
+      "upstreamName": "xdg-desktop-portal-hyprland",
+      "package": "xdg-desktop-portal-hyprland",
+      "disposition": "existing-image"
+    },
+    {
+      "upstreamName": "xdg-terminal-exec",
+      "package": "xdg-terminal-exec",
+      "disposition": "existing-image"
+    },
+    {
+      "upstreamName": "xournalpp",
+      "package": "xournalpp",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "yaru-icon-theme",
+      "package": "yaru-icon-theme",
+      "disposition": "portable-data-or-script"
+    },
+    {
+      "upstreamName": "yay",
+      "package": "yay",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "yt-dlp",
+      "package": "yt-dlp",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "zbar",
+      "package": "zbar",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "zoxide",
+      "package": "zoxide",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "nodejs",
+      "package": "nodejs",
+      "disposition": "native-repository-candidate"
+    },
+    {
+      "upstreamName": "npm",
+      "package": "npm",
+      "disposition": "native-repository-candidate"
+    }
+  ],
+  "originalElfHeadersReopened": [
+    {
+      "package": "chromium",
+      "archive": "chromium-153.0.8010.52-1-riscv64.pkg.tar.zst",
+      "entry": "usr/lib/chromium/chromium",
+      "headerHex": "7f454c460201010000000000000000000300f30001000000e075ce0200000000400000000000000030f35a110000000005000000400038000d00400027002600",
+      "class": "ELF64",
+      "endian": "little",
+      "machine": 243
+    },
+    {
+      "package": "libreoffice-fresh",
+      "archive": "libreoffice-fresh-26.8.0-2-riscv64.pkg.tar.zst",
+      "entry": "usr/lib/libreoffice/program/soffice.bin",
+      "headerHex": "7f454c460201010000000000000000000300f3000100000018070000000000004000000000000000c01100000000000005000000400038000b0040001b001a00",
+      "class": "ELF64",
+      "endian": "little",
+      "machine": 243
+    },
+    {
+      "package": "nodejs",
+      "archive": "nodejs-26.11.1-1-riscv64.pkg.tar.zst",
+      "entry": "usr/bin/node",
+      "headerHex": "7f454c460201010000000000000000000300f30001000000e8413600000000004000000000000000101b73030000000005000000400038000c0040001e001d00",
+      "class": "ELF64",
+      "endian": "little",
+      "machine": 243
+    }
+  ],
+  "noInstallationExecutionOrSignatureClaim": true
+}

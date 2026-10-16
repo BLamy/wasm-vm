@@ -217,6 +217,20 @@ impl SystemBus {
         &mut self.ram
     }
 
+    /// Checked RAM-only DMA write. Invalid ranges leave both RAM and the code
+    /// write log unchanged. Unlike scalar stores, a span may cover many pages;
+    /// record each touched physical frame once, including all middle frames.
+    pub fn write_ram_slice(&mut self, addr: u64, data: &[u8]) -> Result<(), BusFault> {
+        let end = addr
+            .checked_add(data.len() as u64)
+            .ok_or(BusFault::Access)?;
+        self.ram.write_slice(addr, data)?;
+        if self.track_code_writes && !data.is_empty() {
+            self.code_write_log.extend((addr >> 12)..=((end - 1) >> 12));
+        }
+        Ok(())
+    }
+
     /// E2-T25 profiling: per-device MMIO access counts as `(window_base, hits)`, in attach order.
     /// Deterministic (identical native/wasm). The caller maps `window_base` to a device name via
     /// the platform memory map (UART0_BASE, CLINT_BASE, PLIC_BASE, …) to attribute traffic.

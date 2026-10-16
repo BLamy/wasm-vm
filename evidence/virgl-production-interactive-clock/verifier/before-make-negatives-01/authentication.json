@@ -1,0 +1,9 @@
+{
+  "status": "HELD independently reopened negative seal; not a verified product claim",
+  "archive": "stock-before-make-heartbeat-negatives.tar.gz",
+  "bytes": 487651,
+  "sha256": "10745bfc21fee98e5e79b558e98bb1bd160c50880ce8580dd3f86b05fdb21e47",
+  "pairedIdentities": 17,
+  "reopenedMembers": 18,
+  "scope": "Independent preservation of two genuine pre-make stock heartbeat failures and host power correlation; no final clock/task/parent verdict"
+}

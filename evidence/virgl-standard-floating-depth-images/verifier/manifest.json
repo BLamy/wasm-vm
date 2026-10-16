@@ -1,0 +1,108 @@
+{
+  "schema": "fresh-d39-critic-seal-v1",
+  "task": "E6-T11d39",
+  "frozenRuntimeHead": "2ef416185b8b4ddd85e39efd0913c8eb8eeb71e3",
+  "verifierHarnessHead": "9eddf5859b3d6456d3be8d16332c19a8183ed9ca",
+  "archiveSha256": "90ac4d8e042eeaec80843e474e608d1ef84509fe0038a73642c41869089a798e",
+  "archiveBytes": 49297435,
+  "recordIndexSha256": "c433f077dd5d3d26920ad212400741e80940d12a3eeea05fa8d613a27df7ca26",
+  "members": 7139,
+  "reopenedMembers": 7139,
+  "fullUncompressedBytes": 303732156,
+  "workerDependency": {
+    "recording.tar.gz": "43ae2cd2d362ba708121e9d3d23789eae24c738324b43a2261f29e3bf5ebdc16",
+    "records.json": "b853257bc25b5e71da6854ed8c35fb55ffe61b3e3c0cffc34942ed4e1f797891",
+    "manifest.json": "fbee164ddf5646594c79aeaf5237a3a0465bcc75cc73cd1dcff9b7e8a2cc9f4a"
+  },
+  "records": [
+    {
+      "path": "fresh/fault-completed-private-stencil/report.json",
+      "sha256": "0b46a2e9caeaaf03931447057b6d2625b59f5aa0a748cabca2885b7b07248019",
+      "sourceHead": "9eddf5859b3d6456d3be8d16332c19a8183ed9ca",
+      "status": "failed",
+      "schema": "fresh-original-floating-depth-ranges-v1"
+    },
+    {
+      "path": "fresh/hardware-boundaries-0x271c9350/report.json",
+      "sha256": "576fed3494349a945146e054a3cceea982b82b1cf11ae15386fc590d1b212ae0",
+      "sourceHead": "b95a18e5227b7eae932c2e72fee801a82f1fd789",
+      "status": "passed",
+      "schema": "original-floating-depth-image-boundaries-v1"
+    },
+    {
+      "path": "fresh/hardware-boundaries-0x5e71d954/report.json",
+      "sha256": "cad3dcaf98a359c577008e1c5b7bc4c1768aa71c2d0b3d03077939053cae25a1",
+      "sourceHead": "b95a18e5227b7eae932c2e72fee801a82f1fd789",
+      "status": "passed",
+      "schema": "original-floating-depth-image-boundaries-v1"
+    },
+    {
+      "path": "fresh/hardware-boundaries-0xb82fa27d/report.json",
+      "sha256": "7a69ebbc8379ef1eabcbb650e80dc67bbe40c98f0df2b33b7d2b55038f900b82",
+      "sourceHead": "b95a18e5227b7eae932c2e72fee801a82f1fd789",
+      "status": "passed",
+      "schema": "original-floating-depth-image-boundaries-v1"
+    },
+    {
+      "path": "fresh/harness-failed-states-buffer-class/report.json",
+      "sha256": "2d1e11709a09b57998772b5a77a6610abb29b338ada252bc13f5b5cda62b2706",
+      "sourceHead": "bf20cd4df55d6cfcb7be0c8640f669ed1165d75b",
+      "status": "failed",
+      "schema": "fresh-floating-depth-nondefault-caller-state-v1"
+    },
+    {
+      "path": "fresh/harness-failed-states-createShader/report.json",
+      "sha256": "bc8ddc99a1ba1ef4910c425f0cf9d35c15a32b47fc31bee1e06cba7d375e7224",
+      "sourceHead": "5b85cc332ad3914cd1810fe39977430ece51cc98",
+      "status": "failed",
+      "schema": "fresh-floating-depth-nondefault-caller-state-v1"
+    },
+    {
+      "path": "fresh/novel/report.json",
+      "sha256": "8dc0c4f53b320d70390280f29fe85706d2ef45875ec9df491d8d5dc0067812c7",
+      "sourceHead": "9eddf5859b3d6456d3be8d16332c19a8183ed9ca",
+      "status": "passed",
+      "schema": "fresh-original-floating-depth-ranges-v1"
+    },
+    {
+      "path": "fresh/prior-harness-qualification/fault-completed-private-stencil/report.json",
+      "sha256": "0b8787726c7f4d9c4784aaeb381a94862b3c53c9da2a1fc7682caf8d24836737",
+      "sourceHead": "b95a18e5227b7eae932c2e72fee801a82f1fd789",
+      "status": "failed",
+      "schema": "fresh-original-floating-depth-ranges-v1"
+    },
+    {
+      "path": "fresh/prior-harness-qualification/novel/report.json",
+      "sha256": "c060d0a7e43efc3ef59a5331719ce1a6e6f134a6ce98ab9a598e7295fece9d58",
+      "sourceHead": "b95a18e5227b7eae932c2e72fee801a82f1fd789",
+      "status": "passed",
+      "schema": "fresh-original-floating-depth-ranges-v1"
+    },
+    {
+      "path": "fresh/prior-harness-qualification/states/report.json",
+      "sha256": "d4cf921a4f08dd5dfc9712a39b97c339ef671dac7e83ff93406d94b24117c99e",
+      "sourceHead": "8af753aee3ea1838229c4f54c21e95a767081555",
+      "status": "passed",
+      "schema": "fresh-floating-depth-nondefault-caller-state-v1"
+    },
+    {
+      "path": "fresh/probe-historical-pixel-reset/report.json",
+      "sha256": "bcbf279008d9d00a86eb8916d5677f142dbdfa303eef8304e310f1f0aa192a1d",
+      "sourceHead": "45485f871356e9266096040f016febfe0d1a6339",
+      "status": "failed",
+      "schema": "fresh-floating-depth-nondefault-caller-state-v1"
+    },
+    {
+      "path": "fresh/states/report.json",
+      "sha256": "09ba67733b9b95cc1efc0813328221b838f4b9032c7f26e2c8710e0119425d34",
+      "sourceHead": "9eddf5859b3d6456d3be8d16332c19a8183ed9ca",
+      "status": "passed",
+      "schema": "fresh-floating-depth-nondefault-caller-state-v1"
+    }
+  ],
+  "sourceClosureIncluded": true,
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "productionDrawAuthority": false,
+  "authority": "selected-original-floating-depth-storage-transfer-range"
+}

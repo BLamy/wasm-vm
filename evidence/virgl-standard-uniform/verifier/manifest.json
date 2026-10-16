@@ -1,0 +1,14 @@
+{
+  "schema": "E6-T11d16-fresh-verifier-seal-v1",
+  "task": "E6-T11d16",
+  "submission": "5dc84364",
+  "verdict": "refuted",
+  "records": 44,
+  "archiveSha256": "68cb3cb849be72cd465423ced2c23d20a61a141f0f48fdfa3a3ae03c0e797c44",
+  "archiveBytes": 8886000,
+  "recordIndexSha256": "b3d707e7e5831c1995e03f9b829f18fb838a051e74e5f92b0a5afc9e1fff7fa6",
+  "workerArchiveSha256": "25436c66b4a320aa7bd68d407d37cf8c675438047e1fb8f0160964504e601fe0",
+  "verdictSha256": "0b347a134310a73061bf0f45b6d6f67caddd63aea6b9b17e554c5776e9e3f14d",
+  "authority": "isolated-standard-uniform-shader",
+  "productionAuthority": false
+}

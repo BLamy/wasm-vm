@@ -1,0 +1,1581 @@
+{
+  "status": "passed",
+  "frozenHead": "81cd3a4c403176be4b0191fa00ed37f4fd1e1e35",
+  "base": "5af5600c33c69e926c96a3dc82369c31da391565",
+  "evidence": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-constants/worker",
+  "auditSha256": "ef00d356b31491daa9d042a06c642064f591ef19fedb55906c59d5bb357d9c7f",
+  "checks": [
+    {
+      "prediction": "B1",
+      "status": "HELD",
+      "detail": {
+        "sourceBindingsChecked": 431,
+        "recordBindingsChecked": 32,
+        "servedFiles": 31,
+        "receiptSha256": "b8c266ccb74028314366b0ed556377b6e2ca49bff9234734fa1b9f6aeab014d5",
+        "hardwareSha256": "605e77cc268e735c2fb572b0a69c5b9e8dd41369753a45f5a7f32b25aa6856d4"
+      }
+    },
+    {
+      "prediction": "B2",
+      "status": "HELD",
+      "detail": {
+        "originalBodies": 19,
+        "originalAccepted": 12,
+        "exactFixtureResults": 8,
+        "nativeSha256": "1ecee077496f3eea591ff4ac3a14afef91a33700d69d92b174d82bad3881ffef",
+        "nativeTranscriptSha256": "66d5a02d9e24fe98cf4fc9d293309228c18c0351238fa6358762418992b79437",
+        "inheritedOutOfRangeFrontendBoundary": "5af5600c33c69e926c96a3dc82369c31da391565"
+      }
+    },
+    {
+      "prediction": "B3",
+      "status": "HELD",
+      "detail": {
+        "decoderSha256": "7dcbfe96253cac18e65b530aa40554e2b5587d9f3772c575ff2ca6e4c0c2767f",
+        "cases": {
+          "stage-0-184-words": {
+            "bytes": 748,
+            "result": "accepted"
+          },
+          "stage-0-180-words": {
+            "bytes": 732,
+            "result": "accepted"
+          },
+          "stage-0-empty-reset": {
+            "bytes": 12,
+            "result": "accepted"
+          },
+          "stage-0-188-words": {
+            "bytes": 764,
+            "result": [
+              "limit-exceeded",
+              0
+            ]
+          },
+          "stage-0-183-words": {
+            "bytes": 744,
+            "result": [
+              "payload-length",
+              0
+            ]
+          },
+          "stage-0-active-slot-one": {
+            "bytes": 748,
+            "result": [
+              "unsupported-feature",
+              0
+            ]
+          },
+          "stage-1-184-words": {
+            "bytes": 748,
+            "result": "accepted"
+          },
+          "stage-1-180-words": {
+            "bytes": 732,
+            "result": "accepted"
+          },
+          "stage-1-empty-reset": {
+            "bytes": 12,
+            "result": "accepted"
+          },
+          "stage-1-188-words": {
+            "bytes": 764,
+            "result": [
+              "limit-exceeded",
+              0
+            ]
+          },
+          "stage-1-183-words": {
+            "bytes": 744,
+            "result": [
+              "payload-length",
+              0
+            ]
+          },
+          "stage-1-active-slot-one": {
+            "bytes": 748,
+            "result": [
+              "unsupported-feature",
+              0
+            ]
+          },
+          "legacy-inactive-stage-slot": {
+            "bytes": 12,
+            "result": "accepted"
+          },
+          "unsupported-active-stage": {
+            "bytes": 748,
+            "result": [
+              "unsupported-feature",
+              0
+            ]
+          },
+          "unknown-stage": {
+            "bytes": 748,
+            "result": [
+              "invalid-enum",
+              0
+            ]
+          },
+          "slot-limit": {
+            "bytes": 12,
+            "result": [
+              "limit-exceeded",
+              0
+            ]
+          },
+          "last-word-nan": {
+            "bytes": 748,
+            "result": [
+              "invalid-value",
+              0
+            ]
+          },
+          "last-word-infinity": {
+            "bytes": 748,
+            "result": [
+              "invalid-value",
+              0
+            ]
+          },
+          "truncated-184-payload": {
+            "bytes": 744,
+            "result": [
+              "truncated-payload",
+              0
+            ]
+          },
+          "nonzero-object-type": {
+            "bytes": 748,
+            "result": [
+              "invalid-object-type",
+              0
+            ]
+          },
+          "invalid-tail-over-limit": {
+            "bytes": 768,
+            "result": [
+              "limit-exceeded",
+              4
+            ]
+          },
+          "invalid-tail-non-vec4": {
+            "bytes": 748,
+            "result": [
+              "payload-length",
+              4
+            ]
+          },
+          "unaligned-host-view-owned-copy": {
+            "bytes": 748,
+            "result": "accepted"
+          }
+        }
+      }
+    },
+    {
+      "prediction": "B4",
+      "status": "HELD",
+      "detail": {
+        "rawAppliedUploads": 92,
+        "rawConstantWordCounts": {
+          "184": 75,
+          "180": 8,
+          "0": 6,
+          "188": 1,
+          "32": 4
+        },
+        "frames": [
+          {
+            "rig": "primary",
+            "draw": "A first high-bank draw",
+            "submissionIndex": 5,
+            "vertices": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                32.0,
+                0.0
+              ],
+              [
+                32.0,
+                32.0
+              ],
+              [
+                0.0,
+                32.0
+              ]
+            ],
+            "color": [
+              64,
+              191,
+              128,
+              191
+            ],
+            "pixels": 1024,
+            "rgbaSha256": "e601a32bb0a78bcc141f03922a9c9fed9828e245260c0898373554a7e73d733a"
+          },
+          {
+            "rig": "primary",
+            "draw": "A after synchronous source mutation",
+            "submissionIndex": 8,
+            "vertices": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                32.0,
+                0.0
+              ],
+              [
+                32.0,
+                32.0
+              ],
+              [
+                0.0,
+                32.0
+              ]
+            ],
+            "color": [
+              64,
+              191,
+              128,
+              191
+            ],
+            "pixels": 1024,
+            "rgbaSha256": "e601a32bb0a78bcc141f03922a9c9fed9828e245260c0898373554a7e73d733a"
+          },
+          {
+            "rig": "primary",
+            "draw": "B isolated context",
+            "submissionIndex": 14,
+            "vertices": [
+              [
+                12.0,
+                4.0
+              ],
+              [
+                28.0,
+                4.0
+              ],
+              [
+                28.0,
+                20.0
+              ],
+              [
+                12.0,
+                20.0
+              ]
+            ],
+            "color": [
+              191,
+              128,
+              191,
+              191
+            ],
+            "pixels": 1024,
+            "rgbaSha256": "bc363d9f91ec0163294c842b6be58dbbb4b518f810ffc082ef29459649a92064"
+          },
+          {
+            "rig": "primary",
+            "draw": "A restored after B",
+            "submissionIndex": 16,
+            "vertices": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                32.0,
+                0.0
+              ],
+              [
+                32.0,
+                32.0
+              ],
+              [
+                0.0,
+                32.0
+              ]
+            ],
+            "color": [
+              64,
+              191,
+              128,
+              191
+            ],
+            "pixels": 1024,
+            "rgbaSha256": "e601a32bb0a78bcc141f03922a9c9fed9828e245260c0898373554a7e73d733a"
+          },
+          {
+            "rig": "primary",
+            "draw": "B restored after A",
+            "submissionIndex": 18,
+            "vertices": [
+              [
+                12.0,
+                4.0
+              ],
+              [
+                28.0,
+                4.0
+              ],
+              [
+                28.0,
+                20.0
+              ],
+              [
+                12.0,
+                20.0
+              ]
+            ],
+            "color": [
+              191,
+              128,
+              191,
+              191
+            ],
+            "pixels": 1024,
+            "rgbaSha256": "bc363d9f91ec0163294c842b6be58dbbb4b518f810ffc082ef29459649a92064"
+          },
+          {
+            "rig": "primary",
+            "draw": "B isolated subcontext7",
+            "submissionIndex": 25,
+            "vertices": [
+              [
+                12.0,
+                4.0
+              ],
+              [
+                28.0,
+                4.0
+              ],
+              [
+                28.0,
+                20.0
+              ],
+              [
+                12.0,
+                20.0
+              ]
+            ],
+            "color": [
+              191,
+              128,
+              191,
+              191
+            ],
+            "pixels": 1024,
+            "rgbaSha256": "bc363d9f91ec0163294c842b6be58dbbb4b518f810ffc082ef29459649a92064"
+          },
+          {
+            "rig": "primary",
+            "draw": "A restored default subcontext",
+            "submissionIndex": 28,
+            "vertices": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                32.0,
+                0.0
+              ],
+              [
+                32.0,
+                32.0
+              ],
+              [
+                0.0,
+                32.0
+              ]
+            ],
+            "color": [
+              64,
+              191,
+              128,
+              191
+            ],
+            "pixels": 1024,
+            "rgbaSha256": "e601a32bb0a78bcc141f03922a9c9fed9828e245260c0898373554a7e73d733a"
+          },
+          {
+            "rig": "primary",
+            "draw": "B restored subcontext7",
+            "submissionIndex": 31,
+            "vertices": [
+              [
+                12.0,
+                4.0
+              ],
+              [
+                28.0,
+                4.0
+              ],
+              [
+                28.0,
+                20.0
+              ],
+              [
+                12.0,
+                20.0
+              ]
+            ],
+            "color": [
+              191,
+              128,
+              191,
+              191
+            ],
+            "pixels": 1024,
+            "rgbaSha256": "bc363d9f91ec0163294c842b6be58dbbb4b518f810ffc082ef29459649a92064"
+          },
+          {
+            "rig": "primary",
+            "draw": "B recreated subcontext",
+            "submissionIndex": 40,
+            "vertices": [
+              [
+                12.0,
+                4.0
+              ],
+              [
+                28.0,
+                4.0
+              ],
+              [
+                28.0,
+                20.0
+              ],
+              [
+                12.0,
+                20.0
+              ]
+            ],
+            "color": [
+              191,
+              128,
+              191,
+              191
+            ],
+            "pixels": 1024,
+            "rgbaSha256": "bc363d9f91ec0163294c842b6be58dbbb4b518f810ffc082ef29459649a92064"
+          },
+          {
+            "rig": "primary",
+            "draw": "B recreated context",
+            "submissionIndex": 47,
+            "vertices": [
+              [
+                12.0,
+                4.0
+              ],
+              [
+                28.0,
+                4.0
+              ],
+              [
+                28.0,
+                20.0
+              ],
+              [
+                12.0,
+                20.0
+              ]
+            ],
+            "color": [
+              191,
+              128,
+              191,
+              191
+            ],
+            "pixels": 1024,
+            "rgbaSha256": "bc363d9f91ec0163294c842b6be58dbbb4b518f810ffc082ef29459649a92064"
+          },
+          {
+            "rig": "primary",
+            "draw": "A after incomplete and malformed recovery",
+            "submissionIndex": 67,
+            "vertices": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                32.0,
+                0.0
+              ],
+              [
+                32.0,
+                32.0
+              ],
+              [
+                0.0,
+                32.0
+              ]
+            ],
+            "color": [
+              64,
+              191,
+              128,
+              191
+            ],
+            "pixels": 1024,
+            "rgbaSha256": "e601a32bb0a78bcc141f03922a9c9fed9828e245260c0898373554a7e73d733a"
+          },
+          {
+            "rig": "low",
+            "draw": "low actual renderer",
+            "submissionIndex": 8,
+            "vertices": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                32.0,
+                0.0
+              ],
+              [
+                32.0,
+                32.0
+              ],
+              [
+                0.0,
+                32.0
+              ]
+            ],
+            "color": [
+              128,
+              96,
+              64,
+              191
+            ],
+            "pixels": 1024,
+            "rgbaSha256": "67036e07ed0b788236377b5b6f84d67a093105bdb8e1406a9bb0e60b764765cf"
+          },
+          {
+            "rig": "order",
+            "draw": "order actual renderer",
+            "submissionIndex": 6,
+            "vertices": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                32.0,
+                0.0
+              ],
+              [
+                32.0,
+                32.0
+              ],
+              [
+                0.0,
+                32.0
+              ]
+            ],
+            "color": [
+              64,
+              191,
+              128,
+              191
+            ],
+            "pixels": 1024,
+            "rgbaSha256": "e601a32bb0a78bcc141f03922a9c9fed9828e245260c0898373554a7e73d733a"
+          },
+          {
+            "rig": "order",
+            "draw": "order47 restored with poisoned host padding",
+            "submissionIndex": 8,
+            "vertices": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                32.0,
+                0.0
+              ],
+              [
+                32.0,
+                32.0
+              ],
+              [
+                0.0,
+                32.0
+              ]
+            ],
+            "color": [
+              64,
+              191,
+              128,
+              191
+            ],
+            "pixels": 1024,
+            "rgbaSha256": "e601a32bb0a78bcc141f03922a9c9fed9828e245260c0898373554a7e73d733a"
+          },
+          {
+            "rig": "order",
+            "draw": "order47 restored with poisoned host padding",
+            "submissionIndex": 10,
+            "vertices": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                32.0,
+                0.0
+              ],
+              [
+                32.0,
+                32.0
+              ],
+              [
+                0.0,
+                32.0
+              ]
+            ],
+            "color": [
+              64,
+              191,
+              128,
+              191
+            ],
+            "pixels": 1024,
+            "rgbaSha256": "e601a32bb0a78bcc141f03922a9c9fed9828e245260c0898373554a7e73d733a"
+          },
+          {
+            "rig": "inactive-vertex",
+            "draw": "inactive-vertex actual renderer",
+            "submissionIndex": 5,
+            "vertices": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                32.0,
+                0.0
+              ],
+              [
+                32.0,
+                32.0
+              ],
+              [
+                0.0,
+                32.0
+              ]
+            ],
+            "color": [
+              64,
+              191,
+              128,
+              191
+            ],
+            "pixels": 1024,
+            "rgbaSha256": "e601a32bb0a78bcc141f03922a9c9fed9828e245260c0898373554a7e73d733a"
+          },
+          {
+            "rig": "inactive-fragment",
+            "draw": "inactive-fragment actual renderer",
+            "submissionIndex": 5,
+            "vertices": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                32.0,
+                0.0
+              ],
+              [
+                32.0,
+                32.0
+              ],
+              [
+                0.0,
+                32.0
+              ]
+            ],
+            "color": [
+              255,
+              0,
+              0,
+              255
+            ],
+            "pixels": 1024,
+            "rgbaSha256": "4ab589b8423c13f8f33994356d5b696d9b3b56d968e1939f2088c53b5149e6cf"
+          },
+          {
+            "rig": "both-inactive",
+            "draw": "both-inactive actual renderer",
+            "submissionIndex": 4,
+            "vertices": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                32.0,
+                0.0
+              ],
+              [
+                32.0,
+                32.0
+              ],
+              [
+                0.0,
+                32.0
+              ]
+            ],
+            "color": [
+              255,
+              0,
+              0,
+              255
+            ],
+            "pixels": 1024,
+            "rgbaSha256": "4ab589b8423c13f8f33994356d5b696d9b3b56d968e1939f2088c53b5149e6cf"
+          },
+          {
+            "rig": "async-7c1209ad",
+            "draw": "async A high draw",
+            "submissionIndex": 1,
+            "vertices": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                32.0,
+                0.0
+              ],
+              [
+                32.0,
+                32.0
+              ],
+              [
+                0.0,
+                32.0
+              ]
+            ],
+            "color": [
+              64,
+              191,
+              128,
+              191
+            ],
+            "pixels": 1024,
+            "rgbaSha256": "e601a32bb0a78bcc141f03922a9c9fed9828e245260c0898373554a7e73d733a"
+          },
+          {
+            "rig": "async-7c1209ad",
+            "draw": "async B high draw",
+            "submissionIndex": 3,
+            "vertices": [
+              [
+                12.0,
+                4.0
+              ],
+              [
+                28.0,
+                4.0
+              ],
+              [
+                28.0,
+                20.0
+              ],
+              [
+                12.0,
+                20.0
+              ]
+            ],
+            "color": [
+              191,
+              128,
+              191,
+              191
+            ],
+            "pixels": 1024,
+            "rgbaSha256": "bc363d9f91ec0163294c842b6be58dbbb4b518f810ffc082ef29459649a92064"
+          },
+          {
+            "rig": "async-7c1209ad",
+            "draw": "async A recovered after short and empty",
+            "submissionIndex": 9,
+            "vertices": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                32.0,
+                0.0
+              ],
+              [
+                32.0,
+                32.0
+              ],
+              [
+                0.0,
+                32.0
+              ]
+            ],
+            "color": [
+              64,
+              191,
+              128,
+              191
+            ],
+            "pixels": 1024,
+            "rgbaSha256": "e601a32bb0a78bcc141f03922a9c9fed9828e245260c0898373554a7e73d733a"
+          },
+          {
+            "rig": "async-491be583",
+            "draw": "async A high draw",
+            "submissionIndex": 1,
+            "vertices": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                32.0,
+                0.0
+              ],
+              [
+                32.0,
+                32.0
+              ],
+              [
+                0.0,
+                32.0
+              ]
+            ],
+            "color": [
+              64,
+              191,
+              128,
+              191
+            ],
+            "pixels": 1024,
+            "rgbaSha256": "e601a32bb0a78bcc141f03922a9c9fed9828e245260c0898373554a7e73d733a"
+          },
+          {
+            "rig": "async-491be583",
+            "draw": "async B high draw",
+            "submissionIndex": 3,
+            "vertices": [
+              [
+                12.0,
+                4.0
+              ],
+              [
+                28.0,
+                4.0
+              ],
+              [
+                28.0,
+                20.0
+              ],
+              [
+                12.0,
+                20.0
+              ]
+            ],
+            "color": [
+              191,
+              128,
+              191,
+              191
+            ],
+            "pixels": 1024,
+            "rgbaSha256": "bc363d9f91ec0163294c842b6be58dbbb4b518f810ffc082ef29459649a92064"
+          },
+          {
+            "rig": "async-491be583",
+            "draw": "async A recovered after short and empty",
+            "submissionIndex": 9,
+            "vertices": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                32.0,
+                0.0
+              ],
+              [
+                32.0,
+                32.0
+              ],
+              [
+                0.0,
+                32.0
+              ]
+            ],
+            "color": [
+              64,
+              191,
+              128,
+              191
+            ],
+            "pixels": 1024,
+            "rgbaSha256": "e601a32bb0a78bcc141f03922a9c9fed9828e245260c0898373554a7e73d733a"
+          },
+          {
+            "rig": "async-ea016f35",
+            "draw": "async A high draw",
+            "submissionIndex": 1,
+            "vertices": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                32.0,
+                0.0
+              ],
+              [
+                32.0,
+                32.0
+              ],
+              [
+                0.0,
+                32.0
+              ]
+            ],
+            "color": [
+              64,
+              191,
+              128,
+              191
+            ],
+            "pixels": 1024,
+            "rgbaSha256": "e601a32bb0a78bcc141f03922a9c9fed9828e245260c0898373554a7e73d733a"
+          },
+          {
+            "rig": "async-ea016f35",
+            "draw": "async B high draw",
+            "submissionIndex": 3,
+            "vertices": [
+              [
+                12.0,
+                4.0
+              ],
+              [
+                28.0,
+                4.0
+              ],
+              [
+                28.0,
+                20.0
+              ],
+              [
+                12.0,
+                20.0
+              ]
+            ],
+            "color": [
+              191,
+              128,
+              191,
+              191
+            ],
+            "pixels": 1024,
+            "rgbaSha256": "bc363d9f91ec0163294c842b6be58dbbb4b518f810ffc082ef29459649a92064"
+          },
+          {
+            "rig": "async-ea016f35",
+            "draw": "async A recovered after short and empty",
+            "submissionIndex": 9,
+            "vertices": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                32.0,
+                0.0
+              ],
+              [
+                32.0,
+                32.0
+              ],
+              [
+                0.0,
+                32.0
+              ]
+            ],
+            "color": [
+              64,
+              191,
+              128,
+              191
+            ],
+            "pixels": 1024,
+            "rgbaSha256": "e601a32bb0a78bcc141f03922a9c9fed9828e245260c0898373554a7e73d733a"
+          },
+          {
+            "rig": "async-265d8cb7",
+            "draw": "async A high draw",
+            "submissionIndex": 1,
+            "vertices": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                32.0,
+                0.0
+              ],
+              [
+                32.0,
+                32.0
+              ],
+              [
+                0.0,
+                32.0
+              ]
+            ],
+            "color": [
+              64,
+              191,
+              128,
+              191
+            ],
+            "pixels": 1024,
+            "rgbaSha256": "e601a32bb0a78bcc141f03922a9c9fed9828e245260c0898373554a7e73d733a"
+          },
+          {
+            "rig": "async-265d8cb7",
+            "draw": "async B high draw",
+            "submissionIndex": 3,
+            "vertices": [
+              [
+                12.0,
+                4.0
+              ],
+              [
+                28.0,
+                4.0
+              ],
+              [
+                28.0,
+                20.0
+              ],
+              [
+                12.0,
+                20.0
+              ]
+            ],
+            "color": [
+              191,
+              128,
+              191,
+              191
+            ],
+            "pixels": 1024,
+            "rgbaSha256": "bc363d9f91ec0163294c842b6be58dbbb4b518f810ffc082ef29459649a92064"
+          },
+          {
+            "rig": "async-265d8cb7",
+            "draw": "async A recovered after short and empty",
+            "submissionIndex": 9,
+            "vertices": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                32.0,
+                0.0
+              ],
+              [
+                32.0,
+                32.0
+              ],
+              [
+                0.0,
+                32.0
+              ]
+            ],
+            "color": [
+              64,
+              191,
+              128,
+              191
+            ],
+            "pixels": 1024,
+            "rgbaSha256": "e601a32bb0a78bcc141f03922a9c9fed9828e245260c0898373554a7e73d733a"
+          },
+          {
+            "rig": "vs-wrong-type",
+            "draw": "vs-wrong-type genuine recovery draw",
+            "submissionIndex": 5,
+            "vertices": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                32.0,
+                0.0
+              ],
+              [
+                32.0,
+                32.0
+              ],
+              [
+                0.0,
+                32.0
+              ]
+            ],
+            "color": [
+              64,
+              191,
+              128,
+              191
+            ],
+            "pixels": 1024,
+            "rgbaSha256": "e601a32bb0a78bcc141f03922a9c9fed9828e245260c0898373554a7e73d733a"
+          },
+          {
+            "rig": "fs-wrong-type",
+            "draw": "fs-wrong-type genuine recovery draw",
+            "submissionIndex": 5,
+            "vertices": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                32.0,
+                0.0
+              ],
+              [
+                32.0,
+                32.0
+              ],
+              [
+                0.0,
+                32.0
+              ]
+            ],
+            "color": [
+              64,
+              191,
+              128,
+              191
+            ],
+            "pixels": 1024,
+            "rgbaSha256": "e601a32bb0a78bcc141f03922a9c9fed9828e245260c0898373554a7e73d733a"
+          },
+          {
+            "rig": "vs-size48",
+            "draw": "vs-size48 genuine recovery draw",
+            "submissionIndex": 5,
+            "vertices": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                32.0,
+                0.0
+              ],
+              [
+                32.0,
+                32.0
+              ],
+              [
+                0.0,
+                32.0
+              ]
+            ],
+            "color": [
+              64,
+              191,
+              128,
+              191
+            ],
+            "pixels": 1024,
+            "rgbaSha256": "e601a32bb0a78bcc141f03922a9c9fed9828e245260c0898373554a7e73d733a"
+          },
+          {
+            "rig": "vs-exceeds-declared",
+            "draw": "vs-exceeds-declared genuine recovery draw",
+            "submissionIndex": 5,
+            "vertices": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                32.0,
+                0.0
+              ],
+              [
+                32.0,
+                32.0
+              ],
+              [
+                0.0,
+                32.0
+              ]
+            ],
+            "color": [
+              64,
+              191,
+              128,
+              191
+            ],
+            "pixels": 1024,
+            "rgbaSha256": "e601a32bb0a78bcc141f03922a9c9fed9828e245260c0898373554a7e73d733a"
+          },
+          {
+            "rig": "vs-size-zero",
+            "draw": "vs-size-zero genuine recovery draw",
+            "submissionIndex": 5,
+            "vertices": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                32.0,
+                0.0
+              ],
+              [
+                32.0,
+                32.0
+              ],
+              [
+                0.0,
+                32.0
+              ]
+            ],
+            "color": [
+              64,
+              191,
+              128,
+              191
+            ],
+            "pixels": 1024,
+            "rgbaSha256": "e601a32bb0a78bcc141f03922a9c9fed9828e245260c0898373554a7e73d733a"
+          },
+          {
+            "rig": "vs-size-negative",
+            "draw": "vs-size-negative genuine recovery draw",
+            "submissionIndex": 5,
+            "vertices": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                32.0,
+                0.0
+              ],
+              [
+                32.0,
+                32.0
+              ],
+              [
+                0.0,
+                32.0
+              ]
+            ],
+            "color": [
+              64,
+              191,
+              128,
+              191
+            ],
+            "pixels": 1024,
+            "rgbaSha256": "e601a32bb0a78bcc141f03922a9c9fed9828e245260c0898373554a7e73d733a"
+          },
+          {
+            "rig": "vs-size-fraction",
+            "draw": "vs-size-fraction genuine recovery draw",
+            "submissionIndex": 5,
+            "vertices": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                32.0,
+                0.0
+              ],
+              [
+                32.0,
+                32.0
+              ],
+              [
+                0.0,
+                32.0
+              ]
+            ],
+            "color": [
+              64,
+              191,
+              128,
+              191
+            ],
+            "pixels": 1024,
+            "rgbaSha256": "e601a32bb0a78bcc141f03922a9c9fed9828e245260c0898373554a7e73d733a"
+          },
+          {
+            "rig": "vs-size-nan",
+            "draw": "vs-size-nan genuine recovery draw",
+            "submissionIndex": 5,
+            "vertices": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                32.0,
+                0.0
+              ],
+              [
+                32.0,
+                32.0
+              ],
+              [
+                0.0,
+                32.0
+              ]
+            ],
+            "color": [
+              64,
+              191,
+              128,
+              191
+            ],
+            "pixels": 1024,
+            "rgbaSha256": "e601a32bb0a78bcc141f03922a9c9fed9828e245260c0898373554a7e73d733a"
+          },
+          {
+            "rig": "vs-missing-index",
+            "draw": "vs-missing-index genuine recovery draw",
+            "submissionIndex": 5,
+            "vertices": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                32.0,
+                0.0
+              ],
+              [
+                32.0,
+                32.0
+              ],
+              [
+                0.0,
+                32.0
+              ]
+            ],
+            "color": [
+              64,
+              191,
+              128,
+              191
+            ],
+            "pixels": 1024,
+            "rgbaSha256": "e601a32bb0a78bcc141f03922a9c9fed9828e245260c0898373554a7e73d733a"
+          },
+          {
+            "rig": "vs-missing-location",
+            "draw": "vs-missing-location genuine recovery draw",
+            "submissionIndex": 5,
+            "vertices": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                32.0,
+                0.0
+              ],
+              [
+                32.0,
+                32.0
+              ],
+              [
+                0.0,
+                32.0
+              ]
+            ],
+            "color": [
+              64,
+              191,
+              128,
+              191
+            ],
+            "pixels": 1024,
+            "rgbaSha256": "e601a32bb0a78bcc141f03922a9c9fed9828e245260c0898373554a7e73d733a"
+          },
+          {
+            "rig": "fs-missing-index",
+            "draw": "fs-missing-index genuine recovery draw",
+            "submissionIndex": 5,
+            "vertices": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                32.0,
+                0.0
+              ],
+              [
+                32.0,
+                32.0
+              ],
+              [
+                0.0,
+                32.0
+              ]
+            ],
+            "color": [
+              64,
+              191,
+              128,
+              191
+            ],
+            "pixels": 1024,
+            "rgbaSha256": "e601a32bb0a78bcc141f03922a9c9fed9828e245260c0898373554a7e73d733a"
+          },
+          {
+            "rig": "fs-missing-location",
+            "draw": "fs-missing-location genuine recovery draw",
+            "submissionIndex": 5,
+            "vertices": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                32.0,
+                0.0
+              ],
+              [
+                32.0,
+                32.0
+              ],
+              [
+                0.0,
+                32.0
+              ]
+            ],
+            "color": [
+              64,
+              191,
+              128,
+              191
+            ],
+            "pixels": 1024,
+            "rgbaSha256": "e601a32bb0a78bcc141f03922a9c9fed9828e245260c0898373554a7e73d733a"
+          },
+          {
+            "rig": "vs-shorter",
+            "draw": "vs-shorter low valid output",
+            "submissionIndex": 4,
+            "vertices": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                32.0,
+                0.0
+              ],
+              [
+                32.0,
+                32.0
+              ],
+              [
+                0.0,
+                32.0
+              ]
+            ],
+            "color": [
+              128,
+              96,
+              64,
+              191
+            ],
+            "pixels": 1024,
+            "rgbaSha256": "67036e07ed0b788236377b5b6f84d67a093105bdb8e1406a9bb0e60b764765cf"
+          },
+          {
+            "rig": "fs-shorter",
+            "draw": "fs-shorter low valid output",
+            "submissionIndex": 4,
+            "vertices": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                32.0,
+                0.0
+              ],
+              [
+                32.0,
+                32.0
+              ],
+              [
+                0.0,
+                32.0
+              ]
+            ],
+            "color": [
+              128,
+              96,
+              64,
+              191
+            ],
+            "pixels": 1024,
+            "rgbaSha256": "67036e07ed0b788236377b5b6f84d67a093105bdb8e1406a9bb0e60b764765cf"
+          }
+        ],
+        "sabotageFirstMismatch": 0,
+        "sabotageSha256": "32c15f3dfbd79a2e2d387c717ea00343223389f3d802709c0bea88d087de7d77"
+      }
+    },
+    {
+      "prediction": "B6",
+      "status": "HELD",
+      "detail": {
+        "production": {
+          "capsets": [],
+          "guestRendererImplemented": false,
+          "numCapsets": 0,
+          "virglFeature": false
+        },
+        "unchangedProductionTrees": [
+          "web",
+          "crates",
+          ".github"
+        ],
+        "changedRuntimePaths": [
+          "renderer/virgl-command/decoder.mjs",
+          "renderer/virgl-command/state.mjs"
+        ]
+      }
+    }
+  ]
+}

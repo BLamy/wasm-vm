@@ -1,0 +1,15 @@
+
+ ⛅️ wrangler 4.148.0 (update available 4.149.0)
+───────────────────────────────────────────────
+Uploading... (303/303)
+✨ Success! Uploaded 0 files (303 already uploaded) (0.33 sec)
+
+✨ Uploading _headers
+🌎 Deploying...
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mDeployment failed![0m
+
+  	Failed to publish your Function. Got error: Unknown internal error occurred.
+
+
+🪵  Logs were written to "/Users/blamy/Library/Preferences/.wrangler/logs/wrangler-2026-10-12_12-53-12_943.log"

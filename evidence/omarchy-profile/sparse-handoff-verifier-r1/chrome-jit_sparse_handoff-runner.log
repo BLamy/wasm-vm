@@ -1,0 +1,6 @@
+Interactive browsers tests are now available at http://127.0.0.1:8000
+
+Note that interactive mode is enabled because `NO_HEADLESS`
+is specified in the environment of this process. Once you're
+done with testing you'll need to kill this server with
+Ctrl-C.

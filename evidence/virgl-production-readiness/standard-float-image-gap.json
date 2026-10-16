@@ -1,0 +1,374 @@
+{
+  "schema": "original-float-image-negative-readiness-v1",
+  "gitHead": "6ec464d9b9d1daecd01a0dd5ac58d31ac23910fe",
+  "sources": [
+    {
+      "path": "renderer/virgl-shader/vendor/src/virgl_hw.h",
+      "sha256": "191ca5cea527949a29e9753b1e31d550f2fed922895d78dabc5c5c3585aa2ff7"
+    },
+    {
+      "path": "renderer/virgl-command/resources.mjs",
+      "sha256": "acfca389a155b969ece1a9c17d609e868bde2dd7f6e050443412ae51249da9e6"
+    },
+    {
+      "path": "renderer/virgl-command/color-images.mjs",
+      "sha256": "8c1b43f830e13f73d1397398e97bf263343f88c1782c683a890cb0f1fbc5e0e1"
+    }
+  ],
+  "rows": [
+    {
+      "name": "R16_FLOAT",
+      "format": 91,
+      "lanes": 1,
+      "scalarBytes": 2,
+      "metadata": {
+        "id": 77,
+        "target": 2,
+        "format": 91,
+        "bind": 10,
+        "width": 17,
+        "height": 9,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 3,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "fields": {
+        "resourceHandle": 77,
+        "level": 0,
+        "usage": 0,
+        "stride": 34,
+        "layerStride": 0,
+        "box": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "width": 17,
+          "height": 9,
+          "depth": 1
+        },
+        "dataOffset": 7,
+        "direction": 1
+      },
+      "backingByteLength": 397,
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-resource",
+          "message": "Only qualified 2D levels, one layer, one sample and no flags are supported."
+        }
+      }
+    },
+    {
+      "name": "R16G16_FLOAT",
+      "format": 92,
+      "lanes": 2,
+      "scalarBytes": 2,
+      "metadata": {
+        "id": 77,
+        "target": 2,
+        "format": 92,
+        "bind": 10,
+        "width": 17,
+        "height": 9,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 3,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "fields": {
+        "resourceHandle": 77,
+        "level": 0,
+        "usage": 0,
+        "stride": 68,
+        "layerStride": 0,
+        "box": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "width": 17,
+          "height": 9,
+          "depth": 1
+        },
+        "dataOffset": 7,
+        "direction": 1
+      },
+      "backingByteLength": 787,
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-resource",
+          "message": "Only qualified 2D levels, one layer, one sample and no flags are supported."
+        }
+      }
+    },
+    {
+      "name": "R16G16B16_FLOAT",
+      "format": 93,
+      "lanes": 3,
+      "scalarBytes": 2,
+      "metadata": {
+        "id": 77,
+        "target": 2,
+        "format": 93,
+        "bind": 10,
+        "width": 17,
+        "height": 9,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 3,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "fields": {
+        "resourceHandle": 77,
+        "level": 0,
+        "usage": 0,
+        "stride": 102,
+        "layerStride": 0,
+        "box": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "width": 17,
+          "height": 9,
+          "depth": 1
+        },
+        "dataOffset": 7,
+        "direction": 1
+      },
+      "backingByteLength": 1177,
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-resource",
+          "message": "Only qualified 2D levels, one layer, one sample and no flags are supported."
+        }
+      }
+    },
+    {
+      "name": "R16G16B16A16_FLOAT",
+      "format": 94,
+      "lanes": 4,
+      "scalarBytes": 2,
+      "metadata": {
+        "id": 77,
+        "target": 2,
+        "format": 94,
+        "bind": 10,
+        "width": 17,
+        "height": 9,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 3,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "fields": {
+        "resourceHandle": 77,
+        "level": 0,
+        "usage": 0,
+        "stride": 136,
+        "layerStride": 0,
+        "box": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "width": 17,
+          "height": 9,
+          "depth": 1
+        },
+        "dataOffset": 7,
+        "direction": 1
+      },
+      "backingByteLength": 1567,
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-resource",
+          "message": "Only qualified 2D levels, one layer, one sample and no flags are supported."
+        }
+      }
+    },
+    {
+      "name": "R32_FLOAT",
+      "format": 28,
+      "lanes": 1,
+      "scalarBytes": 4,
+      "metadata": {
+        "id": 77,
+        "target": 2,
+        "format": 28,
+        "bind": 10,
+        "width": 17,
+        "height": 9,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 3,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "fields": {
+        "resourceHandle": 77,
+        "level": 0,
+        "usage": 0,
+        "stride": 68,
+        "layerStride": 0,
+        "box": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "width": 17,
+          "height": 9,
+          "depth": 1
+        },
+        "dataOffset": 7,
+        "direction": 1
+      },
+      "backingByteLength": 787,
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-resource",
+          "message": "Only qualified 2D levels, one layer, one sample and no flags are supported."
+        }
+      }
+    },
+    {
+      "name": "R32G32_FLOAT",
+      "format": 29,
+      "lanes": 2,
+      "scalarBytes": 4,
+      "metadata": {
+        "id": 77,
+        "target": 2,
+        "format": 29,
+        "bind": 10,
+        "width": 17,
+        "height": 9,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 3,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "fields": {
+        "resourceHandle": 77,
+        "level": 0,
+        "usage": 0,
+        "stride": 136,
+        "layerStride": 0,
+        "box": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "width": 17,
+          "height": 9,
+          "depth": 1
+        },
+        "dataOffset": 7,
+        "direction": 1
+      },
+      "backingByteLength": 1567,
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-resource",
+          "message": "Only qualified 2D levels, one layer, one sample and no flags are supported."
+        }
+      }
+    },
+    {
+      "name": "R32G32B32_FLOAT",
+      "format": 30,
+      "lanes": 3,
+      "scalarBytes": 4,
+      "metadata": {
+        "id": 77,
+        "target": 2,
+        "format": 30,
+        "bind": 10,
+        "width": 17,
+        "height": 9,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 3,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "fields": {
+        "resourceHandle": 77,
+        "level": 0,
+        "usage": 0,
+        "stride": 204,
+        "layerStride": 0,
+        "box": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "width": 17,
+          "height": 9,
+          "depth": 1
+        },
+        "dataOffset": 7,
+        "direction": 1
+      },
+      "backingByteLength": 2347,
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-resource",
+          "message": "Only qualified 2D levels, one layer, one sample and no flags are supported."
+        }
+      }
+    },
+    {
+      "name": "R32G32B32A32_FLOAT",
+      "format": 31,
+      "lanes": 4,
+      "scalarBytes": 4,
+      "metadata": {
+        "id": 77,
+        "target": 2,
+        "format": 31,
+        "bind": 10,
+        "width": 17,
+        "height": 9,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 3,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "fields": {
+        "resourceHandle": 77,
+        "level": 0,
+        "usage": 0,
+        "stride": 272,
+        "layerStride": 0,
+        "box": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "width": 17,
+          "height": 9,
+          "depth": 1
+        },
+        "dataOffset": 7,
+        "direction": 1
+      },
+      "backingByteLength": 3127,
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-resource",
+          "message": "Only qualified 2D levels, one layer, one sample and no flags are supported."
+        }
+      }
+    }
+  ],
+  "productionNegotiation": false,
+  "guestExecution": false
+}

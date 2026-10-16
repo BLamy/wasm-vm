@@ -1,0 +1,49 @@
+{
+  "native_wasm_identical": true,
+  "fixtures": {
+    "integer-invalidation": {
+      "retired": 4,
+      "trace_fnv": "0xcccac346058ffa25",
+      "state_list_sha256": "afdfc3e1eeb9806aa1853bc83f3562ba08f97bfc36d7f76b426d92d7669f2fc6"
+    },
+    "integer-wrapping-auipc": {
+      "retired": 2,
+      "trace_fnv": "0x58cfb93a95631c7d",
+      "state_list_sha256": "85eba745abb3a917d3b9db624f176308790da2d880217342e2123c4ee3918d00"
+    },
+    "integer-compressed-trap": {
+      "retired": 4,
+      "trace_fnv": "0xb501cc97e4a905b5",
+      "state_list_sha256": "8d1380e24f5fb405a054cfd3ea56751bee6bb2fc0aff964cda493400e515023c"
+    },
+    "integer-wrapping-c": {
+      "retired": 2,
+      "trace_fnv": "0xd075022a987ecaac",
+      "state_list_sha256": "4e85467db94e0a440e10fa909d99b2768d43548862784e53f66f19f5533065f9"
+    },
+    "integer-boundaries": {
+      "retired": 175,
+      "trace_fnv": "0x18ec5c9b6882fa8d",
+      "state_list_sha256": "b7b550585168ebd78293f05a84cc1673d4c5fcf52f4dfbdac808ef49718f0286"
+    },
+    "integer-opcodes": {
+      "retired": 301,
+      "trace_fnv": "0x8fda1ff71b29377d",
+      "state_list_sha256": "9013fafb34ab4e982dd2b29284892aee450b6c67304a80b43a97e496fc8ff62b"
+    }
+  },
+  "artifacts": {
+    "guest/integer-boundaries.states": "b7b550585168ebd78293f05a84cc1673d4c5fcf52f4dfbdac808ef49718f0286",
+    "guest/integer-boundaries.trace": "351c42e4d7a7f8bd3c31a28e2ae07821d1034396ab4551aa22459bc314f07ae5",
+    "guest/integer-compressed-trap.states": "8d1380e24f5fb405a054cfd3ea56751bee6bb2fc0aff964cda493400e515023c",
+    "guest/integer-compressed-trap.trace": "1e5914c58ff2cc0509298fe6600b11f0da5a9a368fcd97e7a097a1bc5094a455",
+    "guest/integer-invalidation.states": "afdfc3e1eeb9806aa1853bc83f3562ba08f97bfc36d7f76b426d92d7669f2fc6",
+    "guest/integer-invalidation.trace": "4b7e6c14394e1cc95a3f762185304469b3b8ca874c60fd7ad842b1f8b78690cb",
+    "guest/integer-opcodes.states": "9013fafb34ab4e982dd2b29284892aee450b6c67304a80b43a97e496fc8ff62b",
+    "guest/integer-opcodes.trace": "92edf427357e284f1d747473ace567557fffc68544f84881cdd3382397cb4dce",
+    "guest/integer-wrapping-auipc.states": "85eba745abb3a917d3b9db624f176308790da2d880217342e2123c4ee3918d00",
+    "guest/integer-wrapping-auipc.trace": "8d75f8ea5fcde9a5e2ec4d0d01904ad6559681a7048a2e626e1f12c7ecbdf8f0",
+    "guest/integer-wrapping-c.states": "4e85467db94e0a440e10fa909d99b2768d43548862784e53f66f19f5533065f9",
+    "guest/integer-wrapping-c.trace": "83890c42a906a8e393051bddb27a6aaddfc72f377cefdd116a03b255c4841eee"
+  }
+}

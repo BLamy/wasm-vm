@@ -1,0 +1,20 @@
+{
+  "status": "passed",
+  "control": {
+    "name": "lane-1-xxxx-w",
+    "text": "FRAG\nDCL OUT[0], COLOR\nDCL TEMP[9]\nIMM[0] FLT32 {0.125, 0.25, 0.5, 1}\nMOV TEMP[9].x, IMM[0].xxxx\nMOV OUT[0], IMM[0]\nMOV OUT[0].w, TEMP[9].xxxx\nEND\n",
+    "ok": true,
+    "stage": 1,
+    "browser": true
+  },
+  "expectedBaseline": true,
+  "actualMutated": {
+    "ok": false,
+    "error": {
+      "code": "parse-error",
+      "message": "TGSI is malformed or outside the documented straight-line profile."
+    }
+  },
+  "mutationBinarySha256": "a0630563ed562394ce673d77ecdaffd776b2ec24259ffca338d938900464b159",
+  "stderr": ""
+}

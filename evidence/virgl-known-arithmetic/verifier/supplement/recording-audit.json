@@ -1,0 +1,794 @@
+{
+  "schema": "virgl-known-arithmetic-incremental-recording-audit-v1",
+  "status": "passed",
+  "exactPriorFixtures": [
+    {
+      "index": 16,
+      "name": "supplemental-zero-return-vector",
+      "textSha256": "b0909ad597f132fa4662444c8172098183fb694c2859aff2d6a9047e7e5d4db3"
+    },
+    {
+      "index": 54,
+      "name": "supplemental-coordinate-wrapper",
+      "textSha256": "c4b060eb6d1914bfb388991e1e3a6895398c42b9e675c525c9e08f557ab5b312"
+    }
+  ],
+  "independentArithmetic": "two exact rational zero identities, 3/4 producer and 3/8 chain",
+  "variants": [
+    {
+      "kind": "hot",
+      "binary": {
+        "path": "target/evidence/virgl-known-arithmetic-critic-supplement/unpacked/hot/original/known-test",
+        "bytes": 3518888,
+        "sha256": "28bbf65f360d93c674ec2b035d871136e958d42be6f00261820d5f922df606da"
+      },
+      "fixture": {
+        "path": "target/evidence/virgl-known-arithmetic-critic-supplement/unpacked/hot/cases.bin",
+        "bytes": 1735,
+        "sha256": "3dd5e097b8759cf87673e7817f61fc33837a8d780d3704b08ead3d73c81c6a2b"
+      },
+      "native": {
+        "path": "target/evidence/virgl-known-arithmetic-critic-supplement/unpacked/hot/native.json",
+        "bytes": 46629,
+        "sha256": "664fb157ee447502f87b7016e64cc45072c0a35e9bff3756ec6d19610fdcc7fc"
+      },
+      "rawProfile": {
+        "path": "target/evidence/virgl-known-arithmetic-critic-supplement/unpacked/hot/native.profraw",
+        "bytes": 105296,
+        "sha256": "742dc360841c2cd650dae8d8bce2054577aaa5ad03d040d0830ca94b8a022c06"
+      },
+      "mergedProfile": {
+        "path": "target/evidence/virgl-known-arithmetic-critic-supplement/hot-remerged.profdata",
+        "bytes": 61032,
+        "sha256": "e1b22983ce2dba1f0bcc1f7127f31ac87696a57275cef9e641e6ebc80311d9d9"
+      },
+      "reexport": {
+        "path": "target/evidence/virgl-known-arithmetic-critic-supplement/hot-reexported.json",
+        "bytes": 13025641,
+        "sha256": "127dff137e25281d7f4095a67b13f1ada4f3988e1982ff96c4e045ac872b2c62"
+      },
+      "llvm": [
+        {
+          "function": "raw_bits.c:known_add",
+          "file": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/raw_known_arithmetic.h",
+          "region": [
+            34,
+            13,
+            34,
+            21,
+            8,
+            0,
+            0,
+            0
+          ],
+          "containingRegions": [
+            [
+              31,
+              1,
+              50,
+              2,
+              64,
+              0,
+              0,
+              0
+            ],
+            [
+              34,
+              4,
+              50,
+              2,
+              64,
+              0,
+              0,
+              0
+            ],
+            [
+              34,
+              13,
+              34,
+              21,
+              8,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "function": "raw_bits.c:known_add",
+          "file": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/raw_known_arithmetic.h",
+          "region": [
+            35,
+            13,
+            35,
+            21,
+            4,
+            0,
+            0,
+            0
+          ],
+          "containingRegions": [
+            [
+              31,
+              1,
+              50,
+              2,
+              64,
+              0,
+              0,
+              0
+            ],
+            [
+              34,
+              4,
+              50,
+              2,
+              64,
+              0,
+              0,
+              0
+            ],
+            [
+              35,
+              4,
+              50,
+              2,
+              56,
+              0,
+              0,
+              0
+            ],
+            [
+              35,
+              13,
+              35,
+              21,
+              4,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "function": "known_arithmetic.c:known_add",
+          "file": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/raw_known_arithmetic.h",
+          "region": [
+            34,
+            13,
+            34,
+            21,
+            4,
+            0,
+            0,
+            0
+          ],
+          "containingRegions": [
+            [
+              31,
+              1,
+              50,
+              2,
+              8,
+              0,
+              0,
+              0
+            ],
+            [
+              34,
+              4,
+              50,
+              2,
+              8,
+              0,
+              0,
+              0
+            ],
+            [
+              34,
+              13,
+              34,
+              21,
+              4,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "function": "known_arithmetic.c:known_add",
+          "file": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/raw_known_arithmetic.h",
+          "region": [
+            35,
+            13,
+            35,
+            21,
+            4,
+            0,
+            0,
+            0
+          ],
+          "containingRegions": [
+            [
+              31,
+              1,
+              50,
+              2,
+              8,
+              0,
+              0,
+              0
+            ],
+            [
+              34,
+              4,
+              50,
+              2,
+              8,
+              0,
+              0,
+              0
+            ],
+            [
+              35,
+              4,
+              50,
+              2,
+              4,
+              0,
+              0,
+              0
+            ],
+            [
+              35,
+              13,
+              35,
+              21,
+              4,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "function": "bridge.c:stage_result",
+          "file": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/bridge.c",
+          "region": [
+            1710,
+            115,
+            1710,
+            142,
+            4,
+            0,
+            0,
+            0
+          ],
+          "containingRegions": [
+            [
+              1607,
+              1,
+              1712,
+              2,
+              24,
+              0,
+              0,
+              0
+            ],
+            [
+              1710,
+              26,
+              1710,
+              158,
+              16,
+              0,
+              0,
+              0
+            ],
+            [
+              1710,
+              101,
+              1710,
+              157,
+              16,
+              0,
+              0,
+              0
+            ],
+            [
+              1710,
+              115,
+              1710,
+              142,
+              4,
+              0,
+              0,
+              0
+            ]
+          ]
+        }
+      ],
+      "v8Profile": {
+        "path": "target/evidence/virgl-known-arithmetic-critic-supplement/unpacked/hot/node-v8/coverage-58172-1791175022335-0.json",
+        "bytes": 239708,
+        "sha256": "0e58b31014ad0e4d9e6f5eba9be796fd45a3b1a8bff52d1adb014089f481b6d4"
+      },
+      "v8": [
+        {
+          "function": "",
+          "startOffset": 11519,
+          "endOffset": 11565,
+          "count": 1,
+          "source": "|| operations[i - 1] === \"ADD\" && op === \"MUL\"",
+          "containingRanges": [
+            {
+              "startOffset": 11460,
+              "endOffset": 11566,
+              "count": 7
+            },
+            {
+              "startOffset": 11519,
+              "endOffset": 11565,
+              "count": 1
+            }
+          ]
+        },
+        {
+          "function": "parseConstantDomain",
+          "startOffset": 11978,
+          "endOffset": 11987,
+          "count": 2,
+          "source": ": checked",
+          "containingRanges": [
+            {
+              "startOffset": 9156,
+              "endOffset": 42775,
+              "count": 19
+            },
+            {
+              "startOffset": 10541,
+              "endOffset": 11994,
+              "count": 7
+            },
+            {
+              "startOffset": 11978,
+              "endOffset": 11987,
+              "count": 2
+            }
+          ]
+        }
+      ],
+      "consumer": {
+        "path": "target/evidence/virgl-known-arithmetic-critic-supplement/unpacked/hot/consumer.json",
+        "bytes": 17364,
+        "sha256": "d6aa34f70ac26749825bdf5cf7d1d9db8d1178c91d68e8b99c8284e0b7eea072"
+      },
+      "literalCacheWords": [
+        [
+          1069547520,
+          1069547520,
+          0,
+          1065353216
+        ],
+        [
+          1061158912,
+          1061158912,
+          1061158912,
+          1061158912
+        ],
+        [
+          1061158912,
+          1061158912,
+          1061158912,
+          1061158912,
+          1052770304,
+          1052770304,
+          1052770304,
+          1052770304
+        ],
+        [
+          1061158912,
+          1061158912,
+          1061158912,
+          1061158912
+        ]
+      ],
+      "completeSinglePairComparisons": 4,
+      "getterInvocations": 0,
+      "sanitizerErrors": 0
+    },
+    {
+      "kind": "cold",
+      "binary": {
+        "path": "target/evidence/virgl-known-arithmetic-critic-supplement/unpacked/cold/original/known-test",
+        "bytes": 3519896,
+        "sha256": "c4eeae93534814d9ccc1f2beded36781275946da8fb97dba0499a662150d74f2"
+      },
+      "fixture": {
+        "path": "target/evidence/virgl-known-arithmetic-critic-supplement/unpacked/cold/cases.bin",
+        "bytes": 1735,
+        "sha256": "3dd5e097b8759cf87673e7817f61fc33837a8d780d3704b08ead3d73c81c6a2b"
+      },
+      "native": {
+        "path": "target/evidence/virgl-known-arithmetic-critic-supplement/unpacked/cold/native.json",
+        "bytes": 46629,
+        "sha256": "664fb157ee447502f87b7016e64cc45072c0a35e9bff3756ec6d19610fdcc7fc"
+      },
+      "rawProfile": {
+        "path": "target/evidence/virgl-known-arithmetic-critic-supplement/unpacked/cold/native.profraw",
+        "bytes": 105296,
+        "sha256": "a6f7c442a18d58c1ed19e8af50e00d275e152e69c7f16496a312c28e79dbb3e2"
+      },
+      "mergedProfile": {
+        "path": "target/evidence/virgl-known-arithmetic-critic-supplement/cold-remerged.profdata",
+        "bytes": 61032,
+        "sha256": "e1b22983ce2dba1f0bcc1f7127f31ac87696a57275cef9e641e6ebc80311d9d9"
+      },
+      "reexport": {
+        "path": "target/evidence/virgl-known-arithmetic-critic-supplement/cold-reexported.json",
+        "bytes": 14729609,
+        "sha256": "bc2f61ab1d6a4889b48d36854d6b2810f1c39a68480516775a705eb377768ac9"
+      },
+      "llvm": [
+        {
+          "function": "raw_bits.c:known_add",
+          "file": "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-known-arithmetic-cold-u5mc9ilw/wasm-vm/renderer/virgl-shader/raw_known_arithmetic.h",
+          "region": [
+            34,
+            13,
+            34,
+            21,
+            8,
+            0,
+            0,
+            0
+          ],
+          "containingRegions": [
+            [
+              31,
+              1,
+              50,
+              2,
+              64,
+              0,
+              0,
+              0
+            ],
+            [
+              34,
+              4,
+              50,
+              2,
+              64,
+              0,
+              0,
+              0
+            ],
+            [
+              34,
+              13,
+              34,
+              21,
+              8,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "function": "raw_bits.c:known_add",
+          "file": "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-known-arithmetic-cold-u5mc9ilw/wasm-vm/renderer/virgl-shader/raw_known_arithmetic.h",
+          "region": [
+            35,
+            13,
+            35,
+            21,
+            4,
+            0,
+            0,
+            0
+          ],
+          "containingRegions": [
+            [
+              31,
+              1,
+              50,
+              2,
+              64,
+              0,
+              0,
+              0
+            ],
+            [
+              34,
+              4,
+              50,
+              2,
+              64,
+              0,
+              0,
+              0
+            ],
+            [
+              35,
+              4,
+              50,
+              2,
+              56,
+              0,
+              0,
+              0
+            ],
+            [
+              35,
+              13,
+              35,
+              21,
+              4,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "function": "known_arithmetic.c:known_add",
+          "file": "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-known-arithmetic-cold-u5mc9ilw/wasm-vm/renderer/virgl-shader/raw_known_arithmetic.h",
+          "region": [
+            34,
+            13,
+            34,
+            21,
+            4,
+            0,
+            0,
+            0
+          ],
+          "containingRegions": [
+            [
+              31,
+              1,
+              50,
+              2,
+              8,
+              0,
+              0,
+              0
+            ],
+            [
+              34,
+              4,
+              50,
+              2,
+              8,
+              0,
+              0,
+              0
+            ],
+            [
+              34,
+              13,
+              34,
+              21,
+              4,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "function": "known_arithmetic.c:known_add",
+          "file": "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-known-arithmetic-cold-u5mc9ilw/wasm-vm/renderer/virgl-shader/raw_known_arithmetic.h",
+          "region": [
+            35,
+            13,
+            35,
+            21,
+            4,
+            0,
+            0,
+            0
+          ],
+          "containingRegions": [
+            [
+              31,
+              1,
+              50,
+              2,
+              8,
+              0,
+              0,
+              0
+            ],
+            [
+              34,
+              4,
+              50,
+              2,
+              8,
+              0,
+              0,
+              0
+            ],
+            [
+              35,
+              4,
+              50,
+              2,
+              4,
+              0,
+              0,
+              0
+            ],
+            [
+              35,
+              13,
+              35,
+              21,
+              4,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "function": "bridge.c:stage_result",
+          "file": "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-known-arithmetic-cold-u5mc9ilw/wasm-vm/renderer/virgl-shader/bridge.c",
+          "region": [
+            1710,
+            115,
+            1710,
+            142,
+            4,
+            0,
+            0,
+            0
+          ],
+          "containingRegions": [
+            [
+              1607,
+              1,
+              1712,
+              2,
+              24,
+              0,
+              0,
+              0
+            ],
+            [
+              1710,
+              26,
+              1710,
+              158,
+              16,
+              0,
+              0,
+              0
+            ],
+            [
+              1710,
+              101,
+              1710,
+              157,
+              16,
+              0,
+              0,
+              0
+            ],
+            [
+              1710,
+              115,
+              1710,
+              142,
+              4,
+              0,
+              0,
+              0
+            ]
+          ]
+        }
+      ],
+      "v8Profile": {
+        "path": "target/evidence/virgl-known-arithmetic-critic-supplement/unpacked/cold/node-v8/coverage-58192-1791175022854-0.json",
+        "bytes": 239708,
+        "sha256": "1c12a450790aa37e8bfb0f66ce177220134fe8b3b8320843ba3e41d618b7e6f5"
+      },
+      "v8": [
+        {
+          "function": "",
+          "startOffset": 11519,
+          "endOffset": 11565,
+          "count": 1,
+          "source": "|| operations[i - 1] === \"ADD\" && op === \"MUL\"",
+          "containingRanges": [
+            {
+              "startOffset": 11460,
+              "endOffset": 11566,
+              "count": 7
+            },
+            {
+              "startOffset": 11519,
+              "endOffset": 11565,
+              "count": 1
+            }
+          ]
+        },
+        {
+          "function": "parseConstantDomain",
+          "startOffset": 11978,
+          "endOffset": 11987,
+          "count": 2,
+          "source": ": checked",
+          "containingRanges": [
+            {
+              "startOffset": 9156,
+              "endOffset": 42775,
+              "count": 19
+            },
+            {
+              "startOffset": 10541,
+              "endOffset": 11994,
+              "count": 7
+            },
+            {
+              "startOffset": 11978,
+              "endOffset": 11987,
+              "count": 2
+            }
+          ]
+        }
+      ],
+      "consumer": {
+        "path": "target/evidence/virgl-known-arithmetic-critic-supplement/unpacked/cold/consumer.json",
+        "bytes": 17364,
+        "sha256": "d6aa34f70ac26749825bdf5cf7d1d9db8d1178c91d68e8b99c8284e0b7eea072"
+      },
+      "literalCacheWords": [
+        [
+          1069547520,
+          1069547520,
+          0,
+          1065353216
+        ],
+        [
+          1061158912,
+          1061158912,
+          1061158912,
+          1061158912
+        ],
+        [
+          1061158912,
+          1061158912,
+          1061158912,
+          1061158912,
+          1052770304,
+          1052770304,
+          1052770304,
+          1052770304
+        ],
+        [
+          1061158912,
+          1061158912,
+          1061158912,
+          1061158912
+        ]
+      ],
+      "completeSinglePairComparisons": 4,
+      "getterInvocations": 0,
+      "sanitizerErrors": 0
+    }
+  ],
+  "v8Source": {
+    "path": "renderer/virgl-command/constant-domain.mjs",
+    "bytes": 51209,
+    "sha256": "0be4e058dc23250a3116ac9360613a404739d807b858b926ee4d84205126b40b"
+  },
+  "v8Snippets": {
+    "(11519, 11565)": "|| operations[i - 1] === \"ADD\" && op === \"MUL\"",
+    "(11978, 11987)": ": checked"
+  }
+}

@@ -1,0 +1,100 @@
+{
+  "schema": "d41-fresh-critic-predictions-v1",
+  "createdAt": "2026-10-11T12:36:51.390816+00:00",
+  "base": "d64b2f5e782fee2090f7a0f435bdb0ea7a0a1081",
+  "frozenSourceHead": "eda91e2569c38de3f56b92fd38b5326b2c6ae3fd",
+  "workerSubmission": "0cf33c7c19a4f1f5211197e4f243cc199e290a15",
+  "evidenceNotYetOpened": true,
+  "predictions": [
+    {
+      "id": "P01",
+      "boundary": "custody",
+      "prediction": "Committed worker archive/index/manifest must match the three supplied digests; every 37121 logical member must resolve to a real earlier physical body with exact length/SHA, every source and generated body must match frozen eda91; final hot/cold receipts and cold clean clone must be exact-head. No pre-repair 9b3 run may substitute.",
+      "status": "PENDING"
+    },
+    {
+      "id": "P02",
+      "boundary": "dependencies",
+      "prediction": "Both D40 complete archives must fully reopen 40703 total members, compiler and GPU packing helper must equal BASE, whole primary sources must match pins; all held criteria carry forward only across unchanged boundaries.",
+      "status": "PENDING"
+    },
+    {
+      "id": "P03",
+      "boundary": "admission",
+      "prediction": "Original format16 accepts only new selected factory roles1/8/9 single-layer2D full/truncated legal NPOT mips. BASE original negative roles/mips and all historical factories stay refused except legacy base bind1 Z16. Original invalid sample/layer/flags/chains/limits/aliases/ranges/dimensions/types/linear/feedback must fail before native copy or guest draw.",
+      "status": "PENDING"
+    },
+    {
+      "id": "P04",
+      "boundary": "full-domain",
+      "prediction": "All65536 original UN16 words appear exactly once in the domain input and execute actual original shader TEX; full native FLOAT red must equal f32(word/65535) within1ULP while G/B/constants/query exact, and exact public canonical UN16 bytes plus every segmented padding byte must match original input.",
+      "status": "PENDING"
+    },
+    {
+      "id": "P05",
+      "boundary": "sampling",
+      "prediction": "Both original shader stages and slots0/15, all supported TXF/TXL/TEX/TXD/TXB/TXQ, four-channel original swizzles, full/private NPOT range identities and nonzero output levels must be independently invertible from original TGSI/wire and inputs; bound native texture/range/generation must match draw associations and diagnostic full planes.",
+      "status": "PENDING"
+    },
+    {
+      "id": "P06",
+      "boundary": "depth",
+      "prediction": "All eight comparison functions, test enable/write masks and FLOAT/SINT/UINT targets must produce independently modeled quantized stored/incoming16-bit comparison outcomes at exact native attached mip/dimensions. Full clears use primary allowed pair uniformly; public bytes exactly serialize validated same native word. Retained126 S8 survives18->126->16 switches exactly.",
+      "status": "PENDING"
+    },
+    {
+      "id": "P07",
+      "boundary": "transfers",
+      "prediction": "Every synchronous/asynchronous segmented/strided/upload/partial-mip/read/copy transfer must reproduce full original input/native/public bytes and padding. GPU-only refresh changes native storage while original backing stays unchanged. Exact resource/private/scratch/staging/conversion reservations precede allocations/readback and failures roll back unchanged.",
+      "status": "PENDING"
+    },
+    {
+      "id": "P08",
+      "boundary": "ownership",
+      "prediction": "Old native generation/private ranges survive opposite-format ID reuse; cancellation, owner-first/renderer-first/disposal close every object exactly once and all terminal resource/async/cache/job charges equal zero. Native IDs and event sequence, not counters alone, prove this.",
+      "status": "PENDING"
+    },
+    {
+      "id": "P09",
+      "boundary": "completion",
+      "prediction": "Positive hardware owns1716 fences with1710 actual consumed completions and6 disposal-only;6993 native objects retire once.1648 CPU reads consist1586 fenced plus62 driver-synchronized synchronous reads. AsyncPBO/diagnostics need actual consumed sync created after writer. Earlier sync cannot qualify a later conversion draw.",
+      "status": "PENDING"
+    },
+    {
+      "id": "P10",
+      "boundary": "counts",
+      "prediction": "Independently reconstruct62 positive runs/133frames/801576 outputwords/280776 depthpixels+2732 transferpixels/10866784publicbytes and56actual pair/112actual stage responses versus101matching draw associations; controls and legacy excluded.",
+      "status": "PENDING"
+    },
+    {
+      "id": "P11",
+      "boundary": "coverage",
+      "prediction": "Every nested governing UTF16/V8 partition in four-file diff executes or exact-source-pinned unchanged predecessor operand/whitespace waiver. Claim602positive/25waived/0unproven;29 listed predecessor operands authenticate complete BASE bodies and offsets with four newly executed; no new UN16 behavior waived.25 recorder bodies differ only by dependency literal and original legacy recorder executes hot/cold.",
+      "status": "PENDING"
+    },
+    {
+      "id": "P12",
+      "boundary": "fresh",
+      "prediction": "Three new varied seeds/schedules must independently retain correct ranges/generations/cancellation/disposal with terminal zero charges and unchanged full original inverses. One bounded novel non-default image/transfer boundary must behave from original input predictions and be promotable to a recurring gate.",
+      "status": "PENDING"
+    },
+    {
+      "id": "P13",
+      "boundary": "sabotage",
+      "prediction": "Actual completed native depth or color storage modified only after initial completion must consume a distinct second post-writer sync and be refuted by the unchanged original-input inverse; no oracle change or simulated return qualifies.",
+      "status": "PENDING"
+    },
+    {
+      "id": "P14",
+      "boundary": "browser",
+      "prediction": "Each hardware recording uses headed actual Metal WebGL2 without software-renderer flags and zero console/page/request errors, contains full served-source closure, browser coverage and screenshot; fresh full records must seal and reopen without summary-only substitution.",
+      "status": "PENDING"
+    },
+    {
+      "id": "P15",
+      "boundary": "scope",
+      "prediction": "Only isolated format16 path is proven; production guest offload/API/caps/300MIPS remain unproven and no successor, merge, push or deployment occurs.",
+      "status": "PENDING"
+    }
+  ]
+}

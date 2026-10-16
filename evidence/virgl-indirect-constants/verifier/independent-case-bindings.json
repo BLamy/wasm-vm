@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "records": [
+    {
+      "path": "current-attack-cases.jsonl.gz",
+      "bytes": 553254,
+      "sha256": "f5bd97320a814e37c9721a6a6e9e7efa588047f5bc39ec0b7d3d68ebb9525057",
+      "uncompressedBytes": 12988732,
+      "uncompressedSha256": "b043f0559f6e042f5cf844f5e44cc2c83aa0e95956967bbd10c04ff29f33f185",
+      "lines": 9088
+    },
+    {
+      "path": "join-fault-attack-cases.jsonl.gz",
+      "bytes": 560307,
+      "sha256": "d22ed1d501546cbccb9d7c790b88c3293f4ed1eebe29227fc42f984aa0237f41",
+      "uncompressedBytes": 13547483,
+      "uncompressedSha256": "2d2c1798a713fe3064411b0eb811a86d1b417f4c873ebae1ca6b3bcb5532b122",
+      "lines": 9088
+    }
+  ]
+}

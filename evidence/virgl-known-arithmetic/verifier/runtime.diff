@@ -1,0 +1,212 @@
+diff --git a/renderer/virgl-command/constant-domain.mjs b/renderer/virgl-command/constant-domain.mjs
+index 139469af..e57c4729 100644
+--- a/renderer/virgl-command/constant-domain.mjs
++++ b/renderer/virgl-command/constant-domain.mjs
+@@ -43,0 +44,2 @@ export const DISCARD_KEY = "|tgsi-fragment-discard-v1:ordered-any-negative/raw-w
++export const KNOWN_ARITHMETIC_PROFILE = "virgl-webgl2-raw-bits-v40";
++export const KNOWN_ARITHMETIC_KIND = "tgsi-known-arithmetic-v1";
+@@ -55,0 +58 @@ const DISCARD_BASES = new Set(rawProfiles(...Array.from({ length: 38 }, (_, i) =
++const KNOWN_ARITHMETIC_BASES = new Set(rawProfiles(...Array.from({ length: 39 }, (_, i) => i + 1)));
+@@ -135 +138 @@ export function parseConstantDomain(metadata, expectedStage) {
+-    const value = record(metadata, [...METADATA_KEYS, "constantDomains", "constantAccesses", "constantConstraints", "constantRadialDomains", "preciseWordContract", "rasterBaseProfile", "constantRasterDomains", "arithmeticBaseProfile", "preciseArithmeticContract", "conversionBaseProfile", "signedConversionContract", "constantConversionDomains", "scalarBaseProfile", "scalarWordContract", "minimumBaseProfile", "minimumWordContract", "fractionBaseProfile", "fractionWordContract", "saturationBaseProfile", "saturationContract", "exponentBaseProfile", "exponentContract", "sineBaseProfile", "sineContract", "powerBaseProfile", "powerContract", "coordinateBaseProfile", "coordinateContract", "discardBaseProfile", "discardContract"], METADATA_KEYS);
++    const value = record(metadata, [...METADATA_KEYS, "constantDomains", "constantAccesses", "constantConstraints", "constantRadialDomains", "preciseWordContract", "rasterBaseProfile", "constantRasterDomains", "arithmeticBaseProfile", "preciseArithmeticContract", "conversionBaseProfile", "signedConversionContract", "constantConversionDomains", "scalarBaseProfile", "scalarWordContract", "minimumBaseProfile", "minimumWordContract", "fractionBaseProfile", "fractionWordContract", "saturationBaseProfile", "saturationContract", "exponentBaseProfile", "exponentContract", "sineBaseProfile", "sineContract", "powerBaseProfile", "powerContract", "coordinateBaseProfile", "coordinateContract", "discardBaseProfile", "discardContract", "knownArithmeticBaseProfile", "knownArithmeticContract"], METADATA_KEYS);
+@@ -136,0 +140,18 @@ export function parseConstantDomain(metadata, expectedStage) {
++    const knownArithmetic = value.profile === KNOWN_ARITHMETIC_PROFILE;
++    require(knownArithmetic === Object.hasOwn(value, "knownArithmeticBaseProfile") && knownArithmetic === Object.hasOwn(value, "knownArithmeticContract"),
++      "Known arithmetic contract disagrees with its profile.");
++    if (knownArithmetic) {
++      require(KNOWN_ARITHMETIC_BASES.has(value.knownArithmeticBaseProfile), "Known arithmetic requires an existing raw base profile.");
++      const policy = record(value.knownArithmeticContract, ["kind", "stage", "operations", "source", "rounding", "result", "emission", "authority", "storage"]);
++      require(policy.kind === KNOWN_ARITHMETIC_KIND && policy.stage === expectedStage &&
++        policy.source === "fully-known-authorized-normal-or-zero-post-modifier" && policy.rounding === "binary32-nearest-ties-to-even-integer" &&
++        policy.result === "normal-or-zero-only" && policy.emission === "literal-word-and-matching-shadow" &&
++        policy.authority === "exact-emitted-producer-version-only" && policy.storage === "unused-third-operand-four-word-cache", "Unknown known arithmetic policy.");
++      const operations = array(policy.operations, 2);
++      require(operations.length > 0 && operations.every((op, i) => ["ADD", "MUL"].includes(op) &&
++        (i === 0 || operations[i - 1] === "ADD" && op === "MUL")), "Invalid known arithmetic operation set.");
++      const base = { ...value, profile: value.knownArithmeticBaseProfile };
++      delete base.knownArithmeticBaseProfile; delete base.knownArithmeticContract;
++      const checked = parseConstantDomain(base, expectedStage);
++      return checked.ok ? Object.freeze({ ...checked, knownArithmetic: Object.freeze({ ...policy, operations: Object.freeze(operations) }) }) : checked;
++    }
+@@ -529 +550 @@ export function checkConversionBank(words, domain, base) {
+-    base = record(base, ["ok", "domain", "access", "constraint", "radialDomain", "rasterDomain", "precision", "arithmetic", "conversion", "conversionDomain", "scalar", "minimum", "fraction", "saturation", "exponent", "sine", "power", "coordinates", "discard"], ["ok", "domain"]);
++    base = record(base, ["ok", "domain", "access", "constraint", "radialDomain", "rasterDomain", "precision", "arithmetic", "conversion", "conversionDomain", "scalar", "minimum", "fraction", "saturation", "exponent", "sine", "power", "coordinates", "discard", "knownArithmetic"], ["ok", "domain"]);
+diff --git a/renderer/virgl-shader/bridge.c b/renderer/virgl-shader/bridge.c
+index 15e064ef..d2910d9c 100644
+--- a/renderer/virgl-shader/bridge.c
++++ b/renderer/virgl-shader/bridge.c
+@@ -1177 +1177 @@ static bool radial_retry(struct profile *profile, const char *text, size_t lengt
+-   unsigned flags = RAW_MIXED | RAW_STRUCTURED | RAW_CONDITIONAL;
++   unsigned flags = RAW_MIXED | RAW_STRUCTURED | RAW_CONDITIONAL | (profile->raw_flags & RAW_KNOWN_RETRY);
+@@ -1195 +1195 @@ static bool radial_retry(struct profile *profile, const char *text, size_t lengt
+-static const char *check_input(struct profile *profile, const char *text, size_t length)
++static const char *check_input_attempt(struct profile *profile, const char *text, size_t length, bool known_retry)
+@@ -1254 +1254 @@ static const char *check_input(struct profile *profile, const char *text, size_t
+-         (structured_candidate ? RAW_STRUCTURED : 0);
++         (structured_candidate ? RAW_STRUCTURED : 0) | (known_retry ? RAW_KNOWN_RETRY : 0);
+@@ -1279 +1279 @@ static const char *check_input(struct profile *profile, const char *text, size_t
+-         .raw_flags = RAW_MIXED | RAW_STRUCTURED | RAW_CONDITIONAL};
++         .raw_flags = RAW_MIXED | RAW_STRUCTURED | RAW_CONDITIONAL | (known_retry ? RAW_KNOWN_RETRY : 0)};
+@@ -1308 +1308 @@ static const char *check_input(struct profile *profile, const char *text, size_t
+-      (structured_candidate ? RAW_STRUCTURED : 0)};
++      (structured_candidate ? RAW_STRUCTURED : 0) | (known_retry ? RAW_KNOWN_RETRY : 0)};
+@@ -1319,0 +1320,17 @@ static const char *check_input(struct profile *profile, const char *text, size_t
++static const char *check_input(struct profile *profile, const char *text, size_t length)
++{
++   const char *failed = check_input_attempt(profile, text, length, false);
++   if (!failed || !strstr(failed, "\"code\":\"unsupported-feature\"")) return failed;
++   /* Existing successful source/metadata bytes win. A fresh final transaction
++    * may materialize known producers; failed retries preserve the old error. */
++   int stage = profile->stage;
++   free(profile->raw);
++   *profile = (struct profile){.stage = stage};
++   const char *retry = check_input_attempt(profile, text, length, true);
++   if (!retry && profile->raw && (profile->raw->opcode_mask & RAW_KNOWN_ARITHMETIC_USED)) {
++      response_used = 0; response_overflow = false;
++      return NULL;
++   }
++   return numeric_rejection();
++}
++
+@@ -1575,0 +1593,13 @@ static void discard_contract(const struct profile *profile, const char *base)
++static void known_arithmetic_contract(const struct profile *profile, const char *base)
++{
++   bool add = false, mul = false;
++   for (unsigned pc = 0; pc < profile->raw->count; ++pc) {
++      const struct raw_instruction *i = &profile->raw->instructions[pc];
++      if (!(i->flags & RAW_KNOWN_RESULT)) continue;
++      add |= i->opcode == RAW_ADD;
++      mul |= i->opcode == RAW_MUL;
++   }
++   append(",\"knownArithmeticBaseProfile\":\"%s\",\"knownArithmeticContract\":{\"kind\":\"tgsi-known-arithmetic-v1\",\"stage\":\"%s\",\"operations\":[%s%s%s],\"source\":\"fully-known-authorized-normal-or-zero-post-modifier\",\"rounding\":\"binary32-nearest-ties-to-even-integer\",\"result\":\"normal-or-zero-only\",\"emission\":\"literal-word-and-matching-shadow\",\"authority\":\"exact-emitted-producer-version-only\",\"storage\":\"unused-third-operand-four-word-cache\"}",
++      base, profile->stage ? "fragment" : "vertex", add ? "\"ADD\"" : "", add && mul ? "," : "", mul ? "\"MUL\"" : "");
++}
++
+@@ -1618,0 +1649 @@ static void stage_result(const struct conversion *c)
++   bool known_arithmetic = profile->raw && (profile->raw->opcode_mask & RAW_KNOWN_ARITHMETIC_USED);
+@@ -1624 +1655 @@ static void stage_result(const struct conversion *c)
+-      discard ? "virgl-webgl2-raw-bits-v39" : coordinates ? "virgl-webgl2-raw-bits-v38" : base_profile,
++      known_arithmetic ? "virgl-webgl2-raw-bits-v40" : discard ? "virgl-webgl2-raw-bits-v39" : coordinates ? "virgl-webgl2-raw-bits-v38" : base_profile,
+@@ -1678,0 +1710 @@ static void stage_result(const struct conversion *c)
++   if (known_arithmetic) known_arithmetic_contract(profile, discard ? "virgl-webgl2-raw-bits-v39" : coordinates ? "virgl-webgl2-raw-bits-v38" : base_profile);
+diff --git a/renderer/virgl-shader/raw_bits.c b/renderer/virgl-shader/raw_bits.c
+index cbef0098..f7575246 100644
+--- a/renderer/virgl-shader/raw_bits.c
++++ b/renderer/virgl-shader/raw_bits.c
+@@ -6,0 +7 @@
++#include "raw_known_arithmetic.h"
+@@ -429 +430,18 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
+-      case RAW_MUL:
++      case RAW_MUL: {
++         a = precise_source(ir, instruction, 0, lane, conditional);
++         b = precise_source(ir, instruction, 1, lane, conditional);
++         if ((instruction->flags & RAW_KNOWN_RETRY) && known_operands(a, b) && safe_raw_float(a) && safe_raw_float(b)) {
++            uint32_t word = instruction->opcode == RAW_ADD ? known_add(a.one, b.one) : known_mul(a.one, b.one);
++            if (safe_raw_float(known_word(word))) {
++               result[lane] = known_word(word);
++               /* ADD/MUL have no third operand. Its four unused swizzle words
++                * hold the exact emission cache; index holds the lane mask. */
++               checked.src[2].swizzle[lane] = word;
++               checked.src[2].index |= 1u << lane;
++               checked.flags |= RAW_KNOWN_RESULT;
++            }
++         }
++         result[lane].origin = RAW_FLOAT_SHADOW | RAW_OUTPUT |
++            ((checked.float_modes[0] | checked.float_modes[1]) >> (lane * 8) & RAW_BANK_DEPENDENCY);
++         break;
++      }
+@@ -489,0 +508 @@ bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)
++   if (instruction->flags & RAW_KNOWN_RESULT) ir->opcode_mask |= RAW_KNOWN_ARITHMETIC_USED;
+@@ -798 +817,3 @@ static void float_snapshot(struct writer *w, const struct profile *p, const stru
+-      if (op == RAW_UCMP) {
++      if ((instruction->flags & RAW_KNOWN_RESULT) && (instruction->src[2].index & (1u << lane))) {
++         emit(w, "/* known:shadow */ uintBitsToFloat(%uu)", instruction->src[2].swizzle[lane]);
++      } else if (op == RAW_UCMP) {
+@@ -1010,0 +1032,3 @@ char *raw_emit(const struct profile *p, unsigned const_count)
++      if (instruction->flags & RAW_KNOWN_RESULT)
++         for (unsigned lane = 0; lane < 4; ++lane) if (instruction->src[2].index & (1u << lane))
++            emit(&w, " /* known:word */ raw_rhs.%c = %uu;\n", "xyzw"[lane], instruction->src[2].swizzle[lane]);
+diff --git a/renderer/virgl-shader/raw_bits.h b/renderer/virgl-shader/raw_bits.h
+index c6aa7b71..da2629b7 100644
+--- a/renderer/virgl-shader/raw_bits.h
++++ b/renderer/virgl-shader/raw_bits.h
+@@ -37,0 +38,2 @@ enum raw_opcode { RAW_MOV, RAW_AND, RAW_OR, RAW_NOT, RAW_SHL, RAW_USHR,
++/* A materialized producer word, independent of all opcode/bank policies. */
++#define RAW_KNOWN_ARITHMETIC_USED (UINT64_C(1) << 60)
+@@ -87 +89 @@ enum { RAW_FLOAT_SHADOW = 33, RAW_FLOAT_DECODE = 34, RAW_FLOAT_CONDITIONAL = 35,
+-       RAW_TERMINATING_DISCARD = 2048 };
++       RAW_TERMINATING_DISCARD = 2048, RAW_KNOWN_RETRY = 4096, RAW_KNOWN_RESULT = 8192 };
+@@ -160 +162 @@ struct profile {
+-   unsigned char raw_flags;
++   unsigned raw_flags;
+diff --git a/renderer/virgl-shader/raw_known_arithmetic.h b/renderer/virgl-shader/raw_known_arithmetic.h
+new file mode 100644
+index 00000000..3a335837
+--- /dev/null
++++ b/renderer/virgl-shader/raw_known_arithmetic.h
+@@ -0,0 +1,64 @@
++/* SPDX-License-Identifier: MIT
++ * Integer binary32 folding for already checked normal/zero operands. No host
++ * floating environment, libm, GPU estimate or dynamic source supplies a fact. */
++#ifndef WASM_VM_RAW_KNOWN_ARITHMETIC_H
++#define WASM_VM_RAW_KNOWN_ARITHMETIC_H
++#include <stdint.h>
++
++static uint32_t known_jam(uint32_t value, unsigned distance)
++{
++   if (!distance) return value;
++   if (distance >= 32) return value != 0;
++   return (value >> distance) | ((value << (32 - distance)) != 0);
++}
++
++static uint32_t known_pack(uint32_t sign, int exponent, uint32_t significand)
++{
++   if (exponent <= 0) {
++      significand = known_jam(significand, (unsigned)(1 - exponent));
++      exponent = 1;
++   }
++   uint32_t rounded = significand >> 3, tail = significand & 7;
++   if (tail > 4 || (tail == 4 && (rounded & 1))) ++rounded;
++   if (rounded >= UINT32_C(0x1000000)) { rounded >>= 1; ++exponent; }
++   if (exponent >= 255) return sign | UINT32_C(0x7f800000);
++   if (!rounded) return sign;
++   if (exponent == 1 && rounded < UINT32_C(0x800000)) exponent = 0;
++   return sign | ((uint32_t)exponent << 23) | (rounded & UINT32_C(0x7fffff));
++}
++
++static uint32_t known_add(uint32_t a, uint32_t b)
++{
++   uint32_t ma = a & UINT32_C(0x7fffffff), mb = b & UINT32_C(0x7fffffff);
++   if (!ma && !mb) return (a & b) & UINT32_C(0x80000000);
++   if (!ma) return b;
++   if (!mb) return a;
++   if (ma < mb) { uint32_t swap = a; a = b; b = swap; }
++   int ea = (int)((a >> 23) & 255), eb = (int)((b >> 23) & 255);
++   uint32_t sa = ((a & UINT32_C(0x7fffff)) | UINT32_C(0x800000)) << 3;
++   uint32_t sb = known_jam(((b & UINT32_C(0x7fffff)) | UINT32_C(0x800000)) << 3, (unsigned)(ea - eb));
++   uint32_t result;
++   if (!((a ^ b) & UINT32_C(0x80000000))) {
++      result = sa + sb;
++      if (result >= UINT32_C(0x8000000)) { result = known_jam(result, 1); ++ea; }
++   } else {
++      result = sa - sb;
++      if (!result) return 0;
++      for (unsigned step = 0; step < 26 && ea > 1 && result < UINT32_C(0x4000000); ++step) { result <<= 1; --ea; }
++   }
++   return known_pack(a & UINT32_C(0x80000000), ea, result);
++}
++
++static uint32_t known_mul(uint32_t a, uint32_t b)
++{
++   uint32_t sign = (a ^ b) & UINT32_C(0x80000000);
++   if (!(a & UINT32_C(0x7fffffff)) || !(b & UINT32_C(0x7fffffff))) return sign;
++   uint64_t product = (uint64_t)((a & UINT32_C(0x7fffff)) | UINT32_C(0x800000)) *
++      ((b & UINT32_C(0x7fffff)) | UINT32_C(0x800000));
++   int exponent = (int)((a >> 23) & 255) + (int)((b >> 23) & 255) - 127;
++   unsigned distance = 20;
++   if (product & (UINT64_C(1) << 47)) { distance = 21; ++exponent; }
++   uint32_t significand = (uint32_t)(product >> distance) | ((product & ((UINT64_C(1) << distance) - 1)) != 0);
++   return known_pack(sign, exponent, significand);
++}
++#endif

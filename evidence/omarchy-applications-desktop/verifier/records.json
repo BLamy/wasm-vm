@@ -1,0 +1,1008 @@
+{
+  "scope": "Independent whole E5.5-T05c verified against worker4654002c, actual original clean cold13 plus authenticated missing-only same-live helper81fa and normal closure. Original app/parentFAILED preserved; all465current originals/fullGPU and carry identities authenticated. No C1/D factory/warm/recovery/full-catalogue/internet/deployment claim.",
+  "files": [
+    {
+      "path": "original/custody.json",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/custody.json",
+      "bytes": 160121,
+      "sha256": "66463e5b7f931cad4309d3673a828259585ddc1bc83932ad09befc5d87777348"
+    },
+    {
+      "path": "original/executed-source/critic-fast-boots.mjs",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/executed-source/critic-fast-boots.mjs",
+      "bytes": 58624,
+      "sha256": "477c0ba438097a0ac735ecc557d394009c4b32e71254a657afa55def71a9532f"
+    },
+    {
+      "path": "original/executed-source/omarchy-applications.mjs",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/executed-source/omarchy-applications.mjs",
+      "bytes": 112362,
+      "sha256": "d629062803c8d8762caf3016e59573274f11fda3c970cfbd50ebe1bcb673431b"
+    },
+    {
+      "path": "original/freeze-script.py",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/freeze-script.py",
+      "bytes": 7015,
+      "sha256": "da06e3a3433d85a7c2afca1466dcfc68831150e2508d81f14693e4e9fbd783b3"
+    },
+    {
+      "path": "original/launch-source/exit.json",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/launch-source/exit.json",
+      "bytes": 247,
+      "sha256": "7784b2043dd4f6b5d857c35e0a20532fa6074e0e07061a4d6171263c4e32fd4c"
+    },
+    {
+      "path": "original/payloads/application-identity-commands.ndjson",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/application-identity-commands.ndjson",
+      "bytes": 2418534,
+      "sha256": "733020893dd2ab7309fcffa7f001a485f8832bc8b513d5ea185b7e305677ffd5"
+    },
+    {
+      "path": "original/payloads/candidate-manifest.json",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/candidate-manifest.json",
+      "bytes": 3539054,
+      "sha256": "8a793846f109a08242688fa32d531f230d7a3e2a7bdb3c694dbfc1abb70367a8"
+    },
+    {
+      "path": "original/payloads/control-applications-cold13-writer-open16-first-save.odt",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/control-applications-cold13-writer-open16-first-save.odt",
+      "bytes": 8716,
+      "sha256": "719cb212524f8393c9cf9fc7b227787f272671114e8a8526f669ac29ddef45af"
+    },
+    {
+      "path": "original/payloads/control-applications-cold13-writer-open16-node-npm-gpu.json",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/control-applications-cold13-writer-open16-node-npm-gpu.json",
+      "bytes": 5761479,
+      "sha256": "9b392b1f73484222fc45db4ac282594a3246a26ba4a2c3ee39a210c0b681f949"
+    },
+    {
+      "path": "original/payloads/control-applications-cold13-writer-open16-node-npm.png",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/control-applications-cold13-writer-open16-node-npm.png",
+      "bytes": 193222,
+      "sha256": "bc0c33f2f1f12b17c18cb257f251298aa42009a7b0ed55d45566f85fe1f27b3a"
+    },
+    {
+      "path": "original/payloads/control-applications-cold13-writer-open16-public-desktop-input-bar-actions.json",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/control-applications-cold13-writer-open16-public-desktop-input-bar-actions.json",
+      "bytes": 16048446,
+      "sha256": "2bf32a67b3c8840e6b8684f4db5a8350d8a297b934f07cd870669d59318f0685"
+    },
+    {
+      "path": "original/payloads/control-applications-cold13-writer-open16-public-desktop-input-bar-content-000.json",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/control-applications-cold13-writer-open16-public-desktop-input-bar-content-000.json",
+      "bytes": 4609,
+      "sha256": "df75d77d787213f2b37b3ed432e4f96621dd092dde8051d820a6ad8bd32fd3d8"
+    },
+    {
+      "path": "original/payloads/control-applications-cold13-writer-open16-public-desktop-input-bar-content-000.png",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/control-applications-cold13-writer-open16-public-desktop-input-bar-content-000.png",
+      "bytes": 4774,
+      "sha256": "762919fbf710292c5abe7888b73db27bbb8b1dcd9d297c342fb2b58c8c4e4ad9"
+    },
+    {
+      "path": "original/payloads/control-applications-cold13-writer-open16-public-desktop-input-bar-content-000.rgba",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/control-applications-cold13-writer-open16-public-desktop-input-bar-content-000.rgba",
+      "bytes": 133120,
+      "sha256": "1c68e682d8c728fd054f1af11fc63b1d7318a346aa9b4ff4fc1f6d0ee0be8b65"
+    },
+    {
+      "path": "original/payloads/control-applications-cold13-writer-open16-public-desktop-input-typed.png",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/control-applications-cold13-writer-open16-public-desktop-input-typed.png",
+      "bytes": 206341,
+      "sha256": "fec88ca7c6f407a471e303919ddbaefb0d7bb74f31c80da4dd77d6de48643689"
+    },
+    {
+      "path": "original/payloads/control-applications-cold13-writer-open16-public-desktop-input-workspace-1.png",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/control-applications-cold13-writer-open16-public-desktop-input-workspace-1.png",
+      "bytes": 194860,
+      "sha256": "27607a2ccde40515032f4982357179c65dfe1886fb6746f4d7d3d83f2fdbbb5c"
+    },
+    {
+      "path": "original/payloads/control-applications-cold13-writer-open16-public-desktop-input-workspace-2.png",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/control-applications-cold13-writer-open16-public-desktop-input-workspace-2.png",
+      "bytes": 1027283,
+      "sha256": "6f4c41c91536bc201a0f33e495ee7fc0e267606fd9bee271d247411928dc8c96"
+    },
+    {
+      "path": "original/payloads/control-applications-cold13-writer-open16-public-desktop-input.json",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/control-applications-cold13-writer-open16-public-desktop-input.json",
+      "bytes": 17492930,
+      "sha256": "8a9578d07d0ce3022c66e188d2de165287b5741ecb6b2ddb025f2fa3a5697307"
+    },
+    {
+      "path": "original/payloads/control-applications-cold13-writer-open16-public-desktop-input.png",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/control-applications-cold13-writer-open16-public-desktop-input.png",
+      "bytes": 209552,
+      "sha256": "9ce804b189e9f4fa54f4caf26334c4d86622c798ae8f47be3122417058c6e022"
+    },
+    {
+      "path": "original/payloads/control-applications-cold13-writer-open16-second-save.odt",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/control-applications-cold13-writer-open16-second-save.odt",
+      "bytes": 9177,
+      "sha256": "7c9ce9319d72fee61f8952da3e3ac495e5ba28136a1257ddc17972e9f70f9b5d"
+    },
+    {
+      "path": "original/payloads/control-applications-cold13-writer-open16-wallpaper-alternate-gpu.json",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/control-applications-cold13-writer-open16-wallpaper-alternate-gpu.json",
+      "bytes": 6081593,
+      "sha256": "e12f4896ad4d4ba93fbcdba9b99e592d288e9c548a54d380e7807360fb401e0d"
+    },
+    {
+      "path": "original/payloads/control-applications-cold13-writer-open16-wallpaper-alternate.png",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/control-applications-cold13-writer-open16-wallpaper-alternate.png",
+      "bytes": 1295223,
+      "sha256": "fe69eae21f8f2ac883e7a08bba5809f4f3fd8ed172969a7a0e8cfc1429254a1f"
+    },
+    {
+      "path": "original/payloads/control-applications-cold13-writer-open16-wallpaper-alternate.rgba",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/control-applications-cold13-writer-open16-wallpaper-alternate.rgba",
+      "bytes": 3840,
+      "sha256": "762ad476e4f4276e3b54cb6e72619cfdf94c4e86ad3fed3bae865076dca715b9"
+    },
+    {
+      "path": "original/payloads/control-applications-cold13-writer-open16-wallpaper-original-gpu.json",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/control-applications-cold13-writer-open16-wallpaper-original-gpu.json",
+      "bytes": 5898503,
+      "sha256": "0f5b3d96942c225b98b13f83ec9aed19ddf676add0de757aa830fbc12389b0f0"
+    },
+    {
+      "path": "original/payloads/control-applications-cold13-writer-open16-wallpaper-original.png",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/control-applications-cold13-writer-open16-wallpaper-original.png",
+      "bytes": 1026693,
+      "sha256": "4eb44cf9d27e22e068a971164f973b000b0026c9346958573ccc0eb5573706b7"
+    },
+    {
+      "path": "original/payloads/control-applications-cold13-writer-open16-wallpaper-original.rgba",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/control-applications-cold13-writer-open16-wallpaper-original.rgba",
+      "bytes": 3840,
+      "sha256": "bde9bbffe9725ffec045f407dab2e6ddbb7dc7365b3307e7ce4f498310d9f289"
+    },
+    {
+      "path": "original/payloads/control-applications-cold13-writer-open16-wallpaper-restored-gpu.json",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/control-applications-cold13-writer-open16-wallpaper-restored-gpu.json",
+      "bytes": 6173896,
+      "sha256": "1d869d7879bd8cf96699d540e579070f558da25b405ded589894d5f9d89ab84c"
+    },
+    {
+      "path": "original/payloads/control-applications-cold13-writer-open16-wallpaper-restored.png",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/control-applications-cold13-writer-open16-wallpaper-restored.png",
+      "bytes": 1026741,
+      "sha256": "c28406c8585ceed27f29ce218e75e5c56f83d03ed52200a1d1d1eb7d710c2498"
+    },
+    {
+      "path": "original/payloads/control-applications-cold13-writer-open16-wallpaper-restored.rgba",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/control-applications-cold13-writer-open16-wallpaper-restored.rgba",
+      "bytes": 3840,
+      "sha256": "bde9bbffe9725ffec045f407dab2e6ddbb7dc7365b3307e7ce4f498310d9f289"
+    },
+    {
+      "path": "original/payloads/control-applications-cold13-writer-open16.json",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/control-applications-cold13-writer-open16.json",
+      "bytes": 38297776,
+      "sha256": "5ae759560aba6ca8b8aca090a9f931a4e4aed2b918e78386edae80a1c40fa15c"
+    },
+    {
+      "path": "original/payloads/control-cold13-final-state18.png",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/control-cold13-final-state18.png",
+      "bytes": 210169,
+      "sha256": "0a869fd7b070b1307b7828c52f0b55811308441112914c4434ee73fea4292387"
+    },
+    {
+      "path": "original/payloads/control-request-cold13-default-apps17.json",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/control-request-cold13-default-apps17.json",
+      "bytes": 59,
+      "sha256": "7491a767c7b6f8cc9e02e4a5917967a5ab6ad976aebdc251e481a700d9a77c2e"
+    },
+    {
+      "path": "original/payloads/control-request-cold13-final-state18.json",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/control-request-cold13-final-state18.json",
+      "bytes": 57,
+      "sha256": "d308c1b3af2c2962f5986dddb14255c64735d120972f4e7174cf78126a5c2d4e"
+    },
+    {
+      "path": "original/payloads/control-request-cold13-normal-release19.json",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/control-request-cold13-normal-release19.json",
+      "bytes": 59,
+      "sha256": "bb656311dee50c1e937c02f52e70f83a1cf51a59f59c1edad339e3d11fd0e5fd"
+    },
+    {
+      "path": "original/payloads/control-request-cold13-writer-open16.json",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/control-request-cold13-writer-open16.json",
+      "bytes": 510,
+      "sha256": "75d0ac7a297db4d83255c0b47cd14b4033c16e210ca640de90a025f58acb8338"
+    },
+    {
+      "path": "original/payloads/control-response-cold13-default-apps17.json",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/control-response-cold13-default-apps17.json",
+      "bytes": 16353973,
+      "sha256": "f67f2860ca0bc488e03f197c746d0a954a7329c187b2aa4f60835094d85cee7a"
+    },
+    {
+      "path": "original/payloads/control-response-cold13-final-state18.json",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/control-response-cold13-final-state18.json",
+      "bytes": 15018763,
+      "sha256": "e57c5aa589f3f7b0d657a2e6f822458730cf49e7b474eb473c2edb7a45dad084"
+    },
+    {
+      "path": "original/payloads/control-response-cold13-normal-release19.json",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/control-response-cold13-normal-release19.json",
+      "bytes": 231,
+      "sha256": "293e0b7bab07bef56db8ec15b3fe4c5bcbba8fcbc275e7d234c39e0deb5cab5a"
+    },
+    {
+      "path": "original/payloads/control-response-cold13-writer-open16.json",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/control-response-cold13-writer-open16.json",
+      "bytes": 40277232,
+      "sha256": "ee5752e06f29b0656255422fcbac861673284f4c4af64a37ba5c717be881222b"
+    },
+    {
+      "path": "original/payloads/control-shell-cold13-default-apps17-menu.png",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/control-shell-cold13-default-apps17-menu.png",
+      "bytes": 132642,
+      "sha256": "38e5284861d1025e6985fc194c61f7eccb6ae4f0a63759b8f8f0fecd3851e604"
+    },
+    {
+      "path": "original/payloads/control-shell-cold13-default-apps17.json",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/control-shell-cold13-default-apps17.json",
+      "bytes": 15066530,
+      "sha256": "a2c6cec983f91ab515ca10f6900f2fef1e86cf89abb78b43536daa03472cbede"
+    },
+    {
+      "path": "original/payloads/executed-harness/application-identity.mjs",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/executed-harness/application-identity.mjs",
+      "bytes": 17968,
+      "sha256": "e5bbe96ee84b669ac9e7a5c59110ee3c3769900af9b0f0f497bcc38f257e57e0"
+    },
+    {
+      "path": "original/payloads/executed-harness/critic-desktop-actions.mjs",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/executed-harness/critic-desktop-actions.mjs",
+      "bytes": 5786,
+      "sha256": "7de2dccd70f92087a059366c7a6da44768eb5de58330f8f3892637dcd84e8caa"
+    },
+    {
+      "path": "original/payloads/executed-harness/critic-fast-boots-bar-content.mjs",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/executed-harness/critic-fast-boots-bar-content.mjs",
+      "bytes": 6452,
+      "sha256": "4e9503d348bcfec285e6e690e354a23ab6c90842501e7ed5a98e59fbbf3ff233"
+    },
+    {
+      "path": "original/payloads/executed-harness/critic-fast-boots-final.mjs",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/executed-harness/critic-fast-boots-final.mjs",
+      "bytes": 3780,
+      "sha256": "1cc8034a9a049b2ec5741446820b02314204433a3b4cc96e4f36afa11b2285bd"
+    },
+    {
+      "path": "original/payloads/executed-harness/critic-fast-boots-input.mjs",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/executed-harness/critic-fast-boots-input.mjs",
+      "bytes": 17038,
+      "sha256": "abfa639fd5bdb679e6c68224cecfffe4972586b2af897f20face9d492f59ac8f"
+    },
+    {
+      "path": "original/payloads/executed-harness/omarchy-shell-ipc.mjs",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/executed-harness/omarchy-shell-ipc.mjs",
+      "bytes": 4308,
+      "sha256": "a46cd2b8b6c859a437a27ae35aa8b60f8f2d4e336198a6674f6bae40b0c77825"
+    },
+    {
+      "path": "original/payloads/input-runtime-elf.json",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/input-runtime-elf.json",
+      "bytes": 1189627,
+      "sha256": "ae72ccdf528974e203726b058a639201bfa19950ee4190658baad14e0440ab86"
+    },
+    {
+      "path": "original/payloads/omarchy-initial-native-applications.json",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/omarchy-initial-native-applications.json",
+      "bytes": 12267576,
+      "sha256": "894df61ff71aee51dddfb735e211844798b7d990f5db22d80900edfa3d2fc28a"
+    },
+    {
+      "path": "original/payloads/passive-worker-timing.json",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/passive-worker-timing.json",
+      "bytes": 405960,
+      "sha256": "a8dda5809b46d904e2b790addae2a1be200e9c3bab0bbd3f940a497f98caf31c"
+    },
+    {
+      "path": "original/payloads/recorder-memory.ndjson",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/recorder-memory.ndjson",
+      "bytes": 33447,
+      "sha256": "8abe309b4a6798b14764ca88698d045386166e8fd86b35d9264c6b9907626754"
+    },
+    {
+      "path": "original/payloads/report.json",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/payloads/report.json",
+      "bytes": 13630010,
+      "sha256": "8a63385b9cc697839e6e6fe984b78dc0941276efb1c9c8d1754049bbfbac1dd4"
+    },
+    {
+      "path": "original/root-closure-inputs/cold13-end-source-guards120-script.py",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/root-closure-inputs/cold13-end-source-guards120-script.py",
+      "bytes": 3491,
+      "sha256": "934fa1db9dd7c04e491aad815b710b5ae2dfee3835c73243552bac6d3aa42362"
+    },
+    {
+      "path": "original/root-closure-inputs/cold13-end-source-guards120.json",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/root-closure-inputs/cold13-end-source-guards120.json",
+      "bytes": 73542,
+      "sha256": "67f1e9fe436e6cad2b8d23e999024892fbf0cbfafbf00577a62061bab11cc4a7"
+    },
+    {
+      "path": "original/root-closure-inputs/control-request-cold13-default-apps17-staged.json",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/root-closure-inputs/control-request-cold13-default-apps17-staged.json",
+      "bytes": 59,
+      "sha256": "7491a767c7b6f8cc9e02e4a5917967a5ab6ad976aebdc251e481a700d9a77c2e"
+    },
+    {
+      "path": "original/root-closure-inputs/control-request-cold13-final-state18-staged.json",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/root-closure-inputs/control-request-cold13-final-state18-staged.json",
+      "bytes": 57,
+      "sha256": "d308c1b3af2c2962f5986dddb14255c64735d120972f4e7174cf78126a5c2d4e"
+    },
+    {
+      "path": "original/root-closure-inputs/control-request-cold13-normal-release19-staged.json",
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/root-closure-inputs/control-request-cold13-normal-release19-staged.json",
+      "bytes": 59,
+      "sha256": "bb656311dee50c1e937c02f52e70f83a1cf51a59f59c1edad339e3d11fd0e5fd"
+    },
+    {
+      "path": "predictions/pre-data86-cold13-remaining-apps-lifetime.json",
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/pre-data86-cold13-remaining-apps-lifetime.json",
+      "bytes": 13214,
+      "sha256": "19b8184cd3cfd86d959d31aae25ee3eac32064452d11c14dc9a45d7dade60dbd"
+    },
+    {
+      "path": "predictions/pre-data90-cold-writer-open-continuation115.json",
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/pre-data90-cold-writer-open-continuation115.json",
+      "bytes": 7377,
+      "sha256": "c6ae2f2c8898641faeadb45a060de7518e56057e84ae7a6997d64658bcc73ed4"
+    },
+    {
+      "path": "predictions/pre-data91-resumed-writer16-resaved-prefix.json",
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/pre-data91-resumed-writer16-resaved-prefix.json",
+      "bytes": 5278,
+      "sha256": "30bc8188cd1f6ca4eb683367cd552271b57952d718c39d734fb394c8498f30d7"
+    },
+    {
+      "path": "predictions/pre-data92-component16-remaining-suffix-default-apps-closure.json",
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/pre-data92-component16-remaining-suffix-default-apps-closure.json",
+      "bytes": 8123,
+      "sha256": "ce0aa15388a68c54412a265327809222bae92f4bbe9272abe285811dbbc3ed7b"
+    },
+    {
+      "path": "promotion/omarchy-application-fixture.test.mjs",
+      "source": "tools/virgl-production/omarchy-application-fixture.test.mjs",
+      "bytes": 11500,
+      "sha256": "e3cd7bcb83e9d0b1c8075aab1bcca6f380e0a6fe3ee2f4f4624c25bf536531b6"
+    },
+    {
+      "path": "review/VERDICT.md",
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/cold13-final-components-closure01/VERDICT.md",
+      "bytes": 9986,
+      "sha256": "854943d682f2fc32dbb544e1d8c6a6f365e4da3bc5966c9d1f2a8f24923a279d"
+    },
+    {
+      "path": "review/audit-current-native-gpu-samples.py",
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/cold13-final-components-closure01/audit-current-native-gpu-samples.py",
+      "bytes": 1967,
+      "sha256": "ec5bdbd93c12d091d19ec267731a759cbfa25a3cec83e3fb2166d82d628ed0d0"
+    },
+    {
+      "path": "review/audit-gpu-extension.py",
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/cold13-final-components-closure01/audit-gpu-extension.py",
+      "bytes": 2563,
+      "sha256": "f0aa88430ab0e156dd6cc80644f1ac970eab9f07a79325bf9f69001426e2896a"
+    },
+    {
+      "path": "review/audit-node-wallpaper.initial-citation-reader.py",
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/cold13-final-components-closure01/audit-node-wallpaper.initial-citation-reader.py",
+      "bytes": 8342,
+      "sha256": "db5df66df2a7a8e4a69a6cdb99fcd1961e1764286df1c63097a5aabca4aac65a"
+    },
+    {
+      "path": "review/audit-node-wallpaper.initial-hash-command-reader.py",
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/cold13-final-components-closure01/audit-node-wallpaper.initial-hash-command-reader.py",
+      "bytes": 8337,
+      "sha256": "a6fd16b5629e72463c197270c49beb9ffd49114feabf5390c13ac018818931cc"
+    },
+    {
+      "path": "review/audit-node-wallpaper.initial-pil-reader.py",
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/cold13-final-components-closure01/audit-node-wallpaper.initial-pil-reader.py",
+      "bytes": 8256,
+      "sha256": "696ffeff58ba9f2c6b0293bd42afc2d99359c70ad55c16d16f7359a04b605381"
+    },
+    {
+      "path": "review/audit-node-wallpaper.py",
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/cold13-final-components-closure01/audit-node-wallpaper.py",
+      "bytes": 8463,
+      "sha256": "ba390714e77b74bf65afe86d20bca40c8f50d5e5ae4d560d42425efd4c0674aa"
+    },
+    {
+      "path": "review/audit-stock-shell-lifetime.initial-finally-reader.py",
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/cold13-final-components-closure01/audit-stock-shell-lifetime.initial-finally-reader.py",
+      "bytes": 13974,
+      "sha256": "02b86cb3c7b6c4f7e7b14906769b390cb69dc1ddf1cb692ee1d9b2ca10836bfc"
+    },
+    {
+      "path": "review/audit-stock-shell-lifetime.initial-guard-uniqueness-reader.py",
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/cold13-final-components-closure01/audit-stock-shell-lifetime.initial-guard-uniqueness-reader.py",
+      "bytes": 14524,
+      "sha256": "d4333161a7cc470c8e4b4c3815149fb0b6c3b093cce9e1321cd84c2bd5ac9e46"
+    },
+    {
+      "path": "review/audit-stock-shell-lifetime.py",
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/cold13-final-components-closure01/audit-stock-shell-lifetime.py",
+      "bytes": 14746,
+      "sha256": "3665e1a64c399c72cef92661cda308ba32a5d38e7e7cfb28e5faa2a5a2f45d46"
+    },
+    {
+      "path": "review/authenticate-originals.py",
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/cold13-final-components-closure01/authenticate-originals.py",
+      "bytes": 1747,
+      "sha256": "f9f9aa4d5750a139ce522dd8310d06f44f613e69d30c11cd565ab063a3b7e6e4"
+    },
+    {
+      "path": "review/build-whole-c-coverage.py",
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/cold13-final-components-closure01/build-whole-c-coverage.py",
+      "bytes": 8416,
+      "sha256": "df671a5cba2f17848f3f89f6915a29747251f1ca9e957335dc22ccb3b8142bb9"
+    },
+    {
+      "path": "review/carried-proof-identities.json",
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/cold13-final-components-closure01/carried-proof-identities.json",
+      "bytes": 30649,
+      "sha256": "66d2db17014ce0b441d71eaa7c89274b74e29bd4ca8ddf3b0d3867126c662356"
+    },
+    {
+      "path": "review/component-json-citations.json",
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/cold13-final-components-closure01/component-json-citations.json",
+      "bytes": 2372,
+      "sha256": "2a3641f2effbaa2f44854b03aefcc01afdb931fee77a1125de1514278989c741"
+    },
+    {
+      "path": "review/current-native-gpu-samples-audit.json",
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/cold13-final-components-closure01/current-native-gpu-samples-audit.json",
+      "bytes": 9402,
+      "sha256": "3a248934a64b9d6190d4794d8dd8c1ee513933b7cb16c22b5e8d9c8373ed4fe1"
+    },
+    {
+      "path": "review/custody-delta-authentication.json",
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/cold13-final-components-closure01/custody-delta-authentication.json",
+      "bytes": 320180,
+      "sha256": "a6f6437a207eeaef8b40ad057532de8a1b55f6ba4825b21fda0eddf9f2a93538"
+    },
+    {
+      "path": "review/end-source-guards-independent.json",
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/cold13-final-components-closure01/end-source-guards-independent.json",
+      "bytes": 124318,
+      "sha256": "0504ebf5cde9dc65df69b1f1b5c8368a06edbfb52a525932554f701306a92b18"
+    },
+    {
+      "path": "review/gpu-extension-audit.json",
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/cold13-final-components-closure01/gpu-extension-audit.json",
+      "bytes": 1473,
+      "sha256": "8d286d0520dac21459cfe4160bbff691fbeb4440dfc8f6ed80d7e07ed8ef56d0"
+    },
+    {
+      "path": "review/gpu-suffix.ndjson.gz",
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/cold13-final-components-closure01/gpu-suffix.ndjson.gz",
+      "bytes": 2079482,
+      "sha256": "8330b5569b3fb0809e59473a7ca89a16fdfec97255ad7d7e24037c87d947da55"
+    },
+    {
+      "path": "review/node-wallpaper-audit.json",
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/cold13-final-components-closure01/node-wallpaper-audit.json",
+      "bytes": 3866,
+      "sha256": "e5e3a7063ad27d428ad905d1327c585f194a763f97e80c346c1fc0da214760e3"
+    },
+    {
+      "path": "review/parent-closure-history-qualification.json",
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/cold13-final-components-closure01/parent-closure-history-qualification.json",
+      "bytes": 555,
+      "sha256": "c95de2521a4a9f3a9a4a1c7b903b72ea538959144d53b73f05b0aa92808b2910"
+    },
+    {
+      "path": "review/png_reader.py",
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/cold13-final-components-closure01/png_reader.py",
+      "bytes": 1344,
+      "sha256": "e59c10ba5a62a3cc8314821bc5de34a11af0f51be3cc2f3d5a4f7172ff53f59c"
+    },
+    {
+      "path": "review/promoted-check-predictions.json",
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/cold13-final-components-closure01/promoted-check-predictions.json",
+      "bytes": 648,
+      "sha256": "ff39ef2d9c2934ec0e49ea2733dd50d3238cec5bc12c4b435dbc4deb6894c1ed"
+    },
+    {
+      "path": "review/promoted-check-receipt.json",
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/cold13-final-components-closure01/promoted-check-receipt.json",
+      "bytes": 1384,
+      "sha256": "d80674f804c2ca5b1f4dbca1ba5e80550fdc8e9ae0406a8cdc32367b25d0bc75"
+    },
+    {
+      "path": "review/promoted-fixtures-guard-removal.log",
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/cold13-final-components-closure01/promoted-fixtures-guard-removal.log",
+      "bytes": 1059,
+      "sha256": "203c3b4ceaf9bf097aab59ecf3a59400f809dc066ed8e701baff7790202d8c69"
+    },
+    {
+      "path": "review/promoted-fixtures-positive.log",
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/cold13-final-components-closure01/promoted-fixtures-positive.log",
+      "bytes": 920,
+      "sha256": "b42b22386df8a385d5ded7fbb178a4373a7451494b010f9e445a48f0f7b0e777"
+    },
+    {
+      "path": "review/promoted-negative/fixtures/omarchy-writer-tip-open.json",
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/cold13-final-components-closure01/promoted-negative/fixtures/omarchy-writer-tip-open.json",
+      "bytes": 31580,
+      "sha256": "72e25c9397b45bad747b57dd0c08896ec85a853c6fe9028c38acc9112da9c3d8"
+    },
+    {
+      "path": "review/promoted-negative/promoted-duplicate-open.test.mjs",
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/cold13-final-components-closure01/promoted-negative/promoted-duplicate-open.test.mjs",
+      "bytes": 11649,
+      "sha256": "5b30d83e47653faf98c4e69b47e72e2f1ee9a30697757795745ff5c66bdc54b6"
+    },
+    {
+      "path": "review/reader-citation-range-negative.json",
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/cold13-final-components-closure01/reader-citation-range-negative.json",
+      "bytes": 374,
+      "sha256": "41ff3d563b801cb72901d8df98360214c29325d991caae0567bde0b39c8fe07b"
+    },
+    {
+      "path": "review/reader-command-literal-negative.json",
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/cold13-final-components-closure01/reader-command-literal-negative.json",
+      "bytes": 260,
+      "sha256": "1d605a3aceb480c955efc07ec0bd1f20a7fcf2b97a6efa1d79f64ba9d4ebf1a1"
+    },
+    {
+      "path": "review/reader-endguard-count-qualification.json",
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/cold13-final-components-closure01/reader-endguard-count-qualification.json",
+      "bytes": 460,
+      "sha256": "5b5b6850d1a0f951a1f0fa04ff1eb1f0a7cd1ac071559d744e840af12d5f5730"
+    },
+    {
+      "path": "review/reader-environment-negative.json",
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/cold13-final-components-closure01/reader-environment-negative.json",
+      "bytes": 309,
+      "sha256": "9d5f816541f8de83f6e3bba083d300f547194dc9659eeeb042ae282501d262cc"
+    },
+    {
+      "path": "review/seal-plan.json",
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/cold13-final-components-closure01/seal-plan.json",
+      "bytes": 50729,
+      "sha256": "b918f0238ba8a15e8d598e338e53457ee50bddbba2a05e414ad528000da3ebb8"
+    },
+    {
+      "path": "review/seal-records.py",
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/seal-records.py",
+      "bytes": 2481,
+      "sha256": "9feca44cc13acb49c38c956917f72ca288b63090f6ecaa6c83e75baf0056fec2"
+    },
+    {
+      "path": "review/stock-shell-lifetime-audit.json",
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/cold13-final-components-closure01/stock-shell-lifetime-audit.json",
+      "bytes": 10045,
+      "sha256": "751677b8aaeb51eacd4d34b9a60bb104ab335d5c255051e910754ec4d721b0cd"
+    },
+    {
+      "path": "review/whole-c-hunk-coverage.json",
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/cold13-final-components-closure01/whole-c-hunk-coverage.json",
+      "bytes": 52766,
+      "sha256": "70246db298044d412b3f8a29a33016d4205b2b2ae1fed9af3643f6dd11377e08"
+    },
+    {
+      "path": "review/worker-diff.patch",
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/cold13-final-components-closure01/worker-diff.patch",
+      "bytes": 1111977,
+      "sha256": "565b431d98448a881d5b89be64fa4879ef343a6bdb85bd61242a2d148d07a151"
+    }
+  ],
+  "externalOriginalsNotDuplicated": [
+    {
+      "source": "target/evidence/omarchy-applications-pristine01/cold13-final-components-closed-frozen01/gpu-prefix.ndjson",
+      "bytes": 1703462764,
+      "sha256": "6de847e7675af2382d2cb7d0a511967bc4b1102f974bbfc06608f5b5464c40db"
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/a7-before-desktop-observation01/sealed/scoped-a7-early-canvas-observation.tar.gz",
+      "bytes": 42806,
+      "sha256": "d28cb2d3a8741de49686612853f9bcd3ff58580e7cfcc9cc6e38b26778f5e9bc",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/a7-browser-launch-negative01/sealed/scoped-a7-first-browser-window-negative.tar.gz",
+      "bytes": 1428097,
+      "sha256": "4027c0887e7133357f5a18a1c77f6826ad2433a79f04247d57285a99ecce3bab",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/a7-first-native-render02/sealed/scoped-a7-first-native-graphics-canvas.tar.gz",
+      "bytes": 46693,
+      "sha256": "4af9cfc837e1e46aa6b20968648330ce8d57c0ac5cf9490aabb8878fd5f706b0",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/a7-initial-native-bar01/sealed/scoped-a7-initial-native-bar.tar.gz",
+      "bytes": 171899,
+      "sha256": "162b798dae8e54518d225e73e2e2426af5ba3fc64b7f6d4008612b936f7e0eed",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/browser-prefix34-svg01/sealed/scoped-concurrent-svg34.tar.gz",
+      "bytes": 7005777,
+      "sha256": "faa8e9c51418d9c8e38f5fe66561b0ebfbdc3fbdc3c0499662c98099611b3a10",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/cache-context01/sealed/scoped-cache-context.tar.gz",
+      "bytes": 44955,
+      "sha256": "8464bb982999277a3bd774d6975435efc8a3f4802b8eca36b2e3302bf56dcd31",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/closed-captures100-lifetime01/sealed/scoped-old11-94-closed-lifetime.tar.gz",
+      "bytes": 24160877,
+      "sha256": "e39472e0ef7271016652225f06b7c722b87254daacecce6c4985ff7aaeaf2067",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/closed08-interruption01/sealed/scoped-interruption-and-recorder.tar.gz",
+      "bytes": 1067963,
+      "sha256": "3aa855dbe82cdf3448ac56a6210d71ae064c2b59f2b5381e5d110246b3d92780",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/cold13-native-prefix01/sealed/scoped-cold13-native-identity-startup-svg.tar.gz",
+      "bytes": 14199459,
+      "sha256": "073d4e5ad55d6e58458f27e1c7a25d93ad8ba23cea1bf803f7d5fc822d1a1f55",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/cold13-tip-open-negative01/sealed/scoped-cold13-tip-open-negative.tar.gz",
+      "bytes": 25266477,
+      "sha256": "d35fdae3a6805492bd6e9ba0ba4a2bce3af49f02f59543b91d017a4f2189fe23",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/cold13-writer-first-save-prefix01/sealed/scoped-cold13-writer-first-save.tar.gz",
+      "bytes": 22919947,
+      "sha256": "644b4b39cda523802827d3e4c9df9b7c97c4c1f3c97b6135144c0c81bfa42ff0",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/cold17-original10-negative01/sealed/scoped-cold17-original10-negative.tar.gz",
+      "bytes": 3768861,
+      "sha256": "6629e024d9fea1dc53007eab4fe5b90ed15e3b91a49102bcb2a4644eb4693df3",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/cold17-startup-readonly71-01/sealed/scoped-cold17-startup-readonly71.tar.gz",
+      "bytes": 11424,
+      "sha256": "2220940f62e47469e7c005efd96af32b5010ed1bc0dbc7db1c365ccea7d88188",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/cold94-image18-input-negative01/sealed/scoped-cold94-image18-native-input-negative.tar.gz",
+      "bytes": 17868203,
+      "sha256": "48ea49671a3da716c8609978bbd07758e793a2dd5d0496166c677816f0f94b5f",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/config68-negative-readonly69-01/sealed/scoped-config68-negative-readonly69.tar.gz",
+      "bytes": 12829,
+      "sha256": "1b4c4705ef22bb9a0e5740367be203fa1b87b23fe2d804d180d3b0b8b66ac465",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/continuation06-negative01/sealed/scoped-negative.tar.gz",
+      "bytes": 452134,
+      "sha256": "cc7cfa0ae5138cb75bfcb832f553bbf7a490a0d115b64020b3f79afd3e50db52",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/existing-a7-build-citations01/sealed/existing-a7-build-default-citations.tar.gz",
+      "bytes": 32369,
+      "sha256": "f8893959aa964712310b592455ea078d0d1ba58aae817c49bc805828fb53a072",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/fixture-receipt16-17/sealed/scoped-receipt-review.tar.gz",
+      "bytes": 1240345,
+      "sha256": "0744cb7f732e02b319c6b42c27a1672b317fa83347454c56aa5515c61d4d23f6",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/identity-increment01/sealed/scoped-increment.tar.gz",
+      "bytes": 2951873,
+      "sha256": "4c4673c9c5e1228e1e13e3418d6a13e03cfc8429bf87b3786e898afd084001a0",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/image17-shell-config01/sealed/scoped-image17-shell-config01.tar.gz",
+      "bytes": 1645682,
+      "sha256": "0688160e5dcbf6ac650a205d9d74d608c32d57e3a2aa6f2f59a987c52f7a44c2",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/independent-cold17-01/sealed/scoped-independent-cold17-delayed43.tar.gz",
+      "bytes": 9852944,
+      "sha256": "d2e497702d7204a6844a489dc4da149417c0c2591f42df74b243c67eac6ab254",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/launcher-images18-software04/sealed/scoped-launcher-images18-software04.tar.gz",
+      "bytes": 3293240,
+      "sha256": "7b343e1963f0b20e3f4c716df1ec23e8c7803e8adb8c076129eff737682bd41b",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/launcher-startup-source92/sealed/scoped-launcher-startup-source92.tar.gz",
+      "bytes": 108377,
+      "sha256": "088bdf1bb2c993f4f67daac6d7835c5d7b8b214232e1c5cd3569a8b1fca937c7",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/launcher-startup94-admission/sealed/scoped-launcher-startup94-admission.tar.gz",
+      "bytes": 2371559,
+      "sha256": "68925ab435b01111d0330a49325e23da86f6a090565049115d5d8c1a631656c6",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/native-note14-18-prefix01/sealed/scoped-native-note14-18-prefix.tar.gz",
+      "bytes": 14652651,
+      "sha256": "0822f47239fde9b34c964a15975433ee8e44a582cce411d074fc6dd7a5c6cb0b",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/native-pointer31-prefix01/sealed/scoped-native-browser31-prefix.tar.gz",
+      "bytes": 7398838,
+      "sha256": "5bb3971f53bece504e9f60d0bc126c8bb7af1716f84a42c9d04d59dc5004f49b",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/navigation25-negative01/sealed/scoped-navigation25-negative.tar.gz",
+      "bytes": 7397262,
+      "sha256": "8f0e66a2a55109f8bb28e1ff01b18dd3c683ea8825a702b7bacaaaa58f189d11",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/owned-fixture11d-warm12-admission/sealed/scoped-owned-fixture11d-warm12-admission.tar.gz",
+      "bytes": 31685,
+      "sha256": "1d6d4e2e38de5b8bafc732e98fdcff2cad770a5214f9cbca8b958b119f164d2a",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/prefix-authenticator-attacks01/sealed/scoped-prefix-authenticator.tar.gz",
+      "bytes": 22107,
+      "sha256": "c8e2b1e193a6bb7560738f3a0b254e74b4c1362eae2c9deb310198ea5467de9c",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/resource-refusal01/sealed/scoped-investigation.tar.gz",
+      "bytes": 3160429,
+      "sha256": "01d3d45ed3e57287e6611e67f5fc4d327d27e6f4cd87a3336fb145aac6453620",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/resumed-writer16-resaved-prefix01/sealed/scoped-resumed-writer16-resaved-prefix.tar.gz",
+      "bytes": 10349728,
+      "sha256": "413d108b1862a3f2a3e682bb94c9ddbddf8a6974459cd3c90fef623d5ec3b2f2",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/retained22-identity01/sealed/scoped-retained-identity.tar.gz",
+      "bytes": 3878930,
+      "sha256": "07a3c17f6cfbdc05cef29898fa33166229b94006a8e389732e1bd63c8657426f",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/retained5210-filesystem01/sealed/scoped-original5210-filesystem.tar.gz",
+      "bytes": 137073417,
+      "sha256": "58e4be372cefaa9dec8c9ae7277a3cc549f9b9d432392c02cdc56fd4b6bf1007",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/run05-partial01/sealed/scoped-partial-review.tar.gz",
+      "bytes": 4246474,
+      "sha256": "313f262006b03172586df191b9bf0d58491a94fef1ebf476c421ed190a75b673",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/run07-complete-history01/sealed/scoped-run07-complete-history.tar.gz",
+      "bytes": 28830923,
+      "sha256": "62873be96829b164a03c5745e9a060aeac9a1cce743e86c11f2927c9f05c0484",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/run07-original-negative01/sealed/scoped-original-negative.tar.gz",
+      "bytes": 8300213,
+      "sha256": "10c6874e3318b722bb9d0cc573b63f22302490be4227d1260e713396ae7abc52",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/run08-closed-negative01/sealed/scoped-run08-negative-identity.tar.gz",
+      "bytes": 11490836,
+      "sha256": "bfcd28e54b51da3b5c057dcd1917c4c2b03a6aeb40c1eb915421ec8ee24d75dc",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/shell-ipc-diagnosis66-67/sealed/scoped-shell-ipc-readonly-diagnosis.tar.gz",
+      "bytes": 26130,
+      "sha256": "0a51f33b1adbd6f6bbc90a06aea103a88a899d5d91ade101f6a191b35865b60f",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/software03-shell-config01/sealed/scoped-software03-shell-config01.tar.gz",
+      "bytes": 1650049,
+      "sha256": "44a2c9f87886a66f4cc9ea3de8e364c1db0981766e1d82ef6677bdaaaba9b2eb",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/sparse-component01/sealed/scoped-review.tar.gz",
+      "bytes": 1034239,
+      "sha256": "7a6354517521507134dc3869d55804ed2279290989de9ac1ab78eaeeb59d4170",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/storage-token-increment01/sealed/scoped-review.tar.gz",
+      "bytes": 30010535,
+      "sha256": "d5b60db61b4ed1f75e6272f8995b327bcedbc016b0381c985eee28af2f7ce2d5",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/swap-memory-filesystem01/sealed/scoped-filesystem-review.tar.gz",
+      "bytes": 3515518,
+      "sha256": "0b3a1aae59ca4844e267d0eeb37344e7f24093e884244c32d1951ffec4933540",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/wallpaper-alternate25-29-prefix01/sealed/scoped-native-wallpaper-alternate25-29.tar.gz",
+      "bytes": 48156728,
+      "sha256": "4a95db9ba2caa310827cc2533a86604ea81e8cc9d169d19350f5c95a10c72158",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/wallpaper-original-return30-35-prefix01/sealed/scoped-native-wallpaper-original-return30-35.tar.gz",
+      "bytes": 45459974,
+      "sha256": "d7a236a66cca52424045b3312a8fc715c74d899ce4c1fec47d7d0e7043529d59",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/warm-original-client-scope11/sealed/scoped-warm-original-client11.tar.gz",
+      "bytes": 11085,
+      "sha256": "100b8755f799f68e7edf0cd229d6a44b360828258dbd4a53a7dd3b64982b1169",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/warm12-browser-submission-negative01/sealed/scoped-warm12-browser-submission-negative.tar.gz",
+      "bytes": 12247462,
+      "sha256": "625c4a40347a6d8b6f1315a4a13412586842792c52167efa4ed1d59e9d595360",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/warm12-navigation-diagnostic13/sealed/scoped-warm12-diagnostic13-negative.tar.gz",
+      "bytes": 25948,
+      "sha256": "892fd21747c766314cd3ed71ec3e69151562ccb114ae24e23402370884a77fb9",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/welcome-preparation01/sealed/scoped-welcome-preparation.tar.gz",
+      "bytes": 2377700,
+      "sha256": "b55c3095f0f08b22473b1daaa0157913899831c318be5ad47a2fbbfd24e71b5d",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/writer-component52-guard01/sealed/scoped-writer52-guard.tar.gz",
+      "bytes": 31918,
+      "sha256": "58d4acb96ce89ed9831a68404ce1f9a37ce5408359d992d7d6158eb9f47e60d6",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/writer-dialog-order115-preparation01/sealed/scoped-writer-dialog-order115-source-guard.tar.gz",
+      "bytes": 1501819,
+      "sha256": "0698935e5f1a0186463e6d23612ea26ecaa2441d5044bdc7166b147e69474572",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/writer-launch55-guard01/sealed/scoped-launcher-negative-and-guard.tar.gz",
+      "bytes": 565764,
+      "sha256": "470053b137c27a00f080e1ab9cdb95ec5014f5c920d56bddc2b0d17969db94df",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/writer-open72-guard01/sealed/scoped-writer-open72-admission.tar.gz",
+      "bytes": 61423,
+      "sha256": "aaa11bd4b9ebf7d986b1b21722f8b562f7387361cbdcce15a5ca81eabf1af890",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/writer-reopen65-guard01/sealed/scoped-writer-reopen65-admission.tar.gz",
+      "bytes": 34958,
+      "sha256": "852d8b82947fc2c3935ae4acd1bf7ecf44ce02f38019ed11fab397518acf38a2",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/writer-reopen70-guard01/sealed/scoped-writer-reopen70-v2-admission.tar.gz",
+      "bytes": 96104,
+      "sha256": "3138e785e1302248ca3455d4937340d68ab6b877a598dbe494d64dc4d93b9985",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/writer-save58-preparation01/sealed/scoped-save-guards-and-maximize-preparation.tar.gz",
+      "bytes": 2781995,
+      "sha256": "15c67fcc1c99c03c66b1f42dcb040e44628003203eaa9ce1067bb902268df482",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/writer45-partial01/sealed/scoped-writer45-partial.tar.gz",
+      "bytes": 8696665,
+      "sha256": "d651fe9fd843a047d68a884e2957b1f12823d69664e62c8e241714a8fd05d09e",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/writer55-save-negative01/sealed/scoped-writer55-save-negative.tar.gz",
+      "bytes": 951905,
+      "sha256": "5cb9e345f0bb3f363167b79ee70493623938b9bea7d100ed76fe985250372b9a",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/writer58-bar-negative01/sealed/scoped-writer58-bar-negative.tar.gz",
+      "bytes": 217266,
+      "sha256": "e1f9b4a4b6c2099da831369cdc9f1e8456355f54d983933c8bbeff6729a66478",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/writer60-save-negative01/sealed/scoped-writer60-save-negative.tar.gz",
+      "bytes": 744453,
+      "sha256": "463784394e3d2320de1757919e6834ea4c38a359893b56492317bbb2e5bab75d",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/writer62-late-file-observation01/sealed/scoped-late-odt-readonly.tar.gz",
+      "bytes": 28574,
+      "sha256": "63dda8902e9bf9353ae07593339ca2b64c64b4213a1d10afae1116d1e658a8f3",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/writer62-save-negative01/sealed/scoped-writer62-save-negative.tar.gz",
+      "bytes": 980007,
+      "sha256": "24115cfed4e4c3b25066d4fe7d96de9cf6940c85302095b9c6d54a197fedfb00",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/writer65-menu-negative01/sealed/scoped-writer65-menu-negative.tar.gz",
+      "bytes": 1688405,
+      "sha256": "03bfa5f021b1f4fe6f9fc29a34de574ed24eba2a2aaeefd13f03dd6bed01e4f8",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/writer70-tip-negative01/sealed/scoped-writer70-tip-negative.tar.gz",
+      "bytes": 6426944,
+      "sha256": "d61f518b56a25f1fc6a81bc093f06ceb294fc09cb30813c3c224863a765d7cbc",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-applications-desktop05c/writer72-closed-partial01/sealed/scoped-writer72-prefix-gpu-failure.tar.gz",
+      "bytes": 21470455,
+      "sha256": "1575928cbd26d2678cf3bcc1904611dc0a3aabfd673ddfd4e222ca831f768569",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-shader-padding01/sealed/scoped-review.tar.gz",
+      "bytes": 672436,
+      "sha256": "5776d3b6a1f79d45b4e035ae06e2d9cf373391cdc23d4e64fc2715f9bb137fdf",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-native-copy01/custody.json",
+      "bytes": 52848,
+      "sha256": "c5dcb27af0df6012365929d74457d1531cf32befa586269a019e0c4eb2be0861",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    },
+    {
+      "source": "target/evidence/critic-omarchy-native-note-controls01/new-helper97/actual13/verdict.md",
+      "bytes": 7517,
+      "sha256": "c46f8f7c0f4f2a20d755137ef23fc33fd635d9a809f716633c5bbf10cad81a01",
+      "role": "Carry exact original scoped verdict and qualifications; negative archives remain negative, not successes. Raw large originals in prior indexed custody are not duplicated."
+    }
+  ]
+}

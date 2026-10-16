@@ -1,0 +1,18 @@
+{
+  "schema": "original-multiple-color-seal-v1",
+  "task": "E6-T11d34",
+  "sourceHead": "fd425d1052ab139e89178729bbb72ce89a3521f1",
+  "records": 102863,
+  "reopenedMembers": 102863,
+  "sourceClosureIncluded": true,
+  "archiveSha256": "5a2bb69d86959fa0eda75da40342a31c760cae2b713dc2a956e9451490d322b9",
+  "archiveBytes": 42964161,
+  "recordIndexSha256": "59df1f7b0a68ea9e1cbe790edc67932b5962a095542d4abc3dca79032d790d99",
+  "hotReceiptSha256": "ab4c84d0fadb41294cfa99cffd8026a36c41d08c6aaa9d464863fd0ea9b180ff",
+  "coldReportSha256": "5f56131b5a889b71f7df1f69e91671721c4fd30738bb3b6e2f25b91d74b84334",
+  "coldReceiptSha256": "ad86bfbfe11974ad6dccae87510dd1ae3c18990c3d19ccaf72713dbb87105fbf",
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "authority": "isolated-original-multiple-color-attachments",
+  "productionDrawAuthority": false
+}

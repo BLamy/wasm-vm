@@ -1,0 +1,14 @@
+{
+  "status": "held",
+  "scope": "The already verified environment scrubbing/timeout/isolation algorithm is unchanged; only task/artifact names changed. Final current-head clone still required.",
+  "replacements": {
+    "ordinary numeric shader chains": "ordered float shader masks",
+    "E6-T12e4c2": "E6-T12e4c1",
+    "numeric-floats": "float-masks",
+    "NUMERIC_FLOATS": "FLOAT_MASKS"
+  },
+  "newSha256": "70ef169d64c458e3cd5d217d463404152d4e8c25eabbf88b1cd0ddc547273b07",
+  "priorSha256": "15eb72f093bf2f95f89eb608b863f5cf7a4e14cf709b97e9a13ed8598bf44789",
+  "priorVerifier": "evidence/virgl-float-masks/verifier/VERIFICATION.md",
+  "priorVerifierSha256": "ae61e66931ecfe17e2abe465d264d4ea1199456efb2c428e44549c8d65f16db4"
+}

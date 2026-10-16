@@ -1,0 +1,33 @@
+    Blocking waiting for file lock on build directory
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/.codex/worktrees/emulator-speed-next/wasm-vm/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.27s
+     Running tests/no_stdout_in_core.rs (target/debug/deps/no_stdout_in_core-78a0b21c15da3f09)
+
+running 1 test
+test core_has_no_stdout_macros ... FAILED
+
+failures:
+
+---- core_has_no_stdout_macros stdout ----
+
+thread 'core_has_no_stdout_macros' (29103866) panicked at crates/core/tests/no_stdout_in_core.rs:12:5:
+crates/core must use the `log` facade, not stdout/stderr macros. Found:
+/Users/blamy/.codex/worktrees/emulator-speed-next/wasm-vm/crates/core/src/decoded_cache_capacity_tests.rs:238: println!
+/Users/blamy/.codex/worktrees/emulator-speed-next/wasm-vm/crates/core/src/decoded_cache_capacity_tests.rs:244: println!
+/Users/blamy/.codex/worktrees/emulator-speed-next/wasm-vm/crates/core/src/decoded_cache_capacity_tests.rs:287: println!
+/Users/blamy/.codex/worktrees/emulator-speed-next/wasm-vm/crates/core/src/dev/virtio/gpu/reset_verifier_tests.rs:243: println!
+/Users/blamy/.codex/worktrees/emulator-speed-next/wasm-vm/crates/core/src/dev/virtio/gpu/mod.rs:4574: println!
+/Users/blamy/.codex/worktrees/emulator-speed-next/wasm-vm/crates/core/src/dev/virtio/gpu/mod.rs:4574: eprintln!
+/Users/blamy/.codex/worktrees/emulator-speed-next/wasm-vm/crates/core/src/dev/virtio/gpu/resources.rs:1235: println!
+/Users/blamy/.codex/worktrees/emulator-speed-next/wasm-vm/crates/core/src/dev/virtio/gpu/resources.rs:1235: eprintln!
+/Users/blamy/.codex/worktrees/emulator-speed-next/wasm-vm/crates/core/src/dev/virtio/gpu/resources.rs:1334: println!
+/Users/blamy/.codex/worktrees/emulator-speed-next/wasm-vm/crates/core/src/dev/virtio/gpu/resources.rs:1334: eprintln!
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    core_has_no_stdout_macros
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+error: test failed, to rerun pass `-p wasm-vm-core --test no_stdout_in_core`

@@ -1,0 +1,1063 @@
+{
+  "parent": "67ca333c05fb70d719c49b3dc5cb8c1f8bb2f6de",
+  "status": "passed",
+  "originals": [
+    {
+      "path": "evidence/virgl-corpus/captures/kmscube/shaders/003270109615e05345631cf8a2273ebc1bf3d86c7590e05ddc8424c441db7605.tgsi",
+      "sha256": "003270109615e05345631cf8a2273ebc1bf3d86c7590e05ddc8424c441db7605",
+      "bytes": 389,
+      "stage": "fragment",
+      "result": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\n smooth    in  vec4 vso_g0;\nlayout (location=0) out vec4 fsout_c0;\n vec4 temp0;\n vec4 temp1;\n vec4 temp2;\n vec4 temp3;\n vec4 temp4;\n vec4 temp5;\n vec4 temp6;\nuniform highp  sampler2D fssamp0;\nvoid main(void)\n{\ntemp1.xy = vec2(((vso_g0.yzxx).xy));\ntemp2 = vec4((texture(fssamp0,  vec4(temp1).xyxx .xy)));\ntemp0.x = float(((vso_g0.xxxx).x));\ntemp0.y = float((uintBitsToFloat(uvec4(1065353216U,1065353216U,1065353216U,1065353216U)).y));\nfsout_c0 = vec4((( vec4(temp0).xxxy  *  vec4(temp2) )));\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-straight-line-v5",
+          "stage": "fragment",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 7,
+              "interpolation": "smooth"
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "fsout_c0",
+              "type": "vec4",
+              "semantic": "COLOR",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            }
+          ],
+          "attributes": [],
+          "uniforms": [],
+          "samplers": [
+            {
+              "index": 0,
+              "name": "fssamp0",
+              "type": "sampler2D"
+            }
+          ],
+          "uniformBlocks": []
+        }
+      }
+    },
+    {
+      "path": "evidence/virgl-corpus/captures/compositor/shaders/0ec6a7a8741638e5a62cbf4a1f6896dd91bb2d60182e8e01f60866adf40fbed6.tgsi",
+      "sha256": "0ec6a7a8741638e5a62cbf4a1f6896dd91bb2d60182e8e01f60866adf40fbed6",
+      "bytes": 83,
+      "stage": "vertex",
+      "result": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\n vec4 temp0;\n vec4 temp1;\n vec4 temp2;\n vec4 temp3;\nlayout (std140) uniform VirglBlock {\n\tvec4 clipp[8];\n\tuint stipple_pattern[32];\n\tfloat winsys_adjust_y;\n\tfloat alpha_ref_val;\n\tbool clip_plane_enabled;\n\tint drawid_base;\n};\nvoid main(void)\n{\ngl_Position = vec4(((in_0)));\ngl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-straight-line-v5",
+          "stage": "vertex",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "gl_Position",
+              "type": "vec4",
+              "semantic": "POSITION",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            }
+          ],
+          "attributes": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "uniforms": [],
+          "samplers": [],
+          "uniformBlocks": [
+            {
+              "name": "VirglBlock",
+              "byteLength": 656,
+              "members": [
+                {
+                  "name": "winsys_adjust_y",
+                  "offset": 640,
+                  "type": "float",
+                  "default": 1
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "path": "evidence/virgl-corpus/captures/glmark2-es2/shaders/12f6d594f42e244d2d35c6a0b51cee809d219cc0729d9cee697b40725139f373.tgsi",
+      "sha256": "12f6d594f42e244d2d35c6a0b51cee809d219cc0729d9cee697b40725139f373",
+      "bytes": 969,
+      "stage": "vertex",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        }
+      }
+    },
+    {
+      "path": "evidence/virgl-corpus/captures/glmark2-es2/shaders/23b5f8a83172e68c9365028d2f3fedbb4d0a12d3b02a39b694388e89304910d3.tgsi",
+      "sha256": "23b5f8a83172e68c9365028d2f3fedbb4d0a12d3b02a39b694388e89304910d3",
+      "bytes": 150,
+      "stage": "vertex",
+      "result": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nin vec4 in_1;\n   out  vec4 vso_g0;\n vec4 temp0;\n vec4 temp1;\n vec4 temp2;\n vec4 temp3;\nlayout (std140) uniform VirglBlock {\n\tvec4 clipp[8];\n\tuint stipple_pattern[32];\n\tfloat winsys_adjust_y;\n\tfloat alpha_ref_val;\n\tbool clip_plane_enabled;\n\tint drawid_base;\n};\nvoid main(void)\n{\ngl_Position = vec4(((in_0)));\nvso_g0.xy = vec2(((in_1.xyxx).xy));\ngl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-straight-line-v5",
+          "stage": "vertex",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 1,
+              "name": "in_1",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "gl_Position",
+              "type": "vec4",
+              "semantic": "POSITION",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            },
+            {
+              "index": 1,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 3,
+              "writtenMask": 3,
+              "interpolation": "smooth"
+            }
+          ],
+          "attributes": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 1,
+              "name": "in_1",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "uniforms": [],
+          "samplers": [],
+          "uniformBlocks": [
+            {
+              "name": "VirglBlock",
+              "byteLength": 656,
+              "members": [
+                {
+                  "name": "winsys_adjust_y",
+                  "offset": 640,
+                  "type": "float",
+                  "default": 1
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "path": "evidence/virgl-corpus/captures/compositor/shaders/3f78a90d838490257666b66477683b24c6ff110c6469504ecba701815312a572.tgsi",
+      "sha256": "3f78a90d838490257666b66477683b24c6ff110c6469504ecba701815312a572",
+      "bytes": 466,
+      "stage": "vertex",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        }
+      }
+    },
+    {
+      "path": "evidence/virgl-corpus/captures/glmark2-es2/shaders/403b0529c632d3d2ffe4584ede810f5745e8b76ca2ab4f575e1073d8f29fcf0c.tgsi",
+      "sha256": "403b0529c632d3d2ffe4584ede810f5745e8b76ca2ab4f575e1073d8f29fcf0c",
+      "bytes": 419,
+      "stage": "vertex",
+      "result": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nin vec4 in_1;\n   out  vec4 vso_g0;\n vec4 temp0;\n vec4 temp1;\n vec4 temp2;\n vec4 temp3;\n vec4 temp4;\n vec4 temp5;\n vec4 temp6;\nuniform uvec4 vsconst0[3];\nlayout (std140) uniform VirglBlock {\n\tvec4 clipp[8];\n\tuint stipple_pattern[32];\n\tfloat winsys_adjust_y;\n\tfloat alpha_ref_val;\n\tbool clip_plane_enabled;\n\tint drawid_base;\n};\nvoid main(void)\n{\ntemp0.xyz = vec3(((uintBitsToFloat(vsconst0[0].xyzz) * (in_0.xxxx))).xyz);\ntemp1.xyz = vec3(((uintBitsToFloat(vsconst0[1].xyzz) * (in_0.yyyx))).xyz);\ntemp2.xyz = vec3((( vec4(temp0).xyzx  + uintBitsToFloat(vsconst0[2].xyzx))).xyz);\ngl_Position.xyz = vec3((( vec4(temp2).xyzx  +  vec4(temp1).xyzx )).xyz);\ngl_Position.w = float((uintBitsToFloat(uvec4(1065353216U,1065353216U,1065353216U,1065353216U)).w));\nvso_g0.xy = vec2(((in_1.xyxx).xy));\ngl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-straight-line-v5",
+          "stage": "vertex",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 1,
+              "name": "in_1",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "gl_Position",
+              "type": "vec4",
+              "semantic": "POSITION",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            },
+            {
+              "index": 1,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 3,
+              "writtenMask": 3,
+              "interpolation": "smooth"
+            }
+          ],
+          "attributes": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 1,
+              "name": "in_1",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "uniforms": [
+            {
+              "name": "vsconst0",
+              "type": "uvec4[]",
+              "count": 3,
+              "encoding": "float32-bits"
+            }
+          ],
+          "samplers": [],
+          "uniformBlocks": [
+            {
+              "name": "VirglBlock",
+              "byteLength": 656,
+              "members": [
+                {
+                  "name": "winsys_adjust_y",
+                  "offset": 640,
+                  "type": "float",
+                  "default": 1
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "path": "evidence/virgl-corpus/captures/glmark2-es2/shaders/5a243fc7a19476612a000906c6060a6c1883fee7f2d87d7137d508269a0cd998.tgsi",
+      "sha256": "5a243fc7a19476612a000906c6060a6c1883fee7f2d87d7137d508269a0cd998",
+      "bytes": 5593,
+      "stage": "fragment",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        }
+      }
+    },
+    {
+      "path": "evidence/virgl-corpus/captures/glmark2-es2/shaders/616a643d02f33f502b08d9bd6368de93ba1bd9c7e6bacdee0e0aa946a2c3e4ad.tgsi",
+      "sha256": "616a643d02f33f502b08d9bd6368de93ba1bd9c7e6bacdee0e0aa946a2c3e4ad",
+      "bytes": 3881,
+      "stage": "fragment",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        }
+      }
+    },
+    {
+      "path": "evidence/virgl-corpus/captures/compositor/shaders/67c701faf0ee06bcefdc246cd8b73f7b8d6278cc2403aa99c18d1912fbb9a0aa.tgsi",
+      "sha256": "67c701faf0ee06bcefdc246cd8b73f7b8d6278cc2403aa99c18d1912fbb9a0aa",
+      "bytes": 102,
+      "stage": "fragment",
+      "result": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\n flat    in  vec4 vso_g0;\n layout(location = 0)  out  vec4 fsout_c0;\n vec4 temp0;\n vec4 temp1;\n vec4 temp2;\n vec4 temp3;\nvoid main(void)\n{\nfsout_c0 = vec4(((vso_g0)));\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-straight-line-v5",
+          "stage": "fragment",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "interpolation": "flat"
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "fsout_c0",
+              "type": "vec4",
+              "semantic": "COLOR",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            }
+          ],
+          "attributes": [],
+          "uniforms": [],
+          "samplers": [],
+          "uniformBlocks": []
+        }
+      }
+    },
+    {
+      "path": "evidence/virgl-corpus/captures/textured-scene/shaders/80d6db6a6f10b93770698cfdd47232fed0fca94f4cb07ba7381bb38563de9808.tgsi",
+      "sha256": "80d6db6a6f10b93770698cfdd47232fed0fca94f4cb07ba7381bb38563de9808",
+      "bytes": 261,
+      "stage": "fragment",
+      "result": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\n smooth    in  vec4 vso_g0;\nlayout (location=0) out vec4 fsout_c0;\n vec4 temp0;\n vec4 temp1;\n vec4 temp2;\n vec4 temp3;\n vec4 temp4;\nuniform uvec4 fsconst0[1];\nuniform highp  sampler2D fssamp0;\nvoid main(void)\n{\ntemp0 = vec4((texture(fssamp0, (vso_g0.xyyy).xy)));\nfsout_c0 = vec4((( vec4(temp0)  * uintBitsToFloat(fsconst0[0]))));\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-straight-line-v5",
+          "stage": "fragment",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 3,
+              "interpolation": "smooth"
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "fsout_c0",
+              "type": "vec4",
+              "semantic": "COLOR",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            }
+          ],
+          "attributes": [],
+          "uniforms": [
+            {
+              "name": "fsconst0",
+              "type": "uvec4[]",
+              "count": 1,
+              "encoding": "float32-bits"
+            }
+          ],
+          "samplers": [
+            {
+              "index": 0,
+              "name": "fssamp0",
+              "type": "sampler2D"
+            }
+          ],
+          "uniformBlocks": []
+        }
+      }
+    },
+    {
+      "path": "evidence/virgl-corpus/captures/glmark2-es2/shaders/9819066def2df1cd09f36f142fd2bc6b659395aa21bea6db7f58fbcc122c7c83.tgsi",
+      "sha256": "9819066def2df1cd09f36f142fd2bc6b659395aa21bea6db7f58fbcc122c7c83",
+      "bytes": 389,
+      "stage": "fragment",
+      "result": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\n smooth    in  vec4 vso_g0;\nlayout (location=0) out vec4 fsout_c0;\n vec4 temp0;\n vec4 temp1;\n vec4 temp2;\n vec4 temp3;\n vec4 temp4;\n vec4 temp5;\n vec4 temp6;\nuniform highp  sampler2D fssamp0;\nvoid main(void)\n{\ntemp1.xy = vec2(((vso_g0.yzxx).xy));\ntemp2 = vec4((texture(fssamp0,  vec4(temp1).xyxx .xy)));\ntemp0.x = float(((vso_g0.xxxx).x));\ntemp0.y = float((uintBitsToFloat(uvec4(1065353216U,1065353216U,1065353216U,1065353216U)).y));\nfsout_c0 = vec4((( vec4(temp2)  *  vec4(temp0).xxxy )));\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-straight-line-v5",
+          "stage": "fragment",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 7,
+              "interpolation": "smooth"
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "fsout_c0",
+              "type": "vec4",
+              "semantic": "COLOR",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            }
+          ],
+          "attributes": [],
+          "uniforms": [],
+          "samplers": [
+            {
+              "index": 0,
+              "name": "fssamp0",
+              "type": "sampler2D"
+            }
+          ],
+          "uniformBlocks": []
+        }
+      }
+    },
+    {
+      "path": "evidence/virgl-corpus/captures/glmark2-es2/shaders/a6143f113a7d0a3ce6118a518c12bc7c537bebfdfa9a0af6580496709188379e.tgsi",
+      "sha256": "a6143f113a7d0a3ce6118a518c12bc7c537bebfdfa9a0af6580496709188379e",
+      "bytes": 8800,
+      "stage": "fragment",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        }
+      }
+    },
+    {
+      "path": "evidence/virgl-corpus/captures/compositor/shaders/b28f0dbcbc79d9931938c29cb77b62a42ba8e95d65bbd1a720d9aecd3f8ec030.tgsi",
+      "sha256": "b28f0dbcbc79d9931938c29cb77b62a42ba8e95d65bbd1a720d9aecd3f8ec030",
+      "bytes": 228,
+      "stage": "fragment",
+      "result": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\n smooth    in  vec4 vso_g0;\n layout(location = 0)  out  vec4 fsout_c0;\n vec4 temp0;\n vec4 temp1;\n vec4 temp2;\n vec4 temp3;\n vec4 temp4;\nuniform uvec4 fsconst0[1];\nuniform highp  sampler2D fssamp0;\nvoid main(void)\n{\ntemp0 = vec4((texture(fssamp0, (vso_g0.xyyy).xy)));\nfsout_c0 = vec4((( vec4(temp0)  * uintBitsToFloat(fsconst0[0].xxxx))));\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-straight-line-v5",
+          "stage": "fragment",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 3,
+              "interpolation": "smooth"
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "fsout_c0",
+              "type": "vec4",
+              "semantic": "COLOR",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            }
+          ],
+          "attributes": [],
+          "uniforms": [
+            {
+              "name": "fsconst0",
+              "type": "uvec4[]",
+              "count": 1,
+              "encoding": "float32-bits"
+            }
+          ],
+          "samplers": [
+            {
+              "index": 0,
+              "name": "fssamp0",
+              "type": "sampler2D"
+            }
+          ],
+          "uniformBlocks": []
+        }
+      }
+    },
+    {
+      "path": "evidence/virgl-corpus/captures/compositor/shaders/c00de140c2e9b128f07f7fba74bd60f3257b832d3251ae52a044bf8e68d90518.tgsi",
+      "sha256": "c00de140c2e9b128f07f7fba74bd60f3257b832d3251ae52a044bf8e68d90518",
+      "bytes": 124,
+      "stage": "fragment",
+      "result": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nlayout (location=0) out vec4 fsout_c0;\n vec4 temp0;\n vec4 temp1;\n vec4 temp2;\n vec4 temp3;\nuniform uvec4 fsconst0[1];\nvoid main(void)\n{\nfsout_c0 = vec4((uintBitsToFloat(fsconst0[0])));\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-straight-line-v5",
+          "stage": "fragment",
+          "inputs": [],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "fsout_c0",
+              "type": "vec4",
+              "semantic": "COLOR",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            }
+          ],
+          "attributes": [],
+          "uniforms": [
+            {
+              "name": "fsconst0",
+              "type": "uvec4[]",
+              "count": 1,
+              "encoding": "float32-bits"
+            }
+          ],
+          "samplers": [],
+          "uniformBlocks": []
+        }
+      }
+    },
+    {
+      "path": "evidence/virgl-corpus/captures/kmscube/shaders/d4f702f7a846a93b6f767bc73ed99a9c0f4fbe5fcb55662bca99e3f07f47d450.tgsi",
+      "sha256": "d4f702f7a846a93b6f767bc73ed99a9c0f4fbe5fcb55662bca99e3f07f47d450",
+      "bytes": 1396,
+      "stage": "vertex",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        }
+      }
+    },
+    {
+      "path": "evidence/virgl-corpus/captures/glmark2-es2/shaders/e911b393909ab041c24f608b41497143eba765cc8d7db1206a47896934d43c51.tgsi",
+      "sha256": "e911b393909ab041c24f608b41497143eba765cc8d7db1206a47896934d43c51",
+      "bytes": 6783,
+      "stage": "fragment",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        }
+      }
+    },
+    {
+      "path": "evidence/virgl-corpus/captures/textured-scene/shaders/e96102a3202dde8b0b05ffa142eb6064c5fe916b673bbf1d31464bcbac56fb33.tgsi",
+      "sha256": "e96102a3202dde8b0b05ffa142eb6064c5fe916b673bbf1d31464bcbac56fb33",
+      "bytes": 256,
+      "stage": "vertex",
+      "result": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nin vec4 in_1;\n   out  vec4 vso_g0;\n vec4 temp0;\n vec4 temp1;\n vec4 temp2;\n vec4 temp3;\nlayout (std140) uniform VirglBlock {\n\tvec4 clipp[8];\n\tuint stipple_pattern[32];\n\tfloat winsys_adjust_y;\n\tfloat alpha_ref_val;\n\tbool clip_plane_enabled;\n\tint drawid_base;\n};\nvoid main(void)\n{\ngl_Position.xy = vec2(((in_0.xyxx).xy));\ngl_Position.z = float((uintBitsToFloat(uvec4(0U,0U,0U,0U)).z));\ngl_Position.w = float((uintBitsToFloat(uvec4(1065353216U,1065353216U,1065353216U,1065353216U)).w));\nvso_g0.xy = vec2(((in_1.xyxx).xy));\ngl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-straight-line-v5",
+          "stage": "vertex",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 1,
+              "name": "in_1",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "gl_Position",
+              "type": "vec4",
+              "semantic": "POSITION",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            },
+            {
+              "index": 1,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 3,
+              "writtenMask": 3,
+              "interpolation": "smooth"
+            }
+          ],
+          "attributes": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 1,
+              "name": "in_1",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "uniforms": [],
+          "samplers": [],
+          "uniformBlocks": [
+            {
+              "name": "VirglBlock",
+              "byteLength": 656,
+              "members": [
+                {
+                  "name": "winsys_adjust_y",
+                  "offset": 640,
+                  "type": "float",
+                  "default": 1
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "path": "evidence/virgl-corpus/captures/glmark2-es2/shaders/e9bc6d3b61e3cda2c215ac8b44a432e2eb1bd4891cfa921c6f914fd3fd86b551.tgsi",
+      "sha256": "e9bc6d3b61e3cda2c215ac8b44a432e2eb1bd4891cfa921c6f914fd3fd86b551",
+      "bytes": 351,
+      "stage": "vertex",
+      "result": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\n vec4 temp0;\n vec4 temp1;\n vec4 temp2;\n vec4 temp3;\n vec4 temp4;\n vec4 temp5;\n vec4 temp6;\n vec4 temp7;\n vec4 temp8;\n vec4 temp9;\nuniform uvec4 vsconst0[4];\nlayout (std140) uniform VirglBlock {\n\tvec4 clipp[8];\n\tuint stipple_pattern[32];\n\tfloat winsys_adjust_y;\n\tfloat alpha_ref_val;\n\tbool clip_plane_enabled;\n\tint drawid_base;\n};\nvoid main(void)\n{\ntemp0 = vec4(((uintBitsToFloat(vsconst0[0]) * (in_0.xxxx))));\ntemp1 = vec4(((uintBitsToFloat(vsconst0[1]) * (in_0.yyyy))));\ntemp2 = vec4((( vec4(temp1)  +  vec4(temp0) )));\ntemp3 = vec4(((uintBitsToFloat(vsconst0[2]) * (in_0.zzzz))));\ntemp4 = vec4((( vec4(temp3)  +  vec4(temp2) )));\ntemp5 = vec4(((uintBitsToFloat(vsconst0[3]) * (in_0.wwww))));\ngl_Position = vec4((( vec4(temp5)  +  vec4(temp4) )));\ngl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-straight-line-v5",
+          "stage": "vertex",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "gl_Position",
+              "type": "vec4",
+              "semantic": "POSITION",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            }
+          ],
+          "attributes": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "uniforms": [
+            {
+              "name": "vsconst0",
+              "type": "uvec4[]",
+              "count": 4,
+              "encoding": "float32-bits"
+            }
+          ],
+          "samplers": [],
+          "uniformBlocks": [
+            {
+              "name": "VirglBlock",
+              "byteLength": 656,
+              "members": [
+                {
+                  "name": "winsys_adjust_y",
+                  "offset": 640,
+                  "type": "float",
+                  "default": 1
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "path": "evidence/virgl-corpus/captures/compositor/shaders/ef095954837a421fd04071ffd1d99e70f56b258614d47a40fc9148238d6d3c88.tgsi",
+      "sha256": "ef095954837a421fd04071ffd1d99e70f56b258614d47a40fc9148238d6d3c88",
+      "bytes": 162,
+      "stage": "fragment",
+      "result": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\n smooth    in  vec4 vso_g0;\n layout(location = 0)  out  vec4 fsout_c0;\n vec4 temp0;\n vec4 temp1;\n vec4 temp2;\n vec4 temp3;\nuniform highp  sampler2D fssamp0;\nvoid main(void)\n{\nfsout_c0 = vec4((texture(fssamp0, (vso_g0.xyyy).xy)));\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-straight-line-v5",
+          "stage": "fragment",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 3,
+              "interpolation": "smooth"
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "fsout_c0",
+              "type": "vec4",
+              "semantic": "COLOR",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            }
+          ],
+          "attributes": [],
+          "uniforms": [],
+          "samplers": [
+            {
+              "index": 0,
+              "name": "fssamp0",
+              "type": "sampler2D"
+            }
+          ],
+          "uniformBlocks": []
+        }
+      }
+    }
+  ],
+  "inventory": [
+    {
+      "sha256": "5a243fc7a19476612a000906c6060a6c1883fee7f2d87d7137d508269a0cd998",
+      "opcode": "DIV",
+      "line": " 14: DIV TEMP[22].x, TEMP[21].xxxx, TEMP[16].xxxx",
+      "negatedSources": []
+    },
+    {
+      "sha256": "5a243fc7a19476612a000906c6060a6c1883fee7f2d87d7137d508269a0cd998",
+      "opcode": "FRC",
+      "line": " 15: FRC TEMP[23].x, TEMP[22].xxxx",
+      "negatedSources": []
+    },
+    {
+      "sha256": "5a243fc7a19476612a000906c6060a6c1883fee7f2d87d7137d508269a0cd998",
+      "opcode": "FRC",
+      "line": " 20: FRC TEMP[28].x, TEMP[27].xxxx",
+      "negatedSources": []
+    },
+    {
+      "sha256": "5a243fc7a19476612a000906c6060a6c1883fee7f2d87d7137d508269a0cd998",
+      "opcode": "LRP",
+      "line": " 21: LRP TEMP[29].x, TEMP[28].xxxx, IMM[1].yyyy, IMM[0].xxxx",
+      "negatedSources": []
+    },
+    {
+      "sha256": "5a243fc7a19476612a000906c6060a6c1883fee7f2d87d7137d508269a0cd998",
+      "opcode": "MAX",
+      "line": " 22: MAX TEMP[30].x, TEMP[29].xxxx, -TEMP[29].xxxx",
+      "negatedSources": [
+        "-TEMP[29].xxxx"
+      ]
+    },
+    {
+      "sha256": "5a243fc7a19476612a000906c6060a6c1883fee7f2d87d7137d508269a0cd998",
+      "opcode": "DIV",
+      "line": "107: DIV TEMP[67].x, TEMP[66].xxxx, TEMP[5].xxxx",
+      "negatedSources": []
+    },
+    {
+      "sha256": "5a243fc7a19476612a000906c6060a6c1883fee7f2d87d7137d508269a0cd998",
+      "opcode": "LRP",
+      "line": "109: LRP TEMP[69], TEMP[68].xxxx, TEMP[6], TEMP[7]",
+      "negatedSources": []
+    },
+    {
+      "sha256": "616a643d02f33f502b08d9bd6368de93ba1bd9c7e6bacdee0e0aa946a2c3e4ad",
+      "opcode": "DIV",
+      "line": " 14: DIV TEMP[19].x, TEMP[18].xxxx, TEMP[13].xxxx",
+      "negatedSources": []
+    },
+    {
+      "sha256": "616a643d02f33f502b08d9bd6368de93ba1bd9c7e6bacdee0e0aa946a2c3e4ad",
+      "opcode": "FRC",
+      "line": " 15: FRC TEMP[20].x, TEMP[19].xxxx",
+      "negatedSources": []
+    },
+    {
+      "sha256": "616a643d02f33f502b08d9bd6368de93ba1bd9c7e6bacdee0e0aa946a2c3e4ad",
+      "opcode": "FRC",
+      "line": " 20: FRC TEMP[25].x, TEMP[24].xxxx",
+      "negatedSources": []
+    },
+    {
+      "sha256": "616a643d02f33f502b08d9bd6368de93ba1bd9c7e6bacdee0e0aa946a2c3e4ad",
+      "opcode": "LRP",
+      "line": " 21: LRP TEMP[26].x, TEMP[25].xxxx, IMM[1].yyyy, IMM[0].xxxx",
+      "negatedSources": []
+    },
+    {
+      "sha256": "616a643d02f33f502b08d9bd6368de93ba1bd9c7e6bacdee0e0aa946a2c3e4ad",
+      "opcode": "MAX",
+      "line": " 22: MAX TEMP[27].x, TEMP[26].xxxx, -TEMP[26].xxxx",
+      "negatedSources": [
+        "-TEMP[26].xxxx"
+      ]
+    },
+    {
+      "sha256": "616a643d02f33f502b08d9bd6368de93ba1bd9c7e6bacdee0e0aa946a2c3e4ad",
+      "opcode": "DIV",
+      "line": " 59:     DIV TEMP[48].x, TEMP[47].xxxx, TEMP[43].xxxx",
+      "negatedSources": []
+    },
+    {
+      "sha256": "616a643d02f33f502b08d9bd6368de93ba1bd9c7e6bacdee0e0aa946a2c3e4ad",
+      "opcode": "LRP",
+      "line": " 68:     LRP TEMP[55], TEMP[49].xxxx, TEMP[52], TEMP[54]",
+      "negatedSources": []
+    },
+    {
+      "sha256": "a6143f113a7d0a3ce6118a518c12bc7c537bebfdfa9a0af6580496709188379e",
+      "opcode": "DIV",
+      "line": "  4: DIV TEMP[21].xy, TEMP[20].xyyy, TEMP[20].zzxx",
+      "negatedSources": []
+    },
+    {
+      "sha256": "a6143f113a7d0a3ce6118a518c12bc7c537bebfdfa9a0af6580496709188379e",
+      "opcode": "MAX",
+      "line": " 19: MAX TEMP[36].x, CONST[4].xxxx, -CONST[4].xxxx",
+      "negatedSources": [
+        "-CONST[4].xxxx"
+      ]
+    },
+    {
+      "sha256": "a6143f113a7d0a3ce6118a518c12bc7c537bebfdfa9a0af6580496709188379e",
+      "opcode": "DIV",
+      "line": " 23:   DIV TEMP[39].x, TEMP[38].xxxx, TEMP[30].xxxx",
+      "negatedSources": []
+    },
+    {
+      "sha256": "a6143f113a7d0a3ce6118a518c12bc7c537bebfdfa9a0af6580496709188379e",
+      "opcode": "DIV",
+      "line": " 35:   DIV TEMP[47].x, TEMP[46].xxxx, CONST[4].xxxx",
+      "negatedSources": []
+    },
+    {
+      "sha256": "a6143f113a7d0a3ce6118a518c12bc7c537bebfdfa9a0af6580496709188379e",
+      "opcode": "DIV",
+      "line": " 51:     DIV TEMP[56].x, TEMP[55].xxxx, CONST[4].xxxx",
+      "negatedSources": []
+    },
+    {
+      "sha256": "a6143f113a7d0a3ce6118a518c12bc7c537bebfdfa9a0af6580496709188379e",
+      "opcode": "DIV",
+      "line": " 62:     DIV TEMP[62].x, TEMP[61].xxxx, CONST[4].xxxx",
+      "negatedSources": []
+    },
+    {
+      "sha256": "a6143f113a7d0a3ce6118a518c12bc7c537bebfdfa9a0af6580496709188379e",
+      "opcode": "FRC",
+      "line": " 70:   FRC TEMP[65].x, TEMP[4].xxxx",
+      "negatedSources": []
+    },
+    {
+      "sha256": "a6143f113a7d0a3ce6118a518c12bc7c537bebfdfa9a0af6580496709188379e",
+      "opcode": "FRC",
+      "line": " 74:   FRC TEMP[69].x, TEMP[68].xxxx",
+      "negatedSources": []
+    },
+    {
+      "sha256": "a6143f113a7d0a3ce6118a518c12bc7c537bebfdfa9a0af6580496709188379e",
+      "opcode": "LRP",
+      "line": " 75:   LRP TEMP[70].x, TEMP[69].xxxx, IMM[1].wwww, IMM[0].xxxx",
+      "negatedSources": []
+    },
+    {
+      "sha256": "a6143f113a7d0a3ce6118a518c12bc7c537bebfdfa9a0af6580496709188379e",
+      "opcode": "MAX",
+      "line": " 76:   MAX TEMP[71].x, TEMP[70].xxxx, -TEMP[70].xxxx",
+      "negatedSources": [
+        "-TEMP[70].xxxx"
+      ]
+    },
+    {
+      "sha256": "a6143f113a7d0a3ce6118a518c12bc7c537bebfdfa9a0af6580496709188379e",
+      "opcode": "DIV",
+      "line": "167:   DIV TEMP[109].x, TEMP[108].xxxx, TEMP[14].xxxx",
+      "negatedSources": []
+    },
+    {
+      "sha256": "a6143f113a7d0a3ce6118a518c12bc7c537bebfdfa9a0af6580496709188379e",
+      "opcode": "LRP",
+      "line": "169:   LRP TEMP[111], TEMP[110].xxxx, TEMP[15], TEMP[16]",
+      "negatedSources": []
+    },
+    {
+      "sha256": "d4f702f7a846a93b6f767bc73ed99a9c0f4fbe5fcb55662bca99e3f07f47d450",
+      "opcode": "DIV",
+      "line": " 14: DIV TEMP[13].xyz, TEMP[12].xyzz, TEMP[12].wwwx",
+      "negatedSources": []
+    },
+    {
+      "sha256": "e911b393909ab041c24f608b41497143eba765cc8d7db1206a47896934d43c51",
+      "opcode": "DIV",
+      "line": "  4: DIV TEMP[17].xy, TEMP[16].xyyy, TEMP[16].zzxx",
+      "negatedSources": []
+    },
+    {
+      "sha256": "e911b393909ab041c24f608b41497143eba765cc8d7db1206a47896934d43c51",
+      "opcode": "MAX",
+      "line": " 19: MAX TEMP[32].x, CONST[4].xxxx, -CONST[4].xxxx",
+      "negatedSources": [
+        "-CONST[4].xxxx"
+      ]
+    },
+    {
+      "sha256": "e911b393909ab041c24f608b41497143eba765cc8d7db1206a47896934d43c51",
+      "opcode": "DIV",
+      "line": " 23:   DIV TEMP[35].x, TEMP[34].xxxx, TEMP[26].xxxx",
+      "negatedSources": []
+    },
+    {
+      "sha256": "e911b393909ab041c24f608b41497143eba765cc8d7db1206a47896934d43c51",
+      "opcode": "DIV",
+      "line": " 35:   DIV TEMP[43].x, TEMP[42].xxxx, CONST[4].xxxx",
+      "negatedSources": []
+    },
+    {
+      "sha256": "e911b393909ab041c24f608b41497143eba765cc8d7db1206a47896934d43c51",
+      "opcode": "DIV",
+      "line": " 51:     DIV TEMP[52].x, TEMP[51].xxxx, CONST[4].xxxx",
+      "negatedSources": []
+    },
+    {
+      "sha256": "e911b393909ab041c24f608b41497143eba765cc8d7db1206a47896934d43c51",
+      "opcode": "DIV",
+      "line": " 62:     DIV TEMP[58].x, TEMP[57].xxxx, CONST[4].xxxx",
+      "negatedSources": []
+    },
+    {
+      "sha256": "e911b393909ab041c24f608b41497143eba765cc8d7db1206a47896934d43c51",
+      "opcode": "FRC",
+      "line": " 70:   FRC TEMP[61].x, TEMP[4].xxxx",
+      "negatedSources": []
+    },
+    {
+      "sha256": "e911b393909ab041c24f608b41497143eba765cc8d7db1206a47896934d43c51",
+      "opcode": "FRC",
+      "line": " 74:   FRC TEMP[65].x, TEMP[64].xxxx",
+      "negatedSources": []
+    },
+    {
+      "sha256": "e911b393909ab041c24f608b41497143eba765cc8d7db1206a47896934d43c51",
+      "opcode": "LRP",
+      "line": " 75:   LRP TEMP[66].x, TEMP[65].xxxx, IMM[1].wwww, IMM[0].xxxx",
+      "negatedSources": []
+    },
+    {
+      "sha256": "e911b393909ab041c24f608b41497143eba765cc8d7db1206a47896934d43c51",
+      "opcode": "MAX",
+      "line": " 76:   MAX TEMP[67].x, TEMP[66].xxxx, -TEMP[66].xxxx",
+      "negatedSources": [
+        "-TEMP[66].xxxx"
+      ]
+    },
+    {
+      "sha256": "e911b393909ab041c24f608b41497143eba765cc8d7db1206a47896934d43c51",
+      "opcode": "DIV",
+      "line": "119:     DIV TEMP[90].x, TEMP[89].xxxx, TEMP[85].xxxx",
+      "negatedSources": []
+    },
+    {
+      "sha256": "e911b393909ab041c24f608b41497143eba765cc8d7db1206a47896934d43c51",
+      "opcode": "LRP",
+      "line": "128:     LRP TEMP[97], TEMP[91].xxxx, TEMP[94], TEMP[96]",
+      "negatedSources": []
+    }
+  ]
+}

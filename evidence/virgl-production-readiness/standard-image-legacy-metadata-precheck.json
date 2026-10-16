@@ -1,0 +1,34 @@
+{
+  "base": "c0488902039a5fb5f9efc8c62101798668b2ce4a",
+  "sources": {
+    "before": "d38ae81822929d0a056b127a2d18e7faa101042677b0ce367fc2d4bc714e3238",
+    "after": "92b9892ff13cb824564369a6b30891ac918bb079bcc4f3973c3df426710d84f9"
+  },
+  "results": [
+    {
+      "version": "before",
+      "invalid": {
+        "message": "WebGL error 1281."
+      },
+      "normalizedAllocated": true,
+      "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)"
+    },
+    {
+      "version": "after",
+      "invalid": {
+        "message": "WebGL error 1281."
+      },
+      "normalizedAllocated": true,
+      "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)"
+    }
+  ],
+  "errors": [],
+  "status": "passed",
+  "schema": "original-image-inherited-fixture-negative-v1",
+  "sourceHead": "7529bc0c3fe796b9309c682ffd6308f1945f686d",
+  "script": "import assert from 'node:assert/strict';\nimport {createServer} from 'node:http';\nimport {execFileSync} from 'node:child_process';\nimport fs from 'node:fs/promises';\nimport {createHash} from 'node:crypto';\nimport {chromium} from '/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/web/node_modules/playwright/index.mjs';\nconst repo='/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm',base='c0488902039a5fb5f9efc8c62101798668b2ce4a',file='renderer/virgl-command/resources.mjs',sha=x=>createHash('sha256').update(x).digest('hex');\nconst before=execFileSync('git',['show',base+':'+file],{cwd:repo}),after=await fs.readFile(repo+'/'+file),sources=new Map([['/before.mjs',before],['/after.mjs',after]]);\nconst server=createServer((req,res)=>{if(req.url==='/favicon.ico')return res.writeHead(204).end();const data=sources.get(req.url);if(data)return res.writeHead(200,{'content-type':'text/javascript'}).end(data);res.writeHead(200,{'content-type':'text/html'}).end('<canvas id=\"gpu\"></canvas>');});await new Promise(r=>server.listen(0,'127.0.0.1',r));let browser;\nconst report={base,sources:{before:sha(before),after:sha(after)},results:[],errors:[]};\ntry{browser=await chromium.launch({executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',headless:false,args:['--enable-gpu']});const page=await browser.newPage();page.on('console',m=>{if(m.type()==='error')report.errors.push(m.text());});page.on('pageerror',e=>report.errors.push(e.message));await page.goto('http://127.0.0.1:'+server.address().port);report.results=await page.evaluate(async()=>{const rows=[];for(const version of ['before','after']){const {createWebGL2TransferBackend}=await import('/'+version+'.mjs'),gl=document.querySelector('#gpu').getContext('webgl2',{failIfMajorPerformanceCaveat:true}),meta={id:1,kind:'texture',format:67,width:2,height:2,byteLength:16},backend=createWebGL2TransferBackend(gl).backend;let invalid;try{backend.allocate(meta);invalid={unexpected:'allocated'};}catch(e){invalid={code:e.code,message:e.message};}const storage=backend.allocate({...meta,lastLevel:0});const ext=gl.getExtension('WEBGL_debug_renderer_info');rows.push({version,invalid,normalizedAllocated:Boolean(storage.texture),gpu:gl.getParameter(ext.UNMASKED_RENDERER_WEBGL)});backend.destroy(storage);backend.dispose();if(gl.getError()!==gl.NO_ERROR)throw Error('native error not drained');}return rows;});for(const r of report.results){assert.equal(r.invalid.message,'WebGL error 1281.');assert.equal(r.normalizedAllocated,true);assert.match(r.gpu,/M4/);assert.match(r.gpu,/Metal/);}assert.deepEqual(report.errors,[]);report.status='passed';await fs.writeFile('/tmp/wasmvm-image-legacy-metadata-precheck.json',JSON.stringify(report,null,2)+'\\n');console.log(JSON.stringify(report));}finally{await browser?.close();await new Promise(r=>server.close(r));}\n",
+  "scriptSha256": "aca76940dfb77d98c0b0e664f4098f359e6be2f29a75a0289b6f97e5f56b9cb0",
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "authority": "negative inherited incomplete host-backend fixture; no runtime qualification"
+}

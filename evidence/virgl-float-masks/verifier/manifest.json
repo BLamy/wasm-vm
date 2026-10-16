@@ -1,0 +1,302 @@
+{
+  "schema": "independent-ordered-mask-verifier-v1",
+  "task": "E6-T12e4c1",
+  "verdict": "verified",
+  "frozenHead": "d549500106399ada00fcd48f1439bd107377ebc5",
+  "workerClaimCommit": "d21fc8a48fe9f9da1ea328ba56a427d5580e2377",
+  "baselineHead": "7be4e09748bc4acfcdf167bd66cd6f3d890132d5",
+  "predictions": [
+    {
+      "number": 1,
+      "status": "HELD"
+    },
+    {
+      "number": 2,
+      "status": "HELD"
+    },
+    {
+      "number": 3,
+      "status": "HELD"
+    },
+    {
+      "number": 4,
+      "status": "HELD"
+    },
+    {
+      "number": 5,
+      "status": "HELD"
+    },
+    {
+      "number": 6,
+      "status": "HELD"
+    },
+    {
+      "number": 7,
+      "status": "HELD"
+    },
+    {
+      "number": 8,
+      "status": "HELD"
+    },
+    {
+      "number": 9,
+      "status": "HELD"
+    },
+    {
+      "number": 10,
+      "status": "HELD"
+    },
+    {
+      "number": 11,
+      "status": "HELD"
+    },
+    {
+      "number": 12,
+      "status": "HELD"
+    },
+    {
+      "number": 13,
+      "status": "HELD"
+    },
+    {
+      "number": 14,
+      "status": "HELD"
+    },
+    {
+      "number": 15,
+      "status": "HELD"
+    },
+    {
+      "number": 16,
+      "status": "HELD"
+    },
+    {
+      "number": 17,
+      "status": "HELD"
+    },
+    {
+      "number": 18,
+      "status": "HELD"
+    },
+    {
+      "number": 19,
+      "status": "HELD"
+    },
+    {
+      "number": 20,
+      "status": "HELD"
+    }
+  ],
+  "records": [
+    {
+      "path": "VERIFICATION.md",
+      "bytes": 10797,
+      "sha256": "ae61e66931ecfe17e2abe465d264d4ea1199456efb2c428e44549c8d65f16db4"
+    },
+    {
+      "path": "audit-native.input",
+      "bytes": 1414340,
+      "sha256": "25f23c04a8dd310d26d48bd4fe49342f5049cc352f9801e5c9ad862de39607a7"
+    },
+    {
+      "path": "audit-native.jsonl",
+      "bytes": 13261425,
+      "sha256": "d1946a6ba8a628be4c0772415e610bcc0aecf593cbcc6109b2df4ad05388ed88"
+    },
+    {
+      "path": "audit-native.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "audit-parent.input",
+      "bytes": 398124,
+      "sha256": "b8bdaffe100d70db00105ed66eacbf9b4713500da2713d4a1e8941c43c4dcce3"
+    },
+    {
+      "path": "audit-parent.jsonl",
+      "bytes": 3535475,
+      "sha256": "dd639ff4a26db3674895f4dca714655454b0d516ad3003100c1ed047f018c4a7"
+    },
+    {
+      "path": "audit-parent.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "binding-audit.json",
+      "bytes": 36061,
+      "sha256": "12dddeb00f0ee20c5addf1d8a89b99e509c9d95a6bb519819e0aa67654ef9fcd"
+    },
+    {
+      "path": "binding-audit.py",
+      "bytes": 24768,
+      "sha256": "e932fb60f95fa022be9eacaecb53a882d0760e20e4cef1c4076ae7851907521c"
+    },
+    {
+      "path": "binding-notes.md",
+      "bytes": 8313,
+      "sha256": "5d21791fa49afd3de1a6bc51ec39dae7a22dfb73069528faca6f5aedbc0aa5ee"
+    },
+    {
+      "path": "binding-predictions.md",
+      "bytes": 1971,
+      "sha256": "7b0662892fd48837342c5a27a14cc82637163cc828a6843afc91dacbb469aebf"
+    },
+    {
+      "path": "browser_audit.mjs",
+      "bytes": 10807,
+      "sha256": "f4d3b46c8925f77b706063e76da079a64f773d6cb210630a82b7f7feff9802bf"
+    },
+    {
+      "path": "controls-audit.json",
+      "bytes": 2836,
+      "sha256": "2eb10d32bff14c44ff5eb8c5c1d74d3f7ae2b312c5a64d5971573375989e25d6"
+    },
+    {
+      "path": "controls_audit.py",
+      "bytes": 5093,
+      "sha256": "bed3c19ac9db553b87f1da8bb1c6f2b9cee0e0b6c8a1e5ce547d38aaa4fb03bd"
+    },
+    {
+      "path": "coverage-branches.json",
+      "bytes": 4935,
+      "sha256": "f2b5215a017dbcd1232ed3a925028784a2b1bced7ac15f757055a00b06a648fe"
+    },
+    {
+      "path": "coverage_branches.py",
+      "bytes": 1069,
+      "sha256": "651b54cb024abb7a59856e7c48d11f310c47e4982eff4fc5a953ee6ff95f89c2"
+    },
+    {
+      "path": "driver.c",
+      "bytes": 738,
+      "sha256": "599467fdd3e83d6d618b620a7d216757417f2e7afb48d86ad5d978c3007ab5ed"
+    },
+    {
+      "path": "hardware/browser.png",
+      "bytes": 39019,
+      "sha256": "4a375a84d33b5f36db1143b3caa95a266e25538a4cc03110725399928129d7dc"
+    },
+    {
+      "path": "hardware/report.json",
+      "bytes": 1363477,
+      "sha256": "164ce04c3adf5e0881451e7742c51bca351691f9881dcfbd4d85b675a04c8c0a"
+    },
+    {
+      "path": "hardware-details.json",
+      "bytes": 1751,
+      "sha256": "4f6da99012637d83a5fbeabe91aa028a7f3f2f291bf967d5343576779e184674"
+    },
+    {
+      "path": "hardware-fixture.json",
+      "bytes": 17598,
+      "sha256": "83ee122956b7c10a4090d3d6e5c5505139d187836f60869c3115d0ec6148f0dc"
+    },
+    {
+      "path": "hardware_details.py",
+      "bytes": 3959,
+      "sha256": "d2e2b012e4f6e1ae7682c8667b2cf73b5f7cd1f2fa3ac531d65635bba92dc3ca"
+    },
+    {
+      "path": "hardware_fixture.py",
+      "bytes": 3660,
+      "sha256": "5dd1df679412a60255d3ccce6d5a0530a35006936020c6128cf56fd87808d953"
+    },
+    {
+      "path": "knowledge-binding.json",
+      "bytes": 2554,
+      "sha256": "8bfda979dc9442335bbc2c84bd83ea7030483f0c75aad441b3543e1f0a322ce0"
+    },
+    {
+      "path": "knowledge-report.json",
+      "bytes": 402,
+      "sha256": "bccaba8e570d2f9d3ca92c95036508d7860532a82ca511f4894c6fc11c2cfd7d"
+    },
+    {
+      "path": "knowledge.stderr",
+      "bytes": 36,
+      "sha256": "5190db9432837fc54e9551b966dfc80c8e21054834c345f4dbe7a684ba27d214"
+    },
+    {
+      "path": "knowledge_attack.c",
+      "bytes": 8784,
+      "sha256": "20f24c3f227b45b7661408188b124473f9ab04f693230497f056f97191b00f5f"
+    },
+    {
+      "path": "native-cases.json",
+      "bytes": 1905577,
+      "sha256": "7819706e2fdafbcb2dac156437a723298151395b268677eb5737967ad512759b"
+    },
+    {
+      "path": "native-report.json",
+      "bytes": 9273,
+      "sha256": "15a8d235a22bf777f3639d0338db4eb50a872bfabd110e9a84a588490d5f84a9"
+    },
+    {
+      "path": "native_audit.py",
+      "bytes": 9463,
+      "sha256": "1a853b1ac91eeb70b583543ed17e63c1c42a33f1dfc6e7fd735d4e2c16724ef6"
+    },
+    {
+      "path": "parent/bridge.c",
+      "bytes": 28129,
+      "sha256": "f39c5dff4e73e1595f34ef01ff43662af844458e7f512c8910b167b453fb43a3"
+    },
+    {
+      "path": "parent/bridge.h",
+      "bytes": 1061,
+      "sha256": "c3829828586db64f5c628210404c329d3805b814b9fad63c8aa619fe2e6d0105"
+    },
+    {
+      "path": "parent/raw_bits.c",
+      "bytes": 10611,
+      "sha256": "e3ccf20b3ae1b4e31a16677ba1d909f214baa84e51992d55c461bfc60523c556"
+    },
+    {
+      "path": "parent/raw_bits.h",
+      "bytes": 2867,
+      "sha256": "5a2c8c7dc5d93a5dca959cd032b4fa39a39ccfd41bf4cd11e206360c14b4a632"
+    },
+    {
+      "path": "predictions.md",
+      "bytes": 6330,
+      "sha256": "1b60d857daf075a80497f212c6c2cfddcfb69fbf157ff4ff203323a67f0f5554"
+    },
+    {
+      "path": "run_browser.mjs",
+      "bytes": 1325,
+      "sha256": "090dba04f84c5990dddba8392448f50aa9c66ccae53e8c1cf218b144560e4d5b"
+    },
+    {
+      "path": "run_knowledge.py",
+      "bytes": 1943,
+      "sha256": "bbef385a04b300e2c99202953b712bd5c3855995d18065ce62cda03dec30af2a"
+    },
+    {
+      "path": "sabotage/failure.png",
+      "bytes": 24634,
+      "sha256": "1324b8eb0e32b607d5a3ed18cc0619fb9fd773ac735af3451e9e521b9e737743"
+    },
+    {
+      "path": "sabotage/report.json",
+      "bytes": 572589,
+      "sha256": "f30fccff45acaa39f954ea418bb081f13edfc38d9d108f9c62711ea4c7ddeff3"
+    },
+    {
+      "path": "sabotage.log",
+      "bytes": 1401,
+      "sha256": "e5d265bff84507f09601aec79643fb675d5dcdd69fe77955cf634b17c0171afe"
+    },
+    {
+      "path": "worker-semantics.json",
+      "bytes": 6754,
+      "sha256": "5258ee81fe05ff47ad953208cb02c95b53afa12360b6fd65b37a59f1ad356c62"
+    },
+    {
+      "path": "worker_semantics.py",
+      "bytes": 6545,
+      "sha256": "2bce54779538a0a3f07475784245c897b9de9c3b79d899d40b8b24da38c51e45"
+    }
+  ]
+}

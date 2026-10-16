@@ -1,0 +1,20 @@
+{
+  "schema": "virgl-workload-inventory-worker-v1",
+  "frozenSourceHead": "a669aad01b93e03e3b528a931748d0800156e57c",
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 184580,
+    "sha256": "fd2b5faf08ab77133937fa8d09183a24f16bfe2f88913ca4f08d2fbacc14e7dc"
+  },
+  "records": 143,
+  "captureManifestSha256": "202500d87a7e31a5c04f192852bb9a23dedce8681fb3ee4850e0738aee30e8a8",
+  "result": {
+    "qemuExit": 0,
+    "guestExit": 0,
+    "clientDraws": 1566,
+    "supportingDraws": 29025,
+    "mutationCases": 39,
+    "recorderCases": 27,
+    "oldShaderBodiesUnchanged": 19
+  }
+}

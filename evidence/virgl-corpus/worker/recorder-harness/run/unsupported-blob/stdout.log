@@ -1,0 +1,2 @@
+FAKE_FORWARD blob
+HARNESS_FORWARDING_PASS scenario=blob calls=1

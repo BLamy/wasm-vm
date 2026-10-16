@@ -1,0 +1,68 @@
+{
+  "schema": "dimensional-depth-surface-carried-original-cold-seal-v1",
+  "head": "cb04190a0fd8d989fb54fb7b2caf39cc86a8a0e7",
+  "records": 2295,
+  "recordIndexSha256": "1a668a80d0a197d2d335965efa3efc6f21b818c80aaf880ecd1bf781a8734a43",
+  "archiveSha256": "ae5c9d17a1328f46fd1e763467639888262c271ff278e15dc95c3789128c5f66",
+  "archiveBytes": 169668599,
+  "preservedFailure": "coverage-audit predecessor namespace collision",
+  "passedSourceGates": 39,
+  "productionAuthority": false,
+  "archiveParts": [
+    {
+      "path": "recording.tar.gz.part-0000",
+      "bytes": 16777216,
+      "sha256": "3f3038270c49ef62d497b10b7e230832102459d4a50c9ef2d2ec4c7af15fe00b"
+    },
+    {
+      "path": "recording.tar.gz.part-0001",
+      "bytes": 16777216,
+      "sha256": "504ae55fefb939c00775d506f837322e10d2cacb1533349631d575088826c914"
+    },
+    {
+      "path": "recording.tar.gz.part-0002",
+      "bytes": 16777216,
+      "sha256": "1aa37df65ae3af6ce255514343c5f3006ed5ef9e5d676cbb13a7cd67552c2ac3"
+    },
+    {
+      "path": "recording.tar.gz.part-0003",
+      "bytes": 16777216,
+      "sha256": "f05cd96e46647e5d7a1e54f4953c93a7354171e5365f1855515571571ae251bf"
+    },
+    {
+      "path": "recording.tar.gz.part-0004",
+      "bytes": 16777216,
+      "sha256": "c0b3d103b5ff5c86982326e213a153c4c6b8eb6db7fc83732ea23e2e889814ad"
+    },
+    {
+      "path": "recording.tar.gz.part-0005",
+      "bytes": 16777216,
+      "sha256": "3418c313de162c36c0512b757381854f27a75d430a30452b7e259401188dccd6"
+    },
+    {
+      "path": "recording.tar.gz.part-0006",
+      "bytes": 16777216,
+      "sha256": "f4e4a09e8d4d3c5407f40f6d7a907c528458bf4ca14690338631018e273c4359"
+    },
+    {
+      "path": "recording.tar.gz.part-0007",
+      "bytes": 16777216,
+      "sha256": "97112faa3a5a6ef5930be95f7907041097ceecf4f4d8730459064559d39dd57e"
+    },
+    {
+      "path": "recording.tar.gz.part-0008",
+      "bytes": 16777216,
+      "sha256": "45aadec15d9e665bbc486f5ccea202ed6958f5b92108c918d655889756969225"
+    },
+    {
+      "path": "recording.tar.gz.part-0009",
+      "bytes": 16777216,
+      "sha256": "ba51f6e0f095cc81a6b8dc99a891cb8f1d933c164297a74c825ef03d288019a2"
+    },
+    {
+      "path": "recording.tar.gz.part-0010",
+      "bytes": 1896439,
+      "sha256": "860e8fd577b407f5118d1cee5befed2d9ff87af3c45a5a5b7ee39e8c8d7a2ddf"
+    }
+  ]
+}

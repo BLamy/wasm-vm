@@ -1,0 +1,151 @@
+
+added 7 packages in 457ms
+npm warn install-scripts 1 package has install scripts not yet covered by allowScripts:
+npm warn install-scripts   fsevents@2.3.2 (install: (install scripts present))
+npm warn install-scripts
+npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+Resolving SDK version '4.0.22' to 'sdk-releases-bebaf7e50e31865b0724f17eaa52e161e2dfef5a-64bit'
+Installing SDK 'sdk-releases-bebaf7e50e31865b0724f17eaa52e161e2dfef5a-64bit'..
+Skipped installing node-22.16.0-64bit, already installed.
+Skipped installing python-3.13.3-64bit, already installed.
+Skipped installing releases-bebaf7e50e31865b0724f17eaa52e161e2dfef5a-64bit, already installed.
+All SDK components already installed: 'sdk-releases-bebaf7e50e31865b0724f17eaa52e161e2dfef5a-64bit'.
+Resolving SDK version '4.0.22' to 'sdk-releases-bebaf7e50e31865b0724f17eaa52e161e2dfef5a-64bit'
+Setting the following tools as active:
+   node-22.16.0-64bit
+   python-3.13.3-64bit
+   releases-bebaf7e50e31865b0724f17eaa52e161e2dfef5a-64bit
+
+Next steps:
+- To conveniently access emsdk tools from the command line,
+  consider adding the following directories to your PATH:
+    /Users/blamy/.cache/wasm-vm/emsdk/4.0.22
+    /Users/blamy/.cache/wasm-vm/emsdk/4.0.22/upstream/emscripten
+- This can be done for the current shell by running:
+    source "/Users/blamy/.cache/wasm-vm/emsdk/4.0.22/emsdk_env.sh"
+- Configure emsdk in your shell startup scripts by running:
+    echo 'source "/Users/blamy/.cache/wasm-vm/emsdk/4.0.22/emsdk_env.sh"' >> $HOME/.zprofile
+emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 4.0.22 (0f3d2e62bccf8e14497ff19e05a1202c51eb0c65)
+Copyright (C) 2025 the Emscripten authors (see AUTHORS.txt)
+This is free and open source software under the MIT license.
+There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
++ git rev-parse HEAD
+a7be954c1f3bea9dd1e96522e890fa012197c6fe
++ python3 -m py_compile tools/virgl-raw-equality/cold.py tools/virgl-raw-equality/faults.py tools/virgl-raw-equality/generate_cases.py tools/virgl-raw-equality/native.py tools/virgl-raw-equality/native_receipt.py tools/virgl-raw-equality/receipt.py tools/virgl-raw-equality/shared.py tools/virgl-raw-equality/wasm_receipt.py
++ for file in renderer/virgl-command/constant-domain.mjs renderer/virgl-shader/tests/raw-equality.mjs renderer/virgl-shader/tests/raw-equality-oracle.mjs 'tools/virgl-raw-equality/*.mjs'
++ node --check renderer/virgl-command/constant-domain.mjs
++ for file in renderer/virgl-command/constant-domain.mjs renderer/virgl-shader/tests/raw-equality.mjs renderer/virgl-shader/tests/raw-equality-oracle.mjs 'tools/virgl-raw-equality/*.mjs'
++ node --check renderer/virgl-shader/tests/raw-equality.mjs
++ for file in renderer/virgl-command/constant-domain.mjs renderer/virgl-shader/tests/raw-equality.mjs renderer/virgl-shader/tests/raw-equality-oracle.mjs 'tools/virgl-raw-equality/*.mjs'
++ node --check renderer/virgl-shader/tests/raw-equality-oracle.mjs
++ for file in renderer/virgl-command/constant-domain.mjs renderer/virgl-shader/tests/raw-equality.mjs renderer/virgl-shader/tests/raw-equality-oracle.mjs 'tools/virgl-raw-equality/*.mjs'
++ node --check tools/virgl-raw-equality/browser.mjs
++ for file in renderer/virgl-command/constant-domain.mjs renderer/virgl-shader/tests/raw-equality.mjs renderer/virgl-shader/tests/raw-equality-oracle.mjs 'tools/virgl-raw-equality/*.mjs'
++ node --check tools/virgl-raw-equality/consumer.mjs
++ for file in renderer/virgl-command/constant-domain.mjs renderer/virgl-shader/tests/raw-equality.mjs renderer/virgl-shader/tests/raw-equality-oracle.mjs 'tools/virgl-raw-equality/*.mjs'
++ node --check tools/virgl-raw-equality/fault-wasm.mjs
++ for file in renderer/virgl-command/constant-domain.mjs renderer/virgl-shader/tests/raw-equality.mjs renderer/virgl-shader/tests/raw-equality-oracle.mjs 'tools/virgl-raw-equality/*.mjs'
++ node --check tools/virgl-raw-equality/float-masks-successor.mjs
++ for file in renderer/virgl-command/constant-domain.mjs renderer/virgl-shader/tests/raw-equality.mjs renderer/virgl-shader/tests/raw-equality-oracle.mjs 'tools/virgl-raw-equality/*.mjs'
++ node --check tools/virgl-raw-equality/integer-masks-successor.mjs
++ for file in renderer/virgl-command/constant-domain.mjs renderer/virgl-shader/tests/raw-equality.mjs renderer/virgl-shader/tests/raw-equality-oracle.mjs 'tools/virgl-raw-equality/*.mjs'
++ node --check tools/virgl-raw-equality/oracle.mjs
++ for file in renderer/virgl-command/constant-domain.mjs renderer/virgl-shader/tests/raw-equality.mjs renderer/virgl-shader/tests/raw-equality-oracle.mjs 'tools/virgl-raw-equality/*.mjs'
++ node --check tools/virgl-raw-equality/wasm.mjs
++ bash renderer/virgl-shader/build.sh guard-check
+Pinned virglrenderer 1.3.0: 70 source/generated SHA-256 hashes match
++ bash renderer/virgl-shader/build.sh raw-equality-sanitize
+Pinned virglrenderer 1.3.0: 70 source/generated SHA-256 hashes match
+vendor/src/vrend/vrend_shader.c:4717:13: warning: 'sprintf' is deprecated: This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead. [-Wdeprecated-declarations]
+ 4717 |             sprintf(arrayname, "[addr%d]", src->DimIndirect.Index);
+      |             ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/_stdio.h:278:1: note: 'sprintf' has been explicitly marked deprecated here
+  278 | __deprecated_msg("This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead.")
+      | ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h:227:48: note: expanded from macro '__deprecated_msg'
+  227 |         #define __deprecated_msg(_msg) __attribute__((__deprecated__(_msg)))
+      |                                                       ^
+vendor/src/vrend/vrend_shader.c:4719:13: warning: 'sprintf' is deprecated: This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead. [-Wdeprecated-declarations]
+ 4719 |             sprintf(arrayname, "[%d]", src->Dimension.Index);
+      |             ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/_stdio.h:278:1: note: 'sprintf' has been explicitly marked deprecated here
+  278 | __deprecated_msg("This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead.")
+      | ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h:227:48: note: expanded from macro '__deprecated_msg'
+  227 |         #define __deprecated_msg(_msg) __attribute__((__deprecated__(_msg)))
+      |                                                       ^
+vendor/src/vrend/vrend_shader.c:7349:16: warning: 'sprintf' is deprecated: This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead. [-Wdeprecated-declarations]
+ 7349 |                sprintf(prefix, "layout(location = %d)", ctx->outputs[i].sid);
+      |                ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/_stdio.h:278:1: note: 'sprintf' has been explicitly marked deprecated here
+  278 | __deprecated_msg("This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead.")
+      | ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h:227:48: note: expanded from macro '__deprecated_msg'
+  227 |         #define __deprecated_msg(_msg) __attribute__((__deprecated__(_msg)))
+      |                                                       ^
+3 warnings generated.
++ python3 tools/virgl-raw-equality/native.py --binary renderer/virgl-shader/build/raw-equality-sanitize/raw-equality-test --output /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-equality-cold-bj_u2niy/wasm-vm/target/evidence/virgl-raw-equality-cold/native
+{"status": "passed", "originals": 19, "acceptedOriginals": 12, "cases": 4152, "pairs": 298, "calls": 602100, "standaloneRecoveries": 306348, "pairRecoveries": 284466, "truncations": 2353, "hostileCases": 324, "mutations": 4096, "allocationFaults": 16, "maxSingleResultBytes": 63369, "maxPairResultBytes": 109235, "report": "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-equality-cold-bj_u2niy/wasm-vm/target/evidence/virgl-raw-equality-cold/native/native-report.json"}
++ bash renderer/virgl-shader/build.sh wasm
+Pinned virglrenderer 1.3.0: 70 source/generated SHA-256 hashes match
++ node tools/virgl-raw-equality/wasm.mjs --native /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-equality-cold-bj_u2niy/wasm-vm/target/evidence/virgl-raw-equality-cold/native/native-report.json --output /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-equality-cold-bj_u2niy/wasm-vm/target/evidence/virgl-raw-equality-cold/wasm
+{"status":"passed","counts":{"calls":14241,"originals":19,"singles":4152,"pairs":298,"recoverySingles":5012,"recoveryPairs":4654,"stress":64,"pressure":33},"report":"/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-equality-cold-bj_u2niy/wasm-vm/target/evidence/virgl-raw-equality-cold/wasm/report.json"}
++ NODE_V8_COVERAGE=/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-equality-cold-bj_u2niy/wasm-vm/target/evidence/virgl-raw-equality-cold/consumer/v8
++ node tools/virgl-raw-equality/consumer.mjs --native /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-equality-cold-bj_u2niy/wasm-vm/target/evidence/virgl-raw-equality-cold/native/native-report.json --output /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-equality-cold-bj_u2niy/wasm-vm/target/evidence/virgl-raw-equality-cold/consumer
+constant obligation checks 2535 getters 0
++ node tools/virgl-raw-equality/integer-masks-successor.mjs --output /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-equality-cold-bj_u2niy/wasm-vm/target/evidence/virgl-raw-equality-cold/integer
+E6-T12f1 retained integer GPU leaf: 377 authored cases;12/19 unchanged originals;704 exact words;direct finite UCMP;18 mixed backend pixel draws;fixed16MiB stress passed.
++ node tools/virgl-raw-equality/float-masks-successor.mjs --output /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-equality-cold-bj_u2niy/wasm-vm/target/evidence/virgl-raw-equality-cold/float
+E6-T12f1 retained ordered GPU leaf: 396 authored cases;12/19 unchanged originals;768 exact words;finite ordered selections;38 mixed backend pixel draws;fixed16MiB stress passed.
++ node tools/virgl-raw-equality/browser.mjs --output /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-equality-cold-bj_u2niy/wasm-vm/target/evidence/virgl-raw-equality-cold/gpu
+640 exact equality words; 8 unchanged migrated shader bodies rendered.
++ node tools/virgl-raw-equality/oracle.mjs
++ python3 tools/virgl-raw-equality/faults.py --output /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-equality-cold-bj_u2niy/wasm-vm/target/evidence/virgl-raw-equality-cold/fault-artifacts
+built five real source faults and native/Wasm parity
++ for mode in nan-guard zero-sign ne-complement mask-one
++ node tools/virgl-raw-equality/browser.mjs --output /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-equality-cold-bj_u2niy/wasm-vm/target/evidence/virgl-raw-equality-cold/fault-nan-guard --fault nan-guard --fault-artifacts /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-equality-cold-bj_u2niy/wasm-vm/target/evidence/virgl-raw-equality-cold/fault-artifacts
+page.evaluate: Error: eq/raw-3 independent vertex byte0: [0,0,0,1065353216,1065320448,1056964608,1065320448,1065320448] / [0,0,0,1065353216,1065320448,1056964608,1056964608,1056964608]
+    at require (http://127.0.0.1:58295/renderer/virgl-shader/tests/raw-equality.mjs:5:43)
+    at equal (http://127.0.0.1:58295/renderer/virgl-shader/tests/raw-equality.mjs:6:28)
+    at vertexProbe (http://127.0.0.1:58295/renderer/virgl-shader/tests/raw-equality.mjs:91:9)
+    at async runAcceptance (http://127.0.0.1:58295/renderer/virgl-shader/tests/raw-equality.mjs:160:30)
+    at async eval (eval at evaluate (:234:30), <anonymous>:3:14)
+    at async <anonymous>:260:30
+    at runVirglBrowser (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-equality-cold-bj_u2niy/wasm-vm/tools/lib/virgl-browser-runner.mjs:145:57)
+    at /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-equality-cold-bj_u2niy/wasm-vm/async file:/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-equality-cold-bj_u2niy/wasm-vm/tools/virgl-raw-equality/browser.mjs:12:1
++ for mode in nan-guard zero-sign ne-complement mask-one
++ node tools/virgl-raw-equality/browser.mjs --output /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-equality-cold-bj_u2niy/wasm-vm/target/evidence/virgl-raw-equality-cold/fault-zero-sign --fault zero-sign --fault-artifacts /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-equality-cold-bj_u2niy/wasm-vm/target/evidence/virgl-raw-equality-cold/fault-artifacts
+page.evaluate: Error: eq/raw-0 independent vertex byte0: [0,0,0,1065353216,1056964608,1056964608,1056964608,1056964608] / [0,0,0,1065353216,1065320448,1065320448,1056964608,1056964608]
+    at require (http://127.0.0.1:58319/renderer/virgl-shader/tests/raw-equality.mjs:5:43)
+    at equal (http://127.0.0.1:58319/renderer/virgl-shader/tests/raw-equality.mjs:6:28)
+    at vertexProbe (http://127.0.0.1:58319/renderer/virgl-shader/tests/raw-equality.mjs:91:9)
+    at async runAcceptance (http://127.0.0.1:58319/renderer/virgl-shader/tests/raw-equality.mjs:160:30)
+    at async eval (eval at evaluate (:234:30), <anonymous>:3:14)
+    at async <anonymous>:260:30
+    at runVirglBrowser (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-equality-cold-bj_u2niy/wasm-vm/tools/lib/virgl-browser-runner.mjs:145:57)
+    at /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-equality-cold-bj_u2niy/wasm-vm/async file:/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-equality-cold-bj_u2niy/wasm-vm/tools/virgl-raw-equality/browser.mjs:12:1
++ for mode in nan-guard zero-sign ne-complement mask-one
++ node tools/virgl-raw-equality/browser.mjs --output /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-equality-cold-bj_u2niy/wasm-vm/target/evidence/virgl-raw-equality-cold/fault-ne-complement --fault ne-complement --fault-artifacts /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-equality-cold-bj_u2niy/wasm-vm/target/evidence/virgl-raw-equality-cold/fault-artifacts
+page.evaluate: Error: ne/raw-0 independent vertex byte0: [0,0,0,1065353216,1065320448,1065320448,1056964608,1056964608] / [0,0,0,1065353216,1056964608,1056964608,1065320448,1065320448]
+    at require (http://127.0.0.1:58339/renderer/virgl-shader/tests/raw-equality.mjs:5:43)
+    at equal (http://127.0.0.1:58339/renderer/virgl-shader/tests/raw-equality.mjs:6:28)
+    at vertexProbe (http://127.0.0.1:58339/renderer/virgl-shader/tests/raw-equality.mjs:91:9)
+    at async runAcceptance (http://127.0.0.1:58339/renderer/virgl-shader/tests/raw-equality.mjs:160:30)
+    at async eval (eval at evaluate (:234:30), <anonymous>:3:14)
+    at async <anonymous>:260:30
+    at runVirglBrowser (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-equality-cold-bj_u2niy/wasm-vm/tools/lib/virgl-browser-runner.mjs:145:57)
+    at /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-equality-cold-bj_u2niy/wasm-vm/async file:/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-equality-cold-bj_u2niy/wasm-vm/tools/virgl-raw-equality/browser.mjs:12:1
++ for mode in nan-guard zero-sign ne-complement mask-one
++ node tools/virgl-raw-equality/browser.mjs --output /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-equality-cold-bj_u2niy/wasm-vm/target/evidence/virgl-raw-equality-cold/fault-mask-one --fault mask-one --fault-artifacts /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-equality-cold-bj_u2niy/wasm-vm/target/evidence/virgl-raw-equality-cold/fault-artifacts
+page.evaluate: Error: eq/raw-0 independent vertex byte0: [0,0,0,1065353216,1056997376,1056997376,1056964608,1056964608] / [0,0,0,1065353216,1065320448,1065320448,1056964608,1056964608]
+    at require (http://127.0.0.1:58359/renderer/virgl-shader/tests/raw-equality.mjs:5:43)
+    at equal (http://127.0.0.1:58359/renderer/virgl-shader/tests/raw-equality.mjs:6:28)
+    at vertexProbe (http://127.0.0.1:58359/renderer/virgl-shader/tests/raw-equality.mjs:91:9)
+    at async runAcceptance (http://127.0.0.1:58359/renderer/virgl-shader/tests/raw-equality.mjs:160:30)
+    at async eval (eval at evaluate (:234:30), <anonymous>:3:14)
+    at async <anonymous>:260:30
+    at runVirglBrowser (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-equality-cold-bj_u2niy/wasm-vm/tools/lib/virgl-browser-runner.mjs:145:57)
+    at /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-equality-cold-bj_u2niy/wasm-vm/async file:/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-equality-cold-bj_u2niy/wasm-vm/tools/virgl-raw-equality/browser.mjs:12:1
++ python3 tools/virgl-raw-equality/receipt.py /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-equality-cold-bj_u2niy/wasm-vm/target/evidence/virgl-raw-equality-cold
+E6-T12f1 recorded native/Wasm/GPU equality proof passed.

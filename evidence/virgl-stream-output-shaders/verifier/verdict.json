@@ -1,0 +1,85 @@
+{
+  "schema": "stream-output-shaders-independent-verdict-v1",
+  "task": "E6-T11d65",
+  "verdict": "verified",
+  "submission": "0c167360a8d01a1e51b7be1309d6caf70fbff611",
+  "frozenSource": "31bf0781db74fea94f51c9d6fa3217d16227bc99",
+  "predictions": {
+    "P1": "HELD",
+    "P2": "HELD",
+    "P3": "HELD",
+    "P4": "HELD",
+    "P5": "HELD",
+    "P6": "HELD",
+    "P7": "HELD",
+    "P8": "HELD",
+    "N1": "HELD",
+    "S1": "HELD"
+  },
+  "reportDigests": {
+    "authentication.json": "6627d3ff75371ffaf8d18a0cfba27a5dee476de487b192a68ba9b4232bbf3bcc",
+    "interrogation.json": "80e76af5d54c52173643d6d77e287f0af89aae6338a10e81486b1a79d3282125",
+    "coverage.json": "983f55172cdd34eeb93afd04b92a3c6835a7f8c09a0f9da825e683579bb38956",
+    "finish.json": "640120ea1048dc0354ac6f7689a3712ab50814b271ce9427f6f07bf2588b2bab",
+    "native-components/report.json": "331adcc338d1a7a7ddf33cd3d4b64a963f6bfeb5cf3dc0927b04980e23efe228",
+    "native-components/wasm-report.json": "a8a589c80f07f292fa94513f171b0051f92257aa071e373978197e6ad67e62d4"
+  },
+  "criticRuntimeChanges": false,
+  "originalWorkerCommands": 42,
+  "nativeComponentSupplement": {
+    "cases": 3,
+    "completeNativeWasmCResponseBytesIdentical": true,
+    "predicateTrueFalse": {
+      "declaredComponentMismatch": [
+        39,
+        11,
+        39,
+        47,
+        1,
+        3,
+        0,
+        0,
+        4
+      ],
+      "reversedDisjointIntervals": [
+        46,
+        14,
+        46,
+        57,
+        0,
+        1,
+        0,
+        0,
+        4
+      ]
+    }
+  },
+  "promotedRegression": "tools/virgl-stream-output-shaders/alias-browser.mjs",
+  "boundedRegression": {
+    "cleanRuns": 12,
+    "physicalControls": 1,
+    "totalCapturedBytes": 1056,
+    "callerLayoutAndResponseDisjoint": true,
+    "jsArenaOwnersRemaining": 0,
+    "nativeReadbackBytesInterrogated": true
+  },
+  "deployment": {
+    "id": "6b288a8e-3da0-4c81-8970-2674e22fa678",
+    "source": "31bf0781db74fea94f51c9d6fa3217d16227bc99",
+    "reopenedMembers": 858,
+    "servedBodies": 192,
+    "passed": 127,
+    "failed": 0,
+    "browserErrors": 0,
+    "partialMarker": true,
+    "proofExportsAbsent": true,
+    "defaultWasmUnchanged": true,
+    "productionGraphicsAuthority": false,
+    "stagedFiles": 639,
+    "carriedDeploymentManifestSha256": "22a01eafcf805b79094ee3b311b749f62e533ecbd8c5ff37d41ffba641f897ee",
+    "liveReportSha256": "229135324646bc7b9d16b4f4e004d17fdabccf0896f4c4d7f6f6d895119953ab",
+    "actualCliReceiptSha256": "270d01a542b491e3cacfe9c4e0309888d4c809d8672870a24dfb0649e674d21c"
+  },
+  "remainingEvidence": [],
+  "scope": "Original-layout selected compiler only; no renderer consumer, production graphics, Linux or MIPS authority."
+}

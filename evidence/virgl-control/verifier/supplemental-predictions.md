@@ -1,0 +1,7 @@
+# Supplemental prediction after draft review, before final evidence
+
+2026-10-03. Original predictions.md remains immutable. Root reported that a development test found and corrected JS generation highwater surviving reset after an applied callback threw. This is a supplied draft finding, not an independently discovered result.
+
+**P16 — PENDING:** If JS applies creation generation G and the callback then throws, the guest gets ERR_UNSPEC and Rust keeps its uncommitted generation G while poisoning subsequent control work. Reset increments the epoch, disposes the applied owner and clears the old JS highwater. A new creation using generation G in the new epoch succeeds. A captured old-epoch event cannot resolve the new object. Independently inspect wire responses, Rust nextGeneration, callback event identities, actual GL destruction and fresh allocation, and both owner mappings at these points.
+
+**P17 — PENDING before frozen-source attacks:** Retain the actual callback `debugName` and `segments.data` objects (not structured clones), grow the exported Wasm memory and verify its former buffer detached, then overwrite guest RAM. The original callback arrays remain non-detached with their original literal bytes. A revoked Proxy fails normalization without owner mutation. Independently revoking the renderer context and the store context before bridge destruction produces a structured poisoned outcome, blocks subsequent normal mutation and recovers only after reset.

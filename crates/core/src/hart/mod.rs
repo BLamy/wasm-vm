@@ -1615,6 +1615,161 @@ impl Hart {
         Ok(old)
     }
 
+    /// Pure integer semantics shared by ordinary execution and cached replay. These instructions
+    /// cannot trap or observe the bus, CSRs, FP state or reservation; only their integer result is
+    /// computed here. Writeback, PC advancement and retirement capture remain with the caller.
+    #[inline(always)]
+    pub(crate) fn integer_result(&self, instr: Instr) -> Option<(u8, u64)> {
+        use Instr::*;
+        let r = &self.regs;
+        let pc = r.pc;
+        Some(match instr {
+            Lui { rd, imm } => (rd, imm as u64),
+            Auipc { rd, imm } => (rd, pc.wrapping_add(imm as u64)),
+
+            Addi { rd, rs1, imm } => (rd, r.read(rs1).wrapping_add(imm as u64)),
+            Slti { rd, rs1, imm } => (rd, ((r.read(rs1) as i64) < imm) as u64),
+            Sltiu { rd, rs1, imm } => (rd, (r.read(rs1) < imm as u64) as u64),
+            Xori { rd, rs1, imm } => (rd, r.read(rs1) ^ imm as u64),
+            Ori { rd, rs1, imm } => (rd, r.read(rs1) | imm as u64),
+            Andi { rd, rs1, imm } => (rd, r.read(rs1) & imm as u64),
+            Slli { rd, rs1, shamt } => (rd, r.read(rs1) << shamt),
+            Srli { rd, rs1, shamt } => (rd, r.read(rs1) >> shamt),
+            Srai { rd, rs1, shamt } => (rd, ((r.read(rs1) as i64) >> shamt) as u64),
+
+            Addiw { rd, rs1, imm } => (rd, sext32(r.read(rs1).wrapping_add(imm as u64) as u32)),
+            Slliw { rd, rs1, shamt } => (rd, sext32((r.read(rs1) as u32) << shamt)),
+            Srliw { rd, rs1, shamt } => (rd, sext32((r.read(rs1) as u32) >> shamt)),
+            Sraiw { rd, rs1, shamt } => {
+                (rd, sext32((((r.read(rs1) as u32) as i32) >> shamt) as u32))
+            }
+
+            Add { rd, rs1, rs2 } => (rd, r.read(rs1).wrapping_add(r.read(rs2))),
+            Sub { rd, rs1, rs2 } => (rd, r.read(rs1).wrapping_sub(r.read(rs2))),
+            // Register shifts: RV64 uses rs2[5:0]; the *W forms use rs2[4:0] (Ch. 5).
+            Sll { rd, rs1, rs2 } => (rd, r.read(rs1) << (r.read(rs2) & 0x3F)),
+            Slt { rd, rs1, rs2 } => (rd, ((r.read(rs1) as i64) < (r.read(rs2) as i64)) as u64),
+            Sltu { rd, rs1, rs2 } => (rd, (r.read(rs1) < r.read(rs2)) as u64),
+            Xor { rd, rs1, rs2 } => (rd, r.read(rs1) ^ r.read(rs2)),
+            Srl { rd, rs1, rs2 } => (rd, r.read(rs1) >> (r.read(rs2) & 0x3F)),
+            Sra { rd, rs1, rs2 } => (rd, ((r.read(rs1) as i64) >> (r.read(rs2) & 0x3F)) as u64),
+            Or { rd, rs1, rs2 } => (rd, r.read(rs1) | r.read(rs2)),
+            And { rd, rs1, rs2 } => (rd, r.read(rs1) & r.read(rs2)),
+
+            Addw { rd, rs1, rs2 } => (
+                rd,
+                sext32((r.read(rs1) as u32).wrapping_add(r.read(rs2) as u32)),
+            ),
+            Subw { rd, rs1, rs2 } => (
+                rd,
+                sext32((r.read(rs1) as u32).wrapping_sub(r.read(rs2) as u32)),
+            ),
+            Sllw { rd, rs1, rs2 } => (rd, sext32((r.read(rs1) as u32) << (r.read(rs2) & 0x1F))),
+            Srlw { rd, rs1, rs2 } => (rd, sext32((r.read(rs1) as u32) >> (r.read(rs2) & 0x1F))),
+            Sraw { rd, rs1, rs2 } => (
+                rd,
+                sext32((((r.read(rs1) as u32) as i32) >> (r.read(rs2) & 0x1F)) as u32),
+            ),
+
+            // ── M extension (E1-T03) ────────────────────────────────────────
+            // Products use wide intermediates; the div/rem edge cases are the spec's
+            // trap-free definitions (Unprivileged ISA "M" chapter) — Rust's own
+            // divide-by-zero and MIN/-1 overflow panics must never be reached, so every
+            // divisor-zero and overflow case is branched out BEFORE the `/` or `%`.
+            Mul { rd, rs1, rs2 } => (rd, r.read(rs1).wrapping_mul(r.read(rs2))),
+            // MULH: high 64 of the signed×signed 128-bit product.
+            Mulh { rd, rs1, rs2 } => {
+                let p = (r.read(rs1) as i64 as i128) * (r.read(rs2) as i64 as i128);
+                (rd, (p >> 64) as u64)
+            }
+            // MULHSU: high 64 of signed(rs1) × unsigned(rs2). The tricky one: rs1 is
+            // sign-extended into i128 (may be negative); rs2 is ZERO-extended (u64→u128,
+            // always in 0..2^64, so non-negative) then viewed as i128. Their exact
+            // product fits in i128 (|i64|·u64 < 2^127); an arithmetic >>64 keeps the sign.
+            Mulhsu { rd, rs1, rs2 } => {
+                let p = (r.read(rs1) as i64 as i128) * (r.read(rs2) as u128 as i128);
+                (rd, (p >> 64) as u64)
+            }
+            // MULHU: high 64 of the unsigned×unsigned 128-bit product.
+            Mulhu { rd, rs1, rs2 } => {
+                let p = (r.read(rs1) as u128) * (r.read(rs2) as u128);
+                (rd, (p >> 64) as u64)
+            }
+            Div { rd, rs1, rs2 } => {
+                let (a, b) = (r.read(rs1) as i64, r.read(rs2) as i64);
+                let q = if b == 0 {
+                    -1i64 // div by zero → all ones
+                } else if a == i64::MIN && b == -1 {
+                    i64::MIN // signed overflow → dividend
+                } else {
+                    a.wrapping_div(b)
+                };
+                (rd, q as u64)
+            }
+            // Unsigned div/rem: checked_* returns None ONLY on divisor zero (no unsigned
+            // overflow case), giving the spec's all-ones / dividend results panic-free.
+            Divu { rd, rs1, rs2 } => {
+                let (a, b) = (r.read(rs1), r.read(rs2));
+                (rd, a.checked_div(b).unwrap_or(u64::MAX))
+            }
+            Rem { rd, rs1, rs2 } => {
+                let (a, b) = (r.read(rs1) as i64, r.read(rs2) as i64);
+                let rem = if b == 0 {
+                    a // rem by zero → dividend
+                } else if a == i64::MIN && b == -1 {
+                    0 // overflow → 0
+                } else {
+                    a.wrapping_rem(b)
+                };
+                (rd, rem as u64)
+            }
+            Remu { rd, rs1, rs2 } => {
+                let (a, b) = (r.read(rs1), r.read(rs2));
+                (rd, a.checked_rem(b).unwrap_or(a))
+            }
+            // W forms: operate on the low 32 bits (upper bits of the sources are
+            // ignored per spec), then sign-extend the 32-bit result to 64.
+            Mulw { rd, rs1, rs2 } => (
+                rd,
+                sext32((r.read(rs1) as u32).wrapping_mul(r.read(rs2) as u32)),
+            ),
+            Divw { rd, rs1, rs2 } => {
+                let (a, b) = (r.read(rs1) as i32, r.read(rs2) as i32);
+                let q = if b == 0 {
+                    -1i32
+                } else if a == i32::MIN && b == -1 {
+                    i32::MIN
+                } else {
+                    a.wrapping_div(b)
+                };
+                (rd, sext32(q as u32))
+            }
+            // DIVUW: unsigned 32-bit divide, result STILL sign-extended from bit 31
+            // (so a 0xFFFF_FFFF quotient reads back as 0xFFFF_FFFF_FFFF_FFFF).
+            Divuw { rd, rs1, rs2 } => {
+                let (a, b) = (r.read(rs1) as u32, r.read(rs2) as u32);
+                (rd, sext32(a.checked_div(b).unwrap_or(u32::MAX)))
+            }
+            Remw { rd, rs1, rs2 } => {
+                let (a, b) = (r.read(rs1) as i32, r.read(rs2) as i32);
+                let rem = if b == 0 {
+                    a
+                } else if a == i32::MIN && b == -1 {
+                    0
+                } else {
+                    a.wrapping_rem(b)
+                };
+                (rd, sext32(rem as u32))
+            }
+            Remuw { rd, rs1, rs2 } => {
+                let (a, b) = (r.read(rs1) as u32, r.read(rs2) as u32);
+                (rd, sext32(a.checked_rem(b).unwrap_or(a)))
+            }
+
+            _ => return None,
+        })
+    }
+
     /// Execute a decoded instruction with a private retirement capture strategy. Every arm
     /// either fully retires (writeback + PC advance) or returns a trap having touched nothing.
     ///
@@ -1635,6 +1790,11 @@ impl Hart {
         capture: &mut C,
     ) -> Result<C::Output, Trap> {
         use Instr::*;
+        if let Some((rd, value)) = self.integer_result(instr) {
+            self.regs.write(rd, value);
+            self.regs.pc = self.regs.pc.wrapping_add(insn_len);
+            return Ok(capture.finish(rd, value));
+        }
         // F/D: every FP instruction requires mstatus.FS != Off (E1-T06). Checked before any
         // architectural read, so an FS=Off trap leaves fflags and the f-registers untouched.
         if is_fp(&instr) && self.csr.fp_off() {
@@ -1652,172 +1812,50 @@ impl Hart {
         // Per-op result and successor PC; applied at the single retirement point
         // below (x0-discard and PC update live in one place).
         let (rd, value, next_pc): (u8, u64, u64) = match instr {
-            Lui { rd, imm } => (rd, imm as u64, pc_next),
-            Auipc { rd, imm } => (rd, pc.wrapping_add(imm as u64), pc_next),
-
-            Addi { rd, rs1, imm } => (rd, r.read(rs1).wrapping_add(imm as u64), pc_next),
-            Slti { rd, rs1, imm } => (rd, ((r.read(rs1) as i64) < imm) as u64, pc_next),
-            Sltiu { rd, rs1, imm } => (rd, (r.read(rs1) < imm as u64) as u64, pc_next),
-            Xori { rd, rs1, imm } => (rd, r.read(rs1) ^ imm as u64, pc_next),
-            Ori { rd, rs1, imm } => (rd, r.read(rs1) | imm as u64, pc_next),
-            Andi { rd, rs1, imm } => (rd, r.read(rs1) & imm as u64, pc_next),
-            Slli { rd, rs1, shamt } => (rd, r.read(rs1) << shamt, pc_next),
-            Srli { rd, rs1, shamt } => (rd, r.read(rs1) >> shamt, pc_next),
-            Srai { rd, rs1, shamt } => (rd, ((r.read(rs1) as i64) >> shamt) as u64, pc_next),
-
-            Addiw { rd, rs1, imm } => (
-                rd,
-                sext32(r.read(rs1).wrapping_add(imm as u64) as u32),
-                pc_next,
-            ),
-            Slliw { rd, rs1, shamt } => (rd, sext32((r.read(rs1) as u32) << shamt), pc_next),
-            Srliw { rd, rs1, shamt } => (rd, sext32((r.read(rs1) as u32) >> shamt), pc_next),
-            Sraiw { rd, rs1, shamt } => (
-                rd,
-                sext32((((r.read(rs1) as u32) as i32) >> shamt) as u32),
-                pc_next,
-            ),
-
-            Add { rd, rs1, rs2 } => (rd, r.read(rs1).wrapping_add(r.read(rs2)), pc_next),
-            Sub { rd, rs1, rs2 } => (rd, r.read(rs1).wrapping_sub(r.read(rs2)), pc_next),
-            // Register shifts: RV64 uses rs2[5:0]; the *W forms use rs2[4:0] (Ch. 5).
-            Sll { rd, rs1, rs2 } => (rd, r.read(rs1) << (r.read(rs2) & 0x3F), pc_next),
-            Slt { rd, rs1, rs2 } => (
-                rd,
-                ((r.read(rs1) as i64) < (r.read(rs2) as i64)) as u64,
-                pc_next,
-            ),
-            Sltu { rd, rs1, rs2 } => (rd, (r.read(rs1) < r.read(rs2)) as u64, pc_next),
-            Xor { rd, rs1, rs2 } => (rd, r.read(rs1) ^ r.read(rs2), pc_next),
-            Srl { rd, rs1, rs2 } => (rd, r.read(rs1) >> (r.read(rs2) & 0x3F), pc_next),
-            Sra { rd, rs1, rs2 } => (
-                rd,
-                ((r.read(rs1) as i64) >> (r.read(rs2) & 0x3F)) as u64,
-                pc_next,
-            ),
-            Or { rd, rs1, rs2 } => (rd, r.read(rs1) | r.read(rs2), pc_next),
-            And { rd, rs1, rs2 } => (rd, r.read(rs1) & r.read(rs2), pc_next),
-
-            Addw { rd, rs1, rs2 } => (
-                rd,
-                sext32((r.read(rs1) as u32).wrapping_add(r.read(rs2) as u32)),
-                pc_next,
-            ),
-            Subw { rd, rs1, rs2 } => (
-                rd,
-                sext32((r.read(rs1) as u32).wrapping_sub(r.read(rs2) as u32)),
-                pc_next,
-            ),
-            Sllw { rd, rs1, rs2 } => (
-                rd,
-                sext32((r.read(rs1) as u32) << (r.read(rs2) & 0x1F)),
-                pc_next,
-            ),
-            Srlw { rd, rs1, rs2 } => (
-                rd,
-                sext32((r.read(rs1) as u32) >> (r.read(rs2) & 0x1F)),
-                pc_next,
-            ),
-            Sraw { rd, rs1, rs2 } => (
-                rd,
-                sext32((((r.read(rs1) as u32) as i32) >> (r.read(rs2) & 0x1F)) as u32),
-                pc_next,
-            ),
-
-            // ── M extension (E1-T03) ────────────────────────────────────────
-            // Products use wide intermediates; the div/rem edge cases are the spec's
-            // trap-free definitions (Unprivileged ISA "M" chapter) — Rust's own
-            // divide-by-zero and MIN/-1 overflow panics must never be reached, so every
-            // divisor-zero and overflow case is branched out BEFORE the `/` or `%`.
-            Mul { rd, rs1, rs2 } => (rd, r.read(rs1).wrapping_mul(r.read(rs2)), pc_next),
-            // MULH: high 64 of the signed×signed 128-bit product.
-            Mulh { rd, rs1, rs2 } => {
-                let p = (r.read(rs1) as i64 as i128) * (r.read(rs2) as i64 as i128);
-                (rd, (p >> 64) as u64, pc_next)
-            }
-            // MULHSU: high 64 of signed(rs1) × unsigned(rs2). The tricky one: rs1 is
-            // sign-extended into i128 (may be negative); rs2 is ZERO-extended (u64→u128,
-            // always in 0..2^64, so non-negative) then viewed as i128. Their exact
-            // product fits in i128 (|i64|·u64 < 2^127); an arithmetic >>64 keeps the sign.
-            Mulhsu { rd, rs1, rs2 } => {
-                let p = (r.read(rs1) as i64 as i128) * (r.read(rs2) as u128 as i128);
-                (rd, (p >> 64) as u64, pc_next)
-            }
-            // MULHU: high 64 of the unsigned×unsigned 128-bit product.
-            Mulhu { rd, rs1, rs2 } => {
-                let p = (r.read(rs1) as u128) * (r.read(rs2) as u128);
-                (rd, (p >> 64) as u64, pc_next)
-            }
-            Div { rd, rs1, rs2 } => {
-                let (a, b) = (r.read(rs1) as i64, r.read(rs2) as i64);
-                let q = if b == 0 {
-                    -1i64 // div by zero → all ones
-                } else if a == i64::MIN && b == -1 {
-                    i64::MIN // signed overflow → dividend
-                } else {
-                    a.wrapping_div(b)
-                };
-                (rd, q as u64, pc_next)
-            }
-            // Unsigned div/rem: checked_* returns None ONLY on divisor zero (no unsigned
-            // overflow case), giving the spec's all-ones / dividend results panic-free.
-            Divu { rd, rs1, rs2 } => {
-                let (a, b) = (r.read(rs1), r.read(rs2));
-                (rd, a.checked_div(b).unwrap_or(u64::MAX), pc_next)
-            }
-            Rem { rd, rs1, rs2 } => {
-                let (a, b) = (r.read(rs1) as i64, r.read(rs2) as i64);
-                let rem = if b == 0 {
-                    a // rem by zero → dividend
-                } else if a == i64::MIN && b == -1 {
-                    0 // overflow → 0
-                } else {
-                    a.wrapping_rem(b)
-                };
-                (rd, rem as u64, pc_next)
-            }
-            Remu { rd, rs1, rs2 } => {
-                let (a, b) = (r.read(rs1), r.read(rs2));
-                (rd, a.checked_rem(b).unwrap_or(a), pc_next)
-            }
-            // W forms: operate on the low 32 bits (upper bits of the sources are
-            // ignored per spec), then sign-extend the 32-bit result to 64.
-            Mulw { rd, rs1, rs2 } => (
-                rd,
-                sext32((r.read(rs1) as u32).wrapping_mul(r.read(rs2) as u32)),
-                pc_next,
-            ),
-            Divw { rd, rs1, rs2 } => {
-                let (a, b) = (r.read(rs1) as i32, r.read(rs2) as i32);
-                let q = if b == 0 {
-                    -1i32
-                } else if a == i32::MIN && b == -1 {
-                    i32::MIN
-                } else {
-                    a.wrapping_div(b)
-                };
-                (rd, sext32(q as u32), pc_next)
-            }
-            // DIVUW: unsigned 32-bit divide, result STILL sign-extended from bit 31
-            // (so a 0xFFFF_FFFF quotient reads back as 0xFFFF_FFFF_FFFF_FFFF).
-            Divuw { rd, rs1, rs2 } => {
-                let (a, b) = (r.read(rs1) as u32, r.read(rs2) as u32);
-                (rd, sext32(a.checked_div(b).unwrap_or(u32::MAX)), pc_next)
-            }
-            Remw { rd, rs1, rs2 } => {
-                let (a, b) = (r.read(rs1) as i32, r.read(rs2) as i32);
-                let rem = if b == 0 {
-                    a
-                } else if a == i32::MIN && b == -1 {
-                    0
-                } else {
-                    a.wrapping_rem(b)
-                };
-                (rd, sext32(rem as u32), pc_next)
-            }
-            Remuw { rd, rs1, rs2 } => {
-                let (a, b) = (r.read(rs1) as u32, r.read(rs2) as u32);
-                (rd, sext32(a.checked_rem(b).unwrap_or(a)), pc_next)
+            Lui { .. }
+            | Auipc { .. }
+            | Addi { .. }
+            | Slti { .. }
+            | Sltiu { .. }
+            | Xori { .. }
+            | Ori { .. }
+            | Andi { .. }
+            | Slli { .. }
+            | Srli { .. }
+            | Srai { .. }
+            | Addiw { .. }
+            | Slliw { .. }
+            | Srliw { .. }
+            | Sraiw { .. }
+            | Add { .. }
+            | Sub { .. }
+            | Sll { .. }
+            | Slt { .. }
+            | Sltu { .. }
+            | Xor { .. }
+            | Srl { .. }
+            | Sra { .. }
+            | Or { .. }
+            | And { .. }
+            | Addw { .. }
+            | Subw { .. }
+            | Sllw { .. }
+            | Srlw { .. }
+            | Sraw { .. }
+            | Mul { .. }
+            | Mulh { .. }
+            | Mulhsu { .. }
+            | Mulhu { .. }
+            | Div { .. }
+            | Divu { .. }
+            | Rem { .. }
+            | Remu { .. }
+            | Mulw { .. }
+            | Divw { .. }
+            | Divuw { .. }
+            | Remw { .. }
+            | Remuw { .. } => {
+                unreachable!("pure integer instructions returned before general execution")
             }
 
             // ── A extension (E1-T04) ────────────────────────────────────────

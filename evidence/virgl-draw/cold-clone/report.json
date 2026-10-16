@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "task": "E6-T12d",
+  "gitHead": "ab60a54e6b3c8bd1020065b7e78b847e3d91c65f",
+  "clone": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-draw-cold-gbo1y1ke/wasm-vm",
+  "removedEnvironmentNames": [
+    "RUST_LOG"
+  ],
+  "command": [
+    "make",
+    "verify-E6-T12d"
+  ],
+  "status": "passed",
+  "cloneHead": "ab60a54e6b3c8bd1020065b7e78b847e3d91c65f",
+  "statusBefore": "",
+  "exitCode": 0,
+  "statusAfter": "",
+  "receiptSha256": "f0a1e3ce227a4cb1702fa1e58c1d6123240f27104db31df7824e88f92128b5e1",
+  "logSha256": "64fe62fc92245121eca4632ab72818cf683dd42daacfb61db7c2a8098ba8480a"
+}

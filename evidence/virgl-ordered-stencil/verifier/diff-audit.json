@@ -1,0 +1,440 @@
+{
+  "status": "passed",
+  "workerBoundary": {
+    "predecessor": "ff80836249c9f235cae516421498a574b51b6f9c",
+    "runtimeFreeze": "c510692cc77e0f0c99d1e2f28dff9de6de2f3372",
+    "changedFiles": [
+      {
+        "path": "Makefile",
+        "freezeSha256": "1879c617d96cd290123e62a3f9b5549c107621e9d59431e7de4af8bfee074a16",
+        "hunks": [
+          {
+            "header": "@@ -2436,0 +2437,4 @@ verify-E6-T11d44-critic:"
+          }
+        ],
+        "classification": "WAIVED declarative recipe; exact make verify-E6-T11d45 hot/cold receipt authenticates the executed gate."
+      },
+      {
+        "path": "evidence/virgl-production-readiness/ordered-stencil-gap/recording.tar.gz",
+        "freezeSha256": "e37ee5c94be466e78b59271f0a2d9d1cf4afe52bf07b35e2d3b33143935be41b",
+        "hunks": [],
+        "classification": "Authenticated complete original negative record + recorder source; all938 members and six original native refusals were independently reopened."
+      },
+      {
+        "path": "evidence/virgl-production-readiness/ordered-stencil-gap/records.json",
+        "freezeSha256": "d62a3e86621ec234a2ca29bc5bd571a978e849af83813386d24a211ec8797a8c",
+        "hunks": [
+          {
+            "header": "@@ -0,0 +1,4692 @@"
+          }
+        ],
+        "classification": "Authenticated complete original negative record + recorder source; all938 members and six original native refusals were independently reopened."
+      },
+      {
+        "path": "evidence/virgl-production-readiness/standard-ordered-stencil-gap.json",
+        "freezeSha256": "ab0246ef23fb77e353bbbe451c86372050a97e3fb748ce676a71c1f5a06cff4c",
+        "hunks": [
+          {
+            "header": "@@ -0,0 +1,2845 @@"
+          }
+        ],
+        "classification": "Authenticated complete original negative record + recorder source; all938 members and six original native refusals were independently reopened."
+      },
+      {
+        "path": "evidence/virgl-production-readiness/standard-ordered-stencil-gap.mjs",
+        "freezeSha256": "9d791b6ae554965fe6794a6769cc4143f5ca34ebcb1d1922d5f152016f5e209a",
+        "hunks": [
+          {
+            "header": "@@ -0,0 +1,40 @@"
+          }
+        ],
+        "classification": "Authenticated complete original negative record + recorder source; all938 members and six original native refusals were independently reopened."
+      },
+      {
+        "path": "renderer/virgl-command/README.md",
+        "freezeSha256": "709c9cc19a9a4a7a2ede6bfd4dc73dc75288b126adba1189126249a957adc54f",
+        "hunks": [
+          {
+            "header": "@@ -309,0 +310,20 @@ and production graphics are still governed by the parent bringup task."
+          }
+        ],
+        "classification": "WAIVED declarative task, queue and scope documentation; no runtime execution."
+      },
+      {
+        "path": "renderer/virgl-command/state.mjs",
+        "freezeSha256": "b605e5c09320b1f0a8ed8819aa21e1cb71ec4c82168831316a963403d6a3ac0b",
+        "hunks": [
+          {
+            "header": "@@ -37,0 +38 @@ export const STANDARD_STENCIL_ASYNC_PROFILE = \"virgl-standard-stencil-async-jobs",
+            "classification": "executed-with-exact-unchanged-operand-waivers",
+            "positivePartitions": 1,
+            "unchangedOperandWaivers": 0,
+            "partitionAudit": "hot-finest-coverage.json + cold-finest-coverage.json"
+          },
+          {
+            "header": "@@ -281 +282,6 @@ export function createVirglStandardStencilAsyncRenderer(options) {",
+            "classification": "executed-with-exact-unchanged-operand-waivers",
+            "positivePartitions": 8,
+            "unchangedOperandWaivers": 0,
+            "partitionAudit": "hot-finest-coverage.json + cold-finest-coverage.json"
+          },
+          {
+            "header": "@@ -332 +338 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+            "classification": "executed-with-exact-unchanged-operand-waivers",
+            "positivePartitions": 23,
+            "unchangedOperandWaivers": 16,
+            "partitionAudit": "hot-finest-coverage.json + cold-finest-coverage.json"
+          },
+          {
+            "header": "@@ -1137 +1143 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+            "classification": "executed-with-exact-unchanged-operand-waivers",
+            "positivePartitions": 2,
+            "unchangedOperandWaivers": 0,
+            "partitionAudit": "hot-finest-coverage.json + cold-finest-coverage.json"
+          },
+          {
+            "header": "@@ -1140 +1146,2 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+            "classification": "executed-with-exact-unchanged-operand-waivers",
+            "positivePartitions": 7,
+            "unchangedOperandWaivers": 0,
+            "partitionAudit": "hot-finest-coverage.json + cold-finest-coverage.json"
+          },
+          {
+            "header": "@@ -1364,0 +1372 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+            "classification": "executed-with-exact-unchanged-operand-waivers",
+            "positivePartitions": 1,
+            "unchangedOperandWaivers": 0,
+            "partitionAudit": "hot-finest-coverage.json + cold-finest-coverage.json"
+          },
+          {
+            "header": "@@ -1370,3 +1378,10 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+            "classification": "executed-with-exact-unchanged-operand-waivers",
+            "positivePartitions": 24,
+            "unchangedOperandWaivers": 0,
+            "partitionAudit": "hot-finest-coverage.json + cold-finest-coverage.json"
+          },
+          {
+            "header": "@@ -1436,0 +1452 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+            "classification": "executed-with-exact-unchanged-operand-waivers",
+            "positivePartitions": 5,
+            "unchangedOperandWaivers": 0,
+            "partitionAudit": "hot-finest-coverage.json + cold-finest-coverage.json"
+          },
+          {
+            "header": "@@ -1490,2 +1506,3 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+            "classification": "executed-with-exact-unchanged-operand-waivers",
+            "positivePartitions": 16,
+            "unchangedOperandWaivers": 0,
+            "partitionAudit": "hot-finest-coverage.json + cold-finest-coverage.json"
+          },
+          {
+            "header": "@@ -1494,0 +1512,25 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+            "classification": "executed-with-exact-unchanged-operand-waivers",
+            "positivePartitions": 53,
+            "unchangedOperandWaivers": 0,
+            "partitionAudit": "hot-finest-coverage.json + cold-finest-coverage.json"
+          },
+          {
+            "header": "@@ -1496 +1538,4 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+            "classification": "executed-with-exact-unchanged-operand-waivers",
+            "positivePartitions": 9,
+            "unchangedOperandWaivers": 0,
+            "partitionAudit": "hot-finest-coverage.json + cold-finest-coverage.json"
+          },
+          {
+            "header": "@@ -1506,0 +1552,4 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+            "classification": "executed-with-exact-unchanged-operand-waivers",
+            "positivePartitions": 14,
+            "unchangedOperandWaivers": 0,
+            "partitionAudit": "hot-finest-coverage.json + cold-finest-coverage.json"
+          },
+          {
+            "header": "@@ -1519 +1568,4 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+            "classification": "executed-with-exact-unchanged-operand-waivers",
+            "positivePartitions": 9,
+            "unchangedOperandWaivers": 0,
+            "partitionAudit": "hot-finest-coverage.json + cold-finest-coverage.json"
+          },
+          {
+            "header": "@@ -1560 +1612,8 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+            "classification": "executed-with-exact-unchanged-operand-waivers",
+            "positivePartitions": 20,
+            "unchangedOperandWaivers": 0,
+            "partitionAudit": "hot-finest-coverage.json + cold-finest-coverage.json"
+          },
+          {
+            "header": "@@ -1563,2 +1622,5 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+            "classification": "executed-with-exact-unchanged-operand-waivers",
+            "positivePartitions": 12,
+            "unchangedOperandWaivers": 0,
+            "partitionAudit": "hot-finest-coverage.json + cold-finest-coverage.json"
+          },
+          {
+            "header": "@@ -1571,0 +1634,5 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+            "classification": "executed-with-exact-unchanged-operand-waivers",
+            "positivePartitions": 11,
+            "unchangedOperandWaivers": 0,
+            "partitionAudit": "hot-finest-coverage.json + cold-finest-coverage.json"
+          },
+          {
+            "header": "@@ -1573 +1640 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+            "classification": "executed-with-exact-unchanged-operand-waivers",
+            "positivePartitions": 3,
+            "unchangedOperandWaivers": 0,
+            "partitionAudit": "hot-finest-coverage.json + cold-finest-coverage.json"
+          },
+          {
+            "header": "@@ -1582 +1649,2 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+            "classification": "executed-with-exact-unchanged-operand-waivers",
+            "positivePartitions": 12,
+            "unchangedOperandWaivers": 1,
+            "partitionAudit": "hot-finest-coverage.json + cold-finest-coverage.json"
+          }
+        ],
+        "classification": "Every changed runtime UTF16 partition has a positive finest counter or one of17 byte-exact unchanged predecessor operands; zero new gaps. Native/body/output replays attack its authority."
+      },
+      {
+        "path": "renderer/virgl-command/tests/standard-ordered-stencil-rig.mjs",
+        "freezeSha256": "afcdf8ca8f674f7814ae3d8219a7500da5b50a83b8c455a2a467fccb603ccee3",
+        "hunks": [
+          {
+            "header": "@@ -0,0 +1,39 @@"
+          }
+        ],
+        "classification": "Executed recording-only instrumentation and original fixture actors across all hot/cold native and fault groups; actual complete vertex fetch/VBO and normalized EBO bodies independently inspected."
+      },
+      {
+        "path": "renderer/virgl-command/tests/standard-ordered-stencil.mjs",
+        "freezeSha256": "54c3f25a40ebbf7819c522dbcdf2a59e8f89090ebfac6dfddcbf2fd13ba279d9",
+        "hunks": [
+          {
+            "header": "@@ -0,0 +1,94 @@"
+          }
+        ],
+        "classification": "Executed recording-only instrumentation and original fixture actors across all hot/cold native and fault groups; actual complete vertex fetch/VBO and normalized EBO bodies independently inspected."
+      },
+      {
+        "path": "renderer/virgl-command/tests/standard-packed-depth-consumer-rig.mjs",
+        "freezeSha256": "5b80ba353a9f813f26f2a267abf4b276d6ab2a985a966e99e7dced8d4a1f4a04",
+        "hunks": [
+          {
+            "header": "@@ -66,0 +67,3 @@ export function rig(gl,bridge,c,f,{delay=0,step=64,fault=null,nativeFault=null,p"
+          }
+        ],
+        "classification": "Qualified builtin-ID native draws physically pass; only negative native location reflection is skipped by recording helper. Runtime builtin INT/size1/location-1 guard remains byte-identical and native IDs physically tagged."
+      },
+      {
+        "path": "renderer/virgl-command/tests/standard-primitive-assembly.mjs",
+        "freezeSha256": "da39d94dea6a0cb80985fd7ea8b1758bc17d86182fc744fd1f667bed5f0ef717",
+        "hunks": [
+          {
+            "header": "@@ -94 +94 @@ export async function runAcceptance({smoke=false}={}){"
+          }
+        ],
+        "classification": "Both smoke mode2 and mode6 execute in hot/cold retained-assembly; independently reopened GPU buffers, native fields and full output."
+      },
+      {
+        "path": "tasks/QUEUE.md",
+        "freezeSha256": "8db9e4e253b16fbb41ab128c82921447d7cb6dca0e6f6ce2485bfd507037c357",
+        "hunks": [
+          {
+            "header": "@@ -5 +5 @@"
+          },
+          {
+            "header": "@@ -684,0 +685 @@ Legend: `[ ]` pending \u00b7 `[~]` in-progress \u00b7 `[?]` implemented/evidence-needed"
+          },
+          {
+            "header": "@@ -688 +689 @@ Legend: `[ ]` pending \u00b7 `[~]` in-progress \u00b7 `[?]` implemented/evidence-needed"
+          }
+        ],
+        "classification": "WAIVED declarative task, queue and scope documentation; no runtime execution."
+      },
+      {
+        "path": "tasks/epic-6-transcendence/E6-T11d-truthful-guest-virgl-bringup.md",
+        "freezeSha256": "00c05be20a69f9ed3051da41c73c62c2f80eaca3addf2f2866bd3d14fb2d4cf3",
+        "hunks": [
+          {
+            "header": "@@ -7,2 +7,2 @@ status: blocked"
+          },
+          {
+            "header": "@@ -547,0 +548,7 @@ Ordered S/high task E6-T11d44 closes native original S8 state/clear execution wi"
+          }
+        ],
+        "classification": "WAIVED declarative task, queue and scope documentation; no runtime execution."
+      },
+      {
+        "path": "tasks/epic-6-transcendence/E6-T11d45-ordered-stencil.md",
+        "freezeSha256": "4a930acec108135d1dc6b1bb9b85a81e7375565932c4edac25a1075a4802a2de",
+        "hunks": [
+          {
+            "header": "@@ -0,0 +1,97 @@"
+          }
+        ],
+        "classification": "WAIVED declarative task, queue and scope documentation; no runtime execution."
+      },
+      {
+        "path": "tools/verify-virgl-ordered-stencil.mjs",
+        "freezeSha256": "79f7894928c5d146c6f7d4dfc5a4949ed09b999d5194fa4836f14eb8f8c5f2d7",
+        "hunks": [
+          {
+            "header": "@@ -0,0 +1,137 @@"
+          }
+        ],
+        "classification": "Executed original fixture/inverse/lifecycle/native/syntax/custody/recursive coverage/receipt/cold/seal evidence tools; commands and full source bodies authenticate at exactc510. Static representation only does not alter product semantics."
+      },
+      {
+        "path": "tools/verify-virgl-ordered-stencil.sh",
+        "freezeSha256": "d03093de9777c4c63ee667ec69e44ce3b5f2a7994922ce8fdb5d73a8e3f5ff04",
+        "hunks": [
+          {
+            "header": "@@ -0,0 +1,44 @@"
+          }
+        ],
+        "classification": "Executed original fixture/inverse/lifecycle/native/syntax/custody/recursive coverage/receipt/cold/seal evidence tools; commands and full source bodies authenticate at exactc510. Static representation only does not alter product semantics."
+      },
+      {
+        "path": "tools/virgl-ordered-stencil/boundaries.mjs",
+        "freezeSha256": "2914a17b792fa28546cd088e5c17ced4961af9d89121a03fcee155c20a4981e8",
+        "hunks": [
+          {
+            "header": "@@ -0,0 +1,30 @@"
+          }
+        ],
+        "classification": "Executed original fixture/inverse/lifecycle/native/syntax/custody/recursive coverage/receipt/cold/seal evidence tools; commands and full source bodies authenticate at exactc510. Static representation only does not alter product semantics."
+      },
+      {
+        "path": "tools/virgl-ordered-stencil/cold.py",
+        "freezeSha256": "5b51fac51d67f0895f2b026b0cb54baa9561889dabe48dc4a4e73cba432b0176",
+        "hunks": [
+          {
+            "header": "@@ -0,0 +1,68 @@"
+          }
+        ],
+        "classification": "Executed original fixture/inverse/lifecycle/native/syntax/custody/recursive coverage/receipt/cold/seal evidence tools; commands and full source bodies authenticate at exactc510. Static representation only does not alter product semantics."
+      },
+      {
+        "path": "tools/virgl-ordered-stencil/coverage-waivers.json",
+        "freezeSha256": "03a94bfe6eb52bd6e8983dfb650867ea53d4a8e23d6c9ef017b4c2ddd7d89af1",
+        "hunks": [
+          {
+            "header": "@@ -0,0 +1,209 @@"
+          }
+        ],
+        "classification": "Authenticated exact old profile alternatives/metadata:false operand only; each full predecessor UTF16 body range independently compared."
+      },
+      {
+        "path": "tools/virgl-ordered-stencil/coverage.py",
+        "freezeSha256": "7172a29259a50edab8c9c27a6cd90d3ed1477b7bca676bba798fff9463c74036",
+        "hunks": [
+          {
+            "header": "@@ -0,0 +1,60 @@"
+          }
+        ],
+        "classification": "Executed original fixture/inverse/lifecycle/native/syntax/custody/recursive coverage/receipt/cold/seal evidence tools; commands and full source bodies authenticate at exactc510. Static representation only does not alter product semantics."
+      },
+      {
+        "path": "tools/virgl-ordered-stencil/fixtures.mjs",
+        "freezeSha256": "199f0bf79e7a87da6f1fb05606939ec31168064a6a7bf1efcefc4c3e20e2a8d5",
+        "hunks": [
+          {
+            "header": "@@ -0,0 +1,75 @@"
+          }
+        ],
+        "classification": "Executed original fixture/inverse/lifecycle/native/syntax/custody/recursive coverage/receipt/cold/seal evidence tools; commands and full source bodies authenticate at exactc510. Static representation only does not alter product semantics."
+      },
+      {
+        "path": "tools/virgl-ordered-stencil/oracle.mjs",
+        "freezeSha256": "e4c2ab256035a14805e02cc4d07a1c13bd4898fa83d9ab8a5f2fc1ce5b6cc1a4",
+        "hunks": [
+          {
+            "header": "@@ -0,0 +1,67 @@"
+          }
+        ],
+        "classification": "Executed original fixture/inverse/lifecycle/native/syntax/custody/recursive coverage/receipt/cold/seal evidence tools; commands and full source bodies authenticate at exactc510. Static representation only does not alter product semantics."
+      },
+      {
+        "path": "tools/virgl-ordered-stencil/physical.py",
+        "freezeSha256": "9a248f7db1368d8583b3ba6c344459125f91fb503737da8485b26ee0425c2a5e",
+        "hunks": [
+          {
+            "header": "@@ -0,0 +1,91 @@"
+          }
+        ],
+        "classification": "Executed original fixture/inverse/lifecycle/native/syntax/custody/recursive coverage/receipt/cold/seal evidence tools; commands and full source bodies authenticate at exactc510. Static representation only does not alter product semantics."
+      },
+      {
+        "path": "tools/virgl-ordered-stencil/predecessor.py",
+        "freezeSha256": "c46b6500b13b1e716d12d34969c0245b0691c8994da91671da9b2279bf91c935",
+        "hunks": [
+          {
+            "header": "@@ -0,0 +1,55 @@"
+          }
+        ],
+        "classification": "Executed original fixture/inverse/lifecycle/native/syntax/custody/recursive coverage/receipt/cold/seal evidence tools; commands and full source bodies authenticate at exactc510. Static representation only does not alter product semantics."
+      },
+      {
+        "path": "tools/virgl-ordered-stencil/receipt.py",
+        "freezeSha256": "e8569f3848ea7e2786857b59eacb3aae52d1d37ea0fb4f4635625647027391bf",
+        "hunks": [
+          {
+            "header": "@@ -0,0 +1,65 @@"
+          }
+        ],
+        "classification": "Executed original fixture/inverse/lifecycle/native/syntax/custody/recursive coverage/receipt/cold/seal evidence tools; commands and full source bodies authenticate at exactc510. Static representation only does not alter product semantics."
+      },
+      {
+        "path": "tools/virgl-ordered-stencil/retained-assembly-values.mjs",
+        "freezeSha256": "08063c856b5ccc007eff7c6e8a3e60810d1fb825c27038347c79a861cb7a3c41",
+        "hunks": [
+          {
+            "header": "@@ -0,0 +1,40 @@"
+          }
+        ],
+        "classification": "Executed original fixture/inverse/lifecycle/native/syntax/custody/recursive coverage/receipt/cold/seal evidence tools; commands and full source bodies authenticate at exactc510. Static representation only does not alter product semantics."
+      },
+      {
+        "path": "tools/virgl-ordered-stencil/seal.py",
+        "freezeSha256": "5f99a12c3382f9dfb2ec72950817dae77a14c03aa7aa1637513b49325cc637d8",
+        "hunks": [
+          {
+            "header": "@@ -0,0 +1,112 @@"
+          }
+        ],
+        "classification": "Executed original fixture/inverse/lifecycle/native/syntax/custody/recursive coverage/receipt/cold/seal evidence tools; commands and full source bodies authenticate at exactc510. Static representation only does not alter product semantics."
+      },
+      {
+        "path": "tools/virgl-ordered-stencil/values.mjs",
+        "freezeSha256": "74ea01abb41f772906d27e09f63a15a3fd91e46de33eb01249a7cf1ff6f1a559",
+        "hunks": [
+          {
+            "header": "@@ -0,0 +1,97 @@"
+          }
+        ],
+        "classification": "Executed original fixture/inverse/lifecycle/native/syntax/custody/recursive coverage/receipt/cold/seal evidence tools; commands and full source bodies authenticate at exactc510. Static representation only does not alter product semantics."
+      }
+    ]
+  },
+  "criticSourceHead": "9381f22a1e555a9d6648f399e255207c51ca4e35",
+  "criticOnlyFiles": [
+    "Makefile",
+    "evidence/virgl-ordered-stencil/verifier/NOVEL-PREDICTION.md",
+    "evidence/virgl-ordered-stencil/verifier/PREDICTIONS.md",
+    "evidence/virgl-ordered-stencil/verifier/custody-initial-assumption.txt",
+    "evidence/virgl-ordered-stencil/verifier/inner-actor-assumption.txt",
+    "evidence/virgl-ordered-stencil/verifier/inner-audit-assumption.txt",
+    "evidence/virgl-ordered-stencil/verifier/resource-fence-audit.json",
+    "renderer/virgl-command/tests/standard-ordered-stencil-critic.mjs",
+    "tools/verify-virgl-ordered-stencil-critic.sh",
+    "tools/verify-virgl-ordered-stencil.mjs",
+    "tools/virgl-ordered-stencil/critic-audit.py",
+    "tools/virgl-ordered-stencil/critic-custody.py",
+    "tools/virgl-ordered-stencil/critic-physical.py",
+    "tools/virgl-ordered-stencil/critic-replay.py",
+    "tools/virgl-ordered-stencil/critic-seal.py"
+  ],
+  "runtimeChangesByCritic": false,
+  "zeroNewUncoveredRuntimePartitions": 0,
+  "unchangedOperandWaivers": 17,
+  "unusedNewRuntimeCode": 0,
+  "unrelatedRustGuestDemoCompilerGatesWaivedBecauseNoChangedBoundary": true
+}

@@ -1,0 +1,174 @@
+{
+  "schema": "original-packed-float-image-gap-v1",
+  "task": "E6-T11d27-planning",
+  "gitHead": "a5085b5491f24b3c700fb7cef7b1629c2efef914",
+  "nativeExecuted": false,
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "productionDrawAuthority": false,
+  "rows": [
+    {
+      "format": 124,
+      "metadata": {
+        "id": 6,
+        "target": 2,
+        "format": 124,
+        "bind": 10,
+        "width": 17,
+        "height": 9,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 4,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "fields": {
+        "resourceHandle": 6,
+        "level": 2,
+        "usage": 0,
+        "stride": 23,
+        "layerStride": 0,
+        "box": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "width": 4,
+          "height": 2,
+          "depth": 1
+        },
+        "dataOffset": 5,
+        "direction": 1
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-resource",
+          "message": "Only qualified 2D levels, one layer, one sample and no flags are supported."
+        }
+      }
+    },
+    {
+      "format": 124,
+      "kind": "view",
+      "hex": "0106060009000000060000007c000002000000000103000088060000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "format": 124,
+      "kind": "surface",
+      "hex": "010805000a000000060000007c0000000200000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "format": 125,
+      "metadata": {
+        "id": 6,
+        "target": 2,
+        "format": 125,
+        "bind": 10,
+        "width": 17,
+        "height": 9,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 4,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "fields": {
+        "resourceHandle": 6,
+        "level": 2,
+        "usage": 0,
+        "stride": 23,
+        "layerStride": 0,
+        "box": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "width": 4,
+          "height": 2,
+          "depth": 1
+        },
+        "dataOffset": 5,
+        "direction": 1
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-resource",
+          "message": "Only qualified 2D levels, one layer, one sample and no flags are supported."
+        }
+      }
+    },
+    {
+      "format": 125,
+      "kind": "view",
+      "hex": "0106060009000000060000007d000002000000000103000088060000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "format": 125,
+      "kind": "surface",
+      "hex": "010805000a000000060000007d0000000200000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    }
+  ],
+  "sources": [
+    {
+      "path": "renderer/virgl-command/decoder.mjs",
+      "bytes": 37406,
+      "sha256": "5d7138153433bbe06a6c3e6085d75ed78be1a633037d710d8ba0f20edf5e1245"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "bytes": 146803,
+      "sha256": "125af9df783d8e37492b31bc65c1a2fbede0879797af8231228d46cb41813a0f"
+    },
+    {
+      "path": "renderer/virgl-command/resources.mjs",
+      "bytes": 89447,
+      "sha256": "dccd5e97dfa4d53379538f08174e36436123d3af919505f374beaa31c8964281"
+    },
+    {
+      "path": "renderer/virgl-command/float-images.mjs",
+      "bytes": 3132,
+      "sha256": "69543e48426c7ded5178b659eb651b5cb765aa559a0bbf96fd8d34f5cf7cfe46"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/virgl_hw.h",
+      "bytes": 36318,
+      "sha256": "191ca5cea527949a29e9753b1e31d550f2fed922895d78dabc5c5c3585aa2ff7"
+    }
+  ]
+}

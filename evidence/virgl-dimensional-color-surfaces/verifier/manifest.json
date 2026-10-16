@@ -1,0 +1,195 @@
+{
+  "schema": "dimensional-color-surface-verifier-seal-v1",
+  "task": "E6-T11d63",
+  "verdict": "verified",
+  "runtimeHead": "6a600d7c1cbf7ea7dd2df8a273465c412e13cf49",
+  "workerMetadataHead": "2be29eca1e9461ec5935e0e1c5b3b582e9ddaadd",
+  "records": 6736,
+  "uniqueBodies": 2492,
+  "backwardLinks": 4244,
+  "recordIndexSha256": "6031faa2a965d9e97ea6a6de74618afc2157bb358157ae2da56b391a319339cc",
+  "archiveSha256": "e027435ec3860953e3310f0762f21885453fdcb69bb59f926a42a4a555fc884a",
+  "archiveBytes": 180555104,
+  "logicalBytes": 1111691610,
+  "preEvidencePredictionsSha256": "38fb28ef95fe3400ad543bec978eba17dd24ce9212f70dc60a0019dfc821b9e7",
+  "verdictSha256": "0b8e16776f4c7691de17f3b397669320b72b4e831e756d247f6106391bde1441",
+  "workerAndDeploymentAuthentication": [
+    {
+      "role": "worker",
+      "manifestSha256": "cdcaa8ba0a2a80d789c7df623818b31cdd491af575ac9a92540b8df25d39cc4e",
+      "indexSha256": "43558e49104803535ea74b29dae6b145bdd8c762163013087f5cb475e22ef624",
+      "archiveSha256": "d3453c44d2c50557d19718d33c9e3949a64418c1eceff5e20ff60fc0c1ed6ec2",
+      "archiveBytes": 93448693,
+      "reopenedMembers": 3926,
+      "gzipEofChecked": true,
+      "extractedBodies": 2564
+    },
+    {
+      "role": "deployment",
+      "manifestSha256": "22a01eafcf805b79094ee3b311b749f62e533ecbd8c5ff37d41ffba641f897ee",
+      "indexSha256": "4c700b75a584dee3bfbb293705b71cdcbcd3d9be6cc66fcd29bacffb91c6a95a",
+      "archiveSha256": "e5e73fc4df3e35934b634816910330d6cd512561866ddb2af6a841e2454b1389",
+      "archiveBytes": 49645482,
+      "reopenedMembers": 515,
+      "gzipEofChecked": true,
+      "extractedBodies": 515
+    }
+  ],
+  "predecessors": {
+    "schema": "dimensional-color-surface-predecessors-v1",
+    "base": "2691b24e6c00478f8d69f81180b6827761de246a",
+    "dependencies": [
+      {
+        "family": "virgl-dimensional-shadow-samplers/worker",
+        "manifestSha256": "8b577966f92fc4dc89d90026a90d8fbf59a3de3d11c21d262b6ec71da062c32c",
+        "indexSha256": "797086b4328561b6f021697392c6a40946b76c1408172e4843d6ee4b5e7f4409",
+        "archiveSha256": "7fa6fe8345d44f52e48e9eb459dbebb52ea478d4fa6460b78335c848277fd0c6",
+        "archiveBytes": 490001728,
+        "reopenedMembers": 8070,
+        "gzipEofChecked": true
+      },
+      {
+        "family": "virgl-dimensional-shadow-samplers/verifier",
+        "manifestSha256": "2a618ef4b0aa3695b82910ca576714ce3de544fdfc30117485bbfa4573d873dc",
+        "indexSha256": "1abeb59d5facf850a5fc26a4b44d8d5533f2d397277498aa22b78155aec8dd9a",
+        "archiveSha256": "023b5894c7d473030503e3aebf0b5848c7331811baa0379708f077923fadbc27",
+        "archiveBytes": 233085122,
+        "reopenedMembers": 2443,
+        "gzipEofChecked": true
+      },
+      {
+        "family": "virgl-dimensional-views/worker",
+        "manifestSha256": "0d33df88ff4eab46b34d7c376fda9f4d69ae1120c6bba9e82a3fd468e8afd135",
+        "indexSha256": "398ef4c26c719a0995bd5fbc7d14039d5dcccdb13613de7a22c945572d9a32da",
+        "archiveSha256": "fb56c37995c361bece8bbe14f6ec5606580741affbb8c76a9469e6c6a231cdf5",
+        "archiveBytes": 151192332,
+        "reopenedMembers": 2327,
+        "gzipEofChecked": true
+      },
+      {
+        "family": "virgl-dimensional-views/verifier",
+        "manifestSha256": "bf8aaeb347ad4aead9304fbfc4759fe74f1e622328f0399fc13c3b412318d590",
+        "indexSha256": "c2b97a36f021cc572d94490e7a341bca0a209923399d3e0c2d070b3026386958",
+        "archiveSha256": "b5cbdaca9aa4885a0b06b94572eaa3a92688be1ba4b0a0c89def652fc956f787",
+        "archiveBytes": 29945836,
+        "reopenedMembers": 445,
+        "gzipEofChecked": true
+      },
+      {
+        "family": "virgl-dimensional-views/transport-verifier",
+        "manifestSha256": "b2b93f53f8fe0029e20cb506b33aac01406f2a5151d36601804cf334c5f88591",
+        "indexSha256": "5f7308a164c7878bab2e01024e3eadf11ea9b01f15355859ed7c2e732a144f86",
+        "archiveSha256": "332645ee4a31909ff984f5503940a18bcd7298432e05c663174e22bfecf08b99",
+        "archiveBytes": 1134499,
+        "reopenedMembers": 26,
+        "gzipEofChecked": true
+      },
+      {
+        "family": "virgl-native-dimensional/worker",
+        "manifestSha256": "7c8fb3ab46b3659ce855e77a80afc161a14f808b491a6753caa6c53231b0d0e6",
+        "indexSha256": "01cb810875ddfcd1b895df24e688e798c1fe4e9d66364da2be4ea0d6aaeef418",
+        "archiveSha256": "d2f66777cdba8f6375d5958e80ca9204854bbccf151a0c3325cb63e6f91eef4b",
+        "archiveBytes": 38478604,
+        "reopenedMembers": 1625,
+        "gzipEofChecked": true
+      },
+      {
+        "family": "virgl-native-dimensional/verifier",
+        "manifestSha256": "d290f464b5be7dbd39e01cc588aa9d4ed580bb4d7e688c345443e86e87ec2dc5",
+        "indexSha256": "914145b80457bbbe323229b4323cdcc04a04001f85399c36a510063cc92bd0b5",
+        "archiveSha256": "073c067eb7fb04d5ce3747d5937e9ec05cd210ae09da8b878ad5179420158619",
+        "archiveBytes": 70942831,
+        "reopenedMembers": 792,
+        "gzipEofChecked": true
+      },
+      {
+        "family": "virgl-dimensional-shadow-shaders/worker",
+        "manifestSha256": "862ccad57dcd39ef940c2ba495c4a638e3e30f82fd4b34546240937b7ce550f1",
+        "indexSha256": "7211cf03b9264aa5215d8d90474fececa5d748bd35a43a0bed2fb1a1d89aac01",
+        "archiveSha256": "d0a39567532a609f313ef2d2a39bea3473d05e7d4d1a43bf5a29edf03221d337",
+        "archiveBytes": 32267855,
+        "reopenedMembers": 44485,
+        "gzipEofChecked": true
+      }
+    ],
+    "generated": {
+      "renderer/virgl-shader/build/wasm/virgl-shader.mjs": {
+        "bytes": 14038,
+        "sha256": "0e5f9c6b75eee85d9a27c6f29aaa4649545ae9a7c639e85466a6bb735f2e51c6"
+      },
+      "renderer/virgl-shader/build/wasm/virgl-shader.wasm": {
+        "bytes": 444027,
+        "sha256": "6b2ae0184103ee1b937f11412aa4a0818c5338d5358cc9b48c04524347163752"
+      }
+    },
+    "unchangedBoundaries": [
+      "D61 original C/Wasm shader compiler",
+      "D62 shader metadata, comparison controls and existing selectors",
+      "D58/D56 original native allocation, private-copy and guarded DMA backend",
+      "all native/Wasm guest execution and transport code"
+    ],
+    "nativeBackendSha256": "486a790144ecedd7d45d1d3145fee8c0181c5fd8a32301705e3ee07fbc3cecb3",
+    "actualLinuxGuest": false,
+    "productionAuthority": false
+  },
+  "actualLinuxGuest": false,
+  "productionAuthority": false,
+  "performanceQualified": false,
+  "archiveParts": [
+    {
+      "path": "recording.tar.gz.part-0000",
+      "bytes": 16777216,
+      "sha256": "0afed3f8517e7a97df9e6a4838048bd40d616b81e43b7563258545fa49c23b11"
+    },
+    {
+      "path": "recording.tar.gz.part-0001",
+      "bytes": 16777216,
+      "sha256": "09683889a307e9f09a763428411164ac3dd7bd7d27abc27bd154f244c06c326d"
+    },
+    {
+      "path": "recording.tar.gz.part-0002",
+      "bytes": 16777216,
+      "sha256": "ebfcacb17dbffad42a330bac4f7ef92a88aa51dca59373ef050454b10787ebc4"
+    },
+    {
+      "path": "recording.tar.gz.part-0003",
+      "bytes": 16777216,
+      "sha256": "65959e64fa31ceed2d916675c461a7b240a994789ff32e6472107c440c1fb198"
+    },
+    {
+      "path": "recording.tar.gz.part-0004",
+      "bytes": 16777216,
+      "sha256": "53bdbb05a632df247b65053673ee71118f828f263a081edca04994148b89ea80"
+    },
+    {
+      "path": "recording.tar.gz.part-0005",
+      "bytes": 16777216,
+      "sha256": "758c4b147d7308d596bf54e2447f53bdb7b2058fe607838690faac25317292dd"
+    },
+    {
+      "path": "recording.tar.gz.part-0006",
+      "bytes": 16777216,
+      "sha256": "f5125661159a7d412f9d803d168d30c120ec49535dd389b21eadba8b03097f4a"
+    },
+    {
+      "path": "recording.tar.gz.part-0007",
+      "bytes": 16777216,
+      "sha256": "41d17e30fa4fd884a981bfaabc0945c6d6e8398170a68b0e5100deeef10d789e"
+    },
+    {
+      "path": "recording.tar.gz.part-0008",
+      "bytes": 16777216,
+      "sha256": "3baf712ab102cad24a0fe3ba03afbb32196afff092b88d0ef5b295dcf5ba83e2"
+    },
+    {
+      "path": "recording.tar.gz.part-0009",
+      "bytes": 16777216,
+      "sha256": "90bf079dffe1859b03ea7b776a741326fbb2eca2e62f42149481c25fd215f393"
+    },
+    {
+      "path": "recording.tar.gz.part-0010",
+      "bytes": 12782944,
+      "sha256": "715a88b009ea6152efb97223e9f23161f7cf089ecf9f9fc743dca79036361d6b"
+    }
+  ]
+}

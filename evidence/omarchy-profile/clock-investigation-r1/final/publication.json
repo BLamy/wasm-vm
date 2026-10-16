@@ -1,0 +1,37 @@
+{
+  "deployedHead": "b2e8468ea3efa485153300407d8176cedff76e17",
+  "checkedAt": "2026-10-01T21:38:50.163Z",
+  "base": "https://wasm-vm.pages.dev",
+  "deployment": "https://2599e2f0.wasm-vm.pages.dev",
+  "files": [
+    {
+      "path": "pkg/wasm_vm_wasm_bg.wasm",
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm_bg.wasm?clock-investigation=b2e8468e",
+      "status": 200,
+      "size": 1628023,
+      "sha256": "f8b40d93039a9bb454250df40592e8c1d62144cac600bdcd82ea74098d7bb516"
+    },
+    {
+      "path": "roadmap.js",
+      "url": "https://wasm-vm.pages.dev/roadmap.js?clock-investigation=b2e8468e",
+      "status": 200,
+      "size": 52051,
+      "sha256": "a313fff04ce0fc1895e68485d189809cf0c6b72eca659edf08ee1391950b2c53"
+    },
+    {
+      "path": "tasks.json",
+      "url": "https://wasm-vm.pages.dev/tasks.json?clock-investigation=b2e8468e",
+      "status": 200,
+      "size": 3759034,
+      "sha256": "461ef106fdc2cb5b640fbf8bf0e64b859164a9673140f139e154315b54e534fd"
+    },
+    {
+      "path": "artifacts-omarchy.json",
+      "url": "https://wasm-vm.pages.dev/artifacts-omarchy.json?clock-investigation=b2e8468e",
+      "status": 200,
+      "size": 1193,
+      "sha256": "0fa46b08b90179bb11f6a451f86959908089f73afa19c99580f28360b7b8c22a"
+    }
+  ],
+  "passed": true
+}

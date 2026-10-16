@@ -1,0 +1,58 @@
+{
+  "task": "E6-T12g6m3a",
+  "status": "passed",
+  "checks": [
+    {
+      "command": [
+        "node",
+        "--check",
+        "tools/virgl-exact-bank/critic.mjs"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "py_compile",
+        "evidence/virgl-exact-bank/verifier/authenticate.py",
+        "evidence/virgl-exact-bank/verifier/capture_audit.py",
+        "evidence/virgl-exact-bank/verifier/carry_forward.py",
+        "evidence/virgl-exact-bank/verifier/coverage_audit.py",
+        "evidence/virgl-exact-bank/verifier/fault_source_audit.py",
+        "evidence/virgl-exact-bank/verifier/prepare_inherited.py",
+        "evidence/virgl-exact-bank/verifier/reexport.py",
+        "evidence/virgl-exact-bank/verifier/sabotage.py",
+        "evidence/virgl-exact-bank/verifier/seal.py"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python3",
+        "tools/check_task_policy.py"
+      ],
+      "exitCode": 0,
+      "stdout": "task-policy: OK (active=none)\n",
+      "stderr": ""
+    }
+  ],
+  "historicalNamesPreserved": 4202,
+  "baselineSha256": "17fd92fd454a14a44fddc4db0beadc4246a92f4ff749e57a8e2762aca638f8ac",
+  "runtimeAndWebTrackedChanges": [],
+  "workerSealDigestsUnchanged": true
+}

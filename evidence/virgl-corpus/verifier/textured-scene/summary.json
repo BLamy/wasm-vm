@@ -1,0 +1,325 @@
+{
+  "apiCalls": {
+    "context_create": 2,
+    "context_create_with_flags": 2,
+    "context_destroy": 1,
+    "create_fence": 11,
+    "ctx_attach_resource": 6,
+    "ctx_detach_resource": 6,
+    "fill_caps": 1,
+    "get_cap_set": 4,
+    "init": 1,
+    "resource_attach_iov": 6,
+    "resource_create": 6,
+    "resource_detach_iov": 5,
+    "resource_unref": 5,
+    "submit_cmd": 8,
+    "transfer_write_iov": 47,
+    "write_fence": 11
+  },
+  "apiResults": {
+    "context_create:0": 2,
+    "context_create_with_flags:0": 2,
+    "context_destroy:0": 1,
+    "create_fence:0": 11,
+    "ctx_attach_resource:0": 6,
+    "ctx_detach_resource:0": 6,
+    "fill_caps:0": 1,
+    "get_cap_set:0": 4,
+    "init:0": 1,
+    "resource_attach_iov:0": 6,
+    "resource_create:0": 6,
+    "resource_detach_iov:0": 5,
+    "resource_unref:0": 5,
+    "submit_cmd:0": 8,
+    "transfer_write_iov:0": 47,
+    "write_fence:0": 11
+  },
+  "blobBytes": 7756580,
+  "blobs": 21,
+  "capsets": [
+    {
+      "bytes": 1408,
+      "event": 131,
+      "set": 2,
+      "sha256": "ac9c58aa54968197ec480f2e90ccb6c57d7a964beef4806e907256e12a04f155",
+      "version": 0
+    }
+  ],
+  "events": 347,
+  "manifestSha256": "64535efc5435d14960d5fc59426bf6480a22be1929882b0c6b78c88573cb493b",
+  "objects": {
+    "BLEND": 2,
+    "DSA": 1,
+    "RASTERIZER": 1,
+    "SAMPLER_STATE": 1,
+    "SAMPLER_VIEW": 1,
+    "SHADER": 2,
+    "SURFACE": 1,
+    "VERTEX_ELEMENTS": 1
+  },
+  "opcodes": {
+    "BIND_OBJECT": 9,
+    "BIND_SAMPLER_STATES": 7,
+    "BIND_SHADER": 10,
+    "CLEAR": 3,
+    "COPY_TRANSFER3D": 4,
+    "CREATE_OBJECT": 10,
+    "CREATE_SUB_CTX": 1,
+    "DESTROY_OBJECT": 9,
+    "DESTROY_SUB_CTX": 1,
+    "DRAW_VBO": 3,
+    "END_TRANSFERS": 8,
+    "LINK_SHADER": 1,
+    "SET_ATOMIC_BUFFERS": 1,
+    "SET_BLEND_COLOR": 1,
+    "SET_CONSTANT_BUFFER": 95,
+    "SET_FRAMEBUFFER_STATE": 2,
+    "SET_FRAMEBUFFER_STATE_NO_ATTACH": 2,
+    "SET_INDEX_BUFFER": 3,
+    "SET_MIN_SAMPLES": 2,
+    "SET_POLYGON_STIPPLE": 1,
+    "SET_SAMPLER_VIEWS": 1,
+    "SET_SAMPLE_MASK": 1,
+    "SET_SHADER_BUFFERS": 6,
+    "SET_SHADER_IMAGES": 12,
+    "SET_STENCIL_REF": 1,
+    "SET_STREAMOUT_TARGETS": 1,
+    "SET_SUB_CTX": 8,
+    "SET_TESS_STATE": 1,
+    "SET_TWEAKS": 2,
+    "SET_VERTEX_BUFFERS": 1,
+    "SET_VIEWPORT_STATE": 1,
+    "TRANSFER3D": 2
+  },
+  "resourceCreates": [
+    {
+      "arraySize": 1,
+      "bind": 2,
+      "depth": 1,
+      "event": 10,
+      "flags": 1,
+      "format": 2,
+      "height": 480,
+      "lastLevel": 0,
+      "nrSamples": 0,
+      "resourceId": 2,
+      "target": 2,
+      "width": 640
+    },
+    {
+      "arraySize": 1,
+      "bind": 16,
+      "depth": 1,
+      "event": 157,
+      "flags": 0,
+      "format": 64,
+      "height": 1,
+      "lastLevel": 0,
+      "nrSamples": 0,
+      "resourceId": 3,
+      "target": 0,
+      "width": 64
+    },
+    {
+      "arraySize": 1,
+      "bind": 32,
+      "depth": 1,
+      "event": 168,
+      "flags": 0,
+      "format": 64,
+      "height": 1,
+      "lastLevel": 0,
+      "nrSamples": 0,
+      "resourceId": 4,
+      "target": 0,
+      "width": 12
+    },
+    {
+      "arraySize": 1,
+      "bind": 10,
+      "depth": 1,
+      "event": 179,
+      "flags": 0,
+      "format": 67,
+      "height": 32,
+      "lastLevel": 0,
+      "nrSamples": 0,
+      "resourceId": 5,
+      "target": 2,
+      "width": 32
+    },
+    {
+      "arraySize": 1,
+      "bind": 10,
+      "depth": 1,
+      "event": 190,
+      "flags": 0,
+      "format": 67,
+      "height": 2,
+      "lastLevel": 0,
+      "nrSamples": 0,
+      "resourceId": 6,
+      "target": 2,
+      "width": 2
+    },
+    {
+      "arraySize": 1,
+      "bind": 524288,
+      "depth": 1,
+      "event": 204,
+      "flags": 0,
+      "format": 64,
+      "height": 1,
+      "lastLevel": 0,
+      "nrSamples": 0,
+      "resourceId": 7,
+      "target": 0,
+      "width": 1048576
+    }
+  ],
+  "resourceFormats": {
+    "2": 1,
+    "64": 3,
+    "67": 2
+  },
+  "shaderInstructions": {
+    "END": 2,
+    "MOV": 4,
+    "MUL": 1,
+    "TEX": 1
+  },
+  "shaderStageCounts": {
+    "FRAG": 1,
+    "VERT": 1
+  },
+  "shaders": {
+    "80d6db6a6f10b93770698cfdd47232fed0fca94f4cb07ba7381bb38563de9808": {
+      "bytes": 261,
+      "instructions": {
+        "END": 1,
+        "MUL": 1,
+        "TEX": 1
+      },
+      "occurrences": [
+        {
+          "context": 2,
+          "declaredBytes": 262,
+          "declaredTokens": 32,
+          "handle": 2,
+          "packets": [
+            {
+              "byteOffset": 4420,
+              "continuation": false,
+              "event": 221,
+              "fragmentBytes": 264
+            }
+          ],
+          "stage": "FRAG",
+          "streamoutOutputs": 0,
+          "subcontext": 1
+        }
+      ],
+      "stage": "FRAG"
+    },
+    "e96102a3202dde8b0b05ffa142eb6064c5fe916b673bbf1d31464bcbac56fb33": {
+      "bytes": 256,
+      "instructions": {
+        "END": 1,
+        "MOV": 4
+      },
+      "occurrences": [
+        {
+          "context": 2,
+          "declaredBytes": 257,
+          "declaredTokens": 32,
+          "handle": 1,
+          "packets": [
+            {
+              "byteOffset": 4136,
+              "continuation": false,
+              "event": 221,
+              "fragmentBytes": 260
+            }
+          ],
+          "stage": "VERT",
+          "streamoutOutputs": 0,
+          "subcontext": 1
+        }
+      ],
+      "stage": "VERT"
+    }
+  },
+  "submissions": [
+    {
+      "bytes": 5736,
+      "commands": 39,
+      "context": 2,
+      "event": 221,
+      "sha256": "364452bac8463817df9b95ae07be7203ec8411bd6be08ab43029f7c69be028cc"
+    },
+    {
+      "bytes": 4164,
+      "commands": 3,
+      "context": 2,
+      "event": 233,
+      "sha256": "11d7a8a13799e2c6a35a34ce40afd121e0d2e62370b9f0ca6b18002d4257470c"
+    },
+    {
+      "bytes": 4236,
+      "commands": 6,
+      "context": 2,
+      "event": 245,
+      "sha256": "a30bdebf440d44f28e95bcb4f28a33f1a51db5350239acd50c8ec73bb9192396"
+    },
+    {
+      "bytes": 4164,
+      "commands": 3,
+      "context": 2,
+      "event": 257,
+      "sha256": "21b0c51152d709ad80365dd8ea0ea209a50bd2451dee23f77de6a4ed088ed4b0"
+    },
+    {
+      "bytes": 4292,
+      "commands": 8,
+      "context": 2,
+      "event": 269,
+      "sha256": "4850440acce5f52b247b9d04192c5fb757dec723b05f3dabe7a1ca53478b81b6"
+    },
+    {
+      "bytes": 4164,
+      "commands": 3,
+      "context": 2,
+      "event": 284,
+      "sha256": "c3e72f8d3b61dcae9cfd7aacd6a2c817686fa695a318d861139ce12bb504ec17"
+    },
+    {
+      "bytes": 4144,
+      "commands": 6,
+      "context": 2,
+      "event": 296,
+      "sha256": "077179667c9698bec4e54db75a1d8a458514ddf87a220ce05ff20eeed532a3da"
+    },
+    {
+      "bytes": 11480,
+      "commands": 142,
+      "context": 2,
+      "event": 306,
+      "sha256": "ae7a34f64af64e7bcfa324f1f70aec362ca207197a5e085727644aca793c351e"
+    }
+  ],
+  "versions": {
+    "guest": {
+      "architecture": "riscv64",
+      "hyprland": "0.56.2-3",
+      "mesa": "1:26.2.2-1"
+    },
+    "host": {
+      "architecture": "aarch64",
+      "renderer": "llvmpipe",
+      "virglCommit": "ca50e008863837e094747a69974dde3ae148aeaa",
+      "virglrenderer": "1.3.0"
+    }
+  },
+  "workload": "textured-scene"
+}

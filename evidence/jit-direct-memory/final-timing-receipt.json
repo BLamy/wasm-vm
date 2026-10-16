@@ -1,0 +1,69 @@
+{
+  "head": "7e51177d966e05f7ae8b3ae23c7d5d0d028c404b",
+  "startedAt": "2026-10-03T01:34:34.073489+00:00",
+  "hashesBefore": {
+    "crates/wasm/src/jit_browser.rs": "8d592c91c45dbffba8958648542d255cb8e69256f65a1a17de5e7de4fb1116ed",
+    "tools/verify/jit-direct-memory-benchmark.mjs": "e6bfc8ded249926e55ef2cb7dd01d56a5e527aee350191d418a667e3d2b3eed6",
+    "tools/perf/bench-browser.mjs": "f44ab5e303a37e67c8adfe2e6798340dbd70b425681fb4d80edc44e69ca7dbac",
+    "web/pkg/wasm_vm_wasm_bg.wasm": "4f1005a174e6dba3cf698d503a21a10168f4ff37db2c2419fbae86fb2f8a787b",
+    "web/dist/pkg/wasm_vm_wasm_bg.wasm": "4f1005a174e6dba3cf698d503a21a10168f4ff37db2c2419fbae86fb2f8a787b"
+  },
+  "commands": [
+    {
+      "label": "micro-final-1",
+      "argv": [
+        "node",
+        "tools/verify/jit-direct-memory-benchmark.mjs",
+        "evidence/jit-direct-memory/micro-final-1",
+        "/tmp/wasm-vm-direct-memory-baseline"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 13.28,
+      "logSha256": "446a769326ade62a44d0e25e8e92e989b71b7e6be91f581543acf17cbd105ce2"
+    },
+    {
+      "label": "micro-final-2",
+      "argv": [
+        "node",
+        "tools/verify/jit-direct-memory-benchmark.mjs",
+        "evidence/jit-direct-memory/micro-final-2",
+        "/tmp/wasm-vm-direct-memory-baseline"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 13.068,
+      "logSha256": "0cb39ea067d8d9a0395ca00425dd31b39004989b3aef815c268b43f927d0d613"
+    },
+    {
+      "label": "browser-final",
+      "argv": [
+        "node",
+        "tools/perf/bench-browser.mjs",
+        "--root",
+        "baseline=/tmp/wasm-vm-direct-memory-baseline",
+        "--root",
+        "candidate=/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm",
+        "--out",
+        "evidence/jit-direct-memory/browser-final",
+        "--samples",
+        "5",
+        "--cases",
+        "busybox-jit,busybox-nojit",
+        "--releases",
+        "/Users/blamy/Documents/Codex/wasm-vm/releases",
+        "--chrome",
+        "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 173.923,
+      "logSha256": "51a0044ed9ac87ef81f8b665d014e50c50b8593a7c12f1827581ee4864109945"
+    }
+  ],
+  "hashesAfter": {
+    "crates/wasm/src/jit_browser.rs": "8d592c91c45dbffba8958648542d255cb8e69256f65a1a17de5e7de4fb1116ed",
+    "tools/verify/jit-direct-memory-benchmark.mjs": "e6bfc8ded249926e55ef2cb7dd01d56a5e527aee350191d418a667e3d2b3eed6",
+    "tools/perf/bench-browser.mjs": "f44ab5e303a37e67c8adfe2e6798340dbd70b425681fb4d80edc44e69ca7dbac",
+    "web/pkg/wasm_vm_wasm_bg.wasm": "4f1005a174e6dba3cf698d503a21a10168f4ff37db2c2419fbae86fb2f8a787b",
+    "web/dist/pkg/wasm_vm_wasm_bg.wasm": "4f1005a174e6dba3cf698d503a21a10168f4ff37db2c2419fbae86fb2f8a787b"
+  },
+  "finishedAt": "2026-10-03T01:37:54.346280+00:00"
+}

@@ -1,0 +1,34 @@
+{
+  "productCodeChanged": false,
+  "corrections": [
+    {
+      "boundary": "audit import path",
+      "original": "../../../../tools",
+      "corrected": "../../../tools",
+      "reason": "verifier audit lives three levels below repository root"
+    },
+    {
+      "boundary": "boundary poison record",
+      "original": "every truthy boundary.poison treated as blob",
+      "corrected": "only kind=poison-instance is a byte blob; older boundary.poison is native state",
+      "failedTranscript": "interrogation-initial-boundary-assumption.log"
+    },
+    {
+      "boundary": "D45 compiler carry",
+      "original": "compare D45 C compiler to current D46 compiler",
+      "corrected": "carry exact D46 compiler; record D45 changed compiler sources as superseded and use independently verified D46 legacy ABI evidence",
+      "failedTranscript": "gap-and-carry-initial-boundary-assumption.log"
+    },
+    {
+      "boundary": "native writer event names",
+      "original": "draw prefix also selected drawBuffers state",
+      "corrected": "only four native draw APIs count as draw writers",
+      "failedTranscript": "corruption-audit-initial-event-classification.log"
+    },
+    {
+      "script": "novel-interrogate.mjs",
+      "initialFailureTranscript": "novel-interrogation-initial-fence-assumption.log",
+      "correction": "The direct post-corruption native fence and the later physical-readback copy fence are distinct legitimate syncs. Independently authenticate both; direct corruption completion follows every writer and the later readback fence follows that completion. No runtime or fixture change."
+    }
+  ]
+}

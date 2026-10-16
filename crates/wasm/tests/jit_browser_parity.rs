@@ -19,7 +19,9 @@
 //! cache/chain/evict bookkeeping are IDENTICAL — this harness is the closest faithful headless form
 //! (a real in-browser boot is dev/browser verification debt: the Mac OS-reaps browser boots).
 
-#![cfg(target_arch = "wasm32")]
+// Supervisor parity requires the real CSR file. The default Wasm gate runs this
+// file; the quarantined stub gate is confined to the original ISA fixtures.
+#![cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 #![allow(clippy::identity_op)] // the RV64 field-encoders keep every field term for legibility
 
 use std::cell::Cell;

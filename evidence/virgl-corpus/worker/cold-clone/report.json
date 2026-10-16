@@ -1,0 +1,18 @@
+{
+  "head": "062cd81430f52326e83a128b6cf7cb6c1e9d3f92",
+  "directory": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-corpus-cold-v6ujwqp4",
+  "command": [
+    "make",
+    "verify-E6-T10b"
+  ],
+  "exitCode": 0,
+  "scrubbed": [
+    "RUSTFLAGS",
+    "RUST_LOG",
+    "CARGO_*",
+    "PYTHONPATH",
+    "PYTHONHOME"
+  ],
+  "gitStatus": "",
+  "logSha256": "8b0cebcc44ef1fdf08ec095186f5af0b3c5d31e670f4594cd71e0ca211324df0"
+}

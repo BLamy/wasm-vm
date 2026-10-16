@@ -1,0 +1,35 @@
+   Compiling virgl-control-independent-verifier v0.0.0 (/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-control/verifier/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.16s
+     Running unittests src/lib.rs (evidence/virgl-control/verifier/native/target-coverage/debug/deps/virgl_control_independent_verifier-2034006dbd4ab529)
+
+running 4 tests
+test tests::each_control_transaction_rolls_back_sink_failure_and_retries ... P10 HELD opcode=0200 expected sink failure atomic and retry successful
+P10 HELD opcode=0201 expected sink failure atomic and retry successful
+P10 HELD opcode=0202 expected sink failure atomic and retry successful
+P10 HELD opcode=0203 expected sink failure atomic and retry successful
+P10 HELD opcode=0204 expected sink failure atomic and retry successful
+P10 HELD opcode=0106 expected sink failure atomic and retry successful
+P10 HELD opcode=0107 expected sink failure atomic and retry successful
+P10 HELD opcode=0102 expected sink failure atomic and retry successful
+ok
+test tests::independent_padding_detach_and_sink_failures_cover_transaction_boundary ... P10/P11 HELD sink_error=invalid-context-id wire=1204; no partial resource publication
+P10/P11 HELD sink_error=invalid-resource-id wire=1203; no partial resource publication
+P10/P11 HELD sink_error=invalid-parameter wire=1205; no partial resource publication
+P10/P11 HELD sink_error=out-of-memory wire=1201; no partial resource publication
+P10/P11 HELD sink_error=unspecified wire=1200; no partial resource publication
+P10/P11 HELD sink_error=bridge-poisoned wire=1200; no partial resource publication
+ok
+test tests::pending_command_survives_every_snapshot_refusal_without_quiesce_or_fallback ... P13 HELD pending command retained; full RAM and architectural/transport digests unchanged through seven refusals
+ok
+test tests::reply_alias_and_late_invalid_sg_do_not_change_initial_owned_bytes ... P08/P09 HELD seed=19; alias SG copied before reply, invalid tail atomic, short valid recovery
+P08/P09 HELD seed=67; alias SG copied before reply, invalid tail atomic, short valid recovery
+P08/P09 HELD seed=d3; alias SG copied before reply, invalid tail atomic, short valid recovery
+ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.63s
+
+   Doc-tests virgl_control_independent_verifier
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s

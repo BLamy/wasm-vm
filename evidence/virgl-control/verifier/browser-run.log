@@ -1,0 +1,22 @@
+{
+  "status": "passed",
+  "variants": [
+    {
+      "variant": "baseline",
+      "status": "passed",
+      "assertions": 645,
+      "attacks": 44,
+      "records": 79
+    },
+    {
+      "variant": "skip-backing",
+      "status": "failed",
+      "error": "initial owned backing: missing-backing: got false, expected true"
+    },
+    {
+      "variant": "preserve-highwater",
+      "status": "failed",
+      "error": "same generation retry after reset literal response: got \"031200000000000000000000000000000000000000000000\", expected \"001100000000000000000000000000000000000000000000\""
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "schema": "virgl-known-arithmetic-critic-sabotage-v1",
+  "task": "E6-T12g6m1",
+  "status": "HELD",
+  "predictionSha256": "a80cdf7c439f3914ae1cf37552b454e0f77b3a739fcfdd8bde813919833b6f1c",
+  "binarySha256": "623078a304b6fb7cabc2af7dd8b693b61aba94703dbe5714be34f00058a3478b",
+  "mutatedSourceSha256": "45f40e0293cbbb1fb2667947df7cd53456ee38740be07a3c6fbe21ee16303f9e",
+  "criticFixtureSha256": "cf310b05000ca0449eadb448cbcc4e628a7d7e634d0c51167eb7e79b6b5bfa1d",
+  "criticExitCode": 1,
+  "criticStderr": "arithmetic 4 op0 3f800000 33800000: 3f800001 != 3f800000\nknown-arithmetic: independent rational prediction in every rounding mode\n",
+  "criticStderrSha256": "f6f5ea5220a74815478ecab8d3bcc8d3865b3525979b1b0ff7f3d2c4ca8a2456",
+  "workerExitCode": 1,
+  "workerStderr": "arithmetic 14 op0 3f800000 33800000: 3f800001 != 3f800000\nknown-arithmetic: independent rational prediction in every rounding mode\n",
+  "workerStderrSha256": "3024958378432b74030bbf0c56f32d11b868339cca40214dd6cd9eae53951396",
+  "originalWorktreeSourceUntouched": true
+}

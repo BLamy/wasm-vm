@@ -1,0 +1,70 @@
+{
+  "schema": "original-packed-image-consumer-gap-v1",
+  "task": "E6-T11d28",
+  "gitHead": "ed846a71801b74986e903f4f029b225df9545134",
+  "sources": [
+    {
+      "path": "renderer/virgl-command/decoder.mjs",
+      "bytes": 37406,
+      "sha256": "5d7138153433bbe06a6c3e6085d75ed78be1a633037d710d8ba0f20edf5e1245"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "bytes": 146803,
+      "sha256": "125af9df783d8e37492b31bc65c1a2fbede0879797af8231228d46cb41813a0f"
+    },
+    {
+      "path": "renderer/virgl-command/resources.mjs",
+      "bytes": 91652,
+      "sha256": "6da63f52d7d079ac2ad154ae70c35d4cbf7293e5f213d65d034422e9af8c44dc"
+    },
+    {
+      "path": "renderer/virgl-command/packed-float-images.mjs",
+      "bytes": 1620,
+      "sha256": "0ea28e0bfcf4a0ae04f634826d4b65cb19a6285850836412c7b06311ce1c5405"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/virgl_hw.h",
+      "bytes": 36318,
+      "sha256": "191ca5cea527949a29e9753b1e31d550f2fed922895d78dabc5c5c3585aa2ff7"
+    },
+    {
+      "path": "tools/virgl-command/standard-float-image-mesa-formats.yaml",
+      "bytes": 80486,
+      "sha256": "f0fef33544456468def10d5dffc72a61e8b0e7acc599b700fc65366e6f495a10"
+    }
+  ],
+  "rows": [
+    {
+      "kind": "sampler-range",
+      "format": 124,
+      "hex": "0106060009000000060000007c0000020000000001030000220a0000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface-mip",
+      "format": 124,
+      "hex": "010805000a000000060000007c0000000200000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    }
+  ],
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "authority": "negative-readiness-only"
+}

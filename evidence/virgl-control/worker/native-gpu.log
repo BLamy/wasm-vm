@@ -1,0 +1,7 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running unittests src/lib.rs (target/debug/deps/wasm_vm_core-66cd39800b706bc9)
+
+running 80 tests
+................................................................................
+test result: ok. 80 passed; 0 failed; 0 ignored; 0 measured; 302 filtered out; finished in 0.49s
+

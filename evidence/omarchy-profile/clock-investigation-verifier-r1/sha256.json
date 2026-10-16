@@ -1,0 +1,23 @@
+{
+  "files": {
+    "VERDICT.md": "dadd741bb527843921469a26f6572cd0e26d98a7a950b410a5da37b40a0d2c64",
+    "attacks.json": "8f258433b1bb1e586b52c6b361007c4154bec6558d47b8ce7532654a11ba427b",
+    "attacks.py": "60a6b2b4975a6f82617c665252dcf790771549c9f54e79cb9706f7f277cd069d",
+    "audit.json": "3c58b707b196b21cfd86e5456850e1ae633024559cd681064deed61588abf874",
+    "audit.py": "40fae428e1e407016b84d2a22f56638b51ae848b563de5dffb430a48bbafb14c",
+    "baseline-tamper.log": "3875f9b197563934832740dfbef6e6190fed674f839f4c5e539783c21508fdbf",
+    "cold-clone-history.log": "7cf083ea39d0698eed5296a58a32f74189f923b3a2c96d4c95ee89e368a6ff9a",
+    "control-sabotage.log": "7acb120484b1687c6a8ffdc6f76202b2fab4e39600432ae34f8985a40f1216c2",
+    "focused-gates.log": "63d7ddb6e9a310f13442ac8338ee49de3a04c520cfb924101a95463cd046a958",
+    "promoted-collector-tests.log": "df0f6394d2f01815e3c433184070ac5ea6d64c7e023eab71c59677dc0c97cf25",
+    "runtime-control/baseline-guest-trace64.txt": "f8cb47ab87213e6d1f0e613d6130babdc3af7fb91a749e9a51c66117143701a9",
+    "runtime-control/candidate-guest-trace64.txt": "f8cb47ab87213e6d1f0e613d6130babdc3af7fb91a749e9a51c66117143701a9",
+    "runtime-control/report.json": "ad08bf21678adcd7c99b7eb9a683d0af4502db5548997b7c43a635c2b5b38e05",
+    "runtime-control.log": "1262c2c9866952350086f4edfc177029a378520692d8a39b107d56de4a3df3b9"
+  },
+  "promotedSourceFiles": {
+    "Makefile": "7d0ff0482de1bff10a0eba8ab7844336255e422dc1d3dca07d53968d3f496512",
+    "crates/core/src/clock_advance_tests.rs": "b101a0158625c5629445f02150ad8506562fd84fdbcb26f7021d94de6ac99a31",
+    "tools/verify/clock-fast-path-benchmark.test.mjs": "b8bd1c0c2c3d9a8c547feceb49110b824d3cf33de9012030fc695ffc32a81fd8"
+  }
+}

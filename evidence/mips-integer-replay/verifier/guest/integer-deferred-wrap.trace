@@ -1,0 +1,16 @@
+compressed=false cached=false traced=false retired=2 pc=0 x5=4092
+core 0: 0xfffffffffffffffa (0x00000001)
+core 0: 0xfffffffffffffffc (0x00001297) x5 0x0000000000000ffc
+compressed=false cached=false traced=true retired=2 pc=0 x5=4092
+compressed=false cached=true traced=false retired=2 pc=0 x5=4092
+core 0: 0xfffffffffffffffa (0x00000001)
+core 0: 0xfffffffffffffffc (0x00001297) x5 0x0000000000000ffc
+compressed=false cached=true traced=true retired=2 pc=0 x5=4092
+compressed=true cached=false traced=false retired=2 pc=0 x5=1
+core 0: 0xfffffffffffffffc (0x00000001)
+core 0: 0xfffffffffffffffe (0x00000285) x5 0x0000000000000001
+compressed=true cached=false traced=true retired=2 pc=0 x5=1
+compressed=true cached=true traced=false retired=2 pc=0 x5=1
+core 0: 0xfffffffffffffffc (0x00000001)
+core 0: 0xfffffffffffffffe (0x00000285) x5 0x0000000000000001
+compressed=true cached=true traced=true retired=2 pc=0 x5=1

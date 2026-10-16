@@ -1,0 +1,6 @@
+{
+  "renderer/virgl-shader/bridge.c": "7a2e7ab3256783532b05a4a5c53f7799ec691a77b01b777f501c5e1d127c9a9e",
+  "renderer/virgl-shader/raw_bits.c": "78582c4f13970bbefd7d3c38a8e3f1d71ab69421d72240dd09af8f6a9159d178",
+  "renderer/virgl-shader/raw_bits.h": "37e0f0f58ed0f651556f52c7a14faa93f8917bbdfc30cbccee10497c53bf0709",
+  "renderer/virgl-shader/bridge.h": "c3829828586db64f5c628210404c329d3805b814b9fad63c8aa619fe2e6d0105"
+}

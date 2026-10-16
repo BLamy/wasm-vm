@@ -1,0 +1,26 @@
+{
+  "head": "7e51177d966e05f7ae8b3ae23c7d5d0d028c404b",
+  "scratch": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-direct-memory-verifier-241gd76s/repo",
+  "command": [
+    "wasm-pack",
+    "test",
+    "--node",
+    "crates/wasm",
+    "--test",
+    "jit_memory_direct_imports_verifier",
+    "--",
+    "verifier_private_memory_interleaved_lifetime",
+    "--nocapture"
+  ],
+  "mutation": "Remove only require_active_host() from jit_load export",
+  "prediction": "First out-of-context load must fail the exact-null sentinel assertion, exposing the removed runtime guard",
+  "startedAt": "2026-10-03T01:22:49Z",
+  "mutantSourceSha256": "1a583ada39c23fc8666792e0ab7a6703c7ed1e6948515a4a73748deaf9537947",
+  "mutantExitCode": 1,
+  "expectedGuardAssertionObserved": true,
+  "restoredStatus": "",
+  "restoredExitCode": 0,
+  "finishedAt": "2026-10-03T01:23:27Z",
+  "logSha256": "3965425c9d635c2e18b24d1c2fa678fa3594a362f1722e9989e57750feb11a6d",
+  "restoredLogSha256": "c6099bb51fa86c0f0cd3e6d093b74ec764252bd28c31a543e28c088462832e72"
+}

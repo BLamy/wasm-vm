@@ -1,0 +1,13 @@
+{
+  "status": "passed",
+  "manifestSha256": "41d6374be74e6119bfc85cd35e4e9d97345c0904f7ddd512f4a988cac5560400",
+  "archiveSha256": "c36fb7f77a4088c0c61b283cd4997512079b10ae8d7e6024932d5a27d42334ba",
+  "recordIndexSha256": "98df45b4000a79235b6407b5c7beaa59c718ffb60c49016607d750dcfe310991",
+  "archiveBytes": 7561056,
+  "archiveParts": 1,
+  "membersReopened": 5097,
+  "logicalBytes": 228666681,
+  "physicalBodies": 950,
+  "hardlinks": 4147,
+  "decompressedOnce": true
+}

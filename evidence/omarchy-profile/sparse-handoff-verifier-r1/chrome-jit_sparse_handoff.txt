@@ -1,0 +1,10 @@
+Loading Wasm module...
+
+running 3 tests
+test core_jit_sparse_handoff::sparse_handoff_matches_full_array_oracle ... ok
+test core_jit_sparse_handoff::disjoint_rotated_masks_compose_without_losing_same_value_stamps ... ok
+test compiled_sparse_and_dense_resumes_match_recorded_interpreter ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.95s
+
+

@@ -1,0 +1,17 @@
+{
+  "schema": "dimensional-color-surface-deployment-seal-v1",
+  "task": "E6-T11d63",
+  "head": "6a600d7c1cbf7ea7dd2df8a273465c412e13cf49",
+  "records": 515,
+  "reopenedMembers": 515,
+  "gzipEofChecked": true,
+  "recordIndexSha256": "4c700b75a584dee3bfbb293705b71cdcbcd3d9be6cc66fcd29bacffb91c6a95a",
+  "archiveSha256": "e5e73fc4df3e35934b634816910330d6cd512561866ddb2af6a841e2454b1389",
+  "archiveBytes": 49645482,
+  "deploymentId": "06b1aab9-97e9-417d-aa18-6b950dec6624",
+  "url": "https://06b1aab9.wasm-vm.pages.dev",
+  "canonical": "https://wasm-vm.pages.dev",
+  "passed": 127,
+  "failed": 0,
+  "productionGraphicsAuthority": false
+}

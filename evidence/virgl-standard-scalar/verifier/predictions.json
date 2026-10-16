@@ -1,0 +1,21 @@
+{
+  "schema": "standard-scalar-critic-predictions-v1",
+  "task": "E6-T11d13",
+  "recordedBeforeEvidenceInspection": true,
+  "workerHead": "2879d9a49c5b9b4f351993f0cf75342c7743d41b",
+  "freezeHead": "1b8e94b79de6ee79f72116246ce4042aa7bda815",
+  "predecessor": "b98847797f109b0a3af6171fd0a8c21983e1057b",
+  "predictions": [
+    {"id":"P1","prediction":"Committed index and archive exactly authenticate 9578 unique safe records, the stated archive/index hashes, hot/cold freeze receipts, every raw/gzip blob, 531 tracked-source and 2 generated identities, and 154 unchanged historical evidence files."},
+    {"id":"P2","prediction":"Pinned native/sanitized enum output is the literal 32-format list. All 396 new wire records have width-correct <= UINT32_MAX ends and reject in the historical factory; 80 historical cases and affected 297 compact critic wire cases admit only the explicitly widened formats."},
+    {"id":"P3","prediction":"Each of 391 hot and 391 cold frames uses original full GPU bytes and a floating input pointer with literal 8/16/32 signedness, normalized=true only for normalized32, exact component count/effective offsets/aligned strides, native divisor, and last fetched byte derived from original indices and instances."},
+    {"id":"P4","prediction":"Actual retained reads contain only the declared byte width. Generic supplied words equal independent integer or rational ties-to-even rounding; 16777217=0x4b800000,16777219=0x4b800002,-16777217=0xcb800000,-2147483648=0xcf000000,4294967295=0x4f800000; signed normalized minimum=0xbf800000 and unsigned normalized maximum=0x3f800000. Missing lanes have words 0,0,0x3f800000."},
+    {"id":"P5","prediction":"Original shader text and literal uploads reconstruct all 102912 hot and cold pixels, including defaults, word-output rounding, normalization extrema, restart, overlap, instancing and A/B/A restoration; all actual draws complete fences. General native array arithmetic has only bounded numerical pixel authority."},
+    {"id":"P6","prediction":"All ten invalid source/staging/work cases make zero actual draws, exact ends pass, and one-byte-short ends fail before native fetch or unowned read allocation. Five original private index buffers match original restart semantics and retire after the final fence."},
+    {"id":"P7","prediction":"Six delayed index/attribute lifetime probes reach the named pending state; revision/cancel fail with no draws and drain fences, source reuse executes the old retained generation and original pixels; disposal retires active read storage. Every run releases all owned bytes and reads."},
+    {"id":"P8","prediction":"Actual served native signedness and scaled-generic faults each complete a real draw/fence, serve precisely the changed runtime source, bind the faulty native pointer/generic word, and fail independently reconstructed original pixels."},
+    {"id":"P9","prediction":"V8 hit ranges cover each new runtime descriptor/converter hunk, including 32-bit signed/unsigned, 8/16 signed scaled, normalized/scaled, generic missing lanes; historical expectation changes execute. Any unhit changed behavior requires specific evidence or deletion, while declarations/docs are individually waived."},
+    {"id":"P10","prediction":"Cold clone is pristine at the exact runtime/harness freeze with scrubbed dependency environment and passed default acceptance; fixed actual 16MiB Wasm/generated hashes match D12 critic pins, compiler/allocator/vendor/guest/production tracked sources and historical seals are unchanged."},
+    {"id":"P11","prediction":"An independently seeded mixed-width shared-buffer case and stride-zero delayed case preserve original native bytes and exact scalar semantics. Rounding ties, signed minimum and retained name reuse remain correct under independently varied schedules, and sabotaging the promoted oracle through actual GPU execution causes a completed draw followed by pixel failure."}
+  ]
+}

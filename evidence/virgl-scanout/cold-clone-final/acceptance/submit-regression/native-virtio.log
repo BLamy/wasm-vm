@@ -1,0 +1,9 @@
+   Compiling wasm-vm-core v0.0.1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-scanout-cold-trjcf0a4/wasm-vm/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.74s
+     Running unittests src/lib.rs (target/debug/deps/wasm_vm_core-66cd39800b706bc9)
+
+running 139 tests
+....................................................................................... 87/139
+....................................................
+test result: ok. 139 passed; 0 failed; 0 ignored; 0 measured; 243 filtered out; finished in 0.51s
+

@@ -1,0 +1,12 @@
+cargo build -p wasm-vm-core --no-default-features
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.09s
+cargo build -p wasm-vm-core --no-default-features --features std
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.07s
+cargo build -p wasm-vm-core --no-default-features --features trace
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.06s
+cargo build -p wasm-vm-core --no-default-features --features std,trace
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.07s
+cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.08s
+cargo build -p wasm-vm-core --no-default-features --features trace --target wasm32-unknown-unknown
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.06s

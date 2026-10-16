@@ -1,0 +1,4 @@
+{"seq":1,"type":"begin","schema":"wasm-vm-virgl-capture-v1","workload":"textured-scene","byteOrder":"little","limits":{"events":100000,"blobBytes":268435456,"eventBytes":67108864,"singleBlobBytes":67108864,"resources":4096,"iovs":16384},"blobs":[]}
+{"seq":2,"type":"init","phase":"enter","threadId":1,"parentCallSeq":0,"flags":81,"callbackVersion":-1,"blobs":[]}
+{"seq":3,"type":"failure","reason":"unsupported callback version","blobs":[]}
+{"seq":4,"type":"end","complete":false,"normalExit":true,"cleanupSeen":false,"openCalls":0,"droppedRecords":0,"blobBytes":0,"workload":"textured-scene","blobs":[]}

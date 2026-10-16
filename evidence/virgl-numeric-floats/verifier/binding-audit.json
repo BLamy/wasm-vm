@@ -1,0 +1,1016 @@
+{
+  "schema": 1,
+  "task": "E6-T12e4c2",
+  "status": "passed",
+  "predictions": {
+    "path": "evidence/virgl-numeric-floats/verifier/predictions.md",
+    "bytes": 4583,
+    "sha256": "1c242d1e8f1fd3f361a15a318d4e92c01fcf8ab751e6532cd5f7ef4a33faf277"
+  },
+  "baselineHead": "59f1b924286af70096d9fb19fbdb35b9ec2ed7a1",
+  "static": {
+    "promotions": [],
+    "unchanged": [
+      {
+        "path": "renderer/virgl-shader/tests/raw-bit-cases.json",
+        "bytes": 107467,
+        "sha256": "f39f7650f947d53370c4d0ecd45eaa282b3610f42a28ca70af24473ee4077e4a"
+      },
+      {
+        "path": "renderer/virgl-shader/tests/integer-mask-cases.json",
+        "bytes": 313645,
+        "sha256": "9f6d3c95508e3088e0a468d55fa77ef578e57c61ca4d10c7339e4d3762d177a6"
+      },
+      {
+        "path": "renderer/virgl-shader/tests/float-mask-cases.json",
+        "bytes": 229820,
+        "sha256": "c3029ca0c4b5083bcb8c3854045ef8cb6a4e923e087ab6d78e99772d860c5311"
+      },
+      {
+        "path": "renderer/virgl-shader/tests/float-mask-hardware.json",
+        "bytes": 58605,
+        "sha256": "77e86508296cd98ee7b0844e635874124dadead9d932f8c03780c83c26c53458"
+      },
+      {
+        "path": "tools/virgl-float-masks/receipt.py",
+        "bytes": 27362,
+        "sha256": "4270e6a892550538a1b0a37a864754a3bbbe94fd09d542a6b1cc64df06802894"
+      },
+      {
+        "path": "tools/verify-virgl-float-masks.mjs",
+        "bytes": 2776,
+        "sha256": "b8ebff7eab599952838237719d6153573436f6ebed7f1f1ae856de11d3b8f04e"
+      },
+      {
+        "path": "renderer/virgl-shader/tests/float-masks.mjs",
+        "bytes": 45102,
+        "sha256": "46a919670247c8e31bd21c81a584c28e5ad46b3f440112f5976ebf7b3e883e75"
+      },
+      {
+        "path": "tools/virgl-raw-bits/receipt.py",
+        "bytes": 29433,
+        "sha256": "8d64d4f29985f654eecd8455fd9a94e84b69d9143b4d70b435a3d1601095f29d"
+      },
+      {
+        "path": "tools/virgl-integer-masks/receipt.py",
+        "bytes": 26894,
+        "sha256": "b8d01854eea5a81bd9b473010b8f8241321dc34a015adba685b4d300ca9fa91c"
+      },
+      {
+        "path": "tools/virgl-raw-bits/regressions.py",
+        "bytes": 16162,
+        "sha256": "5fc571c29f10a899a0c7985e4641324def5bc9ca877bfbb93653fcbea4fd9572"
+      },
+      {
+        "path": "tools/virgl-integer-masks/regressions.py",
+        "bytes": 7760,
+        "sha256": "a09eab3a551dea6e07a36e1b67e4374050ac23f40ed44f193a0f8475d0757749"
+      },
+      {
+        "path": "tools/virgl-constants/receipt.py",
+        "bytes": 36810,
+        "sha256": "db4da3e3640df41c97d1031a3ecf9520b0f0c3e3039f5618424fb2024d85af2e"
+      },
+      {
+        "path": "tools/virgl-banks/receipt.py",
+        "bytes": 31259,
+        "sha256": "fda6d36a2bd290d8fc3a76df1115d7da71b8103c53ac489bc11151302060113b"
+      },
+      {
+        "path": "tools/verify-virgl-raw-bits.mjs",
+        "bytes": 2549,
+        "sha256": "7f132ceebe921aa63c2a83f26499c023d3f8e8f5b15bdc13dcfebd6bdf24e862"
+      },
+      {
+        "path": "tools/verify-virgl-integer-masks.mjs",
+        "bytes": 2773,
+        "sha256": "44021ec10c03e082ed0e11ff8c599329007de32c66dfc1ccffcb99ad9d231248"
+      },
+      {
+        "path": "renderer/virgl-shader/tests/raw-bits.mjs",
+        "bytes": 38247,
+        "sha256": "0ed981c535e859e63556082e70336a250ea8254e876f0b6b5311d569c9de0986"
+      },
+      {
+        "path": "renderer/virgl-shader/tests/integer-masks.mjs",
+        "bytes": 44611,
+        "sha256": "b4e5ca48168907ba566b8d7eb2f0599721d1e528c7812229057416e9a1018a28"
+      },
+      {
+        "path": "renderer/virgl-shader/tests/raw-bit-hardware.json",
+        "bytes": 41731,
+        "sha256": "da9d08b03fa8cbe853f9b9813be9946c9b3d836b9a2c5cf879db9f98510aaae2"
+      },
+      {
+        "path": "renderer/virgl-shader/tests/integer-mask-hardware.json",
+        "bytes": 57298,
+        "sha256": "7ff7c4e8f9d95b0dd1df94ef6ca9e0ba7e776ea2af4f4e879ca3554ebb9bedda"
+      },
+      {
+        "path": "renderer/virgl-shader/tests/captured-invalid.json",
+        "bytes": 20802,
+        "sha256": "fd7769f258bc5d51ce6e1c10c8e91345124676e6ce1777b30999e23a19cdbd80"
+      },
+      {
+        "path": "renderer/virgl-shader/tests/component-cases.json",
+        "bytes": 54311,
+        "sha256": "92752e2bfc8d5712dc77d84b9502ed54c14fbecac6a717191dd556d09c122b40"
+      },
+      {
+        "path": "renderer/virgl-shader/tests/bank-cases.json",
+        "bytes": 192995,
+        "sha256": "a6582a8578b5e0b3e71c9ee49e4fdf0328fb8f40a8ffac1e2984498495513a75"
+      }
+    ],
+    "heldBaselines": [
+      {
+        "path": "evidence/virgl-float-masks/worker/native/native-report.json",
+        "bytes": 4488643,
+        "sha256": "d2af1399a55e947170d0ba60981a9671d0d885c7ceff87f7717c9f98603286b3"
+      },
+      {
+        "path": "evidence/virgl-constants/worker/native/native-report.json",
+        "bytes": 62223,
+        "sha256": "1ecee077496f3eea591ff4ac3a14afef91a33700d69d92b174d82bad3881ffef"
+      }
+    ]
+  },
+  "frozenHead": "1ce9b75b182b5411aee9922f329dc898e2a28b4e",
+  "worker": {
+    "receipt": {
+      "path": "evidence/virgl-numeric-floats/worker/receipt.json",
+      "bytes": 82982,
+      "sha256": "612453552ec1c95798dcbc4e179a82725d44e577ad2054d752cdf59de8fa0a3b"
+    },
+    "records": 142,
+    "sources": 236,
+    "nestedSourceBindings": 4761,
+    "native": {
+      "report": {
+        "path": "evidence/virgl-numeric-floats/worker/native/native-report.json",
+        "bytes": 6071836,
+        "sha256": "86e1e501016a4b1ad59f4b99ee9587cf57d9f170347b7d0719d412102fcac4e7"
+      },
+      "retained": [
+        {
+          "group": "rawCases",
+          "count": 279
+        },
+        {
+          "group": "integerCases",
+          "count": 426
+        },
+        {
+          "group": "floatCases",
+          "count": 454
+        },
+        {
+          "group": "rawPairs",
+          "count": 22
+        },
+        {
+          "group": "integerPairs",
+          "count": 25
+        },
+        {
+          "group": "floatPairs",
+          "count": 45
+        }
+      ],
+      "retainedPairs": 92,
+      "newCases": 350,
+      "newPairs": 33,
+      "stats": {
+        "originals": 19,
+        "acceptedOriginals": 12,
+        "cases": 1509,
+        "pairs": 125,
+        "calls": 219699,
+        "standaloneRecoveries": 115550,
+        "pairRecoveries": 92440,
+        "truncations": 5626,
+        "hostileCases": 324,
+        "mutations": 4096,
+        "maxSingleResultBytes": 54603,
+        "maxPairResultBytes": 107416
+      },
+      "transcriptResults": {
+        "ORIGINAL": 19,
+        "CASE": 1509,
+        "PAIR": 125
+      },
+      "binarySha256": "4bc86b7e8e68f818ed51e04847cce9d449841ec73011957d8c016bc9ccdf8ae7",
+      "coverage": [
+        {
+          "path": "renderer/virgl-shader/bridge.c",
+          "bytes": 29673,
+          "sha256": "ac3cf490270000d1d983a24a7df83e9c95c4b7000b1291b9238ae283ee9ed9f3",
+          "summary": {
+            "branches": {
+              "count": 742,
+              "covered": 658,
+              "notcovered": 84,
+              "percent": 88.67924528301887
+            },
+            "functions": {
+              "count": 32,
+              "covered": 29,
+              "percent": 90.625
+            },
+            "instantiations": {
+              "count": 32,
+              "covered": 29,
+              "percent": 90.625
+            },
+            "lines": {
+              "count": 535,
+              "covered": 521,
+              "percent": 97.38317757009347
+            },
+            "mcdc": {
+              "count": 0,
+              "covered": 0,
+              "notcovered": 0,
+              "percent": 0
+            },
+            "regions": {
+              "count": 1139,
+              "covered": 1078,
+              "notcovered": 61,
+              "percent": 94.64442493415277
+            }
+          }
+        },
+        {
+          "path": "renderer/virgl-shader/raw_bits.c",
+          "bytes": 17884,
+          "sha256": "43609200b4e60b741a6f17234d3442af3cda56f5dc07b26d3631e63555ef2444",
+          "summary": {
+            "branches": {
+              "count": 358,
+              "covered": 354,
+              "notcovered": 4,
+              "percent": 98.88268156424581
+            },
+            "functions": {
+              "count": 17,
+              "covered": 17,
+              "percent": 100
+            },
+            "instantiations": {
+              "count": 17,
+              "covered": 17,
+              "percent": 100
+            },
+            "lines": {
+              "count": 296,
+              "covered": 295,
+              "percent": 99.66216216216216
+            },
+            "mcdc": {
+              "count": 0,
+              "covered": 0,
+              "notcovered": 0,
+              "percent": 0
+            },
+            "regions": {
+              "count": 486,
+              "covered": 483,
+              "notcovered": 3,
+              "percent": 99.38271604938271
+            }
+          }
+        }
+      ]
+    },
+    "browsers": [
+      {
+        "path": "float-regression/async-regression/report.json",
+        "task": "E6-T11b1",
+        "status": "passed",
+        "sha256": "6c27cd18d9e6f5bf5c43c0fb8d03fb2c81cdcf5e9f1ecbfe2c17826f6a462d8b",
+        "sourceCount": 28
+      },
+      {
+        "path": "float-regression/constant-regression/hardware/report.json",
+        "task": "E6-T12e3b",
+        "status": "passed",
+        "sha256": "23ed0f45974cf3fdfe8d96f8db9e124a425e7c5cf5af5ca6d3545dc70e9aba90",
+        "sourceCount": 143
+      },
+      {
+        "path": "float-regression/hardware/report.json",
+        "task": "E6-T12e4c1",
+        "status": "passed",
+        "sha256": "2db01f5589faf531d07626613f1ecbb6941329ce7d9c31a6cacff36aa5badc1d",
+        "sourceCount": 138
+      },
+      {
+        "path": "float-regression/integer-regression/hardware/report.json",
+        "task": "E6-T12e4b",
+        "status": "passed",
+        "sha256": "fc08b16d920eaf3cdaf5a083ebc837b200006e14f0b02afec41ac84a1a950b38",
+        "sourceCount": 138
+      },
+      {
+        "path": "float-regression/integer-regression/sabotage-all-ones-mask/report.json",
+        "task": "E6-T12e4b",
+        "status": "failed",
+        "sha256": "f751ccdbb14c3064c2a45e854ab3bc1f7e4944dbc0f4a23abcab6e1c6751f946",
+        "sourceCount": 138
+      },
+      {
+        "path": "float-regression/integer-regression/sabotage-signed-compare/report.json",
+        "task": "E6-T12e4b",
+        "status": "failed",
+        "sha256": "eb0969ebd4d3d5bc007a0cb1a6c73cbd0274d03c99ad20c2c9f35eaf3ce8afaa",
+        "sourceCount": 138
+      },
+      {
+        "path": "float-regression/integer-regression/sabotage-ucmp-selection/report.json",
+        "task": "E6-T12e4b",
+        "status": "failed",
+        "sha256": "01cfb692a719c277c0e2e268ace634c089b37c23f86e3f0755992014dcac9f8a",
+        "sourceCount": 138
+      },
+      {
+        "path": "float-regression/raw-regression/hardware/report.json",
+        "task": "E6-T12e4a",
+        "status": "passed",
+        "sha256": "34da57e5ec74a39b647962662eaf85b0e60de3aeba842143cf88bf5e60ea49c0",
+        "sourceCount": 138
+      },
+      {
+        "path": "float-regression/raw-regression/sabotage/report.json",
+        "task": "E6-T12e4a",
+        "status": "failed",
+        "sha256": "63cbaa4dd4b381af7cd8165e542b9573465898ef433afd59f58321a465b63517",
+        "sourceCount": 138
+      },
+      {
+        "path": "float-regression/regression/hardware/report.json",
+        "task": "E6-T12e3",
+        "status": "passed",
+        "sha256": "c3b3624b806c24017da2a72ea7bbc9b92e6b1f2e7e1d01c09653f9378d0591f0",
+        "sourceCount": 138
+      },
+      {
+        "path": "float-regression/regression/regression/components/hardware/report.json",
+        "task": "E6-T12e1",
+        "status": "passed",
+        "sha256": "7da9abd36a08202e336f49994eda1f6baf9aee6aa37b597cce7e64d355f37e58",
+        "sourceCount": 138
+      },
+      {
+        "path": "float-regression/regression/regression/components/regression/captured/report.json",
+        "task": "E6-T10d",
+        "status": "passed",
+        "sha256": "cb392a341f987e41d6a6b83b9166aaa23aaccab0b80ef99a24d72ba5362a4d4b",
+        "sourceCount": 122
+      },
+      {
+        "path": "float-regression/regression/regression/components/regression/contract/browser/report.json",
+        "task": "E6-T10c",
+        "status": "passed",
+        "sha256": "8181caa71b20f60f94bfbb34d886fbb861e8f6033a1fe3d2d6804c16214c9998",
+        "sourceCount": 119
+      },
+      {
+        "path": "float-regression/regression/regression/components/regression/literal/report.json",
+        "task": "E6-T10a",
+        "status": "passed",
+        "sha256": "89d16c17b0baff46139881f53315e4d10893eaae92a9e5c791534271d28faba3",
+        "sourceCount": 119
+      },
+      {
+        "path": "float-regression/regression/regression/components/regression/sabotage/report.json",
+        "task": "E6-T10d",
+        "status": "failed",
+        "sha256": "91b341283f83e8a2c9b2f1c28c8b375f739b32a9c5df1850c35e7bf295bc3074",
+        "sourceCount": 122
+      },
+      {
+        "path": "float-regression/regression/regression/components/sabotage/report.json",
+        "task": "E6-T12e1",
+        "status": "failed",
+        "sha256": "00702acf92bac36ba9865c7e5b9423793bb4898c5ce473528a8fa751f5ddfaeb",
+        "sourceCount": 138
+      },
+      {
+        "path": "float-regression/regression/regression/draw/hardware/report.json",
+        "task": "E6-T12d",
+        "status": "passed",
+        "sha256": "ac40ac7c7804f363acd3fd8bdca761247c24f56d37806b7fd33c4577e0d89ab9",
+        "sourceCount": 27
+      },
+      {
+        "path": "float-regression/regression/regression/draw/sabotage-blend/report.json",
+        "task": "E6-T12d",
+        "status": "failed",
+        "sha256": "464af870de3b136accd28e59fbb20f7c9860afd11f05f218f08e762d7dba3f52",
+        "sourceCount": 27
+      },
+      {
+        "path": "float-regression/regression/regression/draw/sabotage-constant/report.json",
+        "task": "E6-T12d",
+        "status": "failed",
+        "sha256": "933225ca183258904121178936896862be8a3674112e70dfe8ee9ad40c6560d3",
+        "sourceCount": 27
+      },
+      {
+        "path": "float-regression/regression/regression/draw/sabotage-index/report.json",
+        "task": "E6-T12d",
+        "status": "failed",
+        "sha256": "d56667edd0482f54d886f35c8c1456862308e010f019f83e20c3daa57aabd90e",
+        "sourceCount": 27
+      },
+      {
+        "path": "float-regression/regression/regression/draw/sabotage-readback-offset/report.json",
+        "task": "E6-T12d",
+        "status": "failed",
+        "sha256": "33be9d8070484b4ad2a1201a51be00ba9c97131259c0be45926d0a27acdca3f8",
+        "sourceCount": 27
+      },
+      {
+        "path": "float-regression/regression/regression/draw/sabotage-texel/report.json",
+        "task": "E6-T12d",
+        "status": "failed",
+        "sha256": "60cc480c91f7ef9ef3249176b76fc3fd4348a032fbcf661f3d4bd671f8acda0e",
+        "sourceCount": 27
+      },
+      {
+        "path": "float-regression/regression/regression/draw/sabotage-vertex/report.json",
+        "task": "E6-T12d",
+        "status": "failed",
+        "sha256": "eb6d3b6c24cc52e6455db8cdb25e2abaf50cf08b1b04910a75cc9a6103b2a9a8",
+        "sourceCount": 27
+      },
+      {
+        "path": "float-regression/regression/regression/draw/state/decoder/report.json",
+        "task": "E6-T12a",
+        "status": "passed",
+        "sha256": "3670fda8d4d2b2642097f94d2436e69dde55afb46093c05b3f66c61ecf696539",
+        "sourceCount": 13
+      },
+      {
+        "path": "float-regression/regression/regression/draw/state/hardware/report.json",
+        "task": "E6-T12c",
+        "status": "passed",
+        "sha256": "5ac91322c7992c379d0a424c7234f21e99c3f1ebaccec591fd5e6e7e923f6be1",
+        "sourceCount": 24
+      },
+      {
+        "path": "float-regression/regression/regression/draw/state/resources/report.json",
+        "task": "E6-T12b",
+        "status": "passed",
+        "sha256": "12d6133d3ee19c5b830aedfad3446fb60fc2d31ca3c86346fd1e7dbaf9aaa133",
+        "sourceCount": 14
+      },
+      {
+        "path": "float-regression/regression/regression/draw/state/sabotage-color-mask/report.json",
+        "task": "E6-T12c",
+        "status": "failed",
+        "sha256": "413d3ad50d35d3014b8a7ad5f1387a8d865860c8b9ef65f7645b1acc37197326",
+        "sourceCount": 24
+      },
+      {
+        "path": "float-regression/regression/regression/draw/state/sabotage-constant-bits/report.json",
+        "task": "E6-T12c",
+        "status": "failed",
+        "sha256": "aa525307e9fbca40dcfb0ed796743f30ea559cb8b75c29f7f2de82c410893bc4",
+        "sourceCount": 24
+      },
+      {
+        "path": "float-regression/regression/regression/hardware/report.json",
+        "task": "E6-T12e2",
+        "status": "passed",
+        "sha256": "b6e071ea9730b5893d4efde2233f41ab9d661100b69bc6f6c68b67e95a23ea7f",
+        "sourceCount": 142
+      },
+      {
+        "path": "float-regression/regression/regression/sabotage/report.json",
+        "task": "E6-T12e2",
+        "status": "failed",
+        "sha256": "984bf9792b1a3434de15b39393a091b23002e8f319ed110fec6e576a7464042c",
+        "sourceCount": 142
+      },
+      {
+        "path": "float-regression/regression/sabotage/report.json",
+        "task": "E6-T12e3",
+        "status": "failed",
+        "sha256": "113871f4d5646201d812f0cb48e389c6ab0c9ec606e5c1eeea3ef2bd884eb6b7",
+        "sourceCount": 138
+      },
+      {
+        "path": "float-regression/sabotage-negative-order/report.json",
+        "task": "E6-T12e4c1",
+        "status": "failed",
+        "sha256": "55b5d357d4be982c29e26e7a090fcd7eb48aa0b320ef4cf874a15dc862a31275",
+        "sourceCount": 138
+      },
+      {
+        "path": "float-regression/sabotage-signed-zero/report.json",
+        "task": "E6-T12e4c1",
+        "status": "failed",
+        "sha256": "d11848f7ae5bde988c8fb250c87644fd075dc9c622bc752794c1912d16b54bde",
+        "sourceCount": 138
+      },
+      {
+        "path": "float-regression/sabotage-unordered-guard/report.json",
+        "task": "E6-T12e4c1",
+        "status": "failed",
+        "sha256": "6b7ea4f8449c4b0a85842365e5a1c6164bacea7dd8025cc5daf93133f73c10ae",
+        "sourceCount": 138
+      },
+      {
+        "path": "hardware/report.json",
+        "task": "E6-T12e4c2",
+        "status": "passed",
+        "sha256": "6030241cb71e6abd68886f93a10b0fbb6036e2dc2664ea12460d9f123e5eb946",
+        "sourceCount": 138
+      },
+      {
+        "path": "sabotage-numeric-decode/report.json",
+        "task": "E6-T12e4c2",
+        "status": "failed",
+        "sha256": "18b5a06d84c7ba8bf79fb153570fff16bc218fd9b3772d1f8cf078ca60e16c0d",
+        "sourceCount": 138
+      },
+      {
+        "path": "sabotage-sampler-index/report.json",
+        "task": "E6-T12e4c2",
+        "status": "failed",
+        "sha256": "fa4076859980e1fd00dc6522ff6b259f7218c3a7fa72671555450ed619a3db91",
+        "sourceCount": 138
+      },
+      {
+        "path": "sabotage-stale-shadow/report.json",
+        "task": "E6-T12e4c2",
+        "status": "failed",
+        "sha256": "10a55bace05fd41cf7b6ea13ad4792419fb7d22f5117101de3fe552a08377fe9",
+        "sourceCount": 138
+      }
+    ],
+    "wasmSha256": "eefc0899be746bdbb246285e9c8bfe8c802d29e0480bf052be9790c78631c02d",
+    "production": {
+      "capsets": [],
+      "guestRendererImplemented": false,
+      "numCapsets": 0,
+      "virglFeature": false
+    },
+    "numericWords": 352,
+    "vertexCaptures": 144,
+    "fragmentBitplanes": 1664,
+    "crossConsumerVectors": 48,
+    "texturePixels": 4096,
+    "interpolationPixels": 25792
+  },
+  "cold": {
+    "receipt": {
+      "path": "evidence/virgl-numeric-floats/cold-clone/acceptance/receipt.json",
+      "bytes": 82982,
+      "sha256": "a9659c5279ddb8c8d75372acff27e51bdd77540570a96047086fdf3ab5fd86fa"
+    },
+    "records": 142,
+    "sources": 236,
+    "nestedSourceBindings": 4761,
+    "native": {
+      "report": {
+        "path": "evidence/virgl-numeric-floats/cold-clone/acceptance/native/native-report.json",
+        "bytes": 6072581,
+        "sha256": "4724df18e9fbfbc04b52d79efa9bf3a67c8d400bcc6d81eb1913d7d2a3ce2804"
+      },
+      "retained": [
+        {
+          "group": "rawCases",
+          "count": 279
+        },
+        {
+          "group": "integerCases",
+          "count": 426
+        },
+        {
+          "group": "floatCases",
+          "count": 454
+        },
+        {
+          "group": "rawPairs",
+          "count": 22
+        },
+        {
+          "group": "integerPairs",
+          "count": 25
+        },
+        {
+          "group": "floatPairs",
+          "count": 45
+        }
+      ],
+      "retainedPairs": 92,
+      "newCases": 350,
+      "newPairs": 33,
+      "stats": {
+        "originals": 19,
+        "acceptedOriginals": 12,
+        "cases": 1509,
+        "pairs": 125,
+        "calls": 219699,
+        "standaloneRecoveries": 115550,
+        "pairRecoveries": 92440,
+        "truncations": 5626,
+        "hostileCases": 324,
+        "mutations": 4096,
+        "maxSingleResultBytes": 54603,
+        "maxPairResultBytes": 107416
+      },
+      "transcriptResults": {
+        "ORIGINAL": 19,
+        "CASE": 1509,
+        "PAIR": 125
+      },
+      "binarySha256": "5db4f1763bed04759b1b2c17a11be65ea439e5eac6babbbcc0c7caa306c24368",
+      "coverage": [
+        {
+          "path": "renderer/virgl-shader/bridge.c",
+          "bytes": 29673,
+          "sha256": "ac3cf490270000d1d983a24a7df83e9c95c4b7000b1291b9238ae283ee9ed9f3",
+          "summary": {
+            "branches": {
+              "count": 742,
+              "covered": 658,
+              "notcovered": 84,
+              "percent": 88.67924528301887
+            },
+            "functions": {
+              "count": 32,
+              "covered": 29,
+              "percent": 90.625
+            },
+            "instantiations": {
+              "count": 32,
+              "covered": 29,
+              "percent": 90.625
+            },
+            "lines": {
+              "count": 535,
+              "covered": 521,
+              "percent": 97.38317757009347
+            },
+            "mcdc": {
+              "count": 0,
+              "covered": 0,
+              "notcovered": 0,
+              "percent": 0
+            },
+            "regions": {
+              "count": 1139,
+              "covered": 1078,
+              "notcovered": 61,
+              "percent": 94.64442493415277
+            }
+          }
+        },
+        {
+          "path": "renderer/virgl-shader/raw_bits.c",
+          "bytes": 17884,
+          "sha256": "43609200b4e60b741a6f17234d3442af3cda56f5dc07b26d3631e63555ef2444",
+          "summary": {
+            "branches": {
+              "count": 358,
+              "covered": 354,
+              "notcovered": 4,
+              "percent": 98.88268156424581
+            },
+            "functions": {
+              "count": 17,
+              "covered": 17,
+              "percent": 100
+            },
+            "instantiations": {
+              "count": 17,
+              "covered": 17,
+              "percent": 100
+            },
+            "lines": {
+              "count": 296,
+              "covered": 295,
+              "percent": 99.66216216216216
+            },
+            "mcdc": {
+              "count": 0,
+              "covered": 0,
+              "notcovered": 0,
+              "percent": 0
+            },
+            "regions": {
+              "count": 486,
+              "covered": 483,
+              "notcovered": 3,
+              "percent": 99.38271604938271
+            }
+          }
+        }
+      ]
+    },
+    "browsers": [
+      {
+        "path": "float-regression/async-regression/report.json",
+        "task": "E6-T11b1",
+        "status": "passed",
+        "sha256": "c43cf4e07b508b1c754f3174fc6bf65ae6aef1331d48fd5cfda999728ef50075",
+        "sourceCount": 28
+      },
+      {
+        "path": "float-regression/constant-regression/hardware/report.json",
+        "task": "E6-T12e3b",
+        "status": "passed",
+        "sha256": "d6747ca781ad092bcd1528a9e0626f6eee71a9c99bb8d4c4e920b4da9a341275",
+        "sourceCount": 143
+      },
+      {
+        "path": "float-regression/hardware/report.json",
+        "task": "E6-T12e4c1",
+        "status": "passed",
+        "sha256": "c3d3fb4e648c1dc1783544ea48eec47846b6868994e67ad9bf582404395cd361",
+        "sourceCount": 138
+      },
+      {
+        "path": "float-regression/integer-regression/hardware/report.json",
+        "task": "E6-T12e4b",
+        "status": "passed",
+        "sha256": "65b42d70486e117e5d67e13175de6a8306d7c84dd4256c8e1460bf793feda8a0",
+        "sourceCount": 138
+      },
+      {
+        "path": "float-regression/integer-regression/sabotage-all-ones-mask/report.json",
+        "task": "E6-T12e4b",
+        "status": "failed",
+        "sha256": "3ce59e7ddc58025c6572b7fa98f101e4301b3c809c5b2f7dabe4cc5c74235088",
+        "sourceCount": 138
+      },
+      {
+        "path": "float-regression/integer-regression/sabotage-signed-compare/report.json",
+        "task": "E6-T12e4b",
+        "status": "failed",
+        "sha256": "2f93f836063edb4c0ab0900716f0f31c85ff770c8712be1344b339d4679d5b2c",
+        "sourceCount": 138
+      },
+      {
+        "path": "float-regression/integer-regression/sabotage-ucmp-selection/report.json",
+        "task": "E6-T12e4b",
+        "status": "failed",
+        "sha256": "d60d2e4bfaee38239001669a8e3110d5ee9d8b1302b273d5a96f95b7b39f1375",
+        "sourceCount": 138
+      },
+      {
+        "path": "float-regression/raw-regression/hardware/report.json",
+        "task": "E6-T12e4a",
+        "status": "passed",
+        "sha256": "e44302508d76a886a8d93eef026a37bc70d8a4976bd764301a09c9441b928070",
+        "sourceCount": 138
+      },
+      {
+        "path": "float-regression/raw-regression/sabotage/report.json",
+        "task": "E6-T12e4a",
+        "status": "failed",
+        "sha256": "91585e422d8e3c7e28b4e4f1df70f59f2f4ed63158eb8b3c9fb4bd308e4ec6d7",
+        "sourceCount": 138
+      },
+      {
+        "path": "float-regression/regression/hardware/report.json",
+        "task": "E6-T12e3",
+        "status": "passed",
+        "sha256": "57c5336f1ed4dab3bbb39a5e53700b739676f119a6edc0a5f7800d3493c680f2",
+        "sourceCount": 138
+      },
+      {
+        "path": "float-regression/regression/regression/components/hardware/report.json",
+        "task": "E6-T12e1",
+        "status": "passed",
+        "sha256": "7687c3f4f04866625759e88dcb7c98e72a03789539b3585c345f534eb70fd836",
+        "sourceCount": 138
+      },
+      {
+        "path": "float-regression/regression/regression/components/regression/captured/report.json",
+        "task": "E6-T10d",
+        "status": "passed",
+        "sha256": "8851a83c4296edc55860a7116c4729eef0ef828b6d82d48896dcbf996b93035a",
+        "sourceCount": 122
+      },
+      {
+        "path": "float-regression/regression/regression/components/regression/contract/browser/report.json",
+        "task": "E6-T10c",
+        "status": "passed",
+        "sha256": "b402037715ca96b93ee1e845ef954a91fcf6a02f34102c1334d22bba4e5d71de",
+        "sourceCount": 119
+      },
+      {
+        "path": "float-regression/regression/regression/components/regression/literal/report.json",
+        "task": "E6-T10a",
+        "status": "passed",
+        "sha256": "0aea246bde31103c2cdce6f58ed5dabb7444e87ef1f6cb15a519eb5c6243f6ef",
+        "sourceCount": 119
+      },
+      {
+        "path": "float-regression/regression/regression/components/regression/sabotage/report.json",
+        "task": "E6-T10d",
+        "status": "failed",
+        "sha256": "f0f71e2673e49bedda4a5264eab36e4344d9e083f5202d4127d0e928f71fb091",
+        "sourceCount": 122
+      },
+      {
+        "path": "float-regression/regression/regression/components/sabotage/report.json",
+        "task": "E6-T12e1",
+        "status": "failed",
+        "sha256": "5bc1df5e448afe882828e13848499a29b64a29deef10f81b20f3ab1cba08b116",
+        "sourceCount": 138
+      },
+      {
+        "path": "float-regression/regression/regression/draw/hardware/report.json",
+        "task": "E6-T12d",
+        "status": "passed",
+        "sha256": "d2fd32255d8827fc1f77b92485b0d9bff17a0447ce92e8b48c081141255d5673",
+        "sourceCount": 27
+      },
+      {
+        "path": "float-regression/regression/regression/draw/sabotage-blend/report.json",
+        "task": "E6-T12d",
+        "status": "failed",
+        "sha256": "1a91c916450155605fffc08e66617f0998cdcedbb4a94514e7d9a250c00ad09e",
+        "sourceCount": 27
+      },
+      {
+        "path": "float-regression/regression/regression/draw/sabotage-constant/report.json",
+        "task": "E6-T12d",
+        "status": "failed",
+        "sha256": "b04bc80419e3b20b2d8a7c3858e4846c028efa920af3188261a3c98c9df5a806",
+        "sourceCount": 27
+      },
+      {
+        "path": "float-regression/regression/regression/draw/sabotage-index/report.json",
+        "task": "E6-T12d",
+        "status": "failed",
+        "sha256": "ce5ff49d388622abc574d66e33eaf5812f75124ee0397314c5e138b4098f52a6",
+        "sourceCount": 27
+      },
+      {
+        "path": "float-regression/regression/regression/draw/sabotage-readback-offset/report.json",
+        "task": "E6-T12d",
+        "status": "failed",
+        "sha256": "227e826697cf43cfd4395f15b3f8ee7cab23ffae01e0fd95b2b52cd93160484d",
+        "sourceCount": 27
+      },
+      {
+        "path": "float-regression/regression/regression/draw/sabotage-texel/report.json",
+        "task": "E6-T12d",
+        "status": "failed",
+        "sha256": "a81e5228f75850f2b4283b90441a3cc42ae0f0785a5ec0cb6dedd062d903835d",
+        "sourceCount": 27
+      },
+      {
+        "path": "float-regression/regression/regression/draw/sabotage-vertex/report.json",
+        "task": "E6-T12d",
+        "status": "failed",
+        "sha256": "259fe7573f82e529e2fc693918008797725fd0d1d95c3f3bd9d341fda9379c9d",
+        "sourceCount": 27
+      },
+      {
+        "path": "float-regression/regression/regression/draw/state/decoder/report.json",
+        "task": "E6-T12a",
+        "status": "passed",
+        "sha256": "596e81908c7a69e567fbdca18c1e2b43f40e796c8dc9dcc3f4d98ec31682a750",
+        "sourceCount": 13
+      },
+      {
+        "path": "float-regression/regression/regression/draw/state/hardware/report.json",
+        "task": "E6-T12c",
+        "status": "passed",
+        "sha256": "953c84180be08f3aaa3a269dc4fc37b12e08e78e665b8d12a9328960ee863e3e",
+        "sourceCount": 24
+      },
+      {
+        "path": "float-regression/regression/regression/draw/state/resources/report.json",
+        "task": "E6-T12b",
+        "status": "passed",
+        "sha256": "9eed359365033dbec6237058eb180768424ad811277f106e9dc922233d27a82a",
+        "sourceCount": 14
+      },
+      {
+        "path": "float-regression/regression/regression/draw/state/sabotage-color-mask/report.json",
+        "task": "E6-T12c",
+        "status": "failed",
+        "sha256": "47bf902e010df1d731bfcc7b58e008524884543cc12a0a1e301aa22e4d51f590",
+        "sourceCount": 24
+      },
+      {
+        "path": "float-regression/regression/regression/draw/state/sabotage-constant-bits/report.json",
+        "task": "E6-T12c",
+        "status": "failed",
+        "sha256": "436d5a28fde2f5a45fb8c064f3c8ab39419979bd547a9c6bb58fc8c137336160",
+        "sourceCount": 24
+      },
+      {
+        "path": "float-regression/regression/regression/hardware/report.json",
+        "task": "E6-T12e2",
+        "status": "passed",
+        "sha256": "912a3f003f5b51b467b649968c48e51c57aa0c39539028a9b8c4059c4491e921",
+        "sourceCount": 142
+      },
+      {
+        "path": "float-regression/regression/regression/sabotage/report.json",
+        "task": "E6-T12e2",
+        "status": "failed",
+        "sha256": "25ceca46416409e110dc58f2aacbb56d8f19f2a7d8dd543b30766d50c01d3280",
+        "sourceCount": 142
+      },
+      {
+        "path": "float-regression/regression/sabotage/report.json",
+        "task": "E6-T12e3",
+        "status": "failed",
+        "sha256": "6740cc6f8ecadd5cbe0c197e264f5fb45c49b6ba9a906727fc84139d60a1a61a",
+        "sourceCount": 138
+      },
+      {
+        "path": "float-regression/sabotage-negative-order/report.json",
+        "task": "E6-T12e4c1",
+        "status": "failed",
+        "sha256": "901c8df56eda8d26bf0966829f459ff77db1cc6bad2032b5cfb1bf48c31aeea8",
+        "sourceCount": 138
+      },
+      {
+        "path": "float-regression/sabotage-signed-zero/report.json",
+        "task": "E6-T12e4c1",
+        "status": "failed",
+        "sha256": "e500c51a849b048a99c8d3d8bc32823356aa717c8c557631cdcffadfd706f6b4",
+        "sourceCount": 138
+      },
+      {
+        "path": "float-regression/sabotage-unordered-guard/report.json",
+        "task": "E6-T12e4c1",
+        "status": "failed",
+        "sha256": "a09da0ac6b9327982c4a7a85ff94e36d61129104507e4df32b29cba801096b80",
+        "sourceCount": 138
+      },
+      {
+        "path": "hardware/report.json",
+        "task": "E6-T12e4c2",
+        "status": "passed",
+        "sha256": "e99a4d9d32a718c487a4d3c658811b63bc19ec08fe9799ce92d087e15f7efc0b",
+        "sourceCount": 138
+      },
+      {
+        "path": "sabotage-numeric-decode/report.json",
+        "task": "E6-T12e4c2",
+        "status": "failed",
+        "sha256": "2a8b7f4ec9ba23550bacf582467a98ddb3c2ae8bfc0bbba6b4cab3bd754fb1a2",
+        "sourceCount": 138
+      },
+      {
+        "path": "sabotage-sampler-index/report.json",
+        "task": "E6-T12e4c2",
+        "status": "failed",
+        "sha256": "20a25ffe12c246ff3b236579db973a062bf8df17fc2efd7f63e7ce7133582eff",
+        "sourceCount": 138
+      },
+      {
+        "path": "sabotage-stale-shadow/report.json",
+        "task": "E6-T12e4c2",
+        "status": "failed",
+        "sha256": "eb7b522391b440b32a83dfadc97a946a3a4a8ff087621de6325121f17b427cc2",
+        "sourceCount": 138
+      }
+    ],
+    "wasmSha256": "eefc0899be746bdbb246285e9c8bfe8c802d29e0480bf052be9790c78631c02d",
+    "production": {
+      "capsets": [],
+      "guestRendererImplemented": false,
+      "numCapsets": 0,
+      "virglFeature": false
+    },
+    "numericWords": 352,
+    "vertexCaptures": 144,
+    "fragmentBitplanes": 1664,
+    "crossConsumerVectors": 48,
+    "texturePixels": 4096,
+    "interpolationPixels": 25792
+  },
+  "hardwareScreenshotSha256": "083d7e8502d859b2cfa12aa2fad7aa2fa00dc90744751648e47c2636a65cb319",
+  "coldReport": {
+    "path": "evidence/virgl-numeric-floats/cold-clone/report.json",
+    "bytes": 31836,
+    "sha256": "2bbdfa7bdbc25ed352ec6e60d91618351f16bb73ceb2c614703fe2290367cd78"
+  },
+  "coldFileCount": 151,
+  "removedEnvironmentNames": [
+    "GIT_PAGER",
+    "RUST_LOG"
+  ],
+  "workerClaim": {
+    "commit": "752b4f677b7c3266080d5924cca780d9bde81468",
+    "path": "tasks/epic-6-transcendence/E6-T12e4c2-numeric-float-shadows.md",
+    "sha256": "2e09dc5f0814489a4978302910a8f8c9cb01735a57061616ab356906de609c97",
+    "evidenceDigests": 12,
+    "firstLine": 80
+  },
+  "assertions": 40028
+}

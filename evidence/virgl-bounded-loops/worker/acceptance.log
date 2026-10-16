@@ -1,0 +1,212 @@
++ git rev-parse HEAD
+bfcd3a4076a163648c67bf7674e94d616c42c1e1
++ python3 -m py_compile tools/virgl-bounded-loops/browser_receipt.py tools/virgl-bounded-loops/cold.py tools/virgl-bounded-loops/compat_common.py tools/virgl-bounded-loops/constant_compat.py tools/virgl-bounded-loops/consumer_compat.py tools/virgl-bounded-loops/consumer_native_compat.py tools/virgl-bounded-loops/consumer_receipt.py tools/virgl-bounded-loops/faults.py tools/virgl-bounded-loops/generate_cases.py tools/virgl-bounded-loops/indirect_compat.py tools/virgl-bounded-loops/legacy_compat.py tools/virgl-bounded-loops/native.py tools/virgl-bounded-loops/native_receipt.py tools/virgl-bounded-loops/oracle.py tools/virgl-bounded-loops/profile_receipt.py tools/virgl-bounded-loops/receipt.py tools/virgl-bounded-loops/regressions.py tools/virgl-bounded-loops/shader_compat.py tools/virgl-bounded-loops/structured_compat.py tools/virgl-bounded-loops/unit_compat.py tools/virgl-bounded-loops/wasm_receipt.py
++ node --check renderer/virgl-command/constant-domain.mjs
++ node --check renderer/virgl-command/tests/bounded-loops.mjs
++ node --check renderer/virgl-command/tests/bounded-loops-oracle.mjs
++ node --check tools/verify-virgl-bounded-loops.mjs
++ node --check tools/virgl-bounded-loops/consumer_compat.mjs
++ node --check tools/virgl-bounded-loops/wasm.mjs
++ node --check tools/virgl-bounded-loops/fault_wasm.mjs
++ node --check tools/virgl-bounded-loops/profiles.mjs
++ node --check tools/virgl-bounded-loops/consumer-unit.mjs
++ bash renderer/virgl-shader/build.sh guard-check
+Pinned virglrenderer 1.3.0: 70 source/generated SHA-256 hashes match
++ bash renderer/virgl-shader/build.sh bounded-loop-sanitize
+Pinned virglrenderer 1.3.0: 70 source/generated SHA-256 hashes match
+vendor/src/vrend/vrend_shader.c:4717:13: warning: 'sprintf' is deprecated: This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead. [-Wdeprecated-declarations]
+ 4717 |             sprintf(arrayname, "[addr%d]", src->DimIndirect.Index);
+      |             ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/_stdio.h:278:1: note: 'sprintf' has been explicitly marked deprecated here
+  278 | __deprecated_msg("This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead.")
+      | ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h:227:48: note: expanded from macro '__deprecated_msg'
+  227 |         #define __deprecated_msg(_msg) __attribute__((__deprecated__(_msg)))
+      |                                                       ^
+vendor/src/vrend/vrend_shader.c:4719:13: warning: 'sprintf' is deprecated: This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead. [-Wdeprecated-declarations]
+ 4719 |             sprintf(arrayname, "[%d]", src->Dimension.Index);
+      |             ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/_stdio.h:278:1: note: 'sprintf' has been explicitly marked deprecated here
+  278 | __deprecated_msg("This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead.")
+      | ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h:227:48: note: expanded from macro '__deprecated_msg'
+  227 |         #define __deprecated_msg(_msg) __attribute__((__deprecated__(_msg)))
+      |                                                       ^
+vendor/src/vrend/vrend_shader.c:7349:16: warning: 'sprintf' is deprecated: This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead. [-Wdeprecated-declarations]
+ 7349 |                sprintf(prefix, "layout(location = %d)", ctx->outputs[i].sid);
+      |                ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/_stdio.h:278:1: note: 'sprintf' has been explicitly marked deprecated here
+  278 | __deprecated_msg("This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead.")
+      | ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h:227:48: note: expanded from macro '__deprecated_msg'
+  227 |         #define __deprecated_msg(_msg) __attribute__((__deprecated__(_msg)))
+      |                                                       ^
+3 warnings generated.
++ python3 tools/virgl-bounded-loops/native.py --binary renderer/virgl-shader/build/bounded-loop-sanitize/bounded-loop-test --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/native
+{"status": "passed", "originals": 19, "acceptedOriginals": 12, "cases": 4012, "pairs": 264, "calls": 743022, "standaloneRecoveries": 378638, "pairRecoveries": 349512, "truncations": 6115, "hostileCases": 324, "mutations": 4096, "allocationFaults": 16, "maxSingleResultBytes": 63369, "maxPairResultBytes": 109235, "report": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/native/native-report.json"}
++ bash renderer/virgl-shader/build.sh native
+Pinned virglrenderer 1.3.0: 70 source/generated SHA-256 hashes match
++ bash renderer/virgl-shader/build.sh wasm
+Pinned virglrenderer 1.3.0: 70 source/generated SHA-256 hashes match
++ node tools/virgl-bounded-loops/wasm.mjs --native /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/native/native-report.json --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/wasm
+{"status":"passed","counts":{"calls":15151,"originals":19,"singles":4012,"pairs":264,"recoverySingles":5590,"recoveryPairs":5160,"stress":64,"pressure":33},"report":"/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/wasm/report.json"}
++ node tools/virgl-bounded-loops/profiles.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/profiles
+E9 retained profiles passed: 50 complete public cases; four explicitly inventoried v10 rejection diagnostics.
++ node tools/virgl-bounded-loops/consumer-unit.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/consumer-unit
+{"status":"passed","schemas":234,"banks":157,"ownership":3,"output":"/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/consumer-unit"}
++ node tools/verify-virgl-raw-bits.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/shader-regression/raw
+E6-T12e4a: 235 authored cases;12/19 unchanged originals;480 exact raw words;15 mixed backend pixel draws;fixed16MiB stress passed.
++ node tools/verify-virgl-integer-masks.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/shader-regression/integer
+E6-T12e4b: 377 authored cases;12/19 unchanged originals;704 exact words;direct finite UCMP;18 mixed backend pixel draws;fixed16MiB stress passed.
++ node tools/verify-virgl-float-masks.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/shader-regression/float
+E6-T12e4c1: 396 authored cases;12/19 unchanged originals;768 exact words;finite ordered selections;38 mixed backend pixel draws;fixed16MiB stress passed.
++ node tools/verify-virgl-numeric-floats.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/shader-regression/numeric
+E6-T12e4c2: 285 authored cases; 12/19 unchanged originals; 352 exact words; 4,096 sampled pixels; 26 mixed backend draws; fixed 16 MiB stress passed.
++ node tools/verify-virgl-component-floats.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/shader-regression/component
+E6-T12e5: 497 authored cases; 12/19 unchanged originals; 448 exact or bounded words; 4,096 sampled pixels; 30 mixed backend draws; fixed 16 MiB stress passed.
++ node tools/verify-virgl-dot-reciprocals.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/shader-regression/dot
+E6-T12e6: 518 authored cases; 12/19 unchanged originals; 488 exact or bounded words; 6,144 sampled pixels; 34 mixed backend draws; fixed 16 MiB stress passed.
++ constant_dir=/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/constant-regression
++ python3 tools/virgl-constant-compiler/faults.py --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/constant-regression/fault-artifacts
+Built both isolated compiler faults from individually bound source copies.
++ node tools/verify-virgl-constant-compiler.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/constant-regression/hardware
+E6-T12e6b normal: 27 draws; 1152 independently checked words; 110592 full-frame pixels; complete cleanup.
++ node tools/verify-virgl-constant-compiler.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/constant-regression/decoder-bypass --mode decoder-bypass
+E6-T12e6b decoder-bypass: 2 draws; 0 independently checked words; 8192 full-frame pixels; complete cleanup.
++ for attack in missing-contract numeric-index
++ node tools/verify-virgl-constant-compiler.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/constant-regression/sabotage-missing-contract --mode missing-contract --fault-artifacts /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/constant-regression/fault-artifacts
+page.evaluate: Error: missing-contract source fault rejected by shared renderer
+    at runAcceptance (http://127.0.0.1:60209/renderer/virgl-command/tests/constant-compiler.mjs:151:703)
+    at async eval (eval at evaluate (:234:30), <anonymous>:3:14)
+    at async <anonymous>:260:30
+    at runVirglBrowser (/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/verify-virgl-constant-compiler.mjs:146:58)
+    at /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/async file:/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/verify-virgl-constant-compiler.mjs:239:1
++ for attack in missing-contract numeric-index
++ node tools/verify-virgl-constant-compiler.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/constant-regression/sabotage-numeric-index --mode numeric-index --fault-artifacts /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/constant-regression/fault-artifacts
+page.evaluate: Error: actual atlas numerical word differs from independent oracle
+    at require (http://127.0.0.1:60235/renderer/virgl-command/tests/constant-compiler.mjs:9:63)
+    at atlas (http://127.0.0.1:60235/renderer/virgl-command/tests/constant-compiler.mjs:127:97)
+    at async runAcceptance (http://127.0.0.1:60235/renderer/virgl-command/tests/constant-compiler.mjs:152:465)
+    at async eval (eval at evaluate (:234:30), <anonymous>:3:14)
+    at async <anonymous>:260:30
+    at runVirglBrowser (/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/verify-virgl-constant-compiler.mjs:146:58)
+    at /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/async file:/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/verify-virgl-constant-compiler.mjs:239:1
++ structured_dir=/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/structured-regression
++ python3 tools/virgl-structured-conditionals/faults.py --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/structured-regression/fault-artifacts
+branch-polarity: 16 actual Wasm fault results match native.
+join-union: 16 actual Wasm fault results match native.
+Built actual branch-polarity and join-union native/Wasm faults from individually bound source copies.
++ node tools/verify-virgl-structured-conditionals.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/structured-regression/hardware
+E6-T12e7 normal: 39 draws; 1088 literal branch words; 159744 full-frame pixels; complete cleanup.
++ node tools/verify-virgl-structured-conditionals.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/structured-regression/sabotage-branch-polarity --mode branch-polarity --fault-artifacts /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/structured-regression/fault-artifacts
+page.evaluate: Error: actual branch atlas differs from independent literal oracle
+    at require (http://127.0.0.1:60315/renderer/virgl-command/tests/structured-conditionals.mjs:9:63)
+    at atlas (http://127.0.0.1:60315/renderer/virgl-command/tests/structured-conditionals.mjs:115:88)
+    at async runAcceptance (http://127.0.0.1:60315/renderer/virgl-command/tests/structured-conditionals.mjs:131:412)
+    at async eval (eval at evaluate (:234:30), <anonymous>:3:14)
+    at async <anonymous>:260:30
+    at runVirglBrowser (/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/verify-virgl-structured-conditionals.mjs:146:58)
+    at /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/async file:/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/verify-virgl-structured-conditionals.mjs:234:1
++ consumer_dir=/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/consumer-regression
++ node tools/virgl-constant-domains/unit.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/consumer-regression/unit
+{"status":"passed","predicates":1549,"schemas":95,"banks":109,"ownership":4,"output":"/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/consumer-regression/unit"}
++ python3 tools/virgl-bounded-loops/consumer_native_compat.py --binary renderer/virgl-shader/build/native/virgl-shader --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/consumer-regression/native
+E9 consumer compatibility: 14 full native results equal verified E6a.
++ python3 tools/virgl-constants/native.py --binary renderer/virgl-shader/build/native/virgl-shader --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/consumer-regression/legacy/native
+{"status": "passed", "originals": 19, "acceptedOriginals": 12, "cases": 8, "calls": 27, "report": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/consumer-regression/legacy/native/native-report.json"}
++ node tools/virgl-constants/decoder.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/consumer-regression/legacy/decoder
+{"status":"passed","cases":23,"accepted":8,"rejected":15,"output":"/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/consumer-regression/legacy/decoder"}
++ async_dir=/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/consumer-regression/legacy/regression
++ node tools/verify-virgl-command-decoder.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/consumer-regression/legacy/regression/regression/decoder --node-only true
+Node command acceptance passed (560 ms)
++ node tools/verify-virgl-resource-transfers.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/consumer-regression/legacy/regression/regression/resources
+Node resource acceptance passed (61 ms)
+Hardware resource acceptance passed (132 ms)
++ node tools/verify-virgl-object-state.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/consumer-regression/legacy/regression/regression/state
+Hardware state acceptance passed (164 ms)
++ node tools/verify-virgl-draw-replay.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/consumer-regression/legacy/regression/regression/draw
+Hardware draw replay passed (344 ms)
++ node tools/verify-virgl-async-jobs.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/consumer-regression/legacy/regression/hardware
+Hardware async jobs passed (2807 ms)
++ for attack in early-collect index-class
++ node tools/verify-virgl-async-jobs.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/consumer-regression/legacy/regression/sabotage-early-collect --sabotage early-collect
+AssertionError [ERR_ASSERTION]: async CPU collection requires a signaled fence: expected true, got false
+
+'failed' !== 'passed'
+
+    at file:///Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/verify-virgl-async-jobs.mjs:154:12
++ for attack in early-collect index-class
++ node tools/verify-virgl-async-jobs.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/consumer-regression/legacy/regression/sabotage-index-class --sabotage index-class
+AssertionError [ERR_ASSERTION]: async index staging uses element-array class: expected true, got false
+
+'failed' !== 'passed'
+
+    at file:///Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/verify-virgl-async-jobs.mjs:154:12
++ python3 tools/virgl-command/async-receipt.py /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/consumer-regression/legacy/regression
+E6-T11b1 receipt passed: asynchronous jobs, original pixels, sequencing controls and synchronous regressions
++ node tools/verify-virgl-pairs.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/consumer-regression/legacy/flat-regression
+E6-T12e2:12/19 originals; 114 native/Wasm pair cases; 8 direct and 44 renderer draws; cache/lifecycle/fault proof passed.
++ node tools/verify-virgl-constants.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/consumer-regression/legacy/hardware
+E6-T12e3b: 45056 exact hardware pixels; full constant transport, reflection and ownership passed.
++ node tools/verify-virgl-constants.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/consumer-regression/legacy/sabotage --sabotage high-upload
+page.evaluate: Error: A first high-bank draw independent pixel (0,0): expected [64,191,128,191], observed [0,0,255,255]
+    at require (http://127.0.0.1:60555/renderer/virgl-command/tests/constants.mjs:11:63)
+    at equal (http://127.0.0.1:60555/renderer/virgl-command/tests/constants.mjs:12:44)
+    at capture (http://127.0.0.1:60555/renderer/virgl-command/tests/constants.mjs:200:5)
+    at async primary (http://127.0.0.1:60555/renderer/virgl-command/tests/constants.mjs:227:5)
+    at async runAcceptance (http://127.0.0.1:60555/renderer/virgl-command/tests/constants.mjs:384:98)
+    at async eval (eval at evaluate (:234:30), <anonymous>:3:14)
+    at async <anonymous>:260:30
+    at runVirglBrowser (/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/verify-virgl-constants.mjs:146:57)
+    at /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/async file:/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/verify-virgl-constants.mjs:236:1
++ node tools/virgl-bounded-loops/consumer_compat.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/consumer-regression/hardware
+E6-T12e9 consumer regression normal: 110592 whole-frame pixels; 64 exact raw words; 120 invalid-bank cases; complete cleanup.
++ node tools/virgl-bounded-loops/consumer_compat.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/consumer-regression/decoder-bypass --mode decoder-bypass
+E6-T12e9 consumer regression decoder-bypass: 10240 whole-frame pixels; 0 exact raw words; 120 invalid-bank cases; complete cleanup.
++ node tools/virgl-bounded-loops/consumer_compat.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/consumer-regression/sabotage --mode decoder-and-guard-bypass
+page.evaluate: Error: finite guard omission: actual invalid conditional uniform upload
+    at invalidMatrix (http://127.0.0.1:60743/renderer/virgl-command/tests/constant-domains.mjs:280:260)
+    at async runAcceptance (http://127.0.0.1:60743/renderer/virgl-command/tests/constant-domains.mjs:313:247)
+    at async eval (eval at evaluate (:234:30), <anonymous>:3:14)
+    at async <anonymous>:260:30
+    at runVirglBrowser (/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/virgl-bounded-loops/consumer_compat.mjs:146:58)
+    at /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/async file:/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/virgl-bounded-loops/consumer_compat.mjs:235:1
++ indirect_dir=/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/indirect-regression
++ python3 tools/virgl-indirect-constants/faults.py --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/indirect-regression/fault-artifacts
+index-offset: 20 actual Wasm fault results match native.
+static-bound: 20 actual Wasm fault results match native.
+Built actual index-offset and static-bound native/Wasm faults from individually bound source copies.
++ node tools/verify-virgl-indirect-constants.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/indirect-regression/hardware
+E6-T12e8 normal: 31 draws; 1216 literal addressed words; 126976 full-frame pixels; complete cleanup.
++ node tools/verify-virgl-indirect-constants.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/indirect-regression/sabotage-decoder-bypass --mode decoder-bypass
+E6-T12e8 decoder-bypass: 5 draws; 0 literal addressed words; 20480 full-frame pixels; complete cleanup.
++ node tools/verify-virgl-indirect-constants.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/indirect-regression/sabotage-index-offset --mode index-offset --fault-artifacts /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/indirect-regression/fault-artifacts
+page.evaluate: Error: actual indirect atlas differs from independent literal oracle
+    at require (http://127.0.0.1:60868/renderer/virgl-command/tests/indirect-constants.mjs:9:63)
+    at atlas (http://127.0.0.1:60868/renderer/virgl-command/tests/indirect-constants.mjs:115:89)
+    at async runAcceptance (http://127.0.0.1:60868/renderer/virgl-command/tests/indirect-constants.mjs:131:439)
+    at async eval (eval at evaluate (:234:30), <anonymous>:3:14)
+    at async <anonymous>:260:30
+    at runVirglBrowser (/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/verify-virgl-indirect-constants.mjs:146:58)
+    at /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/async file:/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/verify-virgl-indirect-constants.mjs:234:1
++ node tools/virgl-indirect-constants/consumer-unit.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/indirect-regression/consumer-unit
+{"status":"passed","schemas":206,"banks":290,"ownership":3,"output":"/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/indirect-regression/consumer-unit"}
++ python3 tools/virgl-bounded-loops/faults.py --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/fault-artifacts
+early-break: 14 actual Wasm fault results match native.
+recurrence-guard: 14 actual Wasm fault results match native.
+Built actual early-break and recurrence-guard native/Wasm faults from individually bound source copies.
++ node tools/verify-virgl-bounded-loops.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/hardware
+E6-T12e9 normal: 39 draws; 768 literal loop words; 159744 full-frame pixels; complete cleanup.
++ node tools/verify-virgl-bounded-loops.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/sabotage-decoder-bypass --mode decoder-bypass
+E6-T12e9 decoder-bypass: 5 draws; 0 literal loop words; 20480 full-frame pixels; complete cleanup.
++ node tools/verify-virgl-bounded-loops.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/sabotage-early-break --mode early-break --fault-artifacts /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker/fault-artifacts
+page.evaluate: Error: actual bounded loop atlas differs from independent literal oracle
+    at require (http://127.0.0.1:60989/renderer/virgl-command/tests/bounded-loops.mjs:9:63)
+    at atlas (http://127.0.0.1:60989/renderer/virgl-command/tests/bounded-loops.mjs:115:86)
+    at async runAcceptance (http://127.0.0.1:60989/renderer/virgl-command/tests/bounded-loops.mjs:132:430)
+    at async eval (eval at evaluate (:234:30), <anonymous>:3:14)
+    at async <anonymous>:260:30
+    at runVirglBrowser (/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/verify-virgl-bounded-loops.mjs:146:58)
+    at /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/async file:/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/verify-virgl-bounded-loops.mjs:234:1
++ python3 tools/virgl-bounded-loops/receipt.py /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-bounded-loops/worker
+E6-T12e9 passed: counted-table termination and complete address bounds, immutable bank validation, full native/Wasm parity, actual GPU words, source faults and retained compatibility.

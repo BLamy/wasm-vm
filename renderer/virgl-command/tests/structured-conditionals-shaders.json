@@ -1,0 +1,678 @@
+{
+  "schema": "wasm-vm-structured-conditional-hardware-v1",
+  "shaders": [
+    {
+      "name": "pass-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL IN[2]\nDCL IN[3]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL OUT[2], GENERIC[1]\nDCL OUT[3], GENERIC[2]\nMOV OUT[0], IN[0]\nMOV OUT[1], IN[1]\nMOV OUT[2], IN[2]\nMOV OUT[3], IN[3]\nEND\n",
+      "expected": {
+        "profile": "virgl-webgl2-straight-line-v5",
+        "constantCount": 0,
+        "constantDomains": null
+      }
+    },
+    {
+      "name": "pass-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[1], GENERIC[0], CONSTANT\nDCL OUT[0], COLOR\nMOV OUT[0], IN[1]\nEND\n",
+      "expected": {
+        "profile": "virgl-webgl2-straight-line-v5",
+        "constantCount": 0,
+        "constantDomains": null
+      }
+    },
+    {
+      "name": "raw-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL IN[2]\nDCL IN[3]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1, 23, 31}\nIMM[1] UINT32 {1065353216, 0, 0, 0}\nIMM[2] UINT32 {19088743, 2309737967, 2147483648, 8388607}\nIMM[3] UINT32 {1, 2143289345, 2147483648, 4294967295}\nIMM[4] UINT32 {8388607, 1065353216, 0, 305419896}\nIMM[5] UINT32 {324508639, 610839776, 4275878552, 1985229328}\nIMM[6] UINT32 {2863311530, 1431655765, 252645135, 4042322160}\nIMM[7] UINT32 {0, 2, 0, 0}\nUIF IMM[7].xxxx\nMOV TEMP[0], IMM[3]\nELSE\nMOV TEMP[0], IMM[4]\nENDIF\nUIF IMM[3].xxxx\nMOV TEMP[1], IMM[3]\nELSE\nMOV TEMP[1], IMM[4]\nENDIF\nUIF IMM[7].yyyy\nMOV TEMP[2], IMM[3]\nELSE\nMOV TEMP[2], IMM[4]\nENDIF\nUIF IMM[3].zzzz\nMOV TEMP[3], IMM[3]\nELSE\nMOV TEMP[3], IMM[4]\nENDIF\nUIF IMM[3].wwww\nMOV TEMP[4], IMM[3]\nELSE\nMOV TEMP[4], IMM[4]\nENDIF\nUIF IMM[7]\nMOV TEMP[5], IMM[3]\nELSE\nMOV TEMP[5], IMM[4]\nENDIF\nUIF IMM[7].yyyy\nMOV TEMP[6], IMM[3]\nELSE\nMOV TEMP[6], IMM[4]\nENDIF\nUIF IMM[3].yyyy\nMOV TEMP[7], IMM[3]\nELSE\nMOV TEMP[7], IMM[4]\nENDIF\nMOV TEMP[8], IMM[4]\nUIF CONST[44].xxxx\nMOV TEMP[8], IMM[3]\nENDIF\nUIF CONST[44].xxxx\nUIF CONST[44].yyyy\nMOV TEMP[9], IMM[3]\nELSE\nMOV TEMP[9], IMM[4]\nENDIF\nELSE\nUIF CONST[44].zzzz\nMOV TEMP[9], IMM[5]\nELSE\nMOV TEMP[9], IMM[6]\nENDIF\nENDIF\nMOV TEMP[10], IMM[3]\nUIF CONST[44].xxxx\nMOV TEMP[10].xy, TEMP[10].yxzw\nELSE\nMOV TEMP[116], TEMP[10]\nMOV TEMP[10].z, TEMP[116].wwww\nMOV TEMP[10].w, TEMP[116].zzzz\nENDIF\nMOV TEMP[117].y, CONST[44].yyyy\nUIF TEMP[117].yyyy\nMOV TEMP[11], IMM[5]\nELSE\nMOV TEMP[11], IMM[6]\nENDIF\nUSHR TEMP[110], IN[1], IMM[0].zzzz\nAND TEMP[110], TEMP[110], IMM[0].wwww\nMOV TEMP[111], IMM[2]\nMOV TEMP[113], IMM[0].xxxx\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[0], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[1], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[2], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[3], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[4], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[5], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[6], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[7], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[8], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[9], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[10], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[11], TEMP[111]\nUSHR TEMP[111], TEMP[111], TEMP[110].xxxx\nAND TEMP[111], TEMP[111], IMM[0].yyyy\nUCMP OUT[1], TEMP[111], IMM[1].xxxx, IMM[0].xxxx\nMOV OUT[0], IN[0]\nEND\n",
+      "expected": {
+        "profile": "virgl-webgl2-raw-bits-v8",
+        "constantCount": 46,
+        "constantDomains": null
+      }
+    },
+    {
+      "name": "raw-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[1], GENERIC[0], CONSTANT\nDCL IN[2], GENERIC[1], CONSTANT\nDCL IN[3], GENERIC[2], CONSTANT\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1, 23, 31}\nIMM[1] UINT32 {1065353216, 0, 0, 0}\nIMM[2] UINT32 {19088743, 2309737967, 2147483648, 8388607}\nIMM[3] UINT32 {1, 2143289345, 2147483648, 4294967295}\nIMM[4] UINT32 {8388607, 1065353216, 0, 305419896}\nIMM[5] UINT32 {324508639, 610839776, 4275878552, 1985229328}\nIMM[6] UINT32 {2863311530, 1431655765, 252645135, 4042322160}\nIMM[7] UINT32 {0, 2, 0, 0}\nUIF IMM[7].xxxx\nMOV TEMP[0], IMM[3]\nELSE\nMOV TEMP[0], IMM[4]\nENDIF\nUIF IMM[3].xxxx\nMOV TEMP[1], IMM[3]\nELSE\nMOV TEMP[1], IMM[4]\nENDIF\nUIF IMM[7].yyyy\nMOV TEMP[2], IMM[3]\nELSE\nMOV TEMP[2], IMM[4]\nENDIF\nUIF IMM[3].zzzz\nMOV TEMP[3], IMM[3]\nELSE\nMOV TEMP[3], IMM[4]\nENDIF\nUIF IMM[3].wwww\nMOV TEMP[4], IMM[3]\nELSE\nMOV TEMP[4], IMM[4]\nENDIF\nUIF IMM[7]\nMOV TEMP[5], IMM[3]\nELSE\nMOV TEMP[5], IMM[4]\nENDIF\nUIF IMM[7].yyyy\nMOV TEMP[6], IMM[3]\nELSE\nMOV TEMP[6], IMM[4]\nENDIF\nUIF IMM[3].yyyy\nMOV TEMP[7], IMM[3]\nELSE\nMOV TEMP[7], IMM[4]\nENDIF\nMOV TEMP[8], IMM[4]\nUIF CONST[44].xxxx\nMOV TEMP[8], IMM[3]\nENDIF\nUIF CONST[44].xxxx\nUIF CONST[44].yyyy\nMOV TEMP[9], IMM[3]\nELSE\nMOV TEMP[9], IMM[4]\nENDIF\nELSE\nUIF CONST[44].zzzz\nMOV TEMP[9], IMM[5]\nELSE\nMOV TEMP[9], IMM[6]\nENDIF\nENDIF\nMOV TEMP[10], IMM[3]\nUIF CONST[44].xxxx\nMOV TEMP[10].xy, TEMP[10].yxzw\nELSE\nMOV TEMP[116], TEMP[10]\nMOV TEMP[10].z, TEMP[116].wwww\nMOV TEMP[10].w, TEMP[116].zzzz\nENDIF\nMOV TEMP[117].y, CONST[44].yyyy\nUIF TEMP[117].yyyy\nMOV TEMP[11], IMM[5]\nELSE\nMOV TEMP[11], IMM[6]\nENDIF\nUSHR TEMP[110], IN[1], IMM[0].zzzz\nAND TEMP[110], TEMP[110], IMM[0].wwww\nMOV TEMP[111], IMM[2]\nMOV TEMP[113], IMM[0].xxxx\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[0], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[1], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[2], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[3], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[4], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[5], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[6], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[7], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[8], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[9], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[10], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[11], TEMP[111]\nUSHR TEMP[111], TEMP[111], TEMP[110].xxxx\nAND TEMP[111], TEMP[111], IMM[0].yyyy\nUCMP OUT[0], TEMP[111], IMM[1].xxxx, IMM[0].xxxx\nEND\n",
+      "expected": {
+        "profile": "virgl-webgl2-raw-bits-v8",
+        "constantCount": 46,
+        "constantDomains": null
+      }
+    },
+    {
+      "name": "numeric-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL IN[2]\nDCL IN[3]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1, 23, 31}\nIMM[1] UINT32 {1065353216, 0, 0, 0}\nIMM[2] UINT32 {19088743, 2309737967, 2147483648, 8388607}\nIMM[3] FLT32 {0.25, 0.5, 2, 1}\nIMM[4] UINT32 {2143289345, 0, 0, 0}\nUIF CONST[44].xxxx\nMOV TEMP[0], IN[2]\nELSE\nMOV TEMP[0], IN[3]\nENDIF\nADD TEMP[8], TEMP[0], IMM[3].xxxx\nUIF CONST[44].xxxx\nADD TEMP[1], IN[2], IMM[3].xxxx\nELSE\nMOV TEMP[1], IN[3]\nENDIF\nMUL TEMP[9], TEMP[1], IMM[3].zzzz\nUIF CONST[44].xxxx\nADD TEMP[2], IN[2], IMM[3].xxxx\nELSE\nMUL TEMP[2], IN[3], IMM[3].zzzz\nENDIF\nADD TEMP[10], TEMP[2], IMM[3].xxxx\nUIF CONST[44].xxxx\nMOV TEMP[3], CONST[0]\nELSE\nMOV TEMP[3], IN[3]\nENDIF\nADD TEMP[11], TEMP[3], IMM[3].xxxx\nUIF CONST[44].xxxx\nMOV TEMP[4], IN[2]\nELSE\nMOV TEMP[4], CONST[45]\nENDIF\nMUL TEMP[12], TEMP[4], IMM[3].zzzz\nUIF CONST[44].xxxx\nUIF CONST[44].yyyy\nMOV TEMP[5], CONST[0]\nELSE\nADD TEMP[5], IN[2], IMM[3].xxxx\nENDIF\nELSE\nUIF CONST[44].zzzz\nMOV TEMP[5], CONST[45]\nELSE\nMOV TEMP[5], IN[3]\nENDIF\nENDIF\nADD TEMP[13], TEMP[5], IMM[3].xxxx\nUIF CONST[44].xxxx\nMOV TEMP[6], IN[2]\nELSE\nMOV TEMP[6], CONST[0]\nENDIF\nMOV TEMP[6].xy, TEMP[6].yxzw\nADD TEMP[14], TEMP[6], IMM[3].xxxx\nUIF CONST[44].xxxx\nUCMP TEMP[7], IMM[1].xxxx, IN[2], IMM[4].xxxx\nELSE\nUCMP TEMP[7], CONST[44], CONST[0], IN[3]\nENDIF\nADD TEMP[15], TEMP[7], IMM[3].xxxx\nUIF CONST[44].xxxx\nMOV TEMP[16], IMM[3]\nELSE\nAND TEMP[16], CONST[0], IMM[0].xxxx\nENDIF\nADD TEMP[17], TEMP[16], IMM[3].xxxx\nUSHR TEMP[110], IN[1], IMM[0].zzzz\nAND TEMP[110], TEMP[110], IMM[0].wwww\nMOV TEMP[111], IMM[2]\nMOV TEMP[113], IMM[0].xxxx\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], CONST[0], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], CONST[45], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[0], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[1], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[2], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[3], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[4], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[5], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[6], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[7], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[8], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[9], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[10], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[11], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[12], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[13], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[14], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[15], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[16], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[17], TEMP[111]\nUSHR TEMP[111], TEMP[111], TEMP[110].xxxx\nAND TEMP[111], TEMP[111], IMM[0].yyyy\nUCMP OUT[1], TEMP[111], IMM[1].xxxx, IMM[0].xxxx\nMOV OUT[0], IN[0]\nEND\n",
+      "expected": {
+        "profile": "virgl-webgl2-raw-bits-v9",
+        "constantCount": 46,
+        "constantDomains": [
+          {
+            "kind": "constant-bank-finite-f32-v1",
+            "stage": "vertex",
+            "slot": 0,
+            "name": "vsconst0",
+            "count": 46
+          }
+        ]
+      }
+    },
+    {
+      "name": "numeric-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[1], GENERIC[0], CONSTANT\nDCL IN[2], GENERIC[1], CONSTANT\nDCL IN[3], GENERIC[2], CONSTANT\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] UINT32 {0, 1, 23, 31}\nIMM[1] UINT32 {1065353216, 0, 0, 0}\nIMM[2] UINT32 {19088743, 2309737967, 2147483648, 8388607}\nIMM[3] FLT32 {0.25, 0.5, 2, 1}\nIMM[4] UINT32 {2143289345, 0, 0, 0}\nUIF CONST[44].xxxx\nMOV TEMP[0], IN[2]\nELSE\nMOV TEMP[0], IN[3]\nENDIF\nADD TEMP[8], TEMP[0], IMM[3].xxxx\nUIF CONST[44].xxxx\nADD TEMP[1], IN[2], IMM[3].xxxx\nELSE\nMOV TEMP[1], IN[3]\nENDIF\nMUL TEMP[9], TEMP[1], IMM[3].zzzz\nUIF CONST[44].xxxx\nADD TEMP[2], IN[2], IMM[3].xxxx\nELSE\nMUL TEMP[2], IN[3], IMM[3].zzzz\nENDIF\nADD TEMP[10], TEMP[2], IMM[3].xxxx\nUIF CONST[44].xxxx\nMOV TEMP[3], CONST[0]\nELSE\nMOV TEMP[3], IN[3]\nENDIF\nADD TEMP[11], TEMP[3], IMM[3].xxxx\nUIF CONST[44].xxxx\nMOV TEMP[4], IN[2]\nELSE\nMOV TEMP[4], CONST[45]\nENDIF\nMUL TEMP[12], TEMP[4], IMM[3].zzzz\nUIF CONST[44].xxxx\nUIF CONST[44].yyyy\nMOV TEMP[5], CONST[0]\nELSE\nADD TEMP[5], IN[2], IMM[3].xxxx\nENDIF\nELSE\nUIF CONST[44].zzzz\nMOV TEMP[5], CONST[45]\nELSE\nMOV TEMP[5], IN[3]\nENDIF\nENDIF\nADD TEMP[13], TEMP[5], IMM[3].xxxx\nUIF CONST[44].xxxx\nMOV TEMP[6], IN[2]\nELSE\nMOV TEMP[6], CONST[0]\nENDIF\nMOV TEMP[6].xy, TEMP[6].yxzw\nADD TEMP[14], TEMP[6], IMM[3].xxxx\nUIF CONST[44].xxxx\nUCMP TEMP[7], IMM[1].xxxx, IN[2], IMM[4].xxxx\nELSE\nUCMP TEMP[7], CONST[44], CONST[0], IN[3]\nENDIF\nADD TEMP[15], TEMP[7], IMM[3].xxxx\nUIF CONST[44].xxxx\nMOV TEMP[16], IMM[3]\nELSE\nAND TEMP[16], CONST[0], IMM[0].xxxx\nENDIF\nADD TEMP[17], TEMP[16], IMM[3].xxxx\nUSHR TEMP[110], IN[1], IMM[0].zzzz\nAND TEMP[110], TEMP[110], IMM[0].wwww\nMOV TEMP[111], IMM[2]\nMOV TEMP[113], IMM[0].xxxx\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], CONST[0], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], CONST[45], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[0], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[1], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[2], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[3], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[4], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[5], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[6], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[7], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[8], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[9], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[10], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[11], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[12], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[13], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[14], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[15], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[16], TEMP[111]\nUADD TEMP[113], TEMP[113], IMM[0].yyyy\nUSEQ TEMP[112], TEMP[110].yyyy, TEMP[113]\nUCMP TEMP[111], TEMP[112], TEMP[17], TEMP[111]\nUSHR TEMP[111], TEMP[111], TEMP[110].xxxx\nAND TEMP[111], TEMP[111], IMM[0].yyyy\nUCMP OUT[0], TEMP[111], IMM[1].xxxx, IMM[0].xxxx\nEND\n",
+      "expected": {
+        "profile": "virgl-webgl2-raw-bits-v9",
+        "constantCount": 46,
+        "constantDomains": [
+          {
+            "kind": "constant-bank-finite-f32-v1",
+            "stage": "fragment",
+            "slot": 0,
+            "name": "fsconst0",
+            "count": 46
+          }
+        ]
+      }
+    },
+    {
+      "name": "mov-color-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL IN[2]\nDCL IN[3]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nUIF CONST[44].xxxx\nMOV OUT[1], IN[2]\nELSE\nMOV OUT[1], IN[3]\nENDIF\nMOV OUT[0], IN[0]\nEND\n",
+      "expected": {
+        "profile": "virgl-webgl2-raw-bits-v8",
+        "constantCount": 46,
+        "constantDomains": null
+      }
+    },
+    {
+      "name": "mov-color-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[1], GENERIC[0], CONSTANT\nDCL IN[2], GENERIC[1], CONSTANT\nDCL IN[3], GENERIC[2], CONSTANT\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nUIF CONST[44].xxxx\nMOV OUT[0], IN[2]\nELSE\nMOV OUT[0], IN[3]\nENDIF\nEND\n",
+      "expected": {
+        "profile": "virgl-webgl2-raw-bits-v8",
+        "constantCount": 46,
+        "constantDomains": null
+      }
+    },
+    {
+      "name": "coupled-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL IN[2]\nDCL IN[3]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL OUT[2], GENERIC[1]\nDCL OUT[3], GENERIC[2]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nIMM[0] FLT32 {0.5, 0, 0, 0}\nUIF CONST[44].xxxx\nMOV TEMP[0], CONST[0]\nELSE\nMOV TEMP[0], CONST[45]\nENDIF\nMUL OUT[1], TEMP[0], IMM[0].xxxx\nMOV OUT[0], IN[0]\nMOV OUT[2], IN[2]\nMOV OUT[3], IN[3]\nEND\n",
+      "expected": {
+        "profile": "virgl-webgl2-raw-bits-v9",
+        "constantCount": 46,
+        "constantDomains": [
+          {
+            "kind": "constant-bank-finite-f32-v1",
+            "stage": "vertex",
+            "slot": 0,
+            "name": "vsconst0",
+            "count": 46
+          }
+        ]
+      }
+    },
+    {
+      "name": "coupled-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[1], GENERIC[0], CONSTANT\nDCL IN[2], GENERIC[1], CONSTANT\nDCL IN[3], GENERIC[2], CONSTANT\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nUIF CONST[44].yyyy\nMOV TEMP[0], CONST[45]\nELSE\nMOV TEMP[0], IN[3]\nENDIF\nADD OUT[0], TEMP[0], IN[1]\nEND\n",
+      "expected": {
+        "profile": "virgl-webgl2-raw-bits-v9",
+        "constantCount": 46,
+        "constantDomains": [
+          {
+            "kind": "constant-bank-finite-f32-v1",
+            "stage": "fragment",
+            "slot": 0,
+            "name": "fsconst0",
+            "count": 46
+          }
+        ]
+      }
+    }
+  ],
+  "pairs": [
+    {
+      "name": "raw-vertex-pair",
+      "vertex": "raw-vertex",
+      "fragment": "pass-fragment",
+      "interfaceKey": "generic-interpolation-v1:g0/15/flat"
+    },
+    {
+      "name": "raw-fragment-pair",
+      "vertex": "pass-vertex",
+      "fragment": "raw-fragment",
+      "interfaceKey": "generic-interpolation-v1:g0/15/flat;g1/15/flat;g2/15/flat"
+    },
+    {
+      "name": "numeric-vertex-pair",
+      "vertex": "numeric-vertex",
+      "fragment": "pass-fragment",
+      "interfaceKey": "generic-interpolation-v1:g0/15/flat"
+    },
+    {
+      "name": "numeric-fragment-pair",
+      "vertex": "pass-vertex",
+      "fragment": "numeric-fragment",
+      "interfaceKey": "generic-interpolation-v1:g0/15/flat;g1/15/flat;g2/15/flat"
+    },
+    {
+      "name": "mov-color-vertex-pair",
+      "vertex": "mov-color-vertex",
+      "fragment": "pass-fragment",
+      "interfaceKey": "generic-interpolation-v1:g0/15/flat"
+    },
+    {
+      "name": "mov-color-fragment-pair",
+      "vertex": "pass-vertex",
+      "fragment": "mov-color-fragment",
+      "interfaceKey": "generic-interpolation-v1:g0/15/flat;g1/15/flat;g2/15/flat"
+    },
+    {
+      "name": "coupled-pair",
+      "vertex": "coupled-vertex",
+      "fragment": "coupled-fragment",
+      "interfaceKey": "generic-interpolation-v1:g0/15/flat;g1/15/flat;g2/15/flat"
+    }
+  ],
+  "negativeCases": [
+    {
+      "name": "one-sided-predicate-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL IN[2]\nDCL IN[3]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nMOV OUT[1], IN[2]\nUIF CONST[44].xxxx\nMOV TEMP[0], IN[2]\nENDIF\nUIF TEMP[0].xxxx\nENDIF\nMOV OUT[0], IN[0]\nEND\n"
+    },
+    {
+      "name": "uninitialized-x-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL IN[2]\nDCL IN[3]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nMOV OUT[1], IN[2]\nMOV TEMP[0].y, IN[2].yyyy\nUIF TEMP[0]\nENDIF\nMOV OUT[0], IN[0]\nEND\n"
+    },
+    {
+      "name": "one-sided-authority-vertex",
+      "stage": "vertex",
+      "text": "VERT\nDCL IN[0]\nDCL IN[1]\nDCL IN[2]\nDCL IN[3]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..45]\nDCL TEMP[0..117]\nMOV TEMP[0], CONST[0]\nUIF CONST[44].xxxx\nMOV TEMP[0], IN[2]\nENDIF\nMOV OUT[1], TEMP[0]\nMOV OUT[0], IN[0]\nEND\n"
+    },
+    {
+      "name": "one-sided-predicate-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[1], GENERIC[0], CONSTANT\nDCL IN[2], GENERIC[1], CONSTANT\nDCL IN[3], GENERIC[2], CONSTANT\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nUIF CONST[44].xxxx\nMOV TEMP[0], IN[2]\nENDIF\nUIF TEMP[0].xxxx\nENDIF\nMOV OUT[0], IN[2]\nEND\n"
+    },
+    {
+      "name": "uninitialized-x-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[1], GENERIC[0], CONSTANT\nDCL IN[2], GENERIC[1], CONSTANT\nDCL IN[3], GENERIC[2], CONSTANT\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nMOV TEMP[0].y, IN[2].yyyy\nUIF TEMP[0]\nENDIF\nMOV OUT[0], IN[2]\nEND\n"
+    },
+    {
+      "name": "one-sided-authority-fragment",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[1], GENERIC[0], CONSTANT\nDCL IN[2], GENERIC[1], CONSTANT\nDCL IN[3], GENERIC[2], CONSTANT\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..117]\nMOV TEMP[0], CONST[0]\nUIF CONST[44].xxxx\nMOV TEMP[0], IN[2]\nENDIF\nMOV OUT[0], TEMP[0]\nEND\n"
+    }
+  ],
+  "kernels": [
+    {
+      "name": "raw-vertex",
+      "family": "raw",
+      "pair": "raw-vertex-pair",
+      "vectorKey": "branches",
+      "pages": [
+        {
+          "name": "orientation",
+          "source": "IMM[2]"
+        },
+        {
+          "name": "zero",
+          "source": "TEMP[0]"
+        },
+        {
+          "name": "one-subnormal",
+          "source": "TEMP[1]"
+        },
+        {
+          "name": "two-subnormal",
+          "source": "TEMP[2]"
+        },
+        {
+          "name": "high-bit-negative-zero",
+          "source": "TEMP[3]"
+        },
+        {
+          "name": "all-ones",
+          "source": "TEMP[4]"
+        },
+        {
+          "name": "y-only-false",
+          "source": "TEMP[5]"
+        },
+        {
+          "name": "post-swizzle-y-true",
+          "source": "TEMP[6]"
+        },
+        {
+          "name": "nan-word-true",
+          "source": "TEMP[7]"
+        },
+        {
+          "name": "no-else-preserves-entry",
+          "source": "TEMP[8]"
+        },
+        {
+          "name": "nested-four-outcomes",
+          "source": "TEMP[9]"
+        },
+        {
+          "name": "aliased-partial-raw",
+          "source": "TEMP[10]"
+        },
+        {
+          "name": "initialized-y-predicate",
+          "source": "TEMP[11]"
+        }
+      ]
+    },
+    {
+      "name": "raw-fragment",
+      "family": "raw",
+      "pair": "raw-fragment-pair",
+      "vectorKey": "branches",
+      "pages": [
+        {
+          "name": "orientation",
+          "source": "IMM[2]"
+        },
+        {
+          "name": "zero",
+          "source": "TEMP[0]"
+        },
+        {
+          "name": "one-subnormal",
+          "source": "TEMP[1]"
+        },
+        {
+          "name": "two-subnormal",
+          "source": "TEMP[2]"
+        },
+        {
+          "name": "high-bit-negative-zero",
+          "source": "TEMP[3]"
+        },
+        {
+          "name": "all-ones",
+          "source": "TEMP[4]"
+        },
+        {
+          "name": "y-only-false",
+          "source": "TEMP[5]"
+        },
+        {
+          "name": "post-swizzle-y-true",
+          "source": "TEMP[6]"
+        },
+        {
+          "name": "nan-word-true",
+          "source": "TEMP[7]"
+        },
+        {
+          "name": "no-else-preserves-entry",
+          "source": "TEMP[8]"
+        },
+        {
+          "name": "nested-four-outcomes",
+          "source": "TEMP[9]"
+        },
+        {
+          "name": "aliased-partial-raw",
+          "source": "TEMP[10]"
+        },
+        {
+          "name": "initialized-y-predicate",
+          "source": "TEMP[11]"
+        }
+      ]
+    },
+    {
+      "name": "numeric-vertex",
+      "family": "numeric",
+      "pair": "numeric-vertex-pair",
+      "vectorKey": "branches",
+      "pages": [
+        {
+          "name": "orientation",
+          "source": "IMM[2]"
+        },
+        {
+          "name": "raw-C0",
+          "source": "CONST[0]"
+        },
+        {
+          "name": "raw-C45",
+          "source": "CONST[45]"
+        },
+        {
+          "name": "distinct-inputs-raw",
+          "source": "TEMP[0]"
+        },
+        {
+          "name": "input-computed-raw",
+          "source": "TEMP[1]"
+        },
+        {
+          "name": "computed-computed-raw",
+          "source": "TEMP[2]"
+        },
+        {
+          "name": "finite-left-raw",
+          "source": "TEMP[3]"
+        },
+        {
+          "name": "finite-right-raw",
+          "source": "TEMP[4]"
+        },
+        {
+          "name": "nested-authority-raw",
+          "source": "TEMP[5]"
+        },
+        {
+          "name": "alias-shadow-raw",
+          "source": "TEMP[6]"
+        },
+        {
+          "name": "ucmp-shadow-raw",
+          "source": "TEMP[7]"
+        },
+        {
+          "name": "distinct-inputs-numeric",
+          "source": "TEMP[8]"
+        },
+        {
+          "name": "input-computed-numeric",
+          "source": "TEMP[9]"
+        },
+        {
+          "name": "computed-computed-numeric",
+          "source": "TEMP[10]"
+        },
+        {
+          "name": "finite-left-numeric",
+          "source": "TEMP[11]"
+        },
+        {
+          "name": "finite-right-numeric",
+          "source": "TEMP[12]"
+        },
+        {
+          "name": "nested-authority-numeric",
+          "source": "TEMP[13]"
+        },
+        {
+          "name": "alias-shadow-numeric",
+          "source": "TEMP[14]"
+        },
+        {
+          "name": "ucmp-shadow-numeric",
+          "source": "TEMP[15]"
+        },
+        {
+          "name": "known-bits-raw",
+          "source": "TEMP[16]"
+        },
+        {
+          "name": "known-bits-numeric",
+          "source": "TEMP[17]"
+        }
+      ]
+    },
+    {
+      "name": "numeric-fragment",
+      "family": "numeric",
+      "pair": "numeric-fragment-pair",
+      "vectorKey": "branches",
+      "pages": [
+        {
+          "name": "orientation",
+          "source": "IMM[2]"
+        },
+        {
+          "name": "raw-C0",
+          "source": "CONST[0]"
+        },
+        {
+          "name": "raw-C45",
+          "source": "CONST[45]"
+        },
+        {
+          "name": "distinct-inputs-raw",
+          "source": "TEMP[0]"
+        },
+        {
+          "name": "input-computed-raw",
+          "source": "TEMP[1]"
+        },
+        {
+          "name": "computed-computed-raw",
+          "source": "TEMP[2]"
+        },
+        {
+          "name": "finite-left-raw",
+          "source": "TEMP[3]"
+        },
+        {
+          "name": "finite-right-raw",
+          "source": "TEMP[4]"
+        },
+        {
+          "name": "nested-authority-raw",
+          "source": "TEMP[5]"
+        },
+        {
+          "name": "alias-shadow-raw",
+          "source": "TEMP[6]"
+        },
+        {
+          "name": "ucmp-shadow-raw",
+          "source": "TEMP[7]"
+        },
+        {
+          "name": "distinct-inputs-numeric",
+          "source": "TEMP[8]"
+        },
+        {
+          "name": "input-computed-numeric",
+          "source": "TEMP[9]"
+        },
+        {
+          "name": "computed-computed-numeric",
+          "source": "TEMP[10]"
+        },
+        {
+          "name": "finite-left-numeric",
+          "source": "TEMP[11]"
+        },
+        {
+          "name": "finite-right-numeric",
+          "source": "TEMP[12]"
+        },
+        {
+          "name": "nested-authority-numeric",
+          "source": "TEMP[13]"
+        },
+        {
+          "name": "alias-shadow-numeric",
+          "source": "TEMP[14]"
+        },
+        {
+          "name": "ucmp-shadow-numeric",
+          "source": "TEMP[15]"
+        },
+        {
+          "name": "known-bits-raw",
+          "source": "TEMP[16]"
+        },
+        {
+          "name": "known-bits-numeric",
+          "source": "TEMP[17]"
+        }
+      ]
+    }
+  ],
+  "vectors": {
+    "branches": [
+      {
+        "name": "false-false",
+        "condition": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "c0": [
+          1040187392,
+          1048576000,
+          1052770304,
+          1056964608
+        ],
+        "c45": [
+          1048576000,
+          1040187392,
+          1056964608,
+          1048576000
+        ],
+        "coupledColor": [
+          159,
+          48,
+          64,
+          255
+        ],
+        "movColor": [
+          128,
+          32,
+          0,
+          255
+        ]
+      },
+      {
+        "name": "false-true",
+        "condition": [
+          0,
+          2,
+          2,
+          0
+        ],
+        "c0": [
+          1052770304,
+          1040187392,
+          1048576000,
+          1056964608
+        ],
+        "c45": [
+          1040187392,
+          1048576000,
+          1052770304,
+          1048576000
+        ],
+        "coupledColor": [
+          48,
+          96,
+          143,
+          96
+        ],
+        "movColor": [
+          128,
+          32,
+          0,
+          255
+        ]
+      },
+      {
+        "name": "true-false",
+        "condition": [
+          2,
+          0,
+          0,
+          0
+        ],
+        "c0": [
+          1048576000,
+          1056964608,
+          1040187392,
+          1052770304
+        ],
+        "c45": [
+          1052770304,
+          1040187392,
+          1048576000,
+          1056964608
+        ],
+        "coupledColor": [
+          159,
+          96,
+          16,
+          255
+        ],
+        "movColor": [
+          64,
+          191,
+          0,
+          255
+        ]
+      },
+      {
+        "name": "true-true",
+        "condition": [
+          2147483648,
+          1,
+          2,
+          0
+        ],
+        "c0": [
+          1056964608,
+          1048576000,
+          1052770304,
+          1040187392
+        ],
+        "c45": [
+          1048576000,
+          1052770304,
+          1040187392,
+          1056964608
+        ],
+        "coupledColor": [
+          128,
+          128,
+          80,
+          143
+        ],
+        "movColor": [
+          64,
+          191,
+          0,
+          255
+        ]
+      }
+    ]
+  },
+  "atlas": {
+    "width": 64,
+    "height": 64,
+    "cellWidth": 2,
+    "cellHeight": 2,
+    "clearBytes": [
+      0,
+      0,
+      255,
+      255
+    ]
+  },
+  "recoverySingles": [
+    "raw-vertex",
+    "numeric-fragment",
+    "mov-color-vertex",
+    "coupled-fragment"
+  ],
+  "recoveryPairs": [
+    "raw-vertex-pair",
+    "numeric-fragment-pair",
+    "coupled-pair"
+  ]
+}

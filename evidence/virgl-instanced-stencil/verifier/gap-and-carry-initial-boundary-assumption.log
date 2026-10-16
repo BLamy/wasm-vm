@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-instanced-stencil/verifier/gap-and-carry.py", line 52, in <module>
+    assert raw==(ROOT/name).read_bytes(),(family,role,name)
+AssertionError: ('virgl-ordered-stencil', 'worker', 'renderer/virgl-shader/bridge.c')

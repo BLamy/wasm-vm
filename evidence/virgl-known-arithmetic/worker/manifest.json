@@ -1,0 +1,24 @@
+{
+  "schema": "virgl-known-arithmetic-worker-seal-v1",
+  "task": "E6-T12g6m1",
+  "sourceHead": "cba5ae02ba16dc15b7b51d5dcdd808f88fcaf1ee",
+  "base": "bfd5c97f7d71f510fccd2bd120f43b3d8b54159f",
+  "records": 100,
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 9910405,
+    "sha256": "cde41a7216f85761baf09b9b8646777e8703f1f449b0af270b31daf87a3813aa"
+  },
+  "recordIndex": {
+    "path": "records.json",
+    "bytes": 17274,
+    "sha256": "67a4726f63fe00ab9fd9f9c708c26ea89d47dff988aeb53fd6dd169d3fe017b0"
+  },
+  "hotReceiptSha256": "dab67a7162be905ae0a0ff19b8f155eeee7f517a9ed4f73724a137b32b709b4f",
+  "coldReportSha256": "0270e3b238204a6889edb5c6bd8cffac86309a47d19a444a339b7f373eefbab2",
+  "coldReceiptSha256": "18f778bee0326a068755886fb57fbf8c3fa86e002c69547aa8b049ae765c4a53",
+  "checkedWords": 7512,
+  "checkedPixels": 23424,
+  "productionNegotiation": false,
+  "guestExecution": false
+}

@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "task": "E6-T11b1",
+  "gitHead": "5dc0c408b105b432b9558b8dbaa7928998378123",
+  "clone": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-async-cold-3bk36tdn/wasm-vm",
+  "removedEnvironmentNames": [
+    "RUST_LOG"
+  ],
+  "command": [
+    "make",
+    "verify-E6-T11b1"
+  ],
+  "status": "passed",
+  "cloneHead": "5dc0c408b105b432b9558b8dbaa7928998378123",
+  "statusBefore": "",
+  "exitCode": 0,
+  "statusAfter": "",
+  "receiptSha256": "d45407818f2514ee7d8e5c3fc15202bef13377d8ad285ec182d0e67b6f4cffcb",
+  "logSha256": "a304d78efbf4c28e18adbd41e80994e975cb06fd5b91b324fedb1b1779a439f3"
+}

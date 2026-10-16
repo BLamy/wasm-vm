@@ -1,0 +1,203 @@
+{
+  "head": "7e51177d966e05f7ae8b3ae23c7d5d0d028c404b",
+  "parent": "96f30bdee9d0a98672336b223004054677baee36",
+  "sourceSha256": {
+    "crates/wasm/src/jit_browser.rs": "8d592c91c45dbffba8958648542d255cb8e69256f65a1a17de5e7de4fb1116ed"
+  },
+  "nativeSourceDiffFromParent": [],
+  "runs": [
+    {
+      "label": "fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--check"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 0.972,
+      "exitCode": 0,
+      "log": "evidence/jit-direct-memory/gates/fmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "commandText": "cargo fmt --all --check"
+    },
+    {
+      "label": "affected-clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "wasm-vm-wasm",
+        "--target",
+        "wasm32-unknown-unknown",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 101,
+      "elapsedSeconds": 2.171,
+      "exitCode": 101,
+      "log": "evidence/jit-direct-memory/gates/affected-clippy.log",
+      "sha256": "08be04b238fa2dfa45d4aeccb8baa21f6428c7964254e52811a9bebf164ef63f",
+      "commandText": "cargo clippy -p wasm-vm-wasm --target wasm32-unknown-unknown --all-targets -- -D warnings"
+    },
+    {
+      "label": "make-ci",
+      "command": [
+        "make",
+        "ci"
+      ],
+      "exit": 2,
+      "elapsedSeconds": 4.835,
+      "exitCode": 2,
+      "log": "evidence/jit-direct-memory/gates/make-ci.log",
+      "sha256": "769b3fe217b97d91500120e5bd459d417bc4de0268da327e77bb898470040b97",
+      "commandText": "make ci"
+    },
+    {
+      "label": "full-wasm-tests",
+      "command": [
+        "wasm-pack",
+        "test",
+        "--node",
+        "crates/wasm",
+        "--no-fail-fast"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 0.257,
+      "exitCode": 1,
+      "log": "evidence/jit-direct-memory/gates/full-wasm-tests.log",
+      "sha256": "a4a1c9dbcfc4481451d08e99fcb953f416803a8961135a777ce82bff6bb6be0c",
+      "commandText": "wasm-pack test --node crates/wasm --no-fail-fast"
+    },
+    {
+      "label": "wasm-wrapper-native-tests",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "wasm-vm-wasm",
+        "--no-fail-fast"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 36.586,
+      "exitCode": 0,
+      "log": "evidence/jit-direct-memory/gates/wasm-wrapper-native-tests.log",
+      "sha256": "7dad93d794b77ff9bc62e17dd7bb83c52e4fd9997891dd5c64a0095c0cc613d2",
+      "commandText": "cargo test -p wasm-vm-wasm --no-fail-fast"
+    },
+    {
+      "label": "feature-matrix",
+      "command": [
+        "make",
+        "features"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 0.792,
+      "exitCode": 0,
+      "log": "evidence/jit-direct-memory/gates/feature-matrix.log",
+      "sha256": "0868f2ac07a4ae69fce201cb79e1c6292fcc89885b539acd154ceb6f0f5bf052",
+      "commandText": "make features"
+    },
+    {
+      "label": "no-host-float",
+      "command": [
+        "bash",
+        "tools/ci/no-host-float.sh"
+      ],
+      "exit": 0,
+      "elapsedSeconds": 0.027,
+      "exitCode": 0,
+      "log": "evidence/jit-direct-memory/gates/no-host-float.log",
+      "sha256": "5f2dd5d383f61a940a1066a790ba9d6bc817c0910cc1215ab93bede39ea8d024",
+      "commandText": "bash tools/ci/no-host-float.sh"
+    },
+    {
+      "label": "determinism-hazards",
+      "command": [
+        "bash",
+        "tools/ci/determinism-hazards.sh"
+      ],
+      "exit": 1,
+      "elapsedSeconds": 0.221,
+      "exitCode": 1,
+      "log": "evidence/jit-direct-memory/gates/determinism-hazards.log",
+      "sha256": "743e0adf32a5e5f1d380f76fcd4c9f54b3361920ef399ceb09dc00806e49fe91",
+      "commandText": "bash tools/ci/determinism-hazards.sh"
+    },
+    {
+      "name": "full-wasm-tests-retry",
+      "command": "wasm-pack test --node crates/wasm",
+      "exitCode": 1,
+      "elapsedSeconds": 695.692,
+      "log": "evidence/jit-direct-memory/gates/full-wasm-tests-retry.log",
+      "sha256": "495e75d99ace3a9750f0f9abf56dbb2341043136510234e05ad01a12f89a65be",
+      "label": "full-wasm-tests-retry",
+      "commandText": "wasm-pack test --node crates/wasm"
+    },
+    {
+      "name": "affected-lib-fixture-clippy",
+      "command": "cargo clippy -p wasm-vm-wasm --target wasm32-unknown-unknown --lib --test jit_memory_direct_imports --test jit_memory_direct_imports_verifier --test jit_browser_parity -- -D warnings",
+      "exitCode": 0,
+      "elapsedSeconds": 0.167,
+      "log": "evidence/jit-direct-memory/gates/affected-lib-fixture-clippy.log",
+      "sha256": "d64a2d3ceb67cfb4675a6259b394bf33e6193f95ae211ce792226e3771cffa57",
+      "label": "affected-lib-fixture-clippy",
+      "commandText": "cargo clippy -p wasm-vm-wasm --target wasm32-unknown-unknown --lib --test jit_memory_direct_imports --test jit_memory_direct_imports_verifier --test jit_browser_parity -- -D warnings"
+    }
+  ],
+  "headAfter": "7e51177d966e05f7ae8b3ae23c7d5d0d028c404b",
+  "sourceSha256After": {
+    "crates/wasm/src/jit_browser.rs": "8d592c91c45dbffba8958648542d255cb8e69256f65a1a17de5e7de4fb1116ed"
+  },
+  "sourceHashesUnchanged": true,
+  "wasmTests": {
+    "resultLines": 61,
+    "passed": 248,
+    "failed": 1,
+    "ignored": 1,
+    "integrationTargetsExpected": 79,
+    "integrationTargetsRun": 60,
+    "skippedIntegrationTargets": [
+      "tests/retirement_capture.rs",
+      "tests/retirement_capture_baseline.rs",
+      "tests/retirement_capture_verifier.rs",
+      "tests/riscv_tests.rs",
+      "tests/rv64a.rs",
+      "tests/rv64c.rs",
+      "tests/rv64d.rs",
+      "tests/rv64f.rs",
+      "tests/rv64m.rs",
+      "tests/sbi.rs",
+      "tests/sbi_timer.rs",
+      "tests/snapshot.rs",
+      "tests/softfloat.rs",
+      "tests/trace.rs",
+      "tests/uart16550.rs",
+      "tests/virtio_blk.rs",
+      "tests/virtio_mmio.rs",
+      "tests/virtqueue.rs",
+      "tests/wrapper.rs"
+    ]
+  },
+  "nativeWrapperTests": {
+    "passed": 33,
+    "failed": 0,
+    "ignored": 0,
+    "resultSummaries": 81,
+    "zeroTestResultSummaries": 80,
+    "note": "Wasm-specific integration tests are cfg-skipped on native; these do not prove wasm execution."
+  },
+  "preexistingFileIdentity": "evidence/jit-direct-memory/gates/preexisting-file-identity.json",
+  "historicalResumeFailure": {
+    "log": "evidence/omarchy-profile/fp-division-r1/ci.log",
+    "lines": [
+      617,
+      626,
+      627,
+      662
+    ],
+    "sha256": "f94b29fef6b4884a42ecf51be2c578c2cabae20f4f070a57ca8cf5a74621b6c9"
+  }
+}

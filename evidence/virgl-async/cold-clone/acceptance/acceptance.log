@@ -1,0 +1,68 @@
+
+added 7 packages in 449ms
+npm warn install-scripts 1 package has install scripts not yet covered by allowScripts:
+npm warn install-scripts   fsevents@2.3.2 (install: (install scripts present))
+npm warn install-scripts
+npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+Resolving SDK version '4.0.22' to 'sdk-releases-bebaf7e50e31865b0724f17eaa52e161e2dfef5a-64bit'
+Installing SDK 'sdk-releases-bebaf7e50e31865b0724f17eaa52e161e2dfef5a-64bit'..
+Skipped installing node-22.16.0-64bit, already installed.
+Skipped installing python-3.13.3-64bit, already installed.
+Skipped installing releases-bebaf7e50e31865b0724f17eaa52e161e2dfef5a-64bit, already installed.
+All SDK components already installed: 'sdk-releases-bebaf7e50e31865b0724f17eaa52e161e2dfef5a-64bit'.
+Resolving SDK version '4.0.22' to 'sdk-releases-bebaf7e50e31865b0724f17eaa52e161e2dfef5a-64bit'
+Setting the following tools as active:
+   node-22.16.0-64bit
+   python-3.13.3-64bit
+   releases-bebaf7e50e31865b0724f17eaa52e161e2dfef5a-64bit
+
+Next steps:
+- To conveniently access emsdk tools from the command line,
+  consider adding the following directories to your PATH:
+    /Users/blamy/.cache/wasm-vm/emsdk/4.0.22
+    /Users/blamy/.cache/wasm-vm/emsdk/4.0.22/upstream/emscripten
+- This can be done for the current shell by running:
+    source "/Users/blamy/.cache/wasm-vm/emsdk/4.0.22/emsdk_env.sh"
+- Configure emsdk in your shell startup scripts by running:
+    echo 'source "/Users/blamy/.cache/wasm-vm/emsdk/4.0.22/emsdk_env.sh"' >> $HOME/.zprofile
+emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 4.0.22 (0f3d2e62bccf8e14497ff19e05a1202c51eb0c65)
+Copyright (C) 2025 the Emscripten authors (see AUTHORS.txt)
+This is free and open source software under the MIT license.
+There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
++ git rev-parse HEAD
+5dc0c408b105b432b9558b8dbaa7928998378123
++ node --check renderer/virgl-command/resources.mjs
++ node --check renderer/virgl-command/state.mjs
++ node --check renderer/virgl-command/tests/async-acceptance.mjs
++ node --check tools/verify-virgl-async-jobs.mjs
++ python3 -m py_compile tools/virgl-command/async-receipt.py tools/virgl-command/async-cold.py
++ bash renderer/virgl-shader/build.sh wasm
+Pinned virglrenderer 1.3.0: 70 source/generated SHA-256 hashes match
++ node tools/verify-virgl-command-decoder.mjs --output /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-async-cold-3bk36tdn/wasm-vm/target/evidence/virgl-async-cold/regression/decoder --node-only true
+Node command acceptance passed (556 ms)
++ node tools/verify-virgl-resource-transfers.mjs --output /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-async-cold-3bk36tdn/wasm-vm/target/evidence/virgl-async-cold/regression/resources
+Node resource acceptance passed (59 ms)
+Hardware resource acceptance passed (128 ms)
++ node tools/verify-virgl-object-state.mjs --output /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-async-cold-3bk36tdn/wasm-vm/target/evidence/virgl-async-cold/regression/state
+Hardware state acceptance passed (168 ms)
++ node tools/verify-virgl-draw-replay.mjs --output /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-async-cold-3bk36tdn/wasm-vm/target/evidence/virgl-async-cold/regression/draw
+Hardware draw replay passed (342 ms)
++ node tools/verify-virgl-async-jobs.mjs --output /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-async-cold-3bk36tdn/wasm-vm/target/evidence/virgl-async-cold/hardware
+Hardware async jobs passed (2792 ms)
++ for attack in early-collect index-class
++ node tools/verify-virgl-async-jobs.mjs --output /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-async-cold-3bk36tdn/wasm-vm/target/evidence/virgl-async-cold/sabotage-early-collect --sabotage early-collect
+AssertionError [ERR_ASSERTION]: async CPU collection requires a signaled fence: expected true, got false
+
+'failed' !== 'passed'
+
+    at file:///private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-async-cold-3bk36tdn/wasm-vm/tools/verify-virgl-async-jobs.mjs:154:12
++ for attack in early-collect index-class
++ node tools/verify-virgl-async-jobs.mjs --output /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-async-cold-3bk36tdn/wasm-vm/target/evidence/virgl-async-cold/sabotage-index-class --sabotage index-class
+AssertionError [ERR_ASSERTION]: async index staging uses element-array class: expected true, got false
+
+'failed' !== 'passed'
+
+    at file:///private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-async-cold-3bk36tdn/wasm-vm/tools/verify-virgl-async-jobs.mjs:154:12
++ python3 tools/virgl-command/async-receipt.py /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-async-cold-3bk36tdn/wasm-vm/target/evidence/virgl-async-cold
+E6-T11b1 receipt passed: asynchronous jobs, original pixels, sequencing controls and synchronous regressions

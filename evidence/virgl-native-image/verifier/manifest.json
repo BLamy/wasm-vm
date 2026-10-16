@@ -1,0 +1,66 @@
+{
+  "schema": "native-image-critic-seal-v1",
+  "task": "E6-T11d54",
+  "verdict": "verified",
+  "sourceHead": "e4de0514066e391713298c187047c3727c830362",
+  "runtimeProofHead": "6799137b1df9601f02cb7347e609095553bd8951",
+  "records": 218,
+  "reopenedMembers": 218,
+  "recordIndexSha256": "f1ad2d4c224506b24cb6c322bb603b0d8278b13ebcfe8e1c6c2ebbc9c076baa1",
+  "archiveSha256": "13e394b2d3efb5489180b4970dee702171895896bd4ca958a737279a02f78444",
+  "archiveBytes": 10645070,
+  "workerAuthentication": {
+    "directory": "evidence/virgl-native-image/worker",
+    "manifestSha256": "760e7cec92d98d9cf2104e534f296429d6f8305e0d24e013a62c4eff91dfd624",
+    "indexSha256": "ca2681aab7fe795ffc508441f0b0c7db306f78ae32de55aa524109b68f85c99b",
+    "archiveSha256": "438ecaf1c7eb936ea785d93ba37792460963f7a39ce1277aaed6cc0d7878c5c2",
+    "bodies": 1179,
+    "bodyBytes": 212606708
+  },
+  "dependencyAuthentication": [
+    {
+      "directory": "evidence/virgl-resource-capacity/worker",
+      "manifestSha256": "59cea015984012bb2bbd8c8ac469e509ae272c5ca10814dbf80af669566dbdd7",
+      "indexSha256": "4a948c805eaf6d5c165a88694e81d575a630069d49292098274de625e4f1c4c8",
+      "archiveSha256": "7abb50b55a92b45ceec07aa52a95f0a024c94837dc0a44773465e3d4d3999420",
+      "bodies": 642,
+      "bodyBytes": 77777340
+    },
+    {
+      "directory": "evidence/virgl-resource-capacity/verifier",
+      "manifestSha256": "7eb6715ab4f8345cf6093d1c7ed35e43aa5b8838d36d1d0ef63410338e353745",
+      "indexSha256": "21dc44b2dd2401e5a056c1ff152fa474e1529cd62199e40596c8c6864e7e6a86",
+      "archiveSha256": "4f038098d37c82b90234fcf03807b2e05632492a368a33647f014579dd0177cc",
+      "bodies": 365,
+      "bodyBytes": 30249682
+    },
+    {
+      "directory": "evidence/virgl-native-buffer/worker",
+      "manifestSha256": "4d21b3f3fbbf1bf04bfb4031018f8ef3f935c4d96fa74d7c6b1015dfbc851722",
+      "indexSha256": "1f53391aca79e771c27bcda31705bccb7ff21e6b39fd0552dd33e3dc4a93cdeb",
+      "archiveSha256": "c28313356f2f469e37e8791dd286ab131d16740a83fd166f3e22caa90b96d214",
+      "bodies": 1546,
+      "bodyBytes": 276902840
+    },
+    {
+      "directory": "evidence/virgl-native-buffer/verifier",
+      "manifestSha256": "b491774df16cda3e20fc1d044b6dfe2d517023ad1da61b0b58db4c9bbef0dfe5",
+      "indexSha256": "506caf42ba7be99f4a4aa2c98472860b17e7626cc23639e19deb293a71900c3c",
+      "archiveSha256": "7e69541eaa14d27feda388731f7fd2da526426374328bb59d41a869c46273cfb",
+      "bodies": 146,
+      "bodyBytes": 211526057
+    }
+  ],
+  "carriedSourceBoundaries": 314,
+  "predictionsSha256": "93efc7b45afb4b14a0c60961e9145dd1ae90b09f14db495656aeb20c244bafd8",
+  "verdictSha256": "85965573ff0ed0ff3944a3b2777d611bd1707bb7d3826e61abcd9cd7327792a3",
+  "correctedCoverage": {
+    "runtimeLines": 65,
+    "directOperands": 276,
+    "dynamicGuardsWithoutStandaloneRegion": 1,
+    "staticWaivers": 156,
+    "uncovered": []
+  },
+  "guestExecution": false,
+  "productionAuthority": false
+}

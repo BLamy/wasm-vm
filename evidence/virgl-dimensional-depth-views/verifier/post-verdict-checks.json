@@ -1,0 +1,40 @@
+{
+  "schema": "d60-post-verdict-checks-v1",
+  "status": "passed",
+  "commands": [
+    {
+      "command": [
+        "python3",
+        "tools/check_task_policy.py"
+      ],
+      "exitCode": 0,
+      "stdout": "task-policy: OK (active=none)\n",
+      "stderr": "",
+      "stdoutSha256": "b09df388647b89ea459126a41fd92d72d5e274ddb70ffe70a741ba88cb705734",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "tools/build_queue.py"
+      ],
+      "exitCode": 0,
+      "stdout": "wrote tasks/QUEUE.md: 677 tasks, 485 verified\n",
+      "stderr": "",
+      "stdoutSha256": "aef31af979bfd9a3ffacdc285a943834c9ade0a0ade48b79589752b42abb3540",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": "",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}

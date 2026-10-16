@@ -26,7 +26,7 @@ fi
 R2_PUBLIC="${R2_PUBLIC:-https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev}"
 R2_BUCKET="${R2_BUCKET:-wasm-vm}"
 PAGES_FILE_LIMIT=$((25 * 1024 * 1024))
-MANIFEST_NAMES=(artifacts.json artifacts-alpine.json artifacts-node-alpine.json artifacts-omarchy.json)
+MANIFEST_NAMES=(artifacts.json artifacts-alpine.json artifacts-node-alpine.json artifacts-omarchy.json artifacts-omarchy-virgl.json)
 LOCAL_RECORDS=$(mktemp "${TMPDIR:-/tmp}/wasm-vm-artifact-records.XXXXXX")
 RELEASE_URLS=$(mktemp "${TMPDIR:-/tmp}/wasm-vm-release-urls.XXXXXX")
 R2_QUEUE=$(mktemp "${TMPDIR:-/tmp}/wasm-vm-r2-queue.XXXXXX")

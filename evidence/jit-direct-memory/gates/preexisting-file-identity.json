@@ -1,0 +1,41 @@
+{
+  "parent": "96f30bdee9d0a98672336b223004054677baee36",
+  "files": [
+    {
+      "path": "crates/wasm/tests/hart.rs",
+      "parentSha256": "0e708523cf9d826585874523ef9c8be55c6641aad80f82f4cb9bd1c090070f7f",
+      "currentSha256": "0e708523cf9d826585874523ef9c8be55c6641aad80f82f4cb9bd1c090070f7f",
+      "identical": true
+    },
+    {
+      "path": "crates/wvseccomp/src/main.rs",
+      "parentSha256": "166934f78790262bc6bd184b5413b114370ffd970e2947b636521c1d191b8899",
+      "currentSha256": "166934f78790262bc6bd184b5413b114370ffd970e2947b636521c1d191b8899",
+      "identical": true
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/resources.rs",
+      "parentSha256": "7cdda4060e7a8ddd7b7df27d42315f9a68f69bf2c407052b9e666309ff97994f",
+      "currentSha256": "7cdda4060e7a8ddd7b7df27d42315f9a68f69bf2c407052b9e666309ff97994f",
+      "identical": true
+    },
+    {
+      "path": "crates/wasm/tests/resume.rs",
+      "parentSha256": "fa0b32a25f5c7bbbea6a83d533a7bb62ef2a19e62162526689de80f4e82b4de1",
+      "currentSha256": "fa0b32a25f5c7bbbea6a83d533a7bb62ef2a19e62162526689de80f4e82b4de1",
+      "identical": true
+    },
+    {
+      "path": "crates/core/src/resume.rs",
+      "parentSha256": "16562aa9699870b54012a52b6a3d102031559c4f231cb9bfc1921a27a156b7c3",
+      "currentSha256": "16562aa9699870b54012a52b6a3d102031559c4f231cb9bfc1921a27a156b7c3",
+      "identical": true
+    },
+    {
+      "path": "crates/wasm/tests/jit_browser_parity.rs",
+      "parentSha256": "ecaca332a6d0474eb67614c2dd7e295de8da0b14520d8d43f8ca5f5d6fad3016",
+      "currentSha256": "ecaca332a6d0474eb67614c2dd7e295de8da0b14520d8d43f8ca5f5d6fad3016",
+      "identical": true
+    }
+  ]
+}

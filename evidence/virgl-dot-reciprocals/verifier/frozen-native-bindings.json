@@ -1,0 +1,17 @@
+[
+  {
+    "path": "native-recording-audit.json",
+    "bytes": 108625,
+    "sha256": "f95de78df5de9c5fa529998300333fbd99b80405f006aaad4776975dc40d3444"
+  },
+  {
+    "path": "compatibility-audit.json",
+    "bytes": 2584,
+    "sha256": "9fbf75760bcd6830edf2f616b2b3774cf74305936b66d68522f22accdf88ffdd"
+  },
+  {
+    "path": "frozen-math-audit.json",
+    "bytes": 5858,
+    "sha256": "e913b57d9b452f4f06155eb48f8ac173a310267e0aa391a616d1c78f22ef9c7c"
+  }
+]

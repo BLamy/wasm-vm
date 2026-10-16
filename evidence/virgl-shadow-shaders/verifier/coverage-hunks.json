@@ -1,0 +1,370 @@
+{
+  "status": "passed",
+  "coverageSha256": "b1bfaa14b51e4aa6ef45a1e0d304fc0a0387657c7ca0493bc488213692336f29",
+  "scopedDiffSha256": "4872953295fe998c5b77ced37e4f93710abe12de2f1582adb86083a551d5820d",
+  "hunks": [
+    {
+      "source": "Makefile",
+      "first": 2461,
+      "last": 2464,
+      "governingPartitions": 0,
+      "minimumPositiveCount": null,
+      "nonExecutableFragments": 0,
+      "classification": "Declarative selected gate; recorded make invocation executes the shell command."
+    },
+    {
+      "source": "renderer/virgl-shader/bridge.c",
+      "first": 2413,
+      "last": 2413,
+      "governingPartitions": 6,
+      "minimumPositiveCount": 4081,
+      "nonExecutableFragments": 0,
+      "classification": "HELD: all smallest governing runtime partitions are positive; non-executable fragments explicitly waived."
+    },
+    {
+      "source": "renderer/virgl-shader/bridge.c",
+      "first": 2493,
+      "last": 2493,
+      "governingPartitions": 22,
+      "minimumPositiveCount": 2,
+      "nonExecutableFragments": 0,
+      "classification": "HELD: all smallest governing runtime partitions are positive; non-executable fragments explicitly waived."
+    },
+    {
+      "source": "renderer/virgl-shader/bridge.c",
+      "first": 2521,
+      "last": 2531,
+      "governingPartitions": 33,
+      "minimumPositiveCount": 2,
+      "nonExecutableFragments": 0,
+      "classification": "HELD: all smallest governing runtime partitions are positive; non-executable fragments explicitly waived."
+    },
+    {
+      "source": "renderer/virgl-shader/bridge.c",
+      "first": 2580,
+      "last": 2580,
+      "governingPartitions": 0,
+      "minimumPositiveCount": null,
+      "nonExecutableFragments": 1,
+      "classification": "WAIVED: non-executable profile fields/signature/comment only; exact typed ABI exercised."
+    },
+    {
+      "source": "renderer/virgl-shader/bridge.c",
+      "first": 2585,
+      "last": 2585,
+      "governingPartitions": 1,
+      "minimumPositiveCount": 3915,
+      "nonExecutableFragments": 0,
+      "classification": "HELD: all smallest governing runtime partitions are positive; non-executable fragments explicitly waived."
+    },
+    {
+      "source": "renderer/virgl-shader/bridge.c",
+      "first": 2601,
+      "last": 2601,
+      "governingPartitions": 1,
+      "minimumPositiveCount": 15,
+      "nonExecutableFragments": 0,
+      "classification": "HELD: all smallest governing runtime partitions are positive; non-executable fragments explicitly waived."
+    },
+    {
+      "source": "renderer/virgl-shader/bridge.c",
+      "first": 2605,
+      "last": 2605,
+      "governingPartitions": 1,
+      "minimumPositiveCount": 10,
+      "nonExecutableFragments": 0,
+      "classification": "HELD: all smallest governing runtime partitions are positive; non-executable fragments explicitly waived."
+    },
+    {
+      "source": "renderer/virgl-shader/bridge.c",
+      "first": 2612,
+      "last": 2612,
+      "governingPartitions": 0,
+      "minimumPositiveCount": null,
+      "nonExecutableFragments": 1,
+      "classification": "WAIVED: non-executable profile fields/signature/comment only; exact typed ABI exercised."
+    },
+    {
+      "source": "renderer/virgl-shader/bridge.c",
+      "first": 2620,
+      "last": 2621,
+      "governingPartitions": 2,
+      "minimumPositiveCount": 3233,
+      "nonExecutableFragments": 0,
+      "classification": "HELD: all smallest governing runtime partitions are positive; non-executable fragments explicitly waived."
+    },
+    {
+      "source": "renderer/virgl-shader/bridge.c",
+      "first": 2667,
+      "last": 2667,
+      "governingPartitions": 1,
+      "minimumPositiveCount": 2,
+      "nonExecutableFragments": 0,
+      "classification": "HELD: all smallest governing runtime partitions are positive; non-executable fragments explicitly waived."
+    },
+    {
+      "source": "renderer/virgl-shader/bridge.c",
+      "first": 2674,
+      "last": 2674,
+      "governingPartitions": 1,
+      "minimumPositiveCount": 2,
+      "nonExecutableFragments": 0,
+      "classification": "HELD: all smallest governing runtime partitions are positive; non-executable fragments explicitly waived."
+    },
+    {
+      "source": "renderer/virgl-shader/bridge.c",
+      "first": 2682,
+      "last": 2682,
+      "governingPartitions": 1,
+      "minimumPositiveCount": 2,
+      "nonExecutableFragments": 0,
+      "classification": "HELD: all smallest governing runtime partitions are positive; non-executable fragments explicitly waived."
+    },
+    {
+      "source": "renderer/virgl-shader/bridge.c",
+      "first": 2692,
+      "last": 2692,
+      "governingPartitions": 1,
+      "minimumPositiveCount": 1,
+      "nonExecutableFragments": 0,
+      "classification": "HELD: all smallest governing runtime partitions are positive; non-executable fragments explicitly waived."
+    },
+    {
+      "source": "renderer/virgl-shader/bridge.c",
+      "first": 2697,
+      "last": 2697,
+      "governingPartitions": 1,
+      "minimumPositiveCount": 644,
+      "nonExecutableFragments": 0,
+      "classification": "HELD: all smallest governing runtime partitions are positive; non-executable fragments explicitly waived."
+    },
+    {
+      "source": "renderer/virgl-shader/bridge.c",
+      "first": 2707,
+      "last": 2707,
+      "governingPartitions": 1,
+      "minimumPositiveCount": 281,
+      "nonExecutableFragments": 0,
+      "classification": "HELD: all smallest governing runtime partitions are positive; non-executable fragments explicitly waived."
+    },
+    {
+      "source": "renderer/virgl-shader/bridge.c",
+      "first": 2713,
+      "last": 2713,
+      "governingPartitions": 1,
+      "minimumPositiveCount": 1000,
+      "nonExecutableFragments": 0,
+      "classification": "HELD: all smallest governing runtime partitions are positive; non-executable fragments explicitly waived."
+    },
+    {
+      "source": "renderer/virgl-shader/bridge.c",
+      "first": 2723,
+      "last": 2723,
+      "governingPartitions": 1,
+      "minimumPositiveCount": 629,
+      "nonExecutableFragments": 0,
+      "classification": "HELD: all smallest governing runtime partitions are positive; non-executable fragments explicitly waived."
+    },
+    {
+      "source": "renderer/virgl-shader/bridge.c",
+      "first": 2729,
+      "last": 2729,
+      "governingPartitions": 1,
+      "minimumPositiveCount": 1016,
+      "nonExecutableFragments": 0,
+      "classification": "HELD: all smallest governing runtime partitions are positive; non-executable fragments explicitly waived."
+    },
+    {
+      "source": "renderer/virgl-shader/bridge.c",
+      "first": 2740,
+      "last": 2756,
+      "governingPartitions": 9,
+      "minimumPositiveCount": 711,
+      "nonExecutableFragments": 7,
+      "classification": "HELD: all smallest governing runtime partitions are positive; non-executable fragments explicitly waived."
+    },
+    {
+      "source": "renderer/virgl-shader/bridge.h",
+      "first": 138,
+      "last": 146,
+      "governingPartitions": 0,
+      "minimumPositiveCount": null,
+      "nonExecutableFragments": 0,
+      "classification": "ABI prototypes/comment only; native/sanitized and actual Wasm exports physically execute."
+    },
+    {
+      "source": "renderer/virgl-shader/build.sh",
+      "first": 20,
+      "last": 45,
+      "governingPartitions": 0,
+      "minimumPositiveCount": null,
+      "nonExecutableFragments": 0,
+      "classification": "Build/export configuration; selected modes run in full hot/cold acceptance and fresh compiler recording. Actual generated binaries/exports, fixed memory and optimized stack are authenticated."
+    },
+    {
+      "source": "renderer/virgl-shader/build.sh",
+      "first": 759,
+      "last": 759,
+      "governingPartitions": 0,
+      "minimumPositiveCount": null,
+      "nonExecutableFragments": 0,
+      "classification": "Build/export configuration; selected modes run in full hot/cold acceptance and fresh compiler recording. Actual generated binaries/exports, fixed memory and optimized stack are authenticated."
+    },
+    {
+      "source": "renderer/virgl-shader/standard.mjs",
+      "first": 49,
+      "last": 53,
+      "governingPartitions": 6,
+      "minimumPositiveCount": 1,
+      "nonExecutableFragments": 0,
+      "classification": "HELD: all smallest governing runtime partitions are positive; non-executable fragments explicitly waived."
+    },
+    {
+      "source": "renderer/virgl-shader/standard.mjs",
+      "first": 56,
+      "last": 57,
+      "governingPartitions": 12,
+      "minimumPositiveCount": 1,
+      "nonExecutableFragments": 0,
+      "classification": "HELD: all smallest governing runtime partitions are positive; non-executable fragments explicitly waived."
+    },
+    {
+      "source": "renderer/virgl-shader/standard_emit.c",
+      "first": 105,
+      "last": 107,
+      "governingPartitions": 25,
+      "minimumPositiveCount": 466,
+      "nonExecutableFragments": 0,
+      "classification": "HELD: all smallest governing runtime partitions are positive; non-executable fragments explicitly waived."
+    },
+    {
+      "source": "renderer/virgl-shader/standard_emit.c",
+      "first": 153,
+      "last": 171,
+      "governingPartitions": 39,
+      "minimumPositiveCount": 222,
+      "nonExecutableFragments": 2,
+      "classification": "HELD: all smallest governing runtime partitions are positive; non-executable fragments explicitly waived."
+    },
+    {
+      "source": "renderer/virgl-shader/standard_emit.c",
+      "first": 207,
+      "last": 209,
+      "governingPartitions": 13,
+      "minimumPositiveCount": 1344,
+      "nonExecutableFragments": 0,
+      "classification": "HELD: all smallest governing runtime partitions are positive; non-executable fragments explicitly waived."
+    },
+    {
+      "source": "renderer/virgl-shader/standard_emit.c",
+      "first": 282,
+      "last": 283,
+      "governingPartitions": 9,
+      "minimumPositiveCount": 1,
+      "nonExecutableFragments": 0,
+      "classification": "HELD: all smallest governing runtime partitions are positive; non-executable fragments explicitly waived."
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "first": 193,
+      "last": 195,
+      "governingPartitions": 22,
+      "minimumPositiveCount": 2,
+      "nonExecutableFragments": 0,
+      "classification": "HELD: all smallest governing runtime partitions are positive; non-executable fragments explicitly waived."
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "first": 202,
+      "last": 202,
+      "governingPartitions": 7,
+      "minimumPositiveCount": 2,
+      "nonExecutableFragments": 0,
+      "classification": "HELD: all smallest governing runtime partitions are positive; non-executable fragments explicitly waived."
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "first": 209,
+      "last": 216,
+      "governingPartitions": 16,
+      "minimumPositiveCount": 76,
+      "nonExecutableFragments": 0,
+      "classification": "HELD: all smallest governing runtime partitions are positive; non-executable fragments explicitly waived."
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "first": 303,
+      "last": 303,
+      "governingPartitions": 4,
+      "minimumPositiveCount": 7679,
+      "nonExecutableFragments": 0,
+      "classification": "HELD: all smallest governing runtime partitions are positive; non-executable fragments explicitly waived."
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "first": 308,
+      "last": 308,
+      "governingPartitions": 0,
+      "minimumPositiveCount": null,
+      "nonExecutableFragments": 1,
+      "classification": "WAIVED: non-executable profile fields/signature/comment only; exact typed ABI exercised."
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "first": 325,
+      "last": 326,
+      "governingPartitions": 5,
+      "minimumPositiveCount": 13760,
+      "nonExecutableFragments": 0,
+      "classification": "HELD: all smallest governing runtime partitions are positive; non-executable fragments explicitly waived."
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "first": 347,
+      "last": 347,
+      "governingPartitions": 7,
+      "minimumPositiveCount": 30696,
+      "nonExecutableFragments": 0,
+      "classification": "HELD: all smallest governing runtime partitions are positive; non-executable fragments explicitly waived."
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.c",
+      "first": 385,
+      "last": 401,
+      "governingPartitions": 70,
+      "minimumPositiveCount": 4,
+      "nonExecutableFragments": 0,
+      "classification": "HELD: all smallest governing runtime partitions are positive; non-executable fragments explicitly waived."
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.h",
+      "first": 32,
+      "last": 35,
+      "governingPartitions": 0,
+      "minimumPositiveCount": null,
+      "nonExecutableFragments": 4,
+      "classification": "WAIVED: non-executable profile fields/signature/comment only; exact typed ABI exercised."
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.h",
+      "first": 46,
+      "last": 46,
+      "governingPartitions": 0,
+      "minimumPositiveCount": null,
+      "nonExecutableFragments": 1,
+      "classification": "WAIVED: non-executable profile fields/signature/comment only; exact typed ABI exercised."
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.h",
+      "first": 72,
+      "last": 72,
+      "governingPartitions": 7,
+      "minimumPositiveCount": 1066,
+      "nonExecutableFragments": 0,
+      "classification": "HELD: all smallest governing runtime partitions are positive; non-executable fragments explicitly waived."
+    }
+  ],
+  "zeroExecutablePartitions": 0,
+  "needsEvidence": [],
+  "dead": []
+}

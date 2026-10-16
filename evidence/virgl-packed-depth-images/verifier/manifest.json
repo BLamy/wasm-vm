@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "task": "E6-T11d42",
+  "role": "fresh-verifier",
+  "verdict": "verified",
+  "sourceHead": "c9d745dca15c170d0dfc080d20d39e8696d436fc",
+  "harnessHead": "d3583d1f4574dfd9fc7a3b0bef0e3e544342cee1",
+  "predecessor": "c34b00e91f6e84501f0eff731a74857a10eb4250",
+  "archiveFormat": "one gzip byte stream in ordered 16 MiB parts",
+  "archiveBytes": 7561056,
+  "archiveSha256": "c36fb7f77a4088c0c61b283cd4997512079b10ae8d7e6024932d5a27d42334ba",
+  "recordIndexSha256": "98df45b4000a79235b6407b5c7beaa59c718ffb60c49016607d750dcfe310991",
+  "members": 5097,
+  "logicalBytes": 228666681,
+  "tarBytes": 113960960,
+  "physicalBodies": 950,
+  "hardlinks": 4147,
+  "archiveParts": [
+    {
+      "path": "recording.tar.gz.part-0000",
+      "bytes": 7561056,
+      "sha256": "c36fb7f77a4088c0c61b283cd4997512079b10ae8d7e6024932d5a27d42334ba"
+    }
+  ],
+  "workerManifestSha256": "9ce4a68b38cc79e138dcda43b352e6cd6c579f3d92e9af03973d185199ceb9c9",
+  "workerArchiveSha256": "e60573b012f80accdeb73f9e1a63d3408c080a8ad4746e68de72b7d373ad602f",
+  "workerRecordIndexSha256": "77ad969bd93459de71e673eacfa914f52d2d6d833ddb017f43059de30cbfac1d"
+}

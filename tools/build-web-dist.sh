@@ -16,6 +16,9 @@ DIST=web/dist
 echo "[web-dist] building wasm + installing pinned deps (make web-build)…"
 make web-build
 
+# Publish the current task ledger with the bundle rather than a stale source snapshot.
+python3 tools/gen-tasks-json.py
+
 echo "[web-dist] assembling $DIST …"
 rm -rf "$DIST"
 mkdir -p "$DIST"
@@ -42,6 +45,11 @@ done
 # The app shell imports the no-bundler input modules from ./src/. Keep that source tree in the
 # deployable bundle; omitting it leaves the generated main.js with a production-only 404.
 [ -d web/src ] && cp -R web/src "$DIST/src"
+[ -d web/renderer ] && cp -R web/renderer "$DIST/renderer"
+# Docstream's compiled reader, lazy feature chunks, portable corpus, and complete
+# migration ledger form the site’s single documentation library.
+[ -d web/docs-bundle ] && cp -R web/docs-bundle "$DIST/docs-bundle"
+[ -d web/docs-content ] && cp -R web/docs-content "$DIST/docs-content"
 
 # The built wasm ES module (from make web-build).
 cp -R web/pkg "$DIST/pkg"
@@ -77,10 +85,12 @@ fi
 if [ -e web/node_modules/three/build/three.module.js ]; then
   mkdir -p "$DIST/vendor/three"
   cp web/node_modules/three/build/three.module.js "$DIST/vendor/three/three.module.js"
-  if [ -e "$DIST/landing.html" ]; then
+  for hero_page in landing.html products.html work-market.html security.html roadmap.html; do
+    if [ -e "$DIST/$hero_page" ]; then
     sed -e 's#\./node_modules/three/build/three\.module\.js#./vendor/three/three.module.js#g' \
-        "$DIST/landing.html" > "$DIST/landing.html.tmp" && mv "$DIST/landing.html.tmp" "$DIST/landing.html"
-  fi
+        "$DIST/$hero_page" > "$DIST/$hero_page.tmp" && mv "$DIST/$hero_page.tmp" "$DIST/$hero_page"
+    fi
+  done
 fi
 
 # DEPLOY-TIME ROOT SWAP: the marketing landing becomes the site root (/) and the app moves to
@@ -108,12 +118,23 @@ fi
 if [ -e "$DIST/runtime-benchmarks.json" ] && [ -e "$DIST/index.html" ]; then
   workload_ver=$(shasum -a 256 "$DIST/runtime-benchmarks.json" | cut -c1-12)
   sed -e "s/__RUNTIME_BENCHMARK_VERSION__/${workload_ver}/g" "$DIST/index.html" > "$DIST/index.html.tmp" && mv "$DIST/index.html.tmp" "$DIST/index.html"
+  if [ -e "$DIST/landing-benchmarks.js" ]; then
+    sed -e "s/__RUNTIME_BENCHMARK_VERSION__/${workload_ver}/g" "$DIST/landing-benchmarks.js" > "$DIST/landing-benchmarks.js.tmp" && mv "$DIST/landing-benchmarks.js.tmp" "$DIST/landing-benchmarks.js"
+  fi
 fi
 
 if [ -e "$DIST/runtime-compute-benchmarks.json" ] && [ -e "$DIST/index.html" ]; then
   compute_ver=$(shasum -a 256 "$DIST/runtime-compute-benchmarks.json" | cut -c1-12)
   sed -e "s/__RUNTIME_COMPUTE_BENCHMARK_VERSION__/${compute_ver}/g" "$DIST/index.html" > "$DIST/index.html.tmp" && mv "$DIST/index.html.tmp" "$DIST/index.html"
+  if [ -e "$DIST/landing-benchmarks.js" ]; then
+    sed -e "s/__RUNTIME_COMPUTE_BENCHMARK_VERSION__/${compute_ver}/g" "$DIST/landing-benchmarks.js" > "$DIST/landing-benchmarks.js.tmp" && mv "$DIST/landing-benchmarks.js.tmp" "$DIST/landing-benchmarks.js"
+  fi
 fi
+
+# The reader's navigation and Markdown pages share the source/deploy route swap.
+# Finalize after benchmark stamping so script URLs identify their actual shipped bytes.
+# Literal code examples and immutable source provenance stay exact.
+python3 tools/finalize-docs-dist.py "$DIST"
 
 # artifacts.json (relative ./releases/… URLs; poor-mans-ci fills web/dist/releases at deploy).
 [ -e web/artifacts.json ] && cp web/artifacts.json "$DIST/"
@@ -126,7 +147,14 @@ fi
 # bug). Include top-level HTML/JSON as well because the landing page and published comparison are
 # shell-owned resources too.
 if [ -e "$DIST/sw.js" ]; then
-  ver=$( { cat "$DIST"/pkg/*_bg.wasm "$DIST"/*.js "$DIST"/*.html "$DIST"/*.json 2>/dev/null; } | { shasum -a 256 2>/dev/null || sha256sum; } | cut -c1-12 )
+  ver=$( { cat "$DIST"/pkg/*_bg.wasm "$DIST"/*.js "$DIST"/*.html "$DIST"/*.json "$DIST"/*.css 2>/dev/null;
+    if [ -d "$DIST/renderer" ]; then
+      rg --files "$DIST/renderer" | LC_ALL=C sort | while IFS= read -r gpu_asset; do cat "$gpu_asset"; done
+    fi
+    if [ -d "$DIST/docs-bundle" ] && [ -d "$DIST/docs-content" ]; then
+      rg --files "$DIST/docs-bundle" "$DIST/docs-content" | LC_ALL=C sort | while IFS= read -r docs_asset; do cat "$docs_asset"; done
+    fi
+  } | { shasum -a 256 2>/dev/null || sha256sum; } | cut -c1-12 )
   sed -e "s/__SW_VERSION__/${ver}/g" "$DIST/sw.js" > "$DIST/sw.js.tmp" && mv "$DIST/sw.js.tmp" "$DIST/sw.js"
   echo "[web-dist] stamped sw.js app-shell version=${ver}"
 fi

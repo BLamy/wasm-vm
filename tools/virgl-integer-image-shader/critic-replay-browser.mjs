@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import {createHash} from 'node:crypto';
+import {gunzipSync} from 'node:zlib';
+import {runVirglBrowser,browserOptions,browserDocument} from '../lib/virgl-browser-runner.mjs';
+const options=browserOptions(['--inputs','--fault']);assert.ok(options.inputs);assert.ok(!options.fault||['wrong-level','wrong-words'].includes(options.fault));
+const root=await fs.realpath(path.resolve(import.meta.dirname,'../..')),inputs=path.relative(root,await fs.realpath(path.resolve(options.inputs))).split(path.sep).join('/'),matrix=inputs+'/native/cases.json',native=inputs+'/native/native.jsonl',hash=b=>createHash('sha256').update(b).digest('hex');
+const files=[matrix,native,'tools/virgl-integer-image-shader/fixtures.mjs'],pins=[];
+for(const name of files){const bytes=await fs.readFile(path.join(root,name));pins.push({path:name,size:bytes.length,sha256:hash(bytes)});}
+const report=await runVirglBrowser({options,task:'E6-T11d32',boundary:'Independent complete original integer shader native fence custody',reportFields:{productionNegotiation:false},modulePath:'/renderer/virgl-shader/tests/standard-integer-image-shader-custody.mjs',windowReportKey:'__integerImageShaderReport',serializedAcceptance:true,browserArguments:{matrixPath:'/'+matrix,nativePath:'/'+native,fault:options.fault??null},servedFiles:files,pinnedFiles:pins,html:browserDocument({title:'Integer shader critic complete replay',heading:'Original integer words with physical fence custody',description:'Complete original matrix · actual native fence identities, state and poll history'}),validate(a){assert.equal(a.frames.length,542);assert.ok(a.frames.every((f,i)=>f.audit.held&&f.cleaned&&f.nativeFenceId===a.nativeFenceCustody[i].id));assert.equal(a.nativeFenceCustody.length,542);assert.equal(new Set(a.nativeFenceCustody.map(f=>f.id)).size,542);assert.ok(a.nativeFenceCustody.every(f=>f.created&&f.retired&&[0x911a,0x911c].includes(f.polls.at(-1).status)));},successMessage:a=>a.frames.length+' independent complete native fence records passed.'});
+for(const item of report.acceptance?.blobs??[]){const zipped=Buffer.from(item.gzipBase64,'base64');assert.equal(hash(zipped),item.gzipSha256);const bytes=gunzipSync(zipped);assert.equal(bytes.length,item.bytes);assert.equal(hash(bytes),item.sha256);delete item.gzipBase64;item.path=item.key+'.bin.gz';await fs.writeFile(path.join(path.resolve(options.output),item.path),zipped);}
+await fs.writeFile(path.join(path.resolve(options.output),'report.json'),JSON.stringify(report,null,2)+'\n');process.exit(report.status==='passed'?0:1);

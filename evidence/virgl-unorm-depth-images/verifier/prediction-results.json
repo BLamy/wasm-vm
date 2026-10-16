@@ -1,0 +1,466 @@
+{
+  "schema": "d41-fresh-critic-prediction-results-v1",
+  "verdict": "verified",
+  "predictionsWrittenBeforeEvidenceSha256": "20ceb3c68d578649472a36d136fde0878293bd0d2e453c95a8f83d9a36fe27fb",
+  "frozenRuntimeHead": "eda91e2569c38de3f56b92fd38b5326b2c6ae3fd",
+  "freshSourceHead": "2073205506d408d2800b1e65bf112123e9869b34",
+  "originalFileUnmodified": true,
+  "results": [
+    {
+      "id": "P01",
+      "prediction": "Committed worker archive/index/manifest must match the three supplied digests; every 37121 logical member must resolve to a real earlier physical body with exact length/SHA, every source and generated body must match frozen eda91; final hot/cold receipts and cold clean clone must be exact-head. No pre-repair 9b3 run may substitute.",
+      "status": "HELD",
+      "observed": "Every37121 logical worker member resolved to an earlier real physical body;1937 physical bodies; all SHA/length/source/receipt pins hold. Final cold clone is exact eda91 with clean status before/after.",
+      "citations": [
+        {
+          "seal": "verifier",
+          "file": "audits/custody.json",
+          "jsonPointer": "/worker/members",
+          "line": 15,
+          "sha256": "9a703cf81569b42f4f3e0a32f7565f9752babdcd628d6fbe5494fd167ed619c5"
+        },
+        {
+          "seal": "verifier",
+          "file": "audits/custody.json",
+          "jsonPointer": "/coldReport/statusAfter",
+          "line": 544856,
+          "sha256": "9a703cf81569b42f4f3e0a32f7565f9752babdcd628d6fbe5494fd167ed619c5"
+        }
+      ]
+    },
+    {
+      "id": "P02",
+      "prediction": "Both D40 complete archives must fully reopen 40703 total members, compiler and GPU packing helper must equal BASE, whole primary sources must match pins; all held criteria carry forward only across unchanged boundaries.",
+      "status": "HELD",
+      "observed": "Complete unchanged D40 worker33662 and critic7041 members reopened; actual C/Wasm compiler and native GPU copy/pack helper unchanged; whole primary pins and original UN16 mapping hold.",
+      "citations": [
+        {
+          "seal": "verifier",
+          "file": "audits/custody.json",
+          "jsonPointer": "/held/0/members",
+          "line": 259877,
+          "sha256": "9a703cf81569b42f4f3e0a32f7565f9752babdcd628d6fbe5494fd167ed619c5"
+        },
+        {
+          "seal": "verifier",
+          "file": "audits/custody.json",
+          "jsonPointer": "/held/1/members",
+          "line": 495525,
+          "sha256": "9a703cf81569b42f4f3e0a32f7565f9752babdcd628d6fbe5494fd167ed619c5"
+        },
+        {
+          "seal": "verifier",
+          "file": "audits/custody.json",
+          "jsonPointer": "/unchangedBoundaries",
+          "line": 545608,
+          "sha256": "9a703cf81569b42f4f3e0a32f7565f9752babdcd628d6fbe5494fd167ed619c5"
+        }
+      ]
+    },
+    {
+      "id": "P03",
+      "prediction": "Original format16 accepts only new selected factory roles1/8/9 single-layer2D full/truncated legal NPOT mips. BASE original negative roles/mips and all historical factories stay refused except legacy base bind1 Z16. Original invalid sample/layer/flags/chains/limits/aliases/ranges/dimensions/types/linear/feedback must fail before native copy or guest draw.",
+      "status": "HELD",
+      "observed": "Original13 readiness refusals and3 legacy successes remain authenticated. Actual format16 native roles/mips/costs match original descriptors. Every boundary schedule refuses60 original bad aliases/returns/filters/roles/feedback before actual draw/copy; drawBuffers is framebuffer setup, not a guest draw.",
+      "citations": [
+        {
+          "seal": "verifier",
+          "file": "audits/custody.json",
+          "jsonPointer": "/originalRefusalRows/0",
+          "line": 544861,
+          "sha256": "9a703cf81569b42f4f3e0a32f7565f9752babdcd628d6fbe5494fd167ed619c5"
+        },
+        {
+          "seal": "verifier",
+          "file": "audits/state.json",
+          "jsonPointer": "/records/0/totals/originalRefusals",
+          "line": 17,
+          "sha256": "4981fea2a61ab52444126caee9095df4f13b62ef9db3b28074db5288c8a1b4ff"
+        },
+        {
+          "seal": "worker",
+          "file": "hot/hardware-boundaries-0x13579bdf/report.json",
+          "jsonPointer": "/browserResult/result/runs/0/source",
+          "line": 2869,
+          "sha256": "951fb443e51830ba86e5d2e82e23297e3163de4d5e62bc3d3090c84709dc74b3"
+        }
+      ]
+    },
+    {
+      "id": "P04",
+      "prediction": "All65536 original UN16 words appear exactly once in the domain input and execute actual original shader TEX; full native FLOAT red must equal f32(word/65535) within1ULP while G/B/constants/query exact, and exact public canonical UN16 bytes plus every segmented padding byte must match original input.",
+      "status": "HELD",
+      "observed": "All65536 original words are physically uploaded at event4. Both actual original TEX draws produce exact f32(word/65535) depth; exact public canonical UN16/padding and complete raw pack collection595 after actual consumed594 hold, maximum0ULP.",
+      "citations": [
+        {
+          "seal": "verifier",
+          "file": "audits/domain.json",
+          "jsonPointer": "/rows/0/values",
+          "line": 10,
+          "sha256": "408d1e1746c27ad38f190f056c656007ccf932713d4fcf7254e0d60672cd080f"
+        },
+        {
+          "seal": "worker",
+          "file": "hot/hardware-domain/report.json",
+          "jsonPointer": "/browserResult/result/runs/0/events/3",
+          "line": 8287,
+          "sha256": "80f3c6d709c3f7673c2cc9e39859d52d425a8a4bf12b836e1890fc8630fbc046"
+        },
+        {
+          "seal": "verifier",
+          "file": "audits/domain.json",
+          "jsonPointer": "/rows/0/completion",
+          "line": 18,
+          "sha256": "408d1e1746c27ad38f190f056c656007ccf932713d4fcf7254e0d60672cd080f"
+        }
+      ]
+    },
+    {
+      "id": "P05",
+      "prediction": "Both original shader stages and slots0/15, all supported TXF/TXL/TEX/TXD/TXB/TXQ, four-channel original swizzles, full/private NPOT range identities and nonzero output levels must be independently invertible from original TGSI/wire and inputs; bound native texture/range/generation must match draw associations and diagnostic full planes.",
+      "status": "HELD",
+      "observed": "Unchanged independent original TGSI/packet/input inverses pass both shader stages, slots0/15 and all six supported operations/swizzles/constants/query/private ranges/nonzero outputs. All full diagnostic bodies match actual returned native bytes; full original UN16 uploads independently confirmed.",
+      "citations": [
+        {
+          "seal": "worker",
+          "file": "hot/hardware-samples/report.json",
+          "jsonPointer": "/browserResult/result/runs/0/vertex",
+          "line": 2863,
+          "sha256": "3551e0e15dc3e8286c4931d248d15e520a37090fa084de062e98456199cbccfe"
+        },
+        {
+          "seal": "verifier",
+          "file": "audits/hot-original-inverses.json",
+          "jsonPointer": "/summaries/4/1",
+          "line": 98,
+          "sha256": "5942ba605d72ce85ab97912b2f9caa8308e1cdaa041a870d2d52911375178461"
+        },
+        {
+          "seal": "verifier",
+          "file": "audits/events.json",
+          "jsonPointer": "/aggregates/hot/physicalNativeReferences",
+          "line": 26,
+          "sha256": "0e980a187cd4f287716f8a3b7f2f11609eb8a070dcacceb6cb8b683c7b885c49"
+        }
+      ]
+    },
+    {
+      "id": "P06",
+      "prediction": "All eight comparison functions, test enable/write masks and FLOAT/SINT/UINT targets must produce independently modeled quantized stored/incoming16-bit comparison outcomes at exact native attached mip/dimensions. Full clears use primary allowed pair uniformly; public bytes exactly serialize validated same native word. Retained126 S8 survives18->126->16 switches exactly.",
+      "status": "HELD",
+      "observed": "Original DSA packets independently derive all eight functions and test/write masks across20 surface runs; full native color/depth bytes hold.126 old S8 pixels remain exact through switches. All8 clear cases uniformly choose allowed24575; public bytes exactly match that validated native word, no independent public tolerance.",
+      "citations": [
+        {
+          "seal": "verifier",
+          "file": "audits/state.json",
+          "jsonPointer": "/records/5/totals/depthFunctions",
+          "line": 118,
+          "sha256": "4981fea2a61ab52444126caee9095df4f13b62ef9db3b28074db5288c8a1b4ff"
+        },
+        {
+          "seal": "verifier",
+          "file": "audits/state.json",
+          "jsonPointer": "/records/5/totals/preservedStencilPixels",
+          "line": 225,
+          "sha256": "4981fea2a61ab52444126caee9095df4f13b62ef9db3b28074db5288c8a1b4ff"
+        },
+        {
+          "seal": "worker",
+          "file": "hot/hardware-transfers/report.json",
+          "jsonPointer": "/browserResult/result/runs/0/clears/0/chosenNativeWord",
+          "line": 3339,
+          "sha256": "2bc04d540b34a3f3acad8c923612309014ff2b219ef8d583c65467fb56f2e4c0"
+        }
+      ]
+    },
+    {
+      "id": "P07",
+      "prediction": "Every synchronous/asynchronous segmented/strided/upload/partial-mip/read/copy transfer must reproduce full original input/native/public bytes and padding. GPU-only refresh changes native storage while original backing stays unchanged. Exact resource/private/scratch/staging/conversion reservations precede allocations/readback and failures roll back unchanged.",
+      "status": "HELD",
+      "observed": "18 transfer cases hold full original/native/public/padding inverses, including native-only refresh. Exact reserved2-byte native mip costs precede texStorage2D.2 allocated failure rollbacks and4 one-byte-short resource/view/scratch/staging refusals preserve budgets and native object/allocation/read counts.",
+      "citations": [
+        {
+          "seal": "verifier",
+          "file": "audits/state.json",
+          "jsonPointer": "/records/6/totals/allocationRollbacks",
+          "line": 243,
+          "sha256": "4981fea2a61ab52444126caee9095df4f13b62ef9db3b28074db5288c8a1b4ff"
+        },
+        {
+          "seal": "verifier",
+          "file": "audits/state.json",
+          "jsonPointer": "/records/6/totals/budgetRefusals",
+          "line": 244,
+          "sha256": "4981fea2a61ab52444126caee9095df4f13b62ef9db3b28074db5288c8a1b4ff"
+        },
+        {
+          "seal": "worker",
+          "file": "hot/hardware-transfers/report.json",
+          "jsonPointer": "/browserResult/result/runs/12/allocations/0/atAllocation/gpuBytes",
+          "line": 229995,
+          "sha256": "2bc04d540b34a3f3acad8c923612309014ff2b219ef8d583c65467fb56f2e4c0"
+        }
+      ]
+    },
+    {
+      "id": "P08",
+      "prediction": "Old native generation/private ranges survive opposite-format ID reuse; cancellation, owner-first/renderer-first/disposal close every object exactly once and all terminal resource/async/cache/job charges equal zero. Native IDs and event sequence, not counters alone, prove this.",
+      "status": "HELD",
+      "observed": "All four terminal modes and old-range/opposite-format126 ID reuse hold from original physical generation/bodies; all6993 positive native objects retire exactly once, every terminal resource/renderer/async/image charge zero. Novel stale source also keeps old private1..2 generation correct while replacement bytes remain exact.",
+      "citations": [
+        {
+          "seal": "verifier",
+          "file": "audits/state.json",
+          "jsonPointer": "/records/0/totals/terminalModes",
+          "line": 21,
+          "sha256": "4981fea2a61ab52444126caee9095df4f13b62ef9db3b28074db5288c8a1b4ff"
+        },
+        {
+          "seal": "verifier",
+          "file": "audits/events.json",
+          "jsonPointer": "/aggregates/hot/nativeObjects",
+          "line": 19,
+          "sha256": "0e980a187cd4f287716f8a3b7f2f11609eb8a070dcacceb6cb8b683c7b885c49"
+        },
+        {
+          "seal": "verifier",
+          "file": "fresh/promoted/report.json",
+          "jsonPointer": "/browserResult/result/runs/0/view/resolvedGeneration",
+          "line": 3050,
+          "sha256": "50cf4379bd50a7183a1c6fb66182296934225db9ae5cf5c3b27a3069ff0694b6"
+        }
+      ]
+    },
+    {
+      "id": "P09",
+      "prediction": "Positive hardware owns1716 fences with1710 actual consumed completions and6 disposal-only;6993 native objects retire once.1648 CPU reads consist1586 fenced plus62 driver-synchronized synchronous reads. AsyncPBO/diagnostics need actual consumed sync created after writer. Earlier sync cannot qualify a later conversion draw.",
+      "status": "HELD",
+      "observed": "Full native events own1716 syncs with1710 actual consumed and6 disposal-only. CPU1648 splits1586 post-writer-fenced and62 driver-synchronized readPixels returns. Transfer summary omission does not count as zero:310 transfer completions are independently included. Blits/PBO writes and conversion draws participate in writer ordering.",
+      "citations": [
+        {
+          "seal": "verifier",
+          "file": "audits/events.json",
+          "jsonPointer": "/aggregates/hot/consumedSyncs",
+          "line": 17,
+          "sha256": "0e980a187cd4f287716f8a3b7f2f11609eb8a070dcacceb6cb8b683c7b885c49"
+        },
+        {
+          "seal": "verifier",
+          "file": "audits/hot-original-inverses.json",
+          "jsonPointer": "/completionAccounting/transferActualConsumedSyncs",
+          "line": 210,
+          "sha256": "5942ba605d72ce85ab97912b2f9caa8308e1cdaa041a870d2d52911375178461"
+        },
+        {
+          "seal": "verifier",
+          "file": "audits/events.json",
+          "jsonPointer": "/aggregates/hot/fencedCPUReads",
+          "line": 21,
+          "sha256": "0e980a187cd4f287716f8a3b7f2f11609eb8a070dcacceb6cb8b683c7b885c49"
+        },
+        {
+          "seal": "verifier",
+          "file": "audits/events.json",
+          "jsonPointer": "/aggregates/hot/synchronousCPUReads",
+          "line": 22,
+          "sha256": "0e980a187cd4f287716f8a3b7f2f11609eb8a070dcacceb6cb8b683c7b885c49"
+        }
+      ]
+    },
+    {
+      "id": "P10",
+      "prediction": "Independently reconstruct62 positive runs/133frames/801576 outputwords/280776 depthpixels+2732 transferpixels/10866784publicbytes and56actual pair/112actual stage responses versus101matching draw associations; controls and legacy excluded.",
+      "status": "HELD",
+      "observed": "Both hot/cold independently reconstruct62 positive runs,133frames,801576output words,280776depth pixels+2732transfer pixels,10866784public bytes,56 actual pair/112 actual stage responses vs101 actual draw associations. Controls and legacy are separate.",
+      "citations": [
+        {
+          "seal": "verifier",
+          "file": "audits/hot-original-inverses.json",
+          "jsonPointer": "/counts",
+          "line": 183,
+          "sha256": "5942ba605d72ce85ab97912b2f9caa8308e1cdaa041a870d2d52911375178461"
+        },
+        {
+          "seal": "verifier",
+          "file": "audits/cold-original-inverses.json",
+          "jsonPointer": "/counts",
+          "line": 183,
+          "sha256": "825b9c1e2ab6f046007f6bd4f97434aa0395f1167f7b3e0e1b0db1f463059c8f"
+        },
+        {
+          "seal": "verifier",
+          "file": "audits/events.json",
+          "jsonPointer": "/aggregates/hot/actualPairResponses",
+          "line": 23,
+          "sha256": "0e980a187cd4f287716f8a3b7f2f11609eb8a070dcacceb6cb8b683c7b885c49"
+        }
+      ]
+    },
+    {
+      "id": "P11",
+      "prediction": "Every nested governing UTF16/V8 partition in four-file diff executes or exact-source-pinned unchanged predecessor operand/whitespace waiver. Claim602positive/25waived/0unproven;29 listed predecessor operands authenticate complete BASE bodies and offsets with four newly executed; no new UN16 behavior waived.25 recorder bodies differ only by dependency literal and original legacy recorder executes hot/cold.",
+      "status": "HELD",
+      "observed": "Both full finest governing UTF16/V8 audits reconstruct602executed/25waived/0unproven. All29 exact predecessor source/offset/operand bodies authenticate; four listed waivers now execute, no new UN16 semantics waived. All25 recorder whole bodies differ by only one dependency literal, original legacy hardware recorder passes hot/cold.",
+      "citations": [
+        {
+          "seal": "verifier",
+          "file": "audits/coverage.json",
+          "jsonPointer": "/audits/0/counts",
+          "line": 364,
+          "sha256": "8f9e5176ff65f8667ede7c79af7bbf1386e1414cefd56a4736fedee2807cca3a"
+        },
+        {
+          "seal": "verifier",
+          "file": "audits/coverage.json",
+          "jsonPointer": "/audits/1/counts",
+          "line": 74554,
+          "sha256": "8f9e5176ff65f8667ede7c79af7bbf1386e1414cefd56a4736fedee2807cca3a"
+        },
+        {
+          "seal": "verifier",
+          "file": "audits/coverage.json",
+          "jsonPointer": "/all29WaiversAuthenticated/0",
+          "line": 6,
+          "sha256": "8f9e5176ff65f8667ede7c79af7bbf1386e1414cefd56a4736fedee2807cca3a"
+        },
+        {
+          "seal": "verifier",
+          "file": "audits/coverage.json",
+          "jsonPointer": "/audits/0/legacyReportSha256",
+          "line": 74550,
+          "sha256": "8f9e5176ff65f8667ede7c79af7bbf1386e1414cefd56a4736fedee2807cca3a"
+        }
+      ]
+    },
+    {
+      "id": "P12",
+      "prediction": "Three new varied seeds/schedules must independently retain correct ranges/generations/cancellation/disposal with terminal zero charges and unchanged full original inverses. One bounded novel non-default image/transfer boundary must behave from original input predictions and be promotable to a recurring gate.",
+      "status": "HELD",
+      "observed": "New schedules0x6a09e667,0xbb67ae85,0x3c6ef372 all pass unchanged full inverses; each4runs/18frames/238actual completions/2disposal-only and terminalzero. Novel13x11 oddstride7 offset5 nine-word mip1 subrectangle, retained1..2 range and pending opposite-format source reuse passes7 full native plane inversions; stale transfer refuses before CPU collection and destination bytes unchanged.",
+      "citations": [
+        {
+          "seal": "verifier",
+          "file": "audits/attacks.json",
+          "jsonPointer": "/schedules",
+          "line": 7,
+          "sha256": "25f474330b6c9a6459ce6514eda95ac438416df558e19390c81d1fcd2e5c966d"
+        },
+        {
+          "seal": "verifier",
+          "file": "fresh/promoted/report.json",
+          "jsonPointer": "/browserResult/result/runs/0/pending/refusal/error/code",
+          "line": 3159,
+          "sha256": "50cf4379bd50a7183a1c6fb66182296934225db9ae5cf5c3b27a3069ff0694b6"
+        },
+        {
+          "seal": "verifier",
+          "file": "fresh/promoted/critic-audit.json",
+          "jsonPointer": "/comparisons/4",
+          "line": 30,
+          "sha256": "e66ca9b6850386d7fc0af590f76ea2e914ee2a896ec897b77fc2186979133a0d"
+        },
+        {
+          "seal": "verifier",
+          "file": "fresh/promoted/critic-audit.json",
+          "jsonPointer": "/staleSourceBeforeCPU",
+          "line": 56,
+          "sha256": "e66ca9b6850386d7fc0af590f76ea2e914ee2a896ec897b77fc2186979133a0d"
+        }
+      ]
+    },
+    {
+      "id": "P13",
+      "prediction": "Actual completed native depth or color storage modified only after initial completion must consume a distinct second post-writer sync and be refuted by the unchanged original-input inverse; no oracle change or simulated return qualifies.",
+      "status": "HELD",
+      "observed": "Actual completed depth draw334 consumes sync3 at337; native clear(.0625)341 follows; new sync4 is created342 and actually consumed345. Actual full diagnostic return378 differs at first word1031794944 vs original prediction1056964736; unchanged full original-input inverse refutes the sabotage.",
+      "citations": [
+        {
+          "seal": "verifier",
+          "file": "fresh/fault-completed-depth/report.json",
+          "jsonPointer": "/partial/runs/0/events/340",
+          "line": 8550,
+          "sha256": "d45ae76568cd8d05cf01500484c1d00208c12cee9831ec822f4ee1738a12ee4b"
+        },
+        {
+          "seal": "verifier",
+          "file": "fresh/fault-completed-depth/report.json",
+          "jsonPointer": "/partial/runs/0/events/344",
+          "line": 8593,
+          "sha256": "d45ae76568cd8d05cf01500484c1d00208c12cee9831ec822f4ee1738a12ee4b"
+        },
+        {
+          "seal": "verifier",
+          "file": "fresh/fault-completed-depth/value-audit.json",
+          "jsonPointer": "/differences/0/misses/0",
+          "line": 32,
+          "sha256": "b5fa0f9f75083376b8d6d69897971cac0cf0c3159a49fb55151f2254a3d4c60e"
+        },
+        {
+          "seal": "verifier",
+          "file": "audits/attacks.json",
+          "jsonPointer": "/physicalSabotage/nativeReadSequence",
+          "line": 176,
+          "sha256": "25f474330b6c9a6459ce6514eda95ac438416df558e19390c81d1fcd2e5c966d"
+        }
+      ]
+    },
+    {
+      "id": "P14",
+      "prediction": "Each hardware recording uses headed actual Metal WebGL2 without software-renderer flags and zero console/page/request errors, contains full served-source closure, browser coverage and screenshot; fresh full records must seal and reopen without summary-only substitution.",
+      "status": "HELD",
+      "observed": "42 worker browser recordings and5 fresh full recordings authenticate whole served source/coverage/screenshot bodies; all headed actual Metal M4 WebGL2, no software flags, zero console/page/request errors. Fresh2472source bodies match20732055; runtime and unchanged inverses remain byteidentical eda91. Fresh root HTML is reconstructed from whole recorder literal and exactly matches its served SHA.",
+      "citations": [
+        {
+          "seal": "verifier",
+          "file": "audits/worker-browser.json",
+          "jsonPointer": "/records/0",
+          "line": 6,
+          "sha256": "e508c4b4a2b10ca9112d8ea9a9009d72ef5ee674f5be1bd264548721e65b5cd8"
+        },
+        {
+          "seal": "verifier",
+          "file": "audits/browser.json",
+          "jsonPointer": "/records/0",
+          "line": 12,
+          "sha256": "658e4762e057b72485562178897da18452b974ae192c36f4c632d8ac69f89196"
+        },
+        {
+          "seal": "verifier",
+          "file": "fresh/promoted/report.json",
+          "jsonPointer": "/browserErrors",
+          "line": 2705,
+          "sha256": "50cf4379bd50a7183a1c6fb66182296934225db9ae5cf5c3b27a3069ff0694b6"
+        }
+      ]
+    },
+    {
+      "id": "P15",
+      "prediction": "Only isolated format16 path is proven; production guest offload/API/caps/300MIPS remain unproven and no successor, merge, push or deployment occurs.",
+      "status": "HELD",
+      "observed": "Verified isolated original UN16 factory only. Recorded guestExecution and productionNegotiation false. Production guest/compositor/worker/scanout/demo offload, complete API/caps and300MIPS remain unproven; no merge/push/deploy/successor by critic.",
+      "citations": [
+        {
+          "seal": "verifier",
+          "file": "fresh/promoted/report.json",
+          "jsonPointer": "/guestExecution",
+          "line": 5,
+          "sha256": "50cf4379bd50a7183a1c6fb66182296934225db9ae5cf5c3b27a3069ff0694b6"
+        },
+        {
+          "seal": "verifier",
+          "file": "fresh/promoted/report.json",
+          "jsonPointer": "/productionNegotiation",
+          "line": 6,
+          "sha256": "50cf4379bd50a7183a1c6fb66182296934225db9ae5cf5c3b27a3069ff0694b6"
+        },
+        {
+          "seal": "verifier",
+          "file": "audits/browser.json",
+          "jsonPointer": "/runtimeHead",
+          "line": 10,
+          "sha256": "658e4762e057b72485562178897da18452b974ae192c36f4c632d8ac69f89196"
+        }
+      ]
+    }
+  ]
+}

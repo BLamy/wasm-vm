@@ -1,0 +1,15 @@
+bash tools/verify-virgl-standard-shared-exponent-adversarial.sh
+{"status": "HELD", "planSha256": "92642f09a1a002ef64593e8d63a68eb1709a73cefc6e5b05bf0a4aeda4e172c5", "plans": 3, "predictedBeforeNative": true}
+Fresh RGB9E5 critic native experiment passed
+Original floating image acceptance passed
+{"schema": "original-rgb9e5-complete-native-inverse-v1", "status": "passed", "faults": [], "runs": 34, "nativeComponents": 4944, "originalInputBytes": 9136, "publicBytes": 880, "nativeUploadBytes": 8976, "paddingBytes": 3326, "footprintChecks": 1517, "gpuCopies": 22}
+Original floating image acceptance passed
+{"schema": "original-rgb9e5-complete-native-inverse-v1", "status": "passed", "faults": [], "runs": 34, "nativeComponents": 4944, "originalInputBytes": 9136, "publicBytes": 880, "nativeUploadBytes": 8976, "paddingBytes": 3326, "footprintChecks": 1517, "gpuCopies": 22}
+Original floating image acceptance passed
+{"schema": "original-rgb9e5-complete-native-inverse-v1", "status": "passed", "faults": [], "runs": 34, "nativeComponents": 4944, "originalInputBytes": 9136, "publicBytes": 880, "nativeUploadBytes": 8976, "paddingBytes": 3326, "footprintChecks": 1517, "gpuCopies": 22}
+AssertionError [ERR_ASSERTION]: critic complete actual private RGB and alpha after real fence: expected "0000803a000000000000403b0000803f0000403c0000963e0000d03d0000803f00002d3f0000a03e0000143e0000803f0000a03e0000853f0000e43e0000803f0000ce3f00004c3f0000803c0000803f00009a400000703f0000ba400000803f000044400000384100003a410000803f0000dc4100002840000062410000803f00000b420000d4410000ba410000803f00005c42000030410000c1420000803f", observed "0000803a000000000000803a0000803f0000403c0000963e0000403c0000803f00002d3f0000a03e00002d3f0000803f0000a03e0000853f0000a03e0000803f0000ce3f00004c3f0000ce3f0000803f00009a400000703f00009a400000803f0000444000003841000044400000803f0000dc41000028400000dc410000803f00000b420000d44100000b420000803f00005c420000304100005c420000803f"
+
+'failed' !== 'passed'
+
+    at file:///Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/verify-virgl-standard-shared-exponent-critic.mjs:117:12
+{"schema": "fresh-rgb9e5-promoted-critic-audit-v1", "status": "HELD", "runs": 11, "actualBlueFieldControl": {"status": "REFUTED", "point": "/partial/sabotage", "originalLevel": 2, "component": 2, "predictedBits": "0x3b400000", "observedBits": "0x3a800000", "nativeSha256": "2d79c870cfc34ea5e0ea37f300cb5f73613ac1dd50a0502f56cb9b7933cb8304", "fence": {"name": "clientWaitSync", "turn": 6, "label": "critic-native-real-completion", "sync": 19, "actual": 37146, "delivered": 37146}}}

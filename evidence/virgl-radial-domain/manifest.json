@@ -1,0 +1,58 @@
+{
+  "schema": "radial-domain-lossless-evidence-v1",
+  "task": "E6-T12f3",
+  "gitHead": "ee23e8d63ba27afec874ec7dc63c6c6be3c7ee7a",
+  "runtimeCommit": "5c71957192758f0c14302683c628cf47e215eb75",
+  "archives": [
+    {
+      "path": "worker.tar.gz",
+      "bytes": 10879590,
+      "sha256": "7c6c072899bf3d242ab2e36c12893f009178654d9e5762455f3caecd77e37862"
+    },
+    {
+      "path": "cold.tar.gz",
+      "bytes": 11487499,
+      "sha256": "d8ced30900b9fd9ffce4f2866c41c37d333fc9a47be8c4dfde254d663af5c8cd"
+    }
+  ],
+  "receipts": [
+    {
+      "path": "worker-receipt.json",
+      "bytes": 50981,
+      "sha256": "496522d2b5b73a17e81b37b4cb751094a171a5e300a7ed40b836fc9952cdee1f"
+    },
+    {
+      "path": "cold-receipt.json",
+      "bytes": 50831,
+      "sha256": "cf79cc161526ebe8d288c962b255f3a57bc9703bd1cfd0f7d09d6a1d4e0cb773"
+    },
+    {
+      "path": "cold-report.json",
+      "bytes": 9016,
+      "sha256": "47216de50dab608d003ff77508eee2dc9be7f8fcfb307f8cdafedbe145de2362"
+    }
+  ],
+  "nativeArtifacts": [
+    {
+      "path": "worker-native",
+      "bytes": 3279312,
+      "sha256": "56235cc7e8f0a45822d0d7473d4146793b1db7ed9b6ea60a5b02552ffa7ae577"
+    },
+    {
+      "path": "cold-native",
+      "bytes": 3280272,
+      "sha256": "79153fa80e3de336f9486128b03a00832ba27f46d8b81033d075bcd639edc4e2"
+    }
+  ],
+  "screenshot": {
+    "path": "browser.png",
+    "bytes": 74690,
+    "sha256": "ea5339d52387b39ef782743c4fd185edfe55877f3ff166252f37f1e71a8d1906"
+  },
+  "workerRecordedFiles": 49,
+  "coldRecordedFiles": 50,
+  "coldAcceptanceFiles": 48,
+  "scope": "Restricted radial coefficient admission in the isolated compiler/shared renderer; two explicitly modified structural ports; untouched originals remain 12/19 accepted; no radial workload, guest GPU negotiation, deployment or desktop throughput claim.",
+  "repair": "Worker canonical run passed runtime gates but failed receipt inventory duplication. Harness-only repair preserves raw failure log; focused successful replay and final receipt bind every source against recorded ancestral and final identical heads. Final pristine-clone canonical command passes without repair.",
+  "boundary": "Lossless packaging only. Every archive member was streamed and compared with the original size and SHA-256. The final pristine clone has unchanged clean status before and after. Runtime sources are unchanged by the evidence/status submission."
+}

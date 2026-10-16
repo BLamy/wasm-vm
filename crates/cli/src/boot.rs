@@ -900,14 +900,14 @@ pub fn boot(a: BootArgs) -> ExitCode {
         if boot_num > 1 {
             eprintln!("wasm-vm: --- reboot #{} ---", boot_num - 1);
         }
-        let (mut m, uart, agent_state, _gpu_state, display_metrics) =
+        let (mut m, uart, agent_state, _gpu_state, _display_metrics) =
             match assemble(&a, &kernel, &initrd, &console) {
                 Ok(v) => v,
                 Err(code) => return code,
             };
         #[cfg(feature = "gpu-trace")]
         let mut display_workload = if a.display_workload {
-            let Some(metrics) = display_metrics else {
+            let Some(metrics) = _display_metrics else {
                 eprintln!("wasm-vm: display workload metrics were not assembled");
                 return ExitCode::from(2);
             };

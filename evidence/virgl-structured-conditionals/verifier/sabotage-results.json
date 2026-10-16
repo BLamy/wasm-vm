@@ -1,0 +1,198 @@
+{
+  "status": "sabotage-detected",
+  "sourceHead": "242ad5705dbdfd07b269c3e5850857c893af41e7",
+  "sourceSha256": "d9d1e35ca4ff820691c7221abb1e56961e7a6c28007e5d9a3bf637d263be7bb5",
+  "mutation": {
+    "before": "s->written[file][index] &= saved_written[index];",
+    "after": "s->written[file][index] |= saved_written[index];",
+    "mutatedSha256": "2b7da1287fcfc2c14526521d6e44dc61365c6b723d47537f1eed97dfb3564051"
+  },
+  "buildCommand": [
+    "clang",
+    "-shared",
+    "-fPIC",
+    "-O1",
+    "-g",
+    "-std=gnu11",
+    "-D_GNU_SOURCE",
+    "-D_DARWIN_C_SOURCE",
+    "-DUTIL_ARCH_LITTLE_ENDIAN=1",
+    "-DUTIL_ARCH_BIG_ENDIAN=0",
+    "-DHAVE___BUILTIN_CLZ=1",
+    "-DHAVE___BUILTIN_CLZLL=1",
+    "-DHAVE___BUILTIN_POPCOUNT=1",
+    "-I.",
+    "-Igenerated",
+    "-Ivendor/src",
+    "-Ivendor/src/mesa",
+    "-Ivendor/src/mesa/pipe",
+    "-Ivendor/src/mesa/compat",
+    "-Ivendor/src/gallium/include",
+    "-Ivendor/src/gallium/auxiliary",
+    "-Ivendor/src/gallium/auxiliary/util",
+    "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/e7-verifier-union-fr3ag69b/bridge.c",
+    "raw_bits.c",
+    "generated/u_format_table.c",
+    "vendor/src/vrend/vrend_shader.c",
+    "vendor/src/gallium/auxiliary/tgsi/tgsi_build.c",
+    "vendor/src/gallium/auxiliary/tgsi/tgsi_dump.c",
+    "vendor/src/gallium/auxiliary/tgsi/tgsi_info.c",
+    "vendor/src/gallium/auxiliary/tgsi/tgsi_iterate.c",
+    "vendor/src/gallium/auxiliary/tgsi/tgsi_parse.c",
+    "vendor/src/gallium/auxiliary/tgsi/tgsi_sanity.c",
+    "vendor/src/gallium/auxiliary/tgsi/tgsi_scan.c",
+    "vendor/src/gallium/auxiliary/tgsi/tgsi_strings.c",
+    "vendor/src/gallium/auxiliary/tgsi/tgsi_text.c",
+    "vendor/src/gallium/auxiliary/tgsi/tgsi_util.c",
+    "vendor/src/gallium/auxiliary/cso_cache/cso_hash.c",
+    "vendor/src/gallium/auxiliary/cso_cache/cso_cache.c",
+    "vendor/src/mesa/util/u_debug.c",
+    "-lm",
+    "-o",
+    "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-structured-conditionals/verifier/audit-union.dylib"
+  ],
+  "binarySha256": "ee144980d1f68abacfdc50162eab95130c2e10bec43d33f0e1fb07165ff17c51",
+  "cases": [
+    {
+      "name": "true-only",
+      "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0]\nIMM[0] FLT32 {0.125, 0.25, 0.5, 1}\nMOV OUT[0], IMM[0]\nUIF IN[0]\nMOV TEMP[0].x, IMM[0]\nENDIF\nUIF TEMP[0].xxxx\nMOV OUT[0], IMM[0]\nENDIF\nEND\n",
+      "prediction": "reject uninitialized predicate on a reachable predecessor",
+      "healthy": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        }
+      },
+      "sabotaged": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nsmooth in vec4 vso_g0;\nlayout(location=0) out vec4 fsout_c0;\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4((uintBitsToFloat(1040187392u)), (uintBitsToFloat(1048576000u)), (uintBitsToFloat(1056964608u)), (uintBitsToFloat(1065353216u)));\n raw_rhs = uvec4((1040187392u), (1048576000u), (1056964608u), (1065353216u));\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n if (floatBitsToUint(vso_g0.x) != 0u) {\n float_rhs = vec4((uintBitsToFloat(1040187392u)), 0.0, 0.0, 0.0);\n raw_rhs = uvec4((1040187392u), 0u, 0u, 0u);\n raw_temp[0].x = raw_rhs.x;\n float_temp[0].x = float_rhs.x;\n }\n if (raw_temp[0].x != 0u) {\n float_rhs = vec4((uintBitsToFloat(1040187392u)), (uintBitsToFloat(1048576000u)), (uintBitsToFloat(1056964608u)), (uintBitsToFloat(1065353216u)));\n raw_rhs = uvec4((1040187392u), (1048576000u), (1056964608u), (1065353216u));\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n }\n fsout_c0.x = float_out[0].x;\n fsout_c0.y = float_out[0].y;\n fsout_c0.z = float_out[0].z;\n fsout_c0.w = float_out[0].w;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-raw-bits-v8",
+          "stage": "fragment",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "interpolation": "smooth"
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "fsout_c0",
+              "type": "vec4",
+              "semantic": "COLOR",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            }
+          ],
+          "attributes": [],
+          "uniforms": [],
+          "samplers": [],
+          "uniformBlocks": []
+        }
+      },
+      "oracle": "deterministic rejected-vs-accepted admission"
+    },
+    {
+      "name": "false-only",
+      "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0]\nIMM[0] FLT32 {0.125, 0.25, 0.5, 1}\nMOV OUT[0], IMM[0]\nUIF IN[0]\nELSE\nMOV TEMP[0].x, IMM[0]\nENDIF\nUIF TEMP[0].xxxx\nMOV OUT[0], IMM[0]\nENDIF\nEND\n",
+      "prediction": "reject uninitialized predicate on a reachable predecessor",
+      "healthy": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        }
+      },
+      "sabotaged": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nsmooth in vec4 vso_g0;\nlayout(location=0) out vec4 fsout_c0;\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4((uintBitsToFloat(1040187392u)), (uintBitsToFloat(1048576000u)), (uintBitsToFloat(1056964608u)), (uintBitsToFloat(1065353216u)));\n raw_rhs = uvec4((1040187392u), (1048576000u), (1056964608u), (1065353216u));\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n if (floatBitsToUint(vso_g0.x) != 0u) {\n } else {\n float_rhs = vec4((uintBitsToFloat(1040187392u)), 0.0, 0.0, 0.0);\n raw_rhs = uvec4((1040187392u), 0u, 0u, 0u);\n raw_temp[0].x = raw_rhs.x;\n float_temp[0].x = float_rhs.x;\n }\n if (raw_temp[0].x != 0u) {\n float_rhs = vec4((uintBitsToFloat(1040187392u)), (uintBitsToFloat(1048576000u)), (uintBitsToFloat(1056964608u)), (uintBitsToFloat(1065353216u)));\n raw_rhs = uvec4((1040187392u), (1048576000u), (1056964608u), (1065353216u));\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n }\n fsout_c0.x = float_out[0].x;\n fsout_c0.y = float_out[0].y;\n fsout_c0.z = float_out[0].z;\n fsout_c0.w = float_out[0].w;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-raw-bits-v8",
+          "stage": "fragment",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "interpolation": "smooth"
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "fsout_c0",
+              "type": "vec4",
+              "semantic": "COLOR",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            }
+          ],
+          "attributes": [],
+          "uniforms": [],
+          "samplers": [],
+          "uniformBlocks": []
+        }
+      },
+      "oracle": "deterministic rejected-vs-accepted admission"
+    },
+    {
+      "name": "nested-true-only",
+      "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0]\nIMM[0] FLT32 {0.125, 0.25, 0.5, 1}\nMOV OUT[0], IMM[0]\nUIF IN[0]\nUIF IN[0]\nMOV TEMP[0].x, IMM[0]\nENDIF\nELSE\nMOV TEMP[0].x, IMM[0]\nENDIF\nUIF TEMP[0].xxxx\nMOV OUT[0], IMM[0]\nENDIF\nEND\n",
+      "prediction": "reject uninitialized predicate on a reachable predecessor",
+      "healthy": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        }
+      },
+      "sabotaged": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nsmooth in vec4 vso_g0;\nlayout(location=0) out vec4 fsout_c0;\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4((uintBitsToFloat(1040187392u)), (uintBitsToFloat(1048576000u)), (uintBitsToFloat(1056964608u)), (uintBitsToFloat(1065353216u)));\n raw_rhs = uvec4((1040187392u), (1048576000u), (1056964608u), (1065353216u));\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n if (floatBitsToUint(vso_g0.x) != 0u) {\n if (floatBitsToUint(vso_g0.x) != 0u) {\n float_rhs = vec4((uintBitsToFloat(1040187392u)), 0.0, 0.0, 0.0);\n raw_rhs = uvec4((1040187392u), 0u, 0u, 0u);\n raw_temp[0].x = raw_rhs.x;\n float_temp[0].x = float_rhs.x;\n }\n } else {\n float_rhs = vec4((uintBitsToFloat(1040187392u)), 0.0, 0.0, 0.0);\n raw_rhs = uvec4((1040187392u), 0u, 0u, 0u);\n raw_temp[0].x = raw_rhs.x;\n float_temp[0].x = float_rhs.x;\n }\n if (raw_temp[0].x != 0u) {\n float_rhs = vec4((uintBitsToFloat(1040187392u)), (uintBitsToFloat(1048576000u)), (uintBitsToFloat(1056964608u)), (uintBitsToFloat(1065353216u)));\n raw_rhs = uvec4((1040187392u), (1048576000u), (1056964608u), (1065353216u));\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n }\n fsout_c0.x = float_out[0].x;\n fsout_c0.y = float_out[0].y;\n fsout_c0.z = float_out[0].z;\n fsout_c0.w = float_out[0].w;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-raw-bits-v8",
+          "stage": "fragment",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "interpolation": "smooth"
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "fsout_c0",
+              "type": "vec4",
+              "semantic": "COLOR",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            }
+          ],
+          "attributes": [],
+          "uniforms": [],
+          "samplers": [],
+          "uniformBlocks": []
+        }
+      },
+      "oracle": "deterministic rejected-vs-accepted admission"
+    }
+  ]
+}

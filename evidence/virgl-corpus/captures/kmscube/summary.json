@@ -1,0 +1,329 @@
+{
+  "apiCalls": {
+    "context_create": 2,
+    "context_create_with_flags": 2,
+    "context_destroy": 1,
+    "create_fence": 14,
+    "ctx_attach_resource": 6,
+    "ctx_detach_resource": 6,
+    "fill_caps": 1,
+    "get_cap_set": 4,
+    "init": 1,
+    "resource_attach_iov": 5,
+    "resource_create": 5,
+    "resource_detach_iov": 4,
+    "resource_unref": 4,
+    "submit_cmd": 10,
+    "transfer_write_iov": 26,
+    "write_fence": 14
+  },
+  "apiResults": {
+    "context_create:0": 2,
+    "context_create_with_flags:0": 2,
+    "context_destroy:0": 1,
+    "create_fence:0": 14,
+    "ctx_attach_resource:0": 6,
+    "ctx_detach_resource:0": 6,
+    "fill_caps:0": 1,
+    "get_cap_set:0": 4,
+    "init:0": 1,
+    "resource_attach_iov:0": 5,
+    "resource_create:0": 5,
+    "resource_detach_iov:0": 4,
+    "resource_unref:0": 4,
+    "submit_cmd:0": 10,
+    "transfer_write_iov:0": 26,
+    "write_fence:0": 14
+  },
+  "blobBytes": 11575700,
+  "blobs": 20,
+  "capsets": [
+    {
+      "bytes": 1408,
+      "event": 89,
+      "set": 2,
+      "sha256": "ac9c58aa54968197ec480f2e90ccb6c57d7a964beef4806e907256e12a04f155",
+      "version": 0
+    }
+  ],
+  "events": 291,
+  "manifestSha256": "f336ce65bbf4827ab6b7f43d76b6be9badbc8c81a3576116095d09615dfbb77f",
+  "objects": {
+    "BLEND": 1,
+    "DSA": 1,
+    "RASTERIZER": 1,
+    "SAMPLER_STATE": 1,
+    "SAMPLER_VIEW": 1,
+    "SHADER": 2,
+    "SURFACE": 8,
+    "VERTEX_ELEMENTS": 1
+  },
+  "opcodes": {
+    "BIND_OBJECT": 4,
+    "BIND_SAMPLER_STATES": 1,
+    "BIND_SHADER": 2,
+    "CLEAR": 8,
+    "CREATE_OBJECT": 16,
+    "CREATE_SUB_CTX": 2,
+    "DESTROY_OBJECT": 7,
+    "DRAW_VBO": 48,
+    "END_TRANSFERS": 10,
+    "LINK_SHADER": 1,
+    "SET_ATOMIC_BUFFERS": 1,
+    "SET_BLEND_COLOR": 1,
+    "SET_CONSTANT_BUFFER": 8,
+    "SET_FRAMEBUFFER_STATE": 8,
+    "SET_FRAMEBUFFER_STATE_NO_ATTACH": 8,
+    "SET_MIN_SAMPLES": 1,
+    "SET_POLYGON_STIPPLE": 1,
+    "SET_SAMPLER_VIEWS": 1,
+    "SET_SUB_CTX": 10,
+    "SET_TESS_STATE": 1,
+    "SET_TWEAKS": 4,
+    "SET_VERTEX_BUFFERS": 1,
+    "SET_VIEWPORT_STATE": 1,
+    "TRANSFER3D": 2
+  },
+  "resourceCreates": [
+    {
+      "arraySize": 1,
+      "bind": 2,
+      "depth": 1,
+      "event": 10,
+      "flags": 1,
+      "format": 2,
+      "height": 800,
+      "lastLevel": 0,
+      "nrSamples": 0,
+      "resourceId": 2,
+      "target": 2,
+      "width": 1280
+    },
+    {
+      "arraySize": 1,
+      "bind": 1310730,
+      "depth": 1,
+      "event": 97,
+      "flags": 0,
+      "format": 2,
+      "height": 480,
+      "lastLevel": 0,
+      "nrSamples": 0,
+      "resourceId": 3,
+      "target": 2,
+      "width": 640
+    },
+    {
+      "arraySize": 1,
+      "bind": 16,
+      "depth": 1,
+      "event": 114,
+      "flags": 0,
+      "format": 64,
+      "height": 1,
+      "lastLevel": 0,
+      "nrSamples": 0,
+      "resourceId": 4,
+      "target": 0,
+      "width": 1056
+    },
+    {
+      "arraySize": 1,
+      "bind": 1048586,
+      "depth": 1,
+      "event": 125,
+      "flags": 0,
+      "format": 67,
+      "height": 512,
+      "lastLevel": 0,
+      "nrSamples": 0,
+      "resourceId": 5,
+      "target": 2,
+      "width": 512
+    },
+    {
+      "arraySize": 1,
+      "bind": 1310730,
+      "depth": 1,
+      "event": 160,
+      "flags": 0,
+      "format": 2,
+      "height": 480,
+      "lastLevel": 0,
+      "nrSamples": 0,
+      "resourceId": 6,
+      "target": 2,
+      "width": 640
+    }
+  ],
+  "resourceFormats": {
+    "2": 3,
+    "64": 1,
+    "67": 1
+  },
+  "shaderInstructions": {
+    "ADD": 9,
+    "DIV": 1,
+    "DP3": 2,
+    "END": 2,
+    "MAX_PRECISE": 1,
+    "MOV": 4,
+    "MUL": 14,
+    "RSQ": 1,
+    "TEX": 1
+  },
+  "shaderStageCounts": {
+    "FRAG": 1,
+    "VERT": 1
+  },
+  "shaders": {
+    "003270109615e05345631cf8a2273ebc1bf3d86c7590e05ddc8424c441db7605": {
+      "bytes": 389,
+      "instructions": {
+        "END": 1,
+        "MOV": 3,
+        "MUL": 1,
+        "TEX": 1
+      },
+      "occurrences": [
+        {
+          "context": 2,
+          "declaredBytes": 390,
+          "declaredTokens": 44,
+          "handle": 2,
+          "packets": [
+            {
+              "byteOffset": 5560,
+              "continuation": false,
+              "event": 154,
+              "fragmentBytes": 392
+            }
+          ],
+          "stage": "FRAG",
+          "streamoutOutputs": 0,
+          "subcontext": 1
+        }
+      ],
+      "stage": "FRAG"
+    },
+    "d4f702f7a846a93b6f767bc73ed99a9c0f4fbe5fcb55662bca99e3f07f47d450": {
+      "bytes": 1396,
+      "instructions": {
+        "ADD": 9,
+        "DIV": 1,
+        "DP3": 2,
+        "END": 1,
+        "MAX_PRECISE": 1,
+        "MOV": 1,
+        "MUL": 13,
+        "RSQ": 1
+      },
+      "occurrences": [
+        {
+          "context": 2,
+          "declaredBytes": 1397,
+          "declaredTokens": 136,
+          "handle": 1,
+          "packets": [
+            {
+              "byteOffset": 4136,
+              "continuation": false,
+              "event": 154,
+              "fragmentBytes": 1400
+            }
+          ],
+          "stage": "VERT",
+          "streamoutOutputs": 0,
+          "subcontext": 1
+        }
+      ],
+      "stage": "VERT"
+    }
+  },
+  "submissions": [
+    {
+      "bytes": 4136,
+      "commands": 6,
+      "context": 2,
+      "event": 140,
+      "sha256": "6e217b1a7323f0a1953564f9df84044657fb757a57ec67e2685ad08873887309"
+    },
+    {
+      "bytes": 6004,
+      "commands": 9,
+      "context": 2,
+      "event": 154,
+      "sha256": "481731244c8a26bcf254a2c3a38aae08273a997dd643e9812ff4bb3301e9d41e"
+    },
+    {
+      "bytes": 5428,
+      "commands": 34,
+      "context": 2,
+      "event": 176,
+      "sha256": "76d4a50a028fa67a8e30830e137b68b7cf1a04889225e70bba00b6dcc5bebf5c"
+    },
+    {
+      "bytes": 4652,
+      "commands": 14,
+      "context": 2,
+      "event": 187,
+      "sha256": "c85f0651be2e679ceef11203c221b53cf45cb6d4b07c245133a20ee40e944153"
+    },
+    {
+      "bytes": 4652,
+      "commands": 14,
+      "context": 2,
+      "event": 198,
+      "sha256": "488b2e6bbe612430fab9b65af22b0f3d370dc274ae18fd86cb1c7f158cf123cc"
+    },
+    {
+      "bytes": 4652,
+      "commands": 14,
+      "context": 2,
+      "event": 209,
+      "sha256": "bdb7036084c1c04dd3841ce13617efb41949b7dc24161d919e472639a943f9a7"
+    },
+    {
+      "bytes": 4652,
+      "commands": 14,
+      "context": 2,
+      "event": 220,
+      "sha256": "8131d5500da650a046b0f6665d4bfb988044c256feb9816e182695b1f5c9ead9"
+    },
+    {
+      "bytes": 4652,
+      "commands": 14,
+      "context": 2,
+      "event": 231,
+      "sha256": "5bcf1d4ba25d2ddbd9afda050bd0c3d10f58eb3e0e41ab48035a03abb73da38e"
+    },
+    {
+      "bytes": 4652,
+      "commands": 14,
+      "context": 2,
+      "event": 242,
+      "sha256": "2eba3a1ef40c2543712d11230f464dc7a90cf6290a297d49311a567fa95ffba2"
+    },
+    {
+      "bytes": 4652,
+      "commands": 14,
+      "context": 2,
+      "event": 253,
+      "sha256": "4cfa4e1158025d70423b66fd9e6bccd04e11118c8c4dcb9b1d34ad835cfadffb"
+    }
+  ],
+  "versions": {
+    "guest": {
+      "architecture": "riscv64",
+      "hyprland": "0.56.2-3",
+      "mesa": "1:26.2.2-1"
+    },
+    "host": {
+      "architecture": "aarch64",
+      "renderer": "llvmpipe",
+      "virglCommit": "ca50e008863837e094747a69974dde3ae148aeaa",
+      "virglrenderer": "1.3.0"
+    }
+  },
+  "workload": "kmscube"
+}

@@ -1,0 +1,55 @@
+{
+  "task": "E6-T12e3",
+  "scope": "Independent binding/oracle audit; parent handles execution attacks and coverage",
+  "status": "held",
+  "runtimeHead": "f88d7bb0c52cb4ac1189f7a05fb1dfdf77b03b91",
+  "predictionsSha256": "7ba109bee956995be7c90ed3e1712ab18ad7b50b59f8ab10c55dbf77df682937",
+  "scriptSha256": "96270ca7ea57cc89cbd76f858c66b16ad5f7cff5edc99e4bd08db93a49a20b07",
+  "checks": {
+    "fixture": 1,
+    "cold": 82,
+    "hash": 1152,
+    "size": 1152,
+    "receipt": 2,
+    "frozen source": 922,
+    "compiler": 12,
+    "original": 104,
+    "inventory": 1378,
+    "native": 4338,
+    "browser": 24,
+    "parity": 9280,
+    "anchors": 184,
+    "stress": 36,
+    "oracle": 10736,
+    "TF": 100,
+    "uniform": 146,
+    "TF bits": 384,
+    "pixels": 104,
+    "pixel values": 3074,
+    "sabotage": 10,
+    "cold parity": 8,
+    "limits": 1
+  },
+  "totalChecks": 33230,
+  "evidence": [
+    {
+      "run": "worker",
+      "receiptSha256": "ad6ab447fa0ad3db82ceea27806b5f7e0aea989a15965b47f44e4146e1e76cae",
+      "nativeSha256": "c57fe63bba9a9bc1139b5f2d0e3ec5118b991e64a5b4b926fc52dac95c08a7c2",
+      "hardwareSha256": "4abebca2554c419a77be5df6ec3cc51273ec49248d90955e20b32fcb73a4dd9c",
+      "sabotageSha256": "3d3cc1e25b3fad81e5fdd30f713d4a0c9fe43c5959c68412357309568bc82063",
+      "sources": 165,
+      "records": 69
+    },
+    {
+      "run": "cold",
+      "receiptSha256": "5b48ed45c0998bcb9df308fc198808f65ac5d51e02095058b2776d5fb54e624e",
+      "nativeSha256": "303249f31ab9bf5521a9c964580fa759db5bc7e3d1ac51b28b466aa09e423548",
+      "hardwareSha256": "44e445bd3e6d2322b27ee1bc2062bcf3a57a09e1164523d3da4761d74d3bda54",
+      "sabotageSha256": "ea11849ce5d879d68c6fd5606ade7d98e088c9e0bc020721e68cf4699be8277b",
+      "sources": 165,
+      "records": 69
+    }
+  ],
+  "findings": []
+}

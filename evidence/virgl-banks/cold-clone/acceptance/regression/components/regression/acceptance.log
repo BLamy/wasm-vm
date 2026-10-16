@@ -1,0 +1,242 @@
+
+added 7 packages in 411ms
+npm warn install-scripts 1 package has install scripts not yet covered by allowScripts:
+npm warn install-scripts   fsevents@2.3.2 (install: (install scripts present))
+npm warn install-scripts
+npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
++ git rev-parse HEAD
+f88d7bb0c52cb4ac1189f7a05fb1dfdf77b03b91
++ python3 -m py_compile tools/virgl-captured-shaders/native.py tools/virgl-captured-shaders/receipt.py tools/virgl-contract/verify.py
++ python3 -m unittest discover -s tools/virgl-contract -p 'test_*.py' -v
+test_caps_precise_and_depth_overclaims_rejected (test_verify.ContractGate) ... ok
+test_component_execution_scope_cannot_move_between_originals (test_verify.ContractGate) ... ok
+test_flat_execution_scope_is_bound_to_original_fragment (test_verify.ContractGate) ... ok
+test_missing_opcode_and_false_support_rejected (test_verify.ContractGate) ... ok
+test_stale_source_and_duplicate_json_fail (test_verify.ContractGate) ... ok
+test_unqualified_browser_and_insufficient_ubo_rejected (test_verify.ContractGate) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.036s
+
+OK
++ node --check tools/lib/virgl-browser-runner.mjs
++ node --check tools/verify-virgl-shader.mjs
++ node --check tools/verify-virgl-captured-shaders.mjs
++ node --check renderer/virgl-shader/tests/captured-textured-scene.mjs
++ bash renderer/virgl-shader/build.sh guard-check
+Pinned virglrenderer 1.3.0: 70 source/generated SHA-256 hashes match
++ bash renderer/virgl-shader/build.sh native
+Pinned virglrenderer 1.3.0: 70 source/generated SHA-256 hashes match
++ bash renderer/virgl-shader/build.sh sanitize
+Pinned virglrenderer 1.3.0: 70 source/generated SHA-256 hashes match
+vendor/src/vrend/vrend_shader.c:4717:13: warning: 'sprintf' is deprecated: This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead. [-Wdeprecated-declarations]
+ 4717 |             sprintf(arrayname, "[addr%d]", src->DimIndirect.Index);
+      |             ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/_stdio.h:278:1: note: 'sprintf' has been explicitly marked deprecated here
+  278 | __deprecated_msg("This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead.")
+      | ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h:227:48: note: expanded from macro '__deprecated_msg'
+  227 |         #define __deprecated_msg(_msg) __attribute__((__deprecated__(_msg)))
+      |                                                       ^
+vendor/src/vrend/vrend_shader.c:4719:13: warning: 'sprintf' is deprecated: This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead. [-Wdeprecated-declarations]
+ 4719 |             sprintf(arrayname, "[%d]", src->Dimension.Index);
+      |             ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/_stdio.h:278:1: note: 'sprintf' has been explicitly marked deprecated here
+  278 | __deprecated_msg("This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead.")
+      | ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h:227:48: note: expanded from macro '__deprecated_msg'
+  227 |         #define __deprecated_msg(_msg) __attribute__((__deprecated__(_msg)))
+      |                                                       ^
+vendor/src/vrend/vrend_shader.c:7349:16: warning: 'sprintf' is deprecated: This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead. [-Wdeprecated-declarations]
+ 7349 |                sprintf(prefix, "layout(location = %d)", ctx->outputs[i].sid);
+      |                ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/_stdio.h:278:1: note: 'sprintf' has been explicitly marked deprecated here
+  278 | __deprecated_msg("This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead.")
+      | ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h:227:48: note: expanded from macro '__deprecated_msg'
+  227 |         #define __deprecated_msg(_msg) __attribute__((__deprecated__(_msg)))
+      |                                                       ^
+3 warnings generated.
+seed=63dc19b1 mutations=1024 recovery=1024 passed
+seed=e687af04 mutations=1024 recovery=1024 passed
+seed=591ef830 mutations=1024 recovery=1024 passed
+seed=1ad290c7 mutations=1024 recovery=1024 passed
+PASS calls=8769 mutations_accepted=1 mutations_rejected=4095 bounded_errors_and_recovery=true
++ bash renderer/virgl-shader/build.sh captured-sanitize
+Pinned virglrenderer 1.3.0: 70 source/generated SHA-256 hashes match
+vendor/src/vrend/vrend_shader.c:4717:13: warning: 'sprintf' is deprecated: This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead. [-Wdeprecated-declarations]
+ 4717 |             sprintf(arrayname, "[addr%d]", src->DimIndirect.Index);
+      |             ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/_stdio.h:278:1: note: 'sprintf' has been explicitly marked deprecated here
+  278 | __deprecated_msg("This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead.")
+      | ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h:227:48: note: expanded from macro '__deprecated_msg'
+  227 |         #define __deprecated_msg(_msg) __attribute__((__deprecated__(_msg)))
+      |                                                       ^
+vendor/src/vrend/vrend_shader.c:4719:13: warning: 'sprintf' is deprecated: This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead. [-Wdeprecated-declarations]
+ 4719 |             sprintf(arrayname, "[%d]", src->Dimension.Index);
+      |             ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/_stdio.h:278:1: note: 'sprintf' has been explicitly marked deprecated here
+  278 | __deprecated_msg("This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead.")
+      | ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h:227:48: note: expanded from macro '__deprecated_msg'
+  227 |         #define __deprecated_msg(_msg) __attribute__((__deprecated__(_msg)))
+      |                                                       ^
+vendor/src/vrend/vrend_shader.c:7349:16: warning: 'sprintf' is deprecated: This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead. [-Wdeprecated-declarations]
+ 7349 |                sprintf(prefix, "layout(location = %d)", ctx->outputs[i].sid);
+      |                ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/_stdio.h:278:1: note: 'sprintf' has been explicitly marked deprecated here
+  278 | __deprecated_msg("This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead.")
+      | ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h:227:48: note: expanded from macro '__deprecated_msg'
+  227 |         #define __deprecated_msg(_msg) __attribute__((__deprecated__(_msg)))
+      |                                                       ^
+3 warnings generated.
++ python3 tools/virgl-captured-shaders/native.py --binary renderer/virgl-shader/build/captured-sanitize/captured-test --output /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-banks-cold-s313ltpc/wasm-vm/target/evidence/virgl-banks-cold/regression/components/regression/native
+captured_stage=0 bytes=256 accepted=true
+captured_stage=1 bytes=261 accepted=true
+negative=reversed-temp-range rejected recovery=2
+negative=oversized-temp-range rejected recovery=2
+negative=negative-temp-range rejected recovery=2
+negative=overflow-temp-range rejected recovery=2
+negative=long-temp-range rejected recovery=2
+negative=missing-temp-range-end rejected recovery=2
+negative=bad-temp-range-separator rejected recovery=2
+negative=nested-temp-range rejected recovery=2
+negative=overlapping-temp-ranges rejected recovery=2
+negative=range-overlaps-prior-scalar rejected recovery=2
+negative=scalar-overlaps-prior-range rejected recovery=2
+negative=duplicate-temp-range rejected recovery=2
+negative=overlapping-const-range rejected recovery=2
+negative=input-range-remains-rejected rejected recovery=2
+negative=output-range-remains-rejected rejected recovery=2
+negative=address-register-remains-rejected rejected recovery=2
+negative=sampler-range-remains-rejected rejected recovery=2
+negative=view-range-remains-rejected rejected recovery=2
+negative=generic-declaration-mask-x rejected recovery=2
+negative=generic-declaration-mask-y rejected recovery=2
+negative=generic-declaration-mask-z rejected recovery=2
+negative=generic-declaration-mask-w rejected recovery=2
+negative=generic-xyz-full-write-undeclared-w rejected recovery=2
+negative=generic-declaration-mask-xyzw rejected recovery=2
+negative=generic-declaration-mask-yx rejected recovery=2
+negative=generic-declaration-mask-xyy rejected recovery=2
+negative=attribute-mask rejected recovery=2
+negative=position-mask rejected recovery=2
+negative=temporary-mask rejected recovery=2
+negative=constant-mask rejected recovery=2
+negative=color-mask rejected recovery=2
+negative=sampler-mask rejected recovery=2
+negative=view-mask rejected recovery=2
+negative=partial-temp-write-xy-then-unwritten-read rejected recovery=2
+negative=partial-temp-write-z-then-unwritten-read rejected recovery=2
+negative=partial-temp-write-w-then-unwritten-read rejected recovery=2
+negative=partial-temp-write-xyzw rejected recovery=2
+negative=incomplete-output-mask-x rejected recovery=2
+negative=incomplete-output-mask-y rejected recovery=2
+negative=unsupported-output-mask-zw rejected recovery=2
+negative=incomplete-output-mask-xyz rejected recovery=2
+negative=unsupported-output-mask-xyzw rejected recovery=2
+negative=unsupported-output-mask-xx rejected recovery=2
+negative=unsupported-output-mask-yx rejected recovery=2
+negative=masked-add-output-missing-second-source-lanes rejected recovery=2
+negative=masked-mul-output-missing-second-source-lanes rejected recovery=2
+negative=masked-mad-output rejected recovery=2
+negative=masked-tex-output rejected recovery=2
+negative=read-unwritten-range-first rejected recovery=2
+negative=read-unwritten-range-last rejected recovery=2
+negative=write-undeclared-output-component rejected recovery=2
+negative=missing-position-w rejected recovery=2
+negative=missing-position-z rejected recovery=2
+negative=missing-position-xy rejected recovery=2
+negative=missing-generic-xy rejected recovery=2
+negative=missing-full-generic-w rejected recovery=2
+negative=missing-color-w rejected recovery=2
+negative=implicit-undeclared-generic-components rejected recovery=2
+negative=swizzled-undeclared-generic-z rejected recovery=2
+negative=swizzled-undeclared-generic-w rejected recovery=2
+negative=consumed-swizzle-lane-remains-bounded rejected recovery=2
+negative=malformed-swizzle-x rejected recovery=2
+negative=malformed-swizzle-xy rejected recovery=2
+negative=malformed-swizzle-xyz rejected recovery=2
+negative=malformed-swizzle-xyzwx rejected recovery=2
+negative=malformed-swizzle-qxyz rejected recovery=2
+negative=malformed-swizzle-rgba rejected recovery=2
+negative=malformed-swizzle-XYZW rejected recovery=2
+negative=malformed-swizzle-empty rejected recovery=2
+negative=swizzled-sampler rejected recovery=2
+negative=uint32-overflow rejected recovery=2
+negative=uint32-long rejected recovery=2
+negative=uint32-long-leading-zeroes rejected recovery=2
+negative=uint32-negative rejected recovery=2
+negative=uint32-plus-sign rejected recovery=2
+negative=uint32-hex rejected recovery=2
+negative=uint32-exponent rejected recovery=2
+negative=uint32-decimal-point rejected recovery=2
+negative=uint32-text-nan rejected recovery=2
+negative=uint32-qnan rejected recovery=2
+negative=uint32-negative-qnan rejected recovery=2
+negative=uint32-infinity rejected recovery=2
+negative=uint32-negative-infinity rejected recovery=2
+negative=uint32-subnormal-min rejected recovery=2
+negative=uint32-subnormal-max rejected recovery=2
+negative=uint32-negative-subnormal-min rejected recovery=2
+negative=uint32-negative-subnormal-max rejected recovery=2
+negative=uint32-above-float-limit rejected recovery=2
+negative=uint32-below-negative-float-limit rejected recovery=2
+negative=uint32-max-finite rejected recovery=2
+negative=uint32-too-few-lanes rejected recovery=2
+negative=uint32-too-many-lanes rejected recovery=2
+negative=signed-integer-immediate rejected recovery=2
+negative=property-zero rejected recovery=2
+negative=property-two rejected recovery=2
+negative=property-negative rejected recovery=2
+negative=property-overflow rejected recovery=2
+negative=property-leading-zero rejected recovery=2
+negative=property-missing rejected recovery=2
+negative=property-trailing rejected recovery=2
+negative=property-equals rejected recovery=2
+negative=duplicate-fragment-property rejected recovery=2
+negative=vertex-fragment-property rejected recovery=2
+negative=property-after-instruction rejected recovery=2
+negative=unknown-property rejected recovery=2
+negative=interpolation-linear rejected recovery=2
+negative=unsupported-flat-centroid rejected recovery=2
+negative=precise-remains-rejected rejected recovery=2
+negative=loop-remains-rejected rejected recovery=2
+negative=integer-opcode-remains-rejected rejected recovery=2
+negative=indirect-source-remains-rejected rejected recovery=2
+negative=key-override-remains-rejected rejected recovery=2
+positive=temp-ranges count=36 singleton-and-endpoint-use=true
+positive=source-swizzles count=256
+positive=uint32-float-boundaries count=8
+positive=component-masks count=2
+truncations=517 complete_end_prefixes_accepted=2 recovery=1034
+seed=18a9e24d captured_mutations=2048 recovery=4096 passed
+seed=4c907fb3 captured_mutations=2048 recovery=4096 passed
+seed=c31e7d82 captured_mutations=2048 recovery=4096 passed
+seed=9b4260a5 captured_mutations=2048 recovery=4096 passed
+mutations_accepted=4 mutations_rejected=8188
+PASS calls=27371 positive_boundaries=302 negative_boundaries=112 exact_captured_recoveries=18246 sanitizer_suite=true
++ bash renderer/virgl-shader/build.sh wasm
+Pinned virglrenderer 1.3.0: 70 source/generated SHA-256 hashes match
++ node tools/verify-virgl-shader.mjs --output /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-banks-cold-s313ltpc/wasm-vm/target/evidence/virgl-banks-cold/regression/components/regression/literal
+E6-T10a: 9 hardware WebGL2 draws, 4336 exact pixels; 13 rejection cases and 416 recoveries passed.
++ node tools/verify-virgl-captured-shaders.mjs --output /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-banks-cold-s313ltpc/wasm-vm/target/evidence/virgl-banks-cold/regression/components/regression/captured
+E6-T10d: 2 unmodified captured shaders, 3 indexed hardware draws, 768 exact pixels; 112 grammar attacks and 1792 valid recoveries passed. Guest 3D remains disabled.
++ node tools/verify-virgl-captured-shaders.mjs --output /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-banks-cold-s313ltpc/wasm-vm/target/evidence/virgl-banks-cold/regression/components/regression/sabotage --sabotage texture-texel
+page.evaluate: Error: original-texture phase=0 pixel(4,4): expected [255,0,0,255], observed [0,0,0,255]
+    at require (http://127.0.0.1:54712/renderer/virgl-shader/tests/captured-textured-scene.mjs:14:65)
+    at equal (http://127.0.0.1:54712/renderer/virgl-shader/tests/captured-textured-scene.mjs:15:44)
+    at renderPhases (http://127.0.0.1:54712/renderer/virgl-shader/tests/captured-textured-scene.mjs:204:11)
+    at async runAcceptance (http://127.0.0.1:54712/renderer/virgl-shader/tests/captured-textured-scene.mjs:243:3)
+    at async eval (eval at evaluate (:234:30), <anonymous>:3:14)
+    at async <anonymous>:260:30
+    at runVirglBrowser (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-banks-cold-s313ltpc/wasm-vm/tools/lib/virgl-browser-runner.mjs:145:57)
+    at /private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-banks-cold-s313ltpc/wasm-vm/async file:/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-banks-cold-s313ltpc/wasm-vm/tools/verify-virgl-captured-shaders.mjs:9:1
++ node tools/verify-virgl-contract-browser.mjs --output /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-banks-cold-s313ltpc/wasm-vm/target/evidence/virgl-banks-cold/regression/components/regression/contract/browser
+E6-T10c: 9 translated literal draws, 4336 exact pixels; actual WebGL2 limits and 4 explicit GLSL API probes passed. Guest 3D remains disabled.
++ python3 tools/virgl-contract/verify.py --browser-report /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-banks-cold-s313ltpc/wasm-vm/target/evidence/virgl-banks-cold/regression/components/regression/contract/browser/report.json --output /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-banks-cold-s313ltpc/wasm-vm/target/evidence/virgl-banks-cold/regression/components/regression/contract/receipt.json
+{"featureCounts": {"apiCalls": 17, "objects": 8, "opcodes": 33, "resourceFormats": 9, "shaderInstructions": 37, "shaderStageCounts": 2}, "shaderOutcomes": {"translated": 12, "unsupported-feature": 7}, "status": "passed", "vertexFormats": {"29": 10, "30": 6}}
++ python3 tools/virgl-captured-shaders/receipt.py /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-banks-cold-s313ltpc/wasm-vm/target/evidence/virgl-banks-cold/regression/components/regression
+E6-T10d acceptance passed: 2 captured shaders / 3 phases / 768 pixels; literal, native, Wasm, corpus and sabotage gates passed.

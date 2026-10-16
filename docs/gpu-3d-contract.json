@@ -1,0 +1,1095 @@
+{
+  "activationBlockers": [
+    "Production E6-T11d final exact-head guest/independent verification and cold-clone gate remain in progress.",
+    "E6-T11e integrated context-loss, recovery and final independent verification remain pending."
+  ],
+  "backend": "WebGL2 / ESSL 3.00",
+  "boundedTableLoops": {
+    "bounds": "Combined structural depth8, one loop per stage, source16KiB,179 instructions, raw_lane12/source24/instruction112, IR<=32768/profile<=8192/flow<=53248 bytes, GLSL<=65536 bytes, fixed Wasm16MiB and256KiB stack. Native/Wasm evidence records actual layout/allocation growth; opcode masks use explicit uint64 shifts.",
+    "compatibility": "All3814 predecessor full stage results and252 pairs remain exact, including original captured12/19 outcomes. Unknown-v12 parser diagnostic changes are explicitly inventoried by successor adapters; no prior whole gate is relabeled.",
+    "consumer": "Validate signed raw word36 on the same owned complete finite prefix used for upload: word>=0x80000000 or word<=18 after exact-u32 checks. Zero/negative finite encodings can be safe; NaN/Inf words independently fail the finite domain. Reject before draw preparation, preserve immutable bank identity checks, and skip invalid non-draw restoration uploads.",
+    "contract": {
+      "component": 0,
+      "declaredCounts": [
+        46,
+        47
+      ],
+      "kind": "constant-bank-counted-table-i32-v1",
+      "maximum": 18,
+      "register": 9,
+      "slot": 0
+    },
+    "metadata": "One exact stage/name/extent constantConstraints record is mandatory alongside matching constantDomains and constantAccesses, which includes every certified index10..45. Old profiles forbid the new field. The finite domain is an explicit checked-loop policy; raw FSLT alone does not claim actual numeric-bank consumption.",
+    "profile": "virgl-webgl2-raw-bits-v12",
+    "proof": "For signed raw n=CONST9.x<=18: n<=0 forces exit at j1; n>=1 forces exit by j=n. Header a=j+10 and b=16*j are inductive. The exact j!=n true tail implies j<=17. Header indices11..28 and tail sets10..26/29..45/28..44 are complete; count19 can reach forbidden46. No runtime iteration cutoff is emitted.",
+    "scope": "One bounded counted-table family in the isolated compiler/shared renderer; no PRECISE or second-capture lane-definedness closure, production guest GPU or performance claim.",
+    "specification": "https://docs.mesa3d.org/gallium/tgsi.html#opcode-BGNLOOP",
+    "syntax": "One alpha-renamable captured counted-table graph per stage: exact j/a/b initializers1/11/16, paired BGNLOOP:0/ENDLOOP:0, sole OR/FSLT/ISGE-guarded BRK, certified recurrence and matching USNE true-tail address chains. No nested loops, CONT, arbitrary carried state, extra exits or unsupported labels.",
+    "task": "E6-T12e9",
+    "validation": "Shared bounded typed syntax builds unvalidated IR, then structural recognition and checked universal-header validation certify it before emission. BRK has no fallthrough; joins include live predecessors only. A syntax pass, a first-iteration value or one observed bank cannot establish authority."
+  },
+  "browserMatrix": {
+    "default": "reject",
+    "qualificationScope": "prototype-only",
+    "qualified": [
+      {
+        "architecture": "arm64",
+        "browserVersion": "154.0.8037.93",
+        "platform": "darwin",
+        "release": "25.6.0",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)"
+      }
+    ],
+    "unqualified": [
+      "Safari",
+      "Firefox",
+      "other Chrome versions/GPUs/OS builds",
+      "software GL",
+      "headless without proven hardware GL"
+    ]
+  },
+  "captureManifests": {
+    "compositor": "22519c071fb65af6c5556bda1c3f4304951f49b8d19141ac40658bcb2d31482c",
+    "glmark2-es2": "28effba207e0c7d5679644e9a5c8d21b5ce30067a8155dfe46f92e417050c263",
+    "kmscube": "f336ce65bbf4827ab6b7f43d76b6be9badbc8c81a3576116095d09615dfbb77f",
+    "textured-scene": "cbe711eb1d57dbaf416d684b351ade01642eff298ecb7869b04063925466f8cf"
+  },
+  "capturedShaders": {
+    "003270109615e05345631cf8a2273ebc1bf3d86c7590e05ddc8424c441db7605": {
+      "currentBridge": "translated",
+      "executionEvidence": "component-fixture-four-bodies",
+      "stage": "FRAG"
+    },
+    "0ec6a7a8741638e5a62cbf4a1f6896dd91bb2d60182e8e01f60866adf40fbed6": {
+      "currentBridge": "translated",
+      "executionEvidence": "not-executed",
+      "stage": "VERT"
+    },
+    "12f6d594f42e244d2d35c6a0b51cee809d219cc0729d9cee697b40725139f373": {
+      "currentBridge": "rejected",
+      "executionEvidence": "not-executed",
+      "rejectionCode": "unsupported-feature",
+      "stage": "VERT"
+    },
+    "23b5f8a83172e68c9365028d2f3fedbb4d0a12d3b02a39b694388e89304910d3": {
+      "currentBridge": "translated",
+      "executionEvidence": "not-executed",
+      "stage": "VERT"
+    },
+    "3f78a90d838490257666b66477683b24c6ff110c6469504ecba701815312a572": {
+      "currentBridge": "rejected",
+      "executionEvidence": "not-executed",
+      "rejectionCode": "unsupported-feature",
+      "stage": "VERT"
+    },
+    "403b0529c632d3d2ffe4584ede810f5745e8b76ca2ab4f575e1073d8f29fcf0c": {
+      "currentBridge": "translated",
+      "executionEvidence": "component-fixture-four-bodies",
+      "stage": "VERT"
+    },
+    "5a243fc7a19476612a000906c6060a6c1883fee7f2d87d7137d508269a0cd998": {
+      "currentBridge": "rejected",
+      "executionEvidence": "not-executed",
+      "rejectionCode": "unsupported-feature",
+      "stage": "FRAG"
+    },
+    "616a643d02f33f502b08d9bd6368de93ba1bd9c7e6bacdee0e0aa946a2c3e4ad": {
+      "currentBridge": "rejected",
+      "executionEvidence": "not-executed",
+      "rejectionCode": "unsupported-feature",
+      "stage": "FRAG"
+    },
+    "67c701faf0ee06bcefdc246cd8b73f7b8d6278cc2403aa99c18d1912fbb9a0aa": {
+      "currentBridge": "translated",
+      "executionEvidence": "flat-pair-renderer-pixels",
+      "stage": "FRAG"
+    },
+    "80d6db6a6f10b93770698cfdd47232fed0fca94f4cb07ba7381bb38563de9808": {
+      "currentBridge": "translated",
+      "executionEvidence": "textured-scene-three-phases",
+      "stage": "FRAG"
+    },
+    "9819066def2df1cd09f36f142fd2bc6b659395aa21bea6db7f58fbcc122c7c83": {
+      "currentBridge": "translated",
+      "executionEvidence": "component-fixture-four-bodies",
+      "stage": "FRAG"
+    },
+    "a6143f113a7d0a3ce6118a518c12bc7c537bebfdfa9a0af6580496709188379e": {
+      "currentBridge": "rejected",
+      "executionEvidence": "not-executed",
+      "rejectionCode": "unsupported-feature",
+      "stage": "FRAG"
+    },
+    "b28f0dbcbc79d9931938c29cb77b62a42ba8e95d65bbd1a720d9aecd3f8ec030": {
+      "currentBridge": "translated",
+      "executionEvidence": "not-executed",
+      "stage": "FRAG"
+    },
+    "c00de140c2e9b128f07f7fba74bd60f3257b832d3251ae52a044bf8e68d90518": {
+      "currentBridge": "translated",
+      "executionEvidence": "not-executed",
+      "stage": "FRAG"
+    },
+    "d4f702f7a846a93b6f767bc73ed99a9c0f4fbe5fcb55662bca99e3f07f47d450": {
+      "currentBridge": "rejected",
+      "executionEvidence": "not-executed",
+      "rejectionCode": "unsupported-feature",
+      "stage": "VERT"
+    },
+    "e911b393909ab041c24f608b41497143eba765cc8d7db1206a47896934d43c51": {
+      "currentBridge": "rejected",
+      "executionEvidence": "not-executed",
+      "rejectionCode": "unsupported-feature",
+      "stage": "FRAG"
+    },
+    "e96102a3202dde8b0b05ffa142eb6064c5fe916b673bbf1d31464bcbac56fb33": {
+      "currentBridge": "translated",
+      "executionEvidence": "textured-scene-three-phases",
+      "stage": "VERT"
+    },
+    "e9bc6d3b61e3cda2c215ac8b44a432e2eb1bd4891cfa921c6f914fd3fd86b551": {
+      "currentBridge": "translated",
+      "executionEvidence": "component-fixture-four-bodies",
+      "stage": "VERT"
+    },
+    "ef095954837a421fd04071ffd1d99e70f56b258614d47a40fc9148238d6d3c88": {
+      "currentBridge": "translated",
+      "executionEvidence": "not-executed",
+      "stage": "FRAG"
+    }
+  },
+  "componentShaderBoundary": {
+    "acceptance": "make verify-E6-T12e5; source-bound native/Wasm parity, independent GPU arithmetic and quotient enclosures, aliases, sampled chains, earlier regressions, fixed-memory recovery and fault controls.",
+    "bounds": "Existing112-byte instruction,26232-byte IR and fixed text/instruction/register/GLSL/JSON/Wasm limits remain. This adds no dynamic value/range instrumentation.",
+    "compatibility": "Six exact prior numeric rejection bodies are explicitly promoted and replaced in historical negative slots by source-bound adjacent rejections. Other full results, all19 original bodies and12 accepted/7 rejected original outcomes remain unchanged.",
+    "negation": "One unary minus on numeric source positions, after register/swizzle selection. Integer/bitwise, raw comparison, MOV, UCMP, sampler, absolute, repeated-sign, unary-plus and saturation modifiers remain unsupported.",
+    "operations": {
+      "DIV": "src0/src1",
+      "FRC": "fract(src0)",
+      "LRP": "mix(src2,src1,src0)",
+      "MAX": "max(src0,src1)"
+    },
+    "oracleBoundary": "Exact dyadic and endpoint witnesses have independent rational references; ordinary zero results allow either sign. Quantitative DIV witnesses use a rational enclosure derived from the specified highp error bound and explicitly recorded positive denominator range. Oracle range conditions do not restrict shader admission.",
+    "ordinaryContract": "The pinned VirGL ordinary ESSL mappings retain arithmetic latitude. They do not promise exact CPU-executor results or exceptional-payload preservation. PRECISE and LEGACY_MATH_RULES remain rejected. LRP may extrapolate; DIV is not clamped or replaced at exceptional inputs.",
+    "scope": "Isolated compiler boundary E6-T12e5; production GPU negotiation and unknown raw numeric constant admission remain gated.",
+    "selection": "Only a validated new opcode or typed numeric negation selects owned raw-bits-v5. Pure new-op/negative numeric shaders use the same checked path without requiring an integer token. Untouched legacy and earlier raw profiles retain exact output.",
+    "sourceAuthority": "The v4 ordinary source rule remains: original IN, computed/sample shadow, or raw words conservatively proved finite normal or signed zero. Ordinary IN/shadows gain no magnitude, finiteness, nonzero-divisor or interpolation-weight admission restrictions. Unknown raw numeric constants remain rejected.",
+    "specification": "https://registry.khronos.org/OpenGL/specs/es/3.0/GLSL_ES_Specification_3.00.pdf"
+  },
+  "componentShaderProfile": "virgl-webgl2-raw-bits-v5",
+  "conditionalConstantCompiler": {
+    "admission": "Run the unchanged unconditional validation first. Only a typed missing-numeric-authority failure permits one fresh full conditional validation from immutable input; a successful retry must prove actual numeric consumption dependent on finite CONST. No caller option, source rewrite or asserted domain selects this path.",
+    "bounds": "Lane facts remain 12 bytes, instructions 112 bytes, raw IR 26232 bytes, maximum 179 non-END instructions, fixed 16 MiB Wasm memory and 256 KiB stack. At most two sequential validation attempts.",
+    "compatibility": "Every previously successful full stage result remains exact. Intentional admission changes are tied to 105 exact promoted bodies and adjacent absolute-modifier negative replacements, including two rejection-pair references; remaining full results and all 19 captured originals remain fixed at 12 accepted and 7 rejected. Failed conditional transactions preserve the original public rejection without partial output.",
+    "consumer": "E6-T12e6a",
+    "contract": "A successful conditional stage derives exactly one constant-bank-finite-f32-v1 record, stage-local slot zero, matching vsconst0/fsconst0 and the validated declared extent. The same applicable stage obligation is emitted in standalone and pair results. The renderer enforces current active uploaded words before dispatch.",
+    "facts": "The existing 12-byte lane fact separates numeric access, ordinary-output authority and finite-bank dependency. Exact MOV/swizzles retain facts. Mixed UCMP keeps synchronized raw payload and numeric snapshot; any potentially selected conditional-only arm blocks ordinary output authority until actual numeric arithmetic computes a result. Known selectors retain only the selected fact. Integer/bitwise writes discard numeric provenance unless independent known-bit proof suffices.",
+    "numericDomain": "Finite includes positive/negative zero and subnormal binary32 encodings. Raw-u32 storage and selection preserve their bits. Ordinary arithmetic retains the GLSL ES3.00 latitude, including permitted subnormal flushing; there is no invented magnitude, nonzero-divisor or interpolation-weight admission restriction.",
+    "output": "Conditional numeric access alone never proves raw stage-output safety. Computed/sample values use actual float shadows; their raw bits are not re-decoded to recover ordinary NaN/Inf values. MOV and UCMP do not grant computed-output authority.",
+    "profile": "virgl-webgl2-raw-bits-v7",
+    "proof": "Native ASan/UBSan with full-result compatibility and retry/recovery checks; native/Wasm single/pair parity; actual compiler to decoded SET_CONSTANT_BUFFER to shared sync/async GPU draws; independent whole-frame bitplane and rational numeric oracles; emitted-contract and numeric-index source faults; retained shader/consumer regression oracles; exact-source final recording, pristine clone and fresh critic.",
+    "scope": "Conditional authored shader integration only. TEX remains fragment-only. PRECISE, indirect addressing, structured control flow, original rejected Mesa workloads and production guest graphics remain gated.",
+    "specification": "https://registry.khronos.org/OpenGL/specs/es/3.0/GLSL_ES_Specification_3.00.pdf",
+    "task": "E6-T12e6b"
+  },
+  "conditionalConstantConsumer": {
+    "admission": "Trusted host compiler metadata only. Exactly one stage-local contract is required for v7; missing, duplicate, unknown or inconsistent constraints reject. Known unconditional profiles require the field to be absent. This consumer slice adds no compiler admission.",
+    "draw": "Check completeness before finiteness and before index readback. Bind the selected context, subcontext, shader/program generations and bank identities to immutable upload snapshots. Revalidate identities after asynchronous yield, restore external bindings and upload those snapshots.",
+    "extent": "Check all words in min(reflected activeCount,46) vec4s, including unused holes. Reflection cannot exceed the declared count. Declaration 47 does not authorize guest CONST46. Wholly inactive arrays require no upload; unuploaded suffixes are outside the domain.",
+    "kind": "constant-bank-finite-f32-v1",
+    "profile": "virgl-webgl2-raw-bits-v7",
+    "proof": "Native predicate/schema checks; real synchronous and varied yielding asynchronous renderer records; literal whole-frame and bit-plane oracles; raw uploads/readback; source-bound decoder and guard bypass controls; preserved legacy renderer oracles; exact-head pristine clone and fresh critic.",
+    "rawDomain": "Each u32 in the active uploaded prefix has exponent bits unequal to 0x7f800000. Positive and negative zeros and subnormals are finite and remain bit-identical in the raw channel. This is not a numeric subnormal-preservation claim.",
+    "restore": "Non-draw restoration skips incomplete or nonfinite conditional uploads while preserving command-prefix CPU state. Unconditional restoration retains its previous temporary zero defaults. A conditional DRAW always requires the complete current bank.",
+    "schema": {
+      "constantDomains": [
+        {
+          "count": "matching declared uvec4[] float32-bits extent, integer 1..47",
+          "kind": "constant-bank-finite-f32-v1",
+          "name": "vsconst0 or fsconst0 matching stage",
+          "slot": 0,
+          "stage": "vertex or fragment"
+        }
+      ]
+    },
+    "scope": "Isolated shared renderer consumer. Production negotiation remains disabled; guest Mesa support and performance remain unclaimed.",
+    "task": "E6-T12e6a",
+    "wire": "The ordinary decoder continues to reject Inf/NaN before applying any command. Isolated source-bound decoder bypass is test evidence for the independent consumer guard, not a new wire feature."
+  },
+  "futureGles3HostPrerequisites": {
+    "MAX_COLOR_ATTACHMENTS": 4,
+    "MAX_COMBINED_UNIFORM_BLOCKS": 26,
+    "MAX_DRAW_BUFFERS": 4,
+    "MAX_FRAGMENT_UNIFORM_BLOCKS": 13,
+    "MAX_UNIFORM_BLOCK_SIZE": 16384,
+    "MAX_UNIFORM_BUFFER_BINDINGS": 25,
+    "MAX_VARYING_VECTORS": 16,
+    "MAX_VERTEX_UNIFORM_BLOCKS": 13
+  },
+  "indirectConstants": {
+    "bounds": "At each indirect use, known-zero/known-one facts must be nonconflicting and the complete conservative unsigned address set must lie in 0..45. Every candidate index and consumed component must be declared. Address state joins both structured predecessors, including the entry state for no-ELSE paths; stale or unknown facts cannot authorize a read.",
+    "compatibility": "All3466 preceding complete single results,236 pairs and19 original captured shader outcomes are retained; original admission stays12/19. Explicit successor adapters inventory unknown-v10 parser diagnostic changes without claiming a historical whole gate.",
+    "contracts": "Both new profiles require one exact stage-local slot-zero constant-bank-static-indirect-v1 record with declared count and sorted unique union of every possible consumed index. v11 additionally requires the matching finite-f32 domain record. v10 forbids that numeric record; every older profile forbids indirect access metadata.",
+    "draw": "Own all min(count,46) vec4 words from the current immutable bank before draw allocation/link/dispatch, including unused entries. v11 checks that entire same prefix is finite. Reflection must upload every proved index. The existing bank-array identity check binds the validated draw plan to its upload across updates and async yields; missing words or restoration zeros never confer authority.",
+    "memory": "Measured raw IR 26256 bytes, profile 7616 bytes, structured flow arena 52612 bytes; within 32768/8192/53248 caps. Maximum179 instructions, fixed16MiB Wasm memory and256KiB stack remain unchanged.",
+    "profiles": {
+      "conditional": "virgl-webgl2-raw-bits-v11",
+      "unconditional": "virgl-webgl2-raw-bits-v10"
+    },
+    "proof": "Sanitized native and actual Wasm full-result parity/recovery; independent word/pixel oracles through real decoded sync/async GPU commands; short/poisoned/replaced bank attacks; isolated compiled static-bound and in-bounds low-bit index faults; exact-source pristine clone and independent critic.",
+    "scope": "Bounded isolated compiler/shared-renderer support. No production guest GPU, Mesa corpus closure or MIPS/FPS acceleration claim.",
+    "syntax": "One declared scalar ADDR[0].x; UARL copies the unsigned post-swizzle x word. Exact CONST[ADDR[0].x] may select declared source components. Offsets, other address lanes/files, loops and PRECISE remain rejected.",
+    "task": "E6-T12e8"
+  },
+  "integerShaderProfile": "virgl-webgl2-raw-bits-v2",
+  "matrix": {
+    "apiCalls": {
+      "context_create": {
+        "corpusOccurrences": 17,
+        "mapping": "Create generation-aware virtual namespace; nested reference ABI calls are one effective creation.",
+        "status": "implementable"
+      },
+      "context_create_with_flags": {
+        "corpusOccurrences": 17,
+        "mapping": "Validate version/flags/profile; do not duplicate context for nested public ABI wrapper.",
+        "status": "implementable"
+      },
+      "context_destroy": {
+        "corpusOccurrences": 13,
+        "mapping": "Remove guest lookup and fail later use; earlier accepted commands retain resources until completion.",
+        "status": "implementable"
+      },
+      "create_fence": {
+        "corpusOccurrences": 307,
+        "mapping": "Preserve u64 fence IDs with BigInt/paired u32; legacy ctxId is command type, not context identity; map submission epoch.",
+        "status": "implementable"
+      },
+      "ctx_attach_resource": {
+        "corpusOccurrences": 100,
+        "mapping": "Global resource store with per-context attachment membership; repeat/detach behavior explicitly validated.",
+        "status": "implementable"
+      },
+      "ctx_detach_resource": {
+        "corpusOccurrences": 100,
+        "mapping": "Revoke future access; queued work retains owned references; no backing use after release.",
+        "status": "implementable"
+      },
+      "fill_caps": {
+        "corpusOccurrences": 4,
+        "mapping": "Current profile has no payload. Future byte encoder must audit every field and Mesa-derived promise before enabling.",
+        "status": "implementable"
+      },
+      "get_cap_set": {
+        "corpusOccurrences": 16,
+        "mapping": "Current profile returns no 3D capsets. Wire layouts documented independently of advertisement.",
+        "status": "implementable"
+      },
+      "init": {
+        "corpusOccurrences": 4,
+        "mapping": "Initialize one physical WebGL2 context only after browser qualification; default 3D advertisement stays disabled.",
+        "status": "implementable"
+      },
+      "resource_attach_iov": {
+        "corpusOccurrences": 83,
+        "mapping": "Copy and validate guest scatter/gather descriptors; never retain borrowed Wasm views across yield.",
+        "status": "implementable"
+      },
+      "resource_create": {
+        "corpusOccurrences": 83,
+        "mapping": "Validate format/target/bind/dimensions/levels/samples and cumulative byte budget before allocating.",
+        "status": "implementable"
+      },
+      "resource_detach_iov": {
+        "corpusOccurrences": 79,
+        "mapping": "Separate guest backing lifetime from host resource; accepted transfers own their input bytes.",
+        "status": "implementable"
+      },
+      "resource_unref": {
+        "corpusOccurrences": 79,
+        "mapping": "Remove resource ID immediately; defer host deletion while views, scanout or work reference generation.",
+        "status": "implementable"
+      },
+      "submit_cmd": {
+        "corpusOccurrences": 241,
+        "mapping": "Copy bounded command bytes; validate framing and all referenced state; unknown/unsupported commands fail, never skipped.",
+        "status": "implementable"
+      },
+      "transfer_read_iov": {
+        "corpusOccurrences": 1,
+        "mapping": "Fence then readPixels/getBufferSubData, convert exact guest byte layout, write response before used ring/IRQ.",
+        "status": "implementable"
+      },
+      "transfer_write_iov": {
+        "corpusOccurrences": 122,
+        "mapping": "Snapshot bytes from checked guest IOV/box/strides; upload before later draw visibility.",
+        "status": "implementable"
+      },
+      "write_fence": {
+        "corpusOccurrences": 294,
+        "mapping": "Poll zero-timeout clientWaitSync after yielding event loop; complete control chains FIFO exactly once; discard stale epochs.",
+        "status": "implementable"
+      }
+    },
+    "objects": {
+      "BLEND": {
+        "corpusOccurrences": 8,
+        "mapping": "blendFuncSeparate/blendEquationSeparate/colorMask; initial one target, reject unsupported logic ops/dual source/independent target state.",
+        "status": "implementable"
+      },
+      "DSA": {
+        "corpusOccurrences": 5,
+        "mapping": "depthFunc/depthMask/stencilOpSeparate/stencilFuncSeparate; active alpha test needs shader specialization or rejection.",
+        "status": "implementable"
+      },
+      "RASTERIZER": {
+        "corpusOccurrences": 7,
+        "mapping": "cull/frontFace/polygonOffset/scissor state; reject unsupported depth clip, stipple, polygon mode, wide lines or point rules until lowered.",
+        "status": "implementable"
+      },
+      "SAMPLER_STATE": {
+        "corpusOccurrences": 5,
+        "mapping": "WebGLSampler; bound wrap/filter/compare/LOD; border color and unsupported wraps rejected until lowered.",
+        "status": "implementable"
+      },
+      "SAMPLER_VIEW": {
+        "corpusOccurrences": 15,
+        "mapping": "Host texture plus immutable format/level/layer/swizzle metadata; view aliasing must preserve shared backing.",
+        "status": "implementable"
+      },
+      "SHADER": {
+        "corpusOccurrences": 50,
+        "mapping": "Bounded TGSI frontend and upstream converter; full source and shader-key validation before compile/link.",
+        "status": "implementable"
+      },
+      "SURFACE": {
+        "corpusOccurrences": 611,
+        "mapping": "Validated renderable resource view held by FBO/scanout lifetime references; no arbitrary texture reinterpretation.",
+        "status": "implementable"
+      },
+      "VERTEX_ELEMENTS": {
+        "corpusOccurrences": 9,
+        "mapping": "vertexAttribPointer/IPointer/divisor; unpack unsupported formats in bounded staging or reject, including Mesa implicit vertex-format promises.",
+        "status": "implementable"
+      }
+    },
+    "opcodes": {
+      "BIND_OBJECT": {
+        "corpusOccurrences": 1822,
+        "mapping": "Resolve typed handle in active context generation/subcontext; restore its full validated state.",
+        "status": "implementable"
+      },
+      "BIND_SAMPLER_STATES": {
+        "corpusOccurrences": 1060,
+        "mapping": "Bind WebGLSampler objects per stage/unit; reject out-of-range slots and unsupported wrap/filter modes.",
+        "status": "implementable"
+      },
+      "BIND_SHADER": {
+        "corpusOccurrences": 2432,
+        "mapping": "Bind validated VS/FS handles; zero unbinds; other executable stages rejected.",
+        "status": "implementable"
+      },
+      "CLEAR": {
+        "corpusOccurrences": 217,
+        "mapping": "clearBufferfv/iv/uiv and depth/stencil clears with format-aware types, masks, scissor and framebuffer orientation.",
+        "status": "implementable"
+      },
+      "COPY_TRANSFER3D": {
+        "corpusOccurrences": 21,
+        "mapping": "Checked copies between guest staging resources and host storage; snapshot source backing before deferred work; honor strides and boxes.",
+        "status": "implementable"
+      },
+      "CREATE_OBJECT": {
+        "corpusOccurrences": 710,
+        "mapping": "Dispatch all eight recorded typed object families; complete validation before insertion; no unknown-type success.",
+        "status": "implementable"
+      },
+      "CREATE_SUB_CTX": {
+        "corpusOccurrences": 13,
+        "mapping": "Create virtual state/typed object namespace inside context generation; no separate physical WebGL context.",
+        "status": "implementable"
+      },
+      "DESTROY_OBJECT": {
+        "corpusOccurrences": 686,
+        "mapping": "Remove handle from lookup; retain GL object while queued work or bound views reference it.",
+        "status": "implementable"
+      },
+      "DESTROY_SUB_CTX": {
+        "corpusOccurrences": 9,
+        "mapping": "Invalidate subcontext handles and caches; deferred deletion preserves earlier submissions.",
+        "status": "implementable"
+      },
+      "DRAW_VBO": {
+        "corpusOccurrences": 7162,
+        "mapping": "drawArrays/drawElements and instanced variants after full state restore; lower restart, base vertex/start instance and unsupported topologies or reject before draw. No blind enum mapping.",
+        "status": "implementable"
+      },
+      "END_TRANSFERS": {
+        "corpusOccurrences": 241,
+        "mapping": "Validate outer packet bounds and preserve ordered transfer visibility; payload is opaque transfer-prefix padding (including stale nonzero command words), never recursively decoded or required zero. Not a GPU-completion fence.",
+        "status": "implementable"
+      },
+      "LINK_SHADER": {
+        "corpusOccurrences": 21,
+        "mapping": "Compile/link keyed variants with attribute/linkage reflection; include per-view swizzle, formats, origin and rasterizer shader state in key.",
+        "status": "implementable"
+      },
+      "SET_ATOMIC_BUFFERS": {
+        "corpusOccurrences": 5,
+        "mapping": "Accept only validated zero bindings as inactive initialization; reject nonzero buffers and atomic execution.",
+        "status": "implementable"
+      },
+      "SET_BLEND_COLOR": {
+        "corpusOccurrences": 5,
+        "mapping": "blendColor after float-bit decode; restore on context switch.",
+        "status": "implementable"
+      },
+      "SET_CONSTANT_BUFFER": {
+        "corpusOccurrences": 4798,
+        "mapping": "Stage-specific slot0 finite float-bit constants, at most184 words (46 vec4s), via uniform4uiv. Reflection records declared, active and addressable upload extents separately; require the entire min(active extent,46) prefix before drawing and upload no host-only padding. Entirely inactive arrays require no guest words. Conservative driver-retained prefixes are not exact semantic liveness. Guest UBOs and integer constant semantics require separate support.",
+        "status": "implementable"
+      },
+      "SET_FRAMEBUFFER_STATE": {
+        "corpusOccurrences": 421,
+        "mapping": "Per-subcontext FBO from validated surface views; check completeness, dimensions, format and active target budget.",
+        "status": "implementable"
+      },
+      "SET_FRAMEBUFFER_STATE_NO_ATTACH": {
+        "corpusOccurrences": 421,
+        "mapping": "Store validated dimensions for detached FBO state; reject draws without legal attachments in initial profile.",
+        "status": "implementable"
+      },
+      "SET_INDEX_BUFFER": {
+        "corpusOccurrences": 3,
+        "mapping": "Track type/offset/resource generation; validate range at draw; rewrite restart indices when needed.",
+        "status": "implementable"
+      },
+      "SET_MIN_SAMPLES": {
+        "corpusOccurrences": 14,
+        "mapping": "Accept inactive/default value only initially; reject nontrivial minimum sample shading.",
+        "status": "implementable"
+      },
+      "SET_POLYGON_STIPPLE": {
+        "corpusOccurrences": 5,
+        "mapping": "Store bounded 32-word state; inactive rasterizer stipple only initially; active stipple rejected until shader lowering proven.",
+        "status": "implementable"
+      },
+      "SET_SAMPLER_VIEWS": {
+        "corpusOccurrences": 1006,
+        "mapping": "Validate attachments and view format/level/layers; specialize every texture sampling operation for view swizzle including forced alpha.",
+        "status": "implementable"
+      },
+      "SET_SAMPLE_MASK": {
+        "corpusOccurrences": 9,
+        "mapping": "Initial single-sample/all-enabled state only; reject active multisample masks until lowering and sample semantics proven.",
+        "status": "implementable"
+      },
+      "SET_SCISSOR_STATE": {
+        "corpusOccurrences": 6491,
+        "mapping": "scissor with checked rectangle and orientation conversion; restore every switch.",
+        "status": "implementable"
+      },
+      "SET_SHADER_BUFFERS": {
+        "corpusOccurrences": 54,
+        "mapping": "Accept validated zero bindings only; reject executable SSBOs.",
+        "status": "implementable"
+      },
+      "SET_SHADER_IMAGES": {
+        "corpusOccurrences": 108,
+        "mapping": "Accept validated zero bindings only; reject executable image load/store.",
+        "status": "implementable"
+      },
+      "SET_STENCIL_REF": {
+        "corpusOccurrences": 9,
+        "mapping": "stencilFuncSeparate using independently restored front/back references and DSA masks.",
+        "status": "implementable"
+      },
+      "SET_STREAMOUT_TARGETS": {
+        "corpusOccurrences": 9,
+        "mapping": "Zero targets only initially; reject active transform feedback until separate GLES3 tier implemented.",
+        "status": "implementable"
+      },
+      "SET_SUB_CTX": {
+        "corpusOccurrences": 241,
+        "mapping": "Select virtual state; invalid subcontext fails; selection re-established on every submission.",
+        "status": "implementable"
+      },
+      "SET_TESS_STATE": {
+        "corpusOccurrences": 5,
+        "mapping": "Validate fixed initialization payload; no-op only with absent tessellation stages; reject tessellation execution.",
+        "status": "implementable"
+      },
+      "SET_TWEAKS": {
+        "corpusOccurrences": 26,
+        "mapping": "Explicit allowlist of pinned initialization tweaks; unknown or semantics-changing tweaks rejected, never silently skipped.",
+        "status": "implementable"
+      },
+      "SET_VERTEX_BUFFERS": {
+        "corpusOccurrences": 1973,
+        "mapping": "Checked vertex buffer offset/stride/divisor; VAOs keyed by resource generations and vertex elements.",
+        "status": "implementable"
+      },
+      "SET_VIEWPORT_STATE": {
+        "corpusOccurrences": 5,
+        "mapping": "Convert Gallium scale/translate to viewport/depthRange, preserving lower-left coordinates and winding.",
+        "status": "implementable"
+      },
+      "TRANSFER3D": {
+        "corpusOccurrences": 227,
+        "mapping": "Host upload/readback with checked resource boxes, levels, row/layer stride, IOV lengths, format conversion and completion ordering.",
+        "status": "implementable"
+      }
+    },
+    "resourceFormats": {
+      "1": {
+        "corpusOccurrences": 2,
+        "mapping": "RGBA8 storage with explicit byte normalization or sample/render conversion; BGRA view swizzle specializes shader; inverse conversion on readback.",
+        "name": "B8G8R8A8_UNORM",
+        "status": "implementable"
+      },
+      "134": {
+        "corpusOccurrences": 1,
+        "mapping": "RGBA8 storage with shader/view alpha one and format-aware readback. Do not trust guest X byte as alpha.",
+        "name": "R8G8B8X8_UNORM",
+        "status": "implementable"
+      },
+      "17": {
+        "corpusOccurrences": 1,
+        "mapping": "No exact core WebGL2 32-bit fixed-point depth attachment. DEPTH_COMPONENT32F is not equivalent; do not advertise or reinterpret.",
+        "name": "Z32_UNORM",
+        "status": "rejected"
+      },
+      "177": {
+        "corpusOccurrences": 1,
+        "mapping": "R8UI/RED_INTEGER storage and usampler2D operations; preserve integer semantics, never normalized red.",
+        "name": "R8_UINT",
+        "status": "implementable"
+      },
+      "2": {
+        "corpusOccurrences": 12,
+        "mapping": "RGBA8 storage with BGR byte order and forced alpha one for sampling/render/readback; scanout alpha independent of stored X.",
+        "name": "B8G8R8X8_UNORM",
+        "status": "implementable"
+      },
+      "20": {
+        "corpusOccurrences": 2,
+        "mapping": "DEPTH24_STENCIL8 storage only with explicit guest packed-bit conversion on upload/readback; allocation success alone is not semantics proof.",
+        "name": "S8_UINT_Z24_UNORM",
+        "status": "implementable"
+      },
+      "21": {
+        "corpusOccurrences": 2,
+        "mapping": "DEPTH_COMPONENT24 candidate; strip/reconstruct guest unused byte explicitly and prove roundtrip/depth tests.",
+        "name": "Z24X8_UNORM",
+        "status": "implementable"
+      },
+      "64": {
+        "corpusOccurrences": 39,
+        "mapping": "Observed target is PIPE_BUFFER. Treat as bytes for vertex/index/staging usage; does not prove normalized R8 texture support.",
+        "name": "R8_UNORM",
+        "status": "implementable"
+      },
+      "67": {
+        "corpusOccurrences": 23,
+        "mapping": "RGBA8 storage; direct normalized color mapping, exact stride/origin/readback handling and per-view swizzle.",
+        "name": "R8G8B8A8_UNORM",
+        "status": "implementable"
+      }
+    },
+    "shaderInstructions": {
+      "ADD": {
+        "corpusOccurrences": 84,
+        "mapping": "Only the bounded literal straight-line bridge profile is implemented; real operands/declarations still require expansion. TEX currently fragment 2D FLOAT only.",
+        "status": "supported"
+      },
+      "ADD_PRECISE": {
+        "corpusOccurrences": 2,
+        "mapping": "Strict PRECISE cannot be represented by current ESSL300 path; do not drop suffix or disable upstream precise handling. Separate semantics-preserving lowering proof required.",
+        "status": "rejected"
+      },
+      "AND": {
+        "corpusOccurrences": 21,
+        "mapping": "ESSL300 int/uint/bitwise lowering with bit reinterpretation, defined shift bounds, bool masks and bounded indirect-address rules; no numeric float coercion.",
+        "status": "implementable"
+      },
+      "BGNLOOP": {
+        "corpusOccurrences": 2,
+        "mapping": "Structured ESSL300 control flow with validated target annotations, nesting, loop work bounds and break targets; reject malformed/unbounded work.",
+        "status": "implementable"
+      },
+      "BRK": {
+        "corpusOccurrences": 2,
+        "mapping": "Structured ESSL300 control flow with validated target annotations, nesting, loop work bounds and break targets; reject malformed/unbounded work.",
+        "status": "implementable"
+      },
+      "DIV": {
+        "corpusOccurrences": 17,
+        "mapping": "Upstream float lowering to ESSL300; validate modifiers/masks/swizzles and numerical edge semantics with independent pixels before accepting.",
+        "status": "implementable"
+      },
+      "DP3": {
+        "corpusOccurrences": 4,
+        "mapping": "Upstream float lowering to ESSL300; validate modifiers/masks/swizzles and numerical edge semantics with independent pixels before accepting.",
+        "status": "implementable"
+      },
+      "ELSE": {
+        "corpusOccurrences": 23,
+        "mapping": "Structured ESSL300 control flow with validated target annotations, nesting, loop work bounds and break targets; reject malformed/unbounded work.",
+        "status": "implementable"
+      },
+      "END": {
+        "corpusOccurrences": 26,
+        "mapping": "Only the bounded literal straight-line bridge profile is implemented; real operands/declarations still require expansion. TEX currently fragment 2D FLOAT only.",
+        "status": "supported"
+      },
+      "ENDIF": {
+        "corpusOccurrences": 25,
+        "mapping": "Structured ESSL300 control flow with validated target annotations, nesting, loop work bounds and break targets; reject malformed/unbounded work.",
+        "status": "implementable"
+      },
+      "ENDLOOP": {
+        "corpusOccurrences": 2,
+        "mapping": "Structured ESSL300 control flow with validated target annotations, nesting, loop work bounds and break targets; reject malformed/unbounded work.",
+        "status": "implementable"
+      },
+      "FRC": {
+        "corpusOccurrences": 8,
+        "mapping": "Upstream float lowering to ESSL300; validate modifiers/masks/swizzles and numerical edge semantics with independent pixels before accepting.",
+        "status": "implementable"
+      },
+      "FSEQ_PRECISE": {
+        "corpusOccurrences": 2,
+        "mapping": "Strict PRECISE cannot be represented by current ESSL300 path; do not drop suffix or disable upstream precise handling. Separate semantics-preserving lowering proof required.",
+        "status": "rejected"
+      },
+      "FSGE": {
+        "corpusOccurrences": 10,
+        "mapping": "Upstream float lowering to ESSL300; validate modifiers/masks/swizzles and numerical edge semantics with independent pixels before accepting.",
+        "status": "implementable"
+      },
+      "FSLT": {
+        "corpusOccurrences": 34,
+        "mapping": "Upstream float lowering to ESSL300; validate modifiers/masks/swizzles and numerical edge semantics with independent pixels before accepting.",
+        "status": "implementable"
+      },
+      "FSNE_PRECISE": {
+        "corpusOccurrences": 4,
+        "mapping": "Strict PRECISE cannot be represented by current ESSL300 path; do not drop suffix or disable upstream precise handling. Separate semantics-preserving lowering proof required.",
+        "status": "rejected"
+      },
+      "ISGE": {
+        "corpusOccurrences": 6,
+        "mapping": "ESSL300 int/uint/bitwise lowering with bit reinterpretation, defined shift bounds, bool masks and bounded indirect-address rules; no numeric float coercion.",
+        "status": "implementable"
+      },
+      "LRP": {
+        "corpusOccurrences": 8,
+        "mapping": "Upstream float lowering to ESSL300; validate modifiers/masks/swizzles and numerical edge semantics with independent pixels before accepting.",
+        "status": "implementable"
+      },
+      "MAX": {
+        "corpusOccurrences": 6,
+        "mapping": "Upstream float lowering to ESSL300; validate modifiers/masks/swizzles and numerical edge semantics with independent pixels before accepting.",
+        "status": "implementable"
+      },
+      "MAX_PRECISE": {
+        "corpusOccurrences": 2,
+        "mapping": "Strict PRECISE cannot be represented by current ESSL300 path; do not drop suffix or disable upstream precise handling. Separate semantics-preserving lowering proof required.",
+        "status": "rejected"
+      },
+      "MOV": {
+        "corpusOccurrences": 102,
+        "mapping": "Only the bounded literal straight-line bridge profile is implemented; real operands/declarations still require expansion. TEX currently fragment 2D FLOAT only.",
+        "status": "supported"
+      },
+      "MOV_PRECISE": {
+        "corpusOccurrences": 2,
+        "mapping": "Strict PRECISE cannot be represented by current ESSL300 path; do not drop suffix or disable upstream precise handling. Separate semantics-preserving lowering proof required.",
+        "status": "rejected"
+      },
+      "MUL": {
+        "corpusOccurrences": 113,
+        "mapping": "Only the bounded literal straight-line bridge profile is implemented; real operands/declarations still require expansion. TEX currently fragment 2D FLOAT only.",
+        "status": "supported"
+      },
+      "MUL_PRECISE": {
+        "corpusOccurrences": 2,
+        "mapping": "Strict PRECISE cannot be represented by current ESSL300 path; do not drop suffix or disable upstream precise handling. Separate semantics-preserving lowering proof required.",
+        "status": "rejected"
+      },
+      "NOT": {
+        "corpusOccurrences": 4,
+        "mapping": "ESSL300 int/uint/bitwise lowering with bit reinterpretation, defined shift bounds, bool masks and bounded indirect-address rules; no numeric float coercion.",
+        "status": "implementable"
+      },
+      "OR": {
+        "corpusOccurrences": 10,
+        "mapping": "ESSL300 int/uint/bitwise lowering with bit reinterpretation, defined shift bounds, bool masks and bounded indirect-address rules; no numeric float coercion.",
+        "status": "implementable"
+      },
+      "RCP": {
+        "corpusOccurrences": 2,
+        "mapping": "Upstream float lowering to ESSL300; validate modifiers/masks/swizzles and numerical edge semantics with independent pixels before accepting.",
+        "status": "implementable"
+      },
+      "RSQ": {
+        "corpusOccurrences": 4,
+        "mapping": "Upstream float lowering to ESSL300; validate modifiers/masks/swizzles and numerical edge semantics with independent pixels before accepting.",
+        "status": "implementable"
+      },
+      "SHL": {
+        "corpusOccurrences": 4,
+        "mapping": "ESSL300 int/uint/bitwise lowering with bit reinterpretation, defined shift bounds, bool masks and bounded indirect-address rules; no numeric float coercion.",
+        "status": "implementable"
+      },
+      "TEX": {
+        "corpusOccurrences": 7,
+        "mapping": "Only the bounded literal straight-line bridge profile is implemented; real operands/declarations still require expansion. TEX currently fragment 2D FLOAT only.",
+        "status": "supported"
+      },
+      "UADD": {
+        "corpusOccurrences": 10,
+        "mapping": "ESSL300 int/uint/bitwise lowering with bit reinterpretation, defined shift bounds, bool masks and bounded indirect-address rules; no numeric float coercion.",
+        "status": "implementable"
+      },
+      "UARL": {
+        "corpusOccurrences": 8,
+        "mapping": "ESSL300 int/uint/bitwise lowering with bit reinterpretation, defined shift bounds, bool masks and bounded indirect-address rules; no numeric float coercion.",
+        "status": "implementable"
+      },
+      "UCMP": {
+        "corpusOccurrences": 50,
+        "mapping": "ESSL300 int/uint/bitwise lowering with bit reinterpretation, defined shift bounds, bool masks and bounded indirect-address rules; no numeric float coercion.",
+        "status": "implementable"
+      },
+      "UIF": {
+        "corpusOccurrences": 25,
+        "mapping": "Structured ESSL300 control flow with validated target annotations, nesting, loop work bounds and break targets; reject malformed/unbounded work.",
+        "status": "implementable"
+      },
+      "USEQ": {
+        "corpusOccurrences": 6,
+        "mapping": "ESSL300 int/uint/bitwise lowering with bit reinterpretation, defined shift bounds, bool masks and bounded indirect-address rules; no numeric float coercion.",
+        "status": "implementable"
+      },
+      "USHR": {
+        "corpusOccurrences": 6,
+        "mapping": "ESSL300 int/uint/bitwise lowering with bit reinterpretation, defined shift bounds, bool masks and bounded indirect-address rules; no numeric float coercion.",
+        "status": "implementable"
+      },
+      "USNE": {
+        "corpusOccurrences": 4,
+        "mapping": "ESSL300 int/uint/bitwise lowering with bit reinterpretation, defined shift bounds, bool masks and bounded indirect-address rules; no numeric float coercion.",
+        "status": "implementable"
+      }
+    },
+    "shaderStageCounts": {
+      "FRAG": {
+        "corpusOccurrences": 15,
+        "mapping": "Bounded FRAG stage support; twelve of nineteen captured bodies translate and seven PRECISE bodies remain rejected. Dedicated execution proof is scoped to the textured-scene pair, four component fixtures and the flat fragment paired with a translated literal vertex stage.",
+        "status": "supported"
+      },
+      "VERT": {
+        "corpusOccurrences": 11,
+        "mapping": "Bounded VERT stage support; twelve of nineteen captured bodies translate and seven PRECISE bodies remain rejected. Dedicated execution proof is scoped to the textured-scene pair, four component fixtures and the flat fragment paired with a translated literal vertex stage.",
+        "status": "supported"
+      }
+    }
+  },
+  "numericShaderBoundary": {
+    "acceptance": "make verify-E6-T12e4c2; native sanitizer/Wasm parity, real numeric/raw GPU consumers, texture chains, aliases, mixed interfaces, fixed-memory failure/recovery, preserved earlier gates and source-bound fault injection.",
+    "bounds": "112-byte checked instruction,26232-byte IR,12-byte lane state; existing finite text/instruction/register/GLSL/JSON/Wasm limits. Float-shadow declarations add bounded per-invocation logical storage, not a driver-register allocation claim.",
+    "compatibility": "No-numeric v1/v2/v3 and pure legacy v5 outcomes remain exact. All19 original bodies and their12 accepted/7 rejected outcomes remain unchanged.",
+    "operations": [
+      "ADD",
+      "MUL",
+      "MAD",
+      "TEX"
+    ],
+    "ordinaryFloatContract": "GLSL ES3.00 ordinary highp operations, without PRECISE, raw NaN-payload, signed-zero or subnormal-preservation promises after numeric computation. MAD permits the specified single or sequential arithmetic and higher internal precision. Output and later numeric consumers use authorized floats directly; raw-only outputs retain their existing safety proof.",
+    "propagation": "MOV preserves available views. In a validated mixed stage, UCMP may preserve a selected arm or join independently authorized float arms using the same nonzero raw selector. An unknown raw arm does not confer authority. All consumed arms remain initialization-checked.",
+    "scope": "Isolated compiler boundary E6-T12e4c2; no guest command admission, capset, Mesa or performance claim.",
+    "sourceAuthority": "Each numeric use resolves an original ordinary float input, an existing computed/sample float shadow, or a raw word proved finite normal or signed zero by conservative known bits. Unknown raw constants/temporaries are rejected. The standalone compiler does not inherit guest constant validation.",
+    "specification": "https://registry.khronos.org/OpenGL/specs/es/3.0/GLSL_ES_Specification_3.00.pdf",
+    "storage": "Private u32 words retain captured representations for integer consumers. Computation and samples also retain their actual ordinary float values in bounded float shadows. Both RHS views are captured before any aliased/partial destination publication; integer writes invalidate float authority.",
+    "texture": "Fragment-only declared 2D FLOAT views and matching samplers0..7; one sample expression per TEX instruction, truthful fssampN sampler2D metadata. Existing full-width TEX destination and consumed-coordinate rules remain."
+  },
+  "numericShaderProfile": "virgl-webgl2-raw-bits-v4",
+  "observedStateScope": {
+    "blend": "RT0 full mask; add; disabled or ONE/INV_SRC_ALPHA and SRC_ALPHA/INV_SRC_ALPHA RGB; ONE/INV_SRC_ALPHA alpha; dither0/1.",
+    "constants": "VS slot0 uploads12/16/32words, FS slot0 uploads4words; all stages0..5 slots0..14 receive empty clears.",
+    "depthStencil": "Disabled or depth test/write LEQUAL; stencil and alpha test inactive.",
+    "draws": "Triangles, triangle strip, triangle fan; tiny scene has u16 indices; instanceCount1; no active restart/baseVertex/baseInstance/indirect/streamout.",
+    "rasterizer": "Fill triangles, depthclip1, half-pixel1; cull none/back, frontCCW0/1, scissor0/1. Point/sprite knobs inactive only under validated triangle topology.",
+    "samplers": "2D nearest or linear, no mipfilter; clamp-edge S/T, repeat or clamp-edge R; compare disabled; cube flag inactive on 2D.",
+    "shaderExecution": "Four complex Xwayland FS shaders are created and linked at glmark event5462, never subsequently bound; corpus does not prove their loops/indirect paths executed.",
+    "transfers": "COPY_TRANSFER3D flags1 upload and3 synchronized readback; source backing needed even without exported transfer_write.",
+    "tweaks": "Only (id1,value1) destination BGRA swizzle and (id2,value1024) transform-feedback samples multiplier; validate exact supported meanings.",
+    "viewport": "Kmscube event176 byte4612 has negative Y scale; other captures positive. Coordinate conversion must preserve cull, scissor and readback."
+  },
+  "orderedShaderProfile": "virgl-webgl2-raw-bits-v3",
+  "pins": {
+    "guestArchitecture": "riscv64",
+    "hyprland": "0.56.2-3",
+    "mesa": "1:26.2.2-1",
+    "virglCommit": "ca50e008863837e094747a69974dde3ae148aeaa",
+    "virglrenderer": "1.3.0"
+  },
+  "preciseWordOperations": {
+    "allocationFailure": "An owned wrapper around the unchanged pinned ordinary translator latches failed nonzero malloc/realloc calls and initializes failed string buffers safely. The bridge resets/checks it for each ordinary conversion, rejects a partial mixed pair and recovers at the same fixed Wasm memory cap.",
+    "contract": "Every new family requires a closed stage-local nonempty sorted unique operation record. Finite, indirect, count and radial obligations remain mandatory; older families forbid the precision record.",
+    "kind": "tgsi-precise-word-local-v1",
+    "limits": "Unchanged 179 non-END instructions, 112-byte instruction, 26480-byte IR, 16MiB Wasm memory, 256KiB stack.",
+    "operations": [
+      "FSEQ_PRECISE",
+      "FSNE_PRECISE",
+      "MAX_PRECISE",
+      "MOV_PRECISE"
+    ],
+    "originals": "Unchanged literal capture hashes and bodies; 12/19 accepted. Mask, owned-bank raster authority and ADD_PRECISE/MUL_PRECISE remain separately gated.",
+    "profiles": {
+      "countedTable": 23,
+      "finite": 18,
+      "indirect": 21,
+      "indirectFinite": 22,
+      "ordinary": 17,
+      "radial": 24,
+      "radialCountedTable": 26,
+      "radialIndirect": 25,
+      "structured": 19,
+      "structuredFinite": 20
+    },
+    "proof": "make verify-E6-T12f4; pinned token/semantic audit, independent rational literal word oracle, sanitizer/Wasm parity, all unchanged or explicitly inventoried predecessor outcomes, 3320 actual shared-renderer GPU words, real source faults and pristine clone.",
+    "scope": "isolated compiler/shared renderer; production guest negotiation remains disabled",
+    "semantics": "Instruction-local retained flag. Ordered binary32 FSEQ, unordered FSNE, strict ordered MAX source0>source1 selecting source1 unchanged on ties/unordered, and exact raw MOV. Numeric/output authority and consumed-lane pre-write aliases are preserved. No exact backward RSQ/DP3 cone or arithmetic admission.",
+    "task": "E6-T12f4"
+  },
+  "production": {
+    "capsets": [],
+    "guestRendererImplemented": false,
+    "numCapsets": 0,
+    "virglFeature": false
+  },
+  "productionIntegration": {
+    "aggregateGpuBytes": 134217728,
+    "capset": {
+      "bytes": 1408,
+      "id": 2,
+      "source": "typed Rust QualifiedCapabilities after physical host qualification",
+      "version": 2
+    },
+    "clock": "instruction time with paced idle selected by original keyboard; warm restore preserves the selected mode and exact guest time, then re-anchors the host clock",
+    "contexts": 32,
+    "drawsPerSubmission": 256,
+    "factory": "createVirglProductionBridge",
+    "guestApi": "OpenGL ES 3.0 / GLSL ES 3.00",
+    "historicalProfileLimits": "unchanged",
+    "indexWorkPerSubmission": 262144,
+    "liveRetainedResources": 512,
+    "pendingJobs": 1,
+    "perResourceBytes": 33554432,
+    "perTransferBytes": 33554432,
+    "rendererSubContexts": 64,
+    "snapshot": "authenticated factory RAM/disk/GPU/clock pairs reconstruct a fresh physical renderer; ordinary software snapshot/import APIs reject accelerated sessions",
+    "softwareFallback": "existing paired Omarchy warm image through gpu=0",
+    "status": "final-verification-in-progress"
+  },
+  "radialCoefficientAdmission": {
+    "certificate": "Adjacent MAX(CONST4.x,-CONST4.x), FSLT against exact word0x3727c5ac, UIF consuming the current scalar producer version and one matching ELSE/ENDIF. Only the linear predecessor is excluded.",
+    "kind": "constant-bank-radial-coefficient-f32-v1",
+    "policy": "One complete owned finite bank prefix, absBits(CONST4.x)>=0x3727c5ac, and any counted-table constraint on the same snapshot before effects. Every older profile forbids radial metadata.",
+    "profiles": {
+      "countedTable": "virgl-webgl2-raw-bits-v16",
+      "indirect": "virgl-webgl2-raw-bits-v15",
+      "structured": "virgl-webgl2-raw-bits-v14"
+    },
+    "proof": "make verify-E6-T12f3; independent rational predicate and counterexample, native/Wasm parity, actual admitted shared GPU paths, replacement/async/restoration, actual domain-check removal caught before GPU dispatch and pristine clone.",
+    "scope": "Restricted admitted domain only. Both full-body fixtures are labelled unmarked structural ports with numeric alpha projection; untouched PRECISE originals, workload compatibility, guest negotiation and300MIPS remain unclaimed.",
+    "task": "E6-T12f3"
+  },
+  "rawEquality": {
+    "compatibility": "All4004 other full E9 stage results and264 pairs remain exact. Exactly8 explicitly hashed undecorated negative fixtures become13 successes; historical fixtures and GPU oracles remain immutable. Originals stay12/19.",
+    "metadata": "Pure equality is unconditional13. Counted-loop12, indirect10/11, structured8/9 and actual finite-bank7 obligations take precedence. Every old domain/access/count record is forbidden on13; unknown14 remains rejected.",
+    "profile": "virgl-webgl2-raw-bits-v13",
+    "scope": "Isolated compiler/shared consumer only; PRECISE, modifiers, consumed-lane definedness, declaration/mask grammar and output authority are unchanged. Production guest graphics and performance claims remain gated.",
+    "semantics": "Undecorated FSEQ is ordered equality; FSNE is unordered inequality. Both zero signs compare equal; every NaN, including identical signaling payloads, compares unordered. Exact zero/all-ones raw masks use integer encodings without floating conversion.",
+    "task": "E6-T12f1"
+  },
+  "rawShaderBoundary": {
+    "acceptance": "make verify-E6-T12e4a, make verify-E6-T12e4b and make verify-E6-T12e4c1; authored both-stage raw32 reconstruction with actual WebGL2 transform feedback and32 fragment bitplanes, mixed v5/v1/v2/v3 interpolation, native/Wasm parity, exact unaffected prior results and unchanged12/19 original acceptance.",
+    "constants": "Existing uvec4 declaration metadata, VirglBlock layout and finite float-bit guest command transport remain unchanged. Direct arbitrary host uniforms are hardware probes only.",
+    "floatInterface": "Existing attribute/varying/POSITION/COLOR ABI remains float. MOV input origins may pass through directly; raw output must prove finite normal or zero using conservative known bits. No NaN/Inf/subnormal raw-payload promise across float IO.",
+    "integerOperations": [
+      "UADD",
+      "ISGE",
+      "USEQ",
+      "USNE",
+      "UCMP"
+    ],
+    "integerOutputProof": "In v1/v2/v3, constant-only arithmetic/comparisons yield exact known bits. UCMP chooses a statically determined arm, otherwise intersects known bits and retains float origin only when both payload origins match. No arithmetic float-origin shortcut or arbitrary float-origin join. V4 ordinary-float authority is separately specified in numericShaderBoundary.",
+    "integerSemantics": "UADD wraps modulo2^32. ISGE compares signed two\u2019s-complement values; USEQ/USNE compare raw words. Comparisons produce0xffffffff or0. UCMP chooses src1 for any nonzero condition, src2 for zero, preserving private payload bits and reading all three initialized sources before writes.",
+    "limits": "All v5 limits remain:179 non-END instructions,118 TEMP registers,46 guest constants,8 other-bank entries/immediates,16KiB text,8192 tokens,256 lines,512-byte lines,64KiB GLSL,147456/295936-byte JSON buffers,16MiB fixed Wasm,256KiB stack.",
+    "mixedPrograms": "ADD/MUL/MAD and fragment 2D FLOAT TEX combine with raw operations under the v4 numericShaderBoundary. DIV/MAX/FRC/LRP and typed numeric source negation extend this under componentShaderBoundary. Other modifiers, PRECISE and control flow remain unsupported. Raw SAMP/SVIEW declarations without a validated mixed numeric program remain rejected.",
+    "operations": [
+      "MOV",
+      "AND",
+      "OR",
+      "NOT",
+      "SHL",
+      "USHR"
+    ],
+    "orderedOperations": [
+      "FSLT",
+      "FSGE"
+    ],
+    "orderedSemantics": "Pure unsigned-word binary32 classification and ordering. Every signed quiet/signalling NaN is unordered; both signed zeros compare equal; negative magnitude order reverses; infinity and subnormal encodings retain their order. Results are exactly0xffffffff or0 without converting raw source words to floats.",
+    "pairing": "Per-stage backend selection preserves semantic/mask/interpolation-derived keys, exact standalone fragment output, and checked smooth/flat vertex qualifiers. No caller-selected keys or backend flags.",
+    "scope": "Isolated compiler boundary; no production guest GPU negotiation or desktop performance claim.",
+    "selection": "Internal only after full validation. AND/OR/NOT/SHL/USHR select raw-bits-v1; UADD/ISGE/USEQ/USNE/UCMP select raw-bits-v2; FSLT/FSGE select raw-bits-v3 for that stage. Inputs without a newly supported opcode retain exact prior acceptance, errors and complete GLSL/metadata. A validated ADD/MUL/MAD/TEX in an owned raw stage selects raw-bits-v4; pure legacy numeric shaders remain v5. Validated DIV/MAX/FRC/LRP or numeric source negation selects owned raw-bits-v5, separately from legacy straight-line-v5.",
+    "storage": "Bounded owned IR and highp uvec4 private TEMP storage; all checked UINT32 immediate words are preserved. Shift counts are masked with31. Consumed lanes are read before partial destination writes."
+  },
+  "rawShaderProfile": "virgl-webgl2-raw-bits-v1",
+  "scalarShaderBoundary": {
+    "acceptance": "make verify-E6-T12e6; actual native/Wasm results, independent GPU exact/rational oracles, explicit predecessor compatibility and pristine-clone proof.",
+    "authority": "Retain ordinary IN, computed/sample shadow and statically proved finite-normal/signed-zero raw authority. No new magnitude, positive-value, finite-value or divisor admission guards. Unknown raw numeric CONST remains separately gated.",
+    "bounds": "Reserve the validated-negation opcode-mask bit 21. Keep 112-byte instructions, 26232-byte IR and existing text/instruction/register/GLSL/JSON/Wasm capacities.",
+    "compatibility": "Exactly two historical valid DP3 negatives are explicitly promoted with source-bound adjacent replacements. Malformed two-source RCP/RSQ cases retain complete errors. All 19 full original results remain unchanged at 12 accepted / 7 unsupported.",
+    "consumption": "Shared initialization/authority masks: DP3 xyz, RCP/RSQ x after swizzling. Destination masks do not redefine scalar source consumption. Typed negation precedes evaluation; aliased sources use pre-write values.",
+    "operations": {
+      "DP3": "dot(src0.xyz,src1.xyz), using post-swizzle lanes; replicate one scalar result",
+      "RCP": "1/src0.x, using the first post-swizzle lane; replicate one scalar result",
+      "RSQ": "inversesqrt(src0.x), using the first post-swizzle lane; replicate one scalar result"
+    },
+    "oracleBoundary": "Exact dyadic dot witnesses; quantitative positive-divisor reciprocal witnesses with 2.5 ULP enclosures; positive-normal inverse-root witnesses with integer-derived rational brackets widened by 2 ULP. Computed zero signs and undefined exceptional payloads are not fixed by the oracle. These witness domains do not limit shader admission.",
+    "ordinaryContract": "DP3 inherits ordinary ESSL arithmetic latitude; RCP uses ordinary division, RSQ ordinary inverse square root. PRECISE, absolute, saturation and LEGACY_MATH_RULES remain unsupported; no clamp or special-input replacement.",
+    "scope": "Isolated ordinary scalar compiler proof only; numeric-constant contracts, production guest graphics, Mesa and MIPS claims remain gated.",
+    "sourceContract": "Mesa 26.2.2 TGSI documentation, interpreter, opcode metadata and source-use rules establish scalar RCP/RSQ and xyz DP3. The old pinned VirGL componentwise RCP shortcut is not used. Both captured RCP sources are explicitly xxxx.",
+    "specification": "https://registry.khronos.org/OpenGL/specs/es/3.0/GLSL_ES_Specification_3.00.pdf"
+  },
+  "scalarShaderProfile": "virgl-webgl2-raw-bits-v6",
+  "schema": "wasm-vm-virgl-browser-contract-v1",
+  "scope": "Bounded shader and isolated renderer proofs with planned wider mappings; production guest GPU negotiation and desktop acceleration remain disabled.",
+  "selectedInterpolation": {
+    "bounds": {
+      "certificateBytes": 112,
+      "flowBytes": 52644,
+      "flowCap": 53248,
+      "profileBytes": 7616,
+      "profileCap": 8192,
+      "rawIrBytes": 26464,
+      "rawIrCap": 32768
+    },
+    "definedness": "Initialization masks remain intersected. True-predecessor facts live only in a compact separate certificate. Guarded LRP kills its old logical destination definition and guards all arithmetic and raw/float publication; only the exact final selected use may borrow the result fact. No zero fill or zero-times-undefined rule.",
+    "evidence": "make verify-E6-T12f2: full retained stage/pair outcomes, all masks/aliases/nested predecessors, literal definition-version/demand traces, shared renderer hardware words/pixels, actual guard/width compiler faults and final exact-head cold clone.",
+    "profiles": "Existing structured8 and finite-bank9; no metadata or guest capability change.",
+    "proof": "The missing-payload predecessor has known signed-zero width. Ordered positive finite bounds force literal zero weight there; unchanged FSNE and final UCMP discard the full LRP result. Predicate, payload, fallback and destination lane versions are checked.",
+    "reject": "Second graph, missing selected lane/predecessor, nonzero missing width, reversed/changed selector, weight/fallback clobber, overlapping fallback publication, unconditional later result read, unsupported syntax or PRECISE.",
+    "scope": "One alpha-renamable outer ELSE/weight/LRP/FSNE/final UCMP family; isolated compiler/shared renderer only. PRECISE, the radial TEMP2.x gap, guest graphics negotiation and desktop300MIPS remain gated.",
+    "task": "E6-T12f2"
+  },
+  "shaderProfile": "virgl-webgl2-straight-line-v5",
+  "shaderSyntax": {
+    "FS_COLOR0_WRITES_ALL_CBUFS": {
+      "mapping": "Exactly one fragment property with value1 before instructions supported under fixed one-target configuration; no MRT support.",
+      "scope": "bounded-v5-subset-only",
+      "status": "supported"
+    },
+    "PRECISE": {
+      "mapping": "Strict precise semantics unsupported in accepted ESSL300 path; cannot discard qualifier.",
+      "status": "rejected"
+    },
+    "TEX-2D-FLOAT": {
+      "mapping": "SAMP0/SVIEW0 FLOAT 2D observed; per-view sample swizzle specialization still required.",
+      "status": "implementable"
+    },
+    "UINT32-immediates": {
+      "mapping": "Four checked decimal words are preserved as float bits; finite magnitude<=1e6 only, no nonzero subnormals. Integer operations remain rejected.",
+      "scope": "bounded-v5-subset-only",
+      "status": "supported"
+    },
+    "declaration-masks": {
+      "mapping": "Generic VS outputs and smooth or flat FS inputs may declare .xy or .xyz; all other declarations stay full-width.",
+      "scope": "bounded-v5-subset-only",
+      "status": "supported"
+    },
+    "declaration-ranges-and-order": {
+      "mapping": "Canonical decimal TEMP0..117 and CONST0..45 indices/ranges are supported, including declarations after immediates. IN/OUT/IMM/SAMP/SVIEW/GENERIC remain0..7; 179 non-END instructions. Text/token/line/GLSL/response/fixed-Wasm bounds remain unchanged. The separate E6-T12e3b command boundary carries up to46 vec4s and checks actual stage limits; retained declared/reflected47 has only46 addressable guest entries. Other file ranges, address registers and larger banks remain rejected.",
+      "scope": "bounded-v5-subset-only",
+      "status": "supported"
+    },
+    "indirect-constant-index": {
+      "mapping": "ADDR[0].x/UARL and CONST[ADDR[0].x] require the complete statically proved 0..45 address set and matching immutable full-prefix draw contract; no clamping or zero substitution.",
+      "scope": "bounded-raw-v10-v11-subset-only",
+      "status": "supported"
+    },
+    "partial-destination-writes": {
+      "mapping": "MOV/ADD/MUL accept TEMP/OUT masks x/y/z/w/xy/xyz, tracking initialized lanes. Complete POSITION/COLOR and every declared generic output lane are required. MAD/TEX retain full-width destinations.",
+      "scope": "bounded-v5-subset-only",
+      "status": "supported"
+    },
+    "semantics-and-interpolation": {
+      "mapping": "POSITION/COLOR and GENERIC0..7 with PERSPECTIVE or CONSTANT fragment interpolation. Bounded pair translation derives matching vertex qualifiers and a canonical semantic/mask/mode identity; no caller compiler keys.",
+      "scope": "bounded-v5-subset-only",
+      "status": "supported"
+    },
+    "source-swizzles-and-negation": {
+      "mapping": "Exactly four xyzw selectors supported. Consumed source lanes follow destination masks for componentwise operations and xy for 2D TEX, then swizzles select declared and initialized lanes. Negation/modifiers remain rejected.",
+      "scope": "bounded-v5-subset-only",
+      "status": "supported"
+    },
+    "structured-target-annotations": {
+      "mapping": "UIF/ELSE/ENDIF retain checked matching targets. One certified counted-table BGNLOOP:0/ENDLOOP:0 pair with guarded BRK has signed-count and address contracts; combined depth8. Other loop forms remain rejected.",
+      "scope": "bounded-raw-v8-v9-v12-subsets-only",
+      "status": "supported"
+    }
+  },
+  "statusMeaning": {
+    "implementable": "Concrete chosen-API mapping exists; implementation and guest proof still required.",
+    "rejected": "No accepted semantics-preserving mapping in this contract; do not advertise.",
+    "supported": "Current bounded literal bridge feature only, never general guest/corpus support."
+  },
+  "structuredConditionals": {
+    "bounds": "One validation-owned heap arena with 8 single-predecessor snapshots, capped at 53248 bytes and freed on every success or failure. Instruction, IR and profile layouts are unchanged; maximum 179 non-END instructions, fixed 16 MiB Wasm memory and 256 KiB stack.",
+    "compatibility": "All 3151 predecessor single cases, 221 pairs and 19 original captured shaders retain their full results. Captured PRECISE and one-sided initialization gaps remain rejected; no original body is rewritten to claim admission.",
+    "contracts": "Raw-v7 and raw-v9 both require the existing exact stage-local finite constant-bank record. Raw-v8 rejects such a record. Missing, unknown or inconsistent contracts fail before native shader allocation; current-bank validation and immutable uploads are unchanged.",
+    "initialization": "Both syntactic predecessors must establish each later consumed lane. No predicate correlation, constant-branch elimination or implicit temporary initialization is used. A no-ELSE branch joins against entry state.",
+    "joins": "Each authorized structured write materializes its actual numeric value in the destination physical shadow. Initialized lanes and ordinary-output authority intersect at joins; surviving numeric finite-bank dependencies combine by union. Raw words and pre-write aliases remain distinct from numeric shadows.",
+    "predicate": "The post-swizzle x lane is an unsigned 32-bit word compared with zero. Noncanonical integer true values remain true; other source lanes do not affect the test.",
+    "profiles": {
+      "conditional": "virgl-webgl2-raw-bits-v9",
+      "unconditional": "virgl-webgl2-raw-bits-v8"
+    },
+    "proof": "Full sanitized native/Wasm parity and allocation recovery; literal nested branch, per-lane color and word-atlas GPU results through decoded sync/async commands; independent exact numerical/reference interpretation; actual compiled polarity and written-mask-union faults; exact-source pristine-clone recording and fresh critic.",
+    "scope": "Authored structured shader support in the isolated compiler/shared renderer. No PRECISE, indirect addressing, loop or original rejected Mesa admission; production guest GPU negotiation remains disabled.",
+    "syntax": "Owned UIF, ELSE and ENDIF only, complete balanced structure, maximum depth 8. Optional UIF targets name the matching ELSE or ENDIF; optional ELSE targets name the matching ENDIF. No arbitrary jumps, IF, CONT or loops.",
+    "task": "E6-T12e7"
+  },
+  "unsupportedExecution": [
+    "compute",
+    "geometry",
+    "tessellation",
+    "SSBO",
+    "image load/store",
+    "atomics",
+    "transform feedback in initial tier",
+    "indirect draw",
+    "active polygon stipple",
+    "non-default sample shading",
+    "PRECISE arithmetic and unsupported PRECISE operations",
+    "Z32_UNORM",
+    "unvalidated command/object/format/state enum"
+  ],
+  "vertexFormats": {
+    "29": {
+      "corpusOccurrences": 10,
+      "mapping": "vertexAttribPointer with FLOAT and exact component count; validate stride, offset and all referenced vertex bytes.",
+      "name": "R32G32_FLOAT",
+      "status": "implementable"
+    },
+    "30": {
+      "corpusOccurrences": 6,
+      "mapping": "vertexAttribPointer with FLOAT and exact component count; validate stride, offset and all referenced vertex bytes.",
+      "name": "R32G32B32_FLOAT",
+      "status": "implementable"
+    }
+  }
+}

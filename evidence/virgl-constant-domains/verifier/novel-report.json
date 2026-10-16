@@ -1,0 +1,496 @@
+{
+  "schema": 1,
+  "status": "passed",
+  "head": "32509356c18af1c18e59bf14375f4402b434bd7d",
+  "seeds": [
+    2455071329,
+    3272624011,
+    274256029,
+    1610547383
+  ],
+  "prototypeCalls": 0,
+  "sourceSha256": "4c647f5dd3beb07b0b9058b66549471515ab3302d5d1988e5fa7500643c1ba55",
+  "harnessSha256": "15282db04b6a94aa619ad890a165613208bbee7ba6f2415173cf28a57a23b7d1",
+  "records": [
+    {
+      "kind": "predicate",
+      "seed": 2455071329,
+      "count": 10000,
+      "accepted": 9972,
+      "rejected": 28,
+      "wordBytesSha256": "62084e5408f45af51fc7cef85dfe5b94ad4b0556ecefe3a34db0d3a6a3c3c797"
+    },
+    {
+      "kind": "predicate",
+      "seed": 3272624011,
+      "count": 10000,
+      "accepted": 9959,
+      "rejected": 41,
+      "wordBytesSha256": "d1729893948c45255ee3647ab336aef498d802c13a3b7a846e5f68d57ae44d25"
+    },
+    {
+      "kind": "predicate",
+      "seed": 274256029,
+      "count": 10000,
+      "accepted": 9961,
+      "rejected": 39,
+      "wordBytesSha256": "e770ff1bc9fc887e0501528a9385f004690992bdb65ab3f76a4fe2a73caa76c1"
+    },
+    {
+      "kind": "predicate",
+      "seed": 1610547383,
+      "count": 10000,
+      "accepted": 9971,
+      "rejected": 29,
+      "wordBytesSha256": "eb6cef9cd43f5747405117a169509479c7e9c5dd315c229e47d7bbaa9574e0d9"
+    },
+    {
+      "0": true,
+      "kind": "prefix",
+      "count": 0,
+      "ownedWords": 0,
+      "ownedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "3": false,
+      "4": true,
+      "kind": "prefix",
+      "count": 1,
+      "ownedWords": 4,
+      "ownedSha256": "222ffb076940ee432615bb638d3cff04dc3dcfcb6f76a7b13cbf680ed5f67df9",
+      "shortCode": "incomplete-draw"
+    },
+    {
+      "7": false,
+      "8": true,
+      "kind": "prefix",
+      "count": 2,
+      "ownedWords": 8,
+      "ownedSha256": "c9626e6aab2abbf9b2fa9317e698a0e4c6dabe44b9e86659851092e24f750aa9",
+      "shortCode": "incomplete-draw"
+    },
+    {
+      "11": false,
+      "12": true,
+      "kind": "prefix",
+      "count": 3,
+      "ownedWords": 12,
+      "ownedSha256": "389e83161e324fa21c8ab09c1e87964d06c2ac69776e39b97c9c2b9f70dde573",
+      "shortCode": "incomplete-draw"
+    },
+    {
+      "15": false,
+      "16": true,
+      "kind": "prefix",
+      "count": 4,
+      "ownedWords": 16,
+      "ownedSha256": "6f46bd4956337d67e971fa9d4f25182dd69796d044dbf7a58af1a890cd6325b4",
+      "shortCode": "incomplete-draw"
+    },
+    {
+      "19": false,
+      "20": true,
+      "kind": "prefix",
+      "count": 5,
+      "ownedWords": 20,
+      "ownedSha256": "78342338d4fe6245c36da98d3710950981a12984ffff316414dc03d9b86eccf1",
+      "shortCode": "incomplete-draw"
+    },
+    {
+      "23": false,
+      "24": true,
+      "kind": "prefix",
+      "count": 6,
+      "ownedWords": 24,
+      "ownedSha256": "d67df080b21810014aeb908d688ab33a664a883266b2ad0d92559213874498fb",
+      "shortCode": "incomplete-draw"
+    },
+    {
+      "27": false,
+      "28": true,
+      "kind": "prefix",
+      "count": 7,
+      "ownedWords": 28,
+      "ownedSha256": "84d5a91cefc791c25421d55a470b026c0cc4eae77f94694e9277db206236b525",
+      "shortCode": "incomplete-draw"
+    },
+    {
+      "31": false,
+      "32": true,
+      "kind": "prefix",
+      "count": 8,
+      "ownedWords": 32,
+      "ownedSha256": "7aeb13cda19d9607b1e2d0cd088508e5adb5ae73333e46a093362e61c967abfb",
+      "shortCode": "incomplete-draw"
+    },
+    {
+      "35": false,
+      "36": true,
+      "kind": "prefix",
+      "count": 9,
+      "ownedWords": 36,
+      "ownedSha256": "f490b138dc901dd19ab1b49ba927ffd0fb96dfff60af33633523064f859ed05c",
+      "shortCode": "incomplete-draw"
+    },
+    {
+      "39": false,
+      "40": true,
+      "kind": "prefix",
+      "count": 10,
+      "ownedWords": 40,
+      "ownedSha256": "bdf2db0a92a57adf947c8b416dbfc3e1175dd8e60aff2087077acfa1c42b31ee",
+      "shortCode": "incomplete-draw"
+    },
+    {
+      "43": false,
+      "44": true,
+      "kind": "prefix",
+      "count": 11,
+      "ownedWords": 44,
+      "ownedSha256": "4b632f0526b3dabb34a16f350d151a297f2416617bdfbd3a2cfc14dbe8320dcc",
+      "shortCode": "incomplete-draw"
+    },
+    {
+      "47": false,
+      "48": true,
+      "kind": "prefix",
+      "count": 12,
+      "ownedWords": 48,
+      "ownedSha256": "12fc07b349512976757f96e115eb9afaf3965c25806bc60dec3ceae7e6f35d31",
+      "shortCode": "incomplete-draw"
+    },
+    {
+      "51": false,
+      "52": true,
+      "kind": "prefix",
+      "count": 13,
+      "ownedWords": 52,
+      "ownedSha256": "9d0f838b4e08ee0d0ceb5d740a2b6ce5fb83af22fd1d0ebdd84d1343d868eb8c",
+      "shortCode": "incomplete-draw"
+    },
+    {
+      "55": false,
+      "56": true,
+      "kind": "prefix",
+      "count": 14,
+      "ownedWords": 56,
+      "ownedSha256": "be56e89c7540a732e393fbe7549c98eadb26a2da361f7f47e1728142ca343fb2",
+      "shortCode": "incomplete-draw"
+    },
+    {
+      "59": false,
+      "60": true,
+      "kind": "prefix",
+      "count": 15,
+      "ownedWords": 60,
+      "ownedSha256": "25debba82bae94d1d47e8c2027d6f6ba3e902b51d804a6ef1429b96d816633bb",
+      "shortCode": "incomplete-draw"
+    },
+    {
+      "63": false,
+      "64": true,
+      "kind": "prefix",
+      "count": 16,
+      "ownedWords": 64,
+      "ownedSha256": "6f192ea54211079a3376edb4e478a3d855e4b4f4bb69572e12fd0b6d068bb7fc",
+      "shortCode": "incomplete-draw"
+    },
+    {
+      "67": false,
+      "68": true,
+      "kind": "prefix",
+      "count": 17,
+      "ownedWords": 68,
+      "ownedSha256": "2ad23865a1724576ec0f635fa8a5a596278211b37fba343e6a07a9526ed8772a",
+      "shortCode": "incomplete-draw"
+    },
+    {
+      "71": false,
+      "72": true,
+      "kind": "prefix",
+      "count": 18,
+      "ownedWords": 72,
+      "ownedSha256": "950c8e8c44b633d6a0ef8f6f848bb36c89f435afbe84f5ee1e03ffa07fd974a3",
+      "shortCode": "incomplete-draw"
+    },
+    {
+      "75": false,
+      "76": true,
+      "kind": "prefix",
+      "count": 19,
+      "ownedWords": 76,
+      "ownedSha256": "2cc045db8c63c74ae5e65f90d741f670c68fa56274ef3ba9beab2a66a2253f6e",
+      "shortCode": "incomplete-draw"
+    },
+    {
+      "79": false,
+      "80": true,
+      "kind": "prefix",
+      "count": 20,
+      "ownedWords": 80,
+      "ownedSha256": "b248ae0107d1446166571d89f83bbf9590b12d7b1dca458d192483c96168fa96",
+      "shortCode": "incomplete-draw"
+    },
+    {
+      "83": false,
+      "84": true,
+      "kind": "prefix",
+      "count": 21,
+      "ownedWords": 84,
+      "ownedSha256": "211efbdc3c5ec97a62c218daf26be0308d83d8568e1abdadd6b0e3ba365d7c8a",
+      "shortCode": "incomplete-draw"
+    },
+    {
+      "87": false,
+      "88": true,
+      "kind": "prefix",
+      "count": 22,
+      "ownedWords": 88,
+      "ownedSha256": "6783d1235845ef0422586a885e349ab3e5f673ffa8821f365178277ed3b13bad",
+      "shortCode": "incomplete-draw"
+    },
+    {
+      "91": false,
+      "92": true,
+      "kind": "prefix",
+      "count": 23,
+      "ownedWords": 92,
+      "ownedSha256": "1f29592dae9d2e9a467e3132959eacff98de1d984f3f3202a11bc4eee4596281",
+      "shortCode": "incomplete-draw"
+    },
+    {
+      "95": false,
+      "96": true,
+      "kind": "prefix",
+      "count": 24,
+      "ownedWords": 96,
+      "ownedSha256": "a91026156b3b645b21a81adfb427609fa126ee5c2323675abd033b5d88626cfc",
+      "shortCode": "incomplete-draw"
+    },
+    {
+      "99": false,
+      "100": true,
+      "kind": "prefix",
+      "count": 25,
+      "ownedWords": 100,
+      "ownedSha256": "d81ebe31948822affaac028af5e3d0e798fd26e79d2ab9e43eba0af51c49ea06",
+      "shortCode": "incomplete-draw"
+    },
+    {
+      "103": false,
+      "104": true,
+      "kind": "prefix",
+      "count": 26,
+      "ownedWords": 104,
+      "ownedSha256": "9998d4ee4059465f9ee174def657fdd29d5b4e5d88edb4b7ffff8d4dca21a76d",
+      "shortCode": "incomplete-draw"
+    },
+    {
+      "107": false,
+      "108": true,
+      "kind": "prefix",
+      "count": 27,
+      "ownedWords": 108,
+      "ownedSha256": "57448f7cc759bfd0b0f9314275eb8062ad18ad7798aedd83959d2b89ceb2a307",
+      "shortCode": "incomplete-draw"
+    },
+    {
+      "111": false,
+      "112": true,
+      "kind": "prefix",
+      "count": 28,
+      "ownedWords": 112,
+      "ownedSha256": "2e4f0ca00e15631aa30019e284ed4177dafaf3ca5f9ce9947d7256e58770bc84",
+      "shortCode": "incomplete-draw"
+    },
+    {
+      "115": false,
+      "116": true,
+      "kind": "prefix",
+      "count": 29,
+      "ownedWords": 116,
+      "ownedSha256": "2c0ffee5d60b3852e0a152e09bb1aaa95a218e2326da688c785a9e20aa74fe0d",
+      "shortCode": "incomplete-draw"
+    },
+    {
+      "119": false,
+      "120": true,
+      "kind": "prefix",
+      "count": 30,
+      "ownedWords": 120,
+      "ownedSha256": "5d54959fd538520b2ee98de3eac40661ad6989117c8a15b486b1593042a644bc",
+      "shortCode": "incomplete-draw"
+    },
+    {
+      "123": false,
+      "124": true,
+      "kind": "prefix",
+      "count": 31,
+      "ownedWords": 124,
+      "ownedSha256": "986418a31c2cb1413642856d8f949d7ec26ca40393b55e69a10589bd1dbb7501",
+      "shortCode": "incomplete-draw"
+    },
+    {
+      "127": false,
+      "128": true,
+      "kind": "prefix",
+      "count": 32,
+      "ownedWords": 128,
+      "ownedSha256": "52ef6f496f5dc5d7af4b6736c3d689ca6d28ce7770cff23ad29c7f7ab88e63c2",
+      "shortCode": "incomplete-draw"
+    },
+    {
+      "131": false,
+      "132": true,
+      "kind": "prefix",
+      "count": 33,
+      "ownedWords": 132,
+      "ownedSha256": "70944112770deaa41714411335b60b08012e99aaa0f2a80c8e224bd62d690f32",
+      "shortCode": "incomplete-draw"
+    },
+    {
+      "135": false,
+      "136": true,
+      "kind": "prefix",
+      "count": 34,
+      "ownedWords": 136,
+      "ownedSha256": "a9793165db7b7759594e64b4206cbe9da5ed01143e680991f8100069b465cc63",
+      "shortCode": "incomplete-draw"
+    },
+    {
+      "139": false,
+      "140": true,
+      "kind": "prefix",
+      "count": 35,
+      "ownedWords": 140,
+      "ownedSha256": "deb281e2b9204f566bd8f9a5f2c47458ddc1bcca0858db8330d256e8d95c0a57",
+      "shortCode": "incomplete-draw"
+    },
+    {
+      "143": false,
+      "144": true,
+      "kind": "prefix",
+      "count": 36,
+      "ownedWords": 144,
+      "ownedSha256": "252b7ffb792d44204a002ffbf4cd2ffbfae10b0a95d1a76ecb40ad1d294b53d6",
+      "shortCode": "incomplete-draw"
+    },
+    {
+      "147": false,
+      "148": true,
+      "kind": "prefix",
+      "count": 37,
+      "ownedWords": 148,
+      "ownedSha256": "78607d05b4f64df59743e6b1052e7921b42a887d584327ad295a440d98eb8109",
+      "shortCode": "incomplete-draw"
+    },
+    {
+      "151": false,
+      "152": true,
+      "kind": "prefix",
+      "count": 38,
+      "ownedWords": 152,
+      "ownedSha256": "dd7b24ed2ab5fe3e760d5eb17332179efad3a11d2bb238cf6dea46857fa00546",
+      "shortCode": "incomplete-draw"
+    },
+    {
+      "155": false,
+      "156": true,
+      "kind": "prefix",
+      "count": 39,
+      "ownedWords": 156,
+      "ownedSha256": "ada2208bb40dab4fe92af21fa34f12995bf56c8a88b40b005ba465ab299c6695",
+      "shortCode": "incomplete-draw"
+    },
+    {
+      "159": false,
+      "160": true,
+      "kind": "prefix",
+      "count": 40,
+      "ownedWords": 160,
+      "ownedSha256": "bc0609fa1c59b08a03ae479dd8a91d269ec5599be09c8c3b7aa6f1bab9cf8d4e",
+      "shortCode": "incomplete-draw"
+    },
+    {
+      "163": false,
+      "164": true,
+      "kind": "prefix",
+      "count": 41,
+      "ownedWords": 164,
+      "ownedSha256": "05de0b33c7c039b1eafafb57ea465f38722599891291b5e69923e5a753e4ea01",
+      "shortCode": "incomplete-draw"
+    },
+    {
+      "167": false,
+      "168": true,
+      "kind": "prefix",
+      "count": 42,
+      "ownedWords": 168,
+      "ownedSha256": "2c6df374651636707514f5869a141fe1fd0b82ca9e48b168dc1f09a45052dfae",
+      "shortCode": "incomplete-draw"
+    },
+    {
+      "171": false,
+      "172": true,
+      "kind": "prefix",
+      "count": 43,
+      "ownedWords": 172,
+      "ownedSha256": "c5d5b95544afc2b55460aeac79645433efcf2f27a42796e4f3a0a2818c5b2539",
+      "shortCode": "incomplete-draw"
+    },
+    {
+      "175": false,
+      "176": true,
+      "kind": "prefix",
+      "count": 44,
+      "ownedWords": 176,
+      "ownedSha256": "52c7f0770af8421db4129060a51a30fa03b46aee3da0d9bbca17963bb0b1d3b9",
+      "shortCode": "incomplete-draw"
+    },
+    {
+      "179": false,
+      "180": true,
+      "kind": "prefix",
+      "count": 45,
+      "ownedWords": 180,
+      "ownedSha256": "dc965a63c425f46fa791c2c0ed8c97fa1bd0ed56236859e88217bd0c6dfd0a81",
+      "shortCode": "incomplete-draw"
+    },
+    {
+      "183": false,
+      "kind": "prefix",
+      "count": 46,
+      "ownedWords": 184,
+      "ownedSha256": "159cd5338e4b6dcd474df92d74e3521e8775a4b7072b24d3dfdb496a6ffb261b",
+      "shortCode": "incomplete-draw"
+    },
+    {
+      "kind": "hostile-prototype",
+      "stage": "vertex",
+      "result": {
+        "ok": true,
+        "domain": {
+          "kind": "constant-bank-finite-f32-v1",
+          "stage": "vertex",
+          "slot": 0,
+          "name": "vsconst0",
+          "count": 47
+        }
+      }
+    },
+    {
+      "kind": "hostile-prototype",
+      "stage": "fragment",
+      "result": {
+        "ok": true,
+        "domain": {
+          "kind": "constant-bank-finite-f32-v1",
+          "stage": "fragment",
+          "slot": 0,
+          "name": "fsconst0",
+          "count": 47
+        }
+      }
+    }
+  ]
+}

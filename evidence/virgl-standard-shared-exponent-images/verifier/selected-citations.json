@@ -1,0 +1,128 @@
+{
+  "native_failure": {
+    "line": 988,
+    "row": {
+      "fault": "conversion-draw",
+      "observed": {
+        "delivered": -1,
+        "label": "native-float-conversion-draw-read-failure",
+        "name": "drawArrays",
+        "original": 3
+      },
+      "point": "/browserResult/result/runs/32/faultEvents/0",
+      "prediction": "P8",
+      "record": "unpacked/cold/hardware-boundaries-0x13579bdf",
+      "result": {
+        "error": {
+          "code": "backend-error",
+          "message": "Backend beginReadback failed."
+        },
+        "ok": false
+      },
+      "status": "HELD"
+    }
+  },
+  "retained": {
+    "line": 1091,
+    "row": {
+      "blob": "blob-0005.bin.gz",
+      "bytes": 288,
+      "observedSha256": "449321fb3e945fdcb50acb1dee2f0ecae55ae0dd168e48daf0462ca269ca3e03",
+      "originalSha256": "abb4c27125e7f156ff45d5fc993e7e22dc519a5d7ab36a276c5d6d159423a1dd",
+      "point": "/browserResult/result/runs/0/observations/0",
+      "predictedSha256": "449321fb3e945fdcb50acb1dee2f0ecae55ae0dd168e48daf0462ca269ca3e03",
+      "prediction": "P2/P3",
+      "record": "unpacked/cold/hardware-boundaries-0xa5471e03",
+      "status": "HELD"
+    }
+  },
+  "private_budget": {
+    "line": 1135,
+    "row": {
+      "allocations": 2,
+      "final": {
+        "backingBytes": 0,
+        "contexts": 0,
+        "cpuBytes": 0,
+        "gpuBytes": 0,
+        "imageHolds": 0,
+        "imageViews": 0,
+        "leases": 0,
+        "resources": 0,
+        "scratchBytes": 0,
+        "storages": 0,
+        "tickets": 0,
+        "uniformRanges": 0
+      },
+      "point": "/browserResult/result/runs/8/allocations",
+      "prediction": "P3/P5/P6/P7",
+      "record": "unpacked/cold/hardware-boundaries-0xa5471e03",
+      "status": "HELD"
+    }
+  },
+  "original_fields": {
+    "line": 1191,
+    "row": {
+      "blob": "blob-0002.bin.gz",
+      "bytes": 786432,
+      "observedSha256": "9eda2af683d4e0f3edb5b6ed40f44b218efe2a1b20e590bc41c26374e97e6c4d",
+      "originalSha256": "7f388f75be68a2df1ca5c06b4971046b092dba84c6195116fa72c16b427a47af",
+      "point": "/browserResult/result/runs/0/planes/0",
+      "predictedSha256": "9eda2af683d4e0f3edb5b6ed40f44b218efe2a1b20e590bc41c26374e97e6c4d",
+      "prediction": "P2/P3",
+      "record": "unpacked/cold/hardware-matrix",
+      "status": "HELD"
+    }
+  },
+  "private_mips": {
+    "line": 1193,
+    "row": {
+      "blob": "blob-0004.bin.gz",
+      "bytes": 786432,
+      "observedSha256": "9eda2af683d4e0f3edb5b6ed40f44b218efe2a1b20e590bc41c26374e97e6c4d",
+      "originalSha256": "7f388f75be68a2df1ca5c06b4971046b092dba84c6195116fa72c16b427a47af",
+      "point": "/browserResult/result/runs/0/views/1/planes/0",
+      "predictedSha256": "9eda2af683d4e0f3edb5b6ed40f44b218efe2a1b20e590bc41c26374e97e6c4d",
+      "prediction": "P2/P3",
+      "record": "unpacked/cold/hardware-matrix",
+      "status": "HELD"
+    }
+  },
+  "public": {
+    "line": 1195,
+    "row": {
+      "blob": "blob-0009.bin.gz",
+      "bytes": 196608,
+      "observedSha256": "7f388f75be68a2df1ca5c06b4971046b092dba84c6195116fa72c16b427a47af",
+      "originalSha256": "7f388f75be68a2df1ca5c06b4971046b092dba84c6195116fa72c16b427a47af",
+      "point": "/browserResult/result/runs/0/transfers/0/sync",
+      "predictedSha256": "7f388f75be68a2df1ca5c06b4971046b092dba84c6195116fa72c16b427a47af",
+      "prediction": "P4",
+      "record": "unpacked/cold/hardware-matrix",
+      "status": "HELD"
+    }
+  },
+  "control": {
+    "line": 1780,
+    "row": {
+      "blob": "blob-0010.bin.gz",
+      "blobSha256": "8890d540e2c3a5108eb0b16eec106a56a19bc88748e826e3ca74e7d2ba5a36f8",
+      "component": 4,
+      "expectedBits": "0x33800000",
+      "fault": "packing-field",
+      "fence": {
+        "actual": 37146,
+        "delivered": 37146,
+        "label": "original-shared-range-copy",
+        "name": "clientWaitSync",
+        "sync": 49,
+        "turn": 12
+      },
+      "observedBits": "0x0",
+      "point": "/partial/sabotage/observation",
+      "prediction": "P9",
+      "record": "unpacked/cold/fault-packing-field/report.json",
+      "status": "HELD"
+    }
+  }
+}

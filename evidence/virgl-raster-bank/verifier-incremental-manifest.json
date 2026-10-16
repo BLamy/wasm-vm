@@ -1,0 +1,46 @@
+{
+  "schema": "raster-bank-verifier-incremental-manifest-v1",
+  "task": "E6-T12f4b",
+  "verdict": "verified",
+  "correctionHead": "10cac3c8d813f959659c57bcd26cfbed1e4788be",
+  "previousVerifierHead": "2e9e90b8ea185ea754309f761a205b76c29bce67",
+  "frozenHead": "4999a81ad93496fc25e78cbb0aeb7adec66006e3",
+  "files": [
+    {
+      "path": "verifier-incremental-predictions.md",
+      "bytes": 1552,
+      "sha256": "64f362c3da7c2acb4f1ac6e2089dbed716247a3f44f6be3ba4031266466d1151"
+    },
+    {
+      "path": "verifier-incremental-audit.py",
+      "bytes": 8022,
+      "sha256": "b86983846188de282817e200e0c3f1923186367ec6078e79af453ae5b043f41e"
+    },
+    {
+      "path": "verifier-incremental-audit.json",
+      "bytes": 9605,
+      "sha256": "2244c38272c0f8ca0983e5fc7d82b52a68507d3a57e301f280fde393f8345acf"
+    },
+    {
+      "path": "verifier-incremental-verdict.json",
+      "bytes": 12712,
+      "sha256": "594d3c4289cde7420fb5d3994d4573352a7361c93c0f9386d42687924f1d4240"
+    }
+  ],
+  "historicalManifest": {
+    "path": "verifier-manifest.json",
+    "bytes": 12024,
+    "sha256": "2736980b3ae01c214fbca88b969979deff1f4df681b718d7c96b7b8d992778ec"
+  },
+  "historicalVerdict": {
+    "path": "verifier-verdict.json",
+    "bytes": 18143,
+    "sha256": "b10cebf6cb545264e1fcb8c6f4f35916b7f165be47f7641197f038946be8271b"
+  },
+  "historicalArchive": {
+    "path": "verifier.tar.gz",
+    "bytes": 5260576,
+    "sha256": "000794e482c88080a5c0e5261547851662546b73aedc46416b80c79c5df72194"
+  },
+  "losslessAudit": "All four incremental files are fully preserved and SHA-256 bound. The original 67-file archive and every original member are unchanged. No runtime, harness, worker/cold capture or shared build artifact was modified."
+}

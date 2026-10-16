@@ -276,9 +276,11 @@ fn a_tampered_layer_blob_is_refused_with_a_digest_mismatch() {
     let tmp = tempfile::tempdir().unwrap();
     let out = tmp.path().join("layout");
     let fx = build_fixture(false);
-    // Pick a layer digest to corrupt: any blob that isn't the manifest/config/index.
-    let manifest = fx.riscv_manifest_digest.clone();
-    let victim = fx.blobs.keys().find(|d| **d != manifest).cloned().unwrap();
+    // Select an actual layer. HashMap iteration could pick the index blob,
+    // which is fetched through the manifest endpoint and never tampered here.
+    let manifest: serde_json::Value =
+        serde_json::from_slice(&fx.blobs[&fx.riscv_manifest_digest]).unwrap();
+    let victim = manifest["layers"][0]["digest"].as_str().unwrap().to_owned();
     let mut reg = MockRegistry::new(fx);
     reg.tamper = Some(victim);
     let image = ImageRef::parse("library/alpine:latest", None).unwrap();

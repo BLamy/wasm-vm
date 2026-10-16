@@ -1,0 +1,50 @@
+{
+  "schema": "precise-arithmetic-fresh-verifier-evidence-v1",
+  "task": "E6-T12f5",
+  "sourceHead": "7e444f2e3523b5b46b4aedbff3ace0c409ff6a83",
+  "workerClaimHead": "187b432e204f3230545235cc1ea4b4ccf5dd6b56",
+  "recordingFiles": 290,
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 10952313,
+    "sha256": "e4e95dd6b1ae7f84b9c2b3dc4de6292a459914ccc47318e6c992e96b6356ac7d"
+  },
+  "inventory": {
+    "path": "records.json",
+    "sha256": "4a0cf055d7c7eca280b4f740e8ad7ce10299741d40c2c93dcbc50c5eb5b374b5"
+  },
+  "independentOracle": {
+    "method": "exact integer-ratio quotient/remainder nearest-even by bit-length quantum; not worker neighbor search or GLSL jam/limbs",
+    "finalReferenceWords": 13896,
+    "finalPhysicalWords": 35280,
+    "finalPhysicalPixels": 1134720
+  },
+  "freshGPU": {
+    "newSeed": 3593562823,
+    "novelVectors": 165,
+    "novelExactWords": 26448,
+    "novelPixels": 846336,
+    "conditionExactWords": 13368,
+    "conditionPixels": 427776,
+    "helperMarkersPerStage": 39
+  },
+  "supplementalNative": {
+    "calls": 14,
+    "authorityCondition": "raw_bits.c:255",
+    "leftTrueFalse": [
+      48,
+      48
+    ],
+    "rightTrueFalse": [
+      16,
+      32
+    ],
+    "nativeWasmParity": true
+  },
+  "sensitivity": {
+    "independentExpectedBitFault": "zero-signs pixel (0,0) contradicts unchanged GPU word",
+    "actualAuthoritySourceFault": "private output/vertex returns true and promoted regression fails"
+  },
+  "workerReceiptReplaySha256": "43485e0d1874ba1ba225eac7ec840672d4104cd79e68b24fdae64ad12e2f848f",
+  "boundary": "Private integer binary32 compiler/shared-renderer proof only. No guest negotiation, desktop MIPS/FPS, 19-body hardware closure or deployment claim."
+}

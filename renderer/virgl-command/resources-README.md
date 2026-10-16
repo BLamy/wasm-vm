@@ -1,0 +1,467 @@
+# VirGL resources and transfers
+
+`resources.mjs` implements the bounded resource/backing/transfer boundary after
+`decoder.mjs`. It does not execute draw/state commands, advertise capsets, activate
+a guest renderer, handle fences, or provide asynchronous queue scheduling.
+`TRANSFER3D` and both `COPY_TRANSFER3D` directions operate on actual WebGL2 buffer,
+normalized color or Z16 depth storage. CPU backing is separate from that storage; staging
+resources allocate no GPU object, and no CPU mirror supplies GPU readback.
+
+## API
+
+All factories and store operations return `{ok:true,...}` or
+`{ok:false,error:{code,message}}`. Returned metadata is recursively frozen; returned
+`Uint8Array` data is an owned copy which callers may mutate. Constructors and
+metadata/byte errors use the same structured result convention. Unexpected
+implementation defects are not disguised as guest errors.
+
+```js
+import {
+  RESOURCE_LIMITS, computeTransferLayout,
+  createWebGL2TransferBackend, createResourceStore,
+} from "./resources.mjs";
+
+const backendResult = createWebGL2TransferBackend(gl);
+const storeResult = createResourceStore({ backend: backendResult.backend });
+const { store, bindings } = storeResult; // Check each result.ok in real callers.
+store.createContext(2);
+store.createResource({
+  id: 3, target: 0, format: 64, bind: 16,
+  width: 64, height: 1, depth: 1, arraySize: 1,
+  lastLevel: 0, nrSamples: 0, flags: 0,
+});
+store.attachContext(2, 3);
+store.attachBacking(3, [new Uint8Array(4096)]);
+// Populate backing from verified input bytes, then prepare a decoded transfer.
+const prepared = store.prepareTransfer(2, decodedCommand);
+const completed = store.executeTransfer(prepared.ticket);
+store.dispose();
+```
+
+The store API is synchronous:
+
+| Method | Success data and meaning |
+| --- | --- |
+| `createContext(contextId)` | `context:{id,generation}`; context IDs are nonzero u32. Transfers use the context immediately, before any guest subcontext command. |
+| `createResource(metadata)` | `resource` containing copied metadata, derived `kind,byteLength`, and `generation`; IDs are nonzero u32. |
+| `attachContext(contextId,id)` | Adds this exact resource generation to the context. Duplicate membership is rejected. |
+| `detachContext(contextId,id)` | Revokes membership and invalidates prepared work using it. |
+| `attachBacking(id,segments)` | `byteLength`; clones an array of 1–256 Uint8Array segments. Zero-length segments are permitted. Duplicate attachment is rejected. |
+| `detachBacking(id)` | Revokes that backing identity and frees its owned segments. |
+| `writeBacking(id,offset,bytes)` | `byteLength`; bounded scatter into owned backing; no input reference is retained. |
+| `readBacking(id,offset,length)` | `bytes`; bounded gather into a new Uint8Array. |
+| `retainStorage(contextId,id,role="view")` | `lease`; an opaque frozen identity token retaining GPU storage. View/surface require sampler/render color binds; depth-surface requires Z16/bind1; vertex/index require the matching buffer class. Readback accepts GPU storage; staging has none. |
+| `readStorage(lease,box?)` | `bytes`; actual GPU readback, tightly packed, whole resource by default. Uses retained storage even after public unref. |
+| `releaseStorage(lease)` | Releases that lease once; unknown, released and foreign tokens fail. |
+| `prepareTransfer(contextId,decodedCommand)` | `ticket,layout`; validates the whole operation, retains exact identities, reserves scratch and snapshots upload bytes. |
+| `executeTransfer(ticket)` | `byteLength,direction`; consumes one ticket, revalidates identities and uploads or scatters actual GPU readback into backing. |
+| `cancelTransfer(ticket)` | Consumes a prepared ticket and releases its reservations/references. |
+| `unref(id)` | Removes lookup in every context and releases backing immediately; retained GPU storage remains alive. |
+| `destroyContext(contextId)` | Revokes all memberships and prepared work in that context. Explicit storage leases remain until released. |
+| `inspect()` | Frozen `resources,contexts,budgets,limits,disposed`; usable after disposal. |
+| `dispose()` | Invalidates all identities, releases backing/tickets/leases/storage and disposes the backend. Repeated successful disposal is harmless. |
+
+Byte inputs must be attached, non-shared Uint8Array views, including nonzero host
+byte offsets and Node Buffers. SharedArrayBuffer is rejected because synchronous
+copying cannot promise a race-free snapshot. Data records accept their documented
+own properties and reject accessors, unknown keys and missing required fields.
+After inspecting all segment descriptors, the store revalidates each byte view and
+its inspected length immediately before copying. A later descriptor trap detaching
+or shrinking an earlier segment therefore rejects without publishing backing or
+budget charges. Caller metadata is copied and revalidated; frozen decoded JavaScript is not an
+identity or authority token. Optional decoded header/name/length fields must agree
+with the transfer opcode. Redundant `readFromHost`/`synchronized` fields, when
+supplied, must agree with validated copy flags.
+
+## Resource profile and budgets
+
+Metadata has exactly `id,target,format,bind,width,height,depth,arraySize,lastLevel,
+nrSamples,flags`. Every value is a checked u32. Width, height, depth and array size
+are nonzero. Supported classes are:
+
+| Derived kind | Required fields | Logical storage |
+| --- | --- | --- |
+| `vertex-buffer` | target 0, format 64, bind 16, height 1 | width bytes on GPU |
+| `index-buffer` | target 0, format 64, bind 32, height 1 | width bytes on GPU |
+| `staging` | target 0, format 64, bind 524288, height 1 | no GPU allocation; attached backing only |
+| `texture` | target 2; format 2, 67 or 233; render bind 2 and/or sampler bind 8 | width × height × 4 conservative GPU bytes |
+| `depth-texture` | target 2, format16 Z16_UNORM, measured depth bind1 only | width × height × 2 GPU/guest bytes |
+
+Textures may also carry the measured SCANOUT (262144) and SHARED (1048576)
+metadata hints. Neither hint grants a view/render role or enables scanout of a
+new format. Global scanout remains format67 with a render bind and flags0.
+
+All classes require depth/arraySize 1 and lastLevel/nrSamples/flags 0. No format
+aliases, mixed buffer bindings, other depth/stencil formats, mipmaps, MSAA, blobs or arrays are
+accepted. An attached backing page may be larger or smaller than the resource's
+logical extent. Each operation must independently fit both the logical resource
+and the backing range it actually accesses.
+
+Frozen `RESOURCE_LIMITS` defines defaults. `createResourceStore({backend,limits})`
+and `computeTransferLayout(...,limits)` accept overrides that only tighten them:
+
+| Key | Default |
+| --- | ---: |
+| `resources` | 16 live or retained resource generations |
+| `contexts` | 8 live contexts |
+| `segments` | 256 segments per backing |
+| `tickets` / `leases` | 64 / 64 |
+| `resourceBytes` | 4 MiB per resource allocation or attached backing |
+| `transferBytes` | 4 MiB per tight transfer and strided footprint |
+| `cpuBytes` | 32 MiB for attached backing plus reserved scratch |
+| `gpuBytes` | 32 MiB of live and retained GPU storage |
+| `scratchBytes` | 8 MiB of pending/temporary transfer storage |
+| `textureSize` | 16,384, additionally limited to measured GL MAX_TEXTURE_SIZE |
+
+A pending transfer reserves its tight byte count for either direction. Upload
+bytes are copied during prepare; readback storage is allocated during execute.
+All reservations are released once after success, cancellation, stale rejection
+or backend failure. Resource and GPU budgets include unpublished generations held
+by leases or prepared work, preventing ID churn from bypassing limits. Caller-owned
+returned byte arrays are no longer retained or budgeted by the store.
+
+`inspect().budgets` reports `resources,contexts,storages,backingBytes,cpuBytes,
+gpuBytes,scratchBytes,tickets,leases`. `resources` includes retained unpublished
+generations and reports copied metadata plus `generation,public,backingBytes,
+references,attachments`. `contexts` contains `id,generation,resourceIds`.
+
+## Transfer layout and backing
+
+`computeTransferLayout(metadata,fields,backingByteLength,limits?)` is a pure Node
+and browser helper. Success returns frozen `layout` with:
+
+```js
+{
+  kind: "texture", box: {x,y,z,width,height,depth},
+  offset, rowBytes, rowCount, rowStride, layerStride,
+  footprintBytes, requiredEnd, tightBytes,
+  direction: "upload" // or "readback"
+}
+```
+
+`fields` uses the decoder's transfer fields. Both variants require
+`resourceHandle,level,usage,stride,layerStride,box`. TRANSFER3D additionally uses
+`dataOffset,direction` (1 upload, 2 readback). COPY_TRANSFER3D uses
+`stagingResourceHandle,stagingOffset,flags` (1 synchronized upload, 3 synchronized
+readback), with optional agreeing `synchronized,readFromHost` booleans. The
+`resourceHandle` must match the metadata ID. `usage` is preserved as a checked
+opaque u32, matching the pinned renderer, and has no execution effect.
+
+Box coordinates must fit the logical resource. Buffers use byte x/width, zero y/z
+and height/depth one. Textures use pixels, level/z zero and depth one. Calculations
+use checked multiplication and subtraction before reads, writes or allocation:
+
+- `rowBytes = box.width × bytesPerPixel`, with bytesPerPixel one for buffers.
+- An explicit nonzero stride must cover rowBytes. Zero stride uses the **full
+  resource** width, not the transfer box width.
+- An explicit nonzero layer stride must cover `rowStride × box.height`. Zero uses
+  `rowStride × resource.height`.
+- `footprintBytes = (box.height - 1) × rowStride + rowBytes`; there is no unused
+  trailing padding after the final row.
+- `requiredEnd = offset + footprintBytes` must fit the attached IOV sum.
+- `tightBytes = rowBytes × box.height` is the GPU upload/readback byte count.
+
+Gather and scatter preserve row padding and bytes outside the validated footprint.
+They cross segment boundaries without assuming one backing segment or page-sized
+logical resources. All box/stride/IOV arithmetic is validated before touching
+bytes. Readback first succeeds into private tight scratch, then writes only the
+validated rows, so a failed backend read does not partially publish guest bytes.
+
+TRANSFER3D uses the primary resource's attached backing. COPY_TRANSFER3D always
+uses the secondary **staging** resource's backing: flags 1 reads it for upload,
+flags 3 writes it for readback. Both resources must belong to the context. The
+pinned read-from-host copy also requires primary resource backing to remain
+attached, although the target bytes go to staging. The GPU resource's storage
+and all backing/membership/context identities are captured during prepare, including
+the primary backing's absence when an upload does not need it. Attaching, detaching
+or replacing even that otherwise unused backing invalidates the prepared ticket.
+
+A prepared ticket is not an already-accepted fenced GPU operation. Revoking any
+captured attachment or identity makes it stale before the first GPU/backing write.
+Detaching and reattaching the same IDs creates a new membership/backing identity;
+destroying and recreating a context or resource creates a new generation. Changing
+backing **contents** after prepare is allowed: uploads use their prior snapshot.
+Actual queue acceptance/fence completion and guest reset epochs are later tasks.
+
+Storage leases are trusted host ownership objects, not guest handles. They remain
+usable for readback after lookup, backing or context removal until explicitly
+released or disposed. The factory returns `{ok:true,store,bindings}`. Its separate
+trusted `bindings.resolve(lease)` capability returns
+`{ok:true,metadata,generation,role,storage}` for a live opaque lease, including
+retained unpublished storage. Foreign, forged and released leases fail. The
+native backend descriptor is available only through this trusted capability;
+ordinary store operations expose no raw GL handles. The state executor in
+`state.mjs` owns its surface/view and vertex/index leases and releases each when
+its owning object or binding dies. State and resource context lifetimes remain
+separate; see `state-README.md`.
+
+## Backend contract and WebGL state
+
+The trusted host backend interface is:
+
+```js
+{
+  maxTextureSize,
+  allocate(normalizedMetadata),                 // returns storage
+  destroy(storage),
+  upload(storage, normalizedMetadata, layout, tightBytes),
+  readback(storage, normalizedMetadata, layout), // owned Uint8Array
+  dispose()
+}
+```
+
+Normalized metadata adds `kind,byteLength`. `allocate` is never called for staging.
+Host backend methods may throw; the store reports `backend-error`. A backend that
+throws during allocation must delete its unpublished allocation itself. The real
+WebGL backend does this, and store allocation failure publishes no resource or
+GPU budget charge. Readback must return a new owned non-shared byte array of
+exactly `layout.tightBytes`; short results fail before any backing scatter.
+A deterministic memory backend is useful for ownership/arithmetic tests, but is
+not GPU execution evidence.
+
+The real backend's allocation descriptors are shallow-frozen
+`{kind:"buffer",buffer:WebGLBuffer}` or `{kind:"texture",texture:WebGLTexture}`.
+A trusted acceptance wrapper around `allocate` can independently inspect these
+handles through GL; the resource store never returns them through its public API.
+
+Index buffers first bind to ELEMENT_ARRAY_BUFFER on a private VAO. Vertex buffers
+first bind to ARRAY_BUFFER. Later upload/readback uses COPY_WRITE_BUFFER and
+COPY_READ_BUFFER, preserving WebGL2's permanent element-versus-other-data buffer
+classification. Textures use immutable single-level RGB8, RGBA8 or RGB10_A2
+texStorage2D, tightly packed texSubImage2D uploads, and readPixels from a private
+read framebuffer. Guest format2 B8G8R8X8 becomes RGB8 with implicit sampled and
+destination alpha one. Format233 B10G10R10X2 becomes RGB10_A2 with all10 color
+bits preserved and actual stored alpha3; initialization clears alpha to one,
+and the state executor masks subsequent alpha writes. Guest X bits are ignored
+on upload and canonicalized to all ones on readback. RGBA8 alpha is unchanged.
+Guest rows and GPU/PBO/scratch budgets remain four bytes per pixel for every
+format, even when RGB8's native upload has three components.
+
+Channel conversion uses the store's private dense scratch in place. Packed
+guest words are explicitly little endian; GL uses native Uint32Array packed
+RGBA/UNSIGNED_INT_2_10_10_10_REV, including PBO collection. Readback performs the
+inverse conversion before returning guest bytes. A staged read retains its own
+format and storage generation, so reusing a public ID for another format cannot
+reinterpret an older pending read. No second CPU image or GPU shadow is added.
+No CPU shadow is used as a readback oracle.
+
+Required format16 uses immutable DEPTH_COMPONENT16, DEPTH_COMPONENT/
+UNSIGNED_SHORT upload and explicit little-endian guest16-bit words. Its only
+measured guest role is a depth surface; color attachment, guest sampler view
+and scanout roles reject. Format17 Z32_UNORM is rejected: DEPTH_COMPONENT32F
+would change normalized integer semantics. No stencil format is admitted.
+
+WebGL2 does not expose depth readPixels. A private fixed host shader samples
+the actual depth image with texelFetch, reconstructs UN16 with binary32 highp,
+and packs its low/high bytes into RG of a region-sized temporary RGBA8 image.
+The backend rejects fragment precision below23 bits. Readback compacts this
+owned RGBA scratch in place, preserving explicit little endian; it has no CPU
+depth mirror or persistent GPU shadow. The returned dense view retains its
+charged four-byte-per-pixel buffer. Upload scratch is two bytes per pixel;
+sync read reserves four CPU scratch plus four temporary GPU bytes per pixel.
+Async read reserves four CPU scratch plus eight GPU bytes per pixel for the
+conversion image and PBO, conservatively until release. These reservations
+precede native allocation, and failure/revocation/disposal releases them.
+The fixed packing program is lazy, bounded and deleted with the backend.
+
+The mapping follows the [GLES3 specification](https://registry.khronos.org/OpenGL/specs/es/3.0/es_spec_3.0.pdf),
+sections2.1.6,3.7/table3.2 and4.3.2, and [WebGL2](https://registry.khronos.org/webgl/specs/latest/2.0/).
+
+Every transfer establishes its required state: PACK/UNPACK PBO bindings null,
+alignments one, row lengths/image heights/skips zero, unpack flipY/premultiply false,
+colorspace conversion NONE, and its own copy/texture/read-FBO binding. Texture
+operations choose texture unit zero; readback selects COLOR_ATTACHMENT0. The
+private FBO detaches its texture afterward, so it does not accidentally retain
+storage. The backend owns an isolated renderer context and does not restore
+external bindings. A future draw executor must establish its own complete state.
+Context loss and GL errors fail explicitly; no successful CPU fallback is returned.
+
+Error codes include `invalid-input,unsupported-resource,unsupported-command,
+invalid-transfer,out-of-bounds,limit-exceeded,resource-exists,context-exists,
+missing-resource,missing-context,missing-attachment,already-attached,missing-backing,
+invalid-ticket,stale-ticket,invalid-lease,disposed,backend-error`. An execute attempt
+consumes a valid ticket even when it fails; retry requires preparing fresh work.
+
+## Sources and acceptance
+
+The implementation follows pinned VirGL 1.3.0 commit
+`ca50e008863837e094747a69974dde3ae148aeaa`: `src/vrend_decode.c`
+`vrend_decode_transfer_common` and `vrend_decode_copy_transfer3d`, and
+`src/vrend_renderer.c` `vrend_resource_alloc_buffer`, `vrend_transfer_size` and
+`check_iov_bounds`. The renderer's default row stride is the full resource width;
+its backing footprint omits final-row padding. Staging uses guest backing only.
+WebGL's distinct buffer classes follow the
+[WebGL2 Buffer Object Binding rules](https://registry.khronos.org/webgl/specs/latest/2.0/#5.1).
+
+Run `make verify-E6-T12b` for source-hashed recorded acceptance. Original upload
+inputs are capture snapshots 156/157/160 only; later snapshots containing renderer
+readback are comparison evidence, never replay inputs. The original resources
+have 4,188 logical GPU bytes and 1,064,960 attached backing bytes. Transfer proof
+covers the 64-byte vertex buffer, 12-byte u16 index buffer and 16-byte texture via
+actual GL readback, independent layout/SG/lifetime/poison cases, and a final clean
+clone. It does not claim replaying the scene's draws or speeding up guest graphics.
+
+`make verify-E6-T12g2` additionally executes G1's unchanged selected kmscube and
+original es2gears color creates/surfaces and kmscube's CPU RGBA upload. Independent
+hardware sampling, physical attachment pixels and inverse sync/async guest bytes
+cover all three formats with literal non-symmetric inputs, varying X bits,
+odd split rows, copy staging, generation reuse and byte-budget pressure. A
+synthetic tiny-scene variant checks destination-alpha and source-alpha blending;
+the complete unchanged RGBA scene remains a regression. Deliberate channel and
+destination-alpha source faults must fail on independent physical pixels. This
+proves isolated color storage, not full gears replay, sampler-view specialization,
+guest execution, live capsets or a MIPS improvement.
+
+`make verify-E6-T12g3` proves the unchanged original es2gears Z16 create and
+SURFACE packet at4425/5115, with independently observed16-bit depth attachment.
+Synthetic uploads cover all65536 encodings through a separate RGBA32F sampling
+oracle, adjacent-depth LESS occlusion, inverse GPU bytes, odd split rows,
+partial regions, copy staging, PBO schedules, retained generations, revocation,
+exact quotas and host-allocation failures. A byte-order source fault must fail
+on normalized GPU samples. The affected decoder/resource/state/draw/async/color
+gates and final pristine clone are included. Original depth upload/draw is not
+claimed: the capture has no CPU depth upload, and guest depth framebuffer/DSA
+execution remains E6-T12h. Production offload negotiation stays disabled.
+
+`make verify-E6-T12g4` admits immutable exact-matching color sampler views2/67/233
+with RGBA/ZERO/ONE selectors. Views share the existing native storage and leases;
+the renderer owns bounded fragment shader variants, with no extra view images
+or CPU shadows. Physical swizzle/filter/alpha oracles retain these color/depth
+transfer gates. Depth views and mip/layer/cube families remain unsupported.
+
+Inline uploads need context membership and GPU storage, without guest backing.
+Their dwords are owned data records; a dense scratch reservation is made before
+allocation or upload. The bounded payload contains exactly the strided footprint
+rounded up to a dword (up to three ignored terminal alignment bytes). Row stride0
+means the full resource width in guest bytes, including partial boxes; layer
+stride0 means the full resource height. Dense repacking skips guest row padding.
+Inline writes never modify guest backing and pending inline tickets bind resource
+and membership generations, independently of unrelated backing changes.
+
+
+## Host-selected multilevel 2D storage
+
+`createStandardTextureResourceStore` and `computeStandardTextureTransferLayout`
+extend the original buffer owner with existing color formats2/67/233 and bounded
+2D mip chains. `decodeStandardTextureSubmission` admits original op9/43/45 level
+words0..14; each resource still bounds the actual selected level. Dimensions round
+down per mip, with a minimum of one, and GPU charges sum every allocated level.
+Selected default strides use the full selected level dimensions. `mip-texture`
+metadata includes frozen `levels` and cannot pass historical view/draw/scanout
+kind checks. Transfers allocate no CPU image mirror; reads use the selected native
+FBO/PBO level and existing fences/identity retirement. Packed X-alpha initializes
+each native level. Historical factories retain their previous admissions and
+metadata/layout shapes. This storage facet grants no full/subrange sampler view,
+complete API, production negotiation or actual guest rendering by itself.
+
+The explicit `createStandardImageResourceStore` host facet adds original 2D view
+ranges and surface planes to the verified multilevel store. Its separate
+`imageAccess` capability owns opaque view and completion tokens. A restricted
+range has a fully charged private immutable GPU chain, refreshed before each
+active draw by identical-format, unscaled native framebuffer blits. A complete
+range may alias its retained source. Public token retirement and allocation
+retirement are distinct: submitted holds keep private/source storage charged
+through the job fence. Caller scissor and read/draw FBO state are restored; no CPU
+image feeds native output. Old factories expose no image capability.
+
+`decodeStandardImageSubmission` and `createVirglStandardImageAsyncRenderer`
+select original view first/last and surface level words. Both shader stages can
+retain different ranges of one source. Logical feedback rejects an overlapping
+original framebuffer plane even when a view uses a private copy. Nonoverlapping
+original levels can render into another plane. Z16 remains level zero; matching
+depth dimensions are checked against the selected color plane. Native base/max
+state restores explicitly, and views/surfaces retain native allocations until
+completion, cancellation or disposal. This isolated host API does not qualify
+production capsets, a complete guest API or the production worker/scanout path.
+
+
+### Original byte color images
+
+`createStandardColorTransferBackend`, `createStandardColorResourceStore`,
+`computeStandardColorTransferLayout`, `decodeStandardColorSubmission`, and
+`createVirglStandardColorAsyncRenderer` select the byte color boundary explicitly.
+The preceding factories keep their admissions and result shapes. The color store
+requires its matching native backend, including actual `EXT_render_snorm` support
+for private signed image copies and readback. Signed-normalized images support
+original sampler roles here; their original render bindings and surfaces reject.
+UNORM and sRGB images support both sampler and render roles.
+
+The immutable original format descriptor preserves each guest channel order and
+logical pixel size. New metadata reports `pixelBytes`, logical `byteLength`, and
+physical `gpuByteLength`, including every mip. Guest boxes, backing offsets and
+row pitches always use logical bytes. RGB SNORM and RGB sRGB use complete RGBA
+native storage with alpha initialized to one. All implicit-alpha render formats
+mask destination alpha writes. Allocation and private-view budgets charge the
+physical storage; uploads reserve enough scratch for any expansion. Expansion
+walks backwards in that same reservation. Readback uses native RGBA bytes and
+compacts them to the original guest order in the same reservation; R/RG images
+therefore reserve four bytes per read pixel, including their staged PBO.
+
+Native normalized sampling supplies missing zero/one channels. Native sRGB
+textures decode before filtering, and native sRGB targets encode linear clears,
+draws and blending. CPU transfers carry encoded bytes. Signed `-128` and `-127`
+represent the same normalized endpoint; normalized readbacks and GPU copies may
+canonicalize that duplicate encoding. No CPU texture shadow or store revision
+substitutes for the actual native image when refreshing a restricted mip view.
+This boundary supplies no complete guest API, positive capset, production guest
+initialization, scanout, deployment or throughput authority.
+
+### Original floating depth storage
+
+`createStandardFloatingDepthResourceStore`,
+`createStandardFloatingDepthTransferBackend`, and
+`computeStandardFloatingDepthTransferLayout` explicitly select Z32_FLOAT (18)
+and Z32_FLOAT_S8X24_UINT (126). Original 2D depth, sampler and combined bindings
+are 1, 8 and 9. Bounded full/truncated NPOT mip chains, strided segmented input,
+partial mip boxes and retained native ranges preserve original level identities.
+Historical owners and layouts continue rejecting these formats; Z16 keeps its
+original one-level depth binding. No new command/shader consumer or production
+device selects this storage profile.
+
+Format 18 owns native DEPTH_COMPONENT32F at four bytes per pixel. Format 126
+owns DEPTH32F_STENCIL8 plus a persistent pixel-unpack buffer, charged together
+at sixteen bytes per pixel before allocation. Original input remains eight
+bytes: little endian F32, stencil UP8 and unused X24. The numeric-offset PBO
+upload obeys WebGL's restriction on packed depth/stencil ArrayBufferViews.
+Finite depth follows GLES clamping to [0,1]. Signed zero and denormals retain
+only their defined alternatives; nonfinite fields have bounded raw custody,
+without a payload/value guarantee. Public X24 padding is canonical zero.
+
+Readback packs native float bits on the GPU. Packed stencil uses a cropped
+matching-format native blit and actual fixed-function masked tests into a
+separate byte plane. CPU work interleaves those downloaded fields only after
+completion; it never mirrors or rasterizes the texture. Read scratch is four
+bytes/pixel for 18 and sixteen for 126. Conversion textures cost four and
+sixteen; queued native read PBOs cost four and eight, so total staging charges
+are eight and twenty-four respectively. Every private 126 range includes its
+own upload-buffer charge. Matching-format NEAREST depth/stencil copies preserve
+fields through GPU-only changes, old generations and completion holds.
+
+Packing restores caller program, VAO, framebuffers, viewport, texture/sampler
+parameters, depth/stencil state, blend and color mask. With indexed draw buffers
+it changes output zero only, preserving other outputs without relying on an
+unavailable enabled-state query. Cancellation, native failure, disposal and ID
+reuse release each owned allocation once. `make verify-E6-T11d39` records full
+original/native/public inputs, varied physical schedules, independent field
+inverses, completed native corruption controls and governing V8 partitions.
+Real guest Mesa initialization, shadow/surface consumers, capabilities, demo
+deployment and throughput remain later qualifications.
+
+E6-T11d55 separately selects `createStandardDimensionalResourceStore`,
+`createStandardDimensionalTransferBackend` and
+`decodeStandardDimensionalSubmission`. Original RGBA8 volume (target3), cube
+(target4, six square faces) and 2D array (target7) owners use actual immutable
+WebGL2 storage. Volume mip depth shrinks; cube faces and array layers stay fixed.
+The selected owner preserves original render/sampler roles and creation hints,
+clamps separate dimensions/layers to measured host limits and charges every mip
+against the existing 4MiB resource/transfer and 32MiB aggregate budgets.
+
+Original op9/43/45 transfers preserve x/y/z, row stride, layer stride, odd public
+offsets, split SG backing and synchronized staging-copy directions. Reads use
+layer/face framebuffer attachments and either native byte output or a fenced
+PBO. GPU-only overwrites supply the inverse oracle; no CPU image mirror exists.
+`make verify-E6-T11d55` records the affected historical paths, three hardware
+schedules, literal full-byte inverses, failure cleanup, native layer sabotage
+and finest changed V8 regions. Historical constructors and dimensional
+sampler/surface/scanout admission remain separately gated. Native transport,
+production capability negotiation and Linux guest rendering are later work.

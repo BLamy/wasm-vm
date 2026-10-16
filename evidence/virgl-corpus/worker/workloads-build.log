@@ -1,0 +1,11 @@
+{
+  "status": "built",
+  "manifest": "/capture/workloads/build-manifest.json",
+  "binaries": {
+    "bin/virgl-textured-scene": "0269773877ca07cf4e47172dac98cf118de14a7c8e5bbbce4960b7af6d842a07",
+    "bin/virgl-textured-scene-sabotage": "35413b4a3bd5a526de67451ce19e9076b9b3115165ad37ae2571ca6a9f1809de",
+    "bin/kmscube": "f1f72ba1b97b6f84647acc9510efa4a1623ae24c769716406605d7895842bc21",
+    "usr/bin/glmark2-es2-drm": "29ede1436f66186a7e9cc3f496047e9bb7d369a693b14b4827dfe460ce3475db",
+    "usr/bin/glmark2-es2-wayland": "8cf379b25c39c0aae9adc9d986b7b51c94b994ff6cd50d9998699bc4ea54bca3"
+  }
+}

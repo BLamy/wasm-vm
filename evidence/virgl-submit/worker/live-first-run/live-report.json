@@ -1,0 +1,22 @@
+{
+  "task": "E6-T11b2",
+  "status": "failed",
+  "gitHead": "f0f125fd0578a22ce08c4bc255ca63708c6e6566",
+  "url": "https://wasm-vm.pages.dev/app.html?noAutoBoot&testHooks=1",
+  "deploymentUrl": "https://81fe5427.wasm-vm.pages.dev",
+  "errors": [
+    "Failed to load resource: the server responded with a status of 404 ()"
+  ],
+  "startedAt": "2026-10-03T06:36:24.894Z",
+  "expectedWasmSha256": "0b926d93b2ef3de3092dc54184e7f6becd9509d0eaf63c8aa7b363a399b58eb8",
+  "actualWasmSha256": "0b926d93b2ef3de3092dc54184e7f6becd9509d0eaf63c8aa7b363a399b58eb8",
+  "proofExportAbsent": true,
+  "passed": 127,
+  "failed": 0,
+  "failure": {
+    "message": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n+ [\n+   'Failed to load resource: the server responded with a status of 404 ()'\n+ ]\n- []\n",
+    "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n\n+ [\n+   'Failed to load resource: the server responded with a status of 404 ()'\n+ ]\n- []\n\n    at file:///Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-submit/worker/verify-live.mjs:28:71"
+  },
+  "finishedAt": "2026-10-03T06:36:41.343Z",
+  "deployLogSha256": "b8325056c6d8c365a8ff6270a4bb5deb239c7ea31b1c1f69e385a281e7292b7f"
+}

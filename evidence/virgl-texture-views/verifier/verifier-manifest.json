@@ -1,0 +1,23 @@
+{
+  "schema": "virgl-texture-view-verifier-seal-v1",
+  "task": "E6-T12g4",
+  "verdict": "verified",
+  "sourceHead": "7b4fbb11b3d386319b7050d7fc1e0442494d4f68",
+  "base": "96d6b83fcde1765fc5e931a95808629f78d37b60",
+  "workerArchiveSha256": "de6d0334fed7059bb9af7dfaa5bd52ed2531089091ef1ce74e65970bb0789830",
+  "records": 20,
+  "archive": {
+    "path": "verifier-recording.tar.gz",
+    "bytes": 274237,
+    "sha256": "5f2642a4f78ce6821d36efcc7a55d2f31c7b6ccd1b0a2abcb3bd4086c3fde6f3"
+  },
+  "recordIndex": {
+    "path": "verifier-records.json",
+    "bytes": 2970,
+    "sha256": "a36f83f4b28b8fceb1af613e735ecbfe3fc00144dd39e3ba7505fc6a059007ef"
+  },
+  "verdictSha256": "ba5a6b4845111e757f13dc64d7ccddf8cb47056d15980ba6948784fa37751e7a",
+  "predictionResultsSha256": "3a271bf9a55f5d2963cc987aa99d3f2aeb18158e03235e99731f29c8e94b54d8",
+  "novelReportSha256": "6c64eb942da5efb9cb3f07811273d9525b48ba67cbf2a6ef81012522f7f78bd0",
+  "faultReportSha256": "dc7801e9a5c449274bf2fa37afafd4b2c07a5ed9b5f68976333781693930a53b"
+}

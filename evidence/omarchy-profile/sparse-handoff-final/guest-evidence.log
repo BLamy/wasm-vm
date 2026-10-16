@@ -1,0 +1,69 @@
+[INFO]: 🎯  Checking for the Wasm target...
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.08s
+[INFO]: ⬇️  Installing wasm-bindgen...
+[WARN  wasm_pack::install] could not download pre-built `wasm-bindgen`: no prebuilt wasm-bindgen binaries are available for this platform: Unrecognized target!. Falling back to `cargo install`.
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests/jit_sparse_handoff.rs (/Users/blamy/.codex/worktrees/emulator-speed-next/wasm-vm/target/wasm32-unknown-unknown/debug/deps/jit_sparse_handoff-d8ae1a4f9ed0f998.wasm)
+running 3 tests
+Invoking test: core_jit_sparse_handoff::sparse_handoff_matches_full_array_oracle
+test core_jit_sparse_handoff::sparse_handoff_matches_full_array_oracle ... ok
+Invoking test: core_jit_sparse_handoff::disjoint_rotated_masks_compose_without_losing_same_value_stamps
+test core_jit_sparse_handoff::disjoint_rotated_masks_compose_without_losing_same_value_stamps ... ok
+Invoking test: compiled_sparse_and_dense_resumes_match_recorded_interpreter
+HANDOFF_GUEST regs=[0] budget=0 total=0 trace=cbf29ce484222325 state=21b95f864bbd516a9b568d8b37a03c8b31ff67144ab684c6ce408747fc0371a9
+HANDOFF_GUEST regs=[0] budget=1 total=1 trace=b376c5b6ab462d44 state=7c1d1ebbd5172bf6240de077b4a7390c306f0099ca0eb822e24294ce6c31f507
+HANDOFF_GUEST regs=[0] budget=2 total=3 trace=c87761f0d5667e04 state=d50ba74e37a890fc897c7cc60695a172a371aa7cf11cd6a707b934c4b8b8cac8
+HANDOFF_GUEST regs=[0] budget=3 total=6 trace=1242b9935c27fee5 state=fa09467ca7e580ba130b76246ef063a10ee94f1b3a3fcdaea066a221d4341b06
+HANDOFF_GUEST regs=[0] budget=31 total=37 trace=2836868f1607cc44 state=863071b5ab770c3cffd4ef2afd8174aed8c8b643d2685dc949ddefd5cc144f7d
+HANDOFF_GUEST regs=[0] budget=127 total=164 trace=531410046ebcf225 state=dbbfd05163d821dd9f08ad3f3865df03fb40b018e332c5093c632191794a8f3f
+HANDOFF_GUEST regs=[0] budget=128 total=292 trace=43aed50e01249225 state=243e48c0d4db342a5e406d94f39328dc7b9470f79644301c8592ef84e6da30d3
+HANDOFF_GUEST regs=[0] budget=129 total=421 trace=28c2c010749cac44 state=bb090e3669a1eaa42c95b821377fb67a8ede719985b5205cc912fe693115ab2d
+HANDOFF_GUEST regs=[0] budget=4096 total=4517 trace=1856b8968170ac44 state=6a83fdd220db2f6aaaaf41f85665e088dfdf1e5ca4b837b27751063bb0c8b67e
+HANDOFF_GUEST regs=[0] budget=4097 total=8614 trace=a28479ffeba6d6e5 state=059efd386a08020b3729f6433b645b6056590d4fd904917c773f2d1b6e366ccf
+HANDOFF_COMPILED regs=[0] blocks=69
+HANDOFF_GUEST regs=[31] budget=0 total=0 trace=cbf29ce484222325 state=346d2661d1d9fcc6c2b7658cff6a451896b6091452b65d126261f29c9bc12827
+HANDOFF_GUEST regs=[31] budget=1 total=1 trace=6e9f25cfb69ce9a0 state=179c3ba595d6e6d78cc56fe8e4706654460c3d827c923706d4f99084f1af4da1
+HANDOFF_GUEST regs=[31] budget=2 total=3 trace=732bd82ffe7831c7 state=80ad35b1eb11af1d2dda57b0850239027c27f2ea98c1caa84a7d0022dc9a95a2
+HANDOFF_GUEST regs=[31] budget=3 total=6 trace=2cf09c5225c4e776 state=717e0498551716ab83121fc92b2a69f17ad500024be7660b9b3aac4e31aed5d2
+HANDOFF_GUEST regs=[31] budget=31 total=37 trace=f2f69d3b5a05ed3b state=d375abc6ffbdde75b45a837d4d1145b667444d6e8e576344aa04eef927e67d12
+HANDOFF_GUEST regs=[31] budget=127 total=164 trace=bf9e9b94b4ebed82 state=ef6778ad042f525e86f32e05927a86dc2a096915944c8aa8486a5ca5c50c41e2
+HANDOFF_GUEST regs=[31] budget=128 total=292 trace=417c1da7006ede42 state=2597ba4f0c1916172aee9f299c96de7eaa0b2d9b38334c9e3cb82916bd3d97e7
+HANDOFF_GUEST regs=[31] budget=129 total=421 trace=399e93b2fb8f5fbb state=f907f97987a042addf8cf54647071ba3a8663a26a7253fd75bec6351bcb258b1
+HANDOFF_GUEST regs=[31] budget=4096 total=4517 trace=17f9832a93893fbb state=f1fba1e4532d7bef8bf5ff60727ab23f59ac2cded93aaff0d060c4de0c881157
+HANDOFF_GUEST regs=[31] budget=4097 total=8614 trace=31d16c87c0807df6 state=a9592b0d6965395a1ddfe4a2b9ac02ff59922ebe055baee311330379f8a373b5
+HANDOFF_COMPILED regs=[31] blocks=69
+HANDOFF_GUEST regs=[1, 7, 31] budget=0 total=0 trace=cbf29ce484222325 state=30b459c875a244b9724c0143c1d20c22e1b10f0487ca9599f2f361edcbd87582
+HANDOFF_GUEST regs=[1, 7, 31] budget=1 total=1 trace=a2ae14e0ebfcfc20 state=6d02c0ad19c122cff2c1030453ff6cd2c4351c255b4f61df67fb5ed33a365791
+HANDOFF_GUEST regs=[1, 7, 31] budget=2 total=3 trace=df3453ac31cd3306 state=ca965f081e4ae9657ee19c304ba6f50d2136897e3bdd35601d5071ef24908847
+HANDOFF_GUEST regs=[1, 7, 31] budget=3 total=6 trace=0691c38fb58ef16f state=beb0776b63c1a89b76bd1a06d7d975fc0c4e475c27ccc050d27950abfc386d35
+HANDOFF_GUEST regs=[1, 7, 31] budget=31 total=37 trace=1cbb675db1ee1725 state=26a90e0b594e90dbbc9de4ba1a79df44d4501b5097fd0c80fb2f5d6b08528bed
+HANDOFF_GUEST regs=[1, 7, 31] budget=127 total=164 trace=22c7100427ca15bb state=29064e8020685f750391d4d98f608aecb6c9528ce43862c5baa85b88a4aedac3
+HANDOFF_GUEST regs=[1, 7, 31] budget=128 total=292 trace=0f4732e3992fcbfb state=8b1dbedda357cc148fc3881ba410d0d3e66b56745db4a57bf683d6c768aaacf1
+HANDOFF_GUEST regs=[1, 7, 31] budget=129 total=421 trace=76fef1be19832fc5 state=2a54e3b2ce1ed0573727014e07b933177f1cda423390e462d3145f6d12ee7f39
+HANDOFF_GUEST regs=[1, 7, 31] budget=4096 total=4517 trace=d33c65d618fb13c5 state=a0764a163dfe9b0b65c342a9b2aac580fdd7c87197a7fde0d236d9dec1ddb162
+HANDOFF_GUEST regs=[1, 7, 31] budget=4097 total=8614 trace=7d9a352100bbf53f state=ff070ca8295248d71fbae53c92744c8b5984a33224c5a8b0456ae2878293122d
+HANDOFF_COMPILED regs=[1, 7, 31] blocks=68
+HANDOFF_GUEST regs=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31] budget=0 total=0 trace=cbf29ce484222325 state=4abf4d412dcc01b6e81e8d2c6a106ca4fd970aa1d2d93b169c37aef2630ff941
+HANDOFF_GUEST regs=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31] budget=1 total=1 trace=a2ae14e0ebfcfc20 state=23f00a2088e635412bf5ea71067a9171eee9ce11ab1826fee4bf4b135ce3f8b0
+HANDOFF_GUEST regs=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31] budget=2 total=3 trace=0b2c3984692a59ba state=da1da13477b88521e062b62d596b8c23398154f211acfa5cb2a97ce94d6832fd
+HANDOFF_GUEST regs=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31] budget=3 total=6 trace=311dd53a0416c61f state=d5f44baed305005e68e59cb72794c5ec87694eb01e57acad45f9e85ad136c22c
+HANDOFF_GUEST regs=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31] budget=31 total=37 trace=6b0903b0e899b275 state=5667edcbc47b286591caaf4a63ce24d0689dbaaa25433d78e3b745e3d6094361
+HANDOFF_GUEST regs=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31] budget=127 total=164 trace=4964dda3bb799703 state=f99c02e48d9a953eb7ab6f451b8d5fe8575b7eea2e13b41f048dfa47d732ec9d
+HANDOFF_GUEST regs=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31] budget=128 total=292 trace=8656e82f1f1560c3 state=aa215e6c68fe409e83d45ab83d0f838fae43b6100697d3e7695d161b047e50c2
+HANDOFF_GUEST regs=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31] budget=129 total=421 trace=a0392131e8632161 state=555470808602caff324ebf8374b0d8d120d98a4a69a5ace51563114ceb114307
+HANDOFF_GUEST regs=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31] budget=4096 total=4517 trace=6c350ef0ba21c4e1 state=57acfd929cebf144b7aede77c51f3f61c2f25daed24d0400311c0359a1ed56b6
+HANDOFF_GUEST regs=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31] budget=4097 total=8614 trace=ef206970dc5ecd79 state=5372e139adcfbf9f28f5cfa6c80ab3b29231ba2c962de5ead7e4de6011257f2e
+HANDOFF_COMPILED regs=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31] blocks=67
+test compiled_sparse_and_dense_resumes_match_recorded_interpreter ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 filtered out; finished in 1.00s
+

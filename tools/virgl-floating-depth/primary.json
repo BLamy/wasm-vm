@@ -1,0 +1,104 @@
+{
+  "schema": "floating-depth-primary-inputs-v1",
+  "sources": [
+    {
+      "path": "tools/virgl-floating-depth/primary/webgl2.html",
+      "repository": "KhronosGroup/WebGL",
+      "revision": "eb040a77b1e1cde6b2ed11b120b83f4575c1f3e9",
+      "url": "https://raw.githubusercontent.com/KhronosGroup/WebGL/eb040a77b1e1cde6b2ed11b120b83f4575c1f3e9/specs/latest/2.0/index.html",
+      "bytes": 279941,
+      "sha256": "05da9e8c2110e7cf57a25944c96484fe139ab1225216adc2b4a778eea78499cd"
+    },
+    {
+      "path": "tools/virgl-floating-depth/primary/es-3.0.6.pdf",
+      "repository": "KhronosGroup/OpenGL-Registry",
+      "revision": "1a4e34ec3cb8346d71112ccd07036924c0627c87",
+      "url": "https://raw.githubusercontent.com/KhronosGroup/OpenGL-Registry/1a4e34ec3cb8346d71112ccd07036924c0627c87/specs/es/3.0/es_spec_3.0.pdf",
+      "bytes": 1528315,
+      "sha256": "7e831831595d3e44c267cc0a0d754f8c244cf3c8f5056f49a674f25fb9d5adeb"
+    },
+    {
+      "path": "tools/virgl-floating-depth/primary/texSubImage2D.xml",
+      "repository": "KhronosGroup/OpenGL-Refpages",
+      "revision": "a654c649a26064afadb94ff40c6292c86ad76d4b",
+      "url": "https://raw.githubusercontent.com/KhronosGroup/OpenGL-Refpages/a654c649a26064afadb94ff40c6292c86ad76d4b/es3.0/glTexSubImage2D.xml",
+      "bytes": 18975,
+      "sha256": "24ce23be94761b1373d68b28ff920d33c813ad6af9ffa1503621e59f5fda7ea1"
+    },
+    {
+      "path": "tools/virgl-floating-depth/primary/version.c",
+      "repository": "Mesa",
+      "version": "26.2.2",
+      "archiveSha256": "eeb29ca7e56cfaa8e8a79538dcf834e3b18e501c31bef5145e959ea437cc4216",
+      "url": "https://archive.mesa3d.org/mesa-26.2.2.tar.xz",
+      "archivePath": "mesa-26.2.2/src/mesa/main/version.c",
+      "bytes": 29380,
+      "sha256": "8d3fd4701b3ec44276fcc0bbd3cafecfcb026043c01b74d9ddf018d3a116a24b"
+    },
+    {
+      "path": "tools/virgl-floating-depth/primary/st_extensions.c",
+      "repository": "Mesa",
+      "version": "26.2.2",
+      "archiveSha256": "eeb29ca7e56cfaa8e8a79538dcf834e3b18e501c31bef5145e959ea437cc4216",
+      "url": "https://archive.mesa3d.org/mesa-26.2.2.tar.xz",
+      "archivePath": "mesa-26.2.2/src/mesa/state_tracker/st_extensions.c",
+      "bytes": 74811,
+      "sha256": "dbed39e3997c3fbc5e3a02c0fd6845cb43ab67f2c7972362ce20c225a24138ff"
+    },
+    {
+      "path": "tools/virgl-floating-depth/primary/virgl_screen.c",
+      "repository": "Mesa",
+      "version": "26.2.2",
+      "archiveSha256": "eeb29ca7e56cfaa8e8a79538dcf834e3b18e501c31bef5145e959ea437cc4216",
+      "url": "https://archive.mesa3d.org/mesa-26.2.2.tar.xz",
+      "archivePath": "mesa-26.2.2/src/gallium/drivers/virgl/virgl_screen.c",
+      "bytes": 42620,
+      "sha256": "6a78bf41561a59e440d814a31a392ee07a03cf54a367ca49cfe71086aa7e85a8"
+    },
+    {
+      "path": "tools/virgl-floating-depth/primary/u_format.yaml",
+      "repository": "Mesa",
+      "version": "26.2.2",
+      "archiveSha256": "eeb29ca7e56cfaa8e8a79538dcf834e3b18e501c31bef5145e959ea437cc4216",
+      "url": "https://archive.mesa3d.org/mesa-26.2.2.tar.xz",
+      "archivePath": "mesa-26.2.2/src/util/format/u_format.yaml",
+      "bytes": 80486,
+      "sha256": "f0fef33544456468def10d5dffc72a61e8b0e7acc599b700fc65366e6f495a10"
+    },
+    {
+      "path": "tools/virgl-floating-depth/primary/u_format_parse.py",
+      "repository": "Mesa",
+      "version": "26.2.2",
+      "archiveSha256": "eeb29ca7e56cfaa8e8a79538dcf834e3b18e501c31bef5145e959ea437cc4216",
+      "url": "https://archive.mesa3d.org/mesa-26.2.2.tar.xz",
+      "archivePath": "mesa-26.2.2/src/util/format/u_format_parse.py",
+      "bytes": 20503,
+      "sha256": "d523a751f6a3334f7cbe2e5bdede1065c3629390cdbbe98e5d41109e3cf63ebb"
+    },
+    {
+      "path": "tools/virgl-floating-depth/primary/u_format_pack.py",
+      "repository": "Mesa",
+      "version": "26.2.2",
+      "archiveSha256": "eeb29ca7e56cfaa8e8a79538dcf834e3b18e501c31bef5145e959ea437cc4216",
+      "url": "https://archive.mesa3d.org/mesa-26.2.2.tar.xz",
+      "archivePath": "mesa-26.2.2/src/util/format/u_format_pack.py",
+      "bytes": 28355,
+      "sha256": "a4a2510d443c84059d25f2346c521d28d503c1744b76b2aa3079198ecc33f2bc"
+    },
+    {
+      "path": "tools/virgl-floating-depth/primary/indexed-draw-buffers.xml",
+      "repository": "KhronosGroup/WebGL",
+      "revision": "eb040a77b1e1cde6b2ed11b120b83f4575c1f3e9",
+      "url": "https://raw.githubusercontent.com/KhronosGroup/WebGL/eb040a77b1e1cde6b2ed11b120b83f4575c1f3e9/extensions/OES_draw_buffers_indexed/extension.xml",
+      "bytes": 8593,
+      "sha256": "eab922bfe963db185870607cc56cd7d7ae4c616fdf7ccb385fd77421775b267c"
+    }
+  ],
+  "rules": {
+    "finiteDepth": "GLES3.0.6 sections 2.1.1 and 3.8.3: clamp depth to [0,1]; normal binary32 values are represented in D32F",
+    "undefinedInputs": "No NaN payload, nonfinite conversion or denormal retention guarantee; bounded raw custody only",
+    "unusedField": "Original X24 is canonical public zero padding",
+    "packedWebGL": "WebGL2 forbids packed depth/stencil ArrayBufferView; numeric-offset PBO overload is qualified physically",
+    "indexedState": "WebGL OES_draw_buffers_indexed omits isEnablediOES. Modify output zero only."
+  }
+}

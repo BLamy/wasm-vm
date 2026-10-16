@@ -1,0 +1,50 @@
+[
+  {
+    "url": "https://b32052cc.wasm-vm.pages.dev/pkg/wasm_vm_wasm_bg.wasm",
+    "status": 200,
+    "bytes": 1628023,
+    "sha256": "f8b40d93039a9bb454250df40592e8c1d62144cac600bdcd82ea74098d7bb516",
+    "head": "a3afda72c9a908b5a8809f0a2dc7fed11b4698a7",
+    "matchesCommittedDist": true
+  },
+  {
+    "url": "https://b32052cc.wasm-vm.pages.dev/roadmap.js",
+    "status": 200,
+    "bytes": 52251,
+    "sha256": "f4b647463e3be838359fad78b45451b07f1f40dd12fff9f8ab203b2725c1eb8d",
+    "head": "a3afda72c9a908b5a8809f0a2dc7fed11b4698a7",
+    "matchesCommittedDist": true
+  },
+  {
+    "url": "https://b32052cc.wasm-vm.pages.dev/tasks.json",
+    "status": 200,
+    "bytes": 3762875,
+    "sha256": "fd05915bd9d552889b40cee1ca5c3314d3b83b0a4c3ff9be695bca355455fe86",
+    "head": "a3afda72c9a908b5a8809f0a2dc7fed11b4698a7",
+    "matchesCommittedDist": true
+  },
+  {
+    "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm_bg.wasm",
+    "status": 200,
+    "bytes": 1628023,
+    "sha256": "f8b40d93039a9bb454250df40592e8c1d62144cac600bdcd82ea74098d7bb516",
+    "head": "a3afda72c9a908b5a8809f0a2dc7fed11b4698a7",
+    "matchesCommittedDist": true
+  },
+  {
+    "url": "https://wasm-vm.pages.dev/roadmap.js",
+    "status": 200,
+    "bytes": 52251,
+    "sha256": "f4b647463e3be838359fad78b45451b07f1f40dd12fff9f8ab203b2725c1eb8d",
+    "head": "a3afda72c9a908b5a8809f0a2dc7fed11b4698a7",
+    "matchesCommittedDist": true
+  },
+  {
+    "url": "https://wasm-vm.pages.dev/tasks.json",
+    "status": 200,
+    "bytes": 3762875,
+    "sha256": "fd05915bd9d552889b40cee1ca5c3314d3b83b0a4c3ff9be695bca355455fe86",
+    "head": "a3afda72c9a908b5a8809f0a2dc7fed11b4698a7",
+    "matchesCommittedDist": true
+  }
+]

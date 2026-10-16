@@ -1,0 +1,71 @@
+{
+  "schema": "E6-T11d16-fresh-verifier-predictions-v1",
+  "createdUtc": "2026-10-10T12:40:47.708398+00:00",
+  "preEvidenceInspection": true,
+  "root": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm",
+  "scopeBase": "e118e4c2ddf83b2641fcca267025b1a6ef8fdad9",
+  "scopeSubmission": "5dc84364",
+  "gitHead": "5dc84364bd5b9f05f71b60257db4f51351f2758c",
+  "predictions": [
+    {
+      "id": "P1",
+      "boundary": "custody and incremental sealing",
+      "prediction": "The archive SHA-256 is 25436c66b4a320aa7bd68d407d37cf8c675438047e1fb8f0160964504e601fe0, index SHA-256 is 8ea043b6586f2309d516e7d5f5ed6403ed413de7f8f6b4f16d317d031ff056b8; exactly 10656 regular members match unique indexed sizes/hashes. Hot/cold receipts bind head01988ea2625edab1669efefec3b7daecd52d64df; only the two sealing files differ at5535d247a43fd8a04183d8df4fc715a74b451055. Each final acceptance log is its receipt-hashed prefix plus the exact one confirmation line, no other bytes."
+    },
+    {
+      "id": "P2",
+      "boundary": "pristine environment and physical host",
+      "prediction": "Cold clone before/after status is empty, clone/source head equals runtime head, exit code0, inherited RUST/CARGO/NODE/compiler overrides scrubbed by the frozen script. Healthy and three fault browser records are headed, actual M4 Max Metal hardware without software flags, zero console/page/request errors, and source/served/generated/V8/blob digests match all archived records."
+    },
+    {
+      "id": "P3",
+      "boundary": "original token dimensions and admission",
+      "prediction": "For each VS/FS CONST[s][a..b], original token declaration slot=s, range=a..b. Direct reads slot0 ends511 allowed512 denied, user slots1/12 ends1023 allowed1024 denied, slot13 denied. Sparse7..1023 direct7 allowed6 denied. Duplicate user-bank declarations and overlapping dimensional/plain slot0 aliases denied before upstream allocation; nonoverlapping aliases preserve order and count max(last+1). Indirect dimensions and malformed extents denied."
+    },
+    {
+      "id": "P4",
+      "boundary": "native source and metadata",
+      "prediction": "Native, ASan/UBSan and Wasm complete responses match for all338 cases. User banks emit layout(std140) uniform VirglVSConsts/VirglFSConsts containing raw uvec4 vsconsts/fsconsts[count], vector stride16, offset0, count<=1024 (slot0<=512), byteLength=count*16. Dynamic offsets remain original signed Register.Index including +/-511 and +/-1023 in generated GPU expressions; vector OOB has native semantics, no certificate."
+    },
+    {
+      "id": "P5",
+      "boundary": "slot0 and format composition",
+      "prediction": "Identical full VS/FS sources under bufferZeroMask0/1/2/3 emit slot0 inline/block in the indicated stages, only with declared slot0. Four masks2/4/24/16 compose all four variants. Old stage/pair/typed/packed reject dimensional banks and remain byte-equal on accepted unchanged cases; old normalizers reject the new profile."
+    },
+    {
+      "id": "P6",
+      "boundary": "hardware direct words and native reflection",
+      "prediction": "All125 draws fence with signaled status and cleanup; all104716 complete pixels match independently constructed expectations. All four byte shifts preserve every raw NaN/sign/mantissa word across both stages and slots0..12. All active banks-zero3 native block count27; each user bank size16384 and member uvec4 size1024 stride16 offset0, slot0 size8192, separate VirglBlock size656 coordinate offset640. Reflected bindBufferRange offsets equal aligned requested offsets and storage contains full original words."
+    },
+    {
+      "id": "P7",
+      "boundary": "simultaneous banks and masks",
+      "prediction": "All-active-banks variants0/1/2/3 output every pixel[273,299,325,351], with native block counts25/26/26/27. All-four-format variants output[-0.75,11.5,10.75,8]. Unused-bank declarations survive compiler metadata with count1024/1 and may be retained/eliminated by native reflection."
+    },
+    {
+      "id": "P8",
+      "boundary": "hardware falsification and independent novel attack",
+      "prediction": "Each worker block-word/range-offset/slot-zero fault completes a real draw/fence before original pixel oracle mismatches. An independent bounded native attack will use a valid high-slot VS+FS dynamic index plus nonzero aligned ranges and independently chosen raw words; complete pixel values and reflection will match before deliberately altering a promoted expected word triggers a pixel-assertion failure after real draw/fence."
+    },
+    {
+      "id": "P9",
+      "boundary": "allocation ownership and fixed bounds",
+      "prediction": "All93 genuine stage/pair upstream/checker/calloc fail-sites return only ok/error and each exact healthy recovery equals baseline. Both caller sources mutate at first semantic allocation yet response equals owned original baseline. Actual exhausted16MiB Wasm yields allocation-failed then checker translation-error after one64KiB relief, and exact recovery after release; conservative optimized call-chain stack195072<262144."
+    },
+    {
+      "id": "P10",
+      "boundary": "strict facade and metadata",
+      "prediction": "Getter execution count0; request/selector/metadata malformed types, unknown fields, inherited fields, throwing proxies and mutation attacks reject or use owned snapshots. New block identity/stage/slot/count/offset/stride/size/profile rules enforce and returned metadata deep freezes; separate bridge memories recover independently."
+    },
+    {
+      "id": "P11",
+      "boundary": "full executable coverage",
+      "prediction": "Full LLVM regions/branches and complete V8 ranges, independently reexportable from bound native binaries/profiles and actual served source, demonstrate executable added hunks or identify precise defensive/unreachable/config waivers. Line samples alone will not establish coverage."
+    },
+    {
+      "id": "P12",
+      "boundary": "retained evidence scope",
+      "prediction": "Unchanged predecessor HELD proofs retain identical code/dependency/evidence digests. Affected standard669-case/129-frame, packed59-case/214-frame and integer48-case/348-frame gates pass at runtime head; unchanged production packets/resources are still unsupported and this verdict grants no production resource/capset/guest execution authority."
+    }
+  ]
+}

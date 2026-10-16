@@ -1,0 +1,3174 @@
+[
+  {
+    "path": "renderer/virgl-command/state.mjs",
+    "sha256": "75feb6234bcf0d6cace8989334e929bffc87b99b0e5989f833ea615caf3c5fa4",
+    "scripts": 6,
+    "lines": [
+      {
+        "line": 4,
+        "source": "import { parseConstantDomain, checkFiniteBank } from \"./constant-domain.mjs\";",
+        "maxMinimum": 1,
+        "maxCount": 1,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 1,
+            "maximum": 1
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/hardware/browser-coverage.json",
+            "minimum": 1,
+            "maximum": 1
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/hardware/browser-coverage.json",
+            "minimum": 1,
+            "maximum": 1
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/state/browser-coverage.json",
+            "minimum": 1,
+            "maximum": 1
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/draw/browser-coverage.json",
+            "minimum": 1,
+            "maximum": 1
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/flat-regression/browser-coverage.json",
+            "minimum": 1,
+            "maximum": 1
+          }
+        ]
+      },
+      {
+        "line": 264,
+        "source": "          object.constantDomain = unwrap(parseConstantDomain(translated.metadata, fields.stageName)).domain;",
+        "maxMinimum": 165,
+        "maxCount": 165,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 165,
+            "maximum": 165
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/hardware/browser-coverage.json",
+            "minimum": 66,
+            "maximum": 66
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/hardware/browser-coverage.json",
+            "minimum": 32,
+            "maximum": 32
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/state/browser-coverage.json",
+            "minimum": 24,
+            "maximum": 24
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/draw/browser-coverage.json",
+            "minimum": 22,
+            "maximum": 22
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/flat-regression/browser-coverage.json",
+            "minimum": 68,
+            "maximum": 68
+          }
+        ]
+      },
+      {
+        "line": 265,
+        "source": "          require(typeof translated.glsl === \"string\" && /^#version 300 es\\b/m.test(translated.glsl), \"shader-error\", \"Shader bridge returned incompatible output.\");",
+        "maxMinimum": 137,
+        "maxCount": 165,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 137,
+            "maximum": 165
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/hardware/browser-coverage.json",
+            "minimum": 66,
+            "maximum": 66
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/hardware/browser-coverage.json",
+            "minimum": 32,
+            "maximum": 32
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/state/browser-coverage.json",
+            "minimum": 24,
+            "maximum": 24
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/draw/browser-coverage.json",
+            "minimum": 22,
+            "maximum": 22
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/flat-regression/browser-coverage.json",
+            "minimum": 68,
+            "maximum": 68
+          }
+        ]
+      },
+      {
+        "line": 360,
+        "source": "            if (uploadCount) program.uniforms.push({ stage, uploadCount, location,",
+        "maxMinimum": 132,
+        "maxCount": 142,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 132,
+            "maximum": 142
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/hardware/browser-coverage.json",
+            "minimum": 58,
+            "maximum": 64
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/hardware/browser-coverage.json",
+            "minimum": 16,
+            "maximum": 16
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/state/browser-coverage.json",
+            "minimum": 9,
+            "maximum": 9
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/draw/browser-coverage.json",
+            "minimum": 11,
+            "maximum": 11
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/flat-regression/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          }
+        ]
+      },
+      {
+        "line": 361,
+        "source": "              conditional: (stage === 0 ? vertex : fragment).constantDomain !== null });",
+        "maxMinimum": 66,
+        "maxCount": 132,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 66,
+            "maximum": 132
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/hardware/browser-coverage.json",
+            "minimum": 27,
+            "maximum": 58
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/hardware/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 16
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/state/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 9
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/draw/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 11
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/flat-regression/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          }
+        ]
+      },
+      {
+        "line": 433,
+        "source": "    // Restoration also follows SET, CLEAR, binding changes and restoreContext.",
+        "maxMinimum": 51,
+        "maxCount": 51,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 45,
+            "maximum": 45
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/hardware/browser-coverage.json",
+            "minimum": 35,
+            "maximum": 35
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/hardware/browser-coverage.json",
+            "minimum": 51,
+            "maximum": 51
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/state/browser-coverage.json",
+            "minimum": 21,
+            "maximum": 21
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/draw/browser-coverage.json",
+            "minimum": 16,
+            "maximum": 16
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/flat-regression/browser-coverage.json",
+            "minimum": 17,
+            "maximum": 17
+          }
+        ]
+      },
+      {
+        "line": 434,
+        "source": "    // A partial/invalid conditional bank remains CPU state but is never uploaded.",
+        "maxMinimum": 51,
+        "maxCount": 51,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 45,
+            "maximum": 45
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/hardware/browser-coverage.json",
+            "minimum": 35,
+            "maximum": 35
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/hardware/browser-coverage.json",
+            "minimum": 51,
+            "maximum": 51
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/state/browser-coverage.json",
+            "minimum": 21,
+            "maximum": 21
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/draw/browser-coverage.json",
+            "minimum": 16,
+            "maximum": 16
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/flat-regression/browser-coverage.json",
+            "minimum": 17,
+            "maximum": 17
+          }
+        ]
+      },
+      {
+        "line": 435,
+        "source": "    const constantUploads = (program, banks, strict) => Object.freeze((program?.uniforms ?? []).flatMap((uniform) => {",
+        "maxMinimum": 51,
+        "maxCount": 3099,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 45,
+            "maximum": 3099
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/hardware/browser-coverage.json",
+            "minimum": 35,
+            "maximum": 591
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/hardware/browser-coverage.json",
+            "minimum": 51,
+            "maximum": 1066
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/state/browser-coverage.json",
+            "minimum": 21,
+            "maximum": 417
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/draw/browser-coverage.json",
+            "minimum": 16,
+            "maximum": 960
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/flat-regression/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 423
+          }
+        ]
+      },
+      {
+        "line": 436,
+        "source": "      const bank = banks[uniform.stage], count = uniform.uploadCount * 4;",
+        "maxMinimum": 2936,
+        "maxCount": 2936,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 2936,
+            "maximum": 2936
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/hardware/browser-coverage.json",
+            "minimum": 354,
+            "maximum": 354
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/hardware/browser-coverage.json",
+            "minimum": 408,
+            "maximum": 408
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/state/browser-coverage.json",
+            "minimum": 185,
+            "maximum": 185
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/draw/browser-coverage.json",
+            "minimum": 487,
+            "maximum": 487
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/flat-regression/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          }
+        ]
+      },
+      {
+        "line": 437,
+        "source": "      let words;",
+        "maxMinimum": 2936,
+        "maxCount": 2936,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 2936,
+            "maximum": 2936
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/hardware/browser-coverage.json",
+            "minimum": 354,
+            "maximum": 354
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/hardware/browser-coverage.json",
+            "minimum": 408,
+            "maximum": 408
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/state/browser-coverage.json",
+            "minimum": 185,
+            "maximum": 185
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/draw/browser-coverage.json",
+            "minimum": 487,
+            "maximum": 487
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/flat-regression/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          }
+        ]
+      },
+      {
+        "line": 438,
+        "source": "      if (uniform.conditional) {",
+        "maxMinimum": 2926,
+        "maxCount": 2936,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 2926,
+            "maximum": 2936
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/hardware/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 354
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/hardware/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 408
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/state/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 185
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/draw/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 487
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/flat-regression/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          }
+        ]
+      },
+      {
+        "line": 439,
+        "source": "        const checked = checkFiniteBank(bank, uniform.uploadCount);",
+        "maxMinimum": 2926,
+        "maxCount": 2926,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 2926,
+            "maximum": 2926
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/hardware/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/hardware/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/state/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/draw/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/flat-regression/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          }
+        ]
+      },
+      {
+        "line": 440,
+        "source": "        if (!checked.ok && !strict) return [];",
+        "maxMinimum": 66,
+        "maxCount": 2926,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 66,
+            "maximum": 2926
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/hardware/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/hardware/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/state/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/draw/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/flat-regression/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          }
+        ]
+      },
+      {
+        "line": 441,
+        "source": "        words = unwrap(checked).words;",
+        "maxMinimum": 2860,
+        "maxCount": 2860,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 2860,
+            "maximum": 2860
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/hardware/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/hardware/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/state/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/draw/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/flat-regression/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          }
+        ]
+      },
+      {
+        "line": 442,
+        "source": "      } else {",
+        "maxMinimum": 10,
+        "maxCount": 2860,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 10,
+            "maximum": 2860
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/hardware/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 354
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/hardware/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 408
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/state/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 185
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/draw/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 487
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/flat-regression/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          }
+        ]
+      },
+      {
+        "line": 443,
+        "source": "        if (strict) require(bank.length >= count, \"incomplete-draw\", \"Drawing requires every active constant word.\");",
+        "maxMinimum": 122,
+        "maxCount": 487,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 2,
+            "maximum": 10
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/hardware/browser-coverage.json",
+            "minimum": 112,
+            "maximum": 354
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/hardware/browser-coverage.json",
+            "minimum": 30,
+            "maximum": 408
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/state/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 185
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/draw/browser-coverage.json",
+            "minimum": 122,
+            "maximum": 487
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/flat-regression/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          }
+        ]
+      },
+      {
+        "line": 444,
+        "source": "        words = Object.freeze(Array.from({ length: count }, (_, index) => bank[index] ?? 0));",
+        "maxMinimum": 486,
+        "maxCount": 61096,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 10,
+            "maximum": 1840
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/hardware/browser-coverage.json",
+            "minimum": 337,
+            "maximum": 61096
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/hardware/browser-coverage.json",
+            "minimum": 408,
+            "maximum": 1632
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/state/browser-coverage.json",
+            "minimum": 185,
+            "maximum": 740
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/draw/browser-coverage.json",
+            "minimum": 486,
+            "maximum": 1944
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/flat-regression/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          }
+        ]
+      },
+      {
+        "line": 445,
+        "source": "      }",
+        "maxMinimum": 486,
+        "maxCount": 486,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 10,
+            "maximum": 10
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/hardware/browser-coverage.json",
+            "minimum": 337,
+            "maximum": 337
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/hardware/browser-coverage.json",
+            "minimum": 408,
+            "maximum": 408
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/state/browser-coverage.json",
+            "minimum": 185,
+            "maximum": 185
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/draw/browser-coverage.json",
+            "minimum": 486,
+            "maximum": 486
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/flat-regression/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          }
+        ]
+      },
+      {
+        "line": 446,
+        "source": "      return [Object.freeze({ uniform, words })];",
+        "maxMinimum": 2835,
+        "maxCount": 2835,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 2835,
+            "maximum": 2835
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/hardware/browser-coverage.json",
+            "minimum": 337,
+            "maximum": 337
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/hardware/browser-coverage.json",
+            "minimum": 408,
+            "maximum": 408
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/state/browser-coverage.json",
+            "minimum": 185,
+            "maximum": 185
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/draw/browser-coverage.json",
+            "minimum": 486,
+            "maximum": 486
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/flat-regression/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          }
+        ]
+      },
+      {
+        "line": 447,
+        "source": "    }));",
+        "maxMinimum": 51,
+        "maxCount": 3099,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 45,
+            "maximum": 3099
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/hardware/browser-coverage.json",
+            "minimum": 35,
+            "maximum": 591
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/hardware/browser-coverage.json",
+            "minimum": 51,
+            "maximum": 1066
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/state/browser-coverage.json",
+            "minimum": 21,
+            "maximum": 417
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/draw/browser-coverage.json",
+            "minimum": 16,
+            "maximum": 960
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/flat-regression/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 423
+          }
+        ]
+      },
+      {
+        "line": 448,
+        "source": "    const validateDrawPlan = (plan) => {",
+        "maxMinimum": 45,
+        "maxCount": 612,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 45,
+            "maximum": 612
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/hardware/browser-coverage.json",
+            "minimum": 35,
+            "maximum": 44
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/hardware/browser-coverage.json",
+            "minimum": 26,
+            "maximum": 51
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/state/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 21
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/draw/browser-coverage.json",
+            "minimum": 16,
+            "maximum": 109
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/flat-regression/browser-coverage.json",
+            "minimum": 17,
+            "maximum": 44
+          }
+        ]
+      },
+      {
+        "line": 449,
+        "source": "      const { ctx, sub, program, shaders, banks } = plan;",
+        "maxMinimum": 612,
+        "maxCount": 612,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 612,
+            "maximum": 612
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/hardware/browser-coverage.json",
+            "minimum": 44,
+            "maximum": 44
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/hardware/browser-coverage.json",
+            "minimum": 26,
+            "maximum": 26
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/state/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/draw/browser-coverage.json",
+            "minimum": 109,
+            "maximum": 109
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/flat-regression/browser-coverage.json",
+            "minimum": 44,
+            "maximum": 44
+          }
+        ]
+      },
+      {
+        "line": 450,
+        "source": "      require(context(ctx.id) === ctx && ctx.subs.get(sub.id) === sub && ctx.current === sub.id,",
+        "maxMinimum": 612,
+        "maxCount": 612,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 612,
+            "maximum": 612
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/hardware/browser-coverage.json",
+            "minimum": 44,
+            "maximum": 44
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/hardware/browser-coverage.json",
+            "minimum": 26,
+            "maximum": 26
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/state/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/draw/browser-coverage.json",
+            "minimum": 109,
+            "maximum": 109
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/flat-regression/browser-coverage.json",
+            "minimum": 44,
+            "maximum": 44
+          }
+        ]
+      },
+      {
+        "line": 451,
+        "source": "        \"stale-context\", \"Draw context or subcontext identity changed.\");",
+        "maxMinimum": 612,
+        "maxCount": 612,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 612,
+            "maximum": 612
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/hardware/browser-coverage.json",
+            "minimum": 44,
+            "maximum": 44
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/hardware/browser-coverage.json",
+            "minimum": 26,
+            "maximum": 26
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/state/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/draw/browser-coverage.json",
+            "minimum": 109,
+            "maximum": 109
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/flat-regression/browser-coverage.json",
+            "minimum": 44,
+            "maximum": 44
+          }
+        ]
+      },
+      {
+        "line": 452,
+        "source": "      require(sub.shaders.every((shader, stage) => shader === shaders[stage]) &&",
+        "maxMinimum": 612,
+        "maxCount": 1224,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 612,
+            "maximum": 1224
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/hardware/browser-coverage.json",
+            "minimum": 44,
+            "maximum": 88
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/hardware/browser-coverage.json",
+            "minimum": 26,
+            "maximum": 52
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/state/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/draw/browser-coverage.json",
+            "minimum": 109,
+            "maximum": 218
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/flat-regression/browser-coverage.json",
+            "minimum": 44,
+            "maximum": 88
+          }
+        ]
+      },
+      {
+        "line": 453,
+        "source": "        sub.programs.get(program.key) === program && programs.has(program) &&",
+        "maxMinimum": 612,
+        "maxCount": 612,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 612,
+            "maximum": 612
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/hardware/browser-coverage.json",
+            "minimum": 44,
+            "maximum": 44
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/hardware/browser-coverage.json",
+            "minimum": 26,
+            "maximum": 26
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/state/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/draw/browser-coverage.json",
+            "minimum": 109,
+            "maximum": 109
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/flat-regression/browser-coverage.json",
+            "minimum": 44,
+            "maximum": 44
+          }
+        ]
+      },
+      {
+        "line": 454,
+        "source": "        sub.constants.every((bank, stage) => bank === banks[stage]),",
+        "maxMinimum": 612,
+        "maxCount": 1224,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 612,
+            "maximum": 1224
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/hardware/browser-coverage.json",
+            "minimum": 44,
+            "maximum": 88
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/hardware/browser-coverage.json",
+            "minimum": 26,
+            "maximum": 52
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/state/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/draw/browser-coverage.json",
+            "minimum": 109,
+            "maximum": 218
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/flat-regression/browser-coverage.json",
+            "minimum": 44,
+            "maximum": 88
+          }
+        ]
+      },
+      {
+        "line": 455,
+        "source": "      \"stale-draw\", \"Draw shader, program or constant-bank identity changed.\");",
+        "maxMinimum": 612,
+        "maxCount": 612,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 612,
+            "maximum": 612
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/hardware/browser-coverage.json",
+            "minimum": 44,
+            "maximum": 44
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/hardware/browser-coverage.json",
+            "minimum": 26,
+            "maximum": 26
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/state/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/draw/browser-coverage.json",
+            "minimum": 109,
+            "maximum": 109
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/flat-regression/browser-coverage.json",
+            "minimum": 44,
+            "maximum": 44
+          }
+        ]
+      },
+      {
+        "line": 456,
+        "source": "    };",
+        "maxMinimum": 45,
+        "maxCount": 612,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 45,
+            "maximum": 612
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/hardware/browser-coverage.json",
+            "minimum": 35,
+            "maximum": 44
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/hardware/browser-coverage.json",
+            "minimum": 26,
+            "maximum": 51
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/state/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 21
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/draw/browser-coverage.json",
+            "minimum": 16,
+            "maximum": 109
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/flat-regression/browser-coverage.json",
+            "minimum": 17,
+            "maximum": 44
+          }
+        ]
+      },
+      {
+        "line": 457,
+        "source": "    const restore = (sub, plan = null) => {",
+        "maxMinimum": 51,
+        "maxCount": 3064,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 45,
+            "maximum": 3064
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/hardware/browser-coverage.json",
+            "minimum": 35,
+            "maximum": 574
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/hardware/browser-coverage.json",
+            "minimum": 51,
+            "maximum": 1062
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/state/browser-coverage.json",
+            "minimum": 21,
+            "maximum": 417
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/draw/browser-coverage.json",
+            "minimum": 16,
+            "maximum": 947
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/flat-regression/browser-coverage.json",
+            "minimum": 17,
+            "maximum": 423
+          }
+        ]
+      },
+      {
+        "line": 459,
+        "source": "      if (plan) validateDrawPlan(plan);",
+        "maxMinimum": 612,
+        "maxCount": 3064,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 612,
+            "maximum": 3064
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/hardware/browser-coverage.json",
+            "minimum": 44,
+            "maximum": 574
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/hardware/browser-coverage.json",
+            "minimum": 26,
+            "maximum": 1062
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/state/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 417
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/draw/browser-coverage.json",
+            "minimum": 109,
+            "maximum": 947
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/flat-regression/browser-coverage.json",
+            "minimum": 44,
+            "maximum": 423
+          }
+        ]
+      },
+      {
+        "line": 460,
+        "source": "      const program = plan ? plan.program : selectedProgram(sub);",
+        "maxMinimum": 612,
+        "maxCount": 3064,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 612,
+            "maximum": 3064
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/hardware/browser-coverage.json",
+            "minimum": 44,
+            "maximum": 574
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/hardware/browser-coverage.json",
+            "minimum": 26,
+            "maximum": 1062
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/state/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 417
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/draw/browser-coverage.json",
+            "minimum": 109,
+            "maximum": 947
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/flat-regression/browser-coverage.json",
+            "minimum": 44,
+            "maximum": 423
+          }
+        ]
+      },
+      {
+        "line": 461,
+        "source": "      const uploads = plan ? plan.uploads : constantUploads(program, sub.constants, false);",
+        "maxMinimum": 612,
+        "maxCount": 3064,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 612,
+            "maximum": 3064
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/hardware/browser-coverage.json",
+            "minimum": 44,
+            "maximum": 574
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/hardware/browser-coverage.json",
+            "minimum": 26,
+            "maximum": 1062
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/state/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 417
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/draw/browser-coverage.json",
+            "minimum": 109,
+            "maximum": 947
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/flat-regression/browser-coverage.json",
+            "minimum": 44,
+            "maximum": 423
+          }
+        ]
+      },
+      {
+        "line": 498,
+        "source": "        for (const upload of uploads) {",
+        "maxMinimum": 2218,
+        "maxCount": 2820,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 2218,
+            "maximum": 2820
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/hardware/browser-coverage.json",
+            "minimum": 170,
+            "maximum": 326
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/hardware/browser-coverage.json",
+            "minimum": 404,
+            "maximum": 404
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/state/browser-coverage.json",
+            "minimum": 185,
+            "maximum": 185
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/draw/browser-coverage.json",
+            "minimum": 474,
+            "maximum": 474
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/flat-regression/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 190
+          }
+        ]
+      },
+      {
+        "line": 499,
+        "source": "          const uniform = upload.uniform, words = new Uint32Array(upload.words);",
+        "maxMinimum": 2820,
+        "maxCount": 2820,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 2820,
+            "maximum": 2820
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/hardware/browser-coverage.json",
+            "minimum": 326,
+            "maximum": 326
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/hardware/browser-coverage.json",
+            "minimum": 404,
+            "maximum": 404
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/state/browser-coverage.json",
+            "minimum": 185,
+            "maximum": 185
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/draw/browser-coverage.json",
+            "minimum": 474,
+            "maximum": 474
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/flat-regression/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          }
+        ]
+      },
+      {
+        "line": 550,
+        "source": "      const banks = Object.freeze([...sub.constants]), shaders = Object.freeze([...sub.shaders]);",
+        "maxMinimum": 647,
+        "maxCount": 647,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 647,
+            "maximum": 647
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/hardware/browser-coverage.json",
+            "minimum": 61,
+            "maximum": 61
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/hardware/browser-coverage.json",
+            "minimum": 34,
+            "maximum": 34
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/state/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/draw/browser-coverage.json",
+            "minimum": 136,
+            "maximum": 136
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/flat-regression/browser-coverage.json",
+            "minimum": 44,
+            "maximum": 44
+          }
+        ]
+      },
+      {
+        "line": 551,
+        "source": "      const uploads = constantUploads(program, banks, true);",
+        "maxMinimum": 647,
+        "maxCount": 647,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 647,
+            "maximum": 647
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/hardware/browser-coverage.json",
+            "minimum": 61,
+            "maximum": 61
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/hardware/browser-coverage.json",
+            "minimum": 34,
+            "maximum": 34
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/state/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/draw/browser-coverage.json",
+            "minimum": 136,
+            "maximum": 136
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/flat-regression/browser-coverage.json",
+            "minimum": 44,
+            "maximum": 44
+          }
+        ]
+      },
+      {
+        "line": 573,
+        "source": "      return Object.freeze({ ctx, sub, command, fields, surface, attributes, index, indexStorage, indexOffset, indexByteLength,",
+        "maxMinimum": 612,
+        "maxCount": 612,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 612,
+            "maximum": 612
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/hardware/browser-coverage.json",
+            "minimum": 44,
+            "maximum": 44
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/hardware/browser-coverage.json",
+            "minimum": 30,
+            "maximum": 30
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/state/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/draw/browser-coverage.json",
+            "minimum": 118,
+            "maximum": 118
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/flat-regression/browser-coverage.json",
+            "minimum": 44,
+            "maximum": 44
+          }
+        ]
+      },
+      {
+        "line": 574,
+        "source": "        program, shaders, banks, uploads });",
+        "maxMinimum": 612,
+        "maxCount": 612,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 612,
+            "maximum": 612
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/hardware/browser-coverage.json",
+            "minimum": 44,
+            "maximum": 44
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/hardware/browser-coverage.json",
+            "minimum": 30,
+            "maximum": 30
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/state/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/draw/browser-coverage.json",
+            "minimum": 118,
+            "maximum": 118
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/flat-regression/browser-coverage.json",
+            "minimum": 44,
+            "maximum": 44
+          }
+        ]
+      },
+      {
+        "line": 599,
+        "source": "      restore(sub, plan);",
+        "maxMinimum": 612,
+        "maxCount": 612,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 612,
+            "maximum": 612
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/hardware/browser-coverage.json",
+            "minimum": 44,
+            "maximum": 44
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/hardware/browser-coverage.json",
+            "minimum": 26,
+            "maximum": 26
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/state/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/regression/regression/draw/browser-coverage.json",
+            "minimum": 112,
+            "maximum": 112
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/legacy/flat-regression/browser-coverage.json",
+            "minimum": 44,
+            "maximum": 44
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "path": "renderer/virgl-command/constant-domain.mjs",
+    "sha256": "4c647f5dd3beb07b0b9058b66549471515ab3302d5d1988e5fa7500643c1ba55",
+    "scripts": 2,
+    "lines": [
+      {
+        "line": 1,
+        "source": "/** Consumer contract only: no shader admission or guest transport is added here. */",
+        "maxMinimum": 1,
+        "maxCount": 1,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 1,
+            "maximum": 1
+          }
+        ]
+      },
+      {
+        "line": 2,
+        "source": "export const CONDITIONAL_PROFILE = \"virgl-webgl2-raw-bits-v7\";",
+        "maxMinimum": 1,
+        "maxCount": 1,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 1,
+            "maximum": 1
+          }
+        ]
+      },
+      {
+        "line": 3,
+        "source": "export const CONSTANT_DOMAIN_KIND = \"constant-bank-finite-f32-v1\";",
+        "maxMinimum": 1,
+        "maxCount": 1,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 1,
+            "maximum": 1
+          }
+        ]
+      },
+      {
+        "line": 4,
+        "source": "const UNCONDITIONAL_PROFILES = new Set([\"virgl-webgl2-straight-line-v5\",",
+        "maxMinimum": 1,
+        "maxCount": 1,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 1,
+            "maximum": 1
+          }
+        ]
+      },
+      {
+        "line": 5,
+        "source": "  ...[1, 2, 3, 4, 5, 6].map((version) => `virgl-webgl2-raw-bits-v${version}`)]);",
+        "maxMinimum": 1,
+        "maxCount": 6,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 1,
+            "maximum": 6
+          }
+        ]
+      },
+      {
+        "line": 6,
+        "source": "const METADATA_KEYS = [\"profile\", \"stage\", \"inputs\", \"outputs\", \"attributes\", \"uniforms\", \"samplers\", \"uniformBlocks\"];",
+        "maxMinimum": 1,
+        "maxCount": 1,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 1,
+            "maximum": 1
+          }
+        ]
+      },
+      {
+        "line": 7,
+        "source": "const DOMAIN_KEYS = [\"kind\", \"stage\", \"slot\", \"name\", \"count\"];",
+        "maxMinimum": 1,
+        "maxCount": 1,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 1,
+            "maximum": 1
+          }
+        ]
+      },
+      {
+        "line": 8,
+        "source": "class DomainFault extends Error {}",
+        "maxMinimum": 1,
+        "maxCount": 1,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 1,
+            "maximum": 1
+          }
+        ]
+      },
+      {
+        "line": 9,
+        "source": "function require(value, message) { if (!value) throw new DomainFault(message); }",
+        "maxMinimum": 119,
+        "maxCount": 552812,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 119,
+            "maximum": 21000
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 28,
+            "maximum": 552812
+          }
+        ]
+      },
+      {
+        "line": 10,
+        "source": "function descriptors(value) {",
+        "maxMinimum": 3707,
+        "maxCount": 3707,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 393,
+            "maximum": 393
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 3707,
+            "maximum": 3707
+          }
+        ]
+      },
+      {
+        "line": 11,
+        "source": "  try { return Object.getOwnPropertyDescriptors(value); }",
+        "maxMinimum": 3707,
+        "maxCount": 3707,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 393,
+            "maximum": 393
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 3707,
+            "maximum": 3707
+          }
+        ]
+      },
+      {
+        "line": 12,
+        "source": "  catch { throw new DomainFault(\"Unusable own data properties.\"); }",
+        "maxMinimum": 1,
+        "maxCount": 1,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 1,
+            "maximum": 1
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          }
+        ]
+      },
+      {
+        "line": 13,
+        "source": "}",
+        "maxMinimum": 3707,
+        "maxCount": 3707,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 393,
+            "maximum": 393
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 3707,
+            "maximum": 3707
+          }
+        ]
+      },
+      {
+        "line": 14,
+        "source": "function isArray(value) {",
+        "maxMinimum": 3709,
+        "maxCount": 3709,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 399,
+            "maximum": 399
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 3709,
+            "maximum": 3709
+          }
+        ]
+      },
+      {
+        "line": 15,
+        "source": "  try { return Array.isArray(value); }",
+        "maxMinimum": 3709,
+        "maxCount": 3709,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 399,
+            "maximum": 399
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 3709,
+            "maximum": 3709
+          }
+        ]
+      },
+      {
+        "line": 16,
+        "source": "  catch { throw new DomainFault(\"Unusable array identity.\"); }",
+        "maxMinimum": 2,
+        "maxCount": 2,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 2,
+            "maximum": 2
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          }
+        ]
+      },
+      {
+        "line": 17,
+        "source": "}",
+        "maxMinimum": 3709,
+        "maxCount": 3709,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 399,
+            "maximum": 399
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 3709,
+            "maximum": 3709
+          }
+        ]
+      },
+      {
+        "line": 18,
+        "source": "function record(value, allowed, required = allowed) {",
+        "maxMinimum": 471,
+        "maxCount": 471,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 178,
+            "maximum": 178
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 471,
+            "maximum": 471
+          }
+        ]
+      },
+      {
+        "line": 19,
+        "source": "  require(value !== null && typeof value === \"object\" && !isArray(value), \"Expected an own data record.\");",
+        "maxMinimum": 469,
+        "maxCount": 471,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 176,
+            "maximum": 178
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 469,
+            "maximum": 471
+          }
+        ]
+      },
+      {
+        "line": 20,
+        "source": "  const fields = descriptors(value), result = {};",
+        "maxMinimum": 471,
+        "maxCount": 471,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 178,
+            "maximum": 178
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 471,
+            "maximum": 471
+          }
+        ]
+      },
+      {
+        "line": 21,
+        "source": "  for (const key of Reflect.ownKeys(fields)) {",
+        "maxMinimum": 471,
+        "maxCount": 2852,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 178,
+            "maximum": 1164
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 471,
+            "maximum": 2852
+          }
+        ]
+      },
+      {
+        "line": 22,
+        "source": "    require(allowed.includes(key) && Object.hasOwn(fields[key], \"value\"), \"Unknown or accessor property.\");",
+        "maxMinimum": 2850,
+        "maxCount": 2852,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 1157,
+            "maximum": 1164
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 2850,
+            "maximum": 2852
+          }
+        ]
+      },
+      {
+        "line": 23,
+        "source": "    result[key] = fields[key].value;",
+        "maxMinimum": 2852,
+        "maxCount": 2852,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 1164,
+            "maximum": 1164
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 2852,
+            "maximum": 2852
+          }
+        ]
+      },
+      {
+        "line": 24,
+        "source": "  }",
+        "maxMinimum": 2852,
+        "maxCount": 2852,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 1164,
+            "maximum": 1164
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 2852,
+            "maximum": 2852
+          }
+        ]
+      },
+      {
+        "line": 25,
+        "source": "  for (const key of required) require(Object.hasOwn(result, key), `Missing ${key}.`);",
+        "maxMinimum": 467,
+        "maxCount": 2679,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 164,
+            "maximum": 1018
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 467,
+            "maximum": 2679
+          }
+        ]
+      },
+      {
+        "line": 26,
+        "source": "  return result;",
+        "maxMinimum": 467,
+        "maxCount": 467,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 153,
+            "maximum": 153
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 467,
+            "maximum": 467
+          }
+        ]
+      },
+      {
+        "line": 27,
+        "source": "}",
+        "maxMinimum": 471,
+        "maxCount": 471,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 178,
+            "maximum": 178
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 471,
+            "maximum": 471
+          }
+        ]
+      },
+      {
+        "line": 28,
+        "source": "function array(value, maximum) {",
+        "maxMinimum": 3240,
+        "maxCount": 3240,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 223,
+            "maximum": 223
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 3240,
+            "maximum": 3240
+          }
+        ]
+      },
+      {
+        "line": 29,
+        "source": "  require(isArray(value), \"Expected an own data array.\");",
+        "maxMinimum": 3240,
+        "maxCount": 3240,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 223,
+            "maximum": 223
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 3240,
+            "maximum": 3240
+          }
+        ]
+      },
+      {
+        "line": 30,
+        "source": "  const fields = descriptors(value), length = fields.length?.value;",
+        "maxMinimum": 3238,
+        "maxCount": 3240,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 219,
+            "maximum": 223
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 3238,
+            "maximum": 3240
+          }
+        ]
+      },
+      {
+        "line": 31,
+        "source": "  require(Number.isInteger(length) && length >= 0 && length <= maximum, \"Array extent exceeds the bounded contract.\");",
+        "maxMinimum": 3238,
+        "maxCount": 3240,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 219,
+            "maximum": 223
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 3238,
+            "maximum": 3240
+          }
+        ]
+      },
+      {
+        "line": 32,
+        "source": "  require(Reflect.ownKeys(fields).length === length + 1, \"Array must be dense and contain no extra properties.\");",
+        "maxMinimum": 3240,
+        "maxCount": 3240,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 223,
+            "maximum": 223
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 3240,
+            "maximum": 3240
+          }
+        ]
+      },
+      {
+        "line": 33,
+        "source": "  const result = [];",
+        "maxMinimum": 3240,
+        "maxCount": 3240,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 223,
+            "maximum": 223
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 3240,
+            "maximum": 3240
+          }
+        ]
+      },
+      {
+        "line": 34,
+        "source": "  for (let index = 0; index < length; index++) {",
+        "maxMinimum": 3240,
+        "maxCount": 527310,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 223,
+            "maximum": 17223
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 3240,
+            "maximum": 527310
+          }
+        ]
+      },
+      {
+        "line": 35,
+        "source": "    require(fields[index] && Object.hasOwn(fields[index], \"value\"), \"Array entries must be own data properties.\");",
+        "maxMinimum": 527310,
+        "maxCount": 527310,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 17223,
+            "maximum": 17223
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 527310,
+            "maximum": 527310
+          }
+        ]
+      },
+      {
+        "line": 36,
+        "source": "    result.push(fields[index].value);",
+        "maxMinimum": 527310,
+        "maxCount": 527310,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 17223,
+            "maximum": 17223
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 527310,
+            "maximum": 527310
+          }
+        ]
+      },
+      {
+        "line": 37,
+        "source": "  }",
+        "maxMinimum": 527310,
+        "maxCount": 527310,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 17223,
+            "maximum": 17223
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 527310,
+            "maximum": 527310
+          }
+        ]
+      },
+      {
+        "line": 38,
+        "source": "  return result;",
+        "maxMinimum": 3236,
+        "maxCount": 3236,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 207,
+            "maximum": 207
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 3236,
+            "maximum": 3236
+          }
+        ]
+      },
+      {
+        "line": 39,
+        "source": "}",
+        "maxMinimum": 3240,
+        "maxCount": 3240,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 223,
+            "maximum": 223
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 3240,
+            "maximum": 3240
+          }
+        ]
+      },
+      {
+        "line": 40,
+        "source": "function failure(code, message) { return Object.freeze({ ok: false, error: Object.freeze({ code, message }) }); }",
+        "maxMinimum": 129,
+        "maxCount": 129,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 127,
+            "maximum": 127
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 129,
+            "maximum": 129
+          }
+        ]
+      },
+      {
+        "line": 41,
+        "source": "",
+        "maxMinimum": 0,
+        "maxCount": 0,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          }
+        ]
+      },
+      {
+        "line": 42,
+        "source": "/** Recognize a trusted compiler result without changing any of its metadata. */",
+        "maxMinimum": 1,
+        "maxCount": 1,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 1,
+            "maximum": 1
+          }
+        ]
+      },
+      {
+        "line": 43,
+        "source": "export function parseConstantDomain(metadata, expectedStage) {",
+        "maxMinimum": 1,
+        "maxCount": 165,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 0,
+            "maximum": 96
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 1,
+            "maximum": 165
+          }
+        ]
+      },
+      {
+        "line": 44,
+        "source": "  try {",
+        "maxMinimum": 165,
+        "maxCount": 165,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 96,
+            "maximum": 96
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 165,
+            "maximum": 165
+          }
+        ]
+      },
+      {
+        "line": 45,
+        "source": "    require(expectedStage === \"vertex\" || expectedStage === \"fragment\", \"Unknown shader stage.\");",
+        "maxMinimum": 80,
+        "maxCount": 165,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 41,
+            "maximum": 96
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 80,
+            "maximum": 165
+          }
+        ]
+      },
+      {
+        "line": 46,
+        "source": "    const value = record(metadata, [...METADATA_KEYS, \"constantDomains\"], METADATA_KEYS);",
+        "maxMinimum": 165,
+        "maxCount": 165,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 96,
+            "maximum": 96
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 165,
+            "maximum": 165
+          }
+        ]
+      },
+      {
+        "line": 47,
+        "source": "    require(value.stage === expectedStage, \"Constant domain stage disagrees with the shader stage.\");",
+        "maxMinimum": 165,
+        "maxCount": 165,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 96,
+            "maximum": 96
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 165,
+            "maximum": 165
+          }
+        ]
+      },
+      {
+        "line": 48,
+        "source": "    require(value.profile === CONDITIONAL_PROFILE || UNCONDITIONAL_PROFILES.has(value.profile), \"Unknown shader profile.\");",
+        "maxMinimum": 20,
+        "maxCount": 165,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 20,
+            "maximum": 96
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 4,
+            "maximum": 165
+          }
+        ]
+      },
+      {
+        "line": 49,
+        "source": "    if (value.profile !== CONDITIONAL_PROFILE) {",
+        "maxMinimum": 18,
+        "maxCount": 165,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 18,
+            "maximum": 96
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 4,
+            "maximum": 165
+          }
+        ]
+      },
+      {
+        "line": 50,
+        "source": "      require(!Object.hasOwn(value, \"constantDomains\"), \"Unconditional shader profile carries a conditional contract.\");",
+        "maxMinimum": 18,
+        "maxCount": 18,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 18,
+            "maximum": 18
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 4,
+            "maximum": 4
+          }
+        ]
+      },
+      {
+        "line": 51,
+        "source": "      return Object.freeze({ ok: true, domain: null });",
+        "maxMinimum": 18,
+        "maxCount": 18,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 18,
+            "maximum": 18
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 4,
+            "maximum": 4
+          }
+        ]
+      },
+      {
+        "line": 52,
+        "source": "    }",
+        "maxMinimum": 18,
+        "maxCount": 18,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 18,
+            "maximum": 18
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 4,
+            "maximum": 4
+          }
+        ]
+      },
+      {
+        "line": 53,
+        "source": "    require(Object.hasOwn(value, \"constantDomains\"), \"Conditional shader profile requires a constant domain.\");",
+        "maxMinimum": 161,
+        "maxCount": 161,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 63,
+            "maximum": 63
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 161,
+            "maximum": 161
+          }
+        ]
+      },
+      {
+        "line": 54,
+        "source": "    const domains = array(value.constantDomains, 1), uniforms = array(value.uniforms, 1);",
+        "maxMinimum": 161,
+        "maxCount": 161,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 63,
+            "maximum": 63
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 161,
+            "maximum": 161
+          }
+        ]
+      },
+      {
+        "line": 55,
+        "source": "    require(domains.length === 1 && uniforms.length === 1, \"Conditional shader requires one domain and one constant bank.\");",
+        "maxMinimum": 155,
+        "maxCount": 165,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 50,
+            "maximum": 96
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 155,
+            "maximum": 165
+          }
+        ]
+      },
+      {
+        "line": 56,
+        "source": "    const domain = record(domains[0], DOMAIN_KEYS);",
+        "maxMinimum": 165,
+        "maxCount": 165,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 96,
+            "maximum": 96
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 165,
+            "maximum": 165
+          }
+        ]
+      },
+      {
+        "line": 57,
+        "source": "    const uniform = record(uniforms[0], [\"name\", \"type\", \"count\", \"encoding\"]);",
+        "maxMinimum": 165,
+        "maxCount": 165,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 96,
+            "maximum": 96
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 165,
+            "maximum": 165
+          }
+        ]
+      },
+      {
+        "line": 58,
+        "source": "    const name = expectedStage === \"vertex\" ? \"vsconst0\" : \"fsconst0\";",
+        "maxMinimum": 73,
+        "maxCount": 165,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 16,
+            "maximum": 96
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 73,
+            "maximum": 165
+          }
+        ]
+      },
+      {
+        "line": 59,
+        "source": "    require(domain.kind === CONSTANT_DOMAIN_KIND && domain.stage === expectedStage && domain.slot === 0 && domain.name === name,",
+        "maxMinimum": 145,
+        "maxCount": 165,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 27,
+            "maximum": 96
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 145,
+            "maximum": 165
+          }
+        ]
+      },
+      {
+        "line": 60,
+        "source": "      \"Unknown or inconsistent constant-bank domain.\");",
+        "maxMinimum": 165,
+        "maxCount": 165,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 96,
+            "maximum": 96
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 165,
+            "maximum": 165
+          }
+        ]
+      },
+      {
+        "line": 61,
+        "source": "    require(Number.isInteger(domain.count) && domain.count >= 1 && domain.count <= 47 &&",
+        "maxMinimum": 137,
+        "maxCount": 165,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 17,
+            "maximum": 96
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 137,
+            "maximum": 165
+          }
+        ]
+      },
+      {
+        "line": 62,
+        "source": "      uniform.name === name && uniform.type === \"uvec4[]\" && uniform.encoding === \"float32-bits\" && uniform.count === domain.count,",
+        "maxMinimum": 137,
+        "maxCount": 165,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 11,
+            "maximum": 96
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 137,
+            "maximum": 165
+          }
+        ]
+      },
+      {
+        "line": 63,
+        "source": "    \"Constant domain does not match the declared bank extent and encoding.\");",
+        "maxMinimum": 165,
+        "maxCount": 165,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 96,
+            "maximum": 96
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 165,
+            "maximum": 165
+          }
+        ]
+      },
+      {
+        "line": 64,
+        "source": "    return Object.freeze({ ok: true, domain: Object.freeze(domain) });",
+        "maxMinimum": 165,
+        "maxCount": 165,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 96,
+            "maximum": 96
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 165,
+            "maximum": 165
+          }
+        ]
+      },
+      {
+        "line": 65,
+        "source": "  } catch (error) {",
+        "maxMinimum": 71,
+        "maxCount": 165,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 71,
+            "maximum": 96
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 28,
+            "maximum": 165
+          }
+        ]
+      },
+      {
+        "line": 66,
+        "source": "    if (!(error instanceof DomainFault)) throw error;",
+        "maxMinimum": 0,
+        "maxCount": 71,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 0,
+            "maximum": 71
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 28
+          }
+        ]
+      },
+      {
+        "line": 67,
+        "source": "    return failure(\"shader-domain-error\", error.message);",
+        "maxMinimum": 71,
+        "maxCount": 71,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 71,
+            "maximum": 71
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 28,
+            "maximum": 28
+          }
+        ]
+      },
+      {
+        "line": 68,
+        "source": "  }",
+        "maxMinimum": 71,
+        "maxCount": 71,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 71,
+            "maximum": 71
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 28,
+            "maximum": 28
+          }
+        ]
+      },
+      {
+        "line": 69,
+        "source": "}",
+        "maxMinimum": 165,
+        "maxCount": 165,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 96,
+            "maximum": 96
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 165,
+            "maximum": 165
+          }
+        ]
+      },
+      {
+        "line": 70,
+        "source": "",
+        "maxMinimum": 0,
+        "maxCount": 0,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          }
+        ]
+      },
+      {
+        "line": 71,
+        "source": "/** Finite binary32 encodings include both zero signs and every subnormal. */",
+        "maxMinimum": 1,
+        "maxCount": 1,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 1,
+            "maximum": 1
+          }
+        ]
+      },
+      {
+        "line": 72,
+        "source": "export function finiteBinary32Word(word) {",
+        "maxMinimum": 1,
+        "maxCount": 519800,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 0,
+            "maximum": 8526
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 1,
+            "maximum": 519800
+          }
+        ]
+      },
+      {
+        "line": 73,
+        "source": "  return Number.isInteger(word) && word >= 0 && word <= 0xffffffff && (word & 0x7f800000) !== 0x7f800000;",
+        "maxMinimum": 519800,
+        "maxCount": 519800,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 8508,
+            "maximum": 8526
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 519800,
+            "maximum": 519800
+          }
+        ]
+      },
+      {
+        "line": 74,
+        "source": "}",
+        "maxMinimum": 519800,
+        "maxCount": 519800,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 8526,
+            "maximum": 8526
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 519800,
+            "maximum": 519800
+          }
+        ]
+      },
+      {
+        "line": 75,
+        "source": "",
+        "maxMinimum": 0,
+        "maxCount": 0,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          }
+        ]
+      },
+      {
+        "line": 76,
+        "source": "/** Validate and own exactly the reflected prefix; no absent word is synthesized. */",
+        "maxMinimum": 1,
+        "maxCount": 1,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 1,
+            "maximum": 1
+          }
+        ]
+      },
+      {
+        "line": 77,
+        "source": "export function checkFiniteBank(words, uploadCount) {",
+        "maxMinimum": 1,
+        "maxCount": 2926,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 0,
+            "maximum": 114
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 1,
+            "maximum": 2926
+          }
+        ]
+      },
+      {
+        "line": 78,
+        "source": "  try {",
+        "maxMinimum": 2926,
+        "maxCount": 2926,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 114,
+            "maximum": 114
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 2926,
+            "maximum": 2926
+          }
+        ]
+      },
+      {
+        "line": 79,
+        "source": "    require(Number.isInteger(uploadCount) && uploadCount >= 0 && uploadCount <= 46, \"Invalid reflected constant upload extent.\");",
+        "maxMinimum": 2926,
+        "maxCount": 2926,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 109,
+            "maximum": 114
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 2926,
+            "maximum": 2926
+          }
+        ]
+      },
+      {
+        "line": 80,
+        "source": "    const bank = array(words, 184);",
+        "maxMinimum": 2926,
+        "maxCount": 2926,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 114,
+            "maximum": 114
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 2926,
+            "maximum": 2926
+          }
+        ]
+      },
+      {
+        "line": 81,
+        "source": "    require(bank.length % 4 === 0, \"Constant bank must contain complete vec4 registers.\");",
+        "maxMinimum": 2926,
+        "maxCount": 2926,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 114,
+            "maximum": 114
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 2926,
+            "maximum": 2926
+          }
+        ]
+      },
+      {
+        "line": 82,
+        "source": "    const count = uploadCount * 4;",
+        "maxMinimum": 2926,
+        "maxCount": 2926,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 114,
+            "maximum": 114
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 2926,
+            "maximum": 2926
+          }
+        ]
+      },
+      {
+        "line": 83,
+        "source": "    if (bank.length < count) return failure(\"incomplete-draw\", \"Drawing requires every active constant word.\");",
+        "maxMinimum": 101,
+        "maxCount": 2926,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 5,
+            "maximum": 114
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 101,
+            "maximum": 2926
+          }
+        ]
+      },
+      {
+        "line": 84,
+        "source": "    const prefix = bank.slice(0, count);",
+        "maxMinimum": 2825,
+        "maxCount": 2825,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 95,
+            "maximum": 95
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 2825,
+            "maximum": 2825
+          }
+        ]
+      },
+      {
+        "line": 85,
+        "source": "    require(prefix.every(finiteBinary32Word), \"Active constant word is outside the finite-binary32 domain.\");",
+        "maxMinimum": 2825,
+        "maxCount": 2825,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 95,
+            "maximum": 95
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 2825,
+            "maximum": 2825
+          }
+        ]
+      },
+      {
+        "line": 86,
+        "source": "    return Object.freeze({ ok: true, words: Object.freeze(prefix) });",
+        "maxMinimum": 2825,
+        "maxCount": 2825,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 95,
+            "maximum": 95
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 2825,
+            "maximum": 2825
+          }
+        ]
+      },
+      {
+        "line": 87,
+        "source": "  } catch (error) {",
+        "maxMinimum": 51,
+        "maxCount": 2825,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 51,
+            "maximum": 95
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 2825
+          }
+        ]
+      },
+      {
+        "line": 88,
+        "source": "    if (!(error instanceof DomainFault)) throw error;",
+        "maxMinimum": 0,
+        "maxCount": 51,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 0,
+            "maximum": 51
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          }
+        ]
+      },
+      {
+        "line": 89,
+        "source": "    return failure(\"constant-domain-error\", error.message);",
+        "maxMinimum": 51,
+        "maxCount": 51,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 51,
+            "maximum": 51
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          }
+        ]
+      },
+      {
+        "line": 90,
+        "source": "  }",
+        "maxMinimum": 51,
+        "maxCount": 51,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 51,
+            "maximum": 51
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 0,
+            "maximum": 0
+          }
+        ]
+      },
+      {
+        "line": 91,
+        "source": "}",
+        "maxMinimum": 2926,
+        "maxCount": 2926,
+        "coverage": [
+          {
+            "path": "evidence/virgl-constant-domains/worker/unit/coverage.json",
+            "minimum": 114,
+            "maximum": 114
+          },
+          {
+            "path": "evidence/virgl-constant-domains/worker/hardware/browser-coverage.json",
+            "minimum": 2926,
+            "maximum": 2926
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -1,0 +1,36 @@
+{
+  "gate": {
+    "suites": 5,
+    "passed": 50,
+    "failed": 0,
+    "ignored": 1,
+    "sha256": "b7e0e9d5932ca45af48ee6060be1b1725922d9fee2bc51b6914d83cfd7389f89"
+  },
+  "core": {
+    "suites": 131,
+    "passed": 1098,
+    "failed": 0,
+    "ignored": 11,
+    "sha256": "63e1dcae4d6d9f7ac73a5ea9329d2b21a0e402e5f7c22729a1bd217c1ffd9b11"
+  },
+  "native-jit": {
+    "suites": 4,
+    "passed": 34,
+    "failed": 0,
+    "ignored": 0,
+    "sha256": "cf2efb6d07114d0f207aa043f701893a37a6bb3816baf538c03e99a14e1ba12f"
+  },
+  "live": {
+    "url": "https://b32052cc.wasm-vm.pages.dev/app.html?noAutoBoot=1",
+    "metrics": {
+      "metric-pass": "127",
+      "metric-fail": "0",
+      "metric-done": "127"
+    },
+    "errors": [],
+    "httpErrors": [],
+    "screenshotSha256": "e5aac704b5cfcc8c3936a58ebb5d2b1e3b90ab5548d4af188f547cbbbde98c03"
+  },
+  "cloneHead": "a3afda72c9a908b5a8809f0a2dc7fed11b4698a7",
+  "cloneTrackedClean": true
+}

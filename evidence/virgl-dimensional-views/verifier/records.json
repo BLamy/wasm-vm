@@ -1,0 +1,2230 @@
+{
+  "schema": "E6-T11d58-critic-body-index-v1",
+  "records": [
+    {
+      "path": "authenticate.py",
+      "bytes": 6930,
+      "sha256": "087a967effef9d289c4fa1c8d98f0b9cb990b6c85a702d44a5be48304399e064"
+    },
+    {
+      "path": "authentication.json",
+      "bytes": 21948,
+      "sha256": "24e2db45d67c79bd334d1923098d44fd9add24d794f1ed635076fc07b35999ab"
+    },
+    {
+      "path": "authentication.log",
+      "bytes": 2721,
+      "sha256": "546974645315ebafd8f0dfd3c176f077571e66498804938d10c8a847909c9efe"
+    },
+    {
+      "path": "boundary-audit.json",
+      "bytes": 186905,
+      "sha256": "5ebd2f48795c558f12b956d8711961a6f706d02e9ea778a56195ba0f76601cb7"
+    },
+    {
+      "path": "boundary-audit.log",
+      "bytes": 413,
+      "sha256": "9e4e3b63f240120b16f38f010dc0a864e3197e848073ef176f58a1a811285b99"
+    },
+    {
+      "path": "boundary_audit.py",
+      "bytes": 10185,
+      "sha256": "116a18498716819cf5e09e6ae48f90b7487c6429bf78fe9ddb192b386e0d0da0"
+    },
+    {
+      "path": "coverage-audit.json",
+      "bytes": 2100789,
+      "sha256": "86ad89e1cc913d390361f28dde06c5fba5af699b2c224b3205f2f06a438b6e7b"
+    },
+    {
+      "path": "coverage-audit.log",
+      "bytes": 359,
+      "sha256": "8fd67cf2f337f102e29cffd231f56f4b52bddf550ec41744ce92142ff008923c"
+    },
+    {
+      "path": "coverage-before-historical-shape.log",
+      "bytes": 316,
+      "sha256": "dccb6e5aa5a0b2bbd0eb0f8a2a28422a89a8a1bf8bdaf3cbf6e2b0d70fcf7666"
+    },
+    {
+      "path": "coverage_audit.py",
+      "bytes": 5655,
+      "sha256": "9e9c2fe94667837668cd295f61f572e5f00d07c10dfb8aac40d0d7c280eb281e"
+    },
+    {
+      "path": "deployment/live/bodies/artifacts-alpine.json",
+      "bytes": 1110,
+      "sha256": "a3e5e51a69fcda662579d367d5b46fab295ab8bebad4d38155afa3b51c034b6c"
+    },
+    {
+      "path": "deployment/live/bodies/artifacts-node-alpine.json",
+      "bytes": 1255,
+      "sha256": "ab1338d6f7b54bf96b2b503aa3e12e3bc72f9de2fd7f2a40728f3cefe2fe6caf"
+    },
+    {
+      "path": "deployment/live/bodies/artifacts-omarchy.json",
+      "bytes": 1193,
+      "sha256": "0fa46b08b90179bb11f6a451f86959908089f73afa19c99580f28360b7b8c22a"
+    },
+    {
+      "path": "deployment/live/bodies/tasks.json",
+      "bytes": 3794933,
+      "sha256": "5d4536ac8949da1e423a7c0a4bdedf7ecd95fb7fa81e402a3d74c685868a965b"
+    },
+    {
+      "path": "deployment/live/browser.png",
+      "bytes": 50513,
+      "sha256": "d3d6fb88b24856706697a17e731dbdad906a30148f15d27edd53baf5f691dd18"
+    },
+    {
+      "path": "deployment/live/report.json",
+      "bytes": 33293,
+      "sha256": "780eb10810eeb3ab7338c9a8621ff8f1a089f679bd762196f401dcf197cee45f"
+    },
+    {
+      "path": "deployment/publication/.wrangler/cache/pages.json",
+      "bytes": 83,
+      "sha256": "fd9d4f78c34977984f8c05f515f1160185f496d728546fb9f9728ec9b9aff404"
+    },
+    {
+      "path": "deployment/publication/.wrangler/cache/wrangler-account.json",
+      "bytes": 113,
+      "sha256": "5a7bd5eb92ca5981cf1b7aa6c38a1b737b187383f51bde0999c8dfb166f185e3"
+    },
+    {
+      "path": "deployment/publication/cloudflare-success.json",
+      "bytes": 24266,
+      "sha256": "364a815344ca6b6be981140c1f64d2a7370cb2f8b450c7419fd86fd2712c06a4"
+    },
+    {
+      "path": "deployment/publication/preparation.py",
+      "bytes": 2764,
+      "sha256": "a64a7b5b795651f12020f0fb99364a7f074d6139e5b79109db759260b416e4b2"
+    },
+    {
+      "path": "deployment/publication/publish.json",
+      "bytes": 664,
+      "sha256": "f7d504057cd789371e91576593e174af726c35e3faf18a3300e4c1c16ab4d39c"
+    },
+    {
+      "path": "deployment/publication/publish.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "deployment/publication/publish.stdout",
+      "bytes": 342,
+      "sha256": "7d6390dbc8d562b55cf0261e813c0e9ea124a3f96d3106387516d496ba572ead"
+    },
+    {
+      "path": "deployment/publication/staging-index.json",
+      "bytes": 50833,
+      "sha256": "37d8ea3dc255b5bad370e414d149722f5e3e020d44f1f16796ec867dc92f23ae"
+    },
+    {
+      "path": "deployment/publication/web/dist/artifacts-alpine.json",
+      "bytes": 1110,
+      "sha256": "a3e5e51a69fcda662579d367d5b46fab295ab8bebad4d38155afa3b51c034b6c"
+    },
+    {
+      "path": "deployment/publication/web/dist/artifacts-node-alpine.json",
+      "bytes": 1255,
+      "sha256": "ab1338d6f7b54bf96b2b503aa3e12e3bc72f9de2fd7f2a40728f3cefe2fe6caf"
+    },
+    {
+      "path": "deployment/publication/web/dist/artifacts-omarchy.json",
+      "bytes": 1193,
+      "sha256": "0fa46b08b90179bb11f6a451f86959908089f73afa19c99580f28360b7b8c22a"
+    },
+    {
+      "path": "deployment/publication/web/dist/artifacts.json",
+      "bytes": 905,
+      "sha256": "c2a325fde02d8dbe84674699336441462eb0d891ba7793d53261986fdbaec404"
+    },
+    {
+      "path": "deployment/publication/web/dist/bench-runtime-compute.mjs",
+      "bytes": 12030,
+      "sha256": "378e4841d50b8165fdee7d15ffe8daf0d2e6a40145982e8525b161696342d8d7"
+    },
+    {
+      "path": "deployment/publication/web/dist/bench-runtime-workloads.mjs",
+      "bytes": 20511,
+      "sha256": "094dd31c872b6fdf080d022add317f40dde128c219342db33d7ba3504add69fb"
+    },
+    {
+      "path": "deployment/publication/web/dist/pkg/package.json",
+      "bytes": 500,
+      "sha256": "d741b89b6dc7717f021a3ceecb51cff5f9eaa5af1b595125f2b910a682761f0c"
+    },
+    {
+      "path": "deployment/publication/web/dist/runtime-benchmarks.json",
+      "bytes": 91935,
+      "sha256": "a455f3d0c4793f8771d0c049f9ddb0058ca8609e0ae5b41385314ba8e59b2185"
+    },
+    {
+      "path": "deployment/publication/web/dist/runtime-compute-benchmarks.json",
+      "bytes": 29667,
+      "sha256": "3a2070175a1b2abdc454476af5c2650ea565399a4a6beb1404bdc7b6bfe4f2ae"
+    },
+    {
+      "path": "deployment/publication/web/dist/src/input/keymap-source.json",
+      "bytes": 7160,
+      "sha256": "73312315ec4741b7914cf5a21ef638938684f5bc8fb23076bc702686c7fdcc73"
+    },
+    {
+      "path": "deployment/publication/web/dist/src/input/w3c-pc105-codes.json",
+      "bytes": 1984,
+      "sha256": "6a17d7494bfc7c27f181294dc1893176236531ad5320fe9e75e4d93e40cd243b"
+    },
+    {
+      "path": "deployment/publication/web/dist/tailscale-connect/package.json",
+      "bytes": 240,
+      "sha256": "e70a1f0a4f34ffed980045f04967ac0c21daf7795bb8792cff065f248891bea5"
+    },
+    {
+      "path": "deployment/publication/web/dist/tasks.json",
+      "bytes": 3794933,
+      "sha256": "5d4536ac8949da1e423a7c0a4bdedf7ecd95fb7fa81e402a3d74c685868a965b"
+    },
+    {
+      "path": "deployment/scripts/live.mjs",
+      "bytes": 7132,
+      "sha256": "a553df8d66ff42df9889745728673a7d1f38c090120fc4d9561e254612961e73"
+    },
+    {
+      "path": "deployment/scripts/publish.py",
+      "bytes": 3104,
+      "sha256": "0eeb456a8dc64a5e4b86fed51befa5c44be4f5323ddc072426e369915ecabd78"
+    },
+    {
+      "path": "deployment/scripts/seal.py",
+      "bytes": 3062,
+      "sha256": "66bfb0699e120d36e3341e4246c44132f872a3d7e634ba567cb54c33e7b5e5c9"
+    },
+    {
+      "path": "deployment-audit.json",
+      "bytes": 43758,
+      "sha256": "e757f4bb6bc6387b44d062c28a8cd86c42d0f2760a6609a05ebc3270ae6ff75d"
+    },
+    {
+      "path": "deployment-audit.log",
+      "bytes": 1206,
+      "sha256": "80c251d61bc00cd1005bf50e2dda1d52ffb9e6b7d8153c712a8196f6dd948e91"
+    },
+    {
+      "path": "deployment_audit.py",
+      "bytes": 6359,
+      "sha256": "d07994347bf4ed409ae5336fd051beb83ee7f7a5fe32a4877c71cc6b6f19d969"
+    },
+    {
+      "path": "final-checks.json",
+      "bytes": 1383,
+      "sha256": "47b8f9d09d80838a4f88c2e20d38e243d6eeb214db17cecc9364e8543e50188a"
+    },
+    {
+      "path": "final-custody.json",
+      "bytes": 38631,
+      "sha256": "9525698203fa5eb84f113c1711d527db214778abda7e885a3c568b9382251e02"
+    },
+    {
+      "path": "final-custody.log",
+      "bytes": 885,
+      "sha256": "2c63d9ca94738e6779ac33a25aba505ea7062a684739a98b9691b9c9ff22dfc1"
+    },
+    {
+      "path": "final_audit.py",
+      "bytes": 4749,
+      "sha256": "d42019020811557fb557f92c615d60434675ba49bfff28ebf6cda6bb2561fb46"
+    },
+    {
+      "path": "fresh-attacks-3141592653/browser-coverage.json",
+      "bytes": 1807225,
+      "sha256": "a6f7c627e2e38b64c88714993b7626c1f1ef79b9591178ee42f72f45d166a559"
+    },
+    {
+      "path": "fresh-attacks-3141592653/browser.png",
+      "bytes": 43778,
+      "sha256": "014e878d4b0bab4f72e7b42f35050df1c49595a7ec376aab8b9fe82e5b5a4284"
+    },
+    {
+      "path": "fresh-attacks-3141592653/report.json",
+      "bytes": 360643,
+      "sha256": "b5c5353078304a35a66e07a4a61b6b80315d3edd86ef7dd1c7ba9d1e219a773c"
+    },
+    {
+      "path": "fresh-attacks-3141592653/run-0000.json.gz",
+      "bytes": 161645,
+      "sha256": "bdad3b939195729e3eb29e305a583d614e227f0cd0ae95d4c1dd0c9229229a18"
+    },
+    {
+      "path": "fresh-attacks-3141592653/run-0001.json.gz",
+      "bytes": 161648,
+      "sha256": "a4440c897de6d217196ab9e8f008fb365409b5e337f4ce5261bd361a7dd1efc0"
+    },
+    {
+      "path": "fresh-attacks-3141592653/run-0002.json.gz",
+      "bytes": 153085,
+      "sha256": "4cd47c4ac407849f8aca48770adc067e4bc88d05e8bb5abc93c653c704c1f770"
+    },
+    {
+      "path": "fresh-attacks-3141592653/run-0003.json.gz",
+      "bytes": 162686,
+      "sha256": "879320c0c6ad17ba1279241be4e5f60428efa4187d9eef63dd2c26421d5c5529"
+    },
+    {
+      "path": "fresh-attacks-3141592653/run-0004.json.gz",
+      "bytes": 161761,
+      "sha256": "6f39648e2edd36f1c47dd2bc8f43803f43540f5bb41f7d90297bac4fc3d69721"
+    },
+    {
+      "path": "fresh-attacks-3141592653/run-0005.json.gz",
+      "bytes": 130833,
+      "sha256": "6fa511dbac9a29782899730daa8222dca40bb515c6435d5ff558650009126b26"
+    },
+    {
+      "path": "fresh-attacks-3141592653/run-0006.json.gz",
+      "bytes": 169023,
+      "sha256": "634a4aac9973527b1adf7b4640c8f1b31fdf21f82c398184e82950328c933cc8"
+    },
+    {
+      "path": "fresh-attacks-3141592653/run-0007.json.gz",
+      "bytes": 153040,
+      "sha256": "9baf9d0a3951e2339886d0cf8409e4f3b09be197c91f464fb4f1726e07011034"
+    },
+    {
+      "path": "fresh-attacks-3141592653/run-0008.json.gz",
+      "bytes": 176600,
+      "sha256": "9a7332654c2408f2a8c9456afdb08b3dae9265d11a47022a3ea28ea3d44cd602"
+    },
+    {
+      "path": "fresh-attacks-3141592653/run-0009.json.gz",
+      "bytes": 176590,
+      "sha256": "55eaa5f82f441d34bdb196b191d319c7fc8b574cb7093bc4190a57d9320b7669"
+    },
+    {
+      "path": "fresh-attacks-3141592653/run-0010.json.gz",
+      "bytes": 159361,
+      "sha256": "cfd2c7b0f64c9e143d4812121f11b7e12bb1240956fbe7562a0c3446fd90b9db"
+    },
+    {
+      "path": "fresh-attacks-3141592653/run-0011.json.gz",
+      "bytes": 162718,
+      "sha256": "9da0a7062eb5c262e3bf60291ef23deb91f28d9cb17920a2e38b76a48df38c93"
+    },
+    {
+      "path": "fresh-attacks-3141592653/run-0012.json.gz",
+      "bytes": 162735,
+      "sha256": "eb4c481a93189df4ef27c2caa90f66e43e029d660dd80f1a3336cd01407155ed"
+    },
+    {
+      "path": "fresh-attacks-3141592653/run-0013.json.gz",
+      "bytes": 154170,
+      "sha256": "1ef911696a4b33f701f40401cf1da7baccbc0bbeb517f5c3dc6fd2e5a5d29b3b"
+    },
+    {
+      "path": "fresh-attacks-3141592653/run-0014.json.gz",
+      "bytes": 163635,
+      "sha256": "5b9e19f68eba15aa6a6da7e47f5041cc9fc673b52fd8d34cfc96eaf3d196c15a"
+    },
+    {
+      "path": "fresh-attacks-3141592653/run-0015.json.gz",
+      "bytes": 162834,
+      "sha256": "21f985832e709ef9f72b57ad3f04406c21e5f458edd18d521e7762bf7064c885"
+    },
+    {
+      "path": "fresh-attacks-3141592653/run-0016.json.gz",
+      "bytes": 131379,
+      "sha256": "9145f4e5849d683c3f397a755fead0edabc7e9c72241978b802dd49842ce3e3f"
+    },
+    {
+      "path": "fresh-attacks-3141592653/run-0017.json.gz",
+      "bytes": 170139,
+      "sha256": "49f7c508be52f33fbca762d3f2fd12fc55be7058106a43f6b60561f5566c8480"
+    },
+    {
+      "path": "fresh-attacks-3141592653/run-0018.json.gz",
+      "bytes": 154011,
+      "sha256": "88cf6cf553c8789107ba21523ea5dd355a21f175564bd1c56f40fd01320245ec"
+    },
+    {
+      "path": "fresh-attacks-3141592653/run-0019.json.gz",
+      "bytes": 177745,
+      "sha256": "999039e8ca49e999df830ff27783e0ab4cc9374b8d4a4b6c35f9dac0b150e8f0"
+    },
+    {
+      "path": "fresh-attacks-3141592653/run-0020.json.gz",
+      "bytes": 177734,
+      "sha256": "a15acb8d2ad14f653aa208e85659f22803c38fccbfa61c0c7d3527b9b3bf8263"
+    },
+    {
+      "path": "fresh-attacks-3141592653/run-0021.json.gz",
+      "bytes": 160761,
+      "sha256": "15715c9a0fbef2248f140ae17f20f00d975ecffc723deac8efd536941c76edb8"
+    },
+    {
+      "path": "fresh-attacks-3141592653/run-0022.json.gz",
+      "bytes": 154195,
+      "sha256": "c4469e976c17c9b62a15f2093f66c8a466544cbac0f2cd498092823a02f11e45"
+    },
+    {
+      "path": "fresh-attacks-3141592653/run-0023.json.gz",
+      "bytes": 162383,
+      "sha256": "719bef188fb02b7cc468067e5bc9bec8563e36c2a545f36bc4a95a098a0fca97"
+    },
+    {
+      "path": "fresh-attacks-3141592653/run-0024.json.gz",
+      "bytes": 162391,
+      "sha256": "74da71577a8dc9762172380cb49480b86eeeaf57c147b67a9d7ef9a123d8c5be"
+    },
+    {
+      "path": "fresh-attacks-3141592653/run-0025.json.gz",
+      "bytes": 153868,
+      "sha256": "669ca2ddbf22e8bcef4cc18ac0427b784e4f601afc67b7d2543137be8761c3fc"
+    },
+    {
+      "path": "fresh-attacks-3141592653/run-0026.json.gz",
+      "bytes": 163321,
+      "sha256": "924a1951d8dbebc98fb63a1f5350f66f7eb354a2fd4e512201d6e08f317cb1b0"
+    },
+    {
+      "path": "fresh-attacks-3141592653/run-0027.json.gz",
+      "bytes": 162522,
+      "sha256": "b63d874d5ccd11e9279275d0e01375500fa7a0ec65c92a927790c6c5aa179157"
+    },
+    {
+      "path": "fresh-attacks-3141592653/run-0028.json.gz",
+      "bytes": 131184,
+      "sha256": "b8d0a149e8f04d0f77934d5804cba48311d44e672c0c7587bd11dc4ecd081580"
+    },
+    {
+      "path": "fresh-attacks-3141592653/run-0029.json.gz",
+      "bytes": 169843,
+      "sha256": "93532841480982f92ab0f302f6d1df46c4b0e436664f6cba0c77ab821e0ffbcb"
+    },
+    {
+      "path": "fresh-attacks-3141592653/run-0030.json.gz",
+      "bytes": 153691,
+      "sha256": "b75b3b254c748f482ae340db6cc35a437fe889d71a76868922a0332429237539"
+    },
+    {
+      "path": "fresh-attacks-3141592653/run-0031.json.gz",
+      "bytes": 177484,
+      "sha256": "ff7f38159638ba273cdc3acae5134b81da6b0fb45116d93c601f8ad60d993abb"
+    },
+    {
+      "path": "fresh-attacks-3141592653/run-0032.json.gz",
+      "bytes": 177441,
+      "sha256": "d7fd3e05104d221fa07df2e4aab6cda0a5050f02819a618bb77ef2e33f459e00"
+    },
+    {
+      "path": "fresh-attacks-3141592653/run-0033.json.gz",
+      "bytes": 160409,
+      "sha256": "d2de5c4b941672abd98ea8b692ef697f66221bc0ca97a2cf781c030098929a9f"
+    },
+    {
+      "path": "fresh-attacks-3141592653/run-0034.json.gz",
+      "bytes": 162399,
+      "sha256": "a24b536c5167f3ccbabfb19b143892b029c648c0abb4192eba737df84e71e01a"
+    },
+    {
+      "path": "fresh-attacks-3141592653/run-0035.json.gz",
+      "bytes": 149033,
+      "sha256": "c3ecaf58fc5aef8097286a8074808caf74fc7f887d7b945d668692cedb9ae7e4"
+    },
+    {
+      "path": "fresh-attacks-3141592653/run-0036.json.gz",
+      "bytes": 149114,
+      "sha256": "b3376f47da05ac6290b361be12538d19c4fc56a9a76531da62b68c10c2593e43"
+    },
+    {
+      "path": "fresh-attacks-3141592653/run-0037.json.gz",
+      "bytes": 149395,
+      "sha256": "adde2a0d2381dc890f72bb90865120c15a65cbb9d57f135a206ab83763b50c8d"
+    },
+    {
+      "path": "fresh-attacks-3141592653/run-0038.json.gz",
+      "bytes": 149570,
+      "sha256": "50189eb89e8a18779639b49c56633267926576756144d831027b5b3cacf0383a"
+    },
+    {
+      "path": "fresh-attacks-3141592653/run-0039.json.gz",
+      "bytes": 151022,
+      "sha256": "172ea65f1a89558550ed38ff8841a980a79704a62861dba505b5189c8e58a449"
+    },
+    {
+      "path": "fresh-attacks-3141592653/run-0040.json.gz",
+      "bytes": 151077,
+      "sha256": "bdbcb45dcf20195da6428649658b0999f89fd3dcf42e0903b563ce791022be66"
+    },
+    {
+      "path": "fresh-attacks-3141592653/run-0041.json.gz",
+      "bytes": 151402,
+      "sha256": "fcf3154a0496b1ad883353fe86d704613ce5be313075a1c375ec1dcd0517e979"
+    },
+    {
+      "path": "fresh-attacks-3141592653/run-0042.json.gz",
+      "bytes": 151585,
+      "sha256": "2cb5ae3ce675edd7212c6ca279fb6b0f698f39020553cc9f5583aed7bf043006"
+    },
+    {
+      "path": "fresh-attacks-3141592653/source/renderer/virgl-command/cache.mjs",
+      "bytes": 2989,
+      "sha256": "9e50cc258528e581f79cee0e4e0038994c7968f80046b9db21e7f5e0e4a92cfa"
+    },
+    {
+      "path": "fresh-attacks-3141592653/source/renderer/virgl-command/color-images.mjs",
+      "bytes": 2770,
+      "sha256": "8c1b43f830e13f73d1397398e97bf263343f88c1782c683a890cb0f1fbc5e0e1"
+    },
+    {
+      "path": "fresh-attacks-3141592653/source/renderer/virgl-command/constant-domain.mjs",
+      "bytes": 116039,
+      "sha256": "75d0f1e72ead2c368163f980a9ef05aaed8fe7c56bbf7679a8f311bae444ab1a"
+    },
+    {
+      "path": "fresh-attacks-3141592653/source/renderer/virgl-command/control-bridge.mjs",
+      "bytes": 33580,
+      "sha256": "977f307a185d27e4711eba8637df41f0910e153ee1e03af52d21ff2f75a95333"
+    },
+    {
+      "path": "fresh-attacks-3141592653/source/renderer/virgl-command/decoder.mjs",
+      "bytes": 47276,
+      "sha256": "4080f1fbbfa3d262bd92a176a29616e573c36089785cacf85389656277b13554"
+    },
+    {
+      "path": "fresh-attacks-3141592653/source/renderer/virgl-command/float-images.mjs",
+      "bytes": 3132,
+      "sha256": "69543e48426c7ded5178b659eb651b5cb765aa559a0bbf96fd8d34f5cf7cfe46"
+    },
+    {
+      "path": "fresh-attacks-3141592653/source/renderer/virgl-command/floating-depth-gpu.mjs",
+      "bytes": 14648,
+      "sha256": "6e87240445044201f21a2977ee883de57e930542b67a99a03cf0077c008ef853"
+    },
+    {
+      "path": "fresh-attacks-3141592653/source/renderer/virgl-command/floating-depth-images.mjs",
+      "bytes": 947,
+      "sha256": "76e02b32e5a24f65f360adb7cbcc0f9e5d51ee90be7cfbe1a383bfa99cc30370"
+    },
+    {
+      "path": "fresh-attacks-3141592653/source/renderer/virgl-command/integer-images.mjs",
+      "bytes": 1557,
+      "sha256": "8871226b60ad86ee1f585f8de6e5891241a361ad84aa811a36028fd003d95029"
+    },
+    {
+      "path": "fresh-attacks-3141592653/source/renderer/virgl-command/packed-float-images.mjs",
+      "bytes": 1620,
+      "sha256": "0ea28e0bfcf4a0ae04f634826d4b65cb19a6285850836412c7b06311ce1c5405"
+    },
+    {
+      "path": "fresh-attacks-3141592653/source/renderer/virgl-command/packed-normalized-images.mjs",
+      "bytes": 2046,
+      "sha256": "5ccf01336a906f3b46b0c8c790c73449331e09ac3cfee2931459d507b6dccd18"
+    },
+    {
+      "path": "fresh-attacks-3141592653/source/renderer/virgl-command/packed-unsigned-images.mjs",
+      "bytes": 991,
+      "sha256": "1170cf4d69d7281fdc32383354d7c17d6019ece0c7a6f681de86b27a57ea0d61"
+    },
+    {
+      "path": "fresh-attacks-3141592653/source/renderer/virgl-command/resources.mjs",
+      "bytes": 142609,
+      "sha256": "d39b525bdd0081fdadf5257d854cc676ec3df3eb95e565bc63c9763409b92776"
+    },
+    {
+      "path": "fresh-attacks-3141592653/source/renderer/virgl-command/scanout.mjs",
+      "bytes": 14132,
+      "sha256": "affbac9b1b14e2a1eadb9bc29c693e120e20ffb84af02196a9eb00660eac1bac"
+    },
+    {
+      "path": "fresh-attacks-3141592653/source/renderer/virgl-command/shared-exponent-gpu.mjs",
+      "bytes": 9865,
+      "sha256": "22efbf4e0a3ae04d2e29900278db1e88880bd7c2fc7e757d0fd12d3a899531b7"
+    },
+    {
+      "path": "fresh-attacks-3141592653/source/renderer/virgl-command/shared-exponent-images.mjs",
+      "bytes": 563,
+      "sha256": "27de20239649aea73145e1f547c9265692f451fedddf3876639c173cf0d6168f"
+    },
+    {
+      "path": "fresh-attacks-3141592653/source/renderer/virgl-command/state.mjs",
+      "bytes": 189384,
+      "sha256": "aa001d630a196801ad7de0fe48ef07a8d8acee8ad2d79fbb8e14acab5babc850"
+    },
+    {
+      "path": "fresh-attacks-3141592653/source/renderer/virgl-command/tests/dimensional-view-owners.mjs",
+      "bytes": 6908,
+      "sha256": "372a96ce0b6d4ca16d004028c65736fdb0a06c50b59b48edc557ac94b5709b26"
+    },
+    {
+      "path": "fresh-attacks-3141592653/source/renderer/virgl-command/tests/native-dimensional-views.mjs",
+      "bytes": 24007,
+      "sha256": "f6958d91ad90a7551dc08803dbcc69e8ccb4e0bcb51db2ffb816589c1f0d6526"
+    },
+    {
+      "path": "fresh-attacks-3141592653/source/renderer/virgl-command/tests/standard-instanced-draws.mjs",
+      "bytes": 32402,
+      "sha256": "f02cf96a50f79ef5ed71c0240784a7ae3d030231d18d320148e89252bf724afa"
+    },
+    {
+      "path": "fresh-attacks-3141592653/source/renderer/virgl-command/tests/submit-acceptance.mjs",
+      "bytes": 53417,
+      "sha256": "c65063916c5f28085604a5dca46a2221f360762c1192776dc9294e2e1ba238ed"
+    },
+    {
+      "path": "fresh-attacks-3141592653/source/renderer/virgl-command/unorm-depth-images.mjs",
+      "bytes": 1409,
+      "sha256": "7fb08881153cfd06ed1acb5dba8d6cc61525b8f742a3b0a9715fb0e68e55e1d1"
+    },
+    {
+      "path": "fresh-attacks-3141592653/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "bytes": 13538,
+      "sha256": "4ade0ffb9ffb661a729179525e7937c4695230dc57a7f79db63a1538119a95f2"
+    },
+    {
+      "path": "fresh-attacks-3141592653/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "bytes": 442769,
+      "sha256": "8749da215131646f0b7d53d59fe7ee19fa68b2fab2e9bec80446c4af3e84e100"
+    },
+    {
+      "path": "fresh-attacks-3141592653/source/renderer/virgl-shader/index.mjs",
+      "bytes": 22546,
+      "sha256": "1bae07f2e668078c4e447f65d1785815714907b7270ced01b131ce70e6d3f10e"
+    },
+    {
+      "path": "fresh-attacks-3141592653/source/renderer/virgl-shader/standard.mjs",
+      "bytes": 13572,
+      "sha256": "2a3f3123b9b85932e76ed5b8576d5d5de10f0179db35875534edbfac7ffa91e4"
+    },
+    {
+      "path": "fresh-attacks-3141592653/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "bytes": 437,
+      "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804"
+    },
+    {
+      "path": "fresh-attacks-3141592653/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+      "bytes": 1314,
+      "sha256": "2877a95db8f6305fce95abf975c0fd7176ea2936c91eae201f662997f37f9fb2"
+    },
+    {
+      "path": "fresh-attacks-3141592653/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm.js",
+      "bytes": 174539,
+      "sha256": "0e9cc143b27b3a6375ddee7cb76fb42fafeaf6c53069bb98f91b61e1ca8d74a9"
+    },
+    {
+      "path": "fresh-attacks-3141592653/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm_bg.wasm",
+      "bytes": 7422308,
+      "sha256": "46272a64d71763c01bc60f99409d15aa6757c70ec58e8313f73ca08c868d7692"
+    },
+    {
+      "path": "fresh-attacks-3141592653/source/tools/virgl-command/standard-draw-oracle.mjs",
+      "bytes": 4684,
+      "sha256": "8de41c4a9f041f7a9acaf8a062a525f64c0ef3d197c464753764ddada94d26e3"
+    },
+    {
+      "path": "fresh-attacks-3141592653/source/tools/virgl-command/standard-image-fixtures.mjs",
+      "bytes": 3809,
+      "sha256": "1c045bdf667fc18be16644a05dfeeb5ef7e88b4eb7eaf3f3572f20fa98954d48"
+    },
+    {
+      "path": "fresh-attacks-3141592653/source/tools/virgl-command/standard-sampler-fixtures.mjs",
+      "bytes": 3671,
+      "sha256": "e0977f02f9d6750b727c5e9b72f9e486b0245acc203acafeeaec16de8e25133d"
+    },
+    {
+      "path": "fresh-attacks-3141592653/source/tools/virgl-command/standard-texture-fixtures.mjs",
+      "bytes": 3872,
+      "sha256": "f32f31df7d93fdf829559b04b822ea23162de44c9e171c19ccc37c71c65c15e8"
+    },
+    {
+      "path": "fresh-attacks-3141592653/source/tools/virgl-dimensional-shaders/fixtures.mjs",
+      "bytes": 8582,
+      "sha256": "853e1ea6c912b600e2113bdbbdc6a01ef8082a032755f9eaeba0ced3d3d6b057"
+    },
+    {
+      "path": "fresh-attacks-3141592653/source/tools/virgl-dimensional-views/browser.mjs",
+      "bytes": 9357,
+      "sha256": "53d35865c259b4afe837e857a4197385fae6348b04a0641cce9f29a5cafd9bc6"
+    },
+    {
+      "path": "fresh-attacks-3141592653/source/tools/virgl-dimensional-views/fixtures.mjs",
+      "bytes": 13456,
+      "sha256": "9b64d28731920091ac25c7d98a4d8d905bc279200707a7b2c7d84fbba36e6b2c"
+    },
+    {
+      "path": "fresh-attacks-3141592653/source/tools/virgl-instance-base/fixtures.mjs",
+      "bytes": 6011,
+      "sha256": "6ff14a60ea98cb044e5b391c9d1e6ef8f4fc8428bb20d1fa6067e57046013304"
+    },
+    {
+      "path": "fresh-attacks-3141592653/source/tools/virgl-shadow-shaders/fixtures.mjs",
+      "bytes": 8653,
+      "sha256": "80b071e28005961a7d8aa06450624a01ab7b058e092384042814ee280dc1aef0"
+    },
+    {
+      "path": "fresh-attacks-3141592653.log",
+      "bytes": 154,
+      "sha256": "dbbf50139fc2b4f77b4adfee02956319bf30d017c975447d9a8e3ce451ec4813"
+    },
+    {
+      "path": "fresh-before-selection-binding.log",
+      "bytes": 1196,
+      "sha256": "b0adbfdc472a9f2aa50ae5b7551140b7a89d11400b2096e0dff42bd17cf442a5"
+    },
+    {
+      "path": "fresh-boundaries-2718281829/browser-coverage.json",
+      "bytes": 1752096,
+      "sha256": "95aebd2555c544acca882fbc213a1f504ee53319b2b9b7f46573a44ae73d7eca"
+    },
+    {
+      "path": "fresh-boundaries-2718281829/browser.png",
+      "bytes": 43557,
+      "sha256": "740a0dcc250c9cad8a795c50ea5133eb0c5d0c5b34490124b5bc55d7fd3898ae"
+    },
+    {
+      "path": "fresh-boundaries-2718281829/report.json",
+      "bytes": 25846,
+      "sha256": "5d533110212aba438fea0c532110ad5129db5057200046df38b30f2268d35d96"
+    },
+    {
+      "path": "fresh-boundaries-2718281829/run-0000.json.gz",
+      "bytes": 228708,
+      "sha256": "e5085873af5b114ba84f9ca14364ea0fa63467ad5d5be3d5128cce6c68804453"
+    },
+    {
+      "path": "fresh-boundaries-2718281829/run-0001.json.gz",
+      "bytes": 231535,
+      "sha256": "b49d2aaf465ce88fb3f6d572143e96af5b39b101d62d641237ec1c46924914e7"
+    },
+    {
+      "path": "fresh-boundaries-2718281829/run-0002.json.gz",
+      "bytes": 230797,
+      "sha256": "1ebbbdf23f69ac30d88bf122b5f32815f133ec2fb5c052e2e0f47eac3eb0daba"
+    },
+    {
+      "path": "fresh-boundaries-2718281829/source/renderer/virgl-command/cache.mjs",
+      "bytes": 2989,
+      "sha256": "9e50cc258528e581f79cee0e4e0038994c7968f80046b9db21e7f5e0e4a92cfa"
+    },
+    {
+      "path": "fresh-boundaries-2718281829/source/renderer/virgl-command/color-images.mjs",
+      "bytes": 2770,
+      "sha256": "8c1b43f830e13f73d1397398e97bf263343f88c1782c683a890cb0f1fbc5e0e1"
+    },
+    {
+      "path": "fresh-boundaries-2718281829/source/renderer/virgl-command/constant-domain.mjs",
+      "bytes": 116039,
+      "sha256": "75d0f1e72ead2c368163f980a9ef05aaed8fe7c56bbf7679a8f311bae444ab1a"
+    },
+    {
+      "path": "fresh-boundaries-2718281829/source/renderer/virgl-command/control-bridge.mjs",
+      "bytes": 33580,
+      "sha256": "977f307a185d27e4711eba8637df41f0910e153ee1e03af52d21ff2f75a95333"
+    },
+    {
+      "path": "fresh-boundaries-2718281829/source/renderer/virgl-command/decoder.mjs",
+      "bytes": 47276,
+      "sha256": "4080f1fbbfa3d262bd92a176a29616e573c36089785cacf85389656277b13554"
+    },
+    {
+      "path": "fresh-boundaries-2718281829/source/renderer/virgl-command/float-images.mjs",
+      "bytes": 3132,
+      "sha256": "69543e48426c7ded5178b659eb651b5cb765aa559a0bbf96fd8d34f5cf7cfe46"
+    },
+    {
+      "path": "fresh-boundaries-2718281829/source/renderer/virgl-command/floating-depth-gpu.mjs",
+      "bytes": 14648,
+      "sha256": "6e87240445044201f21a2977ee883de57e930542b67a99a03cf0077c008ef853"
+    },
+    {
+      "path": "fresh-boundaries-2718281829/source/renderer/virgl-command/floating-depth-images.mjs",
+      "bytes": 947,
+      "sha256": "76e02b32e5a24f65f360adb7cbcc0f9e5d51ee90be7cfbe1a383bfa99cc30370"
+    },
+    {
+      "path": "fresh-boundaries-2718281829/source/renderer/virgl-command/integer-images.mjs",
+      "bytes": 1557,
+      "sha256": "8871226b60ad86ee1f585f8de6e5891241a361ad84aa811a36028fd003d95029"
+    },
+    {
+      "path": "fresh-boundaries-2718281829/source/renderer/virgl-command/packed-float-images.mjs",
+      "bytes": 1620,
+      "sha256": "0ea28e0bfcf4a0ae04f634826d4b65cb19a6285850836412c7b06311ce1c5405"
+    },
+    {
+      "path": "fresh-boundaries-2718281829/source/renderer/virgl-command/packed-normalized-images.mjs",
+      "bytes": 2046,
+      "sha256": "5ccf01336a906f3b46b0c8c790c73449331e09ac3cfee2931459d507b6dccd18"
+    },
+    {
+      "path": "fresh-boundaries-2718281829/source/renderer/virgl-command/packed-unsigned-images.mjs",
+      "bytes": 991,
+      "sha256": "1170cf4d69d7281fdc32383354d7c17d6019ece0c7a6f681de86b27a57ea0d61"
+    },
+    {
+      "path": "fresh-boundaries-2718281829/source/renderer/virgl-command/resources.mjs",
+      "bytes": 142609,
+      "sha256": "d39b525bdd0081fdadf5257d854cc676ec3df3eb95e565bc63c9763409b92776"
+    },
+    {
+      "path": "fresh-boundaries-2718281829/source/renderer/virgl-command/scanout.mjs",
+      "bytes": 14132,
+      "sha256": "affbac9b1b14e2a1eadb9bc29c693e120e20ffb84af02196a9eb00660eac1bac"
+    },
+    {
+      "path": "fresh-boundaries-2718281829/source/renderer/virgl-command/shared-exponent-gpu.mjs",
+      "bytes": 9865,
+      "sha256": "22efbf4e0a3ae04d2e29900278db1e88880bd7c2fc7e757d0fd12d3a899531b7"
+    },
+    {
+      "path": "fresh-boundaries-2718281829/source/renderer/virgl-command/shared-exponent-images.mjs",
+      "bytes": 563,
+      "sha256": "27de20239649aea73145e1f547c9265692f451fedddf3876639c173cf0d6168f"
+    },
+    {
+      "path": "fresh-boundaries-2718281829/source/renderer/virgl-command/state.mjs",
+      "bytes": 189384,
+      "sha256": "aa001d630a196801ad7de0fe48ef07a8d8acee8ad2d79fbb8e14acab5babc850"
+    },
+    {
+      "path": "fresh-boundaries-2718281829/source/renderer/virgl-command/tests/dimensional-view-owners.mjs",
+      "bytes": 6908,
+      "sha256": "372a96ce0b6d4ca16d004028c65736fdb0a06c50b59b48edc557ac94b5709b26"
+    },
+    {
+      "path": "fresh-boundaries-2718281829/source/renderer/virgl-command/tests/native-dimensional-views.mjs",
+      "bytes": 24007,
+      "sha256": "f6958d91ad90a7551dc08803dbcc69e8ccb4e0bcb51db2ffb816589c1f0d6526"
+    },
+    {
+      "path": "fresh-boundaries-2718281829/source/renderer/virgl-command/tests/standard-instanced-draws.mjs",
+      "bytes": 32402,
+      "sha256": "f02cf96a50f79ef5ed71c0240784a7ae3d030231d18d320148e89252bf724afa"
+    },
+    {
+      "path": "fresh-boundaries-2718281829/source/renderer/virgl-command/tests/submit-acceptance.mjs",
+      "bytes": 53417,
+      "sha256": "c65063916c5f28085604a5dca46a2221f360762c1192776dc9294e2e1ba238ed"
+    },
+    {
+      "path": "fresh-boundaries-2718281829/source/renderer/virgl-command/unorm-depth-images.mjs",
+      "bytes": 1409,
+      "sha256": "7fb08881153cfd06ed1acb5dba8d6cc61525b8f742a3b0a9715fb0e68e55e1d1"
+    },
+    {
+      "path": "fresh-boundaries-2718281829/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "bytes": 13538,
+      "sha256": "4ade0ffb9ffb661a729179525e7937c4695230dc57a7f79db63a1538119a95f2"
+    },
+    {
+      "path": "fresh-boundaries-2718281829/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "bytes": 442769,
+      "sha256": "8749da215131646f0b7d53d59fe7ee19fa68b2fab2e9bec80446c4af3e84e100"
+    },
+    {
+      "path": "fresh-boundaries-2718281829/source/renderer/virgl-shader/index.mjs",
+      "bytes": 22546,
+      "sha256": "1bae07f2e668078c4e447f65d1785815714907b7270ced01b131ce70e6d3f10e"
+    },
+    {
+      "path": "fresh-boundaries-2718281829/source/renderer/virgl-shader/standard.mjs",
+      "bytes": 13572,
+      "sha256": "2a3f3123b9b85932e76ed5b8576d5d5de10f0179db35875534edbfac7ffa91e4"
+    },
+    {
+      "path": "fresh-boundaries-2718281829/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "bytes": 437,
+      "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804"
+    },
+    {
+      "path": "fresh-boundaries-2718281829/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+      "bytes": 1314,
+      "sha256": "2877a95db8f6305fce95abf975c0fd7176ea2936c91eae201f662997f37f9fb2"
+    },
+    {
+      "path": "fresh-boundaries-2718281829/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm.js",
+      "bytes": 174539,
+      "sha256": "0e9cc143b27b3a6375ddee7cb76fb42fafeaf6c53069bb98f91b61e1ca8d74a9"
+    },
+    {
+      "path": "fresh-boundaries-2718281829/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm_bg.wasm",
+      "bytes": 7422308,
+      "sha256": "46272a64d71763c01bc60f99409d15aa6757c70ec58e8313f73ca08c868d7692"
+    },
+    {
+      "path": "fresh-boundaries-2718281829/source/tools/virgl-command/standard-draw-oracle.mjs",
+      "bytes": 4684,
+      "sha256": "8de41c4a9f041f7a9acaf8a062a525f64c0ef3d197c464753764ddada94d26e3"
+    },
+    {
+      "path": "fresh-boundaries-2718281829/source/tools/virgl-command/standard-image-fixtures.mjs",
+      "bytes": 3809,
+      "sha256": "1c045bdf667fc18be16644a05dfeeb5ef7e88b4eb7eaf3f3572f20fa98954d48"
+    },
+    {
+      "path": "fresh-boundaries-2718281829/source/tools/virgl-command/standard-sampler-fixtures.mjs",
+      "bytes": 3671,
+      "sha256": "e0977f02f9d6750b727c5e9b72f9e486b0245acc203acafeeaec16de8e25133d"
+    },
+    {
+      "path": "fresh-boundaries-2718281829/source/tools/virgl-command/standard-texture-fixtures.mjs",
+      "bytes": 3872,
+      "sha256": "f32f31df7d93fdf829559b04b822ea23162de44c9e171c19ccc37c71c65c15e8"
+    },
+    {
+      "path": "fresh-boundaries-2718281829/source/tools/virgl-dimensional-shaders/fixtures.mjs",
+      "bytes": 8582,
+      "sha256": "853e1ea6c912b600e2113bdbbdc6a01ef8082a032755f9eaeba0ced3d3d6b057"
+    },
+    {
+      "path": "fresh-boundaries-2718281829/source/tools/virgl-dimensional-views/browser.mjs",
+      "bytes": 9357,
+      "sha256": "53d35865c259b4afe837e857a4197385fae6348b04a0641cce9f29a5cafd9bc6"
+    },
+    {
+      "path": "fresh-boundaries-2718281829/source/tools/virgl-dimensional-views/fixtures.mjs",
+      "bytes": 13456,
+      "sha256": "9b64d28731920091ac25c7d98a4d8d905bc279200707a7b2c7d84fbba36e6b2c"
+    },
+    {
+      "path": "fresh-boundaries-2718281829/source/tools/virgl-instance-base/fixtures.mjs",
+      "bytes": 6011,
+      "sha256": "6ff14a60ea98cb044e5b391c9d1e6ef8f4fc8428bb20d1fa6067e57046013304"
+    },
+    {
+      "path": "fresh-boundaries-2718281829/source/tools/virgl-shadow-shaders/fixtures.mjs",
+      "bytes": 8653,
+      "sha256": "80b071e28005961a7d8aa06450624a01ab7b058e092384042814ee280dc1aef0"
+    },
+    {
+      "path": "fresh-boundaries-2718281829.log",
+      "bytes": 153,
+      "sha256": "a3ff7aa00b0bfe6188c0081b2ae5e2910ce02392a070eb2994bc2d8354e2db54"
+    },
+    {
+      "path": "fresh-facade/results.json",
+      "bytes": 5086881,
+      "sha256": "7d1ee9f223f9df941323dfae919b88ab547be79b80849f70d00d4a6ba7771c38"
+    },
+    {
+      "path": "fresh-facade/source/renderer/virgl-command/constant-domain.mjs",
+      "bytes": 116039,
+      "sha256": "75d0f1e72ead2c368163f980a9ef05aaed8fe7c56bbf7679a8f311bae444ab1a"
+    },
+    {
+      "path": "fresh-facade/source/renderer/virgl-command/decoder.mjs",
+      "bytes": 47276,
+      "sha256": "4080f1fbbfa3d262bd92a176a29616e573c36089785cacf85389656277b13554"
+    },
+    {
+      "path": "fresh-facade/source/tools/virgl-dimensional-views/facade.mjs",
+      "bytes": 9517,
+      "sha256": "cc6c35a4730934b4fa6c2928add0e2ab4dd03618c04897c1bd9f8f657ad789e5"
+    },
+    {
+      "path": "fresh-facade.log",
+      "bytes": 96,
+      "sha256": "36d2900fb6afebfff5fa9257e6d906f0ce36a820c2facc0314ebe324d723ddde"
+    },
+    {
+      "path": "fresh-interrogation.log",
+      "bytes": 3837,
+      "sha256": "6ecff55dcf53d5b7a63649e2e60ee73792ee1c3a8ad2f91c2249a248b2d9b6a1"
+    },
+    {
+      "path": "gpu-refresh-audit.jsonl",
+      "bytes": 12378,
+      "sha256": "baa7771d0f3d0b036ee4de3bedda6fe861dc6a2ea82b4c409e9ffc9795d06183"
+    },
+    {
+      "path": "held-citations.jsonl",
+      "bytes": 130026,
+      "sha256": "9e5361f271590e2f627a1e53f4167bfc585419b4309a61599b0f6a4e4b55cca2"
+    },
+    {
+      "path": "initial-critic-browser.mjs",
+      "bytes": 10331,
+      "sha256": "5364c6dd938a597bb5a64764aa417632f86463c8adc7614b75d5c8dd431fd5bc"
+    },
+    {
+      "path": "interrogate.py",
+      "bytes": 19540,
+      "sha256": "9227b04a777e8ac25d12413d1e5b010ce530d81e90582e03ff4c8647290e9c00"
+    },
+    {
+      "path": "interrogation-before-reset-boundary.log",
+      "bytes": 433,
+      "sha256": "5b11f314e24f257940dbb758d7c28595267c2dc6ca02697fb0e479ded785137c"
+    },
+    {
+      "path": "interrogation-before-upload-disambiguation.log",
+      "bytes": 626,
+      "sha256": "cfe8e37534aad7badc8992c479c0e249e6e24d1cbb74d22d688906183eb03b53"
+    },
+    {
+      "path": "interrogation.log",
+      "bytes": 2726,
+      "sha256": "781899c4a572e14d58d99b5e07606421d54742585889fbac27a5f8a6bf4a2b5d"
+    },
+    {
+      "path": "lifecycle-checks.json",
+      "bytes": 1160,
+      "sha256": "5c1e2990ecc6e116db077d81d3a77a5c32cea0a8b564dfad8c12741866906330"
+    },
+    {
+      "path": "novel-3141592653-2718281829/browser-coverage.json",
+      "bytes": 1719275,
+      "sha256": "7dd55341302d8a60a430dd7ca997f0aa9fd6e1646fde8d20826cf5abb68a60ab"
+    },
+    {
+      "path": "novel-3141592653-2718281829/browser.png",
+      "bytes": 45429,
+      "sha256": "3083cf13752f7b6321101f447e60020f28cd4046985368f513a918aa8727ce85"
+    },
+    {
+      "path": "novel-3141592653-2718281829/report.json",
+      "bytes": 25893,
+      "sha256": "7a1ea55bb46b2a7d4ef07626b82496089619948cbce8fb56835a003789fb885a"
+    },
+    {
+      "path": "novel-3141592653-2718281829/run-0000.json.gz",
+      "bytes": 169316,
+      "sha256": "2740f88c8dc5d09ef6496e0d970f3a76a17351c6456e4a8df4589e31bf7a0c35"
+    },
+    {
+      "path": "novel-3141592653-2718281829/run-0001.json.gz",
+      "bytes": 169316,
+      "sha256": "769e464c557847d44d85d61e912a079f411d756ad6cbc5ed57679d7c0f2e8901"
+    },
+    {
+      "path": "novel-3141592653-2718281829/source/renderer/virgl-command/cache.mjs",
+      "bytes": 2989,
+      "sha256": "9e50cc258528e581f79cee0e4e0038994c7968f80046b9db21e7f5e0e4a92cfa"
+    },
+    {
+      "path": "novel-3141592653-2718281829/source/renderer/virgl-command/color-images.mjs",
+      "bytes": 2770,
+      "sha256": "8c1b43f830e13f73d1397398e97bf263343f88c1782c683a890cb0f1fbc5e0e1"
+    },
+    {
+      "path": "novel-3141592653-2718281829/source/renderer/virgl-command/constant-domain.mjs",
+      "bytes": 116039,
+      "sha256": "75d0f1e72ead2c368163f980a9ef05aaed8fe7c56bbf7679a8f311bae444ab1a"
+    },
+    {
+      "path": "novel-3141592653-2718281829/source/renderer/virgl-command/control-bridge.mjs",
+      "bytes": 33580,
+      "sha256": "977f307a185d27e4711eba8637df41f0910e153ee1e03af52d21ff2f75a95333"
+    },
+    {
+      "path": "novel-3141592653-2718281829/source/renderer/virgl-command/decoder.mjs",
+      "bytes": 47276,
+      "sha256": "4080f1fbbfa3d262bd92a176a29616e573c36089785cacf85389656277b13554"
+    },
+    {
+      "path": "novel-3141592653-2718281829/source/renderer/virgl-command/float-images.mjs",
+      "bytes": 3132,
+      "sha256": "69543e48426c7ded5178b659eb651b5cb765aa559a0bbf96fd8d34f5cf7cfe46"
+    },
+    {
+      "path": "novel-3141592653-2718281829/source/renderer/virgl-command/floating-depth-gpu.mjs",
+      "bytes": 14648,
+      "sha256": "6e87240445044201f21a2977ee883de57e930542b67a99a03cf0077c008ef853"
+    },
+    {
+      "path": "novel-3141592653-2718281829/source/renderer/virgl-command/floating-depth-images.mjs",
+      "bytes": 947,
+      "sha256": "76e02b32e5a24f65f360adb7cbcc0f9e5d51ee90be7cfbe1a383bfa99cc30370"
+    },
+    {
+      "path": "novel-3141592653-2718281829/source/renderer/virgl-command/integer-images.mjs",
+      "bytes": 1557,
+      "sha256": "8871226b60ad86ee1f585f8de6e5891241a361ad84aa811a36028fd003d95029"
+    },
+    {
+      "path": "novel-3141592653-2718281829/source/renderer/virgl-command/packed-float-images.mjs",
+      "bytes": 1620,
+      "sha256": "0ea28e0bfcf4a0ae04f634826d4b65cb19a6285850836412c7b06311ce1c5405"
+    },
+    {
+      "path": "novel-3141592653-2718281829/source/renderer/virgl-command/packed-normalized-images.mjs",
+      "bytes": 2046,
+      "sha256": "5ccf01336a906f3b46b0c8c790c73449331e09ac3cfee2931459d507b6dccd18"
+    },
+    {
+      "path": "novel-3141592653-2718281829/source/renderer/virgl-command/packed-unsigned-images.mjs",
+      "bytes": 991,
+      "sha256": "1170cf4d69d7281fdc32383354d7c17d6019ece0c7a6f681de86b27a57ea0d61"
+    },
+    {
+      "path": "novel-3141592653-2718281829/source/renderer/virgl-command/resources.mjs",
+      "bytes": 142609,
+      "sha256": "d39b525bdd0081fdadf5257d854cc676ec3df3eb95e565bc63c9763409b92776"
+    },
+    {
+      "path": "novel-3141592653-2718281829/source/renderer/virgl-command/scanout.mjs",
+      "bytes": 14132,
+      "sha256": "affbac9b1b14e2a1eadb9bc29c693e120e20ffb84af02196a9eb00660eac1bac"
+    },
+    {
+      "path": "novel-3141592653-2718281829/source/renderer/virgl-command/shared-exponent-gpu.mjs",
+      "bytes": 9865,
+      "sha256": "22efbf4e0a3ae04d2e29900278db1e88880bd7c2fc7e757d0fd12d3a899531b7"
+    },
+    {
+      "path": "novel-3141592653-2718281829/source/renderer/virgl-command/shared-exponent-images.mjs",
+      "bytes": 563,
+      "sha256": "27de20239649aea73145e1f547c9265692f451fedddf3876639c173cf0d6168f"
+    },
+    {
+      "path": "novel-3141592653-2718281829/source/renderer/virgl-command/state.mjs",
+      "bytes": 189384,
+      "sha256": "aa001d630a196801ad7de0fe48ef07a8d8acee8ad2d79fbb8e14acab5babc850"
+    },
+    {
+      "path": "novel-3141592653-2718281829/source/renderer/virgl-command/tests/dimensional-view-owners.mjs",
+      "bytes": 6908,
+      "sha256": "372a96ce0b6d4ca16d004028c65736fdb0a06c50b59b48edc557ac94b5709b26"
+    },
+    {
+      "path": "novel-3141592653-2718281829/source/renderer/virgl-command/tests/native-dimensional-views.mjs",
+      "bytes": 22955,
+      "sha256": "a6f6b6cf294d3298e5aa60555caeb602f82d8abf2c64385de160867c1df3c37d"
+    },
+    {
+      "path": "novel-3141592653-2718281829/source/renderer/virgl-command/tests/standard-instanced-draws.mjs",
+      "bytes": 32402,
+      "sha256": "f02cf96a50f79ef5ed71c0240784a7ae3d030231d18d320148e89252bf724afa"
+    },
+    {
+      "path": "novel-3141592653-2718281829/source/renderer/virgl-command/tests/submit-acceptance.mjs",
+      "bytes": 53417,
+      "sha256": "c65063916c5f28085604a5dca46a2221f360762c1192776dc9294e2e1ba238ed"
+    },
+    {
+      "path": "novel-3141592653-2718281829/source/renderer/virgl-command/unorm-depth-images.mjs",
+      "bytes": 1409,
+      "sha256": "7fb08881153cfd06ed1acb5dba8d6cc61525b8f742a3b0a9715fb0e68e55e1d1"
+    },
+    {
+      "path": "novel-3141592653-2718281829/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "bytes": 13538,
+      "sha256": "4ade0ffb9ffb661a729179525e7937c4695230dc57a7f79db63a1538119a95f2"
+    },
+    {
+      "path": "novel-3141592653-2718281829/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "bytes": 442769,
+      "sha256": "8749da215131646f0b7d53d59fe7ee19fa68b2fab2e9bec80446c4af3e84e100"
+    },
+    {
+      "path": "novel-3141592653-2718281829/source/renderer/virgl-shader/index.mjs",
+      "bytes": 22546,
+      "sha256": "1bae07f2e668078c4e447f65d1785815714907b7270ced01b131ce70e6d3f10e"
+    },
+    {
+      "path": "novel-3141592653-2718281829/source/renderer/virgl-shader/standard.mjs",
+      "bytes": 13572,
+      "sha256": "2a3f3123b9b85932e76ed5b8576d5d5de10f0179db35875534edbfac7ffa91e4"
+    },
+    {
+      "path": "novel-3141592653-2718281829/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "bytes": 437,
+      "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804"
+    },
+    {
+      "path": "novel-3141592653-2718281829/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+      "bytes": 1314,
+      "sha256": "2877a95db8f6305fce95abf975c0fd7176ea2936c91eae201f662997f37f9fb2"
+    },
+    {
+      "path": "novel-3141592653-2718281829/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm.js",
+      "bytes": 174539,
+      "sha256": "0e9cc143b27b3a6375ddee7cb76fb42fafeaf6c53069bb98f91b61e1ca8d74a9"
+    },
+    {
+      "path": "novel-3141592653-2718281829/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm_bg.wasm",
+      "bytes": 7422308,
+      "sha256": "46272a64d71763c01bc60f99409d15aa6757c70ec58e8313f73ca08c868d7692"
+    },
+    {
+      "path": "novel-3141592653-2718281829/source/tools/virgl-command/standard-draw-oracle.mjs",
+      "bytes": 4684,
+      "sha256": "8de41c4a9f041f7a9acaf8a062a525f64c0ef3d197c464753764ddada94d26e3"
+    },
+    {
+      "path": "novel-3141592653-2718281829/source/tools/virgl-command/standard-image-fixtures.mjs",
+      "bytes": 3809,
+      "sha256": "1c045bdf667fc18be16644a05dfeeb5ef7e88b4eb7eaf3f3572f20fa98954d48"
+    },
+    {
+      "path": "novel-3141592653-2718281829/source/tools/virgl-command/standard-sampler-fixtures.mjs",
+      "bytes": 3671,
+      "sha256": "e0977f02f9d6750b727c5e9b72f9e486b0245acc203acafeeaec16de8e25133d"
+    },
+    {
+      "path": "novel-3141592653-2718281829/source/tools/virgl-command/standard-texture-fixtures.mjs",
+      "bytes": 3872,
+      "sha256": "f32f31df7d93fdf829559b04b822ea23162de44c9e171c19ccc37c71c65c15e8"
+    },
+    {
+      "path": "novel-3141592653-2718281829/source/tools/virgl-dimensional-shaders/fixtures.mjs",
+      "bytes": 8582,
+      "sha256": "853e1ea6c912b600e2113bdbbdc6a01ef8082a032755f9eaeba0ced3d3d6b057"
+    },
+    {
+      "path": "novel-3141592653-2718281829/source/tools/virgl-dimensional-views/browser.mjs",
+      "bytes": 9357,
+      "sha256": "53d35865c259b4afe837e857a4197385fae6348b04a0641cce9f29a5cafd9bc6"
+    },
+    {
+      "path": "novel-3141592653-2718281829/source/tools/virgl-dimensional-views/critic-case.mjs",
+      "bytes": 2376,
+      "sha256": "a6f6c7b0a84bd1235339a0074239ae386ec4ef38cbca1a1f9aab4bba2e5d7d28"
+    },
+    {
+      "path": "novel-3141592653-2718281829/source/tools/virgl-dimensional-views/fixtures.mjs",
+      "bytes": 13456,
+      "sha256": "9b64d28731920091ac25c7d98a4d8d905bc279200707a7b2c7d84fbba36e6b2c"
+    },
+    {
+      "path": "novel-3141592653-2718281829/source/tools/virgl-instance-base/fixtures.mjs",
+      "bytes": 6011,
+      "sha256": "6ff14a60ea98cb044e5b391c9d1e6ef8f4fc8428bb20d1fa6067e57046013304"
+    },
+    {
+      "path": "novel-3141592653-2718281829/source/tools/virgl-shadow-shaders/fixtures.mjs",
+      "bytes": 8653,
+      "sha256": "80b071e28005961a7d8aa06450624a01ab7b058e092384042814ee280dc1aef0"
+    },
+    {
+      "path": "novel-corrected-3141592653-2718281829/browser-coverage.json",
+      "bytes": 1719304,
+      "sha256": "9b1412663807d65bee21903ac45d6f5a6cf77ac9daffe4d5a28ba29738553767"
+    },
+    {
+      "path": "novel-corrected-3141592653-2718281829/browser.png",
+      "bytes": 45434,
+      "sha256": "48352183932b7e003ec1a10bb60c4a6d26c8b7b768a20979fb9bb9f9124ef2bd"
+    },
+    {
+      "path": "novel-corrected-3141592653-2718281829/report.json",
+      "bytes": 26087,
+      "sha256": "4aa2f8bbe6a7cf310f5aae4d05f6d3a8086596cf314077da06ced70a34ed724a"
+    },
+    {
+      "path": "novel-corrected-3141592653-2718281829/run-0000.json.gz",
+      "bytes": 169316,
+      "sha256": "2740f88c8dc5d09ef6496e0d970f3a76a17351c6456e4a8df4589e31bf7a0c35"
+    },
+    {
+      "path": "novel-corrected-3141592653-2718281829/run-0001.json.gz",
+      "bytes": 169359,
+      "sha256": "5dcbfc8cc7cc04fa33b8d733cd14f7a4dfa039a516237054aba57db0face17cb"
+    },
+    {
+      "path": "novel-corrected-3141592653-2718281829/source/renderer/virgl-command/cache.mjs",
+      "bytes": 2989,
+      "sha256": "9e50cc258528e581f79cee0e4e0038994c7968f80046b9db21e7f5e0e4a92cfa"
+    },
+    {
+      "path": "novel-corrected-3141592653-2718281829/source/renderer/virgl-command/color-images.mjs",
+      "bytes": 2770,
+      "sha256": "8c1b43f830e13f73d1397398e97bf263343f88c1782c683a890cb0f1fbc5e0e1"
+    },
+    {
+      "path": "novel-corrected-3141592653-2718281829/source/renderer/virgl-command/constant-domain.mjs",
+      "bytes": 116039,
+      "sha256": "75d0f1e72ead2c368163f980a9ef05aaed8fe7c56bbf7679a8f311bae444ab1a"
+    },
+    {
+      "path": "novel-corrected-3141592653-2718281829/source/renderer/virgl-command/control-bridge.mjs",
+      "bytes": 33580,
+      "sha256": "977f307a185d27e4711eba8637df41f0910e153ee1e03af52d21ff2f75a95333"
+    },
+    {
+      "path": "novel-corrected-3141592653-2718281829/source/renderer/virgl-command/decoder.mjs",
+      "bytes": 47276,
+      "sha256": "4080f1fbbfa3d262bd92a176a29616e573c36089785cacf85389656277b13554"
+    },
+    {
+      "path": "novel-corrected-3141592653-2718281829/source/renderer/virgl-command/float-images.mjs",
+      "bytes": 3132,
+      "sha256": "69543e48426c7ded5178b659eb651b5cb765aa559a0bbf96fd8d34f5cf7cfe46"
+    },
+    {
+      "path": "novel-corrected-3141592653-2718281829/source/renderer/virgl-command/floating-depth-gpu.mjs",
+      "bytes": 14648,
+      "sha256": "6e87240445044201f21a2977ee883de57e930542b67a99a03cf0077c008ef853"
+    },
+    {
+      "path": "novel-corrected-3141592653-2718281829/source/renderer/virgl-command/floating-depth-images.mjs",
+      "bytes": 947,
+      "sha256": "76e02b32e5a24f65f360adb7cbcc0f9e5d51ee90be7cfbe1a383bfa99cc30370"
+    },
+    {
+      "path": "novel-corrected-3141592653-2718281829/source/renderer/virgl-command/integer-images.mjs",
+      "bytes": 1557,
+      "sha256": "8871226b60ad86ee1f585f8de6e5891241a361ad84aa811a36028fd003d95029"
+    },
+    {
+      "path": "novel-corrected-3141592653-2718281829/source/renderer/virgl-command/packed-float-images.mjs",
+      "bytes": 1620,
+      "sha256": "0ea28e0bfcf4a0ae04f634826d4b65cb19a6285850836412c7b06311ce1c5405"
+    },
+    {
+      "path": "novel-corrected-3141592653-2718281829/source/renderer/virgl-command/packed-normalized-images.mjs",
+      "bytes": 2046,
+      "sha256": "5ccf01336a906f3b46b0c8c790c73449331e09ac3cfee2931459d507b6dccd18"
+    },
+    {
+      "path": "novel-corrected-3141592653-2718281829/source/renderer/virgl-command/packed-unsigned-images.mjs",
+      "bytes": 991,
+      "sha256": "1170cf4d69d7281fdc32383354d7c17d6019ece0c7a6f681de86b27a57ea0d61"
+    },
+    {
+      "path": "novel-corrected-3141592653-2718281829/source/renderer/virgl-command/resources.mjs",
+      "bytes": 142609,
+      "sha256": "d39b525bdd0081fdadf5257d854cc676ec3df3eb95e565bc63c9763409b92776"
+    },
+    {
+      "path": "novel-corrected-3141592653-2718281829/source/renderer/virgl-command/scanout.mjs",
+      "bytes": 14132,
+      "sha256": "affbac9b1b14e2a1eadb9bc29c693e120e20ffb84af02196a9eb00660eac1bac"
+    },
+    {
+      "path": "novel-corrected-3141592653-2718281829/source/renderer/virgl-command/shared-exponent-gpu.mjs",
+      "bytes": 9865,
+      "sha256": "22efbf4e0a3ae04d2e29900278db1e88880bd7c2fc7e757d0fd12d3a899531b7"
+    },
+    {
+      "path": "novel-corrected-3141592653-2718281829/source/renderer/virgl-command/shared-exponent-images.mjs",
+      "bytes": 563,
+      "sha256": "27de20239649aea73145e1f547c9265692f451fedddf3876639c173cf0d6168f"
+    },
+    {
+      "path": "novel-corrected-3141592653-2718281829/source/renderer/virgl-command/state.mjs",
+      "bytes": 189384,
+      "sha256": "aa001d630a196801ad7de0fe48ef07a8d8acee8ad2d79fbb8e14acab5babc850"
+    },
+    {
+      "path": "novel-corrected-3141592653-2718281829/source/renderer/virgl-command/tests/dimensional-view-owners.mjs",
+      "bytes": 6908,
+      "sha256": "372a96ce0b6d4ca16d004028c65736fdb0a06c50b59b48edc557ac94b5709b26"
+    },
+    {
+      "path": "novel-corrected-3141592653-2718281829/source/renderer/virgl-command/tests/native-dimensional-views.mjs",
+      "bytes": 22984,
+      "sha256": "e6c5d704f083d78a279099a23e56510e0c70fa4ee3e932a4a9acdb9bf2100f9c"
+    },
+    {
+      "path": "novel-corrected-3141592653-2718281829/source/renderer/virgl-command/tests/standard-instanced-draws.mjs",
+      "bytes": 32402,
+      "sha256": "f02cf96a50f79ef5ed71c0240784a7ae3d030231d18d320148e89252bf724afa"
+    },
+    {
+      "path": "novel-corrected-3141592653-2718281829/source/renderer/virgl-command/tests/submit-acceptance.mjs",
+      "bytes": 53417,
+      "sha256": "c65063916c5f28085604a5dca46a2221f360762c1192776dc9294e2e1ba238ed"
+    },
+    {
+      "path": "novel-corrected-3141592653-2718281829/source/renderer/virgl-command/unorm-depth-images.mjs",
+      "bytes": 1409,
+      "sha256": "7fb08881153cfd06ed1acb5dba8d6cc61525b8f742a3b0a9715fb0e68e55e1d1"
+    },
+    {
+      "path": "novel-corrected-3141592653-2718281829/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "bytes": 13538,
+      "sha256": "4ade0ffb9ffb661a729179525e7937c4695230dc57a7f79db63a1538119a95f2"
+    },
+    {
+      "path": "novel-corrected-3141592653-2718281829/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "bytes": 442769,
+      "sha256": "8749da215131646f0b7d53d59fe7ee19fa68b2fab2e9bec80446c4af3e84e100"
+    },
+    {
+      "path": "novel-corrected-3141592653-2718281829/source/renderer/virgl-shader/index.mjs",
+      "bytes": 22546,
+      "sha256": "1bae07f2e668078c4e447f65d1785815714907b7270ced01b131ce70e6d3f10e"
+    },
+    {
+      "path": "novel-corrected-3141592653-2718281829/source/renderer/virgl-shader/standard.mjs",
+      "bytes": 13572,
+      "sha256": "2a3f3123b9b85932e76ed5b8576d5d5de10f0179db35875534edbfac7ffa91e4"
+    },
+    {
+      "path": "novel-corrected-3141592653-2718281829/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "bytes": 437,
+      "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804"
+    },
+    {
+      "path": "novel-corrected-3141592653-2718281829/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+      "bytes": 1314,
+      "sha256": "2877a95db8f6305fce95abf975c0fd7176ea2936c91eae201f662997f37f9fb2"
+    },
+    {
+      "path": "novel-corrected-3141592653-2718281829/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm.js",
+      "bytes": 174539,
+      "sha256": "0e9cc143b27b3a6375ddee7cb76fb42fafeaf6c53069bb98f91b61e1ca8d74a9"
+    },
+    {
+      "path": "novel-corrected-3141592653-2718281829/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm_bg.wasm",
+      "bytes": 7422308,
+      "sha256": "46272a64d71763c01bc60f99409d15aa6757c70ec58e8313f73ca08c868d7692"
+    },
+    {
+      "path": "novel-corrected-3141592653-2718281829/source/tools/virgl-command/standard-draw-oracle.mjs",
+      "bytes": 4684,
+      "sha256": "8de41c4a9f041f7a9acaf8a062a525f64c0ef3d197c464753764ddada94d26e3"
+    },
+    {
+      "path": "novel-corrected-3141592653-2718281829/source/tools/virgl-command/standard-image-fixtures.mjs",
+      "bytes": 3809,
+      "sha256": "1c045bdf667fc18be16644a05dfeeb5ef7e88b4eb7eaf3f3572f20fa98954d48"
+    },
+    {
+      "path": "novel-corrected-3141592653-2718281829/source/tools/virgl-command/standard-sampler-fixtures.mjs",
+      "bytes": 3671,
+      "sha256": "e0977f02f9d6750b727c5e9b72f9e486b0245acc203acafeeaec16de8e25133d"
+    },
+    {
+      "path": "novel-corrected-3141592653-2718281829/source/tools/virgl-command/standard-texture-fixtures.mjs",
+      "bytes": 3872,
+      "sha256": "f32f31df7d93fdf829559b04b822ea23162de44c9e171c19ccc37c71c65c15e8"
+    },
+    {
+      "path": "novel-corrected-3141592653-2718281829/source/tools/virgl-dimensional-shaders/fixtures.mjs",
+      "bytes": 8582,
+      "sha256": "853e1ea6c912b600e2113bdbbdc6a01ef8082a032755f9eaeba0ced3d3d6b057"
+    },
+    {
+      "path": "novel-corrected-3141592653-2718281829/source/tools/virgl-dimensional-views/browser.mjs",
+      "bytes": 9357,
+      "sha256": "53d35865c259b4afe837e857a4197385fae6348b04a0641cce9f29a5cafd9bc6"
+    },
+    {
+      "path": "novel-corrected-3141592653-2718281829/source/tools/virgl-dimensional-views/critic-browser.mjs",
+      "bytes": 10673,
+      "sha256": "55ab09840b899f6adb37d02301c8df02fd14c8dd53ecf1fb720292951a142b54"
+    },
+    {
+      "path": "novel-corrected-3141592653-2718281829/source/tools/virgl-dimensional-views/critic-case.mjs",
+      "bytes": 2376,
+      "sha256": "a6f6c7b0a84bd1235339a0074239ae386ec4ef38cbca1a1f9aab4bba2e5d7d28"
+    },
+    {
+      "path": "novel-corrected-3141592653-2718281829/source/tools/virgl-dimensional-views/fixtures.mjs",
+      "bytes": 13456,
+      "sha256": "9b64d28731920091ac25c7d98a4d8d905bc279200707a7b2c7d84fbba36e6b2c"
+    },
+    {
+      "path": "novel-corrected-3141592653-2718281829/source/tools/virgl-instance-base/fixtures.mjs",
+      "bytes": 6011,
+      "sha256": "6ff14a60ea98cb044e5b391c9d1e6ef8f4fc8428bb20d1fa6067e57046013304"
+    },
+    {
+      "path": "novel-corrected-3141592653-2718281829/source/tools/virgl-shadow-shaders/fixtures.mjs",
+      "bytes": 8653,
+      "sha256": "80b071e28005961a7d8aa06450624a01ab7b058e092384042814ee280dc1aef0"
+    },
+    {
+      "path": "novel-corrected.log",
+      "bytes": 163,
+      "sha256": "48d0fab6f623f247ac3e8f350ba175afde89e6cc074aa10f346c6a579b9b66d1"
+    },
+    {
+      "path": "novel-final-3141592653-2718281829/browser-coverage.json",
+      "bytes": 1719275,
+      "sha256": "5417b811d4e8a502aafe361b30321299a4eedaf9685dc658c43776985acd4b3e"
+    },
+    {
+      "path": "novel-final-3141592653-2718281829/browser.png",
+      "bytes": 45429,
+      "sha256": "3083cf13752f7b6321101f447e60020f28cd4046985368f513a918aa8727ce85"
+    },
+    {
+      "path": "novel-final-3141592653-2718281829/report.json",
+      "bytes": 26083,
+      "sha256": "bd7e700a47da9d5e5b75ed4c3134cd10bde5a74939df16d7d5379db17bb1e060"
+    },
+    {
+      "path": "novel-final-3141592653-2718281829/run-0000.json.gz",
+      "bytes": 169316,
+      "sha256": "2740f88c8dc5d09ef6496e0d970f3a76a17351c6456e4a8df4589e31bf7a0c35"
+    },
+    {
+      "path": "novel-final-3141592653-2718281829/run-0001.json.gz",
+      "bytes": 169316,
+      "sha256": "769e464c557847d44d85d61e912a079f411d756ad6cbc5ed57679d7c0f2e8901"
+    },
+    {
+      "path": "novel-final-3141592653-2718281829/source/renderer/virgl-command/cache.mjs",
+      "bytes": 2989,
+      "sha256": "9e50cc258528e581f79cee0e4e0038994c7968f80046b9db21e7f5e0e4a92cfa"
+    },
+    {
+      "path": "novel-final-3141592653-2718281829/source/renderer/virgl-command/color-images.mjs",
+      "bytes": 2770,
+      "sha256": "8c1b43f830e13f73d1397398e97bf263343f88c1782c683a890cb0f1fbc5e0e1"
+    },
+    {
+      "path": "novel-final-3141592653-2718281829/source/renderer/virgl-command/constant-domain.mjs",
+      "bytes": 116039,
+      "sha256": "75d0f1e72ead2c368163f980a9ef05aaed8fe7c56bbf7679a8f311bae444ab1a"
+    },
+    {
+      "path": "novel-final-3141592653-2718281829/source/renderer/virgl-command/control-bridge.mjs",
+      "bytes": 33580,
+      "sha256": "977f307a185d27e4711eba8637df41f0910e153ee1e03af52d21ff2f75a95333"
+    },
+    {
+      "path": "novel-final-3141592653-2718281829/source/renderer/virgl-command/decoder.mjs",
+      "bytes": 47276,
+      "sha256": "4080f1fbbfa3d262bd92a176a29616e573c36089785cacf85389656277b13554"
+    },
+    {
+      "path": "novel-final-3141592653-2718281829/source/renderer/virgl-command/float-images.mjs",
+      "bytes": 3132,
+      "sha256": "69543e48426c7ded5178b659eb651b5cb765aa559a0bbf96fd8d34f5cf7cfe46"
+    },
+    {
+      "path": "novel-final-3141592653-2718281829/source/renderer/virgl-command/floating-depth-gpu.mjs",
+      "bytes": 14648,
+      "sha256": "6e87240445044201f21a2977ee883de57e930542b67a99a03cf0077c008ef853"
+    },
+    {
+      "path": "novel-final-3141592653-2718281829/source/renderer/virgl-command/floating-depth-images.mjs",
+      "bytes": 947,
+      "sha256": "76e02b32e5a24f65f360adb7cbcc0f9e5d51ee90be7cfbe1a383bfa99cc30370"
+    },
+    {
+      "path": "novel-final-3141592653-2718281829/source/renderer/virgl-command/integer-images.mjs",
+      "bytes": 1557,
+      "sha256": "8871226b60ad86ee1f585f8de6e5891241a361ad84aa811a36028fd003d95029"
+    },
+    {
+      "path": "novel-final-3141592653-2718281829/source/renderer/virgl-command/packed-float-images.mjs",
+      "bytes": 1620,
+      "sha256": "0ea28e0bfcf4a0ae04f634826d4b65cb19a6285850836412c7b06311ce1c5405"
+    },
+    {
+      "path": "novel-final-3141592653-2718281829/source/renderer/virgl-command/packed-normalized-images.mjs",
+      "bytes": 2046,
+      "sha256": "5ccf01336a906f3b46b0c8c790c73449331e09ac3cfee2931459d507b6dccd18"
+    },
+    {
+      "path": "novel-final-3141592653-2718281829/source/renderer/virgl-command/packed-unsigned-images.mjs",
+      "bytes": 991,
+      "sha256": "1170cf4d69d7281fdc32383354d7c17d6019ece0c7a6f681de86b27a57ea0d61"
+    },
+    {
+      "path": "novel-final-3141592653-2718281829/source/renderer/virgl-command/resources.mjs",
+      "bytes": 142609,
+      "sha256": "d39b525bdd0081fdadf5257d854cc676ec3df3eb95e565bc63c9763409b92776"
+    },
+    {
+      "path": "novel-final-3141592653-2718281829/source/renderer/virgl-command/scanout.mjs",
+      "bytes": 14132,
+      "sha256": "affbac9b1b14e2a1eadb9bc29c693e120e20ffb84af02196a9eb00660eac1bac"
+    },
+    {
+      "path": "novel-final-3141592653-2718281829/source/renderer/virgl-command/shared-exponent-gpu.mjs",
+      "bytes": 9865,
+      "sha256": "22efbf4e0a3ae04d2e29900278db1e88880bd7c2fc7e757d0fd12d3a899531b7"
+    },
+    {
+      "path": "novel-final-3141592653-2718281829/source/renderer/virgl-command/shared-exponent-images.mjs",
+      "bytes": 563,
+      "sha256": "27de20239649aea73145e1f547c9265692f451fedddf3876639c173cf0d6168f"
+    },
+    {
+      "path": "novel-final-3141592653-2718281829/source/renderer/virgl-command/state.mjs",
+      "bytes": 189384,
+      "sha256": "aa001d630a196801ad7de0fe48ef07a8d8acee8ad2d79fbb8e14acab5babc850"
+    },
+    {
+      "path": "novel-final-3141592653-2718281829/source/renderer/virgl-command/tests/dimensional-view-owners.mjs",
+      "bytes": 6908,
+      "sha256": "372a96ce0b6d4ca16d004028c65736fdb0a06c50b59b48edc557ac94b5709b26"
+    },
+    {
+      "path": "novel-final-3141592653-2718281829/source/renderer/virgl-command/tests/native-dimensional-views.mjs",
+      "bytes": 22955,
+      "sha256": "a6f6b6cf294d3298e5aa60555caeb602f82d8abf2c64385de160867c1df3c37d"
+    },
+    {
+      "path": "novel-final-3141592653-2718281829/source/renderer/virgl-command/tests/standard-instanced-draws.mjs",
+      "bytes": 32402,
+      "sha256": "f02cf96a50f79ef5ed71c0240784a7ae3d030231d18d320148e89252bf724afa"
+    },
+    {
+      "path": "novel-final-3141592653-2718281829/source/renderer/virgl-command/tests/submit-acceptance.mjs",
+      "bytes": 53417,
+      "sha256": "c65063916c5f28085604a5dca46a2221f360762c1192776dc9294e2e1ba238ed"
+    },
+    {
+      "path": "novel-final-3141592653-2718281829/source/renderer/virgl-command/unorm-depth-images.mjs",
+      "bytes": 1409,
+      "sha256": "7fb08881153cfd06ed1acb5dba8d6cc61525b8f742a3b0a9715fb0e68e55e1d1"
+    },
+    {
+      "path": "novel-final-3141592653-2718281829/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "bytes": 13538,
+      "sha256": "4ade0ffb9ffb661a729179525e7937c4695230dc57a7f79db63a1538119a95f2"
+    },
+    {
+      "path": "novel-final-3141592653-2718281829/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "bytes": 442769,
+      "sha256": "8749da215131646f0b7d53d59fe7ee19fa68b2fab2e9bec80446c4af3e84e100"
+    },
+    {
+      "path": "novel-final-3141592653-2718281829/source/renderer/virgl-shader/index.mjs",
+      "bytes": 22546,
+      "sha256": "1bae07f2e668078c4e447f65d1785815714907b7270ced01b131ce70e6d3f10e"
+    },
+    {
+      "path": "novel-final-3141592653-2718281829/source/renderer/virgl-shader/standard.mjs",
+      "bytes": 13572,
+      "sha256": "2a3f3123b9b85932e76ed5b8576d5d5de10f0179db35875534edbfac7ffa91e4"
+    },
+    {
+      "path": "novel-final-3141592653-2718281829/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "bytes": 437,
+      "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804"
+    },
+    {
+      "path": "novel-final-3141592653-2718281829/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+      "bytes": 1314,
+      "sha256": "2877a95db8f6305fce95abf975c0fd7176ea2936c91eae201f662997f37f9fb2"
+    },
+    {
+      "path": "novel-final-3141592653-2718281829/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm.js",
+      "bytes": 174539,
+      "sha256": "0e9cc143b27b3a6375ddee7cb76fb42fafeaf6c53069bb98f91b61e1ca8d74a9"
+    },
+    {
+      "path": "novel-final-3141592653-2718281829/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm_bg.wasm",
+      "bytes": 7422308,
+      "sha256": "46272a64d71763c01bc60f99409d15aa6757c70ec58e8313f73ca08c868d7692"
+    },
+    {
+      "path": "novel-final-3141592653-2718281829/source/tools/virgl-command/standard-draw-oracle.mjs",
+      "bytes": 4684,
+      "sha256": "8de41c4a9f041f7a9acaf8a062a525f64c0ef3d197c464753764ddada94d26e3"
+    },
+    {
+      "path": "novel-final-3141592653-2718281829/source/tools/virgl-command/standard-image-fixtures.mjs",
+      "bytes": 3809,
+      "sha256": "1c045bdf667fc18be16644a05dfeeb5ef7e88b4eb7eaf3f3572f20fa98954d48"
+    },
+    {
+      "path": "novel-final-3141592653-2718281829/source/tools/virgl-command/standard-sampler-fixtures.mjs",
+      "bytes": 3671,
+      "sha256": "e0977f02f9d6750b727c5e9b72f9e486b0245acc203acafeeaec16de8e25133d"
+    },
+    {
+      "path": "novel-final-3141592653-2718281829/source/tools/virgl-command/standard-texture-fixtures.mjs",
+      "bytes": 3872,
+      "sha256": "f32f31df7d93fdf829559b04b822ea23162de44c9e171c19ccc37c71c65c15e8"
+    },
+    {
+      "path": "novel-final-3141592653-2718281829/source/tools/virgl-dimensional-shaders/fixtures.mjs",
+      "bytes": 8582,
+      "sha256": "853e1ea6c912b600e2113bdbbdc6a01ef8082a032755f9eaeba0ced3d3d6b057"
+    },
+    {
+      "path": "novel-final-3141592653-2718281829/source/tools/virgl-dimensional-views/browser.mjs",
+      "bytes": 9357,
+      "sha256": "53d35865c259b4afe837e857a4197385fae6348b04a0641cce9f29a5cafd9bc6"
+    },
+    {
+      "path": "novel-final-3141592653-2718281829/source/tools/virgl-dimensional-views/critic-browser.mjs",
+      "bytes": 10397,
+      "sha256": "7cddbe97bf1f312cee8a81cbbb705425b0f88eedfd8aea00c43793b9cf8c25d8"
+    },
+    {
+      "path": "novel-final-3141592653-2718281829/source/tools/virgl-dimensional-views/critic-case.mjs",
+      "bytes": 2376,
+      "sha256": "a6f6c7b0a84bd1235339a0074239ae386ec4ef38cbca1a1f9aab4bba2e5d7d28"
+    },
+    {
+      "path": "novel-final-3141592653-2718281829/source/tools/virgl-dimensional-views/fixtures.mjs",
+      "bytes": 13456,
+      "sha256": "9b64d28731920091ac25c7d98a4d8d905bc279200707a7b2c7d84fbba36e6b2c"
+    },
+    {
+      "path": "novel-final-3141592653-2718281829/source/tools/virgl-instance-base/fixtures.mjs",
+      "bytes": 6011,
+      "sha256": "6ff14a60ea98cb044e5b391c9d1e6ef8f4fc8428bb20d1fa6067e57046013304"
+    },
+    {
+      "path": "novel-final-3141592653-2718281829/source/tools/virgl-shadow-shaders/fixtures.mjs",
+      "bytes": 8653,
+      "sha256": "80b071e28005961a7d8aa06450624a01ab7b058e092384042814ee280dc1aef0"
+    },
+    {
+      "path": "novel-final.log",
+      "bytes": 163,
+      "sha256": "e45fbe6fdb35805ff63aacff7cd709d4a6add44bac17afe20d2bc2fa4e79cd94"
+    },
+    {
+      "path": "novel-prediction.json",
+      "bytes": 809,
+      "sha256": "51d573cb8209105692ae33a394d769b63f473e2479c45620af5de2fcf1a8fa96"
+    },
+    {
+      "path": "novel-sabotage-3141592653/browser-coverage.json",
+      "bytes": 1726479,
+      "sha256": "75850d01a20d2ddc608f759462d5b1828d76e002597edd68228384aa2bb6fe96"
+    },
+    {
+      "path": "novel-sabotage-3141592653/browser.png",
+      "bytes": 30551,
+      "sha256": "539e27864006ed6f7c3231b5a24546e73679438b30042dda41bba06908b767e1"
+    },
+    {
+      "path": "novel-sabotage-3141592653/report.json",
+      "bytes": 26429,
+      "sha256": "a107fd8dc1ff4f32d58596b90a3bb1a6897ce3fe51f93189b29d002b9640c309"
+    },
+    {
+      "path": "novel-sabotage-3141592653/run-0000.json.gz",
+      "bytes": 177417,
+      "sha256": "43a0313862c3d1daf862e83a0b6f4b66cc01c211bf61667a8a5bca57c1ab1879"
+    },
+    {
+      "path": "novel-sabotage-3141592653/source/renderer/virgl-command/cache.mjs",
+      "bytes": 2989,
+      "sha256": "9e50cc258528e581f79cee0e4e0038994c7968f80046b9db21e7f5e0e4a92cfa"
+    },
+    {
+      "path": "novel-sabotage-3141592653/source/renderer/virgl-command/color-images.mjs",
+      "bytes": 2770,
+      "sha256": "8c1b43f830e13f73d1397398e97bf263343f88c1782c683a890cb0f1fbc5e0e1"
+    },
+    {
+      "path": "novel-sabotage-3141592653/source/renderer/virgl-command/constant-domain.mjs",
+      "bytes": 116039,
+      "sha256": "75d0f1e72ead2c368163f980a9ef05aaed8fe7c56bbf7679a8f311bae444ab1a"
+    },
+    {
+      "path": "novel-sabotage-3141592653/source/renderer/virgl-command/control-bridge.mjs",
+      "bytes": 33580,
+      "sha256": "977f307a185d27e4711eba8637df41f0910e153ee1e03af52d21ff2f75a95333"
+    },
+    {
+      "path": "novel-sabotage-3141592653/source/renderer/virgl-command/decoder.mjs",
+      "bytes": 47276,
+      "sha256": "4080f1fbbfa3d262bd92a176a29616e573c36089785cacf85389656277b13554"
+    },
+    {
+      "path": "novel-sabotage-3141592653/source/renderer/virgl-command/float-images.mjs",
+      "bytes": 3132,
+      "sha256": "69543e48426c7ded5178b659eb651b5cb765aa559a0bbf96fd8d34f5cf7cfe46"
+    },
+    {
+      "path": "novel-sabotage-3141592653/source/renderer/virgl-command/floating-depth-gpu.mjs",
+      "bytes": 14648,
+      "sha256": "6e87240445044201f21a2977ee883de57e930542b67a99a03cf0077c008ef853"
+    },
+    {
+      "path": "novel-sabotage-3141592653/source/renderer/virgl-command/floating-depth-images.mjs",
+      "bytes": 947,
+      "sha256": "76e02b32e5a24f65f360adb7cbcc0f9e5d51ee90be7cfbe1a383bfa99cc30370"
+    },
+    {
+      "path": "novel-sabotage-3141592653/source/renderer/virgl-command/integer-images.mjs",
+      "bytes": 1557,
+      "sha256": "8871226b60ad86ee1f585f8de6e5891241a361ad84aa811a36028fd003d95029"
+    },
+    {
+      "path": "novel-sabotage-3141592653/source/renderer/virgl-command/packed-float-images.mjs",
+      "bytes": 1620,
+      "sha256": "0ea28e0bfcf4a0ae04f634826d4b65cb19a6285850836412c7b06311ce1c5405"
+    },
+    {
+      "path": "novel-sabotage-3141592653/source/renderer/virgl-command/packed-normalized-images.mjs",
+      "bytes": 2046,
+      "sha256": "5ccf01336a906f3b46b0c8c790c73449331e09ac3cfee2931459d507b6dccd18"
+    },
+    {
+      "path": "novel-sabotage-3141592653/source/renderer/virgl-command/packed-unsigned-images.mjs",
+      "bytes": 991,
+      "sha256": "1170cf4d69d7281fdc32383354d7c17d6019ece0c7a6f681de86b27a57ea0d61"
+    },
+    {
+      "path": "novel-sabotage-3141592653/source/renderer/virgl-command/resources.mjs",
+      "bytes": 142609,
+      "sha256": "d39b525bdd0081fdadf5257d854cc676ec3df3eb95e565bc63c9763409b92776"
+    },
+    {
+      "path": "novel-sabotage-3141592653/source/renderer/virgl-command/scanout.mjs",
+      "bytes": 14132,
+      "sha256": "affbac9b1b14e2a1eadb9bc29c693e120e20ffb84af02196a9eb00660eac1bac"
+    },
+    {
+      "path": "novel-sabotage-3141592653/source/renderer/virgl-command/shared-exponent-gpu.mjs",
+      "bytes": 9865,
+      "sha256": "22efbf4e0a3ae04d2e29900278db1e88880bd7c2fc7e757d0fd12d3a899531b7"
+    },
+    {
+      "path": "novel-sabotage-3141592653/source/renderer/virgl-command/shared-exponent-images.mjs",
+      "bytes": 563,
+      "sha256": "27de20239649aea73145e1f547c9265692f451fedddf3876639c173cf0d6168f"
+    },
+    {
+      "path": "novel-sabotage-3141592653/source/renderer/virgl-command/state.mjs",
+      "bytes": 189384,
+      "sha256": "aa001d630a196801ad7de0fe48ef07a8d8acee8ad2d79fbb8e14acab5babc850"
+    },
+    {
+      "path": "novel-sabotage-3141592653/source/renderer/virgl-command/tests/dimensional-view-owners.mjs",
+      "bytes": 6908,
+      "sha256": "372a96ce0b6d4ca16d004028c65736fdb0a06c50b59b48edc557ac94b5709b26"
+    },
+    {
+      "path": "novel-sabotage-3141592653/source/renderer/virgl-command/tests/native-dimensional-views.mjs",
+      "bytes": 22955,
+      "sha256": "a6f6b6cf294d3298e5aa60555caeb602f82d8abf2c64385de160867c1df3c37d"
+    },
+    {
+      "path": "novel-sabotage-3141592653/source/renderer/virgl-command/tests/standard-instanced-draws.mjs",
+      "bytes": 32402,
+      "sha256": "f02cf96a50f79ef5ed71c0240784a7ae3d030231d18d320148e89252bf724afa"
+    },
+    {
+      "path": "novel-sabotage-3141592653/source/renderer/virgl-command/tests/submit-acceptance.mjs",
+      "bytes": 53417,
+      "sha256": "c65063916c5f28085604a5dca46a2221f360762c1192776dc9294e2e1ba238ed"
+    },
+    {
+      "path": "novel-sabotage-3141592653/source/renderer/virgl-command/unorm-depth-images.mjs",
+      "bytes": 1409,
+      "sha256": "7fb08881153cfd06ed1acb5dba8d6cc61525b8f742a3b0a9715fb0e68e55e1d1"
+    },
+    {
+      "path": "novel-sabotage-3141592653/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "bytes": 13538,
+      "sha256": "4ade0ffb9ffb661a729179525e7937c4695230dc57a7f79db63a1538119a95f2"
+    },
+    {
+      "path": "novel-sabotage-3141592653/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "bytes": 442769,
+      "sha256": "8749da215131646f0b7d53d59fe7ee19fa68b2fab2e9bec80446c4af3e84e100"
+    },
+    {
+      "path": "novel-sabotage-3141592653/source/renderer/virgl-shader/index.mjs",
+      "bytes": 22546,
+      "sha256": "1bae07f2e668078c4e447f65d1785815714907b7270ced01b131ce70e6d3f10e"
+    },
+    {
+      "path": "novel-sabotage-3141592653/source/renderer/virgl-shader/standard.mjs",
+      "bytes": 13572,
+      "sha256": "2a3f3123b9b85932e76ed5b8576d5d5de10f0179db35875534edbfac7ffa91e4"
+    },
+    {
+      "path": "novel-sabotage-3141592653/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "bytes": 437,
+      "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804"
+    },
+    {
+      "path": "novel-sabotage-3141592653/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+      "bytes": 1314,
+      "sha256": "2877a95db8f6305fce95abf975c0fd7176ea2936c91eae201f662997f37f9fb2"
+    },
+    {
+      "path": "novel-sabotage-3141592653/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm.js",
+      "bytes": 174539,
+      "sha256": "0e9cc143b27b3a6375ddee7cb76fb42fafeaf6c53069bb98f91b61e1ca8d74a9"
+    },
+    {
+      "path": "novel-sabotage-3141592653/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm_bg.wasm",
+      "bytes": 7422308,
+      "sha256": "46272a64d71763c01bc60f99409d15aa6757c70ec58e8313f73ca08c868d7692"
+    },
+    {
+      "path": "novel-sabotage-3141592653/source/tools/virgl-command/standard-draw-oracle.mjs",
+      "bytes": 4684,
+      "sha256": "8de41c4a9f041f7a9acaf8a062a525f64c0ef3d197c464753764ddada94d26e3"
+    },
+    {
+      "path": "novel-sabotage-3141592653/source/tools/virgl-command/standard-image-fixtures.mjs",
+      "bytes": 3809,
+      "sha256": "1c045bdf667fc18be16644a05dfeeb5ef7e88b4eb7eaf3f3572f20fa98954d48"
+    },
+    {
+      "path": "novel-sabotage-3141592653/source/tools/virgl-command/standard-sampler-fixtures.mjs",
+      "bytes": 3671,
+      "sha256": "e0977f02f9d6750b727c5e9b72f9e486b0245acc203acafeeaec16de8e25133d"
+    },
+    {
+      "path": "novel-sabotage-3141592653/source/tools/virgl-command/standard-texture-fixtures.mjs",
+      "bytes": 3872,
+      "sha256": "f32f31df7d93fdf829559b04b822ea23162de44c9e171c19ccc37c71c65c15e8"
+    },
+    {
+      "path": "novel-sabotage-3141592653/source/tools/virgl-dimensional-shaders/fixtures.mjs",
+      "bytes": 8582,
+      "sha256": "853e1ea6c912b600e2113bdbbdc6a01ef8082a032755f9eaeba0ced3d3d6b057"
+    },
+    {
+      "path": "novel-sabotage-3141592653/source/tools/virgl-dimensional-views/browser.mjs",
+      "bytes": 9357,
+      "sha256": "53d35865c259b4afe837e857a4197385fae6348b04a0641cce9f29a5cafd9bc6"
+    },
+    {
+      "path": "novel-sabotage-3141592653/source/tools/virgl-dimensional-views/critic-browser.mjs",
+      "bytes": 10397,
+      "sha256": "7cddbe97bf1f312cee8a81cbbb705425b0f88eedfd8aea00c43793b9cf8c25d8"
+    },
+    {
+      "path": "novel-sabotage-3141592653/source/tools/virgl-dimensional-views/critic-case.mjs",
+      "bytes": 2376,
+      "sha256": "a6f6c7b0a84bd1235339a0074239ae386ec4ef38cbca1a1f9aab4bba2e5d7d28"
+    },
+    {
+      "path": "novel-sabotage-3141592653/source/tools/virgl-dimensional-views/fixtures.mjs",
+      "bytes": 13456,
+      "sha256": "9b64d28731920091ac25c7d98a4d8d905bc279200707a7b2c7d84fbba36e6b2c"
+    },
+    {
+      "path": "novel-sabotage-3141592653/source/tools/virgl-instance-base/fixtures.mjs",
+      "bytes": 6011,
+      "sha256": "6ff14a60ea98cb044e5b391c9d1e6ef8f4fc8428bb20d1fa6067e57046013304"
+    },
+    {
+      "path": "novel-sabotage-3141592653/source/tools/virgl-shadow-shaders/fixtures.mjs",
+      "bytes": 8653,
+      "sha256": "80b071e28005961a7d8aa06450624a01ab7b058e092384042814ee280dc1aef0"
+    },
+    {
+      "path": "novel-sabotage-corrected-3141592653/browser-coverage.json",
+      "bytes": 1719634,
+      "sha256": "b41e18047427008517b41640a58948e71833aeec30610945284d799c0cfed801"
+    },
+    {
+      "path": "novel-sabotage-corrected-3141592653/browser.png",
+      "bytes": 30405,
+      "sha256": "45df6dcd66d18b49e30c4a54920b40353a51a9c9e15c9079a520bcaf28e469d7"
+    },
+    {
+      "path": "novel-sabotage-corrected-3141592653/report.json",
+      "bytes": 26439,
+      "sha256": "16cf24772a4d5eeef0e2a6e50a3cb39ea63e9f873503e85ce0c58283f8f6f562"
+    },
+    {
+      "path": "novel-sabotage-corrected-3141592653/run-0000.json.gz",
+      "bytes": 177382,
+      "sha256": "5b55e263fc7da3465b4a4353bc38b81f317e5668de240b0f79a601c9136a94e0"
+    },
+    {
+      "path": "novel-sabotage-corrected-3141592653/source/renderer/virgl-command/cache.mjs",
+      "bytes": 2989,
+      "sha256": "9e50cc258528e581f79cee0e4e0038994c7968f80046b9db21e7f5e0e4a92cfa"
+    },
+    {
+      "path": "novel-sabotage-corrected-3141592653/source/renderer/virgl-command/color-images.mjs",
+      "bytes": 2770,
+      "sha256": "8c1b43f830e13f73d1397398e97bf263343f88c1782c683a890cb0f1fbc5e0e1"
+    },
+    {
+      "path": "novel-sabotage-corrected-3141592653/source/renderer/virgl-command/constant-domain.mjs",
+      "bytes": 116039,
+      "sha256": "75d0f1e72ead2c368163f980a9ef05aaed8fe7c56bbf7679a8f311bae444ab1a"
+    },
+    {
+      "path": "novel-sabotage-corrected-3141592653/source/renderer/virgl-command/control-bridge.mjs",
+      "bytes": 33580,
+      "sha256": "977f307a185d27e4711eba8637df41f0910e153ee1e03af52d21ff2f75a95333"
+    },
+    {
+      "path": "novel-sabotage-corrected-3141592653/source/renderer/virgl-command/decoder.mjs",
+      "bytes": 47276,
+      "sha256": "4080f1fbbfa3d262bd92a176a29616e573c36089785cacf85389656277b13554"
+    },
+    {
+      "path": "novel-sabotage-corrected-3141592653/source/renderer/virgl-command/float-images.mjs",
+      "bytes": 3132,
+      "sha256": "69543e48426c7ded5178b659eb651b5cb765aa559a0bbf96fd8d34f5cf7cfe46"
+    },
+    {
+      "path": "novel-sabotage-corrected-3141592653/source/renderer/virgl-command/floating-depth-gpu.mjs",
+      "bytes": 14648,
+      "sha256": "6e87240445044201f21a2977ee883de57e930542b67a99a03cf0077c008ef853"
+    },
+    {
+      "path": "novel-sabotage-corrected-3141592653/source/renderer/virgl-command/floating-depth-images.mjs",
+      "bytes": 947,
+      "sha256": "76e02b32e5a24f65f360adb7cbcc0f9e5d51ee90be7cfbe1a383bfa99cc30370"
+    },
+    {
+      "path": "novel-sabotage-corrected-3141592653/source/renderer/virgl-command/integer-images.mjs",
+      "bytes": 1557,
+      "sha256": "8871226b60ad86ee1f585f8de6e5891241a361ad84aa811a36028fd003d95029"
+    },
+    {
+      "path": "novel-sabotage-corrected-3141592653/source/renderer/virgl-command/packed-float-images.mjs",
+      "bytes": 1620,
+      "sha256": "0ea28e0bfcf4a0ae04f634826d4b65cb19a6285850836412c7b06311ce1c5405"
+    },
+    {
+      "path": "novel-sabotage-corrected-3141592653/source/renderer/virgl-command/packed-normalized-images.mjs",
+      "bytes": 2046,
+      "sha256": "5ccf01336a906f3b46b0c8c790c73449331e09ac3cfee2931459d507b6dccd18"
+    },
+    {
+      "path": "novel-sabotage-corrected-3141592653/source/renderer/virgl-command/packed-unsigned-images.mjs",
+      "bytes": 991,
+      "sha256": "1170cf4d69d7281fdc32383354d7c17d6019ece0c7a6f681de86b27a57ea0d61"
+    },
+    {
+      "path": "novel-sabotage-corrected-3141592653/source/renderer/virgl-command/resources.mjs",
+      "bytes": 142609,
+      "sha256": "d39b525bdd0081fdadf5257d854cc676ec3df3eb95e565bc63c9763409b92776"
+    },
+    {
+      "path": "novel-sabotage-corrected-3141592653/source/renderer/virgl-command/scanout.mjs",
+      "bytes": 14132,
+      "sha256": "affbac9b1b14e2a1eadb9bc29c693e120e20ffb84af02196a9eb00660eac1bac"
+    },
+    {
+      "path": "novel-sabotage-corrected-3141592653/source/renderer/virgl-command/shared-exponent-gpu.mjs",
+      "bytes": 9865,
+      "sha256": "22efbf4e0a3ae04d2e29900278db1e88880bd7c2fc7e757d0fd12d3a899531b7"
+    },
+    {
+      "path": "novel-sabotage-corrected-3141592653/source/renderer/virgl-command/shared-exponent-images.mjs",
+      "bytes": 563,
+      "sha256": "27de20239649aea73145e1f547c9265692f451fedddf3876639c173cf0d6168f"
+    },
+    {
+      "path": "novel-sabotage-corrected-3141592653/source/renderer/virgl-command/state.mjs",
+      "bytes": 189384,
+      "sha256": "aa001d630a196801ad7de0fe48ef07a8d8acee8ad2d79fbb8e14acab5babc850"
+    },
+    {
+      "path": "novel-sabotage-corrected-3141592653/source/renderer/virgl-command/tests/dimensional-view-owners.mjs",
+      "bytes": 6908,
+      "sha256": "372a96ce0b6d4ca16d004028c65736fdb0a06c50b59b48edc557ac94b5709b26"
+    },
+    {
+      "path": "novel-sabotage-corrected-3141592653/source/renderer/virgl-command/tests/native-dimensional-views.mjs",
+      "bytes": 22984,
+      "sha256": "e6c5d704f083d78a279099a23e56510e0c70fa4ee3e932a4a9acdb9bf2100f9c"
+    },
+    {
+      "path": "novel-sabotage-corrected-3141592653/source/renderer/virgl-command/tests/standard-instanced-draws.mjs",
+      "bytes": 32402,
+      "sha256": "f02cf96a50f79ef5ed71c0240784a7ae3d030231d18d320148e89252bf724afa"
+    },
+    {
+      "path": "novel-sabotage-corrected-3141592653/source/renderer/virgl-command/tests/submit-acceptance.mjs",
+      "bytes": 53417,
+      "sha256": "c65063916c5f28085604a5dca46a2221f360762c1192776dc9294e2e1ba238ed"
+    },
+    {
+      "path": "novel-sabotage-corrected-3141592653/source/renderer/virgl-command/unorm-depth-images.mjs",
+      "bytes": 1409,
+      "sha256": "7fb08881153cfd06ed1acb5dba8d6cc61525b8f742a3b0a9715fb0e68e55e1d1"
+    },
+    {
+      "path": "novel-sabotage-corrected-3141592653/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "bytes": 13538,
+      "sha256": "4ade0ffb9ffb661a729179525e7937c4695230dc57a7f79db63a1538119a95f2"
+    },
+    {
+      "path": "novel-sabotage-corrected-3141592653/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "bytes": 442769,
+      "sha256": "8749da215131646f0b7d53d59fe7ee19fa68b2fab2e9bec80446c4af3e84e100"
+    },
+    {
+      "path": "novel-sabotage-corrected-3141592653/source/renderer/virgl-shader/index.mjs",
+      "bytes": 22546,
+      "sha256": "1bae07f2e668078c4e447f65d1785815714907b7270ced01b131ce70e6d3f10e"
+    },
+    {
+      "path": "novel-sabotage-corrected-3141592653/source/renderer/virgl-shader/standard.mjs",
+      "bytes": 13572,
+      "sha256": "2a3f3123b9b85932e76ed5b8576d5d5de10f0179db35875534edbfac7ffa91e4"
+    },
+    {
+      "path": "novel-sabotage-corrected-3141592653/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "bytes": 437,
+      "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804"
+    },
+    {
+      "path": "novel-sabotage-corrected-3141592653/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+      "bytes": 1314,
+      "sha256": "2877a95db8f6305fce95abf975c0fd7176ea2936c91eae201f662997f37f9fb2"
+    },
+    {
+      "path": "novel-sabotage-corrected-3141592653/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm.js",
+      "bytes": 174539,
+      "sha256": "0e9cc143b27b3a6375ddee7cb76fb42fafeaf6c53069bb98f91b61e1ca8d74a9"
+    },
+    {
+      "path": "novel-sabotage-corrected-3141592653/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm_bg.wasm",
+      "bytes": 7422308,
+      "sha256": "46272a64d71763c01bc60f99409d15aa6757c70ec58e8313f73ca08c868d7692"
+    },
+    {
+      "path": "novel-sabotage-corrected-3141592653/source/tools/virgl-command/standard-draw-oracle.mjs",
+      "bytes": 4684,
+      "sha256": "8de41c4a9f041f7a9acaf8a062a525f64c0ef3d197c464753764ddada94d26e3"
+    },
+    {
+      "path": "novel-sabotage-corrected-3141592653/source/tools/virgl-command/standard-image-fixtures.mjs",
+      "bytes": 3809,
+      "sha256": "1c045bdf667fc18be16644a05dfeeb5ef7e88b4eb7eaf3f3572f20fa98954d48"
+    },
+    {
+      "path": "novel-sabotage-corrected-3141592653/source/tools/virgl-command/standard-sampler-fixtures.mjs",
+      "bytes": 3671,
+      "sha256": "e0977f02f9d6750b727c5e9b72f9e486b0245acc203acafeeaec16de8e25133d"
+    },
+    {
+      "path": "novel-sabotage-corrected-3141592653/source/tools/virgl-command/standard-texture-fixtures.mjs",
+      "bytes": 3872,
+      "sha256": "f32f31df7d93fdf829559b04b822ea23162de44c9e171c19ccc37c71c65c15e8"
+    },
+    {
+      "path": "novel-sabotage-corrected-3141592653/source/tools/virgl-dimensional-shaders/fixtures.mjs",
+      "bytes": 8582,
+      "sha256": "853e1ea6c912b600e2113bdbbdc6a01ef8082a032755f9eaeba0ced3d3d6b057"
+    },
+    {
+      "path": "novel-sabotage-corrected-3141592653/source/tools/virgl-dimensional-views/browser.mjs",
+      "bytes": 9357,
+      "sha256": "53d35865c259b4afe837e857a4197385fae6348b04a0641cce9f29a5cafd9bc6"
+    },
+    {
+      "path": "novel-sabotage-corrected-3141592653/source/tools/virgl-dimensional-views/critic-browser.mjs",
+      "bytes": 10673,
+      "sha256": "55ab09840b899f6adb37d02301c8df02fd14c8dd53ecf1fb720292951a142b54"
+    },
+    {
+      "path": "novel-sabotage-corrected-3141592653/source/tools/virgl-dimensional-views/critic-case.mjs",
+      "bytes": 2376,
+      "sha256": "a6f6c7b0a84bd1235339a0074239ae386ec4ef38cbca1a1f9aab4bba2e5d7d28"
+    },
+    {
+      "path": "novel-sabotage-corrected-3141592653/source/tools/virgl-dimensional-views/fixtures.mjs",
+      "bytes": 13456,
+      "sha256": "9b64d28731920091ac25c7d98a4d8d905bc279200707a7b2c7d84fbba36e6b2c"
+    },
+    {
+      "path": "novel-sabotage-corrected-3141592653/source/tools/virgl-instance-base/fixtures.mjs",
+      "bytes": 6011,
+      "sha256": "6ff14a60ea98cb044e5b391c9d1e6ef8f4fc8428bb20d1fa6067e57046013304"
+    },
+    {
+      "path": "novel-sabotage-corrected-3141592653/source/tools/virgl-shadow-shaders/fixtures.mjs",
+      "bytes": 8653,
+      "sha256": "80b071e28005961a7d8aa06450624a01ab7b058e092384042814ee280dc1aef0"
+    },
+    {
+      "path": "novel-sabotage-corrected.log",
+      "bytes": 296,
+      "sha256": "9a3665d5b403736faca1a453d89d769cca92bcd4967614ae24b967bca9e6fe08"
+    },
+    {
+      "path": "novel-sabotage.log",
+      "bytes": 296,
+      "sha256": "fa3aebfb664cc92506e016103d5982cf104222cefd9a603bf5b63c68fde984f7"
+    },
+    {
+      "path": "novel.log",
+      "bytes": 163,
+      "sha256": "e45fbe6fdb35805ff63aacff7cd709d4a6add44bac17afe20d2bc2fa4e79cd94"
+    },
+    {
+      "path": "policy.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "policy.stdout",
+      "bytes": 30,
+      "sha256": "b09df388647b89ea459126a41fd92d72d5e274ddb70ffe70a741ba88cb705734"
+    },
+    {
+      "path": "predictions.json",
+      "bytes": 6197,
+      "sha256": "a188b5bab782efdce59125f0a49343bf9e337af05b05a6f7958ccc0322a64978"
+    },
+    {
+      "path": "promoted/critic-browser.mjs",
+      "bytes": 10673,
+      "sha256": "55ab09840b899f6adb37d02301c8df02fd14c8dd53ecf1fb720292951a142b54"
+    },
+    {
+      "path": "promoted/critic-case.mjs",
+      "bytes": 2376,
+      "sha256": "a6f6c7b0a84bd1235339a0074239ae386ec4ef38cbca1a1f9aab4bba2e5d7d28"
+    },
+    {
+      "path": "queue-after-verdict.md",
+      "bytes": 119936,
+      "sha256": "2de45145938e13bcf87fc6d958357b4f88efcd34e04fc3628fc4d65d2dde8b13"
+    },
+    {
+      "path": "queue.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "queue.stdout",
+      "bytes": 46,
+      "sha256": "5bbb3c01a018925fc1d5b235201c2e1adfbfa558e2a86657a2933c852eefc084"
+    },
+    {
+      "path": "recording-corrections.json",
+      "bytes": 1259,
+      "sha256": "91b7538c4d34a62c29d8ac8eec0458096f1d2ca4e54f1acc8568e0c70c6201b5"
+    },
+    {
+      "path": "recording-interrogation.json",
+      "bytes": 3160,
+      "sha256": "b089c083633c9014804f07cb93396d398f66098d2777c48d05eebedee15523a4"
+    },
+    {
+      "path": "recording-interrogation.jsonl",
+      "bytes": 573684,
+      "sha256": "166cc76f1352af6034d9c0856846bef74a7b99307e2d30ba2fc35d34ca9e0a88"
+    },
+    {
+      "path": "seal.py",
+      "bytes": 3256,
+      "sha256": "dea368b64f9a5ee08cc556dd1647ed9fc9f683cd8b4e79e25657432a27e33d69"
+    },
+    {
+      "path": "task.diff",
+      "bytes": 1492345,
+      "sha256": "7b63667c9148c9651ae6961b33f6e3bb442bfe4c6b50b8fed5c6d730571208d7"
+    },
+    {
+      "path": "verdict.json",
+      "bytes": 13672,
+      "sha256": "c84d45e6189889a5b96689b95fd9312bfe6f4ea712a334146b1e1a1386da3592"
+    },
+    {
+      "path": "verification-log.md",
+      "bytes": 10903,
+      "sha256": "91d8d3d2e09fbc3baf5d71cc143daf0aed6534c376eeda91f3f13d1ba971ebdc"
+    },
+    {
+      "path": "verifier-interrogation.json",
+      "bytes": 5195,
+      "sha256": "5fcdc50ac8e25dea0f599efe0d87395ff19faba04c029cbc04b566357fb2dfbc"
+    },
+    {
+      "path": "verifier-interrogation.jsonl",
+      "bytes": 37950,
+      "sha256": "6fe347b690b4a743e039d8ed842346c5c839536815c9f1a1c35b9c133286f03d"
+    },
+    {
+      "path": "write_verdict.py",
+      "bytes": 8096,
+      "sha256": "38d5db34855fe056ebd0dd06b2a8b1d8870af05f03dbe71a10e91ceff7159096"
+    }
+  ]
+}

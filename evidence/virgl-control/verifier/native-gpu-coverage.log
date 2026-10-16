@@ -1,0 +1,6 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running unittests src/lib.rs (evidence/virgl-control/verifier/native/target-coverage/debug/deps/wasm_vm_core-8f3aeb3a35649c3e)
+
+running 80 tests
+................................................................................
+test result: ok. 80 passed; 0 failed; 0 ignored; 0 measured; 302 filtered out; finished in 0.50s

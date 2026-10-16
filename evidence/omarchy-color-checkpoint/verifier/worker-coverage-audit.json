@@ -1,0 +1,233 @@
+{
+  "schema": "critic-c1-hunk-coverage-v1",
+  "baseline": "dddae3bc2c15b1332dedcb208f3b7e6c6f852127",
+  "frozen": "43f227ae83acb3fc1c5f9c3bcd9766d2710d0875",
+  "originalCoverageSha256": "190c5ae51ff652b051b9f8748d3af0b722f5b93961c6945b6ddcd3d6bedc1ec3",
+  "sourceSha256": "ce1b15fdbe4fbcb8cf6f21477879cf201c3ae8a803f6b0fecf48264956207bd9",
+  "layoutCalls": 68,
+  "runtimeRanges": [
+    {
+      "startOffset": 33556,
+      "endOffset": 39254,
+      "count": 68,
+      "startLine": 391,
+      "endLine": 436,
+      "source": "function layoutFor(meta, fields, backingBytes, limits) {\n  require(meta.nrSamples === 0, \"invalid-transfer\", \"Multisample storage must be resolved before transfer.\");\n  uint(backingBytes, \"backingByteLength\");\n  require(meta.kind !== \"staging\", \"unsupported-resource\", \"Staging resources have no GPU transfer storage.\");\n  if ([\"dimensional-texture\", \"dimensional-depth-texture\"].includes(meta.kind)) return freeze(dimensionalLayout(meta, fields, backingBytes, limits, require, checkedProduct));\n  require(fields.resourceHandle === meta.id && fields.level <= meta.lastLevel, \"invalid-transfer\", \"Resource identity or level mismatch.\");\n  const selected = [\"mip-texture\", \"mip-depth-texture\"].includes(meta.kind) ? meta.levels[fields.level] : meta;\n  const box = fields.box;\n  for (const [origin, extent, bound] of [[box.x, box.width, selected.width], [box.y, box.height, selected.height], [box.z, box.depth, meta.depth]]) {\n    require(origin <= bound && extent <= bound - origin, \"out-of-bounds\", \"Transfer box exceeds logical resource extent.\");\n  }\n  const depth = [\"depth-texture\", \"mip-depth-texture\"].includes(meta.kind), texture = meta.kind === \"texture\" || meta.kind === \"mip-texture\" || depth;\n  require(texture || (box.y === 0 && box.z === 0 && box.height === 1 && box.depth === 1), \"invalid-transfer\", \"Buffer coordinates are byte-addressed one-dimensional ranges.\");\n  require(box.z === 0 && box.depth === 1, \"invalid-transfer\", \"Only one 2D layer is supported.\");\n  const color = Object.hasOwn(meta, \"pixelBytes\") ? ownedColorFormat(meta) : null;\n  const pixelBytes = depth ? color?.pixelBytes ?? 2 : texture ? color?.pixelBytes ?? 4 : 1;\n  const rowBytes = checkedProduct(box.width, pixelBytes, limits.transferBytes, \"Transfer row exceeds byte limit.\");\n  const defaultStride = checkedProduct(selected.width, pixelBytes, U32, \"Default stride overflows u32.\");\n  const rowStride = fields.stride || defaultStride;\n  require(rowStride >= rowBytes, \"out-of-bounds\", \"Row stride overlaps the transferred row.\");\n  const minimumLayer = checkedProduct(rowStride, box.height, U32, \"Layer stride calculation overflows u32.\");\n  const layerStride = fields.layerStride || checkedProduct(rowStride, selected.height, U32, \"Default layer stride overflows u32.\");\n  require(layerStride >= minimumLayer, \"out-of-bounds\", \"Layer stride overlaps transferred rows.\");\n  const span = checkedProduct(box.height - 1, rowStride, U32, \"Row footprint overflows u32.\");\n  require(rowBytes <= U32 - span, \"out-of-bounds\", \"Transfer footprint overflows u32.\");\n  const footprintBytes = span + rowBytes;\n  const inline = Object.hasOwn(fields, \"dataWords\");\n  const offset = inline ? 0 : Object.hasOwn(fields, \"flags\") ? fields.stagingOffset : fields.dataOffset;\n  require(offset <= backingBytes && footprintBytes <= backingBytes - offset, \"out-of-bounds\", \"Transfer exceeds backing bytes.\");\n  require(footprintBytes <= limits.transferBytes, \"limit-exceeded\", \"Strided transfer footprint exceeds byte limit.\");\n  if (inline) require(fields.dataWords.length * 4 === Math.ceil(footprintBytes / 4) * 4,\n    \"invalid-transfer\", \"Inline payload must contain exactly the aligned strided footprint.\");\n  const tightBytes = checkedProduct(rowBytes, box.height, limits.transferBytes, \"Tight transfer exceeds byte limit.\");\n  const direction = (fields.direction === 2 || fields.flags === 3) ? \"readback\" : \"upload\";\n  const legacyDepth = depth && !meta.floatingDepth && !meta.unormDepth && !meta.packedDepth;\n  const packedBytes = legacyDepth && direction === \"readback\" ? checkedProduct(tightBytes, 2, RESOURCE_LIMITS.scratchBytes, \"Depth conversion exceeds scratch byte limit.\") : tightBytes;\n  const colorScratchLimit = depth ? RESOURCE_LIMITS.scratchBytes : limits.scratchBytes;\n  const colorScratch = color ? checkedProduct(checkedProduct(box.width, box.height, colorScratchLimit, \"Color transfer is too large.\"), direction === \"readback\" ? color.floatingDepth && color.stencil ? 16 : color.readPixelBytes ?? 4 : Math.max(color.pixelBytes, color.nativePixelBytes), colorScratchLimit, \"Native color scratch exceeds byte limit.\") : 0;\n  const nativeDepthRead = (color?.floatingDepth || color?.unormDepth || color?.packedDepth) && direction === \"readback\" ? checkedProduct(box.width * box.height, color.readPixelBytes, RESOURCE_LIMITS.scratchBytes, \"Native depth read exceeds scratch limit.\") : 0;\n  const depthConversion = nativeDepthRead ? checkedProduct(box.width * box.height, color.conversionPixelBytes, RESOURCE_LIMITS.gpuBytes, \"Depth conversion exceeds GPU byte limit.\") : 0;\n  return freeze({ kind: texture ? \"texture\" : \"buffer\", box: { ...box }, offset, rowBytes, rowCount: box.height,\n    ...([\"mip-texture\", \"mip-depth-texture\"].includes(meta.kind) ? { level: fields.level, levelWidth: selected.width, levelHeight: selected.height } : {}),\n    rowStride, layerStride, footprintBytes, requiredEnd: offset + footprintBytes, tightBytes,\n    direction, ...(color ? { scratchBytes: colorScratch, ...(color.sharedExponent ? { conversionBytes: direction === \"readback\" ? tightBytes : 0 } : {}), stagingBytes: direction === \"readback\" ? color.sharedExponent ? checkedProduct(colorScratch, 2, RESOURCE_LIMITS.gpuBytes, \"Shared exponent staging exceeds GPU byte limit.\") : colorScratch : 0 } : {}), ...(nativeDepthRead ? { nativeReadBytes: nativeDepthRead, conversionBytes: depthConversion, stagingBytes: nativeDepthRead + depthConversion } : {}), ...(legacyDepth ? { scratchBytes: packedBytes, conversionBytes: direction === \"readback\" ? packedBytes : 0,\n      stagingBytes: direction === \"readback\" ? checkedProduct(packedBytes, 2, RESOURCE_LIMITS.gpuBytes, \"Depth staging exceeds GPU byte limit.\") : 0 } : {}) });\n}"
+    },
+    {
+      "startOffset": 37260,
+      "endOffset": 37290,
+      "count": 0,
+      "startLine": 427,
+      "endLine": 427,
+      "source": "? RESOURCE_LIMITS.scratchBytes"
+    },
+    {
+      "startOffset": 37475,
+      "endOffset": 37546,
+      "count": 27,
+      "startLine": 428,
+      "endLine": 428,
+      "source": "? color.floatingDepth && color.stencil ? 16 : color.readPixelBytes ?? 4"
+    },
+    {
+      "startOffset": 37497,
+      "endOffset": 37513,
+      "count": 0,
+      "startLine": 428,
+      "endLine": 428,
+      "source": "&& color.stencil"
+    },
+    {
+      "startOffset": 37514,
+      "endOffset": 37518,
+      "count": 0,
+      "startLine": 428,
+      "endLine": 428,
+      "source": "? 16"
+    },
+    {
+      "startOffset": 37547,
+      "endOffset": 37599,
+      "count": 41,
+      "startLine": 428,
+      "endLine": 428,
+      "source": ": Math.max(color.pixelBytes, color.nativePixelBytes)"
+    },
+    {
+      "startOffset": 37664,
+      "endOffset": 37667,
+      "count": 0,
+      "startLine": 428,
+      "endLine": 428,
+      "source": ": 0"
+    }
+  ],
+  "files": [
+    {
+      "path": "Makefile",
+      "hunks": [
+        "@@ -2675,0 +2676,14 @@ verify-omarchy-dense-snapshot:"
+      ],
+      "classification": "executed",
+      "evidence": "acceptance.json exact literal make verify-E5.5-T05c1, exit0 and clean before/after; full acceptance.log commands/builds/results."
+    },
+    {
+      "path": "renderer/virgl-command/resources.mjs",
+      "hunks": [
+        "@@ -427 +427,2 @@ function layoutFor(meta, fields, backingBytes, limits) {"
+      ],
+      "classification": "executed plus semantically unchanged branch waiver",
+      "evidence": "hardware/browser-coverage.json, original source ce1b15fd… layoutFor call count68; read branch27, upload41; two boundary rejections before return. R8 selected/default and tightened Node upload/read tests exercise changed non-depth bound.",
+      "waiver": "Inserted depth arm selects the same RESOURCE_LIMITS.scratchBytes used unconditionally before; depth-kind predicate and every depth/dimensional guard are unchanged. Zero-hit depth/other format arms on this text line are unchanged behavior and not separate new claims."
+    },
+    {
+      "path": "renderer/virgl-command/tests/production-color-checkpoint.mjs",
+      "hunks": [
+        "@@ -0,0 +1,143 @@"
+      ],
+      "classification": "executed",
+      "evidence": "Three frozen original hardware cases182+591+38=811 assertions; both size branches and historical refusal; original catch/failure path additionally exercised by isolated selected-limit sabotage.",
+      "waiver": "Recorder failure guards and cleanup-only exceptional branches are test instrumentation, not a product acceptance claim."
+    },
+    {
+      "path": "tasks/QUEUE.md",
+      "hunks": [
+        "@@ -11 +10,0 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed",
+        "@@ -741 +740 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed"
+      ],
+      "classification": "waived declarative/generated metadata",
+      "evidence": "Task lifecycle/queue/history, roadmap text, runtime content stamp and SW version have no independent executable product behavior; exact-head source diff enumerated. New GPU stamp derived from changed runtime; shipped copies match. Default built page127/0 and source parity cover rendering/build imports."
+    },
+    {
+      "path": "tasks/epic-5.5-omarchy/E5.5-T05c1-omarchy-color-checkpoint-budget.md",
+      "hunks": [
+        "@@ -6 +6 @@ priority: 525.0270435",
+        "@@ -46,0 +47,19 @@ change once. Carry unchanged taskC application and other GPU holds forward."
+      ],
+      "classification": "waived declarative/generated metadata",
+      "evidence": "Task lifecycle/queue/history, roadmap text, runtime content stamp and SW version have no independent executable product behavior; exact-head source diff enumerated. New GPU stamp derived from changed runtime; shipped copies match. Default built page127/0 and source parity cover rendering/build imports."
+    },
+    {
+      "path": "tools/verify-virgl-default-demo.mjs",
+      "hunks": [
+        "@@ -25 +25 @@ if (remoteUrl) {",
+        "@@ -95 +95 @@ try {",
+        "@@ -104 +104 @@ try {"
+      ],
+      "classification": "executed",
+      "evidence": "default-demo/report.json task E5.5-T05c1 executes admitted task and app/graphics branches,127/0 zero errors; unchanged alternative-task branches are outside this claim."
+    },
+    {
+      "path": "tools/virgl-production/omarchy-color-checkpoint-browser.mjs",
+      "hunks": [
+        "@@ -0,0 +1,87 @@"
+      ],
+      "classification": "executed",
+      "evidence": "Full gate successful; complete original source/served/body/gzip/bytes/coverage/PNG report. Independent private literal run success and meaningful failure run exercise success/error/finalization.",
+      "waiver": "Malformed recorder/API/CLI arguments are internal harness admission guards; no untrusted public product boundary is introduced."
+    },
+    {
+      "path": "tools/virgl-production/omarchy-color-checkpoint.test.mjs",
+      "hunks": [
+        "@@ -0,0 +1,25 @@"
+      ],
+      "classification": "executed",
+      "evidence": "acceptance.log:7-19; all three new historical, tightened expanded-read and tightened upload cases pass with no skip."
+    },
+    {
+      "path": "web/dist/gpu-checkpoint-build.js",
+      "hunks": [
+        "@@ -2 +2 @@"
+      ],
+      "classification": "waived declarative/generated metadata",
+      "evidence": "Task lifecycle/queue/history, roadmap text, runtime content stamp and SW version have no independent executable product behavior; exact-head source diff enumerated. New GPU stamp derived from changed runtime; shipped copies match. Default built page127/0 and source parity cover rendering/build imports."
+    },
+    {
+      "path": "web/dist/renderer/virgl-command/resources.mjs",
+      "hunks": [
+        "@@ -427 +427,2 @@ function layoutFor(meta, fields, backingBytes, limits) {"
+      ],
+      "classification": "derived duplicate",
+      "evidence": "Exact byte equality with exercised canonical source; frozen source build and shipped import source joins; no independently edited behavior."
+    },
+    {
+      "path": "web/dist/roadmap.js",
+      "hunks": [
+        "@@ -191 +191 @@ export const ROADMAP = [",
+        "@@ -193 +193 @@ export const ROADMAP = ["
+      ],
+      "classification": "waived declarative/generated metadata",
+      "evidence": "Task lifecycle/queue/history, roadmap text, runtime content stamp and SW version have no independent executable product behavior; exact-head source diff enumerated. New GPU stamp derived from changed runtime; shipped copies match. Default built page127/0 and source parity cover rendering/build imports."
+    },
+    {
+      "path": "web/dist/sw.js",
+      "hunks": [
+        "@@ -21 +21 @@"
+      ],
+      "classification": "waived declarative/generated metadata",
+      "evidence": "Task lifecycle/queue/history, roadmap text, runtime content stamp and SW version have no independent executable product behavior; exact-head source diff enumerated. New GPU stamp derived from changed runtime; shipped copies match. Default built page127/0 and source parity cover rendering/build imports."
+    },
+    {
+      "path": "web/dist/tasks.json",
+      "hunks": [
+        "@@ -4 +4 @@",
+        "@@ -25270 +25270 @@",
+        "@@ -25278 +25278 @@",
+        "@@ -25283 +25283 @@",
+        "@@ -25299 +25299 @@",
+        "@@ -25301,4 +25301,4 @@",
+        "@@ -25310 +25310 @@",
+        "@@ -25318 +25318 @@",
+        "@@ -25331 +25331 @@",
+        "@@ -25344,2 +25344,4 @@",
+        "@@ -25350 +25352 @@"
+      ],
+      "classification": "waived declarative/generated metadata",
+      "evidence": "Task lifecycle/queue/history, roadmap text, runtime content stamp and SW version have no independent executable product behavior; exact-head source diff enumerated. New GPU stamp derived from changed runtime; shipped copies match. Default built page127/0 and source parity cover rendering/build imports."
+    },
+    {
+      "path": "web/gpu-checkpoint-build.js",
+      "hunks": [
+        "@@ -2 +2 @@"
+      ],
+      "classification": "waived declarative/generated metadata",
+      "evidence": "Task lifecycle/queue/history, roadmap text, runtime content stamp and SW version have no independent executable product behavior; exact-head source diff enumerated. New GPU stamp derived from changed runtime; shipped copies match. Default built page127/0 and source parity cover rendering/build imports."
+    },
+    {
+      "path": "web/renderer/virgl-command/resources.mjs",
+      "hunks": [
+        "@@ -427 +427,2 @@ function layoutFor(meta, fields, backingBytes, limits) {"
+      ],
+      "classification": "derived duplicate",
+      "evidence": "Exact byte equality with exercised canonical source; frozen source build and shipped import source joins; no independently edited behavior."
+    },
+    {
+      "path": "web/roadmap.js",
+      "hunks": [
+        "@@ -191 +191 @@ export const ROADMAP = [",
+        "@@ -193 +193 @@ export const ROADMAP = ["
+      ],
+      "classification": "waived declarative/generated metadata",
+      "evidence": "Task lifecycle/queue/history, roadmap text, runtime content stamp and SW version have no independent executable product behavior; exact-head source diff enumerated. New GPU stamp derived from changed runtime; shipped copies match. Default built page127/0 and source parity cover rendering/build imports."
+    },
+    {
+      "path": "web/tasks.json",
+      "hunks": [
+        "@@ -4 +4 @@",
+        "@@ -25270 +25270 @@",
+        "@@ -25278 +25278 @@",
+        "@@ -25283 +25283 @@",
+        "@@ -25299 +25299 @@",
+        "@@ -25301,4 +25301,4 @@",
+        "@@ -25310 +25310 @@",
+        "@@ -25318 +25318 @@",
+        "@@ -25331 +25331 @@",
+        "@@ -25344,2 +25344,4 @@",
+        "@@ -25350 +25352 @@"
+      ],
+      "classification": "waived declarative/generated metadata",
+      "evidence": "Task lifecycle/queue/history, roadmap text, runtime content stamp and SW version have no independent executable product behavior; exact-head source diff enumerated. New GPU stamp derived from changed runtime; shipped copies match. Default built page127/0 and source parity cover rendering/build imports."
+    }
+  ]
+}

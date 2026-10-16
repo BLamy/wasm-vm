@@ -1,0 +1,27 @@
+{
+  "schema": "original-shadow-sampler-seal-v1",
+  "task": "E6-T11d49",
+  "sourceHead": "17b9d9334dfa1b2b209df36e0105e2ec96549fa7",
+  "archiveParts": [
+    {
+      "path": "recording.tar.gz",
+      "bytes": 28031341,
+      "sha256": "efde5ede4f9528859ea0f762b34ac906e2e5765724efe87bd563e9615673c5cb"
+    }
+  ],
+  "records": 44665,
+  "reopenedMembers": 44665,
+  "sourceClosureIncluded": true,
+  "archiveSha256": "efde5ede4f9528859ea0f762b34ac906e2e5765724efe87bd563e9615673c5cb",
+  "archiveBytes": 28031341,
+  "recordIndexSha256": "7bf6f4ea3b5aaf6b53a0199dc8a3dfa6824cf2c512f5f8a7a48067aad3370192",
+  "hotReceiptSha256": "23a5437a6593e2c8175b4c2d239f080816bf82f6be3d3242177f5a9d6a1c6f7d",
+  "coldReportSha256": "70e8159b532594c7e2db5efb6b5de35278d5a2c7f5dbe4c817e536d8ca70cd49",
+  "coldReceiptSha256": "ff9906682e2702bfbb71cdb73c0006c98494e6d660269fcd552e50b7aca22725",
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "authority": "isolated-original-shadow-sampler-consumer",
+  "productionDrawAuthority": false,
+  "predecessorSealsArePublishedDependencies": true,
+  "reopenedPredecessorMembers": 53210
+}

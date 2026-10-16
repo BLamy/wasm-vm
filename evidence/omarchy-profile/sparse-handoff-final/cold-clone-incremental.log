@@ -1,0 +1,10 @@
+From /Users/blamy/.codex/worktrees/emulator-speed-next/wasm-vm
+ * branch              codex/omarchy-jit-sparse-handoff -> FETCH_HEAD
+   26f63873..a3afda72  codex/omarchy-jit-sparse-handoff -> origin/codex/omarchy-jit-sparse-handoff
+Previous HEAD position was 26f63873 test: prove disjoint register-mask composition and stamps
+HEAD is now at a3afda72 test(perf): preserve full register precision in benchmark JSON
+    Checking wasm-vm-core v0.0.1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-handoff-cold-t24eeptc/repo/crates/core)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.12s
+   Compiling wasm-vm-core v0.0.1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-handoff-cold-t24eeptc/repo/crates/core)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.04s
+8 masks / 256 exact 64-bit JSON words: passed

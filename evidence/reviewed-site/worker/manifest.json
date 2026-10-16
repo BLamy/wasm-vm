@@ -1,0 +1,91 @@
+{
+  "schema": "reviewed-site-worker-seal-v1",
+  "task": "E0-T27",
+  "head": "c5f8ad16235a64c70e2732b0ddd7c4d4bc9c63a4",
+  "records": 6073,
+  "uniqueBodies": 905,
+  "backwardLinks": 5168,
+  "reopenedMembers": 6073,
+  "gzipEofChecked": true,
+  "recordIndexSha256": "284e17a274e3bf2f4eaa98fed1769e34c9bf1c99995ed54f963cdcf5eea267bc",
+  "archiveSha256": "b22c3c167a4c105c4beaf3c0571c827f9f54c245cc0e0d231ba80b22e1e02b6b",
+  "archiveBytes": 203096077,
+  "archiveParts": [
+    {
+      "path": "recording.tar.gz.part-0000",
+      "bytes": 16777216,
+      "sha256": "8b27297eb2798a15b2a84cb62764cd7341e6cb3ac5a36c08147bcd16e79d47c2"
+    },
+    {
+      "path": "recording.tar.gz.part-0001",
+      "bytes": 16777216,
+      "sha256": "09254cd1084630c95b445fa7eade34aa407271c26a17c37f25021bb6b7f988e5"
+    },
+    {
+      "path": "recording.tar.gz.part-0002",
+      "bytes": 16777216,
+      "sha256": "1b0b6f5fc026cb8204a9aa6a1fa9b1eaa9bd4010ab3b7306089a48ea6e421f18"
+    },
+    {
+      "path": "recording.tar.gz.part-0003",
+      "bytes": 16777216,
+      "sha256": "9906a65b36f5141e89ee0aadf906378751a90787c5f0377eb4d85402c3a334e3"
+    },
+    {
+      "path": "recording.tar.gz.part-0004",
+      "bytes": 16777216,
+      "sha256": "f45f8359ad903091cc8600c525df45b6ed71185feb5a540bdbd0e00178a00ba8"
+    },
+    {
+      "path": "recording.tar.gz.part-0005",
+      "bytes": 16777216,
+      "sha256": "8f8d3c31dbd241b2b8f6296781b5c84293ecda12c230422427b5e94aeb1cbf72"
+    },
+    {
+      "path": "recording.tar.gz.part-0006",
+      "bytes": 16777216,
+      "sha256": "2a144a0b20a3e2a7f742f652a8d6a5c74533979d1651807424b9745a7db43b3b"
+    },
+    {
+      "path": "recording.tar.gz.part-0007",
+      "bytes": 16777216,
+      "sha256": "7e37420ff7509e6b90a93c55a568001abcc25f4cb42b2311ab5071c9be59cabd"
+    },
+    {
+      "path": "recording.tar.gz.part-0008",
+      "bytes": 16777216,
+      "sha256": "aa1971cb7e0ff7b25a59ed17fcd208e67a8e27ccf0928a1193b16e9073255ea9"
+    },
+    {
+      "path": "recording.tar.gz.part-0009",
+      "bytes": 16777216,
+      "sha256": "c9162e3cbd0302364f0755e6f8ec5970169d4c08c21cd232977bd180590e3ac3"
+    },
+    {
+      "path": "recording.tar.gz.part-0010",
+      "bytes": 16777216,
+      "sha256": "390fa36f339ba28f868ad2b1449751498cc052b8cb24ab1804c193a556ba6588"
+    },
+    {
+      "path": "recording.tar.gz.part-0011",
+      "bytes": 16777216,
+      "sha256": "b41e268c6ad64da535b747b413a0712c34af53a11de53141798916c062431449"
+    },
+    {
+      "path": "recording.tar.gz.part-0012",
+      "bytes": 1769485,
+      "sha256": "94b35099b97ae148731d675bb709221eb283fdc77bd4d61bf2a93bdcc9785406"
+    }
+  ],
+  "deploymentId": "92409cfe-36f8-4dd5-b967-64547d132e95",
+  "url": "https://92409cfe.wasm-vm.pages.dev",
+  "canonical": "https://wasm-vm.pages.dev",
+  "docstreamVersion": "1.8.0",
+  "pages": 154,
+  "accountedRecords": 1995,
+  "passed": 127,
+  "failed": 0,
+  "sourceArchiveSha256": "d6202d04c8492eff9e8f27239043f52670024d49edc14d5b2a47f578cae10656",
+  "productionGuestGpuAuthority": false,
+  "performanceAuthority": false
+}

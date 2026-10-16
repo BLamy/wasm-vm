@@ -1,0 +1,12 @@
+{
+  "head": "29980ba541002a7ce9c68b9e7c3b86e54d10642b",
+  "sha256": {
+    "crates/core/src/hart/regs.rs": "fdfed6c0466a7126e2c3b13b632c6b003fbcda9e17e28b901638ffd760ed92f7",
+    "crates/core/tests/jit_sparse_handoff.rs": "3d7cacddb1ff0fdea1a17d54019474f88d8d937843ba042df6a7edf46798a2a5",
+    "crates/wasm/tests/jit_sparse_handoff.rs": "0fd2ca518bf674be66aa7a45cfbf472d5ac3b864e47abebd310c46266576b601",
+    "crates/core/examples/jit_handoff_probe.rs": "f691b18781a322cea887da18c0cd8fdb540c200cf2ff21d8ca3e0e4bec3dc0e7",
+    "tools/verify/jit-sparse-handoff-benchmark.mjs": "4f52599d5f87ac84805ed01e67bc1ac1f65bb7c5fece1695f6da2dd6a42cb974",
+    "web/dist/pkg/wasm_vm_wasm_bg.wasm": "bf72dd4d1a4fca44be4d1b1b0006466f3cef8faaa9a8d09acd43ef2f5842749b"
+  },
+  "sourceDiff": ""
+}

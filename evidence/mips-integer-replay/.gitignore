@@ -1,0 +1,3 @@
+# Rebuildable host probe executables; hashes and commands are in report.json.
+**/native-baseline
+**/native-candidate

@@ -1,0 +1,1496 @@
+{
+  "base": "cffb8d57",
+  "frozen": "8b7106488b84c256cae7f4eae87eee16a4f09eee",
+  "source": "renderer/virgl-shader/bridge.c",
+  "sourceSha256": "37acf60a04c189555a545f5275ef969f7ee7d9e9ba5966c2d195c56352afd1c0",
+  "binarySha256": "ba43647e5addaba46fc4db1e0630d7614ebc1e397e7e72bb2eb475a24ea11768",
+  "profiles": [
+    {
+      "path": "target/virgl-pairs-verifier/native-18204.profraw",
+      "sha256": "813fed5a09f7908b97dd735d42dd02919f80622fe774dc3cd5c012ef29c665b1"
+    },
+    {
+      "path": "target/virgl-pairs-verifier/native-defensive-21410.profraw",
+      "sha256": "52b6a7cf65d8289bdca627865e217fbcf8a52eaab314b28e246bf094502d3fec"
+    }
+  ],
+  "nativeCoverageSha256": "670c83255bb9157386acebeb2f7c928416a66dbc02ca3e9f12747f3069357e20",
+  "added": [
+    {
+      "line": 30,
+      "count": null,
+      "source": "   bool flat[2][8];"
+    },
+    {
+      "line": 36,
+      "count": null,
+      "source": "static char single_response[BRIDGE_MAX_RESULT];"
+    },
+    {
+      "line": 37,
+      "count": null,
+      "source": "static char pair_response[BRIDGE_MAX_PAIR_RESULT];"
+    },
+    {
+      "line": 38,
+      "count": null,
+      "source": "static char *response = single_response;"
+    },
+    {
+      "line": 39,
+      "count": null,
+      "source": "static size_t response_capacity = sizeof(single_response);"
+    },
+    {
+      "line": 69,
+      "count": 3702491,
+      "source": "   int n = vsnprintf(response + response_used, response_capacity - response_used, fmt, args);"
+    },
+    {
+      "line": 71,
+      "count": 3702491,
+      "source": "   if (n < 0 || (size_t)n >= response_capacity - response_used) {"
+    },
+    {
+      "line": 215,
+      "count": 43538,
+      "source": "   bool flat = false;"
+    },
+    {
+      "line": 231,
+      "count": 24884,
+      "source": "      if (s->stage == 1 && r.file == IN) {"
+    },
+    {
+      "line": 232,
+      "count": 4743,
+      "source": "         if (!punctuation(p, ',')) return false;"
+    },
+    {
+      "line": 233,
+      "count": 4741,
+      "source": "         if (word(p, \"CONSTANT\")) flat = true;"
+    },
+    {
+      "line": 234,
+      "count": 4741,
+      "source": "         else if (!word(p, \"PERSPECTIVE\")) return false;"
+    },
+    {
+      "line": 235,
+      "count": 24884,
+      "source": "      }"
+    },
+    {
+      "line": 248,
+      "count": 40534,
+      "source": "      s->flat[r.file][r.index] = flat;"
+    },
+    {
+      "line": 350,
+      "count": 42814,
+      "source": "      if (semantic == 2) append(\",\\\"interpolation\\\":\\\"%s\\\"\", s->flat[f][i] ? \"flat\" : \"smooth\");"
+    },
+    {
+      "line": 357,
+      "count": null,
+      "source": "/* Each conversion owns only upstream outputs. Text/token workspaces live in"
+    },
+    {
+      "line": 358,
+      "count": null,
+      "source": " * sequential helper calls, so a pair never doubles their Wasm stack footprint. */"
+    },
+    {
+      "line": 359,
+      "count": null,
+      "source": "struct conversion {"
+    },
+    {
+      "line": 360,
+      "count": null,
+      "source": "   struct profile profile;"
+    },
+    {
+      "line": 361,
+      "count": null,
+      "source": "   struct vrend_shader_info info;"
+    },
+    {
+      "line": 362,
+      "count": null,
+      "source": "   struct vrend_variable_shader_info variable;"
+    },
+    {
+      "line": 363,
+      "count": null,
+      "source": "   struct vrend_strarray shader;"
+    },
+    {
+      "line": 364,
+      "count": null,
+      "source": "};"
+    },
+    {
+      "line": 365,
+      "count": null,
+      "source": ""
+    },
+    {
+      "line": 366,
+      "count": null,
+      "source": "static void cleanup(struct conversion *c)"
+    },
+    {
+      "line": 367,
+      "count": 13627,
+      "source": "{"
+    },
+    {
+      "line": 368,
+      "count": 13627,
+      "source": "   strarray_free(&c->shader, true);"
+    },
+    {
+      "line": 369,
+      "count": 13627,
+      "source": "   free(c->info.sampler_arrays);"
+    },
+    {
+      "line": 370,
+      "count": 13627,
+      "source": "   free(c->info.image_arrays);"
+    },
+    {
+      "line": 371,
+      "count": 13627,
+      "source": "}"
+    },
+    {
+      "line": 372,
+      "count": null,
+      "source": ""
+    },
+    {
+      "line": 373,
+      "count": null,
+      "source": "static void begin_response(bool pair)"
+    },
+    {
+      "line": 374,
+      "count": 8194,
+      "source": "{"
+    },
+    {
+      "line": 375,
+      "count": 8194,
+      "source": "   response = pair ? pair_response : single_response;"
+    },
+    {
+      "line": 376,
+      "count": 8194,
+      "source": "   response_capacity = pair ? sizeof(pair_response) : sizeof(single_response);"
+    },
+    {
+      "line": 377,
+      "count": 8194,
+      "source": "   response_used = 0;"
+    },
+    {
+      "line": 378,
+      "count": 8194,
+      "source": "   response_overflow = false;"
+    },
+    {
+      "line": 379,
+      "count": 8194,
+      "source": "}"
+    },
+    {
+      "line": 380,
+      "count": null,
+      "source": ""
+    },
+    {
+      "line": 381,
+      "count": null,
+      "source": "static const char *check_input(struct profile *profile, const char *text, size_t length)"
+    },
+    {
+      "line": 390,
+      "count": 12595,
+      "source": "   char checked[BRIDGE_MAX_TEXT + 1];"
+    },
+    {
+      "line": 391,
+      "count": 12595,
+      "source": "   memcpy(checked, text, length); checked[length] = 0;"
+    },
+    {
+      "line": 393,
+      "count": 12595,
+      "source": "   if (!validate(checked, profile)) return error(failure_code, \"TGSI is malformed or outside the documented straight-line profile.\");"
+    },
+    {
+      "line": 394,
+      "count": 12595,
+      "source": "   return NULL;"
+    },
+    {
+      "line": 395,
+      "count": 12595,
+      "source": "}"
+    },
+    {
+      "line": 396,
+      "count": null,
+      "source": ""
+    },
+    {
+      "line": 397,
+      "count": null,
+      "source": "static const char *convert(struct conversion *c, const char *text, size_t length,"
+    },
+    {
+      "line": 398,
+      "count": null,
+      "source": "                           const struct vrend_fs_shader_info *fragment_interface)"
+    },
+    {
+      "line": 399,
+      "count": 9247,
+      "source": "{"
+    },
+    {
+      "line": 400,
+      "count": 9247,
+      "source": "   char input[BRIDGE_MAX_TEXT + 1];"
+    },
+    {
+      "line": 401,
+      "count": 9247,
+      "source": "   memcpy(input, text, length); input[length] = 0;"
+    },
+    {
+      "line": 402,
+      "count": 9247,
+      "source": "   struct tgsi_token tokens[BRIDGE_MAX_TOKENS] = {0};"
+    },
+    {
+      "line": 407,
+      "count": 9247,
+      "source": "   if (c->profile.stage == 1) key.fs.lower_left_origin = 1;"
+    },
+    {
+      "line": 408,
+      "count": 9247,
+      "source": "   if (fragment_interface) key.fs_info = *fragment_interface;"
+    },
+    {
+      "line": 409,
+      "count": 9247,
+      "source": "   if (!strarray_alloc(&c->shader, SHADER_MAX_STRINGS)) return error(\"translation-error\", \"Shader output allocation failed.\");"
+    },
+    {
+      "line": 410,
+      "count": 9247,
+      "source": "   bool converted = vrend_convert_shader(NULL, &cfg, tokens, 0, &key, &c->info, &c->variable, &c->shader);"
+    },
+    {
+      "line": 412,
+      "count": 36988,
+      "source": "   for (int i = 0; i < c->shader.num_strings; ++i) total += strlen(c->shader.strings[i].buf);"
+    },
+    {
+      "line": 413,
+      "count": 9247,
+      "source": "   if (!converted || upstream_logged || total > BRIDGE_MAX_GLSL)"
+    },
+    {
+      "line": 415,
+      "count": 9247,
+      "source": "   return NULL;"
+    },
+    {
+      "line": 416,
+      "count": 9247,
+      "source": "}"
+    },
+    {
+      "line": 417,
+      "count": null,
+      "source": ""
+    },
+    {
+      "line": 418,
+      "count": null,
+      "source": "/* The profile permits only GENERIC fragment inputs, all centered and either"
+    },
+    {
+      "line": 419,
+      "count": null,
+      "source": " * PERSPECTIVE or CONSTANT. Cross-check upstream's value-only export before it"
+    },
+    {
+      "line": 420,
+      "count": null,
+      "source": " * becomes a vertex key; never accept caller keys or copy owned shader pointers. */"
+    },
+    {
+      "line": 421,
+      "count": null,
+      "source": "static bool checked_fragment_interface(const struct conversion *fragment)"
+    },
+    {
+      "line": 422,
+      "count": 3263,
+      "source": "{"
+    },
+    {
+      "line": 423,
+      "count": 3263,
+      "source": "   const struct profile *p = &fragment->profile;"
+    },
+    {
+      "line": 424,
+      "count": 3263,
+      "source": "   const struct vrend_fs_shader_info *info = &fragment->variable.fs_info;"
+    },
+    {
+      "line": 425,
+      "count": 3263,
+      "source": "   unsigned count = 0;"
+    },
+    {
+      "line": 426,
+      "count": 3263,
+      "source": "   bool seen[FILE_REGISTERS] = {0};"
+    },
+    {
+      "line": 427,
+      "count": 29367,
+      "source": "   for (unsigned i = 0; i < FILE_REGISTERS; ++i) count += p->declared[IN][i];"
+    },
+    {
+      "line": 428,
+      "count": 3263,
+      "source": "   if (info->num_interps != (int)count || info->has_sample_input || info->has_noperspective) return false;"
+    },
+    {
+      "line": 429,
+      "count": 6705,
+      "source": "   for (unsigned i = 0; i < count; ++i) {"
+    },
+    {
+      "line": 430,
+      "count": 3451,
+      "source": "      const struct vrend_interp_info *entry = &info->interpinfo[i];"
+    },
+    {
+      "line": 431,
+      "count": 3451,
+      "source": "      if (entry->semantic_name != TGSI_SEMANTIC_GENERIC || entry->semantic_index >= FILE_REGISTERS ||"
+    },
+    {
+      "line": 432,
+      "count": 3451,
+      "source": "          entry->location != TGSI_INTERPOLATE_LOC_CENTER || seen[entry->semantic_index]) return false;"
+    },
+    {
+      "line": 433,
+      "count": 3447,
+      "source": "      seen[entry->semantic_index] = true;"
+    },
+    {
+      "line": 434,
+      "count": 3447,
+      "source": "      bool matched = false;"
+    },
+    {
+      "line": 435,
+      "count": 31015,
+      "source": "      for (unsigned j = 0; j < FILE_REGISTERS; ++j) if (p->declared[IN][j] && p->semantic_index[IN][j] == entry->semantic_index) {"
+    },
+    {
+      "line": 436,
+      "count": 3446,
+      "source": "         unsigned expected = p->flat[IN][j] ? TGSI_INTERPOLATE_CONSTANT : TGSI_INTERPOLATE_PERSPECTIVE;"
+    },
+    {
+      "line": 437,
+      "count": 3446,
+      "source": "         if (entry->interpolate != expected) return false;"
+    },
+    {
+      "line": 438,
+      "count": 3445,
+      "source": "         matched = true;"
+    },
+    {
+      "line": 439,
+      "count": 3445,
+      "source": "      }"
+    },
+    {
+      "line": 440,
+      "count": 3446,
+      "source": "      if (!matched) return false;"
+    },
+    {
+      "line": 442,
+      "count": 3260,
+      "source": "   return true;"
+    },
+    {
+      "line": 443,
+      "count": 3260,
+      "source": "}"
+    },
+    {
+      "line": 444,
+      "count": null,
+      "source": ""
+    },
+    {
+      "line": 445,
+      "count": null,
+      "source": "static bool match_interface(struct profile *vertex, const struct profile *fragment)"
+    },
+    {
+      "line": 446,
+      "count": 4388,
+      "source": "{"
+    },
+    {
+      "line": 447,
+      "count": 33436,
+      "source": "   for (unsigned i = 0; i < FILE_REGISTERS; ++i) if (fragment->declared[IN][i]) {"
+    },
+    {
+      "line": 448,
+      "count": 4578,
+      "source": "      bool matched = false;"
+    },
+    {
+      "line": 449,
+      "count": 40500,
+      "source": "      for (unsigned j = 0; j < FILE_REGISTERS; ++j) {"
+    },
+    {
+      "line": 450,
+      "count": 36084,
+      "source": "         if (!vertex->declared[OUT][j] || vertex->semantic[OUT][j] != 2 ||"
+    },
+    {
+      "line": 451,
+      "count": 36084,
+      "source": "             vertex->semantic_index[OUT][j] != fragment->semantic_index[IN][i]) continue;"
+    },
+    {
+      "line": 452,
+      "count": 3605,
+      "source": "         if ((fragment->components[IN][i] & vertex->written[OUT][j]) != fragment->components[IN][i]) return false;"
+    },
+    {
+      "line": 453,
+      "count": 3443,
+      "source": "         vertex->flat[OUT][j] = fragment->flat[IN][i];"
+    },
+    {
+      "line": 454,
+      "count": 3443,
+      "source": "         matched = true;"
+    },
+    {
+      "line": 455,
+      "count": 3443,
+      "source": "      }"
+    },
+    {
+      "line": 456,
+      "count": 4416,
+      "source": "      if (!matched) return false;"
+    },
+    {
+      "line": 457,
+      "count": 4416,
+      "source": "   }"
+    },
+    {
+      "line": 458,
+      "count": 4388,
+      "source": "   return true;"
+    },
+    {
+      "line": 459,
+      "count": 4388,
+      "source": "}"
+    },
+    {
+      "line": 460,
+      "count": null,
+      "source": ""
+    },
+    {
+      "line": 461,
+      "count": null,
+      "source": "static void interface_key(const struct profile *fragment)"
+    },
+    {
+      "line": 462,
+      "count": 3253,
+      "source": "{"
+    },
+    {
+      "line": 463,
+      "count": 3253,
+      "source": "   append(\"\\\"generic-interpolation-v1:\");"
+    },
+    {
+      "line": 464,
+      "count": 3253,
+      "source": "   bool comma = false;"
+    },
+    {
+      "line": 465,
+      "count": 29277,
+      "source": "   for (unsigned sid = 0; sid < FILE_REGISTERS; ++sid)"
+    },
+    {
+      "line": 466,
+      "count": 234216,
+      "source": "      for (unsigned i = 0; i < FILE_REGISTERS; ++i)"
+    },
+    {
+      "line": 467,
+      "count": 208192,
+      "source": "         if (fragment->declared[IN][i] && fragment->semantic_index[IN][i] == sid) {"
+    },
+    {
+      "line": 468,
+      "count": 3443,
+      "source": "            append(\"%sg%u/%u/%s\", comma ? \";\" : \"\", sid, fragment->components[IN][i], fragment->flat[IN][i] ? \"flat\" : \"smooth\");"
+    },
+    {
+      "line": 469,
+      "count": 3443,
+      "source": "            comma = true;"
+    },
+    {
+      "line": 470,
+      "count": 3443,
+      "source": "         }"
+    },
+    {
+      "line": 471,
+      "count": 3253,
+      "source": "   append(\"\\\"\");"
+    },
+    {
+      "line": 472,
+      "count": 3253,
+      "source": "}"
+    },
+    {
+      "line": 473,
+      "count": null,
+      "source": ""
+    },
+    {
+      "line": 474,
+      "count": null,
+      "source": "static void stage_result(const struct conversion *c)"
+    },
+    {
+      "line": 475,
+      "count": 9248,
+      "source": "{"
+    },
+    {
+      "line": 476,
+      "count": 9248,
+      "source": "   const struct profile *profile = &c->profile;"
+    },
+    {
+      "line": 477,
+      "count": 9248,
+      "source": "   const struct vrend_shader_info *info = &c->info;"
+    },
+    {
+      "line": 478,
+      "count": 9248,
+      "source": "   int stage = profile->stage;"
+    },
+    {
+      "line": 479,
+      "count": 9248,
+      "source": "   append(\"\\\"glsl\\\":\\\"\");"
+    },
+    {
+      "line": 480,
+      "count": 36990,
+      "source": "   for (int i = 0; i < c->shader.num_strings; ++i) {"
+    },
+    {
+      "line": 481,
+      "count": 3248926,
+      "source": "      for (const char *p = c->shader.strings[i].buf; *p; ++p) {"
+    },
+    {
+      "line": 482,
+      "count": 3221184,
+      "source": "         unsigned char byte = (unsigned char)*p;"
+    },
+    {
+      "line": 483,
+      "count": 3221184,
+      "source": "         if (byte == '\"' || byte == '\\\\') append(\"\\\\%c\", byte);"
+    },
+    {
+      "line": 484,
+      "count": 3221182,
+      "source": "         else if (byte < 32) append(\"\\\\u%04x\", byte);"
+    },
+    {
+      "line": 485,
+      "count": 3221184,
+      "source": "         else append(\"%c\", byte);"
+    },
+    {
+      "line": 488,
+      "count": 9248,
+      "source": "   append(\"\\\",\\\"metadata\\\":{\\\"profile\\\":\\\"virgl-webgl2-straight-line-v4\\\",\\\"stage\\\":\\\"%s\\\",\\\"inputs\\\":\", stage ? \"fragment\" : \"vertex\");"
+    },
+    {
+      "line": 489,
+      "count": 9248,
+      "source": "   io_metadata(profile, IN); append(\",\\\"outputs\\\":\"); io_metadata(profile, OUT);"
+    },
+    {
+      "line": 491,
+      "count": 9248,
+      "source": "   if (!stage) io_metadata(profile, IN); else append(\"[]\");"
+    },
+    {
+      "line": 493,
+      "count": 9248,
+      "source": "   if (info->num_consts) append(\"{\\\"name\\\":\\\"%sconst0\\\",\\\"type\\\":\\\"uvec4[]\\\",\\\"count\\\":%d,\\\"encoding\\\":\\\"float32-bits\\\"}\", stage ? \"fs\" : \"vs\", info->num_consts);"
+    },
+    {
+      "line": 496,
+      "count": 83232,
+      "source": "   for (unsigned i = 0; i < FILE_REGISTERS; ++i) if (info->samplers_used_mask & (1u << i)) {"
+    },
+    {
+      "line": 501,
+      "count": 9248,
+      "source": "   append(\"]}\");"
+    },
+    {
+      "line": 502,
+      "count": 9248,
+      "source": "}"
+    },
+    {
+      "line": 503,
+      "count": null,
+      "source": ""
+    },
+    {
+      "line": 504,
+      "count": null,
+      "source": "const char *bridge_translate(int stage, const char *text, size_t length)"
+    },
+    {
+      "line": 505,
+      "count": 2752,
+      "source": "{"
+    },
+    {
+      "line": 506,
+      "count": 2752,
+      "source": "   begin_response(false);"
+    },
+    {
+      "line": 507,
+      "count": 2752,
+      "source": "   if (stage != 0 && stage != 1) return error(\"unsupported-stage\", \"Only vertex and fragment stages are supported.\");"
+    },
+    {
+      "line": 508,
+      "count": 2748,
+      "source": "   struct conversion c = {.profile = {.stage = stage}};"
+    },
+    {
+      "line": 509,
+      "count": 2748,
+      "source": "   const char *failed = check_input(&c.profile, text, length);"
+    },
+    {
+      "line": 510,
+      "count": 2748,
+      "source": "   if (!failed) failed = convert(&c, text, length, NULL);"
+    },
+    {
+      "line": 511,
+      "count": 2748,
+      "source": "   if (!failed) { append(\"{\\\"ok\\\":true,\"); stage_result(&c); append(\"}\"); }"
+    },
+    {
+      "line": 512,
+      "count": 2748,
+      "source": "   cleanup(&c);"
+    },
+    {
+      "line": 513,
+      "count": 2748,
+      "source": "   if (response_overflow) return error(\"translation-error\", \"JSON output exceeded its bound.\");"
+    },
+    {
+      "line": 514,
+      "count": 2748,
+      "source": "   return response;"
+    },
+    {
+      "line": 515,
+      "count": 2748,
+      "source": "}"
+    },
+    {
+      "line": 516,
+      "count": null,
+      "source": ""
+    },
+    {
+      "line": 517,
+      "count": null,
+      "source": "const char *bridge_translate_pair(const char *vertex_text, size_t vertex_length,"
+    },
+    {
+      "line": 518,
+      "count": null,
+      "source": "                                  const char *fragment_text, size_t fragment_length)"
+    },
+    {
+      "line": 519,
+      "count": 5439,
+      "source": "{"
+    },
+    {
+      "line": 520,
+      "count": 5439,
+      "source": "   begin_response(true);"
+    },
+    {
+      "line": 521,
+      "count": 5439,
+      "source": "   struct conversion vertex = {.profile = {.stage = 0}}, fragment = {.profile = {.stage = 1}};"
+    },
+    {
+      "line": 522,
+      "count": 5439,
+      "source": "   const char *failed = check_input(&vertex.profile, vertex_text, vertex_length);"
+    },
+    {
+      "line": 523,
+      "count": 5439,
+      "source": "   if (!failed) failed = check_input(&fragment.profile, fragment_text, fragment_length);"
+    },
+    {
+      "line": 524,
+      "count": 5439,
+      "source": "   if (!failed && !match_interface(&vertex.profile, &fragment.profile))"
+    },
+    {
+      "line": 525,
+      "count": 5439,
+      "source": "      failed = error(\"incompatible-interface\", \"Fragment GENERIC inputs require matching fully written vertex outputs.\");"
+    },
+    {
+      "line": 526,
+      "count": 5439,
+      "source": "   if (!failed) failed = convert(&fragment, fragment_text, fragment_length, NULL);"
+    },
+    {
+      "line": 527,
+      "count": 5439,
+      "source": "   if (!failed && !checked_fragment_interface(&fragment))"
+    },
+    {
+      "line": 528,
+      "count": 5439,
+      "source": "      failed = error(\"translation-error\", \"Upstream fragment interpolation metadata differs from the checked interface.\");"
+    },
+    {
+      "line": 529,
+      "count": 5439,
+      "source": "   if (!failed) failed = convert(&vertex, vertex_text, vertex_length, &fragment.variable.fs_info);"
+    },
+    {
+      "line": 530,
+      "count": 5439,
+      "source": "   if (!failed) {"
+    },
+    {
+      "line": 531,
+      "count": 3253,
+      "source": "      append(\"{\\\"ok\\\":true,\\\"vertex\\\":{\"); stage_result(&vertex);"
+    },
+    {
+      "line": 532,
+      "count": 3253,
+      "source": "      append(\"},\\\"fragment\\\":{\"); stage_result(&fragment);"
+    },
+    {
+      "line": 533,
+      "count": 3253,
+      "source": "      append(\"},\\\"interfaceKey\\\":\"); interface_key(&fragment.profile); append(\"}\");"
+    },
+    {
+      "line": 534,
+      "count": 5439,
+      "source": "   }"
+    },
+    {
+      "line": 535,
+      "count": 5439,
+      "source": "   cleanup(&vertex); cleanup(&fragment);"
+    }
+  ],
+  "changedBranches": [
+    [
+      507,
+      8,
+      507,
+      18,
+      15,
+      2737
+    ],
+    [
+      507,
+      22,
+      507,
+      32,
+      4,
+      11
+    ],
+    [
+      510,
+      8,
+      510,
+      15,
+      2741,
+      7
+    ],
+    [
+      511,
+      8,
+      511,
+      15,
+      2741,
+      7
+    ],
+    [
+      513,
+      8,
+      513,
+      25,
+      0,
+      2748
+    ],
+    [
+      523,
+      8,
+      523,
+      15,
+      4899,
+      540
+    ],
+    [
+      524,
+      8,
+      524,
+      15,
+      4388,
+      1051
+    ],
+    [
+      524,
+      19,
+      524,
+      71,
+      1135,
+      3253
+    ],
+    [
+      526,
+      8,
+      526,
+      15,
+      3253,
+      2186
+    ],
+    [
+      527,
+      8,
+      527,
+      15,
+      3253,
+      2186
+    ],
+    [
+      527,
+      19,
+      527,
+      57,
+      0,
+      3253
+    ],
+    [
+      529,
+      8,
+      529,
+      15,
+      3253,
+      2186
+    ],
+    [
+      530,
+      8,
+      530,
+      15,
+      3253,
+      2186
+    ],
+    [
+      375,
+      15,
+      375,
+      19,
+      5440,
+      2754
+    ],
+    [
+      376,
+      24,
+      376,
+      28,
+      5440,
+      2754
+    ],
+    [
+      393,
+      8,
+      393,
+      35,
+      567,
+      12028
+    ],
+    [
+      231,
+      11,
+      231,
+      24,
+      9222,
+      15662
+    ],
+    [
+      231,
+      28,
+      231,
+      40,
+      4743,
+      4479
+    ],
+    [
+      232,
+      14,
+      232,
+      34,
+      2,
+      4741
+    ],
+    [
+      233,
+      14,
+      233,
+      33,
+      3785,
+      956
+    ],
+    [
+      234,
+      19,
+      234,
+      42,
+      26,
+      930
+    ],
+    [
+      407,
+      8,
+      407,
+      29,
+      3260,
+      5987
+    ],
+    [
+      408,
+      8,
+      408,
+      26,
+      3253,
+      5994
+    ],
+    [
+      409,
+      8,
+      409,
+      55,
+      0,
+      9247
+    ],
+    [
+      412,
+      20,
+      412,
+      45,
+      27741,
+      9247
+    ],
+    [
+      413,
+      8,
+      413,
+      18,
+      0,
+      9247
+    ],
+    [
+      413,
+      22,
+      413,
+      37,
+      0,
+      9247
+    ],
+    [
+      413,
+      41,
+      413,
+      64,
+      0,
+      9247
+    ],
+    [
+      71,
+      8,
+      71,
+      13,
+      0,
+      3702491
+    ],
+    [
+      71,
+      17,
+      71,
+      63,
+      1,
+      3702490
+    ],
+    [
+      480,
+      20,
+      480,
+      45,
+      27742,
+      9248
+    ],
+    [
+      481,
+      54,
+      481,
+      56,
+      3221184,
+      27742
+    ],
+    [
+      483,
+      14,
+      483,
+      25,
+      1,
+      3221183
+    ],
+    [
+      483,
+      29,
+      483,
+      41,
+      1,
+      3221182
+    ],
+    [
+      484,
+      19,
+      484,
+      28,
+      197312,
+      3023870
+    ],
+    [
+      488,
+      106,
+      488,
+      111,
+      3260,
+      5988
+    ],
+    [
+      491,
+      8,
+      491,
+      14,
+      5988,
+      3260
+    ],
+    [
+      493,
+      8,
+      493,
+      24,
+      5,
+      9243
+    ],
+    [
+      493,
+      124,
+      493,
+      129,
+      3,
+      2
+    ],
+    [
+      496,
+      25,
+      496,
+      43,
+      73984,
+      9248
+    ],
+    [
+      496,
+      54,
+      496,
+      90,
+      5,
+      73979
+    ],
+    [
+      350,
+      11,
+      350,
+      24,
+      9625,
+      33189
+    ],
+    [
+      350,
+      62,
+      350,
+      75,
+      6179,
+      3446
+    ],
+    [
+      447,
+      25,
+      447,
+      43,
+      30183,
+      3253
+    ],
+    [
+      447,
+      54,
+      447,
+      79,
+      4578,
+      25605
+    ],
+    [
+      449,
+      28,
+      449,
+      46,
+      36084,
+      4416
+    ],
+    [
+      450,
+      14,
+      450,
+      39,
+      26545,
+      9539
+    ],
+    [
+      450,
+      43,
+      450,
+      72,
+      4578,
+      4961
+    ],
+    [
+      451,
+      14,
+      451,
+      79,
+      1356,
+      3605
+    ],
+    [
+      452,
+      14,
+      452,
+      100,
+      162,
+      3443
+    ],
+    [
+      456,
+      11,
+      456,
+      19,
+      973,
+      3443
+    ],
+    [
+      427,
+      25,
+      427,
+      43,
+      26104,
+      3263
+    ],
+    [
+      428,
+      8,
+      428,
+      39,
+      1,
+      3262
+    ],
+    [
+      428,
+      43,
+      428,
+      65,
+      1,
+      3261
+    ],
+    [
+      428,
+      69,
+      428,
+      92,
+      1,
+      3260
+    ],
+    [
+      429,
+      25,
+      429,
+      34,
+      3451,
+      3254
+    ],
+    [
+      431,
+      11,
+      431,
+      56,
+      1,
+      3450
+    ],
+    [
+      431,
+      60,
+      431,
+      99,
+      1,
+      3449
+    ],
+    [
+      432,
+      11,
+      432,
+      57,
+      1,
+      3448
+    ],
+    [
+      432,
+      61,
+      432,
+      88,
+      1,
+      3447
+    ],
+    [
+      435,
+      28,
+      435,
+      46,
+      27569,
+      3446
+    ],
+    [
+      435,
+      57,
+      435,
+      75,
+      3832,
+      23737
+    ],
+    [
+      435,
+      79,
+      435,
+      128,
+      3446,
+      386
+    ],
+    [
+      436,
+      30,
+      436,
+      44,
+      3092,
+      354
+    ],
+    [
+      437,
+      14,
+      437,
+      44,
+      1,
+      3445
+    ],
+    [
+      440,
+      11,
+      440,
+      19,
+      1,
+      3445
+    ],
+    [
+      465,
+      27,
+      465,
+      47,
+      26024,
+      3253
+    ],
+    [
+      466,
+      28,
+      466,
+      46,
+      208192,
+      26024
+    ],
+    [
+      467,
+      14,
+      467,
+      39,
+      27544,
+      180648
+    ],
+    [
+      467,
+      43,
+      467,
+      81,
+      3443,
+      24101
+    ],
+    [
+      468,
+      35,
+      468,
+      40,
+      192,
+      3251
+    ],
+    [
+      468,
+      87,
+      468,
+      108,
+      3089,
+      354
+    ]
+  ],
+  "zeroBranches": [
+    [
+      513,
+      8,
+      513,
+      25,
+      0,
+      2748
+    ],
+    [
+      527,
+      19,
+      527,
+      57,
+      0,
+      3253
+    ],
+    [
+      409,
+      8,
+      409,
+      55,
+      0,
+      9247
+    ],
+    [
+      413,
+      8,
+      413,
+      18,
+      0,
+      9247
+    ],
+    [
+      413,
+      22,
+      413,
+      37,
+      0,
+      9247
+    ],
+    [
+      413,
+      41,
+      413,
+      64,
+      0,
+      9247
+    ],
+    [
+      71,
+      8,
+      71,
+      13,
+      0,
+      3702491
+    ]
+  ]
+}

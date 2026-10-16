@@ -1,0 +1,7 @@
+{
+  "status": "passed",
+  "checkedLaneCaptures": 5760,
+  "inputSha256": "48e88133e4c37e005a1a2ebbfef875298884646609e4b34f1a6672504f87a901",
+  "gpuResultSha256": "bc540aeff6e1d0b35d69a460b75e29ab079fc824611953661ba6906d4c643fad",
+  "meaning": "Independent Fraction arithmetic rechecks every actual GPU float word and simultaneous raw carrier. Every effective tested divisor is positive and in the spec accuracy interval; expected zeros permit either zero sign."
+}

@@ -1,0 +1,111 @@
+{
+  "schema": 1,
+  "task": "E6-T11c",
+  "gitHead": "fbceeb4d07f1afe24e9e99a01db8b19e181cdd3e",
+  "clone": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-scanout-cold-ww_7ze7p/wasm-vm",
+  "retainedClone": true,
+  "invocation": [
+    "/Applications/Xcode.app/Contents/Developer/usr/bin/python3",
+    "tools/virgl-command/scanout-cold.py",
+    "--output",
+    "evidence/virgl-scanout/cold-clone",
+    "--desktop-image",
+    "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t17c/repro-b/alpine-rootfs.ext4",
+    "--desktop-assets",
+    "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t17c/chunks/desktop-b"
+  ],
+  "command": [
+    "make",
+    "verify-E6-T11c"
+  ],
+  "removedEnvironmentNames": [
+    "GIT_PAGER",
+    "RUST_LOG"
+  ],
+  "timeoutSeconds": 1800,
+  "desktopImage": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t17c/repro-b/alpine-rootfs.ext4",
+  "desktopAssets": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t17c/chunks/desktop-b",
+  "status": "failed",
+  "startedAt": "2026-10-03T07:17:11.448299+00:00",
+  "inputsBefore": {
+    "image": {
+      "path": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t17c/repro-b/alpine-rootfs.ext4",
+      "bytes": 1073741824,
+      "sha256": "467306a5d842f95927c1f5823363271b55854517f6318576a6a137f5615a5c1e"
+    },
+    "manifest": {
+      "path": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t17c/chunks/desktop-b/manifest.json",
+      "bytes": 548948,
+      "sha256": "1be3c29945747184c3ed868f51add1829e97bfd3945f456d4676d5f035fb4827"
+    },
+    "kernel": {
+      "path": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/releases/kernel/6.6.63/Image",
+      "bytes": 24208896,
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+    },
+    "assets": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t17c/chunks/desktop-b",
+    "publication": {
+      "version": 1,
+      "layout": "split",
+      "chunkSize": 131072,
+      "chunkCount": 8192,
+      "uniqueChunks": 822
+    }
+  },
+  "harness": {
+    "path": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/virgl-command/scanout-cold.py",
+    "bytes": 11198,
+    "sha256": "0dfd12b7d811ede50d81cb2549154b244829ef9abefef2405dc693a3ab6a1137",
+    "headSha256": "0dfd12b7d811ede50d81cb2549154b244829ef9abefef2405dc693a3ab6a1137",
+    "unchanged": true
+  },
+  "cloneHead": "fbceeb4d07f1afe24e9e99a01db8b19e181cdd3e",
+  "statusBefore": "",
+  "cloneKernelBefore": {
+    "path": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-scanout-cold-ww_7ze7p/wasm-vm/releases/kernel/6.6.63/Image",
+    "bytes": 24208896,
+    "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+  },
+  "explicitGateEnvironment": {
+    "VIRGL_SCANOUT_DESKTOP_IMAGE": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t17c/repro-b/alpine-rootfs.ext4",
+    "VIRGL_SCANOUT_DESKTOP_ASSETS": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t17c/chunks/desktop-b",
+    "VIRGL_SCANOUT_EVIDENCE_DIR": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-scanout-cold-ww_7ze7p/wasm-vm/target/evidence/virgl-scanout-cold"
+  },
+  "exitCode": 2,
+  "cloneHeadAfter": "fbceeb4d07f1afe24e9e99a01db8b19e181cdd3e",
+  "statusAfter": "",
+  "cloneKernelAfter": {
+    "path": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-scanout-cold-ww_7ze7p/wasm-vm/releases/kernel/6.6.63/Image",
+    "bytes": 24208896,
+    "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+  },
+  "error": "cold scanout acceptance failed",
+  "inputsAfter": {
+    "image": {
+      "path": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t17c/repro-b/alpine-rootfs.ext4",
+      "bytes": 1073741824,
+      "sha256": "467306a5d842f95927c1f5823363271b55854517f6318576a6a137f5615a5c1e"
+    },
+    "manifest": {
+      "path": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t17c/chunks/desktop-b/manifest.json",
+      "bytes": 548948,
+      "sha256": "1be3c29945747184c3ed868f51add1829e97bfd3945f456d4676d5f035fb4827"
+    },
+    "kernel": {
+      "path": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/releases/kernel/6.6.63/Image",
+      "bytes": 24208896,
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce"
+    },
+    "assets": "/Users/blamy/Documents/Codex/wasm-vm/target/e5-t17c/chunks/desktop-b",
+    "publication": {
+      "version": 1,
+      "layout": "split",
+      "chunkSize": 131072,
+      "chunkCount": 8192,
+      "uniqueChunks": 822
+    }
+  },
+  "inputsUnchanged": true,
+  "logSha256": "ae2814734d4444a3fc3c9212600ddc3ac2558f9071c7aab180fb93d3bd2c55c7",
+  "finishedAt": "2026-10-03T07:23:31.690599+00:00"
+}

@@ -1,0 +1,18 @@
+{
+  "schema": "original-integer-image-consumer-seal-v1",
+  "task": "E6-T11d33",
+  "sourceHead": "ba5370a38126048d64d9353e9be5317a69e2d538",
+  "records": 78714,
+  "reopenedMembers": 78714,
+  "sourceClosureIncluded": true,
+  "archiveSha256": "4bf86adde84cf2ea958e195f6740a848d67f0641952cf4ab00d613f5cae6db3a",
+  "archiveBytes": 55030632,
+  "recordIndexSha256": "2220c476a1feafe3fe7c9228347d0fae4af07f3888f87a52bbc51c8e869568ce",
+  "hotReceiptSha256": "591ad67ca59bedfed7259c95d050151500a870783c3b5426298e1199b6da03e4",
+  "coldReportSha256": "e68e7e6ab9137a33dd2e44dd853bd3c2d52bed79e34b316e881fc00bf8f52697",
+  "coldReceiptSha256": "4c84fe93685aef3d023412b1ea0e3646dd94b2e2d069e1222749b06f875c4963",
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "authority": "isolated-original-integer-image-consumers",
+  "productionDrawAuthority": false
+}

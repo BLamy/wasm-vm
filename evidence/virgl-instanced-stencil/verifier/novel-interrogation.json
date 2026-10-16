@@ -1,0 +1,852 @@
+{
+  "schema": "fresh-original-instanced-stencil-novel-interrogation-v1",
+  "status": "passed",
+  "predictionsPreparedBeforeNativeEvidence": true,
+  "results": [
+    {
+      "name": "novel-0x510e527f",
+      "format": 20,
+      "seed": 1359893119,
+      "reportSha256": "0c4d1f908ab2d1012321a9c6dddff30ad084fdc24f86ef82e80505cda5c3a597",
+      "runPath": "run-0000.json",
+      "runSha256": "89f072a7037dbbe01d88ab3185408cc0833b066a41f1f351137311bc369ccb4b",
+      "predictionSha256": "e59093e5f7cbeb728db51d2289baab53d788f89d919367aebb30565ecacc7cb1",
+      "originalShaderSha256": "f054f65132192de830e4c87d033dfb6676db6586291783a89ed2b52db1f4dc83",
+      "counts": {
+        "nativeCalls": 112,
+        "primitives": 8,
+        "instances": 7,
+        "pixels": 2145,
+        "normalizedBytes": 96
+      },
+      "instanceBases": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "positionOffsets": [
+        8,
+        8,
+        8,
+        24,
+        24,
+        24,
+        40
+      ],
+      "packedOffsets": [
+        12,
+        12,
+        16,
+        16,
+        20,
+        20,
+        24
+      ],
+      "nativeWriters": {
+        "first": 444,
+        "last": 555
+      },
+      "postWriterCompletion": {
+        "createdSequence": 1110,
+        "sync": 7,
+        "sequence": 1112,
+        "actual": 37146,
+        "delivered": 37146
+      },
+      "originalSample": {
+        "x": 8,
+        "y": 4,
+        "expected": [
+          {
+            "color": [
+              0.73046875,
+              0.5,
+              -0.4990215301513672,
+              1
+            ],
+            "stencil": 119,
+            "depth": 0
+          }
+        ]
+      },
+      "physicalBodies": {
+        "color": "29c79774020d030b0cacedcc913339a6a8b70eeb24bfdb4ef81e034d1e0cd975",
+        "depth": "4c8fa2fd3f17de35a0642f2d35e812103e9e00b58a1a7b0c9bc1e4a79722b414"
+      },
+      "control": false,
+      "completedControl": null,
+      "differences": []
+    },
+    {
+      "name": "novel-0x510e527f",
+      "format": 126,
+      "seed": 1359893119,
+      "reportSha256": "0c4d1f908ab2d1012321a9c6dddff30ad084fdc24f86ef82e80505cda5c3a597",
+      "runPath": "run-0001.json",
+      "runSha256": "9ba77fa401a53fcbe977b907ccb9a4642d5e9e1bc1bb6a02e0b2af513219cd4f",
+      "predictionSha256": "e59093e5f7cbeb728db51d2289baab53d788f89d919367aebb30565ecacc7cb1",
+      "originalShaderSha256": "f054f65132192de830e4c87d033dfb6676db6586291783a89ed2b52db1f4dc83",
+      "counts": {
+        "nativeCalls": 112,
+        "primitives": 8,
+        "instances": 7,
+        "pixels": 2145,
+        "normalizedBytes": 96
+      },
+      "instanceBases": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "positionOffsets": [
+        8,
+        8,
+        8,
+        24,
+        24,
+        24,
+        40
+      ],
+      "packedOffsets": [
+        12,
+        12,
+        16,
+        16,
+        20,
+        20,
+        24
+      ],
+      "nativeWriters": {
+        "first": 447,
+        "last": 558
+      },
+      "postWriterCompletion": {
+        "createdSequence": 1113,
+        "sync": 7,
+        "sequence": 1115,
+        "actual": 37146,
+        "delivered": 37146
+      },
+      "originalSample": {
+        "x": 8,
+        "y": 4,
+        "expected": [
+          {
+            "color": [
+              0.73046875,
+              0.5,
+              -0.4990215301513672,
+              1
+            ],
+            "stencil": 119,
+            "depth": 0
+          }
+        ]
+      },
+      "physicalBodies": {
+        "color": "29c79774020d030b0cacedcc913339a6a8b70eeb24bfdb4ef81e034d1e0cd975",
+        "depth": "9439d50c06db84c419e7334be776625a55be1acc5e5bad460f3d5bfc3318cedb"
+      },
+      "control": false,
+      "completedControl": null,
+      "differences": []
+    },
+    {
+      "name": "novel-0x9b05688c",
+      "format": 20,
+      "seed": 2600822924,
+      "reportSha256": "1e23611124ba2964b4448130f06f5390814caf421f8f857a047b19cb7b68b93d",
+      "runPath": "run-0000.json",
+      "runSha256": "e3d7ab9005bd7bffb9685b001307ce039b41dc8814eb22b6f74731238438bde7",
+      "predictionSha256": "e59093e5f7cbeb728db51d2289baab53d788f89d919367aebb30565ecacc7cb1",
+      "originalShaderSha256": "f054f65132192de830e4c87d033dfb6676db6586291783a89ed2b52db1f4dc83",
+      "counts": {
+        "nativeCalls": 112,
+        "primitives": 8,
+        "instances": 7,
+        "pixels": 2145,
+        "normalizedBytes": 96
+      },
+      "instanceBases": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "positionOffsets": [
+        8,
+        8,
+        8,
+        24,
+        24,
+        24,
+        40
+      ],
+      "packedOffsets": [
+        12,
+        12,
+        16,
+        16,
+        20,
+        20,
+        24
+      ],
+      "nativeWriters": {
+        "first": 440,
+        "last": 551
+      },
+      "postWriterCompletion": {
+        "createdSequence": 1103,
+        "sync": 7,
+        "sequence": 1111,
+        "actual": 37146,
+        "delivered": 37146
+      },
+      "originalSample": {
+        "x": 8,
+        "y": 4,
+        "expected": [
+          {
+            "color": [
+              0.73046875,
+              0.5,
+              -0.4990215301513672,
+              1
+            ],
+            "stencil": 119,
+            "depth": 0
+          }
+        ]
+      },
+      "physicalBodies": {
+        "color": "29c79774020d030b0cacedcc913339a6a8b70eeb24bfdb4ef81e034d1e0cd975",
+        "depth": "a9aac3142cd05a2812df0e101079378c517bd8d3d4274f7fbfef08506c238190"
+      },
+      "control": false,
+      "completedControl": null,
+      "differences": []
+    },
+    {
+      "name": "novel-0x9b05688c",
+      "format": 126,
+      "seed": 2600822924,
+      "reportSha256": "1e23611124ba2964b4448130f06f5390814caf421f8f857a047b19cb7b68b93d",
+      "runPath": "run-0001.json",
+      "runSha256": "f316c772394706e212bdcc52a5be02e0ce2a0bbc69c4c566efd50a28160576ec",
+      "predictionSha256": "e59093e5f7cbeb728db51d2289baab53d788f89d919367aebb30565ecacc7cb1",
+      "originalShaderSha256": "f054f65132192de830e4c87d033dfb6676db6586291783a89ed2b52db1f4dc83",
+      "counts": {
+        "nativeCalls": 112,
+        "primitives": 8,
+        "instances": 7,
+        "pixels": 2145,
+        "normalizedBytes": 96
+      },
+      "instanceBases": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "positionOffsets": [
+        8,
+        8,
+        8,
+        24,
+        24,
+        24,
+        40
+      ],
+      "packedOffsets": [
+        12,
+        12,
+        16,
+        16,
+        20,
+        20,
+        24
+      ],
+      "nativeWriters": {
+        "first": 443,
+        "last": 554
+      },
+      "postWriterCompletion": {
+        "createdSequence": 1106,
+        "sync": 7,
+        "sequence": 1114,
+        "actual": 37146,
+        "delivered": 37146
+      },
+      "originalSample": {
+        "x": 8,
+        "y": 4,
+        "expected": [
+          {
+            "color": [
+              0.73046875,
+              0.5,
+              -0.4990215301513672,
+              1
+            ],
+            "stencil": 119,
+            "depth": 0
+          }
+        ]
+      },
+      "physicalBodies": {
+        "color": "29c79774020d030b0cacedcc913339a6a8b70eeb24bfdb4ef81e034d1e0cd975",
+        "depth": "fcfcfe991e0612d2b3817749a233fb842244926d3fd8de30d514ccaea49c9a15"
+      },
+      "control": false,
+      "completedControl": null,
+      "differences": []
+    },
+    {
+      "name": "novel-0x1f83d9ab",
+      "format": 20,
+      "seed": 528734635,
+      "reportSha256": "e12838ee2e1792d32fe5aad75feb32056d7ca920997f940fe151427dce4b3fa4",
+      "runPath": "run-0000.json",
+      "runSha256": "a25ac7e1e7636bea5c6e85c6a9e2570f0441071e442d4461551bceb01cf36126",
+      "predictionSha256": "e59093e5f7cbeb728db51d2289baab53d788f89d919367aebb30565ecacc7cb1",
+      "originalShaderSha256": "f054f65132192de830e4c87d033dfb6676db6586291783a89ed2b52db1f4dc83",
+      "counts": {
+        "nativeCalls": 112,
+        "primitives": 8,
+        "instances": 7,
+        "pixels": 2145,
+        "normalizedBytes": 96
+      },
+      "instanceBases": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "positionOffsets": [
+        8,
+        8,
+        8,
+        24,
+        24,
+        24,
+        40
+      ],
+      "packedOffsets": [
+        12,
+        12,
+        16,
+        16,
+        20,
+        20,
+        24
+      ],
+      "nativeWriters": {
+        "first": 443,
+        "last": 554
+      },
+      "postWriterCompletion": {
+        "createdSequence": 1111,
+        "sync": 7,
+        "sequence": 1117,
+        "actual": 37146,
+        "delivered": 37146
+      },
+      "originalSample": {
+        "x": 8,
+        "y": 4,
+        "expected": [
+          {
+            "color": [
+              0.73046875,
+              0.5,
+              -0.4990215301513672,
+              1
+            ],
+            "stencil": 119,
+            "depth": 0
+          }
+        ]
+      },
+      "physicalBodies": {
+        "color": "29c79774020d030b0cacedcc913339a6a8b70eeb24bfdb4ef81e034d1e0cd975",
+        "depth": "f23fff9be7b5ea0c2e92cb8349f23d582d7ebfc7a38f1b984af71719e000f80e"
+      },
+      "control": false,
+      "completedControl": null,
+      "differences": []
+    },
+    {
+      "name": "novel-0x1f83d9ab",
+      "format": 126,
+      "seed": 528734635,
+      "reportSha256": "e12838ee2e1792d32fe5aad75feb32056d7ca920997f940fe151427dce4b3fa4",
+      "runPath": "run-0001.json",
+      "runSha256": "cef17bb5d16da35a9eb793e70c88d4ccceb06f328b2c785dd1ab252c1ccdc49c",
+      "predictionSha256": "e59093e5f7cbeb728db51d2289baab53d788f89d919367aebb30565ecacc7cb1",
+      "originalShaderSha256": "f054f65132192de830e4c87d033dfb6676db6586291783a89ed2b52db1f4dc83",
+      "counts": {
+        "nativeCalls": 112,
+        "primitives": 8,
+        "instances": 7,
+        "pixels": 2145,
+        "normalizedBytes": 96
+      },
+      "instanceBases": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "positionOffsets": [
+        8,
+        8,
+        8,
+        24,
+        24,
+        24,
+        40
+      ],
+      "packedOffsets": [
+        12,
+        12,
+        16,
+        16,
+        20,
+        20,
+        24
+      ],
+      "nativeWriters": {
+        "first": 446,
+        "last": 557
+      },
+      "postWriterCompletion": {
+        "createdSequence": 1114,
+        "sync": 7,
+        "sequence": 1120,
+        "actual": 37146,
+        "delivered": 37146
+      },
+      "originalSample": {
+        "x": 8,
+        "y": 4,
+        "expected": [
+          {
+            "color": [
+              0.73046875,
+              0.5,
+              -0.4990215301513672,
+              1
+            ],
+            "stencil": 119,
+            "depth": 0
+          }
+        ]
+      },
+      "physicalBodies": {
+        "color": "29c79774020d030b0cacedcc913339a6a8b70eeb24bfdb4ef81e034d1e0cd975",
+        "depth": "30e69e50af137ebd22cd833862089c8bdd6e2fe01e2fe9eb42c0e5b58eb33480"
+      },
+      "control": false,
+      "completedControl": null,
+      "differences": []
+    },
+    {
+      "name": "fault-novel-order",
+      "format": 20,
+      "seed": 1359893119,
+      "reportSha256": "36243d61a9b3cfad4329c491f1aa357c5e44f6733e4ed2206ea1096cd128dc35",
+      "runPath": "report.json#/partial/runs/0",
+      "runSha256": null,
+      "predictionSha256": "e59093e5f7cbeb728db51d2289baab53d788f89d919367aebb30565ecacc7cb1",
+      "originalShaderSha256": "f054f65132192de830e4c87d033dfb6676db6586291783a89ed2b52db1f4dc83",
+      "counts": {
+        "nativeCalls": 112,
+        "primitives": 8,
+        "instances": 7,
+        "pixels": 2145,
+        "normalizedBytes": 96
+      },
+      "instanceBases": [],
+      "positionOffsets": [],
+      "packedOffsets": [],
+      "nativeWriters": {
+        "first": 620,
+        "last": 731
+      },
+      "postWriterCompletion": {
+        "createdSequence": 1283,
+        "sync": 10,
+        "sequence": 1284,
+        "actual": 37148,
+        "delivered": 37148
+      },
+      "originalSample": {
+        "x": 8,
+        "y": 4,
+        "expected": [
+          {
+            "color": [
+              0.73046875,
+              0.5,
+              -0.4990215301513672,
+              1
+            ],
+            "stencil": 119,
+            "depth": 0
+          }
+        ]
+      },
+      "physicalBodies": {
+        "color": "29c79774020d030b0cacedcc913339a6a8b70eeb24bfdb4ef81e034d1e0cd975",
+        "depth": "3b04f3cd98d8d0dcc5394c643fb726d98ba922ebc8e98ae2979a26931fa00dd7"
+      },
+      "control": true,
+      "completedControl": {
+        "before": {
+          "sync": 4,
+          "sequence": 540,
+          "actual": 37146,
+          "delivered": 37146
+        },
+        "createdSequence": 737,
+        "sync": 8,
+        "sequence": 739,
+        "actual": 37146,
+        "delivered": 37146
+      },
+      "differences": [
+        {
+          "pixel": 132,
+          "observed": {
+            "color": [
+              1060831232,
+              1056964608,
+              3204415424,
+              1065353216
+            ],
+            "stencil": 223,
+            "depth": 0
+          },
+          "wanted": [
+            {
+              "color": [
+                0.73046875,
+                0.375,
+                0.4990215301513672,
+                1
+              ],
+              "stencil": 119,
+              "depth": 0
+            },
+            {
+              "color": [
+                0.73046875,
+                0.5,
+                -0.4990215301513672,
+                1
+              ],
+              "stencil": 117,
+              "depth": 0
+            },
+            {
+              "color": [
+                0.19921875,
+                0.5,
+                -0.4990215301513672,
+                1
+              ],
+              "stencil": 125,
+              "depth": 0
+            },
+            {
+              "color": [
+                0.19921875,
+                0.5,
+                -0.4990215301513672,
+                1
+              ],
+              "stencil": 119,
+              "depth": 0
+            },
+            {
+              "color": [
+                0.55078125,
+                0.5,
+                -0.4990215301513672,
+                1
+              ],
+              "stencil": 117,
+              "depth": 0
+            },
+            {
+              "color": [
+                0.73046875,
+                0.5,
+                -0.4990215301513672,
+                1
+              ],
+              "stencil": 125,
+              "depth": 0
+            },
+            {
+              "color": [
+                0.73046875,
+                0.5,
+                -0.4990215301513672,
+                1
+              ],
+              "stencil": 119,
+              "depth": 0
+            },
+            {
+              "color": [
+                0.73046875,
+                0.5,
+                -0.4990215301513672,
+                1
+              ],
+              "stencil": 127,
+              "depth": 0
+            },
+            {
+              "color": [
+                0.19921875,
+                0.5,
+                -0.4990215301513672,
+                1
+              ],
+              "stencil": 127,
+              "depth": 0
+            },
+            {
+              "color": [
+                0.19921875,
+                0.5,
+                -0.4990215301513672,
+                1
+              ],
+              "stencil": 213,
+              "depth": 0
+            },
+            {
+              "color": [
+                0.73046875,
+                0.5,
+                -0.4990215301513672,
+                1
+              ],
+              "stencil": 213,
+              "depth": 0
+            },
+            {
+              "color": [
+                0.73046875,
+                0.5,
+                -0.4990215301513672,
+                1
+              ],
+              "stencil": 215,
+              "depth": 0
+            }
+          ]
+        },
+        {
+          "pixel": 133,
+          "observed": {
+            "color": [
+              1060831232,
+              1056964608,
+              3204415424,
+              1065353216
+            ],
+            "stencil": 223,
+            "depth": 1048576001
+          },
+          "wanted": [
+            {
+              "color": [
+                0.73046875,
+                0.5,
+                -0.4990215301513672,
+                1
+              ],
+              "stencil": 119,
+              "depth": 0.2500000149011621
+            }
+          ]
+        },
+        {
+          "pixel": 134,
+          "observed": {
+            "color": [
+              1060831232,
+              1056964608,
+              3204415424,
+              1065353216
+            ],
+            "stencil": 223,
+            "depth": 1061158912
+          },
+          "wanted": [
+            {
+              "color": [
+                0.73046875,
+                0.5,
+                -0.4990215301513672,
+                1
+              ],
+              "stencil": 119,
+              "depth": 0.7499999850988379
+            }
+          ]
+        },
+        {
+          "pixel": 135,
+          "observed": {
+            "color": [
+              1060831232,
+              1056964608,
+              3204415424,
+              1065353216
+            ],
+            "stencil": 223,
+            "depth": 1065353216
+          },
+          "wanted": [
+            {
+              "color": [
+                0.73046875,
+                0.5,
+                -0.4990215301513672,
+                1
+              ],
+              "stencil": 119,
+              "depth": 1
+            }
+          ]
+        },
+        {
+          "pixel": 136,
+          "observed": {
+            "color": [
+              1060831232,
+              1056964608,
+              3204415424,
+              1065353216
+            ],
+            "stencil": 223,
+            "depth": 0
+          },
+          "wanted": [
+            {
+              "color": [
+                0.73046875,
+                0.5,
+                -0.4990215301513672,
+                1
+              ],
+              "stencil": 119,
+              "depth": 0
+            }
+          ]
+        },
+        {
+          "pixel": 137,
+          "observed": {
+            "color": [
+              1060831232,
+              1056964608,
+              3204415424,
+              1065353216
+            ],
+            "stencil": 223,
+            "depth": 1048576001
+          },
+          "wanted": [
+            {
+              "color": [
+                0.73046875,
+                0.5,
+                -0.4990215301513672,
+                1
+              ],
+              "stencil": 119,
+              "depth": 0.2500000149011621
+            }
+          ]
+        },
+        {
+          "pixel": 138,
+          "observed": {
+            "color": [
+              1060831232,
+              1056964608,
+              3204415424,
+              1065353216
+            ],
+            "stencil": 223,
+            "depth": 1061158912
+          },
+          "wanted": [
+            {
+              "color": [
+                0.73046875,
+                0.5,
+                -0.4990215301513672,
+                1
+              ],
+              "stencil": 119,
+              "depth": 0.7499999850988379
+            }
+          ]
+        },
+        {
+          "pixel": 139,
+          "observed": {
+            "color": [
+              1060831232,
+              1056964608,
+              3204415424,
+              1065353216
+            ],
+            "stencil": 223,
+            "depth": 1065353216
+          },
+          "wanted": [
+            {
+              "color": [
+                0.73046875,
+                0.5,
+                -0.4990215301513672,
+                1
+              ],
+              "stencil": 119,
+              "depth": 1
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

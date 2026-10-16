@@ -1,0 +1,41 @@
+{
+  "originalSourceHead": "242ad5705dbdfd07b269c3e5850857c893af41e7",
+  "results": [
+    {
+      "attack": "clean",
+      "outcome": "ACCEPTED",
+      "mutation": {},
+      "error": null
+    },
+    {
+      "attack": "schema-bool",
+      "outcome": "ACCEPTED",
+      "mutation": {
+        "field": "schema",
+        "before": 1,
+        "after": true
+      },
+      "error": null
+    },
+    {
+      "attack": "wasm-stability-int",
+      "outcome": "ACCEPTED",
+      "mutation": {
+        "field": "join-union/wasm.memory.bufferIdentityStable",
+        "before": true,
+        "after": 1
+      },
+      "error": null
+    },
+    {
+      "attack": "native-exit-bool",
+      "outcome": "ACCEPTED",
+      "mutation": {
+        "field": "join-union/native[0].returnCode",
+        "before": 0,
+        "after": false
+      },
+      "error": null
+    }
+  ]
+}

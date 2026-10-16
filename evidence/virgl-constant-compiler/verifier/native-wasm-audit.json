@@ -1,0 +1,101 @@
+{
+  "head": "f81c83b7444e3e5d8d7e52d9daa04adf1a209fc2",
+  "nativeStats": {
+    "originals": 19,
+    "acceptedOriginals": 12,
+    "cases": 3151,
+    "pairs": 221,
+    "calls": 526760,
+    "standaloneRecoveries": 271744,
+    "pairRecoveries": 237776,
+    "truncations": 9401,
+    "hostileCases": 324,
+    "mutations": 4096,
+    "allocationFaults": 12,
+    "maxSingleResultBytes": 63369,
+    "maxPairResultBytes": 109235
+  },
+  "layout": {
+    "pointerBytes": 8,
+    "rawIrBytes": 26232,
+    "rawInstructionBytes": 112,
+    "rawDestinationBytes": 12,
+    "rawLaneBytes": 12,
+    "registerBytes": 36,
+    "rawSourceBytes": 24,
+    "profileBytes": 7608,
+    "rawIrBoundBytes": 32768,
+    "profileBoundBytes": 8192,
+    "fixedWasmMemoryBytes": 16777216,
+    "fixedWasmStackBytes": 262144
+  },
+  "wasm": {
+    "schema": "wasm-vm-constant-compiler-wasm-v1",
+    "status": "passed",
+    "counts": {
+      "calls": 17738,
+      "originals": 19,
+      "singles": 3151,
+      "pairs": 221,
+      "recoverySingles": 7600,
+      "recoveryPairs": 6650,
+      "stress": 64,
+      "pressure": 24
+    },
+    "memory": {
+      "initialBytes": 16777216,
+      "finalBytes": 16777216,
+      "bufferIdentityStable": true
+    },
+    "maxima": {
+      "singleJSBytes": 60377,
+      "pairJSBytes": 104384,
+      "glslBytes": 58201
+    },
+    "allocationPressure": {
+      "targets": 3,
+      "calls": 24,
+      "errorCodes": [
+        "translation-error",
+        "unsupported-feature"
+      ]
+    },
+    "sources": [
+      {
+        "path": "renderer/virgl-shader/index.mjs",
+        "bytes": 4404,
+        "sha256": "3bde28f884a70558ca052cc51c75695a55b3de867b878e21b237cf41567a5a1e"
+      },
+      {
+        "path": "renderer/virgl-shader/bridge.h",
+        "bytes": 1061,
+        "sha256": "c3829828586db64f5c628210404c329d3805b814b9fad63c8aa619fe2e6d0105"
+      },
+      {
+        "path": "renderer/virgl-shader/build.sh",
+        "bytes": 7535,
+        "sha256": "a7bc0a034d6a1c8c448069fdde847404eac8f931cc7e24e55a4027b7a7a60eae"
+      },
+      {
+        "path": "renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+        "bytes": 9285,
+        "sha256": "45dccef6ff61f9f01a63b86b40eb6c621fa442e39cbf04bbbb79446e5b372e65"
+      },
+      {
+        "path": "renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+        "bytes": 279122,
+        "sha256": "c7411a0ef63c5e414f1ab786acd360c628f1b560a59c3eab80252a3566d3abb0"
+      },
+      {
+        "path": "tools/virgl-constant-compiler/wasm.mjs",
+        "bytes": 10061,
+        "sha256": "4e21dbd8adc84174822019f44a2120f79ce310e16b6db33f757ddb72b0087e2c"
+      },
+      {
+        "path": "tools/virgl-constant-compiler/wasm_receipt.py",
+        "bytes": 9793,
+        "sha256": "4d92887d0c4b4b964c2c697de74c2551877c6b05e8549a556d17424fdcdb5937"
+      }
+    ]
+  }
+}

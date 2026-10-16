@@ -1,0 +1,109 @@
+{
+  "schema": "fresh-raw-equality-verifier-manifest-v1",
+  "task": "E6-T12f1",
+  "workerSubmission": "cdc9ebd14407976a2ea2fb5a5a2cf634078c2726",
+  "authoritativeFreeze": "a7be954c1f3bea9dd1e96522e890fa012197c6fe",
+  "verdict": "needs-evidence",
+  "files": [
+    {
+      "path": "audit-recording.py",
+      "bytes": 11554,
+      "sha256": "a2832b40c0f57fdbdd07522412b2cfec2094c1a70781aa02ae9a6109f4ce90c8"
+    },
+    {
+      "path": "commands.json",
+      "bytes": 2983,
+      "sha256": "e877cc679203bd90758f4b2ad3ca95909a1e2f14507fa0cac6948d55c9bf073a"
+    },
+    {
+      "path": "dependencies.py",
+      "bytes": 1389,
+      "sha256": "bdd0dd59c40708b4dc18297f12cfc55480eadea2e96d549249a5b340199f5b6f"
+    },
+    {
+      "path": "gpu-attack.mjs",
+      "bytes": 9292,
+      "sha256": "c0b2933af068327ccc8ba424fcec957db34042e93478ac57591a2affd854e506"
+    },
+    {
+      "path": "gpu-runner.mjs",
+      "bytes": 1056,
+      "sha256": "130709c2553c52c0af1e39386bbf6253470d1c933adc4845bb8a985f9c085330"
+    },
+    {
+      "path": "known-facts/calls.jsonl",
+      "bytes": 6295466,
+      "sha256": "8fe222d533b6fc14d361b51cb8ac00cf39bc5f0aaf484395444a1ccf6065b842"
+    },
+    {
+      "path": "known-facts/native-build.log",
+      "bytes": 69,
+      "sha256": "9984a58bdabe1a4f02a660f36e028df5528fb5a7b11feb54a4e83ad72bb6c3a8"
+    },
+    {
+      "path": "known-facts/report.json",
+      "bytes": 1212,
+      "sha256": "7b7c1446e930467863c6994d725a67a60ba3d0cdf66e489cd53d47529cacc0e7"
+    },
+    {
+      "path": "known-facts.py",
+      "bytes": 7456,
+      "sha256": "72063b6aa28c37c2c6535f6315a6325dbe467a788bb22827a21d2236be6d4439"
+    },
+    {
+      "path": "loaded-dependencies.json",
+      "bytes": 729,
+      "sha256": "5208e10c84bcd23ebe63e9d2634842130f1e4ece3936fc04fc413ecc1379e198"
+    },
+    {
+      "path": "predictions.md",
+      "bytes": 3403,
+      "sha256": "7424f7a56d2b68f36190336fc5dadd38c55847c0575e08dfd72b9b7b6b2b8cf0"
+    },
+    {
+      "path": "propagated-attacks.json",
+      "bytes": 4343,
+      "sha256": "6bbd0e2a798c3b22174fc8ec8722205feab34bd0a275ef0abad3ce721284f009"
+    },
+    {
+      "path": "propagated-attacks.py",
+      "bytes": 4197,
+      "sha256": "b365b142bd75895747649ba6b05f62aa3805f647a27ecf28c165c16c46b208f8"
+    },
+    {
+      "path": "receipt-attacks.json",
+      "bytes": 39003,
+      "sha256": "6bb33e2a808997107bd3771cae2c7610b9fa8c10ab908fb2652d9a33f48d994d"
+    },
+    {
+      "path": "receipt-attacks.py",
+      "bytes": 7388,
+      "sha256": "bdafd0c13ee53dfbc44140f6ab23d7a143fe860e2b0f5c5b7e0e65f01e2d1cc7"
+    },
+    {
+      "path": "recording-audit.json",
+      "bytes": 13801,
+      "sha256": "886ab3a3c2a7efe6cc9c20c44bd7856b05004a289d58fbc415064ff71e28a6af"
+    },
+    {
+      "path": "seeded-gpu-authoritative/browser-coverage.json",
+      "bytes": 11708,
+      "sha256": "0c499f391f9567f39a3ae9ab4e19d577f4b489bf3b2dae7f2ea8f6d66616ca3f"
+    },
+    {
+      "path": "seeded-gpu-authoritative/browser.png",
+      "bytes": 30953,
+      "sha256": "3f703c5288935560707fd0c40d0e0ad9f08b407ab28cc71e85d3e8c3147ccedf"
+    },
+    {
+      "path": "seeded-gpu-authoritative/report.json",
+      "bytes": 2907276,
+      "sha256": "96b1c3c741c717ce07923ad3c2f50815cf80870f76b2f9661bc2ee79dd93de6d"
+    },
+    {
+      "path": "verdict.md",
+      "bytes": 7934,
+      "sha256": "7dadc9fdfcc13236811f197dc878aa33ae2da1df030700e4ecd67ba2b4e30a79"
+    }
+  ]
+}

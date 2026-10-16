@@ -1,0 +1,42 @@
+
+added 7 packages in 566ms
+npm warn install-scripts 1 package has install scripts not yet covered by allowScripts:
+npm warn install-scripts   fsevents@2.3.2 (install: (install scripts present))
+npm warn install-scripts
+npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
++ git rev-parse HEAD
+fadf4ba813fa31694fb0a560f89c61c740ea3643
++ node --check renderer/virgl-command/resources.mjs
++ node --check renderer/virgl-command/tests/resources-acceptance.mjs
++ node --check tools/virgl-command/resource-fixtures.mjs
++ node --check tools/verify-virgl-resource-transfers.mjs
++ python3 -m py_compile tools/virgl-command/resources-receipt.py tools/virgl-command/resources-cold.py tools/virgl-command/resources-coverage.py
++ node tools/verify-virgl-command-decoder.mjs --output /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-resources-cold-jv5r_rnj/wasm-vm/target/evidence/virgl-resources-cold/decoder --node-only true
+Node command acceptance passed (563 ms)
+++ mktemp -d
++ coverage_dir=/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/tmp.lUVqgCiScl
++ NODE_V8_COVERAGE=/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/tmp.lUVqgCiScl
++ node tools/verify-virgl-resource-transfers.mjs --output /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-resources-cold-jv5r_rnj/wasm-vm/target/evidence/virgl-resources-cold/hardware
+Node resource acceptance passed (70 ms)
+Hardware resource acceptance passed (137 ms)
++ python3 tools/virgl-command/resources-coverage.py /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/tmp.lUVqgCiScl /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-resources-cold-jv5r_rnj/wasm-vm/target/evidence/virgl-resources-cold/node-coverage.json
+Recorded V8 counters for 73 resource functions
++ rm -rf /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/tmp.lUVqgCiScl
++ for attack in texture-texel index-byte
++ node tools/verify-virgl-resource-transfers.mjs --output /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-resources-cold-jv5r_rnj/wasm-vm/target/evidence/virgl-resources-cold/sabotage-texture-texel --sabotage texture-texel
+Node resource acceptance passed (62 ms)
+AssertionError [ERR_ASSERTION]: original texture GPU bytes byte 0: expected 255, got 254
+
+'failed' !== 'passed'
+
+    at file:///private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-resources-cold-jv5r_rnj/wasm-vm/tools/verify-virgl-resource-transfers.mjs:159:12
++ for attack in texture-texel index-byte
++ node tools/verify-virgl-resource-transfers.mjs --output /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-resources-cold-jv5r_rnj/wasm-vm/target/evidence/virgl-resources-cold/sabotage-index-byte --sabotage index-byte
+Node resource acceptance passed (61 ms)
+AssertionError [ERR_ASSERTION]: original index GPU bytes byte 0: expected 0, got 1
+
+'failed' !== 'passed'
+
+    at file:///private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-resources-cold-jv5r_rnj/wasm-vm/tools/verify-virgl-resource-transfers.mjs:159:12
++ python3 tools/virgl-command/resources-receipt.py /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-resources-cold-jv5r_rnj/wasm-vm/target/evidence/virgl-resources-cold
+E6-T12b receipt passed: actual GPU transfers/lifetimes and two input sabotage controls

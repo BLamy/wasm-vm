@@ -1,0 +1,4758 @@
+{
+  "schema": "virgl-known-arithmetic-critic-independent-oracle-v1",
+  "task": "E6-T12g6m1",
+  "status": "passed",
+  "reference": "Python Fraction with exact binary32 integer RN-even; source operands parsed before captured values",
+  "native": [
+    {
+      "kind": "hot",
+      "status": "HELD",
+      "reportSha256": "b591d123ed85f4ba3f74f4037f113b79da0fa2dd55e52b2fb11063ec01d5fac9",
+      "nativeLogSha256": "9b15ff853074ae75cc4d3dda5484f9ad919b031e00e224e4f9501a6bc63675f8",
+      "independentArithmeticResults": 11608,
+      "wholePublicSinglesPairs": 419,
+      "layout": [
+        111744,
+        112,
+        32448
+      ]
+    },
+    {
+      "kind": "cold",
+      "status": "HELD",
+      "reportSha256": "317297d50e240a07f3dd34b4c9b98965f56bc866db4aac2866a58385a27f1eda",
+      "nativeLogSha256": "9b15ff853074ae75cc4d3dda5484f9ad919b031e00e224e4f9501a6bc63675f8",
+      "independentArithmeticResults": 11608,
+      "wholePublicSinglesPairs": 419,
+      "layout": [
+        111744,
+        112,
+        32448
+      ]
+    }
+  ],
+  "physical": [
+    {
+      "kind": "hot",
+      "source": "hot/gpu-1013904242/report.json",
+      "sourceSha256": "8f1687357ce28cd9678fa8d7e9fa54b1f04aa954e7d4fc79483bab39a5302771",
+      "status": "HELD",
+      "seed": 1013904242,
+      "fault": null,
+      "sourceDerivedProducerRows": 61,
+      "rawCarrierWords": 2440,
+      "mathWords": 64,
+      "exactRgbaPixels": 7808,
+      "faultContradictions": [],
+      "qualifiedNumericZeroSigns": [
+        {
+          "vertex": 13,
+          "vector": 0,
+          "lane": 16,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 13,
+          "vector": 0,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 13,
+          "vector": 1,
+          "lane": 16,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 13,
+          "vector": 1,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 14,
+          "vector": 0,
+          "lane": 17,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 14,
+          "vector": 1,
+          "lane": 17,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 29,
+          "vector": 0,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 29,
+          "vector": 1,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 43,
+          "vector": 0,
+          "lane": 18,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 43,
+          "vector": 0,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 43,
+          "vector": 1,
+          "lane": 18,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 43,
+          "vector": 1,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 44,
+          "vector": 0,
+          "lane": 17,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 44,
+          "vector": 0,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 44,
+          "vector": 1,
+          "lane": 17,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 44,
+          "vector": 1,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 59,
+          "vector": 0,
+          "lane": 16,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 59,
+          "vector": 0,
+          "lane": 17,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 59,
+          "vector": 1,
+          "lane": 16,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 59,
+          "vector": 1,
+          "lane": 17,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        }
+      ],
+      "originalPoints": [
+        {
+          "point": "#/acceptance/vertices/0/vectors/0",
+          "words": 20,
+          "sha256": "73932965b18d7e0ebfc43aa495e9b31dcf1107b83af0efa340d9ee0832c9f947"
+        },
+        {
+          "point": "#/acceptance/vertices/0/vectors/1",
+          "words": 20,
+          "sha256": "6862b988e38f867785176303d48522a0d3ace3474a3d9e4e15af4726de38de27"
+        },
+        {
+          "point": "#/acceptance/vertices/1/vectors/0",
+          "words": 20,
+          "sha256": "11444a3fa0484de22f358e23807336ed75a6729cd7099d0f176c0ef22987c022"
+        },
+        {
+          "point": "#/acceptance/vertices/1/vectors/1",
+          "words": 20,
+          "sha256": "4065e275163b20906203a3adfed9663c06831d27decf8664ccdf164cdec000e4"
+        },
+        {
+          "point": "#/acceptance/vertices/2/vectors/0",
+          "words": 20,
+          "sha256": "9115186d0419efb9380087662e4540bb2f490bc7400918fff97263712871548e"
+        },
+        {
+          "point": "#/acceptance/vertices/2/vectors/1",
+          "words": 20,
+          "sha256": "09a2fbf0643163ccc9e6c882b0795f2acca9327ce0aa6ee9ebe1a33d5c99e110"
+        },
+        {
+          "point": "#/acceptance/vertices/3/vectors/0",
+          "words": 20,
+          "sha256": "4296887af177b7187cc4bc5f1e15961a8e41892fcc146673c26ce39f69fc1f35"
+        },
+        {
+          "point": "#/acceptance/vertices/3/vectors/1",
+          "words": 20,
+          "sha256": "59a2ebe357ec4e6832744ebd4f37f838b3f89169f947c01cae783c76a104f8b3"
+        },
+        {
+          "point": "#/acceptance/vertices/4/vectors/0",
+          "words": 20,
+          "sha256": "ec3a2fc0438a13c0f50c0d703f4c7629c13fae247a40496b6580f31752798825"
+        },
+        {
+          "point": "#/acceptance/vertices/4/vectors/1",
+          "words": 20,
+          "sha256": "9de02d8582e077bb9e017592530d68dd678dcb86b1a2e7ada25ed95c55fde23b"
+        },
+        {
+          "point": "#/acceptance/vertices/5/vectors/0",
+          "words": 20,
+          "sha256": "ffe53771ef056490bf667483be09060f061b2dd9242d2badfc79d79af10451b2"
+        },
+        {
+          "point": "#/acceptance/vertices/5/vectors/1",
+          "words": 20,
+          "sha256": "669dc0b118323d28384f12feab479b238df6bd42da0bf73dfa481f3cc70a562d"
+        },
+        {
+          "point": "#/acceptance/vertices/6/vectors/0",
+          "words": 20,
+          "sha256": "3d0afd5c9e0d3297cfef55b7e515c50de895924b8aa792ce9aecdd8913dd84c2"
+        },
+        {
+          "point": "#/acceptance/vertices/6/vectors/1",
+          "words": 20,
+          "sha256": "0156096a4ad9ad68b7582894a52ef244078ca97fce5b37cb873755fd1b3ae44d"
+        },
+        {
+          "point": "#/acceptance/vertices/7/vectors/0",
+          "words": 20,
+          "sha256": "0d79da5c9c91ebc40e3ed62d96592f637a64b26034122bb2addd1f2ddc17793e"
+        },
+        {
+          "point": "#/acceptance/vertices/7/vectors/1",
+          "words": 20,
+          "sha256": "1445fdc5d106b0115ab27f4f476ea75dc4a0998080f3ac74aebc8b6a73b186a9"
+        },
+        {
+          "point": "#/acceptance/vertices/8/vectors/0",
+          "words": 20,
+          "sha256": "d7a6607258da11f91584b79b7b7f8240aa6f798bddc04890ad9fe4dfd77272ec"
+        },
+        {
+          "point": "#/acceptance/vertices/8/vectors/1",
+          "words": 20,
+          "sha256": "c59ba46bc4ade646fb034365e5f2555732bec8041f53c79433bb55a418d87470"
+        },
+        {
+          "point": "#/acceptance/vertices/9/vectors/0",
+          "words": 20,
+          "sha256": "659d68ad27d3c879e8b1f1218c9dbce3ec73fa9c4138f204373fa21c145846b0"
+        },
+        {
+          "point": "#/acceptance/vertices/9/vectors/1",
+          "words": 20,
+          "sha256": "8f0ce97fec72e2cc049b54626b0dc4342029f9c85c9ae2c7fd9cac15a040c177"
+        },
+        {
+          "point": "#/acceptance/vertices/10/vectors/0",
+          "words": 20,
+          "sha256": "16829b8c0baedffe5b41a14aeba8736ad68997a7020775ff162c42fdf7cb7b9d"
+        },
+        {
+          "point": "#/acceptance/vertices/10/vectors/1",
+          "words": 20,
+          "sha256": "58ad6593f16f93fce520fa44bdd07ba0f6a542a7a2f7eab591302010c2dc5adc"
+        },
+        {
+          "point": "#/acceptance/vertices/11/vectors/0",
+          "words": 20,
+          "sha256": "7383c6233f4f39cd6825df61320da9ae62fc11cad74fdb8eccd5e236df201dd9"
+        },
+        {
+          "point": "#/acceptance/vertices/11/vectors/1",
+          "words": 20,
+          "sha256": "4d60d8a187ddaf448ee96953339b84f74be75cc511dc3cf94bb0b9a15e7df9f9"
+        },
+        {
+          "point": "#/acceptance/vertices/12/vectors/0",
+          "words": 20,
+          "sha256": "14b4ddc2357d94658bd3719cf325d4d9b3b2c00bb9f45cf429740cc2223e4dd5"
+        },
+        {
+          "point": "#/acceptance/vertices/12/vectors/1",
+          "words": 20,
+          "sha256": "ded65ea2f4bceb400182582430dedba08d5a4fdbd37869832a54c67d3d80443d"
+        },
+        {
+          "point": "#/acceptance/vertices/13/vectors/0",
+          "words": 20,
+          "sha256": "1641e20be6026a93473f562646362a879d0fd411945d0618fa4c3c4124f74117"
+        },
+        {
+          "point": "#/acceptance/vertices/13/vectors/1",
+          "words": 20,
+          "sha256": "bd4a412973f1a804fa7d80d154808170008e4892b38c0b1f57045832310dfacd"
+        },
+        {
+          "point": "#/acceptance/vertices/14/vectors/0",
+          "words": 20,
+          "sha256": "d7d175210f5562a5a6c9c20e6b6ac216a76e827f57681e291a35957deb57e59d"
+        },
+        {
+          "point": "#/acceptance/vertices/14/vectors/1",
+          "words": 20,
+          "sha256": "a1a4eac0b6e7163bb592d37aa908bac92537e79931ccb2c91525c43ce1eb9f47"
+        },
+        {
+          "point": "#/acceptance/vertices/15/vectors/0",
+          "words": 20,
+          "sha256": "f3ed0f5f2215458e2c9bd8ca6968c50d62dbfe60473af9a7f5a5ad302d85ab67"
+        },
+        {
+          "point": "#/acceptance/vertices/15/vectors/1",
+          "words": 20,
+          "sha256": "d9c8491e9c82458a6ba046adca398b4faaefe0d691f94da6e465c43f6da1259d"
+        },
+        {
+          "point": "#/acceptance/vertices/16/vectors/0",
+          "words": 20,
+          "sha256": "13a0ce33daeac5cd5e778ef8ce8e18e6d487c2e5967214eda107c439dbaea9f5"
+        },
+        {
+          "point": "#/acceptance/vertices/16/vectors/1",
+          "words": 20,
+          "sha256": "8977296991f70e3432ff3547d97f32e22624a8a599b87323d022a0b1b4422e66"
+        },
+        {
+          "point": "#/acceptance/vertices/17/vectors/0",
+          "words": 20,
+          "sha256": "a87278d5125df1fcd618df572fa2e83942f21eb34fb19981227f72896b8ef20f"
+        },
+        {
+          "point": "#/acceptance/vertices/17/vectors/1",
+          "words": 20,
+          "sha256": "b02072ef9a70e0d45f8a1fe28f97c5d314a6ee1d2e0a0f0e8aa68b842400e346"
+        },
+        {
+          "point": "#/acceptance/vertices/18/vectors/0",
+          "words": 20,
+          "sha256": "44e62091759c1d1bd84ba76435f2ca3cc0125c56cdccf62a0a55a7f47243e2f4"
+        },
+        {
+          "point": "#/acceptance/vertices/18/vectors/1",
+          "words": 20,
+          "sha256": "9329f9443f708acf0b717219cc95f005f7f732079f401f1403da49c7a79d7665"
+        },
+        {
+          "point": "#/acceptance/vertices/19/vectors/0",
+          "words": 20,
+          "sha256": "04590b222fddd9e9b12e5ad059a7ff94be4c25b441090f5c277fa839def15f13"
+        },
+        {
+          "point": "#/acceptance/vertices/19/vectors/1",
+          "words": 20,
+          "sha256": "fd97eef81416bd5d2e361fe18fe42d57da95fbf6d1070890f2ef974f53e96204"
+        },
+        {
+          "point": "#/acceptance/vertices/20/vectors/0",
+          "words": 20,
+          "sha256": "31504aead34aa5dae13ca0f73f5852bd3e312d8638fb6a7b1ce269e7630b9557"
+        },
+        {
+          "point": "#/acceptance/vertices/20/vectors/1",
+          "words": 20,
+          "sha256": "6e7f59d2afe586fd1b1174fd4d9053c1988ba76a5877e69a2f8745bdc7d01182"
+        },
+        {
+          "point": "#/acceptance/vertices/21/vectors/0",
+          "words": 20,
+          "sha256": "26a71fb2b068a9e2408430f874bdcc7819852da2812e3a45d72299f7b25ca740"
+        },
+        {
+          "point": "#/acceptance/vertices/21/vectors/1",
+          "words": 20,
+          "sha256": "a362025a5d4918d539913671b3bdebf4cb31bb50a4a104a2d4d0b859f0f382f6"
+        },
+        {
+          "point": "#/acceptance/vertices/22/vectors/0",
+          "words": 20,
+          "sha256": "0525c1dc0b7e8d8683df52fce23e76cf4266ddd875c29f5fe7f027de3a1daa76"
+        },
+        {
+          "point": "#/acceptance/vertices/22/vectors/1",
+          "words": 20,
+          "sha256": "5ab4ca8bc4007677c7c28a23a450e2964b672ba8c159c1faed26d6315cd01d1a"
+        },
+        {
+          "point": "#/acceptance/vertices/23/vectors/0",
+          "words": 20,
+          "sha256": "de361a6c6d9818f776a3a4c93c61b95a41ce19162ffc81fc4d2f2fdf495cd5ae"
+        },
+        {
+          "point": "#/acceptance/vertices/23/vectors/1",
+          "words": 20,
+          "sha256": "5b10e666c78e7f26608d52e2721e4e1b6519faf996d80e14ec1729903046b190"
+        },
+        {
+          "point": "#/acceptance/vertices/24/vectors/0",
+          "words": 20,
+          "sha256": "9c462624103f570300cbbbe355dc5eb4557775c6095ab12c4998e4c211eed9ea"
+        },
+        {
+          "point": "#/acceptance/vertices/24/vectors/1",
+          "words": 20,
+          "sha256": "dea9cdf4bed97af7f6c94ff3916736dddf984c5af524575ac37ebfd1a0642ef2"
+        },
+        {
+          "point": "#/acceptance/vertices/25/vectors/0",
+          "words": 20,
+          "sha256": "d9778be53f69635e88dc1d06a8dd73835988ea99248d196964551dc70bc41eb0"
+        },
+        {
+          "point": "#/acceptance/vertices/25/vectors/1",
+          "words": 20,
+          "sha256": "65e2767956ae310e53013bc555547508dcfb715307ab5b4d1e238f42dbbd4b8a"
+        },
+        {
+          "point": "#/acceptance/vertices/26/vectors/0",
+          "words": 20,
+          "sha256": "6e84e3a2bfd023d01200bedba6291e39e43144ca9861f2ed0647c9f4def65cec"
+        },
+        {
+          "point": "#/acceptance/vertices/26/vectors/1",
+          "words": 20,
+          "sha256": "226cf1fd8849bba5950f98143b223daf90cf86fd8ddd989b931436a508fcfbd9"
+        },
+        {
+          "point": "#/acceptance/vertices/27/vectors/0",
+          "words": 20,
+          "sha256": "f19c9a9ca7205be2cf79a525935f7d3288d5000babff233b7afcc05f1aa23118"
+        },
+        {
+          "point": "#/acceptance/vertices/27/vectors/1",
+          "words": 20,
+          "sha256": "71e2f29b4a1adbfe0cbeaf2d97f2e3ae090f5def31b519b75df14373c72507f7"
+        },
+        {
+          "point": "#/acceptance/vertices/28/vectors/0",
+          "words": 20,
+          "sha256": "12de957036c4b6d36a5b32bef7748557272defcb17755bde68ebee61190589ee"
+        },
+        {
+          "point": "#/acceptance/vertices/28/vectors/1",
+          "words": 20,
+          "sha256": "67db47afc4dcbe9352160fc0c38ffdefa4bf888c654492d11b272438d2c74a9a"
+        },
+        {
+          "point": "#/acceptance/vertices/29/vectors/0",
+          "words": 20,
+          "sha256": "1b66f593b8e3c243c1c6ed8694243a535acf93aae6359d8e851be1b92d95ba94"
+        },
+        {
+          "point": "#/acceptance/vertices/29/vectors/1",
+          "words": 20,
+          "sha256": "330c695ecf7f443b55aa263633662efa14640bbe02ffadf6ac303b0d31d32589"
+        },
+        {
+          "point": "#/acceptance/vertices/30/vectors/0",
+          "words": 20,
+          "sha256": "e969644be0a36d7c1b6e9edbc246f4ba7d7950383c4f99891bcd835b4158af6d"
+        },
+        {
+          "point": "#/acceptance/vertices/30/vectors/1",
+          "words": 20,
+          "sha256": "1d53fe1c612b75124d118bc9a40565eb543d56fe685961b7a83398d7fa0d3562"
+        },
+        {
+          "point": "#/acceptance/vertices/31/vectors/0",
+          "words": 20,
+          "sha256": "73ee40ff61c3914ebcd260558f5d93bf33bd8dc47024722b1fa4225ad59537d6"
+        },
+        {
+          "point": "#/acceptance/vertices/31/vectors/1",
+          "words": 20,
+          "sha256": "e8a02a85948384e0cb44e40b716ddf401dd18eb0c83081a4c2e08da95335d13d"
+        },
+        {
+          "point": "#/acceptance/vertices/32/vectors/0",
+          "words": 20,
+          "sha256": "6d87c542aa9adb7a6076f68366b705c248d56c1a2ec39f4b0ea172169548fa11"
+        },
+        {
+          "point": "#/acceptance/vertices/32/vectors/1",
+          "words": 20,
+          "sha256": "af79c774aaffa38fdcdcc15eb166159d85ad6bb037bca4e83377ca2b245c33ef"
+        },
+        {
+          "point": "#/acceptance/vertices/33/vectors/0",
+          "words": 20,
+          "sha256": "f8cfaba8b74b84bb0623172e8f9bd964c1f5b1775bed8fea3e7e0e345ab3684f"
+        },
+        {
+          "point": "#/acceptance/vertices/33/vectors/1",
+          "words": 20,
+          "sha256": "660bb4c6706aa561e485cdc41ff86cb6225806229058746b18526a7702f37e5d"
+        },
+        {
+          "point": "#/acceptance/vertices/34/vectors/0",
+          "words": 20,
+          "sha256": "08b6c24e37f31a0a521524fb361e377ebfb3c748c5d2725de3c4b21e0bd27d64"
+        },
+        {
+          "point": "#/acceptance/vertices/34/vectors/1",
+          "words": 20,
+          "sha256": "037fbb2ea443a393f4e7727c8a6a335a0afbe5edc2bf3fb353076aec707a3ab9"
+        },
+        {
+          "point": "#/acceptance/vertices/35/vectors/0",
+          "words": 20,
+          "sha256": "63c7a456945cac13535d3ebfe67c94f3f1600a96e5d6eb49d40c11891e4beb0b"
+        },
+        {
+          "point": "#/acceptance/vertices/35/vectors/1",
+          "words": 20,
+          "sha256": "7d7c0ae495efbc098a1c767c3acf1c6e5ad938dbbb899d6281ac3d2616e9b2d6"
+        },
+        {
+          "point": "#/acceptance/vertices/36/vectors/0",
+          "words": 20,
+          "sha256": "4ddea3628e83315235a7859d7f4d76b5bdd2670b1916ae2ce66c561b08722a1d"
+        },
+        {
+          "point": "#/acceptance/vertices/36/vectors/1",
+          "words": 20,
+          "sha256": "3814ed9d0294ba632c0838544a768af93193a9f7e260a4d84ad31afdbdfe2e63"
+        },
+        {
+          "point": "#/acceptance/vertices/37/vectors/0",
+          "words": 20,
+          "sha256": "6826e1e96fc9f51b4ec0f646306d2e0a257055a12acbe2d3bd5639fd99165f48"
+        },
+        {
+          "point": "#/acceptance/vertices/37/vectors/1",
+          "words": 20,
+          "sha256": "7a99a3c70208cd3cc96945d2b97b004e599e224a2ce7bdfcd6f23d3cffd451e0"
+        },
+        {
+          "point": "#/acceptance/vertices/38/vectors/0",
+          "words": 20,
+          "sha256": "93cfa0862fed3ec26d1d0b4df7218edbfc964cd45a4b68b8a42cc982a8f48d1f"
+        },
+        {
+          "point": "#/acceptance/vertices/38/vectors/1",
+          "words": 20,
+          "sha256": "e50e996437e8f9fb391b6be6d2fcc8423f51b59c1ac7e97029666ea36e797db9"
+        },
+        {
+          "point": "#/acceptance/vertices/39/vectors/0",
+          "words": 20,
+          "sha256": "4eb61c8de72ad4ce121ac58300ba8bbc4eb4e3148f6f87f0e165ffd46d90a3ed"
+        },
+        {
+          "point": "#/acceptance/vertices/39/vectors/1",
+          "words": 20,
+          "sha256": "b5a7a656897e7820edc8e3844244ef4dfa9b3c84acd5d130e60862948dafee9f"
+        },
+        {
+          "point": "#/acceptance/vertices/40/vectors/0",
+          "words": 20,
+          "sha256": "21a7d436c4756b9e142a9bb97c33ea7f812d1aeee959dd4e16c53e85b4b686c7"
+        },
+        {
+          "point": "#/acceptance/vertices/40/vectors/1",
+          "words": 20,
+          "sha256": "421bb8ffa061a8068009d7fc7406914d6ac3cb2e0c366d403fb76545b7f5043f"
+        },
+        {
+          "point": "#/acceptance/vertices/41/vectors/0",
+          "words": 20,
+          "sha256": "a7ddb6c4d005952d3265e2496a0ddc1e84f88c15f4846a2ffef8830f1d2be70e"
+        },
+        {
+          "point": "#/acceptance/vertices/41/vectors/1",
+          "words": 20,
+          "sha256": "305001ec0edd83390c60ba7691095e73e4691b5474ad2af55f5b058d9498e4d5"
+        },
+        {
+          "point": "#/acceptance/vertices/42/vectors/0",
+          "words": 20,
+          "sha256": "f84a3d9dd60c4942f527880988d89c055ace93961e52d7652a3a32cf15da55c2"
+        },
+        {
+          "point": "#/acceptance/vertices/42/vectors/1",
+          "words": 20,
+          "sha256": "2b1dce3268a53cf3caa6d0e180f3180b3ddb1d31e4e559c08e00f4e5a94a5018"
+        },
+        {
+          "point": "#/acceptance/vertices/43/vectors/0",
+          "words": 20,
+          "sha256": "11c6db3117708daccb45eb69eb213cafa9e4f353dc352343f1b74ec8db95b366"
+        },
+        {
+          "point": "#/acceptance/vertices/43/vectors/1",
+          "words": 20,
+          "sha256": "0111f5758e6575409128cfa30f3dc9b0387ff4a7337aeeb82264b045099a4aac"
+        },
+        {
+          "point": "#/acceptance/vertices/44/vectors/0",
+          "words": 20,
+          "sha256": "7cc95d2d0ed7fac7c5998c33b2625277ac28f91409da0aa5bc7a50922f7c5e74"
+        },
+        {
+          "point": "#/acceptance/vertices/44/vectors/1",
+          "words": 20,
+          "sha256": "1ffc9d553619f632c33a5330e109b93869b1e105a94e3931360324c93faef66e"
+        },
+        {
+          "point": "#/acceptance/vertices/45/vectors/0",
+          "words": 20,
+          "sha256": "25450b028e314033c860da88fa34efe83e8da6d592bcc7fab3c8880c34f50562"
+        },
+        {
+          "point": "#/acceptance/vertices/45/vectors/1",
+          "words": 20,
+          "sha256": "c639468f5a9e7267dd09793afb704cbd6158d8edc51e0666a36760851a031dda"
+        },
+        {
+          "point": "#/acceptance/vertices/46/vectors/0",
+          "words": 20,
+          "sha256": "e93a674c02be017f13e532656c678576b7cbd244aabc2b45e7b8d35187068ca9"
+        },
+        {
+          "point": "#/acceptance/vertices/46/vectors/1",
+          "words": 20,
+          "sha256": "7a2992efbefae6875087751bc440571b434949e673da65411d690102103b4b6c"
+        },
+        {
+          "point": "#/acceptance/vertices/47/vectors/0",
+          "words": 20,
+          "sha256": "59347f762faf556016500d0fd01844e8c07212c41d416af784e36eca6f33f384"
+        },
+        {
+          "point": "#/acceptance/vertices/47/vectors/1",
+          "words": 20,
+          "sha256": "0b50b5fd42b1097257060433c510b32e19d3b405450aca89f4c0884fdb9f18f2"
+        },
+        {
+          "point": "#/acceptance/vertices/48/vectors/0",
+          "words": 20,
+          "sha256": "04b86587e99b71f24d2a9afda4f418d90c6bc337d080eab77cd50481ceedc525"
+        },
+        {
+          "point": "#/acceptance/vertices/48/vectors/1",
+          "words": 20,
+          "sha256": "eec6fe63582b2359a52e1afa869fa548fbc3baf3bd0025d118527e1c7b06baf6"
+        },
+        {
+          "point": "#/acceptance/vertices/49/vectors/0",
+          "words": 20,
+          "sha256": "ce309fbef25197fbb079a8bdd83f15b2870a1d27b96cedcf7a49d036d6cb4196"
+        },
+        {
+          "point": "#/acceptance/vertices/49/vectors/1",
+          "words": 20,
+          "sha256": "77f7c06e5093970a25569c02df46dadf84b680165254dfc074437a3f31524059"
+        },
+        {
+          "point": "#/acceptance/vertices/50/vectors/0",
+          "words": 20,
+          "sha256": "3c2941d7e141b7c5363460c9c98192a813f93a4720ab214e6a6c038302d4b992"
+        },
+        {
+          "point": "#/acceptance/vertices/50/vectors/1",
+          "words": 20,
+          "sha256": "3d758564800d6c0a5fb72f43487e8ad1dbf486e0b10281f38187b02c721b2086"
+        },
+        {
+          "point": "#/acceptance/vertices/51/vectors/0",
+          "words": 20,
+          "sha256": "f6a194250ae9af4c7fc01dd40cc005630d7aaa07d5b685829b89a2a8583884c9"
+        },
+        {
+          "point": "#/acceptance/vertices/51/vectors/1",
+          "words": 20,
+          "sha256": "d7af57ac71bb957f14d3765e6f939bba70238f6d761c92a2994507a1ea22aa2d"
+        },
+        {
+          "point": "#/acceptance/vertices/52/vectors/0",
+          "words": 20,
+          "sha256": "ab608f29cb70858a673e32183718d7444a6216129abfd6fe20d277f36db4f49a"
+        },
+        {
+          "point": "#/acceptance/vertices/52/vectors/1",
+          "words": 20,
+          "sha256": "47400ed8553784564a6429ce6908d89e4f01524a215e29b76755fbcd0f8bf5a2"
+        },
+        {
+          "point": "#/acceptance/vertices/53/vectors/0",
+          "words": 20,
+          "sha256": "cce8d7b8a82925dccb4b325a119a0f8a84d3ae620470d56e262b9eec87ba1e06"
+        },
+        {
+          "point": "#/acceptance/vertices/53/vectors/1",
+          "words": 20,
+          "sha256": "0ceb7e06e8e2ec60c70eb09ceca47baaffab9467ad855c0c035cb36b14c93383"
+        },
+        {
+          "point": "#/acceptance/vertices/54/vectors/0",
+          "words": 20,
+          "sha256": "bd67c8d543d7a9ab891e79a5381e0da6b22dd2e57f0159667c0fa39c28aa5928"
+        },
+        {
+          "point": "#/acceptance/vertices/54/vectors/1",
+          "words": 20,
+          "sha256": "f13f5f6e3df308ae99b6edbf1ff7a2cfb957b8f9f9f98c4790126bb691d7bbbc"
+        },
+        {
+          "point": "#/acceptance/vertices/55/vectors/0",
+          "words": 20,
+          "sha256": "95cffb817a7bca4b515cedf8d0198444503174b1c862fd44cdcf687f8c8cad7f"
+        },
+        {
+          "point": "#/acceptance/vertices/55/vectors/1",
+          "words": 20,
+          "sha256": "89527e3e0a1d27b24fa432da14fc14305e3bccc85912df21cf65faea27bf2a4b"
+        },
+        {
+          "point": "#/acceptance/vertices/56/vectors/0",
+          "words": 20,
+          "sha256": "0b7f0bed20f652515c1b54adced3a760a9a232e4ac53ae833cc81234683ec09f"
+        },
+        {
+          "point": "#/acceptance/vertices/56/vectors/1",
+          "words": 20,
+          "sha256": "033f6e06ba0d37c880de44f7f912c09e45d0ce16cb21a072c4c7be0312b1df02"
+        },
+        {
+          "point": "#/acceptance/vertices/57/vectors/0",
+          "words": 20,
+          "sha256": "1a4a37e30c2fb3d3bb3a09c5fab3f6c94e74bb5f08d7de574974fae95d66af1f"
+        },
+        {
+          "point": "#/acceptance/vertices/57/vectors/1",
+          "words": 20,
+          "sha256": "2ac332a22a547b0421de453582fd442a7b86a20d7fd23d8ddc98bee1159f7142"
+        },
+        {
+          "point": "#/acceptance/vertices/58/vectors/0",
+          "words": 20,
+          "sha256": "8f274632995cb16b4e3b9945d64c5f003f52c31bb216b099add85503b333bde5"
+        },
+        {
+          "point": "#/acceptance/vertices/58/vectors/1",
+          "words": 20,
+          "sha256": "de7edffc22078789fdf3e0ed31a808eceb3b2ff15a96cd300bbcc25da6853e78"
+        },
+        {
+          "point": "#/acceptance/vertices/59/vectors/0",
+          "words": 20,
+          "sha256": "83fa099f6945f3697465b479a15942dc58db00e3a377bc511bae43ba4a02eb0a"
+        },
+        {
+          "point": "#/acceptance/vertices/59/vectors/1",
+          "words": 20,
+          "sha256": "552d49870ad72333a8389d416f9e82915382427aa86b91070a12ba7eabd73b8c"
+        },
+        {
+          "point": "#/acceptance/vertices/60/vectors/0",
+          "words": 20,
+          "sha256": "0eff9da32f372f7f51768a664d9ca250589ce5df0a7b9874ff297d05c688fa13"
+        },
+        {
+          "point": "#/acceptance/vertices/60/vectors/1",
+          "words": 20,
+          "sha256": "420caa2b76f081d191f6d51b5a67339010a695c5b95c756d5c2abe8a8fea1b23"
+        }
+      ]
+    },
+    {
+      "kind": "hot",
+      "source": "hot/gpu-1779033703/report.json",
+      "sourceSha256": "3f4be8f3ceca9381dcdb89aa6535fe373fc8dceb7133505c5f2543e15d938c68",
+      "status": "HELD",
+      "seed": 1779033703,
+      "fault": null,
+      "sourceDerivedProducerRows": 61,
+      "rawCarrierWords": 2440,
+      "mathWords": 64,
+      "exactRgbaPixels": 7808,
+      "faultContradictions": [],
+      "qualifiedNumericZeroSigns": [
+        {
+          "vertex": 13,
+          "vector": 0,
+          "lane": 16,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 13,
+          "vector": 0,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 13,
+          "vector": 1,
+          "lane": 16,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 13,
+          "vector": 1,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 14,
+          "vector": 0,
+          "lane": 17,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 14,
+          "vector": 1,
+          "lane": 17,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 29,
+          "vector": 0,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 29,
+          "vector": 1,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 43,
+          "vector": 0,
+          "lane": 18,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 43,
+          "vector": 0,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 43,
+          "vector": 1,
+          "lane": 18,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 43,
+          "vector": 1,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 44,
+          "vector": 0,
+          "lane": 17,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 44,
+          "vector": 0,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 44,
+          "vector": 1,
+          "lane": 17,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 44,
+          "vector": 1,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 59,
+          "vector": 0,
+          "lane": 16,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 59,
+          "vector": 0,
+          "lane": 17,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 59,
+          "vector": 1,
+          "lane": 16,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 59,
+          "vector": 1,
+          "lane": 17,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        }
+      ],
+      "originalPoints": [
+        {
+          "point": "#/acceptance/vertices/0/vectors/0",
+          "words": 20,
+          "sha256": "73932965b18d7e0ebfc43aa495e9b31dcf1107b83af0efa340d9ee0832c9f947"
+        },
+        {
+          "point": "#/acceptance/vertices/0/vectors/1",
+          "words": 20,
+          "sha256": "6862b988e38f867785176303d48522a0d3ace3474a3d9e4e15af4726de38de27"
+        },
+        {
+          "point": "#/acceptance/vertices/1/vectors/0",
+          "words": 20,
+          "sha256": "11444a3fa0484de22f358e23807336ed75a6729cd7099d0f176c0ef22987c022"
+        },
+        {
+          "point": "#/acceptance/vertices/1/vectors/1",
+          "words": 20,
+          "sha256": "4065e275163b20906203a3adfed9663c06831d27decf8664ccdf164cdec000e4"
+        },
+        {
+          "point": "#/acceptance/vertices/2/vectors/0",
+          "words": 20,
+          "sha256": "9115186d0419efb9380087662e4540bb2f490bc7400918fff97263712871548e"
+        },
+        {
+          "point": "#/acceptance/vertices/2/vectors/1",
+          "words": 20,
+          "sha256": "09a2fbf0643163ccc9e6c882b0795f2acca9327ce0aa6ee9ebe1a33d5c99e110"
+        },
+        {
+          "point": "#/acceptance/vertices/3/vectors/0",
+          "words": 20,
+          "sha256": "4296887af177b7187cc4bc5f1e15961a8e41892fcc146673c26ce39f69fc1f35"
+        },
+        {
+          "point": "#/acceptance/vertices/3/vectors/1",
+          "words": 20,
+          "sha256": "59a2ebe357ec4e6832744ebd4f37f838b3f89169f947c01cae783c76a104f8b3"
+        },
+        {
+          "point": "#/acceptance/vertices/4/vectors/0",
+          "words": 20,
+          "sha256": "ec3a2fc0438a13c0f50c0d703f4c7629c13fae247a40496b6580f31752798825"
+        },
+        {
+          "point": "#/acceptance/vertices/4/vectors/1",
+          "words": 20,
+          "sha256": "9de02d8582e077bb9e017592530d68dd678dcb86b1a2e7ada25ed95c55fde23b"
+        },
+        {
+          "point": "#/acceptance/vertices/5/vectors/0",
+          "words": 20,
+          "sha256": "e80043acb170011c9580a2b4f9fedb5fb75a774d35162bef0693eba94d49ebd5"
+        },
+        {
+          "point": "#/acceptance/vertices/5/vectors/1",
+          "words": 20,
+          "sha256": "b08cfdf089b6070ce83823365e140e9033df56b141815c64cef88c4a8c4c881c"
+        },
+        {
+          "point": "#/acceptance/vertices/6/vectors/0",
+          "words": 20,
+          "sha256": "81eaa6d332c8e3f2a006578e8a81b38cb3ce22e35298e8ef758ea6dda155e73a"
+        },
+        {
+          "point": "#/acceptance/vertices/6/vectors/1",
+          "words": 20,
+          "sha256": "ca3c030dbb38790f1e68890574d8dbcf7a23077113e81b0828b2668e3579ee86"
+        },
+        {
+          "point": "#/acceptance/vertices/7/vectors/0",
+          "words": 20,
+          "sha256": "b416729ad1925f83a20ddf0f606185585a266fafe65bfcbc7f2a07618fe7de75"
+        },
+        {
+          "point": "#/acceptance/vertices/7/vectors/1",
+          "words": 20,
+          "sha256": "d8998e03704c3cf1bf2625e94e1baaec06dd95baf6aa02cb100c147fb90627a7"
+        },
+        {
+          "point": "#/acceptance/vertices/8/vectors/0",
+          "words": 20,
+          "sha256": "61ef57249a46a8e20cc94ae74256e850d4f5a130af04b3f1c57295b991136399"
+        },
+        {
+          "point": "#/acceptance/vertices/8/vectors/1",
+          "words": 20,
+          "sha256": "785c09c31d1202710ad604e44b956813e51f145f4f0762a926b8fdcdd44957e2"
+        },
+        {
+          "point": "#/acceptance/vertices/9/vectors/0",
+          "words": 20,
+          "sha256": "06acc419018cce63267e3bad1a977b88150e622fa4e0b8332aec062751218553"
+        },
+        {
+          "point": "#/acceptance/vertices/9/vectors/1",
+          "words": 20,
+          "sha256": "995262dd5fd7165aba87aef2613e5dc3d1bae5b5b94917b6e35c01411acf0f4c"
+        },
+        {
+          "point": "#/acceptance/vertices/10/vectors/0",
+          "words": 20,
+          "sha256": "3a85d90ef9da6724b6db5e0ede6bea87066c2640dbbf75a0332eba856607ef6f"
+        },
+        {
+          "point": "#/acceptance/vertices/10/vectors/1",
+          "words": 20,
+          "sha256": "78ba1eb6ca0241c80ee8454337bc2e9b2393a632ffa56110cca7d445510b4bf1"
+        },
+        {
+          "point": "#/acceptance/vertices/11/vectors/0",
+          "words": 20,
+          "sha256": "60edfcbeda897cdc1be9dd6790063d6fe1b9e76f2c6cfea3856231a4841ebaa5"
+        },
+        {
+          "point": "#/acceptance/vertices/11/vectors/1",
+          "words": 20,
+          "sha256": "d8498fcb31076ce1dab53b2b63fe428379d93a82476b5b1b1a2d7763b0e2d1c0"
+        },
+        {
+          "point": "#/acceptance/vertices/12/vectors/0",
+          "words": 20,
+          "sha256": "68c3ea56e46d9f5fbd2d751d8bbf2271523eb3e7e260b1cbf2811959c5eb96f9"
+        },
+        {
+          "point": "#/acceptance/vertices/12/vectors/1",
+          "words": 20,
+          "sha256": "b22832a3c90dcec2607afe712463c547911e187ae535946fdc8d27c1aa1b89f7"
+        },
+        {
+          "point": "#/acceptance/vertices/13/vectors/0",
+          "words": 20,
+          "sha256": "1641e20be6026a93473f562646362a879d0fd411945d0618fa4c3c4124f74117"
+        },
+        {
+          "point": "#/acceptance/vertices/13/vectors/1",
+          "words": 20,
+          "sha256": "bd4a412973f1a804fa7d80d154808170008e4892b38c0b1f57045832310dfacd"
+        },
+        {
+          "point": "#/acceptance/vertices/14/vectors/0",
+          "words": 20,
+          "sha256": "d7d175210f5562a5a6c9c20e6b6ac216a76e827f57681e291a35957deb57e59d"
+        },
+        {
+          "point": "#/acceptance/vertices/14/vectors/1",
+          "words": 20,
+          "sha256": "a1a4eac0b6e7163bb592d37aa908bac92537e79931ccb2c91525c43ce1eb9f47"
+        },
+        {
+          "point": "#/acceptance/vertices/15/vectors/0",
+          "words": 20,
+          "sha256": "f3ed0f5f2215458e2c9bd8ca6968c50d62dbfe60473af9a7f5a5ad302d85ab67"
+        },
+        {
+          "point": "#/acceptance/vertices/15/vectors/1",
+          "words": 20,
+          "sha256": "d9c8491e9c82458a6ba046adca398b4faaefe0d691f94da6e465c43f6da1259d"
+        },
+        {
+          "point": "#/acceptance/vertices/16/vectors/0",
+          "words": 20,
+          "sha256": "13a0ce33daeac5cd5e778ef8ce8e18e6d487c2e5967214eda107c439dbaea9f5"
+        },
+        {
+          "point": "#/acceptance/vertices/16/vectors/1",
+          "words": 20,
+          "sha256": "8977296991f70e3432ff3547d97f32e22624a8a599b87323d022a0b1b4422e66"
+        },
+        {
+          "point": "#/acceptance/vertices/17/vectors/0",
+          "words": 20,
+          "sha256": "a87278d5125df1fcd618df572fa2e83942f21eb34fb19981227f72896b8ef20f"
+        },
+        {
+          "point": "#/acceptance/vertices/17/vectors/1",
+          "words": 20,
+          "sha256": "b02072ef9a70e0d45f8a1fe28f97c5d314a6ee1d2e0a0f0e8aa68b842400e346"
+        },
+        {
+          "point": "#/acceptance/vertices/18/vectors/0",
+          "words": 20,
+          "sha256": "44e62091759c1d1bd84ba76435f2ca3cc0125c56cdccf62a0a55a7f47243e2f4"
+        },
+        {
+          "point": "#/acceptance/vertices/18/vectors/1",
+          "words": 20,
+          "sha256": "9329f9443f708acf0b717219cc95f005f7f732079f401f1403da49c7a79d7665"
+        },
+        {
+          "point": "#/acceptance/vertices/19/vectors/0",
+          "words": 20,
+          "sha256": "04590b222fddd9e9b12e5ad059a7ff94be4c25b441090f5c277fa839def15f13"
+        },
+        {
+          "point": "#/acceptance/vertices/19/vectors/1",
+          "words": 20,
+          "sha256": "fd97eef81416bd5d2e361fe18fe42d57da95fbf6d1070890f2ef974f53e96204"
+        },
+        {
+          "point": "#/acceptance/vertices/20/vectors/0",
+          "words": 20,
+          "sha256": "31504aead34aa5dae13ca0f73f5852bd3e312d8638fb6a7b1ce269e7630b9557"
+        },
+        {
+          "point": "#/acceptance/vertices/20/vectors/1",
+          "words": 20,
+          "sha256": "6e7f59d2afe586fd1b1174fd4d9053c1988ba76a5877e69a2f8745bdc7d01182"
+        },
+        {
+          "point": "#/acceptance/vertices/21/vectors/0",
+          "words": 20,
+          "sha256": "8c1dd4392ae261502876f3bd00911fb303a1caf1d81d18387952133bd62dd89f"
+        },
+        {
+          "point": "#/acceptance/vertices/21/vectors/1",
+          "words": 20,
+          "sha256": "01f044f2a123f8dd65de885c4d74a2dc8f329c58a28ab667fe892b0096f7ae45"
+        },
+        {
+          "point": "#/acceptance/vertices/22/vectors/0",
+          "words": 20,
+          "sha256": "cbe5c26195026b7770ab48ced227fd345905d3c53f81664427880b8f34fad383"
+        },
+        {
+          "point": "#/acceptance/vertices/22/vectors/1",
+          "words": 20,
+          "sha256": "98b99fd69882ecc2118341761f2ea868ed536a0b2ae751ab78ce8fd9f8b7cc8e"
+        },
+        {
+          "point": "#/acceptance/vertices/23/vectors/0",
+          "words": 20,
+          "sha256": "9fb7450c8dc191051e71315902bae1efaf1b3fe38e8258a0a7faed2a5004c8b3"
+        },
+        {
+          "point": "#/acceptance/vertices/23/vectors/1",
+          "words": 20,
+          "sha256": "7d2acf4ea7b9760e41790de6e5efb2c1df9ca327bc295bc0c1edb6b7c825ba16"
+        },
+        {
+          "point": "#/acceptance/vertices/24/vectors/0",
+          "words": 20,
+          "sha256": "51300cfb1095f5b0df152fbfbd9494423f5d5608f6a2562f30f9089c9d37070c"
+        },
+        {
+          "point": "#/acceptance/vertices/24/vectors/1",
+          "words": 20,
+          "sha256": "6bf2453afcd94100d9bac0e9520943a4777b7e48335c5e28fb1ddfaf6f641c1e"
+        },
+        {
+          "point": "#/acceptance/vertices/25/vectors/0",
+          "words": 20,
+          "sha256": "55ce2f33711390054d0565382bed27ce9cafe72c728bdbb7926f6639549a19e2"
+        },
+        {
+          "point": "#/acceptance/vertices/25/vectors/1",
+          "words": 20,
+          "sha256": "2e173a6b16cf554af8b8ec2b93521a203b8925469b73162d10f93ce4163e690b"
+        },
+        {
+          "point": "#/acceptance/vertices/26/vectors/0",
+          "words": 20,
+          "sha256": "96f5eb52d52bb6f05bca304f114225dceff505a2a5034f0da72fce82ef95d483"
+        },
+        {
+          "point": "#/acceptance/vertices/26/vectors/1",
+          "words": 20,
+          "sha256": "b3292b6f7970d590e070aac90d757874b2cf4df860c325797361457e33cda4d6"
+        },
+        {
+          "point": "#/acceptance/vertices/27/vectors/0",
+          "words": 20,
+          "sha256": "a4ac0039fdfc632fc68a07f2eedb61bc9f487bb7c210e472f03668ea02037034"
+        },
+        {
+          "point": "#/acceptance/vertices/27/vectors/1",
+          "words": 20,
+          "sha256": "20e36d44fcdb1fbd986c4e916ddec9967b32575da76dc600de462c258498cae6"
+        },
+        {
+          "point": "#/acceptance/vertices/28/vectors/0",
+          "words": 20,
+          "sha256": "701f2b18014ca92cb3c8e8ab85c4de2b43207f1c10d8e7717f68dc259055fe7c"
+        },
+        {
+          "point": "#/acceptance/vertices/28/vectors/1",
+          "words": 20,
+          "sha256": "0d83fa460d8129ddba70b41ca06adf52d222301663630144d8028f05489e87ac"
+        },
+        {
+          "point": "#/acceptance/vertices/29/vectors/0",
+          "words": 20,
+          "sha256": "1b66f593b8e3c243c1c6ed8694243a535acf93aae6359d8e851be1b92d95ba94"
+        },
+        {
+          "point": "#/acceptance/vertices/29/vectors/1",
+          "words": 20,
+          "sha256": "330c695ecf7f443b55aa263633662efa14640bbe02ffadf6ac303b0d31d32589"
+        },
+        {
+          "point": "#/acceptance/vertices/30/vectors/0",
+          "words": 20,
+          "sha256": "e969644be0a36d7c1b6e9edbc246f4ba7d7950383c4f99891bcd835b4158af6d"
+        },
+        {
+          "point": "#/acceptance/vertices/30/vectors/1",
+          "words": 20,
+          "sha256": "1d53fe1c612b75124d118bc9a40565eb543d56fe685961b7a83398d7fa0d3562"
+        },
+        {
+          "point": "#/acceptance/vertices/31/vectors/0",
+          "words": 20,
+          "sha256": "73ee40ff61c3914ebcd260558f5d93bf33bd8dc47024722b1fa4225ad59537d6"
+        },
+        {
+          "point": "#/acceptance/vertices/31/vectors/1",
+          "words": 20,
+          "sha256": "e8a02a85948384e0cb44e40b716ddf401dd18eb0c83081a4c2e08da95335d13d"
+        },
+        {
+          "point": "#/acceptance/vertices/32/vectors/0",
+          "words": 20,
+          "sha256": "6d87c542aa9adb7a6076f68366b705c248d56c1a2ec39f4b0ea172169548fa11"
+        },
+        {
+          "point": "#/acceptance/vertices/32/vectors/1",
+          "words": 20,
+          "sha256": "af79c774aaffa38fdcdcc15eb166159d85ad6bb037bca4e83377ca2b245c33ef"
+        },
+        {
+          "point": "#/acceptance/vertices/33/vectors/0",
+          "words": 20,
+          "sha256": "f8cfaba8b74b84bb0623172e8f9bd964c1f5b1775bed8fea3e7e0e345ab3684f"
+        },
+        {
+          "point": "#/acceptance/vertices/33/vectors/1",
+          "words": 20,
+          "sha256": "660bb4c6706aa561e485cdc41ff86cb6225806229058746b18526a7702f37e5d"
+        },
+        {
+          "point": "#/acceptance/vertices/34/vectors/0",
+          "words": 20,
+          "sha256": "08b6c24e37f31a0a521524fb361e377ebfb3c748c5d2725de3c4b21e0bd27d64"
+        },
+        {
+          "point": "#/acceptance/vertices/34/vectors/1",
+          "words": 20,
+          "sha256": "037fbb2ea443a393f4e7727c8a6a335a0afbe5edc2bf3fb353076aec707a3ab9"
+        },
+        {
+          "point": "#/acceptance/vertices/35/vectors/0",
+          "words": 20,
+          "sha256": "06d8732df8480233adc1c98707fd40eb6c857f0716ec3bbe3db6fde7a0eeb5db"
+        },
+        {
+          "point": "#/acceptance/vertices/35/vectors/1",
+          "words": 20,
+          "sha256": "9d22224f4e7272b858c004c3d67b083617488cab11436ad3796e63114262e404"
+        },
+        {
+          "point": "#/acceptance/vertices/36/vectors/0",
+          "words": 20,
+          "sha256": "b7197f897d603c42114c7f16aec3d401b4cfb9430ccebe65eadb5e3e7133c84c"
+        },
+        {
+          "point": "#/acceptance/vertices/36/vectors/1",
+          "words": 20,
+          "sha256": "4ad96e824ad3f800b4657bbcc4845b7f4ae801091614589d2a728b483dd4c5e5"
+        },
+        {
+          "point": "#/acceptance/vertices/37/vectors/0",
+          "words": 20,
+          "sha256": "bb646d144a0bf0c6f118781556e49f810f631d5d79143edfed4ac651245e3039"
+        },
+        {
+          "point": "#/acceptance/vertices/37/vectors/1",
+          "words": 20,
+          "sha256": "5b7c6ed3a5ff82cf8591d2ad57755605e1f3c5067c94a0d69f4c79a3e4d5062e"
+        },
+        {
+          "point": "#/acceptance/vertices/38/vectors/0",
+          "words": 20,
+          "sha256": "acc4e7a4cc823ce6a5a7467df16bffa037a3263420398ba635fe3d4bad6027d3"
+        },
+        {
+          "point": "#/acceptance/vertices/38/vectors/1",
+          "words": 20,
+          "sha256": "142622b8b17f0e133f396403d562207daa8dca4197e4e49d76e0141621155519"
+        },
+        {
+          "point": "#/acceptance/vertices/39/vectors/0",
+          "words": 20,
+          "sha256": "e1a25c4460fe497a8c2589b8e497fbb219beba2e25a093b95db0589abe7cb640"
+        },
+        {
+          "point": "#/acceptance/vertices/39/vectors/1",
+          "words": 20,
+          "sha256": "c3cdc652f25d510c18a20de4d60d0acf8788097c36f02a3439c114d694e80261"
+        },
+        {
+          "point": "#/acceptance/vertices/40/vectors/0",
+          "words": 20,
+          "sha256": "150d7cb93f170cf0439356e31341ff70dafbee7a7fe3f8cbe1186594cfce72cb"
+        },
+        {
+          "point": "#/acceptance/vertices/40/vectors/1",
+          "words": 20,
+          "sha256": "db97f444c6630bc4237bf683f6c8e9ebabb72cee077accc156008fbd1f6d0adf"
+        },
+        {
+          "point": "#/acceptance/vertices/41/vectors/0",
+          "words": 20,
+          "sha256": "9fd158eb5369938c54f104a9d505f96f8743195fe870cbb706fc6ef24cfe888e"
+        },
+        {
+          "point": "#/acceptance/vertices/41/vectors/1",
+          "words": 20,
+          "sha256": "d9af8545f9e719cdfc5e4c25ba386cde2865f7c6d71544d50082859b1b206045"
+        },
+        {
+          "point": "#/acceptance/vertices/42/vectors/0",
+          "words": 20,
+          "sha256": "ceba3be3225e9af9c4db067e92fd958f57c1a48547ca20e83fb9341f4dc3f7d8"
+        },
+        {
+          "point": "#/acceptance/vertices/42/vectors/1",
+          "words": 20,
+          "sha256": "dadbb501377716de0ace0b386b41d91b46ebad7c7aa27de7ac1077ad818ef905"
+        },
+        {
+          "point": "#/acceptance/vertices/43/vectors/0",
+          "words": 20,
+          "sha256": "11c6db3117708daccb45eb69eb213cafa9e4f353dc352343f1b74ec8db95b366"
+        },
+        {
+          "point": "#/acceptance/vertices/43/vectors/1",
+          "words": 20,
+          "sha256": "0111f5758e6575409128cfa30f3dc9b0387ff4a7337aeeb82264b045099a4aac"
+        },
+        {
+          "point": "#/acceptance/vertices/44/vectors/0",
+          "words": 20,
+          "sha256": "7cc95d2d0ed7fac7c5998c33b2625277ac28f91409da0aa5bc7a50922f7c5e74"
+        },
+        {
+          "point": "#/acceptance/vertices/44/vectors/1",
+          "words": 20,
+          "sha256": "1ffc9d553619f632c33a5330e109b93869b1e105a94e3931360324c93faef66e"
+        },
+        {
+          "point": "#/acceptance/vertices/45/vectors/0",
+          "words": 20,
+          "sha256": "25450b028e314033c860da88fa34efe83e8da6d592bcc7fab3c8880c34f50562"
+        },
+        {
+          "point": "#/acceptance/vertices/45/vectors/1",
+          "words": 20,
+          "sha256": "c639468f5a9e7267dd09793afb704cbd6158d8edc51e0666a36760851a031dda"
+        },
+        {
+          "point": "#/acceptance/vertices/46/vectors/0",
+          "words": 20,
+          "sha256": "e93a674c02be017f13e532656c678576b7cbd244aabc2b45e7b8d35187068ca9"
+        },
+        {
+          "point": "#/acceptance/vertices/46/vectors/1",
+          "words": 20,
+          "sha256": "7a2992efbefae6875087751bc440571b434949e673da65411d690102103b4b6c"
+        },
+        {
+          "point": "#/acceptance/vertices/47/vectors/0",
+          "words": 20,
+          "sha256": "59347f762faf556016500d0fd01844e8c07212c41d416af784e36eca6f33f384"
+        },
+        {
+          "point": "#/acceptance/vertices/47/vectors/1",
+          "words": 20,
+          "sha256": "0b50b5fd42b1097257060433c510b32e19d3b405450aca89f4c0884fdb9f18f2"
+        },
+        {
+          "point": "#/acceptance/vertices/48/vectors/0",
+          "words": 20,
+          "sha256": "04b86587e99b71f24d2a9afda4f418d90c6bc337d080eab77cd50481ceedc525"
+        },
+        {
+          "point": "#/acceptance/vertices/48/vectors/1",
+          "words": 20,
+          "sha256": "eec6fe63582b2359a52e1afa869fa548fbc3baf3bd0025d118527e1c7b06baf6"
+        },
+        {
+          "point": "#/acceptance/vertices/49/vectors/0",
+          "words": 20,
+          "sha256": "ce309fbef25197fbb079a8bdd83f15b2870a1d27b96cedcf7a49d036d6cb4196"
+        },
+        {
+          "point": "#/acceptance/vertices/49/vectors/1",
+          "words": 20,
+          "sha256": "77f7c06e5093970a25569c02df46dadf84b680165254dfc074437a3f31524059"
+        },
+        {
+          "point": "#/acceptance/vertices/50/vectors/0",
+          "words": 20,
+          "sha256": "3c2941d7e141b7c5363460c9c98192a813f93a4720ab214e6a6c038302d4b992"
+        },
+        {
+          "point": "#/acceptance/vertices/50/vectors/1",
+          "words": 20,
+          "sha256": "3d758564800d6c0a5fb72f43487e8ad1dbf486e0b10281f38187b02c721b2086"
+        },
+        {
+          "point": "#/acceptance/vertices/51/vectors/0",
+          "words": 20,
+          "sha256": "eb59770e47fbd21c72c185c2815cef34e0c847900f44a4d9efdc600f32916e3b"
+        },
+        {
+          "point": "#/acceptance/vertices/51/vectors/1",
+          "words": 20,
+          "sha256": "0e3d51ae2a74e945eeabed7272672eeb628bd78d228b084cd3d734594d3ed0ad"
+        },
+        {
+          "point": "#/acceptance/vertices/52/vectors/0",
+          "words": 20,
+          "sha256": "349b4e75f42d34fad7effd80c03fb506fd813c870d7e0da4f9be5b3f75de21f9"
+        },
+        {
+          "point": "#/acceptance/vertices/52/vectors/1",
+          "words": 20,
+          "sha256": "70a85a89dbb085c2f59508c68a2b6f9649f6e65397452d27c89ef4f7a819be8a"
+        },
+        {
+          "point": "#/acceptance/vertices/53/vectors/0",
+          "words": 20,
+          "sha256": "3be0c81fc03516ff41d4f4ed65f9ca4e6587dc5bfe997df1f4d9333ea1905c48"
+        },
+        {
+          "point": "#/acceptance/vertices/53/vectors/1",
+          "words": 20,
+          "sha256": "d7260e749fa25272220252c5e62059f53e48780d491fee562901625ad789efe7"
+        },
+        {
+          "point": "#/acceptance/vertices/54/vectors/0",
+          "words": 20,
+          "sha256": "1a40d05219d0f30c12ff865b196d094119d5ddcbb4cb6d018852dbb1e2659e9b"
+        },
+        {
+          "point": "#/acceptance/vertices/54/vectors/1",
+          "words": 20,
+          "sha256": "127b1593e9111cf1fdab17571551ec289cff11d38fd3d8c7ac2b46189c6c0613"
+        },
+        {
+          "point": "#/acceptance/vertices/55/vectors/0",
+          "words": 20,
+          "sha256": "1430d5596667d0f3cba94e1345e165b7432a00655c8d6b94aa6a69fe2d4aecdd"
+        },
+        {
+          "point": "#/acceptance/vertices/55/vectors/1",
+          "words": 20,
+          "sha256": "6d023acbba9a8de35ce60aff434ce8b617de688f3b598252ba20da9424cddf09"
+        },
+        {
+          "point": "#/acceptance/vertices/56/vectors/0",
+          "words": 20,
+          "sha256": "b3c0854be48a473720b4f61852b571746b27d246c25708b43e39f9ed41b88fd3"
+        },
+        {
+          "point": "#/acceptance/vertices/56/vectors/1",
+          "words": 20,
+          "sha256": "820ff5edbc557f730e08a386509a8058a0207b82b610bc4c91003936e04cd6f3"
+        },
+        {
+          "point": "#/acceptance/vertices/57/vectors/0",
+          "words": 20,
+          "sha256": "76289ef8d08d93aff664870a6b54a3a35faf52b26dcd2fad3cf63602f942995b"
+        },
+        {
+          "point": "#/acceptance/vertices/57/vectors/1",
+          "words": 20,
+          "sha256": "f5c5b1b626b471d6739f4d442371e629019695c750d2e9bc6db05b7d7027872f"
+        },
+        {
+          "point": "#/acceptance/vertices/58/vectors/0",
+          "words": 20,
+          "sha256": "f3345dc48e7fce075e895bdaf83f545067e2429cc83496687911770644e1fda8"
+        },
+        {
+          "point": "#/acceptance/vertices/58/vectors/1",
+          "words": 20,
+          "sha256": "d195893c135d168167241b9bbfc2af70d0d6fa4e2d3f99e5102b2e1924e1b997"
+        },
+        {
+          "point": "#/acceptance/vertices/59/vectors/0",
+          "words": 20,
+          "sha256": "83fa099f6945f3697465b479a15942dc58db00e3a377bc511bae43ba4a02eb0a"
+        },
+        {
+          "point": "#/acceptance/vertices/59/vectors/1",
+          "words": 20,
+          "sha256": "552d49870ad72333a8389d416f9e82915382427aa86b91070a12ba7eabd73b8c"
+        },
+        {
+          "point": "#/acceptance/vertices/60/vectors/0",
+          "words": 20,
+          "sha256": "0eff9da32f372f7f51768a664d9ca250589ce5df0a7b9874ff297d05c688fa13"
+        },
+        {
+          "point": "#/acceptance/vertices/60/vectors/1",
+          "words": 20,
+          "sha256": "420caa2b76f081d191f6d51b5a67339010a695c5b95c756d5c2abe8a8fea1b23"
+        }
+      ]
+    },
+    {
+      "kind": "hot",
+      "source": "hot/gpu-3144134277/report.json",
+      "sourceSha256": "0bc58b75886f2d62fc1861ac953427c23849f3c77df0862b0ff5201d72c0ea93",
+      "status": "HELD",
+      "seed": 3144134277,
+      "fault": null,
+      "sourceDerivedProducerRows": 61,
+      "rawCarrierWords": 2440,
+      "mathWords": 64,
+      "exactRgbaPixels": 7808,
+      "faultContradictions": [],
+      "qualifiedNumericZeroSigns": [
+        {
+          "vertex": 13,
+          "vector": 0,
+          "lane": 16,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 13,
+          "vector": 0,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 13,
+          "vector": 1,
+          "lane": 16,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 13,
+          "vector": 1,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 14,
+          "vector": 0,
+          "lane": 17,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 14,
+          "vector": 1,
+          "lane": 17,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 29,
+          "vector": 0,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 29,
+          "vector": 1,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 43,
+          "vector": 0,
+          "lane": 18,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 43,
+          "vector": 0,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 43,
+          "vector": 1,
+          "lane": 18,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 43,
+          "vector": 1,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 44,
+          "vector": 0,
+          "lane": 17,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 44,
+          "vector": 0,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 44,
+          "vector": 1,
+          "lane": 17,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 44,
+          "vector": 1,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 59,
+          "vector": 0,
+          "lane": 16,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 59,
+          "vector": 0,
+          "lane": 17,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 59,
+          "vector": 1,
+          "lane": 16,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 59,
+          "vector": 1,
+          "lane": 17,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        }
+      ],
+      "originalPoints": [
+        {
+          "point": "#/acceptance/vertices/0/vectors/0",
+          "words": 20,
+          "sha256": "73932965b18d7e0ebfc43aa495e9b31dcf1107b83af0efa340d9ee0832c9f947"
+        },
+        {
+          "point": "#/acceptance/vertices/0/vectors/1",
+          "words": 20,
+          "sha256": "6862b988e38f867785176303d48522a0d3ace3474a3d9e4e15af4726de38de27"
+        },
+        {
+          "point": "#/acceptance/vertices/1/vectors/0",
+          "words": 20,
+          "sha256": "11444a3fa0484de22f358e23807336ed75a6729cd7099d0f176c0ef22987c022"
+        },
+        {
+          "point": "#/acceptance/vertices/1/vectors/1",
+          "words": 20,
+          "sha256": "4065e275163b20906203a3adfed9663c06831d27decf8664ccdf164cdec000e4"
+        },
+        {
+          "point": "#/acceptance/vertices/2/vectors/0",
+          "words": 20,
+          "sha256": "9115186d0419efb9380087662e4540bb2f490bc7400918fff97263712871548e"
+        },
+        {
+          "point": "#/acceptance/vertices/2/vectors/1",
+          "words": 20,
+          "sha256": "09a2fbf0643163ccc9e6c882b0795f2acca9327ce0aa6ee9ebe1a33d5c99e110"
+        },
+        {
+          "point": "#/acceptance/vertices/3/vectors/0",
+          "words": 20,
+          "sha256": "4296887af177b7187cc4bc5f1e15961a8e41892fcc146673c26ce39f69fc1f35"
+        },
+        {
+          "point": "#/acceptance/vertices/3/vectors/1",
+          "words": 20,
+          "sha256": "59a2ebe357ec4e6832744ebd4f37f838b3f89169f947c01cae783c76a104f8b3"
+        },
+        {
+          "point": "#/acceptance/vertices/4/vectors/0",
+          "words": 20,
+          "sha256": "ec3a2fc0438a13c0f50c0d703f4c7629c13fae247a40496b6580f31752798825"
+        },
+        {
+          "point": "#/acceptance/vertices/4/vectors/1",
+          "words": 20,
+          "sha256": "9de02d8582e077bb9e017592530d68dd678dcb86b1a2e7ada25ed95c55fde23b"
+        },
+        {
+          "point": "#/acceptance/vertices/5/vectors/0",
+          "words": 20,
+          "sha256": "7e8d1d446b2926059eaeea86ba56f705d7ed7f748c40e113483be7b1d0b9de5e"
+        },
+        {
+          "point": "#/acceptance/vertices/5/vectors/1",
+          "words": 20,
+          "sha256": "9545151e726cc4b72dcbb2e7cba75a8197a2bbfac2539c837bb1ba713696e45e"
+        },
+        {
+          "point": "#/acceptance/vertices/6/vectors/0",
+          "words": 20,
+          "sha256": "b4eee0ce47b712e0ed351f4060b150c2de97519e2f083d39fbc76808a44b9ce2"
+        },
+        {
+          "point": "#/acceptance/vertices/6/vectors/1",
+          "words": 20,
+          "sha256": "7ea837758680338836a4aaeb0c6dc30d4b35b977ce8ff80b7284c6510c3ee2e8"
+        },
+        {
+          "point": "#/acceptance/vertices/7/vectors/0",
+          "words": 20,
+          "sha256": "8498631ffc94ecc043c7af9df5bf43969e018e6b6cc63619ef3138447ffe0995"
+        },
+        {
+          "point": "#/acceptance/vertices/7/vectors/1",
+          "words": 20,
+          "sha256": "d3910f45a20a1648322c6cf5bce785e3eee3b08f4ec84e08edf03e0370c8f08c"
+        },
+        {
+          "point": "#/acceptance/vertices/8/vectors/0",
+          "words": 20,
+          "sha256": "d6fdb9a06c92c671899cbbc08209f2465c273e41f0350ec4f387d2e4dc25cb84"
+        },
+        {
+          "point": "#/acceptance/vertices/8/vectors/1",
+          "words": 20,
+          "sha256": "d9b092ef3ff1138f41df15e9cfd7de49cb52762fcf0aa4527b905a1efc13255f"
+        },
+        {
+          "point": "#/acceptance/vertices/9/vectors/0",
+          "words": 20,
+          "sha256": "7936183f679227a665d32c7bc96bd09b245cc4b980b2896391322752cccb4ecd"
+        },
+        {
+          "point": "#/acceptance/vertices/9/vectors/1",
+          "words": 20,
+          "sha256": "830e980db3868f7035b901d0072fa8d87e08fe8b2f4046a5f4b50fefadcc55f8"
+        },
+        {
+          "point": "#/acceptance/vertices/10/vectors/0",
+          "words": 20,
+          "sha256": "ae87172787a185e09b2ed54aa58cc50ffbe5cc1690c747402e59f6ed22cc0996"
+        },
+        {
+          "point": "#/acceptance/vertices/10/vectors/1",
+          "words": 20,
+          "sha256": "688ce9cc5fd14b7e02c23c3cf6e237e2006634f4c4c357b3f219b1e672adbe23"
+        },
+        {
+          "point": "#/acceptance/vertices/11/vectors/0",
+          "words": 20,
+          "sha256": "d1e37086eff681a7d73aced63aa05ae680b73927120ecb59d29fa429ca3cc79b"
+        },
+        {
+          "point": "#/acceptance/vertices/11/vectors/1",
+          "words": 20,
+          "sha256": "def167d441b69e776f03086a04b629b52f411e5db480874935d3652cc618203d"
+        },
+        {
+          "point": "#/acceptance/vertices/12/vectors/0",
+          "words": 20,
+          "sha256": "4a03b4790f731ef3063d745c97564e79b323c5efbaefd9494e40cf883e741872"
+        },
+        {
+          "point": "#/acceptance/vertices/12/vectors/1",
+          "words": 20,
+          "sha256": "1f7e3cb60355d7703279c09a767a1403475fe2f06b91b35fd112926436f6c3b7"
+        },
+        {
+          "point": "#/acceptance/vertices/13/vectors/0",
+          "words": 20,
+          "sha256": "1641e20be6026a93473f562646362a879d0fd411945d0618fa4c3c4124f74117"
+        },
+        {
+          "point": "#/acceptance/vertices/13/vectors/1",
+          "words": 20,
+          "sha256": "bd4a412973f1a804fa7d80d154808170008e4892b38c0b1f57045832310dfacd"
+        },
+        {
+          "point": "#/acceptance/vertices/14/vectors/0",
+          "words": 20,
+          "sha256": "d7d175210f5562a5a6c9c20e6b6ac216a76e827f57681e291a35957deb57e59d"
+        },
+        {
+          "point": "#/acceptance/vertices/14/vectors/1",
+          "words": 20,
+          "sha256": "a1a4eac0b6e7163bb592d37aa908bac92537e79931ccb2c91525c43ce1eb9f47"
+        },
+        {
+          "point": "#/acceptance/vertices/15/vectors/0",
+          "words": 20,
+          "sha256": "f3ed0f5f2215458e2c9bd8ca6968c50d62dbfe60473af9a7f5a5ad302d85ab67"
+        },
+        {
+          "point": "#/acceptance/vertices/15/vectors/1",
+          "words": 20,
+          "sha256": "d9c8491e9c82458a6ba046adca398b4faaefe0d691f94da6e465c43f6da1259d"
+        },
+        {
+          "point": "#/acceptance/vertices/16/vectors/0",
+          "words": 20,
+          "sha256": "13a0ce33daeac5cd5e778ef8ce8e18e6d487c2e5967214eda107c439dbaea9f5"
+        },
+        {
+          "point": "#/acceptance/vertices/16/vectors/1",
+          "words": 20,
+          "sha256": "8977296991f70e3432ff3547d97f32e22624a8a599b87323d022a0b1b4422e66"
+        },
+        {
+          "point": "#/acceptance/vertices/17/vectors/0",
+          "words": 20,
+          "sha256": "a87278d5125df1fcd618df572fa2e83942f21eb34fb19981227f72896b8ef20f"
+        },
+        {
+          "point": "#/acceptance/vertices/17/vectors/1",
+          "words": 20,
+          "sha256": "b02072ef9a70e0d45f8a1fe28f97c5d314a6ee1d2e0a0f0e8aa68b842400e346"
+        },
+        {
+          "point": "#/acceptance/vertices/18/vectors/0",
+          "words": 20,
+          "sha256": "44e62091759c1d1bd84ba76435f2ca3cc0125c56cdccf62a0a55a7f47243e2f4"
+        },
+        {
+          "point": "#/acceptance/vertices/18/vectors/1",
+          "words": 20,
+          "sha256": "9329f9443f708acf0b717219cc95f005f7f732079f401f1403da49c7a79d7665"
+        },
+        {
+          "point": "#/acceptance/vertices/19/vectors/0",
+          "words": 20,
+          "sha256": "04590b222fddd9e9b12e5ad059a7ff94be4c25b441090f5c277fa839def15f13"
+        },
+        {
+          "point": "#/acceptance/vertices/19/vectors/1",
+          "words": 20,
+          "sha256": "fd97eef81416bd5d2e361fe18fe42d57da95fbf6d1070890f2ef974f53e96204"
+        },
+        {
+          "point": "#/acceptance/vertices/20/vectors/0",
+          "words": 20,
+          "sha256": "31504aead34aa5dae13ca0f73f5852bd3e312d8638fb6a7b1ce269e7630b9557"
+        },
+        {
+          "point": "#/acceptance/vertices/20/vectors/1",
+          "words": 20,
+          "sha256": "6e7f59d2afe586fd1b1174fd4d9053c1988ba76a5877e69a2f8745bdc7d01182"
+        },
+        {
+          "point": "#/acceptance/vertices/21/vectors/0",
+          "words": 20,
+          "sha256": "7fb3aa7464f3a684399928dfdeb0da0c2d6b9ce8fa10b9e4e209db81e676cb36"
+        },
+        {
+          "point": "#/acceptance/vertices/21/vectors/1",
+          "words": 20,
+          "sha256": "fe909d4f598a45e72e119cf78b9ffb0da11082a020aa4618368bb610e28dbcb1"
+        },
+        {
+          "point": "#/acceptance/vertices/22/vectors/0",
+          "words": 20,
+          "sha256": "696474b03fe090b856cbe9cbf8417a5a3ce20065e39eb5bbd9d04b3f092be29c"
+        },
+        {
+          "point": "#/acceptance/vertices/22/vectors/1",
+          "words": 20,
+          "sha256": "b368437d0e73961771b0ae42543a03668d106712a255fed206e6736821abdb2e"
+        },
+        {
+          "point": "#/acceptance/vertices/23/vectors/0",
+          "words": 20,
+          "sha256": "ae2a46e497939636ccb5439b8eb365ea57c0a5ef334007e995028bba1d928423"
+        },
+        {
+          "point": "#/acceptance/vertices/23/vectors/1",
+          "words": 20,
+          "sha256": "5615b6fbc0d66ee0b7e39126a78dc08d3b361c9033e503addcdc9c5f5ef3787b"
+        },
+        {
+          "point": "#/acceptance/vertices/24/vectors/0",
+          "words": 20,
+          "sha256": "5d5b395a2fbfbedf980e71d7d88b78f105095d467dae11dd751343d08597b05c"
+        },
+        {
+          "point": "#/acceptance/vertices/24/vectors/1",
+          "words": 20,
+          "sha256": "346ce922f85b9768d750c485b1edb5057c6b847c7e55204ede9a4c2b254fb72d"
+        },
+        {
+          "point": "#/acceptance/vertices/25/vectors/0",
+          "words": 20,
+          "sha256": "ce1d9b896e522a39a206af24a66e1a3e8dd0f594cc7370fb77f237de2bd4e330"
+        },
+        {
+          "point": "#/acceptance/vertices/25/vectors/1",
+          "words": 20,
+          "sha256": "a5646f504f6c3c93f8649c6df9c8a01e81db2ab8e32f00ea2dea93b7c96aa2e5"
+        },
+        {
+          "point": "#/acceptance/vertices/26/vectors/0",
+          "words": 20,
+          "sha256": "c36f49e59e474d860132535b16a56b40380603bf2c02c46e583c02cce6da7edb"
+        },
+        {
+          "point": "#/acceptance/vertices/26/vectors/1",
+          "words": 20,
+          "sha256": "428ca4814a87109b0a0ebd1bfe348d1d82a81a098d7306cb86b9710c305dccde"
+        },
+        {
+          "point": "#/acceptance/vertices/27/vectors/0",
+          "words": 20,
+          "sha256": "c48bc2ce9d5ca0555fc0112ed4a84d33b27acd6acf049f28a01c6b61918a528d"
+        },
+        {
+          "point": "#/acceptance/vertices/27/vectors/1",
+          "words": 20,
+          "sha256": "a84f0b0f2d1df1bd3b4515132ceb906bbfc23b742478ed7259a9a1e0f36b17c5"
+        },
+        {
+          "point": "#/acceptance/vertices/28/vectors/0",
+          "words": 20,
+          "sha256": "aedaa0dfcc253eab54ea75f35678144d2293175b27e73063a94282d9e4329475"
+        },
+        {
+          "point": "#/acceptance/vertices/28/vectors/1",
+          "words": 20,
+          "sha256": "ee79f695bee4ec16a160cca929ab44c5e1aa52380cdc61ad7040bcd57ce79619"
+        },
+        {
+          "point": "#/acceptance/vertices/29/vectors/0",
+          "words": 20,
+          "sha256": "1b66f593b8e3c243c1c6ed8694243a535acf93aae6359d8e851be1b92d95ba94"
+        },
+        {
+          "point": "#/acceptance/vertices/29/vectors/1",
+          "words": 20,
+          "sha256": "330c695ecf7f443b55aa263633662efa14640bbe02ffadf6ac303b0d31d32589"
+        },
+        {
+          "point": "#/acceptance/vertices/30/vectors/0",
+          "words": 20,
+          "sha256": "e969644be0a36d7c1b6e9edbc246f4ba7d7950383c4f99891bcd835b4158af6d"
+        },
+        {
+          "point": "#/acceptance/vertices/30/vectors/1",
+          "words": 20,
+          "sha256": "1d53fe1c612b75124d118bc9a40565eb543d56fe685961b7a83398d7fa0d3562"
+        },
+        {
+          "point": "#/acceptance/vertices/31/vectors/0",
+          "words": 20,
+          "sha256": "73ee40ff61c3914ebcd260558f5d93bf33bd8dc47024722b1fa4225ad59537d6"
+        },
+        {
+          "point": "#/acceptance/vertices/31/vectors/1",
+          "words": 20,
+          "sha256": "e8a02a85948384e0cb44e40b716ddf401dd18eb0c83081a4c2e08da95335d13d"
+        },
+        {
+          "point": "#/acceptance/vertices/32/vectors/0",
+          "words": 20,
+          "sha256": "6d87c542aa9adb7a6076f68366b705c248d56c1a2ec39f4b0ea172169548fa11"
+        },
+        {
+          "point": "#/acceptance/vertices/32/vectors/1",
+          "words": 20,
+          "sha256": "af79c774aaffa38fdcdcc15eb166159d85ad6bb037bca4e83377ca2b245c33ef"
+        },
+        {
+          "point": "#/acceptance/vertices/33/vectors/0",
+          "words": 20,
+          "sha256": "f8cfaba8b74b84bb0623172e8f9bd964c1f5b1775bed8fea3e7e0e345ab3684f"
+        },
+        {
+          "point": "#/acceptance/vertices/33/vectors/1",
+          "words": 20,
+          "sha256": "660bb4c6706aa561e485cdc41ff86cb6225806229058746b18526a7702f37e5d"
+        },
+        {
+          "point": "#/acceptance/vertices/34/vectors/0",
+          "words": 20,
+          "sha256": "08b6c24e37f31a0a521524fb361e377ebfb3c748c5d2725de3c4b21e0bd27d64"
+        },
+        {
+          "point": "#/acceptance/vertices/34/vectors/1",
+          "words": 20,
+          "sha256": "037fbb2ea443a393f4e7727c8a6a335a0afbe5edc2bf3fb353076aec707a3ab9"
+        },
+        {
+          "point": "#/acceptance/vertices/35/vectors/0",
+          "words": 20,
+          "sha256": "ac2fcefd2c869a0703d3ac8b77642c4f7f077286ff3a615bc5867ee9f54e89ad"
+        },
+        {
+          "point": "#/acceptance/vertices/35/vectors/1",
+          "words": 20,
+          "sha256": "eaa7b47f2f089e75776ac028b85ef67832aafd7a627bd133fa39fbb1a8b2f646"
+        },
+        {
+          "point": "#/acceptance/vertices/36/vectors/0",
+          "words": 20,
+          "sha256": "1fad9a9a002ff9307c56febe4e53c533631354ecefd4db98243e737be35ac0b2"
+        },
+        {
+          "point": "#/acceptance/vertices/36/vectors/1",
+          "words": 20,
+          "sha256": "8dafc2743af5797ccc3781b02fd8f6444ce0b78e6ff8b1eb24b21021a0c79158"
+        },
+        {
+          "point": "#/acceptance/vertices/37/vectors/0",
+          "words": 20,
+          "sha256": "cb161eb51fc78323a1ac8ad230427b1f7c287b2afa61f34cdb0b6ab5a8337c5d"
+        },
+        {
+          "point": "#/acceptance/vertices/37/vectors/1",
+          "words": 20,
+          "sha256": "5e2a1d9985674a73d08eb1b377064cac2c5f06b44665d3204057f6b170930989"
+        },
+        {
+          "point": "#/acceptance/vertices/38/vectors/0",
+          "words": 20,
+          "sha256": "a76c772ace8d103e776f4f3492c785621431ce03bc051e93f4f8d1bad7835d9b"
+        },
+        {
+          "point": "#/acceptance/vertices/38/vectors/1",
+          "words": 20,
+          "sha256": "42c0ddf34497005458a2a940ac056975b3c956061a103597f2d7b4e3872a9321"
+        },
+        {
+          "point": "#/acceptance/vertices/39/vectors/0",
+          "words": 20,
+          "sha256": "d2c39878aee167c041a2f7b34f144260e990b8c86444a25d1ee402e9c9ca1e67"
+        },
+        {
+          "point": "#/acceptance/vertices/39/vectors/1",
+          "words": 20,
+          "sha256": "6ec867e9294834697cf2c2417840b794ba1fc36d748deac85dc5c9b21fa54f3d"
+        },
+        {
+          "point": "#/acceptance/vertices/40/vectors/0",
+          "words": 20,
+          "sha256": "c6a9abf6af76fbce66b6c90e7ccc9cdb9f7abec271b6665fec8c552403586e33"
+        },
+        {
+          "point": "#/acceptance/vertices/40/vectors/1",
+          "words": 20,
+          "sha256": "5cb17ad1988fa8965207a5b79e70502935c6b043110cf979a99225a768eb98a3"
+        },
+        {
+          "point": "#/acceptance/vertices/41/vectors/0",
+          "words": 20,
+          "sha256": "99382c441776ad95fce9b245b4d375c2445e2c78ec3974c79e01f2b3d56d3788"
+        },
+        {
+          "point": "#/acceptance/vertices/41/vectors/1",
+          "words": 20,
+          "sha256": "06ab029e0b71fa80ca6425baa33a79b6df1f1670b2301d4405e3e0b1336bd83f"
+        },
+        {
+          "point": "#/acceptance/vertices/42/vectors/0",
+          "words": 20,
+          "sha256": "13a311d1bbfec4b65693c8d5a0faffbb3e4c71bf4b034342aae45cdb68f0f6dd"
+        },
+        {
+          "point": "#/acceptance/vertices/42/vectors/1",
+          "words": 20,
+          "sha256": "4b7d8b5d730dc419143d6fb21ae183fab55e2c1dee9e229babe55b8d2f87b141"
+        },
+        {
+          "point": "#/acceptance/vertices/43/vectors/0",
+          "words": 20,
+          "sha256": "11c6db3117708daccb45eb69eb213cafa9e4f353dc352343f1b74ec8db95b366"
+        },
+        {
+          "point": "#/acceptance/vertices/43/vectors/1",
+          "words": 20,
+          "sha256": "0111f5758e6575409128cfa30f3dc9b0387ff4a7337aeeb82264b045099a4aac"
+        },
+        {
+          "point": "#/acceptance/vertices/44/vectors/0",
+          "words": 20,
+          "sha256": "7cc95d2d0ed7fac7c5998c33b2625277ac28f91409da0aa5bc7a50922f7c5e74"
+        },
+        {
+          "point": "#/acceptance/vertices/44/vectors/1",
+          "words": 20,
+          "sha256": "1ffc9d553619f632c33a5330e109b93869b1e105a94e3931360324c93faef66e"
+        },
+        {
+          "point": "#/acceptance/vertices/45/vectors/0",
+          "words": 20,
+          "sha256": "25450b028e314033c860da88fa34efe83e8da6d592bcc7fab3c8880c34f50562"
+        },
+        {
+          "point": "#/acceptance/vertices/45/vectors/1",
+          "words": 20,
+          "sha256": "c639468f5a9e7267dd09793afb704cbd6158d8edc51e0666a36760851a031dda"
+        },
+        {
+          "point": "#/acceptance/vertices/46/vectors/0",
+          "words": 20,
+          "sha256": "e93a674c02be017f13e532656c678576b7cbd244aabc2b45e7b8d35187068ca9"
+        },
+        {
+          "point": "#/acceptance/vertices/46/vectors/1",
+          "words": 20,
+          "sha256": "7a2992efbefae6875087751bc440571b434949e673da65411d690102103b4b6c"
+        },
+        {
+          "point": "#/acceptance/vertices/47/vectors/0",
+          "words": 20,
+          "sha256": "59347f762faf556016500d0fd01844e8c07212c41d416af784e36eca6f33f384"
+        },
+        {
+          "point": "#/acceptance/vertices/47/vectors/1",
+          "words": 20,
+          "sha256": "0b50b5fd42b1097257060433c510b32e19d3b405450aca89f4c0884fdb9f18f2"
+        },
+        {
+          "point": "#/acceptance/vertices/48/vectors/0",
+          "words": 20,
+          "sha256": "04b86587e99b71f24d2a9afda4f418d90c6bc337d080eab77cd50481ceedc525"
+        },
+        {
+          "point": "#/acceptance/vertices/48/vectors/1",
+          "words": 20,
+          "sha256": "eec6fe63582b2359a52e1afa869fa548fbc3baf3bd0025d118527e1c7b06baf6"
+        },
+        {
+          "point": "#/acceptance/vertices/49/vectors/0",
+          "words": 20,
+          "sha256": "ce309fbef25197fbb079a8bdd83f15b2870a1d27b96cedcf7a49d036d6cb4196"
+        },
+        {
+          "point": "#/acceptance/vertices/49/vectors/1",
+          "words": 20,
+          "sha256": "77f7c06e5093970a25569c02df46dadf84b680165254dfc074437a3f31524059"
+        },
+        {
+          "point": "#/acceptance/vertices/50/vectors/0",
+          "words": 20,
+          "sha256": "3c2941d7e141b7c5363460c9c98192a813f93a4720ab214e6a6c038302d4b992"
+        },
+        {
+          "point": "#/acceptance/vertices/50/vectors/1",
+          "words": 20,
+          "sha256": "3d758564800d6c0a5fb72f43487e8ad1dbf486e0b10281f38187b02c721b2086"
+        },
+        {
+          "point": "#/acceptance/vertices/51/vectors/0",
+          "words": 20,
+          "sha256": "84a77c6b142700b80929f93da9ce553fd0aff85bba4ac428d37c5fab7995b134"
+        },
+        {
+          "point": "#/acceptance/vertices/51/vectors/1",
+          "words": 20,
+          "sha256": "229a5a114bd6639159996fb3ff10d74df9910556a31293b42e21d552d69f7b86"
+        },
+        {
+          "point": "#/acceptance/vertices/52/vectors/0",
+          "words": 20,
+          "sha256": "95a749ab662b9848724e97e1a7f27b953f31a6bba1540216f4a7a36a2eaa9b36"
+        },
+        {
+          "point": "#/acceptance/vertices/52/vectors/1",
+          "words": 20,
+          "sha256": "a4bd5b09580f78407906a306c5f77b7a548b3ec34c72f0b0aef3d69ddc126f37"
+        },
+        {
+          "point": "#/acceptance/vertices/53/vectors/0",
+          "words": 20,
+          "sha256": "7d4c1c2aa30efdcc6d1808a8d2f1a9ec0868bbecb8e71b3187befcd76d704320"
+        },
+        {
+          "point": "#/acceptance/vertices/53/vectors/1",
+          "words": 20,
+          "sha256": "c1c8a6e8c4fe931926f50fbb31c13d67322b0db09d1331987dca34548e2e5f15"
+        },
+        {
+          "point": "#/acceptance/vertices/54/vectors/0",
+          "words": 20,
+          "sha256": "f1b6531f886a4ea0a90a0ffe0c75b692dc9464445797f638224cf005c8fc2e20"
+        },
+        {
+          "point": "#/acceptance/vertices/54/vectors/1",
+          "words": 20,
+          "sha256": "88ca1c8481c17e785e825fb395e118feaddda6ce8434beca25808a8015080026"
+        },
+        {
+          "point": "#/acceptance/vertices/55/vectors/0",
+          "words": 20,
+          "sha256": "a56d861ca8ba6cc22936818bfc8986bdb677c271a59b8d13d47fca16ffcc1cea"
+        },
+        {
+          "point": "#/acceptance/vertices/55/vectors/1",
+          "words": 20,
+          "sha256": "ffd056874ad3d9e6eff175ef7cdaf87644e74db1b5b15475d91e1fd3b32b1090"
+        },
+        {
+          "point": "#/acceptance/vertices/56/vectors/0",
+          "words": 20,
+          "sha256": "ea73f4eb5e7f5c56e2ea3c7770a664a1721183455dce0c69b8bfc5462e5c87c9"
+        },
+        {
+          "point": "#/acceptance/vertices/56/vectors/1",
+          "words": 20,
+          "sha256": "29f50ac9605fc62847a2b16d6cf08bdd4d3220beb79b40b519364c4613602a15"
+        },
+        {
+          "point": "#/acceptance/vertices/57/vectors/0",
+          "words": 20,
+          "sha256": "645ee609d15abc43a8653b8934ef8407a784671a5e6d0475d53510623fbe9b77"
+        },
+        {
+          "point": "#/acceptance/vertices/57/vectors/1",
+          "words": 20,
+          "sha256": "4b3a879652d0a2f696db0b1c3a1b6bef61bd289f91d5e64c4ebd3790c3873736"
+        },
+        {
+          "point": "#/acceptance/vertices/58/vectors/0",
+          "words": 20,
+          "sha256": "3c3bf1ef304713a5ca097aa1c7b29beed2dae558b95038007868d2a71da9649f"
+        },
+        {
+          "point": "#/acceptance/vertices/58/vectors/1",
+          "words": 20,
+          "sha256": "62ed4d264bae19d38a32db4bb851f4b2e0c56781e6a8b9958794675ac350d72e"
+        },
+        {
+          "point": "#/acceptance/vertices/59/vectors/0",
+          "words": 20,
+          "sha256": "83fa099f6945f3697465b479a15942dc58db00e3a377bc511bae43ba4a02eb0a"
+        },
+        {
+          "point": "#/acceptance/vertices/59/vectors/1",
+          "words": 20,
+          "sha256": "552d49870ad72333a8389d416f9e82915382427aa86b91070a12ba7eabd73b8c"
+        },
+        {
+          "point": "#/acceptance/vertices/60/vectors/0",
+          "words": 20,
+          "sha256": "0eff9da32f372f7f51768a664d9ca250589ce5df0a7b9874ff297d05c688fa13"
+        },
+        {
+          "point": "#/acceptance/vertices/60/vectors/1",
+          "words": 20,
+          "sha256": "420caa2b76f081d191f6d51b5a67339010a695c5b95c756d5c2abe8a8fea1b23"
+        }
+      ]
+    },
+    {
+      "kind": "hot",
+      "source": "hot/fault-shadow/report.json",
+      "sourceSha256": "71a24fb8b8b7f56d0841fad71657f398025acc50e2982c60e74c618340ac1651",
+      "status": "HELD",
+      "seed": 1779033703,
+      "fault": "shadow",
+      "sourceDerivedProducerRows": 1,
+      "rawCarrierWords": 20,
+      "mathWords": 0,
+      "exactRgbaPixels": 0,
+      "faultContradictions": [
+        {
+          "vertex": 0,
+          "vector": 0,
+          "lane": 16,
+          "expected": 1065353216,
+          "observed": 1069547520
+        }
+      ],
+      "qualifiedNumericZeroSigns": [],
+      "originalPoints": [
+        {
+          "point": "#/acceptance/vertices/0/vectors/0",
+          "words": 20,
+          "sha256": "2460e1942e0144ae2e32a8333f76a9bef5fd4ac3a38627812f66ccf21bc2c148"
+        }
+      ]
+    },
+    {
+      "kind": "hot",
+      "source": "hot/fault-word/report.json",
+      "sourceSha256": "1907bf22988a36296f36312e876caf2fafa538dbb6595671257c1311da6ba8cd",
+      "status": "HELD",
+      "seed": 1779033703,
+      "fault": "word",
+      "sourceDerivedProducerRows": 1,
+      "rawCarrierWords": 20,
+      "mathWords": 0,
+      "exactRgbaPixels": 0,
+      "faultContradictions": [
+        {
+          "vertex": 0,
+          "vector": 0,
+          "lane": 4,
+          "expected": 1056964608,
+          "observed": 1056964609
+        }
+      ],
+      "qualifiedNumericZeroSigns": [],
+      "originalPoints": [
+        {
+          "point": "#/acceptance/vertices/0/vectors/0",
+          "words": 20,
+          "sha256": "fde0953d3df9337737d19c87eb6576b41936adbd23e75ca0944f1d791234a226"
+        }
+      ]
+    },
+    {
+      "kind": "cold",
+      "source": "cold/acceptance/gpu-1013904242/report.json",
+      "sourceSha256": "bb1b8ca623dd728e77e727615fa436e8ef6f82560accf960f472b9b5fa1b99a7",
+      "status": "HELD",
+      "seed": 1013904242,
+      "fault": null,
+      "sourceDerivedProducerRows": 61,
+      "rawCarrierWords": 2440,
+      "mathWords": 64,
+      "exactRgbaPixels": 7808,
+      "faultContradictions": [],
+      "qualifiedNumericZeroSigns": [
+        {
+          "vertex": 13,
+          "vector": 0,
+          "lane": 16,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 13,
+          "vector": 0,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 13,
+          "vector": 1,
+          "lane": 16,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 13,
+          "vector": 1,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 14,
+          "vector": 0,
+          "lane": 17,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 14,
+          "vector": 1,
+          "lane": 17,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 29,
+          "vector": 0,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 29,
+          "vector": 1,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 43,
+          "vector": 0,
+          "lane": 18,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 43,
+          "vector": 0,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 43,
+          "vector": 1,
+          "lane": 18,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 43,
+          "vector": 1,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 44,
+          "vector": 0,
+          "lane": 17,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 44,
+          "vector": 0,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 44,
+          "vector": 1,
+          "lane": 17,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 44,
+          "vector": 1,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 59,
+          "vector": 0,
+          "lane": 16,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 59,
+          "vector": 0,
+          "lane": 17,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 59,
+          "vector": 1,
+          "lane": 16,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 59,
+          "vector": 1,
+          "lane": 17,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        }
+      ],
+      "originalPoints": [
+        {
+          "point": "#/acceptance/vertices/0/vectors/0",
+          "words": 20,
+          "sha256": "73932965b18d7e0ebfc43aa495e9b31dcf1107b83af0efa340d9ee0832c9f947"
+        },
+        {
+          "point": "#/acceptance/vertices/0/vectors/1",
+          "words": 20,
+          "sha256": "6862b988e38f867785176303d48522a0d3ace3474a3d9e4e15af4726de38de27"
+        },
+        {
+          "point": "#/acceptance/vertices/1/vectors/0",
+          "words": 20,
+          "sha256": "11444a3fa0484de22f358e23807336ed75a6729cd7099d0f176c0ef22987c022"
+        },
+        {
+          "point": "#/acceptance/vertices/1/vectors/1",
+          "words": 20,
+          "sha256": "4065e275163b20906203a3adfed9663c06831d27decf8664ccdf164cdec000e4"
+        },
+        {
+          "point": "#/acceptance/vertices/2/vectors/0",
+          "words": 20,
+          "sha256": "9115186d0419efb9380087662e4540bb2f490bc7400918fff97263712871548e"
+        },
+        {
+          "point": "#/acceptance/vertices/2/vectors/1",
+          "words": 20,
+          "sha256": "09a2fbf0643163ccc9e6c882b0795f2acca9327ce0aa6ee9ebe1a33d5c99e110"
+        },
+        {
+          "point": "#/acceptance/vertices/3/vectors/0",
+          "words": 20,
+          "sha256": "4296887af177b7187cc4bc5f1e15961a8e41892fcc146673c26ce39f69fc1f35"
+        },
+        {
+          "point": "#/acceptance/vertices/3/vectors/1",
+          "words": 20,
+          "sha256": "59a2ebe357ec4e6832744ebd4f37f838b3f89169f947c01cae783c76a104f8b3"
+        },
+        {
+          "point": "#/acceptance/vertices/4/vectors/0",
+          "words": 20,
+          "sha256": "ec3a2fc0438a13c0f50c0d703f4c7629c13fae247a40496b6580f31752798825"
+        },
+        {
+          "point": "#/acceptance/vertices/4/vectors/1",
+          "words": 20,
+          "sha256": "9de02d8582e077bb9e017592530d68dd678dcb86b1a2e7ada25ed95c55fde23b"
+        },
+        {
+          "point": "#/acceptance/vertices/5/vectors/0",
+          "words": 20,
+          "sha256": "ffe53771ef056490bf667483be09060f061b2dd9242d2badfc79d79af10451b2"
+        },
+        {
+          "point": "#/acceptance/vertices/5/vectors/1",
+          "words": 20,
+          "sha256": "669dc0b118323d28384f12feab479b238df6bd42da0bf73dfa481f3cc70a562d"
+        },
+        {
+          "point": "#/acceptance/vertices/6/vectors/0",
+          "words": 20,
+          "sha256": "3d0afd5c9e0d3297cfef55b7e515c50de895924b8aa792ce9aecdd8913dd84c2"
+        },
+        {
+          "point": "#/acceptance/vertices/6/vectors/1",
+          "words": 20,
+          "sha256": "0156096a4ad9ad68b7582894a52ef244078ca97fce5b37cb873755fd1b3ae44d"
+        },
+        {
+          "point": "#/acceptance/vertices/7/vectors/0",
+          "words": 20,
+          "sha256": "0d79da5c9c91ebc40e3ed62d96592f637a64b26034122bb2addd1f2ddc17793e"
+        },
+        {
+          "point": "#/acceptance/vertices/7/vectors/1",
+          "words": 20,
+          "sha256": "1445fdc5d106b0115ab27f4f476ea75dc4a0998080f3ac74aebc8b6a73b186a9"
+        },
+        {
+          "point": "#/acceptance/vertices/8/vectors/0",
+          "words": 20,
+          "sha256": "d7a6607258da11f91584b79b7b7f8240aa6f798bddc04890ad9fe4dfd77272ec"
+        },
+        {
+          "point": "#/acceptance/vertices/8/vectors/1",
+          "words": 20,
+          "sha256": "c59ba46bc4ade646fb034365e5f2555732bec8041f53c79433bb55a418d87470"
+        },
+        {
+          "point": "#/acceptance/vertices/9/vectors/0",
+          "words": 20,
+          "sha256": "659d68ad27d3c879e8b1f1218c9dbce3ec73fa9c4138f204373fa21c145846b0"
+        },
+        {
+          "point": "#/acceptance/vertices/9/vectors/1",
+          "words": 20,
+          "sha256": "8f0ce97fec72e2cc049b54626b0dc4342029f9c85c9ae2c7fd9cac15a040c177"
+        },
+        {
+          "point": "#/acceptance/vertices/10/vectors/0",
+          "words": 20,
+          "sha256": "16829b8c0baedffe5b41a14aeba8736ad68997a7020775ff162c42fdf7cb7b9d"
+        },
+        {
+          "point": "#/acceptance/vertices/10/vectors/1",
+          "words": 20,
+          "sha256": "58ad6593f16f93fce520fa44bdd07ba0f6a542a7a2f7eab591302010c2dc5adc"
+        },
+        {
+          "point": "#/acceptance/vertices/11/vectors/0",
+          "words": 20,
+          "sha256": "7383c6233f4f39cd6825df61320da9ae62fc11cad74fdb8eccd5e236df201dd9"
+        },
+        {
+          "point": "#/acceptance/vertices/11/vectors/1",
+          "words": 20,
+          "sha256": "4d60d8a187ddaf448ee96953339b84f74be75cc511dc3cf94bb0b9a15e7df9f9"
+        },
+        {
+          "point": "#/acceptance/vertices/12/vectors/0",
+          "words": 20,
+          "sha256": "14b4ddc2357d94658bd3719cf325d4d9b3b2c00bb9f45cf429740cc2223e4dd5"
+        },
+        {
+          "point": "#/acceptance/vertices/12/vectors/1",
+          "words": 20,
+          "sha256": "ded65ea2f4bceb400182582430dedba08d5a4fdbd37869832a54c67d3d80443d"
+        },
+        {
+          "point": "#/acceptance/vertices/13/vectors/0",
+          "words": 20,
+          "sha256": "1641e20be6026a93473f562646362a879d0fd411945d0618fa4c3c4124f74117"
+        },
+        {
+          "point": "#/acceptance/vertices/13/vectors/1",
+          "words": 20,
+          "sha256": "bd4a412973f1a804fa7d80d154808170008e4892b38c0b1f57045832310dfacd"
+        },
+        {
+          "point": "#/acceptance/vertices/14/vectors/0",
+          "words": 20,
+          "sha256": "d7d175210f5562a5a6c9c20e6b6ac216a76e827f57681e291a35957deb57e59d"
+        },
+        {
+          "point": "#/acceptance/vertices/14/vectors/1",
+          "words": 20,
+          "sha256": "a1a4eac0b6e7163bb592d37aa908bac92537e79931ccb2c91525c43ce1eb9f47"
+        },
+        {
+          "point": "#/acceptance/vertices/15/vectors/0",
+          "words": 20,
+          "sha256": "f3ed0f5f2215458e2c9bd8ca6968c50d62dbfe60473af9a7f5a5ad302d85ab67"
+        },
+        {
+          "point": "#/acceptance/vertices/15/vectors/1",
+          "words": 20,
+          "sha256": "d9c8491e9c82458a6ba046adca398b4faaefe0d691f94da6e465c43f6da1259d"
+        },
+        {
+          "point": "#/acceptance/vertices/16/vectors/0",
+          "words": 20,
+          "sha256": "13a0ce33daeac5cd5e778ef8ce8e18e6d487c2e5967214eda107c439dbaea9f5"
+        },
+        {
+          "point": "#/acceptance/vertices/16/vectors/1",
+          "words": 20,
+          "sha256": "8977296991f70e3432ff3547d97f32e22624a8a599b87323d022a0b1b4422e66"
+        },
+        {
+          "point": "#/acceptance/vertices/17/vectors/0",
+          "words": 20,
+          "sha256": "a87278d5125df1fcd618df572fa2e83942f21eb34fb19981227f72896b8ef20f"
+        },
+        {
+          "point": "#/acceptance/vertices/17/vectors/1",
+          "words": 20,
+          "sha256": "b02072ef9a70e0d45f8a1fe28f97c5d314a6ee1d2e0a0f0e8aa68b842400e346"
+        },
+        {
+          "point": "#/acceptance/vertices/18/vectors/0",
+          "words": 20,
+          "sha256": "44e62091759c1d1bd84ba76435f2ca3cc0125c56cdccf62a0a55a7f47243e2f4"
+        },
+        {
+          "point": "#/acceptance/vertices/18/vectors/1",
+          "words": 20,
+          "sha256": "9329f9443f708acf0b717219cc95f005f7f732079f401f1403da49c7a79d7665"
+        },
+        {
+          "point": "#/acceptance/vertices/19/vectors/0",
+          "words": 20,
+          "sha256": "04590b222fddd9e9b12e5ad059a7ff94be4c25b441090f5c277fa839def15f13"
+        },
+        {
+          "point": "#/acceptance/vertices/19/vectors/1",
+          "words": 20,
+          "sha256": "fd97eef81416bd5d2e361fe18fe42d57da95fbf6d1070890f2ef974f53e96204"
+        },
+        {
+          "point": "#/acceptance/vertices/20/vectors/0",
+          "words": 20,
+          "sha256": "31504aead34aa5dae13ca0f73f5852bd3e312d8638fb6a7b1ce269e7630b9557"
+        },
+        {
+          "point": "#/acceptance/vertices/20/vectors/1",
+          "words": 20,
+          "sha256": "6e7f59d2afe586fd1b1174fd4d9053c1988ba76a5877e69a2f8745bdc7d01182"
+        },
+        {
+          "point": "#/acceptance/vertices/21/vectors/0",
+          "words": 20,
+          "sha256": "26a71fb2b068a9e2408430f874bdcc7819852da2812e3a45d72299f7b25ca740"
+        },
+        {
+          "point": "#/acceptance/vertices/21/vectors/1",
+          "words": 20,
+          "sha256": "a362025a5d4918d539913671b3bdebf4cb31bb50a4a104a2d4d0b859f0f382f6"
+        },
+        {
+          "point": "#/acceptance/vertices/22/vectors/0",
+          "words": 20,
+          "sha256": "0525c1dc0b7e8d8683df52fce23e76cf4266ddd875c29f5fe7f027de3a1daa76"
+        },
+        {
+          "point": "#/acceptance/vertices/22/vectors/1",
+          "words": 20,
+          "sha256": "5ab4ca8bc4007677c7c28a23a450e2964b672ba8c159c1faed26d6315cd01d1a"
+        },
+        {
+          "point": "#/acceptance/vertices/23/vectors/0",
+          "words": 20,
+          "sha256": "de361a6c6d9818f776a3a4c93c61b95a41ce19162ffc81fc4d2f2fdf495cd5ae"
+        },
+        {
+          "point": "#/acceptance/vertices/23/vectors/1",
+          "words": 20,
+          "sha256": "5b10e666c78e7f26608d52e2721e4e1b6519faf996d80e14ec1729903046b190"
+        },
+        {
+          "point": "#/acceptance/vertices/24/vectors/0",
+          "words": 20,
+          "sha256": "9c462624103f570300cbbbe355dc5eb4557775c6095ab12c4998e4c211eed9ea"
+        },
+        {
+          "point": "#/acceptance/vertices/24/vectors/1",
+          "words": 20,
+          "sha256": "dea9cdf4bed97af7f6c94ff3916736dddf984c5af524575ac37ebfd1a0642ef2"
+        },
+        {
+          "point": "#/acceptance/vertices/25/vectors/0",
+          "words": 20,
+          "sha256": "d9778be53f69635e88dc1d06a8dd73835988ea99248d196964551dc70bc41eb0"
+        },
+        {
+          "point": "#/acceptance/vertices/25/vectors/1",
+          "words": 20,
+          "sha256": "65e2767956ae310e53013bc555547508dcfb715307ab5b4d1e238f42dbbd4b8a"
+        },
+        {
+          "point": "#/acceptance/vertices/26/vectors/0",
+          "words": 20,
+          "sha256": "6e84e3a2bfd023d01200bedba6291e39e43144ca9861f2ed0647c9f4def65cec"
+        },
+        {
+          "point": "#/acceptance/vertices/26/vectors/1",
+          "words": 20,
+          "sha256": "226cf1fd8849bba5950f98143b223daf90cf86fd8ddd989b931436a508fcfbd9"
+        },
+        {
+          "point": "#/acceptance/vertices/27/vectors/0",
+          "words": 20,
+          "sha256": "f19c9a9ca7205be2cf79a525935f7d3288d5000babff233b7afcc05f1aa23118"
+        },
+        {
+          "point": "#/acceptance/vertices/27/vectors/1",
+          "words": 20,
+          "sha256": "71e2f29b4a1adbfe0cbeaf2d97f2e3ae090f5def31b519b75df14373c72507f7"
+        },
+        {
+          "point": "#/acceptance/vertices/28/vectors/0",
+          "words": 20,
+          "sha256": "12de957036c4b6d36a5b32bef7748557272defcb17755bde68ebee61190589ee"
+        },
+        {
+          "point": "#/acceptance/vertices/28/vectors/1",
+          "words": 20,
+          "sha256": "67db47afc4dcbe9352160fc0c38ffdefa4bf888c654492d11b272438d2c74a9a"
+        },
+        {
+          "point": "#/acceptance/vertices/29/vectors/0",
+          "words": 20,
+          "sha256": "1b66f593b8e3c243c1c6ed8694243a535acf93aae6359d8e851be1b92d95ba94"
+        },
+        {
+          "point": "#/acceptance/vertices/29/vectors/1",
+          "words": 20,
+          "sha256": "330c695ecf7f443b55aa263633662efa14640bbe02ffadf6ac303b0d31d32589"
+        },
+        {
+          "point": "#/acceptance/vertices/30/vectors/0",
+          "words": 20,
+          "sha256": "e969644be0a36d7c1b6e9edbc246f4ba7d7950383c4f99891bcd835b4158af6d"
+        },
+        {
+          "point": "#/acceptance/vertices/30/vectors/1",
+          "words": 20,
+          "sha256": "1d53fe1c612b75124d118bc9a40565eb543d56fe685961b7a83398d7fa0d3562"
+        },
+        {
+          "point": "#/acceptance/vertices/31/vectors/0",
+          "words": 20,
+          "sha256": "73ee40ff61c3914ebcd260558f5d93bf33bd8dc47024722b1fa4225ad59537d6"
+        },
+        {
+          "point": "#/acceptance/vertices/31/vectors/1",
+          "words": 20,
+          "sha256": "e8a02a85948384e0cb44e40b716ddf401dd18eb0c83081a4c2e08da95335d13d"
+        },
+        {
+          "point": "#/acceptance/vertices/32/vectors/0",
+          "words": 20,
+          "sha256": "6d87c542aa9adb7a6076f68366b705c248d56c1a2ec39f4b0ea172169548fa11"
+        },
+        {
+          "point": "#/acceptance/vertices/32/vectors/1",
+          "words": 20,
+          "sha256": "af79c774aaffa38fdcdcc15eb166159d85ad6bb037bca4e83377ca2b245c33ef"
+        },
+        {
+          "point": "#/acceptance/vertices/33/vectors/0",
+          "words": 20,
+          "sha256": "f8cfaba8b74b84bb0623172e8f9bd964c1f5b1775bed8fea3e7e0e345ab3684f"
+        },
+        {
+          "point": "#/acceptance/vertices/33/vectors/1",
+          "words": 20,
+          "sha256": "660bb4c6706aa561e485cdc41ff86cb6225806229058746b18526a7702f37e5d"
+        },
+        {
+          "point": "#/acceptance/vertices/34/vectors/0",
+          "words": 20,
+          "sha256": "08b6c24e37f31a0a521524fb361e377ebfb3c748c5d2725de3c4b21e0bd27d64"
+        },
+        {
+          "point": "#/acceptance/vertices/34/vectors/1",
+          "words": 20,
+          "sha256": "037fbb2ea443a393f4e7727c8a6a335a0afbe5edc2bf3fb353076aec707a3ab9"
+        },
+        {
+          "point": "#/acceptance/vertices/35/vectors/0",
+          "words": 20,
+          "sha256": "63c7a456945cac13535d3ebfe67c94f3f1600a96e5d6eb49d40c11891e4beb0b"
+        },
+        {
+          "point": "#/acceptance/vertices/35/vectors/1",
+          "words": 20,
+          "sha256": "7d7c0ae495efbc098a1c767c3acf1c6e5ad938dbbb899d6281ac3d2616e9b2d6"
+        },
+        {
+          "point": "#/acceptance/vertices/36/vectors/0",
+          "words": 20,
+          "sha256": "4ddea3628e83315235a7859d7f4d76b5bdd2670b1916ae2ce66c561b08722a1d"
+        },
+        {
+          "point": "#/acceptance/vertices/36/vectors/1",
+          "words": 20,
+          "sha256": "3814ed9d0294ba632c0838544a768af93193a9f7e260a4d84ad31afdbdfe2e63"
+        },
+        {
+          "point": "#/acceptance/vertices/37/vectors/0",
+          "words": 20,
+          "sha256": "6826e1e96fc9f51b4ec0f646306d2e0a257055a12acbe2d3bd5639fd99165f48"
+        },
+        {
+          "point": "#/acceptance/vertices/37/vectors/1",
+          "words": 20,
+          "sha256": "7a99a3c70208cd3cc96945d2b97b004e599e224a2ce7bdfcd6f23d3cffd451e0"
+        },
+        {
+          "point": "#/acceptance/vertices/38/vectors/0",
+          "words": 20,
+          "sha256": "93cfa0862fed3ec26d1d0b4df7218edbfc964cd45a4b68b8a42cc982a8f48d1f"
+        },
+        {
+          "point": "#/acceptance/vertices/38/vectors/1",
+          "words": 20,
+          "sha256": "e50e996437e8f9fb391b6be6d2fcc8423f51b59c1ac7e97029666ea36e797db9"
+        },
+        {
+          "point": "#/acceptance/vertices/39/vectors/0",
+          "words": 20,
+          "sha256": "4eb61c8de72ad4ce121ac58300ba8bbc4eb4e3148f6f87f0e165ffd46d90a3ed"
+        },
+        {
+          "point": "#/acceptance/vertices/39/vectors/1",
+          "words": 20,
+          "sha256": "b5a7a656897e7820edc8e3844244ef4dfa9b3c84acd5d130e60862948dafee9f"
+        },
+        {
+          "point": "#/acceptance/vertices/40/vectors/0",
+          "words": 20,
+          "sha256": "21a7d436c4756b9e142a9bb97c33ea7f812d1aeee959dd4e16c53e85b4b686c7"
+        },
+        {
+          "point": "#/acceptance/vertices/40/vectors/1",
+          "words": 20,
+          "sha256": "421bb8ffa061a8068009d7fc7406914d6ac3cb2e0c366d403fb76545b7f5043f"
+        },
+        {
+          "point": "#/acceptance/vertices/41/vectors/0",
+          "words": 20,
+          "sha256": "a7ddb6c4d005952d3265e2496a0ddc1e84f88c15f4846a2ffef8830f1d2be70e"
+        },
+        {
+          "point": "#/acceptance/vertices/41/vectors/1",
+          "words": 20,
+          "sha256": "305001ec0edd83390c60ba7691095e73e4691b5474ad2af55f5b058d9498e4d5"
+        },
+        {
+          "point": "#/acceptance/vertices/42/vectors/0",
+          "words": 20,
+          "sha256": "f84a3d9dd60c4942f527880988d89c055ace93961e52d7652a3a32cf15da55c2"
+        },
+        {
+          "point": "#/acceptance/vertices/42/vectors/1",
+          "words": 20,
+          "sha256": "2b1dce3268a53cf3caa6d0e180f3180b3ddb1d31e4e559c08e00f4e5a94a5018"
+        },
+        {
+          "point": "#/acceptance/vertices/43/vectors/0",
+          "words": 20,
+          "sha256": "11c6db3117708daccb45eb69eb213cafa9e4f353dc352343f1b74ec8db95b366"
+        },
+        {
+          "point": "#/acceptance/vertices/43/vectors/1",
+          "words": 20,
+          "sha256": "0111f5758e6575409128cfa30f3dc9b0387ff4a7337aeeb82264b045099a4aac"
+        },
+        {
+          "point": "#/acceptance/vertices/44/vectors/0",
+          "words": 20,
+          "sha256": "7cc95d2d0ed7fac7c5998c33b2625277ac28f91409da0aa5bc7a50922f7c5e74"
+        },
+        {
+          "point": "#/acceptance/vertices/44/vectors/1",
+          "words": 20,
+          "sha256": "1ffc9d553619f632c33a5330e109b93869b1e105a94e3931360324c93faef66e"
+        },
+        {
+          "point": "#/acceptance/vertices/45/vectors/0",
+          "words": 20,
+          "sha256": "25450b028e314033c860da88fa34efe83e8da6d592bcc7fab3c8880c34f50562"
+        },
+        {
+          "point": "#/acceptance/vertices/45/vectors/1",
+          "words": 20,
+          "sha256": "c639468f5a9e7267dd09793afb704cbd6158d8edc51e0666a36760851a031dda"
+        },
+        {
+          "point": "#/acceptance/vertices/46/vectors/0",
+          "words": 20,
+          "sha256": "e93a674c02be017f13e532656c678576b7cbd244aabc2b45e7b8d35187068ca9"
+        },
+        {
+          "point": "#/acceptance/vertices/46/vectors/1",
+          "words": 20,
+          "sha256": "7a2992efbefae6875087751bc440571b434949e673da65411d690102103b4b6c"
+        },
+        {
+          "point": "#/acceptance/vertices/47/vectors/0",
+          "words": 20,
+          "sha256": "59347f762faf556016500d0fd01844e8c07212c41d416af784e36eca6f33f384"
+        },
+        {
+          "point": "#/acceptance/vertices/47/vectors/1",
+          "words": 20,
+          "sha256": "0b50b5fd42b1097257060433c510b32e19d3b405450aca89f4c0884fdb9f18f2"
+        },
+        {
+          "point": "#/acceptance/vertices/48/vectors/0",
+          "words": 20,
+          "sha256": "04b86587e99b71f24d2a9afda4f418d90c6bc337d080eab77cd50481ceedc525"
+        },
+        {
+          "point": "#/acceptance/vertices/48/vectors/1",
+          "words": 20,
+          "sha256": "eec6fe63582b2359a52e1afa869fa548fbc3baf3bd0025d118527e1c7b06baf6"
+        },
+        {
+          "point": "#/acceptance/vertices/49/vectors/0",
+          "words": 20,
+          "sha256": "ce309fbef25197fbb079a8bdd83f15b2870a1d27b96cedcf7a49d036d6cb4196"
+        },
+        {
+          "point": "#/acceptance/vertices/49/vectors/1",
+          "words": 20,
+          "sha256": "77f7c06e5093970a25569c02df46dadf84b680165254dfc074437a3f31524059"
+        },
+        {
+          "point": "#/acceptance/vertices/50/vectors/0",
+          "words": 20,
+          "sha256": "3c2941d7e141b7c5363460c9c98192a813f93a4720ab214e6a6c038302d4b992"
+        },
+        {
+          "point": "#/acceptance/vertices/50/vectors/1",
+          "words": 20,
+          "sha256": "3d758564800d6c0a5fb72f43487e8ad1dbf486e0b10281f38187b02c721b2086"
+        },
+        {
+          "point": "#/acceptance/vertices/51/vectors/0",
+          "words": 20,
+          "sha256": "f6a194250ae9af4c7fc01dd40cc005630d7aaa07d5b685829b89a2a8583884c9"
+        },
+        {
+          "point": "#/acceptance/vertices/51/vectors/1",
+          "words": 20,
+          "sha256": "d7af57ac71bb957f14d3765e6f939bba70238f6d761c92a2994507a1ea22aa2d"
+        },
+        {
+          "point": "#/acceptance/vertices/52/vectors/0",
+          "words": 20,
+          "sha256": "ab608f29cb70858a673e32183718d7444a6216129abfd6fe20d277f36db4f49a"
+        },
+        {
+          "point": "#/acceptance/vertices/52/vectors/1",
+          "words": 20,
+          "sha256": "47400ed8553784564a6429ce6908d89e4f01524a215e29b76755fbcd0f8bf5a2"
+        },
+        {
+          "point": "#/acceptance/vertices/53/vectors/0",
+          "words": 20,
+          "sha256": "cce8d7b8a82925dccb4b325a119a0f8a84d3ae620470d56e262b9eec87ba1e06"
+        },
+        {
+          "point": "#/acceptance/vertices/53/vectors/1",
+          "words": 20,
+          "sha256": "0ceb7e06e8e2ec60c70eb09ceca47baaffab9467ad855c0c035cb36b14c93383"
+        },
+        {
+          "point": "#/acceptance/vertices/54/vectors/0",
+          "words": 20,
+          "sha256": "bd67c8d543d7a9ab891e79a5381e0da6b22dd2e57f0159667c0fa39c28aa5928"
+        },
+        {
+          "point": "#/acceptance/vertices/54/vectors/1",
+          "words": 20,
+          "sha256": "f13f5f6e3df308ae99b6edbf1ff7a2cfb957b8f9f9f98c4790126bb691d7bbbc"
+        },
+        {
+          "point": "#/acceptance/vertices/55/vectors/0",
+          "words": 20,
+          "sha256": "95cffb817a7bca4b515cedf8d0198444503174b1c862fd44cdcf687f8c8cad7f"
+        },
+        {
+          "point": "#/acceptance/vertices/55/vectors/1",
+          "words": 20,
+          "sha256": "89527e3e0a1d27b24fa432da14fc14305e3bccc85912df21cf65faea27bf2a4b"
+        },
+        {
+          "point": "#/acceptance/vertices/56/vectors/0",
+          "words": 20,
+          "sha256": "0b7f0bed20f652515c1b54adced3a760a9a232e4ac53ae833cc81234683ec09f"
+        },
+        {
+          "point": "#/acceptance/vertices/56/vectors/1",
+          "words": 20,
+          "sha256": "033f6e06ba0d37c880de44f7f912c09e45d0ce16cb21a072c4c7be0312b1df02"
+        },
+        {
+          "point": "#/acceptance/vertices/57/vectors/0",
+          "words": 20,
+          "sha256": "1a4a37e30c2fb3d3bb3a09c5fab3f6c94e74bb5f08d7de574974fae95d66af1f"
+        },
+        {
+          "point": "#/acceptance/vertices/57/vectors/1",
+          "words": 20,
+          "sha256": "2ac332a22a547b0421de453582fd442a7b86a20d7fd23d8ddc98bee1159f7142"
+        },
+        {
+          "point": "#/acceptance/vertices/58/vectors/0",
+          "words": 20,
+          "sha256": "8f274632995cb16b4e3b9945d64c5f003f52c31bb216b099add85503b333bde5"
+        },
+        {
+          "point": "#/acceptance/vertices/58/vectors/1",
+          "words": 20,
+          "sha256": "de7edffc22078789fdf3e0ed31a808eceb3b2ff15a96cd300bbcc25da6853e78"
+        },
+        {
+          "point": "#/acceptance/vertices/59/vectors/0",
+          "words": 20,
+          "sha256": "83fa099f6945f3697465b479a15942dc58db00e3a377bc511bae43ba4a02eb0a"
+        },
+        {
+          "point": "#/acceptance/vertices/59/vectors/1",
+          "words": 20,
+          "sha256": "552d49870ad72333a8389d416f9e82915382427aa86b91070a12ba7eabd73b8c"
+        },
+        {
+          "point": "#/acceptance/vertices/60/vectors/0",
+          "words": 20,
+          "sha256": "0eff9da32f372f7f51768a664d9ca250589ce5df0a7b9874ff297d05c688fa13"
+        },
+        {
+          "point": "#/acceptance/vertices/60/vectors/1",
+          "words": 20,
+          "sha256": "420caa2b76f081d191f6d51b5a67339010a695c5b95c756d5c2abe8a8fea1b23"
+        }
+      ]
+    },
+    {
+      "kind": "cold",
+      "source": "cold/acceptance/gpu-1779033703/report.json",
+      "sourceSha256": "48b0d18f04d5a66cc1663bf23357a33df399f2ec2ecebaee62f1ecdec65ae268",
+      "status": "HELD",
+      "seed": 1779033703,
+      "fault": null,
+      "sourceDerivedProducerRows": 61,
+      "rawCarrierWords": 2440,
+      "mathWords": 64,
+      "exactRgbaPixels": 7808,
+      "faultContradictions": [],
+      "qualifiedNumericZeroSigns": [
+        {
+          "vertex": 13,
+          "vector": 0,
+          "lane": 16,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 13,
+          "vector": 0,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 13,
+          "vector": 1,
+          "lane": 16,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 13,
+          "vector": 1,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 14,
+          "vector": 0,
+          "lane": 17,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 14,
+          "vector": 1,
+          "lane": 17,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 29,
+          "vector": 0,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 29,
+          "vector": 1,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 43,
+          "vector": 0,
+          "lane": 18,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 43,
+          "vector": 0,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 43,
+          "vector": 1,
+          "lane": 18,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 43,
+          "vector": 1,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 44,
+          "vector": 0,
+          "lane": 17,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 44,
+          "vector": 0,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 44,
+          "vector": 1,
+          "lane": 17,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 44,
+          "vector": 1,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 59,
+          "vector": 0,
+          "lane": 16,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 59,
+          "vector": 0,
+          "lane": 17,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 59,
+          "vector": 1,
+          "lane": 16,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 59,
+          "vector": 1,
+          "lane": 17,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        }
+      ],
+      "originalPoints": [
+        {
+          "point": "#/acceptance/vertices/0/vectors/0",
+          "words": 20,
+          "sha256": "73932965b18d7e0ebfc43aa495e9b31dcf1107b83af0efa340d9ee0832c9f947"
+        },
+        {
+          "point": "#/acceptance/vertices/0/vectors/1",
+          "words": 20,
+          "sha256": "6862b988e38f867785176303d48522a0d3ace3474a3d9e4e15af4726de38de27"
+        },
+        {
+          "point": "#/acceptance/vertices/1/vectors/0",
+          "words": 20,
+          "sha256": "11444a3fa0484de22f358e23807336ed75a6729cd7099d0f176c0ef22987c022"
+        },
+        {
+          "point": "#/acceptance/vertices/1/vectors/1",
+          "words": 20,
+          "sha256": "4065e275163b20906203a3adfed9663c06831d27decf8664ccdf164cdec000e4"
+        },
+        {
+          "point": "#/acceptance/vertices/2/vectors/0",
+          "words": 20,
+          "sha256": "9115186d0419efb9380087662e4540bb2f490bc7400918fff97263712871548e"
+        },
+        {
+          "point": "#/acceptance/vertices/2/vectors/1",
+          "words": 20,
+          "sha256": "09a2fbf0643163ccc9e6c882b0795f2acca9327ce0aa6ee9ebe1a33d5c99e110"
+        },
+        {
+          "point": "#/acceptance/vertices/3/vectors/0",
+          "words": 20,
+          "sha256": "4296887af177b7187cc4bc5f1e15961a8e41892fcc146673c26ce39f69fc1f35"
+        },
+        {
+          "point": "#/acceptance/vertices/3/vectors/1",
+          "words": 20,
+          "sha256": "59a2ebe357ec4e6832744ebd4f37f838b3f89169f947c01cae783c76a104f8b3"
+        },
+        {
+          "point": "#/acceptance/vertices/4/vectors/0",
+          "words": 20,
+          "sha256": "ec3a2fc0438a13c0f50c0d703f4c7629c13fae247a40496b6580f31752798825"
+        },
+        {
+          "point": "#/acceptance/vertices/4/vectors/1",
+          "words": 20,
+          "sha256": "9de02d8582e077bb9e017592530d68dd678dcb86b1a2e7ada25ed95c55fde23b"
+        },
+        {
+          "point": "#/acceptance/vertices/5/vectors/0",
+          "words": 20,
+          "sha256": "e80043acb170011c9580a2b4f9fedb5fb75a774d35162bef0693eba94d49ebd5"
+        },
+        {
+          "point": "#/acceptance/vertices/5/vectors/1",
+          "words": 20,
+          "sha256": "b08cfdf089b6070ce83823365e140e9033df56b141815c64cef88c4a8c4c881c"
+        },
+        {
+          "point": "#/acceptance/vertices/6/vectors/0",
+          "words": 20,
+          "sha256": "81eaa6d332c8e3f2a006578e8a81b38cb3ce22e35298e8ef758ea6dda155e73a"
+        },
+        {
+          "point": "#/acceptance/vertices/6/vectors/1",
+          "words": 20,
+          "sha256": "ca3c030dbb38790f1e68890574d8dbcf7a23077113e81b0828b2668e3579ee86"
+        },
+        {
+          "point": "#/acceptance/vertices/7/vectors/0",
+          "words": 20,
+          "sha256": "b416729ad1925f83a20ddf0f606185585a266fafe65bfcbc7f2a07618fe7de75"
+        },
+        {
+          "point": "#/acceptance/vertices/7/vectors/1",
+          "words": 20,
+          "sha256": "d8998e03704c3cf1bf2625e94e1baaec06dd95baf6aa02cb100c147fb90627a7"
+        },
+        {
+          "point": "#/acceptance/vertices/8/vectors/0",
+          "words": 20,
+          "sha256": "61ef57249a46a8e20cc94ae74256e850d4f5a130af04b3f1c57295b991136399"
+        },
+        {
+          "point": "#/acceptance/vertices/8/vectors/1",
+          "words": 20,
+          "sha256": "785c09c31d1202710ad604e44b956813e51f145f4f0762a926b8fdcdd44957e2"
+        },
+        {
+          "point": "#/acceptance/vertices/9/vectors/0",
+          "words": 20,
+          "sha256": "06acc419018cce63267e3bad1a977b88150e622fa4e0b8332aec062751218553"
+        },
+        {
+          "point": "#/acceptance/vertices/9/vectors/1",
+          "words": 20,
+          "sha256": "995262dd5fd7165aba87aef2613e5dc3d1bae5b5b94917b6e35c01411acf0f4c"
+        },
+        {
+          "point": "#/acceptance/vertices/10/vectors/0",
+          "words": 20,
+          "sha256": "3a85d90ef9da6724b6db5e0ede6bea87066c2640dbbf75a0332eba856607ef6f"
+        },
+        {
+          "point": "#/acceptance/vertices/10/vectors/1",
+          "words": 20,
+          "sha256": "78ba1eb6ca0241c80ee8454337bc2e9b2393a632ffa56110cca7d445510b4bf1"
+        },
+        {
+          "point": "#/acceptance/vertices/11/vectors/0",
+          "words": 20,
+          "sha256": "60edfcbeda897cdc1be9dd6790063d6fe1b9e76f2c6cfea3856231a4841ebaa5"
+        },
+        {
+          "point": "#/acceptance/vertices/11/vectors/1",
+          "words": 20,
+          "sha256": "d8498fcb31076ce1dab53b2b63fe428379d93a82476b5b1b1a2d7763b0e2d1c0"
+        },
+        {
+          "point": "#/acceptance/vertices/12/vectors/0",
+          "words": 20,
+          "sha256": "68c3ea56e46d9f5fbd2d751d8bbf2271523eb3e7e260b1cbf2811959c5eb96f9"
+        },
+        {
+          "point": "#/acceptance/vertices/12/vectors/1",
+          "words": 20,
+          "sha256": "b22832a3c90dcec2607afe712463c547911e187ae535946fdc8d27c1aa1b89f7"
+        },
+        {
+          "point": "#/acceptance/vertices/13/vectors/0",
+          "words": 20,
+          "sha256": "1641e20be6026a93473f562646362a879d0fd411945d0618fa4c3c4124f74117"
+        },
+        {
+          "point": "#/acceptance/vertices/13/vectors/1",
+          "words": 20,
+          "sha256": "bd4a412973f1a804fa7d80d154808170008e4892b38c0b1f57045832310dfacd"
+        },
+        {
+          "point": "#/acceptance/vertices/14/vectors/0",
+          "words": 20,
+          "sha256": "d7d175210f5562a5a6c9c20e6b6ac216a76e827f57681e291a35957deb57e59d"
+        },
+        {
+          "point": "#/acceptance/vertices/14/vectors/1",
+          "words": 20,
+          "sha256": "a1a4eac0b6e7163bb592d37aa908bac92537e79931ccb2c91525c43ce1eb9f47"
+        },
+        {
+          "point": "#/acceptance/vertices/15/vectors/0",
+          "words": 20,
+          "sha256": "f3ed0f5f2215458e2c9bd8ca6968c50d62dbfe60473af9a7f5a5ad302d85ab67"
+        },
+        {
+          "point": "#/acceptance/vertices/15/vectors/1",
+          "words": 20,
+          "sha256": "d9c8491e9c82458a6ba046adca398b4faaefe0d691f94da6e465c43f6da1259d"
+        },
+        {
+          "point": "#/acceptance/vertices/16/vectors/0",
+          "words": 20,
+          "sha256": "13a0ce33daeac5cd5e778ef8ce8e18e6d487c2e5967214eda107c439dbaea9f5"
+        },
+        {
+          "point": "#/acceptance/vertices/16/vectors/1",
+          "words": 20,
+          "sha256": "8977296991f70e3432ff3547d97f32e22624a8a599b87323d022a0b1b4422e66"
+        },
+        {
+          "point": "#/acceptance/vertices/17/vectors/0",
+          "words": 20,
+          "sha256": "a87278d5125df1fcd618df572fa2e83942f21eb34fb19981227f72896b8ef20f"
+        },
+        {
+          "point": "#/acceptance/vertices/17/vectors/1",
+          "words": 20,
+          "sha256": "b02072ef9a70e0d45f8a1fe28f97c5d314a6ee1d2e0a0f0e8aa68b842400e346"
+        },
+        {
+          "point": "#/acceptance/vertices/18/vectors/0",
+          "words": 20,
+          "sha256": "44e62091759c1d1bd84ba76435f2ca3cc0125c56cdccf62a0a55a7f47243e2f4"
+        },
+        {
+          "point": "#/acceptance/vertices/18/vectors/1",
+          "words": 20,
+          "sha256": "9329f9443f708acf0b717219cc95f005f7f732079f401f1403da49c7a79d7665"
+        },
+        {
+          "point": "#/acceptance/vertices/19/vectors/0",
+          "words": 20,
+          "sha256": "04590b222fddd9e9b12e5ad059a7ff94be4c25b441090f5c277fa839def15f13"
+        },
+        {
+          "point": "#/acceptance/vertices/19/vectors/1",
+          "words": 20,
+          "sha256": "fd97eef81416bd5d2e361fe18fe42d57da95fbf6d1070890f2ef974f53e96204"
+        },
+        {
+          "point": "#/acceptance/vertices/20/vectors/0",
+          "words": 20,
+          "sha256": "31504aead34aa5dae13ca0f73f5852bd3e312d8638fb6a7b1ce269e7630b9557"
+        },
+        {
+          "point": "#/acceptance/vertices/20/vectors/1",
+          "words": 20,
+          "sha256": "6e7f59d2afe586fd1b1174fd4d9053c1988ba76a5877e69a2f8745bdc7d01182"
+        },
+        {
+          "point": "#/acceptance/vertices/21/vectors/0",
+          "words": 20,
+          "sha256": "8c1dd4392ae261502876f3bd00911fb303a1caf1d81d18387952133bd62dd89f"
+        },
+        {
+          "point": "#/acceptance/vertices/21/vectors/1",
+          "words": 20,
+          "sha256": "01f044f2a123f8dd65de885c4d74a2dc8f329c58a28ab667fe892b0096f7ae45"
+        },
+        {
+          "point": "#/acceptance/vertices/22/vectors/0",
+          "words": 20,
+          "sha256": "cbe5c26195026b7770ab48ced227fd345905d3c53f81664427880b8f34fad383"
+        },
+        {
+          "point": "#/acceptance/vertices/22/vectors/1",
+          "words": 20,
+          "sha256": "98b99fd69882ecc2118341761f2ea868ed536a0b2ae751ab78ce8fd9f8b7cc8e"
+        },
+        {
+          "point": "#/acceptance/vertices/23/vectors/0",
+          "words": 20,
+          "sha256": "9fb7450c8dc191051e71315902bae1efaf1b3fe38e8258a0a7faed2a5004c8b3"
+        },
+        {
+          "point": "#/acceptance/vertices/23/vectors/1",
+          "words": 20,
+          "sha256": "7d2acf4ea7b9760e41790de6e5efb2c1df9ca327bc295bc0c1edb6b7c825ba16"
+        },
+        {
+          "point": "#/acceptance/vertices/24/vectors/0",
+          "words": 20,
+          "sha256": "51300cfb1095f5b0df152fbfbd9494423f5d5608f6a2562f30f9089c9d37070c"
+        },
+        {
+          "point": "#/acceptance/vertices/24/vectors/1",
+          "words": 20,
+          "sha256": "6bf2453afcd94100d9bac0e9520943a4777b7e48335c5e28fb1ddfaf6f641c1e"
+        },
+        {
+          "point": "#/acceptance/vertices/25/vectors/0",
+          "words": 20,
+          "sha256": "55ce2f33711390054d0565382bed27ce9cafe72c728bdbb7926f6639549a19e2"
+        },
+        {
+          "point": "#/acceptance/vertices/25/vectors/1",
+          "words": 20,
+          "sha256": "2e173a6b16cf554af8b8ec2b93521a203b8925469b73162d10f93ce4163e690b"
+        },
+        {
+          "point": "#/acceptance/vertices/26/vectors/0",
+          "words": 20,
+          "sha256": "96f5eb52d52bb6f05bca304f114225dceff505a2a5034f0da72fce82ef95d483"
+        },
+        {
+          "point": "#/acceptance/vertices/26/vectors/1",
+          "words": 20,
+          "sha256": "b3292b6f7970d590e070aac90d757874b2cf4df860c325797361457e33cda4d6"
+        },
+        {
+          "point": "#/acceptance/vertices/27/vectors/0",
+          "words": 20,
+          "sha256": "a4ac0039fdfc632fc68a07f2eedb61bc9f487bb7c210e472f03668ea02037034"
+        },
+        {
+          "point": "#/acceptance/vertices/27/vectors/1",
+          "words": 20,
+          "sha256": "20e36d44fcdb1fbd986c4e916ddec9967b32575da76dc600de462c258498cae6"
+        },
+        {
+          "point": "#/acceptance/vertices/28/vectors/0",
+          "words": 20,
+          "sha256": "701f2b18014ca92cb3c8e8ab85c4de2b43207f1c10d8e7717f68dc259055fe7c"
+        },
+        {
+          "point": "#/acceptance/vertices/28/vectors/1",
+          "words": 20,
+          "sha256": "0d83fa460d8129ddba70b41ca06adf52d222301663630144d8028f05489e87ac"
+        },
+        {
+          "point": "#/acceptance/vertices/29/vectors/0",
+          "words": 20,
+          "sha256": "1b66f593b8e3c243c1c6ed8694243a535acf93aae6359d8e851be1b92d95ba94"
+        },
+        {
+          "point": "#/acceptance/vertices/29/vectors/1",
+          "words": 20,
+          "sha256": "330c695ecf7f443b55aa263633662efa14640bbe02ffadf6ac303b0d31d32589"
+        },
+        {
+          "point": "#/acceptance/vertices/30/vectors/0",
+          "words": 20,
+          "sha256": "e969644be0a36d7c1b6e9edbc246f4ba7d7950383c4f99891bcd835b4158af6d"
+        },
+        {
+          "point": "#/acceptance/vertices/30/vectors/1",
+          "words": 20,
+          "sha256": "1d53fe1c612b75124d118bc9a40565eb543d56fe685961b7a83398d7fa0d3562"
+        },
+        {
+          "point": "#/acceptance/vertices/31/vectors/0",
+          "words": 20,
+          "sha256": "73ee40ff61c3914ebcd260558f5d93bf33bd8dc47024722b1fa4225ad59537d6"
+        },
+        {
+          "point": "#/acceptance/vertices/31/vectors/1",
+          "words": 20,
+          "sha256": "e8a02a85948384e0cb44e40b716ddf401dd18eb0c83081a4c2e08da95335d13d"
+        },
+        {
+          "point": "#/acceptance/vertices/32/vectors/0",
+          "words": 20,
+          "sha256": "6d87c542aa9adb7a6076f68366b705c248d56c1a2ec39f4b0ea172169548fa11"
+        },
+        {
+          "point": "#/acceptance/vertices/32/vectors/1",
+          "words": 20,
+          "sha256": "af79c774aaffa38fdcdcc15eb166159d85ad6bb037bca4e83377ca2b245c33ef"
+        },
+        {
+          "point": "#/acceptance/vertices/33/vectors/0",
+          "words": 20,
+          "sha256": "f8cfaba8b74b84bb0623172e8f9bd964c1f5b1775bed8fea3e7e0e345ab3684f"
+        },
+        {
+          "point": "#/acceptance/vertices/33/vectors/1",
+          "words": 20,
+          "sha256": "660bb4c6706aa561e485cdc41ff86cb6225806229058746b18526a7702f37e5d"
+        },
+        {
+          "point": "#/acceptance/vertices/34/vectors/0",
+          "words": 20,
+          "sha256": "08b6c24e37f31a0a521524fb361e377ebfb3c748c5d2725de3c4b21e0bd27d64"
+        },
+        {
+          "point": "#/acceptance/vertices/34/vectors/1",
+          "words": 20,
+          "sha256": "037fbb2ea443a393f4e7727c8a6a335a0afbe5edc2bf3fb353076aec707a3ab9"
+        },
+        {
+          "point": "#/acceptance/vertices/35/vectors/0",
+          "words": 20,
+          "sha256": "06d8732df8480233adc1c98707fd40eb6c857f0716ec3bbe3db6fde7a0eeb5db"
+        },
+        {
+          "point": "#/acceptance/vertices/35/vectors/1",
+          "words": 20,
+          "sha256": "9d22224f4e7272b858c004c3d67b083617488cab11436ad3796e63114262e404"
+        },
+        {
+          "point": "#/acceptance/vertices/36/vectors/0",
+          "words": 20,
+          "sha256": "b7197f897d603c42114c7f16aec3d401b4cfb9430ccebe65eadb5e3e7133c84c"
+        },
+        {
+          "point": "#/acceptance/vertices/36/vectors/1",
+          "words": 20,
+          "sha256": "4ad96e824ad3f800b4657bbcc4845b7f4ae801091614589d2a728b483dd4c5e5"
+        },
+        {
+          "point": "#/acceptance/vertices/37/vectors/0",
+          "words": 20,
+          "sha256": "bb646d144a0bf0c6f118781556e49f810f631d5d79143edfed4ac651245e3039"
+        },
+        {
+          "point": "#/acceptance/vertices/37/vectors/1",
+          "words": 20,
+          "sha256": "5b7c6ed3a5ff82cf8591d2ad57755605e1f3c5067c94a0d69f4c79a3e4d5062e"
+        },
+        {
+          "point": "#/acceptance/vertices/38/vectors/0",
+          "words": 20,
+          "sha256": "acc4e7a4cc823ce6a5a7467df16bffa037a3263420398ba635fe3d4bad6027d3"
+        },
+        {
+          "point": "#/acceptance/vertices/38/vectors/1",
+          "words": 20,
+          "sha256": "142622b8b17f0e133f396403d562207daa8dca4197e4e49d76e0141621155519"
+        },
+        {
+          "point": "#/acceptance/vertices/39/vectors/0",
+          "words": 20,
+          "sha256": "e1a25c4460fe497a8c2589b8e497fbb219beba2e25a093b95db0589abe7cb640"
+        },
+        {
+          "point": "#/acceptance/vertices/39/vectors/1",
+          "words": 20,
+          "sha256": "c3cdc652f25d510c18a20de4d60d0acf8788097c36f02a3439c114d694e80261"
+        },
+        {
+          "point": "#/acceptance/vertices/40/vectors/0",
+          "words": 20,
+          "sha256": "150d7cb93f170cf0439356e31341ff70dafbee7a7fe3f8cbe1186594cfce72cb"
+        },
+        {
+          "point": "#/acceptance/vertices/40/vectors/1",
+          "words": 20,
+          "sha256": "db97f444c6630bc4237bf683f6c8e9ebabb72cee077accc156008fbd1f6d0adf"
+        },
+        {
+          "point": "#/acceptance/vertices/41/vectors/0",
+          "words": 20,
+          "sha256": "9fd158eb5369938c54f104a9d505f96f8743195fe870cbb706fc6ef24cfe888e"
+        },
+        {
+          "point": "#/acceptance/vertices/41/vectors/1",
+          "words": 20,
+          "sha256": "d9af8545f9e719cdfc5e4c25ba386cde2865f7c6d71544d50082859b1b206045"
+        },
+        {
+          "point": "#/acceptance/vertices/42/vectors/0",
+          "words": 20,
+          "sha256": "ceba3be3225e9af9c4db067e92fd958f57c1a48547ca20e83fb9341f4dc3f7d8"
+        },
+        {
+          "point": "#/acceptance/vertices/42/vectors/1",
+          "words": 20,
+          "sha256": "dadbb501377716de0ace0b386b41d91b46ebad7c7aa27de7ac1077ad818ef905"
+        },
+        {
+          "point": "#/acceptance/vertices/43/vectors/0",
+          "words": 20,
+          "sha256": "11c6db3117708daccb45eb69eb213cafa9e4f353dc352343f1b74ec8db95b366"
+        },
+        {
+          "point": "#/acceptance/vertices/43/vectors/1",
+          "words": 20,
+          "sha256": "0111f5758e6575409128cfa30f3dc9b0387ff4a7337aeeb82264b045099a4aac"
+        },
+        {
+          "point": "#/acceptance/vertices/44/vectors/0",
+          "words": 20,
+          "sha256": "7cc95d2d0ed7fac7c5998c33b2625277ac28f91409da0aa5bc7a50922f7c5e74"
+        },
+        {
+          "point": "#/acceptance/vertices/44/vectors/1",
+          "words": 20,
+          "sha256": "1ffc9d553619f632c33a5330e109b93869b1e105a94e3931360324c93faef66e"
+        },
+        {
+          "point": "#/acceptance/vertices/45/vectors/0",
+          "words": 20,
+          "sha256": "25450b028e314033c860da88fa34efe83e8da6d592bcc7fab3c8880c34f50562"
+        },
+        {
+          "point": "#/acceptance/vertices/45/vectors/1",
+          "words": 20,
+          "sha256": "c639468f5a9e7267dd09793afb704cbd6158d8edc51e0666a36760851a031dda"
+        },
+        {
+          "point": "#/acceptance/vertices/46/vectors/0",
+          "words": 20,
+          "sha256": "e93a674c02be017f13e532656c678576b7cbd244aabc2b45e7b8d35187068ca9"
+        },
+        {
+          "point": "#/acceptance/vertices/46/vectors/1",
+          "words": 20,
+          "sha256": "7a2992efbefae6875087751bc440571b434949e673da65411d690102103b4b6c"
+        },
+        {
+          "point": "#/acceptance/vertices/47/vectors/0",
+          "words": 20,
+          "sha256": "59347f762faf556016500d0fd01844e8c07212c41d416af784e36eca6f33f384"
+        },
+        {
+          "point": "#/acceptance/vertices/47/vectors/1",
+          "words": 20,
+          "sha256": "0b50b5fd42b1097257060433c510b32e19d3b405450aca89f4c0884fdb9f18f2"
+        },
+        {
+          "point": "#/acceptance/vertices/48/vectors/0",
+          "words": 20,
+          "sha256": "04b86587e99b71f24d2a9afda4f418d90c6bc337d080eab77cd50481ceedc525"
+        },
+        {
+          "point": "#/acceptance/vertices/48/vectors/1",
+          "words": 20,
+          "sha256": "eec6fe63582b2359a52e1afa869fa548fbc3baf3bd0025d118527e1c7b06baf6"
+        },
+        {
+          "point": "#/acceptance/vertices/49/vectors/0",
+          "words": 20,
+          "sha256": "ce309fbef25197fbb079a8bdd83f15b2870a1d27b96cedcf7a49d036d6cb4196"
+        },
+        {
+          "point": "#/acceptance/vertices/49/vectors/1",
+          "words": 20,
+          "sha256": "77f7c06e5093970a25569c02df46dadf84b680165254dfc074437a3f31524059"
+        },
+        {
+          "point": "#/acceptance/vertices/50/vectors/0",
+          "words": 20,
+          "sha256": "3c2941d7e141b7c5363460c9c98192a813f93a4720ab214e6a6c038302d4b992"
+        },
+        {
+          "point": "#/acceptance/vertices/50/vectors/1",
+          "words": 20,
+          "sha256": "3d758564800d6c0a5fb72f43487e8ad1dbf486e0b10281f38187b02c721b2086"
+        },
+        {
+          "point": "#/acceptance/vertices/51/vectors/0",
+          "words": 20,
+          "sha256": "eb59770e47fbd21c72c185c2815cef34e0c847900f44a4d9efdc600f32916e3b"
+        },
+        {
+          "point": "#/acceptance/vertices/51/vectors/1",
+          "words": 20,
+          "sha256": "0e3d51ae2a74e945eeabed7272672eeb628bd78d228b084cd3d734594d3ed0ad"
+        },
+        {
+          "point": "#/acceptance/vertices/52/vectors/0",
+          "words": 20,
+          "sha256": "349b4e75f42d34fad7effd80c03fb506fd813c870d7e0da4f9be5b3f75de21f9"
+        },
+        {
+          "point": "#/acceptance/vertices/52/vectors/1",
+          "words": 20,
+          "sha256": "70a85a89dbb085c2f59508c68a2b6f9649f6e65397452d27c89ef4f7a819be8a"
+        },
+        {
+          "point": "#/acceptance/vertices/53/vectors/0",
+          "words": 20,
+          "sha256": "3be0c81fc03516ff41d4f4ed65f9ca4e6587dc5bfe997df1f4d9333ea1905c48"
+        },
+        {
+          "point": "#/acceptance/vertices/53/vectors/1",
+          "words": 20,
+          "sha256": "d7260e749fa25272220252c5e62059f53e48780d491fee562901625ad789efe7"
+        },
+        {
+          "point": "#/acceptance/vertices/54/vectors/0",
+          "words": 20,
+          "sha256": "1a40d05219d0f30c12ff865b196d094119d5ddcbb4cb6d018852dbb1e2659e9b"
+        },
+        {
+          "point": "#/acceptance/vertices/54/vectors/1",
+          "words": 20,
+          "sha256": "127b1593e9111cf1fdab17571551ec289cff11d38fd3d8c7ac2b46189c6c0613"
+        },
+        {
+          "point": "#/acceptance/vertices/55/vectors/0",
+          "words": 20,
+          "sha256": "1430d5596667d0f3cba94e1345e165b7432a00655c8d6b94aa6a69fe2d4aecdd"
+        },
+        {
+          "point": "#/acceptance/vertices/55/vectors/1",
+          "words": 20,
+          "sha256": "6d023acbba9a8de35ce60aff434ce8b617de688f3b598252ba20da9424cddf09"
+        },
+        {
+          "point": "#/acceptance/vertices/56/vectors/0",
+          "words": 20,
+          "sha256": "b3c0854be48a473720b4f61852b571746b27d246c25708b43e39f9ed41b88fd3"
+        },
+        {
+          "point": "#/acceptance/vertices/56/vectors/1",
+          "words": 20,
+          "sha256": "820ff5edbc557f730e08a386509a8058a0207b82b610bc4c91003936e04cd6f3"
+        },
+        {
+          "point": "#/acceptance/vertices/57/vectors/0",
+          "words": 20,
+          "sha256": "76289ef8d08d93aff664870a6b54a3a35faf52b26dcd2fad3cf63602f942995b"
+        },
+        {
+          "point": "#/acceptance/vertices/57/vectors/1",
+          "words": 20,
+          "sha256": "f5c5b1b626b471d6739f4d442371e629019695c750d2e9bc6db05b7d7027872f"
+        },
+        {
+          "point": "#/acceptance/vertices/58/vectors/0",
+          "words": 20,
+          "sha256": "f3345dc48e7fce075e895bdaf83f545067e2429cc83496687911770644e1fda8"
+        },
+        {
+          "point": "#/acceptance/vertices/58/vectors/1",
+          "words": 20,
+          "sha256": "d195893c135d168167241b9bbfc2af70d0d6fa4e2d3f99e5102b2e1924e1b997"
+        },
+        {
+          "point": "#/acceptance/vertices/59/vectors/0",
+          "words": 20,
+          "sha256": "83fa099f6945f3697465b479a15942dc58db00e3a377bc511bae43ba4a02eb0a"
+        },
+        {
+          "point": "#/acceptance/vertices/59/vectors/1",
+          "words": 20,
+          "sha256": "552d49870ad72333a8389d416f9e82915382427aa86b91070a12ba7eabd73b8c"
+        },
+        {
+          "point": "#/acceptance/vertices/60/vectors/0",
+          "words": 20,
+          "sha256": "0eff9da32f372f7f51768a664d9ca250589ce5df0a7b9874ff297d05c688fa13"
+        },
+        {
+          "point": "#/acceptance/vertices/60/vectors/1",
+          "words": 20,
+          "sha256": "420caa2b76f081d191f6d51b5a67339010a695c5b95c756d5c2abe8a8fea1b23"
+        }
+      ]
+    },
+    {
+      "kind": "cold",
+      "source": "cold/acceptance/gpu-3144134277/report.json",
+      "sourceSha256": "b2cae891c54d27dea2daa51d07560ec65d57eae058107c2e9ed8770e55b375a4",
+      "status": "HELD",
+      "seed": 3144134277,
+      "fault": null,
+      "sourceDerivedProducerRows": 61,
+      "rawCarrierWords": 2440,
+      "mathWords": 64,
+      "exactRgbaPixels": 7808,
+      "faultContradictions": [],
+      "qualifiedNumericZeroSigns": [
+        {
+          "vertex": 13,
+          "vector": 0,
+          "lane": 16,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 13,
+          "vector": 0,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 13,
+          "vector": 1,
+          "lane": 16,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 13,
+          "vector": 1,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 14,
+          "vector": 0,
+          "lane": 17,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 14,
+          "vector": 1,
+          "lane": 17,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 29,
+          "vector": 0,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 29,
+          "vector": 1,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 43,
+          "vector": 0,
+          "lane": 18,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 43,
+          "vector": 0,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 43,
+          "vector": 1,
+          "lane": 18,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 43,
+          "vector": 1,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 44,
+          "vector": 0,
+          "lane": 17,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 44,
+          "vector": 0,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 44,
+          "vector": 1,
+          "lane": 17,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 44,
+          "vector": 1,
+          "lane": 19,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 59,
+          "vector": 0,
+          "lane": 16,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 59,
+          "vector": 0,
+          "lane": 17,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 59,
+          "vector": 1,
+          "lane": 16,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        },
+        {
+          "vertex": 59,
+          "vector": 1,
+          "lane": 17,
+          "rawWord": 2147483648,
+          "numericShadowWord": 0
+        }
+      ],
+      "originalPoints": [
+        {
+          "point": "#/acceptance/vertices/0/vectors/0",
+          "words": 20,
+          "sha256": "73932965b18d7e0ebfc43aa495e9b31dcf1107b83af0efa340d9ee0832c9f947"
+        },
+        {
+          "point": "#/acceptance/vertices/0/vectors/1",
+          "words": 20,
+          "sha256": "6862b988e38f867785176303d48522a0d3ace3474a3d9e4e15af4726de38de27"
+        },
+        {
+          "point": "#/acceptance/vertices/1/vectors/0",
+          "words": 20,
+          "sha256": "11444a3fa0484de22f358e23807336ed75a6729cd7099d0f176c0ef22987c022"
+        },
+        {
+          "point": "#/acceptance/vertices/1/vectors/1",
+          "words": 20,
+          "sha256": "4065e275163b20906203a3adfed9663c06831d27decf8664ccdf164cdec000e4"
+        },
+        {
+          "point": "#/acceptance/vertices/2/vectors/0",
+          "words": 20,
+          "sha256": "9115186d0419efb9380087662e4540bb2f490bc7400918fff97263712871548e"
+        },
+        {
+          "point": "#/acceptance/vertices/2/vectors/1",
+          "words": 20,
+          "sha256": "09a2fbf0643163ccc9e6c882b0795f2acca9327ce0aa6ee9ebe1a33d5c99e110"
+        },
+        {
+          "point": "#/acceptance/vertices/3/vectors/0",
+          "words": 20,
+          "sha256": "4296887af177b7187cc4bc5f1e15961a8e41892fcc146673c26ce39f69fc1f35"
+        },
+        {
+          "point": "#/acceptance/vertices/3/vectors/1",
+          "words": 20,
+          "sha256": "59a2ebe357ec4e6832744ebd4f37f838b3f89169f947c01cae783c76a104f8b3"
+        },
+        {
+          "point": "#/acceptance/vertices/4/vectors/0",
+          "words": 20,
+          "sha256": "ec3a2fc0438a13c0f50c0d703f4c7629c13fae247a40496b6580f31752798825"
+        },
+        {
+          "point": "#/acceptance/vertices/4/vectors/1",
+          "words": 20,
+          "sha256": "9de02d8582e077bb9e017592530d68dd678dcb86b1a2e7ada25ed95c55fde23b"
+        },
+        {
+          "point": "#/acceptance/vertices/5/vectors/0",
+          "words": 20,
+          "sha256": "7e8d1d446b2926059eaeea86ba56f705d7ed7f748c40e113483be7b1d0b9de5e"
+        },
+        {
+          "point": "#/acceptance/vertices/5/vectors/1",
+          "words": 20,
+          "sha256": "9545151e726cc4b72dcbb2e7cba75a8197a2bbfac2539c837bb1ba713696e45e"
+        },
+        {
+          "point": "#/acceptance/vertices/6/vectors/0",
+          "words": 20,
+          "sha256": "b4eee0ce47b712e0ed351f4060b150c2de97519e2f083d39fbc76808a44b9ce2"
+        },
+        {
+          "point": "#/acceptance/vertices/6/vectors/1",
+          "words": 20,
+          "sha256": "7ea837758680338836a4aaeb0c6dc30d4b35b977ce8ff80b7284c6510c3ee2e8"
+        },
+        {
+          "point": "#/acceptance/vertices/7/vectors/0",
+          "words": 20,
+          "sha256": "8498631ffc94ecc043c7af9df5bf43969e018e6b6cc63619ef3138447ffe0995"
+        },
+        {
+          "point": "#/acceptance/vertices/7/vectors/1",
+          "words": 20,
+          "sha256": "d3910f45a20a1648322c6cf5bce785e3eee3b08f4ec84e08edf03e0370c8f08c"
+        },
+        {
+          "point": "#/acceptance/vertices/8/vectors/0",
+          "words": 20,
+          "sha256": "d6fdb9a06c92c671899cbbc08209f2465c273e41f0350ec4f387d2e4dc25cb84"
+        },
+        {
+          "point": "#/acceptance/vertices/8/vectors/1",
+          "words": 20,
+          "sha256": "d9b092ef3ff1138f41df15e9cfd7de49cb52762fcf0aa4527b905a1efc13255f"
+        },
+        {
+          "point": "#/acceptance/vertices/9/vectors/0",
+          "words": 20,
+          "sha256": "7936183f679227a665d32c7bc96bd09b245cc4b980b2896391322752cccb4ecd"
+        },
+        {
+          "point": "#/acceptance/vertices/9/vectors/1",
+          "words": 20,
+          "sha256": "830e980db3868f7035b901d0072fa8d87e08fe8b2f4046a5f4b50fefadcc55f8"
+        },
+        {
+          "point": "#/acceptance/vertices/10/vectors/0",
+          "words": 20,
+          "sha256": "ae87172787a185e09b2ed54aa58cc50ffbe5cc1690c747402e59f6ed22cc0996"
+        },
+        {
+          "point": "#/acceptance/vertices/10/vectors/1",
+          "words": 20,
+          "sha256": "688ce9cc5fd14b7e02c23c3cf6e237e2006634f4c4c357b3f219b1e672adbe23"
+        },
+        {
+          "point": "#/acceptance/vertices/11/vectors/0",
+          "words": 20,
+          "sha256": "d1e37086eff681a7d73aced63aa05ae680b73927120ecb59d29fa429ca3cc79b"
+        },
+        {
+          "point": "#/acceptance/vertices/11/vectors/1",
+          "words": 20,
+          "sha256": "def167d441b69e776f03086a04b629b52f411e5db480874935d3652cc618203d"
+        },
+        {
+          "point": "#/acceptance/vertices/12/vectors/0",
+          "words": 20,
+          "sha256": "4a03b4790f731ef3063d745c97564e79b323c5efbaefd9494e40cf883e741872"
+        },
+        {
+          "point": "#/acceptance/vertices/12/vectors/1",
+          "words": 20,
+          "sha256": "1f7e3cb60355d7703279c09a767a1403475fe2f06b91b35fd112926436f6c3b7"
+        },
+        {
+          "point": "#/acceptance/vertices/13/vectors/0",
+          "words": 20,
+          "sha256": "1641e20be6026a93473f562646362a879d0fd411945d0618fa4c3c4124f74117"
+        },
+        {
+          "point": "#/acceptance/vertices/13/vectors/1",
+          "words": 20,
+          "sha256": "bd4a412973f1a804fa7d80d154808170008e4892b38c0b1f57045832310dfacd"
+        },
+        {
+          "point": "#/acceptance/vertices/14/vectors/0",
+          "words": 20,
+          "sha256": "d7d175210f5562a5a6c9c20e6b6ac216a76e827f57681e291a35957deb57e59d"
+        },
+        {
+          "point": "#/acceptance/vertices/14/vectors/1",
+          "words": 20,
+          "sha256": "a1a4eac0b6e7163bb592d37aa908bac92537e79931ccb2c91525c43ce1eb9f47"
+        },
+        {
+          "point": "#/acceptance/vertices/15/vectors/0",
+          "words": 20,
+          "sha256": "f3ed0f5f2215458e2c9bd8ca6968c50d62dbfe60473af9a7f5a5ad302d85ab67"
+        },
+        {
+          "point": "#/acceptance/vertices/15/vectors/1",
+          "words": 20,
+          "sha256": "d9c8491e9c82458a6ba046adca398b4faaefe0d691f94da6e465c43f6da1259d"
+        },
+        {
+          "point": "#/acceptance/vertices/16/vectors/0",
+          "words": 20,
+          "sha256": "13a0ce33daeac5cd5e778ef8ce8e18e6d487c2e5967214eda107c439dbaea9f5"
+        },
+        {
+          "point": "#/acceptance/vertices/16/vectors/1",
+          "words": 20,
+          "sha256": "8977296991f70e3432ff3547d97f32e22624a8a599b87323d022a0b1b4422e66"
+        },
+        {
+          "point": "#/acceptance/vertices/17/vectors/0",
+          "words": 20,
+          "sha256": "a87278d5125df1fcd618df572fa2e83942f21eb34fb19981227f72896b8ef20f"
+        },
+        {
+          "point": "#/acceptance/vertices/17/vectors/1",
+          "words": 20,
+          "sha256": "b02072ef9a70e0d45f8a1fe28f97c5d314a6ee1d2e0a0f0e8aa68b842400e346"
+        },
+        {
+          "point": "#/acceptance/vertices/18/vectors/0",
+          "words": 20,
+          "sha256": "44e62091759c1d1bd84ba76435f2ca3cc0125c56cdccf62a0a55a7f47243e2f4"
+        },
+        {
+          "point": "#/acceptance/vertices/18/vectors/1",
+          "words": 20,
+          "sha256": "9329f9443f708acf0b717219cc95f005f7f732079f401f1403da49c7a79d7665"
+        },
+        {
+          "point": "#/acceptance/vertices/19/vectors/0",
+          "words": 20,
+          "sha256": "04590b222fddd9e9b12e5ad059a7ff94be4c25b441090f5c277fa839def15f13"
+        },
+        {
+          "point": "#/acceptance/vertices/19/vectors/1",
+          "words": 20,
+          "sha256": "fd97eef81416bd5d2e361fe18fe42d57da95fbf6d1070890f2ef974f53e96204"
+        },
+        {
+          "point": "#/acceptance/vertices/20/vectors/0",
+          "words": 20,
+          "sha256": "31504aead34aa5dae13ca0f73f5852bd3e312d8638fb6a7b1ce269e7630b9557"
+        },
+        {
+          "point": "#/acceptance/vertices/20/vectors/1",
+          "words": 20,
+          "sha256": "6e7f59d2afe586fd1b1174fd4d9053c1988ba76a5877e69a2f8745bdc7d01182"
+        },
+        {
+          "point": "#/acceptance/vertices/21/vectors/0",
+          "words": 20,
+          "sha256": "7fb3aa7464f3a684399928dfdeb0da0c2d6b9ce8fa10b9e4e209db81e676cb36"
+        },
+        {
+          "point": "#/acceptance/vertices/21/vectors/1",
+          "words": 20,
+          "sha256": "fe909d4f598a45e72e119cf78b9ffb0da11082a020aa4618368bb610e28dbcb1"
+        },
+        {
+          "point": "#/acceptance/vertices/22/vectors/0",
+          "words": 20,
+          "sha256": "696474b03fe090b856cbe9cbf8417a5a3ce20065e39eb5bbd9d04b3f092be29c"
+        },
+        {
+          "point": "#/acceptance/vertices/22/vectors/1",
+          "words": 20,
+          "sha256": "b368437d0e73961771b0ae42543a03668d106712a255fed206e6736821abdb2e"
+        },
+        {
+          "point": "#/acceptance/vertices/23/vectors/0",
+          "words": 20,
+          "sha256": "ae2a46e497939636ccb5439b8eb365ea57c0a5ef334007e995028bba1d928423"
+        },
+        {
+          "point": "#/acceptance/vertices/23/vectors/1",
+          "words": 20,
+          "sha256": "5615b6fbc0d66ee0b7e39126a78dc08d3b361c9033e503addcdc9c5f5ef3787b"
+        },
+        {
+          "point": "#/acceptance/vertices/24/vectors/0",
+          "words": 20,
+          "sha256": "5d5b395a2fbfbedf980e71d7d88b78f105095d467dae11dd751343d08597b05c"
+        },
+        {
+          "point": "#/acceptance/vertices/24/vectors/1",
+          "words": 20,
+          "sha256": "346ce922f85b9768d750c485b1edb5057c6b847c7e55204ede9a4c2b254fb72d"
+        },
+        {
+          "point": "#/acceptance/vertices/25/vectors/0",
+          "words": 20,
+          "sha256": "ce1d9b896e522a39a206af24a66e1a3e8dd0f594cc7370fb77f237de2bd4e330"
+        },
+        {
+          "point": "#/acceptance/vertices/25/vectors/1",
+          "words": 20,
+          "sha256": "a5646f504f6c3c93f8649c6df9c8a01e81db2ab8e32f00ea2dea93b7c96aa2e5"
+        },
+        {
+          "point": "#/acceptance/vertices/26/vectors/0",
+          "words": 20,
+          "sha256": "c36f49e59e474d860132535b16a56b40380603bf2c02c46e583c02cce6da7edb"
+        },
+        {
+          "point": "#/acceptance/vertices/26/vectors/1",
+          "words": 20,
+          "sha256": "428ca4814a87109b0a0ebd1bfe348d1d82a81a098d7306cb86b9710c305dccde"
+        },
+        {
+          "point": "#/acceptance/vertices/27/vectors/0",
+          "words": 20,
+          "sha256": "c48bc2ce9d5ca0555fc0112ed4a84d33b27acd6acf049f28a01c6b61918a528d"
+        },
+        {
+          "point": "#/acceptance/vertices/27/vectors/1",
+          "words": 20,
+          "sha256": "a84f0b0f2d1df1bd3b4515132ceb906bbfc23b742478ed7259a9a1e0f36b17c5"
+        },
+        {
+          "point": "#/acceptance/vertices/28/vectors/0",
+          "words": 20,
+          "sha256": "aedaa0dfcc253eab54ea75f35678144d2293175b27e73063a94282d9e4329475"
+        },
+        {
+          "point": "#/acceptance/vertices/28/vectors/1",
+          "words": 20,
+          "sha256": "ee79f695bee4ec16a160cca929ab44c5e1aa52380cdc61ad7040bcd57ce79619"
+        },
+        {
+          "point": "#/acceptance/vertices/29/vectors/0",
+          "words": 20,
+          "sha256": "1b66f593b8e3c243c1c6ed8694243a535acf93aae6359d8e851be1b92d95ba94"
+        },
+        {
+          "point": "#/acceptance/vertices/29/vectors/1",
+          "words": 20,
+          "sha256": "330c695ecf7f443b55aa263633662efa14640bbe02ffadf6ac303b0d31d32589"
+        },
+        {
+          "point": "#/acceptance/vertices/30/vectors/0",
+          "words": 20,
+          "sha256": "e969644be0a36d7c1b6e9edbc246f4ba7d7950383c4f99891bcd835b4158af6d"
+        },
+        {
+          "point": "#/acceptance/vertices/30/vectors/1",
+          "words": 20,
+          "sha256": "1d53fe1c612b75124d118bc9a40565eb543d56fe685961b7a83398d7fa0d3562"
+        },
+        {
+          "point": "#/acceptance/vertices/31/vectors/0",
+          "words": 20,
+          "sha256": "73ee40ff61c3914ebcd260558f5d93bf33bd8dc47024722b1fa4225ad59537d6"
+        },
+        {
+          "point": "#/acceptance/vertices/31/vectors/1",
+          "words": 20,
+          "sha256": "e8a02a85948384e0cb44e40b716ddf401dd18eb0c83081a4c2e08da95335d13d"
+        },
+        {
+          "point": "#/acceptance/vertices/32/vectors/0",
+          "words": 20,
+          "sha256": "6d87c542aa9adb7a6076f68366b705c248d56c1a2ec39f4b0ea172169548fa11"
+        },
+        {
+          "point": "#/acceptance/vertices/32/vectors/1",
+          "words": 20,
+          "sha256": "af79c774aaffa38fdcdcc15eb166159d85ad6bb037bca4e83377ca2b245c33ef"
+        },
+        {
+          "point": "#/acceptance/vertices/33/vectors/0",
+          "words": 20,
+          "sha256": "f8cfaba8b74b84bb0623172e8f9bd964c1f5b1775bed8fea3e7e0e345ab3684f"
+        },
+        {
+          "point": "#/acceptance/vertices/33/vectors/1",
+          "words": 20,
+          "sha256": "660bb4c6706aa561e485cdc41ff86cb6225806229058746b18526a7702f37e5d"
+        },
+        {
+          "point": "#/acceptance/vertices/34/vectors/0",
+          "words": 20,
+          "sha256": "08b6c24e37f31a0a521524fb361e377ebfb3c748c5d2725de3c4b21e0bd27d64"
+        },
+        {
+          "point": "#/acceptance/vertices/34/vectors/1",
+          "words": 20,
+          "sha256": "037fbb2ea443a393f4e7727c8a6a335a0afbe5edc2bf3fb353076aec707a3ab9"
+        },
+        {
+          "point": "#/acceptance/vertices/35/vectors/0",
+          "words": 20,
+          "sha256": "ac2fcefd2c869a0703d3ac8b77642c4f7f077286ff3a615bc5867ee9f54e89ad"
+        },
+        {
+          "point": "#/acceptance/vertices/35/vectors/1",
+          "words": 20,
+          "sha256": "eaa7b47f2f089e75776ac028b85ef67832aafd7a627bd133fa39fbb1a8b2f646"
+        },
+        {
+          "point": "#/acceptance/vertices/36/vectors/0",
+          "words": 20,
+          "sha256": "1fad9a9a002ff9307c56febe4e53c533631354ecefd4db98243e737be35ac0b2"
+        },
+        {
+          "point": "#/acceptance/vertices/36/vectors/1",
+          "words": 20,
+          "sha256": "8dafc2743af5797ccc3781b02fd8f6444ce0b78e6ff8b1eb24b21021a0c79158"
+        },
+        {
+          "point": "#/acceptance/vertices/37/vectors/0",
+          "words": 20,
+          "sha256": "cb161eb51fc78323a1ac8ad230427b1f7c287b2afa61f34cdb0b6ab5a8337c5d"
+        },
+        {
+          "point": "#/acceptance/vertices/37/vectors/1",
+          "words": 20,
+          "sha256": "5e2a1d9985674a73d08eb1b377064cac2c5f06b44665d3204057f6b170930989"
+        },
+        {
+          "point": "#/acceptance/vertices/38/vectors/0",
+          "words": 20,
+          "sha256": "a76c772ace8d103e776f4f3492c785621431ce03bc051e93f4f8d1bad7835d9b"
+        },
+        {
+          "point": "#/acceptance/vertices/38/vectors/1",
+          "words": 20,
+          "sha256": "42c0ddf34497005458a2a940ac056975b3c956061a103597f2d7b4e3872a9321"
+        },
+        {
+          "point": "#/acceptance/vertices/39/vectors/0",
+          "words": 20,
+          "sha256": "d2c39878aee167c041a2f7b34f144260e990b8c86444a25d1ee402e9c9ca1e67"
+        },
+        {
+          "point": "#/acceptance/vertices/39/vectors/1",
+          "words": 20,
+          "sha256": "6ec867e9294834697cf2c2417840b794ba1fc36d748deac85dc5c9b21fa54f3d"
+        },
+        {
+          "point": "#/acceptance/vertices/40/vectors/0",
+          "words": 20,
+          "sha256": "c6a9abf6af76fbce66b6c90e7ccc9cdb9f7abec271b6665fec8c552403586e33"
+        },
+        {
+          "point": "#/acceptance/vertices/40/vectors/1",
+          "words": 20,
+          "sha256": "5cb17ad1988fa8965207a5b79e70502935c6b043110cf979a99225a768eb98a3"
+        },
+        {
+          "point": "#/acceptance/vertices/41/vectors/0",
+          "words": 20,
+          "sha256": "99382c441776ad95fce9b245b4d375c2445e2c78ec3974c79e01f2b3d56d3788"
+        },
+        {
+          "point": "#/acceptance/vertices/41/vectors/1",
+          "words": 20,
+          "sha256": "06ab029e0b71fa80ca6425baa33a79b6df1f1670b2301d4405e3e0b1336bd83f"
+        },
+        {
+          "point": "#/acceptance/vertices/42/vectors/0",
+          "words": 20,
+          "sha256": "13a311d1bbfec4b65693c8d5a0faffbb3e4c71bf4b034342aae45cdb68f0f6dd"
+        },
+        {
+          "point": "#/acceptance/vertices/42/vectors/1",
+          "words": 20,
+          "sha256": "4b7d8b5d730dc419143d6fb21ae183fab55e2c1dee9e229babe55b8d2f87b141"
+        },
+        {
+          "point": "#/acceptance/vertices/43/vectors/0",
+          "words": 20,
+          "sha256": "11c6db3117708daccb45eb69eb213cafa9e4f353dc352343f1b74ec8db95b366"
+        },
+        {
+          "point": "#/acceptance/vertices/43/vectors/1",
+          "words": 20,
+          "sha256": "0111f5758e6575409128cfa30f3dc9b0387ff4a7337aeeb82264b045099a4aac"
+        },
+        {
+          "point": "#/acceptance/vertices/44/vectors/0",
+          "words": 20,
+          "sha256": "7cc95d2d0ed7fac7c5998c33b2625277ac28f91409da0aa5bc7a50922f7c5e74"
+        },
+        {
+          "point": "#/acceptance/vertices/44/vectors/1",
+          "words": 20,
+          "sha256": "1ffc9d553619f632c33a5330e109b93869b1e105a94e3931360324c93faef66e"
+        },
+        {
+          "point": "#/acceptance/vertices/45/vectors/0",
+          "words": 20,
+          "sha256": "25450b028e314033c860da88fa34efe83e8da6d592bcc7fab3c8880c34f50562"
+        },
+        {
+          "point": "#/acceptance/vertices/45/vectors/1",
+          "words": 20,
+          "sha256": "c639468f5a9e7267dd09793afb704cbd6158d8edc51e0666a36760851a031dda"
+        },
+        {
+          "point": "#/acceptance/vertices/46/vectors/0",
+          "words": 20,
+          "sha256": "e93a674c02be017f13e532656c678576b7cbd244aabc2b45e7b8d35187068ca9"
+        },
+        {
+          "point": "#/acceptance/vertices/46/vectors/1",
+          "words": 20,
+          "sha256": "7a2992efbefae6875087751bc440571b434949e673da65411d690102103b4b6c"
+        },
+        {
+          "point": "#/acceptance/vertices/47/vectors/0",
+          "words": 20,
+          "sha256": "59347f762faf556016500d0fd01844e8c07212c41d416af784e36eca6f33f384"
+        },
+        {
+          "point": "#/acceptance/vertices/47/vectors/1",
+          "words": 20,
+          "sha256": "0b50b5fd42b1097257060433c510b32e19d3b405450aca89f4c0884fdb9f18f2"
+        },
+        {
+          "point": "#/acceptance/vertices/48/vectors/0",
+          "words": 20,
+          "sha256": "04b86587e99b71f24d2a9afda4f418d90c6bc337d080eab77cd50481ceedc525"
+        },
+        {
+          "point": "#/acceptance/vertices/48/vectors/1",
+          "words": 20,
+          "sha256": "eec6fe63582b2359a52e1afa869fa548fbc3baf3bd0025d118527e1c7b06baf6"
+        },
+        {
+          "point": "#/acceptance/vertices/49/vectors/0",
+          "words": 20,
+          "sha256": "ce309fbef25197fbb079a8bdd83f15b2870a1d27b96cedcf7a49d036d6cb4196"
+        },
+        {
+          "point": "#/acceptance/vertices/49/vectors/1",
+          "words": 20,
+          "sha256": "77f7c06e5093970a25569c02df46dadf84b680165254dfc074437a3f31524059"
+        },
+        {
+          "point": "#/acceptance/vertices/50/vectors/0",
+          "words": 20,
+          "sha256": "3c2941d7e141b7c5363460c9c98192a813f93a4720ab214e6a6c038302d4b992"
+        },
+        {
+          "point": "#/acceptance/vertices/50/vectors/1",
+          "words": 20,
+          "sha256": "3d758564800d6c0a5fb72f43487e8ad1dbf486e0b10281f38187b02c721b2086"
+        },
+        {
+          "point": "#/acceptance/vertices/51/vectors/0",
+          "words": 20,
+          "sha256": "84a77c6b142700b80929f93da9ce553fd0aff85bba4ac428d37c5fab7995b134"
+        },
+        {
+          "point": "#/acceptance/vertices/51/vectors/1",
+          "words": 20,
+          "sha256": "229a5a114bd6639159996fb3ff10d74df9910556a31293b42e21d552d69f7b86"
+        },
+        {
+          "point": "#/acceptance/vertices/52/vectors/0",
+          "words": 20,
+          "sha256": "95a749ab662b9848724e97e1a7f27b953f31a6bba1540216f4a7a36a2eaa9b36"
+        },
+        {
+          "point": "#/acceptance/vertices/52/vectors/1",
+          "words": 20,
+          "sha256": "a4bd5b09580f78407906a306c5f77b7a548b3ec34c72f0b0aef3d69ddc126f37"
+        },
+        {
+          "point": "#/acceptance/vertices/53/vectors/0",
+          "words": 20,
+          "sha256": "7d4c1c2aa30efdcc6d1808a8d2f1a9ec0868bbecb8e71b3187befcd76d704320"
+        },
+        {
+          "point": "#/acceptance/vertices/53/vectors/1",
+          "words": 20,
+          "sha256": "c1c8a6e8c4fe931926f50fbb31c13d67322b0db09d1331987dca34548e2e5f15"
+        },
+        {
+          "point": "#/acceptance/vertices/54/vectors/0",
+          "words": 20,
+          "sha256": "f1b6531f886a4ea0a90a0ffe0c75b692dc9464445797f638224cf005c8fc2e20"
+        },
+        {
+          "point": "#/acceptance/vertices/54/vectors/1",
+          "words": 20,
+          "sha256": "88ca1c8481c17e785e825fb395e118feaddda6ce8434beca25808a8015080026"
+        },
+        {
+          "point": "#/acceptance/vertices/55/vectors/0",
+          "words": 20,
+          "sha256": "a56d861ca8ba6cc22936818bfc8986bdb677c271a59b8d13d47fca16ffcc1cea"
+        },
+        {
+          "point": "#/acceptance/vertices/55/vectors/1",
+          "words": 20,
+          "sha256": "ffd056874ad3d9e6eff175ef7cdaf87644e74db1b5b15475d91e1fd3b32b1090"
+        },
+        {
+          "point": "#/acceptance/vertices/56/vectors/0",
+          "words": 20,
+          "sha256": "ea73f4eb5e7f5c56e2ea3c7770a664a1721183455dce0c69b8bfc5462e5c87c9"
+        },
+        {
+          "point": "#/acceptance/vertices/56/vectors/1",
+          "words": 20,
+          "sha256": "29f50ac9605fc62847a2b16d6cf08bdd4d3220beb79b40b519364c4613602a15"
+        },
+        {
+          "point": "#/acceptance/vertices/57/vectors/0",
+          "words": 20,
+          "sha256": "645ee609d15abc43a8653b8934ef8407a784671a5e6d0475d53510623fbe9b77"
+        },
+        {
+          "point": "#/acceptance/vertices/57/vectors/1",
+          "words": 20,
+          "sha256": "4b3a879652d0a2f696db0b1c3a1b6bef61bd289f91d5e64c4ebd3790c3873736"
+        },
+        {
+          "point": "#/acceptance/vertices/58/vectors/0",
+          "words": 20,
+          "sha256": "3c3bf1ef304713a5ca097aa1c7b29beed2dae558b95038007868d2a71da9649f"
+        },
+        {
+          "point": "#/acceptance/vertices/58/vectors/1",
+          "words": 20,
+          "sha256": "62ed4d264bae19d38a32db4bb851f4b2e0c56781e6a8b9958794675ac350d72e"
+        },
+        {
+          "point": "#/acceptance/vertices/59/vectors/0",
+          "words": 20,
+          "sha256": "83fa099f6945f3697465b479a15942dc58db00e3a377bc511bae43ba4a02eb0a"
+        },
+        {
+          "point": "#/acceptance/vertices/59/vectors/1",
+          "words": 20,
+          "sha256": "552d49870ad72333a8389d416f9e82915382427aa86b91070a12ba7eabd73b8c"
+        },
+        {
+          "point": "#/acceptance/vertices/60/vectors/0",
+          "words": 20,
+          "sha256": "0eff9da32f372f7f51768a664d9ca250589ce5df0a7b9874ff297d05c688fa13"
+        },
+        {
+          "point": "#/acceptance/vertices/60/vectors/1",
+          "words": 20,
+          "sha256": "420caa2b76f081d191f6d51b5a67339010a695c5b95c756d5c2abe8a8fea1b23"
+        }
+      ]
+    },
+    {
+      "kind": "cold",
+      "source": "cold/acceptance/fault-shadow/report.json",
+      "sourceSha256": "464002e05fb2038e1618c28dafc243cc5de650caa5cd339352dfe3af369bd82c",
+      "status": "HELD",
+      "seed": 1779033703,
+      "fault": "shadow",
+      "sourceDerivedProducerRows": 1,
+      "rawCarrierWords": 20,
+      "mathWords": 0,
+      "exactRgbaPixels": 0,
+      "faultContradictions": [
+        {
+          "vertex": 0,
+          "vector": 0,
+          "lane": 16,
+          "expected": 1065353216,
+          "observed": 1069547520
+        }
+      ],
+      "qualifiedNumericZeroSigns": [],
+      "originalPoints": [
+        {
+          "point": "#/acceptance/vertices/0/vectors/0",
+          "words": 20,
+          "sha256": "2460e1942e0144ae2e32a8333f76a9bef5fd4ac3a38627812f66ccf21bc2c148"
+        }
+      ]
+    },
+    {
+      "kind": "cold",
+      "source": "cold/acceptance/fault-word/report.json",
+      "sourceSha256": "d028f3ce5f1980679c31d6b0715ec5cc6b1221357c635a1af7b80fcf6bdecf14",
+      "status": "HELD",
+      "seed": 1779033703,
+      "fault": "word",
+      "sourceDerivedProducerRows": 1,
+      "rawCarrierWords": 20,
+      "mathWords": 0,
+      "exactRgbaPixels": 0,
+      "faultContradictions": [
+        {
+          "vertex": 0,
+          "vector": 0,
+          "lane": 4,
+          "expected": 1056964608,
+          "observed": 1056964609
+        }
+      ],
+      "qualifiedNumericZeroSigns": [],
+      "originalPoints": [
+        {
+          "point": "#/acceptance/vertices/0/vectors/0",
+          "words": 20,
+          "sha256": "fde0953d3df9337737d19c87eb6576b41936adbd23e75ca0944f1d791234a226"
+        }
+      ]
+    }
+  ],
+  "heldQualifications": [
+    "Raw two-channel sign/exponent/mantissa words and literal RGBA bytes prove zero signs exactly. Ordinary highp numeric shadow zero sign is expressly qualified by task submission; the only observed zero-sign differences are counted separately.",
+    "Direct integer functions have no fenv dependency; four host-rounding-mode executions are bound by original native source and profile."
+  ]
+}

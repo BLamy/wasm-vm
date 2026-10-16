@@ -1,0 +1,22 @@
+cargo fmt --all --check
+cargo clippy -p wasm-vm-wasm --target wasm32-unknown-unknown --tests -- -D warnings
+    Checking oorandom v11.1.5
+    Checking wasm-bindgen-test-shared v0.2.126
+    Checking nu-ansi-term v0.50.3
+    Checking cast v0.3.0
+    Checking libm v0.2.16
+    Checking num-traits v0.2.19
+    Checking wasm-bindgen-test v0.3.76
+    Checking wasm-vm-wasm v0.0.1 (/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/crates/wasm)
+error: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `-D unused-imports` implied by `-D warnings`
+  = help: to override `-D warnings` add `#[allow(unused_imports)]`
+
+error: could not compile `wasm-vm-wasm` (test "hart_ctrl") due to 1 previous error
+warning: build failed, waiting for other jobs to finish...
+make: *** [verify-E5.5-T03bg] Error 101

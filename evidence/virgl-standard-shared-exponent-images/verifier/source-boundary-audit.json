@@ -1,0 +1,233 @@
+{
+  "schema": "fresh-rgb9e5-primary-and-source-boundary-audit-v1",
+  "status": "HELD",
+  "primarySpec": {
+    "url": "https://registry.khronos.org/OpenGL/extensions/EXT/EXT_texture_shared_exponent.txt",
+    "exactAlternatePrimaryURL": "https://raw.githubusercontent.com/KhronosGroup/OpenGL-Registry/main/extensions/EXT/EXT_texture_shared_exponent.txt",
+    "sha256": "7f4bf01aea3c7feb543e435afc3c9424c9ce9cf1ecdf563d3025beaa64ce4b94",
+    "stored": "EXT_texture_shared_exponent.txt",
+    "points": [
+      "packed fields and B=15/N=9",
+      "Appendix A float-to-shared conversion",
+      "identity packed uploads allowed"
+    ]
+  },
+  "primarySources": [
+    {
+      "path": "renderer/virgl-shader/vendor/src/virgl_hw.h",
+      "sha256": "191ca5cea527949a29e9753b1e31d550f2fed922895d78dabc5c5c3585aa2ff7"
+    },
+    {
+      "path": "tools/virgl-command/standard-float-image-mesa-formats.yaml",
+      "sha256": "f0fef33544456468def10d5dffc72a61e8b0e7acc599b700fc65366e6f495a10"
+    }
+  ],
+  "serving": [
+    {
+      "path": "tools/verify-virgl-async-jobs.mjs",
+      "sha256": "3a02227381cab7d11e0db93a46ab300cb26e2762a31ffa65b457c9a9e3b51d7a",
+      "predecessorSha256": "8b8d2edd85d151af8eaadb0b3a4d512ca157e5c5d0d62440b9bc2d54d9090425",
+      "scope": "Only adds2 imported modules to static serving closure; source-only precise waiver",
+      "status": "HELD"
+    },
+    {
+      "path": "tools/verify-virgl-blend-equations.mjs",
+      "sha256": "d8deaa4fb4343cd0b367f7185ee2f6fe3f364ad657c92027aa8cab4c5a6d88b8",
+      "predecessorSha256": "9aaf703f1724128bc01dd7b7353e8192dfa5e2a428ab74778cca0cbf4ac8b105",
+      "scope": "Only adds2 imported modules to static serving closure; source-only precise waiver",
+      "status": "HELD"
+    },
+    {
+      "path": "tools/verify-virgl-bounded-loops.mjs",
+      "sha256": "80026a181f097e601202a3a6e2e2f9c9c9e0a227cc1631b01ad52221e3dbb2bd",
+      "predecessorSha256": "c554c6be2e3c556c3d99c9eafa59f2dc2d69a9a6ab4e763dd99c79b8401d55e4",
+      "scope": "Only adds2 imported modules to static serving closure; source-only precise waiver",
+      "status": "HELD"
+    },
+    {
+      "path": "tools/verify-virgl-color-formats.mjs",
+      "sha256": "c463bc4fd44b3b0a3b8a09e14e21a4b16df59340bc5db36d18ea91d7992702e2",
+      "predecessorSha256": "b40b01bdad422188f85ea4078517c8936799bbf7c6a12a981ce6e74a201aca02",
+      "scope": "Only adds2 imported modules to static serving closure; source-only precise waiver",
+      "status": "HELD"
+    },
+    {
+      "path": "tools/verify-virgl-constant-compiler.mjs",
+      "sha256": "f39450e7a728dd6f2b94adb84d23ae1dfe0d46fd2dde234f54caa90a295f4096",
+      "predecessorSha256": "a8693cb907d22b0891e2d78a46d3e97f7e120f3336765ad3702b7e9af00b7d28",
+      "scope": "Only adds2 imported modules to static serving closure; source-only precise waiver",
+      "status": "HELD"
+    },
+    {
+      "path": "tools/verify-virgl-constant-domains.mjs",
+      "sha256": "9f70992766e64779dd6e2258eeb2d5b1e2b519329301eb1f25d266f83ae96a98",
+      "predecessorSha256": "3b029c2e4b503526314923e9abf087fb9ddde35adcdfdb602acbcbccc58daad9",
+      "scope": "Only adds2 imported modules to static serving closure; source-only precise waiver",
+      "status": "HELD"
+    },
+    {
+      "path": "tools/verify-virgl-constants.mjs",
+      "sha256": "440cbe7381ee134b7fb6ab56ae69412dda1ab1d38d022473a2fc3dd584b1ed4f",
+      "predecessorSha256": "3ae60080bf9f7f4edf32d739171d48b26ac34de37370f02f9231e4cb2e0039b7",
+      "scope": "Only adds2 imported modules to static serving closure; source-only precise waiver",
+      "status": "HELD"
+    },
+    {
+      "path": "tools/verify-virgl-control.mjs",
+      "sha256": "4e10d60dd35ef042cfe1fdaeed6cd0e3e01bd258f79ab6b71c91078290200953",
+      "predecessorSha256": "c705fe1e28b5eef0ba1e6b661f46f8cfadf587d4f40ccb2ecc784db18c4a97f6",
+      "scope": "Only adds2 imported modules to static serving closure; source-only precise waiver",
+      "status": "HELD"
+    },
+    {
+      "path": "tools/verify-virgl-depth-formats.mjs",
+      "sha256": "0fa3437a54e801bfa9e96bea60e0ff985221a1268a408b806dc76a4af616a1c1",
+      "predecessorSha256": "c4f45065e815974b57ca43c7a164c90c7284ee8041c8f275a9a73f9e8ccfaaf5",
+      "scope": "Only adds2 imported modules to static serving closure; source-only precise waiver",
+      "status": "HELD"
+    },
+    {
+      "path": "tools/verify-virgl-draw-replay.mjs",
+      "sha256": "45eea02191c321edeadd3437482b879149b1fdf72feda2a89c9d94be5881c957",
+      "predecessorSha256": "ac2ae5756c84dd80f5a4a1412114c52536c82df8d09986d9ef3520a0fe507de3",
+      "scope": "Only adds2 imported modules to static serving closure; source-only precise waiver",
+      "status": "HELD"
+    },
+    {
+      "path": "tools/verify-virgl-float-vertex-fetch.mjs",
+      "sha256": "1f9af5310b2975e7e460e3b65538602e7401f81b674b1b068515394a0b0789b2",
+      "predecessorSha256": "ac96a30f307aba35c688d4787f64cd640d204512139a945ad3a2bcd498db1d5c",
+      "scope": "Only adds2 imported modules to static serving closure; source-only precise waiver",
+      "status": "HELD"
+    },
+    {
+      "path": "tools/verify-virgl-indirect-constants.mjs",
+      "sha256": "5cccf448e05c4c1a9c75bef32573e1715baf260eac9f16ffa582eb4cbea9b2cf",
+      "predecessorSha256": "623857f6c0dee06ed71f4646ba69b8f95640290922f10f7168e1aca0cf07f3d6",
+      "scope": "Only adds2 imported modules to static serving closure; source-only precise waiver",
+      "status": "HELD"
+    },
+    {
+      "path": "tools/verify-virgl-inline-uploads.mjs",
+      "sha256": "2ba41b015e6a5b1dd8d6ef155febb1929b9939597a2c27fa1544638510a21b48",
+      "predecessorSha256": "89fc2a65117f36b4366a66887868bb32f2ac5d3064f4d12a33b02360560790c8",
+      "scope": "Only adds2 imported modules to static serving closure; source-only precise waiver",
+      "status": "HELD"
+    },
+    {
+      "path": "tools/verify-virgl-object-state.mjs",
+      "sha256": "15d3a3eb7b580f446a9d98403585d083cbaaee5afdbe8743b77d671ec6f697fb",
+      "predecessorSha256": "c3a13d5324ec0a4307a7083a9710cff0e8970423dadddd5bc84e8a45ba21d4d8",
+      "scope": "Only adds2 imported modules to static serving closure; source-only precise waiver",
+      "status": "HELD"
+    },
+    {
+      "path": "tools/verify-virgl-pairs.mjs",
+      "sha256": "e47826af1fc5e52373b3bb4e94c463c9effae23ad7e86976a59b3812d6e614e4",
+      "predecessorSha256": "1f457737fabb1e70f8832aeaacabac7a72bedd3f08a8edfaf617e99eb366e33b",
+      "scope": "Only adds2 imported modules to static serving closure; source-only precise waiver",
+      "status": "HELD"
+    },
+    {
+      "path": "tools/verify-virgl-raster-depth.mjs",
+      "sha256": "6e7ed867712bf0744b9efc141c5609ff4e0c5d8d284c409dfbe3be3b4f5d26a1",
+      "predecessorSha256": "3b138e5cff6107cdb326b667a2b75be6f9b91f922329549a50b7239f628e022c",
+      "scope": "Only adds2 imported modules to static serving closure; source-only precise waiver",
+      "status": "HELD"
+    },
+    {
+      "path": "tools/verify-virgl-render-cache.mjs",
+      "sha256": "e0737d8951184df75eddc341ae72ddd39c443dbe059a939a4fc17c35ef475939",
+      "predecessorSha256": "46b1b97851f1a9039464954c4772221ce06ec501c58141a902eac4c9c7ec4ad7",
+      "scope": "Only adds2 imported modules to static serving closure; source-only precise waiver",
+      "status": "HELD"
+    },
+    {
+      "path": "tools/verify-virgl-resource-transfers.mjs",
+      "sha256": "6dfbe450c6ae22b895aa129404d6b6fb7a5283de327275fc8ce864ba526f97c4",
+      "predecessorSha256": "5233ad101cbe85a5e922592f1d6cd9eb1a39138841721c58fb7842f4d406f0e0",
+      "scope": "Only adds2 imported modules to static serving closure; source-only precise waiver",
+      "status": "HELD"
+    },
+    {
+      "path": "tools/verify-virgl-standard-float-images-adversarial.mjs",
+      "sha256": "ac85ea9e94d4a9df0416f04149edde2c0dd07f2919e173f7e33e10aa75e258ed",
+      "predecessorSha256": "0faa0617ac2a1d2489c8a50a2b159f006726ecfa91bfc36716a82e7cd51e82bd",
+      "scope": "Only adds2 imported modules to static serving closure; source-only precise waiver",
+      "status": "HELD"
+    },
+    {
+      "path": "tools/verify-virgl-standard-float-images.mjs",
+      "sha256": "f415b7e62576e8d1bc1cc2054159877ea1ebac7daf278280610a0fd8a8d75d85",
+      "predecessorSha256": "a694daf1e71365324857751c3e50671f8b694768ab8518f73048fdf7a1d472e2",
+      "scope": "Only adds2 imported modules to static serving closure; source-only precise waiver",
+      "status": "HELD"
+    },
+    {
+      "path": "tools/verify-virgl-standard-texture-storage-adversarial.mjs",
+      "sha256": "f641f52deff6a5e7f9a8c07084fdb7abcb5e6090ee41cfd680daadc45fb130bc",
+      "predecessorSha256": "2a648f9ba82259402789770457e3f28e96981e8df8d5baae967331346a3e0bdd",
+      "scope": "Only adds2 imported modules to static serving closure; source-only precise waiver",
+      "status": "HELD"
+    },
+    {
+      "path": "tools/verify-virgl-standard-texture-storage.mjs",
+      "sha256": "3e1bcb32afb26ea7e9d3a738dd7b9d4200b2144f95b8b7bad1247fe1a8a21274",
+      "predecessorSha256": "3f69df79ed43488c64d4a3d05095b830f573fe406ab21719a6f955a7cb222a7c",
+      "scope": "Only adds2 imported modules to static serving closure; source-only precise waiver",
+      "status": "HELD"
+    },
+    {
+      "path": "tools/verify-virgl-structured-conditionals.mjs",
+      "sha256": "b4510e7d1fcc4352ca727dde30442281604b98f7d5d27a37b871f77c3499fbb0",
+      "predecessorSha256": "c102fd075d78f9912e6d7ee126c53ae95a0a0640325e0113134dd8b1a106259a",
+      "scope": "Only adds2 imported modules to static serving closure; source-only precise waiver",
+      "status": "HELD"
+    },
+    {
+      "path": "tools/verify-virgl-texture-views.mjs",
+      "sha256": "9bf663f731ef80a8970321b63a5aaa1928a1fc831dfe2b4895af9f6eb6cd5c00",
+      "predecessorSha256": "ca75da1a835f7c78419416315b56729666f620d4666c10110c08b9b942388fcf",
+      "scope": "Only adds2 imported modules to static serving closure; source-only precise waiver",
+      "status": "HELD"
+    },
+    {
+      "path": "tools/verify-virgl-vertex-constants.mjs",
+      "sha256": "413ea02469a8b0c2cb73bcd38c0ca25e3b87451975a0a51be59d6a7b3fd6730d",
+      "predecessorSha256": "6152adf4a30314be643d79e75f6acbf7194026f840b53012e346f04d15b54248",
+      "scope": "Only adds2 imported modules to static serving closure; source-only precise waiver",
+      "status": "HELD"
+    },
+    {
+      "path": "tools/verify-virgl-standard-uniform-bindings.mjs",
+      "sha256": "3ed41f6d553c24b454891867f141d112cd71406ef313c510337fa02d648c8ce0",
+      "predecessorSha256": "b6d6cfb63753a0dcfad9cc18106d65818be130449d9a84e7df6d58d69bc680db",
+      "scope": "Only adds2 imported modules to static serving closure; source-only precise waiver",
+      "status": "HELD"
+    },
+    {
+      "path": "tools/verify-virgl-standard-packed-float-images.mjs",
+      "sha256": "c01ae48a4040fa5b78e61abf1147f1db7e4cbc973331b534c01d167b101dfdbf",
+      "predecessorSha256": "e25463c3d5e0da2128490d85accdb71dfe5715003bcd56a8f4627cc7fb64f92c",
+      "scope": "Only adds2 imported modules to static serving closure; source-only precise waiver",
+      "status": "HELD"
+    }
+  ],
+  "boundaries": [
+    {
+      "path": "renderer/virgl-command/resources.mjs",
+      "inverseSha256": "6da63f52d7d079ac2ad154ae70c35d4cbf7293e5f213d65d034422e9af8c44dc",
+      "sourceSha256": "e41c1d3fb8c3ba2ed81a99a4f1072a6c531957766fa87dd1265bb1bca57697a8"
+    },
+    {
+      "path": "renderer/virgl-command/shared-exponent-images.mjs",
+      "inverseSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sourceSha256": "27de20239649aea73145e1f547c9265692f451fedddf3876639c173cf0d6168f"
+    },
+    {
+      "path": "renderer/virgl-command/shared-exponent-gpu.mjs",
+      "inverseSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sourceSha256": "22efbf4e0a3ae04d2e29900278db1e88880bd7c2fc7e757d0fd12d3a899531b7"
+    }
+  ]
+}

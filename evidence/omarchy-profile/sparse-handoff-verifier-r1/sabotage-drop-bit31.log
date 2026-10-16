@@ -1,0 +1,20 @@
+Compile: ['rustc', '--edition=2024', '--test', '/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/handoff-critic-sabotage-dtnv9mpr/wrapper.rs', '-L', 'dependency=/Users/blamy/.codex/worktrees/emulator-speed-next/wasm-vm/target/debug/deps', '--extern', 'proptest=/Users/blamy/.codex/worktrees/emulator-speed-next/wasm-vm/target/debug/deps/libproptest-e81e24b929139576.rlib', '-o', '/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/handoff-critic-sabotage-dtnv9mpr/tests']
+
+Run: ['/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/handoff-critic-sabotage-dtnv9mpr/tests', '--exact', 'regs::tests::sparse_mask_stamp_wraps_once_and_empty_masks_do_not_mutate', '--nocapture']
+
+running 1 test
+
+thread 'regs::tests::sparse_mask_stamp_wraps_once_and_empty_masks_do_not_mutate' (29098732) panicked at /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/handoff-critic-sabotage-dtnv9mpr/regs.rs:193:9:
+assertion `left == right` failed
+  left: 0
+ right: 18446744073709551615
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test regs::tests::sparse_mask_stamp_wraps_once_and_empty_masks_do_not_mutate ... FAILED
+
+failures:
+
+failures:
+    regs::tests::sparse_mask_stamp_wraps_once_and_empty_masks_do_not_mutate
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s
+

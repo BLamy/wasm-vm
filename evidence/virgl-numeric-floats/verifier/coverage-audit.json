@@ -1,0 +1,2029 @@
+{
+  "status": "passed",
+  "frozenHead": "1ce9b75b182b5411aee9922f329dc898e2a28b4e",
+  "changedExecutableLines": 155,
+  "changedConditionalRegions": 111,
+  "conditionalOutcomes": 222,
+  "lines": [
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 231,
+      "count": "1.24M",
+      "source": "   if (s->raw && !s->mixed_candidate && (r.file == SAMP || r.file == SVIEW)) { failure_code = \"unsupported-feature\"; return false; }",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 298,
+      "count": "97.6k",
+      "source": "      else if (word(p, \"ADD\")) raw.opcode = RAW_ADD;",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 299,
+      "count": "48.6k",
+      "source": "      else if (word(p, \"MUL\")) raw.opcode = RAW_MUL;",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 300,
+      "count": "24.6k",
+      "source": "      else if (word(p, \"MAD\")) raw.opcode = RAW_MAD;",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 301,
+      "count": "315",
+      "source": "      else if (word(p, \"TEX\")) raw.opcode = RAW_TEX;",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 303,
+      "count": "1.16M",
+      "source": "      tex = raw.opcode == RAW_TEX;",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 304,
+      "count": "1.16M",
+      "source": "      arity = raw.opcode == RAW_NOT || tex ? 1 : raw.opcode == RAW_UCMP || raw.opcode == RAW_MAD ? 3 : 2;",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 305,
+      "count": "1.16M",
+      "source": "      partial = !tex && raw.opcode != RAW_MAD;",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 306,
+      "count": "",
+      "source": "      /* These formerly unsupported numeric tokens retain that error category",
+      "classification": "nonexecutable syntax/comment or continuation of covered expression"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 307,
+      "count": "",
+      "source": "       * for malformed syntax and unproven domains in an owned raw stage. */",
+      "classification": "nonexecutable syntax/comment or continuation of covered expression"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 308,
+      "count": "1.16M",
+      "source": "      if ((1u << raw.opcode) & RAW_V4_OPCODES) failure_code = \"unsupported-feature\";",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 325,
+      "count": "22",
+      "source": "      raw.sampler = sampler.index;",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 328,
+      "count": "1.66M",
+      "source": "   if (s->raw) {",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 329,
+      "count": "1.46M",
+      "source": "      raw.dst = (struct raw_destination){dst.file, dst.index, dst.mask};",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 330,
+      "count": "1.46M",
+      "source": "      raw.flags = s->mixed_candidate ? RAW_MIXED : 0;",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 331,
+      "count": "1.46M",
+      "source": "      if (!raw_record(s->raw, &raw)) { failure_code = \"unsupported-feature\"; return false; }",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 332,
+      "count": "1.46M",
+      "source": "   }",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 334,
+      "count": "1.66M",
+      "source": "   failure_code = \"parse-error\";",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 464,
+      "count": "308k",
+      "source": "   bool candidate = false, numeric_candidate = false;",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 477,
+      "count": "2.93M",
+      "source": "      } else if (word(&p, \"ADD\") || word(&p, \"MUL\") || word(&p, \"MAD\") || word(&p, \"TEX\")) {",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 478,
+      "count": "98.2k",
+      "source": "         numeric_candidate = true;",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 482,
+      "count": "190k",
+      "source": "      profile->mixed_candidate = numeric_candidate;",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 499,
+      "count": "1.62M",
+      "source": "      for (unsigned i = 0; i < c->profile.raw->count; ++i)",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 500,
+      "count": "1.44M",
+      "source": "         if (c->profile.raw->instructions[i].opcode == RAW_TEX)",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 501,
+      "count": "15",
+      "source": "            c->info.samplers_used_mask |= 1u << c->profile.raw->instructions[i].sampler;",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 605,
+      "count": "301k",
+      "source": "      c->profile.raw->opcode_mask & RAW_V4_OPCODES ? \"virgl-webgl2-raw-bits-v4\" :",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 61,
+      "count": "",
+      "source": "static bool safe_raw_float(struct raw_lane value)",
+      "classification": "nonexecutable syntax/comment or continuation of covered expression"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 62,
+      "count": "9.86M",
+      "source": "{",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 63,
+      "count": "9.86M",
+      "source": "   const uint32_t exponent = UINT32_C(0x7f800000), mantissa = UINT32_C(0x007fffff);",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 64,
+      "count": "9.86M",
+      "source": "   return (value.zero & exponent) && ((value.one & exponent) || (value.zero & mantissa) == mantissa);",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 65,
+      "count": "9.86M",
+      "source": "}",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 66,
+      "count": "",
+      "source": "",
+      "classification": "nonexecutable syntax/comment or continuation of covered expression"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 67,
+      "count": "",
+      "source": "static unsigned float_mode(struct raw_lane value)",
+      "classification": "nonexecutable syntax/comment or continuation of covered expression"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 68,
+      "count": "10.7M",
+      "source": "{",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 69,
+      "count": "10.7M",
+      "source": "   return value.origin ? value.origin : safe_raw_float(value) ? RAW_FLOAT_DECODE : 0;",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 70,
+      "count": "10.7M",
+      "source": "}",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 71,
+      "count": "",
+      "source": "",
+      "classification": "nonexecutable syntax/comment or continuation of covered expression"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 72,
+      "count": "",
+      "source": "static struct raw_lane selected(struct raw_lane condition, struct raw_lane yes, struct raw_lane no, bool mixed)",
+      "classification": "nonexecutable syntax/comment or continuation of covered expression"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 77,
+      "count": "",
+      "source": "    * float origins remain distinct in old profiles. A mixed stage instead",
+      "classification": "nonexecutable syntax/comment or continuation of covered expression"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 78,
+      "count": "",
+      "source": "    * materializes the chosen authorized value in a new float shadow. */",
+      "classification": "nonexecutable syntax/comment or continuation of covered expression"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 80,
+      "count": "99.9k",
+      "source": "      .origin = mixed && float_mode(yes) && float_mode(no) ? RAW_FLOAT_SHADOW :",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 81,
+      "count": "99.9k",
+      "source": "         yes.origin == no.origin ? yes.origin : 0};",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 84,
+      "count": "",
+      "source": "bool raw_record(struct raw_ir *ir, const struct raw_instruction *input)",
+      "classification": "nonexecutable syntax/comment or continuation of covered expression"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 86,
+      "count": "1.46M",
+      "source": "   struct raw_instruction checked = *input;",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 87,
+      "count": "1.46M",
+      "source": "   checked.float_mask = 0;",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 88,
+      "count": "5.87M",
+      "source": "   for (unsigned source = 0; source < 3; ++source) checked.float_modes[source] = 0;",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 89,
+      "count": "1.46M",
+      "source": "   const struct raw_instruction *instruction = &checked;",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 90,
+      "count": "1.46M",
+      "source": "   bool mixed = (instruction->flags & RAW_MIXED) != 0;",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 91,
+      "count": "1.46M",
+      "source": "   bool numeric = ((1u << instruction->opcode) & RAW_V4_OPCODES) != 0;",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 92,
+      "count": "1.46M",
+      "source": "   unsigned sources = instruction->opcode == RAW_MOV || instruction->opcode == RAW_NOT || instruction->opcode == RAW_TEX ? 1 :",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 93,
+      "count": "1.46M",
+      "source": "      instruction->opcode == RAW_UCMP || instruction->opcode == RAW_MAD ? 3 : 2;",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 94,
+      "count": "1.46M",
+      "source": "   unsigned consumed = instruction->opcode == RAW_TEX ? 3u : instruction->dst.mask;",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 95,
+      "count": "",
+      "source": "   /* Capture read authority at the use site, before any aliased destination",
+      "classification": "nonexecutable syntax/comment or continuation of covered expression"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 96,
+      "count": "",
+      "source": "    * changes facts. Every numeric lane must have an enforceable domain. */",
+      "classification": "nonexecutable syntax/comment or continuation of covered expression"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 97,
+      "count": "4.15M",
+      "source": "   for (unsigned source = 0; source < sources; ++source)",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 98,
+      "count": "13.4M",
+      "source": "      for (unsigned lane = 0; lane < 4; ++lane) if (consumed & (1u << lane)) {",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 99,
+      "count": "10.7M",
+      "source": "         unsigned mode = float_mode(source_lane(ir, &instruction->src[source], lane));",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 100,
+      "count": "10.7M",
+      "source": "         if (numeric && !mode) return false;",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 101,
+      "count": "10.7M",
+      "source": "         if (mixed) checked.float_modes[source] |= (uint32_t)mode << (lane * 8);",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 102,
+      "count": "10.7M",
+      "source": "      }",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 107,
+      "count": "5.86M",
+      "source": "      if (instruction->opcode != RAW_MOV && instruction->opcode != RAW_NOT && instruction->opcode != RAW_TEX)",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 133,
+      "count": "102k",
+      "source": "      case RAW_UCMP: result[lane] = selected(a, b, source_lane(ir, &instruction->src[2], lane), mixed); break;",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 134,
+      "count": "190k",
+      "source": "      case RAW_ADD:",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 135,
+      "count": "286k",
+      "source": "      case RAW_MUL:",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 136,
+      "count": "383k",
+      "source": "      case RAW_MAD:",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 137,
+      "count": "383k",
+      "source": "      case RAW_TEX: result[lane].origin = RAW_FLOAT_SHADOW; break;",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 142,
+      "count": "5.87M",
+      "source": "      if (instruction->dst.mask & (1u << lane)) {",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 143,
+      "count": "5.86M",
+      "source": "         destination[lane] = result[lane];",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 144,
+      "count": "5.86M",
+      "source": "         if (result[lane].origin == RAW_FLOAT_SHADOW) checked.float_mask |= 1u << lane;",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 145,
+      "count": "5.86M",
+      "source": "      }",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 148,
+      "count": "1.46M",
+      "source": "   return true;",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 159,
+      "count": "372k",
+      "source": "         if (!safe_raw_float(value)) return false;",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 196,
+      "count": "",
+      "source": "static unsigned lane_mode(const struct raw_instruction *instruction, unsigned source, unsigned lane)",
+      "classification": "nonexecutable syntax/comment or continuation of covered expression"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 197,
+      "count": "888k",
+      "source": "{",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 198,
+      "count": "888k",
+      "source": "   return (instruction->float_modes[source] >> (lane * 8)) & 255u;",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 199,
+      "count": "888k",
+      "source": "}",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 200,
+      "count": "",
+      "source": "",
+      "classification": "nonexecutable syntax/comment or continuation of covered expression"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 201,
+      "count": "",
+      "source": "static void float_operand(struct writer *w, const struct profile *p, const struct raw_instruction *instruction, unsigned source, unsigned lane)",
+      "classification": "nonexecutable syntax/comment or continuation of covered expression"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 202,
+      "count": "888k",
+      "source": "{",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 203,
+      "count": "888k",
+      "source": "   unsigned mode = lane_mode(instruction, source, lane);",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 204,
+      "count": "888k",
+      "source": "   const struct raw_source *r = &instruction->src[source];",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 205,
+      "count": "888k",
+      "source": "   if (mode == RAW_FLOAT_SHADOW) emit(w, \"float_temp[%u].%c\", r->index, \"xyzw\"[r->swizzle[lane]]);",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 206,
+      "count": "653k",
+      "source": "   else if (mode == RAW_FLOAT_DECODE) {",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 207,
+      "count": "467k",
+      "source": "      emit(w, \"uintBitsToFloat(\"); operand(w, p, r, lane); emit(w, \")\");",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 208,
+      "count": "467k",
+      "source": "   } else input_float(w, p, (mode - 1) / 4, (mode - 1) % 4);",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 209,
+      "count": "888k",
+      "source": "}",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 210,
+      "count": "",
+      "source": "",
+      "classification": "nonexecutable syntax/comment or continuation of covered expression"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 211,
+      "count": "",
+      "source": "static void float_snapshot(struct writer *w, const struct profile *p, const struct raw_instruction *instruction)",
+      "classification": "nonexecutable syntax/comment or continuation of covered expression"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 212,
+      "count": "106k",
+      "source": "{",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 213,
+      "count": "106k",
+      "source": "   enum raw_opcode op = instruction->opcode;",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 214,
+      "count": "106k",
+      "source": "   if (op == RAW_TEX) {",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 215,
+      "count": "",
+      "source": "      /* One vec4 sample is shared by all lanes and both representations. */",
+      "classification": "nonexecutable syntax/comment or continuation of covered expression"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 216,
+      "count": "15",
+      "source": "      emit(w, \" float_rhs = texture(fssamp%u, vec2(\", instruction->sampler);",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 217,
+      "count": "15",
+      "source": "      float_operand(w, p, instruction, 0, 0); emit(w, \", \");",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 218,
+      "count": "15",
+      "source": "      float_operand(w, p, instruction, 0, 1); emit(w, \"));\\n\");",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 219,
+      "count": "15",
+      "source": "      return;",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 220,
+      "count": "15",
+      "source": "   }",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 221,
+      "count": "106k",
+      "source": "   emit(w, \" float_rhs = vec4(\");",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 222,
+      "count": "531k",
+      "source": "   for (unsigned lane = 0; lane < 4; ++lane) {",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 223,
+      "count": "424k",
+      "source": "      if (lane) emit(w, \", \");",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 224,
+      "count": "424k",
+      "source": "      if (!(instruction->float_mask & (1u << lane))) { emit(w, \"0.0\"); continue; }",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 225,
+      "count": "420k",
+      "source": "      emit(w, \"(\");",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 226,
+      "count": "420k",
+      "source": "      if (op == RAW_UCMP) {",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 227,
+      "count": "168",
+      "source": "         unsigned yes = lane_mode(instruction, 1, lane), no = lane_mode(instruction, 2, lane);",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 228,
+      "count": "",
+      "source": "         /* A known selector may choose an authorized shadow while the other",
+      "classification": "nonexecutable syntax/comment or continuation of covered expression"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 229,
+      "count": "",
+      "source": "          * payload is arbitrary raw data. Never decode that unselected arm. */",
+      "classification": "nonexecutable syntax/comment or continuation of covered expression"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 230,
+      "count": "168",
+      "source": "         if (yes && no) {",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 231,
+      "count": "136",
+      "source": "            operand(w, p, &instruction->src[0], lane); emit(w, \" != 0u ? \");",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 232,
+      "count": "136",
+      "source": "            float_operand(w, p, instruction, 1, lane); emit(w, \" : \");",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 233,
+      "count": "136",
+      "source": "            float_operand(w, p, instruction, 2, lane);",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 234,
+      "count": "136",
+      "source": "         } else float_operand(w, p, instruction, yes ? 1 : 2, lane);",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 235,
+      "count": "420k",
+      "source": "      } else {",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 236,
+      "count": "420k",
+      "source": "         float_operand(w, p, instruction, 0, lane);",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 237,
+      "count": "420k",
+      "source": "         if (op == RAW_ADD || op == RAW_MUL || op == RAW_MAD) {",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 238,
+      "count": "373k",
+      "source": "            emit(w, op == RAW_ADD ? \" + \" : \" * \");",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 239,
+      "count": "373k",
+      "source": "            float_operand(w, p, instruction, 1, lane);",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 240,
+      "count": "373k",
+      "source": "            if (op == RAW_MAD) { emit(w, \" + \"); float_operand(w, p, instruction, 2, lane); }",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 241,
+      "count": "373k",
+      "source": "         }",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 242,
+      "count": "420k",
+      "source": "      }",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 243,
+      "count": "420k",
+      "source": "      emit(w, \")\");",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 244,
+      "count": "420k",
+      "source": "   }",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 245,
+      "count": "106k",
+      "source": "   emit(w, \");\\n\");",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 246,
+      "count": "106k",
+      "source": "}",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 247,
+      "count": "",
+      "source": "",
+      "classification": "nonexecutable syntax/comment or continuation of covered expression"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 263,
+      "count": "1.67M",
+      "source": "   for (unsigned index = 0; index < FILE_REGISTERS; ++index) {",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 264,
+      "count": "1.48M",
+      "source": "      bool used = false;",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 265,
+      "count": "13.0M",
+      "source": "      for (unsigned i = 0; i < p->raw->count; ++i)",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 266,
+      "count": "11.5M",
+      "source": "         used |= p->raw->instructions[i].opcode == RAW_TEX && p->raw->instructions[i].sampler == index;",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 267,
+      "count": "1.48M",
+      "source": "      if (used) emit(&w, \"uniform highp sampler2D fssamp%u;\\n\", index);",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 268,
+      "count": "1.48M",
+      "source": "   }",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 280,
+      "count": "185k",
+      "source": "   if (p->raw->opcode_mask & RAW_V4_OPCODES)",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 281,
+      "count": "46.4k",
+      "source": "      emit(&w, \" highp vec4 float_temp[118];\\n highp vec4 float_out[8];\\n highp vec4 float_rhs;\\n\");",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 284,
+      "count": "1.44M",
+      "source": "      bool numeric = ((1u << instruction->opcode) & RAW_V4_OPCODES) != 0;",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 285,
+      "count": "1.44M",
+      "source": "      if (instruction->float_mask) float_snapshot(&w, p, instruction);",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 286,
+      "count": "1.44M",
+      "source": "      if (numeric) emit(&w, \" raw_rhs = floatBitsToUint(float_rhs\");",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 287,
+      "count": "1.34M",
+      "source": "      else {",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 288,
+      "count": "1.34M",
+      "source": "         emit(&w, \" raw_rhs = uvec4(\");",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 289,
+      "count": "6.74M",
+      "source": "         for (unsigned lane = 0; lane < 4; ++lane) {",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 290,
+      "count": "5.39M",
+      "source": "            if (lane) emit(&w, \", \");",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 291,
+      "count": "5.39M",
+      "source": "            if (!(instruction->dst.mask & (1u << lane))) { emit(&w, \"0u\"); continue; }",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 292,
+      "count": "5.39M",
+      "source": "            enum raw_opcode op = instruction->opcode;",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 293,
+      "count": "5.39M",
+      "source": "            emit(&w, \"(\");",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 294,
+      "count": "5.39M",
+      "source": "            if (op == RAW_NOT) emit(&w, \"~\");",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 295,
+      "count": "5.39M",
+      "source": "            if (op == RAW_ISGE) emit(&w, \"(\");",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 296,
+      "count": "5.39M",
+      "source": "            if (op == RAW_FSLT || op == RAW_FSGE) emit(&w, \"raw_float_mask(\");",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 297,
+      "count": "5.39M",
+      "source": "            operand(&w, p, &instruction->src[0], lane);",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 298,
+      "count": "5.39M",
+      "source": "            if (op == RAW_AND || op == RAW_OR) {",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 299,
+      "count": "1.85M",
+      "source": "               emit(&w, op == RAW_AND ? \" & \" : \" | \"); operand(&w, p, &instruction->src[1], lane);",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 300,
+      "count": "3.53M",
+      "source": "            } else if (op == RAW_SHL || op == RAW_USHR) {",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 301,
+      "count": "1.85M",
+      "source": "               emit(&w, op == RAW_SHL ? \" << (\" : \" >> (\");",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 302,
+      "count": "1.85M",
+      "source": "               operand(&w, p, &instruction->src[1], lane); emit(&w, \" & 31u)\");",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 303,
+      "count": "1.85M",
+      "source": "            } else if (op == RAW_UADD) {",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 304,
+      "count": "92.9k",
+      "source": "               emit(&w, \" + \"); operand(&w, p, &instruction->src[1], lane);",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 305,
+      "count": "1.59M",
+      "source": "            } else if (op == RAW_ISGE) {",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 306,
+      "count": "132",
+      "source": "               emit(&w, \" ^ 2147483648u) >= (\"); operand(&w, p, &instruction->src[1], lane);",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 307,
+      "count": "132",
+      "source": "               emit(&w, \" ^ 2147483648u) ? 4294967295u : 0u\");",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 308,
+      "count": "1.59M",
+      "source": "            } else if (op == RAW_USEQ || op == RAW_USNE) {",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 309,
+      "count": "364",
+      "source": "               emit(&w, op == RAW_USEQ ? \" == \" : \" != \"); operand(&w, p, &instruction->src[1], lane);",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 310,
+      "count": "364",
+      "source": "               emit(&w, \" ? 4294967295u : 0u\");",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 311,
+      "count": "1.59M",
+      "source": "            } else if (op == RAW_UCMP) {",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 312,
+      "count": "98.3k",
+      "source": "               emit(&w, \" != 0u ? \"); operand(&w, p, &instruction->src[1], lane);",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 313,
+      "count": "98.3k",
+      "source": "               emit(&w, \" : \"); operand(&w, p, &instruction->src[2], lane);",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 314,
+      "count": "1.49M",
+      "source": "            } else if (op == RAW_FSLT || op == RAW_FSGE) {",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 315,
+      "count": "281k",
+      "source": "               emit(&w, \", \"); operand(&w, p, &instruction->src[1], lane);",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 316,
+      "count": "281k",
+      "source": "               emit(&w, op == RAW_FSGE ? \", true)\" : \", false)\");",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 317,
+      "count": "281k",
+      "source": "            }",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 318,
+      "count": "5.39M",
+      "source": "            emit(&w, \")\");",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 326,
+      "count": "1.44M",
+      "source": "      if (instruction->float_mask) {",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 327,
+      "count": "106k",
+      "source": "         emit(&w, \" float_%s[%u].\", instruction->dst.file == TEMP ? \"temp\" : \"out\", instruction->dst.index);",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 328,
+      "count": "531k",
+      "source": "         for (unsigned lane = 0; lane < 4; ++lane) if (instruction->float_mask & (1u << lane)) emit(&w, \"%c\", \"xyzw\"[lane]);",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 329,
+      "count": "106k",
+      "source": "         emit(&w, \" = float_rhs.\");",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 330,
+      "count": "531k",
+      "source": "         for (unsigned lane = 0; lane < 4; ++lane) if (instruction->float_mask & (1u << lane)) emit(&w, \"%c\", \"xyzw\"[lane]);",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 331,
+      "count": "106k",
+      "source": "         emit(&w, \";\\n\");",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 332,
+      "count": "106k",
+      "source": "      }",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 342,
+      "count": "1.20M",
+      "source": "         if (origin == RAW_FLOAT_SHADOW) emit(&w, \"float_out[%u].%c\", index, \"xyzw\"[lane]);",
+      "classification": "executed"
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 343,
+      "count": "1.06M",
+      "source": "         else if (origin) input_float(&w, p, (origin - 1) / 4, (origin - 1) % 4);",
+      "classification": "executed"
+    }
+  ],
+  "branches": [
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 477,
+      "column": 18,
+      "trueCount": 49384,
+      "falseCount": 2885716
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 477,
+      "column": 37,
+      "trueCount": 24364,
+      "falseCount": 2861352
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 477,
+      "column": 56,
+      "trueCount": 24452,
+      "falseCount": 2836900
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 477,
+      "column": 75,
+      "trueCount": 64,
+      "falseCount": 2836836
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 231,
+      "column": 8,
+      "trueCount": 856426,
+      "falseCount": 393486
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 231,
+      "column": 18,
+      "trueCount": 570901,
+      "falseCount": 285525
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 231,
+      "column": 42,
+      "trueCount": 2,
+      "falseCount": 570899
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 231,
+      "column": 60,
+      "trueCount": 2,
+      "falseCount": 570897
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 298,
+      "column": 16,
+      "trueCount": 49008,
+      "falseCount": 48637
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 299,
+      "column": 16,
+      "trueCount": 24028,
+      "falseCount": 24609
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 300,
+      "column": 16,
+      "trueCount": 24294,
+      "falseCount": 315
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 301,
+      "column": 16,
+      "trueCount": 54,
+      "falseCount": 261
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 304,
+      "column": 15,
+      "trueCount": 790,
+      "falseCount": 1166410
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 304,
+      "column": 40,
+      "trueCount": 54,
+      "falseCount": 1166356
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 304,
+      "column": 50,
+      "trueCount": 25911,
+      "falseCount": 1140445
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 304,
+      "column": 76,
+      "trueCount": 24294,
+      "falseCount": 1116151
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 305,
+      "column": 17,
+      "trueCount": 1167146,
+      "falseCount": 54
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 305,
+      "column": 25,
+      "trueCount": 1142852,
+      "falseCount": 24294
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 308,
+      "column": 11,
+      "trueCount": 97384,
+      "falseCount": 1069816
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 328,
+      "column": 8,
+      "trueCount": 1468729,
+      "falseCount": 196831
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 330,
+      "column": 19,
+      "trueCount": 415220,
+      "falseCount": 1053509
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 331,
+      "column": 11,
+      "trueCount": 76,
+      "falseCount": 1468653
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 499,
+      "column": 28,
+      "trueCount": 1442633,
+      "falseCount": 185852
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 500,
+      "column": 14,
+      "trueCount": 15,
+      "falseCount": 1442618
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 605,
+      "column": 7,
+      "trueCount": 46406,
+      "falseCount": 139442
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 88,
+      "column": 30,
+      "trueCount": 4406187,
+      "falseCount": 1468729
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 92,
+      "column": 23,
+      "trueCount": 304498,
+      "falseCount": 1164231
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 92,
+      "column": 57,
+      "trueCount": 790,
+      "falseCount": 1163441
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 92,
+      "column": 91,
+      "trueCount": 17,
+      "falseCount": 1163424
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 93,
+      "column": 7,
+      "trueCount": 25764,
+      "falseCount": 1137660
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 93,
+      "column": 42,
+      "trueCount": 24274,
+      "falseCount": 1113386
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 94,
+      "column": 24,
+      "trueCount": 17,
+      "falseCount": 1468712
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 97,
+      "column": 30,
+      "trueCount": 2682117,
+      "falseCount": 1468653
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 98,
+      "column": 31,
+      "trueCount": 10728252,
+      "falseCount": 2682041
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 98,
+      "column": 53,
+      "trueCount": 10716285,
+      "falseCount": 11967
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 100,
+      "column": 14,
+      "trueCount": 864492,
+      "falseCount": 9851793
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 100,
+      "column": 25,
+      "trueCount": 76,
+      "falseCount": 864416
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 101,
+      "column": 14,
+      "trueCount": 3127944,
+      "falseCount": 7588265
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 107,
+      "column": 11,
+      "trueCount": 4650847,
+      "falseCount": 1217657
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 107,
+      "column": 45,
+      "trueCount": 4647727,
+      "falseCount": 3120
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 107,
+      "column": 79,
+      "trueCount": 4647667,
+      "falseCount": 60
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 133,
+      "column": 7,
+      "trueCount": 102960,
+      "falseCount": 5765544
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 134,
+      "column": 7,
+      "trueCount": 190610,
+      "falseCount": 5677894
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 135,
+      "column": 7,
+      "trueCount": 95973,
+      "falseCount": 5772531
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 136,
+      "column": 7,
+      "trueCount": 97056,
+      "falseCount": 5771448
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 137,
+      "column": 7,
+      "trueCount": 60,
+      "falseCount": 5868444
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 142,
+      "column": 11,
+      "trueCount": 5868504,
+      "falseCount": 6108
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 144,
+      "column": 14,
+      "trueCount": 431438,
+      "falseCount": 5437066
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 159,
+      "column": 14,
+      "trueCount": 203,
+      "falseCount": 372396
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 263,
+      "column": 29,
+      "trueCount": 1486816,
+      "falseCount": 185852
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 265,
+      "column": 28,
+      "trueCount": 11541064,
+      "falseCount": 1486816
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 266,
+      "column": 18,
+      "trueCount": 120,
+      "falseCount": 11540944
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 266,
+      "column": 63,
+      "trueCount": 15,
+      "falseCount": 105
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 267,
+      "column": 11,
+      "trueCount": 15,
+      "falseCount": 1486801
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 280,
+      "column": 8,
+      "trueCount": 46408,
+      "falseCount": 139444
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 285,
+      "column": 11,
+      "trueCount": 106223,
+      "falseCount": 1336410
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 286,
+      "column": 11,
+      "trueCount": 94478,
+      "falseCount": 1348155
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 289,
+      "column": 34,
+      "trueCount": 5392620,
+      "falseCount": 1348155
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 290,
+      "column": 17,
+      "trueCount": 4044465,
+      "falseCount": 1348155
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 291,
+      "column": 17,
+      "trueCount": 807,
+      "falseCount": 5391813
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 294,
+      "column": 17,
+      "trueCount": 2856,
+      "falseCount": 5388957
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 295,
+      "column": 17,
+      "trueCount": 132,
+      "falseCount": 5391681
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 296,
+      "column": 17,
+      "trueCount": 280756,
+      "falseCount": 5111057
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 296,
+      "column": 35,
+      "trueCount": 340,
+      "falseCount": 5110717
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 298,
+      "column": 17,
+      "trueCount": 371746,
+      "falseCount": 5020067
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 298,
+      "column": 34,
+      "trueCount": 1482398,
+      "falseCount": 3537669
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 299,
+      "column": 25,
+      "trueCount": 371746,
+      "falseCount": 1482398
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 300,
+      "column": 24,
+      "trueCount": 1481462,
+      "falseCount": 2056207
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 300,
+      "column": 41,
+      "trueCount": 370282,
+      "falseCount": 1685925
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 301,
+      "column": 25,
+      "trueCount": 1481462,
+      "falseCount": 370282
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 303,
+      "column": 24,
+      "trueCount": 92990,
+      "falseCount": 1592935
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 305,
+      "column": 24,
+      "trueCount": 132,
+      "falseCount": 1592803
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 308,
+      "column": 24,
+      "trueCount": 234,
+      "falseCount": 1592569
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 308,
+      "column": 42,
+      "trueCount": 130,
+      "falseCount": 1592439
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 309,
+      "column": 25,
+      "trueCount": 234,
+      "falseCount": 130
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 311,
+      "column": 24,
+      "trueCount": 98368,
+      "falseCount": 1494071
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 314,
+      "column": 24,
+      "trueCount": 280756,
+      "falseCount": 1213315
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 314,
+      "column": 42,
+      "trueCount": 340,
+      "falseCount": 1212975
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 316,
+      "column": 25,
+      "trueCount": 340,
+      "falseCount": 280756
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 326,
+      "column": 11,
+      "trueCount": 106223,
+      "falseCount": 1336410
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 327,
+      "column": 37,
+      "trueCount": 71387,
+      "falseCount": 34836
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 328,
+      "column": 34,
+      "trueCount": 424892,
+      "falseCount": 106223
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 328,
+      "column": 56,
+      "trueCount": 420648,
+      "falseCount": 4244
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 330,
+      "column": 34,
+      "trueCount": 424892,
+      "falseCount": 106223
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 330,
+      "column": 56,
+      "trueCount": 420648,
+      "falseCount": 4244
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 342,
+      "column": 14,
+      "trueCount": 139251,
+      "falseCount": 1068267
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 343,
+      "column": 19,
+      "trueCount": 695919,
+      "falseCount": 372348
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 69,
+      "column": 11,
+      "trueCount": 1228404,
+      "falseCount": 9488177
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 69,
+      "column": 41,
+      "trueCount": 4153061,
+      "falseCount": 5335116
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 80,
+      "column": 17,
+      "trueCount": 152,
+      "falseCount": 99840
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 80,
+      "column": 26,
+      "trueCount": 144,
+      "falseCount": 8
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 80,
+      "column": 45,
+      "trueCount": 136,
+      "falseCount": 8
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 81,
+      "column": 10,
+      "trueCount": 99792,
+      "falseCount": 64
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 64,
+      "column": 11,
+      "trueCount": 8118297,
+      "falseCount": 1742479
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 64,
+      "column": 39,
+      "trueCount": 950876,
+      "falseCount": 7167421
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 64,
+      "column": 65,
+      "trueCount": 3574581,
+      "falseCount": 3592840
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 214,
+      "column": 8,
+      "trueCount": 15,
+      "falseCount": 106208
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 222,
+      "column": 28,
+      "trueCount": 424832,
+      "falseCount": 106208
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 223,
+      "column": 11,
+      "trueCount": 318624,
+      "falseCount": 106208
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 224,
+      "column": 11,
+      "trueCount": 4244,
+      "falseCount": 420588
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 226,
+      "column": 11,
+      "trueCount": 168,
+      "falseCount": 420420
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 230,
+      "column": 14,
+      "trueCount": 152,
+      "falseCount": 16
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 230,
+      "column": 21,
+      "trueCount": 136,
+      "falseCount": 16
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 234,
+      "column": 50,
+      "trueCount": 16,
+      "falseCount": 16
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 237,
+      "column": 14,
+      "trueCount": 186917,
+      "falseCount": 233503
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 237,
+      "column": 31,
+      "trueCount": 92853,
+      "falseCount": 140650
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 237,
+      "column": 48,
+      "trueCount": 93952,
+      "falseCount": 46698
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 238,
+      "column": 21,
+      "trueCount": 186917,
+      "falseCount": 186805
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 240,
+      "column": 17,
+      "trueCount": 93952,
+      "falseCount": 279770
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 205,
+      "column": 8,
+      "trueCount": 235009,
+      "falseCount": 653419
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 206,
+      "column": 13,
+      "trueCount": 467850,
+      "falseCount": 185569
+    }
+  ],
+  "records": {
+    "coverage.json": "c2e390e7281b7f48d666218f34ab9ba9737cd9b80dcde0896f97649ba5f89c6a",
+    "coverage-show.txt": "6b8830b16fcf48f2f7aa134f46329a8aeaf1b397e447a716ead56891bf944da8",
+    "native-report.json": "86e1e501016a4b1ad59f4b99ee9587cf57d9f170347b7d0719d412102fcac4e7"
+  },
+  "sources": {
+    "renderer/virgl-shader/bridge.c": "ac3cf490270000d1d983a24a7df83e9c95c4b7000b1291b9238ae283ee9ed9f3",
+    "renderer/virgl-shader/raw_bits.c": "43609200b4e60b741a6f17234d3442af3cda56f5dc07b26d3631e63555ef2444"
+  }
+}

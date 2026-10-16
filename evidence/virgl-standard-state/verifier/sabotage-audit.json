@@ -1,0 +1,51 @@
+{
+  "schema": 1,
+  "status": "passed",
+  "mutation": {
+    "path": "renderer/virgl-command/state.mjs",
+    "needle": "const lanes = [\"v.r\", \"v.g\", \"v.b\", \"v.a\", \"0.0\", \"1.0\"];",
+    "replacement": "const lanes = standard && stage === 0 ? [\"v.r\", \"v.g\", \"v.r\", \"v.a\", \"0.0\", \"1.0\"] : [\"v.r\", \"v.g\", \"v.b\", \"v.a\", \"0.0\", \"1.0\"];",
+    "originalSha256": "7e9d7a18f53aceffe1c13dcc6bcd3f0da80c065c293cd58c21cbcbe06c47433e",
+    "servedSha256": "f8ccaefbc8f350feeababe5cecf801318593d8cf253098fe3cc5f8b9cb09fa39"
+  },
+  "namedOracle": "critic-full-955415761 independent pixel oracle",
+  "expected": [
+    91,
+    117,
+    153,
+    140
+  ],
+  "observed": [
+    82,
+    117,
+    144,
+    140
+  ],
+  "mismatches": [
+    {
+      "pixel": 0,
+      "lane": 0,
+      "expected": 91,
+      "observed": 82
+    },
+    {
+      "pixel": 0,
+      "lane": 2,
+      "expected": 153,
+      "observed": 144
+    },
+    {
+      "pixel": 1,
+      "lane": 0,
+      "expected": 91,
+      "observed": 82
+    },
+    {
+      "pixel": 1,
+      "lane": 2,
+      "expected": 153,
+      "observed": 144
+    }
+  ],
+  "reportSha256": "a5c3a6bc41b65a7f6649d148f3615d2fe91b5cc1dcf0eeb726fadf81871762d1"
+}

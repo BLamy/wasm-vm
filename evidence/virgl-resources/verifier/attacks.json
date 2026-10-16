@@ -1,0 +1,1698 @@
+{
+  "task": "E6-T12b",
+  "status": "passed",
+  "gitHead": "b52c2cbdf2dbf01e02d78e2bb6724502fececc16",
+  "started": "2026-10-03T04:03:47.495Z",
+  "sources": [
+    {
+      "path": "renderer/virgl-command/resources.mjs",
+      "sha256": "728a31ed543fb7565580305f545e51e1d91e15c6881f8318db1190bbb1d04090"
+    },
+    {
+      "path": "renderer/virgl-command/decoder.mjs",
+      "sha256": "8a3123cd1f11803b5c48d9535f51fcd5eaf42f78f99ca76a58af92bf2e9af0fd"
+    },
+    {
+      "path": "renderer/virgl-command/tests/resources-acceptance.mjs",
+      "sha256": "49f97ef7bd4b4329da69246457806c556cfdfaa41bc547cb99af721737f87d02"
+    },
+    {
+      "path": "evidence/virgl-resources/verifier/predictions.md",
+      "sha256": "cd1547ae421c8c72902b6933c8adef602cfa788e5cf328d3f62ec677adca8043"
+    },
+    {
+      "path": "evidence/virgl-resources/verifier/attack-cases.mjs",
+      "sha256": "0bdcd4f6c86bf5d5f1017d14053c61d968fb3c6c7b0ae9773e4ebd54728b86ce"
+    },
+    {
+      "path": "evidence/virgl-resources/verifier/run-attacks.mjs",
+      "sha256": "8ca733bf7b6de74156e31acc1c22b02a994068522313425cb3f868e7b1034663"
+    }
+  ],
+  "errors": {
+    "console": [],
+    "page": [],
+    "request": []
+  },
+  "native": {
+    "status": "passed",
+    "guestExecution": false,
+    "sources": [
+      {
+        "event": 156,
+        "resourceId": 3,
+        "sourceSha256": "f5eeb6294d3e81fcce432bf79250004844f5597b62ba7c1843780c14a3dec751",
+        "backingBytes": 4096,
+        "offset": 0,
+        "bytes": 64
+      },
+      {
+        "event": 157,
+        "resourceId": 4,
+        "sourceSha256": "3fa8bf0940bec2c126815596ab68436434c8acc27d52289d182b06f52c4165ab",
+        "backingBytes": 4096,
+        "offset": 0,
+        "bytes": 12
+      },
+      {
+        "event": 160,
+        "resourceId": 7,
+        "sourceSha256": "da1741f5aaf544e3609af2515998cdf6673735dd64691c22ea78a1d8efbfb50f",
+        "backingBytes": 1048576,
+        "offset": 0,
+        "bytes": 16
+      }
+    ],
+    "assertions": 64439,
+    "cases": [
+      {
+        "name": "default stride one-byte-short backing",
+        "code": "out-of-bounds"
+      },
+      {
+        "name": "row padding one-byte-short backing",
+        "code": "out-of-bounds"
+      },
+      {
+        "name": "row overlap",
+        "code": "out-of-bounds"
+      },
+      {
+        "name": "layer overlap",
+        "code": "out-of-bounds"
+      },
+      {
+        "name": "box x past extent",
+        "code": "out-of-bounds"
+      },
+      {
+        "name": "box y past extent",
+        "code": "out-of-bounds"
+      },
+      {
+        "name": "negative origin",
+        "code": "invalid-input"
+      },
+      {
+        "name": "zero extent",
+        "code": "invalid-input"
+      },
+      {
+        "name": "overflow origin",
+        "code": "out-of-bounds"
+      },
+      {
+        "name": "invalid level",
+        "code": "invalid-transfer"
+      },
+      {
+        "name": "huge offset",
+        "code": "out-of-bounds"
+      },
+      {
+        "name": "unsafe offset",
+        "code": "invalid-input"
+      },
+      {
+        "name": "NaN stride",
+        "code": "invalid-input"
+      },
+      {
+        "name": "fractional stride",
+        "code": "invalid-input"
+      },
+      {
+        "name": "overflow rows",
+        "code": "out-of-bounds"
+      },
+      {
+        "name": "unsupported layer",
+        "code": "out-of-bounds"
+      },
+      {
+        "name": "unsupported depth",
+        "code": "out-of-bounds"
+      },
+      {
+        "name": "invalid texture format",
+        "code": "unsupported-resource"
+      },
+      {
+        "name": "logical buffer extent independent of backing page",
+        "code": "out-of-bounds"
+      },
+      {
+        "name": "duplicate context",
+        "code": "context-exists"
+      },
+      {
+        "name": "duplicate resource ID",
+        "code": "resource-exists"
+      },
+      {
+        "name": "missing context",
+        "code": "missing-context"
+      },
+      {
+        "name": "missing resource",
+        "code": "missing-resource"
+      },
+      {
+        "name": "duplicate attachment",
+        "code": "already-attached"
+      },
+      {
+        "name": "missing backing",
+        "code": "missing-backing"
+      },
+      {
+        "name": "duplicate backing attachment",
+        "code": "already-attached"
+      },
+      {
+        "name": "ticket is single use",
+        "code": "invalid-ticket"
+      },
+      {
+        "name": "write beyond scatter backing",
+        "code": "out-of-bounds"
+      },
+      {
+        "name": "read beyond scatter backing",
+        "code": "out-of-bounds"
+      },
+      {
+        "name": "backing invalidates prepared ticket",
+        "code": "stale-ticket"
+      },
+      {
+        "name": "attachment invalidates prepared ticket",
+        "code": "stale-ticket"
+      },
+      {
+        "name": "unref invalidates prepared ticket",
+        "code": "stale-ticket"
+      },
+      {
+        "name": "cancelled ticket cannot execute",
+        "code": "invalid-ticket"
+      },
+      {
+        "name": "new lookup after public unref fails",
+        "code": "missing-resource"
+      },
+      {
+        "name": "public backing gone after unref",
+        "code": "missing-resource"
+      },
+      {
+        "name": "released lease stale",
+        "code": "invalid-lease"
+      },
+      {
+        "name": "duplicate lease release",
+        "code": "invalid-lease"
+      },
+      {
+        "name": "backend allocation failure",
+        "code": "backend-error"
+      },
+      {
+        "name": "backend upload failure structured",
+        "code": "backend-error"
+      },
+      {
+        "name": "failed backend upload consumes ticket",
+        "code": "invalid-ticket"
+      },
+      {
+        "name": "short backend readback rejected",
+        "code": "backend-error"
+      },
+      {
+        "name": "pending copy destination backing invalidates ticket",
+        "code": "stale-ticket"
+      },
+      {
+        "name": "pending copy destination attachment invalidates ticket",
+        "code": "stale-ticket"
+      },
+      {
+        "name": "pending copy primary backing invalidates ticket",
+        "code": "stale-ticket"
+      },
+      {
+        "name": "copy upload primary backing identity invalidates ticket",
+        "code": "stale-ticket"
+      },
+      {
+        "name": "copy upload null-to-attached primary backing invalidates ticket",
+        "code": "stale-ticket"
+      },
+      {
+        "name": "resource count budget",
+        "code": "limit-exceeded"
+      },
+      {
+        "name": "context count budget",
+        "code": "limit-exceeded"
+      },
+      {
+        "name": "pending ticket budget",
+        "code": "limit-exceeded"
+      },
+      {
+        "name": "lease count budget",
+        "code": "limit-exceeded"
+      },
+      {
+        "name": "retired storage still counts against resources",
+        "code": "limit-exceeded"
+      },
+      {
+        "name": "retired storage still counts against gpuBytes",
+        "code": "limit-exceeded"
+      },
+      {
+        "name": "segment count budget",
+        "code": "limit-exceeded"
+      },
+      {
+        "name": "per-resource backing byte budget",
+        "code": "limit-exceeded"
+      },
+      {
+        "name": "combined backing plus scratch CPU budget",
+        "code": "limit-exceeded"
+      },
+      {
+        "name": "write scratch CPU byte budget",
+        "code": "limit-exceeded"
+      },
+      {
+        "name": "upload scratch byte budget",
+        "code": "limit-exceeded"
+      },
+      {
+        "name": "readback reserves scratch byte budget",
+        "code": "limit-exceeded"
+      },
+      {
+        "name": "reused context ID cannot revive old ticket",
+        "code": "stale-ticket"
+      },
+      {
+        "name": "trusted destroy failure during lease release",
+        "code": "backend-error"
+      },
+      {
+        "name": "trusted destroy failure during ticket release",
+        "code": "backend-error"
+      },
+      {
+        "name": "trusted destroy failure while disposing pending tickets",
+        "code": "backend-error"
+      },
+      {
+        "name": "trusted backend disposal failure",
+        "code": "backend-error"
+      },
+      {
+        "name": "invalid resource zero ID",
+        "code": "invalid-input"
+      },
+      {
+        "name": "invalid resource bad format",
+        "code": "unsupported-resource"
+      },
+      {
+        "name": "invalid resource unsupported bind",
+        "code": "unsupported-resource"
+      },
+      {
+        "name": "invalid resource mip levels",
+        "code": "unsupported-resource"
+      },
+      {
+        "name": "invalid resource multisample",
+        "code": "unsupported-resource"
+      },
+      {
+        "name": "invalid resource resource flags",
+        "code": "unsupported-resource"
+      },
+      {
+        "name": "invalid resource empty width",
+        "code": "invalid-input"
+      },
+      {
+        "name": "invalid resource resource size cap",
+        "code": "limit-exceeded"
+      },
+      {
+        "name": "invalid resource array layers",
+        "code": "unsupported-resource"
+      },
+      {
+        "name": "invalid resource buffer height",
+        "code": "unsupported-resource"
+      },
+      {
+        "name": "throwing metadata reflection trap",
+        "code": "invalid-input"
+      },
+      {
+        "name": "empty segment list",
+        "code": "limit-exceeded"
+      },
+      {
+        "name": "non-byte backing segment",
+        "code": "invalid-input"
+      },
+      {
+        "name": "sparse segment array",
+        "code": "invalid-input"
+      },
+      {
+        "name": "revoked segment array reflection",
+        "code": "invalid-input"
+      },
+      {
+        "name": "throwing segment reflection trap",
+        "code": "invalid-input"
+      },
+      {
+        "name": "earlier segment detach during later segment reflection",
+        "code": "invalid-input"
+      },
+      {
+        "name": "reflected detach left backing unattached",
+        "code": "missing-backing"
+      },
+      {
+        "name": "earlier segment shrink during later segment reflection",
+        "code": "invalid-input"
+      },
+      {
+        "name": "reflected shrink left backing unattached",
+        "code": "missing-backing"
+      },
+      {
+        "name": "default 256 segment budget",
+        "code": "limit-exceeded"
+      },
+      {
+        "name": "backing segment accessor",
+        "code": "invalid-input"
+      },
+      {
+        "name": "detached backing segment",
+        "code": "invalid-input"
+      },
+      {
+        "name": "shared backing segment",
+        "code": "invalid-input"
+      }
+    ],
+    "mutations": {
+      "count": 8192,
+      "seeds": [
+        3735928559,
+        3405691582,
+        2779096485,
+        2882400001,
+        1985229328
+      ],
+      "accepted": 2474,
+      "rejected": 5718
+    },
+    "memoryBackend": {
+      "allocations": 5,
+      "destructions": 5,
+      "uploads": 2,
+      "readbacks": 5
+    },
+    "finalBudgets": {
+      "resources": 0,
+      "contexts": 0,
+      "storages": 0,
+      "backingBytes": 0,
+      "cpuBytes": 0,
+      "gpuBytes": 0,
+      "scratchBytes": 0,
+      "tickets": 0,
+      "leases": 0
+    }
+  },
+  "sabotages": [
+    {
+      "name": "wrong-default-row-stride",
+      "originalSha256": "728a31ed543fb7565580305f545e51e1d91e15c6881f8318db1190bbb1d04090",
+      "mutatedSha256": "33c7ae3d15931a43a81641490f6981293da39575cb70d21f6a7f74f5efd30b9c",
+      "before": "const rowStride = fields.stride || defaultStride;",
+      "after": "const rowStride = fields.stride || rowBytes;",
+      "error": "independent layout rowStride: expected 16, got 8",
+      "status": "detected",
+      "temporaryCopy": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/resource-verifier-sabotage-IGsSlJ"
+    },
+    {
+      "name": "revived-revoked-membership",
+      "originalSha256": "728a31ed543fb7565580305f545e51e1d91e15c6881f8318db1190bbb1d04090",
+      "mutatedSha256": "49d7cd441e7f9ea0bf9b01f644715a28ab5313cd5fd82ef790adb7b6ad6a7b05",
+      "before": "member.active && member.resource.public",
+      "after": "member.resource.public",
+      "error": "attachment invalidates prepared ticket rejected: expected false, got true",
+      "status": "detected",
+      "temporaryCopy": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/resource-verifier-sabotage-sA8J0S"
+    }
+  ],
+  "browser": {
+    "version": "154.0.8037.93",
+    "gpu": {
+      "devices": [
+        {
+          "vendorId": 4203,
+          "deviceId": 0,
+          "vendorString": "Google Inc. (Apple)",
+          "deviceString": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+          "driverVendor": "Apple",
+          "driverVersion": "26.6.2"
+        }
+      ],
+      "auxAttributes": {
+        "amdSwitchable": false,
+        "canSupportThreadedTextureMailbox": false,
+        "directRenderingVersion": "",
+        "displayType": "ANGLE_METAL",
+        "glExtensions": "GL_AMD_performance_monitor GL_ANGLE_base_vertex_base_instance_shader_builtin GL_ANGLE_blob_cache GL_ANGLE_client_arrays GL_ANGLE_clip_cull_distance GL_ANGLE_compressed_texture_etc GL_ANGLE_depth_texture GL_ANGLE_framebuffer_blit GL_ANGLE_framebuffer_multisample GL_ANGLE_get_serialized_context_string GL_ANGLE_get_tex_level_parameter GL_ANGLE_instanced_arrays GL_ANGLE_memory_size GL_ANGLE_pack_reverse_row_order GL_ANGLE_polygon_mode GL_ANGLE_program_binary_readiness_query GL_ANGLE_program_cache_control GL_ANGLE_provoking_vertex GL_ANGLE_renderability_validation GL_ANGLE_request_extension GL_ANGLE_rgbx_internal_format GL_ANGLE_robust_client_memory GL_ANGLE_shader_pixel_local_storage GL_ANGLE_shader_pixel_local_storage_coherent GL_ANGLE_stencil_texturing GL_ANGLE_texture_compression_dxt3 GL_ANGLE_texture_compression_dxt5 GL_ANGLE_texture_multisample GL_ANGLE_translated_shader_source GL_APPLE_clip_distance GL_ARM_rgba8 GL_CHROMIUM_bind_generates_resource GL_CHROMIUM_bind_uniform_location GL_CHROMIUM_copy_texture GL_CHROMIUM_lose_context GL_EXT_base_instance GL_EXT_blend_func_extended GL_EXT_blend_minmax GL_EXT_clip_control GL_EXT_color_buffer_float GL_EXT_color_buffer_half_float GL_EXT_compressed_ETC1_RGB8_sub_texture GL_EXT_conservative_depth GL_EXT_debug_label GL_EXT_debug_marker GL_EXT_depth_clamp GL_EXT_discard_framebuffer GL_EXT_disjoint_timer_query GL_EXT_draw_buffers GL_EXT_draw_buffers_indexed GL_EXT_draw_elements_base_vertex GL_EXT_float_blend GL_EXT_frag_depth GL_EXT_instanced_arrays GL_EXT_map_buffer_range GL_EXT_multisampled_render_to_texture GL_EXT_occlusion_query_boolean GL_EXT_polygon_offset_clamp GL_EXT_pvrtc_sRGB GL_EXT_read_format_bgra GL_EXT_render_snorm GL_EXT_robustness GL_EXT_sRGB GL_EXT_shader_texture_lod GL_EXT_texture_compression_bptc GL_EXT_texture_compression_dxt1 GL_EXT_texture_compression_rgtc GL_EXT_texture_compression_s3tc_srgb GL_EXT_texture_filter_anisotropic GL_EXT_texture_format_BGRA8888 GL_EXT_texture_mirror_clamp_to_edge GL_EXT_texture_norm16 GL_EXT_texture_rg GL_EXT_texture_sRGB_R8 GL_EXT_texture_sRGB_RG8 GL_EXT_texture_shadow_lod GL_EXT_texture_storage GL_IMG_texture_compression_pvrtc GL_KHR_debug GL_KHR_parallel_shader_compile GL_KHR_robustness GL_KHR_texture_compression_astc_hdr GL_KHR_texture_compression_astc_ldr GL_KHR_texture_compression_astc_sliced_3d GL_MESA_framebuffer_flip_y GL_NV_fence GL_NV_framebuffer_blit GL_NV_pixel_buffer_object GL_NV_shader_noperspective_interpolation GL_OES_EGL_image GL_OES_EGL_sync GL_OES_compressed_ETC1_RGB8_texture GL_OES_depth24 GL_OES_depth32 GL_OES_depth_texture GL_OES_draw_buffers_indexed GL_OES_draw_elements_base_vertex GL_OES_element_index_uint GL_OES_fbo_render_mipmap GL_OES_get_program_binary GL_OES_mapbuffer GL_OES_packed_depth_stencil GL_OES_required_internalformat GL_OES_rgb8_rgba8 GL_OES_sample_variables GL_OES_shader_multisample_interpolation GL_OES_standard_derivatives GL_OES_surfaceless_context GL_OES_texture_3D GL_OES_texture_float GL_OES_texture_float_linear GL_OES_texture_half_float GL_OES_texture_half_float_linear GL_OES_texture_npot GL_OES_texture_stencil8 GL_OES_vertex_array_object GL_QCOM_render_shared_exponent ",
+        "glImplementationParts": "(gl=egl-angle,angle=metal)",
+        "glRenderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+        "glResetNotificationStrategy": 33362,
+        "glVendor": "Google Inc. (Apple)",
+        "glVersion": "OpenGL ES 3.0 (ANGLE 2.1.28733 git hash: 802a8704ca94)",
+        "glWsExtensions": "",
+        "glWsVendor": "",
+        "glWsVersion": "",
+        "inProcessGpu": false,
+        "initializationTime": 0.048104,
+        "isAsan": false,
+        "isClangCoverage": false,
+        "jpegDecodeAcceleratorSupported": false,
+        "maxMsaaSamples": "4",
+        "optimus": false,
+        "passthroughCmdDecoder": true,
+        "pixelShaderVersion": "3.00",
+        "processCrashCount": 0,
+        "sandboxed": false,
+        "skiaBackendType": "GraphiteDawnMetal",
+        "subpixelFontRendering": true,
+        "targetCpuBits": 64,
+        "vertexShaderVersion": "3.00",
+        "visibilityCallbackCallCount": 0
+      },
+      "featureStatus": {
+        "2d_canvas": "enabled",
+        "direct_rendering_display_compositor": "disabled_off_ok",
+        "gpu_compositing": "enabled",
+        "multiple_raster_threads": "enabled_on",
+        "opengl": "enabled_on",
+        "rasterization": "enabled",
+        "raw_draw": "disabled_off_ok",
+        "skia_graphite": "enabled_on",
+        "trees_in_viz": "disabled_off",
+        "video_decode": "enabled",
+        "video_encode": "enabled",
+        "webgl": "enabled",
+        "webgpu": "enabled",
+        "webnn": "disabled_off"
+      },
+      "driverBugWorkarounds": [
+        "disable_2d_canvas_auto_flush",
+        "enable_webgl_timer_query_extensions",
+        "disabled_extension_GL_KHR_blend_equation_advanced",
+        "disabled_extension_GL_KHR_blend_equation_advanced_coherent"
+      ],
+      "videoDecoding": [],
+      "videoEncoding": []
+    },
+    "commandLine": {
+      "arguments": [
+        "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+        "--disable-field-trial-config",
+        "--disable-background-networking",
+        "--disable-background-timer-throttling",
+        "--disable-backgrounding-occluded-windows",
+        "--disable-back-forward-cache",
+        "--disable-breakpad",
+        "--disable-client-side-phishing-detection",
+        "--disable-component-extensions-with-background-pages",
+        "--disable-component-update",
+        "--no-default-browser-check",
+        "--disable-default-apps",
+        "--disable-dev-shm-usage",
+        "--disable-extensions",
+        "--disable-features=ImprovedCookieControls,LazyFrameLoading,GlobalMediaControls,DestroyProfileOnBrowserClose,MediaRouter,DialMediaRouteProvider,AcceptCHFrame,AutoExpandDetailsElement,CertificateTransparencyComponentUpdater,AvoidUnnecessaryBeforeUnloadCheckSync,Translate,HttpsUpgrades,PaintHolding,ThirdPartyStoragePartitioning,LensOverlay,PlzDedicatedWorker",
+        "--allow-pre-commit-input",
+        "--disable-hang-monitor",
+        "--disable-ipc-flooding-protection",
+        "--disable-popup-blocking",
+        "--disable-prompt-on-repost",
+        "--disable-renderer-backgrounding",
+        "--force-color-profile=srgb",
+        "--metrics-recording-only",
+        "--no-first-run",
+        "--enable-automation",
+        "--password-store=basic",
+        "--use-mock-keychain",
+        "--no-service-autorun",
+        "--export-tagged-pdf",
+        "--disable-search-engine-choice-screen",
+        "--unsafely-disable-devtools-self-xss-warnings",
+        "--enable-use-zoom-for-dsf=false",
+        "--no-sandbox",
+        "--enable-gpu",
+        "--user-data-dir=/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/playwright_chromiumdev_profile-ezh5oq",
+        "--remote-debugging-pipe",
+        "--no-startup-window",
+        "--flag-switches-begin",
+        "--flag-switches-end"
+      ]
+    }
+  },
+  "attack": {
+    "status": "passed",
+    "assertions": 3424,
+    "records": [
+      {
+        "seed": 3490578157,
+        "i": 0,
+        "w": 3,
+        "h": 2,
+        "x": 2,
+        "y": 1,
+        "rw": 1,
+        "rh": 1,
+        "rowStride": 12,
+        "offset": 4,
+        "sourceBytes": 11,
+        "directionPair": "COPY_TRANSFER3D",
+        "directGpuBytes": 24
+      },
+      {
+        "seed": 3490578157,
+        "i": 1,
+        "w": 6,
+        "h": 2,
+        "x": 5,
+        "y": 0,
+        "rw": 1,
+        "rh": 1,
+        "rowStride": 5,
+        "offset": 2,
+        "sourceBytes": 9,
+        "directionPair": "TRANSFER3D",
+        "directGpuBytes": 48
+      },
+      {
+        "seed": 3490578157,
+        "i": 2,
+        "w": 6,
+        "h": 1,
+        "x": 5,
+        "y": 0,
+        "rw": 1,
+        "rh": 1,
+        "rowStride": 7,
+        "offset": 2,
+        "sourceBytes": 9,
+        "directionPair": "COPY_TRANSFER3D",
+        "directGpuBytes": 24
+      },
+      {
+        "seed": 3490578157,
+        "i": 3,
+        "w": 4,
+        "h": 2,
+        "x": 3,
+        "y": 0,
+        "rw": 1,
+        "rh": 1,
+        "rowStride": 16,
+        "offset": 1,
+        "sourceBytes": 8,
+        "directionPair": "TRANSFER3D",
+        "directGpuBytes": 32
+      },
+      {
+        "seed": 3490578157,
+        "i": 4,
+        "w": 1,
+        "h": 3,
+        "x": 0,
+        "y": 1,
+        "rw": 1,
+        "rh": 2,
+        "rowStride": 6,
+        "offset": 5,
+        "sourceBytes": 18,
+        "directionPair": "COPY_TRANSFER3D",
+        "directGpuBytes": 12
+      },
+      {
+        "seed": 3490578157,
+        "i": 5,
+        "w": 5,
+        "h": 1,
+        "x": 3,
+        "y": 0,
+        "rw": 1,
+        "rh": 1,
+        "rowStride": 8,
+        "offset": 5,
+        "sourceBytes": 12,
+        "directionPair": "TRANSFER3D",
+        "directGpuBytes": 20
+      },
+      {
+        "seed": 3490578157,
+        "i": 6,
+        "w": 5,
+        "h": 4,
+        "x": 3,
+        "y": 3,
+        "rw": 1,
+        "rh": 1,
+        "rowStride": 20,
+        "offset": 0,
+        "sourceBytes": 7,
+        "directionPair": "COPY_TRANSFER3D",
+        "directGpuBytes": 80
+      },
+      {
+        "seed": 3490578157,
+        "i": 7,
+        "w": 4,
+        "h": 4,
+        "x": 1,
+        "y": 0,
+        "rw": 2,
+        "rh": 3,
+        "rowStride": 14,
+        "offset": 4,
+        "sourceBytes": 43,
+        "directionPair": "TRANSFER3D",
+        "directGpuBytes": 64
+      },
+      {
+        "seed": 3490578157,
+        "i": 8,
+        "w": 2,
+        "h": 4,
+        "x": 1,
+        "y": 0,
+        "rw": 1,
+        "rh": 3,
+        "rowStride": 4,
+        "offset": 2,
+        "sourceBytes": 17,
+        "directionPair": "COPY_TRANSFER3D",
+        "directGpuBytes": 32
+      },
+      {
+        "seed": 3490578157,
+        "i": 9,
+        "w": 6,
+        "h": 4,
+        "x": 5,
+        "y": 0,
+        "rw": 1,
+        "rh": 3,
+        "rowStride": 24,
+        "offset": 3,
+        "sourceBytes": 58,
+        "directionPair": "TRANSFER3D",
+        "directGpuBytes": 96
+      },
+      {
+        "seed": 3490578157,
+        "i": 10,
+        "w": 1,
+        "h": 5,
+        "x": 0,
+        "y": 3,
+        "rw": 1,
+        "rh": 2,
+        "rowStride": 9,
+        "offset": 1,
+        "sourceBytes": 17,
+        "directionPair": "COPY_TRANSFER3D",
+        "directGpuBytes": 20
+      },
+      {
+        "seed": 3490578157,
+        "i": 11,
+        "w": 1,
+        "h": 4,
+        "x": 0,
+        "y": 1,
+        "rw": 1,
+        "rh": 2,
+        "rowStride": 4,
+        "offset": 1,
+        "sourceBytes": 12,
+        "directionPair": "TRANSFER3D",
+        "directGpuBytes": 16
+      },
+      {
+        "seed": 3490578157,
+        "i": 12,
+        "w": 1,
+        "h": 1,
+        "x": 0,
+        "y": 0,
+        "rw": 1,
+        "rh": 1,
+        "rowStride": 4,
+        "offset": 0,
+        "sourceBytes": 7,
+        "directionPair": "COPY_TRANSFER3D",
+        "directGpuBytes": 4
+      },
+      {
+        "seed": 3490578157,
+        "i": 13,
+        "w": 4,
+        "h": 2,
+        "x": 3,
+        "y": 0,
+        "rw": 1,
+        "rh": 1,
+        "rowStride": 10,
+        "offset": 4,
+        "sourceBytes": 11,
+        "directionPair": "TRANSFER3D",
+        "directGpuBytes": 32
+      },
+      {
+        "seed": 3490578157,
+        "i": 14,
+        "w": 4,
+        "h": 3,
+        "x": 3,
+        "y": 0,
+        "rw": 1,
+        "rh": 1,
+        "rowStride": 8,
+        "offset": 2,
+        "sourceBytes": 9,
+        "directionPair": "COPY_TRANSFER3D",
+        "directGpuBytes": 48
+      },
+      {
+        "seed": 3490578157,
+        "i": 15,
+        "w": 4,
+        "h": 2,
+        "x": 3,
+        "y": 0,
+        "rw": 1,
+        "rh": 1,
+        "rowStride": 16,
+        "offset": 3,
+        "sourceBytes": 10,
+        "directionPair": "TRANSFER3D",
+        "directGpuBytes": 32
+      },
+      {
+        "seed": 3490578157,
+        "i": 16,
+        "w": 5,
+        "h": 1,
+        "x": 0,
+        "y": 0,
+        "rw": 2,
+        "rh": 1,
+        "rowStride": 10,
+        "offset": 1,
+        "sourceBytes": 12,
+        "directionPair": "COPY_TRANSFER3D",
+        "directGpuBytes": 20
+      },
+      {
+        "seed": 3490578157,
+        "i": 17,
+        "w": 1,
+        "h": 3,
+        "x": 0,
+        "y": 2,
+        "rw": 1,
+        "rh": 1,
+        "rowStride": 6,
+        "offset": 3,
+        "sourceBytes": 10,
+        "directionPair": "TRANSFER3D",
+        "directGpuBytes": 12
+      },
+      {
+        "seed": 3490578157,
+        "i": 18,
+        "w": 1,
+        "h": 4,
+        "x": 0,
+        "y": 3,
+        "rw": 1,
+        "rh": 1,
+        "rowStride": 4,
+        "offset": 2,
+        "sourceBytes": 9,
+        "directionPair": "COPY_TRANSFER3D",
+        "directGpuBytes": 16
+      },
+      {
+        "seed": 3490578157,
+        "i": 19,
+        "w": 2,
+        "h": 3,
+        "x": 1,
+        "y": 2,
+        "rw": 1,
+        "rh": 1,
+        "rowStride": 8,
+        "offset": 0,
+        "sourceBytes": 7,
+        "directionPair": "TRANSFER3D",
+        "directGpuBytes": 24
+      },
+      {
+        "seed": 3490578157,
+        "i": 20,
+        "w": 4,
+        "h": 4,
+        "x": 1,
+        "y": 0,
+        "rw": 1,
+        "rh": 3,
+        "rowStride": 7,
+        "offset": 0,
+        "sourceBytes": 21,
+        "directionPair": "COPY_TRANSFER3D",
+        "directGpuBytes": 64
+      },
+      {
+        "seed": 3490578157,
+        "i": 21,
+        "w": 2,
+        "h": 5,
+        "x": 1,
+        "y": 2,
+        "rw": 1,
+        "rh": 3,
+        "rowStride": 8,
+        "offset": 1,
+        "sourceBytes": 24,
+        "directionPair": "TRANSFER3D",
+        "directGpuBytes": 40
+      },
+      {
+        "seed": 3490578157,
+        "i": 22,
+        "w": 3,
+        "h": 2,
+        "x": 1,
+        "y": 1,
+        "rw": 1,
+        "rh": 1,
+        "rowStride": 6,
+        "offset": 3,
+        "sourceBytes": 10,
+        "directionPair": "COPY_TRANSFER3D",
+        "directGpuBytes": 24
+      },
+      {
+        "seed": 3490578157,
+        "i": 23,
+        "w": 1,
+        "h": 1,
+        "x": 0,
+        "y": 0,
+        "rw": 1,
+        "rh": 1,
+        "rowStride": 8,
+        "offset": 1,
+        "sourceBytes": 8,
+        "directionPair": "TRANSFER3D",
+        "directGpuBytes": 4
+      },
+      {
+        "seed": 826366246,
+        "i": 0,
+        "w": 6,
+        "h": 3,
+        "x": 1,
+        "y": 2,
+        "rw": 5,
+        "rh": 1,
+        "rowStride": 24,
+        "offset": 1,
+        "sourceBytes": 24,
+        "directionPair": "COPY_TRANSFER3D",
+        "directGpuBytes": 72
+      },
+      {
+        "seed": 826366246,
+        "i": 1,
+        "w": 3,
+        "h": 1,
+        "x": 0,
+        "y": 0,
+        "rw": 1,
+        "rh": 1,
+        "rowStride": 7,
+        "offset": 3,
+        "sourceBytes": 10,
+        "directionPair": "TRANSFER3D",
+        "directGpuBytes": 12
+      },
+      {
+        "seed": 826366246,
+        "i": 2,
+        "w": 3,
+        "h": 3,
+        "x": 2,
+        "y": 1,
+        "rw": 1,
+        "rh": 2,
+        "rowStride": 9,
+        "offset": 5,
+        "sourceBytes": 21,
+        "directionPair": "COPY_TRANSFER3D",
+        "directGpuBytes": 36
+      },
+      {
+        "seed": 826366246,
+        "i": 3,
+        "w": 5,
+        "h": 5,
+        "x": 1,
+        "y": 0,
+        "rw": 3,
+        "rh": 3,
+        "rowStride": 20,
+        "offset": 2,
+        "sourceBytes": 57,
+        "directionPair": "TRANSFER3D",
+        "directGpuBytes": 100
+      },
+      {
+        "seed": 826366246,
+        "i": 4,
+        "w": 6,
+        "h": 2,
+        "x": 5,
+        "y": 0,
+        "rw": 1,
+        "rh": 1,
+        "rowStride": 4,
+        "offset": 4,
+        "sourceBytes": 11,
+        "directionPair": "COPY_TRANSFER3D",
+        "directGpuBytes": 48
+      },
+      {
+        "seed": 826366246,
+        "i": 5,
+        "w": 2,
+        "h": 3,
+        "x": 1,
+        "y": 2,
+        "rw": 1,
+        "rh": 1,
+        "rowStride": 7,
+        "offset": 0,
+        "sourceBytes": 7,
+        "directionPair": "TRANSFER3D",
+        "directGpuBytes": 24
+      },
+      {
+        "seed": 826366246,
+        "i": 6,
+        "w": 2,
+        "h": 2,
+        "x": 1,
+        "y": 0,
+        "rw": 1,
+        "rh": 1,
+        "rowStride": 8,
+        "offset": 3,
+        "sourceBytes": 10,
+        "directionPair": "COPY_TRANSFER3D",
+        "directGpuBytes": 16
+      },
+      {
+        "seed": 826366246,
+        "i": 7,
+        "w": 5,
+        "h": 5,
+        "x": 1,
+        "y": 3,
+        "rw": 1,
+        "rh": 2,
+        "rowStride": 5,
+        "offset": 1,
+        "sourceBytes": 13,
+        "directionPair": "TRANSFER3D",
+        "directGpuBytes": 100
+      },
+      {
+        "seed": 826366246,
+        "i": 8,
+        "w": 1,
+        "h": 4,
+        "x": 0,
+        "y": 1,
+        "rw": 1,
+        "rh": 2,
+        "rowStride": 9,
+        "offset": 1,
+        "sourceBytes": 17,
+        "directionPair": "COPY_TRANSFER3D",
+        "directGpuBytes": 16
+      },
+      {
+        "seed": 826366246,
+        "i": 9,
+        "w": 1,
+        "h": 1,
+        "x": 0,
+        "y": 0,
+        "rw": 1,
+        "rh": 1,
+        "rowStride": 4,
+        "offset": 2,
+        "sourceBytes": 9,
+        "directionPair": "TRANSFER3D",
+        "directGpuBytes": 4
+      },
+      {
+        "seed": 826366246,
+        "i": 10,
+        "w": 6,
+        "h": 5,
+        "x": 1,
+        "y": 1,
+        "rw": 2,
+        "rh": 1,
+        "rowStride": 9,
+        "offset": 0,
+        "sourceBytes": 11,
+        "directionPair": "COPY_TRANSFER3D",
+        "directGpuBytes": 120
+      },
+      {
+        "seed": 826366246,
+        "i": 11,
+        "w": 6,
+        "h": 1,
+        "x": 1,
+        "y": 0,
+        "rw": 1,
+        "rh": 1,
+        "rowStride": 6,
+        "offset": 4,
+        "sourceBytes": 11,
+        "directionPair": "TRANSFER3D",
+        "directGpuBytes": 24
+      },
+      {
+        "seed": 826366246,
+        "i": 12,
+        "w": 4,
+        "h": 1,
+        "x": 3,
+        "y": 0,
+        "rw": 1,
+        "rh": 1,
+        "rowStride": 16,
+        "offset": 3,
+        "sourceBytes": 10,
+        "directionPair": "COPY_TRANSFER3D",
+        "directGpuBytes": 16
+      },
+      {
+        "seed": 826366246,
+        "i": 13,
+        "w": 5,
+        "h": 1,
+        "x": 3,
+        "y": 0,
+        "rw": 1,
+        "rh": 1,
+        "rowStride": 7,
+        "offset": 5,
+        "sourceBytes": 12,
+        "directionPair": "TRANSFER3D",
+        "directGpuBytes": 20
+      },
+      {
+        "seed": 826366246,
+        "i": 14,
+        "w": 3,
+        "h": 1,
+        "x": 0,
+        "y": 0,
+        "rw": 3,
+        "rh": 1,
+        "rowStride": 18,
+        "offset": 1,
+        "sourceBytes": 16,
+        "directionPair": "COPY_TRANSFER3D",
+        "directGpuBytes": 12
+      },
+      {
+        "seed": 826366246,
+        "i": 15,
+        "w": 1,
+        "h": 3,
+        "x": 0,
+        "y": 1,
+        "rw": 1,
+        "rh": 2,
+        "rowStride": 4,
+        "offset": 0,
+        "sourceBytes": 11,
+        "directionPair": "TRANSFER3D",
+        "directGpuBytes": 12
+      },
+      {
+        "seed": 826366246,
+        "i": 16,
+        "w": 2,
+        "h": 1,
+        "x": 1,
+        "y": 0,
+        "rw": 1,
+        "rh": 1,
+        "rowStride": 8,
+        "offset": 0,
+        "sourceBytes": 7,
+        "directionPair": "COPY_TRANSFER3D",
+        "directGpuBytes": 8
+      },
+      {
+        "seed": 826366246,
+        "i": 17,
+        "w": 4,
+        "h": 2,
+        "x": 1,
+        "y": 0,
+        "rw": 3,
+        "rh": 1,
+        "rowStride": 13,
+        "offset": 4,
+        "sourceBytes": 19,
+        "directionPair": "TRANSFER3D",
+        "directGpuBytes": 32
+      },
+      {
+        "seed": 826366246,
+        "i": 18,
+        "w": 4,
+        "h": 2,
+        "x": 1,
+        "y": 0,
+        "rw": 3,
+        "rh": 1,
+        "rowStride": 16,
+        "offset": 5,
+        "sourceBytes": 20,
+        "directionPair": "COPY_TRANSFER3D",
+        "directGpuBytes": 32
+      },
+      {
+        "seed": 826366246,
+        "i": 19,
+        "w": 1,
+        "h": 4,
+        "x": 0,
+        "y": 1,
+        "rw": 1,
+        "rh": 3,
+        "rowStride": 7,
+        "offset": 3,
+        "sourceBytes": 24,
+        "directionPair": "TRANSFER3D",
+        "directGpuBytes": 16
+      },
+      {
+        "seed": 826366246,
+        "i": 20,
+        "w": 1,
+        "h": 3,
+        "x": 0,
+        "y": 2,
+        "rw": 1,
+        "rh": 1,
+        "rowStride": 9,
+        "offset": 1,
+        "sourceBytes": 8,
+        "directionPair": "COPY_TRANSFER3D",
+        "directGpuBytes": 12
+      },
+      {
+        "seed": 826366246,
+        "i": 21,
+        "w": 3,
+        "h": 4,
+        "x": 2,
+        "y": 1,
+        "rw": 1,
+        "rh": 3,
+        "rowStride": 12,
+        "offset": 4,
+        "sourceBytes": 35,
+        "directionPair": "TRANSFER3D",
+        "directGpuBytes": 48
+      },
+      {
+        "seed": 826366246,
+        "i": 22,
+        "w": 6,
+        "h": 4,
+        "x": 1,
+        "y": 2,
+        "rw": 5,
+        "rh": 1,
+        "rowStride": 20,
+        "offset": 0,
+        "sourceBytes": 23,
+        "directionPair": "COPY_TRANSFER3D",
+        "directGpuBytes": 96
+      },
+      {
+        "seed": 826366246,
+        "i": 23,
+        "w": 2,
+        "h": 1,
+        "x": 1,
+        "y": 0,
+        "rw": 1,
+        "rh": 1,
+        "rowStride": 8,
+        "offset": 0,
+        "sourceBytes": 7,
+        "directionPair": "TRANSFER3D",
+        "directGpuBytes": 8
+      },
+      {
+        "seed": 2654435769,
+        "i": 0,
+        "w": 5,
+        "h": 5,
+        "x": 0,
+        "y": 2,
+        "rw": 4,
+        "rh": 3,
+        "rowStride": 20,
+        "offset": 4,
+        "sourceBytes": 63,
+        "directionPair": "COPY_TRANSFER3D",
+        "directGpuBytes": 100
+      },
+      {
+        "seed": 2654435769,
+        "i": 1,
+        "w": 6,
+        "h": 2,
+        "x": 3,
+        "y": 0,
+        "rw": 1,
+        "rh": 1,
+        "rowStride": 4,
+        "offset": 4,
+        "sourceBytes": 11,
+        "directionPair": "TRANSFER3D",
+        "directGpuBytes": 48
+      },
+      {
+        "seed": 2654435769,
+        "i": 2,
+        "w": 2,
+        "h": 5,
+        "x": 1,
+        "y": 0,
+        "rw": 1,
+        "rh": 2,
+        "rowStride": 7,
+        "offset": 2,
+        "sourceBytes": 16,
+        "directionPair": "COPY_TRANSFER3D",
+        "directGpuBytes": 40
+      },
+      {
+        "seed": 2654435769,
+        "i": 3,
+        "w": 4,
+        "h": 2,
+        "x": 3,
+        "y": 0,
+        "rw": 1,
+        "rh": 1,
+        "rowStride": 16,
+        "offset": 1,
+        "sourceBytes": 8,
+        "directionPair": "TRANSFER3D",
+        "directGpuBytes": 32
+      },
+      {
+        "seed": 2654435769,
+        "i": 4,
+        "w": 3,
+        "h": 3,
+        "x": 0,
+        "y": 1,
+        "rw": 1,
+        "rh": 2,
+        "rowStride": 4,
+        "offset": 1,
+        "sourceBytes": 12,
+        "directionPair": "COPY_TRANSFER3D",
+        "directGpuBytes": 36
+      },
+      {
+        "seed": 2654435769,
+        "i": 5,
+        "w": 1,
+        "h": 5,
+        "x": 0,
+        "y": 2,
+        "rw": 1,
+        "rh": 2,
+        "rowStride": 8,
+        "offset": 1,
+        "sourceBytes": 16,
+        "directionPair": "TRANSFER3D",
+        "directGpuBytes": 20
+      },
+      {
+        "seed": 2654435769,
+        "i": 6,
+        "w": 5,
+        "h": 3,
+        "x": 4,
+        "y": 0,
+        "rw": 1,
+        "rh": 3,
+        "rowStride": 20,
+        "offset": 4,
+        "sourceBytes": 51,
+        "directionPair": "COPY_TRANSFER3D",
+        "directGpuBytes": 60
+      },
+      {
+        "seed": 2654435769,
+        "i": 7,
+        "w": 4,
+        "h": 3,
+        "x": 1,
+        "y": 0,
+        "rw": 1,
+        "rh": 2,
+        "rowStride": 8,
+        "offset": 4,
+        "sourceBytes": 19,
+        "directionPair": "TRANSFER3D",
+        "directGpuBytes": 48
+      },
+      {
+        "seed": 2654435769,
+        "i": 8,
+        "w": 4,
+        "h": 3,
+        "x": 1,
+        "y": 0,
+        "rw": 3,
+        "rh": 1,
+        "rowStride": 18,
+        "offset": 0,
+        "sourceBytes": 15,
+        "directionPair": "COPY_TRANSFER3D",
+        "directGpuBytes": 48
+      },
+      {
+        "seed": 2654435769,
+        "i": 9,
+        "w": 4,
+        "h": 3,
+        "x": 1,
+        "y": 2,
+        "rw": 1,
+        "rh": 1,
+        "rowStride": 16,
+        "offset": 1,
+        "sourceBytes": 8,
+        "directionPair": "TRANSFER3D",
+        "directGpuBytes": 48
+      },
+      {
+        "seed": 2654435769,
+        "i": 10,
+        "w": 5,
+        "h": 3,
+        "x": 4,
+        "y": 0,
+        "rw": 1,
+        "rh": 3,
+        "rowStride": 10,
+        "offset": 3,
+        "sourceBytes": 30,
+        "directionPair": "COPY_TRANSFER3D",
+        "directGpuBytes": 60
+      },
+      {
+        "seed": 2654435769,
+        "i": 11,
+        "w": 5,
+        "h": 4,
+        "x": 0,
+        "y": 1,
+        "rw": 1,
+        "rh": 1,
+        "rowStride": 7,
+        "offset": 1,
+        "sourceBytes": 8,
+        "directionPair": "TRANSFER3D",
+        "directGpuBytes": 80
+      },
+      {
+        "seed": 2654435769,
+        "i": 12,
+        "w": 5,
+        "h": 1,
+        "x": 3,
+        "y": 0,
+        "rw": 1,
+        "rh": 1,
+        "rowStride": 20,
+        "offset": 4,
+        "sourceBytes": 11,
+        "directionPair": "COPY_TRANSFER3D",
+        "directGpuBytes": 20
+      },
+      {
+        "seed": 2654435769,
+        "i": 13,
+        "w": 6,
+        "h": 2,
+        "x": 5,
+        "y": 0,
+        "rw": 1,
+        "rh": 1,
+        "rowStride": 8,
+        "offset": 0,
+        "sourceBytes": 7,
+        "directionPair": "TRANSFER3D",
+        "directGpuBytes": 48
+      },
+      {
+        "seed": 2654435769,
+        "i": 14,
+        "w": 2,
+        "h": 5,
+        "x": 1,
+        "y": 3,
+        "rw": 1,
+        "rh": 1,
+        "rowStride": 4,
+        "offset": 0,
+        "sourceBytes": 7,
+        "directionPair": "COPY_TRANSFER3D",
+        "directGpuBytes": 40
+      },
+      {
+        "seed": 2654435769,
+        "i": 15,
+        "w": 4,
+        "h": 2,
+        "x": 3,
+        "y": 0,
+        "rw": 1,
+        "rh": 1,
+        "rowStride": 16,
+        "offset": 5,
+        "sourceBytes": 12,
+        "directionPair": "TRANSFER3D",
+        "directGpuBytes": 32
+      },
+      {
+        "seed": 2654435769,
+        "i": 16,
+        "w": 1,
+        "h": 1,
+        "x": 0,
+        "y": 0,
+        "rw": 1,
+        "rh": 1,
+        "rowStride": 7,
+        "offset": 3,
+        "sourceBytes": 10,
+        "directionPair": "COPY_TRANSFER3D",
+        "directGpuBytes": 4
+      },
+      {
+        "seed": 2654435769,
+        "i": 17,
+        "w": 5,
+        "h": 1,
+        "x": 4,
+        "y": 0,
+        "rw": 1,
+        "rh": 1,
+        "rowStride": 10,
+        "offset": 5,
+        "sourceBytes": 12,
+        "directionPair": "TRANSFER3D",
+        "directGpuBytes": 20
+      },
+      {
+        "seed": 2654435769,
+        "i": 18,
+        "w": 1,
+        "h": 1,
+        "x": 0,
+        "y": 0,
+        "rw": 1,
+        "rh": 1,
+        "rowStride": 4,
+        "offset": 0,
+        "sourceBytes": 7,
+        "directionPair": "COPY_TRANSFER3D",
+        "directGpuBytes": 4
+      },
+      {
+        "seed": 2654435769,
+        "i": 19,
+        "w": 2,
+        "h": 2,
+        "x": 1,
+        "y": 0,
+        "rw": 1,
+        "rh": 1,
+        "rowStride": 5,
+        "offset": 4,
+        "sourceBytes": 11,
+        "directionPair": "TRANSFER3D",
+        "directGpuBytes": 16
+      },
+      {
+        "seed": 2654435769,
+        "i": 20,
+        "w": 6,
+        "h": 1,
+        "x": 5,
+        "y": 0,
+        "rw": 1,
+        "rh": 1,
+        "rowStride": 6,
+        "offset": 4,
+        "sourceBytes": 11,
+        "directionPair": "COPY_TRANSFER3D",
+        "directGpuBytes": 24
+      },
+      {
+        "seed": 2654435769,
+        "i": 21,
+        "w": 6,
+        "h": 5,
+        "x": 3,
+        "y": 3,
+        "rw": 2,
+        "rh": 1,
+        "rowStride": 24,
+        "offset": 5,
+        "sourceBytes": 16,
+        "directionPair": "TRANSFER3D",
+        "directGpuBytes": 120
+      },
+      {
+        "seed": 2654435769,
+        "i": 22,
+        "w": 3,
+        "h": 3,
+        "x": 2,
+        "y": 0,
+        "rw": 1,
+        "rh": 2,
+        "rowStride": 7,
+        "offset": 5,
+        "sourceBytes": 19,
+        "directionPair": "COPY_TRANSFER3D",
+        "directGpuBytes": 36
+      },
+      {
+        "seed": 2654435769,
+        "i": 23,
+        "w": 5,
+        "h": 4,
+        "x": 2,
+        "y": 1,
+        "rw": 2,
+        "rh": 3,
+        "rowStride": 13,
+        "offset": 3,
+        "sourceBytes": 40,
+        "directionPair": "TRANSFER3D",
+        "directGpuBytes": 80
+      }
+    ],
+    "seeds": [
+      3490578157,
+      826366246,
+      2654435769
+    ],
+    "uploadCalls": 72,
+    "readCalls": 72,
+    "gpuOracle": "direct framebuffer readPixels of retained GL allocation",
+    "finalBudgets": {
+      "resources": 0,
+      "contexts": 0,
+      "storages": 0,
+      "backingBytes": 0,
+      "cpuBytes": 0,
+      "gpuBytes": 0,
+      "scratchBytes": 0,
+      "tickets": 0,
+      "leases": 0
+    },
+    "defensiveCoverage": [
+      "direct live allocation disposal",
+      "generic GL initialization exception",
+      "invalid null record",
+      "invalid nonarray backing",
+      "trusted programmer exception propagation",
+      "trusted gather allocation fault releases reserved scratch without ticket publication"
+    ]
+  },
+  "coverageSha256": "20aae27ce8081dd1f65cff20560fc92b447a298ce121ee5549ed595e2c42fe95",
+  "screenshotSha256": "39904621c5f2db475dfd4570a31d541df6c395fd2324877837cc0df31a2b17a8",
+  "finished": "2026-10-03T04:03:48.708Z"
+}

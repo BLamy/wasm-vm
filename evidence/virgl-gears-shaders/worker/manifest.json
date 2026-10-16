@@ -1,0 +1,24 @@
+{
+  "schema": "virgl-gears-original-worker-seal-v1",
+  "task": "E6-T12g6a",
+  "sourceHead": "2e7f43167fe29d8ad0da92591888e27e2dbae589",
+  "base": "ee0277231f1903633881d803ba6153b58d31fd1c",
+  "records": 57,
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 4978631,
+    "sha256": "9941036d869021078ce41f67e219b568c24a5b00294598dba4b6873c67b3af6e"
+  },
+  "recordIndex": {
+    "path": "records.json",
+    "bytes": 9881,
+    "sha256": "66f7335f9d11d6cd9cca13b12bbf78e7ae4c43c8f0f3149baea41e514dcad5bb"
+  },
+  "hotReceiptSha256": "08939a224d4124b0487a0daba3166a7cf61d3c70a6d2528ae1f1811fcdc9ef6d",
+  "coldReportSha256": "008ffbb1df301e2b9bd80805150fcef7d0f50615b8662e1ffae830c442b737ee",
+  "coldReceiptSha256": "16d332ab285c26519de4bfe6b2d379eec2dfaf383909493f6b6cd81a1aed95c4",
+  "checkedVertexWords": 2592,
+  "checkedPixels": 27648,
+  "productionNegotiation": false,
+  "guestExecution": false
+}

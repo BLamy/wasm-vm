@@ -1,0 +1,23 @@
+$ wasm-pack test --node crates/wasm --test jit_memory_direct_imports_verifier -- verifier_private_memory_interleaved_lifetime --nocapture
+[INFO]: 🎯  Checking for the Wasm target...
+   Compiling wasm-vm-wasm v0.0.1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-direct-memory-verifier-241gd76s/repo/crates/wasm)
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 13.33s
+[INFO]: ⬇️  Installing wasm-bindgen...
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.17s
+     Running tests/jit_memory_direct_imports_verifier.rs (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-direct-memory-verifier-241gd76s/repo/target/wasm32-unknown-unknown/debug/deps/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm)
+running 1 test
+Invoking test: verifier_private_memory_interleaved_lifetime
+CRITIC_DIRECT_MEMORY_LIFETIME inline=false compiled_executions=8 inactive_calls=55 growth=65536 buffer=[object ArrayBuffer] reservation_isolation=true
+test verifier_private_memory_interleaved_lifetime ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 1 filtered out; finished in 0.05s
+

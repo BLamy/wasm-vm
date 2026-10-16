@@ -1,0 +1,81 @@
+{
+  "url": "https://wasm-vm.pages.dev/app.html?noAutoBoot=1",
+  "browser": "154.0.8037.93",
+  "metrics": {
+    "metric-pass": "127",
+    "metric-fail": "0",
+    "metric-done": "127"
+  },
+  "detail": "E5.5-T03bf\nVERIFIED\n✕ Close\nIncrease cached interpreter throughput with a compact integer executor\nEpic\nE5.5 — 5.5\nStatus\nverified\nEstimate\nS\nDepends on\nE5.5-T03be\nVERIFICATION LOG — EVIDENCE\n### 2026-10-02 — worker — activated\n\nSelected this narrow task for the user's explicit MIPS priority ahead of the\npublication queue. No other task occupies the active lane. Work is isolated in\nthe mips-throughput checkout above the latest open stack layer, preserving the\nuser's unrelated local edits. Parent runtime already includes the September\nperformance overhaul; no comparison to an obsolete pre-overhaul binary counts.\n\n\n### 2026-10-02 — worker — recorded submission\n\nRuntime frozen at `9123bc06cec84f4c581aa877b1126babff245a99`; submission head\n`ee7ed352dae84efac4a2fa867ee9aaa99ec83af2` changes only tests/demo metadata after\nthat freeze. The baseline is parent `a6ae84fd1c71c76ecadcff9000c40ed6319ef4b5`.\n`evidence/mips-integer-replay/{baseline,frozen}.json` binds source, compiler,\nCLI and wasm bytes. Candidate wasm SHA256 is\n`70de75fd1a2cfb6b51893773a394c0276189a1e54fe9a57dca1fbc47dea1f873`.\n\nThe recordings demonstrate that the shared 43-op integer executor preserves\nliteral edge-case results, capture, architectural state and cache boundaries,\nwhile bypassing general-executor overhead during deferred cached replay. Two\nindependent five-pair timing batches improve native cached-integer throughput\n134.6–135.8 → 162.1–163.2 MIPS (+20.2–20.4%) and Chrome throughput\n88.8–88.9 → 97.3–97.7 MIPS (+9.6–9.9%). Native fast boot improves 3.409 →\n2.953 s and CoreMark 20.628 → 17.127 s. Legacy boot takes 2.39% longer and\nbrowser JIT shell takes 1.58% longer by medians; every accepted workload stays\nwithin the task's 5% time-regression limit. No universal/JIT/desktop-latency gain\nis claimed. Work, clocks, instruction accounting and JIT policy were not altered.\n\nCommands and evidence (all paths under `evidence/mips-integer-replay/`):\n\n- `make verify-E5.5-T03bf`: seven native and five actual wasm tests pass;\n  `gates/frozen-acceptance.log`, `guest/`, `gates/integer-replay-parity.json`.\n  Six trace/state groups match across native and wasm. Independent virtual-alias\n  and actual deferred-PC-wrap attacks were promoted into permanent tests.\n- `tools/perf/oracle.sh`: all six baseline/candidate Linux digest files match;\n  `oracle-{baseline,candidate}/`, `oracle-parity.json`. Fixed RTC is\n  1790000000000000000; four modes fingerprint retirement records, two JIT modes\n  record retired counters and final state only. Each case's exact command is\n  in its oracle log/script and the README reproduction instructions.\n- `node tools/verify/clock-fast-path-benchmark.mjs` (twice),\n  `python3 tools/perf/bench_native.py`, `node tools/perf/bench-browser.mjs`:\n  exact arguments and exit codes in `final-benchmark-commands.json`; raw runs\n  in `micro-final-{1,2}/`, `native-final/`, `browser-final/`.\n  `python3 evidence/mips-integer-replay/analyze-results.py` recounts acceptance.\n  Browser real workloads use live RTC and prove host-time behavior, not exact\n  guest instruction identity. Two retained anonymous 404s are inferred favicon\n  requests from that same run's server inventory; no other missing path exists.\n- `cargo fmt --all --check`, affected strict clippy, `make features` (all six\n  configurations), and no-host-float pass. Affected native suites count 1294\n  passed, one existing stdout-hygiene failure, 16 ignored. `make ci` stops at\n  unchanged Linux-only wvseccomp on macOS; determinism-hazards also finds unchanged\n  GPU test timing. `gates/{SUMMARY.md,diagnostics.json}` and raw logs retain\n  commands, failures and exact parent-file comparisons; no full-gauntlet pass\n  is claimed.\n- A clean clone at the frozen runtime, with CARGO/RUSTFLAGS/RUST_LOG overrides\n  scrubbed and no copied target directory, passes fmt and task acceptance;\n  `cold-clone/receipt.json`, command logs and matching guest artifacts.\n- The built demo passes 127/127 ISA cases, zero unexpected browser/HTTP errors,\n  and a live compact-integer capability; `demo-frozen/demo-suite.{json,png}`.\n  Publication and the final live check follow below before verifier handoff.\n\n\nPublication: `bash tools/deploy-cloudflare.sh` succeeded; deployment\n`https://32d61ee9.wasm-vm.pages.dev`, production `https://wasm-vm.pages.dev`.\nThe script validated local manifests and exact public R2 bytes before publishing.\n`deploy-worker.log` preserves the receipt; `live-worker-artifacts.json` confirms\nproduction wasm/roadmap/task bytes match the tested dist. With\n`E5_T18E_DEMO_URL=https://wasm-vm.pages.dev E5_DEMO_TASK=E5.5-T03bf\nE5_DEMO_CAPABILITY='Compact cached integer execution'\nE5_DEMO_OUT=evidence/mips-integer-replay/demo-live-worker\nnode tools/verify/e5-t18e-demo-smoke.mjs`, the live suite passed **127/127**,\nthe I+M capability showed **67/67 live**, and there were zero unexpected errors\n(the URL-attributed favicon 404 is retained). See `demo-live-worker/` and\n`demo-live-worker.log`. Task now submitted for the fresh verifier's verdict.\n\n\n### 2026-10-02 — fresh verifier\n\nVERDICT: verified\n\nReviewed submission `35448100affd89128c1579662851265f076b1dac` against parent\n`a6ae84fd1c71c76ecadcff9000c40ed6319ef4b5`. Runtime remains byte-identical to\nfrozen `9123bc06`; later changes are tests, acceptance/demo tooling, metadata and\nrecordings. Predictions were recorded before evidence inspection in\n`evidence/mips-integer-replay/verifier/predictions.md` (SHA256\n`a33e9824d9124d396f6a83e8de66449798cb2b3f08fc3dca11568203105e1e7f`). The earlier\nHELD results carry forward because their code, dependencies and digests are\nunchanged. All evidence paths below are relative to `evidence/mips-integer-replay/`.\n\n- **P1–P3 — HELD.** All 43 specialized variants preserve the parent semantics and\n  match the deferred allow-list. Literal expected values independently check all\n  opcodes, division zero/overflow paths, high products, W sign extension, masked\n  shifts and comparisons, with a value-observable deferred target in both capture\n  modes. The independently rerun five-test fixture passed (`verifier/unsabotaged.log`).\n  `guest/integer-boundaries.trace:1,29,36,43,85` shows zero division, MIN/-1,\n  zero remainder, W zero division and high product outcomes; trace SHA256\n  `351c42e4d7a7f8bd3c31a28e2ae07821d1034396ab4551aa22459bc314f07ae5`.\n  Opcode trace SHA256 is `92edf427357e284f1d747473ace567557fffc68544f84881cdd3382397cb4dce`.\n  Saved arithmetic traces are reference-path recordings; optimized-path equality\n  is directly asserted by the deterministic fixtures, not misrepresented as a\n  separately retained trace of every candidate mode.\n- **P4 — HELD.** Compressed lengths, original trace PC/bits, x0 discard and\n  wrapping PC are correct. The verifier found and closed the original wrap\n  fixture's narrow coverage gap with a prefix that reaches actual deferred\n  writeback. `verifier/guest/integer-deferred-wrap.trace:5-8,13-16` records full\n  and compressed cached retirement to PC=0, with x5=4092 and x5=1 respectively;\n  SHA256 `6598d6945c5ea57e928d6042f31bdea0e978736cbe689825f9aa93a90f306e9c`.\n- **P5–P7 — HELD.** Serialized hart/RAM comparisons preserve FP/CSR/reservation\n  state; full/split/zero-budget and traced/unit modes agree. Integer-prefix traps\n  retire only their prefix, and patched cached code is observed on resume\n  (`guest/integer-invalidation.trace:2,4`, x4=10 then 11; SHA256\n  `4b7e6c14394e1cc95a3f762185304469b3b8ca874c60fd7ad842b1f8b78690cb`).\n  Existing affected recordings cover accounting/replay, precise exceptions,\n  FS-Off fallback, capture and guest self-modifying aliases\n  (`gates/affected-native-tests.log:493,495,1062,1177,1277,1426`).\n- **P8 — HELD.** Independent raw-record recomputation checks alternating order,\n  equal micro work/state/clocks and actual artifacts. Two five-pair batches give\n  cached native ratios 1.204010x/1.201703x and browser ratios\n  1.095829x/1.099390x. Real workload raw and paired medians remain within the\n  5% time-regression bound. Legacy native boot is **2.393% slower** and median\n  browser JIT shell **1.584% slower**; native uncached micro and browser JIT\n  controls do not establish a gain. See `verifier/final-audit.json` and\n  `verifier/performance-review.md`. No desktop-latency claim is inferred.\n- **P9 — HELD.** Independently recomputed 12 guest artifact hashes, six\n  trace-FNV/state groups and all six parent/candidate fixed-RTC oracle pairs\n  (`verifier/artifact-audit.json`). Four oracle modes trace actual retirements;\n  two JIT modes prove counter/state equality only. The scrubbed pristine clone\n  passed its frozen acceptance command and produced identical guest artifacts\n  (`cold-clone/receipt.json`). Subsequent promoted tests passed in the separate\n  verifier checkout and the final acceptance; runtime/dependency hashes did not\n  change. All submission-binding hashes match the submitted source/build.\n- **P10 — HELD with recorded pre-existing failures.** Raw logs recount 1,294\n  passes, one unchanged stdout-hygiene failure and 16 existing ignored tests.\n  Final task acceptance passes seven native and five actual wasm tests. Affected\n  strict clippy, formatting and six feature builds pass. `make ci` was attempted\n  and stops on Linux-only wvseccomp under macOS; determinism-hazards finds\n  unchanged GPU test timing. All five implicated files were independently\n  compared byte-for-byte to the parent. The full gauntlet is **not** reported as\n  passing (`gates/diagnostics.json`, `verifier/final-audit.json`).\n- **P11 — HELD.** Deployment `32d61ee9` succeeded. The verifier independently\n  fetched production wasm, roadmap and task inventory; all bytes match committed\n  dist and the worker receipt (`verifier/publication-audit.json`). Live wasm\n  SHA256 is `70de75fd1a2cfb6b51893773a394c0276189a1e54fe9a57dca1fbc47dea1f873`.\n  The live recording has 127/127 ISA passes, 67/67 integer+M capability passes,\n  zero unexpected errors, and an explicitly URL-attributed favicon 404\n  (`demo-live-worker/demo-suite.json`). Screenshot inspected and SHA256 checked:\n  `b5aeed8adddebe256e90a1bb0433f0f7efa7071a85eb88f5717e502661a76990`.\n  The pre-verdict capture still displays the earlier task status; the coordinator\n  will publish this verdict's metadata next. The capability itself is live.\n- **NOVEL ATTACK — HELD.** A physically cached AUIPC block reused through two\n  virtual aliases, overlapping source/destination arithmetic and eight mixed\n  capture/resume schedules preserves literal intermediate results, all prefix\n  states and counters. `verifier/guest/integer-virtual-alias.trace:1-9,12,18,25,27,32,36`\n  records the same final state SHA256\n  `37200e0f3f6333c5b903cc9d2488a7f4027313baf173efd0a417a3c58e456cf7`;\n  trace SHA256 `eca4d9ba3aa696b36bdc3017f0d1502cd32a09241b8f0791886fa06bcb98fbd4`.\n- **SABOTAGE — HELD.** Isolated DIVUW zero-extension made the new literal test\n  fail: observed 4294967295, expected 18446744073709551615\n  (`verifier/divuw-sabotage.log:7-10`, exit 101). The mutation was restored exactly\n  and never touched the worker checkout; receipt and patch retained.\n- **COVERAGE/SUITE.** Every changed runtime hunk is executed by the recorded\n  deterministic fixtures or existing affected suites. The exhaustive unreachable\n  integer match is waived as a structural assertion after the identical helper\n  allow-list; declarations/comments/metadata are non-executable. The demo-tool\n  capability assertion executed in both local and live captures. Full hunk\n  dispositions are in `verifier/correctness-review.md`. Promoted\n  `crates/core/tests/integer_replay_alias.rs` and the shared 43-opcode fixture are\n  permanent regression tests; `make verify-E5.5-T03bf` includes both native files\n  and actual wasm coverage. No semantic refutation or remaining evidence gap.\n\nVerifier commands: independent frozen-clone native fixture/alias tests and strict\nclippy (exact commands in `verifier/{novel,sabotage}-receipt.json`),\n`python3 evidence/mips-integer-replay/verifier/audit-final.py`, independent SHA/FNV\nrecomputation, three production artifact fetches (exact arrays in\n`verifier/publication-audit.json`), `python3 tools/check_task_policy.py`, then\n`python3 tools/build_queue.py`. No runtime changes, merges, or CI actions.\nADVERSARIAL VERIFICATION\nA fresh verifier records predictions before inspecting evidence and checks the\ndiff against all opcode, capture and fallback paths. Attack division by zero,\nsigned MIN/-1, high products, W sign extension, shift masking, x0, split budgets,\ntraps after integer prefixes and code invalidation. Independently recalculate\ntiming ratios and compare artifact hashes. Invent one bounded attack and sabotage\none new regression test. Only the verifier may set verified; leave PRs open.\nsource: tasks/epic-5.5-omarchy/E5.5-T03bf-integer-replay.md",
+  "capability": "Compact cached integer execution67/67 passing · live in browser",
+  "errors": [],
+  "httpErrors": [],
+  "consoleLog": [
+    {
+      "type": "verbose",
+      "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+      "url": "https://wasm-vm.pages.dev/app?noAutoBoot=1"
+    },
+    {
+      "type": "verbose",
+      "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+      "url": "https://wasm-vm.pages.dev/app?noAutoBoot=1"
+    },
+    {
+      "type": "warning",
+      "text": "Service Worker registration blocked by Playwright",
+      "url": ""
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 ()",
+      "url": "https://wasm-vm.pages.dev/favicon.ico"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x00000000800002a8 insn=0x0005a027 mode=M mcounteren=0x0 scounteren=0x0",
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x00000000800002f0 insn=0xc0001573 mode=U mcounteren=0x1 scounteren=0x1",
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000302 insn=0x30002573 mode=U mcounteren=0x1 scounteren=0x1",
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x000000008000014c insn=0x00000000 mode=M mcounteren=0x0 scounteren=0x0",
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000208 insn=0x00000000 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000210 insn=0x12000073 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000218 insn=0x180022f3 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000240 insn=0x00000000 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "type": "info",
+      "text": "illegal-instruction epc=0x0000000080000254 insn=0x10200073 mode=S mcounteren=0x0 scounteren=0x0",
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js"
+    }
+  ],
+  "screenshotSha256": "c49d48bd8228f7ae2feadb41c055808d82284b416b3884bcb89694102aa80621"
+}

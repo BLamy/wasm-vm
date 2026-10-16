@@ -1,0 +1,87 @@
+{
+  "head": "26f63873d0a005be19ef2c7c682cfee96907de27",
+  "clone": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-handoff-cold-t24eeptc/repo",
+  "scrubbedKeys": [
+    "RUST_LOG"
+  ],
+  "command": [
+    "make",
+    "verify-E5.5-T03be"
+  ],
+  "initialStatus": "",
+  "exitCode": 0,
+  "finalTrackedDiff": "",
+  "incrementalHarnessCheck": {
+    "head": "a3afda72c9a908b5a8809f0a2dc7fed11b4698a7",
+    "scope": "lossless hexadecimal native benchmark JSON only; runtime, fixtures and browser harness unchanged",
+    "checks": [
+      {
+        "command": [
+          "git",
+          "fetch",
+          "--no-tags",
+          "origin",
+          "codex/omarchy-jit-sparse-handoff"
+        ],
+        "exitCode": 0
+      },
+      {
+        "command": [
+          "git",
+          "checkout",
+          "--detach",
+          "a3afda72c9a908b5a8809f0a2dc7fed11b4698a7"
+        ],
+        "exitCode": 0
+      },
+      {
+        "command": [
+          "cargo",
+          "fmt",
+          "--all",
+          "--check"
+        ],
+        "exitCode": 0
+      },
+      {
+        "command": [
+          "cargo",
+          "clippy",
+          "-p",
+          "wasm-vm-core",
+          "--example",
+          "jit_handoff_probe",
+          "--features",
+          "trace",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exitCode": 0
+      },
+      {
+        "command": [
+          "cargo",
+          "build",
+          "-p",
+          "wasm-vm-core",
+          "--features",
+          "trace",
+          "--example",
+          "jit_handoff_probe"
+        ],
+        "exitCode": 0
+      },
+      {
+        "command": [
+          "node",
+          "/Users/blamy/.codex/worktrees/emulator-speed-next/wasm-vm/evidence/omarchy-profile/sparse-handoff-final/check-native-json.mjs",
+          "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-handoff-cold-t24eeptc/repo/target/debug/examples/jit_handoff_probe",
+          "/Users/blamy/.codex/worktrees/emulator-speed-next/wasm-vm/evidence/omarchy-profile/sparse-handoff-final/cold-native-exact-words.json"
+        ],
+        "exitCode": 0
+      }
+    ],
+    "finalTrackedDiff": ""
+  }
+}

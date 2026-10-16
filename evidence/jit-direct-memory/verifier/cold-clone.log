@@ -1,0 +1,361 @@
+Cloning into '/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-direct-memory-verifier-241gd76s/repo'...
+done.
+Updating files:  33% (3711/11165)Updating files:  34% (3797/11165)Updating files:  35% (3908/11165)Updating files:  36% (4020/11165)Updating files:  37% (4132/11165)Updating files:  38% (4243/11165)Updating files:  39% (4355/11165)Updating files:  40% (4466/11165)Updating files:  41% (4578/11165)Updating files:  42% (4690/11165)Updating files:  43% (4801/11165)Updating files:  44% (4913/11165)Updating files:  45% (5025/11165)Updating files:  46% (5136/11165)Updating files:  47% (5248/11165)Updating files:  48% (5360/11165)Updating files:  49% (5471/11165)Updating files:  50% (5583/11165)Updating files:  51% (5695/11165)Updating files:  52% (5806/11165)Updating files:  53% (5918/11165)Updating files:  54% (6030/11165)Updating files:  55% (6141/11165)Updating files:  56% (6253/11165)Updating files:  57% (6365/11165)Updating files:  58% (6476/11165)Updating files:  59% (6588/11165)Updating files:  60% (6699/11165)Updating files:  61% (6811/11165)Updating files:  62% (6923/11165)Updating files:  63% (7034/11165)Updating files:  64% (7146/11165)Updating files:  65% (7258/11165)Updating files:  66% (7369/11165)Updating files:  67% (7481/11165)Updating files:  68% (7593/11165)Updating files:  69% (7704/11165)Updating files:  70% (7816/11165)Updating files:  71% (7928/11165)Updating files:  72% (8039/11165)Updating files:  73% (8151/11165)Updating files:  74% (8263/11165)Updating files:  75% (8374/11165)Updating files:  76% (8486/11165)Updating files:  77% (8598/11165)Updating files:  78% (8709/11165)Updating files:  79% (8821/11165)Updating files:  80% (8932/11165)Updating files:  81% (9044/11165)Updating files:  82% (9156/11165)Updating files:  83% (9267/11165)Updating files:  84% (9379/11165)Updating files:  85% (9491/11165)Updating files:  86% (9602/11165)Updating files:  86% (9685/11165)Updating files:  87% (9714/11165)Updating files:  88% (9826/11165)Updating files:  89% (9937/11165)Updating files:  90% (10049/11165)Updating files:  91% (10161/11165)Updating files:  92% (10272/11165)Updating files:  93% (10384/11165)Updating files:  94% (10496/11165)Updating files:  95% (10607/11165)Updating files:  96% (10719/11165)Updating files:  97% (10831/11165)Updating files:  98% (10942/11165)Updating files:  99% (11054/11165)Updating files: 100% (11165/11165)Updating files: 100% (11165/11165), done.
+HEAD is now at 7e51177d perf: bind browser JIT memory helpers directly to wasm
+$ rustc -Vv
+rustc 1.96.0 (ac68faa20 2026-05-25)
+binary: rustc
+commit-hash: ac68faa20c58cbccd01ee7208bf3b6e93a7d7f96
+commit-date: 2026-05-25
+host: aarch64-apple-darwin
+release: 1.96.0
+LLVM version: 22.1.2
+$ wasm-pack --version
+wasm-pack 0.15.0
+$ node --version
+v24.20.0
+$ make verify-E5.5-T03bg
+cargo fmt --all --check
+cargo clippy -p wasm-vm-wasm --target wasm32-unknown-unknown --test jit_memory_direct_imports --test jit_memory_direct_imports_verifier --test jit_browser_parity -- -D warnings
+   Compiling proc-macro2 v1.0.106
+   Compiling unicode-ident v1.0.24
+   Compiling quote v1.0.46
+   Compiling wasm-bindgen-shared v0.2.126
+    Checking cfg-if v1.0.4
+   Compiling rustversion v1.0.22
+   Compiling version_check v0.9.5
+   Compiling bumpalo v3.20.3
+    Checking typenum v1.20.1
+    Checking once_cell v1.21.4
+    Checking futures-core v0.3.32
+    Checking futures-task v0.3.32
+    Checking slab v0.4.12
+    Checking pin-project-lite v0.2.17
+   Compiling serde_core v1.0.228
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling zmij v1.0.21
+   Compiling serde v1.0.228
+   Compiling serde_json v1.0.150
+    Checking smallvec v1.15.2
+   Compiling heapless v0.9.3
+    Checking log v0.4.33
+    Checking futures-util v0.3.32
+    Checking byteorder v1.5.0
+    Checking bitflags v2.13.0
+    Checking hash32 v0.3.1
+    Checking tinyvec_macros v0.1.1
+    Checking stable_deref_trait v1.2.1
+   Compiling smoltcp v0.13.1
+   Compiling libm v0.2.16
+   Compiling generic-array v0.14.7
+    Checking memchr v2.8.2
+   Compiling autocfg v1.5.1
+    Checking itoa v1.0.18
+    Checking tinyvec v1.12.0
+   Compiling num-traits v0.2.19
+    Checking managed v0.8.0
+    Checking bitflags v1.3.2
+    Checking unicode-normalization v0.1.25
+    Checking wasm-vm-wasm-emit v0.0.1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-direct-memory-verifier-241gd76s/repo/crates/wasm-emit)
+    Checking wasm-bindgen-test-shared v0.2.126
+    Checking oorandom v11.1.5
+    Checking cast v0.3.0
+    Checking nu-ansi-term v0.50.3
+   Compiling syn v2.0.118
+   Compiling wasm-bindgen v0.2.126
+   Compiling wasm-bindgen-macro-support v0.2.126
+    Checking crypto-common v0.1.7
+    Checking block-buffer v0.10.4
+    Checking digest v0.10.7
+    Checking sha2 v0.10.9
+    Checking wasm-vm-core v0.0.1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-direct-memory-verifier-241gd76s/repo/crates/core)
+   Compiling serde_derive v1.0.228
+   Compiling wasm-bindgen-test-macro v0.3.76
+   Compiling async-trait v0.1.89
+   Compiling wasm-bindgen-macro v0.2.126
+    Checking wasm-vm-storage v0.0.1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-direct-memory-verifier-241gd76s/repo/crates/storage)
+    Checking wasm-vm-jit-translate v0.0.1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-direct-memory-verifier-241gd76s/repo/crates/jit-translate)
+    Checking wasm-vm-slirp v0.0.0 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-direct-memory-verifier-241gd76s/repo/crates/slirp)
+    Checking js-sys v0.3.103
+    Checking console_error_panic_hook v0.1.7
+    Checking web-sys v0.3.103
+    Checking wasm-bindgen-futures v0.4.76
+    Checking getrandom v0.2.17
+    Checking wasm-bindgen-test v0.3.76
+    Checking console_log v1.0.0
+    Checking wasm-vm-wasm v0.0.1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-direct-memory-verifier-241gd76s/repo/crates/wasm)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 17.09s
+wasm-pack test --node crates/wasm --test jit_memory_direct_imports -- --nocapture
+[INFO]: 🎯  Checking for the Wasm target...
+   Compiling cfg-if v1.0.4
+   Compiling unicode-ident v1.0.24
+   Compiling typenum v1.20.1
+   Compiling once_cell v1.21.4
+   Compiling pin-project-lite v0.2.17
+   Compiling futures-core v0.3.32
+   Compiling futures-task v0.3.32
+   Compiling slab v0.4.12
+   Compiling serde_core v1.0.228
+   Compiling byteorder v1.5.0
+   Compiling bitflags v2.13.0
+   Compiling smallvec v1.15.2
+   Compiling log v0.4.33
+   Compiling zmij v1.0.21
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.2
+   Compiling tinyvec_macros v0.1.1
+   Compiling wasm-bindgen-shared v0.2.126
+   Compiling stable_deref_trait v1.2.1
+   Compiling tinyvec v1.12.0
+   Compiling bitflags v1.3.2
+   Compiling futures-util v0.3.32
+   Compiling managed v0.8.0
+   Compiling libm v0.2.16
+   Compiling wasm-bindgen v0.2.126
+   Compiling hash32 v0.3.1
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling wasm-vm-wasm-emit v0.0.1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-direct-memory-verifier-241gd76s/repo/crates/wasm-emit)
+   Compiling nu-ansi-term v0.50.3
+   Compiling cast v0.3.0
+   Compiling wasm-bindgen-test-shared v0.2.126
+   Compiling heapless v0.9.3
+   Compiling oorandom v11.1.5
+   Compiling unicode-normalization v0.1.25
+   Compiling generic-array v0.14.7
+   Compiling smoltcp v0.13.1
+   Compiling num-traits v0.2.19
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling console_error_panic_hook v0.1.7
+   Compiling sha2 v0.10.9
+   Compiling wasm-vm-core v0.0.1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-direct-memory-verifier-241gd76s/repo/crates/core)
+   Compiling js-sys v0.3.103
+   Compiling serde_json v1.0.150
+   Compiling serde v1.0.228
+   Compiling wasm-vm-storage v0.0.1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-direct-memory-verifier-241gd76s/repo/crates/storage)
+   Compiling wasm-vm-slirp v0.0.0 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-direct-memory-verifier-241gd76s/repo/crates/slirp)
+   Compiling wasm-vm-jit-translate v0.0.1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-direct-memory-verifier-241gd76s/repo/crates/jit-translate)
+   Compiling web-sys v0.3.103
+   Compiling wasm-bindgen-futures v0.4.76
+   Compiling getrandom v0.2.17
+   Compiling wasm-bindgen-test v0.3.76
+   Compiling console_log v1.0.0
+   Compiling wasm-vm-wasm v0.0.1 (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-direct-memory-verifier-241gd76s/repo/crates/wasm)
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 54.79s
+[INFO]: ⬇️  Installing wasm-bindgen...
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.11s
+     Running tests/jit_memory_direct_imports.rs (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-direct-memory-verifier-241gd76s/repo/target/wasm32-unknown-unknown/debug/deps/jit_memory_direct_imports-dbe2aace9ad26731.wasm)
+running 5 tests
+Invoking test: successful_atomic_imports_abort_before_linked_successor
+MEMORY_ATOMIC_CHAIN_ABORT selector=0 retired=2 digest=4360274e6d107eadbbba849f46994702849858db31feafdf176cf9019ff1f414
+MEMORY_ATOMIC_CHAIN_ABORT selector=2 retired=2 digest=c48a10dd50ec20b6eeccf52e27a6018925d41b97b8785b541c8c0ada6061e352
+MEMORY_ATOMIC_CHAIN_ABORT selector=3 retired=2 digest=c16d57f48cbd64bc66a7af322926110bb39dbe61540491b3f185733dac3107ac
+test successful_atomic_imports_abort_before_linked_successor ... ok
+Invoking test: shared_literal_width_atomic_fault_matrix
+MEMORY_STATE shared=true case=load-kind-0 retired=3 digest=8a52177d4cbab0dae18387929cc3af0144d7e3e1dc9c21d9a0ff2be4df87453c reference_trace=a450769a15146ece43c6d120dcd4ba06760d85a22f903e2d45849ea7c3084e42
+MEMORY_STATE shared=true case=load-kind-1 retired=3 digest=710485247aa81ef0e70106ad9b5f0574090ee520342b012b9993ff0a820c9285 reference_trace=c29e868634f3e7a57f423be406db398d2d2227f5c8950f1221164521d476e2db
+MEMORY_STATE shared=true case=load-kind-2 retired=3 digest=993a486a0c19ea856c37fe4b2cac97263f246516a4112efe80635a7476fe83e2 reference_trace=49a43158f0bc537b8aab33649e80810b1403f903aaadbb367141b6439d8a65f7
+MEMORY_STATE shared=true case=load-kind-3 retired=3 digest=c56c21275d5d100a595788b61c8de096f48e3d679d8f4243c3846503469e3c0b reference_trace=aa7773adb371be6c2a748b4ed8204c55821aa9b39933fc4a22438046173e1f40
+MEMORY_STATE shared=true case=load-kind-4 retired=3 digest=6b1f7bfba4a7942159a47cc040cc4434181600b74519aebb75b2d20af1a43083 reference_trace=d5911eb765d0c67ee83bcc5e456093add4692619cd6d6de423f9f58bf1dd786e
+MEMORY_STATE shared=true case=load-kind-5 retired=3 digest=a63afe0f80168c9fc447fd4dec2b9116333ae1c71b6a59a8647bc530dbbb6eae reference_trace=4be9a6552bd5c08aca19cc5b1e421091cff0c03b2250bddbc94e3961441fb269
+MEMORY_STATE shared=true case=load-kind-6 retired=3 digest=3532fbb20e4eeb68ca1864ec90e072834e3dc1811eb04467949a9ac49daf7f6a reference_trace=3c61802ac74f9e052b8393ccaa600f36c5dd4fb82aabfb043095d1456824242e
+MEMORY_STATE shared=true case=store-width-1 retired=3 digest=756e8fc2d2acc5b7abd5af897140d3d97c6fd7b758b56e6bdf725e06f4a3e283 reference_trace=8c15a86359dd8cff859d489b928a5067411a1cc51446ad682940e3ce96e954aa
+MEMORY_STATE shared=true case=store-width-2 retired=3 digest=42a8190cfdc63bdfe31f27ceb246dc1c65715f8a30836f553e6c0c5d3fd5cd25 reference_trace=e69e827c31bb150b2e7f15d9a42b6d9f2d0c924ea3ae29a214498194ea9bed46
+MEMORY_STATE shared=true case=store-width-4 retired=3 digest=80cdcd630ff776eb130fd3f9780544b7c4ae4e6a5689dd7ec572d3553c54843d reference_trace=a34499931cea55b345121e731c90c0b39599be4682ff8fae0cc6e8230d7a4a25
+MEMORY_STATE shared=true case=store-width-8 retired=3 digest=3311dc6a25d03c27c340aa509c3d6325c7a17ae497d7e341f6b180eac6f598fb reference_trace=0b06404b6645b2ccf6a9c3228686b6f6ce3461928b0f642d52266921a99752bf
+MEMORY_STATE shared=true case=misaligned-ld retired=3 digest=a02d73453bf8c67dd308acf903209068a280d5068272e234104e9390d95eb445 reference_trace=433666ebaa1d98eabe4b3a1afef5a4975a6b7d29de6656007929d1b6ba24acb6
+MEMORY_STATE shared=true case=misaligned-sd retired=3 digest=25ec9e735792115e3931b8abf9d80112647fa76cc19d3f077912e2f87cc5d326 reference_trace=0db6d0f4d3c6665e9aa4925e3d558682c142ddb4ea44e52fa49521a36e2c994d
+MEMORY_STATE shared=true case=nonoverlapping-store-keeps-reservation retired=3 digest=d3fd922f6a210efe6817f75471c653b22d7d3735c259a019b4c78b98db04faf6 reference_trace=00f372d3bcb1519f92c4338fed64165021ab391c5be237cf0212d549c9c32032
+MEMORY_STATE shared=true case=amo-1-width-4 retired=3 digest=00108a2c08691193a93b068fb36dceba93daa50391014225d029580ab35e5955 reference_trace=27884e24b2f824975a2b23f151d68e805dabcc05fcf5a6b8b63a45e35581084d
+MEMORY_STATE shared=true case=amo-0-width-4 retired=3 digest=6678b0cca37fe9bda709fb6642af1266db318bf516541e83a3bc40dcdf8d545f reference_trace=d04cc7b679b87c86d1030d681aa27c9bdaa49285e2a8e0b0a85553261cbfb55f
+MEMORY_STATE shared=true case=amo-4-width-4 retired=3 digest=6678b0cca37fe9bda709fb6642af1266db318bf516541e83a3bc40dcdf8d545f reference_trace=63325f3d97c0b60e5d89776b31d5c9a8434bb3c95dac63cbcb5a3e516cb00abe
+MEMORY_STATE shared=true case=amo-12-width-4 retired=3 digest=fa393e0670f75cc4740ecd67b9ad3bac0814a40db33e4546b30449326698be1e reference_trace=d3246db9c5ba97049289cbb0b564c874e39d1768f899291760a596ea293d1b33
+MEMORY_STATE shared=true case=amo-8-width-4 retired=3 digest=6678b0cca37fe9bda709fb6642af1266db318bf516541e83a3bc40dcdf8d545f reference_trace=0f4d101fd15f95faa77f74cf747d4a1991ba43822e5f1c51a86df67cccea8f6e
+MEMORY_STATE shared=true case=amo-16-width-4 retired=3 digest=64980231ecfa499f8fb4885445bfd5a20507ade9410596730bd34222ce078c1d reference_trace=3dc94cde9b64a93a68b749cea62f6fbd411d64a4856e219d2cde8f6ccfdf341b
+MEMORY_STATE shared=true case=amo-20-width-4 retired=3 digest=00108a2c08691193a93b068fb36dceba93daa50391014225d029580ab35e5955 reference_trace=03add3d39a2c70ea2716c6d0ca06ecd5968f2a9b6c105ae1145544a6d7bb0b57
+MEMORY_STATE shared=true case=amo-24-width-4 retired=3 digest=00108a2c08691193a93b068fb36dceba93daa50391014225d029580ab35e5955 reference_trace=48608c164061d7c997734e4ad0078fe63d2907e0b84773faa67ddb5a9133be90
+MEMORY_STATE shared=true case=amo-28-width-4 retired=3 digest=64980231ecfa499f8fb4885445bfd5a20507ade9410596730bd34222ce078c1d reference_trace=4d9a0e30477299bcfb6f3f5d8dd7ee99782604b296d994b9f611dc4783af4150
+MEMORY_STATE shared=true case=lr-width-4 retired=3 digest=6710e778742bc138c90d5464db79176a8151d42bf0a9a31446701516b5a1056b reference_trace=23069391a5866036ca139afb21d8ca871d6845e11124e81d3bc339ba1740f23f
+MEMORY_STATE shared=true case=sc-success-width-4 retired=3 digest=1e3c8fef749ef6e5cf450e8994aeb59b2be9d3abf610fc3cbd52c7134a4e33ed reference_trace=ac7171dc44afd105cfcb093ddad2b84098fb602910d56096003f1af2f78f930e
+MEMORY_STATE shared=true case=sc-failure-absent-width-4 retired=3 digest=ae253ee065145b1c46756b74d713cdf416e4e8f6b5cdf4f5020587a6628604d8 reference_trace=22dba3aa6a763826b46bf989281962bcfa85376cdd3029bff760337547d03031
+MEMORY_STATE shared=true case=sc-failure-address-width-4 retired=3 digest=ae253ee065145b1c46756b74d713cdf416e4e8f6b5cdf4f5020587a6628604d8 reference_trace=31f34519fe841c5eddcf0970a229facf354d9ba73663f564e170fe642e9552ab
+MEMORY_STATE shared=true case=sc-failure-width-width-4 retired=3 digest=ae253ee065145b1c46756b74d713cdf416e4e8f6b5cdf4f5020587a6628604d8 reference_trace=2bded62a6b389df8a3d7d3b56ea90985041b952fe63d5a1bb421c8301269e249
+MEMORY_STATE shared=true case=amo-1-width-8 retired=3 digest=0dbc89d6c9b6a3f2bdfc65dbbfc78780d01c8b3a1fd18fce3826316661afb658 reference_trace=e46c5d4a377fc87c437ddbb7df800b97c9bf5d5b050c50447406333d63d08c5f
+MEMORY_STATE shared=true case=amo-0-width-8 retired=3 digest=7bc8730d3bd34ce4a2369cbd6ab957ef6526a2f30f9eb49a32d9059a1ce377b0 reference_trace=98a8104215293c266409b38bad901869f914347930cedaafc491d312a866c7c3
+MEMORY_STATE shared=true case=amo-4-width-8 retired=3 digest=b2eae30d2efb7c4007d9b6ad8a490c36007307453ddcd60a02ec33e9495e8d04 reference_trace=7909d88682efd2eab247d8cbb94e1a0c28be6534858e7c257a22bedaca8fd8be
+MEMORY_STATE shared=true case=amo-12-width-8 retired=3 digest=eab32528e79394e15bdfc877af078aee7eb2ce5f997838c59aab79ee3f633ecd reference_trace=84f56b69e38c3c8a2c8bf6176a7a7046ad737ed5b8461780f702af4bd17ca9c7
+MEMORY_STATE shared=true case=amo-8-width-8 retired=3 digest=c6c8c9a2a34eb66ab13ba693102bb80b119968f174814498ae107475af68ce9b reference_trace=f3d5ef2fbd80a66e09e32ec9902703b98023ae0bd4023a020804b026489ad641
+MEMORY_STATE shared=true case=amo-16-width-8 retired=3 digest=abdfc4b340b0e2ee8b05f20ccac059c67cc78f9e70b8217d80d691a02d1b69a9 reference_trace=5c2706af27339be977394863b4d36e23cd430f3ce85c513715afa79f39f8f8bc
+MEMORY_STATE shared=true case=amo-20-width-8 retired=3 digest=0dbc89d6c9b6a3f2bdfc65dbbfc78780d01c8b3a1fd18fce3826316661afb658 reference_trace=18694411f013d14eab3dcccd96031aa4cb719351472c3585275a6ad3248b258c
+MEMORY_STATE shared=true case=amo-24-width-8 retired=3 digest=abdfc4b340b0e2ee8b05f20ccac059c67cc78f9e70b8217d80d691a02d1b69a9 reference_trace=864e05f2e496efa7a5508ab8e24666bd7bebcd73b8f31cbb8be376b9c7b79c6b
+MEMORY_STATE shared=true case=amo-28-width-8 retired=3 digest=0dbc89d6c9b6a3f2bdfc65dbbfc78780d01c8b3a1fd18fce3826316661afb658 reference_trace=1d8695b30f2245fd52743ea43ec4e89325b77590716ad0e5828de527a5eac4c5
+MEMORY_STATE shared=true case=lr-width-8 retired=3 digest=c56c21275d5d100a595788b61c8de096f48e3d679d8f4243c3846503469e3c0b reference_trace=3fe9e64cb328912244e06f8cde69e550f0d5f7749f6ce14bee73130acecc52f6
+MEMORY_STATE shared=true case=sc-success-width-8 retired=3 digest=72d7a1dfff48ee4251630943e56502e6ce1362dbc1486f8f0afb758b6353919c reference_trace=80ab37baeeb3d867b0da173e6f38d5b3d86ba0e67bd601a7dec2bba086e7d282
+MEMORY_STATE shared=true case=sc-failure-absent-width-8 retired=3 digest=ae253ee065145b1c46756b74d713cdf416e4e8f6b5cdf4f5020587a6628604d8 reference_trace=5a84b8e2710225bf006e8f5013db6d6889b711656e40cc531595460d007113ca
+MEMORY_STATE shared=true case=sc-failure-address-width-8 retired=3 digest=ae253ee065145b1c46756b74d713cdf416e4e8f6b5cdf4f5020587a6628604d8 reference_trace=88d0d84feb643dc1adf53d0be9a506fa817970a93844e76d0bb6e63217276a38
+MEMORY_STATE shared=true case=sc-failure-width-width-8 retired=3 digest=ae253ee065145b1c46756b74d713cdf416e4e8f6b5cdf4f5020587a6628604d8 reference_trace=95c2d70f03f2e5cb1625d8c552d043caf415ee75e20960a989a6846964a7575a
+MEMORY_STATE shared=true case=high-address-load-fault retired=1 digest=1269a6b271865217e117adb09c3fa9e37af4a2aced39fd175ed689bacccdd459 reference_trace=8fc14be8f95fb601155757d6a37ca76ea72cb92b893d684e48f3fa1221be7738
+MEMORY_STATE shared=true case=high-address-store-fault retired=1 digest=1269a6b271865217e117adb09c3fa9e37af4a2aced39fd175ed689bacccdd459 reference_trace=caa2ae6010038203fe992a55a8e0cab5b3698d7d9163ffe052b6df6e964040b7
+MEMORY_STATE shared=true case=high-address-amo-fault retired=1 digest=1269a6b271865217e117adb09c3fa9e37af4a2aced39fd175ed689bacccdd459 reference_trace=32b4ee299a4cf3c9960142d3890c67831874a88213eaf0908e4e5cd35a7f75ac
+MEMORY_STATE shared=true case=high-address-lr-fault retired=1 digest=1269a6b271865217e117adb09c3fa9e37af4a2aced39fd175ed689bacccdd459 reference_trace=88596b7055ee7185104c69d1bd95f4002e67566dc99d6f84044783ddcff223ce
+MEMORY_STATE shared=true case=high-address-sc-fault retired=1 digest=d99ff4f5d77f4cbbc9e62e7e642a9f115bf4df5c1be2d3ec07b985c63536f9eb reference_trace=c3d4651cf74614cc8aad7f148b700d744884db98dd27e9aecf4993be8c3dbf3e
+MEMORY_STATE shared=true case=misaligned-amo-fault retired=1 digest=333dd66d1e64b825bfaf3f5eaba14d42d61e7279947b001cbaabe5ede8914c83 reference_trace=c52cb7bf994b0fddee8069f7bbce928e9dedc5f5acf3ce689d54101add114da5
+MEMORY_STATE shared=true case=misaligned-lr-fault retired=1 digest=333dd66d1e64b825bfaf3f5eaba14d42d61e7279947b001cbaabe5ede8914c83 reference_trace=4ca723431767636303304b7b56dbf21944fc2239e98ea5f26954548ab0262956
+MEMORY_STATE shared=true case=misaligned-sc-fault retired=1 digest=333dd66d1e64b825bfaf3f5eaba14d42d61e7279947b001cbaabe5ede8914c83 reference_trace=cb48efa5620280d0621c33f07a60cbbe8d648abca64e32f4a1fb0f4570c88050
+MEMORY_LITERAL_MATRIX shared=true cases=50 aggregate=ee01061fe9fb4cf5612d065557c1dc7c2d33a01567748aa516d145bd3c4c80bc
+test shared_literal_width_atomic_fault_matrix ... ok
+Invoking test: shared_import_identity_signatures_and_inactive_guards
+MEMORY_IMPORT_ABI {"shared":true,"rows":1,"helpers":5,"correctTypes":5,"rejectedTypes":19,"sabotageRejected":true} inactive_calls=20
+test shared_import_identity_signatures_and_inactive_guards ... ok
+Invoking test: private_literal_width_atomic_fault_matrix
+MEMORY_STATE shared=false case=load-kind-0 retired=3 digest=8a52177d4cbab0dae18387929cc3af0144d7e3e1dc9c21d9a0ff2be4df87453c reference_trace=a450769a15146ece43c6d120dcd4ba06760d85a22f903e2d45849ea7c3084e42
+MEMORY_STATE shared=false case=load-kind-1 retired=3 digest=710485247aa81ef0e70106ad9b5f0574090ee520342b012b9993ff0a820c9285 reference_trace=c29e868634f3e7a57f423be406db398d2d2227f5c8950f1221164521d476e2db
+MEMORY_STATE shared=false case=load-kind-2 retired=3 digest=993a486a0c19ea856c37fe4b2cac97263f246516a4112efe80635a7476fe83e2 reference_trace=49a43158f0bc537b8aab33649e80810b1403f903aaadbb367141b6439d8a65f7
+MEMORY_STATE shared=false case=load-kind-3 retired=3 digest=c56c21275d5d100a595788b61c8de096f48e3d679d8f4243c3846503469e3c0b reference_trace=aa7773adb371be6c2a748b4ed8204c55821aa9b39933fc4a22438046173e1f40
+MEMORY_STATE shared=false case=load-kind-4 retired=3 digest=6b1f7bfba4a7942159a47cc040cc4434181600b74519aebb75b2d20af1a43083 reference_trace=d5911eb765d0c67ee83bcc5e456093add4692619cd6d6de423f9f58bf1dd786e
+MEMORY_STATE shared=false case=load-kind-5 retired=3 digest=a63afe0f80168c9fc447fd4dec2b9116333ae1c71b6a59a8647bc530dbbb6eae reference_trace=4be9a6552bd5c08aca19cc5b1e421091cff0c03b2250bddbc94e3961441fb269
+MEMORY_STATE shared=false case=load-kind-6 retired=3 digest=3532fbb20e4eeb68ca1864ec90e072834e3dc1811eb04467949a9ac49daf7f6a reference_trace=3c61802ac74f9e052b8393ccaa600f36c5dd4fb82aabfb043095d1456824242e
+MEMORY_STATE shared=false case=store-width-1 retired=3 digest=756e8fc2d2acc5b7abd5af897140d3d97c6fd7b758b56e6bdf725e06f4a3e283 reference_trace=8c15a86359dd8cff859d489b928a5067411a1cc51446ad682940e3ce96e954aa
+MEMORY_STATE shared=false case=store-width-2 retired=3 digest=42a8190cfdc63bdfe31f27ceb246dc1c65715f8a30836f553e6c0c5d3fd5cd25 reference_trace=e69e827c31bb150b2e7f15d9a42b6d9f2d0c924ea3ae29a214498194ea9bed46
+MEMORY_STATE shared=false case=store-width-4 retired=3 digest=80cdcd630ff776eb130fd3f9780544b7c4ae4e6a5689dd7ec572d3553c54843d reference_trace=a34499931cea55b345121e731c90c0b39599be4682ff8fae0cc6e8230d7a4a25
+MEMORY_STATE shared=false case=store-width-8 retired=3 digest=3311dc6a25d03c27c340aa509c3d6325c7a17ae497d7e341f6b180eac6f598fb reference_trace=0b06404b6645b2ccf6a9c3228686b6f6ce3461928b0f642d52266921a99752bf
+MEMORY_STATE shared=false case=misaligned-ld retired=3 digest=a02d73453bf8c67dd308acf903209068a280d5068272e234104e9390d95eb445 reference_trace=433666ebaa1d98eabe4b3a1afef5a4975a6b7d29de6656007929d1b6ba24acb6
+MEMORY_STATE shared=false case=misaligned-sd retired=3 digest=25ec9e735792115e3931b8abf9d80112647fa76cc19d3f077912e2f87cc5d326 reference_trace=0db6d0f4d3c6665e9aa4925e3d558682c142ddb4ea44e52fa49521a36e2c994d
+MEMORY_STATE shared=false case=nonoverlapping-store-keeps-reservation retired=3 digest=d3fd922f6a210efe6817f75471c653b22d7d3735c259a019b4c78b98db04faf6 reference_trace=00f372d3bcb1519f92c4338fed64165021ab391c5be237cf0212d549c9c32032
+MEMORY_STATE shared=false case=amo-1-width-4 retired=3 digest=00108a2c08691193a93b068fb36dceba93daa50391014225d029580ab35e5955 reference_trace=27884e24b2f824975a2b23f151d68e805dabcc05fcf5a6b8b63a45e35581084d
+MEMORY_STATE shared=false case=amo-0-width-4 retired=3 digest=6678b0cca37fe9bda709fb6642af1266db318bf516541e83a3bc40dcdf8d545f reference_trace=d04cc7b679b87c86d1030d681aa27c9bdaa49285e2a8e0b0a85553261cbfb55f
+MEMORY_STATE shared=false case=amo-4-width-4 retired=3 digest=6678b0cca37fe9bda709fb6642af1266db318bf516541e83a3bc40dcdf8d545f reference_trace=63325f3d97c0b60e5d89776b31d5c9a8434bb3c95dac63cbcb5a3e516cb00abe
+MEMORY_STATE shared=false case=amo-12-width-4 retired=3 digest=fa393e0670f75cc4740ecd67b9ad3bac0814a40db33e4546b30449326698be1e reference_trace=d3246db9c5ba97049289cbb0b564c874e39d1768f899291760a596ea293d1b33
+MEMORY_STATE shared=false case=amo-8-width-4 retired=3 digest=6678b0cca37fe9bda709fb6642af1266db318bf516541e83a3bc40dcdf8d545f reference_trace=0f4d101fd15f95faa77f74cf747d4a1991ba43822e5f1c51a86df67cccea8f6e
+MEMORY_STATE shared=false case=amo-16-width-4 retired=3 digest=64980231ecfa499f8fb4885445bfd5a20507ade9410596730bd34222ce078c1d reference_trace=3dc94cde9b64a93a68b749cea62f6fbd411d64a4856e219d2cde8f6ccfdf341b
+MEMORY_STATE shared=false case=amo-20-width-4 retired=3 digest=00108a2c08691193a93b068fb36dceba93daa50391014225d029580ab35e5955 reference_trace=03add3d39a2c70ea2716c6d0ca06ecd5968f2a9b6c105ae1145544a6d7bb0b57
+MEMORY_STATE shared=false case=amo-24-width-4 retired=3 digest=00108a2c08691193a93b068fb36dceba93daa50391014225d029580ab35e5955 reference_trace=48608c164061d7c997734e4ad0078fe63d2907e0b84773faa67ddb5a9133be90
+MEMORY_STATE shared=false case=amo-28-width-4 retired=3 digest=64980231ecfa499f8fb4885445bfd5a20507ade9410596730bd34222ce078c1d reference_trace=4d9a0e30477299bcfb6f3f5d8dd7ee99782604b296d994b9f611dc4783af4150
+MEMORY_STATE shared=false case=lr-width-4 retired=3 digest=6710e778742bc138c90d5464db79176a8151d42bf0a9a31446701516b5a1056b reference_trace=23069391a5866036ca139afb21d8ca871d6845e11124e81d3bc339ba1740f23f
+MEMORY_STATE shared=false case=sc-success-width-4 retired=3 digest=1e3c8fef749ef6e5cf450e8994aeb59b2be9d3abf610fc3cbd52c7134a4e33ed reference_trace=ac7171dc44afd105cfcb093ddad2b84098fb602910d56096003f1af2f78f930e
+MEMORY_STATE shared=false case=sc-failure-absent-width-4 retired=3 digest=ae253ee065145b1c46756b74d713cdf416e4e8f6b5cdf4f5020587a6628604d8 reference_trace=22dba3aa6a763826b46bf989281962bcfa85376cdd3029bff760337547d03031
+MEMORY_STATE shared=false case=sc-failure-address-width-4 retired=3 digest=ae253ee065145b1c46756b74d713cdf416e4e8f6b5cdf4f5020587a6628604d8 reference_trace=31f34519fe841c5eddcf0970a229facf354d9ba73663f564e170fe642e9552ab
+MEMORY_STATE shared=false case=sc-failure-width-width-4 retired=3 digest=ae253ee065145b1c46756b74d713cdf416e4e8f6b5cdf4f5020587a6628604d8 reference_trace=2bded62a6b389df8a3d7d3b56ea90985041b952fe63d5a1bb421c8301269e249
+MEMORY_STATE shared=false case=amo-1-width-8 retired=3 digest=0dbc89d6c9b6a3f2bdfc65dbbfc78780d01c8b3a1fd18fce3826316661afb658 reference_trace=e46c5d4a377fc87c437ddbb7df800b97c9bf5d5b050c50447406333d63d08c5f
+MEMORY_STATE shared=false case=amo-0-width-8 retired=3 digest=7bc8730d3bd34ce4a2369cbd6ab957ef6526a2f30f9eb49a32d9059a1ce377b0 reference_trace=98a8104215293c266409b38bad901869f914347930cedaafc491d312a866c7c3
+MEMORY_STATE shared=false case=amo-4-width-8 retired=3 digest=b2eae30d2efb7c4007d9b6ad8a490c36007307453ddcd60a02ec33e9495e8d04 reference_trace=7909d88682efd2eab247d8cbb94e1a0c28be6534858e7c257a22bedaca8fd8be
+MEMORY_STATE shared=false case=amo-12-width-8 retired=3 digest=eab32528e79394e15bdfc877af078aee7eb2ce5f997838c59aab79ee3f633ecd reference_trace=84f56b69e38c3c8a2c8bf6176a7a7046ad737ed5b8461780f702af4bd17ca9c7
+MEMORY_STATE shared=false case=amo-8-width-8 retired=3 digest=c6c8c9a2a34eb66ab13ba693102bb80b119968f174814498ae107475af68ce9b reference_trace=f3d5ef2fbd80a66e09e32ec9902703b98023ae0bd4023a020804b026489ad641
+MEMORY_STATE shared=false case=amo-16-width-8 retired=3 digest=abdfc4b340b0e2ee8b05f20ccac059c67cc78f9e70b8217d80d691a02d1b69a9 reference_trace=5c2706af27339be977394863b4d36e23cd430f3ce85c513715afa79f39f8f8bc
+MEMORY_STATE shared=false case=amo-20-width-8 retired=3 digest=0dbc89d6c9b6a3f2bdfc65dbbfc78780d01c8b3a1fd18fce3826316661afb658 reference_trace=18694411f013d14eab3dcccd96031aa4cb719351472c3585275a6ad3248b258c
+MEMORY_STATE shared=false case=amo-24-width-8 retired=3 digest=abdfc4b340b0e2ee8b05f20ccac059c67cc78f9e70b8217d80d691a02d1b69a9 reference_trace=864e05f2e496efa7a5508ab8e24666bd7bebcd73b8f31cbb8be376b9c7b79c6b
+MEMORY_STATE shared=false case=amo-28-width-8 retired=3 digest=0dbc89d6c9b6a3f2bdfc65dbbfc78780d01c8b3a1fd18fce3826316661afb658 reference_trace=1d8695b30f2245fd52743ea43ec4e89325b77590716ad0e5828de527a5eac4c5
+MEMORY_STATE shared=false case=lr-width-8 retired=3 digest=c56c21275d5d100a595788b61c8de096f48e3d679d8f4243c3846503469e3c0b reference_trace=3fe9e64cb328912244e06f8cde69e550f0d5f7749f6ce14bee73130acecc52f6
+MEMORY_STATE shared=false case=sc-success-width-8 retired=3 digest=72d7a1dfff48ee4251630943e56502e6ce1362dbc1486f8f0afb758b6353919c reference_trace=80ab37baeeb3d867b0da173e6f38d5b3d86ba0e67bd601a7dec2bba086e7d282
+MEMORY_STATE shared=false case=sc-failure-absent-width-8 retired=3 digest=ae253ee065145b1c46756b74d713cdf416e4e8f6b5cdf4f5020587a6628604d8 reference_trace=5a84b8e2710225bf006e8f5013db6d6889b711656e40cc531595460d007113ca
+MEMORY_STATE shared=false case=sc-failure-address-width-8 retired=3 digest=ae253ee065145b1c46756b74d713cdf416e4e8f6b5cdf4f5020587a6628604d8 reference_trace=88d0d84feb643dc1adf53d0be9a506fa817970a93844e76d0bb6e63217276a38
+MEMORY_STATE shared=false case=sc-failure-width-width-8 retired=3 digest=ae253ee065145b1c46756b74d713cdf416e4e8f6b5cdf4f5020587a6628604d8 reference_trace=95c2d70f03f2e5cb1625d8c552d043caf415ee75e20960a989a6846964a7575a
+MEMORY_STATE shared=false case=high-address-load-fault retired=1 digest=1269a6b271865217e117adb09c3fa9e37af4a2aced39fd175ed689bacccdd459 reference_trace=8fc14be8f95fb601155757d6a37ca76ea72cb92b893d684e48f3fa1221be7738
+MEMORY_STATE shared=false case=high-address-store-fault retired=1 digest=1269a6b271865217e117adb09c3fa9e37af4a2aced39fd175ed689bacccdd459 reference_trace=caa2ae6010038203fe992a55a8e0cab5b3698d7d9163ffe052b6df6e964040b7
+MEMORY_STATE shared=false case=high-address-amo-fault retired=1 digest=1269a6b271865217e117adb09c3fa9e37af4a2aced39fd175ed689bacccdd459 reference_trace=32b4ee299a4cf3c9960142d3890c67831874a88213eaf0908e4e5cd35a7f75ac
+MEMORY_STATE shared=false case=high-address-lr-fault retired=1 digest=1269a6b271865217e117adb09c3fa9e37af4a2aced39fd175ed689bacccdd459 reference_trace=88596b7055ee7185104c69d1bd95f4002e67566dc99d6f84044783ddcff223ce
+MEMORY_STATE shared=false case=high-address-sc-fault retired=1 digest=d99ff4f5d77f4cbbc9e62e7e642a9f115bf4df5c1be2d3ec07b985c63536f9eb reference_trace=c3d4651cf74614cc8aad7f148b700d744884db98dd27e9aecf4993be8c3dbf3e
+MEMORY_STATE shared=false case=misaligned-amo-fault retired=1 digest=333dd66d1e64b825bfaf3f5eaba14d42d61e7279947b001cbaabe5ede8914c83 reference_trace=c52cb7bf994b0fddee8069f7bbce928e9dedc5f5acf3ce689d54101add114da5
+MEMORY_STATE shared=false case=misaligned-lr-fault retired=1 digest=333dd66d1e64b825bfaf3f5eaba14d42d61e7279947b001cbaabe5ede8914c83 reference_trace=4ca723431767636303304b7b56dbf21944fc2239e98ea5f26954548ab0262956
+MEMORY_STATE shared=false case=misaligned-sc-fault retired=1 digest=333dd66d1e64b825bfaf3f5eaba14d42d61e7279947b001cbaabe5ede8914c83 reference_trace=cb48efa5620280d0621c33f07a60cbbe8d648abca64e32f4a1fb0f4570c88050
+MEMORY_LITERAL_MATRIX shared=false cases=50 aggregate=ee01061fe9fb4cf5612d065557c1dc7c2d33a01567748aa516d145bd3c4c80bc
+test private_literal_width_atomic_fault_matrix ... ok
+Invoking test: private_import_identity_signatures_and_inactive_guards
+MEMORY_IMPORT_ABI {"shared":false,"rows":1,"helpers":5,"correctTypes":5,"rejectedTypes":19,"sabotageRejected":true} inactive_calls=20
+test private_import_identity_signatures_and_inactive_guards ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 filtered out; finished in 5.21s
+
+wasm-pack test --node crates/wasm --test jit_memory_direct_imports_verifier -- --nocapture
+[INFO]: 🎯  Checking for the Wasm target...
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.12s
+[INFO]: ⬇️  Installing wasm-bindgen...
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s
+     Running tests/jit_memory_direct_imports_verifier.rs (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-direct-memory-verifier-241gd76s/repo/target/wasm32-unknown-unknown/debug/deps/jit_memory_direct_imports_verifier-ca6406ab0596b4c3.wasm)
+running 2 tests
+Invoking test: verifier_private_memory_interleaved_lifetime
+CRITIC_DIRECT_MEMORY_LIFETIME inline=false compiled_executions=8 inactive_calls=55 growth=65536 buffer=[object ArrayBuffer] reservation_isolation=true
+test verifier_private_memory_interleaved_lifetime ... ok
+Invoking test: verifier_inline_memory_interleaved_lifetime
+CRITIC_DIRECT_MEMORY_LIFETIME inline=true compiled_executions=8 inactive_calls=55 growth=65536 buffer=[object ArrayBuffer] reservation_isolation=true
+test verifier_inline_memory_interleaved_lifetime ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.05s
+
+wasm-pack test --node crates/wasm --test jit_browser_parity
+[INFO]: 🎯  Checking for the Wasm target...
+warning: unused import: `Exception`
+ --> crates/wasm/tests/hart_ctrl.rs:8:26
+  |
+8 | use wasm_vm_core::hart::{Exception, Hart};
+  |                          ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `wasm-vm-wasm` (test "hart_ctrl") generated 1 warning (run `cargo fix --test "hart_ctrl" -p wasm-vm-wasm` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.11s
+[INFO]: ⬇️  Installing wasm-bindgen...
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.08s
+     Running tests/jit_browser_parity.rs (/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-direct-memory-verifier-241gd76s/repo/target/wasm32-unknown-unknown/debug/deps/jit_browser_parity-6cc578c42c9ecada.wasm)
+running 39 tests
+test browser_handles_remain_bounded_across_retranslation_churn ... ignored, long browser externref/eviction churn; run explicitly for E4-T33 evidence
+test unexpected_js_exception_fails_closed_without_commit_and_cleans_host ... ok
+test production_browser_budget_stays_below_measured_instance_cliff ... ok
+test page_write_invalidates_compiled_block ... ok
+test execute_miss_preserves_public_guard_and_guest_state ... ok
+test directed_eviction_through_the_single_ordered_path ... ok
+test compile_instantiate_and_cache_by_phys_pc ... ok
+test chain_edge_links_and_unlinks_on_invalidation ... ok
+test bulk_handoff_preserves_all_registers_and_virtual_pc_on_precise_fault ... ok
+test browser_run_chunk_scope_caps_all_internal_subruns_to_eight_installs ... ok
+test browser_machine_xie_enable_preempts_reused_inline_target ... ok
+test browser_jit_six_op_loop_is_exactly_budgeted ... ok
+test browser_jit_matches_interpreter_m_block ... ok
+test browser_jit_matches_interpreter_i_block ... ok
+test browser_jit_matches_interpreter_a_block ... ok
+test browser_inline_tlb_matches_interpreter_for_ram_loop ... ok
+test browser_inline_static_link_unlinks_and_rearms_after_target_reinstall ... ok
+test browser_inline_static_link_retains_across_interrupt_stack_bits ... ok
+test browser_inline_static_link_refuses_after_execute_permission_change ... ok
+test browser_inline_static_guard_rejects_remapped_target_page ... ok
+test browser_inline_static_cross_page_tail_refuses_before_target_entry ... ok
+test browser_inline_static_cross_batch_target_fault_is_precise ... ok
+test browser_inline_static_cross_batch_load_store_matches_interpreter ... ok
+test browser_inline_static_cross_batch_link_executes_and_misses_safely ... ok
+test browser_inline_static_code_store_cuts_link_before_target_reuse ... ok
+test browser_inline_static_chain_reaches_five_blocks_in_one_engine_call ... ok
+test browser_inline_raw_store_to_compiled_page_aborts_before_successor ... ok
+test browser_inline_raw_store_commits_reservation_and_code_log ... ok
+test browser_inline_dynamic_link_retains_across_interrupt_stack_bits_and_sum_invalidates ... ok
+test browser_inline_dynamic_jalr_links_switch_and_unlinks ... ok
+test browser_inline_direct_chain_reports_bounded_retirement ... ok
+test browser_inline_direct_chain_honors_depth_budget ... ok
+test browser_inline_data_store_stays_chained_but_atomic_successor_waits_for_commit ... ok
+test browser_inline_combined_interrupt_bits_plus_sum_invalidates_all_links ... ok
+test browser_handoff_refreshes_after_outer_growth_on_recorded_precise_fault ... ok
+test browser_handoff_refreshes_after_outer_growth_during_compiled_call ... ok
+test browser_dispatch_reuses_memory_views_without_subarray_allocation ... ok
+test browser_clean_dispatch_reuses_cached_outer_view_without_constructor ... ok
+test browser_batch_skips_unsupported_members_without_fragmenting_valid_blocks ... ok
+
+test result: ok. 38 passed; 0 failed; 1 ignored; 0 filtered out; finished in 12.32s
+

@@ -1,0 +1,38 @@
+{
+  "status": "passed",
+  "records": [
+    {
+      "record": "promotion/hardware/report.json",
+      "sha256": "c285a9ce7ccb251d776ac132874997e01ab4bc0007dcadb42b147c45f6f93b83",
+      "frames": 64,
+      "completePixels": 256,
+      "nativeExecutableSha256": "9c264e4aaa94930a14911ef48e838f84c8b0316950b1b06fa29d9b7d4a738e63",
+      "headed": true,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+      "screenshot": {
+        "path": "browser.png",
+        "sha256": "871d6d3d741dc1e6a59fa3545973ed73e363b2044c8db7d362edae89dab0dbb9"
+      }
+    },
+    {
+      "record": "promotion/sabotage/report.json",
+      "sha256": "2610f5c06735650c6988b4bdb7f3e5e2cbe137a497f9a3c67b6d50eda25eb62a",
+      "frames": 1,
+      "completePixels": 4,
+      "nativeExecutableSha256": "9c264e4aaa94930a14911ef48e838f84c8b0316950b1b06fa29d9b7d4a738e63",
+      "headed": true,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+      "screenshot": {
+        "path": "failure.png",
+        "sha256": "929fd3e2e665258876383884efa2b96d739f8d90f051f277519ce9af08b726c0"
+      }
+    }
+  ],
+  "completeHealthyPixels": 256,
+  "completeHealthyDraws": 64,
+  "afterFenceSabotageRejected": true,
+  "workerFixtureImports": false,
+  "independentPythonRawWordOracle": true,
+  "guestExecution": false,
+  "productionAuthority": false
+}

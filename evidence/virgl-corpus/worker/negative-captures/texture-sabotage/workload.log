@@ -1,0 +1,6 @@
+TEXTURED_SCENE_BEGIN draws=3 node=/dev/dri/renderD128
+EGL_VERSION=1.5
+GL_VERSION=OpenGL ES 3.2 Mesa 26.2.2-arch1.1
+GL_VENDOR=Mesa
+GL_RENDERER=virgl (LLVMPIPE (LLVM 15.0.6, 128 bits))
+PIXEL_MISMATCH phase=0 x=4 y=4 got=0,255,0,255 expected=255,0,0,255

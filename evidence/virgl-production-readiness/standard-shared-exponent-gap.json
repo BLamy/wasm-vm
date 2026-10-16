@@ -1,0 +1,133 @@
+{
+  "schema": "original-shared-exponent-image-gap-v1",
+  "task": "E6-T11d29",
+  "gitHead": "cd59854e79cedf31abe35585bbe1fe616a8fc7ae",
+  "authority": "literal-wire-and-synthetic-owner-refusal-only",
+  "nativeExecuted": false,
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "productionDrawAuthority": false,
+  "sources": [
+    {
+      "path": "renderer/virgl-command/resources.mjs",
+      "bytes": 91652,
+      "sha256": "6da63f52d7d079ac2ad154ae70c35d4cbf7293e5f213d65d034422e9af8c44dc"
+    },
+    {
+      "path": "renderer/virgl-command/decoder.mjs",
+      "bytes": 37960,
+      "sha256": "dfac7979df8b0cda51ac5cfeb17763157f1f742eeafc3ea9920a8b6cd48990aa"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "bytes": 147645,
+      "sha256": "16c27a3e9d7a11223dd91be999b9c37def0461e6137b45a43a2a52f64efae413"
+    },
+    {
+      "path": "renderer/virgl-command/packed-float-images.mjs",
+      "bytes": 1620,
+      "sha256": "0ea28e0bfcf4a0ae04f634826d4b65cb19a6285850836412c7b06311ce1c5405"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/virgl_hw.h",
+      "bytes": 36318,
+      "sha256": "191ca5cea527949a29e9753b1e31d550f2fed922895d78dabc5c5c3585aa2ff7"
+    },
+    {
+      "path": "tools/virgl-command/standard-float-image-mesa-formats.yaml",
+      "bytes": 80486,
+      "sha256": "f0fef33544456468def10d5dffc72a61e8b0e7acc599b700fc65366e6f495a10"
+    }
+  ],
+  "rows": [
+    {
+      "kind": "layout",
+      "metadata": {
+        "id": 6,
+        "target": 2,
+        "format": 125,
+        "bind": 8,
+        "width": 13,
+        "height": 7,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 3,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "fields": {
+        "resourceHandle": 6,
+        "level": 0,
+        "usage": 0,
+        "stride": 0,
+        "layerStride": 0,
+        "box": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "width": 13,
+          "height": 7,
+          "depth": 1
+        }
+      },
+      "backingByteLength": 4096,
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-resource",
+          "message": "Only qualified 2D levels, one layer, one sample and no flags are supported."
+        }
+      }
+    },
+    {
+      "kind": "storage",
+      "metadata": {
+        "id": 6,
+        "target": 2,
+        "format": 125,
+        "bind": 8,
+        "width": 13,
+        "height": 7,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 3,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-resource",
+          "message": "Only qualified 2D levels, one layer, one sample and no flags are supported."
+        }
+      },
+      "nativeAllocations": 0
+    },
+    {
+      "kind": "sampler-range",
+      "hex": "0106060009000000060000007d0000020000000001030000220a0000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface-mip",
+      "hex": "010805000a000000060000007d0000000200000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+[
+  {
+    "name": "power/POW-opaque-0-TEMP[3]",
+    "stage": "fragment",
+    "textSha256": "8c0af5bd3452bc8da1988653e920a7f4fe77b2320b526248624279113bd98fca"
+  },
+  {
+    "name": "power/POW-opaque-1-TEMP[3]",
+    "stage": "fragment",
+    "textSha256": "b63b792215dde189b83ee9312eeb94676c41666dd471a87e2e4327b810cbca33"
+  },
+  {
+    "name": "held/prior-exponent-cases/EX2-unknown-TEMP[0]",
+    "stage": "fragment",
+    "textSha256": "b3097313d63a3aa3d8639195f218e49c18b3516459ab1fcf3141b4a4b5edbf29"
+  },
+  {
+    "name": "held/prior-exponent-cases/LG2-unknown-TEMP[0]",
+    "stage": "fragment",
+    "textSha256": "c222f3f6526f5ea5dee4c6b228bc54dabfe18862a6393028f9d6734746ed00ea"
+  },
+  {
+    "name": "held/prior-sine-cases/SIN-unknown-TEMP[0]",
+    "stage": "fragment",
+    "textSha256": "09566d471d8191cd97e3230f29dfa9ea29ed2a76b4dfdb40dfdbc9aa12e2f942"
+  }
+]

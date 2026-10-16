@@ -1,0 +1,18 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+8 !== 10
+
+    at file:///Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-instanced-stencil/verifier/novel-interrogate.mjs:70:120 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: 8,
+  expected: 10,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.20.0

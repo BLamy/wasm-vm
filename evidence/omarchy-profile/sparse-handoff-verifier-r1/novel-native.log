@@ -1,0 +1,13 @@
+Command: ['cargo', 'test', '-p', 'wasm-vm-core', '--test', 'jit_sparse_handoff', '--', '--nocapture']
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/.codex/worktrees/emulator-speed-next/wasm-vm/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.83s
+     Running tests/jit_sparse_handoff.rs (target/debug/deps/jit_sparse_handoff-01374ea6a8da2c56)
+
+running 2 tests
+SPARSE_HANDOFF masks=10598 state_sha256=4dace58378d14297762d010665b9d3bf1ac0fd376e5565ccbe4f122f34e6d1f2
+test sparse_handoff_matches_full_array_oracle ... ok
+VERIFIER_HANDOFF cases=5952 state_sha256=091a8d5c6853b91d309bae75e9c8b6f7a88b6291f5fd9771e48127942f567d64
+test disjoint_rotated_masks_compose_without_losing_same_value_stamps ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.81s
+

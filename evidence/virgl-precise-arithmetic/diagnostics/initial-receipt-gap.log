@@ -1,0 +1,102 @@
++ git rev-parse HEAD
+fefe9b297ba83882c900bbb39273b1d6bfafdab3
++ python3 -m py_compile tools/virgl-precise-arithmetic/cold.py tools/virgl-precise-arithmetic/faults.py tools/virgl-precise-arithmetic/generate_cases.py tools/virgl-precise-arithmetic/native.py tools/virgl-precise-arithmetic/native_receipt.py tools/virgl-precise-arithmetic/receipt.py tools/virgl-precise-arithmetic/shared.py tools/virgl-precise-arithmetic/wasm_receipt.py
++ for file in renderer/virgl-command/tests/precise-arithmetic.mjs 'tools/virgl-precise-arithmetic/*.mjs' tools/lib/virgl-browser-runner.mjs
++ node --check renderer/virgl-command/tests/precise-arithmetic.mjs
++ for file in renderer/virgl-command/tests/precise-arithmetic.mjs 'tools/virgl-precise-arithmetic/*.mjs' tools/lib/virgl-browser-runner.mjs
++ node --check tools/virgl-precise-arithmetic/browser.mjs
++ for file in renderer/virgl-command/tests/precise-arithmetic.mjs 'tools/virgl-precise-arithmetic/*.mjs' tools/lib/virgl-browser-runner.mjs
++ node --check tools/virgl-precise-arithmetic/consumer.mjs
++ for file in renderer/virgl-command/tests/precise-arithmetic.mjs 'tools/virgl-precise-arithmetic/*.mjs' tools/lib/virgl-browser-runner.mjs
++ node --check tools/virgl-precise-arithmetic/oracle.mjs
++ for file in renderer/virgl-command/tests/precise-arithmetic.mjs 'tools/virgl-precise-arithmetic/*.mjs' tools/lib/virgl-browser-runner.mjs
++ node --check tools/virgl-precise-arithmetic/reference.mjs
++ for file in renderer/virgl-command/tests/precise-arithmetic.mjs 'tools/virgl-precise-arithmetic/*.mjs' tools/lib/virgl-browser-runner.mjs
++ node --check tools/virgl-precise-arithmetic/wasm.mjs
++ for file in renderer/virgl-command/tests/precise-arithmetic.mjs 'tools/virgl-precise-arithmetic/*.mjs' tools/lib/virgl-browser-runner.mjs
++ node --check tools/lib/virgl-browser-runner.mjs
++ bash renderer/virgl-shader/build.sh guard-check
+Pinned virglrenderer 1.3.0: 70 source/generated SHA-256 hashes match
++ bash renderer/virgl-shader/build.sh precise-arithmetic-sanitize
+Pinned virglrenderer 1.3.0: 70 source/generated SHA-256 hashes match
+In file included from checked_upstream.c:102:
+./vendor/src/vrend/vrend_shader.c:4717:13: warning: 'sprintf' is deprecated: This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead. [-Wdeprecated-declarations]
+ 4717 |             sprintf(arrayname, "[addr%d]", src->DimIndirect.Index);
+      |             ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/_stdio.h:278:1: note: 'sprintf' has been explicitly marked deprecated here
+  278 | __deprecated_msg("This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead.")
+      | ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h:227:48: note: expanded from macro '__deprecated_msg'
+  227 |         #define __deprecated_msg(_msg) __attribute__((__deprecated__(_msg)))
+      |                                                       ^
+In file included from checked_upstream.c:102:
+./vendor/src/vrend/vrend_shader.c:4719:13: warning: 'sprintf' is deprecated: This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead. [-Wdeprecated-declarations]
+ 4719 |             sprintf(arrayname, "[%d]", src->Dimension.Index);
+      |             ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/_stdio.h:278:1: note: 'sprintf' has been explicitly marked deprecated here
+  278 | __deprecated_msg("This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead.")
+      | ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h:227:48: note: expanded from macro '__deprecated_msg'
+  227 |         #define __deprecated_msg(_msg) __attribute__((__deprecated__(_msg)))
+      |                                                       ^
+In file included from checked_upstream.c:102:
+./vendor/src/vrend/vrend_shader.c:7349:16: warning: 'sprintf' is deprecated: This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead. [-Wdeprecated-declarations]
+ 7349 |                sprintf(prefix, "layout(location = %d)", ctx->outputs[i].sid);
+      |                ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/_stdio.h:278:1: note: 'sprintf' has been explicitly marked deprecated here
+  278 | __deprecated_msg("This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead.")
+      | ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h:227:48: note: expanded from macro '__deprecated_msg'
+  227 |         #define __deprecated_msg(_msg) __attribute__((__deprecated__(_msg)))
+      |                                                       ^
+3 warnings generated.
++ python3 tools/virgl-precise-arithmetic/native.py --binary renderer/virgl-shader/build/precise-arithmetic-sanitize/precise-arithmetic-test --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-precise-arithmetic-worker-final/native
+{"status": "passed", "originals": 19, "acceptedOriginals": 19, "cases": 5101, "pairs": 1116, "calls": 1589060, "standaloneRecoveries": 800358, "pairRecoveries": 774540, "truncations": 3128, "hostileCases": 324, "mutations": 4096, "allocationFaults": 260, "upstreamAllocationFaults": 20, "maxSingleResultBytes": 63369, "maxPairResultBytes": 109235, "report": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-precise-arithmetic-worker-final/native/native-report.json"}
++ bash renderer/virgl-shader/build.sh wasm
+Pinned virglrenderer 1.3.0: 70 source/generated SHA-256 hashes match
++ node tools/virgl-precise-arithmetic/wasm.mjs --native /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-precise-arithmetic-worker-final/native/native-report.json --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-precise-arithmetic-worker-final/wasm
+{"status":"passed","counts":{"calls":74716,"originals":19,"singles":5101,"pairs":1116,"recoverySingles":34720,"recoveryPairs":33600,"stress":64,"pressure":82},"report":"/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-precise-arithmetic-worker-final/wasm/report.json"}
++ node tools/virgl-precise-arithmetic/reference.mjs
++ node tools/virgl-precise-arithmetic/consumer.mjs
++ node tools/virgl-precise-arithmetic/browser.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-precise-arithmetic-worker-final/gpu
+11760 exactly rounded words; 378240 physical pixels.
++ for seed in 2872938129 967105429
++ node tools/virgl-precise-arithmetic/reference.mjs 2872938129
++ node tools/virgl-precise-arithmetic/browser.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-precise-arithmetic-worker-final/gpu-2872938129 --seed 2872938129
+11760 exactly rounded words; 378240 physical pixels.
++ for seed in 2872938129 967105429
++ node tools/virgl-precise-arithmetic/reference.mjs 967105429
++ node tools/virgl-precise-arithmetic/browser.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-precise-arithmetic-worker-final/gpu-967105429 --seed 967105429
+11760 exactly rounded words; 378240 physical pixels.
++ python3 tools/virgl-precise-arithmetic/faults.py --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-precise-arithmetic-worker-final/faults
+Six actual integer arithmetic faults independently refuted on the GPU
++ node tools/virgl-ordered-masks/browser.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-precise-arithmetic-worker-final/retained-mask
+2168 exact GPU words; 2220032 checked pixels.
++ node tools/virgl-precise-word/browser.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-precise-arithmetic-worker-final/retained-precise
+3320 exact GPU words; 3399680 checked pixels.
++ node tools/virgl-raw-equality/browser.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-precise-arithmetic-worker-final/retained-equality
+640 exact equality words; 8 unchanged migrated shader bodies rendered.
++ node tools/virgl-selected-lanes/browser.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-precise-arithmetic-worker-final/retained-selected
+1216 exact words; 1245184 pixels; 196608 observed demand pixels.
++ node tools/virgl-radial-domain/browser.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-precise-arithmetic-worker-final/retained-radial
+138 admitted hardware draws; 565248 checked pixels.
++ node tools/virgl-raster-bank/browser.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-precise-arithmetic-worker-final/retained-raster
+400 exact copied words; 786432 checked pixels.
++ node renderer/virgl-command/tests/ordered-mask-regressions.mjs
++ node renderer/virgl-command/tests/precise-word-regressions.mjs
++ bash renderer/virgl-shader/native_tests/precise_upstream_allocations.sh /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-precise-arithmetic-worker-final/retained-upstream
++ node renderer/virgl-command/tests/radial-domain-regressions.mjs
++ node renderer/virgl-command/tests/raster-bank-verifier-regressions.mjs
++ python3 tools/virgl-precise-arithmetic/receipt.py /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-precise-arithmetic-worker-final
+Traceback (most recent call last):
+  File "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/virgl-precise-arithmetic/receipt.py", line 167, in <module>
+    if __name__=='__main__':main()
+  File "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/virgl-precise-arithmetic/receipt.py", line 143, in main
+    out=Path(sys.argv[1]).resolve();head=git('rev-parse','HEAD').decode().strip();native=native_receipt.verify(out/'native',head);wasm=wasm_receipt.verify(out/'wasm',head,native)
+  File "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/virgl-precise-arithmetic/wasm_receipt.py", line 21, in verify
+    return _verify(directory,head,native)
+  File "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/virgl-precise-arithmetic/wasm_receipt.py", line 118, in _verify
+    require(any(same_json(result,value) for value in allowed),'only complete original/OOM failure before success');error_codes.add(result['error']['code'])
+  File "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/virgl-precise-arithmetic/shared.py", line 8, in require
+    if not ok:raise ValueError(message)
+ValueError: only complete original/OOM failure before success

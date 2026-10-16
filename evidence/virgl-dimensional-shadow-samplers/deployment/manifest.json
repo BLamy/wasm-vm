@@ -1,0 +1,17 @@
+{
+  "schema": "dimensional-shadow-sampler-deployment-seal-v1",
+  "task": "E6-T11d62",
+  "head": "d853f096b3858ef390ad42b6cac33838778d849b",
+  "records": 513,
+  "reopenedMembers": 513,
+  "gzipEofChecked": true,
+  "recordIndexSha256": "3dfc1c58bc68864b83d5c8b05befb7e93d9bcc89bf921efe2505bcbc50bfd161",
+  "archiveSha256": "9021aa3bded6a2b53fdf3b1604e9131578b9f9206e7f68781628316c4dd12f2c",
+  "archiveBytes": 49643323,
+  "deploymentId": "ed51b574-df58-4909-a051-c1b58bf86eb9",
+  "url": "https://ed51b574.wasm-vm.pages.dev",
+  "canonical": "https://wasm-vm.pages.dev",
+  "passed": 127,
+  "failed": 0,
+  "productionGraphicsAuthority": false
+}

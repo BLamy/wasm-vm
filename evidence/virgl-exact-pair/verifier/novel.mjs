@@ -1,0 +1,38 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {createHash} from 'node:crypto';
+import {spawnSync} from 'node:child_process';
+import {createVirglShaderBridge} from '../../../renderer/virgl-shader/index.mjs';
+const sha=b=>createHash('sha256').update(b).digest('hex');
+const root=new URL('../../../',import.meta.url);
+const hot=new URL('./unpacked/hot/',import.meta.url);
+const generated=new URL('./unpacked/generated/',import.meta.url);
+const fixture=JSON.parse(fs.readFileSync(new URL('tools/virgl-exact-pair/fixtures.json',root))).find(x=>x.name==='both-qualified-coordinate-discard');
+const native=JSON.parse(fs.readFileSync(new URL('native/report.json',hot)));
+const reference=native.cases.find(x=>x.name===fixture.name);
+const wasm=fs.readFileSync(new URL('wasm/virgl-shader.wasm',generated));
+const nativeBinary=new URL('exact-pair-sanitize/exact-pair-test',generated);
+assert.equal(sha(wasm),'a6c08274cd3b0e921727c7ff55e2712f0837c58f1c9416c3a79f0ed92823243e');
+assert.equal(sha(fs.readFileSync(nativeBinary)),'46ec6a369d1066d0e90a8879345e270522021da2e1c6ff5bade425b6485a66a7');
+const request=(v,f)=>({vertexText:fixture.vertexText,fragmentText:fixture.fragmentText,vertexComponents:v,fragmentComponents:f});
+const V=fixture.vertexComponents,F=fixture.fragmentComponents;
+const cases=[['original',request(V,F),true],['swap-both',request(F,V),false],['swap-vertex',request(F,F),false],['swap-fragment',request(V,V),false],['restored',request(V,F),true]];
+const bridge=await createVirglShaderBridge({wasmBinary:wasm});
+const wasmResults=[];
+for(const [name,input,expected] of cases){const value=bridge.translatePairExact(input);assert.equal(value.ok,expected,name);if(expected)assert.deepEqual(value,reference.result,name);else assert.deepEqual(Object.keys(value).sort(),['error','ok'],name);wasmResults.push({name,ok:value.ok,error:value.error??null});}
+assert.deepEqual(bridge.translatePairExact(request(V,F)),reference.result,'A/B/A after all cross-stage swaps');
+// Replay the same entire original texts and exact tuples through the original ASan/UBSan binary.
+const u=n=>{const b=Buffer.alloc(4);b.writeUInt32LE(n);return b;};
+const nativeInput=Buffer.concat([Buffer.from('VEP1'),u(cases.length),...cases.flatMap(([,r,expected])=>[u(Buffer.byteLength(r.vertexText)),u(Buffer.byteLength(r.fragmentText)),u(r.vertexComponents.length),u(r.fragmentComponents.length),u(+expected),u(0),...[...r.vertexComponents,...r.fragmentComponents].flatMap(w=>[u(w.register),u(w.component),u(w.word)]),Buffer.from(r.vertexText),Buffer.from(r.fragmentText)])]);
+const p=spawnSync(nativeBinary.pathname,[],{input:nativeInput,maxBuffer:16e6,env:{...process.env,ASAN_OPTIONS:'abort_on_error=1',UBSAN_OPTIONS:'halt_on_error=1',LLVM_PROFILE_FILE:new URL('./novel-native.profraw',import.meta.url).pathname}});
+assert.equal(p.status,0,p.stderr?.toString());assert.equal(p.stderr.length,0);assert.match(p.stdout.toString(),/STATUS passed/);
+const parsed=p.stdout.toString().split('\n').filter(x=>x.startsWith('EXACT ')).map(x=>JSON.parse(x.slice(x.indexOf('{'))));
+assert.equal(parsed.length,cases.length);
+for(let i=0;i<cases.length;i++)assert.equal(parsed[i].ok,cases[i][2],cases[i][0]);
+assert.deepEqual(parsed[0],parsed.at(-1));
+for(let i=0;i<cases.length;i++)assert.deepEqual(parsed[i],bridge.translatePairExact(cases[i][1]),cases[i][0]+' native/Wasm result');
+const report={task:'E6-T12g6m3c',status:'passed',attack:'distinct vertex/fragment slot-zero exact banks swapped across full original coordinate/discard pair and restored',frozenHead:'1bbbe70a7bb4c9a9cdc0c3113cbb6b6a1deba733',nativeBinarySha256:sha(fs.readFileSync(nativeBinary)),wasmSha256:sha(wasm),fixtureName:fixture.name,fixtureTexts:[sha(Buffer.from(fixture.vertexText)),sha(Buffer.from(fixture.fragmentText))],nativeInputSha256:sha(nativeInput),nativeStdoutSha256:sha(p.stdout),cases:wasmResults};
+fs.writeFileSync(new URL('./novel.json',import.meta.url),JSON.stringify(report,null,2)+'\n');
+fs.writeFileSync(new URL('./novel-native-input.bin',import.meta.url),nativeInput);
+fs.writeFileSync(new URL('./novel-native.stdout',import.meta.url),p.stdout);
+console.log(JSON.stringify(report));

@@ -1,0 +1,26 @@
+{
+  "task": "E6-T12g6m3a",
+  "prediction": "P5",
+  "status": "HELD",
+  "actualServedFaultBytesAuthenticated": true,
+  "points": [
+    {
+      "prefix": "hot",
+      "domainSha256": "8871994c196075b53f1a5c349b75f3338aa221718692a655d737a9af1974480c",
+      "stateSha256": "90de0371637c3ecc23e3cb37ff1c5f3270fc2675bf4d653dc7ef6089316124a0",
+      "actualGuardFunctionCount": 5,
+      "capturePoint": "acceptance.rigs[0].attacks[0]",
+      "onlySemanticMutation": "exact inequality disabled",
+      "stateChanges": "only import URLs needed to select the actual scratch guard"
+    },
+    {
+      "prefix": "cold/acceptance",
+      "domainSha256": "8871994c196075b53f1a5c349b75f3338aa221718692a655d737a9af1974480c",
+      "stateSha256": "90de0371637c3ecc23e3cb37ff1c5f3270fc2675bf4d653dc7ef6089316124a0",
+      "actualGuardFunctionCount": 5,
+      "capturePoint": "acceptance.rigs[0].attacks[0]",
+      "onlySemanticMutation": "exact inequality disabled",
+      "stateChanges": "only import URLs needed to select the actual scratch guard"
+    }
+  ]
+}

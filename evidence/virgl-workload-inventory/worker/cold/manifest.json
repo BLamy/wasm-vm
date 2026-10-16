@@ -1,0 +1,27 @@
+{
+  "archive": {
+    "bytes": 241511,
+    "path": "recording.tar.gz",
+    "sha256": "155e1eb8a75cc790513d19abae489953952384df7900e4bd835c854a6dcc05d4"
+  },
+  "cleanAfter": true,
+  "cleanBefore": true,
+  "command": [
+    "make",
+    "verify-E6-T12g1"
+  ],
+  "earlyZeroExitRun": {
+    "accepted": false,
+    "archiveSha256": "4d6d63999632fc23088343403aac4d54c3a0e7beb0dc4ab41a6af96ed595b257",
+    "clientExit": 0,
+    "guestExit": 1,
+    "recordedEvents": 2806,
+    "supportingDraws": 2277
+  },
+  "exitCode": 0,
+  "mutationCases": 42,
+  "originalGuestSourceHead": "a669aad01b93e03e3b528a931748d0800156e57c",
+  "records": 148,
+  "schema": "virgl-workload-inventory-cold-v1",
+  "sourceHead": "928f4fb6e3ae4c134aca8fdd79a759045fbc877d"
+}

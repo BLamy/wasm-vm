@@ -1,0 +1,13 @@
+diff --git a/crates/core/src/hart/mod.rs b/crates/core/src/hart/mod.rs
+index f93b9835..a8f35008 100644
+--- a/crates/core/src/hart/mod.rs
++++ b/crates/core/src/hart/mod.rs
+@@ -1748,7 +1748,7 @@ impl Hart {
+             // (so a 0xFFFF_FFFF quotient reads back as 0xFFFF_FFFF_FFFF_FFFF).
+             Divuw { rd, rs1, rs2 } => {
+                 let (a, b) = (r.read(rs1) as u32, r.read(rs2) as u32);
+-                (rd, sext32(a.checked_div(b).unwrap_or(u32::MAX)))
++                (rd, u64::from(a.checked_div(b).unwrap_or(u32::MAX)))
+             }
+             Remw { rd, rs1, rs2 } => {
+                 let (a, b) = (r.read(rs1) as i32, r.read(rs2) as i32);

@@ -1,0 +1,68 @@
+[
+  {
+    "label": "micro-final-1",
+    "command": [
+      "node",
+      "tools/verify/clock-fast-path-benchmark.mjs",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/mips-integer-replay/micro-final-1",
+      "/tmp/wasm-vm-mips-baseline"
+    ],
+    "exit": 0,
+    "seconds": 21.519807917
+  },
+  {
+    "label": "micro-final-2",
+    "command": [
+      "node",
+      "tools/verify/clock-fast-path-benchmark.mjs",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/mips-integer-replay/micro-final-2",
+      "/tmp/wasm-vm-mips-baseline"
+    ],
+    "exit": 0,
+    "seconds": 21.469657833
+  },
+  {
+    "label": "native-final",
+    "command": [
+      "python3",
+      "tools/perf/bench_native.py",
+      "--out",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/mips-integer-replay/native-final",
+      "--bin",
+      "baseline=/tmp/wasm-vm-mips-baseline/wasm-vm",
+      "--bin",
+      "candidate=/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/release/wasm-vm",
+      "--cases",
+      "busybox-legacy,busybox-fast,compute-fast,coremark-fast",
+      "--reps",
+      "5",
+      "--slow-reps",
+      "3",
+      "--slow-parallel",
+      "1"
+    ],
+    "exit": 0,
+    "seconds": 285.819090042
+  },
+  {
+    "label": "browser-final",
+    "command": [
+      "node",
+      "tools/perf/bench-browser.mjs",
+      "--root",
+      "baseline=/Users/blamy/.codex/worktrees/emulator-speed-next/wasm-vm",
+      "--root",
+      "candidate=/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm",
+      "--out",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/mips-integer-replay/browser-final",
+      "--samples",
+      "5",
+      "--cases",
+      "busybox-jit,busybox-nojit",
+      "--chrome",
+      "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+    ],
+    "exit": 0,
+    "seconds": 170.99024141700005
+  }
+]

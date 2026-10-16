@@ -1,0 +1,25 @@
+{
+  "schema": "fresh-instanced-stencil-custody-release-preflight-v1",
+  "historicalUntrackedPreserved": 1425,
+  "baselineStatusMode": "normal-collapsed-directories",
+  "runtimeFilesUnchanged": true,
+  "trackedChangesLimitedToTaskAndQueue": true,
+  "unknownChromePID23192Preserved": true,
+  "ownedBrowserProcessesRemain": false,
+  "ownedScratchRelocated": "/tmp/wasmvm-production-api-plan/d47-verifier-scratch-ea486697",
+  "relocatedItems": [
+    "predecessor",
+    "predecessor-gap",
+    "unpacked",
+    "virgl-instance-base-verifier.tar.gz",
+    "virgl-instance-base-worker.tar.gz",
+    "virgl-instanced-stencil-worker.tar.gz",
+    "virgl-ordered-stencil-verifier.tar.gz",
+    "virgl-ordered-stencil-worker.tar.gz"
+  ],
+  "preflightAssumptionCorrections": [
+    "Compare original normal-collapsed status entries using normal mode, rather than expanding directory entries with untracked-files=all.",
+    "The actual browser profile prefix ends in a hyphen rather than an underscore."
+  ],
+  "allGitIndexSourceNodeCompilerBrowserGPULeasesHeldUntilFinalCommit": true
+}

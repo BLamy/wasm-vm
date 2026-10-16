@@ -1,0 +1,20 @@
+{
+  "schema": "independent-float-image-verifier-seal-v1",
+  "task": "E6-T11d25",
+  "verdict": "verified",
+  "sourceHead": "953f5c5eee075e4dc6562626bae945db6a0513f0",
+  "workerFrozenHead": "18ef4acfdebd30dd9edef9c3a1cca1e1fc4490dc",
+  "workerSubmission": "132ece2a1f9e6ff71fc08bbd1a8aaa6ddd5a01e1",
+  "records": 111,
+  "unpackedBytes": 25884472,
+  "archiveBytes": 2503216,
+  "archiveSha256": "92de34479708531cfd0f51222366afd95f3f2feeb01d05330f6ac29277b83e0e",
+  "recordIndexSha256": "b733c37355f3f063cf0718572879fa43e89dc7725cd92bc52d4a35a2f1d53232",
+  "workerArchiveSha256": "560341ec9107b78c74be23176fc3d6a5bd988da08674e96f69855f2eec259eb9",
+  "workerIndexSha256": "dc9200c84fc4cbb006390265b5510f2c54343c87d6f609ce202b2e3c2d03f4dd",
+  "coldReportSha256": "69435d0be5916c036481cd50410839610446c7d423c01129d1f143b4457d1276",
+  "coldReceiptSha256": "11450209d60ffaeab8f6de9f416ad0b7567321d6f0d51d265388bbf7eb467eb4",
+  "guestExecution": false,
+  "productionDrawAuthority": false,
+  "authority": "isolated-original-float-image-storage-transfers-ranges"
+}

@@ -1,0 +1,16 @@
+{
+  "schema": "virgl-standard-compact-fetch-seal-v1",
+  "task": "E6-T11d12",
+  "sourceHead": "ac77cdd095de121d71628308d920bfdcdbc454c3",
+  "records": 16252,
+  "archiveSha256": "fcf9e7c4490eda1974668d22a8d1f1f2d28fbea28a8d157b31675d56fba860c4",
+  "archiveBytes": 32673468,
+  "recordIndexSha256": "0b90efc9b0106526f4e54294377d4e01c7a1e464ee1daa4c24038385d8f2f480",
+  "hotReceiptSha256": "0f23206cee8f3c4ebfb150b027ee4f6845acf6dda2399d8c04f10b4051cc8002",
+  "coldReportSha256": "b3f88cd087837eb6db5fc2391c40f6ea2172499d21c57bd81b854d5b12fcbeca",
+  "coldReceiptSha256": "f359b05663644cc0d92415c33410dd9e5163b4d51c6148ce5dd5b5dcd2ce64db",
+  "guestExecution": false,
+  "portableDomainCertified": false,
+  "authority": "isolated-standard-compact-floating-fetch",
+  "productionDrawAuthority": false
+}

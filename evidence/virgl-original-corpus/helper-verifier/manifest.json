@@ -1,0 +1,32 @@
+{
+  "schema": "original-corpus-helper-fresh-verifier-v1",
+  "task": "E6-T12f6",
+  "verdict": "verified",
+  "submission": "f2568918db8f2050c4a54925154c835b6964fdb5",
+  "repairFrozenHead": "8ace8d34e1e5791564411b41de85b4d311a66980",
+  "priorVerdictHead": "15f8917ed3fef4cca4114fea5871edfa8b531dd3",
+  "carried": [
+    "P1",
+    "P2",
+    "P3",
+    "P4",
+    "P5",
+    "P6",
+    "P7"
+  ],
+  "P8": "HELD",
+  "recording": {
+    "path": "recording.tar.gz",
+    "bytes": 116517,
+    "sha256": "702b41bae2127f1d88a8f6a4876ef8ad83dc3a531b1ca4aebb1749c2aa8af956"
+  },
+  "files": 10,
+  "rawBytes": 1997666,
+  "repairWorkerArchiveSha256": "aafcc6a2658b10490fc5de2fb61adc296eb084c59a9cec4de784116fc2f08983",
+  "priorVerifierArchiveSha256": "78d141bca7fe28bf81b85d6a114bc26f1c918a97be1b922dd9bc315dc49124e8",
+  "newTest": {
+    "path": "tools/virgl-original-corpus/verifier-access.mjs",
+    "sha256": "cb3f037b537f3ebb6a0f2173871ecd7167d94208ff74484e51efff99a88ffc1f"
+  },
+  "boundary": "All scoped original closure and helper coverage requirements verified; guest negotiation/full compositor/formats/desktop MIPS remain outside this claim."
+}

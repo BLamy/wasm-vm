@@ -1,0 +1,242 @@
+{
+  "schema": "raw-equality-negative-receipts-v1",
+  "status": "passed",
+  "gitHead": "02d39991b1589deff0c74ec3d62770eb09a407a8",
+  "cleanControls": "passed",
+  "nativeReport": {
+    "path": "native/native-report.json",
+    "bytes": 19989999,
+    "sha256": "5d64c34e653153be853bfb906d869dabc608faa81ab18b83dd0a6bc372ed9459"
+  },
+  "originalReceiptSha256": "0f69b58575820ee2ed81f56c44918721248ee935d55bcd1db71409c12b6cabcd",
+  "checks": [
+    {
+      "name": "recordedMaxima-singleResultBytes-bool",
+      "rejected": true,
+      "error": "nonnegative JSON integer: native.recordedMaxima.singleResultBytes",
+      "auditor": "native"
+    },
+    {
+      "name": "recordedMaxima-singleResultBytes-float",
+      "rejected": true,
+      "error": "nonnegative JSON integer: native.recordedMaxima.singleResultBytes",
+      "auditor": "native"
+    },
+    {
+      "name": "recordedMaxima-singleResultBytes-incorrect-integer",
+      "rejected": true,
+      "error": "exact reconstructed bounded native maxima",
+      "auditor": "native"
+    },
+    {
+      "name": "recordedMaxima-pairResultBytes-bool",
+      "rejected": true,
+      "error": "nonnegative JSON integer: native.recordedMaxima.pairResultBytes",
+      "auditor": "native"
+    },
+    {
+      "name": "recordedMaxima-pairResultBytes-float",
+      "rejected": true,
+      "error": "nonnegative JSON integer: native.recordedMaxima.pairResultBytes",
+      "auditor": "native"
+    },
+    {
+      "name": "recordedMaxima-pairResultBytes-incorrect-integer",
+      "rejected": true,
+      "error": "exact reconstructed bounded native maxima",
+      "auditor": "native"
+    },
+    {
+      "name": "recordedMaxima-stageGlslBytes-bool",
+      "rejected": true,
+      "error": "nonnegative JSON integer: native.recordedMaxima.stageGlslBytes",
+      "auditor": "native"
+    },
+    {
+      "name": "recordedMaxima-stageGlslBytes-float",
+      "rejected": true,
+      "error": "nonnegative JSON integer: native.recordedMaxima.stageGlslBytes",
+      "auditor": "native"
+    },
+    {
+      "name": "recordedMaxima-stageGlslBytes-incorrect-integer",
+      "rejected": true,
+      "error": "exact reconstructed bounded native maxima",
+      "auditor": "native"
+    },
+    {
+      "name": "missing-maxima-field",
+      "rejected": true,
+      "error": "exact reconstructed bounded native maxima",
+      "auditor": "native"
+    },
+    {
+      "name": "omitted-native-sources",
+      "rejected": true,
+      "error": "complete ordered compiler/harness source inventory",
+      "auditor": "native"
+    },
+    {
+      "name": "omitted-coverage-sources",
+      "rejected": true,
+      "error": "complete exact LLVM source bytes/digests and exported summaries",
+      "auditor": "native"
+    },
+    {
+      "name": "wrong-coverage-digest",
+      "rejected": true,
+      "error": "complete exact LLVM source bytes/digests and exported summaries",
+      "auditor": "native"
+    },
+    {
+      "name": "wrong-coverage-bytes",
+      "rejected": true,
+      "error": "complete exact LLVM source bytes/digests and exported summaries",
+      "auditor": "native"
+    },
+    {
+      "name": "invented-coverage-path",
+      "rejected": true,
+      "error": "complete exact LLVM source bytes/digests and exported summaries",
+      "auditor": "native"
+    },
+    {
+      "name": "wrong-coverage-summary",
+      "rejected": true,
+      "error": "complete exact LLVM source bytes/digests and exported summaries",
+      "auditor": "native"
+    },
+    {
+      "name": "boolean-coverage-counter",
+      "rejected": true,
+      "error": "nonnegative JSON integer: LLVM lines.covered",
+      "auditor": "native"
+    },
+    {
+      "name": "float-layout-bound",
+      "rejected": true,
+      "error": "typed transcript observations",
+      "auditor": "native"
+    },
+    {
+      "name": "float-call-statistic",
+      "rejected": true,
+      "error": "typed transcript observations",
+      "auditor": "native"
+    },
+    {
+      "name": "propagated-recordedMaxima-stageGlslBytes-bool",
+      "rejected": true,
+      "error": "nonnegative JSON integer: native.recordedMaxima.stageGlslBytes",
+      "auditor": "full"
+    },
+    {
+      "name": "propagated-recordedMaxima-stageGlslBytes-float",
+      "rejected": true,
+      "error": "nonnegative JSON integer: native.recordedMaxima.stageGlslBytes",
+      "auditor": "full"
+    },
+    {
+      "name": "propagated-recordedMaxima-stageGlslBytes-incorrect-integer",
+      "rejected": true,
+      "error": "exact reconstructed bounded native maxima",
+      "auditor": "full"
+    },
+    {
+      "name": "propagated-omitted-native-sources",
+      "rejected": true,
+      "error": "complete ordered compiler/harness source inventory",
+      "auditor": "full"
+    },
+    {
+      "name": "propagated-omitted-coverage-sources",
+      "rejected": true,
+      "error": "complete exact LLVM source bytes/digests and exported summaries",
+      "auditor": "full"
+    },
+    {
+      "name": "propagated-wrong-coverage-digest",
+      "rejected": true,
+      "error": "complete exact LLVM source bytes/digests and exported summaries",
+      "auditor": "full"
+    },
+    {
+      "name": "propagated-wrong-coverage-summary",
+      "rejected": true,
+      "error": "complete exact LLVM source bytes/digests and exported summaries",
+      "auditor": "full"
+    },
+    {
+      "name": "consumer-float-getters",
+      "rejected": true,
+      "error": "actual typed zero invoked getters",
+      "auditor": "full"
+    },
+    {
+      "name": "consumer-boolean-getters",
+      "rejected": true,
+      "error": "actual typed zero invoked getters",
+      "auditor": "full"
+    },
+    {
+      "name": "consumer-missing-checks",
+      "rejected": true,
+      "error": "complete ordered source-bound consumer metadata/results and literal negative cases",
+      "auditor": "full"
+    },
+    {
+      "name": "consumer-missing-negative-checks",
+      "rejected": true,
+      "error": "complete ordered source-bound consumer metadata/results and literal negative cases",
+      "auditor": "full"
+    },
+    {
+      "name": "consumer-missing-sources",
+      "rejected": true,
+      "error": "complete exact consumer runtime/harness source inventory",
+      "auditor": "full"
+    },
+    {
+      "name": "consumer-extra-schema-field",
+      "rejected": true,
+      "error": "closed consumer report",
+      "auditor": "full"
+    },
+    {
+      "name": "consumer-wrong-schema",
+      "rejected": true,
+      "error": "completed current consumer recording",
+      "auditor": "full"
+    },
+    {
+      "name": "consumer-boolean-result-as-integer",
+      "rejected": true,
+      "error": "complete ordered source-bound consumer metadata/results and literal negative cases",
+      "auditor": "full"
+    },
+    {
+      "name": "consumer-reordered-checks",
+      "rejected": true,
+      "error": "complete ordered source-bound consumer metadata/results and literal negative cases",
+      "auditor": "full"
+    },
+    {
+      "name": "consumer-V8-getter-boolean",
+      "rejected": true,
+      "error": "typed bounded consumer V8 counters",
+      "auditor": "full"
+    },
+    {
+      "name": "consumer-V8-getter-float",
+      "rejected": true,
+      "error": "typed bounded consumer V8 counters",
+      "auditor": "full"
+    },
+    {
+      "name": "consumer-V8-getter-invoked",
+      "rejected": true,
+      "error": "actual source-bound getter counter remains exactly zero",
+      "auditor": "full"
+    }
+  ]
+}

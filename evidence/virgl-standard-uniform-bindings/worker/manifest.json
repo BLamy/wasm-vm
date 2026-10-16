@@ -1,0 +1,16 @@
+{
+  "schema": "original-uniform-binding-seal-v1",
+  "task": "E6-T11d17",
+  "sourceHead": "47eb713cb5a456c8723cc32463fb04a4afea9905",
+  "records": 6286,
+  "archiveSha256": "73a5bdfa08e5b7568b96017d471ac40cfbb8f5d087d52c1b2842cf6c2235d9d5",
+  "archiveBytes": 32965817,
+  "recordIndexSha256": "93f1e05363dd0daced80f4a3229c4bc346410e38da3749288f03f4b20df3f7c4",
+  "hotReceiptSha256": "9c9ec43a23d94a605ff50d3e985781f50701eb3aefbea6ed8c94e22132b773ff",
+  "coldReportSha256": "d94cd5a48d2164cae9c9b76612cbce75f3711c3f3638bd5762c731aa55a5e0e1",
+  "coldReceiptSha256": "76d4b28c99c1f432801f8043f0a97fdc1996a838c98053753a832a0a49d95226",
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "authority": "isolated-original-uniform-buffer-bindings",
+  "productionDrawAuthority": false
+}

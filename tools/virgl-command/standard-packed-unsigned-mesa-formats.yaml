@@ -1,0 +1,12 @@
+- name: R10G10B10A2_UINT
+  layout: plain
+  colorspace: RGB
+  block: {width: 1, height: 1, depth: 1}
+  channels: [UP10, UP10, UP10, UP2]
+  swizzles: [X, Y, Z, W]
+- name: B10G10R10A2_UINT
+  layout: plain
+  colorspace: RGB
+  block: {width: 1, height: 1, depth: 1}
+  channels: [UP10, UP10, UP10, UP2]
+  swizzles: [Z, Y, X, W]

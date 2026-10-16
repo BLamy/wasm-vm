@@ -1,0 +1,16 @@
+{
+  "frozenHead": "7e51177d966e05f7ae8b3ae23c7d5d0d028c404b",
+  "scratch": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-direct-memory-verifier-241gd76s/repo",
+  "removedEnvironmentKeys": [
+    "RUST_LOG"
+  ],
+  "command": "make verify-E5.5-T03bg",
+  "startedAt": "2026-10-03T01:20:47Z",
+  "initialStatus": "",
+  "targetInitiallyAbsent": true,
+  "runtimeSourceSha256": "8d592c91c45dbffba8958648542d255cb8e69256f65a1a17de5e7de4fb1116ed",
+  "exitCode": 0,
+  "finalStatus": "",
+  "finishedAt": "2026-10-03T01:22:32Z",
+  "logSha256": "4360885099d147e34e19643b3b59f1f31149a629f47e50dba30da08277dc8063"
+}

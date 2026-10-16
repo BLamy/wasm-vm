@@ -1,0 +1,155 @@
+{
+  "status": "passed",
+  "head": "cb6726dc68eebecdaf9b848ea846e525003e86c9",
+  "workerClaimCommit": "433e7f71dc8aee0dfd71bba15be14e9e25609387",
+  "clone": "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dot-reciprocals-cold-iyto94nf/wasm-vm",
+  "cleanBeforeAndAfterAudit": true,
+  "coldReportSha256": "dcf7972d3ffabd2c448017d3c1304da081a9af980665ae9c13411daf960e099b",
+  "coldLogSha256": "425cd1636c5a0f9375fd480f93ae2ebb85187f2ba76623de987da0962352272e",
+  "receiptSha256": "42532735ad1bb140a4b0a5df551d4b9b6c0f4f0f67484d25446f7273c2d108f5",
+  "acceptanceFilesVerified": 205,
+  "sourcesVerified": 268,
+  "recordsVerified": 195,
+  "removedEnvironmentNames": [
+    "GIT_PAGER",
+    "RUST_LOG"
+  ],
+  "nativeReportSha256": "52c950cf999bd0335e2c647a71e6390537743a9d013c0c3a8fcf4bfcbef0e211",
+  "nativeStats": {
+    "originals": 19,
+    "acceptedOriginals": 12,
+    "cases": 2699,
+    "pairs": 203,
+    "calls": 435179,
+    "standaloneRecoveries": 225526,
+    "pairRecoveries": 193308,
+    "truncations": 8990,
+    "hostileCases": 324,
+    "mutations": 4096,
+    "maxSingleResultBytes": 63369,
+    "maxPairResultBytes": 109235
+  },
+  "nativeHeldComparison": [
+    "originals",
+    "cases",
+    "pairs",
+    "rawCases",
+    "rawPairs",
+    "integerCases",
+    "integerPairs",
+    "floatCases",
+    "floatPairs",
+    "numericCases",
+    "numericPairs",
+    "componentCases",
+    "componentPairs",
+    "migrations",
+    "stats",
+    "recordedMaxima",
+    "layout",
+    "recoverySingles",
+    "recoveryPairs",
+    "streamSha256",
+    "logSha256",
+    "seeds",
+    "mutationsPerSeed",
+    "sanitizers"
+  ],
+  "entireNativeStreamAndTranscriptEqualHeld": true,
+  "allSourceCoverageFileCountersEqualHeld": true,
+  "scalarValues": {
+    "numeric": [
+      248,
+      30
+    ],
+    "textures": {
+      "exactWords": 32,
+      "boundedWords": 64,
+      "crossDraws": 24,
+      "pixels": 6144
+    },
+    "reciprocals": {
+      "exactWords": 30,
+      "boundedWords": 114,
+      "crossDraws": 18
+    },
+    "observations": {
+      "words": 72,
+      "probes": 6,
+      "vectors": 18,
+      "requiredRawClassChecks": 8,
+      "requiredNumericClassChecks": 16
+    },
+    "pixels": 33728
+  },
+  "scalarReports": {
+    "hardware": "c87ace0046d526ddbd7a7e16194e392e9c4694df6c6dc5308378aa907f06b30d",
+    "sabotage-dp3-lane": "6bdcc86cf61160c6e1712175a5a2de1c39791fe33253b8003f5310719d3f76c6",
+    "sabotage-rcp-source": "e71147972f95009e91cb6c2a660e32dbd12b36c91a120f93365a59c294084702",
+    "sabotage-rsq-operation": "add7ed77ea4fd6a66ddba56a7558c6a54f52016aa5a73d3817c2b95c7f8167e5",
+    "sabotage-numeric-negate": "eaf7916bdc0ccc62f50131bd3f323184654c165e32fe36c77eb125b5d3b4bf81"
+  },
+  "scalarFaults": [
+    {
+      "mode": "dp3-lane",
+      "program": "scalar-dp3-vertex",
+      "mutationSites": 1,
+      "actualMismatches": 1
+    },
+    {
+      "mode": "rcp-source",
+      "program": "scalar-rcp-vertex",
+      "mutationSites": 1,
+      "actualMismatches": 1
+    },
+    {
+      "mode": "rsq-operation",
+      "program": "scalar-rsq-vertex",
+      "mutationSites": 1,
+      "actualMismatches": 1
+    },
+    {
+      "mode": "numeric-negate",
+      "program": "scalar-dp3-swizzle-vertex",
+      "mutationSites": 1,
+      "actualMismatches": 1
+    }
+  ],
+  "harnessFunctionsEntered": 151,
+  "memory": {
+    "initialBytes": 16777216,
+    "observations": 3858,
+    "bufferIdentityStable": true,
+    "finalBytes": 16777216
+  },
+  "objects": {
+    "created": {
+      "Program": 103,
+      "Shader": 206,
+      "VertexArray": 103,
+      "TransformFeedback": 21,
+      "Buffer": 1026,
+      "Framebuffer": 136,
+      "Texture": 136
+    },
+    "deleted": {
+      "Shader": 206,
+      "Buffer": 1026,
+      "TransformFeedback": 21,
+      "VertexArray": 103,
+      "Program": 103,
+      "Framebuffer": 136,
+      "Texture": 136
+    },
+    "live": 0
+  },
+  "screenshot": {
+    "path": "browser.png",
+    "sha256": "89a31f3f97bf316fbdf661cf0789b73c438c4f4dec78fb18d7fe7d23c5511161"
+  },
+  "fullPredecessorReceiptRevalidated": true,
+  "compilerSha256": {
+    "nativeSanitizer": "a6ea1a633f59025154c31e1e1c834c5749cb7eb1afbfcffa5a2dd04dc80e521c",
+    "wasm": "4287e738fe2653fe43f03aec2bade254855ea6e47f94451e5f3ad16f9adc01e7"
+  }
+}

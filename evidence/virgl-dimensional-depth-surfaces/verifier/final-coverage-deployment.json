@@ -1,0 +1,5807 @@
+{
+  "schema": "dimensional-depth-surfaces-final-coverage-deployment-v1",
+  "status": "passed",
+  "P7": "HELD",
+  "P8": "HELD",
+  "changedLines": {
+    "renderer/virgl-command/control-bridge.mjs": [
+      2,
+      4,
+      168,
+      169,
+      170,
+      173,
+      185,
+      187
+    ],
+    "renderer/virgl-command/decoder.mjs": [
+      19,
+      128,
+      133,
+      364,
+      365,
+      696,
+      697,
+      698,
+      699,
+      700,
+      701,
+      733,
+      748
+    ],
+    "renderer/virgl-command/resources.mjs": [
+      618,
+      619,
+      620,
+      621,
+      635,
+      927
+    ],
+    "renderer/virgl-command/state.mjs": [
+      10,
+      49,
+      337,
+      338,
+      339,
+      340,
+      341,
+      342,
+      396,
+      397,
+      599,
+      611,
+      612,
+      1378,
+      1379,
+      1380,
+      1381,
+      1382,
+      1383,
+      1384,
+      1385,
+      1386,
+      1889,
+      1890,
+      1937
+    ]
+  },
+  "executedRegions": 345,
+  "waivedRegions": 78,
+  "needsEvidence": 0,
+  "citations": [
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 2,
+      "startOffset": 85,
+      "endOffset": 617,
+      "sha256": "b936bdf9b7e0b0d68b04276f576c714d584e7a7916d7dc23db891d376942a588",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 0,
+        "endOffset": 36258,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 2,
+      "startOffset": 617,
+      "endOffset": 669,
+      "sha256": "e9e4465c884e477abc734663c49ed062990cd00437910526e972673dabdcd201",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 0,
+        "endOffset": 36258,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 2,
+      "startOffset": 669,
+      "endOffset": 715,
+      "sha256": "bcffc8743496e6b683eb11a06bc0c2e11280ca0f9f44234cb3853303741c3825",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 0,
+        "endOffset": 36258,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 4,
+      "startOffset": 793,
+      "endOffset": 1155,
+      "sha256": "35275e2de2960e58a300c783b2d3ef42d526e367608fb3fe1c69d45191cb0c7f",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 0,
+        "endOffset": 36258,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 4,
+      "startOffset": 1155,
+      "endOffset": 1235,
+      "sha256": "ae3744a1272749436aaa8065b8c10e254bada9bd10a4a8b114a91fcf448d0249",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 0,
+        "endOffset": 36258,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 168,
+      "startOffset": 12812,
+      "endOffset": 12897,
+      "sha256": "14ab1566e1e99ab7f438679e4215a6ceefef7c16bcd9e23b86e597682333899b",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 0,
+        "endOffset": 36258,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 169,
+      "startOffset": 12897,
+      "endOffset": 12904,
+      "sha256": "814e26b2395ad89dfb0e0d27d3879d39899020aa55fc3b17a6c79d6e33087a53",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 0,
+        "endOffset": 36258,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 169,
+      "startOffset": 12904,
+      "endOffset": 13071,
+      "sha256": "44c2a43dff87920ef231d53c6b58add35d92ea50e7a7bfb26ed737e55bd0aae3",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 12904,
+        "endOffset": 13071,
+        "count": 130
+      }
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 169,
+      "startOffset": 13071,
+      "endOffset": 13072,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 0,
+        "endOffset": 36258,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 170,
+      "startOffset": 13072,
+      "endOffset": 13073,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 0,
+        "endOffset": 36258,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 173,
+      "startOffset": 13170,
+      "endOffset": 13420,
+      "sha256": "d964f9111caaf6c0ced399b13af3c84a88559a476fc9ec7a80d73a097ea12591",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 13170,
+        "endOffset": 36257,
+        "count": 130
+      }
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 173,
+      "startOffset": 13420,
+      "endOffset": 13458,
+      "sha256": "27f75ed21dfb5339bbb861da7e888a850a88cf75da49ed87b411622ed2cc6c84",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 13170,
+        "endOffset": 36257,
+        "count": 130
+      }
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 185,
+      "startOffset": 14933,
+      "endOffset": 14965,
+      "sha256": "67946d3c9a1fd249ee06d47eb43d298469181091340a909cc4011e342efbdf83",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 14501,
+        "endOffset": 16945,
+        "count": 130
+      }
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 185,
+      "startOffset": 14965,
+      "endOffset": 14990,
+      "sha256": "26a86d84f6269a5565bf6d1d519a9924a5d97eabc916a6aa7b825c1e1e895193",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 14501,
+        "endOffset": 16945,
+        "count": 130
+      }
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 185,
+      "startOffset": 14990,
+      "endOffset": 15042,
+      "sha256": "bcfe94f42930aa9ca85bf793809d56ecca1020f96303330086a004ee9a4c385d",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 14501,
+        "endOffset": 16945,
+        "count": 130
+      }
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 185,
+      "startOffset": 15042,
+      "endOffset": 15043,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 14501,
+        "endOffset": 16945,
+        "count": 130
+      }
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 185,
+      "startOffset": 15043,
+      "endOffset": 15045,
+      "sha256": "45822f54a0d0e030f75698c9252f1345982e743c9466806048f542467b3ca4f9",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 14501,
+        "endOffset": 16945,
+        "count": 21
+      }
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 185,
+      "startOffset": 15045,
+      "endOffset": 15070,
+      "sha256": "d506d47d9d751c4486fe136b97e36f5da6aafc0939be51b378a3d0576022eb3a",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 14501,
+        "endOffset": 16945,
+        "count": 21
+      }
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 185,
+      "startOffset": 15070,
+      "endOffset": 15122,
+      "sha256": "02b3bfe49fffb22abe2134422f49e0461287c898d906f29001c1cbb67f7a8c9d",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 15070,
+        "endOffset": 15122,
+        "count": 10
+      }
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 185,
+      "startOffset": 15122,
+      "endOffset": 15123,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 14501,
+        "endOffset": 16945,
+        "count": 21
+      }
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 185,
+      "startOffset": 15123,
+      "endOffset": 15147,
+      "sha256": "44cb347c3eab7f8aec3e4e752e9ff1abf9949348221249bc850de980c6ef679a",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 15123,
+        "endOffset": 15449,
+        "count": 11
+      }
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 185,
+      "startOffset": 15147,
+      "endOffset": 15196,
+      "sha256": "d8ca23712d4b9ea7290b5fe56044706eae9ba5a4dfe562f386d03a5f7c56474d",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 15147,
+        "endOffset": 15196,
+        "count": 10
+      }
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 185,
+      "startOffset": 15196,
+      "endOffset": 15197,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 15123,
+        "endOffset": 15449,
+        "count": 11
+      }
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 185,
+      "startOffset": 15197,
+      "endOffset": 15216,
+      "sha256": "372009b8c04857a0bc92d40d2584646416f7cad27db2c6f985f4188133ab9eb3",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 15197,
+        "endOffset": 15449,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 185,
+      "startOffset": 15261,
+      "endOffset": 15281,
+      "sha256": "4952bc04f36018469675047a8c2f822a5cb72532e2fd2e209b6c9a4e158d82ad",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 15197,
+        "endOffset": 15449,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 185,
+      "startOffset": 15325,
+      "endOffset": 15340,
+      "sha256": "c873b560d745639e035d3ef258a4ce53002110fbb8b0cc5170658dcb74ac7bd3",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 15197,
+        "endOffset": 15449,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 185,
+      "startOffset": 15380,
+      "endOffset": 15391,
+      "sha256": "a57b2d7f9d4d224709561f25f2b31f06b9c28b83a39bb9beeb7c5d78a4705edd",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 15197,
+        "endOffset": 15449,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 185,
+      "startOffset": 15427,
+      "endOffset": 15449,
+      "sha256": "5c72b00576cf2c2970f86b8bebafb1f7457fcc313ff4eaa5af5d92418d0a03a2",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 15197,
+        "endOffset": 15449,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 185,
+      "startOffset": 15449,
+      "endOffset": 15507,
+      "sha256": "bc4ad28125bc65d25fd127ea3b410122ac19850ce5fdb80825e87ce6c7fddc86",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 14501,
+        "endOffset": 16945,
+        "count": 130
+      }
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 185,
+      "startOffset": 15542,
+      "endOffset": 15549,
+      "sha256": "c5df3f981f4fee0531d846c85630ee7c3829f8007dce380a8218624bd9629800",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 14501,
+        "endOffset": 16945,
+        "count": 130
+      }
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 187,
+      "startOffset": 15580,
+      "endOffset": 15617,
+      "sha256": "4b3b4451027b50134cc9307135f4ddb114734a479181c330d227046355f57c7f",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 14501,
+        "endOffset": 16945,
+        "count": 130
+      }
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 187,
+      "startOffset": 15617,
+      "endOffset": 15642,
+      "sha256": "26a86d84f6269a5565bf6d1d519a9924a5d97eabc916a6aa7b825c1e1e895193",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 14501,
+        "endOffset": 16945,
+        "count": 130
+      }
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 187,
+      "startOffset": 15642,
+      "endOffset": 15699,
+      "sha256": "977f1b3eed4c76dcb4a5f030efbec2bbae3e2a8d4cc5cb3d5ef8bd471d7b7221",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 14501,
+        "endOffset": 16945,
+        "count": 130
+      }
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 187,
+      "startOffset": 15699,
+      "endOffset": 15700,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 14501,
+        "endOffset": 16945,
+        "count": 130
+      }
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 187,
+      "startOffset": 15700,
+      "endOffset": 15702,
+      "sha256": "45822f54a0d0e030f75698c9252f1345982e743c9466806048f542467b3ca4f9",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 14501,
+        "endOffset": 16945,
+        "count": 21
+      }
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 187,
+      "startOffset": 15702,
+      "endOffset": 15727,
+      "sha256": "d506d47d9d751c4486fe136b97e36f5da6aafc0939be51b378a3d0576022eb3a",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 14501,
+        "endOffset": 16945,
+        "count": 21
+      }
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 187,
+      "startOffset": 15727,
+      "endOffset": 15784,
+      "sha256": "5b4d1ac070be02c24288d53a68037355166bd2c485484149ca0380f7f0d2fe53",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 15727,
+        "endOffset": 15784,
+        "count": 10
+      }
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 187,
+      "startOffset": 15784,
+      "endOffset": 15785,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 14501,
+        "endOffset": 16945,
+        "count": 21
+      }
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 187,
+      "startOffset": 15785,
+      "endOffset": 15806,
+      "sha256": "73928748119f435562ee9f5a102135c0b2f545288bbad48019a181746ef4cc97",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 15785,
+        "endOffset": 16192,
+        "count": 11
+      }
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 187,
+      "startOffset": 15806,
+      "endOffset": 15857,
+      "sha256": "e9781fcd118da09daf91652831eafa44f1219743e8ec4227c508532bb5f999f5",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 15806,
+        "endOffset": 15857,
+        "count": 10
+      }
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 187,
+      "startOffset": 15857,
+      "endOffset": 15858,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 15785,
+        "endOffset": 16192,
+        "count": 11
+      }
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 187,
+      "startOffset": 15858,
+      "endOffset": 15882,
+      "sha256": "44cb347c3eab7f8aec3e4e752e9ff1abf9949348221249bc850de980c6ef679a",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 15858,
+        "endOffset": 16192,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 187,
+      "startOffset": 15936,
+      "endOffset": 15956,
+      "sha256": "4952bc04f36018469675047a8c2f822a5cb72532e2fd2e209b6c9a4e158d82ad",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 15858,
+        "endOffset": 16192,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 187,
+      "startOffset": 16005,
+      "endOffset": 16020,
+      "sha256": "c873b560d745639e035d3ef258a4ce53002110fbb8b0cc5170658dcb74ac7bd3",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 15858,
+        "endOffset": 16192,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 187,
+      "startOffset": 16065,
+      "endOffset": 16076,
+      "sha256": "a57b2d7f9d4d224709561f25f2b31f06b9c28b83a39bb9beeb7c5d78a4705edd",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 15858,
+        "endOffset": 16192,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 187,
+      "startOffset": 16123,
+      "endOffset": 16166,
+      "sha256": "1dd19440f593b643ca9a63d460936a8477fac10ad5e60f0c578092f59db14d27",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 15858,
+        "endOffset": 16192,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 187,
+      "startOffset": 16192,
+      "endOffset": 16246,
+      "sha256": "e984475be0d419fb459149597224fabc625f326d2b3b731ad542a3c858086849",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 14501,
+        "endOffset": 16945,
+        "count": 130
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 19,
+      "startOffset": 1346,
+      "endOffset": 1460,
+      "sha256": "bf353c23cf86f16e7bd6315c0ae16cab7d3b6adfac675a1ec754152a519e7439",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 0,
+        "endOffset": 49756,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 128,
+      "startOffset": 7621,
+      "endOffset": 7623,
+      "sha256": "6c179f21e6f62b629055d8ab40f454ed02e48b68563913473b857d3638e23b28",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 0,
+        "endOffset": 49756,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 128,
+      "startOffset": 7623,
+      "endOffset": 8097,
+      "sha256": "1e92538cc8af66ed0f37bb5be5213b3438b1695bca5f1193267d52a8ac34a652",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 7623,
+        "endOffset": 8995,
+        "count": 4340
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 128,
+      "startOffset": 8097,
+      "endOffset": 8135,
+      "sha256": "27f75ed21dfb5339bbb861da7e888a850a88cf75da49ed87b411622ed2cc6c84",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 7623,
+        "endOffset": 8995,
+        "count": 4340
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 133,
+      "startOffset": 8243,
+      "endOffset": 8933,
+      "sha256": "52be2d63be0d924d3595cad37f42edd8ef96154590f76759cd00c11ee08b4b86",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 7623,
+        "endOffset": 8995,
+        "count": 4340
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 133,
+      "startOffset": 8933,
+      "endOffset": 8992,
+      "sha256": "5f880851d3525ddf7c0d1f977d8042ee0affc76c13b31e5a41034006cfe0089a",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 7623,
+        "endOffset": 8995,
+        "count": 4340
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 364,
+      "startOffset": 24037,
+      "endOffset": 24095,
+      "sha256": "640430431922ced89de3c68734ccc8ea13b9bb2429a944054ef6428cb66ceba7",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 23744,
+        "endOffset": 25184,
+        "count": 360
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 364,
+      "startOffset": 24095,
+      "endOffset": 24136,
+      "sha256": "a184fe4850694ae9f8522432c0fd1f9a8e4f9b6124ef9fea2542250938138a1a",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 23744,
+        "endOffset": 25184,
+        "count": 360
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 364,
+      "startOffset": 24136,
+      "endOffset": 24137,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 23744,
+        "endOffset": 25184,
+        "count": 360
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 364,
+      "startOffset": 24137,
+      "endOffset": 24164,
+      "sha256": "8236fde66b20dc5bcf265d7b84b9938f73d70c482a9d8b62362916056d26ab85",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 24137,
+        "endOffset": 24164,
+        "count": 210
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 364,
+      "startOffset": 24164,
+      "endOffset": 24166,
+      "sha256": "d8a957038679125d4840554fc43375697e662283121561afdefc2c3fbecaf729",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 23744,
+        "endOffset": 25184,
+        "count": 360
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 365,
+      "startOffset": 24166,
+      "endOffset": 24217,
+      "sha256": "689d8a80b5d59685869a0c99460b5030d3f0aee6ded65cc2f8051fe73444d31d",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 23744,
+        "endOffset": 25184,
+        "count": 360
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 365,
+      "startOffset": 24217,
+      "endOffset": 24256,
+      "sha256": "9703c06b59f103d2391d232e0d77e303af06c636811bf0a7224ee8f71feb1503",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 24217,
+        "endOffset": 24668,
+        "count": 168
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 365,
+      "startOffset": 24264,
+      "endOffset": 24312,
+      "sha256": "7416630a6b3bb5d621049f165b398c64731d5d1765a7519350f3235dcf73b0a6",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 24217,
+        "endOffset": 24668,
+        "count": 168
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 365,
+      "startOffset": 24320,
+      "endOffset": 24372,
+      "sha256": "8ccb1456630a77672b0051f4aa1f4c9d617973d6fbf54ced7a22f37a5bdecaea",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 24217,
+        "endOffset": 24668,
+        "count": 168
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 365,
+      "startOffset": 24380,
+      "endOffset": 24429,
+      "sha256": "53bca079212ee37302df637de2bfe97c599db2081de7ff9f387e9d372488c8ff",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 24217,
+        "endOffset": 24668,
+        "count": 168
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 365,
+      "startOffset": 24429,
+      "endOffset": 24437,
+      "sha256": "ebc8aabff5296ecf4dd01a58430c990556edb7ff631c8bcd2abfd42961f8416a",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "boundaries-171281/browser-coverage.json",
+        "startOffset": 24429,
+        "endOffset": 24437,
+        "count": 12
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 365,
+      "startOffset": 24437,
+      "endOffset": 24438,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 24217,
+        "endOffset": 24668,
+        "count": 168
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 365,
+      "startOffset": 24438,
+      "endOffset": 24498,
+      "sha256": "879a7d228ebba72f6e7d93bf0918f68114d16b94fa80780b6fccf2dc25832e22",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "boundaries-171281/browser-coverage.json",
+        "startOffset": 24438,
+        "endOffset": 24506,
+        "count": 10
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 365,
+      "startOffset": 24506,
+      "endOffset": 24507,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 24217,
+        "endOffset": 24668,
+        "count": 168
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 365,
+      "startOffset": 24507,
+      "endOffset": 24563,
+      "sha256": "8b3962e2268844c2f2e76aa59622c2b988cd0e5155aec798a1c6e5d4195feec2",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "boundaries-171281/browser-coverage.json",
+        "startOffset": 24507,
+        "endOffset": 24571,
+        "count": 10
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 365,
+      "startOffset": 24571,
+      "endOffset": 24572,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 24217,
+        "endOffset": 24668,
+        "count": 168
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 365,
+      "startOffset": 24572,
+      "endOffset": 24621,
+      "sha256": "b8f15d2c609357b56ee79650e2f603ef2c8187f6041e8c0889884d3bbfa63311",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "boundaries-171281/browser-coverage.json",
+        "startOffset": 24572,
+        "endOffset": 24621,
+        "count": 10
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 365,
+      "startOffset": 24621,
+      "endOffset": 24622,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 24217,
+        "endOffset": 24668,
+        "count": 168
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 365,
+      "startOffset": 24622,
+      "endOffset": 24667,
+      "sha256": "9709daac531a34aabe01d98c18ecbed29ff53e177d537e6b2ec8b7f66a4abf21",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 24622,
+        "endOffset": 24667,
+        "count": 84
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 365,
+      "startOffset": 24667,
+      "endOffset": 24668,
+      "sha256": "ba5ec51d07a4ac0e951608704431d59a02b21a4e951acc10505a8dc407c501ee",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 24217,
+        "endOffset": 24668,
+        "count": 168
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 365,
+      "startOffset": 24668,
+      "endOffset": 24683,
+      "sha256": "81424cb7ad6f5b9af885bf46d5663340db66528599306d0ef5f95b68ac5a5cf7",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 23744,
+        "endOffset": 25184,
+        "count": 360
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 365,
+      "startOffset": 24683,
+      "endOffset": 24715,
+      "sha256": "102a67488e3efe28d8ca66bcd9a6d573038b942edf91e040052dee6cc861015a",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 24683,
+        "endOffset": 24746,
+        "count": 180
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 365,
+      "startOffset": 24715,
+      "endOffset": 24729,
+      "sha256": "1c0a01211073f96d40ad309e1624bf8dd7e4ce1b294343f186fa9bead7d7ce8e",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 24715,
+        "endOffset": 24729,
+        "count": 42
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 365,
+      "startOffset": 24729,
+      "endOffset": 24730,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 24683,
+        "endOffset": 24746,
+        "count": 180
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 365,
+      "startOffset": 24730,
+      "endOffset": 24745,
+      "sha256": "37d77834dbc9cffa92f31f3bdcbe5e3fd4e70fc8392448b0e105c8a5ed9b59d9",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 24730,
+        "endOffset": 24745,
+        "count": 34
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 365,
+      "startOffset": 24745,
+      "endOffset": 24746,
+      "sha256": "ba5ec51d07a4ac0e951608704431d59a02b21a4e951acc10505a8dc407c501ee",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 24683,
+        "endOffset": 24746,
+        "count": 180
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 365,
+      "startOffset": 24746,
+      "endOffset": 24747,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 23744,
+        "endOffset": 25184,
+        "count": 360
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 365,
+      "startOffset": 24747,
+      "endOffset": 24760,
+      "sha256": "9a97a8e75aa3d77390e27b355ad685b7bed7364823fd75402d0bea90be99c08f",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 24747,
+        "endOffset": 24760,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 365,
+      "startOffset": 24760,
+      "endOffset": 24779,
+      "sha256": "bece6b0a29f9c95d2a63372dc2c24dde36f0bb010c75e76263164d0c7a71fadf",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 23744,
+        "endOffset": 25184,
+        "count": 360
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 365,
+      "startOffset": 24779,
+      "endOffset": 24798,
+      "sha256": "c350ee21d5701bd4ac4bc8e0c235997c39106cb31520aed689f49a3843dd97ef",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 24779,
+        "endOffset": 24798,
+        "count": 50
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 365,
+      "startOffset": 24798,
+      "endOffset": 24799,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 23744,
+        "endOffset": 25184,
+        "count": 360
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 365,
+      "startOffset": 24799,
+      "endOffset": 24818,
+      "sha256": "41dd0970dc8ae64a7d046b25422a64ca6cfd20c7f0f8e05465f2d015bd03efb9",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 24799,
+        "endOffset": 24818,
+        "count": 50
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 365,
+      "startOffset": 24818,
+      "endOffset": 24860,
+      "sha256": "c3b720f0ca738b4b966653390a432dfdda4542259044c17d102eea8ed0c9df6d",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 23744,
+        "endOffset": 25184,
+        "count": 360
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 365,
+      "startOffset": 24860,
+      "endOffset": 24931,
+      "sha256": "cd35725d7abdab762692f91ecdf6bc0df3739af1fc2b14120ec914d4211316fe",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 24860,
+        "endOffset": 24931,
+        "count": 180
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 365,
+      "startOffset": 24931,
+      "endOffset": 24932,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 23744,
+        "endOffset": 25184,
+        "count": 360
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 365,
+      "startOffset": 24932,
+      "endOffset": 24943,
+      "sha256": "35c9a07958f5d6393aed4c4d13a3ce2cd23cf267feff2a7b99f1f89fd979e61f",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 24932,
+        "endOffset": 25097,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 365,
+      "startOffset": 25019,
+      "endOffset": 25097,
+      "sha256": "b9a1f2bd931ed29c54bfe7f8334350828a13d9ab7ad2270a7e8c7ab3d1deaca0",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 24932,
+        "endOffset": 25097,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 365,
+      "startOffset": 25097,
+      "endOffset": 25100,
+      "sha256": "49967ec1ed3836f8eb17aff172b5bfef7de60485a439c6ca11c591e1755739ae",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 23744,
+        "endOffset": 25184,
+        "count": 360
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 696,
+      "startOffset": 44316,
+      "endOffset": 44399,
+      "sha256": "a1595283c77d724c76d910af345c19a0098176effd135811e9b68d37f33edafd",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 0,
+        "endOffset": 49756,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 697,
+      "startOffset": 44399,
+      "endOffset": 44406,
+      "sha256": "814e26b2395ad89dfb0e0d27d3879d39899020aa55fc3b17a6c79d6e33087a53",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 0,
+        "endOffset": 49756,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 697,
+      "startOffset": 44406,
+      "endOffset": 44489,
+      "sha256": "d462d9acf9430eb47508848e0480cffb85893f63e4d8c705d80990a4fd41fcc5",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 44406,
+        "endOffset": 44658,
+        "count": 1860
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 698,
+      "startOffset": 44489,
+      "endOffset": 44657,
+      "sha256": "95dac6006a0936ca2a9bfd512d462145958446fdeb36be6dda2f29fbeb7edeca",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 44406,
+        "endOffset": 44658,
+        "count": 1860
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 699,
+      "startOffset": 44657,
+      "endOffset": 44658,
+      "sha256": "d10b36aa74a59bcf4a88185837f658afaf3646eff2bb16c3928d0e9335e945d2",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 44406,
+        "endOffset": 44658,
+        "count": 1860
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 699,
+      "startOffset": 44658,
+      "endOffset": 44659,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 0,
+        "endOffset": 49756,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 700,
+      "startOffset": 44659,
+      "endOffset": 44660,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 0,
+        "endOffset": 49756,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 701,
+      "startOffset": 44660,
+      "endOffset": 45115,
+      "sha256": "c04001bb30087fe42015f93faf4818c1241580a06ca82af77bf694a82b9cf736",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 44660,
+        "endOffset": 49755,
+        "count": 1860
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 701,
+      "startOffset": 45115,
+      "endOffset": 45153,
+      "sha256": "27f75ed21dfb5339bbb861da7e888a850a88cf75da49ed87b411622ed2cc6c84",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 44660,
+        "endOffset": 49755,
+        "count": 1860
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 733,
+      "startOffset": 47104,
+      "endOffset": 47428,
+      "sha256": "70cde0bcf09433595b14aae4fe65d370dd328024e8db92c07d7d2ff17b0d33eb",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 46906,
+        "endOffset": 48430,
+        "count": 4340
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 733,
+      "startOffset": 47428,
+      "endOffset": 47457,
+      "sha256": "f5903fc232e2c4304863d4f30880ef04bdbde859b6d55f1367a0eb1453afe60a",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 46906,
+        "endOffset": 48430,
+        "count": 4340
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 48603,
+      "endOffset": 48638,
+      "sha256": "a104754105b2ee5c5d270cd4933fb8ed503d3894ad317d0397e6aa72b67e517c",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 48602,
+        "endOffset": 48665,
+        "count": 121
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 48638,
+      "endOffset": 48665,
+      "sha256": "10c344fda808b06d3ee82a7bf95b008222b8ec41e1fecc07da9efbf939f21dab",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 48602,
+        "endOffset": 48665,
+        "count": 121
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 48665,
+      "endOffset": 48709,
+      "sha256": "286bcd33c8de8956026e1784467febb0e8a043f8492102091be7b684109bbb69",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 48602,
+        "endOffset": 48709,
+        "count": 1835
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 48709,
+      "endOffset": 48710,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 44660,
+        "endOffset": 49755,
+        "count": 1860
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 48710,
+      "endOffset": 48737,
+      "sha256": "bdbbea549f1dd7a5c2eb9b4492f0c6ed226a1a3db10ce8eb008c4095721da017",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 48710,
+        "endOffset": 49716,
+        "count": 121
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 48737,
+      "endOffset": 48781,
+      "sha256": "5534d12315b0a3911675eadce0b3b051cb322c653bd2c985daffcfd9f17c21b1",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 48737,
+        "endOffset": 48781,
+        "count": 60
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 48781,
+      "endOffset": 48782,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 48710,
+        "endOffset": 49716,
+        "count": 121
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 48782,
+      "endOffset": 48806,
+      "sha256": "44cb347c3eab7f8aec3e4e752e9ff1abf9949348221249bc850de980c6ef679a",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 48782,
+        "endOffset": 49716,
+        "count": 61
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 48806,
+      "endOffset": 48847,
+      "sha256": "0058ffeade2f6e32e2f78c0e25150cd0c41b9491c7a78e50511185cf700ea290",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 48806,
+        "endOffset": 48847,
+        "count": 60
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 48847,
+      "endOffset": 48848,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 48782,
+        "endOffset": 49716,
+        "count": 61
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 48848,
+      "endOffset": 48867,
+      "sha256": "22d2c415265546531cd2ee6b1b6ba04825a39beb0674577276701ebb2ead513b",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 48848,
+        "endOffset": 49716,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 48902,
+      "endOffset": 48917,
+      "sha256": "c873b560d745639e035d3ef258a4ce53002110fbb8b0cc5170658dcb74ac7bd3",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 48848,
+        "endOffset": 49716,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 48947,
+      "endOffset": 48965,
+      "sha256": "a0f78b48e85036860fc09a1212c28f9ba706a5c357107e6e72f6321b463fdbdd",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 48848,
+        "endOffset": 49716,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 48998,
+      "endOffset": 49009,
+      "sha256": "e68d96a2034df6e9ef0b3f6d83326f2fed109d8f2ef4643362b59b76e46eb79b",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 48848,
+        "endOffset": 49716,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 49035,
+      "endOffset": 49050,
+      "sha256": "b01e7852a1888122e29d4df02eab0df0b4c26160027a51c9201dc178067b791a",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 48848,
+        "endOffset": 49716,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 49087,
+      "endOffset": 49101,
+      "sha256": "09fe595bc4e554a6fcdcc92ff632c2b0abfe9740d412e12ff1ae27183e5fe0aa",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 48848,
+        "endOffset": 49716,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 49137,
+      "endOffset": 49154,
+      "sha256": "c3af0e745879c423072c34e9b384ad16b7c116761f25f20d8d7fcaa0be50135b",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 48848,
+        "endOffset": 49716,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 49193,
+      "endOffset": 49205,
+      "sha256": "1c8730c50888aa94dc56af5f2a18ce945db8d9cda6a32ddb4f34adc6468df581",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 48848,
+        "endOffset": 49716,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 49245,
+      "endOffset": 49259,
+      "sha256": "964f33dc2e827f2462aa3fbd0a86733f3cbd9b35abdd31a3c8a79a22ebf16201",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 48848,
+        "endOffset": 49716,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 49301,
+      "endOffset": 49319,
+      "sha256": "4cafa75bc276b9b849ac1bfe884d3162004bf9abf62ea58bc469fbfdd9c66b5d",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 48848,
+        "endOffset": 49716,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 49352,
+      "endOffset": 49364,
+      "sha256": "e91b78d0f90e3b76acc7956b85cb92b60d332340be4ce8f5d7f091931d4829d1",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 48848,
+        "endOffset": 49716,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 49396,
+      "endOffset": 49406,
+      "sha256": "489ea4af919a1fc14dad341ddc7f3666e70fbec5ab6261ae1524ae92b2a735f5",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 48848,
+        "endOffset": 49716,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 49446,
+      "endOffset": 49456,
+      "sha256": "51470042455d0cd259b96b7eb6875c915056ac56e519f3300912630e9e4011b8",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 48848,
+        "endOffset": 49716,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 49493,
+      "endOffset": 49503,
+      "sha256": "47868a21df53269ee15ef9bda1e0177831efb32fa0354cfe65110378c6907ba8",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 48848,
+        "endOffset": 49716,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 49533,
+      "endOffset": 49543,
+      "sha256": "6326a4505fd3f078f7ddb8887f077a19a8020ce391c6f856ad26d93a3b8b4b61",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 48848,
+        "endOffset": 49716,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 49567,
+      "endOffset": 49577,
+      "sha256": "91d639528b2a442675adfc30da31520fd741227a23ffe85c0ea891c776373775",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 48848,
+        "endOffset": 49716,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 49601,
+      "endOffset": 49613,
+      "sha256": "149005371a003604655bf713481f7fe4bd30d56cdc5b06de38908f8e81d94578",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 48848,
+        "endOffset": 49716,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 49639,
+      "endOffset": 49650,
+      "sha256": "8cf6d31fab41b9043e3fdb3a0772f229142e48d716eec8825de133e50ce98d4a",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 48848,
+        "endOffset": 49716,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 49676,
+      "endOffset": 49688,
+      "sha256": "64aeb9a6047615b2a23d62ae4bd3e5fa54fd45ef2dc814cae9975380f58ba622",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 48848,
+        "endOffset": 49716,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 49706,
+      "endOffset": 49716,
+      "sha256": "39529776d517ee3700a4a71b978fbb57ff837a556d498979e9724afe71b96897",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 48848,
+        "endOffset": 49716,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 49716,
+      "endOffset": 49754,
+      "sha256": "9cf8c2f0f5bde13c4e32669a1cb7e486ef00f47bba7caab47367f279d15635ca",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 44660,
+        "endOffset": 49755,
+        "count": 1860
+      }
+    },
+    {
+      "source": "renderer/virgl-command/resources.mjs",
+      "line": 618,
+      "startOffset": 47666,
+      "endOffset": 47753,
+      "sha256": "d791a61fc6f2aeebe78c88de969babe3674dd02c0d4517d1bc9e69aa38be26ce",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 0,
+        "endOffset": 149255,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/resources.mjs",
+      "line": 619,
+      "startOffset": 47753,
+      "endOffset": 47760,
+      "sha256": "814e26b2395ad89dfb0e0d27d3879d39899020aa55fc3b17a6c79d6e33087a53",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 0,
+        "endOffset": 149255,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/resources.mjs",
+      "line": 619,
+      "startOffset": 47760,
+      "endOffset": 47831,
+      "sha256": "f4b810ce0b6660bcf49816864fb2b0772a54b8a55a865171ee7fbd02322e45fd",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 47760,
+        "endOffset": 48021,
+        "count": 130
+      }
+    },
+    {
+      "source": "renderer/virgl-command/resources.mjs",
+      "line": 620,
+      "startOffset": 47831,
+      "endOffset": 48020,
+      "sha256": "18d95c71b5481a0b2fc3ffb7eee07afcfd5a4c85e2245b9a723cae0d1428d989",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 47760,
+        "endOffset": 48021,
+        "count": 130
+      }
+    },
+    {
+      "source": "renderer/virgl-command/resources.mjs",
+      "line": 621,
+      "startOffset": 48020,
+      "endOffset": 48021,
+      "sha256": "d10b36aa74a59bcf4a88185837f658afaf3646eff2bb16c3928d0e9335e945d2",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 47760,
+        "endOffset": 48021,
+        "count": 130
+      }
+    },
+    {
+      "source": "renderer/virgl-command/resources.mjs",
+      "line": 621,
+      "startOffset": 48021,
+      "endOffset": 48022,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 0,
+        "endOffset": 149255,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/resources.mjs",
+      "line": 635,
+      "startOffset": 48914,
+      "endOffset": 49361,
+      "sha256": "d462199bd6f8328d1844ad4a199aa00d71c0fb2a7f1cea8780dd61103c916573",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 48914,
+        "endOffset": 99246,
+        "count": 130
+      }
+    },
+    {
+      "source": "renderer/virgl-command/resources.mjs",
+      "line": 635,
+      "startOffset": 49361,
+      "endOffset": 49399,
+      "sha256": "27f75ed21dfb5339bbb861da7e888a850a88cf75da49ed87b411622ed2cc6c84",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 48914,
+        "endOffset": 99246,
+        "count": 130
+      }
+    },
+    {
+      "source": "renderer/virgl-command/resources.mjs",
+      "line": 927,
+      "startOffset": 71568,
+      "endOffset": 71604,
+      "sha256": "b58913b7c0e0cd084d2930965c54fad16dd025ba4b93681af957f7021c0f7f5e",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 71565,
+        "endOffset": 71911,
+        "count": 200
+      }
+    },
+    {
+      "source": "renderer/virgl-command/resources.mjs",
+      "line": 927,
+      "startOffset": 71604,
+      "endOffset": 71631,
+      "sha256": "a78549cbce41e4cdf0c7a8a2be31a2e4783e8d613f81425858907a277e75412b",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 71604,
+        "endOffset": 71910,
+        "count": 190
+      }
+    },
+    {
+      "source": "renderer/virgl-command/resources.mjs",
+      "line": 927,
+      "startOffset": 71631,
+      "endOffset": 71653,
+      "sha256": "b2b3f8795af0c1febb0e1d4e9cbea7a48ae6a391c9b243b9956a875cd776c80c",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 71631,
+        "endOffset": 71653,
+        "count": 118
+      }
+    },
+    {
+      "source": "renderer/virgl-command/resources.mjs",
+      "line": 927,
+      "startOffset": 71653,
+      "endOffset": 71654,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 71604,
+        "endOffset": 71910,
+        "count": 190
+      }
+    },
+    {
+      "source": "renderer/virgl-command/resources.mjs",
+      "line": 927,
+      "startOffset": 71654,
+      "endOffset": 71677,
+      "sha256": "49c36540ba3a0a5395cd86d15db124ea465e72747ad27401608b3ea6205be331",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 71654,
+        "endOffset": 71677,
+        "count": 82
+      }
+    },
+    {
+      "source": "renderer/virgl-command/resources.mjs",
+      "line": 927,
+      "startOffset": 71677,
+      "endOffset": 71678,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 71604,
+        "endOffset": 71910,
+        "count": 190
+      }
+    },
+    {
+      "source": "renderer/virgl-command/resources.mjs",
+      "line": 927,
+      "startOffset": 71678,
+      "endOffset": 71680,
+      "sha256": "23eeade931d8902dde575f26bb466a3c786484e46471efa7fa5b054636e7298b",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 71678,
+        "endOffset": 71850,
+        "count": 180
+      }
+    },
+    {
+      "source": "renderer/virgl-command/resources.mjs",
+      "line": 927,
+      "startOffset": 71680,
+      "endOffset": 71681,
+      "sha256": "32ebb1abcc1c601ceb9c4e3c4faba0caa5b85bb98c4f1e6612c40faa528a91c9",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 71678,
+        "endOffset": 71850,
+        "count": 180
+      }
+    },
+    {
+      "source": "renderer/virgl-command/resources.mjs",
+      "line": 927,
+      "startOffset": 71681,
+      "endOffset": 71742,
+      "sha256": "ba2886abd8843d0e9a70626178fb209ad1572f5397d1f403814ce87ee0b5af50",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 71678,
+        "endOffset": 71850,
+        "count": 180
+      }
+    },
+    {
+      "source": "renderer/virgl-command/resources.mjs",
+      "line": 927,
+      "startOffset": 71742,
+      "endOffset": 71744,
+      "sha256": "daac4fe11107edcf95bf1a410cad0818298b73a5a936de3ac1da954c4fdd8ffd",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 71678,
+        "endOffset": 71850,
+        "count": 180
+      }
+    },
+    {
+      "source": "renderer/virgl-command/resources.mjs",
+      "line": 927,
+      "startOffset": 71744,
+      "endOffset": 71772,
+      "sha256": "27f1d311b608850c1a5bbc65aff92ebf618bac8b79b6cd4546dc96314b9f7391",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 71744,
+        "endOffset": 71820,
+        "count": 170
+      }
+    },
+    {
+      "source": "renderer/virgl-command/resources.mjs",
+      "line": 927,
+      "startOffset": 71772,
+      "endOffset": 71820,
+      "sha256": "a25cf298b9dca4ca5fc7ca49a81af5d65f02e72b607b67a71fbe3772af8faf95",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 71744,
+        "endOffset": 71820,
+        "count": 170
+      }
+    },
+    {
+      "source": "renderer/virgl-command/resources.mjs",
+      "line": 927,
+      "startOffset": 71820,
+      "endOffset": 71822,
+      "sha256": "daac4fe11107edcf95bf1a410cad0818298b73a5a936de3ac1da954c4fdd8ffd",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 71678,
+        "endOffset": 71850,
+        "count": 180
+      }
+    },
+    {
+      "source": "renderer/virgl-command/resources.mjs",
+      "line": 927,
+      "startOffset": 71822,
+      "endOffset": 71850,
+      "sha256": "ffdf4f05d550c675b4dd9cbdac8beacc774f0b58f370add6921b490bbbe22ac6",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 71822,
+        "endOffset": 71850,
+        "count": 60
+      }
+    },
+    {
+      "source": "renderer/virgl-command/resources.mjs",
+      "line": 927,
+      "startOffset": 71850,
+      "endOffset": 71851,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 71604,
+        "endOffset": 71910,
+        "count": 190
+      }
+    },
+    {
+      "source": "renderer/virgl-command/resources.mjs",
+      "line": 927,
+      "startOffset": 71851,
+      "endOffset": 71887,
+      "sha256": "ae11771fc13b914dec1263c3669f2e5cae7eca2ab2b7051c962a4f11d4b49abc",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 71851,
+        "endOffset": 71909,
+        "count": 10
+      }
+    },
+    {
+      "source": "renderer/virgl-command/resources.mjs",
+      "line": 927,
+      "startOffset": 71887,
+      "endOffset": 71909,
+      "sha256": "739e6d036a5ef943399e764e1284136f45b377398912aa6dcda00dde82ad8cf1",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 71851,
+        "endOffset": 71909,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/resources.mjs",
+      "line": 927,
+      "startOffset": 71909,
+      "endOffset": 71910,
+      "sha256": "ba5ec51d07a4ac0e951608704431d59a02b21a4e951acc10505a8dc407c501ee",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 71604,
+        "endOffset": 71910,
+        "count": 190
+      }
+    },
+    {
+      "source": "renderer/virgl-command/resources.mjs",
+      "line": 927,
+      "startOffset": 71910,
+      "endOffset": 71911,
+      "sha256": "ba5ec51d07a4ac0e951608704431d59a02b21a4e951acc10505a8dc407c501ee",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 71565,
+        "endOffset": 71911,
+        "count": 200
+      }
+    },
+    {
+      "source": "renderer/virgl-command/resources.mjs",
+      "line": 927,
+      "startOffset": 71911,
+      "endOffset": 71912,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 70391,
+        "endOffset": 72658,
+        "count": 515
+      }
+    },
+    {
+      "source": "renderer/virgl-command/resources.mjs",
+      "line": 927,
+      "startOffset": 71912,
+      "endOffset": 71915,
+      "sha256": "deacaa5b9b9c56aa7946f18b273228ef76c9aeab2058011fc8a9e8efb9e6ad54",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 71912,
+        "endOffset": 72032,
+        "count": 30
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 10,
+      "startOffset": 612,
+      "endOffset": 1424,
+      "sha256": "d60994ea7f2e082f359371e0bfb67ac541687588ebb3e0851cddc80aa907279f",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 0,
+        "endOffset": 198018,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 10,
+      "startOffset": 1424,
+      "endOffset": 1473,
+      "sha256": "f0ca7202a3374a1831c92fded933a58e7111f88cee0f060a324193eefe90e397",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 0,
+        "endOffset": 198018,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 10,
+      "startOffset": 1473,
+      "endOffset": 1510,
+      "sha256": "81e69049e26d69b0435109a7f65ffa917f9e48540b6ee1ab53a4c00cbe4fd1c6",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 0,
+        "endOffset": 198018,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 49,
+      "startOffset": 5867,
+      "endOffset": 5989,
+      "sha256": "7cfbf48e92003a1bc29a4ae427d9b427c5899718213812b12093efa05cbd5a09",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 0,
+        "endOffset": 198018,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 337,
+      "startOffset": 23748,
+      "endOffset": 23833,
+      "sha256": "9a0a04ef73dbed3ca399c934732e0192ed795f97b720a2a65301bb5974307af1",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 0,
+        "endOffset": 198018,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 338,
+      "startOffset": 23833,
+      "endOffset": 23840,
+      "sha256": "814e26b2395ad89dfb0e0d27d3879d39899020aa55fc3b17a6c79d6e33087a53",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 0,
+        "endOffset": 198018,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 338,
+      "startOffset": 23840,
+      "endOffset": 23916,
+      "sha256": "8a5582799e7cb556ad5e493cac423122dd975fed4adfb77331a87cbd1640314f",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 23840,
+        "endOffset": 24119,
+        "count": 130
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 339,
+      "startOffset": 23916,
+      "endOffset": 24118,
+      "sha256": "97f32ef9a2f7a4e75d9847114663f25340020a70f7aa28bcf93d75d421ab9535",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 23840,
+        "endOffset": 24119,
+        "count": 130
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 340,
+      "startOffset": 24118,
+      "endOffset": 24119,
+      "sha256": "d10b36aa74a59bcf4a88185837f658afaf3646eff2bb16c3928d0e9335e945d2",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 23840,
+        "endOffset": 24119,
+        "count": 130
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 340,
+      "startOffset": 24119,
+      "endOffset": 24120,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 0,
+        "endOffset": 198018,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 341,
+      "startOffset": 24120,
+      "endOffset": 24121,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 0,
+        "endOffset": 198018,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 342,
+      "startOffset": 24121,
+      "endOffset": 24717,
+      "sha256": "388b674c701aa1280f91a4221703bcde22d7a253997790c44f118c8029ca02ce",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 24121,
+        "endOffset": 198017,
+        "count": 130
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 342,
+      "startOffset": 24717,
+      "endOffset": 24755,
+      "sha256": "27f75ed21dfb5339bbb861da7e888a850a88cf75da49ed87b411622ed2cc6c84",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 24121,
+        "endOffset": 198017,
+        "count": 130
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 30248,
+      "endOffset": 30293,
+      "sha256": "92169703702ce0076ca2954bc6fa96cb0e3a72a62c5dfad94177b3c7802f9a69",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 24771,
+        "endOffset": 198013,
+        "count": 130
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 30293,
+      "endOffset": 30343,
+      "sha256": "c3650ecf10459f88cfd5bd8c0f0ac51a52d6073966dca8d548f7124f69c044b9",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 24771,
+        "endOffset": 198013,
+        "count": 130
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 30343,
+      "endOffset": 30344,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 24771,
+        "endOffset": 198013,
+        "count": 130
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 30344,
+      "endOffset": 30345,
+      "sha256": "e7ac0786668e0ff0f02b62bd04f45ff636fd82db63b1104601c975dc005f3a67",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 24771,
+        "endOffset": 198013,
+        "count": 21
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 30345,
+      "endOffset": 30371,
+      "sha256": "f6e0e11bcc2ef2e60819c32b6fad8f13b7d7f8da38675c04ca90f3f62cf6fea7",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 24771,
+        "endOffset": 198013,
+        "count": 21
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 30371,
+      "endOffset": 30421,
+      "sha256": "bf9c5a502391671b31e2e893de70b83481310337929adee9fe563e42ee063c93",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 30371,
+        "endOffset": 30421,
+        "count": 10
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 30421,
+      "endOffset": 30422,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 24771,
+        "endOffset": 198013,
+        "count": 21
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 30422,
+      "endOffset": 30443,
+      "sha256": "73928748119f435562ee9f5a102135c0b2f545288bbad48019a181746ef4cc97",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 30422,
+        "endOffset": 31774,
+        "count": 11
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 30443,
+      "endOffset": 30486,
+      "sha256": "f7e82bdf1706ed7bb5681dff830522e16e97098823cddde72642910445e5e441",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 30443,
+        "endOffset": 30486,
+        "count": 10
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 30486,
+      "endOffset": 30487,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 30422,
+        "endOffset": 31774,
+        "count": 11
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 30487,
+      "endOffset": 30511,
+      "sha256": "44cb347c3eab7f8aec3e4e752e9ff1abf9949348221249bc850de980c6ef679a",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 30487,
+        "endOffset": 31774,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 30558,
+      "endOffset": 30578,
+      "sha256": "4952bc04f36018469675047a8c2f822a5cb72532e2fd2e209b6c9a4e158d82ad",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 30487,
+        "endOffset": 31774,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 30619,
+      "endOffset": 30634,
+      "sha256": "c873b560d745639e035d3ef258a4ce53002110fbb8b0cc5170658dcb74ac7bd3",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 30487,
+        "endOffset": 31774,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 30670,
+      "endOffset": 30688,
+      "sha256": "a0f78b48e85036860fc09a1212c28f9ba706a5c357107e6e72f6321b463fdbdd",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 30487,
+        "endOffset": 31774,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 30727,
+      "endOffset": 30743,
+      "sha256": "11bd5c053c0327b01d6deff390621af41644bb05a13824cd428ec8d44f4a15dd",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 30487,
+        "endOffset": 31774,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 30785,
+      "endOffset": 30803,
+      "sha256": "cce5e9f88a6805c3c55268ded2bc906c8d04178d3e368685d2198d1183731b2a",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 30487,
+        "endOffset": 31774,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 30843,
+      "endOffset": 30854,
+      "sha256": "e68d96a2034df6e9ef0b3f6d83326f2fed109d8f2ef4643362b59b76e46eb79b",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 30487,
+        "endOffset": 31774,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 30886,
+      "endOffset": 30901,
+      "sha256": "b01e7852a1888122e29d4df02eab0df0b4c26160027a51c9201dc178067b791a",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 30487,
+        "endOffset": 31774,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 30944,
+      "endOffset": 30958,
+      "sha256": "09fe595bc4e554a6fcdcc92ff632c2b0abfe9740d412e12ff1ae27183e5fe0aa",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 30487,
+        "endOffset": 31774,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 31000,
+      "endOffset": 31017,
+      "sha256": "c3af0e745879c423072c34e9b384ad16b7c116761f25f20d8d7fcaa0be50135b",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 30487,
+        "endOffset": 31774,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 31062,
+      "endOffset": 31074,
+      "sha256": "1c8730c50888aa94dc56af5f2a18ce945db8d9cda6a32ddb4f34adc6468df581",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 30487,
+        "endOffset": 31774,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 31120,
+      "endOffset": 31134,
+      "sha256": "964f33dc2e827f2462aa3fbd0a86733f3cbd9b35abdd31a3c8a79a22ebf16201",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 30487,
+        "endOffset": 31774,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 31182,
+      "endOffset": 31200,
+      "sha256": "4cafa75bc276b9b849ac1bfe884d3162004bf9abf62ea58bc469fbfdd9c66b5d",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 30487,
+        "endOffset": 31774,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 31239,
+      "endOffset": 31251,
+      "sha256": "e91b78d0f90e3b76acc7956b85cb92b60d332340be4ce8f5d7f091931d4829d1",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 30487,
+        "endOffset": 31774,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 31289,
+      "endOffset": 31299,
+      "sha256": "489ea4af919a1fc14dad341ddc7f3666e70fbec5ab6261ae1524ae92b2a735f5",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 30487,
+        "endOffset": 31774,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 31345,
+      "endOffset": 31355,
+      "sha256": "51470042455d0cd259b96b7eb6875c915056ac56e519f3300912630e9e4011b8",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 30487,
+        "endOffset": 31774,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 31398,
+      "endOffset": 31408,
+      "sha256": "47868a21df53269ee15ef9bda1e0177831efb32fa0354cfe65110378c6907ba8",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 30487,
+        "endOffset": 31774,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 31444,
+      "endOffset": 31465,
+      "sha256": "0c1e93e9ce27bf88ea7cade903f4eda07d0bc4ef5b319722f6fd61eb70f95a74",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 30487,
+        "endOffset": 31774,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 31497,
+      "endOffset": 31507,
+      "sha256": "6326a4505fd3f078f7ddb8887f077a19a8020ce391c6f856ad26d93a3b8b4b61",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 30487,
+        "endOffset": 31774,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 31537,
+      "endOffset": 31547,
+      "sha256": "91d639528b2a442675adfc30da31520fd741227a23ffe85c0ea891c776373775",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 30487,
+        "endOffset": 31774,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 31577,
+      "endOffset": 31592,
+      "sha256": "ba3a32d26ca0e1b08d7ca062660a3185859917c9dcb23c916a5e4e6e8f6f94aa",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 30487,
+        "endOffset": 31774,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 31623,
+      "endOffset": 31634,
+      "sha256": "8cf6d31fab41b9043e3fdb3a0772f229142e48d716eec8825de133e50ce98d4a",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 30487,
+        "endOffset": 31774,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 31666,
+      "endOffset": 31678,
+      "sha256": "64aeb9a6047615b2a23d62ae4bd3e5fa54fd45ef2dc814cae9975380f58ba622",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 30487,
+        "endOffset": 31774,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 31702,
+      "endOffset": 31734,
+      "sha256": "911d0612fbc55ad0f8fae89d55399685f008c17f6034d3553265ec7837c6dd07",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 30487,
+        "endOffset": 31774,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 31774,
+      "endOffset": 31776,
+      "sha256": "d8a957038679125d4840554fc43375697e662283121561afdefc2c3fbecaf729",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 24771,
+        "endOffset": 198013,
+        "count": 130
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 31776,
+      "endOffset": 31814,
+      "sha256": "14867d9cae7737f1c5e5c775e16ef866d95e5bc288106deb83abd313adf68696",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 24771,
+        "endOffset": 198013,
+        "count": 130
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 31814,
+      "endOffset": 31828,
+      "sha256": "d39bb4a6a0eaa6289b63f502fd592c7aea7356ced4e99d91a3cba2bc3d6bdd15",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 24771,
+        "endOffset": 198013,
+        "count": 130
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 31828,
+      "endOffset": 31877,
+      "sha256": "9462f9ba4ec6398c64341259107f166a27967b93f7e7fc872df315319729b4c3",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 24771,
+        "endOffset": 198013,
+        "count": 130
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 31877,
+      "endOffset": 31878,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 24771,
+        "endOffset": 198013,
+        "count": 130
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 31878,
+      "endOffset": 31891,
+      "sha256": "5753fc81e34e61d13343f7d4d80203425a3031b86df038bf0560f75305bf86c8",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 24771,
+        "endOffset": 198013,
+        "count": 21
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 31891,
+      "endOffset": 31905,
+      "sha256": "30701ff74e89df0043f5898a181d51b23d29a1738397504b364c5131e44e10df",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 24771,
+        "endOffset": 198013,
+        "count": 21
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 31905,
+      "endOffset": 31954,
+      "sha256": "5e394b0b50cc3ab8d6c88e860226fba65e52e844ed3b5d528e5017b97ca75080",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 31905,
+        "endOffset": 31954,
+        "count": 10
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 31954,
+      "endOffset": 31955,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 24771,
+        "endOffset": 198013,
+        "count": 21
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 31955,
+      "endOffset": 31979,
+      "sha256": "44cb347c3eab7f8aec3e4e752e9ff1abf9949348221249bc850de980c6ef679a",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 31955,
+        "endOffset": 32973,
+        "count": 11
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 31979,
+      "endOffset": 32025,
+      "sha256": "da1dce9267b4467dbfc898b02a80d7a505676a3e37eb228e8f4fdd7816f437c0",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 31979,
+        "endOffset": 32025,
+        "count": 10
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 32025,
+      "endOffset": 32026,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 31955,
+        "endOffset": 32973,
+        "count": 11
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 32026,
+      "endOffset": 32045,
+      "sha256": "22d2c415265546531cd2ee6b1b6ba04825a39beb0674577276701ebb2ead513b",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 32026,
+        "endOffset": 32973,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 32086,
+      "endOffset": 32101,
+      "sha256": "c873b560d745639e035d3ef258a4ce53002110fbb8b0cc5170658dcb74ac7bd3",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 32026,
+        "endOffset": 32973,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 32138,
+      "endOffset": 32156,
+      "sha256": "a0f78b48e85036860fc09a1212c28f9ba706a5c357107e6e72f6321b463fdbdd",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 32026,
+        "endOffset": 32973,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 32195,
+      "endOffset": 32206,
+      "sha256": "e68d96a2034df6e9ef0b3f6d83326f2fed109d8f2ef4643362b59b76e46eb79b",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 32026,
+        "endOffset": 32973,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 32239,
+      "endOffset": 32254,
+      "sha256": "b01e7852a1888122e29d4df02eab0df0b4c26160027a51c9201dc178067b791a",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 32026,
+        "endOffset": 32973,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 32296,
+      "endOffset": 32310,
+      "sha256": "09fe595bc4e554a6fcdcc92ff632c2b0abfe9740d412e12ff1ae27183e5fe0aa",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 32026,
+        "endOffset": 32973,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 32351,
+      "endOffset": 32368,
+      "sha256": "c3af0e745879c423072c34e9b384ad16b7c116761f25f20d8d7fcaa0be50135b",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 32026,
+        "endOffset": 32973,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 32412,
+      "endOffset": 32424,
+      "sha256": "1c8730c50888aa94dc56af5f2a18ce945db8d9cda6a32ddb4f34adc6468df581",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 32026,
+        "endOffset": 32973,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 32469,
+      "endOffset": 32483,
+      "sha256": "964f33dc2e827f2462aa3fbd0a86733f3cbd9b35abdd31a3c8a79a22ebf16201",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 32026,
+        "endOffset": 32973,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 32530,
+      "endOffset": 32548,
+      "sha256": "4cafa75bc276b9b849ac1bfe884d3162004bf9abf62ea58bc469fbfdd9c66b5d",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 32026,
+        "endOffset": 32973,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 32587,
+      "endOffset": 32599,
+      "sha256": "e91b78d0f90e3b76acc7956b85cb92b60d332340be4ce8f5d7f091931d4829d1",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 32026,
+        "endOffset": 32973,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 32637,
+      "endOffset": 32647,
+      "sha256": "489ea4af919a1fc14dad341ddc7f3666e70fbec5ab6261ae1524ae92b2a735f5",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 32026,
+        "endOffset": 32973,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 32692,
+      "endOffset": 32702,
+      "sha256": "51470042455d0cd259b96b7eb6875c915056ac56e519f3300912630e9e4011b8",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 32026,
+        "endOffset": 32973,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 32744,
+      "endOffset": 32754,
+      "sha256": "47868a21df53269ee15ef9bda1e0177831efb32fa0354cfe65110378c6907ba8",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 32026,
+        "endOffset": 32973,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 32790,
+      "endOffset": 32800,
+      "sha256": "6326a4505fd3f078f7ddb8887f077a19a8020ce391c6f856ad26d93a3b8b4b61",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 32026,
+        "endOffset": 32973,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 32831,
+      "endOffset": 32841,
+      "sha256": "91d639528b2a442675adfc30da31520fd741227a23ffe85c0ea891c776373775",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 32026,
+        "endOffset": 32973,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 32872,
+      "endOffset": 32883,
+      "sha256": "8cf6d31fab41b9043e3fdb3a0772f229142e48d716eec8825de133e50ce98d4a",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 32026,
+        "endOffset": 32973,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 32916,
+      "endOffset": 32928,
+      "sha256": "64aeb9a6047615b2a23d62ae4bd3e5fa54fd45ef2dc814cae9975380f58ba622",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 32026,
+        "endOffset": 32973,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 32954,
+      "endOffset": 32973,
+      "sha256": "4b00e0a269770a4bb86ce718da0a9d5d5e90f25c89ae393f4f95e4333cb29c41",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 32026,
+        "endOffset": 32973,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 32973,
+      "endOffset": 32975,
+      "sha256": "d8a957038679125d4840554fc43375697e662283121561afdefc2c3fbecaf729",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 24771,
+        "endOffset": 198013,
+        "count": 130
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 599,
+      "startOffset": 51527,
+      "endOffset": 51600,
+      "sha256": "09de8a63c278aedd73e5d0e36bb0e785ad0936ff93ae402c0d7745b3848e0912",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 51244,
+        "endOffset": 53524,
+        "count": 355
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 599,
+      "startOffset": 51600,
+      "endOffset": 51617,
+      "sha256": "44cb710950a37a93a3faac1c8bd5d766dca7fea7ba8d2b243f5a1d7f94796c30",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 51600,
+        "endOffset": 51617,
+        "count": 190
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 599,
+      "startOffset": 51617,
+      "endOffset": 51618,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 51244,
+        "endOffset": 53524,
+        "count": 355
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 599,
+      "startOffset": 51618,
+      "endOffset": 51631,
+      "sha256": "47697074da0d0e959824586d5d1e9df9fa7752a8a4423bf61e27e0d44ed3a4a2",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 51618,
+        "endOffset": 51651,
+        "count": 165
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 599,
+      "startOffset": 51631,
+      "endOffset": 51639,
+      "sha256": "56cf14434cec944e155560ddb73c8a3bca8da674606c5220d8c21dc33ae8c27a",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 51631,
+        "endOffset": 51639,
+        "count": 15
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 599,
+      "startOffset": 51639,
+      "endOffset": 51640,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 51618,
+        "endOffset": 51651,
+        "count": 165
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 599,
+      "startOffset": 51640,
+      "endOffset": 51651,
+      "sha256": "0f0e5ee97f0f1b2dbe2af4cc96472865e5c7be0cd236a47855a360c3e23340bf",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 51640,
+        "endOffset": 51651,
+        "count": 150
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 599,
+      "startOffset": 51651,
+      "endOffset": 51662,
+      "sha256": "986fbd5371a3f56909771a587e2fc0e1a802977262059ab03b7bde654ec6c230",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 51244,
+        "endOffset": 53524,
+        "count": 355
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 599,
+      "startOffset": 51662,
+      "endOffset": 51707,
+      "sha256": "36a6daf28e73265fe83e7dd978f900b6251ca32cca1966de3f98ca842e3f99a3",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 51662,
+        "endOffset": 51825,
+        "count": 205
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 599,
+      "startOffset": 51707,
+      "endOffset": 51708,
+      "sha256": "32ebb1abcc1c601ceb9c4e3c4faba0caa5b85bb98c4f1e6612c40faa528a91c9",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 51662,
+        "endOffset": 51825,
+        "count": 205
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 599,
+      "startOffset": 51708,
+      "endOffset": 51743,
+      "sha256": "89af16de73ecf35bfb849265f6f6cbe2f78fd5aca6afef2b02caf7d6400d6f78",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 51662,
+        "endOffset": 51825,
+        "count": 205
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 599,
+      "startOffset": 51743,
+      "endOffset": 51744,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 51662,
+        "endOffset": 51825,
+        "count": 205
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 599,
+      "startOffset": 51744,
+      "endOffset": 51772,
+      "sha256": "27f1d311b608850c1a5bbc65aff92ebf618bac8b79b6cd4546dc96314b9f7391",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 51744,
+        "endOffset": 51785,
+        "count": 190
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 599,
+      "startOffset": 51772,
+      "endOffset": 51785,
+      "sha256": "8d82baebedbb83605bb200ed442b44174c5f1ddf294ab489665df2cd02a7a09c",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 51744,
+        "endOffset": 51785,
+        "count": 190
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 599,
+      "startOffset": 51785,
+      "endOffset": 51786,
+      "sha256": "ba5ec51d07a4ac0e951608704431d59a02b21a4e951acc10505a8dc407c501ee",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 51662,
+        "endOffset": 51825,
+        "count": 205
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 599,
+      "startOffset": 51786,
+      "endOffset": 51787,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 51662,
+        "endOffset": 51825,
+        "count": 205
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 599,
+      "startOffset": 51787,
+      "endOffset": 51818,
+      "sha256": "1259ecd342d40933fa4a7b5e45b1398a1145e1ea93f40e73aea5b2572158475a",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 51662,
+        "endOffset": 51825,
+        "count": 205
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 599,
+      "startOffset": 51818,
+      "endOffset": 51819,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 51662,
+        "endOffset": 51825,
+        "count": 205
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 599,
+      "startOffset": 51819,
+      "endOffset": 51823,
+      "sha256": "60a8d2d4ee3ac89462f86b127ba61ada97e06e9330eaf63eb6a317c39923cdc5",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 51662,
+        "endOffset": 51825,
+        "count": 120
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 599,
+      "startOffset": 51823,
+      "endOffset": 51825,
+      "sha256": "e44e5a052384853f64d46ad7a410a386d7f6a37b0e58ce03cce5dd691800493a",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 51662,
+        "endOffset": 51825,
+        "count": 205
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 599,
+      "startOffset": 51825,
+      "endOffset": 51826,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 51244,
+        "endOffset": 53524,
+        "count": 355
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 599,
+      "startOffset": 51826,
+      "endOffset": 51834,
+      "sha256": "98197ca7c3b9359c7d48e8e1afdc038bc126697897528fbf0124676b6e80bc3c",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 51826,
+        "endOffset": 52035,
+        "count": 150
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 599,
+      "startOffset": 51834,
+      "endOffset": 51851,
+      "sha256": "e205acc6b0c73e93a570822e15451ad5b99391f0cecd90be191a5ed28e1ace7e",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 51826,
+        "endOffset": 52035,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 599,
+      "startOffset": 51851,
+      "endOffset": 51852,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 51826,
+        "endOffset": 52035,
+        "count": 150
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 599,
+      "startOffset": 51852,
+      "endOffset": 51925,
+      "sha256": "eb36cc5de3d392f39250f93a7495ab860aa249703313093b812364a3a1b889d8",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 51826,
+        "endOffset": 52035,
+        "count": 150
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 599,
+      "startOffset": 51925,
+      "endOffset": 51953,
+      "sha256": "6611f5c26e74d28dd25421c8e3121bf86aef03db1388db0b7fd7a098a2810609",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 51826,
+        "endOffset": 52035,
+        "count": 150
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 599,
+      "startOffset": 51953,
+      "endOffset": 51966,
+      "sha256": "8d82baebedbb83605bb200ed442b44174c5f1ddf294ab489665df2cd02a7a09c",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 51826,
+        "endOffset": 52035,
+        "count": 150
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 599,
+      "startOffset": 51966,
+      "endOffset": 51967,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 51826,
+        "endOffset": 52035,
+        "count": 150
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 599,
+      "startOffset": 51967,
+      "endOffset": 51990,
+      "sha256": "c0e151cef804ebd5e1a05a0a329312e657ea3c1ccad7c195f42f07c4052ea020",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 51826,
+        "endOffset": 52035,
+        "count": 150
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 599,
+      "startOffset": 51990,
+      "endOffset": 51991,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 51826,
+        "endOffset": 52035,
+        "count": 150
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 599,
+      "startOffset": 51991,
+      "endOffset": 52016,
+      "sha256": "d47162927dfa00cf7f944073f8e2a3761ce0f3011268106cc11147385dc24a97",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "boundaries-171281/browser-coverage.json",
+        "startOffset": 51991,
+        "endOffset": 52016,
+        "count": 12
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 599,
+      "startOffset": 52016,
+      "endOffset": 52017,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 51826,
+        "endOffset": 52035,
+        "count": 150
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 599,
+      "startOffset": 52017,
+      "endOffset": 52021,
+      "sha256": "60a8d2d4ee3ac89462f86b127ba61ada97e06e9330eaf63eb6a317c39923cdc5",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "boundaries-171281/browser-coverage.json",
+        "startOffset": 52017,
+        "endOffset": 52021,
+        "count": 12
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 599,
+      "startOffset": 52021,
+      "endOffset": 52024,
+      "sha256": "e5c5ad251f95585a304db83f185bbfd0807517d856fbdcdd19853d2161959d85",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 51826,
+        "endOffset": 52035,
+        "count": 150
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 599,
+      "startOffset": 52035,
+      "endOffset": 52039,
+      "sha256": "53eab188938333eac523ae65147b795012a45435c0425b025f5b073fb25707d9",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 51244,
+        "endOffset": 53524,
+        "count": 355
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 611,
+      "startOffset": 52993,
+      "endOffset": 53010,
+      "sha256": "dff59319fd08a784f97dce3414e2d6da7e4a0a533b593903c67be173983bf1ae",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 52943,
+        "endOffset": 53289,
+        "count": 300
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 611,
+      "startOffset": 53010,
+      "endOffset": 53057,
+      "sha256": "aae4c13e93175e64fd908f4b0f8da86a159ef7d881f22e9a18f5a5d3c317b8ba",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 52943,
+        "endOffset": 53289,
+        "count": 300
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 611,
+      "startOffset": 53057,
+      "endOffset": 53058,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 52943,
+        "endOffset": 53289,
+        "count": 300
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 611,
+      "startOffset": 53058,
+      "endOffset": 53086,
+      "sha256": "27f1d311b608850c1a5bbc65aff92ebf618bac8b79b6cd4546dc96314b9f7391",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "mrt/browser-coverage.json",
+        "startOffset": 53058,
+        "endOffset": 53141,
+        "count": 20
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 611,
+      "startOffset": 53086,
+      "endOffset": 53141,
+      "sha256": "2da582854aab9cc959e1cddf9894099e61f178c38da5b0948d15d792dfe2b38b",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "mrt/browser-coverage.json",
+        "startOffset": 53058,
+        "endOffset": 53141,
+        "count": 20
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 611,
+      "startOffset": 53141,
+      "endOffset": 53142,
+      "sha256": "ba5ec51d07a4ac0e951608704431d59a02b21a4e951acc10505a8dc407c501ee",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 52943,
+        "endOffset": 53289,
+        "count": 300
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 611,
+      "startOffset": 53142,
+      "endOffset": 53143,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 52943,
+        "endOffset": 53289,
+        "count": 300
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 611,
+      "startOffset": 53143,
+      "endOffset": 53177,
+      "sha256": "4124ba8ec815bd457128a77068773eccd7559dbbaacfb91eda3ce8a67f0ad33f",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 53143,
+        "endOffset": 53177,
+        "count": 150
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 611,
+      "startOffset": 53177,
+      "endOffset": 53178,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 52943,
+        "endOffset": 53289,
+        "count": 300
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 611,
+      "startOffset": 53178,
+      "endOffset": 53203,
+      "sha256": "770dc6e349579d6f20cd816c9fb7bbd81f56eda45dec19a3b38db079edf21cdb",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 53178,
+        "endOffset": 53203,
+        "count": 150
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 611,
+      "startOffset": 53203,
+      "endOffset": 53206,
+      "sha256": "69026cc091f8badcbc36ade8bd7a3a621377c2f06ac70ad85fb3047dae1349b8",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 52943,
+        "endOffset": 53289,
+        "count": 300
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 612,
+      "startOffset": 53206,
+      "endOffset": 53247,
+      "sha256": "076f6b11743652e5ffae0a5cb195a373c4bd2cecaa0a1b88b972d9f40efac7de",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 52943,
+        "endOffset": 53289,
+        "count": 300
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 612,
+      "startOffset": 53247,
+      "endOffset": 53289,
+      "sha256": "060e6fe0bb76ee65c0e7045b4a13dfe3d6b043e20484ba697618cb46afb7eb21",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 52943,
+        "endOffset": 53289,
+        "count": 300
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 612,
+      "startOffset": 53289,
+      "endOffset": 53290,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 53289,
+        "endOffset": 53478,
+        "count": 270
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1378,
+      "startOffset": 118930,
+      "endOffset": 118960,
+      "sha256": "6f3d5e2575d7bf388e2f27b250a26c53d3f85a067020c50f766b3f32c40bcc0a",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 118654,
+        "endOffset": 119817,
+        "count": 60
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1378,
+      "startOffset": 118960,
+      "endOffset": 118962,
+      "sha256": "a6fb08fda1acb957b6116bd37811a1fe41a01611c0631edbf786d6889a27a55c",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 118960,
+        "endOffset": 119809,
+        "count": 1860
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1379,
+      "startOffset": 118962,
+      "endOffset": 119054,
+      "sha256": "325c87b382e38fbd0dc70ebf4d999479727dab12b9f05f50f19ad2ab8c9cb37f",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 118960,
+        "endOffset": 119809,
+        "count": 1860
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1380,
+      "startOffset": 119054,
+      "endOffset": 119110,
+      "sha256": "85775f70ed717509fcae08eb0cc50c0a4c1448ae518a8804e0237cdb5914cb7c",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 118960,
+        "endOffset": 119809,
+        "count": 1860
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1380,
+      "startOffset": 119110,
+      "endOffset": 119125,
+      "sha256": "0ae5767fa34c917b7528e3f5c5ffe2601a85db6efe3cf9392306157eda4abf21",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 118960,
+        "endOffset": 119809,
+        "count": 1860
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1380,
+      "startOffset": 119125,
+      "endOffset": 119134,
+      "sha256": "ce10812d297990e9e02121644aca88999dc6e2859cb10e6b80ebf19b685c4c66",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 119125,
+        "endOffset": 119134,
+        "count": 744
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1380,
+      "startOffset": 119134,
+      "endOffset": 119135,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 118960,
+        "endOffset": 119809,
+        "count": 1860
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1380,
+      "startOffset": 119135,
+      "endOffset": 119171,
+      "sha256": "d30dbd9e6a400f5cdc37a1a4ba9c2fba19251f79ac6faae397c95ea576876e57",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 119135,
+        "endOffset": 119201,
+        "count": 1488
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1380,
+      "startOffset": 119171,
+      "endOffset": 119177,
+      "sha256": "34a04005bcaf206eec990bd9637d9fdb6725e0a0c0d4aebf003f17f4c956eb5c",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 119135,
+        "endOffset": 119201,
+        "count": 1488
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1380,
+      "startOffset": 119177,
+      "endOffset": 119192,
+      "sha256": "0ae5767fa34c917b7528e3f5c5ffe2601a85db6efe3cf9392306157eda4abf21",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 119135,
+        "endOffset": 119201,
+        "count": 1488
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1380,
+      "startOffset": 119192,
+      "endOffset": 119201,
+      "sha256": "ce10812d297990e9e02121644aca88999dc6e2859cb10e6b80ebf19b685c4c66",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 119192,
+        "endOffset": 119201,
+        "count": 744
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1380,
+      "startOffset": 119201,
+      "endOffset": 119203,
+      "sha256": "daac4fe11107edcf95bf1a410cad0818298b73a5a936de3ac1da954c4fdd8ffd",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 118960,
+        "endOffset": 119809,
+        "count": 1860
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1380,
+      "startOffset": 119203,
+      "endOffset": 119232,
+      "sha256": "dd3ebca29ef1abc545756da898a7d6ff81868978f13fb434867f5fcca7187e99",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 119203,
+        "endOffset": 119232,
+        "count": 744
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1380,
+      "startOffset": 119232,
+      "endOffset": 119233,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 118960,
+        "endOffset": 119809,
+        "count": 1860
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1380,
+      "startOffset": 119233,
+      "endOffset": 119254,
+      "sha256": "8eb3e0283bec34fd9251d44081e60ef15111c784d0c9ff8590079123a3443157",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 119233,
+        "endOffset": 119254,
+        "count": 1116
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1380,
+      "startOffset": 119254,
+      "endOffset": 119256,
+      "sha256": "d8a957038679125d4840554fc43375697e662283121561afdefc2c3fbecaf729",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 118960,
+        "endOffset": 119809,
+        "count": 1860
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1381,
+      "startOffset": 119256,
+      "endOffset": 119352,
+      "sha256": "6350ab76de90d48b8e8b2b4524ad521449c307213b74b001c4b04c20a8f7f7e0",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 118960,
+        "endOffset": 119809,
+        "count": 1860
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1381,
+      "startOffset": 119352,
+      "endOffset": 119354,
+      "sha256": "a6fb08fda1acb957b6116bd37811a1fe41a01611c0631edbf786d6889a27a55c",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "mrt/browser-coverage.json",
+        "startOffset": 119352,
+        "endOffset": 119696,
+        "count": 130
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1382,
+      "startOffset": 119354,
+      "endOffset": 119400,
+      "sha256": "1258e27d4f02b31c7c3baab7cfe629bad934decc9d3279551cd1313a584a5fb4",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "mrt/browser-coverage.json",
+        "startOffset": 119352,
+        "endOffset": 119696,
+        "count": 130
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1382,
+      "startOffset": 119400,
+      "endOffset": 119452,
+      "sha256": "fa003b0a38c8e3e57a857c44c2ce0dcc7f753885d6c651c35f7242d555c7ee6b",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "hardware-171281/browser-coverage.json",
+        "startOffset": 119400,
+        "endOffset": 119555,
+        "count": 2340
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1383,
+      "startOffset": 119452,
+      "endOffset": 119555,
+      "sha256": "496a4f2ed5097282e893852da33f7c9127f43c0c5cbd1fc73d0e2777d5ad1324",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "hardware-171281/browser-coverage.json",
+        "startOffset": 119400,
+        "endOffset": 119555,
+        "count": 2340
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1383,
+      "startOffset": 119555,
+      "endOffset": 119556,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "hardware-171281/browser-coverage.json",
+        "startOffset": 119555,
+        "endOffset": 119684,
+        "count": 1950
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1384,
+      "startOffset": 119556,
+      "endOffset": 119684,
+      "sha256": "2b0662967e5abf17988c98452662892664026445c7d81de1123f241a595fe4cf",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "hardware-171281/browser-coverage.json",
+        "startOffset": 119555,
+        "endOffset": 119684,
+        "count": 1950
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1384,
+      "startOffset": 119684,
+      "endOffset": 119685,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "mrt/browser-coverage.json",
+        "startOffset": 119352,
+        "endOffset": 119696,
+        "count": 130
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1385,
+      "startOffset": 119685,
+      "endOffset": 119696,
+      "sha256": "9726a7494bd555db3c8018a2eb6d1da4a8a6d066a7d4d1fc387acba8b911f42a",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "mrt/browser-coverage.json",
+        "startOffset": 119352,
+        "endOffset": 119696,
+        "count": 130
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1385,
+      "startOffset": 119696,
+      "endOffset": 119799,
+      "sha256": "66a0c4d45e7a97d034118a02140cf2263030148f21d309e1d70d636f61ce785d",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "mrt/browser-coverage.json",
+        "startOffset": 119696,
+        "endOffset": 119799,
+        "count": 65
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1385,
+      "startOffset": 119799,
+      "endOffset": 119800,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 118960,
+        "endOffset": 119809,
+        "count": 1860
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1386,
+      "startOffset": 119800,
+      "endOffset": 119809,
+      "sha256": "2a44168318e224e1f830fe9ab620aa00dd4f7b3fb19ef4399abf59593cf0756d",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 118960,
+        "endOffset": 119809,
+        "count": 1860
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1386,
+      "startOffset": 119809,
+      "endOffset": 119810,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 118654,
+        "endOffset": 119817,
+        "count": 60
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1889,
+      "startOffset": 156745,
+      "endOffset": 156788,
+      "sha256": "c51c747db4ba237c96e71d782b445e883b9aca0bf44e082f08ce4e41aae4154e",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 142240,
+        "endOffset": 158493,
+        "count": 260
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1889,
+      "startOffset": 156788,
+      "endOffset": 156798,
+      "sha256": "df4a31fdf6aa0df503c5f758ed4cbda96e3279a1109801394e06f8e4ce44ce41",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "boundaries-171281/browser-coverage.json",
+        "startOffset": 156788,
+        "endOffset": 156798,
+        "count": 24
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1889,
+      "startOffset": 156798,
+      "endOffset": 156802,
+      "sha256": "de4b09f8fa1d16077ea861e84c5bb6b6b6048a8fa832d1b4a808aec9eeee70fc",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 142240,
+        "endOffset": 158493,
+        "count": 260
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1889,
+      "startOffset": 156802,
+      "endOffset": 156809,
+      "sha256": "b26975c51928adf5240c3809afbf7ab3b42b48ccb4c30fa7ebaef610ebcd0acb",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "boundaries-171281/browser-coverage.json",
+        "startOffset": 156802,
+        "endOffset": 156809,
+        "count": 24
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1889,
+      "startOffset": 156809,
+      "endOffset": 156852,
+      "sha256": "d7fe1e6c90e2c6841a73be135aa78b630ef29976d4a9f21bcda55b15d218d737",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 142240,
+        "endOffset": 158493,
+        "count": 260
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1889,
+      "startOffset": 156852,
+      "endOffset": 156872,
+      "sha256": "6196c48249dee6432535f1c927541b02ebd72b7d87f92947a847a404d0464c71",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "boundaries-171281/browser-coverage.json",
+        "startOffset": 156852,
+        "endOffset": 156872,
+        "count": 24
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1889,
+      "startOffset": 156872,
+      "endOffset": 156873,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 142240,
+        "endOffset": 158493,
+        "count": 260
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1889,
+      "startOffset": 156873,
+      "endOffset": 156880,
+      "sha256": "b26975c51928adf5240c3809afbf7ab3b42b48ccb4c30fa7ebaef610ebcd0acb",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "boundaries-171281/browser-coverage.json",
+        "startOffset": 156873,
+        "endOffset": 156880,
+        "count": 24
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1889,
+      "startOffset": 156880,
+      "endOffset": 156882,
+      "sha256": "beadba836315747fc95ae304452514b72fe122a6e345974638d70c4e8ebace6a",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 142240,
+        "endOffset": 158493,
+        "count": 260
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1890,
+      "startOffset": 156882,
+      "endOffset": 156921,
+      "sha256": "fbb33fce0f54411b9076a3890fecb160ed9d3581ab87d5817e31d74a4dca580f",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 142240,
+        "endOffset": 158493,
+        "count": 260
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1890,
+      "startOffset": 156921,
+      "endOffset": 156940,
+      "sha256": "666ab8f08443ffe7d9fa010aa56575b19c99bc91ab59c0ccba9b1671a5489c04",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 142240,
+        "endOffset": 158493,
+        "count": 260
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1890,
+      "startOffset": 156940,
+      "endOffset": 156941,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 142240,
+        "endOffset": 158493,
+        "count": 260
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1890,
+      "startOffset": 156941,
+      "endOffset": 157205,
+      "sha256": "94e4cbd74f5ac40cf383f1a1c1b6279426f10ec84490a86c048575f5a15713a8",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "boundaries-171281/browser-coverage.json",
+        "startOffset": 156941,
+        "endOffset": 157205,
+        "count": 24
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1890,
+      "startOffset": 157205,
+      "endOffset": 157206,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 142240,
+        "endOffset": 158493,
+        "count": 260
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1890,
+      "startOffset": 157206,
+      "endOffset": 157210,
+      "sha256": "d893fcf92aa10f2bc47353e182a23e48707f35735c929e8defe1cbe93100eb57",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "boundaries-171281/browser-coverage.json",
+        "startOffset": 157206,
+        "endOffset": 157210,
+        "count": 24
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1890,
+      "startOffset": 157210,
+      "endOffset": 157215,
+      "sha256": "b814fe65190451a17acf2fe9bbde8eaf3abae9da86c2f5b5a5afd8b283300e3e",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "attacks/browser-coverage.json",
+        "startOffset": 142240,
+        "endOffset": 158493,
+        "count": 260
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1937,
+      "startOffset": 160525,
+      "endOffset": 160559,
+      "sha256": "ed3a075450ba0ff4976fc2711203dd86c901f2226cd46950c545f515ef5cec60",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "boundaries-171281/browser-coverage.json",
+        "startOffset": 160523,
+        "endOffset": 160917,
+        "count": 36
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1937,
+      "startOffset": 160559,
+      "endOffset": 160561,
+      "sha256": "23eeade931d8902dde575f26bb466a3c786484e46471efa7fa5b054636e7298b",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "boundaries-171281/browser-coverage.json",
+        "startOffset": 160523,
+        "endOffset": 160917,
+        "count": 36
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1937,
+      "startOffset": 160561,
+      "endOffset": 160562,
+      "sha256": "32ebb1abcc1c601ceb9c4e3c4faba0caa5b85bb98c4f1e6612c40faa528a91c9",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "boundaries-171281/browser-coverage.json",
+        "startOffset": 160523,
+        "endOffset": 160917,
+        "count": 36
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1937,
+      "startOffset": 160562,
+      "endOffset": 160636,
+      "sha256": "fb9ded3b623a5214b1dfb4fe5c268188d0cf145ebe954d9075282e118a9c89d7",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "boundaries-171281/browser-coverage.json",
+        "startOffset": 160523,
+        "endOffset": 160917,
+        "count": 36
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1937,
+      "startOffset": 160636,
+      "endOffset": 160638,
+      "sha256": "daac4fe11107edcf95bf1a410cad0818298b73a5a936de3ac1da954c4fdd8ffd",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "boundaries-171281/browser-coverage.json",
+        "startOffset": 160523,
+        "endOffset": 160917,
+        "count": 36
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1937,
+      "startOffset": 160638,
+      "endOffset": 160727,
+      "sha256": "2d225a7e3cba28944ae5c0c0693308ebb94a4dd120e86123439779f9b19e28d1",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "mrt/browser-coverage.json",
+        "startOffset": 160638,
+        "endOffset": 160727,
+        "count": 10
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1937,
+      "startOffset": 160727,
+      "endOffset": 160728,
+      "sha256": "ba5ec51d07a4ac0e951608704431d59a02b21a4e951acc10505a8dc407c501ee",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "boundaries-171281/browser-coverage.json",
+        "startOffset": 160523,
+        "endOffset": 160917,
+        "count": 36
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1937,
+      "startOffset": 160728,
+      "endOffset": 160729,
+      "sha256": "36a9e7f1c95b82ffb99743e0c5c4ce95d83c9a430aac59f84ef3cbfab6145068",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "boundaries-171281/browser-coverage.json",
+        "startOffset": 160523,
+        "endOffset": 160917,
+        "count": 36
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1937,
+      "startOffset": 160729,
+      "endOffset": 160777,
+      "sha256": "19613f7ea4c6a071adbac805cc619fc275acdb64106504ca6e946f998511fa94",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "historical/browser-coverage.json",
+        "startOffset": 160309,
+        "endOffset": 162104,
+        "count": 1
+      }
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1937,
+      "startOffset": 160777,
+      "endOffset": 160865,
+      "sha256": "2ddccb287ab6197dd3b1198fc0537c87093c555234fc293aad5d63c809795351",
+      "status": "HELD",
+      "finestCounter": {
+        "record": "boundaries-171281/browser-coverage.json",
+        "startOffset": 160523,
+        "endOffset": 160917,
+        "count": 36
+      }
+    }
+  ],
+  "waivers": [
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 185,
+      "startOffset": 15216,
+      "endOffset": 15261,
+      "sha256": "c6fb23add3e58f5a693d2623229d03697634bc466caa7b68321b18f1d5bc9240",
+      "baseStartOffset": 14732,
+      "status": "waived",
+      "text": "? createStandardDimensionalDepthResourceStore",
+      "reason": "Unchanged historical factory or optional resource-limit selection; the new closed selected factory executes its own new branch."
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 185,
+      "startOffset": 15281,
+      "endOffset": 15325,
+      "sha256": "8a015213ff586b206b80de6442f98b75e9c27e527c837f228b990f75e5e70c28",
+      "baseStartOffset": 14797,
+      "status": "waived",
+      "text": "? createStandardDimensionalViewResourceStore",
+      "reason": "Unchanged historical factory or optional resource-limit selection; the new closed selected factory executes its own new branch."
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 185,
+      "startOffset": 15340,
+      "endOffset": 15380,
+      "sha256": "9abc31e3371ca4c0df2f76d122dd841c2ab1174b4d39ec33effec1e0c76c43ce",
+      "baseStartOffset": 14856,
+      "status": "waived",
+      "text": "? createStandardDimensionalResourceStore",
+      "reason": "Unchanged historical factory or optional resource-limit selection; the new closed selected factory executes its own new branch."
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 185,
+      "startOffset": 15391,
+      "endOffset": 15427,
+      "sha256": "f517a0a0b32e1170a3dc188a6058f0fcac70dd4581c30834ce6e6a89ead92a82",
+      "baseStartOffset": 14907,
+      "status": "waived",
+      "text": "? createStandardDesktopResourceStore",
+      "reason": "Unchanged historical factory or optional resource-limit selection; the new closed selected factory executes its own new branch."
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 185,
+      "startOffset": 15507,
+      "endOffset": 15542,
+      "sha256": "6866ecc447b032064ca9f5a9f402d94a692cd5c6d5f938644a522798bfaf56c3",
+      "baseStartOffset": 15023,
+      "status": "waived",
+      "text": ": { limits: config.resourceLimits }",
+      "reason": "Unchanged historical factory or optional resource-limit selection; the new closed selected factory executes its own new branch."
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 187,
+      "startOffset": 15882,
+      "endOffset": 15936,
+      "sha256": "ef54cce0bc3fdf13b0814c4b391cf5e16c8d6e5f2fc571464f30f64733366df1",
+      "baseStartOffset": 15313,
+      "status": "waived",
+      "text": "? createVirglStandardDimensionalDepthViewAsyncRenderer",
+      "reason": "Unchanged historical factory or optional resource-limit selection; the new closed selected factory executes its own new branch."
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 187,
+      "startOffset": 15956,
+      "endOffset": 16005,
+      "sha256": "977958973be031ae946e180d33a7e0d94cd90fa3f0c9a4aa39bd68b94eee7716",
+      "baseStartOffset": 15387,
+      "status": "waived",
+      "text": "? createVirglStandardDimensionalViewAsyncRenderer",
+      "reason": "Unchanged historical factory or optional resource-limit selection; the new closed selected factory executes its own new branch."
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 187,
+      "startOffset": 16020,
+      "endOffset": 16065,
+      "sha256": "4c3ed95bf727975516f8a411febbf822779dc4c7f7b1cc130bd06b844b1d0487",
+      "baseStartOffset": 15451,
+      "status": "waived",
+      "text": "? createVirglStandardDimensionalAsyncRenderer",
+      "reason": "Unchanged historical factory or optional resource-limit selection; the new closed selected factory executes its own new branch."
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 187,
+      "startOffset": 16076,
+      "endOffset": 16123,
+      "sha256": "74a13b22a2f7855e4ab3b147ddf053cfe9d0bdbb642ac1fe63c8e385750c222b",
+      "baseStartOffset": 15507,
+      "status": "waived",
+      "text": "? createVirglStandardShadowSamplerAsyncRenderer",
+      "reason": "Unchanged historical factory or optional resource-limit selection; the new closed selected factory executes its own new branch."
+    },
+    {
+      "source": "renderer/virgl-command/control-bridge.mjs",
+      "line": 187,
+      "startOffset": 16166,
+      "endOffset": 16192,
+      "sha256": "e1d884fa26ae14b9a601cfe73bdc44bf933514c2aaa66f2b50c50853316b9705",
+      "baseStartOffset": 15597,
+      "status": "waived",
+      "text": ": createVirglStateRenderer",
+      "reason": "Unchanged historical factory or optional resource-limit selection; the new closed selected factory executes its own new branch."
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 365,
+      "startOffset": 24256,
+      "endOffset": 24264,
+      "sha256": "ebc8aabff5296ecf4dd01a58430c990556edb7ff631c8bcd2abfd42961f8416a",
+      "baseStartOffset": 23921,
+      "status": "waived",
+      "text": "?.render",
+      "reason": "Unchanged historical format renderability, diagnostic or profile label; all newly admitted depth/layer operands execute separately."
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 365,
+      "startOffset": 24312,
+      "endOffset": 24320,
+      "sha256": "ebc8aabff5296ecf4dd01a58430c990556edb7ff631c8bcd2abfd42961f8416a",
+      "baseStartOffset": 23977,
+      "status": "waived",
+      "text": "?.render",
+      "reason": "Unchanged historical format renderability, diagnostic or profile label; all newly admitted depth/layer operands execute separately."
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 365,
+      "startOffset": 24372,
+      "endOffset": 24380,
+      "sha256": "ebc8aabff5296ecf4dd01a58430c990556edb7ff631c8bcd2abfd42961f8416a",
+      "baseStartOffset": 24037,
+      "status": "waived",
+      "text": "?.render",
+      "reason": "Unchanged historical format renderability, diagnostic or profile label; all newly admitted depth/layer operands execute separately."
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 365,
+      "startOffset": 24498,
+      "endOffset": 24506,
+      "sha256": "ebc8aabff5296ecf4dd01a58430c990556edb7ff631c8bcd2abfd42961f8416a",
+      "baseStartOffset": 24163,
+      "status": "waived",
+      "text": "?.render",
+      "reason": "Unchanged historical format renderability, diagnostic or profile label; all newly admitted depth/layer operands execute separately."
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 365,
+      "startOffset": 24563,
+      "endOffset": 24571,
+      "sha256": "ebc8aabff5296ecf4dd01a58430c990556edb7ff631c8bcd2abfd42961f8416a",
+      "baseStartOffset": 24228,
+      "status": "waived",
+      "text": "?.render",
+      "reason": "Unchanged historical format renderability, diagnostic or profile label; all newly admitted depth/layer operands execute separately."
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 365,
+      "startOffset": 24943,
+      "endOffset": 25019,
+      "sha256": "d6ba33ee1eb4909b199a3be4ef4c0c0f2f39bda9f931346ddc226d609025d358",
+      "baseStartOffset": 24588,
+      "status": "waived",
+      "text": "? \"Only qualified 2D image levels or level-zero Z16 surfaces are supported.\"",
+      "reason": "Unchanged historical format renderability, diagnostic or profile label; all newly admitted depth/layer operands execute separately."
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 48867,
+      "endOffset": 48902,
+      "sha256": "f9e8e66890cbe42c0c726c91a947cbf76115e9e9c292cd61cb322ef2c4d096f8",
+      "baseStartOffset": 48036,
+      "status": "waived",
+      "text": "? STANDARD_DIMENSIONAL_VIEW_PROFILE",
+      "reason": "Unchanged historical format renderability, diagnostic or profile label; all newly admitted depth/layer operands execute separately."
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 48917,
+      "endOffset": 48947,
+      "sha256": "f918e9fa57d8b69f8db140b411f5b8b36a9f40a235f3c2920af2e6c816b82b7f",
+      "baseStartOffset": 48086,
+      "status": "waived",
+      "text": "? STANDARD_DIMENSIONAL_PROFILE",
+      "reason": "Unchanged historical format renderability, diagnostic or profile label; all newly admitted depth/layer operands execute separately."
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 48965,
+      "endOffset": 48998,
+      "sha256": "7fe6e0a2179ad13fac73ae9ddacd0da60fe2033b96744f894af22ccba2d42feb",
+      "baseStartOffset": 48134,
+      "status": "waived",
+      "text": "? STANDARD_SHADOW_SAMPLER_PROFILE",
+      "reason": "Unchanged historical format renderability, diagnostic or profile label; all newly admitted depth/layer operands execute separately."
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 49009,
+      "endOffset": 49035,
+      "sha256": "ddfd94c82428f1de42e696341da2071c0b7f7f9fe860bf920e4b14684f661aa4",
+      "baseStartOffset": 48178,
+      "status": "waived",
+      "text": "? STANDARD_STENCIL_PROFILE",
+      "reason": "Unchanged historical format renderability, diagnostic or profile label; all newly admitted depth/layer operands execute separately."
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 49050,
+      "endOffset": 49087,
+      "sha256": "5d19050bfddd47cda4c2574fa0d93a10863e30abeb0873f844e184f389ececc9",
+      "baseStartOffset": 48219,
+      "status": "waived",
+      "text": "? STANDARD_PACKED_DEPTH_IMAGE_PROFILE",
+      "reason": "Unchanged historical format renderability, diagnostic or profile label; all newly admitted depth/layer operands execute separately."
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 49101,
+      "endOffset": 49137,
+      "sha256": "bddb2ac2e7692f5c661a6db7000c719a4905758a2a02ef97ccbf6b4bd69b1b2b",
+      "baseStartOffset": 48270,
+      "status": "waived",
+      "text": "? STANDARD_UNORM_DEPTH_IMAGE_PROFILE",
+      "reason": "Unchanged historical format renderability, diagnostic or profile label; all newly admitted depth/layer operands execute separately."
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 49154,
+      "endOffset": 49193,
+      "sha256": "079525438cfaade1d2a839e590edcaad1e12034661c46def7eb734ef03339267",
+      "baseStartOffset": 48323,
+      "status": "waived",
+      "text": "? STANDARD_FLOATING_DEPTH_IMAGE_PROFILE",
+      "reason": "Unchanged historical format renderability, diagnostic or profile label; all newly admitted depth/layer operands execute separately."
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 49205,
+      "endOffset": 49245,
+      "sha256": "f35eb4f00aa01bb3514bb5fab4157360a2b9ea3b7707e711d8eee1e50572c0d4",
+      "baseStartOffset": 48374,
+      "status": "waived",
+      "text": "? STANDARD_PACKED_UNSIGNED_IMAGE_PROFILE",
+      "reason": "Unchanged historical format renderability, diagnostic or profile label; all newly admitted depth/layer operands execute separately."
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 49259,
+      "endOffset": 49301,
+      "sha256": "c64b336d260dfb072c6726d5dbfbd97b92a171ea9b1d1823f3168b9b0ba90676",
+      "baseStartOffset": 48428,
+      "status": "waived",
+      "text": "? STANDARD_PACKED_NORMALIZED_IMAGE_PROFILE",
+      "reason": "Unchanged historical format renderability, diagnostic or profile label; all newly admitted depth/layer operands execute separately."
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 49319,
+      "endOffset": 49352,
+      "sha256": "31a6fa7dd48ede5f573cf8de14cab5a2fd58d26ab914acee027e1b81b30980c2",
+      "baseStartOffset": 48488,
+      "status": "waived",
+      "text": "? STANDARD_MULTIPLE_COLOR_PROFILE",
+      "reason": "Unchanged historical format renderability, diagnostic or profile label; all newly admitted depth/layer operands execute separately."
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 49364,
+      "endOffset": 49396,
+      "sha256": "d4fe3a0e88993da5ef8bedb0d3a3fd3c80f2c46176e9cffccbcf9613a992d87a",
+      "baseStartOffset": 48533,
+      "status": "waived",
+      "text": "? STANDARD_INTEGER_IMAGE_PROFILE",
+      "reason": "Unchanged historical format renderability, diagnostic or profile label; all newly admitted depth/layer operands execute separately."
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 49406,
+      "endOffset": 49446,
+      "sha256": "344dbb24902a1267126b8e406eac21975b6e06e94d98ed81c1b4697ab9d477a2",
+      "baseStartOffset": 48575,
+      "status": "waived",
+      "text": "? STANDARD_SHARED_EXPONENT_IMAGE_PROFILE",
+      "reason": "Unchanged historical format renderability, diagnostic or profile label; all newly admitted depth/layer operands execute separately."
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 49456,
+      "endOffset": 49493,
+      "sha256": "fa04dcdeab835e0423ba8c2f5b2cb3b8c4a1ff0194b4b8d71946a33291baa6aa",
+      "baseStartOffset": 48625,
+      "status": "waived",
+      "text": "? STANDARD_PACKED_FLOAT_IMAGE_PROFILE",
+      "reason": "Unchanged historical format renderability, diagnostic or profile label; all newly admitted depth/layer operands execute separately."
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 49503,
+      "endOffset": 49533,
+      "sha256": "a8b0cde1337757cc664b2a82b9c3949f4755425f9d9308874b2b5fd4e2c79e88",
+      "baseStartOffset": 48672,
+      "status": "waived",
+      "text": "? STANDARD_FLOAT_IMAGE_PROFILE",
+      "reason": "Unchanged historical format renderability, diagnostic or profile label; all newly admitted depth/layer operands execute separately."
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 49543,
+      "endOffset": 49567,
+      "sha256": "96892ec181e0eaf3d7e7b1fe0ce40f58f38f9d71bd28ecc951d5be89bd398fba",
+      "baseStartOffset": 48712,
+      "status": "waived",
+      "text": "? STANDARD_COLOR_PROFILE",
+      "reason": "Unchanged historical format renderability, diagnostic or profile label; all newly admitted depth/layer operands execute separately."
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 49577,
+      "endOffset": 49601,
+      "sha256": "74ab93e7219c27a450340065f97cbf1b59cf59c57a97ebcf78757d409a706826",
+      "baseStartOffset": 48746,
+      "status": "waived",
+      "text": "? STANDARD_IMAGE_PROFILE",
+      "reason": "Unchanged historical format renderability, diagnostic or profile label; all newly admitted depth/layer operands execute separately."
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 49613,
+      "endOffset": 49639,
+      "sha256": "4d13bd46692aa649d4b4ef987c617f7a30561ee328303d9995aa477e7a5d032e",
+      "baseStartOffset": 48782,
+      "status": "waived",
+      "text": "? STANDARD_TEXTURE_PROFILE",
+      "reason": "Unchanged historical format renderability, diagnostic or profile label; all newly admitted depth/layer operands execute separately."
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 49650,
+      "endOffset": 49676,
+      "sha256": "10ffc846cb82147cab40ba03de7ba0686d401f0866581a507d2d4cc9ea402fec",
+      "baseStartOffset": 48819,
+      "status": "waived",
+      "text": "? STANDARD_UNIFORM_PROFILE",
+      "reason": "Unchanged historical format renderability, diagnostic or profile label; all newly admitted depth/layer operands execute separately."
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "line": 748,
+      "startOffset": 49688,
+      "endOffset": 49706,
+      "sha256": "0fc6768def01675527ab6952af0a040bb5931f3923d9e7818e3c998a198f05af",
+      "baseStartOffset": 48857,
+      "status": "waived",
+      "text": "? STANDARD_PROFILE",
+      "reason": "Unchanged historical format renderability, diagnostic or profile label; all newly admitted depth/layer operands execute separately."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 30511,
+      "endOffset": 30558,
+      "sha256": "e403e4c0d1a1c8207cdf15af04e21d74c00c0ee7324373613f8042d342fc5ee6",
+      "baseStartOffset": 29855,
+      "status": "waived",
+      "text": "? STANDARD_DIMENSIONAL_DEPTH_VIEW_ASYNC_PROFILE",
+      "reason": "Unchanged historical profile/decoder/kind selection; no added operation or format admission is contained here."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 30578,
+      "endOffset": 30619,
+      "sha256": "0ea2f9c045064167c8300d761b35aa42470670354153a31631321db1ca483aa6",
+      "baseStartOffset": 29922,
+      "status": "waived",
+      "text": "? STANDARD_DIMENSIONAL_VIEW_ASYNC_PROFILE",
+      "reason": "Unchanged historical profile/decoder/kind selection; no added operation or format admission is contained here."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 30634,
+      "endOffset": 30670,
+      "sha256": "fa1bbacf7de64f445f64b55c0bdf41fe4030ad5c6c6e2f16672432497a4536a7",
+      "baseStartOffset": 29978,
+      "status": "waived",
+      "text": "? STANDARD_DIMENSIONAL_ASYNC_PROFILE",
+      "reason": "Unchanged historical profile/decoder/kind selection; no added operation or format admission is contained here."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 30688,
+      "endOffset": 30727,
+      "sha256": "24d92a468689a135308ab5306c83aef77d0bf59052d431569a8bd25330ece7ed",
+      "baseStartOffset": 30032,
+      "status": "waived",
+      "text": "? STANDARD_SHADOW_SAMPLER_ASYNC_PROFILE",
+      "reason": "Unchanged historical profile/decoder/kind selection; no added operation or format admission is contained here."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 30743,
+      "endOffset": 30785,
+      "sha256": "ee7ac8ab9959e92e32936f9642fdda30a14f646d4f914003ae16cc821c7ab59e",
+      "baseStartOffset": 30087,
+      "status": "waived",
+      "text": "? STANDARD_INSTANCED_STENCIL_ASYNC_PROFILE",
+      "reason": "Unchanged historical profile/decoder/kind selection; no added operation or format admission is contained here."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 30803,
+      "endOffset": 30843,
+      "sha256": "6129e8ad06a78bbeea38003c3ee3bc0a69a5e2ef89d0de205c4c361fea676bec",
+      "baseStartOffset": 30147,
+      "status": "waived",
+      "text": "? STANDARD_ORDERED_STENCIL_ASYNC_PROFILE",
+      "reason": "Unchanged historical profile/decoder/kind selection; no added operation or format admission is contained here."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 30854,
+      "endOffset": 30886,
+      "sha256": "eabf3a54cb12a358d463a55037d7987b57a0bcff4f20c8813b84ecb1d59eca4b",
+      "baseStartOffset": 30198,
+      "status": "waived",
+      "text": "? STANDARD_STENCIL_ASYNC_PROFILE",
+      "reason": "Unchanged historical profile/decoder/kind selection; no added operation or format admission is contained here."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 30901,
+      "endOffset": 30944,
+      "sha256": "21a9b8c435fb7e408ec43abe8d40d9f65c1d4416228e38fa5e64b41bc7b9fac8",
+      "baseStartOffset": 30245,
+      "status": "waived",
+      "text": "? STANDARD_PACKED_DEPTH_IMAGE_ASYNC_PROFILE",
+      "reason": "Unchanged historical profile/decoder/kind selection; no added operation or format admission is contained here."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 30958,
+      "endOffset": 31000,
+      "sha256": "9d2db2a0a6cf7f1381eec000325e4acc1acc178ace0069051aea7d0b951e8087",
+      "baseStartOffset": 30302,
+      "status": "waived",
+      "text": "? STANDARD_UNORM_DEPTH_IMAGE_ASYNC_PROFILE",
+      "reason": "Unchanged historical profile/decoder/kind selection; no added operation or format admission is contained here."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 31017,
+      "endOffset": 31062,
+      "sha256": "a23eac3dd00ded8f563e74d74b53578fb54e21e735f1564180e6b62c764c532f",
+      "baseStartOffset": 30361,
+      "status": "waived",
+      "text": "? STANDARD_FLOATING_DEPTH_IMAGE_ASYNC_PROFILE",
+      "reason": "Unchanged historical profile/decoder/kind selection; no added operation or format admission is contained here."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 31074,
+      "endOffset": 31120,
+      "sha256": "5c6f2db32d298be644322d1b74c1f974b0796354b1607f500fb88d8baa3c699f",
+      "baseStartOffset": 30418,
+      "status": "waived",
+      "text": "? STANDARD_PACKED_UNSIGNED_IMAGE_ASYNC_PROFILE",
+      "reason": "Unchanged historical profile/decoder/kind selection; no added operation or format admission is contained here."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 31134,
+      "endOffset": 31182,
+      "sha256": "c4d0de16e59c910e5731fbb0d826c9ccf7582e14bfbea89fe2da7258b8883c14",
+      "baseStartOffset": 30478,
+      "status": "waived",
+      "text": "? STANDARD_PACKED_NORMALIZED_IMAGE_ASYNC_PROFILE",
+      "reason": "Unchanged historical profile/decoder/kind selection; no added operation or format admission is contained here."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 31200,
+      "endOffset": 31239,
+      "sha256": "6d9226dc1594e2b3edb5e1a6e647d97bb6eaec8b1b6cd0b53f1ad505ec98fda6",
+      "baseStartOffset": 30544,
+      "status": "waived",
+      "text": "? STANDARD_MULTIPLE_COLOR_ASYNC_PROFILE",
+      "reason": "Unchanged historical profile/decoder/kind selection; no added operation or format admission is contained here."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 31251,
+      "endOffset": 31289,
+      "sha256": "0be4d58e5c1c33e74791fd71f03e2b32d450b3c9906aaa5cf2660b0a6f71fd2b",
+      "baseStartOffset": 30595,
+      "status": "waived",
+      "text": "? STANDARD_INTEGER_IMAGE_ASYNC_PROFILE",
+      "reason": "Unchanged historical profile/decoder/kind selection; no added operation or format admission is contained here."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 31299,
+      "endOffset": 31345,
+      "sha256": "fe1064e94c93f020e8d8a93ddd33a02e3605560a435bebb607afdcfabc0bddad",
+      "baseStartOffset": 30643,
+      "status": "waived",
+      "text": "? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE",
+      "reason": "Unchanged historical profile/decoder/kind selection; no added operation or format admission is contained here."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 31355,
+      "endOffset": 31398,
+      "sha256": "63091f477c1023e5ad6ab8b618cc9efb8b02cc8e1b639399e10a7afa58f6994c",
+      "baseStartOffset": 30699,
+      "status": "waived",
+      "text": "? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE",
+      "reason": "Unchanged historical profile/decoder/kind selection; no added operation or format admission is contained here."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 31408,
+      "endOffset": 31444,
+      "sha256": "339c666b9c4993b6384c3f57715d5e50365eb18a826c081777fe413a79425598",
+      "baseStartOffset": 30752,
+      "status": "waived",
+      "text": "? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE",
+      "reason": "Unchanged historical profile/decoder/kind selection; no added operation or format admission is contained here."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 31465,
+      "endOffset": 31497,
+      "sha256": "8075b4886e02b83ca5535cdb74d4bfce81347d4cab0eaae73c3c8810c610c094",
+      "baseStartOffset": 30809,
+      "status": "waived",
+      "text": "? STANDARD_TEXTURE_ASYNC_PROFILE",
+      "reason": "Unchanged historical profile/decoder/kind selection; no added operation or format admission is contained here."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 31507,
+      "endOffset": 31537,
+      "sha256": "dfbe4e8be5594adaeccc77c749566fceb23d3bca372ff0f9ccb6606d0ea0697e",
+      "baseStartOffset": 30851,
+      "status": "waived",
+      "text": "? STANDARD_COLOR_ASYNC_PROFILE",
+      "reason": "Unchanged historical profile/decoder/kind selection; no added operation or format admission is contained here."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 31547,
+      "endOffset": 31577,
+      "sha256": "912e452d966a99d17f196b2799a6e9bb0de68a007c90e64bd0ac93b70c313483",
+      "baseStartOffset": 30891,
+      "status": "waived",
+      "text": "? STANDARD_IMAGE_ASYNC_PROFILE",
+      "reason": "Unchanged historical profile/decoder/kind selection; no added operation or format admission is contained here."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 31592,
+      "endOffset": 31623,
+      "sha256": "1a19d3ded211ddae9cdf06e15b2e7a4846010daee3b14bbc5f3336bdc036ccb6",
+      "baseStartOffset": 30936,
+      "status": "waived",
+      "text": "? STANDARD_BUFFER_ASYNC_PROFILE",
+      "reason": "Unchanged historical profile/decoder/kind selection; no added operation or format admission is contained here."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 31634,
+      "endOffset": 31666,
+      "sha256": "7d0787236709efe243b36695b1bb21b4a6e71a76fe6e03294b2e9e269d55daf4",
+      "baseStartOffset": 30978,
+      "status": "waived",
+      "text": "? STANDARD_UNIFORM_ASYNC_PROFILE",
+      "reason": "Unchanged historical profile/decoder/kind selection; no added operation or format admission is contained here."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 31678,
+      "endOffset": 31702,
+      "sha256": "927dcd764e1ac0d043338364935dd086c09007ff4430ad420aefa6a2382368a3",
+      "baseStartOffset": 31022,
+      "status": "waived",
+      "text": "? STANDARD_ASYNC_PROFILE",
+      "reason": "Unchanged historical profile/decoder/kind selection; no added operation or format admission is contained here."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 396,
+      "startOffset": 31734,
+      "endOffset": 31774,
+      "sha256": "68b158f67e33f2c9b14a96d8469543b26f627720daa6770bd4d04227362cbb53",
+      "baseStartOffset": 31078,
+      "status": "waived",
+      "text": ": drawing ? DRAW_PROFILE : STATE_PROFILE",
+      "reason": "Unchanged historical profile/decoder/kind selection; no added operation or format admission is contained here."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 32045,
+      "endOffset": 32086,
+      "sha256": "9a294c81aeadf6f359cc677d37f48528681e50167f4eed8029a053d25d4a5cae",
+      "baseStartOffset": 31312,
+      "status": "waived",
+      "text": "? decodeStandardDimensionalViewSubmission",
+      "reason": "Unchanged historical profile/decoder/kind selection; no added operation or format admission is contained here."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 32101,
+      "endOffset": 32138,
+      "sha256": "643f9dd162c157ca8ecb3f61799b2a3ebc80872fe6806168efe747b98fc0806a",
+      "baseStartOffset": 31368,
+      "status": "waived",
+      "text": "? decodeStandardDimensionalSubmission",
+      "reason": "Unchanged historical profile/decoder/kind selection; no added operation or format admission is contained here."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 32156,
+      "endOffset": 32195,
+      "sha256": "24e235e21a9d18d0e46d4a5e1963d43cb0baf3ef4d4fc662b60ad3d071194b1f",
+      "baseStartOffset": 31423,
+      "status": "waived",
+      "text": "? decodeStandardShadowSamplerSubmission",
+      "reason": "Unchanged historical profile/decoder/kind selection; no added operation or format admission is contained here."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 32206,
+      "endOffset": 32239,
+      "sha256": "95cfa116e020c8b7fb9d3119daa20eb6e73d1e5c843b16fc5fb4d06d8777ecc9",
+      "baseStartOffset": 31473,
+      "status": "waived",
+      "text": "? decodeStandardStencilSubmission",
+      "reason": "Unchanged historical profile/decoder/kind selection; no added operation or format admission is contained here."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 32254,
+      "endOffset": 32296,
+      "sha256": "b54d84f59a82cdab7957f57108b3f4bea3ba93d3c7922c2e7b52bfd9f3b9b0d3",
+      "baseStartOffset": 31521,
+      "status": "waived",
+      "text": "? decodeStandardPackedDepthImageSubmission",
+      "reason": "Unchanged historical profile/decoder/kind selection; no added operation or format admission is contained here."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 32310,
+      "endOffset": 32351,
+      "sha256": "9f7bd841fa0d1479d993c8b3b51041e5094c91fd423e330fbfbd3d3307df2da2",
+      "baseStartOffset": 31577,
+      "status": "waived",
+      "text": "? decodeStandardUnormDepthImageSubmission",
+      "reason": "Unchanged historical profile/decoder/kind selection; no added operation or format admission is contained here."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 32368,
+      "endOffset": 32412,
+      "sha256": "cf15f2801d0e0e64eea0e17431691daacaa2f68331930f021511732964781032",
+      "baseStartOffset": 31635,
+      "status": "waived",
+      "text": "? decodeStandardFloatingDepthImageSubmission",
+      "reason": "Unchanged historical profile/decoder/kind selection; no added operation or format admission is contained here."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 32424,
+      "endOffset": 32469,
+      "sha256": "7f6439a35bdbb8c73ebf5db6e10815c1bbb29e4bd004df90efa0e7c3d4e290b1",
+      "baseStartOffset": 31691,
+      "status": "waived",
+      "text": "? decodeStandardPackedUnsignedImageSubmission",
+      "reason": "Unchanged historical profile/decoder/kind selection; no added operation or format admission is contained here."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 32483,
+      "endOffset": 32530,
+      "sha256": "2d180d0306d952f1cb2632cade622ef50c57d60bbac1ed035c0505204a147a46",
+      "baseStartOffset": 31750,
+      "status": "waived",
+      "text": "? decodeStandardPackedNormalizedImageSubmission",
+      "reason": "Unchanged historical profile/decoder/kind selection; no added operation or format admission is contained here."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 32548,
+      "endOffset": 32587,
+      "sha256": "ddd0bb42849d66f8d6fea8b47123643d820079a6f25889dd6cdec46d71f22d5d",
+      "baseStartOffset": 31815,
+      "status": "waived",
+      "text": "? decodeStandardMultipleColorSubmission",
+      "reason": "Unchanged historical profile/decoder/kind selection; no added operation or format admission is contained here."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 32599,
+      "endOffset": 32637,
+      "sha256": "b02d69c15f1b8a4dbf8e9c412c0a3d9d6c2a9bf83fc0588bf003b3401a7035e6",
+      "baseStartOffset": 31866,
+      "status": "waived",
+      "text": "? decodeStandardIntegerImageSubmission",
+      "reason": "Unchanged historical profile/decoder/kind selection; no added operation or format admission is contained here."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 32647,
+      "endOffset": 32692,
+      "sha256": "ddadb1fc6a31a7ec6c0e728d65faae5f00b7c83fc54b0eb13db7ca75bac49353",
+      "baseStartOffset": 31914,
+      "status": "waived",
+      "text": "? decodeStandardSharedExponentImageSubmission",
+      "reason": "Unchanged historical profile/decoder/kind selection; no added operation or format admission is contained here."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 32702,
+      "endOffset": 32744,
+      "sha256": "3909dc14313a4da3ef6b35afd40788e14cdf176d2d366db210344f47ad341072",
+      "baseStartOffset": 31969,
+      "status": "waived",
+      "text": "? decodeStandardPackedFloatImageSubmission",
+      "reason": "Unchanged historical profile/decoder/kind selection; no added operation or format admission is contained here."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 32754,
+      "endOffset": 32790,
+      "sha256": "30574b7a5b1f4b9fd20b4f9856bb3d0a0298751f9274c74bd39dae01863172c3",
+      "baseStartOffset": 32021,
+      "status": "waived",
+      "text": "? decodeStandardFloatImageSubmission",
+      "reason": "Unchanged historical profile/decoder/kind selection; no added operation or format admission is contained here."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 32800,
+      "endOffset": 32831,
+      "sha256": "48bd49d46d774525f1023a07e3bc2056872ff869ab64fceff85697b6190d14fc",
+      "baseStartOffset": 32067,
+      "status": "waived",
+      "text": "? decodeStandardColorSubmission",
+      "reason": "Unchanged historical profile/decoder/kind selection; no added operation or format admission is contained here."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 32841,
+      "endOffset": 32872,
+      "sha256": "95fbedfda888f4ac5baa048d96a63ca1557db76e7e139ec21750d135a78e37fc",
+      "baseStartOffset": 32108,
+      "status": "waived",
+      "text": "? decodeStandardImageSubmission",
+      "reason": "Unchanged historical profile/decoder/kind selection; no added operation or format admission is contained here."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 32883,
+      "endOffset": 32916,
+      "sha256": "45816024be80c00ed9573cfbd5f071613907f62bcd6d7296a1717ef0c1278fce",
+      "baseStartOffset": 32150,
+      "status": "waived",
+      "text": "? decodeStandardUniformSubmission",
+      "reason": "Unchanged historical profile/decoder/kind selection; no added operation or format admission is contained here."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 397,
+      "startOffset": 32928,
+      "endOffset": 32954,
+      "sha256": "e37009c7f2986685b08a1b10007dac66dfd15f3a3386367fc995944901602637",
+      "baseStartOffset": 32195,
+      "status": "waived",
+      "text": "? decodeStandardSubmission",
+      "reason": "Unchanged historical profile/decoder/kind selection; no added operation or format admission is contained here."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 599,
+      "startOffset": 52024,
+      "endOffset": 52035,
+      "sha256": "3aa6b1c8b1fba810c7f73aec34efb14e144a8ebbf9b440579592540c24ba8d38",
+      "baseStartOffset": 51247,
+      "status": "waived",
+      "text": ": \"texture\"",
+      "reason": "Unchanged historical profile/decoder/kind selection; no added operation or format admission is contained here."
+    }
+  ],
+  "deployment": {
+    "id": "9724effa-3c8e-42ba-996a-1edf07049acb",
+    "sourceHead": "2f1e09f52ef3529b591887a08721fb234e77e500",
+    "servedBodies": 192,
+    "passed": 127,
+    "failed": 0,
+    "browserErrors": 0,
+    "partialMarker": true,
+    "proofExportsAbsent": true,
+    "defaultWasmUnchanged": true,
+    "defaultWasmSha256": "d45b575207e0035b5c518698e7b6793b2bf12da635531723fad70813a5956c36",
+    "productionGraphicsAuthority": false,
+    "reportSha256": "b940038347f3bcd2db13a5a90942163b6412474cf0d818a07bee12057f6e54cf",
+    "cliReceiptSha256": "b4b81170d9319bc8c7f4cd1ef859a0c51fb42120183d8a0dc94f8ce20e8a9ede",
+    "screenshotSha256": "fe5ff2574aae47b1c427beda8134d20f969f430dbb981b8cfcc30edbbe391e35",
+    "carriedBootManifests": [
+      {
+        "path": "artifacts.json",
+        "sourceSha256": "9448cba61163eab896c1a80ec166274f552f5bbc847b83f7d69025f00a95b8cf",
+        "stagedSha256": "c2a325fde02d8dbe84674699336441462eb0d891ba7793d53261986fdbaec404",
+        "boundary": "unchanged authenticated D55 content-addressed boot URLs"
+      },
+      {
+        "path": "artifacts-alpine.json",
+        "sourceSha256": "72843b6eebb9b482f1ffba392872d24824ca7465a09d1b4bec257d02a93a1ece",
+        "stagedSha256": "a3e5e51a69fcda662579d367d5b46fab295ab8bebad4d38155afa3b51c034b6c",
+        "boundary": "unchanged authenticated D55 content-addressed boot URLs"
+      },
+      {
+        "path": "artifacts-node-alpine.json",
+        "sourceSha256": "84dd4084dc7ef21e0054aa819fa3694b744ea93d013d8d8bc2c951cf9b8c8857",
+        "stagedSha256": "ab1338d6f7b54bf96b2b503aa3e12e3bc72f9de2fd7f2a40728f3cefe2fe6caf",
+        "boundary": "unchanged authenticated D55 content-addressed boot URLs"
+      },
+      {
+        "path": "artifacts-omarchy.json",
+        "sourceSha256": "935dcf06755da8c14ddf8b178e2eb8919d63b034979d578617df8b163c2360bf",
+        "stagedSha256": "0fa46b08b90179bb11f6a451f86959908089f73afa19c99580f28360b7b8c22a",
+        "boundary": "unchanged authenticated D55 content-addressed boot URLs"
+      }
+    ],
+    "stagedFiles": 639,
+    "legacyAssetWaiver": "docs-mount.js is an unchanged, authenticated prior deployment asset, absent from the new frozen source and unserved in the canonical run. No executable D64 change is carried in it."
+  }
+}

@@ -1,0 +1,82 @@
+[
+  {
+    "name": "native-calls-float",
+    "rejected": true,
+    "message": "nonnegative JSON integer: native.stats.calls"
+  },
+  {
+    "name": "native-maxsingle-float",
+    "rejected": true,
+    "message": "nonnegative JSON integer: native.stats.maxSingleResultBytes"
+  },
+  {
+    "name": "native-maxpair-float",
+    "rejected": true,
+    "message": "nonnegative JSON integer: native.stats.maxPairResultBytes"
+  },
+  {
+    "name": "native-flow-float",
+    "rejected": true,
+    "message": "nonnegative JSON integer: native.flow.arenaBytes"
+  },
+  {
+    "name": "native-count-bool",
+    "rejected": true,
+    "message": "exact mandatory signed raw-word constraint"
+  },
+  {
+    "name": "native-extent-float",
+    "rejected": true,
+    "message": "exact mandatory signed raw-word constraint"
+  },
+  {
+    "name": "native-source-bytes-float",
+    "rejected": true,
+    "message": "current source identity"
+  },
+  {
+    "name": "native-allocation-counter-bool",
+    "rejected": true,
+    "message": "all sixteen actual loop allocations and transaction errors"
+  },
+  {
+    "name": "native-llvm-region-float",
+    "rejected": true,
+    "message": "nonnegative JSON integer: LLVM function region positions and counts"
+  },
+  {
+    "name": "native-llvm-region-bool",
+    "rejected": true,
+    "message": "nonnegative JSON integer: LLVM function region positions and counts"
+  },
+  {
+    "name": "wasm-calls-float",
+    "rejected": true,
+    "message": "independent exact call/recovery/output accounting"
+  },
+  {
+    "name": "wasm-memory-float",
+    "rejected": true,
+    "message": "same fixed Wasm memory throughout every recorded call"
+  },
+  {
+    "name": "wasm-schedule-bool",
+    "rejected": true,
+    "message": "bounded real allocator pressure matrix"
+  },
+  {
+    "name": "wasm-capacity-float",
+    "rejected": true,
+    "message": "real bounded malloc capacity record"
+  },
+  {
+    "name": "wasm-source-bytes-float",
+    "rejected": true,
+    "message": "exact Wasm runtime/harness identities and bounds"
+  },
+  {
+    "name": "wasm-ownership-ok-int",
+    "rejected": true,
+    "message": "complete owned request/result observations"
+  }
+]

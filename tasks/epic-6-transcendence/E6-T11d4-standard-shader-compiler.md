@@ -1,0 +1,477 @@
+---
+id: E6-T11d4
+epic: 6
+title: Compile bounded ordinary guest shaders with standard WebGL2 semantics
+priority: 525.027037
+status: verified
+depends_on: [E6-T11d3]
+estimate: S
+risk: high
+capstone: false
+---
+
+## Boundary
+
+Add a separate host-selected standard shader compiler facet around the pinned
+VirGL TGSI-to-ESSL translator and parser. Bound the complete grammar before the
+general upstream parser, check its independently derived interface metadata,
+then emit standard ESSL with typed word storage. Integer/untyped temporaries,
+MOV/UCMP and flat interfaces must retain 32-bit words without float storage
+canonicalizing NaN encodings. Actual floating operations use native highp math;
+scalar TGSI results replicate the first swizzled lane. Keep metadata owned.
+It is compilation admission, not an exact numerical certificate. Preserve the
+existing ordinary/raw/private entry points and their exact admission/results;
+no guest packet or supplied fact may choose or weaken that old proof facet.
+
+The new facet admits ordinary uniform-fed floating operations, boolean/integer
+lowerings and structured flow within its closed supported token set. It covers
+the pinned complete original sources, scalar/vector masks and modifiers,
+bounded constant/register/IO/sampler declarations and independent interstage
+matching. Compilation resources and stack/heap/output stay fixed and checked.
+Unknown stages/opcodes/properties/files, memory operations and excessive text,
+indices, depth or resource extent fail without partial GLSL/metadata. Native
+and Wasm results are deterministic and recover after malformed/allocation cases.
+The new facet states its standard precision and undefined-domain rules plainly;
+it grants no bit-exact/private/precondition authority and no positive capsets.
+
+Production state integration and actual texture/storage/draw semantics remain
+ordered successors. This isolated compiler does not claim a guest boot, full
+API support, bounded GPU execution time or graphics throughput.
+
+## Deterministic acceptance
+
+`make verify-E6-T11d4` authenticates pinned source/image/ABI context and executes
+the new guarded public C and actual fixed-memory Wasm entry points. Record
+native and ASan/UBSan bounds/malformed/allocation/recovery tests with independent
+seeds, exact native/Wasm outputs, complete original captured sources, each
+accepted token/property/declaration family and both sides of every declared
+limit. Cross-check emitted metadata against separately decoded pinned TGSI
+records rather than trusting the bridge output as its own expected value.
+
+Compile the complete captured programs on the headed hardware WebGL2 context;
+link actual fragment-derived smooth/flat interfaces and physically draw a
+bounded independently specified set, including ordinary dynamic SIN/EX2/LG2/
+POW, nonuniform scalar replication, every admitted arithmetic/comparison word
+family, literal NaN-mask custody, flat raw-word transport, default constant
+banks, nontrivial masks/swizzles, branches and partial IO.
+Record actual uploaded bytes, emitted sources, reflection, full pixel bytes and
+independent mathematical pixel expectations with specified precision budgets.
+Exercise original full compositor programs through this general facet without
+private exact tuples/source pins/geometry specialization granting admission.
+
+A real emitter/native-operation mutation must fail the independent physical
+oracle. Preserve exact legacy/raw/private acceptance/results at representative
+anchors and affected existing compiler gates. At the frozen source run the
+submission gate once, one final pristine exact-head clone, seal source/input/
+output/coverage/browser evidence, and submit to a fresh adversarial verifier.
+No production demo imports or capabilities change in this isolated slice.
+
+## Adversarial verification
+
+Predict specific admitted dynamic operations and actual GPU values before
+inspection. Attack oversized/wrapped/ranged/multidimensional/indirect register
+fields, stage or IO mismatch, semantic collisions, unknown and partial token
+consumption, immediate literal limits, depth/labels/flow balance, allocation
+failure and stale response/input ownership. Cover every changed runtime hunk
+with deterministic evidence or a narrowly justified waiver. Probe a separately
+chosen well-defined dynamic shader and sabotage the promoted oracle once.
+Check that no new facet result is confused with an old exact or conditional
+contract; existing private rejection/results must carry unchanged.
+
+## Verification log
+
+### 2026-10-09 — worker — implemented; frozen declaration repairs
+
+Runtime/source and sealing head: `1c17b508d0dc52199613f4c4883486c477773203`. Commands:
+
+```sh
+VIRGL_STANDARD_SHADER_EVIDENCE_DIR=target/evidence/virgl-standard-shader-final-declaration-fixes make verify-E6-T11d4
+python3 tools/virgl-standard-shader/cold.py --output target/evidence/virgl-standard-shader-final-declaration-fixes-cold
+python3 tools/virgl-standard-shader/seal.py target/evidence/virgl-standard-shader-final-declaration-fixes target/evidence/virgl-standard-shader-final-declaration-fixes-cold evidence/virgl-standard-shader/declaration-repair
+```
+
+All exit zero. This new complete hot recording and final pristine exact-head
+clone demonstrate 669 independent native/sanitized/actual-Wasm cases, separately
+parsed TGSI metadata, 265 physical compiles/programs, 129 hardware GPU frames
+and 2,390,688 independently recomputed pixels. Both 512-vector banks execute
+with isolated zero declarations placed last. Unused SAMP/SVIEW declarations
+execute on both stages without requiring a texture. Used/unused mixtures and
+missing-declaration rejections preserve the separate declared/read masks.
+The fixed-memory/stack/allocation and retained ordinary/raw/private checks also
+pass. The actual SIN-to-COS emission mutation is independently caught.
+
+`evidence/virgl-standard-shader/declaration-repair/{manifest.json,records.json,recording.tar.gz}`
+seals 417 records and 15,479,457 compressed bytes. Archive
+SHA256 `40ea23d821e37165c6b54f54b7cb636e9418601b8b709dbb4bffc6658ac0b99d`; index
+`387063b8ea31ea8ab77d6b830d5c7a13a5ab9949a815418c46ce4b45dcd767c5`. Hot receipt
+`15ec02d8f017edac338f905bb4c817daf73cc518fe7cfbca1fc08a84375e4a09`; cold receipt
+`3c402acbecf99819614c82ae183e1b89ced721680f7e736a0ab21257b67634f0`; cold report
+`b82e974188460b4f05df5b6a944a0e4872cd05d500e925bcbcfe29d29c7c5fdc`. Sealing binds its actual helper bytes
+`0870c73ac8ee59700ed2fa286487e0de5e1f7f713ae700d47422becb0dd93ed5` at that same frozen head.
+The cold checkout is clean before and after its full acceptance with inherited
+compiler/RUST/CARGO/browser overrides scrubbed.
+
+The intermediate b233979a hot run's receipt found only an untracked, unused
+critic proposal in the shader source directory after every product check passed.
+The proposal was preserved in
+`target/evidence/virgl-standard-shader-review-proposals/standard-adversarial.mjs`;
+only affected browser recordings were repeated at the identical frozen b233979a
+head and its clean clone also passed. Those intermediate recordings remain
+immutable at `target/evidence/virgl-standard-shader-order-final-complete` and
+its `-cold` sibling. They are superseded for this final runtime claim by the
+new full submission above after the independently found unused-sampler repair.
+
+Prior critic HELD results carry only where their runtime/dependency boundary and
+evidence digest are unchanged. The new separate critic must falsify the repaired
+transactions and finish P10 changed-hunk/defensive coverage closure. This is an
+isolated standard compiler claim; production negotiation, full API, guest boot,
+GPU execution bounds and throughput remain unclaimed and gated.
+
+### 2026-10-09 — worker — unused sampler declaration repair
+
+The declaration-order repair at `b233979a` passes all 657 cases and 128 physical
+frames, including its clean exact-head run. A subsequent integration probe finds
+that legal unused SAMP/SVIEW declarations still reject: pinned upstream
+`vrend_shader.c:1896` calls the declaration mask `samplers_used`, while the
+standard guardian records actual TEX reads. The transaction now compares that
+upstream field to independently guarded declarations; public metadata still
+contains only independently decoded instruction reads. No sampler limit or
+undeclared-TEX check is relaxed. The matrix adds both stages, slots0/15,
+used/unused mixtures and missing SAMP/SVIEW rejection, plus a real paired draw
+with unused declarations in both stages. New runtime semantics require a new
+frozen submission and final exact-head clone before the fresh verdict.
+
+### 2026-10-09 — worker — declaration-order repair in progress
+
+Fresh refutation `6a81dbab` found a legitimate isolated CONST0 declaration after
+CONST511. The standard transaction now stably moves that complete two-token
+declaration before earlier constants. No register, property, immediate,
+instruction or label is rewritten; strict upstream/guardian maximum-extent
+checking remains enabled, and the legacy C boundary is unchanged. The expanded
+independent matrix contains 657 cases, including both stages, intervening
+declarations, descending ranges, all 512 declarations in both orders, sparse
+banks, no-zero/single-zero cases and duplicate/hole rejection. Three new physical
+paired draws exercise both 512-vector banks. These are worker self-validation
+until a frozen recording, exact-head cold clone and fresh verdict are submitted.
+
+### 2026-10-09 — worker — structural and physical self-validation
+
+The unmodified upstream float-temporary translation compiled every complete
+original but contradicted the independent 92cb corner-opacity oracle: at
+pixel (358,228) bank 0 expected alpha 0.00010340225773969997 and observed
+0.000000201957575995948. A separate 4×4 literal-mask probe confirmed
+that MOV of `0xffffffff` through a float temporary followed by NOT/UCMP chose
+the wrong branch (0.125 instead of 0.875, GL error 0 on M4 Max Metal).
+The new facet therefore owns a typed word emitter after the pinned guarded
+parser/interface transaction; it preserves raw integer custody and TGSI scalar
+replication. The old C runtime body and exact APIs are unchanged.
+
+Ephemeral self-validation at `target/evidence/virgl-standard-shader-draft/`
+passes 634 native/Wasm structural/limit cases, independent TGSI metadata,
+125 headed hardware draws and 2,390,624 independently recomputed pixel values,
+including all three complete 92cb banks and six c580 corner/discard draws.
+An actual SIN-to-COS emitted-operation mutation fails the physical oracle.
+These are development checks, not a frozen submission or verifier verdict.
+
+The first frozen recording at `bbfdfb36` passes the complete standard path and
+offline pixel audit. An ancillary ancient E6-T10a browser fixture then fails
+because it still expects text/GLSL/temp limits 16384/65536/117. The verified
+predecessor `97ed2ca3` already publishes 49152/262144/511 (and vertex slot127);
+the entire pre-existing C runtime body is byte-identical. This is a stale harness
+assertion, not a new runtime contradiction. The affected ordinary gate uses the
+current recorded original corpus instead: 19 unchanged bodies, 57 programs,
+1,536 independently checked vertex words and 155,648 physical pixels pass.
+No old runtime code or expected shader value is changed to clear the fixture.
+
+The second frozen recording at `d03edbd2` again passes the complete standard
+submission and current original corpus, then encounters the same obsolete limit
+assertion in the ancient raw-bit full-suite wrapper. The final retained raw path
+executes the unchanged authored MOV/AND/OR/NOT/SHL/USHR shader bodies and the
+unchanged independent BigInt reference on actual GPU banks spanning shift counts
+0, 1, 7, 15, 23, 31 and 32. It replaces only that ancillary obsolete wrapper;
+no numerical oracle, old shader source, profile or runtime body changes.
+
+The source-frozen `ea1c446d` hot submission passes all compiler, metadata, native/
+Wasm, 125-frame pixel, mutation and retained entry-point checks. Its first
+pristine clone exposes a harness portability defect: macOS's `/var` temporary
+alias and canonical `/private/var` module root produce an outside-repository
+relative input path. Canonicalizing both input and root paths fixes that bounded
+recording wrapper. Runtime and expected values remain unchanged; the final
+exact-head cold-clone proof is rerun because this was a portability failure.
+
+The `383f6fac` cold run also passes the full standard path and retained ordinary/
+raw probes. The ancillary retained raster generator then exposes a second
+portability dependency: its fixed predecessor directory needs both freshly
+generated geometry bytes and the JSON instruction/event provenance. The recipe
+now stages those same newly recorded artifacts at that fixed path and seals
+their hashes. It never copies old ignored evidence into a cold checkout.
+
+### 2026-10-09 — worker — implemented; frozen compiler submission
+
+Compiler/source head: `571c22593967e1cdae801d0c54ab0833d94b2c43`.
+Commands: `VIRGL_STANDARD_SHADER_EVIDENCE_DIR=target/evidence/virgl-standard-shader-final-complete make verify-E6-T11d4`;
+`python3 tools/virgl-standard-shader/cold.py --output target/evidence/virgl-standard-shader-final-complete-cold`;
+`python3 tools/virgl-standard-shader/seal.py target/evidence/virgl-standard-shader-final-complete target/evidence/virgl-standard-shader-final-complete-cold evidence/virgl-standard-shader`.
+The pristine exact-head clone is clean before and after acceptance, with inherited
+RUST/CARGO/compiler/browser overrides scrubbed. Both commands exit zero.
+
+The compiler recording demonstrates 634 independent native/sanitized/Wasm
+cases, separately parsed pinned TGSI metadata, actual allocation-site failures
+and exact recovery, fixed 16 MiB Wasm memory, 238 hardware compiles/programs,
+125 real GPU frames and 2,390,624 independently recomputed RGBA pixels. It
+executes all three full original 92cb banks and six c580 color/discard frames
+through the standard facet. An actual emitted SIN-to-COS mutation fails by
+0.398157 at the first pixel. Direct retained proofs pass 19 ordinary original
+bodies/57 programs, 42 original raw-bit frames, and both private original-pair
+paths. The pre-existing C body is byte-identical to verified `97ed2ca3`; its
+unchanged HELD semantic evidence carries forward. No guest boot, positive
+capset, complete API, GPU-time bound or graphics throughput is claimed.
+
+Evidence: `evidence/virgl-standard-shader/{manifest.json,records.json,recording.tar.gz}`
+seals 409 records, 15,363,226 compressed bytes. Archive SHA256
+`ee57339a1ce43d5f600a4d0d2c0e4bc47b361a189b78e1807cc31061225067b8`;
+index `a9a18780e726e13e0f6c883ce447e1c415314ff9d4b2604daa6273b5528bff2b`.
+Hot receipt `f2f3adf4665cda7f3a89b97fe79463df1f4fd325f5b0730098f30cf90b086497`;
+cold receipt `0f3dd8c91f66f8de021753922be3e65837345d7810be122e9cae670ae64a37ca`.
+
+The seal tool alone was corrected afterward at `505a9e59`: receipt generation
+hashes the log before printing its one confirmation line. Sealing authenticates
+that exact recorded prefix and exact final line and binds all finalized bytes;
+prefix edits, footer edits and appended text reject. It refuses any post-freeze
+change outside that sealing file. The seal separately records the actual helper
+head and SHA256 `7651a22aaa59bf8b50824420f018f96c32926f29be590c2bc9dbb7974c527a21`
+and includes its bytes. No compiler, acceptance or cold-clone behavior changed;
+the final exact-head cold proof at `571c2259` is retained incrementally.
+A fresh adversarial session must judge correctness and every changed hunk.
+
+
+### 2026-10-09 — fresh adversarial verifier — VERDICT: refuted
+
+VERDICT: refuted
+
+- **P2/P3 supported declaration order — FAILED.** Before execution, independent
+  case 528 predicted admission and a 512-vector constant bank for the exact
+  source below. Optimized native, ASan/UBSan and the actual public fixed-memory
+  Wasm facet instead return only `ok:false` and `translation-error` with
+  `Standard conversion failed or metadata/output bounds disagree.` Rechecked
+  the single input independently on all three paths. At `bridge.c:2283`, an
+  unmodified-source `-g -O0` ASan/UBSan debugger build observes
+  `profile.constants=512`, `info.num_consts=513`: direct expressions in
+  `evidence/virgl-standard-shader/verifier/finding/lldb-debug.log:21` and `:23`
+  (SHA256 `36ce777862c86b6e606d101d88ecd2d75fe8bc664575ecd7fa04df24ade8cac2`). The maximum extent is retained by
+  `standard_guard.c:144`; pinned `vendor/src/vrend/vrend_shader.c:1958–1966`
+  sets 512 for Last511, then increments for Last0; the new strict metadata
+  comparison at `bridge.c:2284` rejects the admitted source. The positive
+  prediction, case bytes and optimized result at `promoted-final/native/native.jsonl:529`
+  are sealed below. Repair the standard-only upstream metadata transaction,
+  retain strict extent checking and all old entry-point bodies, and record this
+  declaration-order regression on native/sanitized/Wasm plus final exact-head
+  cold acceptance. This is an admitted-grammar completeness failure.
+
+```tgsi
+FRAG
+DCL CONST[511]
+DCL CONST[0]
+DCL OUT[0], COLOR
+0: MOV OUT[0], CONST[511]
+1: END
+```
+
+- **P1 evidence custody — HELD.** Independently authenticated all 409 worker
+  records, both source lists and generated binaries, exact frozen compiler
+  `571c2259`, clean actual cold clone before/after, and all final log bytes.
+  Audited the post-freeze `seal.py` diff, its separately recorded helper head
+  `505a9e59` and SHA256 `7651a22aaa59bf8b50824420f018f96c32926f29be590c2bc9dbb7974c527a21`;
+  independently sabotaged hot/cold prefix, confirmation and appended bytes
+  (six mutations), all rejected. Worker archive/index remain
+  `ee57339a1ce43d5f600a4d0d2c0e4bc47b361a189b78e1807cc31061225067b8` /
+  `a9a18780e726e13e0f6c883ce447e1c415314ff9d4b2604daa6273b5528bff2b`.
+- **P2/P3 other exercised grammar and metadata — HELD.** Worker 634 cases
+  match native/sanitized/actual Wasm and separately decoded pinned TGSI.
+  Fresh seeds `608135816`, `2242054355`, `320440878` add 483 predicted cases
+  (66 admitted) covering wrapped/ranged/multidimensional/indirect fields,
+  collisions, stages, labels/depth/flow, partial tokens and literal limits;
+  native/sanitized/Wasm and independent metadata agree. These successful
+  cases do not waive the positive declaration-order failure.
+- **P4 ownership/allocation — HELD.** Worker 41 actual allocation-site faults
+  recover, and caller text mutation preserves original paired results.
+  Fresh fixed-16MiB Wasm pressure lets input allocation succeed, then exercises
+  C arena failure after releasing 2048 bytes and checked upstream parser failure
+  after releasing 65536 bytes; single/pair return no partial output and fully
+  recover after freeing allocations. Owned-field, getter/proxy, stale-result
+  and wrapper-exhaustion attacks also hold (`wasm-pressure.json`,
+  `independent/node.json` in the critic archive).
+- **P5/P6/P7 physical semantics — HELD.** Recomputed both sealed hot/cold
+  recordings offline: 125 frames / 2,390,624 pixels, all three complete 92cb
+  banks and six c580 frames. Predicted dynamic SIN, first-swizzled EX2
+  replication, literal NaN-mask custody and raw flat words before inspection;
+  all satisfy the independent budgets/word assertions. A separate bounded
+  uniform-fed shader combines ARL-selected constants, scalar EX2/LG2/SIN/COS,
+  nonuniform swizzles, masked aliases, unsigned source negation/comparison and
+  flow on defined finite inputs. Three fresh hardware frames / 768 pixels
+  have maximum errors `7.256596390448067e-8`, `4.334021097562868e-8`,
+  `2.165692496447491e-7` (`fresh-physical-audit.json`). Browser console/page/
+  request error counts are zero.
+- **P8 isolation / prior architectural boundary — HELD.** The complete legacy
+  C body hash `60b2defc35edff77c760bf641cddb8c4719b58e5727e9e883e3bc07b94183e9e`
+  and 250 pre-existing compiler files are unchanged. Retained ordinary
+  19 bodies/57 programs, raw 42 frames, and private original-pair anchors
+  preserve their profiles/results. Carry prior verified architectural evidence
+  forward only for that unchanged boundary. The standard authority remains
+  distinct; no production capability or throughput claim is inferred.
+- **P9/P11 novel attack and sabotage — HELD.** Actual emitted SIN-to-COS
+  mutation fails the independent fresh physical oracle at pixel (0,0):
+  expected lane0 `2.9353883300152694`, observed `1.5279462337493896`, error
+  `1.4074420962658798`. Sabotaging the candidate promoted CPU oracle by +0.125
+  also fails at (0,0), error `0.12500000337037198`, with zero browser errors.
+- **P10 sufficiency — partial audit retained, closure pending repair.** Sealed
+  LLVM profiles re-export identically against their recorded binaries. Matrix
+  line coverage is 332/335 guard and 213/218 emitter; allocation recordings
+  cover the fault transactions, and fresh Wasm/physical attacks execute C
+  arena/parser failures and unsigned source negation. Authenticated optimized
+  stack records show pair108256 + conversion33552 + upstream49216 + emitter624
+  =191648 bytes before small callbacks, within262144. Exhaustive defensive/
+  branch waiver closure is unfinished after this semantic refutation; this
+  entry grants no complete sufficiency verdict.
+
+SUITE: no permanent promotion while correctness is refuted. Critic test
+proposals are retained in the archive for the repair. The 483-case/three-frame
+candidate passed after a Python3.9-only harness `zip` repair; the expanded
+532-case/six-frame candidate stops at case528 before Wasm/browser. No six-frame
+pass is claimed. Preserve HELD predictions when their code, dependency boundary
+and evidence digests remain unchanged; rerun the affected semantic gates and
+one final pristine exact-head proof for the repair.
+
+Critic evidence: `evidence/virgl-standard-shader/verifier/{manifest.json,records.json,recording.tar.gz,verdict.json,finding/}`;
+71 records, 2,212,835 compressed bytes;
+archive SHA256 `1f59cd3fc8c56509ef73b9d02f766d02e488a9eae70df1e607a4ac036061e78c`;
+index `2435c54371b4db9a5935683aec13881f6925db8993996b48b38024df864f86cd`. It binds original predictions,
+fresh inputs/results/coverage, complete pixel bytes, both sabotage captures,
+log-authentication attacks and the rechecked finding. Runtime was not edited.
+Commands include independent `metadata.py` and `pixels.mjs` replays on both
+unpacked worker sides; native/sanitized/Node critic matrices and pressure;
+headed hardware critic draws and sabotage; independent offline pixel audit;
+`xcrun lldb --batch` on the reproduced source at `bridge.c:2283`;
+`python3 tools/check_task_policy.py`; `python3 tools/build_queue.py`.
+
+### 2026-10-09 — fresh completion verifier
+
+VERDICT: verified
+
+Reviewed predecessor `97ed2ca31f08465e442c88aed3a677237f78e236` through frozen
+runtime/source `1c17b508d0dc52199613f4c4883486c477773203`, submitted by claim
+commit `8101e82c2228012ff6a7435da8ab03e31f4e975d`. Predictions were written
+before final evidence inspection (`completion-verifier/predictions.json`).
+No implementation code was edited.
+
+- **Carry prior HELD — HELD.** Reauthenticated all 409 original worker and
+  71 prior critic archive members and indexes. Carry P1; P2/P3 excluding the
+  refuted declaration order; P4 ownership/allocation/actual16MiB pressure;
+  P5–P7 unchanged emitter/full-original semantics; P8 legacy; and P9/P11
+  independent operation/oracle sabotage. Guard, emitter, headers and wrapper
+  bytes still match the prior critic boundary. The old C prefix, after removing
+  only the two new includes, matches verified predecessor bytes. Original
+  worker archive remains `ee57339a1ce43d5f600a4d0d2c0e4bc47b361a189b78e1807cc31061225067b8`;
+  prior critic remains `1f59cd3fc8c56509ef73b9d02f766d02e488a9eae70df1e607a4ac036061e78c`
+  (`audit/carry-forward-authentication.json` in the new archive).
+- **R1 final custody — HELD.** Authenticated all 417 final worker members,
+  indexes, both 195-file receipts, 369 source hashes and 11 generated artifacts
+  on each side. Independently replayed metadata and every pixel on both sides:
+  669 cases, 265 physical compiles/programs, 129 hardware frames and
+  2,390,688 pixels. Actual Wasm bytes, headed Apple M4 Max contexts and zero
+  console/page/request errors match. Final cold clone is exactly `1c17b508`,
+  clean before/after, exit0, with scrubbed build environment. Hot receipt
+  `15ec02d8f017edac338f905bb4c817daf73cc518fe7cfbca1fc08a84375e4a09`,
+  cold `3c402acbecf99819614c82ae183e1b89ced721680f7e736a0ab21257b67634f0`,
+  final worker archive `40ea23d821e37165c6b54f54b7cb636e9418601b8b709dbb4bffc6658ac0b99d`
+  (`completion-verifier/authentication.json`). No runtime change follows that head.
+- **R2/R4 constant admission and strict extent — HELD.** The exact prior
+  CONST511-then-CONST0 refutation now admits with independently decoded
+  uniform count512 on native/sanitized/actual Wasm. Fresh high1/17/127/255/511,
+  zero-first/late, shuffled sparse declarations and intervening IMM/TEMP/SAMP/
+  SVIEW cases hold on both stages; duplicate/overlap/hole/wrapped/dimensional
+  cases still reject without partial output (`suite/native/native.jsonl`
+  lines533–692; `audit/repair-case-points.json`). At `bridge.c:2325`, a
+  recorded debugger probe observes guarded/upstream512, then injects513:
+  strict comparison rejects and the next healthy call recovers
+  (`audit/constant-extent-drift.lldb.log`, SHA256
+  `896b408810f40e867909b93745bbc71b996d18b5e1ec13ea96f19ed4a1eef83f`).
+- **R3/R7 original token custody and physical repair — HELD.** Whole-token
+  permutation executes 73 times in merged native profiles; no labels,
+  instructions, immediate words or register indices are rewritten. Two
+  independently specified repair plans combine late CONST0, unused slot15,
+  raw immediate words, indirect addressing, explicit flow labels, scalar
+  replication, masks/swizzles and defined finite native math. At pixel(0,0),
+  fragment seed1096302871 yields
+  `[2.9020700454711914,2.5383729934692383,1.2711868286132812,0.9485054016113281]`;
+  vertex seed2126713300 yields
+  `[2.639313220977783,2.224212884902954,0.8709676861763,0.6785236597061157]`.
+  Maximum errors against precomputed CPU math are `1.0119175630762811e-7`
+  and `1.082069500668581e-7`, below the explicit0.00005 budgets.
+  All eight promoted hardware frames / 2048 full pixels pass with zero browser
+  errors (`suite/physical-audit.json` points6/7 and corresponding full pixel files).
+- **R5/R6 declared/read masks — HELD.** Empty, high, mixed and all16 unused
+  SAMP/SVIEW sets admit on both stages, in both declaration orders. Public
+  metadata/emission contains only independently decoded TEX reads. Unrelated
+  unused declarations do not grant missing SAMP or SVIEW permission
+  (`suite/native/native.jsonl` lines685–688). At `bridge.c:2325`, guardian
+  declared mask32768 equals upstream32768 while the public read mask is zero;
+  injecting upstream0 rejects without GLSL/metadata and recovers
+  (`audit/declared-mask-drift.lldb.log`, SHA256
+  `467cffdc9dfce67bcfa09f95b20e723e60a7360805189c79fd4a6222424c9600`).
+- **R8 legacy/authority — HELD.** Old body bytes and the prior compiler
+  dependency boundary remain unchanged. Authenticated hot/cold ordinary,
+  raw and both private originals preserve their contracts. Standard metadata
+  still states native-highp/undefined-domain semantics and false exact/GPU-bound
+  authority; production imports/capsets remain outside this slice.
+- **R9 / prior P10 exhaustive sufficiency — HELD, closed.** Independently
+  remerged/re-exported all four final hot/cold LLVM profiles; exports exactly
+  equal their sealed originals. Merged worker+695-case critic coverage covers
+  every new runtime function. Classified all 51 changed hunks and all 49
+  remaining zero native-arm entries individually in
+  `completion-verifier/coverage-audit.json`; no needs-evidence or dead-feature
+  entry remains. Reachable parser-allocation failure is recorded on actual
+  fixed16MiB Wasm after releasing65536 bytes, with single/pair clean recovery.
+  Five process-state fault recordings on a private, unmodified debug build
+  execute strict constant/mask/output/log consistency and ordering rejection.
+  Remaining narrowly waived arms follow closed file/opcode/semantic types,
+  complete private pinned tokens, fixed ASCII emission templates, public
+  prechecks, JSON capacity inequalities or zero-width/preprocessor regions.
+  The detailed V8 wrapper blocks all execute across matrix+pressure, including
+  paired throwing-Proxy reflection. Optimized stack records conservatively
+  sum pair+converter+upstream+emitter+instruction+tex to199152 bytes before
+  small fixed helpers, within262144; no recursive guest-flow C stack exists.
+- **Promoted sabotage — HELD.** Actual emitted SIN-to-COS fails at pixel(0,0),
+  lane0 error `1.4074420962658798`; independently shifting the CPU oracle by
+  +0.125 also fails, error `0.12500000337037198`. Both fail with zero browser
+  errors (`suite/physical-audit.json` faults and both full sabotage captures).
+
+SUITE: promote `make verify-E6-T11d4-adversarial`: 695 deterministic cases
+(208 admitted), independent pinned metadata/native-Wasm equality, eight
+independent physical plans, full offline pixels, operation/oracle sabotage,
+actual fixed-memory C arena/parser pressure and reflection/ownership regressions.
+The three final grammar-coverage inputs reject missing register/indirect brackets
+and accept bounded loop flow without optional branch targets. The final
+695-case physical plan bytes equal the recorded eight-frame plan, so its
+hardware evidence carries unchanged. Exact recipe components passed against
+authenticated frozen native/sanitized/Wasm bytes; `bash -n` and `make -n`
+check the new recipe. Build modes are the final worker hot/cold modes. A
+redundant runtime rebuild/cold clone after test-only promotion is unnecessary.
+
+New critic evidence:
+`evidence/virgl-standard-shader/completion-verifier/{manifest.json,records.json,recording.tar.gz,verdict.json,coverage-audit.json,authentication.json,predictions.json}`;
+107 records, 7,363,417 compressed bytes; archive SHA256
+`35135d4c16dda7c25c2f00d49e04acdcd2140b8375ba8db43c27afc6201524a0`;
+index `6da06a396d5a0ead4599cce1086fdcb3fa8361bf0411ad040d46abf048fb82b0`.
+It preserves predictions, source/binary bindings, native/sanitized/Wasm results,
+complete pixels, profiles, every waiver and the five debugger transactions.
+Prior worker/critic archives were not modified.
+
+Commands: independent `metadata.py` and `pixels.mjs` on both sealed worker sides;
+695-case authenticated native/sanitized/Node runs; actual Wasm pressure;
+headed `adversarial-browser.mjs` acceptance and both expected-failing sabotage
+runs; offline `adversarial-pixels.py`; LLVM profile re-export/merge/show;
+`xcrun lldb --batch` at `bridge.c:2287`/`2325`;
+`python3 tools/check_task_policy.py` before `python3 tools/build_queue.py`.
+This verdict covers the isolated standard compiler. It adds no exact authority,
+production capabilities, guest boot/full API claim, GPU execution bound or throughput claim.

@@ -1,0 +1,1 @@
+root=/dev/vda rw console=ttyS0 init=/bin/bash

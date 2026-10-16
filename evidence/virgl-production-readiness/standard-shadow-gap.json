@@ -1,0 +1,1921 @@
+{
+  "schema": "original-shadow-compiler-sampler-gap-v1",
+  "sourceHead": "41c1aa490d19d8c307ea7bdbb5647acf346681f4",
+  "records": [
+    {
+      "kind": "positive-ordinary-2D-control",
+      "request": {
+        "stage": "vertex",
+        "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\n0: TEX OUT[0], IN[0], SAMP[0], 2D\n1: END\n"
+      },
+      "result": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nuniform highp sampler2D vssamp0;\nlayout(std140) uniform VirglBlock {\nvec4 clipp[8];\nuint stipple_pattern[32];\nfloat winsys_adjust_y;\nfloat alpha_ref_val;\nbool clip_plane_enabled;\nint drawid_base;\n};\nuniform vec2 wv_point_size;\nvoid main() {\nbool flow_condition;\nuvec4 o0;\n{\nuvec4 a = (floatBitsToUint(in_0)).xyzw;\nuvec4 r = floatBitsToUint(texture(vssamp0, uintBitsToFloat(a).xy));\no0.xyzw = r.xyzw;\n}\ngl_Position = uintBitsToFloat(o0);\ngl_Position.y *= winsys_adjust_y;\ngl_PointSize = wv_point_size.y > 0.5 ? 1.0 : wv_point_size.x;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-standard-instance-base-gles3-v1",
+          "stage": "vertex",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "gl_Position",
+              "type": "vec4",
+              "semantic": "POSITION",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "syntacticWriteMask": 15
+            }
+          ],
+          "attributes": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "systemValues": [],
+          "uniforms": [],
+          "samplers": [
+            {
+              "index": 0,
+              "name": "vssamp0",
+              "type": "sampler2D"
+            }
+          ],
+          "uniformBlocks": [
+            {
+              "name": "VirglBlock",
+              "byteLength": 656,
+              "members": [
+                {
+                  "name": "winsys_adjust_y",
+                  "offset": 640,
+                  "type": "float",
+                  "default": 1
+                }
+              ]
+            }
+          ],
+          "rasterUniforms": [
+            {
+              "name": "wv_point_size",
+              "type": "vec2",
+              "semantic": "POINT_SIZE"
+            }
+          ],
+          "instanceUniforms": [],
+          "guestUniformBlocks": [],
+          "textureQueries": [],
+          "colorOutputMasks": {
+            "signedMask": 0,
+            "unsignedMask": 0
+          },
+          "broadcastColor0": false,
+          "standardSemantics": {
+            "kind": "native-gles3-highp-v1",
+            "precision": "native-highp",
+            "undefinedDomains": "native-gles3",
+            "preciseQualifier": "no-gpu-shader5",
+            "registerStorage": "uvec4",
+            "flatVaryingStorage": "uvec4",
+            "scalarResults": "tgsi-x-replicated",
+            "exactAuthority": false,
+            "gpuExecutionBound": false
+          }
+        }
+      }
+    },
+    {
+      "kind": "original-shadow-refusal",
+      "declaration": "2D",
+      "opcode": "TEX",
+      "request": {
+        "stage": "vertex",
+        "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\n0: TEX OUT[0], IN[0], SAMP[0], SHADOW2D\n1: END\n"
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "kind": "original-shadow-refusal",
+      "declaration": "2D",
+      "opcode": "TXL",
+      "request": {
+        "stage": "vertex",
+        "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\n0: TXL OUT[0], IN[0], SAMP[0], SHADOW2D\n1: END\n"
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "kind": "original-shadow-refusal",
+      "declaration": "2D",
+      "opcode": "TXD",
+      "request": {
+        "stage": "vertex",
+        "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\n0: TXD OUT[0], IN[0], IN[0], IN[0], SAMP[0], SHADOW2D\n1: END\n"
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "kind": "original-shadow-refusal",
+      "declaration": "2D",
+      "opcode": "TXQ",
+      "request": {
+        "stage": "vertex",
+        "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\n0: TXQ OUT[0], IN[0], SAMP[0], SHADOW2D\n1: END\n"
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "kind": "original-shadow-refusal",
+      "declaration": "2D",
+      "opcode": "TXP",
+      "request": {
+        "stage": "vertex",
+        "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\n0: TXP OUT[0], IN[0], SAMP[0], SHADOW2D\n1: END\n"
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "kind": "original-shadow-refusal",
+      "declaration": "SHADOW2D",
+      "opcode": "TEX",
+      "request": {
+        "stage": "vertex",
+        "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL SAMP[0]\nDCL SVIEW[0], SHADOW2D, FLOAT\n0: TEX OUT[0], IN[0], SAMP[0], SHADOW2D\n1: END\n"
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "kind": "original-shadow-refusal",
+      "declaration": "SHADOW2D",
+      "opcode": "TXL",
+      "request": {
+        "stage": "vertex",
+        "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL SAMP[0]\nDCL SVIEW[0], SHADOW2D, FLOAT\n0: TXL OUT[0], IN[0], SAMP[0], SHADOW2D\n1: END\n"
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "kind": "original-shadow-refusal",
+      "declaration": "SHADOW2D",
+      "opcode": "TXD",
+      "request": {
+        "stage": "vertex",
+        "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL SAMP[0]\nDCL SVIEW[0], SHADOW2D, FLOAT\n0: TXD OUT[0], IN[0], IN[0], IN[0], SAMP[0], SHADOW2D\n1: END\n"
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "kind": "original-shadow-refusal",
+      "declaration": "SHADOW2D",
+      "opcode": "TXQ",
+      "request": {
+        "stage": "vertex",
+        "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL SAMP[0]\nDCL SVIEW[0], SHADOW2D, FLOAT\n0: TXQ OUT[0], IN[0], SAMP[0], SHADOW2D\n1: END\n"
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "kind": "original-shadow-refusal",
+      "declaration": "SHADOW2D",
+      "opcode": "TXP",
+      "request": {
+        "stage": "vertex",
+        "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL SAMP[0]\nDCL SVIEW[0], SHADOW2D, FLOAT\n0: TXP OUT[0], IN[0], SAMP[0], SHADOW2D\n1: END\n"
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "kind": "positive-ordinary-2D-control",
+      "request": {
+        "stage": "fragment",
+        "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\n0: TEX OUT[0], IN[0], SAMP[0], 2D\n1: END\n"
+      },
+      "result": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nsmooth in vec4 vso_g0;\nlayout(location=0) out vec4 fsout_c0;\nuniform highp sampler2D fssamp0;\nvoid main() {\nbool flow_condition;\nuvec4 o0;\n{\nuvec4 a = (floatBitsToUint(vso_g0)).xyzw;\nuvec4 r = floatBitsToUint(texture(fssamp0, uintBitsToFloat(a).xy));\no0.xyzw = r.xyzw;\n}\nfsout_c0 = uintBitsToFloat(o0);\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-standard-instance-base-gles3-v1",
+          "stage": "fragment",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "interpolation": "smooth"
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "fsout_c0",
+              "type": "vec4",
+              "semantic": "COLOR",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "syntacticWriteMask": 15
+            }
+          ],
+          "attributes": [],
+          "systemValues": [],
+          "uniforms": [],
+          "samplers": [
+            {
+              "index": 0,
+              "name": "fssamp0",
+              "type": "sampler2D"
+            }
+          ],
+          "uniformBlocks": [],
+          "rasterUniforms": [],
+          "instanceUniforms": [],
+          "guestUniformBlocks": [],
+          "textureQueries": [],
+          "colorOutputMasks": {
+            "signedMask": 0,
+            "unsignedMask": 0
+          },
+          "broadcastColor0": false,
+          "standardSemantics": {
+            "kind": "native-gles3-highp-v1",
+            "precision": "native-highp",
+            "undefinedDomains": "native-gles3",
+            "preciseQualifier": "no-gpu-shader5",
+            "registerStorage": "uvec4",
+            "flatVaryingStorage": "uvec4",
+            "scalarResults": "tgsi-x-replicated",
+            "exactAuthority": false,
+            "gpuExecutionBound": false
+          }
+        }
+      }
+    },
+    {
+      "kind": "original-shadow-refusal",
+      "declaration": "2D",
+      "opcode": "TEX",
+      "request": {
+        "stage": "fragment",
+        "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\n0: TEX OUT[0], IN[0], SAMP[0], SHADOW2D\n1: END\n"
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "kind": "original-shadow-refusal",
+      "declaration": "2D",
+      "opcode": "TXL",
+      "request": {
+        "stage": "fragment",
+        "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\n0: TXL OUT[0], IN[0], SAMP[0], SHADOW2D\n1: END\n"
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "kind": "original-shadow-refusal",
+      "declaration": "2D",
+      "opcode": "TXD",
+      "request": {
+        "stage": "fragment",
+        "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\n0: TXD OUT[0], IN[0], IN[0], IN[0], SAMP[0], SHADOW2D\n1: END\n"
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "kind": "original-shadow-refusal",
+      "declaration": "2D",
+      "opcode": "TXB",
+      "request": {
+        "stage": "fragment",
+        "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\n0: TXB OUT[0], IN[0], SAMP[0], SHADOW2D\n1: END\n"
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "kind": "original-shadow-refusal",
+      "declaration": "2D",
+      "opcode": "TXQ",
+      "request": {
+        "stage": "fragment",
+        "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\n0: TXQ OUT[0], IN[0], SAMP[0], SHADOW2D\n1: END\n"
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "kind": "original-shadow-refusal",
+      "declaration": "2D",
+      "opcode": "TXP",
+      "request": {
+        "stage": "fragment",
+        "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\n0: TXP OUT[0], IN[0], SAMP[0], SHADOW2D\n1: END\n"
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "kind": "original-shadow-refusal",
+      "declaration": "SHADOW2D",
+      "opcode": "TEX",
+      "request": {
+        "stage": "fragment",
+        "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL SAMP[0]\nDCL SVIEW[0], SHADOW2D, FLOAT\n0: TEX OUT[0], IN[0], SAMP[0], SHADOW2D\n1: END\n"
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "kind": "original-shadow-refusal",
+      "declaration": "SHADOW2D",
+      "opcode": "TXL",
+      "request": {
+        "stage": "fragment",
+        "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL SAMP[0]\nDCL SVIEW[0], SHADOW2D, FLOAT\n0: TXL OUT[0], IN[0], SAMP[0], SHADOW2D\n1: END\n"
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "kind": "original-shadow-refusal",
+      "declaration": "SHADOW2D",
+      "opcode": "TXD",
+      "request": {
+        "stage": "fragment",
+        "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL SAMP[0]\nDCL SVIEW[0], SHADOW2D, FLOAT\n0: TXD OUT[0], IN[0], IN[0], IN[0], SAMP[0], SHADOW2D\n1: END\n"
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "kind": "original-shadow-refusal",
+      "declaration": "SHADOW2D",
+      "opcode": "TXB",
+      "request": {
+        "stage": "fragment",
+        "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL SAMP[0]\nDCL SVIEW[0], SHADOW2D, FLOAT\n0: TXB OUT[0], IN[0], SAMP[0], SHADOW2D\n1: END\n"
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "kind": "original-shadow-refusal",
+      "declaration": "SHADOW2D",
+      "opcode": "TXQ",
+      "request": {
+        "stage": "fragment",
+        "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL SAMP[0]\nDCL SVIEW[0], SHADOW2D, FLOAT\n0: TXQ OUT[0], IN[0], SAMP[0], SHADOW2D\n1: END\n"
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "kind": "original-shadow-refusal",
+      "declaration": "SHADOW2D",
+      "opcode": "TXP",
+      "request": {
+        "stage": "fragment",
+        "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL SAMP[0]\nDCL SVIEW[0], SHADOW2D, FLOAT\n0: TXP OUT[0], IN[0], SAMP[0], SHADOW2D\n1: END\n"
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    }
+  ],
+  "samplerRecords": [
+    {
+      "compareMode": 0,
+      "compareFunction": 0,
+      "words": [
+        591617,
+        77,
+        4242,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bytes": [
+        1,
+        7,
+        9,
+        0,
+        77,
+        0,
+        0,
+        0,
+        146,
+        16,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "result": {
+        "ok": true,
+        "profile": "virgl-standard-stencil-commands-v1",
+        "sourceSha256": null,
+        "event": null,
+        "contextId": null,
+        "byteLength": 40,
+        "commands": [
+          {
+            "opcode": 1,
+            "name": "CREATE_OBJECT",
+            "objectType": 7,
+            "objectName": "SAMPLER_STATE",
+            "byteOffset": 0,
+            "byteLength": 40,
+            "payloadDwords": 9,
+            "fields": {
+              "handle": 77,
+              "wrapS": 2,
+              "wrapT": 2,
+              "wrapR": 2,
+              "minImageFilter": 0,
+              "minMipFilter": 2,
+              "magImageFilter": 0,
+              "compareMode": 0,
+              "compareFunction": 0,
+              "seamlessCubeMap": false,
+              "maxAnisotropy": 0,
+              "lodBias": 0,
+              "minLod": 0,
+              "maxLod": 0,
+              "borderColor": [
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "compareMode": 0,
+      "compareFunction": 1,
+      "words": [
+        591617,
+        77,
+        69778,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bytes": [
+        1,
+        7,
+        9,
+        0,
+        77,
+        0,
+        0,
+        0,
+        146,
+        16,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "result": {
+        "ok": true,
+        "profile": "virgl-standard-stencil-commands-v1",
+        "sourceSha256": null,
+        "event": null,
+        "contextId": null,
+        "byteLength": 40,
+        "commands": [
+          {
+            "opcode": 1,
+            "name": "CREATE_OBJECT",
+            "objectType": 7,
+            "objectName": "SAMPLER_STATE",
+            "byteOffset": 0,
+            "byteLength": 40,
+            "payloadDwords": 9,
+            "fields": {
+              "handle": 77,
+              "wrapS": 2,
+              "wrapT": 2,
+              "wrapR": 2,
+              "minImageFilter": 0,
+              "minMipFilter": 2,
+              "magImageFilter": 0,
+              "compareMode": 0,
+              "compareFunction": 1,
+              "seamlessCubeMap": false,
+              "maxAnisotropy": 0,
+              "lodBias": 0,
+              "minLod": 0,
+              "maxLod": 0,
+              "borderColor": [
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "compareMode": 0,
+      "compareFunction": 2,
+      "words": [
+        591617,
+        77,
+        135314,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bytes": [
+        1,
+        7,
+        9,
+        0,
+        77,
+        0,
+        0,
+        0,
+        146,
+        16,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "result": {
+        "ok": true,
+        "profile": "virgl-standard-stencil-commands-v1",
+        "sourceSha256": null,
+        "event": null,
+        "contextId": null,
+        "byteLength": 40,
+        "commands": [
+          {
+            "opcode": 1,
+            "name": "CREATE_OBJECT",
+            "objectType": 7,
+            "objectName": "SAMPLER_STATE",
+            "byteOffset": 0,
+            "byteLength": 40,
+            "payloadDwords": 9,
+            "fields": {
+              "handle": 77,
+              "wrapS": 2,
+              "wrapT": 2,
+              "wrapR": 2,
+              "minImageFilter": 0,
+              "minMipFilter": 2,
+              "magImageFilter": 0,
+              "compareMode": 0,
+              "compareFunction": 2,
+              "seamlessCubeMap": false,
+              "maxAnisotropy": 0,
+              "lodBias": 0,
+              "minLod": 0,
+              "maxLod": 0,
+              "borderColor": [
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "compareMode": 0,
+      "compareFunction": 3,
+      "words": [
+        591617,
+        77,
+        200850,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bytes": [
+        1,
+        7,
+        9,
+        0,
+        77,
+        0,
+        0,
+        0,
+        146,
+        16,
+        3,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "result": {
+        "ok": true,
+        "profile": "virgl-standard-stencil-commands-v1",
+        "sourceSha256": null,
+        "event": null,
+        "contextId": null,
+        "byteLength": 40,
+        "commands": [
+          {
+            "opcode": 1,
+            "name": "CREATE_OBJECT",
+            "objectType": 7,
+            "objectName": "SAMPLER_STATE",
+            "byteOffset": 0,
+            "byteLength": 40,
+            "payloadDwords": 9,
+            "fields": {
+              "handle": 77,
+              "wrapS": 2,
+              "wrapT": 2,
+              "wrapR": 2,
+              "minImageFilter": 0,
+              "minMipFilter": 2,
+              "magImageFilter": 0,
+              "compareMode": 0,
+              "compareFunction": 3,
+              "seamlessCubeMap": false,
+              "maxAnisotropy": 0,
+              "lodBias": 0,
+              "minLod": 0,
+              "maxLod": 0,
+              "borderColor": [
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "compareMode": 0,
+      "compareFunction": 4,
+      "words": [
+        591617,
+        77,
+        266386,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bytes": [
+        1,
+        7,
+        9,
+        0,
+        77,
+        0,
+        0,
+        0,
+        146,
+        16,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "result": {
+        "ok": true,
+        "profile": "virgl-standard-stencil-commands-v1",
+        "sourceSha256": null,
+        "event": null,
+        "contextId": null,
+        "byteLength": 40,
+        "commands": [
+          {
+            "opcode": 1,
+            "name": "CREATE_OBJECT",
+            "objectType": 7,
+            "objectName": "SAMPLER_STATE",
+            "byteOffset": 0,
+            "byteLength": 40,
+            "payloadDwords": 9,
+            "fields": {
+              "handle": 77,
+              "wrapS": 2,
+              "wrapT": 2,
+              "wrapR": 2,
+              "minImageFilter": 0,
+              "minMipFilter": 2,
+              "magImageFilter": 0,
+              "compareMode": 0,
+              "compareFunction": 4,
+              "seamlessCubeMap": false,
+              "maxAnisotropy": 0,
+              "lodBias": 0,
+              "minLod": 0,
+              "maxLod": 0,
+              "borderColor": [
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "compareMode": 0,
+      "compareFunction": 5,
+      "words": [
+        591617,
+        77,
+        331922,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bytes": [
+        1,
+        7,
+        9,
+        0,
+        77,
+        0,
+        0,
+        0,
+        146,
+        16,
+        5,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "result": {
+        "ok": true,
+        "profile": "virgl-standard-stencil-commands-v1",
+        "sourceSha256": null,
+        "event": null,
+        "contextId": null,
+        "byteLength": 40,
+        "commands": [
+          {
+            "opcode": 1,
+            "name": "CREATE_OBJECT",
+            "objectType": 7,
+            "objectName": "SAMPLER_STATE",
+            "byteOffset": 0,
+            "byteLength": 40,
+            "payloadDwords": 9,
+            "fields": {
+              "handle": 77,
+              "wrapS": 2,
+              "wrapT": 2,
+              "wrapR": 2,
+              "minImageFilter": 0,
+              "minMipFilter": 2,
+              "magImageFilter": 0,
+              "compareMode": 0,
+              "compareFunction": 5,
+              "seamlessCubeMap": false,
+              "maxAnisotropy": 0,
+              "lodBias": 0,
+              "minLod": 0,
+              "maxLod": 0,
+              "borderColor": [
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "compareMode": 0,
+      "compareFunction": 6,
+      "words": [
+        591617,
+        77,
+        397458,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bytes": [
+        1,
+        7,
+        9,
+        0,
+        77,
+        0,
+        0,
+        0,
+        146,
+        16,
+        6,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "result": {
+        "ok": true,
+        "profile": "virgl-standard-stencil-commands-v1",
+        "sourceSha256": null,
+        "event": null,
+        "contextId": null,
+        "byteLength": 40,
+        "commands": [
+          {
+            "opcode": 1,
+            "name": "CREATE_OBJECT",
+            "objectType": 7,
+            "objectName": "SAMPLER_STATE",
+            "byteOffset": 0,
+            "byteLength": 40,
+            "payloadDwords": 9,
+            "fields": {
+              "handle": 77,
+              "wrapS": 2,
+              "wrapT": 2,
+              "wrapR": 2,
+              "minImageFilter": 0,
+              "minMipFilter": 2,
+              "magImageFilter": 0,
+              "compareMode": 0,
+              "compareFunction": 6,
+              "seamlessCubeMap": false,
+              "maxAnisotropy": 0,
+              "lodBias": 0,
+              "minLod": 0,
+              "maxLod": 0,
+              "borderColor": [
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "compareMode": 0,
+      "compareFunction": 7,
+      "words": [
+        591617,
+        77,
+        462994,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bytes": [
+        1,
+        7,
+        9,
+        0,
+        77,
+        0,
+        0,
+        0,
+        146,
+        16,
+        7,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "result": {
+        "ok": true,
+        "profile": "virgl-standard-stencil-commands-v1",
+        "sourceSha256": null,
+        "event": null,
+        "contextId": null,
+        "byteLength": 40,
+        "commands": [
+          {
+            "opcode": 1,
+            "name": "CREATE_OBJECT",
+            "objectType": 7,
+            "objectName": "SAMPLER_STATE",
+            "byteOffset": 0,
+            "byteLength": 40,
+            "payloadDwords": 9,
+            "fields": {
+              "handle": 77,
+              "wrapS": 2,
+              "wrapT": 2,
+              "wrapR": 2,
+              "minImageFilter": 0,
+              "minMipFilter": 2,
+              "magImageFilter": 0,
+              "compareMode": 0,
+              "compareFunction": 7,
+              "seamlessCubeMap": false,
+              "maxAnisotropy": 0,
+              "lodBias": 0,
+              "minLod": 0,
+              "maxLod": 0,
+              "borderColor": [
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "compareMode": 1,
+      "compareFunction": 0,
+      "words": [
+        591617,
+        77,
+        37010,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bytes": [
+        1,
+        7,
+        9,
+        0,
+        77,
+        0,
+        0,
+        0,
+        146,
+        144,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only core repeat, clamp-edge and mirrored-repeat non-shadow samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "compareMode": 1,
+      "compareFunction": 1,
+      "words": [
+        591617,
+        77,
+        102546,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bytes": [
+        1,
+        7,
+        9,
+        0,
+        77,
+        0,
+        0,
+        0,
+        146,
+        144,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only core repeat, clamp-edge and mirrored-repeat non-shadow samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "compareMode": 1,
+      "compareFunction": 2,
+      "words": [
+        591617,
+        77,
+        168082,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bytes": [
+        1,
+        7,
+        9,
+        0,
+        77,
+        0,
+        0,
+        0,
+        146,
+        144,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only core repeat, clamp-edge and mirrored-repeat non-shadow samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "compareMode": 1,
+      "compareFunction": 3,
+      "words": [
+        591617,
+        77,
+        233618,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bytes": [
+        1,
+        7,
+        9,
+        0,
+        77,
+        0,
+        0,
+        0,
+        146,
+        144,
+        3,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only core repeat, clamp-edge and mirrored-repeat non-shadow samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "compareMode": 1,
+      "compareFunction": 4,
+      "words": [
+        591617,
+        77,
+        299154,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bytes": [
+        1,
+        7,
+        9,
+        0,
+        77,
+        0,
+        0,
+        0,
+        146,
+        144,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only core repeat, clamp-edge and mirrored-repeat non-shadow samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "compareMode": 1,
+      "compareFunction": 5,
+      "words": [
+        591617,
+        77,
+        364690,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bytes": [
+        1,
+        7,
+        9,
+        0,
+        77,
+        0,
+        0,
+        0,
+        146,
+        144,
+        5,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only core repeat, clamp-edge and mirrored-repeat non-shadow samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "compareMode": 1,
+      "compareFunction": 6,
+      "words": [
+        591617,
+        77,
+        430226,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bytes": [
+        1,
+        7,
+        9,
+        0,
+        77,
+        0,
+        0,
+        0,
+        146,
+        144,
+        6,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only core repeat, clamp-edge and mirrored-repeat non-shadow samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "compareMode": 1,
+      "compareFunction": 7,
+      "words": [
+        591617,
+        77,
+        495762,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bytes": [
+        1,
+        7,
+        9,
+        0,
+        77,
+        0,
+        0,
+        0,
+        146,
+        144,
+        7,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only core repeat, clamp-edge and mirrored-repeat non-shadow samplers are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    }
+  ],
+  "pins": [
+    {
+      "path": "evidence/virgl-production-readiness/standard-shadow-gap.mjs",
+      "bytes": 3797,
+      "sha256": "aad4f37b82bf37174941c9860c92fb1faaf202b85c493aeb5c03a11180e6187e"
+    },
+    {
+      "path": "renderer/virgl-shader/standard.mjs",
+      "bytes": 12727,
+      "sha256": "6e9a37712641b46db30403af0c7a52ef575f9e4999052f6a85b053a5d8318dce"
+    },
+    {
+      "path": "renderer/virgl-shader/standard_guard.c",
+      "bytes": 22103,
+      "sha256": "cd6764a9fc43a73a7353873a8b6461d3927e16fea05504044154296320042f45"
+    },
+    {
+      "path": "renderer/virgl-shader/standard_guard.h",
+      "bytes": 3478,
+      "sha256": "2399dc24876a19cff67d5985b3653b2c895ea6e0e30d8efd6a736e68676696d4"
+    },
+    {
+      "path": "renderer/virgl-shader/standard_emit.c",
+      "bytes": 18629,
+      "sha256": "019476d6439ebcc33914388e493692370796b491101aff570dc88350547ba78f"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "bytes": 156152,
+      "sha256": "8e4fc274c3c19ec54edc2f98cd2a9bbd376d7209948d0ad7763f693766cfddfb"
+    },
+    {
+      "path": "renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "bytes": 12690,
+      "sha256": "2fe4bfc079c0149817f8842e400e4567757da05b0e4e6d73689605a42aea0e05"
+    },
+    {
+      "path": "renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "bytes": 439212,
+      "sha256": "41afa61d8a42c547c7a8c4cc261ee4e689039d0edc62b98d3ecf448c3fca965d"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/virgl_protocol.h",
+      "bytes": 30358,
+      "sha256": "094a6e2b210f1d3dd0f1ac254ed8820c1d889e57d2735c0c6194dbc94f3b1ac7"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/vrend/vrend_shader.c",
+      "bytes": 333808,
+      "sha256": "e08fe8ceebfebb3e6a050b74d0ea0ebbfab35b6be742b6f0c9b9149dd484c3e2"
+    },
+    {
+      "path": "renderer/virgl-command/decoder.mjs",
+      "bytes": 44879,
+      "sha256": "e421aa823c4c45801a268626c206ca0150ecbaa29e976cb9d45fb2aa5bea4638"
+    },
+    {
+      "path": "tools/virgl-floating-depth-consumer/primary/vrend_renderer.c",
+      "bytes": 495473,
+      "sha256": "be7e5c63fb501cb77bd5b2c13c332f8b93c49fd04d207f17d434932c237f4ea3"
+    },
+    {
+      "path": "tools/virgl-instance-base/primary/glsl-es-3.00.6.pdf",
+      "bytes": 968763,
+      "sha256": "325058092a1c96a172f6e5b1e4008e94e7a2c75b63d6431f5bec273f374b6e7f"
+    }
+  ],
+  "nativeDrawExecuted": false,
+  "guestExecution": false,
+  "productionAuthority": false
+}

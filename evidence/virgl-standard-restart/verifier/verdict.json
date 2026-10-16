@@ -1,0 +1,284 @@
+{
+  "schema": "standard-restart-fresh-verdict-v1",
+  "task": "E6-T11d9",
+  "verdict": "verified",
+  "workerSubmission": "13e0f7b26276cc1dd20bd3c67b82d463d07e4df0",
+  "runtimeHead": "31e4b3ff907d36f54689513796927acc16b5fd62",
+  "finalWorkerSourceClosure": "ef30bcccb02f006a72da6c4796134b9c780a828d",
+  "verifiedPredecessor": "bef7040804a1c71ad37112e35adcfebefbc4be21",
+  "authority": "isolated-standard-primitive-restart",
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "fullGuestApiClaim": false,
+  "provokingStateQualified": false,
+  "predictions": [
+    {
+      "id": "P0",
+      "prediction": "The archive/index authenticate every unique record; hot physical reports remain at 31e4 and the final pristine clone at ef30. Git/source digests permit only the receipt-file correction between those heads. The original hot acceptance log retains its receipt KeyError and is not a passed full make invocation. Earlier HELD compiler/resource/constant/link and historical D6/D7/D8 records are byte-identical to bef704.",
+      "result": "HELD",
+      "evidence": [
+        {
+          "path": "authentication.json",
+          "sha256": "8e6ceeda7c21c82667d2f85a1c1c42700582270986c620e0968214f42f440ab1"
+        },
+        {
+          "path": "carry-forward.json",
+          "sha256": "57166916d7a96bfaf19101eacd1c84702a821b5b01044fe47e2f639216d77a51"
+        }
+      ]
+    },
+    {
+      "id": "P1",
+      "prediction": "Literal DRAW flags admit only modes 1..6 with boolean indexed/restart, zero base offsets and stream output; restart enabled requires indexed, disabled requires marker zero. Legacy remains only modes 4/5, no restart. Hostile boolean, offset, stream-output and malformed-tail snapshots fail before native draw.",
+      "result": "HELD",
+      "evidence": [
+        {
+          "path": "hot-physical-audit.json",
+          "sha256": "78299acd4c57f71bce1a94af72904db0898325eb549e9afc706ff97f2a8d3ca8"
+        },
+        {
+          "path": "cold-physical-audit.json",
+          "sha256": "b2f7742ac032a6e0cc0b28189fc8bf1a4bcd084167b0831ca92a157c91912676"
+        },
+        {
+          "path": "final-promoted/fresh-physical-audit.json",
+          "sha256": "e47ffc56a6ae55b46f7a3c5ccd96054923f2907f9702462ace10018135a0f131"
+        }
+      ]
+    },
+    {
+      "id": "P2",
+      "prediction": "Every original source GPU buffer equals reconstruction from literal transfer bytes at original offsets and generations. Normalization replaces only enabled exact original marker with u32max and preserves all other original IDs, including 255/65535 with restart disabled or an out-of-type marker. Fixed-compatible streams preserve native size/offset. Real nonrestart u32max rejects before allocation/draw.",
+      "result": "HELD",
+      "evidence": [
+        {
+          "path": "hot-physical-audit.json",
+          "sha256": "78299acd4c57f71bce1a94af72904db0898325eb549e9afc706ff97f2a8d3ca8"
+        },
+        {
+          "path": "cold-physical-audit.json",
+          "sha256": "b2f7742ac032a6e0cc0b28189fc8bf1a4bcd084167b0831ca92a157c91912676"
+        },
+        {
+          "path": "final-promoted/fresh-physical-audit.json",
+          "sha256": "e47ffc56a6ae55b46f7a3c5ccd96054923f2907f9702462ace10018135a0f131"
+        }
+      ]
+    },
+    {
+      "id": "P3",
+      "prediction": "Native modes, original/native types and offsets, original attribute/generic/divisor bindings and all pixels match an independently derived byte/primitive/ID oracle. Restart divides every mode into segments; tails cannot bridge segments, loop closures stay inside each segment. Vertex-ID tags physically guard clip W. No observed pixels are used to form expectations; per-instance colors avoid a provoking-state claim.",
+      "result": "HELD",
+      "evidence": [
+        {
+          "path": "hot-physical-audit.json",
+          "sha256": "78299acd4c57f71bce1a94af72904db0898325eb549e9afc706ff97f2a8d3ca8"
+        },
+        {
+          "path": "cold-physical-audit.json",
+          "sha256": "b2f7742ac032a6e0cc0b28189fc8bf1a4bcd084167b0831ca92a157c91912676"
+        },
+        {
+          "path": "final-promoted/fresh-physical-audit.json",
+          "sha256": "e47ffc56a6ae55b46f7a3c5ccd96054923f2907f9702462ace10018135a0f131"
+        }
+      ]
+    },
+    {
+      "id": "P4",
+      "prediction": "Actual fetch min/max exclude only enabled exact markers and ignore hints. All restart produces null min/max, null first/last/byte ends, explicit empty fetches and clear pixels while count*max(1,instances) still consumes source work. Short bounds, work 35 vs 36, exact/one-short read storage and 65th draw have specific errors.",
+      "result": "HELD",
+      "evidence": [
+        {
+          "path": "boundary-audit.json",
+          "sha256": "0b2370e34ddcae68bde4b1955a16002fc45b1d2a5822a8f783ffb1b1470754d4"
+        },
+        {
+          "path": "hot-physical-audit.json",
+          "sha256": "78299acd4c57f71bce1a94af72904db0898325eb549e9afc706ff97f2a8d3ca8"
+        },
+        {
+          "path": "cold-physical-audit.json",
+          "sha256": "b2f7742ac032a6e0cc0b28189fc8bf1a4bcd084167b0831ca92a157c91912676"
+        },
+        {
+          "path": "final-promoted/fresh-physical-audit.json",
+          "sha256": "e47ffc56a6ae55b46f7a3c5ccd96054923f2907f9702462ace10018135a0f131"
+        }
+      ]
+    },
+    {
+      "id": "P5",
+      "prediction": "Whole pending read batches reject changed original storage even after index collection and before constant completion. Cancellation/stale revision never normalize or draw; name reuse succeeds only with retained old generation and original bytes. Every job drains its real fences and releases read/staging counters.",
+      "result": "HELD",
+      "evidence": [
+        {
+          "path": "boundary-audit.json",
+          "sha256": "0b2370e34ddcae68bde4b1955a16002fc45b1d2a5822a8f783ffb1b1470754d4"
+        }
+      ]
+    },
+    {
+      "id": "P6",
+      "prediction": "Exact 65536 source words reach 262144 normalized native bytes, and 64 draws reach 64 retained buffers; work 65535 fails and no yield owns CPU scratch. GPU scratch remains owned and detached from guest VAO through later reads/final drain. Second create/upload failure keeps only successful draw prefix; cancellation and explicit disposal release every owned object/read with counters zero.",
+      "result": "HELD",
+      "evidence": [
+        {
+          "path": "boundary-audit.json",
+          "sha256": "0b2370e34ddcae68bde4b1955a16002fc45b1d2a5822a8f783ffb1b1470754d4"
+        },
+        {
+          "path": "hot-physical-audit.json",
+          "sha256": "78299acd4c57f71bce1a94af72904db0898325eb549e9afc706ff97f2a8d3ca8"
+        },
+        {
+          "path": "cold-physical-audit.json",
+          "sha256": "b2f7742ac032a6e0cc0b28189fc8bf1a4bcd084167b0831ca92a157c91912676"
+        },
+        {
+          "path": "final-promoted/fresh-physical-audit.json",
+          "sha256": "e47ffc56a6ae55b46f7a3c5ccd96054923f2907f9702462ace10018135a0f131"
+        }
+      ]
+    },
+    {
+      "id": "P7",
+      "prediction": "A/B/A context and native EBO/VAO poisoning restore actual original/native bindings and pixels. Every runtime added hunk has positive V8 execution coverage or a narrow explicit guard/type/config waiver.",
+      "result": "HELD",
+      "evidence": [
+        {
+          "path": "coverage-audit.json",
+          "sha256": "03ee0eda43939d109ce4097176b660c239a1773ba94a55f251aa3338fca186c0"
+        },
+        {
+          "path": "boundary-audit.json",
+          "sha256": "0b2370e34ddcae68bde4b1955a16002fc45b1d2a5822a8f783ffb1b1470754d4"
+        }
+      ]
+    },
+    {
+      "id": "P8",
+      "prediction": "A real served marker-mapping mutation completes drawElementsInstanced and a real final GPU fence, retains original marker in physical normalized GPU bytes, and fails the independent full pixel oracle. The promoted fresh oracle must also fail this actual served mutation.",
+      "result": "HELD",
+      "evidence": [
+        {
+          "path": "final-promoted/fresh-physical-audit.json",
+          "sha256": "e47ffc56a6ae55b46f7a3c5ccd96054923f2907f9702462ace10018135a0f131"
+        },
+        {
+          "path": "boundary-audit.json",
+          "sha256": "0b2370e34ddcae68bde4b1955a16002fc45b1d2a5822a8f783ffb1b1470754d4"
+        }
+      ]
+    },
+    {
+      "id": "P9",
+      "prediction": "A newly seeded custom-marker/wide-index stream with independent nonzero binding/source offsets and a per-fence later schedule satisfies the same original byte, exact-marker, full-pixel and lifetime invariants; independently varied all-restart/out-of-type markers and nonrestart native sentinel give their specified outcomes.",
+      "result": "HELD",
+      "evidence": [
+        {
+          "path": "final-promoted/fresh-physical-audit.json",
+          "sha256": "e47ffc56a6ae55b46f7a3c5ccd96054923f2907f9702462ace10018135a0f131"
+        },
+        {
+          "path": "boundary-audit.json",
+          "sha256": "0b2370e34ddcae68bde4b1955a16002fc45b1d2a5822a8f783ffb1b1470754d4"
+        }
+      ]
+    }
+  ],
+  "runtimeHunks": 18,
+  "runtimeAddedLines": 77,
+  "executedRuntimeLines": 65,
+  "structuralCommentLines": 12,
+  "semanticCoverageGaps": 0,
+  "workerRecordsAuthenticated": 6862,
+  "originalFramesChecked": 378,
+  "originalPixelsChecked": 278016,
+  "originalNativeDrawsChecked": 754,
+  "originalNormalizedBuffersChecked": 636,
+  "freshFrames": 52,
+  "freshPixels": 51712,
+  "freshNativeDraws": 177,
+  "freshNormalizedBuffers": 177,
+  "freshLaterTaskYieldPoints": 2778,
+  "requiredOracleRegression": "Actual served wrong marker mapping completes the native draw and real final fence, retains original marker in GPU bytes, and fails the promoted independent full-pixel oracle. First mismatch at(0,3): clear expected, [58,53,41,128] observed.",
+  "priorAttempt": "The preserved initial sensitivity attempt used an out-of-storage marker and hit the native WebGL range guard before pixel comparison. It is not counted as the required oracle proof; the seed-derived in-storage marker reaches the required completed draw/fence and independent pixel failure.",
+  "honestOriginalHotOutcome": "The original hot full make failed only at receipt KeyError: bytes. Runtime/browser/offline gates passed at their actual31e4 head, the receipt correction alone is source-equivalent, and the final pristine ef30 clone passed the complete corrected make. The earlier full invocation is never relabeled passed.",
+  "suite": [
+    "renderer/virgl-command/tests/standard-primitive-restart-adversarial.mjs",
+    "tools/virgl-command/standard-restart-adversarial-oracle.mjs",
+    "tools/virgl-command/standard-restart-adversarial-pixels.mjs",
+    "tools/verify-virgl-standard-restart-adversarial.sh",
+    "make verify-E6-T11d9-adversarial"
+  ],
+  "commands": [
+    "python3 evidence/virgl-standard-restart/verifier/authenticate.py",
+    "node tools/virgl-command/standard-restart-adversarial-pixels.mjs evidence/virgl-standard-restart/verifier/unpacked/hot evidence/virgl-standard-restart/verifier/hot-physical-audit.json",
+    "node tools/virgl-command/standard-restart-adversarial-pixels.mjs evidence/virgl-standard-restart/verifier/unpacked/cold evidence/virgl-standard-restart/verifier/cold-physical-audit.json",
+    "VIRGL_STANDARD_RESTART_ADVERSARIAL_EVIDENCE_DIR=evidence/virgl-standard-restart/verifier/final-promoted make verify-E6-T11d9-adversarial",
+    "python3 evidence/virgl-standard-restart/verifier/boundary_audit.py",
+    "python3 evidence/virgl-standard-restart/verifier/coverage_audit.py"
+  ],
+  "nonRuntimeDiffCoverage": [
+    {
+      "paths": [
+        "renderer/virgl-command/tests/standard-instanced-draws.mjs"
+      ],
+      "classification": "executed",
+      "reason": "Direct retained D6 hot/cold hardware runs exercise renewed legal-maximum one-byte-short source negatives; original historical records stay unchanged."
+    },
+    {
+      "paths": [
+        "renderer/virgl-command/tests/standard-primitive-restart.mjs",
+        "tools/virgl-command/standard-restart-oracle.mjs"
+      ],
+      "classification": "executed",
+      "reason": "Hot/cold headed native frames, positive and rejection/failure/lifetime branches, and the recorded pixel regression run through these harnesses; source/coverage and physical bytes authenticate."
+    },
+    {
+      "paths": [
+        "tools/verify-virgl-standard-restart.mjs",
+        "tools/verify-virgl-standard-restart.sh",
+        "tools/virgl-command/standard-restart-pixels.mjs",
+        "tools/virgl-command/standard-restart-receipt.py",
+        "tools/virgl-command/standard-restart-cold.py",
+        "tools/virgl-command/standard-restart-seal.py",
+        "Makefile"
+      ],
+      "classification": "executed",
+      "reason": "Exact local logs and final pristine clone run the actual gate, compiler build, records parser, archive sealer and Node/GPU/offline paths. Receipt-only carry and forced-createBuffer-null correction execute in hot/cold records. Unclaimed tool I/O error reporting is waived."
+    },
+    {
+      "paths": [
+        "renderer/virgl-command/draw-README.md",
+        "tasks/QUEUE.md",
+        "tasks/epic-6-transcendence/E6-T11d9-standard-primitive-restart.md",
+        "tasks/epic-6-transcendence/E6-T11d-truthful-guest-virgl-bringup.md"
+      ],
+      "classification": "waived",
+      "reason": "Documentation/task metadata/dependency changes do not execute runtime behavior; no production negotiation or demo import changes."
+    },
+    {
+      "paths": [
+        "evidence/virgl-standard-restart/worker",
+        "evidence/virgl-production-readiness/standard-restart-gap.json"
+      ],
+      "classification": "waived",
+      "reason": "Evidence/declarative historical negative fixture carries no runtime authority. Full worker archive custody is authenticated; the historical restart-gap artifact stays scoped to its pre-D9 source."
+    }
+  ],
+  "findings": [],
+  "carry": {
+    "path": "carry-forward.json",
+    "sha256": "57166916d7a96bfaf19101eacd1c84702a821b5b01044fe47e2f639216d77a51"
+  },
+  "scopeExclusions": [
+    "per-vertex flat provoking convention",
+    "complete GLES/API",
+    "production capsets/import",
+    "actual guest rendering",
+    "demo deployment",
+    "MIPS/FPS"
+  ]
+}

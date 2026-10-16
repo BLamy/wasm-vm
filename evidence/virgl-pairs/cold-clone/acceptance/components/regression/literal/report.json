@@ -1,0 +1,2412 @@
+{
+  "schema": 1,
+  "task": "E6-T10a",
+  "boundary": "literal TGSI -> pinned upstream converter -> GLSL ES300 -> hardware WebGL2",
+  "guestExecution": false,
+  "status": "passed",
+  "command": [
+    "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+    "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-pairs-cold-taha7w0z/wasm-vm/tools/verify-virgl-shader.mjs",
+    "--output",
+    "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-pairs-cold-taha7w0z/wasm-vm/target/evidence/virgl-pairs-cold/components/regression/literal"
+  ],
+  "startedAt": "2026-10-03T08:29:53.112Z",
+  "host": {
+    "platform": "darwin",
+    "architecture": "arm64",
+    "release": "25.6.0",
+    "node": "v24.20.0"
+  },
+  "gitHead": "8b7106488b84c256cae7f4eae87eee16a4f09eee",
+  "trackedChanges": [],
+  "sources": [
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "size": 23688,
+      "sha256": "37acf60a04c189555a545f5275ef969f7ee7d9e9ba5966c2d195c56352afd1c0"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.h",
+      "size": 907,
+      "sha256": "2febc160dbafdf74e9c23e823e436ab6ea4d026a116c98a9bcda4fa050a17aec"
+    },
+    {
+      "path": "renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "size": 9285,
+      "sha256": "45dccef6ff61f9f01a63b86b40eb6c621fa442e39cbf04bbbb79446e5b372e65"
+    },
+    {
+      "path": "renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "size": 262012,
+      "sha256": "2c7a17530da765a9478f8f6edd1421f59375fe82789926375894bba58d1a1032"
+    },
+    {
+      "path": "renderer/virgl-shader/build.sh",
+      "size": 2834,
+      "sha256": "a4f4681901296f5a09b8893ec04a5ce5decfd8afed8817fca6805ed862e9b5b2"
+    },
+    {
+      "path": "renderer/virgl-shader/cli.c",
+      "size": 454,
+      "sha256": "65c9e5a0a3c58ddad36e520f335ca054c8eeec33e851df24db474546a8d7afb3"
+    },
+    {
+      "path": "renderer/virgl-shader/generated/u_format_gen.h",
+      "size": 48398,
+      "sha256": "ac83c3095bf8d81e84eeb448e7743135ce14cf7b35efdc0b75fef8d9c941f068"
+    },
+    {
+      "path": "renderer/virgl-shader/generated/u_format_table.c",
+      "size": 554830,
+      "sha256": "9b654addadc5a17ae283381ba93c8f745a9416171284821e3da381571a49b4f4"
+    },
+    {
+      "path": "renderer/virgl-shader/generated/virgl-version.h",
+      "size": 2149,
+      "sha256": "bea8c6c3b5f6509840d7365bfd0a6bb1d9671118e38da04464a419372faa97fb"
+    },
+    {
+      "path": "renderer/virgl-shader/index.mjs",
+      "size": 4373,
+      "sha256": "e09660b620259f25eecc315537ba8046b3f9a8ce0d148ef3f95ae5a0edff0ec5"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/captured.c",
+      "size": 10446,
+      "sha256": "203fbbf533fca4749f2fed5896557eab97cacc1ac37579d9f985996c075c2626"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/components.c",
+      "size": 6760,
+      "sha256": "a4d354dd26828aa38743baa402b19bccc2ffa7f8d206dd750b7da057f06133b4"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/hostile.c",
+      "size": 7478,
+      "sha256": "cff3b387a16d438a12dd1af57b47128c815a9f1a9fc1966a365cee51e1119696"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/pairs.c",
+      "size": 8708,
+      "sha256": "19dc85ec25b16230e813996531e3a8235b396c4dfb9331304ad815cc784f46c2"
+    },
+    {
+      "path": "renderer/virgl-shader/README.md",
+      "size": 15874,
+      "sha256": "6f9822e48c42b3cec46134325369d537bdb1f2e9ee126161dcaa3190d0f8619f"
+    },
+    {
+      "path": "renderer/virgl-shader/regenerate.py",
+      "size": 1696,
+      "sha256": "04121f0bbc2438b885c88737b03886c27a7024ea75454858c1bed9e40e89b399"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/alpha.frag.tgsi",
+      "size": 145,
+      "sha256": "b76a6ab3958192db11de2e1e300e2761e6c6db359e00afeb3e6527d8fa70b53e"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/arithmetic.frag.tgsi",
+      "size": 160,
+      "sha256": "e05362e13188b954051e39bccf3da5201ebaf967ee9a60ac0f987ee38383600f"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/browser.mjs",
+      "size": 18203,
+      "sha256": "52bbd13702c8534ef0d05e40be23d4a5112d36fdb7c712c50d9a234cfd321cbc"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/captured-invalid.json",
+      "size": 20801,
+      "sha256": "7a2524ec56b2cad12cc919411ce3984e91d61e66968cdcf43158c05cc5b7ad55"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/captured-textured-scene.mjs",
+      "size": 17303,
+      "sha256": "2c8bdeda1368908d02d886bbb207c7e3341502d474a16cde5f0f5ee58a475936"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/component-cases.json",
+      "size": 54300,
+      "sha256": "3e96e57258aa60ed807a516b91508e1f22cb01445899d4e94d2016d5727fd054"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/components.mjs",
+      "size": 20021,
+      "sha256": "639e5b388775729b6d9e2776c2313cdef869195af548f8f9b08c70937b77aac5"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/corpus.mjs",
+      "size": 4442,
+      "sha256": "4f88a7a4f4a301f1a60e3f1b046d71635373a273cbc07e60b43c35aae33d0245"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/linkage.frag.tgsi",
+      "size": 80,
+      "sha256": "bf50dd29e6dadcc16e16e538731a72e47498881e38154fc15059bc2997d846c9"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/pair-cases.json",
+      "size": 199391,
+      "sha256": "e24a52f0a3de67b692a703c3b0307453e8c07e97e114898e432bc62d2d867567"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/pairs.mjs",
+      "size": 15961,
+      "sha256": "96f5c649d0d34ee6a3d88795b328572cec9bc020d78726d733717ae20b5f2e23"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/passthrough.vert.tgsi",
+      "size": 109,
+      "sha256": "396294ea197243b64d61cc6207e76f5043f791d318d5dc90d8ec3da1fc496ce4"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/texture.frag.tgsi",
+      "size": 185,
+      "sha256": "4ca512b5dfd3afac60eddf009cdc542fe6effa5b9817143ff404210ffce3fa00"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/transform.vert.tgsi",
+      "size": 165,
+      "sha256": "320d661e3f13f88dd6c3e874ffe1a43320211a28b69d505cc9e0e6c3fe4908ff"
+    },
+    {
+      "path": "renderer/virgl-shader/UPSTREAM.json",
+      "size": 8594,
+      "sha256": "6f7866d3a3a5e502f6516506909c0d43dec60902fd251a2eecec9610bd992a71"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/cso_cache/cso_cache.c",
+      "size": 8950,
+      "sha256": "88a296ad627e49f22d3e58b6c70c2a656f8c3e7a6fba652f16332c172b12737c"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/cso_cache/cso_cache.h",
+      "size": 5609,
+      "sha256": "84ce8070d4af061f51e887ce7d80ce8fa9d81633205cf16bd61e42832d2cf1a0"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/cso_cache/cso_hash.c",
+      "size": 11319,
+      "sha256": "385fbd6abb5cfdb8fe0b982f07bdc2b98e2edaa50910b26681ab500c48d88514"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/cso_cache/cso_hash.h",
+      "size": 4178,
+      "sha256": "189444cd8c4b98327d79f0c33c5b63231854ab6419f9fe18b20e829510bcd66f"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_build.c",
+      "size": 35054,
+      "sha256": "45867deeb665f4ca86bc0b755ea3e72d320cb01ef881b6a808e9f332b0a040c3"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_build.h",
+      "size": 2838,
+      "sha256": "5f3c327979b3043649b9df678b0e359d387f334e9573c16bd4a263c5452da039"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_dump.c",
+      "size": 23084,
+      "sha256": "747fc8eb4df95202ea8192b377751021480ec7f430ba458936045a999d7f39bc"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_dump.h",
+      "size": 2696,
+      "sha256": "94cb5b4d80dc53937819a8dce44344ae63633e418174d3f8674668e1a74f49f4"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_info.c",
+      "size": 22172,
+      "sha256": "2419cdd3a6322cee5da57d666012504c7b6500acb228418334b8183aa7ec1833"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_info.h",
+      "size": 3230,
+      "sha256": "d20f7d0697a35196c5893d9454016b1cbe58d0b5dfe1eadec23b692271de0568"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_iterate.c",
+      "size": 2910,
+      "sha256": "1767a12cd5be68c04ec5f94a8ec27559913708c9eee13ba524919ee376c85879"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_iterate.h",
+      "size": 2323,
+      "sha256": "29a5f6c96dc4e3483a8afc1f6fdd035fabb29dbcd354bb316d5a005c7feb34db"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_parse.c",
+      "size": 9241,
+      "sha256": "c08c03b75cc74dc8d30231773ed357ddbcbf5b792d303164882ad996c89d91bd"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_parse.h",
+      "size": 4672,
+      "sha256": "3fb35f0187777fffcbbd9b5f12d3f17f7012e925439f5b959fc9c6876230ef1c"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_sanity.c",
+      "size": 15277,
+      "sha256": "f5bc791e3488f2ae35ef1156b7953620de38601bbb4418984d039af5a0c14e51"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_sanity.h",
+      "size": 1879,
+      "sha256": "beac1b1c6680faf9cbcb660324b445a7664ea22fdc1ffb69f9ccfbac5fbf0bac"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_scan.c",
+      "size": 24473,
+      "sha256": "c77892860df340b883c5e191577006f6ba5b0f07eb4ca6d74ec5e6466eac0975"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_scan.h",
+      "size": 5283,
+      "sha256": "16f4742f1f8563703686aec4dbfade31ebaee2d1357f69ff525678919e0fc928"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_strings.c",
+      "size": 5859,
+      "sha256": "e1c3909633b5acd3ff445ce3ddde249457ca92d1ba571269162b7eb5903f513f"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_strings.h",
+      "size": 2378,
+      "sha256": "12d42a3b23f78824c93a5115e479d437f21bb03745b647a9004feaef74a42abb"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_text.c",
+      "size": 49657,
+      "sha256": "692188a36d9cb4cb714dfc3eaf8fc9f7be4f5428550d8ad243fa3d6247d25b0c"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_text.h",
+      "size": 1628,
+      "sha256": "e3a4c2c7af363e952c4b32b71c9b6f5517718392ed9572b86f27d27151e8af9c"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_util.c",
+      "size": 11690,
+      "sha256": "dbab8d2d314a647c9639d9dd9e6947d3b920346a4680d3fe8102e7497241e4ce"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_util.h",
+      "size": 2715,
+      "sha256": "f3b4b296b9f0ccc1b8ad802bca91597efd12e08c551ccbce3b94fc23467a8fc1"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_debug_describe.h",
+      "size": 2040,
+      "sha256": "002511b4833ea6665b0aa6bd9010a0d999a58a4f8d91cb32de7fc30ff28f76ab"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_debug_refcnt.h",
+      "size": 1789,
+      "sha256": "2f173c1b54038fcd432933611687632ab2eac27a94511c615a9ab0c302a8c7b9"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_format_parse.py",
+      "size": 20341,
+      "sha256": "718ba46b27fbec2e0026ca8e2480a6b4992583a9b2bd4e2a90eee2a64f8a6ee7"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_format_s3tc.h",
+      "size": 1601,
+      "sha256": "653113e5628c6ab84f5dd680cc658a992901011435332b2c445adabd0131587c"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_format_table.py",
+      "size": 20834,
+      "sha256": "4fd54a3df7c3ccd37c3cd429953956799fa4d5113d147d60d8cf5d48e6415087"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_format.h",
+      "size": 24095,
+      "sha256": "3e2f6ad3d5c933ca9fd0124b3ae66a1584fc2ae57f761f2e147b497473384f51"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_inlines.h",
+      "size": 7051,
+      "sha256": "52961188ed9a0cd849baabdbcce5fb1701f0bb8dc02e64115e82cbe2cac89866"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_prim.h",
+      "size": 7979,
+      "sha256": "8b4fddd7a11f08c7dd2d90a2b8f1f91abbfeaf849cc5f21425a5c80375b396d4"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/include/pipe/p_defines.h",
+      "size": 25281,
+      "sha256": "29b02c15399768ab74054e711f6633c407cf5f952f591c046e7542b82e54a008"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/include/pipe/p_shader_tokens.h",
+      "size": 23154,
+      "sha256": "48d2cedf0e97e4a685c20acb59bc8dd1317e0b2ba9166e9c4ac81fedda2e61f9"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/include/pipe/p_state.h",
+      "size": 19681,
+      "sha256": "4c9b59a7e9827314dcac5b7492ecd0cc62bd585d662f0611e542af70858c9dbe"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/compat/c11_compat.h",
+      "size": 483,
+      "sha256": "103fedb48f658d36cb416c9c9e5ea4d70dff181aab551fcb1028107d098ffa3e"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/compat/c99_compat.h",
+      "size": 2754,
+      "sha256": "92445314d5fb3eff3a12eaf4cc864f9b459862a99594403b36ea79dfe149d267"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/compat/no_extern_c.h",
+      "size": 2051,
+      "sha256": "60883a8d2b2978b861ef686c5a9afb41cf91ffec7c56baca89c626e7fea2d385"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/pipe/p_compiler.h",
+      "size": 4021,
+      "sha256": "cea977fedff656415c98ca4ac98d7ba4649c7bde65730f76a2e7a94034519e81"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/pipe/p_config.h",
+      "size": 4036,
+      "sha256": "86c0234de12412f65f8a53f1e9f619841d2e60a2b0e32b1ba99961b78c698985"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/bitscan.h",
+      "size": 8438,
+      "sha256": "afa4325d0ed38985bf00b547788a3b73c66a97a4513a3beb516e55b5fead5879"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/detect_os.h",
+      "size": 2522,
+      "sha256": "6d45904758bf3b5a67c0fa3829534461f1c8b276f55328f58a7cbac1d3770f95"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/hash_table.h",
+      "size": 7376,
+      "sha256": "9189e93d161af045eee3fca6f47aa164313e1668ab7341c69987a0f3ada24352"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/macros.h",
+      "size": 15240,
+      "sha256": "a6d424c804a9dd0e22f9bfe5fe332554b3440a13929d0aecf93f571ce9e9db8d"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/os_memory_aligned.h",
+      "size": 3383,
+      "sha256": "12d86fa94be38c13f7eeebdf313795e1267dd5a7187d2f0072e0e896f41702f6"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/os_memory_stdc.h",
+      "size": 2088,
+      "sha256": "07360363b88c927065e10df71bebf6c8a0cc3b9167c9dfce55f2d65f11e6f787"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/os_memory.h",
+      "size": 1938,
+      "sha256": "d77e951306a5027123a7c64675e10b23af8de03ea0673e84cbd935f93284e73f"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/os_misc.h",
+      "size": 2695,
+      "sha256": "3b88b89e0227de413926a9907d660c4b967ee5fe15c9e47977ecfe7091823ceb"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_atomic.h",
+      "size": 11209,
+      "sha256": "cd3c5ca84af9a2aae50517e8735aacf7e72edce326504d60c9c239f5c7ab3d0c"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_debug.c",
+      "size": 10824,
+      "sha256": "9a3f45a3ed1cb45cd6b8543181b06aa30a6ef1ca57a0fca2678900f9c42b5a4d"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_debug.h",
+      "size": 11537,
+      "sha256": "652e2cbc07d44cee7de3fa8cf2e30edc816bb061393de2f43f6d99d99e798ad8"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_endian.h",
+      "size": 1712,
+      "sha256": "088a97ceb214f120fabfe4a0eb8924fb1655de982525548bd867e3b45931b409"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_formats.h",
+      "size": 1818,
+      "sha256": "3fb34a11387b6c625a20862bd5204fc1b5dfb874d2a5f718ba6fa37953925cfc"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_math.h",
+      "size": 17141,
+      "sha256": "1ba82ca8f9eaaac9b48b5ffbb3fa59edbd4f91051f6bbdd8bf2dc6d375a2620a"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_memory.h",
+      "size": 2735,
+      "sha256": "c5db17c724c70283ddbe04165722f6988d4e0eb9aa3602ae472feff016649af9"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_string.h",
+      "size": 3055,
+      "sha256": "2c5615fc0be8f391051e2302dd1b1985eba5c5ece4922f511f8da07c59cf2598"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/virgl_hw.h",
+      "size": 36318,
+      "sha256": "191ca5cea527949a29e9753b1e31d550f2fed922895d78dabc5c5c3585aa2ff7"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/virgl_protocol.h",
+      "size": 30358,
+      "sha256": "094a6e2b210f1d3dd0f1ac254ed8820c1d889e57d2735c0c6194dbc94f3b1ac7"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/virgl_util.h",
+      "size": 4932,
+      "sha256": "d96d902c2b4d27083e5982fc90c7e887841cce07e0f95f42aa07ae64d9b53b77"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/virglrenderer.h",
+      "size": 19876,
+      "sha256": "0b39479c6dbad50d0b94adbd681e124d3c1a77cb0560309ed493241644730cf8"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/vrend/vrend_debug.h",
+      "size": 3279,
+      "sha256": "89f086d99d07d01753de837068fa510e00d6447961f994d3a7bb7d2dbbe5a62f"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/vrend/vrend_shader.c",
+      "size": 333808,
+      "sha256": "e08fe8ceebfebb3e6a050b74d0ea0ebbfab35b6be742b6f0c9b9149dd484c3e2"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/vrend/vrend_shader.h",
+      "size": 9367,
+      "sha256": "0df385cd9953620e9531db813a54fc582594f56364e5bf1efb1e7cd1ba2a2d09"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/vrend/vrend_strbuf.h",
+      "size": 6786,
+      "sha256": "b5909235cf614798d6cc89e6d9236e1653faf14b0493e1e912b68098841cae6f"
+    },
+    {
+      "path": "renderer/virgl-shader/verify_sources.py",
+      "size": 951,
+      "sha256": "2f473d2719bddcecea8828cd9eb02b98671d23fb6879f41946847998c8fea287"
+    },
+    {
+      "path": "tools/lib/virgl-browser-runner.mjs",
+      "size": 12831,
+      "sha256": "8ef93b0898858329aca938219b3532424aa4bb65945ddba3a59ae799af26f0e2"
+    },
+    {
+      "path": "tools/verify-virgl-shader.mjs",
+      "size": 1137,
+      "sha256": "dc7ac12e619fd150aa73c6ba12b0df096bc2eebc79f91c7c5dd5036edde80709"
+    }
+  ],
+  "servedFiles": [
+    {
+      "path": "renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "size": 9285,
+      "sha256": "45dccef6ff61f9f01a63b86b40eb6c621fa442e39cbf04bbbb79446e5b372e65"
+    },
+    {
+      "path": "renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "size": 262012,
+      "sha256": "2c7a17530da765a9478f8f6edd1421f59375fe82789926375894bba58d1a1032"
+    },
+    {
+      "path": "renderer/virgl-shader/index.mjs",
+      "size": 4373,
+      "sha256": "e09660b620259f25eecc315537ba8046b3f9a8ce0d148ef3f95ae5a0edff0ec5"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/alpha.frag.tgsi",
+      "size": 145,
+      "sha256": "b76a6ab3958192db11de2e1e300e2761e6c6db359e00afeb3e6527d8fa70b53e"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/arithmetic.frag.tgsi",
+      "size": 160,
+      "sha256": "e05362e13188b954051e39bccf3da5201ebaf967ee9a60ac0f987ee38383600f"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/browser.mjs",
+      "size": 18203,
+      "sha256": "52bbd13702c8534ef0d05e40be23d4a5112d36fdb7c712c50d9a234cfd321cbc"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/corpus.mjs",
+      "size": 4442,
+      "sha256": "4f88a7a4f4a301f1a60e3f1b046d71635373a273cbc07e60b43c35aae33d0245"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/linkage.frag.tgsi",
+      "size": 80,
+      "sha256": "bf50dd29e6dadcc16e16e538731a72e47498881e38154fc15059bc2997d846c9"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/passthrough.vert.tgsi",
+      "size": 109,
+      "sha256": "396294ea197243b64d61cc6207e76f5043f791d318d5dc90d8ec3da1fc496ce4"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/texture.frag.tgsi",
+      "size": 185,
+      "sha256": "4ca512b5dfd3afac60eddf009cdc542fe6effa5b9817143ff404210ffce3fa00"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/transform.vert.tgsi",
+      "size": 165,
+      "sha256": "320d661e3f13f88dd6c3e874ffe1a43320211a28b69d505cc9e0e6c3fe4908ff"
+    }
+  ],
+  "browserErrors": {
+    "console": [],
+    "page": [],
+    "requests": []
+  },
+  "browser": {
+    "executablePath": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    "executableSha256": "b4a14b08946ab78756169696fd272d6c3040a22df52da4f83f665225685f4c10",
+    "version": "154.0.8037.93",
+    "launch": {
+      "executablePath": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+      "headless": false,
+      "args": [
+        "--enable-gpu"
+      ]
+    },
+    "actualCommandLine": [
+      "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+      "--disable-field-trial-config",
+      "--disable-background-networking",
+      "--disable-background-timer-throttling",
+      "--disable-backgrounding-occluded-windows",
+      "--disable-back-forward-cache",
+      "--disable-breakpad",
+      "--disable-client-side-phishing-detection",
+      "--disable-component-extensions-with-background-pages",
+      "--disable-component-update",
+      "--no-default-browser-check",
+      "--disable-default-apps",
+      "--disable-dev-shm-usage",
+      "--disable-extensions",
+      "--disable-features=ImprovedCookieControls,LazyFrameLoading,GlobalMediaControls,DestroyProfileOnBrowserClose,MediaRouter,DialMediaRouteProvider,AcceptCHFrame,AutoExpandDetailsElement,CertificateTransparencyComponentUpdater,AvoidUnnecessaryBeforeUnloadCheckSync,Translate,HttpsUpgrades,PaintHolding,ThirdPartyStoragePartitioning,LensOverlay,PlzDedicatedWorker",
+      "--allow-pre-commit-input",
+      "--disable-hang-monitor",
+      "--disable-ipc-flooding-protection",
+      "--disable-popup-blocking",
+      "--disable-prompt-on-repost",
+      "--disable-renderer-backgrounding",
+      "--force-color-profile=srgb",
+      "--metrics-recording-only",
+      "--no-first-run",
+      "--enable-automation",
+      "--password-store=basic",
+      "--use-mock-keychain",
+      "--no-service-autorun",
+      "--export-tagged-pdf",
+      "--disable-search-engine-choice-screen",
+      "--unsafely-disable-devtools-self-xss-warnings",
+      "--enable-use-zoom-for-dsf=false",
+      "--no-sandbox",
+      "--enable-gpu",
+      "--user-data-dir=/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/playwright_chromiumdev_profile-rnfzgr",
+      "--remote-debugging-pipe",
+      "--no-startup-window",
+      "--flag-switches-begin",
+      "--flag-switches-end"
+    ],
+    "cdpVersion": {
+      "protocolVersion": "1.3",
+      "product": "Chrome/154.0.8037.93",
+      "revision": "@f89f3a4363808e117c592adedcf9947882ac3b79",
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "jsVersion": "15.4.80.19"
+    },
+    "gpu": {
+      "devices": [
+        {
+          "vendorId": 4203,
+          "deviceId": 0,
+          "vendorString": "Google Inc. (Apple)",
+          "deviceString": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+          "driverVendor": "Apple",
+          "driverVersion": "26.6.2"
+        }
+      ],
+      "auxAttributes": {
+        "amdSwitchable": false,
+        "canSupportThreadedTextureMailbox": false,
+        "directRenderingVersion": "",
+        "displayType": "ANGLE_METAL",
+        "glExtensions": "GL_AMD_performance_monitor GL_ANGLE_base_vertex_base_instance_shader_builtin GL_ANGLE_blob_cache GL_ANGLE_client_arrays GL_ANGLE_clip_cull_distance GL_ANGLE_compressed_texture_etc GL_ANGLE_depth_texture GL_ANGLE_framebuffer_blit GL_ANGLE_framebuffer_multisample GL_ANGLE_get_serialized_context_string GL_ANGLE_get_tex_level_parameter GL_ANGLE_instanced_arrays GL_ANGLE_memory_size GL_ANGLE_pack_reverse_row_order GL_ANGLE_polygon_mode GL_ANGLE_program_binary_readiness_query GL_ANGLE_program_cache_control GL_ANGLE_provoking_vertex GL_ANGLE_renderability_validation GL_ANGLE_request_extension GL_ANGLE_rgbx_internal_format GL_ANGLE_robust_client_memory GL_ANGLE_shader_pixel_local_storage GL_ANGLE_shader_pixel_local_storage_coherent GL_ANGLE_stencil_texturing GL_ANGLE_texture_compression_dxt3 GL_ANGLE_texture_compression_dxt5 GL_ANGLE_texture_multisample GL_ANGLE_translated_shader_source GL_APPLE_clip_distance GL_ARM_rgba8 GL_CHROMIUM_bind_generates_resource GL_CHROMIUM_bind_uniform_location GL_CHROMIUM_copy_texture GL_CHROMIUM_lose_context GL_EXT_base_instance GL_EXT_blend_func_extended GL_EXT_blend_minmax GL_EXT_clip_control GL_EXT_color_buffer_float GL_EXT_color_buffer_half_float GL_EXT_compressed_ETC1_RGB8_sub_texture GL_EXT_conservative_depth GL_EXT_debug_label GL_EXT_debug_marker GL_EXT_depth_clamp GL_EXT_discard_framebuffer GL_EXT_disjoint_timer_query GL_EXT_draw_buffers GL_EXT_draw_buffers_indexed GL_EXT_draw_elements_base_vertex GL_EXT_float_blend GL_EXT_frag_depth GL_EXT_instanced_arrays GL_EXT_map_buffer_range GL_EXT_multisampled_render_to_texture GL_EXT_occlusion_query_boolean GL_EXT_polygon_offset_clamp GL_EXT_pvrtc_sRGB GL_EXT_read_format_bgra GL_EXT_render_snorm GL_EXT_robustness GL_EXT_sRGB GL_EXT_shader_texture_lod GL_EXT_texture_compression_bptc GL_EXT_texture_compression_dxt1 GL_EXT_texture_compression_rgtc GL_EXT_texture_compression_s3tc_srgb GL_EXT_texture_filter_anisotropic GL_EXT_texture_format_BGRA8888 GL_EXT_texture_mirror_clamp_to_edge GL_EXT_texture_norm16 GL_EXT_texture_rg GL_EXT_texture_sRGB_R8 GL_EXT_texture_sRGB_RG8 GL_EXT_texture_shadow_lod GL_EXT_texture_storage GL_IMG_texture_compression_pvrtc GL_KHR_debug GL_KHR_parallel_shader_compile GL_KHR_robustness GL_KHR_texture_compression_astc_hdr GL_KHR_texture_compression_astc_ldr GL_KHR_texture_compression_astc_sliced_3d GL_MESA_framebuffer_flip_y GL_NV_fence GL_NV_framebuffer_blit GL_NV_pixel_buffer_object GL_NV_shader_noperspective_interpolation GL_OES_EGL_image GL_OES_EGL_sync GL_OES_compressed_ETC1_RGB8_texture GL_OES_depth24 GL_OES_depth32 GL_OES_depth_texture GL_OES_draw_buffers_indexed GL_OES_draw_elements_base_vertex GL_OES_element_index_uint GL_OES_fbo_render_mipmap GL_OES_get_program_binary GL_OES_mapbuffer GL_OES_packed_depth_stencil GL_OES_required_internalformat GL_OES_rgb8_rgba8 GL_OES_sample_variables GL_OES_shader_multisample_interpolation GL_OES_standard_derivatives GL_OES_surfaceless_context GL_OES_texture_3D GL_OES_texture_float GL_OES_texture_float_linear GL_OES_texture_half_float GL_OES_texture_half_float_linear GL_OES_texture_npot GL_OES_texture_stencil8 GL_OES_vertex_array_object GL_QCOM_render_shared_exponent ",
+        "glImplementationParts": "(gl=egl-angle,angle=metal)",
+        "glRenderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+        "glResetNotificationStrategy": 33362,
+        "glVendor": "Google Inc. (Apple)",
+        "glVersion": "OpenGL ES 3.0 (ANGLE 2.1.28733 git hash: 802a8704ca94)",
+        "glWsExtensions": "",
+        "glWsVendor": "",
+        "glWsVersion": "",
+        "inProcessGpu": false,
+        "initializationTime": 0.032677,
+        "isAsan": false,
+        "isClangCoverage": false,
+        "jpegDecodeAcceleratorSupported": false,
+        "maxMsaaSamples": "4",
+        "optimus": false,
+        "passthroughCmdDecoder": true,
+        "pixelShaderVersion": "3.00",
+        "processCrashCount": 0,
+        "sandboxed": false,
+        "skiaBackendType": "GraphiteDawnMetal",
+        "subpixelFontRendering": true,
+        "targetCpuBits": 64,
+        "vertexShaderVersion": "3.00",
+        "visibilityCallbackCallCount": 0
+      },
+      "featureStatus": {
+        "2d_canvas": "enabled",
+        "direct_rendering_display_compositor": "disabled_off_ok",
+        "gpu_compositing": "enabled",
+        "multiple_raster_threads": "enabled_on",
+        "opengl": "enabled_on",
+        "rasterization": "enabled",
+        "raw_draw": "disabled_off_ok",
+        "skia_graphite": "enabled_on",
+        "trees_in_viz": "disabled_off",
+        "video_decode": "enabled",
+        "video_encode": "enabled",
+        "webgl": "enabled",
+        "webgpu": "enabled",
+        "webnn": "disabled_off"
+      },
+      "driverBugWorkarounds": [
+        "disable_2d_canvas_auto_flush",
+        "enable_webgl_timer_query_extensions",
+        "disabled_extension_GL_KHR_blend_equation_advanced",
+        "disabled_extension_GL_KHR_blend_equation_advanced_coherent"
+      ],
+      "videoDecoding": [],
+      "videoEncoding": []
+    },
+    "webglFeature": "webgl"
+  },
+  "acceptance": {
+    "kind": "virgl-shader-boundary",
+    "guestExecution": false,
+    "status": "passed",
+    "translations": [
+      {
+        "name": "passthrough",
+        "stage": "vertex",
+        "file": "passthrough.vert.tgsi",
+        "sourceSha256": "396294ea197243b64d61cc6207e76f5043f791d318d5dc90d8ec3da1fc496ce4",
+        "glslSha256": "1ea8d35da7f3f9114f506d66918a86c738b72fbcc1ccc64b77d63b9d63119841",
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nin vec4 in_1;\n   out  vec4 vso_g0;\nlayout (std140) uniform VirglBlock {\n\tvec4 clipp[8];\n\tuint stipple_pattern[32];\n\tfloat winsys_adjust_y;\n\tfloat alpha_ref_val;\n\tbool clip_plane_enabled;\n\tint drawid_base;\n};\nvoid main(void)\n{\ngl_Position = vec4(((in_0)));\nvso_g0 = vec4(((in_1)));\ngl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-straight-line-v4",
+          "stage": "vertex",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 1,
+              "name": "in_1",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "gl_Position",
+              "type": "vec4",
+              "semantic": "POSITION",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            },
+            {
+              "index": 1,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15,
+              "interpolation": "smooth"
+            }
+          ],
+          "attributes": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 1,
+              "name": "in_1",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "uniforms": [],
+          "samplers": [],
+          "uniformBlocks": [
+            {
+              "name": "VirglBlock",
+              "byteLength": 656,
+              "members": [
+                {
+                  "name": "winsys_adjust_y",
+                  "offset": 640,
+                  "type": "float",
+                  "default": 1
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "name": "transform",
+        "stage": "vertex",
+        "file": "transform.vert.tgsi",
+        "sourceSha256": "320d661e3f13f88dd6c3e874ffe1a43320211a28b69d505cc9e0e6c3fe4908ff",
+        "glslSha256": "63629f573eab4f412f23c8475ad9d43c86b6d2f9d1075ab8581608a2028bfecd",
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nin vec4 in_1;\n   out  vec4 vso_g0;\n vec4 temp0;\nuniform uvec4 vsconst0[1];\nlayout (std140) uniform VirglBlock {\n\tvec4 clipp[8];\n\tuint stipple_pattern[32];\n\tfloat winsys_adjust_y;\n\tfloat alpha_ref_val;\n\tbool clip_plane_enabled;\n\tint drawid_base;\n};\nvoid main(void)\n{\ntemp0 = vec4((((in_0) * uintBitsToFloat(vsconst0[0]))));\ngl_Position = vec4(( vec4(temp0) ));\nvso_g0 = vec4(((in_1)));\ngl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-straight-line-v4",
+          "stage": "vertex",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 1,
+              "name": "in_1",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "gl_Position",
+              "type": "vec4",
+              "semantic": "POSITION",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            },
+            {
+              "index": 1,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15,
+              "interpolation": "smooth"
+            }
+          ],
+          "attributes": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            },
+            {
+              "index": 1,
+              "name": "in_1",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "uniforms": [
+            {
+              "name": "vsconst0",
+              "type": "uvec4[]",
+              "count": 1,
+              "encoding": "float32-bits"
+            }
+          ],
+          "samplers": [],
+          "uniformBlocks": [
+            {
+              "name": "VirglBlock",
+              "byteLength": 656,
+              "members": [
+                {
+                  "name": "winsys_adjust_y",
+                  "offset": 640,
+                  "type": "float",
+                  "default": 1
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "name": "linkage",
+        "stage": "fragment",
+        "file": "linkage.frag.tgsi",
+        "sourceSha256": "bf50dd29e6dadcc16e16e538731a72e47498881e38154fc15059bc2997d846c9",
+        "glslSha256": "dd9a0a98508ffc9776ed3e1f620996d62115eb7bb75dd13f8285cab33cad9bb4",
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\n smooth    in  vec4 vso_g0;\n layout(location = 0)  out  vec4 fsout_c0;\nvoid main(void)\n{\nfsout_c0 = vec4(((vso_g0)));\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-straight-line-v4",
+          "stage": "fragment",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "interpolation": "smooth"
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "fsout_c0",
+              "type": "vec4",
+              "semantic": "COLOR",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            }
+          ],
+          "attributes": [],
+          "uniforms": [],
+          "samplers": [],
+          "uniformBlocks": []
+        }
+      },
+      {
+        "name": "arithmetic",
+        "stage": "fragment",
+        "file": "arithmetic.frag.tgsi",
+        "sourceSha256": "e05362e13188b954051e39bccf3da5201ebaf967ee9a60ac0f987ee38383600f",
+        "glslSha256": "f188edea2578e7a3bd0928a8acaf8a99a50a2c635a98d1968e3b910c5d6f27c2",
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\n layout(location = 0)  out  vec4 fsout_c0;\n vec4 temp0;\nuniform uvec4 fsconst0[2];\nvoid main(void)\n{\ntemp0 = vec4(((uintBitsToFloat(fsconst0[0]) * (vec4(0.5,0.25,1,0.5)))));\nfsout_c0 = vec4((( vec4(temp0)  + uintBitsToFloat(fsconst0[1]))));\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-straight-line-v4",
+          "stage": "fragment",
+          "inputs": [],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "fsout_c0",
+              "type": "vec4",
+              "semantic": "COLOR",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            }
+          ],
+          "attributes": [],
+          "uniforms": [
+            {
+              "name": "fsconst0",
+              "type": "uvec4[]",
+              "count": 2,
+              "encoding": "float32-bits"
+            }
+          ],
+          "samplers": [],
+          "uniformBlocks": []
+        }
+      },
+      {
+        "name": "texture",
+        "stage": "fragment",
+        "file": "texture.frag.tgsi",
+        "sourceSha256": "4ca512b5dfd3afac60eddf009cdc542fe6effa5b9817143ff404210ffce3fa00",
+        "glslSha256": "57d2650233458ffccedc4b5f11a7bfdbd962e7991a2d4eabede650e7f9e2b103",
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\n smooth    in  vec4 vso_g0;\n layout(location = 0)  out  vec4 fsout_c0;\n vec4 temp0;\nuniform uvec4 fsconst0[1];\nuniform highp  sampler2D fssamp0;\nvoid main(void)\n{\ntemp0 = vec4((texture(fssamp0, (vso_g0).xy)));\nfsout_c0 = vec4((( vec4(temp0)  * uintBitsToFloat(fsconst0[0]))));\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-straight-line-v4",
+          "stage": "fragment",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "interpolation": "smooth"
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "fsout_c0",
+              "type": "vec4",
+              "semantic": "COLOR",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            }
+          ],
+          "attributes": [],
+          "uniforms": [
+            {
+              "name": "fsconst0",
+              "type": "uvec4[]",
+              "count": 1,
+              "encoding": "float32-bits"
+            }
+          ],
+          "samplers": [
+            {
+              "index": 0,
+              "name": "fssamp0",
+              "type": "sampler2D"
+            }
+          ],
+          "uniformBlocks": []
+        }
+      },
+      {
+        "name": "alpha",
+        "stage": "fragment",
+        "file": "alpha.frag.tgsi",
+        "sourceSha256": "b76a6ab3958192db11de2e1e300e2761e6c6db359e00afeb3e6527d8fa70b53e",
+        "glslSha256": "8dd118cc8bfdb974a93a8620d2055da49e24cf368292f78c528bc879e0ce03a9",
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\n smooth    in  vec4 vso_g0;\n layout(location = 0)  out  vec4 fsout_c0;\nuniform uvec4 fsconst0[1];\nvoid main(void)\n{\nfsout_c0 = vec4(((vso_g0) * (vec4(0.5,1,0,0.5)) + uintBitsToFloat(fsconst0[0])));\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-straight-line-v4",
+          "stage": "fragment",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "interpolation": "smooth"
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "fsout_c0",
+              "type": "vec4",
+              "semantic": "COLOR",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            }
+          ],
+          "attributes": [],
+          "uniforms": [
+            {
+              "name": "fsconst0",
+              "type": "uvec4[]",
+              "count": 1,
+              "encoding": "float32-bits"
+            }
+          ],
+          "samplers": [],
+          "uniformBlocks": []
+        }
+      }
+    ],
+    "errors": [
+      {
+        "name": "empty",
+        "expectedCode": "parse-error",
+        "error": {
+          "code": "parse-error",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        },
+        "inputBytes": 0,
+        "inputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "garbage",
+        "expectedCode": "parse-error",
+        "error": {
+          "code": "parse-error",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        },
+        "inputBytes": 13,
+        "inputSha256": "1efa86d679fffc14b8bfc3b02b2f8455dc2ef7ec29685489efdbd8e3b3fd7bb9"
+      },
+      {
+        "name": "missing-end",
+        "expectedCode": "parse-error",
+        "error": {
+          "code": "parse-error",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        },
+        "inputBytes": 105,
+        "inputSha256": "b8b395b18e66a64b88074fe0fa8ed82862af2b759eb959a6f6da6b002e05e2b9"
+      },
+      {
+        "name": "unknown-property",
+        "expectedCode": "unsupported-feature",
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        },
+        "inputBytes": 145,
+        "inputSha256": "ff546b33003c2149f9db4aae1cac6b0b959f93f94c97c0931b9528d47b797717"
+      },
+      {
+        "name": "unknown-opcode",
+        "expectedCode": "unsupported-feature",
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        },
+        "inputBytes": 112,
+        "inputSha256": "2ba3e2e217e47932cfa4c561784c62a4f88a3e7ae3ea910d541ae3968af5b03c"
+      },
+      {
+        "name": "overflow-register",
+        "expectedCode": "unsupported-feature",
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        },
+        "inputBytes": 127,
+        "inputSha256": "b8ee44b3e1a8a3db9ec735650dd4afce89974fbcc52c969ce8c1b322a45a902a"
+      },
+      {
+        "name": "register-outside-profile",
+        "expectedCode": "unsupported-feature",
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        },
+        "inputBytes": 109,
+        "inputSha256": "b525020d02e215d281494dc3c14e489d47f68b0c516ee305f51c2ca7c8084fb0"
+      },
+      {
+        "name": "unsupported-geometry",
+        "expectedCode": "unsupported-stage",
+        "error": {
+          "code": "unsupported-stage",
+          "message": "Only vertex and fragment stages are supported."
+        },
+        "inputBytes": 9,
+        "inputSha256": "dce18348129979a9e7f4f20b541b741030d7bea43330ee8eb061c4938507da13"
+      },
+      {
+        "name": "stage-mismatch",
+        "expectedCode": "unsupported-stage",
+        "error": {
+          "code": "unsupported-stage",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        },
+        "inputBytes": 109,
+        "inputSha256": "396294ea197243b64d61cc6207e76f5043f791d318d5dc90d8ec3da1fc496ce4"
+      },
+      {
+        "name": "embedded-nul",
+        "expectedCode": "invalid-input",
+        "error": {
+          "code": "invalid-input",
+          "message": "TGSI must be printable ASCII without NUL bytes."
+        },
+        "inputBytes": 128,
+        "inputSha256": "d3b1af2a764bdc0c52bb6bbb377d5e87d5ccc14f20751423917cecc85378d8e9"
+      },
+      {
+        "name": "non-ascii",
+        "expectedCode": "invalid-input",
+        "error": {
+          "code": "invalid-input",
+          "message": "TGSI must be printable ASCII without NUL bytes."
+        },
+        "inputBytes": 111,
+        "inputSha256": "b7f28293ff8e9191147c456148aefa30a4008573ec1c2422f377609c5e80f047"
+      },
+      {
+        "name": "oversized",
+        "expectedCode": "input-too-large",
+        "error": {
+          "code": "input-too-large",
+          "message": "TGSI text exceeds 16384 bytes."
+        },
+        "inputBytes": 16385,
+        "inputSha256": "39061532d423f2d385027b9d40fc07e2bedf7bf3151e8f8bdd5ff005cd5136d1"
+      },
+      {
+        "name": "non-string",
+        "expectedCode": "invalid-input",
+        "error": {
+          "code": "invalid-input",
+          "message": "Provide a stage and TGSI text string."
+        },
+        "inputBytes": null,
+        "inputSha256": "73475cb40a568e8da8a045ced110137e159f890ac4da883b6b17dc651b3a8049"
+      }
+    ],
+    "draws": [
+      {
+        "name": "generic-linkage-red",
+        "vertex": "passthrough",
+        "fragment": "linkage",
+        "viewport": [
+          32,
+          32
+        ],
+        "blend": false,
+        "clear": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "checkedPixels": 576,
+        "checks": [
+          {
+            "rect": [
+              4,
+              4,
+              24,
+              24
+            ],
+            "expected": [
+              255,
+              0,
+              0,
+              255
+            ],
+            "observed": [
+              255,
+              0,
+              0,
+              255
+            ],
+            "pixels": 576
+          }
+        ],
+        "rgbaSha256": "4ab589b8423c13f8f33994356d5b696d9b3b56d968e1939f2088c53b5149e6cf",
+        "activeAttributes": [
+          {
+            "index": 0,
+            "name": "in_0",
+            "type": 35666,
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "componentMask": 15,
+            "location": 0
+          },
+          {
+            "index": 1,
+            "name": "in_1",
+            "type": 35666,
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "componentMask": 15,
+            "location": 1
+          }
+        ],
+        "uniformBlocks": [
+          {
+            "name": "VirglBlock",
+            "index": 0,
+            "byteLength": 656,
+            "members": [
+              {
+                "name": "winsys_adjust_y",
+                "reflectedName": "winsys_adjust_y",
+                "offset": 640,
+                "type": 5126,
+                "value": 1
+              }
+            ]
+          }
+        ],
+        "uniforms": [],
+        "samplers": [],
+        "logs": {
+          "vertex": "",
+          "fragment": "",
+          "link": ""
+        },
+        "glError": 0
+      },
+      {
+        "name": "generic-linkage-cyan",
+        "vertex": "passthrough",
+        "fragment": "linkage",
+        "viewport": [
+          32,
+          32
+        ],
+        "blend": false,
+        "clear": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "checkedPixels": 576,
+        "checks": [
+          {
+            "rect": [
+              4,
+              4,
+              24,
+              24
+            ],
+            "expected": [
+              0,
+              255,
+              255,
+              255
+            ],
+            "observed": [
+              0,
+              255,
+              255,
+              255
+            ],
+            "pixels": 576
+          }
+        ],
+        "rgbaSha256": "f8189aede8290aa3c48aa45e4b7946b77aec52fe17e53e67a7166894c7ed9fde",
+        "activeAttributes": [
+          {
+            "index": 0,
+            "name": "in_0",
+            "type": 35666,
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "componentMask": 15,
+            "location": 0
+          },
+          {
+            "index": 1,
+            "name": "in_1",
+            "type": 35666,
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "componentMask": 15,
+            "location": 1
+          }
+        ],
+        "uniformBlocks": [
+          {
+            "name": "VirglBlock",
+            "index": 0,
+            "byteLength": 656,
+            "members": [
+              {
+                "name": "winsys_adjust_y",
+                "reflectedName": "winsys_adjust_y",
+                "offset": 640,
+                "type": 5126,
+                "value": 1
+              }
+            ]
+          }
+        ],
+        "uniforms": [],
+        "samplers": [],
+        "logs": {
+          "vertex": "",
+          "fragment": "",
+          "link": ""
+        },
+        "glError": 0
+      },
+      {
+        "name": "uniform-mul-add-alpha",
+        "vertex": "passthrough",
+        "fragment": "arithmetic",
+        "viewport": [
+          32,
+          32
+        ],
+        "blend": false,
+        "clear": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "checkedPixels": 576,
+        "checks": [
+          {
+            "rect": [
+              4,
+              4,
+              24,
+              24
+            ],
+            "expected": [
+              128,
+              128,
+              255,
+              128
+            ],
+            "observed": [
+              128,
+              128,
+              255,
+              128
+            ],
+            "pixels": 576
+          }
+        ],
+        "rgbaSha256": "fcc82d7175d51ed6691cc9e40cba6e01a16f428c0e1bd01d8f1ef8c834d49cd6",
+        "activeAttributes": [
+          {
+            "index": 0,
+            "name": "in_0",
+            "type": 35666,
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "componentMask": 15,
+            "location": 0
+          },
+          {
+            "index": 1,
+            "name": "in_1",
+            "type": 35666,
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "componentMask": 15,
+            "location": 1
+          }
+        ],
+        "uniformBlocks": [
+          {
+            "name": "VirglBlock",
+            "index": 0,
+            "byteLength": 656,
+            "members": [
+              {
+                "name": "winsys_adjust_y",
+                "reflectedName": "winsys_adjust_y",
+                "offset": 640,
+                "type": 5126,
+                "value": 1
+              }
+            ]
+          }
+        ],
+        "uniforms": [
+          {
+            "name": "fsconst0[0]",
+            "stage": "fragment",
+            "type": "uvec4[]",
+            "values": [
+              [
+                1,
+                1,
+                0,
+                1
+              ],
+              [
+                0,
+                0.25,
+                1,
+                0
+              ]
+            ],
+            "bits": [
+              1065353216,
+              1065353216,
+              0,
+              1065353216,
+              0,
+              1048576000,
+              1065353216,
+              0
+            ]
+          }
+        ],
+        "samplers": [],
+        "logs": {
+          "vertex": "",
+          "fragment": "",
+          "link": ""
+        },
+        "glError": 0
+      },
+      {
+        "name": "uniform-update",
+        "vertex": "passthrough",
+        "fragment": "arithmetic",
+        "viewport": [
+          32,
+          32
+        ],
+        "blend": false,
+        "clear": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "checkedPixels": 576,
+        "checks": [
+          {
+            "rect": [
+              4,
+              4,
+              24,
+              24
+            ],
+            "expected": [
+              0,
+              255,
+              255,
+              255
+            ],
+            "observed": [
+              0,
+              255,
+              255,
+              255
+            ],
+            "pixels": 576
+          }
+        ],
+        "rgbaSha256": "f8189aede8290aa3c48aa45e4b7946b77aec52fe17e53e67a7166894c7ed9fde",
+        "activeAttributes": [
+          {
+            "index": 0,
+            "name": "in_0",
+            "type": 35666,
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "componentMask": 15,
+            "location": 0
+          },
+          {
+            "index": 1,
+            "name": "in_1",
+            "type": 35666,
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "componentMask": 15,
+            "location": 1
+          }
+        ],
+        "uniformBlocks": [
+          {
+            "name": "VirglBlock",
+            "index": 0,
+            "byteLength": 656,
+            "members": [
+              {
+                "name": "winsys_adjust_y",
+                "reflectedName": "winsys_adjust_y",
+                "offset": 640,
+                "type": 5126,
+                "value": 1
+              }
+            ]
+          }
+        ],
+        "uniforms": [
+          {
+            "name": "fsconst0[0]",
+            "stage": "fragment",
+            "type": "uvec4[]",
+            "values": [
+              [
+                0,
+                0,
+                1,
+                0
+              ],
+              [
+                0,
+                1,
+                0,
+                1
+              ]
+            ],
+            "bits": [
+              0,
+              0,
+              1065353216,
+              0,
+              0,
+              1065353216,
+              0,
+              1065353216
+            ]
+          }
+        ],
+        "samplers": [],
+        "logs": {
+          "vertex": "",
+          "fragment": "",
+          "link": ""
+        },
+        "glError": 0
+      },
+      {
+        "name": "vertex-uniform-transform",
+        "vertex": "transform",
+        "fragment": "linkage",
+        "viewport": [
+          32,
+          32
+        ],
+        "blend": false,
+        "clear": [
+          0,
+          0,
+          1,
+          1
+        ],
+        "checkedPixels": 368,
+        "checks": [
+          {
+            "rect": [
+              10,
+              10,
+              12,
+              12
+            ],
+            "expected": [
+              0,
+              255,
+              0,
+              255
+            ],
+            "observed": [
+              0,
+              255,
+              0,
+              255
+            ],
+            "pixels": 144
+          },
+          {
+            "rect": [
+              2,
+              2,
+              4,
+              28
+            ],
+            "expected": [
+              0,
+              0,
+              255,
+              255
+            ],
+            "observed": [
+              0,
+              0,
+              255,
+              255
+            ],
+            "pixels": 112
+          },
+          {
+            "rect": [
+              26,
+              2,
+              4,
+              28
+            ],
+            "expected": [
+              0,
+              0,
+              255,
+              255
+            ],
+            "observed": [
+              0,
+              0,
+              255,
+              255
+            ],
+            "pixels": 112
+          }
+        ],
+        "rgbaSha256": "88dfcd2f5244be8541629fb5f2c92011d9cdaa5122cd5668a781127b1443cfc0",
+        "activeAttributes": [
+          {
+            "index": 0,
+            "name": "in_0",
+            "type": 35666,
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "componentMask": 15,
+            "location": 0
+          },
+          {
+            "index": 1,
+            "name": "in_1",
+            "type": 35666,
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "componentMask": 15,
+            "location": 1
+          }
+        ],
+        "uniformBlocks": [
+          {
+            "name": "VirglBlock",
+            "index": 0,
+            "byteLength": 656,
+            "members": [
+              {
+                "name": "winsys_adjust_y",
+                "reflectedName": "winsys_adjust_y",
+                "offset": 640,
+                "type": 5126,
+                "value": 1
+              }
+            ]
+          }
+        ],
+        "uniforms": [
+          {
+            "name": "vsconst0[0]",
+            "stage": "vertex",
+            "type": "uvec4[]",
+            "values": [
+              [
+                0.5,
+                0.5,
+                1,
+                1
+              ]
+            ],
+            "bits": [
+              1056964608,
+              1056964608,
+              1065353216,
+              1065353216
+            ]
+          }
+        ],
+        "samplers": [],
+        "logs": {
+          "vertex": "",
+          "fragment": "",
+          "link": ""
+        },
+        "glError": 0
+      },
+      {
+        "name": "nearest-texture-rgba",
+        "vertex": "passthrough",
+        "fragment": "texture",
+        "viewport": [
+          32,
+          32
+        ],
+        "blend": false,
+        "clear": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "checkedPixels": 256,
+        "checks": [
+          {
+            "rect": [
+              4,
+              4,
+              8,
+              8
+            ],
+            "expected": [
+              255,
+              0,
+              0,
+              255
+            ],
+            "observed": [
+              255,
+              0,
+              0,
+              255
+            ],
+            "pixels": 64
+          },
+          {
+            "rect": [
+              20,
+              4,
+              8,
+              8
+            ],
+            "expected": [
+              0,
+              255,
+              0,
+              128
+            ],
+            "observed": [
+              0,
+              255,
+              0,
+              128
+            ],
+            "pixels": 64
+          },
+          {
+            "rect": [
+              4,
+              20,
+              8,
+              8
+            ],
+            "expected": [
+              0,
+              0,
+              255,
+              64
+            ],
+            "observed": [
+              0,
+              0,
+              255,
+              64
+            ],
+            "pixels": 64
+          },
+          {
+            "rect": [
+              20,
+              20,
+              8,
+              8
+            ],
+            "expected": [
+              255,
+              255,
+              0,
+              0
+            ],
+            "observed": [
+              255,
+              255,
+              0,
+              0
+            ],
+            "pixels": 64
+          }
+        ],
+        "rgbaSha256": "469f7d0cc3d4747b2a62b05d62436f44bf474623e30dc7d29dc2632ea6ff0360",
+        "activeAttributes": [
+          {
+            "index": 0,
+            "name": "in_0",
+            "type": 35666,
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "componentMask": 15,
+            "location": 0
+          },
+          {
+            "index": 1,
+            "name": "in_1",
+            "type": 35666,
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "componentMask": 15,
+            "location": 1
+          }
+        ],
+        "uniformBlocks": [
+          {
+            "name": "VirglBlock",
+            "index": 0,
+            "byteLength": 656,
+            "members": [
+              {
+                "name": "winsys_adjust_y",
+                "reflectedName": "winsys_adjust_y",
+                "offset": 640,
+                "type": 5126,
+                "value": 1
+              }
+            ]
+          }
+        ],
+        "uniforms": [
+          {
+            "name": "fsconst0[0]",
+            "stage": "fragment",
+            "type": "uvec4[]",
+            "values": [
+              [
+                1,
+                1,
+                1,
+                1
+              ]
+            ],
+            "bits": [
+              1065353216,
+              1065353216,
+              1065353216,
+              1065353216
+            ]
+          }
+        ],
+        "samplers": [
+          {
+            "index": 0,
+            "name": "fssamp0",
+            "type": "sampler2D",
+            "texture": [
+              255,
+              0,
+              0,
+              255,
+              0,
+              255,
+              0,
+              128,
+              0,
+              0,
+              255,
+              64,
+              255,
+              255,
+              0,
+              0
+            ]
+          }
+        ],
+        "logs": {
+          "vertex": "",
+          "fragment": "",
+          "link": ""
+        },
+        "glError": 0
+      },
+      {
+        "name": "texture-tint-uniform",
+        "vertex": "passthrough",
+        "fragment": "texture",
+        "viewport": [
+          32,
+          32
+        ],
+        "blend": false,
+        "clear": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "checkedPixels": 256,
+        "checks": [
+          {
+            "rect": [
+              4,
+              4,
+              8,
+              8
+            ],
+            "expected": [
+              255,
+              0,
+              0,
+              255
+            ],
+            "observed": [
+              255,
+              0,
+              0,
+              255
+            ],
+            "pixels": 64
+          },
+          {
+            "rect": [
+              20,
+              4,
+              8,
+              8
+            ],
+            "expected": [
+              0,
+              128,
+              0,
+              255
+            ],
+            "observed": [
+              0,
+              128,
+              0,
+              255
+            ],
+            "pixels": 64
+          },
+          {
+            "rect": [
+              4,
+              20,
+              8,
+              8
+            ],
+            "expected": [
+              0,
+              0,
+              0,
+              255
+            ],
+            "observed": [
+              0,
+              0,
+              0,
+              255
+            ],
+            "pixels": 64
+          },
+          {
+            "rect": [
+              20,
+              20,
+              8,
+              8
+            ],
+            "expected": [
+              255,
+              128,
+              0,
+              255
+            ],
+            "observed": [
+              255,
+              128,
+              0,
+              255
+            ],
+            "pixels": 64
+          }
+        ],
+        "rgbaSha256": "1d754556e8e0abc93bf12d0c6a44ffdbb6fe925dc7c96dbb8c30474d372d16ae",
+        "activeAttributes": [
+          {
+            "index": 0,
+            "name": "in_0",
+            "type": 35666,
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "componentMask": 15,
+            "location": 0
+          },
+          {
+            "index": 1,
+            "name": "in_1",
+            "type": 35666,
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "componentMask": 15,
+            "location": 1
+          }
+        ],
+        "uniformBlocks": [
+          {
+            "name": "VirglBlock",
+            "index": 0,
+            "byteLength": 656,
+            "members": [
+              {
+                "name": "winsys_adjust_y",
+                "reflectedName": "winsys_adjust_y",
+                "offset": 640,
+                "type": 5126,
+                "value": 1
+              }
+            ]
+          }
+        ],
+        "uniforms": [
+          {
+            "name": "fsconst0[0]",
+            "stage": "fragment",
+            "type": "uvec4[]",
+            "values": [
+              [
+                1,
+                0.5,
+                0,
+                1
+              ]
+            ],
+            "bits": [
+              1065353216,
+              1056964608,
+              0,
+              1065353216
+            ]
+          }
+        ],
+        "samplers": [
+          {
+            "index": 0,
+            "name": "fssamp0",
+            "type": "sampler2D",
+            "texture": [
+              255,
+              0,
+              0,
+              255,
+              0,
+              255,
+              0,
+              255,
+              0,
+              0,
+              255,
+              255,
+              255,
+              255,
+              0,
+              255
+            ]
+          }
+        ],
+        "logs": {
+          "vertex": "",
+          "fragment": "",
+          "link": ""
+        },
+        "glError": 0
+      },
+      {
+        "name": "mad-alpha-output",
+        "vertex": "passthrough",
+        "fragment": "alpha",
+        "viewport": [
+          32,
+          32
+        ],
+        "blend": false,
+        "clear": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "checkedPixels": 576,
+        "checks": [
+          {
+            "rect": [
+              4,
+              4,
+              24,
+              24
+            ],
+            "expected": [
+              255,
+              0,
+              0,
+              128
+            ],
+            "observed": [
+              255,
+              0,
+              0,
+              128
+            ],
+            "pixels": 576
+          }
+        ],
+        "rgbaSha256": "1b7382d463433653e8b0c267108878a2226833b0bb4a05eb6bc296022e373b3d",
+        "activeAttributes": [
+          {
+            "index": 0,
+            "name": "in_0",
+            "type": 35666,
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "componentMask": 15,
+            "location": 0
+          },
+          {
+            "index": 1,
+            "name": "in_1",
+            "type": 35666,
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "componentMask": 15,
+            "location": 1
+          }
+        ],
+        "uniformBlocks": [
+          {
+            "name": "VirglBlock",
+            "index": 0,
+            "byteLength": 656,
+            "members": [
+              {
+                "name": "winsys_adjust_y",
+                "reflectedName": "winsys_adjust_y",
+                "offset": 640,
+                "type": 5126,
+                "value": 1
+              }
+            ]
+          }
+        ],
+        "uniforms": [
+          {
+            "name": "fsconst0[0]",
+            "stage": "fragment",
+            "type": "uvec4[]",
+            "values": [
+              [
+                0.5,
+                0,
+                0,
+                0
+              ]
+            ],
+            "bits": [
+              1056964608,
+              0,
+              0,
+              0
+            ]
+          }
+        ],
+        "samplers": [],
+        "logs": {
+          "vertex": "",
+          "fragment": "",
+          "link": ""
+        },
+        "glError": 0
+      },
+      {
+        "name": "mad-source-over-blue",
+        "vertex": "passthrough",
+        "fragment": "alpha",
+        "viewport": [
+          32,
+          32
+        ],
+        "blend": true,
+        "clear": [
+          0,
+          0,
+          1,
+          1
+        ],
+        "checkedPixels": 576,
+        "checks": [
+          {
+            "rect": [
+              4,
+              4,
+              24,
+              24
+            ],
+            "expected": [
+              128,
+              0,
+              128,
+              255
+            ],
+            "observed": [
+              128,
+              0,
+              128,
+              255
+            ],
+            "pixels": 576
+          }
+        ],
+        "rgbaSha256": "e6d2283ad64cc7eb536e58e6e0b50d57ca71a482d4adb41ce9a8f9c3f088f494",
+        "activeAttributes": [
+          {
+            "index": 0,
+            "name": "in_0",
+            "type": 35666,
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "componentMask": 15,
+            "location": 0
+          },
+          {
+            "index": 1,
+            "name": "in_1",
+            "type": 35666,
+            "semantic": "ATTRIBUTE",
+            "semanticIndex": 0,
+            "componentMask": 15,
+            "location": 1
+          }
+        ],
+        "uniformBlocks": [
+          {
+            "name": "VirglBlock",
+            "index": 0,
+            "byteLength": 656,
+            "members": [
+              {
+                "name": "winsys_adjust_y",
+                "reflectedName": "winsys_adjust_y",
+                "offset": 640,
+                "type": 5126,
+                "value": 1
+              }
+            ]
+          }
+        ],
+        "uniforms": [
+          {
+            "name": "fsconst0[0]",
+            "stage": "fragment",
+            "type": "uvec4[]",
+            "values": [
+              [
+                0.5,
+                0,
+                0,
+                0
+              ]
+            ],
+            "bits": [
+              1056964608,
+              0,
+              0,
+              0
+            ]
+          }
+        ],
+        "samplers": [],
+        "logs": {
+          "vertex": "",
+          "fragment": "",
+          "link": ""
+        },
+        "glError": 0
+      }
+    ],
+    "renderer": {
+      "vendor": "Google Inc. (Apple)",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+      "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "shadingLanguageVersion": "WebGL GLSL ES 3.00 (OpenGL ES GLSL ES 3.0 Chromium)",
+      "contextAttributes": {
+        "alpha": true,
+        "antialias": false,
+        "depth": true,
+        "desynchronized": false,
+        "failIfMajorPerformanceCaveat": true,
+        "powerPreference": "default",
+        "premultipliedAlpha": false,
+        "preserveDrawingBuffer": true,
+        "stencil": false,
+        "xrCompatible": false
+      },
+      "extensions": [
+        "EXT_clip_control",
+        "EXT_color_buffer_float",
+        "EXT_color_buffer_half_float",
+        "EXT_conservative_depth",
+        "EXT_depth_clamp",
+        "EXT_disjoint_timer_query_webgl2",
+        "EXT_float_blend",
+        "EXT_polygon_offset_clamp",
+        "EXT_render_snorm",
+        "EXT_texture_compression_bptc",
+        "EXT_texture_compression_rgtc",
+        "EXT_texture_filter_anisotropic",
+        "EXT_texture_mirror_clamp_to_edge",
+        "EXT_texture_norm16",
+        "KHR_parallel_shader_compile",
+        "NV_shader_noperspective_interpolation",
+        "OES_draw_buffers_indexed",
+        "OES_sample_variables",
+        "OES_shader_multisample_interpolation",
+        "OES_texture_float_linear",
+        "WEBGL_blend_func_extended",
+        "WEBGL_clip_cull_distance",
+        "WEBGL_compressed_texture_astc",
+        "WEBGL_compressed_texture_etc",
+        "WEBGL_compressed_texture_etc1",
+        "WEBGL_compressed_texture_pvrtc",
+        "WEBGL_compressed_texture_s3tc",
+        "WEBGL_compressed_texture_s3tc_srgb",
+        "WEBGL_debug_renderer_info",
+        "WEBGL_debug_shaders",
+        "WEBGL_lose_context",
+        "WEBGL_multi_draw",
+        "WEBGL_polygon_mode",
+        "WEBGL_provoking_vertex",
+        "WEBGL_render_shared_exponent",
+        "WEBGL_stencil_texturing"
+      ]
+    },
+    "limits": {
+      "textBytes": 16384,
+      "tokens": 8192,
+      "glslBytes": 65536,
+      "instructions": 128,
+      "registerIndex": 7,
+      "temporaryRegisterIndex": 9
+    },
+    "exactTextBoundary": {
+      "bytes": 16384,
+      "glslAndMetadataIdentical": true
+    },
+    "recovery": {
+      "rounds": 32,
+      "failures": 416,
+      "successes": 416,
+      "outputAndMetadataIdentical": true
+    },
+    "checkedPixels": 4336
+  },
+  "screenshot": {
+    "path": "browser.png",
+    "sha256": "02bcd7de28b6291ef619f63fa2149170350c56262949cd4925e273f678d38e32"
+  },
+  "finishedAt": "2026-10-03T08:29:53.845Z"
+}

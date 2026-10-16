@@ -1,0 +1,150 @@
+   Compiling libc v0.2.186
+   Compiling proc-macro2 v1.0.106
+   Compiling unicode-ident v1.0.24
+   Compiling cfg-if v1.0.4
+   Compiling quote v1.0.46
+   Compiling zerocopy v0.8.52
+   Compiling version_check v0.9.5
+   Compiling generic-array v0.14.7
+   Compiling getrandom v0.3.4
+   Compiling serde_core v1.0.228
+   Compiling syn v2.0.118
+   Compiling crossbeam-utils v0.8.21
+   Compiling bitflags v2.13.0
+   Compiling typenum v1.20.1
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.21
+   Compiling rustix v1.1.4
+   Compiling getrandom v0.4.3
+   Compiling serde v1.0.228
+   Compiling zerocopy-derive v0.8.52
+   Compiling serde_derive v1.0.228
+   Compiling num-traits v0.2.19
+   Compiling rand_core v0.9.5
+   Compiling errno v0.3.14
+   Compiling either v1.16.0
+   Compiling regex-syntax v0.8.11
+   Compiling serde_json v1.0.150
+   Compiling once_cell v1.21.4
+   Compiling crossbeam-epoch v0.9.18
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling rayon-core v1.13.0
+   Compiling ciborium-io v0.2.2
+   Compiling anstyle v1.0.14
+   Compiling memchr v2.8.2
+   Compiling itoa v1.0.18
+   Compiling clap_lex v1.1.0
+   Compiling fastrand v2.4.1
+   Compiling clap_builder v4.6.0
+   Compiling tempfile v3.27.0
+   Compiling half v2.7.1
+   Compiling ppv-lite86 v0.2.21
+   Compiling ciborium-ll v0.2.2
+   Compiling digest v0.10.7
+   Compiling crossbeam-deque v0.8.6
+   Compiling regex-automata v0.4.14
+   Compiling itertools v0.10.5
+   Compiling wait-timeout v0.2.1
+   Compiling cpufeatures v0.2.17
+   Compiling fnv v1.0.7
+   Compiling same-file v1.0.6
+   Compiling smallvec v1.15.2
+   Compiling bit-vec v0.8.0
+   Compiling cast v0.3.0
+   Compiling quick-error v1.2.3
+   Compiling rusty-fork v0.3.1
+   Compiling criterion-plot v0.5.0
+   Compiling regex v1.12.4
+   Compiling bit-set v0.8.0
+   Compiling walkdir v2.5.0
+   Compiling sha2 v0.10.9
+   Compiling clap v4.6.1
+   Compiling tinytemplate v1.2.1
+   Compiling ciborium v0.2.2
+   Compiling rand_chacha v0.9.0
+   Compiling rand_xorshift v0.4.0
+   Compiling rand v0.9.4
+   Compiling is-terminal v0.4.17
+   Compiling unarray v0.1.4
+   Compiling oorandom v11.1.5
+   Compiling log v0.4.33
+   Compiling anes v0.1.6
+   Compiling rayon v1.12.0
+   Compiling wasm-vm-core v0.0.1 (/private/tmp/wasm-vm-mips-verifier-9123bc/crates/core)
+   Compiling proptest v1.11.0
+   Compiling criterion v0.5.1
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.31s
+     Running tests/integer_replay.rs (target/debug/deps/integer_replay-0679b3867de7aace)
+
+running 5 tests
+integer-wrapping-auipc: retired=2 trace-fnv=0x58cfb93a95631c7d states-sha256=85eba745abb3a917d3b9db624f176308790da2d880217342e2123c4ee3918d00
+integer-invalidation: retired=4 trace-fnv=0xcccac346058ffa25 states-sha256=afdfc3e1eeb9806aa1853bc83f3562ba08f97bfc36d7f76b426d92d7669f2fc6
+integer-compressed-trap: retired=4 trace-fnv=0xb501cc97e4a905b5 states-sha256=8d1380e24f5fb405a054cfd3ea56751bee6bb2fc0aff964cda493400e515023c
+integer-compressed-trap: retired=4 trace-fnv=0xb501cc97e4a905b5 states-sha256=8d1380e24f5fb405a054cfd3ea56751bee6bb2fc0aff964cda493400e515023c
+integer-invalidation: retired=4 trace-fnv=0xcccac346058ffa25 states-sha256=afdfc3e1eeb9806aa1853bc83f3562ba08f97bfc36d7f76b426d92d7669f2fc6
+integer-wrapping-auipc: retired=2 trace-fnv=0x58cfb93a95631c7d states-sha256=85eba745abb3a917d3b9db624f176308790da2d880217342e2123c4ee3918d00
+integer-wrapping-auipc: retired=2 trace-fnv=0x58cfb93a95631c7d states-sha256=85eba745abb3a917d3b9db624f176308790da2d880217342e2123c4ee3918d00
+integer-invalidation: retired=4 trace-fnv=0xcccac346058ffa25 states-sha256=afdfc3e1eeb9806aa1853bc83f3562ba08f97bfc36d7f76b426d92d7669f2fc6
+integer-compressed-trap: retired=4 trace-fnv=0xb501cc97e4a905b5 states-sha256=8d1380e24f5fb405a054cfd3ea56751bee6bb2fc0aff964cda493400e515023c
+test cached_integer_prefix_sees_code_replacement_between_slices ... ok
+integer-wrapping-c: retired=2 trace-fnv=0xd075022a987ecaac states-sha256=4e85467db94e0a440e10fa909d99b2768d43548862784e53f66f19f5533065f9
+integer-compressed-trap: retired=4 trace-fnv=0xb501cc97e4a905b5 states-sha256=8d1380e24f5fb405a054cfd3ea56751bee6bb2fc0aff964cda493400e515023c
+integer-wrapping-c: retired=2 trace-fnv=0xd075022a987ecaac states-sha256=4e85467db94e0a440e10fa909d99b2768d43548862784e53f66f19f5533065f9
+integer-compressed-trap: retired=4 trace-fnv=0xb501cc97e4a905b5 states-sha256=8d1380e24f5fb405a054cfd3ea56751bee6bb2fc0aff964cda493400e515023c
+integer-wrapping-c: retired=2 trace-fnv=0xd075022a987ecaac states-sha256=4e85467db94e0a440e10fa909d99b2768d43548862784e53f66f19f5533065f9
+integer-compressed-trap: retired=4 trace-fnv=0xb501cc97e4a905b5 states-sha256=8d1380e24f5fb405a054cfd3ea56751bee6bb2fc0aff964cda493400e515023c
+test cached_auipc_and_compressed_retirement_wrap_the_virtual_pc ... ok
+test compressed_lengths_and_trap_after_integer_prefix_are_precise ... ok
+integer-boundaries: retired=175 trace-fnv=0x18ec5c9b6882fa8d states-sha256=b7b550585168ebd78293f05a84cc1673d4c5fcf52f4dfbdac808ef49718f0286
+test arithmetic_boundaries_match_literal_results_in_every_replay_mode ... ok
+integer-opcodes: retired=301 trace-fnv=0x8fda1ff71b29377d states-sha256=9013fafb34ab4e982dd2b29284892aee450b6c67304a80b43a97e496fc8ff62b
+test all_43_integer_opcodes_match_literal_results_in_every_replay_mode ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.02s
+
+     Running tests/integer_replay_alias.rs (target/debug/deps/integer_replay_alias-b1974cc4bf6adb03)
+
+running 1 test
+budgets=[7] trace_even=false retired=14 cache_hits=1 cache_misses=1 state_sha256=37200e0f3f6333c5b903cc9d2488a7f4027313baf173efd0a417a3c58e456cf7
+core 0: 0xffffffc020000000 (0x00000001)
+core 0: 0xffffffc020000002 (0x80000297) x5 0xffffffbfa0000002
+core 0: 0xffffffc020000006 (0x005282b3) x5 0xffffff7f40000004
+core 0: 0xffffffc02000000a (0x4052d2b3) x5 0xfffffff7f4000000
+core 0: 0xffffffc02000000e (0xfff2829b) x5 0xfffffffff3ffffff
+core 0: 0xffffffc020000012 (0x00001017)
+core 0: 0xffffffc020000016 (0x00028333) x6 0xfffffffff3ffffff
+budgets=[7] trace_even=true retired=14 cache_hits=1 cache_misses=1 state_sha256=37200e0f3f6333c5b903cc9d2488a7f4027313baf173efd0a417a3c58e456cf7
+core 0: 0xffffffc020000012 (0x00001017)
+core 0: 0xffffffc020000016 (0x00028333) x6 0xfffffffff3ffffff
+budgets=[2, 0, 3, 2] trace_even=false retired=14 cache_hits=1 cache_misses=1 state_sha256=37200e0f3f6333c5b903cc9d2488a7f4027313baf173efd0a417a3c58e456cf7
+core 0: 0xffffffc020000000 (0x00000001)
+core 0: 0xffffffc020000002 (0x80000297) x5 0xffffffbfa0000002
+core 0: 0xffffffc020000006 (0x005282b3) x5 0xffffff7f40000004
+core 0: 0xffffffc02000000a (0x4052d2b3) x5 0xfffffff7f4000000
+core 0: 0xffffffc02000000e (0xfff2829b) x5 0xfffffffff3ffffff
+budgets=[2, 0, 3, 2] trace_even=true retired=14 cache_hits=1 cache_misses=1 state_sha256=37200e0f3f6333c5b903cc9d2488a7f4027313baf173efd0a417a3c58e456cf7
+core 0: 0xffffffc020000002 (0x80000297) x5 0xffffffbfa0000002
+core 0: 0xffffffc020000006 (0x005282b3) x5 0xffffff7f40000004
+core 0: 0xffffffc02000000a (0x4052d2b3) x5 0xfffffff7f4000000
+core 0: 0xffffffc02000000e (0xfff2829b) x5 0xfffffffff3ffffff
+core 0: 0xffffffc020000012 (0x00001017)
+core 0: 0xffffffc020000016 (0x00028333) x6 0xfffffffff3ffffff
+budgets=[1, 1, 0, 5] trace_even=false retired=14 cache_hits=1 cache_misses=1 state_sha256=37200e0f3f6333c5b903cc9d2488a7f4027313baf173efd0a417a3c58e456cf7
+core 0: 0xffffffc020000000 (0x00000001)
+budgets=[1, 1, 0, 5] trace_even=true retired=14 cache_hits=1 cache_misses=1 state_sha256=37200e0f3f6333c5b903cc9d2488a7f4027313baf173efd0a417a3c58e456cf7
+core 0: 0xffffffc020000000 (0x00000001)
+core 0: 0xffffffc020000002 (0x80000297) x5 0xffffffbfa0000002
+core 0: 0xffffffc020000006 (0x005282b3) x5 0xffffff7f40000004
+core 0: 0xffffffc02000000a (0x4052d2b3) x5 0xfffffff7f4000000
+budgets=[0, 4, 3] trace_even=false retired=14 cache_hits=1 cache_misses=1 state_sha256=37200e0f3f6333c5b903cc9d2488a7f4027313baf173efd0a417a3c58e456cf7
+core 0: 0xffffffc02000000e (0xfff2829b) x5 0xfffffffff3ffffff
+core 0: 0xffffffc020000012 (0x00001017)
+core 0: 0xffffffc020000016 (0x00028333) x6 0xfffffffff3ffffff
+budgets=[0, 4, 3] trace_even=true retired=14 cache_hits=1 cache_misses=1 state_sha256=37200e0f3f6333c5b903cc9d2488a7f4027313baf173efd0a417a3c58e456cf7
+
+test virtual_aliases_preserve_integer_pc_and_aliasing_across_mixed_capture_slices ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.19s
+

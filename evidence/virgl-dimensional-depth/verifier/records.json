@@ -1,0 +1,1547 @@
+{
+  "schema": "dimensional-depth-verifier-index-v1",
+  "task": "E6-T11d59",
+  "workerHead": "d7b20d465eaa45057c234b5fd48d8a3e2eada823",
+  "records": [
+    {
+      "path": "attack-citations.jsonl",
+      "bytes": 648906,
+      "sha256": "8fb5fc79ca9512e02109108013bbc1de4042d4b5d41515838c498ad3e1b77803"
+    },
+    {
+      "path": "attack-interrogation.json",
+      "bytes": 161,
+      "sha256": "b1c4f0f2f44b46c0e4f53b0d06d1e3f9a08d5a9bcd8cbe44ad4539a8854d88b5"
+    },
+    {
+      "path": "attack-interrogation.log",
+      "bytes": 124,
+      "sha256": "0c6c0f49beb27fb8932ddd07cd65872fa2f1d8e5847cf9ee1903947fcfd4bf9d"
+    },
+    {
+      "path": "attack_interrogate.py",
+      "bytes": 6023,
+      "sha256": "6580df1205b7070b4bae5c21b8b4a0ecd1227a57bf6bc560658e2a1cd14f6ccf"
+    },
+    {
+      "path": "authenticate-initial.log",
+      "bytes": 662,
+      "sha256": "fbea9597b9f76efd2fede3335ea40b5465ce442963af7dbd2d258f86df999400"
+    },
+    {
+      "path": "authenticate-initial.py",
+      "bytes": 8057,
+      "sha256": "ca879e290c33be8fa6708d5d694df3d4d6032366ca3e19521cc155f556900667"
+    },
+    {
+      "path": "authenticate-second.log",
+      "bytes": 3556,
+      "sha256": "dc42720a4b964cc09f245bf762efcc3a1dfd16ddb92680293fd9bf2f8895df9a"
+    },
+    {
+      "path": "authenticate-second.py",
+      "bytes": 8087,
+      "sha256": "3ea8651efc5cf8f22d700e9b99280e15de00d03ff71c681a6fd54d722e2f8d1d"
+    },
+    {
+      "path": "authenticate.log",
+      "bytes": 3303,
+      "sha256": "388788305e4e22661d677a976908416bc17b956c73b6fc482ab5621d052a5874"
+    },
+    {
+      "path": "authenticate.py",
+      "bytes": 8089,
+      "sha256": "a85b9d4dc815a50109143e7e8b03d6c6119b1ed752d1709de114f55a68ff1046"
+    },
+    {
+      "path": "body-authentication.jsonl",
+      "bytes": 2163530,
+      "sha256": "5b228e10d9d7262068ed545cf945d9426e9fcc7337b58667c8d366e4a0f4e5bc"
+    },
+    {
+      "path": "canonical-live.png",
+      "bytes": 50618,
+      "sha256": "59b897d1f2d6b44fab5b1a350f4b4d89a3ee776c79a5526029026f78a95d1da6"
+    },
+    {
+      "path": "coverage-citations.json",
+      "bytes": 847244,
+      "sha256": "42b88061c92dffe36efb3842ea05e237c434689c96bc19bf622c053185e6a0ca"
+    },
+    {
+      "path": "coverage-interrogation.log",
+      "bytes": 156,
+      "sha256": "ef95b401060f1c5b22b394a4a30bbcf1819b2726f40dda5a4f56db0d4b371bab"
+    },
+    {
+      "path": "coverage_interrogate.py",
+      "bytes": 7848,
+      "sha256": "cde7f83884f7b44a41b28b0a1faaad7b9c42eb1eeaf6c302aae64eef3b39707f"
+    },
+    {
+      "path": "custody.json",
+      "bytes": 209474,
+      "sha256": "417b9bb771ee68e3432536f961d2be0799eeb03059a86cd5b07a367266b5c911"
+    },
+    {
+      "path": "deployment-interrogation.json",
+      "bytes": 110339,
+      "sha256": "3419631c589f76a8ccd5b7042bf9f537a6ead436a063ad2071376bcad27d40ff"
+    },
+    {
+      "path": "deployment-interrogation.log",
+      "bytes": 241,
+      "sha256": "ff5266afd04b3f31b1e377a5f4da35a502068bcc24fea94b6f1b0dc25fdf654b"
+    },
+    {
+      "path": "deployment-reopened/live/bodies/artifacts-alpine.json",
+      "bytes": 1110,
+      "sha256": "a3e5e51a69fcda662579d367d5b46fab295ab8bebad4d38155afa3b51c034b6c"
+    },
+    {
+      "path": "deployment-reopened/live/bodies/artifacts-node-alpine.json",
+      "bytes": 1255,
+      "sha256": "ab1338d6f7b54bf96b2b503aa3e12e3bc72f9de2fd7f2a40728f3cefe2fe6caf"
+    },
+    {
+      "path": "deployment-reopened/live/bodies/artifacts-omarchy.json",
+      "bytes": 1193,
+      "sha256": "0fa46b08b90179bb11f6a451f86959908089f73afa19c99580f28360b7b8c22a"
+    },
+    {
+      "path": "deployment-reopened/live/bodies/tasks.json",
+      "bytes": 3794933,
+      "sha256": "5d4536ac8949da1e423a7c0a4bdedf7ecd95fb7fa81e402a3d74c685868a965b"
+    },
+    {
+      "path": "deployment-reopened/live/report.json",
+      "bytes": 33295,
+      "sha256": "fd77c364f250920e0c9ff4c55bde818d478a1c00324ea24c39067b65cb7a0e68"
+    },
+    {
+      "path": "deployment-reopened/packaging/early-deployment-seal.stderr",
+      "bytes": 891,
+      "sha256": "abda6532ce2fed53b3262141e7f404ef466dd036605a19443f3cd7ba06c9bc78"
+    },
+    {
+      "path": "deployment-reopened/packaging/worker-failure.json",
+      "bytes": 223,
+      "sha256": "e132f0d8778b190f7ab9a4d32def84ee47ae0eb65d9ce75d3891881b7a5f21f0"
+    },
+    {
+      "path": "deployment-reopened/publication/.wrangler/cache/pages.json",
+      "bytes": 83,
+      "sha256": "fd9d4f78c34977984f8c05f515f1160185f496d728546fb9f9728ec9b9aff404"
+    },
+    {
+      "path": "deployment-reopened/publication/.wrangler/cache/wrangler-account.json",
+      "bytes": 113,
+      "sha256": "5a7bd5eb92ca5981cf1b7aa6c38a1b737b187383f51bde0999c8dfb166f185e3"
+    },
+    {
+      "path": "deployment-reopened/publication/cloudflare-success.json",
+      "bytes": 24263,
+      "sha256": "d5cbb1ac1ec69b8c9e1277090f21e8f48b2320d644106bda0c4ea38e271e2d7d"
+    },
+    {
+      "path": "deployment-reopened/publication/preparation.py",
+      "bytes": 2809,
+      "sha256": "b2e0676fda7d2f5a9589249076e8f1ed37578bee0ed5d957d4f23de3dea84334"
+    },
+    {
+      "path": "deployment-reopened/publication/publish.json",
+      "bytes": 665,
+      "sha256": "367519bba15ee6fcbcd6a9ca8fc9300e742b7e43e5c6bf5bf7f9b58e3e69db08"
+    },
+    {
+      "path": "deployment-reopened/publication/publish.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "deployment-reopened/publication/publish.stdout",
+      "bytes": 365,
+      "sha256": "88c0f3108693404b71505e31f0c808a0006e058a67c6ffe20ee02a7e7c180793"
+    },
+    {
+      "path": "deployment-reopened/publication/staging-index.json",
+      "bytes": 50865,
+      "sha256": "502040013b13ea29d43d13793a3b235a8b770ddc4d701b63e73572b1eb6c37f4"
+    },
+    {
+      "path": "deployment-reopened/publication/web/dist/artifacts-alpine.json",
+      "bytes": 1110,
+      "sha256": "a3e5e51a69fcda662579d367d5b46fab295ab8bebad4d38155afa3b51c034b6c"
+    },
+    {
+      "path": "deployment-reopened/publication/web/dist/artifacts-node-alpine.json",
+      "bytes": 1255,
+      "sha256": "ab1338d6f7b54bf96b2b503aa3e12e3bc72f9de2fd7f2a40728f3cefe2fe6caf"
+    },
+    {
+      "path": "deployment-reopened/publication/web/dist/artifacts-omarchy.json",
+      "bytes": 1193,
+      "sha256": "0fa46b08b90179bb11f6a451f86959908089f73afa19c99580f28360b7b8c22a"
+    },
+    {
+      "path": "deployment-reopened/publication/web/dist/artifacts.json",
+      "bytes": 905,
+      "sha256": "c2a325fde02d8dbe84674699336441462eb0d891ba7793d53261986fdbaec404"
+    },
+    {
+      "path": "deployment-reopened/publication/web/dist/pkg/package.json",
+      "bytes": 500,
+      "sha256": "d741b89b6dc7717f021a3ceecb51cff5f9eaa5af1b595125f2b910a682761f0c"
+    },
+    {
+      "path": "deployment-reopened/publication/web/dist/runtime-benchmarks.json",
+      "bytes": 91935,
+      "sha256": "a455f3d0c4793f8771d0c049f9ddb0058ca8609e0ae5b41385314ba8e59b2185"
+    },
+    {
+      "path": "deployment-reopened/publication/web/dist/runtime-compute-benchmarks.json",
+      "bytes": 29667,
+      "sha256": "3a2070175a1b2abdc454476af5c2650ea565399a4a6beb1404bdc7b6bfe4f2ae"
+    },
+    {
+      "path": "deployment-reopened/publication/web/dist/src/input/keymap-source.json",
+      "bytes": 7160,
+      "sha256": "73312315ec4741b7914cf5a21ef638938684f5bc8fb23076bc702686c7fdcc73"
+    },
+    {
+      "path": "deployment-reopened/publication/web/dist/src/input/w3c-pc105-codes.json",
+      "bytes": 1984,
+      "sha256": "6a17d7494bfc7c27f181294dc1893176236531ad5320fe9e75e4d93e40cd243b"
+    },
+    {
+      "path": "deployment-reopened/publication/web/dist/tailscale-connect/package.json",
+      "bytes": 240,
+      "sha256": "e70a1f0a4f34ffed980045f04967ac0c21daf7795bb8792cff065f248891bea5"
+    },
+    {
+      "path": "deployment-reopened/publication/web/dist/tasks.json",
+      "bytes": 3794933,
+      "sha256": "5d4536ac8949da1e423a7c0a4bdedf7ecd95fb7fa81e402a3d74c685868a965b"
+    },
+    {
+      "path": "deployment-reopened/scripts/live.mjs",
+      "bytes": 7132,
+      "sha256": "2b51351200620b24472443afd4c47ffe0c5ee8355035821df91751ac759eb95d"
+    },
+    {
+      "path": "deployment-reopened/scripts/publish.py",
+      "bytes": 3105,
+      "sha256": "aa8548aa4ff75b95f80a34577bc4fe531d773f87260fe65a9bb18ee3d376505d"
+    },
+    {
+      "path": "deployment-reopened/scripts/seal.py",
+      "bytes": 3272,
+      "sha256": "c01b23aaa7956c5a85916bf24f2683c37c378ff19f59045bfb4ba1448333b932"
+    },
+    {
+      "path": "deployment_interrogate.py",
+      "bytes": 6512,
+      "sha256": "21d06539bd9cf6e0c1f8c1337a0ce0028f6b9dbd7756c0a7b9c9eafb41ea79ba"
+    },
+    {
+      "path": "final-checks.json",
+      "bytes": 790,
+      "sha256": "a68a1ae02740107bcfbaadfde13bda0a7109bae76931fab0fea364ffe071d7c5"
+    },
+    {
+      "path": "final-policy.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "final-policy.stdout",
+      "bytes": 30,
+      "sha256": "b09df388647b89ea459126a41fd92d72d5e274ddb70ffe70a741ba88cb705734"
+    },
+    {
+      "path": "final-queue.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "final-queue.stdout",
+      "bytes": 46,
+      "sha256": "181116c2664313f9f23186175258f23cbbde4eb767f598b0072182722261eb55"
+    },
+    {
+      "path": "finish-task.log",
+      "bytes": 130,
+      "sha256": "16c59a6356d4f8d74f1c68b372c23b06016cb44a422b94ff064322050eec1b0e"
+    },
+    {
+      "path": "finish_task.py",
+      "bytes": 5860,
+      "sha256": "59f876a4c5e5882e84878afa99521b0f884ffdc0913d01908bd691c02114dff8"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/browser-coverage.json",
+      "bytes": 1559425,
+      "sha256": "c378552a3163b8d99cbfc47d1309abe4c342cac1087084c7e3485d77f764a202"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/browser.png",
+      "bytes": 40626,
+      "sha256": "484462312b4898cc75add9ad38826fe61846fbe85cb37555117b87833af6ed00"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/report.json",
+      "bytes": 181041087,
+      "sha256": "4242d5b6d9916e12fd814667f107b652a0cbcf6daf0d43fc66e91fffda5a73c7"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/run-0000.json.gz",
+      "bytes": 318447,
+      "sha256": "d4b0edcd9d6db74518c601ae827332c8b54a127837582be9f5579ac38b910330"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/run-0001.json.gz",
+      "bytes": 314343,
+      "sha256": "4eb9238811f0f08bdf7135792250e987930bf46825099deca90d4ee62b79c817"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/run-0002.json.gz",
+      "bytes": 426518,
+      "sha256": "8938787727665c78448d361fb7921b91658ce244b9719b11481997dda222faee"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/run-0003.json.gz",
+      "bytes": 328931,
+      "sha256": "ac6691dfa1e0dc82ff80417eef57e330233e5af39f7b08d1d5535bb0c8bd680e"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/run-0004.json.gz",
+      "bytes": 437935,
+      "sha256": "60d80f4f0fc06c3146fa73d6709d205133bb64b1bb2b9a11dca62859f24a49a3"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/run-0005.json.gz",
+      "bytes": 363643,
+      "sha256": "ee782276e81b6f5f938f7e9a10c3aeed19f6040fd2896d6e36bb0deaaec286ae"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/run-0006.json.gz",
+      "bytes": 356405,
+      "sha256": "54c61100a9bf1d6f7d8b4a5179e392cca0d391d9f408f16dcea52a827757e564"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/run-0007.json.gz",
+      "bytes": 493792,
+      "sha256": "927401ce79526a1312ad046214cfc7605ba67f654a088f09100a6276468106d3"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/run-0008.json.gz",
+      "bytes": 382117,
+      "sha256": "f633ff18e4e15afbc7df7695e66766e712075c5acdb63ef796643b20c7e447bc"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/run-0009.json.gz",
+      "bytes": 511948,
+      "sha256": "22d3f2bd79ef21c8eff7871a098af9bdeafcea6a09c0d9705be3c669b4424bb2"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/run-0010.json.gz",
+      "bytes": 318692,
+      "sha256": "5947b37961eaa18bd43fdd5bbe7fb977a270297ba5f5248378eadcf4189fe725"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/run-0011.json.gz",
+      "bytes": 314708,
+      "sha256": "39bd09d6767eab90dd781b131ea81d6340febd57e620b327d7663b67e5c8d620"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/run-0012.json.gz",
+      "bytes": 426190,
+      "sha256": "48f486ba5d87010bcbb1fba591b7f75845e9e48cf0dba9cb09d1b33b41b0374f"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/run-0013.json.gz",
+      "bytes": 329165,
+      "sha256": "37437896ca8a8984ce1e2aba85dbdf7eb68f2509a4716e6c569e01173fa2edf7"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/run-0014.json.gz",
+      "bytes": 437469,
+      "sha256": "cd9caa58ae58be0110f8adf8f8254c19bfbadfd887d7aeb7b40ba847e4fadbdb"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/run-0015.json.gz",
+      "bytes": 363459,
+      "sha256": "53d0a2051172b511f318799a9125625e8c764200fc39c1cc92527943cd3e67c0"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/run-0016.json.gz",
+      "bytes": 356522,
+      "sha256": "217e2e42b8075704baffaaf0110f9d124314dd96c0108b74e155e420f9c46460"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/run-0017.json.gz",
+      "bytes": 493524,
+      "sha256": "8e4a2e1238e25df478b9f174422cacbf34ee74cae3f94210f8b4ac69579b8880"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/run-0018.json.gz",
+      "bytes": 381847,
+      "sha256": "ee5146f31d61f448d45dfe1b7fd2c50df439ddfb4d23e818ae22a9d39d9ab1cc"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/run-0019.json.gz",
+      "bytes": 511633,
+      "sha256": "38e0b87ae81747b3f3c92942e726381a23167ea01159050ef24734de5414bb2b"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/run-0020.json.gz",
+      "bytes": 319219,
+      "sha256": "f53055f5d4a4be55a63e3e20967173f5c8034f34e89e3e54fee1f52c64497074"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/run-0021.json.gz",
+      "bytes": 315161,
+      "sha256": "14164c63e2663d4251019d7a6842422aa2f48de226e64231987dda27049b605b"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/run-0022.json.gz",
+      "bytes": 426597,
+      "sha256": "3bfbff7c6cd5867e946d29037029dd5e30b076de0f00a47125be5787a53aa7e1"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/run-0023.json.gz",
+      "bytes": 329473,
+      "sha256": "ec1b3844217af4805cf417f74b6d22da0e9a694ce0fbf6f4054c2f86e40f5b73"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/run-0024.json.gz",
+      "bytes": 437710,
+      "sha256": "8710cd930e7d8a321a10104fe7c5cd5551aa8a8613fd130146fd5de60ad45577"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/run-0025.json.gz",
+      "bytes": 363953,
+      "sha256": "edc562f817973de82e5c8f07384643367299c516e7e1939aa207e47db800f10d"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/run-0026.json.gz",
+      "bytes": 356846,
+      "sha256": "594103ffb6d1decc958ea2036eb67976f39e3dfacae9e9ad04bc160315322ee3"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/run-0027.json.gz",
+      "bytes": 494244,
+      "sha256": "5d9c3d4e79e7bea3cf3160979f11056bea8143dded7aff7719c02b77119662ea"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/run-0028.json.gz",
+      "bytes": 382371,
+      "sha256": "91b2d58816b0e103ca195d28a7cac8b6db58a41aa3dde16ab7e3fe6343606c70"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/run-0029.json.gz",
+      "bytes": 511574,
+      "sha256": "6e8ee0c695de6167d53a19ee3f00e8b84db2ff038f488791bc64b4e2f0d9fd19"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/run-0030.json.gz",
+      "bytes": 312370,
+      "sha256": "90e551696f4b8b16244ea45b0dd722801a7815a1be34291a7bf31a38fb150c80"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/run-0031.json.gz",
+      "bytes": 434637,
+      "sha256": "e4233ce553fd4b3983d6d7ac03e57c7fd060c290f527c4bae820f43f13c9c1ad"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/run-0032.json.gz",
+      "bytes": 353161,
+      "sha256": "9348279c69a2501d9dc65b8ada6ee44e1242a8acf2f278da2c06279066cda9fd"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/run-0033.json.gz",
+      "bytes": 506814,
+      "sha256": "3e5fa2bca5d91c62c658ee2ac8c3cfc8ed5689353caaa7ba62ad8f70dde3b453"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/run-0034.json.gz",
+      "bytes": 312560,
+      "sha256": "03542dcc7a970f89c927ae9059ffe62f77cc20961e19684471be462c197cb26c"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/run-0035.json.gz",
+      "bytes": 435023,
+      "sha256": "2dd0c3f6a8fbd7b753f1780eae185b8b36a0135137615327505e3aa5fe54d1b2"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/run-0036.json.gz",
+      "bytes": 353718,
+      "sha256": "6c75c85e72bdd538ba6b9f5889a9003b3334a6b067bfe037bb4e2f0617c89229"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/run-0037.json.gz",
+      "bytes": 507946,
+      "sha256": "940aa69425ae3759ff795f9a632197fc47f60c95936e14f103120ba3560f630e"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/run-0038.json.gz",
+      "bytes": 312764,
+      "sha256": "af9efe8b0b08bc00ace0abafd377aead43cfcaef08732825582f552d28840a99"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/run-0039.json.gz",
+      "bytes": 435372,
+      "sha256": "92f38de853ce77302fb2c2fa7a93b867f62867c1806e306d99314889f2529828"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/run-0040.json.gz",
+      "bytes": 353292,
+      "sha256": "84e866859e0e9b10bf6d87969fd053645249a607a8745cbd46b5ffa480dabe32"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/run-0041.json.gz",
+      "bytes": 507526,
+      "sha256": "e973565fb27dade9f679793f04f82b0aaca740d21ae11a973b7050127bf55625"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/source/renderer/virgl-command/cache.mjs",
+      "bytes": 2989,
+      "sha256": "9e50cc258528e581f79cee0e4e0038994c7968f80046b9db21e7f5e0e4a92cfa"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/source/renderer/virgl-command/color-images.mjs",
+      "bytes": 2770,
+      "sha256": "8c1b43f830e13f73d1397398e97bf263343f88c1782c683a890cb0f1fbc5e0e1"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/source/renderer/virgl-command/constant-domain.mjs",
+      "bytes": 116039,
+      "sha256": "75d0f1e72ead2c368163f980a9ef05aaed8fe7c56bbf7679a8f311bae444ab1a"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/source/renderer/virgl-command/control-bridge.mjs",
+      "bytes": 34067,
+      "sha256": "fe885a12faf340912b04a5b533fff5f8aabe0122ee743692190862dd43140e7f"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/source/renderer/virgl-command/decoder.mjs",
+      "bytes": 47276,
+      "sha256": "4080f1fbbfa3d262bd92a176a29616e573c36089785cacf85389656277b13554"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/source/renderer/virgl-command/dimensional-depth-images.mjs",
+      "bytes": 8781,
+      "sha256": "44d2d7b39145262ebd2533a8bc9625f1de500e7633cea73184a26c6727e5d68a"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/source/renderer/virgl-command/float-images.mjs",
+      "bytes": 3132,
+      "sha256": "69543e48426c7ded5178b659eb651b5cb765aa559a0bbf96fd8d34f5cf7cfe46"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/source/renderer/virgl-command/floating-depth-gpu.mjs",
+      "bytes": 15017,
+      "sha256": "fd981d745f076d294fbb4579b85cbb325d62465de77293384c91a8a848a84255"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/source/renderer/virgl-command/floating-depth-images.mjs",
+      "bytes": 947,
+      "sha256": "76e02b32e5a24f65f360adb7cbcc0f9e5d51ee90be7cfbe1a383bfa99cc30370"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/source/renderer/virgl-command/integer-images.mjs",
+      "bytes": 1557,
+      "sha256": "8871226b60ad86ee1f585f8de6e5891241a361ad84aa811a36028fd003d95029"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/source/renderer/virgl-command/packed-float-images.mjs",
+      "bytes": 1620,
+      "sha256": "0ea28e0bfcf4a0ae04f634826d4b65cb19a6285850836412c7b06311ce1c5405"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/source/renderer/virgl-command/packed-normalized-images.mjs",
+      "bytes": 2046,
+      "sha256": "5ccf01336a906f3b46b0c8c790c73449331e09ac3cfee2931459d507b6dccd18"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/source/renderer/virgl-command/packed-unsigned-images.mjs",
+      "bytes": 991,
+      "sha256": "1170cf4d69d7281fdc32383354d7c17d6019ece0c7a6f681de86b27a57ea0d61"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/source/renderer/virgl-command/resources.mjs",
+      "bytes": 145736,
+      "sha256": "18151296f3eb59acc95614759e2ee7c5b3498c443c370f82f3726d9cc35e6965"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/source/renderer/virgl-command/scanout.mjs",
+      "bytes": 14132,
+      "sha256": "affbac9b1b14e2a1eadb9bc29c693e120e20ffb84af02196a9eb00660eac1bac"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/source/renderer/virgl-command/shared-exponent-gpu.mjs",
+      "bytes": 9865,
+      "sha256": "22efbf4e0a3ae04d2e29900278db1e88880bd7c2fc7e757d0fd12d3a899531b7"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/source/renderer/virgl-command/shared-exponent-images.mjs",
+      "bytes": 563,
+      "sha256": "27de20239649aea73145e1f547c9265692f451fedddf3876639c173cf0d6168f"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/source/renderer/virgl-command/state.mjs",
+      "bytes": 189384,
+      "sha256": "aa001d630a196801ad7de0fe48ef07a8d8acee8ad2d79fbb8e14acab5babc850"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/source/renderer/virgl-command/tests/dimensional-depth-budgets.mjs",
+      "bytes": 5979,
+      "sha256": "0ab58f8aecbbb03f0118b1578c26419301777c5d6626319ac83b1ecd7e43abe4"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/source/renderer/virgl-command/tests/dimensional-depth-direct.mjs",
+      "bytes": 6503,
+      "sha256": "e0c371e8d6dd615d89a608dd1a78920e71aaf1e196d8c748fb4eeff1e07f9763"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/source/renderer/virgl-command/tests/dimensional-depth-failures.mjs",
+      "bytes": 8629,
+      "sha256": "3c747c9cd7cf94f3a963f2995e152ddc7daca32b8827b6014ca533892bf9a4df"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/source/renderer/virgl-command/tests/dimensional-depth-ownership.mjs",
+      "bytes": 1955,
+      "sha256": "274e1eacfc630953a95d2201cf602b39ed89422b4735cfcd9044edaeb61a476b"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/source/renderer/virgl-command/tests/native-dimensional-depth.mjs",
+      "bytes": 31169,
+      "sha256": "823e8b96e0cd17753bace8a87a7652ad9245aff685e29b85b5517a9cf64e6944"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/source/renderer/virgl-command/tests/submit-acceptance.mjs",
+      "bytes": 53417,
+      "sha256": "c65063916c5f28085604a5dca46a2221f360762c1192776dc9294e2e1ba238ed"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/source/renderer/virgl-command/unorm-depth-images.mjs",
+      "bytes": 1409,
+      "sha256": "7fb08881153cfd06ed1acb5dba8d6cc61525b8f742a3b0a9715fb0e68e55e1d1"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "bytes": 13538,
+      "sha256": "4ade0ffb9ffb661a729179525e7937c4695230dc57a7f79db63a1538119a95f2"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "bytes": 442769,
+      "sha256": "8749da215131646f0b7d53d59fe7ee19fa68b2fab2e9bec80446c4af3e84e100"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/source/renderer/virgl-shader/index.mjs",
+      "bytes": 22546,
+      "sha256": "1bae07f2e668078c4e447f65d1785815714907b7270ced01b131ce70e6d3f10e"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/source/renderer/virgl-shader/standard.mjs",
+      "bytes": 13572,
+      "sha256": "2a3f3123b9b85932e76ed5b8576d5d5de10f0179db35875534edbfac7ffa91e4"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "bytes": 437,
+      "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+      "bytes": 1314,
+      "sha256": "2877a95db8f6305fce95abf975c0fd7176ea2936c91eae201f662997f37f9fb2"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm.js",
+      "bytes": 174981,
+      "sha256": "0c06d38554753de457dbf9a84de5c1968c11a1b19e031b1e2e8a44e41808ed30"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm_bg.wasm",
+      "bytes": 7425956,
+      "sha256": "8c48aebb8f58bee66e4d0f69c9045e88263edfc9fb3ddd2e918828e5894e6323"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/source/tools/virgl-dimensional-depth/browser.mjs",
+      "bytes": 10274,
+      "sha256": "387277e89d7b023c1a26bcffc5d0b438a86a5c53330d58e32513a5d781f7930f"
+    },
+    {
+      "path": "fresh-362436069-521288629-88675123/source/tools/virgl-dimensional-depth/fixtures.mjs",
+      "bytes": 4742,
+      "sha256": "5d833e32c6c7c98b3eb051ffcdcec2dedd615fcb2ec5edaef1a609bc76c94976"
+    },
+    {
+      "path": "fresh-artifact-pins.json",
+      "bytes": 717,
+      "sha256": "702b8d35ec1f9f058cc39efe13edd093eaaa17bc7c3cd794220804ebfe944f2b"
+    },
+    {
+      "path": "fresh.log",
+      "bytes": 113,
+      "sha256": "6dfd1a26e7f1b727541fbbbfd07188df0b103eb48f0ab6ac9cfe6098fa49145e"
+    },
+    {
+      "path": "hunk-ledger-initial.log",
+      "bytes": 459,
+      "sha256": "60c431ed9ba6d8835d3dc6e139e797b8689da6bf02411d2c7b510c4578d236f4"
+    },
+    {
+      "path": "hunk-ledger-initial.py",
+      "bytes": 12523,
+      "sha256": "0c2881cf3e4a3b945e38352e1b283295c7d4e47645fef3fe9e91cdeb324ccd10"
+    },
+    {
+      "path": "hunk-ledger-second.log",
+      "bytes": 333,
+      "sha256": "543fc208330d81dc8fe9cc22bbc9c8438e0ffaaef7637067eddb322c0858e3c3"
+    },
+    {
+      "path": "hunk-ledger-second.py",
+      "bytes": 12949,
+      "sha256": "e93faf9061648374bd0421dd325537656ea1f301b18bf7efd5bc60047a969f29"
+    },
+    {
+      "path": "hunk-ledger.json",
+      "bytes": 2161312,
+      "sha256": "78efbc3ad92ddbf91f7f76217d287b9e16e03cafddeecd515c159e0e45dbea1e"
+    },
+    {
+      "path": "hunk-ledger.log",
+      "bytes": 381,
+      "sha256": "dde6169d50de04fb8534c076a3cf5204f78779406ab78d22ca3c3472c21258c8"
+    },
+    {
+      "path": "hunk_ledger.py",
+      "bytes": 12952,
+      "sha256": "a50668b6a3c8640d64a6a99813fae49b64e07eee90223281d83687d658088623"
+    },
+    {
+      "path": "initial-provenance.json",
+      "bytes": 226,
+      "sha256": "8acb55506fe22d00fa096e4d2905a578429e91c68fed8f06a4c533a87e1a95a5"
+    },
+    {
+      "path": "interrogate-initial.log",
+      "bytes": 908,
+      "sha256": "53123c2fd1a874bb1f6456b47db632431f3e2277cbbd4bc940e55a5336c8a01a"
+    },
+    {
+      "path": "interrogate-initial.py",
+      "bytes": 16310,
+      "sha256": "9b125eaeb64633fe861cc439583f470c1ac405da30d948ec5fe1b9031709e8d4"
+    },
+    {
+      "path": "interrogate.log",
+      "bytes": 300,
+      "sha256": "a98d34bac61eabe1b968320df147c3beccaa7885b386ec9f23b39cae6f5d4c31"
+    },
+    {
+      "path": "interrogate.py",
+      "bytes": 16351,
+      "sha256": "71e21cb69eec5d57cd3fa4b63504b85fb0ed0e3fc16961425d1f2599d6d7e9a5"
+    },
+    {
+      "path": "novel-2654435769-2135587861/browser-coverage.json",
+      "bytes": 1427088,
+      "sha256": "b095231e04c94c8043c8cef9f6ab51cb16762205862675a972e4a743c0a2d91e"
+    },
+    {
+      "path": "novel-2654435769-2135587861/browser.png",
+      "bytes": 34940,
+      "sha256": "2b8f1e535669af2129e29e84af0bc62b1296c9c2b4bf7709ddb3e53e23643239"
+    },
+    {
+      "path": "novel-2654435769-2135587861/report.json",
+      "bytes": 17400494,
+      "sha256": "1989cb89c145dda81782bf457ac948b821abd365fc980ca3a947f3f224db1427"
+    },
+    {
+      "path": "novel-2654435769-2135587861/source/evidence/virgl-dimensional-depth/verifier/novel-case.mjs",
+      "bytes": 13713,
+      "sha256": "5928c534c5bc0f4406a343f2d017acb8d1c24e60e7b6ee11fe2f5a1acca395ef"
+    },
+    {
+      "path": "novel-2654435769-2135587861/source/renderer/virgl-command/cache.mjs",
+      "bytes": 2989,
+      "sha256": "9e50cc258528e581f79cee0e4e0038994c7968f80046b9db21e7f5e0e4a92cfa"
+    },
+    {
+      "path": "novel-2654435769-2135587861/source/renderer/virgl-command/color-images.mjs",
+      "bytes": 2770,
+      "sha256": "8c1b43f830e13f73d1397398e97bf263343f88c1782c683a890cb0f1fbc5e0e1"
+    },
+    {
+      "path": "novel-2654435769-2135587861/source/renderer/virgl-command/constant-domain.mjs",
+      "bytes": 116039,
+      "sha256": "75d0f1e72ead2c368163f980a9ef05aaed8fe7c56bbf7679a8f311bae444ab1a"
+    },
+    {
+      "path": "novel-2654435769-2135587861/source/renderer/virgl-command/control-bridge.mjs",
+      "bytes": 34067,
+      "sha256": "fe885a12faf340912b04a5b533fff5f8aabe0122ee743692190862dd43140e7f"
+    },
+    {
+      "path": "novel-2654435769-2135587861/source/renderer/virgl-command/decoder.mjs",
+      "bytes": 47276,
+      "sha256": "4080f1fbbfa3d262bd92a176a29616e573c36089785cacf85389656277b13554"
+    },
+    {
+      "path": "novel-2654435769-2135587861/source/renderer/virgl-command/dimensional-depth-images.mjs",
+      "bytes": 8781,
+      "sha256": "44d2d7b39145262ebd2533a8bc9625f1de500e7633cea73184a26c6727e5d68a"
+    },
+    {
+      "path": "novel-2654435769-2135587861/source/renderer/virgl-command/float-images.mjs",
+      "bytes": 3132,
+      "sha256": "69543e48426c7ded5178b659eb651b5cb765aa559a0bbf96fd8d34f5cf7cfe46"
+    },
+    {
+      "path": "novel-2654435769-2135587861/source/renderer/virgl-command/floating-depth-gpu.mjs",
+      "bytes": 15017,
+      "sha256": "fd981d745f076d294fbb4579b85cbb325d62465de77293384c91a8a848a84255"
+    },
+    {
+      "path": "novel-2654435769-2135587861/source/renderer/virgl-command/floating-depth-images.mjs",
+      "bytes": 947,
+      "sha256": "76e02b32e5a24f65f360adb7cbcc0f9e5d51ee90be7cfbe1a383bfa99cc30370"
+    },
+    {
+      "path": "novel-2654435769-2135587861/source/renderer/virgl-command/integer-images.mjs",
+      "bytes": 1557,
+      "sha256": "8871226b60ad86ee1f585f8de6e5891241a361ad84aa811a36028fd003d95029"
+    },
+    {
+      "path": "novel-2654435769-2135587861/source/renderer/virgl-command/packed-float-images.mjs",
+      "bytes": 1620,
+      "sha256": "0ea28e0bfcf4a0ae04f634826d4b65cb19a6285850836412c7b06311ce1c5405"
+    },
+    {
+      "path": "novel-2654435769-2135587861/source/renderer/virgl-command/packed-normalized-images.mjs",
+      "bytes": 2046,
+      "sha256": "5ccf01336a906f3b46b0c8c790c73449331e09ac3cfee2931459d507b6dccd18"
+    },
+    {
+      "path": "novel-2654435769-2135587861/source/renderer/virgl-command/packed-unsigned-images.mjs",
+      "bytes": 991,
+      "sha256": "1170cf4d69d7281fdc32383354d7c17d6019ece0c7a6f681de86b27a57ea0d61"
+    },
+    {
+      "path": "novel-2654435769-2135587861/source/renderer/virgl-command/resources.mjs",
+      "bytes": 145736,
+      "sha256": "18151296f3eb59acc95614759e2ee7c5b3498c443c370f82f3726d9cc35e6965"
+    },
+    {
+      "path": "novel-2654435769-2135587861/source/renderer/virgl-command/scanout.mjs",
+      "bytes": 14132,
+      "sha256": "affbac9b1b14e2a1eadb9bc29c693e120e20ffb84af02196a9eb00660eac1bac"
+    },
+    {
+      "path": "novel-2654435769-2135587861/source/renderer/virgl-command/shared-exponent-gpu.mjs",
+      "bytes": 9865,
+      "sha256": "22efbf4e0a3ae04d2e29900278db1e88880bd7c2fc7e757d0fd12d3a899531b7"
+    },
+    {
+      "path": "novel-2654435769-2135587861/source/renderer/virgl-command/shared-exponent-images.mjs",
+      "bytes": 563,
+      "sha256": "27de20239649aea73145e1f547c9265692f451fedddf3876639c173cf0d6168f"
+    },
+    {
+      "path": "novel-2654435769-2135587861/source/renderer/virgl-command/state.mjs",
+      "bytes": 189384,
+      "sha256": "aa001d630a196801ad7de0fe48ef07a8d8acee8ad2d79fbb8e14acab5babc850"
+    },
+    {
+      "path": "novel-2654435769-2135587861/source/renderer/virgl-command/tests/submit-acceptance.mjs",
+      "bytes": 53417,
+      "sha256": "c65063916c5f28085604a5dca46a2221f360762c1192776dc9294e2e1ba238ed"
+    },
+    {
+      "path": "novel-2654435769-2135587861/source/renderer/virgl-command/unorm-depth-images.mjs",
+      "bytes": 1409,
+      "sha256": "7fb08881153cfd06ed1acb5dba8d6cc61525b8f742a3b0a9715fb0e68e55e1d1"
+    },
+    {
+      "path": "novel-2654435769-2135587861/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "bytes": 13538,
+      "sha256": "4ade0ffb9ffb661a729179525e7937c4695230dc57a7f79db63a1538119a95f2"
+    },
+    {
+      "path": "novel-2654435769-2135587861/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "bytes": 442769,
+      "sha256": "8749da215131646f0b7d53d59fe7ee19fa68b2fab2e9bec80446c4af3e84e100"
+    },
+    {
+      "path": "novel-2654435769-2135587861/source/renderer/virgl-shader/index.mjs",
+      "bytes": 22546,
+      "sha256": "1bae07f2e668078c4e447f65d1785815714907b7270ced01b131ce70e6d3f10e"
+    },
+    {
+      "path": "novel-2654435769-2135587861/source/renderer/virgl-shader/standard.mjs",
+      "bytes": 13572,
+      "sha256": "2a3f3123b9b85932e76ed5b8576d5d5de10f0179db35875534edbfac7ffa91e4"
+    },
+    {
+      "path": "novel-2654435769-2135587861/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "bytes": 437,
+      "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804"
+    },
+    {
+      "path": "novel-2654435769-2135587861/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+      "bytes": 1314,
+      "sha256": "2877a95db8f6305fce95abf975c0fd7176ea2936c91eae201f662997f37f9fb2"
+    },
+    {
+      "path": "novel-2654435769-2135587861/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm.js",
+      "bytes": 174981,
+      "sha256": "0c06d38554753de457dbf9a84de5c1968c11a1b19e031b1e2e8a44e41808ed30"
+    },
+    {
+      "path": "novel-2654435769-2135587861/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm_bg.wasm",
+      "bytes": 7425956,
+      "sha256": "8c48aebb8f58bee66e4d0f69c9045e88263edfc9fb3ddd2e918828e5894e6323"
+    },
+    {
+      "path": "novel-2654435769-2135587861/source/tools/virgl-dimensional-depth/browser.mjs",
+      "bytes": 10274,
+      "sha256": "387277e89d7b023c1a26bcffc5d0b438a86a5c53330d58e32513a5d781f7930f"
+    },
+    {
+      "path": "novel-browser.mjs",
+      "bytes": 10354,
+      "sha256": "0aef9faa0ffabafea4adf083624c218e4412e2b7d858a5aa70d925a990d4ea52"
+    },
+    {
+      "path": "novel-case.mjs",
+      "bytes": 14959,
+      "sha256": "273164dee6770363b054db0d1cb5f68d0384a03f50464096dd2231be479443b2"
+    },
+    {
+      "path": "novel-interrogation.json",
+      "bytes": 2501,
+      "sha256": "985f10a9e4235f166d4a3198367bcf500c7494ba6b2416d222f041db0b5b1513"
+    },
+    {
+      "path": "novel-interrogation.log",
+      "bytes": 131,
+      "sha256": "a2e02fa34fdec7a03b1eed2744b7bde9810670cbcc906d3d4af1381deeac56f1"
+    },
+    {
+      "path": "novel-sabotage-stencil/browser-coverage.json",
+      "bytes": 1415835,
+      "sha256": "613a7b799b6d631ed4819029c2e7f65cf5f45692d500ec159528e22e24079988"
+    },
+    {
+      "path": "novel-sabotage-stencil/browser.png",
+      "bytes": 77599,
+      "sha256": "b28f8cd3f7b54f45c42fd7ea122ceb74e11235e90007ace0cf990b2a54da3620"
+    },
+    {
+      "path": "novel-sabotage-stencil/report.json",
+      "bytes": 1281054,
+      "sha256": "dcfbf828ebdac3c3e7146876fa020485fc8c77703d3ff152e56cab6f50b79f23"
+    },
+    {
+      "path": "novel-sabotage-stencil/served-source/renderer/virgl-command/floating-depth-gpu.mjs",
+      "bytes": 15085,
+      "sha256": "0c581824be90777370f7b43ea1f49795476396465917bd1157edbad099cc6f80"
+    },
+    {
+      "path": "novel-sabotage-stencil/source/evidence/virgl-dimensional-depth/verifier/novel-case.mjs",
+      "bytes": 13713,
+      "sha256": "5928c534c5bc0f4406a343f2d017acb8d1c24e60e7b6ee11fe2f5a1acca395ef"
+    },
+    {
+      "path": "novel-sabotage-stencil/source/renderer/virgl-command/cache.mjs",
+      "bytes": 2989,
+      "sha256": "9e50cc258528e581f79cee0e4e0038994c7968f80046b9db21e7f5e0e4a92cfa"
+    },
+    {
+      "path": "novel-sabotage-stencil/source/renderer/virgl-command/color-images.mjs",
+      "bytes": 2770,
+      "sha256": "8c1b43f830e13f73d1397398e97bf263343f88c1782c683a890cb0f1fbc5e0e1"
+    },
+    {
+      "path": "novel-sabotage-stencil/source/renderer/virgl-command/constant-domain.mjs",
+      "bytes": 116039,
+      "sha256": "75d0f1e72ead2c368163f980a9ef05aaed8fe7c56bbf7679a8f311bae444ab1a"
+    },
+    {
+      "path": "novel-sabotage-stencil/source/renderer/virgl-command/control-bridge.mjs",
+      "bytes": 34067,
+      "sha256": "fe885a12faf340912b04a5b533fff5f8aabe0122ee743692190862dd43140e7f"
+    },
+    {
+      "path": "novel-sabotage-stencil/source/renderer/virgl-command/decoder.mjs",
+      "bytes": 47276,
+      "sha256": "4080f1fbbfa3d262bd92a176a29616e573c36089785cacf85389656277b13554"
+    },
+    {
+      "path": "novel-sabotage-stencil/source/renderer/virgl-command/dimensional-depth-images.mjs",
+      "bytes": 8781,
+      "sha256": "44d2d7b39145262ebd2533a8bc9625f1de500e7633cea73184a26c6727e5d68a"
+    },
+    {
+      "path": "novel-sabotage-stencil/source/renderer/virgl-command/float-images.mjs",
+      "bytes": 3132,
+      "sha256": "69543e48426c7ded5178b659eb651b5cb765aa559a0bbf96fd8d34f5cf7cfe46"
+    },
+    {
+      "path": "novel-sabotage-stencil/source/renderer/virgl-command/floating-depth-gpu.mjs",
+      "bytes": 15017,
+      "sha256": "fd981d745f076d294fbb4579b85cbb325d62465de77293384c91a8a848a84255"
+    },
+    {
+      "path": "novel-sabotage-stencil/source/renderer/virgl-command/floating-depth-images.mjs",
+      "bytes": 947,
+      "sha256": "76e02b32e5a24f65f360adb7cbcc0f9e5d51ee90be7cfbe1a383bfa99cc30370"
+    },
+    {
+      "path": "novel-sabotage-stencil/source/renderer/virgl-command/integer-images.mjs",
+      "bytes": 1557,
+      "sha256": "8871226b60ad86ee1f585f8de6e5891241a361ad84aa811a36028fd003d95029"
+    },
+    {
+      "path": "novel-sabotage-stencil/source/renderer/virgl-command/packed-float-images.mjs",
+      "bytes": 1620,
+      "sha256": "0ea28e0bfcf4a0ae04f634826d4b65cb19a6285850836412c7b06311ce1c5405"
+    },
+    {
+      "path": "novel-sabotage-stencil/source/renderer/virgl-command/packed-normalized-images.mjs",
+      "bytes": 2046,
+      "sha256": "5ccf01336a906f3b46b0c8c790c73449331e09ac3cfee2931459d507b6dccd18"
+    },
+    {
+      "path": "novel-sabotage-stencil/source/renderer/virgl-command/packed-unsigned-images.mjs",
+      "bytes": 991,
+      "sha256": "1170cf4d69d7281fdc32383354d7c17d6019ece0c7a6f681de86b27a57ea0d61"
+    },
+    {
+      "path": "novel-sabotage-stencil/source/renderer/virgl-command/resources.mjs",
+      "bytes": 145736,
+      "sha256": "18151296f3eb59acc95614759e2ee7c5b3498c443c370f82f3726d9cc35e6965"
+    },
+    {
+      "path": "novel-sabotage-stencil/source/renderer/virgl-command/scanout.mjs",
+      "bytes": 14132,
+      "sha256": "affbac9b1b14e2a1eadb9bc29c693e120e20ffb84af02196a9eb00660eac1bac"
+    },
+    {
+      "path": "novel-sabotage-stencil/source/renderer/virgl-command/shared-exponent-gpu.mjs",
+      "bytes": 9865,
+      "sha256": "22efbf4e0a3ae04d2e29900278db1e88880bd7c2fc7e757d0fd12d3a899531b7"
+    },
+    {
+      "path": "novel-sabotage-stencil/source/renderer/virgl-command/shared-exponent-images.mjs",
+      "bytes": 563,
+      "sha256": "27de20239649aea73145e1f547c9265692f451fedddf3876639c173cf0d6168f"
+    },
+    {
+      "path": "novel-sabotage-stencil/source/renderer/virgl-command/state.mjs",
+      "bytes": 189384,
+      "sha256": "aa001d630a196801ad7de0fe48ef07a8d8acee8ad2d79fbb8e14acab5babc850"
+    },
+    {
+      "path": "novel-sabotage-stencil/source/renderer/virgl-command/tests/submit-acceptance.mjs",
+      "bytes": 53417,
+      "sha256": "c65063916c5f28085604a5dca46a2221f360762c1192776dc9294e2e1ba238ed"
+    },
+    {
+      "path": "novel-sabotage-stencil/source/renderer/virgl-command/unorm-depth-images.mjs",
+      "bytes": 1409,
+      "sha256": "7fb08881153cfd06ed1acb5dba8d6cc61525b8f742a3b0a9715fb0e68e55e1d1"
+    },
+    {
+      "path": "novel-sabotage-stencil/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "bytes": 13538,
+      "sha256": "4ade0ffb9ffb661a729179525e7937c4695230dc57a7f79db63a1538119a95f2"
+    },
+    {
+      "path": "novel-sabotage-stencil/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "bytes": 442769,
+      "sha256": "8749da215131646f0b7d53d59fe7ee19fa68b2fab2e9bec80446c4af3e84e100"
+    },
+    {
+      "path": "novel-sabotage-stencil/source/renderer/virgl-shader/index.mjs",
+      "bytes": 22546,
+      "sha256": "1bae07f2e668078c4e447f65d1785815714907b7270ced01b131ce70e6d3f10e"
+    },
+    {
+      "path": "novel-sabotage-stencil/source/renderer/virgl-shader/standard.mjs",
+      "bytes": 13572,
+      "sha256": "2a3f3123b9b85932e76ed5b8576d5d5de10f0179db35875534edbfac7ffa91e4"
+    },
+    {
+      "path": "novel-sabotage-stencil/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "bytes": 437,
+      "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804"
+    },
+    {
+      "path": "novel-sabotage-stencil/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+      "bytes": 1314,
+      "sha256": "2877a95db8f6305fce95abf975c0fd7176ea2936c91eae201f662997f37f9fb2"
+    },
+    {
+      "path": "novel-sabotage-stencil/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm.js",
+      "bytes": 174981,
+      "sha256": "0c06d38554753de457dbf9a84de5c1968c11a1b19e031b1e2e8a44e41808ed30"
+    },
+    {
+      "path": "novel-sabotage-stencil/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm_bg.wasm",
+      "bytes": 7425956,
+      "sha256": "8c48aebb8f58bee66e4d0f69c9045e88263edfc9fb3ddd2e918828e5894e6323"
+    },
+    {
+      "path": "novel-sabotage-stencil/source/tools/virgl-dimensional-depth/browser.mjs",
+      "bytes": 10274,
+      "sha256": "387277e89d7b023c1a26bcffc5d0b438a86a5c53330d58e32513a5d781f7930f"
+    },
+    {
+      "path": "novel-sabotage.log",
+      "bytes": 1038,
+      "sha256": "4fd6e80905eff462f6a37f4d45364c3dc77af3fb106ed46b6d2e74880171939e"
+    },
+    {
+      "path": "novel.log",
+      "bytes": 68,
+      "sha256": "72a4f9e4a856ec387a37b9fa938af65a14978395a422a4db6c18c75448d88c4d"
+    },
+    {
+      "path": "novel_interrogate.py",
+      "bytes": 6195,
+      "sha256": "c1e50b3fe0d8e1b2d0236b88a5617c5ba4443762fe51eff65db9e56ef604c883"
+    },
+    {
+      "path": "physical-citations.jsonl",
+      "bytes": 858157,
+      "sha256": "d4e159dd80726eb6d2eab6315e7b0e21ed0a6a1cac099ed4802db0acbe595959"
+    },
+    {
+      "path": "physical-interrogation.json",
+      "bytes": 356,
+      "sha256": "04ed40f13d7b26e4569e5bd4dae3f85b5a80827443b0ccc6e95e085e64668719"
+    },
+    {
+      "path": "predictions.json",
+      "bytes": 5898,
+      "sha256": "33d6fa78802f530b2bffc9421fef324ba0b42633df2026749c74c9abb23d8c89"
+    },
+    {
+      "path": "promoted-2654435769-2135587861/browser-coverage.json",
+      "bytes": 1430779,
+      "sha256": "cce4f456b4e20037e20ef7a889a27184a27d1ece036394801571951e72e11df1"
+    },
+    {
+      "path": "promoted-2654435769-2135587861/browser.png",
+      "bytes": 38558,
+      "sha256": "add050ca0921f73a7dda0a38715269fd703a478da9d987f77e3f23a15529c603"
+    },
+    {
+      "path": "promoted-2654435769-2135587861/report.json",
+      "bytes": 18031272,
+      "sha256": "7ed17f8c7a2a49f6287df509361dd302e4facf4c480ed7726158e550a64be1c1"
+    },
+    {
+      "path": "promoted-2654435769-2135587861/source/renderer/virgl-command/cache.mjs",
+      "bytes": 2989,
+      "sha256": "9e50cc258528e581f79cee0e4e0038994c7968f80046b9db21e7f5e0e4a92cfa"
+    },
+    {
+      "path": "promoted-2654435769-2135587861/source/renderer/virgl-command/color-images.mjs",
+      "bytes": 2770,
+      "sha256": "8c1b43f830e13f73d1397398e97bf263343f88c1782c683a890cb0f1fbc5e0e1"
+    },
+    {
+      "path": "promoted-2654435769-2135587861/source/renderer/virgl-command/constant-domain.mjs",
+      "bytes": 116039,
+      "sha256": "75d0f1e72ead2c368163f980a9ef05aaed8fe7c56bbf7679a8f311bae444ab1a"
+    },
+    {
+      "path": "promoted-2654435769-2135587861/source/renderer/virgl-command/control-bridge.mjs",
+      "bytes": 34067,
+      "sha256": "fe885a12faf340912b04a5b533fff5f8aabe0122ee743692190862dd43140e7f"
+    },
+    {
+      "path": "promoted-2654435769-2135587861/source/renderer/virgl-command/decoder.mjs",
+      "bytes": 47276,
+      "sha256": "4080f1fbbfa3d262bd92a176a29616e573c36089785cacf85389656277b13554"
+    },
+    {
+      "path": "promoted-2654435769-2135587861/source/renderer/virgl-command/dimensional-depth-images.mjs",
+      "bytes": 8781,
+      "sha256": "44d2d7b39145262ebd2533a8bc9625f1de500e7633cea73184a26c6727e5d68a"
+    },
+    {
+      "path": "promoted-2654435769-2135587861/source/renderer/virgl-command/float-images.mjs",
+      "bytes": 3132,
+      "sha256": "69543e48426c7ded5178b659eb651b5cb765aa559a0bbf96fd8d34f5cf7cfe46"
+    },
+    {
+      "path": "promoted-2654435769-2135587861/source/renderer/virgl-command/floating-depth-gpu.mjs",
+      "bytes": 15017,
+      "sha256": "fd981d745f076d294fbb4579b85cbb325d62465de77293384c91a8a848a84255"
+    },
+    {
+      "path": "promoted-2654435769-2135587861/source/renderer/virgl-command/floating-depth-images.mjs",
+      "bytes": 947,
+      "sha256": "76e02b32e5a24f65f360adb7cbcc0f9e5d51ee90be7cfbe1a383bfa99cc30370"
+    },
+    {
+      "path": "promoted-2654435769-2135587861/source/renderer/virgl-command/integer-images.mjs",
+      "bytes": 1557,
+      "sha256": "8871226b60ad86ee1f585f8de6e5891241a361ad84aa811a36028fd003d95029"
+    },
+    {
+      "path": "promoted-2654435769-2135587861/source/renderer/virgl-command/packed-float-images.mjs",
+      "bytes": 1620,
+      "sha256": "0ea28e0bfcf4a0ae04f634826d4b65cb19a6285850836412c7b06311ce1c5405"
+    },
+    {
+      "path": "promoted-2654435769-2135587861/source/renderer/virgl-command/packed-normalized-images.mjs",
+      "bytes": 2046,
+      "sha256": "5ccf01336a906f3b46b0c8c790c73449331e09ac3cfee2931459d507b6dccd18"
+    },
+    {
+      "path": "promoted-2654435769-2135587861/source/renderer/virgl-command/packed-unsigned-images.mjs",
+      "bytes": 991,
+      "sha256": "1170cf4d69d7281fdc32383354d7c17d6019ece0c7a6f681de86b27a57ea0d61"
+    },
+    {
+      "path": "promoted-2654435769-2135587861/source/renderer/virgl-command/resources.mjs",
+      "bytes": 145736,
+      "sha256": "18151296f3eb59acc95614759e2ee7c5b3498c443c370f82f3726d9cc35e6965"
+    },
+    {
+      "path": "promoted-2654435769-2135587861/source/renderer/virgl-command/scanout.mjs",
+      "bytes": 14132,
+      "sha256": "affbac9b1b14e2a1eadb9bc29c693e120e20ffb84af02196a9eb00660eac1bac"
+    },
+    {
+      "path": "promoted-2654435769-2135587861/source/renderer/virgl-command/shared-exponent-gpu.mjs",
+      "bytes": 9865,
+      "sha256": "22efbf4e0a3ae04d2e29900278db1e88880bd7c2fc7e757d0fd12d3a899531b7"
+    },
+    {
+      "path": "promoted-2654435769-2135587861/source/renderer/virgl-command/shared-exponent-images.mjs",
+      "bytes": 563,
+      "sha256": "27de20239649aea73145e1f547c9265692f451fedddf3876639c173cf0d6168f"
+    },
+    {
+      "path": "promoted-2654435769-2135587861/source/renderer/virgl-command/state.mjs",
+      "bytes": 189384,
+      "sha256": "aa001d630a196801ad7de0fe48ef07a8d8acee8ad2d79fbb8e14acab5babc850"
+    },
+    {
+      "path": "promoted-2654435769-2135587861/source/renderer/virgl-command/tests/dimensional-depth-overlap.mjs",
+      "bytes": 14911,
+      "sha256": "33e09baf58e944f344dcaa503e131f51376842656df8cb870bd772cf5f30c216"
+    },
+    {
+      "path": "promoted-2654435769-2135587861/source/renderer/virgl-command/tests/submit-acceptance.mjs",
+      "bytes": 53417,
+      "sha256": "c65063916c5f28085604a5dca46a2221f360762c1192776dc9294e2e1ba238ed"
+    },
+    {
+      "path": "promoted-2654435769-2135587861/source/renderer/virgl-command/unorm-depth-images.mjs",
+      "bytes": 1409,
+      "sha256": "7fb08881153cfd06ed1acb5dba8d6cc61525b8f742a3b0a9715fb0e68e55e1d1"
+    },
+    {
+      "path": "promoted-2654435769-2135587861/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "bytes": 13538,
+      "sha256": "4ade0ffb9ffb661a729179525e7937c4695230dc57a7f79db63a1538119a95f2"
+    },
+    {
+      "path": "promoted-2654435769-2135587861/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "bytes": 442769,
+      "sha256": "8749da215131646f0b7d53d59fe7ee19fa68b2fab2e9bec80446c4af3e84e100"
+    },
+    {
+      "path": "promoted-2654435769-2135587861/source/renderer/virgl-shader/index.mjs",
+      "bytes": 22546,
+      "sha256": "1bae07f2e668078c4e447f65d1785815714907b7270ced01b131ce70e6d3f10e"
+    },
+    {
+      "path": "promoted-2654435769-2135587861/source/renderer/virgl-shader/standard.mjs",
+      "bytes": 13572,
+      "sha256": "2a3f3123b9b85932e76ed5b8576d5d5de10f0179db35875534edbfac7ffa91e4"
+    },
+    {
+      "path": "promoted-2654435769-2135587861/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "bytes": 437,
+      "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804"
+    },
+    {
+      "path": "promoted-2654435769-2135587861/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+      "bytes": 1314,
+      "sha256": "2877a95db8f6305fce95abf975c0fd7176ea2936c91eae201f662997f37f9fb2"
+    },
+    {
+      "path": "promoted-2654435769-2135587861/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm.js",
+      "bytes": 174981,
+      "sha256": "0c06d38554753de457dbf9a84de5c1968c11a1b19e031b1e2e8a44e41808ed30"
+    },
+    {
+      "path": "promoted-2654435769-2135587861/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm_bg.wasm",
+      "bytes": 7425956,
+      "sha256": "8c48aebb8f58bee66e4d0f69c9045e88263edfc9fb3ddd2e918828e5894e6323"
+    },
+    {
+      "path": "promoted-2654435769-2135587861/source/tools/virgl-dimensional-depth/browser.mjs",
+      "bytes": 10274,
+      "sha256": "387277e89d7b023c1a26bcffc5d0b438a86a5c53330d58e32513a5d781f7930f"
+    },
+    {
+      "path": "promoted-sabotage-stencil/browser-coverage.json",
+      "bytes": 1418137,
+      "sha256": "0765bcd6af3af8d9fa7683b7d061476635c49f9cc7e05c33d6e9ce6b8b7d8cdd"
+    },
+    {
+      "path": "promoted-sabotage-stencil/browser.png",
+      "bytes": 77413,
+      "sha256": "3b88a17a210e0b5d1ffdaeedeac467d6b5db15377e3479184e34eb305430dd3d"
+    },
+    {
+      "path": "promoted-sabotage-stencil/report.json",
+      "bytes": 1281045,
+      "sha256": "02e4ef5be2a229daf32a0eed588cc8f6667ac3634ed41a8508f60d4d624323ad"
+    },
+    {
+      "path": "promoted-sabotage-stencil/served-source/renderer/virgl-command/floating-depth-gpu.mjs",
+      "bytes": 15085,
+      "sha256": "0c581824be90777370f7b43ea1f49795476396465917bd1157edbad099cc6f80"
+    },
+    {
+      "path": "promoted-sabotage-stencil/source/renderer/virgl-command/cache.mjs",
+      "bytes": 2989,
+      "sha256": "9e50cc258528e581f79cee0e4e0038994c7968f80046b9db21e7f5e0e4a92cfa"
+    },
+    {
+      "path": "promoted-sabotage-stencil/source/renderer/virgl-command/color-images.mjs",
+      "bytes": 2770,
+      "sha256": "8c1b43f830e13f73d1397398e97bf263343f88c1782c683a890cb0f1fbc5e0e1"
+    },
+    {
+      "path": "promoted-sabotage-stencil/source/renderer/virgl-command/constant-domain.mjs",
+      "bytes": 116039,
+      "sha256": "75d0f1e72ead2c368163f980a9ef05aaed8fe7c56bbf7679a8f311bae444ab1a"
+    },
+    {
+      "path": "promoted-sabotage-stencil/source/renderer/virgl-command/control-bridge.mjs",
+      "bytes": 34067,
+      "sha256": "fe885a12faf340912b04a5b533fff5f8aabe0122ee743692190862dd43140e7f"
+    },
+    {
+      "path": "promoted-sabotage-stencil/source/renderer/virgl-command/decoder.mjs",
+      "bytes": 47276,
+      "sha256": "4080f1fbbfa3d262bd92a176a29616e573c36089785cacf85389656277b13554"
+    },
+    {
+      "path": "promoted-sabotage-stencil/source/renderer/virgl-command/dimensional-depth-images.mjs",
+      "bytes": 8781,
+      "sha256": "44d2d7b39145262ebd2533a8bc9625f1de500e7633cea73184a26c6727e5d68a"
+    },
+    {
+      "path": "promoted-sabotage-stencil/source/renderer/virgl-command/float-images.mjs",
+      "bytes": 3132,
+      "sha256": "69543e48426c7ded5178b659eb651b5cb765aa559a0bbf96fd8d34f5cf7cfe46"
+    },
+    {
+      "path": "promoted-sabotage-stencil/source/renderer/virgl-command/floating-depth-gpu.mjs",
+      "bytes": 15017,
+      "sha256": "fd981d745f076d294fbb4579b85cbb325d62465de77293384c91a8a848a84255"
+    },
+    {
+      "path": "promoted-sabotage-stencil/source/renderer/virgl-command/floating-depth-images.mjs",
+      "bytes": 947,
+      "sha256": "76e02b32e5a24f65f360adb7cbcc0f9e5d51ee90be7cfbe1a383bfa99cc30370"
+    },
+    {
+      "path": "promoted-sabotage-stencil/source/renderer/virgl-command/integer-images.mjs",
+      "bytes": 1557,
+      "sha256": "8871226b60ad86ee1f585f8de6e5891241a361ad84aa811a36028fd003d95029"
+    },
+    {
+      "path": "promoted-sabotage-stencil/source/renderer/virgl-command/packed-float-images.mjs",
+      "bytes": 1620,
+      "sha256": "0ea28e0bfcf4a0ae04f634826d4b65cb19a6285850836412c7b06311ce1c5405"
+    },
+    {
+      "path": "promoted-sabotage-stencil/source/renderer/virgl-command/packed-normalized-images.mjs",
+      "bytes": 2046,
+      "sha256": "5ccf01336a906f3b46b0c8c790c73449331e09ac3cfee2931459d507b6dccd18"
+    },
+    {
+      "path": "promoted-sabotage-stencil/source/renderer/virgl-command/packed-unsigned-images.mjs",
+      "bytes": 991,
+      "sha256": "1170cf4d69d7281fdc32383354d7c17d6019ece0c7a6f681de86b27a57ea0d61"
+    },
+    {
+      "path": "promoted-sabotage-stencil/source/renderer/virgl-command/resources.mjs",
+      "bytes": 145736,
+      "sha256": "18151296f3eb59acc95614759e2ee7c5b3498c443c370f82f3726d9cc35e6965"
+    },
+    {
+      "path": "promoted-sabotage-stencil/source/renderer/virgl-command/scanout.mjs",
+      "bytes": 14132,
+      "sha256": "affbac9b1b14e2a1eadb9bc29c693e120e20ffb84af02196a9eb00660eac1bac"
+    },
+    {
+      "path": "promoted-sabotage-stencil/source/renderer/virgl-command/shared-exponent-gpu.mjs",
+      "bytes": 9865,
+      "sha256": "22efbf4e0a3ae04d2e29900278db1e88880bd7c2fc7e757d0fd12d3a899531b7"
+    },
+    {
+      "path": "promoted-sabotage-stencil/source/renderer/virgl-command/shared-exponent-images.mjs",
+      "bytes": 563,
+      "sha256": "27de20239649aea73145e1f547c9265692f451fedddf3876639c173cf0d6168f"
+    },
+    {
+      "path": "promoted-sabotage-stencil/source/renderer/virgl-command/state.mjs",
+      "bytes": 189384,
+      "sha256": "aa001d630a196801ad7de0fe48ef07a8d8acee8ad2d79fbb8e14acab5babc850"
+    },
+    {
+      "path": "promoted-sabotage-stencil/source/renderer/virgl-command/tests/dimensional-depth-overlap.mjs",
+      "bytes": 14911,
+      "sha256": "33e09baf58e944f344dcaa503e131f51376842656df8cb870bd772cf5f30c216"
+    },
+    {
+      "path": "promoted-sabotage-stencil/source/renderer/virgl-command/tests/submit-acceptance.mjs",
+      "bytes": 53417,
+      "sha256": "c65063916c5f28085604a5dca46a2221f360762c1192776dc9294e2e1ba238ed"
+    },
+    {
+      "path": "promoted-sabotage-stencil/source/renderer/virgl-command/unorm-depth-images.mjs",
+      "bytes": 1409,
+      "sha256": "7fb08881153cfd06ed1acb5dba8d6cc61525b8f742a3b0a9715fb0e68e55e1d1"
+    },
+    {
+      "path": "promoted-sabotage-stencil/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "bytes": 13538,
+      "sha256": "4ade0ffb9ffb661a729179525e7937c4695230dc57a7f79db63a1538119a95f2"
+    },
+    {
+      "path": "promoted-sabotage-stencil/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "bytes": 442769,
+      "sha256": "8749da215131646f0b7d53d59fe7ee19fa68b2fab2e9bec80446c4af3e84e100"
+    },
+    {
+      "path": "promoted-sabotage-stencil/source/renderer/virgl-shader/index.mjs",
+      "bytes": 22546,
+      "sha256": "1bae07f2e668078c4e447f65d1785815714907b7270ced01b131ce70e6d3f10e"
+    },
+    {
+      "path": "promoted-sabotage-stencil/source/renderer/virgl-shader/standard.mjs",
+      "bytes": 13572,
+      "sha256": "2a3f3123b9b85932e76ed5b8576d5d5de10f0179db35875534edbfac7ffa91e4"
+    },
+    {
+      "path": "promoted-sabotage-stencil/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "bytes": 437,
+      "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804"
+    },
+    {
+      "path": "promoted-sabotage-stencil/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+      "bytes": 1314,
+      "sha256": "2877a95db8f6305fce95abf975c0fd7176ea2936c91eae201f662997f37f9fb2"
+    },
+    {
+      "path": "promoted-sabotage-stencil/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm.js",
+      "bytes": 174981,
+      "sha256": "0c06d38554753de457dbf9a84de5c1968c11a1b19e031b1e2e8a44e41808ed30"
+    },
+    {
+      "path": "promoted-sabotage-stencil/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm_bg.wasm",
+      "bytes": 7425956,
+      "sha256": "8c48aebb8f58bee66e4d0f69c9045e88263edfc9fb3ddd2e918828e5894e6323"
+    },
+    {
+      "path": "promoted-sabotage-stencil/source/tools/virgl-dimensional-depth/browser.mjs",
+      "bytes": 10274,
+      "sha256": "387277e89d7b023c1a26bcffc5d0b438a86a5c53330d58e32513a5d781f7930f"
+    },
+    {
+      "path": "promoted-sabotage.log",
+      "bytes": 1028,
+      "sha256": "22bacf114e34e2938d03534f10cb33a45dc55ed89d9bfdd1fefbd4f682c2d95d"
+    },
+    {
+      "path": "promoted-sources/renderer/virgl-command/tests/dimensional-depth-overlap.mjs",
+      "bytes": 14911,
+      "sha256": "33e09baf58e944f344dcaa503e131f51376842656df8cb870bd772cf5f30c216"
+    },
+    {
+      "path": "promoted-sources/tools/virgl-dimensional-depth/overlap-browser.mjs",
+      "bytes": 10355,
+      "sha256": "5070bf1364fdb9e3304950a40b6ba966920b3a60a1b6db1cf0377591d0cdc8e6"
+    },
+    {
+      "path": "promoted.log",
+      "bytes": 95,
+      "sha256": "3b6795dbde04ca268753388ad8a0e7f138fe51f5deff7f1c395a2a4b261644cc"
+    },
+    {
+      "path": "readiness-authentication.json",
+      "bytes": 43101,
+      "sha256": "3bd098937c88c7bf537f4a29371e38b97290807d67a3dbd3e1f8e32f862a4bd5"
+    },
+    {
+      "path": "reopened-default.wasm",
+      "bytes": 1634057,
+      "sha256": "d45b575207e0035b5c518698e7b6793b2bf12da635531723fad70813a5956c36"
+    },
+    {
+      "path": "reopened-native.profdata",
+      "bytes": 542520,
+      "sha256": "c1950cc8391180daf001b2d3f84729aa1420f5a4462e96f8c69dac4d2037164c"
+    },
+    {
+      "path": "report.md",
+      "bytes": 16893,
+      "sha256": "52752114e83a53c53caebd27d6f8d74b970a6338095225c75accc7f83fbd64f4"
+    },
+    {
+      "path": "seal.py",
+      "bytes": 4935,
+      "sha256": "42a9dbccfadf3202851e89c468cf0ca237cb2935afbb23856b0387041cdab8ff"
+    },
+    {
+      "path": "task.diff",
+      "bytes": 191539,
+      "sha256": "1998fb1fae19e1fa8aa95d9a58cc09950b84e6018a268abd7029451818cebea9"
+    },
+    {
+      "path": "task.md",
+      "bytes": 13984,
+      "sha256": "96c83262e39524c2f47276e50f2b0e6ca8f4c26ab9ff49d5891ea38a5ea98031"
+    },
+    {
+      "path": "verdict.json",
+      "bytes": 30603,
+      "sha256": "54baa4afcbb92042d7674386e9c9ce33f7e844cf956c62d028bfbae52831e304"
+    },
+    {
+      "path": "verdict.log",
+      "bytes": 285,
+      "sha256": "6cbae1bdd6e1085b0450aef9b45223cb61f21e9040b4a842571ea1e090e64559"
+    },
+    {
+      "path": "verification-entry-template.md",
+      "bytes": 10834,
+      "sha256": "92b7a6039fbc0acbd0283b4097b3c42a702f2bef20e1dc8c68a7bf41e3824647"
+    },
+    {
+      "path": "write_verdict.py",
+      "bytes": 12802,
+      "sha256": "20e9b6b0922874988ec2ebca283f4397711f21b1fddddf17af41a1f4f3d6ac2a"
+    }
+  ]
+}

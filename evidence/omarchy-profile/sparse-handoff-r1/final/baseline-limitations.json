@@ -1,0 +1,28 @@
+{
+  "head": "0a5f7bd7a1f4e55878d314cd4d65420a6ba1ff98",
+  "checks": [
+    {
+      "name": "stdout",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "wasm-vm-core",
+        "--test",
+        "no_stdout_in_core"
+      ],
+      "exitCode": 101
+    },
+    {
+      "name": "seccomp",
+      "command": [
+        "cargo",
+        "check",
+        "-p",
+        "wasm-vm-wvseccomp",
+        "--all-features"
+      ],
+      "exitCode": 101
+    }
+  ]
+}

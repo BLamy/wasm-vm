@@ -1,0 +1,37 @@
+[
+  {
+    "name": "amoadd-d",
+    "baselineMips": 16.03881393093653,
+    "candidateMips": 19.15938210117504,
+    "speedup": 1.1945635246892783,
+    "pairedSpeedup": 1.195476190249125
+  },
+  {
+    "name": "lr-sc-d",
+    "baselineMips": 23.301197104178897,
+    "candidateMips": 32.10401700775711,
+    "speedup": 1.3777840196029882,
+    "pairedSpeedup": 1.3777840196029882
+  },
+  {
+    "name": "tlb-collision",
+    "baselineMips": 41.97051573581072,
+    "candidateMips": 105.80611044966939,
+    "speedup": 2.5209628377139977,
+    "pairedSpeedup": 2.5264989311767216
+  },
+  {
+    "name": "tlb-hit-control",
+    "baselineMips": 389.5218616974523,
+    "candidateMips": 396.78603335685233,
+    "speedup": 1.018648944702986,
+    "pairedSpeedup": 1.0144429163786937
+  },
+  {
+    "name": "integer-control",
+    "baselineMips": 635.6016366260551,
+    "candidateMips": 657.0302234417372,
+    "speedup": 1.0337138634970024,
+    "pairedSpeedup": 1.0365291099166938
+  }
+]

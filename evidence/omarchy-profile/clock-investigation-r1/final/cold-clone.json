@@ -1,0 +1,12 @@
+{
+  "head": "37a269d490543b3c2970de600d60f7f055c6acac",
+  "clone": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-clock-final-cold-a4wc8eet/repo",
+  "scrubbedKeys": [
+    "RUST_LOG"
+  ],
+  "command": [
+    "make",
+    "verify-E5.5-T03bd"
+  ],
+  "exitCode": 0
+}

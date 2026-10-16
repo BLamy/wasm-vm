@@ -1,0 +1,85 @@
++ git rev-parse HEAD
+32509356c18af1c18e59bf14375f4402b434bd7d
++ node --check renderer/virgl-command/constant-domain.mjs
++ node --check renderer/virgl-command/state.mjs
++ node --check renderer/virgl-command/tests/constant-domains.mjs
++ node --check tools/verify-virgl-constant-domains.mjs
++ node --check tools/virgl-constant-domains/unit.mjs
++ python3 -m py_compile tools/virgl-constant-domains/browser_receipt.py tools/virgl-constant-domains/cold.py tools/virgl-constant-domains/common.py tools/virgl-constant-domains/lifecycle_receipt.py tools/virgl-constant-domains/native.py tools/virgl-constant-domains/receipt.py tools/virgl-constant-domains/regressions.py tools/virgl-constant-domains/unit_receipt.py
++ node tools/virgl-constant-domains/unit.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-constant-domains/worker/unit
+{"status":"passed","predicates":1549,"schemas":95,"banks":109,"ownership":4,"output":"/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-constant-domains/worker/unit"}
++ bash renderer/virgl-shader/build.sh native
+Pinned virglrenderer 1.3.0: 70 source/generated SHA-256 hashes match
++ python3 tools/virgl-constant-domains/native.py --binary renderer/virgl-shader/build/native/virgl-shader --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-constant-domains/worker/native
+Constant-domain consumer native inputs: 14 complete translations recorded
++ python3 tools/virgl-constants/native.py --binary renderer/virgl-shader/build/native/virgl-shader --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-constant-domains/worker/legacy/native
+{"status": "passed", "originals": 19, "acceptedOriginals": 12, "cases": 8, "calls": 27, "report": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-constant-domains/worker/legacy/native/native-report.json"}
++ node tools/virgl-constants/decoder.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-constant-domains/worker/legacy/decoder
+{"status":"passed","cases":23,"accepted":8,"rejected":15,"output":"/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-constant-domains/worker/legacy/decoder"}
++ VIRGL_ASYNC_EVIDENCE_DIR=/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-constant-domains/worker/legacy/regression
++ bash tools/verify-virgl-async-jobs.sh
++ git rev-parse HEAD
+32509356c18af1c18e59bf14375f4402b434bd7d
++ node --check renderer/virgl-command/resources.mjs
++ node --check renderer/virgl-command/state.mjs
++ node --check renderer/virgl-command/tests/async-acceptance.mjs
++ node --check tools/verify-virgl-async-jobs.mjs
++ python3 -m py_compile tools/virgl-command/async-receipt.py tools/virgl-command/async-cold.py
++ bash renderer/virgl-shader/build.sh wasm
+Pinned virglrenderer 1.3.0: 70 source/generated SHA-256 hashes match
++ node tools/verify-virgl-command-decoder.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-constant-domains/worker/legacy/regression/regression/decoder --node-only true
+Node command acceptance passed (533 ms)
++ node tools/verify-virgl-resource-transfers.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-constant-domains/worker/legacy/regression/regression/resources
+Node resource acceptance passed (60 ms)
+Hardware resource acceptance passed (123 ms)
++ node tools/verify-virgl-object-state.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-constant-domains/worker/legacy/regression/regression/state
+Hardware state acceptance passed (158 ms)
++ node tools/verify-virgl-draw-replay.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-constant-domains/worker/legacy/regression/regression/draw
+Hardware draw replay passed (333 ms)
++ node tools/verify-virgl-async-jobs.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-constant-domains/worker/legacy/regression/hardware
+Hardware async jobs passed (2826 ms)
++ for attack in early-collect index-class
++ node tools/verify-virgl-async-jobs.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-constant-domains/worker/legacy/regression/sabotage-early-collect --sabotage early-collect
+AssertionError [ERR_ASSERTION]: async CPU collection requires a signaled fence: expected true, got false
+
+'failed' !== 'passed'
+
+    at file:///Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/verify-virgl-async-jobs.mjs:154:12
++ for attack in early-collect index-class
++ node tools/verify-virgl-async-jobs.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-constant-domains/worker/legacy/regression/sabotage-index-class --sabotage index-class
+AssertionError [ERR_ASSERTION]: async index staging uses element-array class: expected true, got false
+
+'failed' !== 'passed'
+
+    at file:///Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/verify-virgl-async-jobs.mjs:154:12
++ python3 tools/virgl-command/async-receipt.py /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-constant-domains/worker/legacy/regression
+E6-T11b1 receipt passed: asynchronous jobs, original pixels, sequencing controls and synchronous regressions
++ node tools/verify-virgl-pairs.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-constant-domains/worker/legacy/flat-regression
+E6-T12e2:12/19 originals; 114 native/Wasm pair cases; 8 direct and 44 renderer draws; cache/lifecycle/fault proof passed.
++ node tools/verify-virgl-constants.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-constant-domains/worker/legacy/hardware
+E6-T12e3b: 45056 exact hardware pixels; full constant transport, reflection and ownership passed.
++ node tools/verify-virgl-constants.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-constant-domains/worker/legacy/sabotage --sabotage high-upload
+page.evaluate: Error: A first high-bank draw independent pixel (0,0): expected [64,191,128,191], observed [0,0,255,255]
+    at require (http://127.0.0.1:57073/renderer/virgl-command/tests/constants.mjs:11:63)
+    at equal (http://127.0.0.1:57073/renderer/virgl-command/tests/constants.mjs:12:44)
+    at capture (http://127.0.0.1:57073/renderer/virgl-command/tests/constants.mjs:200:5)
+    at async primary (http://127.0.0.1:57073/renderer/virgl-command/tests/constants.mjs:227:5)
+    at async runAcceptance (http://127.0.0.1:57073/renderer/virgl-command/tests/constants.mjs:384:98)
+    at async eval (eval at evaluate (:234:30), <anonymous>:3:14)
+    at async <anonymous>:260:30
+    at runVirglBrowser (/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/verify-virgl-constants.mjs:146:57)
+    at /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/async file:/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/verify-virgl-constants.mjs:236:1
++ node tools/verify-virgl-constant-domains.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-constant-domains/worker/hardware
+E6-T12e6a normal: 110592 whole-frame pixels; 64 exact raw words; 120 invalid-bank cases; complete cleanup.
++ node tools/verify-virgl-constant-domains.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-constant-domains/worker/decoder-bypass --mode decoder-bypass
+E6-T12e6a decoder-bypass: 10240 whole-frame pixels; 0 exact raw words; 120 invalid-bank cases; complete cleanup.
++ node tools/verify-virgl-constant-domains.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-constant-domains/worker/sabotage --mode decoder-and-guard-bypass
+page.evaluate: Error: finite guard omission: actual invalid conditional uniform upload
+    at invalidMatrix (http://127.0.0.1:57258/renderer/virgl-command/tests/constant-domains.mjs:280:260)
+    at async runAcceptance (http://127.0.0.1:57258/renderer/virgl-command/tests/constant-domains.mjs:313:247)
+    at async eval (eval at evaluate (:234:30), <anonymous>:3:14)
+    at async <anonymous>:260:30
+    at runVirglBrowser (/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/verify-virgl-constant-domains.mjs:146:58)
+    at /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/async file:/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/verify-virgl-constant-domains.mjs:235:1
++ python3 tools/virgl-constant-domains/receipt.py /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-constant-domains/worker
+E6-T12e6a passed: checked immutable raw constants, real GPU pixels, varied async schedules, fault controls and preserved legacy workloads.

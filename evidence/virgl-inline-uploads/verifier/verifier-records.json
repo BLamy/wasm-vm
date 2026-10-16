@@ -1,0 +1,137 @@
+[
+  {
+    "path": "audit-recording.py",
+    "bytes": 5718,
+    "sha256": "381bba72d1c867669124b48ea853d1d1ee43695c6c200df20ac2f9aa716cb022"
+  },
+  {
+    "path": "authenticate.py",
+    "bytes": 5278,
+    "sha256": "be3f146787759f97d7c7db5dc89b31f0a451b22d7800f9511659736162440e06"
+  },
+  {
+    "path": "authentication.json",
+    "bytes": 36782,
+    "sha256": "769c686888ab5a4d56f519b6fe01ee27ba0219dcb1173a2d3beb94dcaa05cf80"
+  },
+  {
+    "path": "coverage-audit.json",
+    "bytes": 329893,
+    "sha256": "12e56a9690d193a95219ffba3a7f3aef1d05b796275e1b5d36764b55abd742cc"
+  },
+  {
+    "path": "coverage-audit.py",
+    "bytes": 4471,
+    "sha256": "8297127b0e01d5c7f1a5b7e051402ac19a9e0dd3abde9de0f5de69326e7ec43e"
+  },
+  {
+    "path": "finalize.py",
+    "bytes": 3339,
+    "sha256": "c2a5f779c57f49b632eb570dc76e354745080120f284cb3704628e4e94ee3cd7"
+  },
+  {
+    "path": "novel-clean/browser.png",
+    "bytes": 44032,
+    "sha256": "def5537af133e4712d8e560092d33fc97478334100c17132bbc670168f2a6a41"
+  },
+  {
+    "path": "novel-clean/coverage.json",
+    "bytes": 125180,
+    "sha256": "6fd4ba97ad64cd15624ccee2dc1c8d4c6893e50b47a9ebc387d2340885dfdab5"
+  },
+  {
+    "path": "novel-clean/report.json",
+    "bytes": 4076370,
+    "sha256": "9d1011ce3f11a91fadc8a19e97be7e51434ab86d5605b4b05f959fb10b32f335"
+  },
+  {
+    "path": "novel.mjs",
+    "bytes": 18420,
+    "sha256": "1c9709791f42e5777e9d40310a3866c89132bfd2cf0afe63268a836375a43400"
+  },
+  {
+    "path": "observation-audit.json",
+    "bytes": 18985,
+    "sha256": "9367d63e5f9a42f837abc03e6b327d1fa2c8c2c22d69660249a66d83e81f157b"
+  },
+  {
+    "path": "prediction-results.json",
+    "bytes": 9651,
+    "sha256": "ac48d6be72d4e5d7cd631b481ee9cd190863df7c76767fd79d3ee58ea71b5281"
+  },
+  {
+    "path": "predictions.md",
+    "bytes": 5466,
+    "sha256": "a9df4303d5c3eadaba8105934dc0fa2402cbf4e92fa6aad5a6704b8c7bb0ce59"
+  },
+  {
+    "path": "provenance.json",
+    "bytes": 5955,
+    "sha256": "9030ddb5b76a701f339e0e222215e78d28c0c8de9ab5a9b8bc1291e8b463bc4a"
+  },
+  {
+    "path": "provenance.py",
+    "bytes": 4567,
+    "sha256": "3dc0b283da3030be23b835bae3e8b837b7f626e56dfe5a53956ba4291cf52b7a"
+  },
+  {
+    "path": "run-novel.mjs",
+    "bytes": 8620,
+    "sha256": "9284a9390566792975c6f5f99b5f4a9468fdbe65ad1cd26b49046b8d6c872697"
+  },
+  {
+    "path": "sabotage-row-reverse/browser.png",
+    "bytes": 22718,
+    "sha256": "06abd92a171e58f8405b71599fcc49e3f31c636700ea767f80b07aac3dd6332b"
+  },
+  {
+    "path": "sabotage-row-reverse/coverage.json",
+    "bytes": 105531,
+    "sha256": "4d8fff420d81100f973b421af23abe9d20247b83bd0df59373ce9898720cefa5"
+  },
+  {
+    "path": "sabotage-row-reverse/report.json",
+    "bytes": 12087,
+    "sha256": "099a61e83f7081c6086a0ac5f18a7b2eee439f241c042573cb37a111cb7e356a"
+  },
+  {
+    "path": "sabotage-row-reverse/served-resources.mjs",
+    "bytes": 63992,
+    "sha256": "d49bb7f1082f03d732df0ee1574f2bb9cb127dda304aca310f28ece3608800dd"
+  },
+  {
+    "path": "sabotage-test-blind/browser.png",
+    "bytes": 38972,
+    "sha256": "09914db18fd5c257c4d8ec07cc79e3e8240cee90fc8387e2620042c0b54532e9"
+  },
+  {
+    "path": "sabotage-test-blind/coverage.json",
+    "bytes": 127514,
+    "sha256": "3411c69466bd23f29558685d1a6a4b271b321808315a57344653f38443de14c8"
+  },
+  {
+    "path": "sabotage-test-blind/report.json",
+    "bytes": 1300334,
+    "sha256": "c20636f483861e99404aae9bbb06f012d87821f3e4db787df320e231f9bb0d65"
+  },
+  {
+    "path": "sabotage-test-blind/served-inline-test.mjs",
+    "bytes": 30510,
+    "sha256": "fe5ba01c09361b49d8487780d69171ae462caebbdce43cd6e8fa28338f46d302"
+  },
+  {
+    "path": "sabotage-test-blind/served-resources.mjs",
+    "bytes": 63992,
+    "sha256": "d49bb7f1082f03d732df0ee1574f2bb9cb127dda304aca310f28ece3608800dd"
+  },
+  {
+    "path": "seal.py",
+    "bytes": 2358,
+    "sha256": "20dd146fbbba7a344b271ca341a309fb300455bfce37124890fc09edf11980c5"
+  },
+  {
+    "path": "verdict.md",
+    "bytes": 9858,
+    "sha256": "be8b38a0b936cd6280d327c2911c43e32cc2a476ba038e7133b9044059a24dad"
+  }
+]

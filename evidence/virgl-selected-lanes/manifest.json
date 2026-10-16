@@ -1,0 +1,55 @@
+{
+  "schema": "selected-lanes-lossless-evidence-v1",
+  "task": "E6-T12f2",
+  "gitHead": "5a34d6e5aeba3e52365484700aa921a24cb2d3f6",
+  "runtimeCommit": "e332abb975d6a4b7793717b680e65fd630fd87eb",
+  "archives": [
+    {
+      "path": "worker.tar.gz",
+      "bytes": 6314169,
+      "sha256": "c6d03d170a783b339c407759d0b7552231f632987605e5a703b670ce422ef30b"
+    },
+    {
+      "path": "cold.tar.gz",
+      "bytes": 6319522,
+      "sha256": "2e68bfcdc53dff0fe12ac9768e25b66bd6949279e5fbe57559e9457ed09dc3ec"
+    }
+  ],
+  "receipts": [
+    {
+      "path": "worker-receipt.json",
+      "bytes": 55502,
+      "sha256": "07bdb94f284666735cb6c466da00e4ae54deb87fd514d40a33a321e7c3238edd"
+    },
+    {
+      "path": "cold-receipt.json",
+      "bytes": 55502,
+      "sha256": "2b58dceebd023bb123835feb2b3c8b13d0ce898c6be7350e95324a4057309db2"
+    },
+    {
+      "path": "cold-report.json",
+      "bytes": 9736,
+      "sha256": "8964f9b07368e9a31e788d1fc1f234d349ba05c7a32c2769b84bd129ed02932f"
+    }
+  ],
+  "nativeArtifacts": [
+    {
+      "path": "worker-native",
+      "bytes": 3261344,
+      "sha256": "045ab66e24cf3a409d7b8cec03889f7043fd2fbff47c24e4aa07da50d7e9d302"
+    },
+    {
+      "path": "cold-native",
+      "bytes": 3262304,
+      "sha256": "7b2afe7c86aaba03910449534f088b0a2a636c286efa7b184146fb3f5e3daa53"
+    }
+  ],
+  "screenshot": {
+    "path": "browser.png",
+    "bytes": 29802,
+    "sha256": "9005a6dce324cb0423e406a7a3153a0317de19ea22a086ee785723c176e7a41a"
+  },
+  "workerRecordedFiles": 48,
+  "coldAcceptanceFiles": 50,
+  "boundary": "Lossless packaging only. Extracted bytes match every original receipt/cold digest; runtime sources are unchanged by the JSON import repair or this evidence/status commit."
+}

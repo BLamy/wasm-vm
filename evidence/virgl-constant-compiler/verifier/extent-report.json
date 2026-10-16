@@ -1,0 +1,2773 @@
+{
+  "sourceHead": "f81c83b7444e3e5d8d7e52d9daa04adf1a209fc2",
+  "binarySha256": "53066a3b7306ad3e23505a3e3a4a6a9ddab0c4278858e29390b5d6bb1798b2ac",
+  "singles": [
+    {
+      "name": "only-zero-0",
+      "result": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nsmooth out vec4 vso_g0;\nuniform highp uvec4 vsconst0[1];\nlayout(std140) uniform VirglBlock {\n vec4 clipp[8];\n uint stipple_pattern[32];\n float winsys_adjust_y;\n float alpha_ref_val;\n bool clip_plane_enabled;\n int drawid_base;\n};\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4(1.0 / (uintBitsToFloat(vsconst0[0].z)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n raw_rhs = uvec4((floatBitsToUint(in_0.x)), (floatBitsToUint(in_0.y)), (floatBitsToUint(in_0.z)), (floatBitsToUint(in_0.w)));\n raw_out[1].xyzw = raw_rhs.xyzw;\n gl_Position.x = float_out[0].x;\n gl_Position.y = float_out[0].y;\n gl_Position.z = float_out[0].z;\n gl_Position.w = float_out[0].w;\n vso_g0.x = in_0.x;\n vso_g0.y = in_0.y;\n vso_g0.z = in_0.z;\n vso_g0.w = in_0.w;\n gl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-raw-bits-v7",
+          "stage": "vertex",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "gl_Position",
+              "type": "vec4",
+              "semantic": "POSITION",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            },
+            {
+              "index": 1,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15,
+              "interpolation": "smooth"
+            }
+          ],
+          "attributes": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "uniforms": [
+            {
+              "name": "vsconst0",
+              "type": "uvec4[]",
+              "count": 1,
+              "encoding": "float32-bits"
+            }
+          ],
+          "samplers": [],
+          "uniformBlocks": [
+            {
+              "name": "VirglBlock",
+              "byteLength": 656,
+              "members": [
+                {
+                  "name": "winsys_adjust_y",
+                  "offset": 640,
+                  "type": "float",
+                  "default": 1
+                }
+              ]
+            }
+          ],
+          "constantDomains": [
+            {
+              "kind": "constant-bank-finite-f32-v1",
+              "stage": "vertex",
+              "slot": 0,
+              "name": "vsconst0",
+              "count": 1
+            }
+          ]
+        }
+      },
+      "sha256": "d245148ffac0801a071a06d59ff957998231ba3b4145d9d60ff449e106a269bf"
+    },
+    {
+      "name": "only-high-0",
+      "result": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nsmooth out vec4 vso_g0;\nuniform highp uvec4 vsconst0[46];\nlayout(std140) uniform VirglBlock {\n vec4 clipp[8];\n uint stipple_pattern[32];\n float winsys_adjust_y;\n float alpha_ref_val;\n bool clip_plane_enabled;\n int drawid_base;\n};\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4(1.0 / (uintBitsToFloat(vsconst0[45].z)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n raw_rhs = uvec4((floatBitsToUint(in_0.x)), (floatBitsToUint(in_0.y)), (floatBitsToUint(in_0.z)), (floatBitsToUint(in_0.w)));\n raw_out[1].xyzw = raw_rhs.xyzw;\n gl_Position.x = float_out[0].x;\n gl_Position.y = float_out[0].y;\n gl_Position.z = float_out[0].z;\n gl_Position.w = float_out[0].w;\n vso_g0.x = in_0.x;\n vso_g0.y = in_0.y;\n vso_g0.z = in_0.z;\n vso_g0.w = in_0.w;\n gl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-raw-bits-v7",
+          "stage": "vertex",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "gl_Position",
+              "type": "vec4",
+              "semantic": "POSITION",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            },
+            {
+              "index": 1,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15,
+              "interpolation": "smooth"
+            }
+          ],
+          "attributes": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "uniforms": [
+            {
+              "name": "vsconst0",
+              "type": "uvec4[]",
+              "count": 46,
+              "encoding": "float32-bits"
+            }
+          ],
+          "samplers": [],
+          "uniformBlocks": [
+            {
+              "name": "VirglBlock",
+              "byteLength": 656,
+              "members": [
+                {
+                  "name": "winsys_adjust_y",
+                  "offset": 640,
+                  "type": "float",
+                  "default": 1
+                }
+              ]
+            }
+          ],
+          "constantDomains": [
+            {
+              "kind": "constant-bank-finite-f32-v1",
+              "stage": "vertex",
+              "slot": 0,
+              "name": "vsconst0",
+              "count": 46
+            }
+          ]
+        }
+      },
+      "sha256": "00d8a1f1199276ecbf9f1e4fffd66bf560f49732a8b72cf6067255689119e468"
+    },
+    {
+      "name": "low-high-0",
+      "result": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nsmooth out vec4 vso_g0;\nuniform highp uvec4 vsconst0[46];\nlayout(std140) uniform VirglBlock {\n vec4 clipp[8];\n uint stipple_pattern[32];\n float winsys_adjust_y;\n float alpha_ref_val;\n bool clip_plane_enabled;\n int drawid_base;\n};\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4(1.0 / (uintBitsToFloat(vsconst0[45].z)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n raw_rhs = uvec4((floatBitsToUint(in_0.x)), (floatBitsToUint(in_0.y)), (floatBitsToUint(in_0.z)), (floatBitsToUint(in_0.w)));\n raw_out[1].xyzw = raw_rhs.xyzw;\n gl_Position.x = float_out[0].x;\n gl_Position.y = float_out[0].y;\n gl_Position.z = float_out[0].z;\n gl_Position.w = float_out[0].w;\n vso_g0.x = in_0.x;\n vso_g0.y = in_0.y;\n vso_g0.z = in_0.z;\n vso_g0.w = in_0.w;\n gl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-raw-bits-v7",
+          "stage": "vertex",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "gl_Position",
+              "type": "vec4",
+              "semantic": "POSITION",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            },
+            {
+              "index": 1,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15,
+              "interpolation": "smooth"
+            }
+          ],
+          "attributes": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "uniforms": [
+            {
+              "name": "vsconst0",
+              "type": "uvec4[]",
+              "count": 46,
+              "encoding": "float32-bits"
+            }
+          ],
+          "samplers": [],
+          "uniformBlocks": [
+            {
+              "name": "VirglBlock",
+              "byteLength": 656,
+              "members": [
+                {
+                  "name": "winsys_adjust_y",
+                  "offset": 640,
+                  "type": "float",
+                  "default": 1
+                }
+              ]
+            }
+          ],
+          "constantDomains": [
+            {
+              "kind": "constant-bank-finite-f32-v1",
+              "stage": "vertex",
+              "slot": 0,
+              "name": "vsconst0",
+              "count": 46
+            }
+          ]
+        }
+      },
+      "sha256": "00d8a1f1199276ecbf9f1e4fffd66bf560f49732a8b72cf6067255689119e468"
+    },
+    {
+      "name": "high-low-0",
+      "result": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nsmooth out vec4 vso_g0;\nuniform highp uvec4 vsconst0[47];\nlayout(std140) uniform VirglBlock {\n vec4 clipp[8];\n uint stipple_pattern[32];\n float winsys_adjust_y;\n float alpha_ref_val;\n bool clip_plane_enabled;\n int drawid_base;\n};\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4(1.0 / (uintBitsToFloat(vsconst0[0].z)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n raw_rhs = uvec4((floatBitsToUint(in_0.x)), (floatBitsToUint(in_0.y)), (floatBitsToUint(in_0.z)), (floatBitsToUint(in_0.w)));\n raw_out[1].xyzw = raw_rhs.xyzw;\n gl_Position.x = float_out[0].x;\n gl_Position.y = float_out[0].y;\n gl_Position.z = float_out[0].z;\n gl_Position.w = float_out[0].w;\n vso_g0.x = in_0.x;\n vso_g0.y = in_0.y;\n vso_g0.z = in_0.z;\n vso_g0.w = in_0.w;\n gl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-raw-bits-v7",
+          "stage": "vertex",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "gl_Position",
+              "type": "vec4",
+              "semantic": "POSITION",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            },
+            {
+              "index": 1,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15,
+              "interpolation": "smooth"
+            }
+          ],
+          "attributes": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "uniforms": [
+            {
+              "name": "vsconst0",
+              "type": "uvec4[]",
+              "count": 47,
+              "encoding": "float32-bits"
+            }
+          ],
+          "samplers": [],
+          "uniformBlocks": [
+            {
+              "name": "VirglBlock",
+              "byteLength": 656,
+              "members": [
+                {
+                  "name": "winsys_adjust_y",
+                  "offset": 640,
+                  "type": "float",
+                  "default": 1
+                }
+              ]
+            }
+          ],
+          "constantDomains": [
+            {
+              "kind": "constant-bank-finite-f32-v1",
+              "stage": "vertex",
+              "slot": 0,
+              "name": "vsconst0",
+              "count": 47
+            }
+          ]
+        }
+      },
+      "sha256": "e1e1d8483a2b96625bd90c41b0dc6daca8a847b475dbc39549d0d69f851b71e0"
+    },
+    {
+      "name": "only-zero-1",
+      "result": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nsmooth in vec4 vso_g0;\nlayout(location=0) out vec4 fsout_c0;\nuniform highp uvec4 fsconst0[1];\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4(1.0 / (uintBitsToFloat(fsconst0[0].z)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n fsout_c0.x = float_out[0].x;\n fsout_c0.y = float_out[0].y;\n fsout_c0.z = float_out[0].z;\n fsout_c0.w = float_out[0].w;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-raw-bits-v7",
+          "stage": "fragment",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "interpolation": "smooth"
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "fsout_c0",
+              "type": "vec4",
+              "semantic": "COLOR",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            }
+          ],
+          "attributes": [],
+          "uniforms": [
+            {
+              "name": "fsconst0",
+              "type": "uvec4[]",
+              "count": 1,
+              "encoding": "float32-bits"
+            }
+          ],
+          "samplers": [],
+          "uniformBlocks": [],
+          "constantDomains": [
+            {
+              "kind": "constant-bank-finite-f32-v1",
+              "stage": "fragment",
+              "slot": 0,
+              "name": "fsconst0",
+              "count": 1
+            }
+          ]
+        }
+      },
+      "sha256": "4beb74e21e9e95cdf6f0c5fca933ff4f1b952057c5ac6c32a5110ae9e728a805"
+    },
+    {
+      "name": "only-high-1",
+      "result": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nsmooth in vec4 vso_g0;\nlayout(location=0) out vec4 fsout_c0;\nuniform highp uvec4 fsconst0[46];\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4(1.0 / (uintBitsToFloat(fsconst0[45].z)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n fsout_c0.x = float_out[0].x;\n fsout_c0.y = float_out[0].y;\n fsout_c0.z = float_out[0].z;\n fsout_c0.w = float_out[0].w;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-raw-bits-v7",
+          "stage": "fragment",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "interpolation": "smooth"
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "fsout_c0",
+              "type": "vec4",
+              "semantic": "COLOR",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            }
+          ],
+          "attributes": [],
+          "uniforms": [
+            {
+              "name": "fsconst0",
+              "type": "uvec4[]",
+              "count": 46,
+              "encoding": "float32-bits"
+            }
+          ],
+          "samplers": [],
+          "uniformBlocks": [],
+          "constantDomains": [
+            {
+              "kind": "constant-bank-finite-f32-v1",
+              "stage": "fragment",
+              "slot": 0,
+              "name": "fsconst0",
+              "count": 46
+            }
+          ]
+        }
+      },
+      "sha256": "cbc514a7d7abd0f58468f8d6f0028d52ace3173b5d09b19e88d1921fe16b3141"
+    },
+    {
+      "name": "low-high-1",
+      "result": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nsmooth in vec4 vso_g0;\nlayout(location=0) out vec4 fsout_c0;\nuniform highp uvec4 fsconst0[46];\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4(1.0 / (uintBitsToFloat(fsconst0[45].z)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n fsout_c0.x = float_out[0].x;\n fsout_c0.y = float_out[0].y;\n fsout_c0.z = float_out[0].z;\n fsout_c0.w = float_out[0].w;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-raw-bits-v7",
+          "stage": "fragment",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "interpolation": "smooth"
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "fsout_c0",
+              "type": "vec4",
+              "semantic": "COLOR",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            }
+          ],
+          "attributes": [],
+          "uniforms": [
+            {
+              "name": "fsconst0",
+              "type": "uvec4[]",
+              "count": 46,
+              "encoding": "float32-bits"
+            }
+          ],
+          "samplers": [],
+          "uniformBlocks": [],
+          "constantDomains": [
+            {
+              "kind": "constant-bank-finite-f32-v1",
+              "stage": "fragment",
+              "slot": 0,
+              "name": "fsconst0",
+              "count": 46
+            }
+          ]
+        }
+      },
+      "sha256": "cbc514a7d7abd0f58468f8d6f0028d52ace3173b5d09b19e88d1921fe16b3141"
+    },
+    {
+      "name": "high-low-1",
+      "result": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nsmooth in vec4 vso_g0;\nlayout(location=0) out vec4 fsout_c0;\nuniform highp uvec4 fsconst0[47];\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4(1.0 / (uintBitsToFloat(fsconst0[0].z)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n fsout_c0.x = float_out[0].x;\n fsout_c0.y = float_out[0].y;\n fsout_c0.z = float_out[0].z;\n fsout_c0.w = float_out[0].w;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-raw-bits-v7",
+          "stage": "fragment",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "interpolation": "smooth"
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "fsout_c0",
+              "type": "vec4",
+              "semantic": "COLOR",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "writtenMask": 15
+            }
+          ],
+          "attributes": [],
+          "uniforms": [
+            {
+              "name": "fsconst0",
+              "type": "uvec4[]",
+              "count": 47,
+              "encoding": "float32-bits"
+            }
+          ],
+          "samplers": [],
+          "uniformBlocks": [],
+          "constantDomains": [
+            {
+              "kind": "constant-bank-finite-f32-v1",
+              "stage": "fragment",
+              "slot": 0,
+              "name": "fsconst0",
+              "count": 47
+            }
+          ]
+        }
+      },
+      "sha256": "036b75bb16bae3a38a22f6c0b2fd44f1460e8f8f2380737505635b112d5d71d0"
+    }
+  ],
+  "pairs": [
+    {
+      "vertex": "only-zero-0",
+      "fragment": "only-zero-1",
+      "result": {
+        "ok": true,
+        "vertex": {
+          "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nsmooth out vec4 vso_g0;\nuniform highp uvec4 vsconst0[1];\nlayout(std140) uniform VirglBlock {\n vec4 clipp[8];\n uint stipple_pattern[32];\n float winsys_adjust_y;\n float alpha_ref_val;\n bool clip_plane_enabled;\n int drawid_base;\n};\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4(1.0 / (uintBitsToFloat(vsconst0[0].z)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n raw_rhs = uvec4((floatBitsToUint(in_0.x)), (floatBitsToUint(in_0.y)), (floatBitsToUint(in_0.z)), (floatBitsToUint(in_0.w)));\n raw_out[1].xyzw = raw_rhs.xyzw;\n gl_Position.x = float_out[0].x;\n gl_Position.y = float_out[0].y;\n gl_Position.z = float_out[0].z;\n gl_Position.w = float_out[0].w;\n vso_g0.x = in_0.x;\n vso_g0.y = in_0.y;\n vso_g0.z = in_0.z;\n vso_g0.w = in_0.w;\n gl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+          "metadata": {
+            "profile": "virgl-webgl2-raw-bits-v7",
+            "stage": "vertex",
+            "inputs": [
+              {
+                "index": 0,
+                "name": "in_0",
+                "type": "vec4",
+                "semantic": "ATTRIBUTE",
+                "semanticIndex": 0,
+                "componentMask": 15
+              }
+            ],
+            "outputs": [
+              {
+                "index": 0,
+                "name": "gl_Position",
+                "type": "vec4",
+                "semantic": "POSITION",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15
+              },
+              {
+                "index": 1,
+                "name": "vso_g0",
+                "type": "vec4",
+                "semantic": "GENERIC",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15,
+                "interpolation": "smooth"
+              }
+            ],
+            "attributes": [
+              {
+                "index": 0,
+                "name": "in_0",
+                "type": "vec4",
+                "semantic": "ATTRIBUTE",
+                "semanticIndex": 0,
+                "componentMask": 15
+              }
+            ],
+            "uniforms": [
+              {
+                "name": "vsconst0",
+                "type": "uvec4[]",
+                "count": 1,
+                "encoding": "float32-bits"
+              }
+            ],
+            "samplers": [],
+            "uniformBlocks": [
+              {
+                "name": "VirglBlock",
+                "byteLength": 656,
+                "members": [
+                  {
+                    "name": "winsys_adjust_y",
+                    "offset": 640,
+                    "type": "float",
+                    "default": 1
+                  }
+                ]
+              }
+            ],
+            "constantDomains": [
+              {
+                "kind": "constant-bank-finite-f32-v1",
+                "stage": "vertex",
+                "slot": 0,
+                "name": "vsconst0",
+                "count": 1
+              }
+            ]
+          }
+        },
+        "fragment": {
+          "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nsmooth in vec4 vso_g0;\nlayout(location=0) out vec4 fsout_c0;\nuniform highp uvec4 fsconst0[1];\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4(1.0 / (uintBitsToFloat(fsconst0[0].z)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n fsout_c0.x = float_out[0].x;\n fsout_c0.y = float_out[0].y;\n fsout_c0.z = float_out[0].z;\n fsout_c0.w = float_out[0].w;\n}\n",
+          "metadata": {
+            "profile": "virgl-webgl2-raw-bits-v7",
+            "stage": "fragment",
+            "inputs": [
+              {
+                "index": 0,
+                "name": "vso_g0",
+                "type": "vec4",
+                "semantic": "GENERIC",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "interpolation": "smooth"
+              }
+            ],
+            "outputs": [
+              {
+                "index": 0,
+                "name": "fsout_c0",
+                "type": "vec4",
+                "semantic": "COLOR",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15
+              }
+            ],
+            "attributes": [],
+            "uniforms": [
+              {
+                "name": "fsconst0",
+                "type": "uvec4[]",
+                "count": 1,
+                "encoding": "float32-bits"
+              }
+            ],
+            "samplers": [],
+            "uniformBlocks": [],
+            "constantDomains": [
+              {
+                "kind": "constant-bank-finite-f32-v1",
+                "stage": "fragment",
+                "slot": 0,
+                "name": "fsconst0",
+                "count": 1
+              }
+            ]
+          }
+        },
+        "interfaceKey": "generic-interpolation-v1:g0/15/smooth"
+      },
+      "sha256": "d84becff602876ca265207487ea35e3227d64d51e43bd5c10193ef28a62841c7"
+    },
+    {
+      "vertex": "only-zero-0",
+      "fragment": "only-high-1",
+      "result": {
+        "ok": true,
+        "vertex": {
+          "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nsmooth out vec4 vso_g0;\nuniform highp uvec4 vsconst0[1];\nlayout(std140) uniform VirglBlock {\n vec4 clipp[8];\n uint stipple_pattern[32];\n float winsys_adjust_y;\n float alpha_ref_val;\n bool clip_plane_enabled;\n int drawid_base;\n};\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4(1.0 / (uintBitsToFloat(vsconst0[0].z)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n raw_rhs = uvec4((floatBitsToUint(in_0.x)), (floatBitsToUint(in_0.y)), (floatBitsToUint(in_0.z)), (floatBitsToUint(in_0.w)));\n raw_out[1].xyzw = raw_rhs.xyzw;\n gl_Position.x = float_out[0].x;\n gl_Position.y = float_out[0].y;\n gl_Position.z = float_out[0].z;\n gl_Position.w = float_out[0].w;\n vso_g0.x = in_0.x;\n vso_g0.y = in_0.y;\n vso_g0.z = in_0.z;\n vso_g0.w = in_0.w;\n gl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+          "metadata": {
+            "profile": "virgl-webgl2-raw-bits-v7",
+            "stage": "vertex",
+            "inputs": [
+              {
+                "index": 0,
+                "name": "in_0",
+                "type": "vec4",
+                "semantic": "ATTRIBUTE",
+                "semanticIndex": 0,
+                "componentMask": 15
+              }
+            ],
+            "outputs": [
+              {
+                "index": 0,
+                "name": "gl_Position",
+                "type": "vec4",
+                "semantic": "POSITION",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15
+              },
+              {
+                "index": 1,
+                "name": "vso_g0",
+                "type": "vec4",
+                "semantic": "GENERIC",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15,
+                "interpolation": "smooth"
+              }
+            ],
+            "attributes": [
+              {
+                "index": 0,
+                "name": "in_0",
+                "type": "vec4",
+                "semantic": "ATTRIBUTE",
+                "semanticIndex": 0,
+                "componentMask": 15
+              }
+            ],
+            "uniforms": [
+              {
+                "name": "vsconst0",
+                "type": "uvec4[]",
+                "count": 1,
+                "encoding": "float32-bits"
+              }
+            ],
+            "samplers": [],
+            "uniformBlocks": [
+              {
+                "name": "VirglBlock",
+                "byteLength": 656,
+                "members": [
+                  {
+                    "name": "winsys_adjust_y",
+                    "offset": 640,
+                    "type": "float",
+                    "default": 1
+                  }
+                ]
+              }
+            ],
+            "constantDomains": [
+              {
+                "kind": "constant-bank-finite-f32-v1",
+                "stage": "vertex",
+                "slot": 0,
+                "name": "vsconst0",
+                "count": 1
+              }
+            ]
+          }
+        },
+        "fragment": {
+          "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nsmooth in vec4 vso_g0;\nlayout(location=0) out vec4 fsout_c0;\nuniform highp uvec4 fsconst0[46];\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4(1.0 / (uintBitsToFloat(fsconst0[45].z)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n fsout_c0.x = float_out[0].x;\n fsout_c0.y = float_out[0].y;\n fsout_c0.z = float_out[0].z;\n fsout_c0.w = float_out[0].w;\n}\n",
+          "metadata": {
+            "profile": "virgl-webgl2-raw-bits-v7",
+            "stage": "fragment",
+            "inputs": [
+              {
+                "index": 0,
+                "name": "vso_g0",
+                "type": "vec4",
+                "semantic": "GENERIC",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "interpolation": "smooth"
+              }
+            ],
+            "outputs": [
+              {
+                "index": 0,
+                "name": "fsout_c0",
+                "type": "vec4",
+                "semantic": "COLOR",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15
+              }
+            ],
+            "attributes": [],
+            "uniforms": [
+              {
+                "name": "fsconst0",
+                "type": "uvec4[]",
+                "count": 46,
+                "encoding": "float32-bits"
+              }
+            ],
+            "samplers": [],
+            "uniformBlocks": [],
+            "constantDomains": [
+              {
+                "kind": "constant-bank-finite-f32-v1",
+                "stage": "fragment",
+                "slot": 0,
+                "name": "fsconst0",
+                "count": 46
+              }
+            ]
+          }
+        },
+        "interfaceKey": "generic-interpolation-v1:g0/15/smooth"
+      },
+      "sha256": "cabdd9d646460a5d2a0198c48024738f87dc2b95934d0749502c3b25861cbc83"
+    },
+    {
+      "vertex": "only-zero-0",
+      "fragment": "low-high-1",
+      "result": {
+        "ok": true,
+        "vertex": {
+          "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nsmooth out vec4 vso_g0;\nuniform highp uvec4 vsconst0[1];\nlayout(std140) uniform VirglBlock {\n vec4 clipp[8];\n uint stipple_pattern[32];\n float winsys_adjust_y;\n float alpha_ref_val;\n bool clip_plane_enabled;\n int drawid_base;\n};\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4(1.0 / (uintBitsToFloat(vsconst0[0].z)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n raw_rhs = uvec4((floatBitsToUint(in_0.x)), (floatBitsToUint(in_0.y)), (floatBitsToUint(in_0.z)), (floatBitsToUint(in_0.w)));\n raw_out[1].xyzw = raw_rhs.xyzw;\n gl_Position.x = float_out[0].x;\n gl_Position.y = float_out[0].y;\n gl_Position.z = float_out[0].z;\n gl_Position.w = float_out[0].w;\n vso_g0.x = in_0.x;\n vso_g0.y = in_0.y;\n vso_g0.z = in_0.z;\n vso_g0.w = in_0.w;\n gl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+          "metadata": {
+            "profile": "virgl-webgl2-raw-bits-v7",
+            "stage": "vertex",
+            "inputs": [
+              {
+                "index": 0,
+                "name": "in_0",
+                "type": "vec4",
+                "semantic": "ATTRIBUTE",
+                "semanticIndex": 0,
+                "componentMask": 15
+              }
+            ],
+            "outputs": [
+              {
+                "index": 0,
+                "name": "gl_Position",
+                "type": "vec4",
+                "semantic": "POSITION",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15
+              },
+              {
+                "index": 1,
+                "name": "vso_g0",
+                "type": "vec4",
+                "semantic": "GENERIC",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15,
+                "interpolation": "smooth"
+              }
+            ],
+            "attributes": [
+              {
+                "index": 0,
+                "name": "in_0",
+                "type": "vec4",
+                "semantic": "ATTRIBUTE",
+                "semanticIndex": 0,
+                "componentMask": 15
+              }
+            ],
+            "uniforms": [
+              {
+                "name": "vsconst0",
+                "type": "uvec4[]",
+                "count": 1,
+                "encoding": "float32-bits"
+              }
+            ],
+            "samplers": [],
+            "uniformBlocks": [
+              {
+                "name": "VirglBlock",
+                "byteLength": 656,
+                "members": [
+                  {
+                    "name": "winsys_adjust_y",
+                    "offset": 640,
+                    "type": "float",
+                    "default": 1
+                  }
+                ]
+              }
+            ],
+            "constantDomains": [
+              {
+                "kind": "constant-bank-finite-f32-v1",
+                "stage": "vertex",
+                "slot": 0,
+                "name": "vsconst0",
+                "count": 1
+              }
+            ]
+          }
+        },
+        "fragment": {
+          "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nsmooth in vec4 vso_g0;\nlayout(location=0) out vec4 fsout_c0;\nuniform highp uvec4 fsconst0[46];\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4(1.0 / (uintBitsToFloat(fsconst0[45].z)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n fsout_c0.x = float_out[0].x;\n fsout_c0.y = float_out[0].y;\n fsout_c0.z = float_out[0].z;\n fsout_c0.w = float_out[0].w;\n}\n",
+          "metadata": {
+            "profile": "virgl-webgl2-raw-bits-v7",
+            "stage": "fragment",
+            "inputs": [
+              {
+                "index": 0,
+                "name": "vso_g0",
+                "type": "vec4",
+                "semantic": "GENERIC",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "interpolation": "smooth"
+              }
+            ],
+            "outputs": [
+              {
+                "index": 0,
+                "name": "fsout_c0",
+                "type": "vec4",
+                "semantic": "COLOR",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15
+              }
+            ],
+            "attributes": [],
+            "uniforms": [
+              {
+                "name": "fsconst0",
+                "type": "uvec4[]",
+                "count": 46,
+                "encoding": "float32-bits"
+              }
+            ],
+            "samplers": [],
+            "uniformBlocks": [],
+            "constantDomains": [
+              {
+                "kind": "constant-bank-finite-f32-v1",
+                "stage": "fragment",
+                "slot": 0,
+                "name": "fsconst0",
+                "count": 46
+              }
+            ]
+          }
+        },
+        "interfaceKey": "generic-interpolation-v1:g0/15/smooth"
+      },
+      "sha256": "cabdd9d646460a5d2a0198c48024738f87dc2b95934d0749502c3b25861cbc83"
+    },
+    {
+      "vertex": "only-zero-0",
+      "fragment": "high-low-1",
+      "result": {
+        "ok": true,
+        "vertex": {
+          "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nsmooth out vec4 vso_g0;\nuniform highp uvec4 vsconst0[1];\nlayout(std140) uniform VirglBlock {\n vec4 clipp[8];\n uint stipple_pattern[32];\n float winsys_adjust_y;\n float alpha_ref_val;\n bool clip_plane_enabled;\n int drawid_base;\n};\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4(1.0 / (uintBitsToFloat(vsconst0[0].z)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n raw_rhs = uvec4((floatBitsToUint(in_0.x)), (floatBitsToUint(in_0.y)), (floatBitsToUint(in_0.z)), (floatBitsToUint(in_0.w)));\n raw_out[1].xyzw = raw_rhs.xyzw;\n gl_Position.x = float_out[0].x;\n gl_Position.y = float_out[0].y;\n gl_Position.z = float_out[0].z;\n gl_Position.w = float_out[0].w;\n vso_g0.x = in_0.x;\n vso_g0.y = in_0.y;\n vso_g0.z = in_0.z;\n vso_g0.w = in_0.w;\n gl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+          "metadata": {
+            "profile": "virgl-webgl2-raw-bits-v7",
+            "stage": "vertex",
+            "inputs": [
+              {
+                "index": 0,
+                "name": "in_0",
+                "type": "vec4",
+                "semantic": "ATTRIBUTE",
+                "semanticIndex": 0,
+                "componentMask": 15
+              }
+            ],
+            "outputs": [
+              {
+                "index": 0,
+                "name": "gl_Position",
+                "type": "vec4",
+                "semantic": "POSITION",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15
+              },
+              {
+                "index": 1,
+                "name": "vso_g0",
+                "type": "vec4",
+                "semantic": "GENERIC",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15,
+                "interpolation": "smooth"
+              }
+            ],
+            "attributes": [
+              {
+                "index": 0,
+                "name": "in_0",
+                "type": "vec4",
+                "semantic": "ATTRIBUTE",
+                "semanticIndex": 0,
+                "componentMask": 15
+              }
+            ],
+            "uniforms": [
+              {
+                "name": "vsconst0",
+                "type": "uvec4[]",
+                "count": 1,
+                "encoding": "float32-bits"
+              }
+            ],
+            "samplers": [],
+            "uniformBlocks": [
+              {
+                "name": "VirglBlock",
+                "byteLength": 656,
+                "members": [
+                  {
+                    "name": "winsys_adjust_y",
+                    "offset": 640,
+                    "type": "float",
+                    "default": 1
+                  }
+                ]
+              }
+            ],
+            "constantDomains": [
+              {
+                "kind": "constant-bank-finite-f32-v1",
+                "stage": "vertex",
+                "slot": 0,
+                "name": "vsconst0",
+                "count": 1
+              }
+            ]
+          }
+        },
+        "fragment": {
+          "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nsmooth in vec4 vso_g0;\nlayout(location=0) out vec4 fsout_c0;\nuniform highp uvec4 fsconst0[47];\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4(1.0 / (uintBitsToFloat(fsconst0[0].z)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n fsout_c0.x = float_out[0].x;\n fsout_c0.y = float_out[0].y;\n fsout_c0.z = float_out[0].z;\n fsout_c0.w = float_out[0].w;\n}\n",
+          "metadata": {
+            "profile": "virgl-webgl2-raw-bits-v7",
+            "stage": "fragment",
+            "inputs": [
+              {
+                "index": 0,
+                "name": "vso_g0",
+                "type": "vec4",
+                "semantic": "GENERIC",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "interpolation": "smooth"
+              }
+            ],
+            "outputs": [
+              {
+                "index": 0,
+                "name": "fsout_c0",
+                "type": "vec4",
+                "semantic": "COLOR",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15
+              }
+            ],
+            "attributes": [],
+            "uniforms": [
+              {
+                "name": "fsconst0",
+                "type": "uvec4[]",
+                "count": 47,
+                "encoding": "float32-bits"
+              }
+            ],
+            "samplers": [],
+            "uniformBlocks": [],
+            "constantDomains": [
+              {
+                "kind": "constant-bank-finite-f32-v1",
+                "stage": "fragment",
+                "slot": 0,
+                "name": "fsconst0",
+                "count": 47
+              }
+            ]
+          }
+        },
+        "interfaceKey": "generic-interpolation-v1:g0/15/smooth"
+      },
+      "sha256": "8995aef078e96754c76b7e4e20ec72de5e296a3779b656440462162bafe2f9f9"
+    },
+    {
+      "vertex": "only-high-0",
+      "fragment": "only-zero-1",
+      "result": {
+        "ok": true,
+        "vertex": {
+          "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nsmooth out vec4 vso_g0;\nuniform highp uvec4 vsconst0[46];\nlayout(std140) uniform VirglBlock {\n vec4 clipp[8];\n uint stipple_pattern[32];\n float winsys_adjust_y;\n float alpha_ref_val;\n bool clip_plane_enabled;\n int drawid_base;\n};\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4(1.0 / (uintBitsToFloat(vsconst0[45].z)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n raw_rhs = uvec4((floatBitsToUint(in_0.x)), (floatBitsToUint(in_0.y)), (floatBitsToUint(in_0.z)), (floatBitsToUint(in_0.w)));\n raw_out[1].xyzw = raw_rhs.xyzw;\n gl_Position.x = float_out[0].x;\n gl_Position.y = float_out[0].y;\n gl_Position.z = float_out[0].z;\n gl_Position.w = float_out[0].w;\n vso_g0.x = in_0.x;\n vso_g0.y = in_0.y;\n vso_g0.z = in_0.z;\n vso_g0.w = in_0.w;\n gl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+          "metadata": {
+            "profile": "virgl-webgl2-raw-bits-v7",
+            "stage": "vertex",
+            "inputs": [
+              {
+                "index": 0,
+                "name": "in_0",
+                "type": "vec4",
+                "semantic": "ATTRIBUTE",
+                "semanticIndex": 0,
+                "componentMask": 15
+              }
+            ],
+            "outputs": [
+              {
+                "index": 0,
+                "name": "gl_Position",
+                "type": "vec4",
+                "semantic": "POSITION",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15
+              },
+              {
+                "index": 1,
+                "name": "vso_g0",
+                "type": "vec4",
+                "semantic": "GENERIC",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15,
+                "interpolation": "smooth"
+              }
+            ],
+            "attributes": [
+              {
+                "index": 0,
+                "name": "in_0",
+                "type": "vec4",
+                "semantic": "ATTRIBUTE",
+                "semanticIndex": 0,
+                "componentMask": 15
+              }
+            ],
+            "uniforms": [
+              {
+                "name": "vsconst0",
+                "type": "uvec4[]",
+                "count": 46,
+                "encoding": "float32-bits"
+              }
+            ],
+            "samplers": [],
+            "uniformBlocks": [
+              {
+                "name": "VirglBlock",
+                "byteLength": 656,
+                "members": [
+                  {
+                    "name": "winsys_adjust_y",
+                    "offset": 640,
+                    "type": "float",
+                    "default": 1
+                  }
+                ]
+              }
+            ],
+            "constantDomains": [
+              {
+                "kind": "constant-bank-finite-f32-v1",
+                "stage": "vertex",
+                "slot": 0,
+                "name": "vsconst0",
+                "count": 46
+              }
+            ]
+          }
+        },
+        "fragment": {
+          "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nsmooth in vec4 vso_g0;\nlayout(location=0) out vec4 fsout_c0;\nuniform highp uvec4 fsconst0[1];\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4(1.0 / (uintBitsToFloat(fsconst0[0].z)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n fsout_c0.x = float_out[0].x;\n fsout_c0.y = float_out[0].y;\n fsout_c0.z = float_out[0].z;\n fsout_c0.w = float_out[0].w;\n}\n",
+          "metadata": {
+            "profile": "virgl-webgl2-raw-bits-v7",
+            "stage": "fragment",
+            "inputs": [
+              {
+                "index": 0,
+                "name": "vso_g0",
+                "type": "vec4",
+                "semantic": "GENERIC",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "interpolation": "smooth"
+              }
+            ],
+            "outputs": [
+              {
+                "index": 0,
+                "name": "fsout_c0",
+                "type": "vec4",
+                "semantic": "COLOR",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15
+              }
+            ],
+            "attributes": [],
+            "uniforms": [
+              {
+                "name": "fsconst0",
+                "type": "uvec4[]",
+                "count": 1,
+                "encoding": "float32-bits"
+              }
+            ],
+            "samplers": [],
+            "uniformBlocks": [],
+            "constantDomains": [
+              {
+                "kind": "constant-bank-finite-f32-v1",
+                "stage": "fragment",
+                "slot": 0,
+                "name": "fsconst0",
+                "count": 1
+              }
+            ]
+          }
+        },
+        "interfaceKey": "generic-interpolation-v1:g0/15/smooth"
+      },
+      "sha256": "3c097a916a3a2f66d87c3e71ecd0166b6b6ee3d0cea87e2d9619d30f1bab4538"
+    },
+    {
+      "vertex": "only-high-0",
+      "fragment": "only-high-1",
+      "result": {
+        "ok": true,
+        "vertex": {
+          "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nsmooth out vec4 vso_g0;\nuniform highp uvec4 vsconst0[46];\nlayout(std140) uniform VirglBlock {\n vec4 clipp[8];\n uint stipple_pattern[32];\n float winsys_adjust_y;\n float alpha_ref_val;\n bool clip_plane_enabled;\n int drawid_base;\n};\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4(1.0 / (uintBitsToFloat(vsconst0[45].z)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n raw_rhs = uvec4((floatBitsToUint(in_0.x)), (floatBitsToUint(in_0.y)), (floatBitsToUint(in_0.z)), (floatBitsToUint(in_0.w)));\n raw_out[1].xyzw = raw_rhs.xyzw;\n gl_Position.x = float_out[0].x;\n gl_Position.y = float_out[0].y;\n gl_Position.z = float_out[0].z;\n gl_Position.w = float_out[0].w;\n vso_g0.x = in_0.x;\n vso_g0.y = in_0.y;\n vso_g0.z = in_0.z;\n vso_g0.w = in_0.w;\n gl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+          "metadata": {
+            "profile": "virgl-webgl2-raw-bits-v7",
+            "stage": "vertex",
+            "inputs": [
+              {
+                "index": 0,
+                "name": "in_0",
+                "type": "vec4",
+                "semantic": "ATTRIBUTE",
+                "semanticIndex": 0,
+                "componentMask": 15
+              }
+            ],
+            "outputs": [
+              {
+                "index": 0,
+                "name": "gl_Position",
+                "type": "vec4",
+                "semantic": "POSITION",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15
+              },
+              {
+                "index": 1,
+                "name": "vso_g0",
+                "type": "vec4",
+                "semantic": "GENERIC",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15,
+                "interpolation": "smooth"
+              }
+            ],
+            "attributes": [
+              {
+                "index": 0,
+                "name": "in_0",
+                "type": "vec4",
+                "semantic": "ATTRIBUTE",
+                "semanticIndex": 0,
+                "componentMask": 15
+              }
+            ],
+            "uniforms": [
+              {
+                "name": "vsconst0",
+                "type": "uvec4[]",
+                "count": 46,
+                "encoding": "float32-bits"
+              }
+            ],
+            "samplers": [],
+            "uniformBlocks": [
+              {
+                "name": "VirglBlock",
+                "byteLength": 656,
+                "members": [
+                  {
+                    "name": "winsys_adjust_y",
+                    "offset": 640,
+                    "type": "float",
+                    "default": 1
+                  }
+                ]
+              }
+            ],
+            "constantDomains": [
+              {
+                "kind": "constant-bank-finite-f32-v1",
+                "stage": "vertex",
+                "slot": 0,
+                "name": "vsconst0",
+                "count": 46
+              }
+            ]
+          }
+        },
+        "fragment": {
+          "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nsmooth in vec4 vso_g0;\nlayout(location=0) out vec4 fsout_c0;\nuniform highp uvec4 fsconst0[46];\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4(1.0 / (uintBitsToFloat(fsconst0[45].z)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n fsout_c0.x = float_out[0].x;\n fsout_c0.y = float_out[0].y;\n fsout_c0.z = float_out[0].z;\n fsout_c0.w = float_out[0].w;\n}\n",
+          "metadata": {
+            "profile": "virgl-webgl2-raw-bits-v7",
+            "stage": "fragment",
+            "inputs": [
+              {
+                "index": 0,
+                "name": "vso_g0",
+                "type": "vec4",
+                "semantic": "GENERIC",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "interpolation": "smooth"
+              }
+            ],
+            "outputs": [
+              {
+                "index": 0,
+                "name": "fsout_c0",
+                "type": "vec4",
+                "semantic": "COLOR",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15
+              }
+            ],
+            "attributes": [],
+            "uniforms": [
+              {
+                "name": "fsconst0",
+                "type": "uvec4[]",
+                "count": 46,
+                "encoding": "float32-bits"
+              }
+            ],
+            "samplers": [],
+            "uniformBlocks": [],
+            "constantDomains": [
+              {
+                "kind": "constant-bank-finite-f32-v1",
+                "stage": "fragment",
+                "slot": 0,
+                "name": "fsconst0",
+                "count": 46
+              }
+            ]
+          }
+        },
+        "interfaceKey": "generic-interpolation-v1:g0/15/smooth"
+      },
+      "sha256": "0af755d4c3c2bad06bd7c5aa8433cc7cdbc4c66437c4811550e179eb03cd4433"
+    },
+    {
+      "vertex": "only-high-0",
+      "fragment": "low-high-1",
+      "result": {
+        "ok": true,
+        "vertex": {
+          "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nsmooth out vec4 vso_g0;\nuniform highp uvec4 vsconst0[46];\nlayout(std140) uniform VirglBlock {\n vec4 clipp[8];\n uint stipple_pattern[32];\n float winsys_adjust_y;\n float alpha_ref_val;\n bool clip_plane_enabled;\n int drawid_base;\n};\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4(1.0 / (uintBitsToFloat(vsconst0[45].z)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n raw_rhs = uvec4((floatBitsToUint(in_0.x)), (floatBitsToUint(in_0.y)), (floatBitsToUint(in_0.z)), (floatBitsToUint(in_0.w)));\n raw_out[1].xyzw = raw_rhs.xyzw;\n gl_Position.x = float_out[0].x;\n gl_Position.y = float_out[0].y;\n gl_Position.z = float_out[0].z;\n gl_Position.w = float_out[0].w;\n vso_g0.x = in_0.x;\n vso_g0.y = in_0.y;\n vso_g0.z = in_0.z;\n vso_g0.w = in_0.w;\n gl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+          "metadata": {
+            "profile": "virgl-webgl2-raw-bits-v7",
+            "stage": "vertex",
+            "inputs": [
+              {
+                "index": 0,
+                "name": "in_0",
+                "type": "vec4",
+                "semantic": "ATTRIBUTE",
+                "semanticIndex": 0,
+                "componentMask": 15
+              }
+            ],
+            "outputs": [
+              {
+                "index": 0,
+                "name": "gl_Position",
+                "type": "vec4",
+                "semantic": "POSITION",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15
+              },
+              {
+                "index": 1,
+                "name": "vso_g0",
+                "type": "vec4",
+                "semantic": "GENERIC",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15,
+                "interpolation": "smooth"
+              }
+            ],
+            "attributes": [
+              {
+                "index": 0,
+                "name": "in_0",
+                "type": "vec4",
+                "semantic": "ATTRIBUTE",
+                "semanticIndex": 0,
+                "componentMask": 15
+              }
+            ],
+            "uniforms": [
+              {
+                "name": "vsconst0",
+                "type": "uvec4[]",
+                "count": 46,
+                "encoding": "float32-bits"
+              }
+            ],
+            "samplers": [],
+            "uniformBlocks": [
+              {
+                "name": "VirglBlock",
+                "byteLength": 656,
+                "members": [
+                  {
+                    "name": "winsys_adjust_y",
+                    "offset": 640,
+                    "type": "float",
+                    "default": 1
+                  }
+                ]
+              }
+            ],
+            "constantDomains": [
+              {
+                "kind": "constant-bank-finite-f32-v1",
+                "stage": "vertex",
+                "slot": 0,
+                "name": "vsconst0",
+                "count": 46
+              }
+            ]
+          }
+        },
+        "fragment": {
+          "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nsmooth in vec4 vso_g0;\nlayout(location=0) out vec4 fsout_c0;\nuniform highp uvec4 fsconst0[46];\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4(1.0 / (uintBitsToFloat(fsconst0[45].z)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n fsout_c0.x = float_out[0].x;\n fsout_c0.y = float_out[0].y;\n fsout_c0.z = float_out[0].z;\n fsout_c0.w = float_out[0].w;\n}\n",
+          "metadata": {
+            "profile": "virgl-webgl2-raw-bits-v7",
+            "stage": "fragment",
+            "inputs": [
+              {
+                "index": 0,
+                "name": "vso_g0",
+                "type": "vec4",
+                "semantic": "GENERIC",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "interpolation": "smooth"
+              }
+            ],
+            "outputs": [
+              {
+                "index": 0,
+                "name": "fsout_c0",
+                "type": "vec4",
+                "semantic": "COLOR",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15
+              }
+            ],
+            "attributes": [],
+            "uniforms": [
+              {
+                "name": "fsconst0",
+                "type": "uvec4[]",
+                "count": 46,
+                "encoding": "float32-bits"
+              }
+            ],
+            "samplers": [],
+            "uniformBlocks": [],
+            "constantDomains": [
+              {
+                "kind": "constant-bank-finite-f32-v1",
+                "stage": "fragment",
+                "slot": 0,
+                "name": "fsconst0",
+                "count": 46
+              }
+            ]
+          }
+        },
+        "interfaceKey": "generic-interpolation-v1:g0/15/smooth"
+      },
+      "sha256": "0af755d4c3c2bad06bd7c5aa8433cc7cdbc4c66437c4811550e179eb03cd4433"
+    },
+    {
+      "vertex": "only-high-0",
+      "fragment": "high-low-1",
+      "result": {
+        "ok": true,
+        "vertex": {
+          "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nsmooth out vec4 vso_g0;\nuniform highp uvec4 vsconst0[46];\nlayout(std140) uniform VirglBlock {\n vec4 clipp[8];\n uint stipple_pattern[32];\n float winsys_adjust_y;\n float alpha_ref_val;\n bool clip_plane_enabled;\n int drawid_base;\n};\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4(1.0 / (uintBitsToFloat(vsconst0[45].z)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n raw_rhs = uvec4((floatBitsToUint(in_0.x)), (floatBitsToUint(in_0.y)), (floatBitsToUint(in_0.z)), (floatBitsToUint(in_0.w)));\n raw_out[1].xyzw = raw_rhs.xyzw;\n gl_Position.x = float_out[0].x;\n gl_Position.y = float_out[0].y;\n gl_Position.z = float_out[0].z;\n gl_Position.w = float_out[0].w;\n vso_g0.x = in_0.x;\n vso_g0.y = in_0.y;\n vso_g0.z = in_0.z;\n vso_g0.w = in_0.w;\n gl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+          "metadata": {
+            "profile": "virgl-webgl2-raw-bits-v7",
+            "stage": "vertex",
+            "inputs": [
+              {
+                "index": 0,
+                "name": "in_0",
+                "type": "vec4",
+                "semantic": "ATTRIBUTE",
+                "semanticIndex": 0,
+                "componentMask": 15
+              }
+            ],
+            "outputs": [
+              {
+                "index": 0,
+                "name": "gl_Position",
+                "type": "vec4",
+                "semantic": "POSITION",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15
+              },
+              {
+                "index": 1,
+                "name": "vso_g0",
+                "type": "vec4",
+                "semantic": "GENERIC",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15,
+                "interpolation": "smooth"
+              }
+            ],
+            "attributes": [
+              {
+                "index": 0,
+                "name": "in_0",
+                "type": "vec4",
+                "semantic": "ATTRIBUTE",
+                "semanticIndex": 0,
+                "componentMask": 15
+              }
+            ],
+            "uniforms": [
+              {
+                "name": "vsconst0",
+                "type": "uvec4[]",
+                "count": 46,
+                "encoding": "float32-bits"
+              }
+            ],
+            "samplers": [],
+            "uniformBlocks": [
+              {
+                "name": "VirglBlock",
+                "byteLength": 656,
+                "members": [
+                  {
+                    "name": "winsys_adjust_y",
+                    "offset": 640,
+                    "type": "float",
+                    "default": 1
+                  }
+                ]
+              }
+            ],
+            "constantDomains": [
+              {
+                "kind": "constant-bank-finite-f32-v1",
+                "stage": "vertex",
+                "slot": 0,
+                "name": "vsconst0",
+                "count": 46
+              }
+            ]
+          }
+        },
+        "fragment": {
+          "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nsmooth in vec4 vso_g0;\nlayout(location=0) out vec4 fsout_c0;\nuniform highp uvec4 fsconst0[47];\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4(1.0 / (uintBitsToFloat(fsconst0[0].z)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n fsout_c0.x = float_out[0].x;\n fsout_c0.y = float_out[0].y;\n fsout_c0.z = float_out[0].z;\n fsout_c0.w = float_out[0].w;\n}\n",
+          "metadata": {
+            "profile": "virgl-webgl2-raw-bits-v7",
+            "stage": "fragment",
+            "inputs": [
+              {
+                "index": 0,
+                "name": "vso_g0",
+                "type": "vec4",
+                "semantic": "GENERIC",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "interpolation": "smooth"
+              }
+            ],
+            "outputs": [
+              {
+                "index": 0,
+                "name": "fsout_c0",
+                "type": "vec4",
+                "semantic": "COLOR",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15
+              }
+            ],
+            "attributes": [],
+            "uniforms": [
+              {
+                "name": "fsconst0",
+                "type": "uvec4[]",
+                "count": 47,
+                "encoding": "float32-bits"
+              }
+            ],
+            "samplers": [],
+            "uniformBlocks": [],
+            "constantDomains": [
+              {
+                "kind": "constant-bank-finite-f32-v1",
+                "stage": "fragment",
+                "slot": 0,
+                "name": "fsconst0",
+                "count": 47
+              }
+            ]
+          }
+        },
+        "interfaceKey": "generic-interpolation-v1:g0/15/smooth"
+      },
+      "sha256": "8af82f4fdfc14ffc096d11bcf98e361b60fa61e1b3ef14255b9be925016ba75c"
+    },
+    {
+      "vertex": "low-high-0",
+      "fragment": "only-zero-1",
+      "result": {
+        "ok": true,
+        "vertex": {
+          "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nsmooth out vec4 vso_g0;\nuniform highp uvec4 vsconst0[46];\nlayout(std140) uniform VirglBlock {\n vec4 clipp[8];\n uint stipple_pattern[32];\n float winsys_adjust_y;\n float alpha_ref_val;\n bool clip_plane_enabled;\n int drawid_base;\n};\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4(1.0 / (uintBitsToFloat(vsconst0[45].z)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n raw_rhs = uvec4((floatBitsToUint(in_0.x)), (floatBitsToUint(in_0.y)), (floatBitsToUint(in_0.z)), (floatBitsToUint(in_0.w)));\n raw_out[1].xyzw = raw_rhs.xyzw;\n gl_Position.x = float_out[0].x;\n gl_Position.y = float_out[0].y;\n gl_Position.z = float_out[0].z;\n gl_Position.w = float_out[0].w;\n vso_g0.x = in_0.x;\n vso_g0.y = in_0.y;\n vso_g0.z = in_0.z;\n vso_g0.w = in_0.w;\n gl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+          "metadata": {
+            "profile": "virgl-webgl2-raw-bits-v7",
+            "stage": "vertex",
+            "inputs": [
+              {
+                "index": 0,
+                "name": "in_0",
+                "type": "vec4",
+                "semantic": "ATTRIBUTE",
+                "semanticIndex": 0,
+                "componentMask": 15
+              }
+            ],
+            "outputs": [
+              {
+                "index": 0,
+                "name": "gl_Position",
+                "type": "vec4",
+                "semantic": "POSITION",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15
+              },
+              {
+                "index": 1,
+                "name": "vso_g0",
+                "type": "vec4",
+                "semantic": "GENERIC",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15,
+                "interpolation": "smooth"
+              }
+            ],
+            "attributes": [
+              {
+                "index": 0,
+                "name": "in_0",
+                "type": "vec4",
+                "semantic": "ATTRIBUTE",
+                "semanticIndex": 0,
+                "componentMask": 15
+              }
+            ],
+            "uniforms": [
+              {
+                "name": "vsconst0",
+                "type": "uvec4[]",
+                "count": 46,
+                "encoding": "float32-bits"
+              }
+            ],
+            "samplers": [],
+            "uniformBlocks": [
+              {
+                "name": "VirglBlock",
+                "byteLength": 656,
+                "members": [
+                  {
+                    "name": "winsys_adjust_y",
+                    "offset": 640,
+                    "type": "float",
+                    "default": 1
+                  }
+                ]
+              }
+            ],
+            "constantDomains": [
+              {
+                "kind": "constant-bank-finite-f32-v1",
+                "stage": "vertex",
+                "slot": 0,
+                "name": "vsconst0",
+                "count": 46
+              }
+            ]
+          }
+        },
+        "fragment": {
+          "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nsmooth in vec4 vso_g0;\nlayout(location=0) out vec4 fsout_c0;\nuniform highp uvec4 fsconst0[1];\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4(1.0 / (uintBitsToFloat(fsconst0[0].z)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n fsout_c0.x = float_out[0].x;\n fsout_c0.y = float_out[0].y;\n fsout_c0.z = float_out[0].z;\n fsout_c0.w = float_out[0].w;\n}\n",
+          "metadata": {
+            "profile": "virgl-webgl2-raw-bits-v7",
+            "stage": "fragment",
+            "inputs": [
+              {
+                "index": 0,
+                "name": "vso_g0",
+                "type": "vec4",
+                "semantic": "GENERIC",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "interpolation": "smooth"
+              }
+            ],
+            "outputs": [
+              {
+                "index": 0,
+                "name": "fsout_c0",
+                "type": "vec4",
+                "semantic": "COLOR",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15
+              }
+            ],
+            "attributes": [],
+            "uniforms": [
+              {
+                "name": "fsconst0",
+                "type": "uvec4[]",
+                "count": 1,
+                "encoding": "float32-bits"
+              }
+            ],
+            "samplers": [],
+            "uniformBlocks": [],
+            "constantDomains": [
+              {
+                "kind": "constant-bank-finite-f32-v1",
+                "stage": "fragment",
+                "slot": 0,
+                "name": "fsconst0",
+                "count": 1
+              }
+            ]
+          }
+        },
+        "interfaceKey": "generic-interpolation-v1:g0/15/smooth"
+      },
+      "sha256": "3c097a916a3a2f66d87c3e71ecd0166b6b6ee3d0cea87e2d9619d30f1bab4538"
+    },
+    {
+      "vertex": "low-high-0",
+      "fragment": "only-high-1",
+      "result": {
+        "ok": true,
+        "vertex": {
+          "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nsmooth out vec4 vso_g0;\nuniform highp uvec4 vsconst0[46];\nlayout(std140) uniform VirglBlock {\n vec4 clipp[8];\n uint stipple_pattern[32];\n float winsys_adjust_y;\n float alpha_ref_val;\n bool clip_plane_enabled;\n int drawid_base;\n};\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4(1.0 / (uintBitsToFloat(vsconst0[45].z)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n raw_rhs = uvec4((floatBitsToUint(in_0.x)), (floatBitsToUint(in_0.y)), (floatBitsToUint(in_0.z)), (floatBitsToUint(in_0.w)));\n raw_out[1].xyzw = raw_rhs.xyzw;\n gl_Position.x = float_out[0].x;\n gl_Position.y = float_out[0].y;\n gl_Position.z = float_out[0].z;\n gl_Position.w = float_out[0].w;\n vso_g0.x = in_0.x;\n vso_g0.y = in_0.y;\n vso_g0.z = in_0.z;\n vso_g0.w = in_0.w;\n gl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+          "metadata": {
+            "profile": "virgl-webgl2-raw-bits-v7",
+            "stage": "vertex",
+            "inputs": [
+              {
+                "index": 0,
+                "name": "in_0",
+                "type": "vec4",
+                "semantic": "ATTRIBUTE",
+                "semanticIndex": 0,
+                "componentMask": 15
+              }
+            ],
+            "outputs": [
+              {
+                "index": 0,
+                "name": "gl_Position",
+                "type": "vec4",
+                "semantic": "POSITION",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15
+              },
+              {
+                "index": 1,
+                "name": "vso_g0",
+                "type": "vec4",
+                "semantic": "GENERIC",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15,
+                "interpolation": "smooth"
+              }
+            ],
+            "attributes": [
+              {
+                "index": 0,
+                "name": "in_0",
+                "type": "vec4",
+                "semantic": "ATTRIBUTE",
+                "semanticIndex": 0,
+                "componentMask": 15
+              }
+            ],
+            "uniforms": [
+              {
+                "name": "vsconst0",
+                "type": "uvec4[]",
+                "count": 46,
+                "encoding": "float32-bits"
+              }
+            ],
+            "samplers": [],
+            "uniformBlocks": [
+              {
+                "name": "VirglBlock",
+                "byteLength": 656,
+                "members": [
+                  {
+                    "name": "winsys_adjust_y",
+                    "offset": 640,
+                    "type": "float",
+                    "default": 1
+                  }
+                ]
+              }
+            ],
+            "constantDomains": [
+              {
+                "kind": "constant-bank-finite-f32-v1",
+                "stage": "vertex",
+                "slot": 0,
+                "name": "vsconst0",
+                "count": 46
+              }
+            ]
+          }
+        },
+        "fragment": {
+          "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nsmooth in vec4 vso_g0;\nlayout(location=0) out vec4 fsout_c0;\nuniform highp uvec4 fsconst0[46];\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4(1.0 / (uintBitsToFloat(fsconst0[45].z)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n fsout_c0.x = float_out[0].x;\n fsout_c0.y = float_out[0].y;\n fsout_c0.z = float_out[0].z;\n fsout_c0.w = float_out[0].w;\n}\n",
+          "metadata": {
+            "profile": "virgl-webgl2-raw-bits-v7",
+            "stage": "fragment",
+            "inputs": [
+              {
+                "index": 0,
+                "name": "vso_g0",
+                "type": "vec4",
+                "semantic": "GENERIC",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "interpolation": "smooth"
+              }
+            ],
+            "outputs": [
+              {
+                "index": 0,
+                "name": "fsout_c0",
+                "type": "vec4",
+                "semantic": "COLOR",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15
+              }
+            ],
+            "attributes": [],
+            "uniforms": [
+              {
+                "name": "fsconst0",
+                "type": "uvec4[]",
+                "count": 46,
+                "encoding": "float32-bits"
+              }
+            ],
+            "samplers": [],
+            "uniformBlocks": [],
+            "constantDomains": [
+              {
+                "kind": "constant-bank-finite-f32-v1",
+                "stage": "fragment",
+                "slot": 0,
+                "name": "fsconst0",
+                "count": 46
+              }
+            ]
+          }
+        },
+        "interfaceKey": "generic-interpolation-v1:g0/15/smooth"
+      },
+      "sha256": "0af755d4c3c2bad06bd7c5aa8433cc7cdbc4c66437c4811550e179eb03cd4433"
+    },
+    {
+      "vertex": "low-high-0",
+      "fragment": "low-high-1",
+      "result": {
+        "ok": true,
+        "vertex": {
+          "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nsmooth out vec4 vso_g0;\nuniform highp uvec4 vsconst0[46];\nlayout(std140) uniform VirglBlock {\n vec4 clipp[8];\n uint stipple_pattern[32];\n float winsys_adjust_y;\n float alpha_ref_val;\n bool clip_plane_enabled;\n int drawid_base;\n};\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4(1.0 / (uintBitsToFloat(vsconst0[45].z)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n raw_rhs = uvec4((floatBitsToUint(in_0.x)), (floatBitsToUint(in_0.y)), (floatBitsToUint(in_0.z)), (floatBitsToUint(in_0.w)));\n raw_out[1].xyzw = raw_rhs.xyzw;\n gl_Position.x = float_out[0].x;\n gl_Position.y = float_out[0].y;\n gl_Position.z = float_out[0].z;\n gl_Position.w = float_out[0].w;\n vso_g0.x = in_0.x;\n vso_g0.y = in_0.y;\n vso_g0.z = in_0.z;\n vso_g0.w = in_0.w;\n gl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+          "metadata": {
+            "profile": "virgl-webgl2-raw-bits-v7",
+            "stage": "vertex",
+            "inputs": [
+              {
+                "index": 0,
+                "name": "in_0",
+                "type": "vec4",
+                "semantic": "ATTRIBUTE",
+                "semanticIndex": 0,
+                "componentMask": 15
+              }
+            ],
+            "outputs": [
+              {
+                "index": 0,
+                "name": "gl_Position",
+                "type": "vec4",
+                "semantic": "POSITION",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15
+              },
+              {
+                "index": 1,
+                "name": "vso_g0",
+                "type": "vec4",
+                "semantic": "GENERIC",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15,
+                "interpolation": "smooth"
+              }
+            ],
+            "attributes": [
+              {
+                "index": 0,
+                "name": "in_0",
+                "type": "vec4",
+                "semantic": "ATTRIBUTE",
+                "semanticIndex": 0,
+                "componentMask": 15
+              }
+            ],
+            "uniforms": [
+              {
+                "name": "vsconst0",
+                "type": "uvec4[]",
+                "count": 46,
+                "encoding": "float32-bits"
+              }
+            ],
+            "samplers": [],
+            "uniformBlocks": [
+              {
+                "name": "VirglBlock",
+                "byteLength": 656,
+                "members": [
+                  {
+                    "name": "winsys_adjust_y",
+                    "offset": 640,
+                    "type": "float",
+                    "default": 1
+                  }
+                ]
+              }
+            ],
+            "constantDomains": [
+              {
+                "kind": "constant-bank-finite-f32-v1",
+                "stage": "vertex",
+                "slot": 0,
+                "name": "vsconst0",
+                "count": 46
+              }
+            ]
+          }
+        },
+        "fragment": {
+          "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nsmooth in vec4 vso_g0;\nlayout(location=0) out vec4 fsout_c0;\nuniform highp uvec4 fsconst0[46];\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4(1.0 / (uintBitsToFloat(fsconst0[45].z)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n fsout_c0.x = float_out[0].x;\n fsout_c0.y = float_out[0].y;\n fsout_c0.z = float_out[0].z;\n fsout_c0.w = float_out[0].w;\n}\n",
+          "metadata": {
+            "profile": "virgl-webgl2-raw-bits-v7",
+            "stage": "fragment",
+            "inputs": [
+              {
+                "index": 0,
+                "name": "vso_g0",
+                "type": "vec4",
+                "semantic": "GENERIC",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "interpolation": "smooth"
+              }
+            ],
+            "outputs": [
+              {
+                "index": 0,
+                "name": "fsout_c0",
+                "type": "vec4",
+                "semantic": "COLOR",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15
+              }
+            ],
+            "attributes": [],
+            "uniforms": [
+              {
+                "name": "fsconst0",
+                "type": "uvec4[]",
+                "count": 46,
+                "encoding": "float32-bits"
+              }
+            ],
+            "samplers": [],
+            "uniformBlocks": [],
+            "constantDomains": [
+              {
+                "kind": "constant-bank-finite-f32-v1",
+                "stage": "fragment",
+                "slot": 0,
+                "name": "fsconst0",
+                "count": 46
+              }
+            ]
+          }
+        },
+        "interfaceKey": "generic-interpolation-v1:g0/15/smooth"
+      },
+      "sha256": "0af755d4c3c2bad06bd7c5aa8433cc7cdbc4c66437c4811550e179eb03cd4433"
+    },
+    {
+      "vertex": "low-high-0",
+      "fragment": "high-low-1",
+      "result": {
+        "ok": true,
+        "vertex": {
+          "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nsmooth out vec4 vso_g0;\nuniform highp uvec4 vsconst0[46];\nlayout(std140) uniform VirglBlock {\n vec4 clipp[8];\n uint stipple_pattern[32];\n float winsys_adjust_y;\n float alpha_ref_val;\n bool clip_plane_enabled;\n int drawid_base;\n};\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4(1.0 / (uintBitsToFloat(vsconst0[45].z)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n raw_rhs = uvec4((floatBitsToUint(in_0.x)), (floatBitsToUint(in_0.y)), (floatBitsToUint(in_0.z)), (floatBitsToUint(in_0.w)));\n raw_out[1].xyzw = raw_rhs.xyzw;\n gl_Position.x = float_out[0].x;\n gl_Position.y = float_out[0].y;\n gl_Position.z = float_out[0].z;\n gl_Position.w = float_out[0].w;\n vso_g0.x = in_0.x;\n vso_g0.y = in_0.y;\n vso_g0.z = in_0.z;\n vso_g0.w = in_0.w;\n gl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+          "metadata": {
+            "profile": "virgl-webgl2-raw-bits-v7",
+            "stage": "vertex",
+            "inputs": [
+              {
+                "index": 0,
+                "name": "in_0",
+                "type": "vec4",
+                "semantic": "ATTRIBUTE",
+                "semanticIndex": 0,
+                "componentMask": 15
+              }
+            ],
+            "outputs": [
+              {
+                "index": 0,
+                "name": "gl_Position",
+                "type": "vec4",
+                "semantic": "POSITION",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15
+              },
+              {
+                "index": 1,
+                "name": "vso_g0",
+                "type": "vec4",
+                "semantic": "GENERIC",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15,
+                "interpolation": "smooth"
+              }
+            ],
+            "attributes": [
+              {
+                "index": 0,
+                "name": "in_0",
+                "type": "vec4",
+                "semantic": "ATTRIBUTE",
+                "semanticIndex": 0,
+                "componentMask": 15
+              }
+            ],
+            "uniforms": [
+              {
+                "name": "vsconst0",
+                "type": "uvec4[]",
+                "count": 46,
+                "encoding": "float32-bits"
+              }
+            ],
+            "samplers": [],
+            "uniformBlocks": [
+              {
+                "name": "VirglBlock",
+                "byteLength": 656,
+                "members": [
+                  {
+                    "name": "winsys_adjust_y",
+                    "offset": 640,
+                    "type": "float",
+                    "default": 1
+                  }
+                ]
+              }
+            ],
+            "constantDomains": [
+              {
+                "kind": "constant-bank-finite-f32-v1",
+                "stage": "vertex",
+                "slot": 0,
+                "name": "vsconst0",
+                "count": 46
+              }
+            ]
+          }
+        },
+        "fragment": {
+          "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nsmooth in vec4 vso_g0;\nlayout(location=0) out vec4 fsout_c0;\nuniform highp uvec4 fsconst0[47];\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4(1.0 / (uintBitsToFloat(fsconst0[0].z)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n fsout_c0.x = float_out[0].x;\n fsout_c0.y = float_out[0].y;\n fsout_c0.z = float_out[0].z;\n fsout_c0.w = float_out[0].w;\n}\n",
+          "metadata": {
+            "profile": "virgl-webgl2-raw-bits-v7",
+            "stage": "fragment",
+            "inputs": [
+              {
+                "index": 0,
+                "name": "vso_g0",
+                "type": "vec4",
+                "semantic": "GENERIC",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "interpolation": "smooth"
+              }
+            ],
+            "outputs": [
+              {
+                "index": 0,
+                "name": "fsout_c0",
+                "type": "vec4",
+                "semantic": "COLOR",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15
+              }
+            ],
+            "attributes": [],
+            "uniforms": [
+              {
+                "name": "fsconst0",
+                "type": "uvec4[]",
+                "count": 47,
+                "encoding": "float32-bits"
+              }
+            ],
+            "samplers": [],
+            "uniformBlocks": [],
+            "constantDomains": [
+              {
+                "kind": "constant-bank-finite-f32-v1",
+                "stage": "fragment",
+                "slot": 0,
+                "name": "fsconst0",
+                "count": 47
+              }
+            ]
+          }
+        },
+        "interfaceKey": "generic-interpolation-v1:g0/15/smooth"
+      },
+      "sha256": "8af82f4fdfc14ffc096d11bcf98e361b60fa61e1b3ef14255b9be925016ba75c"
+    },
+    {
+      "vertex": "high-low-0",
+      "fragment": "only-zero-1",
+      "result": {
+        "ok": true,
+        "vertex": {
+          "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nsmooth out vec4 vso_g0;\nuniform highp uvec4 vsconst0[47];\nlayout(std140) uniform VirglBlock {\n vec4 clipp[8];\n uint stipple_pattern[32];\n float winsys_adjust_y;\n float alpha_ref_val;\n bool clip_plane_enabled;\n int drawid_base;\n};\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4(1.0 / (uintBitsToFloat(vsconst0[0].z)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n raw_rhs = uvec4((floatBitsToUint(in_0.x)), (floatBitsToUint(in_0.y)), (floatBitsToUint(in_0.z)), (floatBitsToUint(in_0.w)));\n raw_out[1].xyzw = raw_rhs.xyzw;\n gl_Position.x = float_out[0].x;\n gl_Position.y = float_out[0].y;\n gl_Position.z = float_out[0].z;\n gl_Position.w = float_out[0].w;\n vso_g0.x = in_0.x;\n vso_g0.y = in_0.y;\n vso_g0.z = in_0.z;\n vso_g0.w = in_0.w;\n gl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+          "metadata": {
+            "profile": "virgl-webgl2-raw-bits-v7",
+            "stage": "vertex",
+            "inputs": [
+              {
+                "index": 0,
+                "name": "in_0",
+                "type": "vec4",
+                "semantic": "ATTRIBUTE",
+                "semanticIndex": 0,
+                "componentMask": 15
+              }
+            ],
+            "outputs": [
+              {
+                "index": 0,
+                "name": "gl_Position",
+                "type": "vec4",
+                "semantic": "POSITION",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15
+              },
+              {
+                "index": 1,
+                "name": "vso_g0",
+                "type": "vec4",
+                "semantic": "GENERIC",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15,
+                "interpolation": "smooth"
+              }
+            ],
+            "attributes": [
+              {
+                "index": 0,
+                "name": "in_0",
+                "type": "vec4",
+                "semantic": "ATTRIBUTE",
+                "semanticIndex": 0,
+                "componentMask": 15
+              }
+            ],
+            "uniforms": [
+              {
+                "name": "vsconst0",
+                "type": "uvec4[]",
+                "count": 47,
+                "encoding": "float32-bits"
+              }
+            ],
+            "samplers": [],
+            "uniformBlocks": [
+              {
+                "name": "VirglBlock",
+                "byteLength": 656,
+                "members": [
+                  {
+                    "name": "winsys_adjust_y",
+                    "offset": 640,
+                    "type": "float",
+                    "default": 1
+                  }
+                ]
+              }
+            ],
+            "constantDomains": [
+              {
+                "kind": "constant-bank-finite-f32-v1",
+                "stage": "vertex",
+                "slot": 0,
+                "name": "vsconst0",
+                "count": 47
+              }
+            ]
+          }
+        },
+        "fragment": {
+          "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nsmooth in vec4 vso_g0;\nlayout(location=0) out vec4 fsout_c0;\nuniform highp uvec4 fsconst0[1];\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4(1.0 / (uintBitsToFloat(fsconst0[0].z)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n fsout_c0.x = float_out[0].x;\n fsout_c0.y = float_out[0].y;\n fsout_c0.z = float_out[0].z;\n fsout_c0.w = float_out[0].w;\n}\n",
+          "metadata": {
+            "profile": "virgl-webgl2-raw-bits-v7",
+            "stage": "fragment",
+            "inputs": [
+              {
+                "index": 0,
+                "name": "vso_g0",
+                "type": "vec4",
+                "semantic": "GENERIC",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "interpolation": "smooth"
+              }
+            ],
+            "outputs": [
+              {
+                "index": 0,
+                "name": "fsout_c0",
+                "type": "vec4",
+                "semantic": "COLOR",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15
+              }
+            ],
+            "attributes": [],
+            "uniforms": [
+              {
+                "name": "fsconst0",
+                "type": "uvec4[]",
+                "count": 1,
+                "encoding": "float32-bits"
+              }
+            ],
+            "samplers": [],
+            "uniformBlocks": [],
+            "constantDomains": [
+              {
+                "kind": "constant-bank-finite-f32-v1",
+                "stage": "fragment",
+                "slot": 0,
+                "name": "fsconst0",
+                "count": 1
+              }
+            ]
+          }
+        },
+        "interfaceKey": "generic-interpolation-v1:g0/15/smooth"
+      },
+      "sha256": "8942e425fb89aa428d7f64aebe50461f83cb117e0bde73e6d4c944482acc6a48"
+    },
+    {
+      "vertex": "high-low-0",
+      "fragment": "only-high-1",
+      "result": {
+        "ok": true,
+        "vertex": {
+          "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nsmooth out vec4 vso_g0;\nuniform highp uvec4 vsconst0[47];\nlayout(std140) uniform VirglBlock {\n vec4 clipp[8];\n uint stipple_pattern[32];\n float winsys_adjust_y;\n float alpha_ref_val;\n bool clip_plane_enabled;\n int drawid_base;\n};\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4(1.0 / (uintBitsToFloat(vsconst0[0].z)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n raw_rhs = uvec4((floatBitsToUint(in_0.x)), (floatBitsToUint(in_0.y)), (floatBitsToUint(in_0.z)), (floatBitsToUint(in_0.w)));\n raw_out[1].xyzw = raw_rhs.xyzw;\n gl_Position.x = float_out[0].x;\n gl_Position.y = float_out[0].y;\n gl_Position.z = float_out[0].z;\n gl_Position.w = float_out[0].w;\n vso_g0.x = in_0.x;\n vso_g0.y = in_0.y;\n vso_g0.z = in_0.z;\n vso_g0.w = in_0.w;\n gl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+          "metadata": {
+            "profile": "virgl-webgl2-raw-bits-v7",
+            "stage": "vertex",
+            "inputs": [
+              {
+                "index": 0,
+                "name": "in_0",
+                "type": "vec4",
+                "semantic": "ATTRIBUTE",
+                "semanticIndex": 0,
+                "componentMask": 15
+              }
+            ],
+            "outputs": [
+              {
+                "index": 0,
+                "name": "gl_Position",
+                "type": "vec4",
+                "semantic": "POSITION",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15
+              },
+              {
+                "index": 1,
+                "name": "vso_g0",
+                "type": "vec4",
+                "semantic": "GENERIC",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15,
+                "interpolation": "smooth"
+              }
+            ],
+            "attributes": [
+              {
+                "index": 0,
+                "name": "in_0",
+                "type": "vec4",
+                "semantic": "ATTRIBUTE",
+                "semanticIndex": 0,
+                "componentMask": 15
+              }
+            ],
+            "uniforms": [
+              {
+                "name": "vsconst0",
+                "type": "uvec4[]",
+                "count": 47,
+                "encoding": "float32-bits"
+              }
+            ],
+            "samplers": [],
+            "uniformBlocks": [
+              {
+                "name": "VirglBlock",
+                "byteLength": 656,
+                "members": [
+                  {
+                    "name": "winsys_adjust_y",
+                    "offset": 640,
+                    "type": "float",
+                    "default": 1
+                  }
+                ]
+              }
+            ],
+            "constantDomains": [
+              {
+                "kind": "constant-bank-finite-f32-v1",
+                "stage": "vertex",
+                "slot": 0,
+                "name": "vsconst0",
+                "count": 47
+              }
+            ]
+          }
+        },
+        "fragment": {
+          "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nsmooth in vec4 vso_g0;\nlayout(location=0) out vec4 fsout_c0;\nuniform highp uvec4 fsconst0[46];\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4(1.0 / (uintBitsToFloat(fsconst0[45].z)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n fsout_c0.x = float_out[0].x;\n fsout_c0.y = float_out[0].y;\n fsout_c0.z = float_out[0].z;\n fsout_c0.w = float_out[0].w;\n}\n",
+          "metadata": {
+            "profile": "virgl-webgl2-raw-bits-v7",
+            "stage": "fragment",
+            "inputs": [
+              {
+                "index": 0,
+                "name": "vso_g0",
+                "type": "vec4",
+                "semantic": "GENERIC",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "interpolation": "smooth"
+              }
+            ],
+            "outputs": [
+              {
+                "index": 0,
+                "name": "fsout_c0",
+                "type": "vec4",
+                "semantic": "COLOR",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15
+              }
+            ],
+            "attributes": [],
+            "uniforms": [
+              {
+                "name": "fsconst0",
+                "type": "uvec4[]",
+                "count": 46,
+                "encoding": "float32-bits"
+              }
+            ],
+            "samplers": [],
+            "uniformBlocks": [],
+            "constantDomains": [
+              {
+                "kind": "constant-bank-finite-f32-v1",
+                "stage": "fragment",
+                "slot": 0,
+                "name": "fsconst0",
+                "count": 46
+              }
+            ]
+          }
+        },
+        "interfaceKey": "generic-interpolation-v1:g0/15/smooth"
+      },
+      "sha256": "760ccddb82c94bee088bcb21167b49fde8370ef6a9ba351f65d36ee2327ee4ef"
+    },
+    {
+      "vertex": "high-low-0",
+      "fragment": "low-high-1",
+      "result": {
+        "ok": true,
+        "vertex": {
+          "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nsmooth out vec4 vso_g0;\nuniform highp uvec4 vsconst0[47];\nlayout(std140) uniform VirglBlock {\n vec4 clipp[8];\n uint stipple_pattern[32];\n float winsys_adjust_y;\n float alpha_ref_val;\n bool clip_plane_enabled;\n int drawid_base;\n};\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4(1.0 / (uintBitsToFloat(vsconst0[0].z)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n raw_rhs = uvec4((floatBitsToUint(in_0.x)), (floatBitsToUint(in_0.y)), (floatBitsToUint(in_0.z)), (floatBitsToUint(in_0.w)));\n raw_out[1].xyzw = raw_rhs.xyzw;\n gl_Position.x = float_out[0].x;\n gl_Position.y = float_out[0].y;\n gl_Position.z = float_out[0].z;\n gl_Position.w = float_out[0].w;\n vso_g0.x = in_0.x;\n vso_g0.y = in_0.y;\n vso_g0.z = in_0.z;\n vso_g0.w = in_0.w;\n gl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+          "metadata": {
+            "profile": "virgl-webgl2-raw-bits-v7",
+            "stage": "vertex",
+            "inputs": [
+              {
+                "index": 0,
+                "name": "in_0",
+                "type": "vec4",
+                "semantic": "ATTRIBUTE",
+                "semanticIndex": 0,
+                "componentMask": 15
+              }
+            ],
+            "outputs": [
+              {
+                "index": 0,
+                "name": "gl_Position",
+                "type": "vec4",
+                "semantic": "POSITION",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15
+              },
+              {
+                "index": 1,
+                "name": "vso_g0",
+                "type": "vec4",
+                "semantic": "GENERIC",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15,
+                "interpolation": "smooth"
+              }
+            ],
+            "attributes": [
+              {
+                "index": 0,
+                "name": "in_0",
+                "type": "vec4",
+                "semantic": "ATTRIBUTE",
+                "semanticIndex": 0,
+                "componentMask": 15
+              }
+            ],
+            "uniforms": [
+              {
+                "name": "vsconst0",
+                "type": "uvec4[]",
+                "count": 47,
+                "encoding": "float32-bits"
+              }
+            ],
+            "samplers": [],
+            "uniformBlocks": [
+              {
+                "name": "VirglBlock",
+                "byteLength": 656,
+                "members": [
+                  {
+                    "name": "winsys_adjust_y",
+                    "offset": 640,
+                    "type": "float",
+                    "default": 1
+                  }
+                ]
+              }
+            ],
+            "constantDomains": [
+              {
+                "kind": "constant-bank-finite-f32-v1",
+                "stage": "vertex",
+                "slot": 0,
+                "name": "vsconst0",
+                "count": 47
+              }
+            ]
+          }
+        },
+        "fragment": {
+          "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nsmooth in vec4 vso_g0;\nlayout(location=0) out vec4 fsout_c0;\nuniform highp uvec4 fsconst0[46];\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4(1.0 / (uintBitsToFloat(fsconst0[45].z)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n fsout_c0.x = float_out[0].x;\n fsout_c0.y = float_out[0].y;\n fsout_c0.z = float_out[0].z;\n fsout_c0.w = float_out[0].w;\n}\n",
+          "metadata": {
+            "profile": "virgl-webgl2-raw-bits-v7",
+            "stage": "fragment",
+            "inputs": [
+              {
+                "index": 0,
+                "name": "vso_g0",
+                "type": "vec4",
+                "semantic": "GENERIC",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "interpolation": "smooth"
+              }
+            ],
+            "outputs": [
+              {
+                "index": 0,
+                "name": "fsout_c0",
+                "type": "vec4",
+                "semantic": "COLOR",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15
+              }
+            ],
+            "attributes": [],
+            "uniforms": [
+              {
+                "name": "fsconst0",
+                "type": "uvec4[]",
+                "count": 46,
+                "encoding": "float32-bits"
+              }
+            ],
+            "samplers": [],
+            "uniformBlocks": [],
+            "constantDomains": [
+              {
+                "kind": "constant-bank-finite-f32-v1",
+                "stage": "fragment",
+                "slot": 0,
+                "name": "fsconst0",
+                "count": 46
+              }
+            ]
+          }
+        },
+        "interfaceKey": "generic-interpolation-v1:g0/15/smooth"
+      },
+      "sha256": "760ccddb82c94bee088bcb21167b49fde8370ef6a9ba351f65d36ee2327ee4ef"
+    },
+    {
+      "vertex": "high-low-0",
+      "fragment": "high-low-1",
+      "result": {
+        "ok": true,
+        "vertex": {
+          "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nsmooth out vec4 vso_g0;\nuniform highp uvec4 vsconst0[47];\nlayout(std140) uniform VirglBlock {\n vec4 clipp[8];\n uint stipple_pattern[32];\n float winsys_adjust_y;\n float alpha_ref_val;\n bool clip_plane_enabled;\n int drawid_base;\n};\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4(1.0 / (uintBitsToFloat(vsconst0[0].z)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n raw_rhs = uvec4((floatBitsToUint(in_0.x)), (floatBitsToUint(in_0.y)), (floatBitsToUint(in_0.z)), (floatBitsToUint(in_0.w)));\n raw_out[1].xyzw = raw_rhs.xyzw;\n gl_Position.x = float_out[0].x;\n gl_Position.y = float_out[0].y;\n gl_Position.z = float_out[0].z;\n gl_Position.w = float_out[0].w;\n vso_g0.x = in_0.x;\n vso_g0.y = in_0.y;\n vso_g0.z = in_0.z;\n vso_g0.w = in_0.w;\n gl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+          "metadata": {
+            "profile": "virgl-webgl2-raw-bits-v7",
+            "stage": "vertex",
+            "inputs": [
+              {
+                "index": 0,
+                "name": "in_0",
+                "type": "vec4",
+                "semantic": "ATTRIBUTE",
+                "semanticIndex": 0,
+                "componentMask": 15
+              }
+            ],
+            "outputs": [
+              {
+                "index": 0,
+                "name": "gl_Position",
+                "type": "vec4",
+                "semantic": "POSITION",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15
+              },
+              {
+                "index": 1,
+                "name": "vso_g0",
+                "type": "vec4",
+                "semantic": "GENERIC",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15,
+                "interpolation": "smooth"
+              }
+            ],
+            "attributes": [
+              {
+                "index": 0,
+                "name": "in_0",
+                "type": "vec4",
+                "semantic": "ATTRIBUTE",
+                "semanticIndex": 0,
+                "componentMask": 15
+              }
+            ],
+            "uniforms": [
+              {
+                "name": "vsconst0",
+                "type": "uvec4[]",
+                "count": 47,
+                "encoding": "float32-bits"
+              }
+            ],
+            "samplers": [],
+            "uniformBlocks": [
+              {
+                "name": "VirglBlock",
+                "byteLength": 656,
+                "members": [
+                  {
+                    "name": "winsys_adjust_y",
+                    "offset": 640,
+                    "type": "float",
+                    "default": 1
+                  }
+                ]
+              }
+            ],
+            "constantDomains": [
+              {
+                "kind": "constant-bank-finite-f32-v1",
+                "stage": "vertex",
+                "slot": 0,
+                "name": "vsconst0",
+                "count": 47
+              }
+            ]
+          }
+        },
+        "fragment": {
+          "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nsmooth in vec4 vso_g0;\nlayout(location=0) out vec4 fsout_c0;\nuniform highp uvec4 fsconst0[47];\nvoid main(void) {\n highp uvec4 raw_temp[118];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[118];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4(1.0 / (uintBitsToFloat(fsconst0[0].z)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n fsout_c0.x = float_out[0].x;\n fsout_c0.y = float_out[0].y;\n fsout_c0.z = float_out[0].z;\n fsout_c0.w = float_out[0].w;\n}\n",
+          "metadata": {
+            "profile": "virgl-webgl2-raw-bits-v7",
+            "stage": "fragment",
+            "inputs": [
+              {
+                "index": 0,
+                "name": "vso_g0",
+                "type": "vec4",
+                "semantic": "GENERIC",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "interpolation": "smooth"
+              }
+            ],
+            "outputs": [
+              {
+                "index": 0,
+                "name": "fsout_c0",
+                "type": "vec4",
+                "semantic": "COLOR",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "writtenMask": 15
+              }
+            ],
+            "attributes": [],
+            "uniforms": [
+              {
+                "name": "fsconst0",
+                "type": "uvec4[]",
+                "count": 47,
+                "encoding": "float32-bits"
+              }
+            ],
+            "samplers": [],
+            "uniformBlocks": [],
+            "constantDomains": [
+              {
+                "kind": "constant-bank-finite-f32-v1",
+                "stage": "fragment",
+                "slot": 0,
+                "name": "fsconst0",
+                "count": 47
+              }
+            ]
+          }
+        },
+        "interfaceKey": "generic-interpolation-v1:g0/15/smooth"
+      },
+      "sha256": "7369af295f59d25ecfcfa6b0bc00bc27208fa02085c00bbe055196f5be7d2a0f"
+    }
+  ],
+  "status": "passed"
+}

@@ -1,0 +1,2275 @@
+{
+  "passed": true,
+  "frozenHead": "37a269d490543b3c2970de600d60f7f055c6acac",
+  "runtimeBase": "0a5f7bd7a1f4e55878d314cd4d65420a6ba1ff98",
+  "wasmChecks": {
+    "current": "f8b40d93039a9bb454250df40592e8c1d62144cac600bdcd82ea74098d7bb516",
+    "frozen": "f8b40d93039a9bb454250df40592e8c1d62144cac600bdcd82ea74098d7bb516",
+    "main": "f8b40d93039a9bb454250df40592e8c1d62144cac600bdcd82ea74098d7bb516",
+    "preserved": "f8b40d93039a9bb454250df40592e8c1d62144cac600bdcd82ea74098d7bb516",
+    "rebuilt": "f8b40d93039a9bb454250df40592e8c1d62144cac600bdcd82ea74098d7bb516"
+  },
+  "sealFilesChecked": 14,
+  "nativePairs": 150,
+  "browserPairs": 150,
+  "nativeRunsIncludingWarmups": 360,
+  "browserRunsIncludingWarmups": 420,
+  "canonicalTraceSha256": "f8cb47ab87213e6d1f0e613d6130babdc3af7fb91a749e9a51c66117143701a9",
+  "ramFixtureSha256": "c7d032c22b596d220102600fedf6e5de9e0f7e38487e0367eb4b8a7d4b51f7c4",
+  "reports": [
+    {
+      "report": "evidence/omarchy-profile/clock-investigation-r1/subtick-exact/report.json",
+      "sha256": "5174198f7807117de22cd4a41d2cf3e0e01b9f9b36378e59629e86821d879d80",
+      "native": [
+        {
+          "cached": true,
+          "divider": 0,
+          "baselineSeconds": 0.054235167,
+          "candidateSeconds": 0.051818708,
+          "ratio": 1.0466329457693155
+        },
+        {
+          "cached": false,
+          "divider": 64,
+          "baselineSeconds": 0.095443541,
+          "candidateSeconds": 0.095708709,
+          "ratio": 0.9972294266345187
+        },
+        {
+          "cached": true,
+          "divider": 1,
+          "baselineSeconds": 0.058974834,
+          "candidateSeconds": 0.059392375,
+          "ratio": 0.9929697877884156
+        },
+        {
+          "cached": true,
+          "divider": 64,
+          "baselineSeconds": 0.059319292,
+          "candidateSeconds": 0.057962666,
+          "ratio": 1.0234051691135118
+        },
+        {
+          "cached": true,
+          "divider": 1024,
+          "baselineSeconds": 0.059506917,
+          "candidateSeconds": 0.057457875,
+          "ratio": 1.0356616390703623
+        }
+      ],
+      "browser": [
+        {
+          "config": {
+            "fast": false,
+            "divider": 64,
+            "jit": false,
+            "budget": 4000000
+          },
+          "baselineMs": 82.20500004291534,
+          "candidateMs": 77.06500005722046,
+          "ratio": 1.066696943902919,
+          "minimumCompiledRetirements": 0
+        },
+        {
+          "config": {
+            "fast": true,
+            "divider": 1,
+            "jit": false,
+            "budget": 4000000
+          },
+          "baselineMs": 46.16000008583069,
+          "candidateMs": 47.13499999046326,
+          "ratio": 0.9793147362929917,
+          "minimumCompiledRetirements": 0
+        },
+        {
+          "config": {
+            "fast": true,
+            "divider": 64,
+            "jit": false,
+            "budget": 4000000
+          },
+          "baselineMs": 45.15499997138977,
+          "candidateMs": 45.38499999046326,
+          "ratio": 0.9949322459155708,
+          "minimumCompiledRetirements": 0
+        },
+        {
+          "config": {
+            "fast": true,
+            "divider": 1024,
+            "jit": false,
+            "budget": 4000000
+          },
+          "baselineMs": 45.95999991893768,
+          "candidateMs": 45.31500005722046,
+          "ratio": 1.0142336943816124,
+          "minimumCompiledRetirements": 0
+        },
+        {
+          "config": {
+            "fast": true,
+            "divider": 64,
+            "jit": true,
+            "budget": 40000000
+          },
+          "baselineMs": 62.50999999046326,
+          "candidateMs": 61.919999957084656,
+          "ratio": 1.0095284243182738,
+          "minimumCompiledRetirements": 40019748
+        }
+      ],
+      "identicalBrowserBinary": false,
+      "gateRatio": 0.9949322459155708
+    },
+    {
+      "report": "evidence/omarchy-profile/clock-investigation-r1/power-two-and-shortcuts/report.json",
+      "sha256": "00f5dd817bf6bdc3fe1c999c3e63983e7645a222b56b8194f4362134d9de0c4c",
+      "native": [
+        {
+          "cached": true,
+          "divider": 0,
+          "baselineSeconds": 0.054231666,
+          "candidateSeconds": 0.056717917,
+          "ratio": 0.9561646278370907
+        },
+        {
+          "cached": false,
+          "divider": 64,
+          "baselineSeconds": 0.09636325,
+          "candidateSeconds": 0.094842959,
+          "ratio": 1.0160295610346783
+        },
+        {
+          "cached": true,
+          "divider": 1,
+          "baselineSeconds": 0.059656959,
+          "candidateSeconds": 0.063123833,
+          "ratio": 0.9450782084161461
+        },
+        {
+          "cached": true,
+          "divider": 64,
+          "baselineSeconds": 0.060609625,
+          "candidateSeconds": 0.062598042,
+          "ratio": 0.9682351566203938
+        },
+        {
+          "cached": true,
+          "divider": 1024,
+          "baselineSeconds": 0.059214583,
+          "candidateSeconds": 0.060809708,
+          "ratio": 0.9737685798458365
+        }
+      ],
+      "browser": [
+        {
+          "config": {
+            "fast": false,
+            "divider": 64,
+            "jit": false,
+            "budget": 4000000
+          },
+          "baselineMs": 81.3050000667572,
+          "candidateMs": 80.33499991893768,
+          "ratio": 1.0120744401418846,
+          "minimumCompiledRetirements": 0
+        },
+        {
+          "config": {
+            "fast": true,
+            "divider": 1,
+            "jit": false,
+            "budget": 4000000
+          },
+          "baselineMs": 45.639999985694885,
+          "candidateMs": 46.704999923706055,
+          "ratio": 0.9771973035060298,
+          "minimumCompiledRetirements": 0
+        },
+        {
+          "config": {
+            "fast": true,
+            "divider": 64,
+            "jit": false,
+            "budget": 4000000
+          },
+          "baselineMs": 45.44000005722046,
+          "candidateMs": 46.419999957084656,
+          "ratio": 0.9788884123056827,
+          "minimumCompiledRetirements": 0
+        },
+        {
+          "config": {
+            "fast": true,
+            "divider": 1024,
+            "jit": false,
+            "budget": 4000000
+          },
+          "baselineMs": 45.31000006198883,
+          "candidateMs": 46.519999980926514,
+          "ratio": 0.9739896835891274,
+          "minimumCompiledRetirements": 0
+        },
+        {
+          "config": {
+            "fast": true,
+            "divider": 64,
+            "jit": true,
+            "budget": 40000000
+          },
+          "baselineMs": 62.77499997615814,
+          "candidateMs": 63.72500002384186,
+          "ratio": 0.9850921922741737,
+          "minimumCompiledRetirements": 40019748
+        }
+      ],
+      "identicalBrowserBinary": false,
+      "gateRatio": 0.9788884123056827
+    },
+    {
+      "report": "evidence/omarchy-profile/clock-investigation-r1/conditional-mtime-store/report.json",
+      "sha256": "ba98fa12adf409f431d6ccee9de5a0f214fbb3195841172618e88e7b23b80341",
+      "native": [
+        {
+          "cached": true,
+          "divider": 0,
+          "baselineSeconds": 0.0540905,
+          "candidateSeconds": 0.053379208,
+          "ratio": 1.0133252632747942
+        },
+        {
+          "cached": false,
+          "divider": 64,
+          "baselineSeconds": 0.093821375,
+          "candidateSeconds": 0.098122208,
+          "ratio": 0.9561686076204073
+        },
+        {
+          "cached": true,
+          "divider": 1,
+          "baselineSeconds": 0.058840458,
+          "candidateSeconds": 0.059658,
+          "ratio": 0.9862961882731569
+        },
+        {
+          "cached": true,
+          "divider": 64,
+          "baselineSeconds": 0.05940625,
+          "candidateSeconds": 0.058528667,
+          "ratio": 1.0149940711959151
+        },
+        {
+          "cached": true,
+          "divider": 1024,
+          "baselineSeconds": 0.059130167,
+          "candidateSeconds": 0.058346083,
+          "ratio": 1.0134385028040356
+        }
+      ],
+      "browser": [
+        {
+          "config": {
+            "fast": false,
+            "divider": 64,
+            "jit": false,
+            "budget": 4000000
+          },
+          "baselineMs": 82.40499997138977,
+          "candidateMs": 74.6049998998642,
+          "ratio": 1.10455063443462,
+          "minimumCompiledRetirements": 0
+        },
+        {
+          "config": {
+            "fast": true,
+            "divider": 1,
+            "jit": false,
+            "budget": 4000000
+          },
+          "baselineMs": 45.05499994754791,
+          "candidateMs": 46.33500003814697,
+          "ratio": 0.9723750924885022,
+          "minimumCompiledRetirements": 0
+        },
+        {
+          "config": {
+            "fast": true,
+            "divider": 64,
+            "jit": false,
+            "budget": 4000000
+          },
+          "baselineMs": 45.05499994754791,
+          "candidateMs": 46.18500006198883,
+          "ratio": 0.9755331793239309,
+          "minimumCompiledRetirements": 0
+        },
+        {
+          "config": {
+            "fast": true,
+            "divider": 1024,
+            "jit": false,
+            "budget": 4000000
+          },
+          "baselineMs": 45.07000005245209,
+          "candidateMs": 45.61999988555908,
+          "ratio": 0.9879438878893751,
+          "minimumCompiledRetirements": 0
+        },
+        {
+          "config": {
+            "fast": true,
+            "divider": 64,
+            "jit": true,
+            "budget": 40000000
+          },
+          "baselineMs": 63.47000002861023,
+          "candidateMs": 61.68500006198883,
+          "ratio": 1.0289373423819017,
+          "minimumCompiledRetirements": 40019748
+        }
+      ],
+      "identicalBrowserBinary": false,
+      "gateRatio": 0.9755331793239309
+    },
+    {
+      "report": "evidence/omarchy-profile/clock-investigation-r1/power-two-minimal/report.json",
+      "sha256": "936b9bd6f52174f9489b9b512e511587f5ccce67bde41f76c59e40ac1a6d2233",
+      "native": [
+        {
+          "cached": true,
+          "divider": 0,
+          "baselineSeconds": 0.053817375,
+          "candidateSeconds": 0.052560834,
+          "ratio": 1.023906412900526
+        },
+        {
+          "cached": false,
+          "divider": 64,
+          "baselineSeconds": 0.095107916,
+          "candidateSeconds": 0.097157625,
+          "ratio": 0.9789032615813736
+        },
+        {
+          "cached": true,
+          "divider": 1,
+          "baselineSeconds": 0.05948525,
+          "candidateSeconds": 0.059403625,
+          "ratio": 1.0013740743936081
+        },
+        {
+          "cached": true,
+          "divider": 64,
+          "baselineSeconds": 0.058954291,
+          "candidateSeconds": 0.05967475,
+          "ratio": 0.9879269037574518
+        },
+        {
+          "cached": true,
+          "divider": 1024,
+          "baselineSeconds": 0.059778541,
+          "candidateSeconds": 0.059574375,
+          "ratio": 1.0034270774976657
+        }
+      ],
+      "browser": [
+        {
+          "config": {
+            "fast": false,
+            "divider": 64,
+            "jit": false,
+            "budget": 4000000
+          },
+          "baselineMs": 80.17000007629395,
+          "candidateMs": 78.10000002384186,
+          "ratio": 1.0265044820975695,
+          "minimumCompiledRetirements": 0
+        },
+        {
+          "config": {
+            "fast": true,
+            "divider": 1,
+            "jit": false,
+            "budget": 4000000
+          },
+          "baselineMs": 45.9099999666214,
+          "candidateMs": 46.5349999666214,
+          "ratio": 0.9865692489427678,
+          "minimumCompiledRetirements": 0
+        },
+        {
+          "config": {
+            "fast": true,
+            "divider": 64,
+            "jit": false,
+            "budget": 4000000
+          },
+          "baselineMs": 45.99500000476837,
+          "candidateMs": 46.14999997615814,
+          "ratio": 0.9966413874004367,
+          "minimumCompiledRetirements": 0
+        },
+        {
+          "config": {
+            "fast": true,
+            "divider": 1024,
+            "jit": false,
+            "budget": 4000000
+          },
+          "baselineMs": 45.34500002861023,
+          "candidateMs": 46.21000003814697,
+          "ratio": 0.981281107794359,
+          "minimumCompiledRetirements": 0
+        },
+        {
+          "config": {
+            "fast": true,
+            "divider": 64,
+            "jit": true,
+            "budget": 40000000
+          },
+          "baselineMs": 62.855000019073486,
+          "candidateMs": 64.04000008106232,
+          "ratio": 0.9814959390929286,
+          "minimumCompiledRetirements": 40019748
+        }
+      ],
+      "identicalBrowserBinary": false,
+      "gateRatio": 0.9966413874004367
+    },
+    {
+      "report": "evidence/omarchy-profile/clock-investigation-r1/final/control/report.json",
+      "sha256": "182c502161c378ca6d3136ff398fb358ebae57904f1fd87c5db1b13529052d72",
+      "native": [
+        {
+          "cached": true,
+          "divider": 0,
+          "baselineSeconds": 0.053487125,
+          "candidateSeconds": 0.053395,
+          "ratio": 1.0017253488154323
+        },
+        {
+          "cached": false,
+          "divider": 64,
+          "baselineSeconds": 0.095151125,
+          "candidateSeconds": 0.092755417,
+          "ratio": 1.0258282273691897
+        },
+        {
+          "cached": true,
+          "divider": 1,
+          "baselineSeconds": 0.05854925,
+          "candidateSeconds": 0.058894958,
+          "ratio": 0.9941300917474124
+        },
+        {
+          "cached": true,
+          "divider": 64,
+          "baselineSeconds": 0.060519542,
+          "candidateSeconds": 0.060218833,
+          "ratio": 1.0049936039112548
+        },
+        {
+          "cached": true,
+          "divider": 1024,
+          "baselineSeconds": 0.058527792,
+          "candidateSeconds": 0.058754083,
+          "ratio": 0.9961485059685129
+        }
+      ],
+      "browser": [
+        {
+          "config": {
+            "fast": false,
+            "divider": 64,
+            "jit": false,
+            "budget": 4000000
+          },
+          "baselineMs": 80.41999995708466,
+          "candidateMs": 80.33499991893768,
+          "ratio": 1.0010580698105775,
+          "minimumCompiledRetirements": 0
+        },
+        {
+          "config": {
+            "fast": true,
+            "divider": 1,
+            "jit": false,
+            "budget": 4000000
+          },
+          "baselineMs": 45.605000019073486,
+          "candidateMs": 45.37999999523163,
+          "ratio": 1.0049581318612935,
+          "minimumCompiledRetirements": 0
+        },
+        {
+          "config": {
+            "fast": true,
+            "divider": 64,
+            "jit": false,
+            "budget": 4000000
+          },
+          "baselineMs": 44.949999928474426,
+          "candidateMs": 45.75999999046326,
+          "ratio": 0.982298949690611,
+          "minimumCompiledRetirements": 0
+        },
+        {
+          "config": {
+            "fast": true,
+            "divider": 1024,
+            "jit": false,
+            "budget": 4000000
+          },
+          "baselineMs": 45.019999980926514,
+          "candidateMs": 45.3400000333786,
+          "ratio": 0.9929422132285728,
+          "minimumCompiledRetirements": 0
+        },
+        {
+          "config": {
+            "fast": true,
+            "divider": 64,
+            "jit": true,
+            "budget": 40000000
+          },
+          "baselineMs": 61.50999999046326,
+          "candidateMs": 61.174999952316284,
+          "ratio": 1.0054760938031564,
+          "minimumCompiledRetirements": 40019748
+        }
+      ],
+      "identicalBrowserBinary": true,
+      "gateRatio": 0.982298949690611
+    },
+    {
+      "report": "evidence/omarchy-profile/clock-investigation-verifier-r1/runtime-control/report.json",
+      "sha256": "ad08bf21678adcd7c99b7eb9a683d0af4502db5548997b7c43a635c2b5b38e05",
+      "native": [
+        {
+          "cached": true,
+          "divider": 0,
+          "baselineSeconds": 0.053515084,
+          "candidateSeconds": 0.053645584,
+          "ratio": 0.9975673673344668
+        },
+        {
+          "cached": false,
+          "divider": 64,
+          "baselineSeconds": 0.094051834,
+          "candidateSeconds": 0.092712333,
+          "ratio": 1.0144479267930837
+        },
+        {
+          "cached": true,
+          "divider": 1,
+          "baselineSeconds": 0.058429208,
+          "candidateSeconds": 0.058720041,
+          "ratio": 0.995047125392845
+        },
+        {
+          "cached": true,
+          "divider": 64,
+          "baselineSeconds": 0.0591255,
+          "candidateSeconds": 0.059919625,
+          "ratio": 0.9867468296071613
+        },
+        {
+          "cached": true,
+          "divider": 1024,
+          "baselineSeconds": 0.059201791,
+          "candidateSeconds": 0.059653334,
+          "ratio": 0.9924305488105659
+        }
+      ],
+      "browser": [
+        {
+          "config": {
+            "fast": false,
+            "divider": 64,
+            "jit": false,
+            "budget": 4000000
+          },
+          "baselineMs": 80.50499999523163,
+          "candidateMs": 81.6049998998642,
+          "ratio": 0.9865204349490552,
+          "minimumCompiledRetirements": 0
+        },
+        {
+          "config": {
+            "fast": true,
+            "divider": 1,
+            "jit": false,
+            "budget": 4000000
+          },
+          "baselineMs": 44.949999928474426,
+          "candidateMs": 45.575000047683716,
+          "ratio": 0.9862863385945064,
+          "minimumCompiledRetirements": 0
+        },
+        {
+          "config": {
+            "fast": true,
+            "divider": 64,
+            "jit": false,
+            "budget": 4000000
+          },
+          "baselineMs": 44.56000006198883,
+          "candidateMs": 44.985000014305115,
+          "ratio": 0.9905524074206705,
+          "minimumCompiledRetirements": 0
+        },
+        {
+          "config": {
+            "fast": true,
+            "divider": 1024,
+            "jit": false,
+            "budget": 4000000
+          },
+          "baselineMs": 44.63499999046326,
+          "candidateMs": 44.855000019073486,
+          "ratio": 0.9950953064649052,
+          "minimumCompiledRetirements": 0
+        },
+        {
+          "config": {
+            "fast": true,
+            "divider": 64,
+            "jit": true,
+            "budget": 40000000
+          },
+          "baselineMs": 61.29000008106232,
+          "candidateMs": 61.74500000476837,
+          "ratio": 0.9926309835019691,
+          "minimumCompiledRetirements": 40019748
+        }
+      ],
+      "identicalBrowserBinary": true,
+      "gateRatio": 0.9905524074206705
+    }
+  ],
+  "nativeFixtures": [
+    {
+      "log": "focused-gates.log",
+      "configurations": 72,
+      "rows": [
+        {
+          "line": 26,
+          "divider": 1,
+          "startPhase": 0,
+          "startTime": 0,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "30360956ab4dfce5",
+          "finalMtime": "192",
+          "finalPhase": "0"
+        },
+        {
+          "line": 27,
+          "divider": 1,
+          "startPhase": 0,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "30360956ab4dfce5",
+          "finalMtime": "192",
+          "finalPhase": "0"
+        },
+        {
+          "line": 28,
+          "divider": 1,
+          "startPhase": 0,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "30360956ab4dfce5",
+          "finalMtime": "192",
+          "finalPhase": "0"
+        },
+        {
+          "line": 29,
+          "divider": 1,
+          "startPhase": 0,
+          "startTime": 18446744073709551614,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "f41e948d9a68ab65",
+          "finalMtime": "190",
+          "finalPhase": "0"
+        },
+        {
+          "line": 30,
+          "divider": 1,
+          "startPhase": 0,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "f41e948d9a68ab65",
+          "finalMtime": "190",
+          "finalPhase": "0"
+        },
+        {
+          "line": 31,
+          "divider": 1,
+          "startPhase": 0,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "f41e948d9a68ab65",
+          "finalMtime": "190",
+          "finalPhase": "0"
+        },
+        {
+          "line": 32,
+          "divider": 1,
+          "startPhase": 0,
+          "startTime": 0,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "30360956ab4dfce5",
+          "finalMtime": "192",
+          "finalPhase": "0"
+        },
+        {
+          "line": 33,
+          "divider": 1,
+          "startPhase": 0,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "30360956ab4dfce5",
+          "finalMtime": "192",
+          "finalPhase": "0"
+        },
+        {
+          "line": 34,
+          "divider": 1,
+          "startPhase": 0,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "30360956ab4dfce5",
+          "finalMtime": "192",
+          "finalPhase": "0"
+        },
+        {
+          "line": 35,
+          "divider": 1,
+          "startPhase": 0,
+          "startTime": 18446744073709551614,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "f41e948d9a68ab65",
+          "finalMtime": "190",
+          "finalPhase": "0"
+        },
+        {
+          "line": 36,
+          "divider": 1,
+          "startPhase": 0,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "f41e948d9a68ab65",
+          "finalMtime": "190",
+          "finalPhase": "0"
+        },
+        {
+          "line": 37,
+          "divider": 1,
+          "startPhase": 0,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "f41e948d9a68ab65",
+          "finalMtime": "190",
+          "finalPhase": "0"
+        },
+        {
+          "line": 38,
+          "divider": 3,
+          "startPhase": 0,
+          "startTime": 0,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "d629ad8723d984e5",
+          "finalMtime": "64",
+          "finalPhase": "0"
+        },
+        {
+          "line": 39,
+          "divider": 3,
+          "startPhase": 0,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "d629ad8723d984e5",
+          "finalMtime": "64",
+          "finalPhase": "0"
+        },
+        {
+          "line": 40,
+          "divider": 3,
+          "startPhase": 0,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "d629ad8723d984e5",
+          "finalMtime": "64",
+          "finalPhase": "0"
+        },
+        {
+          "line": 41,
+          "divider": 3,
+          "startPhase": 0,
+          "startTime": 18446744073709551614,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "ede028c10ff37365",
+          "finalMtime": "62",
+          "finalPhase": "0"
+        },
+        {
+          "line": 42,
+          "divider": 3,
+          "startPhase": 0,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "ede028c10ff37365",
+          "finalMtime": "62",
+          "finalPhase": "0"
+        },
+        {
+          "line": 43,
+          "divider": 3,
+          "startPhase": 0,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "ede028c10ff37365",
+          "finalMtime": "62",
+          "finalPhase": "0"
+        },
+        {
+          "line": 44,
+          "divider": 3,
+          "startPhase": 2,
+          "startTime": 0,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "d629ad8723d984e5",
+          "finalMtime": "64",
+          "finalPhase": "2"
+        },
+        {
+          "line": 45,
+          "divider": 3,
+          "startPhase": 2,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "d629ad8723d984e5",
+          "finalMtime": "64",
+          "finalPhase": "2"
+        },
+        {
+          "line": 46,
+          "divider": 3,
+          "startPhase": 2,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "d629ad8723d984e5",
+          "finalMtime": "64",
+          "finalPhase": "2"
+        },
+        {
+          "line": 47,
+          "divider": 3,
+          "startPhase": 2,
+          "startTime": 18446744073709551614,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "ede028c10ff37365",
+          "finalMtime": "62",
+          "finalPhase": "2"
+        },
+        {
+          "line": 48,
+          "divider": 3,
+          "startPhase": 2,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "ede028c10ff37365",
+          "finalMtime": "62",
+          "finalPhase": "2"
+        },
+        {
+          "line": 49,
+          "divider": 3,
+          "startPhase": 2,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "ede028c10ff37365",
+          "finalMtime": "62",
+          "finalPhase": "2"
+        },
+        {
+          "line": 50,
+          "divider": 10,
+          "startPhase": 0,
+          "startTime": 0,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "6ac9193e7a059deb",
+          "finalMtime": "19",
+          "finalPhase": "2"
+        },
+        {
+          "line": 51,
+          "divider": 10,
+          "startPhase": 0,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "6ac9193e7a059deb",
+          "finalMtime": "19",
+          "finalPhase": "2"
+        },
+        {
+          "line": 52,
+          "divider": 10,
+          "startPhase": 0,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "6ac9193e7a059deb",
+          "finalMtime": "19",
+          "finalPhase": "2"
+        },
+        {
+          "line": 53,
+          "divider": 10,
+          "startPhase": 0,
+          "startTime": 18446744073709551614,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "5d7c6463cd3e2747",
+          "finalMtime": "17",
+          "finalPhase": "2"
+        },
+        {
+          "line": 54,
+          "divider": 10,
+          "startPhase": 0,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "5d7c6463cd3e2747",
+          "finalMtime": "17",
+          "finalPhase": "2"
+        },
+        {
+          "line": 55,
+          "divider": 10,
+          "startPhase": 0,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "5d7c6463cd3e2747",
+          "finalMtime": "17",
+          "finalPhase": "2"
+        },
+        {
+          "line": 56,
+          "divider": 10,
+          "startPhase": 9,
+          "startTime": 0,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "cd1dd37da4996ea2",
+          "finalMtime": "20",
+          "finalPhase": "1"
+        },
+        {
+          "line": 57,
+          "divider": 10,
+          "startPhase": 9,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "cd1dd37da4996ea2",
+          "finalMtime": "20",
+          "finalPhase": "1"
+        },
+        {
+          "line": 58,
+          "divider": 10,
+          "startPhase": 9,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "cd1dd37da4996ea2",
+          "finalMtime": "20",
+          "finalPhase": "1"
+        },
+        {
+          "line": 59,
+          "divider": 10,
+          "startPhase": 9,
+          "startTime": 18446744073709551614,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "66fb077867457da2",
+          "finalMtime": "18",
+          "finalPhase": "1"
+        },
+        {
+          "line": 60,
+          "divider": 10,
+          "startPhase": 9,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "66fb077867457da2",
+          "finalMtime": "18",
+          "finalPhase": "1"
+        },
+        {
+          "line": 61,
+          "divider": 10,
+          "startPhase": 9,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "66fb077867457da2",
+          "finalMtime": "18",
+          "finalPhase": "1"
+        },
+        {
+          "line": 62,
+          "divider": 64,
+          "startPhase": 0,
+          "startTime": 0,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "e6904b7d4f345c88",
+          "finalMtime": "3",
+          "finalPhase": "0"
+        },
+        {
+          "line": 63,
+          "divider": 64,
+          "startPhase": 0,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "e6904b7d4f345c88",
+          "finalMtime": "3",
+          "finalPhase": "0"
+        },
+        {
+          "line": 64,
+          "divider": 64,
+          "startPhase": 0,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "e6904b7d4f345c88",
+          "finalMtime": "3",
+          "finalPhase": "0"
+        },
+        {
+          "line": 65,
+          "divider": 64,
+          "startPhase": 0,
+          "startTime": 18446744073709551614,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "5b9dc6657f23c88c",
+          "finalMtime": "1",
+          "finalPhase": "0"
+        },
+        {
+          "line": 66,
+          "divider": 64,
+          "startPhase": 0,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "5b9dc6657f23c88c",
+          "finalMtime": "1",
+          "finalPhase": "0"
+        },
+        {
+          "line": 67,
+          "divider": 64,
+          "startPhase": 0,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "5b9dc6657f23c88c",
+          "finalMtime": "1",
+          "finalPhase": "0"
+        },
+        {
+          "line": 68,
+          "divider": 64,
+          "startPhase": 63,
+          "startTime": 0,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "a87900f0e1b65c6d",
+          "finalMtime": "3",
+          "finalPhase": "63"
+        },
+        {
+          "line": 69,
+          "divider": 64,
+          "startPhase": 63,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "a87900f0e1b65c6d",
+          "finalMtime": "3",
+          "finalPhase": "63"
+        },
+        {
+          "line": 70,
+          "divider": 64,
+          "startPhase": 63,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "a87900f0e1b65c6d",
+          "finalMtime": "3",
+          "finalPhase": "63"
+        },
+        {
+          "line": 71,
+          "divider": 64,
+          "startPhase": 63,
+          "startTime": 18446744073709551614,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "760f2b9ee7306535",
+          "finalMtime": "1",
+          "finalPhase": "63"
+        },
+        {
+          "line": 72,
+          "divider": 64,
+          "startPhase": 63,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "760f2b9ee7306535",
+          "finalMtime": "1",
+          "finalPhase": "63"
+        },
+        {
+          "line": 73,
+          "divider": 64,
+          "startPhase": 63,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "760f2b9ee7306535",
+          "finalMtime": "1",
+          "finalPhase": "63"
+        },
+        {
+          "line": 74,
+          "divider": 1024,
+          "startPhase": 0,
+          "startTime": 0,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "5af8bd202230a9e5",
+          "finalMtime": "0",
+          "finalPhase": "192"
+        },
+        {
+          "line": 75,
+          "divider": 1024,
+          "startPhase": 0,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "5af8bd202230a9e5",
+          "finalMtime": "0",
+          "finalPhase": "192"
+        },
+        {
+          "line": 76,
+          "divider": 1024,
+          "startPhase": 0,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "5af8bd202230a9e5",
+          "finalMtime": "0",
+          "finalPhase": "192"
+        },
+        {
+          "line": 77,
+          "divider": 1024,
+          "startPhase": 0,
+          "startTime": 18446744073709551614,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "aa7970de4bccdfe5",
+          "finalMtime": "18446744073709551614",
+          "finalPhase": "192"
+        },
+        {
+          "line": 78,
+          "divider": 1024,
+          "startPhase": 0,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "aa7970de4bccdfe5",
+          "finalMtime": "18446744073709551614",
+          "finalPhase": "192"
+        },
+        {
+          "line": 79,
+          "divider": 1024,
+          "startPhase": 0,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "aa7970de4bccdfe5",
+          "finalMtime": "18446744073709551614",
+          "finalPhase": "192"
+        },
+        {
+          "line": 80,
+          "divider": 1024,
+          "startPhase": 1023,
+          "startTime": 0,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "fb0044eeb4205f76",
+          "finalMtime": "1",
+          "finalPhase": "191"
+        },
+        {
+          "line": 81,
+          "divider": 1024,
+          "startPhase": 1023,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "fb0044eeb4205f76",
+          "finalMtime": "1",
+          "finalPhase": "191"
+        },
+        {
+          "line": 82,
+          "divider": 1024,
+          "startPhase": 1023,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "fb0044eeb4205f76",
+          "finalMtime": "1",
+          "finalPhase": "191"
+        },
+        {
+          "line": 83,
+          "divider": 1024,
+          "startPhase": 1023,
+          "startTime": 18446744073709551614,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "c0294a3bbfa58ab6",
+          "finalMtime": "18446744073709551615",
+          "finalPhase": "191"
+        },
+        {
+          "line": 84,
+          "divider": 1024,
+          "startPhase": 1023,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "c0294a3bbfa58ab6",
+          "finalMtime": "18446744073709551615",
+          "finalPhase": "191"
+        },
+        {
+          "line": 85,
+          "divider": 1024,
+          "startPhase": 1023,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "c0294a3bbfa58ab6",
+          "finalMtime": "18446744073709551615",
+          "finalPhase": "191"
+        },
+        {
+          "line": 86,
+          "divider": 18446744073709551615,
+          "startPhase": 0,
+          "startTime": 0,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "5af8bd202230a9e5",
+          "finalMtime": "0",
+          "finalPhase": "192"
+        },
+        {
+          "line": 87,
+          "divider": 18446744073709551615,
+          "startPhase": 0,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "5af8bd202230a9e5",
+          "finalMtime": "0",
+          "finalPhase": "192"
+        },
+        {
+          "line": 88,
+          "divider": 18446744073709551615,
+          "startPhase": 0,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "5af8bd202230a9e5",
+          "finalMtime": "0",
+          "finalPhase": "192"
+        },
+        {
+          "line": 89,
+          "divider": 18446744073709551615,
+          "startPhase": 0,
+          "startTime": 18446744073709551614,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "aa7970de4bccdfe5",
+          "finalMtime": "18446744073709551614",
+          "finalPhase": "192"
+        },
+        {
+          "line": 90,
+          "divider": 18446744073709551615,
+          "startPhase": 0,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "aa7970de4bccdfe5",
+          "finalMtime": "18446744073709551614",
+          "finalPhase": "192"
+        },
+        {
+          "line": 91,
+          "divider": 18446744073709551615,
+          "startPhase": 0,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "aa7970de4bccdfe5",
+          "finalMtime": "18446744073709551614",
+          "finalPhase": "192"
+        },
+        {
+          "line": 92,
+          "divider": 18446744073709551615,
+          "startPhase": 18446744073709551614,
+          "startTime": 0,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "fb0044eeb4205f76",
+          "finalMtime": "1",
+          "finalPhase": "191"
+        },
+        {
+          "line": 93,
+          "divider": 18446744073709551615,
+          "startPhase": 18446744073709551614,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "fb0044eeb4205f76",
+          "finalMtime": "1",
+          "finalPhase": "191"
+        },
+        {
+          "line": 94,
+          "divider": 18446744073709551615,
+          "startPhase": 18446744073709551614,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "fb0044eeb4205f76",
+          "finalMtime": "1",
+          "finalPhase": "191"
+        },
+        {
+          "line": 95,
+          "divider": 18446744073709551615,
+          "startPhase": 18446744073709551614,
+          "startTime": 18446744073709551614,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "c0294a3bbfa58ab6",
+          "finalMtime": "18446744073709551615",
+          "finalPhase": "191"
+        },
+        {
+          "line": 96,
+          "divider": 18446744073709551615,
+          "startPhase": 18446744073709551614,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "c0294a3bbfa58ab6",
+          "finalMtime": "18446744073709551615",
+          "finalPhase": "191"
+        },
+        {
+          "line": 97,
+          "divider": 18446744073709551615,
+          "startPhase": 18446744073709551614,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "c0294a3bbfa58ab6",
+          "finalMtime": "18446744073709551615",
+          "finalPhase": "191"
+        }
+      ]
+    },
+    {
+      "log": "cold-clone-focused-gates.log",
+      "configurations": 72,
+      "rows": [
+        {
+          "line": 169,
+          "divider": 1,
+          "startPhase": 0,
+          "startTime": 0,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "30360956ab4dfce5",
+          "finalMtime": "192",
+          "finalPhase": "0"
+        },
+        {
+          "line": 170,
+          "divider": 1,
+          "startPhase": 0,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "30360956ab4dfce5",
+          "finalMtime": "192",
+          "finalPhase": "0"
+        },
+        {
+          "line": 171,
+          "divider": 1,
+          "startPhase": 0,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "30360956ab4dfce5",
+          "finalMtime": "192",
+          "finalPhase": "0"
+        },
+        {
+          "line": 172,
+          "divider": 1,
+          "startPhase": 0,
+          "startTime": 18446744073709551614,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "f41e948d9a68ab65",
+          "finalMtime": "190",
+          "finalPhase": "0"
+        },
+        {
+          "line": 173,
+          "divider": 1,
+          "startPhase": 0,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "f41e948d9a68ab65",
+          "finalMtime": "190",
+          "finalPhase": "0"
+        },
+        {
+          "line": 174,
+          "divider": 1,
+          "startPhase": 0,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "f41e948d9a68ab65",
+          "finalMtime": "190",
+          "finalPhase": "0"
+        },
+        {
+          "line": 175,
+          "divider": 1,
+          "startPhase": 0,
+          "startTime": 0,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "30360956ab4dfce5",
+          "finalMtime": "192",
+          "finalPhase": "0"
+        },
+        {
+          "line": 176,
+          "divider": 1,
+          "startPhase": 0,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "30360956ab4dfce5",
+          "finalMtime": "192",
+          "finalPhase": "0"
+        },
+        {
+          "line": 177,
+          "divider": 1,
+          "startPhase": 0,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "30360956ab4dfce5",
+          "finalMtime": "192",
+          "finalPhase": "0"
+        },
+        {
+          "line": 178,
+          "divider": 1,
+          "startPhase": 0,
+          "startTime": 18446744073709551614,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "f41e948d9a68ab65",
+          "finalMtime": "190",
+          "finalPhase": "0"
+        },
+        {
+          "line": 179,
+          "divider": 1,
+          "startPhase": 0,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "f41e948d9a68ab65",
+          "finalMtime": "190",
+          "finalPhase": "0"
+        },
+        {
+          "line": 180,
+          "divider": 1,
+          "startPhase": 0,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "f41e948d9a68ab65",
+          "finalMtime": "190",
+          "finalPhase": "0"
+        },
+        {
+          "line": 181,
+          "divider": 3,
+          "startPhase": 0,
+          "startTime": 0,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "d629ad8723d984e5",
+          "finalMtime": "64",
+          "finalPhase": "0"
+        },
+        {
+          "line": 182,
+          "divider": 3,
+          "startPhase": 0,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "d629ad8723d984e5",
+          "finalMtime": "64",
+          "finalPhase": "0"
+        },
+        {
+          "line": 183,
+          "divider": 3,
+          "startPhase": 0,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "d629ad8723d984e5",
+          "finalMtime": "64",
+          "finalPhase": "0"
+        },
+        {
+          "line": 184,
+          "divider": 3,
+          "startPhase": 0,
+          "startTime": 18446744073709551614,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "ede028c10ff37365",
+          "finalMtime": "62",
+          "finalPhase": "0"
+        },
+        {
+          "line": 185,
+          "divider": 3,
+          "startPhase": 0,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "ede028c10ff37365",
+          "finalMtime": "62",
+          "finalPhase": "0"
+        },
+        {
+          "line": 186,
+          "divider": 3,
+          "startPhase": 0,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "ede028c10ff37365",
+          "finalMtime": "62",
+          "finalPhase": "0"
+        },
+        {
+          "line": 187,
+          "divider": 3,
+          "startPhase": 2,
+          "startTime": 0,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "d629ad8723d984e5",
+          "finalMtime": "64",
+          "finalPhase": "2"
+        },
+        {
+          "line": 188,
+          "divider": 3,
+          "startPhase": 2,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "d629ad8723d984e5",
+          "finalMtime": "64",
+          "finalPhase": "2"
+        },
+        {
+          "line": 189,
+          "divider": 3,
+          "startPhase": 2,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "d629ad8723d984e5",
+          "finalMtime": "64",
+          "finalPhase": "2"
+        },
+        {
+          "line": 190,
+          "divider": 3,
+          "startPhase": 2,
+          "startTime": 18446744073709551614,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "ede028c10ff37365",
+          "finalMtime": "62",
+          "finalPhase": "2"
+        },
+        {
+          "line": 191,
+          "divider": 3,
+          "startPhase": 2,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "ede028c10ff37365",
+          "finalMtime": "62",
+          "finalPhase": "2"
+        },
+        {
+          "line": 192,
+          "divider": 3,
+          "startPhase": 2,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "ede028c10ff37365",
+          "finalMtime": "62",
+          "finalPhase": "2"
+        },
+        {
+          "line": 193,
+          "divider": 10,
+          "startPhase": 0,
+          "startTime": 0,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "6ac9193e7a059deb",
+          "finalMtime": "19",
+          "finalPhase": "2"
+        },
+        {
+          "line": 194,
+          "divider": 10,
+          "startPhase": 0,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "6ac9193e7a059deb",
+          "finalMtime": "19",
+          "finalPhase": "2"
+        },
+        {
+          "line": 195,
+          "divider": 10,
+          "startPhase": 0,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "6ac9193e7a059deb",
+          "finalMtime": "19",
+          "finalPhase": "2"
+        },
+        {
+          "line": 196,
+          "divider": 10,
+          "startPhase": 0,
+          "startTime": 18446744073709551614,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "5d7c6463cd3e2747",
+          "finalMtime": "17",
+          "finalPhase": "2"
+        },
+        {
+          "line": 197,
+          "divider": 10,
+          "startPhase": 0,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "5d7c6463cd3e2747",
+          "finalMtime": "17",
+          "finalPhase": "2"
+        },
+        {
+          "line": 198,
+          "divider": 10,
+          "startPhase": 0,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "5d7c6463cd3e2747",
+          "finalMtime": "17",
+          "finalPhase": "2"
+        },
+        {
+          "line": 199,
+          "divider": 10,
+          "startPhase": 9,
+          "startTime": 0,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "cd1dd37da4996ea2",
+          "finalMtime": "20",
+          "finalPhase": "1"
+        },
+        {
+          "line": 200,
+          "divider": 10,
+          "startPhase": 9,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "cd1dd37da4996ea2",
+          "finalMtime": "20",
+          "finalPhase": "1"
+        },
+        {
+          "line": 201,
+          "divider": 10,
+          "startPhase": 9,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "cd1dd37da4996ea2",
+          "finalMtime": "20",
+          "finalPhase": "1"
+        },
+        {
+          "line": 202,
+          "divider": 10,
+          "startPhase": 9,
+          "startTime": 18446744073709551614,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "66fb077867457da2",
+          "finalMtime": "18",
+          "finalPhase": "1"
+        },
+        {
+          "line": 203,
+          "divider": 10,
+          "startPhase": 9,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "66fb077867457da2",
+          "finalMtime": "18",
+          "finalPhase": "1"
+        },
+        {
+          "line": 204,
+          "divider": 10,
+          "startPhase": 9,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "66fb077867457da2",
+          "finalMtime": "18",
+          "finalPhase": "1"
+        },
+        {
+          "line": 205,
+          "divider": 64,
+          "startPhase": 0,
+          "startTime": 0,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "e6904b7d4f345c88",
+          "finalMtime": "3",
+          "finalPhase": "0"
+        },
+        {
+          "line": 206,
+          "divider": 64,
+          "startPhase": 0,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "e6904b7d4f345c88",
+          "finalMtime": "3",
+          "finalPhase": "0"
+        },
+        {
+          "line": 207,
+          "divider": 64,
+          "startPhase": 0,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "e6904b7d4f345c88",
+          "finalMtime": "3",
+          "finalPhase": "0"
+        },
+        {
+          "line": 208,
+          "divider": 64,
+          "startPhase": 0,
+          "startTime": 18446744073709551614,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "5b9dc6657f23c88c",
+          "finalMtime": "1",
+          "finalPhase": "0"
+        },
+        {
+          "line": 209,
+          "divider": 64,
+          "startPhase": 0,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "5b9dc6657f23c88c",
+          "finalMtime": "1",
+          "finalPhase": "0"
+        },
+        {
+          "line": 210,
+          "divider": 64,
+          "startPhase": 0,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "5b9dc6657f23c88c",
+          "finalMtime": "1",
+          "finalPhase": "0"
+        },
+        {
+          "line": 211,
+          "divider": 64,
+          "startPhase": 63,
+          "startTime": 0,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "a87900f0e1b65c6d",
+          "finalMtime": "3",
+          "finalPhase": "63"
+        },
+        {
+          "line": 212,
+          "divider": 64,
+          "startPhase": 63,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "a87900f0e1b65c6d",
+          "finalMtime": "3",
+          "finalPhase": "63"
+        },
+        {
+          "line": 213,
+          "divider": 64,
+          "startPhase": 63,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "a87900f0e1b65c6d",
+          "finalMtime": "3",
+          "finalPhase": "63"
+        },
+        {
+          "line": 214,
+          "divider": 64,
+          "startPhase": 63,
+          "startTime": 18446744073709551614,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "760f2b9ee7306535",
+          "finalMtime": "1",
+          "finalPhase": "63"
+        },
+        {
+          "line": 215,
+          "divider": 64,
+          "startPhase": 63,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "760f2b9ee7306535",
+          "finalMtime": "1",
+          "finalPhase": "63"
+        },
+        {
+          "line": 216,
+          "divider": 64,
+          "startPhase": 63,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "760f2b9ee7306535",
+          "finalMtime": "1",
+          "finalPhase": "63"
+        },
+        {
+          "line": 217,
+          "divider": 1024,
+          "startPhase": 0,
+          "startTime": 0,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "5af8bd202230a9e5",
+          "finalMtime": "0",
+          "finalPhase": "192"
+        },
+        {
+          "line": 218,
+          "divider": 1024,
+          "startPhase": 0,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "5af8bd202230a9e5",
+          "finalMtime": "0",
+          "finalPhase": "192"
+        },
+        {
+          "line": 219,
+          "divider": 1024,
+          "startPhase": 0,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "5af8bd202230a9e5",
+          "finalMtime": "0",
+          "finalPhase": "192"
+        },
+        {
+          "line": 220,
+          "divider": 1024,
+          "startPhase": 0,
+          "startTime": 18446744073709551614,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "aa7970de4bccdfe5",
+          "finalMtime": "18446744073709551614",
+          "finalPhase": "192"
+        },
+        {
+          "line": 221,
+          "divider": 1024,
+          "startPhase": 0,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "aa7970de4bccdfe5",
+          "finalMtime": "18446744073709551614",
+          "finalPhase": "192"
+        },
+        {
+          "line": 222,
+          "divider": 1024,
+          "startPhase": 0,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "aa7970de4bccdfe5",
+          "finalMtime": "18446744073709551614",
+          "finalPhase": "192"
+        },
+        {
+          "line": 223,
+          "divider": 1024,
+          "startPhase": 1023,
+          "startTime": 0,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "fb0044eeb4205f76",
+          "finalMtime": "1",
+          "finalPhase": "191"
+        },
+        {
+          "line": 224,
+          "divider": 1024,
+          "startPhase": 1023,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "fb0044eeb4205f76",
+          "finalMtime": "1",
+          "finalPhase": "191"
+        },
+        {
+          "line": 225,
+          "divider": 1024,
+          "startPhase": 1023,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "fb0044eeb4205f76",
+          "finalMtime": "1",
+          "finalPhase": "191"
+        },
+        {
+          "line": 226,
+          "divider": 1024,
+          "startPhase": 1023,
+          "startTime": 18446744073709551614,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "c0294a3bbfa58ab6",
+          "finalMtime": "18446744073709551615",
+          "finalPhase": "191"
+        },
+        {
+          "line": 227,
+          "divider": 1024,
+          "startPhase": 1023,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "c0294a3bbfa58ab6",
+          "finalMtime": "18446744073709551615",
+          "finalPhase": "191"
+        },
+        {
+          "line": 228,
+          "divider": 1024,
+          "startPhase": 1023,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "c0294a3bbfa58ab6",
+          "finalMtime": "18446744073709551615",
+          "finalPhase": "191"
+        },
+        {
+          "line": 229,
+          "divider": 18446744073709551615,
+          "startPhase": 0,
+          "startTime": 0,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "5af8bd202230a9e5",
+          "finalMtime": "0",
+          "finalPhase": "192"
+        },
+        {
+          "line": 230,
+          "divider": 18446744073709551615,
+          "startPhase": 0,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "5af8bd202230a9e5",
+          "finalMtime": "0",
+          "finalPhase": "192"
+        },
+        {
+          "line": 231,
+          "divider": 18446744073709551615,
+          "startPhase": 0,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "5af8bd202230a9e5",
+          "finalMtime": "0",
+          "finalPhase": "192"
+        },
+        {
+          "line": 232,
+          "divider": 18446744073709551615,
+          "startPhase": 0,
+          "startTime": 18446744073709551614,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "aa7970de4bccdfe5",
+          "finalMtime": "18446744073709551614",
+          "finalPhase": "192"
+        },
+        {
+          "line": 233,
+          "divider": 18446744073709551615,
+          "startPhase": 0,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "aa7970de4bccdfe5",
+          "finalMtime": "18446744073709551614",
+          "finalPhase": "192"
+        },
+        {
+          "line": 234,
+          "divider": 18446744073709551615,
+          "startPhase": 0,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "aa7970de4bccdfe5",
+          "finalMtime": "18446744073709551614",
+          "finalPhase": "192"
+        },
+        {
+          "line": 235,
+          "divider": 18446744073709551615,
+          "startPhase": 18446744073709551614,
+          "startTime": 0,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "fb0044eeb4205f76",
+          "finalMtime": "1",
+          "finalPhase": "191"
+        },
+        {
+          "line": 236,
+          "divider": 18446744073709551615,
+          "startPhase": 18446744073709551614,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "fb0044eeb4205f76",
+          "finalMtime": "1",
+          "finalPhase": "191"
+        },
+        {
+          "line": 237,
+          "divider": 18446744073709551615,
+          "startPhase": 18446744073709551614,
+          "startTime": 0,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "fb0044eeb4205f76",
+          "finalMtime": "1",
+          "finalPhase": "191"
+        },
+        {
+          "line": 238,
+          "divider": 18446744073709551615,
+          "startPhase": 18446744073709551614,
+          "startTime": 18446744073709551614,
+          "cached": "false",
+          "batched": "false",
+          "traceHash": "c0294a3bbfa58ab6",
+          "finalMtime": "18446744073709551615",
+          "finalPhase": "191"
+        },
+        {
+          "line": 239,
+          "divider": 18446744073709551615,
+          "startPhase": 18446744073709551614,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "false",
+          "traceHash": "c0294a3bbfa58ab6",
+          "finalMtime": "18446744073709551615",
+          "finalPhase": "191"
+        },
+        {
+          "line": 240,
+          "divider": 18446744073709551615,
+          "startPhase": 18446744073709551614,
+          "startTime": 18446744073709551614,
+          "cached": "true",
+          "batched": "true",
+          "traceHash": "c0294a3bbfa58ab6",
+          "finalMtime": "18446744073709551615",
+          "finalPhase": "191"
+        }
+      ]
+    }
+  ],
+  "coldCloneCarriedForward": {
+    "head": "37a269d490543b3c2970de600d60f7f055c6acac",
+    "clone": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-clock-final-cold-a4wc8eet/repo",
+    "scrubbedKeys": [
+      "RUST_LOG"
+    ],
+    "command": [
+      "make",
+      "verify-E5.5-T03bd"
+    ],
+    "exitCode": 0
+  },
+  "demo": {
+    "metrics": {
+      "metric-pass": "127",
+      "metric-fail": "0",
+      "metric-done": "127"
+    },
+    "errors": [],
+    "httpErrors": [],
+    "screenshotSha256": "6765ab538ed0241123fb249806ad25f6e5964c9661d994b2a3a547702060aede"
+  },
+  "freshNativeBinaryDigestsChecked": {
+    "baseline": "81c0607c5231ce27ad81a3733426468c8400677c123f350fb0d85789eb0566b6",
+    "candidate": "d2a9aaa1998d74c079676aba5501d847e1cda69c3c7db29adf60d2e52c689bdb"
+  }
+}

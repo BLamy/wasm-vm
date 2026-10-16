@@ -1,0 +1,52 @@
+{
+  "schema": "desktop-control-critic-assessment-v1",
+  "verdict": "verified",
+  "predictions": {
+    "P1": "HELD",
+    "P2": "HELD",
+    "P3": "HELD",
+    "P4": "HELD",
+    "P5": "HELD",
+    "P6": "HELD",
+    "P7": "HELD",
+    "P8": "HELD"
+  },
+  "findings": [],
+  "needsEvidence": [],
+  "deadRuntimeHunks": [],
+  "sourceBoundary": "selected native captured-resource transport only",
+  "evidence": {
+    "authentication": "authentication.json",
+    "originalState": "recording-audit.json",
+    "coverage": "coverage-audit.json",
+    "coverageReplay": "coverage-provenance.json",
+    "novelOwnership": "novel-audit.json",
+    "fault": "fault-audit.json",
+    "fresh": "fresh/receipt.json",
+    "promoted": "promoted/receipt.json",
+    "promotedEquality": "promoted/equality.json"
+  },
+  "suite": {
+    "promoted": "crates/core/tests/virtio_gpu_control3d/desktop_critic.rs",
+    "promotedControls": 255,
+    "scheduleSeeds": [
+      12743,
+      47405,
+      58723
+    ],
+    "oracleMutationCaught": true,
+    "discard": "Expanded field/budget probe remains verifier evidence; existing permanent metadata/budget/short-response tests cover the same class. Bounded fresh ownership schedules are promoted."
+  },
+  "cold": "authenticated final exact-runtime/harness-head cold proof once; no portability failure, no repeated clone",
+  "heldD50": "303 source pins and1007 complete bodies authenticated; unchanged physical GL/retained storage/compiler authority carried",
+  "remainingParentAcceptance": [
+    "complete GLES/format17",
+    "actual guest Mesa/Hyprland",
+    "typed capsets and selected host wiring",
+    "worker/submission/transfer/scanout",
+    "production browser enablement",
+    "300MIPS"
+  ],
+  "guestExecution": false,
+  "productionAuthority": false
+}

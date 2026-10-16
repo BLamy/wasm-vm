@@ -1,0 +1,17 @@
+{
+  "productionChanges": false,
+  "corrections": [
+    {
+      "when": "Before novel first execution",
+      "detail": "The shared drawPacket convenience computes count from topology. Promoted u32 count countercase now writes the literal count field directly instead of passing an ignored convenience option."
+    },
+    {
+      "when": "Independent recording audit initial attempt",
+      "detail": "Corrected critic enum transcription: WebGL TIMEOUT_EXPIRED=37147 and ALREADY_SIGNALED=37146. Full pixels/native fetch audits had already held; no product assertion changed."
+    },
+    {
+      "when": "Initial promoted sabotage; normal novel gate passed",
+      "detail": "Exact calibration R32 backing had84 bytes, so native divisor2=>1 attempted byte132 and GL correctly rejected1282 before a physical frame. This is not accepted as pixel-oracle sabotage. Only calibration now pads original data to132 bytes, predicts the same wire fetch end84 before execution, and preserves exact novel68-byte cases."
+    }
+  ]
+}

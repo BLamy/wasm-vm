@@ -1,0 +1,80 @@
+[
+  {
+    "mode": "native-signedness",
+    "reportSha256": "de3353da763a4ddc861c202b9e31cdbe795c450a9520188e9cb67507a4262371",
+    "pixelSha256": "a0dddcaf2074a662663b50f1964ee344a0b11973b48acbf6e7ee5d259d9b8605",
+    "nativeDraws": 1,
+    "gpuComplete": true,
+    "maxPixelError": 199,
+    "prediction": {
+      "x": 10,
+      "y": 3,
+      "expected": [
+        25,
+        65,
+        175,
+        100
+      ],
+      "observed": [
+        25,
+        190,
+        80,
+        155
+      ],
+      "error": 125
+    },
+    "error": "critic-high16-sabotage-native-signedness critic original TGSI pixels: expected [], observed [{\"x\":10,\"y\":3,\"expected\":[25,65,175,100],\"observed\":[25,190,80,155],\"error\":125},{\"x\":11,\"y\":3,\"expected\":[25,65,175,100],\"observed\":[25,190,80,155],\"error\":125},{\"x\":12,\"y\":3,\"expected\":[25,65,175,100],\"observed\":[25,190,80,155],\"error\":125},{\"x\":13,\"y\":3,\"expected\":[25,65,175,100],\"observed\":[25,190,80,155],\"error\":125},{\"x\":26,\"y\":3,\"expected\":[25,65,175,100],\"observed\":[25,190,80,155],\"error\":125},{\"x\":27,\"y\":3,\"expected\":[25,65,175,100],\"observed\":[25,190,80,155],\"error\":125},{\"x\":28,\"y\":3,\"expected\":[25,65,175,100],\"observed\":[25,190,80,155],\"error\":125},{\"x\":29,\"y\":3,\"expected\":[25,65,175,100],\"observed\":[25,190,80,155],\"error\":125}]"
+  },
+  {
+    "mode": "constant-word",
+    "reportSha256": "56015d994587ab1568cea9d0cef761757377c290ec06f66052edd46aa479b377",
+    "pixelSha256": "f3ff977faf3f389f9b9235e4ff649ef5d8f254cfbe1664be21d77e4d28c2c76b",
+    "nativeDraws": 1,
+    "gpuComplete": true,
+    "maxPixelError": 1,
+    "prediction": {
+      "x": 1,
+      "y": 2,
+      "expected": [
+        9,
+        207,
+        21,
+        62
+      ],
+      "observed": [
+        8,
+        207,
+        21,
+        62
+      ],
+      "error": 1
+    },
+    "error": "critic-high16-sabotage-constant-word critic original TGSI pixels: expected [], observed [{\"x\":1,\"y\":2,\"expected\":[9,207,21,62],\"observed\":[8,207,21,62],\"error\":1},{\"x\":2,\"y\":2,\"expected\":[9,207,21,62],\"observed\":[8,207,21,62],\"error\":1},{\"x\":3,\"y\":2,\"expected\":[9,207,21,62],\"observed\":[8,207,21,62],\"error\":1},{\"x\":4,\"y\":2,\"expected\":[9,207,21,62],\"observed\":[8,207,21,62],\"error\":1},{\"x\":17,\"y\":2,\"expected\":[9,207,21,62],\"observed\":[8,207,21,62],\"error\":1},{\"x\":18,\"y\":2,\"expected\":[9,207,21,62],\"observed\":[8,207,21,62],\"error\":1},{\"x\":19,\"y\":2,\"expected\":[9,207,21,62],\"observed\":[8,207,21,62],\"error\":1},{\"x\":20,\"y\":2,\"expected\":[9,207,21,62],\"observed\":[8,207,21,62],\"error\":1}]"
+  },
+  {
+    "mode": "shader-conversion",
+    "reportSha256": "93b619b80a7057b7dad892a250ac80a82c78f2c140e8b0d5282cbce066b431c9",
+    "pixelSha256": "96c2f7481babed9fe7d9f0a1c0b96e875cffb50d825efe1d3e1185d6020f51ce",
+    "nativeDraws": 1,
+    "gpuComplete": true,
+    "maxPixelError": 213,
+    "prediction": {
+      "x": 1,
+      "y": 2,
+      "expected": [
+        9,
+        207,
+        21,
+        62
+      ],
+      "observed": [
+        137,
+        48,
+        234,
+        2
+      ],
+      "error": 213
+    },
+    "error": "critic-high16-sabotage-shader-conversion critic original TGSI pixels: expected [], observed [{\"x\":1,\"y\":2,\"expected\":[9,207,21,62],\"observed\":[137,48,234,2],\"error\":213},{\"x\":2,\"y\":2,\"expected\":[9,207,21,62],\"observed\":[137,48,234,2],\"error\":213},{\"x\":3,\"y\":2,\"expected\":[9,207,21,62],\"observed\":[137,48,234,2],\"error\":213},{\"x\":4,\"y\":2,\"expected\":[9,207,21,62],\"observed\":[137,48,234,2],\"error\":213},{\"x\":17,\"y\":2,\"expected\":[9,207,21,62],\"observed\":[137,48,234,2],\"error\":213},{\"x\":18,\"y\":2,\"expected\":[9,207,21,62],\"observed\":[137,48,234,2],\"error\":213},{\"x\":19,\"y\":2,\"expected\":[9,207,21,62],\"observed\":[137,48,234,2],\"error\":213},{\"x\":20,\"y\":2,\"expected\":[9,207,21,62],\"observed\":[137,48,234,2],\"error\":213}]"
+  }
+]

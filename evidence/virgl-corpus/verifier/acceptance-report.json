@@ -1,0 +1,16 @@
+{
+  "head": "5b211b216d8a16464ca5aa1d213ecd2bd6a0f93d",
+  "command": [
+    "make",
+    "verify-E6-T10b"
+  ],
+  "exitCode": 0,
+  "scrubbed": [
+    "RUSTFLAGS",
+    "RUST_LOG",
+    "CARGO_*",
+    "PYTHONPATH",
+    "PYTHONHOME"
+  ],
+  "logSha256": "0c07b7023237960369d8f0286dfaa974aa1e21638968831fe619855677475f56"
+}

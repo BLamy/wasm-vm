@@ -1,0 +1,3599 @@
+{
+  "schema": "original-integer-image-consumer-gap-v1",
+  "task": "E6-T11d33",
+  "gitHead": "c64c3325c15d8978f455d57fc103559eec1b9d20",
+  "verifiedDependency": "E6-T11d32",
+  "authority": "actual-compiler-and-original-wire-refusal-only",
+  "nativeExecuted": false,
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "productionDrawAuthority": false,
+  "seals": [
+    {
+      "path": "evidence/virgl-integer-image-shader/worker/manifest.json",
+      "bytes": 840,
+      "sha256": "43f667bc6a3f300e08ed945e507afc3b31ae1eab06208019f2676309e56968f1"
+    },
+    {
+      "path": "evidence/virgl-integer-image-shader/worker/records.json",
+      "bytes": 3834118,
+      "sha256": "7d670a9b824d7fc96f02c307b5e98d505658af4876430e80e77ac61b41e3f8dd"
+    },
+    {
+      "path": "evidence/virgl-integer-image-shader/worker/recording.tar.gz",
+      "bytes": 13237825,
+      "sha256": "6489b7d7b97effba826b3f8555efc192b9dcfae59ca8a232142cea6355f68be0"
+    },
+    {
+      "path": "evidence/virgl-integer-image-shader/verifier/manifest.json",
+      "bytes": 1967,
+      "sha256": "13ae15bb1c1c83c83227661bd6c53eaefcd65abf96dbf4664b9d14e510906a4c"
+    },
+    {
+      "path": "evidence/virgl-integer-image-shader/verifier/records.json",
+      "bytes": 3137821,
+      "sha256": "0ed286ce446acf0c406cd1d578254778ea47e00e9430f1d5f6ccab1494e8de5d"
+    },
+    {
+      "path": "evidence/virgl-integer-image-shader/verifier/recording.tar.gz",
+      "bytes": 12031151,
+      "sha256": "1fbd03f22c08eeb555df4645fa1d4ba67d5093e8cd1fb8309854676cc8bd5bf8"
+    }
+  ],
+  "reopened": [
+    {
+      "role": "worker",
+      "reopenedMembers": 22894
+    },
+    {
+      "role": "verifier",
+      "reopenedMembers": 17249
+    }
+  ],
+  "sources": [
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "bytes": 84631,
+      "sha256": "33c5453db8d16988cb5ee1a51d5197eb7cc72615d9ac2464cb84bca1218258f2"
+    },
+    {
+      "path": "renderer/virgl-command/decoder.mjs",
+      "bytes": 38551,
+      "sha256": "66187e1a9ae7b4e4de76275d060758111d6bf0b7b7477125638d5aa68b219d6c"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "bytes": 148617,
+      "sha256": "f77796c9128b7d8f46a2edc8f20eae24a2d8086e72c217d22397e8f3acda18fa"
+    },
+    {
+      "path": "renderer/virgl-command/resources.mjs",
+      "bytes": 100590,
+      "sha256": "b9b7645b12ad66a1ab6a05df6f8707be827e7422025462f8f738730459712e02"
+    },
+    {
+      "path": "renderer/virgl-command/integer-images.mjs",
+      "bytes": 1557,
+      "sha256": "8871226b60ad86ee1f585f8de6e5891241a361ad84aa811a36028fd003d95029"
+    },
+    {
+      "path": "renderer/virgl-shader/standard.mjs",
+      "bytes": 12344,
+      "sha256": "3c02d62f4f533c4348f7efd313ae3810449b2b0d2845a615c4f2be6dd0a9b448"
+    },
+    {
+      "path": "renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "bytes": 12294,
+      "sha256": "6bb07a0b2a056d21ae52b22d7700ce10577854c1cdcf0877dd80be938e30e0fa"
+    },
+    {
+      "path": "renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "bytes": 438512,
+      "sha256": "acbe036afcdc4f1d8aa8cfb0fb107f48ba27759a6af4a7b9d6c83e3aa679d6cc"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/virgl_hw.h",
+      "bytes": 36318,
+      "sha256": "191ca5cea527949a29e9753b1e31d550f2fed922895d78dabc5c5c3585aa2ff7"
+    },
+    {
+      "path": "tools/virgl-command/standard-image-fixtures.mjs",
+      "bytes": 3809,
+      "sha256": "1c045bdf667fc18be16644a05dfeeb5ef7e88b4eb7eaf3f3572f20fa98954d48"
+    }
+  ],
+  "shaderRows": [
+    {
+      "stage": "vertex",
+      "type": "UINT",
+      "op": "TEX",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, UINT\n0: TEX OUT[1], CONST[0], SAMP[0], 2D\n1: MOV OUT[0], IN[0]\n2: END\n",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      },
+      "colors": {
+        "signedColorMask": 0,
+        "unsignedColorMask": 0
+      },
+      "selectedResult": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nsmooth out vec4 vso_g0;\nuniform uvec4 vsconst0[3];\nuniform highp usampler2D vssamp0;\nlayout(std140) uniform VirglBlock {\nvec4 clipp[8];\nuint stipple_pattern[32];\nfloat winsys_adjust_y;\nfloat alpha_ref_val;\nbool clip_plane_enabled;\nint drawid_base;\n};\nuniform vec2 wv_point_size;\nvoid main() {\nbool flow_condition;\nuvec4 o0;\nuvec4 o1;\n{\nuvec4 a = (vsconst0[0]).xyzw;\nuvec4 r = uvec4(texture(vssamp0, uintBitsToFloat(a).xy));\no1.xyzw = r.xyzw;\n}\n{\nuvec4 a = (floatBitsToUint(in_0)).xyzw;\nuvec4 r = a;\no0.xyzw = r.xyzw;\n}\ngl_Position = uintBitsToFloat(o0);\nvso_g0 = uintBitsToFloat(o1);\ngl_Position.y *= winsys_adjust_y;\ngl_PointSize = wv_point_size.y > 0.5 ? 1.0 : wv_point_size.x;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-standard-integer-image-gles3-v1",
+          "stage": "vertex",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "gl_Position",
+              "type": "vec4",
+              "semantic": "POSITION",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "syntacticWriteMask": 15
+            },
+            {
+              "index": 1,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "syntacticWriteMask": 15,
+              "interpolation": "smooth"
+            }
+          ],
+          "attributes": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "systemValues": [],
+          "uniforms": [
+            {
+              "name": "vsconst0",
+              "type": "uvec4[]",
+              "count": 3,
+              "encoding": "raw-32bit-words"
+            }
+          ],
+          "samplers": [
+            {
+              "index": 0,
+              "name": "vssamp0",
+              "type": "usampler2D"
+            }
+          ],
+          "uniformBlocks": [
+            {
+              "name": "VirglBlock",
+              "byteLength": 656,
+              "members": [
+                {
+                  "name": "winsys_adjust_y",
+                  "offset": 640,
+                  "type": "float",
+                  "default": 1
+                }
+              ]
+            }
+          ],
+          "rasterUniforms": [
+            {
+              "name": "wv_point_size",
+              "type": "vec2",
+              "semantic": "POINT_SIZE"
+            }
+          ],
+          "guestUniformBlocks": [],
+          "textureQueries": [],
+          "colorOutputMasks": {
+            "signedMask": 0,
+            "unsignedMask": 0
+          },
+          "broadcastColor0": false,
+          "standardSemantics": {
+            "kind": "native-gles3-highp-v1",
+            "precision": "native-highp",
+            "undefinedDomains": "native-gles3",
+            "preciseQualifier": "no-gpu-shader5",
+            "registerStorage": "uvec4",
+            "flatVaryingStorage": "uvec4",
+            "scalarResults": "tgsi-x-replicated",
+            "exactAuthority": false,
+            "gpuExecutionBound": false
+          }
+        }
+      },
+      "oldMetadata": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      },
+      "oldResult": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      }
+    },
+    {
+      "stage": "vertex",
+      "type": "UINT",
+      "op": "TXL",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, UINT\n0: TXL OUT[1], CONST[0], SAMP[0], 2D\n1: MOV OUT[0], IN[0]\n2: END\n",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      },
+      "colors": {
+        "signedColorMask": 0,
+        "unsignedColorMask": 0
+      },
+      "selectedResult": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nsmooth out vec4 vso_g0;\nuniform uvec4 vsconst0[3];\nuniform highp usampler2D vssamp0;\nlayout(std140) uniform VirglBlock {\nvec4 clipp[8];\nuint stipple_pattern[32];\nfloat winsys_adjust_y;\nfloat alpha_ref_val;\nbool clip_plane_enabled;\nint drawid_base;\n};\nuniform vec2 wv_point_size;\nvoid main() {\nbool flow_condition;\nuvec4 o0;\nuvec4 o1;\n{\nuvec4 a = (vsconst0[0]).xyzw;\nuvec4 r = uvec4(textureLod(vssamp0, uintBitsToFloat(a).xy, uintBitsToFloat(a).w));\no1.xyzw = r.xyzw;\n}\n{\nuvec4 a = (floatBitsToUint(in_0)).xyzw;\nuvec4 r = a;\no0.xyzw = r.xyzw;\n}\ngl_Position = uintBitsToFloat(o0);\nvso_g0 = uintBitsToFloat(o1);\ngl_Position.y *= winsys_adjust_y;\ngl_PointSize = wv_point_size.y > 0.5 ? 1.0 : wv_point_size.x;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-standard-integer-image-gles3-v1",
+          "stage": "vertex",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "gl_Position",
+              "type": "vec4",
+              "semantic": "POSITION",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "syntacticWriteMask": 15
+            },
+            {
+              "index": 1,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "syntacticWriteMask": 15,
+              "interpolation": "smooth"
+            }
+          ],
+          "attributes": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "systemValues": [],
+          "uniforms": [
+            {
+              "name": "vsconst0",
+              "type": "uvec4[]",
+              "count": 3,
+              "encoding": "raw-32bit-words"
+            }
+          ],
+          "samplers": [
+            {
+              "index": 0,
+              "name": "vssamp0",
+              "type": "usampler2D"
+            }
+          ],
+          "uniformBlocks": [
+            {
+              "name": "VirglBlock",
+              "byteLength": 656,
+              "members": [
+                {
+                  "name": "winsys_adjust_y",
+                  "offset": 640,
+                  "type": "float",
+                  "default": 1
+                }
+              ]
+            }
+          ],
+          "rasterUniforms": [
+            {
+              "name": "wv_point_size",
+              "type": "vec2",
+              "semantic": "POINT_SIZE"
+            }
+          ],
+          "guestUniformBlocks": [],
+          "textureQueries": [],
+          "colorOutputMasks": {
+            "signedMask": 0,
+            "unsignedMask": 0
+          },
+          "broadcastColor0": false,
+          "standardSemantics": {
+            "kind": "native-gles3-highp-v1",
+            "precision": "native-highp",
+            "undefinedDomains": "native-gles3",
+            "preciseQualifier": "no-gpu-shader5",
+            "registerStorage": "uvec4",
+            "flatVaryingStorage": "uvec4",
+            "scalarResults": "tgsi-x-replicated",
+            "exactAuthority": false,
+            "gpuExecutionBound": false
+          }
+        }
+      },
+      "oldMetadata": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      },
+      "oldResult": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      }
+    },
+    {
+      "stage": "vertex",
+      "type": "UINT",
+      "op": "TXF",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, UINT\n0: TXF OUT[1], CONST[0], SAMP[0], 2D\n1: MOV OUT[0], IN[0]\n2: END\n",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      },
+      "colors": {
+        "signedColorMask": 0,
+        "unsignedColorMask": 0
+      },
+      "selectedResult": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nsmooth out vec4 vso_g0;\nuniform uvec4 vsconst0[3];\nuniform highp usampler2D vssamp0;\nlayout(std140) uniform VirglBlock {\nvec4 clipp[8];\nuint stipple_pattern[32];\nfloat winsys_adjust_y;\nfloat alpha_ref_val;\nbool clip_plane_enabled;\nint drawid_base;\n};\nuniform vec2 wv_point_size;\nvoid main() {\nbool flow_condition;\nuvec4 o0;\nuvec4 o1;\n{\nuvec4 a = (vsconst0[0]).xyzw;\nuvec4 r = uvec4(texelFetch(vssamp0, ivec2(a.xy), int(a.w)));\no1.xyzw = r.xyzw;\n}\n{\nuvec4 a = (floatBitsToUint(in_0)).xyzw;\nuvec4 r = a;\no0.xyzw = r.xyzw;\n}\ngl_Position = uintBitsToFloat(o0);\nvso_g0 = uintBitsToFloat(o1);\ngl_Position.y *= winsys_adjust_y;\ngl_PointSize = wv_point_size.y > 0.5 ? 1.0 : wv_point_size.x;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-standard-integer-image-gles3-v1",
+          "stage": "vertex",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "gl_Position",
+              "type": "vec4",
+              "semantic": "POSITION",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "syntacticWriteMask": 15
+            },
+            {
+              "index": 1,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "syntacticWriteMask": 15,
+              "interpolation": "smooth"
+            }
+          ],
+          "attributes": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "systemValues": [],
+          "uniforms": [
+            {
+              "name": "vsconst0",
+              "type": "uvec4[]",
+              "count": 3,
+              "encoding": "raw-32bit-words"
+            }
+          ],
+          "samplers": [
+            {
+              "index": 0,
+              "name": "vssamp0",
+              "type": "usampler2D"
+            }
+          ],
+          "uniformBlocks": [
+            {
+              "name": "VirglBlock",
+              "byteLength": 656,
+              "members": [
+                {
+                  "name": "winsys_adjust_y",
+                  "offset": 640,
+                  "type": "float",
+                  "default": 1
+                }
+              ]
+            }
+          ],
+          "rasterUniforms": [
+            {
+              "name": "wv_point_size",
+              "type": "vec2",
+              "semantic": "POINT_SIZE"
+            }
+          ],
+          "guestUniformBlocks": [],
+          "textureQueries": [],
+          "colorOutputMasks": {
+            "signedMask": 0,
+            "unsignedMask": 0
+          },
+          "broadcastColor0": false,
+          "standardSemantics": {
+            "kind": "native-gles3-highp-v1",
+            "precision": "native-highp",
+            "undefinedDomains": "native-gles3",
+            "preciseQualifier": "no-gpu-shader5",
+            "registerStorage": "uvec4",
+            "flatVaryingStorage": "uvec4",
+            "scalarResults": "tgsi-x-replicated",
+            "exactAuthority": false,
+            "gpuExecutionBound": false
+          }
+        }
+      },
+      "oldMetadata": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      },
+      "oldResult": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      }
+    },
+    {
+      "stage": "vertex",
+      "type": "UINT",
+      "op": "TXD",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, UINT\n0: TXD OUT[1], CONST[0], CONST[1], CONST[2], SAMP[0], 2D\n1: MOV OUT[0], IN[0]\n2: END\n",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      },
+      "colors": {
+        "signedColorMask": 0,
+        "unsignedColorMask": 0
+      },
+      "selectedResult": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nsmooth out vec4 vso_g0;\nuniform uvec4 vsconst0[3];\nuniform highp usampler2D vssamp0;\nlayout(std140) uniform VirglBlock {\nvec4 clipp[8];\nuint stipple_pattern[32];\nfloat winsys_adjust_y;\nfloat alpha_ref_val;\nbool clip_plane_enabled;\nint drawid_base;\n};\nuniform vec2 wv_point_size;\nvoid main() {\nbool flow_condition;\nuvec4 o0;\nuvec4 o1;\n{\nuvec4 a = (vsconst0[0]).xyzw;\nuvec4 b = (vsconst0[1]).xyzw;\nuvec4 c = (vsconst0[2]).xyzw;\nuvec4 r = uvec4(textureGrad(vssamp0, uintBitsToFloat(a).xy, uintBitsToFloat(b).xy, uintBitsToFloat(c).xy));\no1.xyzw = r.xyzw;\n}\n{\nuvec4 a = (floatBitsToUint(in_0)).xyzw;\nuvec4 r = a;\no0.xyzw = r.xyzw;\n}\ngl_Position = uintBitsToFloat(o0);\nvso_g0 = uintBitsToFloat(o1);\ngl_Position.y *= winsys_adjust_y;\ngl_PointSize = wv_point_size.y > 0.5 ? 1.0 : wv_point_size.x;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-standard-integer-image-gles3-v1",
+          "stage": "vertex",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "gl_Position",
+              "type": "vec4",
+              "semantic": "POSITION",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "syntacticWriteMask": 15
+            },
+            {
+              "index": 1,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "syntacticWriteMask": 15,
+              "interpolation": "smooth"
+            }
+          ],
+          "attributes": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "systemValues": [],
+          "uniforms": [
+            {
+              "name": "vsconst0",
+              "type": "uvec4[]",
+              "count": 3,
+              "encoding": "raw-32bit-words"
+            }
+          ],
+          "samplers": [
+            {
+              "index": 0,
+              "name": "vssamp0",
+              "type": "usampler2D"
+            }
+          ],
+          "uniformBlocks": [
+            {
+              "name": "VirglBlock",
+              "byteLength": 656,
+              "members": [
+                {
+                  "name": "winsys_adjust_y",
+                  "offset": 640,
+                  "type": "float",
+                  "default": 1
+                }
+              ]
+            }
+          ],
+          "rasterUniforms": [
+            {
+              "name": "wv_point_size",
+              "type": "vec2",
+              "semantic": "POINT_SIZE"
+            }
+          ],
+          "guestUniformBlocks": [],
+          "textureQueries": [],
+          "colorOutputMasks": {
+            "signedMask": 0,
+            "unsignedMask": 0
+          },
+          "broadcastColor0": false,
+          "standardSemantics": {
+            "kind": "native-gles3-highp-v1",
+            "precision": "native-highp",
+            "undefinedDomains": "native-gles3",
+            "preciseQualifier": "no-gpu-shader5",
+            "registerStorage": "uvec4",
+            "flatVaryingStorage": "uvec4",
+            "scalarResults": "tgsi-x-replicated",
+            "exactAuthority": false,
+            "gpuExecutionBound": false
+          }
+        }
+      },
+      "oldMetadata": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      },
+      "oldResult": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      }
+    },
+    {
+      "stage": "vertex",
+      "type": "UINT",
+      "op": "TXQ",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, UINT\n0: TXQ OUT[1], CONST[0], SAMP[0], 2D\n1: MOV OUT[0], IN[0]\n2: END\n",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      },
+      "colors": {
+        "signedColorMask": 0,
+        "unsignedColorMask": 0
+      },
+      "selectedResult": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nsmooth out vec4 vso_g0;\nuniform uvec4 vsconst0[3];\nuniform highp usampler2D vssamp0;\nuniform highp int vssamplevels0;\nlayout(std140) uniform VirglBlock {\nvec4 clipp[8];\nuint stipple_pattern[32];\nfloat winsys_adjust_y;\nfloat alpha_ref_val;\nbool clip_plane_enabled;\nint drawid_base;\n};\nuniform vec2 wv_point_size;\nvoid main() {\nbool flow_condition;\nuvec4 o0;\nuvec4 o1;\n{\nuvec4 a = (vsconst0[0]).xyzw;\nuvec4 r = uvec4(textureSize(vssamp0, int(a.x)), 0, vssamplevels0);\no1.xyzw = r.xyzw;\n}\n{\nuvec4 a = (floatBitsToUint(in_0)).xyzw;\nuvec4 r = a;\no0.xyzw = r.xyzw;\n}\ngl_Position = uintBitsToFloat(o0);\nvso_g0 = uintBitsToFloat(o1);\ngl_Position.y *= winsys_adjust_y;\ngl_PointSize = wv_point_size.y > 0.5 ? 1.0 : wv_point_size.x;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-standard-integer-image-gles3-v1",
+          "stage": "vertex",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "gl_Position",
+              "type": "vec4",
+              "semantic": "POSITION",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "syntacticWriteMask": 15
+            },
+            {
+              "index": 1,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "syntacticWriteMask": 15,
+              "interpolation": "smooth"
+            }
+          ],
+          "attributes": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "systemValues": [],
+          "uniforms": [
+            {
+              "name": "vsconst0",
+              "type": "uvec4[]",
+              "count": 3,
+              "encoding": "raw-32bit-words"
+            }
+          ],
+          "samplers": [
+            {
+              "index": 0,
+              "name": "vssamp0",
+              "type": "usampler2D"
+            }
+          ],
+          "uniformBlocks": [
+            {
+              "name": "VirglBlock",
+              "byteLength": 656,
+              "members": [
+                {
+                  "name": "winsys_adjust_y",
+                  "offset": 640,
+                  "type": "float",
+                  "default": 1
+                }
+              ]
+            }
+          ],
+          "rasterUniforms": [
+            {
+              "name": "wv_point_size",
+              "type": "vec2",
+              "semantic": "POINT_SIZE"
+            }
+          ],
+          "guestUniformBlocks": [],
+          "textureQueries": [
+            {
+              "index": 0,
+              "name": "vssamplevels0",
+              "type": "int",
+              "semantic": "TEXTURE_LEVELS"
+            }
+          ],
+          "colorOutputMasks": {
+            "signedMask": 0,
+            "unsignedMask": 0
+          },
+          "broadcastColor0": false,
+          "standardSemantics": {
+            "kind": "native-gles3-highp-v1",
+            "precision": "native-highp",
+            "undefinedDomains": "native-gles3",
+            "preciseQualifier": "no-gpu-shader5",
+            "registerStorage": "uvec4",
+            "flatVaryingStorage": "uvec4",
+            "scalarResults": "tgsi-x-replicated",
+            "exactAuthority": false,
+            "gpuExecutionBound": false
+          }
+        }
+      },
+      "oldMetadata": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      },
+      "oldResult": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      }
+    },
+    {
+      "stage": "vertex",
+      "type": "SINT",
+      "op": "TEX",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, SINT\n0: TEX OUT[1], CONST[0], SAMP[0], 2D\n1: MOV OUT[0], IN[0]\n2: END\n",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      },
+      "colors": {
+        "signedColorMask": 0,
+        "unsignedColorMask": 0
+      },
+      "selectedResult": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nsmooth out vec4 vso_g0;\nuniform uvec4 vsconst0[3];\nuniform highp isampler2D vssamp0;\nlayout(std140) uniform VirglBlock {\nvec4 clipp[8];\nuint stipple_pattern[32];\nfloat winsys_adjust_y;\nfloat alpha_ref_val;\nbool clip_plane_enabled;\nint drawid_base;\n};\nuniform vec2 wv_point_size;\nvoid main() {\nbool flow_condition;\nuvec4 o0;\nuvec4 o1;\n{\nuvec4 a = (vsconst0[0]).xyzw;\nuvec4 r = uvec4(texture(vssamp0, uintBitsToFloat(a).xy));\no1.xyzw = r.xyzw;\n}\n{\nuvec4 a = (floatBitsToUint(in_0)).xyzw;\nuvec4 r = a;\no0.xyzw = r.xyzw;\n}\ngl_Position = uintBitsToFloat(o0);\nvso_g0 = uintBitsToFloat(o1);\ngl_Position.y *= winsys_adjust_y;\ngl_PointSize = wv_point_size.y > 0.5 ? 1.0 : wv_point_size.x;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-standard-integer-image-gles3-v1",
+          "stage": "vertex",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "gl_Position",
+              "type": "vec4",
+              "semantic": "POSITION",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "syntacticWriteMask": 15
+            },
+            {
+              "index": 1,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "syntacticWriteMask": 15,
+              "interpolation": "smooth"
+            }
+          ],
+          "attributes": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "systemValues": [],
+          "uniforms": [
+            {
+              "name": "vsconst0",
+              "type": "uvec4[]",
+              "count": 3,
+              "encoding": "raw-32bit-words"
+            }
+          ],
+          "samplers": [
+            {
+              "index": 0,
+              "name": "vssamp0",
+              "type": "isampler2D"
+            }
+          ],
+          "uniformBlocks": [
+            {
+              "name": "VirglBlock",
+              "byteLength": 656,
+              "members": [
+                {
+                  "name": "winsys_adjust_y",
+                  "offset": 640,
+                  "type": "float",
+                  "default": 1
+                }
+              ]
+            }
+          ],
+          "rasterUniforms": [
+            {
+              "name": "wv_point_size",
+              "type": "vec2",
+              "semantic": "POINT_SIZE"
+            }
+          ],
+          "guestUniformBlocks": [],
+          "textureQueries": [],
+          "colorOutputMasks": {
+            "signedMask": 0,
+            "unsignedMask": 0
+          },
+          "broadcastColor0": false,
+          "standardSemantics": {
+            "kind": "native-gles3-highp-v1",
+            "precision": "native-highp",
+            "undefinedDomains": "native-gles3",
+            "preciseQualifier": "no-gpu-shader5",
+            "registerStorage": "uvec4",
+            "flatVaryingStorage": "uvec4",
+            "scalarResults": "tgsi-x-replicated",
+            "exactAuthority": false,
+            "gpuExecutionBound": false
+          }
+        }
+      },
+      "oldMetadata": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      },
+      "oldResult": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      }
+    },
+    {
+      "stage": "vertex",
+      "type": "SINT",
+      "op": "TXL",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, SINT\n0: TXL OUT[1], CONST[0], SAMP[0], 2D\n1: MOV OUT[0], IN[0]\n2: END\n",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      },
+      "colors": {
+        "signedColorMask": 0,
+        "unsignedColorMask": 0
+      },
+      "selectedResult": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nsmooth out vec4 vso_g0;\nuniform uvec4 vsconst0[3];\nuniform highp isampler2D vssamp0;\nlayout(std140) uniform VirglBlock {\nvec4 clipp[8];\nuint stipple_pattern[32];\nfloat winsys_adjust_y;\nfloat alpha_ref_val;\nbool clip_plane_enabled;\nint drawid_base;\n};\nuniform vec2 wv_point_size;\nvoid main() {\nbool flow_condition;\nuvec4 o0;\nuvec4 o1;\n{\nuvec4 a = (vsconst0[0]).xyzw;\nuvec4 r = uvec4(textureLod(vssamp0, uintBitsToFloat(a).xy, uintBitsToFloat(a).w));\no1.xyzw = r.xyzw;\n}\n{\nuvec4 a = (floatBitsToUint(in_0)).xyzw;\nuvec4 r = a;\no0.xyzw = r.xyzw;\n}\ngl_Position = uintBitsToFloat(o0);\nvso_g0 = uintBitsToFloat(o1);\ngl_Position.y *= winsys_adjust_y;\ngl_PointSize = wv_point_size.y > 0.5 ? 1.0 : wv_point_size.x;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-standard-integer-image-gles3-v1",
+          "stage": "vertex",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "gl_Position",
+              "type": "vec4",
+              "semantic": "POSITION",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "syntacticWriteMask": 15
+            },
+            {
+              "index": 1,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "syntacticWriteMask": 15,
+              "interpolation": "smooth"
+            }
+          ],
+          "attributes": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "systemValues": [],
+          "uniforms": [
+            {
+              "name": "vsconst0",
+              "type": "uvec4[]",
+              "count": 3,
+              "encoding": "raw-32bit-words"
+            }
+          ],
+          "samplers": [
+            {
+              "index": 0,
+              "name": "vssamp0",
+              "type": "isampler2D"
+            }
+          ],
+          "uniformBlocks": [
+            {
+              "name": "VirglBlock",
+              "byteLength": 656,
+              "members": [
+                {
+                  "name": "winsys_adjust_y",
+                  "offset": 640,
+                  "type": "float",
+                  "default": 1
+                }
+              ]
+            }
+          ],
+          "rasterUniforms": [
+            {
+              "name": "wv_point_size",
+              "type": "vec2",
+              "semantic": "POINT_SIZE"
+            }
+          ],
+          "guestUniformBlocks": [],
+          "textureQueries": [],
+          "colorOutputMasks": {
+            "signedMask": 0,
+            "unsignedMask": 0
+          },
+          "broadcastColor0": false,
+          "standardSemantics": {
+            "kind": "native-gles3-highp-v1",
+            "precision": "native-highp",
+            "undefinedDomains": "native-gles3",
+            "preciseQualifier": "no-gpu-shader5",
+            "registerStorage": "uvec4",
+            "flatVaryingStorage": "uvec4",
+            "scalarResults": "tgsi-x-replicated",
+            "exactAuthority": false,
+            "gpuExecutionBound": false
+          }
+        }
+      },
+      "oldMetadata": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      },
+      "oldResult": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      }
+    },
+    {
+      "stage": "vertex",
+      "type": "SINT",
+      "op": "TXF",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, SINT\n0: TXF OUT[1], CONST[0], SAMP[0], 2D\n1: MOV OUT[0], IN[0]\n2: END\n",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      },
+      "colors": {
+        "signedColorMask": 0,
+        "unsignedColorMask": 0
+      },
+      "selectedResult": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nsmooth out vec4 vso_g0;\nuniform uvec4 vsconst0[3];\nuniform highp isampler2D vssamp0;\nlayout(std140) uniform VirglBlock {\nvec4 clipp[8];\nuint stipple_pattern[32];\nfloat winsys_adjust_y;\nfloat alpha_ref_val;\nbool clip_plane_enabled;\nint drawid_base;\n};\nuniform vec2 wv_point_size;\nvoid main() {\nbool flow_condition;\nuvec4 o0;\nuvec4 o1;\n{\nuvec4 a = (vsconst0[0]).xyzw;\nuvec4 r = uvec4(texelFetch(vssamp0, ivec2(a.xy), int(a.w)));\no1.xyzw = r.xyzw;\n}\n{\nuvec4 a = (floatBitsToUint(in_0)).xyzw;\nuvec4 r = a;\no0.xyzw = r.xyzw;\n}\ngl_Position = uintBitsToFloat(o0);\nvso_g0 = uintBitsToFloat(o1);\ngl_Position.y *= winsys_adjust_y;\ngl_PointSize = wv_point_size.y > 0.5 ? 1.0 : wv_point_size.x;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-standard-integer-image-gles3-v1",
+          "stage": "vertex",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "gl_Position",
+              "type": "vec4",
+              "semantic": "POSITION",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "syntacticWriteMask": 15
+            },
+            {
+              "index": 1,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "syntacticWriteMask": 15,
+              "interpolation": "smooth"
+            }
+          ],
+          "attributes": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "systemValues": [],
+          "uniforms": [
+            {
+              "name": "vsconst0",
+              "type": "uvec4[]",
+              "count": 3,
+              "encoding": "raw-32bit-words"
+            }
+          ],
+          "samplers": [
+            {
+              "index": 0,
+              "name": "vssamp0",
+              "type": "isampler2D"
+            }
+          ],
+          "uniformBlocks": [
+            {
+              "name": "VirglBlock",
+              "byteLength": 656,
+              "members": [
+                {
+                  "name": "winsys_adjust_y",
+                  "offset": 640,
+                  "type": "float",
+                  "default": 1
+                }
+              ]
+            }
+          ],
+          "rasterUniforms": [
+            {
+              "name": "wv_point_size",
+              "type": "vec2",
+              "semantic": "POINT_SIZE"
+            }
+          ],
+          "guestUniformBlocks": [],
+          "textureQueries": [],
+          "colorOutputMasks": {
+            "signedMask": 0,
+            "unsignedMask": 0
+          },
+          "broadcastColor0": false,
+          "standardSemantics": {
+            "kind": "native-gles3-highp-v1",
+            "precision": "native-highp",
+            "undefinedDomains": "native-gles3",
+            "preciseQualifier": "no-gpu-shader5",
+            "registerStorage": "uvec4",
+            "flatVaryingStorage": "uvec4",
+            "scalarResults": "tgsi-x-replicated",
+            "exactAuthority": false,
+            "gpuExecutionBound": false
+          }
+        }
+      },
+      "oldMetadata": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      },
+      "oldResult": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      }
+    },
+    {
+      "stage": "vertex",
+      "type": "SINT",
+      "op": "TXD",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, SINT\n0: TXD OUT[1], CONST[0], CONST[1], CONST[2], SAMP[0], 2D\n1: MOV OUT[0], IN[0]\n2: END\n",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      },
+      "colors": {
+        "signedColorMask": 0,
+        "unsignedColorMask": 0
+      },
+      "selectedResult": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nsmooth out vec4 vso_g0;\nuniform uvec4 vsconst0[3];\nuniform highp isampler2D vssamp0;\nlayout(std140) uniform VirglBlock {\nvec4 clipp[8];\nuint stipple_pattern[32];\nfloat winsys_adjust_y;\nfloat alpha_ref_val;\nbool clip_plane_enabled;\nint drawid_base;\n};\nuniform vec2 wv_point_size;\nvoid main() {\nbool flow_condition;\nuvec4 o0;\nuvec4 o1;\n{\nuvec4 a = (vsconst0[0]).xyzw;\nuvec4 b = (vsconst0[1]).xyzw;\nuvec4 c = (vsconst0[2]).xyzw;\nuvec4 r = uvec4(textureGrad(vssamp0, uintBitsToFloat(a).xy, uintBitsToFloat(b).xy, uintBitsToFloat(c).xy));\no1.xyzw = r.xyzw;\n}\n{\nuvec4 a = (floatBitsToUint(in_0)).xyzw;\nuvec4 r = a;\no0.xyzw = r.xyzw;\n}\ngl_Position = uintBitsToFloat(o0);\nvso_g0 = uintBitsToFloat(o1);\ngl_Position.y *= winsys_adjust_y;\ngl_PointSize = wv_point_size.y > 0.5 ? 1.0 : wv_point_size.x;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-standard-integer-image-gles3-v1",
+          "stage": "vertex",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "gl_Position",
+              "type": "vec4",
+              "semantic": "POSITION",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "syntacticWriteMask": 15
+            },
+            {
+              "index": 1,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "syntacticWriteMask": 15,
+              "interpolation": "smooth"
+            }
+          ],
+          "attributes": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "systemValues": [],
+          "uniforms": [
+            {
+              "name": "vsconst0",
+              "type": "uvec4[]",
+              "count": 3,
+              "encoding": "raw-32bit-words"
+            }
+          ],
+          "samplers": [
+            {
+              "index": 0,
+              "name": "vssamp0",
+              "type": "isampler2D"
+            }
+          ],
+          "uniformBlocks": [
+            {
+              "name": "VirglBlock",
+              "byteLength": 656,
+              "members": [
+                {
+                  "name": "winsys_adjust_y",
+                  "offset": 640,
+                  "type": "float",
+                  "default": 1
+                }
+              ]
+            }
+          ],
+          "rasterUniforms": [
+            {
+              "name": "wv_point_size",
+              "type": "vec2",
+              "semantic": "POINT_SIZE"
+            }
+          ],
+          "guestUniformBlocks": [],
+          "textureQueries": [],
+          "colorOutputMasks": {
+            "signedMask": 0,
+            "unsignedMask": 0
+          },
+          "broadcastColor0": false,
+          "standardSemantics": {
+            "kind": "native-gles3-highp-v1",
+            "precision": "native-highp",
+            "undefinedDomains": "native-gles3",
+            "preciseQualifier": "no-gpu-shader5",
+            "registerStorage": "uvec4",
+            "flatVaryingStorage": "uvec4",
+            "scalarResults": "tgsi-x-replicated",
+            "exactAuthority": false,
+            "gpuExecutionBound": false
+          }
+        }
+      },
+      "oldMetadata": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      },
+      "oldResult": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      }
+    },
+    {
+      "stage": "vertex",
+      "type": "SINT",
+      "op": "TXQ",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, SINT\n0: TXQ OUT[1], CONST[0], SAMP[0], 2D\n1: MOV OUT[0], IN[0]\n2: END\n",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      },
+      "colors": {
+        "signedColorMask": 0,
+        "unsignedColorMask": 0
+      },
+      "selectedResult": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nsmooth out vec4 vso_g0;\nuniform uvec4 vsconst0[3];\nuniform highp isampler2D vssamp0;\nuniform highp int vssamplevels0;\nlayout(std140) uniform VirglBlock {\nvec4 clipp[8];\nuint stipple_pattern[32];\nfloat winsys_adjust_y;\nfloat alpha_ref_val;\nbool clip_plane_enabled;\nint drawid_base;\n};\nuniform vec2 wv_point_size;\nvoid main() {\nbool flow_condition;\nuvec4 o0;\nuvec4 o1;\n{\nuvec4 a = (vsconst0[0]).xyzw;\nuvec4 r = uvec4(textureSize(vssamp0, int(a.x)), 0, vssamplevels0);\no1.xyzw = r.xyzw;\n}\n{\nuvec4 a = (floatBitsToUint(in_0)).xyzw;\nuvec4 r = a;\no0.xyzw = r.xyzw;\n}\ngl_Position = uintBitsToFloat(o0);\nvso_g0 = uintBitsToFloat(o1);\ngl_Position.y *= winsys_adjust_y;\ngl_PointSize = wv_point_size.y > 0.5 ? 1.0 : wv_point_size.x;\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-standard-integer-image-gles3-v1",
+          "stage": "vertex",
+          "inputs": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "gl_Position",
+              "type": "vec4",
+              "semantic": "POSITION",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "syntacticWriteMask": 15
+            },
+            {
+              "index": 1,
+              "name": "vso_g0",
+              "type": "vec4",
+              "semantic": "GENERIC",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "syntacticWriteMask": 15,
+              "interpolation": "smooth"
+            }
+          ],
+          "attributes": [
+            {
+              "index": 0,
+              "name": "in_0",
+              "type": "vec4",
+              "semantic": "ATTRIBUTE",
+              "semanticIndex": 0,
+              "componentMask": 15
+            }
+          ],
+          "systemValues": [],
+          "uniforms": [
+            {
+              "name": "vsconst0",
+              "type": "uvec4[]",
+              "count": 3,
+              "encoding": "raw-32bit-words"
+            }
+          ],
+          "samplers": [
+            {
+              "index": 0,
+              "name": "vssamp0",
+              "type": "isampler2D"
+            }
+          ],
+          "uniformBlocks": [
+            {
+              "name": "VirglBlock",
+              "byteLength": 656,
+              "members": [
+                {
+                  "name": "winsys_adjust_y",
+                  "offset": 640,
+                  "type": "float",
+                  "default": 1
+                }
+              ]
+            }
+          ],
+          "rasterUniforms": [
+            {
+              "name": "wv_point_size",
+              "type": "vec2",
+              "semantic": "POINT_SIZE"
+            }
+          ],
+          "guestUniformBlocks": [],
+          "textureQueries": [
+            {
+              "index": 0,
+              "name": "vssamplevels0",
+              "type": "int",
+              "semantic": "TEXTURE_LEVELS"
+            }
+          ],
+          "colorOutputMasks": {
+            "signedMask": 0,
+            "unsignedMask": 0
+          },
+          "broadcastColor0": false,
+          "standardSemantics": {
+            "kind": "native-gles3-highp-v1",
+            "precision": "native-highp",
+            "undefinedDomains": "native-gles3",
+            "preciseQualifier": "no-gpu-shader5",
+            "registerStorage": "uvec4",
+            "flatVaryingStorage": "uvec4",
+            "scalarResults": "tgsi-x-replicated",
+            "exactAuthority": false,
+            "gpuExecutionBound": false
+          }
+        }
+      },
+      "oldMetadata": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      },
+      "oldResult": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      }
+    },
+    {
+      "stage": "fragment",
+      "type": "UINT",
+      "op": "TEX",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, UINT\n0: TEX OUT[0], CONST[0], SAMP[0], 2D\n1: END\n",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      },
+      "colors": {
+        "signedColorMask": 0,
+        "unsignedColorMask": 1
+      },
+      "selectedResult": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nlayout(location=0) out uvec4 fsout_c0;\nuniform uvec4 fsconst0[3];\nuniform highp usampler2D fssamp0;\nvoid main() {\nbool flow_condition;\nuvec4 o0;\n{\nuvec4 a = (fsconst0[0]).xyzw;\nuvec4 r = uvec4(texture(fssamp0, uintBitsToFloat(a).xy));\no0.xyzw = r.xyzw;\n}\nfsout_c0 = uvec4(o0);\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-standard-integer-image-gles3-v1",
+          "stage": "fragment",
+          "inputs": [],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "fsout_c0",
+              "type": "uvec4",
+              "semantic": "COLOR",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "syntacticWriteMask": 15
+            }
+          ],
+          "attributes": [],
+          "systemValues": [],
+          "uniforms": [
+            {
+              "name": "fsconst0",
+              "type": "uvec4[]",
+              "count": 3,
+              "encoding": "raw-32bit-words"
+            }
+          ],
+          "samplers": [
+            {
+              "index": 0,
+              "name": "fssamp0",
+              "type": "usampler2D"
+            }
+          ],
+          "uniformBlocks": [],
+          "rasterUniforms": [],
+          "guestUniformBlocks": [],
+          "textureQueries": [],
+          "colorOutputMasks": {
+            "signedMask": 0,
+            "unsignedMask": 1
+          },
+          "broadcastColor0": false,
+          "standardSemantics": {
+            "kind": "native-gles3-highp-v1",
+            "precision": "native-highp",
+            "undefinedDomains": "native-gles3",
+            "preciseQualifier": "no-gpu-shader5",
+            "registerStorage": "uvec4",
+            "flatVaryingStorage": "uvec4",
+            "scalarResults": "tgsi-x-replicated",
+            "exactAuthority": false,
+            "gpuExecutionBound": false
+          }
+        }
+      },
+      "oldMetadata": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      },
+      "oldResult": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      }
+    },
+    {
+      "stage": "fragment",
+      "type": "UINT",
+      "op": "TXL",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, UINT\n0: TXL OUT[0], CONST[0], SAMP[0], 2D\n1: END\n",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      },
+      "colors": {
+        "signedColorMask": 0,
+        "unsignedColorMask": 1
+      },
+      "selectedResult": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nlayout(location=0) out uvec4 fsout_c0;\nuniform uvec4 fsconst0[3];\nuniform highp usampler2D fssamp0;\nvoid main() {\nbool flow_condition;\nuvec4 o0;\n{\nuvec4 a = (fsconst0[0]).xyzw;\nuvec4 r = uvec4(textureLod(fssamp0, uintBitsToFloat(a).xy, uintBitsToFloat(a).w));\no0.xyzw = r.xyzw;\n}\nfsout_c0 = uvec4(o0);\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-standard-integer-image-gles3-v1",
+          "stage": "fragment",
+          "inputs": [],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "fsout_c0",
+              "type": "uvec4",
+              "semantic": "COLOR",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "syntacticWriteMask": 15
+            }
+          ],
+          "attributes": [],
+          "systemValues": [],
+          "uniforms": [
+            {
+              "name": "fsconst0",
+              "type": "uvec4[]",
+              "count": 3,
+              "encoding": "raw-32bit-words"
+            }
+          ],
+          "samplers": [
+            {
+              "index": 0,
+              "name": "fssamp0",
+              "type": "usampler2D"
+            }
+          ],
+          "uniformBlocks": [],
+          "rasterUniforms": [],
+          "guestUniformBlocks": [],
+          "textureQueries": [],
+          "colorOutputMasks": {
+            "signedMask": 0,
+            "unsignedMask": 1
+          },
+          "broadcastColor0": false,
+          "standardSemantics": {
+            "kind": "native-gles3-highp-v1",
+            "precision": "native-highp",
+            "undefinedDomains": "native-gles3",
+            "preciseQualifier": "no-gpu-shader5",
+            "registerStorage": "uvec4",
+            "flatVaryingStorage": "uvec4",
+            "scalarResults": "tgsi-x-replicated",
+            "exactAuthority": false,
+            "gpuExecutionBound": false
+          }
+        }
+      },
+      "oldMetadata": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      },
+      "oldResult": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      }
+    },
+    {
+      "stage": "fragment",
+      "type": "UINT",
+      "op": "TXF",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, UINT\n0: TXF OUT[0], CONST[0], SAMP[0], 2D\n1: END\n",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      },
+      "colors": {
+        "signedColorMask": 0,
+        "unsignedColorMask": 1
+      },
+      "selectedResult": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nlayout(location=0) out uvec4 fsout_c0;\nuniform uvec4 fsconst0[3];\nuniform highp usampler2D fssamp0;\nvoid main() {\nbool flow_condition;\nuvec4 o0;\n{\nuvec4 a = (fsconst0[0]).xyzw;\nuvec4 r = uvec4(texelFetch(fssamp0, ivec2(a.xy), int(a.w)));\no0.xyzw = r.xyzw;\n}\nfsout_c0 = uvec4(o0);\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-standard-integer-image-gles3-v1",
+          "stage": "fragment",
+          "inputs": [],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "fsout_c0",
+              "type": "uvec4",
+              "semantic": "COLOR",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "syntacticWriteMask": 15
+            }
+          ],
+          "attributes": [],
+          "systemValues": [],
+          "uniforms": [
+            {
+              "name": "fsconst0",
+              "type": "uvec4[]",
+              "count": 3,
+              "encoding": "raw-32bit-words"
+            }
+          ],
+          "samplers": [
+            {
+              "index": 0,
+              "name": "fssamp0",
+              "type": "usampler2D"
+            }
+          ],
+          "uniformBlocks": [],
+          "rasterUniforms": [],
+          "guestUniformBlocks": [],
+          "textureQueries": [],
+          "colorOutputMasks": {
+            "signedMask": 0,
+            "unsignedMask": 1
+          },
+          "broadcastColor0": false,
+          "standardSemantics": {
+            "kind": "native-gles3-highp-v1",
+            "precision": "native-highp",
+            "undefinedDomains": "native-gles3",
+            "preciseQualifier": "no-gpu-shader5",
+            "registerStorage": "uvec4",
+            "flatVaryingStorage": "uvec4",
+            "scalarResults": "tgsi-x-replicated",
+            "exactAuthority": false,
+            "gpuExecutionBound": false
+          }
+        }
+      },
+      "oldMetadata": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      },
+      "oldResult": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      }
+    },
+    {
+      "stage": "fragment",
+      "type": "UINT",
+      "op": "TXD",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, UINT\n0: TXD OUT[0], CONST[0], CONST[1], CONST[2], SAMP[0], 2D\n1: END\n",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      },
+      "colors": {
+        "signedColorMask": 0,
+        "unsignedColorMask": 1
+      },
+      "selectedResult": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nlayout(location=0) out uvec4 fsout_c0;\nuniform uvec4 fsconst0[3];\nuniform highp usampler2D fssamp0;\nvoid main() {\nbool flow_condition;\nuvec4 o0;\n{\nuvec4 a = (fsconst0[0]).xyzw;\nuvec4 b = (fsconst0[1]).xyzw;\nuvec4 c = (fsconst0[2]).xyzw;\nuvec4 r = uvec4(textureGrad(fssamp0, uintBitsToFloat(a).xy, uintBitsToFloat(b).xy, uintBitsToFloat(c).xy));\no0.xyzw = r.xyzw;\n}\nfsout_c0 = uvec4(o0);\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-standard-integer-image-gles3-v1",
+          "stage": "fragment",
+          "inputs": [],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "fsout_c0",
+              "type": "uvec4",
+              "semantic": "COLOR",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "syntacticWriteMask": 15
+            }
+          ],
+          "attributes": [],
+          "systemValues": [],
+          "uniforms": [
+            {
+              "name": "fsconst0",
+              "type": "uvec4[]",
+              "count": 3,
+              "encoding": "raw-32bit-words"
+            }
+          ],
+          "samplers": [
+            {
+              "index": 0,
+              "name": "fssamp0",
+              "type": "usampler2D"
+            }
+          ],
+          "uniformBlocks": [],
+          "rasterUniforms": [],
+          "guestUniformBlocks": [],
+          "textureQueries": [],
+          "colorOutputMasks": {
+            "signedMask": 0,
+            "unsignedMask": 1
+          },
+          "broadcastColor0": false,
+          "standardSemantics": {
+            "kind": "native-gles3-highp-v1",
+            "precision": "native-highp",
+            "undefinedDomains": "native-gles3",
+            "preciseQualifier": "no-gpu-shader5",
+            "registerStorage": "uvec4",
+            "flatVaryingStorage": "uvec4",
+            "scalarResults": "tgsi-x-replicated",
+            "exactAuthority": false,
+            "gpuExecutionBound": false
+          }
+        }
+      },
+      "oldMetadata": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      },
+      "oldResult": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      }
+    },
+    {
+      "stage": "fragment",
+      "type": "UINT",
+      "op": "TXQ",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, UINT\n0: TXQ OUT[0], CONST[0], SAMP[0], 2D\n1: END\n",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      },
+      "colors": {
+        "signedColorMask": 0,
+        "unsignedColorMask": 1
+      },
+      "selectedResult": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nlayout(location=0) out uvec4 fsout_c0;\nuniform uvec4 fsconst0[3];\nuniform highp usampler2D fssamp0;\nuniform highp int fssamplevels0;\nvoid main() {\nbool flow_condition;\nuvec4 o0;\n{\nuvec4 a = (fsconst0[0]).xyzw;\nuvec4 r = uvec4(textureSize(fssamp0, int(a.x)), 0, fssamplevels0);\no0.xyzw = r.xyzw;\n}\nfsout_c0 = uvec4(o0);\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-standard-integer-image-gles3-v1",
+          "stage": "fragment",
+          "inputs": [],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "fsout_c0",
+              "type": "uvec4",
+              "semantic": "COLOR",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "syntacticWriteMask": 15
+            }
+          ],
+          "attributes": [],
+          "systemValues": [],
+          "uniforms": [
+            {
+              "name": "fsconst0",
+              "type": "uvec4[]",
+              "count": 3,
+              "encoding": "raw-32bit-words"
+            }
+          ],
+          "samplers": [
+            {
+              "index": 0,
+              "name": "fssamp0",
+              "type": "usampler2D"
+            }
+          ],
+          "uniformBlocks": [],
+          "rasterUniforms": [],
+          "guestUniformBlocks": [],
+          "textureQueries": [
+            {
+              "index": 0,
+              "name": "fssamplevels0",
+              "type": "int",
+              "semantic": "TEXTURE_LEVELS"
+            }
+          ],
+          "colorOutputMasks": {
+            "signedMask": 0,
+            "unsignedMask": 1
+          },
+          "broadcastColor0": false,
+          "standardSemantics": {
+            "kind": "native-gles3-highp-v1",
+            "precision": "native-highp",
+            "undefinedDomains": "native-gles3",
+            "preciseQualifier": "no-gpu-shader5",
+            "registerStorage": "uvec4",
+            "flatVaryingStorage": "uvec4",
+            "scalarResults": "tgsi-x-replicated",
+            "exactAuthority": false,
+            "gpuExecutionBound": false
+          }
+        }
+      },
+      "oldMetadata": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      },
+      "oldResult": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      }
+    },
+    {
+      "stage": "fragment",
+      "type": "UINT",
+      "op": "TXB",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, UINT\n0: TXB OUT[0], CONST[0], SAMP[0], 2D\n1: END\n",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      },
+      "colors": {
+        "signedColorMask": 0,
+        "unsignedColorMask": 1
+      },
+      "selectedResult": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nlayout(location=0) out uvec4 fsout_c0;\nuniform uvec4 fsconst0[3];\nuniform highp usampler2D fssamp0;\nvoid main() {\nbool flow_condition;\nuvec4 o0;\n{\nuvec4 a = (fsconst0[0]).xyzw;\nuvec4 r = uvec4(texture(fssamp0, uintBitsToFloat(a).xy, uintBitsToFloat(a).w));\no0.xyzw = r.xyzw;\n}\nfsout_c0 = uvec4(o0);\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-standard-integer-image-gles3-v1",
+          "stage": "fragment",
+          "inputs": [],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "fsout_c0",
+              "type": "uvec4",
+              "semantic": "COLOR",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "syntacticWriteMask": 15
+            }
+          ],
+          "attributes": [],
+          "systemValues": [],
+          "uniforms": [
+            {
+              "name": "fsconst0",
+              "type": "uvec4[]",
+              "count": 3,
+              "encoding": "raw-32bit-words"
+            }
+          ],
+          "samplers": [
+            {
+              "index": 0,
+              "name": "fssamp0",
+              "type": "usampler2D"
+            }
+          ],
+          "uniformBlocks": [],
+          "rasterUniforms": [],
+          "guestUniformBlocks": [],
+          "textureQueries": [],
+          "colorOutputMasks": {
+            "signedMask": 0,
+            "unsignedMask": 1
+          },
+          "broadcastColor0": false,
+          "standardSemantics": {
+            "kind": "native-gles3-highp-v1",
+            "precision": "native-highp",
+            "undefinedDomains": "native-gles3",
+            "preciseQualifier": "no-gpu-shader5",
+            "registerStorage": "uvec4",
+            "flatVaryingStorage": "uvec4",
+            "scalarResults": "tgsi-x-replicated",
+            "exactAuthority": false,
+            "gpuExecutionBound": false
+          }
+        }
+      },
+      "oldMetadata": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      },
+      "oldResult": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      }
+    },
+    {
+      "stage": "fragment",
+      "type": "SINT",
+      "op": "TEX",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, SINT\n0: TEX OUT[0], CONST[0], SAMP[0], 2D\n1: END\n",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      },
+      "colors": {
+        "signedColorMask": 1,
+        "unsignedColorMask": 0
+      },
+      "selectedResult": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nlayout(location=0) out ivec4 fsout_c0;\nuniform uvec4 fsconst0[3];\nuniform highp isampler2D fssamp0;\nvoid main() {\nbool flow_condition;\nuvec4 o0;\n{\nuvec4 a = (fsconst0[0]).xyzw;\nuvec4 r = uvec4(texture(fssamp0, uintBitsToFloat(a).xy));\no0.xyzw = r.xyzw;\n}\nfsout_c0 = ivec4(o0);\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-standard-integer-image-gles3-v1",
+          "stage": "fragment",
+          "inputs": [],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "fsout_c0",
+              "type": "ivec4",
+              "semantic": "COLOR",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "syntacticWriteMask": 15
+            }
+          ],
+          "attributes": [],
+          "systemValues": [],
+          "uniforms": [
+            {
+              "name": "fsconst0",
+              "type": "uvec4[]",
+              "count": 3,
+              "encoding": "raw-32bit-words"
+            }
+          ],
+          "samplers": [
+            {
+              "index": 0,
+              "name": "fssamp0",
+              "type": "isampler2D"
+            }
+          ],
+          "uniformBlocks": [],
+          "rasterUniforms": [],
+          "guestUniformBlocks": [],
+          "textureQueries": [],
+          "colorOutputMasks": {
+            "signedMask": 1,
+            "unsignedMask": 0
+          },
+          "broadcastColor0": false,
+          "standardSemantics": {
+            "kind": "native-gles3-highp-v1",
+            "precision": "native-highp",
+            "undefinedDomains": "native-gles3",
+            "preciseQualifier": "no-gpu-shader5",
+            "registerStorage": "uvec4",
+            "flatVaryingStorage": "uvec4",
+            "scalarResults": "tgsi-x-replicated",
+            "exactAuthority": false,
+            "gpuExecutionBound": false
+          }
+        }
+      },
+      "oldMetadata": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      },
+      "oldResult": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      }
+    },
+    {
+      "stage": "fragment",
+      "type": "SINT",
+      "op": "TXL",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, SINT\n0: TXL OUT[0], CONST[0], SAMP[0], 2D\n1: END\n",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      },
+      "colors": {
+        "signedColorMask": 1,
+        "unsignedColorMask": 0
+      },
+      "selectedResult": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nlayout(location=0) out ivec4 fsout_c0;\nuniform uvec4 fsconst0[3];\nuniform highp isampler2D fssamp0;\nvoid main() {\nbool flow_condition;\nuvec4 o0;\n{\nuvec4 a = (fsconst0[0]).xyzw;\nuvec4 r = uvec4(textureLod(fssamp0, uintBitsToFloat(a).xy, uintBitsToFloat(a).w));\no0.xyzw = r.xyzw;\n}\nfsout_c0 = ivec4(o0);\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-standard-integer-image-gles3-v1",
+          "stage": "fragment",
+          "inputs": [],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "fsout_c0",
+              "type": "ivec4",
+              "semantic": "COLOR",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "syntacticWriteMask": 15
+            }
+          ],
+          "attributes": [],
+          "systemValues": [],
+          "uniforms": [
+            {
+              "name": "fsconst0",
+              "type": "uvec4[]",
+              "count": 3,
+              "encoding": "raw-32bit-words"
+            }
+          ],
+          "samplers": [
+            {
+              "index": 0,
+              "name": "fssamp0",
+              "type": "isampler2D"
+            }
+          ],
+          "uniformBlocks": [],
+          "rasterUniforms": [],
+          "guestUniformBlocks": [],
+          "textureQueries": [],
+          "colorOutputMasks": {
+            "signedMask": 1,
+            "unsignedMask": 0
+          },
+          "broadcastColor0": false,
+          "standardSemantics": {
+            "kind": "native-gles3-highp-v1",
+            "precision": "native-highp",
+            "undefinedDomains": "native-gles3",
+            "preciseQualifier": "no-gpu-shader5",
+            "registerStorage": "uvec4",
+            "flatVaryingStorage": "uvec4",
+            "scalarResults": "tgsi-x-replicated",
+            "exactAuthority": false,
+            "gpuExecutionBound": false
+          }
+        }
+      },
+      "oldMetadata": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      },
+      "oldResult": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      }
+    },
+    {
+      "stage": "fragment",
+      "type": "SINT",
+      "op": "TXF",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, SINT\n0: TXF OUT[0], CONST[0], SAMP[0], 2D\n1: END\n",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      },
+      "colors": {
+        "signedColorMask": 1,
+        "unsignedColorMask": 0
+      },
+      "selectedResult": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nlayout(location=0) out ivec4 fsout_c0;\nuniform uvec4 fsconst0[3];\nuniform highp isampler2D fssamp0;\nvoid main() {\nbool flow_condition;\nuvec4 o0;\n{\nuvec4 a = (fsconst0[0]).xyzw;\nuvec4 r = uvec4(texelFetch(fssamp0, ivec2(a.xy), int(a.w)));\no0.xyzw = r.xyzw;\n}\nfsout_c0 = ivec4(o0);\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-standard-integer-image-gles3-v1",
+          "stage": "fragment",
+          "inputs": [],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "fsout_c0",
+              "type": "ivec4",
+              "semantic": "COLOR",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "syntacticWriteMask": 15
+            }
+          ],
+          "attributes": [],
+          "systemValues": [],
+          "uniforms": [
+            {
+              "name": "fsconst0",
+              "type": "uvec4[]",
+              "count": 3,
+              "encoding": "raw-32bit-words"
+            }
+          ],
+          "samplers": [
+            {
+              "index": 0,
+              "name": "fssamp0",
+              "type": "isampler2D"
+            }
+          ],
+          "uniformBlocks": [],
+          "rasterUniforms": [],
+          "guestUniformBlocks": [],
+          "textureQueries": [],
+          "colorOutputMasks": {
+            "signedMask": 1,
+            "unsignedMask": 0
+          },
+          "broadcastColor0": false,
+          "standardSemantics": {
+            "kind": "native-gles3-highp-v1",
+            "precision": "native-highp",
+            "undefinedDomains": "native-gles3",
+            "preciseQualifier": "no-gpu-shader5",
+            "registerStorage": "uvec4",
+            "flatVaryingStorage": "uvec4",
+            "scalarResults": "tgsi-x-replicated",
+            "exactAuthority": false,
+            "gpuExecutionBound": false
+          }
+        }
+      },
+      "oldMetadata": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      },
+      "oldResult": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      }
+    },
+    {
+      "stage": "fragment",
+      "type": "SINT",
+      "op": "TXD",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, SINT\n0: TXD OUT[0], CONST[0], CONST[1], CONST[2], SAMP[0], 2D\n1: END\n",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      },
+      "colors": {
+        "signedColorMask": 1,
+        "unsignedColorMask": 0
+      },
+      "selectedResult": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nlayout(location=0) out ivec4 fsout_c0;\nuniform uvec4 fsconst0[3];\nuniform highp isampler2D fssamp0;\nvoid main() {\nbool flow_condition;\nuvec4 o0;\n{\nuvec4 a = (fsconst0[0]).xyzw;\nuvec4 b = (fsconst0[1]).xyzw;\nuvec4 c = (fsconst0[2]).xyzw;\nuvec4 r = uvec4(textureGrad(fssamp0, uintBitsToFloat(a).xy, uintBitsToFloat(b).xy, uintBitsToFloat(c).xy));\no0.xyzw = r.xyzw;\n}\nfsout_c0 = ivec4(o0);\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-standard-integer-image-gles3-v1",
+          "stage": "fragment",
+          "inputs": [],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "fsout_c0",
+              "type": "ivec4",
+              "semantic": "COLOR",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "syntacticWriteMask": 15
+            }
+          ],
+          "attributes": [],
+          "systemValues": [],
+          "uniforms": [
+            {
+              "name": "fsconst0",
+              "type": "uvec4[]",
+              "count": 3,
+              "encoding": "raw-32bit-words"
+            }
+          ],
+          "samplers": [
+            {
+              "index": 0,
+              "name": "fssamp0",
+              "type": "isampler2D"
+            }
+          ],
+          "uniformBlocks": [],
+          "rasterUniforms": [],
+          "guestUniformBlocks": [],
+          "textureQueries": [],
+          "colorOutputMasks": {
+            "signedMask": 1,
+            "unsignedMask": 0
+          },
+          "broadcastColor0": false,
+          "standardSemantics": {
+            "kind": "native-gles3-highp-v1",
+            "precision": "native-highp",
+            "undefinedDomains": "native-gles3",
+            "preciseQualifier": "no-gpu-shader5",
+            "registerStorage": "uvec4",
+            "flatVaryingStorage": "uvec4",
+            "scalarResults": "tgsi-x-replicated",
+            "exactAuthority": false,
+            "gpuExecutionBound": false
+          }
+        }
+      },
+      "oldMetadata": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      },
+      "oldResult": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      }
+    },
+    {
+      "stage": "fragment",
+      "type": "SINT",
+      "op": "TXQ",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, SINT\n0: TXQ OUT[0], CONST[0], SAMP[0], 2D\n1: END\n",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      },
+      "colors": {
+        "signedColorMask": 1,
+        "unsignedColorMask": 0
+      },
+      "selectedResult": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nlayout(location=0) out ivec4 fsout_c0;\nuniform uvec4 fsconst0[3];\nuniform highp isampler2D fssamp0;\nuniform highp int fssamplevels0;\nvoid main() {\nbool flow_condition;\nuvec4 o0;\n{\nuvec4 a = (fsconst0[0]).xyzw;\nuvec4 r = uvec4(textureSize(fssamp0, int(a.x)), 0, fssamplevels0);\no0.xyzw = r.xyzw;\n}\nfsout_c0 = ivec4(o0);\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-standard-integer-image-gles3-v1",
+          "stage": "fragment",
+          "inputs": [],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "fsout_c0",
+              "type": "ivec4",
+              "semantic": "COLOR",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "syntacticWriteMask": 15
+            }
+          ],
+          "attributes": [],
+          "systemValues": [],
+          "uniforms": [
+            {
+              "name": "fsconst0",
+              "type": "uvec4[]",
+              "count": 3,
+              "encoding": "raw-32bit-words"
+            }
+          ],
+          "samplers": [
+            {
+              "index": 0,
+              "name": "fssamp0",
+              "type": "isampler2D"
+            }
+          ],
+          "uniformBlocks": [],
+          "rasterUniforms": [],
+          "guestUniformBlocks": [],
+          "textureQueries": [
+            {
+              "index": 0,
+              "name": "fssamplevels0",
+              "type": "int",
+              "semantic": "TEXTURE_LEVELS"
+            }
+          ],
+          "colorOutputMasks": {
+            "signedMask": 1,
+            "unsignedMask": 0
+          },
+          "broadcastColor0": false,
+          "standardSemantics": {
+            "kind": "native-gles3-highp-v1",
+            "precision": "native-highp",
+            "undefinedDomains": "native-gles3",
+            "preciseQualifier": "no-gpu-shader5",
+            "registerStorage": "uvec4",
+            "flatVaryingStorage": "uvec4",
+            "scalarResults": "tgsi-x-replicated",
+            "exactAuthority": false,
+            "gpuExecutionBound": false
+          }
+        }
+      },
+      "oldMetadata": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      },
+      "oldResult": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      }
+    },
+    {
+      "stage": "fragment",
+      "type": "SINT",
+      "op": "TXB",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, SINT\n0: TXB OUT[0], CONST[0], SAMP[0], 2D\n1: END\n",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      },
+      "colors": {
+        "signedColorMask": 1,
+        "unsignedColorMask": 0
+      },
+      "selectedResult": {
+        "ok": true,
+        "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nlayout(location=0) out ivec4 fsout_c0;\nuniform uvec4 fsconst0[3];\nuniform highp isampler2D fssamp0;\nvoid main() {\nbool flow_condition;\nuvec4 o0;\n{\nuvec4 a = (fsconst0[0]).xyzw;\nuvec4 r = uvec4(texture(fssamp0, uintBitsToFloat(a).xy, uintBitsToFloat(a).w));\no0.xyzw = r.xyzw;\n}\nfsout_c0 = ivec4(o0);\n}\n",
+        "metadata": {
+          "profile": "virgl-webgl2-standard-integer-image-gles3-v1",
+          "stage": "fragment",
+          "inputs": [],
+          "outputs": [
+            {
+              "index": 0,
+              "name": "fsout_c0",
+              "type": "ivec4",
+              "semantic": "COLOR",
+              "semanticIndex": 0,
+              "componentMask": 15,
+              "syntacticWriteMask": 15
+            }
+          ],
+          "attributes": [],
+          "systemValues": [],
+          "uniforms": [
+            {
+              "name": "fsconst0",
+              "type": "uvec4[]",
+              "count": 3,
+              "encoding": "raw-32bit-words"
+            }
+          ],
+          "samplers": [
+            {
+              "index": 0,
+              "name": "fssamp0",
+              "type": "isampler2D"
+            }
+          ],
+          "uniformBlocks": [],
+          "rasterUniforms": [],
+          "guestUniformBlocks": [],
+          "textureQueries": [],
+          "colorOutputMasks": {
+            "signedMask": 1,
+            "unsignedMask": 0
+          },
+          "broadcastColor0": false,
+          "standardSemantics": {
+            "kind": "native-gles3-highp-v1",
+            "precision": "native-highp",
+            "undefinedDomains": "native-gles3",
+            "preciseQualifier": "no-gpu-shader5",
+            "registerStorage": "uvec4",
+            "flatVaryingStorage": "uvec4",
+            "scalarResults": "tgsi-x-replicated",
+            "exactAuthority": false,
+            "gpuExecutionBound": false
+          }
+        }
+      },
+      "oldMetadata": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      },
+      "oldResult": {
+        "ok": false,
+        "error": {
+          "code": "shader-domain-error",
+          "message": "Unknown or accessor property."
+        }
+      }
+    },
+    {
+      "kind": "pair",
+      "type": "SINT",
+      "vertexText": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, SINT\n0: TXF OUT[1], CONST[0], SAMP[0], 2D\n1: MOV OUT[0], IN[0]\n2: END\n",
+      "fragmentText": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, SINT\n0: TXF OUT[0], CONST[0], SAMP[0], 2D\n1: END\n",
+      "selectors": {
+        "signedMask": 0,
+        "unsignedMask": 0,
+        "packedSignedMask": 0,
+        "packedNormalizedMask": 0,
+        "bufferZeroMask": 0,
+        "signedColorMask": 1,
+        "unsignedColorMask": 0
+      },
+      "selectedResult": {
+        "ok": true,
+        "vertex": {
+          "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nsmooth out vec4 vso_g0;\nuniform uvec4 vsconst0[3];\nuniform highp isampler2D vssamp0;\nlayout(std140) uniform VirglBlock {\nvec4 clipp[8];\nuint stipple_pattern[32];\nfloat winsys_adjust_y;\nfloat alpha_ref_val;\nbool clip_plane_enabled;\nint drawid_base;\n};\nuniform vec2 wv_point_size;\nvoid main() {\nbool flow_condition;\nuvec4 o0;\nuvec4 o1;\n{\nuvec4 a = (vsconst0[0]).xyzw;\nuvec4 r = uvec4(texelFetch(vssamp0, ivec2(a.xy), int(a.w)));\no1.xyzw = r.xyzw;\n}\n{\nuvec4 a = (floatBitsToUint(in_0)).xyzw;\nuvec4 r = a;\no0.xyzw = r.xyzw;\n}\ngl_Position = uintBitsToFloat(o0);\nvso_g0 = uintBitsToFloat(o1);\ngl_Position.y *= winsys_adjust_y;\ngl_PointSize = wv_point_size.y > 0.5 ? 1.0 : wv_point_size.x;\n}\n",
+          "metadata": {
+            "profile": "virgl-webgl2-standard-integer-image-gles3-v1",
+            "stage": "vertex",
+            "inputs": [
+              {
+                "index": 0,
+                "name": "in_0",
+                "type": "vec4",
+                "semantic": "ATTRIBUTE",
+                "semanticIndex": 0,
+                "componentMask": 15
+              }
+            ],
+            "outputs": [
+              {
+                "index": 0,
+                "name": "gl_Position",
+                "type": "vec4",
+                "semantic": "POSITION",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "syntacticWriteMask": 15
+              },
+              {
+                "index": 1,
+                "name": "vso_g0",
+                "type": "vec4",
+                "semantic": "GENERIC",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "syntacticWriteMask": 15,
+                "interpolation": "smooth"
+              }
+            ],
+            "attributes": [
+              {
+                "index": 0,
+                "name": "in_0",
+                "type": "vec4",
+                "semantic": "ATTRIBUTE",
+                "semanticIndex": 0,
+                "componentMask": 15
+              }
+            ],
+            "systemValues": [],
+            "uniforms": [
+              {
+                "name": "vsconst0",
+                "type": "uvec4[]",
+                "count": 3,
+                "encoding": "raw-32bit-words"
+              }
+            ],
+            "samplers": [
+              {
+                "index": 0,
+                "name": "vssamp0",
+                "type": "isampler2D"
+              }
+            ],
+            "uniformBlocks": [
+              {
+                "name": "VirglBlock",
+                "byteLength": 656,
+                "members": [
+                  {
+                    "name": "winsys_adjust_y",
+                    "offset": 640,
+                    "type": "float",
+                    "default": 1
+                  }
+                ]
+              }
+            ],
+            "rasterUniforms": [
+              {
+                "name": "wv_point_size",
+                "type": "vec2",
+                "semantic": "POINT_SIZE"
+              }
+            ],
+            "guestUniformBlocks": [],
+            "textureQueries": [],
+            "colorOutputMasks": {
+              "signedMask": 0,
+              "unsignedMask": 0
+            },
+            "broadcastColor0": false,
+            "standardSemantics": {
+              "kind": "native-gles3-highp-v1",
+              "precision": "native-highp",
+              "undefinedDomains": "native-gles3",
+              "preciseQualifier": "no-gpu-shader5",
+              "registerStorage": "uvec4",
+              "flatVaryingStorage": "uvec4",
+              "scalarResults": "tgsi-x-replicated",
+              "exactAuthority": false,
+              "gpuExecutionBound": false
+            }
+          }
+        },
+        "fragment": {
+          "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nlayout(location=0) out ivec4 fsout_c0;\nuniform uvec4 fsconst0[3];\nuniform highp isampler2D fssamp0;\nvoid main() {\nbool flow_condition;\nuvec4 o0;\n{\nuvec4 a = (fsconst0[0]).xyzw;\nuvec4 r = uvec4(texelFetch(fssamp0, ivec2(a.xy), int(a.w)));\no0.xyzw = r.xyzw;\n}\nfsout_c0 = ivec4(o0);\n}\n",
+          "metadata": {
+            "profile": "virgl-webgl2-standard-integer-image-gles3-v1",
+            "stage": "fragment",
+            "inputs": [],
+            "outputs": [
+              {
+                "index": 0,
+                "name": "fsout_c0",
+                "type": "ivec4",
+                "semantic": "COLOR",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "syntacticWriteMask": 15
+              }
+            ],
+            "attributes": [],
+            "systemValues": [],
+            "uniforms": [
+              {
+                "name": "fsconst0",
+                "type": "uvec4[]",
+                "count": 3,
+                "encoding": "raw-32bit-words"
+              }
+            ],
+            "samplers": [
+              {
+                "index": 0,
+                "name": "fssamp0",
+                "type": "isampler2D"
+              }
+            ],
+            "uniformBlocks": [],
+            "rasterUniforms": [],
+            "guestUniformBlocks": [],
+            "textureQueries": [],
+            "colorOutputMasks": {
+              "signedMask": 1,
+              "unsignedMask": 0
+            },
+            "broadcastColor0": false,
+            "standardSemantics": {
+              "kind": "native-gles3-highp-v1",
+              "precision": "native-highp",
+              "undefinedDomains": "native-gles3",
+              "preciseQualifier": "no-gpu-shader5",
+              "registerStorage": "uvec4",
+              "flatVaryingStorage": "uvec4",
+              "scalarResults": "tgsi-x-replicated",
+              "exactAuthority": false,
+              "gpuExecutionBound": false
+            }
+          }
+        },
+        "interfaceKey": "standard-generic-interpolation-v1:"
+      },
+      "oldPair": {
+        "ok": false,
+        "error": {
+          "code": "shader-link-error",
+          "message": "Unknown or accessor property."
+        }
+      },
+      "oldInterface": {
+        "ok": false,
+        "error": {
+          "code": "shader-link-error",
+          "message": "Unknown or accessor property."
+        }
+      }
+    },
+    {
+      "kind": "pair",
+      "type": "UINT",
+      "vertexText": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, UINT\n0: TXF OUT[1], CONST[0], SAMP[0], 2D\n1: MOV OUT[0], IN[0]\n2: END\n",
+      "fragmentText": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, UINT\n0: TXF OUT[0], CONST[0], SAMP[0], 2D\n1: END\n",
+      "selectors": {
+        "signedMask": 0,
+        "unsignedMask": 0,
+        "packedSignedMask": 0,
+        "packedNormalizedMask": 0,
+        "bufferZeroMask": 0,
+        "signedColorMask": 0,
+        "unsignedColorMask": 1
+      },
+      "selectedResult": {
+        "ok": true,
+        "vertex": {
+          "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nsmooth out vec4 vso_g0;\nuniform uvec4 vsconst0[3];\nuniform highp usampler2D vssamp0;\nlayout(std140) uniform VirglBlock {\nvec4 clipp[8];\nuint stipple_pattern[32];\nfloat winsys_adjust_y;\nfloat alpha_ref_val;\nbool clip_plane_enabled;\nint drawid_base;\n};\nuniform vec2 wv_point_size;\nvoid main() {\nbool flow_condition;\nuvec4 o0;\nuvec4 o1;\n{\nuvec4 a = (vsconst0[0]).xyzw;\nuvec4 r = uvec4(texelFetch(vssamp0, ivec2(a.xy), int(a.w)));\no1.xyzw = r.xyzw;\n}\n{\nuvec4 a = (floatBitsToUint(in_0)).xyzw;\nuvec4 r = a;\no0.xyzw = r.xyzw;\n}\ngl_Position = uintBitsToFloat(o0);\nvso_g0 = uintBitsToFloat(o1);\ngl_Position.y *= winsys_adjust_y;\ngl_PointSize = wv_point_size.y > 0.5 ? 1.0 : wv_point_size.x;\n}\n",
+          "metadata": {
+            "profile": "virgl-webgl2-standard-integer-image-gles3-v1",
+            "stage": "vertex",
+            "inputs": [
+              {
+                "index": 0,
+                "name": "in_0",
+                "type": "vec4",
+                "semantic": "ATTRIBUTE",
+                "semanticIndex": 0,
+                "componentMask": 15
+              }
+            ],
+            "outputs": [
+              {
+                "index": 0,
+                "name": "gl_Position",
+                "type": "vec4",
+                "semantic": "POSITION",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "syntacticWriteMask": 15
+              },
+              {
+                "index": 1,
+                "name": "vso_g0",
+                "type": "vec4",
+                "semantic": "GENERIC",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "syntacticWriteMask": 15,
+                "interpolation": "smooth"
+              }
+            ],
+            "attributes": [
+              {
+                "index": 0,
+                "name": "in_0",
+                "type": "vec4",
+                "semantic": "ATTRIBUTE",
+                "semanticIndex": 0,
+                "componentMask": 15
+              }
+            ],
+            "systemValues": [],
+            "uniforms": [
+              {
+                "name": "vsconst0",
+                "type": "uvec4[]",
+                "count": 3,
+                "encoding": "raw-32bit-words"
+              }
+            ],
+            "samplers": [
+              {
+                "index": 0,
+                "name": "vssamp0",
+                "type": "usampler2D"
+              }
+            ],
+            "uniformBlocks": [
+              {
+                "name": "VirglBlock",
+                "byteLength": 656,
+                "members": [
+                  {
+                    "name": "winsys_adjust_y",
+                    "offset": 640,
+                    "type": "float",
+                    "default": 1
+                  }
+                ]
+              }
+            ],
+            "rasterUniforms": [
+              {
+                "name": "wv_point_size",
+                "type": "vec2",
+                "semantic": "POINT_SIZE"
+              }
+            ],
+            "guestUniformBlocks": [],
+            "textureQueries": [],
+            "colorOutputMasks": {
+              "signedMask": 0,
+              "unsignedMask": 0
+            },
+            "broadcastColor0": false,
+            "standardSemantics": {
+              "kind": "native-gles3-highp-v1",
+              "precision": "native-highp",
+              "undefinedDomains": "native-gles3",
+              "preciseQualifier": "no-gpu-shader5",
+              "registerStorage": "uvec4",
+              "flatVaryingStorage": "uvec4",
+              "scalarResults": "tgsi-x-replicated",
+              "exactAuthority": false,
+              "gpuExecutionBound": false
+            }
+          }
+        },
+        "fragment": {
+          "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nlayout(location=0) out uvec4 fsout_c0;\nuniform uvec4 fsconst0[3];\nuniform highp usampler2D fssamp0;\nvoid main() {\nbool flow_condition;\nuvec4 o0;\n{\nuvec4 a = (fsconst0[0]).xyzw;\nuvec4 r = uvec4(texelFetch(fssamp0, ivec2(a.xy), int(a.w)));\no0.xyzw = r.xyzw;\n}\nfsout_c0 = uvec4(o0);\n}\n",
+          "metadata": {
+            "profile": "virgl-webgl2-standard-integer-image-gles3-v1",
+            "stage": "fragment",
+            "inputs": [],
+            "outputs": [
+              {
+                "index": 0,
+                "name": "fsout_c0",
+                "type": "uvec4",
+                "semantic": "COLOR",
+                "semanticIndex": 0,
+                "componentMask": 15,
+                "syntacticWriteMask": 15
+              }
+            ],
+            "attributes": [],
+            "systemValues": [],
+            "uniforms": [
+              {
+                "name": "fsconst0",
+                "type": "uvec4[]",
+                "count": 3,
+                "encoding": "raw-32bit-words"
+              }
+            ],
+            "samplers": [
+              {
+                "index": 0,
+                "name": "fssamp0",
+                "type": "usampler2D"
+              }
+            ],
+            "uniformBlocks": [],
+            "rasterUniforms": [],
+            "guestUniformBlocks": [],
+            "textureQueries": [],
+            "colorOutputMasks": {
+              "signedMask": 0,
+              "unsignedMask": 1
+            },
+            "broadcastColor0": false,
+            "standardSemantics": {
+              "kind": "native-gles3-highp-v1",
+              "precision": "native-highp",
+              "undefinedDomains": "native-gles3",
+              "preciseQualifier": "no-gpu-shader5",
+              "registerStorage": "uvec4",
+              "flatVaryingStorage": "uvec4",
+              "scalarResults": "tgsi-x-replicated",
+              "exactAuthority": false,
+              "gpuExecutionBound": false
+            }
+          }
+        },
+        "interfaceKey": "standard-generic-interpolation-v1:"
+      },
+      "oldPair": {
+        "ok": false,
+        "error": {
+          "code": "shader-link-error",
+          "message": "Unknown or accessor property."
+        }
+      },
+      "oldInterface": {
+        "ok": false,
+        "error": {
+          "code": "shader-link-error",
+          "message": "Unknown or accessor property."
+        }
+      }
+    }
+  ],
+  "wireRows": [
+    {
+      "kind": "sampler-view",
+      "format": 177,
+      "hex": "010606000900000006000000b10000020000000001030000220a0000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 177,
+      "hex": "010805000a00000006000000b10000000200000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "sampler-view",
+      "format": 178,
+      "hex": "010606000900000006000000b20000020000000001030000220a0000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 178,
+      "hex": "010805000a00000006000000b20000000200000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "sampler-view",
+      "format": 179,
+      "hex": "010606000900000006000000b30000020000000001030000220a0000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 179,
+      "hex": "010805000a00000006000000b30000000200000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "sampler-view",
+      "format": 180,
+      "hex": "010606000900000006000000b40000020000000001030000220a0000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 180,
+      "hex": "010805000a00000006000000b40000000200000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "sampler-view",
+      "format": 181,
+      "hex": "010606000900000006000000b50000020000000001030000220a0000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 181,
+      "hex": "010805000a00000006000000b50000000200000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "sampler-view",
+      "format": 182,
+      "hex": "010606000900000006000000b60000020000000001030000220a0000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 182,
+      "hex": "010805000a00000006000000b60000000200000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "sampler-view",
+      "format": 183,
+      "hex": "010606000900000006000000b70000020000000001030000220a0000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 183,
+      "hex": "010805000a00000006000000b70000000200000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "sampler-view",
+      "format": 184,
+      "hex": "010606000900000006000000b80000020000000001030000220a0000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 184,
+      "hex": "010805000a00000006000000b80000000200000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "sampler-view",
+      "format": 185,
+      "hex": "010606000900000006000000b90000020000000001030000220a0000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 185,
+      "hex": "010805000a00000006000000b90000000200000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "sampler-view",
+      "format": 186,
+      "hex": "010606000900000006000000ba0000020000000001030000220a0000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 186,
+      "hex": "010805000a00000006000000ba0000000200000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "sampler-view",
+      "format": 187,
+      "hex": "010606000900000006000000bb0000020000000001030000220a0000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 187,
+      "hex": "010805000a00000006000000bb0000000200000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "sampler-view",
+      "format": 188,
+      "hex": "010606000900000006000000bc0000020000000001030000220a0000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 188,
+      "hex": "010805000a00000006000000bc0000000200000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "sampler-view",
+      "format": 189,
+      "hex": "010606000900000006000000bd0000020000000001030000220a0000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 189,
+      "hex": "010805000a00000006000000bd0000000200000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "sampler-view",
+      "format": 190,
+      "hex": "010606000900000006000000be0000020000000001030000220a0000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 190,
+      "hex": "010805000a00000006000000be0000000200000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "sampler-view",
+      "format": 191,
+      "hex": "010606000900000006000000bf0000020000000001030000220a0000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 191,
+      "hex": "010805000a00000006000000bf0000000200000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "sampler-view",
+      "format": 192,
+      "hex": "010606000900000006000000c00000020000000001030000220a0000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 192,
+      "hex": "010805000a00000006000000c00000000200000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "sampler-view",
+      "format": 193,
+      "hex": "010606000900000006000000c10000020000000001030000220a0000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 193,
+      "hex": "010805000a00000006000000c10000000200000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "sampler-view",
+      "format": 194,
+      "hex": "010606000900000006000000c20000020000000001030000220a0000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 194,
+      "hex": "010805000a00000006000000c20000000200000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "sampler-view",
+      "format": 195,
+      "hex": "010606000900000006000000c30000020000000001030000220a0000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 195,
+      "hex": "010805000a00000006000000c30000000200000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "sampler-view",
+      "format": 196,
+      "hex": "010606000900000006000000c40000020000000001030000220a0000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 196,
+      "hex": "010805000a00000006000000c40000000200000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "sampler-view",
+      "format": 197,
+      "hex": "010606000900000006000000c50000020000000001030000220a0000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 197,
+      "hex": "010805000a00000006000000c50000000200000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "sampler-view",
+      "format": 198,
+      "hex": "010606000900000006000000c60000020000000001030000220a0000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 198,
+      "hex": "010805000a00000006000000c60000000200000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "sampler-view",
+      "format": 199,
+      "hex": "010606000900000006000000c70000020000000001030000220a0000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 199,
+      "hex": "010805000a00000006000000c70000000200000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "sampler-view",
+      "format": 200,
+      "hex": "010606000900000006000000c80000020000000001030000220a0000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 200,
+      "hex": "010805000a00000006000000c80000000200000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    }
+  ]
+}

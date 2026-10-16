@@ -1,0 +1,30 @@
+{
+  "native": "passed",
+  "wasm": "passed",
+  "head": "bfcd3a4076a163648c67bf7674e94d616c42c1e1",
+  "stats": {
+    "originals": 19,
+    "acceptedOriginals": 12,
+    "cases": 4012,
+    "pairs": 264,
+    "calls": 743022,
+    "standaloneRecoveries": 378638,
+    "pairRecoveries": 349512,
+    "truncations": 6115,
+    "hostileCases": 324,
+    "mutations": 4096,
+    "allocationFaults": 16,
+    "maxSingleResultBytes": 63369,
+    "maxPairResultBytes": 109235
+  },
+  "wasmCounts": {
+    "calls": 15151,
+    "originals": 19,
+    "singles": 4012,
+    "pairs": 264,
+    "recoverySingles": 5590,
+    "recoveryPairs": 5160,
+    "stress": 64,
+    "pressure": 33
+  }
+}

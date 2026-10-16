@@ -17,6 +17,7 @@ export const DEFAULT_PUBLIC_BASE = "https://pub-c7188e40d3a0463183db72f9dd03cae2
 export const DEFAULT_BUCKET = "wasm-vm";
 export const CHUNK_SIZE = 256 * 1024;
 export const CONCURRENCY = 4;
+export const MAX_UPLOAD_CONCURRENCY = 32;
 export const PUBLIC_CONCURRENCY = 16;
 export const PUBLIC_TIMEOUT_MS = 20_000;
 export const PUBLIC_RETRY_BACKOFF_MS = [500, 1_000];
@@ -388,8 +389,8 @@ async function stageManifest(validated) {
   }
 }
 
-async function ensureUploaded({ object, bucket, publicBase, fetchImpl, uploader, timeoutMs, retryDelaysMs, maxAttempts }) {
-  const before = await checkPublicObject({
+async function ensureUploaded({ object, bucket, publicBase, fetchImpl, uploader, timeoutMs, retryDelaysMs, maxAttempts, checkObject = checkPublicObject }) {
+  const before = await checkObject({
     fetchImpl,
     publicBase,
     key: object.key,
@@ -406,7 +407,7 @@ async function ensureUploaded({ object, bucket, publicBase, fetchImpl, uploader,
   const stage = await stageChunk(object);
   try {
     await uploader({ bucket, key: object.key, sourcePath: stage.path });
-    const after = await checkPublicObject({
+    const after = await checkObject({
       fetchImpl,
       publicBase,
       key: object.key,
@@ -461,12 +462,20 @@ export async function publishChunks({
   validatedManifest = null,
   provenance = null,
   onProgress = () => {},
+  objectChecker = null,
+  uploadConcurrency = CONCURRENCY,
 }) {
   if (!manifestPath) fail("manifest path is required");
   publicBase = validatePublicBase(publicBase);
   bucket = validateBucket(bucket);
   if (typeof fetchImpl !== "function") fail("fetch is unavailable");
+  assert.ok(Number.isSafeInteger(uploadConcurrency) && uploadConcurrency >= 1 && uploadConcurrency <= MAX_UPLOAD_CONCURRENCY, "bounded upload concurrency");
   const validated = validatedManifest || await validateLocalManifest(manifestPath);
+  // The default verifies public HTTPS. Bulk release tools may explicitly use
+  // the same bucket's authenticated full-byte checker and label that transport
+  // in their own receipt; publication ordering and mismatch refusal stay here.
+  assert.ok(objectChecker === null || typeof objectChecker === "function");
+  const checkObject = objectChecker || checkPublicObject;
   const sourceProvenance = provenance || await scriptProvenance();
   const result = {
     mode: publish ? "publish" : "plan",
@@ -491,10 +500,10 @@ export async function publishChunks({
     return result;
   }
 
-  // Preflight every public object before the first write. A concurrent 403/5xx must not allow a
+  // Preflight every object through the selected checker before the first write. A 403/5xx must not allow a
   // different 404 object to upload and leave a partially published set behind.
   const preflight = await mapLimit(validated.objects, PUBLIC_CONCURRENCY, async (object, index) => {
-    const check = await checkPublicObject({
+    const check = await checkObject({
       fetchImpl,
       publicBase,
       key: object.key,
@@ -523,7 +532,7 @@ export async function publishChunks({
   const pending = preflight.filter(({ check }) => check.state !== "exact");
   const outcomes = await mapLimit(
     pending,
-    CONCURRENCY,
+    uploadConcurrency,
     async ({ object }) => {
       const outcome = await ensureUploaded({
         object,
@@ -534,6 +543,7 @@ export async function publishChunks({
         timeoutMs: publicTimeoutMs,
         retryDelaysMs: publicRetryDelaysMs,
         maxAttempts: publicMaxAttempts,
+        checkObject,
       });
       processed += 1;
       if (outcome.state === "uploaded") result.uploaded += 1;
@@ -546,7 +556,7 @@ export async function publishChunks({
 
   const finalKey = validated.manifestKey;
   const finalBytes = validated.manifestBytes;
-  const final = await checkPublicObject({
+  const final = await checkObject({
     fetchImpl,
     publicBase,
     key: finalKey,
@@ -564,7 +574,7 @@ export async function publishChunks({
     const stage = await stageManifest(validated);
     try {
       await uploader({ bucket, key: finalKey, sourcePath: stage.path });
-      const verified = await checkPublicObject({
+      const verified = await checkObject({
         fetchImpl,
         publicBase,
         key: finalKey,

@@ -318,6 +318,16 @@ impl InputState {
         self.pending_event_budget
     }
 
+    /// A physical make needs a later host turn to supply its break. Include
+    /// frames not yet delivered so an idle timer cannot overtake either edge.
+    /// This does not stop instruction-count time or alter the guest's events.
+    #[cfg(not(feature = "zicsr-stub"))]
+    pub(crate) fn awaiting_host_key_release(&self) -> bool {
+        self.staged_event_count != 0
+            || self.pending_event_count != 0
+            || !self.delivered_keys.is_empty()
+    }
+
     /// Number of events waiting for a guest eventq buffer, excluding already-delivered prefixes.
     pub fn pending_events(&self) -> usize {
         self.pending_event_count

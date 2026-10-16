@@ -1,0 +1,3 @@
+Command: ['cargo', 'clippy', '-p', 'wasm-vm-core', '--test', 'jit_sparse_handoff', '--features', 'trace', '--', '-D', 'warnings']
+    Checking wasm-vm-core v0.0.1 (/Users/blamy/.codex/worktrees/emulator-speed-next/wasm-vm/crates/core)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.22s

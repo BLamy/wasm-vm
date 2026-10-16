@@ -1,0 +1,2955 @@
+{
+  "status": "passed",
+  "counts": {
+    "inversePixels": 225,
+    "cases": 17,
+    "correctPreFaultInversePlanes": 2,
+    "physicalOracleFailures": 2
+  },
+  "citations": [
+    {
+      "record": "novel-reviewed-362436069/report.json",
+      "sha256": "a0a64795cb5a3a1675d3892b001fc1c799990ae668eabb4abed06cb0297304f4",
+      "point": "browserResult/result/result/rows/0",
+      "format": 16,
+      "seed": 362436069,
+      "generationPair": [
+        2,
+        3
+      ],
+      "nativeCopies": [
+        {
+          "sequence": 315,
+          "source": [
+            7,
+            1,
+            5
+          ],
+          "destination": [
+            9,
+            0,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 1206,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 339,
+          "source": [
+            7,
+            1,
+            6
+          ],
+          "destination": [
+            9,
+            0,
+            1
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 1206,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 363,
+          "source": [
+            7,
+            2,
+            5
+          ],
+          "destination": [
+            9,
+            1,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 1206,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 387,
+          "source": [
+            7,
+            2,
+            6
+          ],
+          "destination": [
+            9,
+            1,
+            1
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 1206,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 413,
+          "source": [
+            7,
+            2,
+            6
+          ],
+          "destination": [
+            11,
+            0,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 1206,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        }
+      ],
+      "fence": {
+        "waits": 7
+      },
+      "inverse": [
+        {
+          "label": "overlap",
+          "originalMip": 1,
+          "firstLayer": 5,
+          "expected": "ffffffffffffffffffffffff000000000000000000000000",
+          "observed": "ffffffffffffffffffffffff000000000000000000000000"
+        },
+        {
+          "label": "overlap",
+          "originalMip": 2,
+          "firstLayer": 5,
+          "expected": "0000ffff",
+          "observed": "0000ffff"
+        },
+        {
+          "label": "last-layer-single-tail",
+          "originalMip": 2,
+          "firstLayer": 6,
+          "expected": "ffff",
+          "observed": "ffff"
+        }
+      ]
+    },
+    {
+      "record": "novel-reviewed-362436069/report.json",
+      "sha256": "a0a64795cb5a3a1675d3892b001fc1c799990ae668eabb4abed06cb0297304f4",
+      "point": "browserResult/result/result/rows/1",
+      "format": 18,
+      "seed": 362436069,
+      "generationPair": [
+        2,
+        3
+      ],
+      "nativeCopies": [
+        {
+          "sequence": 1677,
+          "source": [
+            56,
+            1,
+            5
+          ],
+          "destination": [
+            58,
+            0,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 2412,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 1701,
+          "source": [
+            56,
+            1,
+            6
+          ],
+          "destination": [
+            58,
+            0,
+            1
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 2412,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 1725,
+          "source": [
+            56,
+            2,
+            5
+          ],
+          "destination": [
+            58,
+            1,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 2412,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 1749,
+          "source": [
+            56,
+            2,
+            6
+          ],
+          "destination": [
+            58,
+            1,
+            1
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 2412,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 1775,
+          "source": [
+            56,
+            2,
+            6
+          ],
+          "destination": [
+            60,
+            0,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 2412,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        }
+      ],
+      "fence": {
+        "waits": 1
+      },
+      "inverse": [
+        {
+          "label": "overlap",
+          "originalMip": 1,
+          "firstLayer": 5,
+          "expected": "0000803f0000803f0000803f0000803f0000803f0000803f000000000000000000000000000000000000000000000000",
+          "observed": "0000803f0000803f0000803f0000803f0000803f0000803f000000000000000000000000000000000000000000000000"
+        },
+        {
+          "label": "overlap",
+          "originalMip": 2,
+          "firstLayer": 5,
+          "expected": "000000000000803f",
+          "observed": "000000000000803f"
+        },
+        {
+          "label": "last-layer-single-tail",
+          "originalMip": 2,
+          "firstLayer": 6,
+          "expected": "0000803f",
+          "observed": "0000803f"
+        }
+      ]
+    },
+    {
+      "record": "novel-reviewed-362436069/report.json",
+      "sha256": "a0a64795cb5a3a1675d3892b001fc1c799990ae668eabb4abed06cb0297304f4",
+      "point": "browserResult/result/result/rows/2",
+      "format": 20,
+      "seed": 362436069,
+      "generationPair": [
+        2,
+        3
+      ],
+      "nativeCopies": [
+        {
+          "sequence": 3033,
+          "source": [
+            105,
+            1,
+            5
+          ],
+          "destination": [
+            107,
+            0,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 2412,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 3057,
+          "source": [
+            105,
+            1,
+            6
+          ],
+          "destination": [
+            107,
+            0,
+            1
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 2412,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 3081,
+          "source": [
+            105,
+            2,
+            5
+          ],
+          "destination": [
+            107,
+            1,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 2412,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 3105,
+          "source": [
+            105,
+            2,
+            6
+          ],
+          "destination": [
+            107,
+            1,
+            1
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 2412,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 3131,
+          "source": [
+            105,
+            2,
+            6
+          ],
+          "destination": [
+            109,
+            0,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 2412,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        }
+      ],
+      "fence": {
+        "waits": 1
+      },
+      "inverse": [
+        {
+          "label": "overlap",
+          "originalMip": 1,
+          "firstLayer": 5,
+          "expected": "6fffffff6fffffff6fffffff6fffffff6fffffff6fffffff800000008000000080000000800000008000000080000000",
+          "observed": "6fffffff6fffffff6fffffff6fffffff6fffffff6fffffff800000008000000080000000800000008000000080000000"
+        },
+        {
+          "label": "overlap",
+          "originalMip": 2,
+          "firstLayer": 5,
+          "expected": "a4000000b5ffffff",
+          "observed": "a4000000b5ffffff"
+        },
+        {
+          "label": "last-layer-single-tail",
+          "originalMip": 2,
+          "firstLayer": 6,
+          "expected": "b5ffffff",
+          "observed": "b5ffffff"
+        }
+      ]
+    },
+    {
+      "record": "novel-reviewed-362436069/report.json",
+      "sha256": "a0a64795cb5a3a1675d3892b001fc1c799990ae668eabb4abed06cb0297304f4",
+      "point": "browserResult/result/result/rows/3",
+      "format": 21,
+      "seed": 362436069,
+      "generationPair": [
+        2,
+        3
+      ],
+      "nativeCopies": [
+        {
+          "sequence": 4792,
+          "source": [
+            169,
+            1,
+            5
+          ],
+          "destination": [
+            171,
+            0,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 2412,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 4816,
+          "source": [
+            169,
+            1,
+            6
+          ],
+          "destination": [
+            171,
+            0,
+            1
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 2412,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 4840,
+          "source": [
+            169,
+            2,
+            5
+          ],
+          "destination": [
+            171,
+            1,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 2412,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 4864,
+          "source": [
+            169,
+            2,
+            6
+          ],
+          "destination": [
+            171,
+            1,
+            1
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 2412,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 4890,
+          "source": [
+            169,
+            2,
+            6
+          ],
+          "destination": [
+            173,
+            0,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 2412,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        }
+      ],
+      "fence": {
+        "waits": 1
+      },
+      "inverse": [
+        {
+          "label": "overlap",
+          "originalMip": 1,
+          "firstLayer": 5,
+          "expected": "ffffff00ffffff00ffffff00ffffff00ffffff00ffffff00000000000000000000000000000000000000000000000000",
+          "observed": "ffffff00ffffff00ffffff00ffffff00ffffff00ffffff00000000000000000000000000000000000000000000000000"
+        },
+        {
+          "label": "overlap",
+          "originalMip": 2,
+          "firstLayer": 5,
+          "expected": "00000000ffffff00",
+          "observed": "00000000ffffff00"
+        },
+        {
+          "label": "last-layer-single-tail",
+          "originalMip": 2,
+          "firstLayer": 6,
+          "expected": "ffffff00",
+          "observed": "ffffff00"
+        }
+      ]
+    },
+    {
+      "record": "novel-reviewed-362436069/report.json",
+      "sha256": "a0a64795cb5a3a1675d3892b001fc1c799990ae668eabb4abed06cb0297304f4",
+      "point": "browserResult/result/result/rows/4",
+      "format": 126,
+      "seed": 362436069,
+      "generationPair": [
+        2,
+        3
+      ],
+      "nativeCopies": [
+        {
+          "sequence": 6188,
+          "source": [
+            218,
+            1,
+            5
+          ],
+          "destination": [
+            221,
+            0,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 9648,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 6212,
+          "source": [
+            218,
+            1,
+            6
+          ],
+          "destination": [
+            221,
+            0,
+            1
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 9648,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 6236,
+          "source": [
+            218,
+            2,
+            5
+          ],
+          "destination": [
+            221,
+            1,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 9648,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 6260,
+          "source": [
+            218,
+            2,
+            6
+          ],
+          "destination": [
+            221,
+            1,
+            1
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 9648,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 6286,
+          "source": [
+            218,
+            2,
+            6
+          ],
+          "destination": [
+            224,
+            0,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 9648,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        }
+      ],
+      "fence": {
+        "waits": 1
+      },
+      "inverse": [
+        {
+          "label": "overlap",
+          "originalMip": 1,
+          "firstLayer": 5,
+          "expected": "0000803f6f0000000000803f6f0000000000803f6f0000000000803f6f0000000000803f6f0000000000803f6f000000000000008000000000000000800000000000000080000000000000008000000000000000800000000000000080000000",
+          "observed": "0000803f6f0000000000803f6f0000000000803f6f0000000000803f6f0000000000803f6f0000000000803f6f000000000000008000000000000000800000000000000080000000000000008000000000000000800000000000000080000000"
+        },
+        {
+          "label": "overlap",
+          "originalMip": 2,
+          "firstLayer": 5,
+          "expected": "00000000a40000000000803fb5000000",
+          "observed": "00000000a40000000000803fb5000000"
+        },
+        {
+          "label": "last-layer-single-tail",
+          "originalMip": 2,
+          "firstLayer": 6,
+          "expected": "0000803fb5000000",
+          "observed": "0000803fb5000000"
+        }
+      ]
+    },
+    {
+      "record": "novel-521288629/report.json",
+      "sha256": "a8f51e15d06c64b5bd7d18b546efb44cd60d2db5b7182c6d917a7fda3990dd47",
+      "point": "browserResult/result/result/rows/0",
+      "format": 16,
+      "seed": 521288629,
+      "generationPair": [
+        2,
+        3
+      ],
+      "nativeCopies": [
+        {
+          "sequence": 315,
+          "source": [
+            7,
+            1,
+            5
+          ],
+          "destination": [
+            9,
+            0,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 1206,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 339,
+          "source": [
+            7,
+            1,
+            6
+          ],
+          "destination": [
+            9,
+            0,
+            1
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 1206,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 363,
+          "source": [
+            7,
+            2,
+            5
+          ],
+          "destination": [
+            9,
+            1,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 1206,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 387,
+          "source": [
+            7,
+            2,
+            6
+          ],
+          "destination": [
+            9,
+            1,
+            1
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 1206,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 413,
+          "source": [
+            7,
+            2,
+            6
+          ],
+          "destination": [
+            11,
+            0,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 1206,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        }
+      ],
+      "fence": {
+        "waits": 7
+      },
+      "inverse": [
+        {
+          "label": "overlap",
+          "originalMip": 1,
+          "firstLayer": 5,
+          "expected": "ffffffffffffffffffffffff000000000000000000000000",
+          "observed": "ffffffffffffffffffffffff000000000000000000000000"
+        },
+        {
+          "label": "overlap",
+          "originalMip": 2,
+          "firstLayer": 5,
+          "expected": "0000ffff",
+          "observed": "0000ffff"
+        },
+        {
+          "label": "last-layer-single-tail",
+          "originalMip": 2,
+          "firstLayer": 6,
+          "expected": "ffff",
+          "observed": "ffff"
+        }
+      ]
+    },
+    {
+      "record": "novel-521288629/report.json",
+      "sha256": "a8f51e15d06c64b5bd7d18b546efb44cd60d2db5b7182c6d917a7fda3990dd47",
+      "point": "browserResult/result/result/rows/1",
+      "format": 18,
+      "seed": 521288629,
+      "generationPair": [
+        2,
+        3
+      ],
+      "nativeCopies": [
+        {
+          "sequence": 1677,
+          "source": [
+            56,
+            1,
+            5
+          ],
+          "destination": [
+            58,
+            0,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 2412,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 1701,
+          "source": [
+            56,
+            1,
+            6
+          ],
+          "destination": [
+            58,
+            0,
+            1
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 2412,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 1725,
+          "source": [
+            56,
+            2,
+            5
+          ],
+          "destination": [
+            58,
+            1,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 2412,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 1749,
+          "source": [
+            56,
+            2,
+            6
+          ],
+          "destination": [
+            58,
+            1,
+            1
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 2412,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 1775,
+          "source": [
+            56,
+            2,
+            6
+          ],
+          "destination": [
+            60,
+            0,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 2412,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        }
+      ],
+      "fence": {
+        "waits": 1
+      },
+      "inverse": [
+        {
+          "label": "overlap",
+          "originalMip": 1,
+          "firstLayer": 5,
+          "expected": "0000803f0000803f0000803f0000803f0000803f0000803f000000000000000000000000000000000000000000000000",
+          "observed": "0000803f0000803f0000803f0000803f0000803f0000803f000000000000000000000000000000000000000000000000"
+        },
+        {
+          "label": "overlap",
+          "originalMip": 2,
+          "firstLayer": 5,
+          "expected": "000000000000803f",
+          "observed": "000000000000803f"
+        },
+        {
+          "label": "last-layer-single-tail",
+          "originalMip": 2,
+          "firstLayer": 6,
+          "expected": "0000803f",
+          "observed": "0000803f"
+        }
+      ]
+    },
+    {
+      "record": "novel-521288629/report.json",
+      "sha256": "a8f51e15d06c64b5bd7d18b546efb44cd60d2db5b7182c6d917a7fda3990dd47",
+      "point": "browserResult/result/result/rows/2",
+      "format": 20,
+      "seed": 521288629,
+      "generationPair": [
+        2,
+        3
+      ],
+      "nativeCopies": [
+        {
+          "sequence": 3033,
+          "source": [
+            105,
+            1,
+            5
+          ],
+          "destination": [
+            107,
+            0,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 2412,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 3057,
+          "source": [
+            105,
+            1,
+            6
+          ],
+          "destination": [
+            107,
+            0,
+            1
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 2412,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 3081,
+          "source": [
+            105,
+            2,
+            5
+          ],
+          "destination": [
+            107,
+            1,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 2412,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 3105,
+          "source": [
+            105,
+            2,
+            6
+          ],
+          "destination": [
+            107,
+            1,
+            1
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 2412,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 3131,
+          "source": [
+            105,
+            2,
+            6
+          ],
+          "destination": [
+            109,
+            0,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 2412,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        }
+      ],
+      "fence": {
+        "waits": 1
+      },
+      "inverse": [
+        {
+          "label": "overlap",
+          "originalMip": 1,
+          "firstLayer": 5,
+          "expected": "3fffffff3fffffff3fffffff3fffffff3fffffff3fffffff500000005000000050000000500000005000000050000000",
+          "observed": "3fffffff3fffffff3fffffff3fffffff3fffffff3fffffff500000005000000050000000500000005000000050000000"
+        },
+        {
+          "label": "overlap",
+          "originalMip": 2,
+          "firstLayer": 5,
+          "expected": "7400000085ffffff",
+          "observed": "7400000085ffffff"
+        },
+        {
+          "label": "last-layer-single-tail",
+          "originalMip": 2,
+          "firstLayer": 6,
+          "expected": "85ffffff",
+          "observed": "85ffffff"
+        }
+      ]
+    },
+    {
+      "record": "novel-521288629/report.json",
+      "sha256": "a8f51e15d06c64b5bd7d18b546efb44cd60d2db5b7182c6d917a7fda3990dd47",
+      "point": "browserResult/result/result/rows/3",
+      "format": 21,
+      "seed": 521288629,
+      "generationPair": [
+        2,
+        3
+      ],
+      "nativeCopies": [
+        {
+          "sequence": 4792,
+          "source": [
+            169,
+            1,
+            5
+          ],
+          "destination": [
+            171,
+            0,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 2412,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 4816,
+          "source": [
+            169,
+            1,
+            6
+          ],
+          "destination": [
+            171,
+            0,
+            1
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 2412,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 4840,
+          "source": [
+            169,
+            2,
+            5
+          ],
+          "destination": [
+            171,
+            1,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 2412,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 4864,
+          "source": [
+            169,
+            2,
+            6
+          ],
+          "destination": [
+            171,
+            1,
+            1
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 2412,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 4890,
+          "source": [
+            169,
+            2,
+            6
+          ],
+          "destination": [
+            173,
+            0,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 2412,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        }
+      ],
+      "fence": {
+        "waits": 1
+      },
+      "inverse": [
+        {
+          "label": "overlap",
+          "originalMip": 1,
+          "firstLayer": 5,
+          "expected": "ffffff00ffffff00ffffff00ffffff00ffffff00ffffff00000000000000000000000000000000000000000000000000",
+          "observed": "ffffff00ffffff00ffffff00ffffff00ffffff00ffffff00000000000000000000000000000000000000000000000000"
+        },
+        {
+          "label": "overlap",
+          "originalMip": 2,
+          "firstLayer": 5,
+          "expected": "00000000ffffff00",
+          "observed": "00000000ffffff00"
+        },
+        {
+          "label": "last-layer-single-tail",
+          "originalMip": 2,
+          "firstLayer": 6,
+          "expected": "ffffff00",
+          "observed": "ffffff00"
+        }
+      ]
+    },
+    {
+      "record": "novel-521288629/report.json",
+      "sha256": "a8f51e15d06c64b5bd7d18b546efb44cd60d2db5b7182c6d917a7fda3990dd47",
+      "point": "browserResult/result/result/rows/4",
+      "format": 126,
+      "seed": 521288629,
+      "generationPair": [
+        2,
+        3
+      ],
+      "nativeCopies": [
+        {
+          "sequence": 6188,
+          "source": [
+            218,
+            1,
+            5
+          ],
+          "destination": [
+            221,
+            0,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 9648,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 6212,
+          "source": [
+            218,
+            1,
+            6
+          ],
+          "destination": [
+            221,
+            0,
+            1
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 9648,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 6236,
+          "source": [
+            218,
+            2,
+            5
+          ],
+          "destination": [
+            221,
+            1,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 9648,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 6260,
+          "source": [
+            218,
+            2,
+            6
+          ],
+          "destination": [
+            221,
+            1,
+            1
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 9648,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 6286,
+          "source": [
+            218,
+            2,
+            6
+          ],
+          "destination": [
+            224,
+            0,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 9648,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        }
+      ],
+      "fence": {
+        "waits": 1
+      },
+      "inverse": [
+        {
+          "label": "overlap",
+          "originalMip": 1,
+          "firstLayer": 5,
+          "expected": "0000803f3f0000000000803f3f0000000000803f3f0000000000803f3f0000000000803f3f0000000000803f3f000000000000005000000000000000500000000000000050000000000000005000000000000000500000000000000050000000",
+          "observed": "0000803f3f0000000000803f3f0000000000803f3f0000000000803f3f0000000000803f3f0000000000803f3f000000000000005000000000000000500000000000000050000000000000005000000000000000500000000000000050000000"
+        },
+        {
+          "label": "overlap",
+          "originalMip": 2,
+          "firstLayer": 5,
+          "expected": "00000000740000000000803f85000000",
+          "observed": "00000000740000000000803f85000000"
+        },
+        {
+          "label": "last-layer-single-tail",
+          "originalMip": 2,
+          "firstLayer": 6,
+          "expected": "0000803f85000000",
+          "observed": "0000803f85000000"
+        }
+      ]
+    },
+    {
+      "record": "novel-sabotage-362436069/report.json",
+      "sha256": "6ad4d675f109937ed73a50593710e89263c8505b9236af6749ea6247ff86d7bf",
+      "point": "browserResult/partial/rows/0",
+      "format": 16,
+      "seed": 362436069,
+      "generationPair": [
+        2,
+        3
+      ],
+      "nativeCopies": [
+        {
+          "sequence": 315,
+          "source": [
+            7,
+            1,
+            5
+          ],
+          "destination": [
+            9,
+            0,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 1206,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 339,
+          "source": [
+            7,
+            1,
+            6
+          ],
+          "destination": [
+            9,
+            0,
+            1
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 1206,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 363,
+          "source": [
+            7,
+            2,
+            5
+          ],
+          "destination": [
+            9,
+            1,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 1206,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 387,
+          "source": [
+            7,
+            2,
+            5
+          ],
+          "destination": [
+            9,
+            1,
+            1
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 1206,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 413,
+          "source": [
+            7,
+            2,
+            5
+          ],
+          "destination": [
+            11,
+            0,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 1206,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        }
+      ],
+      "fence": {
+        "waits": 7
+      },
+      "inverse": [
+        {
+          "label": "overlap",
+          "originalMip": 1,
+          "firstLayer": 5,
+          "expected": "ffffffffffffffffffffffff000000000000000000000000",
+          "observed": "ffffffffffffffffffffffff000000000000000000000000"
+        },
+        {
+          "label": "overlap",
+          "originalMip": 2,
+          "firstLayer": 5,
+          "expected": "0000ffff",
+          "observed": "00000000"
+        }
+      ]
+    },
+    {
+      "record": "promoted-362436069/report.json",
+      "sha256": "825bd2b468bfb78a4de1859db1174318397b9abc3c01124b14a381c4b9af2bac",
+      "point": "browserResult/result/result/rows/0",
+      "format": 16,
+      "seed": 362436069,
+      "generationPair": [
+        2,
+        3
+      ],
+      "nativeCopies": [
+        {
+          "sequence": 315,
+          "source": [
+            7,
+            1,
+            5
+          ],
+          "destination": [
+            9,
+            0,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 1206,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 339,
+          "source": [
+            7,
+            1,
+            6
+          ],
+          "destination": [
+            9,
+            0,
+            1
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 1206,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 363,
+          "source": [
+            7,
+            2,
+            5
+          ],
+          "destination": [
+            9,
+            1,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 1206,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 387,
+          "source": [
+            7,
+            2,
+            6
+          ],
+          "destination": [
+            9,
+            1,
+            1
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 1206,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 413,
+          "source": [
+            7,
+            2,
+            6
+          ],
+          "destination": [
+            11,
+            0,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 1206,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        }
+      ],
+      "fence": {
+        "waits": 7
+      },
+      "inverse": [
+        {
+          "label": "overlap",
+          "originalMip": 1,
+          "firstLayer": 5,
+          "expected": "ffffffffffffffffffffffff000000000000000000000000",
+          "observed": "ffffffffffffffffffffffff000000000000000000000000"
+        },
+        {
+          "label": "overlap",
+          "originalMip": 2,
+          "firstLayer": 5,
+          "expected": "0000ffff",
+          "observed": "0000ffff"
+        },
+        {
+          "label": "last-layer-single-tail",
+          "originalMip": 2,
+          "firstLayer": 6,
+          "expected": "ffff",
+          "observed": "ffff"
+        }
+      ]
+    },
+    {
+      "record": "promoted-362436069/report.json",
+      "sha256": "825bd2b468bfb78a4de1859db1174318397b9abc3c01124b14a381c4b9af2bac",
+      "point": "browserResult/result/result/rows/1",
+      "format": 18,
+      "seed": 362436069,
+      "generationPair": [
+        2,
+        3
+      ],
+      "nativeCopies": [
+        {
+          "sequence": 1677,
+          "source": [
+            56,
+            1,
+            5
+          ],
+          "destination": [
+            58,
+            0,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 2412,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 1701,
+          "source": [
+            56,
+            1,
+            6
+          ],
+          "destination": [
+            58,
+            0,
+            1
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 2412,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 1725,
+          "source": [
+            56,
+            2,
+            5
+          ],
+          "destination": [
+            58,
+            1,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 2412,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 1749,
+          "source": [
+            56,
+            2,
+            6
+          ],
+          "destination": [
+            58,
+            1,
+            1
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 2412,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 1775,
+          "source": [
+            56,
+            2,
+            6
+          ],
+          "destination": [
+            60,
+            0,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 2412,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        }
+      ],
+      "fence": {
+        "waits": 1
+      },
+      "inverse": [
+        {
+          "label": "overlap",
+          "originalMip": 1,
+          "firstLayer": 5,
+          "expected": "0000803f0000803f0000803f0000803f0000803f0000803f000000000000000000000000000000000000000000000000",
+          "observed": "0000803f0000803f0000803f0000803f0000803f0000803f000000000000000000000000000000000000000000000000"
+        },
+        {
+          "label": "overlap",
+          "originalMip": 2,
+          "firstLayer": 5,
+          "expected": "000000000000803f",
+          "observed": "000000000000803f"
+        },
+        {
+          "label": "last-layer-single-tail",
+          "originalMip": 2,
+          "firstLayer": 6,
+          "expected": "0000803f",
+          "observed": "0000803f"
+        }
+      ]
+    },
+    {
+      "record": "promoted-362436069/report.json",
+      "sha256": "825bd2b468bfb78a4de1859db1174318397b9abc3c01124b14a381c4b9af2bac",
+      "point": "browserResult/result/result/rows/2",
+      "format": 20,
+      "seed": 362436069,
+      "generationPair": [
+        2,
+        3
+      ],
+      "nativeCopies": [
+        {
+          "sequence": 3033,
+          "source": [
+            105,
+            1,
+            5
+          ],
+          "destination": [
+            107,
+            0,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 2412,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 3057,
+          "source": [
+            105,
+            1,
+            6
+          ],
+          "destination": [
+            107,
+            0,
+            1
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 2412,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 3081,
+          "source": [
+            105,
+            2,
+            5
+          ],
+          "destination": [
+            107,
+            1,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 2412,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 3105,
+          "source": [
+            105,
+            2,
+            6
+          ],
+          "destination": [
+            107,
+            1,
+            1
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 2412,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 3131,
+          "source": [
+            105,
+            2,
+            6
+          ],
+          "destination": [
+            109,
+            0,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 2412,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        }
+      ],
+      "fence": {
+        "waits": 1
+      },
+      "inverse": [
+        {
+          "label": "overlap",
+          "originalMip": 1,
+          "firstLayer": 5,
+          "expected": "6fffffff6fffffff6fffffff6fffffff6fffffff6fffffff800000008000000080000000800000008000000080000000",
+          "observed": "6fffffff6fffffff6fffffff6fffffff6fffffff6fffffff800000008000000080000000800000008000000080000000"
+        },
+        {
+          "label": "overlap",
+          "originalMip": 2,
+          "firstLayer": 5,
+          "expected": "a4000000b5ffffff",
+          "observed": "a4000000b5ffffff"
+        },
+        {
+          "label": "last-layer-single-tail",
+          "originalMip": 2,
+          "firstLayer": 6,
+          "expected": "b5ffffff",
+          "observed": "b5ffffff"
+        }
+      ]
+    },
+    {
+      "record": "promoted-362436069/report.json",
+      "sha256": "825bd2b468bfb78a4de1859db1174318397b9abc3c01124b14a381c4b9af2bac",
+      "point": "browserResult/result/result/rows/3",
+      "format": 21,
+      "seed": 362436069,
+      "generationPair": [
+        2,
+        3
+      ],
+      "nativeCopies": [
+        {
+          "sequence": 4792,
+          "source": [
+            169,
+            1,
+            5
+          ],
+          "destination": [
+            171,
+            0,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 2412,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 4816,
+          "source": [
+            169,
+            1,
+            6
+          ],
+          "destination": [
+            171,
+            0,
+            1
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 2412,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 4840,
+          "source": [
+            169,
+            2,
+            5
+          ],
+          "destination": [
+            171,
+            1,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 2412,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 4864,
+          "source": [
+            169,
+            2,
+            6
+          ],
+          "destination": [
+            171,
+            1,
+            1
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 2412,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 4890,
+          "source": [
+            169,
+            2,
+            6
+          ],
+          "destination": [
+            173,
+            0,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 2412,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        }
+      ],
+      "fence": {
+        "waits": 1
+      },
+      "inverse": [
+        {
+          "label": "overlap",
+          "originalMip": 1,
+          "firstLayer": 5,
+          "expected": "ffffff00ffffff00ffffff00ffffff00ffffff00ffffff00000000000000000000000000000000000000000000000000",
+          "observed": "ffffff00ffffff00ffffff00ffffff00ffffff00ffffff00000000000000000000000000000000000000000000000000"
+        },
+        {
+          "label": "overlap",
+          "originalMip": 2,
+          "firstLayer": 5,
+          "expected": "00000000ffffff00",
+          "observed": "00000000ffffff00"
+        },
+        {
+          "label": "last-layer-single-tail",
+          "originalMip": 2,
+          "firstLayer": 6,
+          "expected": "ffffff00",
+          "observed": "ffffff00"
+        }
+      ]
+    },
+    {
+      "record": "promoted-362436069/report.json",
+      "sha256": "825bd2b468bfb78a4de1859db1174318397b9abc3c01124b14a381c4b9af2bac",
+      "point": "browserResult/result/result/rows/4",
+      "format": 126,
+      "seed": 362436069,
+      "generationPair": [
+        2,
+        3
+      ],
+      "nativeCopies": [
+        {
+          "sequence": 6188,
+          "source": [
+            218,
+            1,
+            5
+          ],
+          "destination": [
+            221,
+            0,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 9648,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 6212,
+          "source": [
+            218,
+            1,
+            6
+          ],
+          "destination": [
+            221,
+            0,
+            1
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 9648,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 6236,
+          "source": [
+            218,
+            2,
+            5
+          ],
+          "destination": [
+            221,
+            1,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 9648,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 6260,
+          "source": [
+            218,
+            2,
+            6
+          ],
+          "destination": [
+            221,
+            1,
+            1
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 9648,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 6286,
+          "source": [
+            218,
+            2,
+            6
+          ],
+          "destination": [
+            224,
+            0,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 9648,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        }
+      ],
+      "fence": {
+        "waits": 1
+      },
+      "inverse": [
+        {
+          "label": "overlap",
+          "originalMip": 1,
+          "firstLayer": 5,
+          "expected": "0000803f6f0000000000803f6f0000000000803f6f0000000000803f6f0000000000803f6f0000000000803f6f000000000000008000000000000000800000000000000080000000000000008000000000000000800000000000000080000000",
+          "observed": "0000803f6f0000000000803f6f0000000000803f6f0000000000803f6f0000000000803f6f0000000000803f6f000000000000008000000000000000800000000000000080000000000000008000000000000000800000000000000080000000"
+        },
+        {
+          "label": "overlap",
+          "originalMip": 2,
+          "firstLayer": 5,
+          "expected": "00000000a40000000000803fb5000000",
+          "observed": "00000000a40000000000803fb5000000"
+        },
+        {
+          "label": "last-layer-single-tail",
+          "originalMip": 2,
+          "firstLayer": 6,
+          "expected": "0000803fb5000000",
+          "observed": "0000803fb5000000"
+        }
+      ]
+    },
+    {
+      "record": "promoted-sabotage-362436069/report.json",
+      "sha256": "10bdccbfae570a2576f8a222af010001ce7c59514e0e51ddece5d0b06b4b3583",
+      "point": "browserResult/partial/rows/0",
+      "format": 16,
+      "seed": 362436069,
+      "generationPair": [
+        2,
+        3
+      ],
+      "nativeCopies": [
+        {
+          "sequence": 315,
+          "source": [
+            7,
+            1,
+            5
+          ],
+          "destination": [
+            9,
+            0,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 1206,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 339,
+          "source": [
+            7,
+            1,
+            6
+          ],
+          "destination": [
+            9,
+            0,
+            1
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 1206,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 363,
+          "source": [
+            7,
+            2,
+            5
+          ],
+          "destination": [
+            9,
+            1,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 1206,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 387,
+          "source": [
+            7,
+            2,
+            5
+          ],
+          "destination": [
+            9,
+            1,
+            1
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 1206,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        },
+        {
+          "sequence": 413,
+          "source": [
+            7,
+            2,
+            5
+          ],
+          "destination": [
+            11,
+            0,
+            0
+          ],
+          "budget": {
+            "resources": 2,
+            "contexts": 1,
+            "storages": 2,
+            "backingBytes": 4096,
+            "cpuBytes": 4096,
+            "gpuBytes": 1206,
+            "scratchBytes": 0,
+            "tickets": 0,
+            "leases": 2,
+            "uniformRanges": 0,
+            "imageViews": 4,
+            "imageHolds": 2
+          }
+        }
+      ],
+      "fence": {
+        "waits": 7
+      },
+      "inverse": [
+        {
+          "label": "overlap",
+          "originalMip": 1,
+          "firstLayer": 5,
+          "expected": "ffffffffffffffffffffffff000000000000000000000000",
+          "observed": "ffffffffffffffffffffffff000000000000000000000000"
+        },
+        {
+          "label": "overlap",
+          "originalMip": 2,
+          "firstLayer": 5,
+          "expected": "0000ffff",
+          "observed": "00000000"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "schema": "original-packed-unsigned-consumer-seal-v1",
+  "task": "E6-T11d38",
+  "sourceHead": "11326fe597196cb75d0853d230da0a3ed22683c5",
+  "records": 26639,
+  "reopenedMembers": 26639,
+  "sourceClosureIncluded": true,
+  "archiveSha256": "8faad34f84ccfce10b8645598ad92f53a2e3b58414949d4dee6fc59a5ed7a0c6",
+  "archiveBytes": 18851139,
+  "recordIndexSha256": "a9004074786c4e82196bf4177986b7cf150c16bdd6f611ecda330f8c314cb567",
+  "hotReceiptSha256": "3b25b9a5a58139decdcb807a3feef5a7179bcd035634a0fa9a109a3a465160d7",
+  "coldReportSha256": "0a25da170eb7f46b8e46c984f272b37cc17cd2ae9f70961613abcbcd116ba8e6",
+  "coldReceiptSha256": "61801e6a8853e61c1900edc65ada84156347346a00db44e7714c86461c449ce6",
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "authority": "isolated-original-packed-unsigned-consumer-attachments",
+  "productionDrawAuthority": false
+}

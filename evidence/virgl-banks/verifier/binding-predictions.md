@@ -1,0 +1,17 @@
+# E6-T12e3 independent binding predictions
+
+Written after task/scoped source inspection and before opening worker/cold evidence.
+Frozen runtime: f88d7bb0c52cb4ac1189f7a05fb1dfdf77b03b91.
+
+1. Every receipt input hash names bytes present in the frozen Git tree; every recorded artifact digest equals the committed artifact, with no stale source/build/served substitution.
+2. The native fixture stream reconstructed independently from the 19 unchanged original bytes, 404 fixtures and four pair selectors has the recorded SHA, and every raw native result equals the parsed report value.
+3. The browser contains the full same native results (all GLSL and metadata, not merely status) for 404 cases, four pairs and 19 original identities. Exactly 12 originals succeed and the other seven contain PRECISE and reject unsupported-feature.
+4. Recompute original syntax maxima from original bytes without using the worker inventory function: TEMP declaration117/direct113, CONST declaration45/direct25, 8800 bytes,191 nonempty lines,80 maximum line bytes,178 non-END instructions. The recorded per-original inventory must agree.
+5. Each of the nine hardware stage texts is byte-identical to a shared native fixture; every hardware draw and transform-feedback stage hash names its full native GLSL, except the explicit sabotage changed fragment. Pair metadata has the v5 profile and original unmodified frontend bounds.
+6. For fragment low/high/order cases, independent execution of MOV/ADD over fixture inputs gives low RGBA [128,96,64,191], high/order [64,191,128,191]. All recorded pixel sample positions are exactly the interior 16x16 grid and all raw observations equal independently computed values.
+7. For low/high vertex fixture arithmetic, independent binary32 MOV/MUL/ADD yields each recorded gl_Position and echo vector, including preserved TEMP17 .75. Maximal179 yields unchanged gl_Position and echo [0,0,0,59], while maximal fragment yields [0,0,0,255]. All raw uint32 bits and byte digests agree.
+8. The reordered declaration case truthfully declares/reflects47 and writes poison to host array element46, while only46 guest vectors are uploaded. The poison's exact binary32 bits, selected uploaded values and actual output demonstrate the unaddressable padding cannot alias CONST45.
+9. Maximum pair stress inputs are independently reconstructed exact179-non-END vertex/fragment texts padded to16384 bytes each; native and browser results match and all recorded fixed-memory observations account exactly for calls. Stack/memory flags remain256KiB/16MiB and no growth.
+10. Native summary arithmetic reconciles seed batches, each truncation/hostile/case/mutation and all recovery calls; no sanitizer failure text or silently incomplete raw log exists. Measured maxima independently match full recorded serialization and stay within unchanged caps.
+11. Sabotage changes exactly one generated fsconst0[45] read to fsconst0[5], retains correct compilation/link and preceding TF/low pixels, then the first high pixel must fail [64,191,128,191] versus independently predicted [223,96,191,191]. No unrelated browser failure can count as detection.
+12. The cold clone report, raw log and retained clean clone bind the same frozen head and scrubbed command; every copied acceptance artifact matches its original retained clone bytes, source hashes and complete result/pixel/TF identities. The evidence demonstrates this machine's clean-checkout reproducibility, not broader host portability or production renderer support.

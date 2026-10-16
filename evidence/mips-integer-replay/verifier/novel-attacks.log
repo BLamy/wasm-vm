@@ -1,0 +1,64 @@
+   Compiling wasm-vm-core v0.0.1 (/private/tmp/wasm-vm-mips-verifier-9123bc/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.22s
+     Running tests/integer_replay_alias.rs (target/debug/deps/integer_replay_alias-b1974cc4bf6adb03)
+
+running 2 tests
+compressed=false cached=false traced=false retired=2 pc=0 x5=4092
+core 0: 0xfffffffffffffffa (0x00000001)
+core 0: 0xfffffffffffffffc (0x00001297) x5 0x0000000000000ffc
+compressed=false cached=false traced=true retired=2 pc=0 x5=4092
+compressed=false cached=true traced=false retired=2 pc=0 x5=4092
+core 0: 0xfffffffffffffffa (0x00000001)
+core 0: 0xfffffffffffffffc (0x00001297) x5 0x0000000000000ffc
+compressed=false cached=true traced=true retired=2 pc=0 x5=4092
+compressed=true cached=false traced=false retired=2 pc=0 x5=1
+core 0: 0xfffffffffffffffc (0x00000001)
+core 0: 0xfffffffffffffffe (0x00000285) x5 0x0000000000000001
+compressed=true cached=false traced=true retired=2 pc=0 x5=1
+compressed=true cached=true traced=false retired=2 pc=0 x5=1
+core 0: 0xfffffffffffffffc (0x00000001)
+core 0: 0xfffffffffffffffe (0x00000285) x5 0x0000000000000001
+compressed=true cached=true traced=true retired=2 pc=0 x5=1
+
+test deferred_integer_writeback_wraps_the_virtual_pc_for_both_lengths ... ok
+budgets=[7] trace_even=false retired=14 cache_hits=1 cache_misses=1 state_sha256=37200e0f3f6333c5b903cc9d2488a7f4027313baf173efd0a417a3c58e456cf7
+core 0: 0xffffffc020000000 (0x00000001)
+core 0: 0xffffffc020000002 (0x80000297) x5 0xffffffbfa0000002
+core 0: 0xffffffc020000006 (0x005282b3) x5 0xffffff7f40000004
+core 0: 0xffffffc02000000a (0x4052d2b3) x5 0xfffffff7f4000000
+core 0: 0xffffffc02000000e (0xfff2829b) x5 0xfffffffff3ffffff
+core 0: 0xffffffc020000012 (0x00001017)
+core 0: 0xffffffc020000016 (0x00028333) x6 0xfffffffff3ffffff
+budgets=[7] trace_even=true retired=14 cache_hits=1 cache_misses=1 state_sha256=37200e0f3f6333c5b903cc9d2488a7f4027313baf173efd0a417a3c58e456cf7
+core 0: 0xffffffc020000012 (0x00001017)
+core 0: 0xffffffc020000016 (0x00028333) x6 0xfffffffff3ffffff
+budgets=[2, 0, 3, 2] trace_even=false retired=14 cache_hits=1 cache_misses=1 state_sha256=37200e0f3f6333c5b903cc9d2488a7f4027313baf173efd0a417a3c58e456cf7
+core 0: 0xffffffc020000000 (0x00000001)
+core 0: 0xffffffc020000002 (0x80000297) x5 0xffffffbfa0000002
+core 0: 0xffffffc020000006 (0x005282b3) x5 0xffffff7f40000004
+core 0: 0xffffffc02000000a (0x4052d2b3) x5 0xfffffff7f4000000
+core 0: 0xffffffc02000000e (0xfff2829b) x5 0xfffffffff3ffffff
+budgets=[2, 0, 3, 2] trace_even=true retired=14 cache_hits=1 cache_misses=1 state_sha256=37200e0f3f6333c5b903cc9d2488a7f4027313baf173efd0a417a3c58e456cf7
+core 0: 0xffffffc020000002 (0x80000297) x5 0xffffffbfa0000002
+core 0: 0xffffffc020000006 (0x005282b3) x5 0xffffff7f40000004
+core 0: 0xffffffc02000000a (0x4052d2b3) x5 0xfffffff7f4000000
+core 0: 0xffffffc02000000e (0xfff2829b) x5 0xfffffffff3ffffff
+core 0: 0xffffffc020000012 (0x00001017)
+core 0: 0xffffffc020000016 (0x00028333) x6 0xfffffffff3ffffff
+budgets=[1, 1, 0, 5] trace_even=false retired=14 cache_hits=1 cache_misses=1 state_sha256=37200e0f3f6333c5b903cc9d2488a7f4027313baf173efd0a417a3c58e456cf7
+core 0: 0xffffffc020000000 (0x00000001)
+budgets=[1, 1, 0, 5] trace_even=true retired=14 cache_hits=1 cache_misses=1 state_sha256=37200e0f3f6333c5b903cc9d2488a7f4027313baf173efd0a417a3c58e456cf7
+core 0: 0xffffffc020000000 (0x00000001)
+core 0: 0xffffffc020000002 (0x80000297) x5 0xffffffbfa0000002
+core 0: 0xffffffc020000006 (0x005282b3) x5 0xffffff7f40000004
+core 0: 0xffffffc02000000a (0x4052d2b3) x5 0xfffffff7f4000000
+budgets=[0, 4, 3] trace_even=false retired=14 cache_hits=1 cache_misses=1 state_sha256=37200e0f3f6333c5b903cc9d2488a7f4027313baf173efd0a417a3c58e456cf7
+core 0: 0xffffffc02000000e (0xfff2829b) x5 0xfffffffff3ffffff
+core 0: 0xffffffc020000012 (0x00001017)
+core 0: 0xffffffc020000016 (0x00028333) x6 0xfffffffff3ffffff
+budgets=[0, 4, 3] trace_even=true retired=14 cache_hits=1 cache_misses=1 state_sha256=37200e0f3f6333c5b903cc9d2488a7f4027313baf173efd0a417a3c58e456cf7
+
+test virtual_aliases_preserve_integer_pc_and_aliasing_across_mixed_capture_slices ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.19s
+

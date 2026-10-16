@@ -1,0 +1,26 @@
+{
+  "schema": "virgl-known-arithmetic-critic-seal-v1",
+  "task": "E6-T12g6m1",
+  "verdict": "needs-evidence",
+  "sourceHead": "cba5ae02ba16dc15b7b51d5dcdd808f88fcaf1ee",
+  "submissionHead": "5c6daa5fd87bccc7dc39398b6f6ba6d22991585c",
+  "base": "bfd5c97f7d71f510fccd2bd120f43b3d8b54159f",
+  "records": 62,
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 4765891,
+    "sha256": "baf7e9f401baff5e1042f7b826345e6893dfee8e7069bec0e11390470b71f67f"
+  },
+  "recordIndex": {
+    "path": "records.json",
+    "bytes": 10500,
+    "sha256": "40afc73663871d44d0da14430e4e1d6bb44a531a77adbbdd241be8a11f3be315"
+  },
+  "predictionsSha256": "38fe79294e1c3bdb35000ac0c183ba5d6e25100c1101fbd15b5fadec9855f555",
+  "verdictSha256": "977540db11b82f90f9cdc26254877e575e5b2d07aee25fc1dae13ce0eee878da",
+  "workerManifestSha256": "e211633f326cd8e43e37a1585d9c892f84fa8d1eea5f13ac00bcf98d4104d15f",
+  "originalBoundaryChanged": false,
+  "historicalUntrackedPreserved": true,
+  "productionNegotiation": false,
+  "guestExecution": false
+}

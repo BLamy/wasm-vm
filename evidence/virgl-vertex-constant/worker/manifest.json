@@ -1,0 +1,16 @@
+{
+  "schema": "virgl-vertex-constant-seal-v1",
+  "task": "E6-T11d1",
+  "sourceHead": "92c98c7361cad2518200bfa99765ed5895ef4f95",
+  "records": 254,
+  "archiveSha256": "0438914308a3ccd17516af6a696ad65cfe9afbb5af589afd882ee7cc919c2d3c",
+  "archiveBytes": 18605631,
+  "recordIndexSha256": "90489cd5702fa32ccc6bfc5ac97cd1d67febb731a6be8b410f5ffa82b5da6f34",
+  "hotReceiptSha256": "c7a845562b622013c70d1a36df9ba8043ba57f5c5a4ed761346005a59be6a474",
+  "coldReportSha256": "ad06e3d093d014d0aadae3bb0a54cb426af435234dd092c1416bd5434ce01ea4",
+  "coldReceiptSha256": "d1b0c930b114076b9b1269403b9d68ec340c1e3f8ad892751044cf2c076e33b1",
+  "guestExecution": false,
+  "portableDomainCertified": false,
+  "authority": "isolated-bounded-vertex-constants",
+  "productionDrawAuthority": false
+}

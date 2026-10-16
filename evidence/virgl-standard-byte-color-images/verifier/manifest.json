@@ -1,0 +1,97 @@
+{
+  "schema": "independent-byte-color-verifier-seal-v1",
+  "task": "E6-T11d22",
+  "status": "HELD",
+  "sourceHead": "583d28fd8a57a0576ea9ae7a59320d8973c337a1",
+  "workerSubmission": "9c15f5b4750e1e100d6c952684d97b9d0ce227ac",
+  "frozenWorkerHead": "30908255d0ab91434ff37505852fe6550977a227",
+  "unchangedProductHead": "76bd5df85e9c59f202d1bd879cb8f2470612432a",
+  "predecessor": "ac916b7fd0b194c088fe5d54800b24a80a4679ac",
+  "records": 1824,
+  "uncompressedBytes": 86399827,
+  "archiveBytes": 5606591,
+  "archiveSha256": "378a8544edca4ff2126ed67c38f1c065dde4f58463b0a2f3b22437ca0c6834df",
+  "recordIndexSha256": "98d712a443dac42b6e5a436ecc3997faec888f3bc35dec3a51eb1bc1b173f4cd",
+  "workerArchiveSha256": "06406c64da6f9117633df916eb307c466df9d73c3fcc13abec640f7efcb5ac4e",
+  "workerIndexSha256": "846ce5b67333ea0f3aac751d3c5aed448979ca2f17c2fd1cae569c73974166a7",
+  "pathMap": [
+    {
+      "original": "/tmp/wasm-vm-d22-critic-zsm4k8jl/fresh-boundaries-0x7f4a7c15",
+      "archive": "fresh/fresh-boundaries-0x7f4a7c15"
+    },
+    {
+      "original": "/tmp/wasm-vm-d22-critic-zsm4k8jl/fresh-smoke",
+      "archive": "fresh/fresh-smoke"
+    },
+    {
+      "original": "/tmp/wasm-vm-d22-critic-zsm4k8jl/fresh-worker-control",
+      "archive": "fresh/fresh-worker-control"
+    },
+    {
+      "original": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-standard-byte-color-verifier-final/novel-0x31415927",
+      "archive": "promoted/novel-0x31415927"
+    },
+    {
+      "original": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-standard-byte-color-verifier-final/novel-0x27182818",
+      "archive": "promoted/novel-0x27182818"
+    },
+    {
+      "original": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-standard-byte-color-verifier-final/fault-native-encoding",
+      "archive": "promoted/fault-native-encoding"
+    },
+    {
+      "original": "/tmp/wasm-vm-d22-critic-zsm4k8jl/oracle-v8",
+      "archive": "node/oracle-v8"
+    },
+    {
+      "original": "/tmp/wasm-vm-d22-critic-zsm4k8jl/worker-driver-v8",
+      "archive": "node/worker-driver-v8"
+    },
+    {
+      "original": "/tmp/wasm-vm-d22-critic-zsm4k8jl/worker-driver-control-v8",
+      "archive": "node/worker-driver-control-v8"
+    },
+    {
+      "original": "/tmp/wasm-vm-d22-critic-zsm4k8jl/worker-driver-smoke-v8",
+      "archive": "node/worker-driver-smoke-v8"
+    },
+    {
+      "original": "/tmp/wasm-vm-d22-critic-zsm4k8jl/promoted-node-v8",
+      "archive": "node/promoted-node-v8"
+    }
+  ],
+  "dependencies": {
+    "worker": {
+      "members": 20366,
+      "bytes": 396551002,
+      "archiveSha256": "6dcdde6ae41416f458cb4d5371df2ac0c83ae49e2bc0571a3efa52d2142f0a48",
+      "recordIndexSha256": "3199b8a4c20646f8cf31bd9b1e3d0b36a45c88e0e6994902b6564fddd425aeaa"
+    },
+    "verifier": {
+      "members": 11121,
+      "bytes": 370986278,
+      "archiveSha256": "47deac18c7fc583deb1a3bf095dae6715ce8c544e7eed4a18b6afe8a8620e833",
+      "recordIndexSha256": "c67e29bdf2c11753058384372a146413dbe573f0d241d427cf671888a193ebbc"
+    }
+  },
+  "coldCarry": {
+    "head": "30908255d0ab91434ff37505852fe6550977a227",
+    "reportSha256": "aaa2e726c5a2183250764b2eea5fec3933ab5dbea442d6f982bb0ae97b8b43d0",
+    "receiptSha256": "17d3aa8752362bd758abd9c5915ed3c4e74e1844bbbae5082c54e0f6d335b61b",
+    "reason": "Only verifier tests/evidence/log/status/queue change after submission. Frozen exact-head pristine scrubbed proof and unchanged dependency boundary carry; no portability failure or runtime semantic change."
+  },
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "productionDrawAuthority": false,
+  "scope": "isolated explicitly host-selected original byte-color images only",
+  "suite": {
+    "command": "make verify-E6-T11d22-adversarial",
+    "sourceHead": "583d28fd8a57a0576ea9ae7a59320d8973c337a1",
+    "status": "passed",
+    "healthySeeds": [
+      "0x31415927",
+      "0x27182818"
+    ],
+    "nativeControl": "fault-native-encoding: failed original oracle after actual consumed physical fence"
+  }
+}

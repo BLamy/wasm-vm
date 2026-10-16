@@ -1,0 +1,18 @@
+[
+  {
+    "path": "artifacts.json",
+    "sha256": "c2a325fde02d8dbe84674699336441462eb0d891ba7793d53261986fdbaec404"
+  },
+  {
+    "path": "artifacts-alpine.json",
+    "sha256": "a3e5e51a69fcda662579d367d5b46fab295ab8bebad4d38155afa3b51c034b6c"
+  },
+  {
+    "path": "artifacts-node-alpine.json",
+    "sha256": "ab1338d6f7b54bf96b2b503aa3e12e3bc72f9de2fd7f2a40728f3cefe2fe6caf"
+  },
+  {
+    "path": "artifacts-omarchy.json",
+    "sha256": "0fa46b08b90179bb11f6a451f86959908089f73afa19c99580f28360b7b8c22a"
+  }
+]

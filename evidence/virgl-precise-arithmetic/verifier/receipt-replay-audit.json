@@ -1,0 +1,16 @@
+{
+  "status": "passed",
+  "sourceHead": "7e444f2e3523b5b46b4aedbff3ace0c409ff6a83",
+  "clone": "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-precise-arithmetics-cold-kgdnwbf_/wasm-vm",
+  "command": [
+    "/Applications/Xcode.app/Contents/Developer/usr/bin/python3",
+    "-c",
+    "from pathlib import Path\nimport sys\nsys.path.insert(0,'tools/virgl-precise-arithmetic')\nimport receipt\noutput=Path(sys.argv[2]).resolve()\nevidence=Path(sys.argv[1]).resolve()\noriginal_write=Path.write_text\ndef redirected_write(self,data,*args,**kwargs):\n    assert self.resolve()==evidence/'receipt.json',str(self)\n    return original_write(output,data,*args,**kwargs)\nPath.write_text=redirected_write\nreceipt.main()\n",
+    "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-precise-arithmetics-cold-kgdnwbf_/wasm-vm/target/evidence/virgl-precise-arithmetic-cold",
+    "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-precise-arithmetic-verifier/replayed-receipt.json"
+  ],
+  "exitCode": 0,
+  "readerSha256": "d01b5f63ffc435a3717b9f96ad13b425905640087fd663f4d82e271dcb8b3c8e",
+  "receiptSha256": "43485e0d1874ba1ba225eac7ec840672d4104cd79e68b24fdae64ad12e2f848f",
+  "assertions": "Original reader functions and exact-head bindings unchanged; only final receipt write diverted to fresh verifier evidence."
+}

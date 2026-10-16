@@ -1,0 +1,215 @@
+{
+  "native": [
+    {
+      "path": "crates/core/src/dev/virtio/gpu/mod.rs",
+      "added": 110,
+      "positiveLineCounts": 84,
+      "zeroLines": [
+        {
+          "line": 1903,
+          "text": "                        slot.borrow_mut().protocol_violation();"
+        },
+        {
+          "line": 1904,
+          "text": "                        *vq = None;"
+        },
+        {
+          "line": 1905,
+          "text": "                        return;"
+        }
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/scanout3d.rs",
+      "added": 402,
+      "positiveLineCounts": 308,
+      "zeroLines": [
+        {
+          "line": 203,
+          "text": "        return Err(E::Unspecified);"
+        },
+        {
+          "line": 264,
+          "text": "            return Err(E::InvalidParameter);"
+        },
+        {
+          "line": 340,
+          "text": "        return true;"
+        }
+      ]
+    },
+    {
+      "path": "crates/core/src/dev/virtio/gpu/submit3d.rs",
+      "added": 90,
+      "positiveLineCounts": 62,
+      "zeroLines": [
+        {
+          "line": 274,
+          "text": "            Self::Render(r) => Some(r.context),"
+        },
+        {
+          "line": 280,
+          "text": "            Self::Render(r) => match &r.kind {"
+        },
+        {
+          "line": 281,
+          "text": "                Submit3dKind::Commands(b) => b.len() as u64,"
+        },
+        {
+          "line": 282,
+          "text": "                Submit3dKind::Transfer(_) => 72,"
+        }
+      ]
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "added": 21,
+      "positiveLineCounts": 18,
+      "zeroLines": []
+    }
+  ],
+  "javascript": [
+    {
+      "path": "renderer/virgl-command/control-bridge.mjs",
+      "added": 34,
+      "uncoveredChangedRanges": [
+        {
+          "startLine": 184,
+          "endLine": 184,
+          "startOffset": 13489,
+          "endOffset": 13509,
+          "text": "?? 'bridge-poisoned'"
+        },
+        {
+          "startLine": 184,
+          "endLine": 184,
+          "startOffset": 13534,
+          "endOffset": 13564,
+          "text": "?? 'Scanout operation failed.'"
+        },
+        {
+          "startLine": 191,
+          "endLine": 191,
+          "startOffset": 13943,
+          "endOffset": 13977,
+          "text": "catch (caught) { error = caught; }"
+        }
+      ]
+    },
+    {
+      "path": "renderer/virgl-command/resources.mjs",
+      "added": 30,
+      "uncoveredChangedRanges": []
+    },
+    {
+      "path": "renderer/virgl-command/scanout.mjs",
+      "added": 169,
+      "uncoveredChangedRanges": [
+        {
+          "startLine": 54,
+          "endLine": 54,
+          "startOffset": 5006,
+          "endOffset": 5037,
+          "text": "?? 'Scanout dependency failed.'"
+        },
+        {
+          "startLine": 83,
+          "endLine": 83,
+          "startOffset": 6962,
+          "endOffset": 6969,
+          "text": "return;"
+        },
+        {
+          "startLine": 91,
+          "endLine": 91,
+          "startOffset": 7612,
+          "endOffset": 7645,
+          "text": "catch (error) { onFault(error); }"
+        },
+        {
+          "startLine": 106,
+          "endLine": 106,
+          "startOffset": 8977,
+          "endOffset": 9096,
+          "text": "catch (error) { if (accepted.lease) accepted.owner.store.releaseStorage(accepted.lease); onFault(error); throw error; }"
+        },
+        {
+          "startLine": 159,
+          "endLine": 159,
+          "startOffset": 13370,
+          "endOffset": 13382,
+          "text": "return ok();"
+        }
+      ]
+    },
+    {
+      "path": "web/dist/src/sink/virgl-scanout-presenter.js",
+      "added": 128,
+      "uncoveredChangedRanges": [
+        {
+          "startLine": 127,
+          "endLine": 127,
+          "startOffset": 9012,
+          "endOffset": 9021,
+          "text": "?.dispose"
+        },
+        {
+          "startLine": 127,
+          "endLine": 127,
+          "startOffset": 9118,
+          "endOffset": 9126,
+          "text": "?? error"
+        },
+        {
+          "startLine": 51,
+          "endLine": 51,
+          "startOffset": 4335,
+          "endOffset": 4342,
+          "text": "return;"
+        },
+        {
+          "startLine": 62,
+          "endLine": 62,
+          "startOffset": 5040,
+          "endOffset": 5047,
+          "text": "return;"
+        },
+        {
+          "startLine": 65,
+          "endLine": 65,
+          "startOffset": 5131,
+          "endOffset": 5170,
+          "text": "{ settle(entry, 'cancelled'); return; }"
+        },
+        {
+          "startLine": 77,
+          "endLine": 77,
+          "startOffset": 5820,
+          "endOffset": 5920,
+          "text": "catch (error) { remember(`delivery: ${String(error?.message ?? error)}`); settle(entry, 'failed'); }"
+        },
+        {
+          "startLine": 84,
+          "endLine": 84,
+          "startOffset": 6239,
+          "endOffset": 6254,
+          "text": ": 'unspecified'"
+        },
+        {
+          "startLine": 84,
+          "endLine": 84,
+          "startOffset": 6295,
+          "endOffset": 6326,
+          "text": ": 'Presenter operation failed.'"
+        },
+        {
+          "startLine": 122,
+          "endLine": 123,
+          "startOffset": 8797,
+          "endOffset": 8884,
+          "text": "catch (error) { return fail('unspecified', String(error?.message ?? error)); }\n        "
+        }
+      ]
+    }
+  ]
+}

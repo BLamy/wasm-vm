@@ -1,0 +1,62 @@
+{
+  "schema": "virgl-scalar-operations-verifier-seal-v1",
+  "task": "E6-T12g6f",
+  "verdict": "verified",
+  "sourceHead": "ad0bf0267ce7a53e2e5ab6a2f6a5b2ee0a2383f4",
+  "base": "58601f91",
+  "records": 51,
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 4617019,
+    "sha256": "c5fd50cd563707c31c5c6ac52e360e0a711cdb16c088a2fff64a8461381c06e4"
+  },
+  "recordIndex": {
+    "path": "records.json",
+    "bytes": 8214,
+    "sha256": "7ac5c0e5a368a575d0dbb1ac9607a357830a30d5198aaa0cce37e54c71f41b9a"
+  },
+  "verdictRecord": {
+    "path": "verdict.json",
+    "bytes": 9578,
+    "sha256": "2fdbc8ae6450f90c36d0fce9863a2e8439f72c9872b480076e201061953f1909"
+  },
+  "workerDependencies": {
+    "manifestSha256": "84b75468f27c4a184371b8ff738e30412d6f88e181e465753182860f08d78347",
+    "archive": {
+      "path": "recording.tar.gz",
+      "bytes": 13380867,
+      "sha256": "619627d6ed0a2f3f62d461e0f3699bc1da7c04cfa4a9f1f2d18dd0a2e1fdbb68"
+    },
+    "recordIndex": {
+      "path": "records.json",
+      "bytes": 14089,
+      "sha256": "65f3c277eb411b162186fed14447a80a30b07c41d02daef5ae018312a9099959"
+    }
+  },
+  "priorHeldSeals": {
+    "virgl-signed-conversions": "bf3ae212d2ef31ce1a084a162f38e692713f36bcc69f9f200977751e42545cd7",
+    "virgl-signed-integers": "50796c1e44d5cff1cadc56dfbc5908b3298b0cb601c38d14e11c8465efbb0543",
+    "virgl-hex-literals": "de87e77241b5f78f78b30364e728d4b0465d37114e8fc46a65913ca87df3b2a2",
+    "virgl-compiler-bounds": "1081296a0236616037539d953cacba78aed05d517dc6eee6c048e1d96ba6e643"
+  },
+  "promoted": {
+    "path": "renderer/virgl-shader/tests/scalar-operation-regressions.mjs",
+    "schema": "virgl-scalar-operation-critic-guards-v1",
+    "cases": 1427,
+    "testSha256": "5bc2520293dc934249f91e962f6328f36053cf702960200a8731e068d122fba8",
+    "nativeBinary": {
+      "path": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-scalar-operations/verifier/unpacked/generated/native/virgl-shader",
+      "sha256": "bd87ef36fa9951ab36bdb1b6f90006567fe4e77ef54e1c84893ddc571111533e"
+    },
+    "reportSha256": "622b2f6a027a8b8f807bed273344503f422980c4f917a64ca1b15931c8b2bfec"
+  },
+  "coverage": {
+    "hunks": 23,
+    "runtimeAddedLines": 103,
+    "needsEvidence": 0,
+    "dead": 0
+  },
+  "held": 11,
+  "failed": 0,
+  "needsEvidence": 0
+}

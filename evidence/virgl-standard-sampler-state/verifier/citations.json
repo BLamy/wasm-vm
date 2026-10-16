@@ -1,0 +1,488 @@
+{
+  "status": "passed",
+  "points": [
+    {
+      "record": "wire-audit.json",
+      "jsonPoint": "/runs/0",
+      "line": 4,
+      "sha256": "381ac90370c727fa095263af760b40f668d8cc0065b4458847d6896759131e97",
+      "custody": "critic sealed archive"
+    },
+    {
+      "record": "wire-audit.json",
+      "jsonPoint": "/runs/1",
+      "line": 14,
+      "sha256": "381ac90370c727fa095263af760b40f668d8cc0065b4458847d6896759131e97",
+      "custody": "critic sealed archive"
+    },
+    {
+      "record": "recording-audit.json",
+      "jsonPoint": "/runs/0/frames/0",
+      "line": 12,
+      "sha256": "b4f5d654bd73e88c098a33854d42f913a43ce8df15337d1310b259234535155f",
+      "custody": "critic sealed archive"
+    },
+    {
+      "record": "recording-audit.json",
+      "jsonPoint": "/runs/1/frames/0",
+      "line": 32602,
+      "sha256": "b4f5d654bd73e88c098a33854d42f913a43ce8df15337d1310b259234535155f",
+      "custody": "critic sealed archive"
+    },
+    {
+      "record": "recording-audit.json",
+      "jsonPoint": "/runs/2/frames/0",
+      "line": 32739,
+      "sha256": "b4f5d654bd73e88c098a33854d42f913a43ce8df15337d1310b259234535155f",
+      "custody": "critic sealed archive"
+    },
+    {
+      "record": "recording-audit.json",
+      "jsonPoint": "/runs/3/frames/0",
+      "line": 32876,
+      "sha256": "b4f5d654bd73e88c098a33854d42f913a43ce8df15337d1310b259234535155f",
+      "custody": "critic sealed archive"
+    },
+    {
+      "record": "recording-audit.json",
+      "jsonPoint": "/runs/4/frames/0",
+      "line": 65466,
+      "sha256": "b4f5d654bd73e88c098a33854d42f913a43ce8df15337d1310b259234535155f",
+      "custody": "critic sealed archive"
+    },
+    {
+      "record": "recording-audit.json",
+      "jsonPoint": "/runs/5/frames/0",
+      "line": 65603,
+      "sha256": "b4f5d654bd73e88c098a33854d42f913a43ce8df15337d1310b259234535155f",
+      "custody": "critic sealed archive"
+    },
+    {
+      "record": "coverage-regions.json",
+      "jsonPoint": "/waivers",
+      "line": 50357,
+      "sha256": "a0bf68da86bd08b29f1be70b44d5a8135b11fbeab803e32126882c0d3adbe009",
+      "custody": "critic sealed archive"
+    },
+    {
+      "record": "coverage-regions.json",
+      "jsonPoint": "/runtimeUnexecuted",
+      "line": 50671,
+      "sha256": "a0bf68da86bd08b29f1be70b44d5a8135b11fbeab803e32126882c0d3adbe009",
+      "custody": "critic sealed archive"
+    },
+    {
+      "record": "promotion-coverage.json",
+      "jsonPoint": "/unexecuted",
+      "line": 47,
+      "sha256": "4d0ee551b2b90c5fbb0c769a90a1259ddb1c298e7a015d7e243bfe8987581711",
+      "custody": "critic sealed archive"
+    },
+    {
+      "record": "promotion-coverage.json",
+      "jsonPoint": "/segments",
+      "line": 48,
+      "sha256": "4d0ee551b2b90c5fbb0c769a90a1259ddb1c298e7a015d7e243bfe8987581711",
+      "custody": "critic sealed archive"
+    },
+    {
+      "record": "authentication.json",
+      "jsonPoint": "/receipts",
+      "line": 8,
+      "sha256": "b3a40003a581178e3c892f5cc7f72a50ed3c62f180346c810e546372f2091176",
+      "custody": "critic sealed archive"
+    },
+    {
+      "record": "authentication.json",
+      "jsonPoint": "/boundaries",
+      "line": 28,
+      "sha256": "b3a40003a581178e3c892f5cc7f72a50ed3c62f180346c810e546372f2091176",
+      "custody": "critic sealed archive"
+    },
+    {
+      "record": "authentication.json",
+      "jsonPoint": "/carry",
+      "line": 35,
+      "sha256": "b3a40003a581178e3c892f5cc7f72a50ed3c62f180346c810e546372f2091176",
+      "custody": "critic sealed archive"
+    },
+    {
+      "record": "authentication.json",
+      "jsonPoint": "/cold",
+      "line": 82,
+      "sha256": "b3a40003a581178e3c892f5cc7f72a50ed3c62f180346c810e546372f2091176",
+      "custody": "critic sealed archive"
+    },
+    {
+      "record": "fresh-custody.json",
+      "jsonPoint": "/immutableFrozenSources",
+      "line": 6,
+      "sha256": "2d745c4dcd277cb705f1f3eafbfdd7bada88f5f1c8f168c699def0f87f3537ea",
+      "custody": "critic sealed archive"
+    },
+    {
+      "record": "fresh-custody.json",
+      "jsonPoint": "/runtimeDiffAfterFreeze",
+      "line": 11,
+      "sha256": "2d745c4dcd277cb705f1f3eafbfdd7bada88f5f1c8f168c699def0f87f3537ea",
+      "custody": "critic sealed archive"
+    },
+    {
+      "record": "fresh-custody.json",
+      "jsonPoint": "/incrementalCarry",
+      "line": 2582,
+      "sha256": "2d745c4dcd277cb705f1f3eafbfdd7bada88f5f1c8f168c699def0f87f3537ea",
+      "custody": "critic sealed archive"
+    },
+    {
+      "record": "wasm-replay.json",
+      "jsonPoint": "/actualPairExportCalls",
+      "line": 4,
+      "sha256": "e11232523e4c1a744f38e203324383de25084598c797c83afb9c1128a65ec107",
+      "custody": "critic sealed archive"
+    },
+    {
+      "record": "wasm-replay.json",
+      "jsonPoint": "/translations/0",
+      "line": 6,
+      "sha256": "e11232523e4c1a744f38e203324383de25084598c797c83afb9c1128a65ec107",
+      "custody": "critic sealed archive"
+    },
+    {
+      "record": "independent-matrix-audit.json",
+      "jsonPoint": "/positivePixels",
+      "line": 97775,
+      "sha256": "186394d96b52ae314339e9f37a8a409677866e3abf53e45e65ba84c9cd968e12",
+      "custody": "critic sealed archive"
+    },
+    {
+      "record": "independent-matrix-audit.json",
+      "jsonPoint": "/nativeDraws",
+      "line": 97776,
+      "sha256": "186394d96b52ae314339e9f37a8a409677866e3abf53e45e65ba84c9cd968e12",
+      "custody": "critic sealed archive"
+    },
+    {
+      "record": "promoted-stable/adversarial-audit.json",
+      "jsonPoint": "/positivePixels",
+      "line": 1474,
+      "sha256": "69f2f08145893042887b6a97e39dc44a8e8fc87906e14985250ffbc5084a58e5",
+      "custody": "critic sealed archive"
+    },
+    {
+      "record": "promoted-stable/adversarial-audit.json",
+      "jsonPoint": "/nativeDraws",
+      "line": 1475,
+      "sha256": "69f2f08145893042887b6a97e39dc44a8e8fc87906e14985250ffbc5084a58e5",
+      "custody": "critic sealed archive"
+    },
+    {
+      "record": "state-audit.json",
+      "jsonPoint": "/runs/0/statePoints",
+      "line": 7,
+      "sha256": "3a6a2b7a165ec016efd60e502fb3466690c61e04c1b101bf037047eb6a6e491e",
+      "custody": "critic sealed archive"
+    },
+    {
+      "record": "state-audit.json",
+      "jsonPoint": "/runs/0/nativeParameterOnly/0",
+      "line": 81,
+      "sha256": "3a6a2b7a165ec016efd60e502fb3466690c61e04c1b101bf037047eb6a6e491e",
+      "custody": "critic sealed archive"
+    },
+    {
+      "record": "state-audit.json",
+      "jsonPoint": "/runs/0/finalBudgetsZero",
+      "line": 2746,
+      "sha256": "3a6a2b7a165ec016efd60e502fb3466690c61e04c1b101bf037047eb6a6e491e",
+      "custody": "critic sealed archive"
+    },
+    {
+      "record": "unpacked/hot/wire/report.json",
+      "jsonPoint": "/wire/records",
+      "line": 153,
+      "sha256": "c0a7e938a7c0b3bb7891f3bb2c329879abd4905d6d8eed32005315822b120f4a",
+      "custody": "worker sealed archive via worker-reference.json"
+    },
+    {
+      "record": "unpacked/hot/wire/report.json",
+      "jsonPoint": "/wire/extra/0",
+      "line": 65692,
+      "sha256": "c0a7e938a7c0b3bb7891f3bb2c329879abd4905d6d8eed32005315822b120f4a",
+      "custody": "worker sealed archive via worker-reference.json"
+    },
+    {
+      "record": "unpacked/hot/wire/report.json",
+      "jsonPoint": "/wire/predictions",
+      "line": 80957,
+      "sha256": "c0a7e938a7c0b3bb7891f3bb2c329879abd4905d6d8eed32005315822b120f4a",
+      "custody": "worker sealed archive via worker-reference.json"
+    },
+    {
+      "record": "unpacked/cold/report.json",
+      "jsonPoint": "/cloneHead",
+      "line": 14,
+      "sha256": "6912e094a3608245bf68f7f7d3e7a53469a55eceeddbc56aeee06aba97fd89ea",
+      "custody": "worker sealed archive via worker-reference.json"
+    },
+    {
+      "record": "unpacked/cold/report.json",
+      "jsonPoint": "/statusBefore",
+      "line": 15,
+      "sha256": "6912e094a3608245bf68f7f7d3e7a53469a55eceeddbc56aeee06aba97fd89ea",
+      "custody": "worker sealed archive via worker-reference.json"
+    },
+    {
+      "record": "unpacked/cold/report.json",
+      "jsonPoint": "/exitCode",
+      "line": 16,
+      "sha256": "6912e094a3608245bf68f7f7d3e7a53469a55eceeddbc56aeee06aba97fd89ea",
+      "custody": "worker sealed archive via worker-reference.json"
+    },
+    {
+      "record": "unpacked/cold/report.json",
+      "jsonPoint": "/statusAfter",
+      "line": 17,
+      "sha256": "6912e094a3608245bf68f7f7d3e7a53469a55eceeddbc56aeee06aba97fd89ea",
+      "custody": "worker sealed archive via worker-reference.json"
+    },
+    {
+      "record": "unpacked/hot/hardware/report.json",
+      "jsonPoint": "/browserResult/result/frames/0",
+      "line": 240830,
+      "sha256": "8e5c3bbd736b796c3712549adf49febe6976a06c98ba4f71f2eed1f76603e8d5",
+      "custody": "worker sealed archive via worker-reference.json"
+    },
+    {
+      "record": "unpacked/hot/hardware/report.json",
+      "jsonPoint": "/browserResult/result/frames/648",
+      "line": 713222,
+      "sha256": "8e5c3bbd736b796c3712549adf49febe6976a06c98ba4f71f2eed1f76603e8d5",
+      "custody": "worker sealed archive via worker-reference.json"
+    },
+    {
+      "record": "unpacked/hot/hardware/report.json",
+      "jsonPoint": "/browserResult/result/frames/831",
+      "line": 848852,
+      "sha256": "8e5c3bbd736b796c3712549adf49febe6976a06c98ba4f71f2eed1f76603e8d5",
+      "custody": "worker sealed archive via worker-reference.json"
+    },
+    {
+      "record": "unpacked/hot/hardware/report.json",
+      "jsonPoint": "/browserResult/result/rejections/0",
+      "line": 1590741,
+      "sha256": "8e5c3bbd736b796c3712549adf49febe6976a06c98ba4f71f2eed1f76603e8d5",
+      "custody": "worker sealed archive via worker-reference.json"
+    },
+    {
+      "record": "unpacked/hot/hardware/report.json",
+      "jsonPoint": "/browserResult/result/rejections/1",
+      "line": 1590938,
+      "sha256": "8e5c3bbd736b796c3712549adf49febe6976a06c98ba4f71f2eed1f76603e8d5",
+      "custody": "worker sealed archive via worker-reference.json"
+    },
+    {
+      "record": "unpacked/hot/hardware/report.json",
+      "jsonPoint": "/browserResult/result/rejections/2",
+      "line": 1591135,
+      "sha256": "8e5c3bbd736b796c3712549adf49febe6976a06c98ba4f71f2eed1f76603e8d5",
+      "custody": "worker sealed archive via worker-reference.json"
+    },
+    {
+      "record": "unpacked/hot/hardware/report.json",
+      "jsonPoint": "/browserResult/result/ownership/0",
+      "line": 1591334,
+      "sha256": "8e5c3bbd736b796c3712549adf49febe6976a06c98ba4f71f2eed1f76603e8d5",
+      "custody": "worker sealed archive via worker-reference.json"
+    },
+    {
+      "record": "unpacked/hot/hardware/report.json",
+      "jsonPoint": "/browserResult/result/ownership/72",
+      "line": 1607606,
+      "sha256": "8e5c3bbd736b796c3712549adf49febe6976a06c98ba4f71f2eed1f76603e8d5",
+      "custody": "worker sealed archive via worker-reference.json"
+    },
+    {
+      "record": "unpacked/cold/hardware/report.json",
+      "jsonPoint": "/browserResult/result/frames/0",
+      "line": 240770,
+      "sha256": "919d7bcd6e86aa7c2fb43a349e47b473398f4f3a5b32f7bf0d374b1bd32db627",
+      "custody": "worker sealed archive via worker-reference.json"
+    },
+    {
+      "record": "unpacked/cold/hardware/report.json",
+      "jsonPoint": "/browserResult/result/runs/254/final",
+      "line": 1590485,
+      "sha256": "919d7bcd6e86aa7c2fb43a349e47b473398f4f3a5b32f7bf0d374b1bd32db627",
+      "custody": "worker sealed archive via worker-reference.json"
+    },
+    {
+      "record": "unpacked/hot/fault-wrap/report.json",
+      "jsonPoint": "/partial/frames/0",
+      "line": 1041,
+      "sha256": "9505f219bed392d13e94c9c2c96a6b80010ac66eaadc444e581765e3ef03fcc7",
+      "custody": "worker sealed archive via worker-reference.json"
+    },
+    {
+      "record": "unpacked/hot/fault-wrap/report.json",
+      "jsonPoint": "/partial/runs/0/history/0/result",
+      "line": 1859,
+      "sha256": "9505f219bed392d13e94c9c2c96a6b80010ac66eaadc444e581765e3ef03fcc7",
+      "custody": "worker sealed archive via worker-reference.json"
+    },
+    {
+      "record": "unpacked/hot/fault-filter/report.json",
+      "jsonPoint": "/partial/frames/0",
+      "line": 1041,
+      "sha256": "00ff2b47edc515f9b729dbca82d3a18b482bee151517b9956eed279bd9054b31",
+      "custody": "worker sealed archive via worker-reference.json"
+    },
+    {
+      "record": "unpacked/hot/fault-filter/report.json",
+      "jsonPoint": "/partial/runs/0/history/0/result",
+      "line": 1859,
+      "sha256": "00ff2b47edc515f9b729dbca82d3a18b482bee151517b9956eed279bd9054b31",
+      "custody": "worker sealed archive via worker-reference.json"
+    },
+    {
+      "record": "unpacked/cold/fault-wrap/report.json",
+      "jsonPoint": "/partial/frames/0",
+      "line": 1041,
+      "sha256": "7dddb290296b591180afacd596575a0e3e4bad8f8c300e97cebdc0493c1e2ee3",
+      "custody": "worker sealed archive via worker-reference.json"
+    },
+    {
+      "record": "unpacked/cold/fault-wrap/report.json",
+      "jsonPoint": "/partial/runs/0/history/0/result",
+      "line": 1859,
+      "sha256": "7dddb290296b591180afacd596575a0e3e4bad8f8c300e97cebdc0493c1e2ee3",
+      "custody": "worker sealed archive via worker-reference.json"
+    },
+    {
+      "record": "unpacked/cold/fault-filter/report.json",
+      "jsonPoint": "/partial/frames/0",
+      "line": 1041,
+      "sha256": "043a88edceaec6b94a1f61426cab9e85a4d469ef599f8800a823f0e08ebc98df",
+      "custody": "worker sealed archive via worker-reference.json"
+    },
+    {
+      "record": "unpacked/cold/fault-filter/report.json",
+      "jsonPoint": "/partial/runs/0/history/0/result",
+      "line": 1859,
+      "sha256": "043a88edceaec6b94a1f61426cab9e85a4d469ef599f8800a823f0e08ebc98df",
+      "custody": "worker sealed archive via worker-reference.json"
+    },
+    {
+      "record": "promoted-stable/gpu-362436069/report.json",
+      "jsonPoint": "/browserResult/result/frames/5",
+      "line": 7356,
+      "sha256": "e8751091dbbb4bbce5b6181cf28f55b28a7125b7b6fc799fd27cddc8a16271a5",
+      "custody": "critic sealed archive"
+    },
+    {
+      "record": "promoted-stable/gpu-362436069/report.json",
+      "jsonPoint": "/browserResult/result/runs/0/final",
+      "line": 19618,
+      "sha256": "e8751091dbbb4bbce5b6181cf28f55b28a7125b7b6fc799fd27cddc8a16271a5",
+      "custody": "critic sealed archive"
+    },
+    {
+      "record": "promoted-stable/gpu-362436069/report.json",
+      "jsonPoint": "/browserResult/result/ownership/0",
+      "line": 19997,
+      "sha256": "e8751091dbbb4bbce5b6181cf28f55b28a7125b7b6fc799fd27cddc8a16271a5",
+      "custody": "critic sealed archive"
+    },
+    {
+      "record": "promoted-stable/gpu-521288629/report.json",
+      "jsonPoint": "/browserResult/result/frames/5",
+      "line": 7548,
+      "sha256": "89da60fa91db97b9afe260b9d60da581aaf620d875387154c650b198925e338e",
+      "custody": "critic sealed archive"
+    },
+    {
+      "record": "promoted-stable/gpu-733973753/report.json",
+      "jsonPoint": "/browserResult/result/frames/5",
+      "line": 7188,
+      "sha256": "052ad7219ec6e29a0c2bf1b3f52f66fbf1c3a6bf8aa060dafa798be9b83e9cdf",
+      "custody": "critic sealed archive"
+    },
+    {
+      "record": "promoted-stable/sabotage-wrap/report.json",
+      "jsonPoint": "/partial/frames/0",
+      "line": 1108,
+      "sha256": "9b9ba402edae7aae67533bf378a7f02b86dfd717c7832302863cb7ed37eca567",
+      "custody": "critic sealed archive"
+    },
+    {
+      "record": "promoted-stable/sabotage-wrap/report.json",
+      "jsonPoint": "/partial/runs/0/history/0/result",
+      "line": 1988,
+      "sha256": "9b9ba402edae7aae67533bf378a7f02b86dfd717c7832302863cb7ed37eca567",
+      "custody": "critic sealed archive"
+    },
+    {
+      "record": "promoted-stable/sabotage-filter/report.json",
+      "jsonPoint": "/partial/frames/0",
+      "line": 1108,
+      "sha256": "0bb069b7bd90f67d47b9fb94614f6d228dab5990481b9b7dbeed7b8294d12ea6",
+      "custody": "critic sealed archive"
+    },
+    {
+      "record": "promoted-stable/sabotage-filter/report.json",
+      "jsonPoint": "/partial/runs/0/history/0/result",
+      "line": 1988,
+      "sha256": "0bb069b7bd90f67d47b9fb94614f6d228dab5990481b9b7dbeed7b8294d12ea6",
+      "custody": "critic sealed archive"
+    },
+    {
+      "record": "promoted-final/gpu-521288629/report.json",
+      "jsonPoint": "/partial/frames/5",
+      "line": 6879,
+      "sha256": "191eace8980991fe0f4e74d11355e47ea68bea3e0a4e0c5b22d3b664abe48154",
+      "custody": "critic sealed archive"
+    },
+    {
+      "record": "novel-recheck-521288629/report.json",
+      "jsonPoint": "/partial/frames/5",
+      "line": 6879,
+      "sha256": "b515eb216861256a690d39649cf425854068661b9f74a52f8c4681a098a42d5a",
+      "custody": "critic sealed archive"
+    },
+    {
+      "record": "interpolation-diagnostic.json",
+      "jsonPoint": "/result/rows/1/gpuComplete",
+      "line": 353,
+      "sha256": "8f1a80094d399a632ba195f151ec96e96a12b7df6272f8a648c5dc9868d93357",
+      "custody": "critic sealed archive"
+    },
+    {
+      "record": "interpolation-diagnostic.json",
+      "jsonPoint": "/result/rows/1/values",
+      "line": 613,
+      "sha256": "8f1a80094d399a632ba195f151ec96e96a12b7df6272f8a648c5dc9868d93357",
+      "custody": "critic sealed archive"
+    },
+    {
+      "record": "prediction-correction.json",
+      "jsonPoint": "/observedUpperRightY",
+      "line": 10,
+      "sha256": "c52caebef2604b622d7f71cbdf26543981be21614bcf2572bdb7cd31d1d811f2",
+      "custody": "critic sealed archive"
+    },
+    {
+      "record": "prediction-correction.json",
+      "jsonPoint": "/measuredCoordinateModelPixelMismatches",
+      "line": 18,
+      "sha256": "c52caebef2604b622d7f71cbdf26543981be21614bcf2572bdb7cd31d1d811f2",
+      "custody": "critic sealed archive"
+    },
+    {
+      "record": "prediction-correction.json",
+      "jsonPoint": "/revisedPredictionBeforeNewRuns",
+      "line": 20,
+      "sha256": "c52caebef2604b622d7f71cbdf26543981be21614bcf2572bdb7cd31d1d811f2",
+      "custody": "critic sealed archive"
+    }
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "schema": "dimensional-view-seal-v1",
+  "task": "E6-T11d58",
+  "head": "1c7f8c9b4e52e09e8f6e2201f92d7483ce7117a6",
+  "records": 2327,
+  "reopenedMembers": 2327,
+  "recordIndexSha256": "398ef4c26c719a0995bd5fbc7d14039d5dcccdb13613de7a22c945572d9a32da",
+  "archiveSha256": "fb56c37995c361bece8bbe14f6ec5606580741affbb8c76a9469e6c6a231cdf5",
+  "archiveBytes": 151192332,
+  "dependencySeals": [
+    {
+      "family": "virgl-production-readiness/dimensional-sampler-view-gap",
+      "manifestSha256": "b76764f40ad62136a835869e1adb88650ae58f8b6a56ce0284c42b8ff9f8c530",
+      "indexSha256": "8a0f3e965d6fc8a515c2fb289c7b7e88cfcefc163b0ca2fe7225890e841351bf",
+      "archiveSha256": "f087447c3ff9b16638724faffe0cf83c7a6f2979c37775e092f5fec2f2d6543a",
+      "reopenedBodies": 84
+    },
+    {
+      "family": "virgl-dimensional-shaders/worker",
+      "manifestSha256": "0c698861a17b341265e35b6c6d223ea0390ea495cb942c0e469d4ecb1201602f",
+      "indexSha256": "ce50cc6e695c5a8dacebc006e88c661967f2fa1e5a1e646b4ae5809d9c54976f",
+      "archiveSha256": "0476287955b27dd7ffca49c3be190acfa6f2b809c86f0b7f9339c995ec84970c",
+      "reopenedBodies": 38049
+    },
+    {
+      "family": "virgl-dimensional-shaders/verifier",
+      "manifestSha256": "acd8e069a0145f98a800aa6f496beba2f0d5b1ba3f29dc42e674ce556b4c0843",
+      "indexSha256": "a2ec3a56cc5f691c63d7176f57d9ee8470f4b203819560cbdd380b147f8b59a7",
+      "archiveSha256": "676ea1a1e5fd4a620d6ec7171a0f73b86e106b918c326692c49c3e5fa3a079d7",
+      "reopenedBodies": 12768
+    },
+    {
+      "family": "virgl-native-dimensional/worker",
+      "manifestSha256": "7c8fb3ab46b3659ce855e77a80afc161a14f808b491a6753caa6c53231b0d0e6",
+      "indexSha256": "01cb810875ddfcd1b895df24e688e798c1fe4e9d66364da2be4ea0d6aaeef418",
+      "archiveSha256": "d2f66777cdba8f6375d5958e80ca9204854bbccf151a0c3325cb63e6f91eef4b",
+      "reopenedBodies": 1625
+    },
+    {
+      "family": "virgl-native-dimensional/verifier",
+      "manifestSha256": "d290f464b5be7dbd39e01cc588aa9d4ed580bb4d7e688c345443e86e87ec2dc5",
+      "indexSha256": "914145b80457bbbe323229b4323cdcc04a04001f85399c36a510063cc92bd0b5",
+      "archiveSha256": "073c067eb7fb04d5ce3747d5937e9ec05cd210ae09da8b878ad5179420158619",
+      "reopenedBodies": 792
+    }
+  ],
+  "authoritativeRecording": "cold/recording",
+  "commands": 31,
+  "guestExecution": false,
+  "productionAuthority": false,
+  "archiveParts": [
+    {
+      "path": "recording.tar.gz.part-0000",
+      "bytes": 16777216,
+      "sha256": "c7335b796c62a33b74529243463f13180a4b4bfa9a5e20037112d888779fb1d9"
+    },
+    {
+      "path": "recording.tar.gz.part-0001",
+      "bytes": 16777216,
+      "sha256": "ab896f7793ec99cfa65e3f80437d03eafabbdf2b447c8a4f315fae933b1aa3fd"
+    },
+    {
+      "path": "recording.tar.gz.part-0002",
+      "bytes": 16777216,
+      "sha256": "fce5847c331e77d44beffd9cfe733c98a294d2241a6ced10b436b32d52fe2999"
+    },
+    {
+      "path": "recording.tar.gz.part-0003",
+      "bytes": 16777216,
+      "sha256": "a18840cfe410ccbc6b6491c1991579ee442d14703d949feedbad83cd5dcd8985"
+    },
+    {
+      "path": "recording.tar.gz.part-0004",
+      "bytes": 16777216,
+      "sha256": "f602fae3abb3f0a2a33c2a3109e18aa7fc722462ba06a88c7186a1c24ec03654"
+    },
+    {
+      "path": "recording.tar.gz.part-0005",
+      "bytes": 16777216,
+      "sha256": "54f9c7beeb8eb6e0603a8e333a5994d229be4344a65f22006a9bf9e5e16a273f"
+    },
+    {
+      "path": "recording.tar.gz.part-0006",
+      "bytes": 16777216,
+      "sha256": "d9af8db6a6f9a95f02b27af87ef5366345cc41c302641a9b7e9a378d42a1b016"
+    },
+    {
+      "path": "recording.tar.gz.part-0007",
+      "bytes": 16777216,
+      "sha256": "9d758442859134b3be41762f4222e4443071abd3d75249d5a7c7fefc0efc4786"
+    },
+    {
+      "path": "recording.tar.gz.part-0008",
+      "bytes": 16777216,
+      "sha256": "23afc15e802ce22bb7585cebe01c7e43e708d36110de3f50a09cadd2f680a0f9"
+    },
+    {
+      "path": "recording.tar.gz.part-0009",
+      "bytes": 197388,
+      "sha256": "1046880dda5f86d37777b03241b60620203ec706a92a20b3bc118d3b71dd856e"
+    }
+  ],
+  "originalManifestSha256": "366968fe114438560886832570b9c36b1ffe4e3d7526cf718fba6b6dc9a47b2c"
+}

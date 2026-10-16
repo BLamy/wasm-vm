@@ -1,0 +1,578 @@
+{
+  "schema": 1,
+  "docstreamVersion": "1.8.0",
+  "sourceRevision": "2691b24e6c00478f8d69f81180b6827761de246a",
+  "baselineProse": 1533,
+  "auxiliaryRecords": 456,
+  "ledgerDocuments": 1995,
+  "renderedPages": 154,
+  "dispositions": {
+    "preserved": 1879,
+    "rewritten": 110,
+    "obsolete": 6
+  },
+  "localLinks": 225,
+  "docstreamContentRefs": 113,
+  "namedCodeFences": 142,
+  "referenceCodeBlocks": 181,
+  "shaderFragmentSha256": "7c02808459cd4af76ec975490232d401bf5b77d58729eb77b51e7f78a05d6742",
+  "roundtripExceptions": [],
+  "commands": [
+    {
+      "source": "README.md",
+      "codeBlocks": 1
+    },
+    {
+      "source": "bench/README.md",
+      "codeBlocks": 6
+    },
+    {
+      "source": "bench/RUNNER.md",
+      "codeBlocks": 1
+    },
+    {
+      "source": "bench/module-costs/README.md",
+      "codeBlocks": 4
+    },
+    {
+      "source": "bench/module-costs/results/README.md",
+      "codeBlocks": 1
+    },
+    {
+      "source": "compliance/EXCLUSIONS.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "compliance/README.md",
+      "codeBlocks": 1
+    },
+    {
+      "source": "compliance/spike/README.md",
+      "codeBlocks": 2
+    },
+    {
+      "source": "compliance/wasmvm/README.md",
+      "codeBlocks": 2
+    },
+    {
+      "source": "crates/jit-runtime/corpus/README.md",
+      "codeBlocks": 1
+    },
+    {
+      "source": "crates/wasm-emit/README.md",
+      "codeBlocks": 2
+    },
+    {
+      "source": "docs/RELEASE_ASSURANCE.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "docs/adr/0002-sbi-firmware.md",
+      "codeBlocks": 2
+    },
+    {
+      "source": "docs/agent-protocol.md",
+      "codeBlocks": 1
+    },
+    {
+      "source": "docs/audio.md",
+      "codeBlocks": 6
+    },
+    {
+      "source": "docs/baselines.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "docs/boot-debugging.md",
+      "codeBlocks": 3
+    },
+    {
+      "source": "docs/capstone-e0.md",
+      "codeBlocks": 8
+    },
+    {
+      "source": "docs/clipboard.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "docs/container-matrix.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "docs/containers.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "docs/decisions/display-server.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "docs/demos/level-4.md",
+      "codeBlocks": 4
+    },
+    {
+      "source": "docs/deployment/network-providers.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "docs/design/chunked-image.md",
+      "codeBlocks": 1
+    },
+    {
+      "source": "docs/design/cow-overlay.md",
+      "codeBlocks": 1
+    },
+    {
+      "source": "docs/design/file-transfer.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "docs/design/http-fast-path-eval.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "docs/design/image-pipeline.md",
+      "codeBlocks": 3
+    },
+    {
+      "source": "docs/design/slirp.md",
+      "codeBlocks": 2
+    },
+    {
+      "source": "docs/design/softfloat.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "docs/design/tailscale-worker-protocol.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "docs/design/ws-proxy-protocol.md",
+      "codeBlocks": 1
+    },
+    {
+      "source": "docs/desktop-boot-order.md",
+      "codeBlocks": 2
+    },
+    {
+      "source": "docs/desktop-bringup.md",
+      "codeBlocks": 6
+    },
+    {
+      "source": "docs/display.md",
+      "codeBlocks": 1
+    },
+    {
+      "source": "docs/e4-t22-cpu-worker-coop-coep.md",
+      "codeBlocks": 5
+    },
+    {
+      "source": "docs/embedding-guide.md",
+      "codeBlocks": 9
+    },
+    {
+      "source": "docs/gpu-3d-decision.md",
+      "codeBlocks": 1
+    },
+    {
+      "source": "docs/images.md",
+      "codeBlocks": 1
+    },
+    {
+      "source": "docs/input.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "docs/jit-architecture.md",
+      "codeBlocks": 2
+    },
+    {
+      "source": "docs/jit-fp-policy.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "docs/kernel.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "docs/level1-report.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "docs/perf-baseline.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "docs/perf/capstone-e4.md",
+      "codeBlocks": 5
+    },
+    {
+      "source": "docs/perf/cursor-plane.md",
+      "codeBlocks": 1
+    },
+    {
+      "source": "docs/perf/display-server-workload.md",
+      "codeBlocks": 3
+    },
+    {
+      "source": "docs/perf/e4-t34-jit-retrospective.md",
+      "codeBlocks": 1
+    },
+    {
+      "source": "docs/perf/flamegraphs.md",
+      "codeBlocks": 8
+    },
+    {
+      "source": "docs/perf/jit-register-handoff-2026-10.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "docs/perf/level1-baseline.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "docs/perf/level3-interpreter-baseline.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "docs/perf/perf-overhaul-2026-09.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "docs/perf/present-paths.md",
+      "codeBlocks": 2
+    },
+    {
+      "source": "docs/platform.md",
+      "codeBlocks": 2
+    },
+    {
+      "source": "docs/product/proofmesh-api.md",
+      "codeBlocks": 8
+    },
+    {
+      "source": "docs/product/proofmesh-roadmap.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "docs/product/proofmesh-whitepaper.md",
+      "codeBlocks": 7
+    },
+    {
+      "source": "docs/rootfs.md",
+      "codeBlocks": 3
+    },
+    {
+      "source": "docs/timekeeping.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "docs/trace-format.md",
+      "codeBlocks": 3
+    },
+    {
+      "source": "docs/ui.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "docs/virgl-shader-prerequisites.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "docs/virtio-snd.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "docs/worker-devices.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "fuzz/README.md",
+      "codeBlocks": 1
+    },
+    {
+      "source": "guest/README.md",
+      "codeBlocks": 2
+    },
+    {
+      "source": "renderer/virgl-command/README.md",
+      "codeBlocks": 3
+    },
+    {
+      "source": "renderer/virgl-command/async-README.md",
+      "codeBlocks": 1
+    },
+    {
+      "source": "renderer/virgl-command/blend-README.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "renderer/virgl-command/cache-README.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "renderer/virgl-command/compact-vertex-README.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "renderer/virgl-command/control-README.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "renderer/virgl-command/draw-README.md",
+      "codeBlocks": 2
+    },
+    {
+      "source": "renderer/virgl-command/float-consumer-README.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "renderer/virgl-command/float-images-README.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "renderer/virgl-command/float-vertex-README.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "renderer/virgl-command/integer-image-consumer-README.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "renderer/virgl-command/integer-images-README.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "renderer/virgl-command/integer-vertex-README.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "renderer/virgl-command/packed-float-consumer-README.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "renderer/virgl-command/packed-float-images-README.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "renderer/virgl-command/packed-normalized-images-README.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "renderer/virgl-command/packed-vertex-README.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "renderer/virgl-command/resources-README.md",
+      "codeBlocks": 3
+    },
+    {
+      "source": "renderer/virgl-command/scalar-vertex-README.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "renderer/virgl-command/scanout-README.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "renderer/virgl-command/shared-exponent-images-README.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "renderer/virgl-command/standard-state-README.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "renderer/virgl-command/state-README.md",
+      "codeBlocks": 1
+    },
+    {
+      "source": "renderer/virgl-command/submit-README.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "renderer/virgl-command/texture-operations-README.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "renderer/virgl-shader/INTEGER-IMAGES.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "renderer/virgl-shader/README.md",
+      "codeBlocks": 4
+    },
+    {
+      "source": "renderer/virgl-shader/STANDARD.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "tests/fuzz-regressions/README.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "tests/stress/README.md",
+      "codeBlocks": 1
+    },
+    {
+      "source": "tools/diff/README.md",
+      "codeBlocks": 2
+    },
+    {
+      "source": "tools/fuzz/README.md",
+      "codeBlocks": 1
+    },
+    {
+      "source": "tools/fuzz/sensitivity/README.md",
+      "codeBlocks": 1
+    },
+    {
+      "source": "tools/image/OMARCHY.md",
+      "codeBlocks": 3
+    },
+    {
+      "source": "tools/image/e5-t22c/README.md",
+      "codeBlocks": 1
+    },
+    {
+      "source": "tools/perf/README.md",
+      "codeBlocks": 2
+    },
+    {
+      "source": "tools/rr/README.md",
+      "codeBlocks": 3
+    },
+    {
+      "source": "tools/toolchain/README.md",
+      "codeBlocks": 5
+    },
+    {
+      "source": "tools/verify/runbook.md",
+      "codeBlocks": 4
+    },
+    {
+      "source": "tools/virgl-92cb-geometry/README.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "tools/virgl-92cb-power-domain/README.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "tools/virgl-92cb-raster/README.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "tools/virgl-capture/README.md",
+      "codeBlocks": 2
+    },
+    {
+      "source": "tools/virgl-capture/tests/recorder_README.md",
+      "codeBlocks": 2
+    },
+    {
+      "source": "tools/virgl-capture/workloads/README.md",
+      "codeBlocks": 4
+    },
+    {
+      "source": "tools/virgl-command/cache-README.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "tools/virgl-command/raster-README.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "tools/virgl-compiler-bounds/README.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "tools/virgl-exact-bank/README.md",
+      "codeBlocks": 1
+    },
+    {
+      "source": "tools/virgl-exact-producer/README.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "tools/virgl-exponent-logarithm/README.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "tools/virgl-fragment-coordinates/README.md",
+      "codeBlocks": 1
+    },
+    {
+      "source": "tools/virgl-fragment-discard/README.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "tools/virgl-gears-shaders/README.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "tools/virgl-hex-literals/README.md",
+      "codeBlocks": 1
+    },
+    {
+      "source": "tools/virgl-known-arithmetic/README.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "tools/virgl-known-branches/README.md",
+      "codeBlocks": 1
+    },
+    {
+      "source": "tools/virgl-minimum-selection/README.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "tools/virgl-original-corpus/README.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "tools/virgl-original-programs/README.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "tools/virgl-power/README.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "tools/virgl-precise-fraction/README.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "tools/virgl-required-formats/README.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "tools/virgl-saturation/README.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "tools/virgl-scalar-operations/README.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "tools/virgl-signed-conversions/README.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "tools/virgl-signed-integers/README.md",
+      "codeBlocks": 1
+    },
+    {
+      "source": "tools/virgl-sine/README.md",
+      "codeBlocks": 0
+    },
+    {
+      "source": "web/README.md",
+      "codeBlocks": 5
+    },
+    {
+      "source": "web/tailscale-connect/README.md",
+      "codeBlocks": 0
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "task": "E6-T12g6m3a",
+  "status": "passed",
+  "exports": [
+    {
+      "label": "hot",
+      "binarySha256": "c8ec34225ed6bcd0e46ac7606916bdcd7fc3ad100892c4a67235101b84b8a3fa",
+      "rawProfileSha256": "e66bb57e48c763a2950c69ffc660a74e79dd812bdf2eac16d88907b8ab7d64e4",
+      "originalExportSha256": "4d82b354e86e53f225260bc5c6e314aba726f87ed2a94a1b388e7645c80f84f6",
+      "reexportSha256": "4d82b354e86e53f225260bc5c6e314aba726f87ed2a94a1b388e7645c80f84f6",
+      "fullParsedExportEqual": true
+    },
+    {
+      "label": "cold",
+      "binarySha256": "f942a5b35753c884c8d15ce66f1c61ea70291db56ab5ab68c4d1f039fb1cdcfa",
+      "rawProfileSha256": "ea41a87e6e4491642de2709410ca43cee1ef44ceb8fff740f386cc97d486516e",
+      "originalExportSha256": "54ca8b83ed6ef6a8cee1e70ff11720eba379abb16eeef1685239f787afc34c5e",
+      "reexportSha256": "54ca8b83ed6ef6a8cee1e70ff11720eba379abb16eeef1685239f787afc34c5e",
+      "fullParsedExportEqual": true
+    }
+  ],
+  "retainedReplayExitCode": 0,
+  "retainedReplayStdoutSha256": "a34f3185478b090e2e9b756840ad46d426ebf57a1fba4ce1ed7b02d42a1898f7",
+  "currentWasmEqualsOriginal": true,
+  "wasmSha256": "c1c4a666544d2076f25d23f7c2f4833df207f75bb783e6e74536b7bb34a3efa5"
+}

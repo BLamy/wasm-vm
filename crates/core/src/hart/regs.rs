@@ -175,6 +175,30 @@ mod tests {
     }
 
     #[test]
+    fn sparse_mask_stamp_wraps_once_and_empty_masks_do_not_mutate() {
+        let mut r = XRegs {
+            jit_version: u64::MAX,
+            ..XRegs::default()
+        };
+        let words = [u64::MAX; 32];
+        for mask in [0, 1] {
+            r.jit_commit_words_mask(&words, mask);
+            assert_eq!(r.jit_version(), u64::MAX);
+            assert_eq!(r.regs, [0; 32]);
+        }
+        r.jit_commit_words_mask(&words, 0x8000_0003);
+        assert_eq!(r.jit_version(), 0);
+        assert_eq!(r.read(0), 0);
+        assert_eq!(r.read(1), u64::MAX);
+        assert_eq!(r.read(31), u64::MAX);
+        assert_eq!(r.read(2), 0);
+        r.jit_commit_words_mask(&words, u32::MAX);
+        assert_eq!(r.jit_version(), 1, "one stamp per commit, not per register");
+        assert_eq!(r.read(0), 0);
+        assert_eq!(&r.regs[1..], &[u64::MAX; 31]);
+    }
+
+    #[test]
     fn jit_version_is_not_architectural_equality() {
         let mut changed = XRegs::default();
         let same_words = changed.jit_words().to_owned();

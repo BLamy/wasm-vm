@@ -1,0 +1,33 @@
+{
+  "schema": "production-compositor-api-readiness-v1",
+  "source": {
+    "repository": "https://github.com/hyprwm/Hyprland",
+    "revision": "efb50993780079460b0cbed1363e2166a2de1d9f",
+    "version": "0.56.2",
+    "url": "https://raw.githubusercontent.com/hyprwm/Hyprland/efb50993780079460b0cbed1363e2166a2de1d9f/src/render/OpenGL.cpp",
+    "bytes": 124442,
+    "sha256": "7bbf0f8f6714cc7ed7b6d17dbc670d75f5f17db54637def8d8b322ac3b873d58"
+  },
+  "sourceContextRequest": {
+    "function": "CHyprOpenGLImpl::initEGL",
+    "preferred": "GLES3.2",
+    "fallback": "GLES3.0",
+    "failedBoth": "explicit assertion",
+    "lines": [
+      184,
+      203
+    ]
+  },
+  "capturedReference": {
+    "path": "evidence/virgl-workload-inventory/captures/es2gears/hyprland.log",
+    "sha256": "bf6c9463e695388ce061510d4827588230e753e093e328c44707226037523614",
+    "referenceAPI": "OpenGL ES 3.2 Mesa 26.2.2-arch1.1",
+    "lines": [
+      104,
+      116,
+      205
+    ]
+  },
+  "authority": "source/readiness only; no production or complete-API proof",
+  "productionDrawAuthority": false
+}

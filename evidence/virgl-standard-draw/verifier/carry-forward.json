@@ -1,0 +1,11 @@
+{
+  "status": "HELD",
+  "dependencyHead": "761a912a88823954e3424f7b003c15887e7c9034",
+  "task": "E6-T11d5",
+  "nativeLinkAndActiveUniformAccountingUnchanged": true,
+  "nativeLinkClosureSha256": "07a797f1f7070ceb251de6f0404bf6340942ceadf4f50e5dabcf13958516d4c8",
+  "priorCriticArchiveSha256": "fc19a77e6f6819c4b3cec8c98449e37accc7c9160d7d2ab8554fa8560d06f045",
+  "priorCriticIndexSha256": "02d8445ba85ef95e2dcf41c6f441afcbf012d860b5781000ff7750e7b190608d",
+  "unchangedCompilerConstantsCacheResourcesFiles": 266,
+  "reason": "The complete native link/admission body, including raw banks, samplers, blocks, active-uniform completeness and native output checks, is byte-identical. Compiler/ownership closure is authenticated separately. Carry HELD D5 proof unchanged; only new fetch/divisor/native draw boundary is interrogated."
+}

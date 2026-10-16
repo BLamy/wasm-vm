@@ -1,0 +1,66 @@
+{
+  "schema": "virgl-original-c580-independent-audit-v1",
+  "sourceHead": "3d79918858975d1f44f6da2145930acc1660f23e",
+  "archiveSha256": "b0e6a1d568612aa9befbe53c5cb3130d246018ad4778b5ca5eb4926ed4e9ba99",
+  "predictions": "HELD",
+  "bankDraws": [
+    42,
+    2084,
+    145
+  ],
+  "completeNativeWasmBrowserPairs": 3,
+  "physicalFrames": 6,
+  "pixels": 96,
+  "survivors": 42,
+  "discards": 54,
+  "maxPixelError": 2.70397970014713e-07,
+  "faults": [
+    "discard",
+    "output"
+  ],
+  "coldClone": "HELD",
+  "sourcePackets": [
+    {
+      "event": 5328,
+      "offset": 48424,
+      "handle": 444,
+      "packetSha256": "27be42ebccb3f7a31ecedceb889a4408e85b6b9858f0ed660ecc922f486a2690",
+      "sourceSha256": "403b0529c632d3d2ffe4584ede810f5745e8b76ca2ab4f575e1073d8f29fcf0c"
+    },
+    {
+      "event": 5328,
+      "offset": 48868,
+      "handle": 445,
+      "packetSha256": "4a13248f0df80245d79d589e1ae9947790b784a3d08422c9ba98e0e2e9d7aaa8",
+      "sourceSha256": "c5806d5f8fd74bf2d3ce5ccf32bdc255ec13ad9447eec5896a3c96a591a5c68f"
+    }
+  ],
+  "shaderHandleLifetime": "handles 444 and 445 created at event 5328, bound as stages 0 and 1, and destroyed at event 52683; no intervening replacement",
+  "nativeHarnessCoverage": {
+    "functions": {
+      "count": 5,
+      "covered": 5,
+      "percent": 100
+    },
+    "lines": {
+      "count": 60,
+      "covered": 60,
+      "percent": 100
+    },
+    "regions": {
+      "count": 41,
+      "covered": 39,
+      "notcovered": 2,
+      "percent": 95.1219512195122
+    }
+  },
+  "browserHarnessCoverage": {
+    "sourceSha256": "89c8edde6bc5349d8eed7373b19885015bb13dce90c39ebc39b98ecac566570f",
+    "runAcceptanceCount": 1,
+    "expectedPixelCount": 96,
+    "survivorColorCount": 42
+  },
+  "novelCoordinateSourceFault": "HELD at bank0 near (0,1), verifier coordinate-report.json",
+  "priorHeld": "carried forward; compiler runtime unchanged since 379c8707 and recorded predecessor gates passed",
+  "makeCi": "failed before this path in untouched macOS wvseccomp and clippy items_after_test_module; no task finding"
+}

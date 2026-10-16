@@ -1,0 +1,2 @@
+FAKE_FORWARD init
+HARNESS_FORWARDING_PASS scenario=callback-null calls=1

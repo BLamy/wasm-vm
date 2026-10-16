@@ -1,0 +1,199 @@
+{
+  "schema": "standard-packed-critic-predictions-v1",
+  "writtenBeforeEvidence": true,
+  "at": "2026-10-10T11:26:05.009614+00:00",
+  "predecessor": "23bf410f9e152d53e83e674717c647a4164dcde7",
+  "submission": "520dbc10ad15f3ae328de577db724b1ff99cb32a",
+  "sourceFreeze": "e7a85906622794c60872876f9d3e80da83df9ccd",
+  "predictions": [
+    {
+      "id": "P1",
+      "boundary": "Custody",
+      "prediction": "Every member digest/size matches the independently opened archive index; sealed hot/cold sources match e7a85906622794c60872876f9d3e80da83df9ccd. Source freeze -> submission changes only evidence and lifecycle prose; cold exact-head status before/after is empty and environment scrubbed.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P2",
+      "boundary": "Original wire extent",
+      "prediction": "Original enums 8/123/172/173 describe four fields in four bytes. Source offsets 0xfffffffb and 0xfffffffC admit exactly four bytes under uint32 end bounds; 0xfffffffd rejects. Legacy decode and floatingVertexFormat reject all four; descriptors are frozen and unsupported adjacent/swizzled enums reject.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P3",
+      "boundary": "Original signed fields",
+      "prediction": "For original fields [-512,-511,511,-2], SSCALED values remain [-512,-511,511,-2], including alpha binary32 bytes [0,0,0,192]. SNORM gives [-1,-1,1,-1], including alpha [0,0,128,191]. Signed arrays use native type33640,size4,normalizedfalse,original buffer and actual C helper; no CPU array expansion.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P4",
+      "boundary": "Constants",
+      "prediction": "Each nonempty packed stride0 draw reads one original four-byte color element through retained GPU tickets, then supplies Float32Array generic values/words and disabled arrays/divisor0. Signed packed constants select zero packed masks and bypass array decode. Shared/mixed position+packed read batches preserve original widths16/4.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P5",
+      "boundary": "Layout bounds",
+      "prediction": "Aligned offset with nonzero stride252 and exact four-byte last extent draws; byte-short, misalignment, stride256/255 reject before any native draw. All original storage bytes match literal uploads, including shared/overlapping storage.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P6",
+      "boundary": "Lifetimes and ceilings",
+      "prediction": "Exact work6/staging10 admit and one-short work5/staging9 reject before draw/read allocation as appropriate. Delayed index/attribute revision and cancellation reject, drain fences and release all staging/tickets. Name reuse retains old generations. Disposal retires retained pending reads.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P7",
+      "boundary": "Compiler boundary",
+      "prediction": "Native/sanitized/Wasm outputs agree for59 literal packed cases. All four masks are compatible16-bit, normalized subset packed, integer disjoint; undeclared/invalid masks and malformed facade requests reject with no partial source. Getter traps are never evaluated, owned primitive snapshot survives caller mutation and peer memory is isolated. Old stage/pair/typed use zero packed masks.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P8",
+      "boundary": "Variant identity",
+      "prediction": "On identical original shader/storage, signed scaled array -> normalized array -> constant -> scaled array yields mask tuples (0,0,2,0),(0,0,2,2),(0,0,0,0) and reuses first program only without eviction. Typed masks coexist and packed attr15 sets32768 while constants clear only packed bits.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P9",
+      "boundary": "Native restoration",
+      "prediction": "After poisoned VAO, pointers,generics,divisors and EBO, full original pixels/pointers/generic types/bindings restore correctly across contexts and pending steps.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P10",
+      "boundary": "Fault sufficiency",
+      "prediction": "Three actual served-runtime faults (native normalization, constant alpha width, GPU alpha sign) each complete draw/fence then fail original full pixels. My independent pixel assertions also fail those completed draws; failure before draw does not count.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P11",
+      "boundary": "Coverage",
+      "prediction": "Every added executable C/JS region is exercised by sealed positive/negative record coverage or my bounded direct test; blank/braces/declarative type/config/doc-only regions receive precise waivers. Narrow nested V8 zero counters do not get disguised by enclosing positive counters.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P12",
+      "boundary": "Incremental carry",
+      "prediction": "Historical HELD evidence digests are identical to verified predecessor23bf410f9e152d53e83e674717c647a4164dcde7; unaffected dependencies unchanged. No crates/web/guest/API/capset/deployment changes and no production claim.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P13",
+      "boundary": "Fixture and environment hunt",
+      "prediction": "Pixel oracle reconstructs original uploads and TGSI without renderer descriptors/unpacker or emitted ESSL; actual generated C/Wasm/binary/served files are sealed, no software renderer flags, browser errors or ignored semantic checks. Pristine scrubbed acceptance completes at source freeze.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P14",
+      "boundary": "Independent seeds and novel boundary",
+      "prediction": "Independent seeds0x27c52ad1,0xb73e168c,0x694d803f exercise delayed high15 shared mixed constant batches, signed alpha/minima, varying legal offset/stride ends and stale/reuse/native restoration. Novel simultaneous signed packed attr1+15 with different normalized subsets must retain both decoded contracts across array/constant transitions and cache budgets.",
+      "status": "PREDICTED"
+    },
+    {
+      "id": "P15",
+      "boundary": "Allocations and stack",
+      "prediction": "All40 genuine packed allocation faults reject with no partial success and recover exact outputs; both complete caller texts owned before semantic allocation. Retained typed40 plus standard compiler669/129 at same freeze complete. Conservative optimized packed Wasm stack is191856<262144.",
+      "status": "PREDICTED"
+    }
+  ],
+  "literalRows": [
+    {
+      "format": 8,
+      "originalFields": [
+        0,
+        1023,
+        512,
+        3
+      ],
+      "packedWord": 3759143936,
+      "packedHex": "00fc0fe0",
+      "expectedValues": [
+        0.0,
+        1.0,
+        0.5004887580871582,
+        1.0
+      ],
+      "expectedWords": [
+        0,
+        1065353216,
+        1056972808,
+        1065353216
+      ]
+    },
+    {
+      "format": 123,
+      "originalFields": [
+        0,
+        1023,
+        512,
+        3
+      ],
+      "packedWord": 3759143936,
+      "packedHex": "00fc0fe0",
+      "expectedValues": [
+        0.0,
+        1023.0,
+        512.0,
+        3.0
+      ],
+      "expectedWords": [
+        0,
+        1149222912,
+        1140850688,
+        1077936128
+      ]
+    },
+    {
+      "format": 172,
+      "originalFields": [
+        -512,
+        -511,
+        511,
+        -2
+      ],
+      "packedWord": 2683831808,
+      "packedHex": "0006f89f",
+      "expectedValues": [
+        -512.0,
+        -511.0,
+        511.0,
+        -2.0
+      ],
+      "expectedWords": [
+        3288334336,
+        3288301568,
+        1140817920,
+        3221225472
+      ]
+    },
+    {
+      "format": 173,
+      "originalFields": [
+        -512,
+        -511,
+        511,
+        -2
+      ],
+      "packedWord": 2683831808,
+      "packedHex": "0006f89f",
+      "expectedValues": [
+        -1.0,
+        -1.0,
+        1.0,
+        -1.0
+      ],
+      "expectedWords": [
+        3212836864,
+        3212836864,
+        1065353216,
+        3212836864
+      ]
+    }
+  ],
+  "seeds": [
+    667232977,
+    3074299532,
+    1766686783
+  ]
+}

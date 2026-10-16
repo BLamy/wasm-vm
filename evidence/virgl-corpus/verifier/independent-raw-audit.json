@@ -1,0 +1,1709 @@
+{
+  "compositor": {
+    "allSummaryFieldsRecomputed": [
+      "events",
+      "blobs",
+      "blobBytes",
+      "apiCalls",
+      "apiResults",
+      "opcodes",
+      "objects",
+      "shaderInstructions",
+      "submissions",
+      "shaders",
+      "resourceCreates",
+      "resourceFormats",
+      "capsets",
+      "shaderStageCounts"
+    ],
+    "apiPairs": 500,
+    "artifactsHashed": 23,
+    "blobBytes": 81131305,
+    "blobs": 146,
+    "commands": 9495,
+    "commandsByContext": {
+      "5": {
+        "BIND_OBJECT": 566,
+        "BIND_SAMPLER_STATES": 331,
+        "BIND_SHADER": 758,
+        "CLEAR": 65,
+        "COPY_TRANSFER3D": 7,
+        "CREATE_OBJECT": 216,
+        "CREATE_SUB_CTX": 2,
+        "DESTROY_OBJECT": 215,
+        "DESTROY_SUB_CTX": 2,
+        "DRAW_VBO": 2241,
+        "END_TRANSFERS": 67,
+        "LINK_SHADER": 5,
+        "SET_ATOMIC_BUFFERS": 1,
+        "SET_BLEND_COLOR": 1,
+        "SET_CONSTANT_BUFFER": 1433,
+        "SET_FRAMEBUFFER_STATE": 129,
+        "SET_FRAMEBUFFER_STATE_NO_ATTACH": 129,
+        "SET_MIN_SAMPLES": 3,
+        "SET_POLYGON_STIPPLE": 1,
+        "SET_SAMPLER_VIEWS": 319,
+        "SET_SAMPLE_MASK": 2,
+        "SET_SCISSOR_STATE": 2041,
+        "SET_SHADER_BUFFERS": 12,
+        "SET_SHADER_IMAGES": 24,
+        "SET_STENCIL_REF": 2,
+        "SET_STREAMOUT_TARGETS": 2,
+        "SET_SUB_CTX": 67,
+        "SET_TESS_STATE": 1,
+        "SET_TWEAKS": 4,
+        "SET_VERTEX_BUFFERS": 620,
+        "SET_VIEWPORT_STATE": 1,
+        "TRANSFER3D": 69
+      },
+      "6": {
+        "BIND_OBJECT": 4,
+        "BIND_SAMPLER_STATES": 6,
+        "BIND_SHADER": 6,
+        "CREATE_OBJECT": 4,
+        "CREATE_SUB_CTX": 2,
+        "DESTROY_OBJECT": 4,
+        "DESTROY_SUB_CTX": 1,
+        "END_TRANSFERS": 3,
+        "LINK_SHADER": 2,
+        "SET_CONSTANT_BUFFER": 92,
+        "SET_FRAMEBUFFER_STATE": 1,
+        "SET_FRAMEBUFFER_STATE_NO_ATTACH": 1,
+        "SET_MIN_SAMPLES": 1,
+        "SET_SAMPLE_MASK": 1,
+        "SET_SHADER_BUFFERS": 6,
+        "SET_SHADER_IMAGES": 12,
+        "SET_STENCIL_REF": 1,
+        "SET_STREAMOUT_TARGETS": 1,
+        "SET_SUB_CTX": 3,
+        "SET_TWEAKS": 4,
+        "TRANSFER3D": 4
+      }
+    },
+    "contexts": {
+      "1": "swapper/0",
+      "2": "Hyprland",
+      "4": "Hyprland",
+      "5": "Hyprland",
+      "6": "Xwayland"
+    },
+    "events": 2707,
+    "eventsSha256": "5aedec4ee9c7c803648e16399f0846a88b1a1223b4eb93bec88726bc25b36b72",
+    "fencesCompleted": 92,
+    "fencesCreated": 94,
+    "firsts": {
+      "backing_snapshot": 13,
+      "begin": 1,
+      "context_create": 15,
+      "context_create_with_flags": 16,
+      "context_destroy": 192,
+      "create_fence": 120,
+      "ctx_attach_resource": 19,
+      "ctx_detach_resource": 21,
+      "end": 2707,
+      "fill_caps": 109,
+      "get_cap_set": 2,
+      "init": 4,
+      "object:BLEND": [
+        567,
+        4668,
+        "bb292689da3416e3fc8e358e94929ea238b44bcc66439d165080d782a68c4cc7"
+      ],
+      "object:DSA": [
+        567,
+        4724,
+        "bb292689da3416e3fc8e358e94929ea238b44bcc66439d165080d782a68c4cc7"
+      ],
+      "object:RASTERIZER": [
+        567,
+        4796,
+        "bb292689da3416e3fc8e358e94929ea238b44bcc66439d165080d782a68c4cc7"
+      ],
+      "object:SAMPLER_STATE": [
+        567,
+        8764,
+        "bb292689da3416e3fc8e358e94929ea238b44bcc66439d165080d782a68c4cc7"
+      ],
+      "object:SAMPLER_VIEW": [
+        567,
+        8720,
+        "bb292689da3416e3fc8e358e94929ea238b44bcc66439d165080d782a68c4cc7"
+      ],
+      "object:SHADER": [
+        167,
+        4136,
+        "71b2412cafcc7c07ca7f0133b032f6cb34f67f69278c39565121fa169923a5c2"
+      ],
+      "object:SURFACE": [
+        286,
+        5456,
+        "dce83eb6083d192421f8eb80cfa4e50d73b23dcba2533cd751c7ecdf50698c74"
+      ],
+      "object:VERTEX_ELEMENTS": [
+        567,
+        4756,
+        "bb292689da3416e3fc8e358e94929ea238b44bcc66439d165080d782a68c4cc7"
+      ],
+      "opcode:BIND_OBJECT": [
+        178,
+        4136,
+        "0d37a02931b81a1b387b7d23908d4e40b0f5f5f2ab550b4cff3e9b922b3b6368"
+      ],
+      "opcode:BIND_SAMPLER_STATES": [
+        178,
+        4152,
+        "0d37a02931b81a1b387b7d23908d4e40b0f5f5f2ab550b4cff3e9b922b3b6368"
+      ],
+      "opcode:BIND_SHADER": [
+        178,
+        11296,
+        "0d37a02931b81a1b387b7d23908d4e40b0f5f5f2ab550b4cff3e9b922b3b6368"
+      ],
+      "opcode:CLEAR": [
+        286,
+        5508,
+        "dce83eb6083d192421f8eb80cfa4e50d73b23dcba2533cd751c7ecdf50698c74"
+      ],
+      "opcode:COPY_TRANSFER3D": [
+        567,
+        4136,
+        "bb292689da3416e3fc8e358e94929ea238b44bcc66439d165080d782a68c4cc7"
+      ],
+      "opcode:CREATE_OBJECT": [
+        167,
+        4136,
+        "71b2412cafcc7c07ca7f0133b032f6cb34f67f69278c39565121fa169923a5c2"
+      ],
+      "opcode:CREATE_SUB_CTX": [
+        167,
+        4096,
+        "71b2412cafcc7c07ca7f0133b032f6cb34f67f69278c39565121fa169923a5c2"
+      ],
+      "opcode:DESTROY_OBJECT": [
+        178,
+        4104,
+        "0d37a02931b81a1b387b7d23908d4e40b0f5f5f2ab550b4cff3e9b922b3b6368"
+      ],
+      "opcode:DESTROY_SUB_CTX": [
+        178,
+        11448,
+        "0d37a02931b81a1b387b7d23908d4e40b0f5f5f2ab550b4cff3e9b922b3b6368"
+      ],
+      "opcode:DRAW_VBO": [
+        567,
+        5204,
+        "bb292689da3416e3fc8e358e94929ea238b44bcc66439d165080d782a68c4cc7"
+      ],
+      "opcode:END_TRANSFERS": [
+        167,
+        224,
+        "71b2412cafcc7c07ca7f0133b032f6cb34f67f69278c39565121fa169923a5c2"
+      ],
+      "opcode:LINK_SHADER": [
+        167,
+        4768,
+        "71b2412cafcc7c07ca7f0133b032f6cb34f67f69278c39565121fa169923a5c2"
+      ],
+      "opcode:SET_ATOMIC_BUFFERS": [
+        567,
+        6632,
+        "bb292689da3416e3fc8e358e94929ea238b44bcc66439d165080d782a68c4cc7"
+      ],
+      "opcode:SET_BLEND_COLOR": [
+        567,
+        6444,
+        "bb292689da3416e3fc8e358e94929ea238b44bcc66439d165080d782a68c4cc7"
+      ],
+      "opcode:SET_CONSTANT_BUFFER": [
+        178,
+        5160,
+        "0d37a02931b81a1b387b7d23908d4e40b0f5f5f2ab550b4cff3e9b922b3b6368"
+      ],
+      "opcode:SET_FRAMEBUFFER_STATE": [
+        178,
+        11408,
+        "0d37a02931b81a1b387b7d23908d4e40b0f5f5f2ab550b4cff3e9b922b3b6368"
+      ],
+      "opcode:SET_FRAMEBUFFER_STATE_NO_ATTACH": [
+        178,
+        11420,
+        "0d37a02931b81a1b387b7d23908d4e40b0f5f5f2ab550b4cff3e9b922b3b6368"
+      ],
+      "opcode:SET_MIN_SAMPLES": [
+        178,
+        11440,
+        "0d37a02931b81a1b387b7d23908d4e40b0f5f5f2ab550b4cff3e9b922b3b6368"
+      ],
+      "opcode:SET_POLYGON_STIPPLE": [
+        567,
+        6312,
+        "bb292689da3416e3fc8e358e94929ea238b44bcc66439d165080d782a68c4cc7"
+      ],
+      "opcode:SET_SAMPLER_VIEWS": [
+        567,
+        8748,
+        "bb292689da3416e3fc8e358e94929ea238b44bcc66439d165080d782a68c4cc7"
+      ],
+      "opcode:SET_SAMPLE_MASK": [
+        178,
+        11432,
+        "0d37a02931b81a1b387b7d23908d4e40b0f5f5f2ab550b4cff3e9b922b3b6368"
+      ],
+      "opcode:SET_SCISSOR_STATE": [
+        567,
+        6512,
+        "bb292689da3416e3fc8e358e94929ea238b44bcc66439d165080d782a68c4cc7"
+      ],
+      "opcode:SET_SHADER_BUFFERS": [
+        178,
+        4292,
+        "0d37a02931b81a1b387b7d23908d4e40b0f5f5f2ab550b4cff3e9b922b3b6368"
+      ],
+      "opcode:SET_SHADER_IMAGES": [
+        178,
+        4496,
+        "0d37a02931b81a1b387b7d23908d4e40b0f5f5f2ab550b4cff3e9b922b3b6368"
+      ],
+      "opcode:SET_STENCIL_REF": [
+        178,
+        11288,
+        "0d37a02931b81a1b387b7d23908d4e40b0f5f5f2ab550b4cff3e9b922b3b6368"
+      ],
+      "opcode:SET_STREAMOUT_TARGETS": [
+        178,
+        11400,
+        "0d37a02931b81a1b387b7d23908d4e40b0f5f5f2ab550b4cff3e9b922b3b6368"
+      ],
+      "opcode:SET_SUB_CTX": [
+        167,
+        4104,
+        "71b2412cafcc7c07ca7f0133b032f6cb34f67f69278c39565121fa169923a5c2"
+      ],
+      "opcode:SET_TESS_STATE": [
+        567,
+        6604,
+        "bb292689da3416e3fc8e358e94929ea238b44bcc66439d165080d782a68c4cc7"
+      ],
+      "opcode:SET_TWEAKS": [
+        167,
+        4112,
+        "71b2412cafcc7c07ca7f0133b032f6cb34f67f69278c39565121fa169923a5c2"
+      ],
+      "opcode:SET_VERTEX_BUFFERS": [
+        567,
+        5188,
+        "bb292689da3416e3fc8e358e94929ea238b44bcc66439d165080d782a68c4cc7"
+      ],
+      "opcode:SET_VIEWPORT_STATE": [
+        567,
+        4844,
+        "bb292689da3416e3fc8e358e94929ea238b44bcc66439d165080d782a68c4cc7"
+      ],
+      "opcode:TRANSFER3D": [
+        167,
+        0,
+        "71b2412cafcc7c07ca7f0133b032f6cb34f67f69278c39565121fa169923a5c2"
+      ],
+      "resource_attach_iov": 12,
+      "resource_create": 10,
+      "resource_detach_iov": 184,
+      "resource_unref": 186,
+      "submit_cmd": 167,
+      "transfer_write_iov": 23,
+      "write_fence": 127
+    },
+    "footer": {
+      "blobBytes": 81131305,
+      "blobs": [],
+      "cleanupSeen": false,
+      "complete": true,
+      "droppedRecords": 0,
+      "normalExit": true,
+      "openCalls": 0,
+      "seq": 2707,
+      "type": "end",
+      "workload": "compositor"
+    },
+    "guestMarkerLines": [
+      242,
+      246
+    ],
+    "manifestSha256": "22519c071fb65af6c5556bda1c3f4304951f49b8d19141ac40658bcb2d31482c",
+    "objects": {
+      "BLEND": 2,
+      "DSA": 1,
+      "RASTERIZER": 2,
+      "SAMPLER_STATE": 1,
+      "SAMPLER_VIEW": 6,
+      "SHADER": 16,
+      "SURFACE": 189,
+      "VERTEX_ELEMENTS": 3
+    },
+    "opcodes": {
+      "BIND_OBJECT": 570,
+      "BIND_SAMPLER_STATES": 337,
+      "BIND_SHADER": 764,
+      "CLEAR": 65,
+      "COPY_TRANSFER3D": 7,
+      "CREATE_OBJECT": 220,
+      "CREATE_SUB_CTX": 4,
+      "DESTROY_OBJECT": 219,
+      "DESTROY_SUB_CTX": 3,
+      "DRAW_VBO": 2241,
+      "END_TRANSFERS": 70,
+      "LINK_SHADER": 7,
+      "SET_ATOMIC_BUFFERS": 1,
+      "SET_BLEND_COLOR": 1,
+      "SET_CONSTANT_BUFFER": 1525,
+      "SET_FRAMEBUFFER_STATE": 130,
+      "SET_FRAMEBUFFER_STATE_NO_ATTACH": 130,
+      "SET_MIN_SAMPLES": 4,
+      "SET_POLYGON_STIPPLE": 1,
+      "SET_SAMPLER_VIEWS": 319,
+      "SET_SAMPLE_MASK": 3,
+      "SET_SCISSOR_STATE": 2041,
+      "SET_SHADER_BUFFERS": 18,
+      "SET_SHADER_IMAGES": 36,
+      "SET_STENCIL_REF": 3,
+      "SET_STREAMOUT_TARGETS": 3,
+      "SET_SUB_CTX": 70,
+      "SET_TESS_STATE": 1,
+      "SET_TWEAKS": 8,
+      "SET_VERTEX_BUFFERS": 620,
+      "SET_VIEWPORT_STATE": 1,
+      "TRANSFER3D": 73
+    },
+    "referencedBlobRoles": {
+      "backing": 1705,
+      "capset": 1,
+      "command": 70,
+      "context_name": 12
+    },
+    "resourceFormats": {
+      "2": 4,
+      "20": 1,
+      "64": 15,
+      "67": 9
+    },
+    "shaderBytes": 1584,
+    "shaderInstructions": {
+      "ADD": 4,
+      "ADD_PRECISE": 1,
+      "END": 7,
+      "MOV": 6,
+      "MUL": 5,
+      "MUL_PRECISE": 1,
+      "TEX": 2
+    },
+    "shaderShapes": {
+      "(0, 0, False)": 8,
+      "(1, 0, False)": 8
+    },
+    "shaderStages": {
+      "FRAG": 4,
+      "VERT": 3
+    },
+    "shaders": 7,
+    "submissions": 70,
+    "versionsLines": {
+      "hyprland": 95,
+      "mesa": 268
+    },
+    "workloadMarkers": [
+      [
+        "hyprland.log",
+        99,
+        "DEBUG from aquamarine ]: CDRMRenderer: Using KHR_context_flush_control"
+      ],
+      [
+        "hyprland.log",
+        103,
+        "DEBUG from aquamarine ]: Renderer: virgl (LLVMPIPE (LLVM 15.0.6, 128 bits))"
+      ],
+      [
+        "hyprland.log",
+        111,
+        "DEBUG from aquamarine ]: CDRMRenderer: Using KHR_context_flush_control"
+      ],
+      [
+        "hyprland.log",
+        115,
+        "DEBUG from aquamarine ]: Renderer: virgl (LLVMPIPE (LLVM 15.0.6, 128 bits))"
+      ],
+      [
+        "hyprland.log",
+        204,
+        "DEBUG ]: Renderer: virgl (LLVMPIPE (LLVM 15.0.6, 128 bits))"
+      ]
+    ]
+  },
+  "glmark2-es2": {
+    "allSummaryFieldsRecomputed": [
+      "events",
+      "blobs",
+      "blobBytes",
+      "apiCalls",
+      "apiResults",
+      "opcodes",
+      "objects",
+      "shaderInstructions",
+      "submissions",
+      "shaders",
+      "resourceCreates",
+      "resourceFormats",
+      "capsets",
+      "shaderStageCounts"
+    ],
+    "apiPairs": 854,
+    "artifactsHashed": 24,
+    "blobBytes": 164586528,
+    "blobs": 313,
+    "commands": 20377,
+    "commandsByContext": {
+      "5": {
+        "BIND_OBJECT": 1223,
+        "BIND_SAMPLER_STATES": 696,
+        "BIND_SHADER": 1634,
+        "CLEAR": 138,
+        "COPY_TRANSFER3D": 7,
+        "CREATE_OBJECT": 435,
+        "CREATE_SUB_CTX": 2,
+        "DESTROY_OBJECT": 434,
+        "DESTROY_SUB_CTX": 2,
+        "DRAW_VBO": 4869,
+        "END_TRANSFERS": 140,
+        "LINK_SHADER": 5,
+        "SET_ATOMIC_BUFFERS": 1,
+        "SET_BLEND_COLOR": 1,
+        "SET_CONSTANT_BUFFER": 2893,
+        "SET_FRAMEBUFFER_STATE": 275,
+        "SET_FRAMEBUFFER_STATE_NO_ATTACH": 275,
+        "SET_MIN_SAMPLES": 3,
+        "SET_POLYGON_STIPPLE": 1,
+        "SET_SAMPLER_VIEWS": 684,
+        "SET_SAMPLE_MASK": 2,
+        "SET_SCISSOR_STATE": 4450,
+        "SET_SHADER_BUFFERS": 12,
+        "SET_SHADER_IMAGES": 24,
+        "SET_STENCIL_REF": 2,
+        "SET_STREAMOUT_TARGETS": 2,
+        "SET_SUB_CTX": 140,
+        "SET_TESS_STATE": 1,
+        "SET_TWEAKS": 4,
+        "SET_VERTEX_BUFFERS": 1350,
+        "SET_VIEWPORT_STATE": 1,
+        "TRANSFER3D": 142
+      },
+      "6": {
+        "BIND_OBJECT": 4,
+        "BIND_SAMPLER_STATES": 6,
+        "BIND_SHADER": 6,
+        "COPY_TRANSFER3D": 1,
+        "CREATE_OBJECT": 15,
+        "CREATE_SUB_CTX": 2,
+        "DESTROY_OBJECT": 4,
+        "DESTROY_SUB_CTX": 1,
+        "END_TRANSFERS": 6,
+        "LINK_SHADER": 6,
+        "SET_CONSTANT_BUFFER": 92,
+        "SET_FRAMEBUFFER_STATE": 2,
+        "SET_FRAMEBUFFER_STATE_NO_ATTACH": 2,
+        "SET_MIN_SAMPLES": 1,
+        "SET_SAMPLE_MASK": 1,
+        "SET_SHADER_BUFFERS": 6,
+        "SET_SHADER_IMAGES": 12,
+        "SET_STENCIL_REF": 1,
+        "SET_STREAMOUT_TARGETS": 1,
+        "SET_SUB_CTX": 6,
+        "SET_TWEAKS": 4,
+        "TRANSFER3D": 5
+      },
+      "7": {
+        "BIND_OBJECT": 12,
+        "BIND_SAMPLER_STATES": 13,
+        "BIND_SHADER": 16,
+        "CLEAR": 3,
+        "COPY_TRANSFER3D": 2,
+        "CREATE_OBJECT": 14,
+        "CREATE_SUB_CTX": 2,
+        "DESTROY_OBJECT": 13,
+        "DESTROY_SUB_CTX": 2,
+        "DRAW_VBO": 1,
+        "END_TRANSFERS": 7,
+        "LINK_SHADER": 1,
+        "SET_ATOMIC_BUFFERS": 1,
+        "SET_BLEND_COLOR": 1,
+        "SET_CONSTANT_BUFFER": 185,
+        "SET_FRAMEBUFFER_STATE": 4,
+        "SET_FRAMEBUFFER_STATE_NO_ATTACH": 4,
+        "SET_MIN_SAMPLES": 3,
+        "SET_POLYGON_STIPPLE": 1,
+        "SET_SAMPLER_VIEWS": 1,
+        "SET_SAMPLE_MASK": 2,
+        "SET_SHADER_BUFFERS": 12,
+        "SET_SHADER_IMAGES": 24,
+        "SET_STENCIL_REF": 2,
+        "SET_STREAMOUT_TARGETS": 2,
+        "SET_SUB_CTX": 7,
+        "SET_TESS_STATE": 1,
+        "SET_TWEAKS": 4,
+        "SET_VERTEX_BUFFERS": 1,
+        "SET_VIEWPORT_STATE": 1,
+        "TRANSFER3D": 3
+      }
+    },
+    "contexts": {
+      "1": "swapper/0",
+      "2": "Hyprland",
+      "4": "Hyprland",
+      "5": "Hyprland",
+      "6": "Xwayland",
+      "7": "glmark2-es2-way"
+    },
+    "events": 5847,
+    "eventsSha256": "ceaefc4b26e9d5811a89d4bb1f4fe24cd2ecb57def339e697e001cfbbd03921c",
+    "fencesCompleted": 177,
+    "fencesCreated": 188,
+    "firsts": {
+      "backing_snapshot": 13,
+      "begin": 1,
+      "context_create": 15,
+      "context_create_with_flags": 16,
+      "context_destroy": 201,
+      "create_fence": 126,
+      "ctx_attach_resource": 19,
+      "ctx_detach_resource": 21,
+      "end": 5847,
+      "fill_caps": 112,
+      "get_cap_set": 2,
+      "init": 4,
+      "object:BLEND": [
+        576,
+        4668,
+        "ea608cff5d1651bb3e12dcd0fb45d3ca6b768d76a0d53efe7ec0e43d8607198b"
+      ],
+      "object:DSA": [
+        576,
+        4724,
+        "ea608cff5d1651bb3e12dcd0fb45d3ca6b768d76a0d53efe7ec0e43d8607198b"
+      ],
+      "object:RASTERIZER": [
+        576,
+        4796,
+        "ea608cff5d1651bb3e12dcd0fb45d3ca6b768d76a0d53efe7ec0e43d8607198b"
+      ],
+      "object:SAMPLER_STATE": [
+        576,
+        8764,
+        "ea608cff5d1651bb3e12dcd0fb45d3ca6b768d76a0d53efe7ec0e43d8607198b"
+      ],
+      "object:SAMPLER_VIEW": [
+        576,
+        8720,
+        "ea608cff5d1651bb3e12dcd0fb45d3ca6b768d76a0d53efe7ec0e43d8607198b"
+      ],
+      "object:SHADER": [
+        173,
+        4136,
+        "71b2412cafcc7c07ca7f0133b032f6cb34f67f69278c39565121fa169923a5c2"
+      ],
+      "object:SURFACE": [
+        295,
+        5456,
+        "dce83eb6083d192421f8eb80cfa4e50d73b23dcba2533cd751c7ecdf50698c74"
+      ],
+      "object:VERTEX_ELEMENTS": [
+        576,
+        4756,
+        "ea608cff5d1651bb3e12dcd0fb45d3ca6b768d76a0d53efe7ec0e43d8607198b"
+      ],
+      "opcode:BIND_OBJECT": [
+        187,
+        4136,
+        "0d37a02931b81a1b387b7d23908d4e40b0f5f5f2ab550b4cff3e9b922b3b6368"
+      ],
+      "opcode:BIND_SAMPLER_STATES": [
+        187,
+        4152,
+        "0d37a02931b81a1b387b7d23908d4e40b0f5f5f2ab550b4cff3e9b922b3b6368"
+      ],
+      "opcode:BIND_SHADER": [
+        187,
+        11296,
+        "0d37a02931b81a1b387b7d23908d4e40b0f5f5f2ab550b4cff3e9b922b3b6368"
+      ],
+      "opcode:CLEAR": [
+        295,
+        5508,
+        "dce83eb6083d192421f8eb80cfa4e50d73b23dcba2533cd751c7ecdf50698c74"
+      ],
+      "opcode:COPY_TRANSFER3D": [
+        576,
+        4136,
+        "ea608cff5d1651bb3e12dcd0fb45d3ca6b768d76a0d53efe7ec0e43d8607198b"
+      ],
+      "opcode:CREATE_OBJECT": [
+        173,
+        4136,
+        "71b2412cafcc7c07ca7f0133b032f6cb34f67f69278c39565121fa169923a5c2"
+      ],
+      "opcode:CREATE_SUB_CTX": [
+        173,
+        4096,
+        "71b2412cafcc7c07ca7f0133b032f6cb34f67f69278c39565121fa169923a5c2"
+      ],
+      "opcode:DESTROY_OBJECT": [
+        187,
+        4104,
+        "0d37a02931b81a1b387b7d23908d4e40b0f5f5f2ab550b4cff3e9b922b3b6368"
+      ],
+      "opcode:DESTROY_SUB_CTX": [
+        187,
+        11448,
+        "0d37a02931b81a1b387b7d23908d4e40b0f5f5f2ab550b4cff3e9b922b3b6368"
+      ],
+      "opcode:DRAW_VBO": [
+        576,
+        5204,
+        "ea608cff5d1651bb3e12dcd0fb45d3ca6b768d76a0d53efe7ec0e43d8607198b"
+      ],
+      "opcode:END_TRANSFERS": [
+        173,
+        224,
+        "71b2412cafcc7c07ca7f0133b032f6cb34f67f69278c39565121fa169923a5c2"
+      ],
+      "opcode:LINK_SHADER": [
+        173,
+        4768,
+        "71b2412cafcc7c07ca7f0133b032f6cb34f67f69278c39565121fa169923a5c2"
+      ],
+      "opcode:SET_ATOMIC_BUFFERS": [
+        576,
+        6632,
+        "ea608cff5d1651bb3e12dcd0fb45d3ca6b768d76a0d53efe7ec0e43d8607198b"
+      ],
+      "opcode:SET_BLEND_COLOR": [
+        576,
+        6444,
+        "ea608cff5d1651bb3e12dcd0fb45d3ca6b768d76a0d53efe7ec0e43d8607198b"
+      ],
+      "opcode:SET_CONSTANT_BUFFER": [
+        187,
+        5160,
+        "0d37a02931b81a1b387b7d23908d4e40b0f5f5f2ab550b4cff3e9b922b3b6368"
+      ],
+      "opcode:SET_FRAMEBUFFER_STATE": [
+        187,
+        11408,
+        "0d37a02931b81a1b387b7d23908d4e40b0f5f5f2ab550b4cff3e9b922b3b6368"
+      ],
+      "opcode:SET_FRAMEBUFFER_STATE_NO_ATTACH": [
+        187,
+        11420,
+        "0d37a02931b81a1b387b7d23908d4e40b0f5f5f2ab550b4cff3e9b922b3b6368"
+      ],
+      "opcode:SET_MIN_SAMPLES": [
+        187,
+        11440,
+        "0d37a02931b81a1b387b7d23908d4e40b0f5f5f2ab550b4cff3e9b922b3b6368"
+      ],
+      "opcode:SET_POLYGON_STIPPLE": [
+        576,
+        6312,
+        "ea608cff5d1651bb3e12dcd0fb45d3ca6b768d76a0d53efe7ec0e43d8607198b"
+      ],
+      "opcode:SET_SAMPLER_VIEWS": [
+        576,
+        8748,
+        "ea608cff5d1651bb3e12dcd0fb45d3ca6b768d76a0d53efe7ec0e43d8607198b"
+      ],
+      "opcode:SET_SAMPLE_MASK": [
+        187,
+        11432,
+        "0d37a02931b81a1b387b7d23908d4e40b0f5f5f2ab550b4cff3e9b922b3b6368"
+      ],
+      "opcode:SET_SCISSOR_STATE": [
+        576,
+        6512,
+        "ea608cff5d1651bb3e12dcd0fb45d3ca6b768d76a0d53efe7ec0e43d8607198b"
+      ],
+      "opcode:SET_SHADER_BUFFERS": [
+        187,
+        4292,
+        "0d37a02931b81a1b387b7d23908d4e40b0f5f5f2ab550b4cff3e9b922b3b6368"
+      ],
+      "opcode:SET_SHADER_IMAGES": [
+        187,
+        4496,
+        "0d37a02931b81a1b387b7d23908d4e40b0f5f5f2ab550b4cff3e9b922b3b6368"
+      ],
+      "opcode:SET_STENCIL_REF": [
+        187,
+        11288,
+        "0d37a02931b81a1b387b7d23908d4e40b0f5f5f2ab550b4cff3e9b922b3b6368"
+      ],
+      "opcode:SET_STREAMOUT_TARGETS": [
+        187,
+        11400,
+        "0d37a02931b81a1b387b7d23908d4e40b0f5f5f2ab550b4cff3e9b922b3b6368"
+      ],
+      "opcode:SET_SUB_CTX": [
+        173,
+        4104,
+        "71b2412cafcc7c07ca7f0133b032f6cb34f67f69278c39565121fa169923a5c2"
+      ],
+      "opcode:SET_TESS_STATE": [
+        576,
+        6604,
+        "ea608cff5d1651bb3e12dcd0fb45d3ca6b768d76a0d53efe7ec0e43d8607198b"
+      ],
+      "opcode:SET_TWEAKS": [
+        173,
+        4112,
+        "71b2412cafcc7c07ca7f0133b032f6cb34f67f69278c39565121fa169923a5c2"
+      ],
+      "opcode:SET_VERTEX_BUFFERS": [
+        576,
+        5188,
+        "ea608cff5d1651bb3e12dcd0fb45d3ca6b768d76a0d53efe7ec0e43d8607198b"
+      ],
+      "opcode:SET_VIEWPORT_STATE": [
+        576,
+        4844,
+        "ea608cff5d1651bb3e12dcd0fb45d3ca6b768d76a0d53efe7ec0e43d8607198b"
+      ],
+      "opcode:TRANSFER3D": [
+        173,
+        0,
+        "71b2412cafcc7c07ca7f0133b032f6cb34f67f69278c39565121fa169923a5c2"
+      ],
+      "resource_attach_iov": 12,
+      "resource_create": 10,
+      "resource_detach_iov": 193,
+      "resource_unref": 195,
+      "submit_cmd": 173,
+      "transfer_read_iov": 5578,
+      "transfer_write_iov": 23,
+      "write_fence": 133
+    },
+    "footer": {
+      "blobBytes": 164586528,
+      "blobs": [],
+      "cleanupSeen": false,
+      "complete": true,
+      "droppedRecords": 0,
+      "normalExit": true,
+      "openCalls": 0,
+      "seq": 5847,
+      "type": "end",
+      "workload": "glmark2-es2"
+    },
+    "guestMarkerLines": [
+      242,
+      257
+    ],
+    "manifestSha256": "28effba207e0c7d5679644e9a5c8d21b5ce30067a8155dfe46f92e417050c263",
+    "objects": {
+      "BLEND": 3,
+      "DSA": 2,
+      "RASTERIZER": 3,
+      "SAMPLER_STATE": 2,
+      "SAMPLER_VIEW": 7,
+      "SHADER": 30,
+      "SURFACE": 413,
+      "VERTEX_ELEMENTS": 4
+    },
+    "opcodes": {
+      "BIND_OBJECT": 1239,
+      "BIND_SAMPLER_STATES": 715,
+      "BIND_SHADER": 1656,
+      "CLEAR": 141,
+      "COPY_TRANSFER3D": 10,
+      "CREATE_OBJECT": 464,
+      "CREATE_SUB_CTX": 6,
+      "DESTROY_OBJECT": 451,
+      "DESTROY_SUB_CTX": 5,
+      "DRAW_VBO": 4870,
+      "END_TRANSFERS": 153,
+      "LINK_SHADER": 12,
+      "SET_ATOMIC_BUFFERS": 2,
+      "SET_BLEND_COLOR": 2,
+      "SET_CONSTANT_BUFFER": 3170,
+      "SET_FRAMEBUFFER_STATE": 281,
+      "SET_FRAMEBUFFER_STATE_NO_ATTACH": 281,
+      "SET_MIN_SAMPLES": 7,
+      "SET_POLYGON_STIPPLE": 2,
+      "SET_SAMPLER_VIEWS": 685,
+      "SET_SAMPLE_MASK": 5,
+      "SET_SCISSOR_STATE": 4450,
+      "SET_SHADER_BUFFERS": 30,
+      "SET_SHADER_IMAGES": 60,
+      "SET_STENCIL_REF": 5,
+      "SET_STREAMOUT_TARGETS": 5,
+      "SET_SUB_CTX": 153,
+      "SET_TESS_STATE": 2,
+      "SET_TWEAKS": 12,
+      "SET_VERTEX_BUFFERS": 1351,
+      "SET_VIEWPORT_STATE": 2,
+      "TRANSFER3D": 150
+    },
+    "referencedBlobRoles": {
+      "backing": 4137,
+      "capset": 1,
+      "command": 153,
+      "context_name": 14
+    },
+    "resourceFormats": {
+      "1": 2,
+      "134": 1,
+      "17": 1,
+      "177": 1,
+      "2": 4,
+      "20": 1,
+      "21": 2,
+      "64": 20,
+      "67": 11
+    },
+    "shaderBytes": 28500,
+    "shaderInstructions": {
+      "ADD": 71,
+      "ADD_PRECISE": 1,
+      "AND": 21,
+      "BGNLOOP": 2,
+      "BRK": 2,
+      "DIV": 16,
+      "DP3": 2,
+      "ELSE": 23,
+      "END": 15,
+      "ENDIF": 25,
+      "ENDLOOP": 2,
+      "FRC": 8,
+      "FSEQ_PRECISE": 2,
+      "FSGE": 10,
+      "FSLT": 34,
+      "FSNE_PRECISE": 4,
+      "ISGE": 6,
+      "LRP": 8,
+      "MAX": 6,
+      "MAX_PRECISE": 1,
+      "MOV": 88,
+      "MOV_PRECISE": 2,
+      "MUL": 93,
+      "MUL_PRECISE": 1,
+      "NOT": 4,
+      "OR": 10,
+      "RCP": 2,
+      "RSQ": 3,
+      "SHL": 4,
+      "TEX": 3,
+      "UADD": 10,
+      "UARL": 8,
+      "UCMP": 50,
+      "UIF": 25,
+      "USEQ": 6,
+      "USHR": 6,
+      "USNE": 4
+    },
+    "shaderShapes": {
+      "(0, 0, False)": 15,
+      "(1, 0, False)": 15
+    },
+    "shaderStages": {
+      "FRAG": 9,
+      "VERT": 6
+    },
+    "shaders": 15,
+    "submissions": 153,
+    "versionsLines": {
+      "hyprland": 95,
+      "mesa": 268
+    },
+    "workloadMarkers": [
+      [
+        "workload.log",
+        6,
+        "    GL_RENDERER:    virgl (LLVMPIPE (LLVM 15.0.6, 128 bits))"
+      ],
+      [
+        "workload.log",
+        11,
+        "[texture] texture-filter=nearest: Validation: Success"
+      ],
+      [
+        "hyprland.log",
+        99,
+        "DEBUG from aquamarine ]: CDRMRenderer: Using KHR_context_flush_control"
+      ],
+      [
+        "hyprland.log",
+        103,
+        "DEBUG from aquamarine ]: Renderer: virgl (LLVMPIPE (LLVM 15.0.6, 128 bits))"
+      ],
+      [
+        "hyprland.log",
+        111,
+        "DEBUG from aquamarine ]: CDRMRenderer: Using KHR_context_flush_control"
+      ],
+      [
+        "hyprland.log",
+        115,
+        "DEBUG from aquamarine ]: Renderer: virgl (LLVMPIPE (LLVM 15.0.6, 128 bits))"
+      ],
+      [
+        "hyprland.log",
+        204,
+        "DEBUG ]: Renderer: virgl (LLVMPIPE (LLVM 15.0.6, 128 bits))"
+      ]
+    ]
+  },
+  "kmscube": {
+    "allSummaryFieldsRecomputed": [
+      "events",
+      "blobs",
+      "blobBytes",
+      "apiCalls",
+      "apiResults",
+      "opcodes",
+      "objects",
+      "shaderInstructions",
+      "submissions",
+      "shaders",
+      "resourceCreates",
+      "resourceFormats",
+      "capsets",
+      "shaderStageCounts"
+    ],
+    "apiPairs": 105,
+    "artifactsHashed": 19,
+    "blobBytes": 11575700,
+    "blobs": 20,
+    "commands": 147,
+    "commandsByContext": {
+      "2": {
+        "BIND_OBJECT": 4,
+        "BIND_SAMPLER_STATES": 1,
+        "BIND_SHADER": 2,
+        "CLEAR": 8,
+        "CREATE_OBJECT": 16,
+        "CREATE_SUB_CTX": 2,
+        "DESTROY_OBJECT": 7,
+        "DRAW_VBO": 48,
+        "END_TRANSFERS": 10,
+        "LINK_SHADER": 1,
+        "SET_ATOMIC_BUFFERS": 1,
+        "SET_BLEND_COLOR": 1,
+        "SET_CONSTANT_BUFFER": 8,
+        "SET_FRAMEBUFFER_STATE": 8,
+        "SET_FRAMEBUFFER_STATE_NO_ATTACH": 8,
+        "SET_MIN_SAMPLES": 1,
+        "SET_POLYGON_STIPPLE": 1,
+        "SET_SAMPLER_VIEWS": 1,
+        "SET_SUB_CTX": 10,
+        "SET_TESS_STATE": 1,
+        "SET_TWEAKS": 4,
+        "SET_VERTEX_BUFFERS": 1,
+        "SET_VIEWPORT_STATE": 1,
+        "TRANSFER3D": 2
+      }
+    },
+    "contexts": {
+      "1": "swapper/0",
+      "2": "kmscube"
+    },
+    "events": 291,
+    "eventsSha256": "d9007a7d2d3b2d769710c69dc7b4740a5aaf41a9b57a2426181b01c0457a3506",
+    "fencesCompleted": 14,
+    "fencesCreated": 14,
+    "firsts": {
+      "backing_snapshot": 13,
+      "begin": 1,
+      "context_create": 15,
+      "context_create_with_flags": 16,
+      "context_destroy": 275,
+      "create_fence": 99,
+      "ctx_attach_resource": 19,
+      "ctx_detach_resource": 21,
+      "end": 291,
+      "fill_caps": 88,
+      "get_cap_set": 2,
+      "init": 4,
+      "object:BLEND": [
+        176,
+        4500,
+        "76d4a50a028fa67a8e30830e137b68b7cf1a04889225e70bba00b6dcc5bebf5c"
+      ],
+      "object:DSA": [
+        176,
+        4192,
+        "76d4a50a028fa67a8e30830e137b68b7cf1a04889225e70bba00b6dcc5bebf5c"
+      ],
+      "object:RASTERIZER": [
+        176,
+        4556,
+        "76d4a50a028fa67a8e30830e137b68b7cf1a04889225e70bba00b6dcc5bebf5c"
+      ],
+      "object:SAMPLER_STATE": [
+        176,
+        4444,
+        "76d4a50a028fa67a8e30830e137b68b7cf1a04889225e70bba00b6dcc5bebf5c"
+      ],
+      "object:SAMPLER_VIEW": [
+        176,
+        4400,
+        "76d4a50a028fa67a8e30830e137b68b7cf1a04889225e70bba00b6dcc5bebf5c"
+      ],
+      "object:SHADER": [
+        154,
+        4136,
+        "481731244c8a26bcf254a2c3a38aae08273a997dd643e9812ff4bb3301e9d41e"
+      ],
+      "object:SURFACE": [
+        176,
+        4104,
+        "76d4a50a028fa67a8e30830e137b68b7cf1a04889225e70bba00b6dcc5bebf5c"
+      ],
+      "object:VERTEX_ELEMENTS": [
+        176,
+        5012,
+        "76d4a50a028fa67a8e30830e137b68b7cf1a04889225e70bba00b6dcc5bebf5c"
+      ],
+      "opcode:BIND_OBJECT": [
+        176,
+        4216,
+        "76d4a50a028fa67a8e30830e137b68b7cf1a04889225e70bba00b6dcc5bebf5c"
+      ],
+      "opcode:BIND_SAMPLER_STATES": [
+        176,
+        4484,
+        "76d4a50a028fa67a8e30830e137b68b7cf1a04889225e70bba00b6dcc5bebf5c"
+      ],
+      "opcode:BIND_SHADER": [
+        176,
+        4224,
+        "76d4a50a028fa67a8e30830e137b68b7cf1a04889225e70bba00b6dcc5bebf5c"
+      ],
+      "opcode:CLEAR": [
+        176,
+        4156,
+        "76d4a50a028fa67a8e30830e137b68b7cf1a04889225e70bba00b6dcc5bebf5c"
+      ],
+      "opcode:CREATE_OBJECT": [
+        154,
+        4136,
+        "481731244c8a26bcf254a2c3a38aae08273a997dd643e9812ff4bb3301e9d41e"
+      ],
+      "opcode:CREATE_SUB_CTX": [
+        140,
+        4096,
+        "6e217b1a7323f0a1953564f9df84044657fb757a57ec67e2685ad08873887309"
+      ],
+      "opcode:DESTROY_OBJECT": [
+        187,
+        4104,
+        "c85f0651be2e679ceef11203c221b53cf45cb6d4b07c245133a20ee40e944153"
+      ],
+      "opcode:DRAW_VBO": [
+        176,
+        5116,
+        "76d4a50a028fa67a8e30830e137b68b7cf1a04889225e70bba00b6dcc5bebf5c"
+      ],
+      "opcode:END_TRANSFERS": [
+        140,
+        56,
+        "6e217b1a7323f0a1953564f9df84044657fb757a57ec67e2685ad08873887309"
+      ],
+      "opcode:LINK_SHADER": [
+        154,
+        5976,
+        "481731244c8a26bcf254a2c3a38aae08273a997dd643e9812ff4bb3301e9d41e"
+      ],
+      "opcode:SET_ATOMIC_BUFFERS": [
+        176,
+        4812,
+        "76d4a50a028fa67a8e30830e137b68b7cf1a04889225e70bba00b6dcc5bebf5c"
+      ],
+      "opcode:SET_BLEND_COLOR": [
+        176,
+        4380,
+        "76d4a50a028fa67a8e30830e137b68b7cf1a04889225e70bba00b6dcc5bebf5c"
+      ],
+      "opcode:SET_CONSTANT_BUFFER": [
+        176,
+        4644,
+        "76d4a50a028fa67a8e30830e137b68b7cf1a04889225e70bba00b6dcc5bebf5c"
+      ],
+      "opcode:SET_FRAMEBUFFER_STATE": [
+        176,
+        4128,
+        "76d4a50a028fa67a8e30830e137b68b7cf1a04889225e70bba00b6dcc5bebf5c"
+      ],
+      "opcode:SET_FRAMEBUFFER_STATE_NO_ATTACH": [
+        176,
+        4144,
+        "76d4a50a028fa67a8e30830e137b68b7cf1a04889225e70bba00b6dcc5bebf5c"
+      ],
+      "opcode:SET_MIN_SAMPLES": [
+        176,
+        4604,
+        "76d4a50a028fa67a8e30830e137b68b7cf1a04889225e70bba00b6dcc5bebf5c"
+      ],
+      "opcode:SET_POLYGON_STIPPLE": [
+        176,
+        4248,
+        "76d4a50a028fa67a8e30830e137b68b7cf1a04889225e70bba00b6dcc5bebf5c"
+      ],
+      "opcode:SET_SAMPLER_VIEWS": [
+        176,
+        4428,
+        "76d4a50a028fa67a8e30830e137b68b7cf1a04889225e70bba00b6dcc5bebf5c"
+      ],
+      "opcode:SET_SUB_CTX": [
+        140,
+        4104,
+        "6e217b1a7323f0a1953564f9df84044657fb757a57ec67e2685ad08873887309"
+      ],
+      "opcode:SET_TESS_STATE": [
+        176,
+        4784,
+        "76d4a50a028fa67a8e30830e137b68b7cf1a04889225e70bba00b6dcc5bebf5c"
+      ],
+      "opcode:SET_TWEAKS": [
+        140,
+        4112,
+        "6e217b1a7323f0a1953564f9df84044657fb757a57ec67e2685ad08873887309"
+      ],
+      "opcode:SET_VERTEX_BUFFERS": [
+        176,
+        5076,
+        "76d4a50a028fa67a8e30830e137b68b7cf1a04889225e70bba00b6dcc5bebf5c"
+      ],
+      "opcode:SET_VIEWPORT_STATE": [
+        176,
+        4612,
+        "76d4a50a028fa67a8e30830e137b68b7cf1a04889225e70bba00b6dcc5bebf5c"
+      ],
+      "opcode:TRANSFER3D": [
+        140,
+        0,
+        "6e217b1a7323f0a1953564f9df84044657fb757a57ec67e2685ad08873887309"
+      ],
+      "resource_attach_iov": 12,
+      "resource_create": 10,
+      "resource_detach_iov": 267,
+      "resource_unref": 269,
+      "submit_cmd": 140,
+      "transfer_write_iov": 23,
+      "write_fence": 106
+    },
+    "footer": {
+      "blobBytes": 11575700,
+      "blobs": [],
+      "cleanupSeen": false,
+      "complete": true,
+      "droppedRecords": 0,
+      "normalExit": true,
+      "openCalls": 0,
+      "seq": 291,
+      "type": "end",
+      "workload": "kmscube"
+    },
+    "guestMarkerLines": [
+      242,
+      261
+    ],
+    "manifestSha256": "f336ce65bbf4827ab6b7f43d76b6be9badbc8c81a3576116095d09615dfbb77f",
+    "objects": {
+      "BLEND": 1,
+      "DSA": 1,
+      "RASTERIZER": 1,
+      "SAMPLER_STATE": 1,
+      "SAMPLER_VIEW": 1,
+      "SHADER": 2,
+      "SURFACE": 8,
+      "VERTEX_ELEMENTS": 1
+    },
+    "opcodes": {
+      "BIND_OBJECT": 4,
+      "BIND_SAMPLER_STATES": 1,
+      "BIND_SHADER": 2,
+      "CLEAR": 8,
+      "CREATE_OBJECT": 16,
+      "CREATE_SUB_CTX": 2,
+      "DESTROY_OBJECT": 7,
+      "DRAW_VBO": 48,
+      "END_TRANSFERS": 10,
+      "LINK_SHADER": 1,
+      "SET_ATOMIC_BUFFERS": 1,
+      "SET_BLEND_COLOR": 1,
+      "SET_CONSTANT_BUFFER": 8,
+      "SET_FRAMEBUFFER_STATE": 8,
+      "SET_FRAMEBUFFER_STATE_NO_ATTACH": 8,
+      "SET_MIN_SAMPLES": 1,
+      "SET_POLYGON_STIPPLE": 1,
+      "SET_SAMPLER_VIEWS": 1,
+      "SET_SUB_CTX": 10,
+      "SET_TESS_STATE": 1,
+      "SET_TWEAKS": 4,
+      "SET_VERTEX_BUFFERS": 1,
+      "SET_VIEWPORT_STATE": 1,
+      "TRANSFER3D": 2
+    },
+    "referencedBlobRoles": {
+      "backing": 79,
+      "capset": 1,
+      "command": 10,
+      "context_name": 4
+    },
+    "resourceFormats": {
+      "2": 3,
+      "64": 1,
+      "67": 1
+    },
+    "shaderBytes": 1785,
+    "shaderInstructions": {
+      "ADD": 9,
+      "DIV": 1,
+      "DP3": 2,
+      "END": 2,
+      "MAX_PRECISE": 1,
+      "MOV": 4,
+      "MUL": 14,
+      "RSQ": 1,
+      "TEX": 1
+    },
+    "shaderShapes": {
+      "(0, 0, False)": 1,
+      "(1, 0, False)": 1
+    },
+    "shaderStages": {
+      "FRAG": 1,
+      "VERT": 1
+    },
+    "shaders": 2,
+    "submissions": 10,
+    "versionsLines": {
+      "hyprland": 95,
+      "mesa": 268
+    },
+    "workloadMarkers": [
+      [
+        "workload.log",
+        13,
+        "  renderer: \"virgl (LLVMPIPE (LLVM 15.0.6, 128 bits))\""
+      ],
+      [
+        "workload.log",
+        16,
+        "Rendered 7 frames in 0.037851 sec (184.936646 fps)"
+      ]
+    ]
+  },
+  "textured-scene": {
+    "allSummaryFieldsRecomputed": [
+      "events",
+      "blobs",
+      "blobBytes",
+      "apiCalls",
+      "apiResults",
+      "opcodes",
+      "objects",
+      "shaderInstructions",
+      "submissions",
+      "shaders",
+      "resourceCreates",
+      "resourceFormats",
+      "capsets",
+      "shaderStageCounts"
+    ],
+    "apiPairs": 101,
+    "artifactsHashed": 19,
+    "blobBytes": 13490980,
+    "blobs": 21,
+    "commands": 210,
+    "commandsByContext": {
+      "2": {
+        "BIND_OBJECT": 9,
+        "BIND_SAMPLER_STATES": 7,
+        "BIND_SHADER": 10,
+        "CLEAR": 3,
+        "COPY_TRANSFER3D": 4,
+        "CREATE_OBJECT": 10,
+        "CREATE_SUB_CTX": 1,
+        "DESTROY_OBJECT": 9,
+        "DESTROY_SUB_CTX": 1,
+        "DRAW_VBO": 3,
+        "END_TRANSFERS": 8,
+        "LINK_SHADER": 1,
+        "SET_ATOMIC_BUFFERS": 1,
+        "SET_BLEND_COLOR": 1,
+        "SET_CONSTANT_BUFFER": 95,
+        "SET_FRAMEBUFFER_STATE": 2,
+        "SET_FRAMEBUFFER_STATE_NO_ATTACH": 2,
+        "SET_INDEX_BUFFER": 3,
+        "SET_MIN_SAMPLES": 2,
+        "SET_POLYGON_STIPPLE": 1,
+        "SET_SAMPLER_VIEWS": 1,
+        "SET_SAMPLE_MASK": 1,
+        "SET_SHADER_BUFFERS": 6,
+        "SET_SHADER_IMAGES": 12,
+        "SET_STENCIL_REF": 1,
+        "SET_STREAMOUT_TARGETS": 1,
+        "SET_SUB_CTX": 8,
+        "SET_TESS_STATE": 1,
+        "SET_TWEAKS": 2,
+        "SET_VERTEX_BUFFERS": 1,
+        "SET_VIEWPORT_STATE": 1,
+        "TRANSFER3D": 2
+      }
+    },
+    "contexts": {
+      "1": "swapper/0",
+      "2": "virgl-textured-"
+    },
+    "events": 283,
+    "eventsSha256": "c6a95dbcf78f2cdd955af45fbec044cfc5fe4fbb8a4a4a93afefbad37b6856f9",
+    "fencesCompleted": 11,
+    "fencesCreated": 11,
+    "firsts": {
+      "backing_snapshot": 13,
+      "begin": 1,
+      "context_create": 15,
+      "context_create_with_flags": 16,
+      "context_destroy": 275,
+      "create_fence": 102,
+      "ctx_attach_resource": 19,
+      "ctx_detach_resource": 21,
+      "end": 283,
+      "fill_caps": 88,
+      "get_cap_set": 2,
+      "init": 4,
+      "object:BLEND": [
+        161,
+        5192,
+        "364452bac8463817df9b95ae07be7203ec8411bd6be08ab43029f7c69be028cc"
+      ],
+      "object:DSA": [
+        161,
+        4884,
+        "364452bac8463817df9b95ae07be7203ec8411bd6be08ab43029f7c69be028cc"
+      ],
+      "object:RASTERIZER": [
+        161,
+        5248,
+        "364452bac8463817df9b95ae07be7203ec8411bd6be08ab43029f7c69be028cc"
+      ],
+      "object:SAMPLER_STATE": [
+        161,
+        5136,
+        "364452bac8463817df9b95ae07be7203ec8411bd6be08ab43029f7c69be028cc"
+      ],
+      "object:SAMPLER_VIEW": [
+        161,
+        5092,
+        "364452bac8463817df9b95ae07be7203ec8411bd6be08ab43029f7c69be028cc"
+      ],
+      "object:SHADER": [
+        161,
+        4136,
+        "364452bac8463817df9b95ae07be7203ec8411bd6be08ab43029f7c69be028cc"
+      ],
+      "object:SURFACE": [
+        161,
+        4796,
+        "364452bac8463817df9b95ae07be7203ec8411bd6be08ab43029f7c69be028cc"
+      ],
+      "object:VERTEX_ELEMENTS": [
+        161,
+        5592,
+        "364452bac8463817df9b95ae07be7203ec8411bd6be08ab43029f7c69be028cc"
+      ],
+      "opcode:BIND_OBJECT": [
+        161,
+        4908,
+        "364452bac8463817df9b95ae07be7203ec8411bd6be08ab43029f7c69be028cc"
+      ],
+      "opcode:BIND_SAMPLER_STATES": [
+        161,
+        5176,
+        "364452bac8463817df9b95ae07be7203ec8411bd6be08ab43029f7c69be028cc"
+      ],
+      "opcode:BIND_SHADER": [
+        161,
+        4916,
+        "364452bac8463817df9b95ae07be7203ec8411bd6be08ab43029f7c69be028cc"
+      ],
+      "opcode:CLEAR": [
+        161,
+        4848,
+        "364452bac8463817df9b95ae07be7203ec8411bd6be08ab43029f7c69be028cc"
+      ],
+      "opcode:COPY_TRANSFER3D": [
+        161,
+        4736,
+        "364452bac8463817df9b95ae07be7203ec8411bd6be08ab43029f7c69be028cc"
+      ],
+      "opcode:CREATE_OBJECT": [
+        161,
+        4136,
+        "364452bac8463817df9b95ae07be7203ec8411bd6be08ab43029f7c69be028cc"
+      ],
+      "opcode:CREATE_SUB_CTX": [
+        161,
+        4096,
+        "364452bac8463817df9b95ae07be7203ec8411bd6be08ab43029f7c69be028cc"
+      ],
+      "opcode:DESTROY_OBJECT": [
+        233,
+        4116,
+        "077179667c9698bec4e54db75a1d8a458514ddf87a220ce05ff20eeed532a3da"
+      ],
+      "opcode:DESTROY_SUB_CTX": [
+        249,
+        11472,
+        "ae7a34f64af64e7bcfa324f1f70aec362ca207197a5e085727644aca793c351e"
+      ],
+      "opcode:DRAW_VBO": [
+        161,
+        5684,
+        "364452bac8463817df9b95ae07be7203ec8411bd6be08ab43029f7c69be028cc"
+      ],
+      "opcode:END_TRANSFERS": [
+        161,
+        112,
+        "364452bac8463817df9b95ae07be7203ec8411bd6be08ab43029f7c69be028cc"
+      ],
+      "opcode:LINK_SHADER": [
+        161,
+        4708,
+        "364452bac8463817df9b95ae07be7203ec8411bd6be08ab43029f7c69be028cc"
+      ],
+      "opcode:SET_ATOMIC_BUFFERS": [
+        161,
+        5392,
+        "364452bac8463817df9b95ae07be7203ec8411bd6be08ab43029f7c69be028cc"
+      ],
+      "opcode:SET_BLEND_COLOR": [
+        161,
+        5072,
+        "364452bac8463817df9b95ae07be7203ec8411bd6be08ab43029f7c69be028cc"
+      ],
+      "opcode:SET_CONSTANT_BUFFER": [
+        161,
+        5336,
+        "364452bac8463817df9b95ae07be7203ec8411bd6be08ab43029f7c69be028cc"
+      ],
+      "opcode:SET_FRAMEBUFFER_STATE": [
+        161,
+        4820,
+        "364452bac8463817df9b95ae07be7203ec8411bd6be08ab43029f7c69be028cc"
+      ],
+      "opcode:SET_FRAMEBUFFER_STATE_NO_ATTACH": [
+        161,
+        4836,
+        "364452bac8463817df9b95ae07be7203ec8411bd6be08ab43029f7c69be028cc"
+      ],
+      "opcode:SET_INDEX_BUFFER": [
+        161,
+        5640,
+        "364452bac8463817df9b95ae07be7203ec8411bd6be08ab43029f7c69be028cc"
+      ],
+      "opcode:SET_MIN_SAMPLES": [
+        161,
+        5296,
+        "364452bac8463817df9b95ae07be7203ec8411bd6be08ab43029f7c69be028cc"
+      ],
+      "opcode:SET_POLYGON_STIPPLE": [
+        161,
+        4940,
+        "364452bac8463817df9b95ae07be7203ec8411bd6be08ab43029f7c69be028cc"
+      ],
+      "opcode:SET_SAMPLER_VIEWS": [
+        161,
+        5120,
+        "364452bac8463817df9b95ae07be7203ec8411bd6be08ab43029f7c69be028cc"
+      ],
+      "opcode:SET_SAMPLE_MASK": [
+        249,
+        11408,
+        "ae7a34f64af64e7bcfa324f1f70aec362ca207197a5e085727644aca793c351e"
+      ],
+      "opcode:SET_SHADER_BUFFERS": [
+        249,
+        4260,
+        "ae7a34f64af64e7bcfa324f1f70aec362ca207197a5e085727644aca793c351e"
+      ],
+      "opcode:SET_SHADER_IMAGES": [
+        249,
+        4464,
+        "ae7a34f64af64e7bcfa324f1f70aec362ca207197a5e085727644aca793c351e"
+      ],
+      "opcode:SET_STENCIL_REF": [
+        249,
+        11256,
+        "ae7a34f64af64e7bcfa324f1f70aec362ca207197a5e085727644aca793c351e"
+      ],
+      "opcode:SET_STREAMOUT_TARGETS": [
+        249,
+        11368,
+        "ae7a34f64af64e7bcfa324f1f70aec362ca207197a5e085727644aca793c351e"
+      ],
+      "opcode:SET_SUB_CTX": [
+        161,
+        4104,
+        "364452bac8463817df9b95ae07be7203ec8411bd6be08ab43029f7c69be028cc"
+      ],
+      "opcode:SET_TESS_STATE": [
+        161,
+        5364,
+        "364452bac8463817df9b95ae07be7203ec8411bd6be08ab43029f7c69be028cc"
+      ],
+      "opcode:SET_TWEAKS": [
+        161,
+        4112,
+        "364452bac8463817df9b95ae07be7203ec8411bd6be08ab43029f7c69be028cc"
+      ],
+      "opcode:SET_VERTEX_BUFFERS": [
+        161,
+        5656,
+        "364452bac8463817df9b95ae07be7203ec8411bd6be08ab43029f7c69be028cc"
+      ],
+      "opcode:SET_VIEWPORT_STATE": [
+        161,
+        5304,
+        "364452bac8463817df9b95ae07be7203ec8411bd6be08ab43029f7c69be028cc"
+      ],
+      "opcode:TRANSFER3D": [
+        161,
+        0,
+        "364452bac8463817df9b95ae07be7203ec8411bd6be08ab43029f7c69be028cc"
+      ],
+      "resource_attach_iov": 12,
+      "resource_create": 10,
+      "resource_detach_iov": 240,
+      "resource_unref": 242,
+      "submit_cmd": 161,
+      "transfer_write_iov": 23,
+      "write_fence": 109
+    },
+    "footer": {
+      "blobBytes": 13490980,
+      "blobs": [],
+      "cleanupSeen": false,
+      "complete": true,
+      "droppedRecords": 0,
+      "normalExit": true,
+      "openCalls": 0,
+      "seq": 283,
+      "type": "end",
+      "workload": "textured-scene"
+    },
+    "guestMarkerLines": [
+      242,
+      254
+    ],
+    "manifestSha256": "cbe711eb1d57dbaf416d684b351ade01642eff298ecb7869b04063925466f8cf",
+    "objects": {
+      "BLEND": 2,
+      "DSA": 1,
+      "RASTERIZER": 1,
+      "SAMPLER_STATE": 1,
+      "SAMPLER_VIEW": 1,
+      "SHADER": 2,
+      "SURFACE": 1,
+      "VERTEX_ELEMENTS": 1
+    },
+    "opcodes": {
+      "BIND_OBJECT": 9,
+      "BIND_SAMPLER_STATES": 7,
+      "BIND_SHADER": 10,
+      "CLEAR": 3,
+      "COPY_TRANSFER3D": 4,
+      "CREATE_OBJECT": 10,
+      "CREATE_SUB_CTX": 1,
+      "DESTROY_OBJECT": 9,
+      "DESTROY_SUB_CTX": 1,
+      "DRAW_VBO": 3,
+      "END_TRANSFERS": 8,
+      "LINK_SHADER": 1,
+      "SET_ATOMIC_BUFFERS": 1,
+      "SET_BLEND_COLOR": 1,
+      "SET_CONSTANT_BUFFER": 95,
+      "SET_FRAMEBUFFER_STATE": 2,
+      "SET_FRAMEBUFFER_STATE_NO_ATTACH": 2,
+      "SET_INDEX_BUFFER": 3,
+      "SET_MIN_SAMPLES": 2,
+      "SET_POLYGON_STIPPLE": 1,
+      "SET_SAMPLER_VIEWS": 1,
+      "SET_SAMPLE_MASK": 1,
+      "SET_SHADER_BUFFERS": 6,
+      "SET_SHADER_IMAGES": 12,
+      "SET_STENCIL_REF": 1,
+      "SET_STREAMOUT_TARGETS": 1,
+      "SET_SUB_CTX": 8,
+      "SET_TESS_STATE": 1,
+      "SET_TWEAKS": 2,
+      "SET_VERTEX_BUFFERS": 1,
+      "SET_VIEWPORT_STATE": 1,
+      "TRANSFER3D": 2
+    },
+    "referencedBlobRoles": {
+      "backing": 79,
+      "capset": 1,
+      "command": 8,
+      "context_name": 4
+    },
+    "resourceFormats": {
+      "2": 1,
+      "64": 3,
+      "67": 2
+    },
+    "shaderBytes": 517,
+    "shaderInstructions": {
+      "END": 2,
+      "MOV": 4,
+      "MUL": 1,
+      "TEX": 1
+    },
+    "shaderShapes": {
+      "(0, 0, False)": 1,
+      "(1, 0, False)": 1
+    },
+    "shaderStages": {
+      "FRAG": 1,
+      "VERT": 1
+    },
+    "shaders": 2,
+    "submissions": 8,
+    "versionsLines": {
+      "hyprland": 95,
+      "mesa": 268
+    },
+    "workloadMarkers": [
+      [
+        "workload.log",
+        5,
+        "GL_RENDERER=virgl (LLVMPIPE (LLVM 15.0.6, 128 bits))"
+      ],
+      [
+        "workload.log",
+        6,
+        "PIXELS_PASS phase=0 checked=256"
+      ],
+      [
+        "workload.log",
+        7,
+        "PIXELS_PASS phase=1 checked=256"
+      ],
+      [
+        "workload.log",
+        8,
+        "PIXELS_PASS phase=2 checked=256"
+      ],
+      [
+        "workload.log",
+        9,
+        "TEXTURED_SCENE_END status=pass draws=3 checked_pixels=768"
+      ]
+    ]
+  }
+}

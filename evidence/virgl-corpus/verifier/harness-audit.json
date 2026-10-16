@@ -1,0 +1,70 @@
+{
+  "artifactsHashed": 118,
+  "boundary": "Recorder ABI forwarding, literal pre/post transfer bytes and failure guards only; fake renderer is not graphics evidence.",
+  "caseNames": [
+    "happy",
+    "callbacks-1",
+    "callbacks-2",
+    "callbacks-3",
+    "callbacks-4",
+    "callback-invalid",
+    "callback-null",
+    "unsupported-blob",
+    "iov-count",
+    "iov-size",
+    "iov-null",
+    "iov-array-null",
+    "submit-negative",
+    "submit-large",
+    "submit-null",
+    "resource-limit",
+    "active-exit",
+    "invalid-limit--1",
+    "invalid-limit-0",
+    "invalid-limit-4294967296",
+    "invalid-limit-12x",
+    "event-count-limit",
+    "blob-limit",
+    "event-byte-limit",
+    "footer-baseline",
+    "footer-insufficient",
+    "footer-exact"
+  ],
+  "cases": 27,
+  "contextFence": {
+    "blobs": [],
+    "ctxId": 19,
+    "fenceId": 18364758544493064720,
+    "parentCallSeq": 66,
+    "phase": "enter",
+    "ringId": 3,
+    "seq": 67,
+    "threadId": 1,
+    "type": "write_context_fence"
+  },
+  "happyEventsSha256": "242444ee8beb61cabece9761d33c5964bbddb38ad68b9011d31c5f09e5cbeda9",
+  "inputsHashed": 8,
+  "oracleSabotageRejected": true,
+  "readbacks": [
+    {
+      "bytesHex": "7265616441465430",
+      "event": 19,
+      "iovLengths": [
+        4,
+        4
+      ],
+      "sha256": "4e6989573df0f49ee52a63b5202cac9f0b760cbb223368e3cdd7b5633b4670d7"
+    },
+    {
+      "bytesHex": "7265616441465430",
+      "event": 23,
+      "iovLengths": [
+        3,
+        5
+      ],
+      "sha256": "4e6989573df0f49ee52a63b5202cac9f0b760cbb223368e3cdd7b5633b4670d7"
+    }
+  ],
+  "reportSha256": "9569c0e6a09b723c254518e57b2f6da2292f3bea8c605650f5cc0affd2fbef75",
+  "result": "HELD"
+}

@@ -1,0 +1,25 @@
+{
+  "archive": {
+    "bytes": 2795473,
+    "path": "recording.tar.gz",
+    "sha256": "dbf7a0fbd12cc4e3711e4fc4745738d9cd3ac2ae4d9d60974f19077e148996eb"
+  },
+  "base": "9d93635d7aee08adb3cb1b17516cb4e5da87c9b0",
+  "boundary": "Required native Z16 storage, original selected create/SURFACE and synthetic independent GPU observations; production negotiation remains disabled.",
+  "coldReceiptSha256": "0b8b1ee981ff669120cb9e8bb54c780ca09fa762ffb9086be21aff8b5f023ba9",
+  "coldReportSha256": "ff57d7016c4d027108303bff9bdded0563fa6307a25d3f99848c1f16514d63d7",
+  "hardwareAssertions": 1386,
+  "nativeAssertions": 4808,
+  "receiptSha256": "d4159a43b3104a2d3d927161992b9bc21061e70150ea5b80dd170052fe6d005e",
+  "recordIndex": {
+    "bytes": 9832,
+    "path": "records.json",
+    "sha256": "901115cdd02e462128df9d0455ba671e4420ece6c2b02a5ff87cd48b32527e67"
+  },
+  "records": 60,
+  "schema": "virgl-depth-worker-seal-v1",
+  "sourceHead": "61db520384877672b63a23cd0539946c55297431",
+  "supplementAssertions": 55,
+  "supplementReportSha256": "15c231e08da010c8e19e95f7dca19034dbcad35c4f22cd34ffccb6c4e38b364f",
+  "task": "E6-T12g3"
+}

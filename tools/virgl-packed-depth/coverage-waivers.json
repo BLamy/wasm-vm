@@ -1,0 +1,125 @@
+{
+  "predecessor": "c34b00e91f6e84501f0eff731a74857a10eb4250",
+  "waivers": [
+    {
+      "source": "renderer/virgl-command/resources.mjs",
+      "startOffset": 1405,
+      "endOffset": 1442,
+      "text": "? packedFloatColorFormat(meta.format)",
+      "sha256": "03d2e2f035eb73b649a40dbce33a3e87ff779712d4f63dd0d95968fcbe76aabc",
+      "classification": "unchanged-operand",
+      "predecessorSourceSha256": "6e80e55800180b81dbc3f2eef56dbfb1af3b5183f0bc4d586096fee1bc79454f",
+      "predecessorStartOffset": 1346,
+      "predecessorEndOffset": 1383,
+      "reason": "The unchanged color format/metadata operand matches the same D41 expression and its exact whole-source digest. Held D41 evidence carries that behavior forward; every new packedDepth operand executes in this recording."
+    },
+    {
+      "source": "renderer/virgl-command/resources.mjs",
+      "startOffset": 1475,
+      "endOffset": 1515,
+      "text": "? sharedExponentColorFormat(meta.format)",
+      "sha256": "fbc0de64e6f254cb62a068acaf2ee3decbd8ecf344ae3960ce2afa1802896703",
+      "classification": "unchanged-operand",
+      "predecessorSourceSha256": "6e80e55800180b81dbc3f2eef56dbfb1af3b5183f0bc4d586096fee1bc79454f",
+      "predecessorStartOffset": 1416,
+      "predecessorEndOffset": 1456,
+      "reason": "The unchanged color format/metadata operand matches the same D41 expression and its exact whole-source digest. Held D41 evidence carries that behavior forward; every new packedDepth operand executes in this recording."
+    },
+    {
+      "source": "renderer/virgl-command/resources.mjs",
+      "startOffset": 1613,
+      "endOffset": 1655,
+      "text": "? packedNormalizedColorFormat(meta.format)",
+      "sha256": "b9b16f3cd9621d1c52b0044fb6c929dac4a5e496c8cfa3f3edc6eeefb0ff2c38",
+      "classification": "unchanged-operand",
+      "predecessorSourceSha256": "6e80e55800180b81dbc3f2eef56dbfb1af3b5183f0bc4d586096fee1bc79454f",
+      "predecessorStartOffset": 1554,
+      "predecessorEndOffset": 1596,
+      "reason": "The unchanged color format/metadata operand matches the same D41 expression and its exact whole-source digest. Held D41 evidence carries that behavior forward; every new packedDepth operand executes in this recording."
+    },
+    {
+      "source": "renderer/virgl-command/resources.mjs",
+      "startOffset": 1688,
+      "endOffset": 1728,
+      "text": "? packedUnsignedColorFormat(meta.format)",
+      "sha256": "4d92bad874832980b45ab3e989f2c06ab8359d2adf812c070e04458362da673e",
+      "classification": "unchanged-operand",
+      "predecessorSourceSha256": "6e80e55800180b81dbc3f2eef56dbfb1af3b5183f0bc4d586096fee1bc79454f",
+      "predecessorStartOffset": 1629,
+      "predecessorEndOffset": 1669,
+      "reason": "The unchanged color format/metadata operand matches the same D41 expression and its exact whole-source digest. Held D41 evidence carries that behavior forward; every new packedDepth operand executes in this recording."
+    },
+    {
+      "source": "renderer/virgl-command/resources.mjs",
+      "startOffset": 13308,
+      "endOffset": 13331,
+      "text": "? { packedFloat: true }",
+      "sha256": "ed00bc633bee77f776a748e8d6acfd68a997bf9df469c2ace00fb8918efde6e2",
+      "classification": "unchanged-operand",
+      "predecessorSourceSha256": "6e80e55800180b81dbc3f2eef56dbfb1af3b5183f0bc4d586096fee1bc79454f",
+      "predecessorStartOffset": 13011,
+      "predecessorEndOffset": 13034,
+      "reason": "The unchanged color format/metadata operand matches the same D41 expression and its exact whole-source digest. Held D41 evidence carries that behavior forward; every new packedDepth operand executes in this recording."
+    },
+    {
+      "source": "renderer/virgl-command/resources.mjs",
+      "startOffset": 13364,
+      "endOffset": 13390,
+      "text": "? { sharedExponent: true }",
+      "sha256": "2c11d1b9f6d007cfc0ad343dd85bdcb01fff1928c8c5cb94c08bc14938347163",
+      "classification": "unchanged-operand",
+      "predecessorSourceSha256": "6e80e55800180b81dbc3f2eef56dbfb1af3b5183f0bc4d586096fee1bc79454f",
+      "predecessorStartOffset": 13067,
+      "predecessorEndOffset": 13093,
+      "reason": "The unchanged color format/metadata operand matches the same D41 expression and its exact whole-source digest. Held D41 evidence carries that behavior forward; every new packedDepth operand executes in this recording."
+    },
+    {
+      "source": "renderer/virgl-command/resources.mjs",
+      "startOffset": 13491,
+      "endOffset": 13519,
+      "text": "? { packedNormalized: true }",
+      "sha256": "d48ed460beb945c2a210d23fda566484e334fcc5a1befd794d057a23ed65625a",
+      "classification": "unchanged-operand",
+      "predecessorSourceSha256": "6e80e55800180b81dbc3f2eef56dbfb1af3b5183f0bc4d586096fee1bc79454f",
+      "predecessorStartOffset": 13194,
+      "predecessorEndOffset": 13222,
+      "reason": "The unchanged color format/metadata operand matches the same D41 expression and its exact whole-source digest. Held D41 evidence carries that behavior forward; every new packedDepth operand executes in this recording."
+    },
+    {
+      "source": "renderer/virgl-command/resources.mjs",
+      "startOffset": 13552,
+      "endOffset": 13578,
+      "text": "? { packedUnsigned: true }",
+      "sha256": "7388e68c5762050c19d67bc5f4ac8c9e845251b5e7a3ff68229bc23c7ee12efc",
+      "classification": "unchanged-operand",
+      "predecessorSourceSha256": "6e80e55800180b81dbc3f2eef56dbfb1af3b5183f0bc4d586096fee1bc79454f",
+      "predecessorStartOffset": 13255,
+      "predecessorEndOffset": 13281,
+      "reason": "The unchanged color format/metadata operand matches the same D41 expression and its exact whole-source digest. Held D41 evidence carries that behavior forward; every new packedDepth operand executes in this recording."
+    },
+    {
+      "source": "renderer/virgl-command/resources.mjs",
+      "startOffset": 73192,
+      "endOffset": 73244,
+      "text": ": lastLevel > firstLevel ? \"mip-texture\" : \"texture\"",
+      "sha256": "ba07098499e0aebbd025baf3d8b5fb4f06dec76928e8c747582f867ba85f0803",
+      "classification": "unchanged-operand",
+      "predecessorSourceSha256": "6e80e55800180b81dbc3f2eef56dbfb1af3b5183f0bc4d586096fee1bc79454f",
+      "predecessorStartOffset": 71778,
+      "predecessorEndOffset": 71830,
+      "reason": "The color-only retained-range kind/accounting operand is identical in the same D41 expression. New packed depth range geometry, precharge and rollback execute in this recording."
+    },
+    {
+      "source": "renderer/virgl-command/resources.mjs",
+      "startOffset": 74386,
+      "endOffset": 74414,
+      "text": "gpuBytes += allocationBytes;",
+      "sha256": "531a569ec002f0a6aaf526198de89cccafaafeea6e5c6b6a01dca97ce0582de5",
+      "classification": "unchanged-operand",
+      "predecessorSourceSha256": "6e80e55800180b81dbc3f2eef56dbfb1af3b5183f0bc4d586096fee1bc79454f",
+      "predecessorStartOffset": 72905,
+      "predecessorEndOffset": 72933,
+      "reason": "The color-only retained-range kind/accounting operand is identical in the same D41 expression. New packed depth range geometry, precharge and rollback execute in this recording."
+    }
+  ]
+}

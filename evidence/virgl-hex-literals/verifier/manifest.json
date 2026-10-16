@@ -1,0 +1,40 @@
+{
+  "schema": "virgl-hex-literals-critic-seal-v1",
+  "task": "E6-T12g6c",
+  "verdict": "verified",
+  "verifiedBase": "500ebfde1262e4615c9e15dbc96ecf1c407870f0",
+  "sourceHead": "5a039d16b2bfd756f6908a718ea063ad7c619905",
+  "workerSubmission": "d264649c8407f546530556e5dff9edc4b81bc9e2",
+  "workerArchiveSha256": "6aa1b74273563be5ae6aabaef307904b2362a1584edd344a7b27bc9281ac1ace",
+  "predictions": {
+    "held": 19,
+    "failed": 0,
+    "needsEvidence": 0,
+    "beforeSha256": "d7e3d511c17a36227b6088ffe5108f158461bdf21862732c4a3f790b624b7ea6"
+  },
+  "freshNativeCases": 725,
+  "primaryComparisons": 512,
+  "promotedNativeWasmGuards": 49,
+  "physicalSeed": 1821720247,
+  "physicalWords": 13344,
+  "physicalPixels": 5184,
+  "sabotage": "owned nibble shift caught by admission and exact source words",
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 562502,
+    "sha256": "bb25e10d6b31a6efe547c8468a6b4d0f560b40c60650e85c6133bcbe33aa184d"
+  },
+  "recordIndex": {
+    "path": "records.json",
+    "bytes": 4764,
+    "sha256": "e684ae0b0a697a59a89c57f01c15c8347fa2d2853d7233b269ee6a8ce0618977"
+  },
+  "records": 30,
+  "promotedGuard": {
+    "path": "renderer/virgl-shader/tests/hex-literal-regressions.mjs",
+    "sha256": "91000d19f71a851b94ea21d974e6d250ceb96e654b3aa5765d0b7a39321c770e"
+  },
+  "productionNegotiation": false,
+  "guestExecution": false,
+  "unchangedG6bProofs": "HELD"
+}

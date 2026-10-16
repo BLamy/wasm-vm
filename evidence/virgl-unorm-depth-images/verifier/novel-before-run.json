@@ -1,0 +1,22 @@
+{
+  "prediction": "P12-novel",
+  "createdAt": "2026-10-11T12:40:57.175583+00:00",
+  "beforeExecution": true,
+  "source": {
+    "format": 16,
+    "width": 13,
+    "height": 11,
+    "lastLevel": 3,
+    "bind": 9
+  },
+  "patch": {
+    "level": 1,
+    "x": 2,
+    "y": 1,
+    "width": 3,
+    "height": 3,
+    "stride": 7,
+    "offset": 5
+  },
+  "predictedResult": "A native uploaded odd-stride multirow mip subrectangle changes exactly nine UN16 words; adjacent full native mip words remain original. An issued COPY_TRANSFER3D async ticket becomes stale after source public unref/opposite126 ID reuse and fails before CPU collection; its discard drain consumes its own post-writer sync and staging stays unchanged. The old retained private range1..2 refreshes the original UN16 generation and exact patched words, while all replacement126 backing/padding stay unchanged. Every native object/sync retires once with zero terminal charges."
+}

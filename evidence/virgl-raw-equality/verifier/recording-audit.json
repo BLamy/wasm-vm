@@ -1,0 +1,346 @@
+{
+  "schema": "fresh-raw-equality-recording-audit-v1",
+  "status": "passed",
+  "head": "a7be954c1f3bea9dd1e96522e890fa012197c6fe",
+  "coldReportSha256": "dc7de94e200cae79eacd702b34e8f3f393aa47015d7a33a16d25f05043a7fb1b",
+  "receiptSha256": "f92373e057bd0a41b12a92e21b4a8ae372d397ef7571e84edbdcdd79ea11ddd7",
+  "coldFiles": 75,
+  "sourceBindings": 175,
+  "recordBindings": 73,
+  "compatibility": {
+    "retainedStages": 4012,
+    "unchangedStages": 4004,
+    "retainedPairs": 264,
+    "originals": 19,
+    "acceptedOriginals": 12,
+    "migrations": [
+      {
+        "group": "integer",
+        "name": "still-unsupported-FSEQ-vertex",
+        "inputSha256": "298bd485cd86416e1ab942186ecf9ca05e2564196a06b46b7d0dfc898cde6f81",
+        "oldResultSha256": "99b95a7c00a9d1a6fc5eb7b38444565d23e95ceaff4d25bda0fd0c043c2abc1e",
+        "newResultSha256": "2a9b3bd0b5f630fc21fca0ce0c5f9942b155154b45d8cd54cd9c6a3d6c9e8268"
+      },
+      {
+        "group": "integer",
+        "name": "still-unsupported-FSNE-vertex",
+        "inputSha256": "077825a0dea5c6754da2e96e398b6cd52d288fb1880920394d8cdfacec03fd9f",
+        "oldResultSha256": "99b95a7c00a9d1a6fc5eb7b38444565d23e95ceaff4d25bda0fd0c043c2abc1e",
+        "newResultSha256": "91009bf44809a4922a92823726c4ae5bae65db3c06c997fbe21d057c4e80f01b"
+      },
+      {
+        "group": "integer",
+        "name": "still-unsupported-FSEQ-fragment",
+        "inputSha256": "a66bb0d8d7fc9bd6be7019f69caac93f5e367565213641d074da8ae56038c0b9",
+        "oldResultSha256": "99b95a7c00a9d1a6fc5eb7b38444565d23e95ceaff4d25bda0fd0c043c2abc1e",
+        "newResultSha256": "c149acddd0b0eeb5c6ca271bcef3b75f4a0604f3bd15fca0f1141c347f07da9a"
+      },
+      {
+        "group": "integer",
+        "name": "still-unsupported-FSNE-fragment",
+        "inputSha256": "436a6f1c882e81f63c2852c3f03c569fddcd08287cc0f609ad4814bcbc37692d",
+        "oldResultSha256": "99b95a7c00a9d1a6fc5eb7b38444565d23e95ceaff4d25bda0fd0c043c2abc1e",
+        "newResultSha256": "daa233961b3b0f8ef0b95b2998f4f823b4ae05b1c846353902479818c54b153a"
+      },
+      {
+        "group": "float",
+        "name": "still-unsupported-FSEQ-vertex",
+        "inputSha256": "614f908b65a1034643f398f3baf2b550d8ea443cf066ae15e476aae24322fcf2",
+        "oldResultSha256": "99b95a7c00a9d1a6fc5eb7b38444565d23e95ceaff4d25bda0fd0c043c2abc1e",
+        "newResultSha256": "98aba5559d6eb897af94b33e1fc29493b59bdd3ec11c82f86da33c611ed33997"
+      },
+      {
+        "group": "float",
+        "name": "still-unsupported-FSNE-vertex",
+        "inputSha256": "1f9a7885a698f58b20bc0364427240364def07c2e7d7a8bcada2e1b1d95833c4",
+        "oldResultSha256": "99b95a7c00a9d1a6fc5eb7b38444565d23e95ceaff4d25bda0fd0c043c2abc1e",
+        "newResultSha256": "3788e502d48ad5e8031336134c191ee1a46de18e8079ce2a76dfb0e5925eeb01"
+      },
+      {
+        "group": "float",
+        "name": "still-unsupported-FSEQ-fragment",
+        "inputSha256": "334f10a239df26e7af12d408eaf9735fcdd6bd8cfc5e6328fbe0129f5a403230",
+        "oldResultSha256": "99b95a7c00a9d1a6fc5eb7b38444565d23e95ceaff4d25bda0fd0c043c2abc1e",
+        "newResultSha256": "d984d1ea8e6afc22e40f7115f33dc6859c4cf98bae0ecd8e59c6f9764ffc6c22"
+      },
+      {
+        "group": "float",
+        "name": "still-unsupported-FSNE-fragment",
+        "inputSha256": "556b6506e4080720992c4b23f833f179f7127f99f1ecf92a59fe2381e533ec64",
+        "oldResultSha256": "99b95a7c00a9d1a6fc5eb7b38444565d23e95ceaff4d25bda0fd0c043c2abc1e",
+        "newResultSha256": "36e56588ee0f9fb26ad12603d8faf76b5c72b3017e440b380241b42b1500579a"
+      }
+    ]
+  },
+  "coverage": {
+    "exportSha256": "12467ca55e6a01fb5571a32c3c7a4f8d4a5c86108752b921ff0163c8e2b2745b",
+    "reexportMatches": true,
+    "command": [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/llvm-cov",
+      "export",
+      "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-equality-cold-bj_u2niy/wasm-vm/renderer/virgl-shader/build/raw-equality-sanitize/raw-equality-test",
+      "-instr-profile=/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-equality-cold-bj_u2niy/wasm-vm/target/evidence/virgl-raw-equality-cold/native/native.profdata",
+      "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-equality-cold-bj_u2niy/wasm-vm/renderer/virgl-shader/bridge.c",
+      "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-raw-equality-cold-bj_u2niy/wasm-vm/renderer/virgl-shader/raw_bits.c"
+    ],
+    "knownEqualityCalls": 124,
+    "changedLines": [
+      {
+        "file": "renderer/virgl-shader/bridge.c",
+        "line": 652,
+        "source": "      else if (word(p, \"FSEQ\")) raw.opcode = RAW_FSEQ;",
+        "count": 540286,
+        "classification": "executed",
+        "waiver": null
+      },
+      {
+        "file": "renderer/virgl-shader/bridge.c",
+        "line": 653,
+        "source": "      else if (word(p, \"FSNE\")) raw.opcode = RAW_FSNE;",
+        "count": 495362,
+        "classification": "executed",
+        "waiver": null
+      },
+      {
+        "file": "renderer/virgl-shader/bridge.c",
+        "line": 881,
+        "source": "          word(&p, \"FSLT\") || word(&p, \"FSGE\") || word(&p, \"FSEQ\") || word(&p, \"FSNE\") || word(&p, \"UARL\")) {",
+        "count": 13074252,
+        "classification": "executed",
+        "waiver": null
+      },
+      {
+        "file": "renderer/virgl-shader/bridge.c",
+        "line": 1082,
+        "source": "      c->profile.raw->opcode_mask & RAW_EQUALITY_OPCODES ? \"virgl-webgl2-raw-bits-v13\" :",
+        "count": 352387,
+        "classification": "executed",
+        "waiver": null
+      },
+      {
+        "file": "renderer/virgl-shader/raw_bits.c",
+        "line": 63,
+        "source": "/* Equality consumes encodings, including exceptional words, without a float",
+        "count": 0,
+        "classification": "waived",
+        "waiver": "Non-executable comment/blank/function declaration; body independently exercised."
+      },
+      {
+        "file": "renderer/virgl-shader/raw_bits.c",
+        "line": 64,
+        "source": " * conversion. An identical NaN is unordered; the two zero signs are equal. */",
+        "count": 0,
+        "classification": "waived",
+        "waiver": "Non-executable comment/blank/function declaration; body independently exercised."
+      },
+      {
+        "file": "renderer/virgl-shader/raw_bits.c",
+        "line": 65,
+        "source": "static uint32_t equal_float_mask(uint32_t a, uint32_t b, bool not_equal)",
+        "count": 0,
+        "classification": "waived",
+        "waiver": "Non-executable comment/blank/function declaration; body independently exercised."
+      },
+      {
+        "file": "renderer/virgl-shader/raw_bits.c",
+        "line": 66,
+        "source": "{",
+        "count": 124,
+        "classification": "executed",
+        "waiver": null
+      },
+      {
+        "file": "renderer/virgl-shader/raw_bits.c",
+        "line": 67,
+        "source": "   uint32_t magnitude_a = a & UINT32_C(0x7fffffff), magnitude_b = b & UINT32_C(0x7fffffff);",
+        "count": 124,
+        "classification": "executed",
+        "waiver": null
+      },
+      {
+        "file": "renderer/virgl-shader/raw_bits.c",
+        "line": 68,
+        "source": "   bool unordered = magnitude_a > UINT32_C(0x7f800000) || magnitude_b > UINT32_C(0x7f800000);",
+        "count": 124,
+        "classification": "executed",
+        "waiver": null
+      },
+      {
+        "file": "renderer/virgl-shader/raw_bits.c",
+        "line": 69,
+        "source": "   bool equal = !unordered && (a == b || (magnitude_a == 0 && magnitude_b == 0));",
+        "count": 124,
+        "classification": "executed",
+        "waiver": null
+      },
+      {
+        "file": "renderer/virgl-shader/raw_bits.c",
+        "line": 70,
+        "source": "   return (not_equal ? !equal : equal) ? UINT32_MAX : 0;",
+        "count": 124,
+        "classification": "executed",
+        "waiver": null
+      },
+      {
+        "file": "renderer/virgl-shader/raw_bits.c",
+        "line": 71,
+        "source": "}",
+        "count": 124,
+        "classification": "executed",
+        "waiver": null
+      },
+      {
+        "file": "renderer/virgl-shader/raw_bits.c",
+        "line": 72,
+        "source": "",
+        "count": 0,
+        "classification": "waived",
+        "waiver": "Non-executable comment/blank/function declaration; body independently exercised."
+      },
+      {
+        "file": "renderer/virgl-shader/raw_bits.c",
+        "line": 202,
+        "source": "      case RAW_FSEQ:",
+        "count": 177978,
+        "classification": "executed",
+        "waiver": null
+      },
+      {
+        "file": "renderer/virgl-shader/raw_bits.c",
+        "line": 203,
+        "source": "      case RAW_FSNE:",
+        "count": 178571,
+        "classification": "executed",
+        "waiver": null
+      },
+      {
+        "file": "renderer/virgl-shader/raw_bits.c",
+        "line": 204,
+        "source": "         if (known_operands(a, b)) result[lane] = known_word(equal_float_mask(a.one, b.one, instruction->opcode == RAW_FSNE));",
+        "count": 178571,
+        "classification": "executed",
+        "waiver": null
+      },
+      {
+        "file": "renderer/virgl-shader/raw_bits.c",
+        "line": 205,
+        "source": "         break;",
+        "count": 178571,
+        "classification": "executed",
+        "waiver": null
+      },
+      {
+        "file": "renderer/virgl-shader/raw_bits.c",
+        "line": 325,
+        "source": "   if ((UINT64_C(1) << op) & RAW_V6_OPCODES) {",
+        "count": 1031071,
+        "classification": "executed",
+        "waiver": null
+      },
+      {
+        "file": "renderer/virgl-shader/raw_bits.c",
+        "line": 412,
+        "source": "   if (p->raw->opcode_mask & RAW_EQUALITY_OPCODES)",
+        "count": 571756,
+        "classification": "executed",
+        "waiver": null
+      },
+      {
+        "file": "renderer/virgl-shader/raw_bits.c",
+        "line": 413,
+        "source": "      emit(&w, \"uint raw_float_equal_mask(uint a, uint b, bool not_equal) {\\n\"",
+        "count": 43906,
+        "classification": "executed",
+        "waiver": null
+      },
+      {
+        "file": "renderer/virgl-shader/raw_bits.c",
+        "line": 414,
+        "source": "         \" uint magnitude_a = a & 2147483647u, magnitude_b = b & 2147483647u;\\n\"",
+        "count": 43906,
+        "classification": "executed",
+        "waiver": null
+      },
+      {
+        "file": "renderer/virgl-shader/raw_bits.c",
+        "line": 415,
+        "source": "         \" bool unordered = magnitude_a > 2139095040u || magnitude_b > 2139095040u;\\n\"",
+        "count": 43906,
+        "classification": "executed",
+        "waiver": null
+      },
+      {
+        "file": "renderer/virgl-shader/raw_bits.c",
+        "line": 416,
+        "source": "         \" bool equal = !unordered && (a == b || (magnitude_a == 0u && magnitude_b == 0u));\\n\"",
+        "count": 43906,
+        "classification": "executed",
+        "waiver": null
+      },
+      {
+        "file": "renderer/virgl-shader/raw_bits.c",
+        "line": 417,
+        "source": "         \" return (not_equal ? !equal : equal) ? 4294967295u : 0u;\\n}\\n\");",
+        "count": 571756,
+        "classification": "executed",
+        "waiver": null
+      },
+      {
+        "file": "renderer/virgl-shader/raw_bits.c",
+        "line": 452,
+        "source": "            if (op == RAW_FSEQ || op == RAW_FSNE) emit(&w, \"raw_float_equal_mask(\");",
+        "count": 12635884,
+        "classification": "executed",
+        "waiver": null
+      },
+      {
+        "file": "renderer/virgl-shader/raw_bits.c",
+        "line": 470,
+        "source": "            } else if (op == RAW_FSEQ || op == RAW_FSNE) {",
+        "count": 5379918,
+        "classification": "executed",
+        "waiver": null
+      },
+      {
+        "file": "renderer/virgl-shader/raw_bits.c",
+        "line": 471,
+        "source": "               emit(&w, \", \"); operand(&w, p, &instruction->src[1], lane);",
+        "count": 175542,
+        "classification": "executed",
+        "waiver": null
+      },
+      {
+        "file": "renderer/virgl-shader/raw_bits.c",
+        "line": 472,
+        "source": "               emit(&w, op == RAW_FSNE ? \", true)\" : \", false)\");",
+        "count": 175542,
+        "classification": "executed",
+        "waiver": null
+      }
+    ]
+  },
+  "physicalDirectPredicateWords": 192,
+  "gpuReportSha256": "216cd2aa04cd5a128fcffabb9b1e1221534fe3d5547bbe7031f8c067425e3b48",
+  "compilerFaults": [
+    {
+      "mode": "nan-guard",
+      "reportSha256": "28db48f0a649b9e5837cc14591e3a0a2673fca6a9641a3a676dec22b7df0f2ee",
+      "failure": "eq/raw-3 independent vertex byte0: [0,0,0,1065353216,1065320448,1056964608,1065320448,1065320448] / [0,0,0,1065353216,1065320448,1056964608,1056964608,1056964608]"
+    },
+    {
+      "mode": "zero-sign",
+      "reportSha256": "cdc6a3a8f14c3dc07b2be1b4e247bcca49630fc6e6df052080cb64b3230dc6f2",
+      "failure": "eq/raw-0 independent vertex byte0: [0,0,0,1065353216,1056964608,1056964608,1056964608,1056964608] / [0,0,0,1065353216,1065320448,1065320448,1056964608,1056964608]"
+    },
+    {
+      "mode": "ne-complement",
+      "reportSha256": "027d01363d37644be1e94ed2cdcf1d96be7f73ee53c8936b914adba0d750550b",
+      "failure": "ne/raw-0 independent vertex byte0: [0,0,0,1065353216,1065320448,1065320448,1056964608,1056964608] / [0,0,0,1065353216,1056964608,1056964608,1065320448,1065320448]"
+    },
+    {
+      "mode": "mask-one",
+      "reportSha256": "0ac44760b82d517d5cc7b321d662141688f956a06bc59df095de4a2b77b4a333",
+      "failure": "eq/raw-0 independent vertex byte0: [0,0,0,1065353216,1056997376,1056997376,1056964608,1056964608] / [0,0,0,1065353216,1065320448,1065320448,1056964608,1056964608]"
+    }
+  ]
+}

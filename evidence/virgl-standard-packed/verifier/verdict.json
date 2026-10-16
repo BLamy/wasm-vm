@@ -1,0 +1,365 @@
+{
+  "schema": "standard-packed-fresh-critic-verdict-v1",
+  "verdict": "verified",
+  "task": "E6-T11d15",
+  "predecessor": "23bf410f9e152d53e83e674717c647a4164dcde7",
+  "submission": "520dbc10ad15f3ae328de577db724b1ff99cb32a",
+  "sourceFreeze": "e7a85906622794c60872876f9d3e80da83df9ccd",
+  "predictionsSha256": "9c3b9c79c019908a86e10e204b938f649debd04f8097d8700745b2e53044f767",
+  "predictions": [
+    {
+      "id": "P1",
+      "boundary": "Custody",
+      "prediction": "Every member digest/size matches the independently opened archive index; sealed hot/cold sources match e7a85906622794c60872876f9d3e80da83df9ccd. Source freeze -> submission changes only evidence and lifecycle prose; cold exact-head status before/after is empty and environment scrubbed.",
+      "status": "HELD",
+      "observed": "All17,844 worker record sizes/digests authenticated;1596 hot/cold source pins match freeze. Only worker evidence/task/queue follow freeze. Pristine exact-freeze cold status before/after empty, exit0, scrub rule and log authenticated.",
+      "citations": [
+        {
+          "path": "authentication.json",
+          "sha256": "3c13f6ce3e26b086173559bef4ee05143d32a21319f1547f6fe3298f1c1e790b"
+        }
+      ]
+    },
+    {
+      "id": "P2",
+      "boundary": "Original wire extent",
+      "prediction": "Original enums 8/123/172/173 describe four fields in four bytes. Source offsets 0xfffffffb and 0xfffffffC admit exactly four bytes under uint32 end bounds; 0xfffffffd rejects. Legacy decode and floatingVertexFormat reject all four; descriptors are frozen and unsupported adjacent/swizzled enums reject.",
+      "status": "HELD",
+      "observed": "Original four-byte enums and immutable separate descriptors held. Corrected critic exclusive-end arithmetic: offset0xfffffffb admits;0xfffffffc rejects under the unchanged <=0xffffffff policy. Original mistaken prediction preserved, followed by independently predicted corrected boundary before final proof.",
+      "citations": [
+        {
+          "path": "prediction-correction.json",
+          "sha256": "be935d27d0c70ae87bf1d882f0307460b455350af52807df3cac4cf2a1d18466"
+        },
+        {
+          "path": "narrow-admission.json",
+          "sha256": "e23b3f1cc56c31378ecdc1ed28b605714228b9357dbae272ece066de34ab7e28"
+        },
+        {
+          "path": "promoted/suite-report.json",
+          "sha256": "8729175b6b88b83065fa8405a4cce09a8824da1d432760f2febcc1e134006292"
+        }
+      ],
+      "originalPredictionStatus": "FAILED_CRITIC_ARITHMETIC",
+      "correctedPredictionStatus": "HELD",
+      "correction": {
+        "path": "prediction-correction.json",
+        "sha256": "be935d27d0c70ae87bf1d882f0307460b455350af52807df3cac4cf2a1d18466"
+      }
+    },
+    {
+      "id": "P3",
+      "boundary": "Original signed fields",
+      "prediction": "For original fields [-512,-511,511,-2], SSCALED values remain [-512,-511,511,-2], including alpha binary32 bytes [0,0,0,192]. SNORM gives [-1,-1,1,-1], including alpha [0,0,128,191]. Signed arrays use native type33640,size4,normalizedfalse,original buffer and actual C helper; no CPU array expansion.",
+      "status": "HELD",
+      "observed": "Original signed fields[-512,-511,511,-2] remain scaled and become[-1,-1,1,-1] normalized. Signed arrays use original native type33640 unnormalized and actual C helper. Exact alpha words0xc0000000/0xbf800000 and full original pixels hold.",
+      "citations": [
+        {
+          "path": "promoted-hardware-audit.jsonl",
+          "sha256": "4823ce47940aaec1f3fc95b137f46b026af15e028ae7394b53e71be5c6339517",
+          "line": 91,
+          "lineSha256": "50f38f87527d028c700f284d07ccbd437825dd70b5f99e590b05215fe62adabb"
+        },
+        {
+          "path": "promoted-hardware-audit.jsonl",
+          "sha256": "4823ce47940aaec1f3fc95b137f46b026af15e028ae7394b53e71be5c6339517",
+          "line": 92,
+          "lineSha256": "54be75ffc803cf310724a2f80922b701b05c92de9b10fe2556cd18e8c9b2f229"
+        },
+        {
+          "path": "hot-hardware-audit.jsonl",
+          "sha256": "1157a22c69bc21a45a49b8c6a6f939d44b3862e61a7a69f41b8fe809dccf4063",
+          "line": 103,
+          "lineSha256": "f57636cbf41d5158f816acce1dd0ebe60a5529d8c9b9192d453bc55bd7042794"
+        },
+        {
+          "path": "hot-hardware-audit.jsonl",
+          "sha256": "1157a22c69bc21a45a49b8c6a6f939d44b3862e61a7a69f41b8fe809dccf4063",
+          "line": 143,
+          "lineSha256": "c466d7fe405fe513e6e2ea6df7e2631ce8542e9e6b3904064cf8f73b2ce2217d"
+        }
+      ]
+    },
+    {
+      "id": "P4",
+      "boundary": "Constants",
+      "prediction": "Each nonempty packed stride0 draw reads one original four-byte color element through retained GPU tickets, then supplies Float32Array generic values/words and disabled arrays/divisor0. Signed packed constants select zero packed masks and bypass array decode. Shared/mixed position+packed read batches preserve original widths16/4.",
+      "status": "HELD",
+      "observed": "Original four-byte packed constants and16-byte float position constants supply disabled Float32Array generic attributes. Shared batches use zero packed masks, exact words and one original source copy per constant; independent final audit checked34 exact source-copy ranges.",
+      "citations": [
+        {
+          "path": "promoted-hardware-audit.jsonl",
+          "sha256": "4823ce47940aaec1f3fc95b137f46b026af15e028ae7394b53e71be5c6339517",
+          "line": 15,
+          "lineSha256": "e241175243cf5c7a4f79d1d30b72f5f202dcda2e914af1e2fc3523a1f67210ab"
+        },
+        {
+          "path": "promoted-hardware-audit.jsonl",
+          "sha256": "4823ce47940aaec1f3fc95b137f46b026af15e028ae7394b53e71be5c6339517",
+          "line": 16,
+          "lineSha256": "6276efaf7cf875152d6f507da5a7ac372ed4758cc6756e4229f03d12b997dc50"
+        },
+        {
+          "path": "independent-audit.json",
+          "sha256": "7b8a7950c4f712705621b4b036de6bd93296e505df41354268e8f139969f3adf"
+        }
+      ]
+    },
+    {
+      "id": "P5",
+      "boundary": "Layout bounds",
+      "prediction": "Aligned offset with nonzero stride252 and exact four-byte last extent draws; byte-short, misalignment, stride256/255 reject before any native draw. All original storage bytes match literal uploads, including shared/overlapping storage.",
+      "status": "HELD",
+      "observed": "Native stride252 exact four-byte end holds at effective offset4194300/end4194304, including stride0; byte-short/misaligned/256/255 layouts reject before draw. Full original storage matched all1288 worker and306 independent buffer records.",
+      "citations": [
+        {
+          "path": "promoted-hardware-audit.jsonl",
+          "sha256": "4823ce47940aaec1f3fc95b137f46b026af15e028ae7394b53e71be5c6339517",
+          "line": 91,
+          "lineSha256": "50f38f87527d028c700f284d07ccbd437825dd70b5f99e590b05215fe62adabb"
+        },
+        {
+          "path": "promoted-hardware-audit.jsonl",
+          "sha256": "4823ce47940aaec1f3fc95b137f46b026af15e028ae7394b53e71be5c6339517",
+          "line": 92,
+          "lineSha256": "54be75ffc803cf310724a2f80922b701b05c92de9b10fe2556cd18e8c9b2f229"
+        },
+        {
+          "path": "boundary-audit.jsonl",
+          "sha256": "5027c180dd83efc251bc27c0300258157b7539405402a185957bcfcce29c059f"
+        },
+        {
+          "path": "recording-audit.json",
+          "sha256": "0bbb5f1161e1c4503044470037f0ef98618ad74d259244a8c38cb9158015299c"
+        },
+        {
+          "path": "independent-audit.json",
+          "sha256": "7b8a7950c4f712705621b4b036de6bd93296e505df41354268e8f139969f3adf"
+        }
+      ]
+    },
+    {
+      "id": "P6",
+      "boundary": "Lifetimes and ceilings",
+      "prediction": "Exact work6/staging10 admit and one-short work5/staging9 reject before draw/read allocation as appropriate. Delayed index/attribute revision and cancellation reject, drain fences and release all staging/tickets. Name reuse retains old generations. Disposal retires retained pending reads.",
+      "status": "HELD",
+      "observed": "Work6/staging10 admits; work5/staging9 rejects before draw, short staging before any native copy. Both pending phases hold original generations on name reuse and reject stale revision/cancel with completed fences. Disposal releases reads/staging; all recorded native fences retire and jobs drain.",
+      "citations": [
+        {
+          "path": "boundary-audit.jsonl",
+          "sha256": "5027c180dd83efc251bc27c0300258157b7539405402a185957bcfcce29c059f"
+        }
+      ]
+    },
+    {
+      "id": "P7",
+      "boundary": "Compiler boundary",
+      "prediction": "Native/sanitized/Wasm outputs agree for59 literal packed cases. All four masks are compatible16-bit, normalized subset packed, integer disjoint; undeclared/invalid masks and malformed facade requests reject with no partial source. Getter traps are never evaluated, owned primitive snapshot survives caller mutation and peer memory is isolated. Old stage/pair/typed use zero packed masks.",
+      "status": "HELD",
+      "observed": "Actual native/sanitized/Wasm59 literal cases and own13 literal mask cases agree. Four masks enforce16-bit compatible declaration/subset/disjoint boundaries; six fieldwise proxy mutations demonstrate primitive ownership; getters0, peer factory memory isolation and exact16MiB recovery hold. Old entry points have zero packed helpers.",
+      "citations": [
+        {
+          "path": "promoted/compiler/report.json",
+          "sha256": "435f81bff358d0f81c090ec57e18bcd4de953a1f42d55abe82563cb9f0f7d46d"
+        },
+        {
+          "path": "boundary-audit.jsonl",
+          "sha256": "5027c180dd83efc251bc27c0300258157b7539405402a185957bcfcce29c059f"
+        }
+      ]
+    },
+    {
+      "id": "P8",
+      "boundary": "Variant identity",
+      "prediction": "On identical original shader/storage, signed scaled array -> normalized array -> constant -> scaled array yields mask tuples (0,0,2,0),(0,0,2,2),(0,0,0,0) and reuses first program only without eviction. Typed masks coexist and packed attr15 sets32768 while constants clear only packed bits.",
+      "status": "HELD",
+      "observed": "Same-source scaled/normalized/constant variants retain complete identities. Novel simultaneous packed attr1+15 normalized subsets yield32770/32768,32770/2,32768/0,0/0; native program reuse holds without eviction and recompiles with eviction.",
+      "citations": [
+        {
+          "path": "promoted-hardware-audit.jsonl",
+          "sha256": "4823ce47940aaec1f3fc95b137f46b026af15e028ae7394b53e71be5c6339517",
+          "line": 17,
+          "lineSha256": "a12e899d508a9391043ca6c05381d4789f507fcd2eb174dbcf207f5d4e0a052e"
+        },
+        {
+          "path": "promoted-hardware-audit.jsonl",
+          "sha256": "4823ce47940aaec1f3fc95b137f46b026af15e028ae7394b53e71be5c6339517",
+          "line": 18,
+          "lineSha256": "13ccdecf2576dd1be75749bd83bb6884e7fe93e6bb014f3ad00d80813c092af2"
+        },
+        {
+          "path": "boundary-audit.jsonl",
+          "sha256": "5027c180dd83efc251bc27c0300258157b7539405402a185957bcfcce29c059f"
+        }
+      ]
+    },
+    {
+      "id": "P9",
+      "boundary": "Native restoration",
+      "prediction": "After poisoned VAO, pointers,generics,divisors and EBO, full original pixels/pointers/generic types/bindings restore correctly across contexts and pending steps.",
+      "status": "HELD",
+      "observed": "Actual poisoned native VAO/pointer/generic/divisor/EBO state restores original full pixels and all pointer/generic/native reflection values across contexts, delays and original storage restoration for three independent seeds.",
+      "citations": [
+        {
+          "path": "promoted-hardware-audit.jsonl",
+          "sha256": "4823ce47940aaec1f3fc95b137f46b026af15e028ae7394b53e71be5c6339517",
+          "line": 28,
+          "lineSha256": "950a93ad714c6ad1aa98a0b76cfcdcf75fe0848e63a2ce172991fbbd22f11f9f"
+        },
+        {
+          "path": "promoted-hardware-audit.jsonl",
+          "sha256": "4823ce47940aaec1f3fc95b137f46b026af15e028ae7394b53e71be5c6339517",
+          "line": 29,
+          "lineSha256": "e08eb00ca6ad8f08e828680eb43ffef9d4a354c5445e868bd59c8ecf3b5a1793"
+        },
+        {
+          "path": "promoted-hardware-audit.jsonl",
+          "sha256": "4823ce47940aaec1f3fc95b137f46b026af15e028ae7394b53e71be5c6339517",
+          "line": 30,
+          "lineSha256": "05bf58903839883c04baffc553e725f3b933860c49a4ddf44043992182bf4744"
+        }
+      ]
+    },
+    {
+      "id": "P10",
+      "boundary": "Fault sufficiency",
+      "prediction": "Three actual served-runtime faults (native normalization, constant alpha width, GPU alpha sign) each complete draw/fence then fail original full pixels. My independent pixel assertions also fail those completed draws; failure before draw does not count.",
+      "status": "HELD",
+      "observed": "All6 worker and3 independently promoted served faults complete native draws/fences and fail original pixels. Promoted normalization error112, constant alpha error132 and signed alpha error128 at x1,y2; signed alpha expected[0,0,0,192],observed[0,0,0,64].",
+      "citations": [
+        {
+          "path": "promoted-fault-native-normalize-audit.jsonl",
+          "sha256": "fa86f7634f7cd39efe8f376bdcd26e9b5ee8dfd39f3ae9241d0f4923850a5a67",
+          "line": 1,
+          "lineSha256": "432e3e5671d5542d88c46f12a6334b23c3c65360bf9ba47d8d5a561601abc72d"
+        },
+        {
+          "path": "promoted-fault-constant-field-audit.jsonl",
+          "sha256": "bcd5cd65ac66e6e869a61f252f838cfbc0ee34b747c5b654797d178ab475f00d",
+          "line": 1,
+          "lineSha256": "81f34eb935afe4849958b9a99a3e1ff35740cae4da4a8e461db8f91f7af68140"
+        },
+        {
+          "path": "promoted-fault-shader-sign-audit.jsonl",
+          "sha256": "02d11a6682065fd3f6b8bdbdd340579abff7ade5ac55b879cdb4b89e36526aac",
+          "line": 1,
+          "lineSha256": "4a790e37b60c827353565b581a581c829076737cbbe84d3e5e3d12b665440f62"
+        },
+        {
+          "path": "recording-audit.json",
+          "sha256": "0bbb5f1161e1c4503044470037f0ef98618ad74d259244a8c38cb9158015299c"
+        }
+      ]
+    },
+    {
+      "id": "P11",
+      "boundary": "Coverage",
+      "prediction": "Every added executable C/JS region is exercised by sealed positive/negative record coverage or my bounded direct test; blank/braces/declarative type/config/doc-only regions receive precise waivers. Narrow nested V8 zero counters do not get disguised by enclosing positive counters.",
+      "status": "HELD",
+      "observed": "All34 files/53 hunks classified.507 full narrow V8 intervals,191 LLVM regions and51 branch records interrogated; no zero production region or missing production direction. Explicit scaffolding/declaration/documentation waivers remain; narrow retained admission and healthy scalar/packed smokes close harness gaps. All8 LLVM exports independently re-created from exact raw counters/binaries.",
+      "citations": [
+        {
+          "path": "coverage-classification.json",
+          "sha256": "454fa3b2488a5fac6b98fa374afbd8e5dd3fdcc04cd769e02d79ef6a616ab3b0"
+        },
+        {
+          "path": "coverage-regions.json",
+          "sha256": "8d503cad7c9ac642e7b1436671d9a24038989e162c35b2aae00985cc25e25af2"
+        },
+        {
+          "path": "reexport-coverage.json",
+          "sha256": "e41fc4769cbe6f5b9e1163383e3176503b155184e62722c0bbe6767186e986ba"
+        }
+      ]
+    },
+    {
+      "id": "P12",
+      "boundary": "Incremental carry",
+      "prediction": "Historical HELD evidence digests are identical to verified predecessor23bf410f9e152d53e83e674717c647a4164dcde7; unaffected dependencies unchanged. No crates/web/guest/API/capset/deployment changes and no production claim.",
+      "status": "HELD",
+      "observed": "All199 historical HELD evidence records retain predecessor/source/dependency digests. No crates/web/guest changes or production/capset/deployment/throughput claim. Freeze-to-submission and later verifier-only changes preserve the actual runtime boundary.",
+      "citations": [
+        {
+          "path": "authentication.json",
+          "sha256": "3c13f6ce3e26b086173559bef4ee05143d32a21319f1547f6fe3298f1c1e790b"
+        }
+      ]
+    },
+    {
+      "id": "P13",
+      "boundary": "Fixture and environment hunt",
+      "prediction": "Pixel oracle reconstructs original uploads and TGSI without renderer descriptors/unpacker or emitted ESSL; actual generated C/Wasm/binary/served files are sealed, no software renderer flags, browser errors or ignored semantic checks. Pristine scrubbed acceptance completes at source freeze.",
+      "status": "HELD",
+      "observed": "The promoted independent oracle has no imports and uses original packets/upload bytes/radix field reconstruction/original TGSI, not renderer unpacker or emitted ESSL. Headed M4 Metal has native WebGL2 enabled, no software-renderer flags and zero browser errors; full generated/served/storage/source pins and pristine scrubbed clone authenticated.",
+      "citations": [
+        {
+          "path": "recording-audit.json",
+          "sha256": "0bbb5f1161e1c4503044470037f0ef98618ad74d259244a8c38cb9158015299c"
+        },
+        {
+          "path": "independent-audit.json",
+          "sha256": "7b8a7950c4f712705621b4b036de6bd93296e505df41354268e8f139969f3adf"
+        },
+        {
+          "path": "authentication.json",
+          "sha256": "3c13f6ce3e26b086173559bef4ee05143d32a21319f1547f6fe3298f1c1e790b"
+        },
+        {
+          "path": "promoted/hardware/report.json",
+          "sha256": "2461ee3fd162727550dced0f721ef71a0dfdeb5f43a10bee1a112f11b27eed7c",
+          "point": "browser,browserErrors,sources,servedFiles"
+        }
+      ]
+    },
+    {
+      "id": "P14",
+      "boundary": "Independent seeds and novel boundary",
+      "prediction": "Independent seeds0x27c52ad1,0xb73e168c,0x694d803f exercise delayed high15 shared mixed constant batches, signed alpha/minima, varying legal offset/stride ends and stale/reuse/native restoration. Novel simultaneous signed packed attr1+15 with different normalized subsets must retain both decoded contracts across array/constant transitions and cache budgets.",
+      "status": "HELD",
+      "observed": "Own three seeds667232977,3074299532,1766686783 complete92 native frames/23,552 pixels,14 pre-draw rejections,9 delayed shared/mixed lifetime attacks and6 simultaneous-mask/cache ownership records. Signed minima/alpha, high15, maxstride/maxoffset and native restoration hold.",
+      "citations": [
+        {
+          "path": "promoted/suite-report.json",
+          "sha256": "8729175b6b88b83065fa8405a4cce09a8824da1d432760f2febcc1e134006292"
+        },
+        {
+          "path": "independent-audit.json",
+          "sha256": "7b8a7950c4f712705621b4b036de6bd93296e505df41354268e8f139969f3adf"
+        },
+        {
+          "path": "boundary-audit.jsonl",
+          "sha256": "5027c180dd83efc251bc27c0300258157b7539405402a185957bcfcce29c059f"
+        }
+      ]
+    },
+    {
+      "id": "P15",
+      "boundary": "Allocations and stack",
+      "prediction": "All40 genuine packed allocation faults reject with no partial success and recover exact outputs; both complete caller texts owned before semantic allocation. Retained typed40 plus standard compiler669/129 at same freeze complete. Conservative optimized packed Wasm stack is191856<262144.",
+      "status": "HELD",
+      "observed": "All40 genuine packed failures and40 exact recoveries per hot/cold run hold, both caller sources owned before semantic allocation. Typed48+40 faults and standard669/129 hardware retained; conservative optimized Wasm191856<262144.",
+      "citations": [
+        {
+          "path": "boundary-audit.jsonl",
+          "sha256": "5027c180dd83efc251bc27c0300258157b7539405402a185957bcfcce29c059f"
+        },
+        {
+          "path": "reexport-coverage.json",
+          "sha256": "e41fc4769cbe6f5b9e1163383e3176503b155184e62722c0bbe6767186e986ba"
+        }
+      ]
+    }
+  ],
+  "productRefutations": [],
+  "needsEvidence": [],
+  "runtimeFixes": false,
+  "suite": [
+    "make verify-E6-T11d15-adversarial",
+    "original-byte/TGSI oracle",
+    "three independent seeded hardware attacks",
+    "literal actual native/Wasm mask attacks",
+    "three completed native GPU pixel sabotages"
+  ],
+  "scope": "Isolated original packed standard async vertex fetch only. No production graphics completion, guest instruction, API/capset, deployment, portable interior normalized word or throughput certification.",
+  "environment": "Existing exact-freeze scrubbed cold proof independently authenticated once; no unnecessary second pristine clone or unrelated broad gauntlet."
+}

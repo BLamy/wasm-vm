@@ -1,0 +1,170 @@
+{
+  "schema": "fresh-shadow-sampler-verdict-v1",
+  "verdict": "verified",
+  "task": "E6-T11d49",
+  "runtimeHead": "17b9d9334dfa1b2b209df36e0105e2ec96549fa7",
+  "criticHead": "58138a0d370718744e8c74f52860faa1200d0928",
+  "outcomes": [
+    {
+      "id": "P01",
+      "outcome": "HELD"
+    },
+    {
+      "id": "P02",
+      "outcome": "HELD"
+    },
+    {
+      "id": "P03",
+      "outcome": "HELD"
+    },
+    {
+      "id": "P04",
+      "outcome": "HELD"
+    },
+    {
+      "id": "P05",
+      "outcome": "HELD"
+    },
+    {
+      "id": "P06",
+      "outcome": "HELD"
+    },
+    {
+      "id": "P07",
+      "outcome": "HELD"
+    },
+    {
+      "id": "P08",
+      "outcome": "HELD"
+    },
+    {
+      "id": "P09",
+      "outcome": "HELD"
+    },
+    {
+      "id": "P10",
+      "outcome": "HELD"
+    },
+    {
+      "id": "P11",
+      "outcome": "HELD"
+    },
+    {
+      "id": "P12",
+      "outcome": "HELD"
+    }
+  ],
+  "workerIndependentPointFrames": 1174,
+  "workerIndependentPointWords": 42264,
+  "coverage": [
+    {
+      "side": "hot",
+      "positive": 493,
+      "unchangedWaivers": 25,
+      "unclassified": 0
+    },
+    {
+      "side": "cold",
+      "positive": 493,
+      "unchangedWaivers": 25,
+      "unclassified": 0
+    }
+  ],
+  "freshPointFrames": 51,
+  "freshPointWords": 1836,
+  "novelFrames": 48,
+  "novelControlWords": {
+    "compare": 72,
+    "mask": 12
+  },
+  "freshReports": [
+    {
+      "path": "hardware-bindings/report.json",
+      "sha256": "e615e0128667d9916adda402a4916c8fb62223277cec6989e0672e739d3e6f1b",
+      "gitHead": "58138a0d370718744e8c74f52860faa1200d0928"
+    },
+    {
+      "path": "hardware-boundaries-0x6ac47308/report.json",
+      "sha256": "f010c5c976b616ba02cb7e3f901782b74adcf58be032187fe6debcc59585570f",
+      "gitHead": "58138a0d370718744e8c74f52860faa1200d0928"
+    },
+    {
+      "path": "hardware-boundaries-0xb59d7a1d/report.json",
+      "sha256": "dbc4b0b86083594f322d92601895a0c33bacc9a06a4fc28ff1d06224852dad4e",
+      "gitHead": "58138a0d370718744e8c74f52860faa1200d0928"
+    },
+    {
+      "path": "hardware-boundaries-0xe174cf53/report.json",
+      "sha256": "2622a6cacfa88edd23b45ca0b366bcdedb8b4790e94f164fa188ac4cd6e3d92f",
+      "gitHead": "58138a0d370718744e8c74f52860faa1200d0928"
+    },
+    {
+      "path": "hardware-historical/report.json",
+      "sha256": "3cc8de38c8b5c5a0bb368b1e8ae193a4a21210766587095d882dc36abf258d6c",
+      "gitHead": "58138a0d370718744e8c74f52860faa1200d0928"
+    },
+    {
+      "path": "hardware-inherited/report.json",
+      "sha256": "aac3593ca4f08f8ffc2d607b5ac6833c395d706d8de61c4949aae4327e7c36c8",
+      "gitHead": "58138a0d370718744e8c74f52860faa1200d0928"
+    },
+    {
+      "path": "hardware-mips/report.json",
+      "sha256": "d11563c5a2eb86407feba6c784c57589b573968f7167fc231f1f9faa70bbd5a6",
+      "gitHead": "58138a0d370718744e8c74f52860faa1200d0928"
+    },
+    {
+      "path": "hardware-query-only/report.json",
+      "sha256": "de13c98ccc38b3677a9036bc64038572538c027e804765c57f5b82460559c677",
+      "gitHead": "58138a0d370718744e8c74f52860faa1200d0928"
+    },
+    {
+      "path": "hardware-reflection/report.json",
+      "sha256": "63d0bfd12bfbb47a54827cc5c429cccb92fab5f1d54e4743ce535c4008b568b7",
+      "gitHead": "58138a0d370718744e8c74f52860faa1200d0928"
+    },
+    {
+      "path": "hardware-refusals/report.json",
+      "sha256": "db5828594496bfac8e3247e371f5874aedb0653b99aa8124c1ba280f495945b4",
+      "gitHead": "58138a0d370718744e8c74f52860faa1200d0928"
+    },
+    {
+      "path": "hardware-same-image/report.json",
+      "sha256": "aa3155bf1fd6d5e8beb25b4772f5ce2a20abe04ccfbcdb074b4c6eb340183fff",
+      "gitHead": "58138a0d370718744e8c74f52860faa1200d0928"
+    },
+    {
+      "path": "hardware-typed/report.json",
+      "sha256": "50806c095f9faa6cd19facfb5c53e5f696dbf4c55b9b5b2d2d43b27c2b535f1e",
+      "gitHead": "58138a0d370718744e8c74f52860faa1200d0928"
+    },
+    {
+      "path": "novel-0x61a387d9/report.json",
+      "sha256": "8e2a1522a025184ca01150316405f36db6c9c22a126d6f91e08b0d8d7b6e5608",
+      "gitHead": "58138a0d370718744e8c74f52860faa1200d0928"
+    },
+    {
+      "path": "novel-0x94ce720a/report.json",
+      "sha256": "a9bf52ef92333f9dd938aa135822edc66205f1d858af34d3aa2aa4206a3fc38d",
+      "gitHead": "58138a0d370718744e8c74f52860faa1200d0928"
+    },
+    {
+      "path": "novel-0xd73ab56b/report.json",
+      "sha256": "ca3648c28c65a35254a44eee2d5fb70ee217b34eba3fd9c8ce940b088694f003",
+      "gitHead": "58138a0d370718744e8c74f52860faa1200d0928"
+    },
+    {
+      "path": "novel-fault-compare/report.json",
+      "sha256": "af383106a57f2a7c4b6e2a05b6e36b0a84fed3c42eb0ded646d0b17ab100f888",
+      "gitHead": "58138a0d370718744e8c74f52860faa1200d0928"
+    },
+    {
+      "path": "novel-fault-mask/report.json",
+      "sha256": "383611d9c21b771acaae52d14bdaae66516556fdca7f40fab6cbd32b70e8bf0e",
+      "gitHead": "58138a0d370718744e8c74f52860faa1200d0928"
+    }
+  ],
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "productionDrawAuthority": false
+}

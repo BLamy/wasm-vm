@@ -1,0 +1,32 @@
++ git rev-parse HEAD
+cb6726dc68eebecdaf9b848ea846e525003e86c9
++ node --check renderer/virgl-command/state.mjs
++ node --check renderer/virgl-command/resources.mjs
++ node --check renderer/virgl-command/tests/state-acceptance.mjs
++ node --check tools/virgl-command/state-fixtures.mjs
++ node --check tools/verify-virgl-object-state.mjs
++ python3 -m py_compile tools/virgl-command/state-receipt.py tools/virgl-command/state-cold.py
++ bash renderer/virgl-shader/build.sh wasm
+Pinned virglrenderer 1.3.0: 70 source/generated SHA-256 hashes match
++ node tools/verify-virgl-command-decoder.mjs --output /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dot-reciprocals-cold-iyto94nf/wasm-vm/target/evidence/virgl-dot-reciprocals-cold/component-regression/numeric-regression/float-regression/regression/regression/draw/state/decoder --node-only true
+Node command acceptance passed (546 ms)
++ node tools/verify-virgl-resource-transfers.mjs --output /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dot-reciprocals-cold-iyto94nf/wasm-vm/target/evidence/virgl-dot-reciprocals-cold/component-regression/numeric-regression/float-regression/regression/regression/draw/state/resources --node-only true
+Node resource acceptance passed (58 ms)
++ node tools/verify-virgl-object-state.mjs --output /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dot-reciprocals-cold-iyto94nf/wasm-vm/target/evidence/virgl-dot-reciprocals-cold/component-regression/numeric-regression/float-regression/regression/regression/draw/state/hardware
+Hardware state acceptance passed (154 ms)
++ for attack in constant-bits color-mask
++ node tools/verify-virgl-object-state.mjs --output /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dot-reciprocals-cold-iyto94nf/wasm-vm/target/evidence/virgl-dot-reciprocals-cold/component-regression/numeric-regression/float-regression/regression/regression/draw/state/sabotage-constant-bits --sabotage constant-bits
+AssertionError [ERR_ASSERTION]: original fragment constant bits: expected "[1065353216,1065353216,1065353216,1065353216]", got "[1056964608,1065353216,1065353216,1065353216]"
+
+'failed' !== 'passed'
+
+    at file:///private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dot-reciprocals-cold-iyto94nf/wasm-vm/tools/verify-virgl-object-state.mjs:153:12
++ for attack in constant-bits color-mask
++ node tools/verify-virgl-object-state.mjs --output /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dot-reciprocals-cold-iyto94nf/wasm-vm/target/evidence/virgl-dot-reciprocals-cold/component-regression/numeric-regression/float-regression/regression/regression/draw/state/sabotage-color-mask --sabotage color-mask
+AssertionError [ERR_ASSERTION]: original color mask: expected "[true,true,true,true]", got "[false,true,true,true]"
+
+'failed' !== 'passed'
+
+    at file:///private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dot-reciprocals-cold-iyto94nf/wasm-vm/tools/verify-virgl-object-state.mjs:153:12
++ python3 tools/virgl-command/state-receipt.py /var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dot-reciprocals-cold-iyto94nf/wasm-vm/target/evidence/virgl-dot-reciprocals-cold/component-regression/numeric-regression/float-regression/regression/regression/draw/state
+E6-T12c receipt passed: original GL state, shader linkage, clear/isolation and wire sabotage controls

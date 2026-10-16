@@ -1,0 +1,12 @@
+fb5530140000-fb55301d1000 r-xp 00000000 00:2a 134857                     /build-virgl-1.3.0/src/libvirglrenderer.so.1.11.0
+fb55301d1000-fb55301e2000 ---p 00091000 00:2a 134857                     /build-virgl-1.3.0/src/libvirglrenderer.so.1.11.0
+fb55301e2000-fb55301f0000 r--p 00092000 00:2a 134857                     /build-virgl-1.3.0/src/libvirglrenderer.so.1.11.0
+fb55301f0000-fb55301f4000 rw-p 000a0000 00:2a 134857                     /build-virgl-1.3.0/src/libvirglrenderer.so.1.11.0
+fb5530490000-fb5530497000 r-xp 00000000 00:2a 42731                      /usr/lib/aarch64-linux-gnu/qemu/hw-display-virtio-gpu-gl.so
+fb5530497000-fb55304af000 ---p 00007000 00:2a 42731                      /usr/lib/aarch64-linux-gnu/qemu/hw-display-virtio-gpu-gl.so
+fb55304af000-fb55304b0000 r--p 0000f000 00:2a 42731                      /usr/lib/aarch64-linux-gnu/qemu/hw-display-virtio-gpu-gl.so
+fb55304b0000-fb55304b1000 rw-p 00010000 00:2a 42731                      /usr/lib/aarch64-linux-gnu/qemu/hw-display-virtio-gpu-gl.so
+fb5536750000-fb5536756000 r-xp 00000000 00:2a 19744                      /capture/recorder.so
+fb5536756000-fb553676f000 ---p 00006000 00:2a 19744                      /capture/recorder.so
+fb553676f000-fb5536770000 r--p 0000f000 00:2a 19744                      /capture/recorder.so
+fb5536770000-fb5536771000 rw-p 00010000 00:2a 19744                      /capture/recorder.so

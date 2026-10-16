@@ -1,0 +1,7 @@
+page.evaluate: Error: finite guard omission: actual invalid conditional uniform upload
+    at invalidMatrix (http://127.0.0.1:57881/renderer/virgl-command/tests/constant-domains.mjs:280:260)
+    at async runAcceptance (http://127.0.0.1:57881/renderer/virgl-command/tests/constant-domains.mjs:313:247)
+    at async eval (eval at evaluate (:234:30), <anonymous>:3:14)
+    at async <anonymous>:260:30
+    at runVirglBrowser (/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/verify-virgl-constant-domains.mjs:146:58)
+    at /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/async file:/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/verify-virgl-constant-domains.mjs:235:1

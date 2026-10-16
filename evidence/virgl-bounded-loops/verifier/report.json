@@ -1,0 +1,143 @@
+{
+  "task": "E6-T12e9",
+  "role": "fresh adversarial verifier; no implementation edits",
+  "head": "bfcd3a4076a163648c67bf7674e94d616c42c1e1",
+  "parent": "62e90790d5c6f0a5da5fa528c482679c16c74290",
+  "status": "verified",
+  "predictionFile": "predictions.md",
+  "findings": [],
+  "held": [
+    {
+      "prediction": "P1-P2",
+      "result": "HELD",
+      "proof": "attack-results.json and dynamic-address-results.json",
+      "details": "1,121 independently authored or mutated compiler inputs; 53 admitted variants; 10,441 independent literal executions; maximum 18 iterations and indirect addresses 10 through 45. Unsafe graph variants rejected."
+    },
+    {
+      "prediction": "P3-P5",
+      "result": "HELD",
+      "proof": "consumer-results.json, browser-fault-control.json and worker hardware reports",
+      "details": "269 raw count words, 45 typed metadata mutants, 36 omitted-index variants, owned snapshots and getter avoidance. Both-stage invalid current counts reject before GL work; synchronous and asynchronous restoration uses approved immutable words, busy mutation attacks fail, and poisoned native state restores before drawing."
+    },
+    {
+      "prediction": "P6",
+      "result": "HELD",
+      "proof": "native-wasm-control.json",
+      "details": "4,012 stages and 264 pairs; 743,022 native and 15,151 Wasm calls. All 3,814 predecessor stages and 252 pairs retained exactly; 12 of 19 original captures accepted. The two PRECISE loop captures reject at native.log lines 8 and 16. Fixed 16 MiB memory retains buffer identity across 64 maximum-text calls and 33 allocator-pressure calls."
+    },
+    {
+      "prediction": "P7",
+      "result": "HELD",
+      "proof": "pixel-reconstruction.json and browser-fault-control.json",
+      "details": "Independent direct RGBA decoding reconstructs 25 atlases, 800 words and 102,400 pixels, including 24 healthy atlases and one safe fault atlas. Full browser oracle holds for 39 draws, 768 words and 159,744 pixels, plus five decoder-bypass recovery draws. The early-break fault produces 26 mismatching words with safe j=1 and tail addresses 10, 29 and 28."
+    },
+    {
+      "prediction": "P8",
+      "result": "HELD",
+      "proof": "sabotage-results.json, receipt-attacks.json, native-wasm-forgeries.json, browser-forgeries.json",
+      "details": "Count-admission bypass fails at raw count 19. The real recurrence-check mutant admits an independent +16 counterexample selecting tail addresses 42, 46 and 60; translation only, never dispatched to a GPU. All 36 typed receipt forgeries are rejected and clean controls pass."
+    },
+    {
+      "prediction": "P9",
+      "result": "HELD",
+      "proof": "coverage-audit.json, coverage-reexport.json, js-coverage-audit.json",
+      "details": "Exact frozen source byte checks pass. Re-exported LLVM coverage is byte-identical. All 260 newly instrumented bridge.c lines and 10 new executable raw_bits.c lines are hit, along with all 41 changed JavaScript lines. The three exhaustiveness labels in raw_bits.c:211-213 are waived because control returns earlier. Declaration and layout changes are covered by measured sizes and compile-time bounds. The pristine clone remains clean at the same frozen source head; all 178 copied artifacts match, its aggregate receipt reconstructs exactly, and re-exported LLVM counts match byte-for-byte."
+    }
+  ],
+  "layoutBefore": {
+    "pointerBytes": 8,
+    "rawIrBytes": 26256,
+    "rawInstructionBytes": 112,
+    "rawDestinationBytes": 12,
+    "rawLaneBytes": 12,
+    "registerBytes": 36,
+    "rawSourceBytes": 24,
+    "profileBytes": 7616,
+    "rawIrBoundBytes": 32768,
+    "profileBoundBytes": 8192,
+    "fixedWasmMemoryBytes": 16777216,
+    "fixedWasmStackBytes": 262144
+  },
+  "layoutAfter": {
+    "pointerBytes": 8,
+    "rawIrBytes": 26352,
+    "rawInstructionBytes": 112,
+    "rawDestinationBytes": 12,
+    "rawLaneBytes": 12,
+    "registerBytes": 36,
+    "rawSourceBytes": 24,
+    "profileBytes": 7616,
+    "rawIrBoundBytes": 32768,
+    "profileBoundBytes": 8192,
+    "fixedWasmMemoryBytes": 16777216,
+    "fixedWasmStackBytes": 262144
+  },
+  "flowBefore": {
+    "arenaBytes": 52612,
+    "arenaBoundBytes": 53248,
+    "depthLimit": 8
+  },
+  "flowAfter": {
+    "arenaBytes": 52644,
+    "arenaBoundBytes": 53248,
+    "depthLimit": 8
+  },
+  "waivers": [
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "lines": [
+        211,
+        212,
+        213
+      ],
+      "reason": "Enum exhaustiveness labels only. All loop opcodes execute raw_record control branch113-116 and return before this secondary switch; no new unexecuted behavior."
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.h",
+      "reason": "Enum/mask/type definitions and static assertions have no standalone runtime execution. Shift consumers execute;actual layout and fixedmemory limits recorded."
+    },
+    {
+      "file": "docs/gpu-3d-contract.json, docs/gpu-3d-decision.md, renderer/virgl-shader/README.md",
+      "reason": "Declarative documentation; independently checked against admittedprofile and observed bounds. Productionnegotiation unchanged."
+    }
+  ],
+  "suite": "Promote this verifier directory: independent graph/lane mutations, literal executor, raw-bank boundary tests, pixel decoder, receipt forgery tests and deterministic sabotage. Retain make verify-E6-T12e9 as repeatable risk-tier acceptance; no additional unrelated requirement.",
+  "workerClaimCommit": "9e647be3c69fe4bfd3706ba198cd1630cd454400",
+  "cold": {
+    "task": "E6-T12e9",
+    "sourceHead": "bfcd3a4076a163648c67bf7674e94d616c42c1e1",
+    "workerClaimCommit": "9e647be3c69fe4bfd3706ba198cd1630cd454400",
+    "workerClaimSha256": "bf33baa835f07c642224ce7ab0b0be0b1cd5da0a263edac500afa4ec3375f352",
+    "coldReportSha256": "69a613e5cfa4d46b06f6a486ee60f757c9912068230abe5fd17fe003d34438a9",
+    "coldReceiptSha256": "03fcb73473ee76e2472fde314a4591b0eceb179f57a6e115b877fc9b2d1f85d7",
+    "copiedArtifactsVerified": 178,
+    "copiedArtifactsEqualPreservedClone": true,
+    "cleanBeforeAndAfterAndNow": true,
+    "removedEnvironmentNames": [
+      "GIT_PAGER",
+      "RUST_LOG"
+    ],
+    "harnessSha256": "eda83074cfa59b1744c9e629fee97dfd2e3ce1de3234353141c48c3d996d7825",
+    "logSha256": "1a331691d0bbaaf7df5acc34dd6ab847169a6f5961108420bb15ec59aa6a6572"
+  },
+  "coldControl": {
+    "task": "E6-T12e9",
+    "sourceHead": "bfcd3a4076a163648c67bf7674e94d616c42c1e1",
+    "checkoutHead": "bfcd3a4076a163648c67bf7674e94d616c42c1e1",
+    "checkout": "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-indirect-constants-cold-xi83qtie/wasm-vm",
+    "evidence": "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-indirect-constants-cold-xi83qtie/wasm-vm/target/evidence/virgl-bounded-loops-cold",
+    "receiptSha256": "03fcb73473ee76e2472fde314a4591b0eceb179f57a6e115b877fc9b2d1f85d7",
+    "receiptReconstructedExactly": true,
+    "coverageReexportSha256": "0dee49ca9e9bd59c947504d105bb63b454255f81a251fa97772088ca735d7adc",
+    "sources": 398,
+    "records": 176,
+    "checkoutStatus": ""
+  },
+  "aggregateControl": {
+    "head": "bfcd3a4076a163648c67bf7674e94d616c42c1e1",
+    "reconstructedExactly": true,
+    "receiptSha256": "0cda5d537e15773794904bf7d53c30ff4da55c1c6846e846875fee5915a22715",
+    "sources": 398,
+    "records": 176
+  }
+}

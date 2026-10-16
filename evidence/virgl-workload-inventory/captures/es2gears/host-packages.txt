@@ -1,0 +1,5 @@
+libgl1-mesa-dri:arm64	22.3.6-1+deb12u2
+libssl-dev:arm64	3.0.22-1~deb12u1
+qemu-system-gui	1:7.2+dfsg-7+deb12u18+b3
+qemu-system-misc	1:7.2+dfsg-7+deb12u18+b3
+xvfb	2:21.1.7-3+deb12u13

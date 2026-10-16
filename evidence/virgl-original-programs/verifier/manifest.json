@@ -1,0 +1,22 @@
+{
+  "schema": "virgl-original-programs-verifier-seal-v1",
+  "task": "E6-T12g6m",
+  "verdict": "verified",
+  "workerSourceHead": "3f0db236825e4389c4cd78e82192f81dc9b5cf90",
+  "reviewedSubmissionHead": "b5e91fe302cbc55f594ac6aa779c68367f182547",
+  "workerArchiveSha256": "a90cd34bf49f9dbe9dc8ebb54e2f0a95f544a1f72c78d28e436f1ba16beb5a12",
+  "records": 256,
+  "archiveBytes": 11824102,
+  "archiveSha256": "65ec95ab66be6b8a1417c1567f7c2dd635727d4cab688ad4bead0681e64e1af6",
+  "recordIndexSha256": "31f151f82eb815a5898e16154e91479ef0081724efd20b6749c65d8437cdf6fc",
+  "predictionsSha256": "de2ad8d22addb59a61678456972b81d68a34205581f2c909443f081986d98283",
+  "finalAuditSha256": "a5899f9bf4575cd0d9ade77f52f728cd96d24406f3892b1fc5e5ce471c049cb9",
+  "coverageAuditSha256": "e85a69f0a03770cd36ee4f3190cd9b56d51d012304f4ebe5de61544a5291df26",
+  "promotedTest": {
+    "path": "renderer/virgl-shader/tests/original-programs-custody.mjs",
+    "sha256": "6e5efc2876dfe63e011d2fddb7bcd5773fe4bf7a8b5f9cc80126a32203979991"
+  },
+  "guestExecution": false,
+  "productionDrawAuthority": false,
+  "portableAccuracyAuthority": false
+}

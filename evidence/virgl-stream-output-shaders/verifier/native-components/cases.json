@@ -1,0 +1,55 @@
+[
+  {
+    "name": "declared-xy-capture-xy",
+    "kind": 0,
+    "capture": 3,
+    "words": [
+      1,
+      0,
+      0,
+      0,
+      3,
+      92191,
+      0
+    ],
+    "a": "VERT\nDCL CONST[0..1]\nDCL OUT[0], POSITION\nDCL OUT[31].xy, GENERIC[0]\n0: MOV OUT[0], CONST[0]\n1: MOV OUT[31].xy, CONST[1]\n2: END\n",
+    "b": "",
+    "expectedError": null
+  },
+  {
+    "name": "declared-xy-capture-z-refused",
+    "kind": 0,
+    "capture": 3,
+    "words": [
+      1,
+      0,
+      0,
+      0,
+      3,
+      91679,
+      0
+    ],
+    "a": "VERT\nDCL CONST[0..1]\nDCL OUT[0], POSITION\nDCL OUT[31].xy, GENERIC[0]\n0: MOV OUT[0], CONST[0]\n1: MOV OUT[31].xy, CONST[1]\n2: END\n",
+    "b": "",
+    "expectedError": "unsupported-feature"
+  },
+  {
+    "name": "reversed-disjoint-destination-order",
+    "kind": 0,
+    "capture": 3,
+    "words": [
+      2,
+      0,
+      0,
+      0,
+      64,
+      4155167,
+      0,
+      484383,
+      0
+    ],
+    "a": "VERT\nDCL CONST[0..1]\nDCL OUT[0], POSITION\nDCL OUT[31], GENERIC[0]\n0: MOV OUT[0], CONST[0]\n1: MOV OUT[31], CONST[1]\n2: END\n",
+    "b": "",
+    "expectedError": null
+  }
+]

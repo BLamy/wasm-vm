@@ -112,6 +112,8 @@ export const ROADMAP = [
     blurb: "Fast interpreter and bounded JIT paths are proven; the whole-machine worker is the demo default, with JIT enabled on isolated pages. Strict restored-Node acceleration remains E4-T34 work.",
     caps: [
       { name: "Fast predecoded interpreter", status: "verified", evidence: "E4-T30: exact-entry hit path, differential corpus, and live busybox proof" },
+      { name: "Compact cached integer execution", status: "verified", group: "rv64u", filter: ["rv64ui-p-", "rv64um-p-"], evidence: "E5.5-T03bf verified: cached integer loops improve ~20% native and ~10% browser on M4 Max. Shared arithmetic semantics, literal edge cases, guest trace/state parity and independent alias/wrap attacks pass. Real-workload timings and small legacy/JIT regressions are recorded in the task evidence." },
+      { name: "Direct JIT memory imports", status: "verified", group: "rv64u", filter: ["rv64ui-p-lb", "rv64ui-p-lh", "rv64ui-p-lw", "rv64ui-p-ld", "rv64ui-p-sb", "rv64ui-p-sh", "rv64ui-p-sw", "rv64ui-p-sd", "rv64ua-p-"], evidence: "E5.5-T03bg verified: direct wasm imports improve atomic loops 20–38% and forced translation-miss loops 2.5×. Literal/reference state, signatures, faults, reservations, lifetime, growth and independent sabotage checks pass. Real BusyBox timings are approximately neutral; no 300-MIPS desktop claim." },
       { name: "Exact bounded JIT work + retirement", status: "verified", evidence: "E4-T31: budgets, traps, counters, trace gating, CLI, and Wasm wrapper" },
       { name: "Single-precision FP moves", status: "partial", group: "rv64uf-p", filter: ["move"], evidence: "Live ISA move suite; E5.5-T03t adds integer-only JIT moves with separate native/browser state proof. Desktop response remains unresolved." },
       { name: "Floating-point memory transfers", status: "partial", group: "rv64u", filter: ["ldst"], evidence: "Live F/D memory suites; E5.5-T03u adds checked JIT FP transfers, exact faults and page permissions. Desktop response remains unresolved." },
@@ -121,7 +123,7 @@ export const ROADMAP = [
       { name: "Float-to-word conversions", status: "partial", group: "rv64uf", filter: ["fcvt_w"], evidence: "Live single-precision conversion suite; E5.5-T03y compiles FCVT.W.S/WU.S through the existing software backend with exact clipping, rounding, flags and RV64 word sign extension. Desktop response remains unresolved." },
       { name: "Single-precision division", status: "partial", group: "rv64uf", filter: ["fdiv"], evidence: "Live single-precision division suite; E5.5-T03z compiles FDIV.S through the existing software backend with exact rounding, flags and source boxing. Desktop response remains unresolved." },
       { name: "Single-precision fused multiply-add", status: "partial", group: "rv64uf", filter: ["fmadd"], evidence: "Live single-precision fused suite; E5.5-T03an compiles FMADD.S through a software helper with one rounding, flags and three-source boxing. E5.5-T03ao calls all five pure FP helpers through direct WASM imports. Desktop response remains unresolved." },
-      { name: "Bulk JIT state handoff + bounded browser handles", status: "verified", evidence: "E4-T33: one 568-byte transfer each way; exact fault state; 4,096-cycle externref/eviction stress" },
+      { name: "Bulk JIT state handoff + bounded browser handles", status: "verified", evidence: "E4-T33: one 568-byte transfer each way; exact fault state; 4,096-cycle externref/eviction stress. E5.5-T03be: 10,598-mask oracle and paired browser measurements; six register-commit candidates failed the repeatable speed gate. Production runtime restored unchanged; no additional speedup claimed." },
       { name: "Default whole-machine Web Worker", status: "verified", evidence: "E4-T32: fresh verifier held exact raw-frame Node matrix plus unchanged browser/rr proof" },
       { name: "Bounded multi-target JALR return PIC", status: "verified", evidence: "E4-T37: four-way same-set Node parity, hysteretic replacement, generated EXEC-TLB authority, fuel, invalidation, and telemetry proof" },
       { name: "JIT residency policy ledger", status: "verified", evidence: "E4-T38: identical Node fixture compared repack-off, cap-256, and cap-1024 with pause, churn, residency, fusion, and retirement-share metrics" },
@@ -164,7 +166,7 @@ export const ROADMAP = [
       { name: "Desktop cursor alignment + DPR hit-testing", status: "verified", evidence: "E5-T18c: four fresh local Chromium contexts, two window cycles each, exact guest cursor alignment and boundary hit-tests at DPR 1 and 2" },
       { name: "Desktop snapshot reload + interaction round-trip", status: "in-progress", evidence: "E5.5-T03al bounds snapshot container allocation for the 1 GiB Omarchy guest. E5-T26f still requires Chromium save/reload/restore, keyboard, drag, cursor and gesture-audio proof; desktop responsiveness remains unresolved." },
       { name: "Opt-in desktop monotonic clock", status: "verified", evidence: "E5-T26i: real worker rdtime and restore/pause lifecycle verified; measured wall mode did not improve interaction latency, so icount remains the default" },
-      { name: "Deterministic guest timer-rate selection", status: "verified", evidence: "E5-T26j: explicit divider and real-worker restore verified; 10/1/1/10 comparison was negative, so default ten and F's two-second requirement remain unchanged" },
+      { name: "Deterministic guest timer-rate selection", status: "verified", evidence: "E5-T26j: explicit divider and real-worker restore verified. E5.5-T03bd adds paired host-time measurements and clock/phase/resume oracles. Four clock candidates failed the browser speed gate against the current runtime and were discarded; no additional speedup is claimed. The timer-rate experiment was negative; default ten and F's two-second requirement remain unchanged." },
       { name: "Bounded decoded-block cache selection", status: "verified", evidence: "E5-T26k: strict 4096/16384 selection, coherent restore and Chromium comparison verified; fewer decoded builds did not satisfy F, so default 4096 and the two-second requirement remain unchanged" },
       { name: "Live priority for pending JIT compilation", status: "verified", evidence: "E5-T26l: real cross-pump priority, stale-byte safety, fixed budgets and independent clone/sabotage verified; new browser screen still fails F at 4727.945 ms, so its two-second gate remains unchanged" },
       { name: "Measured desktop drag FPS + bottleneck attribution", status: "in-progress", evidence: "E5-T25b: five real Foot-window drag runs with drawn-present, guest-instruction, transfer, and present buckets" },
@@ -175,9 +177,21 @@ export const ROADMAP = [
   {
     epic: "E6",
     title: "Transcendence",
-    status: "pending",
-    blurb: "Multi-hart SMP: HSM hart lifecycle, round-robin boot, RVWMO memory-model audit.",
+    status: "partial",
+    blurb: "Qualified browser GPU rendering for Omarchy; context-loss recovery and multi-hart SMP remain in progress.",
     caps: [
+      { name: "Original indexed draw hints", status: "verified", evidence: "E6-T11d68: independently verified original Quickshell indexed starts, retained offsets, primitive restart, physical pixels, refusal guards and full pristine clone. Full default Omarchy rendering remains E6-T11d." },
+      { name: "Original GLES queries", status: "verified", evidence: "E6-T11d69a/b: real boolean occlusion and logical transform-feedback counts independently verified through original guest result buffers and actual Mesa GLES. Full default Omarchy remains E6-T11d." },
+      { name: "Native multisample resolve", status: "verified", evidence: "E6-T11d67: independently verified original fenced BLIT, actual two/four-sample GPU storage, sample-weighted byte budgets, literal depth/color resolves and partial-edge pixels; real guest Mesa and pristine-clone acceptance passed." },
+      { name: "Original fragmented GPU backing", status: "verified", evidence: "E6-T11d70: independently verified original native/physical DMA and pristine clone; production admits up to16384 original backing segments with bounded RAM, byte budgets and failure atomicity; historical private256 remains unchanged." },
+      { name: "Keyboard waits across guest idle", status: "verified", evidence: "E6-T11d71: independently verified original keyboard lifecycle, normal retirement, idle waits, stock desktop input and pristine production evidence." },
+      { name: "Host-paced guest idle", status: "verified", evidence: "E6-T11d73: independently verified native/Wasm idle ceilings, busy JIT timing, pause/restore, keyboard and GPU waits, with pristine-clone evidence. Production keyboard integration is tracked separately." },
+      { name: "Interactive desktop time", status: "verified", evidence: "E6-T11d72: independently verified original keyboard ABI, host-paced idle selection, stock typing and pause/resume. Busy execution retains instruction-based time; the final ordinary worker and pristine clone are recorded." },
+      { name: "GPU frame continuity", status: "verified", evidence: "E6-T11d74d1 independently verifies production buffer switches without blanking the visible frame, cancellation of obsolete frames, partial replacement and explicit display disable/context loss." },
+      { name: "Production desktop GPU capacity", status: "verified", evidence: "E6-T11d74d2 independently verifies 512 live/retained resources, 32 contexts and 64 renderer subcontexts through original MMIO, physical rendering and fresh checkpoint reconstruction. E5.5-T05c verifies 512 production storage tokens with unchanged byte ceilings. Native 2D color checkpoint reads are covered by E5.5-T05c1." },
+      { name: "Paired GPU warm checkpoints", status: "verified", evidence: "E6-T11d74a/b/c independently verify native checkpoints and fresh worker reconstruction. E6-T11d74d independently verifies the published Omarchy ready artifact, initial/repeat GPU boots, new guest draws, trusted input and all software fast boots." },
+      { name: "Native desktop applications", status: "in-progress", evidence: "E5.5-T05b verifies the signed RISC-V image. E5.5-T05c independently verifies Chromium, LibreOffice and Node/npm, including Writer save/reopen, desktop input and wallpaper restoration. E5.5-T05c1 verifies the color checkpoint budget; E5.5-T05d tracks paired application-image warm factories, restored launches and all-image persistence. Thirteen upstream application ports remain open." },
+      { name: "Guest GPU offload", status: "partial", evidence: "E6-T11d independently verifies production WebGL2 qualification, typed VirGL capabilities, real Mesa/Hyprland worker rendering and retained scanout, including dimensional depth, transform feedback and native multisample resolve. Context-loss recovery verification remains E6-T11e. The launcher offers qualified GPU warm boots, explicit GPU cold boots and the existing software warm snapshot." },
       { name: "Multi-hart core state + SBI HSM", status: "pending" },
       { name: "SMP kernel boot (round-robin)", status: "pending" },
       { name: "RVWMO / wasm memory-model audit", status: "pending" },
@@ -205,9 +219,9 @@ export const ROADMAP = [
 // ════════════════════════════════════════════════════════════════════════════
 // Linear-style roadmap — the Roadmap tab. Reads ./tasks.json (generated from the
 // /tasks folder by tools/gen-tasks-json.py, the single source of truth). The
-// ROADMAP array above is retained ONLY because main.js/tabs.js still import it
+// ROADMAP array above is retained because main.js imports it
 // for the legacy live-suite capability panel (now hidden); this module owns the
-// visible Roadmap tab and never touches those elements.
+// public marketing roadmap and never touches those elements.
 // ════════════════════════════════════════════════════════════════════════════
 
 const STATUS = {
@@ -275,7 +289,7 @@ function matchesFilter(t) {
   if (f.status && t.status !== f.status) return false;
   if (f.search) {
     const q = f.search.toLowerCase();
-    if (!(`${t.id} ${t.title} ${t.goal}`.toLowerCase().includes(q))) return false;
+    if (!(`${t.id} ${t.title} ${t.goal} ${t.boundary || ""}`.toLowerCase().includes(q))) return false;
   }
   return true;
 }
@@ -706,6 +720,16 @@ function openDetail(id) {
   if (t.goal) {
     body.append(h("h4", "rm-detail-h", "Goal"));
     body.append(h("p", "rm-detail-text", t.goal));
+  }
+
+  if (t.boundary) {
+    body.append(h("h4", "rm-detail-h", "Boundary"));
+    body.append(h("pre", "rm-log rm-boundary", t.boundary));
+  }
+
+  if (t.acceptanceContract) {
+    body.append(h("h4", "rm-detail-h", "Acceptance contract"));
+    body.append(h("pre", "rm-log rm-acceptance-contract", t.acceptanceContract));
   }
 
   if (t.criteria && t.criteria.length) {

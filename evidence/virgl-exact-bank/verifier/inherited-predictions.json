@@ -1,0 +1,24 @@
+{
+  "task": "E6-T12g6m3a",
+  "predictedBeforeExecution": true,
+  "seed": 324508640,
+  "commandsPerStep": 3,
+  "expectedFrames": 8,
+  "expectedRejections": 4,
+  "colors": {
+    "conversion": [
+      0,
+      0,
+      0,
+      255
+    ],
+    "raster": [
+      128,
+      128,
+      128,
+      128
+    ]
+  },
+  "expected": "original complete compiler results stay unwrapped; finite inherited failures apply one CPU SET, no unsafe upload/index/link/staging/DRAW; same complete pixels and all budgets/native objects zero",
+  "sourceSha256": "7f5bd5732f07a64e76dac9df34b1a0205aa602e66393887e354aea424d018d4e"
+}

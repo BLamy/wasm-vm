@@ -1,0 +1,63 @@
+{
+  "schema": "virgl-known-arithmetic-supplement-predictions-v1",
+  "words": [
+    {
+      "op": "ADD",
+      "a": 0,
+      "b": 1069547520,
+      "expected": 1069547520
+    },
+    {
+      "op": "ADD",
+      "a": 1069547520,
+      "b": 0,
+      "expected": 1069547520
+    }
+  ],
+  "cases": [
+    {
+      "name": "supplemental-zero-return-vector",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0..7]\nDCL CONST[0..45]\nIMM[0] UINT32 {0,1069547520,1065353216,0}\nIMM[1] UINT32 {1069547520,0,3212836864,1065353216}\nADD TEMP[0], IMM[0], IMM[1]\nF2I TEMP[1], TEMP[0]\nI2F OUT[0], TEMP[1]\nEND\n",
+      "partner": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nMOV OUT[0], IN[0]\nMOV OUT[1], IN[0]\nEND\n",
+      "ok": true,
+      "pairOk": true,
+      "expectedWords": [
+        1069547520,
+        1069547520,
+        0,
+        1065353216
+      ],
+      "textSha256": "b0909ad597f132fa4662444c8172098183fb694c2859aff2d6a9047e7e5d4db3"
+    },
+    {
+      "name": "supplemental-coordinate-wrapper",
+      "stage": "fragment",
+      "text": "FRAG\nPROPERTY FS_COORD_ORIGIN LOWER_LEFT\nPROPERTY FS_COORD_PIXEL_CENTER HALF_INTEGER\nDCL IN[0], POSITION, LINEAR\nDCL OUT[0], COLOR\nDCL TEMP[0..7]\nIMM[0] UINT32 {1048576000,1048576000,1048576000,1048576000}\nIMM[1] UINT32 {1056964608,1056964608,1056964608,1056964608}\nADD TEMP[0], IMM[0], IMM[1]\nSIN TEMP[1], TEMP[0]\nADD OUT[0], TEMP[1], IN[0]\nEND\n",
+      "partner": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nMOV OUT[0], IN[0]\nMOV OUT[1], IN[0]\nEND\n",
+      "ok": true,
+      "pairOk": true,
+      "expectedWords": null,
+      "textSha256": "c4b060eb6d1914bfb388991e1e3a6895398c42b9e675c525c9e08f557ab5b312"
+    },
+    {
+      "name": "both-operation-wrapper",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0..7]\nDCL CONST[0..45]\nIMM[0] UINT32 {1048576000,1048576000,1048576000,1048576000}\nIMM[1] UINT32 {1056964608,1056964608,1056964608,1056964608}\nADD TEMP[0], IMM[0], IMM[1]\nMUL TEMP[0], TEMP[0], IMM[1]\nSIN OUT[0], TEMP[0]\nEND\n",
+      "partner": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nMOV OUT[0], IN[0]\nMOV OUT[1], IN[0]\nEND\n",
+      "ok": true,
+      "pairOk": true,
+      "expectedWords": null,
+      "textSha256": "c907ea31b877988d8ba9bab61ba2aedc2535b3cb7564401656f7a2908fc8deb8"
+    },
+    {
+      "name": "ADD/SIN OUT[0], TEMP[0]",
+      "stage": "fragment",
+      "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL CONST[0..45]\nDCL TEMP[0..6]\nIMM[0] UINT32 {1048576000,1048576000,1048576000,1048576000}\nIMM[1] UINT32 {1056964608,1056964608,1056964608,1056964608}\nIMM[2] UINT32 {1073741824,1073741824,1073741824,1073741824}\nADD TEMP[0], IMM[0], IMM[1]\nSIN OUT[0], TEMP[0]\nEND\n",
+      "partner": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nMOV OUT[0], IN[0]\nMOV OUT[1], IN[0]\nEND\n",
+      "ok": true,
+      "pairOk": true,
+      "textSha256": "b3361efa79942a3eb1f51697c3cd1847d51d9e46d2a87fcff7d1dc6450861fc3"
+    }
+  ]
+}

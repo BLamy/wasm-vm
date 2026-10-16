@@ -1,0 +1,119 @@
++ git rev-parse HEAD
+0e165928553aed9d261cff0d4ba27b513876569b
++ python3 -m py_compile tools/virgl-raw-equality/cold.py tools/virgl-raw-equality/faults.py tools/virgl-raw-equality/generate_cases.py tools/virgl-raw-equality/native.py tools/virgl-raw-equality/native_receipt.py tools/virgl-raw-equality/receipt.py tools/virgl-raw-equality/shared.py tools/virgl-raw-equality/wasm_receipt.py
++ for file in renderer/virgl-command/constant-domain.mjs renderer/virgl-shader/tests/raw-equality.mjs renderer/virgl-shader/tests/raw-equality-oracle.mjs 'tools/virgl-raw-equality/*.mjs'
++ node --check renderer/virgl-command/constant-domain.mjs
++ for file in renderer/virgl-command/constant-domain.mjs renderer/virgl-shader/tests/raw-equality.mjs renderer/virgl-shader/tests/raw-equality-oracle.mjs 'tools/virgl-raw-equality/*.mjs'
++ node --check renderer/virgl-shader/tests/raw-equality.mjs
++ for file in renderer/virgl-command/constant-domain.mjs renderer/virgl-shader/tests/raw-equality.mjs renderer/virgl-shader/tests/raw-equality-oracle.mjs 'tools/virgl-raw-equality/*.mjs'
++ node --check renderer/virgl-shader/tests/raw-equality-oracle.mjs
++ for file in renderer/virgl-command/constant-domain.mjs renderer/virgl-shader/tests/raw-equality.mjs renderer/virgl-shader/tests/raw-equality-oracle.mjs 'tools/virgl-raw-equality/*.mjs'
++ node --check tools/virgl-raw-equality/browser.mjs
++ for file in renderer/virgl-command/constant-domain.mjs renderer/virgl-shader/tests/raw-equality.mjs renderer/virgl-shader/tests/raw-equality-oracle.mjs 'tools/virgl-raw-equality/*.mjs'
++ node --check tools/virgl-raw-equality/consumer.mjs
++ for file in renderer/virgl-command/constant-domain.mjs renderer/virgl-shader/tests/raw-equality.mjs renderer/virgl-shader/tests/raw-equality-oracle.mjs 'tools/virgl-raw-equality/*.mjs'
++ node --check tools/virgl-raw-equality/fault-wasm.mjs
++ for file in renderer/virgl-command/constant-domain.mjs renderer/virgl-shader/tests/raw-equality.mjs renderer/virgl-shader/tests/raw-equality-oracle.mjs 'tools/virgl-raw-equality/*.mjs'
++ node --check tools/virgl-raw-equality/float-masks-successor.mjs
++ for file in renderer/virgl-command/constant-domain.mjs renderer/virgl-shader/tests/raw-equality.mjs renderer/virgl-shader/tests/raw-equality-oracle.mjs 'tools/virgl-raw-equality/*.mjs'
++ node --check tools/virgl-raw-equality/integer-masks-successor.mjs
++ for file in renderer/virgl-command/constant-domain.mjs renderer/virgl-shader/tests/raw-equality.mjs renderer/virgl-shader/tests/raw-equality-oracle.mjs 'tools/virgl-raw-equality/*.mjs'
++ node --check tools/virgl-raw-equality/oracle.mjs
++ for file in renderer/virgl-command/constant-domain.mjs renderer/virgl-shader/tests/raw-equality.mjs renderer/virgl-shader/tests/raw-equality-oracle.mjs 'tools/virgl-raw-equality/*.mjs'
++ node --check tools/virgl-raw-equality/wasm.mjs
++ bash renderer/virgl-shader/build.sh guard-check
+Pinned virglrenderer 1.3.0: 70 source/generated SHA-256 hashes match
++ bash renderer/virgl-shader/build.sh raw-equality-sanitize
+Pinned virglrenderer 1.3.0: 70 source/generated SHA-256 hashes match
+vendor/src/vrend/vrend_shader.c:4717:13: warning: 'sprintf' is deprecated: This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead. [-Wdeprecated-declarations]
+ 4717 |             sprintf(arrayname, "[addr%d]", src->DimIndirect.Index);
+      |             ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/_stdio.h:278:1: note: 'sprintf' has been explicitly marked deprecated here
+  278 | __deprecated_msg("This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead.")
+      | ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h:227:48: note: expanded from macro '__deprecated_msg'
+  227 |         #define __deprecated_msg(_msg) __attribute__((__deprecated__(_msg)))
+      |                                                       ^
+vendor/src/vrend/vrend_shader.c:4719:13: warning: 'sprintf' is deprecated: This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead. [-Wdeprecated-declarations]
+ 4719 |             sprintf(arrayname, "[%d]", src->Dimension.Index);
+      |             ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/_stdio.h:278:1: note: 'sprintf' has been explicitly marked deprecated here
+  278 | __deprecated_msg("This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead.")
+      | ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h:227:48: note: expanded from macro '__deprecated_msg'
+  227 |         #define __deprecated_msg(_msg) __attribute__((__deprecated__(_msg)))
+      |                                                       ^
+vendor/src/vrend/vrend_shader.c:7349:16: warning: 'sprintf' is deprecated: This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead. [-Wdeprecated-declarations]
+ 7349 |                sprintf(prefix, "layout(location = %d)", ctx->outputs[i].sid);
+      |                ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/_stdio.h:278:1: note: 'sprintf' has been explicitly marked deprecated here
+  278 | __deprecated_msg("This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead.")
+      | ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h:227:48: note: expanded from macro '__deprecated_msg'
+  227 |         #define __deprecated_msg(_msg) __attribute__((__deprecated__(_msg)))
+      |                                                       ^
+3 warnings generated.
++ python3 tools/virgl-raw-equality/native.py --binary renderer/virgl-shader/build/raw-equality-sanitize/raw-equality-test --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/raw-equality-worker-final/native
+{"status": "passed", "originals": 19, "acceptedOriginals": 12, "cases": 4152, "pairs": 298, "calls": 602100, "standaloneRecoveries": 306348, "pairRecoveries": 284466, "truncations": 2353, "hostileCases": 324, "mutations": 4096, "allocationFaults": 16, "maxSingleResultBytes": 63369, "maxPairResultBytes": 109235, "report": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/raw-equality-worker-final/native/native-report.json"}
++ bash renderer/virgl-shader/build.sh wasm
+Pinned virglrenderer 1.3.0: 70 source/generated SHA-256 hashes match
++ node tools/virgl-raw-equality/wasm.mjs --native /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/raw-equality-worker-final/native/native-report.json --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/raw-equality-worker-final/wasm
+{"status":"passed","counts":{"calls":14241,"originals":19,"singles":4152,"pairs":298,"recoverySingles":5012,"recoveryPairs":4654,"stress":64,"pressure":33},"report":"/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/raw-equality-worker-final/wasm/report.json"}
++ NODE_V8_COVERAGE=/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/raw-equality-worker-final/consumer/v8
++ node tools/virgl-raw-equality/consumer.mjs --native /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/raw-equality-worker-final/native/native-report.json --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/raw-equality-worker-final/consumer
+constant obligation checks 2535 getters 0
++ node tools/virgl-raw-equality/integer-masks-successor.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/raw-equality-worker-final/integer
+E6-T12f1 retained integer GPU leaf: 377 authored cases;12/19 unchanged originals;704 exact words;direct finite UCMP;18 mixed backend pixel draws;fixed16MiB stress passed.
++ node tools/virgl-raw-equality/float-masks-successor.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/raw-equality-worker-final/float
+E6-T12f1 retained ordered GPU leaf: 396 authored cases;12/19 unchanged originals;768 exact words;finite ordered selections;38 mixed backend pixel draws;fixed16MiB stress passed.
++ node tools/virgl-raw-equality/browser.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/raw-equality-worker-final/gpu
+640 exact equality words; 8 unchanged migrated shader bodies rendered.
++ node tools/virgl-raw-equality/oracle.mjs
++ python3 tools/virgl-raw-equality/faults.py --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/raw-equality-worker-final/fault-artifacts
+built five real source faults and native/Wasm parity
++ for mode in nan-guard zero-sign ne-complement mask-one
++ node tools/virgl-raw-equality/browser.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/raw-equality-worker-final/fault-nan-guard --fault nan-guard --fault-artifacts /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/raw-equality-worker-final/fault-artifacts
+page.evaluate: Error: eq/raw-3 independent vertex byte0: [0,0,0,1065353216,1065320448,1056964608,1065320448,1065320448] / [0,0,0,1065353216,1065320448,1056964608,1056964608,1056964608]
+    at require (http://127.0.0.1:57441/renderer/virgl-shader/tests/raw-equality.mjs:5:43)
+    at equal (http://127.0.0.1:57441/renderer/virgl-shader/tests/raw-equality.mjs:6:28)
+    at vertexProbe (http://127.0.0.1:57441/renderer/virgl-shader/tests/raw-equality.mjs:91:9)
+    at async runAcceptance (http://127.0.0.1:57441/renderer/virgl-shader/tests/raw-equality.mjs:160:30)
+    at async eval (eval at evaluate (:234:30), <anonymous>:3:14)
+    at async <anonymous>:260:30
+    at runVirglBrowser (/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/lib/virgl-browser-runner.mjs:145:57)
+    at /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/async file:/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/virgl-raw-equality/browser.mjs:11:1
++ for mode in nan-guard zero-sign ne-complement mask-one
++ node tools/virgl-raw-equality/browser.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/raw-equality-worker-final/fault-zero-sign --fault zero-sign --fault-artifacts /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/raw-equality-worker-final/fault-artifacts
+page.evaluate: Error: eq/raw-0 independent vertex byte0: [0,0,0,1065353216,1056964608,1056964608,1056964608,1056964608] / [0,0,0,1065353216,1065320448,1065320448,1056964608,1056964608]
+    at require (http://127.0.0.1:57463/renderer/virgl-shader/tests/raw-equality.mjs:5:43)
+    at equal (http://127.0.0.1:57463/renderer/virgl-shader/tests/raw-equality.mjs:6:28)
+    at vertexProbe (http://127.0.0.1:57463/renderer/virgl-shader/tests/raw-equality.mjs:91:9)
+    at async runAcceptance (http://127.0.0.1:57463/renderer/virgl-shader/tests/raw-equality.mjs:160:30)
+    at async eval (eval at evaluate (:234:30), <anonymous>:3:14)
+    at async <anonymous>:260:30
+    at runVirglBrowser (/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/lib/virgl-browser-runner.mjs:145:57)
+    at /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/async file:/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/virgl-raw-equality/browser.mjs:11:1
++ for mode in nan-guard zero-sign ne-complement mask-one
++ node tools/virgl-raw-equality/browser.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/raw-equality-worker-final/fault-ne-complement --fault ne-complement --fault-artifacts /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/raw-equality-worker-final/fault-artifacts
+page.evaluate: Error: ne/raw-0 independent vertex byte0: [0,0,0,1065353216,1065320448,1065320448,1056964608,1056964608] / [0,0,0,1065353216,1056964608,1056964608,1065320448,1065320448]
+    at require (http://127.0.0.1:57485/renderer/virgl-shader/tests/raw-equality.mjs:5:43)
+    at equal (http://127.0.0.1:57485/renderer/virgl-shader/tests/raw-equality.mjs:6:28)
+    at vertexProbe (http://127.0.0.1:57485/renderer/virgl-shader/tests/raw-equality.mjs:91:9)
+    at async runAcceptance (http://127.0.0.1:57485/renderer/virgl-shader/tests/raw-equality.mjs:160:30)
+    at async eval (eval at evaluate (:234:30), <anonymous>:3:14)
+    at async <anonymous>:260:30
+    at runVirglBrowser (/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/lib/virgl-browser-runner.mjs:145:57)
+    at /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/async file:/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/virgl-raw-equality/browser.mjs:11:1
++ for mode in nan-guard zero-sign ne-complement mask-one
++ node tools/virgl-raw-equality/browser.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/raw-equality-worker-final/fault-mask-one --fault mask-one --fault-artifacts /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/raw-equality-worker-final/fault-artifacts
+page.evaluate: Error: eq/raw-0 independent vertex byte0: [0,0,0,1065353216,1056997376,1056997376,1056964608,1056964608] / [0,0,0,1065353216,1065320448,1065320448,1056964608,1056964608]
+    at require (http://127.0.0.1:57514/renderer/virgl-shader/tests/raw-equality.mjs:5:43)
+    at equal (http://127.0.0.1:57514/renderer/virgl-shader/tests/raw-equality.mjs:6:28)
+    at vertexProbe (http://127.0.0.1:57514/renderer/virgl-shader/tests/raw-equality.mjs:91:9)
+    at async runAcceptance (http://127.0.0.1:57514/renderer/virgl-shader/tests/raw-equality.mjs:160:30)
+    at async eval (eval at evaluate (:234:30), <anonymous>:3:14)
+    at async <anonymous>:260:30
+    at runVirglBrowser (/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/lib/virgl-browser-runner.mjs:145:57)
+    at /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/async file:/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/virgl-raw-equality/browser.mjs:11:1
++ python3 tools/virgl-raw-equality/receipt.py /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/raw-equality-worker-final
+E6-T12f1 recorded native/Wasm/GPU equality proof passed.

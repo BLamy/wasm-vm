@@ -1,0 +1,79 @@
+{
+  "status": "passed",
+  "originalFieldsOnly": true,
+  "oracleImportsProductCode": false,
+  "runs": [
+    {
+      "run": "stencil-critic-switch-20-to-18",
+      "bodySha256": "921428b4416858dea81e57d5bba01ff6cde3692d25de52c0e3f74acec7c4714b",
+      "originalFormat": 20,
+      "depthOnlyFormat": 18,
+      "oldStencil": 9,
+      "newStencil": null,
+      "sameFramebuffer": 4,
+      "nativeDrawSequence": 507,
+      "lifetime": {
+        "syncs": 11,
+        "polls": 52,
+        "cpuReads": 10,
+        "fencedCPUReads": 10,
+        "synchronousCPUReads": 0
+      }
+    },
+    {
+      "run": "stencil-critic-switch-20-to-21",
+      "bodySha256": "a2bd441059ae14b36a53881b001516165ba48292bcbe5354538bfe7405a0ba6f",
+      "originalFormat": 20,
+      "depthOnlyFormat": 21,
+      "oldStencil": 9,
+      "newStencil": null,
+      "sameFramebuffer": 4,
+      "nativeDrawSequence": 507,
+      "lifetime": {
+        "syncs": 11,
+        "polls": 52,
+        "cpuReads": 10,
+        "fencedCPUReads": 10,
+        "synchronousCPUReads": 0
+      }
+    },
+    {
+      "run": "stencil-critic-switch-126-to-18",
+      "bodySha256": "2b4505ab618f006bc15c9d17b539039d8b5f8a335882fb5c406c3f4e33ed933c",
+      "originalFormat": 126,
+      "depthOnlyFormat": 18,
+      "oldStencil": 9,
+      "newStencil": null,
+      "sameFramebuffer": 4,
+      "nativeDrawSequence": 510,
+      "lifetime": {
+        "syncs": 11,
+        "polls": 52,
+        "cpuReads": 10,
+        "fencedCPUReads": 10,
+        "synchronousCPUReads": 0
+      }
+    },
+    {
+      "run": "stencil-critic-switch-126-to-21",
+      "bodySha256": "2ab80a7440e222f2f98d9252e039e34af64c6ad80e64e7bdd2ea9e7e6e2862a6",
+      "originalFormat": 126,
+      "depthOnlyFormat": 21,
+      "oldStencil": 9,
+      "newStencil": null,
+      "sameFramebuffer": 4,
+      "nativeDrawSequence": 510,
+      "lifetime": {
+        "syncs": 11,
+        "polls": 52,
+        "cpuReads": 10,
+        "fencedCPUReads": 10,
+        "synchronousCPUReads": 0
+      }
+    }
+  ],
+  "nativeDepthPixels": 11140,
+  "publicBytes": 819888,
+  "consumedSyncs": 44,
+  "blitWriters": 0
+}

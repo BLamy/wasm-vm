@@ -1,0 +1,130 @@
+Resolving SDK version '4.0.22' to 'sdk-releases-bebaf7e50e31865b0724f17eaa52e161e2dfef5a-64bit'
+Installing SDK 'sdk-releases-bebaf7e50e31865b0724f17eaa52e161e2dfef5a-64bit'..
+Skipped installing node-22.16.0-64bit, already installed.
+Skipped installing python-3.13.3-64bit, already installed.
+Skipped installing releases-bebaf7e50e31865b0724f17eaa52e161e2dfef5a-64bit, already installed.
+All SDK components already installed: 'sdk-releases-bebaf7e50e31865b0724f17eaa52e161e2dfef5a-64bit'.
+Resolving SDK version '4.0.22' to 'sdk-releases-bebaf7e50e31865b0724f17eaa52e161e2dfef5a-64bit'
+Setting the following tools as active:
+   node-22.16.0-64bit
+   python-3.13.3-64bit
+   releases-bebaf7e50e31865b0724f17eaa52e161e2dfef5a-64bit
+
+Next steps:
+- To conveniently access emsdk tools from the command line,
+  consider adding the following directories to your PATH:
+    /Users/blamy/.cache/wasm-vm/emsdk/4.0.22
+    /Users/blamy/.cache/wasm-vm/emsdk/4.0.22/upstream/emscripten
+- This can be done for the current shell by running:
+    source "/Users/blamy/.cache/wasm-vm/emsdk/4.0.22/emsdk_env.sh"
+- Configure emsdk in your shell startup scripts by running:
+    echo 'source "/Users/blamy/.cache/wasm-vm/emsdk/4.0.22/emsdk_env.sh"' >> $HOME/.zprofile
+emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 4.0.22 (0f3d2e62bccf8e14497ff19e05a1202c51eb0c65)
+Copyright (C) 2025 the Emscripten authors (see AUTHORS.txt)
+This is free and open source software under the MIT license.
+There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
++ git rev-parse HEAD
+3992d9466554f44b209938937c24551c6bb6bdee
++ python3 -m py_compile tools/virgl-raster-bank/cold.py tools/virgl-raster-bank/faults.py tools/virgl-raster-bank/generate_cases.py tools/virgl-raster-bank/native.py tools/virgl-raster-bank/native_receipt.py tools/virgl-raster-bank/receipt.py tools/virgl-raster-bank/shared.py tools/virgl-raster-bank/wasm_receipt.py
++ for file in renderer/virgl-command/tests/raster-bank.mjs 'tools/virgl-raster-bank/*.mjs' tools/lib/virgl-browser-runner.mjs
++ node --check renderer/virgl-command/tests/raster-bank.mjs
++ for file in renderer/virgl-command/tests/raster-bank.mjs 'tools/virgl-raster-bank/*.mjs' tools/lib/virgl-browser-runner.mjs
++ node --check tools/virgl-raster-bank/browser.mjs
++ for file in renderer/virgl-command/tests/raster-bank.mjs 'tools/virgl-raster-bank/*.mjs' tools/lib/virgl-browser-runner.mjs
++ node --check tools/virgl-raster-bank/consumer.mjs
++ for file in renderer/virgl-command/tests/raster-bank.mjs 'tools/virgl-raster-bank/*.mjs' tools/lib/virgl-browser-runner.mjs
++ node --check tools/virgl-raster-bank/oracle.mjs
++ for file in renderer/virgl-command/tests/raster-bank.mjs 'tools/virgl-raster-bank/*.mjs' tools/lib/virgl-browser-runner.mjs
++ node --check tools/virgl-raster-bank/reference.mjs
++ for file in renderer/virgl-command/tests/raster-bank.mjs 'tools/virgl-raster-bank/*.mjs' tools/lib/virgl-browser-runner.mjs
++ node --check tools/virgl-raster-bank/wasm.mjs
++ for file in renderer/virgl-command/tests/raster-bank.mjs 'tools/virgl-raster-bank/*.mjs' tools/lib/virgl-browser-runner.mjs
++ node --check tools/lib/virgl-browser-runner.mjs
++ bash renderer/virgl-shader/build.sh guard-check
+Pinned virglrenderer 1.3.0: 70 source/generated SHA-256 hashes match
++ bash renderer/virgl-shader/build.sh raster-bank-sanitize
+Pinned virglrenderer 1.3.0: 70 source/generated SHA-256 hashes match
+In file included from checked_upstream.c:102:
+./vendor/src/vrend/vrend_shader.c:4717:13: warning: 'sprintf' is deprecated: This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead. [-Wdeprecated-declarations]
+ 4717 |             sprintf(arrayname, "[addr%d]", src->DimIndirect.Index);
+      |             ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/_stdio.h:278:1: note: 'sprintf' has been explicitly marked deprecated here
+  278 | __deprecated_msg("This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead.")
+      | ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h:227:48: note: expanded from macro '__deprecated_msg'
+  227 |         #define __deprecated_msg(_msg) __attribute__((__deprecated__(_msg)))
+      |                                                       ^
+In file included from checked_upstream.c:102:
+./vendor/src/vrend/vrend_shader.c:4719:13: warning: 'sprintf' is deprecated: This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead. [-Wdeprecated-declarations]
+ 4719 |             sprintf(arrayname, "[%d]", src->Dimension.Index);
+      |             ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/_stdio.h:278:1: note: 'sprintf' has been explicitly marked deprecated here
+  278 | __deprecated_msg("This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead.")
+      | ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h:227:48: note: expanded from macro '__deprecated_msg'
+  227 |         #define __deprecated_msg(_msg) __attribute__((__deprecated__(_msg)))
+      |                                                       ^
+In file included from checked_upstream.c:102:
+./vendor/src/vrend/vrend_shader.c:7349:16: warning: 'sprintf' is deprecated: This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead. [-Wdeprecated-declarations]
+ 7349 |                sprintf(prefix, "layout(location = %d)", ctx->outputs[i].sid);
+      |                ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/_stdio.h:278:1: note: 'sprintf' has been explicitly marked deprecated here
+  278 | __deprecated_msg("This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead.")
+      | ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h:227:48: note: expanded from macro '__deprecated_msg'
+  227 |         #define __deprecated_msg(_msg) __attribute__((__deprecated__(_msg)))
+      |                                                       ^
+3 warnings generated.
++ python3 tools/virgl-raster-bank/native.py --binary renderer/virgl-shader/build/raster-bank-sanitize/raster-bank-test --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-raster-bank-worker-3992d946/native
+{"status": "passed", "originals": 19, "acceptedOriginals": 18, "cases": 4816, "pairs": 851, "calls": 1501326, "standaloneRecoveries": 756480, "pairRecoveries": 731264, "truncations": 3128, "hostileCases": 324, "mutations": 4096, "allocationFaults": 244, "upstreamAllocationFaults": 20, "maxSingleResultBytes": 63369, "maxPairResultBytes": 109235, "report": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-raster-bank-worker-3992d946/native/native-report.json"}
++ bash renderer/virgl-shader/build.sh wasm
+Pinned virglrenderer 1.3.0: 70 source/generated SHA-256 hashes match
++ node tools/virgl-raster-bank/wasm.mjs --native /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-raster-bank-worker-3992d946/native/native-report.json --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-raster-bank-worker-3992d946/wasm
+{"status":"passed","counts":{"calls":45696,"originals":19,"singles":4816,"pairs":851,"recoverySingles":20280,"recoveryPairs":19604,"stress":64,"pressure":51},"report":"/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-raster-bank-worker-3992d946/wasm/report.json"}
++ node tools/virgl-raster-bank/reference.mjs
++ node tools/virgl-raster-bank/consumer.mjs
++ node tools/virgl-raster-bank/browser.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-raster-bank-worker-3992d946/gpu
+400 exact copied words; 786432 checked pixels.
++ for seed in 2872938129 967105429
++ node tools/virgl-raster-bank/reference.mjs 2872938129
++ node tools/virgl-raster-bank/browser.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-raster-bank-worker-3992d946/gpu-2872938129 --seed 2872938129
+400 exact copied words; 786432 checked pixels.
++ for seed in 2872938129 967105429
++ node tools/virgl-raster-bank/reference.mjs 967105429
++ node tools/virgl-raster-bank/browser.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-raster-bank-worker-3992d946/gpu-967105429 --seed 967105429
+400 exact copied words; 786432 checked pixels.
++ python3 tools/virgl-raster-bank/faults.py --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-raster-bank-worker-3992d946/faults
+Three actual raster boundary faults independently refuted
++ node tools/virgl-ordered-masks/browser.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-raster-bank-worker-3992d946/retained-mask
+2168 exact GPU words; 2220032 checked pixels.
++ node tools/virgl-precise-word/browser.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-raster-bank-worker-3992d946/retained-precise
+3320 exact GPU words; 3399680 checked pixels.
++ node tools/virgl-raw-equality/browser.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-raster-bank-worker-3992d946/retained-equality
+640 exact equality words; 8 unchanged migrated shader bodies rendered.
++ node tools/virgl-selected-lanes/browser.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-raster-bank-worker-3992d946/retained-selected
+1216 exact words; 1245184 pixels; 196608 observed demand pixels.
++ node tools/virgl-radial-domain/browser.mjs --output /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-raster-bank-worker-3992d946/retained-radial
+138 admitted hardware draws; 565248 checked pixels.
++ node renderer/virgl-command/tests/ordered-mask-regressions.mjs
++ node renderer/virgl-command/tests/precise-word-regressions.mjs
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: bank-selection-does-not-grant-output/vertex
+
+true !== false
+
+    at requireResult (file:///Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-command/tests/precise-word-regressions.mjs:19:12)
+    at runPreciseWordRegressions (file:///Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-command/tests/precise-word-regressions.mjs:52:5)
+    at file:///Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-command/tests/precise-word-regressions.mjs:123:30 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: true,
+  expected: false,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.20.0

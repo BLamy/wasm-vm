@@ -1,0 +1,11 @@
+{
+  "status": "passed",
+  "checks": 704,
+  "failures": [],
+  "totalFailures": 0,
+  "fixtureSha256": "c897381690fa5403790183d373bad2f9b7a15eb21c4bd4846e053b829447f336",
+  "gpuResultSha256": "0000a969f56ef08b0aa3f67b0a3cc32dc6f3bc363a21c9f988b98c0debe1b47b",
+  "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+  "draws": 176,
+  "oracle": "independent fractions; inverse-root rational floor isqrt at 160 bits; RCP2.5ULP/RSQ2ULP; exact dyadic DP3 and preserved lanes; within-invocation replication"
+}

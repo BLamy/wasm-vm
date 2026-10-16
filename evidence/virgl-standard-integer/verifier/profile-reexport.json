@@ -1,0 +1,40 @@
+[
+  {
+    "prefix": "hot",
+    "mode": "matrix",
+    "actualRawProfileReexport": true,
+    "independentReplaySameCoverage": true,
+    "workerRawSha256": "2e3c22bebe4b1d0451b6987c1f15905466bcf54433d5a8154dab44a322bc388e"
+  },
+  {
+    "prefix": "hot",
+    "mode": "allocations",
+    "actualRawProfileReexport": true,
+    "independentReplaySameCoverage": true,
+    "workerRawSha256": "ca3878658ffa9865fd4741959065d4fe50a1547fa2c03408ceec58d2e6cc1644"
+  },
+  {
+    "prefix": "hot",
+    "nodeV8RawScripts": 101,
+    "normalizedRawCustody": 2
+  },
+  {
+    "prefix": "cold",
+    "mode": "matrix",
+    "actualRawProfileReexport": true,
+    "independentReplaySameCoverage": true,
+    "workerRawSha256": "16ba209060f47a391b070ab762bb726e6ff8132d9a2f8583a5199429f02b5521"
+  },
+  {
+    "prefix": "cold",
+    "mode": "allocations",
+    "actualRawProfileReexport": true,
+    "independentReplaySameCoverage": true,
+    "workerRawSha256": "85b71e5e35657d03a15d8be074a045941bde1d0432f8e4719b747a555ca35d07"
+  },
+  {
+    "prefix": "cold",
+    "nodeV8RawScripts": 101,
+    "normalizedRawCustody": 2
+  }
+]

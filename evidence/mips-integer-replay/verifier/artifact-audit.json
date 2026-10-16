@@ -1,0 +1,124 @@
+[
+  {
+    "artifact": "guest/integer-boundaries.states",
+    "sha256": "b7b550585168ebd78293f05a84cc1673d4c5fcf52f4dfbdac808ef49718f0286"
+  },
+  {
+    "artifact": "guest/integer-boundaries.trace",
+    "sha256": "351c42e4d7a7f8bd3c31a28e2ae07821d1034396ab4551aa22459bc314f07ae5"
+  },
+  {
+    "artifact": "guest/integer-compressed-trap.states",
+    "sha256": "8d1380e24f5fb405a054cfd3ea56751bee6bb2fc0aff964cda493400e515023c"
+  },
+  {
+    "artifact": "guest/integer-compressed-trap.trace",
+    "sha256": "1e5914c58ff2cc0509298fe6600b11f0da5a9a368fcd97e7a097a1bc5094a455"
+  },
+  {
+    "artifact": "guest/integer-invalidation.states",
+    "sha256": "afdfc3e1eeb9806aa1853bc83f3562ba08f97bfc36d7f76b426d92d7669f2fc6"
+  },
+  {
+    "artifact": "guest/integer-invalidation.trace",
+    "sha256": "4b7e6c14394e1cc95a3f762185304469b3b8ca874c60fd7ad842b1f8b78690cb"
+  },
+  {
+    "artifact": "guest/integer-opcodes.states",
+    "sha256": "9013fafb34ab4e982dd2b29284892aee450b6c67304a80b43a97e496fc8ff62b"
+  },
+  {
+    "artifact": "guest/integer-opcodes.trace",
+    "sha256": "92edf427357e284f1d747473ace567557fffc68544f84881cdd3382397cb4dce"
+  },
+  {
+    "artifact": "guest/integer-wrapping-auipc.states",
+    "sha256": "85eba745abb3a917d3b9db624f176308790da2d880217342e2123c4ee3918d00"
+  },
+  {
+    "artifact": "guest/integer-wrapping-auipc.trace",
+    "sha256": "8d75f8ea5fcde9a5e2ec4d0d01904ad6559681a7048a2e626e1f12c7ecbdf8f0"
+  },
+  {
+    "artifact": "guest/integer-wrapping-c.states",
+    "sha256": "4e85467db94e0a440e10fa909d99b2768d43548862784e53f66f19f5533065f9"
+  },
+  {
+    "artifact": "guest/integer-wrapping-c.trace",
+    "sha256": "83890c42a906a8e393051bddb27a6aaddfc72f377cefdd116a03b255c4841eee"
+  },
+  {
+    "fixture": "integer-invalidation",
+    "recomputed_trace_fnv": "0xcccac346058ffa25",
+    "retired": 4
+  },
+  {
+    "fixture": "integer-wrapping-auipc",
+    "recomputed_trace_fnv": "0x58cfb93a95631c7d",
+    "retired": 2
+  },
+  {
+    "fixture": "integer-compressed-trap",
+    "recomputed_trace_fnv": "0xb501cc97e4a905b5",
+    "retired": 4
+  },
+  {
+    "fixture": "integer-wrapping-c",
+    "recomputed_trace_fnv": "0xd075022a987ecaac",
+    "retired": 2
+  },
+  {
+    "fixture": "integer-boundaries",
+    "recomputed_trace_fnv": "0x18ec5c9b6882fa8d",
+    "retired": 175
+  },
+  {
+    "fixture": "integer-opcodes",
+    "recomputed_trace_fnv": "0x8fda1ff71b29377d",
+    "retired": 301
+  },
+  {
+    "oracle": "busybox-legacy",
+    "equal": true,
+    "sha256": "f0a27e4a09df871fb64305b5199ab5557ebaca168f9071aca04a62d9d79ee4a7"
+  },
+  {
+    "oracle": "busybox-cache",
+    "equal": true,
+    "sha256": "f0a27e4a09df871fb64305b5199ab5557ebaca168f9071aca04a62d9d79ee4a7"
+  },
+  {
+    "oracle": "busybox-fast",
+    "equal": true,
+    "sha256": "7c71f1051ea640077f8cb3a83aa4298a3e0589c888090950462dcd5d6e36aac0"
+  },
+  {
+    "oracle": "busybox-jit",
+    "equal": true,
+    "sha256": "a119747b8a76c5fae2c47f8aa13aa139a4756ba36251776b258ec1ef25c669e7"
+  },
+  {
+    "oracle": "alpine-fast",
+    "equal": true,
+    "sha256": "a4086776d90e8f43c1f4e1c23e73cf675a4f97f62e93a3130f6897cea9cfe55d"
+  },
+  {
+    "oracle": "alpine-jit",
+    "equal": true,
+    "sha256": "5f53dd20ea4646cb1833ea63174c203929ea713e8cb9c38a16af2fc1807389e0"
+  },
+  {
+    "source": "crates/core/src/hart/mod.rs",
+    "diagnostics_match_frozen_source": true,
+    "sha256": "ad30a3bd92fd2f0070eb5e286b9e3645f75e932f5d8f9350fa4e1a40178b3bae"
+  },
+  {
+    "source": "crates/core/src/lib.rs",
+    "diagnostics_match_frozen_source": true,
+    "sha256": "c401d8fff4e027c9815cbf2e47376a860bca31d199347ce47ee91b7daf47fab6"
+  },
+  {
+    "pristine_clone_guest_artifacts_match": true,
+    "head": "9123bc06cec84f4c581aa877b1126babff245a99"
+  }
+]

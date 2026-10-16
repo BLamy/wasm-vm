@@ -1,0 +1,11 @@
+=======================================================
+    glmark2 2023.01
+=======================================================
+    OpenGL Information
+    GL_VENDOR:      Mesa
+    GL_RENDERER:    virgl (LLVMPIPE (LLVM 15.0.6, 128 bits))
+    GL_VERSION:     OpenGL ES 3.2 Mesa 26.2.2-arch1.1
+    Surface Config: buf=32 r=8 g=8 b=8 a=8 depth=32 stencil=0 samples=0
+    Surface Size:   800x600 windowed
+=======================================================
+[texture] texture-filter=nearest: Validation: Success

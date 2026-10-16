@@ -1,0 +1,13 @@
+{
+  "status": "HELD",
+  "frames": 3,
+  "pixels": 960,
+  "reportSha256": "bfd6a31f50f0e494b0b31540a70cdd4688d82e54ae9b0a5c62fc5a7e389ff60b",
+  "labels": [
+    "mixed-wide-0",
+    "context-B-0",
+    "context-A-restored-0"
+  ],
+  "sameOriginalPixelNativeAndLiteralPredictions": true,
+  "reason": "New harness router default branch reproduces the three original mixed-wide A/B/A frames exactly. This is a touched-harness routing check, not a second runtime gauntlet."
+}

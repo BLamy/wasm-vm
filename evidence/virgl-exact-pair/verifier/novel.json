@@ -1,0 +1,51 @@
+{
+  "task": "E6-T12g6m3c",
+  "status": "passed",
+  "attack": "distinct vertex/fragment slot-zero exact banks swapped across full original coordinate/discard pair and restored",
+  "frozenHead": "1bbbe70a7bb4c9a9cdc0c3113cbb6b6a1deba733",
+  "nativeBinarySha256": "46ec6a369d1066d0e90a8879345e270522021da2e1c6ff5bade425b6485a66a7",
+  "wasmSha256": "a6c08274cd3b0e921727c7ff55e2712f0837c58f1c9416c3a79f0ed92823243e",
+  "fixtureName": "both-qualified-coordinate-discard",
+  "fixtureTexts": [
+    "5ed1a5ed2b98724a6dbff6fb4203b99a9a7140449911ca3b37c1b7cf12a1478c",
+    "f646cc214d7f4c75afd245d34c21a775c864b8528765b5f6c3d955cf8b1d07e8"
+  ],
+  "nativeInputSha256": "9ab0ee5638fb7ddd12dadc544b44689d2a0a1935896631a5209857cc9d6ceb75",
+  "nativeStdoutSha256": "5455841d573c7a8862e73b1cb8c72834613d0c60372cf7ecb71867260978cb51",
+  "cases": [
+    {
+      "name": "original",
+      "ok": true,
+      "error": null
+    },
+    {
+      "name": "swap-both",
+      "ok": false,
+      "error": {
+        "code": "unsupported-feature",
+        "message": "TGSI is malformed or outside the documented straight-line profile."
+      }
+    },
+    {
+      "name": "swap-vertex",
+      "ok": false,
+      "error": {
+        "code": "unsupported-feature",
+        "message": "TGSI is malformed or outside the documented straight-line profile."
+      }
+    },
+    {
+      "name": "swap-fragment",
+      "ok": false,
+      "error": {
+        "code": "unsupported-feature",
+        "message": "TGSI is malformed or outside the documented straight-line profile."
+      }
+    },
+    {
+      "name": "restored",
+      "ok": true,
+      "error": null
+    }
+  ]
+}

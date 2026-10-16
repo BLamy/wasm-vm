@@ -1,0 +1,9 @@
+The first independent custody run reopened every archive member, then rejected
+the current task source against the earlier c510 task source. This assertion was
+an incorrect verifier assumption: the explicitly allowed submission delta adds
+the worker claim, implemented status and regenerated queue. Archived receipt
+sources still require exact c510 bodies; current task/queue require exact submitted
+1d3955 bodies. Runtime/harness identities remain exact c510. No product or worker
+custody finding follows from this metadata comparison mistake. The original
+extraction is preserved at /tmp/d45-critic-custody-20261011; final authentication
+uses a new scratch directory and reopens the bodies again.

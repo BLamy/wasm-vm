@@ -1,0 +1,32 @@
+[
+  {
+    "path": "native-audit.json",
+    "bytes": 1607244,
+    "sha256": "6a194c2e92589f5391b68d2124a5915c8ee011b1d99b03f8383a518aef7d4cb6"
+  },
+  {
+    "path": "current-gpu-check.json",
+    "bytes": 537,
+    "sha256": "ded546806700b660f894435407a8357fd1ece99d040e3b1b43ce649108e719c4"
+  },
+  {
+    "path": "edges-gpu-check.json",
+    "bytes": 534,
+    "sha256": "e9ed0f928be419d7ae7eb5e559d8e5e5fa6817ecf984e03877a502a365d52fa8"
+  },
+  {
+    "path": "sabotage-dot-gpu-check.json",
+    "bytes": 4738,
+    "sha256": "00372d142eff45be931da5e00a8bd7f47674dcc7e4ffceeeaa8514fc4e3ce638"
+  },
+  {
+    "path": "sabotage-reciprocal-gpu-check.json",
+    "bytes": 5130,
+    "sha256": "a650f77739d074fd0dacf304ab829704de94d4407c5e8474eadfbb4f5a4fd179"
+  },
+  {
+    "path": "primary-source-digests.json",
+    "bytes": 600,
+    "sha256": "0a3dadab88147fda90d656f283804d0f9e003cbc99c8ab461e98b26e99b866e6"
+  }
+]

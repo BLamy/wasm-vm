@@ -1,0 +1,18 @@
+{
+  "status": "passed",
+  "head": "6a8d3841e18379d665af4c7d8f9449322529636f",
+  "workerSubmissionHead": "1dacb4fc30dd4206e73800f184b15a607f459556",
+  "coldReportSha256": "7e36542bdb098a38c476ef444eaf2f7f73d295e775ee61a36aecf000471a5c4e",
+  "coldLogSha256": "c748ceee707635fc7c61a734c510dc5bbec78f325fc24b3c209dc2160903a8b7",
+  "receiptSha256": "8846e747513422097b14b490383b68e5326f835c3e77e6d434425cd19f1f9286",
+  "harnessSha256": "69a85742866ce20bc3c5653f430f3307af12da86a198d58c06a3bcdabf4738be",
+  "copiedRecordsVerified": 179,
+  "copyMatchesClone": true,
+  "cloneStillPristine": true,
+  "postFreezeOnlyEvidenceAndLifecycle": true,
+  "removedEnvironmentNames": [
+    "GIT_PAGER",
+    "RUST_LOG"
+  ],
+  "scrubAudit": "cold.py removes compiler, Cargo/Rust, Node/Python, Emscripten, graphics/harness, Git and shell-injection overrides before clone and acceptance; the two listed names were present, other named overrides absent."
+}

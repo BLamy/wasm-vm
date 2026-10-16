@@ -1,0 +1,5 @@
+FAKE_FORWARD init
+FAKE_FORWARD fence
+FAKE_FORWARD context_fence
+FAKE_FORWARD cleanup
+HARNESS_FORWARDING_PASS scenario=callbacks-4 calls=4

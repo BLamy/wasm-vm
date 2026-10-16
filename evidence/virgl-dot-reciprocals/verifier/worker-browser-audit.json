@@ -1,0 +1,146 @@
+{
+  "status": "passed-with-dead-harness-helper-finding",
+  "head": "72a8695ba92d734a6bead0c42ead3089d8611806",
+  "receiptSha256": "35493421001e40f03d65d21b0f2e6078570294e461b2bae803e4568967540062",
+  "currentSourceDeltas": [
+    {
+      "path": "renderer/virgl-shader/tests/dot-reciprocals.mjs",
+      "kind": "only the identified unused fraction helper deleted; old recording remains bound to old head"
+    }
+  ],
+  "sourcesBound": 268,
+  "recordsBound": 195,
+  "browserReports": {
+    "hardware": "62c9fd61cfc27e4482894deb76475b778a5642a00650f6ac90ebd3ddc570a6ab",
+    "sabotage-dp3-lane": "b0185b978d57f2307dfde2bbf1aac44b128b59a337fabaeda62e9560098ebb56",
+    "sabotage-rcp-source": "b9d1f884e08d6f65bee64a9e6c379758bf43437a9b02677a62d6582d9d3b19e9",
+    "sabotage-rsq-operation": "3b26f07cf9dae740f8fd0a7adbae5d2cca500b25cde96f59e8c648cac8e5533d",
+    "sabotage-numeric-negate": "08669ce709084ef69148ef7834b7adb07bda6de7ad0ab35de04071ffd32b7c39"
+  },
+  "numeric": [
+    248,
+    30
+  ],
+  "textures": {
+    "exactWords": 32,
+    "boundedWords": 64,
+    "crossDraws": 24,
+    "pixels": 6144
+  },
+  "reciprocals": {
+    "exactWords": 30,
+    "boundedWords": 114,
+    "crossDraws": 18
+  },
+  "observations": {
+    "words": 72,
+    "probes": 6,
+    "vectors": 18,
+    "requiredRawClassChecks": 8,
+    "requiredNumericClassChecks": 16
+  },
+  "interpolationPixels": 33728,
+  "faults": [
+    {
+      "mode": "dp3-lane",
+      "program": "scalar-dp3-vertex",
+      "mutationSites": 1,
+      "actualMismatches": 1
+    },
+    {
+      "mode": "rcp-source",
+      "program": "scalar-rcp-vertex",
+      "mutationSites": 1,
+      "actualMismatches": 1
+    },
+    {
+      "mode": "rsq-operation",
+      "program": "scalar-rsq-vertex",
+      "mutationSites": 1,
+      "actualMismatches": 1
+    },
+    {
+      "mode": "numeric-negate",
+      "program": "scalar-dp3-swizzle-vertex",
+      "mutationSites": 1,
+      "actualMismatches": 1
+    }
+  ],
+  "tamperChecks": [
+    {
+      "attack": "change-upload",
+      "status": "rejected",
+      "reason": "independently encoded actual attribute bytes"
+    },
+    {
+      "attack": "widen-claimed-enclosure",
+      "status": "rejected",
+      "reason": "independent RCP/RSQ root or division enclosures and directed uniform endpoints"
+    },
+    {
+      "attack": "out-of-range-coherent-word",
+      "status": "rejected",
+      "reason": "complete raw reciprocal fragment word reconstruction and independently derived rational errors"
+    },
+    {
+      "attack": "within-bound-nonbroadcast",
+      "status": "rejected",
+      "reason": "one scalar result is replicated identically in every written group"
+    },
+    {
+      "attack": "missing-program",
+      "status": "rejected",
+      "reason": "complete ordered quantitative reciprocal workload"
+    },
+    {
+      "attack": "invent-exact-root",
+      "status": "rejected",
+      "reason": "independent RCP/RSQ root or division enclosures and directed uniform endpoints"
+    },
+    {
+      "attack": "change-bitplane-digest",
+      "status": "rejected",
+      "reason": "complete raw reciprocal fragment word reconstruction and independently derived rational errors"
+    },
+    {
+      "attack": "weaken-zero-class",
+      "status": "rejected",
+      "reason": "all raw scalar exceptional words and justified class requirements"
+    }
+  ],
+  "memory": {
+    "initialBytes": 16777216,
+    "observations": 3858,
+    "bufferIdentityStable": true,
+    "finalBytes": 16777216
+  },
+  "objects": {
+    "created": {
+      "Program": 103,
+      "Shader": 206,
+      "VertexArray": 103,
+      "TransformFeedback": 21,
+      "Buffer": 1026,
+      "Framebuffer": 136,
+      "Texture": 136
+    },
+    "deleted": {
+      "Shader": 206,
+      "Buffer": 1026,
+      "TransformFeedback": 21,
+      "VertexArray": 103,
+      "Program": 103,
+      "Framebuffer": 136,
+      "Texture": 136
+    },
+    "live": 0
+  },
+  "unenteredHarnessFunctions": [
+    {
+      "name": "fraction",
+      "startOffset": 11552,
+      "endOffset": 11571,
+      "count": 0
+    }
+  ]
+}

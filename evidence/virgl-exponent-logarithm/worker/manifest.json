@@ -1,0 +1,24 @@
+{
+  "schema": "virgl-exponent-logarithm-worker-seal-v1",
+  "task": "E6-T12g6i",
+  "sourceHead": "a3c2b48995cc6165f4a2844497671273d7305029",
+  "base": "2aa21751921bb047f8bb6b58432d35c093a76b62",
+  "records": 115,
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 28587982,
+    "sha256": "2a64c4c3cfc3abdad5d624a7e1132d867afc6332889576ae5715993dc8866afe"
+  },
+  "recordIndex": {
+    "path": "records.json",
+    "bytes": 20055,
+    "sha256": "b37eb8cf128dee208580dbcff376af6675d6aafb921b48ac80380c57fb1a2fb9"
+  },
+  "hotReceiptSha256": "466bf961aac0a994dc435f69437fff56ff92e09a6e54c545f186b6ca8fa52259",
+  "coldReportSha256": "4fe5e0c77e86556dc525bed2e75cf5ec004713e70a2498c3580331e091c1d313",
+  "coldReceiptSha256": "9d2c69fe2b21fd21556e4e44b9a7051f268cf3e223076a690cf55c370f8259ac",
+  "checkedWords": 39456,
+  "checkedPixels": 91392,
+  "productionNegotiation": false,
+  "guestExecution": false
+}

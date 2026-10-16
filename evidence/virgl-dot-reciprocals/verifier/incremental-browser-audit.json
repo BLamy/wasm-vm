@@ -1,0 +1,98 @@
+{
+  "status": "passed",
+  "head": "cb6726dc68eebecdaf9b848ea846e525003e86c9",
+  "previousHead": "72a8695ba92d734a6bead0c42ead3089d8611806",
+  "sourceDelta": "Only unreferenced/uncalled fraction helper removed. Runtime and all other sources identical. Historical recording remains bound to previous head.",
+  "nativeEvidenceSha256": "781960b68e1cb49d03b02ec4e6264183dc52fec408825d37ecb93daa7f189dcb",
+  "reports": {
+    "hardware": "e079ad1b8537d5a53077288b017c32701868c57f96a4c7f2ef4b9f8fa96393aa",
+    "sabotage-dp3-lane": "5db9dc24a223a6937d6af088f10761e08a794ab43b3352b0156a45b67e955567",
+    "sabotage-rcp-source": "648bba7c3373f0d0b00de45640635f983f1f8351b5c5cd9e5ca85e72c3ae4d11",
+    "sabotage-rsq-operation": "598ecce3d55180b1e7a76fc8f2e2b1f22be4d687c988d918bb94ba090bb121b0",
+    "sabotage-numeric-negate": "6f30b803f9053870fbfeca4f5e47921640a5786a3ff14a2a63795aea20bbd009"
+  },
+  "values": {
+    "numeric": [
+      248,
+      30
+    ],
+    "textures": {
+      "exactWords": 32,
+      "boundedWords": 64,
+      "crossDraws": 24,
+      "pixels": 6144
+    },
+    "reciprocals": {
+      "exactWords": 30,
+      "boundedWords": 114,
+      "crossDraws": 18
+    },
+    "observations": {
+      "words": 72,
+      "probes": 6,
+      "vectors": 18,
+      "requiredRawClassChecks": 8,
+      "requiredNumericClassChecks": 16
+    },
+    "pixels": 33728
+  },
+  "faults": [
+    {
+      "mode": "dp3-lane",
+      "program": "scalar-dp3-vertex",
+      "mutationSites": 1,
+      "actualMismatches": 1
+    },
+    {
+      "mode": "rcp-source",
+      "program": "scalar-rcp-vertex",
+      "mutationSites": 1,
+      "actualMismatches": 1
+    },
+    {
+      "mode": "rsq-operation",
+      "program": "scalar-rsq-vertex",
+      "mutationSites": 1,
+      "actualMismatches": 1
+    },
+    {
+      "mode": "numeric-negate",
+      "program": "scalar-dp3-swizzle-vertex",
+      "mutationSites": 1,
+      "actualMismatches": 1
+    }
+  ],
+  "harnessFunctions": 151,
+  "unenteredHarnessFunctions": [],
+  "memory": {
+    "initialBytes": 16777216,
+    "observations": 3858,
+    "bufferIdentityStable": true,
+    "finalBytes": 16777216
+  },
+  "objects": {
+    "created": {
+      "Program": 103,
+      "Shader": 206,
+      "VertexArray": 103,
+      "TransformFeedback": 21,
+      "Buffer": 1026,
+      "Framebuffer": 136,
+      "Texture": 136
+    },
+    "deleted": {
+      "Shader": 206,
+      "Buffer": 1026,
+      "TransformFeedback": 21,
+      "VertexArray": 103,
+      "Program": 103,
+      "Framebuffer": 136,
+      "Texture": 136
+    },
+    "live": 0
+  },
+  "screenshot": {
+    "path": "browser.png",
+    "sha256": "140e7396a1be34e6394c4947654dca0a86f57c201cec4bdcbb987a6f6058f3c5"
+  }
+}

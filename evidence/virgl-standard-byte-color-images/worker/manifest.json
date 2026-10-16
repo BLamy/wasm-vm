@@ -1,0 +1,16 @@
+{
+  "schema": "original-byte-color-seal-v1",
+  "task": "E6-T11d22",
+  "sourceHead": "30908255d0ab91434ff37505852fe6550977a227",
+  "records": 30256,
+  "archiveSha256": "06406c64da6f9117633df916eb307c466df9d73c3fcc13abec640f7efcb5ac4e",
+  "archiveBytes": 23359582,
+  "recordIndexSha256": "846ce5b67333ea0f3aac751d3c5aed448979ca2f17c2fd1cae569c73974166a7",
+  "hotReceiptSha256": "92343a0947ee5d6355fb71f193a2647ab2a29d63df7b4b7c32b79ee63615a5db",
+  "coldReportSha256": "aaa2e726c5a2183250764b2eea5fec3933ab5dbea442d6f982bb0ae97b8b43d0",
+  "coldReceiptSha256": "17d3aa8752362bd758abd9c5915ed3c4e74e1844bbbae5082c54e0f6d335b61b",
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "authority": "isolated-original-byte-colors",
+  "productionDrawAuthority": false
+}

@@ -1,0 +1,220 @@
+{
+  "schema": "virgl-gears-guest-workload-v1",
+  "pins": {
+    "schema": "virgl-gears-source-pins-v1",
+    "mesa_demos": {
+      "version": "9.0.0",
+      "url": "https://archive.mesa3d.org/demos/mesa-demos-9.0.0.tar.xz",
+      "archive": "mesa-demos-9.0.0.tar.xz",
+      "bytes": 14839368,
+      "sha256": "3046a3d26a7b051af7ebdd257a5f23bfeb160cad6ed952329cdff1e9f1ed496b",
+      "license": "MIT; unchanged per-file source notices and full original archive retained",
+      "program": "es2gears_wayland"
+    },
+    "cross_compiler": {
+      "path": "/usr/bin/riscv64-linux-gnu-gcc-12",
+      "bytes": 1973824,
+      "sha256": "c6c471e91126c6b0fd91034f4d94be2bae7f49df33461f3e039843ffed077fa0",
+      "version_prefix": "riscv64-linux-gnu-gcc-12 (Debian 12.2.0-13) 12.2.0"
+    },
+    "sources": [
+      "src/egl/opengles2/es2gears.c",
+      "src/egl/eglut/eglut.c",
+      "src/egl/eglut/eglut_wayland.c",
+      "src/util/matrix.c"
+    ],
+    "headers_and_build": [
+      "src/egl/eglut/eglut.h",
+      "src/egl/eglut/eglutint.h",
+      "src/util/matrix.h",
+      "src/egl/opengles2/meson.build",
+      "src/egl/eglut/meson.build",
+      "src/util/meson.build",
+      "meson.build",
+      "README.rst"
+    ]
+  },
+  "basePins": {
+    "source_image_sha256": "bfcde69e5eeb2b5baba96a451f0671092b5973e8cc3a7f581722adf513651200",
+    "guest_packages": {
+      "mesa": "1:26.2.2-1",
+      "hyprland": "0.56.2-3",
+      "libdrm": "2.4.134-1",
+      "libglvnd": "1.7.0-3"
+    },
+    "kmscube": {
+      "repository": "https://gitlab.freedesktop.org/mesa/kmscube.git",
+      "revision": "f60e50e887d3c49e91ac9b06d8199b36152632fa",
+      "git_archive_sha256": "e2781477c2a9735f038740ad8c882c5ff4a0b99a6b5e8766f9272d3e7a591c8f",
+      "license": "MIT; archive contains original COPYING and source notices"
+    },
+    "glmark2": {
+      "version": "2023.01-2",
+      "architecture": "riscv64",
+      "package": "glmark2-2023.01-2-riscv64.pkg.tar.zst",
+      "url": "https://riscv.mirror.pkgbuild.com/repo/extra/glmark2-2023.01-2-riscv64.pkg.tar.zst",
+      "sha256": "e01efb362f8890fd08ba31dffa3aab19c43ba86b38a30723595349a7bf4ca40f",
+      "upstream": "https://github.com/glmark2/glmark2/tree/2023.01"
+    },
+    "cross_packages": {
+      "gcc-riscv64-linux-gnu": "4:12.2.0-5",
+      "gcc-12-riscv64-linux-gnu": "12.2.0-13cross1",
+      "libgcc-12-dev-riscv64-cross": "12.2.0-13cross1",
+      "binutils-riscv64-linux-gnu": "2.40-2",
+      "zstd": "1.5.4+dfsg2-5"
+    }
+  },
+  "invocation": {
+    "rootfs": "/reference/omarchy.ext4",
+    "archive": "/workload-build/inputs/mesa-demos-9.0.0.tar.xz",
+    "output": "/capture/gears-workload-a669aad0"
+  },
+  "source_image_sha256": "bfcde69e5eeb2b5baba96a451f0671092b5973e8cc3a7f581722adf513651200",
+  "crossPackages": {
+    "gcc-riscv64-linux-gnu": "4:12.2.0-5",
+    "gcc-12-riscv64-linux-gnu": "12.2.0-13cross1",
+    "libgcc-12-dev-riscv64-cross": "12.2.0-13cross1",
+    "binutils-riscv64-linux-gnu": "2.40-2",
+    "zstd": "1.5.4+dfsg2-5"
+  },
+  "compiler": {
+    "path": "/usr/bin/riscv64-linux-gnu-gcc-12",
+    "bytes": 1973824,
+    "sha256": "c6c471e91126c6b0fd91034f4d94be2bae7f49df33461f3e039843ffed077fa0",
+    "version": "riscv64-linux-gnu-gcc-12 (Debian 12.2.0-13) 12.2.0\nCopyright (C) 2022 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n"
+  },
+  "command": {
+    "cwd": "/capture/gears-workload-a669aad0/sources/mesa-demos-9.0.0",
+    "argv": [
+      "riscv64-linux-gnu-gcc",
+      "--sysroot=/capture/gears-workload-a669aad0/sysroot",
+      "-B/capture/gears-workload-a669aad0/sysroot/usr/lib",
+      "-std=gnu11",
+      "-O2",
+      "-DWL_EGL_PLATFORM",
+      "-D_GNU_SOURCE",
+      "-DHAVE_SINCOS",
+      "-Werror=implicit-function-declaration",
+      "-Werror=return-type",
+      "-Werror=incompatible-pointer-types",
+      "-Werror=int-conversion",
+      "-fno-math-errno",
+      "-fno-trapping-math",
+      "-Wl,--build-id=none",
+      "-ffile-prefix-map=/capture/gears-workload-a669aad0/sources/mesa-demos-9.0.0=mesa-demos-9.0.0",
+      "-I/capture/gears-workload-a669aad0/sysroot/usr/include",
+      "-I/capture/gears-workload-a669aad0/sysroot/usr/include/libdecor-0",
+      "-Isrc/egl/eglut",
+      "-Isrc/util",
+      "-L/capture/gears-workload-a669aad0/sysroot/usr/lib",
+      "-Wl,-rpath-link,/capture/gears-workload-a669aad0/sysroot/usr/lib",
+      "src/egl/opengles2/es2gears.c",
+      "src/egl/eglut/eglut.c",
+      "src/egl/eglut/eglut_wayland.c",
+      "src/util/matrix.c",
+      "-lEGL",
+      "-lGLESv2",
+      "-lwayland-client",
+      "-lwayland-egl",
+      "-ldecor-0",
+      "-lxkbcommon",
+      "-lm",
+      "-ldl",
+      "-pthread",
+      "-o",
+      "/capture/gears-workload-a669aad0/bin/es2gears_wayland"
+    ]
+  },
+  "sources": [
+    {
+      "path": "src/egl/opengles2/es2gears.c",
+      "bytes": 15942,
+      "sha256": "775aa31fb99b3216c216c9da75dd65ce9e8e913a67e5b0c8ea1d518d83dc9524"
+    },
+    {
+      "path": "src/egl/eglut/eglut.c",
+      "bytes": 8278,
+      "sha256": "138bb2afe1a4c1a16c480a2d52470fcfd677754796f395a6b8c9750d73a251ad"
+    },
+    {
+      "path": "src/egl/eglut/eglut_wayland.c",
+      "bytes": 15286,
+      "sha256": "a5b5abe9aa668614eb4282a02cf4bc97a3340e2809d91f5b56a1158e85b41ba7"
+    },
+    {
+      "path": "src/util/matrix.c",
+      "bytes": 3715,
+      "sha256": "aae799677280f2aaf0c46d59a899031f5231be552a78c6f58da72db1585b8952"
+    },
+    {
+      "path": "src/egl/eglut/eglut.h",
+      "bytes": 2549,
+      "sha256": "d883f6f365bc9f638294257b931d412674c936f3d8a9af3bc11afe39080d6fbc"
+    },
+    {
+      "path": "src/egl/eglut/eglutint.h",
+      "bytes": 2529,
+      "sha256": "5e1733094f523fe376dd59135a25b376016357f03ed40ac3fac2cda59d7e294f"
+    },
+    {
+      "path": "src/util/matrix.h",
+      "bytes": 2669,
+      "sha256": "6cf829d205ac097bb8842e5bcc5f60c1f4285c6009e8b0d75a3f264afb67f00d"
+    },
+    {
+      "path": "src/egl/opengles2/meson.build",
+      "bytes": 1703,
+      "sha256": "ebdfeb514faa9643f44a68ff97e63a19834ea3abcf8c045f97acf87674036c8e"
+    },
+    {
+      "path": "src/egl/eglut/meson.build",
+      "bytes": 1647,
+      "sha256": "a00fde97c6ec4b92e2a94ea2f87125b92439d8f7dd440528f8612938f88a1df5"
+    },
+    {
+      "path": "src/util/meson.build",
+      "bytes": 1553,
+      "sha256": "46acd73a5bf6a7c6ffbe9ef65327ed26f72296d8c830377d42bdca939e9cdb8d"
+    },
+    {
+      "path": "meson.build",
+      "bytes": 7270,
+      "sha256": "d0b3c23143142847558f3e483f2857cbbf1ff06f10004ab7c32a1d02f2e6e3ba"
+    },
+    {
+      "path": "README.rst",
+      "bytes": 3539,
+      "sha256": "8458a4793aa75276bcbf182b2869b25e2d9291f49d1868f67e944d3a95588e94"
+    }
+  ],
+  "archive": {
+    "path": "sources/mesa-demos-9.0.0.tar.xz",
+    "bytes": 14839368,
+    "sha256": "3046a3d26a7b051af7ebdd257a5f23bfeb160cad6ed952329cdff1e9f1ed496b"
+  },
+  "binary": {
+    "path": "bin/es2gears_wayland",
+    "bytes": 38376,
+    "sha256": "59f4029a08b809f8d191cd7b3d719e2c5b09f0aadb97833f088b41fa60a918af"
+  },
+  "sysrootInventory": {
+    "path": "sysroot-files.json",
+    "bytes": 2065449,
+    "sha256": "529408e51ef65ea1ddade31379ccecbefdfc130c4ed1dd1362be289cf1f1639a"
+  },
+  "compileLog": {
+    "path": "compile.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "elfHeader": {
+    "path": "elf-header.txt",
+    "bytes": 979,
+    "sha256": "d3da07aef414ee445a429957bc6765fcf66422778c9a685bfcfa59ddeb18f025"
+  },
+  "builder": {
+    "path": "sources/build_gears_in_container.py",
+    "bytes": 8898,
+    "sha256": "d551a0994dec1891a35725e78b2c2d821f919ccbe0c69cb6b1a2736abbefb4dc"
+  }
+}

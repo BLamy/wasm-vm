@@ -94,6 +94,8 @@ pub struct VirtioMmio {
     driver_features: u64,
     queue_sel: u32,
     queues: [QueueState; MAX_QUEUES],
+    #[cfg(feature = "virgl-renderer")]
+    queue_generations: [Option<u64>; MAX_QUEUES],
     int_status: u32,
     config_gen: u32,
     /// QueueNotify kicks observed (queue index of the most recent, plus a count) — ring
@@ -128,6 +130,25 @@ impl VirtioMmio {
         Ok(())
     }
 
+    /// Assembly-time replacement only; no live driver or configured ring can
+    /// be displaced. The normal install_device contract remains unchanged.
+    #[cfg(feature = "virgl-renderer")]
+    pub(crate) fn replace_unnegotiated_device(
+        &mut self,
+        dev: Box<dyn VirtioDevice>,
+    ) -> Result<(), Box<dyn VirtioDevice>> {
+        if self.status != 0
+            || self.notify_count != 0
+            || self.driver_features != 0
+            || self.queues.iter().any(|q| *q != QueueState::default())
+        {
+            return Err(dev);
+        }
+        self.dev = Some(dev);
+        self.config_gen = self.config_gen.wrapping_add(1);
+        Ok(())
+    }
+
     /// Device id currently installed in this slot, or zero for an empty slot. Machine assembly
     /// uses this read-only view to place optional devices without disturbing established slots.
     pub fn device_id(&self) -> u32 {
@@ -146,6 +167,8 @@ impl VirtioMmio {
             driver_features: 0,
             queue_sel: 0,
             queues: [QueueState::default(); MAX_QUEUES],
+            #[cfg(feature = "virgl-renderer")]
+            queue_generations: [Some(1); MAX_QUEUES],
             int_status: 0,
             config_gen: 0,
             last_notify: None,
@@ -208,6 +231,16 @@ impl VirtioMmio {
     /// Selected queue state (transport-internal and for E2-T09 ring processing).
     pub fn queue(&self, idx: usize) -> &QueueState {
         &self.queues[idx % MAX_QUEUES]
+    }
+
+    /// Host ownership revision, incremented even for same-value guest writes.
+    #[cfg(feature = "virgl-renderer")]
+    pub fn queue_generation(&self, idx: usize) -> Option<u64> {
+        self.queue_generations.get(idx).copied().flatten()
+    }
+    #[cfg(feature = "virgl-renderer")]
+    fn bump_queue_generation(&mut self, idx: usize) {
+        self.queue_generations[idx] = self.queue_generations[idx].and_then(|n| n.checked_add(1));
     }
 
     /// E3-T12c1: serialize the transport's behavioral lifecycle state — device status, feature
@@ -286,6 +319,10 @@ impl VirtioMmio {
         self.last_notify = if has_notify { Some(notify_q) } else { None };
         self.notify_count = notify_count;
         self.queues = queues;
+        #[cfg(feature = "virgl-renderer")]
+        for idx in 0..MAX_QUEUES {
+            self.bump_queue_generation(idx);
+        }
         Ok(())
     }
 
@@ -294,6 +331,8 @@ impl VirtioMmio {
     #[cfg(test)]
     pub(crate) fn set_queue_for_test(&mut self, idx: usize, qs: QueueState) {
         self.queues[idx % MAX_QUEUES] = qs;
+        #[cfg(feature = "virgl-renderer")]
+        self.bump_queue_generation(idx % MAX_QUEUES);
     }
 
     fn sel_queue_mut(&mut self) -> &mut QueueState {
@@ -316,6 +355,10 @@ impl VirtioMmio {
         self.driver_features = 0;
         self.queue_sel = 0;
         self.queues = [QueueState::default(); MAX_QUEUES];
+        #[cfg(feature = "virgl-renderer")]
+        for idx in 0..MAX_QUEUES {
+            self.bump_queue_generation(idx);
+        }
         self.int_status = 0;
         self.last_notify = None;
         if let Some(d) = self.dev.as_mut() {
@@ -375,6 +418,22 @@ impl VirtioMmio {
         // Empty slots tolerate arbitrary writes (kernel probes then skips).
         if self.dev.is_none() {
             return;
+        }
+        #[cfg(feature = "virgl-renderer")]
+        if self.queue_sel_valid()
+            && matches!(
+                offset,
+                QUEUE_NUM
+                    | QUEUE_READY
+                    | QUEUE_DESC_LOW
+                    | QUEUE_DESC_HIGH
+                    | QUEUE_DRIVER_LOW
+                    | QUEUE_DRIVER_HIGH
+                    | QUEUE_DEVICE_LOW
+                    | QUEUE_DEVICE_HIGH
+            )
+        {
+            self.bump_queue_generation(self.queue_sel as usize);
         }
         match offset {
             DEVICE_FEATURES_SEL => self.dev_feat_sel = v,

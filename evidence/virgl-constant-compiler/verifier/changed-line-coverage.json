@@ -1,0 +1,749 @@
+{
+  "head": "f81c83b7444e3e5d8d7e52d9daa04adf1a209fc2",
+  "coverageSha256": "b1edfe51fc9a372bbd47169f82166708f51022e205ac10569750f42aa23951c2",
+  "records": [
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 29,
+      "counter": "",
+      "source": "/* Public unsupported-feature also covers syntax. Only this typed failure may",
+      "classification": "waived-declaration-comment-or-covered-continuation"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 30,
+      "counter": "",
+      "source": " * retry with compiler-derived finite-bank authority. */",
+      "classification": "waived-declaration-comment-or-covered-continuation"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 31,
+      "counter": "",
+      "source": "static bool missing_numeric_authority;",
+      "classification": "waived-declaration-comment-or-covered-continuation"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 234,
+      "counter": "3.62M",
+      "source": "   if (s->raw && !(s->raw_flags & RAW_MIXED) && (r.file == SAMP || r.file == SVIEW)) { failure_code = \"unsupported-feature\"; return false; }",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 349,
+      "counter": "3.52M",
+      "source": "      raw.flags |= s->raw_flags;",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 350,
+      "counter": "3.52M",
+      "source": "      if (!raw_record(s->raw, &raw)) {",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 351,
+      "counter": "68.8k",
+      "source": "         missing_numeric_authority = true;",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 352,
+      "counter": "68.8k",
+      "source": "         failure_code = \"unsupported-feature\";",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 353,
+      "counter": "68.8k",
+      "source": "         return false;",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 354,
+      "counter": "68.8k",
+      "source": "      }",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 472,
+      "counter": "",
+      "source": "static const char *numeric_rejection(void)",
+      "classification": "waived-declaration-comment-or-covered-continuation"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 473,
+      "counter": "555",
+      "source": "{",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 474,
+      "counter": "555",
+      "source": "   return error(\"unsupported-feature\", \"TGSI is malformed or outside the documented straight-line profile.\");",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 475,
+      "counter": "555",
+      "source": "}",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 476,
+      "counter": "",
+      "source": "",
+      "classification": "waived-declaration-comment-or-covered-continuation"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 520,
+      "counter": "484k",
+      "source": "      profile->raw_flags = numeric_candidate ? RAW_MIXED : 0;",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 526,
+      "counter": "760k",
+      "source": "   missing_numeric_authority = false;",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 527,
+      "counter": "760k",
+      "source": "   if (validate(checked, profile)) return NULL;",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 528,
+      "counter": "79.3k",
+      "source": "   if (!missing_numeric_authority)",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 529,
+      "counter": "10.6k",
+      "source": "      return error(failure_code, \"TGSI is malformed or outside the documented straight-line profile.\");",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 530,
+      "counter": "",
+      "source": "   /* The ordinary result wins whenever it succeeds. A failed domain use gets",
+      "classification": "waived-declaration-comment-or-covered-continuation"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 531,
+      "counter": "",
+      "source": "    * one fresh whole-text attempt: no first-pass facts or borrowed response",
+      "classification": "waived-declaration-comment-or-covered-continuation"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 532,
+      "counter": "",
+      "source": "    * pointer survive, and no concurrent second IR grows the storage budget. */",
+      "classification": "waived-declaration-comment-or-covered-continuation"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 533,
+      "counter": "68.6k",
+      "source": "   int stage = profile->stage;",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 534,
+      "counter": "68.6k",
+      "source": "   free(profile->raw);",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 535,
+      "counter": "68.6k",
+      "source": "   *profile = (struct profile){.stage = stage, .raw_flags = RAW_MIXED | RAW_CONDITIONAL};",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 536,
+      "counter": "68.6k",
+      "source": "   profile->raw = calloc(1, sizeof(*profile->raw));",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 537,
+      "counter": "68.6k",
+      "source": "   if (!profile->raw) return numeric_rejection();",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 538,
+      "counter": "68.6k",
+      "source": "   memcpy(checked, text, length); checked[length] = 0;",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 539,
+      "counter": "68.6k",
+      "source": "   failure_code = \"parse-error\";",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 540,
+      "counter": "68.6k",
+      "source": "   missing_numeric_authority = false;",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 541,
+      "counter": "68.6k",
+      "source": "   if (!validate(checked, profile) || !(profile->raw->opcode_mask & RAW_FINITE_BANK_USED))",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 542,
+      "counter": "269",
+      "source": "      return numeric_rejection();",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 659,
+      "counter": "749k",
+      "source": "      c->profile.raw->opcode_mask & RAW_FINITE_BANK_USED ? \"virgl-webgl2-raw-bits-v7\" :",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 678,
+      "counter": "749k",
+      "source": "   append(\"]\");",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 679,
+      "counter": "749k",
+      "source": "   if (profile->raw && (profile->raw->opcode_mask & RAW_FINITE_BANK_USED))",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 680,
+      "counter": "68.3k",
+      "source": "      append(\",\\\"constantDomains\\\":[{\\\"kind\\\":\\\"constant-bank-finite-f32-v1\\\",\\\"stage\\\":\\\"%s\\\",\\\"slot\\\":0,\\\"name\\\":\\\"%sconst0\\\",\\\"count\\\":%d}]\",",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 681,
+      "counter": "68.3k",
+      "source": "         stage ? \"fragment\" : \"vertex\", stage ? \"fs\" : \"vs\", info->num_consts);",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 682,
+      "counter": "749k",
+      "source": "   append(\"}\");",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 693,
+      "counter": "288k",
+      "source": "   bool retry_failed = (c.profile.raw_flags & RAW_CONDITIONAL) && (failed || response_overflow);",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 695,
+      "counter": "288k",
+      "source": "   if (retry_failed) return numeric_rejection();",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 718,
+      "counter": "",
+      "source": "   /* A later stage/interface/emission failure must not replace the original",
+      "classification": "waived-declaration-comment-or-covered-continuation"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 719,
+      "counter": "",
+      "source": "    * ordinary rejection that selected a conditional transaction. */",
+      "classification": "waived-declaration-comment-or-covered-continuation"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 720,
+      "counter": "238k",
+      "source": "   bool retry_failed = ((vertex.profile.raw_flags | fragment.profile.raw_flags) & RAW_CONDITIONAL) &&",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 721,
+      "counter": "238k",
+      "source": "      (failed || response_overflow);",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 723,
+      "counter": "238k",
+      "source": "   if (retry_failed) return numeric_rejection();",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 7,
+      "counter": "",
+      "source": "static struct raw_lane source_lane(const struct raw_ir *ir, const struct raw_source *r, unsigned lane, bool conditional)",
+      "classification": "waived-declaration-comment-or-covered-continuation"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 15,
+      "counter": "11.6M",
+      "source": "   if (r->file == IN) return (struct raw_lane){.origin = (1 + r->index * 4 + component) | RAW_OUTPUT};",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 16,
+      "counter": "6.91M",
+      "source": "   if (r->file == CONST && conditional)",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 17,
+      "counter": "1.91M",
+      "source": "      return (struct raw_lane){.origin = RAW_FLOAT_CONDITIONAL | RAW_BANK_DEPENDENCY};",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 18,
+      "counter": "4.99M",
+      "source": "   return (struct raw_lane){0};",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 71,
+      "counter": "27.0M",
+      "source": "   return value.origin ? value.origin : safe_raw_float(value) ? RAW_FLOAT_DECODE | RAW_OUTPUT : 0;",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 72,
+      "counter": "27.0M",
+      "source": "}",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 73,
+      "counter": "",
+      "source": "",
+      "classification": "waived-declaration-comment-or-covered-continuation"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 74,
+      "counter": "",
+      "source": "static bool output_legal(struct raw_lane value)",
+      "classification": "waived-declaration-comment-or-covered-continuation"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 75,
+      "counter": "3.54M",
+      "source": "{",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 76,
+      "counter": "3.54M",
+      "source": "   return (value.origin & RAW_OUTPUT) || safe_raw_float(value);",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 86,
+      "counter": "689k",
+      "source": "   unsigned origin = yes.origin == no.origin ? yes.origin : 0;",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 87,
+      "counter": "689k",
+      "source": "   if (mixed && float_mode(yes) && float_mode(no))",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 88,
+      "counter": "273k",
+      "source": "      origin = RAW_FLOAT_SHADOW | ((yes.origin | no.origin) & RAW_BANK_DEPENDENCY) |",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 89,
+      "counter": "273k",
+      "source": "         (output_legal(yes) && output_legal(no) ? RAW_OUTPUT : 0);",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 90,
+      "counter": "689k",
+      "source": "   return (struct raw_lane){.zero = yes.zero & no.zero, .one = yes.one & no.one, .origin = origin};",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 109,
+      "counter": "3.52M",
+      "source": "   bool conditional = (instruction->flags & RAW_CONDITIONAL) != 0;",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 111,
+      "counter": "3.52M",
+      "source": "   unsigned dependency = 0;",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 121,
+      "counter": "26.1M",
+      "source": "         unsigned mode = float_mode(source_lane(ir, &instruction->src[source], lane, conditional));",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 123,
+      "counter": "26.1M",
+      "source": "         if (numeric) dependency |= mode & RAW_BANK_DEPENDENCY;",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 126,
+      "counter": "",
+      "source": "   /* A known raw selector never demands numerical access to its unused arm.",
+      "classification": "waived-declaration-comment-or-covered-continuation"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 127,
+      "counter": "",
+      "source": "    * Only the retry prunes these modes, preserving old emitted expressions. */",
+      "classification": "waived-declaration-comment-or-covered-continuation"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 128,
+      "counter": "3.45M",
+      "source": "   if (conditional && instruction->opcode == RAW_UCMP)",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 129,
+      "counter": "342k",
+      "source": "      for (unsigned lane = 0; lane < 4; ++lane) if (consumed & (1u << lane)) {",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 130,
+      "counter": "273k",
+      "source": "         struct raw_lane condition = source_lane(ir, &instruction->src[0], lane, conditional);",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 131,
+      "counter": "273k",
+      "source": "         if (condition.zero == UINT32_MAX || condition.one) {",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 132,
+      "counter": "268",
+      "source": "            unsigned unused = condition.zero == UINT32_MAX ? 1 : 2;",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 133,
+      "counter": "268",
+      "source": "            checked.float_modes[unused] &= ~(UINT32_C(255) << (lane * 8));",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 134,
+      "counter": "268",
+      "source": "         }",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 135,
+      "counter": "273k",
+      "source": "      }",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 141,
+      "counter": "12.1M",
+      "source": "         a = source_lane(ir, &instruction->src[0], lane, conditional);",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 142,
+      "counter": "12.1M",
+      "source": "         if (sources > 1) b = source_lane(ir, &instruction->src[1], lane, conditional);",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 168,
+      "counter": "692k",
+      "source": "      case RAW_UCMP: result[lane] = selected(a, b, source_lane(ir, &instruction->src[2], lane, conditional), mixed); break;",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 179,
+      "counter": "1.67M",
+      "source": "      case RAW_TEX:",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 180,
+      "counter": "1.67M",
+      "source": "         result[lane].origin = RAW_FLOAT_SHADOW | RAW_OUTPUT;",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 181,
+      "counter": "1.67M",
+      "source": "         if (instruction->opcode == RAW_TEX || ((1u << instruction->opcode) & RAW_V6_OPCODES))",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 182,
+      "counter": "290k",
+      "source": "            result[lane].origin |= dependency;",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 183,
+      "counter": "4.44M",
+      "source": "         else for (unsigned source = 0; source < sources; ++source)",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 184,
+      "counter": "3.05M",
+      "source": "            result[lane].origin |= (checked.float_modes[source] >> (lane * 8)) & RAW_BANK_DEPENDENCY;",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 185,
+      "counter": "1.67M",
+      "source": "         break;",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 192,
+      "counter": "13.8M",
+      "source": "         if ((result[lane].origin & RAW_ACCESS_MASK) == RAW_FLOAT_SHADOW) checked.float_mask |= 1u << lane;",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 197,
+      "counter": "3.45M",
+      "source": "   if (dependency) ir->opcode_mask |= RAW_FINITE_BANK_USED;",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 208,
+      "counter": "3.27M",
+      "source": "         if (!output_legal(value)) return false;",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 252,
+      "counter": "4.19M",
+      "source": "   unsigned mode = lane_mode(instruction, source, lane) & RAW_ACCESS_MASK;",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 257,
+      "counter": "3.15M",
+      "source": "   else if (mode == RAW_FLOAT_DECODE || mode == RAW_FLOAT_CONDITIONAL) {",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 422,
+      "counter": "3.27M",
+      "source": "         unsigned authority = p->raw->output[index][lane].origin;",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 423,
+      "counter": "3.27M",
+      "source": "         unsigned origin = authority & RAW_ACCESS_MASK;",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 424,
+      "counter": "3.27M",
+      "source": "         if ((authority & RAW_OUTPUT) && origin == RAW_FLOAT_SHADOW) emit(&w, \"float_out[%u].%c\", index, \"xyzw\"[lane]);",
+      "classification": "executed"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "line": 425,
+      "counter": "2.25M",
+      "source": "         else if (authority & RAW_OUTPUT) input_float(&w, p, (origin - 1) / 4, (origin - 1) % 4);",
+      "classification": "executed"
+    }
+  ],
+  "branchWaivers": [
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 541,
+      "branch": "successful conditional validation with no RAW_FINITE_BANK_USED",
+      "reason": "Invariant check evaluated on 68.3k accepted retries. First pass had a numeric source without authority; the only extra source authority on identical fully revalidated text is conditional CONST, so any successful retry necessarily marks that dependency. No externally reachable distinct behavior exists for true arm."
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 693,
+      "branch": "response_overflow after successful conditional emission",
+      "reason": "Existing JSON bound is larger than maximum escaped 64KiB GLSL plus bounded metadata; native observed 63369 single/109235 pair bytes. Conditional emitter overflow reaches failed=true and is exercised; JSON bound remains defense in depth."
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "line": 721,
+      "branch": "paired response_overflow after successful conditional emission",
+      "reason": "Same pre-existing JSON size invariant with per-stage GLSL limit and bounded metadata, evaluated after every pair. Conditional allocation/interface/emission failure paths execute rollback."
+    }
+  ],
+  "nonRuntimeDiffWaivers": [
+    {
+      "paths": [
+        "renderer/virgl-shader/raw_bits.h"
+      ],
+      "reason": "Types, compact masks, constants and signatures are compile-time metadata; recorded layout assertions and old full results establish unchanged boundaries."
+    },
+    {
+      "paths": [
+        "Makefile",
+        "renderer/virgl-shader/build.sh"
+      ],
+      "reason": "Build recipes directly execute in acceptance log; sanitizer harness fault injection is limited to instrumented target and ordinary native/Wasm builds retain no injection API."
+    },
+    {
+      "paths": [
+        "docs/gpu-3d-contract.json",
+        "docs/gpu-3d-decision.md",
+        "renderer/virgl-shader/README.md",
+        "tasks/QUEUE.md",
+        "tasks/epic-6-transcendence/E6-T12e6b-constant-domain-compiler.md"
+      ],
+      "reason": "Declarative task/documentation metadata; contract production and predecessor consumer are byte-equivalent to held head."
+    },
+    {
+      "paths": [
+        "renderer/virgl-shader/tests/*-cases.json",
+        "renderer/virgl-shader/tests/constant-compiler-migrations.json",
+        "renderer/virgl-command/tests/constant-compiler-shaders.json"
+      ],
+      "reason": "Literal inputs and expected identities are independently reconstructed, every new and retained body is present in native/Wasm logs; exact 105 promotions and adjacent modifications compare to Git-held predecessor."
+    },
+    {
+      "paths": [
+        "tools/virgl-constant-compiler/*.py",
+        "tools/virgl-constant-compiler/*.mjs",
+        "tools/verify-virgl-constant-compiler.*",
+        "renderer/virgl-shader/native_tests/constant_compiler.c",
+        "renderer/virgl-command/tests/constant-compiler*.mjs"
+      ],
+      "reason": "Recording and verification harness directly exercised by deterministic acceptance, with each outcome/data binding recomputed by independent receipt functions, native transcript, copied-source sabotage, and V8 coverage. Cold helper evidence pending final clone."
+    }
+  ],
+  "finalSourceHead": "d3565d11c2133aacbaa628ffa82342b5d308ab10",
+  "finalAdapterCoverage": [
+    {
+      "path": "tools/virgl-constant-compiler/shader_compat.py",
+      "lines": "235-241",
+      "classification": "executed",
+      "citation": "cold-clone/acceptance/receipt.json regressions.shaders.suites: raw absent-schema assertion and exact operation tables for the other five suites; independently recomputed by final_cold_audit.py"
+    },
+    {
+      "path": "tools/virgl-constant-compiler/legacy_compat.py",
+      "line": 27,
+      "classification": "executed",
+      "citation": "cold-clone/acceptance/receipt.json regressions.legacyRenderer current compiler inventory including native_tests/constant_compiler.c; independently recomputed by final_cold_audit.py"
+    }
+  ]
+}

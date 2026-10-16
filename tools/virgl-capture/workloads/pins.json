@@ -1,0 +1,30 @@
+{
+  "source_image_sha256": "bfcde69e5eeb2b5baba96a451f0671092b5973e8cc3a7f581722adf513651200",
+  "guest_packages": {
+    "mesa": "1:26.2.2-1",
+    "hyprland": "0.56.2-3",
+    "libdrm": "2.4.134-1",
+    "libglvnd": "1.7.0-3"
+  },
+  "kmscube": {
+    "repository": "https://gitlab.freedesktop.org/mesa/kmscube.git",
+    "revision": "f60e50e887d3c49e91ac9b06d8199b36152632fa",
+    "git_archive_sha256": "e2781477c2a9735f038740ad8c882c5ff4a0b99a6b5e8766f9272d3e7a591c8f",
+    "license": "MIT; archive contains original COPYING and source notices"
+  },
+  "glmark2": {
+    "version": "2023.01-2",
+    "architecture": "riscv64",
+    "package": "glmark2-2023.01-2-riscv64.pkg.tar.zst",
+    "url": "https://riscv.mirror.pkgbuild.com/repo/extra/glmark2-2023.01-2-riscv64.pkg.tar.zst",
+    "sha256": "e01efb362f8890fd08ba31dffa3aab19c43ba86b38a30723595349a7bf4ca40f",
+    "upstream": "https://github.com/glmark2/glmark2/tree/2023.01"
+  },
+  "cross_packages": {
+    "gcc-riscv64-linux-gnu": "4:12.2.0-5",
+    "gcc-12-riscv64-linux-gnu": "12.2.0-13cross1",
+    "libgcc-12-dev-riscv64-cross": "12.2.0-13cross1",
+    "binutils-riscv64-linux-gnu": "2.40-2",
+    "zstd": "1.5.4+dfsg2-5"
+  }
+}

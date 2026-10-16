@@ -1,0 +1,21 @@
+{
+  "schema": "dimensional-shader-fresh-verifier-seal-v1",
+  "task": "E6-T11d57",
+  "verdict": "verified",
+  "workerSubmission": "f880e934b9278af86c1f28f3d05d34c581b5bf9f",
+  "frozenRuntimeHarness": "ebd460b325f5a3b97798a9450ab3c7f879b9ca26",
+  "verifiedBase": "48b2ba0c7ee90d13093f7782e5a2502e44095753",
+  "records": 12768,
+  "reopenedMembers": 12768,
+  "recordIndexSha256": "a2ec3a56cc5f691c63d7176f57d9ee8470f4b203819560cbdd380b147f8b59a7",
+  "archiveSha256": "676ea1a1e5fd4a620d6ec7171a0f73b86e106b918c326692c49c3e5fa3a079d7",
+  "archiveBytes": 20004659,
+  "workerBodiesAuthenticated": 75642,
+  "predictionsSha256": "dd69990521a618a2222cde2e008d5cb2712e568d5c78a8a017abb7b1c3547420",
+  "verdictSha256": "7d60416b2c9895c3d2ee6e11c3e3dc3ed7024ea5635c4952af721c94cbf09327",
+  "novelOracleSourceSha256": "6343f1f34f8784254e9f49daad72a72e0d8236c159eb99f0687f6635ae9687e7",
+  "changedRuntime": false,
+  "productionAuthority": false,
+  "promotionDoesNotChangeRuntime": true,
+  "diagnosticsPreserved": true
+}

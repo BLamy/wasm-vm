@@ -1,0 +1,68 @@
+{
+  "schema": "original-image-subresource-negative-readiness-v1",
+  "sourceHead": "a229993e20de3e8b14d64b5c9004292f9c41f614",
+  "sources": [
+    {
+      "path": "renderer/virgl-command/decoder.mjs",
+      "sha256": "9129c0dafdf3bb73d147d706384cda4ae53ae87314458e33108909dda4e85290"
+    },
+    {
+      "path": "renderer/virgl-command/resources.mjs",
+      "sha256": "d38ae81822929d0a056b127a2d18e7faa101042677b0ce367fc2d4bc714e3238"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "sha256": "a84763979eb266f2bbcdd0d1e48855d7e9498c7a7f0da4b23e3e7ad015dd908d"
+    },
+    {
+      "path": "renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "sha256": "fc479ec92133f8b75d26043d20fca97d00b1a1556481abf5c5daf23b66e00fca"
+    }
+  ],
+  "records": [
+    {
+      "name": "original-view-range",
+      "words": [
+        5,
+        6,
+        33554499,
+        0,
+        513,
+        1672
+      ],
+      "packetHex": "01060600050000000600000043000002000000000102000088060000",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only level zero, layer zero sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "name": "original-surface-level",
+      "words": [
+        12,
+        6,
+        67,
+        2,
+        0
+      ],
+      "packetHex": "010805000c00000006000000430000000200000000000000",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required level zero, layer zero color or Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    }
+  ],
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "verifiedDependencyHead": "c0488902039a5fb5f9efc8c62101798668b2ce4a"
+}

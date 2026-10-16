@@ -1,0 +1,334 @@
+{
+  "schema": "wasm-vm-banks-verifier-final-audit-v1",
+  "status": "passed",
+  "frozenHead": "f88d7bb0c52cb4ac1189f7a05fb1dfdf77b03b91",
+  "checks": 1129,
+  "nativeCases": 3603,
+  "nativeCalls": 14415,
+  "nativeRecoveries": 10809,
+  "wasmParityCases": 2174,
+  "hardwarePixelChecks": 1024,
+  "hardwareFloatWords": 48,
+  "hardwareGuardWords": 16,
+  "changedExecutableCLines": 25,
+  "bindingChecks": 33230,
+  "runtimeSources": [
+    {
+      "path": "Makefile",
+      "sha256": "183cd02990008dfed4969951773649bf8272d15256ceee03757f0e79d53f0378"
+    },
+    {
+      "path": "docs/gpu-3d-contract.json",
+      "sha256": "b7bd67beb81aa15d3b63b8da569eed3e31c1170bffde447ab39b4bf1067c745f"
+    },
+    {
+      "path": "docs/gpu-3d-decision.md",
+      "sha256": "e19543a5dfdc7d1b0bf4fb78dc6154465607c221c0ec0a5c369da1cdb97054ca"
+    },
+    {
+      "path": "renderer/virgl-shader/README.md",
+      "sha256": "cb33932eb8f7f5a0b8a7a901816a36989b8cb0fa35994e222370d6aa6fc7a08d"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "sha256": "eea6467ae207e56057ed54cdf25cb1dd992fefd61f433b3190ced073a9beca88"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.h",
+      "sha256": "e8938d29d9c7c8e03d9aeb3b4f7a85e88ccdd7937cb955fa4b5406dacb848f72"
+    },
+    {
+      "path": "renderer/virgl-shader/build.sh",
+      "sha256": "f416ddbc099f851be42bf8605390b0428c2f2caae0c9bf10b28664f315feea39"
+    },
+    {
+      "path": "renderer/virgl-shader/index.mjs",
+      "sha256": "3bde28f884a70558ca052cc51c75695a55b3de867b878e21b237cf41567a5a1e"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/banks.c",
+      "sha256": "bbdb308cf8eb69b1ad5d53e33ad8e49051b58ac1ceed8b390d143db63b3f81e7"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/captured.c",
+      "sha256": "b0339483f3cb999932be8ae3e2dda9afefbec706f745bcb821d9df4ea8881abf"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/components.c",
+      "sha256": "6fd3bf132a80e5d8b9776967cd2d335433f54fba4937271c2d8e1e4504aea938"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/bank-cases.json",
+      "sha256": "331e33865483b30f4bf1d2e2443e254efcc600a925056e0690f23d162fc75b50"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/banks.mjs",
+      "sha256": "b0f538bf1c61c9eb83d3b9b3a0e1567d2981bcbb728e1a2eba9f54e66bcd007d"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/browser.mjs",
+      "sha256": "98c06c9083ac761ebec44ebc2b051dd0faf8e917014ce7287dc8aa079bb7e1ef"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/captured-invalid.json",
+      "sha256": "1087aceffb1f0c11ca4332a456c9b3a844c6a2ccf6d354083f7031c1ead3b771"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/captured-textured-scene.mjs",
+      "sha256": "53f95875da947dd6644e993fcb7310601d12e6f1dd7c6ec7859d6b3d597434c0"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/component-cases.json",
+      "sha256": "92752e2bfc8d5712dc77d84b9502ed54c14fbecac6a717191dd556d09c122b40"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/components.mjs",
+      "sha256": "28feb47ddaa30ba18704f63f150ce3e150b040be9788c146620635965c9a5f0c"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/pair-cases.json",
+      "sha256": "1b230d356463f1adb1155631a5377e7f8e65ab6f78bc4404eeba26c0b7b52d63"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/pairs.mjs",
+      "sha256": "a837403ff169cfb40b015256fb29b32da6c0f7b2f07eaf975c57392f8a690e3a"
+    },
+    {
+      "path": "tasks/epic-6-transcendence/E6-T12e3b-constant-transport-reflection.md",
+      "sha256": "05e611e05e9218f794713a5f14cdf47d7c57cb891612b1a4e02f80a8a0848391"
+    },
+    {
+      "path": "tools/verify-virgl-banks.mjs",
+      "sha256": "6f0692e2758b5e9fd0d32643bf6b7c1541400a4eae39c9d5868550a9fdac29d7"
+    },
+    {
+      "path": "tools/verify-virgl-banks.sh",
+      "sha256": "d976cda93b63805985b6532699f0fddb3dafbcb1fb01ac55e4344de47b56191d"
+    },
+    {
+      "path": "tools/virgl-banks/cold.py",
+      "sha256": "e53d759137fdbfb9ae035037f6975ccc44ea61ff451f25253784ce63a88d9274"
+    },
+    {
+      "path": "tools/virgl-banks/inventory.py",
+      "sha256": "32b4cde6e838133f1c8887330c552060a6d2524529700d344d3f3611e7382d7a"
+    },
+    {
+      "path": "tools/virgl-banks/native.py",
+      "sha256": "c50c1da70e87da2aabf21b7ff88d42e31faa0e3f38057d16add4587464c41171"
+    },
+    {
+      "path": "tools/virgl-banks/receipt.py",
+      "sha256": "fda6d36a2bd290d8fc3a76df1115d7da71b8103c53ac489bc11151302060113b"
+    },
+    {
+      "path": "tools/virgl-components/native.py",
+      "sha256": "6bbe31d4d5cda4aff2f79a094978a67e621925c2a452c883179a2899557d0ea0"
+    },
+    {
+      "path": "tools/virgl-components/receipt.py",
+      "sha256": "f742263795e345f123e492aeb245fc38af5e71e55923c87947d3cb120f79de73"
+    },
+    {
+      "path": "tools/virgl-pairs/native.py",
+      "sha256": "bdf6969225f1791e5a25248c79a23c06179924a38c67eb11e9451d904f13adbd"
+    },
+    {
+      "path": "tools/virgl-pairs/receipt.py",
+      "sha256": "e7881114f8c2c46bc48da050a4c79fdaa804f313cce7352302e31fc2f0dcd8cc"
+    }
+  ],
+  "records": [
+    {
+      "path": "evidence/virgl-banks/verifier/anchors.json",
+      "bytes": 834,
+      "sha256": "e508cb0c035b2fd5c2df832ecbb9ee826e57fafb7eff7a49183e176a700245ba"
+    },
+    {
+      "path": "evidence/virgl-banks/verifier/batch.c",
+      "bytes": 772,
+      "sha256": "037a0a41d1f52cec7ddd9052851a2da3db6ccff398d8e4f26c70b1e412aa4c6d"
+    },
+    {
+      "path": "evidence/virgl-banks/verifier/binding-audit.json",
+      "bytes": 1796,
+      "sha256": "b204ddb3a1544a6d9a30a3519384460b7b2d7584cd2ba5569ac23b8da40b6929"
+    },
+    {
+      "path": "evidence/virgl-banks/verifier/binding-audit.py",
+      "bytes": 21601,
+      "sha256": "96270ca7ea57cc89cbd76f858c66b16ad5f7cff5edc99e4bd08db93a49a20b07"
+    },
+    {
+      "path": "evidence/virgl-banks/verifier/binding-predictions.md",
+      "bytes": 3516,
+      "sha256": "7ba109bee956995be7c90ed3e1712ab18ad7b50b59f8ab10c55dbf77df682937"
+    },
+    {
+      "path": "evidence/virgl-banks/verifier/binding-review.md",
+      "bytes": 6167,
+      "sha256": "6cc049510a14b5b3bef782e6ac25737ff2743d8109a3f924ad73c3459def0cee"
+    },
+    {
+      "path": "evidence/virgl-banks/verifier/browser-cases.json",
+      "bytes": 679008,
+      "sha256": "19b73fa9a65754056536543df56abec3200c4382684c73d669438e998d3419c4"
+    },
+    {
+      "path": "evidence/virgl-banks/verifier/browser-coverage.json",
+      "bytes": 4886,
+      "sha256": "32dc4516fc73977aeaf8f13e85198a57b1eb47a2d39cdb81f99f123d0e079b30"
+    },
+    {
+      "path": "evidence/virgl-banks/verifier/browser-expectations.json",
+      "bytes": 1828780,
+      "sha256": "e1a94506fffd4e2f9c3f60e614ac31724207333b5fb55fb2c93a9ad90d0173ec"
+    },
+    {
+      "path": "evidence/virgl-banks/verifier/build-native.py",
+      "bytes": 1994,
+      "sha256": "56e4bf37c526cd225dfaec598750fd9df76a4905dd3b1f8097adf35007b0c16d"
+    },
+    {
+      "path": "evidence/virgl-banks/verifier/coverage-census.json",
+      "bytes": 7440,
+      "sha256": "05f8d2b459756a7ffb328b850b468ec253d345aed1f429e4ab79055f42bfc60a"
+    },
+    {
+      "path": "evidence/virgl-banks/verifier/coverage-review.md",
+      "bytes": 5005,
+      "sha256": "15f3c49033db8d6ef2929d09755bd74d3bcb6151c977db4eb40564e62a3f1232"
+    },
+    {
+      "path": "evidence/virgl-banks/verifier/extra-native-parity.json",
+      "bytes": 18300,
+      "sha256": "e0f80a81a42aebbde7fe9a4edf620b0811e82b2bc23a2256c9c2348ff1d46911"
+    },
+    {
+      "path": "evidence/virgl-banks/verifier/extra-native-parity.py",
+      "bytes": 1375,
+      "sha256": "1fcd7364ef19568d957117894e1550ad94281bc3922f7e889c78f056569ff245"
+    },
+    {
+      "path": "evidence/virgl-banks/verifier/final-audit.py",
+      "bytes": 3801,
+      "sha256": "a2283f6d74ed84068024add926a2a6ab35d7b7c5e1a932ee3e421205db45a906"
+    },
+    {
+      "path": "evidence/virgl-banks/verifier/gpu-attacks.mjs",
+      "bytes": 10648,
+      "sha256": "288e98a07a96cc2c789545c37b63861156897bd2368a921897e34c78d11a66c7"
+    },
+    {
+      "path": "evidence/virgl-banks/verifier/gpu-run.log",
+      "bytes": 47,
+      "sha256": "bf706ef676a5716607384e399ab41a584f750cb25fcbcf3bfb355c22a6340d9c"
+    },
+    {
+      "path": "evidence/virgl-banks/verifier/gpu-sabotage-run.log",
+      "bytes": 47,
+      "sha256": "873ce71326124941e2bd7fbaa6cc0fb4429fbc297201a04657a25c23eb35db13"
+    },
+    {
+      "path": "evidence/virgl-banks/verifier/gpu-sabotage.json",
+      "bytes": 357620,
+      "sha256": "4649e8bfd22b2357832c30f0fbdc2685845d4e01a974dc4129d875d7828a7629"
+    },
+    {
+      "path": "evidence/virgl-banks/verifier/gpu-sabotage.png",
+      "bytes": 92507,
+      "sha256": "ac1ad7dcb93164a0afeb7df930f5289688c3f24494b8c482e03dd1f2aa141391"
+    },
+    {
+      "path": "evidence/virgl-banks/verifier/gpu.json",
+      "bytes": 711090,
+      "sha256": "eb9a96bc1c3f21eff9152c3a94c76cdcf766abc6f37d4292f5db282cd3b3abea"
+    },
+    {
+      "path": "evidence/virgl-banks/verifier/gpu.png",
+      "bytes": 42627,
+      "sha256": "9fcd78d6506a643238a860391e59d63f08e8418b0a5a5c9c50bc85d617e285a6"
+    },
+    {
+      "path": "evidence/virgl-banks/verifier/harness-calibration.json",
+      "bytes": 390,
+      "sha256": "077406b7536ca926c0a6d65a6bfdbc1cd7a802b53c71d17170b2a0051eb9e7b7"
+    },
+    {
+      "path": "evidence/virgl-banks/verifier/native-attacks.py",
+      "bytes": 10609,
+      "sha256": "d00bb6472d77b5784f90703470d507869606d0136f9ee353f4f0002111e76d88"
+    },
+    {
+      "path": "evidence/virgl-banks/verifier/native-build.json",
+      "bytes": 33258,
+      "sha256": "9fb380ec92b296874bbbf122949d3444bd5128f81b82b25d398ebaa8814afd32"
+    },
+    {
+      "path": "evidence/virgl-banks/verifier/native-build.log",
+      "bytes": 3638,
+      "sha256": "2707a991c0bddfb82aae16ba3822727e06f55c07e2a6461927d5cb0c0cf76815"
+    },
+    {
+      "path": "evidence/virgl-banks/verifier/native-coverage.json",
+      "bytes": 146446,
+      "sha256": "73d9b0d1dc14857f88bc4a769da4506601fa34a505718906919a0258fdc7bb6c"
+    },
+    {
+      "path": "evidence/virgl-banks/verifier/native-coverage.txt",
+      "bytes": 41915,
+      "sha256": "ccd2c000742ebdc8a44532301c2b65bd1b6b32c0ef9e0c5836ee9ef0161743b1"
+    },
+    {
+      "path": "evidence/virgl-banks/verifier/native-output.jsonl.gz",
+      "bytes": 383486,
+      "sha256": "9d51abafa1ad1d1fb3f97f6d892e5df64c6974306c75bd99172c4316b13eb45c"
+    },
+    {
+      "path": "evidence/virgl-banks/verifier/native-run.log",
+      "bytes": 101,
+      "sha256": "8b130e88596ec5c28706c4329ad4ed91e146b1de6f70eb682d016af6015547d3"
+    },
+    {
+      "path": "evidence/virgl-banks/verifier/native-stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/virgl-banks/verifier/native.json",
+      "bytes": 3871023,
+      "sha256": "55fa684f47c3cecb2ea46d271a9a1bedf512c6a605c313ef617e71fcd7d3d3e1"
+    },
+    {
+      "path": "evidence/virgl-banks/verifier/predictions.md",
+      "bytes": 11800,
+      "sha256": "e7c1c6e5ba959fd3cc3f599c97507cb22f1b18187fe379cb75533345951a9b87"
+    },
+    {
+      "path": "evidence/virgl-banks/verifier/preparation.json",
+      "bytes": 1890,
+      "sha256": "59ee5fd26a87c59c3f0461a9b7ebab3a7db1cf8ca23db7054a1bce37c065ff02"
+    },
+    {
+      "path": "evidence/virgl-banks/verifier/run-gpu.mjs",
+      "bytes": 4803,
+      "sha256": "50d99961ed49b1c271a5d9bc837c34546236abc858f6f3702da86455df613841"
+    },
+    {
+      "path": "evidence/virgl-banks/verifier/sabotage-coverage.json",
+      "bytes": 4886,
+      "sha256": "81d37478b19afc9b3ab35d211340ef7756b1cf7dda567664848c5662b754d18c"
+    },
+    {
+      "path": "evidence/virgl-banks/verifier/supplement-before-evidence.md",
+      "bytes": 2278,
+      "sha256": "59c9ed85bf3a6037e0439cb03685a9bd046157b7b07f36c5ceadbfe3fb6b4bc8"
+    },
+    {
+      "path": "evidence/virgl-banks/verifier/supplement-preparation.json",
+      "bytes": 225,
+      "sha256": "10b0acf20b8eb326a0ad0febbf1de4fc1c409a826425ae047f93130dbf9985c5"
+    }
+  ],
+  "findingCount": 0
+}

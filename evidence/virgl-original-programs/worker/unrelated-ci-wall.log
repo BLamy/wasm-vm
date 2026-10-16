@@ -1,0 +1,124 @@
+cargo fmt --all --check
+cargo clippy --workspace --all-targets --all-features -- -D warnings
+    Checking wasm-vm-jit-runtime v0.0.1 (/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/crates/jit-runtime)
+    Checking wasm-vm-cli v0.0.1 (/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/crates/cli)
+    Checking wasm-vm-core v0.0.1 (/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/crates/core)
+    Checking wasm-vm-wvseccomp v0.0.0 (/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/crates/wvseccomp)
+error[E0425]: cannot find function `prctl` in crate `libc`
+   --> crates/wvseccomp/src/main.rs:121:23
+    |
+121 |     if unsafe { libc::prctl(libc::PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) } != 0 {
+    |                       ^^^^^ not found in `libc`
+
+error[E0425]: cannot find value `PR_SET_NO_NEW_PRIVS` in crate `libc`
+   --> crates/wvseccomp/src/main.rs:121:35
+    |
+121 |     if unsafe { libc::prctl(libc::PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) } != 0 {
+    |                                   ^^^^^^^^^^^^^^^^^^^ not found in `libc`
+
+error[E0425]: cannot find value `SYS_seccomp` in crate `libc`
+   --> crates/wvseccomp/src/main.rs:132:19
+    |
+132 |             libc::SYS_seccomp,
+    |                   ^^^^^^^^^^^ not found in `libc`
+
+error[E0308]: mismatched types
+   --> crates/wvseccomp/src/main.rs:148:37
+    |
+148 |     let rc = unsafe { libc::syscall(SYS_MOUNT as libc::c_long, 0, 0, 0, 0, 0) };
+    |                       ------------- ^^^^^^^^^^^^^^^^^^^^^^^^^ expected `i32`, found `i64`
+    |                       |
+    |                       arguments to this function are incorrect
+    |
+note: function defined here
+   --> /Users/blamy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.186/src/unix/bsd/mod.rs:586:12
+    |
+586 |     pub fn syscall(num: c_int, ...) -> c_int;
+    |            ^^^^^^^
+help: you can convert an `i64` to an `i32` and panic if the converted value doesn't fit
+    |
+148 |     let rc = unsafe { libc::syscall((SYS_MOUNT as libc::c_long).try_into().unwrap(), 0, 0, 0, 0, 0) };
+    |                                     +                         +++++++++++++++++++++
+
+Some errors have detailed explanations: E0308, E0425.
+For more information about an error, try `rustc --explain E0308`.
+error: could not compile `wasm-vm-wvseccomp` (bin "wvseccomp" test) due to 4 previous errors
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `wasm-vm-wvseccomp` (bin "wvseccomp") due to 4 previous errors
+error[E0599]: no method named `enable_syscon` found for struct `wasm_vm_core::Machine` in the current scope
+  --> crates/jit-runtime/tests/timekeeping.rs:90:7
+   |
+90 |     m.enable_syscon();
+   |       ^^^^^^^^^^^^^
+   |
+help: there is a method `enable_plic` with a similar name
+   |
+90 -     m.enable_syscon();
+90 +     m.enable_plic();
+   |
+
+error[E0599]: no method named `enable_builtin_sbi` found for struct `wasm_vm_core::Machine` in the current scope
+    --> crates/jit-runtime/tests/jit_execution.rs:596:7
+     |
+ 596 |     m.enable_builtin_sbi();
+     |       ^^^^^^^^^^^^^^^^^^
+     |
+help: there is a method `enable_clint` with a similar name, but with different arguments
+    --> crates/core/src/lib.rs:1508:5
+     |
+1508 | /     pub fn enable_clint(
+1509 | |         &mut self,
+1510 | |         clock_div: u64,
+1511 | |     ) -> alloc::rc::Rc<core::cell::RefCell<dev::clint::ClintState>> {
+     | |___________________________________________________________________^
+
+For more information about this error, try `rustc --explain E0599`.
+error: could not compile `wasm-vm-jit-runtime` (test "timekeeping") due to 1 previous error
+error: could not compile `wasm-vm-jit-runtime` (test "jit_execution") due to 1 previous error
+error: struct `OsEntropy` is never constructed
+ --> crates/cli/src/os_entropy.rs:7:12
+  |
+7 | pub struct OsEntropy;
+  |            ^^^^^^^^^
+  |
+  = note: `-D dead-code` implied by `-D warnings`
+  = help: to override `-D warnings` add `#[expect(dead_code)]` or `#[allow(dead_code)]`
+
+error: could not compile `wasm-vm-cli` (bin "wasm-vm") due to 1 previous error
+error: could not compile `wasm-vm-cli` (bin "wasm-vm" test) due to 1 previous error
+error: items after a test module
+    --> crates/core/src/dev/virtio/gpu/mod.rs:2156:1
+     |
+2156 |   mod tests {
+     |   ^^^^^^^^^
+...
+4930 |   fn is_submit3d_type(ty: u32) -> bool {
+     |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+4939 |   enum PendingService {
+     |   ^^^^^^^^^^^^^^^^^^^
+...
+4946 | / fn service_submit3d_completion(
+4947 | |     slot: &Rc<RefCell<VirtioMmio>>,
+4948 | |     vq: &mut Option<Virtqueue>,
+4949 | |     state: &Rc<RefCell<GpuState>>,
+4950 | |     bus: &mut SystemBus,
+4951 | | ) -> PendingService {
+     | |___________________^
+...
+5053 | / pub(crate) fn submit3d_dma(
+5054 | |     slot: &Rc<RefCell<VirtioMmio>>,
+5055 | |     state: &Rc<RefCell<GpuState>>,
+5056 | |     bus: &mut SystemBus,
+5057 | |     exchange: &submit3d::Submit3dExchange,
+5058 | |     output: Option<&[u8]>,
+5059 | | ) -> Result<Vec<u8>, control3d::Control3dError> {
+     | |_______________________________________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.96.0/index.html#items_after_test_module
+     = note: `-D clippy::items-after-test-module` implied by `-D warnings`
+     = help: to override `-D warnings` add `#[allow(clippy::items_after_test_module)]`
+     = help: move the items to before the test module was defined
+
+error: could not compile `wasm-vm-core` (lib test) due to 1 previous error
+make: *** [clippy] Error 101

@@ -1,0 +1,12 @@
+{
+  "schema": 1,
+  "dist": "/Users/blamy/.codex/worktrees/website-docstream/wasm-vm/.design-tmp/dist-smoke/web/dist",
+  "docstreamVersion": "1.8.0",
+  "pages": 154,
+  "ledgerDocuments": 1995,
+  "readerRevision": "fe95ffa6a61d",
+  "lazyFeatures": 110,
+  "codeExamplesPreserved": true,
+  "rawBenchmarkBytesPreserved": true,
+  "largestAssetBytes": 26043701
+}

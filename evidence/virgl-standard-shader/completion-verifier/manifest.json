@@ -1,0 +1,18 @@
+{
+  "schema": "virgl-standard-shader-completion-recording-v1",
+  "task": "E6-T11d4",
+  "verdict": "verified",
+  "sourceHead": "1c17b508d0dc52199613f4c4883486c477773203",
+  "workerClaimCommit": "8101e82c2228012ff6a7435da8ab03e31f4e975d",
+  "workerArchiveSha256": "40ea23d821e37165c6b54f54b7cb636e9418601b8b709dbb4bffc6658ac0b99d",
+  "priorCriticArchiveSha256": "1f59cd3fc8c56509ef73b9d02f766d02e488a9eae70df1e607a4ac036061e78c",
+  "records": 107,
+  "archiveBytes": 7363417,
+  "archiveSha256": "35135d4c16dda7c25c2f00d49e04acdcd2140b8375ba8db43c27afc6201524a0",
+  "indexSha256": "6da06a396d5a0ead4599cce1086fdcb3fa8361bf0411ad040d46abf048fb82b0",
+  "verdictSha256": "27bbdf0e09ce3aaca6c6b68e5ab12f6156cc6df4a847481493858447a4f1f832",
+  "freshCases": 695,
+  "acceptedCases": 208,
+  "hardwareFrames": 8,
+  "pixels": 2048
+}

@@ -1,0 +1,101 @@
+{
+  "schema": "original-corpus-helper-repair-lossless-v1",
+  "task": "E6-T12f6",
+  "gitHead": "8ace8d34e1e5791564411b41de85b4d311a66980",
+  "previousVerdictHead": "15f8917ed3fef4cca4114fea5871edfa8b531dd3",
+  "status": "passed",
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 217456,
+    "sha256": "aafcc6a2658b10490fc5de2fb61adc296eb084c59a9cec4de784116fc2f08983"
+  },
+  "files": 34,
+  "rawBytes": 3910416,
+  "sources": [
+    {
+      "path": "renderer/virgl-shader/tests/original-corpus.mjs",
+      "bytes": 17645,
+      "sha256": "3634573e3bb9e5f88649642b61df924ce823525055b0c0d1e38530ad1709a771"
+    },
+    {
+      "path": "tools/verify-virgl-original-corpus.sh",
+      "bytes": 3179,
+      "sha256": "c9fa432a33e0af8b61d3fe1c03074fbf723b158907a5411ea1a18ac39665d804"
+    },
+    {
+      "path": "tools/virgl-original-corpus/README.md",
+      "bytes": 4992,
+      "sha256": "2707340301c0465d737f0712a4da89435e684a1d72aaa4a15ad3d1203913ebb7"
+    },
+    {
+      "path": "tools/virgl-original-corpus/verifier-regressions.mjs",
+      "bytes": 8316,
+      "sha256": "4f3ca9e71e89f52595b233d8b8c2cb4227e14874dd43716634b32c46010072a5"
+    },
+    {
+      "path": "tools/virgl-original-corpus/verifier.py",
+      "bytes": 15119,
+      "sha256": "8635684cc2c0a2219a19a1bed601a90324acc6953eb83b5e18d2da2614d036f4"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "bytes": 21920,
+      "sha256": "75c4577ddb7d06777eef857239c434b182af15b2fd36a4c06167799c5ebef86f"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/indirect-constant-cases.json",
+      "bytes": 339595,
+      "sha256": "8155bcfee6bcf299dc26d8b2eb82b98bda270c8bfbb763a97c4f320895fce167"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/original-corpus.json",
+      "bytes": 43067,
+      "sha256": "72762494d89146a605db7dae27e22ba76288f9cad5dca6654f6a3af669704020"
+    },
+    {
+      "path": "evidence/virgl-original-corpus/artifacts/worker/virgl-shader.wasm",
+      "bytes": 313935,
+      "sha256": "1f26f78f5ba3516e98ea701f3e85e46364b3334cc855e86f08772dd949de299a"
+    },
+    {
+      "path": "evidence/virgl-original-corpus/artifacts/worker/virgl-shader.mjs",
+      "bytes": 9285,
+      "sha256": "45dccef6ff61f9f01a63b86b40eb6c621fa442e39cbf04bbbb79446e5b372e65"
+    }
+  ],
+  "carriedHeldPredictions": [
+    "P1",
+    "P2",
+    "P3",
+    "P4",
+    "P5",
+    "P6",
+    "P7"
+  ],
+  "retainedArchive": {
+    "path": "evidence/virgl-original-corpus/cold.tar.gz",
+    "bytes": 23981965,
+    "sha256": "dff685c3c517135f43df8a2212d573e2c03e12330ebbaf69c01651aaff149028"
+  },
+  "retainedInputs": [
+    {
+      "archiveMember": "acceptance/gpu/report.json",
+      "path": "target/evidence/original-helper-retained-inputs/gpu/report.json",
+      "bytes": 17403343,
+      "sha256": "e5d0004cf102ff1157c43fec0b45ec00d7ce16b7d79ab6c3bf3d10147527a2e8"
+    },
+    {
+      "archiveMember": "acceptance/gpu-430670705/report.json",
+      "path": "target/evidence/original-helper-retained-inputs/gpu-430670705/report.json",
+      "bytes": 17404452,
+      "sha256": "d712d37954770af377e644a250205c7598ed652bd17676f6a2c84f478903bd04"
+    },
+    {
+      "archiveMember": "acceptance/gpu-2480340481/report.json",
+      "path": "target/evidence/original-helper-retained-inputs/gpu-2480340481/report.json",
+      "bytes": 17402969,
+      "sha256": "dcd90c8291168d9b34cb8681279777b39d1b6b9e1b6a75b663c1c12adbdb7fc6"
+    }
+  ],
+  "boundary": "Only access-only helper count authority and promoted gate integration changed. Prior P1-P7 and production code/toolchain/artifact digests carry forward unchanged. Narrow final exact-head pristine clone exercises all promoted helper cases and both new gate commands."
+}

@@ -1,0 +1,102 @@
+{
+  "status": "passed",
+  "head": "7e444f2e3523b5b46b4aedbff3ace0c409ff6a83",
+  "sourceClone": "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-precise-arithmetics-cold-kgdnwbf_/wasm-vm",
+  "pristineBefore": "",
+  "pristineAfter": "",
+  "acceptanceFilesVerified": 1096,
+  "receiptSha256": "43485e0d1874ba1ba225eac7ec840672d4104cd79e68b24fdae64ad12e2f848f",
+  "independentFinalArithmetic": {
+    "references": 13896,
+    "pixelWords": 35280,
+    "pixels": 1134720,
+    "stages": [
+      "fragment",
+      "vertex"
+    ]
+  },
+  "contraction": {
+    "separate": 0,
+    "fused": 2826960896
+  },
+  "removedEnvironmentNames": [
+    "GIT_PAGER",
+    "RUST_LOG"
+  ],
+  "receipt": {
+    "nativeCalls": 1589060,
+    "wasmCalls": 74716,
+    "gpu": {
+      "status": "passed",
+      "draws": 2955,
+      "words": 11760,
+      "pixels": 378240,
+      "counterDraws": 1544,
+      "counterPixels": 197632,
+      "physicalFailures": 0,
+      "helperBranches": 39
+    },
+    "sabotage": {
+      "sticky": {
+        "status": "refuted-source-fault",
+        "draws": 0,
+        "words": 0,
+        "pixels": 0,
+        "counterDraws": 0,
+        "counterPixels": 0,
+        "physicalFailures": 1,
+        "helperBranches": 0
+      },
+      "round-even": {
+        "status": "refuted-source-fault",
+        "draws": 0,
+        "words": 0,
+        "pixels": 0,
+        "counterDraws": 0,
+        "counterPixels": 0,
+        "physicalFailures": 1,
+        "helperBranches": 0
+      },
+      "limb-carry": {
+        "status": "refuted-source-fault",
+        "draws": 0,
+        "words": 0,
+        "pixels": 0,
+        "counterDraws": 0,
+        "counterPixels": 0,
+        "physicalFailures": 1,
+        "helperBranches": 0
+      },
+      "normalize": {
+        "status": "refuted-source-fault",
+        "draws": 0,
+        "words": 0,
+        "pixels": 0,
+        "counterDraws": 0,
+        "counterPixels": 0,
+        "physicalFailures": 1,
+        "helperBranches": 0
+      },
+      "zero-sign": {
+        "status": "refuted-source-fault",
+        "draws": 0,
+        "words": 0,
+        "pixels": 0,
+        "counterDraws": 0,
+        "counterPixels": 0,
+        "physicalFailures": 1,
+        "helperBranches": 0
+      },
+      "intermediate-rounding": {
+        "status": "refuted-source-fault",
+        "draws": 0,
+        "words": 0,
+        "pixels": 0,
+        "counterDraws": 0,
+        "counterPixels": 0,
+        "physicalFailures": 1,
+        "helperBranches": 0
+      }
+    }
+  }
+}

@@ -1,0 +1,136 @@
+{
+  "task": "E6-T12e1",
+  "frozenHead": "ae3bdf0f1d707f239b00907269f5c783fcf597e5",
+  "status": "bindings-held",
+  "checks": {
+    "cold-success": 1,
+    "cold-exact-head": 1,
+    "cold-recorded-clean": 1,
+    "cold-retained-head": 1,
+    "cold-retained-clean": 1,
+    "cold-frozen-harness": 1,
+    "cold-log": 1,
+    "digest": 1303,
+    "size": 1303,
+    "seven-prior-plus-four": 1,
+    "receipt-anchor": 2,
+    "receipt-head": 2,
+    "receipt-source-tracked": 222,
+    "frozen-source": 1214,
+    "compiler-binding": 12,
+    "native-sanitizers": 2,
+    "native-log": 2,
+    "native-binary": 2,
+    "original-identities": 2,
+    "exact-accepted-identities": 2,
+    "exact-rejections": 2,
+    "browser-frozen-head": 8,
+    "browser-zero-errors": 8,
+    "hardware-status": 2,
+    "all19-native-wasm-parity": 2,
+    "four-new-draw-identities": 2,
+    "unchanged-original-bytes": 38,
+    "original-content-address": 38,
+    "remaining-rejection-provenance": 16,
+    "four-native-original-parity": 8,
+    "all249-native-wasm-parity": 2,
+    "fixture-size": 2,
+    "fixture-identity-outcome": 498,
+    "recovery-parity": 2,
+    "draw-count": 2,
+    "fragment-bound-attributes": 12,
+    "compiled-original-glsl": 20,
+    "draw-depth-mode": 20,
+    "pixel-uniqueness": 20,
+    "pixel-coordinates": 20,
+    "independent-pixel": 9472,
+    "vertex-bound-constants": 8,
+    "vertex-bound-attributes": 8,
+    "pixel-total": 2,
+    "sabotage-exact-source": 2,
+    "sabotage-observed-pixel": 2,
+    "prior-draws": 4,
+    "prior-observed-pixels": 58,
+    "z-swizzle-counterexample": 1
+  },
+  "evidence": {
+    "worker": {
+      "receiptSha256": "2c9115baa9649dbf7b8f4dfe01227c99e61e66538e19d00ded00eb1ef8a5743a",
+      "sources": 111,
+      "records": 18,
+      "servedBodies": 26,
+      "unchangedOriginals": 19,
+      "acceptedHashes": [
+        "003270109615e05345631cf8a2273ebc1bf3d86c7590e05ddc8424c441db7605",
+        "0ec6a7a8741638e5a62cbf4a1f6896dd91bb2d60182e8e01f60866adf40fbed6",
+        "23b5f8a83172e68c9365028d2f3fedbb4d0a12d3b02a39b694388e89304910d3",
+        "403b0529c632d3d2ffe4584ede810f5745e8b76ca2ab4f575e1073d8f29fcf0c",
+        "80d6db6a6f10b93770698cfdd47232fed0fca94f4cb07ba7381bb38563de9808",
+        "9819066def2df1cd09f36f142fd2bc6b659395aa21bea6db7f58fbcc122c7c83",
+        "b28f0dbcbc79d9931938c29cb77b62a42ba8e95d65bbd1a720d9aecd3f8ec030",
+        "c00de140c2e9b128f07f7fba74bd60f3257b832d3251ae52a044bf8e68d90518",
+        "e96102a3202dde8b0b05ffa142eb6064c5fe916b673bbf1d31464bcbac56fb33",
+        "e9bc6d3b61e3cda2c215ac8b44a432e2eb1bd4891cfa921c6f914fd3fd86b551",
+        "ef095954837a421fd04071ffd1d99e70f56b258614d47a40fc9148238d6d3c88"
+      ],
+      "outcomes": {
+        "translated": 11,
+        "unsupported-feature": 7,
+        "parse-error": 1
+      },
+      "pixels": 4736,
+      "prior": {
+        "literal": {
+          "draws": 9,
+          "pixels": 4336
+        },
+        "captured": {
+          "draws": 3,
+          "pixels": 768
+        }
+      }
+    },
+    "cold-clone/acceptance": {
+      "receiptSha256": "32d2d19d454a92d977bb52193faaa7e1291a1875559a56991d416273e10be7c5",
+      "sources": 111,
+      "records": 18,
+      "servedBodies": 26,
+      "unchangedOriginals": 19,
+      "acceptedHashes": [
+        "003270109615e05345631cf8a2273ebc1bf3d86c7590e05ddc8424c441db7605",
+        "0ec6a7a8741638e5a62cbf4a1f6896dd91bb2d60182e8e01f60866adf40fbed6",
+        "23b5f8a83172e68c9365028d2f3fedbb4d0a12d3b02a39b694388e89304910d3",
+        "403b0529c632d3d2ffe4584ede810f5745e8b76ca2ab4f575e1073d8f29fcf0c",
+        "80d6db6a6f10b93770698cfdd47232fed0fca94f4cb07ba7381bb38563de9808",
+        "9819066def2df1cd09f36f142fd2bc6b659395aa21bea6db7f58fbcc122c7c83",
+        "b28f0dbcbc79d9931938c29cb77b62a42ba8e95d65bbd1a720d9aecd3f8ec030",
+        "c00de140c2e9b128f07f7fba74bd60f3257b832d3251ae52a044bf8e68d90518",
+        "e96102a3202dde8b0b05ffa142eb6064c5fe916b673bbf1d31464bcbac56fb33",
+        "e9bc6d3b61e3cda2c215ac8b44a432e2eb1bd4891cfa921c6f914fd3fd86b551",
+        "ef095954837a421fd04071ffd1d99e70f56b258614d47a40fc9148238d6d3c88"
+      ],
+      "outcomes": {
+        "translated": 11,
+        "unsupported-feature": 7,
+        "parse-error": 1
+      },
+      "pixels": 4736,
+      "prior": {
+        "literal": {
+          "draws": 9,
+          "pixels": 4336
+        },
+        "captured": {
+          "draws": 3,
+          "pixels": 768
+        }
+      }
+    }
+  },
+  "coldClone": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-components-cold-22v3wa1x/wasm-vm",
+  "coldRemovedEnvironmentNames": [
+    "GIT_PAGER",
+    "RUST_LOG"
+  ],
+  "limitation": "Vertex depth oracle only observes z<0; replacing affine TEMP1 z source y with x preserves all depth decisions over the quad. Main verifier informed; requires GPU attack or independent exact-z native assertion to resolve."
+}

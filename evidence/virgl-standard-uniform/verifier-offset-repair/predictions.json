@@ -1,0 +1,48 @@
+{
+  "schema": "E6-T11d16-signed-offset-repair-predictions-v1",
+  "createdUtc": "2026-10-10T13:03:16.490983+00:00",
+  "beforeNewWorkerEvidenceInspection": true,
+  "runtimeHead": "d3e0dc04431b64f7585565fdbf0a9c5065078152",
+  "diffBase": "ea2906ee1e6abece757fcbb3bc549b881f1336b6",
+  "priorVerdictSha256": "0b347a134310a73061bf0f45b6d6f67caddd63aea6b9b17e554c5776e9e3f14d",
+  "carriedHeldIds": [
+    "P1",
+    "P2",
+    "P3",
+    "P4",
+    "P5",
+    "P6",
+    "P7",
+    "P8",
+    "P9",
+    "P10",
+    "P11",
+    "P12"
+  ],
+  "predictions": [
+    {
+      "id": "R1",
+      "prediction": "The original upstream translator plus its sanity check accepts exact signed16 relative indices -32768,-32767,-1024,-512,-1,0,1,511,512,1023,1024,32766,32767 in both VS/FS, plain slot0 and dimensional slots0/1/12 when declared storage includes vector0. Selected native sanitized and fixed-memory Wasm admit them with complete equal source/metadata; compensating ARL bases equal negative offset preserve original signed token Index and effective vector0."
+    },
+    {
+      "id": "R2",
+      "prediction": "For the same four forms and two stages, +32768 and -32769 fail unsupported-feature in selected native and Wasm before original signed16 token truncation. Direct vectors512/1024 and dimension13 retain the existing declaration rejection. No outside-signed16 offset becomes an admitted opposite-signed token."
+    },
+    {
+      "id": "R3",
+      "prediction": "Every new sealed hardware fixture executes an actual headed Apple M4 Max Metal draw and completed fence, has defined effective vector0, preserves signed offset/source and original ARL base, and exposes all four bytes of every original word. All128 added draws have independently reconstructible complete pixels/storage/reflection; total253 healthy draws104844 pixels397 compiles508 native/Wasm cases per hot/cold run hold."
+    },
+    {
+      "id": "R4",
+      "prediction": "A bounded novel endpoint variation selecting the declared LAST vector rather than vector0 with ARL base last-offset succeeds for both stages, plain/dimensional slot0 and dimensional1/12. Original signed indices -32768/+32767 remain exact; independent raw words and all four byte shifts hold after real draws/fences. Altering one independent predicted pixel lane after actual fence must fail the assertion with cleanup completed."
+    },
+    {
+      "id": "R5",
+      "prediction": "All changed executable standard_guard.c regions and both signed bound branches execute in sealed native profiles; added cases cover plain-indirect fallback, both signs, endpoint acceptance, and both first-outside rejections. Added harness branches/assertions execute or receive specific non-product defensive waivers. LLVM exports regenerate from sealed actual binary/raw profiles and V8 source offsets bind authenticated generated/served/source bytes."
+    },
+    {
+      "id": "R6",
+      "prediction": "The new worker archive/index/receipt/source/generated/served/blob records authenticate at exact frozen head d3e0dc04; hot and final scrubbed cold acceptance pass with empty clone status. Original worker and verifier archives/indexes remain unchanged. Twelve HELD facets carry unchanged source/dependency/evidence identities; prior48-frame hardware proof carries where original inputs produce byte-identical GPU sources and downstream code remains identical."
+    }
+  ]
+}

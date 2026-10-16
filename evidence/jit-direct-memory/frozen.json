@@ -1,0 +1,13 @@
+{
+  "head": "7e51177d966e05f7ae8b3ae23c7d5d0d028c404b",
+  "parent": "96f30bdee9d0a98672336b223004054677baee36",
+  "compiler": "rustc 1.96.0 (ac68faa20 2026-05-25)\nbinary: rustc\ncommit-hash: ac68faa20c58cbccd01ee7208bf3b6e93a7d7f96\ncommit-date: 2026-05-25\nhost: aarch64-apple-darwin\nrelease: 1.96.0\nLLVM version: 22.1.2\n",
+  "sha256": {
+    "crates/wasm/src/jit_browser.rs": "8d592c91c45dbffba8958648542d255cb8e69256f65a1a17de5e7de4fb1116ed",
+    "crates/wasm/tests/jit_memory_direct_imports.rs": "d11b09632a39d6f92637c261229be7645e7893c90d29c8c39766c97a85662182",
+    "crates/wasm/tests/jit_memory_direct_imports_verifier.rs": "f08521a118ef1be219bf7fdaa164e0a43428501c653aa6eb54802e989de94400",
+    "tools/verify/jit-direct-memory-benchmark.mjs": "e6bfc8ded249926e55ef2cb7dd01d56a5e527aee350191d418a667e3d2b3eed6",
+    "web/dist/pkg/wasm_vm_wasm_bg.wasm": "4f1005a174e6dba3cf698d503a21a10168f4ff37db2c2419fbae86fb2f8a787b"
+  },
+  "unchangedNativeSourceTrees": true
+}

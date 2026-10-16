@@ -1,0 +1,16 @@
+{
+  "schema": "dimensional-depth-view-deployment-seal-v1",
+  "task": "E6-T11d60",
+  "head": "9698c0a91086cd419087154875d7200efcfded69",
+  "records": 512,
+  "reopenedMembers": 512,
+  "recordIndexSha256": "be8d78eaddb35e2fbe8d8cfe9591f60c7c7caaab9d7e2c5506c2199844a0fb08",
+  "archiveSha256": "2938b5c97a407dbf9f3cd7e71b344bf7f4214ac052835b03fe65db733c5c5cf3",
+  "archiveBytes": 49647931,
+  "deploymentId": "d72507c5-dc78-4fc4-92b6-f663c3bd9357",
+  "url": "https://d72507c5.wasm-vm.pages.dev",
+  "canonical": "https://wasm-vm.pages.dev",
+  "passed": 127,
+  "failed": 0,
+  "productionGraphicsAuthority": false
+}

@@ -1,0 +1,119 @@
+{
+  "schema": "standard-assembly-critic-checks-v1",
+  "commands": [
+    {
+      "command": [
+        "node",
+        "--check",
+        "renderer/virgl-command/tests/standard-primitive-assembly-adversarial.mjs"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "--check",
+        "tools/virgl-command/standard-assembly-adversarial-oracle.mjs"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "--check",
+        "tools/virgl-command/standard-assembly-adversarial-audit.mjs"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "py_compile",
+        "evidence/virgl-standard-assembly/verifier/authenticate.py",
+        "evidence/virgl-standard-assembly/verifier/coverage_audit.py",
+        "evidence/virgl-standard-assembly/verifier/seal.py"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python3",
+        "tools/check_task_policy.py"
+      ],
+      "exitCode": 0,
+      "stdout": "task-policy: OK (active=none)\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python3",
+        "tools/build_queue.py"
+      ],
+      "exitCode": 0,
+      "stdout": "wrote tasks/QUEUE.md: 627 tasks, 435 verified\n",
+      "stderr": ""
+    }
+  ],
+  "physicalRuns": [
+    {
+      "command": [
+        "node",
+        "tools/verify-virgl-standard-assembly.mjs",
+        "--output",
+        "evidence/virgl-standard-assembly/verifier/independent",
+        "--adversarial",
+        "true"
+      ],
+      "exitCode": 0
+    },
+    {
+      "command": [
+        "node",
+        "tools/verify-virgl-standard-assembly.mjs",
+        "--output",
+        "evidence/virgl-standard-assembly/verifier/fault-list-order",
+        "--smoke",
+        "true",
+        "--mutation",
+        "list-order"
+      ],
+      "exitCode": 1,
+      "expectedFailure": "completed native draw/fence fails original pixel oracle"
+    },
+    {
+      "command": [
+        "node",
+        "tools/verify-virgl-standard-assembly.mjs",
+        "--output",
+        "evidence/virgl-standard-assembly/verifier/fault-provoking",
+        "--smoke",
+        "true",
+        "--mutation",
+        "provoking"
+      ],
+      "exitCode": 1,
+      "expectedFailure": "completed native draw/fence fails original pixel oracle"
+    }
+  ],
+  "status": "passed",
+  "ordering": "task status update -> successful task policy -> queue regeneration -> selected evidence seal -> exact-path commit"
+}

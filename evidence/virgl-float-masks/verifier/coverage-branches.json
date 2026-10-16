@@ -1,0 +1,225 @@
+{
+  "status": "passed",
+  "frozenHead": "d549500106399ada00fcd48f1439bd107377ebc5",
+  "conditions": 24,
+  "outcomes": 48,
+  "records": [
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 461,
+      "column": 11,
+      "endLine": 461,
+      "endColumn": 27,
+      "trueCount": 38207,
+      "falseCount": 1271566
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 461,
+      "column": 31,
+      "endLine": 461,
+      "endColumn": 47,
+      "trueCount": 193,
+      "falseCount": 1271373
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 296,
+      "column": 16,
+      "endLine": 296,
+      "endColumn": 31,
+      "trueCount": 38845,
+      "falseCount": 424
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 297,
+      "column": 16,
+      "endLine": 297,
+      "endColumn": 31,
+      "trueCount": 199,
+      "falseCount": 225
+    },
+    {
+      "file": "renderer/virgl-shader/bridge.c",
+      "line": 586,
+      "column": 7,
+      "endLine": 586,
+      "endColumn": 51,
+      "trueCount": 37313,
+      "falseCount": 74593
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 101,
+      "column": 14,
+      "endLine": 101,
+      "endColumn": 34,
+      "trueCount": 75092,
+      "falseCount": 80368
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 176,
+      "column": 8,
+      "endLine": 176,
+      "endColumn": 44,
+      "trueCount": 37313,
+      "falseCount": 74595
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 196,
+      "column": 14,
+      "endLine": 196,
+      "endColumn": 28,
+      "trueCount": 151448,
+      "falseCount": 3172537
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 196,
+      "column": 32,
+      "endLine": 196,
+      "endColumn": 46,
+      "trueCount": 340,
+      "falseCount": 3172197
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 214,
+      "column": 21,
+      "endLine": 214,
+      "endColumn": 35,
+      "trueCount": 151448,
+      "falseCount": 751215
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 214,
+      "column": 39,
+      "endLine": 214,
+      "endColumn": 53,
+      "trueCount": 340,
+      "falseCount": 750875
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 216,
+      "column": 22,
+      "endLine": 216,
+      "endColumn": 36,
+      "trueCount": 340,
+      "falseCount": 151448
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 53,
+      "column": 8,
+      "endLine": 53,
+      "endColumn": 30,
+      "trueCount": 130,
+      "falseCount": 74962
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 53,
+      "column": 46,
+      "endLine": 53,
+      "endColumn": 68,
+      "trueCount": 64,
+      "falseCount": 74898
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 54,
+      "column": 21,
+      "endLine": 54,
+      "endColumn": 37,
+      "trueCount": 74430,
+      "falseCount": 468
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 54,
+      "column": 41,
+      "endLine": 54,
+      "endColumn": 57,
+      "trueCount": 74414,
+      "falseCount": 16
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 55,
+      "column": 21,
+      "endLine": 55,
+      "endColumn": 33,
+      "trueCount": 320,
+      "falseCount": 74578
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 56,
+      "column": 21,
+      "endLine": 56,
+      "endColumn": 33,
+      "trueCount": 264,
+      "falseCount": 74634
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 57,
+      "column": 20,
+      "endLine": 57,
+      "endColumn": 33,
+      "trueCount": 296,
+      "falseCount": 74602
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 57,
+      "column": 36,
+      "endLine": 57,
+      "endColumn": 45,
+      "trueCount": 64,
+      "falseCount": 232
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 57,
+      "column": 49,
+      "endLine": 57,
+      "endColumn": 63,
+      "trueCount": 112,
+      "falseCount": 120
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 57,
+      "column": 66,
+      "endLine": 57,
+      "endColumn": 76,
+      "trueCount": 252,
+      "falseCount": 74350
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 57,
+      "column": 80,
+      "endLine": 57,
+      "endColumn": 93,
+      "trueCount": 120,
+      "falseCount": 132
+    },
+    {
+      "file": "renderer/virgl-shader/raw_bits.c",
+      "line": 58,
+      "column": 11,
+      "endLine": 58,
+      "endColumn": 19,
+      "trueCount": 296,
+      "falseCount": 74602
+    }
+  ],
+  "coverageSha256": "d2278abbb1bf5726c2e806093d7ee5aac82ad66cdb612cb41563f3872979fe91"
+}

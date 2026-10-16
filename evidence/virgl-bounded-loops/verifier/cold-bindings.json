@@ -1,0 +1,17 @@
+{
+  "task": "E6-T12e9",
+  "sourceHead": "bfcd3a4076a163648c67bf7674e94d616c42c1e1",
+  "workerClaimCommit": "9e647be3c69fe4bfd3706ba198cd1630cd454400",
+  "workerClaimSha256": "bf33baa835f07c642224ce7ab0b0be0b1cd5da0a263edac500afa4ec3375f352",
+  "coldReportSha256": "69a613e5cfa4d46b06f6a486ee60f757c9912068230abe5fd17fe003d34438a9",
+  "coldReceiptSha256": "03fcb73473ee76e2472fde314a4591b0eceb179f57a6e115b877fc9b2d1f85d7",
+  "copiedArtifactsVerified": 178,
+  "copiedArtifactsEqualPreservedClone": true,
+  "cleanBeforeAndAfterAndNow": true,
+  "removedEnvironmentNames": [
+    "GIT_PAGER",
+    "RUST_LOG"
+  ],
+  "harnessSha256": "eda83074cfa59b1744c9e629fee97dfd2e3ce1de3234353141c48c3d996d7825",
+  "logSha256": "1a331691d0bbaaf7df5acc34dd6ab847169a6f5961108420bb15ec59aa6a6572"
+}

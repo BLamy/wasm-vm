@@ -1,0 +1,29 @@
+{
+  "frozenHead": "37a269d490543b3c2970de600d60f7f055c6acac",
+  "runtimeBase": "0a5f7bd7a1f4e55878d314cd4d65420a6ba1ff98",
+  "coreSourceSha256": "454a3fb7c578f75e675f532d182e64a1f441d7eebfa0caed77ef8fe41fae3673",
+  "wasmSha256": "f8b40d93039a9bb454250df40592e8c1d62144cac600bdcd82ea74098d7bb516",
+  "harnessSha256": "01b174897db7ce605ba384fb44bc7db0ac250f1ebb01c166ac2c34ab7772df6f",
+  "producerSha256": "f8227c1d9c4841dd4b3aa2e9942dae4a583f7137fa52cbe7b3b0c1993a75a2aa",
+  "control": {
+    "cachedDivider64Speedup": 0.982298949690611,
+    "decision": "unchanged-runtime-control",
+    "acceptanceHeld": false
+  },
+  "files": {
+    "cold-clone.json": "ea40e615f66b3a34b1b5394fa3a1174f556ee5ed13c5ae1432fd297e22d73416",
+    "focused-gates.log": "c740cceffd5014f673c08c44f66ec67660b55dac4a6166c1c95bcd4ef8228158",
+    "baseline-seccomp-macos.log": "0409736cfb9bb47d3a0ed772b3b348a64b71bfd14a82351f3d169366cf297aca",
+    "baseline-seccomp-macos.json": "62646ee820ec1fd7756dcd727d4b0624461314e1f20d124530192f45a2dbe3c5",
+    "control.log": "cc190f160e651aa3f5103318ea98c324b97c312d74d5b0e85b827e1ebab17ceb",
+    "local-gauntlet.log": "d4d7a45b5cedd6b287b91a50446e4f8b57a0023aa0efcaef7b6b5569ecd59543",
+    "demo.log": "ad262b2458155f229c08397f20e082c79207b2e9359bf63f3a6f6e41ba4312c3",
+    "cold-clone-focused-gates.log": "8e1bea407a70c087ba51a021b605b3041eab723b4e913985406cb24e523831a1",
+    "cold-clone-driver.log": "a3c510acca0ee21e2a21deee08e0c89e5e5d83cb21468330e2395961e28f486f",
+    "demo/demo-suite.json": "e7e235b3f7aa5a813b1da0f2537b3d0285fd8b1f266a5bb129a3738831e6b602",
+    "demo/demo-suite.png": "6765ab538ed0241123fb249806ad25f6e5964c9661d994b2a3a547702060aede",
+    "control/report.json": "182c502161c378ca6d3136ff398fb358ebae57904f1fd87c5db1b13529052d72",
+    "control/baseline-guest-trace64.txt": "f8cb47ab87213e6d1f0e613d6130babdc3af7fb91a749e9a51c66117143701a9",
+    "control/candidate-guest-trace64.txt": "f8cb47ab87213e6d1f0e613d6130babdc3af7fb91a749e9a51c66117143701a9"
+  }
+}

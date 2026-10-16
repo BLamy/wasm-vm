@@ -1,0 +1,40 @@
+{
+  "seeds": [
+    "2fe68731",
+    "c47b920d",
+    "741dba53",
+    "af5681e9",
+    "0932c7bd"
+  ],
+  "trials": 800,
+  "schedulesPerTrial": 32,
+  "instructions": 51200,
+  "assertions": 3500032,
+  "originAssertions": 112288,
+  "exactKnownAssertions": 456032,
+  "safeOutputAssertions": 45248,
+  "partialInstructions": 47712,
+  "aliasSources": 8070,
+  "opcodeHits": [
+    4587,
+    4635,
+    4588,
+    4694,
+    4627,
+    4625,
+    4702,
+    4702,
+    4647,
+    4716,
+    4677
+  ],
+  "ok": true,
+  "head": "1e8f2586a125efd91460db3a7e11049855acb495",
+  "sources": {
+    "renderer/virgl-shader/raw_bits.c": "e3ccf20b3ae1b4e31a16677ba1d909f214baa84e51992d55c461bfc60523c556",
+    "renderer/virgl-shader/raw_bits.h": "5a2c8c7dc5d93a5dca959cd032b4fa39a39ccfd41bf4cd11e206360c14b4a632",
+    "evidence/virgl-integer-masks/verifier/knowledge_attack.c": "4f778552e46995f8f5a9bf472765c580880135cc532e6e6b52c5bdb913148d0a"
+  },
+  "binarySha256": "dac85fef1074f7eda1bfb9187128ab96161d314d4d7167aeeb2c6ecfd0c02157",
+  "command": "clang -std=gnu11 -O1 -g -fno-omit-frame-pointer -fsanitize=address,undefined -Irenderer/virgl-shader renderer/virgl-shader/raw_bits.c evidence/virgl-integer-masks/verifier/knowledge_attack.c -o evidence/virgl-integer-masks/verifier/knowledge-attack; ASAN_OPTIONS=abort_on_error=1 UBSAN_OPTIONS=halt_on_error=1 evidence/virgl-integer-masks/verifier/knowledge-attack"
+}

@@ -1,0 +1,399 @@
+{
+  "schema": "stream-output-shaders-critic-record-index-v1",
+  "records": [
+    {
+      "path": "verifier/alias-clean/browser-coverage.json",
+      "bytes": 68367,
+      "sha256": "62cb723ddde035d35fe4eb0cc78ac43a1a73c888cfefb525caf6c24d3c7751dd",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/alias-clean/browser.png",
+      "bytes": 35284,
+      "sha256": "c0c22ed337800bc38254ba6982f482233f870cadf8a41717467f09a763fcf584",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/alias-clean/recorder.mjs",
+      "bytes": 15712,
+      "sha256": "32aceb2cb0d75fca4fab263182344b88bf75e786f56fcb4f0a32cde06d653a23",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/alias-clean/report.json",
+      "bytes": 856239,
+      "sha256": "fb60afaf6c0e3a11c81d20700064dbd4f7b128d30121c126410c4a20c699e1bc",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/alias-clean/served-root.html",
+      "bytes": 436,
+      "sha256": "f5ba5e28c4314183685a0073fd290749e8a9390b653c862d41b28f907eb55fdc",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/alias-clean/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "bytes": 14434,
+      "sha256": "4b3d0589d178ae6e3a2ad90c0abbddccc8226690e49e8cf91f8509ba64ca4f4a",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/alias-clean/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "bytes": 446891,
+      "sha256": "5f9b5935cc4a34d7d3b1cbceb3f75572c7ba8de822e09fea365a8d6c7aefb09b",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/alias-clean/source/renderer/virgl-shader/standard.mjs",
+      "bytes": 20285,
+      "sha256": "842b2b6041ce71d267940cb7732bc936624b410a90fe17ccc108af7fee386d92",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/alias-clean.log",
+      "bytes": 114,
+      "sha256": "553887b4db008d658ad034e135ab21d743334f18a18aaccba03bd04ba548aefe",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/alias-reversed/browser-coverage.json",
+      "bytes": 68337,
+      "sha256": "86fdc0d5deaf68729479152889a88846f482bb0925edd03b46f0b2d13649b64d",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/alias-reversed/browser.png",
+      "bytes": 28288,
+      "sha256": "6afec02211a19855bfdf86b049b7c8f6e2f9af8445fc3747dede541293550553",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/alias-reversed/recorder.mjs",
+      "bytes": 15712,
+      "sha256": "32aceb2cb0d75fca4fab263182344b88bf75e786f56fcb4f0a32cde06d653a23",
+      "kind": "hardlink",
+      "target": "verifier/alias-clean/recorder.mjs"
+    },
+    {
+      "path": "verifier/alias-reversed/report.json",
+      "bytes": 84865,
+      "sha256": "c26ae052d1595cbb6d31325ed73d945f707e18a6acd604bebd54692c48e88fb5",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/alias-reversed/served-root.html",
+      "bytes": 436,
+      "sha256": "f5ba5e28c4314183685a0073fd290749e8a9390b653c862d41b28f907eb55fdc",
+      "kind": "hardlink",
+      "target": "verifier/alias-clean/served-root.html"
+    },
+    {
+      "path": "verifier/alias-reversed/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "bytes": 14434,
+      "sha256": "4b3d0589d178ae6e3a2ad90c0abbddccc8226690e49e8cf91f8509ba64ca4f4a",
+      "kind": "hardlink",
+      "target": "verifier/alias-clean/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs"
+    },
+    {
+      "path": "verifier/alias-reversed/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "bytes": 446891,
+      "sha256": "5f9b5935cc4a34d7d3b1cbceb3f75572c7ba8de822e09fea365a8d6c7aefb09b",
+      "kind": "hardlink",
+      "target": "verifier/alias-clean/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm"
+    },
+    {
+      "path": "verifier/alias-reversed/source/renderer/virgl-shader/standard.mjs",
+      "bytes": 20285,
+      "sha256": "842b2b6041ce71d267940cb7732bc936624b410a90fe17ccc108af7fee386d92",
+      "kind": "hardlink",
+      "target": "verifier/alias-clean/source/renderer/virgl-shader/standard.mjs"
+    },
+    {
+      "path": "verifier/alias-reversed.log",
+      "bytes": 298,
+      "sha256": "0616d99ac3fd5cf83153f84012d7a5ecf60b3dc8181d1fc2063ecd7ecfc2bdc4",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/authenticate.py",
+      "bytes": 7136,
+      "sha256": "a0697a1b68fbea9b2949041d704331f60c521ed352f2720efc2223b32c0ff2b3",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/authentication.json",
+      "bytes": 2657,
+      "sha256": "6627d3ff75371ffaf8d18a0cfba27a5dee476de487b192a68ba9b4232bbf3bcc",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/authentication.log",
+      "bytes": 1067,
+      "sha256": "2b2b14fe435bba01369a7625c86f1080d9a0b020330c2ce75f4fb3c23c599300",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/citations.jsonl",
+      "bytes": 373809,
+      "sha256": "d2a37b8f197bf94b8c4fd8d44702a7ce1fb00cbb6c85ef44fdbc645ad7eb48aa",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/component-wasm.log",
+      "bytes": 69,
+      "sha256": "f1211e0c1490bd1332271affd43a483190673115480f903c6cad863ff6cd62c5",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/component-wasm.mjs",
+      "bytes": 2557,
+      "sha256": "1784a0f0598330e4ecb79ba8bd39fcb51cef2059558924975a035051b54d914d",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/components.log",
+      "bytes": 171,
+      "sha256": "b4c850ef3b370c88ee25a9d218fb52e798d6206f0cf53f74d1c9592b90db5bd5",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/components.py",
+      "bytes": 5449,
+      "sha256": "e60a9d4aa9d98c3849a271851d1ea0541fdd8a306bda9a7643362596aba64c2c",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/coverage-initial.log",
+      "bytes": 786,
+      "sha256": "239f4fef71a22fde274aaee7e4595943dab7decb32fa020df008ff57a0ad0e36",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/coverage-second.log",
+      "bytes": 520,
+      "sha256": "5c411484962eada6d00c9f40c91b87f83889aaa51328bf4831609e37dfa85061",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/coverage.json",
+      "bytes": 288193,
+      "sha256": "983f55172cdd34eeb93afd04b92a3c6835a7f8c09a0f9da825e683579bb38956",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/coverage.log",
+      "bytes": 208,
+      "sha256": "ac29a4f175af65262d719606c2b808ae1a75d64dd9bf1fd5d5c8ed92707ae932",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/coverage.py",
+      "bytes": 9125,
+      "sha256": "979457b0290bf14732358681660cbaea098fe03f1559accc457e305a5dc39a92",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/final-checks.json",
+      "bytes": 2989,
+      "sha256": "9b0a92e32187c16009fadc9d4b9431377002aeb78de7f1286cd38ffa726df852",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/final_checks.py",
+      "bytes": 1679,
+      "sha256": "cd30638d91548b29f949f731dfab6917216952b29bab5fe26241cd70b9590475",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/finish.json",
+      "bytes": 1155,
+      "sha256": "640120ea1048dc0354ac6f7689a3712ab50814b271ce9427f6f07bf2588b2bab",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/finish.log",
+      "bytes": 1045,
+      "sha256": "8b0846b9a2bc50414d1097a939f0e3f24a5dd396e2c59a29a2fa9274d4a2d7a5",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/finish.py",
+      "bytes": 12680,
+      "sha256": "d66e2f8ab53d6f9b0346a5b8fd2206d8ec24c1551c7f581bb91a88c5afbbfd77",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/interrogate.py",
+      "bytes": 17042,
+      "sha256": "aafbd4f09738125be0958a9fd139d6fc3e4fe420228e6cbf8ed8071f6565786d",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/interrogation.json",
+      "bytes": 550,
+      "sha256": "80e76af5d54c52173643d6d77e287f0af89aae6338a10e81486b1a79d3282125",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/interrogation.log",
+      "bytes": 470,
+      "sha256": "1c22b742c8215e9d732ba0b9b26abe7b2fe2d537d665e6b9a1f57349d4de2a18",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/native-components/build.stderr",
+      "bytes": 3485,
+      "sha256": "9d919492d190e3af34e860126c96da760444f90fee69288fe78b210806f83bdb",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/native-components/build.stdout",
+      "bytes": 69,
+      "sha256": "9984a58bdabe1a4f02a660f36e028df5528fb5a7b11feb54a4e83ad72bb6c3a8",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/native-components/cases.bin",
+      "bytes": 630,
+      "sha256": "509b04b81164052e1b7c193184d43063d1fceb16a50672d7b3467405f38ede55",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/native-components/cases.json",
+      "bytes": 1125,
+      "sha256": "ac3dff20ba70ca45bab7304b4ca3866616245d677750e5081243abe5a1b6f6f1",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/native-components/commands.json",
+      "bytes": 2641,
+      "sha256": "56879f89ecf400ca15c001d246295c0d17bea801fb4ee511ba9484af97d2dccc",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/native-components/coverage.json",
+      "bytes": 18908501,
+      "sha256": "b7e86c8da8c48d6f579558ee0f3d46816496e0c5e4a59901e47a2d314ca5e24f",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/native-components/coverage.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/native-components/coverage.stdout",
+      "bytes": 18908501,
+      "sha256": "b7e86c8da8c48d6f579558ee0f3d46816496e0c5e4a59901e47a2d314ca5e24f",
+      "kind": "hardlink",
+      "target": "verifier/native-components/coverage.json"
+    },
+    {
+      "path": "verifier/native-components/native.jsonl",
+      "bytes": 5571,
+      "sha256": "adb562bc18403bcfad71bea6912f2bf963843596ed74be816ef91c706214afc1",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/native-components/native.profdata",
+      "bytes": 54560,
+      "sha256": "90ed6471fad5062d6b601804b79611357784d6724d4745b1c9b07b7b89e608d6",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/native-components/native.profraw",
+      "bytes": 128936,
+      "sha256": "2bf2fa777e84816a8e2231af54e118d33b3ef07ee79527c73412c7e8c15f265d",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/native-components/native.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "hardlink",
+      "target": "verifier/native-components/coverage.stderr"
+    },
+    {
+      "path": "verifier/native-components/native.stdout",
+      "bytes": 5571,
+      "sha256": "adb562bc18403bcfad71bea6912f2bf963843596ed74be816ef91c706214afc1",
+      "kind": "hardlink",
+      "target": "verifier/native-components/native.jsonl"
+    },
+    {
+      "path": "verifier/native-components/profile.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "hardlink",
+      "target": "verifier/native-components/coverage.stderr"
+    },
+    {
+      "path": "verifier/native-components/profile.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "hardlink",
+      "target": "verifier/native-components/coverage.stderr"
+    },
+    {
+      "path": "verifier/native-components/report.json",
+      "bytes": 4306,
+      "sha256": "331adcc338d1a7a7ddf33cd3d4b64a963f6bfeb5cf3dc0927b04980e23efe228",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/native-components/source.tar",
+      "bytes": 11028480,
+      "sha256": "18b5b7861fcc480bb5d8275c9e993568d82bc03617cf32769f82557f4352236c",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/native-components/standard-stream-output-test",
+      "bytes": 4161560,
+      "sha256": "70d5362e451218d2d0f5337af2403fb1ed6427918bedf64f26d1776393801464",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/native-components/wasm-report.json",
+      "bytes": 369,
+      "sha256": "a8a589c80f07f292fa94513f171b0051f92257aa071e373978197e6ad67e62d4",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/native-components/wasm.jsonl",
+      "bytes": 17005,
+      "sha256": "bb4b8d6be765893db9ea381d78f9c6e6b48a174c1e72d8eb2aab6f53883ac5ae",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/novel-citations.jsonl",
+      "bytes": 5274,
+      "sha256": "89619e8115ad5eb2950702810ea2efd726a2293d20fed1b4d2bc096390ae9766",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/predictions.json",
+      "bytes": 2178,
+      "sha256": "1b362e0de23c01be82bb2896d1201b29f17413e80b250d7c74ec495c89dda28d",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/seal_final.py",
+      "bytes": 5560,
+      "sha256": "d9be3f9238e5ae748b84847fd45a10f12ec7418b6650173b3917a2f5a30df23f",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/task.diff",
+      "bytes": 150637,
+      "sha256": "b169a25b7cb4c5b66d327b2a3afcedce89272e703c258ccbbd4ccfa4a971d79f",
+      "kind": "file"
+    },
+    {
+      "path": "verifier/verdict.json",
+      "bytes": 2703,
+      "sha256": "01be0635416ff988883d71b5591638c1c8d55715fa7a11a01928e6d5027279d8",
+      "kind": "file"
+    }
+  ]
+}

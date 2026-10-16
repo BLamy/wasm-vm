@@ -1,0 +1,152 @@
+{
+  "schema": "virgl-guest-workloads-v1",
+  "source_image_sha256": "bfcde69e5eeb2b5baba96a451f0671092b5973e8cc3a7f581722adf513651200",
+  "pins": {
+    "source_image_sha256": "bfcde69e5eeb2b5baba96a451f0671092b5973e8cc3a7f581722adf513651200",
+    "guest_packages": {
+      "mesa": "1:26.2.2-1",
+      "hyprland": "0.56.2-3",
+      "libdrm": "2.4.134-1",
+      "libglvnd": "1.7.0-3"
+    },
+    "kmscube": {
+      "repository": "https://gitlab.freedesktop.org/mesa/kmscube.git",
+      "revision": "f60e50e887d3c49e91ac9b06d8199b36152632fa",
+      "git_archive_sha256": "e2781477c2a9735f038740ad8c882c5ff4a0b99a6b5e8766f9272d3e7a591c8f",
+      "license": "MIT; archive contains original COPYING and source notices"
+    },
+    "glmark2": {
+      "version": "2023.01-2",
+      "architecture": "riscv64",
+      "package": "glmark2-2023.01-2-riscv64.pkg.tar.zst",
+      "url": "https://riscv.mirror.pkgbuild.com/repo/extra/glmark2-2023.01-2-riscv64.pkg.tar.zst",
+      "sha256": "e01efb362f8890fd08ba31dffa3aab19c43ba86b38a30723595349a7bf4ca40f",
+      "upstream": "https://github.com/glmark2/glmark2/tree/2023.01"
+    },
+    "cross_packages": {
+      "gcc-riscv64-linux-gnu": "4:12.2.0-5",
+      "gcc-12-riscv64-linux-gnu": "12.2.0-13cross1",
+      "libgcc-12-dev-riscv64-cross": "12.2.0-13cross1",
+      "binutils-riscv64-linux-gnu": "2.40-2",
+      "zstd": "1.5.4+dfsg2-5"
+    }
+  },
+  "cross_packages": {
+    "gcc-riscv64-linux-gnu": "4:12.2.0-5",
+    "gcc-12-riscv64-linux-gnu": "12.2.0-13cross1",
+    "libgcc-12-dev-riscv64-cross": "12.2.0-13cross1",
+    "binutils-riscv64-linux-gnu": "2.40-2",
+    "zstd": "1.5.4+dfsg2-5"
+  },
+  "compiler": "riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0",
+  "commands": [
+    {
+      "cwd": "/workload-build/control",
+      "argv": [
+        "riscv64-linux-gnu-gcc",
+        "--sysroot=/workload-sysroot",
+        "-B/workload-sysroot/usr/lib",
+        "-O2",
+        "-Wl,--build-id=none",
+        "-I/workload-sysroot/usr/include",
+        "-I/workload-sysroot/usr/include/libdrm",
+        "-L/workload-sysroot/usr/lib",
+        "-Wl,-rpath-link,/workload-sysroot/usr/lib",
+        "-std=gnu11",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "textured-scene.c",
+        "-lEGL",
+        "-lGLESv2",
+        "-lgbm",
+        "-ldrm",
+        "-lm",
+        "-ldl",
+        "-pthread",
+        "-o",
+        "/capture/workloads/bin/virgl-textured-scene"
+      ]
+    },
+    {
+      "cwd": "/workload-build/sabotage",
+      "argv": [
+        "riscv64-linux-gnu-gcc",
+        "--sysroot=/workload-sysroot",
+        "-B/workload-sysroot/usr/lib",
+        "-O2",
+        "-Wl,--build-id=none",
+        "-I/workload-sysroot/usr/include",
+        "-I/workload-sysroot/usr/include/libdrm",
+        "-L/workload-sysroot/usr/lib",
+        "-Wl,-rpath-link,/workload-sysroot/usr/lib",
+        "-std=gnu11",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "textured-scene.c",
+        "-lEGL",
+        "-lGLESv2",
+        "-lgbm",
+        "-ldrm",
+        "-lm",
+        "-ldl",
+        "-pthread",
+        "-o",
+        "/capture/workloads/bin/virgl-textured-scene-sabotage"
+      ]
+    },
+    {
+      "cwd": "/workload-build/kmscube",
+      "argv": [
+        "riscv64-linux-gnu-gcc",
+        "--sysroot=/workload-sysroot",
+        "-B/workload-sysroot/usr/lib",
+        "-O2",
+        "-Wl,--build-id=none",
+        "-I/workload-sysroot/usr/include",
+        "-I/workload-sysroot/usr/include/libdrm",
+        "-L/workload-sysroot/usr/lib",
+        "-Wl,-rpath-link,/workload-sysroot/usr/lib",
+        "-std=gnu99",
+        "common.c",
+        "cube-smooth.c",
+        "cube-gears.c",
+        "cube-tex.c",
+        "drm-atomic.c",
+        "drm-common.c",
+        "drm-legacy.c",
+        "drm-offscreen.c",
+        "esTransform.c",
+        "frame-512x512-NV12.c",
+        "frame-512x512-RGBA.c",
+        "kmscube.c",
+        "perfcntrs.c",
+        "-lEGL",
+        "-lGLESv2",
+        "-lgbm",
+        "-ldrm",
+        "-lm",
+        "-ldl",
+        "-pthread",
+        "-o",
+        "/capture/workloads/bin/kmscube"
+      ]
+    }
+  ],
+  "sysroot_inventory_sha256": "db713db992f4e6c1e7fe842b1b5f8b9d0e8b734122be555653a1333f9b64f861",
+  "binaries": {
+    "bin/virgl-textured-scene": "0269773877ca07cf4e47172dac98cf118de14a7c8e5bbbce4960b7af6d842a07",
+    "bin/virgl-textured-scene-sabotage": "35413b4a3bd5a526de67451ce19e9076b9b3115165ad37ae2571ca6a9f1809de",
+    "bin/kmscube": "f1f72ba1b97b6f84647acc9510efa4a1623ae24c769716406605d7895842bc21",
+    "usr/bin/glmark2-es2-drm": "29ede1436f66186a7e9cc3f496047e9bb7d369a693b14b4827dfe460ce3475db",
+    "usr/bin/glmark2-es2-wayland": "8cf379b25c39c0aae9adc9d986b7b51c94b994ff6cd50d9998699bc4ea54bca3"
+  },
+  "workload_source_sha256": "067d289393bc8671e971e9b93912042580446d3e5492598eb229904039a9e9ea",
+  "sabotage_source_sha256": "a76c1864bbaedf2f126767e6e0f6d2da82a74963dfab7dea28426039709b1b41",
+  "kmscube_optional_features": {
+    "gstreamer": false,
+    "png_export": false,
+    "gles3_shadertoy": false
+  }
+}

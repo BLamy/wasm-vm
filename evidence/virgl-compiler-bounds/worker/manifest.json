@@ -1,0 +1,24 @@
+{
+  "schema": "virgl-compiler-bounds-worker-seal-v1",
+  "task": "E6-T12g6b",
+  "sourceHead": "07f47569525dfa898dadd6f95dfa0a7a4a8718e4",
+  "base": "60aebb0e1a4639ff4d9468067879e9789e6a5a23",
+  "records": 104,
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 14015802,
+    "sha256": "2e9a57b80f05914377f852f17c3aaf597112f269d2ea67244b1a510944601756"
+  },
+  "recordIndex": {
+    "path": "records.json",
+    "bytes": 18071,
+    "sha256": "77214cdb6c845547d9985015bee862323a06cc8f401380d64340b9c21c06fcf7"
+  },
+  "hotReceiptSha256": "06095e23f4688683932916a4968717ce391175faa8d233628b19fc32067a5c9e",
+  "coldReportSha256": "ab084416411bab8c517943d55d52aa901333e59a2ad659ad581276cc16cdffb9",
+  "coldReceiptSha256": "9880378ec6192667f9377e43643bcf174b52a2fbe32fd41c00695e3e298b8a9a",
+  "checkedWords": 10368,
+  "checkedPixels": 82944,
+  "productionNegotiation": false,
+  "guestExecution": false
+}

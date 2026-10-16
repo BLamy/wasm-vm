@@ -1,0 +1,4681 @@
+{
+  "schema": "standard-compact-fresh-critic-audit-v1",
+  "sourceHead": "4fd889f27c477978b59f81e9cecb4bb7916e9c45",
+  "seed": 1803735539,
+  "frames": [
+    {
+      "name": "final-gpu",
+      "index": 0,
+      "label": "critic-seeded-48-false",
+      "pixelsSha256": "1584baca5a6b040cc7c2c1b0005aad3d2ae431535fed9d096612bc8ae7795f8a",
+      "originalWireSha256": "87eeb33ddd38126d3e3100061c237e82bf5336c8f3c86f05669012b0cde52521",
+      "nativeSources": [
+        {
+          "resourceId": 3,
+          "generation": 4,
+          "nativeBuffer": 8,
+          "blob": {
+            "key": "blob-0002",
+            "bytes": 282,
+            "sha256": "892248e6e9c0512be444afe3ded9ecb2d9d9a72cd73ba55228632a505419e6d0",
+            "gzipSha256": "30a6ee67d9e06ba0ce19940e0025b04409bffbe74afff6ba3574ce32f9c8bf95"
+          }
+        },
+        {
+          "resourceId": 6,
+          "generation": 5,
+          "nativeBuffer": 9,
+          "blob": {
+            "key": "blob-0003",
+            "bytes": 18,
+            "sha256": "5b9c16b6594cdd06b96a5c805d1e457e35afaeeee2556724a236dc16a32693c8",
+            "gzipSha256": "3b1820d9881fbbe17605431fde5a6251533a996d872f4613df4160c68a4c335c"
+          }
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 3,
+          "lastElement": 16,
+          "firstByte": 52,
+          "requiredEnd": 276
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 2,
+          "offset": 278,
+          "components": 1,
+          "sourceFormat": 48,
+          "elementBytes": 2,
+          "nativeType": 5123,
+          "normalized": true,
+          "constant": false,
+          "divisor": 2,
+          "nativeDivisor": 2,
+          "firstElement": 0,
+          "lastElement": 1,
+          "firstByte": 278,
+          "requiredEnd": 282
+        }
+      ],
+      "held": true,
+      "pixels": 768,
+      "nanPixels": 0,
+      "maxError": 0,
+      "misses": [],
+      "portableNaNPayload": false
+    },
+    {
+      "name": "final-gpu",
+      "index": 1,
+      "label": "critic-seeded-48-true",
+      "pixelsSha256": "abf234aa226a70084f0a9d7bc5b385d94b86f7f804c512bc6dda928a642c877c",
+      "originalWireSha256": "e5af218424d86e219e9293d5d512d5df49423259bc3867d91aeb40a0f207db41",
+      "nativeSources": [
+        {
+          "resourceId": 3,
+          "generation": 4,
+          "nativeBuffer": 8,
+          "blob": {
+            "key": "blob-0007",
+            "bytes": 296,
+            "sha256": "d20dd9ae098ec7297882923472927702b0b64890b6f6a4b50380c7fbeadcba81",
+            "gzipSha256": "7a30d826fde97ca19cedce3c15c3b5fa6dce057484ea1ba4d31e4f2de0c4156b"
+          }
+        },
+        {
+          "resourceId": 6,
+          "generation": 5,
+          "nativeBuffer": 9,
+          "blob": {
+            "key": "blob-0008",
+            "bytes": 18,
+            "sha256": "b6a2662a86ffa05cad6c3c21348e8104272b129dfbbbdbeb6df4a00c70a52fac",
+            "gzipSha256": "1e1b358cf31e693ddb379e68b3c1ab5056fc3bf622a33065fd13f19a65eb7a61"
+          }
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 4,
+          "lastElement": 17,
+          "firstByte": 68,
+          "requiredEnd": 292
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 0,
+          "offset": 294,
+          "components": 1,
+          "sourceFormat": 48,
+          "elementBytes": 2,
+          "nativeType": 5123,
+          "normalized": true,
+          "constant": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "firstByte": 294,
+          "requiredEnd": 296,
+          "genericValues": [
+            0.4759441614151001,
+            0,
+            0,
+            1
+          ],
+          "componentWords": [
+            1056157428
+          ],
+          "nan": [
+            false,
+            false,
+            false,
+            false
+          ]
+        }
+      ],
+      "held": true,
+      "pixels": 768,
+      "nanPixels": 0,
+      "maxError": 0,
+      "misses": [],
+      "portableNaNPayload": false
+    },
+    {
+      "name": "final-gpu",
+      "index": 2,
+      "label": "critic-seeded-49-false",
+      "pixelsSha256": "e204cd36e5956b9010306772a529e8b1e273de4d19237945392ffa507cbdf54f",
+      "originalWireSha256": "7ac245104a7b40ac1d82434561676b9530657f1304ae0c8b499744838dd0a458",
+      "nativeSources": [
+        {
+          "resourceId": 3,
+          "generation": 4,
+          "nativeBuffer": 8,
+          "blob": {
+            "key": "blob-0012",
+            "bytes": 320,
+            "sha256": "6fd1c415cf9f34fef9b3715755f48575063ea69df41a020a56d4c923149fb4e8",
+            "gzipSha256": "eb1deca35a6afd7648d25a1282f50108fe7114b4415218d7ad81d02e87a6e372"
+          }
+        },
+        {
+          "resourceId": 6,
+          "generation": 5,
+          "nativeBuffer": 9,
+          "blob": {
+            "key": "blob-0013",
+            "bytes": 18,
+            "sha256": "2887c2a165801b99fb11744bf545c272410c0cb48ad4ea6ee247e6b9ae3d92d2",
+            "gzipSha256": "0acc253bcd34b3e256eceadffc6bc57862fa12e0faaf8360a1a7391dcc7c07f9"
+          }
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 4,
+          "lastElement": 18,
+          "firstByte": 68,
+          "requiredEnd": 308
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 6,
+          "offset": 310,
+          "components": 2,
+          "sourceFormat": 49,
+          "elementBytes": 4,
+          "nativeType": 5123,
+          "normalized": true,
+          "constant": false,
+          "divisor": 2,
+          "nativeDivisor": 2,
+          "firstElement": 0,
+          "lastElement": 1,
+          "firstByte": 310,
+          "requiredEnd": 320
+        }
+      ],
+      "held": true,
+      "pixels": 768,
+      "nanPixels": 0,
+      "maxError": 0,
+      "misses": [],
+      "portableNaNPayload": false
+    },
+    {
+      "name": "final-gpu",
+      "index": 3,
+      "label": "critic-seeded-49-true",
+      "pixelsSha256": "50925be3883ec2f6baa255ea10e17361c15f19b0958fce6d9f358c101871d204",
+      "originalWireSha256": "5558d9875355c2d8102922d62a9cbe99681b370f2aaa2214da6ae3df9b9dd9fa",
+      "nativeSources": [
+        {
+          "resourceId": 3,
+          "generation": 4,
+          "nativeBuffer": 8,
+          "blob": {
+            "key": "blob-0017",
+            "bytes": 314,
+            "sha256": "680c641b51b98569d89cf5488223393be52c128fe618bafb20bc661bd10c2040",
+            "gzipSha256": "5b835bf138783b57d27aa3692feeb1561225f4ec7820bb496b04118cfadce828"
+          }
+        },
+        {
+          "resourceId": 6,
+          "generation": 5,
+          "nativeBuffer": 9,
+          "blob": {
+            "key": "blob-0018",
+            "bytes": 18,
+            "sha256": "bf3ec050faa16c69d57e1e7fbedbeeb59b430b9b2c25edae6fbd1c0fcf4b8fb9",
+            "gzipSha256": "cda7dfab1b9db7fb4168441c8c6ec32011282fbdfd0a4749ba778e096d0ad28d"
+          }
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 2,
+          "lastElement": 18,
+          "firstByte": 36,
+          "requiredEnd": 308
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 0,
+          "offset": 310,
+          "components": 2,
+          "sourceFormat": 49,
+          "elementBytes": 4,
+          "nativeType": 5123,
+          "normalized": true,
+          "constant": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "firstByte": 310,
+          "requiredEnd": 314,
+          "genericValues": [
+            0.23041123151779175,
+            0.7058823704719543,
+            0,
+            1
+          ],
+          "componentWords": [
+            1047261420,
+            1060418741
+          ],
+          "nan": [
+            false,
+            false,
+            false,
+            false
+          ]
+        }
+      ],
+      "held": true,
+      "pixels": 768,
+      "nanPixels": 0,
+      "maxError": 0,
+      "misses": [],
+      "portableNaNPayload": false
+    },
+    {
+      "name": "final-gpu",
+      "index": 4,
+      "label": "critic-seeded-50-false",
+      "pixelsSha256": "9cbc2657abb93e0fc91704d140d10c9658cd841f9754df265cc7b2553bf6f832",
+      "originalWireSha256": "77e8781a7cf302dad4a99c316620b12e90a3bbfbb8051fe9d67b92bed67f5e92",
+      "nativeSources": [
+        {
+          "resourceId": 3,
+          "generation": 4,
+          "nativeBuffer": 8,
+          "blob": {
+            "key": "blob-0022",
+            "bytes": 436,
+            "sha256": "94827e25c2558709be8a43a3fbc710b6739805adb52d039ba84218f5603667ea",
+            "gzipSha256": "a98162712bd251bf8cd321198fcbe635a06dc8d432f704925d3c6df0cad659f3"
+          }
+        },
+        {
+          "resourceId": 6,
+          "generation": 5,
+          "nativeBuffer": 9,
+          "blob": {
+            "key": "blob-0023",
+            "bytes": 18,
+            "sha256": "550f1dc2886b0fabb7f9bd9e29bb087f7efa24dc53bdf348ead95b592d8e9d05",
+            "gzipSha256": "f76156d3a937469895220da68a7533ddcd4622130b6d2990bc038eb421bff9db"
+          }
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 2,
+          "lastElement": 17,
+          "firstByte": 36,
+          "requiredEnd": 292
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 8,
+          "offset": 294,
+          "components": 3,
+          "sourceFormat": 50,
+          "elementBytes": 6,
+          "nativeType": 5123,
+          "normalized": true,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 2,
+          "lastElement": 17,
+          "firstByte": 310,
+          "requiredEnd": 436
+        }
+      ],
+      "held": true,
+      "pixels": 768,
+      "nanPixels": 0,
+      "maxError": 0,
+      "misses": [],
+      "portableNaNPayload": false
+    },
+    {
+      "name": "final-gpu",
+      "index": 5,
+      "label": "critic-seeded-50-true",
+      "pixelsSha256": "d3cc2e7ef4d4b94529ea6a3478b0823820481a197e90d2f818be80eb9fffa644",
+      "originalWireSha256": "ffe48e42c2b267287f97f9cf7a8bfec13e8976ddfd82224e5d36d8b58ba4d3e2",
+      "nativeSources": [
+        {
+          "resourceId": 3,
+          "generation": 4,
+          "nativeBuffer": 8,
+          "blob": {
+            "key": "blob-0027",
+            "bytes": 300,
+            "sha256": "572c1cff6603024c794dfa47519b231b79fbd6a36e10fde6ba1ebbbd7ece4cc2",
+            "gzipSha256": "953897a43be4a8d8c37afaa0b7cb71bd97107c2e48f14925a87a34ed404d0ebb"
+          }
+        },
+        {
+          "resourceId": 6,
+          "generation": 5,
+          "nativeBuffer": 9,
+          "blob": {
+            "key": "blob-0028",
+            "bytes": 18,
+            "sha256": "550f1dc2886b0fabb7f9bd9e29bb087f7efa24dc53bdf348ead95b592d8e9d05",
+            "gzipSha256": "f76156d3a937469895220da68a7533ddcd4622130b6d2990bc038eb421bff9db"
+          }
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 2,
+          "lastElement": 17,
+          "firstByte": 36,
+          "requiredEnd": 292
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 0,
+          "offset": 294,
+          "components": 3,
+          "sourceFormat": 50,
+          "elementBytes": 6,
+          "nativeType": 5123,
+          "normalized": true,
+          "constant": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "firstByte": 294,
+          "requiredEnd": 300,
+          "genericValues": [
+            0.01745632104575634,
+            0.8951399922370911,
+            0.8362706899642944,
+            1
+          ],
+          "componentWords": [
+            1016004751,
+            1063593957,
+            1062606294
+          ],
+          "nan": [
+            false,
+            false,
+            false,
+            false
+          ]
+        }
+      ],
+      "held": true,
+      "pixels": 768,
+      "nanPixels": 0,
+      "maxError": 0,
+      "misses": [],
+      "portableNaNPayload": false
+    },
+    {
+      "name": "final-gpu",
+      "index": 6,
+      "label": "critic-seeded-51-false",
+      "pixelsSha256": "2be2eb989f61f4c0e1882a1694c11cfc3efe8732213d960e9401fd6eab7324a1",
+      "originalWireSha256": "d6d7ac20a0c706f6b257b0be2378e5285f325beb06ba4ff5f7888b215ed6d2d4",
+      "nativeSources": [
+        {
+          "resourceId": 3,
+          "generation": 4,
+          "nativeBuffer": 8,
+          "blob": {
+            "key": "blob-0032",
+            "bytes": 342,
+            "sha256": "703a4e08ff35142a3ee2a4bd78b8e6069652e3e707a466e398c4a392d71f1afe",
+            "gzipSha256": "bc2fd52f969d19599301b78c7d9b5bce704bba8f1f2678f47911cefc2a3ce8fb"
+          }
+        },
+        {
+          "resourceId": 6,
+          "generation": 5,
+          "nativeBuffer": 9,
+          "blob": {
+            "key": "blob-0033",
+            "bytes": 18,
+            "sha256": "2748168976ca83a06fddaf28e80f0329368c31ee058e8b7b757fafebd450b000",
+            "gzipSha256": "19277b8464e87d8dba600f3e12792aa91a2315d9271f620ee68681fa5392f9b8"
+          }
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 2,
+          "lastElement": 19,
+          "firstByte": 36,
+          "requiredEnd": 324
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 8,
+          "offset": 326,
+          "components": 4,
+          "sourceFormat": 51,
+          "elementBytes": 8,
+          "nativeType": 5123,
+          "normalized": true,
+          "constant": false,
+          "divisor": 2,
+          "nativeDivisor": 2,
+          "firstElement": 0,
+          "lastElement": 1,
+          "firstByte": 326,
+          "requiredEnd": 342
+        }
+      ],
+      "held": true,
+      "pixels": 768,
+      "nanPixels": 0,
+      "maxError": 0,
+      "misses": [],
+      "portableNaNPayload": false
+    },
+    {
+      "name": "final-gpu",
+      "index": 7,
+      "label": "critic-seeded-51-true",
+      "pixelsSha256": "41c77a9aacdf356d60ae982318b857d52e37caf7ad1829ff5bde3ec733d13ee1",
+      "originalWireSha256": "44d5a3750626989e32223b97ad26a15dd73ff7cc79576fb345068b6c85aca4b9",
+      "nativeSources": [
+        {
+          "resourceId": 3,
+          "generation": 4,
+          "nativeBuffer": 8,
+          "blob": {
+            "key": "blob-0037",
+            "bytes": 286,
+            "sha256": "57e721f7252a84e9dcd18745775c12086a2f22d2be18595b08455eb2f23dd4ec",
+            "gzipSha256": "127b755ee584157a2e7689cc45a7f20076e026898da69384918cb05ca03d0057"
+          }
+        },
+        {
+          "resourceId": 6,
+          "generation": 5,
+          "nativeBuffer": 9,
+          "blob": {
+            "key": "blob-0038",
+            "bytes": 18,
+            "sha256": "8a65bb009e4ba5453cb863100ee9572125e29722a55f01e41a34352a2ad33de6",
+            "gzipSha256": "9ebc66afcfc6de5fdb1922534095243207cbc54ebdd6e2f896de8f3eb78a9a1c"
+          }
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 2,
+          "lastElement": 16,
+          "firstByte": 36,
+          "requiredEnd": 276
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 0,
+          "offset": 278,
+          "components": 4,
+          "sourceFormat": 51,
+          "elementBytes": 8,
+          "nativeType": 5123,
+          "normalized": true,
+          "constant": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "firstByte": 278,
+          "requiredEnd": 286,
+          "genericValues": [
+            0.7446708083152771,
+            0.27737849950790405,
+            0.653315007686615,
+            0.18628214299678802
+          ],
+          "componentWords": [
+            1061069503,
+            1049494670,
+            1059536807,
+            1044299967
+          ],
+          "nan": [
+            false,
+            false,
+            false,
+            false
+          ]
+        }
+      ],
+      "held": true,
+      "pixels": 768,
+      "nanPixels": 0,
+      "maxError": 0,
+      "misses": [],
+      "portableNaNPayload": false
+    },
+    {
+      "name": "final-gpu",
+      "index": 8,
+      "label": "critic-seeded-56-false",
+      "pixelsSha256": "630297e63b29f91ff8630094632270b9e3997818dad1ef0cb09000522614ca76",
+      "originalWireSha256": "233fcc17c57ace557335808ce64ae74d06124448856fd96c5beb1c958854de64",
+      "nativeSources": [
+        {
+          "resourceId": 3,
+          "generation": 4,
+          "nativeBuffer": 8,
+          "blob": {
+            "key": "blob-0042",
+            "bytes": 324,
+            "sha256": "45e7a2399ae7d27e6a6253657ebe502196860258bbfeebcde2d4f7f32694cd66",
+            "gzipSha256": "572e23b76f0f35a7291208121e5465869a3fd34c5d4c38b876aee429ef8ff23e"
+          }
+        },
+        {
+          "resourceId": 6,
+          "generation": 5,
+          "nativeBuffer": 9,
+          "blob": {
+            "key": "blob-0043",
+            "bytes": 18,
+            "sha256": "622535e921ebc5b338b106638aeb29685daa217baac9dd2157bc258f31ab649a",
+            "gzipSha256": "f1f43ad19429f21a5ec63f4d2070f589e5adcc6cd4f3b53e103f8f3547050c94"
+          }
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 2,
+          "lastElement": 15,
+          "firstByte": 36,
+          "requiredEnd": 260
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 4,
+          "offset": 262,
+          "components": 1,
+          "sourceFormat": 56,
+          "elementBytes": 2,
+          "nativeType": 5122,
+          "normalized": true,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 2,
+          "lastElement": 15,
+          "firstByte": 270,
+          "requiredEnd": 324
+        }
+      ],
+      "held": true,
+      "pixels": 768,
+      "nanPixels": 0,
+      "maxError": 0,
+      "misses": [],
+      "portableNaNPayload": false
+    },
+    {
+      "name": "final-gpu",
+      "index": 9,
+      "label": "critic-seeded-56-true",
+      "pixelsSha256": "1e33572fa52a6e0b3aa3cc237f0e0f4b52cd414fd2baca0b7d85260fbe8656c7",
+      "originalWireSha256": "4882ba55a5f963ecb52e0f26d77fc9afaff6ece6aa91fb5e37f4cb9b441fd50f",
+      "nativeSources": [
+        {
+          "resourceId": 3,
+          "generation": 4,
+          "nativeBuffer": 8,
+          "blob": {
+            "key": "blob-0047",
+            "bytes": 328,
+            "sha256": "a8c2336d7e1398476527fe9d4484e3489c74dd4f3677a9eda918deb4258a9991",
+            "gzipSha256": "beddee4494d53d6f9d0a1997d6f708e44bee22e99a8cdf8dbffa854c63864381"
+          }
+        },
+        {
+          "resourceId": 6,
+          "generation": 5,
+          "nativeBuffer": 9,
+          "blob": {
+            "key": "blob-0048",
+            "bytes": 18,
+            "sha256": "02c2eb0bda95bba7a50f42bf85c4f39a5e118e402d6069c36fcd5c944be2d0b6",
+            "gzipSha256": "a8d5bb261194ca13d023c415cbc9490569da7892a076593f9f9367512f35c11a"
+          }
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 3,
+          "lastElement": 19,
+          "firstByte": 52,
+          "requiredEnd": 324
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 0,
+          "offset": 326,
+          "components": 1,
+          "sourceFormat": 56,
+          "elementBytes": 2,
+          "nativeType": 5122,
+          "normalized": true,
+          "constant": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "firstByte": 326,
+          "requiredEnd": 328,
+          "genericValues": [
+            -1,
+            0,
+            0,
+            1
+          ],
+          "componentWords": [
+            3212836864
+          ],
+          "nan": [
+            false,
+            false,
+            false,
+            false
+          ]
+        }
+      ],
+      "held": true,
+      "pixels": 768,
+      "nanPixels": 0,
+      "maxError": 0,
+      "misses": [],
+      "portableNaNPayload": false
+    },
+    {
+      "name": "final-gpu",
+      "index": 10,
+      "label": "critic-seeded-57-false",
+      "pixelsSha256": "d6f592c950c56d35c47388c768ff7980eccf912c21beb7c2cd746d63a2303128",
+      "originalWireSha256": "c6675413a33f82f41292dbe1006c1fe5d2c712d9fb6ef73ceb3b6bd48d811627",
+      "nativeSources": [
+        {
+          "resourceId": 3,
+          "generation": 4,
+          "nativeBuffer": 8,
+          "blob": {
+            "key": "blob-0052",
+            "bytes": 378,
+            "sha256": "16a0c05dd04de3181fc40950f01037e8cf1668cffd3fd9c94156acaa3e8af787",
+            "gzipSha256": "bb6fefd0c437445ef15fb3b2f91302a520b94b5eb841eb2dc897c09d9ab3a91a"
+          }
+        },
+        {
+          "resourceId": 6,
+          "generation": 5,
+          "nativeBuffer": 9,
+          "blob": {
+            "key": "blob-0053",
+            "bytes": 18,
+            "sha256": "e7d40d470279d6aa6e184f406c6b58f9ae9f2398312dd191a50bbdb65ff7236a",
+            "gzipSha256": "d2ea9e0c6160ab90ba330915bd673a2ac618f2d4bebc1bd2041233b15f170edc"
+          }
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 4,
+          "lastElement": 16,
+          "firstByte": 68,
+          "requiredEnd": 276
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 6,
+          "offset": 278,
+          "components": 2,
+          "sourceFormat": 57,
+          "elementBytes": 4,
+          "nativeType": 5122,
+          "normalized": true,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 4,
+          "lastElement": 16,
+          "firstByte": 302,
+          "requiredEnd": 378
+        }
+      ],
+      "held": true,
+      "pixels": 768,
+      "nanPixels": 0,
+      "maxError": 0,
+      "misses": [],
+      "portableNaNPayload": false
+    },
+    {
+      "name": "final-gpu",
+      "index": 11,
+      "label": "critic-seeded-57-true",
+      "pixelsSha256": "86d1390cacd86644709a7d2a05aee34ec58b1c32d811f9da373e6073ad7caa72",
+      "originalWireSha256": "d762f5e1041027e6990826ab92d3b6b4f01eec06eb2d1fc9f3f8ba20210b546e",
+      "nativeSources": [
+        {
+          "resourceId": 3,
+          "generation": 4,
+          "nativeBuffer": 8,
+          "blob": {
+            "key": "blob-0057",
+            "bytes": 266,
+            "sha256": "434b36216fb5fab76f83b49f8c563207c72833da2a268c73e0c48f894cd0592f",
+            "gzipSha256": "6476defb6365b2be2659a0ac73fee23eb0ac4733fcde463b9ab7078be26bfc30"
+          }
+        },
+        {
+          "resourceId": 6,
+          "generation": 5,
+          "nativeBuffer": 9,
+          "blob": {
+            "key": "blob-0058",
+            "bytes": 18,
+            "sha256": "622535e921ebc5b338b106638aeb29685daa217baac9dd2157bc258f31ab649a",
+            "gzipSha256": "f1f43ad19429f21a5ec63f4d2070f589e5adcc6cd4f3b53e103f8f3547050c94"
+          }
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 2,
+          "lastElement": 15,
+          "firstByte": 36,
+          "requiredEnd": 260
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 0,
+          "offset": 262,
+          "components": 2,
+          "sourceFormat": 57,
+          "elementBytes": 4,
+          "nativeType": 5122,
+          "normalized": true,
+          "constant": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "firstByte": 262,
+          "requiredEnd": 266,
+          "genericValues": [
+            -1,
+            -1,
+            0,
+            1
+          ],
+          "componentWords": [
+            3212836864,
+            3212836864
+          ],
+          "nan": [
+            false,
+            false,
+            false,
+            false
+          ]
+        }
+      ],
+      "held": true,
+      "pixels": 768,
+      "nanPixels": 0,
+      "maxError": 0,
+      "misses": [],
+      "portableNaNPayload": false
+    },
+    {
+      "name": "final-gpu",
+      "index": 12,
+      "label": "critic-seeded-58-false",
+      "pixelsSha256": "cbde137c28803295d306ce59f7afc042287fae525e8aabebe45993776bd77d39",
+      "originalWireSha256": "a2cf957a6c80ca916f0ab1039cddcc9351b8e5852ce3b64e43b269351148719f",
+      "nativeSources": [
+        {
+          "resourceId": 3,
+          "generation": 4,
+          "nativeBuffer": 8,
+          "blob": {
+            "key": "blob-0062",
+            "bytes": 308,
+            "sha256": "c17c918023f152dc64882b4c887dbfd2fc7184fb8fabfdbe5e133bb0a89c9732",
+            "gzipSha256": "97b74df36ed62c26f4bc8396d6e7a7d2b84d1a53b07f3714bf7966268e2137e8"
+          }
+        },
+        {
+          "resourceId": 6,
+          "generation": 5,
+          "nativeBuffer": 9,
+          "blob": {
+            "key": "blob-0063",
+            "bytes": 18,
+            "sha256": "297617b019ea5eb471782a2d8ca16adabaa50a532c3a47b58b9c9d321a688b44",
+            "gzipSha256": "24741adfc94ff9edb27181c99d7a238c8f35bc7ec75417e8388ef6fd03830d9a"
+          }
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 4,
+          "lastElement": 17,
+          "firstByte": 68,
+          "requiredEnd": 292
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 8,
+          "offset": 294,
+          "components": 3,
+          "sourceFormat": 58,
+          "elementBytes": 6,
+          "nativeType": 5122,
+          "normalized": true,
+          "constant": false,
+          "divisor": 2,
+          "nativeDivisor": 2,
+          "firstElement": 0,
+          "lastElement": 1,
+          "firstByte": 294,
+          "requiredEnd": 308
+        }
+      ],
+      "held": true,
+      "pixels": 768,
+      "nanPixels": 0,
+      "maxError": 0,
+      "misses": [],
+      "portableNaNPayload": false
+    },
+    {
+      "name": "final-gpu",
+      "index": 13,
+      "label": "critic-seeded-58-true",
+      "pixelsSha256": "1a4a30c5a76a2e5bacc7f91fedfae689047c8ddb6bc75053a618cf8e09d62ac6",
+      "originalWireSha256": "c0808aa37ca4ee11061d26e52c8b554d09e91de17849cbee59cf745655ba7c0e",
+      "nativeSources": [
+        {
+          "resourceId": 3,
+          "generation": 4,
+          "nativeBuffer": 8,
+          "blob": {
+            "key": "blob-0067",
+            "bytes": 316,
+            "sha256": "d39fdb45eacb34c6fb1677ae45041b9633e84139a547b42f5f637fd0b1cc1e3f",
+            "gzipSha256": "5552da076acc2493cde85b8a2322099e4430ae651c730888daa47ea706b919f5"
+          }
+        },
+        {
+          "resourceId": 6,
+          "generation": 5,
+          "nativeBuffer": 9,
+          "blob": {
+            "key": "blob-0068",
+            "bytes": 18,
+            "sha256": "2887c2a165801b99fb11744bf545c272410c0cb48ad4ea6ee247e6b9ae3d92d2",
+            "gzipSha256": "0acc253bcd34b3e256eceadffc6bc57862fa12e0faaf8360a1a7391dcc7c07f9"
+          }
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 4,
+          "lastElement": 18,
+          "firstByte": 68,
+          "requiredEnd": 308
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 0,
+          "offset": 310,
+          "components": 3,
+          "sourceFormat": 58,
+          "elementBytes": 6,
+          "nativeType": 5122,
+          "normalized": true,
+          "constant": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "firstByte": 310,
+          "requiredEnd": 316,
+          "genericValues": [
+            -1,
+            -1,
+            -1,
+            1
+          ],
+          "componentWords": [
+            3212836864,
+            3212836864,
+            3212836864
+          ],
+          "nan": [
+            false,
+            false,
+            false,
+            false
+          ]
+        }
+      ],
+      "held": true,
+      "pixels": 768,
+      "nanPixels": 0,
+      "maxError": 0,
+      "misses": [],
+      "portableNaNPayload": false
+    },
+    {
+      "name": "final-gpu",
+      "index": 14,
+      "label": "critic-seeded-59-false",
+      "pixelsSha256": "dec93816b7a4eae650503a0996edf18a5fdc8159eb8834ef64d2f5a172733434",
+      "originalWireSha256": "94ecd0b76584ea8a21013af9cfb32ef4007bc31ad939905d017f28c07cb3fefa",
+      "nativeSources": [
+        {
+          "resourceId": 3,
+          "generation": 4,
+          "nativeBuffer": 8,
+          "blob": {
+            "key": "blob-0072",
+            "bytes": 328,
+            "sha256": "7dc4f5d5971f77760844bc7023edd75034ec9c6ecaa74e2cb2f4f0a6b77af7d6",
+            "gzipSha256": "33f14f43f9803707df2e108ffabf2033491bac6d7d827eb19df44fb2d900c01b"
+          }
+        },
+        {
+          "resourceId": 6,
+          "generation": 5,
+          "nativeBuffer": 9,
+          "blob": {
+            "key": "blob-0073",
+            "bytes": 18,
+            "sha256": "0026cd2de2a363dcfa5bcd4aef1fef7ac9879ac2605db02bfd173d451393e5ef",
+            "gzipSha256": "383750def4ef7b1bb31612bfa5a803f2365c9ac45d27110d1d45c9a952628916"
+          }
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 2,
+          "lastElement": 18,
+          "firstByte": 36,
+          "requiredEnd": 308
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 10,
+          "offset": 310,
+          "components": 4,
+          "sourceFormat": 59,
+          "elementBytes": 8,
+          "nativeType": 5122,
+          "normalized": true,
+          "constant": false,
+          "divisor": 2,
+          "nativeDivisor": 2,
+          "firstElement": 0,
+          "lastElement": 1,
+          "firstByte": 310,
+          "requiredEnd": 328
+        }
+      ],
+      "held": true,
+      "pixels": 768,
+      "nanPixels": 0,
+      "maxError": 0,
+      "misses": [],
+      "portableNaNPayload": false
+    },
+    {
+      "name": "final-gpu",
+      "index": 15,
+      "label": "critic-seeded-59-true",
+      "pixelsSha256": "e80232b4d18d0bb7e794be263ba937626f383f9917d4b8a737ba893a8f752293",
+      "originalWireSha256": "6a1d3b0bca5b08277567f2758790a2985821ac582cd371142d24b010c13b374f",
+      "nativeSources": [
+        {
+          "resourceId": 3,
+          "generation": 4,
+          "nativeBuffer": 8,
+          "blob": {
+            "key": "blob-0077",
+            "bytes": 286,
+            "sha256": "ef4facd82b5ac20cfa44df36d8f06f322f1cc186cb23f0ee9431c50d7c39e951",
+            "gzipSha256": "4ac5ca1114368d613238bf4e05714117420a3097fd215100779ed333625937f4"
+          }
+        },
+        {
+          "resourceId": 6,
+          "generation": 5,
+          "nativeBuffer": 9,
+          "blob": {
+            "key": "blob-0078",
+            "bytes": 18,
+            "sha256": "5dabb0b81293912e40a5a1a6291f88cd43f0a88be24219642e990ad5537a8ed9",
+            "gzipSha256": "f208edecff0f171f15565607302e87a5123aed692a75460e2276e797161a6fb1"
+          }
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 2,
+          "lastElement": 16,
+          "firstByte": 36,
+          "requiredEnd": 276
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 0,
+          "offset": 278,
+          "components": 4,
+          "sourceFormat": 59,
+          "elementBytes": 8,
+          "nativeType": 5122,
+          "normalized": true,
+          "constant": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "firstByte": 278,
+          "requiredEnd": 286,
+          "genericValues": [
+            -1,
+            -1,
+            -1,
+            -1
+          ],
+          "componentWords": [
+            3212836864,
+            3212836864,
+            3212836864,
+            3212836864
+          ],
+          "nan": [
+            false,
+            false,
+            false,
+            false
+          ]
+        }
+      ],
+      "held": true,
+      "pixels": 768,
+      "nanPixels": 0,
+      "maxError": 0,
+      "misses": [],
+      "portableNaNPayload": false
+    },
+    {
+      "name": "final-gpu",
+      "index": 16,
+      "label": "critic-seeded-64-false",
+      "pixelsSha256": "228724587f641963619ab10c30ee313e594bdec153c18b0ddb2cb876269f7fc3",
+      "originalWireSha256": "789d911ac163ecc197900fa28ec6eb3c4f093a465bfc5443c79dc389f1a25ff1",
+      "nativeSources": [
+        {
+          "resourceId": 3,
+          "generation": 4,
+          "nativeBuffer": 8,
+          "blob": {
+            "key": "blob-0082",
+            "bytes": 328,
+            "sha256": "6dcf9f3044a751f805eff48a3fb4d303cb3d28acb1d5094e7a1aef6a80d970f9",
+            "gzipSha256": "db4ca9c6b2a0735d7c24df197248866d110a013438830634023e0543fd2a34cf"
+          }
+        },
+        {
+          "resourceId": 6,
+          "generation": 5,
+          "nativeBuffer": 9,
+          "blob": {
+            "key": "blob-0083",
+            "bytes": 18,
+            "sha256": "b6a2662a86ffa05cad6c3c21348e8104272b129dfbbbdbeb6df4a00c70a52fac",
+            "gzipSha256": "1e1b358cf31e693ddb379e68b3c1ab5056fc3bf622a33065fd13f19a65eb7a61"
+          }
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 4,
+          "lastElement": 17,
+          "firstByte": 68,
+          "requiredEnd": 292
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 2,
+          "offset": 293,
+          "components": 1,
+          "sourceFormat": 64,
+          "elementBytes": 1,
+          "nativeType": 5121,
+          "normalized": true,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 4,
+          "lastElement": 17,
+          "firstByte": 301,
+          "requiredEnd": 328
+        }
+      ],
+      "held": true,
+      "pixels": 768,
+      "nanPixels": 0,
+      "maxError": 0,
+      "misses": [],
+      "portableNaNPayload": false
+    },
+    {
+      "name": "final-gpu",
+      "index": 17,
+      "label": "critic-seeded-64-true",
+      "pixelsSha256": "f58b25bb356cd19e62de479a62dd96130c60f1bed7da475186f139e6f51208dc",
+      "originalWireSha256": "0a7e5c0149990284e93fc468499156a1429f1a330379217d819b5aaf2290f2a1",
+      "nativeSources": [
+        {
+          "resourceId": 3,
+          "generation": 4,
+          "nativeBuffer": 8,
+          "blob": {
+            "key": "blob-0087",
+            "bytes": 294,
+            "sha256": "391392d5e38e096cb08952aea4adcfc65e3275f9cb4c003d0675592a98d04fcb",
+            "gzipSha256": "3cc1172dacdee5255993c32896fb62d097e868f5f1751cfa0e9200202b698edf"
+          }
+        },
+        {
+          "resourceId": 6,
+          "generation": 5,
+          "nativeBuffer": 9,
+          "blob": {
+            "key": "blob-0088",
+            "bytes": 18,
+            "sha256": "550f1dc2886b0fabb7f9bd9e29bb087f7efa24dc53bdf348ead95b592d8e9d05",
+            "gzipSha256": "f76156d3a937469895220da68a7533ddcd4622130b6d2990bc038eb421bff9db"
+          }
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 2,
+          "lastElement": 17,
+          "firstByte": 36,
+          "requiredEnd": 292
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 0,
+          "offset": 293,
+          "components": 1,
+          "sourceFormat": 64,
+          "elementBytes": 1,
+          "nativeType": 5121,
+          "normalized": true,
+          "constant": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "firstByte": 293,
+          "requiredEnd": 294,
+          "genericValues": [
+            0.5333333611488342,
+            0,
+            0,
+            1
+          ],
+          "componentWords": [
+            1057523849
+          ],
+          "nan": [
+            false,
+            false,
+            false,
+            false
+          ]
+        }
+      ],
+      "held": true,
+      "pixels": 768,
+      "nanPixels": 0,
+      "maxError": 0,
+      "misses": [],
+      "portableNaNPayload": false
+    },
+    {
+      "name": "final-gpu",
+      "index": 18,
+      "label": "critic-seeded-65-false",
+      "pixelsSha256": "3d59c7709774dcfb16139397dfdca7fce2065b396beff66271cfc78a5c07d37b",
+      "originalWireSha256": "91e6d12c83d527b1383789b257834a2dc2b054ff8a81932e397c68a184d23baf",
+      "nativeSources": [
+        {
+          "resourceId": 3,
+          "generation": 4,
+          "nativeBuffer": 8,
+          "blob": {
+            "key": "blob-0092",
+            "bytes": 346,
+            "sha256": "4420960268b69471ff4aadda5dc1d89d4c880a865ec77631e2ec7f6a70b73e32",
+            "gzipSha256": "d008470756f2ca869aa45d30ed4916359b07734bb6b36bd5cf900dc271c3e8f3"
+          }
+        },
+        {
+          "resourceId": 6,
+          "generation": 5,
+          "nativeBuffer": 9,
+          "blob": {
+            "key": "blob-0093",
+            "bytes": 18,
+            "sha256": "c2061b0172253236c9bac4fb9ac132653f36fe569b98e5a597146ca6119a1a77",
+            "gzipSha256": "a29181ce454a9db73e723d392fd16db0ba16a7728b3655398ae6d0a3208941cb"
+          }
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 4,
+          "lastElement": 17,
+          "firstByte": 68,
+          "requiredEnd": 292
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 3,
+          "offset": 293,
+          "components": 2,
+          "sourceFormat": 65,
+          "elementBytes": 2,
+          "nativeType": 5121,
+          "normalized": true,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 4,
+          "lastElement": 17,
+          "firstByte": 305,
+          "requiredEnd": 346
+        }
+      ],
+      "held": true,
+      "pixels": 768,
+      "nanPixels": 0,
+      "maxError": 0,
+      "misses": [],
+      "portableNaNPayload": false
+    },
+    {
+      "name": "final-gpu",
+      "index": 19,
+      "label": "critic-seeded-65-true",
+      "pixelsSha256": "708abfa5acaf62b1825bc3aeb4211709eb229efd5efd033713b00f8ae020d1bc",
+      "originalWireSha256": "d1f04edd7b4f05b67d1bc9088a91e706a7750267ed242735c1233d73f2e970f3",
+      "nativeSources": [
+        {
+          "resourceId": 3,
+          "generation": 4,
+          "nativeBuffer": 8,
+          "blob": {
+            "key": "blob-0097",
+            "bytes": 279,
+            "sha256": "7e5adcab6238db05592d5c66ee12391b3ec54591f2fa7d155746a0b048292526",
+            "gzipSha256": "13bcf26798ca10d135efeb3ff2bcfff06dd68554f9306045dde5ade13823a0d3"
+          }
+        },
+        {
+          "resourceId": 6,
+          "generation": 5,
+          "nativeBuffer": 9,
+          "blob": {
+            "key": "blob-0098",
+            "bytes": 18,
+            "sha256": "9a80febe8c257a23bf97bd04f7138bfd7a4dff240959adb33fd7eb9792f484da",
+            "gzipSha256": "eadf79cbfb06321093e6dbe90f49148ad3294b3eb5e1cfdc0db2fbd41aae8120"
+          }
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 3,
+          "lastElement": 16,
+          "firstByte": 52,
+          "requiredEnd": 276
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 0,
+          "offset": 277,
+          "components": 2,
+          "sourceFormat": 65,
+          "elementBytes": 2,
+          "nativeType": 5121,
+          "normalized": true,
+          "constant": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "firstByte": 277,
+          "requiredEnd": 279,
+          "genericValues": [
+            0.9450980424880981,
+            0.4901960790157318,
+            0,
+            1
+          ],
+          "componentWords": [
+            1064432114,
+            1056635643
+          ],
+          "nan": [
+            false,
+            false,
+            false,
+            false
+          ]
+        }
+      ],
+      "held": true,
+      "pixels": 768,
+      "nanPixels": 0,
+      "maxError": 0,
+      "misses": [],
+      "portableNaNPayload": false
+    },
+    {
+      "name": "final-gpu",
+      "index": 20,
+      "label": "critic-seeded-66-false",
+      "pixelsSha256": "90b0e6cd4e7aeda44f589b92df39c8da7cd0a4de7d77d87dc18bbadd5dd66261",
+      "originalWireSha256": "7609b6492104948b4ac466ca14d581201be507ad5d3bf6d7d63fc547619a96ed",
+      "nativeSources": [
+        {
+          "resourceId": 3,
+          "generation": 4,
+          "nativeBuffer": 8,
+          "blob": {
+            "key": "blob-0102",
+            "bytes": 315,
+            "sha256": "6a511f843c7c66cd1e5ccd6a06066ffadb5756a92b882fd3c6282b6a17be2b48",
+            "gzipSha256": "6cadda3c0438456e851c1bd876b6dfc7bcb62216698aa4e8591ffa028ba1b25a"
+          }
+        },
+        {
+          "resourceId": 6,
+          "generation": 5,
+          "nativeBuffer": 9,
+          "blob": {
+            "key": "blob-0103",
+            "bytes": 18,
+            "sha256": "2887c2a165801b99fb11744bf545c272410c0cb48ad4ea6ee247e6b9ae3d92d2",
+            "gzipSha256": "0acc253bcd34b3e256eceadffc6bc57862fa12e0faaf8360a1a7391dcc7c07f9"
+          }
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 4,
+          "lastElement": 18,
+          "firstByte": 68,
+          "requiredEnd": 308
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 3,
+          "offset": 309,
+          "components": 3,
+          "sourceFormat": 66,
+          "elementBytes": 3,
+          "nativeType": 5121,
+          "normalized": true,
+          "constant": false,
+          "divisor": 2,
+          "nativeDivisor": 2,
+          "firstElement": 0,
+          "lastElement": 1,
+          "firstByte": 309,
+          "requiredEnd": 315
+        }
+      ],
+      "held": true,
+      "pixels": 768,
+      "nanPixels": 0,
+      "maxError": 0,
+      "misses": [],
+      "portableNaNPayload": false
+    },
+    {
+      "name": "final-gpu",
+      "index": 21,
+      "label": "critic-seeded-66-true",
+      "pixelsSha256": "b4cdb62105185c3fcf7e8168cac7ac91fa74933ca4568b2a8f599b377d148bd1",
+      "originalWireSha256": "03cdfa33ea5f015efa22ea8317e90232f49575fc659b79f5c00324ed95e1ba49",
+      "nativeSources": [
+        {
+          "resourceId": 3,
+          "generation": 4,
+          "nativeBuffer": 8,
+          "blob": {
+            "key": "blob-0107",
+            "bytes": 312,
+            "sha256": "b57283b58b5031114f01c251d05c69c587f9349be6015e2ca4bf222477a1dd0d",
+            "gzipSha256": "102f9c7863e3828e3423bb1f1d93d24442124c3e47815b25384c244e33b2fbec"
+          }
+        },
+        {
+          "resourceId": 6,
+          "generation": 5,
+          "nativeBuffer": 9,
+          "blob": {
+            "key": "blob-0108",
+            "bytes": 18,
+            "sha256": "bf3ec050faa16c69d57e1e7fbedbeeb59b430b9b2c25edae6fbd1c0fcf4b8fb9",
+            "gzipSha256": "cda7dfab1b9db7fb4168441c8c6ec32011282fbdfd0a4749ba778e096d0ad28d"
+          }
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 2,
+          "lastElement": 18,
+          "firstByte": 36,
+          "requiredEnd": 308
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 0,
+          "offset": 309,
+          "components": 3,
+          "sourceFormat": 66,
+          "elementBytes": 3,
+          "nativeType": 5121,
+          "normalized": true,
+          "constant": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "firstByte": 309,
+          "requiredEnd": 312,
+          "genericValues": [
+            0.5764706134796143,
+            0.5333333611488342,
+            0.2235294133424759,
+            1
+          ],
+          "componentWords": [
+            1058247572,
+            1057523849,
+            1046799589
+          ],
+          "nan": [
+            false,
+            false,
+            false,
+            false
+          ]
+        }
+      ],
+      "held": true,
+      "pixels": 768,
+      "nanPixels": 0,
+      "maxError": 0,
+      "misses": [],
+      "portableNaNPayload": false
+    },
+    {
+      "name": "final-gpu",
+      "index": 22,
+      "label": "critic-seeded-67-false",
+      "pixelsSha256": "06604137c324ac33938e20d2ccaed7b441fa05e00e9209dd9dff86f11d29c6fb",
+      "originalWireSha256": "ff44ad81943106feb84452fb156ebaab903e02d6e7391651f1a7c3f873dff09e",
+      "nativeSources": [
+        {
+          "resourceId": 3,
+          "generation": 4,
+          "nativeBuffer": 8,
+          "blob": {
+            "key": "blob-0112",
+            "bytes": 333,
+            "sha256": "24a6640c422845959aaef5fae95a6a135a044d0b5d660740f9cbb01e2c8ad5eb",
+            "gzipSha256": "69b40b4018602aa49c05aeee823ec715a47da9f4b89515598c97e084eb056bd1"
+          }
+        },
+        {
+          "resourceId": 6,
+          "generation": 5,
+          "nativeBuffer": 9,
+          "blob": {
+            "key": "blob-0113",
+            "bytes": 18,
+            "sha256": "66558217906874e7fcfd6b046730bc6f3e204344b6bd22a9a8783de12c2e6083",
+            "gzipSha256": "70641d6eebe0385dee8f3eeee000d13c26cb5b4a134bb2b19a0009d2a556ee24"
+          }
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 2,
+          "lastElement": 19,
+          "firstByte": 36,
+          "requiredEnd": 324
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 4,
+          "offset": 325,
+          "components": 4,
+          "sourceFormat": 67,
+          "elementBytes": 4,
+          "nativeType": 5121,
+          "normalized": true,
+          "constant": false,
+          "divisor": 2,
+          "nativeDivisor": 2,
+          "firstElement": 0,
+          "lastElement": 1,
+          "firstByte": 325,
+          "requiredEnd": 333
+        }
+      ],
+      "held": true,
+      "pixels": 768,
+      "nanPixels": 0,
+      "maxError": 0,
+      "misses": [],
+      "portableNaNPayload": false
+    },
+    {
+      "name": "final-gpu",
+      "index": 23,
+      "label": "critic-seeded-67-true",
+      "pixelsSha256": "a08771b5e8d74a1b70bd585a25f749a0b02d69d6db3e9089ecbf9d7818fa4a4e",
+      "originalWireSha256": "a9dc888d4d195d330186d7813fd0b39ab451e0c94a38eeecaf471e5d06bd4e72",
+      "nativeSources": [
+        {
+          "resourceId": 3,
+          "generation": 4,
+          "nativeBuffer": 8,
+          "blob": {
+            "key": "blob-0117",
+            "bytes": 313,
+            "sha256": "0c5940ca37b2046fe3ab8eb507b12fdfb65ffa7b11156478b6021a448457adea",
+            "gzipSha256": "ca24d853a1c98a14ff86268b0bd3f94feee62e51b5044313fa95532ecb0fbb9f"
+          }
+        },
+        {
+          "resourceId": 6,
+          "generation": 5,
+          "nativeBuffer": 9,
+          "blob": {
+            "key": "blob-0118",
+            "bytes": 18,
+            "sha256": "c9f85d9c3543b3e5574fa6237735336949a921b7cda17fef2c18718fd6e39601",
+            "gzipSha256": "d83feec860a02a7598c4587fa3fcf8da81ab43460fdc4fc6b510b88d03088340"
+          }
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 4,
+          "lastElement": 18,
+          "firstByte": 68,
+          "requiredEnd": 308
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 0,
+          "offset": 309,
+          "components": 4,
+          "sourceFormat": 67,
+          "elementBytes": 4,
+          "nativeType": 5121,
+          "normalized": true,
+          "constant": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "firstByte": 309,
+          "requiredEnd": 313,
+          "genericValues": [
+            0.06666667014360428,
+            0.7568627595901489,
+            0.32156863808631897,
+            0.46666666865348816
+          ],
+          "componentWords": [
+            1032358025,
+            1061274050,
+            1050977445,
+            1055846127
+          ],
+          "nan": [
+            false,
+            false,
+            false,
+            false
+          ]
+        }
+      ],
+      "held": true,
+      "pixels": 768,
+      "nanPixels": 0,
+      "maxError": 0,
+      "misses": [],
+      "portableNaNPayload": false
+    },
+    {
+      "name": "final-gpu",
+      "index": 24,
+      "label": "critic-seeded-74-false",
+      "pixelsSha256": "903fea245071d49f06128f8b714ea3e78ecf021a559ba700a0d7344492963c24",
+      "originalWireSha256": "c1e5d1fe3a2194b829aa2ef5f6b59df3ef90cc1ea8abca51dd6afcf6a917a7a4",
+      "nativeSources": [
+        {
+          "resourceId": 3,
+          "generation": 4,
+          "nativeBuffer": 8,
+          "blob": {
+            "key": "blob-0122",
+            "bytes": 295,
+            "sha256": "9c65223f1248f09e52ece87a75b6edd84cd7bf6aa46791e35c3947892e4567b9",
+            "gzipSha256": "eceac60f8d2953446e032e06bec40e6e8b88407aa1f540d8c0e156b5971b0bfe"
+          }
+        },
+        {
+          "resourceId": 6,
+          "generation": 5,
+          "nativeBuffer": 9,
+          "blob": {
+            "key": "blob-0123",
+            "bytes": 18,
+            "sha256": "c2061b0172253236c9bac4fb9ac132653f36fe569b98e5a597146ca6119a1a77",
+            "gzipSha256": "a29181ce454a9db73e723d392fd16db0ba16a7728b3655398ae6d0a3208941cb"
+          }
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 4,
+          "lastElement": 17,
+          "firstByte": 68,
+          "requiredEnd": 292
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 1,
+          "offset": 293,
+          "components": 1,
+          "sourceFormat": 74,
+          "elementBytes": 1,
+          "nativeType": 5120,
+          "normalized": true,
+          "constant": false,
+          "divisor": 2,
+          "nativeDivisor": 2,
+          "firstElement": 0,
+          "lastElement": 1,
+          "firstByte": 293,
+          "requiredEnd": 295
+        }
+      ],
+      "held": true,
+      "pixels": 768,
+      "nanPixels": 0,
+      "maxError": 0,
+      "misses": [],
+      "portableNaNPayload": false
+    },
+    {
+      "name": "final-gpu",
+      "index": 25,
+      "label": "critic-seeded-74-true",
+      "pixelsSha256": "1e33572fa52a6e0b3aa3cc237f0e0f4b52cd414fd2baca0b7d85260fbe8656c7",
+      "originalWireSha256": "6d2c6c55716e7f45f3725d459edc095700efe02e0556519540c8e86d03dbd457",
+      "nativeSources": [
+        {
+          "resourceId": 3,
+          "generation": 4,
+          "nativeBuffer": 8,
+          "blob": {
+            "key": "blob-0127",
+            "bytes": 262,
+            "sha256": "d338d148ba582016fa70b80357d012d0090c26f22a8b8dc1ce946c33251cc478",
+            "gzipSha256": "5797be53928eddf8cb40725ae79958de14a4a6d42457b7a43ea840db31ac7661"
+          }
+        },
+        {
+          "resourceId": 6,
+          "generation": 5,
+          "nativeBuffer": 9,
+          "blob": {
+            "key": "blob-0128",
+            "bytes": 18,
+            "sha256": "bdc62a608930836f4a2f0e39d9f682fcbbee81de899d32c1229b9dba77abb8b2",
+            "gzipSha256": "f6103b24edc4d6d4a764a8a3e2979fbba0e3cb3e61bc1cd89de37d4e46d820d5"
+          }
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 2,
+          "lastElement": 15,
+          "firstByte": 36,
+          "requiredEnd": 260
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 0,
+          "offset": 261,
+          "components": 1,
+          "sourceFormat": 74,
+          "elementBytes": 1,
+          "nativeType": 5120,
+          "normalized": true,
+          "constant": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "firstByte": 261,
+          "requiredEnd": 262,
+          "genericValues": [
+            -1,
+            0,
+            0,
+            1
+          ],
+          "componentWords": [
+            3212836864
+          ],
+          "nan": [
+            false,
+            false,
+            false,
+            false
+          ]
+        }
+      ],
+      "held": true,
+      "pixels": 768,
+      "nanPixels": 0,
+      "maxError": 0,
+      "misses": [],
+      "portableNaNPayload": false
+    },
+    {
+      "name": "final-gpu",
+      "index": 26,
+      "label": "critic-seeded-75-false",
+      "pixelsSha256": "b655dc5ec48b877179fd3baf090af47e2de1bc04f1b78793e18f58ad23e7e54c",
+      "originalWireSha256": "e39ae6afa1978f3f637bf5732a3543b72e7a5411a7c93e10aec447b4c65753e9",
+      "nativeSources": [
+        {
+          "resourceId": 3,
+          "generation": 4,
+          "nativeBuffer": 8,
+          "blob": {
+            "key": "blob-0132",
+            "bytes": 293,
+            "sha256": "0de737310db773ddbc6f8663b865dc9634f8f366ccc53fb35d03e81b36679d78",
+            "gzipSha256": "ef9e6284e057423f774e219fefb78b0324b84b6165809305cc53f051a943bea9"
+          }
+        },
+        {
+          "resourceId": 6,
+          "generation": 5,
+          "nativeBuffer": 9,
+          "blob": {
+            "key": "blob-0133",
+            "bytes": 18,
+            "sha256": "58019a67d7fdc7a87ac4e0d617358db4606d592d334c273e7f483c6815cee310",
+            "gzipSha256": "27552ea4571d43fdf7f363fb47d948582fb39ca7c3414f6b0baded78c4d41e22"
+          }
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 4,
+          "lastElement": 15,
+          "firstByte": 68,
+          "requiredEnd": 260
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 2,
+          "offset": 261,
+          "components": 2,
+          "sourceFormat": 75,
+          "elementBytes": 2,
+          "nativeType": 5120,
+          "normalized": true,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 4,
+          "lastElement": 15,
+          "firstByte": 269,
+          "requiredEnd": 293
+        }
+      ],
+      "held": true,
+      "pixels": 768,
+      "nanPixels": 0,
+      "maxError": 0,
+      "misses": [],
+      "portableNaNPayload": false
+    },
+    {
+      "name": "final-gpu",
+      "index": 27,
+      "label": "critic-seeded-75-true",
+      "pixelsSha256": "86d1390cacd86644709a7d2a05aee34ec58b1c32d811f9da373e6073ad7caa72",
+      "originalWireSha256": "3a193e0af8cde409cab97d43b0c4279363d529055a270d04abaf4360e31888c5",
+      "nativeSources": [
+        {
+          "resourceId": 3,
+          "generation": 4,
+          "nativeBuffer": 8,
+          "blob": {
+            "key": "blob-0137",
+            "bytes": 311,
+            "sha256": "8bd9ac54bb1de5b324b6d1614fa64c01cc327c3f7d11623a653c8a97fc259c1e",
+            "gzipSha256": "6944bd6e8a80b473351d1957b0614ab3fe27528fb4c711c240ab5296407cdb60"
+          }
+        },
+        {
+          "resourceId": 6,
+          "generation": 5,
+          "nativeBuffer": 9,
+          "blob": {
+            "key": "blob-0138",
+            "bytes": 18,
+            "sha256": "2887c2a165801b99fb11744bf545c272410c0cb48ad4ea6ee247e6b9ae3d92d2",
+            "gzipSha256": "0acc253bcd34b3e256eceadffc6bc57862fa12e0faaf8360a1a7391dcc7c07f9"
+          }
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 4,
+          "lastElement": 18,
+          "firstByte": 68,
+          "requiredEnd": 308
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 0,
+          "offset": 309,
+          "components": 2,
+          "sourceFormat": 75,
+          "elementBytes": 2,
+          "nativeType": 5120,
+          "normalized": true,
+          "constant": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "firstByte": 309,
+          "requiredEnd": 311,
+          "genericValues": [
+            -1,
+            -1,
+            0,
+            1
+          ],
+          "componentWords": [
+            3212836864,
+            3212836864
+          ],
+          "nan": [
+            false,
+            false,
+            false,
+            false
+          ]
+        }
+      ],
+      "held": true,
+      "pixels": 768,
+      "nanPixels": 0,
+      "maxError": 0,
+      "misses": [],
+      "portableNaNPayload": false
+    },
+    {
+      "name": "final-gpu",
+      "index": 28,
+      "label": "critic-seeded-76-false",
+      "pixelsSha256": "cbde137c28803295d306ce59f7afc042287fae525e8aabebe45993776bd77d39",
+      "originalWireSha256": "4bea4c90bcffff79c0ba3779a064fc5c17192dbffc2a27a5e38ab9a34816fdea",
+      "nativeSources": [
+        {
+          "resourceId": 3,
+          "generation": 4,
+          "nativeBuffer": 8,
+          "blob": {
+            "key": "blob-0142",
+            "bytes": 283,
+            "sha256": "a1036401091a11572d1557492918b68462a68bfd570ea6c160c5ab17b5d2dcb0",
+            "gzipSha256": "ab05265a6c66a0a4900945b678ecebe85d2b094e588504fb3e600de1187ce755"
+          }
+        },
+        {
+          "resourceId": 6,
+          "generation": 5,
+          "nativeBuffer": 9,
+          "blob": {
+            "key": "blob-0143",
+            "bytes": 18,
+            "sha256": "739605584571a86d741c3f21635921b1cd7e6fef9a0d7ea1a440d4645077e785",
+            "gzipSha256": "edf07a16c41e8b7c9f5760708184cbad786154231a1aad221bd1984d345f91aa"
+          }
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 4,
+          "lastElement": 16,
+          "firstByte": 68,
+          "requiredEnd": 276
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 3,
+          "offset": 277,
+          "components": 3,
+          "sourceFormat": 76,
+          "elementBytes": 3,
+          "nativeType": 5120,
+          "normalized": true,
+          "constant": false,
+          "divisor": 2,
+          "nativeDivisor": 2,
+          "firstElement": 0,
+          "lastElement": 1,
+          "firstByte": 277,
+          "requiredEnd": 283
+        }
+      ],
+      "held": true,
+      "pixels": 768,
+      "nanPixels": 0,
+      "maxError": 0,
+      "misses": [],
+      "portableNaNPayload": false
+    },
+    {
+      "name": "final-gpu",
+      "index": 29,
+      "label": "critic-seeded-76-true",
+      "pixelsSha256": "1a4a30c5a76a2e5bacc7f91fedfae689047c8ddb6bc75053a618cf8e09d62ac6",
+      "originalWireSha256": "3e5a375adcfb55ae7046feeee65b08a0ed4d715c0eca0c0cdbb565f8ed25a164",
+      "nativeSources": [
+        {
+          "resourceId": 3,
+          "generation": 4,
+          "nativeBuffer": 8,
+          "blob": {
+            "key": "blob-0147",
+            "bytes": 296,
+            "sha256": "9bc8b4ed102aeaadb32bce53a3848d87358cc61d3884e23d5049e9fd715c3efa",
+            "gzipSha256": "2dbc61eb91590dca560da580a7aef335bca80bce7471b656d25a9ed418bbc91e"
+          }
+        },
+        {
+          "resourceId": 6,
+          "generation": 5,
+          "nativeBuffer": 9,
+          "blob": {
+            "key": "blob-0148",
+            "bytes": 18,
+            "sha256": "550f1dc2886b0fabb7f9bd9e29bb087f7efa24dc53bdf348ead95b592d8e9d05",
+            "gzipSha256": "f76156d3a937469895220da68a7533ddcd4622130b6d2990bc038eb421bff9db"
+          }
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 2,
+          "lastElement": 17,
+          "firstByte": 36,
+          "requiredEnd": 292
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 0,
+          "offset": 293,
+          "components": 3,
+          "sourceFormat": 76,
+          "elementBytes": 3,
+          "nativeType": 5120,
+          "normalized": true,
+          "constant": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "firstByte": 293,
+          "requiredEnd": 296,
+          "genericValues": [
+            -1,
+            -1,
+            -1,
+            1
+          ],
+          "componentWords": [
+            3212836864,
+            3212836864,
+            3212836864
+          ],
+          "nan": [
+            false,
+            false,
+            false,
+            false
+          ]
+        }
+      ],
+      "held": true,
+      "pixels": 768,
+      "nanPixels": 0,
+      "maxError": 0,
+      "misses": [],
+      "portableNaNPayload": false
+    },
+    {
+      "name": "final-gpu",
+      "index": 30,
+      "label": "critic-seeded-77-false",
+      "pixelsSha256": "f48eee5a4a8c01e2b1106b9c6035a0efeb2f533807a302385b6114e363d4b521",
+      "originalWireSha256": "ca81d780327d8d4433ac02efb773596a73bfc70f2b392eb18f50549c97fcd1f5",
+      "nativeSources": [
+        {
+          "resourceId": 3,
+          "generation": 4,
+          "nativeBuffer": 8,
+          "blob": {
+            "key": "blob-0152",
+            "bytes": 345,
+            "sha256": "909eb2efa1f2048abf25ab86f0b47d164ab11f45a4ad13b1d813aa621ddf3db2",
+            "gzipSha256": "82f76d315761f3860780c37e8c0e1c3da50f5bf9736fe04157f79e2579cdc0b1"
+          }
+        },
+        {
+          "resourceId": 6,
+          "generation": 5,
+          "nativeBuffer": 9,
+          "blob": {
+            "key": "blob-0153",
+            "bytes": 18,
+            "sha256": "9a80febe8c257a23bf97bd04f7138bfd7a4dff240959adb33fd7eb9792f484da",
+            "gzipSha256": "eadf79cbfb06321093e6dbe90f49148ad3294b3eb5e1cfdc0db2fbd41aae8120"
+          }
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 3,
+          "lastElement": 16,
+          "firstByte": 52,
+          "requiredEnd": 276
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 4,
+          "offset": 277,
+          "components": 4,
+          "sourceFormat": 77,
+          "elementBytes": 4,
+          "nativeType": 5120,
+          "normalized": true,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 3,
+          "lastElement": 16,
+          "firstByte": 289,
+          "requiredEnd": 345
+        }
+      ],
+      "held": true,
+      "pixels": 768,
+      "nanPixels": 0,
+      "maxError": 0,
+      "misses": [],
+      "portableNaNPayload": false
+    },
+    {
+      "name": "final-gpu",
+      "index": 31,
+      "label": "critic-seeded-77-true",
+      "pixelsSha256": "e80232b4d18d0bb7e794be263ba937626f383f9917d4b8a737ba893a8f752293",
+      "originalWireSha256": "aa813de3481af6221fd9ef982c164c201fd9e0cfacb8df823055f910cc6a97f7",
+      "nativeSources": [
+        {
+          "resourceId": 3,
+          "generation": 4,
+          "nativeBuffer": 8,
+          "blob": {
+            "key": "blob-0157",
+            "bytes": 281,
+            "sha256": "00c800d5fd1e7f902f71d41ae7fc02590f8301be7acf8d0f8cae6a870d425848",
+            "gzipSha256": "2dfee83f51b2cfeb2c99c8597f0b1919df4e3c03f4e248824f0540ab5b4b91a6"
+          }
+        },
+        {
+          "resourceId": 6,
+          "generation": 5,
+          "nativeBuffer": 9,
+          "blob": {
+            "key": "blob-0158",
+            "bytes": 18,
+            "sha256": "5b9c16b6594cdd06b96a5c805d1e457e35afaeeee2556724a236dc16a32693c8",
+            "gzipSha256": "3b1820d9881fbbe17605431fde5a6251533a996d872f4613df4160c68a4c335c"
+          }
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 3,
+          "lastElement": 16,
+          "firstByte": 52,
+          "requiredEnd": 276
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 0,
+          "offset": 277,
+          "components": 4,
+          "sourceFormat": 77,
+          "elementBytes": 4,
+          "nativeType": 5120,
+          "normalized": true,
+          "constant": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "firstByte": 277,
+          "requiredEnd": 281,
+          "genericValues": [
+            -1,
+            -1,
+            -1,
+            -1
+          ],
+          "componentWords": [
+            3212836864,
+            3212836864,
+            3212836864,
+            3212836864
+          ],
+          "nan": [
+            false,
+            false,
+            false,
+            false
+          ]
+        }
+      ],
+      "held": true,
+      "pixels": 768,
+      "nanPixels": 0,
+      "maxError": 0,
+      "misses": [],
+      "portableNaNPayload": false
+    },
+    {
+      "name": "final-gpu",
+      "index": 32,
+      "label": "critic-seeded-91-false",
+      "pixelsSha256": "1a0274ad3c6f0f5ac4e0cded54513f3a0cbc6bdef0d9b78754a4a1988052fb4c",
+      "originalWireSha256": "274cb0db10fe5ac5309cddc53f31311da28179c3900f0478e18ccdf7f5185c06",
+      "nativeSources": [
+        {
+          "resourceId": 3,
+          "generation": 4,
+          "nativeBuffer": 8,
+          "blob": {
+            "key": "blob-0162",
+            "bytes": 366,
+            "sha256": "d00da6c1a48917df0d66f33117d3a33a5b44af90f4d310f3a4f2e50f5be23f76",
+            "gzipSha256": "195d9457a08c0b8ae1bf68182d894b088989a6b85a44d0616b538cc8e8860f57"
+          }
+        },
+        {
+          "resourceId": 6,
+          "generation": 5,
+          "nativeBuffer": 9,
+          "blob": {
+            "key": "blob-0163",
+            "bytes": 18,
+            "sha256": "163669a4b77eeab52472b694efc336808d7ce4389955b3754466badde28c68f4",
+            "gzipSha256": "ae49fceb02099d39bde37b817e391fd300d04f093ed2ba8fbc76bcef28108641"
+          }
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 3,
+          "lastElement": 19,
+          "firstByte": 52,
+          "requiredEnd": 324
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 2,
+          "offset": 326,
+          "components": 1,
+          "sourceFormat": 91,
+          "elementBytes": 2,
+          "nativeType": 5131,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 3,
+          "lastElement": 19,
+          "firstByte": 332,
+          "requiredEnd": 366
+        }
+      ],
+      "held": true,
+      "pixels": 768,
+      "nanPixels": 0,
+      "maxError": 0,
+      "misses": [],
+      "portableNaNPayload": false
+    },
+    {
+      "name": "final-gpu",
+      "index": 33,
+      "label": "critic-seeded-91-true",
+      "pixelsSha256": "4f0a4abed65db53d63f3568b30cc29c37ba2273dd70dd0d007569ff571ac9b32",
+      "originalWireSha256": "f3e4f4364d945678db2bdc129f7db31acdf586af4749663cea30ef4735b9f44c",
+      "nativeSources": [
+        {
+          "resourceId": 3,
+          "generation": 4,
+          "nativeBuffer": 8,
+          "blob": {
+            "key": "blob-0167",
+            "bytes": 312,
+            "sha256": "8fc7402ffd883f9b34dca87e0123e6e5eb504bf9e3f42d26aafbad79428c49b3",
+            "gzipSha256": "1a333296c881d929e15569fc77bedd37ff795d1701f8667bf9ec23693c471a6b"
+          }
+        },
+        {
+          "resourceId": 6,
+          "generation": 5,
+          "nativeBuffer": 9,
+          "blob": {
+            "key": "blob-0168",
+            "bytes": 18,
+            "sha256": "bf3ec050faa16c69d57e1e7fbedbeeb59b430b9b2c25edae6fbd1c0fcf4b8fb9",
+            "gzipSha256": "cda7dfab1b9db7fb4168441c8c6ec32011282fbdfd0a4749ba778e096d0ad28d"
+          }
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 2,
+          "lastElement": 18,
+          "firstByte": 36,
+          "requiredEnd": 308
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 0,
+          "offset": 310,
+          "components": 1,
+          "sourceFormat": 91,
+          "elementBytes": 2,
+          "nativeType": 5131,
+          "normalized": false,
+          "constant": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "firstByte": 310,
+          "requiredEnd": 312,
+          "genericValues": [
+            5.960464477539063e-8,
+            0,
+            0,
+            1
+          ],
+          "componentWords": [
+            864026624
+          ],
+          "nan": [
+            false,
+            false,
+            false,
+            false
+          ]
+        }
+      ],
+      "held": true,
+      "pixels": 768,
+      "nanPixels": 0,
+      "maxError": 0,
+      "misses": [],
+      "portableNaNPayload": false
+    },
+    {
+      "name": "final-gpu",
+      "index": 34,
+      "label": "critic-seeded-92-false",
+      "pixelsSha256": "bef20e4299e5b722895a6864cd1c74e05277372de24418a910bb2f1e47c8d253",
+      "originalWireSha256": "3956847ade36cdf8b9452621d2eb834f8244af8fe8adf192207b6780217f2db5",
+      "nativeSources": [
+        {
+          "resourceId": 3,
+          "generation": 4,
+          "nativeBuffer": 8,
+          "blob": {
+            "key": "blob-0172",
+            "bytes": 318,
+            "sha256": "30f6cbe66e3d280809a9650d82f61e98e0cd25539c6a6883971029036fcae792",
+            "gzipSha256": "ec64aee53afa15b0046087671fc63a681fec7226ea6a4c022670ead9e60d770f"
+          }
+        },
+        {
+          "resourceId": 6,
+          "generation": 5,
+          "nativeBuffer": 9,
+          "blob": {
+            "key": "blob-0173",
+            "bytes": 18,
+            "sha256": "abba98dc52013e760d9ee219a15f474a9111b82af307c487169f26d1902c01f0",
+            "gzipSha256": "846248803c2480edb70e23d50b291df42e58b33cf025070e919221452d147061"
+          }
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 2,
+          "lastElement": 18,
+          "firstByte": 36,
+          "requiredEnd": 308
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 4,
+          "offset": 310,
+          "components": 2,
+          "sourceFormat": 92,
+          "elementBytes": 4,
+          "nativeType": 5131,
+          "normalized": false,
+          "constant": false,
+          "divisor": 2,
+          "nativeDivisor": 2,
+          "firstElement": 0,
+          "lastElement": 1,
+          "firstByte": 310,
+          "requiredEnd": 318
+        }
+      ],
+      "held": true,
+      "pixels": 768,
+      "nanPixels": 0,
+      "maxError": 0,
+      "misses": [],
+      "portableNaNPayload": false
+    },
+    {
+      "name": "final-gpu",
+      "index": 35,
+      "label": "critic-seeded-92-true",
+      "pixelsSha256": "4f0a4abed65db53d63f3568b30cc29c37ba2273dd70dd0d007569ff571ac9b32",
+      "originalWireSha256": "953c2c4403405b34a53a6b672ebcc46a2e0800f88bfa7eb29e2fa53608c00f0f",
+      "nativeSources": [
+        {
+          "resourceId": 3,
+          "generation": 4,
+          "nativeBuffer": 8,
+          "blob": {
+            "key": "blob-0177",
+            "bytes": 282,
+            "sha256": "a61d8eddff3ed2575ddc6d3883f5ee791cbd9301c61df712b5b69c6ae246283e",
+            "gzipSha256": "8d5961775bb618725c7255b8b5df41b90d966a0281782db68e92870a20c12a0f"
+          }
+        },
+        {
+          "resourceId": 6,
+          "generation": 5,
+          "nativeBuffer": 9,
+          "blob": {
+            "key": "blob-0178",
+            "bytes": 18,
+            "sha256": "8a65bb009e4ba5453cb863100ee9572125e29722a55f01e41a34352a2ad33de6",
+            "gzipSha256": "9ebc66afcfc6de5fdb1922534095243207cbc54ebdd6e2f896de8f3eb78a9a1c"
+          }
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 2,
+          "lastElement": 16,
+          "firstByte": 36,
+          "requiredEnd": 276
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 0,
+          "offset": 278,
+          "components": 2,
+          "sourceFormat": 92,
+          "elementBytes": 4,
+          "nativeType": 5131,
+          "normalized": false,
+          "constant": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "firstByte": 278,
+          "requiredEnd": 282,
+          "genericValues": [
+            5.960464477539063e-8,
+            0.00006097555160522461,
+            0,
+            1
+          ],
+          "componentWords": [
+            864026624,
+            947896320
+          ],
+          "nan": [
+            false,
+            false,
+            false,
+            false
+          ]
+        }
+      ],
+      "held": true,
+      "pixels": 768,
+      "nanPixels": 0,
+      "maxError": 0,
+      "misses": [],
+      "portableNaNPayload": false
+    },
+    {
+      "name": "final-gpu",
+      "index": 36,
+      "label": "critic-seeded-93-false",
+      "pixelsSha256": "31f3035feb2181023a7c7c802ad0c5c7085427ec0e1bfde2c733f521983dfdaa",
+      "originalWireSha256": "721201adb052689c0138f92d903bd490cd7969706c2eb2877f67e31f492c8ddf",
+      "nativeSources": [
+        {
+          "resourceId": 3,
+          "generation": 4,
+          "nativeBuffer": 8,
+          "blob": {
+            "key": "blob-0182",
+            "bytes": 460,
+            "sha256": "3bf59deb2cbbe7819b727ffeafb400026bc07c645db8f4127482c76c0439ff05",
+            "gzipSha256": "7c27d8981858f2c018a1516cd4ddd087813b4785b52d352c43fc494e9f39a79c"
+          }
+        },
+        {
+          "resourceId": 6,
+          "generation": 5,
+          "nativeBuffer": 9,
+          "blob": {
+            "key": "blob-0183",
+            "bytes": 18,
+            "sha256": "3d235776d01511f9352fe56c99aa8ed67eb25b91d8d723b7ef3af42f751b9073",
+            "gzipSha256": "34c877038c0424f94ac187c242c20f837c1de60379a2b69e1de9bf1e4e8cd1b7"
+          }
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 3,
+          "lastElement": 18,
+          "firstByte": 52,
+          "requiredEnd": 308
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 8,
+          "offset": 310,
+          "components": 3,
+          "sourceFormat": 93,
+          "elementBytes": 6,
+          "nativeType": 5131,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 3,
+          "lastElement": 18,
+          "firstByte": 334,
+          "requiredEnd": 460
+        }
+      ],
+      "held": true,
+      "pixels": 768,
+      "nanPixels": 0,
+      "maxError": 0,
+      "misses": [],
+      "portableNaNPayload": false
+    },
+    {
+      "name": "final-gpu",
+      "index": 37,
+      "label": "critic-seeded-93-true",
+      "pixelsSha256": "4f0a4abed65db53d63f3568b30cc29c37ba2273dd70dd0d007569ff571ac9b32",
+      "originalWireSha256": "3fd7fd7d422dfe46695db19d83557bb2fefcd3a22f2250e6e4a629baad81f42d",
+      "nativeSources": [
+        {
+          "resourceId": 3,
+          "generation": 4,
+          "nativeBuffer": 8,
+          "blob": {
+            "key": "blob-0187",
+            "bytes": 316,
+            "sha256": "d9aa118d80db3c9c142d945821046dd3811636a632100bc938ac92f946c1062e",
+            "gzipSha256": "e62f861852f340062b80125a6edb2f51cc90009089c01345d0646cfbf722e40f"
+          }
+        },
+        {
+          "resourceId": 6,
+          "generation": 5,
+          "nativeBuffer": 9,
+          "blob": {
+            "key": "blob-0188",
+            "bytes": 18,
+            "sha256": "3d235776d01511f9352fe56c99aa8ed67eb25b91d8d723b7ef3af42f751b9073",
+            "gzipSha256": "34c877038c0424f94ac187c242c20f837c1de60379a2b69e1de9bf1e4e8cd1b7"
+          }
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 3,
+          "lastElement": 18,
+          "firstByte": 52,
+          "requiredEnd": 308
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 0,
+          "offset": 310,
+          "components": 3,
+          "sourceFormat": 93,
+          "elementBytes": 6,
+          "nativeType": 5131,
+          "normalized": false,
+          "constant": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "firstByte": 310,
+          "requiredEnd": 316,
+          "genericValues": [
+            5.960464477539063e-8,
+            0.00006097555160522461,
+            0.00006103515625,
+            1
+          ],
+          "componentWords": [
+            864026624,
+            947896320,
+            947912704
+          ],
+          "nan": [
+            false,
+            false,
+            false,
+            false
+          ]
+        }
+      ],
+      "held": true,
+      "pixels": 768,
+      "nanPixels": 0,
+      "maxError": 0,
+      "misses": [],
+      "portableNaNPayload": false
+    },
+    {
+      "name": "final-gpu",
+      "index": 38,
+      "label": "critic-seeded-94-false",
+      "pixelsSha256": "64409fdbb253c14e8e1ea7cc92ca5ca97637725da7e28bb61c1704ef8afa9ca6",
+      "originalWireSha256": "628c90c8b3b478920559560e9054b20d2b0737a19d127f32e306dd3d862c22fb",
+      "nativeSources": [
+        {
+          "resourceId": 3,
+          "generation": 4,
+          "nativeBuffer": 8,
+          "blob": {
+            "key": "blob-0192",
+            "bytes": 342,
+            "sha256": "f032cc302eaec7d81aacd0b934e777180db3ba2ed5abce0cba8b2a1230dfabbd",
+            "gzipSha256": "59aeb1a7e97c029b140154414c0e19c72ba7772975cbd1cf914990ca2948b72e"
+          }
+        },
+        {
+          "resourceId": 6,
+          "generation": 5,
+          "nativeBuffer": 9,
+          "blob": {
+            "key": "blob-0193",
+            "bytes": 18,
+            "sha256": "7a60423fa2afbc3b7cddb82f6667a2d6d571fd8a7c9361ca94419ca700d461d3",
+            "gzipSha256": "9934b2d4770d5023d2df52635d7982f42d27c1c6a72bedd735207290ce039a84"
+          }
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 4,
+          "lastElement": 19,
+          "firstByte": 68,
+          "requiredEnd": 324
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 8,
+          "offset": 326,
+          "components": 4,
+          "sourceFormat": 94,
+          "elementBytes": 8,
+          "nativeType": 5131,
+          "normalized": false,
+          "constant": false,
+          "divisor": 2,
+          "nativeDivisor": 2,
+          "firstElement": 0,
+          "lastElement": 1,
+          "firstByte": 326,
+          "requiredEnd": 342
+        }
+      ],
+      "held": true,
+      "pixels": 768,
+      "nanPixels": 0,
+      "maxError": 0,
+      "misses": [],
+      "portableNaNPayload": false
+    },
+    {
+      "name": "final-gpu",
+      "index": 39,
+      "label": "critic-seeded-94-true",
+      "pixelsSha256": "a55264a51b923908f8ec82be019663619106beffa1576ef40fe474f3f2323e16",
+      "originalWireSha256": "cdcb884553b96fb810b6619c110344b1aaec75e1a8dc8c8aac94528afb5b49b1",
+      "nativeSources": [
+        {
+          "resourceId": 3,
+          "generation": 4,
+          "nativeBuffer": 8,
+          "blob": {
+            "key": "blob-0197",
+            "bytes": 286,
+            "sha256": "ec32ac9d6402821a8c8560542a61d68987211feb2a3e8017458d451e3909274f",
+            "gzipSha256": "440c91a6b5975519e9957e012a73f3925f4a2fd2cd190b224abd5c1015c5bc05"
+          }
+        },
+        {
+          "resourceId": 6,
+          "generation": 5,
+          "nativeBuffer": 9,
+          "blob": {
+            "key": "blob-0198",
+            "bytes": 18,
+            "sha256": "5dabb0b81293912e40a5a1a6291f88cd43f0a88be24219642e990ad5537a8ed9",
+            "gzipSha256": "f208edecff0f171f15565607302e87a5123aed692a75460e2276e797161a6fb1"
+          }
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 2,
+          "lastElement": 16,
+          "firstByte": 36,
+          "requiredEnd": 276
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 0,
+          "offset": 278,
+          "components": 4,
+          "sourceFormat": 94,
+          "elementBytes": 8,
+          "nativeType": 5131,
+          "normalized": false,
+          "constant": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "firstByte": 278,
+          "requiredEnd": 286,
+          "genericValues": [
+            5.960464477539063e-8,
+            0.00006097555160522461,
+            0.00006103515625,
+            1.0009765625
+          ],
+          "componentWords": [
+            864026624,
+            947896320,
+            947912704,
+            1065361408
+          ],
+          "nan": [
+            false,
+            false,
+            false,
+            false
+          ]
+        }
+      ],
+      "held": true,
+      "pixels": 768,
+      "nanPixels": 0,
+      "maxError": 0,
+      "misses": [],
+      "portableNaNPayload": false
+    },
+    {
+      "name": "final-gpu",
+      "index": 40,
+      "label": "critic-restore-A1",
+      "pixelsSha256": "95dea9e8a19b664f3a34ff1c5f539bbb38552325be8bdeaa2dd1878d6e981d51",
+      "originalWireSha256": "a86380262ef73314c1c233fdc7045c0c3f276001d736db99a6ceb8eede454620",
+      "nativeSources": [
+        {
+          "resourceId": 3,
+          "generation": 4,
+          "nativeBuffer": 8,
+          "blob": {
+            "key": "blob-0202",
+            "bytes": 285,
+            "sha256": "62b6dda3b4ee0d5b59897b3252459cd44f45897e2be44eac6165b6570bb72bcb",
+            "gzipSha256": "1ef0bd49d12d5a9d818e20081a74f63eb50c6bc37a54ef14e1fb020a1caf2f93"
+          }
+        },
+        {
+          "resourceId": 6,
+          "generation": 5,
+          "nativeBuffer": 9,
+          "blob": {
+            "key": "blob-0203",
+            "bytes": 18,
+            "sha256": "611b4f13bdf0b36b4c1c939fcb6c6acf087ce92876614b37f35dcaef70fa5586",
+            "gzipSha256": "c133a9b713a0634749fcb23c713b653d7fb510d7c81ba3ce776bb9045d56d641"
+          }
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 3,
+          "lastElement": 13,
+          "firstByte": 52,
+          "requiredEnd": 228
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 4,
+          "offset": 229,
+          "components": 4,
+          "sourceFormat": 77,
+          "elementBytes": 4,
+          "nativeType": 5120,
+          "normalized": true,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 3,
+          "lastElement": 13,
+          "firstByte": 241,
+          "requiredEnd": 285
+        }
+      ],
+      "held": true,
+      "pixels": 256,
+      "nanPixels": 0,
+      "maxError": 0,
+      "misses": [],
+      "portableNaNPayload": false
+    },
+    {
+      "name": "final-gpu",
+      "index": 41,
+      "label": "critic-restore-B",
+      "pixelsSha256": "28f67ea1e299227ba8a2986df2cdd5c6950e245d50bee59c122abc5b57e97d1d",
+      "originalWireSha256": "5fcdf59b8c72e6922e925dabe548164d29e8670914f335da81dc5f49742e7191",
+      "nativeSources": [
+        {
+          "resourceId": 3,
+          "generation": 4,
+          "nativeBuffer": 8,
+          "blob": {
+            "key": "blob-0207",
+            "bytes": 285,
+            "sha256": "42dad70271dbd87e9c416d4fe3790fcf9216b8ea0e37b18194c652a8bc1a6a46",
+            "gzipSha256": "3e8a7a5baaaba673869e1a4535a50344614f5df5fa9575b0d224b7bf31ce3c7c"
+          }
+        },
+        {
+          "resourceId": 6,
+          "generation": 5,
+          "nativeBuffer": 9,
+          "blob": {
+            "key": "blob-0208",
+            "bytes": 18,
+            "sha256": "611b4f13bdf0b36b4c1c939fcb6c6acf087ce92876614b37f35dcaef70fa5586",
+            "gzipSha256": "c133a9b713a0634749fcb23c713b653d7fb510d7c81ba3ce776bb9045d56d641"
+          }
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 3,
+          "lastElement": 13,
+          "firstByte": 52,
+          "requiredEnd": 228
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 0,
+          "offset": 230,
+          "components": 4,
+          "sourceFormat": 94,
+          "elementBytes": 8,
+          "nativeType": 5131,
+          "normalized": false,
+          "constant": true,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "firstByte": 230,
+          "requiredEnd": 238,
+          "genericValues": [
+            0.00006097555160522461,
+            0.00006103515625,
+            0,
+            1
+          ],
+          "componentWords": [
+            947896320,
+            947912704,
+            2147483648,
+            1065353216
+          ],
+          "nan": [
+            false,
+            false,
+            false,
+            false
+          ]
+        }
+      ],
+      "held": true,
+      "pixels": 256,
+      "nanPixels": 0,
+      "maxError": 0,
+      "misses": [],
+      "portableNaNPayload": false
+    },
+    {
+      "name": "final-gpu",
+      "index": 42,
+      "label": "critic-restore-A2",
+      "pixelsSha256": "95dea9e8a19b664f3a34ff1c5f539bbb38552325be8bdeaa2dd1878d6e981d51",
+      "originalWireSha256": "f5345cf6830455a63fcf57326a95d1a2c40708ddc3a09977caeeb793c86801f1",
+      "nativeSources": [
+        {
+          "resourceId": 3,
+          "generation": 4,
+          "nativeBuffer": 8,
+          "blob": {
+            "key": "blob-0212",
+            "bytes": 285,
+            "sha256": "62b6dda3b4ee0d5b59897b3252459cd44f45897e2be44eac6165b6570bb72bcb",
+            "gzipSha256": "1ef0bd49d12d5a9d818e20081a74f63eb50c6bc37a54ef14e1fb020a1caf2f93"
+          }
+        },
+        {
+          "resourceId": 6,
+          "generation": 5,
+          "nativeBuffer": 9,
+          "blob": {
+            "key": "blob-0213",
+            "bytes": 18,
+            "sha256": "611b4f13bdf0b36b4c1c939fcb6c6acf087ce92876614b37f35dcaef70fa5586",
+            "gzipSha256": "c133a9b713a0634749fcb23c713b653d7fb510d7c81ba3ce776bb9045d56d641"
+          }
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 3,
+          "lastElement": 13,
+          "firstByte": 52,
+          "requiredEnd": 228
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 4,
+          "offset": 229,
+          "components": 4,
+          "sourceFormat": 77,
+          "elementBytes": 4,
+          "nativeType": 5120,
+          "normalized": true,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 3,
+          "lastElement": 13,
+          "firstByte": 241,
+          "requiredEnd": 285
+        }
+      ],
+      "held": true,
+      "pixels": 256,
+      "nanPixels": 0,
+      "maxError": 0,
+      "misses": [],
+      "portableNaNPayload": false
+    },
+    {
+      "name": "final-gpu",
+      "index": 43,
+      "label": "critic-pending-reuse",
+      "pixelsSha256": "ce874e9fc0452be6228193008e960239afcca72c4a74a2d730464975e74ac7c3",
+      "originalWireSha256": "2b744069f9b88ec653ab1dae0064075dc8dfbcefea3d27a4c37989e5524277a1",
+      "nativeSources": [
+        {
+          "resourceId": 3,
+          "generation": 4,
+          "nativeBuffer": 8,
+          "blob": {
+            "key": "blob-0236",
+            "bytes": 302,
+            "sha256": "5678a6886e8a430ce439e382152c2802deb79c8bb8e3e3613a141134a4f2b0c0",
+            "gzipSha256": "c7a1a3bfc42153dcef14ef58d4f78847aeb1d6d940159bbc1be56a63e8d46197"
+          }
+        },
+        {
+          "resourceId": 6,
+          "generation": 5,
+          "nativeBuffer": 9,
+          "blob": {
+            "key": "blob-0237",
+            "bytes": 18,
+            "sha256": "4cd3a33867a15b0c87fc05b97d88db57fa8e8cba9d35d1551781c1b579e8e544",
+            "gzipSha256": "c3202a3511182d88cd87e4165c57ec2772a46adde58b2e5f9ef79d162c4e1251"
+          }
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 3,
+          "lastElement": 17,
+          "firstByte": 52,
+          "requiredEnd": 292
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 0,
+          "offset": 294,
+          "components": 4,
+          "sourceFormat": 59,
+          "elementBytes": 8,
+          "nativeType": 5122,
+          "normalized": true,
+          "constant": true,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "firstByte": 294,
+          "requiredEnd": 302,
+          "genericValues": [
+            -1,
+            -1,
+            0.041657764464616776,
+            1
+          ],
+          "componentWords": [
+            3212836864,
+            3212836864,
+            1026203989,
+            1065353216
+          ],
+          "nan": [
+            false,
+            false,
+            false,
+            false
+          ]
+        }
+      ],
+      "held": true,
+      "pixels": 256,
+      "nanPixels": 0,
+      "maxError": 0,
+      "misses": [],
+      "portableNaNPayload": false
+    }
+  ],
+  "faults": [
+    {
+      "name": "final-sabotage-native",
+      "index": 0,
+      "label": "critic-sabotage-native-normalize",
+      "pixelsSha256": "39e7ed5473a33b56d4d9439de9b1726eb5d5f455be47e0ecd120c9079e50be69",
+      "originalWireSha256": "7d03c41ff8a4b39031109e15c33229510512b5fe72d2f0964d087b3c01c0d806",
+      "nativeSources": [
+        {
+          "resourceId": 3,
+          "generation": 4,
+          "nativeBuffer": 8,
+          "blob": {
+            "key": "blob-0002",
+            "bytes": 245,
+            "sha256": "c0d9acd43ae3a758bd44c8eb98ce15d89370d2d936bd76acd35b92bcf45bd5b1",
+            "gzipSha256": "da1d8557ea9b94171df33c97a2c14cd227b8d8e694e745ee2f7d111d3367a4b1"
+          }
+        },
+        {
+          "resourceId": 6,
+          "generation": 5,
+          "nativeBuffer": 9,
+          "blob": {
+            "key": "blob-0003",
+            "bytes": 18,
+            "sha256": "b43276f5d9aeb3eea4efad6e90c3cd160b19806e2ad829a7fdbc6fb9666b7a64",
+            "gzipSha256": "fcef1e569e16955bb2c097e840ec898890575e5e2c09c4dfd076ca9ecad0a8fc"
+          }
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 2,
+          "lastElement": 11,
+          "firstByte": 36,
+          "requiredEnd": 196
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 4,
+          "offset": 197,
+          "components": 4,
+          "sourceFormat": 67,
+          "elementBytes": 4,
+          "nativeType": 5121,
+          "normalized": true,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 2,
+          "lastElement": 11,
+          "firstByte": 205,
+          "requiredEnd": 245
+        }
+      ],
+      "held": false,
+      "pixels": 256,
+      "nanPixels": 0,
+      "maxError": 222,
+      "misses": [
+        {
+          "x": 1,
+          "y": 2,
+          "expected": [
+            136,
+            160,
+            224,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 119
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "expected": [
+            136,
+            160,
+            224,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 119
+        },
+        {
+          "x": 3,
+          "y": 2,
+          "expected": [
+            136,
+            160,
+            224,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 119
+        },
+        {
+          "x": 4,
+          "y": 2,
+          "expected": [
+            136,
+            160,
+            224,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 119
+        },
+        {
+          "x": 1,
+          "y": 3,
+          "expected": [
+            136,
+            160,
+            224,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 119
+        },
+        {
+          "x": 2,
+          "y": 3,
+          "expected": [
+            136,
+            160,
+            224,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 119
+        },
+        {
+          "x": 3,
+          "y": 3,
+          "expected": [
+            136,
+            160,
+            224,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 119
+        },
+        {
+          "x": 4,
+          "y": 3,
+          "expected": [
+            136,
+            160,
+            224,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 119
+        }
+      ],
+      "portableNaNPayload": false
+    },
+    {
+      "name": "final-sabotage-constant",
+      "index": 0,
+      "label": "critic-sabotage-constant-unpack",
+      "pixelsSha256": "0e48da2a94ba03bc5eca17e7f2e5c8aae637ec5606795e54cffc2d7ac88abc89",
+      "originalWireSha256": "aab7fb0261cfdf626ab19b2a4b3a35a746f3a61603f7cfc4d721707e752f2af6",
+      "nativeSources": [
+        {
+          "resourceId": 3,
+          "generation": 4,
+          "nativeBuffer": 8,
+          "blob": {
+            "key": "blob-0002",
+            "bytes": 201,
+            "sha256": "33fe5ad0d9e4b36acfb980b0ea9543c276281b659a3146c6d598db19933c3716",
+            "gzipSha256": "dc965dea0049e57051d7766d33ab6ed5b204c922e0fbe3041a09f88b88a979e7"
+          }
+        },
+        {
+          "resourceId": 6,
+          "generation": 5,
+          "nativeBuffer": 9,
+          "blob": {
+            "key": "blob-0003",
+            "bytes": 18,
+            "sha256": "b43276f5d9aeb3eea4efad6e90c3cd160b19806e2ad829a7fdbc6fb9666b7a64",
+            "gzipSha256": "fcef1e569e16955bb2c097e840ec898890575e5e2c09c4dfd076ca9ecad0a8fc"
+          }
+        }
+      ],
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 2,
+          "lastElement": 11,
+          "firstByte": 36,
+          "requiredEnd": 196
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 0,
+          "offset": 197,
+          "components": 4,
+          "sourceFormat": 67,
+          "elementBytes": 4,
+          "nativeType": 5121,
+          "normalized": true,
+          "constant": true,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "firstByte": 197,
+          "requiredEnd": 201,
+          "genericValues": [
+            0.06666667014360428,
+            0.2549019753932953,
+            0.7568627595901489,
+            1
+          ],
+          "componentWords": [
+            1032358025,
+            1048740483,
+            1061274050,
+            1065353216
+          ],
+          "nan": [
+            false,
+            false,
+            false,
+            false
+          ]
+        }
+      ],
+      "held": false,
+      "pixels": 256,
+      "nanPixels": 0,
+      "maxError": 119,
+      "misses": [
+        {
+          "x": 1,
+          "y": 2,
+          "expected": [
+            136,
+            160,
+            224,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 119
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "expected": [
+            136,
+            160,
+            224,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 119
+        },
+        {
+          "x": 3,
+          "y": 2,
+          "expected": [
+            136,
+            160,
+            224,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 119
+        },
+        {
+          "x": 4,
+          "y": 2,
+          "expected": [
+            136,
+            160,
+            224,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 119
+        },
+        {
+          "x": 1,
+          "y": 3,
+          "expected": [
+            136,
+            160,
+            224,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 119
+        },
+        {
+          "x": 2,
+          "y": 3,
+          "expected": [
+            136,
+            160,
+            224,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 119
+        },
+        {
+          "x": 3,
+          "y": 3,
+          "expected": [
+            136,
+            160,
+            224,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 119
+        },
+        {
+          "x": 4,
+          "y": 3,
+          "expected": [
+            136,
+            160,
+            224,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 119
+        }
+      ],
+      "portableNaNPayload": false
+    }
+  ],
+  "files": {
+    "final-gpu/blob-0000.bin.gz": "30a6ee67d9e06ba0ce19940e0025b04409bffbe74afff6ba3574ce32f9c8bf95",
+    "final-gpu/blob-0001.bin.gz": "3b1820d9881fbbe17605431fde5a6251533a996d872f4613df4160c68a4c335c",
+    "final-gpu/blob-0002.bin.gz": "30a6ee67d9e06ba0ce19940e0025b04409bffbe74afff6ba3574ce32f9c8bf95",
+    "final-gpu/blob-0003.bin.gz": "3b1820d9881fbbe17605431fde5a6251533a996d872f4613df4160c68a4c335c",
+    "final-gpu/blob-0004.bin.gz": "f3e58cad1546b26e2445fd691bd5da9700a3f61596b8d4ff542314ed5f0e0c95",
+    "final-gpu/blob-0005.bin.gz": "7a30d826fde97ca19cedce3c15c3b5fa6dce057484ea1ba4d31e4f2de0c4156b",
+    "final-gpu/blob-0006.bin.gz": "1e1b358cf31e693ddb379e68b3c1ab5056fc3bf622a33065fd13f19a65eb7a61",
+    "final-gpu/blob-0007.bin.gz": "7a30d826fde97ca19cedce3c15c3b5fa6dce057484ea1ba4d31e4f2de0c4156b",
+    "final-gpu/blob-0008.bin.gz": "1e1b358cf31e693ddb379e68b3c1ab5056fc3bf622a33065fd13f19a65eb7a61",
+    "final-gpu/blob-0009.bin.gz": "428f4dd19a24f57aea5f2c17344fd9f8970e3869576ee2fdee6ff985c7ef39b1",
+    "final-gpu/blob-0010.bin.gz": "eb1deca35a6afd7648d25a1282f50108fe7114b4415218d7ad81d02e87a6e372",
+    "final-gpu/blob-0011.bin.gz": "0acc253bcd34b3e256eceadffc6bc57862fa12e0faaf8360a1a7391dcc7c07f9",
+    "final-gpu/blob-0012.bin.gz": "eb1deca35a6afd7648d25a1282f50108fe7114b4415218d7ad81d02e87a6e372",
+    "final-gpu/blob-0013.bin.gz": "0acc253bcd34b3e256eceadffc6bc57862fa12e0faaf8360a1a7391dcc7c07f9",
+    "final-gpu/blob-0014.bin.gz": "85333b4bfd64d266a659ac3fa37146d696f33bff0c8e28565f753ea2492b8bbb",
+    "final-gpu/blob-0015.bin.gz": "5b835bf138783b57d27aa3692feeb1561225f4ec7820bb496b04118cfadce828",
+    "final-gpu/blob-0016.bin.gz": "cda7dfab1b9db7fb4168441c8c6ec32011282fbdfd0a4749ba778e096d0ad28d",
+    "final-gpu/blob-0017.bin.gz": "5b835bf138783b57d27aa3692feeb1561225f4ec7820bb496b04118cfadce828",
+    "final-gpu/blob-0018.bin.gz": "cda7dfab1b9db7fb4168441c8c6ec32011282fbdfd0a4749ba778e096d0ad28d",
+    "final-gpu/blob-0019.bin.gz": "872b8f84304b0362c7adaa534aaa09ae9f316b4e400885f642b688a1b81a494a",
+    "final-gpu/blob-0020.bin.gz": "a98162712bd251bf8cd321198fcbe635a06dc8d432f704925d3c6df0cad659f3",
+    "final-gpu/blob-0021.bin.gz": "f76156d3a937469895220da68a7533ddcd4622130b6d2990bc038eb421bff9db",
+    "final-gpu/blob-0022.bin.gz": "a98162712bd251bf8cd321198fcbe635a06dc8d432f704925d3c6df0cad659f3",
+    "final-gpu/blob-0023.bin.gz": "f76156d3a937469895220da68a7533ddcd4622130b6d2990bc038eb421bff9db",
+    "final-gpu/blob-0024.bin.gz": "d65c9a05e71e15a15543ba1d2c8f1b31370762a88bcec28f97aa9da43d69cc0a",
+    "final-gpu/blob-0025.bin.gz": "953897a43be4a8d8c37afaa0b7cb71bd97107c2e48f14925a87a34ed404d0ebb",
+    "final-gpu/blob-0026.bin.gz": "f76156d3a937469895220da68a7533ddcd4622130b6d2990bc038eb421bff9db",
+    "final-gpu/blob-0027.bin.gz": "953897a43be4a8d8c37afaa0b7cb71bd97107c2e48f14925a87a34ed404d0ebb",
+    "final-gpu/blob-0028.bin.gz": "f76156d3a937469895220da68a7533ddcd4622130b6d2990bc038eb421bff9db",
+    "final-gpu/blob-0029.bin.gz": "c1fa79dd9f01dac51a16bc1b5daffac930f3ac70261337bd252566762c5fc5fb",
+    "final-gpu/blob-0030.bin.gz": "bc2fd52f969d19599301b78c7d9b5bce704bba8f1f2678f47911cefc2a3ce8fb",
+    "final-gpu/blob-0031.bin.gz": "19277b8464e87d8dba600f3e12792aa91a2315d9271f620ee68681fa5392f9b8",
+    "final-gpu/blob-0032.bin.gz": "bc2fd52f969d19599301b78c7d9b5bce704bba8f1f2678f47911cefc2a3ce8fb",
+    "final-gpu/blob-0033.bin.gz": "19277b8464e87d8dba600f3e12792aa91a2315d9271f620ee68681fa5392f9b8",
+    "final-gpu/blob-0034.bin.gz": "e0dadbc00cb5526d64265eae120e9a0b9a1ed98591e32aea289dc04707906111",
+    "final-gpu/blob-0035.bin.gz": "127b755ee584157a2e7689cc45a7f20076e026898da69384918cb05ca03d0057",
+    "final-gpu/blob-0036.bin.gz": "9ebc66afcfc6de5fdb1922534095243207cbc54ebdd6e2f896de8f3eb78a9a1c",
+    "final-gpu/blob-0037.bin.gz": "127b755ee584157a2e7689cc45a7f20076e026898da69384918cb05ca03d0057",
+    "final-gpu/blob-0038.bin.gz": "9ebc66afcfc6de5fdb1922534095243207cbc54ebdd6e2f896de8f3eb78a9a1c",
+    "final-gpu/blob-0039.bin.gz": "3244d3acb1c1d9048d29dd9662b99f4731e4849c8b08e51abbe0791bba7834c2",
+    "final-gpu/blob-0040.bin.gz": "572e23b76f0f35a7291208121e5465869a3fd34c5d4c38b876aee429ef8ff23e",
+    "final-gpu/blob-0041.bin.gz": "f1f43ad19429f21a5ec63f4d2070f589e5adcc6cd4f3b53e103f8f3547050c94",
+    "final-gpu/blob-0042.bin.gz": "572e23b76f0f35a7291208121e5465869a3fd34c5d4c38b876aee429ef8ff23e",
+    "final-gpu/blob-0043.bin.gz": "f1f43ad19429f21a5ec63f4d2070f589e5adcc6cd4f3b53e103f8f3547050c94",
+    "final-gpu/blob-0044.bin.gz": "27bf74036c2f244dc5d32c4725496b94239a325b6b1b12fd7802eb194ff25ec5",
+    "final-gpu/blob-0045.bin.gz": "beddee4494d53d6f9d0a1997d6f708e44bee22e99a8cdf8dbffa854c63864381",
+    "final-gpu/blob-0046.bin.gz": "a8d5bb261194ca13d023c415cbc9490569da7892a076593f9f9367512f35c11a",
+    "final-gpu/blob-0047.bin.gz": "beddee4494d53d6f9d0a1997d6f708e44bee22e99a8cdf8dbffa854c63864381",
+    "final-gpu/blob-0048.bin.gz": "a8d5bb261194ca13d023c415cbc9490569da7892a076593f9f9367512f35c11a",
+    "final-gpu/blob-0049.bin.gz": "9416d0ff35b6231816b4f0e0e6a780eedb54077c7f612fe7861f7bddbee67898",
+    "final-gpu/blob-0050.bin.gz": "bb6fefd0c437445ef15fb3b2f91302a520b94b5eb841eb2dc897c09d9ab3a91a",
+    "final-gpu/blob-0051.bin.gz": "d2ea9e0c6160ab90ba330915bd673a2ac618f2d4bebc1bd2041233b15f170edc",
+    "final-gpu/blob-0052.bin.gz": "bb6fefd0c437445ef15fb3b2f91302a520b94b5eb841eb2dc897c09d9ab3a91a",
+    "final-gpu/blob-0053.bin.gz": "d2ea9e0c6160ab90ba330915bd673a2ac618f2d4bebc1bd2041233b15f170edc",
+    "final-gpu/blob-0054.bin.gz": "02241c1f175f402d61f05584ad940c7b52763c8dde40b0e5b04e4609e63e986f",
+    "final-gpu/blob-0055.bin.gz": "6476defb6365b2be2659a0ac73fee23eb0ac4733fcde463b9ab7078be26bfc30",
+    "final-gpu/blob-0056.bin.gz": "f1f43ad19429f21a5ec63f4d2070f589e5adcc6cd4f3b53e103f8f3547050c94",
+    "final-gpu/blob-0057.bin.gz": "6476defb6365b2be2659a0ac73fee23eb0ac4733fcde463b9ab7078be26bfc30",
+    "final-gpu/blob-0058.bin.gz": "f1f43ad19429f21a5ec63f4d2070f589e5adcc6cd4f3b53e103f8f3547050c94",
+    "final-gpu/blob-0059.bin.gz": "4bf9b38114f2586bdd0e8c699ba139b42e48eba57caefe980c3f19a7333643b9",
+    "final-gpu/blob-0060.bin.gz": "97b74df36ed62c26f4bc8396d6e7a7d2b84d1a53b07f3714bf7966268e2137e8",
+    "final-gpu/blob-0061.bin.gz": "24741adfc94ff9edb27181c99d7a238c8f35bc7ec75417e8388ef6fd03830d9a",
+    "final-gpu/blob-0062.bin.gz": "97b74df36ed62c26f4bc8396d6e7a7d2b84d1a53b07f3714bf7966268e2137e8",
+    "final-gpu/blob-0063.bin.gz": "24741adfc94ff9edb27181c99d7a238c8f35bc7ec75417e8388ef6fd03830d9a",
+    "final-gpu/blob-0064.bin.gz": "05fd01925bd2a8444d8e19d2dbc56a324e63c70f65784bffb87ec82b4ec19894",
+    "final-gpu/blob-0065.bin.gz": "5552da076acc2493cde85b8a2322099e4430ae651c730888daa47ea706b919f5",
+    "final-gpu/blob-0066.bin.gz": "0acc253bcd34b3e256eceadffc6bc57862fa12e0faaf8360a1a7391dcc7c07f9",
+    "final-gpu/blob-0067.bin.gz": "5552da076acc2493cde85b8a2322099e4430ae651c730888daa47ea706b919f5",
+    "final-gpu/blob-0068.bin.gz": "0acc253bcd34b3e256eceadffc6bc57862fa12e0faaf8360a1a7391dcc7c07f9",
+    "final-gpu/blob-0069.bin.gz": "c2b0b42280f5a41125f5d16c33e3ecca2abf4e07d8069d8db75b385d0c51e328",
+    "final-gpu/blob-0070.bin.gz": "33f14f43f9803707df2e108ffabf2033491bac6d7d827eb19df44fb2d900c01b",
+    "final-gpu/blob-0071.bin.gz": "383750def4ef7b1bb31612bfa5a803f2365c9ac45d27110d1d45c9a952628916",
+    "final-gpu/blob-0072.bin.gz": "33f14f43f9803707df2e108ffabf2033491bac6d7d827eb19df44fb2d900c01b",
+    "final-gpu/blob-0073.bin.gz": "383750def4ef7b1bb31612bfa5a803f2365c9ac45d27110d1d45c9a952628916",
+    "final-gpu/blob-0074.bin.gz": "120dfb627896ff6e880d0747d31f6d965a31daf2591e423f9d1f7ce7bfc93518",
+    "final-gpu/blob-0075.bin.gz": "4ac5ca1114368d613238bf4e05714117420a3097fd215100779ed333625937f4",
+    "final-gpu/blob-0076.bin.gz": "f208edecff0f171f15565607302e87a5123aed692a75460e2276e797161a6fb1",
+    "final-gpu/blob-0077.bin.gz": "4ac5ca1114368d613238bf4e05714117420a3097fd215100779ed333625937f4",
+    "final-gpu/blob-0078.bin.gz": "f208edecff0f171f15565607302e87a5123aed692a75460e2276e797161a6fb1",
+    "final-gpu/blob-0079.bin.gz": "b3c71c0a598cebbcc1fefe0b93b79c8a8a6b5f27d0f0343dd07aec2ac6f2157f",
+    "final-gpu/blob-0080.bin.gz": "db4ca9c6b2a0735d7c24df197248866d110a013438830634023e0543fd2a34cf",
+    "final-gpu/blob-0081.bin.gz": "1e1b358cf31e693ddb379e68b3c1ab5056fc3bf622a33065fd13f19a65eb7a61",
+    "final-gpu/blob-0082.bin.gz": "db4ca9c6b2a0735d7c24df197248866d110a013438830634023e0543fd2a34cf",
+    "final-gpu/blob-0083.bin.gz": "1e1b358cf31e693ddb379e68b3c1ab5056fc3bf622a33065fd13f19a65eb7a61",
+    "final-gpu/blob-0084.bin.gz": "96b7655ffa986649a179fdeac1b3cb2e02d6a734de02a083920d152a112e31cc",
+    "final-gpu/blob-0085.bin.gz": "3cc1172dacdee5255993c32896fb62d097e868f5f1751cfa0e9200202b698edf",
+    "final-gpu/blob-0086.bin.gz": "f76156d3a937469895220da68a7533ddcd4622130b6d2990bc038eb421bff9db",
+    "final-gpu/blob-0087.bin.gz": "3cc1172dacdee5255993c32896fb62d097e868f5f1751cfa0e9200202b698edf",
+    "final-gpu/blob-0088.bin.gz": "f76156d3a937469895220da68a7533ddcd4622130b6d2990bc038eb421bff9db",
+    "final-gpu/blob-0089.bin.gz": "13616a3a9561fda61866abcd4be042c4ed44087cda5ea3c85791dcef0da36196",
+    "final-gpu/blob-0090.bin.gz": "d008470756f2ca869aa45d30ed4916359b07734bb6b36bd5cf900dc271c3e8f3",
+    "final-gpu/blob-0091.bin.gz": "a29181ce454a9db73e723d392fd16db0ba16a7728b3655398ae6d0a3208941cb",
+    "final-gpu/blob-0092.bin.gz": "d008470756f2ca869aa45d30ed4916359b07734bb6b36bd5cf900dc271c3e8f3",
+    "final-gpu/blob-0093.bin.gz": "a29181ce454a9db73e723d392fd16db0ba16a7728b3655398ae6d0a3208941cb",
+    "final-gpu/blob-0094.bin.gz": "2ed3e80702875e933d83ef57a3f4f767106a781ea162e8b55935c3c7561bf800",
+    "final-gpu/blob-0095.bin.gz": "13bcf26798ca10d135efeb3ff2bcfff06dd68554f9306045dde5ade13823a0d3",
+    "final-gpu/blob-0096.bin.gz": "eadf79cbfb06321093e6dbe90f49148ad3294b3eb5e1cfdc0db2fbd41aae8120",
+    "final-gpu/blob-0097.bin.gz": "13bcf26798ca10d135efeb3ff2bcfff06dd68554f9306045dde5ade13823a0d3",
+    "final-gpu/blob-0098.bin.gz": "eadf79cbfb06321093e6dbe90f49148ad3294b3eb5e1cfdc0db2fbd41aae8120",
+    "final-gpu/blob-0099.bin.gz": "afdbe5a9c97fd76e7dc5d1daadcba3677b6e55826a6e20af636220b80373ff33",
+    "final-gpu/blob-0100.bin.gz": "6cadda3c0438456e851c1bd876b6dfc7bcb62216698aa4e8591ffa028ba1b25a",
+    "final-gpu/blob-0101.bin.gz": "0acc253bcd34b3e256eceadffc6bc57862fa12e0faaf8360a1a7391dcc7c07f9",
+    "final-gpu/blob-0102.bin.gz": "6cadda3c0438456e851c1bd876b6dfc7bcb62216698aa4e8591ffa028ba1b25a",
+    "final-gpu/blob-0103.bin.gz": "0acc253bcd34b3e256eceadffc6bc57862fa12e0faaf8360a1a7391dcc7c07f9",
+    "final-gpu/blob-0104.bin.gz": "d494e5d27809eb95474c7751d14f11116076d56f623b6c5235f4383b54f45220",
+    "final-gpu/blob-0105.bin.gz": "102f9c7863e3828e3423bb1f1d93d24442124c3e47815b25384c244e33b2fbec",
+    "final-gpu/blob-0106.bin.gz": "cda7dfab1b9db7fb4168441c8c6ec32011282fbdfd0a4749ba778e096d0ad28d",
+    "final-gpu/blob-0107.bin.gz": "102f9c7863e3828e3423bb1f1d93d24442124c3e47815b25384c244e33b2fbec",
+    "final-gpu/blob-0108.bin.gz": "cda7dfab1b9db7fb4168441c8c6ec32011282fbdfd0a4749ba778e096d0ad28d",
+    "final-gpu/blob-0109.bin.gz": "7b4a96c9916a9be15a0a6b254331e09aafec8024a31b8929d2f3df540715a65a",
+    "final-gpu/blob-0110.bin.gz": "69b40b4018602aa49c05aeee823ec715a47da9f4b89515598c97e084eb056bd1",
+    "final-gpu/blob-0111.bin.gz": "70641d6eebe0385dee8f3eeee000d13c26cb5b4a134bb2b19a0009d2a556ee24",
+    "final-gpu/blob-0112.bin.gz": "69b40b4018602aa49c05aeee823ec715a47da9f4b89515598c97e084eb056bd1",
+    "final-gpu/blob-0113.bin.gz": "70641d6eebe0385dee8f3eeee000d13c26cb5b4a134bb2b19a0009d2a556ee24",
+    "final-gpu/blob-0114.bin.gz": "68a4f698110c153bed59ebae9abd4cd303fa9552640fdb052853091ea5b11b32",
+    "final-gpu/blob-0115.bin.gz": "ca24d853a1c98a14ff86268b0bd3f94feee62e51b5044313fa95532ecb0fbb9f",
+    "final-gpu/blob-0116.bin.gz": "d83feec860a02a7598c4587fa3fcf8da81ab43460fdc4fc6b510b88d03088340",
+    "final-gpu/blob-0117.bin.gz": "ca24d853a1c98a14ff86268b0bd3f94feee62e51b5044313fa95532ecb0fbb9f",
+    "final-gpu/blob-0118.bin.gz": "d83feec860a02a7598c4587fa3fcf8da81ab43460fdc4fc6b510b88d03088340",
+    "final-gpu/blob-0119.bin.gz": "aa06ec5dc8034db7a359d2e5b5d4f1fdffc1ed4bc8cc3500a4cda939596687a0",
+    "final-gpu/blob-0120.bin.gz": "eceac60f8d2953446e032e06bec40e6e8b88407aa1f540d8c0e156b5971b0bfe",
+    "final-gpu/blob-0121.bin.gz": "a29181ce454a9db73e723d392fd16db0ba16a7728b3655398ae6d0a3208941cb",
+    "final-gpu/blob-0122.bin.gz": "eceac60f8d2953446e032e06bec40e6e8b88407aa1f540d8c0e156b5971b0bfe",
+    "final-gpu/blob-0123.bin.gz": "a29181ce454a9db73e723d392fd16db0ba16a7728b3655398ae6d0a3208941cb",
+    "final-gpu/blob-0124.bin.gz": "e49fd81c6836b64046c91b64bf12e4d607538d829784e1bbea8f47b6fcf28b40",
+    "final-gpu/blob-0125.bin.gz": "5797be53928eddf8cb40725ae79958de14a4a6d42457b7a43ea840db31ac7661",
+    "final-gpu/blob-0126.bin.gz": "f6103b24edc4d6d4a764a8a3e2979fbba0e3cb3e61bc1cd89de37d4e46d820d5",
+    "final-gpu/blob-0127.bin.gz": "5797be53928eddf8cb40725ae79958de14a4a6d42457b7a43ea840db31ac7661",
+    "final-gpu/blob-0128.bin.gz": "f6103b24edc4d6d4a764a8a3e2979fbba0e3cb3e61bc1cd89de37d4e46d820d5",
+    "final-gpu/blob-0129.bin.gz": "9416d0ff35b6231816b4f0e0e6a780eedb54077c7f612fe7861f7bddbee67898",
+    "final-gpu/blob-0130.bin.gz": "ef9e6284e057423f774e219fefb78b0324b84b6165809305cc53f051a943bea9",
+    "final-gpu/blob-0131.bin.gz": "27552ea4571d43fdf7f363fb47d948582fb39ca7c3414f6b0baded78c4d41e22",
+    "final-gpu/blob-0132.bin.gz": "ef9e6284e057423f774e219fefb78b0324b84b6165809305cc53f051a943bea9",
+    "final-gpu/blob-0133.bin.gz": "27552ea4571d43fdf7f363fb47d948582fb39ca7c3414f6b0baded78c4d41e22",
+    "final-gpu/blob-0134.bin.gz": "bbff4785f19779626d7a35eaf1451395f41f7e9d2e77a838c548086d04644fee",
+    "final-gpu/blob-0135.bin.gz": "6944bd6e8a80b473351d1957b0614ab3fe27528fb4c711c240ab5296407cdb60",
+    "final-gpu/blob-0136.bin.gz": "0acc253bcd34b3e256eceadffc6bc57862fa12e0faaf8360a1a7391dcc7c07f9",
+    "final-gpu/blob-0137.bin.gz": "6944bd6e8a80b473351d1957b0614ab3fe27528fb4c711c240ab5296407cdb60",
+    "final-gpu/blob-0138.bin.gz": "0acc253bcd34b3e256eceadffc6bc57862fa12e0faaf8360a1a7391dcc7c07f9",
+    "final-gpu/blob-0139.bin.gz": "4bf9b38114f2586bdd0e8c699ba139b42e48eba57caefe980c3f19a7333643b9",
+    "final-gpu/blob-0140.bin.gz": "ab05265a6c66a0a4900945b678ecebe85d2b094e588504fb3e600de1187ce755",
+    "final-gpu/blob-0141.bin.gz": "edf07a16c41e8b7c9f5760708184cbad786154231a1aad221bd1984d345f91aa",
+    "final-gpu/blob-0142.bin.gz": "ab05265a6c66a0a4900945b678ecebe85d2b094e588504fb3e600de1187ce755",
+    "final-gpu/blob-0143.bin.gz": "edf07a16c41e8b7c9f5760708184cbad786154231a1aad221bd1984d345f91aa",
+    "final-gpu/blob-0144.bin.gz": "05fd01925bd2a8444d8e19d2dbc56a324e63c70f65784bffb87ec82b4ec19894",
+    "final-gpu/blob-0145.bin.gz": "2dbc61eb91590dca560da580a7aef335bca80bce7471b656d25a9ed418bbc91e",
+    "final-gpu/blob-0146.bin.gz": "f76156d3a937469895220da68a7533ddcd4622130b6d2990bc038eb421bff9db",
+    "final-gpu/blob-0147.bin.gz": "2dbc61eb91590dca560da580a7aef335bca80bce7471b656d25a9ed418bbc91e",
+    "final-gpu/blob-0148.bin.gz": "f76156d3a937469895220da68a7533ddcd4622130b6d2990bc038eb421bff9db",
+    "final-gpu/blob-0149.bin.gz": "c2b0b42280f5a41125f5d16c33e3ecca2abf4e07d8069d8db75b385d0c51e328",
+    "final-gpu/blob-0150.bin.gz": "82f76d315761f3860780c37e8c0e1c3da50f5bf9736fe04157f79e2579cdc0b1",
+    "final-gpu/blob-0151.bin.gz": "eadf79cbfb06321093e6dbe90f49148ad3294b3eb5e1cfdc0db2fbd41aae8120",
+    "final-gpu/blob-0152.bin.gz": "82f76d315761f3860780c37e8c0e1c3da50f5bf9736fe04157f79e2579cdc0b1",
+    "final-gpu/blob-0153.bin.gz": "eadf79cbfb06321093e6dbe90f49148ad3294b3eb5e1cfdc0db2fbd41aae8120",
+    "final-gpu/blob-0154.bin.gz": "a511f4772a8fa3cd2c8de3bbc99bea521bb9aba19781db8d8b340b948effca51",
+    "final-gpu/blob-0155.bin.gz": "2dfee83f51b2cfeb2c99c8597f0b1919df4e3c03f4e248824f0540ab5b4b91a6",
+    "final-gpu/blob-0156.bin.gz": "3b1820d9881fbbe17605431fde5a6251533a996d872f4613df4160c68a4c335c",
+    "final-gpu/blob-0157.bin.gz": "2dfee83f51b2cfeb2c99c8597f0b1919df4e3c03f4e248824f0540ab5b4b91a6",
+    "final-gpu/blob-0158.bin.gz": "3b1820d9881fbbe17605431fde5a6251533a996d872f4613df4160c68a4c335c",
+    "final-gpu/blob-0159.bin.gz": "b3c71c0a598cebbcc1fefe0b93b79c8a8a6b5f27d0f0343dd07aec2ac6f2157f",
+    "final-gpu/blob-0160.bin.gz": "195d9457a08c0b8ae1bf68182d894b088989a6b85a44d0616b538cc8e8860f57",
+    "final-gpu/blob-0161.bin.gz": "ae49fceb02099d39bde37b817e391fd300d04f093ed2ba8fbc76bcef28108641",
+    "final-gpu/blob-0162.bin.gz": "195d9457a08c0b8ae1bf68182d894b088989a6b85a44d0616b538cc8e8860f57",
+    "final-gpu/blob-0163.bin.gz": "ae49fceb02099d39bde37b817e391fd300d04f093ed2ba8fbc76bcef28108641",
+    "final-gpu/blob-0164.bin.gz": "ed9c6ab5bb250f3d805649af54e8c5380065d505096cf27af8d581a772b9793d",
+    "final-gpu/blob-0165.bin.gz": "1a333296c881d929e15569fc77bedd37ff795d1701f8667bf9ec23693c471a6b",
+    "final-gpu/blob-0166.bin.gz": "cda7dfab1b9db7fb4168441c8c6ec32011282fbdfd0a4749ba778e096d0ad28d",
+    "final-gpu/blob-0167.bin.gz": "1a333296c881d929e15569fc77bedd37ff795d1701f8667bf9ec23693c471a6b",
+    "final-gpu/blob-0168.bin.gz": "cda7dfab1b9db7fb4168441c8c6ec32011282fbdfd0a4749ba778e096d0ad28d",
+    "final-gpu/blob-0169.bin.gz": "0b3859ef88c16f9ef782b9c739cedd025b96472688912c760773823dc0e064e6",
+    "final-gpu/blob-0170.bin.gz": "ec64aee53afa15b0046087671fc63a681fec7226ea6a4c022670ead9e60d770f",
+    "final-gpu/blob-0171.bin.gz": "846248803c2480edb70e23d50b291df42e58b33cf025070e919221452d147061",
+    "final-gpu/blob-0172.bin.gz": "ec64aee53afa15b0046087671fc63a681fec7226ea6a4c022670ead9e60d770f",
+    "final-gpu/blob-0173.bin.gz": "846248803c2480edb70e23d50b291df42e58b33cf025070e919221452d147061",
+    "final-gpu/blob-0174.bin.gz": "09a22cd79d0b920b14110c416768713186f1bc65843a2b4e22639ab0396ef1cd",
+    "final-gpu/blob-0175.bin.gz": "8d5961775bb618725c7255b8b5df41b90d966a0281782db68e92870a20c12a0f",
+    "final-gpu/blob-0176.bin.gz": "9ebc66afcfc6de5fdb1922534095243207cbc54ebdd6e2f896de8f3eb78a9a1c",
+    "final-gpu/blob-0177.bin.gz": "8d5961775bb618725c7255b8b5df41b90d966a0281782db68e92870a20c12a0f",
+    "final-gpu/blob-0178.bin.gz": "9ebc66afcfc6de5fdb1922534095243207cbc54ebdd6e2f896de8f3eb78a9a1c",
+    "final-gpu/blob-0179.bin.gz": "0b3859ef88c16f9ef782b9c739cedd025b96472688912c760773823dc0e064e6",
+    "final-gpu/blob-0180.bin.gz": "7c27d8981858f2c018a1516cd4ddd087813b4785b52d352c43fc494e9f39a79c",
+    "final-gpu/blob-0181.bin.gz": "34c877038c0424f94ac187c242c20f837c1de60379a2b69e1de9bf1e4e8cd1b7",
+    "final-gpu/blob-0182.bin.gz": "7c27d8981858f2c018a1516cd4ddd087813b4785b52d352c43fc494e9f39a79c",
+    "final-gpu/blob-0183.bin.gz": "34c877038c0424f94ac187c242c20f837c1de60379a2b69e1de9bf1e4e8cd1b7",
+    "final-gpu/blob-0184.bin.gz": "8a875d030bc1eddb430caab24f6ff53f16e88f1dea9bafb7a0b574a3f78ceced",
+    "final-gpu/blob-0185.bin.gz": "e62f861852f340062b80125a6edb2f51cc90009089c01345d0646cfbf722e40f",
+    "final-gpu/blob-0186.bin.gz": "34c877038c0424f94ac187c242c20f837c1de60379a2b69e1de9bf1e4e8cd1b7",
+    "final-gpu/blob-0187.bin.gz": "e62f861852f340062b80125a6edb2f51cc90009089c01345d0646cfbf722e40f",
+    "final-gpu/blob-0188.bin.gz": "34c877038c0424f94ac187c242c20f837c1de60379a2b69e1de9bf1e4e8cd1b7",
+    "final-gpu/blob-0189.bin.gz": "0b3859ef88c16f9ef782b9c739cedd025b96472688912c760773823dc0e064e6",
+    "final-gpu/blob-0190.bin.gz": "59aeb1a7e97c029b140154414c0e19c72ba7772975cbd1cf914990ca2948b72e",
+    "final-gpu/blob-0191.bin.gz": "9934b2d4770d5023d2df52635d7982f42d27c1c6a72bedd735207290ce039a84",
+    "final-gpu/blob-0192.bin.gz": "59aeb1a7e97c029b140154414c0e19c72ba7772975cbd1cf914990ca2948b72e",
+    "final-gpu/blob-0193.bin.gz": "9934b2d4770d5023d2df52635d7982f42d27c1c6a72bedd735207290ce039a84",
+    "final-gpu/blob-0194.bin.gz": "b6e8b57cc250620ce8670f6e868de08a9c71a556debd6c06be6b9173b74963fb",
+    "final-gpu/blob-0195.bin.gz": "440c91a6b5975519e9957e012a73f3925f4a2fd2cd190b224abd5c1015c5bc05",
+    "final-gpu/blob-0196.bin.gz": "f208edecff0f171f15565607302e87a5123aed692a75460e2276e797161a6fb1",
+    "final-gpu/blob-0197.bin.gz": "440c91a6b5975519e9957e012a73f3925f4a2fd2cd190b224abd5c1015c5bc05",
+    "final-gpu/blob-0198.bin.gz": "f208edecff0f171f15565607302e87a5123aed692a75460e2276e797161a6fb1",
+    "final-gpu/blob-0199.bin.gz": "f2baae3ecf8486a674643ea31a93c6502448c0296e13a4821b9b1cd73e95cb90",
+    "final-gpu/blob-0200.bin.gz": "1ef0bd49d12d5a9d818e20081a74f63eb50c6bc37a54ef14e1fb020a1caf2f93",
+    "final-gpu/blob-0201.bin.gz": "c133a9b713a0634749fcb23c713b653d7fb510d7c81ba3ce776bb9045d56d641",
+    "final-gpu/blob-0202.bin.gz": "1ef0bd49d12d5a9d818e20081a74f63eb50c6bc37a54ef14e1fb020a1caf2f93",
+    "final-gpu/blob-0203.bin.gz": "c133a9b713a0634749fcb23c713b653d7fb510d7c81ba3ce776bb9045d56d641",
+    "final-gpu/blob-0204.bin.gz": "cc3658977195fcc59cf9d6442779a4a2fadc719b8d5b7ef009add39031f90ad2",
+    "final-gpu/blob-0205.bin.gz": "3e8a7a5baaaba673869e1a4535a50344614f5df5fa9575b0d224b7bf31ce3c7c",
+    "final-gpu/blob-0206.bin.gz": "c133a9b713a0634749fcb23c713b653d7fb510d7c81ba3ce776bb9045d56d641",
+    "final-gpu/blob-0207.bin.gz": "3e8a7a5baaaba673869e1a4535a50344614f5df5fa9575b0d224b7bf31ce3c7c",
+    "final-gpu/blob-0208.bin.gz": "c133a9b713a0634749fcb23c713b653d7fb510d7c81ba3ce776bb9045d56d641",
+    "final-gpu/blob-0209.bin.gz": "bddb7d51b497065d5ee9e488e4aee055390454aa08a4fd9f25bd2c31e2ef9abd",
+    "final-gpu/blob-0210.bin.gz": "1ef0bd49d12d5a9d818e20081a74f63eb50c6bc37a54ef14e1fb020a1caf2f93",
+    "final-gpu/blob-0211.bin.gz": "c133a9b713a0634749fcb23c713b653d7fb510d7c81ba3ce776bb9045d56d641",
+    "final-gpu/blob-0212.bin.gz": "1ef0bd49d12d5a9d818e20081a74f63eb50c6bc37a54ef14e1fb020a1caf2f93",
+    "final-gpu/blob-0213.bin.gz": "c133a9b713a0634749fcb23c713b653d7fb510d7c81ba3ce776bb9045d56d641",
+    "final-gpu/blob-0214.bin.gz": "cc3658977195fcc59cf9d6442779a4a2fadc719b8d5b7ef009add39031f90ad2",
+    "final-gpu/blob-0215.bin.gz": "0043824fdaa030f1623a90747d6243217c8e05ffb661b618f8d71a8c28c5df6d",
+    "final-gpu/blob-0216.bin.gz": "3ff56f9d64d32ef1ba05dd7a54d3dedd2abbba2db7991a1a8b950b7bb8ac2563",
+    "final-gpu/blob-0217.bin.gz": "01e84369d2a57932572756712fbd5834c7a2dc6382efff6ae0997ff13897df84",
+    "final-gpu/blob-0218.bin.gz": "0043824fdaa030f1623a90747d6243217c8e05ffb661b618f8d71a8c28c5df6d",
+    "final-gpu/blob-0219.bin.gz": "2ba89c42474b2c6887100a69ba0cd40121aba49fd746984be1591b00bf457d5b",
+    "final-gpu/blob-0220.bin.gz": "01e84369d2a57932572756712fbd5834c7a2dc6382efff6ae0997ff13897df84",
+    "final-gpu/blob-0221.bin.gz": "0043824fdaa030f1623a90747d6243217c8e05ffb661b618f8d71a8c28c5df6d",
+    "final-gpu/blob-0222.bin.gz": "73b1685379df9525e5996a7203641bbde236621dd2d9b7e10e9d9666cccad853",
+    "final-gpu/blob-0223.bin.gz": "01e84369d2a57932572756712fbd5834c7a2dc6382efff6ae0997ff13897df84",
+    "final-gpu/blob-0224.bin.gz": "0043824fdaa030f1623a90747d6243217c8e05ffb661b618f8d71a8c28c5df6d",
+    "final-gpu/blob-0225.bin.gz": "d279e62aeea175dac007d4903457b530a152bf364fff003dad8e4ca406b62af9",
+    "final-gpu/blob-0226.bin.gz": "01e84369d2a57932572756712fbd5834c7a2dc6382efff6ae0997ff13897df84",
+    "final-gpu/blob-0227.bin.gz": "0043824fdaa030f1623a90747d6243217c8e05ffb661b618f8d71a8c28c5df6d",
+    "final-gpu/blob-0228.bin.gz": "b443edda3c521fb768f2641c824b1d586e983515b825acc13fb56dbf5c2276af",
+    "final-gpu/blob-0229.bin.gz": "164a33e7d9ede1ca9f575c654978c15d06d4f29ff6c79e46b0775144301ee317",
+    "final-gpu/blob-0230.bin.gz": "c7a1a3bfc42153dcef14ef58d4f78847aeb1d6d940159bbc1be56a63e8d46197",
+    "final-gpu/blob-0231.bin.gz": "c3202a3511182d88cd87e4165c57ec2772a46adde58b2e5f9ef79d162c4e1251",
+    "final-gpu/blob-0232.bin.gz": "c7a1a3bfc42153dcef14ef58d4f78847aeb1d6d940159bbc1be56a63e8d46197",
+    "final-gpu/blob-0233.bin.gz": "c3202a3511182d88cd87e4165c57ec2772a46adde58b2e5f9ef79d162c4e1251",
+    "final-gpu/blob-0234.bin.gz": "c7a1a3bfc42153dcef14ef58d4f78847aeb1d6d940159bbc1be56a63e8d46197",
+    "final-gpu/blob-0235.bin.gz": "c3202a3511182d88cd87e4165c57ec2772a46adde58b2e5f9ef79d162c4e1251",
+    "final-gpu/blob-0236.bin.gz": "c7a1a3bfc42153dcef14ef58d4f78847aeb1d6d940159bbc1be56a63e8d46197",
+    "final-gpu/blob-0237.bin.gz": "c3202a3511182d88cd87e4165c57ec2772a46adde58b2e5f9ef79d162c4e1251",
+    "final-gpu/blob-0238.bin.gz": "597b99d374b02da55fec0ac1db53aed63007e2d4c3cc9927e3488ea5cc653b86",
+    "final-gpu/blob-0239.bin.gz": "c7a1a3bfc42153dcef14ef58d4f78847aeb1d6d940159bbc1be56a63e8d46197",
+    "final-gpu/blob-0240.bin.gz": "c3202a3511182d88cd87e4165c57ec2772a46adde58b2e5f9ef79d162c4e1251",
+    "final-gpu/browser-coverage.json": "0d4f86633bd90f357d5c6fe8fcb90575f1324bbb4689071ed19a5124c2eabb11",
+    "final-gpu/browser.png": "5ae631358d03d857f0160315f31b202d22c32ef8d4ab49a1a1663c5caef342a4",
+    "final-gpu/report.json": "e6b10050566663b1d6fdb33d43a9fa2e1a1cc4607966ad5ffdfdcd4a3b9f5088",
+    "final-sabotage-native/blob-0000.bin.gz": "da1d8557ea9b94171df33c97a2c14cd227b8d8e694e745ee2f7d111d3367a4b1",
+    "final-sabotage-native/blob-0001.bin.gz": "fcef1e569e16955bb2c097e840ec898890575e5e2c09c4dfd076ca9ecad0a8fc",
+    "final-sabotage-native/blob-0002.bin.gz": "da1d8557ea9b94171df33c97a2c14cd227b8d8e694e745ee2f7d111d3367a4b1",
+    "final-sabotage-native/blob-0003.bin.gz": "fcef1e569e16955bb2c097e840ec898890575e5e2c09c4dfd076ca9ecad0a8fc",
+    "final-sabotage-native/blob-0004.bin.gz": "a8094110877188f99ba35fa3782efa5a468de7ea6acf36afd36204e71f8eaa1a",
+    "final-sabotage-native/browser-coverage.json": "5d3f83e256c760eece2a13981982c48ad06f90a639035566c65f4326c0067cbe",
+    "final-sabotage-native/browser.png": "a62b12e163293616b7d80cdd8f045def306a42325bcf80fa5ff5ee733bdef193",
+    "final-sabotage-native/mutation-source.mjs": "19b335e4d85295a52617dcf5e3fb5e70a76f3a9945b49e3cc19fa6a1c9e40d5e",
+    "final-sabotage-native/report.json": "87815471edc5313129ab85b71c60b1b1b799fd14925dd14b8c897bbdf64a6db0",
+    "final-sabotage-constant/blob-0000.bin.gz": "dc965dea0049e57051d7766d33ab6ed5b204c922e0fbe3041a09f88b88a979e7",
+    "final-sabotage-constant/blob-0001.bin.gz": "fcef1e569e16955bb2c097e840ec898890575e5e2c09c4dfd076ca9ecad0a8fc",
+    "final-sabotage-constant/blob-0002.bin.gz": "dc965dea0049e57051d7766d33ab6ed5b204c922e0fbe3041a09f88b88a979e7",
+    "final-sabotage-constant/blob-0003.bin.gz": "fcef1e569e16955bb2c097e840ec898890575e5e2c09c4dfd076ca9ecad0a8fc",
+    "final-sabotage-constant/blob-0004.bin.gz": "3b5e6d3971b7ce5ef9680a5fd272bbf0034287ae503b46557f30f54817ae69d2",
+    "final-sabotage-constant/browser-coverage.json": "d43bd44d46c22d365f8b31d36a7eafa07c62b6229986f5016d786c06c9770d28",
+    "final-sabotage-constant/browser.png": "f0e09c28fba84d41d2987d67fb6c24b03fed4c9c0b7ec1656c50a611dc0969a5",
+    "final-sabotage-constant/mutation-source.mjs": "beef4a80119471066ad928e9cdd1e1711cb7ca60ed3b5cba2131d9fdb2023588",
+    "final-sabotage-constant/report.json": "266c5617f4cd699c0eb2bd60543d7d52ed6f575e80b16a0864678a680e1b56f3"
+  },
+  "sources": {
+    "renderer/virgl-command/resources.mjs": "c2355819a1ae04125af8689bb0e23cbdfa73b10dc87710b0be72638397a66eae",
+    "renderer/virgl-command/decoder.mjs": "a9bcef126b4f15d3e3920c1e5c14728c294afc79fde31015adb8e4f79237b2a1",
+    "renderer/virgl-command/state.mjs": "e6ed224b99346005e099479d950c2bbf03ba3c98fb3e68562463e5626c16f635",
+    "renderer/virgl-command/cache.mjs": "9e50cc258528e581f79cee0e4e0038994c7968f80046b9db21e7f5e0e4a92cfa",
+    "renderer/virgl-command/constant-domain.mjs": "3c04624cd731d744b96d4a1b0647dcfe44d0a096fa67c96261877f5204925e69",
+    "renderer/virgl-command/tests/standard-compact-vertex-fetch.mjs": "e7c9cee10cc2194a3f9fcf912da2d57ece2e70237ed42640a5a5a47072e34851",
+    "renderer/virgl-shader/standard.mjs": "d949b156fed338cd9816abf94239eb32b1773aaf3b3c4ade6dba77201d2310cc",
+    "renderer/virgl-shader/index.mjs": "1bae07f2e668078c4e447f65d1785815714907b7270ced01b131ce70e6d3f10e",
+    "renderer/virgl-shader/build/wasm/virgl-shader.mjs": "8d07e5832efc6bc832b9bd684bcaaaad19b536783643f40d088e2ddfba2a5052",
+    "renderer/virgl-shader/build/wasm/virgl-shader.wasm": "30c655db576b421808c5316af3248c5c848b368000e4036f0803f26e0c309a81",
+    "tools/virgl-command/standard-compact-oracle.mjs": "c626038849a3b8524d44668a39a6f18a7807a03d17321c46408a2f77011f28af",
+    "tools/verify-virgl-standard-compact.mjs": "b683a9187fb11b0e7c561ab20ae2d63de70fb24d75b61cd1e8333c8e1d3c1b33",
+    "tools/virgl-command/fixtures.mjs": "399b6b74fa48a8b6edfb237f23e7a42d45a65495fcb090762da0275218a29217",
+    "renderer/virgl-command/tests/standard-instanced-draws.mjs": "f667e2ef49a45a5c906ca424e8a436aee4e4d9c6a7428ca67a9de3a31b8edc3c",
+    "tools/virgl-command/standard-draw-oracle.mjs": "8de41c4a9f041f7a9acaf8a062a525f64c0ef3d197c464753764ddada94d26e3",
+    "renderer/virgl-shader/UPSTREAM.json": "6f7866d3a3a5e502f6516506909c0d43dec60902fd251a2eecec9610bd992a71",
+    "renderer/virgl-shader/bridge.c": "b732da2dec8cbb2121ad9059ce461185260dc7ca551c5faec28462600fb84898",
+    "renderer/virgl-shader/standard_guard.c": "1d7c94c83243122ccc1b52607722e5088ed593aab10c3b568db87af256b7db4d",
+    "renderer/virgl-shader/standard_guard.h": "dc6ca7d1c093a0d194ed4f94c59187347929c2a264d1026e7357825f1b6a6616",
+    "renderer/virgl-shader/standard_emit.c": "76102e93e05151b3cf6ec44f1f2caaf470374386db99d1536cf4949fa184d402",
+    "renderer/virgl-command/tests/standard-compact-vertex-fetch-adversarial.mjs": "f66b41107fcfab22eced3a1aa9c17041cdc1613de583d8f913f7036d78f36ee8",
+    "tools/virgl-command/standard-compact-adversarial-oracle.mjs": "fc3535d580d7ccf4322208d949800f4ebb8a97fd4e15cb2232b14479c0d540e1"
+  },
+  "status": "passed",
+  "rejections": [
+    {
+      "label": "critic-short-{\"format\":77,\"shortColor\":true}",
+      "error": {
+        "code": "out-of-bounds",
+        "message": "An actual vertex fetch exceeds retained storage.",
+        "byteOffset": 1216,
+        "opcode": 8
+      },
+      "wireSha256": "4d038e5991cb2ea270c18bfebf4e5a78aa0b8cacc67a3e9f674d54738fc9cf37"
+    },
+    {
+      "label": "critic-short-{\"format\":94,\"stride\":0,\"shortColor\":true}",
+      "error": {
+        "code": "out-of-bounds",
+        "message": "Vertex element exceeds storage.",
+        "byteOffset": 992,
+        "opcode": 6
+      },
+      "wireSha256": "55415cad9877bc94c3ab0b84b7a81f863e9f143f8fd6b540f324651b42fe43e8"
+    },
+    {
+      "label": "critic-short-{\"format\":92,\"stride\":3}",
+      "error": {
+        "code": "invalid-state",
+        "message": "Vertex buffer stride/offset is not supported by WebGL.",
+        "byteOffset": 992,
+        "opcode": 6
+      },
+      "wireSha256": "431b51c4e5a42338b29d20c3a290cdfb8f70a694c0c3c71089ac13682cddc4d0"
+    },
+    {
+      "label": "critic-short-{\"format\":93,\"bufferOffset\":0,\"sourceOffset\":1}",
+      "error": {
+        "code": "invalid-state",
+        "message": "Vertex buffer stride/offset is not supported by WebGL.",
+        "byteOffset": 992,
+        "opcode": 6
+      },
+      "wireSha256": "63ad2814d7b0b9d639e07dad7568586739b0cd81e93bf98ffb3f61b68d897edf"
+    },
+    {
+      "label": "critic-short-{\"format\":59,\"shortIndex\":true}",
+      "error": {
+        "code": "out-of-bounds",
+        "message": "Index draw range exceeds retained storage.",
+        "byteOffset": 1216,
+        "opcode": 8
+      },
+      "wireSha256": "daecfd843aedbe145069ad2c29c872a5053647a7b9801547c551a7ede493abbb"
+    }
+  ],
+  "suspensions": [
+    {
+      "action": "revision",
+      "before": {
+        "active": 1,
+        "status": "waiting-attributes",
+        "appliedCommands": 1,
+        "commandCount": 2,
+        "draws": 0,
+        "inputBytes": 0,
+        "outputBytes": 0,
+        "reads": 2,
+        "transfers": 0,
+        "stagingBytes": 14,
+        "normalizedBuffers": 0,
+        "normalizedBytes": 0,
+        "normalizationScratchBytes": 0
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "stale-storage",
+          "message": "Retained storage lease or contents changed during readback.",
+          "byteOffset": 36,
+          "opcode": 8
+        },
+        "appliedCommands": 1,
+        "draws": [],
+        "gpuComplete": true
+      }
+    },
+    {
+      "action": "cancel",
+      "before": {
+        "active": 1,
+        "status": "waiting-attributes",
+        "appliedCommands": 1,
+        "commandCount": 2,
+        "draws": 0,
+        "inputBytes": 0,
+        "outputBytes": 0,
+        "reads": 2,
+        "transfers": 0,
+        "stagingBytes": 14,
+        "normalizedBuffers": 0,
+        "normalizedBytes": 0,
+        "normalizationScratchBytes": 0
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "cancelled",
+          "message": "Renderer job was cancelled.",
+          "byteOffset": 36,
+          "opcode": 8
+        },
+        "appliedCommands": 1,
+        "draws": [],
+        "gpuComplete": true
+      }
+    },
+    {
+      "action": "reuse",
+      "before": {
+        "active": 1,
+        "status": "waiting-attributes",
+        "appliedCommands": 1,
+        "commandCount": 2,
+        "draws": 0,
+        "inputBytes": 0,
+        "outputBytes": 0,
+        "reads": 2,
+        "transfers": 0,
+        "stagingBytes": 14,
+        "normalizedBuffers": 0,
+        "normalizedBytes": 0,
+        "normalizationScratchBytes": 0
+      },
+      "result": {
+        "ok": true,
+        "profile": "virgl-standard-async-jobs-v1",
+        "appliedCommands": 2,
+        "draws": [
+          {
+            "byteOffset": 36,
+            "opcode": 8,
+            "count": 3,
+            "indexed": true,
+            "mode": 0,
+            "start": 0,
+            "indexOffset": 12,
+            "indexByteLength": 6,
+            "actualMinIndex": 3,
+            "actualMaxIndex": 17,
+            "instanceCount": 1,
+            "effectiveInstances": 1,
+            "vertexWork": 3,
+            "indexSize": 2,
+            "primitiveRestart": false,
+            "restartIndex": 0,
+            "validIndexCount": 3,
+            "restartCount": 0,
+            "normalizedIndices": false,
+            "nativeIndexSize": 2,
+            "nativeIndexOffset": 12,
+            "normalizedIndexBytes": 0,
+            "primitiveAssembly": "lists",
+            "assembled": false,
+            "nativeMode": 0,
+            "nativeCount": 3,
+            "nativeIndexed": true,
+            "nativeVertexWork": 3,
+            "contextId": 1,
+            "contextGeneration": 1,
+            "subContextId": 0,
+            "subContextGeneration": 2,
+            "indexResourceId": 6,
+            "indexResourceGeneration": 5,
+            "vertexFetches": [
+              {
+                "attributeIndex": 0,
+                "location": 0,
+                "resourceId": 3,
+                "resourceGeneration": 4,
+                "stride": 16,
+                "offset": 4,
+                "components": 4,
+                "firstByte": 52,
+                "requiredEnd": 292,
+                "sourceFormat": 31,
+                "elementBytes": 16,
+                "nativeType": 5126,
+                "normalized": false,
+                "divisor": 0,
+                "nativeDivisor": 0,
+                "firstElement": 3,
+                "lastElement": 17
+              },
+              {
+                "attributeIndex": 1,
+                "location": 1,
+                "resourceId": 3,
+                "resourceGeneration": 4,
+                "stride": 0,
+                "offset": 294,
+                "components": 4,
+                "firstByte": 294,
+                "requiredEnd": 302,
+                "sourceFormat": 59,
+                "elementBytes": 8,
+                "nativeType": 5122,
+                "normalized": true,
+                "divisor": 0,
+                "nativeDivisor": 0,
+                "firstElement": 0,
+                "lastElement": 0,
+                "constant": true,
+                "componentWords": [
+                  3212836864,
+                  3212836864,
+                  1026203989,
+                  1065353216
+                ],
+                "genericValues": [
+                  -1,
+                  -1,
+                  0.041657764464616776,
+                  1
+                ]
+              }
+            ],
+            "framebuffer": {
+              "resourceId": 1,
+              "resourceGeneration": 3,
+              "width": 16,
+              "height": 16,
+              "depthResourceId": null,
+              "depthResourceGeneration": null
+            },
+            "vertexShader": {
+              "handle": 1,
+              "generation": 5
+            },
+            "fragmentShader": {
+              "handle": 2,
+              "generation": 6
+            }
+          }
+        ],
+        "gpuComplete": true,
+        "byteLength": 88,
+        "contextId": 1,
+        "subContextId": 0
+      }
+    }
+  ],
+  "ownership": [
+    {
+      "before": {
+        "active": 1,
+        "status": "waiting-attributes",
+        "appliedCommands": 1,
+        "commandCount": 2,
+        "draws": 0,
+        "inputBytes": 0,
+        "outputBytes": 0,
+        "reads": 2,
+        "transfers": 0,
+        "stagingBytes": 14,
+        "normalizedBuffers": 0,
+        "normalizedBytes": 0,
+        "normalizationScratchBytes": 0
+      },
+      "after": {
+        "ok": true,
+        "disposed": false,
+        "reads": 0,
+        "transfers": 0,
+        "stagingBytes": 0
+      }
+    }
+  ],
+  "pixels": 31744
+}

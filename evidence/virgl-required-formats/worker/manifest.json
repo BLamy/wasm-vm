@@ -1,0 +1,16 @@
+{
+  "schema": "virgl-required-formats-seal-v1",
+  "task": "E6-T12g6",
+  "sourceHead": "5ad750b459d44b1f92dc3db9f5a49f043647b846",
+  "records": 118,
+  "archiveSha256": "aaf797f2914f32519af9eed6ae55c32b2172b0d6ebaa89503eceedc0913c57db",
+  "archiveBytes": 4566080,
+  "recordIndexSha256": "bdaf8a3ec2f48e7b7fed86993e9a5d206526e8e72be18b3be41e6644e49bedba",
+  "hotReceiptSha256": "b5b0f6ca8bd4183ddfd9070d8eff1cc201c6245c96c4a970288bc532612d0c18",
+  "coldReportSha256": "dad275de0f4eb2f70e9ae50ae18d43c4ea099ba6367f516385cf362929fbe9d8",
+  "coldReceiptSha256": "5c6f92c4fcce474072d12e5daf1e490c0e5344dd26294bff204e8de842fa2c46",
+  "guestExecution": false,
+  "portableDomainCertified": false,
+  "authority": "isolated-client-format-view-closure",
+  "productionDrawAuthority": false
+}

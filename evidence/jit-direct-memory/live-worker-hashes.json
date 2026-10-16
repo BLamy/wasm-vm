@@ -1,0 +1,79 @@
+{
+  "head": "7e51177d966e05f7ae8b3ae23c7d5d0d028c404b",
+  "base": "https://wasm-vm.pages.dev",
+  "timestamp": "2026-10-03T01:40:02.608467+00:00",
+  "artifacts": [
+    {
+      "path": "pkg/wasm_vm_wasm_bg.wasm",
+      "command": [
+        "curl",
+        "--fail",
+        "--silent",
+        "--show-error",
+        "--retry",
+        "3",
+        "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm_bg.wasm?proof=1790991602608605000"
+      ],
+      "bytes": 1632987,
+      "sha256": {
+        "live": "4f1005a174e6dba3cf698d503a21a10168f4ff37db2c2419fbae86fb2f8a787b",
+        "local": "4f1005a174e6dba3cf698d503a21a10168f4ff37db2c2419fbae86fb2f8a787b",
+        "committed": "4f1005a174e6dba3cf698d503a21a10168f4ff37db2c2419fbae86fb2f8a787b"
+      }
+    },
+    {
+      "path": "roadmap.js",
+      "command": [
+        "curl",
+        "--fail",
+        "--silent",
+        "--show-error",
+        "--retry",
+        "3",
+        "https://wasm-vm.pages.dev/roadmap.js?proof=1790991603115563000"
+      ],
+      "bytes": 53134,
+      "sha256": {
+        "live": "c8604ddbedcec475cd225dae9d0c8e82be4c68bdd4486e2b3480b17340ee3832",
+        "local": "c8604ddbedcec475cd225dae9d0c8e82be4c68bdd4486e2b3480b17340ee3832",
+        "committed": "c8604ddbedcec475cd225dae9d0c8e82be4c68bdd4486e2b3480b17340ee3832"
+      }
+    },
+    {
+      "path": "tasks.json",
+      "command": [
+        "curl",
+        "--fail",
+        "--silent",
+        "--show-error",
+        "--retry",
+        "3",
+        "https://wasm-vm.pages.dev/tasks.json?proof=1790991603346078000"
+      ],
+      "bytes": 3786457,
+      "sha256": {
+        "live": "567491d71a5f577f1d42e2d728a5dd12bd6ccd23917a95bb7415c490849b0bc5",
+        "local": "567491d71a5f577f1d42e2d728a5dd12bd6ccd23917a95bb7415c490849b0bc5",
+        "committed": "567491d71a5f577f1d42e2d728a5dd12bd6ccd23917a95bb7415c490849b0bc5"
+      }
+    },
+    {
+      "path": "sw.js",
+      "command": [
+        "curl",
+        "--fail",
+        "--silent",
+        "--show-error",
+        "--retry",
+        "3",
+        "https://wasm-vm.pages.dev/sw.js?proof=1790991604232335000"
+      ],
+      "bytes": 5053,
+      "sha256": {
+        "live": "cedad161b310955b46de795a4c150ee08fe86052999126a34768a79e54266aeb",
+        "local": "cedad161b310955b46de795a4c150ee08fe86052999126a34768a79e54266aeb",
+        "committed": "cedad161b310955b46de795a4c150ee08fe86052999126a34768a79e54266aeb"
+      }
+    }
+  ]
+}

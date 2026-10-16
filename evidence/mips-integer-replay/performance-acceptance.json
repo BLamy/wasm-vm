@@ -1,0 +1,202 @@
+{
+  "minimumIntegerSpeedup": 1.02,
+  "maximumTimeRegression": 1.05,
+  "integer": [
+    {
+      "run": 1,
+      "platform": "native",
+      "speedup": 1.2040101719299312,
+      "pairedSpeedup": 1.2040101719299312,
+      "baselineMips": 134.63546471820425,
+      "candidateMips": 162.1024690232313
+    },
+    {
+      "run": 1,
+      "platform": "browser",
+      "speedup": 1.0958287714239883,
+      "pairedSpeedup": 1.0886794722225532,
+      "baselineMips": 88.78037963947877,
+      "candidateMips": 97.28809434688527
+    },
+    {
+      "run": 2,
+      "platform": "native",
+      "speedup": 1.2017032610635645,
+      "pairedSpeedup": 1.2014527926703384,
+      "baselineMips": 135.83813188609122,
+      "candidateMips": 163.23712606429842
+    },
+    {
+      "run": 2,
+      "platform": "browser",
+      "speedup": 1.0993895005546477,
+      "pairedSpeedup": 1.0997182390674232,
+      "baselineMips": 88.84940006892478,
+      "candidateMips": 97.68009756635531
+    }
+  ],
+  "native": [
+    {
+      "case": "busybox-legacy",
+      "metric": "wall_s",
+      "pairs": 5,
+      "baseline": 5.822632708,
+      "candidate": 5.961981416,
+      "speedup": 0.9766271146659341,
+      "pairedSpeedup": 0.9767058024747621,
+      "pairedRatios": [
+        0.9535001086350418,
+        0.9696305168283473,
+        0.9825926901406027,
+        0.9783868205871642,
+        0.9767058024747621
+      ]
+    },
+    {
+      "case": "busybox-fast",
+      "metric": "wall_s",
+      "pairs": 5,
+      "baseline": 3.408640208,
+      "candidate": 2.953404209,
+      "speedup": 1.154139415665741,
+      "pairedSpeedup": 1.154139415665741,
+      "pairedRatios": [
+        1.1700105097754199,
+        1.1524372014287414,
+        1.1593157797606195,
+        1.1397767984587897,
+        1.154139415665741
+      ]
+    },
+    {
+      "case": "compute-fast",
+      "metric": "region_s",
+      "pairs": 5,
+      "baseline": 2.32804725,
+      "candidate": 2.278918375,
+      "speedup": 1.0215579792321434,
+      "pairedSpeedup": 1.0206500191126855,
+      "pairedRatios": [
+        1.0201810512220195,
+        1.0290487918047642,
+        1.0206500191126855,
+        1.0116786332592282,
+        1.0339170574549879
+      ]
+    },
+    {
+      "case": "coremark-fast",
+      "metric": "region_s",
+      "pairs": 3,
+      "baseline": 20.628239916,
+      "candidate": 17.127073292,
+      "speedup": 1.2044229369670172,
+      "pairedSpeedup": 1.2028398512560066,
+      "pairedRatios": [
+        1.2150686671022004,
+        1.2028398512560066,
+        1.1992486595704872
+      ]
+    }
+  ],
+  "browser": [
+    {
+      "case": "busybox-jit",
+      "metric": "readyMs",
+      "pairs": 5,
+      "baseline": 4694.310000061989,
+      "candidate": 4643.650000095367,
+      "speedup": 1.01090952159736,
+      "pairedSpeedup": 1.024063262012549,
+      "pairedRatios": [
+        1.0359633491611628,
+        1.024063262012549,
+        1.0319093669156558,
+        1.0158687604459353,
+        1.01090952159736
+      ]
+    },
+    {
+      "case": "busybox-jit",
+      "metric": "regionMs",
+      "pairs": 5,
+      "baseline": 3597.2300000190735,
+      "candidate": 3654.210000038147,
+      "speedup": 0.9844070264110495,
+      "pairedSpeedup": 1.0090690565521832,
+      "pairedRatios": [
+        0.9742999381153572,
+        1.0090690565521832,
+        1.0269232526187135,
+        0.9746944071910806,
+        1.0309328144702798
+      ]
+    },
+    {
+      "case": "busybox-nojit",
+      "metric": "readyMs",
+      "pairs": 5,
+      "baseline": 5009.710000038147,
+      "candidate": 4671.72000002861,
+      "speedup": 1.0723480859314058,
+      "pairedSpeedup": 1.0818778844689405,
+      "pairedRatios": [
+        1.1069983581949336,
+        1.0925495326556631,
+        1.0251709005639018,
+        1.0818778844689405,
+        1.0803986540080168
+      ]
+    },
+    {
+      "case": "busybox-nojit",
+      "metric": "regionMs",
+      "pairs": 5,
+      "baseline": 2843.1449999809265,
+      "candidate": 2794.1349999904633,
+      "speedup": 1.0175403121147084,
+      "pairedSpeedup": 1.0397971013130642,
+      "pairedRatios": [
+        1.042723413289162,
+        1.0397971013130642,
+        0.9744406591287196,
+        1.0117804725422126,
+        1.0533707211714929
+      ]
+    }
+  ],
+  "browserConsole": {
+    "rawErrors": [
+      {
+        "case": "busybox-jit",
+        "label": "baseline",
+        "rep": 0,
+        "errors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ]
+      },
+      {
+        "case": "busybox-jit",
+        "label": "candidate",
+        "rep": 0,
+        "errors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ]
+      }
+    ],
+    "missingNonFaviconPaths": {
+      "baseline": {
+        "count": 840,
+        "bytes": 339739440,
+        "notFound": []
+      },
+      "candidate": {
+        "count": 840,
+        "bytes": 339866950,
+        "notFound": []
+      }
+    },
+    "classification": "Expected favicon 404 inferred from same-run server inventory; URLs were not captured in console records."
+  },
+  "passed": true
+}

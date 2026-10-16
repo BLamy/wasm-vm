@@ -1,0 +1,761 @@
+{
+  "schema": 1,
+  "task": "E6-T11d69a",
+  "scope": "Final no-carry ordinary clone and authenticated worker archive; original Mesa valid-host carry excludes the repaired bad-native branch",
+  "status": "held",
+  "workerArchive": {
+    "path": "evidence/virgl-production-boolean-queries/worker/exact-head-query-submission-and-cold.tar.gz",
+    "bytes": 22867165,
+    "sha256": "28f17e3938b135f00207055d9922de053fc0997543558507e77b32925c03532d"
+  },
+  "workerMembersAuthenticated": 1023,
+  "runtimeHead": "7eef61fe41d050f3f128f6dff4c88a52c4a0b1cc",
+  "ordinaryFullHistoryClone": true,
+  "cloneBuildAcceptanceExits": [
+    0,
+    0,
+    0
+  ],
+  "submissionGates": [
+    {
+      "name": "policy",
+      "command": [
+        "python3",
+        "tools/check_task_policy.py"
+      ],
+      "seconds": 0.0790860652923584,
+      "exitCode": 0
+    },
+    {
+      "name": "format",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--check"
+      ],
+      "seconds": 1.144902229309082,
+      "exitCode": 0
+    },
+    {
+      "name": "core-clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "wasm-vm-core",
+        "--tests",
+        "--features",
+        "virgl-renderer,virgl-control-proof,gpu-trace,trace",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "seconds": 9.402418851852417,
+      "exitCode": 0
+    },
+    {
+      "name": "native",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "wasm-vm-core",
+        "--lib",
+        "--features",
+        "virgl-renderer,virgl-control-proof,gpu-trace,trace"
+      ],
+      "seconds": 20.37564206123352,
+      "exitCode": 0
+    },
+    {
+      "name": "transport",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "wasm-vm-core",
+        "--features",
+        "virgl-renderer,virgl-control-proof,gpu-trace,trace",
+        "--test",
+        "production_virgl_critic",
+        "--test",
+        "virgl_capabilities"
+      ],
+      "seconds": 3.9555017948150635,
+      "exitCode": 0
+    },
+    {
+      "name": "wasm-clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "wasm-vm-wasm",
+        "--target",
+        "wasm32-unknown-unknown",
+        "--features",
+        "virgl-renderer",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "seconds": 12.670660257339478,
+      "exitCode": 0
+    },
+    {
+      "name": "proof-build",
+      "command": [
+        "wasm-pack",
+        "build",
+        "crates/wasm",
+        "--target",
+        "web",
+        "--out-dir",
+        "../../target/virgl-production/pkg",
+        "--features",
+        "virgl-renderer,virgl-control-proof"
+      ],
+      "seconds": 25.03149104118347,
+      "exitCode": 0
+    },
+    {
+      "name": "hardware",
+      "command": [
+        "node",
+        "tools/virgl-production/worker-boolean-queries-browser.mjs",
+        "--output",
+        "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/production-boolean-queries-cold01/boolean-queries/hardware",
+        "--schedules",
+        "0,1,2"
+      ],
+      "seconds": 6.522704839706421,
+      "exitCode": 0
+    },
+    {
+      "name": "promoted-novel",
+      "command": [
+        "node",
+        "tools/virgl-production/critic-fast-boots-boolean-queries-browser.mjs",
+        "--output",
+        "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/production-boolean-queries-cold01/boolean-queries/promoted-novel"
+      ],
+      "seconds": 8.824527978897095,
+      "exitCode": 0
+    },
+    {
+      "name": "private-profile",
+      "command": [
+        "node",
+        "tools/verify-virgl-draw-replay.mjs",
+        "--output",
+        "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/production-boolean-queries-cold01/boolean-queries/private-profile"
+      ],
+      "seconds": 1.7410778999328613,
+      "exitCode": 0
+    },
+    {
+      "name": "default-demo",
+      "command": [
+        "node",
+        "tools/verify-virgl-default-demo.mjs",
+        "--output",
+        "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/production-boolean-queries-cold01/boolean-queries/default-demo",
+        "--task",
+        "E6-T11d69a"
+      ],
+      "seconds": 7.095643043518066,
+      "exitCode": 0
+    }
+  ],
+  "runtimeSourcePins": {
+    "renderer/virgl-command/tests/production-boolean-queries.mjs": "934093a1eb90a8ac2ea11e2902053172092199e699a0dbc75d812e919b49e250",
+    "renderer/virgl-command/decoder.mjs": "8c23e2ca6a33b6c2613d15dce9284ce2da5ba16f36394a8b8f7507e2be878a64",
+    "renderer/virgl-command/state.mjs": "a05208d402c600ae24ea346be8b29118d82c4402a931fb012df6b81482516afd",
+    "renderer/virgl-command/queries.mjs": "737c8245f5bba1d898f5c7b90d046acbe8b5c54ba383f8eea79130f98163c416",
+    "renderer/virgl-command/resources.mjs": "18ea2bcaa19c60adb9b8c9a3f43be81d12fe0461cb06c7f66fee31fef5a6d06d",
+    "renderer/virgl-command/production.mjs": "c3cc943ff6a3e61dee5fac19142799b142d288fe543a40d9b953e6e4ae08ee28"
+  },
+  "coldProofWasmPins": [
+    "f06b48da01807918da0afaad2c4abbab3fbac481209fe4d0b68bd6e4186cd280",
+    "f06b48da01807918da0afaad2c4abbab3fbac481209fe4d0b68bd6e4186cd280"
+  ],
+  "physicalRows": [
+    {
+      "scope": "hardware",
+      "name": "boolean1/schedule0",
+      "sha256": "b8bf435667f3bf084c5fb96a6d2f11a54087f04b4a7e7c5c51ec7433d397a994",
+      "assertions": 31314,
+      "nativeDrawArrays": 3,
+      "readWords": [
+        [
+          1,
+          4,
+          1,
+          0
+        ],
+        [
+          1,
+          4,
+          1,
+          0
+        ],
+        [
+          2,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          4,
+          0,
+          0
+        ],
+        [
+          1,
+          4,
+          0,
+          0
+        ],
+        [
+          1,
+          4,
+          0,
+          0
+        ],
+        [
+          1,
+          4,
+          0,
+          0
+        ],
+        [
+          1,
+          4,
+          0,
+          0
+        ],
+        [
+          1,
+          4,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "scope": "hardware",
+      "name": "boolean11/schedule0",
+      "sha256": "ea817719a207287eb5c331a2e3cb579e3917540ae5e19e7d82e7be0465910980",
+      "assertions": 31315,
+      "nativeDrawArrays": 3,
+      "readWords": [
+        [
+          1,
+          4,
+          1,
+          0
+        ],
+        [
+          1,
+          4,
+          1,
+          0
+        ],
+        [
+          2,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          4,
+          0,
+          0
+        ],
+        [
+          1,
+          4,
+          0,
+          0
+        ],
+        [
+          1,
+          4,
+          0,
+          0
+        ],
+        [
+          1,
+          4,
+          0,
+          0
+        ],
+        [
+          1,
+          4,
+          0,
+          0
+        ],
+        [
+          1,
+          4,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "scope": "hardware",
+      "name": "boolean1/schedule1",
+      "sha256": "2ca486a809383ac4617fb90d05aa612108361b1f294cff50da6d4f56cda0b505",
+      "assertions": 31880,
+      "nativeDrawArrays": 3,
+      "readWords": [
+        [
+          1,
+          4,
+          1,
+          0
+        ],
+        [
+          1,
+          4,
+          1,
+          0
+        ],
+        [
+          2,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          4,
+          0,
+          0
+        ],
+        [
+          1,
+          4,
+          0,
+          0
+        ],
+        [
+          1,
+          4,
+          0,
+          0
+        ],
+        [
+          1,
+          4,
+          0,
+          0
+        ],
+        [
+          1,
+          4,
+          0,
+          0
+        ],
+        [
+          1,
+          4,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "scope": "hardware",
+      "name": "boolean11/schedule1",
+      "sha256": "cd7fb0ae4eb6377bac85e8f05229bffc0df5d19e84ec7d8e3c9fdb5acda814f9",
+      "assertions": 31881,
+      "nativeDrawArrays": 3,
+      "readWords": [
+        [
+          1,
+          4,
+          1,
+          0
+        ],
+        [
+          1,
+          4,
+          1,
+          0
+        ],
+        [
+          2,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          4,
+          0,
+          0
+        ],
+        [
+          1,
+          4,
+          0,
+          0
+        ],
+        [
+          1,
+          4,
+          0,
+          0
+        ],
+        [
+          1,
+          4,
+          0,
+          0
+        ],
+        [
+          1,
+          4,
+          0,
+          0
+        ],
+        [
+          1,
+          4,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "scope": "hardware",
+      "name": "boolean1/schedule2",
+      "sha256": "d4574d32e327b2def0a2f2ba5cb949550f6f764b28d679ae51583189fc0157ec",
+      "assertions": 32154,
+      "nativeDrawArrays": 3,
+      "readWords": [
+        [
+          1,
+          4,
+          1,
+          0
+        ],
+        [
+          1,
+          4,
+          1,
+          0
+        ],
+        [
+          2,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          4,
+          0,
+          0
+        ],
+        [
+          1,
+          4,
+          0,
+          0
+        ],
+        [
+          1,
+          4,
+          0,
+          0
+        ],
+        [
+          1,
+          4,
+          0,
+          0
+        ],
+        [
+          1,
+          4,
+          0,
+          0
+        ],
+        [
+          1,
+          4,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "scope": "hardware",
+      "name": "boolean11/schedule2",
+      "sha256": "0006c3a1929411b0f3235ca9009aa6f673acfa4606d6b56c6fb185180dbd50bb",
+      "assertions": 32155,
+      "nativeDrawArrays": 3,
+      "readWords": [
+        [
+          1,
+          4,
+          1,
+          0
+        ],
+        [
+          1,
+          4,
+          1,
+          0
+        ],
+        [
+          2,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          4,
+          0,
+          0
+        ],
+        [
+          1,
+          4,
+          0,
+          0
+        ],
+        [
+          1,
+          4,
+          0,
+          0
+        ],
+        [
+          1,
+          4,
+          0,
+          0
+        ],
+        [
+          1,
+          4,
+          0,
+          0
+        ],
+        [
+          1,
+          4,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "scope": "hardware",
+      "name": "physical-context-loss-pending-query",
+      "sha256": "38f0aea0b3efae6c6b60b8af9cdc0be1620923ff809d05fdc404a39198594cbd",
+      "assertions": 1917,
+      "nativeDrawArrays": 0,
+      "readWords": []
+    },
+    {
+      "scope": "promoted-novel",
+      "name": "interleave/schedule161803",
+      "sha256": "d0ada378c1dfebc3692d2227d277a5038f1c7eee7faeae1d86653eac9b3f7477",
+      "assertions": 20534,
+      "nativeDrawArrays": 2,
+      "readWords": [
+        [
+          1,
+          4,
+          0,
+          0
+        ],
+        [
+          1,
+          4,
+          0,
+          0
+        ],
+        [
+          2,
+          861239193,
+          2271560481,
+          305441741
+        ],
+        [
+          1,
+          4,
+          1,
+          0
+        ],
+        [
+          1,
+          4,
+          0,
+          0
+        ],
+        [
+          1,
+          4,
+          0,
+          0
+        ],
+        [
+          1,
+          4,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "scope": "promoted-novel",
+      "name": "budget/schedule161803",
+      "sha256": "a5db02aae82935e4d48510fed341834da5502aad312a26829392d782f87465d2",
+      "assertions": 1937673,
+      "nativeDrawArrays": 4096,
+      "readWords": [
+        [
+          1,
+          4,
+          1,
+          0
+        ]
+      ]
+    },
+    {
+      "scope": "promoted-novel",
+      "name": "invalid-result/schedule161803",
+      "sha256": "cda546bad67b57b9c4ba7df1857383cbb5dfd2fecf9605055e1030c39f5bb806",
+      "assertions": 10498,
+      "nativeDrawArrays": 0,
+      "readWords": [
+        [
+          1,
+          4,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "scope": "promoted-novel",
+      "name": "invalid-availability/schedule161803",
+      "sha256": "7afb97db2b53f2af707866abfcb391c6cd89bbe3edd669c54591fbf465bf74d8",
+      "assertions": 10492,
+      "nativeDrawArrays": 0,
+      "readWords": [
+        [
+          1,
+          4,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "scope": "promoted-novel",
+      "name": "native-result-error/schedule161803",
+      "sha256": "6501174769fa6b18101d51288828b896c40d4b79e30011c6aa662177a74ffe07",
+      "assertions": 10498,
+      "nativeDrawArrays": 0,
+      "readWords": [
+        [
+          1,
+          4,
+          0,
+          0
+        ]
+      ]
+    }
+  ],
+  "assertions": 2182311,
+  "defaultDemo": {
+    "passed": 127,
+    "failed": 0,
+    "proofExportAbsent": true,
+    "wasmSha256": "962f14d5dd7ec31ad1134c470f6ca50aa7d30fff2ce219cfc4f2e1c92a928edf"
+  },
+  "privateProfile": "passed",
+  "coverage": [
+    {
+      "boundary": "new native query lifecycle/parts/poll/publication",
+      "evidence": "frozen02+final cold worker7/promoted5 rows and V8 coverage; fault delivery/retry,4096 ceiling and physical loss"
+    },
+    {
+      "boundary": "original QUERY/BEGIN/END/GET and custom storage ownership/layout",
+      "evidence": "actual Mesa original gpu lines1121\u20131209, workerinvalidstate/role/span/reuse/reset, independent interleaved poisoned32byte/64byte guards"
+    },
+    {
+      "boundary": "Rust custom-buffer sizing/capability11",
+      "evidence": "390 native tests, typedABI/originalMMIO transport, actual GLES-only boolean gate and counter/timer refusals"
+    },
+    {
+      "boundary": "qualification methods/empty native probes",
+      "evidence": "native actual two-target profile, physical fence, zero result on both; failure predicates share validated native reads"
+    },
+    {
+      "boundary": "comments/docs/command-name table/diagnostic counters/test query tracking",
+      "classification": "waived as nonsemantic declarations/observers; object tracking itself is exercised in cleanup"
+    },
+    {
+      "boundary": "raster closure unchanged pre-existing draw branches",
+      "classification": "carry prior indexed/MS/instancing/culling holds; new query wrapper entry executes original raster arrays, and valid-host ordinary compositor executes inactive-query path"
+    }
+  ],
+  "additionalFramingProof": {
+    "status": "held",
+    "scope": "tests-only original-MMIO supplemental negative and promoted matrix; runtime unchanged from final cold",
+    "isolatedReportSha256": "0dca85ced292e13c6cc1d02a7a911e6a05e92c69dc96e513d0ea5b3e673022d9",
+    "promotedReportSha256": "6f9d26b56899746169876d6a5484f9ae877babd957b15ac5de46093156db37aa",
+    "rows": [
+      {
+        "name": "interleave/schedule161803",
+        "assertions": 20534,
+        "sha256": "45a149974dae004811692c7c531004f1600b6487bd3f6ad8422e55bc6fe0f405"
+      },
+      {
+        "name": "budget/schedule161803",
+        "assertions": 1937673,
+        "sha256": "42b19a640112fcc93d0cb8fdbb926a03fd29ab29b03e8c367a87239264007441"
+      },
+      {
+        "name": "invalid-result/schedule161803",
+        "assertions": 10511,
+        "sha256": "6cd1f89584d92795225e0982022f21b8f4bdd278aae1aad4f6c3e0134f8b0c0e"
+      },
+      {
+        "name": "invalid-availability/schedule161803",
+        "assertions": 10492,
+        "sha256": "4dcee6bbeb4d87b1a909ed68d26ad3fe4097e0c82d39a7dc3580886f83b9f578"
+      },
+      {
+        "name": "native-result-error/schedule161803",
+        "assertions": 10498,
+        "sha256": "8533ae1ca02f6452a6a850cd9009ff2f9547ac8647aa9ddc37753e10e32bd1ab"
+      },
+      {
+        "name": "framing/schedule161803",
+        "assertions": 10893,
+        "sha256": "6ec36282470a9599169d7e86b473fa1d34f6bdad252ea613d9e013ee5068985a"
+      }
+    ],
+    "seal": {
+      "archive": "independent-exact-framing-02.tar.gz",
+      "bytes": 2862627,
+      "sha256": "2bca94a7ef02d8f9ee70b8990f653f42cf4364c492e31432a95fc984b1e04da9"
+    }
+  },
+  "coldInventoryEntries": 236,
+  "coldUniquePhysicalFiles": 121
+}

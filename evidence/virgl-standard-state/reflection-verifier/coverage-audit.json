@@ -1,0 +1,2153 @@
+{
+  "schema": 1,
+  "head": "adcbe81bcd091c3d411a8f96ac8746e1a17290fb",
+  "base": "01c4dc73f08a752ab5593ae941acdc441d5f4123",
+  "files": {
+    "renderer/virgl-command/state.mjs": {
+      "sha256": "5cf194157113199a8a92bbf117ec9c5f9c0f355f506f1480ade9814085ba6f22",
+      "recordings": [
+        "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/retained-raster-depth/browser-coverage.json",
+        "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json",
+        "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/retained-async-jobs/browser-coverage.json",
+        "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/promoted-blend/browser-coverage.json",
+        "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/retained-draw-replay/browser-coverage.json",
+        "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/retained-object-state/browser-coverage.json",
+        "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/retained-blend-equations/browser-coverage.json",
+        "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/retained-render-cache/browser-coverage.json",
+        "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/retained-float-vertex-fetch/browser-coverage.json",
+        "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/cold/retained-raster-depth/browser-coverage.json",
+        "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/cold/hardware/browser-coverage.json",
+        "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/cold/retained-async-jobs/browser-coverage.json",
+        "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/cold/promoted-blend/browser-coverage.json",
+        "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/cold/retained-draw-replay/browser-coverage.json",
+        "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/cold/retained-object-state/browser-coverage.json",
+        "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/cold/retained-blend-equations/browser-coverage.json",
+        "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/cold/retained-render-cache/browser-coverage.json",
+        "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/cold/retained-float-vertex-fetch/browser-coverage.json",
+        "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+      ],
+      "hunks": [
+        {
+          "start": 597,
+          "count": 14
+        }
+      ],
+      "addedLines": [
+        {
+          "line": 597,
+          "text": "if (standard) for (let index = 0; index < gl.getProgramParameter(program.native, gl.ACTIVE_UNIFORMS); index++) {",
+          "classification": "executed",
+          "minimumCount": 49,
+          "maximumCount": 348,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json",
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/retained-blend-equations/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 598,
+          "text": "const actual = gl.getActiveUniform(program.native, index);",
+          "classification": "executed",
+          "minimumCount": 348,
+          "maximumCount": 348,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 599,
+          "text": "require(actual, \"shader-reflection-error\", \"Missing active native uniform reflection.\");",
+          "classification": "executed",
+          "minimumCount": 348,
+          "maximumCount": 348,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 600,
+          "text": "const blockIndex = gl.getActiveUniforms(program.native, [index], gl.UNIFORM_BLOCK_INDEX)[0];",
+          "classification": "executed",
+          "minimumCount": 348,
+          "maximumCount": 348,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 601,
+          "text": "// The measured system block includes upstream reserved members. Its",
+          "classification": "structural/comment",
+          "minimumCount": 348,
+          "maximumCount": 348,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 602,
+          "text": "// complete native extent and owned zero-filled data were checked above.",
+          "classification": "structural/comment",
+          "minimumCount": 348,
+          "maximumCount": 348,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 603,
+          "text": "const accounted = program.blocks.some(block => block.index === blockIndex) ||",
+          "classification": "executed",
+          "minimumCount": 78,
+          "maximumCount": 348,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 604,
+          "text": "program.reflection.uniforms.some(uniform => uniform.name === actual.name &&",
+          "classification": "executed",
+          "minimumCount": 65,
+          "maximumCount": 101,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json",
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 605,
+          "text": "uniform.activeCount === actual.size && actual.type === gl.UNSIGNED_INT_VEC4) ||",
+          "classification": "executed",
+          "minimumCount": 37,
+          "maximumCount": 78,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json",
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 606,
+          "text": "program.reflection.samplers.some(sampler => sampler.name === actual.name &&",
+          "classification": "executed",
+          "minimumCount": 32,
+          "maximumCount": 93,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 607,
+          "text": "actual.size === 1 && actual.type === gl.SAMPLER_2D) ||",
+          "classification": "executed",
+          "minimumCount": 5,
+          "maximumCount": 37,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json",
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 608,
+          "text": "program.reflection.blend?.uniform === actual.name && actual.size === 1 && actual.type === gl.FLOAT_VEC4;",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 348,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 609,
+          "text": "require(accounted, \"shader-reflection-error\", `Active native uniform ${actual.name} has no checked binding metadata.`);",
+          "classification": "executed",
+          "minimumCount": 348,
+          "maximumCount": 348,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 610,
+          "text": "}",
+          "classification": "structural/comment",
+          "minimumCount": 348,
+          "maximumCount": 348,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        }
+      ],
+      "summary": {
+        "executed": 11,
+        "structural/comment": 3,
+        "executed-with-narrow-harness-waiver": 0
+      }
+    },
+    "renderer/virgl-command/tests/standard-state-binding.mjs": {
+      "sha256": "a929e1d97a42f1327708d3fc1d405a6665e25e1025bd5b5df0fea6672dfe2a73",
+      "recordings": [
+        "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json",
+        "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/fault-suffix/browser-coverage.json",
+        "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/fault-metadata/browser-coverage.json",
+        "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/cold/hardware/browser-coverage.json",
+        "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/cold/fault-suffix/browser-coverage.json",
+        "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/cold/fault-metadata/browser-coverage.json"
+      ],
+      "hunks": [
+        {
+          "start": 162,
+          "count": 1
+        },
+        {
+          "start": 288,
+          "count": 8
+        },
+        {
+          "start": 297,
+          "count": 1
+        },
+        {
+          "start": 427,
+          "count": 12
+        },
+        {
+          "start": 566,
+          "count": 38
+        }
+      ],
+      "addedLines": [
+        {
+          "line": 162,
+          "text": "if (name === \"getActiveAttrib\" || name === \"getActiveUniform\") events.push({ name, turn, label: currentLabel,",
+          "classification": "executed",
+          "minimumCount": 408,
+          "maximumCount": 274820,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 288,
+          "text": "const activeUniforms = [];",
+          "classification": "executed",
+          "minimumCount": 56,
+          "maximumCount": 56,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 289,
+          "text": "for (let index = 0; index < gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS); index++) {",
+          "classification": "executed",
+          "minimumCount": 56,
+          "maximumCount": 436,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 290,
+          "text": "const actual = gl.getActiveUniform(program, index);",
+          "classification": "executed",
+          "minimumCount": 436,
+          "maximumCount": 436,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 291,
+          "text": "activeUniforms.push({ index, name: actual.name, type: actual.type, size: actual.size,",
+          "classification": "executed",
+          "minimumCount": 436,
+          "maximumCount": 436,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 292,
+          "text": "blockIndex: gl.getActiveUniforms(program, [index], gl.UNIFORM_BLOCK_INDEX)[0] });",
+          "classification": "executed",
+          "minimumCount": 436,
+          "maximumCount": 436,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 293,
+          "text": "}",
+          "classification": "structural/comment",
+          "minimumCount": 436,
+          "maximumCount": 436,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 294,
+          "text": "const blendLocation = gl.getUniformLocation(program, \"wv_rgb_blend_factor\");",
+          "classification": "executed",
+          "minimumCount": 56,
+          "maximumCount": 56,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 295,
+          "text": "const blend = blendLocation === null ? null : { words: [...gl.getUniform(program, blendLocation)] };",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 56,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 297,
+          "text": "return { op: call.name, args: call.args, programObject: r.trace.id(program), uniforms, attributes, systemValues, samplers, activeUniforms, blend };",
+          "classification": "executed",
+          "minimumCount": 56,
+          "maximumCount": 56,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 427,
+          "text": "{",
+          "classification": "structural/comment",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 428,
+          "text": "const r = make({ delay: 2, step: 1 }), factor = [.25, .5, .75, .25], source = [.25, .5, .75, 1];",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 429,
+          "text": "const target = 1 | 7 << 4 | 8 << 9 | 1 << 17 | 17 << 22 | 15 << 27;",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 430,
+          "text": "const rec = await submit(r, 1, join(setup(r), packet(1, 1, [5, 0, 0, target, ...Array(7).fill(0)]),",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 431,
+          "text": "packet(2, 1, [5]), packet(14, 0, factor.map(word)), draw()), \"standard-owned-blend-uniform\");",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 432,
+          "text": "const saved = await frame(r, rec, colorOracle([source[0] * factor[0], source[1] * factor[1], source[2] * factor[2], 1]),",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 433,
+          "text": "{ kind: \"owned-blend\", source, factor });",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 434,
+          "text": "c.same(saved.native.blend.words, [...factor.slice(0, 3), 1], \"actual renderer-owned native blend uniform\");",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 435,
+          "text": "c.same(saved.native.activeUniforms.some(u => u.name === \"wv_rgb_blend_factor\" && u.type === gl.FLOAT_VEC4 && u.size === 1),",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 2,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 436,
+          "text": "true, \"owned blend uniform participates in complete active reflection\");",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 437,
+          "text": "done(r);",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 438,
+          "text": "}",
+          "classification": "structural/comment",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 566,
+          "text": "const omit = (stage, field) => ({ ...bridge,",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 4,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 567,
+          "text": "translate(request) {",
+          "classification": "executed",
+          "minimumCount": 8,
+          "maximumCount": 8,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 568,
+          "text": "const out = copy(bridge.translate(request));",
+          "classification": "executed",
+          "minimumCount": 8,
+          "maximumCount": 8,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 569,
+          "text": "if (request.stage === stage) out.metadata[field] = [];",
+          "classification": "executed",
+          "minimumCount": 4,
+          "maximumCount": 8,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 570,
+          "text": "return out;",
+          "classification": "executed",
+          "minimumCount": 8,
+          "maximumCount": 8,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 571,
+          "text": "},",
+          "classification": "structural/comment",
+          "minimumCount": 4,
+          "maximumCount": 8,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 572,
+          "text": "translatePair(request) {",
+          "classification": "executed",
+          "minimumCount": 4,
+          "maximumCount": 4,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 573,
+          "text": "const out = copy(bridge.translatePair(request)); out[stage].metadata[field] = []; return out;",
+          "classification": "executed",
+          "minimumCount": 4,
+          "maximumCount": 4,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 574,
+          "text": "},",
+          "classification": "structural/comment",
+          "minimumCount": 4,
+          "maximumCount": 4,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 575,
+          "text": "});",
+          "classification": "structural/comment",
+          "minimumCount": 1,
+          "maximumCount": 4,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 576,
+          "text": "report.nativeBindingRejections = [];",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 577,
+          "text": "for (const stage of [\"vertex\", \"fragment\"]) for (const field of [\"uniforms\", \"samplers\"]) {",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 4,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 578,
+          "text": "const r = rig(gl, omit(stage, field), c, { delay: 2, step: 1 }), label = `omitted-active-${stage}-${field}`;",
+          "classification": "executed",
+          "minimumCount": 4,
+          "maximumCount": 4,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 579,
+          "text": "let vertex = VS, fragment = FS, extra = new Uint8Array();",
+          "classification": "executed",
+          "minimumCount": 4,
+          "maximumCount": 4,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 580,
+          "text": "if (field === \"uniforms\" && stage === \"vertex\") vertex = tgsi(\"vertex\",",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 4,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 581,
+          "text": "\"DCL IN[0]\\nDCL OUT[0], POSITION\\nDCL CONST[0]\", [\"ADD OUT[0], IN[0], CONST[0]\"]);",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 582,
+          "text": "if (field === \"samplers\") {",
+          "classification": "executed",
+          "minimumCount": 2,
+          "maximumCount": 4,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 583,
+          "text": "const declaration = \"DCL SAMP[15]\\nDCL SVIEW[15], 2D, FLOAT\\nIMM[0] FLT32 {0.5,0.5,0,1}\";",
+          "classification": "executed",
+          "minimumCount": 2,
+          "maximumCount": 2,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 584,
+          "text": "if (stage === \"vertex\") vertex = tgsi(\"vertex\", \"DCL IN[0]\\nDCL OUT[0], POSITION\\nDCL TEMP[0]\\n\" + declaration,",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 2,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 585,
+          "text": "[\"TEX TEMP[0], IMM[0], SAMP[15], 2D\", \"ADD OUT[0], IN[0], TEMP[0]\"]);",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 586,
+          "text": "else fragment = tgsi(\"fragment\", \"DCL OUT[0], COLOR\\n\" + declaration, [\"TEX OUT[0], IMM[0], SAMP[15], 2D\"]);",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 587,
+          "text": "add(r, meta(5, 2, 67, 8, 1), new Uint8Array(4));",
+          "classification": "executed",
+          "minimumCount": 2,
+          "maximumCount": 2,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 588,
+          "text": "extra = join(transfer(5, 1), packet(1, 7, [8, 2 | 2 << 3 | 2 << 11, 0, 0, word(1), 0, 0, 0, 0]),",
+          "classification": "executed",
+          "minimumCount": 2,
+          "maximumCount": 2,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 589,
+          "text": "samplerView(6, 5, [0, 1, 2, 3]), bindSampler(stage === \"vertex\" ? 0 : 1, 6));",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 2,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 590,
+          "text": "}",
+          "classification": "structural/comment",
+          "minimumCount": 2,
+          "maximumCount": 2,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 591,
+          "text": "const rec = await submit(r, 1, join(extra, setup(r, { vertex, fragment }), draw()), label);",
+          "classification": "executed",
+          "minimumCount": 4,
+          "maximumCount": 4,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 592,
+          "text": "const name = (stage === \"vertex\" ? \"vs\" : \"fs\") + (field === \"uniforms\" ? \"const0[0]\" : \"samp15\");",
+          "classification": "executed",
+          "minimumCount": 2,
+          "maximumCount": 4,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 593,
+          "text": "report.nativeBindingRejections.push({ label, name, result: rec.result,",
+          "classification": "executed",
+          "minimumCount": 4,
+          "maximumCount": 4,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 594,
+          "text": "native: r.trace.events.filter(event => event.name === \"getActiveUniform\"),",
+          "classification": "executed",
+          "minimumCount": 4,
+          "maximumCount": 25,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 595,
+          "text": "nativeDraws: r.trace.calls.map(call => ({ name: call.name, args: call.args, turn: call.turn })) });",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 4,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/fault-metadata/browser-coverage.json",
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 596,
+          "text": "c.same(rec.result.ok, false, label + \" coherently spoofed stage/pair metadata rejects\");",
+          "classification": "executed",
+          "minimumCount": 4,
+          "maximumCount": 4,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 597,
+          "text": "c.same(rec.result.error.code, \"shader-reflection-error\", label + \" fails native completeness check\");",
+          "classification": "executed",
+          "minimumCount": 4,
+          "maximumCount": 4,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 598,
+          "text": "c.same(rec.result.error.message.includes(name), true, label + \" names missing actual native binding\");",
+          "classification": "executed",
+          "minimumCount": 4,
+          "maximumCount": 4,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 599,
+          "text": "c.same(r.trace.calls.length, 0, label + \" fails before any native draw\");",
+          "classification": "executed",
+          "minimumCount": 4,
+          "maximumCount": 4,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 600,
+          "text": "c.same(r.trace.events.some(event => event.name === \"getActiveUniform\" && event.result?.name === name), true,",
+          "classification": "executed",
+          "minimumCount": 4,
+          "maximumCount": 9,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 601,
+          "text": "label + \" records independently active native uniform\");",
+          "classification": "executed",
+          "minimumCount": 4,
+          "maximumCount": 4,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 602,
+          "text": "report.runs.push({ history: r.history, events: r.trace.events, exchanges: r.exchanges }); dispose(r);",
+          "classification": "executed",
+          "minimumCount": 4,
+          "maximumCount": 4,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 603,
+          "text": "}",
+          "classification": "structural/comment",
+          "minimumCount": 4,
+          "maximumCount": 4,
+          "citations": [
+            "target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair/hot/hardware/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        }
+      ],
+      "summary": {
+        "executed": 52,
+        "structural/comment": 8,
+        "executed-with-narrow-harness-waiver": 0
+      }
+    },
+    "renderer/virgl-command/tests/standard-state-boundaries.mjs": {
+      "sha256": "b2caf76add497ff8a690a99e4188842e250ee9aed999a745b5569cf33030132a",
+      "recordings": [
+        "evidence/virgl-standard-state/reflection-verifier/promoted-final/fault-native-binding/browser-coverage.json",
+        "evidence/virgl-standard-state/reflection-verifier/promoted-final/fault-pixel/browser-coverage.json",
+        "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+      ],
+      "hunks": [
+        {
+          "start": 97,
+          "count": 3
+        },
+        {
+          "start": 133,
+          "count": 1
+        },
+        {
+          "start": 136,
+          "count": 1
+        },
+        {
+          "start": 140,
+          "count": 2
+        },
+        {
+          "start": 149,
+          "count": 1
+        },
+        {
+          "start": 175,
+          "count": 1
+        },
+        {
+          "start": 186,
+          "count": 76
+        }
+      ],
+      "addedLines": [
+        {
+          "line": 97,
+          "text": "if(name==='getActiveUniform')events.push({name,label,turn,index:args[1],result:result?{name:result.name,type:result.type,size:result.size}:null});",
+          "classification": "executed-with-narrow-harness-waiver",
+          "minimumCount": 0,
+          "maximumCount": 154365,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": [
+            {
+              "start": 10179,
+              "end": 10184,
+              "text": ":null"
+            }
+          ],
+          "waiverKind": "trusted-native-diagnostic",
+          "waiver": "Only the trace formatter null arm is unhit. All recorded calls query live owned programs at valid ACTIVE_UNIFORMS indices; actual nonnull native entries are recorded and the renderer handles its own missing-reflection error. The formatter does not control native admission."
+        },
+        {
+          "line": 98,
+          "text": "if(name==='getActiveUniforms')events.push({name,label,turn,indices:[...args[1]],parameter:args[2],result:[...result]});",
+          "classification": "executed",
+          "minimumCount": 282,
+          "maximumCount": 154365,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 99,
+          "text": "if(name==='shaderSource')events.push({name,label,turn,type:gl.getShaderParameter(args[0],gl.SHADER_TYPE),source:args[1]});",
+          "classification": "executed",
+          "minimumCount": 53,
+          "maximumCount": 154365,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 133,
+          "text": "const program=gl.getParameter(gl.CURRENT_PROGRAM),uniforms=[],samplers=[],activeUniforms=[];assert(program,'critic actual program');",
+          "classification": "executed",
+          "minimumCount": 23,
+          "maximumCount": 23,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/fault-native-binding/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 136,
+          "text": "activeUniforms.push({index:i,name:a.name,type:a.type,size:a.size,blockIndex:gl.getActiveUniforms(program,[i],gl.UNIFORM_BLOCK_INDEX)[0]});",
+          "classification": "executed",
+          "minimumCount": 262,
+          "maximumCount": 262,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/fault-native-binding/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 140,
+          "text": "const sources=gl.getAttachedShaders(program).map(shader=>({type:gl.getShaderParameter(shader,gl.SHADER_TYPE),source:gl.getShaderSource(shader)}));",
+          "classification": "executed",
+          "minimumCount": 23,
+          "maximumCount": 46,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/fault-native-binding/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 141,
+          "text": "gl.activeTexture(gl.TEXTURE0);return {uniforms,samplers,activeUniforms,sources};",
+          "classification": "executed",
+          "minimumCount": 23,
+          "maximumCount": 23,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/fault-native-binding/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 149,
+          "text": "const ownedRun={seed,delay:schedule?7:3,step:schedule?4:3,frames:r.frames,history:r.history,exchanges:r.exchanges,events:r.t.events};report.runs.push(ownedRun);",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 2,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/fault-native-binding/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 175,
+          "text": "ownedRun.inspection=info;finish(r);",
+          "classification": "executed",
+          "minimumCount": 2,
+          "maximumCount": 2,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/fault-native-binding/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 186,
+          "text": "",
+          "classification": "structural/comment",
+          "minimumCount": 0,
+          "maximumCount": 0,
+          "citations": [],
+          "unhitRanges": []
+        },
+        {
+          "line": 187,
+          "text": "// Original independently selected shader, four real images and literal raw banks",
+          "classification": "structural/comment",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/fault-native-binding/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 188,
+          "text": "// reproduce F1/F2. The unknown default-block scalar is a fresh completeness attack;",
+          "classification": "structural/comment",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/fault-native-binding/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 189,
+          "text": "// an unused declaration has the same metadata and must be admitted when pruned.",
+          "classification": "structural/comment",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/fault-native-binding/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 190,
+          "text": "export async function runNativeBindingAttacks(plans){",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/fault-native-binding/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 191,
+          "text": "const gl=document.querySelector('canvas').getContext('webgl2'),original=await createVirglStandardShaderBridge(),spec=plans[0].specimen;",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/fault-native-binding/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 192,
+          "text": "const report={schema:1,status:'running',sourceSeed:spec.seed,cases:[]};window.__criticStandardBindings=report;",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/fault-native-binding/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 193,
+          "text": "const unknown='wv_critic_unaccounted';",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/fault-native-binding/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 194,
+          "text": "const inject=(out,active)=>{",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 8,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/fault-native-binding/browser-coverage.json",
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 195,
+          "text": "const main=/\\bvoid\\s+main\\s*\\(\\s*(?:void)?\\s*\\)/g;",
+          "classification": "executed",
+          "minimumCount": 8,
+          "maximumCount": 8,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 196,
+          "text": "same([...out.glsl.matchAll(main)].length,1,'critic one actual compiler main');",
+          "classification": "executed",
+          "minimumCount": 8,
+          "maximumCount": 8,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 197,
+          "text": "const at=out.glsl.indexOf('\\nvoid main(');assert(at>=0,'critic original main insertion point');",
+          "classification": "executed",
+          "minimumCount": 8,
+          "maximumCount": 8,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 198,
+          "text": "out.glsl=out.glsl.slice(0,at)+'\\nuniform highp float '+unknown+';\\n'+out.glsl.slice(at);",
+          "classification": "executed",
+          "minimumCount": 8,
+          "maximumCount": 8,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 199,
+          "text": "if(active){",
+          "classification": "executed",
+          "minimumCount": 4,
+          "maximumCount": 8,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 200,
+          "text": "const end=out.glsl.lastIndexOf('\\n}');same(out.glsl.slice(end).trim(),'}','critic actual compiler main ends source');",
+          "classification": "executed",
+          "minimumCount": 4,
+          "maximumCount": 4,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 201,
+          "text": "out.glsl=out.glsl.slice(0,end)+'\\nfsout_c0.r+='+unknown+';'+out.glsl.slice(end);",
+          "classification": "executed",
+          "minimumCount": 4,
+          "maximumCount": 4,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 202,
+          "text": "}",
+          "classification": "structural/comment",
+          "minimumCount": 4,
+          "maximumCount": 4,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 203,
+          "text": "return out;",
+          "classification": "executed",
+          "minimumCount": 8,
+          "maximumCount": 8,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 204,
+          "text": "};",
+          "classification": "structural/comment",
+          "minimumCount": 1,
+          "maximumCount": 8,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/fault-native-binding/browser-coverage.json",
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 205,
+          "text": "const cases=[",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/fault-native-binding/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 206,
+          "text": "{label:'fragment-uniforms',stage:'fragment',field:'uniforms',names:['fsconst0[0]']},",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/fault-native-binding/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 207,
+          "text": "{label:'fragment-samplers',stage:'fragment',field:'samplers',names:['fssamp2','fssamp15']},",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/fault-native-binding/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 208,
+          "text": "{label:'vertex-uniforms',stage:'vertex',field:'uniforms',names:['vsconst0[0]']},",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/fault-native-binding/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 209,
+          "text": "{label:'vertex-samplers',stage:'vertex',field:'samplers',names:['vssamp3','vssamp15']},",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/fault-native-binding/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 210,
+          "text": "{label:'unknown-active-default-block',stage:'fragment',unknown:true,active:true,names:[unknown]},",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/fault-native-binding/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 211,
+          "text": "{label:'unknown-eliminated-default-block',stage:'fragment',unknown:true,active:false,names:[unknown]},",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/fault-native-binding/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 212,
+          "text": "];",
+          "classification": "structural/comment",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/fault-native-binding/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 213,
+          "text": "for(const test of cases){",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 6,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/fault-native-binding/browser-coverage.json",
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 214,
+          "text": "const change=out=>{if(test.unknown)return inject(out,test.active);out.metadata[test.field]=[];return out;};",
+          "classification": "executed",
+          "minimumCount": 6,
+          "maximumCount": 24,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 215,
+          "text": "const compiler={...original,",
+          "classification": "executed",
+          "minimumCount": 6,
+          "maximumCount": 6,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 216,
+          "text": "translate(request){const out=cp(original.translate(request));return request.stage===test.stage?change(out):out;},",
+          "classification": "executed",
+          "minimumCount": 6,
+          "maximumCount": 18,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 217,
+          "text": "translatePair(request){const out=cp(original.translatePair(request));if(out.ok)out[test.stage]=change(out[test.stage]);return out;},",
+          "classification": "executed",
+          "minimumCount": 6,
+          "maximumCount": 12,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 218,
+          "text": "};",
+          "classification": "structural/comment",
+          "minimumCount": 6,
+          "maximumCount": 6,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 219,
+          "text": "const stage=compiler.translate({stage:test.stage,text:spec[test.stage]}),pair=compiler.translatePair({vertexText:spec.vertex,fragmentText:spec.fragment});",
+          "classification": "executed",
+          "minimumCount": 6,
+          "maximumCount": 6,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 220,
+          "text": "if(test.stage==='fragment'){",
+          "classification": "executed",
+          "minimumCount": 4,
+          "maximumCount": 6,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 221,
+          "text": "same(stage.glsl,pair.fragment.glsl,'critic coherent stage/pair actual fragment GLSL');",
+          "classification": "executed",
+          "minimumCount": 4,
+          "maximumCount": 4,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 222,
+          "text": "same(stage.metadata,pair.fragment.metadata,'critic coherent stage/pair fragment metadata');",
+          "classification": "executed",
+          "minimumCount": 4,
+          "maximumCount": 4,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 223,
+          "text": "}else{",
+          "classification": "executed",
+          "minimumCount": 2,
+          "maximumCount": 4,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 224,
+          "text": "// The legitimate pair changes VS interpolation from the FS flat declaration.",
+          "classification": "structural/comment",
+          "minimumCount": 2,
+          "maximumCount": 2,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 225,
+          "text": "// Omit only the same binding field in each actual compiler result.",
+          "classification": "structural/comment",
+          "minimumCount": 2,
+          "maximumCount": 2,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 226,
+          "text": "same(stage.glsl,original.translate({stage:'vertex',text:spec.vertex}).glsl,'critic unchanged actual stage VS');",
+          "classification": "executed",
+          "minimumCount": 2,
+          "maximumCount": 2,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 227,
+          "text": "same(pair.vertex.glsl,original.translatePair({vertexText:spec.vertex,fragmentText:spec.fragment}).vertex.glsl,'critic unchanged actual paired VS');",
+          "classification": "executed",
+          "minimumCount": 2,
+          "maximumCount": 2,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 228,
+          "text": "same(stage.metadata[test.field],[],'critic stage VS coherent field omission');",
+          "classification": "executed",
+          "minimumCount": 2,
+          "maximumCount": 2,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 229,
+          "text": "same(pair.vertex.metadata[test.field],[],'critic paired VS coherent field omission');",
+          "classification": "executed",
+          "minimumCount": 2,
+          "maximumCount": 2,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 230,
+          "text": "}",
+          "classification": "structural/comment",
+          "minimumCount": 2,
+          "maximumCount": 2,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 231,
+          "text": "const r=rig(gl,compiler,2,3);for(let i=0;i<4;i++)r.add(meta(5+i,2,67,8,2,2),new Uint8Array(spec.images[i]));",
+          "classification": "executed",
+          "minimumCount": 6,
+          "maximumCount": 24,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 232,
+          "text": "const rec=await submit(r,1,join(setup(spec),draw(),transfer(1,8,8,2)),'critic-binding-'+test.label);",
+          "classification": "executed",
+          "minimumCount": 6,
+          "maximumCount": 6,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 233,
+          "text": "const draws=r.t.events.filter(event=>event.name==='drawArrays'||event.name==='drawElements');",
+          "classification": "executed",
+          "minimumCount": 6,
+          "maximumCount": 177,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 234,
+          "text": "const active=r.t.events.filter(event=>event.name==='getActiveUniform'&&event.result&&test.names.includes(event.result.name));",
+          "classification": "executed",
+          "minimumCount": 6,
+          "maximumCount": 177,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 235,
+          "text": "const row={label:test.label,names:test.names,prediction:{ok:test.active===false,nativeDraws:test.active===false?1:0},",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 6,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 236,
+          "text": "result:rec.result,nativeDraws:draws,activeNative:active,history:r.history,events:r.t.events,",
+          "classification": "executed",
+          "minimumCount": 6,
+          "maximumCount": 6,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 237,
+          "text": "output:rec.output,native:draws.length?native(gl,r):null,compilerStage:stage,compilerPair:pair};",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 6,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/fault-native-binding/browser-coverage.json",
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 238,
+          "text": "report.cases.push(row);",
+          "classification": "executed",
+          "minimumCount": 6,
+          "maximumCount": 6,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 239,
+          "text": "if(test.active===false){",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 6,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 240,
+          "text": "ok(rec.result,'critic eliminated declaration draw');same(rec.result.gpuComplete,true,'critic eliminated declaration final fence');",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 241,
+          "text": "same(draws.length,1,'critic eliminated declaration real draw');",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 242,
+          "text": "same(row.native.activeUniforms.filter(entry=>entry.name===unknown),[],'critic native unknown declaration actually eliminated');",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 12,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 243,
+          "text": "same(rec.output?.length,256,'critic eliminated declaration full output');",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 244,
+          "text": "const wanted=plans[0].frames[0][1],mismatches=[];",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 245,
+          "text": "for(let at=0;at<rec.output.length;at++)if(Math.abs(rec.output[at]-wanted[at%4])>1)mismatches.push({at,observed:rec.output[at],expected:wanted[at%4]});",
+          "classification": "executed-with-narrow-harness-waiver",
+          "minimumCount": 0,
+          "maximumCount": 256,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": [
+            {
+              "start": 25782,
+              "end": 25850,
+              "text": "mismatches.push({at,observed:rec.output[at],expected:wanted[at%4]});"
+            }
+          ],
+          "waiverKind": "failure-only-diagnostic",
+          "waiver": "Only mismatch collection for the correctly eliminated declaration is unhit. All 256 byte comparisons execute, and the independent offline auditor rechecks every byte. The real VS-view sabotage exercises the shared independent pixel rejection and saves the real draw/fence/output; diagnostic collection here carries no separate runtime behavior."
+        },
+        {
+          "line": 246,
+          "text": "row.expected=wanted;row.mismatches=mismatches;same(mismatches,[],'critic eliminated declaration independent pixel oracle');",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 247,
+          "text": "}else{",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 5,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 248,
+          "text": "same(rec.result.ok,false,'critic-binding-'+test.label+' coherent active metadata rejects before draw');",
+          "classification": "executed",
+          "minimumCount": 5,
+          "maximumCount": 5,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 249,
+          "text": "same(rec.result.error.code,'shader-reflection-error','critic native completeness error');",
+          "classification": "executed",
+          "minimumCount": 5,
+          "maximumCount": 5,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 250,
+          "text": "assert(test.names.some(name=>rec.result.error.message.includes(name)),'critic native completeness names actual missing binding');",
+          "classification": "executed",
+          "minimumCount": 5,
+          "maximumCount": 5,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 251,
+          "text": "same(draws.length,0,'critic incomplete bindings execute zero native draws');",
+          "classification": "executed",
+          "minimumCount": 5,
+          "maximumCount": 5,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 252,
+          "text": "assert(active.length>0,'critic missing default-block entry is genuinely active natively');",
+          "classification": "executed",
+          "minimumCount": 5,
+          "maximumCount": 5,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 253,
+          "text": "for(const event of active){",
+          "classification": "executed",
+          "minimumCount": 5,
+          "maximumCount": 5,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 254,
+          "text": "const block=r.t.events.find(next=>next.name==='getActiveUniforms'&&next.parameter===gl.UNIFORM_BLOCK_INDEX&&next.indices[0]===event.index&&next.turn===event.turn);",
+          "classification": "executed",
+          "minimumCount": 5,
+          "maximumCount": 105,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 255,
+          "text": "assert(block&&block.result[0]===-1,'critic omitted active native entry is in default block');",
+          "classification": "executed",
+          "minimumCount": 5,
+          "maximumCount": 5,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 256,
+          "text": "}",
+          "classification": "structural/comment",
+          "minimumCount": 5,
+          "maximumCount": 5,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 257,
+          "text": "}",
+          "classification": "structural/comment",
+          "minimumCount": 5,
+          "maximumCount": 5,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 258,
+          "text": "same(gl.getError(),gl.NO_ERROR,'critic binding no native GL error');row.held=true;finish(r);",
+          "classification": "executed",
+          "minimumCount": 6,
+          "maximumCount": 6,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 259,
+          "text": "}",
+          "classification": "structural/comment",
+          "minimumCount": 6,
+          "maximumCount": 6,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 260,
+          "text": "report.status='passed';return report;",
+          "classification": "executed",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/normal/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        },
+        {
+          "line": 261,
+          "text": "}",
+          "classification": "structural/comment",
+          "minimumCount": 1,
+          "maximumCount": 1,
+          "citations": [
+            "evidence/virgl-standard-state/reflection-verifier/promoted-final/fault-native-binding/browser-coverage.json"
+          ],
+          "unhitRanges": []
+        }
+      ],
+      "summary": {
+        "executed": 68,
+        "structural/comment": 15,
+        "executed-with-narrow-harness-waiver": 2
+      }
+    }
+  },
+  "status": "coverage-accounted",
+  "carryForward": {
+    "record": "evidence/virgl-standard-state/verifier/recording.tar.gz:coverage-audit.json",
+    "sha256": "abf2418a38d40fc68ee7b26f36a12aff2a8f6f6b5d73cfd86afbba97c92dc9e5",
+    "sourceHead": "365b3cf3d076637c347c7e9802420f847d09fbed",
+    "summary": {
+      "renderer/virgl-command/constant-domain.mjs": {
+        "addedLines": 180,
+        "hunks": 1,
+        "executed": 149,
+        "executedWithNarrowWaiver": 4,
+        "syntaxWaived": 27
+      },
+      "renderer/virgl-command/decoder.mjs": {
+        "addedLines": 18,
+        "hunks": 9,
+        "executed": 14,
+        "executedWithNarrowWaiver": 0,
+        "syntaxWaived": 4
+      },
+      "renderer/virgl-command/state.mjs": {
+        "addedLines": 70,
+        "hunks": 35,
+        "executed": 62,
+        "executedWithNarrowWaiver": 3,
+        "syntaxWaived": 5
+      }
+    },
+    "waivers": [
+      {
+        "path": "renderer/virgl-command/constant-domain.mjs",
+        "line": 916,
+        "ranges": [
+          {
+            "start": 69071,
+            "end": 69076,
+            "text": "throw"
+          },
+          {
+            "start": 69077,
+            "end": 69083,
+            "text": "error;"
+          }
+        ],
+        "reason": "Only the unexpected non-DomainFault defect rethrow is unhit. All descriptor/proxy/domain failures enter the recorded structured DomainFault path. This branch preserves unexpected implementation errors and is outside the guest metadata behavior; do not monkeypatch trusted JavaScript intrinsics to manufacture a defect."
+      },
+      {
+        "path": "renderer/virgl-command/constant-domain.mjs",
+        "line": 927,
+        "ranges": [
+          {
+            "start": 69716,
+            "end": 69721,
+            "text": "throw"
+          },
+          {
+            "start": 69722,
+            "end": 69728,
+            "text": "error;"
+          }
+        ],
+        "reason": "Only the unexpected non-DomainFault defect rethrow is unhit. All descriptor/proxy/domain failures enter the recorded structured DomainFault path. This branch preserves unexpected implementation errors and is outside the guest metadata behavior; do not monkeypatch trusted JavaScript intrinsics to manufacture a defect."
+      },
+      {
+        "path": "renderer/virgl-command/constant-domain.mjs",
+        "line": 940,
+        "ranges": [
+          {
+            "start": 70612,
+            "end": 70617,
+            "text": "throw"
+          },
+          {
+            "start": 70618,
+            "end": 70624,
+            "text": "error;"
+          }
+        ],
+        "reason": "Only the unexpected non-DomainFault defect rethrow is unhit. All descriptor/proxy/domain failures enter the recorded structured DomainFault path. This branch preserves unexpected implementation errors and is outside the guest metadata behavior; do not monkeypatch trusted JavaScript intrinsics to manufacture a defect."
+      },
+      {
+        "path": "renderer/virgl-command/constant-domain.mjs",
+        "line": 945,
+        "ranges": [
+          {
+            "start": 70951,
+            "end": 70956,
+            "text": "throw"
+          },
+          {
+            "start": 70957,
+            "end": 70963,
+            "text": "error;"
+          }
+        ],
+        "reason": "Only the unexpected non-DomainFault defect rethrow is unhit. All descriptor/proxy/domain failures enter the recorded structured DomainFault path. This branch preserves unexpected implementation errors and is outside the guest metadata behavior; do not monkeypatch trusted JavaScript intrinsics to manufacture a defect."
+      },
+      {
+        "path": "renderer/virgl-command/state.mjs",
+        "line": 516,
+        "ranges": [
+          {
+            "start": 38188,
+            "end": 38189,
+            "text": "?"
+          },
+          {
+            "start": 38190,
+            "end": 38193,
+            "text": "128"
+          }
+        ],
+        "reason": "The unhit 128-vector ternary arm is the unchanged legacy VS-v6 cap. The new standard 512 arm and legacy 46 arm execute; preserved old-domain contracts and unchanged legacy expression carry their prior proof, with nine exact-head affected renderer regressions passing."
+      },
+      {
+        "path": "renderer/virgl-command/state.mjs",
+        "line": 545,
+        "ranges": [
+          {
+            "start": 40839,
+            "end": 40840,
+            "text": ":"
+          },
+          {
+            "start": 40841,
+            "end": 40845,
+            "text": "null"
+          }
+        ],
+        "reason": "The unhit null arm is the unchanged old-facet VS sampler view fallback. The new standard both-stage lookup executes with native VS3/15 and FS2/15. Old factories still use the original FS-only view branch and their retained regressions pass."
+      },
+      {
+        "path": "renderer/virgl-command/state.mjs",
+        "line": 547,
+        "ranges": [
+          {
+            "start": 41011,
+            "end": 41013,
+            "text": "||"
+          },
+          {
+            "start": 41014,
+            "end": 41022,
+            "text": "constant"
+          }
+        ],
+        "reason": "The unhit constant arm is the unchanged old-facet all-constant-only sampler elimination predicate. Standard reflection permissiveness executes with pruned native VS/FS15; the original exact sampler predicate is preserved and carried."
+      }
+    ],
+    "stateLineMapping": "original <=596 unchanged; original >=597 maps to +14"
+  },
+  "rawAuditSha256": "bca8b2c40067bc175f2c7db39361cd840263754fb1d454d4c83670945224ebec",
+  "newRuntimeWaivers": [],
+  "newHarnessWaivers": [
+    {
+      "file": "renderer/virgl-command/tests/standard-state-boundaries.mjs",
+      "line": 97,
+      "kind": "trusted-native-diagnostic",
+      "reason": "Only the trace formatter null arm is unhit. All recorded calls query live owned programs at valid ACTIVE_UNIFORMS indices; actual nonnull native entries are recorded and the renderer handles its own missing-reflection error. The formatter does not control native admission."
+    },
+    {
+      "file": "renderer/virgl-command/tests/standard-state-boundaries.mjs",
+      "line": 245,
+      "kind": "failure-only-diagnostic",
+      "reason": "Only mismatch collection for the correctly eliminated declaration is unhit. All 256 byte comparisons execute, and the independent offline auditor rechecks every byte. The real VS-view sabotage exercises the shared independent pixel rejection and saves the real draw/fence/output; diagnostic collection here carries no separate runtime behavior."
+    }
+  ],
+  "proofToolLedger": [
+    {
+      "path": "renderer/virgl-command/standard-state-README.md",
+      "classification": "declarative",
+      "reason": "Documents the admitted factory/accounting scope and two physical mutations; no executable behavior."
+    },
+    {
+      "path": "tools/verify-virgl-standard-state.mjs",
+      "classification": "executed",
+      "points": [
+        "worker hot/cold wire/report.json",
+        "worker hot/cold hardware/report.json",
+        "worker hot/cold fault-suffix/report.json:mutation",
+        "worker hot/cold fault-metadata/report.json:mutation"
+      ],
+      "reason": "Both added mutation-selection paths produce authenticated actual served bytes and physical named failures; source closure is checked independently."
+    },
+    {
+      "path": "tools/verify-virgl-standard-state.sh",
+      "classification": "executed",
+      "points": [
+        "worker hot/acceptance.log",
+        "worker cold/acceptance.log",
+        "worker hot/receipt.json",
+        "worker cold/receipt.json"
+      ],
+      "reason": "New negative metadata command runs, exits 1 after a completed native draw, and the closed full command sequence produces passed exact-head receipts."
+    },
+    {
+      "path": "tools/virgl-command/standard-state-pixels.mjs",
+      "classification": "executed",
+      "points": [
+        "worker hot/physical-audit.json:frames[34]",
+        "worker cold/physical-audit.json:frames[34]",
+        "recording-audit.json:recordings.*.addedBlend"
+      ],
+      "reason": "The added blend wire reconstruction and owned factor equation are exercised twice and independently recomputed from literal packets/full pixels by this critic."
+    },
+    {
+      "path": "tools/virgl-command/standard-state-receipt.py",
+      "classification": "executed",
+      "points": [
+        "worker hot/receipt.json",
+        "worker cold/receipt.json",
+        "authentication.json",
+        "recording-audit.json"
+      ],
+      "reason": "Repaired receipts attest four genuine native omissions and actual metadata sabotage at this exact source closure; the critic separately authenticates all referenced original records and physical facts."
+    },
+    {
+      "path": "tools/verify-virgl-standard-state-adversarial.mjs",
+      "classification": "executed",
+      "points": [
+        "promoted-final/normal/report.json",
+        "promoted-final/fault-native-binding/report.json",
+        "promoted-final/fault-pixel/report.json"
+      ],
+      "reason": "Reanchored runtime/binary custody, six native-binding calls, both real source mutations and failure captures execute in the final promoted recording. No runtime source was edited."
+    },
+    {
+      "path": "tools/virgl-command/standard-state-adversarial-audit.py",
+      "classification": "executed",
+      "points": [
+        "promoted-final/adversarial-audit.json",
+        "promoted-final/acceptance.log"
+      ],
+      "reason": "Checks all 1472 physical pixels, native types/default-block indices, source custody, real draw/fences and both named sensitivity failures. need/assert failure reporting is diagnostic guard code, not a product branch."
+    },
+    {
+      "path": "tools/verify-virgl-standard-state-adversarial.sh",
+      "classification": "executed-with-narrow-declarative-waivers",
+      "points": [
+        "promoted-final/acceptance.log"
+      ],
+      "reason": "Normal/negative commands and audit execute through make. Optional missing-dependency setup delegates to unchanged, cold-proven npm/compiler tooling. The two unexpected-success error messages are defensive diagnostic paths."
+    },
+    {
+      "path": "Makefile:verify-E6-T11d5-adversarial",
+      "classification": "executed",
+      "points": [
+        "promoted-final/acceptance.log"
+      ],
+      "reason": "Invoked the exact new target; phony declaration is declarative."
+    }
+  ]
+}

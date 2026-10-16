@@ -1,0 +1,8 @@
+{
+  "runtimeUnchanged": true,
+  "sources": {
+    "crates/core/src/lib.rs": "a9e986ad45b5e6ad1ec57c46b6c5a685e6f7bc3012150f671709d2adda4da170",
+    "crates/core/src/dev/virtio/gpu/mod.rs": "e364f506b65cc719f5e644bbca5e1dd6de067ff6c59bd471705ce76cf37445fb",
+    "crates/core/src/dev/virtio/gpu/control3d.rs": "b42298c47f567ec990a7b54a3ab1a9b2dc09cf75261364e12f500428bf6aefa9"
+  }
+}

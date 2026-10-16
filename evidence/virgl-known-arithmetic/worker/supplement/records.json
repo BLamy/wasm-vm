@@ -1,0 +1,218 @@
+{
+  "schema": "virgl-known-arithmetic-supplement-records-v1",
+  "task": "E6-T12g6m1",
+  "harnessHead": "5353cf8591a94dbd962f92ee69b488ff18b8ebf0",
+  "runtimeHead": "cba5ae02ba16dc15b7b51d5dcdd808f88fcaf1ee",
+  "records": [
+    {
+      "path": "checks.log",
+      "bytes": 2448,
+      "sha256": "5b43d36d6857d1138687183000118abce668edfde20cfc878205d295a5caf7cf"
+    },
+    {
+      "path": "cold/cases.bin",
+      "bytes": 1735,
+      "sha256": "3dd5e097b8759cf87673e7817f61fc33837a8d780d3704b08ead3d73c81c6a2b"
+    },
+    {
+      "path": "cold/consumer.json",
+      "bytes": 17364,
+      "sha256": "d6aa34f70ac26749825bdf5cf7d1d9db8d1178c91d68e8b99c8284e0b7eea072"
+    },
+    {
+      "path": "cold/consumer.log",
+      "bytes": 74,
+      "sha256": "58fdd5512e9551018cfa720de78d69b099170d133667422bd53f696ed7bcd003"
+    },
+    {
+      "path": "cold/consumer.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "cold/coverage.json",
+      "bytes": 14729609,
+      "sha256": "bc2f61ab1d6a4889b48d36854d6b2810f1c39a68480516775a705eb377768ac9"
+    },
+    {
+      "path": "cold/native.json",
+      "bytes": 46629,
+      "sha256": "664fb157ee447502f87b7016e64cc45072c0a35e9bff3756ec6d19610fdcc7fc"
+    },
+    {
+      "path": "cold/native.log",
+      "bytes": 32535,
+      "sha256": "14611f7ef3444a83287104b31a2ac96dfd791186ce715ffbe11c986a77061781"
+    },
+    {
+      "path": "cold/native.profdata",
+      "bytes": 61032,
+      "sha256": "e1b22983ce2dba1f0bcc1f7127f31ac87696a57275cef9e641e6ebc80311d9d9"
+    },
+    {
+      "path": "cold/native.profraw",
+      "bytes": 105296,
+      "sha256": "a6f7c442a18d58c1ed19e8af50e00d275e152e69c7f16496a312c28e79dbb3e2"
+    },
+    {
+      "path": "cold/native.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "cold/node-v8/coverage-58192-1791175022854-0.json",
+      "bytes": 239708,
+      "sha256": "1c12a450790aa37e8bfb0f66ce177220134fe8b3b8320843ba3e41d618b7e6f5"
+    },
+    {
+      "path": "cold/original/known-test",
+      "bytes": 3519896,
+      "sha256": "c4eeae93534814d9ccc1f2beded36781275946da8fb97dba0499a662150d74f2"
+    },
+    {
+      "path": "cold/original/virgl-shader.mjs",
+      "bytes": 9285,
+      "sha256": "45dccef6ff61f9f01a63b86b40eb6c621fa442e39cbf04bbbb79446e5b372e65"
+    },
+    {
+      "path": "cold/original/virgl-shader.wasm",
+      "bytes": 339292,
+      "sha256": "5bc734aa578cd384e77cef975a0866fa10d1a568adb96a5f8a51916522eca21a"
+    },
+    {
+      "path": "cold/predictions.json",
+      "bytes": 3146,
+      "sha256": "f1a39129b47ef7f81e40292ccea68415b5c4a8eabe28270bcf8c37e92ef61c6b"
+    },
+    {
+      "path": "cold/report.json",
+      "bytes": 6676,
+      "sha256": "d9dfbc43167247bf0bea21839aca7fec4eb19677f058aa3b5934f23bee33b637"
+    },
+    {
+      "path": "cold/wasm.json",
+      "bytes": 43742,
+      "sha256": "9cab24f2caf66276c3b6492825bb2579f45a2c159db89a240072b6deff31fd1f"
+    },
+    {
+      "path": "commands.json",
+      "bytes": 3611,
+      "sha256": "9cbd687ebb215d61595ee1b0fbfe9d5d1d5b8105d8a4b3f5986cdd2761d43a8c"
+    },
+    {
+      "path": "hot/cases.bin",
+      "bytes": 1735,
+      "sha256": "3dd5e097b8759cf87673e7817f61fc33837a8d780d3704b08ead3d73c81c6a2b"
+    },
+    {
+      "path": "hot/consumer.json",
+      "bytes": 17364,
+      "sha256": "d6aa34f70ac26749825bdf5cf7d1d9db8d1178c91d68e8b99c8284e0b7eea072"
+    },
+    {
+      "path": "hot/consumer.log",
+      "bytes": 74,
+      "sha256": "58fdd5512e9551018cfa720de78d69b099170d133667422bd53f696ed7bcd003"
+    },
+    {
+      "path": "hot/consumer.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "hot/coverage.json",
+      "bytes": 13025641,
+      "sha256": "127dff137e25281d7f4095a67b13f1ada4f3988e1982ff96c4e045ac872b2c62"
+    },
+    {
+      "path": "hot/native.json",
+      "bytes": 46629,
+      "sha256": "664fb157ee447502f87b7016e64cc45072c0a35e9bff3756ec6d19610fdcc7fc"
+    },
+    {
+      "path": "hot/native.log",
+      "bytes": 32535,
+      "sha256": "14611f7ef3444a83287104b31a2ac96dfd791186ce715ffbe11c986a77061781"
+    },
+    {
+      "path": "hot/native.profdata",
+      "bytes": 61032,
+      "sha256": "e1b22983ce2dba1f0bcc1f7127f31ac87696a57275cef9e641e6ebc80311d9d9"
+    },
+    {
+      "path": "hot/native.profraw",
+      "bytes": 105296,
+      "sha256": "742dc360841c2cd650dae8d8bce2054577aaa5ad03d040d0830ca94b8a022c06"
+    },
+    {
+      "path": "hot/native.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "hot/node-v8/coverage-58172-1791175022335-0.json",
+      "bytes": 239708,
+      "sha256": "0e58b31014ad0e4d9e6f5eba9be796fd45a3b1a8bff52d1adb014089f481b6d4"
+    },
+    {
+      "path": "hot/original/known-test",
+      "bytes": 3518888,
+      "sha256": "28bbf65f360d93c674ec2b035d871136e958d42be6f00261820d5f922df606da"
+    },
+    {
+      "path": "hot/original/virgl-shader.mjs",
+      "bytes": 9285,
+      "sha256": "45dccef6ff61f9f01a63b86b40eb6c621fa442e39cbf04bbbb79446e5b372e65"
+    },
+    {
+      "path": "hot/original/virgl-shader.wasm",
+      "bytes": 339292,
+      "sha256": "5bc734aa578cd384e77cef975a0866fa10d1a568adb96a5f8a51916522eca21a"
+    },
+    {
+      "path": "hot/predictions.json",
+      "bytes": 3146,
+      "sha256": "f1a39129b47ef7f81e40292ccea68415b5c4a8eabe28270bcf8c37e92ef61c6b"
+    },
+    {
+      "path": "hot/report.json",
+      "bytes": 6384,
+      "sha256": "ea34a8367f772d027bbb853d30470c432259872ecca1f12d07f43ab2e77bb3af"
+    },
+    {
+      "path": "hot/wasm.json",
+      "bytes": 43742,
+      "sha256": "9cab24f2caf66276c3b6492825bb2579f45a2c159db89a240072b6deff31fd1f"
+    },
+    {
+      "path": "source/tools/verify-virgl-known-arithmetic.sh",
+      "bytes": 2214,
+      "sha256": "37edd36da9b522f979982788f49ab783ead9f8dc94318209d72a3fb7b879f730"
+    },
+    {
+      "path": "source/tools/virgl-known-arithmetic/README.md",
+      "bytes": 2692,
+      "sha256": "faa9972b1c382cc26e76bc0eeeb346420587a5bbc83400d1580d6014f5e52475"
+    },
+    {
+      "path": "source/tools/virgl-known-arithmetic/receipt.py",
+      "bytes": 7367,
+      "sha256": "ad756ed8daba65c6d04b1ef022e9d9d08f5dc30637002aa5d9722049eaf6b4ff"
+    },
+    {
+      "path": "source/tools/virgl-known-arithmetic/supplement-cases.json",
+      "bytes": 3146,
+      "sha256": "f1a39129b47ef7f81e40292ccea68415b5c4a8eabe28270bcf8c37e92ef61c6b"
+    },
+    {
+      "path": "source/tools/virgl-known-arithmetic/supplement-seal.py",
+      "bytes": 7467,
+      "sha256": "6d04dac8d99a48db6130406c6a46aca31680f621a68a6be4ce4091b343b4f4e8"
+    },
+    {
+      "path": "source/tools/virgl-known-arithmetic/supplement.mjs",
+      "bytes": 12123,
+      "sha256": "f2ede860a49ba55f1529b758417b7a78a983f0637aa0c150cb62d0fed0120360"
+    }
+  ]
+}

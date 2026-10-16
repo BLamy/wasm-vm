@@ -1,0 +1,107 @@
+{
+  "schema": "fresh-instanced-stencil-predictions-v1",
+  "task": "E6-T11d47",
+  "role": "fresh-independent-verifier",
+  "preparedAt": "2026-10-12T01:30:20.711870+00:00",
+  "sourceHead": "3cbb041b43928701026b5ca2ddfb3dcf9a799c2b",
+  "submissionHead": "d88235ea7d16b2475ff9d6c7d96cc361d5589c3e",
+  "concreteWorkerEvidenceInspected": false,
+  "predictions": [
+    {
+      "id": "P01",
+      "boundary": "Full custody",
+      "prediction": "Before opening logical records, the worker manifest/index/archive must match all three claimed digests, contain exactly 41944 unique indexed file or prior-physical-hardlink members, and every member body must match its byte count and SHA256. All four D45/D46 published predecessor seals must reopen all 97179 members and be byte-identical at a19b4944.",
+      "result": "PENDING"
+    },
+    {
+      "id": "P02",
+      "boundary": "Exact predecessor refusals",
+      "prediction": "The original new-profile vertex, fragment and pair are compiler-ok but the predecessor multiple-color parser rejects all three, while old-profile results are admitted. Actual ordered-consumer original two-instance 20/126 draws must return unsupported-stencil at opcode8/offset0 with no native draws and consumed completion.",
+      "result": "PENDING"
+    },
+    {
+      "id": "P03",
+      "boundary": "Closed metadata",
+      "prediction": "At stage/pair/interface qualification the selected profile owns only wv_instance_base:uint:INSTANCE_BASE:default+0 for a declared vertex INSTANCEID. Unknown profile/fields, accessor values, duplicates, malformed semantic/default, fragment offsets or forged interface keys must reject before native drawing. Complete existing multiple-color fields must survive and frozen results cannot retain caller-mutable authority.",
+      "result": "PENDING"
+    },
+    {
+      "id": "P04",
+      "boundary": "Native reflection and ownership",
+      "prediction": "For every active base, native exact name wv_instance_base must reflect UNSIGNED_INT,size1,initial0 and a location belonging to that program generation. Absent and declared-unused system values have no active base. The active component cost makes vertex budget2 reject and budget3 admit; type/size/location/index/default failures have zero native draws.",
+      "result": "PENDING"
+    },
+    {
+      "id": "P05",
+      "boundary": "Original native ordering",
+      "prediction": "For the baseline 5-instance list fixture of four original triangles, each instance must issue eight calls with base0,1,2,3,4, normalized EBO offsets0,0,12,12,24,24,36,36 and front/back cull pairs. Every asymmetric split follows instance-major, original-primitive-major,front/back-major. Common/absent/cull paths preserve the original effective instance count.",
+      "result": "PENDING"
+    },
+    {
+      "id": "P06",
+      "boundary": "Original fetch phases",
+      "prediction": "At each split call for instance i, positive-divisor nonconstant attributes keep a positive native divisor and have pointer originalBufferOffset+originalElementOffset+floor(i/originalDivisor)*originalStride. Native integer and packed APIs preserve original element format; zero-stride is a constant. Every captured native input body remains the captured original resource generation.",
+      "result": "PENDING"
+    },
+    {
+      "id": "P07",
+      "boundary": "Original topology and IDs",
+      "prediction": "Original arrays/nonmonotonic u8/u16/u32 IDs, restart segments, strip parity, fans and incomplete tails produce the independent literal original primitive stream. Normalization retains each original ID; native LAST provoking convention retains the original final color. VertexID tags and whole physical colors/depth/S8 must match original bytes.",
+      "result": "PENDING"
+    },
+    {
+      "id": "P08",
+      "boundary": "Whole physical semantics",
+      "prediction": "For every captured frame after its post-writer native completion, the original-byte inverse must match every physical color/depth/S8 pixel, including differing/common/disabled face masks/refs, culling, ordinary primitives and absent S8. Oracle source imports no product decoder/compiler/state implementation and contains no calculated-by-product goldens.",
+      "result": "PENDING"
+    },
+    {
+      "id": "P09",
+      "boundary": "Whole bounds and quotas",
+      "prediction": "count*max(1,originalInstances) is charged before draws. One-byte-short index, vertex and last-instance fetches reject without normalized allocation/native draws. Split normalization reuses one original uint stream across instances, native calls/work remain bounded, exact work budgets pass and minus-one reject.",
+      "result": "PENDING"
+    },
+    {
+      "id": "P10",
+      "boundary": "Restoration before yield",
+      "prediction": "After any successful split or native suffix failure and at every later suspension, owned base is0, positive-divisor pointers/divisors equal their original configuration, CPU scratch is0, original element binding is restored, and stencil/cull/provoking state matches the declared context.",
+      "result": "PENDING"
+    },
+    {
+      "id": "P11",
+      "boundary": "Native failure prefixes",
+      "prediction": "Actual second normalized allocation/upload failures preserve the first completed original draw. An invalid tenth native draw leaves nine successful passes; a bad uint/phase at original instance1 leaves eight successful passes. No native suffix executes beyond the failing point; full physical prefix and restored state agree, and indices are retained until drain or explicit disposal.",
+      "result": "PENDING"
+    },
+    {
+      "id": "P12",
+      "boundary": "Lifetime and schedules",
+      "prediction": "Across three independent seeds, name reuse preserves captured index/instance generations and replacement bytes; backing poison cannot replace retained native inputs; stale revisions reject; shader/context recreation advances binding generation; cancellation/disposal preserve completed prefixes and every native object retires once after required native completion.",
+      "result": "PENDING"
+    },
+    {
+      "id": "P13",
+      "boundary": "Completed physical controls",
+      "prediction": "Served primitive-major ordering and real wrong uint/phase bindings must each draw, complete a distinct fence created after the corrupted writers, and fail the unchanged original-byte oracle with physical differences. Full original/corrupt sources and native bodies are retained; reflection-query negatives are not accepted as physical corruptions.",
+      "result": "PENDING"
+    },
+    {
+      "id": "P14",
+      "boundary": "Finest V8 coverage",
+      "prediction": "Independently reconstruct every finest governing partition intersecting added runtime operands. Every changed behavior executes; each zero partition is exact corresponding unchanged predecessor fallback code with unchanged dependency/evidence digest, or narrowly justified whitespace. No new instance operand is waived.",
+      "result": "PENDING"
+    },
+    {
+      "id": "P15",
+      "boundary": "Cold isolation and carry-forward",
+      "prediction": "Hot/cold commands use the same frozen3cbb041b source/harness closure. Cold clone starts/ends pristine with build overrides scrubbed; it reconstructs generated Wasm from the verified published compiler instead of copying a local build. Unchanged compiler/native/Wasm/resource/storage/Rust/web facts carry only with exact bodies/digests; later worker commits change only evidence/task/queue.",
+      "result": "PENDING"
+    },
+    {
+      "id": "P16",
+      "boundary": "Bounded novel physical attack",
+      "prediction": "A fresh original u32 restart-strip fixture with7 overlapping instances, divisor3, packed signed-normalized secondary divisor2 and per-phase position offsets must issue instance-major calls and original phased fetches and match every physical pixel. Serving the primitive-major loop against the unchanged oracle must complete a real post-writer native fence and be physically refuted. It must retain complete novel packet,input,shader,native and served-source bodies.",
+      "result": "PENDING"
+    }
+  ]
+}

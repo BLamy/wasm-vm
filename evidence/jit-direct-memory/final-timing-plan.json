@@ -1,0 +1,21 @@
+{
+  "implementationHead": "7e51177d966e05f7ae8b3ae23c7d5d0d028c404b",
+  "plan": "Two independent seven-pair micro batches, then one five-pair real-workload matrix. All attempts retained; no post-hoc sample filtering. Wait for our builds/tests to finish. Unrelated host activity is not stopped.",
+  "micro": [
+    "amoadd-d",
+    "lr-sc-d",
+    "tlb-collision",
+    "tlb-hit-control",
+    "integer-control"
+  ],
+  "real": [
+    "busybox-jit",
+    "busybox-nojit"
+  ],
+  "acceptance": {
+    "affectedMicro": "speedup > 1.02 in both batches, ratio of medians and median of paired ratios",
+    "controlsAndReal": "candidate host duration / baseline <= 1.05 for each control and workload phase; report both ratios",
+    "correctness": "all runs complete expected work; micro exact states and retired budgets; real fixed shell result, no snapshots, identical execution policy; only favicon errors allowed"
+  },
+  "limitations": "Real boots use live RTC and can retire different work. End-to-end wall time is authoritative, not MIPS or deterministic equivalence. Control measurements expose host noise."
+}

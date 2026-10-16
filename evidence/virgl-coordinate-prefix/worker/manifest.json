@@ -1,0 +1,14 @@
+{
+  "schema": "virgl-coordinate-prefix-worker-seal-v1",
+  "task": "E6-T12g6m4b",
+  "sourceHead": "68744083cede96b774c4ddb68149b078bc0cf886",
+  "records": 93,
+  "archiveSha256": "9060f8506ee3dfa162108f91c53ad80d0458b7e60eada6bd06b13b22d9aa668f",
+  "archiveBytes": 6378369,
+  "recordIndexSha256": "c87a9b3810b4c47edf707f927189c2219aec7efb0fd4ecc64ca71b81e91f080d",
+  "hotReceiptSha256": "10fe52f56e2fa20006069d1f79c62d8c7654be85fcfd35d8b996ec4ab073fb04",
+  "coldReportSha256": "7bf3beb3b42bd9055a2a0580aa79973aad2633bf94a89952889e2ffff6c53007",
+  "coldReceiptSha256": "a13904859f8038cd968710031a90122610dd6ac2c7618ab8a16f44c400dec0ff",
+  "guestExecution": false,
+  "productionNegotiation": false
+}

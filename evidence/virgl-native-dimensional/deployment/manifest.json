@@ -1,0 +1,11 @@
+{
+  "schema": "native-dimensional-publication-seal-v1",
+  "head": "9de5721b5a9c5c0d70b94956305ba76a447a5024",
+  "records": 201,
+  "reopenedMembers": 201,
+  "recordIndexSha256": "4f1761718f2197e77ffad96a3ee1467078dccfb9ced0dd6d21b31cec12532397",
+  "archiveSha256": "2edd60e5536a0ed4593e24bf8d079136406c720eb0a2c03abb6ed9178e2c24a6",
+  "archiveBytes": 2261275,
+  "deployment": "9f22c455-fe79-48e1-a0c9-1062f684a74f",
+  "productionAuthority": false
+}

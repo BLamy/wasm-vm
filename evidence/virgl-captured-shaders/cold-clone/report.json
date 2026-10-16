@@ -1,0 +1,27 @@
+{
+  "head": "8759a30622e6604b8cd3d5c35d110260c6fd1943",
+  "clone": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-captured-shaders-cold-371k7jh9/wasm-vm",
+  "commands": [
+    [
+      "git",
+      "clone",
+      "--shared",
+      "--branch",
+      "codex/virgl-captured-shaders",
+      "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm",
+      "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-captured-shaders-cold-371k7jh9/wasm-vm"
+    ],
+    [
+      "make",
+      "verify-E6-T10d"
+    ]
+  ],
+  "scrubbedNames": [
+    "RUST_LOG"
+  ],
+  "status": "passed",
+  "statusBefore": "",
+  "statusAfter": "",
+  "acceptanceReceiptSha256": "b25814661f1f65a47a6c0431749178ba43b69dfb9f87a38d336c2d8edb188ba3",
+  "logSha256": "da2ecf78813df2b56fd3c096ece5a2917a7aad23258778603c7b1ce072b2123a"
+}
