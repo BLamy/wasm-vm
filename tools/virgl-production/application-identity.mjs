@@ -56,7 +56,7 @@ export function createApplicationIdentityProof(page,command,output,options={}){
     return {data,result};
   }
   const stable=(a,b)=>{assert.equal(a.pid,b.pid);assert.equal(a.exe,b.exe);assert.equal(a.starttime,b.starttime);assert.deepEqual(a.exeStat,b.exeStat);assert.deepEqual(a.pathStat,b.pathStat);assert.deepEqual(a.rootStat,b.rootStat);assert.deepEqual(a.rootBlock,b.rootBlock);};
-  async function capture(directory){
+  async function capture(directory,retained){
     await fs.copyFile(fileURLToPath(import.meta.url),path.join(directory,'application-identity-source.mjs'));
     const manifestBytes=await fs.readFile(path.join(imageDirectory,'manifest.json')),manifest=JSON.parse(manifestBytes);
     const preparation=JSON.parse(await fs.readFile(path.join(imageDirectory,'preparation.json')));
@@ -71,8 +71,19 @@ export function createApplicationIdentityProof(page,command,output,options={}){
     const descriptor=JSON.parse(await fs.readFile(path.join(repo,'web/artifacts-omarchy-virgl.json')));
     const expectedIdentity={buildId:GPU_CHECKPOINT_BUILD_ID,kernelSha256:descriptor.artifacts.kernel.sha256,imageManifestSha256:sha(manifestBytes),ramMib:1024,
       bootargs:'root=/dev/vda rw console=ttyS0 earlycon=sbi plymouth.enable=0',guestClock:'icount',icountDivider:64,interactiveClock:'paced-on-keyboard'};
-    const sync=await run('sync');
-    const pairPath=path.join(directory,'actual.wvgpair'),file=await fs.open(pairPath,'wx');let next=0,total;
+    const sync=retained?retained.receipt.sync:await run('sync');
+    const pairPath=path.join(directory,'actual.wvgpair');
+    let capture,source;
+    if(retained){
+      const previous=path.resolve(output,retained.receipt.pair.path);
+      assert.ok(previous.startsWith(path.resolve(output)+path.sep));
+      assert.equal((await fs.stat(previous)).size,retained.receipt.pair.bytes);
+      assert.equal(await hashFile(previous),retained.receipt.pair.sha256);
+      execFileSync('cp',['-c',previous,pairPath]);
+      capture=retained.receipt.capture;
+      source={kind:'retained observed filesystem; fresh live process identity before and after',...retained.reference};
+    }else{
+    const file=await fs.open(pairPath,'wx');let next=0,total;
     const binding='__appIdentityUpload'+process.pid+'_'+uploadSequence+++'_'+randomUUID().replaceAll('-','');
     await page.exposeFunction(binding,async entry=>{
       assert.equal(entry.offset,next);assert.ok(Number.isSafeInteger(entry.total)&&entry.total>0&&entry.total<=512*1024*1024);
@@ -80,7 +91,6 @@ export function createApplicationIdentityProof(page,command,output,options={}){
       const b=Buffer.from(entry.base64,'base64');assert.equal(b.toString('base64'),entry.base64);assert.ok(b.length>0&&b.length<=1024*1024&&next+b.length<=total);
       const result=await file.write(b,0,b.length,next);assert.equal(result.bytesWritten,b.length);next+=b.length;
     });
-    let capture;
     try{const outcome=await page.evaluate(async binding=>{
       const c=window.__linuxCtl,wasPaused=await c.isPaused();await c.pause();
       let stage='before-clock',value,error,cleanupError;
@@ -102,7 +112,9 @@ export function createApplicationIdentityProof(page,command,output,options={}){
       if(outcome.cleanupError)throw Error('capture resume: '+(outcome.cleanupError.stack||outcome.cleanupError.message));
       capture=outcome.value;
     }finally{await file.close();}
-    assert.equal(next,total);assert.equal(next,capture.bytes);assert.deepEqual(capture.after.clock,capture.before.clock);
+    assert.equal(next,total);assert.equal(next,capture.bytes);
+    }
+    assert.deepEqual(capture.after.clock,capture.before.clock);
     assert.equal(capture.after.scheduler.retiredInstructions,capture.before.scheduler.retiredInstructions);
     const bytes=await fs.readFile(pairPath),decoded=await decodeGpuCheckpointPair(bytes,expectedIdentity),delta=Buffer.from(decoded.disk);
     const native=Buffer.from(decoded.native),trailer=native.length-84;
@@ -114,11 +126,18 @@ export function createApplicationIdentityProof(page,command,output,options={}){
     assert.equal(native.subarray(44,76).toString('hex'),delta.subarray(17,49).toString('hex'));
     assert.equal(native.readBigUInt64LE(76),delta.readBigUInt64LE(49));
     const rows=parseIdentityDelta(delta,manifest);await fs.writeFile(path.join(directory,'actual.wvod'),delta);
+    if(retained){
+      const r=retained.receipt;
+      assert.deepEqual(decoded.identity,r.identity);assert.equal(decoded.epoch,r.epoch);
+      assert.deepEqual(decoded.clockState,r.clockState);assert.equal(decoded.witness,r.witness);
+      assert.equal(sha(delta),r.diskSha256);assert.equal(rows.length,r.deltaBlocks);
+      assert.equal(sha(manifestBytes),r.manifestSha256);assert.equal(expectedImageSha256,r.baseImageSha256);
+    }
     await fs.writeFile(path.join(directory,'base-manifest.json'),manifestBytes);
     const base=path.join(imageDirectory,'guest.ext4');baseHash??=await hashFile(base);assert.equal(baseHash,expectedImageSha256);
     const disk=path.join(directory,'reconstructed.ext4');execFileSync('cp',['-c',base,disk]);assert.equal(await hashFile(disk),baseHash);
     const handle=await fs.open(disk,'r+');try{for(const row of rows){const result=await handle.write(delta,row.at,4096,row.offset);assert.equal(result.bytesWritten,4096);}}finally{await handle.close();}
-    return {sync,capture,pair:{path:path.relative(output,pairPath),bytes:bytes.length,sha256:sha(bytes)},identity:decoded.identity,epoch:decoded.epoch,clockState:decoded.clockState,witness:decoded.witness,
+    return {sync,capture,...(source?{source}:{}),pair:{path:path.relative(output,pairPath),bytes:bytes.length,sha256:sha(bytes)},identity:decoded.identity,epoch:decoded.epoch,clockState:decoded.clockState,witness:decoded.witness,
       diskSha256:sha(delta),baseImageSha256:baseHash,manifestSha256:sha(manifestBytes),deltaBlocks:rows.length,directory,disk};
   }
   async function dump(proof,executable,stat,label){
@@ -155,8 +174,19 @@ export function createApplicationIdentityProof(page,command,output,options={}){
         const after=await metadata(client.pid,executable);stable(before.data,after.data);
         const result={window:client,process:before.result,before,after,executable,executableSha256:digest,nativeHash:hash};cache.set(executable,result);return result;
       }
+      let retained;
+      if(options.processWitness){
+        const reference=options.processWitness;
+        assert.match(reference.sha256,/^[a-f0-9]{64}$/);
+        const filename=path.resolve(output,reference.path);assert.ok(filename.startsWith(path.resolve(output)+path.sep));
+        const bytes=await fs.readFile(filename);assert.equal(sha(bytes),reference.sha256);
+        const receipt=JSON.parse(bytes);assert.equal(receipt.body.executable,executable);
+        assert.equal(receipt.body.executableSha256,options.executables[executable]);
+        stable(receipt.before.data,receipt.after.data);stable(receipt.after.data,before.data);
+        assert.deepEqual(receipt.body.stat,before.data.exeStat);retained={reference,receipt};
+      }
       const directory=path.join(output,label+'-filesystem');await fs.mkdir(directory,{recursive:false});
-      const proof=await capture(directory),after=await metadata(client.pid,executable);stable(before.data,after.data);
+      const proof=await capture(directory,retained),after=await metadata(client.pid,executable);stable(before.data,after.data);
       const body=await dump(proof,executable,before.data.exeStat,'executable');
       const receipt={...proof,directory:path.relative(output,proof.directory),disk:path.relative(output,proof.disk),before,after,body};
       await fs.writeFile(path.join(directory,'receipt.json'),JSON.stringify(receipt,null,2)+'\n');
@@ -166,6 +196,12 @@ export function createApplicationIdentityProof(page,command,output,options={}){
       const code=`import os,json,stat;s=os.stat(${JSON.stringify(executable)});print(json.dumps(dict(dev=s.st_dev,ino=s.st_ino,size=s.st_size,mode=stat.S_IMODE(s.st_mode),uid=s.st_uid,gid=s.st_gid,mtimeNs=str(s.st_mtime_ns),ctimeNs=str(s.st_ctime_ns))))`;
       const command='python3 -c '+quote(code),result=await run(command),stat=JSON.parse(result.stdout);
       assert.equal(stat.uid,0);assert.equal(stat.mode&0o022,0);
+      if(stat.size<=64*1024*1024){
+        const hash=await run('sha256sum -- '+quote(executable));
+        const digest=hash.stdout.trim().split(/\s+/)[0];assert.equal(digest,options.executables[executable]);
+        const after=await run(command);assert.deepEqual(JSON.parse(after.stdout),stat);
+        return{executable,executableSha256:digest,before:result,after,nativeHash:hash};
+      }
       const directory=path.join(output,label+'-filesystem');await fs.mkdir(directory,{recursive:false});const proof=await capture(directory);
       const after=await run(command);assert.deepEqual(JSON.parse(after.stdout),stat);
       const body=await dump(proof,executable,stat,'executable');const receipt={...proof,directory:path.relative(output,proof.directory),disk:path.relative(output,proof.disk),before:result,after,body};

@@ -93,7 +93,7 @@ export async function verifyOmarchyApplications(page, command, output, options =
   identityModule.searchParams.set('recording',identityModuleSha256);
   const {createApplicationIdentityProof}=await import(identityModule.href);
   const name = options.name || 'native-applications';
-  let continueExistingBrowser=options.continueExistingBrowser===true,continuationRequest;
+  let continueExistingBrowser=options.continueExistingBrowser===true,continuationRequest,processWitness;
   if(name.startsWith('control-applications-')){
     // The original failed controller predates this option. Its retained, owned
     // control request binds the incremental helper without mutating that loaded
@@ -109,19 +109,24 @@ export async function verifyOmarchyApplications(page, command, output, options =
       assert.equal(original.applicationContinuation,true);assert.ok(!original.remoteUrl);
       assert.ok(original.errors.some(error=>error.includes('native Chromium loaded and focused the guest loopback page')));
       continuationRequest={id,sha256:sha(bytes),scope:'owned failed local warm application run; original navigation failure remains retained'};
+      if(request.processWitness){
+        assert.equal(request.processWitness.path,'omarchy-initial-native-applications-identity-0-filesystem/receipt.json');
+        assert.match(request.processWitness.sha256,/^[a-f0-9]{64}$/);processWitness=request.processWitness;
+      }
     }
   }
   if(continueExistingBrowser)assert.ok(continuationRequest,'existing browser continuation requires the retained owned failure and request');
   const fixtureSpec=createApplicationFixture(randomUUID().replaceAll('-',''));
   const report = {status:'running',identityModuleSha256,continueExistingBrowser,fixtureToken:fixtureSpec.token,fixtureServerSha256:sha(Buffer.from(fixtureSpec.source)),networking:{provider:'offline',fixture:fixtureSpec.url,externalBrowsingClaim:false},phases:[]};
   if(continuationRequest)report.continuationRequest=continuationRequest;
+  if(processWitness)report.processWitness=processWitness;
   const file = path.join(output,name+'.json');
   const inventoryBytes=await fs.readFile(path.join(output,'input-runtime-elf.json'));
   assert.equal(sha(inventoryBytes),'ae72ccdf528974e203726b058a639201bfa19950ee4190658baad14e0440ab86','accepted signed application inventory');
   const prompters=JSON.parse(inventoryBytes).filter(row=>row.path==='usr/lib/gcr-prompter');assert.equal(prompters.length,1);assert.equal(prompters[0].machine,243);
   const executables={...options.executables,'/usr/lib/gcr-prompter':prompters[0].sha256};
   report.acceptedInventorySha256=sha(inventoryBytes);
-  const identityProof=createApplicationIdentityProof(page,command,output,{...options,executables});
+  const identityProof=createApplicationIdentityProof(page,command,output,{...options,executables,processWitness});
   let identitySequence=0;
   const pageErrors=[];
   const onError=error=>pageErrors.push(String(error));
