@@ -61,7 +61,7 @@ await fs.mkdir(output, {recursive:false});
 const noteRecorderMemory=()=>appendFileSync(path.join(output,'recorder-memory.ndjson'),JSON.stringify({time:Date.now(),...process.memoryUsage()})+'\n');
 noteRecorderMemory();const recorderMemoryTimer=setInterval(noteRecorderMemory,30000);recorderMemoryTimer.unref();
 if(gpuTrace)await fs.writeFile(path.join(output,'gpu.ndjson'),'');
-const report = {status:'running', scope:'actual production UI fast boots and repeat launches',
+const report = {status:'running', scope:restoredApplications?'native application launches after a fresh factory restoration; repeat timing is verified separately':swapCheckpoint?'separate swapped-page checkpoint fixture, not factory or publication timing':'actual production UI fast boots and repeat launches',
   head:execFileSync('git',['rev-parse','HEAD'],{cwd:repo,encoding:'utf8'}).trim(),
   webRoot:web, releaseCache, saveOnRepeat, gpuTrace, remoteUrl, warmGpu, applicationContinuation, restoredApplications, swapCheckpointMode:swapCheckpoint, phases:[], requests:[], remoteFetches:[], liveSources:[], sourceHashes:{}, harnessHashes:{}, errors:[]};
 if(applicationComponent)report.applicationComponent={name:applicationComponent,scope:'Only missing native Writer/Node/npm/wallpaper and final desktop proof; not Chromium/SVG or publication timing.'};
@@ -629,7 +629,7 @@ try{
     if(gpuTrace){query.set('testHooks','1');query.set('gpuTrace','1');query.set('workerHeartbeatTimeoutMs','10000');}
     if(guest==='omarchy')query.set('desktop','1');
     const url=origin+'/app?'+query+'#ide';
-    for(const round of coldGpu||captureGpuPair||applicationContinuation?['initial']:['initial','repeat']){
+    for(const round of coldGpu||captureGpuPair||applicationContinuation||restoredApplications?['initial']:['initial','repeat']){
       phase=guest+'-'+round;let started=Date.now();
       let repeatCheckpoint,phaseEgl,publicDesktopInput,publicDesktopFinal,warmPixels,warmTiming,postWorkloadInput,restoredAppLaunches,swapResult;
       if(round==='initial')await page.goto(url);
@@ -749,7 +749,7 @@ try{
           }:undefined;
           report.publicDesktopInput=await verifyPublicDesktopInput(page,guestCommand,output,{name:phase+'-public-desktop-input',initialClockMode:applicationWorkload?'paced-icount':expectedGpuPair?.clockState.mode||'icount',prepareFactory:captureGpuPair,beforeTyping:captureFactory});
           publicDesktopInput=report.publicDesktopInput;
-          if(warmGpu&&!captureGpuPair){
+          if(warmGpu&&!captureGpuPair&&!restoredApplications){
             warmPixels=await verifyWarmGpuPixels(page,{outputDir:output,label:phase+'-literal-pixels'});
             postWorkloadInput=await verifyPublicDesktopInput(page,guestCommand,output,{name:phase+'-post-workload-input',
               initialClockMode:'paced-icount',barActions:false,text:'touch /tmp/gpukeyboard84touch',
@@ -759,7 +759,7 @@ try{
             const {verifyOmarchyShellIpc}=await import('./omarchy-shell-ipc.mjs');
             report.shellIpc=await verifyOmarchyShellIpc(page,guestCommand,output,{name:phase+'-shell-ipc'});
           }
-          if(restoredApplications&&round==='repeat'){
+          if(restoredApplications){
             const {verifyRestoredApplicationLaunches}=await import('./omarchy-restored-app-launches.mjs');
             restoredAppLaunches=await verifyRestoredApplicationLaunches(page,guestCommand,output,{name:phase+'-restored-applications',executables:applicationExecutables});
             report.restoredAppLaunches=restoredAppLaunches;
