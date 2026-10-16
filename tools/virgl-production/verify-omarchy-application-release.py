@@ -102,7 +102,7 @@ try:
             run("software-builder-syntax", ["bash", "-n", "tools/build-omarchy-snapshot.sh"])
             for name in ("critic-fast-boots", "critic-fast-boots-input", "critic-desktop-actions",
                          "omarchy-swap-checkpoint", "omarchy-factory-guard", "omarchy-factory-prewarm",
-                         "omarchy-restored-app-launches", "omarchy-release-recovery"):
+                         "omarchy-restored-app-launches", "omarchy-release-recovery", "recompress-gpu-factory"):
                 run("syntax-"+name, ["node", "--check", "tools/virgl-production/"+name+".mjs"])
             run("docs", ["node", "tools/check-docs.mjs"])
             run("docs-dist", ["python3", "tools/check-docs-dist.py"])
