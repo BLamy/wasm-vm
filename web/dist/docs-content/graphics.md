@@ -18,6 +18,8 @@ The accelerated image uses a pinned Mesa 26.2.2 build with VirGL and the GLES AP
 
 GPU rendering restores an authenticated Omarchy warm checkpoint on compatible hosts. RAM, the complete disk overlay, the selected guest clock and the original GPU command/DMA journal belong to one pinned artifact. A fresh worker rebuilds actual GPU resources and physically presents the restored display in its new renderer epoch. Readiness also requires new CPU execution; a static desktop can then accept the input that requests another draw. Acceptance checks new guest GPU work after startup. Repeat launches restore an independent copy of the same factory desktop.
 
+The accelerated factory captures a clean session after the original wallpaper and Apps menu have initialized, startup jobs have finished, and disk requests have settled over a measured interval. Preparation opens the stock Apps menu, searches for LibreOffice Writer, closes it and checks the desktop again before freezing RAM, disk and GPU state together.
+
 Use `?guest=omarchy&desktop=1&noSnapshot=1` on the launcher for an explicit GPU cold boot. The **Software rendering** option retains its paired RAM snapshot and disk delta. BusyBox, Alpine and Alpine + Node keep their fast-boot paths. A corrupt or incompatible GPU checkpoint produces a visible error; it cannot silently become a cold boot or a software session.
 
 {% hint style="info" %}

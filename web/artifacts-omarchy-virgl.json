@@ -7,9 +7,9 @@
       "size": 24208896
     },
     "gpuCheckpoint": {
-      "url": "releases/boot-snapshot/omarchy-apps-virgl-ready-7456e9bd6aa3.wvgpair",
-      "sha256": "7456e9bd6aa37c227f4695a466ad277c2b9de030a9cdfc89f8956ddca3c9963c",
-      "size": 187218254
+      "url": "releases/boot-snapshot/omarchy-apps-virgl-ready-3583ea9927d1.wvgpair",
+      "sha256": "3583ea9927d142e33c9b1de5963d89bd1f0b1022df7047c8a8b02d7f734a01bd",
+      "size": 204057731
     }
   },
   "chunkedImage": {
