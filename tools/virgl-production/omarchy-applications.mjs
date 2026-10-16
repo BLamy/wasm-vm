@@ -413,6 +413,24 @@ export async function verifyOmarchyApplications(page, command, output, options =
     report.phases.push({kind:'native-writer-content-click',client,target,time:Date.now()});await save();
     await waitActive(row=>row.address===window.address&&isWriterDocumentWindow(row));
   }
+  async function focusFileDialog(dialog){
+    const result=await run(hypr+'monitors');assert.equal(result.exit,0);
+    const monitor=JSON.parse(result.stdout).find(row=>row.id===dialog.monitor);assert.equal(monitor.scale,1);
+    let current=await waitActive(row=>row.address===dialog.address);
+    async function clickVisible(){
+      await focusInput();const box=await page.locator('#ide-display-canvas').boundingBox();assert.ok(box?.width>0&&box.height>0);
+      const target={x:Math.max(15,Math.min(monitor.width-15,current.at[0]+current.size[0]*0.5)),y:Math.max(15,Math.min(monitor.height-15,current.at[1]+current.size[1]*0.5))};
+      await page.mouse.click(box.x+target.x*box.width/monitor.width,box.y+target.y*box.height/monitor.height,{delay:120});
+      report.phases.push({kind:'native-file-dialog-focus',dialog:current,target,time:Date.now()});await save();
+    }
+    await clickVisible();
+    if(current.at[0]<0||current.at[1]<0||current.at[0]+current.size[0]>monitor.width||current.at[1]+current.size[1]>monitor.height){
+      await press('Meta+f');
+      current=await waitActive(row=>row.address===dialog.address&&row.at[0]>=0&&row.at[1]>=0&&row.at[0]+row.size[0]<=monitor.width&&row.at[1]+row.size[1]<=monitor.height);
+      await clickVisible();
+    }
+    await waitActive(row=>row.address===dialog.address);return current;
+  }
   async function verifySandboxedImage(chromium) {
     const expected={pid:chromium.pid,starttime:report.chromium.before.data.starttime,exe:'/usr/lib/chromium/chromium'};
     const code=`import gi,hashlib,json,os,base64;from pathlib import Path;expected=json.loads(${JSON.stringify(JSON.stringify(expected))})\ndef process():\n p=Path('/proc')/str(expected['pid']);s=(p/'stat').read_text();value=dict(pid=expected['pid'],starttime=s[s.rfind(')')+2:].split()[19],exe=os.readlink(p/'exe'));assert value==expected;return value\nbefore=process();gi.require_version('GdkPixbuf','2.0');from gi.repository import GdkPixbuf;assert 'GLYCIN_DISABLE_SANDBOX' not in os.environ;p='/usr/share/icons/Adwaita/scalable/status/image-missing.svg';source=open(p,'rb').read();b=GdkPixbuf.Pixbuf.new_from_file_at_scale(p,48,48,True);pixels=b.get_pixels();after=process();assert before==after;print(json.dumps({'chromiumBefore':before,'chromiumAfter':after,'width':b.get_width(),'height':b.get_height(),'channels':b.get_n_channels(),'stride':b.get_rowstride(),'pixelSha256':hashlib.sha256(pixels).hexdigest(),'sourceSha256':hashlib.sha256(source).hexdigest(),'pixels':base64.b64encode(pixels).decode(),'source':base64.b64encode(source).decode()}),flush=True)`;
@@ -564,16 +582,16 @@ export async function verifyOmarchyApplications(page, command, output, options =
 
     report.writer=await identity(await launchWriter(sandboxPrefix?.prior.writer.window.pid),'/usr/lib/libreoffice/program/soffice.bin');assert.match(report.writer.process.stdout,/\/usr\/lib\/libreoffice\/program\/soffice.bin/);
     await finishWriterWelcome(report.writer.window);await focusWriterContent(report.writer.window);
-    const first='omarchy riscv document 42';await press('Control+a');await type(first);await press('Control+s');
-    report.saveDialog=await waitActive(row=>/^Save(?: As)?$/i.test(row.title));await shot('writer-save-dialog');
+    const first='Omarchy riscv document 42';await press('Control+a');await type(first);await press('Control+s');
+    report.saveDialog=await waitActive(row=>/^Save(?: As)?$/i.test(row.title));report.fittedSaveDialog=await focusFileDialog(report.saveDialog);await shot('writer-save-dialog');
     await press('Control+l');await type(document);await press('Enter');await waitClosed(row=>row.address===report.saveDialog.address);
     report.firstSave=await readDocument('first-save',[first]);assert.ok(report.firstSave.text.includes(first));
     await shot('writer-saved');await press('Control+q');await waitClosed(row=>/libreoffice|soffice/i.test(row.class));
-    await launchWriter();await press('Control+o');report.openDialog=await waitActive(row=>/^Open(?: File)?$/i.test(row.title));await shot('writer-open-dialog');
+    await launchWriter();await press('Control+o');report.openDialog=await waitActive(row=>/^Open(?: File)?$/i.test(row.title));report.fittedOpenDialog=await focusFileDialog(report.openDialog);await shot('writer-open-dialog');
     await press('Control+l');await type(document);await press('Enter');await waitClosed(row=>row.address===report.openDialog.address);
     report.reopenedWindow=await waitWindow(row=>/omarchy-native-applications-42/i.test(row.title));
-    await focusWriterContent(report.reopenedWindow);await shot('writer-reopened');await press('Control+End');await press('Enter');await type('reopened and saved');await press('Control+s');await sleep(2000);
-    report.secondSave=await readDocument('second-save',[first,'reopened and saved']);assert.ok(report.secondSave.text.includes(first));assert.ok(report.secondSave.text.includes('reopened and saved'));
+    await focusWriterContent(report.reopenedWindow);await shot('writer-reopened');await press('Control+End');await press('Enter');await type('Reopened and saved');await press('Control+s');await sleep(2000);
+    report.secondSave=await readDocument('second-save',[first,'Reopened and saved']);assert.ok(report.secondSave.text.includes(first));assert.ok(report.secondSave.text.includes('Reopened and saved'));
     assert.notEqual(report.firstSave.sha256,report.secondSave.sha256);report.writerGpu=await shot('writer-resaved');
     await press('Control+q');await waitClosed(row=>/libreoffice|soffice/i.test(row.class));
 
