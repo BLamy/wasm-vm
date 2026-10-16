@@ -12,6 +12,21 @@ export async function verifyDesktopActions(page, command, output, {name, monitor
     const reply = await command(page, 'XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j activeworkspace', 300000);
     assert.equal(reply.exit, 0); return JSON.parse(reply.stdout);
   };
+  // Preserve both sides of a failed first interaction. Host pointer frames are
+  // submissions, not evidence that libinput or the original shell received them.
+  // The native log is read in place without restarting or configuring the guest.
+  const pointerState = () => page.evaluate(async () => ({
+    time: performance.now(), clock: await window.__linuxCtl.guestClockState(),
+    state: window.__pointer?.state(), frames: window.__pointer?.frames(),
+    diagnostics: window.__pointer?.diagnostics(),
+  }));
+  const nativeInputLog = async () => {
+    const code = "from pathlib import Path;import json,time,hashlib;out=[]\n" +
+      "for p in Path('/run/user/1000/hypr').glob('*/hyprland.log'):\n" +
+      " b=p.read_bytes();out.append(dict(path=str(p),bytes=len(b),sha256=hashlib.sha256(b).hexdigest(),tail=b[-32768:].decode('utf-8','replace')))\n" +
+      "print(json.dumps(dict(monotonic=time.monotonic(),logs=out)))";
+    return command(page, "python3 -c '" + code.replaceAll("'", "'\\''") + "'", 300000);
+  };
   const canvas = page.locator('#ide-display-canvas'), box = await canvas.boundingBox();
   assert.ok(box?.width > 0 && box?.height > 0);
   assert.equal(monitor.width, 1280, 'pinned default desktop width');
@@ -22,6 +37,7 @@ export async function verifyDesktopActions(page, command, output, {name, monitor
   try {
     report.before = {workspace: await readWorkspace(), gpu: await page.evaluate(() => wvmDemo.gpuStats()),
       display:await page.evaluate(()=>globalThis.__presentation.state())};
+    report.nativeInputLogBefore = await nativeInputLog();
     assert.equal(report.before.workspace.id, foot.workspace.id, 'default Foot workspace is active');
     assert.ok([1, 2, 3, 4, 5].includes(foot.workspace.id));
     await page.evaluate(() => {
@@ -53,8 +69,10 @@ export async function verifyDesktopActions(page, command, output, {name, monitor
     // Guest state, rather than a painted button or cursor, proves the action.
     const away = foot.workspace.id === 2 ? 1 : 2;
     for (const expected of [away, foot.workspace.id]) {
-      const row = {expected, x: 25 + 20 * expected, y: layer.h / 2, started: Date.now()}; report.actions.push(row);
+      const row = {expected, x: 25 + 20 * expected, y: layer.h / 2,
+        pointerBefore: await pointerState(), started: Date.now()}; report.actions.push(row);
       await page.mouse.click(...point(row.x, row.y), {delay: 120});
+      row.inputFinished = Date.now();
       const deadline = Date.now() + 120000;
       do {
         row.observed = await readWorkspace(); await save();
@@ -77,6 +95,8 @@ export async function verifyDesktopActions(page, command, output, {name, monitor
     }
   } catch (error) { report.status = 'failed'; report.error = error.stack || String(error); throw error; }
   finally {
+    report.pointerAfter = await pointerState().catch(error => ({error: String(error)}));
+    report.nativeInputLogAfter = await nativeInputLog().catch(error => ({error: String(error)}));
     report.continuity = await page.evaluate(() => {
       const state = globalThis.__criticDesktopContinuity;
       if (!state) return null;
